@@ -260,7 +260,7 @@ private struct MemoryUpdatedNotice: View {
               comment: "A deleted fact didn't come back, and Undo stays to try again"))
         }
       case .undone:
-        Text("Change undone", tableName: "Settings", comment: "Says a deleted fact came back")
+        Text(undone)
       case .changedSince:
         FailureLine(
           message: LocalizedStringResource(
@@ -271,6 +271,11 @@ private struct MemoryUpdatedNotice: View {
     .font(.footnote)
     .padding(.top, 4)
     .accessibilityElement(children: .combine)
+    .announcesStatus(status == .undone ? undone : nil)
+  }
+
+  private var undone: String {
+    String(localized: "Change undone", table: "Settings", comment: "Says a deleted fact came back")
   }
 }
 

@@ -241,6 +241,7 @@ struct LessonStageView: View {
       // A screen whose answer starts over (a missed question coming straight back) is made anew,
       // as another screen would be, so its canvas starts over too.
       .id(visit(step))
+      .announcesBuddyOffer(.misses, isShown: state.struggleOffer != nil && !step.showsOwnResult)
       .onChange(of: shownPrompt(step), initial: true) { _, shown in
         store.promptAudio.enter(prompt: shown.url, audio: audio)
       }
@@ -258,6 +259,7 @@ struct LessonStageView: View {
           isCheckSlow = !Task.isCancelled
         }
       }
+      .announcesStatus(isCheckSlow && state.phase == .checking ? LessonCheckNote.slowLine : nil)
       .simultaneousGesture(TapGesture().onEnded { store.touches += 1 })
       .scrollDismissesKeyboard(.interactively)
       .sensoryFeedback(trigger: countedVerdict(step)) { _, isCorrect in
@@ -321,9 +323,7 @@ private struct LessonCheckNote: View {
   var body: some View {
     if state.notice == .selfCorrect {
       Label {
-        Text(
-          "Not quite. Look again and fix it yourself, then check.", tableName: "Player",
-          comment: "A wrong language answer the learner can fix once")
+        Text(LessonPlayerState.Notice.selfCorrect.line)
       } icon: {
         Image(systemName: "pencil")
       }
@@ -341,13 +341,48 @@ private struct LessonCheckNote: View {
     }
 
     if isSlow, state.phase == .checking {
-      Text(
-        "Still checking. This is taking longer than usual.", tableName: "Player",
-        comment: "Grading the answer is taking longer than usual"
-      )
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      Text(Self.slowLine)
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
     }
+  }
+
+  static var slowLine: String {
+    String(
+      localized: "Still checking. This is taking longer than usual.", table: "Player",
+      comment: "Grading the answer is taking longer than usual")
+  }
+}
+
+extension LessonPlayerState.Notice {
+  var line: String {
+    switch self {
+    case .selfCorrect:
+      String(
+        localized: "Not quite. Look again and fix it yourself, then check.", table: "Player",
+        comment: "A wrong language answer the learner can fix once")
+    case .answerNotSaved:
+      String(
+        localized: "Your answer here didn't save. Answer it again to finish the lesson.",
+        table: "Player",
+        comment: "The lesson came back to a screen whose answer was never saved")
+    case .pictureReady:
+      String(
+        localized: "This question was waiting for its picture. Answer it to finish the lesson.",
+        table: "Player",
+        comment: "A question left out while its picture was drawn came back once it was drawn")
+    case .writingSkipped:
+      String(
+        localized: "No more writing today.", table: "Player",
+        comment: "\"Can't write now\" left the lesson's writing out")
+    }
+  }
+}
+
+extension LessonPlayerState {
+  /// What the stage's notice says; a quick check shows its progress there instead.
+  var noticeLine: String? {
+    quickCheckProgress == nil ? notice?.line : nil
   }
 }
 
@@ -554,10 +589,7 @@ private struct LessonNotice: View {
       switch state.notice {
       case .answerNotSaved:
         Label {
-          Text(
-            "Your answer here didn't save. Answer it again to finish the lesson.",
-            tableName: "Player",
-            comment: "The lesson came back to a screen whose answer was never saved")
+          Text(LessonPlayerState.Notice.answerNotSaved.line)
         } icon: {
           Image(systemName: "icloud.slash")
         }
@@ -565,10 +597,7 @@ private struct LessonNotice: View {
         .foregroundStyle(.secondary)
       case .pictureReady:
         Label {
-          Text(
-            "This question was waiting for its picture. Answer it to finish the lesson.",
-            tableName: "Player",
-            comment: "A question left out while its picture was drawn came back once it was drawn")
+          Text(LessonPlayerState.Notice.pictureReady.line)
         } icon: {
           Image(systemName: "photo")
         }
@@ -577,9 +606,7 @@ private struct LessonNotice: View {
       case .writingSkipped:
         HStack(alignment: .firstTextBaseline) {
           Label {
-            Text(
-              "No more writing today.", tableName: "Player",
-              comment: "\"Can't write now\" left the lesson's writing out")
+            Text(LessonPlayerState.Notice.writingSkipped.line)
           } icon: {
             Image(systemName: "pencil.slash")
           }

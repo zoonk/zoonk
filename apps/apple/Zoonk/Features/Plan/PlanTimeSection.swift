@@ -83,6 +83,7 @@ struct PlanTimeSection: View {
 
         await ask(revision)
       }
+      .announcesStatus(editor.isSaving ? nil : finish)
 
       coverage(answer: answer, found: found, minutes: current)
 
@@ -145,7 +146,7 @@ struct PlanTimeSection: View {
         moveDate(to: fittingDate)
       }
     } else if let finish {
-      finish
+      Text(finish)
         .font(.subheadline)
         .foregroundStyle(.secondary)
     }
@@ -161,18 +162,20 @@ struct PlanTimeSection: View {
 
   /// A plan without a date says when it finishes. The end is the saved schedule's last day, laid
   /// out again only by a change, so once it has passed it no longer says that.
-  private var finish: Text? {
-    guard let end = plan.estimate.endDate, end >= plan.today, plan.end == nil else {
+  private var finish: String? {
+    guard plan.feasibility?.deadline == nil || plan.schedule.targetDate == nil,
+      let end = plan.estimate.endDate, end >= plan.today, plan.end == nil
+    else {
       return nil
     }
 
     return editor.isSaving
-      ? Text(
-        "Working out when you'd finish…", tableName: "Plan",
+      ? String(
+        localized: "Working out when you'd finish…", table: "Plan",
         comment: "While a change to the time saves, in place of when the plan finishes")
-      : Text(
-        "You finish around \(PlanDate.text(end, today: plan.today, month: true)).",
-        tableName: "Plan", comment: "When a plan without a date finishes, as a month and year")
+      : String(
+        localized: "You finish around \(PlanDate.text(end, today: plan.today, month: true)).",
+        table: "Plan", comment: "When a plan without a date finishes, as a month and year")
   }
 
   /// Turning it on says what it changes first; turning it off applies at once.

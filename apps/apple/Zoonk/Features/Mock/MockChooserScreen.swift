@@ -713,7 +713,7 @@ private struct MockChooser: View {
 
     // A start that ends after the learner left for another tab isn't read out over it.
     if isOnScreen, !outcome.isEmpty {
-      AccessibilityNotification.Announcement(outcome.joined(separator: " ")).post()
+      announcePolitely(outcome.joinedSentences())
     }
   }
 }

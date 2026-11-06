@@ -84,24 +84,24 @@ struct GoalMaterialSections: View {
           choices: [
             .init(
               value: MaterialIntent.exam,
-              label: Text(
-                "Prepare for an exam", tableName: "Onboarding",
+              label: String(
+                localized: "Prepare for an exam", table: "Onboarding",
                 comment: "Material intent: the learner wants to prepare for an exam on it"),
               detail: Text(
                 "Give a date and we'll plan up to it", tableName: "Onboarding",
                 comment: "Under the exam material intent")),
             .init(
               value: .understand,
-              label: Text(
-                "Understand this material", tableName: "Onboarding",
+              label: String(
+                localized: "Understand this material", table: "Onboarding",
                 comment: "Material intent: lessons that teach it"),
               detail: Text(
                 "Short lessons, in the right order", tableName: "Onboarding",
                 comment: "Under the understand material intent")),
             .init(
               value: .questions,
-              label: Text(
-                "Ask questions", tableName: "Onboarding",
+              label: String(
+                localized: "Ask questions", table: "Onboarding",
                 comment: "Material intent: answers from it"),
               detail: Text(
                 "Answers show the page they came from", tableName: "Onboarding",
@@ -208,6 +208,7 @@ struct MaterialAttachControls<Label: View>: View {
       label
     }
     .disabled(isAdding)
+    .announcesStatus(isAdding ? Self.adding : nil)
     .fileImporter(isPresented: $isImporting, allowedContentTypes: readableMaterialTypes) { result in
       if case .success(let file) = result {
         add { try await attach(file) }
@@ -229,7 +230,7 @@ struct MaterialAttachControls<Label: View>: View {
     if isAdding {
       HStack(spacing: 8) {
         ProgressView()
-        Text("Adding your material…", tableName: "Onboarding", comment: "While material is added")
+        Text(Self.adding)
       }
       .foregroundStyle(.secondary)
     }
@@ -237,6 +238,11 @@ struct MaterialAttachControls<Label: View>: View {
     if let error {
       FailureLine(message: error)
     }
+  }
+
+  private static var adding: String {
+    String(
+      localized: "Adding your material…", table: "Onboarding", comment: "While material is added")
   }
 
   private func attach(_ file: URL) async throws -> AttachedSource {
@@ -430,13 +436,12 @@ struct MaterialQuestionsView: View {
       if isAsking {
         HStack(spacing: 8) {
           ProgressView()
-          Text(
-            "Reading your material…", tableName: "Onboarding",
-            comment: "While a question about the learner's material is answered")
+          Text(Self.reading)
         }
         .foregroundStyle(.secondary)
       }
     }
+    .announcesStatus(isAsking ? Self.reading : turns.last.flatMap(Self.spoken))
     .safeAreaInset(edge: .bottom) {
       HStack(alignment: .bottom, spacing: 8) {
         MultilineTextField(
@@ -483,6 +488,20 @@ struct MaterialQuestionsView: View {
 
   private var trimmed: String {
     question.trimmingCharacters(in: .whitespacesAndNewlines)
+  }
+
+  private static var reading: String {
+    String(
+      localized: "Reading your material…", table: "Onboarding",
+      comment: "While a question about the learner's material is answered")
+  }
+
+  /// A failed answer is a `FailureLine`, which reads itself out.
+  private static func spoken(_ turn: Turn) -> String? {
+    switch turn.answer {
+    case .success(let answer): answer.answer
+    case .failure: nil
+    }
   }
 
   private func ask() {

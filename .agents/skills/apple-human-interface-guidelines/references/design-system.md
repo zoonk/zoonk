@@ -121,6 +121,7 @@ From the first accessibility size text grows past what a row can hold side by si
 | `StatTile`                                                  | A panel with a `Label` (its symbol in the stat's role color) over a readout                                                       |
 | `NoticeCard`, `Suggestion`                                  | `GroupBox` with a `Label`                                                                                                         |
 | Empty, error, signed-out states                             | `ContentUnavailableView`                                                                                                          |
+| A `role="status"` line (`aria-live="polite"`)               | `.announcesStatus(message)` on a view that stays on screen while the line comes and goes, so VoiceOver reads each new one         |
 | Switch                                                      | `Toggle`, with `.tint(.success)` on its `Form`. The system default is green, and an ink switch hides its white knob in dark mode. |
 | Segmented choices, menus, dialogs, sheets                   | `Picker` with `.pickerStyle(.segmented)`, `Menu`, `.confirmationDialog`, `.alert`, `.sheet` with detents                          |
 | The task's action bar                                       | `.safeAreaBar(edge: .bottom)` holding a `.mainAction` button, so it gets the scroll edge effect                                   |

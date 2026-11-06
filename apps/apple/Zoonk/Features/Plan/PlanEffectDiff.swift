@@ -16,6 +16,16 @@ struct PlanEffectLine: Equatable {
   let kind: Kind
   let text: String
   let tone: Tone
+
+  var spoken: String {
+    kind == .added
+      ? String(
+        localized: "After the change: \(text)", table: "Plan",
+        comment: "Spoken line of a change's diff, as it'll be")
+      : String(
+        localized: "Now: \(text)", table: "Plan",
+        comment: "Spoken line of a change's diff, as it is")
+  }
 }
 
 /// Main's `PlanEffectDiff` for a plan with a date: what a change moves, from now to after it.
@@ -150,14 +160,7 @@ struct PlanEffectDiff: View {
           }
           .foregroundStyle(style(line))
           .accessibilityElement(children: .ignore)
-          .accessibilityLabel(
-            line.kind == .added
-              ? Text(
-                "After the change: \(line.text)", tableName: "Plan",
-                comment: "Spoken line of a change's diff, as it'll be")
-              : Text(
-                "Now: \(line.text)", tableName: "Plan",
-                comment: "Spoken line of a change's diff, as it is"))
+          .accessibilityLabel(Text(line.spoken))
         }
       }
       .font(.subheadline)

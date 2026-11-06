@@ -148,6 +148,8 @@ private struct LessonPlayerContent: View {
     }
     .environment(\.lessonAudio, sounds)
     .onChange(of: store.state?.currentStep?.id) { sounds.stop() }
+    // From here rather than the stage, which is made anew as a lesson comes back from its end.
+    .announcesStatus(store.state?.noticeLine)
     .onChange(of: scenePhase) { _, phase in
       if phase == .background {
         store.reportAbandonment()

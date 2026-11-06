@@ -137,8 +137,8 @@ private struct SQLPlaygroundCanvas: View {
         editor
       }
 
-      if let queryRun, !isStale, let message = errorMessage(queryRun) {
-        message
+      if let errorLine {
+        Text(errorLine)
           .font(.subheadline.monospaced())
           .foregroundStyle(.destructive)
       }
@@ -151,6 +151,8 @@ private struct SQLPlaygroundCanvas: View {
         review
       }
     }
+    .announcesStatus(errorLine)
+    .announcesStatus(result.map(resultLine))
     .task(id: isChecked) {
       guard isChecked else {
         return
@@ -244,23 +246,8 @@ private struct SQLPlaygroundCanvas: View {
       ? compare(result.rows, with: fields.expected.rows).map { $0 ? .plain : .extra } : nil
 
     VStack(alignment: .leading, spacing: 6) {
-      Group {
-        if result.columns.isEmpty {
-          Text(
-            "The query ran but didn't return a table. Use SELECT to get rows.",
-            tableName: "ActivitiesCode",
-            comment: "A SQL statement that returned no table")
-        } else if result.rows.isEmpty {
-          Text(
-            "Your result has no rows", tableName: "ActivitiesCode",
-            comment: "A query returned no rows")
-        } else {
-          Text(
-            "Your result: \(result.rows.count) rows", tableName: "ActivitiesCode",
-            comment: "How many rows a query returned")
-        }
-      }
-      .font(.subheadline.weight(.medium))
+      Text(resultLine(result))
+        .font(.subheadline.weight(.medium))
 
       if !result.columns.isEmpty {
         SQLRowsTable(
@@ -339,22 +326,47 @@ private struct SQLPlaygroundCanvas: View {
     }
   }
 
-  private func errorMessage(_ run: SQLRun) -> Text? {
-    switch run {
-    case .done: nil
-    case .error(let message): Text(verbatim: message)
+  private var errorLine: String? {
+    guard let queryRun, !isStale else {
+      return nil
+    }
+
+    switch queryRun {
+    case .done:
+      return nil
+    case .error(let message):
+      return message
     case .timeout:
-      Text(
-        "The query took more than \(CodeSQLRunner.timeLimitSeconds) seconds and was stopped.",
-        tableName: "ActivitiesCode", comment: "A SQL query ran out of time")
+      return String(
+        localized:
+          "The query took more than \(CodeSQLRunner.timeLimitSeconds) seconds and was stopped.",
+        table: "ActivitiesCode", comment: "A SQL query ran out of time")
     case .tooManyRows:
-      Text(
-        "The query returned too many rows. Is a join missing its condition?",
-        tableName: "ActivitiesCode",
+      return String(
+        localized: "The query returned too many rows. Is a join missing its condition?",
+        table: "ActivitiesCode",
         comment:
           "A query returned more rows than a lesson's small tables could need, most often by joining tables without saying how they match"
       )
     }
+  }
+
+  private func resultLine(_ result: SQLResult) -> String {
+    if result.columns.isEmpty {
+      return String(
+        localized: "The query ran but didn't return a table. Use SELECT to get rows.",
+        table: "ActivitiesCode", comment: "A SQL statement that returned no table")
+    }
+
+    if result.rows.isEmpty {
+      return String(
+        localized: "Your result has no rows", table: "ActivitiesCode",
+        comment: "A query returned no rows")
+    }
+
+    return String(
+      localized: "Your result: \(result.rows.count) rows", table: "ActivitiesCode",
+      comment: "How many rows a query returned")
   }
 
   private func insert(_ snippet: String) {

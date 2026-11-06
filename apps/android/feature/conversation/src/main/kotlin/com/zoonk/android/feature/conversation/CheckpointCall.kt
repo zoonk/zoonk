@@ -231,6 +231,7 @@ private fun CheckpointIntro(
             actions = {
                 Text(
                     stringResource(R.string.conversation_study_time_used_up),
+                    Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )

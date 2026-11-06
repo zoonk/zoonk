@@ -416,6 +416,7 @@
   "onboarding_weekend_time_label": "3bfa58d7f3ac43a8ac09d5eef15d2cb8ea8c071aea4b0dee4171992c9b8acd6e",
   "onboarding_what_you_wrote": "127c9898fabd74953f59e504d37489d0d5675013410f01582e1281fc76018edd",
   "onboarding_write_again": "fe7aaa75a7b0de67fa935c0ebf756841376df42b49b075740a9130673cb2d875",
+  "onboarding_you_picked": "57fcfda79fe5ae2c5596d6ec482d45a896c9a0561bdf5519bc070484b84e13cc",
   "onboarding_your_answer": "717baafb8067fe5aa708ebb45a178661251996b7ac05f2e2e0183e7be8a5be19",
   "onboarding_your_question": "bb5943a016abcf496657b734818630b41c15947bc4194287816bb04c50f01889",
   "onboarding_your_text": "b133c3241598d50f9be7fd8cbb580ca59b2f5958e1c83b8a70701c62ac86151c"
@@ -855,6 +856,8 @@
     <string name="onboarding_level_title">どのくらい知っていますか？</string>
     <string name="onboarding_level_description">学習計画をどこから始めるかだけが変わります。</string>
     <string name="onboarding_level_label">レベル</string>
+    <!-- Screen reader, as a one-answer question moves on: the answer picked. -->
+    <string name="onboarding_you_picked">%1$sを選びました</string>
     <string name="onboarding_course_chapter_description">この章からコースに沿って、毎日使える時間に合わせて学習を進める計画です。</string>
     <string name="onboarding_course_follows">毎日使える時間に合わせて、このコースを進める学習計画です。</string>
     <!-- Before the lessons' count, like "3 chapters · 12 lessons". -->

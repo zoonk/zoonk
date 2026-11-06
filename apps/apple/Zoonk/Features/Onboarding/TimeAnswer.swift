@@ -61,11 +61,7 @@ struct TimeAnswer: View {
     .font(.subheadline)
     .buttonStyle(.borderless)
     .opacity(updating ? 0.5 : 1)
-    .onChange(of: line.isBusy || updating ? nil : announcement) { _, words in
-      if let words {
-        AccessibilityNotification.Announcement(words).post()
-      }
-    }
+    .announcesStatus(line.isBusy || updating ? nil : announcement)
   }
 
   private var announcement: String {

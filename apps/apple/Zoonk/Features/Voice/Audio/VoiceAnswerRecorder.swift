@@ -36,6 +36,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
 
         status
       }
+      .announcesStatus(announcement)
       .onDisappear {
         recorder.cancel()
         grading?.cancel()
@@ -64,6 +65,20 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
         .foregroundStyle(.secondary)
         .accessibilityAddTraits(.updatesFrequently)
     }
+  }
+
+  /// Silent while recording: VoiceOver's speech would end up in the take.
+  private var announcement: String? {
+    if recorder.isRecording {
+      return nil
+    }
+
+    if case .limit(let limit) = issue {
+      return limit.message
+    }
+
+    // A failure is a `FailureLine`, which reads itself out.
+    return checking || issue == .noSpeech ? hint : nil
   }
 
   private var hint: String? {

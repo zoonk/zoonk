@@ -53,11 +53,8 @@ struct PatternTesterCanvas: View {
       examples
 
       if let summary {
-        Text(
-          "\(summary.passing) of \(summary.total) examples pass.", tableName: "ActivitiesCharts",
-          comment: "How many examples a pattern gets right"
-        )
-        .font(.subheadline.weight(.medium).monospacedDigit())
+        Text(Self.passingLine(summary))
+          .font(.subheadline.weight(.medium).monospacedDigit())
       }
 
       if context.phase != .explore {
@@ -81,6 +78,7 @@ struct PatternTesterCanvas: View {
         .foregroundStyle(.secondary)
       }
     }
+    .announcesStatus(isRegex ? nil : summary.map(Self.passingLine))
     .task(id: pattern) {
       guard case .regex(let regex) = fields else {
         return
@@ -91,7 +89,13 @@ struct PatternTesterCanvas: View {
         pattern.isEmpty ? nil : await PatternRegexPreview.shared.test(pattern, regex: regex)
 
       if !Task.isCancelled {
+        // The test the canvas opens with reads nothing out: its line shows from the start on main.
+        let before = regexTest.map { _ in regexLine }
         regexTest = (pattern, results)
+
+        if let before, let line = regexLine, line != before {
+          announcePolitely(line)
+        }
       }
     }
   }
@@ -254,12 +258,9 @@ struct PatternTesterCanvas: View {
       let results = tested?.results
 
       if tested != nil, !pattern.isEmpty, results == nil {
-        Text(
-          "This pattern can't run. Check that brackets close, and don't repeat a group that already repeats inside.",
-          tableName: "ActivitiesCharts", comment: "A regex that doesn't compile or is unsafe"
-        )
-        .font(.footnote)
-        .foregroundStyle(.destructive)
+        Text(Self.invalidLine)
+          .font(.footnote)
+          .foregroundStyle(.destructive)
       }
 
       sampleList(
@@ -421,7 +422,11 @@ struct PatternTesterCanvas: View {
 
     if !isChecked && hintsShown < fields.hints.count {
       Button {
+        let hint = fields.hints[hintsShown]
         hintsShown += 1
+        announcePolitely(
+          [hint.mistake, hint.hint].map { LessonRichText.typeset($0, literalNumbers: isRegex).said }
+            .joined(separator: ": "))
       } label: {
         Label {
           hintsShown == 0
@@ -436,6 +441,34 @@ struct PatternTesterCanvas: View {
     }
   }
 
+  /// The last pattern tested, even while the next one runs, so typing reads a line out only when a
+  /// test changes it.
+  private var regexLine: String? {
+    guard let regexTest, !regexTest.pattern.isEmpty else {
+      return nil
+    }
+
+    return regexTest.results.map { Self.passingLine(Self.tally($0)) } ?? Self.invalidLine
+  }
+
+  private static func passingLine(_ summary: (passing: Int, total: Int)) -> String {
+    String(
+      localized: "\(summary.passing) of \(summary.total) examples pass.", table: "ActivitiesCharts",
+      comment: "How many examples a pattern gets right")
+  }
+
+  private static var invalidLine: String {
+    String(
+      localized:
+        "This pattern can't run. Check that brackets close, and don't repeat a group that already repeats inside.",
+      table: "ActivitiesCharts", comment: "A regex that doesn't compile or is unsafe")
+  }
+
+  private static func tally(_ results: PatternRegex.Results) -> (passing: Int, total: Int) {
+    let all = results.shouldMatch + results.shouldNotMatch
+    return (all.filter(\.passes).count, all.count)
+  }
+
   private var summary: (passing: Int, total: Int)? {
     switch fields {
     case .regex:
@@ -443,8 +476,7 @@ struct PatternTesterCanvas: View {
         return nil
       }
 
-      let all = results.shouldMatch + results.shouldNotMatch
-      return (all.filter(\.passes).count, all.count)
+      return Self.tally(results)
     case .formula(let formula):
       guard !pattern.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
         return nil

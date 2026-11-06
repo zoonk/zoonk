@@ -416,6 +416,7 @@
   "onboarding_weekend_time_label": "9d54c5a88201c54c435e9bc0284674328ed83ded7e02619dae46f3ff1b796384",
   "onboarding_what_you_wrote": "75992763a32fe3eff863cca1162f93a9e1a7809ada19773b87d86963c6c11a80",
   "onboarding_write_again": "8123f2b69a2370105118f050b90cd42ef722db48a57b3c6504b92d8b3dbd6dff",
+  "onboarding_you_picked": "81a583264315cbb1536e2f796725cdde01c4fdbb76a4b93090c271e795ab4d0f",
   "onboarding_your_answer": "f7f5a5c0c46a869b0299ee9cf233cedab885856c576f59f52cf883703354f97d",
   "onboarding_your_question": "6a6ce9c07682f4013eb1840f1ae9e2d4ddcc59dcb89e3c672f89cea9ebb25bdf",
   "onboarding_your_text": "ba5b826b5e50776a273c6accfa00e3982e43811a02f4714f6a209dae321f7d3a"
@@ -889,6 +890,8 @@
     <string name="onboarding_level_title">Quanto ne sai già?</string>
     <string name="onboarding_level_description">Cambia solo il punto di partenza del tuo piano.</string>
     <string name="onboarding_level_label">Il tuo livello</string>
+    <!-- Screen reader, as a one-answer question moves on: the answer picked. -->
+    <string name="onboarding_you_picked">Hai scelto %1$s</string>
     <string name="onboarding_course_chapter_description">Il tuo piano parte da questo capitolo e segue il corso, adattandosi al tempo che hai ogni giorno.</string>
     <string name="onboarding_course_follows">Il tuo piano segue questo corso e si adatta al tempo che hai ogni giorno.</string>
     <!-- Before the lessons' count, like "3 chapters · 12 lessons". -->

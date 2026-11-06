@@ -165,9 +165,7 @@ struct CheckpointScreen: View {
                 Text(
                   CheckpointCopy.decisionLine(decision, lessons: state.reinforcementLessons))
               } else if !feedback.isCorrect {
-                Text(
-                  "You'll see why at the end.", tableName: "Practice",
-                  comment: "A checkpoint keeps its answers until it ends.")
+                Text(seeWhyAtEnd)
               }
             }
             .foregroundStyle(.secondary)
@@ -204,6 +202,27 @@ struct CheckpointScreen: View {
         ) { Task { await confirm() } }
       }
     }
+    .announcesStatus(verdict(state))
+  }
+
+  private var seeWhyAtEnd: String {
+    String(
+      localized: "You'll see why at the end.", table: "Practice",
+      comment: "A checkpoint keeps its answers until it ends.")
+  }
+
+  private func verdict(_ state: CheckpointDuelState) -> String? {
+    guard let feedback = state.feedback else {
+      return nil
+    }
+
+    let detail =
+      state.decision.map {
+        CheckpointCopy.decisionLine($0, lessons: state.reinforcementLessons)
+      } ?? (feedback.isCorrect ? nil : seeWhyAtEnd)
+
+    return [String(localized: PracticeVerdict(isCorrect: feedback.isCorrect).label), detail]
+      .compactMap(\.self).joinedSentences()
   }
 
   private func read() async {

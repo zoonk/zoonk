@@ -188,6 +188,7 @@ private struct NextStopView: View {
         offerWrittenLesson()
       }
     }
+    .announcesStatus(notWrittenLine)
     .onDisappear {
       action?.cancel()
     }
@@ -305,16 +306,12 @@ private struct NextStopView: View {
         Section {
           ContentUnavailableView {
             Label {
-              Text(
-                "This lesson isn't available", tableName: "Session",
-                comment: "A lesson its quality checks set aside")
+              Text(Self.setAsideTitle)
             } icon: {
               Image(systemName: "exclamationmark.circle")
             }
           } description: {
-            Text(
-              "It didn't pass our quality checks, so your plan goes on without it.",
-              tableName: "Session", comment: "A lesson its quality checks set aside")
+            Text(Self.setAsideReason)
           }
         }
       }
@@ -383,6 +380,22 @@ private struct NextStopView: View {
   private var isWrittenWhileWaiting: Bool {
     lessonStatus == "ready" && waitedFor != nil && waitedFor == next?.id
   }
+
+  private var notWrittenLine: String? {
+    switch writing {
+    case .refused(let refusal): LessonUnavailableView(refusal: refusal) {}.said
+    case .setAside: [Self.setAsideTitle, Self.setAsideReason].joinedSentences()
+    default: nil
+    }
+  }
+
+  private static let setAsideTitle = String(
+    localized: "This lesson isn't available", table: "Session",
+    comment: "A lesson its quality checks set aside")
+
+  private static let setAsideReason = String(
+    localized: "It didn't pass our quality checks, so your plan goes on without it.",
+    table: "Session", comment: "A lesson its quality checks set aside")
 
   private var isLessonUnavailable: Bool {
     switch writing {

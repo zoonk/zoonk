@@ -159,7 +159,7 @@ private struct DecisionTreeCanvas: View {
 
     if case .outcome(let node)? = fields.node(next.last) {
       context.setAnswer(.order(next))
-      announceActivityChange(
+      announcePolitely(
         String(
           localized: "The key leads to \(node.label).", table: "Activities",
           comment: "VoiceOver, once a decision tree walk reaches an outcome"))
