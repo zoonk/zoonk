@@ -163,9 +163,22 @@ async function inspectPage(url: string): Promise<InspectedPage | null> {
 }
 
 /**
- * Brand identity is the domain of the address the server fetched, never a model's word. With no
- * brand page found, the brand is the product site's registrable domain, so a product on a brand's
- * subdomain ties to it. Null when a page isn't HTML on a registrable domain or the sites aren't tied.
+ * A brand is a site, named by its homepage. With no brand page found, a product on a brand's
+ * subdomain ("developer.lumen.example") names its registrable domain's homepage. A page with a path,
+ * such as an organization on a code host, or a product on a host of its own names no brand.
+ */
+function findBrandHome({ brandUrl, product }: { brandUrl: string | null; product: InspectedPage }) {
+  if (brandUrl) {
+    return toPath(brandUrl) === "" ? brandUrl : null;
+  }
+
+  return toHost(product.url) === product.domain ? null : `https://${product.domain}/`;
+}
+
+/**
+ * Brand identity is the domain of the homepage the server fetched, never a model's word, and a
+ * homepage that redirects to another domain names none. Null when a page isn't HTML on a registrable
+ * domain or the sites aren't tied.
  */
 export async function inspectProductSites({
   brandUrl,
@@ -178,9 +191,15 @@ export async function inspectProductSites({
   productUrl: string;
 }): Promise<ProductSites | null> {
   const product = await inspectPage(productUrl);
-  const brand = product && (await inspectPage(brandUrl ?? `https://${product.domain}/`));
+  const brandHome = product && findBrandHome({ brandUrl, product });
+  const brand = brandHome && (await inspectPage(brandHome));
 
-  if (!product || !brand || !(await isProductOfBrand({ brand, product, productName }))) {
+  if (
+    !product ||
+    !brand ||
+    brand.domain !== toRegistrableDomain(brandHome) ||
+    !(await isProductOfBrand({ brand, product, productName }))
+  ) {
     return null;
   }
 

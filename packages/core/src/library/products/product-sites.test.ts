@@ -10,13 +10,20 @@ function requestedUrl(input: Parameters<typeof fetch>[0]): string {
   return "href" in input ? input.href : input.url;
 }
 
-/** Serves each address's page, linking to the addresses given; anything else is a 404. */
-function serve(pages: Record<string, string[]>) {
+/**
+ * Serves each address's page, linking to the addresses given, or a redirect to `{ redirect }`;
+ * anything else is a 404.
+ */
+function serve(pages: Record<string, string[] | { redirect: string }>) {
   vi.mocked(fetch).mockImplementation(async (input) => {
     const links = pages[requestedUrl(input)];
 
     if (!links) {
       return new PageResponse("", { status: 404 });
+    }
+
+    if (!Array.isArray(links)) {
+      return new PageResponse(null, { headers: { location: links.redirect }, status: 302 });
     }
 
     const anchors = links.map((link) => `<a href="${link}">link</a>`).join("");
@@ -92,6 +99,43 @@ describe(inspectProductSites, () => {
     ).resolves.toBeNull();
   });
 
+  it("ties a product page with a path on the brand's own domain", async () => {
+    serve({
+      "https://www.lumen.example/": [],
+      "https://www.lumen.example/products/orbit/": ["https://www.lumen.example/"],
+    });
+
+    await expect(
+      inspect("https://www.lumen.example/", "https://www.lumen.example/products/orbit/"),
+    ).resolves.toMatchObject({ brand: { domain: "lumen.example" } });
+  });
+
+  it("refuses a brand page with a path, such as an organization's page on a code host", async () => {
+    serve({ "https://code.example/lumen": [], "https://code.example/lumen/orbit": [] });
+
+    await expect(
+      inspect("https://code.example/lumen", "https://code.example/lumen/orbit"),
+    ).resolves.toBeNull();
+  });
+
+  it("refuses a brand homepage that redirects to another site", async () => {
+    serve({
+      "https://code.example/lumen": ["https://code.example/lumen/orbit"],
+      "https://code.example/lumen/orbit": ["https://lumen.example/"],
+      "https://lumen.example/": { redirect: "https://code.example/lumen" },
+    });
+
+    await expect(
+      inspect("https://lumen.example/", "https://code.example/lumen/orbit"),
+    ).resolves.toBeNull();
+  });
+
+  it("gives a project on a code host with no brand page no brand", async () => {
+    serve({ "https://code.example/": [], "https://code.example/someone/orbit": [] });
+
+    await expect(inspect(null, "https://code.example/someone/orbit")).resolves.toBeNull();
+  });
+
   it("refuses a third-party site that links to a brand that never links back", async () => {
     serve({
       "https://copycat.example/": ["https://lumen.example/"],
@@ -136,6 +180,22 @@ describe(isOfficialPage, () => {
   it("accepts pages on the brand's or the product's domain", () => {
     expect(isOfficialPage({ sites, url: "https://blog.lumen.example/orbit-5" })).toBe(true);
     expect(isOfficialPage({ sites, url: "https://docs.orbit.example/" })).toBe(true);
+  });
+
+  it("accepts any page on the brand's domain, such as docs on its subdomain", () => {
+    const onBrand: ProductSites = {
+      ...sites,
+      product: {
+        ...sites.product,
+        domain: "lumen.example",
+        links: [],
+        url: "https://www.lumen.example/products/orbit/",
+      },
+    };
+
+    expect(
+      isOfficialPage({ sites: onBrand, url: "https://docs.lumen.example/orbit/release-notes/" }),
+    ).toBe(true);
   });
 
   it("accepts pages under a path the product page links to", () => {
