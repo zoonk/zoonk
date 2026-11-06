@@ -35,10 +35,13 @@ export async function pickLessonIconsStep(input: {
 }
 
 /** Its own step, so a retried drawing reads the claim from the run instead of claiming again. */
-export async function claimLessonIconsStep(needs: IconNeed[]): Promise<IconClaim[]> {
+export async function claimLessonIconsStep(input: {
+  needs: IconNeed[];
+  runId: string;
+}): Promise<IconClaim[]> {
   "use step";
 
-  return claimLessonIcons(needs);
+  return claimLessonIcons(input);
 }
 
 /** One icon per step, so a failed drawing retries alone without drawing the others again. */

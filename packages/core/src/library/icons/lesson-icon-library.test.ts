@@ -20,8 +20,8 @@ function needFor(name: string, searchWords: string[] = []) {
   return { description: `A drawing of a ${name}`, name, searchWords };
 }
 
-async function claimOne(need: ReturnType<typeof needFor>) {
-  const [claim] = await claimLessonIcons([need]);
+async function claimOne(need: ReturnType<typeof needFor>, runId: string = randomUUID()) {
+  const [claim] = await claimLessonIcons({ needs: [need], runId });
 
   if (!claim) {
     throw new Error(`No row for ${need.name}`);
@@ -71,6 +71,15 @@ describe(claimLessonIcons, () => {
     await expect(
       prisma.lessonIcon.findMany({ select: { status: true }, where: { name: need.name } }),
     ).resolves.toStrictEqual([{ status: "running" }]);
+  });
+
+  it("gives a retried claim back the names its first try saved before the step failed", async () => {
+    const [need, runId] = [needFor(`${randomWord()} gavel`), randomUUID()];
+
+    vi.spyOn(prisma.lessonIcon, "findMany").mockRejectedValueOnce(new Error("Connection lost"));
+
+    await expect(claimOne(need, runId)).rejects.toThrow("Connection lost");
+    await expect(claimOne(need, runId)).resolves.toMatchObject({ claimed: true });
   });
 });
 

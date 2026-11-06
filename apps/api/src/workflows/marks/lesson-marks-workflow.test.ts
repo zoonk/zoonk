@@ -7,6 +7,7 @@ import { readSavedLessonMap } from "@zoonk/core/library/lessons/map";
 import { prisma } from "@zoonk/db";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { getWorkflowMetadata } from "workflow";
 import { drawnIcon } from "./_test-utils/icon-results";
 import { lessonMarksWorkflow } from "./lesson-marks-workflow";
 
@@ -174,6 +175,11 @@ describe(lessonMarksWorkflow, () => {
     const [cloud, nucleus] = [uniqueName(), uniqueName()];
     taggedAs({ cloud, nucleus });
     const [first, second] = await Promise.all([markedLesson(), markedLesson()]);
+    const metadata = getWorkflowMetadata();
+
+    vi.mocked(getWorkflowMetadata)
+      .mockReturnValueOnce({ ...metadata, workflowRunId: "first-lesson-marks" })
+      .mockReturnValueOnce({ ...metadata, workflowRunId: "second-lesson-marks" });
 
     await Promise.all([
       lessonMarksWorkflow({ lessonId: first.id }),

@@ -60,6 +60,7 @@ export async function lessonIconFixture(attrs: Partial<LessonIcon> = {}) {
       description: "A test drawing.",
       generatedAt: new Date(),
       name: `test icon ${key}`,
+      runId: "test",
       smallUrl: `https://example.test/icons/${key}-96.webp`,
       status: "completed",
       styleVersion: 1,

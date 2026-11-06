@@ -55,30 +55,39 @@ export type IconClaim = { claimed: boolean; iconId: string; need: IconNeed };
 
 /**
  * Internal workflow bridge: inserts a running row for each new name, and only the run whose insert
- * won draws it; the others link the row as it is, and lessons show its icon once it's completed.
- * A draw that never finishes leaves its row running and the name without an icon, as a failed draw
- * does: no run takes the claim over or waits for it.
+ * won draws it, including after a retry of its claim step; the others link the row as it is, and
+ * lessons show its icon once it's completed. A draw that never finishes leaves its row running and
+ * the name without an icon, as a failed draw does: no run takes the claim over or waits for it.
  */
-export async function claimLessonIcons(needs: readonly IconNeed[]): Promise<IconClaim[]> {
-  const won = await prisma.lessonIcon.createManyAndReturn({
+export async function claimLessonIcons({
+  needs,
+  runId,
+}: {
+  needs: readonly IconNeed[];
+  runId: string;
+}): Promise<IconClaim[]> {
+  await prisma.lessonIcon.createMany({
     data: needs.map((need) => ({
       description: need.description,
       name: need.name,
+      runId,
       status: "running" as const,
       styleVersion: LESSON_ICON_STYLE_VERSION,
       tags: need.searchWords,
     })),
-    select: { name: true },
     skipDuplicates: true,
   });
 
-  const claimed = new Set(won.map((icon) => icon.name));
-  const rows = await findIconsByName(needs.map((need) => need.name));
-  const ids = new Map(rows.map((icon) => [icon.name, icon.id]));
+  const rows = await prisma.lessonIcon.findMany({
+    select: { id: true, name: true, runId: true },
+    where: { name: { in: needs.map((need) => need.name) } },
+  });
+
+  const byName = new Map(rows.map((icon) => [icon.name, icon]));
 
   return needs.flatMap((need) => {
-    const iconId = ids.get(need.name);
-    return iconId ? [{ claimed: claimed.has(need.name), iconId, need }] : [];
+    const icon = byName.get(need.name);
+    return icon ? [{ claimed: icon.runId === runId, iconId: icon.id, need }] : [];
   });
 }
 
