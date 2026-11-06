@@ -1,13 +1,11 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { startFreshnessCheck, startNoticeReadingAgain } from "@/lib/freshness";
 import { freshnessCommandRequestSchema } from "@/lib/openapi/schemas/research-sources";
 import { readBody } from "@/lib/request-input";
-import { freshnessWorkflow } from "@/workflows/freshness/freshness-workflow";
-import { readNoticeAgainWorkflow } from "@/workflows/freshness/read-notice-again-workflow";
 import { getFreshnessCommandAccess } from "@zoonk/core/library/exams/freshness-access";
 import { stopFreshnessChecks } from "@zoonk/core/library/exams/freshness-checks";
 import { type NextRequest, NextResponse } from "next/server";
-import { start } from "workflow/api";
 
 async function sendFreshnessCommand(request: NextRequest) {
   const parsed = await readBody(request, freshnessCommandRequestSchema);
@@ -23,15 +21,15 @@ async function sendFreshnessCommand(request: NextRequest) {
       ? await stopFreshnessChecks(target)
       : await getFreshnessCommandAccess(target);
 
-  if (access === "unauthorized") {
+  if (access.status === "unauthorized") {
     return errors.unauthorized();
   }
 
-  if (access === "forbidden") {
+  if (access.status === "forbidden") {
     return errors.forbidden();
   }
 
-  if (access === "notFound") {
+  if (access.status === "notFound") {
     return errors.notFound("Exam or source not found");
   }
 
@@ -39,9 +37,11 @@ async function sendFreshnessCommand(request: NextRequest) {
     return NextResponse.json({ status: "stopped" });
   }
 
-  await (target.kind === "exam" && command === "readAgain"
-    ? start(readNoticeAgainWorkflow, [{ examBlueprintId: target.examBlueprintId }])
-    : start(freshnessWorkflow, [target]));
+  const stored = access.target;
+
+  await (stored.kind === "exam" && command === "readAgain"
+    ? startNoticeReadingAgain(stored.examBlueprintId)
+    : startFreshnessCheck(stored));
 
   return NextResponse.json({ status: "started" });
 }

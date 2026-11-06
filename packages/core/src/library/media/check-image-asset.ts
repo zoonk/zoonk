@@ -21,6 +21,9 @@ import { uploadImageFile } from "./_utils/save-image-asset";
 
 const CHECK_TIER = chooseServiceTier({ wait: "later" });
 
+const CHECK_FAILURES = 3;
+const OWED_PICTURES_PER_SWEEP = 100;
+
 export type PictureRedraw = Awaited<ReturnType<typeof uploadImageFile>> & {
   provenance: LibraryProvenance;
   reuseKey: string;
@@ -34,6 +37,7 @@ export type ImageAssetCheck =
 async function findAsset(assetId: string) {
   const asset = await prisma.mediaAsset.findUnique({
     select: {
+      alt: true,
       height: true,
       id: true,
       language: true,
@@ -88,13 +92,10 @@ async function findLessonTags(assetId: string): Promise<string[]> {
 
 /** Internal workflow bridge: checks the stored picture, or its `redraw` before it's shown. */
 export async function checkImageAsset({
-  alt,
   analytics,
   assetId,
   redraw,
 }: {
-  /** The alt of the screen the picture was drawn for. */
-  alt?: string | null;
   analytics?: ImageAnalytics;
   assetId: string;
   redraw?: PictureRedraw;
@@ -106,7 +107,7 @@ export async function checkImageAsset({
   }
 
   const review = await reviewImage({
-    alt,
+    alt: asset.alt,
     analytics,
     image: await readStoredImage({ url: redraw?.url ?? asset.url }),
     language: getAssetLanguage(asset),
@@ -114,11 +115,15 @@ export async function checkImageAsset({
     serviceTier: CHECK_TIER,
   });
 
-  if (review.usable) {
-    return { status: "passed" };
+  if (!review.usable) {
+    return { findings: review.problems, status: "rejected" };
   }
 
-  return { findings: review.problems, status: "rejected" };
+  if (!redraw) {
+    await prisma.mediaAsset.updateMany({ data: { checkOwedAt: null }, where: { id: assetId } });
+  }
+
+  return { status: "passed" };
 }
 
 /**
@@ -126,12 +131,10 @@ export async function checkImageAsset({
  * that plan fails the same way. Labels stay as they were: screens and questions point at them.
  */
 export async function planImageAssetAgain({
-  alt,
   analytics,
   assetId,
   findings,
 }: {
-  alt?: string | null;
   analytics?: ImageAnalytics;
   assetId: string;
   findings: string[];
@@ -139,11 +142,11 @@ export async function planImageAssetAgain({
   const asset = await readAsset(assetId);
 
   const { data } = await generateImageScene({
-    alt,
+    alt: asset.alt,
     analytics,
     findings,
     language: getAssetLanguage(asset),
-    request: alt ?? describeImageScene(asset.scene),
+    request: asset.alt ?? describeImageScene(asset.scene),
     textAllowed: asset.scene.labels.length > 0,
   });
 
@@ -204,6 +207,7 @@ export async function replaceImageAsset({
     prisma.mediaAsset.updateMany({
       data: {
         ...toProvenanceData(redraw.provenance),
+        checkOwedAt: null,
         height: redraw.height,
         prompt: describeImageScene(redraw.scene),
         reuseKey: redraw.reuseKey,
@@ -218,6 +222,48 @@ export async function replaceImageAsset({
   ]);
 
   revalidateCacheTags([getMediaAssetCacheTag(assetId), ...lessonTags]);
+}
+
+const owesCheck = { checkFailures: { lt: CHECK_FAILURES }, checkOwedAt: { not: null } };
+
+/**
+ * Internal workflow bridge: null when the picture owes no check. One whose check failed three times
+ * owes none, since another try would only pay again.
+ */
+export function findOwedPictureCheck(assetId: string): Promise<{ checkFailures: number } | null> {
+  return prisma.mediaAsset.findFirst({
+    select: { checkFailures: true },
+    where: { ...owesCheck, id: assetId },
+  });
+}
+
+/**
+ * Internal workflow bridge: a check that failed after its retries. It moves the count on from the
+ * one its check read, so a retry of this write counts the failure once.
+ */
+export async function recordFailedPictureCheck({
+  assetId,
+  checkFailures,
+}: {
+  assetId: string;
+  checkFailures: number;
+}): Promise<void> {
+  await prisma.mediaAsset.updateMany({
+    data: { checkFailures: checkFailures + 1 },
+    where: { checkFailures, id: assetId },
+  });
+}
+
+/** Internal bridge for the daily sweep. */
+export async function listOwedPictureChecks(): Promise<string[]> {
+  const pictures = await prisma.mediaAsset.findMany({
+    orderBy: { checkOwedAt: "asc" },
+    select: { id: true },
+    take: OWED_PICTURES_PER_SWEEP,
+    where: owesCheck,
+  });
+
+  return pictures.map((picture) => picture.id);
 }
 
 /**

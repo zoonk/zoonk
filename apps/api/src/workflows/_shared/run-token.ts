@@ -117,16 +117,19 @@ export async function claimRunToken(token: string): Promise<RunTokenClaim> {
 }
 
 /**
- * Takes the token once its holder ends. Runs waiting on one holder then take turns instead of all
- * resuming together. After `joinRun`'s longest wait the caller goes on without it, as a joined run does.
+ * Takes the token once its holder ends, and says whether it did. Runs waiting on one holder then take
+ * turns instead of all resuming together. After `joinRun`'s longest wait it returns false, and the
+ * caller decides whether to go on without the token, as a joined run does.
  */
-export async function waitForRunToken(token: string): Promise<void> {
-  await repeatUntil({
-    done: (claim) => claim.conflict === null,
+export async function waitForRunToken(token: string): Promise<boolean> {
+  const claim = await repeatUntil({
+    done: (current) => current.conflict === null,
     run: () => claimRunToken(token),
     times: MAX_JOIN_POLLS,
     wait: () => sleep(JOIN_POLL),
   });
+
+  return claim.conflict === null;
 }
 
 /**

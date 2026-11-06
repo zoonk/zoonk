@@ -4,7 +4,6 @@ import { MAX_ONBOARDING_ANSWER_LENGTH } from "@zoonk/core/view-models/onboarding
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { useId } from "react";
-import { useKeptTyping } from "../../use-kept-typing";
 
 /**
  * Only a screen's first field takes focus. Its text stays 16px on phones, where iOS Safari zooms
@@ -24,7 +23,6 @@ export function TextField({
   value: string;
 }) {
   const inputId = useId();
-  const kept = useKeptTyping(onChange);
 
   return (
     <div className="flex flex-col gap-2">
@@ -33,7 +31,6 @@ export function TextField({
         autoFocus={autoFocus}
         className="h-11 text-base md:text-[0.9375rem]"
         id={inputId}
-        {...kept.field}
         maxLength={MAX_ONBOARDING_ANSWER_LENGTH}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}

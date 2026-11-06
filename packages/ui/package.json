@@ -12,6 +12,7 @@
     "./hooks/command-palette-search": "./src/hooks/use-command-palette-search.ts",
     "./hooks/infinite-list": "./src/hooks/use-infinite-list.ts",
     "./hooks/is-mounted": "./src/hooks/use-is-mounted.ts",
+    "./hooks/kept-typing": "./src/hooks/use-kept-typing.ts",
     "./hooks/hide-element": "./src/hooks/use-hide-element.ts",
     "./hooks/keyboard": "./src/hooks/use-keyboard.ts",
     "./hooks/measured-width": "./src/hooks/use-measured-width.ts",

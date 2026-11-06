@@ -11,7 +11,6 @@ import { type BuddyGlasses, type BuddyKind } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
-import { useKeptTyping } from "../use-kept-typing";
 import { BUDDY_KINDS, BuddyTagline } from "./buddy-labels";
 import { useBuddyName } from "./use-buddy-name";
 
@@ -68,7 +67,6 @@ export function BuddyPicker({
   const t = useExtracted();
   const nameId = useId();
 
-  const keptName = useKeptTyping((name) => onChange({ ...choice, name }));
   const defaultName = useBuddyName({ kind: choice.kind, name: null });
 
   return (
@@ -95,7 +93,6 @@ export function BuddyPicker({
         <Input
           autoComplete="off"
           id={nameId}
-          {...keptName.field}
           maxLength={BUDDY_NAME_MAX_LENGTH}
           onChange={(event) => onChange({ ...choice, name: event.target.value })}
           placeholder={defaultName}

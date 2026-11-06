@@ -1,18 +1,23 @@
+import { waitForSleep } from "@workflow/vitest";
 import { generateExamSpeakingCard } from "@zoonk/ai/tasks/language/exam-speaking-card";
+import { findMistakePattern } from "@zoonk/ai/tasks/language/mistake-pattern";
 import { gateMemoryFact } from "@zoonk/ai/tasks/memory/gate";
 import { classifyMistakeCause } from "@zoonk/ai/tasks/mistakes/cause";
 import { mockConditionsSchema } from "@zoonk/core/exams/mocks/contract";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getRun } from "workflow/api";
+import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
+import { getHookByToken, getRun } from "workflow/api";
+import { getWorld } from "workflow/runtime";
 import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "./follow-ups-workflow";
 
@@ -22,6 +27,8 @@ vi.mock("@zoonk/ai/tasks/memory/gate", () => ({ gateMemoryFact: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/language/exam-speaking-card", () => ({
   generateExamSpeakingCard: vi.fn(),
 }));
+
+vi.mock("@zoonk/ai/tasks/language/mistake-pattern", () => ({ findMistakePattern: vi.fn() }));
 
 const WAIT = { interval: 200, timeout: 10_000 };
 
@@ -60,6 +67,60 @@ async function owedCause() {
   return { mistakeId: mistake.id, userId: user.id };
 }
 
+function noPattern() {
+  return {
+    data: {
+      contrast: [],
+      drill: [],
+      kind: "none" as const,
+      mistakeNumbers: [],
+      rule: "",
+      title: "",
+    },
+    provenance: {} as never,
+    systemPrompt: "",
+    usage: {} as never,
+    userPrompt: "",
+  };
+}
+
+async function addMistakes({
+  from,
+  lessonId,
+  userId,
+}: {
+  from: number;
+  lessonId: string;
+  userId: string;
+}) {
+  const steps = await Promise.all(
+    [from, from + 1, from + 2].map((position) =>
+      libraryStepFixture({ kind: "typedAnswer", lessonId, position }),
+    ),
+  );
+
+  await Promise.all(steps.map((step) => mistakeFixture({ stepId: step.id, userId })));
+}
+
+function owePatternCheck(userId: string) {
+  return prisma.followUp.create({
+    data: { input: { language: "en" }, key: "en", kind: "findMistakePattern", userId },
+  });
+}
+
+async function findRunBehind({ holderId, since }: { holderId: string; since: Date }) {
+  const world = await getWorld();
+  const workflowName = await getRun(holderId).workflowName;
+  const { data } = await world.runs.list({ workflowName });
+  const behind = data.find((run) => run.runId !== holderId && run.createdAt >= since);
+
+  if (!behind) {
+    throw new Error(`No run started behind ${holderId}`);
+  }
+
+  return getRun(behind.runId);
+}
+
 function readCause(mistakeId: string) {
   return prisma.mistake.findUniqueOrThrow({ where: { id: mistakeId } }).then((row) => row.cause);
 }
@@ -79,6 +140,7 @@ async function runFollowUps(userId: string) {
 describe(followUpsWorkflow, () => {
   beforeEach(() => {
     vi.mocked(classifyMistakeCause).mockReset().mockResolvedValue(classified());
+    vi.mocked(findMistakePattern).mockReset().mockResolvedValue(noPattern());
 
     vi.mocked(gateMemoryFact)
       .mockReset()
@@ -303,6 +365,83 @@ describe(followUpsWorkflow, () => {
       await expect(readCause(later.id)).resolves.toBe("trap");
       await expect(countOwed(userId)).resolves.toBe(0);
     }, WAIT);
+  });
+
+  it("checks again, once the running check ends, mistakes made after it read them", async () => {
+    const user = await userFixture();
+    const lesson = await libraryLessonFixture({ targetLanguage: "en" });
+    const firstCheck = Promise.withResolvers<null>();
+    const checked: number[] = [];
+
+    vi.mocked(findMistakePattern).mockImplementation(async ({ mistakes }) => {
+      checked.push(mistakes.length);
+
+      if (checked.length === 1) {
+        await firstCheck.promise;
+      }
+
+      return noPattern();
+    });
+
+    await addMistakes({ from: 0, lessonId: lesson.id, userId: user.id });
+    await owePatternCheck(user.id);
+    await runFollowUps(user.id);
+    await vi.waitFor(() => expect(checked).toStrictEqual([3]), WAIT);
+
+    const holder = await getHookByToken(`findMistakePattern:${user.id}:en`);
+    const askedAgainAt = new Date();
+
+    await addMistakes({ from: 3, lessonId: lesson.id, userId: user.id });
+    await owePatternCheck(user.id);
+    await runFollowUps(user.id);
+
+    // A run waiting its turn looks again every 10 s, so the test wakes it once the turn is free.
+    const waiting = await findRunBehind({ holderId: holder.runId, since: askedAgainAt });
+    const sleepId = await waitForSleep(waiting);
+
+    firstCheck.resolve(null);
+    await getRun(holder.runId).returnValue;
+    await waiting.wakeUp({ correlationIds: [sleepId] });
+
+    await vi.waitFor(() => expect(checked).toStrictEqual([3, 6]), WAIT);
+    await expect(countOwed(user.id)).resolves.toBe(0);
+  });
+
+  it("starts one check for an ask when the queue takes its run but the answer is lost", async () => {
+    const user = await userFixture();
+    const lesson = await libraryLessonFixture({ targetLanguage: "en" });
+    const world = await getWorld();
+    const queue = world.queue.bind(world);
+    const queued = new Set<string>();
+
+    const enqueue = vi.spyOn(world, "queue").mockImplementation(async (...args) => {
+      const result = await queue(...args);
+      const [, message] = args;
+
+      if (
+        "runInput" in message &&
+        message.runInput?.workflowName.endsWith("//backgroundTaskWorkflow")
+      ) {
+        const isFirst = queued.size === 0;
+        queued.add(message.runId);
+
+        if (isFirst) {
+          throw new Error("The queue took the run, but its answer was lost");
+        }
+      }
+
+      return result;
+    });
+
+    onTestFinished(() => enqueue.mockRestore());
+
+    await addMistakes({ from: 0, lessonId: lesson.id, userId: user.id });
+    await owePatternCheck(user.id);
+    await runFollowUps(user.id);
+
+    expect(queued.size).toBe(1);
+    await vi.waitFor(() => expect(findMistakePattern).toHaveBeenCalledOnce(), WAIT);
+    await expect(countOwed(user.id)).resolves.toBe(0);
   });
 
   it("leaves a stopped run's rows to the next one", async () => {

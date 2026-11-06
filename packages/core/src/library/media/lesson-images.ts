@@ -17,8 +17,7 @@ import {
 } from "./_utils/step-image-request";
 
 export type StepImageOutcome =
-  | { status: "generated"; mediaAssetId: string; alt: string }
-  | { status: "reused"; mediaAssetId: string }
+  | { status: "generated" | "reused"; mediaAssetId: string }
   | { status: "failed" | "none" };
 
 const categorySelect = {
@@ -64,10 +63,8 @@ function getLessonPictureScope(lesson: StepForImage["lesson"]) {
   };
 }
 
-function toOutcome({ alt, picture }: { alt: string; picture: LibraryPicture }): StepImageOutcome {
-  return picture.drawn
-    ? { alt, mediaAssetId: picture.assetId, status: "generated" }
-    : { mediaAssetId: picture.assetId, status: "reused" };
+function toOutcome(picture: LibraryPicture): StepImageOutcome {
+  return { mediaAssetId: picture.assetId, status: picture.drawn ? "generated" : "reused" };
 }
 
 export async function listLessonImageSteps({ lessonId }: { lessonId: string }): Promise<string[]> {
@@ -151,7 +148,7 @@ export async function createStepImage({
     return { status: "failed" };
   }
 
-  return toOutcome({ alt: request.alt, picture });
+  return toOutcome(picture);
 }
 
 export type OptionPictureTarget = { optionId: string; stepId: string };
@@ -234,5 +231,5 @@ export async function createStepOptionPicture({
 
   revalidateCacheTags([getLibraryLessonCacheTag(lesson.id)]);
 
-  return toOutcome({ alt: request.alt, picture });
+  return toOutcome(picture);
 }

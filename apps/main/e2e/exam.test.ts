@@ -153,12 +153,8 @@ test.describe("Exam goal", () => {
       const rewrite = page.getByLabel("Rewrite what needs work");
       await expect(rewrite).toHaveValue("Meu primeiro rascunho da redação.");
 
-      // Typing before the page hydrates is lost, so fill until the word count React keeps follows it.
-      await expect(async () => {
-        await rewrite.fill(draft);
-        await expect(rewrite).toHaveValue(draft, { timeout: 1000 });
-        await expect(page.getByText(/^\d{2,} words$/u)).toBeVisible({ timeout: 1000 });
-      }).toPass();
+      await rewrite.fill(draft);
+      await expect(page.getByText(/^\d{2,} words$/u)).toBeVisible();
 
       const send = page.getByRole("button", { name: "Grade the rewrite" });
 
