@@ -1,5 +1,9 @@
 import { prisma } from "@zoonk/db";
-import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  examBlueprintFixture,
+  sourceFixture,
+  unnoticedSourceChangeFixture,
+} from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { getSession } from "../../users/get-session";
@@ -57,6 +61,34 @@ describe(listDueFreshnessTargets, () => {
       ]);
     }
   });
+
+  it("finds a checked source that still owes a notice before its check is due, until its notice failed three times", async () => {
+    const nextCheckAt = hoursFromSweep(30 * 24);
+
+    const [owing, stopped, exhausted] = await Promise.all([
+      sourceFixture({ nextCheckAt }),
+      sourceFixture({ nextCheckAt: null }),
+      sourceFixture({ nextCheckAt, noticeFailures: 3 }),
+    ]);
+
+    const ids = [owing.id, stopped.id, exhausted.id];
+
+    await Promise.all(
+      ids.map((sourceId) =>
+        unnoticedSourceChangeFixture({ changedAt: hoursFromSweep(-1), sourceId }),
+      ),
+    );
+
+    try {
+      const targets = await listDueFreshnessTargets({ now: SWEEP_AT });
+
+      expect(targets).toContainEqual({ kind: "source", sourceId: owing.id });
+      expect(targets).not.toContainEqual({ kind: "source", sourceId: stopped.id });
+      expect(targets).not.toContainEqual({ kind: "source", sourceId: exhausted.id });
+    } finally {
+      await prisma.source.deleteMany({ where: { id: { in: ids } } });
+    }
+  });
 });
 
 describe(scheduleFreshnessChecks, () => {
@@ -107,7 +139,7 @@ describe(stopFreshnessChecks, () => {
     const examTarget = { examBlueprintId: exam.id, kind: "exam" as const };
     mockSessionWithRole({ role: "user", userId: learner.id });
 
-    await expect(stopFreshnessChecks(examTarget)).resolves.toStrictEqual({ status: "forbidden" });
+    await expect(stopFreshnessChecks(examTarget)).resolves.toBe("forbidden");
 
     await expect(
       prisma.examBlueprint.findUniqueOrThrow({ where: { id: exam.id } }),
@@ -120,10 +152,7 @@ describe(stopFreshnessChecks, () => {
         stopFreshnessChecks(examTarget),
         stopFreshnessChecks({ kind: "source", sourceId: source.id }),
       ]),
-    ).resolves.toStrictEqual([
-      { status: "ready", target: examTarget },
-      { status: "ready", target: { kind: "source", sourceId: source.id } },
-    ]);
+    ).resolves.toStrictEqual(["ready", "ready"]);
 
     const [storedExam, storedSource] = await Promise.all([
       prisma.examBlueprint.findUniqueOrThrow({ where: { id: exam.id } }),

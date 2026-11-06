@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { answerTimeZoneSchema, itemAnswerInputSchema } from "../learner/contract";
 import { type ListeningSetView } from "../library/listening/listening-set-view";
@@ -6,8 +7,7 @@ import { areaIdSchema } from "./day-block";
 
 export const todayStudySessionInputSchema = z
   .object({
-    goalId: z
-      .uuid()
+    goalId: uuidSchema()
       .optional()
       .meta({ description: "The goal whose day to read; defaults to the active goal" }),
     timeZone: answerTimeZoneSchema.meta({
@@ -105,7 +105,7 @@ export const studyAnswerInputSchema = z
       orderAnswerSchema,
     ]),
     durationMs: itemAnswerInputSchema.shape.durationMs,
-    itemId: z.uuid(),
+    itemId: uuidSchema(),
     timeZone: answerTimeZoneSchema,
   })
   .strict()

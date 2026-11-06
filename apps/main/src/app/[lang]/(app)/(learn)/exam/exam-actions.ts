@@ -3,10 +3,11 @@
 import { examResultInputSchema } from "@zoonk/core/exams/results/contract";
 import { reportExamResult } from "@zoonk/core/exams/results/report";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-const goalIdSchema = z.uuid();
+const goalIdSchema = uuidSchema();
 const timeZoneSchema = z.string().refine(isValidTimeZone);
 
 export async function reportExamResultAction(

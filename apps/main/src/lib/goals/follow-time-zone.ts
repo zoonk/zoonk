@@ -4,10 +4,11 @@ import { followGoalTimeZone } from "@zoonk/core/learner/follow-time-zone";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const followInputSchema = z.object({
-  goalId: z.uuid(),
+  goalId: uuidSchema(),
   timeZone: z.string().refine(isValidTimeZone),
 });
 

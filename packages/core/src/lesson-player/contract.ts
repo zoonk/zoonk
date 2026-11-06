@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { answerDurationSchema, answerTimeZoneSchema } from "../learner/contract";
 import { activityAnswerSchema } from "../library/activities/activity-answer-schema";
@@ -39,8 +40,7 @@ export type LessonStepAnswer = z.infer<typeof lessonStepAnswerSchema>;
 export const lessonStepCheckInputSchema = z
   .object({
     answer: lessonStepAnswerSchema,
-    attemptId: z
-      .uuid()
+    attemptId: uuidSchema()
       .optional()
       .describe("Your id for this answer: sent again with it (a retry), it's recorded once"),
     durationMs: answerDurationSchema,
@@ -63,8 +63,7 @@ export const libraryLessonStartInputSchema = z
     runId: lessonRunIdSchema
       .optional()
       .describe("Refresh this open run, including after a long pause"),
-    studySessionId: z
-      .uuid()
+    studySessionId: uuidSchema()
       .optional()
       .meta({
         description:
@@ -83,7 +82,7 @@ const lessonRunAnswerSchema = z.object({
     .datetime()
     .meta({ description: "Before the run's `startedAt` for an answer from an earlier sitting" }),
   isCorrect: z.boolean(),
-  stepId: z.uuid(),
+  stepId: uuidSchema(),
 });
 
 export const libraryLessonRunSchema = z
@@ -97,7 +96,7 @@ export const libraryLessonRunSchema = z
     hyperdrive: z
       .object({
         knownStepIds: z
-          .array(z.uuid())
+          .array(uuidSchema())
           .meta({
             description:
               "Screens answered right before this run: a right answer on them doesn't build Hyperdrive",
@@ -113,14 +112,17 @@ export const libraryLessonRunSchema = z
         description:
           "Where Hyperdrive stood when the run started, to show it live with the server's rule (a resumed run replays its `answers` on top)",
       }),
-    optionalStepIds: z.array(z.uuid()).optional().describe("Questions with late numbered pictures"),
+    optionalStepIds: z
+      .array(uuidSchema())
+      .optional()
+      .describe("Questions with late numbered pictures"),
     replay: z
       .boolean()
       .meta({
         description:
           "True when the learner already finished this lesson: its end offers no next lesson",
       }),
-    runId: z.uuid().meta({ description: "Send it with every answer and with the completion" }),
+    runId: uuidSchema().meta({ description: "Send it with every answer and with the completion" }),
     startedAt: z.iso.datetime(),
   })
   .meta({ id: "LibraryLessonRun" });
@@ -237,7 +239,9 @@ export const answerExplanationInputSchema = z
 export const answerExplanationSchema = z
   .object({
     explanation: z.string(),
-    explanationId: z.uuid().meta({ description: "The answer explanation this feedback is about" }),
+    explanationId: uuidSchema().meta({
+      description: "The answer explanation this feedback is about",
+    }),
     reused: z
       .boolean()
       .meta({ description: "Another learner gave the same answer before, so no model ran" }),

@@ -119,8 +119,8 @@
   "player_offer_tricky": "02b926f34504bf2c9264d4ea8d6d2d8f3c25b00424531cc643c9366227dc2f36",
   "player_open_failed": "7eddaac226b8897341c94aec7a9ce84740c0229f1fc9e541192e0c900584553a",
   "player_opening_lesson": "f2ae56b1774fd32e593fb31a95c16b9bebcb9e778ad21248f235857fd4115dfe",
+  "player_opening_map_hint": "6d1579c32b6ba27c8a828269c22cf0a922fc041d7024ca17e73c8376037d28d9",
   "player_opening_map_idea": "88df0aba61af9413fcf4a5db730d209bb08397ae413f6f3b810277178fc9c436",
-  "player_opening_map_ideas": "71ef40ab3fbb2d5686bd87f713287240d58c5e59cfcaf73b5fa37ed697480773",
   "player_opening_map_show": "b92663d75c350d84e70ef01808dad7bac499750cd0dc82a7cd7149ff0cf85ef2",
   "player_part_of": "4eda0724244cd2fd23edc92f0a9bcc87a7390ccf9be9d253bd8e0af327de89bc",
   "player_phase_draw": "559e2e3a380419099e68918c859c74ecb76c8a9cad6e3e6b0e4297849ad0d61b",
@@ -207,12 +207,8 @@
     <string name="player_idea_position">Concetto %1$s di %2$s</string>
     <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
     <string name="player_example">Esempio</string>
-    <!-- Under the small map of the lesson's ideas on its opening screen, before the learner has studied them. -->
-    <plurals name="player_opening_map_ideas">
-        <item quantity="one">%1$s concetto da scoprire in questa lezione</item>
-        <item quantity="many">%1$s concetti da scoprire in questa lezione</item>
-        <item quantity="other">%1$s concetti da scoprire in questa lezione</item>
-    </plurals>
+    <!-- Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers. -->
+    <string name="player_opening_map_hint">Tocca un’idea per scoprire di cosa tratta</string>
     <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
     <string name="player_opening_map_idea">Concetto %1$s</string>
     <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->

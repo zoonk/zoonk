@@ -1,4 +1,5 @@
 import { GoalKind } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { displayWeightSchema } from "../../exams/display-weight-contract";
 import { examDocumentSchema } from "../../exams/exam-document";
@@ -20,8 +21,7 @@ const notPlannedReasonSchema = z
 
 const syllabusChapterSchema = z
   .object({
-    chapterId: z
-      .uuid()
+    chapterId: uuidSchema()
       .nullable()
       .meta({
         description:
@@ -59,8 +59,7 @@ const syllabusChapterSchema = z
         description:
           "Its number in the subject, in the subject's order (the ones done first): every screen calls it Chapter 4",
       }),
-    skillId: z
-      .uuid()
+    skillId: uuidSchema()
       .nullable()
       .meta({
         description:
@@ -239,7 +238,7 @@ export const syllabusViewSchema = z
         description:
           "The subjects and topics come from the learner's own material (a class test's slides or notes), not an official notice",
       }),
-    goal: z.object({ id: z.uuid(), kind: z.enum(GoalKind), title: z.string() }),
+    goal: z.object({ id: uuidSchema(), kind: z.enum(GoalKind), title: z.string() }),
     kind: z
       .enum(["notice", "modules"])
       .meta({

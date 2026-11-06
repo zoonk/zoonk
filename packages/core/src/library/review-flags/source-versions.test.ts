@@ -10,9 +10,10 @@ import {
   examBlueprintFixture,
   learnerSourceFixture,
   sourceFixture,
+  unnoticedSourceChangeFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { assert, describe, expect, it, vi } from "vitest";
 import { waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { writeLessonContent } from "../../_test-utils/write-lesson-content";
 import {
@@ -66,15 +67,20 @@ async function changeSource(source: Pick<Source, "id" | "language">, text: strin
     where: { id: source.id },
   });
 
-  return recordSourceChangeNotice({
+  const owed = await unnoticedSourceChangeFixture({ previousHash, sourceId: source.id });
+
+  const notice = await recordSourceChangeNotice({
+    ...owed,
     contentHash,
     fields: ["text"],
     language: source.language,
     message: "The source changed.",
-    previousHash,
     provenance: PROVENANCE,
     sourceId: source.id,
   });
+
+  assert(notice, "The owed change should get its notice.");
+  return notice;
 }
 
 function modelOutput<T>(data: T) {

@@ -1,14 +1,15 @@
 import { planEffectSchema } from "@zoonk/core/plans/effect-contract";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { checkpointMoveResponseSchema } from "./checkpoints";
 
 export const challengeStartResponseSchema = z
   .object({
-    blockId: z.uuid(),
+    blockId: uuidSchema(),
     kind: z
       .enum(["checkpoint", "mock"])
       .meta({ description: "Played as a checkpoint (see /checkpoints) or a mock (see /mocks)" }),
-    sessionId: z.uuid(),
+    sessionId: uuidSchema(),
   })
   .meta({ id: "ChallengeStart" });
 
@@ -37,8 +38,7 @@ export const challengeMoveResponseSchema = checkpointMoveResponseSchema
         description:
           "What making room on the new day did to the plan, such as the lessons it left out; null before the plan is built",
       }),
-    planItemId: z
-      .uuid()
+    planItemId: uuidSchema()
       .nullable()
       .meta({ description: "The challenge on its new day: a dated plan item is a new one" }),
   })
@@ -46,8 +46,7 @@ export const challengeMoveResponseSchema = checkpointMoveResponseSchema
 
 export const challengeUndoResponseSchema = z
   .object({
-    planItemId: z
-      .uuid()
+    planItemId: uuidSchema()
       .nullable()
       .meta({ description: "The challenge back on its day: a dated plan item is a new one" }),
   })

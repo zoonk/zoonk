@@ -119,8 +119,8 @@
   "player_offer_tricky": "70e94f5832c4f0026325afb45a41a41ccec0f440767ad1f97b55358679f9a4fd",
   "player_open_failed": "870de9fa9acdfdb2ec1add47ef0c5569891dc87ba421b32fc49ada6d365e6c1b",
   "player_opening_lesson": "63f60303b73d28ed3f33641d86b9ff6e279527bf7882857a3b981f6daea86a8c",
+  "player_opening_map_hint": "49d4a9d3aab9431a58d7c62278ddaa20815f00737370e57a1e68783e7eff2705",
   "player_opening_map_idea": "98e59585566e46622cb6e07358d4d795d06af0b85be62e7319b5c8de5d77494c",
-  "player_opening_map_ideas": "6d310ec12150095533f04efa02b0bb5db848bd726ab02a124e0aa260e177cc02",
   "player_opening_map_show": "9abce7b4494bf684af2baede067737960778655e004f42c295be08cd56b28784",
   "player_part_of": "6b799f8504ed4a349eaadc3bcae08da3813387118effbb74c97125683ce3f69b",
   "player_phase_draw": "bf4db89646d09818ac4a61a32bd737a3ee6ad1c5c631a2c9f4e60307be467396",
@@ -207,12 +207,8 @@
     <string name="player_idea_position">Ideia %1$s de %2$s</string>
     <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
     <string name="player_example">Exemplo</string>
-    <!-- Under the small map of the lesson's ideas on its opening screen, before the learner has studied them. -->
-    <plurals name="player_opening_map_ideas">
-        <item quantity="one">%1$s ideia para descobrir nesta aula</item>
-        <item quantity="many">%1$s ideias para descobrir nesta aula</item>
-        <item quantity="other">%1$s ideias para descobrir nesta aula</item>
-    </plurals>
+    <!-- Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers. -->
+    <string name="player_opening_map_hint">Toque em uma ideia para ver o que ela aborda</string>
     <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
     <string name="player_opening_map_idea">Ideia %1$s</string>
     <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->

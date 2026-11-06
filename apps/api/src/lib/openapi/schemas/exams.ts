@@ -16,6 +16,7 @@ import { speakingMockExamSchema } from "@zoonk/core/language/conversations/contr
 import { speakingPaperViewSchema } from "@zoonk/core/language/exam-speaking/contract";
 import { TOPIC_FREQUENCY_LEVELS } from "@zoonk/core/library/exams/blueprint-past-contract";
 import { passMarksSchema } from "@zoonk/core/library/exams/pass-marks";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { examMockSummarySchema } from "./exam-mock-summary";
 import { examMockProgressSchema } from "./exam-progress";
@@ -180,7 +181,7 @@ export const examViewResponseSchema = z
         description:
           "The exam day by day as its notice sets it out (each sitting's date, time and parts); empty when the notice doesn't state it",
       }),
-    goalId: z.uuid(),
+    goalId: uuidSchema(),
     map: examMapSchema.nullable(),
     mocks: z.array(examMockSummarySchema),
     mocksRequirePlus: z
@@ -201,9 +202,9 @@ export const examViewResponseSchema = z
         fullLength: z
           .boolean()
           .meta({ description: "The whole exam day; otherwise a short mock, half of it" }),
-        planItemId: z
-          .uuid()
-          .meta({ description: "Its plan item, whose challenge introduces it before its day" }),
+        planItemId: uuidSchema().meta({
+          description: "Its plan item, whose challenge introduces it before its day",
+        }),
         questions: z.number().int().min(0),
       })
       .nullable()
@@ -247,12 +248,10 @@ export const examViewResponseSchema = z
               description:
                 "When the clock of the section it's on runs out: the one the learner sees on opening it, the next section's once a break ends. Past it, the mock waits to be handed in. Null once every section is handed in and it only waits to be graded",
             }),
-          id: z
-            .uuid()
-            .meta({
-              description:
-                "The id it opens by (GET /v1/mocks/{blockId}): its session block's for the plan's weekly mock, its own for one taken any time",
-            }),
+          id: uuidSchema().meta({
+            description:
+              "The id it opens by (GET /v1/mocks/{blockId}): its session block's for the plan's weekly mock, its own for one taken any time",
+          }),
           number: z
             .number()
             .int()

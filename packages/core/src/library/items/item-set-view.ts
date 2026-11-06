@@ -1,12 +1,13 @@
 import { lessonVisualSchema } from "@zoonk/ai/tasks/visuals/schema";
 import { ItemSetKind } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { listeningSetViewSchema } from "../listening/listening-set-view";
 
 export const itemSetViewSchema = z
   .object({
     count: z.number().int().min(1).meta({ description: "How many questions the set has" }),
-    id: z.uuid(),
+    id: uuidSchema(),
     kind: z.enum(ItemSetKind),
     listening: listeningSetViewSchema
       .meta({

@@ -1,4 +1,5 @@
 import { BuddyGlasses, BuddyKind } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
 import { BUDDY_NAME_MAX_LENGTH } from "./buddy-name-limit";
@@ -39,8 +40,7 @@ function hasProfileField(input: Record<string, unknown>) {
 /** Omitted fields preserve current settings, allowing independent screen updates. */
 export const learningProfileUpdateSchema = z
   .object({
-    activeGoalId: z
-      .uuid()
+    activeGoalId: uuidSchema()
       .nullable()
       .optional()
       .meta({ description: "The goal the tabs show, or null for none" }),

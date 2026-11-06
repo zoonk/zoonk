@@ -51,6 +51,14 @@
         ]
       }
     ],
+    "eslint/no-restricted-properties": [
+      "error",
+      {
+        "object": "z",
+        "property": "uuid",
+        "message": "Use uuidSchema from @zoonk/utils/uuid-schema: it reads a capitalized id lowercase, as the database returns ids and core compares them."
+      }
+    ],
     "eslint/no-magic-numbers": [
       "error",
       {

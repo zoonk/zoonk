@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const mindMapBranchSchema = z
@@ -53,7 +54,7 @@ export const chapterMindMapStatusSchema = z
 
 export const chapterMindMapSchema = z
   .object({
-    chapterId: z.uuid(),
+    chapterId: uuidSchema(),
     image: mindMapImageSchema
       .nullable()
       .meta({ description: "Null until it's drawn, and when its picture failed its check twice" }),
@@ -96,10 +97,10 @@ export const goalMindMapsSchema = z
     chapters: z
       .array(goalMindMapSchema)
       .meta({ description: "The chapters the learner finished, in plan order" }),
-    goal: z.object({ id: z.uuid(), title: z.string() }),
+    goal: z.object({ id: uuidSchema(), title: z.string() }),
     nextChapter: z
       .object({
-        chapterId: z.uuid(),
+        chapterId: uuidSchema(),
         lessonsLeft: z.int().min(1).meta({ description: "Its lessons left in the plan" }),
         title: z.string(),
       })

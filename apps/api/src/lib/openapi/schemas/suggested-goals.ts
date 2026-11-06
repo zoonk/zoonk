@@ -1,16 +1,16 @@
 import { SuggestedGoalStatus } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 export const suggestedGoalSchema = z
   .object({
-    courseId: z
-      .uuid()
+    courseId: uuidSchema()
       .nullable()
       .meta({
         description:
           "The course to start on accepting (POST /v1/courses/{courseId}/goals), while anyone can still start it; null once it's gone, when apps open onboarding with the title",
       }),
-    id: z.uuid(),
+    id: uuidSchema(),
     status: z.enum(SuggestedGoalStatus),
     title: z
       .string()

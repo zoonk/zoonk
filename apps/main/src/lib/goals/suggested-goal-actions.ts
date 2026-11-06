@@ -7,9 +7,9 @@ import {
 import { respondToSuggestedGoal } from "@zoonk/core/goals/suggestions/respond";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
-import { z } from "zod";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 
-const answerInputSchema = suggestedGoalAnswerSchema.extend({ suggestionId: z.uuid() });
+const answerInputSchema = suggestedGoalAnswerSchema.extend({ suggestionId: uuidSchema() });
 
 export async function answerSuggestedGoalAction(input: {
   status: "accepted" | "dismissed";

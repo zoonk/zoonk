@@ -1,4 +1,5 @@
 import { MAX_CEFR_SCORE } from "@zoonk/utils/cefr";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { speakingMockExamSchema } from "../../language/conversations/conversation-contract";
 import { speakingPaperViewSchema } from "../../language/exam-speaking/speaking-contract";
@@ -31,7 +32,7 @@ export const languageProgressViewSchema = z
       .array(z.object({ done: z.boolean(), text: z.string(), unitTitle: z.string() }))
       .meta({ description: '"I can" checks: finished units checked, the current unit\'s ahead' }),
     goal: z.object({
-      id: z.uuid(),
+      id: uuidSchema(),
       targetDate: logicalDateSchema.nullable(),
       targetLanguage: z.string(),
       title: z.string(),
@@ -73,13 +74,13 @@ const unitMistakeSchema = z.object({
   answer: z.string().nullable(),
   correctAnswer: z.string().nullable(),
   explanation: z.string().nullable(),
-  id: z.uuid(),
+  id: uuidSchema(),
   question: z.string(),
   skill: z.enum(LANGUAGE_MISTAKE_SKILLS),
 });
 
 export const noticedPatternSchema = z.object({
-  id: z.uuid(),
+  id: uuidSchema(),
   kind: z.enum(["pattern", "typos"]),
   title: z.string(),
 });
@@ -135,13 +136,13 @@ export const languageUnitViewSchema = z
           "Offer the unit's chapter test while lessons remain, unless it was failed today without a lesson studied in this unit since; available again on the next learner-local day",
       }),
     conversation: practiceCallSchema,
-    goalId: z.uuid().nullable(),
+    goalId: uuidSchema().nullable(),
     grammarTips: z.array(z.object({ text: z.string(), title: z.string() })),
     lessons: z
       .array(
         z.object({
           done: z.boolean(),
-          lessonId: z.uuid(),
+          lessonId: uuidSchema(),
           minutes: z.int().min(0),
           state: z
             .enum(["done", "next", "upcoming"])
@@ -170,10 +171,10 @@ export const languageUnitViewSchema = z
       .nullable()
       .meta({ description: "Mispronounced words in the language due to be said again today" }),
     summaries: z
-      .array(z.object({ ideas: z.array(z.string()), lessonId: z.uuid(), title: z.string() }))
+      .array(z.object({ ideas: z.array(z.string()), lessonId: uuidSchema(), title: z.string() }))
       .meta({ description: "Summary cards of the unit's finished lessons, in lesson order" }),
     unit: z.object({
-      chapterId: z.uuid(),
+      chapterId: uuidSchema(),
       description: z.string(),
       levelRange: z.string().meta({ description: 'The CEFR bands it teaches, "A1–A2"' }),
       objectives: z.array(z.string()),
@@ -224,7 +225,7 @@ export const languageUnitsViewSchema = z
     alphabet: z
       .object({
         canDo: z.string().nullable(),
-        lessonId: z.uuid().meta({ description: "Open it anytime to practice the letters" }),
+        lessonId: uuidSchema().meta({ description: "Open it anytime to practice the letters" }),
         minutes: z.int().min(0),
         pending: z
           .boolean()
@@ -239,10 +240,10 @@ export const languageUnitsViewSchema = z
         description:
           "The alphabet lesson of a language whose script isn't Latin, once written; null otherwise",
       }),
-    goalId: z.uuid(),
+    goalId: uuidSchema(),
     units: z.array(
       z.object({
-        chapterId: z.uuid(),
+        chapterId: uuidSchema(),
         done: z.boolean().meta({ description: "Every lesson done, or a call for the unit won" }),
         lessonsDone: z.int().min(0),
         lessonsTotal: z.int().min(0),

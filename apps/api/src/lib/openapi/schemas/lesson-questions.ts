@@ -6,6 +6,7 @@ import {
   lessonQuestionResourceSchema,
   lessonQuestionThreadResourceSchema,
 } from "@zoonk/core/lesson-questions/contract";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const lessonQuestionContextInputOpenAPISchema = lessonQuestionContextInputSchema.meta({
@@ -80,7 +81,7 @@ const earlierQuestionSchema = z
       .string()
       .nullable()
       .meta({ description: "The course the lesson was in, as the learner saw it" }),
-    id: z.uuid(),
+    id: uuidSchema(),
     lessonTitle: z
       .string()
       .nullable()
@@ -95,14 +96,13 @@ const earlierQuestionSchema = z
 
 export const earlierQuestionsQuerySchema = z
   .object({
-    cursor: z.uuid().optional().meta({ description: "Opaque cursor returned in nextCursor" }),
+    cursor: uuidSchema().optional().meta({ description: "Opaque cursor returned in nextCursor" }),
   })
   .meta({ id: "EarlierQuestionsQuery" });
 
 export const earlierQuestionsResponseSchema = z
   .object({
-    nextCursor: z
-      .uuid()
+    nextCursor: uuidSchema()
       .nullable()
       .meta({ description: "Reads the page of older questions; null on the last page" }),
     questions: z.array(earlierQuestionSchema),

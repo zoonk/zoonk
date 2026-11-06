@@ -119,8 +119,8 @@
   "player_offer_tricky": "18011757acce053c6d478c95a2ae70ed192e1f1c95f1b67fe2508d8c4be285ff",
   "player_open_failed": "67b8e1a6af4847e3c5cbcd7340b22f59e869ef969953f6a40aee80603bea93aa",
   "player_opening_lesson": "04ddffca306d4c6571540ace77d879be63759dd8c85179534b86b96662ab557f",
+  "player_opening_map_hint": "ad461cf9b70fb83f822466580e5948624bc1da59c52b0daf532ea736bc37fb89",
   "player_opening_map_idea": "cc65cd7e78ee6a1f042bec83f20ab3dec58796fe862677cce22341c80b14181e",
-  "player_opening_map_ideas": "add47e8b59805cdd344ac48985980e51cb0b7ce69a44b008173c1ff8b8f3aabc",
   "player_opening_map_show": "ae0b195ed02462fc0e80c0cbb7221dcb67f3ffc668e33cac6e25db6d93abdf36",
   "player_part_of": "c9d745c1a3c7affefaecc365a89d28eacab7de5bfbd34e4709b693536252a865",
   "player_phase_draw": "d9dc454637ae1726131338e10da07261f471963c8f83560810f78652722cc1f7",
@@ -207,11 +207,8 @@
     <string name="player_idea_position">Kavram %1$s / %2$s</string>
     <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
     <string name="player_example">Örnek</string>
-    <!-- Under the small map of the lesson's ideas on its opening screen, before the learner has studied them. -->
-    <plurals name="player_opening_map_ideas">
-        <item quantity="one">Bu derste keşfedeceğin %1$s kavram var</item>
-        <item quantity="other">Bu derste keşfedeceğin %1$s kavram var</item>
-    </plurals>
+    <!-- Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers. -->
+    <string name="player_opening_map_hint">Neleri kapsadığını görmek için bir kavrama dokun</string>
     <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
     <string name="player_opening_map_idea">%1$s. kavram</string>
     <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->

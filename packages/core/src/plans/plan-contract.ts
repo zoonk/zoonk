@@ -1,3 +1,4 @@
+import { lowercaseUuid } from "@zoonk/utils/uuid";
 import { z } from "zod";
 import { examChoicePickSchema } from "../exams/choices/exam-choice-contract";
 import { LANGUAGE_ACTIVITY_TYPES } from "../language/activities/language-activities";
@@ -38,7 +39,7 @@ const focusPartInputSchema = z
       .max(MAX_PART_NAME_LENGTH)
       .meta({ description: "The part as the learner says it, such as biology and chemistry" }),
     skillIds: z
-      .array(z.string().trim().min(1))
+      .array(z.string().trim().min(1).overwrite(lowercaseUuid))
       .min(1)
       .max(MAX_PART_SKILLS)
       .meta({ description: "The area's skills in the part, from the plan's graph" }),
@@ -174,6 +175,7 @@ const planOperationSchema = z
                   .string()
                   .trim()
                   .min(1)
+                  .overwrite(lowercaseUuid)
                   .meta({ description: "One of the plan's `bases`" }),
               })
               .strict(),
