@@ -112,7 +112,3 @@ export type PlayableLibraryLesson = {
   targetLanguage: string | null;
   title: string;
 };
-
-export type LessonMarks = Pick<PlayableLibraryLesson, "marksPending" | "summary"> & {
-  steps: { marks: StepMarks | null; stepId: string }[];
-};

@@ -5,7 +5,6 @@ import {
   type LibraryLessonRun,
 } from "@zoonk/core/lesson-player/contract";
 import {
-  type LessonMarks,
   type LessonPicture,
   type PlayableLibraryLesson,
 } from "@zoonk/core/lesson-player/playable-lesson";
@@ -114,8 +113,6 @@ export type LessonPlayerAdapters = {
   requestExampleLine?: (input: { stepId: string }) => Promise<ExampleLine | null>;
   /** Omit `stepIds` to read every screen's pictures. */
   getLessonPictures?: (stepIds?: string[]) => Promise<LessonPicture[]>;
-  /** Read again while the lesson's `marksPending`. Null means the read failed. */
-  getLessonMarks?: () => Promise<LessonMarks | null>;
   explainAnswer?: (input: { answer: string; stepId: string }) => Promise<AnswerExplanationOutcome>;
   /** Grades a recording of a spoken answer. Without it, spoken screens take a typed answer. */
   gradeSpokenAnswer?: (input: {

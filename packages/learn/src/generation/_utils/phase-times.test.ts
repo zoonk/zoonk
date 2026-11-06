@@ -35,6 +35,77 @@ describe(getPhaseTimes, () => {
     ]);
   });
 
+  it("times a lesson's marking and drawing from when writing ended, each to its own finish", () => {
+    expect(
+      timesOf(
+        {
+          stepTimes: {
+            drawPictures: { completed: 70_000, started: 50_000 },
+            markLesson: { started: 50_000 },
+            planLesson: { completed: 20_000, started: 1000 },
+            writeLesson: { completed: 50_000, started: 20_000 },
+          },
+          steps: {
+            drawPictures: "completed",
+            markLesson: "started",
+            planLesson: "completed",
+            writeLesson: "completed",
+          },
+        },
+        "lesson",
+      ).slice(2),
+    ).toStrictEqual([
+      { endedAt: null, startedAt: 50_000 },
+      { endedAt: 70_000, startedAt: 50_000 },
+    ]);
+  });
+
+  it("keeps a lesson's drawing time once the lesson is ready after marking ends", () => {
+    expect(
+      timesOf(
+        {
+          stepTimes: {
+            drawPictures: { completed: 70_000, started: 50_000 },
+            lessonReady: { completed: 250_010 },
+            markLesson: { completed: 250_000, started: 50_000 },
+            planLesson: { completed: 20_000, started: 1000 },
+            writeLesson: { completed: 50_000, started: 20_000 },
+          },
+          steps: {
+            drawPictures: "completed",
+            lessonReady: "completed",
+            markLesson: "completed",
+            planLesson: "completed",
+            writeLesson: "completed",
+          },
+        },
+        "lesson",
+      ).slice(2),
+    ).toStrictEqual([
+      { endedAt: 250_000, startedAt: 50_000 },
+      { endedAt: 70_000, startedAt: 50_000 },
+    ]);
+  });
+
+  it("starts a lesson's drawing with marking, before drawing reports its own start", () => {
+    expect(
+      timesOf(
+        {
+          stepTimes: {
+            markLesson: { started: 50_000 },
+            planLesson: { completed: 20_000, started: 1000 },
+            writeLesson: { completed: 50_000, started: 20_000 },
+          },
+          steps: { markLesson: "started", planLesson: "completed", writeLesson: "completed" },
+        },
+        "lesson",
+      ).slice(2),
+    ).toStrictEqual([
+      { endedAt: null, startedAt: 50_000 },
+      { endedAt: null, startedAt: 50_000 },
+    ]);
+  });
+
   it("ends a phase whose finish wasn't reported as the next one begins", () => {
     expect(
       timesOf({

@@ -26,7 +26,6 @@ import {
 import { LessonTutor } from "./tutor/lesson-tutor";
 import { type LessonTutorConfig } from "./tutor/lesson-tutor-context";
 import { useAbandonTracking } from "./use-abandon-tracking";
-import { useArrivingMarks } from "./use-arriving-marks";
 import { useExampleLines } from "./use-example-lines";
 import { useLessonPlayerActions } from "./use-lesson-player-actions";
 import { usePreloadActivityCanvases } from "./use-preload-activity-canvases";
@@ -137,12 +136,6 @@ export function LessonPlayerProvider({
   );
 
   const exampleLines = useExampleLines({ adapters, steps: lesson.steps });
-  const arrived = useArrivingMarks({ getLessonMarks: adapters.getLessonMarks, lesson });
-
-  const arrivedMarks = useMemo(
-    () => (arrived ? new Map(arrived.steps.map(({ marks, stepId }) => [stepId, marks])) : null),
-    [arrived],
-  );
 
   const actions = useLessonPlayerActions({
     adapters,
@@ -186,7 +179,6 @@ export function LessonPlayerProvider({
   const config = useMemo(
     () => ({
       adapters,
-      arrivedMarks,
       buddy,
       challengeTeam,
       exampleLinesWriting: exampleLines.writing,
@@ -194,8 +186,7 @@ export function LessonPlayerProvider({
         estimatedMinutes: lesson.estimatedMinutes,
         id: lesson.id,
         language: lesson.language,
-        marksPending: arrived ? arrived.marksPending : lesson.marksPending,
-        summary: arrived ? arrived.summary : lesson.summary,
+        summary: lesson.summary,
         targetLanguage: lesson.targetLanguage,
         title: lesson.title,
       },
@@ -209,8 +200,6 @@ export function LessonPlayerProvider({
     }),
     [
       adapters,
-      arrived,
-      arrivedMarks,
       buddy,
       challengeTeam,
       exampleLines.writing,

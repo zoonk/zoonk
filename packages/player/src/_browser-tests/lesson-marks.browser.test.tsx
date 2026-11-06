@@ -1,12 +1,10 @@
-import { type LessonMarks } from "@zoonk/core/lesson-player/playable-lesson";
 import { type LessonIcon } from "@zoonk/core/library/icons/contract";
 import { type LessonMap } from "@zoonk/core/library/lessons/map";
 import { type StepMarks } from "@zoonk/core/library/marks/contract";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
-import { describe, expect, it, onTestFinished, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { page, userEvent } from "vitest/browser";
-import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
-import { nextFrames } from "../_test-utils/tutor-api";
+import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import { contentStep, teachingStep } from "../preview/preview-steps";
 
@@ -73,35 +71,6 @@ function shownStrips() {
 
 function boxOf(text: string) {
   return page.getByRole("main").getByText(text, { exact: true }).element().getBoundingClientRect();
-}
-
-function endMapLabels() {
-  return MAP.ideas.map(({ label = "" }) => {
-    const { left, top } = boxOf(label);
-    return { left, top };
-  });
-}
-
-function endMapIcons() {
-  return document.querySelectorAll('[data-slot="lesson-map"] [data-slot="lesson-icon"]');
-}
-
-function withoutIcon(idea: LessonMap["ideas"][number]) {
-  return { ...idea, icon: null };
-}
-
-async function openEndMapWhileTagsArrive(summary: LessonMap) {
-  const arrival = Promise.withResolvers<LessonMarks>();
-  const opened = buildLesson(lesson().steps, { marksPending: true, summary });
-  const getLessonMarks = vi.fn(() => arrival.promise);
-
-  renderLessonPlayer({ adapters: { ...buildAdapters(opened), getLessonMarks }, lesson: opened });
-  await next();
-  await next();
-  await answerCheck();
-
-  await expect.element(page.getByRole("main").getByText("Reading the cloud")).toBeVisible();
-  return arrival;
 }
 
 async function answerCheck() {
@@ -225,104 +194,6 @@ describe("lesson marks", () => {
 
     await expect.element(page.getByText("cloud of possibilities", { exact: true })).toBeVisible();
     expect(underlined()).toStrictEqual(["a cloud of possibilities: a map"]);
-  });
-
-  it("fills in marks that arrive after the lesson opened, only the underline on the screen being read", async () => {
-    const tagged = lesson();
-    const [scene, explanation, check] = tagged.steps;
-    const arrival = Promise.withResolvers<LessonMarks>();
-    const getLessonMarks = vi.fn(() => arrival.promise);
-
-    const opened = buildLesson(
-      tagged.steps.map((step) => ({ ...step, marks: null })),
-      {
-        marksPending: true,
-        summary: { ...MAP, ideas: MAP.ideas.map(({ label, text }) => ({ label, text })) },
-      },
-    );
-
-    renderLessonPlayer({
-      adapters: { ...buildAdapters(opened), getLessonMarks },
-      lesson: { ...opened, id: tagged.id },
-    });
-
-    await next();
-    await expect.element(page.getByText("It spreads out into", { exact: false })).toBeVisible();
-
-    arrival.resolve({
-      marksPending: false,
-      steps: [scene, explanation, check].flatMap((step) =>
-        step && "marks" in step ? [{ marks: step.marks, stepId: step.id }] : [],
-      ),
-      summary: MAP,
-    });
-
-    await expect.poll(underlined).toStrictEqual(["a map of where it might be"]);
-    await expect.element(strip()).not.toBeInTheDocument();
-    await expect.element(page.getByText("Example", { exact: true })).not.toBeInTheDocument();
-
-    await next();
-    await expect.element(strip()).toHaveTextContent("Idea 2 of 2");
-
-    await page.getByRole("button", { name: "Previous screen" }).click();
-    await expect.poll(shownStrips).toStrictEqual([["Idea 1 of 2", "A cloud, not an orbit"]]);
-    expect(underlined()).toStrictEqual(["a map of where it might be"]);
-
-    await page.getByRole("button", { name: "Previous screen" }).click();
-    await expect.element(page.getByText("2 ideas to discover in this lesson")).toBeVisible();
-  });
-
-  it("keeps each idea's icon room on the end map, so icons drawn after it opened move nothing", async () => {
-    const arrival = await openEndMapWhileTagsArrive({ ...MAP, ideas: MAP.ideas.map(withoutIcon) });
-    const before = endMapLabels();
-
-    arrival.resolve({ marksPending: false, steps: [], summary: MAP });
-    await expect.poll(() => endMapIcons().length).toBe(MAP.ideas.length);
-    expect(endMapLabels()).toStrictEqual(before);
-  });
-
-  it("keeps the end map's icon room when its tags end with no icon or about line", async () => {
-    const untold = { ...MAP, ideas: MAP.ideas.map(({ label, text }) => ({ label, text })) };
-    const arrival = await openEndMapWhileTagsArrive(untold);
-    const before = endMapLabels();
-
-    arrival.resolve({ marksPending: false, steps: [], summary: untold });
-    await arrival.promise;
-    await nextFrames();
-    expect(endMapLabels()).toStrictEqual(before);
-  });
-
-  it("keeps reading marks after a few failed reads, within the screens' picture wait", async () => {
-    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "Date"] });
-
-    onTestFinished(() => {
-      vi.useRealTimers();
-    });
-
-    const tagged = lesson();
-
-    const getLessonMarks = vi
-      .fn<() => Promise<LessonMarks | null>>()
-      .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce(null)
-      .mockResolvedValue({ marksPending: false, steps: [], summary: MAP });
-
-    const opened = buildLesson(tagged.steps, {
-      marksPending: true,
-      summary: { ...MAP, ideas: MAP.ideas.map(({ label, text }) => ({ label, text })) },
-    });
-
-    renderLessonPlayer({ adapters: { ...buildAdapters(opened), getLessonMarks }, lesson: opened });
-    const openingMap = page.getByText("2 ideas to discover in this lesson");
-
-    await expect
-      .poll(async () => {
-        await vi.advanceTimersByTimeAsync(4000);
-        return openingMap.query();
-      })
-      .not.toBeNull();
   });
 
   it("leaves an example inside a numbered list unframed, so the list keeps counting", async () => {
