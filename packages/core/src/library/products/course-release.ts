@@ -64,7 +64,7 @@ async function hasFollower(courseId: string): Promise<boolean> {
   return goal !== null;
 }
 
-function loadMainCourses(where: { id?: string; productId?: string }) {
+function loadMainCourses(where: { id?: string | { in: string[] }; productId?: string }) {
   return prisma.course.findMany({
     select: {
       id: true,
@@ -92,14 +92,20 @@ function findNextRelease({ course, now }: { course: MainCourse; now: Date }) {
 }
 
 /**
- * Internal workflow bridge for the release check and the daily sweep: the product's main courses
- * that don't teach its current release yet and that a learner follows.
+ * Internal workflow bridge for the release check, the daily sweep and a new goal's courses: the
+ * main courses, of one product or among `courseIds`, that don't teach their product's current
+ * release yet and that a learner follows.
  */
 export async function listCoursesBehind({
+  courseIds,
   now = new Date(),
   productId,
-}: { now?: Date; productId?: string } = {}): Promise<string[]> {
-  const courses = await loadMainCourses(productId ? { productId } : {});
+}: { courseIds?: string[]; now?: Date; productId?: string } = {}): Promise<string[]> {
+  const courses = await loadMainCourses({
+    ...(courseIds ? { id: { in: courseIds } } : {}),
+    ...(productId ? { productId } : {}),
+  });
+
   const behind = courses.filter((course) => findNextRelease({ course, now }));
 
   const followed = await Promise.all(

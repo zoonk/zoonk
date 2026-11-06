@@ -12,6 +12,8 @@ import {
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
+import { startCourseReleases } from "../products/course-release-workflow";
+import { listCoursesBehindStep } from "../products/steps/product-releases-steps";
 import { isBuiltBeforeResearch, loadGoalReferences } from "./goal-content-inputs";
 import { startOutlines } from "./goal-outlines";
 import { prepareGraphPlacement } from "./goal-placement-items";
@@ -270,6 +272,25 @@ async function prepareCurriculum({
   return kept ? toReused(kept) : { built, reused: false, ...saving };
 }
 
+/**
+ * After the plan commits, so the goal already follows its courses when the update checks for a
+ * learner. The goal doesn't wait for it.
+ */
+async function updateProductCoursesBehind({
+  courseIdsByKey,
+  inputs,
+}: {
+  courseIdsByKey: Record<string, string>;
+  inputs: GoalCurriculumInputs;
+}): Promise<void> {
+  if (!inputs.product) {
+    return;
+  }
+
+  const courseIds = await listCoursesBehindStep([...new Set(Object.values(courseIdsByKey))]);
+  await startCourseReleases(courseIds);
+}
+
 export async function buildCurriculum({
   context,
   inputs,
@@ -304,6 +325,8 @@ export async function buildCurriculum({
     scope,
     waitsForNotice,
   });
+
+  await updateProductCoursesBehind({ courseIdsByKey: written.courseIdsByKey, inputs });
 
   // Placement invalidates plan inputs, so it starts only after the initial plan commits.
   if (!rebuild) {

@@ -40,7 +40,11 @@ import { courseBandsFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { brandFixture, productFixture } from "@zoonk/testing/fixtures/products";
+import {
+  brandFixture,
+  productFixture,
+  productReleaseFixture,
+} from "@zoonk/testing/fixtures/products";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   examBlueprintFixture,
@@ -61,6 +65,7 @@ import { courseDetailsWorkflow } from "../courses/course-details-workflow";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { levelTestBankWorkflow } from "../language/level-test-bank-workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
+import { courseReleaseWorkflow } from "../products/course-release-workflow";
 import { goalContentWorkflow } from "./goal-content-workflow";
 import * as goalPlacement from "./goal-placement-items";
 import { placementItemsWorkflow } from "./placement-items-workflow";
@@ -1882,6 +1887,50 @@ describe(goalContentWorkflow, () => {
       productId: product.id,
       title: name,
     });
+  });
+
+  it("starts the release update of the product's main course a new goal lands on while it's behind", async () => {
+    const brand = await brandFixture();
+    const name = `Gizmo ${crypto.randomUUID().slice(0, 8)}`;
+    const product = await productFixture({ name, organizationId: brand.id });
+
+    const [older] = await Promise.all([
+      productReleaseFixture({ productId: product.id, releasedAt: new Date("2025-01-10") }),
+      productReleaseFixture({
+        name: `${name} 2`,
+        productId: product.id,
+        releasedAt: new Date("2026-01-10"),
+      }),
+    ]);
+
+    const main = await courseFixture({
+      organizationId: brand.id,
+      productId: product.id,
+      productReleaseId: older.id,
+      title: name,
+    });
+
+    const { goal } = await newGoal({ productCheckedAt: new Date(), productId: product.id });
+    const built = isolatedGraph();
+    const last = built.courses.length - 1;
+
+    // Not the goal's first course, so the goal follows it only once its plan maps skills to it.
+    vi.mocked(generateSkillGraph).mockResolvedValue(
+      graphResult({
+        ...built,
+        courses: built.courses.map((course, index) =>
+          index === last ? { ...course, title: name } : course,
+        ),
+      }),
+    );
+
+    await goalContentWorkflow({ goalId: goal.id });
+
+    const started = getStartMock()
+      .mock.calls.filter(([workflow]) => workflow === courseReleaseWorkflow)
+      .map(([, args]) => args);
+
+    expect(started).toStrictEqual([[{ courseId: main.id }]]);
   });
 
   it("builds an exam's graph at once when onboarding already found its current blueprint, whatever instructions read it", async () => {

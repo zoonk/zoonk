@@ -1,3 +1,4 @@
+import { listCoursesBehind } from "@zoonk/core/library/products/course-release";
 import {
   type ReleasesReading,
   readProductReleases,
@@ -16,4 +17,13 @@ export async function readProductReleasesStep(
 export async function saveProductReleasesStep(reading: ReleasesReading): Promise<string[]> {
   "use step";
   return saveReadReleases(reading);
+}
+
+/**
+ * Followed main courses, all of them or those among `courseIds`, whose product has a newer release
+ * than they teach, such as an announced one now out.
+ */
+export async function listCoursesBehindStep(courseIds?: string[]): Promise<string[]> {
+  "use step";
+  return listCoursesBehind({ courseIds });
 }
