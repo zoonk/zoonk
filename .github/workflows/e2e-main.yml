@@ -1,7 +1,7 @@
 name: E2E Tests (Main App)
 
-# Main's Playwright suite (`pnpm e2e:main`): on every PR, and again on `main` before staging, where
-# `ci.yml` calls this workflow.
+# Main's Playwright suite (`pnpm e2e:main`): on every PR, and again on each push to `main`,
+# where `ci.yml` calls this workflow.
 on:
   workflow_call:
     inputs:

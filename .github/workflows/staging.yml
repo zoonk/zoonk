@@ -1,0 +1,59 @@
+name: Staging
+
+# Staging runs on request (`pnpm staging`, or "Run workflow" in Actions), not on every push to `main`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID_API: ${{ vars.VERCEL_PROJECT_ID_API }}
+  VERCEL_PROJECT_ID_MAIN: ${{ vars.VERCEL_PROJECT_ID_MAIN }}
+  VERCEL_PROJECT_ID_ADMIN: ${{ vars.VERCEL_PROJECT_ID_ADMIN }}
+
+jobs:
+  staging:
+    # Staging's database is shared, so it only takes migrations that reached `main`.
+    if: github.ref == 'refs/heads/main'
+    concurrency:
+      group: staging
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 95
+    env:
+      DEPLOY_TARGET: staging
+      DEPLOY_REF: main
+      GH_TOKEN: ${{ github.token }}
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
+      NEON_PRODUCTION_BRANCH: ${{ vars.NEON_PRODUCTION_BRANCH }}
+      NEON_STAGING_BRANCH: ${{ vars.NEON_STAGING_BRANCH }}
+      NEON_DATABASE: ${{ vars.NEON_DATABASE }}
+      NEON_ROLE: ${{ vars.NEON_ROLE }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      # Node comes from the runner's tool cache: pnpm/setup would download it from nodejs.org,
+      # whose slow downloads time jobs out.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: package.json
+      - uses: pnpm/setup@fa36a5ef7dcdefc3a7cb25655c122e00cf6e636e # v3.1.2
+        with:
+          node-version-file: false
+          cache: true
+          save-cache: ${{ github.ref == 'refs/heads/main' }}
+      - name: Require successful CI for the commit
+        run: pnpm deploy:require-ci
+      - name: Load staging database credentials
+        run: pnpm deploy:database
+      - name: Migrate staging once
+        run: pnpm --filter @zoonk/db db:deploy
+      - name: Deploy staging apps
+        run: pnpm deploy staging
+      - name: Cancel remote builds when this workflow is canceled or fails
+        if: cancelled() || failure()
+        run: pnpm deploy cancel-run

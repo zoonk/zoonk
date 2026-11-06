@@ -1,8 +1,8 @@
 name: Vitest
 
 # Every Vitest suite: unit tests, database and workflow integration tests against a fresh Postgres
-# migrated from scratch, and the player's browser tests. On every PR, and again on `main` before
-# staging, where `ci.yml` calls this workflow.
+# migrated from scratch, and the player's browser tests. On every PR, and again on each push to
+# `main`, where `ci.yml` calls this workflow.
 on:
   workflow_call:
     inputs:
