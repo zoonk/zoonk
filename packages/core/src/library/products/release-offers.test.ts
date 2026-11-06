@@ -1,6 +1,10 @@
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { courseChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import {
+  chapterSkillFixture,
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
 import { brandFixture, productFixture } from "@zoonk/testing/fixtures/products";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -10,7 +14,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-util
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
-import { offerWhatsNew } from "./release-offers";
+import { findWhatsNewChapter, offerWhatsNew } from "./release-offers";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
 
@@ -132,5 +136,33 @@ describe(offerWhatsNew, () => {
       [fixture.course.id],
       [fixture.course.id],
     ]);
+  });
+});
+
+describe(findWhatsNewChapter, () => {
+  it("reuses only a What's new chapter whose lessons were all saved", async () => {
+    const { course } = await setup();
+    const releaseId = crypto.randomUUID();
+
+    const [skill, chapter] = await Promise.all([
+      skillFixture({ identityKey: `whats-new:${releaseId}:exportfromthepanel` }),
+      libraryChapterFixture({ outlineStatus: "failed" }),
+    ]);
+
+    await Promise.all([
+      courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 50 }),
+      chapterSkillFixture({ chapterId: chapter.id, skillId: skill.id }),
+    ]);
+
+    await expect(findWhatsNewChapter({ courseId: course.id, releaseId })).resolves.toBeNull();
+
+    await prisma.chapter.update({
+      data: { outlineStatus: "completed" },
+      where: { id: chapter.id },
+    });
+
+    await expect(findWhatsNewChapter({ courseId: course.id, releaseId })).resolves.toMatchObject({
+      skills: [{ id: skill.id, key: skill.id }],
+    });
   });
 });
