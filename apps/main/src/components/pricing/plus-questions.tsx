@@ -16,9 +16,6 @@ import { type PlusViewerState } from "./plus-plan";
 
 const PLUS_QUESTIONS_ID = "plus-questions";
 
-const LEGAL_LINK_CLASS =
-  "hover:text-foreground hit-area relative underline-offset-4 hover:underline";
-
 function keepNumbersWithWords(text: string) {
   return text.replaceAll(/(?<=\d) /gu, "\u00A0");
 }
@@ -148,12 +145,6 @@ export async function PlusQuestions({
             )}
           </p>
         </PublicDisclosure>
-
-        <p className="text-muted-foreground mt-6 text-sm">
-          <Link className={LEGAL_LINK_CLASS} href="/terms">
-            {t("Terms")}
-          </Link>
-        </p>
       </div>
     </section>
   );
