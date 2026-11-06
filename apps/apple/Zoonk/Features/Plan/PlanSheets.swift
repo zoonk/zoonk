@@ -16,7 +16,7 @@ enum PlanSheet: Identifiable, Hashable {
 extension View {
   func planSheets(
     _ sheet: Binding<PlanSheet?>, context: PlanContext, syllabus: GoalSyllabus?,
-    slotAnswer: Binding<PlanSlotAnswer?> = .constant(nil)
+    slotAnswer: Binding<PlanSlotAnswer?>
   ) -> some View {
     modifier(
       PlanSheets(sheet: sheet, slotAnswer: slotAnswer, context: context, syllabus: syllabus))
