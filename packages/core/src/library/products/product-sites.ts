@@ -11,8 +11,47 @@ export type ProductSites = {
   product: { domain: string; imageUrl: string | null; links: string[]; url: string };
 };
 
+const TRAILING_SLASHES = /\/+$/u;
+const WWW = /^www\./u;
+/** What a code host's maker publishes, on GitHub's and GitLab's paths alike. */
+const RELEASES_PATH = /^(?:\/-)?\/(?:releases|tags)(?:\/|$)/u;
+const RELEASES_PAGE = /\/(?:releases|tags)$/u;
+
+function toPath(url: string): string {
+  return new URL(url).pathname.replace(TRAILING_SLASHES, "");
+}
+
+function toHost(url: string): string {
+  return new URL(url).hostname.replace(WWW, "");
+}
+
+/** The path after `base`'s on the same host ("" for `base` itself); null when `url` isn't under it. */
+function readPathUnder({ base, url }: { base: string; url: string }): string | null {
+  const [basePath, path] = [toPath(base), toPath(url)];
+
+  if (toHost(base) !== toHost(url)) {
+    return null;
+  }
+
+  return path === basePath || path.startsWith(`${basePath}/`) ? path.slice(basePath.length) : null;
+}
+
+/**
+ * A homepage's site is its whole registrable domain. A page with a path, such as a repository on a
+ * code host, speaks only for itself and the pages under it: the rest of that host is other people's.
+ */
+function isOnProductSite({ productUrl, url }: { productUrl: string; url: string }): boolean {
+  return toPath(productUrl) === ""
+    ? toRegistrableDomain(url) === toRegistrableDomain(productUrl)
+    : readPathUnder({ base: productUrl, url }) !== null;
+}
+
 function linksToDomain({ domain, page }: { domain: string; page: InspectedPage }): boolean {
   return page.tags.links.some((link) => toRegistrableDomain(link) === domain);
+}
+
+function linksToProduct({ page, product }: { page: InspectedPage; product: InspectedPage }) {
+  return page.tags.links.some((link) => isOnProductSite({ productUrl: product.url, url: link }));
 }
 
 /** Enough for a homepage's menu entry and a footer link about the product. */
@@ -31,7 +70,7 @@ async function vouchesFor({
   product: InspectedPage;
   productName: string;
 }): Promise<boolean> {
-  if (linksToDomain({ domain: product.domain, page: brand })) {
+  if (linksToProduct({ page: brand, product })) {
     return true;
   }
 
@@ -53,7 +92,7 @@ async function vouchesFor({
     (result) =>
       result.status === "fulfilled" &&
       result.value?.domain === brand.domain &&
-      linksToDomain({ domain: product.domain, page: result.value }),
+      linksToProduct({ page: result.value, product }),
   );
 }
 
@@ -77,26 +116,34 @@ async function isProductOfBrand({
   );
 }
 
-/** A site's root ("github.com/") would vouch for every page on it, so a link needs a path. */
-function isUnderLink({ link, url }: { link: string; url: string }): boolean {
-  const { origin, pathname } = new URL(link);
-  const base = `${origin}${pathname.replace(/\/+$/u, "")}`;
+/**
+ * Under a page with a path, such as a code repository where anyone may open an issue or a pull
+ * request, only what its maker publishes counts: the page itself and its releases and tags. A
+ * homepage link would make its whole host official, so it counts for nothing.
+ */
+function isPublishedAt({ link, url }: { link: string; url: string }): boolean {
+  const rest = readPathUnder({ base: link, url });
 
-  return pathname.replace(/\/+$/u, "") !== "" && (url === base || url.startsWith(`${base}/`));
+  return (
+    rest !== null &&
+    toPath(link) !== "" &&
+    (rest === "" || RELEASES_PATH.test(rest) || RELEASES_PAGE.test(toPath(link)))
+  );
 }
 
 /**
- * Docs and releases pages count on the brand's or the product's domain, or under an address the
+ * Docs and releases pages count on the brand's domain or the product's site, or under an address the
  * product page links to, such as its code repository's releases.
  */
 export function isOfficialPage({ sites, url }: { sites: ProductSites; url: string }): boolean {
   const domain = toRegistrableDomain(url);
+  const { product } = sites;
 
   return (
     domain !== null &&
     (domain === sites.brand.domain ||
-      domain === sites.product.domain ||
-      sites.product.links.some((link) => isUnderLink({ link, url })))
+      (toPath(product.url) === "" && domain === product.domain) ||
+      [product.url, ...product.links].some((link) => isPublishedAt({ link, url })))
   );
 }
 

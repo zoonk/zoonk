@@ -69,6 +69,29 @@ describe(inspectProductSites, () => {
     });
   });
 
+  it("ties a repository on a code host that the brand links to", async () => {
+    serve({
+      "https://code.example/lumen/orbit": ["https://lumen.example/"],
+      "https://lumen.example/": ["https://code.example/lumen/orbit/releases"],
+    });
+
+    await expect(
+      inspect("https://lumen.example/", "https://code.example/lumen/orbit"),
+    ).resolves.toMatchObject({ product: { domain: "code.example" } });
+  });
+
+  it("refuses a repository on a code host when the brand links only another one there", async () => {
+    serve({
+      "https://code.example/copycat/orbit": ["https://lumen.example/"],
+      "https://lumen.example/": ["https://code.example/lumen/website", "/products/orbit-notes"],
+      "https://lumen.example/products/orbit-notes": ["https://code.example/lumen/orbit"],
+    });
+
+    await expect(
+      inspect("https://lumen.example/", "https://code.example/copycat/orbit"),
+    ).resolves.toBeNull();
+  });
+
   it("refuses a third-party site that links to a brand that never links back", async () => {
     serve({
       "https://copycat.example/": ["https://lumen.example/"],
@@ -117,6 +140,48 @@ describe(isOfficialPage, () => {
 
   it("accepts pages under a path the product page links to", () => {
     expect(isOfficialPage({ sites, url: "https://code.example/lumen/orbit/releases" })).toBe(true);
+  });
+
+  it("accepts only what a linked repository's maker publishes: the repository, its releases and tags", () => {
+    const repository = "https://code.example/lumen/orbit";
+
+    expect(isOfficialPage({ sites, url: repository })).toBe(true);
+    expect(isOfficialPage({ sites, url: `${repository}/releases/tag/v5.0.1` })).toBe(true);
+    expect(isOfficialPage({ sites, url: `${repository}/tags` })).toBe(true);
+    expect(isOfficialPage({ sites, url: `${repository}/-/releases` })).toBe(true);
+    expect(isOfficialPage({ sites, url: `${repository}/issues/1234` })).toBe(false);
+    expect(isOfficialPage({ sites, url: `${repository}/discussions/7` })).toBe(false);
+    expect(isOfficialPage({ sites, url: `${repository}/pull/12` })).toBe(false);
+    expect(isOfficialPage({ sites, url: `${repository}/wiki/Releases` })).toBe(false);
+  });
+
+  it("accepts a release under a stored releases page", () => {
+    const stored = {
+      ...sites,
+      product: { ...sites.product, links: [`${sites.product.links[0]}/releases`] },
+    };
+
+    expect(
+      isOfficialPage({ sites: stored, url: "https://code.example/lumen/orbit/releases/tag/v5" }),
+    ).toBe(true);
+  });
+
+  it("keeps a product page on a code host from making the rest of that host official", () => {
+    const hosted: ProductSites = {
+      ...sites,
+      product: {
+        ...sites.product,
+        domain: "code.example",
+        links: [],
+        url: "https://code.example/lumen/orbit",
+      },
+    };
+
+    const official = (url: string) => isOfficialPage({ sites: hosted, url });
+
+    expect(official("https://code.example/lumen/orbit/releases")).toBe(true);
+    expect(official("https://code.example/lumen/orbit/issues/1")).toBe(false);
+    expect(official("https://code.example/copycat/orbit/releases")).toBe(false);
   });
 
   it("refuses other sites, a sibling path and a site's root link", () => {
