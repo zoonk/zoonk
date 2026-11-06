@@ -3,7 +3,6 @@ import { getWorkflowMetadata, sleep } from "workflow";
 import { start } from "workflow/api";
 import { deliverCourseContent } from "../_shared/course-content-notification";
 import { repeatUntil } from "../_shared/repeat-until";
-import { startOnce } from "../_shared/run-token";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
   advanceCourseReleaseStep,
@@ -166,13 +165,4 @@ export async function courseReleaseWorkflow({
     },
     times: MAX_RELEASES,
   });
-}
-
-/** One release update per course at a time: a course already updating keeps its run. */
-export async function startCourseReleases(courseIds: readonly string[]): Promise<void> {
-  await Promise.all(
-    courseIds.map((courseId) =>
-      startOnce(courseReleaseWorkflow, [{ courseId }], `course-release:${courseId}`),
-    ),
-  );
 }

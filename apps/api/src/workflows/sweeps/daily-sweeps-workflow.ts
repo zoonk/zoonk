@@ -4,7 +4,7 @@ import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
-import { startCourseReleases } from "../products/course-release-workflow";
+import { startCourseReleases } from "../products/product-releases";
 import { listCoursesBehindStep } from "../products/steps/product-releases-steps";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";

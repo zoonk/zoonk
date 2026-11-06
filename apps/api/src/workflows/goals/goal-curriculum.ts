@@ -12,7 +12,7 @@ import {
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
-import { startCourseReleases } from "../products/course-release-workflow";
+import { startCourseReleases } from "../products/product-releases";
 import { listCoursesBehindStep } from "../products/steps/product-releases-steps";
 import { isBuiltBeforeResearch, loadGoalReferences } from "./goal-content-inputs";
 import { startOutlines } from "./goal-outlines";

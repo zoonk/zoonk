@@ -1,7 +1,7 @@
 import { type ServiceTier } from "@zoonk/ai/provider-options";
-import { claimRunToken, waitForRunToken } from "../_shared/run-token";
+import { claimRunToken, startOnce, waitForRunToken } from "../_shared/run-token";
 import { type ResearchAnalytics } from "../research/_utils/research-analytics";
-import { startCourseReleases } from "./course-release-workflow";
+import { courseReleaseWorkflow } from "./course-release-workflow";
 import { readProductReleasesStep, saveProductReleasesStep } from "./steps/product-releases-steps";
 
 /**
@@ -35,4 +35,13 @@ export async function readProductReleases({
 
   const courseIds = await saveProductReleasesStep(reading);
   await startCourseReleases(courseIds);
+}
+
+/** One release update per course at a time: a course already updating keeps its run. */
+export async function startCourseReleases(courseIds: readonly string[]): Promise<void> {
+  await Promise.all(
+    courseIds.map((courseId) =>
+      startOnce(courseReleaseWorkflow, [{ courseId }], `course-release:${courseId}`),
+    ),
+  );
 }
