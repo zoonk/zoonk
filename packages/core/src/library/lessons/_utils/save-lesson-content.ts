@@ -288,6 +288,7 @@ export async function publishStagedLessonVersion({
     });
 
     await lockPlanSourceWrite(tx, {
+      lessonIds: [lessonId],
       skillIds: questionSkills.flatMap((step) => step.skillId ?? []),
     });
 

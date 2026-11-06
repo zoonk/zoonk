@@ -428,6 +428,55 @@ describe(saveLessonContent, () => {
     });
   });
 
+  it("publishes a staged question while a newer fix is staged at once, without a deadlock", async () => {
+    const { lesson, skill, workflowRunId } = await claimedLesson();
+
+    await saveReadyLesson({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [screen(skill.id)],
+      summary: { ideas: [], shape: "hub" },
+      workflowRunId,
+    });
+
+    const stage = () =>
+      stageLessonVersion({
+        language: "en",
+        lessonId: lesson.id,
+        replaces: 1,
+        screens: [numericScreen(skill.id)],
+        summary: { ideas: [], shape: "hub" },
+      });
+
+    const version = await stage();
+    const held = Promise.withResolvers<number>();
+    const released = Promise.withResolvers<null>();
+
+    const learnerWrite = prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM library_lessons WHERE id = ${lesson.id}::uuid FOR KEY SHARE`;
+      const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+      held.resolve(backend?.pid ?? 0);
+      await released.promise;
+    });
+
+    learnerWrite.catch((error: unknown) => held.reject(error));
+    const pid = await held.promise;
+    const publishing = publishStagedLessonVersion({ lessonId: lesson.id, version: version ?? 0 });
+    let staging: ReturnType<typeof stage> = Promise.resolve(null);
+
+    try {
+      await waitForBlockedStatement(pid, /library_lessons WHERE id = \$1::uuid FOR UPDATE/u);
+      staging = stage();
+      await waitForBlockedStatement(pid, /FOR NO KEY UPDATE/u);
+    } finally {
+      released.resolve(null);
+      await learnerWrite;
+    }
+
+    const settled = await Promise.allSettled([publishing, staging]);
+    expect(settled.map((result) => result.status)).toStrictEqual(["fulfilled", "fulfilled"]);
+  });
+
   it("leaves no bank questions behind for a staged version a newer one replaced", async () => {
     const { lesson, skill, workflowRunId } = await claimedLesson();
 
