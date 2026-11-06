@@ -5,18 +5,18 @@ import { safeAsync } from "@zoonk/utils/error";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../../cache/tags";
-import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-rows";
+import { type LibraryProvenance } from "../../_utils/library-rows";
 import {
   PlanInputWriteConflictError,
   lockPlanSourceWrite,
   writePlanInputs,
 } from "../../_utils/plan-input-write";
-import { toStoredItem } from "../../items/item-content";
 import { resolveReviewFlags } from "../../sources/content-review-flags";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
 import { type ScreenMathItem } from "../../steps/written-screens";
 import { CURRENT_STEPS, lockCurrentLessonVersion, startLessonVersion } from "../lesson-versions";
 import { getLessonScreenSkillId, isNotebookQuestionStep } from "./lesson-screen-skill";
+import { createQuestionItem, parseScreenQuestion, toScreenQuestion } from "./screen-question-item";
 import { toStepData } from "./step-data";
 
 class LessonPublicationLostError extends Error {
@@ -53,33 +53,6 @@ function repairScreenSkill({
   }
 
   return { ...screen, skillId };
-}
-
-async function createMathItem({
-  language,
-  screen,
-  tx,
-}: {
-  language: string;
-  screen: LessonScreenToSave;
-  tx: TransactionClient;
-}): Promise<string | null> {
-  if (!screen.mathItem || !screen.skillId) {
-    return null;
-  }
-
-  const stored = toStoredItem({
-    ...screen.mathItem,
-    difficulty: "medium",
-    format: "numeric",
-    otherSolutions: [],
-  });
-
-  const item = await tx.item.create({
-    data: { ...stored, language, skillId: screen.skillId, ...toProvenanceData(screen.provenance) },
-  });
-
-  return item.id;
 }
 
 async function prepareScreens(
@@ -155,9 +128,18 @@ async function writeScreens(
 ): Promise<number> {
   const version = await startLessonVersion(tx, lessonId, { staged });
 
-  const itemIds = await Promise.all(
-    screens.map((screen) => createMathItem({ language, screen, tx })),
-  );
+  const itemIds = staged
+    ? []
+    : await Promise.all(
+        screens.map((screen) =>
+          createQuestionItem(tx, {
+            language,
+            provenance: screen.provenance,
+            question: toScreenQuestion(screen.mathItem),
+            skillId: screen.skillId,
+          }),
+        ),
+      );
 
   await tx.step.createMany({
     data: screens.map((screen, position) => ({
@@ -176,6 +158,7 @@ async function writeScreens(
       sourceId: screen.citation?.sourceId ?? null,
       sourcePage: screen.citation?.page ?? null,
       staged,
+      stagedItem: staged ? (toScreenQuestion(screen.mathItem) ?? undefined) : undefined,
       version,
     })),
   });
@@ -299,10 +282,34 @@ export async function publishStagedLessonVersion({
   const staged = { lessonId, retiredAt: null, staged: true, version };
 
   return publishVersion(lessonId, async (tx) => {
+    const questionSkills = await tx.step.findMany({
+      select: { skillId: true },
+      where: { ...staged, stagedItem: { not: DbNull } },
+    });
+
+    await lockPlanSourceWrite(tx, {
+      skillIds: questionSkills.flatMap((step) => step.skillId ?? []),
+    });
+
     await lockCurrentLessonVersion(tx, lessonId);
 
     const lesson = await tx.lesson.findUniqueOrThrow({
-      select: { stagedSummary: true, steps: { select: { id: true }, take: 1, where: staged } },
+      select: {
+        language: true,
+        stagedSummary: true,
+        steps: {
+          select: {
+            generatedAt: true,
+            id: true,
+            model: true,
+            promptVersion: true,
+            runId: true,
+            skillId: true,
+            stagedItem: true,
+          },
+          where: staged,
+        },
+      },
       where: { id: lessonId },
     });
 
@@ -315,7 +322,22 @@ export async function publishStagedLessonVersion({
       where: { lessonId, ...CURRENT_STEPS },
     });
 
-    await tx.step.updateMany({ data: { staged: false }, where: staged });
+    await Promise.all(
+      lesson.steps.map(async (step) => {
+        const itemId = await createQuestionItem(tx, {
+          language: lesson.language,
+          provenance: step,
+          question: parseScreenQuestion(step.stagedItem),
+          skillId: step.skillId,
+        });
+
+        if (itemId) {
+          await tx.step.update({ data: { itemId }, where: { id: step.id } });
+        }
+      }),
+    );
+
+    await tx.step.updateMany({ data: { staged: false, stagedItem: DbNull }, where: staged });
 
     await tx.lesson.update({
       data: { stagedSummary: DbNull, summary: lesson.stagedSummary ?? DbNull },
