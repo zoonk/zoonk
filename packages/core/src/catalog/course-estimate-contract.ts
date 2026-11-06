@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { dailyMinutesSchema, goalCreateInputSchema } from "../goals/goal-contract";
 import { planNumbersSchema, planWorkloadSchema } from "../plans/numbers-contract";
@@ -5,7 +6,7 @@ import { MAX_PLAN_DAYS } from "../plans/target-date-range";
 
 export const coursePlanEstimateInputSchema = z
   .object({
-    courseId: z.uuid(),
+    courseId: uuidSchema(),
     dailyMinutes: dailyMinutesSchema,
     studyDays: goalCreateInputSchema.shape.studyDays
       .unwrap()
@@ -31,7 +32,7 @@ const publishedContentSchema = z
   );
 
 const courseEstimateLessonSchema = z.object({
-  chapterId: z.uuid().nullable(),
+  chapterId: uuidSchema().nullable(),
   dayMinutes: z
     .number()
     .nonnegative()
@@ -42,12 +43,12 @@ const courseEstimateLessonSchema = z.object({
     .number()
     .positive()
     .describe("Sampled duration of the whole authored lesson."),
-  lessonId: z.uuid(),
+  lessonId: uuidSchema(),
   title: z.string(),
 });
 
 const courseEstimateChapterSchema = z.object({
-  chapterId: z.uuid(),
+  chapterId: uuidSchema(),
   endWeek: weekSchema.describe(
     "Week when the actual teaching interval of the chapter's planned written or quick work ends. Null means no covered work or an unknown completion date for unwritten aggregate work; week and workKinds distinguish these cases.",
   ),

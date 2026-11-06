@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { shortPhaseSchema } from "./short-exam-plans";
 
@@ -25,7 +26,7 @@ export const planPhaseSchema = z
     chapters: z
       .array(
         z.object({
-          chapterId: z.uuid().nullable(),
+          chapterId: uuidSchema().nullable(),
           deeper: z
             .boolean()
             .meta({
@@ -51,8 +52,7 @@ export const planPhaseSchema = z
               description:
                 "A `writing` row's lessons the plan teaches, after its cuts and base choices. Null for every other row, and for one of a plan saved before it stored them (until its next change): say no count then",
             }),
-          skillId: z
-            .uuid()
+          skillId: uuidSchema()
             .nullable()
             .meta({
               description:
@@ -93,8 +93,7 @@ export const planPhaseSchema = z
             description:
               "The challenge remains visible in the plan, but starting it requires Plus; its intro reports `locked` and `status` `plusRequired`",
           }),
-        planItemId: z
-          .uuid()
+        planItemId: uuidSchema()
           .nullable()
           .meta({
             description:

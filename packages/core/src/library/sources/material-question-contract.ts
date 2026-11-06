@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 export const MAX_MATERIAL_QUESTION_LENGTH = 500;
@@ -14,7 +15,7 @@ export const materialQuestionInputSchema = z
       .meta({ description: "The learner's language, for the answer" }),
     question: z.string().trim().min(1).max(MAX_MATERIAL_QUESTION_LENGTH),
     sourceIds: z
-      .array(z.uuid())
+      .array(uuidSchema())
       .min(1)
       .max(MAX_QUESTION_SOURCES)
       .meta({ description: "The learner's own material to answer from (`POST /v1/uploads`)" }),

@@ -1,8 +1,9 @@
 import { checkpointRefSchema } from "@zoonk/core/sessions/day-block";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 export const checkpointAnsweredQuestionsSchema = z
-  .array(z.object({ isCorrect: z.boolean(), itemId: z.uuid() }))
+  .array(z.object({ isCorrect: z.boolean(), itemId: uuidSchema() }))
   .optional()
   .meta({
     description: "Saved checkpoint verdicts, including questions whose content was removed",

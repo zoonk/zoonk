@@ -4,6 +4,7 @@ import { mockFundingSchema } from "@zoonk/core/plans/mock-funding-contract";
 import { noticedPatternSchema } from "@zoonk/core/view-models/language/contract";
 import { TODAY_NOTICE_KINDS } from "@zoonk/core/view-models/today/notice";
 import { GoalKind } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { lessonGenerationStatusSchema } from "./content-generation";
 import { examMomentSchema } from "./exams";
@@ -18,7 +19,7 @@ import { uploadRequestSchema } from "./upload-request";
 export const todayResponseSchema = z
   .object({
     earlierWork: z
-      .array(z.object({ id: z.uuid().nullable(), title: z.string() }))
+      .array(z.object({ id: uuidSchema().nullable(), title: z.string() }))
       .describe(
         "Earlier unfinished saved teaching, in plan order. Start settles it into the current plan; this list does not promise it all fits one session.",
       ),
@@ -47,7 +48,7 @@ export const todayResponseSchema = z
           description:
             "Whole days until the goal's date, 0 on the day itself; null for a goal without one and once its date passed",
         }),
-      id: z.uuid(),
+      id: uuidSchema(),
       kind: z.enum(GoalKind),
       targetDate: logicalDateSchema.nullable(),
       title: z.string(),
@@ -56,7 +57,7 @@ export const todayResponseSchema = z
       .nullable()
       .meta({ description: "At most one insight from recent sessions, until it's answered" }),
     lessonStatus: z
-      .record(z.uuid(), lessonGenerationStatusSchema)
+      .record(uuidSchema(), lessonGenerationStatusSchema)
       .meta({
         description:
           "Where each lesson of the day's learn blocks stands; a stop still being written says so. Follow one with `/v1/library/lessons/{lessonId}/readiness`",
@@ -153,19 +154,16 @@ export const todayResponseSchema = z
         description:
           "The official document or class material research couldn't read, asked of the learner until they upload it (POST /v1/uploads, then POST /v1/research with its source) or dismiss it (DELETE /v1/goals/{goalId}/upload-request); null when research needs nothing",
       }),
-    userId: z
-      .uuid()
-      .meta({
-        description:
-          "The authenticated viewer who produced this response. Discard a delayed response if that learner is no longer current.",
-      }),
+    userId: uuidSchema().meta({
+      description:
+        "The authenticated viewer who produced this response. Discard a delayed response if that learner is no longer current.",
+    }),
     weeklyChallenge: z
       .object({
         access: z.enum(["open", "plusRequired"]),
         date: logicalDateSchema.nullable(),
         kind: z.enum(["mixed", "mock"]),
-        planItemId: z
-          .uuid()
+        planItemId: uuidSchema()
           .nullable()
           .meta({
             description:

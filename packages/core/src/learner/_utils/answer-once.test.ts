@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { describe, expect, it } from "vitest";
-import { z } from "zod";
 import { getAnswerAttemptId } from "./answer-once";
 
 describe(getAnswerAttemptId, () => {
@@ -11,7 +11,7 @@ describe(getAnswerAttemptId, () => {
     const otherUserId = randomUUID();
     const id = getAnswerAttemptId({ key, questionId, userId });
 
-    expect(z.uuid().safeParse(id).success).toBe(true);
+    expect(uuidSchema().safeParse(id).success).toBe(true);
     expect(getAnswerAttemptId({ key, questionId, userId })).toBe(id);
     expect(getAnswerAttemptId({ key, questionId, userId: otherUserId })).not.toBe(id);
     expect(getAnswerAttemptId({ key, questionId: otherUserId, userId })).not.toBe(id);

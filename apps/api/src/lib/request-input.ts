@@ -1,6 +1,4 @@
 import { safeAsync } from "@zoonk/utils/error";
-import { isJsonObject } from "@zoonk/utils/json";
-import { isUuid } from "@zoonk/utils/uuid";
 import { z } from "zod";
 import { resolveAudioMediaType } from "./audio-media-type";
 
@@ -19,37 +17,8 @@ function refuse(message: string): InvalidRequestError {
   return new InvalidRequestError(new z.ZodError([{ code: "custom", message, path: [] }]));
 }
 
-/** Deeper than any request schema nests, so Zod refuses what lies below it. */
-const MAX_ID_DEPTH = 32;
-
-function lowercaseUuids(value: unknown, depth = 0): unknown {
-  if (isUuid(value)) {
-    return value.toLowerCase();
-  }
-
-  if (depth === MAX_ID_DEPTH) {
-    return value;
-  }
-
-  if (Array.isArray(value)) {
-    return value.map((item) => lowercaseUuids(item, depth + 1));
-  }
-
-  if (isJsonObject(value)) {
-    return Object.fromEntries(
-      Object.entries(value).map(([key, item]) => [key, lowercaseUuids(item, depth + 1)]),
-    );
-  }
-
-  return value;
-}
-
-/**
- * Ids reach core lowercase, as the database returns them: core and Prisma's batched `findUnique`
- * match ids with `===`, while clients may send any case.
- */
 export function parseInput<T>(schema: z.ZodType<T>, input: unknown): T {
-  const result = schema.safeParse(lowercaseUuids(input));
+  const result = schema.safeParse(input);
 
   if (!result.success) {
     throw new InvalidRequestError(result.error);

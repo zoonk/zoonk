@@ -1,9 +1,10 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 export const catchUpSchema = z
   .object({
     blockIds: z
-      .array(z.uuid())
+      .array(uuidSchema())
       .meta({ description: "The day's blocks that catch up: label them so" }),
     later: z
       .object({

@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../learner/contract";
 import { lessonRunIdSchema } from "./_utils/lesson-run-id";
@@ -8,7 +9,7 @@ export const libraryLessonCompletionInputSchema = z
   .object({
     runId: lessonRunIdSchema,
     skippedWritingStepIds: z
-      .array(z.uuid())
+      .array(uuidSchema())
       .max(MAX_SKIPPED_WRITING_STEPS)
       .optional()
       .meta({

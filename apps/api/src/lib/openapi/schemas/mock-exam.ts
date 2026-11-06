@@ -15,6 +15,7 @@ import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labe
 import { milestoneSchema, missionMomentSchema } from "@zoonk/core/sessions/completion-contract";
 import { reachedSchema } from "@zoonk/core/sessions/reached";
 import { MistakeCause } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import {
   itemCitationSchema,
@@ -45,7 +46,7 @@ const mockQuestionSchema = z.object({
         "How it's answered: a pick (`multipleChoice`, by `select`; `trueFalse`), a number typed into the answer box (`numeric`, `{ number }`, beside `unit`), a word or a short answer typed in (`typed`, `{ text }`), or a full mock's written part (`essay`: an essay, a discursive test), its text (`{ text }`) on the section's clock",
     }),
   image: questionImageSchema,
-  itemId: z.uuid(),
+  itemId: uuidSchema(),
   number: z.number().int().min(1),
   options: z.array(z.string()).nullable(),
   question: z.string(),
@@ -56,7 +57,7 @@ const mockQuestionSchema = z.object({
       description:
         "The text, case or chart it shares with its set's other questions, asked together in the set's order: show it with each of them",
     }),
-  skillId: z.uuid(),
+  skillId: uuidSchema(),
   unit: questionUnitSchema,
   visual: questionVisualSchema,
 });
@@ -66,7 +67,7 @@ const mockEssaySchema = z
     area: z.string().nullable(),
     context: z.string().nullable(),
     grade: essayGradeSchema.nullable(),
-    itemId: z.uuid(),
+    itemId: uuidSchema(),
     question: z.string(),
     status: z
       .enum(["blank", "graded", "pending"])
@@ -109,7 +110,7 @@ const mockAdaptSchema = z
 export const mockViewResponseSchema = z
   .object({
     adapt: mockAdaptSchema,
-    blockId: z.uuid(),
+    blockId: uuidSchema(),
     brainPower: z.number().int(),
     breakUntil: z.iso
       .datetime()
@@ -144,7 +145,7 @@ export const mockViewResponseSchema = z
             answer: mockAnswerSchema.nullable(),
             durationMs: z.number().int(),
             flagged: z.boolean(),
-            itemId: z.uuid(),
+            itemId: uuidSchema(),
           }),
         ),
         kind: z
@@ -155,7 +156,7 @@ export const mockViewResponseSchema = z
               "`listening`: its questions are on recordings (each question's `set.listening`, played as many times as the exam does); `speaking`: the speaking paper, with no questions (see `speaking`); null for the others",
           }),
         plays: z
-          .array(z.object({ played: z.number().int().min(0), setId: z.uuid() }))
+          .array(z.object({ played: z.number().int().min(0), setId: uuidSchema() }))
           .meta({
             description:
               "A listening section's recordings with the plays already counted (POST /v1/mocks/{blockId}/plays as each play starts), so another tab or device has the same plays left; empty for other sections",
@@ -200,7 +201,7 @@ export const mockViewResponseSchema = z
           "The exam's questions for what a mock taken any time sits, when it asks fewer (the bank had too few new ones, and a full mock never repeats answered ones): say how many of them it asks. Null when it asks them all",
       }),
     fullLength: z.boolean(),
-    goalId: z.uuid().nullable(),
+    goalId: uuidSchema().nullable(),
     leftOut: mockLeftOutSchema,
     minutes: z.number().int(),
     missionMoment: missionMomentSchema
@@ -219,8 +220,7 @@ export const mockViewResponseSchema = z
         description:
           "What it takes to pass, in the notice's own words, for a mock of the whole exam: show it beside the score, saying its language when it isn't the learner's; null otherwise",
       }),
-    planItemId: z
-      .uuid()
+    planItemId: uuidSchema()
       .nullable()
       .meta({ description: "The plan item it plays: its challenge, before and on its day" }),
     purpose: mockPurposeSchema,
@@ -249,7 +249,7 @@ export const mockViewResponseSchema = z
         correctAnswer: z.string().nullable(),
         explanation: z.string().nullable(),
         format: z.enum(MOCK_QUESTION_FORMATS),
-        itemId: z.uuid(),
+        itemId: uuidSchema(),
         learnerAnswer: z.string().nullable(),
         number: z.number().int(),
         outcome: z
@@ -266,8 +266,7 @@ export const mockViewResponseSchema = z
     scoring: z.enum(MOCK_SCORINGS),
     scoringNote: z.string().nullable(),
     sections: z.array(mockSectionSchema),
-    sessionId: z
-      .uuid()
+    sessionId: uuidSchema()
       .nullable()
       .meta({ description: "The study session it was played in; null for a mock taken any time" }),
     shape: mockShapeSchema

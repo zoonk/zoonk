@@ -1,4 +1,5 @@
 import { type GoalKind } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type MockIdentity } from "../plans/planner/mock-identity";
 import { type DayView } from "./day-view";
@@ -31,7 +32,7 @@ export const checkpointRefSchema = z.discriminatedUnion("mock", [
 export const dayBlockRefSchema = z
   .object({
     areaId: areaIdSchema.nullable(),
-    chapterId: z.uuid().nullable(),
+    chapterId: uuidSchema().nullable(),
     checkpoint: checkpointRefSchema.nullable(),
     flags: z
       .object({
@@ -44,7 +45,7 @@ export const dayBlockRefSchema = z
       })
       .strict(),
     kind: z.enum(["learn", "review", "practice", "produce", "checkpoint"]),
-    lessonId: z.uuid().nullable(),
+    lessonId: uuidSchema().nullable(),
     planItemKey: z.string().max(MAX_PLAN_ITEM_KEY_LENGTH).nullable(),
     position: z.int().nonnegative(),
   })

@@ -1,4 +1,5 @@
 import { type PlanBasesView } from "@zoonk/core/plans/view-contract";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const minutesSchema = z.int().min(1);
@@ -35,7 +36,7 @@ export const planBasesSchema = z
               description:
                 "What's built on it and worth more: an exam's notice topics, in the notice's own words, or a goal's outcome skills (its portfolio, its job search), the most valuable first",
             }),
-          skillId: z.uuid(),
+          skillId: uuidSchema(),
           studied: z
             .boolean()
             .meta({

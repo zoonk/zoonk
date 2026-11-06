@@ -1,4 +1,5 @@
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 /** An hour covers a slow typed answer; anything longer is a tab left open, not answering time. */
@@ -38,7 +39,7 @@ export const choiceAnswerSchema = z
 export type ChoiceAnswer = z.infer<typeof choiceAnswerSchema>;
 
 export const itemAnswerInputSchema = z
-  .object({ answer: choiceAnswerSchema, durationMs: answerDurationSchema, itemId: z.uuid() })
+  .object({ answer: choiceAnswerSchema, durationMs: answerDurationSchema, itemId: uuidSchema() })
   .strict()
   .meta({ id: "ItemAnswerInput" });
 
@@ -60,7 +61,9 @@ export const skillListInputSchema = z
       .enum(["all", "new", "learning", "solid", "mastered", "fading"])
       .optional()
       .meta({ description: "Mastered is the gold card; fading means memory is dropping" }),
-    goalId: z.uuid().optional().meta({ description: "Only this goal's skills, New ones included" }),
+    goalId: uuidSchema()
+      .optional()
+      .meta({ description: "Only this goal's skills, New ones included" }),
   })
   .strict()
   .meta({ id: "SkillListQuery" });
@@ -69,8 +72,7 @@ export type SkillListInput = z.infer<typeof skillListInputSchema>;
 
 export const reviewScheduleInputSchema = z
   .object({
-    goalId: z
-      .uuid()
+    goalId: uuidSchema()
       .optional()
       .meta({ description: "Only this goal's skills, capped by its daily time" }),
     timeZone: answerTimeZoneSchema,

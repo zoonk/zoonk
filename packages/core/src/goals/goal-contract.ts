@@ -1,6 +1,7 @@
 import { GoalKind } from "@zoonk/db";
 import { LANGUAGE_CODE_PATTERN, toCanonicalLanguage } from "@zoonk/utils/languages";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
 import { DAYS_PER_WEEK } from "../plans/planner/plan-state";
@@ -84,10 +85,10 @@ export const goalDraftSchema = z
   .object({
     dailyMinutes: dailyMinutesSchema.optional(),
     details: detailsSchema.optional(),
-    examBlueprintId: z.uuid().optional(),
+    examBlueprintId: uuidSchema().optional(),
     kind: z.enum(GoalKind),
     language: languageSchema.meta({ description: "The language the learner studies in" }),
-    primaryCourseId: z.uuid().optional(),
+    primaryCourseId: uuidSchema().optional(),
     prompt: z
       .string()
       .trim()
@@ -118,7 +119,7 @@ export const goalCreateInputSchema = z
     }),
     goals: z.array(goalDraftSchema).min(1).max(MAX_GOALS_AT_ONCE),
     sourceIds: z
-      .array(z.uuid())
+      .array(uuidSchema())
       .max(MAX_GOAL_SOURCES)
       .optional()
       .meta({

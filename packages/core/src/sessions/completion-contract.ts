@@ -1,5 +1,6 @@
 import { type Milestone } from "@zoonk/db";
 import { BELT_COLORS_ORDER, getBeltStartBrainPower } from "@zoonk/utils/belt-level";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import {
   type OwnedCertificateFacts,
@@ -60,7 +61,7 @@ export type StudyBlockCompletion = {
   total: number;
 };
 
-const idSchema = z.uuid();
+const idSchema = uuidSchema();
 const countSchema = z.number().int().min(0);
 
 /** Off-session activity points exclude the separately displayed daily mission reward. */

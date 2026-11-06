@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import {
   itemCitationSchema,
@@ -10,7 +11,7 @@ import {
 import { itemSetSchema } from "./item-set";
 import { mistakeDrillSchema } from "./mistakes";
 
-const idSchema = z.uuid();
+const idSchema = uuidSchema();
 
 export const studyBlockQuestionSchema = z.object({
   answered: z

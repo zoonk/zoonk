@@ -1,4 +1,5 @@
 import { exerciseContentWith } from "@zoonk/core/player/contracts/exercise-content";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const wordBankOptionSchema = z.object({
@@ -48,7 +49,7 @@ const translationOptionSchema = z.object({
 
 const serializedStepResourceShape = {
   fillBlankOptions: z.array(wordBankOptionSchema),
-  id: z.uuid(),
+  id: uuidSchema(),
   matchColumnsRightItems: z.array(z.string()),
   position: z.number().int().min(0),
   readingPromptWords: z.array(readingPromptWordSchema),

@@ -6,6 +6,7 @@ import {
   type PlacementMockOptionView,
   mockShapeSchema,
 } from "@zoonk/core/exams/mocks/contract";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { examMockSummarySchema } from "./exam-mock-summary";
 import { mockPurposeSchema } from "./mock-exam";
@@ -86,7 +87,7 @@ export const mockOptionsResponseSchema = z
       }),
     examDocument: examDocumentSchema,
     examName: z.string(),
-    goalId: z.uuid(),
+    goalId: uuidSchema(),
     lastMock: examMockSummarySchema
       .nullable()
       .meta({
@@ -102,7 +103,7 @@ export const mockOptionsResponseSchema = z
     placement: z
       .object({
         mock: z
-          .object({ id: z.uuid(), status: z.enum(["finished", "running"]) })
+          .object({ id: uuidSchema(), status: z.enum(["finished", "running"]) })
           .nullable()
           .meta({ description: "The goal's placement mock, once started" }),
         options: z
@@ -121,7 +122,7 @@ export const mockOptionsResponseSchema = z
           "A diagnostic mock in the exam's format, taken in onboarding instead of the quick placement (POST with `purpose: placement` and a `length`): its questions spread over every subject's topics set where the plan starts. Null when the exam has no questions to ask",
       }),
     running: z
-      .object({ id: z.uuid(), purpose: mockPurposeSchema, shape: mockShapeSchema.nullable() })
+      .object({ id: uuidSchema(), purpose: mockPurposeSchema, shape: mockShapeSchema.nullable() })
       .nullable()
       .meta({
         description:
@@ -139,8 +140,7 @@ export const anytimeMockResponseSchema = z
       .min(0)
       .optional()
       .meta({ description: "For `short`: the questions of what was picked, in the real exam" }),
-    id: z
-      .uuid()
+    id: uuidSchema()
       .nullable()
       .meta({
         description: "The mock's id (GET /v1/mocks/{id}); null for needsQuestions and short",
@@ -193,8 +193,7 @@ export const mockQuestionsGenerationSchema = z
 
 export const mockPlanOfferResultSchema = z
   .object({
-    changeId: z
-      .uuid()
+    changeId: uuidSchema()
       .nullable()
       .meta({
         description: "The plan change it made, whose undo brings it back; null when unchanged",

@@ -1,4 +1,5 @@
 import { type GoalTutorAppTool } from "@zoonk/ai/tasks/tutor/goal-tutor-tools";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { lessonStepAnswerSchema } from "../lesson-player/contract";
 import { planChangeSchema } from "../plans/plan-change-contract";
@@ -17,7 +18,7 @@ export const MAX_LESSON_QUESTION_THREAD_TURNS = 50;
 
 const MAX_LESSON_QUESTION_STEP_NUMBER = 2_147_483_647;
 
-const lessonQuestionThreadCursorSchema = z.uuid();
+const lessonQuestionThreadCursorSchema = uuidSchema();
 
 const SCREEN_CONTEXT_KINDS = ["chapter", "plan", "mock", "subject"] as const;
 
@@ -33,26 +34,30 @@ export const getLessonQuestionThreadInputSchema = z
   .object({
     contextKind: z.enum(["lesson", "step", "answer", "item", ...SCREEN_CONTEXT_KINDS]).optional(),
     cursor: lessonQuestionThreadCursorSchema.optional(),
-    stepId: z.uuid().optional(),
+    stepId: uuidSchema().optional(),
   })
   .strict();
 
 const lessonQuestionLessonContextInputSchema = z
-  .object({ kind: z.literal("lesson"), stepIds: z.array(z.uuid()).optional() })
+  .object({ kind: z.literal("lesson"), stepIds: z.array(uuidSchema()).optional() })
   .strict();
 
 /** Client ordinals are presentation-only because screens can shuffle; content is always resolved by step id. */
 const lessonQuestionStepNumberSchema = z.number().int().min(1).max(MAX_LESSON_QUESTION_STEP_NUMBER);
 
 const lessonQuestionStepContextInputSchema = z
-  .object({ kind: z.literal("step"), stepId: z.uuid(), stepNumber: lessonQuestionStepNumberSchema })
+  .object({
+    kind: z.literal("step"),
+    stepId: uuidSchema(),
+    stepNumber: lessonQuestionStepNumberSchema,
+  })
   .strict();
 
 const lessonQuestionAnswerContextInputSchema = z
   .object({
     answer: lessonStepAnswerSchema,
     kind: z.literal("answer"),
-    stepId: z.uuid(),
+    stepId: uuidSchema(),
     stepNumber: lessonQuestionStepNumberSchema,
   })
   .strict();
@@ -63,8 +68,7 @@ const lessonQuestionScreenContextSchema = z.object({ kind: z.enum(SCREEN_CONTEXT
 const lessonQuestionItemContextSchema = z
   .object({
     answered: z.boolean(),
-    blockId: z
-      .uuid()
+    blockId: uuidSchema()
       .optional()
       .meta({ description: "The session block it's asked in; absent in mistakes practice" }),
     kind: z.literal("item"),
@@ -83,7 +87,7 @@ export const createLessonQuestionInputSchema = z
   .object({
     context: lessonQuestionContextInputSchema,
     question: z.string().trim().min(1).max(MAX_LESSON_QUESTION_LENGTH),
-    requestId: z.uuid(),
+    requestId: uuidSchema(),
     /** The server words suggestions and may share their answers; typed learner questions remain personal. */
     suggestion: z.enum(LESSON_SCREEN_SUGGESTIONS).optional(),
   })
@@ -101,7 +105,7 @@ const tutorOfferCourseSchema = z
   .object({
     brandSlug: z.string(),
     description: z.string().nullable(),
-    id: z.uuid(),
+    id: uuidSchema(),
     imageUrl: z.string().nullable(),
     slug: z.string(),
     title: z.string(),
@@ -134,13 +138,11 @@ export const tutorToolOfferSchema = z
       .strict(),
     z
       .object({
-        chapterId: z
-          .uuid()
-          .meta({
-            description: "The chapter whose test-out to start (`POST …/test-out/generations`)",
-          }),
+        chapterId: uuidSchema().meta({
+          description: "The chapter whose test-out to start (`POST …/test-out/generations`)",
+        }),
         chapterTitle: z.string(),
-        goalId: z.uuid(),
+        goalId: uuidSchema(),
         kind: z.literal("chapterTest"),
         lessonsLeft: z
           .int()
@@ -150,7 +152,7 @@ export const tutorToolOfferSchema = z
       .strict(),
     z
       .object({
-        goalId: z.uuid(),
+        goalId: uuidSchema(),
         kind: z
           .literal("chooseFocus")
           .meta({ description: "Choosing which subjects get the plan's depth, or the focus test" }),
@@ -159,10 +161,10 @@ export const tutorToolOfferSchema = z
     z
       .object({
         call: practiceCallSchema,
-        chapterId: z
-          .uuid()
-          .meta({ description: "The unit whose practice call to start (`kind: practice`)" }),
-        goalId: z.uuid(),
+        chapterId: uuidSchema().meta({
+          description: "The unit whose practice call to start (`kind: practice`)",
+        }),
+        goalId: uuidSchema(),
         kind: z.literal("conversationCall"),
         unitTitle: z.string(),
       })
@@ -170,7 +172,7 @@ export const tutorToolOfferSchema = z
     z
       .object({
         access: tutorOfferAccessSchema,
-        goalId: z.uuid(),
+        goalId: uuidSchema(),
         kind: z
           .literal("mockExam")
           .meta({
@@ -189,7 +191,7 @@ export const tutorToolOfferSchema = z
       .object({
         access: tutorOfferAccessSchema,
         cadence: z.enum(WRITTEN_CADENCES).meta({ description: "When the plan practices it" }),
-        goalId: z.uuid(),
+        goalId: uuidSchema(),
         kind: z
           .literal("essay")
           .meta({ description: "The exam's written test, as its subject's page in the plan" }),
@@ -203,7 +205,7 @@ export const tutorToolOfferSchema = z
       .strict(),
     z
       .object({
-        goalId: z.uuid(),
+        goalId: uuidSchema(),
         kind: z.literal("mistakes").meta({ description: "The goal's mistakes notebook" }),
         open: z.int().min(1).meta({ description: "Mistakes waiting to be fixed" }),
       })
@@ -211,7 +213,7 @@ export const tutorToolOfferSchema = z
     z
       .object({
         count: z.int().min(1).meta({ description: "Words due to be said again" }),
-        goalId: z.uuid(),
+        goalId: uuidSchema(),
         kind: z
           .literal("pronunciation")
           .meta({ description: "Saying again the words the learner mispronounced" }),
@@ -244,14 +246,14 @@ const lessonQuestionContextSummarySchema = z.discriminatedUnion("kind", [
   z
     .object({
       kind: z.literal("step"),
-      stepId: z.uuid().nullable(),
+      stepId: uuidSchema().nullable(),
       stepNumber: lessonQuestionStepNumberSchema,
     })
     .strict(),
   z
     .object({
       kind: z.literal("answer"),
-      stepId: z.uuid().nullable(),
+      stepId: uuidSchema().nullable(),
       stepNumber: lessonQuestionStepNumberSchema,
     })
     .strict(),
@@ -262,7 +264,7 @@ export const lessonQuestionResourceSchema = z
     answer: z.string().nullable(),
     context: lessonQuestionContextSummarySchema,
     createdAt: z.iso.datetime(),
-    id: z.uuid(),
+    id: uuidSchema(),
     /** Proposals require a learner tap before applying. */
     planChange: planChangeSchema.nullable(),
     question: z.string(),
@@ -275,8 +277,8 @@ export const lessonQuestionResourceSchema = z
 export const lessonQuestionThreadResourceSchema = z
   .object({
     hasMore: z.boolean(),
-    id: z.uuid(),
-    lessonId: z.uuid().nullable(),
+    id: uuidSchema(),
+    lessonId: uuidSchema().nullable(),
     nextCursor: lessonQuestionThreadCursorSchema.nullable(),
     questions: z.array(lessonQuestionResourceSchema),
   })
@@ -313,7 +315,7 @@ export type LessonQuestionResource = z.infer<typeof lessonQuestionResourceSchema
 export type CreatedLessonQuestion = z.infer<typeof createdLessonQuestionSchema>;
 export type LessonQuestionThreadResource = z.infer<typeof lessonQuestionThreadResourceSchema>;
 
-const memoryFactSummarySchema = z.object({ id: z.uuid(), statement: z.string() }).nullable();
+const memoryFactSummarySchema = z.object({ id: uuidSchema(), statement: z.string() }).nullable();
 
 /** Sent after answer text as data-memory; consumers may offer undo. */
 export const lessonQuestionMemoryChangesSchema = z.array(
@@ -335,7 +337,7 @@ export const LESSON_QUESTION_TOOL_OFFER_PART = "data-tool-offer";
 /** Replaced proposal ids let clients invalidate earlier cards without rereading the thread. */
 export const LESSON_QUESTION_REPLACED_CHANGES_PART = "data-plan-changes-replaced";
 
-export const replacedPlanChangesSchema = z.object({ ids: z.array(z.uuid()) });
+export const replacedPlanChangesSchema = z.object({ ids: z.array(uuidSchema()) });
 
 /** Only saved answer text has validated live links; streamed text must remain unlinked until this replacement arrives. */
 export const LESSON_QUESTION_SAVED_ANSWER_PART = "data-saved-answer";

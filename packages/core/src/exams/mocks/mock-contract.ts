@@ -1,5 +1,6 @@
 import { PARTIAL_CREDIT_RULES } from "@zoonk/ai/tasks/research/partial-credit";
 import { type MistakeCause } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type OwnedCertificateFacts } from "../../certificates/certificate-contract";
 import { type ExamDayChecklistItem } from "../../checkpoints/weekly-challenge-rules";
@@ -75,7 +76,7 @@ const mockSectionSchema = z.object({
   navigation: sectionNavigationSchema.nullable().optional(),
   questions: z.int().min(0),
   routing: routingSchema.nullable(),
-  speakingSectionId: z.uuid().nullable().optional(),
+  speakingSectionId: uuidSchema().nullable().optional(),
   tools: z.string().nullable().optional(),
 });
 

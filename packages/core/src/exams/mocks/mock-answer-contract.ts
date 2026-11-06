@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { MAX_ESSAY_CHARACTERS } from "../essays/essay-contract";
 
@@ -54,7 +55,7 @@ export const mockAnswerInputSchema = z
       .max(MAX_ANSWER_DURATION_MS)
       .meta({ description: "Total time spent on the question so far" }),
     flagged: z.boolean().meta({ description: "Marked to come back to; also means unsure" }),
-    itemId: z.uuid(),
+    itemId: uuidSchema(),
   })
   .strict()
   .meta({ id: "MockAnswerInput" });
@@ -62,6 +63,8 @@ export const mockAnswerInputSchema = z
 export type MockAnswerInput = z.infer<typeof mockAnswerInputSchema>;
 
 export const mockPlayInputSchema = z
-  .object({ setId: z.uuid().meta({ description: "The recording's set: a question's `set.id`" }) })
+  .object({
+    setId: uuidSchema().meta({ description: "The recording's set: a question's `set.id`" }),
+  })
   .strict()
   .meta({ id: "MockPlayInput" });
