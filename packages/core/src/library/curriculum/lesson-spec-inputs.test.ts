@@ -205,11 +205,13 @@ describe(loadLessonSpecInputs, () => {
   it("grounds a product lesson in its product's pages even in another language than theirs", async () => {
     const brand = await brandFixture();
     const product = await productFixture({ organizationId: brand.id });
+
     const course = await courseFixture({
       language: "pt",
       organizationId: brand.id,
       productId: product.id,
     });
+
     const chapter = await libraryChapterFixture({ homeCourseId: course.id, language: "pt" });
 
     const [lesson] = await Promise.all([
