@@ -59,6 +59,24 @@ describe(listEndsBeforeLessons, () => {
     ).toStrictEqual([]);
   });
 
+  it("never counts the end of a phase whose challenge the learner already won", () => {
+    const won = {
+      key: "boss:0",
+      kind: "boss" as const,
+      lessonId: null,
+      phase: 0,
+      scheduledFor: end,
+      skillId: null,
+      status: "done" as const,
+    };
+
+    const items = [won, filed("a", "arrival", "2026-10-19"), filed("b", "renting", "2026-10-20")];
+
+    expect(
+      listEndsBeforeLessons({ ends, given, items, units: [{ depth: false, key: "a" }] }),
+    ).toStrictEqual([]);
+  });
+
   it("lets depth a plan short on time studies later come after the challenge", () => {
     const items = [filed("a", "arrival", "2026-10-19"), filed("b", "renting", "2026-10-20")];
 

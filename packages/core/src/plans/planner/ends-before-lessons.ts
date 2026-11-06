@@ -32,7 +32,15 @@ export function listEndsBeforeLessons({
     units.flatMap((unit) => (unit.depth && !core.has(unit.key) ? [unit.key] : [])),
   );
 
-  const lessons = items.filter(
+  // A lesson that spills past its phase's end is filed under the next phase but still belongs to
+  // its skill's phase, or to its chapter's level in a course.
+  const home = items.map((item) => ({
+    ...item,
+    phase:
+      courseLevels.get(item.lessonId ?? "") ?? skillPhases.get(item.skillId ?? "") ?? item.phase,
+  }));
+
+  const lessons = home.filter(
     (item) =>
       LEARN_KINDS.has(item.kind) &&
       item.status === "todo" &&
@@ -40,17 +48,12 @@ export function listEndsBeforeLessons({
       !depth.has(item.key),
   );
 
-  const won = listWonPhases(items);
-
-  // A lesson that spills past its phase's end is filed under the next phase but still belongs to
-  // its skill's phase, or to its chapter's level in a course.
-  const homePhase = (item: (typeof lessons)[number]) =>
-    courseLevels.get(item.lessonId ?? "") ?? skillPhases.get(item.skillId ?? "") ?? item.phase;
+  const won = listWonPhases(home);
 
   return [...ends].flatMap(([phase, date]) =>
     !won.has(phase) &&
     lessons.some(
-      (item) => homePhase(item) <= phase && item.scheduledFor !== null && item.scheduledFor > date,
+      (item) => item.phase <= phase && item.scheduledFor !== null && item.scheduledFor > date,
     )
       ? [phase]
       : [],
