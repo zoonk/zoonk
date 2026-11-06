@@ -5,7 +5,7 @@ ALTER TABLE "items" ADD COLUMN     "source_hash" TEXT;
 CREATE TABLE "library_step_sources" (
     "step_id" UUID NOT NULL,
     "source_id" UUID NOT NULL,
-    "content_hash" TEXT NOT NULL,
+    "content_hash" TEXT,
 
     CONSTRAINT "library_step_sources_pkey" PRIMARY KEY ("step_id","source_id")
 );
