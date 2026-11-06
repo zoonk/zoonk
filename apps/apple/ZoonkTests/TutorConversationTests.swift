@@ -211,6 +211,21 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertTrue(api.suggestions.isEmpty)
   }
 
+  func testAnOfferWaitsWhileAnEarlierQuestionIsUnsent() async {
+    let api = TutorAPIStub(askFailures: [APIError.network])
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+    conversation.draft = "Is it saved?"
+    await conversation.send()
+    let simpler = TutorSuggestion(
+      id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
+
+    await conversation.ask(TutorDraft(suggestion: simpler, offer: UUID()))
+
+    XCTAssertEqual(api.requestIDs.count, 1, "the unsent question isn't sent again on its own")
+    XCTAssertTrue(conversation.hasUnsentQuestion)
+  }
+
   func testAnOfferLeftBeforeTheThreadLoadsIsNeverAsked() async {
     let api = TutorAPIStub()
     let conversation = makeConversation(api: api)

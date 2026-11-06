@@ -143,7 +143,7 @@ final class TutorConversation {
       return
     }
 
-    if canAsk {
+    if canAsk && !hasUnsentQuestion {
       await send(draft.suggestion)
     } else if self.draft == typed {
       fill(draft)
