@@ -65,6 +65,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/research/find-choice-options": { findChoiceOptions: vi.fn() },
   "@zoonk/ai/tasks/research/find-course-weights": { findCourseWeights: vi.fn() },
   "@zoonk/ai/tasks/research/find-official-sources": { findOfficialSources: vi.fn() },
+  "@zoonk/ai/tasks/research/find-product-pages": { findProductPages: vi.fn() },
   "@zoonk/ai/tasks/research/find-subject-questions": { findSubjectQuestions: vi.fn() },
   "@zoonk/ai/tasks/research/find-target-cutoff": { findTargetCutoff: vi.fn() },
   "@zoonk/ai/tasks/research/find-topic-frequency": { findTopicFrequency: vi.fn() },
