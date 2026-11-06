@@ -101,59 +101,12 @@ final class StepMarksTests: XCTestCase {
       parts.before?.text, "1. Heat the water.\n2. Add the tea.\n3. Pour it into a cup.")
   }
 
-  func testLateMarksDrawOnTheScreenInViewAndAddTheRestOnTheNextVisit() throws {
-    var state = LessonPlayerState(
-      lessonId: "lesson", steps: [try explanation("first"), try explanation("second")],
-      hasMap: true)
-
-    state.applyMarks(from: [
-      try explanation("first", marks: #"{"ideaIndex": 0, "underline": "Cells make up"}"#),
-      try explanation("second", marks: #"{"ideaIndex": 1}"#),
-    ])
-
-    XCTAssertEqual(
-      state.steps["first"]?.marks, StepMarks(underline: "Cells make up"),
-      "only what draws on the text, so the screen in view keeps its layout")
-    XCTAssertEqual(state.steps["second"]?.marks?.ideaIndex, 1)
-
-    state.continueLesson()
-    XCTAssertEqual(
-      state.steps["first"]?.marks, StepMarks(ideaIndex: 0, underline: "Cells make up"))
-  }
-
-  func testALateIconLeavesTheLayoutTheScreenInViewAlreadyShows() throws {
-    var state = LessonPlayerState(
-      lessonId: "lesson",
-      steps: [try explanation("first", marks: #"{"ideaIndex": 0, "example": "Cells."}"#)],
-      hasMap: true)
-    let icon =
-      #"{"url": "https://cdn.test/cell-256.webp", "smallUrl": "https://cdn.test/cell-96.webp"}"#
-
-    state.applyMarks(from: [
-      try explanation("first", marks: #"{"ideaIndex": 0, "example": "Cells.", "icon": \#(icon)}"#)
-    ])
-
-    XCTAssertEqual(state.steps["first"]?.marks, StepMarks(ideaIndex: 0, example: "Cells."))
-  }
-
   func testAnExampleInsideANumberedListWithWindowsLineEndingsLeavesTheListWhole() {
     let parts = LessonTextParts(
       "1. Heat the water.\r\n2. Add the tea.\r\n3. Pour it into a cup.",
       marks: StepMarks(example: "2. Add the tea."))
 
     XCTAssertNil(parts.example)
-  }
-
-  func testHeldMarksShowOnceAnotherScreenComesFirst() throws {
-    var state = LessonPlayerState(
-      lessonId: "lesson", steps: [try check("check"), try explanation("explanation")])
-
-    state.applyMarks(from: [try check("check", marks: #"{"ideaIndex": 1}"#)])
-    XCTAssertNil(state.steps["check"]?.marks?.ideaIndex)
-
-    state.explainFirst()
-    XCTAssertEqual(state.currentStep?.id, "explanation")
-    XCTAssertEqual(state.steps["check"]?.marks?.ideaIndex, 1)
   }
 
   @MainActor
@@ -191,44 +144,7 @@ final class StepMarksTests: XCTestCase {
     }
   }
 
-  func testMarksAreAwaitedWhileAnyScreenIsWithinItsWait() throws {
-    let now = Date.now
-    let written = { (minutesAgo: Double) in
-      Int(now.addingTimeInterval(-minutesAgo * 60).timeIntervalSince1970 * 1000)
-    }
-    let kept = try step(
-      #"{"id": "kept", "position": 0, "kind": "explanation", "pictureWaitStartedAt": \#(written(10)), "content": {"title": null, "text": "Cells make up living things."}}"#
-    )
-    let rewritten = try step(
-      #"{"id": "rewritten", "position": 1, "kind": "explanation", "pictureWaitStartedAt": \#(written(1)), "content": {"title": null, "text": "Cells divide."}}"#
-    )
-    let lesson = PlayableLesson(
-      id: "lesson", title: "A lesson", language: "en", targetLanguage: nil, chapterTitle: nil,
-      steps: [kept, rewritten], summary: nil, tutorSuggestions: [], marksPending: true)
-
-    XCTAssertTrue(lesson.isWaitingForMarks(openedAt: now, now: now))
-    XCTAssertFalse(lesson.isWaitingForMarks(openedAt: now, now: now.addingTimeInterval(5 * 60)))
-  }
-
   private func step(_ json: String) throws -> LessonStep {
     try JSONDecoder().decode(LessonStep.self, from: Data(json.utf8))
-  }
-
-  private func explanation(_ id: String, marks: String = "null") throws -> LessonStep {
-    try step(
-      """
-      {"id": "\(id)", "position": 0, "kind": "explanation", "marks": \(marks),
-       "content": {"title": null, "text": "Cells make up living things."}}
-      """)
-  }
-
-  private func check(_ id: String, marks: String = "null") throws -> LessonStep {
-    try step(
-      """
-      {"id": "\(id)", "position": 0, "kind": "check", "marks": \(marks),
-       "content": {"question": "Capital of France?", "basis": null, "options": [
-         {"id": "right", "isCorrect": true, "reason": "It is.", "text": "Paris"},
-         {"id": "wrong", "isCorrect": false, "reason": "That's Lyon.", "text": "Lyon"}]}}
-      """)
   }
 }

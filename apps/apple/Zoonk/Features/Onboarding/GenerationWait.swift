@@ -7,6 +7,7 @@ struct GenerationWait: Equatable, Sendable {
     case curriculum
     case explanation
     case levelTestBank
+    case lesson
   }
 
   enum PhaseState: Equatable, Sendable {
@@ -20,6 +21,8 @@ struct GenerationWait: Equatable, Sendable {
     let label: LocalizedStringResource
     /// Shown only once one of its steps is reported: runs skip it when it doesn't apply.
     let isOptional: Bool
+    /// Runs at the same time as the phase before it, so each finishes on its own steps.
+    var runsAlongside = false
     var state = PhaseState.waiting
     var isReported = false
     var skillName: String?
@@ -63,9 +66,15 @@ struct GenerationWait: Equatable, Sendable {
         return
       }
 
-      // Earlier phases are done once a later one reports.
-      for earlier in phases.indices where earlier < index {
+      let stage = stage(of: index)
+
+      // Earlier stages are done once a later one reports, and a stage's phases run together.
+      for earlier in phases.indices where earlier < stage.lowerBound {
         phases[earlier].state = .done
+      }
+
+      for alongside in stage where phases[alongside].state == .waiting {
+        phases[alongside].state = .working
       }
 
       phases[index].isReported = true
@@ -80,6 +89,13 @@ struct GenerationWait: Equatable, Sendable {
         isDone = true
       }
     }
+  }
+
+  /// The phases that run at the same time as the one at `index`, itself included.
+  private func stage(of index: Int) -> Range<Int> {
+    let start = phases[...index].lastIndex { !$0.runsAlongside } ?? 0
+    let end = phases[(index + 1)...].firstIndex { !$0.runsAlongside } ?? phases.endIndex
+    return start..<end
   }
 
   private enum Place {
@@ -107,6 +123,11 @@ struct GenerationWait: Equatable, Sendable {
     case (.explanation, "explanationReady"): .done
     case (.levelTestBank, "writeLevelTestBank"): .phase("bank")
     case (.levelTestBank, "levelTestBankReady"): .done
+    case (.lesson, "planLesson"): .phase("plan")
+    case (.lesson, "writeLesson"): .phase("write")
+    case (.lesson, "markLesson"): .phase("mark")
+    case (.lesson, "drawPictures"): .phase("draw")
+    case (.lesson, "lessonReady"): .done
     default: nil
     }
   }
@@ -184,6 +205,37 @@ struct GenerationWait: Equatable, Sendable {
             "Writing the level test questions", table: "Onboarding",
             comment: "The step of the wait while a language's level test questions are written"),
           isOptional: false)
+      ]
+    case .lesson:
+      [
+        Phase(
+          id: "plan",
+          label: LocalizedStringResource(
+            "Planning the lesson", table: "Player",
+            comment: "A step of the wait while a lesson is written"),
+          isOptional: false),
+        Phase(
+          id: "write",
+          label: LocalizedStringResource(
+            "Writing the lesson", table: "Player",
+            comment: "A step of the wait while a lesson is written"),
+          isOptional: false),
+        Phase(
+          id: "mark",
+          label: LocalizedStringResource(
+            "Highlighting the key ideas", table: "Player",
+            comment:
+              "A step of the wait while a lesson is written, like \"Planning the lesson\" and \"Writing the lesson\" before it. \"Ideas\" are the lesson map's ideas, as in \"Idea 2 of 4\"."
+          ),
+          isOptional: false),
+        Phase(
+          id: "draw",
+          label: LocalizedStringResource(
+            "Drawing the pictures", table: "Player",
+            comment:
+              "A step of the wait while a lesson is written, like \"Planning the lesson\" and \"Writing the lesson\" before it"
+          ),
+          isOptional: false, runsAlongside: true),
       ]
     }
   }

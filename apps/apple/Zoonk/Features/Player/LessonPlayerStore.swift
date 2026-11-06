@@ -45,6 +45,8 @@ final class LessonPlayerStore {
   /// the app, a guest's lesson ends as a learner's.
   private let fromCatalog: Bool
   private(set) var screen = Screen.loading
+  private(set) var writingProgress = GenerationWait(kind: .lesson).started
+  private var progressRun: String?
   private(set) var warmUp: WarmUp?
   private(set) var lesson: PlayableLesson?
   private(set) var state: LessonPlayerState?
@@ -277,15 +279,12 @@ final class LessonPlayerStore {
     screen = .playing
   }
 
-  /// Every few seconds, as the API asks, until a lesson written moments ago has its pictures and
-  /// marks or the wait ends.
-  func followLateContent() async {
-    while !Task.isCancelled, let state, let identity, let lesson,
-      lesson.marksPending || state.steps.values.contains(where: \.imagePending)
+  /// Every few seconds, as the API asks, until the pictures come or the wait ends.
+  func followLatePictures() async {
+    while !Task.isCancelled, let state, let identity,
+      state.steps.values.contains(where: \.imagePending)
     {
-      let isLastRead =
-        !lesson.isWaitingForMarks(openedAt: openedAt)
-        && !state.steps.values.contains { $0.isWaitingForPicture(openedAt: openedAt) }
+      let isLastRead = !state.steps.values.contains { $0.isWaitingForPicture(openedAt: openedAt) }
 
       if !isLastRead {
         try? await Task.sleep(for: .seconds(4))
@@ -294,13 +293,8 @@ final class LessonPlayerStore {
       await lessonResource.refresh()
       guard isCurrent(identity) else { return }
 
-      if case .ready(let fresh) = lessonResource.value {
-        self.state?.applyPictures(from: fresh.steps)
-
-        if lesson.marksPending {
-          self.state?.applyMarks(from: fresh.steps)
-          self.lesson = fresh
-        }
+      if case .ready(let lesson) = lessonResource.value {
+        self.state?.applyPictures(from: lesson.steps)
       }
 
       // A numbered picture that never came leaves its question out once the wait is over.
@@ -357,7 +351,7 @@ final class LessonPlayerStore {
     }
 
     switch lesson?.status {
-    case .generating: screen = .waiting(outline, .writing)
+    case .generating: waitForWriting(outline)
     case .ready: await load(refresh: true)
     case .failed: screen = .waiting(outline, .failed)
     case .notStarted, nil: screen = .waiting(outline, .notStarted)
@@ -383,7 +377,7 @@ final class LessonPlayerStore {
       return
     }
 
-    screen = .waiting(outline, .writing)
+    waitForWriting(outline)
     let api = api
     let written = await write { token in try await api.writeLesson(id: outline.id, token: token) }
     guard isCurrent(identity) else { return }
@@ -411,7 +405,10 @@ final class LessonPlayerStore {
     _ outline: LessonOutline, run: String?, identity: AuthenticatedSession
   ) async {
     let lesson = await signingOutOnUnauthorized(identity) {
-      try await api.followWriting(id: outline.id, run: run, token: identity.bearerToken)
+      try await api.followWriting(id: outline.id, run: run, token: identity.bearerToken) {
+        [weak self] run, event in
+        self?.recordProgress(event, of: run, for: identity)
+      }
     }
 
     guard !Task.isCancelled, isCurrent(identity), case .waiting(_, .writing) = screen else {
@@ -424,6 +421,28 @@ final class LessonPlayerStore {
     case .failed, nil: screen = .waiting(outline, .failed)
     case .generating, .notStarted: screen = .waiting(outline, .notStarted)
     }
+  }
+
+  private func waitForWriting(_ outline: LessonOutline) {
+    screen = .waiting(outline, .writing)
+    progressRun = nil
+    writingProgress = GenerationWait(kind: .lesson).started
+  }
+
+  /// A run that takes over from one that stopped starts the steps over.
+  private func recordProgress(
+    _ event: GenerationEvent, of run: String, for identity: AuthenticatedSession
+  ) {
+    guard isCurrent(identity) else {
+      return
+    }
+
+    if run != progressRun {
+      progressRun = run
+      writingProgress = GenerationWait(kind: .lesson).started
+    }
+
+    writingProgress.apply(event)
   }
 
   private func readiness(_ lessonId: String, identity: AuthenticatedSession) async

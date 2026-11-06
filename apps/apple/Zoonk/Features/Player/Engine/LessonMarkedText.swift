@@ -49,21 +49,9 @@ struct LessonTextParts: Equatable {
 }
 
 extension PlayableLesson {
-  /// The API's wait: marks come within a late picture's wait while any screen is within it. A fixed
-  /// lesson keeps its unchanged screens' older times, so the newest one decides.
-  func isWaitingForMarks(openedAt: Date, now: Date = .now) -> Bool {
-    let start = steps.map { $0.waitStart(openedAt: openedAt) }.max() ?? openedAt
-    return marksPending && now.timeIntervalSince(start) < LessonStep.lateWait
-  }
-
   /// The map the opening scene and the strip draw from, once tagging has reached the lesson.
   var taggedSummary: LessonSummary? {
     steps.contains { $0.marks != nil } || summary?.isTagged == true ? summary : nil
-  }
-
-  /// Tagged, or being tagged: its map's ideas get icons, which can come after the map shows.
-  var expectsIdeaIcons: Bool {
-    marksPending || taggedSummary != nil
   }
 }
 
