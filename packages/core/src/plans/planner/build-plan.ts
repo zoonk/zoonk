@@ -314,6 +314,7 @@ function planGoal({
     }),
     ...listDroppedSkills(dropped),
     endsBeforeLessons: listEndsBeforeLessons({ ends: phaseEnds, given, items, units: laidOut }),
+    heldForChallenges: new Set(carriedSchedule.heldForChallenges),
     items,
     keptKeys: new Set([...kept, ...setAside].map((item) => item.key)),
     ...listLessonDays(units, keptPortions),

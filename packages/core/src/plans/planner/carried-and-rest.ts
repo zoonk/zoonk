@@ -97,7 +97,9 @@ export function scheduleCarriedAndRest({
       ? { ...learned, yielded: placed.carried.length > 0 ? scheduleRanked().yielded : [] }
       : scheduleRanked();
 
-    return { carriedSchedule: placed.schedule, released: placed.released, restSchedule };
+    const carriedSchedule = { ...placed.schedule, heldForChallenges: placed.heldForChallenges };
+
+    return { carriedSchedule, released: placed.released, restSchedule };
   };
 
   const first = layOut(new Set());

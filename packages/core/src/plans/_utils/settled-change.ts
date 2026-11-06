@@ -38,6 +38,7 @@ export function getSettledPlanChange({
     payload: toPlanChangePayload({
       behind: getFallingBehind({ computed, context }),
       carriedItemIds: listCarriedItemIds({
+        held: computed.built.heldForChallenges,
         items: computed.built.items,
         left: left.filter((item) => item.kind !== "boss"),
       }),
