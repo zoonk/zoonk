@@ -12,6 +12,7 @@ import {
   outlineWhatsNewChapterStep,
   refreshReleasePagesStep,
   saveWhatsNewChapterStep,
+  saveWhatsNewSkillsStep,
 } from "./steps/course-release-steps";
 
 /** The most lessons `flaggedContentWorkflow` prepares in one run. */
@@ -47,24 +48,24 @@ async function startRewrites(flagIds: readonly string[]): Promise<void> {
   await Promise.all(batches.map((batch) => start(flaggedContentWorkflow, [{ flagIds: batch }])));
 }
 
+/** Before the course moves, so a failure here leaves it behind and the next run does it again. */
 async function addWhatsNew({
-  advance,
   comparison,
   courseId,
   state,
   workflowRunId,
 }: ReleaseRun & {
-  advance: NonNullable<Awaited<ReturnType<typeof advanceCourseReleaseStep>>>;
   comparison: NonNullable<Awaited<ReturnType<typeof compareReleaseStep>>>;
   state: Behind;
 }): Promise<void> {
-  const { whatsNew } = comparison;
-  const { skills } = advance;
+  const { provenance, whatsNew } = comparison;
 
-  if (!whatsNew || skills.length === 0) {
+  if (!whatsNew) {
     return;
   }
 
+  const releaseId = state.toReleaseId;
+  const skills = await saveWhatsNewSkillsStep({ courseId, provenance, releaseId, whatsNew });
   const outline = await outlineWhatsNewChapterStep({ courseId, skills, whatsNew, workflowRunId });
 
   const { lessonIds } = await deliverCourseContent(
@@ -79,12 +80,11 @@ async function addWhatsNew({
   );
 
   const offer = {
-    advancedAt: advance.advancedAt,
     courseId,
     lessons: Math.max(1, Math.round(lessonIds.length / skills.length)),
     offer: whatsNew.offer,
-    provenance: comparison.provenance,
-    releaseId: state.toReleaseId,
+    provenance,
+    releaseId,
     skills,
   };
 
@@ -99,25 +99,25 @@ async function applyRelease({ state, ...run }: ReleaseRun & { state: Behind }): 
   await refreshReleasePagesStep(state.pageSourceIds);
 
   const comparison = await compareReleaseStep({ ...run, state });
-  const advance = await advanceCourseReleaseStep({ comparison, courseId: run.courseId, state });
 
-  if (!advance) {
+  if (comparison) {
+    await addWhatsNew({ ...run, comparison, state });
+  }
+
+  const flagIds = await advanceCourseReleaseStep({ comparison, courseId: run.courseId, state });
+
+  if (!flagIds) {
     return false;
   }
 
-  await startRewrites(advance.flagIds);
-
-  if (comparison) {
-    await addWhatsNew({ ...run, advance, comparison, state });
-  }
-
+  await startRewrites(flagIds);
   return true;
 }
 
 /**
  * Moves a product's main course to its current release, one release at a time: one comparison of
- * the release notes with the course's lessons, the changed lessons rewritten in place, and a
- * "What's new" chapter offered to learners already past the course's start. System work no learner
+ * the release notes with the course's lessons, a "What's new" chapter offered to learners already
+ * past the course's start, then the move itself, with the changed lessons rewritten in place. System work no learner
  * waits on; one run per course (`getCourseReleaseToken`).
  */
 export async function courseReleaseWorkflow({

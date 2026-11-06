@@ -124,23 +124,21 @@ async function offerToGoal({ goalId, offer }: { goalId: string; offer: ReleaseOf
 }
 
 /**
- * Internal workflow bridge. Offers the "What's new" skills, as a change to approve, to one page of
- * the course's followers who were already past its start when it moved (a learner who hasn't done a
- * lesson in it just gets the updated course), once per goal and release. Returns where the next page
- * starts, or null after the last.
+ * Internal workflow bridge, run before the course moves. Offers the "What's new" skills, as a
+ * change to approve, to one page of the course's followers already past its start (a learner who
+ * hasn't done a lesson in it, or starts later, gets the updated course), once per goal and release.
+ * Returns where the next page starts, or null after the last.
  */
 export async function offerWhatsNew({
-  advancedAt,
   after,
   ...offer
-}: ReleaseOffer & { advancedAt: Date; after: string | null }): Promise<string | null> {
+}: ReleaseOffer & { after: string | null }): Promise<string | null> {
   const goals = await prisma.goal.findMany({
     orderBy: { id: "asc" },
     select: { id: true },
     take: OFFER_PAGE_SIZE,
     where: {
       ...courseFollowersFilter(offer.courseId),
-      createdAt: { lte: advancedAt },
       plan: {
         items: {
           some: { chapter: { courses: { some: { courseId: offer.courseId } } }, status: "done" },

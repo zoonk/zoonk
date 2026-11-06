@@ -119,7 +119,11 @@ async function applyChanges({
   }
 
   if (check.releasesUpdate) {
-    await readProductReleases({ analytics, productId: check.releasesUpdate.productId });
+    await Promise.all(
+      check.releasesUpdate.productIds.map((productId) =>
+        readProductReleases({ analytics, productId }),
+      ),
+    );
   }
 }
 

@@ -173,6 +173,21 @@ describe(courseReleaseWorkflow, () => {
     ).resolves.toMatchObject({ productReleaseId: releases[1]?.id });
   });
 
+  it("leaves the course behind, to try again, when its What's new chapter can't be written", async () => {
+    const { course, releases } = await productCourse();
+    await follow(course.id);
+    compareWith({ changed: [], whatsNew: WHATS_NEW });
+    vi.mocked(generateCourseOutline).mockRejectedValue(new Error("Model unavailable"));
+
+    await expect(courseReleaseWorkflow({ courseId: course.id })).rejects.toThrow(
+      "Model unavailable",
+    );
+
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+    ).resolves.toMatchObject({ productReleaseId: releases[0]?.id });
+  });
+
   it("leaves a pinned or unfollowed course alone, without comparing", async () => {
     const [pinned, unfollowed] = await Promise.all([
       productCourse({ pinned: true }),

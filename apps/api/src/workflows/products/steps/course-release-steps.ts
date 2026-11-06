@@ -13,11 +13,11 @@ import {
   refreshReleasePages,
 } from "@zoonk/core/library/products/course-release";
 import {
-  type CourseAdvance,
   type ReleaseComparisonResult,
   type WhatsNew,
   advanceCourseRelease,
   loadReleaseComparison,
+  saveWhatsNewSkills,
 } from "@zoonk/core/library/products/release-advance";
 import {
   loadWhatsNewOutline,
@@ -81,14 +81,23 @@ export async function compareReleaseStep({
   };
 }
 
+/** Returns the flags of the lessons to rewrite, or null when the course moved meanwhile. */
 export async function advanceCourseReleaseStep(input: {
   comparison: ReleaseComparisonResult | null;
   courseId: string;
   state: Behind;
-}): Promise<CourseAdvance | null> {
+}): Promise<string[] | null> {
   "use step";
 
   return advanceCourseRelease({ ...input, ...input.state });
+}
+
+export async function saveWhatsNewSkillsStep(
+  input: Parameters<typeof saveWhatsNewSkills>[0],
+): Promise<GoalSkillRef[]> {
+  "use step";
+
+  return saveWhatsNewSkills(input);
 }
 
 /** Code keeps the one chapter, under the title and skills the comparison gave it. */

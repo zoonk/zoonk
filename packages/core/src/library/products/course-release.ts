@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { refreshWebSource } from "../sources/web-sources";
 import { pickCurrentRelease } from "./current-release";
 
@@ -108,10 +109,20 @@ export async function listCoursesBehind({
   return followed.flat();
 }
 
-async function hasOpenFlags(courseId: string): Promise<boolean> {
+/**
+ * A flagged lesson's rewrite starts right away and takes minutes, so a flag open for days marks a
+ * rewrite that failed; the next release doesn't wait on it.
+ */
+const REWRITE_DAYS = 2;
+
+async function hasOpenFlags({ courseId, now }: { courseId: string; now: Date }): Promise<boolean> {
   const flag = await prisma.contentReviewFlag.findFirst({
     select: { id: true },
-    where: { lesson: { homeChapter: { homeCourseId: courseId } }, status: "open" },
+    where: {
+      createdAt: { gt: new Date(now.getTime() - REWRITE_DAYS * MS_PER_DAY) },
+      lesson: { homeChapter: { homeCourseId: courseId } },
+      status: "open",
+    },
   });
 
   return flag !== null;
@@ -165,7 +176,7 @@ export async function loadCourseRelease({
     return { status: "unfollowed" };
   }
 
-  if (await hasOpenFlags(course.id)) {
+  if (await hasOpenFlags({ courseId: course.id, now })) {
     return { status: "rewriting" };
   }
 

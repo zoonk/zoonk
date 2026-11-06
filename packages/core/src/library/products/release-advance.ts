@@ -6,9 +6,30 @@ import { type GoalSkillRef } from "../curriculum/curriculum-scope";
 import { readLessonMap } from "../lessons/lesson-map";
 import { toNameKey } from "./product-keys";
 
+/** Enough of a long changelog to hold one release's notes. */
+const NOTES_WINDOW = 60_000;
+/** Text before the release's name, where a changelog puts its date and heading. */
+const NOTES_LEAD = 500;
+
+/**
+ * A changelog lists every release, so a course catching up on an older one reads from where that
+ * release's name first appears rather than from the newest release at the top.
+ */
+function toReleaseNotes({ names, text }: { names: (string | null)[]; text: string }): string {
+  const found = names.flatMap((name) => (name ? [text.indexOf(name)] : [])).filter((at) => at >= 0);
+  const start = found.length > 0 ? Math.max(0, Math.min(...found) - NOTES_LEAD) : 0;
+
+  return text.slice(start, start + NOTES_WINDOW);
+}
+
 async function loadReleaseNotes(releaseId: string) {
   const release = await prisma.productRelease.findUniqueOrThrow({
-    select: { name: true, product: { select: { name: true, releasesSource: true } }, source: true },
+    select: {
+      name: true,
+      product: { select: { name: true, releasesSource: true } },
+      source: true,
+      version: true,
+    },
     where: { id: releaseId },
   });
 
@@ -17,7 +38,14 @@ async function loadReleaseNotes(releaseId: string) {
   return {
     name: release.name,
     page: page?.extractedText
-      ? { contentHash: page.contentHash, sourceId: page.id, text: page.extractedText }
+      ? {
+          contentHash: page.contentHash,
+          sourceId: page.id,
+          text: toReleaseNotes({
+            names: [release.name, release.version],
+            text: page.extractedText,
+          }),
+        }
       : null,
     product: release.product.name,
   };
@@ -87,34 +115,25 @@ export type ReleaseComparisonResult = {
   whatsNew: WhatsNew | null;
 };
 
-export type CourseAdvance = {
-  /** When the course moved: goals made later get the updated course instead of an offer. */
-  advancedAt: Date;
-  flagIds: string[];
-  skills: GoalSkillRef[];
-};
-
-function toSkillKeys({ releaseId, whatsNew }: { releaseId: string; whatsNew: WhatsNew | null }) {
-  return (whatsNew?.skills ?? []).map((skill) => ({
+function toSkillKeys({ releaseId, whatsNew }: { releaseId: string; whatsNew: WhatsNew }) {
+  return whatsNew.skills.map((skill) => ({
     ...skill,
     identityKey: `whats-new:${releaseId}:${toNameKey(skill.name)}`,
   }));
 }
 
 async function findWhatsNewSkills({
-  db,
   language,
   releaseId,
   whatsNew,
 }: {
-  db: Pick<TransactionClient, "skill">;
   language: string;
   releaseId: string;
-  whatsNew: WhatsNew | null;
+  whatsNew: WhatsNew;
 }): Promise<GoalSkillRef[]> {
   const keys = [...new Set(toSkillKeys({ releaseId, whatsNew }).map((skill) => skill.identityKey))];
 
-  const skills = await db.skill.findMany({
+  const skills = await prisma.skill.findMany({
     select: { description: true, id: true, identityKey: true, name: true },
     where: { identityKey: { in: keys }, language },
   });
@@ -128,34 +147,40 @@ async function findWhatsNewSkills({
   });
 }
 
-/** One skill per new capability and language, so a retried or concurrent advance saves it once. */
-async function saveWhatsNewSkills({
-  comparison,
-  language,
+/**
+ * Internal workflow bridge. One skill per new capability, release and language, so a retried or
+ * repeated update saves it once.
+ */
+export async function saveWhatsNewSkills({
+  courseId,
+  provenance,
   releaseId,
-  tx,
+  whatsNew,
 }: {
-  comparison: ReleaseComparisonResult;
-  language: string;
+  courseId: string;
+  provenance: LibraryProvenance;
   releaseId: string;
-  tx: TransactionClient;
+  whatsNew: WhatsNew;
 }): Promise<GoalSkillRef[]> {
-  const { whatsNew } = comparison;
+  const { language } = await prisma.course.findUniqueOrThrow({
+    select: { language: true },
+    where: { id: courseId },
+  });
 
-  await tx.skill.createMany({
+  await prisma.skill.createMany({
     data: toSkillKeys({ releaseId, whatsNew }).map((skill) => ({
-      ...toProvenanceData(comparison.provenance),
+      ...toProvenanceData(provenance),
       description: skill.description,
       identityKey: skill.identityKey,
       language,
-      level: whatsNew?.level ?? null,
+      level: whatsNew.level,
       name: skill.name,
       normalizedName: normalizeString(skill.name),
     })),
     skipDuplicates: true,
   });
 
-  return findWhatsNewSkills({ db: tx, language, releaseId, whatsNew });
+  return findWhatsNewSkills({ language, releaseId, whatsNew });
 }
 
 async function flagChangedLessons({
@@ -188,43 +213,22 @@ async function flagChangedLessons({
   return flags.map((flag) => flag.id);
 }
 
-async function replayAdvance({
-  comparison,
-  language,
-  toReleaseId,
-}: {
-  comparison: ReleaseComparisonResult;
-  language: string;
-  toReleaseId: string;
-}): Promise<CourseAdvance | null> {
+async function replayAdvance(comparison: ReleaseComparisonResult): Promise<string[] | null> {
   const notice = await prisma.sourceChangeNotice.findFirst({
     include: { reviewFlags: { select: { id: true } } },
     where: { runId: comparison.provenance.runId, sourceId: comparison.page.sourceId },
   });
 
-  if (!notice) {
-    return null;
-  }
-
-  return {
-    advancedAt: notice.createdAt,
-    flagIds: notice.reviewFlags.map((flag) => flag.id),
-    skills: await findWhatsNewSkills({
-      db: prisma,
-      language,
-      releaseId: toReleaseId,
-      whatsNew: comparison.whatsNew,
-    }),
-  };
+  return notice ? notice.reviewFlags.map((flag) => flag.id) : null;
 }
 
 /**
- * Internal workflow bridge. Moves a main course to `toReleaseId`, only if it still teaches
- * `fromReleaseId`, in the transaction that flags the lessons the comparison found changed and saves
- * the release's new skills, so a rewrite reads the new release. The notice is the release's own,
- * not `createSourceChangeNotice`, which would flag every lesson citing the page, pinned courses'
- * included. A retry after the commit finds that notice by the comparison's run and returns the same
- * result. Null when the course moved meanwhile.
+ * Internal workflow bridge, the update's last write. Moves a main course to `toReleaseId`, only if
+ * it still teaches `fromReleaseId`, in the transaction that flags the lessons the comparison found
+ * changed, so a rewrite reads the new release. The notice is the release's own, not
+ * `createSourceChangeNotice`, which would flag every lesson citing the page, pinned courses'
+ * included. Returns the flags; a retry after the commit finds them by the comparison's run. Null
+ * when the course moved meanwhile.
  */
 export async function advanceCourseRelease({
   comparison,
@@ -236,13 +240,13 @@ export async function advanceCourseRelease({
   courseId: string;
   fromReleaseId: string | null;
   toReleaseId: string;
-}): Promise<CourseAdvance | null> {
+}): Promise<string[] | null> {
   const { language } = await prisma.course.findUniqueOrThrow({
     select: { language: true },
     where: { id: courseId },
   });
 
-  const replay = comparison ? await replayAdvance({ comparison, language, toReleaseId }) : null;
+  const replay = comparison ? await replayAdvance(comparison) : null;
 
   if (replay) {
     return replay;
@@ -259,7 +263,7 @@ export async function advanceCourseRelease({
     }
 
     if (!comparison) {
-      return { advancedAt: new Date(), flagIds: [], skills: [] };
+      return [];
     }
 
     const notice = await tx.sourceChangeNotice.create({
@@ -274,10 +278,6 @@ export async function advanceCourseRelease({
       },
     });
 
-    return {
-      advancedAt: notice.createdAt,
-      flagIds: await flagChangedLessons({ comparison, courseId, noticeId: notice.id, tx }),
-      skills: await saveWhatsNewSkills({ comparison, language, releaseId: toReleaseId, tx }),
-    };
+    return flagChangedLessons({ comparison, courseId, noticeId: notice.id, tx });
   });
 }

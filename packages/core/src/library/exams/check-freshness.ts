@@ -34,8 +34,8 @@ export type FreshnessCheck =
       blueprintUpdate: { examBlueprintId: string } | null;
       nextCheckAt: string;
       nextNotice: { examBlueprintId: string } | null;
-      /** A product's releases page whose text isn't the one its releases were read from. */
-      releasesUpdate: { productId: string } | null;
+      /** Products whose releases page's text isn't the one their releases were read from. */
+      releasesUpdate: { productIds: string[] } | null;
       sourceChange: SourceChange | null;
       status: "scheduled";
     };
@@ -257,18 +257,18 @@ async function checkSource({
   await prisma.source.update({ data: { nextCheckAt }, where: { id: source.id } });
 
   // A releases page is read for its releases, never turned into a notice for learners.
-  const [product] = source.releasesOf;
   const contentHash = refresh?.source.contentHash ?? source.contentHash;
+  const unread = source.releasesOf.filter((product) => product.releasesHash !== contentHash);
 
   return {
     blueprintUpdate: null,
     nextCheckAt: nextCheckAt.toISOString(),
     nextNotice: null,
-    releasesUpdate:
-      product && product.releasesHash !== contentHash ? { productId: product.id } : null,
-    sourceChange: product
-      ? null
-      : toSourceChange({ language: source.language, refresh, title: source.title }),
+    releasesUpdate: unread.length > 0 ? { productIds: unread.map((product) => product.id) } : null,
+    sourceChange:
+      source.releasesOf.length > 0
+        ? null
+        : toSourceChange({ language: source.language, refresh, title: source.title }),
     status: "scheduled",
   };
 }

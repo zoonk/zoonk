@@ -43,7 +43,11 @@ export async function countActiveSourceGoals(sourceId: string): Promise<number> 
       OR: [
         { learnerSources: { some: { sourceId } } },
         { examBlueprint: { sourceId } },
-        { product: { sources: { some: { id: sourceId } } } },
+        {
+          product: {
+            OR: [{ releasesSourceId: sourceId }, { sources: { some: { id: sourceId } } }],
+          },
+        },
         ...mainCourses.flatMap((course) => courseFollowersFilter(course.id).OR),
       ],
       status: "active",

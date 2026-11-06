@@ -267,7 +267,7 @@ describe(checkFreshness, () => {
     await expect(
       checkFreshness({ now: NOW, target: { kind: "source", sourceId: source.id } }),
     ).resolves.toMatchObject({
-      releasesUpdate: { productId: course.productId },
+      releasesUpdate: { productIds: [course.productId] },
       sourceChange: null,
       status: "scheduled",
     });
@@ -285,7 +285,26 @@ describe(checkFreshness, () => {
 
     await expect(
       checkFreshness({ now: NOW, target: { kind: "source", sourceId: source.id } }),
-    ).resolves.toMatchObject({ releasesUpdate: { productId: product.id }, status: "scheduled" });
+    ).resolves.toMatchObject({ releasesUpdate: { productIds: [product.id] }, status: "scheduled" });
+  });
+
+  it("asks for the releases of every product a shared releases page wasn't read for", async () => {
+    servePage("Version 2 is out.");
+
+    const [{ source }, user] = await Promise.all([productReleasesPage(), userFixture()]);
+    const brand = await brandFixture();
+
+    const unread = await productFixture({
+      organizationId: brand.id,
+      releasesHash: "read-before",
+      releasesSourceId: source.id,
+    });
+
+    await goalFixture({ productId: unread.id, userId: user.id });
+
+    await expect(
+      checkFreshness({ now: NOW, target: { kind: "source", sourceId: source.id } }),
+    ).resolves.toMatchObject({ releasesUpdate: { productIds: [unread.id] }, status: "scheduled" });
   });
 
   it("stops checking a source nobody studies", async () => {

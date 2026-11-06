@@ -102,10 +102,8 @@ describe(offerWhatsNew, () => {
     const fixture = await setup();
     const started = await learner({ ...fixture, started: true });
     const fresh = await learner({ ...fixture, started: false });
-    const advancedAt = new Date("2100-01-01T00:00:00Z");
-
-    await expect(offerWhatsNew({ ...fixture.offer, advancedAt, after: null })).resolves.toBeNull();
-    await offerWhatsNew({ ...fixture.offer, advancedAt, after: null });
+    await expect(offerWhatsNew({ ...fixture.offer, after: null })).resolves.toBeNull();
+    await offerWhatsNew({ ...fixture.offer, after: null });
 
     const [changes, freshChanges] = await Promise.all([
       listReleaseChanges(started.plan.id),
@@ -134,15 +132,5 @@ describe(offerWhatsNew, () => {
       [fixture.course.id],
       [fixture.course.id],
     ]);
-  });
-
-  it("leaves out learners whose goal began after the course moved", async () => {
-    const fixture = await setup();
-    const started = await learner({ ...fixture, started: true });
-    const advancedAt = new Date(started.goal.createdAt.getTime() - 1);
-
-    await offerWhatsNew({ ...fixture.offer, advancedAt, after: null });
-
-    await expect(listReleaseChanges(started.plan.id)).resolves.toStrictEqual([]);
   });
 });

@@ -13,7 +13,12 @@ import { sourceChangeNoticeFixture, sourceFixture } from "@zoonk/testing/fixture
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { listCoursesBehind, loadCourseRelease } from "./course-release";
-import { type ReleaseComparisonResult, advanceCourseRelease } from "./release-advance";
+import {
+  type ReleaseComparisonResult,
+  advanceCourseRelease,
+  loadReleaseComparison,
+  saveWhatsNewSkills,
+} from "./release-advance";
 
 const NOW = new Date("2026-11-06T12:00:00Z");
 
@@ -28,8 +33,16 @@ async function productWithReleases() {
   });
 
   const [first, second] = await Promise.all([
-    productReleaseFixture({ productId: product.id, releasedAt: new Date("2025-01-10") }),
-    productReleaseFixture({ productId: product.id, releasedAt: new Date("2026-01-10") }),
+    productReleaseFixture({
+      name: "Test Product 1",
+      productId: product.id,
+      releasedAt: new Date("2025-01-10"),
+    }),
+    productReleaseFixture({
+      name: "Test Product 2",
+      productId: product.id,
+      releasedAt: new Date("2026-01-10"),
+    }),
   ]);
 
   return { brand, first, page, product, second };
@@ -134,7 +147,7 @@ describe(listCoursesBehind, () => {
 });
 
 describe(loadCourseRelease, () => {
-  it("waits while a lesson its last move flagged is still being rewritten", async () => {
+  it("waits while a lesson its last move flagged is still being rewritten, not on a rewrite that failed days ago", async () => {
     const { course, page, second } = await mainCourse();
     await follow(course.id);
 
@@ -152,6 +165,12 @@ describe(loadCourseRelease, () => {
     await expect(loadCourseRelease({ courseId: course.id })).resolves.toStrictEqual({
       status: "rewriting",
     });
+
+    const days = 3;
+
+    await expect(
+      loadCourseRelease({ courseId: course.id, now: new Date(Date.now() + days * 86_400_000) }),
+    ).resolves.toMatchObject({ status: "behind" });
   });
 
   it("moves one release at a time, never to an announced or undated release and never back", async () => {
@@ -215,9 +234,7 @@ describe(advanceCourseRelease, () => {
       comparison: comparison(page, { changedLessonIds: [changed?.id ?? ""] }),
     });
 
-    const flags = await prisma.contentReviewFlag.findMany({
-      where: { id: { in: advance?.flagIds } },
-    });
+    const flags = await prisma.contentReviewFlag.findMany({ where: { id: { in: advance ?? [] } } });
 
     expect(flags.map((flag) => flag.lessonId)).toStrictEqual([changed?.id]);
 
@@ -240,21 +257,13 @@ describe(advanceCourseRelease, () => {
     const [changed] = await homedLessons(course.id, 1);
     const state = { courseId: course.id, fromReleaseId: first.id, toReleaseId: second.id };
 
-    const compared = comparison(page, {
-      changedLessonIds: [changed?.id ?? ""],
-      whatsNew: {
-        level: "beginner",
-        offer: "Learn the new export panel.",
-        skills: [{ description: "Export from the new panel.", name: "Export a file" }],
-        title: "What's new in Test Product 2",
-      },
-    });
+    const compared = comparison(page, { changedLessonIds: [changed?.id ?? ""] });
 
     const advanced = await advanceCourseRelease({ ...state, comparison: compared });
     const retried = await advanceCourseRelease({ ...state, comparison: compared });
 
     expect(retried).toStrictEqual(advanced);
-    expect(advanced?.skills).toHaveLength(1);
+    expect(advanced).toHaveLength(1);
 
     await expect(
       advanceCourseRelease({ ...state, comparison: comparison(page) }),
@@ -263,5 +272,54 @@ describe(advanceCourseRelease, () => {
     await expect(
       prisma.contentReviewFlag.count({ where: { lessonId: changed?.id } }),
     ).resolves.toBe(1);
+  });
+});
+
+describe(saveWhatsNewSkills, () => {
+  it("saves each new skill once per release and language, however often the update runs", async () => {
+    const { course, second } = await mainCourse();
+
+    const input = {
+      courseId: course.id,
+      provenance: comparison({ contentHash: "h", id: "s" }).provenance,
+      releaseId: second.id,
+      whatsNew: {
+        level: "beginner" as const,
+        offer: "Learn the new export panel.",
+        skills: [{ description: "Export from the new panel.", name: "Export a file" }],
+        title: "What's new in Test Product 2",
+      },
+    };
+
+    const [saved, again] = await Promise.all([
+      saveWhatsNewSkills(input),
+      saveWhatsNewSkills(input),
+    ]);
+
+    expect(again).toStrictEqual(saved);
+    expect(saved.map((skill) => skill.name)).toStrictEqual(["Export a file"]);
+  });
+});
+
+describe(loadReleaseComparison, () => {
+  it("reads an older release's notes from a changelog whose newer releases fill its top", async () => {
+    const { course, first, page, product, second } = await mainCourse();
+    const newer = `Test Product 9 adds sync.\n${"Fixes and improvements.\n".repeat(4000)}`;
+
+    await Promise.all([
+      prisma.source.update({
+        data: { extractedText: `${newer}${second.name} moves export to a panel.` },
+        where: { id: page.id },
+      }),
+      productReleaseFixture({ name: "Test Product 9", productId: product.id }),
+    ]);
+
+    const input = await loadReleaseComparison({
+      courseId: course.id,
+      fromReleaseId: first.id,
+      toReleaseId: second.id,
+    });
+
+    expect(input?.page.text).toContain(`${second.name} moves export to a panel.`);
   });
 });
