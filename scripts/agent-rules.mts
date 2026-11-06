@@ -61,15 +61,14 @@ function syncAgentRules() {
 
 function findStaleAgentRules(): string[] {
   const before = AGENT_FILES.map((path) => ({ content: readOptional(path), path }));
+  const changed = () => before.filter(({ content, path }) => readOptional(path) !== content);
 
   try {
     syncAgentRules();
 
-    return before
-      .filter(({ content, path }) => readOptional(path) !== content)
-      .map(({ path }) => relative(ROOT, path));
+    return changed().map(({ path }) => relative(ROOT, path));
   } finally {
-    for (const file of before) {
+    for (const file of changed()) {
       restore(file);
     }
   }
