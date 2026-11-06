@@ -21,7 +21,6 @@ import { QuestionErrorAction, RequestErrorMessage } from "./lesson-question-erro
 import { useLessonQuestionNavigation } from "./lesson-question-navigation";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { type OfferedSuggestion } from "./lesson-question-state";
-import { hasConversation } from "./lesson-question-state-helpers";
 import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
 import {
   ThreadPanel,
@@ -41,7 +40,7 @@ function ThreadLoadError({
   onRetry: () => void;
 }) {
   return (
-    <Empty className="min-h-full p-6">
+    <Empty className="min-h-full">
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <MessageSquareTextIcon />
@@ -98,7 +97,7 @@ function EmptyThread({
   const suggestions = lessonSuggestions ? offered : [];
 
   return (
-    <Empty className="min-h-full p-6">
+    <Empty className="min-h-full">
       <EmptyHeader>
         <EmptyMedia aria-hidden="true" className="[&_svg]:size-auto">
           <span className="flex size-12 items-center justify-center *:size-12!">
@@ -122,7 +121,7 @@ function GuestThread() {
   const { loginHref } = useLessonQuestionNavigation();
 
   return (
-    <Empty className="min-h-full p-6">
+    <Empty className="min-h-full">
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <MessageSquareTextIcon />
@@ -220,7 +219,7 @@ export function QuestionThread({ identity }: { identity: TutorIdentity }) {
     );
   }
 
-  if (!hasConversation(state)) {
+  if (state.questions.length === 0 && !state.hasMore && !state.creating) {
     return (
       <ThreadPanel>
         <EmptyThread

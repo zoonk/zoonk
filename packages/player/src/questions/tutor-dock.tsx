@@ -162,7 +162,7 @@ function DockedConversation({ buddy }: { buddy: TutorBuddy }) {
         </p>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+      <div className="min-h-0 flex-1">
         <QuestionThread identity={buddy.identity} />
       </div>
     </section>
