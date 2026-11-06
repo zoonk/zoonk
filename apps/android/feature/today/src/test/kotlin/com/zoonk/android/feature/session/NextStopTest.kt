@@ -257,11 +257,11 @@ class NextStopTest {
     }
 
     @Test
-    fun aRunStillWritingAfterFiveMinutesSaysItDidntFinish() {
+    fun aRunStillWritingAfterTenMinutesSaysItDidntFinish() {
         settled = LessonReadiness.Status.GENERATING
         shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
         show()
-        rule.mainClock.advanceTimeBy(301_000)
+        rule.mainClock.advanceTimeBy(601_000)
         rule.waitForIdle()
 
         rule.onNodeWithText("This didn't finish").assertExists()
