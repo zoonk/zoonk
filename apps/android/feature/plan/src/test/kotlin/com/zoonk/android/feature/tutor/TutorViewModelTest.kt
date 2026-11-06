@@ -406,6 +406,45 @@ class TutorViewModelTest {
             assertEquals("", vm.draft.text.toString())
         }
 
+    /** Another device asked first: the screen's ask waits in the composer, still going by its suggestion. */
+    @Test
+    fun aScreensAskTheServerTurnsAwayWaitsInTheComposerWithItsSuggestion() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            api.refusal = ApiException(ApiError.Unavailable, status = 409)
+            api.thread = TutorThread(listOf(turn("elsewhere", TutorTurn.Status.Running, null)), hasMore = false, nextCursor = null)
+
+            vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
+            advanceUntilIdle()
+
+            assertEquals(listOf("elsewhere"), vm.turns.map { it.id })
+            assertEquals("Explain it more simply", vm.draft.text.toString())
+
+            api.refusal = null
+            api.thread = TutorThread(listOf(turn("elsewhere", TutorTurn.Status.Completed, "Done.")), hasMore = false, nextCursor = null)
+            vm.thread.refresh()
+            vm.send()
+            advanceUntilIdle()
+
+            assertEquals(listOf("simpler", "simpler"), api.asked.map { it.suggestion })
+        }
+
+    @Test
+    fun aScreensAskTheServerTurnsAwayKeepsWhatTheLearnerTypedMeanwhile() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            api.refusal = ApiException(ApiError.Unavailable, status = 409)
+            api.askGate = CompletableDeferred()
+
+            vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
+            advanceUntilIdle()
+            vm.draft.setTextAndPlaceCursorAtEnd("What's a cell wall?")
+            api.askGate?.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals("What's a cell wall?", vm.draft.text.toString())
+        }
+
     @Test
     fun aConflictReadsTheConversationAgain() =
         runTest(dispatcher) {

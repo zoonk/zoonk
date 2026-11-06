@@ -393,6 +393,14 @@ class TutorViewModel internal constructor(
                     if (result.status == CONFLICT) {
                         unresolved = null
                         thread.refresh()
+                        // An earlier question goes first, so this one waits in the composer, still going by its suggestion.
+                        if (draft.text.isEmpty()) {
+                            if (pending.suggestion == null) {
+                                draft.setTextAndPlaceCursorAtEnd(pending.question)
+                            } else {
+                                offer(TutorSuggestion(pending.question, pending.suggestion))
+                            }
+                        }
                         return@launch
                     }
                     val failure = result.toTutorFailure()
