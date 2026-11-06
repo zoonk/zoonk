@@ -125,7 +125,7 @@ function WritingProgress({
         <GenerationWait kind="lesson" run={held ? toHeldRun(run) : run}>
           {!held && (
             <GenerationTimelineDescription className="text-sm">
-              {t("This lesson is being written for you. It's usually ready in about two minutes.")}
+              {t("This lesson is being written for you. It's usually ready in a few minutes.")}
             </GenerationTimelineDescription>
           )}
         </GenerationWait>

@@ -40,7 +40,7 @@
   "session_next_stop": "042d60d4ec828fabbaa46162c7c6095eb15128c7c4ff54885adb800daba147ef",
   "session_next_stop_failed": "e7898391383f1f3147a41fd3ebe82c5184882d32eaa710fa71aad35471c93dbb",
   "session_next_while_waiting": "101c399da1872a8b5aa568ae37375a7936c6a4977eed74aad1781c73cf76e041",
-  "session_next_writing_note": "ef1b06f9b9e14c199af3d2ffb4c8f695fa33658dbfcf7dae2f1960043a1b5741",
+  "session_next_writing_note": "57d0dfdc8fb066a5d00b1123b61622649fa8d00cae5e07ac5650059a9571a8f5",
   "session_opening_slow": "aa37c18d87444b6d187057ed23d13daddf917d98b2b45364680e2aeaa09f1cb2",
   "session_opening_very_slow": "844133ffa61653d54a2358e31352e77921d6e5325cc126f2c35f4a236ad58264",
   "session_summary_back_on": "c2de87d323ba450b33284ff166e6a050fd7fd712f676a60fe1508a9f90630974",
@@ -193,7 +193,7 @@
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">Sıradaki</string>
     <string name="session_next_start">Başla</string>
-    <string name="session_next_writing_note">Bu dersi senin için hazırlıyoruz. Genellikle iki dakika kadar sürüyor.</string>
+    <string name="session_next_writing_note">Bu dersi senin için hazırlıyoruz. Genellikle birkaç dakika içinde hazır olur.</string>
     <string name="session_next_lesson_ready">Dersin hazır.</string>
     <string name="session_next_stop">Bugünlük bitir</string>
     <string name="session_next_stop_failed">Çalışmayı durduramadık. Tekrar dene.</string>
