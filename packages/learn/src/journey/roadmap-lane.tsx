@@ -9,28 +9,36 @@ import { KindDot } from "../_components/kind-tile";
 import { getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
-import { AXIS_CLASS, AXIS_LABEL_CLASS } from "./roadmap-styles";
+import { AXIS_CLASS, AXIS_TEXT_CLASS, AxisLabel, getPointSide } from "./roadmap-styles";
 import { useRoadmapFinish, useRoadmapOverrun } from "./use-roadmap";
 
 const PERCENT = 100;
 
 const PHASE_END_SHARE = 0.9;
 
-const MIDDLE_SHARE = 0.5;
+const FLAG_ROOM = "1rem";
 
 function LaneMark({
+  beforeFlag = false,
   children,
-  className,
+  end = false,
   share,
 }: {
+  beforeFlag?: boolean;
   children: React.ReactNode;
-  className?: string;
+  end?: boolean;
   share: number;
 }) {
+  const anchor = end ? "-100%" : "-50%";
+
+  const x = beforeFlag
+    ? `min(${anchor}, ${(1 - share) * PERCENT}cqw - ${FLAG_ROOM} - 100%)`
+    : anchor;
+
   return (
     <span
-      className={cn("absolute top-1/2 flex -translate-x-1/2 -translate-y-1/2", className)}
-      style={{ left: `${share * PERCENT}%` }}
+      className="absolute top-1/2 flex"
+      style={{ left: `${share * PERCENT}%`, translate: `${x} -50%` }}
     >
       {children}
     </span>
@@ -52,18 +60,15 @@ export function PhaseLane({ isLast, phase }: { isLast: boolean; phase: PlanPhase
   const overrunShare = overrun?.phaseIndex === phase.index ? overrun.share : null;
 
   return (
-    <span aria-hidden="true" className="relative mt-1 block h-4">
+    <span aria-hidden="true" className="@container relative mt-2 block h-4">
       {typeof mockShare === "number" && (
-        <LaneMark share={mockShare}>
+        <LaneMark beforeFlag={flag} share={mockShare}>
           <KindDot className="size-1.5" kind="mock" />
         </LaneMark>
       )}
 
       {typeof challengeShare === "number" && (
-        <LaneMark
-          className={cn(challengeShare > PHASE_END_SHARE && "-translate-x-full", flag && "-ml-4")}
-          share={challengeShare}
-        >
+        <LaneMark beforeFlag={flag} end={challengeShare > PHASE_END_SHARE} share={challengeShare}>
           <Trickster className="size-3.5" />
         </LaneMark>
       )}
@@ -79,28 +84,7 @@ export function PhaseLane({ isLast, phase }: { isLast: boolean; phase: PlanPhase
   );
 }
 
-function getLabelSide(share: number): "left" | "right" {
-  return share < MIDDLE_SHARE ? "left" : "right";
-}
-
-function getLabelStyle(share: number): React.CSSProperties {
-  return getLabelSide(share) === "left"
-    ? { left: `${share * PERCENT}%` }
-    : { right: `${(1 - share) * PERCENT}%` };
-}
-
-function TodayLabel({ share }: { share: number }) {
-  const t = useExtracted();
-  const style = getLabelStyle(share);
-
-  return (
-    <span className={cn(AXIS_LABEL_CLASS, "text-foreground")} style={style}>
-      {t("Today")}
-    </span>
-  );
-}
-
-function FinishDate() {
+function GoalDate() {
   const t = useExtracted();
   const { goal } = usePlanScreen();
   const finish = useRoadmapFinish();
@@ -110,107 +94,99 @@ function FinishDate() {
   }
 
   const date = (
-    <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
+    <PlanDateText
+      className="whitespace-normal"
+      estimate={finish.estimate}
+      isoDate={finish.isoDate}
+      month={finish.month}
+    />
   );
 
-  return goal.kind === "exam" ? t.rich("<date></date> · exam", { date: () => date }) : date;
+  if (goal.kind !== "exam") {
+    return date;
+  }
+
+  return (
+    <>
+      <span className="@max-[8rem]/phase:hidden">
+        {t.rich("<date></date> · exam", { date: () => date })}
+      </span>
+      <span className="hidden @max-[8rem]/phase:inline">{date}</span>
+    </>
+  );
 }
 
-function FinishLabel({
-  flagOnPhone = false,
-  phase,
-}: {
-  flagOnPhone?: boolean;
-  phase: PlanPhaseView;
-}) {
-  const { goal } = usePlanScreen();
+function EndLabel({ after, phase }: { after: boolean; phase: PlanPhaseView }) {
   const finish = useRoadmapFinish();
   const overrun = useRoadmapOverrun();
 
   if (overrun && phase.endDate) {
-    return <PlanDateText className={cn(AXIS_LABEL_CLASS, "right-0")} isoDate={phase.endDate} />;
+    return (
+      <AxisLabel after={after} share={1}>
+        <PlanDateText className={AXIS_TEXT_CLASS} isoDate={phase.endDate} />
+      </AxisLabel>
+    );
   }
 
   if (!finish) {
     return null;
   }
 
-  const exam = goal.kind === "exam";
-  const labelClass = cn(AXIS_LABEL_CLASS, "text-foreground right-0");
-
-  const labels = (
-    <>
-      <span className={cn(labelClass, exam && "@max-[8rem]/phase:hidden")}>
-        <FinishDate />
+  return (
+    <AxisLabel after={after} share={1}>
+      <span className={cn(AXIS_TEXT_CLASS, "text-foreground")}>
+        <GoalDate />
       </span>
-      {exam && (
-        <PlanDateText
-          className={cn(labelClass, "hidden @max-[8rem]/phase:inline")}
-          estimate={finish.estimate}
-          isoDate={finish.isoDate}
-          month={finish.month}
-        />
-      )}
-    </>
-  );
-
-  if (!exam || !flagOnPhone) {
-    return labels;
-  }
-
-  return (
-    <>
-      <FlagIcon className="absolute top-0.5 right-0 size-3.5 sm:hidden" />
-      <span className="max-sm:hidden">{labels}</span>
-    </>
-  );
-}
-
-function OverrunLabel({ share }: { share: number }) {
-  return (
-    <span className={cn(AXIS_LABEL_CLASS, "text-foreground")} style={getLabelStyle(share)}>
-      <FinishDate />
-    </span>
+    </AxisLabel>
   );
 }
 
 export function PhaseAxis({
-  flagOnPhone = false,
   isLast,
   labelled,
   phase,
   todayShare,
 }: {
-  flagOnPhone?: boolean;
   isLast: boolean;
   labelled: boolean;
   phase: PlanPhaseView;
   todayShare: number | null;
 }) {
+  const t = useExtracted();
   const overrun = useRoadmapOverrun();
-  const overrunShare = overrun?.phaseIndex === phase.index ? overrun.share : null;
-  const overrunSide = overrunShare === null ? null : getLabelSide(overrunShare);
+  const goalShare = overrun?.phaseIndex === phase.index ? overrun.share : null;
+  const goalSide = goalShare === null ? null : getPointSide(goalShare);
 
-  const todayLabelled = todayShare !== null && overrunShare === null;
-  const startLabelled = labelled && phase.startDate !== null && overrunSide !== "left";
-  const finishLabelled = isLast && overrunSide !== "right";
+  const todayLabelled = todayShare !== null && goalShare === null;
+  const startLabelled = labelled && phase.startDate !== null && goalSide !== "left";
+  const finishLabelled = isLast && goalSide !== "right";
 
   return (
     <span aria-hidden="true" className={AXIS_CLASS}>
-      {todayLabelled && <TodayLabel share={todayShare} />}
-      {overrunShare !== null && <OverrunLabel share={overrunShare} />}
-      {startLabelled && phase.startDate && (
-        <PlanDateText
-          className={cn(
-            AXIS_LABEL_CLASS,
-            "left-0",
-            isLast ? "@max-[10rem]/phase:hidden" : "@max-[4.5rem]/phase:hidden",
-          )}
-          isoDate={phase.startDate}
-          month={phase.kind === "learn"}
-        />
+      {todayLabelled && (
+        <AxisLabel share={todayShare}>
+          <span className={cn(AXIS_TEXT_CLASS, "text-foreground")}>{t("Today")}</span>
+        </AxisLabel>
       )}
-      {finishLabelled && <FinishLabel flagOnPhone={flagOnPhone} phase={phase} />}
+      {startLabelled && phase.startDate && (
+        <AxisLabel className={cn(isLast && "@max-[10rem]/phase:hidden")} share={0}>
+          <PlanDateText
+            className={AXIS_TEXT_CLASS}
+            isoDate={phase.startDate}
+            month={phase.kind === "learn"}
+          />
+        </AxisLabel>
+      )}
+      {goalShare !== null && (
+        <AxisLabel after={startLabelled} share={goalShare}>
+          <span className={cn(AXIS_TEXT_CLASS, "text-foreground")}>
+            <GoalDate />
+          </span>
+        </AxisLabel>
+      )}
+      {finishLabelled && (
+        <EndLabel after={todayLabelled || startLabelled || goalShare !== null} phase={phase} />
+      )}
     </span>
   );
 }

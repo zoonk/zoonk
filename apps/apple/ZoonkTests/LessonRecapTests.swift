@@ -44,27 +44,6 @@ final class LessonRecapTests: XCTestCase {
     XCTAssertEqual(state.recap?.step.id, "first")
   }
 
-  func testAQuestionMovedAheadOfItsExplanationsRecapsTheOneItWasWrittenAfterOnceRead() throws {
-    var state = LessonPlayerState(
-      lessonId: "lesson",
-      steps: try [
-        hook("hook", position: 0), explanation("first", position: 1),
-        explanation("second", position: 2), check("quiz", position: 3),
-      ],
-      support: .questionFirst)
-
-    state.continueLesson()
-    XCTAssertEqual(state.currentStep?.id, "quiz")
-    try answer(&state, right: false)
-    XCTAssertNil(state.recap, "nothing about it is read yet, and the hook isn't recapped")
-
-    state.continueLesson()
-    state.continueLesson()
-    state.continueLesson()
-    XCTAssertEqual(state.currentStep?.id, "quiz")
-    XCTAssertEqual(state.recap?.step.id, "second")
-  }
-
   func testAQuestionWrittenBeforeItsExplanationsRecapsTheOneAfterItOnceChecked() throws {
     let steps = try [
       hook("hook", position: 0), check("quiz", position: 1),

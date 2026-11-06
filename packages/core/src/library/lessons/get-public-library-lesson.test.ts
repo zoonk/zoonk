@@ -42,7 +42,10 @@ describe(getPublicLibraryLesson, () => {
         question: guessHook.question,
       },
       id: lesson.id,
-      summaryIdeas: ["The planet picture can't work.", "The electron is a cloud."],
+      summary: {
+        ideas: [{ text: "The planet picture can't work." }, { text: "The electron is a cloud." }],
+        shape: "hub",
+      },
       title: lesson.title,
     });
 
@@ -53,7 +56,7 @@ describe(getPublicLibraryLesson, () => {
     const lesson = await libraryLessonFixture();
     const result = await getPublicLibraryLesson({ lessonId: lesson.id });
 
-    expect(result).toMatchObject({ firstScreen: null, summaryIdeas: [] });
+    expect(result).toMatchObject({ firstScreen: null, summary: null });
   });
 
   it("never returns a private lesson", async () => {

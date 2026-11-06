@@ -3,7 +3,7 @@ package com.zoonk.android.feature.conversation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,7 +36,9 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.WritingWait
+import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.api.models.LanguageCheckpointCall
 import com.zoonk.api.models.LanguageCheckpointCallIntro
 import kotlinx.coroutines.launch
@@ -160,16 +162,14 @@ internal fun CheckpointCallContent(
     val scope = rememberCoroutineScope()
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
-            CallFrame(title = { CallTitle(stringResource(R.string.conversation_unit_challenge)) }, onClose = exits::close) {
-                item(key = "loading") { Box(Modifier.callItem(), contentAlignment = Alignment.Center) { CircularProgressIndicator() } }
+            TaskScaffold(onClose = exits::close, title = { CallTitle(stringResource(R.string.conversation_unit_challenge)) }) { padding ->
+                PageLoading(Modifier.padding(padding))
             }
         }
 
         is LoadState.Failed -> {
-            CallFrame(title = { CallTitle(stringResource(R.string.conversation_unit_challenge)) }, onClose = exits::close) {
-                item(
-                    key = "failed",
-                ) { LoadFailedMessage(onRetry = { scope.launch { model.call.refresh() } }, modifier = Modifier.callItem()) }
+            TaskScaffold(onClose = exits::close, title = { CallTitle(stringResource(R.string.conversation_unit_challenge)) }) { padding ->
+                LoadFailedMessage(onRetry = { scope.launch { model.call.refresh() } }, modifier = Modifier.padding(padding))
             }
         }
 
@@ -230,6 +230,7 @@ private fun CheckpointIntro(
             actions = {
                 Text(
                     stringResource(R.string.conversation_study_time_used_up),
+                    Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -261,7 +262,7 @@ private fun CheckpointPreparing(
     val writing by model.writing.generationId.collectAsStateWithLifecycle()
 
     if (writing != null) {
-        CallFrame(title = { CallTitle(title) }, onClose = exits::close) {
+        CallFrame(title = { CallTitle(title) }, onClose = exits::close, lonePage = true) {
             item(key = "wait") {
                 WritingWait(model.writing, hint = null, modifier = Modifier.callItem()) {
                     Text(
@@ -291,6 +292,7 @@ private fun CheckpointPreparing(
                 label = stringResource(R.string.conversation_get_ready),
             )
         },
+        lonePage = true,
     ) {
         item(key = "header") {
             Column(Modifier.callItem(), verticalArrangement = Arrangement.spacedBy(8.dp)) {

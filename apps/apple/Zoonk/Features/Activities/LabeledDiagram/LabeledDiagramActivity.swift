@@ -251,7 +251,7 @@ private struct LabeledDiagramCanvas: View {
     placements[key] = nil
     activeKey = key
     context.setAnswer(answer(placements))
-    announceActivityChange(
+    announcePolitely(
       String(
         localized: "\(name) taken off.", table: "Activities",
         comment: "VoiceOver, after a name is taken off a spot"))
@@ -268,7 +268,7 @@ private struct LabeledDiagramCanvas: View {
     placements = next
     activeKey = Self.nextEmpty(after: key, placements: next, fields: fields)
     context.setAnswer(answer(next))
-    announceActivityChange(
+    announcePolitely(
       String(
         localized: "\(name) on spot \(key).", table: "Activities",
         comment: "VoiceOver, after a name is put on a spot"))

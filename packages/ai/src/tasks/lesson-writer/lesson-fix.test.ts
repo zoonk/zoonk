@@ -1,10 +1,14 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { answerOnceWith } from "../_test-utils/answer-once-with";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { type LessonSpec } from "../lesson-spec/lesson-spec-rules";
 import { fixLessonDraft } from "./lesson-fix";
 import { type WrittenLesson, type WrittenScreen } from "./written-lesson-schema";
 import type * as Ai from "ai";
+
+/** Where the schema the answer follows starts, after the fix's rules. */
+const OUTPUT_FORMAT = "\n\n# Output format";
 
 vi.mock("server-only", () => ({}));
 
@@ -46,6 +50,7 @@ function spec(screenCount: number): LessonSpec {
       kind: "explanation" as const,
       skills: [0],
       visual: null,
+      visualKind: "none",
     })),
     skills: [
       {
@@ -57,14 +62,13 @@ function spec(screenCount: number): LessonSpec {
         useCase: "Work.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "A lesson",
   };
 }
 
 const lesson: WrittenLesson = {
   screens: [explanation("One"), explanation("Two"), explanation("Three")],
-  summary: ["The idea."],
+  summary: { ideas: [{ label: "Idea", text: "The idea." }], shape: "hub" },
 };
 
 function fix(params: { screenCount: number; shortAnswers?: boolean }) {
@@ -81,6 +85,25 @@ function fix(params: { screenCount: number; shortAnswers?: boolean }) {
   });
 }
 
+/** A fixed check screen 2 with `count` options, the first one right. */
+function fixedCheck(count: number) {
+  return {
+    basis: null,
+    context: null,
+    image: null,
+    kind: "check" as const,
+    options: Array.from({ length: count }, (_, index) => ({
+      isCorrect: index === 0,
+      picture: null,
+      reason: `Why ${index}.`,
+      text: `Option ${index}`,
+    })),
+    question: "Which one?",
+    screen: 2,
+    visual: null,
+  };
+}
+
 describe(fixLessonDraft, () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -90,8 +113,8 @@ describe(fixLessonDraft, () => {
     vi.mocked(generateText).mockResolvedValueOnce(
       createGenerateTextResult({
         screens: [
-          { content: explanation("Two, shorter"), screen: 2 },
-          { content: explanation("Out of the plan"), screen: 9 },
+          { ...explanation("Two, shorter"), screen: 2 },
+          { ...explanation("Out of the plan"), screen: 9 },
         ],
         summary: null,
       }),
@@ -100,11 +123,12 @@ describe(fixLessonDraft, () => {
     const { data, userPrompt } = await fix({ screenCount: 3 });
 
     expect(userPrompt).toContain("Screen 2: Too long.");
+    expect(userPrompt).toContain("\nMONEY: $2,400.00 or $2,400\n");
     expect(data.changedScreens).toStrictEqual([1]);
 
     expect(data.lesson).toStrictEqual({
       screens: [explanation("One"), explanation("Two, shorter"), explanation("Three")],
-      summary: ["The idea."],
+      summary: lesson.summary,
     });
   });
 
@@ -123,11 +147,14 @@ describe(fixLessonDraft, () => {
     });
   });
 
-  it("fills a planned screen the draft left out and takes a new summary", async () => {
+  it("fills a planned screen the draft left out and takes a new summary, repaired", async () => {
     vi.mocked(generateText).mockResolvedValueOnce(
       createGenerateTextResult({
-        screens: [{ content: explanation("Four"), screen: 4 }],
-        summary: ["A clearer idea."],
+        screens: [{ ...explanation("Four"), screen: 4 }],
+        summary: {
+          ideas: [{ label: "**Clearer** idea.", text: " A clearer idea. " }],
+          shape: "nested",
+        },
       }),
     );
 
@@ -135,7 +162,11 @@ describe(fixLessonDraft, () => {
 
     expect(data.changedScreens).toStrictEqual([3]);
     expect(data.lesson.screens.at(-1)).toStrictEqual(explanation("Four"));
-    expect(data.lesson.summary).toStrictEqual(["A clearer idea."]);
+
+    expect(data.lesson.summary).toStrictEqual({
+      ideas: [{ label: "Clearer idea", text: "A clearer idea." }],
+      shape: "hub",
+    });
   });
 
   it("reads the typed answers' rules only for a lesson whose learners' exams ask written answers", async () => {
@@ -148,7 +179,19 @@ describe(fixLessonDraft, () => {
       fix({ screenCount: 3, shortAnswers: true }),
     ]);
 
-    expect(picked.systemPrompt).toBe("Fix the lesson.\nKeep the rest.");
-    expect(written.systemPrompt).toBe("Fix the lesson.\nFix typed answers.\nKeep the rest.");
+    expect(picked.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe("Fix the lesson.\nKeep the rest.");
+
+    expect(written.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
+      "Fix the lesson.\nFix typed answers.\nKeep the rest.",
+    );
+  });
+
+  it("drops a check's extra wrong option instead of failing the fix", async () => {
+    await answerOnceWith({ screens: [fixedCheck(6)], summary: null });
+
+    const { data } = await fix({ screenCount: 3 });
+    const { screen: _number, ...fixed } = fixedCheck(5);
+
+    expect(data.lesson.screens[1]).toStrictEqual(fixed);
   });
 });

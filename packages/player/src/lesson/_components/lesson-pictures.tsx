@@ -2,6 +2,7 @@
 
 import { asksNumberedPicture } from "@zoonk/core/lesson-player/picture-policy";
 import { type LessonPicture } from "@zoonk/core/lesson-player/playable-lesson";
+import { DRAWN_PICTURE_SIZE, PICTURE_BOX_CLASS, pictureBoxStyle } from "@zoonk/learn/picture-box";
 import { MediaPending } from "@zoonk/ui/components/media-pending";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -124,14 +125,17 @@ export function LessonPicturesProvider({
   return <LessonPicturesContext value={state}>{children}</LessonPicturesContext>;
 }
 
-function useStepPicture(step: PlayableLibraryStep) {
-  const { drawn, pending: waiting } = use(LessonPicturesContext);
+function getStepPicture({ drawn, pending: waiting }: PicturesState, step: PlayableLibraryStep) {
   const own = "image" in step ? step.image : null;
   const image = own ?? drawn[step.id] ?? null;
   const asks = getImageRequest(step) !== null;
   const pending = !image && asks && waiting.includes(step.id);
 
   return { image, pending };
+}
+
+function useStepPicture(step: PlayableLibraryStep) {
+  return getStepPicture(use(LessonPicturesContext), step);
 }
 
 export function useOptionPicture(step: PlayableLibraryStep, optionId: string) {
@@ -143,10 +147,14 @@ export function useOptionPicture(step: PlayableLibraryStep, optionId: string) {
   return { image, pending };
 }
 
-export function useIsRequiredPictureDrawing(step: PlayableLibraryStep): boolean {
-  const { pending } = useStepPicture(step);
+export function useIsRequiredPictureDrawing(step: PlayableLibraryStep | null): boolean {
+  const pictures = use(LessonPicturesContext);
 
-  return pending && "content" in step && asksNumberedPicture(step);
+  if (!step) {
+    return false;
+  }
+
+  return getStepPicture(pictures, step).pending && "content" in step && asksNumberedPicture(step);
 }
 
 export function useIsExploredPictureLost(step: PlayableLibraryStep): boolean {
@@ -154,18 +162,15 @@ export function useIsExploredPictureLost(step: PlayableLibraryStep): boolean {
   return step.kind === "explanation" && labeledDiagramOf(step) !== null && !image && !pending;
 }
 
-export function useHasStepPicture(step: PlayableLibraryStep): boolean {
-  const { image, pending } = useStepPicture(step);
-  return image !== null || pending;
-}
-
 function LessonPicturePending({ alt, frame }: { alt?: string; frame: LessonPictureFrame }) {
   const t = useExtracted();
 
   return (
     <MediaPending
-      className={cn("aspect-4/5 w-full", PICTURE_FRAME_CLASS[frame])}
-      icon={<ImageIcon aria-hidden="true" className="size-6" />}
+      scrollable
+      className={cn(PICTURE_BOX_CLASS, PICTURE_FRAME_CLASS[frame])}
+      icon={<ImageIcon aria-hidden="true" className="size-6 shrink-0" />}
+      style={pictureBoxStyle(DRAWN_PICTURE_SIZE.scene)}
     >
       <p role="status">{t("Drawing the picture…")}</p>
       {alt && <p>{alt}</p>}
@@ -173,22 +178,10 @@ function LessonPicturePending({ alt, frame }: { alt?: string; frame: LessonPictu
   );
 }
 
-function PictureFrame({
-  children,
-  className,
-  frame,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  frame: LessonPictureFrame;
-}) {
+function PictureFrame({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <div
-      className={cn(
-        "flex w-full justify-start",
-        frame === "hero" && "max-sm:-mx-4 max-sm:w-[calc(100%+2rem)]",
-        className,
-      )}
+      className={cn("flex w-full justify-start max-sm:justify-center", className)}
       data-slot="lesson-picture"
     >
       {children}
@@ -215,7 +208,7 @@ export function LessonStepPicture({
 
   if (image) {
     return (
-      <PictureFrame className={className} frame={frame}>
+      <PictureFrame className={className}>
         <LessonStepImage frame={frame} image={image} priority={priority} />
       </PictureFrame>
     );
@@ -223,7 +216,7 @@ export function LessonStepPicture({
 
   if (pending) {
     return (
-      <PictureFrame className={className} frame={frame}>
+      <PictureFrame className={className}>
         <LessonPicturePending alt={asks ? request?.alt : undefined} frame={frame} />
       </PictureFrame>
     );

@@ -14,13 +14,17 @@ struct LessonStepView: View {
   var body: some View {
     content
       .environment(store.work(for: step.id, round: state.rounds[step.id] ?? 0))
+      .environment(
+        \.highlightsLessonTerms, step.isExplaining && store.lesson?.targetLanguage == nil)
   }
 
   @ViewBuilder
   private var content: some View {
     switch step.content {
     case .hook(let content):
-      HookStepView(step: step, content: content, context: context, part: part)
+      HookStepView(
+        step: step, content: content, context: context, part: part,
+        openingMap: store.lesson?.taggedSummary)
     case .explanation(let content):
       ExplanationStepView(step: step, content: content, part: part)
     case .workedExample(let content):
@@ -95,6 +99,21 @@ private struct HookStepView: View {
   let content: HookContent
   let context: LessonStepContext
   let part: LessonStepPart
+  let openingMap: LessonSummary?
+  /// A map that comes while the scene is read shows from the next visit, so the scene doesn't move.
+  @State private var showsOpeningMap: Bool
+
+  init(
+    step: LessonStep, content: HookContent, context: LessonStepContext, part: LessonStepPart,
+    openingMap: LessonSummary?
+  ) {
+    self.step = step
+    self.content = content
+    self.context = context
+    self.part = part
+    self.openingMap = openingMap
+    _showsOpeningMap = State(initialValue: openingMap != nil)
+  }
 
   var body: some View {
     switch part {
@@ -108,11 +127,13 @@ private struct HookStepView: View {
     if content.asksGuess, let question = content.question {
       LessonEyebrow(
         title: Text(
-          "Guess first", tableName: "Player",
-          comment: "Above a hook's question: a guess never counts"),
+          "Just a guess, it doesn't count", tableName: "Player",
+          comment:
+            "Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored."
+        ),
         systemImage: "sparkles")
+      StepMedia(step: step, visual: content.visual, asks: true, opens: true)
       LessonQuestionText(text: question)
-      StepMedia(step: step, visual: content.visual, asks: true)
     } else {
       // A read screen leads with its picture; a spread has it on the facing page.
       if !isPaneSplit {
@@ -121,6 +142,12 @@ private struct HookStepView: View {
 
       LessonTextBlocks(content.text ?? "")
         .typeStyle(.lessonText)
+
+      if showsOpeningMap, let openingMap {
+        // On one page the map takes the room the scene leaves at its bottom.
+        Spacer(minLength: 8)
+        LessonOpeningMap(summary: openingMap)
+      }
     }
   }
 
@@ -169,11 +196,7 @@ private struct ExplanationStepView: View {
         StepMedia(step: step, visual: content.visual, hero: true)
       }
 
-      if let title = content.title {
-        LessonQuestionText(text: title)
-      }
-
-      LessonTextBlocks(content.text)
+      LessonScreenText(title: content.title, text: content.text, marks: step.marks)
         .typeStyle(.lessonText)
     case .turn:
       if isPaneSplit {
@@ -226,11 +249,7 @@ private struct WorkedExampleStepView: View {
       title: Text("Worked example", tableName: "Player", comment: "Label above a worked example"),
       systemImage: "list.number")
 
-    if let title = content.title {
-      LessonQuestionText(text: title)
-    }
-
-    LessonTextBlocks(content.problem)
+    LessonScreenText(title: content.title, text: content.problem, marks: step.marks)
     StepMedia(step: step, visual: content.visual)
   }
 
@@ -252,11 +271,23 @@ private struct WorkedExampleStepView: View {
         .accessibilityElement(children: .combine)
       }
     }
+    .announcesStatus(newestStep)
 
     if shown >= content.steps.count {
       LessonTextBlocks(content.result)
         .typeStyle(.body.weight(.semibold))
     }
+  }
+
+  /// The step "Show the next step" just added; the first one is there as the screen opens.
+  private var newestStep: String? {
+    guard shown > 1, content.steps.indices.contains(shown - 1) else {
+      return nil
+    }
+
+    let step = content.steps[shown - 1]
+    return [LessonRichText.spoken(step.text), step.math.map { LessonMath.typeset($0).said }]
+      .compactMap(\.self).joinedSentences()
   }
 }
 
@@ -269,13 +300,18 @@ private struct CheckStepView: View {
   var body: some View {
     switch part {
     case .screen:
+      StepMedia(step: step, visual: nil, asks: true)
+
       if let context = content.context {
         LessonTextBlocks(context)
           .foregroundStyle(.mutedForeground)
       }
 
+      if let visual = content.visual {
+        LessonVisualView(visual: visual)
+      }
+
       LessonQuestionText(text: content.question)
-      StepMedia(step: step, visual: content.visual, asks: true)
     case .turn:
       LessonOptionList(
         options: content.options.map {
@@ -320,8 +356,10 @@ private struct TypedAnswerStepView: View {
         LessonVisualView(visual: visual)
       }
     case .turn:
+      let question = LessonQuestionParts(content.question).question
+
       LessonAnswerField(
-        label: Text(verbatim: LessonRichText.spoken(content.question)),
+        label: question.isEmpty ? nil : Text(verbatim: LessonRichText.spoken(question)),
         text: context.answer?.text ?? "",
         isLocked: context.isLocked,
         isNumber: content.isNumberAnswer,
@@ -334,7 +372,8 @@ private struct TypedAnswerStepView: View {
 }
 
 struct LessonAnswerField: View {
-  let label: Text
+  /// Without one, VoiceOver reads the placeholder, as a browser names main's field.
+  let label: Text?
   let text: String
   let isLocked: Bool
   var isNumber = false
@@ -342,14 +381,15 @@ struct LessonAnswerField: View {
   let check: (@MainActor () -> Void)?
   let onChange: @MainActor (String) -> Void
 
+  private var prompt: Text {
+    isNumber
+      ? Text("Your answer", tableName: "Player", comment: "Placeholder of a number answer")
+      : Text("Write your answer", tableName: "Player", comment: "Placeholder of a written answer")
+  }
+
   var body: some View {
     MultilineTextField(
-      text: Binding(get: { text }, set: onChange),
-      prompt: isNumber
-        ? Text("Your answer", tableName: "Player", comment: "Placeholder of a number answer")
-        : Text(
-          "Write your answer", tableName: "Player", comment: "Placeholder of a written answer"),
-      label: label
+      text: Binding(get: { text }, set: onChange), prompt: prompt, label: label ?? prompt
     ) {
       isFocused.wrappedValue = false
       check?()
@@ -453,15 +493,15 @@ private struct SpokenAnswerStepView: View {
           content: content,
           isLocked: context.isLocked,
           onGraded: context.resolveSpoken,
-          onBlocked: { store.isMicBlocked = true }))
+          onBlocked: {
+            store.isMicBlocked = true
+            announcePolitely(Self.micBlockedLine)
+          }))
     } else {
       if store.isMicBlocked, !context.isLocked {
         VStack(alignment: .leading, spacing: 4) {
-          Text(
-            "The microphone is blocked. Type your answer instead.", tableName: "Player",
-            comment: "A spoken screen falls back to typing when the microphone is off"
-          )
-          .foregroundStyle(.mutedForeground)
+          Text(Self.micBlockedLine)
+            .foregroundStyle(.mutedForeground)
 
           if let settings = URL(string: UIApplication.openSettingsURLString) {
             Link(destination: settings) {
@@ -484,6 +524,12 @@ private struct SpokenAnswerStepView: View {
     }
 
     modeSwitch
+  }
+
+  private static var micBlockedLine: String {
+    String(
+      localized: "The microphone is blocked. Type your answer instead.", table: "Player",
+      comment: "A spoken screen falls back to typing when the microphone is off")
   }
 
   /// An answer started one way doesn't carry over, and asking to speak tries the microphone again.
@@ -550,6 +596,10 @@ extension HookContent {
 }
 
 extension LessonStep {
+  var opensLesson: Bool {
+    if case .hook(let hook) = content { !hook.asksGuess } else { false }
+  }
+
   /// Text that teaches, which the buddy can explain another way, as main's aside offers beside it.
   var teachesInText: Bool {
     switch content {
@@ -565,11 +615,12 @@ struct StepMedia: View {
   let visual: LessonVisual?
   var asks = false
   var hero = false
+  var opens = false
 
   var body: some View {
     LessonPictureView(
       image: step.image, alt: step.picture?.alt, isPending: step.imagePending, asks: asks,
-      hero: hero)
+      hero: hero, opens: opens)
 
     if let visual {
       LessonVisualView(visual: visual)

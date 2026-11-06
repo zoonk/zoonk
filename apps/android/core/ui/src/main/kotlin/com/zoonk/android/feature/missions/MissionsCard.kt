@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -49,6 +50,8 @@ import com.zoonk.android.feature.session.BlockMark
 import com.zoonk.android.feature.session.DayMission
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.MissionOpens
+import com.zoonk.android.feature.session.OPENING_ROW_ALPHA
+import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.ui.characters.Buddy
 import com.zoonk.android.ui.characters.BuddyCrop
 import com.zoonk.android.ui.characters.BuddyLook
@@ -70,7 +73,7 @@ import kotlinx.coroutines.launch
  * The day's missions (main's `MissionsCard`): their status, the Brain Power they earn together,
  * a track of their progress and a row each. [rowsInQueue] leaves the rows to the session's queue,
  * which marks each mission's block; [collapseWhenDone] folds a won day to one line; [showBuddy] off
- * where the whole page is the buddy's.
+ * where the whole page is the buddy's. [opening] and [openFailed] say where a row's tap stands.
  */
 @Composable
 fun MissionsCard(
@@ -83,6 +86,8 @@ fun MissionsCard(
     modifier: Modifier = Modifier,
     brainPower: Long? = null,
     blockOf: (DayMission) -> DayStep? = { null },
+    opening: (DayMission) -> Boolean = { false },
+    openFailed: (DayMission) -> Boolean = { false },
     rowsInQueue: Boolean = false,
     collapseWhenDone: Boolean = false,
     showBuddy: Boolean = true,
@@ -142,7 +147,7 @@ fun MissionsCard(
                 Column(Modifier.padding(top = 6.dp)) {
                     missions.forEachIndexed { index, mission ->
                         if (index > 0) HorizontalDivider()
-                        MissionRow(mission, blockOf(mission), buddy, buddyName, onOpen)
+                        MissionRow(mission, blockOf(mission), buddy, buddyName, opening(mission), openFailed(mission), onOpen)
                     }
                 }
             } else {
@@ -261,6 +266,8 @@ private fun MissionRow(
     block: DayStep?,
     buddy: BuddyLook,
     buddyName: String,
+    busy: Boolean,
+    openFailed: Boolean,
     onOpen: (MissionOpens) -> Unit,
 ) {
     val opens = mission.opens?.takeIf { !mission.done && mission.waitReason == null }
@@ -273,6 +280,8 @@ private fun MissionRow(
         mark = { if (block != null && !mission.done) BlockMark(block) else MissionMark(mission.kind, mission.done, buddy) },
         openLabel = missionOpenLabel(mission, buddyName),
         onOpen = opens?.let { { onOpen(it) } },
+        busy = busy,
+        openFailed = openFailed,
         trailing =
             if (!mission.done && mission.opens is MissionOpens.Block && mission.waitReason == null) {
                 {
@@ -315,6 +324,8 @@ fun MissionListRow(
     openLabel: String?,
     onOpen: (() -> Unit)?,
     modifier: Modifier = Modifier,
+    busy: Boolean = false,
+    openFailed: Boolean = false,
     trailing: (@Composable () -> Unit)? = null,
 ) {
     val doneLabel = stringResource(R.string.today_step_done)
@@ -323,7 +334,13 @@ fun MissionListRow(
         modifier =
             modifier
                 .fillMaxWidth()
-                .then(if (onOpen != null) Modifier.clickable(role = Role.Button, onClickLabel = openLabel, onClick = onOpen) else Modifier)
+                .then(
+                    if (onOpen != null) {
+                        Modifier.clickable(enabled = !busy, role = Role.Button, onClickLabel = openLabel, onClick = onOpen)
+                    } else {
+                        Modifier
+                    },
+                ).alpha(if (busy) OPENING_ROW_ALPHA else 1f)
                 .semantics { if (done) stateDescription = doneLabel }
                 .heightIn(min = 48.dp)
                 .padding(vertical = 10.dp),
@@ -338,6 +355,7 @@ fun MissionListRow(
                 color = if (muted) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.titleSmall,
             )
+            if (openFailed) StepOpenFailed()
             line?.let {
                 Text(
                     it,

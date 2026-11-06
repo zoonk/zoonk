@@ -8,6 +8,7 @@ import {
   catalogTryLessonSchema,
   firstQuestionSchema,
 } from "./catalog-try-lesson";
+import { lessonMapResponseSchema } from "./lesson-map";
 
 const generationStatusSchema = z.enum(["completed", "failed", "pending", "running"]);
 
@@ -285,10 +286,10 @@ export const catalogLessonSchema = z
       .meta({ description: "What the lesson opens with; null until its content is written" }),
     id: z.uuid(),
     language: z.string(),
-    summaryIdeas: z
-      .array(z.string())
+    summary: lessonMapResponseSchema
+      .nullable()
       .meta({
-        description: `What the lesson teaches, each idea in one sentence; empty until it's written. ${LESSON_RICH_TEXT}`,
+        description: `What the lesson teaches; null until it's written. Each idea's \`text\` is ${LESSON_RICH_TEXT}`,
       }),
     title: z.string(),
   })

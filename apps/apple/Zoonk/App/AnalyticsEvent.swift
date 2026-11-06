@@ -128,14 +128,16 @@ enum AnalyticsEvent: Equatable {
     }
 
     let stepID = state.queue.indices.contains(state.position) ? state.queue[state.position] : nil
+    let stepKind =
+      state.phase == .map ? "map" : stepID.flatMap { state.steps[$0]?.kind.rawValue } ?? "unknown"
 
     return .activityAbandoned(
-      lessonID: state.lessonId, screen: state.position + 1,
-      stepKind: stepID.flatMap { state.steps[$0]?.kind.rawValue } ?? "unknown",
+      lessonID: state.lessonId, screen: state.position + 1, stepKind: stepKind,
       wrongInARow: wrongInARow(state))
   }
 
-  /// Wrong verdicts since the last right one, counting each screen seen by its latest verdict.
+  /// Wrong verdicts since the last right one, counting each screen seen by its latest verdict that
+  /// counts.
   private static func wrongInARow(_ state: LessonPlayerState) -> Int {
     var latestFirst: [String] = []
 
@@ -144,9 +146,7 @@ enum AnalyticsEvent: Equatable {
       latestFirst.append(stepID)
     }
 
-    let verdicts = latestFirst.compactMap { stepID in
-      state.results[stepID].flatMap { $0.checked ? $0.isCorrect : nil }
-    }
+    let verdicts = latestFirst.compactMap(state.countedVerdict)
 
     return verdicts.firstIndex(of: true) ?? verdicts.count
   }

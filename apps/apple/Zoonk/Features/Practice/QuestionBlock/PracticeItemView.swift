@@ -497,9 +497,8 @@ struct NumericItemView: View {
       .modifier(AnswerFieldStyle(mark: mark, isFocused: isFocused))
 
       if isInvalid {
-        Text(invalidHint)
+        FailureLine(message: invalidHint)
           .typeStyle(.body)
-          .foregroundStyle(.destructiveText)
       } else if let rule {
         Text(rule)
           .typeStyle(.note)

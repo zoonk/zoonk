@@ -1,18 +1,17 @@
 import { type OwedFollowUp } from "@zoonk/core/follow-ups/contract";
+import { rememberProposedMemory } from "../_shared/remember-memory";
 import { claimRunToken } from "../_shared/run-token";
 import {
-  type ProposedMemory,
   askToCancelSecondStorePlusStep,
   checkFactSensitivityStep,
   checkMistakePatternStep,
   claimDailyInsightStep,
   endWebPlusBesideStoreStep,
-  gateMemoryCandidateStep,
   proposeOnboardingMemoryStep,
   proposeSessionMemoryStep,
-  rememberMemoryCandidateStep,
   resolveMistakeCauseStep,
   saveDailyInsightStep,
+  settleSessionDayStep,
   voiceWordStep,
   writeDailyInsightStep,
 } from "./steps/background-task-steps";
@@ -33,33 +32,6 @@ export type BackgroundTask = Exclude<
 export type BackgroundTaskResult = { status: "alreadyRunning" | "done" };
 
 type InsightTask = Extract<BackgroundTask, { kind: "checkDailyInsight" }>;
-
-async function rememberCandidate({
-  candidate,
-  context,
-}: {
-  candidate: ProposedMemory["candidates"][number];
-  context: ProposedMemory["context"];
-}): Promise<void> {
-  const gate = await gateMemoryCandidateStep(candidate);
-
-  if (gate) {
-    await rememberMemoryCandidateStep({ candidate, context, gate });
-  }
-}
-
-/** Each candidate sees what the one before it changed. */
-async function remember(proposed: ProposedMemory | null): Promise<void> {
-  if (!proposed) {
-    return;
-  }
-
-  await proposed.candidates.reduce<Promise<void>>(
-    (previous, candidate) =>
-      previous.then(() => rememberCandidate({ candidate, context: proposed.context })),
-    Promise.resolve(),
-  );
-}
 
 /** Claim, write and save are separate steps, so a retried save never asks the model again. */
 async function checkDailyInsight({ input, userId }: InsightTask): Promise<void> {
@@ -84,13 +56,15 @@ async function runTask(task: BackgroundTask): Promise<void> {
     case "findMistakePattern":
       return checkMistakePatternStep({ ...task.input, userId });
     case "rememberOnboarding":
-      return remember(await proposeOnboardingMemoryStep({ ...task.input, userId }));
+      return rememberProposedMemory(await proposeOnboardingMemoryStep({ ...task.input, userId }));
     case "rememberSession":
-      return remember(await proposeSessionMemoryStep({ ...task.input, userId }));
+      return rememberProposedMemory(await proposeSessionMemoryStep({ ...task.input, userId }));
     case "checkDailyInsight":
       return checkDailyInsight(task);
     case "checkFactSensitivity":
       return checkFactSensitivityStep(task.input);
+    case "settleSessionDay":
+      return settleSessionDayStep({ ...task.input, userId });
     case "voiceWord":
       return voiceWordStep(task.input);
     case "endWebPlusBesideStore":

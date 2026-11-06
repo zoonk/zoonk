@@ -27,12 +27,12 @@ struct TutorPlanChangeCard: View {
         actions
 
         if failed {
-          Text(
-            "We couldn't save your answer. Try again.", tableName: "Tutor",
-            comment: "Answering a plan change the buddy proposed failed"
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't save your answer. Try again.", table: "Tutor",
+              comment: "Answering a plan change the buddy proposed failed")
           )
           .typeStyle(.note)
-          .foregroundStyle(.destructiveText)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -170,38 +170,51 @@ struct TutorMemoryUpdate: View {
     VStack(alignment: .leading, spacing: 6) {
       switch undo {
       case .undone:
-        Text("Change undone", tableName: "Tutor", comment: "A memory change was undone")
-      case .failed:
-        Text(
-          "Couldn't undo. It changed since.", tableName: "Tutor",
-          comment: "Undoing a memory change failed"
-        )
-        .foregroundStyle(.destructiveText)
-      case .undoing, nil:
+        Text(undone)
+      case .changedSince:
+        FailureLine(
+          message: LocalizedStringResource(
+            "Couldn't undo. It changed since.", table: "Tutor",
+            comment: "Undoing a memory change failed"))
+      case .failed, .undoing, nil:
         Label {
-          Text(
-            "Memory updated: \(statement)", tableName: "Tutor",
-            comment: "What the buddy now remembers; the argument is the fact")
+          Text(Self.line(changes))
         } icon: {
           Image(systemName: "brain")
         }
 
         Button {
-          Task {
-            await conversation.undoMemory(of: turnID)
-          }
+          Task { await conversation.undoMemory(of: turnID) }
         } label: {
           Text("Undo", tableName: "Tutor", comment: "Undoes what the buddy remembered")
         }
         .buttonStyle(.ghost)
         .disabled(undo == .undoing)
+
+        if undo == .failed {
+          FailureLine(
+            message: LocalizedStringResource(
+              "Couldn't undo. Try again.", table: "Tutor",
+              comment: "Undoing a memory change didn't go through, and Undo stays to try again"))
+        }
       }
     }
     .typeStyle(.note)
     .foregroundStyle(.mutedForeground)
+    .announcesStatus(undo == .undone ? undone : nil)
   }
 
-  private var statement: String {
+  private var undone: String {
+    String(localized: "Change undone", table: "Tutor", comment: "A memory change was undone")
+  }
+
+  static func line(_ changes: [TutorMemoryChange]) -> String {
+    String(
+      localized: "Memory updated: \(statement(changes))", table: "Tutor",
+      comment: "What the buddy now remembers; the argument is the fact")
+  }
+
+  private static func statement(_ changes: [TutorMemoryChange]) -> String {
     let first = changes.first.flatMap { $0.fact?.statement ?? $0.previous?.statement } ?? ""
     let more = changes.count - 1
 
@@ -220,26 +233,36 @@ struct TutorMissionMoment: View {
   let moment: Components.Schemas.StudyMissionMoment
 
   var body: some View {
-    let done = moment.missions.filter { $0.status == .done }.count
-
     Label {
       VStack(alignment: .leading, spacing: 2) {
-        Text(
-          "Mission done", tableName: "Tutor",
-          comment: "Asking the buddy completed one of the day's missions"
-        )
-        .typeStyle(.body.weight(.semibold))
-        Text(
-          "Today's missions: \(done) of \(moment.missions.count)", tableName: "Tutor",
-          comment: "The day's missions done, after asking the buddy"
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
+        Text(Self.title)
+          .typeStyle(.body.weight(.semibold))
+        Text(Self.progress(moment))
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
     } icon: {
       Image(systemName: "checkmark.circle.fill")
         .foregroundStyle(.success)
     }
     .accessibilityElement(children: .combine)
+  }
+
+  static func said(_ moment: Components.Schemas.StudyMissionMoment) -> String {
+    [title, progress(moment)].joinedSentences()
+  }
+
+  private static var title: String {
+    String(
+      localized: "Mission done", table: "Tutor",
+      comment: "Asking the buddy completed one of the day's missions")
+  }
+
+  private static func progress(_ moment: Components.Schemas.StudyMissionMoment) -> String {
+    let done = moment.missions.filter { $0.status == .done }.count
+
+    return String(
+      localized: "Today's missions: \(done) of \(moment.missions.count)", table: "Tutor",
+      comment: "The day's missions done, after asking the buddy")
   }
 }

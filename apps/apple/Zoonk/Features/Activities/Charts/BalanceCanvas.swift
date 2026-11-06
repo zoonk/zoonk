@@ -72,6 +72,7 @@ private struct BlockBalance: View {
       .animation(reduceMotion ? nil : .snappy, value: current)
       .accessibilityElement(children: .ignore)
       .accessibilityLabel(Text(verbatim: description(sides)))
+      .announcesStatus(tilt != 0 ? hint.map(LessonRichText.spoken) : nil)
 
     Text(verbatim: "\(sides.left) \(tilt == 0 ? "=" : "≠") \(sides.right)")
       .typeStyle(.section.monospaced())
@@ -355,6 +356,8 @@ private struct SymbolicBalance: View {
     Text(verbatim: current)
       .typeStyle(.section.monospaced())
       .frame(maxWidth: .infinity)
+      .announcesStatus(current)
+      .announcesStatus(hint.map(LessonRichText.spoken))
 
     if reached < steps.count && !isChecked {
       VStack(spacing: 8) {

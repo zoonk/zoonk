@@ -136,6 +136,9 @@ struct DrillIdeaView: View {
 /// Its task ends the question when the time runs out; key it by the question. It counts from
 /// `start`, so drawing it again never adds time.
 struct DrillCountdownView: View {
+  /// VoiceOver hears the clock only at these marks: every second would talk over the question.
+  private static let warnings = [10, 5]
+
   let seconds: Int
   let start: Date
   let onTimeUp: () -> Void
@@ -159,14 +162,28 @@ struct DrillCountdownView: View {
           ))
     }
     .task {
-      let left = start.addingTimeInterval(TimeInterval(seconds)).timeIntervalSinceNow
-      try? await Task.sleep(for: .seconds(max(left, 0)))
+      for mark in Self.warnings where end.timeIntervalSinceNow > TimeInterval(mark) {
+        try? await Task.sleep(for: .seconds(end.timeIntervalSinceNow - TimeInterval(mark)))
+        if Task.isCancelled { return }
+        announcePolitely(
+          String(
+            localized: "\(mark) seconds left", table: "Practice",
+            comment: "VoiceOver: a timed drill's clock is about to run out"))
+      }
+
+      try? await Task.sleep(for: .seconds(max(end.timeIntervalSinceNow, 0)))
       if !Task.isCancelled { onTimeUp() }
     }
   }
 }
 
 struct DrillAnswerNotes: View {
+  static var timesUp: String {
+    String(
+      localized: "Time's up. It counts as a miss, so it comes back.", table: "Practice",
+      comment: "After a timed drill's clock ran out.")
+  }
+
   let drill: PracticeDrill?
   let notSure: Bool
   let timedOut: Bool
@@ -175,9 +192,7 @@ struct DrillAnswerNotes: View {
   var body: some View {
     if timedOut {
       QuestionNote(systemImage: "timer") {
-        Text(
-          "Time's up. It counts as a miss, so it comes back.", tableName: "Practice",
-          comment: "After a timed drill's clock ran out.")
+        Text(Self.timesUp)
       }
     }
 

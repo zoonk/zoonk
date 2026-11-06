@@ -1,6 +1,10 @@
 import { safeAsync } from "@zoonk/utils/error";
 
-type SubscriptionChange = { change: "canceled" | "started"; plan: string; referenceId: string };
+export type SubscriptionChange = {
+  change: "canceled" | "started";
+  plan: string;
+  referenceId: string;
+};
 type SubscriptionChangeSink = (event: SubscriptionChange) => Promise<void>;
 
 declare global {

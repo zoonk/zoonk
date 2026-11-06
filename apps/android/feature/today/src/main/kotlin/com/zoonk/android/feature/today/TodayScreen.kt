@@ -45,6 +45,7 @@ import com.zoonk.android.feature.onboarding.questionsLeft
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.LearnerAccess
+import com.zoonk.android.navigation.SignInGate
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
@@ -97,7 +98,7 @@ fun TodayScreen(
             }
 
             LearnerAccess.SessionEnded -> {
-                SessionEnded(navigator, padding)
+                SignInGate(ended = true, navigator, padding)
             }
 
             LearnerAccess.Unavailable -> {
@@ -218,23 +219,6 @@ internal fun localDayLine(summary: LearnerSummary?): String? {
     val zone = summary?.timeZone ?: return null
     val today = java.time.LocalDate.now(ZoneId.of(zone))
     return formatDate(today, currentLocale(), DateStyle.WeekdayDayShort, today)
-}
-
-/** The plan is still in the account, so this leads back to it instead of a first goal built again as a guest. */
-@Composable
-private fun SessionEnded(
-    navigator: AppNavigator,
-    padding: PaddingValues,
-) {
-    StatusMessage(
-        icon = R.drawable.ic_lock,
-        title = stringResource(R.string.gate_session_ended_title),
-        description = stringResource(R.string.today_session_ended_description),
-        modifier = Modifier.padding(padding).verticalScroll(rememberScrollState()),
-    ) {
-        Button(onClick = { navigator.open(AppRoute.Login) }) { Text(stringResource(R.string.gate_log_in)) }
-        OutlinedButton(onClick = { navigator.open(AppRoute.StartGoal()) }) { Text(stringResource(R.string.gate_start_something_new)) }
-    }
 }
 
 @Composable

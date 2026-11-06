@@ -60,15 +60,25 @@ struct CodeRunBar: View {
   /// Shown only once there's something to undo.
   var reset: (() -> Void)?
 
+  private var loadingLine: String? {
+    guard status == .loading else {
+      return nil
+    }
+
+    return String(
+      localized: "Getting \(runtimeName) ready. This takes a few seconds the first time.",
+      table: "ActivitiesCode", comment: "A code runtime (Python) is downloading")
+  }
+
   var body: some View {
-    if status == .failed {
-      VStack(alignment: .leading, spacing: 8) {
-        Text(
-          "\(runtimeName) didn't load. Check your connection and try again.",
-          tableName: "ActivitiesCode", comment: "A code runtime (Python) failed to download"
+    VStack(alignment: .leading, spacing: status == .failed ? 8 : 6) {
+      if status == .failed {
+        FailureLine(
+          message: LocalizedStringResource(
+            "\(runtimeName) didn't load. Check your connection and try again.",
+            table: "ActivitiesCode", comment: "A code runtime (Python) failed to download")
         )
         .typeStyle(.body)
-        .foregroundStyle(.destructiveText)
 
         Button(action: retry) {
           Label {
@@ -78,9 +88,7 @@ struct CodeRunBar: View {
           }
         }
         .buttonStyle(.outline)
-      }
-    } else {
-      VStack(alignment: .leading, spacing: 6) {
+      } else {
         HStack(spacing: 8) {
           if let reset {
             Button(action: reset) {
@@ -105,14 +113,13 @@ struct CodeRunBar: View {
         }
         .controlSize(.large)
 
-        if status == .loading {
-          ActivityCaption(
-            Text(
-              "Getting \(runtimeName) ready. This takes a few seconds the first time.",
-              tableName: "ActivitiesCode", comment: "A code runtime (Python) is downloading"))
+        if let loadingLine {
+          ActivityCaption(Text(loadingLine))
         }
       }
     }
+    // One stack whatever the status, so the line a retry brings back is read out.
+    .announcesStatus(loadingLine)
   }
 
   private var runButton: some View {

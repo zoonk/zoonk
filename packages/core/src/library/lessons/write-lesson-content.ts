@@ -57,7 +57,10 @@ export type LessonDraftToFix = { draft: LessonDraftState; first: GateResult; sta
  */
 const PRIVATE_FIX_PASSES = 2;
 
-/** Internal workflow bridge: the caller must hold the lesson's content claim and dispatch returned background checks. */
+/**
+ * Internal workflow bridge: the caller must hold the lesson's content claim, report the lesson
+ * ready once it's saved (`completeLessonContent`) and dispatch returned background checks.
+ */
 export async function writeLessonContent({
   analytics,
   forExam = false,
@@ -88,7 +91,7 @@ export async function writeLessonContent({
   const context = toWritingContext(inputs);
   const taskAnalytics = { contentScope: "shared" as const, traceId: workflowRunId, ...analytics };
 
-  const writer = pickDraftWriter({ heldBackDrafts: inputs.heldBackDrafts });
+  const writer = pickDraftWriter({ heldBackDrafts: inputs.heldBackDrafts, reuse });
 
   const draft = await writeLessonDraft({
     ...context,
@@ -122,7 +125,11 @@ export async function writeLessonContent({
       remainingFixes: reusable ? 1 : PRIVATE_FIX_PASSES,
       review,
       version: {
-        lesson: repairWrittenLesson({ language: inputs.language, lesson: draft.data }),
+        lesson: repairWrittenLesson({
+          language: inputs.language,
+          lesson: draft.data,
+          spec: inputs.spec,
+        }),
         provenanceByScreen: draft.data.screens.map(() => draft.provenance),
       },
     },
@@ -195,7 +202,7 @@ export async function checkLessonContent({
     language: inputs.language,
     lessonId,
     screens,
-    summary: written.lesson.summary.map((idea) => idea.trim()),
+    summary: written.lesson.summary,
     workflowRunId,
   });
 

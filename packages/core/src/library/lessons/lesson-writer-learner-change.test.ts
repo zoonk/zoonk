@@ -19,7 +19,7 @@ import { holdBackLessonDraft } from "../generation/hold-back-lesson";
 import {
   type LessonScreenToSave,
   saveLessonContent,
-  saveLessonVersion,
+  stageLessonVersion,
 } from "./_utils/save-lesson-content";
 
 const WRITERS = ["holdback", "publish", "version"] as const;
@@ -103,7 +103,7 @@ function write({
     language: "en",
     lessonId: lesson.id,
     screens: [screen(invalid)],
-    summary: ["One whole is two halves."],
+    summary: { ideas: [{ text: "One whole is two halves." }], shape: "hub" as const },
   };
 
   if (writer === "publish") {
@@ -113,7 +113,7 @@ function write({
     });
   }
 
-  return saveLessonVersion({ ...input, replaces: stale ? 0 : 1 });
+  return stageLessonVersion({ ...input, replaces: stale ? 0 : 1 });
 }
 
 async function sourceVersion(planId: string) {
@@ -180,8 +180,14 @@ describe("lesson writer plan marks", () => {
       });
 
       await expect(
-        prisma.step.findFirstOrThrow({ where: { lessonId: context.lesson.id, retiredAt: null } }),
-      ).resolves.toMatchObject({ version: writer === "holdback" ? 1 : 2 });
+        prisma.step.findFirstOrThrow({
+          orderBy: { version: "desc" },
+          where: { lessonId: context.lesson.id, retiredAt: null },
+        }),
+      ).resolves.toMatchObject({
+        staged: writer === "version",
+        version: writer === "holdback" ? 1 : 2,
+      });
     },
   );
 

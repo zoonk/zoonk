@@ -52,7 +52,8 @@ export const languageUnitQuerySchema = z
       .uuid()
       .optional()
       .meta({
-        description: "The language goal; the learner's goal for the unit's language when left out",
+        description:
+          "The language goal; when left out, the goal the learner chose if it's for the unit's language, otherwise their latest one for it",
       }),
   })
   .meta({ id: "LanguageUnitQuery" });

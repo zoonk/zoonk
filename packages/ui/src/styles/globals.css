@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./divided-rows.css";
+@import "./hand-marks.css";
 @import "./hit-area.css";
 @import "./ink-band.css";
 @import "./scroll-fade.css";

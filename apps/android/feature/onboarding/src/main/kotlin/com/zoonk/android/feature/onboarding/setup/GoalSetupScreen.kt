@@ -41,7 +41,9 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.mock.MockStore
+import com.zoonk.android.feature.onboarding.LocalOnboardingAnnounce
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.start.text
@@ -179,6 +181,8 @@ fun GoalSetupScreen(
         },
     ) { padding ->
         var span by remember { mutableStateOf<PageSpan?>(null) }
+        var announced by remember { mutableStateOf("") }
+        val announce = remember { { text: String -> announced = text } }
 
         BoxWithConstraints(Modifier.padding(padding).consumeWindowInsets(padding).onPageSpan { span = it }) {
             val fold = spreadFold(maxWidth, span)
@@ -219,6 +223,7 @@ fun GoalSetupScreen(
                                             asideBeside || fold != null,
                                             warmUps,
                                             prepareToday,
+                                            announce,
                                         )
                                     }
                                 if (it == OnboardingStep.SCHEDULE) schedule.SaveableStateProvider(it.value, setupStep) else setupStep()
@@ -237,6 +242,7 @@ fun GoalSetupScreen(
                     else -> {}
                 }
             }
+            ActivityAnnouncement(announced)
         }
     }
 }
@@ -255,6 +261,7 @@ private fun ColumnScope.SetupStep(
     asideBeside: Boolean,
     warmUps: WarmUpStore?,
     prepareToday: suspend () -> Unit,
+    announce: (String) -> Unit,
 ) {
     val subject = view.subject()
     val pending = vm.isSaving
@@ -266,6 +273,7 @@ private fun ColumnScope.SetupStep(
     CompositionLocalProvider(
         LocalPlanStart provides planStart,
         LocalSetupWarmUp provides warmUps,
+        LocalOnboardingAnnounce provides announce,
     ) {
         QuestionStep(
             step,

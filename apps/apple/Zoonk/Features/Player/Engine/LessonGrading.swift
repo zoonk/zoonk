@@ -53,6 +53,16 @@ enum LessonGrading {
       feedback: content.reveal)
   }
 
+  /// "I don't know yet" on the opening guess: the answer without a pick.
+  static func revealHook(_ content: HookContent) -> LocalGrade? {
+    guard let answer = content.options?.first(where: \.isCorrect) else {
+      return nil
+    }
+
+    return LocalGrade(
+      isCorrect: false, answerText: nil, correctAnswer: answer.text, feedback: content.reveal)
+  }
+
   private static func gradeOptions(
     _ options: [(id: String, text: String, isCorrect: Bool, reason: String?)], optionId: String
   ) -> LocalGrade? {

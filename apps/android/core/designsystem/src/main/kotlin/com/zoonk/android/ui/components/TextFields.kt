@@ -41,6 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
@@ -84,58 +85,153 @@ fun OutlinedTextField(
     minLines: Int = 1,
     interactionSource: MutableInteractionSource? = null,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
+) = ZoonkField(
+    value,
+    modifier.fieldSemantics(label, isError),
+    FieldLook(enabled, isError, singleLine, label, placeholder, leadingIcon, trailingIcon, prefix, suffix, supportingText),
+    textStyle,
+    visualTransformation,
+    interactionSource,
+    colors,
+) { fieldModifier, style, cursor, interaction, decoration ->
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = fieldModifier,
+        enabled = enabled,
+        readOnly = readOnly,
+        textStyle = style,
+        cursorBrush = cursor,
+        visualTransformation = visualTransformation,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        interactionSource = interaction,
+        singleLine = singleLine,
+        maxLines = maxLines,
+        minLines = minLines,
+        decorationBox = decoration,
+    )
+}
+
+/** The field over a [TextFieldValue], for a screen that keeps the learner's cursor where the field moves, as across a fold. */
+@Composable
+fun OutlinedTextField(
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    textStyle: TextStyle = LocalTextStyle.current,
+    label: String? = null,
+    placeholder: @Composable (() -> Unit)? = null,
+    supportingText: @Composable (() -> Unit)? = null,
+    isError: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    singleLine: Boolean = false,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+    minLines: Int = 1,
+    interactionSource: MutableInteractionSource? = null,
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
+) = ZoonkField(
+    value.text,
+    modifier.fieldSemantics(label, isError),
+    FieldLook(enabled, isError, singleLine, label, placeholder, supportingText = supportingText),
+    textStyle,
+    VisualTransformation.None,
+    interactionSource,
+    colors,
+) { fieldModifier, style, cursor, interaction, decoration ->
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = fieldModifier,
+        enabled = enabled,
+        readOnly = readOnly,
+        textStyle = style,
+        cursorBrush = cursor,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        interactionSource = interaction,
+        singleLine = singleLine,
+        maxLines = maxLines,
+        minLines = minLines,
+        decorationBox = decoration,
+    )
+}
+
+/** What the field draws around its words, the same whichever value it edits. */
+private class FieldLook(
+    val enabled: Boolean,
+    val isError: Boolean,
+    val singleLine: Boolean,
+    val label: String?,
+    val placeholder: @Composable (() -> Unit)?,
+    val leadingIcon: @Composable (() -> Unit)? = null,
+    val trailingIcon: @Composable (() -> Unit)? = null,
+    val prefix: @Composable (() -> Unit)? = null,
+    val suffix: @Composable (() -> Unit)? = null,
+    val supportingText: @Composable (() -> Unit)? = null,
+)
+
+/** Main's field around a [BasicTextField] showing [text], which [field] draws with the style, cursor and frame given to it. */
+@Composable
+private fun ZoonkField(
+    text: String,
+    modifier: Modifier,
+    look: FieldLook,
+    textStyle: TextStyle,
+    visualTransformation: VisualTransformation,
+    interactionSource: MutableInteractionSource?,
+    colors: TextFieldColors,
+    field: @Composable (
+        modifier: Modifier,
+        style: TextStyle,
+        cursor: SolidColor,
+        interaction: MutableInteractionSource,
+        decoration: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
+    ) -> Unit,
 ) {
     val interaction = interactionSource ?: remember { MutableInteractionSource() }
     val focused by interaction.collectIsFocusedAsState()
     val textColor =
         textStyle.color.takeOrElse {
             when {
-                !enabled -> colors.disabledTextColor
-                isError -> colors.errorTextColor
+                !look.enabled -> colors.disabledTextColor
+                look.isError -> colors.errorTextColor
                 focused -> colors.focusedTextColor
                 else -> colors.unfocusedTextColor
             }
         }
 
     CompositionLocalProvider(LocalTextSelectionColors provides colors.textSelectionColors) {
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = modifier.fieldSemantics(label, isError),
-            enabled = enabled,
-            readOnly = readOnly,
-            textStyle = textStyle.merge(TextStyle(color = textColor)),
-            cursorBrush = SolidColor(if (isError) colors.errorCursorColor else colors.cursorColor),
-            visualTransformation = visualTransformation,
-            keyboardOptions = keyboardOptions,
-            keyboardActions = keyboardActions,
-            interactionSource = interaction,
-            singleLine = singleLine,
-            maxLines = maxLines,
-            minLines = minLines,
-            decorationBox = { innerTextField ->
-                LabeledField(label, enabled) {
-                    OutlinedTextFieldDefaults.DecorationBox(
-                        value = value,
-                        innerTextField = innerTextField,
-                        enabled = enabled,
-                        singleLine = singleLine,
-                        visualTransformation = visualTransformation,
-                        interactionSource = interaction,
-                        isError = isError,
-                        placeholder = placeholder,
-                        leadingIcon = leadingIcon,
-                        trailingIcon = trailingIcon,
-                        prefix = prefix,
-                        suffix = suffix,
-                        supportingText = supportingText,
-                        colors = colors,
-                        contentPadding = FIELD_PADDING,
-                        container = { FieldContainer(enabled, isError, interaction, colors) },
-                    )
-                }
-            },
-        )
+        field(
+            modifier,
+            textStyle.merge(TextStyle(color = textColor)),
+            SolidColor(if (look.isError) colors.errorCursorColor else colors.cursorColor),
+            interaction,
+        ) { innerTextField ->
+            LabeledField(look.label, look.enabled) {
+                OutlinedTextFieldDefaults.DecorationBox(
+                    value = text,
+                    innerTextField = innerTextField,
+                    enabled = look.enabled,
+                    singleLine = look.singleLine,
+                    visualTransformation = visualTransformation,
+                    interactionSource = interaction,
+                    isError = look.isError,
+                    placeholder = look.placeholder,
+                    leadingIcon = look.leadingIcon,
+                    trailingIcon = look.trailingIcon,
+                    prefix = look.prefix,
+                    suffix = look.suffix,
+                    supportingText = look.supportingText,
+                    colors = colors,
+                    contentPadding = FIELD_PADDING,
+                    container = { FieldContainer(look.enabled, look.isError, interaction, colors) },
+                )
+            }
+        }
     }
 }
 

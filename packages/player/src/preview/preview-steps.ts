@@ -8,6 +8,7 @@ import {
   type TeachingStepKind,
 } from "@zoonk/core/lesson-player/playable-lesson";
 import { getActivityTemplate } from "@zoonk/core/library/activities/templates";
+import { type StepMarks } from "@zoonk/core/library/marks/contract";
 import {
   type ChartVisual,
   type TimelineVisual,
@@ -33,6 +34,7 @@ type StepOptions = {
   id?: string;
   image?: PlayableStepImage | null;
   imagePending?: boolean;
+  marks?: StepMarks | null;
   pictureWaitStartedAt?: number;
   optionPictures?: Readonly<Record<string, PlayableStepImage>>;
 };
@@ -44,6 +46,7 @@ export function contentStep<TKind extends TeachingStepKind>(
     id = crypto.randomUUID(),
     image = null,
     imagePending = false,
+    marks = null,
     optionPictures,
     pictureWaitStartedAt = imagePending ? Date.now() : undefined,
   }: StepOptions & { content: object },
@@ -56,6 +59,7 @@ export function contentStep<TKind extends TeachingStepKind>(
     imagePending,
     ...(pictureWaitStartedAt === undefined ? {} : { pictureWaitStartedAt }),
     kind,
+    marks,
     ...(optionPictures ? { optionPictures } : {}),
     position: 0,
     skillId: null,

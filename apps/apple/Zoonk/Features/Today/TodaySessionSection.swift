@@ -144,7 +144,8 @@ struct TodaySessionSection: View {
   private func blockButton(_ block: StudyBlock, isNext: Bool) -> some View {
     let row = BlockRow(
       block: block, view: view, isNext: isNext, countsTowardMission: countsTowardMission(block),
-      isBusy: busy == .block(block.position) || (isNext && busy == .main))
+      isBusy: busy == .block(block.position) || (isNext && busy == .main),
+      failed: failed == .block(block.position))
 
     if block.waitReason == nil {
       Button {
@@ -273,23 +274,26 @@ struct TodayMainAction: View {
       .disabled(isBusy)
 
       if failed {
-        failure
+        FailureLine(message: failure)
           .typeStyle(.note)
-          .foregroundStyle(.destructiveText)
       }
     }
   }
 
-  private var failure: Text {
-    if case .prepareLessons = kind {
-      return Text(
-        "That didn't save. Try again.", tableName: "Today",
-        comment: "A change couldn't be saved")
+  private var failure: LocalizedStringResource {
+    switch kind {
+    case .prepareLessons, .practice:
+      LocalizedStringResource(
+        "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved")
+    case .keepLearning:
+      LocalizedStringResource(
+        "We couldn't open your next lessons. Try again.", table: "Today",
+        comment: "Adding the plan's next lessons to the day failed")
+    case .continueSession, .seePlan, .startSession, .summary:
+      LocalizedStringResource(
+        "We couldn't open the next step. Try again.", table: "Today",
+        comment: "Opening the day's next step failed")
     }
-
-    return Text(
-      "We couldn't open the next step. Try again.", tableName: "Today",
-      comment: "Opening the day's next step failed")
   }
 
   private var title: Text {
@@ -449,6 +453,7 @@ struct BlockRow: View {
   let isNext: Bool
   let countsTowardMission: Bool
   var isBusy = false
+  var failed = false
   var showsDetail = false
 
   var body: some View {
@@ -460,6 +465,15 @@ struct BlockRow: View {
           Text(block.displayTitle)
             .typeStyle(.rowTitle)
             .foregroundStyle(block.isFinished ? .mutedForeground : .primary)
+
+          if failed {
+            FailureLine(
+              message: LocalizedStringResource(
+                "We couldn't open this step. Try again.", table: "Today",
+                comment: "Under a step of the day, or a mission, that didn't open")
+            )
+            .typeStyle(.note)
+          }
 
           if !block.isFinished {
             ForEach(lines, id: \.self) { line in
@@ -613,12 +627,11 @@ private struct ComingLessonsRow: View {
         .foregroundStyle(.mutedForeground)
 
         if failed {
-          Text(
-            "That didn't save. Try again.", tableName: "Today",
-            comment: "A change couldn't be saved"
+          FailureLine(
+            message: LocalizedStringResource(
+              "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved")
           )
           .typeStyle(.meta)
-          .foregroundStyle(.destructiveText)
         }
       }
 
@@ -700,12 +713,19 @@ private struct FoldRow: View {
   }
 }
 
-private struct TodayDayStatus: View {
+struct TodayDayStatus: View {
+  private enum Link {
+    case changeLimit
+    case summary
+  }
+
+  @Environment(AppRouter.self) private var router
+
   let view: TodayView
   private let sentence: String
   private let clause: String?
   private let systemImage: String
-  private var changesLimit = false
+  private var link: Link?
 
   init?(view: TodayView, writingStalled: Bool) {
     self.view = view
@@ -725,7 +745,7 @@ private struct TodayDayStatus: View {
     if let limit = session.limitStatus {
       let time = studyDuration(minutes: session.dailyLimit?.limitMinutes ?? 0)
       systemImage = "hourglass"
-      changesLimit = true
+      link = .changeLimit
 
       switch limit {
       case .reached:
@@ -760,6 +780,7 @@ private struct TodayDayStatus: View {
         : String(
           localized: "Today's session is complete.", table: "Today", comment: "Day done")
       clause = Self.seeYou(session.week)
+      link = keepLearning ? .summary : nil
     case .waiting where writingStalled:
       systemImage = "clock"
       sentence = String(
@@ -822,6 +843,10 @@ private struct TodayDayStatus: View {
     }
   }
 
+  var announcement: String {
+    [sentence, clause].compactMap(\.self).joinedSentences()
+  }
+
   var body: some View {
     Label {
       VStack(alignment: .leading, spacing: 2) {
@@ -832,8 +857,21 @@ private struct TodayDayStatus: View {
             .foregroundStyle(.mutedForeground)
         }
 
-        if changesLimit {
+        switch link {
+        case .changeLimit:
           ChangeLimitButton()
+        case .summary:
+          Button {
+            router.open(.session)
+          } label: {
+            Text("See today's summary", tableName: "Today", comment: "Opens today's summary")
+              .typeWeight(.semibold)
+              .underline()
+              .multilineTextAlignment(.leading)
+          }
+          .buttonStyle(.borderless)
+        case nil:
+          EmptyView()
         }
       }
     } icon: {

@@ -88,6 +88,7 @@ private struct TimelineCanvas: View {
         gaps
       }
     }
+    .announcesStatus(showsTruth ? datedPairs.map(spokenGap).joined(separator: ". ") : nil)
   }
 
   private var track: [TimelineFields.TrackEvent] {
@@ -206,52 +207,61 @@ private struct TimelineCanvas: View {
       tableName: "Activities", comment: "VoiceOver: a timeline's range, then each date on it")
   }
 
-  private var gaps: some View {
+  private var datedPairs: [(earlier: (String, Int), later: (String, Int))] {
     let dated =
       (fields.anchors.map { ($0.label, $0.year) } + fields.events.map { ($0.label, $0.year) })
       .sorted { $0.1 < $1.1 }
 
-    return VStack(alignment: .leading, spacing: 6) {
-      ForEach(Array(zip(dated, dated.dropFirst()).enumerated()), id: \.offset) { index, pair in
-        let (earlier, later) = pair
+    return zip(dated, dated.dropFirst()).map { (earlier: $0, later: $1) }
+  }
 
+  private var gaps: some View {
+    VStack(alignment: .leading, spacing: 6) {
+      ForEach(Array(datedPairs.enumerated()), id: \.offset) { index, pair in
         HStack(alignment: .firstTextBaseline, spacing: 8) {
           Circle()
             .fill(index.isMultiple(of: 2) ? Color.vizHighlight : Color.vizSecondary)
             .frame(width: 8, height: 8)
             .accessibilityHidden(true)
 
-          gap(from: earlier, to: later, spoken: false)
-            .accessibilityLabel(gap(from: earlier, to: later, spoken: true))
+          gap(from: pair.earlier, to: pair.later)
+            .accessibilityLabel(spokenGap(pair))
         }
         .typeStyle(.body)
       }
     }
   }
 
-  private func gap(from earlier: (String, Int), to later: (String, Int), spoken: Bool) -> Text {
+  private func gap(from earlier: (String, Int), to later: (String, Int)) -> Text {
     let years = TimelineScale.yearsBetween(earlier.1, later.1)
-    let rounded = TimelineScale.roundedGap(years)
     let from = LessonRichText.typeset(earlier.0).quoted(
-      spoken: spoken, legibility: legibilityWeight)
-    let to = LessonRichText.typeset(later.0).quoted(spoken: spoken, legibility: legibilityWeight)
+      spoken: false, legibility: legibilityWeight)
+    let to = LessonRichText.typeset(later.0).quoted(spoken: false, legibility: legibilityWeight)
 
     return Text(
-      "\(gapText(years: years, rounded: rounded)) from \(from) (\(formatYear(earlier.1))) to \(to) (\(formatYear(later.1)))",
+      "\(Text(gapText(years)).typeWeight(.semibold, legibility: legibilityWeight)) from \(from) (\(formatYear(earlier.1))) to \(to) (\(formatYear(later.1)))",
       tableName: "Activities", comment: "The time between two dates of a timeline")
   }
 
-  private func gapText(years: Int, rounded: Int) -> Text {
-    rounded == years
-      ? Text(
-        "\(years) years", tableName: "Activities", comment: "A number of years between two dates"
-      )
-      .typeWeight(.semibold, legibility: legibilityWeight)
-      : Text(
-        "about \(rounded) years", tableName: "Activities",
-        comment: "A rounded number of years between two dates"
-      )
-      .typeWeight(.semibold, legibility: legibilityWeight)
+  private func spokenGap(_ pair: (earlier: (String, Int), later: (String, Int))) -> String {
+    let years = TimelineScale.yearsBetween(pair.earlier.1, pair.later.1)
+
+    return String(
+      localized:
+        "\(gapText(years)) from \(LessonRichText.spoken(pair.earlier.0)) (\(formatYear(pair.earlier.1))) to \(LessonRichText.spoken(pair.later.0)) (\(formatYear(pair.later.1)))",
+      table: "Activities", comment: "The time between two dates of a timeline")
+  }
+
+  private func gapText(_ years: Int) -> String {
+    let rounded = TimelineScale.roundedGap(years)
+
+    return rounded == years
+      ? String(
+        localized: "\(years) years", table: "Activities",
+        comment: "A number of years between two dates")
+      : String(
+        localized: "about \(rounded) years", table: "Activities",
+        comment: "A rounded number of years between two dates")
   }
 
   private func formatYear(_ year: Int) -> String {

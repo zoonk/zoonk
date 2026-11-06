@@ -4,15 +4,19 @@ import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -30,6 +34,7 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.SpreadScreen
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
@@ -62,7 +67,7 @@ private const val RECAP =
        "So blue reaches your eyes from every direction."]"""
 private const val LESSON =
     """{"id":"$LESSON_ID","title":"Why is the sky blue?","description":"Light and air.","estimatedMinutes":5,"language":"en",
-       "level":"overview","skills":[],"steps":[],"summaryIdeas":[],"targetLanguage":null,"canDo":null,"chapter":null}"""
+       "level":"overview","skills":[],"steps":[],"summary":null,"targetLanguage":null,"canDo":null,"chapter":null}"""
 
 private fun explanation(
     outline: String = "[]",
@@ -86,7 +91,10 @@ private fun explanation(
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class ExplainScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -113,6 +121,25 @@ class ExplainScreenshots {
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tablet() = capture("tablet")
 
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun book() = capture("book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBook() = capture("small-book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("book-font200", fold = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookRightToLeft() = capture("book-rtl", fold = true, rightToLeft = true)
+
     private val written =
         explanation(
             outline = OUTLINE,
@@ -136,6 +163,8 @@ class ExplainScreenshots {
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        fold: Boolean = false,
+        rightToLeft: Boolean = false,
     ) {
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
@@ -176,16 +205,19 @@ class ExplainScreenshots {
                 "outline" to
                     { ExplainWaiting(explanation(outline = OUTLINE), viewModel, rememberAppNavigator(), readAgain = {}, onStart = {}) },
                 "written" to { ExplainWaiting(written, viewModel, rememberAppNavigator(), readAgain = {}, onStart = {}) },
-                "ending" to { SpreadScreen { ExplainEnding(written, completed(), rememberAppNavigator(), readAgain = {}) } },
+                "ending" to { SpreadScreen(result = true) { ExplainEnding(written, completed(), rememberAppNavigator(), readAgain = {}) } },
             )
         var index by mutableIntStateOf(0)
 
         viewModel.show(explanation())
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                Surface(color = MaterialTheme.colorScheme.surface) { key(index) { screens[index].second() } }
+                CompositionLocalProvider(LocalLayoutDirection provides if (rightToLeft) LayoutDirection.Rtl else LayoutDirection.Ltr) {
+                    Surface(color = MaterialTheme.colorScheme.surface) { key(index) { screens[index].second() } }
+                }
             }
         }
+        if (fold) compose.unfoldBook(folds)
         screens.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()

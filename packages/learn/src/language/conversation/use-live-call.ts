@@ -8,7 +8,7 @@ import {
 import { type RefObject, useCallback, useState } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
 import { type CallLength } from "./live-call-clock";
-import { type CallEndingEvent } from "./live-call-ending";
+import { type CallEndingEvent } from "./live-call-ending-event";
 import {
   type LiveCallError,
   useCallProblem,

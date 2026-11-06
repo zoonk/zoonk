@@ -152,6 +152,7 @@ private struct FeedbackForm: View {
         }
       }
     }
+    .announcesStatus(store.state == .sent ? thanks : nil)
     .interactiveDismissDisabled(store.state == .submitting)
     .presentationDetents([.medium, .large])
     .presentationDragIndicator(.visible)
@@ -231,12 +232,9 @@ private struct FeedbackForm: View {
 
       if case .failed(let failure) = store.state {
         Section {
-          Label {
-            Text(failureMessage(failure))
-          } icon: {
-            Image(systemName: "exclamationmark.triangle")
-          }
-          .foregroundStyle(.destructiveText)
+          FailureLine(
+            message: failureMessage(failure), systemImage: "exclamationmark.triangle"
+          )
           .accessibilityAddTraits(.isStaticText)
         }
       }
@@ -282,16 +280,19 @@ private struct FeedbackForm: View {
   private var confirmation: some View {
     ContentUnavailableView {
       Label {
-        Text(
-          "Thanks! We got your message.",
-          tableName: "Feedback",
-          comment: "Confirmation after feedback is sent.")
+        Text(thanks)
       } icon: {
         Image(systemName: "checkmark.circle.fill")
           .foregroundStyle(.success)
           .accessibilityHidden(true)
       }
     }
+  }
+
+  private var thanks: String {
+    String(
+      localized: "Thanks! We got your message.", table: "Feedback",
+      comment: "Confirmation after feedback is sent.")
   }
 
   private func submit() {

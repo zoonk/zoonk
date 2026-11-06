@@ -13,13 +13,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -36,7 +36,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.IntState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -70,6 +69,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -82,6 +82,7 @@ import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.feature.audio.VoiceRecording
+import com.zoonk.android.feature.ceremonies.CertificatesMoment
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.ceremonies.MomentCeremony
 import com.zoonk.android.feature.player.engine.CompletionStatus
@@ -94,6 +95,7 @@ import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.PrimaryLabel
 import com.zoonk.android.feature.player.engine.isLanguageStep
 import com.zoonk.android.feature.player.engine.isReadStep
+import com.zoonk.android.feature.player.engine.lessonMap
 import com.zoonk.android.feature.player.engine.round
 import com.zoonk.android.feature.player.engine.screen
 import com.zoonk.android.feature.player.language.LessonLanguage
@@ -104,16 +106,20 @@ import com.zoonk.android.feature.player.language.promptAudioUrl
 import com.zoonk.android.feature.player.language.rememberLessonLanguage
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.PlayableLesson
+import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.steps.FillsView
+import com.zoonk.android.feature.player.steps.LessonMapView
+import com.zoonk.android.feature.player.steps.LocalAskSimpler
 import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
 import com.zoonk.android.feature.player.steps.LocalScreenWork
+import com.zoonk.android.feature.player.steps.LocalStepViewHeight
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.player.steps.StepView
-import com.zoonk.android.feature.player.steps.SummaryIdeas
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.player.steps.keyPick
 import com.zoonk.android.feature.player.steps.rememberScreenWork
+import com.zoonk.android.feature.tutor.TutorOffer
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
@@ -122,19 +128,22 @@ import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
-import com.zoonk.android.ui.scaffold.screenSplit
+import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.spreadShows
 import com.zoonk.api.models.LearnerSummaryBuddy
@@ -158,7 +167,7 @@ internal fun LessonColumn(
 ) {
     Box(modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
         Column(
-            modifier = Modifier.lessonColumnWidth(),
+            modifier = Modifier.taskColumn(),
             verticalArrangement = Arrangement.spacedBy(COLUMN_SPACING),
             content = content,
         )
@@ -169,66 +178,6 @@ internal fun LessonColumn(
 @Composable
 internal fun LessonColumnBeforeFold(content: @Composable ColumnScope.() -> Unit) {
     BeforeFold { beforeFold -> LessonColumn(beforeFold.padding(vertical = 24.dp), content) }
-}
-
-/**
- * A lesson's end as the shared foldables rule lays out a result: what was [done], then what's [next]
- * beside the way on. [withMoment] is whether its moment is on screen yet, which waits for the save.
- */
-@Composable
-internal fun LessonEndPages(
-    withMoment: Boolean,
-    done: @Composable ColumnScope.() -> Unit,
-    next: @Composable ColumnScope.() -> Unit,
-) {
-    // The moment plays once: made again after a fold or a rotation, the end shows it as it finished.
-    var played by rememberSaveable { mutableStateOf(false) }
-    val plays = remember { !played }
-    SideEffect { if (withMoment) played = true }
-    // The one column keeps its own scroll, so folding back finds it where the learner left it.
-    val scroll = rememberScrollState()
-    val doneScroll = rememberScrollState()
-    val nextScroll = rememberScrollState()
-    var span by remember { mutableStateOf<PageSpan?>(null) }
-
-    CelebrationScope(play = plays) {
-        BoxWithConstraints(Modifier.fillMaxSize().onPageSpan { span = it }) {
-            val fold = spreadFold(maxWidth, span)
-
-            if (fold == null) {
-                EndPage(Modifier.fillMaxSize(), scroll, Alignment.CenterHorizontally) {
-                    done()
-                    next()
-                }
-            } else {
-                EndPage(Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true }, doneScroll, Alignment.End, done)
-                EndPage(
-                    Modifier.fillMaxSize().padding(start = fold.end).semantics { isTraversalGroup = true },
-                    nextScroll,
-                    Alignment.Start,
-                    next,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun EndPage(
-    modifier: Modifier,
-    scroll: ScrollState,
-    align: Alignment.Horizontal,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    Column(
-        modifier
-            .verticalScroll(scroll)
-            .padding(vertical = 24.dp)
-            .wrapContentWidth(align)
-            .lessonColumnWidth(),
-        verticalArrangement = Arrangement.spacedBy(COLUMN_SPACING),
-        content = content,
-    )
 }
 
 /**
@@ -243,7 +192,7 @@ private fun StepColumn(
     align: Alignment.Horizontal = Alignment.CenterHorizontally,
     content: @Composable () -> Unit,
 ) {
-    Layout(content, modifier.wrapContentWidth(align).lessonColumnWidth()) { measurables, constraints ->
+    Layout(content, modifier.wrapContentWidth(align).taskColumn()) { measurables, constraints ->
         val spacing = COLUMN_SPACING.roundToPx()
         val loose = constraints.copy(minWidth = 0, minHeight = 0)
         val filling = measurables.indexOfFirst { it.layoutId == FillsView }
@@ -265,10 +214,6 @@ private fun StepColumn(
     }
 }
 
-private fun Modifier.lessonColumnWidth() = widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = COLUMN_PADDING)
-
-private val COLUMN_WIDTH = 640.dp
-private val COLUMN_PADDING = 20.dp
 private val COLUMN_SPACING = 20.dp
 
 @Composable
@@ -283,6 +228,7 @@ fun LessonPlayer(
     buddy: LearnerSummaryBuddy? = null,
     ceremony: MomentCeremony? = null,
     tutor: LessonTutor? = null,
+    certificatesMoment: CertificatesMoment? = null,
 ) {
     val screen = remember(state) { state?.screen() }
     val ownEnd =
@@ -319,14 +265,17 @@ fun LessonPlayer(
                 override fun pressNumberKey(index: Int) = numberKeys?.invoke(index) == true
 
                 override fun runPrimary() {
-                    viewModel.state.value
-                        ?.screen()
-                        ?.primary
-                        ?.takeIf { it.enabled }
-                        ?.let { if (it.isCheck) viewModel.check() else viewModel.dispatch(LessonAction.Continue) }
+                    val screen = viewModel.state.value?.screen() ?: return
+                    val primary = screen.primary?.takeIf { it.enabled } ?: return
+
+                    when {
+                        primary.label == PrimaryLabel.DontKnowYet -> screen.step?.let { dontKnow(it.id) }
+                        primary.isCheck -> viewModel.check()
+                        else -> viewModel.dispatch(LessonAction.Continue)
+                    }
                 }
 
-                override fun dontKnow(stepId: String) = viewModel.dispatch(LessonAction.SkipWriting(stepId = stepId))
+                override fun dontKnow(stepId: String) = viewModel.dispatch(LessonAction.DontKnow(stepId))
 
                 override fun skipWriting() = viewModel.skipWriting()
 
@@ -354,8 +303,10 @@ fun LessonPlayer(
     var asking by rememberSaveable { mutableStateOf(false) }
     // Ask opened beside the screen on an open book sits on the page after the fold, so it hides while the device is closed.
     var askedOnSpread by rememberSaveable { mutableStateOf(false) }
-    // A suggestion the help beside a teaching screen put in the buddy's composer, until the buddy takes it.
+    // A suggestion the help beside a teaching screen put in the buddy's composer, or "I didn't get this" asked at once,
+    // until the buddy takes it.
     var offerId by rememberSaveable { mutableStateOf<String?>(null) }
+    var offerAsked by rememberSaveable { mutableStateOf(false) }
     // Main's offer to ask the buddy stops for a question once it's turned down or the buddy is asked about it.
     var closedOffers by rememberSaveable { mutableStateOf(emptyList<String>()) }
     val stepId = screen?.step?.id
@@ -375,14 +326,23 @@ fun LessonPlayer(
                 AskBuddyOffer(reason, tutor.identity, onAsk = { ask(spread) }, onDismiss = closeOffer)
             }
         }
-    val help: (@Composable () -> Unit)? =
+    val help: (@Composable (simplerOnScreen: Boolean) -> Unit)? =
         tutor?.takeIf { it.canAsk }?.let { buddy ->
-            {
+            { simplerOnScreen ->
                 val spread = spreadShows()
-                ScreenHelp(buddy) { suggestion ->
+                ScreenHelp(buddy, simplerOnScreen) { suggestion ->
                     offerId = suggestion?.id
+                    offerAsked = false
                     ask(spread)
                 }
+            }
+        }
+    val askSimpler: ((Boolean) -> Unit)? =
+        tutor?.takeIf { it.canAsk }?.let { buddy ->
+            { onSpread ->
+                offerId = buddy.suggestions.firstOrNull { it.id == SIMPLER_SUGGESTION }?.id
+                offerAsked = true
+                ask(onSpread)
             }
         }
     val unsent = screen?.unsentAnswer == true
@@ -390,7 +350,7 @@ fun LessonPlayer(
     // Escape leaves as back does, so leaving with an unsent answer asks first.
     val leave = { backDispatcher?.onBackPressed() ?: exits.close() }
 
-    SpreadScreen {
+    SpreadScreen(result = state?.phase == LessonPhase.Completed && state.run !is LessonRun.Refused) {
         TaskScaffold(
             onClose = exits::close,
             modifier =
@@ -413,7 +373,7 @@ fun LessonPlayer(
                             }
                     },
             title = { LessonTitle(lesson.title) },
-            actions = { ScreenMenu(lesson, state, screen, viewModel) },
+            actions = { ScreenMenu(state, screen, viewModel) },
             exitConfirmation =
                 if (unsent) {
                     TaskExitConfirmation(
@@ -455,8 +415,11 @@ fun LessonPlayer(
                                         state.tutorScope(screen),
                                         state.showsMiss(screen) && screen.struggleOffer == null,
                                         asking && (spread || !askedOnSpread),
-                                        tutor.suggestions.firstOrNull { it.id == offerId },
-                                        { offerId = null },
+                                        tutor.suggestions.firstOrNull { it.id == offerId }?.let { TutorOffer(it, offerAsked) },
+                                        {
+                                            offerId = null
+                                            offerAsked = false
+                                        },
                                     ) { open -> if (open) ask(spread) else asking = false }
                                 }
                             }
@@ -470,10 +433,14 @@ fun LessonPlayer(
         ) { padding ->
             Column(Modifier.fillMaxSize().padding(padding)) {
                 if (state == null || screen == null) {
-                    Starting()
+                    PageLoading()
                 } else {
                     Segments(screen.segments, state)
-                    CompositionLocalProvider(LocalPrimaryFocus provides primaryFocus) {
+                    val spread = spreadShows()
+                    CompositionLocalProvider(
+                        LocalPrimaryFocus provides primaryFocus,
+                        LocalAskSimpler provides askSimpler?.let { asks -> { asks(spread) } },
+                    ) {
                         Content(
                             state,
                             screen,
@@ -486,6 +453,7 @@ fun LessonPlayer(
                             language,
                             buddy,
                             ceremony,
+                            certificatesMoment,
                             offer,
                             help,
                             touches,
@@ -554,30 +522,31 @@ private fun handleKey(
 private val DIGIT_KEYS = listOf(Key.One, Key.Two, Key.Three, Key.Four, Key.Five, Key.Six, Key.Seven, Key.Eight, Key.Nine)
 
 @Composable
-private fun Starting() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-}
-
-@Composable
 private fun Segments(
     segments: List<TaskSegment>,
     state: LessonPlayerState,
 ) {
     val label = stringResource(R.string.player_progress)
-    val done = if (state.phase == LessonPhase.Completed) state.queue.size else state.position
+    val done = if (state.phase == LessonPhase.Completed) segments.size else state.position
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
-    // Over the page before a fold or a spread's split, as the bar's title is.
     BoxWithConstraints(Modifier.fillMaxWidth().onPageSpan { span = it }) {
-        val split = screenSplit(maxWidth, span)
+        // A refused run's gate keeps to the page before a fold, not a wide window's split, and the progress keeps over it.
+        val fold = if (state.run is LessonRun.Refused) pageFold(maxWidth, span) else spreadFold(maxWidth, span)
 
-        LessonColumn((split?.let { Modifier.width(it.start) } ?: Modifier).padding(bottom = 8.dp)) {
+        Box(
+            (if (fold == null) Modifier.fillMaxWidth() else Modifier.width(fold.start))
+                .wrapContentWidth(if (fold == null) Alignment.CenterHorizontally else Alignment.End)
+                .taskColumn()
+                .padding(bottom = 8.dp),
+        ) {
             TaskSegments(segments, contentDescription = label, done = done)
         }
     }
 }
 
 private const val SWIPE_DISTANCE = 96f
+private val STEP_PADDING = 16.dp
 private val REVEAL_MARGIN = 16.dp
 
 @Composable
@@ -593,8 +562,9 @@ private fun Content(
     language: LessonLanguage,
     buddy: LearnerSummaryBuddy?,
     ceremony: MomentCeremony?,
+    certificatesMoment: CertificatesMoment?,
     offer: (@Composable (BuddyOfferReason) -> Unit)?,
-    help: (@Composable () -> Unit)?,
+    help: (@Composable (simplerOnScreen: Boolean) -> Unit)?,
     touches: IntState,
     canvasWork: SaveableStateHolder,
 ) {
@@ -608,7 +578,8 @@ private fun Content(
         }
 
         state.phase == LessonPhase.Completed -> {
-            MomentAfterCeremony(state.completion?.result?.ceremonyMilestone(), ceremony) {
+            val result = state.completion?.result
+            MomentAfterCeremony(result?.ceremonyMilestone(), ceremony, result?.awardedCertificates().orEmpty(), certificatesMoment) {
                 if (ownEnd == null) LessonCompletionView(state, ending, buddy) else ownEnd.body(state)
             }
         }
@@ -652,6 +623,7 @@ private fun Content(
                 BoxWithConstraints(
                     Modifier
                         .fillMaxSize()
+                        .then(if (language.languages.isLanguageLesson || !step.isReadStep) Modifier else Modifier.dottedPaper())
                         .onPageSpan { span = it }
                         .pointerInput(screen.canGoBack, screen.canGoForward) {
                             var travelled = 0f
@@ -678,15 +650,18 @@ private fun Content(
                             .then(if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true })
                             .onGloballyPositioned { reveal.viewport = it }
                             .verticalScroll(if (fold == null) scroll else turnScroll)
-                            .padding(vertical = 16.dp),
+                            .padding(vertical = STEP_PADDING),
                         align = if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
                     ) {
                         Notice(state, screen, viewModel, part)
-                        work.Page(turn = true) { StepView(step, state, screen, actions, navigator, language, part) }
-                        // Beside a teaching screen's text, the buddy's help stays in view, so it never also pops up after a pause.
+                        CompositionLocalProvider(LocalStepViewHeight provides if (fold == null) maxHeight - STEP_PADDING * 2 else null) {
+                            work.Page(turn = true) { StepView(step, state, screen, actions, navigator, language, part) }
+                        }
+                        // Beside a teaching screen's text, the buddy's help stays in view, so it never also pops up after a pause;
+                        // a knowledge lesson's explanations have "I didn't get this" instead.
                         if (help != null && fold != null && step.teachesInText) {
-                            help()
-                        } else if (offer != null && screen.quickCheck == null) {
+                            help(step.content is StepContent.Explanation && !language.languages.isLanguageLesson)
+                        } else if (offer != null && screen.quickCheck == null && language.languages.isLanguageLesson) {
                             StrugglePause(step, state.position, touches) { offer(BuddyOfferReason.Pause) }
                         }
                         Result(state, screen, if (fold == null) scroll else turnScroll, reveal, viewModel, exits, offer)
@@ -702,7 +677,7 @@ private fun Content(
                                     .fillMaxHeight()
                                     .semantics { isTraversalGroup = true }
                                     .verticalScroll(scroll)
-                                    .padding(vertical = 16.dp),
+                                    .padding(vertical = STEP_PADDING),
                                 align = Alignment.End,
                             ) {
                                 Notice(state, screen, viewModel, StepPart.Screen)
@@ -871,11 +846,21 @@ private fun ActionBar(
 
     TaskActions(back) { width ->
         if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
-        Button(onClick = actions::runPrimary, enabled = primary.enabled, modifier = width.focusRequester(primaryFocus)) {
+        val label: @Composable RowScope.() -> Unit = {
             if (primary.busy) {
                 CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
             }
             Text(stringResource(primary.label.text()))
+        }
+        if (primary.label == PrimaryLabel.DontKnowYet) {
+            OutlinedButton(
+                onClick = actions::runPrimary,
+                enabled = primary.enabled,
+                modifier = width.focusRequester(primaryFocus),
+                content = label,
+            )
+        } else {
+            Button(onClick = actions::runPrimary, enabled = primary.enabled, modifier = width.focusRequester(primaryFocus), content = label)
         }
         ask()
     }
@@ -887,6 +872,7 @@ private fun PrimaryLabel.text(): Int =
         PrimaryLabel.Checking -> R.string.player_action_checking
         PrimaryLabel.Confirm -> R.string.player_action_confirm
         PrimaryLabel.Continue -> R.string.player_action_continue
+        PrimaryLabel.DontKnowYet -> R.string.player_dont_know_yet
         PrimaryLabel.Next -> R.string.player_action_next
         PrimaryLabel.NextStep -> R.string.player_action_next_step
         PrimaryLabel.SeeAnswer -> R.string.player_action_see_answer
@@ -896,14 +882,14 @@ private fun PrimaryLabel.text(): Int =
 
 @Composable
 private fun ScreenMenu(
-    lesson: PlayableLesson,
     state: LessonPlayerState?,
     screen: LessonScreen?,
     viewModel: LessonPlayerViewModel,
 ) {
     var open by rememberSaveable { mutableStateOf(false) }
-    var summaryOpen by rememberSaveable { mutableStateOf(false) }
+    var mapOpen by rememberSaveable { mutableStateOf(false) }
     val isDone = state?.phase == LessonPhase.Completed
+    val map = state?.lessonMap
 
     if (screen?.step == null && !isDone) return
 
@@ -929,34 +915,34 @@ private fun ScreenMenu(
                     leadingIcon = { Icon(painterResource(R.drawable.ic_bolt), contentDescription = null) },
                 )
             }
-            if (isDone && lesson.summaryIdeas.isNotEmpty()) {
+            if (isDone && map != null) {
                 DropdownMenuItem(
-                    text = { Text(stringResource(R.string.player_lesson_summary)) },
+                    text = { Text(stringResource(R.string.player_lesson_map)) },
                     onClick = {
                         open = false
-                        summaryOpen = true
+                        mapOpen = true
                     },
-                    leadingIcon = { Icon(painterResource(R.drawable.ic_description), contentDescription = null) },
+                    leadingIcon = { Icon(painterResource(R.drawable.ic_lan), contentDescription = null) },
                 )
             }
         }
     }
 
-    if (summaryOpen && isDone) {
-        SummarySheet(lesson.summaryIdeas, onDismiss = { summaryOpen = false })
+    if (mapOpen && isDone && map != null) {
+        LessonMapSheet(map, onDismiss = { mapOpen = false })
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SummarySheet(
-    ideas: List<String>,
+private fun LessonMapSheet(
+    map: StepContent.Map,
     onDismiss: () -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
         LessonColumn(Modifier.verticalScroll(rememberScrollState()).padding(bottom = 24.dp)) {
-            Text(stringResource(R.string.player_lesson_summary), style = MaterialTheme.typography.titleLarge)
-            SummaryIdeas(ideas)
+            Text(stringResource(R.string.player_lesson_map), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+            LessonMapView(map)
         }
     }
 }

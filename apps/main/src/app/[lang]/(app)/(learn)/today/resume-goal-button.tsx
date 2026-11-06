@@ -35,7 +35,9 @@ export function ResumeGoalButton({ goalId, goalTitle }: { goalId: string; goalTi
   // The resume expires the learner's goals, so Today renders again; the button stays busy until then.
   const resume = () => {
     startTransition(async () => {
-      setOutcome(await setGoalStatusAction(goalId, "active"));
+      setOutcome(
+        await setGoalStatusAction(goalId, "active").catch((): GoalStatusOutcome => "failed"),
+      );
     });
   };
 

@@ -32,9 +32,7 @@ struct LessonWaysOut: View {
             store.dontKnow()
           } label: {
             Label {
-              Text(
-                "I don't know yet", tableName: "Player",
-                comment: "Shows a good answer to a written question")
+              Text(Self.dontKnowTitle)
             } icon: {
               Image(systemName: "questionmark.circle")
             }
@@ -57,6 +55,12 @@ struct LessonWaysOut: View {
     .buttonStyle(.borderless)
     .typeStyle(.body)
   }
+
+  static let dontKnowTitle = LocalizedStringResource(
+    "I don't know yet", table: "Player",
+    comment:
+      "Reveals the answer: a good answer to a written question, or the answer to the lesson's opening guess"
+  )
 }
 
 struct LessonExampleLine: View {
@@ -102,7 +106,7 @@ struct LessonScreenHelp: View {
       .foregroundStyle(.mutedForeground)
 
       FlowLayout {
-        ForEach((store.lesson?.tutorSuggestions ?? []).prefix(2), id: \.id) { suggestion in
+        ForEach(store.suggestionsBeside.prefix(2), id: \.id) { suggestion in
           Button {
             store.ask(suggestionId: suggestion.id.rawValue)
           } label: {
@@ -124,7 +128,7 @@ struct LessonScreenHelp: View {
   }
 }
 
-/// After two misses in a row on the same idea, or a long pause on an explanation.
+/// After two misses in a row on the same idea, or a long pause on a language lesson's explanation.
 struct LessonAskBuddyOffer: View {
   enum Reason {
     case misses, pause
@@ -140,7 +144,7 @@ struct LessonAskBuddyOffer: View {
   var body: some View {
     if tutor.panel != nil, !isDismissed {
       VStack(alignment: .leading, spacing: 8) {
-        message
+        Text(Self.message(reason, buddyName: buddyName))
           .typeStyle(.body)
 
         ButtonRow {
@@ -170,24 +174,23 @@ struct LessonAskBuddyOffer: View {
     learnerSummary?.summary.value?.buddyDisplayName
   }
 
-  @ViewBuilder
-  private var message: some View {
+  static func message(_ reason: Reason, buddyName: String?) -> String {
     switch (reason, buddyName) {
     case (.misses, let name?):
-      Text(
-        "This one is tricky. \(name) can explain it another way.", tableName: "Player",
+      String(
+        localized: "This one is tricky. \(name) can explain it another way.", table: "Player",
         comment: "Offer to ask the buddy after two misses")
     case (.misses, nil):
-      Text(
-        "This one is tricky. Your buddy can explain it another way.", tableName: "Player",
+      String(
+        localized: "This one is tricky. Your buddy can explain it another way.", table: "Player",
         comment: "Offer to ask the buddy after two misses")
     case (.pause, let name?):
-      Text(
-        "Taking your time? \(name) can explain it another way.", tableName: "Player",
+      String(
+        localized: "Taking your time? \(name) can explain it another way.", table: "Player",
         comment: "Offer to ask the buddy after a long pause")
     case (.pause, nil):
-      Text(
-        "Taking your time? Your buddy can explain it another way.", tableName: "Player",
+      String(
+        localized: "Taking your time? Your buddy can explain it another way.", table: "Player",
         comment: "Offer to ask the buddy after a long pause")
     }
   }
@@ -202,6 +205,28 @@ struct LessonAskBuddyOffer: View {
   }
 }
 
+extension View {
+  /// Reads the offer out as it shows up, from a view that stays while it comes and goes.
+  func announcesBuddyOffer(_ reason: LessonAskBuddyOffer.Reason, isShown: Bool) -> some View {
+    modifier(BuddyOfferAnnouncement(reason: reason, isShown: isShown))
+  }
+}
+
+private struct BuddyOfferAnnouncement: ViewModifier {
+  @Environment(\.lessonTutor) private var tutor
+  @Environment(LearnerSummaryStore.self) private var learnerSummary: LearnerSummaryStore?
+
+  let reason: LessonAskBuddyOffer.Reason
+  let isShown: Bool
+
+  func body(content: Content) -> some View {
+    content.announcesStatus(
+      isShown && tutor.panel != nil
+        ? LessonAskBuddyOffer.message(
+          reason, buddyName: learnerSummary?.summary.value?.buddyDisplayName) : nil)
+  }
+}
+
 struct LessonPauseOffer: View {
   @Environment(\.scenePhase) private var scenePhase
   @State private var isStuck = false
@@ -209,13 +234,16 @@ struct LessonPauseOffer: View {
   let step: LessonStep
   let store: LessonPlayerStore
 
+  private var isShown: Bool { isStuck && store.state?.quickCheck == nil }
+
   var body: some View {
     // A stack rather than a group, so the timer runs while nothing shows yet.
     VStack(alignment: .leading, spacing: 0) {
-      if isStuck, store.state?.quickCheck == nil {
+      if isShown {
         LessonAskBuddyOffer(reason: .pause, store: store)
       }
     }
+    .announcesBuddyOffer(.pause, isShown: isShown)
     .task(id: PauseKey(stepId: step.id, isActive: scenePhase == .active, touches: store.touches)) {
       guard !isStuck, scenePhase == .active, let delay = step.strugglePause else {
         return
@@ -255,5 +283,45 @@ extension LessonStep {
     let words = WordCount.count(text)
     let readingSeconds = Double(words) / 150 * 60
     return .seconds(max(45, readingSeconds * 3))
+  }
+}
+
+extension PlayableLesson {
+  /// Every explanation and worked example of a knowledge lesson.
+  func offersDidntGetIt(on step: LessonStep) -> Bool {
+    step.isExplaining && targetLanguage == nil
+  }
+}
+
+/// Learners who don't follow a screen rarely think to ask the buddy, so one tap asks for them.
+struct LessonDidntGetIt: View {
+  @Environment(\.lessonTutor) private var tutor
+
+  let store: LessonPlayerStore
+
+  var body: some View {
+    // A guest can't talk with the buddy yet: the tap would ask them to sign up instead.
+    if tutor.panel != nil, !store.isGuest {
+      Button {
+        store.ask(suggestionId: "simpler", sendsAtOnce: true)
+      } label: {
+        Label {
+          Text(
+            "I didn't get this", tableName: "Player",
+            comment:
+              "Quiet button under a lesson's explanation, in the learner's own voice: what they'd say when the screen lost them (\"Não entendi\" in Portuguese). Tapping it has the buddy explain the screen more simply."
+          )
+        } icon: {
+          Image(systemName: "questionmark.bubble")
+        }
+      }
+      .buttonStyle(.borderless)
+      .typeStyle(.body)
+      .foregroundStyle(.mutedForeground)
+      .accessibilityHint(
+        Text(
+          "Your buddy explains this screen more simply", tableName: "Player",
+          comment: "VoiceOver hint of the \"I didn't get this\" button under an explanation"))
+    }
   }
 }

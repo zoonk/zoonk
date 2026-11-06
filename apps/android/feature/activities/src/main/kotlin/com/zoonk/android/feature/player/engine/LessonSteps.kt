@@ -5,7 +5,8 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 
-private val READ_KINDS = setOf(StepKind.Alphabet, StepKind.Explanation, StepKind.Summary, StepKind.Vocabulary, StepKind.WorkedExample)
+private val READ_KINDS =
+    setOf(StepKind.Alphabet, StepKind.Explanation, StepKind.Map, StepKind.Summary, StepKind.Vocabulary, StepKind.WorkedExample)
 
 private val RETRY_KINDS = setOf(StepKind.Activity, StepKind.Check)
 
@@ -17,7 +18,15 @@ private val SELF_CORRECT_KINDS = setOf(StepKind.FillBlank, StepKind.Listening, S
 
 /** Core's rule: these screens are read, never answered, so finishing doesn't wait for them. */
 private val READ_ONLY_KINDS =
-    setOf(StepKind.Alphabet, StepKind.Explanation, StepKind.Hook, StepKind.Summary, StepKind.Vocabulary, StepKind.WorkedExample)
+    setOf(
+        StepKind.Alphabet,
+        StepKind.Explanation,
+        StepKind.Hook,
+        StepKind.Map,
+        StepKind.Summary,
+        StepKind.Vocabulary,
+        StepKind.WorkedExample,
+    )
 
 val LessonStep.isReadStep: Boolean
     get() = content is StepContent.Fact || kind in READ_KINDS

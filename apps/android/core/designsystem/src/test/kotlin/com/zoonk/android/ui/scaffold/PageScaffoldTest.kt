@@ -11,9 +11,6 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -47,9 +44,7 @@ class PageScaffoldTest {
         }
         rule.onNodeWithText("Report").performClick()
 
-        val fold = FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)
-        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(listOf(fold)))
-        rule.waitForIdle()
+        rule.unfoldBook(folds)
 
         rule.onNodeWithText("Report open").assertIsDisplayed()
     }

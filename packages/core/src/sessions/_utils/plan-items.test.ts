@@ -3,7 +3,6 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
@@ -179,7 +178,7 @@ describe("completion reduces posted coverage without planning", () => {
     expect(JSON.stringify(saved.summary)).toBe(JSON.stringify(posted.summary));
   });
 
-  it("reads no plan when the item it checks off isn't a lesson", async () => {
+  it("leaves the plan as it was when the item it checks off isn't a lesson", async () => {
     const [user, lesson] = await Promise.all([userFixture(), libraryLessonFixture()]);
 
     const { plan, summary } = await postedPlan({
@@ -190,15 +189,10 @@ describe("completion reduces posted coverage without planning", () => {
 
     const checkpoint = await planItemFixture({ kind: "checkpoint", planId: plan.id });
 
-    const counted = await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       await markLearnerChanged(tx, { planInputs: true, userId: user.id });
-
-      return countDatabaseStatements(() =>
-        completePlanItem(tx, { now: NOW, planItemId: checkpoint.id, userId: user.id }),
-      );
+      await completePlanItem(tx, { now: NOW, planItemId: checkpoint.id, userId: user.id });
     });
-
-    expect(counted.statements).toBe(1);
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       summary,

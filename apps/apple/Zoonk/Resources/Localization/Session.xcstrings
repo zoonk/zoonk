@@ -6879,61 +6879,61 @@
         }
       }
     },
-    "This lesson is being written for you. It's usually ready in about two minutes." : {
+    "This lesson is being written for you. It's usually ready in a few minutes." : {
       "comment" : "A lesson being written",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir erstellen diese Lektion für dich. Sie ist normalerweise in etwa zwei Minuten fertig."
+            "value" : "Wir erstellen diese Lektion für dich. Sie ist normalerweise in ein paar Minuten fertig."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estamos preparando esta lección para ti. Suele estar lista en aproximadamente dos minutos."
+            "value" : "Estamos preparando esta lección para ti. Suele estar lista en unos minutos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ta leçon est en cours de préparation. Elle est généralement prête en deux minutes environ."
+            "value" : "Cette leçon est en cours de préparation pour toi. Elle est généralement prête en quelques minutes."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stiamo preparando questa lezione per te. Di solito è pronta in circa due minuti."
+            "value" : "Stiamo preparando questa lezione per te. Di solito è pronta in qualche minuto."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このレッスンを作成しています。通常は2分ほどで完成します。"
+            "value" : "レッスンを作成しています。通常は数分で準備が整います。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 레슨을 만들고 있어요. 보통 2분 정도면 준비돼요."
+            "value" : "맞춤 레슨을 만들고 있어요. 보통 몇 분이면 준비돼요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przygotowujemy dla ciebie tę lekcję. Zwykle zajmuje nam to około dwóch minut."
+            "value" : "Przygotowujemy dla ciebie tę lekcję. Zwykle jest gotowa w ciągu kilku minut."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estamos criando esta aula para você. Ela costuma ficar pronta em cerca de dois minutos."
+            "value" : "Esta aula está sendo criada para você. Ela costuma ficar pronta em alguns minutos."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu dersi senin için hazırlıyoruz. Genellikle iki dakika kadar sürüyor."
+            "value" : "Bu dersi senin için hazırlıyoruz. Genellikle birkaç dakika içinde hazır olur."
           }
         }
       }

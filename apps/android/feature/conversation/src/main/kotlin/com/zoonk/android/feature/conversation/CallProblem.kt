@@ -153,7 +153,7 @@ private fun Problem(
     actions: @Composable () -> Unit,
     content: @Composable () -> Unit,
 ) {
-    CallFrame(title = { CallTitle(title) }, onClose = onClose, bottomBar = actions) {
+    CallFrame(title = { CallTitle(title) }, onClose = onClose, bottomBar = actions, lonePage = true) {
         item(key = "problem") { Box(Modifier.callItem()) { content() } }
     }
 }

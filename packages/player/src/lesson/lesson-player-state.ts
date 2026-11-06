@@ -1,7 +1,6 @@
-import { type LessonStepCheckResult, type LessonSupport } from "@zoonk/core/lesson-player/contract";
+import { type LessonStepCheckResult } from "@zoonk/core/lesson-player/contract";
 import { type LessonPicture } from "@zoonk/core/lesson-player/playable-lesson";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
-import { orderLessonOpening } from "./_utils/lesson-opening";
 import {
   type LessonPlayerAnswer,
   type LessonPlayerCompletionState,
@@ -13,7 +12,8 @@ import {
   type PlayableLibraryStep,
 } from "./lesson-player-types";
 
-type LessonPlayerPhase = "checking" | "completed" | "feedback" | "playing";
+/** `map`: every screen is done and the lesson map shows, before the lesson is saved. */
+type LessonPlayerPhase = "checking" | "completed" | "feedback" | "map" | "playing";
 
 type CheckIssue = HelpLimit | { status: "noSpeech" };
 
@@ -40,6 +40,7 @@ export type LessonPlayerState = {
     | { result: null; status: "ready"; testedOut: boolean }
     | null;
   firstVerdicts: Record<string, boolean>;
+  hasMap: boolean;
   helped: string[];
   lessonId: string;
   misses: { skillId: string | null; stepId: string }[];
@@ -63,7 +64,6 @@ export type LessonPlayerState = {
   startedAt: number;
   stepStartedAt: number;
   steps: Record<string, PlayableLibraryStep>;
-  support: LessonSupport | null;
   unavailableStepIds: string[];
   writingRestore: Pick<LessonPlayerState, "position" | "queue" | "skippedWritingStepIds"> | null;
 };
@@ -104,8 +104,7 @@ export type LessonPlayerAction =
   | { type: "writingRestored" };
 
 export function createInitialState(
-  lesson: Pick<LessonPlayerLesson, "id" | "steps">,
-  support: LessonSupport | null = null,
+  lesson: Pick<LessonPlayerLesson, "id" | "steps"> & { hasMap: boolean },
 ): LessonPlayerState {
   const now = Date.now();
   const steps = Object.fromEntries(lesson.steps.map((step) => [step.id, step]));
@@ -117,13 +116,14 @@ export function createInitialState(
     checkIssue: null,
     completion: queue.length === 0 ? { result: null, status: "ready", testedOut: false } : null,
     firstVerdicts: {},
+    hasMap: lesson.hasMap,
     helped: [],
     lessonId: lesson.id,
     misses: [],
     notice: null,
     phase: queue.length === 0 ? "completed" : "playing",
     position: 0,
-    queue: orderLessonOpening({ queue, steps, support }),
+    queue,
     quickCheck: null,
     results: {},
     retried: [],
@@ -136,7 +136,6 @@ export function createInitialState(
     startedAt: now,
     stepStartedAt: now,
     steps,
-    support,
     unavailableStepIds: [],
     writingRestore: null,
   };

@@ -35,11 +35,11 @@ interface AccountApi {
 
     suspend fun isUsernameAvailable(username: String): Boolean
 
-    /** A null [name] leaves the saved one, which may predate the name's length limit. */
+    /** A null field leaves the saved one; a saved name may predate the name's length limit. */
     suspend fun updateProfile(
         session: AuthenticatedSession,
         name: String?,
-        username: String,
+        username: String?,
     ): MeResponse
 
     suspend fun exportData(session: AuthenticatedSession): AccountDataExport
@@ -129,7 +129,7 @@ class LiveAccountApi(
     override suspend fun updateProfile(
         session: AuthenticatedSession,
         name: String?,
-        username: String,
+        username: String?,
     ): MeResponse = perform { api.clients(session).account.updateCurrentUser(MeUpdate(name = name, username = username)) }
 
     override suspend fun exportData(session: AuthenticatedSession): AccountDataExport =

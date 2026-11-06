@@ -149,7 +149,7 @@ export const TEST_CASES = [
     },
   },
   {
-    expectations: `Two planets compared, one above the other at their relative sizes: Earth blue and green with white clouds, Mars smaller (about half as wide) and rusty red, each with its label. ${TEXT_RULE}`,
+    expectations: `Two planets compared side by side at their relative sizes: Earth blue and green with white clouds, Mars smaller (about half as wide) and rusty red, each with its label. ${TEXT_RULE}`,
     id: "earth-mars-pt",
     userInput: {
       caseId: "earth-mars-pt",

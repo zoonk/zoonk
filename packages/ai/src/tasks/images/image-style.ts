@@ -4,14 +4,21 @@ import { type CourseCategory } from "@zoonk/utils/categories";
  * Bump it when new images would look different. Stored images are never redrawn on their own:
  * that's a person's call, and this version is how they find an older style's images.
  */
-export const IMAGE_STYLE_VERSION = 2;
+export const IMAGE_STYLE_VERSION = 4;
 
-/** Portrait, so it fills a phone's screen above the words. */
-export const IMAGE_SIZE = "1024x1280";
+/**
+ * A hook or step picture is landscape, leaving room on a phone for the words and options under it,
+ * and costs less than 1024x1280 portrait (158 output tokens against 173 on gpt-image-2.5-flare, 2
+ * Nov 2026). A picture that is an answer option is square, since options sit in a grid (196 tokens).
+ */
+export const IMAGE_SIZES = { landscape: "1536x1024", square: "1024x1024" } as const;
+
+export type ImageCanvas = keyof typeof IMAGE_SIZES;
 
 /**
  * Each subject keeps its colors in every image, so a course looks like one course. Hex values
- * anchor the names for the image model; the names do most of the work.
+ * anchor the names for the image model; the names do most of the work. No accent is red or pink:
+ * the accent marks what a picture highlights, and red means a wrong answer in the app.
  */
 export type ImagePalette = { key: string; colors: readonly string[]; accent: string };
 
@@ -19,7 +26,7 @@ type PaletteKey = CourseCategory | "general";
 
 const PALETTES: Readonly<Record<PaletteKey, Omit<ImagePalette, "key">>> = {
   arts: {
-    accent: "raspberry (#E0457B)",
+    accent: "amber (#FBBF24)",
     colors: ["soft violet (#B69CF0)", "pale lilac (#EFE8FD)", "warm gray (#78716C)"],
   },
   business: {
@@ -27,7 +34,7 @@ const PALETTES: Readonly<Record<PaletteKey, Omit<ImagePalette, "key">>> = {
     colors: ["dusty navy (#5B6B9A)", "pale cream (#FBF3E0)", "warm gray (#78716C)"],
   },
   communication: {
-    accent: "coral (#F97360)",
+    accent: "amber (#FBBF24)",
     colors: ["soft sky blue (#7DB8F2)", "pale blue (#E3F0FD)", "slate gray (#64748B)"],
   },
   culture: {
@@ -51,7 +58,7 @@ const PALETTES: Readonly<Record<PaletteKey, Omit<ImagePalette, "key">>> = {
     colors: ["soft indigo (#8B93F8)", "pale lavender (#E4E6FD)", "slate gray (#64748B)"],
   },
   geography: {
-    accent: "coral (#F97360)",
+    accent: "sunflower yellow (#F8C630)",
     colors: ["sea blue (#6BB5D8)", "sand (#F3E7C9)", "leaf green (#8CC084)"],
   },
   health: {
@@ -63,7 +70,7 @@ const PALETTES: Readonly<Record<PaletteKey, Omit<ImagePalette, "key">>> = {
     colors: ["terracotta (#D08C6B)", "parchment (#F6ECDC)", "warm brown (#8B6B4E)"],
   },
   languages: {
-    accent: "coral red (#F05D5E)",
+    accent: "teal (#14B8A6)",
     colors: ["soft indigo (#6E6CD8)", "pale lavender (#E6E4FB)", "warm yellow (#F8D26A)"],
   },
   law: {
@@ -75,7 +82,7 @@ const PALETTES: Readonly<Record<PaletteKey, Omit<ImagePalette, "key">>> = {
     colors: ["soft teal (#5CC8C2)", "pale mint (#DDF4F2)", "slate gray (#64748B)"],
   },
   science: {
-    accent: "coral red (#F05D5E)",
+    accent: "amber (#FBBF24)",
     colors: ["soft indigo (#8B93F8)", "pale lavender (#E4E6FD)", "slate gray (#64748B)"],
   },
   society: {

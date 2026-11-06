@@ -284,7 +284,7 @@ private struct CauseEffectCanvas: View {
   /// The notice quotes the events' labels as written, so it draws their math and says it in words.
   private func say(_ line: String) {
     notice = line
-    announceActivityChange(LessonRichText.spoken(line))
+    announcePolitely(LessonRichText.spoken(line))
   }
 
   @ViewBuilder

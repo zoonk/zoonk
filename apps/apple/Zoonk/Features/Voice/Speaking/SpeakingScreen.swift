@@ -115,7 +115,7 @@ private struct SpeakingPaperView: View {
         Text(paper.title)
           .typeStyle(.section)
         Text(
-          "\(paper.tasks.count) tasks\u{00A0}· \(minutesText(min: paper.minutes.min, max: paper.minutes.max)) in the exam",
+          "\(paper.tasks.count) tasks\u{00A0}· \(speakingTaskMinutes(min: paper.minutes.min, max: paper.minutes.max)) in the exam",
           tableName: "Voice",
           comment: "How many tasks the speaking paper has and how long it is"
         )
@@ -230,8 +230,8 @@ private struct SpeakingPaperView: View {
     return VStack(alignment: .leading, spacing: 8) {
       if !task.criteria.isEmpty {
         Text(
-          "Rated on \(task.criteria.map { speakingCriterionName($0.key, officialName: $0.name) }.formatted(.list(type: .and)))",
-          tableName: "Voice", comment: "The official criteria a speaking task is rated on"
+          speakingRatedOn(
+            task.criteria.map { speakingCriterionName($0.key, officialName: $0.name) })
         )
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
@@ -281,30 +281,27 @@ private struct SpeakingPaperView: View {
 
       // Only the open task starts, so a failure is said right under its button.
       if let startFailure {
-        startFailureText(startFailure)
+        FailureLine(message: startFailureMessage(startFailure))
           .typeStyle(.body)
-          .foregroundStyle(.destructiveText)
       }
     }
     .padding(.vertical, 4)
   }
 
-  @ViewBuilder
-  private func startFailureText(_ failure: StartFailure) -> some View {
+  private func startFailureMessage(_ failure: StartFailure) -> String {
     switch failure {
     case .limit(let limit) where limit.period == .month:
-      Text(
-        "Not enough call time this month for this task", tableName: "Voice",
+      String(
+        localized: "Not enough call time this month for this task", table: "Voice",
         comment: "The call time left this month can't fit this speaking exam task")
     case .limit:
-      Text(
-        "Not enough call time today for this task", tableName: "Voice",
+      String(
+        localized: "Not enough call time today for this task", table: "Voice",
         comment: "The call time left today can't fit this speaking exam task")
     case .failed:
-      Text(
-        "The task didn't start. Try again in a moment.", tableName: "Voice",
-        comment: "Starting an exam task failed"
-      )
+      String(
+        localized: "The task didn't start. Try again in a moment.", table: "Voice",
+        comment: "Starting an exam task failed")
     }
   }
 
@@ -317,7 +314,7 @@ private struct SpeakingPaperView: View {
       : String(
         localized: "With an examiner (AI)", table: "Voice", comment: "Whom the learner talks to")
 
-    var facts = [role, minutesText(min: task.minutes.min, max: task.minutes.max)]
+    var facts = [role, speakingTaskMinutes(min: task.minutes.min, max: task.minutes.max)]
 
     if task.prepMinutes > 0 {
       facts.append(
@@ -328,13 +325,6 @@ private struct SpeakingPaperView: View {
     }
 
     return facts.joinedFacts()
-  }
-
-  private func minutesText(min: Double, max: Double) -> String {
-    min == max
-      ? String(localized: "\(Int(min)) min", table: "Voice", comment: "A task's length")
-      : String(
-        localized: "\(Int(min))–\(Int(max)) min", table: "Voice", comment: "A task's length range")
   }
 
   private func lastTryText(

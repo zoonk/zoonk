@@ -63,8 +63,8 @@ export function PronunciationClient({
       buddy={buddy}
       exitHref="/today"
       key={`${bfcacheId}:${reviews.goalId}`}
-      renderCeremony={(milestone, onClose) => (
-        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+      renderCeremony={(moments, onClose) => (
+        <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
       )}
       reviews={reviews}
     />

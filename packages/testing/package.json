@@ -8,9 +8,11 @@
     "./accessibility/target-size": "./src/accessibility/target-size.ts",
     "./accessibility/text-selection": "./src/accessibility/text-selection.ts",
     "./browser-preflight": "./src/browser-preflight.ts",
+    "./skip-after-timeout": "./src/skip-after-timeout.ts",
     "./fixtures/accounts": "./src/fixtures/accounts.ts",
     "./fixtures/activity-checks": "./src/fixtures/activity-contents/activity-checks.ts",
     "./fixtures/activity-contents": "./src/fixtures/activity-contents.ts",
+    "./fixtures/certificates": "./src/fixtures/certificates.ts",
     "./fixtures/challenge-contents": "./src/fixtures/challenge-contents.ts",
     "./fixtures/challenge-written-case": "./src/fixtures/challenge-written-case.ts",
     "./fixtures/courses": "./src/fixtures/courses.ts",
@@ -45,7 +47,7 @@
     "./fixtures/words": "./src/fixtures/words.ts"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
     "@zoonk/db": "workspace:*",
@@ -55,6 +57,7 @@
     "@types/node": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
     "axe-core": "4.14.0",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

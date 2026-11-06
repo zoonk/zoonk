@@ -19,8 +19,11 @@ export type ImageSceneInput = {
   /** False for language courses. */
   textAllowed: boolean;
   request: string;
+  alt?: string | null;
   screenText?: string | null;
   context?: string | null;
+  /** What the picture check found wrong in the last picture drawn for this request. */
+  findings?: readonly string[] | null;
 };
 
 export type ImageSceneParams = ImageSceneInput & {
@@ -35,8 +38,10 @@ function buildUserPrompt(input: ImageSceneInput): string {
     LANGUAGE: ${getPromptLanguageName({ language: input.language })}
     TEXT_ALLOWED: ${input.textAllowed ? "yes" : "no"}
     REQUEST: ${input.request}
+    ALT: ${input.alt || "none"}
     SCREEN_TEXT: ${input.screenText || "none"}
     CONTEXT: ${input.context || "none"}
+    FINDINGS: ${input.findings?.length ? input.findings.join("; ") : "none"}
   `;
 }
 

@@ -22,12 +22,8 @@ struct ChallengeStepView: View {
       intro
     case (.intro, .turn):
       EmptyView()
-    case (.deciding(let node, _, let decisions, _), .screen):
-      meters(decisions)
-      conversation(decisions)
-      ForEach(Array(node.messages.enumerated()), id: \.offset) { _, message in
-        self.message(message)
-      }
+    case (.deciding(_, _, let decisions, _), .screen), (.ended(_, _, let decisions), .screen):
+      played(decisions, upcoming: upcoming(progress))
     case (.deciding(let node, let confirmed, _, let pending), .turn):
       LessonQuestionText(text: named(node.prompt))
       LessonOptionList(
@@ -38,9 +34,6 @@ struct ChallengeStepView: View {
       ) { choiceId in
         store.select(.challenge(choiceIds: confirmed + [choiceId]))
       }
-    case (.ended(_, _, let decisions), .screen):
-      meters(decisions)
-      conversation(decisions)
     case (.ended(let ending, _, let decisions), .turn):
       if let result = state.currentResult {
         debrief(ending: ending, decisions: decisions, isCorrect: result.isCorrect)
@@ -127,6 +120,78 @@ struct ChallengeStepView: View {
     }
   }
 
+  /// One view while deciding and once ended, so what the last decision brings is read out too.
+  private func played(_ decisions: [ChallengeWalk.Decision], upcoming: ChallengeContent.Node?)
+    -> some View
+  {
+    VStack(alignment: .leading, spacing: 20) {
+      meters(decisions)
+      conversation(decisions)
+
+      if let upcoming {
+        ForEach(Array(upcoming.messages.enumerated()), id: \.offset) { _, message in
+          self.message(message)
+        }
+      }
+    }
+    .onChange(of: decisions.count) { previous, count in
+      if count > previous, let line = newest(decisions, upcoming: upcoming) {
+        announcePolitely(line)
+      }
+    }
+  }
+
+  private func upcoming(_ progress: ChallengeProgress) -> ChallengeContent.Node? {
+    guard case .deciding(let node, _, _, _) = progress else {
+      return nil
+    }
+
+    return node
+  }
+
+  /// Main's meters and conversation log read what a decision brings, in the order it shows: once
+  /// per decision, even one that brings the same as the last.
+  private func newest(_ decisions: [ChallengeWalk.Decision], upcoming: ChallengeContent.Node?)
+    -> String?
+  {
+    guard let latest = decisions.last else {
+      return nil
+    }
+
+    let moved = ChallengeWalk.meters(content, decisions: decisions).filter { $0.change != 0 }.map {
+      "\(named($0.meter.label)) \(Self.moveWords($0.change))"
+    }
+    let jump =
+      latest.choice.timeJump.map {
+        [([named($0.label)] + ($0.panel.map(panelLines) ?? [])).joined(separator: "\n")]
+      } ?? []
+    let lines = latest.choice.replies.map(said) + jump + (upcoming?.messages ?? []).map(said)
+
+    let parts = [
+      moved.isEmpty ? nil : moved.formatted(.list(type: .and)),
+      lines.isEmpty ? nil : lines.joinedSentences(),
+    ].compactMap(\.self)
+
+    return parts.isEmpty ? nil : parts.joined(separator: "\n")
+  }
+
+  /// In the order main and Android read a panel, with the team's names filled in everywhere but a
+  /// metric's value, as they do.
+  private func panelLines(_ panel: ChallengeContent.Panel) -> [String] {
+    [panel.title.map(named)].compactMap(\.self)
+      + panel.metrics.flatMap {
+        [named($0.label), $0.value] + [$0.note.map(named)].compactMap(\.self)
+      }
+      + [panel.note.map(named)].compactMap(\.self)
+  }
+
+  private func said(_ message: ChallengeContent.Message) -> String {
+    String(
+      localized:
+        "\(name(for: message.from)): \(LessonRichText.typeset(named(message.text)).said)",
+      table: "Player", comment: "VoiceOver: who said a message in a challenge, then what they said")
+  }
+
   @ViewBuilder
   private func meters(_ decisions: [ChallengeWalk.Decision]) -> some View {
     if !content.meters.isEmpty {
@@ -156,27 +221,14 @@ struct ChallengeStepView: View {
   @ViewBuilder
   private func move(_ change: Int, of meter: ChallengeContent.Meter) -> some View {
     if change == 0 {
-      Text(
-        "no change", tableName: "Player",
-        comment: "Beside a challenge meter the last decision didn't move"
-      )
-      .foregroundStyle(.mutedForeground)
+      Text(Self.moveWords(change))
+        .foregroundStyle(.mutedForeground)
     } else {
       let isUp = change > 0
       let isBig = abs(change) >= 25
 
       Label {
-        switch (isUp, isBig) {
-        case (true, true):
-          Text("much higher", tableName: "Player", comment: "A challenge meter went up a lot")
-        case (true, false):
-          Text("a bit higher", tableName: "Player", comment: "A challenge meter went up a little")
-        case (false, true):
-          Text("much lower", tableName: "Player", comment: "A challenge meter went down a lot")
-        case (false, false):
-          Text(
-            "a bit lower", tableName: "Player", comment: "A challenge meter went down a little")
-        }
+        Text(Self.moveWords(change))
       } icon: {
         Image(
           systemName: isBig
@@ -184,6 +236,26 @@ struct ChallengeStepView: View {
       }
       .typeWeight(.medium)
       .foregroundStyle(isUp == (meter.goodWhen == .high) ? Color.successText : .warningText)
+    }
+  }
+
+  private static func moveWords(_ change: Int) -> String {
+    switch (change > 0, abs(change) >= 25) {
+    case _ where change == 0:
+      String(
+        localized: "no change", table: "Player",
+        comment: "Beside a challenge meter the last decision didn't move")
+    case (true, true):
+      String(localized: "much higher", table: "Player", comment: "A challenge meter went up a lot")
+    case (true, false):
+      String(
+        localized: "a bit higher", table: "Player", comment: "A challenge meter went up a little")
+    case (false, true):
+      String(
+        localized: "much lower", table: "Player", comment: "A challenge meter went down a lot")
+    case (false, false):
+      String(
+        localized: "a bit lower", table: "Player", comment: "A challenge meter went down a little")
     }
   }
 

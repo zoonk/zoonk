@@ -1,26 +1,25 @@
 import "server-only";
-import { safeAsync } from "@zoonk/utils/error";
 import { decideBoolean } from "../../evaluate/decisions";
 import { evaluateQuestions } from "../../evaluate/evaluate-questions";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
-import { type LessonSpec } from "./lesson-spec-rules";
 import instructions from "./picture-need.prompt.md";
 
-/** The picture-need eval's runner-up after Jev (8 Oct 2026). */
-const fallbackModel = "openai/gpt-6-luna";
+/** The picture-need eval's runner-up after Jev (4 Nov 2026): 79% of 63 cases, Luna 76%. */
+const fallbackModel = "anthropic/claude-haiku-5.5";
 
 /**
- * A missing teaching picture costs the learner more than one picture too many. On the eval this
- * caught 11 of 16 decorative pictures and dropped 2 of 36 that teach; 0.5 dropped 4.
+ * On Jev's two eval runs (4 Nov 2026, 63 cases, scenes' and questions' pictures included), this
+ * kept 39 and 40 of 42 pictures that teach and caught 19 of 21 decorative ones; 0.3 caught 2 fewer
+ * and 0.4 dropped 1 or 2 more that teach.
  */
-const TEACHES_AT = 0.45;
+const TEACHES_AT = 0.35;
 
 export const pictureNeedClassifier = {
   question: {
     criteria: {
       false:
-        "The words already say everything the picture shows, or it repeats numbers or text, shows something everyone knows, repeats the picture before or gives the answer away.",
-      true: "A learner who only read the words would have to imagine what the picture shows, or the question is about the picture itself.",
+        "A template, table, chart or timeline would show it better (steps, causes, a changing value, amounts, data or dates); it shows the story or an everyday situation again with nothing to see; it repeats numbers or text, repeats the picture before or shows the result to work out; its main subject is something the words don't name; the words already say all it shows, or it shows something everyone knows.",
+      true: "A learner who only read the words would have to see it to understand: how something looks, is built or is arranged, two things only seeing can compare, a setup they work from, a setup too complex for any template, a thing, place or structure nobody sees in daily life, or the learner answering by looking at it.",
     },
     instructions,
     type: "boolean",
@@ -43,52 +42,21 @@ export const pictureNeedClassifier = {
   }),
 };
 
-/** Native visuals (tables, charts, timelines) aren't pictures and stay as planned. */
-export async function keepTeachingPictures({
+type PictureNeedInput = Parameters<typeof pictureNeedClassifier.toInput>[0];
+
+/** Throws when neither model answers, so the caller's workflow step retries it. */
+export async function judgePicture({
   analytics,
-  spec,
-}: {
-  analytics?: AiGenerationContext;
-  spec: LessonSpec;
-}): Promise<LessonSpec> {
-  const verdicts = await Promise.all(
-    spec.screens.map(async (screen, index) => {
-      const picture = screen.visual;
+  ...input
+}: PictureNeedInput & { analytics?: AiGenerationContext }): Promise<boolean> {
+  const run = await evaluateQuestions({
+    analytics,
+    fallbackModel,
+    input: pictureNeedClassifier.toInput(input),
+    keepInput: true,
+    questions: { teaches: pictureNeedClassifier.question },
+    task: "picture-need",
+  });
 
-      if (!picture) {
-        return true;
-      }
-
-      const run = await safeAsync(() =>
-        evaluateQuestions({
-          analytics,
-          fallbackModel,
-          input: pictureNeedClassifier.toInput({
-            lesson: spec.title,
-            picture,
-            previousPicture: spec.screens[index - 1]?.visual ?? null,
-            screen,
-          }),
-          keepInput: true,
-          questions: { teaches: pictureNeedClassifier.question },
-          task: "picture-need",
-        }),
-      );
-
-      // A check that can't run keeps the picture: the plan asked for it.
-      return run.error
-        ? true
-        : decideBoolean({
-            probability: run.data.answers.teaches.probability,
-            threshold: TEACHES_AT,
-          });
-    }),
-  );
-
-  return {
-    ...spec,
-    screens: spec.screens.map((screen, index) =>
-      verdicts[index] ? screen : { ...screen, visual: null },
-    ),
-  };
+  return decideBoolean({ probability: run.answers.teaches.probability, threshold: TEACHES_AT });
 }

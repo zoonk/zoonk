@@ -1,16 +1,22 @@
 package com.zoonk.android.feature.pronunciation
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
@@ -47,6 +53,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
@@ -64,6 +71,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
 import com.zoonk.android.feature.audio.ListenButton
 import com.zoonk.android.feature.audio.MicrophoneOff
 import com.zoonk.android.feature.audio.RecordButton
@@ -78,8 +86,15 @@ import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberRecordTap
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.withoutFailure
+import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
+import com.zoonk.android.feature.ceremonies.MomentCeremony
+import com.zoonk.android.feature.ceremonies.SessionCeremony
+import com.zoonk.android.feature.ceremonies.momentBuddy
 import com.zoonk.android.feature.player.LessonColumn
 import com.zoonk.android.feature.questions.ItemLine
+import com.zoonk.android.feature.session.DayMoment
+import com.zoonk.android.feature.session.ReachedFacts
+import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
@@ -92,16 +107,25 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.PageSpan
+import com.zoonk.android.ui.scaffold.ResultPages
+import com.zoonk.android.ui.scaffold.ResultScreen
+import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.GeistMono
+import com.zoonk.api.models.LearnerSummaryBuddy
 import com.zoonk.api.models.PronunciationAnswerGrade
 import com.zoonk.api.models.PronunciationRoundResult
 import java.time.ZoneId
@@ -121,12 +145,22 @@ fun PronunciationScreen(
 
     if (owner == null || goalId == null) {
         TaskScaffold(onClose = navigator::closeTask, title = { Text(stringResource(R.string.pronunciation_title)) }) { padding ->
-            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+            PageLoading(Modifier.padding(padding))
         }
         return
     }
 
-    key(owner, goalId) { PronunciationTask(goalId, owner, app.pronunciation, app.speech, navigator) }
+    key(owner, goalId) {
+        PronunciationTask(
+            goalId,
+            owner,
+            app.pronunciation,
+            app.speech,
+            navigator,
+            buddy = summary.value?.buddy,
+            ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
+        )
+    }
 }
 
 /**
@@ -140,13 +174,15 @@ internal fun PronunciationTask(
     store: PronunciationStore,
     speech: SpeechPlayer,
     navigator: AppNavigator,
+    buddy: LearnerSummaryBuddy?,
+    ceremony: MomentCeremony,
 ) {
     val context = LocalContext.current
     val model = viewModel(key = "pronunciation:$owner:$goalId") { PronunciationViewModel(context) }
     val round = model.round
 
     if (round != null) {
-        PronunciationRoundScreen(round, model, speech, navigator)
+        PronunciationRoundScreen(round, model, speech, navigator, buddy, ceremony)
         return
     }
 
@@ -173,7 +209,7 @@ internal fun PronunciationTask(
 
     TaskScaffold(onClose = navigator::closeTask, title = { Text(stringResource(R.string.pronunciation_title)) }) { padding ->
         Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-            if (fresh == false) LoadFailedMessage(onRetry = { attempt++ }) else CircularProgressIndicator()
+            if (fresh == false) LoadFailedMessage(onRetry = { attempt++ }) else PageLoading()
         }
     }
 }
@@ -184,10 +220,20 @@ internal fun PronunciationRoundScreen(
     model: PronunciationViewModel,
     speech: SpeechPlayer,
     navigator: AppNavigator,
+    buddy: LearnerSummaryBuddy?,
+    ceremony: MomentCeremony,
 ) {
     when (val step = round.step) {
-        is RoundStep.Result -> RoundEnd(round, step.result, navigator::closeTask)
-        is RoundStep.Word -> WordStep(round, step, model, speech, navigator)
+        is RoundStep.Result -> {
+            MomentAfterCeremony(
+                step.result?.ceremony,
+                ceremony,
+            ) { RoundEnd(round, step.result, buddy, navigator::closeTask) }
+        }
+
+        is RoundStep.Word -> {
+            WordStep(round, step, model, speech, navigator)
+        }
     }
 }
 
@@ -223,54 +269,122 @@ private fun WordStep(
         haptics.performHapticFeedback(if (grade.isCorrect) HapticFeedbackType.Confirm else HapticFeedbackType.Reject)
     }
 
-    TaskScaffold(
-        onClose = navigator::closeTask,
-        modifier = Modifier.taskKeys(onEnter = { if (step.grade != null && !round.pending) model.next() }, onEscape = navigator::closeTask),
-        title = { Text(stringResource(R.string.pronunciation_title)) },
-        actions = {
-            if (step.grade == null && !model.microphoneOff) {
-                WordMenu(enabled = !round.pending && !recording, onSkip = model::next)
-            }
-        },
-        bottomBar = {
-            TaskActionBar {
-                if (round.finishFailed) SaveFailed(onRetry = model::finish)
-                WordActions(round, step, model, status, tapRecord)
-            }
-        },
-    ) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
-            LessonColumn(Modifier.padding(top = 8.dp, bottom = 16.dp)) { RoundMeter(round) }
-            Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(bottom = 16.dp)) {
-                LessonColumn {
-                    key(word.id) { WordCard(word, round.language, normal, slow, navigator) }
-                    val grade = step.grade
-                    when {
-                        grade != null -> {
-                            GradeNote(grade)
-                        }
+    SpreadScreen {
+        TaskScaffold(
+            onClose = navigator::closeTask,
+            modifier =
+                Modifier.taskKeys(onEnter = { if (step.grade != null && !round.pending) model.next() }, onEscape = navigator::closeTask),
+            title = { Text(stringResource(R.string.pronunciation_title)) },
+            actions = {
+                if (step.grade == null && !model.microphoneOff) {
+                    WordMenu(enabled = !round.pending && !recording, onSkip = model::next)
+                }
+            },
+            bottomBar = {
+                TaskActionBar {
+                    if (round.finishFailed) SaveFailed(onRetry = model::finish)
+                    WordActions(round, step, model, status, tapRecord)
+                }
+            },
+        ) { padding ->
+            WordPages(
+                Modifier.fillMaxSize().padding(padding),
+                meter = { RoundMeter(round) },
+                word = { key(word.id) { WordCard(word, round.language, normal, slow, navigator) } },
+            ) {
+                val grade = step.grade
+                when {
+                    grade != null -> {
+                        GradeNote(grade)
+                    }
 
-                        model.microphoneOff -> {
-                            MicrophoneOff(stringResource(R.string.pronunciation_microphone_off))
-                        }
+                    model.microphoneOff -> {
+                        MicrophoneOff(stringResource(R.string.pronunciation_microphone_off))
+                    }
 
-                        step.issue is VoiceIssue.Limited && !recording && !round.pending -> {
-                            LimitNotice(
-                                step.issue.limit,
-                                LimitSubject.Help,
-                                onCreateAccount = { navigator.open(AppRoute.Login) },
-                                onSeePlus = { navigator.open(AppRoute.Subscription) },
-                            )
-                        }
+                    step.issue is VoiceIssue.Limited && !recording && !round.pending -> {
+                        LimitNotice(
+                            step.issue.limit,
+                            LimitSubject.Help,
+                            onCreateAccount = { navigator.open(AppRoute.Login) },
+                            onSeePlus = { navigator.open(AppRoute.Subscription) },
+                            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                        )
+                    }
 
-                        else -> {
-                            RecorderStatus(step.issue, pending = round.pending, recording = recording)
-                        }
+                    else -> {
+                        RecorderStatus(step.issue, pending = round.pending, recording = recording)
                     }
                 }
             }
         }
     }
+}
+
+/**
+ * A word as a spread, as a practice question: the [meter] and the [word] on the page before the split, the learner's
+ * [turn] on the page after it, above the docked actions. The turn's page is the one column's place.
+ */
+@Composable
+private fun WordPages(
+    modifier: Modifier,
+    meter: @Composable () -> Unit,
+    word: @Composable () -> Unit,
+    turn: @Composable ColumnScope.() -> Unit,
+) {
+    // The one column and the word's page share their scroll, so the reading place keeps as the book opens or closes.
+    val scroll = rememberScrollState()
+    val turnScroll = rememberScrollState()
+    var span by remember { mutableStateOf<PageSpan?>(null) }
+
+    BoxWithConstraints(modifier.onPageSpan { span = it }) {
+        val fold = spreadFold(maxWidth, span)
+
+        Column(Modifier.fillMaxSize()) {
+            Box(
+                (if (fold == null) Modifier.fillMaxWidth() else Modifier.width(fold.start))
+                    .wrapContentWidth(if (fold == null) Alignment.CenterHorizontally else Alignment.End)
+                    .taskColumn()
+                    .padding(top = 8.dp, bottom = 16.dp),
+            ) { meter() }
+            Box(Modifier.weight(1f).fillMaxWidth()) {
+                val turnPage = if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true }
+                WordPage(
+                    Modifier.fillMaxSize().then(turnPage),
+                    if (fold == null) scroll else turnScroll,
+                    if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
+                ) {
+                    if (fold == null) word()
+                    turn()
+                }
+                if (fold != null) {
+                    WordPage(
+                        Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true },
+                        scroll,
+                        Alignment.End,
+                    ) { word() }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun WordPage(
+    modifier: Modifier,
+    scroll: ScrollState,
+    align: Alignment.Horizontal,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier
+            .verticalScroll(scroll)
+            .padding(bottom = 16.dp)
+            .wrapContentWidth(align)
+            .taskColumn(),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        content = content,
+    )
 }
 
 @Composable
@@ -534,59 +648,81 @@ private fun SaveFailed(onRetry: () -> Unit) {
     }
 }
 
-/** The day's moment and its ceremony come with the session's (L3), as on the lesson's end. */
 @Composable
 private fun RoundEnd(
     round: PronunciationRound,
     result: PronunciationRoundResult?,
+    buddy: LearnerSummaryBuddy?,
     onDone: () -> Unit,
 ) {
-    val noWords = round.words.isEmpty()
+    ResultScreen {
+        val noWords = round.words.isEmpty()
+        val title = if (result == null) R.string.pronunciation_nothing_said else R.string.pronunciation_practice_done
 
-    TaskScaffold(
-        onClose = onDone,
-        modifier = Modifier.taskKeys(onEnter = onDone, onEscape = onDone),
-        title = { Text(stringResource(R.string.pronunciation_title)) },
-        bottomBar = {
-            TaskActionBar {
-                TaskActions { width -> Button(onClick = onDone, modifier = width) { Text(stringResource(R.string.pronunciation_done)) } }
-            }
-        },
-    ) { padding ->
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(vertical = 24.dp),
-        ) {
-            LessonColumn(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
-                if (noWords) {
-                    Text(
-                        stringResource(R.string.pronunciation_no_words),
-                        Modifier.semantics { heading() },
-                        style = MaterialTheme.typography.headlineSmall,
-                    )
-                    return@LessonColumn
+        TaskScaffold(
+            onClose = onDone,
+            modifier = Modifier.taskKeys(onEnter = onDone, onEscape = onDone),
+            title = { Text(stringResource(R.string.pronunciation_title)) },
+            bottomBar = {
+                TaskActionBar {
+                    TaskActions { width ->
+                        Button(onClick = onDone, modifier = width) { Text(stringResource(R.string.pronunciation_done)) }
+                    }
                 }
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        stringResource(if (result == null) R.string.pronunciation_nothing_said else R.string.pronunciation_practice_done),
-                        Modifier.semantics { heading() },
-                        style = MaterialTheme.typography.headlineSmall,
-                    )
-                    Text(
-                        stringResource(R.string.pronunciation_accent),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
-                result?.let {
-                    MomentReadouts(it.brainPower, score = MomentScore(it.total.toInt(), it.correct.toInt(), spoken = true))
-                }
-            }
+            },
+        ) { padding ->
+            ResultPages(
+                modifier = Modifier.padding(padding),
+                withMoment = true,
+                columnModifier = Modifier.taskColumn(),
+                done = {
+                    Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                        if (noWords) {
+                            Text(
+                                stringResource(R.string.pronunciation_no_words),
+                                Modifier.semantics { heading() },
+                                style = MaterialTheme.typography.headlineSmall,
+                            )
+                        } else {
+                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text(
+                                    stringResource(title),
+                                    Modifier.semantics { heading() },
+                                    style = MaterialTheme.typography.headlineSmall,
+                                )
+                                Text(
+                                    stringResource(R.string.pronunciation_accent),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                )
+                            }
+                            result?.let {
+                                MomentReadouts(it.brainPower, score = MomentScore(it.total.toInt(), it.correct.toInt(), spoken = true))
+                            }
+                        }
+                    }
+                    result?.let { RoundMoment(it, buddy) }
+                },
+                next = {},
+            )
         }
     }
+}
+
+@Composable
+private fun RoundMoment(
+    result: PronunciationRoundResult,
+    buddy: LearnerSummaryBuddy?,
+) {
+    val moment = buddy.momentBuddy()
+
+    DayMoment(
+        missions = result.missionMoment?.missionMomentFacts(),
+        reached = ReachedFacts(result.reached.level, result.reached.energy),
+        ceremony = result.ceremony?.kind,
+        buddy = moment.look,
+        buddyName = moment.name,
+    )
 }
 
 /** Enter presses the screen's main action and Escape leaves, as in the lesson player. */

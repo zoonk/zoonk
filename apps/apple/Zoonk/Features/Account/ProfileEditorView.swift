@@ -30,6 +30,12 @@ struct ProfileEditorView: View {
     _username = State(initialValue: account.user.username ?? "")
   }
 
+  private static var savedLine: String {
+    String(
+      localized: "Saved.", table: "Account",
+      comment: "The profile saved and its editor stays open beside the settings")
+  }
+
   var body: some View {
     ZoonkList {
       if isRequiredSetup {
@@ -75,8 +81,8 @@ struct ProfileEditorView: View {
             .foregroundStyle(.destructiveText)
           } else if !isRequiredSetup {
             Text(
-              "How Zoonk and your buddy call you", tableName: "Account",
-              comment: "What the profile name is for")
+              "How Zoonk and your buddy call you, and the name on your certificates.",
+              tableName: "Account", comment: "What the profile name is for")
           }
         }
 
@@ -156,9 +162,7 @@ struct ProfileEditorView: View {
       } else if isSaved {
         Section {
           Label {
-            Text(
-              "Saved.", tableName: "Account",
-              comment: "The profile saved and its editor stays open beside the settings")
+            Text(Self.savedLine)
           } icon: {
             Image(systemName: "checkmark.circle")
           }
@@ -252,6 +256,7 @@ struct ProfileEditorView: View {
     }
     .onChange(of: name) { isSaved = false }
     .onChange(of: username) { isSaved = false }
+    .announcesStatus(isSaved ? Self.savedLine : nil)
     .toolbar {
       if !isRequiredSetup {
         ToolbarItem(placement: .confirmationAction) {

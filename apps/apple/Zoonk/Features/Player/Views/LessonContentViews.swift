@@ -55,16 +55,24 @@ struct LessonRichText: View {
 }
 
 struct LessonTextBlocks: View {
+  @Environment(\.highlightsLessonTerms) private var highlightsTerms
+
   let text: String
   let mark: String?
+  let underline: String?
 
-  init(_ text: String, mark: String? = nil) {
+  init(_ text: String, mark: String? = nil, underline: String? = nil) {
     self.text = text
     self.mark = mark
+    self.underline = underline
   }
 
   var body: some View {
-    RichTextBlocks(text, mark: mark) { LessonRichText.typeset($0) }
+    RichTextBlocks(
+      text, mark: mark,
+      marks: underline != nil || highlightsTerms
+        ? RichTextMarks(underline: underline, highlightsTerms: highlightsTerms) : nil
+    ) { LessonRichText.typeset($0) }
   }
 }
 
@@ -84,20 +92,68 @@ struct LessonEyebrow: View {
   }
 }
 
+/// A question as a VoiceOver heading, with any table of data above it as a check's context.
 struct LessonQuestionText: View {
   let text: String
 
   var body: some View {
-    LessonRichText(text)
-      .typeStyle(.question)
-      .dimsOnceChecked()
-      .fixedSize(horizontal: false, vertical: true)
-      .accessibilityAddTraits(.isHeader)
+    let parts = LessonQuestionParts(text)
+
+    if let data = parts.data {
+      LessonTextBlocks(data)
+        .foregroundStyle(.mutedForeground)
+    }
+
+    if !parts.question.isEmpty {
+      LessonRichText(parts.question)
+        .typeStyle(.question)
+        .dimsOnceChecked()
+        .fixedSize(horizontal: false, vertical: true)
+        .accessibilityAddTraits(.isHeader)
+    }
+  }
+}
+
+/// Main's `splitQuestionData`: in a question with a table, the last run of prose lines asks, and the
+/// table with the rest of the lines is its data.
+struct LessonQuestionParts: Equatable {
+  let data: String?
+  let question: String
+}
+
+extension LessonQuestionParts {
+  init(_ text: String) {
+    let lines = RichTextBlock.lines(text)
+    let tableLines = RichTextBlock.tableLines(lines)
+
+    guard !tableLines.isEmpty else {
+      self.init(data: nil, question: text)
+      return
+    }
+
+    let isProse = { (index: Int) in
+      !tableLines.contains(index) && !lines[index].trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
+    guard let end = lines.indices.last(where: isProse) else {
+      self.init(data: text, question: "")
+      return
+    }
+
+    let start = (lines.indices.last { $0 < end && !isProse($0) } ?? -1) + 1
+    let data = (lines[..<start] + lines[(end + 1)...]).joined(separator: "\n")
+
+    self.init(
+      data: data.trimmingCharacters(in: .whitespacesAndNewlines),
+      question: lines[start...end].joined(separator: "\n"))
   }
 }
 
 extension EnvironmentValues {
+  @Entry var highlightsLessonTerms = false
   @Entry var lessonScreenHeight: CGFloat = .infinity
+  /// Between the lesson's bars: what a screen and its action bar share.
+  @Entry var lessonPageHeight: CGFloat = .infinity
   @Entry var isLessonStepChecked = false
 }
 
@@ -133,8 +189,14 @@ enum LessonPictureFrame {
 }
 
 struct LessonPictureView: View {
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.imageLoader) private var images
   @Environment(\.lessonScreenHeight) private var screenHeight
+  @Environment(\.lessonPageHeight) private var pageHeight
+  @Environment(\.isPaneSplit) private var isPaneSplit
+  /// What the opening guess's page holds besides its picture: the chip, a three-line question,
+  /// three options and the action bar.
+  @ScaledMetric(relativeTo: .title2) private var openingReserve: CGFloat = 520
   @Environment(SessionStore.self) private var session
 
   let image: LessonStepImage?
@@ -143,13 +205,18 @@ struct LessonPictureView: View {
   /// A question's picture says what it shows until it's there, since the question may need it.
   var asks = false
   var hero = false
+  /// The opening guess's picture comes before its question, so in one column it gives up its height
+  /// for the question and options, down to a floor where it still reads. On a spread they face it.
+  var opens = false
+  /// The shape pictures of this kind are drawn at, held while one draws.
+  var drawnAspectRatio = LessonPicturePlaceholder.screenAspectRatio
 
   var body: some View {
     if let image, let url = URL(string: image.url) {
       picture(url: url, image: image)
     } else if let alt, isPending {
       LessonPicturePlaceholder(alt: asks ? alt : nil, saysItIsDrawing: true)
-        .pictureFrame(aspectRatio: LessonPicturePlaceholder.aspectRatio, maxHeight: maxHeight)
+        .pictureFrame(aspectRatio: drawnAspectRatio, maxHeight: maxHeight, alignment: alignment)
     } else if let alt, asks {
       Label {
         Text(alt)
@@ -167,7 +234,12 @@ struct LessonPictureView: View {
 
   private var maxHeight: CGFloat {
     let frame: LessonPictureFrame = asks ? .question : hero ? .hero : .inline
-    return frame.maxHeight(screen: screenHeight)
+    let cap = frame.maxHeight(screen: screenHeight)
+    return opens && !isPaneSplit ? max(140, min(pageHeight - openingReserve, cap)) : cap
+  }
+
+  private var alignment: Alignment {
+    horizontalSizeClass == .regular ? .leading : .center
   }
 
   private func picture(url: URL, image: LessonStepImage) -> some View {
@@ -193,7 +265,7 @@ struct LessonPictureView: View {
       }
     }
     .pictureFrame(
-      aspectRatio: aspectRatio ?? LessonPicturePlaceholder.aspectRatio, maxHeight: maxHeight
+      aspectRatio: aspectRatio ?? drawnAspectRatio, maxHeight: maxHeight, alignment: alignment
     )
     .accessibilityElement()
     .accessibilityLabel(Text(alt ?? ""))
@@ -204,8 +276,10 @@ struct LessonPictureView: View {
 /// Holds a picture's place until it's drawn and loaded, so nothing moves when it comes. Its
 /// description says what the question needs meanwhile; only the fill pulses, so it stays readable.
 struct LessonPicturePlaceholder: View {
-  /// Pictures are drawn at 1024 by 1280, as main's default.
-  static let aspectRatio: CGFloat = 4 / 5
+  /// New screen pictures are drawn at 1536 by 1024 and option pictures at 1024 by 1024; a stored
+  /// picture keeps the size it says it has.
+  static let screenAspectRatio: CGFloat = 3 / 2
+  static let optionAspectRatio: CGFloat = 1
 
   let alt: String?
   var saysItIsDrawing = false
@@ -248,10 +322,12 @@ struct LessonPicturePlaceholder: View {
 extension View {
   /// A picture's shape at the width it's offered, no taller than `maxHeight`; whatever holds its
   /// place gets the same frame.
-  func pictureFrame(aspectRatio: CGFloat, maxHeight: CGFloat = .infinity) -> some View {
+  func pictureFrame(
+    aspectRatio: CGFloat, maxHeight: CGFloat = .infinity, alignment: Alignment = .center
+  ) -> some View {
     PictureFrameLayout(aspectRatio: aspectRatio, maxHeight: maxHeight) { self }
       .clipShape(.rect(cornerRadius: Radius.xl, style: .continuous))
-      .frame(maxWidth: .infinity, alignment: .leading)
+      .frame(maxWidth: .infinity, alignment: alignment)
   }
 }
 

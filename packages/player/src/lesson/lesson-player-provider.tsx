@@ -1,7 +1,6 @@
 "use client";
 
 import { type TrackEvent } from "@zoonk/core/analytics/events";
-import { type LessonSupport } from "@zoonk/core/lesson-player/contract";
 import { type ChallengeTeam } from "@zoonk/core/library/challenges/team";
 import { usePreloadMath } from "@zoonk/learn/rich-text/preload-math";
 import { useEffect, useEffectEvent, useMemo, useReducer } from "react";
@@ -68,21 +67,21 @@ function createStartingState({
   firstAnswer,
   lesson,
   resume,
-  support,
 }: {
   firstAnswer: LessonPlayerAnswer | string | null;
   lesson: PlayableLibraryLesson;
   resume: LessonRunAnswers;
-  support: LessonSupport | null;
 }): LessonPlayerState {
   const first = lesson.steps[0];
   const answer = first && firstAnswer ? toFirstAnswer({ first, firstAnswer }) : null;
 
+  const initial = { ...lesson, hasMap: lesson.summary !== null };
+
   if (!first || !answer) {
-    return resumeLesson(createInitialState(lesson, support), resume);
+    return resumeLesson(createInitialState(initial), resume);
   }
 
-  const state = createInitialState(lesson);
+  const state = createInitialState(initial);
 
   return lessonPlayerReducer(state, { answer, stepId: first.id, type: "selectAnswer" });
 }
@@ -101,8 +100,6 @@ export type LessonPlayerProviderProps = {
   routes: LessonPlayerRoutes;
   slots?: LessonPlayerSlots;
   soundsEnabled?: boolean;
-  /** Omit `support` to preserve the lesson's authored order. */
-  support?: LessonSupport | null;
   track?: TrackEvent;
   tutor?: LessonTutorConfig;
   viewer: { hasSession: boolean };
@@ -128,14 +125,13 @@ export function LessonPlayerProvider({
   routes,
   slots = NO_SLOTS,
   soundsEnabled = false,
-  support = null,
   track = noTracking,
   tutor,
   viewer,
 }: LessonPlayerProviderProps) {
   const [state, dispatch] = useReducer(
     lessonPlayerReducer,
-    { firstAnswer, lesson, resume, support },
+    { firstAnswer, lesson, resume },
     createStartingState,
   );
 
@@ -190,7 +186,7 @@ export function LessonPlayerProvider({
         estimatedMinutes: lesson.estimatedMinutes,
         id: lesson.id,
         language: lesson.language,
-        summaryIdeas: lesson.summaryIdeas,
+        summary: lesson.summary,
         targetLanguage: lesson.targetLanguage,
         title: lesson.title,
       },

@@ -23,6 +23,7 @@ if (process.env.NODE_ENV !== "production") {
 export type {
   AnswerExplanation,
   Attempt,
+  Certificate,
   Chapter,
   ChapterLesson,
   ChapterMindMap,
@@ -48,6 +49,7 @@ export type {
   LearnerSource,
   LearningEvent,
   Lesson,
+  LessonIcon,
   LessonQuestion,
   LessonQuestionContextKind,
   LessonQuestionStatus,

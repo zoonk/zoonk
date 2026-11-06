@@ -201,6 +201,7 @@ struct ChangeLimitButton: View {
     } label: {
       Text("Change limit", tableName: "Settings", comment: "Opens the daily time limit setting")
         .typeWeight(.semibold)
+        .underline()
     }
     .buttonStyle(.borderless)
   }
@@ -209,14 +210,11 @@ struct ChangeLimitButton: View {
 struct SettingsSaveError: View {
   var body: some View {
     Section {
-      Label {
-        Text(
-          "That didn't save. Try again.", tableName: "Settings",
-          comment: "Shown when a setting change didn't save")
-      } icon: {
-        Image(systemName: "exclamationmark.circle")
-      }
-      .foregroundStyle(.destructiveText)
+      FailureLine(
+        message: LocalizedStringResource(
+          "That didn't save. Try again.", table: "Settings",
+          comment: "Shown when a setting change didn't save"),
+        systemImage: "exclamationmark.circle")
     }
   }
 }

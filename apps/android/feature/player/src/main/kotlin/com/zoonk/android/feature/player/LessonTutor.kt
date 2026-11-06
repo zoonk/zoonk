@@ -35,6 +35,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
+import com.zoonk.android.feature.player.engine.lessonStepIds
 import com.zoonk.android.feature.player.engine.strugglePauseMs
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
@@ -42,16 +43,18 @@ import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.toApi
 import com.zoonk.android.feature.tutor.TutorAvatar
 import com.zoonk.android.feature.tutor.TutorIdentity
+import com.zoonk.android.feature.tutor.TutorOffer
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.feature.tutor.TutorSuggestion
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.api.models.LessonTutorSuggestion
 import kotlinx.coroutines.delay
 
 /**
  * The buddy beside a lesson: who it is, the lesson's suggestions, whether the learner can ask it (a
  * guest can't yet, so nothing offers it beside a screen), and its ask button, whose conversation shows
- * while `open`, with [offer] in its composer once.
+ * while `open`, taking [offer] once: in its composer, or asked at once.
  */
 @Immutable
 class LessonTutor(
@@ -62,13 +65,15 @@ class LessonTutor(
         scope: TutorScope,
         worded: Boolean,
         open: Boolean,
-        offer: TutorSuggestion?,
+        offer: TutorOffer?,
         onOfferTaken: () -> Unit,
         onOpenChange: (Boolean) -> Unit,
     ) -> Unit,
 )
 
 enum class BuddyOfferReason { Misses, Pause }
+
+internal val SIMPLER_SUGGESTION = LessonTutorSuggestion.Id.SIMPLER.value
 
 /** Main's `AskBuddyOffer`: after two misses on one idea, or a long pause on an explanation. */
 @Composable
@@ -99,11 +104,13 @@ internal fun AskBuddyOffer(
 
 /**
  * Main's aside beside a teaching screen on wide screens, on the learner's page of a spread: two of the
- * buddy's suggestions for the screen, ready to send, or anything else.
+ * buddy's suggestions for the screen, ready to send, or anything else. A screen that shows "I didn't
+ * get this" ([simplerOnScreen]) already asks for the simpler explanation, so the aside offers the others.
  */
 @Composable
 internal fun ScreenHelp(
     tutor: LessonTutor,
+    simplerOnScreen: Boolean,
     onAsk: (TutorSuggestion?) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -120,7 +127,7 @@ internal fun ScreenHelp(
             )
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            tutor.suggestions.take(SCREEN_SUGGESTIONS).forEach { suggestion ->
+            tutor.suggestions.filterNot { simplerOnScreen && it.id == SIMPLER_SUGGESTION }.take(SCREEN_SUGGESTIONS).forEach { suggestion ->
                 SuggestionChip(onClick = { onAsk(suggestion) }, label = { Text(suggestion.label) })
             }
             SuggestionChip(onClick = { onAsk(null) }, label = { Text(stringResource(R.string.player_ask_something_else)) })
@@ -130,9 +137,9 @@ internal fun ScreenHelp(
 
 private const val SCREEN_SUGGESTIONS = 2
 
-/** Text that teaches, which the buddy can explain another way: an explanation, or a hook's fact. */
+/** Text that teaches, which the buddy can explain another way: an explanation, a hook's fact, or the lesson's map. */
 internal val LessonStep.teachesInText: Boolean
-    get() = content is StepContent.Explanation || content is StepContent.Fact
+    get() = content is StepContent.Explanation || content is StepContent.Fact || content is StepContent.Map
 
 /** Main's struggle pause: no press, scroll or key on an explanation for its pause while the app shows. */
 @Composable
@@ -163,7 +170,7 @@ internal fun StrugglePause(
 
 /** What the buddy is asked about on [screen]: the learner's checked answer, the screen, or the lesson before its first screen. */
 internal fun LessonPlayerState.tutorScope(screen: LessonScreen): TutorScope {
-    val step = screen.step ?: return TutorScope.Lesson(lessonId, steps.keys.toList())
+    val step = screen.step?.takeUnless { it.kind == StepKind.Map } ?: return TutorScope.Lesson(lessonId, lessonStepIds)
     val number = position + 1
     val checked = answers[step.id]?.takeIf { phase == LessonPhase.Feedback && step.id in results }?.toApi()
     return if (checked != null) TutorScope.Answer(lessonId, step.id, number, checked) else TutorScope.Step(lessonId, step.id, number)

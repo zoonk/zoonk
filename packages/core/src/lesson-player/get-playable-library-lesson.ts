@@ -5,12 +5,13 @@ import { cacheTag } from "next/cache";
 import { getLibraryLessonCacheTag, getMediaAssetCacheTag } from "../cache/tags";
 import { filterSkippedSteps } from "../language/activities/language-activities";
 import { loadSkippedActivities } from "../language/activities/skipped-activities";
+import { readActiveGoal } from "../learner/facts/learning-profile";
 import { getLearnerLessonPlanCacheTags } from "../library/_utils/learner-lesson-plan";
 import { canViewLibraryRow } from "../library/_utils/library-visibility";
-import { toSummaryIdeas } from "../library/lessons/_utils/summary-ideas";
 import { CURRENT_STEPS } from "../library/lessons/lesson-versions";
 import { getSession } from "../users/get-session";
 import { withLearnerLessonVersions } from "./_utils/learner-lesson-versions";
+import { withLessonMarks } from "./_utils/lesson-marks";
 import { playableStepInclude } from "./_utils/lesson-rows";
 import { loadPlayableSteps } from "./_utils/load-playable-steps";
 import { type PlayableLibraryLesson } from "./playable-lesson";
@@ -59,11 +60,22 @@ async function toLoadedPlayableLesson(lesson: PlayableLessonRow): Promise<Loaded
     title: lesson.title,
   };
 
-  const steps = await loadPlayableSteps({ lesson, rows: lesson.steps });
+  const playable = await loadPlayableSteps({ lesson, rows: lesson.steps });
 
-  if (lesson.contentStatus !== "completed" || steps.length === 0) {
+  if (lesson.contentStatus !== "completed" || playable.length === 0) {
     return { access, result: { lesson: outline, status: "notGenerated" } };
   }
+
+  const endsOnItsOwn = playable.some(
+    (step) => step.kind === "summary" || step.kind === "challenge",
+  );
+
+  const { steps, summary } = await withLessonMarks({
+    rows: lesson.steps,
+    steps: playable,
+    summary: endsOnItsOwn ? null : lesson.summary,
+    targetLanguage: lesson.targetLanguage,
+  });
 
   return {
     access,
@@ -75,7 +87,7 @@ async function toLoadedPlayableLesson(lesson: PlayableLessonRow): Promise<Loaded
         level: lesson.level,
         skills: lesson.skills.map((item) => item.skill),
         steps,
-        summaryIdeas: toSummaryIdeas(lesson.summary),
+        summary,
         targetLanguage: lesson.targetLanguage,
       },
       status: "ready",
@@ -148,16 +160,22 @@ export async function getLibraryLessonOutline({
   return cached.result.status === "ready" ? toOutline(cached.result.lesson) : cached.result.lesson;
 }
 
-function loadLessonSkippedActivities({
+async function loadLessonSkippedActivities({
   lesson,
   userId,
 }: {
   lesson: PlayableLibraryLesson;
   userId: string;
 }) {
-  return lesson.targetLanguage
-    ? loadSkippedActivities({ targetLanguage: lesson.targetLanguage, userId })
-    : Promise.resolve([]);
+  if (!lesson.targetLanguage) {
+    return [];
+  }
+
+  return loadSkippedActivities({
+    activeGoal: await readActiveGoal(userId),
+    targetLanguage: lesson.targetLanguage,
+    userId,
+  });
 }
 
 /** Private lessons require ownership; screens require a learner or guest session. Visitors and unfinished lessons receive an outline. */
@@ -196,7 +214,7 @@ export async function getPlayableLibraryLesson({
     return {
       lesson: {
         ...lesson,
-        steps: filterSkippedSteps({ activities: skippedActivities, steps: lesson.steps }),
+        steps: filterSkippedSteps({ activities: skippedActivities ?? [], steps: lesson.steps }),
       },
       status: "ready",
     };

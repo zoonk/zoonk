@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
@@ -54,10 +55,13 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.LineBreak
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -452,7 +456,7 @@ private fun PhaseBand(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(height)
+                // Before the height, so the ticks meet the band rather than the 48dp touch target Surface centers on it.
                 .drawBehind {
                     todayShare ?: return@drawBehind
                     val x = size.width * if (layoutDirection == LayoutDirection.Rtl) 1 - todayShare else todayShare
@@ -460,7 +464,8 @@ private fun PhaseBand(
                     val line = 1.5.dp.toPx()
                     drawRect(ink, Offset(x, -tick), Size(line, tick))
                     drawRect(ink, Offset(x, size.height), Size(line, tick))
-                }.semantics { contentDescription = label },
+                }.height(height)
+                .semantics { contentDescription = label },
         shape = MaterialTheme.shapes.small,
         color = container,
         contentColor = content,
@@ -512,26 +517,29 @@ private fun PhaseLane(
     val flag = isLast && page.finish != null && !hasOverrun
     val flagTint = MaterialTheme.colorScheme.onSurface
 
-    FractionRow(
+    Box(
         Modifier
-            .padding(top = 4.dp)
+            .padding(top = 8.dp)
             .height(16.dp)
             .fillMaxWidth()
             .clearAndSetSemantics {},
     ) {
-        mockShare?.let { At(it, Anchor.Center) { KindDot(LearnKind.Mock) } }
-        challengeShare?.let { At(it, if (it > PHASE_END_SHARE) Anchor.End else Anchor.Center) { Trickster(Modifier.size(14.dp)) } }
-        if (flag) At(1f, Anchor.End) { Icon(painterResource(R.drawable.ic_flag), null, Modifier.size(14.dp), tint = flagTint) }
-        overrun?.let {
-            At(
-                it.share,
-                Anchor.Center,
-            ) { Icon(painterResource(R.drawable.ic_flag), null, Modifier.size(14.dp), tint = flagTint) }
+        FractionRow(Modifier.fillMaxSize(), endRoom = FLAG_ROOM.takeIf { flag }) {
+            mockShare?.let { At(it, Anchor.Center) { KindDot(LearnKind.Mock) } }
+            challengeShare?.let { At(it, if (it > PHASE_END_SHARE) Anchor.End else Anchor.Center) { Trickster(Modifier.size(14.dp)) } }
+            overrun?.let {
+                At(
+                    it.share,
+                    Anchor.Center,
+                ) { Icon(painterResource(R.drawable.ic_flag), null, Modifier.size(14.dp), tint = flagTint) }
+            }
         }
+        if (flag) Icon(painterResource(R.drawable.ic_flag), null, Modifier.align(Alignment.TopEnd).size(14.dp), tint = flagTint)
     }
 }
 
 private const val PHASE_END_SHARE = 0.9f
+private val FLAG_ROOM = 16.dp
 
 @Composable
 private fun PhaseAxis(
@@ -544,11 +552,14 @@ private fun PhaseAxis(
     hasOverrun: Boolean,
     width: Dp,
 ) {
-    val style = MaterialTheme.typography.labelSmall.withTabularFigures()
+    val style =
+        MaterialTheme.typography.labelSmall
+            .withTabularFigures()
+            .copy(lineBreak = LineBreak.Heading)
     val faint = MaterialTheme.colorScheme.onSurfaceVariant
     val ink = MaterialTheme.colorScheme.onSurface
     val overrunSide = overrun?.let { if (it.share < MIDDLE_SHARE) Anchor.Start else Anchor.End }
-    val start = phase.start?.takeIf { labelled && overrunSide != Anchor.Start && width >= if (isLast) 160.dp else 72.dp }
+    val start = phase.start?.takeIf { labelled && overrunSide != Anchor.Start && (!isLast || width >= 160.dp) }
     val finishShown = isLast && overrunSide != Anchor.End
     val finishWords = page.finish?.let { planDate(it.date, page.today, it.estimate, it.month) }
     val examFinish =
@@ -561,44 +572,81 @@ private fun PhaseAxis(
                 it.text
             }
         }
+    val overrunEnd = phase.end?.takeIf { hasOverrun }
+    val labels =
+        listOfNotNull(
+            todayShare?.takeIf { overrun == null }?.let { AxisLabel(stringResource(R.string.plan_today), ink, it) },
+            start?.let {
+                AxisLabel(formatPlanDate(it, page.today, currentLocale(), month = phase.kind == PlanPhase.Kind.LEARN), faint, 0f)
+            },
+            overrun?.let { at -> examFinish?.let { AxisLabel(it, ink, at.share) } },
+            when {
+                !finishShown -> null
+                overrunEnd != null -> AxisLabel(formatPlanDate(overrunEnd, page.today, currentLocale()), faint, 1f)
+                examFinish != null -> AxisLabel(examFinish, ink, 1f)
+                else -> null
+            },
+        )
 
-    FractionRow(Modifier.height(16.dp).fillMaxWidth().clearAndSetSemantics {}) {
-        if (todayShare != null && overrun == null) {
-            At(todayShare, sideOf(todayShare)) { Text(stringResource(R.string.plan_today), style = style, color = ink, maxLines = 1) }
-        }
-        if (overrun != null && examFinish != null) {
-            At(overrun.share, sideOf(overrun.share)) { Text(examFinish, style = style, color = ink, maxLines = 1) }
-        }
-        if (start != null) {
-            At(0f, Anchor.Start) {
+    Layout(
+        content = {
+            labels.forEach {
                 Text(
-                    formatPlanDate(start, page.today, currentLocale(), month = phase.kind == PlanPhase.Kind.LEARN),
+                    it.text,
                     style = style,
-                    color = faint,
-                    maxLines = 1,
+                    color = it.color,
+                    textAlign = if (it.share < MIDDLE_SHARE) TextAlign.Start else TextAlign.End,
                 )
             }
-        }
-        if (finishShown) {
-            val end = phase.end
-            when {
-                hasOverrun && end != null -> {
-                    At(1f, Anchor.End) {
-                        Text(formatPlanDate(end, page.today, currentLocale()), style = style, color = faint, maxLines = 1)
-                    }
-                }
+        },
+        modifier = Modifier.fillMaxWidth().clearAndSetSemantics {},
+    ) { measurables, constraints ->
+        val width = constraints.maxWidth
+        val placeables = measurables.map { it.measure(Constraints(maxWidth = width)) }
+        val places = axisLabelPlaces(labels.map { it.share }, placeables.map { IntSize(it.width, it.height) }, width, AXIS_GAP.roundToPx())
+        val height = placeables.indices.maxOfOrNull { places[it].y + placeables[it].height } ?: 0
 
-                examFinish != null -> {
-                    At(1f, Anchor.End) { Text(examFinish, style = style, color = ink, maxLines = 1) }
-                }
-            }
+        layout(width, max(AXIS_LINE.roundToPx(), height)) {
+            placeables.forEachIndexed { index, placeable -> placeable.placeRelative(places[index]) }
         }
     }
 }
 
-private const val MIDDLE_SHARE = 0.5f
+private class AxisLabel(
+    val text: String,
+    val color: Color,
+    val share: Float,
+)
 
-private fun sideOf(share: Float) = if (share < MIDDLE_SHARE) Anchor.Start else Anchor.End
+/** Main's `AxisLabel`, for labels in point order, each measured no wider than the phase. */
+internal fun axisLabelPlaces(
+    shares: List<Float>,
+    sizes: List<IntSize>,
+    width: Int,
+    gap: Int,
+): List<IntOffset> {
+    var top = 0
+    var lineHeight = 0
+    var lineEnd: Int? = null
+
+    return shares.zip(sizes) { share, size ->
+        val point = (width * share).roundToInt()
+        val x = (if (share < MIDDLE_SHARE) point else point - size.width).coerceIn(0, max(0, width - size.width))
+        val end = lineEnd
+        if (end != null && x < end + gap) {
+            top += lineHeight
+            lineHeight = 0
+        }
+        lineHeight = max(lineHeight, size.height)
+        lineEnd = x + size.width
+        IntOffset(x, top)
+    }
+}
+
+private val AXIS_LINE = 16.dp
+private val AXIS_GAP = 8.dp
+
+private const val MIDDLE_SHARE = 0.5f
 
 internal enum class Anchor { Start, Center, End }
 
@@ -618,11 +666,13 @@ private class FractionScope {
 @Composable
 private fun FractionRow(
     modifier: Modifier,
+    endRoom: Dp? = null,
     content: FractionScope.() -> Unit,
 ) {
     val items = FractionScope().apply(content).items
     Layout(content = { items.forEach { it.third() } }, modifier = modifier) { measurables, constraints ->
         val placeables = measurables.map { it.measure(Constraints()) }
+        val end = endRoom?.let { constraints.maxWidth - it.roundToPx() }
         layout(
             constraints.maxWidth,
             constraints.maxHeight.takeIf { it != Constraints.Infinity } ?: placeables.maxOfOrNull { it.height } ?: 0,
@@ -636,7 +686,7 @@ private fun FractionRow(
                         Anchor.Center -> x - placeable.width / 2
                         Anchor.End -> x - placeable.width
                     }
-                placeable.placeRelative(left, 0)
+                placeable.placeRelative(end?.let { left.coerceAtMost(it - placeable.width) } ?: left, 0)
             }
         }
     }

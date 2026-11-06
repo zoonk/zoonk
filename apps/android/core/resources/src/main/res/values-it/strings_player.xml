@@ -62,10 +62,12 @@
   "player_course_size": "46df12005800f1be11cbcf77b6a4867865bf9b4c69867b464b8079a9c128cd64",
   "player_create_account_to_save": "86691b657f3ef51dcd4e786a51d0825b94fadbecd367e7c9c3cb818b9ddf8032",
   "player_create_free_account": "2570dcb5a263a2b44ea80b2e69e8336932f4a108225c33de26b4ab225704c83b",
+  "player_didnt_get_it": "de5c78896fc0e415ae340208646a69de456055dd776a4ed054e3d14c0c7f5ee2",
   "player_done": "c988fc5c6858b68dc1a09a4cd993d6003dc2da26f0b40c743ee7311e4a499563",
   "player_dont_know_yet": "29e1b6b7b832a0f3b4f0d37fd76f50b509e03a181a9cc37fd83776a32f470616",
   "player_drawing_picture": "cd7311395bd38a4906423bd5f159e5e96ec83e397a634d63aab61e76d86d5f14",
   "player_enter_hint": "282fe54894c9f7c4ca759d39c417325b6b71f80ec3ddd0afbe6ee7c32688587b",
+  "player_example": "a796ac1588621ad573b72c770599838c9916c41677c7795b6fb8041a8798a16c",
   "player_explain_answer": "9574839cae8e2df993728c936164c15e4a3e2edc5f9dab3cde73412ae740b500",
   "player_explain_answer_failed": "09fc77c49634c48018a1fb6308ccde9bd3efb83651db2952c6f5cf969cb6073e",
   "player_explain_answer_title": "84c8e48fd6879b374ec64c5b2ccbf5fa5a504362b59f16196491eeeb9036e9bb",
@@ -77,13 +79,13 @@
   "player_free_limit_month_description": "68165a0fe0c655daf05066a8a5a107b1e4d75cb8748cdd5b6ee21c1df115e745",
   "player_free_limit_month_title": "3f002d54b9bfa0f35f7d814527a5f3aa93400996e6567d0f7373d6b1e4973330",
   "player_from_the_lesson": "67c616637d95d6214a1d482373725381911f2d3d939d92565af9153a9aa2e256",
-  "player_guess_first": "460d13ce685becb63db5b7203cce6141bf7ae299d16e07193cabdc4223d56052",
-  "player_guess_hint": "b75528453321778579d5a91028b4325350437717d99478c38c14732a06afd681",
+  "player_guess_chip": "c2d76cd2555f276ef600a89dd659741338cb94abf004a83ca0237509eb4d698f",
   "player_guest_limit_description": "bd31225b4a11ca63cb2d29a973aa819eb7e83c91987ffe9f6164798cf6ae7773",
   "player_guest_limit_title": "7f1eb075e41d0c23c9bda965feb7b3abaea39dd75b28da5f33f470e61b473ec9",
   "player_guest_save_note": "5a4156dcb471ab473501fde9afc37961dfca539c0a4f87f9709d3a7f28f77d08",
   "player_how_to_say": "0e5a02dbd5179648d1f653f37514ad7978353683abbd39fb490e73b5a38e10a6",
   "player_hyperdrive_streak": "f896add2145fed962c270ed583d211a8f957a3eadd397d8739edc908f0bb6739",
+  "player_idea_position": "943373a5a3b76a6de7a497373b0a642dcb7dc617126f53440b8fd09cc9e5a76d",
   "player_in_your_own_words": "c6f32f4877774327a482c55aa46166816a99cefb48f88644cab7decfb72c9cbc",
   "player_keep_writing": "dcdfd61af3ae4cd16d4a6845466bad69f9088029a9b88bd204ddfe2d3b04b951",
   "player_key_point_missing": "d5694859cd6b1ac9633d2abb5248bf64b3d2d49a2d2cfcfd4cb55ca3239d6721",
@@ -93,8 +95,9 @@
   "player_leave_description": "030d0a278cf63fc7a33b2341b22cc78b887dbcca60a96a31097f4e7931d7c072",
   "player_leave_title": "ff12860dd7d835b29afd9636b3539bdf6bbb7005e56658108da6743c0874b0da",
   "player_lesson_complete": "160a45c5a119e7feb7dfff8e22d01bf7ff8fc7877fec6b08c20ecbbbf860642a",
+  "player_lesson_map": "2380b0753fbb8cbce86707e6360a98322b31dd96a0e6dbc532fe455eb6f8a875",
+  "player_lesson_map_nested": "2acaa10214e0acede3a6a24c29bc7d1507f8a787a8e17c040789246649e2bfdc",
   "player_lesson_of": "efcedf1fe6d89dc646ff522b46eccd75d22285cd57f78a0953af976f8278acfc",
-  "player_lesson_summary": "ebe993bbf93f05a5caaec7c28c83ea3657c3d40ea1c74daaef832ed5d25140e4",
   "player_listen": "d9dad9e7c623905d3013c143263066b9f6f0e26fd187df1695b182293095f454",
   "player_microphone_blocked": "13b897da575ea51ff3e3820f5ccf8f78f7f337b2784bb2db76115dc2f0e9a76f",
   "player_next_lesson": "6898b6896b43bea69e2c7208782df158a7062e36bb29cee631252c38c8a9be0f",
@@ -103,7 +106,7 @@
   "player_not_found_title": "5b762cfd823817eb0fc967a1c73eb70cae5017d782a4c2276d9089f9912f42c5",
   "player_not_in_app_description": "1321935ead014dcfcf253b62fb1c63e1d3f05f5c6ad286833f939b34ee51c213",
   "player_not_in_app_title": "e36ed11d2f6f1a2103bef2e959a373819bec066d07f64379c859a3b52433437e",
-  "player_not_written_description": "0d501da0d1a346d05360eac8c05f3ce971eca693f1dfb839284151640808f609",
+  "player_not_written_description": "01b4385c541cef479c7c7487513161d4cbe5e5c6f7a66728c7b37a50587aa5e2",
   "player_not_written_title": "3351675250f5565c2967f63d6be7ca3fdc32f8500524c54da39ad17a189c1b86",
   "player_nothing_left_description": "164e8e662a3d42afd48760c39ad8927f8c8445bbbc10dee63edcf321fb657dc5",
   "player_nothing_left_title": "c03ea427ddc2f303e5c0b7ac036fed2c6ce0af7bd19b0b408432bc7977999155",
@@ -116,7 +119,16 @@
   "player_offer_tricky": "02b926f34504bf2c9264d4ea8d6d2d8f3c25b00424531cc643c9366227dc2f36",
   "player_open_failed": "7eddaac226b8897341c94aec7a9ce84740c0229f1fc9e541192e0c900584553a",
   "player_opening_lesson": "f2ae56b1774fd32e593fb31a95c16b9bebcb9e778ad21248f235857fd4115dfe",
+  "player_opening_map_idea": "88df0aba61af9413fcf4a5db730d209bb08397ae413f6f3b810277178fc9c436",
+  "player_opening_map_ideas": "71ef40ab3fbb2d5686bd87f713287240d58c5e59cfcaf73b5fa37ed697480773",
+  "player_opening_map_show": "b92663d75c350d84e70ef01808dad7bac499750cd0dc82a7cd7149ff0cf85ef2",
   "player_part_of": "4eda0724244cd2fd23edc92f0a9bcc87a7390ccf9be9d253bd8e0af327de89bc",
+  "player_phase_draw": "559e2e3a380419099e68918c859c74ecb76c8a9cad6e3e6b0e4297849ad0d61b",
+  "player_phase_draw_line_1": "6ffb66ef76f96004cc875ed732f9f493ff3e29ad87629641237dc66457ba689c",
+  "player_phase_draw_line_2": "6b655a91a60bc961d9cd67ab074d223708aef1647427e0eec93980b03e6b4374",
+  "player_phase_mark": "7de26f73d992b8c7fcfa00d2178216c540cf358b2a72971482650d2b56b61686",
+  "player_phase_mark_line_1": "c55387e95d4b46dee9b4816d82db798ed7e9aed0a3c0327ef94748143a5a96ba",
+  "player_phase_mark_line_2": "b76e7fb66eaa1b99fbc51594543edbdc001e62a91585d7225c126324eefaf527",
   "player_phase_plan": "64e290a1f6db20fc49f22b0d71fc746e41ba39cbb9d5aac7384ab0f32d7331e1",
   "player_phase_plan_line_1": "122454ecd495f4a08a59f9e7ff03827d836418882072ee77dc37c3d099839605",
   "player_phase_plan_line_2": "147a03a2868416ac8ee6086878af3ef5a809ff6b9538f6c131cc46edd27d6ea4",
@@ -178,7 +190,7 @@
   "player_write_again": "dc90596055f67b8a83606fb95ddacf760918e3553acfd95f1c027a83c10fef7b",
   "player_write_your_answer": "f214de9fa199199c6ac8fb524ea6e4b1a1b7abd8d1f4cd83e80522d0df5dfd50",
   "player_writing_lesson": "0cee8345c10d6389ce29d06097d482c9b37da78fd63aaeb17282e643d83af3ff",
-  "player_writing_note": "8e85a391d1d38d08fdeaf138fe74f5ea1c302b45548a5b8bb3a1c031eb1a0d80",
+  "player_writing_note": "870311de71f5e360d9c90912294f791b0122f5eff126071deba5a5db54fe902a",
   "player_your_answer": "3a358814d3e8478554c92c1e5e86fc1eba05410e22b270404c63268787dea169",
   "player_your_example": "ff69287a95c623e4f6c67a03015d26097c88b1135b511326b1ef56adaeaf08b3"
 }
@@ -187,7 +199,26 @@
     <string name="player_screen_options">Opzioni della schermata</string>
     <string name="player_ai_note">Creato con l’IA. Può contenere errori.</string>
     <string name="player_know_this">Lo so già</string>
-    <string name="player_lesson_summary">Riepilogo della lezione</string>
+    <!-- Names a small diagram of this lesson's main ideas, drawn by the app: the lesson's last screen, a menu item and a sheet title. Not the chapter's mind map. -->
+    <string name="player_lesson_map">Mappa della lezione</string>
+    <!-- Under a lesson map whose ideas are levels, the smallest first, such as an organism inside a population. -->
+    <string name="player_lesson_map_nested">Ogni livello si trova dentro quello successivo.</string>
+    <!-- Above a lesson's teaching screen or question: which of the lesson map's ideas it belongs to, with the idea's name under it. A position, not a count. -->
+    <string name="player_idea_position">Concetto %1$s di %2$s</string>
+    <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
+    <string name="player_example">Esempio</string>
+    <!-- Under the small map of the lesson's ideas on its opening screen, before the learner has studied them. -->
+    <plurals name="player_opening_map_ideas">
+        <item quantity="one">%1$s concetto da scoprire in questa lezione</item>
+        <item quantity="many">%1$s concetti da scoprire in questa lezione</item>
+        <item quantity="other">%1$s concetti da scoprire in questa lezione</item>
+    </plurals>
+    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
+    <string name="player_opening_map_idea">Concetto %1$s</string>
+    <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->
+    <string name="player_opening_map_show">Vedi di cosa parla</string>
+    <!-- A quiet button under a lesson's explanation for a learner who didn't understand it; the buddy then explains it more simply. Casual and short, as the learner would say it (Portuguese: "Não entendi"). -->
+    <string name="player_didnt_get_it">Non ho capito</string>
     <string name="player_progress">Avanzamento della lezione</string>
     <string name="player_leave_title">Vuoi fermarti per ora?</string>
     <string name="player_leave_description">La tua risposta non è stata controllata, quindi non verrà salvata.</string>
@@ -254,8 +285,8 @@
     <string name="player_comes_back_tomorrow">Ritroverai questo concetto nel ripasso di domani</string>
     <string name="player_comes_back_weekday">Ritroverai questo concetto nel ripasso di %1$s</string>
     <string name="player_comes_back_date">Ritroverai questo concetto in un ripasso il %1$s</string>
-    <string name="player_guess_first">Prima prova a indovinare</string>
-    <string name="player_guess_hint">Sbagliare ora ti aiuta a ricordare più avanti.</string>
+    <!-- Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored. -->
+    <string name="player_guess_chip">È solo un’ipotesi, non fa punteggio</string>
     <string name="player_answer_options">Opzioni di risposta</string>
     <string name="player_worked_example">Esempio svolto</string>
     <string name="player_worked_example_steps">Passaggi</string>
@@ -279,7 +310,7 @@
     <string name="player_your_answer">La tua risposta</string>
     <string name="player_write_your_answer">Scrivi la tua risposta</string>
     <string name="player_not_written_title">Questa lezione è ancora da preparare</string>
-    <string name="player_not_written_description">Zoonk la prepara quando inizi. Ci vuole un minuto o due.</string>
+    <string name="player_not_written_description">Zoonk la prepara quando inizi. Ci vuole qualche minuto.</string>
     <string name="player_start_this_lesson">Inizia questa lezione</string>
     <string name="player_starting">Stiamo avviando…</string>
     <string name="player_writing_lesson">Stiamo preparando la tua lezione</string>
@@ -288,7 +319,17 @@
     <string name="player_phase_plan_line_2">Stiamo scegliendo come spiegare al meglio l’argomento…</string>
     <string name="player_phase_write">Stiamo preparando la lezione</string>
     <string name="player_phase_write_line">Stiamo preparando la schermata %1$d…</string>
-    <string name="player_writing_note">Di solito ci vuole un minuto o due. La lezione si apre qui appena è pronta.</string>
+    <!-- A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it. "Ideas" are the lesson map's ideas, as in "Idea 2 of 4". -->
+    <string name="player_phase_mark">Stiamo evidenziando le idee chiave</string>
+    <string name="player_phase_mark_line_1">Stiamo sottolineando ciò che conta di più…</string>
+    <!-- Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4". -->
+    <string name="player_phase_mark_line_2">Stiamo abbinando ogni schermata alla sua idea…</string>
+    <!-- A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it. -->
+    <string name="player_phase_draw">Stiamo disegnando le immagini</string>
+    <string name="player_phase_draw_line_1">Stiamo disegnando ciò che ogni schermata descrive…</string>
+    <!-- Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4". -->
+    <string name="player_phase_draw_line_2">Stiamo disegnando un’icona per ogni idea…</string>
+    <string name="player_writing_note">Di solito ci vuole qualche minuto. La lezione si apre qui appena è pronta.</string>
     <string name="player_ready_while_waiting">Da fare nell’attesa</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->
     <string name="player_ready_instead">Un’alternativa già pronta</string>

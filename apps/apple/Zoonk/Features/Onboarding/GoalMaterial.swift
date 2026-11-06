@@ -119,24 +119,24 @@ struct GoalMaterialSections: View {
           choices: [
             .init(
               value: MaterialIntent.exam,
-              label: Text(
-                "Prepare for an exam", tableName: "Onboarding",
+              label: String(
+                localized: "Prepare for an exam", table: "Onboarding",
                 comment: "Material intent: the learner wants to prepare for an exam on it"),
               detail: Text(
                 "Give a date and we'll plan up to it", tableName: "Onboarding",
                 comment: "Under the exam material intent")),
             .init(
               value: .understand,
-              label: Text(
-                "Understand this material", tableName: "Onboarding",
+              label: String(
+                localized: "Understand this material", table: "Onboarding",
                 comment: "Material intent: lessons that teach it"),
               detail: Text(
                 "Short lessons, in the right order", tableName: "Onboarding",
                 comment: "Under the understand material intent")),
             .init(
               value: .questions,
-              label: Text(
-                "Ask questions", tableName: "Onboarding",
+              label: String(
+                localized: "Ask questions", table: "Onboarding",
                 comment: "Material intent: answers from it"),
               detail: Text(
                 "Answers show the page they came from", tableName: "Onboarding",
@@ -196,6 +196,11 @@ struct MaterialDraft {
   var isAdding = false
   var error: LocalizedStringResource?
   var showsSignUp = false
+
+  static var adding: String {
+    String(
+      localized: "Adding your material…", table: "Onboarding", comment: "While material is added")
+  }
 }
 
 /// A file, pasted text or a link, added as one source: the ways to add one, then what's being
@@ -241,6 +246,7 @@ struct MaterialAttachMenu<Label: View>: View {
       label
     }
     .disabled(draft.isAdding)
+    .announcesStatus(draft.isAdding ? MaterialDraft.adding : nil)
     .fileImporter(isPresented: $isImporting, allowedContentTypes: readableMaterialTypes) { result in
       if case .success(let file) = result {
         $draft.add({ try await attach(file) }, then: onAttached)
@@ -321,14 +327,13 @@ struct MaterialAttachProgress: View {
     if draft.isAdding {
       HStack(spacing: 8) {
         ProgressView()
-        Text("Adding your material…", tableName: "Onboarding", comment: "While material is added")
+        Text(MaterialDraft.adding)
       }
       .foregroundStyle(.mutedForeground)
     }
 
     if let error = draft.error {
-      Text(error)
-        .foregroundStyle(.destructiveText)
+      FailureLine(message: error)
     }
   }
 }
@@ -513,8 +518,7 @@ struct MaterialQuestionsView: View {
               .foregroundStyle(.mutedForeground)
             }
           case .failure(let error):
-            Text(Self.message(for: error))
-              .foregroundStyle(.destructiveText)
+            FailureLine(message: Self.message(for: error))
           }
         }
       }
@@ -522,13 +526,12 @@ struct MaterialQuestionsView: View {
       if isAsking {
         HStack(spacing: 8) {
           ProgressView()
-          Text(
-            "Reading your material…", tableName: "Onboarding",
-            comment: "While a question about the learner's material is answered")
+          Text(Self.reading)
         }
         .foregroundStyle(.mutedForeground)
       }
     }
+    .announcesStatus(isAsking ? Self.reading : turns.last.flatMap(Self.spoken))
     .safeAreaInset(edge: .bottom) {
       HStack(alignment: .bottom, spacing: 8) {
         MultilineTextField(
@@ -576,6 +579,20 @@ struct MaterialQuestionsView: View {
 
   private var trimmed: String {
     question.trimmingCharacters(in: .whitespacesAndNewlines)
+  }
+
+  private static var reading: String {
+    String(
+      localized: "Reading your material…", table: "Onboarding",
+      comment: "While a question about the learner's material is answered")
+  }
+
+  /// A failed answer is a `FailureLine`, which reads itself out.
+  private static func spoken(_ turn: Turn) -> String? {
+    switch turn.answer {
+    case .success(let answer): answer.answer
+    case .failure: nil
+    }
   }
 
   private func ask() {

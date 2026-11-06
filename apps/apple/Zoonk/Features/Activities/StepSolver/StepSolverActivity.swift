@@ -185,7 +185,7 @@ private struct StepSolverCanvas: View {
     picks = next
 
     if let choice = step.choices.first(where: { $0.id == choiceId }) {
-      announceActivityChange(LessonRichText.spoken(choice.isCorrect ? step.math : choice.reason))
+      announcePolitely(LessonRichText.spoken(choice.isCorrect ? step.math : choice.reason))
     }
 
     guard let pairs = StepSolver.firstPicks(fields.steps, picks: next) else {

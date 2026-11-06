@@ -107,7 +107,13 @@ function PasteText({ onAdd, pending }: { onAdd: (text: string) => void; pending:
         placeholder={t("Paste the syllabus, your notes or a chapter")}
         value={text}
       />
-      <Button className="self-start" disabled={pending || !text.trim()} size="sm" type="submit">
+      <Button
+        className="self-start"
+        disabled={pending || !text.trim()}
+        focusableWhenDisabled
+        size="sm"
+        type="submit"
+      >
         {t("Add text")}
       </Button>
     </form>
@@ -136,7 +142,7 @@ export function AttachControls({ attach, language, onAttached }: AttachControlsP
   const add = (run: () => Promise<AttachOutcome>) =>
     startTransition(async () => {
       setError(null);
-      const outcome = await run();
+      const outcome = await run().catch((): AttachOutcome => ({ status: "failed" }));
 
       if (outcome.status === "attached") {
         setPasting(null);

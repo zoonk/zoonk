@@ -46,6 +46,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
+import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.RunFinished
@@ -85,7 +86,6 @@ import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.api.models.MistakePattern
 import com.zoonk.api.models.MistakePatternContrastInner
 import com.zoonk.api.models.MistakePatternDrillInner
@@ -117,7 +117,7 @@ fun PatternScreen(
 
     when (val drill = state) {
         null -> PatternRead(viewModel, navigator, onClose = viewModel::leave)
-        else -> PatternContent(drill, viewModel, app)
+        else -> PatternContent(drill, viewModel, app) { navigator.open(AppRoute.Subscription) }
     }
 }
 
@@ -156,12 +156,13 @@ internal fun PatternContent(
     drill: PatternDrill,
     viewModel: PatternViewModel,
     app: AppContainer,
+    onSeePlus: () -> Unit = {},
 ) {
     val step = drill.step
     val onClose = viewModel::leave
     when {
         drill.isTypos -> TyposPattern(drill.pattern, onClose)
-        step is DrillStep.Result -> PatternResult(drill.pattern.title, step.result, app, onClose)
+        step is DrillStep.Result -> PatternResult(drill.pattern.title, step.result, app, onClose, onSeePlus)
         step is DrillStep.Question -> PatternQuestion(drill, step.index, viewModel, app, onClose)
         else -> PatternIntroPage(drill.pattern, onStart = viewModel::start, onClose = onClose)
     }
@@ -172,7 +173,7 @@ private fun TyposPattern(
     pattern: MistakePattern,
     onClose: () -> Unit,
 ) {
-    TaskScaffold(
+    RunPage(
         onClose = onClose,
         title = { LessonTitle(stringResource(R.string.pattern_title)) },
         bottomBar = {
@@ -180,11 +181,9 @@ private fun TyposPattern(
                 TaskActions { width -> Button(onClick = onClose, modifier = width) { Text(stringResource(R.string.pattern_done)) } }
             }
         },
-    ) { padding ->
-        RunPage(Modifier.padding(padding)) {
-            RunIntro(title = stringResource(R.string.pattern_just_typos), detail = stringResource(R.string.pattern_typos_detail))
-            if (pattern.rule.isNotBlank()) Text(pattern.rule, style = MaterialTheme.typography.bodyLarge)
-        }
+    ) {
+        RunIntro(title = stringResource(R.string.pattern_just_typos), detail = stringResource(R.string.pattern_typos_detail))
+        if (pattern.rule.isNotBlank()) Text(pattern.rule, style = MaterialTheme.typography.bodyLarge)
     }
 }
 
@@ -196,7 +195,7 @@ private fun PatternIntroPage(
 ) {
     val time = formatMinutes(DRILL_MINUTES, currentLocale())
 
-    TaskScaffold(
+    RunPage(
         onClose = onClose,
         title = { LessonTitle(stringResource(R.string.pattern_title)) },
         bottomBar = {
@@ -206,29 +205,27 @@ private fun PatternIntroPage(
                 }
             }
         },
-    ) { padding ->
-        RunPage(Modifier.padding(padding)) {
-            val count = pattern.occurrences.toInt()
-            val seen =
-                if (count ==
-                    0
-                ) {
-                    stringResource(R.string.pattern_seen)
-                } else {
-                    pluralStringResource(R.plurals.pattern_seen_times, count, count)
-                }
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Eyebrow(stringResource(R.string.pattern_noticed))
-                Text(pattern.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-                Text(seen, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+    ) {
+        val count = pattern.occurrences.toInt()
+        val seen =
+            if (count ==
+                0
+            ) {
+                stringResource(R.string.pattern_seen)
+            } else {
+                pluralStringResource(R.plurals.pattern_seen_times, count, count)
             }
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                pattern.examples.firstOrNull()?.let { ExampleLines(it) }
-                Text(pattern.rule, style = MaterialTheme.typography.bodyLarge)
-            }
-            ContrastRows(pattern.contrast)
-            AlsoCameUp(pattern.examples.drop(1))
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Eyebrow(stringResource(R.string.pattern_noticed))
+            Text(pattern.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+            Text(seen, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
         }
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            pattern.examples.firstOrNull()?.let { ExampleLines(it) }
+            Text(pattern.rule, style = MaterialTheme.typography.bodyLarge)
+        }
+        ContrastRows(pattern.contrast)
+        AlsoCameUp(pattern.examples.drop(1))
     }
 }
 
@@ -441,8 +438,9 @@ private fun PatternResult(
     result: MistakePatternPracticeResult,
     app: AppContainer,
     onClose: () -> Unit,
+    onSeePlus: () -> Unit,
 ) {
-    MomentAfterCeremony(app, result.ceremony) { buddy ->
+    MomentAfterCeremony(app, result.ceremony, result.certificates.map { it.naming }, onSeePlus) { buddy ->
         RunFinished(
             title = stringResource(R.string.practice_done_title),
             action = stringResource(R.string.pattern_done),

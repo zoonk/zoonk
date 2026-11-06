@@ -77,6 +77,7 @@ import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.SpreadScreen
@@ -237,7 +238,7 @@ private fun ScrollingPage(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(modifier.verticalScroll(scroll).padding(vertical = 8.dp), horizontalAlignment = align) {
-        Column(Modifier.runColumn(), verticalArrangement = Arrangement.spacedBy(16.dp), content = content)
+        Column(Modifier.taskColumn(), verticalArrangement = Arrangement.spacedBy(16.dp), content = content)
     }
 }
 
@@ -269,7 +270,7 @@ internal fun RunHeader(
     content: @Composable () -> Unit,
 ) {
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        Box(Modifier.runColumn().padding(bottom = 8.dp).then(modifier)) { content() }
+        Box(Modifier.taskColumn().padding(bottom = 8.dp).then(modifier)) { content() }
     }
 }
 

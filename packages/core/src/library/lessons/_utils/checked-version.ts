@@ -190,10 +190,15 @@ export async function fixVersionDraft({
   });
 
   const changed = new Set(fix.data.changedScreens);
-  const lesson = repairWrittenLesson({ language: gate.context.language, lesson: fix.data.lesson });
+
+  const repaired = repairWrittenLesson({
+    language: gate.context.language,
+    lesson: fix.data.lesson,
+    spec: gate.context.spec,
+  });
 
   return {
-    lesson,
+    lesson: repaired,
     provenanceByScreen: fix.data.lesson.screens.map(
       (_, index) =>
         (changed.has(index) ? fix.provenance : draft.provenanceByScreen[index]) ?? fix.provenance,
@@ -244,7 +249,12 @@ export async function checkVersion({
   gate: LessonGate;
   review: boolean;
 }): Promise<CheckedVersion> {
-  const lesson = repairWrittenLesson({ language: gate.context.language, lesson: written.lesson });
+  const lesson = repairWrittenLesson({
+    language: gate.context.language,
+    lesson: written.lesson,
+    spec: gate.context.spec,
+  });
+
   const draft = { ...written, lesson };
   const first = await runLessonQualityGate({ ...gate, lesson, review });
 

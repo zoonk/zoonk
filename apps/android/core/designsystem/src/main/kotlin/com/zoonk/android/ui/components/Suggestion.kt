@@ -71,7 +71,8 @@ sealed interface SuggestionMark {
  * and [lineAction], by default "View", which opens [content] in a bottom sheet titled [label]; as a
  * [SuggestionLayout.Panel] it shows [content] in full. Once [answered], [summary] is the answer's
  * result, read out when it shows, an open sheet closes, and a keyboard's or screen reader's focus
- * moves to it, as the control they used is gone.
+ * moves to it, as the control they used is gone. While [failed], a line reads the save error in
+ * place of [summary], as main's does when its [lineAction] didn't save.
  */
 @Composable
 fun Suggestion(
@@ -81,6 +82,7 @@ fun Suggestion(
     modifier: Modifier = Modifier,
     mark: SuggestionMark = SuggestionMark.New,
     answered: Boolean = false,
+    failed: Boolean = false,
     lineAction: (@Composable () -> Unit)? = { SuggestionOpen() },
     content: @Composable SuggestionContentScope.() -> Unit,
 ) {
@@ -100,7 +102,7 @@ fun Suggestion(
     CompositionLocalProvider(LocalFrame provides frame) {
         when (layout) {
             SuggestionLayout.Line -> {
-                SuggestionLine(summary, answered, modifier, lineAction)
+                SuggestionLine(summary, answered, failed, modifier, lineAction)
                 if (open) SuggestionSheet(label, onClose = { open = false }, onFocus = { moveFocus(sheetFocus) }, content)
             }
 
@@ -247,6 +249,7 @@ fun SuggestionAction(
 private fun SuggestionLine(
     summary: String,
     answered: Boolean,
+    failed: Boolean,
     modifier: Modifier,
     action: (@Composable () -> Unit)?,
 ) {
@@ -261,16 +264,27 @@ private fun SuggestionLine(
             ) {
                 Mark(PANEL_MARK)
                 Text(
-                    text = summary,
+                    text = if (failed) stringResource(R.string.suggestion_save_failed) else summary,
                     modifier =
                         Modifier
                             .weight(1f)
                             .focusRequester(LocalFrame.current.focus)
                             .focusable()
-                            .then(if (answered) Modifier.semantics { liveRegion = LiveRegionMode.Polite } else Modifier),
+                            .then(
+                                when {
+                                    failed -> Modifier.semantics { liveRegion = LiveRegionMode.Assertive }
+                                    answered -> Modifier.semantics { liveRegion = LiveRegionMode.Polite }
+                                    else -> Modifier
+                                },
+                            ),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = if (answered) FontWeight.Medium else null,
-                    color = if (whole) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                    color =
+                        when {
+                            failed -> MaterialTheme.colorScheme.error
+                            whole -> MaterialTheme.colorScheme.onSurface
+                            else -> MaterialTheme.colorScheme.onSurfaceVariant
+                        },
                     maxLines = if (whole || LocalDensity.current.fontScale > FULL_SUMMARY_FONT_SCALE) Int.MAX_VALUE else 2,
                     overflow = TextOverflow.Ellipsis,
                 )

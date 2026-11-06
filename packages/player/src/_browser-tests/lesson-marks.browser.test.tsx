@@ -1,0 +1,289 @@
+import { type LessonIcon } from "@zoonk/core/library/icons/contract";
+import { type LessonMap } from "@zoonk/core/library/lessons/map";
+import { type StepMarks } from "@zoonk/core/library/marks/contract";
+import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
+import { describe, expect, it } from "vitest";
+import { page, userEvent } from "vitest/browser";
+import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { buildLesson } from "../preview/preview-lesson";
+import { contentStep, teachingStep } from "../preview/preview-steps";
+
+function inlineIcon(letter: string): LessonIcon {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96"><circle cx="48" cy="48" r="44" fill="#fde68a" /><text x="48" y="62" font-size="40" text-anchor="middle">${letter}</text></svg>`;
+  const url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+  return { smallUrl: url, url };
+}
+
+const RIGHT_OPTION = "Where the electron is most likely to be found";
+const SCENE = "You toss a ball and can always say where it is. An electron isn't like that.";
+
+const MAP: LessonMap = {
+  ideas: [
+    {
+      about: "What the electron does around the nucleus",
+      icon: inlineIcon("C"),
+      label: "A cloud, not an orbit",
+      text: "The electron spreads around the nucleus as a cloud of chances, not along a path.",
+    },
+    {
+      about: "How to read the cloud",
+      icon: inlineIcon("R"),
+      label: "Reading the cloud",
+      text: "The darker the cloud, the likelier the electron is there.",
+    },
+  ],
+  shape: "hub",
+};
+
+function marks(fields: Partial<StepMarks>): StepMarks {
+  return { example: null, icon: null, ideaIndex: null, underline: null, ...fields };
+}
+
+function lesson({ summary = MAP, tagged = true }: { summary?: LessonMap; tagged?: boolean } = {}) {
+  return buildLesson(
+    [
+      contentStep("hook", { content: { text: SCENE, variant: "text" } }),
+      teachingStep("explanation", {
+        marks: tagged
+          ? marks({
+              example: "The electron doesn't circle the nucleus like a planet.",
+              icon: inlineIcon("E"),
+              ideaIndex: 0,
+              underline: "a map of where it might be",
+            })
+          : null,
+      }),
+      teachingStep("check", { marks: tagged ? marks({ ideaIndex: 1 }) : null }),
+    ],
+    { summary },
+  );
+}
+
+function strip() {
+  return page.getByRole("main").getByText(/^Idea \d of \d$/u);
+}
+
+function shownStrips() {
+  return [...document.querySelectorAll('[data-slot="orientation-strip"]')]
+    .filter((shown) => shown.checkVisibility())
+    .map((shown) => [...shown.querySelectorAll("p")].map((line) => line.textContent));
+}
+
+function boxOf(text: string) {
+  return page.getByRole("main").getByText(text, { exact: true }).element().getBoundingClientRect();
+}
+
+async function answerCheck() {
+  await page.getByRole("radio", { name: RIGHT_OPTION }).click();
+  await page.getByRole("button", { name: /^Check/u }).click();
+  await page.getByRole("button", { name: /^Continue/u }).click();
+}
+
+function underlined() {
+  return [...document.querySelectorAll('[data-slot="underline"]')].map((mark) => mark.textContent);
+}
+
+async function next() {
+  await page.getByRole("button", { name: /^Next/u }).click();
+}
+
+const NO_BACKGROUND = "rgba(0, 0, 0, 0)";
+
+async function newTermBackground(lessonOptions: Parameters<typeof buildLesson>[1]) {
+  renderLessonPlayer({
+    lesson: buildLesson([teachingStep("explanation", { marks: null })], lessonOptions),
+  });
+
+  const term = page.getByText("cloud of possibilities", { exact: true });
+  await expect.element(term).toBeVisible();
+  return getComputedStyle(term.element()).backgroundColor;
+}
+
+describe("lesson marks", () => {
+  it("opens on the lesson's ideas, each saying what it covers without its answer", async () => {
+    const { onExit } = renderLessonPlayer({ lesson: lesson() });
+
+    await expect.element(page.getByText("2 ideas to discover in this lesson")).toBeVisible();
+    await expect.element(page.getByText("A cloud, not an orbit")).not.toBeInTheDocument();
+
+    await page.getByRole("button", { name: "Idea 2 of 2" }).click();
+    const about = page.getByRole("dialog", { name: "Reading the cloud" });
+    await expect.element(about).toMatchTextContent("How to read the cloud");
+
+    await userEvent.keyboard("{Escape}");
+    await expect.element(about).not.toBeInTheDocument();
+    await expect.element(page.getByRole("alertdialog")).not.toBeInTheDocument();
+    await expect.element(page.getByText(SCENE)).toBeVisible();
+    expect(onExit).not.toHaveBeenCalled();
+  });
+
+  it("names an opening map idea above the line on what it covers", async () => {
+    renderLessonPlayer({ lesson: lesson() });
+    await page.getByRole("button", { name: "Idea 1 of 2" }).click();
+
+    const about = page.getByRole("dialog", { name: "A cloud, not an orbit" });
+    const line = "What the electron does around the nucleus";
+    await expect.element(about).toHaveAccessibleDescription(line);
+
+    const name = about.getByText("A cloud, not an orbit").element().getBoundingClientRect();
+    const covers = about.getByText(line).element().getBoundingClientRect();
+    expect(name.bottom).toBeLessThanOrEqual(covers.top);
+  });
+
+  it("marks an explanation's idea, main point, example and new term without changing its words", async () => {
+    renderLessonPlayer({ lesson: lesson() });
+    await next();
+
+    await expect.poll(shownStrips).toStrictEqual([["Idea 1 of 2", "A cloud, not an orbit"]]);
+    expect(underlined()).toStrictEqual(["a map of where it might be"]);
+
+    await expect.element(page.getByText("Example", { exact: true })).toBeVisible();
+
+    await expect
+      .element(
+        page.getByText("The electron doesn't circle the nucleus like a planet.", { exact: true }),
+      )
+      .toBeVisible();
+
+    await expect
+      .element(
+        page.getByText(
+          "It spreads out into a cloud of possibilities: a map of where it might be.",
+          { exact: true },
+        ),
+      )
+      .toBeVisible();
+
+    await expect.element(page.getByText("cloud of possibilities", { exact: true })).toBeVisible();
+
+    expect(page.getByRole("main").getByRole("img").elements()).toHaveLength(0);
+  });
+
+  it("shows the idea a question belongs to, then the lesson map around the lesson's title", async () => {
+    const tagged = lesson();
+    renderLessonPlayer({ lesson: tagged });
+    await next();
+    await next();
+
+    await expect.poll(shownStrips).toStrictEqual([["Idea 2 of 2", "Reading the cloud"]]);
+
+    await answerCheck();
+
+    const map = page.getByRole("main");
+    await expect.element(map.getByRole("heading", { name: "Lesson map" })).toBeVisible();
+    await expect.element(map.getByText(tagged.title, { exact: true })).toBeVisible();
+
+    const ideas = map.getByRole("listitem");
+    expect(ideas.elements()).toHaveLength(MAP.ideas.length);
+
+    await expect
+      .element(ideas.first())
+      .toMatchTextContent(/A cloud, not an orbit.*as a cloud of chances/u);
+
+    await expect
+      .element(ideas.last())
+      .toMatchTextContent(/Reading the cloud.*The darker the cloud/u);
+  });
+
+  it("underlines a main point that runs through a new term", async () => {
+    const explanation = teachingStep("explanation", {
+      marks: marks({ ideaIndex: 0, underline: "a cloud of possibilities: a map" }),
+    });
+
+    renderLessonPlayer({ lesson: buildLesson([explanation], { summary: MAP }) });
+
+    await expect.element(page.getByText("cloud of possibilities", { exact: true })).toBeVisible();
+    expect(underlined()).toStrictEqual(["a cloud of possibilities: a map"]);
+  });
+
+  it("leaves an example inside a numbered list unframed, so the list keeps counting", async () => {
+    const steps = "1. Heat the water.\n2. Add the salt.\n3. Stir until it dissolves.";
+
+    const explanation = contentStep("explanation", {
+      content: { text: steps },
+      marks: marks({
+        example: "2. Add the salt.",
+        icon: inlineIcon("S"),
+        ideaIndex: 0,
+        underline: "Add the salt",
+      }),
+    });
+
+    renderLessonPlayer({ lesson: buildLesson([explanation], { summary: MAP }) });
+    await expect.element(page.getByText("Add the salt.")).toBeVisible();
+
+    await expect.element(page.getByText("Example", { exact: true })).not.toBeInTheDocument();
+    expect(page.getByRole("main").getByRole("listitem").elements()).toHaveLength(3);
+    expect(underlined()).toStrictEqual(["Add the salt"]);
+
+    const cornerIcons = document.querySelectorAll(
+      '[data-slot="lesson-text"] [data-slot="lesson-icon"]',
+    );
+
+    expect(cornerIcons).toHaveLength(1);
+  });
+
+  it("plays a lesson written before marks as plain text", async () => {
+    const plainMap = { ...MAP, ideas: MAP.ideas.map(({ label, text }) => ({ label, text })) };
+    renderLessonPlayer({ lesson: lesson({ summary: plainMap, tagged: false }) });
+
+    await expect.element(page.getByText(SCENE)).toBeVisible();
+    await expect.element(page.getByText(/ideas to discover/u)).not.toBeInTheDocument();
+    await next();
+
+    const text = playableStepContent.explanation.text.replaceAll("**", "");
+    await expect.element(page.getByText(text, { exact: true })).toBeVisible();
+
+    await expect.element(strip()).not.toBeInTheDocument();
+    await expect.element(page.getByText("Example", { exact: true })).not.toBeInTheDocument();
+    expect(underlined()).toStrictEqual([]);
+
+    await next();
+    await answerCheck();
+    const [first] = plainMap.ideas;
+    expect(boxOf(first?.label ?? "").left).toBe(boxOf(first?.text ?? "").left);
+  });
+
+  it("puts a knowledge lesson's new term on the highlighter, even before its marks", async () => {
+    await expect(newTermBackground({})).resolves.not.toBe(NO_BACKGROUND);
+  });
+
+  it("keeps the punctuation after an underlined phrase on its last word's line", async () => {
+    await page.viewport(447, 900);
+
+    const text =
+      "Remember that the electron spreads as a **cloud of possibilities** around the nucleus. This tells us where it might be.";
+
+    renderLessonPlayer({
+      lesson: buildLesson([
+        contentStep("explanation", {
+          content: { text },
+          marks: marks({
+            example: text,
+            icon: inlineIcon("E"),
+            underline: "the electron spreads as a cloud of possibilities around the nucleus",
+          }),
+        }),
+      ]),
+    });
+
+    await expect.element(page.getByText("cloud of possibilities", { exact: true })).toBeVisible();
+    await document.fonts.ready;
+
+    const phrase = document.querySelector('[data-slot="underline"]');
+    const following = phrase?.nextElementSibling?.firstChild ?? document.body;
+    const lastLine = [...(phrase?.getClientRects() ?? [])].at(-1);
+    const period = document.createRange();
+    period.setStart(following, 0);
+    period.setEnd(following, 1);
+
+    expect(period.toString()).toBe(".");
+    expect(period.getBoundingClientRect().top).toBeCloseTo(lastLine?.top ?? Number.NaN, 0);
+  });
+
+  it("keeps a language lesson's bold plain, as before marks existed", async () => {
+    await expect(newTermBackground({ language: "pt", targetLanguage: "en" })).resolves.toBe(
+      NO_BACKGROUND,
+    );
+  });
+});

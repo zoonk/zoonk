@@ -4,7 +4,12 @@ import { runImageTaskGeneration } from "../../provenance/run-image-generation";
 import { type ImageGenerationQuality, buildImageProviderOptions } from "../../provider-options";
 import { generateImageWithSafetyRetry } from "../_utils/generate-image-with-safety-retry";
 import { type ImageScene } from "./image-scene-schema";
-import { IMAGE_SIZE, IMAGE_STYLE_VERSION, type ImagePalette } from "./image-style";
+import {
+  IMAGE_SIZES,
+  IMAGE_STYLE_VERSION,
+  type ImageCanvas,
+  type ImagePalette,
+} from "./image-style";
 import {
   LESSON_IMAGE_TEMPLATE,
   buildLessonImagePrompt,
@@ -20,6 +25,7 @@ const DEFAULT_QUALITY: ImageGenerationQuality = "low";
 
 export type LessonImageParams = {
   scene: ImageScene;
+  canvas?: ImageCanvas;
   corrections?: readonly string[];
   language: string;
   palette: ImagePalette;
@@ -35,6 +41,7 @@ export type LessonImageParams = {
  */
 export async function generateLessonImage({
   analytics,
+  canvas = "landscape",
   corrections,
   language,
   model = defaultModel,
@@ -44,23 +51,19 @@ export async function generateLessonImage({
   useFallback = true,
 }: LessonImageParams) {
   const sceneInput = formatImageSceneInput({ corrections, language, scene });
+  const size = IMAGE_SIZES[canvas];
 
   const { provenance, result } = await runImageTaskGeneration({
     analytics,
     generate: ({ promptTraining }) =>
       generateImageWithSafetyRetry({
         analytics,
-        buildPrompt: ({ input }) => buildLessonImagePrompt({ palette, sceneInput: input }),
+        buildPrompt: ({ input }) => buildLessonImagePrompt({ canvas, palette, sceneInput: input }),
         input: sceneInput,
         maxImagesPerCall: 1,
         model,
-        providerOptions: buildImageProviderOptions({
-          promptTraining,
-          quality,
-          size: IMAGE_SIZE,
-          useFallback,
-        }),
-        size: IMAGE_SIZE,
+        providerOptions: buildImageProviderOptions({ promptTraining, quality, size, useFallback }),
+        size,
       }),
     libraryInput: true,
     promptVersion: `style-v${IMAGE_STYLE_VERSION}`,
@@ -69,7 +72,7 @@ export async function generateLessonImage({
     task: "lesson-image",
   });
 
-  const prompt = buildLessonImagePrompt({ palette, sceneInput });
+  const prompt = buildLessonImagePrompt({ canvas, palette, sceneInput });
 
   return { data: { image: result.image }, prompt, provenance };
 }

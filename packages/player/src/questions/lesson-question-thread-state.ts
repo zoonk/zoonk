@@ -1,7 +1,6 @@
 import { type LessonQuestionResource } from "@zoonk/core/lesson-questions/contract";
 import { type LessonQuestionAction, type LessonQuestionState } from "./lesson-question-state";
 import {
-  endQuestionCreate,
   getReconciledAnswerError,
   mergeEarlierQuestions,
   mergeLatestQuestions,
@@ -125,7 +124,6 @@ export function reduceLessonQuestionThreadAction({
           answerError: state.answerError,
           questions: action.questions,
         }),
-        ...endQuestionCreate(state),
         error: null,
         ...mergeServerQuestions({ latestQuestions: action.questions, state }),
         requestError: null,

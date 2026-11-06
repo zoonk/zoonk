@@ -6,6 +6,7 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { chapterLessonFixture, lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { TEACHING_LESSON_STEPS } from "@zoonk/testing/fixtures/playable-step-contents";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { type Page, expect, test } from "./fixtures";
@@ -21,7 +22,7 @@ async function expectVerdict(page: Page, verdict: string) {
 }
 
 async function answerHook(page: Page) {
-  await expect(page.getByText("Guess first")).toBeVisible();
+  await expect(page.getByText("Just a guess, it doesn't count")).toBeVisible();
   await page.getByRole("radio", { name: "No" }).click();
   await primary(page, /^See the answer/u).click();
   await expectVerdict(page, "Good guess!");
@@ -143,11 +144,22 @@ async function createChapterGuest(browser: Browser) {
 }
 
 test.describe("Library lesson player", () => {
-  test("plays every teaching screen and finishes the lesson", async ({
+  test("plays every teaching screen, shows the lesson map and finishes the lesson", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
-    const { lesson } = await playableLessonFixture();
+    const { lesson } = await playableLessonFixture({
+      lesson: {
+        summary: {
+          ideas: [
+            { label: "Organism", text: "An organism is one living thing." },
+            { label: "Population", text: "A population is one species living in one place." },
+          ],
+          shape: "nested",
+        },
+      },
+      steps: TEACHING_LESSON_STEPS.filter((kind) => kind !== "summary"),
+    });
 
     await page.goto(`/learn/${lesson.id}`);
 
@@ -158,7 +170,9 @@ test.describe("Library lesson player", () => {
     await answerTyped(page);
     await answerSpokenByTyping(page);
 
-    await expect(page.getByRole("heading", { name: "Summary" })).toBeVisible();
+    const map = page.getByRole("main").getByRole("heading", { name: "Lesson map" });
+    await expect(map).toBeVisible();
+    await expect(page.getByText("A population is one species living in one place.")).toBeVisible();
     await primary(page, /^Continue/u).click();
 
     await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();

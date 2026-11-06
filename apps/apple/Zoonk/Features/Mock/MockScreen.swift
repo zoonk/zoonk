@@ -154,10 +154,8 @@ struct MockStepStatus: View {
       switch run.queue.status {
       case .retrying:
         HStack {
-          Text(
-            "Not saved yet\u{00A0}· retrying", tableName: "Mock", comment: "An answer waits to save"
-          )
-          .frame(maxWidth: .infinity, alignment: .leading)
+          Text(retrying)
+            .frame(maxWidth: .infinity, alignment: .leading)
           Button {
             run.queue.retryNow()
           } label: {
@@ -168,35 +166,43 @@ struct MockStepStatus: View {
         }
         .foregroundStyle(.mutedForeground)
       case .refused:
-        Text("Your last answer wasn't saved.", tableName: "Mock", comment: "A refused save")
-          .foregroundStyle(.destructiveText)
+        FailureLine(
+          message: LocalizedStringResource(
+            "Your last answer wasn't saved.", table: "Mock", comment: "A refused save"))
       case .saved, .saving:
         EmptyView()
       }
 
       if run.failed {
-        Group {
-          if run.queue.status == .saved {
-            Text(
-              "That didn't go through. Your answers are saved. Try again in a moment.",
-              tableName: "Mock", comment: "A mock step failed; the answers are saved")
-          } else {
-            Text(
-              "That didn't go through. Try again in a moment.", tableName: "Mock",
-              comment: "A mock step failed")
-          }
-        }
-        .foregroundStyle(.destructiveText)
+        FailureLine(
+          message: run.queue.status == .saved
+            ? String(
+              localized: "That didn't go through. Your answers are saved. Try again in a moment.",
+              table: "Mock", comment: "A mock step failed; the answers are saved")
+            : String(
+              localized: "That didn't go through. Try again in a moment.", table: "Mock",
+              comment: "A mock step failed"))
       } else if run.slow {
-        Text(
-          "Still handing it in. This is taking longer than usual.", tableName: "Mock",
-          comment: "A mock step is slow"
-        )
-        .foregroundStyle(.mutedForeground)
+        Text(slow)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .typeStyle(.body)
     .frame(maxWidth: .infinity, alignment: .leading)
+    .announcesStatus(run.queue.status == .retrying ? retrying : nil)
+    .announcesStatus(!run.failed && run.slow ? slow : nil)
+  }
+
+  private var retrying: String {
+    String(
+      localized: "Not saved yet\u{00A0}· retrying", table: "Mock",
+      comment: "An answer waits to save")
+  }
+
+  private var slow: String {
+    String(
+      localized: "Still handing it in. This is taking longer than usual.", table: "Mock",
+      comment: "A mock step is slow")
   }
 }
 
@@ -266,7 +272,6 @@ private struct MockTimeUpView: View {
         .disabled(run.pending)
         .keyboardShortcut(.defaultAction)
       }
-      .keepsOffFold()
     }
     .lonePage()
   }
@@ -296,7 +301,6 @@ private struct MockGradingView: View {
         .disabled(run.pending)
         .keyboardShortcut(.defaultAction)
       }
-      .keepsOffFold()
     }
     .lonePage()
   }
@@ -331,7 +335,6 @@ private struct MockExpiredView: View {
       .controlSize(.large)
       .scenePadding(.horizontal)
       .padding(.vertical, 10)
-      .keepsOffFold()
     }
     .lonePage()
   }
@@ -397,8 +400,8 @@ private struct MockBreakView: View {
         .controlSize(.large)
         .disabled(run.pending)
       }
-      .keepsOffFold()
     }
+    .lonePage()
   }
 }
 
@@ -487,8 +490,8 @@ private struct MockSpeakingView: View {
           .disabled(run.pending)
         }
       }
-      .keepsOffFold()
     }
+    .lonePage()
     .alert(handInTitle, isPresented: $confirmsHandIn) {
       Button(role: .cancel) {
       } label: {
@@ -513,14 +516,18 @@ private struct MockSpeakingView: View {
   }
 
   private func taskRow(_ task: MockSpeaking.Task, number: Int) -> some View {
-    HStack {
+    AccessibilityStack {
       VStack(alignment: .leading, spacing: 2) {
-        Text("Task \(number)", tableName: "Mock", comment: "A speaking task's number")
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
+        Text(
+          "Task \(number)\u{00A0}· \(speakingTaskMinutes(min: task.minutes.min, max: task.minutes.max))",
+          tableName: "Mock", comment: "A speaking task's number and how long it lasts"
+        )
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
         Text(task.name)
       }
-      Spacer()
+      .frame(maxWidth: .infinity, alignment: .leading)
+
       if task.status == .completed {
         Label {
           Text("Done", tableName: "Mock", comment: "A speaking task that's done")
@@ -537,6 +544,8 @@ private struct MockSpeakingView: View {
         .buttonStyle(.outline)
       }
     }
+    // The Done label would otherwise start the row's separator under its title.
+    .alignmentGuide(.listRowSeparatorLeading) { $0[.leading] }
   }
 
   private var handInLabel: Text {

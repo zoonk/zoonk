@@ -37,7 +37,6 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.StatTone
-import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
@@ -147,7 +146,6 @@ private fun ProgressTiles(
                                     painterResource(R.drawable.ic_timer),
                                     contentDescription = null,
                                     modifier = it,
-                                    tint = StatTone.Neutral.color,
                                 )
                             },
                             footer =
@@ -182,7 +180,6 @@ private fun ProgressTiles(
                                         painterResource(R.drawable.ic_trophy),
                                         contentDescription = null,
                                         modifier = it,
-                                        tint = StatTone.Success.color,
                                     )
                                 },
                             )

@@ -1,6 +1,9 @@
 package com.zoonk.android.feature.player
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.RectF
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
@@ -13,25 +16,34 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
+import coil3.ImageLoader
+import coil3.asImage
+import coil3.decode.DataSource
+import coil3.intercept.Interceptor
+import coil3.request.ImageResult
+import coil3.request.SuccessResult
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.PrivateImages
 import com.zoonk.android.feature.activities.choiceAnswer
 import com.zoonk.android.feature.player.engine.HyperdriveStart
+import com.zoonk.android.feature.player.engine.LESSON_MAP_STEP_ID
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.reduce
+import com.zoonk.android.feature.player.engine.revealGuess
+import com.zoonk.android.feature.player.model.GuessOption
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.feature.player.model.StepVisual
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.tutor.TutorIdentity
@@ -40,14 +52,21 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.PrivatePictures
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.LessonMap
+import com.zoonk.api.models.LessonMapIdeasInner
 import com.zoonk.api.models.LibraryLessonCompletion
+import com.zoonk.api.models.ScreenPicture
 import com.zoonk.api.models.SpokenAnswerGrade
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -86,6 +105,14 @@ class LessonPlayerScreenshots {
     fun phone() = capture("phone")
 
     @Test
+    @Config(qualifiers = "w360dp-h640dp-xhdpi")
+    fun smallPhone() = capture("small-phone")
+
+    @Test
+    @Config(qualifiers = "w360dp-h640dp-night-xhdpi")
+    fun smallPhoneDark() = capture("small-phone-dark", dark = true)
+
+    @Test
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
     fun phoneDarkMoreContrast() = capture("phone-dark-more-contrast", dark = true, moreContrast = true)
 
@@ -104,9 +131,13 @@ class LessonPlayerScreenshots {
     @Config(qualifiers = "w852dp-h883dp-xhdpi")
     fun book() = capture("book", fold = true)
 
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBook() = capture("small-book", fold = true)
+
     private val steps =
         listOf(
-            hookGuessStep("hook"),
+            hookGuessStep("hook").copy(image = StepImage("scene", "$API_FILES/scene.png", "A food truck parked on a street", 1536, 1024)),
             explanationStep("idea", visual = RIDERSHIP),
             workedExampleStep("worked"),
             checkStep("quiz"),
@@ -133,9 +164,25 @@ class LessonPlayerScreenshots {
             "hook-revealed" to {
                 at(
                     LessonAction.SelectAnswer("hook", LessonAnswer.Hook("yes")),
-                    LessonAction.CheckResolved("hook", checkResult(false, "No, and here's why.").toStepResult("Yes"), counts = false),
+                    LessonAction.CheckResolved("hook", revealGuess(steps.first(), "yes")!!, counts = false),
                 )
             },
+            "hook" to { at() },
+            "hook-dont-know" to { at(LessonAction.DontKnow("hook")) },
+            "hook-drawing" to { played(listOf(DRAWING_HOOK, explanationStep("idea"))) },
+            "hook-four-options" to { played(listOf(FOUR_OPTION_HOOK, explanationStep("idea"))) },
+            "hook-four-options-revealed" to {
+                played(
+                    listOf(FOUR_OPTION_HOOK, explanationStep("idea")),
+                    LessonAction.SelectAnswer("hook", LessonAnswer.Hook("o0")),
+                    LessonAction.CheckResolved("hook", revealGuess(FOUR_OPTION_HOOK, "o0")!!, counts = false),
+                )
+            },
+            "map-stored" to { onMap(STORED_MAP, "Receitas regulares e eventuais") },
+            "map-hub" to { onMap(HUB_MAP, "Características dos seres vivos") },
+            "map-nested" to { onMap(NESTED_MAP, NESTED_TITLE) },
+            "completed-map" to
+                { onMap(NESTED_MAP, NESTED_TITLE, LessonAction.Continue, LessonAction.CompletionSaved(completion(COMPLETION))) },
             "explanation" to { at(*pastHook()) },
             "worked-example" to { at(*toWorked(), LessonAction.Continue) },
             "check-wrong" to {
@@ -250,6 +297,31 @@ class LessonPlayerScreenshots {
             },
         )
 
+    private fun onMap(
+        map: LessonMap,
+        title: String,
+        vararg actions: LessonAction,
+    ) = played(
+        listOf(explanationStep("idea"), LessonStep(LESSON_MAP_STEP_ID, null, StepContent.Map(map, title))),
+        LessonAction.Continue,
+        *actions,
+    )
+
+    private fun played(
+        lessonSteps: List<LessonStep>,
+        vararg actions: LessonAction,
+    ): LessonPlayerState {
+        val started =
+            reduce(
+                LessonPlayerState.initial(LESSON_ID, lessonSteps, now = 0),
+                LessonAction.RunStarted(RUN_ID, emptyList(), HyperdriveStart(emptySet(), 0), Instant.parse("2026-10-28T10:00:00Z")),
+                0,
+            )
+        return actions.fold(started) { state, action -> reduce(state, action, 0) }
+    }
+
+    private fun completion(json: String) = ApiJson.decodeFromString(LibraryLessonCompletion.serializer(), json)
+
     private fun completed(json: String) =
         at(
             *toQuiz(),
@@ -264,7 +336,7 @@ class LessonPlayerScreenshots {
     private fun pastHook() =
         arrayOf(
             LessonAction.SelectAnswer("hook", LessonAnswer.Hook("no")),
-            LessonAction.CheckResolved("hook", checkResult(true, "No, and here's why.").toStepResult("No"), counts = false),
+            LessonAction.CheckResolved("hook", revealGuess(steps.first(), "no")!!, counts = false),
             LessonAction.Continue,
         )
 
@@ -306,9 +378,11 @@ class LessonPlayerScreenshots {
                 override fun replace(route: AppRoute) = Unit
             }
 
+        val pictures = scenePictures()
+
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState()) {
+                CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState(), LocalPrivatePictures provides pictures) {
                     key(index) {
                         LessonPlayer(
                             lesson,
@@ -323,26 +397,41 @@ class LessonPlayerScreenshots {
                 }
             }
         }
+        if (fold) compose.unfoldBook(folds)
         states.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()
-            // Each state composes the player anew, and the publisher only tells what's listening when it publishes.
-            if (fold) {
-                folds.overrideWindowLayoutInfo(
-                    TestWindowLayoutInfo(
-                        listOf(
-                            FoldingFeature(
-                                compose.activity,
-                                state = FoldingFeature.State.FLAT,
-                                orientation = FoldingFeature.Orientation.VERTICAL,
-                            ),
-                        ),
-                    ),
-                )
-                compose.waitForIdle()
-            }
             write("${states[screen].first}-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
+    }
+
+    /** Every picture loads at once as the same drawn 3:2 scene, so a render shows the room real pictures take. */
+    private fun scenePictures(): PrivatePictures {
+        val scene =
+            Bitmap.createBitmap(1536, 1024, Bitmap.Config.ARGB_8888).apply {
+                val canvas = Canvas(this)
+                val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+                canvas.drawColor(0xFFDCEAF5.toInt())
+                paint.color = 0xFF9CC9A6.toInt()
+                canvas.drawRect(0f, 820f, 1536f, 1024f, paint)
+                paint.color = 0xFFF2B84B.toInt()
+                canvas.drawRoundRect(RectF(380f, 400f, 1160f, 780f), 64f, 64f, paint)
+                paint.color = 0xFF2F3B4C.toInt()
+                canvas.drawCircle(580f, 800f, 90f, paint)
+                canvas.drawCircle(960f, 800f, 90f, paint)
+            }
+        val loader =
+            ImageLoader
+                .Builder(compose.activity)
+                .components {
+                    add(
+                        object : Interceptor {
+                            override suspend fun intercept(chain: Interceptor.Chain): ImageResult =
+                                SuccessResult(scene.asImage(), chain.request, DataSource.MEMORY)
+                        },
+                    )
+                }.build()
+        return PrivatePictures(PrivateImages("$API/".toHttpUrl(), loader), AuthenticatedSession(ANA, "token", "local"))
     }
 
     private fun write(
@@ -354,6 +443,80 @@ class LessonPlayerScreenshots {
         println("Screenshot ${file.path}")
     }
 }
+
+private const val NESTED_TITLE = "Níveis de organização ecológica"
+
+private fun idea(
+    text: String,
+    label: String? = null,
+) = LessonMapIdeasInner(text = text, label = label)
+
+private val STORED_MAP =
+    LessonMap(
+        ideas =
+            listOf(
+                idea("Receita regular é o dinheiro que entra todo mês, como o salário."),
+                idea("Receita eventual aparece de vez em quando, como um bico ou um presente."),
+                idea("Ao planejar o mês, conte só com as receitas regulares."),
+            ),
+        shape = LessonMap.Shape.HUB,
+    )
+
+private val HUB_MAP =
+    LessonMap(
+        ideas =
+            listOf(
+                idea("Todo ser vivo é formado por uma ou mais células.", "Células"),
+                idea("Os seres vivos usam energia e matéria para crescer e se manter.", "Metabolismo"),
+                idea("Os seres vivos geram descendentes parecidos com eles.", "Reprodução"),
+                idea("Um sinal sozinho não basta para dizer que algo está vivo.", "Um sinal não basta"),
+            ),
+        shape = LessonMap.Shape.HUB,
+    )
+
+private val NESTED_MAP =
+    LessonMap(
+        ideas =
+            listOf(
+                idea("Um ser vivo individual, como uma capivara.", "Organismo"),
+                idea("Seres da mesma espécie, na mesma área, ao mesmo tempo.", "População"),
+                idea("Todas as populações de seres vivos de uma área.", "Comunidade"),
+                idea("Os seres vivos de uma área, o que não é vivo (água, solo, luz) e como um afeta o outro.", "Ecossistema"),
+            ),
+        shape = LessonMap.Shape.NESTED,
+    )
+
+private const val API = "http://localhost/v1"
+private const val API_FILES = "$API/files"
+
+private val FOUR_OPTION_HOOK =
+    hookGuessStep("hook").let { step ->
+        val guess = (step.content as StepContent.Guess).content
+        step.copy(
+            content =
+                StepContent.Guess(
+                    guess.copy(
+                        question = "A food truck costs R$ 40,000 and its owner still owes R$ 30,000 on it. How much of it is really hers?",
+                        reveal = "R$ 10,000 is hers. The rest still belongs to the bank.",
+                        options =
+                            listOf("R$ 40,000", "R$ 10,000", "R$ 70,000", "R$ 30,000").mapIndexed { index, text ->
+                                GuessOption(
+                                    "o$index",
+                                    index == 1,
+                                    text,
+                                )
+                            },
+                    ),
+                ),
+            image = StepImage("scene", "$API_FILES/scene.png", "A food truck parked on a street", 1536, 1024),
+        )
+    }
+
+private val DRAWING_HOOK =
+    hookGuessStep("hook").copy(
+        imagePending = true,
+        picture = ScreenPicture(alt = "A food truck parked on a street", required = false),
+    )
 
 private val RIDERSHIP: StepVisual =
     ApiJson.decodeFromString(

@@ -90,7 +90,7 @@ import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.ActivityExpectedAnswer
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf11
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf11Value as RhythmAnswerValue
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf33Value as RhythmTapperContent
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf32Value as RhythmTapperContent
 
 val rhythmTapperRenderer =
     ActivityRenderer(

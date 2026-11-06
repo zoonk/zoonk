@@ -1,4 +1,5 @@
 import { type BuddyKind } from "@zoonk/utils/buddy";
+import { type LessonScreenSuggestion } from "../lesson-questions/contract";
 import { type MissionKind } from "../sessions/missions/catalog";
 import { type AnalyticsGoalKind, type SharedEventProperties } from "./shared-properties";
 
@@ -150,7 +151,12 @@ type LearningEvents = {
     | { goal_id: string; scope: "plan" }
     | { goal_id: string; scope: "subject"; subject_key: string }
     | { item_id: string; scope: "item" }
-    | { lesson_id: string; scope: "answer" | "lesson" | "screen" }
+    | {
+        lesson_id: string;
+        scope: "answer" | "lesson" | "screen";
+        /** The chip or button the learner tapped; null for a typed question. */
+        suggestion: LessonScreenSuggestion | null;
+      }
     | { mock_id: string; scope: "mock" }
     | { scope: "material" };
 };

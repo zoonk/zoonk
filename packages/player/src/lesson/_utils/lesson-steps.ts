@@ -46,10 +46,6 @@ export function isQuestionStep(step: PlayableLibraryStep): boolean {
   return QUESTION_KINDS.has(step.kind);
 }
 
-export function isExplainingStep(step: PlayableLibraryStep): boolean {
-  return EXPLAINING_KINDS.has(step.kind);
-}
-
 export function isServerGradedAnswer({
   answer,
   step,

@@ -29,18 +29,10 @@ export const howMuchIsTheRentLesson: SeedLesson = {
   steps: [
     {
       content: {
-        options: [
-          guess("much", pt("How much is the rent?"), true),
-          guess("many", pt("How many is the rent?")),
-          guess("costs", pt("What costs the rent?")),
-        ],
-        question: pt(
-          "Você liga por causa de um apartamento em Toronto. Qual frase pergunta quanto é o aluguel?",
+        text: pt(
+          "Lucas vai se mudar para Toronto e achou um apartamento. Antes de ligar para o dono, ensaia a pergunta mais importante: quanto é o aluguel? Como se pergunta isso em inglês?",
         ),
-        reveal: pt(
-          "“How much is the rent?” How much é para preço e para o que não se conta; how many é para o que se conta.",
-        ),
-        variant: "guess",
+        variant: "text",
       },
       kind: "hook",
     },
@@ -60,6 +52,23 @@ export const howMuchIsTheRentLesson: SeedLesson = {
       },
       kind: "matchColumns",
       skill: "rental-words",
+    },
+    {
+      content: {
+        options: [
+          guess("much", pt("How much is the rent?"), true),
+          guess("many", pt("How many is the rent?")),
+          guess("costs", pt("What costs the rent?")),
+        ],
+        question: pt(
+          "Você liga por causa de um apartamento em Toronto. Qual frase pergunta quanto é o aluguel?",
+        ),
+        reveal: pt(
+          "“How much is the rent?” How much é para preço e para o que não se conta; how many é para o que se conta.",
+        ),
+        variant: "guess",
+      },
+      kind: "hook",
     },
     {
       content: {

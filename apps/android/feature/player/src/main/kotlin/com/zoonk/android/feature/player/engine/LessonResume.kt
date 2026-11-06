@@ -35,7 +35,10 @@ private fun LessonPlayerState.resumePosition(
 }
 
 /** A run the learner comes back to continues at the first screen still to answer; a check missed once comes back at the end. */
-internal fun LessonPlayerState.resume(answers: List<RunAnswer>): LessonPlayerState {
+internal fun LessonPlayerState.resume(
+    answers: List<RunAnswer>,
+    now: Long,
+): LessonPlayerState {
     val known = answers.filter { it.stepId in steps }
 
     if (known.isEmpty()) return this
@@ -45,32 +48,31 @@ internal fun LessonPlayerState.resume(answers: List<RunAnswer>): LessonPlayerSta
     val position = resumePosition(resumedQueue, known.map(RunAnswer::stepId).toSet(), queue.size)
     val resumed = copy(firstVerdicts = runVerdicts(known), queue = resumedQueue, retried = retriedIn(known) + missed)
 
-    if (position >= resumedQueue.size) {
-        return resumed.copy(
-            completion = LessonCompletion(CompletionStatus.Ready),
-            phase = LessonPhase.Completed,
-            position = resumedQueue.size - 1,
-        )
-    }
+    if (position >= resumedQueue.size) return resumed.copy(position = resumedQueue.size - 1).finish(CompletionStatus.Ready, now)
 
     return resumed.copy(position = position)
 }
 
-/** "I don't know yet": the sample answer, without a verdict. */
-internal fun LessonPlayerState.showSampleAnswer(stepId: String): LessonPlayerState {
-    val step = currentStep
-    val typed = step?.content as? StepContent.TypedAnswer
+/** "I don't know yet": an open answer's sample, or the guess's answer with no pick, without a verdict; neither counts. */
+internal fun LessonPlayerState.revealAnswer(stepId: String): LessonPlayerState {
+    val step = currentStep?.takeIf { it.id == stepId && phase == LessonPhase.Playing } ?: return this
+    val shown = copy(checkFailed = false, checkIssue = null, notice = null, phase = LessonPhase.Feedback)
 
-    if (phase != LessonPhase.Playing || step?.id != stepId || typed == null) return this
+    return when (val content = step.content) {
+        is StepContent.TypedAnswer -> {
+            val sample = StepResult(isCorrect = false, checked = false, correctAnswer = content.content.sampleAnswer)
+            shown.copy(results = results + (stepId to sample), skippedWritingStepIds = (skippedWritingStepIds + stepId).distinct())
+        }
 
-    return copy(
-        checkFailed = false,
-        checkIssue = null,
-        notice = null,
-        phase = LessonPhase.Feedback,
-        results = results + (stepId to StepResult(isCorrect = false, checked = false, correctAnswer = typed.content.sampleAnswer)),
-        skippedWritingStepIds = (skippedWritingStepIds + stepId).distinct(),
-    )
+        is StepContent.Guess -> {
+            val answer = revealGuess(step, optionId = null) ?: return this
+            shown.copy(results = results + (stepId to answer))
+        }
+
+        else -> {
+            this
+        }
+    }
 }
 
 /** "Can't write now" leaves out every writing screen ahead for the rest of the day; "Write again" puts them back. */

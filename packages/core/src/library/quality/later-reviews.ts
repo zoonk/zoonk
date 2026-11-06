@@ -3,12 +3,12 @@ import { type CheckLessonQualityParams } from "@zoonk/ai/tasks/quality/lesson-ch
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
-import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { markPlanSourcesChanged } from "../../learner/_utils/mark-learner-changed";
 import { resolvePlanInputDependents } from "../../plans/_utils/plan-input-dependencies";
 import { loadLessonWritingContext } from "../lessons/_utils/lesson-writing-inputs";
+import { readLessonMap } from "../lessons/lesson-map";
 import { loadLessonReuse } from "../lessons/lesson-reuse";
 import { CURRENT_STEPS } from "../lessons/lesson-versions";
 
@@ -47,14 +47,6 @@ export async function listLessonsForLaterReview({
     .slice(0, limit);
 }
 
-function readSummary(summary: unknown): string[] {
-  const ideas = isJsonObject(summary) && Array.isArray(summary.ideas) ? summary.ideas : [];
-
-  return ideas.flatMap((idea) =>
-    isJsonObject(idea) && typeof idea.text === "string" ? [idea.text] : [],
-  );
-}
-
 export type LaterReviewInput = Omit<
   CheckLessonQualityParams,
   "analytics" | "model" | "reasoning" | "serviceTier" | "useFallback"
@@ -87,7 +79,7 @@ export async function prepareLaterReview(lessonId: string): Promise<LaterReviewI
     ...context,
     lesson: {
       screens: lesson.steps.map(({ content, kind }) => ({ content, kind })),
-      summary: readSummary(lesson.summary),
+      summary: readLessonMap(lesson.summary),
     },
     reuse,
     version: first.version,

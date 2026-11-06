@@ -18,6 +18,7 @@ import com.zoonk.api.models.ChapterLesson
 import com.zoonk.api.models.GoalChapter
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LessonGeneration
+import com.zoonk.api.models.LessonMap
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.LessonStepCheckInput
 import com.zoonk.api.models.LessonStepCheckResult
@@ -33,19 +34,21 @@ private const val NEXT_LESSON_ID = "00000000-0000-4000-8000-0000000000cc"
 const val CHAPTER_ID = "00000000-0000-4000-8000-0000000000dd"
 private const val DONE_LESSON_ID = "00000000-0000-4000-8000-0000000000ff"
 
-fun playable(steps: List<LessonStep>) =
-    PlayableLesson(
-        id = LESSON_ID,
-        title = "Why clouds float",
-        description = "What keeps a cloud up.",
-        estimatedMinutes = 5,
-        language = "en",
-        targetLanguage = null,
-        chapterId = CHAPTER_ID,
-        steps = steps,
-        summaryIdeas = listOf("Clouds are tiny droplets."),
-        tutorSuggestions = emptyList(),
-    )
+fun playable(
+    steps: List<LessonStep>,
+    map: LessonMap? = null,
+) = PlayableLesson(
+    id = LESSON_ID,
+    title = "Why clouds float",
+    description = "What keeps a cloud up.",
+    estimatedMinutes = 5,
+    language = "en",
+    targetLanguage = null,
+    chapterId = CHAPTER_ID,
+    steps = steps,
+    map = map,
+    tutorSuggestions = emptyList(),
+)
 
 fun checkResult(
     isCorrect: Boolean,
@@ -68,7 +71,7 @@ fun checkResult(
 
 val COMPLETION =
     """
-    {"ceremony":null,"reached":{"energy":null,"level":null},"brainPower":30,"correctCount":2,"energyDelta":0.5,
+    {"ceremony":null,"certificates":[],"reached":{"energy":null,"level":null},"brainPower":30,"correctCount":2,"energyDelta":0.5,
      "incorrectCount":0,"isFirstCompletion":true,"nextReviewAt":"2026-10-31T09:00:00Z","seconds":120,"studyBlock":null,
      "totalBrainPower":130}
     """.trimIndent()
@@ -81,10 +84,14 @@ class FakeLessonPlayerApi(
     val completions = mutableListOf<String>()
     var optionalStepIds = "[]"
     var runAnswers = "[]"
+
+    /** The lesson opening an older server sent with the run, which the player ignores. */
+    var support = "null"
     var startFailures = 0
     var checkFailures = 0
     var grade: (String, LessonStepCheckInput) -> LessonStepCheckResult = { _, _ -> checkResult(isCorrect = true) }
     var gate: CompletableDeferred<Unit>? = null
+    var lessonGate: CompletableDeferred<Unit>? = null
     val readinessStates = ArrayDeque<String>()
     var warmUpId: String? = null
     var writes = 0
@@ -93,7 +100,10 @@ class FakeLessonPlayerApi(
     override suspend fun lesson(
         session: AuthenticatedSession?,
         lessonId: String,
-    ) = load
+    ): LessonLoad {
+        lessonGate?.await()
+        return load
+    }
 
     override suspend fun challengeTeam(
         session: AuthenticatedSession,
@@ -113,7 +123,7 @@ class FakeLessonPlayerApi(
         return ApiJson.decodeFromString(
             """
             {"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
-             "replay":false,"startedAt":"2026-10-28T10:00:00Z","support":null}
+             "replay":false,"startedAt":"2026-10-28T10:00:00Z","support":$support}
             """.trimIndent(),
         )
     }

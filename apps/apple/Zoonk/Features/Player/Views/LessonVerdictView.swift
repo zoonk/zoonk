@@ -94,6 +94,7 @@ struct LessonVerdictView: View {
     .accessibilityElement(children: .contain)
   }
 
+  /// A guess's reveal already names the right option, and the option list marks it.
   @ViewBuilder
   private var correctAnswerLine: some View {
     if !result.isCorrect, let correctAnswer = result.correctAnswer,
@@ -249,19 +250,31 @@ private struct LessonExplainAnswerView: View {
 
         switch state {
         case .failed:
-          Text(
-            "We couldn't explain it right now. Try again in a moment.", tableName: "Player",
-            comment: "The explanation of a typed answer failed"
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+          Text(Self.failedLine)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         case .refused(let refusal):
           LessonHelpLimitNote(refusal: refusal)
         default:
           EmptyView()
         }
       }
+      .announcesStatus(statusLine)
     }
+  }
+
+  private var statusLine: String? {
+    switch store.explanations[step.id] {
+    case .failed: Self.failedLine
+    case .refused(let refusal): LessonHelpLimitNote.message(refusal)
+    default: nil
+    }
+  }
+
+  private static var failedLine: String {
+    String(
+      localized: "We couldn't explain it right now. Try again in a moment.", table: "Player",
+      comment: "The explanation of a typed answer failed")
   }
 }
 

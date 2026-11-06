@@ -24,7 +24,9 @@ final class LessonPlayerDependencies {
     }
 
     let api = api
-    let lesson = cache.resource(audience: .viewer) { session in
+    // A lesson follows the learner's goals and active goal: a language plan's skipped activities, and
+    // the active goal's versions for a lesson in no plan.
+    let lesson = cache.resource(audience: .viewer, domains: [.goals, .learningProfile]) { session in
       try await api.getLesson(id: id, token: session?.bearerToken)
     }
     lessons[id] = lesson
@@ -65,7 +67,7 @@ private struct LessonPlayerContent: View {
   @Environment(LearnerSummaryStore.self) private var learnerSummary: LearnerSummaryStore?
   @State private var store: LessonPlayerStore
   @State private var isLeaving = false
-  @State private var isShowingSummary = false
+  @State private var isShowingMap = false
   @State private var soundOwner = UUID().uuidString
 
   init(store: LessonPlayerStore) {
@@ -112,9 +114,11 @@ private struct LessonPlayerContent: View {
       LessonAskPanel(store: store, isBeside: false)
         .zoonkStyles()
     }
-    .sheet(isPresented: $isShowingSummary) {
-      LessonSummarySheet(ideas: store.lesson?.summaryIdeas ?? [])
-        .zoonkStyles()
+    .sheet(isPresented: $isShowingMap) {
+      if let lesson = store.lesson, let summary = lesson.summary {
+        LessonMapSheet(title: lesson.title, summary: summary)
+          .zoonkStyles()
+      }
     }
     // A lesson opened while the saved session is still being checked waits for it, so it reads once.
     .task(id: session.state == .restoring ? nil : session.authenticatedSession?.bearerToken ?? "") {
@@ -130,6 +134,9 @@ private struct LessonPlayerContent: View {
         return activityRenderers.renderer(for: content.template) == nil
       }
       await store.load()
+    }
+    // Per opening: a lesson written on the learner's tap opens after `load()` has returned.
+    .task(id: store.openedAt) {
       await store.followLatePictures()
     }
     // A visitor who starts the lesson as a guest gets the session first and the summary after it.
@@ -139,6 +146,8 @@ private struct LessonPlayerContent: View {
     }
     .environment(\.lessonAudio, sounds)
     .onChange(of: store.state?.currentStep?.id) { sounds.stop() }
+    // From here rather than the stage, which is made anew as a lesson comes back from its end.
+    .announcesStatus(store.state?.noticeLine)
     .onChange(of: scenePhase) { _, phase in
       if phase == .background {
         store.reportAbandonment()
@@ -163,7 +172,8 @@ private struct LessonPlayerContent: View {
         switch stage {
         case .waiting(let holding):
           LessonWaitingView(
-            outline: warmUp.outline, writing: writing, warmUpID: warmUp.deckID, holding: holding
+            outline: warmUp.outline, writing: writing, progress: store.writingProgress,
+            warmUpID: warmUp.deckID, holding: holding
           ) {
             Task { await store.writeLesson() }
           }
@@ -202,7 +212,7 @@ private struct LessonPlayerContent: View {
       }
       .lonePage()
     case .waiting(let outline, let writing):
-      LessonWaitingView(outline: outline, writing: writing) {
+      LessonWaitingView(outline: outline, writing: writing, progress: store.writingProgress) {
         Task { await store.writeLesson() }
       }
       .lonePage()
@@ -216,12 +226,14 @@ private struct LessonPlayerContent: View {
         } else if state.phase == .completed, let completion = state.completion {
           LessonCompletionView(
             completion: completion, correct: state.correctCount, answered: state.answeredCount,
-            soundsEnabled: store.soundsEnabled, guestEnding: guestEnding
+            soundsEnabled: store.soundsEnabled, guestEnding: guestEnding, lesson: store.lesson
           ) {
             Task { await store.finish() }
           } close: {
             dismiss()
           }
+        } else if state.phase == .map, let lesson = store.lesson, let summary = lesson.summary {
+          LessonMapStage(store: store, state: state, title: lesson.title, summary: summary)
         } else {
           LessonStageView(store: store, state: state)
             .onDisappear { sounds.stop() }
@@ -321,15 +333,14 @@ private struct LessonPlayerContent: View {
       }
     }
 
-    if state.phase == .completed, !(store.lesson?.summaryIdeas ?? []).isEmpty {
+    if state.phase == .completed, store.lesson?.summary != nil {
       Button {
-        isShowingSummary = true
+        isShowingMap = true
       } label: {
         Label {
-          Text(
-            "Lesson summary", tableName: "Player", comment: "Opens the lesson's summary card")
+          Text(LessonMapView.name)
         } icon: {
-          Image(systemName: "list.bullet.rectangle")
+          Image(systemName: LessonMapView.symbol)
         }
       }
     }
@@ -375,12 +386,15 @@ struct LessonAskPanel: View {
 
   var body: some View {
     if let panel = tutor.panel, let lesson = store.lesson {
+      let stepId = store.state?.currentStep?.id
+
       panel(
         LessonTutorScope(
-          lessonId: lesson.id, stepId: store.state?.currentStep?.id,
+          lessonId: lesson.id, stepId: stepId,
           stepNumber: store.state.flatMap { $0.currentStep == nil ? nil : $0.position + 1 },
           answer: store.state?.answerInView, stepIds: store.state?.lessonOrder ?? [],
-          suggestions: lesson.tutorSuggestions, startingOffer: store.askingOffer),
+          suggestions: isBeside ? store.suggestionsBeside : lesson.tutorSuggestions,
+          startingOffer: store.startingOffer(about: stepId)),
         isBeside)
     }
   }

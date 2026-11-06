@@ -31,18 +31,22 @@ function isSettled(answer: Answer | undefined): boolean {
   return answer !== undefined && !("failed" in answer);
 }
 
-function applyOffers({
+async function applyOffers({
   adapt,
   offers,
 }: {
   adapt: (offer: MockPlanOffer) => Promise<MockPlanOfferOutcome | null>;
   offers: readonly MockPlanOffer[];
 }): Promise<Answers> {
-  return offers.reduce<Promise<Answers>>(async (previous, offer) => {
-    const answers = await previous;
-    const outcome = await adapt(offer).catch(() => null);
-    return { ...answers, [offer]: outcome ? { outcome } : { failed: true } };
-  }, Promise.resolve({}));
+  const [offer, ...rest] = offers;
+
+  if (!offer) {
+    return {};
+  }
+
+  const outcome = await adapt(offer).catch(() => null);
+  const answers = await applyOffers({ adapt, offers: rest });
+  return { ...answers, [offer]: outcome ? { outcome } : { failed: true } };
 }
 
 export function usePlanChange(adapt: MockAdaptView | null) {
@@ -223,11 +227,23 @@ export function MockPlanChange({
 
       {!change.settled && (
         <div className="flex flex-wrap gap-2">
-          <Button disabled={change.isPending} onClick={change.apply} size="sm" variant="outline">
+          <Button
+            disabled={change.isPending}
+            focusableWhenDisabled
+            onClick={change.apply}
+            size="sm"
+            variant="outline"
+          >
             {change.isPending && <Spinner aria-hidden="true" />}
             {t("Apply")}
           </Button>
-          <Button disabled={change.isPending} onClick={change.keep} size="sm" variant="ghost">
+          <Button
+            disabled={change.isPending}
+            focusableWhenDisabled
+            onClick={change.keep}
+            size="sm"
+            variant="ghost"
+          >
             {t("Keep my plan")}
           </Button>
         </div>

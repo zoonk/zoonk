@@ -137,7 +137,7 @@ private struct SessionContent: View {
         Task { await session.refresh() }
       }
     }
-    .milestoneCeremony(playback.moment?.ceremony)
+    .completionMoments(playback.moment?.day)
   }
 }
 
@@ -188,6 +188,7 @@ private struct NextStopView: View {
         offerWrittenLesson()
       }
     }
+    .announcesStatus(notWrittenLine)
     .onDisappear {
       action?.cancel()
     }
@@ -305,16 +306,12 @@ private struct NextStopView: View {
         Section {
           ContentUnavailableView {
             Label {
-              Text(
-                "This lesson isn't available", tableName: "Session",
-                comment: "A lesson its quality checks set aside")
+              Text(Self.setAsideTitle)
             } icon: {
               Image(systemName: "exclamationmark.circle")
             }
           } description: {
-            Text(
-              "It didn't pass our quality checks, so your plan goes on without it.",
-              tableName: "Session", comment: "A lesson its quality checks set aside")
+            Text(Self.setAsideReason)
           }
         }
       }
@@ -350,12 +347,12 @@ private struct NextStopView: View {
         .disabled(isStopping || isOpening)
 
         if failed {
-          Text(
-            "We couldn't open the next step. Try again.", tableName: "Session",
-            comment: "Opening or stopping failed"
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't open the next step. Try again.", table: "Session",
+              comment: "Opening or stopping failed")
           )
           .typeStyle(.note)
-          .foregroundStyle(.destructiveText)
         }
       }
     }
@@ -383,6 +380,22 @@ private struct NextStopView: View {
   private var isWrittenWhileWaiting: Bool {
     lessonStatus == "ready" && waitedFor != nil && waitedFor == next?.id
   }
+
+  private var notWrittenLine: String? {
+    switch writing {
+    case .refused(let refusal): LessonUnavailableView(refusal: refusal) {}.said
+    case .setAside: [Self.setAsideTitle, Self.setAsideReason].joinedSentences()
+    default: nil
+    }
+  }
+
+  private static let setAsideTitle = String(
+    localized: "This lesson isn't available", table: "Session",
+    comment: "A lesson its quality checks set aside")
+
+  private static let setAsideReason = String(
+    localized: "It didn't pass our quality checks, so your plan goes on without it.",
+    table: "Session", comment: "A lesson its quality checks set aside")
 
   private var isLessonUnavailable: Bool {
     switch writing {
@@ -427,11 +440,10 @@ private struct NextStopView: View {
 
     if writing == .failed || lessonStatus == "failed" {
       return AnyView(
-        Text(
-          "We couldn't write this lesson.", tableName: "Session",
-          comment: "Writing a lesson failed"
-        )
-        .foregroundStyle(.destructiveText))
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't write this lesson.", table: "Session",
+            comment: "Writing a lesson failed")))
     }
 
     guard isLessonWorkRunning else {
@@ -441,7 +453,7 @@ private struct NextStopView: View {
     return AnyView(
       Label {
         Text(
-          "This lesson is being written for you. It's usually ready in about two minutes.",
+          "This lesson is being written for you. It's usually ready in a few minutes.",
           tableName: "Session", comment: "A lesson being written")
       } icon: {
         ProgressView()

@@ -1,6 +1,7 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { type LibraryLessonStatus, toContentStatus } from "@/lib/library-lesson-filters";
+import { CURRENT_STEPS } from "@zoonk/core/library/lessons/versions";
 import { prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 
@@ -19,7 +20,7 @@ const libraryLessonListInclude = {
     orderBy: { position: "asc" as const },
     select: { generatedAt: true, model: true, promptVersion: true, runId: true },
     take: 1,
-    where: { retiredAt: null },
+    where: CURRENT_STEPS,
   },
 } as const;
 
@@ -33,7 +34,7 @@ function buildLibraryLessonWhere({ model, promptVersion, search, status }: Libra
 
   return {
     contentStatus: toContentStatus(status),
-    ...(hasProvenanceFilter ? { steps: { some: { model, promptVersion, retiredAt: null } } } : {}),
+    ...(hasProvenanceFilter ? { steps: { some: { ...CURRENT_STEPS, model, promptVersion } } } : {}),
     ...(containsSearch
       ? {
           OR: [
@@ -57,7 +58,7 @@ async function countLessonRows(lessonIds: string[]) {
     prisma.step.groupBy({
       _count: { id: true },
       by: ["lessonId"],
-      where: { lessonId: { in: lessonIds }, retiredAt: null },
+      where: { lessonId: { in: lessonIds }, ...CURRENT_STEPS },
     }),
   ]);
 

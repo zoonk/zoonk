@@ -35,7 +35,7 @@
   "catalog_expand": "1c84c872240a1f1fceb062fb190a2a230a6262b24203bf1ed7141eb25e05724c",
   "catalog_go_to_chapter": "3b9f0b4ae6a4d254d6bb7107dd93c0b1303c4cd345636854cb346a57181a57c3",
   "catalog_goal_example": "eb482f3f016c379ceef673c79651dec958cd6395761210d9f2a7894aa3e9001c",
-  "catalog_guess_first": "22a02db21733a0dc2db1d5d47b544e9b7c224d2d6ab37862af61afba14daaa7c",
+  "catalog_guess_chip": "ba3394d452fe426c87626e60228317457c1b53be130c2c06d86fae443563a76f",
   "catalog_guess_note": "de655001bd568dff6e289016fe79e0186fca5f7de903765485049054e773179b",
   "catalog_ideas": "23fccdad6aa5313ac47189546363e0a6d3bcd9bbe3d9e74cd92844d4649ad20b",
   "catalog_left_out": "6346cbabef419437961ebd31ad4feafbe6b68dea02f925c71efe9bd75e07031c",
@@ -183,7 +183,8 @@
     <string name="catalog_start_free">Empieza gratis, sin necesidad de una cuenta.</string>
     <string name="catalog_try_title">Probar una lección · gratis · %1$s</string>
     <string name="catalog_try_place">%1$s · lección %2$s</string>
-    <string name="catalog_guess_first">Primero haz una suposición. No cuenta.</string>
+    <!-- Chip above a lesson's opening question on a course page, which the learner answers before being taught. Guesses are never scored. -->
+    <string name="catalog_guess_chip">Solo una suposición, no cuenta</string>
     <string name="catalog_quick_question">Pregunta rápida</string>
     <string name="catalog_guess_note">Tu respuesta inicia la lección de %1$s min.</string>
     <string name="catalog_check_note">Tu elección abre la lección de %1$s min. Comprueba tu respuesta ahí.</string>

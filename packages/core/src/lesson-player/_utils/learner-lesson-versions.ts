@@ -1,5 +1,6 @@
 import "server-only";
 import { type StepVariant } from "@zoonk/db";
+import { fitStepMarks } from "../../library/marks/step-marks";
 import { safeParseStepContent } from "../../library/steps/contract/step-contract";
 import {
   type LearnerVersionKeys,
@@ -39,6 +40,10 @@ function isVersionedStep(step: PlayableLibraryStep): step is VersionedStep {
   return VERSIONED_KINDS.has(step.kind);
 }
 
+function withFittedMarks(step: VersionedStep): VersionedStep {
+  return step.marks ? { ...step, marks: fitStepMarks({ marks: step.marks, screen: step }) } : step;
+}
+
 function toSeenStep({
   keys,
   step,
@@ -56,13 +61,13 @@ function toSeenStep({
 
   switch (step.kind) {
     case "challenge":
-      return withContent({ step, version });
+      return withFittedMarks(withContent({ step, version }));
     case "check":
-      return withContent({ step, version });
+      return withFittedMarks(withContent({ step, version }));
     case "explanation":
-      return withExploreExpected(withContent({ step, version }));
+      return withFittedMarks(withExploreExpected(withContent({ step, version })));
     case "workedExample":
-      return withContent({ step, version });
+      return withFittedMarks(withContent({ step, version }));
     default:
       return step;
   }

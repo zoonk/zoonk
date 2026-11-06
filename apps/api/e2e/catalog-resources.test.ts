@@ -459,7 +459,7 @@ test.describe("Catalog resource API", () => {
       firstScreen: screen,
       id: guessed!.id,
       language: guessed!.language,
-      summaryIdeas: ["The electron is a cloud."],
+      summary: { ideas: [{ text: "The electron is a cloud." }], shape: "hub" },
       title: guessed!.title,
     });
 

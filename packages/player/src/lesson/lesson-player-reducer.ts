@@ -1,3 +1,4 @@
+import { isAtEnd, leaveMap } from "./_utils/lesson-end";
 import {
   advance,
   continueChallenge,
@@ -50,6 +51,10 @@ function continueFrom(state: LessonPlayerState): LessonPlayerState {
     return advance(state);
   }
 
+  if (state.phase === "map") {
+    return leaveMap(state);
+  }
+
   const step = getCurrentStep(state);
 
   if (state.phase === "playing" && step?.kind === "challenge") {
@@ -64,7 +69,7 @@ function continueFrom(state: LessonPlayerState): LessonPlayerState {
 }
 
 function navigate(state: LessonPlayerState, action: ActionOf<"navigate">): LessonPlayerState {
-  if (state.phase !== "playing") {
+  if (state.phase !== "playing" && state.phase !== "map") {
     return state;
   }
 
@@ -119,10 +124,11 @@ function isSameProgress(a: Record<string, boolean>, b: Record<string, boolean>):
 }
 
 function resumeFrom(state: LessonPlayerState, answers: LessonRunAnswers): LessonPlayerState {
-  const fresh = createInitialState(
-    { id: state.lessonId, steps: Object.values(state.steps) },
-    state.support,
-  );
+  const fresh = createInitialState({
+    hasMap: state.hasMap,
+    id: state.lessonId,
+    steps: Object.values(state.steps),
+  });
 
   const writingRestore = state.notice === "writingSkipped" ? state.writingRestore : null;
 
@@ -194,7 +200,7 @@ function resyncRun(state: LessonPlayerState, action: ActionOf<"runResynced">): L
   const available = skipSteps(state, optionalStepIds);
   const missing = resumeFrom(available, action.answers);
 
-  if (missing.phase !== "completed") {
+  if (!isAtEnd(missing)) {
     return { ...missing, notice: "answerNotSaved" };
   }
 
@@ -204,7 +210,7 @@ function resyncRun(state: LessonPlayerState, action: ActionOf<"runResynced">): L
 
   const pictured = resumeFrom(restorePicturedSteps(available, pictures), action.answers);
 
-  return pictured.phase === "completed"
+  return isAtEnd(pictured)
     ? setCompletionStatus(state, "failed")
     : { ...pictured, notice: "pictureReady" };
 }
@@ -219,7 +225,7 @@ function completionSaved(
 }
 
 function recordVerdict(state: LessonPlayerState, action: ActionOf<"checkResolved">) {
-  return state.phase === "completed" ? state : resolveCheck(state, action);
+  return isAtEnd(state) ? state : resolveCheck(state, action);
 }
 
 export function lessonPlayerReducer(

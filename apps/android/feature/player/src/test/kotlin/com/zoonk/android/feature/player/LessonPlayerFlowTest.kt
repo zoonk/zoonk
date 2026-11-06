@@ -30,6 +30,7 @@ import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.language.reading
+import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.SpokenAnswerGrade
@@ -63,6 +64,47 @@ class LessonPlayerFlowTest {
     ) = harness.play(steps, configure = configure)
 
     private fun tap(text: String) = rule.onNodeWithText(text).performClick()
+
+    @Test
+    fun aPracticedLearnerReadsTheExplanationBeforeTheCheckEvenWhenTheRunSaysQuestionFirst() {
+        play(listOf(explanationStep("idea"), checkStep("quiz"))) { support = "\"questionFirst\"" }
+
+        assertTrue(viewModel.state.value?.run is LessonRun.Started)
+        assertEquals(listOf("idea", "quiz"), viewModel.state.value?.queue)
+    }
+
+    /** A lesson reopened after a plan change plays the screens read again, not the copy the app kept. */
+    @Test
+    fun aLessonReopenedAfterAPlanChangePlaysItsFreshScreens() {
+        play(listOf(explanationStep("idea"), summaryStep("end")))
+        api.load = LessonLoad.Ready(playable(listOf(explanationStep("idea"), typedAnswerStep("write"), summaryStep("end"))))
+        harness.cache.invalidate(setOf(DataDomain.Goals))
+
+        harness.viewModel = openAgain()
+        rule.waitUntil { viewModel.state.value?.run is LessonRun.Started }
+
+        assertEquals(
+            listOf("idea", "write", "end"),
+            viewModel.state.value
+                ?.steps
+                ?.keys
+                ?.toList(),
+        )
+    }
+
+    /** A start that fails shows at once, even while the lesson's read is slow to come back. */
+    @Test
+    fun aFailedStartShowsWithoutWaitingForTheLessonsRead() {
+        play(listOf(explanationStep("idea"), summaryStep("end")))
+        harness.cache.invalidate(setOf(DataDomain.Goals))
+        api.lessonGate = CompletableDeferred()
+        api.startFailures = 1
+
+        harness.viewModel = openAgain()
+
+        rule.waitUntil { viewModel.state.value?.run is LessonRun.Refused }
+        api.lessonGate?.complete(Unit)
+    }
 
     /** Android closing the app in the background keeps a typed answer the learner hasn't checked. */
     @Test

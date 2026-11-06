@@ -14,7 +14,7 @@
     "sample:production": "tsx scripts/sample-production-inputs.ts",
     "start": "node ../../scripts/dev/run-service.mts evals start:app",
     "start:app": "next start",
-    "typecheck": "next typegen && tsc --noEmit"
+    "typecheck": "next typegen && tsrs --noEmit"
   },
   "dependencies": {
     "@zoonk/ai": "workspace:*",

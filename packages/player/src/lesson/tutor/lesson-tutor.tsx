@@ -7,6 +7,7 @@ import { type LessonQuestionNavigation } from "../../questions/lesson-question-n
 import { LessonQuestionHostProvider } from "../../questions/lesson-question-provider";
 import { TutorBuddyProvider } from "../../questions/tutor-buddy";
 import { isLanguageStep, isReadStep } from "../_utils/lesson-steps";
+import { hasDidntGetIt } from "../controls/didnt-get-it-button";
 import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
 import { LessonInteractionProvider } from "../lesson-player-interaction";
 import { type PlayableLibraryStep } from "../lesson-player-types";
@@ -46,9 +47,11 @@ function LessonBuddy({
   identity: TutorIdentity;
   navigation: LessonQuestionNavigation;
 }) {
+  const { lesson } = useLessonPlayerConfig();
   const { screen, state } = useLessonPlayer();
   const context = useTutorContext();
   const missed = useShowsMiss();
+  const asksSimpler = hasDidntGetIt({ step: screen.step, targetLanguage: lesson.targetLanguage });
 
   return (
     <TutorBuddyProvider
@@ -57,6 +60,7 @@ function LessonBuddy({
       missed={missed}
       navigation={navigation}
       quote={<TutorQuote />}
+      screenSuggestion={asksSimpler ? "simpler" : undefined}
       suggests={missed || isTeachingRead(screen.step)}
       visit={`${state.position}:${screen.step?.id ?? ""}`}
     >

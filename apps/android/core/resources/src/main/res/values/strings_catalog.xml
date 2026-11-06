@@ -54,7 +54,8 @@
 
     <string name="catalog_try_title">Try a lesson · free · %1$s</string>
     <string name="catalog_try_place">%1$s · lesson %2$s</string>
-    <string name="catalog_guess_first">Guess first. It doesn\'t count.</string>
+    <!-- Chip above a lesson's opening question on a course page, which the learner answers before being taught. Guesses are never scored. -->
+    <string name="catalog_guess_chip">Just a guess, it doesn\'t count</string>
     <string name="catalog_quick_question">Quick question</string>
     <string name="catalog_guess_note">Your answer starts the %1$s-minute lesson.</string>
     <string name="catalog_check_note">Your choice opens the %1$s-minute lesson. Check your answer there.</string>

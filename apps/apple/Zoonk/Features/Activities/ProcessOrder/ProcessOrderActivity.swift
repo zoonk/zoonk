@@ -147,7 +147,7 @@ private struct ProcessOrderCanvas: View {
     context.setAnswer(.order(order))
 
     let text = fields.steps.first { $0.id == id }.map { LessonRichText.spoken($0.text) } ?? ""
-    announceActivityChange(
+    announcePolitely(
       String(
         localized: "\(text) is now step \(index + 1).", table: "Activities",
         comment: "VoiceOver, after a step of a process moves"))

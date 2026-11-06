@@ -30,6 +30,7 @@
 - “session” (study): “çalışma” (“bugünkü çalışma”), not “oturum”, which is the sign-in session or a mock's section
 - “subject” of an exam: “branş”, not “ders” (a lesson); a subject the learner studies as a goal, rather than an exam or a language: “konu”
 - “topic”: “konu”
+- “idea” (one of a lesson map’s ideas, as in “Idea 2 of 4”): “kavram”, not “fikir”
 - “area” (a weighted part of an exam or a goal): “alan”
 - “section” (a part of a mock exam): “oturum”
 - “material” (the learner's own files and notes): “materyal”
@@ -76,6 +77,7 @@
 - “Phase challenge”: “Aşama meydan okuması”
 - “Weekly challenge”: “Haftalık meydan okuma”
 - “Mock exam”, including speaking mocks: “deneme sınavı”, never just “deneme”, which is a try
+- The placement test, whatever the English calls it (“level test”, “placement”, an exam's “diagnostic”): “seviye tespit testi”, never “seviye belirleme” or a bare “seviye testi”
 - “Logbook”: “Çalışma günlüğü”
 - “Fading” (needs review): “Tekrar edilecek”
 - “Overview” (course level and a plan's first phase): “Genel bakış”

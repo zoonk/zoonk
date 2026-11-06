@@ -40,7 +40,7 @@
   "session_next_stop": "72888b480cdbd2a04ffe198427f5d9a3dba02817b9825fbadbceb42d6a423bc6",
   "session_next_stop_failed": "c9a75f168beb4ce4024a98c98c40f0ae688ae2c65221da977517294783126407",
   "session_next_while_waiting": "713fa02f2053b7d18b52ae054e8574efcc338c7b67b6507929c7114cb4d2deba",
-  "session_next_writing_note": "71454e0625a7024b2352c8bd47241d30140ffbc40f7ee68f1e85a3fced6af781",
+  "session_next_writing_note": "a9f70503af8ecc9d052c4123feff14397f7138097a757f632665fadb7037aaba",
   "session_opening_slow": "9cdf7c9eb11c35fa1e33eacf0aaf9673f27c25756c2fed5d62a07275e4cc5193",
   "session_opening_very_slow": "e1a36c1a9b2d7a16a6a363872bea9f370c69b60e94f2b7ce0eb0aa6e3bd7060d",
   "session_summary_back_on": "ad2c77fdc9f24447fad1fe9c702bb669125f8e646630455f48c079ed86026dd9",
@@ -203,7 +203,7 @@
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">A seguire</string>
     <string name="session_next_start">Inizia</string>
-    <string name="session_next_writing_note">Stiamo preparando questa lezione per te. Di solito è pronta in circa due minuti.</string>
+    <string name="session_next_writing_note">Stiamo preparando questa lezione per te. Di solito è pronta in qualche minuto.</string>
     <string name="session_next_lesson_ready">La tua lezione è pronta.</string>
     <string name="session_next_stop">Fermati per oggi</string>
     <string name="session_next_stop_failed">Non siamo riusciti a interrompere la sessione. Riprova.</string>

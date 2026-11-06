@@ -42,6 +42,7 @@ import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -58,6 +59,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.Resource
@@ -87,9 +89,10 @@ import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
+import com.zoonk.android.ui.components.PictureShape
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.TextButton
-import com.zoonk.android.ui.components.isWideWindow
+import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.richtext.MathText
@@ -121,6 +124,8 @@ internal fun QuestionScene(content: @Composable ColumnScope.() -> Unit) {
 }
 
 private val QUESTION_SPACING = 24.dp
+private val QUESTION_PART_SPACING = 12.dp
+private val MIN_YIELDED_PICTURE = 140.dp
 
 /** The layout id of the screen part that takes the height the lesson screen's other parts leave in view. */
 object FillsView
@@ -128,7 +133,7 @@ object FillsView
 /**
  * A word bank's screen. In one narrow column the bank sits at the bottom of the view, just above the
  * actions, so it stays under the learner's thumb while the answer grows; once the screen outgrows the
- * view, the bank follows its content. A wide window keeps it under the answer.
+ * view, the bank follows its content. A wide layout ([isWideLayout]) keeps it under the answer.
  */
 @Composable
 internal fun WordBankScene(
@@ -136,7 +141,7 @@ internal fun WordBankScene(
     bank: @Composable () -> Unit,
 ) {
     Column(
-        Modifier.fillMaxWidth().then(if (isWideWindow()) Modifier else Modifier.layoutId(FillsView)),
+        Modifier.fillMaxWidth().then(if (isWideLayout()) Modifier else Modifier.layoutId(FillsView)),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         QuestionScene(question)
@@ -149,16 +154,21 @@ private fun BodyText(text: String) {
     RichText(text = text, style = MaterialTheme.typography.bodyLarge)
 }
 
+/** The opening scene. Once a knowledge lesson's map is tagged, its opening map follows the scene's words. */
 @Composable
 internal fun FactHookView(
     step: LessonStep,
     content: StepContent.Fact,
     part: StepPart,
+    marking: LessonMarking?,
 ) {
+    val map = marking?.map?.takeIf { part.showsScreen && it.opensLesson }
+
     ReadScene {
         if (part.showsTurn) StepPicture(step, PictureFrame.Hero)
         if (part.showsScreen) BodyText(content.content.text)
         if (part.showsTurn) LessonStepVisual(content.content.visual)
+        if (map != null) OpeningMap(map)
     }
 }
 
@@ -171,36 +181,81 @@ internal fun GuessHookView(
     locked: Boolean,
     actions: StepActions,
     part: StepPart,
+    marking: LessonMarking?,
 ) {
     val guess = content.content
-    val selectedId = (answer as? LessonAnswer.Hook)?.optionId
 
-    QuestionScene {
-        if (part.showsScreen) {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                LabelChip(stringResource(R.string.player_guess_first), icon = R.drawable.ic_auto_awesome)
-                StepPicture(step, PictureFrame.Question)
-                LessonStepVisual(guess.visual)
-                QuestionText(guess.question)
+    HookScene(
+        // Only a drawn picture gives up height: the placeholder and a picture's description need theirs.
+        viewHeight = LocalStepViewHeight.current.takeIf { step.image != null },
+        chip = {
+            if (part.showsScreen) {
+                Column(verticalArrangement = Arrangement.spacedBy(QUESTION_SPACING)) {
+                    if (marking != null) IdeaStrip(marking.map, step.marks)
+                    LabelChip(stringResource(R.string.player_guess_chip), icon = R.drawable.ic_auto_awesome)
+                }
             }
-        }
-
-        if (part.showsTurn) {
-            ChoiceOptions(
-                options = guess.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
-                selectedId = selectedId,
-                isChecked = result != null,
-                isGuess = true,
-                locked = locked,
-                onSelect = { id -> actions.select(id?.let(LessonAnswer::Hook)) },
-            )
-
-            if (result == null) {
-                Text(
-                    text = stringResource(R.string.player_guess_hint),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
+        },
+        picture = { if (part.showsScreen) StepPicture(step, PictureFrame.Question) },
+        question = {
+            if (part.showsScreen) {
+                Column(verticalArrangement = Arrangement.spacedBy(QUESTION_PART_SPACING)) {
+                    LessonStepVisual(guess.visual)
+                    QuestionText(guess.question)
+                }
+            }
+        },
+        options = {
+            if (part.showsTurn) {
+                ChoiceOptions(
+                    options = guess.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
+                    selectedId = (answer as? LessonAnswer.Hook)?.optionId,
+                    isChecked = result != null,
+                    isGuess = true,
+                    locked = locked,
+                    onSelect = { id -> actions.select(id?.let(LessonAnswer::Hook)) },
                 )
+            }
+        },
+    )
+}
+
+/**
+ * The hook's picture comes first. In one column of [viewHeight] it gives the question and its options
+ * the height they need, down to [MIN_YIELDED_PICTURE]; when even that doesn't leave them room, the
+ * column scrolls.
+ */
+@Composable
+private fun HookScene(
+    viewHeight: Dp?,
+    chip: @Composable () -> Unit,
+    picture: @Composable () -> Unit,
+    question: @Composable () -> Unit,
+    options: @Composable () -> Unit,
+) {
+    Layout(listOf(chip, picture, question, options), Modifier.fillMaxWidth()) { slots, constraints ->
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val partGap = QUESTION_PART_SPACING.roundToPx()
+        val sceneGap = QUESTION_SPACING.roundToPx()
+        val (chips, pictures, questions, optionList) = slots
+        val (chipParts, questionParts, optionParts) = listOf(chips, questions, optionList).map { part -> part.map { it.measure(loose) } }
+        val others =
+            chipParts.sumOf { it.height } + questionParts.sumOf { it.height } + optionParts.sumOf { it.height } + partGap * 2 + sceneGap
+        val pictureRoom = viewHeight?.let { (it.roundToPx() - others).coerceAtLeast(MIN_YIELDED_PICTURE.roundToPx()) }
+        val pictureParts = pictures.map { it.measure(if (pictureRoom == null) loose else loose.copy(maxHeight = pictureRoom)) }
+        val rows =
+            listOf(chipParts to partGap, pictureParts to partGap, questionParts to sceneGap, optionParts to 0)
+                .filter { (parts, _) -> parts.any { it.height > 0 } }
+        val height = rows.sumOf { (parts, _) -> parts.sumOf { it.height } } + rows.dropLast(1).sumOf { (_, gap) -> gap }
+
+        layout(constraints.maxWidth, height) {
+            var y = 0
+            rows.forEach { (parts, gap) ->
+                parts.forEach { part ->
+                    part.placeRelative(0, y)
+                    y += part.height
+                }
+                y += gap
             }
         }
     }
@@ -212,29 +267,35 @@ internal fun ExplanationView(
     content: StepContent.Explanation,
     actions: StepActions,
     part: StepPart,
+    marking: LessonMarking?,
 ) {
     val explanation = content.content
 
     ReadScene {
+        if (part.showsScreen && marking != null) IdeaStrip(marking.map, step.marks)
         if (part.showsTurn) StepPicture(step, PictureFrame.Hero)
         if (part.showsScreen) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                explanation.title?.let { title ->
-                    RichInlineText(
-                        text = title,
-                        modifier = Modifier.semantics { heading() },
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
-                BodyText(explanation.text)
-            }
+            TeachingText(
+                explanation.title,
+                explanation.text,
+                step.marks.takeIf { marking != null },
+                marksTerms =
+                    marking != null,
+            )
         }
         if (part.showsTurn) {
             LessonStepVisual(explanation.visual)
             content.explore?.takeUnless { step.isExploredPictureLost }?.let { ExploredActivityCanvas(it, actions.cantListen) }
         }
         if (part.showsScreen && explanation.exampleLineSlot != null) actions.exampleLine(step.id)?.let { ExampleLine(it) }
+        if (part.showsScreen && marking != null) DidntGetItButton()
     }
+}
+
+@Composable
+private fun DidntGetItButton() {
+    val ask = LocalAskSimpler.current ?: return
+    GhostAction(R.drawable.ic_contact_support, stringResource(R.string.player_didnt_get_it), ask)
 }
 
 /** Main's `ExampleLine`: the explanation's idea in the learner's own life, once it's written; nothing when none fits. */
@@ -265,8 +326,10 @@ internal fun WorkedExampleView(
     content: StepContent.WorkedExample,
     revealed: Int,
     part: StepPart,
+    marking: LessonMarking?,
 ) {
     val worked = content.content
+    val marksTerms = marking != null
     val steps = worked.steps.take(revealed)
     val isDone = revealed >= worked.steps.size
     val newest = remember { BringIntoViewRequester() }
@@ -281,11 +344,12 @@ internal fun WorkedExampleView(
     // above the button that shows the next one.
     ReadScene {
         if (part.showsScreen) {
+            if (marking != null) IdeaStrip(marking.map, step.marks)
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 LabelChip(stringResource(R.string.player_worked_example), icon = R.drawable.ic_format_list_numbered)
                 worked.title?.let { QuestionText(it) }
             }
-            BodyText(worked.problem)
+            TeachingText(title = null, text = worked.problem, marks = step.marks.takeIf { marking != null }, marksTerms = marksTerms)
             StepPicture(step, PictureFrame.Inline)
             LessonStepVisual(worked.visual)
         }
@@ -316,7 +380,7 @@ internal fun WorkedExampleView(
                                 style = MaterialTheme.typography.bodyLarge.withTabularFigures(),
                             )
                             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                RichText(text = line.text, style = MaterialTheme.typography.bodyLarge)
+                                RichText(text = line.text, style = MaterialTheme.typography.bodyLarge, marksTerms = marksTerms)
                                 line.math?.let { MathText(it) }
                             }
                         }
@@ -336,10 +400,11 @@ internal fun WorkedExampleView(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.labelLarge,
                         )
-                        BodyText(worked.result)
+                        RichText(text = worked.result, style = MaterialTheme.typography.bodyLarge, marksTerms = marksTerms)
                     }
                 }
             }
+            if (marking != null) DidntGetItButton()
         }
     }
 }
@@ -353,10 +418,12 @@ internal fun CheckView(
     screen: LessonScreen,
     actions: StepActions,
     part: StepPart,
+    marking: LessonMarking?,
 ) {
     val check = content.content
 
     QuestionScene {
+        if (part.showsScreen && marking != null) screen.step?.let { IdeaStrip(marking.map, it.marks) }
         if (part.showsScreen) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 screen.step?.let { StepPicture(it, PictureFrame.Question) }
@@ -420,7 +487,7 @@ internal fun SummaryView(content: StepContent.Summary) {
 }
 
 @Composable
-fun SummaryIdeas(ideas: List<String>) {
+private fun SummaryIdeas(ideas: List<String>) {
     Column {
         ideas.forEachIndexed { index, idea ->
             if (index > 0) HorizontalDivider()
@@ -445,6 +512,7 @@ internal fun TypedAnswerView(
     screen: LessonScreen,
     actions: StepActions,
     part: StepPart,
+    marking: LessonMarking?,
 ) {
     val typed = content.content
     val isNumber = isNumberAnswer(typed.acceptedAnswers)
@@ -453,6 +521,7 @@ internal fun TypedAnswerView(
     val text = (answer as? LessonAnswer.Typed)?.text.orEmpty()
 
     QuestionScene {
+        if (part.showsScreen && marking != null) IdeaStrip(marking.map, step.marks)
         if (part.showsScreen) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 if (inOwnWords) LabelChip(stringResource(R.string.player_in_your_own_words), icon = R.drawable.ic_edit)
@@ -766,11 +835,19 @@ private fun PictureOption(
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         when {
             image != null -> {
-                PrivatePicture(image.url, image.alt, image.width, image.height, PictureFrame.Question, Modifier.fillMaxWidth())
+                PrivatePicture(
+                    image.url,
+                    image.alt,
+                    image.width,
+                    image.height,
+                    PictureFrame.Question,
+                    Modifier.fillMaxWidth(),
+                    PictureShape.Square,
+                )
             }
 
             step.imagePending -> {
-                PendingPicture(PictureFrame.Question, Modifier.fillMaxWidth()) {
+                PendingPicture(PictureFrame.Question, Modifier.fillMaxWidth(), PictureShape.Square) {
                     Icon(
                         painterResource(R.drawable.ic_image),
                         contentDescription = stringResource(R.string.player_drawing_picture),

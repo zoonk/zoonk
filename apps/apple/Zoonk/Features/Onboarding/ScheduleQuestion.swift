@@ -286,14 +286,14 @@ struct ScheduleQuestion: View {
         failed: found.status == .failed, first: found.first, found: shown.found, picked: picked)
   }
 
-  private var refusalWords: Text? {
+  private var refusalWords: String? {
     guard case .dayTooShort(let minutes, let goals) = refusal else {
       return nil
     }
 
-    return Text(
-      "Choose at least \(duration(minutes)) a day for your \(goals) goals.",
-      tableName: "Onboarding",
+    return String(
+      localized: "Choose at least \(duration(minutes)) a day for your \(goals) goals.",
+      table: "Onboarding",
       comment: "The day's time is shorter than the goals typed together need")
   }
 

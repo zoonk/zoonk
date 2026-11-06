@@ -170,13 +170,12 @@ private struct LogbookSteps: View {
         ForEach(steps.filter { $0 != .week }, id: \.self) { step in
           page(step)
         }
-
-        Section {
-          letsGo
-            .controlSize(.large)
-        }
-        .listRowBackground(Color.clear)
-        .listRowInsets(.vertical, 0)
+      }
+      .safeAreaBar(edge: .bottom) {
+        letsGo
+          .controlSize(.large)
+          .scenePadding(.horizontal)
+          .padding(.vertical, 10)
       }
     } single: {
       TabView(selection: $current) {

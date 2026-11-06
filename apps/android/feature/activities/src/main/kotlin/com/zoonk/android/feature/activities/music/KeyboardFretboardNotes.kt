@@ -5,11 +5,11 @@ import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.ActivityExpectedAnswer
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf6
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf31FieldsStart
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf31FieldsStartOneOf
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf30FieldsStart
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf6Value as NotesAnswerValue
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf31FieldsStart.PlayableLibraryStepAnyOfContentOneOf31FieldsStartOneOf1Value as NotesTargetValue
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf31FieldsStart.PlayableLibraryStepAnyOfContentOneOf31FieldsStartOneOfValue as ChordTargetValue
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf30FieldsStart.PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf1Value as NotesTargetValue
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf30FieldsStart.PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOfValue as ChordTargetValue
 
 sealed interface NoteTarget {
     /** Its pitch classes, sorted, or none when a note isn't one. */
@@ -34,21 +34,21 @@ sealed interface NoteTarget {
     }
 
     companion object {
-        fun of(field: PlayableLibraryStepAnyOfContentOneOf31FieldsStart): NoteTarget =
+        fun of(field: PlayableLibraryStepAnyOfContentOneOf30FieldsStart): NoteTarget =
             when (field) {
                 is ChordTargetValue -> Chord(field.value.root, chordQuality(field.value.quality))
                 is NotesTargetValue -> Notes(field.value.notes)
             }
 
-        private fun chordQuality(quality: PlayableLibraryStepAnyOfContentOneOf31FieldsStartOneOf.Quality): ChordQuality =
+        private fun chordQuality(quality: PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf.Quality): ChordQuality =
             when (quality) {
-                PlayableLibraryStepAnyOfContentOneOf31FieldsStartOneOf.Quality.AUGMENTED -> ChordQuality.Augmented
-                PlayableLibraryStepAnyOfContentOneOf31FieldsStartOneOf.Quality.DIMINISHED -> ChordQuality.Diminished
-                PlayableLibraryStepAnyOfContentOneOf31FieldsStartOneOf.Quality.DOMINANT7 -> ChordQuality.Dominant7
-                PlayableLibraryStepAnyOfContentOneOf31FieldsStartOneOf.Quality.MAJOR -> ChordQuality.Major
-                PlayableLibraryStepAnyOfContentOneOf31FieldsStartOneOf.Quality.MAJOR7 -> ChordQuality.Major7
-                PlayableLibraryStepAnyOfContentOneOf31FieldsStartOneOf.Quality.MINOR -> ChordQuality.Minor
-                PlayableLibraryStepAnyOfContentOneOf31FieldsStartOneOf.Quality.MINOR7 -> ChordQuality.Minor7
+                PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf.Quality.AUGMENTED -> ChordQuality.Augmented
+                PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf.Quality.DIMINISHED -> ChordQuality.Diminished
+                PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf.Quality.DOMINANT7 -> ChordQuality.Dominant7
+                PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf.Quality.MAJOR -> ChordQuality.Major
+                PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf.Quality.MAJOR7 -> ChordQuality.Major7
+                PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf.Quality.MINOR -> ChordQuality.Minor
+                PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf.Quality.MINOR7 -> ChordQuality.Minor7
             }
     }
 }

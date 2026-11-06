@@ -295,7 +295,7 @@ struct MoleculeBuilderCanvas: View {
   }
 
   private func changed(_ text: String) {
-    AccessibilityNotification.Announcement(text).post()
+    announcePolitely(text)
 
     switch context.check {
     case .numeric:
@@ -347,7 +347,7 @@ struct MoleculeBuilderCanvas: View {
         ?? String(
           localized: "Nothing selected.", table: "ActivitiesCharts",
           comment: "Announced when no atom is selected")
-      AccessibilityNotification.Announcement(text).post()
+      announcePolitely(text)
       return
     }
 

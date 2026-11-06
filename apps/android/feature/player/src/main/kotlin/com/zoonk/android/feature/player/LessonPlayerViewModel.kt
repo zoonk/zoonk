@@ -32,13 +32,13 @@ import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.LessonRun
-import com.zoonk.android.feature.player.engine.LessonSupport
 import com.zoonk.android.feature.player.engine.RunAnswer
 import com.zoonk.android.feature.player.engine.abandonEvent
 import com.zoonk.android.feature.player.engine.gradeOnDevice
 import com.zoonk.android.feature.player.engine.hasExampleLineSlot
 import com.zoonk.android.feature.player.engine.isServerGradedAnswer
 import com.zoonk.android.feature.player.engine.isWaitingForPicture
+import com.zoonk.android.feature.player.engine.playedSteps
 import com.zoonk.android.feature.player.engine.reduce
 import com.zoonk.android.feature.player.engine.revealGuess
 import com.zoonk.android.feature.player.engine.round
@@ -64,6 +64,7 @@ import com.zoonk.api.models.LibraryLessonRun
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -84,7 +85,6 @@ import kotlinx.serialization.json.encodeToJsonElement
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
-import com.zoonk.api.models.LessonSupport as ApiLessonSupport
 
 /** [fit] is where a guest's lesson sits in its course; null outside a public chapter. */
 @Immutable
@@ -471,18 +471,22 @@ class LessonPlayerViewModel(
     }
 
     private fun startRun() {
-        val lesson = lesson ?: return
+        val opened = lesson ?: return
         dispatch(LessonAction.RunStarting)
         starting =
             work.launch {
-                val outcome =
-                    if (sendUnsent()) {
-                        start(runId = null) ?: return@launch
-                    } else {
-                        StartOutcome.Refused(LessonRefusal.Failed)
-                    }
+                // The run keeps the screens it starts with, and the copy shown on opening may predate a plan change or
+                // a rewrite, so a stale one is read again first, as Apple's player does. Offline, the copy plays.
+                val read = store.lesson(lessonId)
+                val reading = async { read.load() }
+                val outcome = if (sendUnsent()) start(runId = null) else StartOutcome.Refused(LessonRefusal.Failed)
+                if (outcome !is StartOutcome.Started) reading.cancel()
+                if (outcome == null) return@launch
                 when (outcome) {
                     is StartOutcome.Started -> {
+                        reading.await()
+                        val lesson = (read.state.value.value as? LessonLoad.Ready)?.lesson ?: opened
+                        this@LessonPlayerViewModel.lesson = lesson
                         val state = playFrom(lesson, outcome.run)
                         if (sessions.current != owner) return@launch
                         replay = outcome.run.replay
@@ -491,7 +495,7 @@ class LessonPlayerViewModel(
                     }
 
                     is StartOutcome.Refused -> {
-                        val current = mutableState.value ?: LessonPlayerState.initial(lesson.id, lesson.steps, now = now())
+                        val current = mutableState.value ?: LessonPlayerState.initial(opened.id, opened.playedSteps, now = now())
                         mutableState.value = reduce(current, LessonAction.RunRefused(outcome.refusal), now())
                     }
                 }
@@ -522,7 +526,7 @@ class LessonPlayerViewModel(
         run: LibraryLessonRun,
     ): LessonPlayerState {
         val started = now()
-        var state = LessonPlayerState.initial(lesson.id, lesson.steps, run.support?.toSupport(), started)
+        var state = LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = started)
         state = reduce(state, run.toStartedAction(), started)
 
         val unplayable = lesson.steps.filterNot(::isPlayable).map(LessonStep::id)
@@ -805,12 +809,6 @@ class LessonPlayerViewModel(
         const val ANSWERS = "answers"
     }
 }
-
-private fun ApiLessonSupport.toSupport() =
-    when (this) {
-        ApiLessonSupport.EXPLANATION_FIRST -> LessonSupport.ExplanationFirst
-        ApiLessonSupport.QUESTION_FIRST -> LessonSupport.QuestionFirst
-    }
 
 private fun LibraryLessonRun.toStartedAction() =
     LessonAction.RunStarted(

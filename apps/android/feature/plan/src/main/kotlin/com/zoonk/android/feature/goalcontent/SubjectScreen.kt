@@ -39,6 +39,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -155,7 +156,7 @@ internal fun SubjectContent(
         }
 
         LoadState.Idle, LoadState.Loading -> {
-            PageScaffold(onBack = back) { PageLoading(it) }
+            PageScaffold(onBack = back) { PageLoading(Modifier.padding(it), MaterialTheme.colorScheme.tertiary) }
         }
     }
 }

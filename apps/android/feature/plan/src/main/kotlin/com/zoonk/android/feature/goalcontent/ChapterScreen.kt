@@ -67,6 +67,7 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ListedLesson
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TestOutRow
@@ -205,7 +206,7 @@ internal fun ChapterContent(
         }
 
         LoadState.Idle, LoadState.Loading -> {
-            PageScaffold(onBack = back) { PageLoading(it) }
+            PageScaffold(onBack = back) { PageLoading(Modifier.padding(it), MaterialTheme.colorScheme.tertiary) }
         }
     }
 }

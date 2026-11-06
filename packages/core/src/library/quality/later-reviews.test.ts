@@ -47,14 +47,15 @@ describe(listLessonsForLaterReview, () => {
 });
 
 describe(prepareLaterReview, () => {
-  it("reads the lesson's current version as stored against its own plan, naming the model that wrote it and its reuse", async () => {
+  it("reads the lesson's current version as stored against its own plan, its map's labels included, naming the model that wrote it and its reuse", async () => {
     const spec = temperatureSpec();
 
-    const lesson = await libraryLessonFixture({
-      contentStatus: "completed",
-      spec,
-      summary: { ideas: [{ text: "A rise moves up the thermometer." }] },
-    });
+    const map = {
+      ideas: [{ label: "A rise", text: "A rise moves up the thermometer." }],
+      shape: "hub",
+    };
+
+    const lesson = await libraryLessonFixture({ contentStatus: "completed", spec, summary: map });
 
     const [, step] = await Promise.all([
       libraryStepFixture({
@@ -73,10 +74,7 @@ describe(prepareLaterReview, () => {
     ]);
 
     await expect(prepareLaterReview(lesson.id)).resolves.toMatchObject({
-      lesson: {
-        screens: [{ content: step.content, kind: step.kind }],
-        summary: ["A rise moves up the thermometer."],
-      },
+      lesson: { screens: [{ content: step.content, kind: step.kind }], summary: map },
       reuse: "library",
       spec: { title: spec.title },
       version: 2,

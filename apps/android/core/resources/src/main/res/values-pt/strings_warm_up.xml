@@ -2,6 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "warm_up_deck_end": "b989806a5d76be659c6c9677bf2fa0fc10c0bacef2ccda00f35fd57e66a720b4",
+  "warm_up_guess_hint": "9b00eee24185a1c0b03058599f33042abbeedc188383c9e6aeb7b58a5556493b",
   "warm_up_lesson_ready": "c26e7f05a632bfda74eca56d4aacbad022ec4f815f69c42e612eaf4e320f8f8a",
   "warm_up_next": "a8158c16fe45199cf6502b2834801d1af33f59c4c99b74bc062cf568949cd823",
   "warm_up_plan_ready": "5000d72fa6e9e56767fc52a505c3fe893885382a899845b27a58be0ba03ef112",
@@ -19,6 +20,8 @@
     <string name="warm_up_next">Próximo palpite</string>
     <!-- Under the last question's answer: there are no more questions to guess. -->
     <string name="warm_up_deck_end">Por enquanto, é só.</string>
+    <!-- Under a warm-up question: a guess never counts -->
+    <string name="warm_up_guess_hint">Errar agora ajuda você a lembrar depois.</string>
     <!-- Title of the plan's wait once the plan is ready and the learner is still guessing. -->
     <string name="warm_up_plan_ready">Seu plano está pronto</string>
     <!-- Under "Your plan is ready" on the daily study time question, which comes before the plan shows. -->

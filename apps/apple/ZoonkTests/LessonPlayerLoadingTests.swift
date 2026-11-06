@@ -33,7 +33,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
     let outline = LessonOutline(id: "lesson", title: "Before", description: "", estimatedMinutes: 5)
     let ready = PlayableLesson(
       id: "lesson", title: "Ready", language: "en", targetLanguage: nil, chapterTitle: nil,
-      steps: [], summaryIdeas: [], tutorSuggestions: [])
+      steps: [], summary: nil, tutorSuggestions: [])
     let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
       reads += 1
       return reads == 1 ? .notGenerated(outline) : .ready(ready)
@@ -85,6 +85,20 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(reads, 2)
     XCTAssertEqual(reopened.state?.steps["check"]?.imagePending, false)
     XCTAssertEqual(reopened.state?.steps["check"]?.image?.url, "https://example.com/a.png")
+  }
+
+  func testIDidntGetItAsksOnlyAboutTheScreenItWasTappedOn() async throws {
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+      .ready(try markedLesson())
+    }
+    let store = player(cache: cache, content: content, transport: OfflineLessonTransport())
+    await store.load()
+
+    store.ask(suggestionId: "simpler", sendsAtOnce: true)
+
+    XCTAssertEqual(store.startingOffer(about: "first")?.sendsAtOnce, true)
+    XCTAssertNil(store.startingOffer(about: "second"), "moving on with Ask open never asks again")
   }
 
   /// Loading the lesson again (a session renewed for the same learner) starts every answer over,
@@ -174,7 +188,25 @@ private func pictureLesson(isDrawn: Bool) throws -> PlayableLesson {
 
   return PlayableLesson(
     id: "lesson", title: "A lesson", language: "en", targetLanguage: nil, chapterTitle: nil,
-    steps: [step], summaryIdeas: [], tutorSuggestions: [])
+    steps: [step], summary: nil, tutorSuggestions: [])
+}
+
+private func markedLesson() throws -> PlayableLesson {
+  let steps = try ["first", "second"].enumerated().map { index, id in
+    try JSONDecoder().decode(
+      LessonStep.self,
+      from: Data(
+        """
+        {"id": "\(id)", "position": \(index), "pictureWaitStartedAt": 0, "kind": "explanation",
+         "content": {"title": null, "text": "Cells make up living things."},
+         "marks": {"ideaIndex": \(index)}}
+        """.utf8))
+  }
+
+  return PlayableLesson(
+    id: "lesson", title: "A lesson", language: "en", targetLanguage: nil, chapterTitle: nil,
+    steps: steps, summary: nil,
+    tutorSuggestions: [.init(id: .simpler, label: "Explain it more simply")])
 }
 
 extension CurrentAccount {
@@ -255,12 +287,13 @@ private struct JSONTransport: ClientTransport {
 }
 
 private let sessionLessonCompletion = #"""
-  {"brainPower": 62, "ceremony": null, "correctCount": 1, "energyDelta": 0.5, "incorrectCount": 0,
+  {"brainPower": 62, "ceremony": null, "certificates": [], "correctCount": 1, "energyDelta": 0.5, "incorrectCount": 0,
    "isFirstCompletion": true, "nextReviewAt": null, "seconds": 120, "totalBrainPower": 400,
    "reached": {"energy": null, "level": {"color": "yellow", "level": 3}},
    "studyBlock": {
      "blockId": "0192f8a4-3c2b-7d1e-8f00-000000000001", "brainPower": 62, "capsulesOpened": 0,
-     "ceremony": null, "checkpoint": null, "comesBackOn": null, "completedMissions": ["somethingNew"],
+     "ceremony": null, "certificates": [], "checkpoint": null, "comesBackOn": null,
+     "completedMissions": ["somethingNew"],
      "correct": 1, "fullMeal": {"bonus": 50, "paid": true}, "milestones": [],
      "missions": [{"kind": "somethingNew", "status": "done", "done": 1, "total": 1}],
      "netScore": null, "nextBlockId": null,

@@ -268,10 +268,10 @@ export function PlanLessonRow({
       {onOpen ? (
         <button
           aria-busy={busy || undefined}
+          aria-disabled={busy || undefined}
           className={cn(ROW_OPEN_CLASS, "flex-1 after:inset-x-0")}
           data-slot="today-row-open"
-          disabled={busy}
-          onClick={onOpen}
+          onClick={busy ? undefined : onOpen}
           type="button"
         >
           {name}

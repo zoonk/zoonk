@@ -10,6 +10,7 @@ import {
 } from "./call-generation-copy";
 import { type KindCopy, type PhaseCopy } from "./generation-copy-types";
 import { type GenerationKind } from "./generation-kinds";
+import { useLessonCopy } from "./lesson-generation-copy";
 
 function useQuestionLines() {
   const t = useExtracted();
@@ -248,35 +249,6 @@ function useMockQuestionsCopy(): KindCopy<"mockQuestions"> {
         label: t("Writing questions like the exam's"),
         lines: [t("Picking what to ask in each subject…")],
         numbered: questionLines({ count: 12 }),
-      },
-    },
-  };
-}
-
-function useLessonCopy(): KindCopy<"lesson"> {
-  const t = useExtracted();
-
-  return {
-    name: t("Writing your lesson"),
-    phases: {
-      plan: {
-        label: t("Planning the lesson"),
-        lines: [
-          t("Choosing what to cover…"),
-          t({
-            description: 'Zoonk at work on a lesson. "It" is the lesson\'s topic.',
-            message: "Picking the best way to explain it…",
-          }),
-        ],
-      },
-      write: {
-        label: t("Writing the lesson"),
-        lines: [],
-        numbered: {
-          count: 6,
-          line: (number) => t("Writing screen {number}…", { number: String(number) }),
-          review: t("Checking the answers…"),
-        },
       },
     },
   };

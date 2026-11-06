@@ -3,6 +3,11 @@
   "git": { "deploymentEnabled": false },
   "buildCommand": "cd ../.. && pnpm turbo run build --filter=api",
   "ignoreCommand": "exit 1",
-  "crons": [{ "path": "/cron/daily-sweeps", "schedule": "0 6 * * *" }],
-  "functions": { "src/app/v1/generations/*/events/route.ts": { "supportsCancellation": true } }
+  "schedules": { "daily-sweeps": { "schedule": "0 6 * * *", "function": "cron/daily-sweeps" } },
+  "functions": {
+    "src/app/cron/daily-sweeps/route.ts": {
+      "experimentalTriggers": [{ "type": "schedule/v1beta" }]
+    },
+    "src/app/v1/generations/*/events/route.ts": { "supportsCancellation": true }
+  }
 }

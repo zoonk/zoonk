@@ -3,7 +3,25 @@
     <string name="player_screen_options">Screen options</string>
     <string name="player_ai_note">Made with AI. It may contain mistakes.</string>
     <string name="player_know_this">I already know this</string>
-    <string name="player_lesson_summary">Lesson summary</string>
+    <!-- Names a small diagram of this lesson's main ideas, drawn by the app: the lesson's last screen, a menu item and a sheet title. Not the chapter's mind map. -->
+    <string name="player_lesson_map">Lesson map</string>
+    <!-- Under a lesson map whose ideas are levels, the smallest first, such as an organism inside a population. -->
+    <string name="player_lesson_map_nested">Each level sits inside the next one.</string>
+    <!-- Above a lesson's teaching screen or question: which of the lesson map's ideas it belongs to, with the idea's name under it. A position, not a count. -->
+    <string name="player_idea_position">Idea %1$s of %2$s</string>
+    <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
+    <string name="player_example">Example</string>
+    <!-- Under the small map of the lesson's ideas on its opening screen, before the learner has studied them. -->
+    <plurals name="player_opening_map_ideas">
+        <item quantity="one">%1$s idea to discover in this lesson</item>
+        <item quantity="other">%1$s ideas to discover in this lesson</item>
+    </plurals>
+    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
+    <string name="player_opening_map_idea">Idea %1$s</string>
+    <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->
+    <string name="player_opening_map_show">See what it covers</string>
+    <!-- A quiet button under a lesson's explanation for a learner who didn't understand it; the buddy then explains it more simply. Casual and short, as the learner would say it (Portuguese: "Não entendi"). -->
+    <string name="player_didnt_get_it">I didn\'t get this</string>
     <string name="player_progress">Lesson progress</string>
     <string name="player_leave_title">Leave for now?</string>
     <string name="player_leave_description">Your answer hasn\'t been checked, so it won\'t be kept.</string>
@@ -73,8 +91,8 @@
     <string name="player_comes_back_weekday">This idea comes back in %1$s\'s review</string>
     <string name="player_comes_back_date">This idea comes back in a review on %1$s</string>
 
-    <string name="player_guess_first">Guess first</string>
-    <string name="player_guess_hint">Getting it wrong now helps you remember later.</string>
+    <!-- Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored. -->
+    <string name="player_guess_chip">Just a guess, it doesn\'t count</string>
     <string name="player_answer_options">Answer options</string>
     <string name="player_worked_example">Worked example</string>
     <string name="player_worked_example_steps">Steps</string>
@@ -98,7 +116,7 @@
     <string name="player_write_your_answer">Write your answer</string>
 
     <string name="player_not_written_title">This lesson isn\'t written yet</string>
-    <string name="player_not_written_description">Zoonk writes it when you start. It takes a minute or two.</string>
+    <string name="player_not_written_description">Zoonk writes it when you start. It takes a few minutes.</string>
     <string name="player_start_this_lesson">Start this lesson</string>
     <string name="player_starting">Starting…</string>
     <string name="player_writing_lesson">Writing your lesson</string>
@@ -107,7 +125,17 @@
     <string name="player_phase_plan_line_2">Picking the best way to explain it…</string>
     <string name="player_phase_write">Writing the lesson</string>
     <string name="player_phase_write_line">Writing screen %1$d…</string>
-    <string name="player_writing_note">It usually takes a minute or two. The lesson opens here as soon as it\'s ready.</string>
+    <!-- A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it. "Ideas" are the lesson map's ideas, as in "Idea 2 of 4". -->
+    <string name="player_phase_mark">Highlighting the key ideas</string>
+    <string name="player_phase_mark_line_1">Underlining what matters most…</string>
+    <!-- Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4". -->
+    <string name="player_phase_mark_line_2">Matching each screen to its idea…</string>
+    <!-- A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it. -->
+    <string name="player_phase_draw">Drawing the pictures</string>
+    <string name="player_phase_draw_line_1">Drawing what each screen describes…</string>
+    <!-- Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4". -->
+    <string name="player_phase_draw_line_2">Drawing an icon for each idea…</string>
+    <string name="player_writing_note">It usually takes a few minutes. The lesson opens here as soon as it\'s ready.</string>
     <string name="player_ready_while_waiting">Ready while you wait</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->
     <string name="player_ready_instead">Ready to do instead</string>

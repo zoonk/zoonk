@@ -40,7 +40,10 @@ type MistakePracticeSummary = ProgressCelebration & {
   total: number;
 };
 
-type PracticeRunTotals = Omit<MistakePracticeSummary, "ceremony" | "missionMoment" | "reached">;
+type PracticeRunTotals = Omit<
+  MistakePracticeSummary,
+  "ceremony" | "certificates" | "missionMoment" | "reached"
+>;
 
 export type FinishMistakePracticeResult =
   | { result: MistakePracticeSummary; status: "ready" }

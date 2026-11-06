@@ -26,7 +26,6 @@ enum ActivityBadge: Sendable {
   case exploreMap
   case fillSquare
   case findError
-  case followQuestions
   case handsOn
   case labelIt
   case linkCauses
@@ -98,10 +97,6 @@ enum ActivityBadge: Sendable {
     case .findError:
       LocalizedStringResource(
         "Find the error", table: "Player",
-        comment: "What the learner does in an activity, named above its prompt")
-    case .followQuestions:
-      LocalizedStringResource(
-        "Follow the questions", table: "Player",
         comment: "What the learner does in an activity, named above its prompt")
     case .handsOn:
       LocalizedStringResource(
@@ -219,7 +214,6 @@ enum ActivityBadge: Sendable {
     case .exploreMap: "mappin.and.ellipse"
     case .fillSquare: "checkmark.square"
     case .findError: "text.magnifyingglass"
-    case .followQuestions: "arrow.triangle.branch"
     case .handsOn: "hand.raised"
     case .labelIt: "tag"
     case .linkCauses: "point.3.connected.trianglepath.dotted"

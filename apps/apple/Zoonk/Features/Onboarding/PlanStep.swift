@@ -315,11 +315,10 @@ private struct RevealNoticeDay: View {
   @ViewBuilder
   private var failure: some View {
     if failed {
-      Text(
-        "That didn't go through. Try again in a moment.", tableName: "Exam",
-        comment: "Changing the date failed"
-      )
-      .foregroundStyle(.destructiveText)
+      FailureLine(
+        message: LocalizedStringResource(
+          "That didn't go through. Try again in a moment.", table: "Exam",
+          comment: "Changing the date failed"))
     }
   }
 
@@ -484,6 +483,7 @@ private struct PlanReveal: View {
   @State private var showsTodayProgress = false
   @State private var isChangingDate = false
   @State private var dateChangeFailed = false
+  @State private var slotAnswer: PlanSlotAnswer?
 
   var body: some View {
     let goal = learnerGoal
@@ -636,7 +636,7 @@ private struct PlanReveal: View {
       AreaWeights(syllabus: syllabus)
     }
 
-    PlanSuggestionSection(context: context)
+    PlanSuggestionSection(context: context, answer: $slotAnswer)
 
     if let structure {
       Section {

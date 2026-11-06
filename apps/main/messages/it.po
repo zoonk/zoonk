@@ -237,6 +237,14 @@ msgid "Completed lessons"
 msgstr "Lezioni completate"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/certificates/page.tsx
+msgctxt "lX2csU"
+msgid "Certificates"
+msgstr "Certificati"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
@@ -244,6 +252,7 @@ msgstr "Esame"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/lib/certificates/certificate-study-view.ts
 msgctxt "ONqlu6"
 msgid "Speaking"
 msgstr "Parlato"
@@ -344,6 +353,12 @@ msgstr "Lingua"
 msgctxt "4tfrGE"
 msgid "Couldn't open your next step. Try again."
 msgstr "Non siamo riusciti ad aprire il passaggio successivo. Riprova."
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+#: src/components/catalog/course-progress.tsx
+msgctxt "JIzivc"
+msgid "We couldn't switch goals. Try again."
+msgstr "Non siamo riusciti a cambiare obiettivo. Riprova."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "60v8Pt"
@@ -574,9 +589,11 @@ msgctxt "rEPdIs"
 msgid "Course outline"
 msgstr "Indice del corso"
 
+#. How many chapters a finished course's plan held.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
+#: src/lib/certificates/certificate-view.ts
 msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, one {# capitolo} other {# capitoli}}"
@@ -855,6 +872,11 @@ msgstr "Il tuo compagno risponde alle tue domande e adatta il tuo piano."
 msgctxt "BV0cQk"
 msgid "Your day"
 msgstr "La tua giornata"
+
+#: src/app/[lang]/(app)/(learn)/certificates/page.tsx
+msgctxt "Ybfjqu"
+msgid "A certificate for every level and plan you finish."
+msgstr "Un certificato per ogni livello e ogni piano che completi."
 
 #: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
 msgctxt "1ZQwwl"
@@ -1215,9 +1237,9 @@ msgstr "I tuoi dati"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "O7G-L3"
-msgid "How Zoonk and your buddy call you"
-msgstr "Come ti chiamano Zoonk e il tuo compagno"
+msgctxt "1aCPlI"
+msgid "How Zoonk and your buddy call you, and the name on your certificates."
+msgstr "Il nome con cui ti chiamano Zoonk e il tuo compagno e che compare sui tuoi certificati."
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
@@ -2410,6 +2432,27 @@ msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "Il tuo account è stato eliminato."
 
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+#: src/app/[lang]/c/[code]/page.tsx
+msgctxt "kgqbTN"
+msgid "We couldn't find this certificate"
+msgstr "Non abbiamo trovato questo certificato"
+
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+msgctxt "pFjRPG"
+msgid "Check the link. A certificate's link ends in its 12-character code, like {example}, and works with or without the dashes."
+msgstr "Controlla il link. Il link di un certificato termina con il suo codice di 12 caratteri, come {example}, e funziona con o senza trattini."
+
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+msgctxt "15PZTm"
+msgid "Go to Zoonk"
+msgstr "Vai su Zoonk"
+
+#: src/app/[lang]/c/[code]/page.tsx
+msgctxt "4566_7"
+msgid "A certificate issued by Zoonk. Anyone with its link can check it."
+msgstr "Un certificato rilasciato da Zoonk. Chiunque abbia il link può verificarlo."
+
 #: src/app/[lang]/challenge/[planItemId]/page.tsx
 #: src/app/[lang]/checkpoint/[blockId]/page.tsx
 msgctxt "9MidH4"
@@ -2497,9 +2540,9 @@ msgid "Your lesson is ready. Start it whenever you like."
 msgstr "La tua lezione è pronta. Iniziala quando vuoi."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "X6rSIT"
-msgid "It usually takes a minute or two. The lesson opens here as soon as it's ready."
-msgstr "Di solito ci vuole un minuto o due. La lezione si apre qui appena è pronta."
+msgctxt "ILYIbj"
+msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
+msgstr "Di solito ci vuole qualche minuto. La lezione si apre qui appena è pronta."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "Dr8j6a"
@@ -2507,9 +2550,9 @@ msgid "This lesson isn't written yet"
 msgstr "Questa lezione è ancora da preparare"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "kCHykv"
-msgid "Zoonk writes it when you start. It takes a minute or two."
-msgstr "Zoonk la prepara quando inizi. Ci vuole un minuto o due."
+msgctxt "BdqTEJ"
+msgid "Zoonk writes it when you start. It takes a few minutes."
+msgstr "Zoonk la prepara quando inizi. Ci vuole qualche minuto."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "RFCwI6"
@@ -2821,10 +2864,11 @@ msgctxt "mElWfu"
 msgid "You are here"
 msgstr "Sei qui"
 
+#. Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored.
 #: src/components/catalog/first-question.tsx
-msgctxt "xpsuUj"
-msgid "Guess first. It doesn't count."
-msgstr "Prima prova a indovinare. Non conta."
+msgctxt "AlhfZ4"
+msgid "Just a guess, it doesn't count"
+msgstr "È solo un’ipotesi, non fa punteggio"
 
 #: src/components/catalog/first-question.tsx
 msgctxt "ShLQAa"
@@ -3002,6 +3046,11 @@ msgstr "Un compagno di studio con l’IA ogni volta che ti blocchi"
 msgctxt "GEER8U"
 msgid "Higher limits for speaking calls"
 msgstr "Limiti più alti per le conversazioni"
+
+#: src/components/pricing/plus-benefits.tsx
+msgctxt "udRZBr"
+msgid "A certificate for every level you finish"
+msgstr "Un certificato per ogni livello che completi"
 
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "joZG7W"
@@ -3443,6 +3492,123 @@ msgstr "Corsi: {category}"
 msgctxt "BBu_dn"
 msgid "Courses in {category}"
 msgstr "Corsi: {category}"
+
+#. After “Topics covered” when the certificate lists only the first six topics.
+#: src/lib/certificates/certificate-fit.ts
+msgctxt "oDI_Rp"
+msgid "and {count} more"
+msgstr "e {count} in più"
+
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "1TOMnj"
+msgid "Listening"
+msgstr "Ascolto"
+
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "MOK_yK"
+msgid "Reading"
+msgstr "Lettura"
+
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "GoReDj"
+msgid "Writing"
+msgstr "Scrittura"
+
+#. A certificate's fact: the day the learner finished the course or level.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "95stPq"
+msgid "Completed"
+msgstr "Data di completamento"
+
+#. A certificate's fact: how many of the plan's lessons the learner studied.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "mrBiB2"
+msgid "Lessons studied"
+msgstr "Lezioni studiate"
+
+#. A certificate's fact: lessons the learner skipped by passing a test, said for outsiders.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "dx3nJs"
+msgid "Passed by test"
+msgstr "Superate con un test"
+
+#. A certificate's fact: about how long the studied lessons take. In Brazilian Portuguese: “Carga horária”.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "KHL8ap"
+msgid "Study time"
+msgstr "Tempo di studio"
+
+#. A certificate's study time, the plan's estimate for the lessons studied, such as “about 41 hr”. Brazilian schools read it as the certificate's workload (carga horária).
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "8QINPM"
+msgid "about {duration}"
+msgstr "circa {duration}"
+
+#. Under a big number on a certificate's social post: how many lessons the learner studied.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "hYLeZv"
+msgid "{count, plural, =0 {lessons studied} one {lesson studied} other {lessons studied}}"
+msgstr "{count, plural, =0 {lezioni studiate} one {lezione studiata} other {lezioni studiate}}"
+
+#. Under a big number of hours on a certificate's social post, such as “~41 h” over “of study”.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "6SwZ60"
+msgid "of study"
+msgstr "di studio"
+
+#. Shown on a certificate where the learner's name goes, until they add one to their profile.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "vlKhIl"
+msgid "Your name"
+msgstr "Il tuo nome"
+
+#. The kind of document, above the learner's name on a certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "zaINXN"
+msgid "Certificate of completion"
+msgstr "Certificato di completamento"
+
+#. Above a certificate's link and QR code, which open the page that proves it's real.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "5FXh-Z"
+msgid "Verify this certificate"
+msgstr "Verifica questo certificato"
+
+#. The fine print on a language level certificate. {level} is the next level's start, such as B2 on a B1 certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "yA8QN_"
+msgid "Awarded when every skill this learner practiced on Zoonk reached {level}, measured from their answers. This is not an official exam result."
+msgstr "Rilasciato quando tutte le abilità esercitate su Zoonk hanno raggiunto il livello {level}, misurato in base alle risposte date. Non è l’esito di un esame ufficiale."
+
+#. How a language level certificate was earned. The level follows the CEFR scale, without claiming official recognition.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "PrhNZj"
+msgid "Level completed · aligned with the CEFR"
+msgstr "Livello completato · in linea con il CEFR"
+
+#. A course level certificate's level, such as “Beginner level”.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "XmHKKJ"
+msgid "{level} level"
+msgstr "Livello {level}"
+
+#. Above the topics a finished course covered, on its certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "fAGVcM"
+msgid "Topics covered"
+msgstr "Argomenti trattati"
+
+#. The fine print on a course level's certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "anftNZ"
+msgid "Awarded for finishing every lesson and challenge of this level on Zoonk."
+msgstr "Rilasciato per aver completato tutte le lezioni e le sfide di questo livello su Zoonk."
+
+#. The fine print on a certificate for a learner's whole study plan in a course, which may cover only part of the course: the topics it lists.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "Sadn8K"
+msgid "Awarded for finishing every lesson and challenge of a study plan on Zoonk."
+msgstr "Rilasciato per aver completato tutte le lezioni e le sfide di un piano su Zoonk."
 
 #: src/lib/public/public-labels.ts
 msgctxt "3Rx6Qo"

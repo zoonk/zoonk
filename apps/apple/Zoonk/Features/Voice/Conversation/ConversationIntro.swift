@@ -81,19 +81,17 @@ struct ConversationIntro<Footer: View>: View {
     }
   }
 
+  private var length: String {
+    Duration.seconds(intro.minutes * 60).formatted(.units(allowed: [.minutes], width: .abbreviated))
+  }
+
   @ViewBuilder
   private var about: some View {
-    let length = Duration.seconds(intro.minutes * 60).formatted(
-      .units(allowed: [.minutes], width: .abbreviated))
-
     Section {
       VStack(alignment: .leading, spacing: 8) {
-        Text(
-          "About \(length)\u{00A0}· Level \(intro.level)", tableName: "Voice",
-          comment: "A call's length and level, over its title"
-        )
-        .typeStyle(.data)
-        .foregroundStyle(.faint)
+        eyebrow
+          .typeStyle(.data)
+          .foregroundStyle(.faint)
 
         Text(intro.speakingTask?.task.name ?? intro.title)
           .typeStyle(.section)
@@ -102,20 +100,27 @@ struct ConversationIntro<Footer: View>: View {
           .foregroundStyle(.mutedForeground)
 
         if !intro.callsCharacter {
-          Text(
-            "It ends on its own after about \(length).", tableName: "Voice",
-            comment: "An exam task's call stops by itself at about its length"
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+          Text(howTheCallRuns)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
       }
       .listRowBackground(Color.clear)
       .listRowSeparator(.hidden)
     }
 
-    Section {
-      CharacterRow(intro: intro, isTalking: false)
+    if let examTask = intro.speakingTask {
+      Section {
+        CharacterRow(intro: intro, isTalking: false)
+      } footer: {
+        SectionFooter {
+          StandInNote(name: intro.character.name, role: examTask.task.role)
+        }
+      }
+    } else {
+      Section {
+        CharacterRow(intro: intro, isTalking: false)
+      }
     }
 
     if let examTask = intro.speakingTask {
@@ -127,10 +132,57 @@ struct ConversationIntro<Footer: View>: View {
     }
   }
 
+  private var eyebrow: Text {
+    if let examTask = intro.speakingTask {
+      Text(speakingTaskMinutes(min: examTask.task.minutes.min, max: examTask.task.minutes.max))
+    } else {
+      Text(
+        "About \(length)\u{00A0}· Level \(intro.level)", tableName: "Voice",
+        comment: "A call's length and level, over its title")
+    }
+  }
+
+  private var howTheCallRuns: String {
+    let ends = String(
+      localized: "It ends on its own after about \(length).", table: "Voice",
+      comment: "An exam task's call stops by itself at about its length")
+
+    guard let examTask = intro.speakingTask else {
+      return ends
+    }
+
+    return [
+      String(
+        localized: "\(intro.character.name) opens the call, and your card stays on screen.",
+        table: "Voice", comment: "An exam task's call: the AI speaks first, the card stays visible"),
+      ends,
+      speakingRatedOn(
+        examTask.criteria.map { speakingCriterionName($0.key, officialName: $0.name) }),
+    ].joinedSentences()
+  }
+
   @ViewBuilder
   private var task: some View {
     if let examTask = intro.speakingTask {
-      ExamTaskCard(task: examTask)
+      Section {
+        ExamTaskCard(card: examTask.card)
+          .typesettingLanguage(.init(identifier: examTask.language))
+      } header: {
+        SectionTitle(
+          Text(
+            "Task \(examTask.number) of \(examTask.taskCount)", tableName: "Voice",
+            comment: "Which task of the exam's speaking paper this is"))
+      } footer: {
+        SectionFooter {
+          MicNote(
+            text: Text(
+              "Speak your answers: typed ones aren't rated on how you sound. The microphone is used only during the call.",
+              tableName: "Voice",
+              comment:
+                "Before an exam task's call: why to speak rather than type, and the microphone"
+            ))
+        }
+      }
     } else {
       Section {
         ForEach(intro.objectives, id: \.label) { objective in
@@ -149,13 +201,10 @@ struct ConversationIntro<Footer: View>: View {
         )
       } footer: {
         SectionFooter {
-          Label {
-            Text(
+          MicNote(
+            text: Text(
               "Turn your sound on. The microphone is on only during the call.", tableName: "Voice",
-              comment: "Before a call: what it needs from the learner's device")
-          } icon: {
-            Image(systemName: "mic")
-          }
+              comment: "Before a call: what it needs from the learner's device"))
         }
       }
     }
@@ -319,9 +368,53 @@ private struct HowTheCallWorks: View {
   }
 }
 
+private struct StandInNote: View {
+  let name: String
+  let role: Components.Schemas.SpeakingTask.RolePayload
+
+  var body: some View {
+    let standIn =
+      switch role {
+      case .examiner:
+        String(
+          localized: "\(name) is an AI standing in for a human examiner.", table: "Voice",
+          comment: "Before an exam task: who the AI plays")
+      case .partner:
+        String(
+          localized: "\(name) is an AI playing the other candidate, in place of a real one.",
+          table: "Voice", comment: "Before an exam task: who the AI plays")
+      }
+
+    Label {
+      Text(
+        [
+          standIn,
+          String(
+            localized: "It's practice: the estimate after it isn't an official score.",
+            table: "Voice", comment: "Before an exam task: its estimate isn't an official score"),
+        ].joinedSentences())
+    } icon: {
+      Image(systemName: "info.circle")
+    }
+  }
+}
+
+private struct MicNote: View {
+  let text: Text
+
+  var body: some View {
+    Label {
+      text
+    } icon: {
+      Image(systemName: "mic")
+    }
+  }
+}
+
 struct CharacterRow: View {
   let intro: CallIntro
   let isTalking: Bool
+  @ScaledMetric(relativeTo: .subheadline) private var markSize = 32.0
 
   var body: some View {
     let character = intro.character
@@ -329,7 +422,7 @@ struct CharacterRow: View {
     HStack(spacing: 12) {
       Text(character.name.prefix(1).uppercased())
         .typeStyle(.note.weight(.medium))
-        .frame(minWidth: 32, minHeight: 32)
+        .frame(width: markSize, height: markSize)
         .background(Color.muted, in: .circle)
         .overlay {
           Circle().strokeBorder(isTalking ? Color.mutedForeground : .clear, lineWidth: 1.5)
@@ -346,7 +439,8 @@ struct CharacterRow: View {
             case .examiner:
               Text("Examiner", tableName: "Voice", comment: "Whom the AI plays in an exam task")
             case .partner:
-              Text("Your partner", tableName: "Voice", comment: "Whom the AI plays in an exam task")
+              Text(
+                "Other candidate", tableName: "Voice", comment: "Whom the AI plays in an exam task")
             }
           } else {
             Text("\(character.role)\u{00A0}· \(character.place)")
@@ -361,70 +455,60 @@ struct CharacterRow: View {
 }
 
 private struct ExamTaskCard: View {
-  let task: Components.Schemas.ExamSpeakingTask
+  let card: Components.Schemas.SpeakingCard
 
   var body: some View {
-    let card = task.card
+    ForEach(card.instructions, id: \.self) { line in
+      Text(line)
+    }
 
-    Section {
-      ForEach(card.instructions, id: \.self) { line in
-        Text(line)
+    if let text = card.text {
+      VStack(alignment: .leading, spacing: 4) {
+        Text(text.title).typeStyle(.body.weight(.semibold))
+        Text(text.body)
       }
+    }
 
-      if let text = card.text {
-        VStack(alignment: .leading, spacing: 4) {
-          Text(text.title).typeStyle(.body.weight(.semibold))
-          Text(text.body)
-        }
-      }
+    if let table = card.table {
+      VStack(alignment: .leading, spacing: 8) {
+        Text(table.title).typeStyle(.body.weight(.semibold))
 
-      if let table = card.table {
-        VStack(alignment: .leading, spacing: 8) {
-          Text(table.title).typeStyle(.body.weight(.semibold))
-
-          Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 4) {
-            GridRow {
-              ForEach(table.columns, id: \.self) { column in
-                Text(column).typeStyle(.body.weight(.semibold))
-              }
+        Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 4) {
+          GridRow {
+            ForEach(table.columns, id: \.self) { column in
+              Text(column).typeStyle(.body.weight(.semibold))
             }
+          }
 
-            ForEach(Array(table.rows.enumerated()), id: \.offset) { _, row in
-              GridRow {
-                ForEach(Array(row.enumerated()), id: \.offset) { _, cell in
-                  Text(cell).typeStyle(.body)
-                }
+          ForEach(Array(table.rows.enumerated()), id: \.offset) { _, row in
+            GridRow {
+              ForEach(Array(row.enumerated()), id: \.offset) { _, cell in
+                Text(cell).typeStyle(.body)
               }
             }
           }
         }
       }
-
-      ForEach(card.prompts, id: \.self) { prompt in
-        Label {
-          Text(prompt)
-        } icon: {
-          Image(systemName: "smallcircle.filled.circle")
-            .imageScale(.small)
-        }
-      }
-
-      ForEach(card.photos, id: \.url) { photo in
-        AsyncImage(url: URL(string: photo.url)) { image in
-          image.resizable().scaledToFit()
-        } placeholder: {
-          Color.muted
-            .aspectRatio(4 / 3, contentMode: .fit)
-        }
-        .clipShape(.rect(cornerRadius: Radius.md, style: .continuous))
-        .accessibilityLabel(photo.alt)
-      }
-    } header: {
-      SectionTitle(
-        Text(
-          "Task \(task.number) of \(task.taskCount)", tableName: "Voice",
-          comment: "Which task of the exam's speaking paper this is"))
     }
-    .typesettingLanguage(.init(identifier: task.language))
+
+    ForEach(card.prompts, id: \.self) { prompt in
+      Label {
+        Text(prompt)
+      } icon: {
+        Image(systemName: "smallcircle.filled.circle")
+          .imageScale(.small)
+      }
+    }
+
+    ForEach(card.photos, id: \.url) { photo in
+      AsyncImage(url: URL(string: photo.url)) { image in
+        image.resizable().scaledToFit()
+      } placeholder: {
+        Color.muted
+          .aspectRatio(4 / 3, contentMode: .fit)
+      }
+      .clipShape(.rect(cornerRadius: Radius.md, style: .continuous))
+      .accessibilityLabel(photo.alt)
+    }
   }
 }

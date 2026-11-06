@@ -45,7 +45,7 @@ final class TutorConversation {
   private(set) var askFailure: TutorFailure?
   private(set) var answerFailures: [String: TutorFailure] = [:]
   private(set) var memoryChanges: [String: [TutorMemoryChange]] = [:]
-  private(set) var memoryUndos: [String: TutorMemoryUndo] = [:]
+  private(set) var memoryUndos: [String: MemoryUndo] = [:]
   private(set) var missionMoment: Components.Schemas.StudyMissionMoment?
   private(set) var isLoadingEarlier = false
   private(set) var earlierFailed = false
@@ -129,6 +129,28 @@ final class TutorConversation {
   /// made of it.
   func prepare(_ draft: TutorDraft) {
     guard preparedOffers.insert(draft.offer).inserted else { return }
+    fill(draft)
+  }
+
+  /// While an earlier question still needs its answer, the suggestion waits in the composer, unless
+  /// the learner typed there while the thread loaded. A learner who left meanwhile isn't asked for.
+  func ask(_ draft: TutorDraft) async {
+    guard preparedOffers.insert(draft.offer).inserted else { return }
+    let typed = self.draft
+    await thread.load()
+
+    if Task.isCancelled {
+      return
+    }
+
+    if canAsk && !hasUnsentQuestion {
+      await send(draft.suggestion)
+    } else if self.draft == typed {
+      fill(draft)
+    }
+  }
+
+  private func fill(_ draft: TutorDraft) {
     self.draft = draft.suggestion.label
     draftSuggestion = draft.suggestion
   }
@@ -212,9 +234,8 @@ final class TutorConversation {
     }
   }
 
-  /// Once per turn: the server answers a second undo of the same changes with a conflict.
   func undoMemory(of turnID: String) async {
-    guard let changes = memoryChanges[turnID], memoryUndos[turnID] == nil else {
+    guard let changes = memoryChanges[turnID], memoryUndos[turnID]?.canUndo ?? true else {
       return
     }
 
@@ -225,9 +246,12 @@ final class TutorConversation {
     }
 
     switch result {
-    case .done: memoryUndos[turnID] = .undone
-    case .failed: memoryUndos[turnID] = .failed
-    case .obsolete: memoryUndos[turnID] = nil
+    case .done(let undone):
+      memoryUndos[turnID] = undone ? .undone : .changedSince
+    case .failed:
+      memoryUndos[turnID] = .failed
+    case .obsolete:
+      memoryUndos[turnID] = nil
     }
   }
 
@@ -285,14 +309,29 @@ final class TutorConversation {
         draft = taken
       }
 
-      await fail(asking: error, session: session)
+      await fail(asking: request, error: error, session: session)
     }
   }
 
-  private func fail(asking error: Error, session: AuthenticatedSession) async {
+  private func fail(
+    asking request: (question: String, suggestion: String?, id: String), error: Error,
+    session: AuthenticatedSession
+  ) async {
     switch error {
     case TutorFailure.conflict:
       unresolved = nil
+
+      // An earlier question goes first, so this one waits in the composer, still going by its
+      // suggestion. It's there before the read, so a question sent during it can't be overwritten.
+      if draft.isEmpty {
+        draft = request.question
+
+        if let suggestion = request.suggestion {
+          draftSuggestion = TutorSuggestion(
+            id: suggestion, label: request.question, lessonSuggestionID: suggestion)
+        }
+      }
+
       await thread.refresh()
     case let failure as TutorFailure:
       unresolved = nil
@@ -467,10 +506,11 @@ final class TutorConversation {
   }
 }
 
-/// A suggestion offered once, to wait in the composer.
+/// A suggestion offered once.
 struct TutorDraft: Hashable, Sendable {
   let suggestion: TutorSuggestion
   let offer: UUID
+  var sendsAtOnce = false
 }
 
 /// A lesson's own suggestion carries its id.

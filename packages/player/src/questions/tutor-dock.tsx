@@ -105,7 +105,9 @@ function DockSuggestions({ buddy }: { buddy: TutorBuddy }) {
   const suggestions = useTutorSuggestions({
     context: buddy.context,
     lessonSuggestions: controller.suggestions,
-  }).slice(0, SUGGESTED);
+  })
+    .filter(({ suggestion }) => !suggestion || suggestion !== buddy.screenSuggestion)
+    .slice(0, SUGGESTED);
 
   return (
     <TutorSuggestions

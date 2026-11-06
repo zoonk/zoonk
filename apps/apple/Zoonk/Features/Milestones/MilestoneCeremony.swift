@@ -255,31 +255,109 @@ struct MilestoneStage: View {
 }
 
 extension View {
-  /// Opens once per milestone wherever it shows, and marks it shown.
-  func milestoneCeremony(_ milestone: Milestone?) -> some View {
-    modifier(MilestoneCeremonyPresenter(milestone: milestone))
+  /// The certificates a result earned, then its milestone, rarest first: each opens once wherever
+  /// it shows, full screen, and is marked shown. A certificate left through See Plus isn't, so it
+  /// plays again after the next task.
+  func completionMoments(certificates: [CertificateFacts] = [], milestone: Milestone? = nil)
+    -> some View
+  {
+    modifier(
+      CompletionMomentsPresenter(
+        earned: CompletionMoments(certificates: certificates, milestone: milestone)))
+  }
+
+  func completionMoments(_ day: DayResult?) -> some View {
+    completionMoments(certificates: day?.certificates ?? [], milestone: day?.ceremony)
+  }
+
+  /// A result as the generated client decodes it.
+  func completionMoments(
+    certificates: [Components.Schemas.OwnedCertificateFacts],
+    ceremony: Components.Schemas.Milestone?
+  ) -> some View {
+    completionMoments(
+      certificates: certificates.isEmpty ? [] : (try? StudyJSON.recode(certificates)) ?? [],
+      milestone: ceremony.map(Milestone.init))
   }
 }
 
-private struct MilestoneCeremonyPresenter: ViewModifier {
+private struct CompletionMoments: Hashable, Identifiable {
+  var certificates: [CertificateFacts]
+  var milestone: Milestone?
+
+  var id: Self { self }
+}
+
+private struct CompletionMomentsPresenter: ViewModifier {
+  @Environment(AppRouter.self) private var router
+  @Environment(CertificatesStore.self) private var certificates
   @Environment(StudySessionStore.self) private var sessions
 
-  let milestone: Milestone?
+  let earned: CompletionMoments
 
-  @State private var shown: Milestone?
+  @State private var shown: CompletionMoments?
+  /// A result plays once on its screen, even when the screen appears again.
+  @State private var played: CompletionMoments?
+  @State private var opensPlus = false
 
   func body(content: Content) -> some View {
     content
-      .onChange(of: milestone, initial: true) { _, milestone in
-        if let milestone, sessions.claimCeremony(milestone) {
-          shown = milestone
+      .onChange(of: earned, initial: true) { _, earned in
+        guard earned != played else {
+          return
+        }
+
+        played = earned
+        let new = CompletionMoments(
+          certificates: certificates.claimMoments(earned.certificates),
+          milestone: earned.milestone.flatMap { sessions.claimCeremony($0) ? $0 : nil })
+
+        if !new.certificates.isEmpty || new.milestone != nil {
+          shown = new
         }
       }
-      .fullScreenCover(item: $shown) { milestone in
-        MilestoneCeremony(milestone: milestone) {
-          shown = nil
-        }
+      // Plus opens once the moment is gone: a screen under a cover can't present.
+      .fullScreenCover(item: $shown, onDismiss: openPlus) { moments in
+        CompletionMomentsView(
+          moments: moments,
+          onSeePlus: {
+            opensPlus = true
+            shown = nil
+          },
+          onClose: { shown = nil }
+        )
         .zoonkStyles()
       }
+  }
+
+  private func openPlus() {
+    guard opensPlus else {
+      return
+    }
+
+    opensPlus = false
+    router.present(.subscription)
+  }
+}
+
+private struct CompletionMomentsView: View {
+  @State private var certificatesClosed = false
+
+  let moments: CompletionMoments
+  let onSeePlus: () -> Void
+  let onClose: () -> Void
+
+  var body: some View {
+    if !moments.certificates.isEmpty, !certificatesClosed {
+      CertificateCeremony(certificates: moments.certificates, onSeePlus: onSeePlus) {
+        if moments.milestone == nil {
+          onClose()
+        } else {
+          certificatesClosed = true
+        }
+      }
+    } else if let milestone = moments.milestone {
+      MilestoneCeremony(milestone: milestone, onClose: onClose)
+    }
   }
 }

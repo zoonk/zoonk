@@ -21,7 +21,8 @@ import { useSessionAction } from "./use-session-action";
 
 const WAITING_CHECK_MS = 5000;
 
-const STUCK_AFTER_MS = { notStarted: 20_000, writing: 300_000 } as const;
+// A lesson opens at most five minutes after its text is written, so writing ends well inside this.
+const STUCK_AFTER_MS = { notStarted: 20_000, writing: 600_000 } as const;
 
 function hasLessonChanged({
   generationId,
@@ -125,7 +126,7 @@ function WritingProgress({
         <GenerationWait kind="lesson" run={held ? toHeldRun(run) : run}>
           {!held && (
             <GenerationTimelineDescription className="text-sm">
-              {t("This lesson is being written for you. It's usually ready in about two minutes.")}
+              {t("This lesson is being written for you. It's usually ready in a few minutes.")}
             </GenerationTimelineDescription>
           )}
         </GenerationWait>

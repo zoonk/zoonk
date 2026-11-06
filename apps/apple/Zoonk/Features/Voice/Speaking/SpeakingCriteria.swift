@@ -50,3 +50,9 @@ func speakingCriterionName(_ key: String, officialName: String?) -> String {
     officialName ?? key
   }
 }
+
+func speakingRatedOn(_ criteria: [String]) -> String {
+  String(
+    localized: "Rated on \(criteria.formatted(.list(type: .and))).", table: "Voice",
+    comment: "The official criteria a speaking task is rated on")
+}

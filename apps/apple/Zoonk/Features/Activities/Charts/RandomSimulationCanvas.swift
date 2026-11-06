@@ -143,17 +143,21 @@ private struct ChanceSimulationView: View {
       if isDone {
         ViewThatFits(in: .horizontal) {
           HStack {
-            doneSummary(share: share)
+            Text(doneSummary(share: share)).typeStyle(.body.monospaced())
             Spacer()
             runAgain
           }
           VStack(alignment: .leading, spacing: 12) {
-            doneSummary(share: share)
+            Text(doneSummary(share: share)).typeStyle(.body.monospaced())
             runAgain
           }
         }
       }
     }
+    // An explored simulation plays its first run as the screen opens.
+    .announcesStatus(
+      isDone && (runIndex > 0 || context.phase != .explore) ? doneSummary(share: share) : nil
+    )
     .task(id: isRunning ? seed : nil) {
       guard isRunning, simulated?.seed != self.seed else {
         return
@@ -180,14 +184,13 @@ private struct ChanceSimulationView: View {
         : Text(verbatim: runsLabel))
   }
 
-  private func doneSummary(share: Double) -> some View {
+  private func doneSummary(share: Double) -> String {
     let exact = percentText(ChanceModel.exactChance(fields.model))
 
-    return Text(
-      "\(fields.hitLabel) in \(percentText(share)) of the runs. The exact chance is \(exact).",
-      tableName: "ActivitiesCharts", comment: "What a simulation found, next to the exact chance"
-    )
-    .typeStyle(.body.monospaced())
+    return String(
+      localized:
+        "\(fields.hitLabel) in \(percentText(share)) of the runs. The exact chance is \(exact).",
+      table: "ActivitiesCharts", comment: "What a simulation found, next to the exact chance")
   }
 
   private var runAgain: some View {
@@ -351,6 +354,9 @@ private struct SamplingSimulationView: View {
   }
 
   private var simulationKey: [Int] { [size, seed(size), seed(smallest)] }
+
+  /// The run the screen opens with, which shows at once; only a new run or size plays, as on main.
+  private var isOpeningRun: Bool { runIndex == 0 && sizeIndex == fields.sampleSizes.count - 1 }
 
   private func valueText(_ value: Double, digits: Int? = nil) -> String {
     isShare
@@ -554,12 +560,11 @@ private struct SamplingSimulationView: View {
       }
     }
     .modifier(
-      // The opening run shows at once; only a new run or size plays, as on main.
       RevealCount(
-        key: run == nil ? -1 : seed(size), total: selected.count,
-        isInstant: runIndex == 0 && sizeIndex == fields.sampleSizes.count - 1,
+        key: run == nil ? -1 : seed(size), total: selected.count, isInstant: isOpeningRun,
         revealed: $revealed)
     )
+    .announcesStatus(isDone && !isOpeningRun ? samplesText : nil)
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
       Text(
@@ -594,12 +599,17 @@ private struct SamplingSimulationView: View {
     .foregroundStyle(isCurrent ? Color(.foreground) : .mutedForeground)
   }
 
+  private var samplesText: String {
+    String(
+      localized:
+        "\(ActivityNumberFormat.format(Double(fields.runs))) samples of \(ActivityNumberFormat.format(Double(size)))",
+      table: "ActivitiesCharts", comment: "A finished sampling run")
+  }
+
   private func progress(shown: Int, isDone: Bool) -> some View {
     Group {
       if isDone {
-        Text(
-          "\(ActivityNumberFormat.format(Double(fields.runs))) samples of \(ActivityNumberFormat.format(Double(size)))",
-          tableName: "ActivitiesCharts", comment: "A finished sampling run")
+        Text(samplesText)
       } else {
         Text(
           "Running \(ActivityNumberFormat.format(Double(shown))) of \(ActivityNumberFormat.format(Double(fields.runs)))…",

@@ -69,11 +69,10 @@ struct SuggestedGoalSection: View {
     } footer: {
       SectionFooter {
         if failed {
-          Text(
-            "We couldn't save your answer. Try again.", tableName: "Today",
-            comment: "Answering the suggested goal failed"
-          )
-          .foregroundStyle(.destructiveText)
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't save your answer. Try again.", table: "Today",
+              comment: "Answering the suggested goal failed"))
         }
       }
     }
@@ -191,11 +190,12 @@ struct TodayExamChoiceSection: View {
   @ViewBuilder
   private var failure: some View {
     if editor?.failed == true {
-      Text(
-        "That didn't save. Try again.", tableName: "Today", comment: "A change couldn't be saved"
+      FailureLine(
+        message: LocalizedStringResource(
+          "That didn't save. Try again.", table: "Today",
+          comment: "A change couldn't be saved")
       )
       .typeStyle(.note)
-      .foregroundStyle(.destructiveText)
     }
   }
 
@@ -203,7 +203,13 @@ struct TodayExamChoiceSection: View {
     let editor = editor ?? PlanEditor(goalId: goalID, store: plans)
     self.editor = editor
 
-    Task { await editor.chooseExamOptions(subjects, in: group) }
+    Task {
+      if await editor.chooseExamOptions(subjects, in: group),
+        case .applied(_, let sentence) = editor.latest
+      {
+        announcePolitely(sentence)
+      }
+    }
   }
 }
 
@@ -259,12 +265,10 @@ struct TodayUploadRequestSection: View {
         } icon: {
           Image(systemName: "doc.text.magnifyingglass")
         }
+        .announcesStatus(answered ? thanks : nil)
 
         if answered {
-          Text(
-            "Thanks. We're reading it now, and your plan will update in a few minutes.",
-            tableName: "Today",
-            comment: "After the learner uploaded the document research asked for")
+          Text(thanks)
         } else {
           MaterialAttachControls(goal: (request.goalId, request.language), draft: $draft) {
             Label {
@@ -289,12 +293,12 @@ struct TodayUploadRequestSection: View {
           .disabled(isDismissing)
 
           if failed {
-            Text(
-              "That didn't save. Try again.", tableName: "Today",
-              comment: "A change couldn't be saved"
+            FailureLine(
+              message: LocalizedStringResource(
+                "That didn't save. Try again.", table: "Today",
+                comment: "A change couldn't be saved")
             )
             .typeStyle(.note)
-            .foregroundStyle(.destructiveText)
           }
         }
       }
@@ -317,6 +321,12 @@ struct TodayUploadRequestSection: View {
 
       isDismissing = false
     }
+  }
+
+  private var thanks: String {
+    String(
+      localized: "Thanks. We're reading it now, and your plan will update in a few minutes.",
+      table: "Today", comment: "After the learner uploaded the document research asked for")
   }
 
   private var isNotice: Bool { request.examDocument == .notice }

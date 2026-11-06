@@ -18,6 +18,7 @@ function lesson(kinds: LessonScreenKind[]): LessonSpec {
       kind,
       skills: kind === "hook" ? [] : [0],
       visual: kind === "hook" ? "A carbon atom with its electron shells labeled." : null,
+      visualKind: kind === "hook" ? "picture" : "none",
     })),
     skills: [
       {
@@ -29,7 +30,6 @@ function lesson(kinds: LessonScreenKind[]): LessonSpec {
         useCase: "Predict how atoms bond.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Valence electrons",
   };
 }
@@ -37,6 +37,8 @@ function lesson(kinds: LessonScreenKind[]): LessonSpec {
 function passingLesson(): LessonSpec {
   return lesson([
     "hook",
+    "explanation",
+    "guess",
     "explanation",
     "check",
     "explanation",
@@ -50,8 +52,11 @@ function failingLesson(): LessonSpec {
   return lesson([
     "hook",
     "explanation",
+    "guess",
+    "explanation",
     "explanation",
     "workedExample",
+    "explanation",
     "explanation",
     "check",
     "activity",
@@ -108,7 +113,7 @@ describe(scoreLessonSpec, () => {
     const result = await score([failingLesson()], expected);
 
     expect(result.score).toBe(6);
-    expect(result.steps[0]?.conclusion).toContain("4 teaching screens in a row");
+    expect(result.steps[0]?.conclusion).toContain("a check comes after at most 4");
     expect(generateText).not.toHaveBeenCalled();
   });
 

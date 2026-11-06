@@ -53,6 +53,8 @@ import com.zoonk.android.feature.session.BlockMark
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.feature.session.MissionOpens
+import com.zoonk.android.feature.session.OPENING_ROW_ALPHA
+import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.challengePhase
@@ -216,7 +218,6 @@ private fun LazyListScope.sessionQueue(
     val upcoming = queue.after.size + coming + model.day.plusLessons.size
     val more = (upcoming - rows).coerceAtLeast(0)
     val shownAfter = if (folds.moreOpen) queue.after else queue.after.take(rows)
-    val pending = (viewModel.pending as? TodayTap.Step)?.position
     val showsComing = coming > 0 && (folds.moreOpen || queue.after.size < rows)
     val plusShown =
         (if (folds.moreOpen) model.day.plusLessons.size else (rows - queue.after.size - coming).coerceAtLeast(0))
@@ -252,7 +253,8 @@ private fun LazyListScope.sessionQueue(
             step = step,
             isNext = isNext,
             opens = replay != null || (!step.isFinished && step.waitReason == null),
-            busy = pending == step.position || (isNext && viewModel.pending == TodayTap.Continue),
+            busy = viewModel.pending == TodayTap.Step(step.position) || (isNext && viewModel.pending == TodayTap.Continue),
+            openFailed = viewModel.failed == TodayTap.Step(step.position),
             onOpen = { if (replay != null) actions.navigate(AppRoute.Lesson(replay.toString())) else actions.open(step) },
             modifier = Modifier.pageRow(),
             onNavigate = actions.navigate,
@@ -402,6 +404,7 @@ private fun StepRow(
     busy: Boolean,
     onOpen: () -> Unit,
     modifier: Modifier,
+    openFailed: Boolean = false,
     onNavigate: (AppRoute) -> Unit = {},
     divider: Boolean = true,
 ) {
@@ -423,13 +426,16 @@ private fun StepRow(
         stateDescription = state,
         leading = { BlockMark(step) },
         supporting =
-            if (finished) {
+            if (finished && !openFailed) {
                 null
             } else {
                 {
                     Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                        StepLines(model, step)
-                        if (isNext && step.canTestOut) step.chapterId?.let { TestOutLink(model, it, onNavigate) }
+                        if (openFailed) StepOpenFailed()
+                        if (!finished) {
+                            StepLines(model, step)
+                            if (isNext && step.canTestOut) step.chapterId?.let { TestOutLink(model, it, onNavigate) }
+                        }
                     }
                 }
             },
@@ -621,7 +627,7 @@ private fun QueueRow(
     Column(modifier) {
         ListRow(
             headline = headline,
-            modifier = Modifier.alpha(if (busy) BUSY_ALPHA else 1f),
+            modifier = Modifier.alpha(if (busy) OPENING_ROW_ALPHA else 1f),
             onClick = onClick,
             enabled = !busy,
             highlighted = isNext,
@@ -885,6 +891,5 @@ private const val PHONE_DONE_ROWS = 2
 private const val OPEN_BACKLOG_LIMIT = 5
 private const val PHONE_UPCOMING_ROWS = 6
 private const val WIDE_UPCOMING_ROWS = 12
-private const val BUSY_ALPHA = 0.6f
 private const val SKIPPED_ALPHA = 0.25f
 private const val AHEAD_ALPHA = 0.5f

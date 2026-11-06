@@ -8,7 +8,7 @@ struct PlayableLesson: Hashable, Sendable {
   let targetLanguage: String?
   let chapterTitle: String?
   let steps: [LessonStep]
-  let summaryIdeas: [String]
+  let summary: LessonSummary?
   let tutorSuggestions: [Components.Schemas.LessonTutorSuggestion]
 }
 
@@ -33,7 +33,6 @@ struct LessonRunStart: Hashable, Sendable {
   let answers: [LessonRunAnswer]
   let hyperdrive: LessonHyperdriveStart
   let optionalStepIds: [String]
-  let support: LessonPlayerState.LessonSupport?
 }
 
 struct LessonFit: Hashable, Sendable {
@@ -104,7 +103,8 @@ struct LessonPlayerAPI: Sendable {
           PlayableLesson(
             id: lesson.id, title: lesson.title, language: lesson.language,
             targetLanguage: lesson.targetLanguage, chapterTitle: lesson.chapter?.title,
-            steps: lesson.steps, summaryIdeas: lesson.summaryIdeas,
+            steps: lesson.steps,
+            summary: lesson.summary?.value1,
             tutorSuggestions: ready.tutorSuggestions))
       case .case2(let outline):
         let lesson = outline.lesson
@@ -155,10 +155,7 @@ struct LessonPlayerAPI: Sendable {
           },
           hyperdrive: LessonHyperdriveStart(
             knownStepIds: Set(run.hyperdrive.knownStepIds), streak: run.hyperdrive.streak),
-          optionalStepIds: run.optionalStepIds ?? [],
-          support: run.support.flatMap {
-            LessonPlayerState.LessonSupport(rawValue: $0.value1.rawValue)
-          }))
+          optionalStepIds: run.optionalStepIds ?? []))
     case .unauthorized:
       throw APIError.unauthorized
     case .notFound:
@@ -284,9 +281,12 @@ struct LessonPlayerAPI: Sendable {
   /// Waits while a run writes the lesson (`run` when the learner's tap just started it, since the
   /// lesson names its run only once the run claims it) and returns how it stands once none does:
   /// `failed` when a run ended without writing it, as main's waits give up on a stalled lesson.
-  func followWriting(id: String, run: String?, token: String) async throws
-    -> Components.Schemas.LessonReadiness
-  {
+  func followWriting(
+    id: String, run: String?, token: String,
+    progress: @escaping @MainActor @Sendable (_ run: String, _ event: GenerationEvent) -> Void = {
+      _, _ in
+    }
+  ) async throws -> Components.Schemas.LessonReadiness {
     var followed: String
 
     if let run {
@@ -303,9 +303,12 @@ struct LessonPlayerAPI: Sendable {
 
     while true {
       do {
-        for try await event in clients.generationEvents(id: followed, token: token)
-        where event.step == "lessonReady" {
-          break
+        for try await event in clients.generationEvents(id: followed, token: token) {
+          await progress(followed, event)
+
+          if event.step == "lessonReady" {
+            break
+          }
         }
       } catch {}
 

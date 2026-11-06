@@ -26,6 +26,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.zoonk.android.R
+import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.tutor.CONFLICT
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.api.models.MemoryChangeReference
 import java.util.UUID
@@ -40,8 +42,26 @@ data class MemoryChangeShown(
     val reference: MemoryChangeReference get() = MemoryChangeReference(factId, previousFactId)
 }
 
-/** Where an Undo of a memory change stands; [Failed] means memory changed since. */
-enum class MemoryUndo { Offered, Undoing, Undone, Failed }
+/** Where an Undo of a memory change stands: [Changed] means memory changed since; after [Failed] it can be tried again. */
+enum class MemoryUndo {
+    Offered,
+    Undoing,
+    Undone,
+    Changed,
+    Failed,
+    ;
+
+    /** Whether a tap on Undo starts one. */
+    val canUndo: Boolean get() = this == Offered || this == Failed
+}
+
+/** What an Undo's answer leaves: only the API's conflict means it can't be undone anymore. */
+internal fun MutationResult<Unit>.memoryUndo(): MemoryUndo =
+    when (this) {
+        is MutationResult.Done -> MemoryUndo.Undone
+        is MutationResult.Failed -> if (status == CONFLICT) MemoryUndo.Changed else MemoryUndo.Failed
+        MutationResult.Obsolete -> MemoryUndo.Offered
+    }
 
 /**
  * Main's "Memory updated" line with Undo, wherever Zoonk learns or forgets something (the memory
@@ -75,10 +95,16 @@ fun MemoryUpdated(
                             append(stringResource(R.string.memory_change_undone))
                         }
 
-                        MemoryUndo.Failed -> {
+                        MemoryUndo.Changed -> {
                             withStyle(
                                 SpanStyle(color = MaterialTheme.colorScheme.error),
                             ) { append(stringResource(R.string.memory_undo_failed)) }
+                        }
+
+                        MemoryUndo.Failed -> {
+                            withStyle(
+                                SpanStyle(color = MaterialTheme.colorScheme.error),
+                            ) { append(stringResource(R.string.memory_undo_retry)) }
                         }
 
                         MemoryUndo.Offered, MemoryUndo.Undoing -> {
@@ -104,8 +130,8 @@ fun MemoryUpdated(
                 ),
         )
 
-        if (undo == MemoryUndo.Offered || undo == MemoryUndo.Undoing) {
-            TextButton(onClick = onUndo, enabled = undo == MemoryUndo.Offered, modifier = Modifier.alignByBaseline()) {
+        if (undo.canUndo || undo == MemoryUndo.Undoing) {
+            TextButton(onClick = onUndo, enabled = undo.canUndo, modifier = Modifier.alignByBaseline()) {
                 Text(stringResource(R.string.memory_undo))
             }
         }

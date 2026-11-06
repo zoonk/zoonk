@@ -99,12 +99,13 @@ internal class LessonPlayerHarness(
         val drafts = DraftStore(newFolder(), scope, io = Dispatchers.Main.immediate)
         runBlocking { drafts.follow { DraftsChange(ana.accountId) } }
         saved = SavedStateHandle()
+        val store = LessonPlayerStore(api, cache)
         val newViewModel = {
             LessonPlayerViewModel(
                 lessonId = LESSON_ID,
                 studySessionId = null,
                 firstAnswer = null,
-                store = LessonPlayerStore(api, cache),
+                store = store,
                 cache = cache,
                 sessions = session,
                 choices = TodayChoices(drafts),

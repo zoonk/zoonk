@@ -26,7 +26,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -48,11 +47,12 @@ import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.withWords
 import com.zoonk.android.ui.scaffold.TaskAside
@@ -68,7 +68,11 @@ import com.zoonk.api.models.LanguageConversationIntroObjectivesInner
 import com.zoonk.api.models.SpeakingMockExam
 
 internal val CALL_COLUMN = 640.dp
-private val AVATAR_MIN = 40.dp
+private val CALL_ITEM_MARGIN = 16.dp
+
+/** The task's bar keeps its own 16dp sides, so its actions line up with the items' text. */
+private val CALL_BAR_WIDTH = CALL_COLUMN - CALL_ITEM_MARGIN * 2
+private val MARK_MIN = 40.dp
 
 /**
  * A call's task frame: its [content] in one column, and [aside] beside it where there's room (main's
@@ -90,9 +94,10 @@ internal fun CallFrame(
     bottomBar: (@Composable () -> Unit)? = null,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
     barUnderAside: Boolean = false,
+    lonePage: Boolean = false,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
-    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val wide = isWideLayout()
     val bar: (@Composable () -> Unit)? =
         bottomBar?.let { bar ->
             {
@@ -100,13 +105,12 @@ internal fun CallFrame(
                     Box(
                         Modifier.fillMaxWidth(),
                         Alignment.Center,
-                    ) { Box(Modifier.widthIn(max = CALL_COLUMN), Alignment.CenterEnd) { bar() } }
+                    ) { Box(Modifier.widthIn(max = CALL_BAR_WIDTH).fillMaxWidth(), Alignment.CenterEnd) { bar() } }
                 }
             }
         }
 
     BoxWithConstraints {
-        // Both read the window on every frame: a reading that starts once a fold shows sees no fold at first.
         val fold = pageFold(maxWidth)
         val asideBeside = supportingPaneBeside(maxWidth, panesTouch = true)
         val barAfterFold = barUnderAside && aside != null && fold != null && asideBeside
@@ -118,6 +122,7 @@ internal fun CallFrame(
             exitConfirmation = exitConfirmation,
             bottomBar = bar.takeUnless { barAfterFold },
             aside = aside?.let { TaskAside(footer = bar.takeIf { barAfterFold }, content = it) },
+            lonePage = lonePage,
         ) { padding ->
             val beside = taskAsideBeside()
             Column(Modifier.fillMaxSize().padding(padding), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -142,15 +147,15 @@ internal fun CallTitle(text: String) {
     Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
 }
 
-/** Whether the bar is on a wide window, where its main action keeps its own width. */
+/** Whether the bar is as wide as main's `lg` for a task, off a book's page, where its main action keeps its own width. */
 internal val LocalWideBar = staticCompositionLocalOf { false }
 
-/** A bar's main action: the bar's width on a phone, its own at the bar's end on wide windows. */
+/** A bar's main action: the bar's width on a phone and on a book's page, its own at the bar's end on wide windows. */
 @Composable
 internal fun Modifier.barAction(): Modifier = if (LocalWideBar.current) this else fillMaxWidth()
 
 /** One item of a call's column, at its reading width. */
-internal fun Modifier.callItem(): Modifier = widthIn(max = CALL_COLUMN).fillMaxWidth().padding(horizontal = 16.dp)
+internal fun Modifier.callItem(): Modifier = widthIn(max = CALL_COLUMN).fillMaxWidth().padding(horizontal = CALL_ITEM_MARGIN)
 
 @Composable
 internal fun conversationTitle(conversation: LanguageConversation): String =
@@ -219,20 +224,22 @@ internal fun CharacterAvatar(
         border = BorderStroke(2.dp, if (talking) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.secondaryContainer),
         modifier = Modifier.clearAndSetSemantics {},
     ) {
-        // A circle at any text size: the initial's line plus room around it, never under 40dp.
-        val side =
-            with(LocalDensity.current) {
-                maxOf(
-                    AVATAR_MIN,
-                    MaterialTheme.typography.titleSmall.lineHeight
-                        .toDp() + 16.dp,
-                )
-            }
-        Box(Modifier.size(side), contentAlignment = Alignment.Center) {
+        Box(Modifier.size(markSide()), contentAlignment = Alignment.Center) {
             Text(name.trim().take(1).uppercase(), style = MaterialTheme.typography.titleSmall, textAlign = TextAlign.Center)
         }
     }
 }
+
+/** The side of every round mark on a call, so the avatar and the turn row's discs stay one size at any text size. */
+@Composable
+internal fun markSide(): Dp =
+    with(LocalDensity.current) {
+        maxOf(
+            MARK_MIN,
+            MaterialTheme.typography.titleSmall.lineHeight
+                .toDp() + 16.dp,
+        )
+    }
 
 /** A call's goals, met or not, in the call's language; [describe] says how, on the intro. */
 @Composable

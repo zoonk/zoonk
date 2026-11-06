@@ -81,6 +81,7 @@ export function EarlierTurns({ page = false }: { page?: boolean }) {
       )}
       <Button
         disabled={state.isLoadingEarlier}
+        focusableWhenDisabled
         onClick={() => void loadEarlier()}
         size="sm"
         type="button"

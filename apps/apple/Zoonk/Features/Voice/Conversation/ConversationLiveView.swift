@@ -41,10 +41,12 @@ struct ConversationLiveView: View {
       callColumn(besideAside: false)
     }
     .safeAreaBar(edge: .top) {
-      // A vertical bar (iPhone Duo) has no room for the clock, so it tops the call.
+      // A vertical bar (iPhone Duo) has no room for the clock, so it tops the call, on its page.
       if isToolbarVertical {
         CallHeader(call: call)
           .scenePadding(.horizontal)
+          .frame(maxWidth: .infinity)
+          .keepsBeforeHinge()
       }
     }
     .toolbar {
@@ -418,6 +420,7 @@ private struct CallEndedStatus: View {
           announcePolitely([title, detail].compactMap(\.self).joinedSentences())
         }
       }
+      .announcesAlert(state == .closing || state == .failed ? title : nil)
 
       if state == .closing || state == .failed {
         Button(action: onRetry) {
@@ -428,6 +431,7 @@ private struct CallEndedStatus: View {
         .controlSize(.large)
       }
     }
+    .announcesStatus(isSlow ? detail : nil)
     .task(id: state) {
       isSlow = false
 

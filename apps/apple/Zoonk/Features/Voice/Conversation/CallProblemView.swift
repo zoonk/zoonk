@@ -33,6 +33,7 @@ struct CallProblemView: View {
     } actions: {
       actions
     }
+    .lonePage()
   }
 
   private var symbol: String {
@@ -124,6 +125,7 @@ struct DroppedCallView: View {
     } actions: {
       actions
     }
+    .lonePage()
   }
 
   @ViewBuilder

@@ -173,6 +173,7 @@ private struct PronunciationRoundView: View {
 
           return grade.isCorrect ? .success : .error
         }
+        .announcesStatus(announcement(state))
       }
     }
   }
@@ -202,19 +203,47 @@ private struct PronunciationRoundView: View {
       GradeNote(grade: grade)
     case .ready(let notice):
       if recorder.isDenied {
-        MicrophoneOffView(
-          description: Text(
-            "Turn on the microphone for Zoonk in Settings to say the word. You can skip it for now.",
-            tableName: "Voice", comment: "How to say a word when the microphone is off")
-        ) {}
+        MicrophoneOffView(description: Text(microphoneOff)) {}
       } else if case .limit(let limit) = notice {
         HelpLimitNotice(limit: limit)
+      } else if notice == .failed, round?.isPending != true, !recorder.isRecording {
+        FailureLine(message: statusLine(notice))
+          .typeStyle(.note)
       } else {
         Text(statusLine(notice))
           .typeStyle(.note)
-          .foregroundStyle(
-            notice == .failed ? AnyShapeStyle(.destructiveText) : AnyShapeStyle(.mutedForeground))
+          .foregroundStyle(.mutedForeground)
       }
+    }
+  }
+
+  private var microphoneOff: String {
+    String(
+      localized:
+        "Turn on the microphone for Zoonk in Settings to say the word. You can skip it for now.",
+      table: "Voice", comment: "How to say a word when the microphone is off")
+  }
+
+  /// Silent while recording, so VoiceOver isn't in the take, and for the prompt a word opens with.
+  private func announcement(_ state: PronunciationRound.WordState) -> String? {
+    switch state {
+    case .graded(let grade):
+      return [grade.verdict, grade.comesBack].joinedSentences()
+    case .ready(let notice):
+      if recorder.isDenied {
+        return microphoneOff
+      }
+
+      if recorder.isRecording {
+        return nil
+      }
+
+      if case .limit(let limit) = notice {
+        return limit.message
+      }
+
+      // A failure is a `FailureLine`, which reads itself out.
+      return round?.isPending == true || notice == .noSpeech ? statusLine(notice) : nil
     }
   }
 
@@ -310,11 +339,12 @@ private struct PronunciationRoundView: View {
 
   private func finishError(_ round: PronunciationRound) -> some View {
     HStack {
-      Text(
-        "We couldn't save your answers.", tableName: "Voice", comment: "Finishing the round failed"
+      FailureLine(
+        message: LocalizedStringResource(
+          "We couldn't save your answers.", table: "Voice",
+          comment: "Finishing the round failed")
       )
       .typeStyle(.body)
-      .foregroundStyle(.destructiveText)
 
       Spacer()
 
@@ -364,35 +394,44 @@ private struct GradeNote: View {
     VStack(alignment: .leading, spacing: 4) {
       if grade.isCorrect {
         Label {
-          Text("That sounded right", tableName: "Voice", comment: "A word said right")
+          Text(grade.verdict)
         } icon: {
           Image(systemName: "checkmark.circle.fill")
         }
         .typeStyle(.body.weight(.semibold))
         .foregroundStyle(.successText)
       } else {
-        Text(
-          "We heard “\(grade.transcript)”", tableName: "Voice",
-          comment: "What the grader heard when a word didn't sound right"
-        )
-        .typeStyle(.body.weight(.semibold))
+        Text(grade.verdict)
+          .typeStyle(.body.weight(.semibold))
       }
 
-      Group {
-        if let next = grade.nextReviewAt {
-          Text(
-            "It comes back \(next.formatted(.dateTime.day().month(.wide))).", tableName: "Voice",
-            comment: "When the word comes back to say again")
-        } else {
-          Text(
-            "You've got this one. It won't come back.", tableName: "Voice",
-            comment: "A word that's learned")
-        }
-      }
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
+      Text(grade.comesBack)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
+  }
+}
+
+extension PronunciationRound.Grade {
+  fileprivate var verdict: String {
+    isCorrect
+      ? String(localized: "That sounded right", table: "Voice", comment: "A word said right")
+      : String(
+        localized: "We heard “\(transcript)”", table: "Voice",
+        comment: "What the grader heard when a word didn't sound right")
+  }
+
+  fileprivate var comesBack: String {
+    guard let nextReviewAt else {
+      return String(
+        localized: "You've got this one. It won't come back.", table: "Voice",
+        comment: "A word that's learned")
+    }
+
+    return String(
+      localized: "It comes back \(nextReviewAt.formatted(.dateTime.day().month(.wide))).",
+      table: "Voice", comment: "When the word comes back to say again")
   }
 }
 
@@ -416,18 +455,17 @@ private struct PronunciationResultView: View {
           Image(systemName: "checkmark.circle")
         }
       }
-      .safeAreaBar(edge: .bottom) { doneButton.keepsOffFold() }
+      .safeAreaBar(edge: .bottom) { doneButton }
       .lonePage()
     } else {
       PaneSplit {
         ZoonkList {
           summary
-        }
-      } secondary: {
-        ZoonkList {
           dayMoment
         }
-        .safeAreaBar(edge: .bottom) { doneButton }
+      } secondary: {
+        Color.clear
+          .safeAreaBar(edge: .bottom) { doneButton }
       } single: {
         ZoonkList {
           summary
@@ -435,7 +473,7 @@ private struct PronunciationResultView: View {
         }
         .safeAreaBar(edge: .bottom) { doneButton.keepsOffFold() }
       }
-      .milestoneCeremony(day?.ceremony)
+      .completionMoments(day)
     }
   }
 

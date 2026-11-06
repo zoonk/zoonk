@@ -4,7 +4,6 @@
   "activities_badge_before_after": "629c42d265d97c8b409b1432b2264c920bc2d5572a338dd9ab1b189ec93470ea",
   "activities_badge_estimate_first": "d367a6ca10c38e0dd738458e771c06b2cabbc5e4ad9e9349e4e81c3b793fe75d",
   "activities_badge_find_error": "54a2fd12c08e4340657679e171fb74fd6a88a4e92b9f21c1f65ca16ddafe3a57",
-  "activities_badge_follow_questions": "1638310c3cb22beb3ed06602e81f13de235f14bb180170fb6cda1c95162a8952",
   "activities_badge_read_chart": "963ec87b3b9330ee1e832bc48d4b4b80a121480c3e2dffac03661f4963f186a3",
   "activities_badge_reply": "22b41ad534300f513e365e73eb5e8518ae605e30183544906d6d1dcfaeca4420",
   "activities_badge_spot_pattern": "b6dd8caccecc92b6502f1cfa131a7248c7a3eb51465ceaf298db12ebb324d5aa",
@@ -58,23 +57,13 @@
   "activities_sortable_move_up": "c81521667f74eda60a2e3c27ab9aff1cc485ce01527590f22fe9131d77cc22e1",
   "activities_sortable_over": "a3b42587667f17c7b307a64bfc9958412cca31f2339ca29494c39ae9597d6bd8",
   "activities_sortable_picked_up": "d214cae23ce4baef2a295c4cd13e8d4acf35a59ec074e5b8718901cc2bfd0324",
-  "activities_sortable_stopped": "e8e87143c64b20de3e09b58327746b51f660b5cee4cdfb7703b59e8afbe516f5",
-  "activities_tree_case": "80846ed11b6768d4feaf9fdf85a5170ce73ff0a834e2cdbfef894296e5efa56a",
-  "activities_tree_it_leads_to": "8de288de8262cdf919993acf9de073d552957ce842a2210d602b648706c9feed",
-  "activities_tree_leads_to": "047dafc1158f0f99d4be399d59acff363dd933cefc1fb7436ff940a9e544cbf8",
-  "activities_tree_still_possible": "563ddca1701b1d4092d43c8c11a32a3469d57fc5f1ed9e27f407d65d9ac998d9",
-  "activities_tree_undo": "346a8dacd56e95c9af4d2b164cb34fc04b58e3b8b2cdc4f5fd5205e3e74de9ed",
-  "activities_tree_walk": "b5a4d3ecd2e21b6221c58f4f63e7d2cdd845fc38d47ad8b25f6a7d465c492525",
-  "activities_tree_you_chose": "3bc91fb633718fe3368b47e7be64c3a5513d18154f11d95d4fa290396f6c1ee7",
-  "activities_tree_your_answers": "b5d361c97bb40b60e6ae1c45a557f0f44a23900ae67a35090515416e038ac23b"
+  "activities_sortable_stopped": "e8e87143c64b20de3e09b58327746b51f660b5cee4cdfb7703b59e8afbe516f5"
 }
 -->
 <resources>
     <string name="activities_badge_estimate_first">Önce tahmin et</string>
     <string name="activities_badge_read_chart">Grafiği oku</string>
     <string name="activities_badge_before_after">Öncesi ve sonrası</string>
-    <!-- A key here is an identification key: questions that branch until they name something, like a key to trees. -->
-    <string name="activities_badge_follow_questions">Soruları takip et</string>
     <string name="activities_badge_find_error">Hatayı bul</string>
     <string name="activities_badge_step_by_step">Adım adım</string>
     <string name="activities_badge_spot_pattern">Örüntüyü bul</string>
@@ -112,18 +101,6 @@
     <string name="activities_chart_spans">Ölçülecek aralıklar</string>
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s / %2$s</string>
-    <!-- The panel with the case the learner follows through the questions. -->
-    <string name="activities_tree_case">İncelenen örnek</string>
-    <!-- The outcomes the learner's answers can still reach from here. -->
-    <string name="activities_tree_still_possible">Hâlâ mümkün olanlar</string>
-    <string name="activities_tree_your_answers">Cevapların</string>
-    <string name="activities_tree_leads_to">Cevaplarına göre sonuç</string>
-    <string name="activities_tree_undo">Geri al</string>
-    <string name="activities_tree_walk">Bu durum için izlenen yol</string>
-    <!-- The branch the learner took where the key went another way, like "You chose Single". -->
-    <string name="activities_tree_you_chose">Seçimin: %1$s</string>
-    <!-- The outcome the right walk reaches, like "It leads to Pine." -->
-    <string name="activities_tree_it_leads_to">Bu yolun sonucu: %1$s.</string>
     <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->
     <string name="activities_find_error_ai_asked">Biri bir yapay zekâ asistanına sordu</string>
     <string name="activities_find_error_problem">Soru</string>

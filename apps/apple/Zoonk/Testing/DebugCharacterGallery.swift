@@ -1,8 +1,10 @@
 #if DEBUG
   import SwiftUI
 
-  /// `ZOONK_DEBUG_CHARACTERS=ceremony` opens a milestone's ceremony instead, and `=moments` a
-  /// result's missions; also a launch argument (`-ZOONK_DEBUG_CHARACTERS moments`).
+  /// `ZOONK_DEBUG_CHARACTERS=ceremony` opens a milestone's ceremony instead, `=moments` a
+  /// result's missions, and `=certificates` the award moment of the certificates the local API
+  /// serves for the codes in `ZOONK_DEBUG_CERTIFICATES`, oldest first and comma-separated; also a
+  /// launch argument (`-ZOONK_DEBUG_CHARACTERS moments`).
   struct DebugCharacterGallery: ViewModifier {
     private let mode =
       ProcessInfo.processInfo.environment["ZOONK_DEBUG_CHARACTERS"]
@@ -16,6 +18,8 @@
               CeremonyPreview()
             } else if mode == "moments" {
               MomentsPreview()
+            } else if mode == "certificates" {
+              CertificatesPreview()
             } else {
               Gallery()
             }
@@ -188,6 +192,34 @@
       .id(index)
     }
   }
+  /// All of them at once, then each alone. See Plus moves on too.
+  private struct CertificatesPreview: View {
+    @Environment(CertificatesStore.self) private var store
+    @State private var index = 0
+
+    private let codes = (ProcessInfo.processInfo.environment["ZOONK_DEBUG_CERTIFICATES"] ?? "")
+      .split(separator: ",").map(String.init)
+
+    var body: some View {
+      let facts = codes.compactMap { store.certificate(code: $0)?.facts }
+      let shown = [facts] + (facts.count > 1 ? facts.map { [$0] } : [])
+
+      Group {
+        if facts.count == codes.count, !facts.isEmpty {
+          CertificateCeremony(
+            certificates: shown[index % shown.count], onSeePlus: { index += 1 }
+          ) {
+            index += 1
+          }
+          .id(index)
+        } else {
+          ProgressView()
+        }
+      }
+      .loads(store.list)
+    }
+  }
+
   private struct MomentsPreview: View {
     private enum Variant: String, CaseIterable {
       case oneDone = "One mission done"
@@ -215,14 +247,14 @@
       let json =
         switch variant {
         case .oneDone, .allDone:
-          #"{"ceremony": null, "reached": null, "missionMoment": \#(moment)}"#
+          #"{"ceremony": null, "certificates": [], "reached": null, "missionMoment": \#(moment)}"#
         case .reached:
           """
-          {"ceremony": null, "missionMoment": null,
+          {"ceremony": null, "certificates": [], "missionMoment": null,
            "reached": {"energy": 80, "level": {"color": "yellow", "level": 3}}}
           """
         case .maxEnergy:
-          #"{"ceremony": null, "missionMoment": null, "reached": {"energy": 100, "level": null}}"#
+          #"{"ceremony": null, "certificates": [], "missionMoment": null, "reached": {"energy": 100, "level": null}}"#
         }
       return try? JSONDecoder().decode(DayResult.self, from: Data(json.utf8))
     }

@@ -14,8 +14,20 @@ function skill(name: string, hard = false): LessonSpecSkill {
   return { description: `${name}.`, example: "e", hard, name, topic: name, useCase: "u" };
 }
 
-function screen(kind: LessonScreenKind, skills: number[] = [0], extra: Partial<LessonScreen> = {}) {
-  return { activityTemplate: null, brief: kind, kind, skills, visual: null, ...extra };
+function screen(
+  kind: LessonScreenKind,
+  skills: number[] = [0],
+  extra: Partial<LessonScreen> = {},
+): LessonScreen {
+  return {
+    activityTemplate: null,
+    brief: kind,
+    kind,
+    skills,
+    visual: null,
+    visualKind: "none",
+    ...extra,
+  };
 }
 
 function spec(screens: LessonScreen[], skills = [skill("Calculate a percent change")]): LessonSpec {
@@ -25,7 +37,6 @@ function spec(screens: LessonScreen[], skills = [skill("Calculate a percent chan
     estimatedMinutes: estimateLessonMinutes(screens.map((item) => item.kind)),
     screens,
     skills,
-    supportMode: "explanationFirst",
     title: "Percent change",
   };
 }
@@ -33,6 +44,7 @@ function spec(screens: LessonScreen[], skills = [skill("Calculate a percent chan
 const validScreens = [
   screen("hook", []),
   screen("explanation"),
+  screen("guess"),
   screen("explanation"),
   screen("check"),
   screen("explanation"),
@@ -40,8 +52,8 @@ const validScreens = [
   screen("application"),
 ];
 
-function getCodes(lesson: LessonSpec, level: CourseLevel = "beginner") {
-  return getLessonSpecIssues({ level, spec: lesson }).map((issue) => issue.code);
+function getCodes(lesson: LessonSpec, level: CourseLevel = "beginner", novice = false) {
+  return getLessonSpecIssues({ level, novice, spec: lesson }).map((issue) => issue.code);
 }
 
 describe(estimateLessonMinutes, () => {
@@ -61,7 +73,7 @@ describe(estimateLessonMinutes, () => {
         "check",
         "application",
       ]),
-    ).toBe(4);
+    ).toBe(3);
   });
 });
 
@@ -77,7 +89,9 @@ describe(getLessonSpecIssues, () => {
       screen("hook", []),
       ...skills.flatMap((_, index) => [
         screen("explanation", [index]),
+        ...(index === 0 ? [screen("guess", [index])] : []),
         screen("workedExample", [index]),
+        screen("check", [index]),
         screen("check", [index]),
       ]),
       screen("application", [0, 1, 2, 3]),
@@ -90,13 +104,13 @@ describe(getLessonSpecIssues, () => {
     const screens = [
       screen("hook", []),
       screen("explanation"),
+      screen("guess"),
       screen("workedExample"),
       screen("check"),
       screen("workedExample"),
       screen("workedExample"),
       screen("check"),
       screen("workedExample"),
-      screen("explanation"),
       screen("check"),
       screen("application"),
     ];
@@ -116,12 +130,14 @@ describe(getLessonSpecIssues, () => {
     expect(getCodes(applicationInMiddle)).toContain("application");
   });
 
-  it("flags more than three teaching screens without a check", () => {
+  it("flags more than four teaching screens without a check", () => {
     const screens = [
       screen("hook", []),
       screen("explanation"),
+      screen("guess"),
       screen("explanation"),
       screen("workedExample"),
+      screen("explanation"),
       screen("explanation"),
       screen("check"),
       screen("application"),
@@ -130,18 +146,87 @@ describe(getLessonSpecIssues, () => {
     expect(getCodes(spec(screens))).toStrictEqual(["checkGap"]);
   });
 
-  it("checks the support mode against the screen after the hook", () => {
-    const questionFirst = [
+  it("teaches before the first check at every level, and twice for a new learner", () => {
+    const early = spec([
+      screen("hook", []),
+      screen("explanation"),
+      screen("guess"),
+      screen("explanation"),
+      screen("check"),
+      screen("application"),
+    ]);
+
+    const questionFirst = spec([
       screen("hook", []),
       screen("check"),
+      screen("explanation"),
+      screen("guess"),
+      screen("explanation"),
+      screen("check"),
+      screen("application"),
+    ]);
+
+    const oneScreenFirst = spec([
+      screen("hook", []),
+      screen("explanation"),
+      screen("check"),
+      screen("explanation"),
+      screen("check"),
+      screen("application"),
+    ]);
+
+    expect(getCodes(early)).toStrictEqual([]);
+    expect(getCodes(questionFirst, "advanced")).toContain("earlyCheck");
+
+    expect(
+      getLessonSpecIssues({ level: "beginner", novice: true, spec: oneScreenFirst }).map(
+        (issue) => issue.code,
+      ),
+    ).toContain("earlyCheck");
+
+    expect(getCodes(oneScreenFirst, "advanced")).not.toContain("earlyCheck");
+    expect(getCodes(spec(validScreens), "beginner", true)).toStrictEqual([]);
+  });
+
+  it("asks no lesson for a visual on its screens", () => {
+    expect(getCodes(spec(validScreens), "beginner", true)).toStrictEqual([]);
+    expect(getCodes(spec(validScreens), "advanced")).toStrictEqual([]);
+  });
+
+  it("places exactly one guess right after the first explanation, followed by another", () => {
+    const withoutGuess = validScreens.filter((item) => item.kind !== "guess");
+
+    const guessed = (at: number) => {
+      const screens = [...withoutGuess];
+      screens.splice(at, 0, screen("guess"));
+      return spec(screens);
+    };
+
+    expect(getCodes(guessed(2))).toStrictEqual([]);
+    expect(getCodes(guessed(1))).toStrictEqual(["guess"]);
+    expect(getCodes(guessed(4))).toStrictEqual(["guess"]);
+    expect(getCodes(spec(withoutGuess))).toStrictEqual(["guess"]);
+
+    const twice = [...validScreens];
+    twice.splice(4, 0, screen("guess"));
+
+    expect(getCodes(spec(twice))).toStrictEqual(["guess"]);
+  });
+
+  it("counts teaching on both sides of the guess as one run", () => {
+    const run = [
+      screen("hook", []),
+      screen("explanation"),
+      screen("guess"),
+      screen("explanation"),
+      screen("explanation"),
       screen("explanation"),
       screen("explanation"),
       screen("check"),
       screen("application"),
     ];
 
-    expect(getCodes({ ...spec(questionFirst), supportMode: "questionFirst" })).toStrictEqual([]);
-    expect(getCodes(spec(questionFirst))).toStrictEqual(["supportMode"]);
+    expect(getCodes(spec(run))).toStrictEqual(["checkGap"]);
   });
 
   it("requires a worked example for each hard skill and every skill taught and practiced", () => {
@@ -150,7 +235,7 @@ describe(getLessonSpecIssues, () => {
     const screens = [
       screen("hook", []),
       screen("explanation", [0]),
-      screen("check", [0]),
+      screen("guess", [0]),
       screen("explanation", [0]),
       screen("check", [0]),
       screen("application", [0]),
@@ -167,6 +252,8 @@ describe(getLessonSpecIssues, () => {
     const screens = [
       screen("hook", []),
       screen("explanation"),
+      screen("guess"),
+      screen("explanation"),
       screen("activity", [0], { activityTemplate: "slider-graph" }),
       screen("explanation"),
       screen("activity"),
@@ -178,7 +265,7 @@ describe(getLessonSpecIssues, () => {
 
   it("flags screens that point at no skill or a missing one", () => {
     const screens = validScreens.map((item, index) =>
-      index === 2 ? { ...item, skills: [4] } : item,
+      index === 3 ? { ...item, skills: [4] } : item,
     );
 
     expect(getCodes(spec(screens))).toStrictEqual(["skillReference"]);
@@ -186,12 +273,16 @@ describe(getLessonSpecIssues, () => {
 });
 
 describe(fitsLesson, () => {
-  it("fits up to three skills, twelve screens and five minutes", () => {
+  it("fits up to three skills, sixteen screens and five minutes", () => {
     expect(fitsLesson({ level: "beginner", spec: spec(validScreens) })).toBe(true);
 
-    const long = spec([...validScreens.slice(0, -1), ...validScreens]);
+    const long = spec([
+      ...validScreens.slice(0, -1),
+      ...validScreens.slice(1, -1),
+      ...validScreens.slice(4),
+    ]);
 
-    expect(long.screens).toHaveLength(13);
+    expect(long.screens).toHaveLength(17);
     expect(fitsLesson({ level: "beginner", spec: long })).toBe(false);
   });
 });

@@ -24,11 +24,17 @@ struct DayResult: Decodable, Hashable, Sendable {
   }
 
   let ceremony: Milestone?
+  /// Unshown, oldest first.
+  let certificates: [CertificateFacts]
   let missionMoment: MissionMoment?
   let reached: Reached?
 
-  init(ceremony: Milestone?, missionMoment: MissionMoment?, reached: Reached?) {
+  init(
+    ceremony: Milestone?, certificates: [CertificateFacts], missionMoment: MissionMoment?,
+    reached: Reached?
+  ) {
     self.ceremony = ceremony
+    self.certificates = certificates
     self.missionMoment = missionMoment
     self.reached = reached
   }

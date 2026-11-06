@@ -1,5 +1,5 @@
 import { generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
-import { keepTeachingPictures } from "@zoonk/ai/tasks/lesson-spec/picture-need";
+import { judgePicture } from "@zoonk/ai/tasks/lesson-spec/picture-need";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { fixLessonDraft } from "@zoonk/ai/tasks/lesson-writer/fix";
 import { checkLessonQuality } from "@zoonk/ai/tasks/quality/lesson-check";
@@ -23,8 +23,10 @@ type RecordedDraft = Awaited<ReturnType<typeof writeLessonDraft>>["data"];
 const recordedSpec = recordedOutput<RecordedSpec>("lesson-spec");
 const recordedDraft = recordedOutput<RecordedDraft>("lesson-draft");
 
+const ARGON = "google/gemini-4-argon";
 const SOL = "openai/gpt-6-sol";
 const OPUS = "anthropic/claude-opus-5.5";
+const TERRA = "openai/gpt-6.1-terra";
 
 const heldBack: RecordedDraft = {
   ...recordedDraft,
@@ -39,7 +41,7 @@ function mockDrafts(held: number) {
   Array.from({ length: held }).forEach(() =>
     vi
       .mocked(writeLessonDraft)
-      .mockImplementationOnce(async (params) => taskResult(heldBack, params.model ?? SOL)),
+      .mockImplementationOnce(async (params) => taskResult(heldBack, params.model)),
   );
 }
 
@@ -77,10 +79,10 @@ function writeSteps() {
 describe("lesson content redrafts", () => {
   beforeEach(() => {
     vi.mocked(generateLessonSpec).mockResolvedValue(taskResult(recordedSpec));
-    vi.mocked(keepTeachingPictures).mockImplementation(async ({ spec }) => spec);
+    vi.mocked(judgePicture).mockResolvedValue(true);
 
     vi.mocked(writeLessonDraft).mockImplementation(async (params) =>
-      taskResult(recordedDraft, params.model ?? SOL),
+      taskResult(recordedDraft, params.model),
     );
 
     vi.mocked(fixLessonDraft).mockResolvedValue(
@@ -102,7 +104,7 @@ describe("lesson content redrafts", () => {
 
     expect(vi.mocked(writeLessonDraft).mock.calls[1]?.[0]).toMatchObject({
       heldBackProblems: [expect.objectContaining({ screen: 2 })],
-      model: undefined,
+      model: OPUS,
     });
 
     expect(writeSteps()).toStrictEqual(["started", "completed", "started", "completed"]);
@@ -121,9 +123,9 @@ describe("lesson content redrafts", () => {
     ).resolves.toStrictEqual({ lessonId: lesson.id, status: "heldBack" });
 
     expect(vi.mocked(writeLessonDraft).mock.calls.map(([params]) => params.model)).toStrictEqual([
-      undefined,
-      undefined,
       OPUS,
+      OPUS,
+      TERRA,
     ]);
 
     const [stored, planItem] = await Promise.all([
@@ -175,8 +177,8 @@ describe("lesson content redrafts", () => {
     ).resolves.toMatchObject({ status: "heldBack" });
 
     expect(vi.mocked(writeLessonDraft).mock.calls.map(([params]) => params.model)).toStrictEqual([
-      undefined,
       OPUS,
+      ARGON,
     ]);
   });
 

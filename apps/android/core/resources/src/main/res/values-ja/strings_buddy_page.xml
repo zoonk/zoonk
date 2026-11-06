@@ -36,7 +36,6 @@
   "buddy_page_missions_done": "5edd0f8def77e55ee6e48824d9c809e07e36fb88c34efd063d4d1f5bef939941",
   "buddy_page_more": "ddb7a357aa832bee724d295bdb8c2cef3ff99cedff101c033ff356d3aafa0edb",
   "buddy_page_not_yet": "47c38bcdf5544429ff160b5485031265a8cf95a716d89d677afdb2bdc8fa4b59",
-  "buddy_page_open_failed": "7d83d275d01e6bd14cc35c528b35cd56495f0b4934120509ff52947a421135ea",
   "buddy_page_placeholder": "166765b82bfa7310da2017e8464861291f7f5b035c69aa00a0dea83aefc96fa4",
   "buddy_page_remembers": "9ed368023fa7d2ae9afc289cb90b462afeca767ce23e95d616618ad10fa8ca03",
   "buddy_page_save_failed": "8f30e08077eb54582b6db1ff9a7c8ba53a028fa19b8a1257b03c8f189c1d8bb9",
@@ -69,7 +68,6 @@
     <!-- Read aloud for a count shown as "2/6", like glasses earned of all. -->
     <string name="buddy_page_count">%1$s個（全%2$s個中）</string>
     <string name="buddy_page_save_failed">保存できませんでした。もう一度お試しください。</string>
-    <string name="buddy_page_open_failed">開けませんでした。もう一度試してください。</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="buddy_page_greeting">こんにちは！わたしは%1$s、一緒に学習するAIの相棒です。学んでいることは何でも聞いてください。学習計画で変えたいことも教えてください。</string>
     <string name="buddy_page_goal_placeholder">学びたいこと</string>

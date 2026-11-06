@@ -17,13 +17,11 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -113,21 +111,21 @@ class TaskScaffoldTest {
     @Config(qualifiers = "w852dp-h883dp")
     fun keepsWhatAnActionOpenedAsTheBookOpens() {
         rule.setContent {
-            CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState()) {
-                TaskScaffold(
-                    onClose = {},
-                    actions = {
-                        var open by rememberSaveable { mutableStateOf(false) }
-                        TextButton(onClick = { open = true }) { Text(if (open) "Report open" else "Report") }
-                    },
-                ) {}
+            ZoonkTheme {
+                CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState()) {
+                    TaskScaffold(
+                        onClose = {},
+                        actions = {
+                            var open by rememberSaveable { mutableStateOf(false) }
+                            TextButton(onClick = { open = true }) { Text(if (open) "Report open" else "Report") }
+                        },
+                    ) {}
+                }
             }
         }
         rule.onNodeWithText("Report").performClick()
 
-        val fold = FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)
-        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(listOf(fold)))
-        rule.waitForIdle()
+        rule.unfoldBook(folds)
 
         rule.onNodeWithText("Report open").assertIsDisplayed()
     }

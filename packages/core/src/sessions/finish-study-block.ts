@@ -235,6 +235,7 @@ export async function finishLessonBlock({
     block: owned.block,
     brainPower: finish.brainPower,
     lessonId,
+    timeZone: owned.timeZone,
     userId: owned.userId,
   });
 

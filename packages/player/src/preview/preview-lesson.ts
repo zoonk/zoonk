@@ -28,7 +28,7 @@ export function buildLesson(
     level: "beginner",
     skills: [],
     steps: steps.map((step, position) => ({ ...step, position })),
-    summaryIdeas: [],
+    summary: null,
     targetLanguage: null,
     title: "Preview lesson",
     ...overrides,
@@ -68,6 +68,7 @@ export function localAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapte
         completion: {
           brainPower: 10,
           ceremony: null,
+          certificates: [],
           correctCount: 1,
           energyDelta: 1,
           incorrectCount: 0,

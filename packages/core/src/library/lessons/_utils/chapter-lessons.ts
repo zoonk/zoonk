@@ -4,9 +4,9 @@ import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
 import { type StepKind, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { libraryRowsVisibleTo } from "../../_utils/library-visibility";
+import { readLessonMapSentences } from "../lesson-map";
 import { CURRENT_STEPS } from "../lesson-versions";
 import { parseStoredLessonSpec } from "./stored-lesson-spec";
-import { toSummaryIdeas } from "./summary-ideas";
 
 export type ChapterLesson = NonNullable<WriteLessonDraftParams["chapterLessons"]>[number];
 
@@ -22,6 +22,7 @@ const EXAMPLE_FIELDS: Partial<Record<StepKind, readonly string[]>> = {
 const EXAMPLE_SCREENS: ReadonlySet<LessonSpec["screens"][number]["kind"]> = new Set([
   "application",
   "check",
+  "guess",
   "hook",
   "workedExample",
 ]);
@@ -68,7 +69,7 @@ function describeLesson({
   summary: unknown;
 }): Pick<ChapterLesson, "examples" | "ideas"> {
   const planned = parseStoredLessonSpec(spec);
-  const summaryIdeas = toSummaryIdeas(summary);
+  const summaryIdeas = readLessonMapSentences(summary);
   const written = steps.flatMap((step) => describeStep(step) ?? []);
 
   return {

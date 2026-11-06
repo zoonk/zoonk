@@ -22,6 +22,7 @@ function mathCheck(question: string): WrittenScreen {
     basis: null,
     context: null,
     correctReason: "You add {rise} to {start}.",
+    image: null,
     kind: "mathCheck",
     math: {
       answer: 3,

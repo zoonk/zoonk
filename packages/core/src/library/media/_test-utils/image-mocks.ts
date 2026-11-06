@@ -82,6 +82,28 @@ export function mockDrawnImages(images: readonly Buffer[]) {
   return mock;
 }
 
+/** Holds every draw until all of them have started, so none of them finds another's picture. */
+export function mockDrawnImagesAtOnce(images: readonly Buffer[]) {
+  const mock = vi.mocked(generateLessonImage);
+  const allStarted = Promise.withResolvers<null>();
+  let started = 0;
+
+  images.forEach((image) =>
+    mock.mockImplementationOnce(async () => {
+      started += 1;
+
+      if (started === images.length) {
+        allStarted.resolve(null);
+      }
+
+      await allStarted.promise;
+      return drawnImage(image);
+    }),
+  );
+
+  return mock;
+}
+
 function checkResult(passed: boolean): CheckResult {
   const result = {
     data: {

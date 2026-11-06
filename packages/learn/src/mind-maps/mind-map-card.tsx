@@ -164,6 +164,7 @@ function MindMapRequestCard({
         <Button
           className="self-start"
           disabled={isPending || isCapped}
+          focusableWhenDisabled
           onClick={isFailure ? retry : create}
           size="sm"
           variant="outline"

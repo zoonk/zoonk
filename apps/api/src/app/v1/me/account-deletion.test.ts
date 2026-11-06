@@ -2,7 +2,6 @@ import { randomUUID } from "node:crypto";
 import { del, list } from "@vercel/blob";
 import { auth } from "@zoonk/auth";
 import { deleteUserDependenciesBeforeAuthDelete } from "@zoonk/auth/account-deletion";
-import { registerEvaluationRunLog } from "@zoonk/core/evaluation-runs/log";
 import {
   copyStoredCourseWeights,
   recordCourseWeights,
@@ -15,6 +14,7 @@ import {
 } from "@zoonk/core/library/curriculum/reusable-curriculum";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { findExplanationGoFurther } from "@zoonk/core/library/explanations/save";
+import { registerServerSinks } from "@zoonk/core/server-sinks";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { feedbackFixture } from "@zoonk/testing/fixtures/feedback";
@@ -258,7 +258,7 @@ async function prepareForExam({
 }
 
 async function logEvaluationRuns({ goalId, userId }: { goalId: string; userId: string }) {
-  registerEvaluationRunLog();
+  registerServerSinks();
 
   const run = {
     answers: { reuse: { probability: 0.9, type: "boolean" as const } },

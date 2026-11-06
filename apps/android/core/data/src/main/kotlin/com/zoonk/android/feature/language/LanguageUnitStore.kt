@@ -25,7 +25,7 @@ class LiveLanguageUnitApi(
     ): LanguageUnit = perform { api.clients(session).language.getLanguageUnit(chapterId) }
 }
 
-/** Core reads the unit fresh from the plan, today's session, mistakes and call allowance, so it follows all of them. */
+/** Core reads the unit fresh from the goal the learner chose, its plan, today's session, mistakes and call allowance, so it follows all of them. */
 class LanguageUnitStore(
     api: LanguageUnitApi,
     cache: AppCache,
@@ -37,6 +37,7 @@ class LanguageUnitStore(
                 DataDomain.Allowance,
                 DataDomain.Goals,
                 DataDomain.LearnerModel,
+                DataDomain.LearningProfile,
                 DataDomain.UserProgress,
                 DataDomain.UserSession,
                 DataDomain.UserSubscription,

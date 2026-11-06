@@ -36,7 +36,6 @@
   "buddy_page_missions_done": "498cd13a17b5e8a6c90359efecbaf23551fbffceff24c1759686e705c9a583b2",
   "buddy_page_more": "a69adc5510b85ef35600609c9dc9c468732aa9aa98d9e2b784066e00dc8fbd77",
   "buddy_page_not_yet": "3f89917574417fca264d97e0003c04f1dfec6dd0d631926620eeab2d44bb4ba2",
-  "buddy_page_open_failed": "bcfe1ba88d39d14e15c32a91cdb2f525cb612b631f01d3ed468a75fce25dcc45",
   "buddy_page_placeholder": "3cfd062a1e502122b93b706c151b4d8cb62a49ac3e0d3b405c514b7714e606e6",
   "buddy_page_remembers": "5e5a03e48f08fbc1e02b493ef767f0fe14e9a40c7b32b61a199124c4bf3d6473",
   "buddy_page_save_failed": "ced8dbc8f1ac04c4a481974b61a33e1e34e0bdde63c250bf300f9657f84f0c0d",
@@ -69,7 +68,6 @@
     <!-- Read aloud for a count shown as "2/6", like glasses earned of all. -->
     <string name="buddy_page_count">%1$s de %2$s</string>
     <string name="buddy_page_save_failed">Não foi possível salvar. Tente de novo.</string>
-    <string name="buddy_page_open_failed">Não foi possível abrir. Tente de novo.</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="buddy_page_greeting">Oi! Sou %1$s, seu parceiro de estudos com IA. Pergunte o que quiser sobre o que você está estudando ou me conte o que gostaria de mudar no seu plano.</string>
     <string name="buddy_page_goal_placeholder">O que você quer aprender</string>

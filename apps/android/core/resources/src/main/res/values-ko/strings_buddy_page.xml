@@ -36,7 +36,6 @@
   "buddy_page_missions_done": "958f08a1c630a50d1360fb941e92fdfd4cef480fb0f0492d1d81bab451308ba3",
   "buddy_page_more": "97ed9e9460c35f1b5d691bd6a51a3ad41071e7a60270c28dc5856217d09b0f59",
   "buddy_page_not_yet": "562afc1c4315d03d9179b2e8a42ffac032af4842f86efa51a044a0ad123c9125",
-  "buddy_page_open_failed": "a6302a73d8922f534eee2b4fc9ae395660d8edc6ea8ecfb5fcc44d058ea73d42",
   "buddy_page_placeholder": "97646b20cb7b591f51aebedd44769471a40116f499b9c1156cb84172351f0ea2",
   "buddy_page_remembers": "d09e1f99e35e8870b6fffedc2514aeabbf111b96249bed6e127002c01b23e6bf",
   "buddy_page_save_failed": "da96c6c1c1a3c2a5618882c626aa1f8552550013539c2b1eec617cb81f6011b8",
@@ -69,7 +68,6 @@
     <!-- Read aloud for a count shown as "2/6", like glasses earned of all. -->
     <string name="buddy_page_count">%1$s개, 총 %2$s개</string>
     <string name="buddy_page_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
-    <string name="buddy_page_open_failed">열리지 않았어요. 다시 시도해 보세요.</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="buddy_page_greeting">안녕하세요! 저는 AI 공부 짝꿍 %1$s(이)라고 해요. 공부하는 내용에 대해 뭐든 물어보거나, 계획에서 바꾸고 싶은 점을 알려 주세요.</string>
     <string name="buddy_page_goal_placeholder">배우고 싶은 것</string>

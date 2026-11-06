@@ -1,12 +1,20 @@
 import SwiftUI
 
 struct BuddyDayView: View {
+  @Environment(BuddyStore.self) private var buddy
+  @Environment(\.isCoveredByTask) private var isCovered
   @Environment(\.tutorPlaces) private var places
+  @Environment(TodayStore.self) private var todayStore
 
   let status: BuddyStatus
   let name: String
   let onGlasses: () -> Void
   var showsTitle = false
+
+  /// The block a mission tap is opening, and the one that didn't open, as Today keeps its rows'.
+  @State private var opening: String?
+  @State private var failed: String?
+  @State private var tapTask: Task<Void, Never>?
 
   var body: some View {
     ZoonkList {
@@ -37,9 +45,14 @@ struct BuddyDayView: View {
           if !earned {
             ForEach(Array(today.missions.enumerated()), id: \.offset) { _, mission in
               if let row = StudyMission(mission) {
-                MissionRow(mission: row, buddyName: name) {
+                let blockID = mission.opens?.value1.blockID
+
+                MissionRow(
+                  mission: row, buddyName: name, isBusy: blockID != nil && opening == blockID,
+                  failed: blockID != nil && failed == blockID
+                ) {
                   if let opens = mission.opens?.value1 {
-                    places.open(.mission(opens))
+                    open(opens)
                   }
                 }
               }
@@ -85,6 +98,19 @@ struct BuddyDayView: View {
       }
       .foregroundStyle(.primary)
     }
+    .onChange(of: isCovered) {
+      if isCovered {
+        tapTask?.cancel()
+      }
+    }
+    // Another goal's or day's missions start without the last one's tap.
+    .onChange(of: status.today.map { "\($0.goalId) \($0.localDate)" }) {
+      tapTask?.cancel()
+      failed = nil
+    }
+    .onDisappear {
+      tapTask?.cancel()
+    }
   }
 
   var title: Text {
@@ -95,6 +121,40 @@ struct BuddyDayView: View {
 
   var subtitle: Text {
     Text("\(status.stage.name)\u{00A0}· \(status.growthLine)")
+  }
+
+  /// A block mission opens as Today's rows do, so the row says when it didn't. A tap whose screen
+  /// went (another tab, a task over it, the day's sheet closed) is cancelled and says nothing.
+  private func open(_ opens: Components.Schemas.StudyMissionOpens) {
+    guard let blockID = opens.blockID else {
+      places.open(.mission(opens))
+      return
+    }
+
+    guard opening == nil else {
+      return
+    }
+
+    opening = blockID
+    failed = nil
+
+    tapTask = Task {
+      let result = await todayStore.open(blockID: blockID)
+
+      switch result {
+      // Busy until the card shows what changed, which the open's own invalidation doesn't wait for.
+      case .done(.changed) where !Task.isCancelled:
+        await buddy.status.refresh()
+      case .done(let destination) where !Task.isCancelled:
+        places.open(.missionStep(destination))
+      case .failed:
+        failed = blockID
+      case .done, .obsolete:
+        break
+      }
+
+      opening = nil
+    }
   }
 
   @ViewBuilder
@@ -142,5 +202,11 @@ struct BuddyDayView: View {
         }
       }
     }
+  }
+}
+
+extension Components.Schemas.StudyMissionOpens {
+  fileprivate var blockID: String? {
+    if case .case1(let block) = self { block.blockId } else { nil }
   }
 }

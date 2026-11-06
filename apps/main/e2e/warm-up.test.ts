@@ -156,6 +156,8 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
   await expect(steps).toHaveText([
     /^Planning the lesson, done/u,
     /^Writing the lesson, in progress/u,
+    /^Highlighting the key ideas, not started yet/u,
+    /^Drawing the pictures, not started yet/u,
   ]);
 
   const card = page.getByRole("radiogroup", { name: FIRST_CARD });
@@ -167,7 +169,13 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
 
   await expect(page.getByRole("status").filter({ hasText: "Your lesson is ready." })).toBeVisible();
 
-  await expect(steps).toHaveText([/^Planning the lesson, done/u, /^Writing the lesson, done/u]);
+  await expect(steps).toHaveText([
+    /^Planning the lesson, done/u,
+    /^Writing the lesson, done/u,
+    /^Highlighting the key ideas, done/u,
+    /^Drawing the pictures, done/u,
+  ]);
+
   await expect(page.getByRole("button", { name: "Next guess" })).toBeHidden();
   await expect(page.getByText(/^Smoke masks the alarm scent/u)).toBeVisible();
 

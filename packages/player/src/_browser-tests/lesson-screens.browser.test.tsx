@@ -14,6 +14,7 @@ import { explanationStep, languageStep, teachingStep } from "../preview/preview-
 
 const EXPLANATION_TITLE = "A cloud, not a little ball";
 const PHONE = { height: 844, width: 390 };
+const DESKTOP = { height: 900, width: 1440 };
 const RIGHT_OPTION = "Where the electron is most likely to be found";
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 
@@ -27,19 +28,45 @@ async function answerRight() {
   await page.getByRole("button", { name: /^Continue/u }).click();
 }
 
+async function continueFromMap() {
+  await expect.element(page.getByRole("heading", { name: "Lesson map" })).toBeVisible();
+  await page.getByRole("button", { name: /^Continue/u }).click();
+}
+
 describe("lesson screens", () => {
-  it("keeps the summary card in the screen's menu for the lesson's end", async () => {
+  it("opens with the explanation for a learner who practiced the skill, even from a page that says question first", async () => {
+    const practicedLearnerPage = { support: "questionFirst" } as const;
+
+    renderLessonPlayer({
+      lesson: buildLesson([teachingStep("explanation"), teachingStep("check")]),
+      ...practicedLearnerPage,
+    });
+
+    await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).not.toBeInTheDocument();
+    await expect.element(page.getByText(EXPLANATION_TITLE)).toBeVisible();
+
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeVisible();
+  });
+
+  it("keeps the lesson map in the screen's menu for the lesson's end", async () => {
     await atViewport(PHONE, async () => {
       renderLessonPlayer({
         lesson: buildLesson([teachingStep("explanation"), teachingStep("check")], {
-          summaryIdeas: ["Electrons live in clouds.", "The densest part is likeliest."],
+          summary: {
+            ideas: [
+              { text: "Electrons live in clouds." },
+              { text: "The densest part is likeliest." },
+            ],
+            shape: "hub",
+          },
         }),
       });
 
       await expect.element(page.getByText(EXPLANATION_TITLE)).toBeVisible();
 
       const knowThis = page.getByRole("menuitem", { name: "I already know this" });
-      const summaryItem = page.getByRole("menuitem", { name: "Lesson summary" });
+      const summaryItem = page.getByRole("menuitem", { name: "Lesson map" });
       await page.getByRole("button", { name: "Screen options" }).click();
       await expect.element(knowThis).toBeVisible();
       await expect.element(summaryItem).not.toBeInTheDocument();
@@ -49,12 +76,13 @@ describe("lesson screens", () => {
       await page.getByRole("radio", { name: RIGHT_OPTION }).click();
       await page.getByRole("button", { name: /^Check/u }).click();
       await page.getByRole("button", { name: /^Continue/u }).click();
+      await continueFromMap();
       await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
       await page.getByRole("button", { name: "Screen options" }).click();
       await summaryItem.click();
 
-      const summary = page.getByRole("dialog", { name: "Lesson summary" });
+      const summary = page.getByRole("dialog", { name: "Lesson map" });
       await expect.element(summary.getByText("Electrons live in clouds.")).toBeVisible();
       await expect.element(summary.getByText("The densest part is likeliest.")).toBeVisible();
 
@@ -64,11 +92,37 @@ describe("lesson screens", () => {
     });
   });
 
-  it("keeps the summary card in the menu of a host's header over its own moment", async () => {
+  it("leaves the lesson map out of the menu on a wide screen, whose aside already shows it", async () => {
+    await atViewport(DESKTOP, async () => {
+      renderLessonPlayer({
+        lesson: buildLesson([teachingStep("check")], {
+          summary: { ideas: [{ text: "Electrons live in clouds." }], shape: "hub" },
+        }),
+      });
+
+      await answerRight();
+      await continueFromMap();
+      await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+
+      const aside = page.getByRole("complementary", { name: "Lesson map" });
+      await expect.element(aside.getByText("Electrons live in clouds.")).toBeVisible();
+
+      await page.getByRole("button", { name: "Screen options" }).click();
+      await expect.element(page.getByRole("menu")).toBeVisible();
+
+      await expect
+        .element(page.getByRole("menuitem", { name: "Lesson map" }))
+        .not.toBeInTheDocument();
+
+      await expect.element(page.getByRole("menu").getByRole("separator")).not.toBeInTheDocument();
+    });
+  });
+
+  it("keeps the lesson map in the menu of a host's header over its own moment", async () => {
     await atViewport(PHONE, async () => {
       renderLessonPlayer({
         lesson: buildLesson([teachingStep("check")], {
-          summaryIdeas: ["Electrons live in clouds."],
+          summary: { ideas: [{ text: "Electrons live in clouds." }], shape: "hub" },
         }),
         slots: {
           completion: () => <h2>Block done</h2>,
@@ -78,22 +132,23 @@ describe("lesson screens", () => {
       });
 
       await answerRight();
+      await continueFromMap();
       await expect.element(page.getByRole("heading", { name: "Block done" })).toBeVisible();
 
       const header = page.getByRole("banner", { name: "Today" });
       await expect.element(header.getByRole("button", { name: "Screen options" })).toBeVisible();
       await header.getByRole("button", { name: "Screen options" }).click();
-      await page.getByRole("menuitem", { name: "Lesson summary" }).click();
+      await page.getByRole("menuitem", { name: "Lesson map" }).click();
 
-      const summary = page.getByRole("dialog", { name: "Lesson summary" });
+      const summary = page.getByRole("dialog", { name: "Lesson map" });
       await expect.element(summary.getByText("Electrons live in clouds.")).toBeVisible();
     });
   });
 
-  it("closes the summary card when a lesson that couldn't save goes back to a screen", async () => {
+  it("closes the lesson map when a lesson that couldn't save goes back to a screen", async () => {
     await atViewport(PHONE, async () => {
       const lesson = buildLesson([teachingStep("check"), teachingStep("check")], {
-        summaryIdeas: ["Electrons live in clouds."],
+        summary: { ideas: [{ text: "Electrons live in clouds." }], shape: "hub" },
       });
 
       const runId = crypto.randomUUID();
@@ -118,11 +173,12 @@ describe("lesson screens", () => {
 
       await answerRight();
       await answerRight();
+      await continueFromMap();
 
       await page.getByRole("button", { name: "Screen options" }).click();
-      await page.getByRole("menuitem", { name: "Lesson summary" }).click();
+      await page.getByRole("menuitem", { name: "Lesson map" }).click();
 
-      const summary = page.getByRole("dialog", { name: "Lesson summary" });
+      const summary = page.getByRole("dialog", { name: "Lesson map" });
       await expect.element(summary).toBeVisible();
 
       saving.resolve({ status: "incomplete" });

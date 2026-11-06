@@ -1,10 +1,16 @@
 import "server-only";
-import { Output, generateText } from "ai";
+import { generateText } from "ai";
 import { getModelFamily } from "../../_utils/model-family";
-import { acceptOmittedNulls } from "../../_utils/omitted-nulls";
+import { schemaInPrompt } from "../../_utils/schema-in-prompt";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
+import {
+  type CallReuse,
+  type Reasoning,
+  type ServiceTier,
+  buildProviderOptions,
+} from "../../provider-options";
+import { readsNoviceRules } from "../_utils/novice-rules";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import typedQuestionRules from "../items/item-rules/typed-question.prompt.md";
 import {
@@ -13,28 +19,42 @@ import {
   formatLessonPlan,
   formatLessonProblems,
 } from "./format-lesson-plan";
+import { normalizeLessonMap } from "./lesson-map";
 import rulesTemplate from "./lesson-writer.prompt.md";
+import { getScreenCharacterLimit } from "./screen-length";
+import { fitWrittenBounds } from "./written-lesson-bounds";
 import { type WrittenLesson, writtenLessonSchema } from "./written-lesson-schema";
 
 const systemPrompt = rulesTemplate.replace("{{TYPED_QUESTION}}", () =>
   typedQuestionRules.trim().replaceAll(/^/gmu, "  "),
 );
 
-/**
- * Terra taught fewer wrong ideas than Sol on the lesson-writer eval at under half the cost (30 Oct
- * 2026); Gemini, Opus and Luna taught more. Fallbacks come from other families, so an outage at one
- * provider doesn't stop lessons.
- */
-const defaultModel = "openai/gpt-6.1-terra";
-const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
+const lessonOutput = schemaInPrompt(writtenLessonSchema, { repair: fitWrittenBounds });
 
 /**
- * Gemini 3.8 Flash rejects the writer's schema as too large (9 Oct 2026), so it falls back to Terra.
+ * `getLessonWriterModel` picks the first writer; each model falls back to the others, all from other
+ * families, so an outage at one provider doesn't stop lessons.
  */
-const geminiFallbackModels = [defaultModel, "anthropic/claude-opus-5.5"] as const;
+const WRITER_MODELS = [
+  "openai/gpt-6.1-terra",
+  "anthropic/claude-opus-5.5",
+  "google/gemini-4-argon",
+] as const;
 
-function getFallbackModels(model: string): readonly string[] {
-  return getModelFamily(model) === "google" ? geminiFallbackModels : fallbackModels;
+const [defaultModel, sharedLessonModel] = WRITER_MODELS;
+
+/**
+ * Opus 5.5 writes a lesson other learners will read. On 15 lessons across subjects, levels and 8
+ * languages (4 Nov 2026), three blind judges scored it 8.74 and Sonnet 5.5 8.34, widest on clarity
+ * and natural speech, at about $0.20 a lesson against $0.15, which a shared lesson spreads across its
+ * readers. Terra tied Sol for a lesson one learner reads, at half its price.
+ */
+export function getLessonWriterModel({ reuse }: { reuse: CallReuse }): string {
+  return reuse === "personal" ? defaultModel : sharedLessonModel;
+}
+
+function getFallbackModels(model: string): string[] {
+  return WRITER_MODELS.filter((candidate) => candidate !== model);
 }
 
 export type WriteLessonDraftParams = LessonWritingContext & {
@@ -48,27 +68,26 @@ export type WriteLessonDraftParams = LessonWritingContext & {
 };
 
 /**
- * The first model of the writer's chain from a family that wrote none of the held-back drafts; a
- * shared lesson Terra drafted goes to Opus rather than Gemini, which taught wrong ideas in the writer
- * eval. The reviewer follows the writer, so it stays from another family.
+ * The first model of the writer's chain from a family that wrote none of the held-back drafts. The
+ * reviewer follows the writer, so it stays from another family.
  */
 export function getLessonRewriteModel(heldBackModels: readonly string[]): string {
   const families = new Set(heldBackModels.map((model) => getModelFamily(model)));
 
-  return (
-    [defaultModel, ...fallbackModels].find((model) => !families.has(getModelFamily(model))) ??
-    defaultModel
-  );
+  return WRITER_MODELS.find((model) => !families.has(getModelFamily(model))) ?? defaultModel;
 }
 
 const FIND_ERROR_TEMPLATE = "findError";
 
 function buildSystemPrompt(params: WriteLessonDraftParams): string {
-  return selectPromptVariants({
+  const novice = readsNoviceRules(params);
+
+  const rules = selectPromptVariants({
     template: systemPrompt,
     variants: {
       exams: (params.exams?.length ?? 0) > 0,
       material: Boolean(params.material),
+      novice,
       setup: Boolean(params.setup),
       shortAnswers: Boolean(params.shortAnswers),
       sources: Boolean(params.sources),
@@ -77,6 +96,11 @@ function buildSystemPrompt(params: WriteLessonDraftParams): string {
       ),
     },
   });
+
+  return rules.replaceAll(
+    "{{SCREEN_CHARACTERS}}",
+    String(getScreenCharacterLimit(params.language)),
+  );
 }
 
 function formatWriterPrompt(params: WriteLessonDraftParams): string {
@@ -97,7 +121,7 @@ ${formatLessonProblems(problems)}
 /** Callers run the lesson checks in `@zoonk/core` and send what fails to `fixLessonDraft`. */
 export async function writeLessonDraft(params: WriteLessonDraftParams) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
-  const instructions = buildSystemPrompt(params);
+  const instructions = `${buildSystemPrompt(params)}\n\n${lessonOutput.outputRules}`;
   const userPrompt = formatWriterPrompt(params);
 
   const providerOptions = buildProviderOptions({
@@ -113,7 +137,7 @@ export async function writeLessonDraft(params: WriteLessonDraftParams) {
       generateText({
         instructions,
         model,
-        output: Output.object({ schema: acceptOmittedNulls(writtenLessonSchema) }),
+        output: lessonOutput.output,
         prompt: userPrompt,
         providerOptions,
         reasoning,
@@ -123,7 +147,10 @@ export async function writeLessonDraft(params: WriteLessonDraftParams) {
     task: "lesson-writer",
   });
 
-  const data: WrittenLesson = result.output;
+  const data: WrittenLesson = {
+    ...result.output,
+    summary: normalizeLessonMap(result.output.summary),
+  };
 
   return { data, provenance, systemPrompt: instructions, usage: result.usage, userPrompt };
 }

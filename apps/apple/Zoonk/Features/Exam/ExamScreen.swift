@@ -230,11 +230,10 @@ private struct ExamHero: View {
               comment: "The official calendar's day; the argument is a date like 'Tuesday, May 5'")
           }
           if dateFailed {
-            Text(
-              "That didn't go through. Try again in a moment.", tableName: "Exam",
-              comment: "Changing the date failed"
-            )
-            .foregroundStyle(.destructiveText)
+            FailureLine(
+              message: LocalizedStringResource(
+                "That didn't go through. Try again in a moment.", table: "Exam",
+                comment: "Changing the date failed"))
           }
           Button {
             Task { await useDate(noticeDay.date) }
@@ -292,11 +291,10 @@ private struct ExamHero: View {
         }
 
         if dateFailed {
-          Text(
-            "That didn't go through. Try again in a moment.", tableName: "Exam",
-            comment: "Changing the date failed"
-          )
-          .foregroundStyle(.destructiveText)
+          FailureLine(
+            message: LocalizedStringResource(
+              "That didn't go through. Try again in a moment.", table: "Exam",
+              comment: "Changing the date failed"))
         }
       }
     }
@@ -415,23 +413,33 @@ private struct ExamResultSection: View {
     Double(form.score.replacingOccurrences(of: ",", with: "."))
   }
 
+  private var savedLine: String? {
+    guard form.saved || exam.result != nil else {
+      return nil
+    }
+
+    if let value = exam.result?.score, !form.saved || parsedScore == nil {
+      return String(
+        localized: "Result saved: \(MockLabels.number(value)). Thank you for telling us.",
+        table: "Exam", comment: "A reported result")
+    }
+
+    if form.saved, let parsedScore {
+      return String(
+        localized: "Result saved: \(MockLabels.number(parsedScore)). Thank you for telling us.",
+        table: "Exam", comment: "A reported result")
+    }
+
+    return String(
+      localized: "Result saved. Thank you for telling us.", table: "Exam",
+      comment: "A reported result without a score")
+  }
+
   var body: some View {
     Section {
-      if form.saved || exam.result != nil {
+      if let savedLine {
         Label {
-          if let value = exam.result?.score, !form.saved || parsedScore == nil {
-            Text(
-              "Result saved: \(MockLabels.number(value)). Thank you for telling us.",
-              tableName: "Exam", comment: "A reported result")
-          } else if form.saved, let parsedScore {
-            Text(
-              "Result saved: \(MockLabels.number(parsedScore)). Thank you for telling us.",
-              tableName: "Exam", comment: "A reported result")
-          } else {
-            Text(
-              "Result saved. Thank you for telling us.", tableName: "Exam",
-              comment: "A reported result without a score")
-          }
+          Text(savedLine)
         } icon: {
           Image(systemName: "checkmark.circle.fill").foregroundStyle(.success)
         }
@@ -459,11 +467,10 @@ private struct ExamResultSection: View {
       }
 
       if form.failed {
-        Text(
-          "That didn't go through. Try again in a moment.", tableName: "Exam",
-          comment: "Saving the result failed"
-        )
-        .foregroundStyle(.destructiveText)
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't go through. Try again in a moment.", table: "Exam",
+            comment: "Saving the result failed"))
       }
 
       Button {
@@ -516,7 +523,11 @@ private struct ExamResultSection: View {
         try await api.reportResult(token: token, goalId: goalId, input: input)
       })
     {
-    case .done(true): form.saved = true
+    case .done(true):
+      form.saved = true
+      if let savedLine {
+        announcePolitely(savedLine)
+      }
     case .done(false), .failed: form.failed = true
     case .obsolete: break
     }
@@ -1020,26 +1031,21 @@ private struct SpeakingMockSection: View {
 
         switch start.refusal {
         case .limit(let limit):
-          Group {
-            if limit.period == .month {
-              Text(
-                "Not enough call time this month for this mock", tableName: "Exam",
+          FailureLine(
+            message: limit.period == .month
+              ? String(
+                localized: "Not enough call time this month for this mock", table: "Exam",
                 comment: "The call time left this month can't fit the mock")
-            } else {
-              Text(
-                "Not enough call time today for this mock", tableName: "Exam",
-                comment: "The call time left today can't fit the mock")
-            }
-          }
-          .foregroundStyle(.destructiveText)
+              : String(
+                localized: "Not enough call time today for this mock", table: "Exam",
+                comment: "The call time left today can't fit the mock"))
         case nil:
           EmptyView()
         case .some:
-          Text(
-            "The mock didn't start. Try again in a moment.", tableName: "Exam",
-            comment: "Starting the speaking mock failed"
-          )
-          .foregroundStyle(.destructiveText)
+          FailureLine(
+            message: LocalizedStringResource(
+              "The mock didn't start. Try again in a moment.", table: "Exam",
+              comment: "Starting the speaking mock failed"))
         }
       }
     }

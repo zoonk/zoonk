@@ -8,12 +8,13 @@ import { CEFR_BANDS } from "../../language/levels/skill-level-rules";
 import { findFreshMistakePattern } from "../../language/patterns/find-fresh-pattern";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readDuePronunciation } from "../../learner/facts/due-pronunciation";
+import { readActiveGoal } from "../../learner/facts/learning-profile";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { loadTestOutPlan } from "../../learner/test-out/_utils/test-out-plan";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
-import { toSummaryIdeas } from "../../library/lessons/_utils/summary-ideas";
+import { readLessonMapSentences } from "../../library/lessons/lesson-map";
 import { getSession } from "../../users/get-session";
 import { findUpNextLessonId } from "../_utils/up-next-lesson";
 import { loadGrammarTips, loadUnitMistakes, loadUnitWords } from "./_utils/unit-content";
@@ -70,7 +71,11 @@ export async function getLanguageUnitView({
   }
 
   const userId = session.user.id;
-  const chapter = isUuid(chapterId) ? await findVisibleUnit({ chapterId, userId }) : null;
+
+  const [chapter, activeGoal] = await Promise.all([
+    isUuid(chapterId) ? findVisibleUnit({ chapterId, userId }) : null,
+    readActiveGoal(userId),
+  ]);
 
   if (!chapter) {
     return { status: "notFound" };
@@ -82,7 +87,8 @@ export async function getLanguageUnitView({
     return { status: "notLanguage" };
   }
 
-  const goal = await findLearnerLanguageGoal({ goalId, targetLanguage, userId });
+  const goal = await findLearnerLanguageGoal({ activeGoal, goalId, targetLanguage, userId });
+
   const lessonIds = chapter.lessons.map(({ lesson }) => lesson.id);
 
   const plan = goal
@@ -139,7 +145,7 @@ export async function getLanguageUnitView({
       : null;
 
   const summaries = chapter.lessons.flatMap(({ lesson }) => {
-    const ideas = done.has(lesson.id) ? toSummaryIdeas(lesson.summary) : [];
+    const ideas = done.has(lesson.id) ? readLessonMapSentences(lesson.summary) : [];
     return ideas.length > 0 ? [{ ideas, lessonId: lesson.id, title: lesson.title }] : [];
   });
 

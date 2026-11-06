@@ -7,6 +7,7 @@ namingStrategy: idiomatic
 # screen kind and activity template are index-named and far larger than what it reads.
 typeOverrides:
   schemas:
+    LessonMap: LessonSummary
     LessonStepAnswer: LessonAnswer
     PlayableLibraryStep: LessonStep
 filter:
@@ -22,6 +23,7 @@ filter:
     - askMaterialQuestion
     - cancelStripeSubscription
     - checkLanguageConversationObjectives
+    - claimCourseCertificate
     - completeGoalPlacement
     - completeLanguageConversation
     - completePronunciationRound
@@ -178,6 +180,7 @@ filter:
     - gradeMockEssays
     - joinInstrumentWaitlist
     - leaveInstrumentWaitlist
+    - listCertificates
     - listChapterLessons
     - listCourseCategoryCounts
     - listCourseChapters
@@ -187,10 +190,12 @@ filter:
     - listCurrentUserMistakes
     - listEarlierQuestions
     - listGoalMindMaps
+    - listGoals
     - listInstrumentWaitlist
     - listMocks
     - listPronunciationReviews
     - listSourceChangeNotices
+    - markCertificateShown
     - moveChallenge
     - moveWeeklyChallenge
     - openStudyBlock

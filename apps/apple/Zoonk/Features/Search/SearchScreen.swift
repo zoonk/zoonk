@@ -13,6 +13,8 @@ struct SearchScreen: View {
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @State private var query = ""
   @State private var isFeedbackPresented = false
+  @State private var switchFailed = false
+  @State private var isSwitchingGoal = false
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
@@ -48,7 +50,14 @@ struct SearchScreen: View {
     }
     .catalogDestinations()
     .feedbackSheet(
-      isPresented: $isFeedbackPresented, context: FeedbackContext(screen: "command-palette"))
+      isPresented: $isFeedbackPresented, context: FeedbackContext(screen: "command-palette")
+    )
+    .alert(
+      Text(
+        "We couldn't switch goals. Try again.", tableName: "Search",
+        comment: "Switching to another goal from search didn't go through"),
+      isPresented: $switchFailed
+    ) {}
   }
 
   /// Before a query, the places to go face what the learner can do. A query's own matches face the
@@ -196,10 +205,24 @@ struct SearchScreen: View {
     case .feedback:
       isFeedbackPresented = true
     case .switchGoal(let goalID):
-      Task {
-        await learner.switchGoal(to: goalID)
+      guard !isSwitchingGoal else {
+        return
       }
-      router.showRoot(of: .today)
+
+      isSwitchingGoal = true
+
+      Task {
+        defer { isSwitchingGoal = false }
+
+        switch await learner.switchGoal(to: goalID) {
+        case .done:
+          router.showRoot(of: .today)
+        case .failed:
+          switchFailed = true
+        case .obsolete:
+          break
+        }
+      }
     }
   }
 }

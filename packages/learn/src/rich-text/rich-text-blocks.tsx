@@ -1,7 +1,11 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { RichTable } from "../_components/rich-table";
 import { useAppLocale } from "../_utils/locale";
-import { type RichInlineSegment, RichInlineSegments } from "./rich-inline-segments";
+import {
+  type RichInlineSegment,
+  RichInlineSegments,
+  type RichMarkStyle,
+} from "./rich-inline-segments";
 import { type RichBlock, markRichBlocks, parseRichBlocks } from "./rich-text-parser";
 import { speakSegments } from "./rich-text-speech";
 import { typesetNumbers } from "./rich-text-typography";
@@ -57,11 +61,13 @@ function RichTableBlock({ block }: { block: Extract<RichBlock, { kind: "table" }
 
 function RichBlockView({
   block,
+  markStyle,
   paragraphTag,
   htmlFor,
 }: {
   block: RichBlock;
   htmlFor?: string;
+  markStyle?: RichMarkStyle;
   paragraphTag: "p" | "h1" | "h2" | "h3" | "label";
 }) {
   if (block.kind === "table") {
@@ -80,7 +86,7 @@ function RichBlockView({
 
           return (
             <li className="ps-1" key={key}>
-              <RichInlineSegments segments={item} />
+              <RichInlineSegments markStyle={markStyle} segments={item} />
             </li>
           );
         })}
@@ -95,7 +101,7 @@ function RichBlockView({
 
     return (
       <span className="block" key={key}>
-        <RichInlineSegments segments={line} />
+        <RichInlineSegments markStyle={markStyle} segments={line} />
       </span>
     );
   });
@@ -111,12 +117,15 @@ export function RichTextBlocks({
   className,
   htmlFor,
   mark,
+  markStyle,
   paragraphTag = "p",
   text,
 }: {
   className?: string;
   htmlFor?: string;
+  /** A quote of the text to mark where it first appears. */
   mark?: string | null;
+  markStyle?: RichMarkStyle;
   paragraphTag?: "p" | "h1" | "h2" | "h3" | "label";
   text: string;
 }) {
@@ -135,6 +144,7 @@ export function RichTextBlocks({
           <RichBlockView
             block={typesetBlock({ block, locale })}
             key={key}
+            markStyle={markStyle}
             paragraphTag={paragraphTag}
             htmlFor={htmlFor}
           />

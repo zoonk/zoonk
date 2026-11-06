@@ -147,10 +147,14 @@ private struct PlanSetupLeft: View {
 }
 
 private struct PlanContent: View {
+  @Environment(AppRouter.self) private var router
+  @Environment(CertificatesStore.self) private var certificates
   @Environment(PlanStore.self) private var store
   @State private var adjusting: AdjustPlanSheet.Section?
   @State private var sheet: PlanSheet?
   @State private var isReporting = false
+  @State private var claimed: [CertificateFacts] = []
+  @State private var slotAnswer: PlanSlotAnswer?
 
   let goal: LearnerGoal
   let plan: GoalPlan
@@ -160,7 +164,7 @@ private struct PlanContent: View {
     let structure = syllabus.flatMap { $0.hasSubjectPages ? $0 : nil }
     let context = PlanContext(
       goal: goal, plan: plan, adjust: { adjusting = $0 }, report: { isReporting = true },
-      show: { sheet = $0 })
+      show: { sheet = $0 }, claimCertificate: claimCertificate)
 
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
@@ -171,7 +175,7 @@ private struct PlanContent: View {
     } secondary: {
       ZoonkList {
         PlanNumbersSection(context: context, syllabus: syllabus)
-        PlanSuggestionSection(context: context, isInline: true)
+        PlanSuggestionSection(context: context, answer: $slotAnswer, isInline: true)
         NextOnPathSection(context: context)
         PlanMoreSection(goal: goal)
         PlanSettingsSection(context: context)
@@ -181,7 +185,7 @@ private struct PlanContent: View {
         header
         PlanRoadmapSection(context: context, structure: structure)
         PlanNumbersSection(context: context, syllabus: syllabus)
-        PlanSuggestionSection(context: context)
+        PlanSuggestionSection(context: context, answer: $slotAnswer)
         structureSections(context: context, structure: structure, namesChoices: true)
         NextOnPathSection(context: context)
         PlanMoreSection(goal: goal)
@@ -191,6 +195,8 @@ private struct PlanContent: View {
     .barTitleAfterHero(String(localized: "Plan", table: "Plan", comment: "Title of the Plan tab"))
     .modifier(PlanToolbar(context: context))
     .planSheets($sheet, context: context, syllabus: syllabus)
+    .completionMoments(certificates: claimed)
+    .loads(courseEnd, refreshable: false)
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: store)
         .zoonkStyles()
@@ -205,6 +211,31 @@ private struct PlanContent: View {
       PageHeader(
         Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"),
         eyebrow: planEyebrow(goal: goal, plan: plan))
+    }
+  }
+
+  /// An exam's course can finish before its plan does: its exam-day mocks come after.
+  private var courseEnd: [any CachedResource] {
+    goal.kind == .exam && plan.end == nil ? [store.planEnd(goalId: goal.id)] : []
+  }
+
+  /// The learner asked for them, so when every moment already played, the certificate opens
+  /// instead.
+  private func claimCertificate() async -> Bool {
+    switch await certificates.claim(goalID: goal.id) {
+    case .done(let claimed) where !claimed.isEmpty:
+      let unshown = claimed.filter { !$0.wasShown }.map(\.facts)
+
+      if !unshown.isEmpty {
+        self.claimed = unshown
+      } else if let only = claimed.first, claimed.count == 1 {
+        sheet = .certificate(code: only.facts.code)
+      } else {
+        router.present(.account(.certificates))
+      }
+      return true
+    case .done, .failed: return false
+    case .obsolete: return true
     }
   }
 
@@ -230,6 +261,8 @@ struct PlanContext {
   let adjust: (AdjustPlanSheet.Section) -> Void
   var report: () -> Void = {}
   var show: (PlanSheet) -> Void
+  /// False when it didn't save; the Plan plays the certificate's moment.
+  var claimCertificate: () async -> Bool = { false }
 
   var isPaused: Bool { goal.status == .paused }
 }

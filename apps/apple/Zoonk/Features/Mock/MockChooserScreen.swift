@@ -156,6 +156,8 @@ private struct MockChooser: View {
   @State private var length: PlacementMockOption.Length?
   @State private var status: ChooserStatus = .choosing
   @State private var busy = false
+  @State private var isOnScreen = false
+  @AccessibilityFocusState private var isPlusNoticeFocused: Bool
 
   let goalId: String
   let view: MockOptions
@@ -194,6 +196,14 @@ private struct MockChooser: View {
         lastMockSection
       }
     }
+    .onAppear { isOnScreen = true }
+    .onDisappear { isOnScreen = false }
+    // See Plus took the place of the Start the learner pressed.
+    .onChange(of: isOpen) {
+      if !isOpen, status == .plusRequired {
+        isPlusNoticeFocused = true
+      }
+    }
   }
 
   /// Main's `ChooserHeader`: what the last Start found takes the line under the title, and Start
@@ -206,7 +216,9 @@ private struct MockChooser: View {
           ? Text(
             "A mock exam to find your level", tableName: "Mock", comment: "Placement mock title")
           : Text("Take a mock exam", tableName: "Mock", comment: "Mock chooser title"),
-        eyebrow: Text(view.examName), supporting: line)
+        eyebrow: Text(view.examName), supporting: line
+      )
+      .announcesAlert(failure)
 
       startAction
 
@@ -304,7 +316,10 @@ private struct MockChooser: View {
             : Text(
               "Mock exams come with Plus: whenever you want, and every week in your plan.",
               tableName: "Mock", comment: "Mocks without Plus"),
-          showsSeePlus: false, isInset: true)
+          showsSeePlus: false, isInset: true
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityFocused($isPlusNoticeFocused)
       }
     }
   }
@@ -382,41 +397,30 @@ private struct MockChooser: View {
 
   /// Main's `ChooserLine`: the page's one line, or what the last Start found in its place.
   private var line: Text {
+    if let failure {
+      return Text(failure).foregroundStyle(.destructiveText)
+    }
+
+    if case .short? = shownStatus {
+      return Text(verbatim: outcome.joinedSentences())
+    }
+
+    return detail
+  }
+
+  /// A Start that failed, read out as main's `role="alert"` is, since VoiceOver stays on Start.
+  private var failure: String? {
     switch shownStatus {
-    case .short(_, let examQuestions, let limit, let minutes, let questions)?:
-      let ready = String(
-        localized:
-          "\(questions) of the \(examQuestions) questions are ready now, so this mock takes about \(MockLabels.duration(minutes: minutes)).",
-        table: "Mock", comment: "A mock that can ask only part of its questions")
-      let more =
-        switch limit {
-        case .day:
-          String(
-            localized: "More can be written for your mocks tomorrow.", table: "Mock",
-            comment: "Daily question limit")
-        case .month:
-          String(
-            localized: "More can be written for your mocks next month.", table: "Mock",
-            comment: "Monthly question limit")
-        case .total, nil:
-          String(
-            localized: "The question bank doesn't have more new ones for it yet.", table: "Mock",
-            comment: "No more questions")
-        }
-      return Text(verbatim: [ready, more].joinedSentences())
     case .notEnoughQuestions?:
-      return Text(
-        "There aren't enough questions for this mock yet. Try the full exam or another subject.",
-        tableName: "Mock", comment: "Too few questions for a mock"
-      )
-      .foregroundStyle(.destructiveText)
+      String(
+        localized:
+          "There aren't enough questions for this mock yet. Try the full exam or another subject.",
+        table: "Mock", comment: "Too few questions for a mock")
     case .failed?:
-      return Text(
-        "We couldn't start the mock. Try again.", tableName: "Mock", comment: "Start failed"
-      )
-      .foregroundStyle(.destructiveText)
+      String(
+        localized: "We couldn't start the mock. Try again.", table: "Mock", comment: "Start failed")
     default:
-      return detail
+      nil
     }
   }
 
@@ -434,6 +438,41 @@ private struct MockChooser: View {
       }
     } icon: {
       ProgressView()
+    }
+  }
+
+  /// What the last Start led to, in words: VoiceOver stays on Start and hears it. A failure is
+  /// read out as an alert (`failure`).
+  private var outcome: [String] {
+    switch status {
+    case .short(_, let examQuestions, let limit, let minutes, let questions):
+      let more =
+        switch limit {
+        case .day:
+          String(
+            localized: "More can be written for your mocks tomorrow.", table: "Mock",
+            comment: "Daily question limit")
+        case .month:
+          String(
+            localized: "More can be written for your mocks next month.", table: "Mock",
+            comment: "Monthly question limit")
+        case .total, nil:
+          String(
+            localized: "The question bank doesn't have more new ones for it yet.", table: "Mock",
+            comment: "No more questions")
+        }
+
+      return [
+        String(
+          localized:
+            "\(questions) of the \(examQuestions) questions are ready now, so this mock takes about \(MockLabels.duration(minutes: minutes)).",
+          table: "Mock", comment: "A mock that can ask only part of its questions"),
+        more,
+      ]
+    case .refused(let limit):
+      return [limit.message]
+    case .choosing, .writing, .plusRequired, .notEnoughQuestions, .failed:
+      return []
     }
   }
 
@@ -693,6 +732,11 @@ private struct MockChooser: View {
       status = .failed
     case .obsolete:
       status = .choosing
+    }
+
+    // A start that ends after the learner left for another tab isn't read out over it.
+    if isOnScreen, !outcome.isEmpty {
+      announcePolitely(outcome.joinedSentences())
     }
   }
 }

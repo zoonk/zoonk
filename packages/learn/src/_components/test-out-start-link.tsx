@@ -32,7 +32,7 @@ export function useTestOutStart(onStart: () => Promise<TestOutStart>) {
 
   const start = () =>
     startTransition(async () => {
-      setResult(await onStart());
+      setResult(await onStart().catch((): TestOutStart => ({ status: "failed" })));
     });
 
   return { isPending, opening: isPending || result?.status === "started", result, start };
@@ -84,7 +84,7 @@ export function TestOutStartLink({
       <p className={cn("text-muted-foreground text-sm", className)}>
         {t("Already know this?")}
         {space}
-        <Button disabled={opening} onClick={start} variant="link">
+        <Button disabled={opening} focusableWhenDisabled onClick={start} variant="link">
           {opening ? t("Opening the test…") : t("Take the test")}
         </Button>
       </p>

@@ -1,6 +1,7 @@
 import { isAnswerableStep } from "@zoonk/core/lesson-player/run";
 import { type LessonPlayerState } from "../lesson-player-state";
 import { type LessonRunAnswers } from "../lesson-player-types";
+import { finishScreens } from "./lesson-end";
 import { isRetryStep } from "./lesson-steps";
 
 export function getRunVerdicts(answers: LessonRunAnswers): Record<string, boolean> {
@@ -94,12 +95,7 @@ export function resumeLesson(
   };
 
   if (position >= queue.length) {
-    return {
-      ...resumed,
-      completion: { result: null, status: "ready", testedOut: false },
-      phase: "completed",
-      position: queue.length - 1,
-    };
+    return finishScreens({ ...resumed, position: queue.length - 1 }, "ready");
   }
 
   return { ...resumed, position };

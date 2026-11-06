@@ -83,11 +83,13 @@ struct LessonOptionList: View {
   private func pictureLabel(_ option: LessonOption) -> some View {
     VStack(spacing: 8) {
       if let picture = option.picture {
-        LessonPictureView(image: picture, alt: option.pictureAlt, isPending: false, asks: true)
+        LessonPictureView(
+          image: picture, alt: option.pictureAlt, isPending: false, asks: true,
+          drawnAspectRatio: LessonPicturePlaceholder.optionAspectRatio)
       } else {
         LessonPicturePlaceholder(alt: option.pictureAlt, isDrawing: picturesPending)
           .pictureFrame(
-            aspectRatio: LessonPicturePlaceholder.aspectRatio,
+            aspectRatio: LessonPicturePlaceholder.optionAspectRatio,
             maxHeight: LessonPictureFrame.question.maxHeight(screen: screenHeight))
       }
 

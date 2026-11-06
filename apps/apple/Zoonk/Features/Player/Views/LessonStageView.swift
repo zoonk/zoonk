@@ -32,15 +32,6 @@ struct LessonStageView: View {
     }
   }
 
-  /// A verdict that counts: a hook's guess is never wrong and "I don't know yet" has none.
-  private func countedVerdict(_ step: LessonStep) -> Bool? {
-    guard let result = state.currentResult, step.kind != .hook, !result.isSampleAnswer else {
-      return nil
-    }
-
-    return result.isCorrect
-  }
-
   /// Main's verdict is a live status region: VoiceOver says it as it arrives, wherever focus is.
   private func announceVerdict() {
     guard let step = state.currentStep, let result = state.currentResult, !step.showsOwnResult
@@ -92,6 +83,9 @@ struct LessonStageView: View {
         let offersHelp =
           spread != nil && step.teachesInText && tutor.panel != nil && !store.isGuest
         let recap = state.recap
+        let map = store.lesson?.taggedSummary
+        let teachesKnowledge = store.lesson?.targetLanguage == nil
+        let offersDidntGetIt = store.lesson?.offersDidntGetIt(on: step) == true
 
         HStack(spacing: 0) {
           if let pages = spread {
@@ -100,10 +94,15 @@ struct LessonStageView: View {
                 LessonNotice(state: state, store: store)
 
                 VStack(alignment: .leading, spacing: 20) {
+                  LessonIdeaHeader(step: step, map: map)
                   LessonStepView(step: step, state: state, store: store, part: .screen)
                   LessonStepNotes(step: step, store: store)
                 }
                 .id(Self.screenId)
+
+                if offersDidntGetIt {
+                  LessonDidntGetIt(store: store)
+                }
 
                 // The page the learner reads ends with what the question rests on.
                 if let recap {
@@ -121,13 +120,17 @@ struct LessonStageView: View {
           }
 
           ScrollViewReader { scroll in
-            LessonPage(store: store, fillsHeight: spread == nil && step.hasWordBank) {
+            LessonPage(
+              store: store,
+              fillsHeight: spread == nil && (step.hasWordBank || (step.opensLesson && map != nil))
+            ) {
               if spread == nil {
                 LessonNotice(state: state, store: store)
               }
 
               VStack(alignment: .leading, spacing: 20) {
                 if spread == nil {
+                  LessonIdeaHeader(step: step, map: map)
                   LessonStepView(step: step, state: state, store: store, part: .screen)
                 }
 
@@ -165,7 +168,9 @@ struct LessonStageView: View {
                 .id(Self.verdictId)
               }
 
-              if step.strugglePause != nil, !offersHelp {
+              if spread == nil, offersDidntGetIt {
+                LessonDidntGetIt(store: store)
+              } else if step.strugglePause != nil, !offersHelp, !offersDidntGetIt {
                 LessonPauseOffer(step: step, store: store)
               }
 
@@ -227,12 +232,18 @@ struct LessonStageView: View {
               .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
           }
         }
+        .background {
+          if step.isRead, teachesKnowledge {
+            LessonPaper()
+          }
+        }
         .environment(\.isPaneSplit, spread != nil)
         .environment(\.isLessonStepChecked, state.phase == .feedback)
         .environment(
           \.lessonScreenHeight,
           proxy.size.height + proxy.safeAreaInsets.top + proxy.safeAreaInsets.bottom
         )
+        .environment(\.lessonPageHeight, proxy.size.height)
         .environment(store.promptAudio)
         .onChange(of: pages != nil, initial: true) { _, isSpread in
           store.isSpread = isSpread
@@ -241,6 +252,7 @@ struct LessonStageView: View {
       // A screen whose answer starts over (a missed question coming straight back) is made anew,
       // as another screen would be, so its canvas starts over too.
       .id(visit(step))
+      .announcesBuddyOffer(.misses, isShown: state.struggleOffer != nil && !step.showsOwnResult)
       .onChange(of: shownPrompt(step), initial: true) { _, shown in
         store.promptAudio.enter(prompt: shown.url, audio: audio)
       }
@@ -258,9 +270,10 @@ struct LessonStageView: View {
           isCheckSlow = !Task.isCancelled
         }
       }
+      .announcesStatus(isCheckSlow && state.phase == .checking ? LessonCheckNote.slowLine : nil)
       .simultaneousGesture(TapGesture().onEnded { store.touches += 1 })
       .scrollDismissesKeyboard(.interactively)
-      .sensoryFeedback(trigger: countedVerdict(step)) { _, isCorrect in
+      .sensoryFeedback(trigger: state.countedVerdict(step.id)) { _, isCorrect in
         isCorrect.map { $0 ? .success : .error }
       }
       .onChange(of: state.currentResult?.isCorrect) { _, isCorrect in
@@ -272,7 +285,7 @@ struct LessonStageView: View {
   }
 }
 
-private struct LessonPage<Content: View>: View {
+struct LessonPage<Content: View>: View {
   @State private var visibleHeight: CGFloat?
 
   let store: LessonPlayerStore
@@ -300,6 +313,17 @@ private struct LessonPage<Content: View>: View {
   }
 }
 
+private struct LessonIdeaHeader: View {
+  let step: LessonStep
+  let map: LessonSummary?
+
+  var body: some View {
+    if let map, let index = step.idea(in: map) {
+      LessonIdeaStrip(summary: map, index: index)
+    }
+  }
+}
+
 /// Last, so a line arriving after the screen shows moves nothing.
 private struct LessonStepNotes: View {
   let step: LessonStep
@@ -321,9 +345,7 @@ private struct LessonCheckNote: View {
   var body: some View {
     if state.notice == .selfCorrect {
       Label {
-        Text(
-          "Not quite. Look again and fix it yourself, then check.", tableName: "Player",
-          comment: "A wrong language answer the learner can fix once")
+        Text(LessonPlayerState.Notice.selfCorrect.line)
       } icon: {
         Image(systemName: "pencil")
       }
@@ -332,22 +354,57 @@ private struct LessonCheckNote: View {
     }
 
     if state.checkFailed {
-      Text(
-        "We couldn't check your answer this time. Try again.", tableName: "Player",
-        comment: "The server couldn't grade a written or spoken answer"
+      FailureLine(
+        message: LocalizedStringResource(
+          "We couldn't check your answer this time. Try again.", table: "Player",
+          comment: "The server couldn't grade a written or spoken answer")
       )
       .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
     }
 
     if isSlow, state.phase == .checking {
-      Text(
-        "Still checking. This is taking longer than usual.", tableName: "Player",
-        comment: "Grading the answer is taking longer than usual"
-      )
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
+      Text(Self.slowLine)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
     }
+  }
+
+  static var slowLine: String {
+    String(
+      localized: "Still checking. This is taking longer than usual.", table: "Player",
+      comment: "Grading the answer is taking longer than usual")
+  }
+}
+
+extension LessonPlayerState.Notice {
+  var line: String {
+    switch self {
+    case .selfCorrect:
+      String(
+        localized: "Not quite. Look again and fix it yourself, then check.", table: "Player",
+        comment: "A wrong language answer the learner can fix once")
+    case .answerNotSaved:
+      String(
+        localized: "Your answer here didn't save. Answer it again to finish the lesson.",
+        table: "Player",
+        comment: "The lesson came back to a screen whose answer was never saved")
+    case .pictureReady:
+      String(
+        localized: "This question was waiting for its picture. Answer it to finish the lesson.",
+        table: "Player",
+        comment: "A question left out while its picture was drawn came back once it was drawn")
+    case .writingSkipped:
+      String(
+        localized: "No more writing today.", table: "Player",
+        comment: "\"Can't write now\" left the lesson's writing out")
+    }
+  }
+}
+
+extension LessonPlayerState {
+  /// What the stage's notice says; a quick check shows its progress there instead.
+  var noticeLine: String? {
+    quickCheckProgress == nil ? notice?.line : nil
   }
 }
 
@@ -355,7 +412,8 @@ private struct LessonCheckNote: View {
 struct LessonActionBar: View {
   let store: LessonPlayerStore
   let state: LessonPlayerState
-  let step: LessonStep
+  /// Nil on the lesson map, which is read like a screen.
+  let step: LessonStep?
 
   @Environment(\.activityRenderers) private var activityRenderers
   @Environment(\.lessonTutor) private var tutor
@@ -371,7 +429,7 @@ struct LessonActionBar: View {
         }
       }
 
-      if step.isRead {
+      if let step, step.isRead {
         LessonAudioButton(url: step.promptAudio, style: .bar)
       }
 
@@ -389,13 +447,14 @@ struct LessonActionBar: View {
   @ViewBuilder
   private var primaryButton: some View {
     let primary = primaryAction
-
-    Button {
+    let button = Button {
       switch primary.action {
       case .check:
         Task { await store.check(gradeActivity: activityGrade) }
       case .continueLesson:
         store.continueLesson()
+      case .dontKnow:
+        store.dontKnow()
       }
     } label: {
       HStack {
@@ -408,10 +467,15 @@ struct LessonActionBar: View {
       }
       .frame(maxWidth: .infinity)
     }
-    .buttonStyle(.mainAction)
     .controlSize(.large)
     .disabled(primary.isDisabled)
     .keyboardShortcut(.defaultAction)
+
+    if primary.isProminent {
+      button.buttonStyle(.mainAction)
+    } else {
+      button.buttonStyle(.outline)
+    }
   }
 
   private var askButton: some View {
@@ -436,7 +500,7 @@ struct LessonActionBar: View {
   }
 
   private var activityGrade: ((ActivityStepContent, ActivityAnswer) -> Bool)? {
-    guard case .activity(let content) = step.content else {
+    guard case .activity(let content) = step?.content else {
       return nil
     }
 
@@ -444,7 +508,7 @@ struct LessonActionBar: View {
   }
 
   private enum PrimaryKind {
-    case check, continueLesson
+    case check, continueLesson, dontKnow
   }
 
   private struct PrimaryAction {
@@ -452,9 +516,14 @@ struct LessonActionBar: View {
     let title: LocalizedStringResource
     var isBusy = false
     var isDisabled = false
+    var isProminent = true
   }
 
   private var primaryAction: PrimaryAction {
+    guard let step else {
+      return PrimaryAction(action: .continueLesson, title: Self.continueTitle)
+    }
+
     switch state.phase {
     case .feedback:
       return PrimaryAction(action: .continueLesson, title: Self.continueTitle)
@@ -465,7 +534,7 @@ struct LessonActionBar: View {
           "Checking your answer", table: "Player",
           comment: "The main button while a written answer is graded"),
         isBusy: true, isDisabled: true)
-    case .playing, .completed:
+    case .playing, .map, .completed:
       break
     }
 
@@ -482,7 +551,7 @@ struct LessonActionBar: View {
 
       return PrimaryAction(
         action: .continueLesson,
-        title: state.position == state.queue.count - 1
+        title: state.isLastScreen
           ? Self.continueTitle
           : LocalizedStringResource(
             "Next", table: "Player", comment: "Moves to the next screen of the lesson"))
@@ -509,6 +578,13 @@ struct LessonActionBar: View {
             "Confirm", table: "Player", comment: "Confirms a decision in a challenge"),
           isDisabled: pending == nil)
       }
+    }
+
+    // The reveal often points at the picture, so it waits for one still being drawn, as the options do.
+    if state.revealsWithoutGuess {
+      return PrimaryAction(
+        action: .dontKnow, title: LessonWaysOut.dontKnowTitle,
+        isDisabled: step.isRequiredPictureDrawing(openedAt: store.openedAt), isProminent: false)
     }
 
     return PrimaryAction(
@@ -576,10 +652,7 @@ private struct LessonNotice: View {
       switch state.notice {
       case .answerNotSaved:
         Label {
-          Text(
-            "Your answer here didn't save. Answer it again to finish the lesson.",
-            tableName: "Player",
-            comment: "The lesson came back to a screen whose answer was never saved")
+          Text(LessonPlayerState.Notice.answerNotSaved.line)
         } icon: {
           Image(systemName: "icloud.slash")
         }
@@ -587,10 +660,7 @@ private struct LessonNotice: View {
         .foregroundStyle(.mutedForeground)
       case .pictureReady:
         Label {
-          Text(
-            "This question was waiting for its picture. Answer it to finish the lesson.",
-            tableName: "Player",
-            comment: "A question left out while its picture was drawn came back once it was drawn")
+          Text(LessonPlayerState.Notice.pictureReady.line)
         } icon: {
           Image(systemName: "photo")
         }
@@ -599,9 +669,7 @@ private struct LessonNotice: View {
       case .writingSkipped:
         HStack(alignment: .firstTextBaseline) {
           Label {
-            Text(
-              "No more writing today.", tableName: "Player",
-              comment: "\"Can't write now\" left the lesson's writing out")
+            Text(LessonPlayerState.Notice.writingSkipped.line)
           } icon: {
             Image(systemName: "pencil.slash")
           }

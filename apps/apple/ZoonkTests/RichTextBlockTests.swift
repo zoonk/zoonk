@@ -8,7 +8,7 @@ final class RichTextBlockTests: XCTestCase {
       RichTextBlock.parse("First line\nsame paragraph\n\n| A | B |\n|---|---|\n| 1 | 2 |"),
       [
         .paragraph(lines: ["First line", "same paragraph"]),
-        .table(header: ["A", "B"], rows: [["1", "2"]]),
+        .table(header: ["A", "B"], alignments: [.leading, .leading], rows: [["1", "2"]]),
       ])
   }
 
@@ -40,7 +40,8 @@ final class RichTextBlockTests: XCTestCase {
     XCTAssertEqual(
       RichTextBlock.parse("Price | Shares\n:--- | ---:\n5 | 10\n7\nAfter"),
       [
-        .table(header: ["Price", "Shares"], rows: [["5", "10"]]),
+        .table(
+          header: ["Price", "Shares"], alignments: [.leading, .trailing], rows: [["5", "10"]]),
         .paragraph(lines: ["7", "After"]),
       ])
     XCTAssertEqual(

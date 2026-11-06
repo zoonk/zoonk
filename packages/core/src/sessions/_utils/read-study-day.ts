@@ -3,8 +3,10 @@ import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readClaimEvents } from "../../learner/facts/claim-events";
+import { readPracticeMistakes } from "../../learner/facts/practice-mistakes";
 import { readPreparationInputs } from "../../learner/facts/preparation-inputs";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
+import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readUsageTotals } from "../../learner/facts/usage-totals";
 import { toIdKey } from "../../library/_utils/shared-rows";
 import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
@@ -72,12 +74,14 @@ export async function readStudyDay({
     now,
     readClaims: (skillIds: readonly string[]) =>
       readClaimEvents(userId, goal.id, toIdKey(skillIds)),
+    readSubscription: readActiveSubscription,
     timeZone,
     userId,
   };
 
   const day = await planStudyDay({
     ...context,
+    readMistakes: () => readPracticeMistakes(userId, goal.id),
     readPreparation: () => readPreparationInputs(userId, goal.id),
     readUsage: () => readUsageTotals(userId),
     selection,

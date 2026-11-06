@@ -1,0 +1,1174 @@
+{
+  "de-fotosynthese": {
+    "ideas": [
+      {
+        "label": "Kohlendioxid und Wasser",
+        "text": "Die Pflanze braucht Kohlendioxid und Wasser, um durch Fotosynthese Zucker herzustellen."
+      },
+      {
+        "label": "Chloroplasten",
+        "text": "Die Fotosynthese findet in den grünen Chloroplasten der Pflanzenzellen statt."
+      },
+      {
+        "label": "Energie im Zucker",
+        "text": "Licht liefert Energie, die bei der Fotosynthese im Zucker gespeichert wird."
+      },
+      {
+        "label": "Sauerstoff entsteht",
+        "text": "Bei der Fotosynthese entsteht neben Zucker auch Sauerstoff, den die Pflanze abgeben kann."
+      },
+      {
+        "label": "Nachts ohne Licht",
+        "text": "Nachts kann die Pflanze zuvor gebildeten Zucker als Energiequelle nutzen."
+      }
+    ],
+    "language": "de",
+    "lessonTitle": "Die Fotosynthese",
+    "level": "beginner",
+    "screens": [
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Eine grüne Pflanze stellt mithilfe von Licht selbst Zucker her. Das kann auch die Wasserpflanze im Aquarium. Dieser Vorgang heißt **Fotosynthese**.",
+        "title": "Zucker aus eigener Herstellung"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "Woher stammt der größte Teil des Materials für neues, trockenes Holz eines Baumes?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Ein Baum braucht ein Gas aus der Luft, um Zucker herzustellen, aus dem später Holz entstehen kann. Dieses Gas heißt **Kohlendioxid**.",
+        "title": "Baumaterial aus der Luft"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Eine Sonnenblume nimmt Wasser über ihre Wurzeln auf. Sie verbraucht dieses Wasser bei der Fotosynthese.",
+        "title": "Wasser wird verbraucht"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Eine Pflanze bekommt Licht und Wasser, aber kein Kohlendioxid mehr.\nKann sie weiter durch Fotosynthese Zucker herstellen?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Ein Blatt besteht aus winzigen Zellen, seinen lebenden Bausteinen. In kleinen grünen Körperchen darin findet die Fotosynthese statt. Sie heißen **Chloroplasten**.",
+        "title": "In der Blattzelle"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "In den Chloroplasten fängt ein grüner Farbstoff einen Teil des Sonnenlichts auf, das auf ein Blatt fällt. Dieser Farbstoff heißt **Chlorophyll**.",
+        "title": "Licht auffangen"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Licht liefert bei der Fotosynthese Energie, aber kein Baumaterial. Diese Energie wird im Zucker gespeichert, den die Pflanze später als Energiequelle nutzen kann.",
+        "title": "Energie im Zucker"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Bei der Fotosynthese entsteht neben Zucker auch Sauerstoff, ein Gas, das die Pflanze abgeben kann. Die Blasen an der Wasserpflanze im hellen Aquarium enthalten diesen Sauerstoff.",
+        "title": "Sauerstoff entsteht"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Ohne Licht stellt eine Pflanze durch Fotosynthese keinen neuen Zucker her. Nachts kann sie trotzdem weiterleben, weil sie zuvor gebildeten Zucker als Energiequelle nutzt.",
+        "title": "Nachts ohne Licht"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "In einem dunklen Gewächshaus bekommen Pflanzen Wasser und Kohlendioxid.\nWas ermöglicht neue Fotosynthese und warum?",
+        "title": null
+      }
+    ]
+  },
+  "en-heart-chambers": {
+    "ideas": [
+      { "label": "Atria", "text": "The two upper chambers, the atria, receive blood." },
+      {
+        "label": "Ventricles",
+        "text": "The two lower chambers, the ventricles, pump blood out: the right to the lungs and the left to the whole body."
+      },
+      {
+        "label": "Septum",
+        "text": "The septum is the wall that separates the heart’s two sides and keeps their blood apart."
+      }
+    ],
+    "language": "en",
+    "lessonTitle": "The chambers of the heart",
+    "level": "beginner",
+    "screens": [
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Look at Naomi’s heart from the front: its right side appears on your left. The two upper chambers, called atria, receive blood; the two lower chambers, called ventricles, pump it out. The right ventricle sends blood to the lungs; the left sends it to the whole body. The septum is the wall that separates the two sides, keeping their blood apart. Look at the numbered parts.",
+        "title": "Four chambers at work"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Naomi learns that one chamber sends blood to her whole body.\nWhich chamber does that job?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "During Naomi’s heart exam, a doctor hears signs of a hole in the wall between her ventricles.\nWhat is the wall, and why can a hole let blood mix?",
+        "title": null
+      }
+    ]
+  },
+  "en-particle-in-a-box": {
+    "ideas": [
+      {
+        "label": "Boundary conditions",
+        "text": "Infinite walls make the wave zero outside the box, so continuity gives $\\psi(0)=\\psi(L)=0$."
+      },
+      {
+        "label": "Allowed energies",
+        "text": "The nonzero box states have $k_n=n\\pi/L$ and $E_n=n^2h^2/(8mL^2)$ for positive integers $n$."
+      },
+      {
+        "label": "Standing waves",
+        "text": "Each normalized standing wave fits $n$ half-wavelengths in the box and has $n-1$ interior nodes."
+      },
+      {
+        "label": "An electron's photon",
+        "text": "An electron dropping from $n=2$ to $n=1$ in a $1.0\\,\\text{nm}$ box emits a photon near $1100\\,\\text{nm}$."
+      }
+    ],
+    "language": "en",
+    "lessonTitle": "Particle in a box",
+    "level": "advanced",
+    "screens": [
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Naomi models a confined particle between $x=0$ and $x=L$. Its potential energy $V(x)$ is zero inside and infinite outside, where its wavefunction $\\psi$, the particle's probability amplitude, is zero. Continuity makes $\\psi(0)=\\psi(L)=0$: these are **boundary conditions**, like a guitar string pinned at both ends.",
+        "title": "A box with walls"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Inside Naomi's box, the energy equation is $-(\\hbar^2/2m)\\psi''=E\\psi$. Here $m$ is mass, $E$ is energy, $\\hbar$ is Planck's constant divided by $2\\pi$, and $\\psi''$ is the second spatial derivative. With $k=\\sqrt{2mE}/\\hbar$, it becomes $\\psi''=-k^2\\psi$, so $\\psi=A\\sin kx+B\\cos kx$. This oscillation resembles a vibrating string.",
+        "title": "The wave inside"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Naomi has $\\psi=A\\sin kx+B\\cos kx$ inside the box and requires $\\psi(0)=0$.\nWhich term can remain after she applies the condition at zero?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "workedExample",
+        "text": "Naomi has applied the left boundary condition and found $\\psi=A\\sin kx$. Which values of $k$ and $E$ satisfy the right boundary?",
+        "title": "Allowed waves and energies"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Naomi considers assigning $n=0$ to the lowest state of the box.\nWhy must the lowest state instead have $n=1$?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Naomi sets the total probability in the box to one: $\\int_0^L|\\psi|^2dx=1$. This gives $A=\\sqrt{2/L}$ and $\\psi_n=\\sqrt{2/L}\\sin(n\\pi x/L)$. Each **standing wave** fits $n$ half-wavelengths into $L$ and has $n-1$ interior nodes, points where the wave is zero. For $n=3$, there are two nodes and $E_3=9E_1$; the gaps grow because $E_n\\propto n^2$.",
+        "title": "Waves that fit"
+      },
+      {
+        "hasVisual": false,
+        "kind": "workedExample",
+        "text": "Naomi models an electron in a $1.0\\,\\text{nm}$ box. What energy and wavelength result when it drops from $n=2$ to $n=1$?",
+        "title": "An electron's photon"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "For the same electron, $E_1={energy}\\,\\text{eV}$ when the box width is ${wide}\\,\\text{nm}$. Naomi makes the box ${narrow}\\,\\text{nm}$ wide.\nWhat is the new $E_1$, in eV, to two decimal places?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Naomi uses the box model for CdSe dots. She compares a 6 nm dot with a 3 nm dot, keeping the material the same. Treat the confinement contribution to the transition energy as proportional to $1/L^2$.\nHow does the confinement contribution change, and why can the smaller dot emit bluer light?",
+        "title": null
+      }
+    ]
+  },
+  "en-percent-change": {
+    "ideas": [
+      { "label": "The change", "text": "The change is the new value minus the starting value." },
+      {
+        "label": "Percent change",
+        "text": "Percent change is the change divided by the starting value, multiplied by 100."
+      },
+      {
+        "label": "Getting back",
+        "text": "After a drop, the rise needed to get back is measured from the lower value, so it is a bigger percent."
+      }
+    ],
+    "language": "en",
+    "lessonTitle": "Percent change",
+    "level": "beginner",
+    "screens": [
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Leah’s movie ticket went from $20 to $25. Subtract the old price from the new one: $25 − $20 = $5. But $5 alone doesn’t tell you how big the jump is: it’s bigger compared with a $20 ticket than with a $500 TV.",
+        "title": "How big is $5?"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Leah can ask how many cents the ticket changed for each dollar she started with. To find the **percent change**, divide the change by the original price, then multiply by 100. Original means the starting value, before the change. For the ticket, $5 on $20 is 25 cents per starting dollar.",
+        "title": "Compare with the start"
+      },
+      {
+        "hasVisual": false,
+        "kind": "workedExample",
+        "text": "Leah’s movie ticket went from $20 to $25. What was the percent increase?",
+        "title": "The ticket increase"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Leah’s monthly salary rose from ${old} to ${new}.\nWhat was the percent increase, rounded to the nearest whole percent?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "workedExample",
+        "text": "Leah finds a jacket reduced from $80 to $60. What is the percent change?",
+        "title": "A price decrease"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "A video game Leah wants drops from ${old} to ${new}.\nWhat is the percent change?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Leah’s $100 sneakers drop 50% to $50. A 50% rise on $50 adds only $25, making $75, not $100. To return to $100, the price needs a $50 rise from $50: 50 ÷ 50 × 100 = 100%. The starting value changed, so the same dollar amount is a bigger percent.",
+        "title": "Getting back to $100"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Your monthly pay of $3,000 is cut 10% in a slow season, then raised 10% later.\nWhat happens to your pay, and what rise would undo the cut?",
+        "title": null
+      }
+    ]
+  },
+  "en-python-range": {
+    "ideas": [
+      {
+        "label": "Start and stop",
+        "text": "In `range(start, stop)`, counting starts at the start and leaves out the stop, even when counting down."
+      },
+      { "label": "Reach 5", "text": "`range(1, 6)` reaches 5 because it stops before 6." },
+      {
+        "label": "Number of values",
+        "text": "When counting up by ones, the number of values is stop minus start."
+      }
+    ],
+    "language": "en",
+    "lessonTitle": "Count with range() in Python",
+    "level": "beginner",
+    "screens": [
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Hannah’s `range(1, 5)` starts at 1 and gives 1, 2, 3, 4. In `range(start, stop)`, the stop is left out, even when counting down. To reach 5, use `range(1, 6)`. Counting up by ones, the number of values is stop minus start: 5 − 1 = 4. A loop over page numbers works the same way.",
+        "title": "Stop before the end"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Hannah runs `for n in range(2, 6): print(n)`.\nWhat does the loop print?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Hannah uses `for n in range(10, 0, -1): print(n)` for a timer countdown. The `-1` counts down by one.\nWhat is the last number printed?",
+        "title": null
+      }
+    ]
+  },
+  "es-inflacion": {
+    "ideas": [
+      {
+        "label": "Inflación",
+        "text": "La inflación ocurre cuando los precios suben en general y siguen subiendo con el tiempo."
+      },
+      {
+        "label": "Suben más despacio",
+        "text": "Cuando la inflación baja de 8% a 3%, los precios en general siguen subiendo, pero más despacio."
+      },
+      {
+        "label": "No todos suben",
+        "text": "No todos los precios tienen que subir para que haya inflación."
+      },
+      {
+        "label": "Poder adquisitivo",
+        "text": "El poder adquisitivo es lo que puedes comprar con tu dinero."
+      },
+      {
+        "label": "Más pesos",
+        "text": "Recibir más pesos no garantiza comprar más si tus compras también se encarecen."
+      }
+    ],
+    "language": "es",
+    "lessonTitle": "Qué es la inflación",
+    "level": "beginner",
+    "screens": [
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Unas compras que representan el consumo de los hogares pasan de $100.00 a $108.00 en un año: suben 8%. Cuando los precios suben en general y siguen subiendo con el tiempo, hay **inflación**.",
+        "title": "Precios en aumento"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "La inflación anual pasa de 8% a 3%. ¿Qué ocurre con los precios durante el segundo año?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Aunque la inflación baja de 8% a 3%, los precios en general siguen subiendo. Las compras que costaban $108.00 pasan a $111.24 con el aumento de 3%.",
+        "title": "Suben más despacio"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Si el jitomate se encarece durante una semana, eso no demuestra que haya inflación. También hace falta saber qué pasa con muchos otros precios a lo largo del tiempo.",
+        "title": "Un precio no basta"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Sube el precio del café en una cafetería.\n¿Qué conviene revisar antes de concluir que hay inflación?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Una televisión puede abaratarse mientras el conjunto de compras de los hogares sigue encareciéndose. No todos los precios tienen que subir para que haya inflación.",
+        "title": "No todos suben"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "La ropa baja de precio, pero el conjunto de compras de los hogares se encarece de forma sostenida.\n¿La baja de la ropa contradice que haya inflación?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Con $200.00 compras diez comidas de $20.00, pero solo ocho si cada una cuesta $25.00. Lo que puedes comprar con tu dinero es tu **poder adquisitivo**. Si tu dinero no aumenta y tus compras se encarecen, lo pierdes.",
+        "title": "Lo que compra tu dinero"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Sergio conserva $600.00 en efectivo mientras suben los precios de sus compras habituales.\n¿Qué pierde Sergio?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Tu ingreso pasa de $1,000.00 a $1,100.00 y tus mismas compras pasan de $1,000.00 a $1,100.00. Recibir más pesos no garantiza comprar más: en este caso, solo puedes comprar lo mismo.",
+        "title": "Más pesos, mismas compras"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Marta compara su ingreso quincenal con el costo de las mismas compras en el mercado.\n\n| Concepto | Antes | Ahora |\n| --- | ---: | ---: |\n| Ingreso | $4,000.00 | $4,400.00 |\n| Compras | $4,000.00 | $4,600.00 |\n¿Le alcanza para mantener esas compras y por qué?",
+        "title": null
+      }
+    ]
+  },
+  "ja-teko": {
+    "ideas": [
+      { "label": "支点", "text": "支点は、てこが回る中心です。" },
+      {
+        "label": "力点と作用点",
+        "text": "力点はてこを動かす力を加える場所で、作用点はてこが相手に力を加える場所です。"
+      },
+      {
+        "label": "支点からの距離",
+        "text": "支点と作用点が同じなら、力点を支点から遠ざけるほど必要な力は小さくなります。"
+      },
+      {
+        "label": "手の動き",
+        "text": "小さな力で上げられる配置では、その分、手を大きく動かします。"
+      }
+    ],
+    "language": "ja",
+    "lessonTitle": "てこのはたらき",
+    "level": "beginner",
+    "screens": [
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "支えを中心に回るこの棒を、てこといいます。棒と支えが接する回る中心が**支点**です。",
+        "title": "棒が回る場所"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "箱と手の位置はそのままで、支えを箱に近づけると、箱を上げる力はどうなりますか？",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "箱と手が同じ位置なら、支点を箱に近づけるほど小さな力で上げられます。箱側が短く、手側が長くなるからです。",
+        "title": "支点を箱の近くに"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "箱を上げるとき、手で棒を押します。このように、てこを動かす力を加える場所が**力点**です。",
+        "title": "手で押す場所"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "棒の左端は箱を押し上げます。このように、てこが相手に力を加える場所が**作用点**です。",
+        "title": "箱を押す場所"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "支点と作用点が同じなら、力点を支点から遠ざけるほど、必要な力は小さくなります。長い柄の端を押すと楽なのはそのためです。",
+        "title": "遠くを押す"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "同じ釘を同じバールで抜きます。\n小さな力で押せる位置はどちらですか？",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "棒の重さを無視すると、左右の距離が同じてこでは、箱を支える力は箱の重さと同じです。力を小さくする効果はありません。",
+        "title": "距離が同じなら"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "棒の重さを無視すると、力点が作用点より支点に近い場合、箱を支えるには箱の重さより大きな力が必要です。てこはいつも楽になるわけではありません。",
+        "title": "力が大きくなる配置"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "同じ重さの箱を静かに支えます。棒の重さは無視します。\n手に必要な力が大きいのはどちらですか？",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "小さな力で上げられる配置では、その分、手を大きく動かします。支点から遠い力点が大きく下がる間に、近い作用点は少し上がります。",
+        "title": "手は大きく動く"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "庭の重い石を棒で少し浮かせます。棒の右側を下げる空間は十分あります。\n最も小さな力で浮かせる配置と、そのときの動きは？",
+        "title": null
+      }
+    ]
+  },
+  "pt-ativo-passivo": {
+    "ideas": [
+      {
+        "label": "Ativo",
+        "text": "O ativo reúne recursos que a empresa controla por fatos já ocorridos e que podem trazer benefícios."
+      },
+      {
+        "label": "Valores a receber",
+        "text": "Um valor que a empresa tem direito de cobrar por um serviço entregue faz parte do ativo."
+      },
+      {
+        "label": "Passivo",
+        "text": "O passivo inclui obrigações atuais causadas por algo que já aconteceu e que exigirão entregar recursos."
+      },
+      {
+        "label": "Itens separados",
+        "text": "Um empréstimo recebido gera dinheiro no ativo e uma dívida no passivo, registrados em itens separados."
+      },
+      {
+        "label": "Compra planejada",
+        "text": "Um plano de compra ainda não contratado nem recebido não cria passivo."
+      }
+    ],
+    "language": "pt",
+    "lessonTitle": "Ativo e passivo",
+    "level": "beginner",
+    "screens": [
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "A padaria já comprou farinha e pode usá-la para fazer pães para venda. Recursos que a empresa controla por fatos já ocorridos e que podem trazer benefícios formam o **ativo**.",
+        "title": "Recursos da empresa"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "Uma oficina recebe uma máquina de R$ 7.000,00, comprada a prazo e sem entrada. O que acontece com o ativo da oficina?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "A oficina já controla e usa a máquina, então registra R$ 7.000,00 no ativo, mesmo sem ter pago nenhuma parcela.",
+        "title": "Mesmo sem quitar"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Uma gráfica entregou um serviço e tem R$ 900,00 a receber do cliente. Esse valor é um direito de cobrança e faz parte do ativo.",
+        "title": "Valores a receber"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Uma gráfica recebeu papel e deve R$ 400,00 ao fornecedor. Essa obrigação atual surgiu de algo que já aconteceu e exigirá entregar recursos: ela faz parte do **passivo**.",
+        "title": "Valores a pagar"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Uma distribuidora entregou peças a uma oficina e receberá R$ 650,00 depois.\nEm qual grupo a distribuidora registra o valor a receber?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Uma empresa recebe um empréstimo de R$ 4.000,00. Ela registra o dinheiro no banco como ativo e a dívida de R$ 4.000,00 como passivo, em itens separados.",
+        "title": "Os dois ao mesmo tempo"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Uma empresa planeja comprar um computador, mas ainda não contratou a compra nem recebeu o aparelho. Esse plano não cria passivo, pois ainda não existe obrigação pela compra.",
+        "title": "Um plano não é dívida"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Uma empresa registrou no passivo o orçamento de uma reforma que ainda não aprovou nem contratou.\nO que ela deve fazer com esse registro?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "A marcenaria Linha Clara recebeu a máquina sem entrada e ainda não pagou parcelas.\n\n| Item | Ativo | Passivo |\n| --- | ---: | ---: |\n| Máquina a prazo | R$ 9.000,00 | R$ 0,00 |\n| Clientes a receber | R$ 1.200,00 | R$ 0,00 |\n| Compra planejada | R$ 0,00 | R$ 2.500,00 |\n\nQuais correções a marcenaria deve fazer?",
+        "title": null
+      }
+    ]
+  },
+  "pt-ciclo-celular": {
+    "ideas": [
+      {
+        "label": "G1",
+        "text": "Em G1, a célula recém-formada cresce e produz as peças que usa para funcionar."
+      },
+      {
+        "label": "fase S",
+        "text": "Na fase S, a célula copia o seu DNA inteiro e continua sendo uma célula só."
+      },
+      {
+        "label": "G2",
+        "text": "Em G2, com o DNA já copiado, a célula produz os materiais que vai usar na divisão."
+      },
+      {
+        "label": "fase M",
+        "text": "Na fase M, a célula reparte seu conteúdo e vira duas, que podem recomeçar o ciclo celular em G1."
+      },
+      {
+        "label": "intérfase",
+        "text": "G1, S e G2 juntas formam a intérfase, o período ativo antes da fase M."
+      }
+    ],
+    "language": "pt",
+    "lessonTitle": "Fases do ciclo celular",
+    "level": "beginner",
+    "screens": [
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Cada célula da sua pele carrega um manual de instruções. Ela segue esse manual para produzir as peças de que precisa para funcionar. Esse manual se chama **DNA**.",
+        "title": "O manual da célula"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "Uma célula da pele passa várias horas sem se separar em duas. O que ela faz durante esse tempo?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Uma célula que acabou de se formar é pequena. Por isso, ela primeiro cresce e produz as peças que usa no dia a dia, seguindo o DNA. Essa fase de crescimento se chama **G1**.",
+        "title": "Primeiro, crescer"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Depois de crescer, a célula da pele faz uma cópia do seu DNA inteiro. Ela continua sendo uma célula só, agora com o manual em dobro. Essa fase de cópia se chama **fase S**.",
+        "title": "Depois, copiar o manual"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Uma célula da pele já cresceu. Agora ela está no meio da cópia do seu DNA e continua sendo uma célula só.\nEm que fase essa célula está?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Com o DNA já copiado, a célula ainda não se divide. Antes, ela produz os materiais que vai usar na divisão. Essa preparação final se chama **G2**.",
+        "title": "Últimos preparativos"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Por fim, a célula reparte seu conteúdo, e cada lado leva uma cópia do DNA. Assim, uma célula vira duas. Essa etapa de divisão se chama **fase M**.",
+        "title": "Enfim, a divisão"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Em G1, S e G2, a célula ainda é uma só, mas está ativa: ela cresce, copia e se prepara. Juntas, essas três fases se chamam **intérfase**. Depois dela vem a fase M.",
+        "title": "As três fases ativas"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Uma célula nova passa por G1, S, G2 e M e vira duas. Se essas células também se dividem, cada uma recomeça em G1. Essa sequência que se repete se chama **ciclo celular**.",
+        "title": "Uma sequência que recomeça"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Uma célula recém-formada cresce em G1, copia o DNA em S e depois se divide em M.\nQual fase fica entre a cópia do DNA e a divisão?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "No laboratório, Jussara vê que uma célula da pele terminou de copiar o DNA. O relatório anota: *vai se dividir imediatamente* e *ainda está na intérfase*.\nQual afirmação do relatório precisa ser corrigida?",
+        "title": null
+      }
+    ]
+  },
+  "pt-eletrons-valencia": {
+    "ideas": [
+      {
+        "label": "Camadas",
+        "text": "Os elétrons ocupam regiões de energia chamadas camadas, que não são trilhos de movimento."
+      },
+      {
+        "label": "Elétrons de valência",
+        "text": "Os elétrons de valência são os da camada ocupada mais externa."
+      },
+      {
+        "label": "Ligação química",
+        "text": "Uma ligação química mantém átomos unidos e envolve elétrons de valência sem fundir seus centros."
+      },
+      {
+        "label": "Par compartilhado",
+        "text": "No gás hidrogênio, cada átomo contribui com seu único elétron para um par compartilhado."
+      },
+      {
+        "label": "Elétrons e ligações",
+        "text": "Na água, o oxigênio tem 6 elétrons de valência e faz duas ligações."
+      }
+    ],
+    "language": "pt",
+    "lessonTitle": "Átomos e elétrons de valência",
+    "level": "beginner",
+    "screens": [
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "A água e outras matérias são feitas de unidades minúsculas. Elas se chamam **átomos**. O hidrogênio é um tipo de átomo.",
+        "title": "Uma unidade minúscula"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "Quando dois átomos de hidrogênio se unem para formar o gás, o que acontece?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Na união dos hidrogênios, as partículas externas se reorganizam, mas os centros continuam separados. Essas partículas são os **elétrons**.",
+        "title": "Os centros ficam separados"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "No oxigênio, 2 elétrons ocupam a primeira região de energia e 6 ocupam a segunda. Essas regiões são chamadas **camadas**; elas não são trilhos de movimento.",
+        "title": "Regiões de energia"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "No oxigênio, a segunda camada é a ocupada mais externa e tem 6 elétrons. Os elétrons da camada ocupada mais externa são os **elétrons de valência**.",
+        "title": "Elétrons mais externos"
+      },
+      {
+        "hasVisual": false,
+        "kind": "workedExample",
+        "text": "O magnésio tem 2, 8 e 2 elétrons em suas camadas. Quantos são de valência?",
+        "title": "Contando no magnésio"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "O enxofre tem {internos}, {meio} e {externos} elétrons nas três camadas, de dentro para fora.\nQuantos elétrons de valência ele tem?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "O hélio tem uma única camada ocupada, com 2 elétrons. Como ela também é a camada ocupada mais externa, os 2 elétrons são de valência.",
+        "title": "Uma camada só"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "O hélio tem 2 elétrons em uma camada. O lítio tem 2 na primeira camada e 1 na segunda.\nQual tem mais elétrons de valência?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "No gás hidrogênio, uma interação mantém dois átomos unidos sem fundir seus centros. Essa interação envolve elétrons de valência e é uma **ligação química**.",
+        "title": "Átomos unidos"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Cada hidrogênio contribui com seu único elétron para um par compartilhado. Compartilhar elétrons é uma maneira de formar uma ligação e não cria elétrons novos.",
+        "title": "Um par compartilhado"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Na água, o oxigênio tem 6 elétrons de valência e faz duas ligações, uma com cada hidrogênio. A quantidade de elétrons externos não é a quantidade de ligações.",
+        "title": "Elétrons não são ligações"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Ao montar um modelo de amônia, alguém diz que o nitrogênio tem 3 elétrons de valência porque faz 3 ligações. O átomo tem 2 elétrons na primeira camada e 5 na segunda.\nComo você corrige a afirmação?",
+        "title": null
+      }
+    ]
+  },
+  "pt-finalidades-oab": {
+    "ideas": [
+      {
+        "label": "Finalidade institucional",
+        "text": "A finalidade institucional inclui defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social."
+      },
+      {
+        "label": "Justiça mais rápida",
+        "text": "A OAB deve lutar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas, sem julgar processos no lugar dos juízes."
+      },
+      {
+        "label": "Finalidade corporativa",
+        "text": "A OAB promove com exclusividade a representação, a defesa, a seleção e a disciplina dos advogados em todo o Brasil, sem limitar a eles todas as suas finalidades."
+      }
+    ],
+    "language": "pt",
+    "lessonTitle": "Finalidades da OAB",
+    "level": "intermediate",
+    "screens": [
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "A queixa que Lorena ouviu diz respeito ao interesse de todos, não só ao de uma profissão. Essa atuação é chamada de **finalidade institucional**. Pelo art. 44, I, do Estatuto da Advocacia, a OAB deve defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social. Por exemplo, pode atuar em defesa de pessoas cujos direitos humanos foram violados.",
+        "title": "Defesa da sociedade"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "Lorena leva à OAB duas propostas: cobrar providências contra a demora dos processos e defender advogados em questões da profissão. Quais podem corresponder às finalidades da Ordem?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "A OAB pode cobrar providências contra atrasos, mas não pode julgar processos no lugar dos juízes. O art. 44, I, também prevê que ela deve lutar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas. Essas frentes são previstas por si: cobrar rapidez não exige provar que uma lei foi aplicada incorretamente.",
+        "title": "Uma Justiça mais rápida"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Ao saber da queixa ouvida por Lorena, Raimundo sugere que a OAB decida o recurso no lugar dos juízes para combater a demora.\nComo você avalia a proposta de Raimundo?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Thaís afirma a Lorena que a OAB só pode cobrar rapidez da Justiça se também demonstrar que alguma lei foi aplicada incorretamente.\nA afirmação de Thaís está correta?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Lorena também pode contar com a OAB em questões da profissão. Essa atuação é chamada de **finalidade corporativa**. Pelo art. 44, II, do Estatuto, cabe à OAB promover, com exclusividade e em todo o Brasil, a representação, a defesa, a seleção e a disciplina dos advogados. A exclusividade vale para essas atribuições e não limita aos advogados todas as finalidades da OAB.",
+        "title": "A atuação pela advocacia"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Murilo diz a Lorena que, como a OAB atua com exclusividade na seleção de advogados, ela não pode defender direitos humanos de pessoas que não sejam advogadas.\nOnde está o erro de Murilo?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Na sede da OAB, Sabrina analisa três pedidos: cobrar providências diante de violações de direitos humanos; promover a seleção de advogados; e assumir o julgamento de recursos atrasados.\nComo esses pedidos se relacionam, nessa ordem, com as finalidades do art. 44 do Estatuto?",
+        "title": null
+      }
+    ]
+  },
+  "pt-juros-sobre-juros": {
+    "ideas": [
+      {
+        "label": "Juros",
+        "text": "Juros são o ganho que o dinheiro aplicado rende, como R$ 100 sobre R$ 1.000 no primeiro ano."
+      },
+      {
+        "label": "Juros sobre juros",
+        "text": "Quando os ganhos antigos ficam aplicados, eles também rendem, e o ganho sobe de R$ 100 para R$ 110."
+      },
+      {
+        "label": "Reinvestir",
+        "text": "Reinvestir é deixar o ganho na aplicação, porque se você tira o ganho, só o valor inicial continua rendendo."
+      },
+      {
+        "label": "Mesmo ritmo, ganho maior",
+        "text": "No mesmo ritmo, o ganho em reais cresce porque o saldo que rende cresce."
+      },
+      {
+        "label": "Na bolsa",
+        "text": "Na bolsa, uma ação pode subir num ano e cair no seguinte, então o exemplo mostra o mecanismo e não promete esse caminho."
+      }
+    ],
+    "language": "pt",
+    "lessonTitle": "Juros sobre juros",
+    "level": "beginner",
+    "screens": [
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Imagine R$ 1.000 aplicados que rendem R$ 100 no primeiro ano. Esse ganho se chama **juros**. Ele pode ficar aplicado, junto com os R$ 1.000 do começo.",
+        "title": "O ganho do dinheiro aplicado"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "Os R$ 1.000 e os R$ 100 de ganho continuam aplicados, rendendo no mesmo ritmo. Quanto a aplicação vai ganhar no segundo ano?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "No segundo ano, os R$ 1.000 rendem de novo R$ 100. Os R$ 100 ganhos antes também rendem: mais R$ 10. Assim, o ganho sobe para R$ 110. Quando ganhos antigos também rendem, isso se chama **juros sobre juros**.",
+        "title": "O ganho também rende"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Se você tirar os R$ 100 da aplicação, só os R$ 1.000 continuam rendendo, e o ganho do ano seguinte volta a ser R$ 100. Deixar o ganho lá dentro para render também se chama **reinvestir**.",
+        "title": "Tirar ou deixar o ganho"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Davi tem duas aplicações de R$ 500 que rendem no mesmo ritmo. Numa, ele deixa os ganhos lá dentro. Na outra, tira todo o ganho no fim de cada ano.\nQual delas ganha mais no segundo ano?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Cada R$ 100 rende R$ 10 por ano, sempre. Mas o saldo que rende cresce, então o ganho em reais cresce junto. Mova o prazo até 20 anos: o saldo chega a uns R$ 6.727, e a curva fica cada vez mais inclinada.",
+        "title": "Mesmo ritmo, ganho maior"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Uma aplicação rende no mesmo ritmo todo ano, sem depósitos nem retiradas. Mesmo assim, ela ganha mais reais no décimo ano do que no primeiro.\nO que explica isso?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Na bolsa, uma ação, que é um pedacinho de uma empresa, pode subir num ano e cair no seguinte. Por isso, o exemplo dos R$ 1.000 crescendo no mesmo ritmo mostra o mecanismo. Ele não promete esse caminho.",
+        "title": "Na bolsa, o caminho oscila"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Você investe na B3, a bolsa de valores do Brasil, para dar a entrada num apartamento daqui a 15 anos. Você não precisa usar os ganhos agora.\nQual decisão e qual motivo fazem sentido?",
+        "title": null
+      }
+    ]
+  },
+  "pt-receitas-despesas": {
+    "ideas": [
+      { "label": "Receita", "text": "O salário é uma receita porque é dinheiro que você ganhou." },
+      {
+        "label": "Empréstimo",
+        "text": "O dinheiro emprestado não é receita porque você precisa devolvê-lo."
+      },
+      {
+        "label": "Despesa",
+        "text": "A conta de luz é uma despesa, mesmo sendo um gasto necessário."
+      },
+      {
+        "label": "Ganho ocasional",
+        "text": "Um presente em dinheiro que você não precisa devolver é receita, mesmo que não aconteça todo mês."
+      },
+      {
+        "label": "Contas próprias",
+        "text": "Uma transferência entre contas próprias não é receita nem despesa: o dinheiro só muda de lugar."
+      }
+    ],
+    "language": "pt",
+    "lessonTitle": "Receitas e despesas",
+    "level": "beginner",
+    "screens": [
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Você recebeu R$ 2.600,00 de salário neste mês. Esse dinheiro que você ganhou é uma **receita** do orçamento da casa.",
+        "title": "Dinheiro que você ganha"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "Você recebe R$ 600,00 de um empréstimo na conta. O que acontece com a receita do mês?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Os R$ 600,00 emprestados aumentam o dinheiro disponível agora. Mas não são receita: você precisa devolvê-los, então fica com uma dívida.",
+        "title": "Empréstimo não é ganho"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Você gasta R$ 150,00 para pagar a luz de casa, um serviço necessário. Esse gasto é uma **despesa**, assim como pagamentos por compras ou obrigações.",
+        "title": "Dinheiro que você gasta"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Você paga R$ 45,00 em dinheiro por um remédio necessário.\nComo registrar esse pagamento?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Você recebe R$ 100,00 de presente e não precisa devolver. O presente é uma receita, mesmo que você não o receba todo mês.",
+        "title": "Um ganho ocasional"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Você passa R$ 200,00 de uma conta sua para outra. Isso não é receita nem despesa da casa: o dinheiro continua sendo seu, apenas mudou de lugar.",
+        "title": "Entre contas próprias"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Você revisa estes registros do orçamento da casa:\n\n| Movimentação | Registro feito |\n| --- | --- |\n| Salário recebido: R$ 2.300,00 | Receita |\n| Empréstimo recebido: R$ 400,00 | Receita |\n| Farmácia paga: R$ 80,00 | Despesa |\n| Transferência entre contas próprias: R$ 200,00 | Despesa |\n\nQuais registros devem sair das receitas e despesas, e por quê?",
+        "title": null
+      }
+    ]
+  },
+  "pt-regra-de-tres": {
+    "ideas": [
+      {
+        "label": "Direta e inversa",
+        "text": "Com equipe e ritmo fixos, o tempo cresce na mesma proporção que o pedido; para o mesmo pedido, mais trabalhadores no mesmo ritmo reduzem o tempo na proporção inversa."
+      },
+      {
+        "label": "Regra de três simples",
+        "text": "A regra de três simples calcula um valor desconhecido usando duas quantidades relacionadas e uma condição fixa."
+      },
+      {
+        "label": "Regra de três composta",
+        "text": "Na regra de três composta, o tempo inicial é multiplicado pela nova quantidade de etiquetas dividida pela inicial e pelo número inicial de impressoras dividido pelo novo."
+      }
+    ],
+    "language": "pt",
+    "lessonTitle": "Regra de três simples e composta",
+    "level": "intermediate",
+    "screens": [
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Na gráfica, Marília compara equipes e pedidos. Para o mesmo pedido, mais trabalhadores no mesmo ritmo reduzem o tempo na proporção inversa; com equipe e ritmo fixos, o tempo cresce na mesma proporção que o pedido. Essas relações são chamadas, respectivamente, de **inversa** e direta. Antes de comparar, diga o que permanece fixo.",
+        "title": "O que fica fixo?"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Um carro mantém o mesmo consumo por quilômetro. Uma piscina é enchida por torneiras iguais, abertas ao mesmo tempo.\nComo o combustível varia com a distância e o tempo de enchimento com o número de torneiras?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Marília também precisa pintar o muro da gráfica. Para o mesmo muro, se a equipe dobra e todos trabalham no mesmo ritmo, o tempo cai pela metade: a relação é inversa. Para calcular um valor desconhecido usando duas quantidades relacionadas e uma condição fixa, usamos a **regra de três simples**.",
+        "title": "Uma mudança por vez"
+      },
+      {
+        "hasVisual": false,
+        "kind": "workedExample",
+        "text": "Quatro trabalhadores pintam o muro da gráfica em 6 dias. Em quantos dias 8 trabalhadores, no mesmo ritmo, pintam o mesmo muro?",
+        "title": "O prazo do muro"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Na gráfica de Marília, {printers} impressoras fazem {initial} etiquetas em {hours} horas. Elas mantêm o mesmo ritmo.\nQuantas horas as mesmas impressoras levam para fazer {target} etiquetas?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Marília muda tanto o pedido de etiquetas quanto o número de impressoras iguais, mantendo o ritmo de cada uma. Para achar o novo tempo, multiplique o tempo inicial pelo novo número de etiquetas dividido pelo inicial e pelo número inicial de impressoras dividido pelo novo. Esse cálculo é uma **regra de três composta**. A divisão das impressoras fica invertida porque mais impressoras reduzem o tempo.",
+        "title": "Duas mudanças juntas"
+      },
+      {
+        "hasVisual": false,
+        "kind": "workedExample",
+        "text": "Três impressoras iguais fazem 240 etiquetas em 4 horas. Quanto tempo 5 impressoras levam para fazer 600 etiquetas, no mesmo ritmo?",
+        "title": "Etiquetas e impressoras"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Na gráfica de Marília, {machines} máquinas iguais fazem {initial} peças em {hours} horas. Cada máquina mantém o mesmo ritmo.\nQuantas horas {newMachines} máquinas levam para fazer {target} peças?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Numa padaria, {ovens} fornos iguais assam {initial} pães em {hours} horas. Cada forno mantém o mesmo ritmo.\nQuantas horas {newOvens} fornos levam para assar {target} pães?",
+        "title": null
+      }
+    ]
+  },
+  "pt-renda-bruta-liquida": {
+    "ideas": [
+      {
+        "label": "Salário bruto",
+        "text": "O salário bruto é o valor inicial antes das retiradas do pagamento."
+      },
+      {
+        "label": "Renda líquida",
+        "text": "No salário, a renda líquida é o bruto menos os descontos."
+      },
+      {
+        "label": "Contas depois",
+        "text": "Uma conta paga depois diminui o dinheiro restante, mas não muda o salário líquido."
+      },
+      {
+        "label": "Faturamento bruto",
+        "text": "O faturamento bruto é o total cobrado pelas vendas ou serviços antes dos gastos do trabalho e dos impostos."
+      }
+    ],
+    "language": "pt",
+    "lessonTitle": "Renda bruta e renda líquida",
+    "level": "beginner",
+    "screens": [
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Otávio confere a proposta: são R$ 3.000,00 antes de qualquer retirada do pagamento. Esse valor inicial é o **salário bruto**. Uma proposta de R$ 2.000,00 também mostra o bruto antes dos descontos.",
+        "title": "O valor anunciado"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "Otávio compara duas propostas de mesmo salário bruto. Qual deixa mais dinheiro para ele usar ao receber?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Imagine o pagamento de Otávio como uma caixa de dinheiro: tiram valores antes de entregá-la. O que chega após essas retiradas é a **renda líquida**. No salário, líquido = bruto − descontos; contas pagas depois não são esses descontos. Mova os controles: R$ 3.000,00 menos R$ 300,00 deixam R$ 2.700,00.",
+        "title": "O que chega à conta"
+      },
+      {
+        "hasVisual": false,
+        "kind": "workedExample",
+        "text": "Veja um exemplo de pagamento de Otávio. O desconto de INSS é uma contribuição para a previdência pública. Os valores são fictícios.\n\n| Item | Valor |\n| --- | ---: |\n| Salário bruto | R$ 3.000,00 |\n| Desconto de INSS | R$ 270,00 |\n| Outro desconto | R$ 30,00 |\n| Total de descontos | R$ 300,00 |\n| Salário líquido | R$ 2.700,00 |\n\nQuanto chega à conta?",
+        "title": "Do bruto ao líquido"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Um salário bruto é de R$ {bruto},00 e os descontos somam R$ {desconto},00.\nQual é o salário líquido?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Otávio nota que, sem descontos, receberia o mesmo valor do salário bruto. Uma conta de luz paga depois diminui o dinheiro restante, mas não muda o salário líquido. Por exemplo, de R$ 2.000,00 líquidos, pagar R$ 150,00 deixa R$ 1.850,00.",
+        "title": "Depois de receber"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Otávio também considera fazer serviços por conta própria. O total cobrado pelas vendas ou serviços, antes dos gastos do trabalho e dos impostos, é o **faturamento bruto**. Para saber quanto sobra do que recebeu, subtraia esses gastos e impostos.\n\n| Exemplo | Valor |\n| --- | ---: |\n| Recebido | R$ 1.000,00 |\n| Materiais | R$ 200,00 |\n| Impostos | R$ 100,00 |\n| Sobra | R$ 700,00 |",
+        "title": "Trabalho por conta própria"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Um serviço trouxe R$ {recebido},00. Os materiais custaram R$ {materiais},00 e os impostos, R$ {impostos},00.\nQuanto sobra após esses gastos?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Otávio organiza o dinheiro que recebeu no mês, antes de pagar as contas de casa.\n\n| Origem ou gasto | Valor |\n| --- | ---: |\n| Salário bruto | R$ 3.000,00 |\n| Descontos do salário | R$ 300,00 |\n| Serviços recebidos | R$ 2.000,00 |\n| Materiais | R$ 500,00 |\n| Impostos dos serviços | R$ 100,00 |\nQuanto está disponível antes das contas da casa?",
+        "title": null
+      }
+    ]
+  }
+}

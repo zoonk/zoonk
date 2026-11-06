@@ -8,7 +8,6 @@ import {
   estimateLessonMinutes,
   fitsLesson,
   getMaxLessonMinutes,
-  getSupportModeFromScreens,
 } from "./lesson-spec-rules";
 
 type SkillSegment = { screens: LessonScreen[]; skill: number };
@@ -134,7 +133,7 @@ function createFrameScreen({
   kind: LessonScreenKind;
   skills: number[];
 }): LessonScreen {
-  return { activityTemplate: null, brief, kind, skills, visual: null };
+  return { activityTemplate: null, brief, kind, skills, visual: null, visualKind: "none" };
 }
 
 /** The first lesson keeps the original hook and the last the original application. */
@@ -176,6 +175,17 @@ function formatTopics({ language, topics }: { language: string; topics: string[]
   return new Intl.ListFormat(language, { style: "long", type: "conjunction" }).format(topics);
 }
 
+/** A guess needs something taught before it, so a part where its skill comes first drops it. */
+function withoutEarlyGuess(screens: readonly LessonScreen[]): LessonScreen[] {
+  const firstTeaching = screens.findIndex(
+    (screen) => screen.kind === "explanation" || screen.kind === "workedExample",
+  );
+
+  return screens.filter(
+    (screen, index) => screen.kind !== "guess" || (firstTeaching !== -1 && index > firstTeaching),
+  );
+}
+
 function buildPart({
   group,
   index,
@@ -201,8 +211,10 @@ function buildPart({
     spec,
   });
 
-  const body = group.flatMap((segment) =>
-    segment.screens.map((screen) => remapScreen({ fallback: [0], remap, screen })),
+  const body = withoutEarlyGuess(
+    group.flatMap((segment) =>
+      segment.screens.map((screen) => remapScreen({ fallback: [0], remap, screen })),
+    ),
   );
 
   const screens = [frame.hook, ...body, frame.application];
@@ -212,9 +224,9 @@ function buildPart({
     canDo: lead?.name ?? spec.canDo,
     description: lead?.description ?? spec.description,
     estimatedMinutes: estimateLessonMinutes(screens.map((screen) => screen.kind)),
+    ...(index > 0 && { laterPart: true }),
     screens,
     skills,
-    supportMode: getSupportModeFromScreens(screens),
     title: formatTopics({ language, topics: skills.map((skill) => skill.topic) }),
   };
 }

@@ -39,6 +39,7 @@ function checkLesson(input: FixLessonDraftParams, lesson: WrittenLesson) {
     language: input.language,
     lesson,
     level: input.level,
+    material: input.material,
     shortAnswers: input.shortAnswers,
     spec: input.spec,
   });
@@ -71,11 +72,7 @@ export const scoreLessonFix: TaskScorer<LessonFixExpected> = async ({ output, te
 
   const checked = checkLesson(input, lesson);
 
-  const problems = [
-    ...checked.problems,
-    ...(await checkLessonPrograms(checked.screens)),
-    ...findQuestionBases({ lesson, screens: checked.screens }).problems,
-  ].map(
+  const problems = [...checked.problems, ...(await checkLessonPrograms(checked.screens))].map(
     (problem) => `Screen ${problem.screen === null ? "-" : problem.screen + 1}: ${problem.problem}`,
   );
 

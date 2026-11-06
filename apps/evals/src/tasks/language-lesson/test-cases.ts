@@ -125,6 +125,81 @@ export const TEST_CASES: TestCase<unknown, LanguageLessonInput>[] = [
     },
   },
   {
+    expectations: `US English speaker learning Mexican Spanish, A2, answering a doctor's questions about symptoms. The doctor and the patient don't know each other, so the doctor's questions use "usted" ("¿Qué le duele?", "¿Desde cuándo le duele?", "¿Toma algún medicamento?"), never "tú" ("¿Qué te duele?", "¿Tomas algún medicamento?"), in the sentences, tip examples, practice and writing answers. Mexican vocabulary and natural A2 sentences.`,
+    id: "en-es-a2-doctor",
+    userInput: {
+      knownWords: [],
+      learnerLanguage: "en",
+      lessonCanDo: "Understand and answer the doctor's questions about your symptoms",
+      lessonDescription:
+        "Answer what the doctor asks: what hurts, since when, and whether you take any medicine",
+      lessonTitle: "Answering the doctor's questions",
+      level: "A2",
+      targetLanguage: "es",
+      unitCanDos: [
+        "Book an appointment",
+        "Explain your symptoms",
+        "Understand the doctor's instructions",
+      ],
+      unitTitle: "At the doctor",
+    },
+  },
+  {
+    expectations: `US English speaker learning German, A2, calling a landlord in Berlin to arrange a viewing. The landlord and the caller don't know each other, so both use "Sie" ("Passt Ihnen Dienstag um 14 Uhr?", "Kann ich die Wohnung sehen?"), never "du" ("Passt dir Dienstag?"), in the sentences, tip examples, practice and writing answers.`,
+    id: "en-de-a2-viewing",
+    userInput: {
+      knownWords: [],
+      learnerLanguage: "en",
+      lessonCanDo: "Ask the landlord if you can see the apartment and agree on a time",
+      lessonDescription: "Call the landlord, ask to see the apartment and set a day and time",
+      lessonTitle: "Arranging a viewing",
+      level: "A2",
+      targetLanguage: "de",
+      unitCanDos: ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
+      unitTitle: "Renting an apartment in Berlin",
+    },
+  },
+  {
+    expectations: `US English speaker learning Italian, A2, answering a doctor's questions about symptoms. The doctor and the patient don't know each other, so the doctor's questions use "Lei" ("Da quando Le fa male la testa?", "Prende delle medicine?"), never "tu" ("Da quando ti fa male?", "Prendi medicine?"), in the sentences, tip examples, practice and writing answers.`,
+    id: "en-it-a2-doctor",
+    userInput: {
+      knownWords: [],
+      learnerLanguage: "en",
+      lessonCanDo: "Understand and answer the doctor's questions about your symptoms",
+      lessonDescription:
+        "Answer what the doctor asks: what hurts, since when, and whether you take any medicine",
+      lessonTitle: "Answering the doctor's questions",
+      level: "A2",
+      targetLanguage: "it",
+      unitCanDos: [
+        "Book an appointment",
+        "Explain your symptoms",
+        "Understand the doctor's instructions",
+      ],
+      unitTitle: "At the doctor",
+    },
+  },
+  {
+    expectations: `US English speaker learning Polish, A2, answering a doctor's questions about symptoms. The doctor and the patient don't know each other, so the doctor is polite: "Pan" or "Pani" ("Co Panu dolega?", "Czy przyjmuje Pani jakieś leki?") or an impersonal question ("Od kiedy boli głowa?"), never "ty" ("Co cię boli?", "Czy bierzesz leki?"), in the sentences, tip examples, practice and writing answers.`,
+    id: "en-pl-a2-doctor",
+    userInput: {
+      knownWords: [],
+      learnerLanguage: "en",
+      lessonCanDo: "Understand and answer the doctor's questions about your symptoms",
+      lessonDescription:
+        "Answer what the doctor asks: what hurts, since when, and whether you take any medicine",
+      lessonTitle: "Answering the doctor's questions",
+      level: "A2",
+      targetLanguage: "pl",
+      unitCanDos: [
+        "Book an appointment",
+        "Explain your symptoms",
+        "Understand the doctor's instructions",
+      ],
+      unitTitle: "At the doctor",
+    },
+  },
+  {
     expectations: `Mexican Spanish speaker learning US English, A2, talking about their job. Words like "I work as", "a nurse", "a shift", "full-time". Tips for Spanish speakers (the English "v" and "b", the "sh" sound, adding "e" before "s" + consonant as in "estudent"), notes for false friends ("actually" is not "actualmente"). All learner-language text in Mexican Spanish.`,
     id: "es-en-a2-work",
     userInput: {

@@ -23,13 +23,14 @@ struct TutorComposerBar: View {
         }
 
         if let failure = conversation.askFailure {
-          (failure == .failed
-            ? Text(
-              "We couldn't send your last question. Try again.", tableName: "Tutor",
-              comment: "Sending a question to the buddy failed")
-            : failure.message)
-            .typeStyle(.note)
-            .foregroundStyle(.destructiveText)
+          FailureLine(
+            message: failure == .failed
+              ? String(
+                localized: "We couldn't send your last question. Try again.", table: "Tutor",
+                comment: "Sending a question to the buddy failed")
+              : failure.message
+          )
+          .typeStyle(.note)
         }
 
         composer
@@ -134,9 +135,10 @@ struct TutorLimitNotice: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
-      failure.message
+      Text(failure.message)
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
+        .announcesAlert(failure.message)
 
       TutorRemedyButton(failure: failure, retry: {})
     }

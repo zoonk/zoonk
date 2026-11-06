@@ -64,12 +64,14 @@ struct CheckpointCallIntro: View {
           startButton(writesFirst: true, callee: nil)
         }
       }
+      .lonePage()
     case .loaded(.plusRequired):
       VStack(spacing: 12) {
         CallStartFooter(isLocked: true, callee: nil) {}
       }
       .scenePadding()
       .frame(maxHeight: .infinity)
+      .lonePage()
     case .empty, .failed(.notFound), .loaded(.notLanguage):
       NotFoundView()
     case .failed(let error) where error != .unauthorized:
@@ -86,12 +88,12 @@ struct CheckpointCallIntro: View {
   private func startButton(writesFirst: Bool, callee: String?) -> some View {
     VStack(spacing: 8) {
       if didFail {
-        Text(
-          "The call didn't start. Try again in a moment.", tableName: "Voice",
-          comment: "Starting a checkpoint call failed"
+        FailureLine(
+          message: LocalizedStringResource(
+            "The call didn't start. Try again in a moment.", table: "Voice",
+            comment: "Starting a checkpoint call failed")
         )
         .typeStyle(.body)
-        .foregroundStyle(.destructiveText)
       }
 
       Button {
@@ -149,6 +151,10 @@ struct CheckpointCallIntro: View {
       needsPlus = true
     case .done(.refused(let refusal)) where Self.changes.contains(refusal.code):
       await call.refresh()
+
+      if case .loaded(.notStarted(let preview)) = call.state, preview.dailyLimitReached {
+        announcePolitely(StudyTimeUsedUp.line)
+      }
     case .failed(.notFound):
       await call.refresh()
     case .done(.refused), .failed:
@@ -182,16 +188,20 @@ struct CheckpointCallIntro: View {
 
 /// Start would refuse the call until the learner's next session.
 private struct StudyTimeUsedUp: View {
+  static var line: String {
+    String(
+      localized:
+        "You've reached your daily time limit. You can make this call in your next session.",
+      table: "Voice", comment: "The daily time limit is a setting that stops study for the day.")
+  }
+
   @Environment(AppRouter.self) private var router
 
   var body: some View {
-    Text(
-      "You've reached your daily time limit. You can make this call in your next session.",
-      tableName: "Voice", comment: "The daily time limit is a setting that stops study for the day."
-    )
-    .typeStyle(.note)
-    .foregroundStyle(.mutedForeground)
-    .frame(maxWidth: .infinity, alignment: .leading)
+    Text(Self.line)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
+      .frame(maxWidth: .infinity, alignment: .leading)
 
     Button {
       router.showRoot(of: .today)

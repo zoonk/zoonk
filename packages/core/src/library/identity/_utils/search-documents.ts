@@ -53,3 +53,11 @@ export const EXAM_BLUEPRINT_DOCUMENT = {
   parts: sql`ARRAY[e.name, e.board, e.role, replace(e.identity_key, '-', ' ')]`,
   table: sql`exam_blueprints`,
 } satisfies IndexedDocument;
+
+export const LESSON_ICON_DOCUMENT = {
+  alias: sql`i`,
+  indexed: sql`i.status = 'completed'`,
+  language: sql`'en'`,
+  parts: sql`ARRAY[i.name] || i.tags`,
+  table: sql`lesson_icons`,
+} satisfies IndexedDocument;

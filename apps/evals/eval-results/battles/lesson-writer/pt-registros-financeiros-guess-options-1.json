@@ -1,0 +1,219 @@
+{
+  "codeChecks": {
+    "openai/gpt-6.1-terra": { "passed": 13, "problems": [], "total": 13 },
+    "openai/gpt-6-luna": {
+      "passed": 11,
+      "problems": [
+        "Screen 8: result: Too big: expected string to have <=400 characters",
+        "Screen 9: Its basis names screen 8; name an earlier hook text, explanation or worked example."
+      ],
+      "total": 13
+    }
+  },
+  "expectations": "\n      - MUST be in Brazilian Portuguese, for total beginners\n      \n  - Someone who reads only the guess's question, knowing nothing the lesson teaches, can't answer it: its setup never settles the answer by itself, and the right option is never the only one that echoes the question's words\n  - The guess keeps its plan's idea, the one the next screen explains, and one wrong option is what a beginner's intuition says\n\n      - The plan's guess gives itself away by its words: it asks which purchase he might not find in the statement \"yet\", and only the right option says \"ainda não\" while both others say \"já debitado\". The written options are worded alike, so the question's words don't point to the right one\n      - Every option, the application's included, reads as a natural answer in plain words. The plan's application asks what is still missing and how to treat two records; options written as fragments joined by semicolons, like an answer key (\"Outro extrato; transferência interna; fatura sem duplicar\"), fail\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - At every level, exams and class material included, the first screen is a `hookText` scene with nothing to pick or type, ending on the question the lesson answers, even when its plan was a guess; no check comes before the first explanation or worked example, and the writer adds no screen the plan doesn't have, so a plan with no screen planned as a guess has no guess. A screen planned as the guess is a `hookGuess` that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    \n\nSCORE CATEGORIES:\n\n### Accuracy\n- Category ID: `accuracy`\n- Weight: 25%\n- Expectations: Audit accuracy like a subject expert. Every fact, number, calculation, formula and notation must be correct, every check must have exactly one defensible right answer, and every reason must match its option. Data must be real or labeled as an example. Score at most 6 for any error that teaches something wrong or marks a wrong answer right; at most 8 for a small imprecision a learner wouldn't notice.\n\n### Engaging, not a textbook\n- Category ID: `teacher`\n- Weight: 25%\n- Expectations: Audit how it feels to learn from, as a learner who would rather watch a great teacher on YouTube than read a textbook. The hook opens on something from everyday life the learner has seen, felt or done, not a definition or a topic statement. Each idea arrives through one brief, specific example the learner can picture (a named situation, real numbers, a familiar object or moment) before or with its rule, and hard ideas get an everyday comparison. The voice talks to the learner in spoken, everyday words and short sentences, and each screen gives a reason to read the next (a question, a surprise, a contrast). Warm and direct, never cheesy: no \"Great job!\", \"Let's dive in\", forced jokes or exclamation marks for energy. Score at most 6 when it reads like a textbook or an encyclopedia (definitions first, passive voice, abstract nouns, \"it is important to note\"); at most 7 when most screens state a rule before any example, or for cheesy filler; at most 8 for one stretch of textbook tone or one generic example (\"a company\", \"a person\", \"product X\") where a specific one would teach. Reading costs the learner, so length is never a strength here: score at most 7 when screens run longer than their idea needs (a second example, a recap, side detail the learner reads past), since a shorter screen that teaches the same thing is the better one.\n\n### Clarity\n- Category ID: `clarity`\n- Weight: 20%\n- Expectations: Audit clarity for the stated level. Each screen teaches one idea in short sentences. Every technical term is explained before it's used (with an everyday comparison where plain words aren't enough), and never two new terms on one screen. Complex ideas are explained completely: no skipped steps, no naming an idea instead of explaining how it works. Score at most 8 for one unexplained term or skipped step; at most 7 for several; at most 6 when a learner at this level couldn't follow.\n\n### Checks & feedback\n- Category ID: `checks`\n- Weight: 15%\n- Expectations: Audit the checks. Each makes the learner use the idea (predict, calculate, classify, spot the error), never repeat a sentence from a screen. Wrong options are real misconceptions, including the tempting wrong answer the plan names, and every option's reason explains why it's right, or why it's tempting and wrong. Checks after worked examples give less help. Typed answers have key points a grader can check. Activities make the learner do something that shows the idea, with a check about it. Every learner reads the same screens whatever they picked, so a screen after a check builds on its question and right answer and never praises or corrects the learner's pick (\"you started with the right question\", \"you got it\"). Score at most 8 for one recall-only check, a weak reason or a screen that judges the learner's pick; at most 7 for several; at most 6 when checks mostly don't test understanding.\n\n### Level, hook & application\n- Category ID: `fitAndApplication`\n- Weight: 15%\n- Expectations: Audit fit and relevance. The level is respected (overview: no formulas or notation; beginner: words a 12-year-old follows, a formula only after the intuition; advanced: precise and complete). The first screen is a scene with nothing to answer, at every level (no \"In this lesson\", no recap, no greeting), and a guess appears only where the plan puts one. Examples come from the learner's world in the lesson's language and country. The application is a realistic situation naming a concrete place where the idea shows up. No filler, history or \"why this matters in general\". The lesson follows its plan's briefs. The summary states each idea in one sentence. Score at most 6 for formulas in an overview or wrong language variant; at most 8 for one slip; at most 7 for several.",
+  "judgedAt": "2026-11-03T19:21:29.806Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Facts are correct and the bases quote the deciding sentences. 'Uma compra no cartão' without 'crédito' is a small imprecision, since a debit purchase would appear in the statement.",
+              "score": 8,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The hook is an everyday scene and the screens are short and concrete with real values. The tone is somewhat flat, and screens rarely give a reason to read the next one.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Extrato, fatura and comprovante are each introduced on their own screen with an example. Sentences are short and easy to follow.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The guess avoids word echo, and the checks include the tempting errors the plan names. The double-count check has only two options, and its reasons are brief.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The lesson fits the level and follows the plan, with a natural-language application and a one-sentence-per-idea summary. The application names no concrete place.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "A follows the plan screen by screen. Its guess options are worded alike, so the question's words do not point to the right one, and the application options read as natural sentences. Weaknesses: 'Uma compra no cartão' does not say credit, so it is slightly ambiguous, and the application has no setting.",
+          "score": 7.75
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Content is correct. The check 9 basis quotes a step that only partly decides the answer.",
+              "score": 8,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The hook and examples are concrete, and the Petrolina setting adds context. The tone is plain and slightly textbook-like ('Esse registro... se chama extrato').",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Terms are introduced clearly one per screen, and the table's 'Tratamento' column makes the logic explicit.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The guess's right option alone echoes 'ainda não' from the question, which is the named failure. The other checks have good distractors and reasons.",
+              "score": 6,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The lesson follows the plan, and the application names a place and uses natural sentences. The summary drops the comprovante idea.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6-luna",
+          "reasoning": "B is solid overall, with a richer worked-example table, a third option on the double-count check, and a setting in Petrolina. However, its guess gives itself away: only the right option says 'ainda não paga' while the others say 'já saiu da conta', which is the exact failure the expectations name.",
+          "score": 7.3
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 1447,
+        "cacheWriteTokens": 0,
+        "inputTokens": 17341,
+        "outputTokens": 1412,
+        "reasoningTokens": 482
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All financial concepts, examples, tables, and check explanations are accurate and consistent with the lesson plan.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The lesson uses a warm, conversational Brazilian Portuguese tone with concrete everyday examples before introducing terms, keeping screens concise and engaging.",
+              "score": 9,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Each screen introduces one clear idea at a beginner level with helpful tables and plain-language definitions.",
+              "score": 10,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Model A fixes the plan's giveaway wording in the `hookGuess` by removing \"ainda não\" from the right option, writes natural sentences without semicolons in the application check, and selects an exact `basis` quote on screen 9 that covers all three record types.",
+              "score": 9,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The lesson fits the beginner level and Brazilian context well, but screen 2 leaves the English word \"learner\" in `exampleLineIdea` and screen 12 does not name a concrete place beyond the house.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "Model A follows the critical task constraints much better, rewriting the guess options so they do not echo \"ainda não\" from the question and writing the application options as natural sentences without semicolons. Its main weaknesses are a stray English word (\"learner\") in an `exampleLineIdea` field and not naming a concrete location in the final application screen.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All domain facts, tables, and explanations about bank statements, credit card bills, receipts, and internal transfers are accurate.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The explanations are brief, direct, and grounded in Kauã's everyday situation, though a few transitions feel slightly abrupt.",
+              "score": 9,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Terms like extrato, fatura, and transferência interna are explained clearly for a beginner, and the worked example table adds a helpful 'Tratamento' column.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Screen 3 directly violates the task expectation by repeating \"ainda não\" from the question only in the right option while both distractors say \"já saiu da conta.\" In addition, screens 9 and 12 use semicolon-joined option fragments, and screen 9's `basis` quote omits the cash receipt part of the answer.",
+              "score": 5,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The lesson respects the beginner level, uses Brazilian Portuguese naturally,names Petrolina from the cast list in the application, and summarizes each idea in one sentence.",
+              "score": 9,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6-luna",
+          "reasoning": "Model B fails the explicit expectation on the guess screen by keeping \"ainda não\" only in the correct option while both wrong options say \"já saiu da conta,\" giving the answer away by wording alone. It also uses semicolon-joined clauses in check options and picks an incomplete `basis` quote on screen 9.",
+          "score": 8.65
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 11453,
+        "outputTokens": 1723,
+        "reasoningTokens": 863
+      }
+    }
+  ],
+  "outputs": {
+    "openai/gpt-6.1-terra": "5f216557a3fe9cbe",
+    "openai/gpt-6-luna": "528431d3287198ac"
+  },
+  "swapped": false,
+  "taskId": "lesson-writer",
+  "testCaseId": "pt-registros-financeiros-guess-options-1"
+}

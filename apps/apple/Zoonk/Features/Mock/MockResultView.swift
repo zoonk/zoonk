@@ -74,28 +74,18 @@ struct MockResultView: View {
   @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
   @State private var choices = MockResultChoices()
-  @State private var isAtHinge = false
   let run: MockRun
   let view: MockView
 
   var body: some View {
-    // With nothing to review, an open book reads the areas and what the mock showed after the
-    // fold, so that page isn't left with only the notes. Tablets keep them with the score.
-    let diagnosisAfterFold = isAtHinge && view.review.isEmpty
-
     PaneSplit {
       ZoonkList {
         scoreSections
-        if !diagnosisAfterFold {
-          diagnosisSections
-        }
+        diagnosisSections
         partSections
       }
     } secondary: {
       ReviewList(review: view.review, place: $choices.reviewPlace) {
-        if diagnosisAfterFold {
-          diagnosisSections
-        }
         planSections
         reviewSections
       }
@@ -110,13 +100,9 @@ struct MockResultView: View {
       }
       .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
     }
-    .onGeometryChange(for: Bool.self) {
-      PaneSpace($0).hinge != nil
-    } action: {
-      isAtHinge = $0
-    }
+    .announcesStatus(gradesEssays ? MockEssaySections.grading : nil)
     .navigationTitle(MockLabels.title(number: view.number))
-    .milestoneCeremony(view.day.ceremony)
+    .completionMoments(view.day)
     .toolbar {
       if view.purpose != .placement {
         TutorAskToolbarItem(scope: .mock(blockId: view.blockId))
@@ -126,6 +112,10 @@ struct MockResultView: View {
       ConversationScreen(conversationId: task.conversationId)
         .zoonkStyles()
     }
+  }
+
+  private var gradesEssays: Bool {
+    run.essayGrading == .grading && view.essays.contains { $0.status == .pending }
   }
 
   @ViewBuilder
@@ -701,6 +691,12 @@ private struct MockInsightsSection: View {
 }
 
 private struct MockEssaySections: View {
+  static var grading: String {
+    String(
+      localized: "Grading it with the exam's rubric. It can take up to 30 seconds.", table: "Mock",
+      comment: "An essay is being graded")
+  }
+
   let run: MockRun
   let essay: MockEssay
   let number: Int
@@ -744,9 +740,7 @@ private struct MockEssaySections: View {
       switch run.essayGrading {
       case .grading:
         Label {
-          Text(
-            "Grading it with the exam's rubric. It can take up to 30 seconds.", tableName: "Mock",
-            comment: "An essay is being graded")
+          Text(Self.grading)
         } icon: {
           ProgressView()
         }
@@ -759,11 +753,10 @@ private struct MockEssaySections: View {
         .foregroundStyle(.mutedForeground)
       case .failed, .idle:
         if run.essayGrading == .failed {
-          Text(
-            "That didn't go through. Try again in a moment.", tableName: "Mock",
-            comment: "Grading failed"
-          )
-          .foregroundStyle(.destructiveText)
+          FailureLine(
+            message: LocalizedStringResource(
+              "That didn't go through. Try again in a moment.", table: "Mock",
+              comment: "Grading failed"))
         } else {
           Text("It hasn't been graded yet.", tableName: "Mock", comment: "An ungraded essay")
             .foregroundStyle(.mutedForeground)
@@ -1004,6 +997,7 @@ private struct MockPlanSection: View {
           .foregroundStyle(.mutedForeground)
         }
       }
+      .announcesStatus(open.isEmpty && !statusLines.isEmpty ? statusLines.joinedSentences() : nil)
 
       if open.isEmpty {
         ForEach(statusLines, id: \.self) { line in
@@ -1011,11 +1005,10 @@ private struct MockPlanSection: View {
         }
       } else {
         if answers.byOffer.values.contains(.failed) {
-          Text(
-            "That didn't go through. Try again in a moment.", tableName: "Mock",
-            comment: "Applying the plan change failed"
-          )
-          .foregroundStyle(.destructiveText)
+          FailureLine(
+            message: LocalizedStringResource(
+              "That didn't go through. Try again in a moment.", table: "Mock",
+              comment: "Applying the plan change failed"))
         }
 
         ButtonRow {

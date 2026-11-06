@@ -1,6 +1,7 @@
 "use client";
 
 import { TASK_HEADER_ICON_CLASS } from "@zoonk/learn/task-header";
+import { HIDDEN_WITH_TASK_ASIDE_CLASS } from "@zoonk/learn/task-layout";
 import { Button } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
@@ -12,15 +13,15 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { cn } from "@zoonk/ui/lib/utils";
-import { EllipsisIcon, NotebookTextIcon, SparklesIcon, ZapIcon } from "lucide-react";
+import { EllipsisIcon, NetworkIcon, SparklesIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { getLessonFocusTarget } from "./_utils/lesson-focus";
-import { SummarySheet } from "./controls/summary-sheet";
+import { LessonMapSheet } from "./controls/lesson-map-sheet";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
 import { useLessonInteraction } from "./lesson-player-interaction";
 
-function useSummarySheet(isDone: boolean) {
+function useMapSheet(isDone: boolean) {
   const { setPaused } = useLessonInteraction();
   const [open, setOpen] = useState(false);
   const openRef = useRef(false);
@@ -55,15 +56,21 @@ export function LessonScreenMenu() {
   const { lesson, slots } = useLessonPlayerConfig();
   const { actions, screen, state } = useLessonPlayer();
   const isDone = state.phase === "completed";
-  const summary = useSummarySheet(isDone);
+  const mapSheet = useMapSheet(isDone);
 
-  if (!screen.step && !isDone) {
+  if (!screen.step && !isDone && state.phase !== "map") {
     return null;
   }
 
+  const showsMap = isDone && lesson.summary;
+  const mapClass = cn(!slots.completion && HIDDEN_WITH_TASK_ASIDE_CLASS);
+
+  const reportItem =
+    screen.step && slots.reportMenuItem?.({ contentId: screen.step.id, contentKind: "step" });
+
   return (
     <>
-      <DropdownMenu onOpenChange={summary.onMenuOpenChange}>
+      <DropdownMenu onOpenChange={mapSheet.onMenuOpenChange}>
         <DropdownMenuTrigger
           render={
             <Button
@@ -85,7 +92,9 @@ export function LessonScreenMenu() {
             </DropdownMenuLabel>
           </DropdownMenuGroup>
 
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator
+            className={cn(showsMap && !screen.canKnowThis && !reportItem && mapClass)}
+          />
 
           {screen.canKnowThis && (
             <DropdownMenuItem onClick={actions.knowThis}>
@@ -94,19 +103,25 @@ export function LessonScreenMenu() {
             </DropdownMenuItem>
           )}
 
-          {isDone && lesson.summaryIdeas.length > 0 && (
-            <DropdownMenuItem onClick={() => summary.change(true)}>
-              <NotebookTextIcon aria-hidden="true" />
-              {t("Lesson summary")}
+          {showsMap && (
+            <DropdownMenuItem className={mapClass} onClick={() => mapSheet.change(true)}>
+              <NetworkIcon aria-hidden="true" />
+              {t("Lesson map")}
             </DropdownMenuItem>
           )}
 
-          {screen.step &&
-            slots.reportMenuItem?.({ contentId: screen.step.id, contentKind: "step" })}
+          {reportItem}
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <SummarySheet ideas={lesson.summaryIdeas} onOpenChange={summary.change} open={summary.open} />
+      {lesson.summary && (
+        <LessonMapSheet
+          map={lesson.summary}
+          onOpenChange={mapSheet.change}
+          open={mapSheet.open}
+          title={lesson.title}
+        />
+      )}
     </>
   );
 }

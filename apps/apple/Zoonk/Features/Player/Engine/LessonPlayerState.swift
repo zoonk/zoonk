@@ -6,6 +6,8 @@ struct LessonPlayerState: Equatable, Sendable {
     case playing
     case checking
     case feedback
+    /// Nothing is left to play: the lesson map shows before the lesson is saved.
+    case map
     case completed
   }
 
@@ -58,10 +60,6 @@ struct LessonPlayerState: Equatable, Sendable {
     let skippedWritingStepIds: [String]
   }
 
-  enum LessonSupport: String, Hashable, Sendable {
-    case explanationFirst, questionFirst
-  }
-
   /// A device-graded answer the server hasn't accepted yet: the lesson can't finish without it,
   /// and a resend keeps its attempt id so the server records it once.
   struct UnsavedAnswer: Hashable, Sendable {
@@ -74,7 +72,7 @@ struct LessonPlayerState: Equatable, Sendable {
   let lessonId: String
   private(set) var steps: [String: LessonStep]
   let lessonOrder: [String]
-  private(set) var support: LessonSupport?
+  let hasMap: Bool
   private(set) var queue: [String]
   private(set) var position = 0
   private(set) var phase: Phase
@@ -116,14 +114,13 @@ struct LessonPlayerState: Equatable, Sendable {
   private(set) var unsavedAnswers: [String: UnsavedAnswer] = [:]
 
   init(
-    lessonId: String, steps lessonSteps: [LessonStep], support: LessonSupport? = nil,
-    now: Date = .now
+    lessonId: String, steps lessonSteps: [LessonStep], hasMap: Bool = false, now: Date = .now
   ) {
     self.lessonId = lessonId
     steps = Dictionary(lessonSteps.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
     lessonOrder = lessonSteps.map(\.id)
-    self.support = support
-    queue = Self.orderOpening(lessonOrder, steps: steps, support: support)
+    self.hasMap = hasMap
+    queue = lessonOrder
     phase = lessonOrder.isEmpty ? .completed : .playing
     completion = lessonOrder.isEmpty ? Completion(status: .ready) : nil
     stepStartedAt = now
@@ -171,17 +168,51 @@ struct LessonPlayerState: Equatable, Sendable {
     return false
   }
 
-  /// Previous is on every screen after the first while it's being played, not during "I know this".
+  /// Previous is on every screen after the first while it's being played, the map included, not
+  /// during "I know this". It returns only to a screen played in this sitting: a question answered
+  /// in an earlier one (a resumed run) or the earlier copy of one that came back has no result here,
+  /// so it would ask for an answer again.
   var canGoBack: Bool {
-    phase == .playing && position > 0 && quickCheck == nil && !isRefused
-      && !isEarlierCopy(at: position - 1)
+    guard phase == .playing || phase == .map, position > 0, quickCheck == nil, !isRefused else {
+      return false
+    }
+
+    let previous = queue[position - 1]
+    return results[previous] != nil || steps[previous]?.isRead == true
   }
 
-  /// A missed question that came back holds its attempt in the later copy, so the earlier one, its
-  /// result cleared, would show it unanswered and let the learner answer it twice.
-  private func isEarlierCopy(at index: Int) -> Bool {
-    let id = queue[index]
-    return results[id] == nil && queue[(index + 1)...].contains(id)
+  /// A screen's verdict when it counts: a hook's guess is never wrong, and "I don't know yet" and an
+  /// answer that wasn't checked have none.
+  func countedVerdict(_ stepId: String) -> Bool? {
+    guard let result = results[stepId], steps[stepId]?.kind != .hook, !result.isSampleAnswer,
+      result.checked
+    else {
+      return nil
+    }
+
+    return result.isCorrect
+  }
+
+  /// The opening guess with nothing picked: its main button is "I don't know yet", which reveals the
+  /// answer; a pick makes it "See the answer".
+  var revealsWithoutGuess: Bool {
+    guard phase == .playing, let step = currentStep, case .hook(let hook) = step.content,
+      hook.asksGuess
+    else {
+      return false
+    }
+
+    return answers[step.id] == nil
+  }
+
+  /// "I already know this" ends on the result: a learner who passed every check skips the map.
+  private var endsWithMap: Bool {
+    hasMap && quickCheck == nil
+  }
+
+  /// The screen whose Continue ends the lesson.
+  var isLastScreen: Bool {
+    position == queue.count - 1 && !endsWithMap
   }
 
   var progress: Double {
@@ -189,8 +220,9 @@ struct LessonPlayerState: Equatable, Sendable {
       return 1
     }
 
-    let done = phase == .completed ? queue.count : position + (phase == .feedback ? 1 : 0)
-    return Double(done) / Double(queue.count)
+    let total = queue.count + (endsWithMap ? 1 : 0)
+    let done = phase == .completed ? total : position + (phase == .feedback ? 1 : 0)
+    return Double(done) / Double(total)
   }
 
   /// Main's `getSegments`: a screen's first copy shows its first verdict, a later copy its own.
@@ -311,6 +343,11 @@ struct LessonPlayerState: Equatable, Sendable {
       return
     }
 
+    if phase == .map {
+      complete(status: .saving)
+      return
+    }
+
     guard phase == .playing, let step = currentStep else {
       return
     }
@@ -367,19 +404,29 @@ struct LessonPlayerState: Equatable, Sendable {
   }
 
   /// "I don't know yet" on a written screen: its good answer shows, counted neither way, and it
-  /// doesn't come back at the end.
+  /// doesn't come back at the end. On the opening guess it reveals the answer, counted neither way and,
+  /// like a guess, never sent.
   mutating func dontKnow(_ stepId: String) {
-    guard phase == .playing, let step = currentStep, step.id == stepId,
-      case .typedAnswer(let content) = step.content
-    else {
+    guard phase == .playing, let step = currentStep, step.id == stepId else {
       return
     }
 
-    checkFailed = false
-    notice = nil
-    phase = .feedback
-    results[stepId] = .sampleAnswer(content.sampleAnswer)
-    addSkippedWriting([stepId])
+    switch step.content {
+    case .typedAnswer(let content):
+      checkFailed = false
+      notice = nil
+      phase = .feedback
+      results[stepId] = .sampleAnswer(content.sampleAnswer)
+      addSkippedWriting([stepId])
+    case .hook(let hook) where hook.asksGuess:
+      guard let reveal = LessonGrading.revealHook(hook) else {
+        return
+      }
+
+      resolve(stepId, result: LessonStepResult(reveal), counts: false)
+    default:
+      return
+    }
   }
 
   /// Number questions are kept. A lesson left with nothing to do as it opens (`opening`) waits for
@@ -575,15 +622,9 @@ struct LessonPlayerState: Equatable, Sendable {
     answers runAnswers: [LessonRunAnswer],
     startedAt: Date = .distantPast,
     hyperdrive: LessonHyperdriveStart = .none,
-    optionalStepIds: [String] = [],
-    support: LessonSupport? = nil
+    optionalStepIds: [String] = []
   ) {
     let isUntouched = results.isEmpty && quickCheck == nil
-
-    if isUntouched, support != self.support {
-      self.support = support
-      queue = Self.orderOpening(queue, steps: steps, support: support)
-    }
 
     run = .started(runId: runId)
     hyperdriveStart = hyperdrive
@@ -736,6 +777,21 @@ struct LessonPlayerState: Equatable, Sendable {
     phase = .completed
   }
 
+  /// One rule for every way a lesson runs out of screens: the map, as a last screen after them,
+  /// then the save.
+  private mutating func end(_ status: Completion.Status, now: Date) {
+    guard endsWithMap else {
+      complete(status: status)
+      return
+    }
+
+    checkFailed = false
+    reviewing = false
+    phase = .map
+    position = queue.count
+    stepStartedAt = now
+  }
+
   private mutating func recordFirstVerdict(_ stepId: String, isCorrect: Bool, attemptId: String?) {
     firstVerdicts[stepId] = isCorrect
     firstVerdictAttemptIds[stepId] = attemptId
@@ -757,7 +813,7 @@ struct LessonPlayerState: Equatable, Sendable {
     }.map(\.element)
 
     guard position + 1 < queue.count else {
-      complete(status: .saving)
+      end(.saving, now: now)
       return
     }
 
@@ -790,7 +846,7 @@ struct LessonPlayerState: Equatable, Sendable {
   private mutating func leaveOutAhead(
     _ isLeftOut: (String) -> Bool, completionStatus: Completion.Status, now: Date
   ) {
-    guard phase != .completed else {
+    guard phase != .completed, phase != .map else {
       return
     }
 
@@ -810,7 +866,7 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     if position >= queue.count {
-      complete(status: completionStatus)
+      end(completionStatus, now: now)
     } else {
       notice = nil
       enter(position, now: now)
@@ -905,9 +961,7 @@ struct LessonPlayerState: Equatable, Sendable {
 
   private mutating func resetForResume() {
     let leftOut = unavailableStepIds + skippedWritingStepIds
-    queue = Self.orderOpening(lessonOrder, steps: steps, support: support).filter {
-      !leftOut.contains($0)
-    }
+    queue = lessonOrder.filter { !leftOut.contains($0) }
     position = 0
     phase = queue.isEmpty ? .completed : .playing
     for id in lessonOrder {
@@ -960,37 +1014,12 @@ struct LessonPlayerState: Equatable, Sendable {
 
     guard let open else {
       position = max(queue.count - 1, 0)
-      complete(status: .ready)
+      end(.ready, now: .now)
       return
     }
 
     let readingBefore = queue[..<open].lastIndex { isAnswerable($0) }
     position = readingBefore.map { $0 + 1 } ?? 0
-  }
-
-  /// A lesson that opens with explanations gets the check (or activity) that follows them first
-  /// when the learner partly knows the skill (`questionFirst`): they try what they know, then read.
-  private static func orderOpening(
-    _ queue: [String], steps: [String: LessonStep], support: LessonSupport?
-  )
-    -> [String]
-  {
-    guard support == .questionFirst,
-      let start = queue.firstIndex(where: { steps[$0]?.kind != .hook }),
-      let opening = steps[queue[start]], opening.isExplaining,
-      let questionIndex = queue.indices.first(where: {
-        $0 > start && steps[queue[$0]]?.isExplaining == false
-      }),
-      let question = steps[queue[questionIndex]], question.isRetried,
-      question.skillId == nil || opening.skillId == nil || question.skillId == opening.skillId
-    else {
-      return queue
-    }
-
-    var reordered = queue
-    reordered.remove(at: questionIndex)
-    reordered.insert(question.id, at: start)
-    return reordered
   }
 }
 

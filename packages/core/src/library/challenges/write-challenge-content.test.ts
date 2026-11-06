@@ -79,10 +79,11 @@ describe(writeChallengeLessonContent, () => {
       where: { id: lessonId },
     });
 
-    expect(lesson.contentStatus).toBe("completed");
+    expect(lesson.contentStatus).toBe("running");
 
     expect(lesson.summary).toStrictEqual({
       ideas: writtenChallengeCaseFixture().summary.map((text) => ({ text })),
+      shape: "hub",
     });
 
     expect(lesson.steps.map((step) => step.kind)).toStrictEqual(["challenge"]);

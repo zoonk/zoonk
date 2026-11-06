@@ -157,7 +157,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This lesson is being written for you. It's usually ready in about two minutes.").assertExists()
+        rule.onNodeWithText("This lesson is being written for you. It's usually ready in a few minutes.").assertExists()
         rule.onNodeWithText("While you wait: Mixed practice").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
         assertEquals(0, dayReads)
@@ -199,7 +199,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This lesson is being written for you. It's usually ready in about two minutes.").assertExists()
+        rule.onNodeWithText("This lesson is being written for you. It's usually ready in a few minutes.").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
 
         rule.mainClock.advanceTimeBy(5_000)
@@ -257,11 +257,11 @@ class NextStopTest {
     }
 
     @Test
-    fun aRunStillWritingAfterFiveMinutesSaysItDidntFinish() {
+    fun aRunStillWritingAfterTenMinutesSaysItDidntFinish() {
         settled = LessonReadiness.Status.GENERATING
         shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
         show()
-        rule.mainClock.advanceTimeBy(301_000)
+        rule.mainClock.advanceTimeBy(601_000)
         rule.waitForIdle()
 
         rule.onNodeWithText("This didn't finish").assertExists()
@@ -281,7 +281,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(5_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This lesson is being written for you. It's usually ready in about two minutes.").assertExists()
+        rule.onNodeWithText("This lesson is being written for you. It's usually ready in a few minutes.").assertExists()
 
         rule.mainClock.advanceTimeBy(5_000)
         rule.waitForIdle()
@@ -333,7 +333,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This lesson is being written for you. It's usually ready in about two minutes.").assertExists()
+        rule.onNodeWithText("This lesson is being written for you. It's usually ready in a few minutes.").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
 
         rule.mainClock.advanceTimeBy(10_000)
@@ -350,7 +350,7 @@ class NextStopTest {
         rule.waitForIdle()
 
         rule.onNodeWithText("Start").assertExists()
-        rule.onNodeWithText("This lesson is being written for you. It's usually ready in about two minutes.").assertDoesNotExist()
+        rule.onNodeWithText("This lesson is being written for you. It's usually ready in a few minutes.").assertDoesNotExist()
 
         rule.mainClock.advanceTimeBy(5_000)
         rule.waitForIdle()

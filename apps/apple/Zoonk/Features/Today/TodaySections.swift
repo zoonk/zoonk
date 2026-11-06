@@ -4,6 +4,7 @@ import SwiftUI
 struct TodayUpNextSection: View {
   let view: TodayView
   let isBusy: Bool
+  let failed: Bool
   let keepLearning: () -> Void
 
   var body: some View {
@@ -35,7 +36,7 @@ struct TodayUpNextSection: View {
     }
 
     Section {
-      TodayMainAction(kind: .keepLearning, isBusy: isBusy, failed: false, action: keepLearning)
+      TodayMainAction(kind: .keepLearning, isBusy: isBusy, failed: failed, action: keepLearning)
     }
     .listRowBackground(Color.clear)
     .listRowInsets(.vertical, 0)
@@ -50,6 +51,7 @@ struct TodayMoreSection: View {
 
   let view: TodayView
   let busy: TodayDayView.Tap?
+  let failed: TodayDayView.Tap?
   let addTime: () -> Void
   let catchUp: () -> Void
 
@@ -61,7 +63,7 @@ struct TodayMoreSection: View {
         Section {
           TodayMainAction(
             kind: .practice(minutes: view.session.extraTime.minutes),
-            isBusy: busy == .keepLearning, failed: false, action: addTime)
+            isBusy: busy == .keepLearning, failed: failed == .keepLearning, action: addTime)
         }
         .listRowBackground(Color.clear)
         .listRowInsets(.vertical, 0)
@@ -90,15 +92,25 @@ struct TodayMoreSection: View {
           if (state == .done || state == .rest) && view.session.extraTime.available {
             Button(action: addTime) {
               Label {
-                view.studiedToday
-                  ? Text(
-                    "Study \(view.session.extraTime.minutes) more minutes", tableName: "Today",
-                    comment: "Adds study time once the day is done")
-                  : Text(
-                    "Study for \(view.session.extraTime.minutes) minutes", tableName: "Today",
-                    comment: "Adds study time on a rest day")
+                VStack(alignment: .leading, spacing: 2) {
+                  view.studiedToday
+                    ? Text(
+                      "Study \(view.session.extraTime.minutes) more minutes", tableName: "Today",
+                      comment: "Adds study time once the day is done")
+                    : Text(
+                      "Study for \(view.session.extraTime.minutes) minutes", tableName: "Today",
+                      comment: "Adds study time on a rest day")
+
+                  if failed == .keepLearning {
+                    saveFailure
+                  }
+                }
               } icon: {
-                Image(systemName: "plus.circle")
+                if busy == .keepLearning {
+                  ProgressView()
+                } else {
+                  Image(systemName: "plus.circle")
+                }
               }
             }
             .disabled(busy != nil)
@@ -109,10 +121,16 @@ struct TodayMoreSection: View {
           {
             Button(action: catchUp) {
               Label {
-                Text(
-                  "Catch up today\u{00A0}· +\(studyDuration(minutes: later.minutes))",
-                  tableName: "Today",
-                  comment: "Adds the lessons earlier days left to today")
+                VStack(alignment: .leading, spacing: 2) {
+                  Text(
+                    "Catch up today\u{00A0}· +\(studyDuration(minutes: later.minutes))",
+                    tableName: "Today",
+                    comment: "Adds the lessons earlier days left to today")
+
+                  if failed == .catchUp {
+                    saveFailure
+                  }
+                }
               } icon: {
                 if busy == .catchUp {
                   ProgressView()
@@ -126,6 +144,14 @@ struct TodayMoreSection: View {
         }
       }
     }
+  }
+
+  private var saveFailure: some View {
+    FailureLine(
+      message: LocalizedStringResource(
+        "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved")
+    )
+    .typeStyle(.note)
   }
 
   private func hasRows(_ state: DayState) -> Bool {
@@ -241,12 +267,12 @@ struct TodayPlanChangeSection: View {
       }
 
       if failed {
-        Text(
-          "We couldn't save your answer. Try again.", tableName: "Today",
-          comment: "Answering a plan change failed"
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't save your answer. Try again.", table: "Today",
+            comment: "Answering a plan change failed")
         )
         .typeStyle(.note)
-        .foregroundStyle(.destructiveText)
       }
     }
     .onChange(of: shown.decision) {
@@ -452,6 +478,8 @@ struct TodayMissionsSection: View {
   @Environment(\.isPaneSplit) private var isBesideTheDay
 
   let view: TodayView
+  let busy: TodayDayView.Tap?
+  let failed: TodayDayView.Tap?
   let open: (StudyBlock) -> Void
 
   private var missions: [StudyMission] { view.session.missions }
@@ -465,12 +493,16 @@ struct TodayMissionsSection: View {
 
       if !earned, isBesideTheDay || !onlyOpensBlocks {
         ForEach(Array(missions.enumerated()), id: \.offset) { _, mission in
+          let block = view.session.blocks.first { mission.opens($0) }
+          let tap = block.map { TodayDayView.Tap.mission($0.position) }
+
           MissionRow(
-            mission: mission, buddyName: learner.buddyDisplayName,
-            block: view.session.blocks.first { mission.opens($0) }
+            mission: mission, buddyName: learner.buddyDisplayName, block: block,
+            isBusy: tap != nil && busy == tap, failed: tap != nil && failed == tap
           ) {
             go(mission)
           }
+          .disabled(busy != nil)
         }
       }
     } header: {

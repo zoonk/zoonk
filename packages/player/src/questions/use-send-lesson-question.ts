@@ -122,7 +122,12 @@ export function useSendLessonQuestion({
         suggestion,
       });
 
-      dispatch({ question: request.input.question, type: "questionCreateStarted" });
+      dispatch({
+        question: request.input.question,
+        suggestion: request.input.suggestion,
+        type: "questionCreateStarted",
+      });
+
       const input = { ...request.input, requestId: request.requestId };
       setPendingRequests((current) => new Map(current).set(scope, request));
       const result = await createLessonQuestionRequest({ connection, input, target });
@@ -133,8 +138,13 @@ export function useSendLessonQuestion({
       }
 
       if (result.status === "error") {
-        if (result.error.kind === "conflict" && (await reconcileThread(context))) {
-          return;
+        if (result.error.kind === "conflict") {
+          const reconciled = await reconcileThread(context);
+          dispatch({ type: "questionCreateConflicted" });
+
+          if (reconciled) {
+            return;
+          }
         }
 
         dispatch({ reason: result.error, type: "questionCreateFailed" });

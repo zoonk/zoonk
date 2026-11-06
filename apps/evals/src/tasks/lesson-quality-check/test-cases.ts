@@ -85,9 +85,9 @@ export const TEST_CASES: TestCase<
     userInput: EXAM_PREP_BASE_LESSON,
   },
   {
-    expected: { kinds: ["weakCheck", "level"], screen: 2, verdict: "fail" },
+    expected: { kinds: ["weakCheck", "level"], screen: 5, verdict: "fail" },
     id: "pt-finalidades-oab-exam-prep-absurd-option",
-    userInput: plant(EXAM_PREP_BASE_LESSON, 2, {
+    userInput: plant(EXAM_PREP_BASE_LESSON, 5, {
       basis: null,
       context:
         "Raimundo vê que um recurso demora a ser julgado. Ele sugere que a OAB passe a decidi-lo no lugar dos juízes.",
@@ -120,9 +120,9 @@ export const TEST_CASES: TestCase<
   },
   { expected: { verdict: "pass" }, id: "pt-estabilidade-sourced-clean", userInput: estabilidade },
   {
-    expected: { kinds: ["incorrect"], screen: 3, verdict: "fail" },
+    expected: { kinds: ["incorrect"], screen: 4, verdict: "fail" },
     id: "en-tax-deadlines-contradicts-source",
-    userInput: plant(taxDeadlines, 3, {
+    userInput: plant(taxDeadlines, 4, {
       exampleLineIdea: null,
       explore: null,
       image: null,
@@ -154,7 +154,7 @@ export const TEST_CASES: TestCase<
   {
     expected: { verdict: "pass" },
     id: "en-temperature-numbered-picture-clean",
-    userInput: plant(temperature, 8, {
+    userInput: plant(temperature, 9, {
       basis: null,
       context:
         "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
@@ -194,9 +194,9 @@ export const TEST_CASES: TestCase<
     userInput: { ...regra, lesson: regra.lesson },
   },
   {
-    expected: { kinds: ["incorrect"], screen: 3, verdict: "fail" },
+    expected: { kinds: ["incorrect"], screen: 4, verdict: "fail" },
     id: "en-temperature-wrong-math",
-    userInput: plant(temperature, 3, {
+    userInput: plant(temperature, 4, {
       image: null,
       kind: "workedExample",
       problem: "It's −3 °C and the temperature rises 5 degrees. What's the new temperature?",
@@ -210,9 +210,9 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["filler", "scope"], screen: 5, verdict: "fail" },
+    expected: { kinds: ["filler", "scope"], screen: 6, verdict: "fail" },
     id: "en-temperature-filler",
-    userInput: plant(temperature, 5, {
+    userInput: plant(temperature, 6, {
       exampleLineIdea: null,
       explore: null,
       image: null,
@@ -223,9 +223,9 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["decorativeActivity", "weakCheck", "unclear"], screen: 6, verdict: "fail" },
+    expected: { kinds: ["decorativeActivity", "weakCheck", "unclear"], screen: 7, verdict: "fail" },
     id: "en-temperature-decorative-activity",
-    userInput: plant(temperature, 6, {
+    userInput: plant(temperature, 7, {
       content: JSON.stringify({
         check: {
           answer: 5,
@@ -249,9 +249,9 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["jargon", "unclear", "level"], screen: 3, verdict: "fail" },
+    expected: { kinds: ["jargon", "unclear", "level"], screen: 2, verdict: "fail" },
     id: "pt-regra-jargon",
-    userInput: plant(regra, 3, {
+    userInput: plant(regra, 2, {
       exampleLineIdea: null,
       explore: null,
       image: null,
@@ -262,36 +262,36 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["scope"], screen: 2, verdict: "fail" },
+    expected: { kinds: ["scope"], screen: 5, verdict: "fail" },
     id: "pt-regra-framed-around-one-exam",
-    userInput: plant(regra, 2, {
-      ...(screenOf(regra, 2) as Extract<WrittenScreen, { kind: "check" }>),
+    userInput: plant(regra, 5, {
+      ...(screenOf(regra, 5) as Extract<WrittenScreen, { kind: "check" }>),
       context:
         "Na prova da Cebraspe para analista da Câmara dos Deputados, conforme o subitem 13.5 do edital, recursos vão para sac@cebraspe.org.br. Um setor da Câmara organiza a triagem desses recursos.",
     }),
   },
   {
-    expected: { kinds: ["unclear"], screen: 2, verdict: "fail" },
+    expected: { kinds: ["unclear"], screen: 5, verdict: "fail" },
     id: "pt-regra-case-before-shown",
-    userInput: plant(regra, 2, {
-      ...(screenOf(regra, 2) as Extract<WrittenScreen, { kind: "check" }>),
+    userInput: plant(regra, 5, {
+      ...(screenOf(regra, 5) as Extract<WrittenScreen, { kind: "check" }>),
       context: "Volte ao pedido da Lorena e compare as duas mudanças que a gráfica conferiu nele.",
     }),
   },
   {
-    expected: { kinds: ["incorrect", "scope"], screen: 2, verdict: "fail" },
+    expected: { kinds: ["incorrect", "scope"], screen: 5, verdict: "fail" },
     id: "pt-regra-real-brand-failure",
-    userInput: plant(regra, 2, {
-      ...(screenOf(regra, 2) as Extract<WrittenScreen, { kind: "check" }>),
+    userInput: plant(regra, 5, {
+      ...(screenOf(regra, 5) as Extract<WrittenScreen, { kind: "check" }>),
       context:
         "A gráfica que imprime as etiquetas do Mercado Livre errou o prazo de um pedido grande porque o sistema do Mercado Livre caiu. Todos trabalham no mesmo ritmo.",
     }),
   },
   {
-    expected: { kinds: ["incorrect"], screen: 2, verdict: "fail" },
+    expected: { kinds: ["incorrect"], screen: 5, verdict: "fail" },
     id: "pt-regra-wrong-answer-key",
-    userInput: plant(regra, 2, {
-      ...(screenOf(regra, 2) as Extract<WrittenScreen, { kind: "check" }>),
+    userInput: plant(regra, 5, {
+      ...(screenOf(regra, 5) as Extract<WrittenScreen, { kind: "check" }>),
       options: [
         {
           isCorrect: false,
@@ -324,9 +324,9 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["level", "jargon"], screen: 5, verdict: "fail" },
+    expected: { kinds: ["level", "jargon"], screen: 6, verdict: "fail" },
     id: "pt-eletron-formula-in-overview",
-    userInput: plant(eletron, 5, {
+    userInput: plant(eletron, 6, {
       exampleLineIdea: null,
       explore: null,
       image: null,
@@ -337,9 +337,9 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["incorrect"], screen: 5, verdict: "fail" },
+    expected: { kinds: ["incorrect"], screen: 6, verdict: "fail" },
     id: "pt-regra-worked-example-trap",
-    userInput: plant(regra, 5, {
+    userInput: plant(regra, 6, {
       image: null,
       kind: "workedExample",
       problem:
@@ -361,9 +361,9 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["incorrect"], screen: 8, verdict: "fail" },
+    expected: { kinds: ["incorrect"], screen: 9, verdict: "fail" },
     id: "en-temperature-mismatched-reason",
-    userInput: plant(temperature, 8, {
+    userInput: plant(temperature, 9, {
       basis: null,
       context:
         "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
@@ -394,9 +394,9 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["unclear", "incorrect"], screen: 8, verdict: "fail" },
+    expected: { kinds: ["unclear", "incorrect"], screen: 9, verdict: "fail" },
     id: "en-temperature-data-disagrees-with-options",
-    userInput: plant(temperature, 8, {
+    userInput: plant(temperature, 9, {
       basis: null,
       context:
         "Five weather stations logged the dawn temperature and the rise forecast for the day:\n\n| Station | Dawn | Rise |\n|---|---:|---:|\n| A | −6 °C | 9 degrees |\n| B | −4 °C | 3 degrees |\n| C | −2 °C | 1 degree |\n| D | −5 °C | 3 degrees |\n| E | −8 °C | 2 degrees |",
@@ -439,11 +439,23 @@ export const TEST_CASES: TestCase<
       ...regra,
       lesson: {
         ...(regra.lesson as WrittenLesson),
-        summary: [
-          "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo.",
-          "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
-          "Na regra de três composta, todas as razões entram na mesma ordem, sem inverter nenhuma.",
-        ],
+        summary: {
+          ideas: [
+            {
+              label: "Trabalho ou capacidade fixa",
+              text: "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo.",
+            },
+            {
+              label: "Regra de três simples",
+              text: "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
+            },
+            {
+              label: "Regra de três composta",
+              text: "Na regra de três composta, todas as razões entram na mesma ordem, sem inverter nenhuma.",
+            },
+          ],
+          shape: "hub",
+        },
       },
     },
   },
@@ -454,18 +466,30 @@ export const TEST_CASES: TestCase<
       ...regra,
       lesson: {
         ...(regra.lesson as WrittenLesson),
-        summary: [
-          "Duas grandezas são diretamente proporcionais sempre que aumentam ou diminuem juntas, e inversamente proporcionais sempre que uma aumenta enquanto a outra diminui.",
-          "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
-          "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção.",
-        ],
+        summary: {
+          ideas: [
+            {
+              label: "Grandezas proporcionais",
+              text: "Duas grandezas são diretamente proporcionais sempre que aumentam ou diminuem juntas, e inversamente proporcionais sempre que uma aumenta enquanto a outra diminui.",
+            },
+            {
+              label: "Regra de três simples",
+              text: "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
+            },
+            {
+              label: "Regra de três composta",
+              text: "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção.",
+            },
+          ],
+          shape: "hub",
+        },
       },
     },
   },
   {
-    expected: { kinds: ["incorrect"], screen: 8, verdict: "fail" },
+    expected: { kinds: ["incorrect"], screen: 9, verdict: "fail" },
     id: "en-temperature-two-right-options",
-    userInput: plant(temperature, 8, {
+    userInput: plant(temperature, 9, {
       basis: null,
       context:
         "It's −3 °C in Denver, and the forecast says it will warm up 5 degrees. Maya says the thermometer will read 8 °C.",
@@ -498,11 +522,11 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["incorrect"], screen: 4, verdict: "fail" },
+    expected: { kinds: ["incorrect"], screen: 5, verdict: "fail" },
     id: "pt-eletron-wrong-reason-on-right-option",
-    userInput: plant(eletron, 4, {
-      ...(screenOf(eletron, 4) as Extract<WrittenScreen, { kind: "check" }>),
-      options: (screenOf(eletron, 4) as Extract<WrittenScreen, { kind: "check" }>).options.map(
+    userInput: plant(eletron, 5, {
+      ...(screenOf(eletron, 5) as Extract<WrittenScreen, { kind: "check" }>),
+      options: (screenOf(eletron, 5) as Extract<WrittenScreen, { kind: "check" }>).options.map(
         (option) =>
           option.isCorrect
             ? {
@@ -536,7 +560,7 @@ export const TEST_CASES: TestCase<
     },
   },
   {
-    expected: { kinds: ["scope", "weakCheck"], screen: 8, verdict: "fail" },
+    expected: { kinds: ["scope", "weakCheck"], screen: 9, verdict: "fail" },
     id: "en-temperature-repeats-earlier-lesson",
     userInput: {
       ...temperature,

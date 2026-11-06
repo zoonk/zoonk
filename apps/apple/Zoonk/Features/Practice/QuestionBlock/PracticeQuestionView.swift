@@ -278,9 +278,7 @@ struct PracticeFeedbackPanel<Notes: View>: View {
       }
 
       if let correctAnswerText {
-        Text(
-          "Right answer: \(correctAnswerText)", tableName: "Practice",
-          comment: "The right answer in words, under a wrong answer's verdict.")
+        Text(PracticeAnswerText.rightAnswerLine(correctAnswerText))
       }
 
       if let explanation {
@@ -341,6 +339,12 @@ struct WorkedStepsView: View {
 
 /// Choice and true-or-false questions mark the right option instead, so they need no line.
 enum PracticeAnswerText {
+  static func rightAnswerLine(_ answer: String) -> String {
+    String(
+      localized: "Right answer: \(answer)", table: "Practice",
+      comment: "The right answer in words, under a wrong answer's verdict.")
+  }
+
   static func correctLine(
     feedbackIsCorrect: Bool, correctAnswer: PracticeAnswer?, question: PracticeQuestion,
     labels: PracticeTrueFalseLabels

@@ -5,6 +5,16 @@ struct EssayGradeSections: View {
   var isClosed = false
 
   var body: some View {
+    EssayScoreSections(grade: grade, isClosed: isClosed)
+    EssayNextStepSections(grade: grade)
+  }
+}
+
+struct EssayScoreSections: View {
+  let grade: EssayGrade
+  var isClosed = false
+
+  var body: some View {
     if grade.zeroReason == .tooShort {
       Section {
         VStack(alignment: .leading, spacing: 4) {
@@ -49,7 +59,15 @@ struct EssayGradeSections: View {
         SectionTitle(
           Text("Score by criterion", tableName: "Essay", comment: "Each criterion's score"))
       }
+    }
+  }
+}
 
+struct EssayNextStepSections: View {
+  let grade: EssayGrade
+
+  var body: some View {
+    if grade.zeroReason != .tooShort {
       Section {
         if let next = grade.nextStep {
           VStack(alignment: .leading, spacing: 4) {

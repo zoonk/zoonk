@@ -3,7 +3,7 @@ import { type GoalTutorLookUpResult } from "@zoonk/ai/tasks/tutor/goal-tutor-loo
 import { type Goal, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { listFinishedLessonIds } from "../../../catalog/_utils/finished-lessons";
-import { toSummaryIdeas } from "../../../library/lessons/_utils/summary-ideas";
+import { readLessonMapSentences } from "../../../library/lessons/lesson-map";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { matchesQuery } from "./lookup-text";
 
@@ -66,7 +66,7 @@ export async function lookUpLesson({
         date: !done && item.scheduledFor ? toIsoDate(item.scheduledFor) : null,
         description: item.lesson.description,
         done,
-        ideas: toSummaryIdeas(item.lesson.summary),
+        ideas: readLessonMapSentences(item.lesson.summary),
         title: item.lesson.title,
       };
     }),

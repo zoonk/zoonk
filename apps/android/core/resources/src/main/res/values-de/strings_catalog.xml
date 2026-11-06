@@ -35,7 +35,7 @@
   "catalog_expand": "9fae29107fb60ca2f5a091e344bd7bac2790aba9504645fc5b548eaa0f7cdb8f",
   "catalog_go_to_chapter": "f9294370e02bc5de97cfde1bd46935411d54cc6490a6ad45bed6cfa8c28af80e",
   "catalog_goal_example": "07ffa337b463096da04842be7716d6b6202b2aa5f1768dd8133caae3056e9aa7",
-  "catalog_guess_first": "ebbf70a75b483b933118adf55898cedf2d5a9a0ae3a0fea20aaf86d42cd9169e",
+  "catalog_guess_chip": "11d80f5d5820812ab8498bdee67b9269c26c35366c1222f73222fc44021488f3",
   "catalog_guess_note": "094489b31cf63d8fd4d508affb30fb7611b120eaa32db47992f30d0dc0f582e8",
   "catalog_ideas": "06f008fa6ae9b9957df90c53ac17b44928212148ab5e9590d5ce7a8a67657980",
   "catalog_left_out": "e6941b3bac1f880f7672c221e24de9180fb53fa4520af18a28904bfca4fd658a",
@@ -180,7 +180,8 @@
     <string name="catalog_start_free">Starte kostenlos, ohne Konto.</string>
     <string name="catalog_try_title">Probier eine Lektion aus · kostenlos · %1$s</string>
     <string name="catalog_try_place">%1$s · Lektion %2$s</string>
-    <string name="catalog_guess_first">Rate zuerst. Deine Antwort zählt nicht.</string>
+    <!-- Chip above a lesson's opening question on a course page, which the learner answers before being taught. Guesses are never scored. -->
+    <string name="catalog_guess_chip">Einfach raten, das zählt nicht</string>
     <string name="catalog_quick_question">Kurze Frage</string>
     <string name="catalog_guess_note">Mit deiner Antwort beginnt die %1$s-minütige Lektion.</string>
     <string name="catalog_check_note">Mit deiner Auswahl öffnest du die %1$s-minütige Lektion. Dort kannst du deine Antwort prüfen.</string>

@@ -144,7 +144,7 @@ private struct NotationPlayerCanvas: View {
   }
 
   var body: some View {
-    MusicCanvas {
+    MusicCanvas(audio: audio) {
       header
 
       if tune.hasMusic {
@@ -169,8 +169,6 @@ private struct NotationPlayerCanvas: View {
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
-
-      MusicSoundNote(audio: audio)
     }
     .onAppear {
       audio.onInterruption = { playback.stop(audio: audio) }

@@ -86,7 +86,7 @@ private fun chapterResource(id: String): ChapterResource =
 private fun catalogLesson(id: String): CatalogLesson =
     ApiJson.decodeFromString(
         """{"description":"Why the planet picture fails.","estimatedMinutes":7,"firstScreen":$QUESTION,"id":"$id","language":"en",
-            "summaryIdeas":["The electron is a cloud."],"title":"The cloud"}""",
+            "summary":{"ideas":[{"text":"The electron is a cloud."}],"shape":"hub"},"title":"The cloud"}""",
     )
 
 class FakeCatalogApi : CatalogApi {

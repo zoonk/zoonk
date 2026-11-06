@@ -16,7 +16,7 @@ Activities are templates the writer picks and fills, never code per lesson. An `
 
 Every activity has a check tied to what the learner does ("useful, never decorative"):
 
-- `interaction`: the end state of the interaction is the answer. Code computes it from the fields (`computeExpected`): timelines sort by date, Punnett squares combine alleles, decision trees are walked, traces give the value at each pause.
+- `interaction`: the end state of the interaction is the answer. Code computes it from the fields (`computeExpected`): timelines sort by date, Punnett squares combine alleles, traces give the value at each pause.
 - `numeric`: a number the learner produces by moving or placing something. Code recomputes it (`computeValue`) and the validator rejects an `answer` that doesn't match. `inputs` put the sliders where the question asks and `output` names what to read.
 - `choice`: a question about what the learner saw. When options carry a `value`, the option closest to the computed number must be the correct one.
 

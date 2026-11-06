@@ -172,7 +172,7 @@ describe("a rewritten lesson", () => {
           skillId: null,
         },
       ],
-      summary: ["A posse ocorre em quinze dias."],
+      summary: { ideas: [{ text: "A posse ocorre em quinze dias." }], shape: "hub" },
       workflowRunId,
     });
 

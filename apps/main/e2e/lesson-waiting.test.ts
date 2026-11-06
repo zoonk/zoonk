@@ -167,6 +167,10 @@ test.describe("A lesson still being written", () => {
       lessonStep("planLesson", "started"),
       lessonStep("planLesson", "completed"),
       lessonStep("writeLesson", "started"),
+      lessonStep("writeLesson", "completed"),
+      lessonStep("markLesson", "started"),
+      lessonStep("drawPictures", "started"),
+      lessonStep("markLesson", "completed"),
     ];
 
     const runId = `e2e-lesson-${randomUUID()}`;
@@ -185,7 +189,9 @@ test.describe("A lesson still being written", () => {
 
     await expect(phases.getByRole("listitem")).toHaveText([
       /^Planning the lesson, done/u,
-      /^Writing the lesson, in progress/u,
+      /^Writing the lesson, done/u,
+      /^Highlighting the key ideas, done/u,
+      /^Drawing the pictures, in progress/u,
     ]);
 
     await writeLessonElsewhere(unwritten.id);

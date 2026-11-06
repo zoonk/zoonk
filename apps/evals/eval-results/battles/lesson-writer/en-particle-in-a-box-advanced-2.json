@@ -1,0 +1,422 @@
+{
+  "codeChecks": {
+    "openai/gpt-6.1-terra": { "passed": 12, "problems": [], "total": 12 },
+    "anthropic/claude-opus-5.5": {
+      "passed": 11,
+      "problems": ["Screen 8: data: Cite the data's source or mark it as an example"],
+      "total": 12
+    },
+    "anthropic/claude-sonnet-5.5": {
+      "passed": 10,
+      "problems": [
+        "Screen 7: Shows table pipes as text, since the rows have no header and |---| line: \"|ψ|² tells how likely Tanya's electron is to be found at each spot, and it must be somewhere, so $\\int_0^L|\\psi|^2dx = 1$. That fixes $A = \\sqrt{2/L}$, giving $\\psi_n(x) = \\sqrt{2/L}\\,\\sin(n\\pi x/L)$. Each is a standing wave with n half-wavelengths in L and n − 1 **nodes**, points inside the box where ψ = 0, like the still spots on a guitar harmonic. Since $E_n \\propto n^2$, the levels sit at 1, 4, 9 and 16 times $E_1$, and the gaps keep growing.\".",
+        "Screen 8: data: Cite the data's source or mark it as an example",
+        "Screen 7: Has 78 words besides its tables; an explanation here aims for about 45. Keep the story's beat, the idea and one example, and cut the rest or leave it to the screen that teaches it."
+      ],
+      "total": 12
+    },
+    "google/gemini-4-argon": {
+      "passed": 8,
+      "problems": [
+        "Screen 8: data: Cite the data's source or mark it as an example",
+        "Screen 10: The question shows undeclared {ref}.",
+        "Screen 10: Step 2 shows undeclared {ref}.",
+        "Screen 2: Has 68 words besides its tables; an explanation here aims for about 45. Keep the story's beat, the idea and one example, and cut the rest or leave it to the screen that teaches it.",
+        "Screen 7: Has 68 words besides its tables; an explanation here aims for about 45. Keep the story's beat, the idea and one example, and cut the rest or leave it to the screen that teaches it."
+      ],
+      "total": 12
+    }
+  },
+  "expectations": "\n      - MUST be in US English, for advanced learners\n      - The derivation is complete and correct: the time-independent equation inside the box, boundary conditions ψ(0) = ψ(L) = 0, sine solutions, kL = nπ, and E_n = n²π²ħ²/(2mL²)\n      - Standing waves on a string come before the notation, and each new term (wave function, boundary condition, quantized) is explained when it first appears\n      - Notation is consistent across screens (ħ, m, L, n), and the worked derivation reveals one move per step\n      - The slider graph shows how energy depends on n or L, with a check about what the learner saw\n      - Checks need real understanding (why n = 0 isn't allowed, how E scales with L), with reasons for every option\n      - Every image `alt` stays under 160 characters and reads as a whole sentence, not cut mid-word\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - At every level, exams and class material included, the first screen is a `hookText` scene with nothing to pick or type, ending on the question the lesson answers, even when its plan was a guess; no check comes before the first explanation or worked example, and the writer adds no screen the plan doesn't have, so a plan with no screen planned as a guess has no guess. A screen planned as the guess is a `hookGuess` that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    \n\nSCORE CATEGORIES:\n\n### Accuracy\n- Category ID: `accuracy`\n- Weight: 25%\n- Expectations: Audit accuracy like a subject expert. Every fact, number, calculation, formula and notation must be correct, every check must have exactly one defensible right answer, and every reason must match its option. Data must be real or labeled as an example. Score at most 6 for any error that teaches something wrong or marks a wrong answer right; at most 8 for a small imprecision a learner wouldn't notice.\n\n### Engaging, not a textbook\n- Category ID: `teacher`\n- Weight: 25%\n- Expectations: Audit how it feels to learn from, as a learner who would rather watch a great teacher on YouTube than read a textbook. The hook opens on something from everyday life the learner has seen, felt or done, not a definition or a topic statement. Each idea arrives through one brief, specific example the learner can picture (a named situation, real numbers, a familiar object or moment) before or with its rule, and hard ideas get an everyday comparison. The voice talks to the learner in spoken, everyday words and short sentences, and each screen gives a reason to read the next (a question, a surprise, a contrast). Warm and direct, never cheesy: no \"Great job!\", \"Let's dive in\", forced jokes or exclamation marks for energy. Score at most 6 when it reads like a textbook or an encyclopedia (definitions first, passive voice, abstract nouns, \"it is important to note\"); at most 7 when most screens state a rule before any example, or for cheesy filler; at most 8 for one stretch of textbook tone or one generic example (\"a company\", \"a person\", \"product X\") where a specific one would teach. Reading costs the learner, so length is never a strength here: score at most 7 when screens run longer than their idea needs (a second example, a recap, side detail the learner reads past), since a shorter screen that teaches the same thing is the better one.\n\n### Clarity\n- Category ID: `clarity`\n- Weight: 20%\n- Expectations: Audit clarity for the stated level. Each screen teaches one idea in short sentences. Every technical term is explained before it's used (with an everyday comparison where plain words aren't enough), and never two new terms on one screen. Complex ideas are explained completely: no skipped steps, no naming an idea instead of explaining how it works. Score at most 8 for one unexplained term or skipped step; at most 7 for several; at most 6 when a learner at this level couldn't follow.\n\n### Checks & feedback\n- Category ID: `checks`\n- Weight: 15%\n- Expectations: Audit the checks. Each makes the learner use the idea (predict, calculate, classify, spot the error), never repeat a sentence from a screen. Wrong options are real misconceptions, including the tempting wrong answer the plan names, and every option's reason explains why it's right, or why it's tempting and wrong. Checks after worked examples give less help. Typed answers have key points a grader can check. Activities make the learner do something that shows the idea, with a check about it. Every learner reads the same screens whatever they picked, so a screen after a check builds on its question and right answer and never praises or corrects the learner's pick (\"you started with the right question\", \"you got it\"). Score at most 8 for one recall-only check, a weak reason or a screen that judges the learner's pick; at most 7 for several; at most 6 when checks mostly don't test understanding.\n\n### Level, hook & application\n- Category ID: `fitAndApplication`\n- Weight: 15%\n- Expectations: Audit fit and relevance. The level is respected (overview: no formulas or notation; beginner: words a 12-year-old follows, a formula only after the intuition; advanced: precise and complete). The first screen is a scene with nothing to answer, at every level (no \"In this lesson\", no recap, no greeting), and a guess appears only where the plan puts one. Examples come from the learner's world in the lesson's language and country. The application is a realistic situation naming a concrete place where the idea shows up. No filler, history or \"why this matters in general\". The lesson follows its plan's briefs. The summary states each idea in one sentence. Score at most 6 for formulas in an overview or wrong language variant; at most 8 for one slip; at most 7 for several.",
+  "judgedAt": "2026-11-03T17:59:43.361Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The derivation, numbers and scaling are all correct, and the application rightly separates the confinement contribution from the material contribution. Every option has exactly one defensible answer.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The vial hook is concrete and the screens are short, with an Owen thread and a guitar-string comparison. The tone is somewhat dry and formula-led in places.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "It defines ψ's meaning, the symbols and nodes at first use. Screen 2 introduces 'infinite well' after using the idea, alongside other new terms, and 'zero-point energy' arrives late in a result line.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Checks target the planned misconceptions with reasons for every option, the activity plots ψ against x across n, and the application has four diagnostic options. The mathCheck basis quotes a sentence about using h = 2πħ rather than the 1/L² dependence that decides the answer.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The hook is a scene with no question to answer, and the screens follow the plan in order at advanced precision. The quantum dot application is realistic, and the summary gives one sentence per idea.",
+              "score": 9,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "C is complete, correct and concise. It explains the wavefunction at first use and notes that photon energy also includes a material contribution, a physically sound nuance. Its weak spots are a mathCheck basis quote that doesn't decide the answer and a second new term (infinite well) on screen 2.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All formulas, numbers and option reasons are correct. The application treats the whole emission shift as confinement, a small simplification.",
+              "score": 8,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The hook is vivid and the analogies (guitar, violin harmonics) help. Some screens are wordier than their idea needs.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Terms are bolded and defined, and the steps are not skipped. The wavefunction is used without explaining what it represents, and screen 2 introduces several new notions at once.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Reasons are strong for every option and the basis quotes decide the answers. The activity plots E_n/E_1 against n, covering energy scaling but not the ψ_n and |ψ_n|² redraw.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "It follows the plan in order with an advanced-level derivation and a quantum dot application. The summary gives one sentence per idea.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-4-argon",
+          "reasoning": "B gives a correct, complete derivation with strong checks and well-chosen basis quotes. It doesn't explain what ψ means physically on first use, screens run a bit longer, and the activity plots E against n but doesn't show the wave shape redraw the brief describes.",
+          "score": 7.55
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 1447,
+        "inputTokens": 24520,
+        "outputTokens": 1736,
+        "reasoningTokens": 687
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All equations, derivations, physical constants, and numerical calculations are accurate. Every check has a single correct answer and accurate option reasons.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The lesson uses a warm, direct voice anchored in Tanya's glowing quantum dot vials and connects the math back to real-world QLED TVs. On screens 2 and 3, the mathematical notation is stated slightly before the guitar string comparison rather than leading with the physical analogy first.",
+              "score": 9,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Model D explains 'wave function', 'boundary conditions', 'wavenumber', 'quantized', and 'nodes' clearly when they appear, and reveals one mathematical move per step in both worked examples. On screen 2, 'wave function' is only briefly named before its probability meaning is explained on screen 7, so it is capped at 8.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "All checks test real conceptual and mathematical understanding, include the planned misconceptions, provide clear reasons for every option, and use exact, decisive basis quotes.",
+              "score": 10,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The lesson fits the advanced level, follows all 11 screen briefs, uses US English and cast names, grounds the application in Samsung QLED TVs, and keeps all image alt texts under 160 characters as complete sentences.",
+              "score": 10,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "Model D is the strongest output because it explicitly defines all required terms (including 'wave function', 'boundary conditions', and 'quantized'), paces the worked examples clearly with one move per step, and pairs every check with an accurate basis quote and thorough feedback. The only minor blemish is that the guitar string analogy appears alongside or just after the mathematical boundary condition notation rather than strictly before it.",
+          "score": 9.35
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All formulas, derivations, and numerical values in the worked examples and checks are completely accurate.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The narrative around Owen's glowing vials is vivid and direct, and the transitions between screens feel natural and motivating.",
+              "score": 9,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The worked examples reveal one move per step, and 'boundary conditions', 'wavenumber', and 'nodes' are explained clearly. However, $\\psi$ is used on screen 2 without being introduced as the wave function, and 'quantized' (used in screen 5's title as 'quantizes') is not defined in the text, triggering the cap of 7 for several unexplained terms.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Checks require genuine application, include all required distractors, have clear option-specific feedback, and link to exact decisive basis quotes.",
+              "score": 10,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Follows all screen briefs, fits the advanced level, uses US English and cast names, connects the application to QLED TV screens, and keeps all alt texts under 160 characters.",
+              "score": 10,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model A is very well written, accurate, and engaging, with clean step-by-step worked examples and strong checks. However, it introduces $\\psi$ on screen 2 without ever defining or naming it as the wave function, and its title uses the word 'quantizes' without explaining what 'quantized' means in the text.",
+          "score": 9.15
+        },
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The physics, formulas, and numerical calculations are all accurate.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The tone is somewhat dry and textbook-like compared to Models A and D, and the final application screen stays purely in the lab model without connecting to a concrete everyday place or product.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Model C omits the required terms 'boundary conditions' and 'quantized', and compresses multiple moves into single steps in both worked examples (such as combining the substitution of $k_n$ and the conversion from $\\hbar$ to $h$ in Step 4 of Screen 5, and jumping straight from the symbolic formula to joules and eV in Step 1 of Screen 9).",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "On screen 10, the basis quote ('Substitute the allowed values into the energy relation and use $h=2\\pi\\hbar$.') does not state the inverse-square $1/L^2$ scaling that decides the question. Additionally, checks 4 and 6 only offer 3 options, and the activity prompt awkwardly tells the learner not to set $n$ to 3.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Fits the advanced level and keeps alt texts under 160 characters, but the hook fails to mention the UV lamp or excitation light needed to make the vials glow, and the application check doesn't name a concrete real-world place outside the lab.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "Model C is mathematically accurate and defines 'wavefunction' well on screen 2, but it skips steps in the derivations, leaves 'boundary conditions' and 'quantized' unexplained, and reads more like a dry textbook. It also uses a non-decisive basis quote on screen 10 and includes an extra static image inside the interactive activity.",
+          "score": 8.05
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 22301,
+        "outputTokens": 1464,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The main derivation, normalized states, energy levels, and photon calculation are correct. However, screen 10 varies the electron’s reference energy and reference width independently, although the stated model fixes one from the other; those ranges permit incorrect physical premises.",
+              "score": 6,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The glowing-vial hook, direct wording, and short derivation steps create a reasonably teacher-like experience. The normalization screen becomes formula-led, with the familiar guitar comparison arriving after the abstract explanation.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "D explains ħ and quantization and separates most boundary-condition moves clearly. However, wave function is introduced without its meaning, the string analogy follows notation, and normalization jumps from the integral condition to its coefficient without showing the calculation.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The checks address useful misconceptions about boundary conditions, zero energy, node counts, and inverse-square scaling, with generally strong feedback. The first question’s wording, “Which term survives at x = 0?”, is ambiguous because the surviving sine term itself vanishes there.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "D supplies the 11 planned screen kinds in order, a noninteractive hook, an appropriate application, and one-sentence summary ideas. However, its activity plots wave amplitude rather than energy against n or L, and several image alts are fragments rather than whole sentences.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "D is strongest overall because its derivation is more carefully staged, its language is direct, and it explains “quantized” when introducing it. It still misses the required intuition-first ordering and energy graph, and its variable numerical exercise can generate physically inconsistent premises.",
+          "score": 7.15
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The core equations, allowed states, scaling laws, and numerical transition calculation are correct. However, the activity says that counting wall zeros explains four nodes for ψ₄; three interior zeros plus both wall zeros would give five, so this feedback teaches an incorrect counting explanation.",
+              "score": 6,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The vial scene, guitar comparisons, and conversational misconception framing make the lesson approachable without forced enthusiasm. The normalization screen is a concentrated stretch of equations and rules before its familiar comparison.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Most derivation moves and the numerical conversion are easy to follow. However, ψ appears without an explanation of wave function, “quantizes” arrives before a plain-language definition, and the normalization coefficient is asserted rather than derived.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The boundary-condition, zero-state, and scaling checks generally test understanding and explain realistic distractors. The activity has an incorrect node-count reason and promises observation of both ψ and probability density even though only ψ is configured as the plotted output.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "A follows the planned screen sequence and provides the required advanced formulas, numerical application, and concise summary ideas. It misses the required energy-versus-n-or-L graph and places the string intuition after notation; several alts also lack complete sentence structure.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "A offers a complete core derivation, useful misconception checks, and a well-developed numerical example. It trails D slightly because its activity promises more than the configured plot delivers, its feedback includes an incorrect node-count explanation, and key terms receive less timely explanation.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The central derivation and default numerical answers are correct. However, the activity labels |ψ|² at a point as probability rather than probability density, and screen 10 allows reference widths inconsistent with its fixed electron energy while retaining feedback that assumes the width always halves.",
+              "score": 6,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The vial hook and musical-string comparisons provide useful concrete anchors. Several screens pack equations, definitions, and repeated conclusions into longer passages, especially the derivation and normalization explanation, making the experience more textbook-like than necessary.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The overall mathematical progression is understandable for advanced learners. Nevertheless, wavefunction and quantized are not explained on introduction, normalization skips its calculation, and worked steps combine multiple moves, including substitution and conversion from ħ to h.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Most distractors target relevant misconceptions, and the slider check connects node counts with quadratic energy growth. However, the zero-state check largely repeats the preceding explanation, and the activity image alt explicitly supplies the node count the learner is asked to determine.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "B preserves the planned sequence and correctly plots energy ratio against n. It replaces the planned redrawing of wave shapes and densities with point-value outputs and a static image, introduces notation before the string intuition, and uses fragmentary image alts.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-4-argon",
+          "reasoning": "B covers the essential physics and is the only output to configure the required energy-versus-n graph. Its more compressed derivation, less explanatory introduction of terminology, and problems in the activity labels and variable exercise make it the weakest overall.",
+          "score": 6.75
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 22429,
+        "outputTokens": 2646,
+        "reasoningTokens": 1305
+      }
+    }
+  ],
+  "outputs": {
+    "openai/gpt-6.1-terra": "ebc2dc6c5a5d06a1",
+    "anthropic/claude-opus-5.5": "e0cd9512a0d08cd4",
+    "anthropic/claude-sonnet-5.5": "01760da250fed848",
+    "google/gemini-4-argon": "7e238518dfe69ade"
+  },
+  "swapped": false,
+  "taskId": "lesson-writer",
+  "testCaseId": "en-particle-in-a-box-advanced-2"
+}

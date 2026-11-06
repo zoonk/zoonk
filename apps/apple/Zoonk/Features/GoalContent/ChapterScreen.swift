@@ -107,7 +107,7 @@ private struct ChapterContent: View {
   @Environment(AppRouter.self) private var router
   @Environment(GoalContentStore.self) private var store
   @State private var isPracticing = false
-  @State private var practiceNote: Text?
+  @State private var practiceNote: String?
   @State private var practiceTask: Task<Void, Never>?
 
   let goal: LearnerGoal
@@ -255,9 +255,10 @@ private struct ChapterContent: View {
             }
           }
           .disabled(isPracticing)
+          .announcesStatus(practiceNote)
 
           if let practiceNote {
-            practiceNote
+            Text(practiceNote)
               .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
           }
@@ -317,19 +318,20 @@ private struct ChapterContent: View {
       case .done(.opened(let route)):
         router.open(route)
       case .done(.dailyLimit):
-        practiceNote = Text(
-          "You've reached your daily time limit. Tomorrow's session picks this chapter up.",
-          tableName: "Plan",
+        practiceNote = String(
+          localized:
+            "You've reached your daily time limit. Tomorrow's session picks this chapter up.",
+          table: "Plan",
           comment:
             "Says the learner's daily time limit, a setting that stops study for the day, is reached"
         )
       case .done(.nothingToPractice):
-        practiceNote = Text(
-          "Nothing to practice in this chapter yet.", tableName: "Plan",
+        practiceNote = String(
+          localized: "Nothing to practice in this chapter yet.", table: "Plan",
           comment: "Says the chapter has nothing to practice")
       case .failed:
-        practiceNote = Text(
-          "That didn't work. Try again in a moment.", tableName: "Plan",
+        practiceNote = String(
+          localized: "That didn't work. Try again in a moment.", table: "Plan",
           comment: "Says the practice didn't start")
       case .obsolete:
         break

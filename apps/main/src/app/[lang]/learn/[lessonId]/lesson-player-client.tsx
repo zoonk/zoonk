@@ -19,7 +19,6 @@ import { checkLessonStep } from "@/lib/lessons/lesson-step-check";
 import { type LessonSessionContext } from "@/lib/session/lesson-session-context";
 import { requestSpokenGrade } from "@/lib/speech/spoken-answer-request";
 import { trackEvent } from "@zoonk/core/analytics/client";
-import { type LessonSupport } from "@zoonk/core/lesson-player/contract";
 import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { type ChallengeTeam } from "@zoonk/core/library/challenges/team";
 import { useAppLocale } from "@zoonk/learn/locale";
@@ -44,9 +43,9 @@ const DEFAULT_ROUTING: LessonRouting = { exit: "/", exitTo: null, nextLesson: nu
 
 function createCeremonySlot(buddy: TutorViewer["buddy"]): Pick<LessonPlayerSlots, "ceremony"> {
   return {
-    ceremony: (milestone, onClose) => (
+    ceremony: (moments, onClose) => (
       <MainLearnProvider>
-        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+        <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
       </MainLearnProvider>
     ),
   };
@@ -87,7 +86,6 @@ type LessonPlayerClientProps = {
   sessionContext?: LessonSessionContext | null;
   soundsEnabled: boolean;
   studySessionId: string | null;
-  support?: LessonSupport | null;
   tutor: TutorViewer;
   tutorSuggestions?: readonly LessonTutorSuggestion[];
 };
@@ -104,7 +102,6 @@ function LessonPlayerVisit({
   sessionContext = null,
   soundsEnabled,
   studySessionId,
-  support = null,
   tutor: tutorViewer,
   tutorSuggestions,
 }: LessonPlayerClientProps) {
@@ -168,7 +165,6 @@ function LessonPlayerVisit({
       routes={routes}
       slots={slots}
       soundsEnabled={soundsEnabled}
-      support={support}
       track={trackEvent}
       tutor={tutor}
       viewer={{ hasSession }}

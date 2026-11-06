@@ -60,6 +60,35 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertTrue(wait.isDone)
   }
 
+  func testALessonsMarksAndPicturesEachFinishOnTheirOwnStepInEitherOrder() {
+    for (first, second) in [("markLesson", "drawPictures"), ("drawPictures", "markLesson")] {
+      var wait = GenerationWait(kind: .lesson)
+      wait.apply(GenerationEvent(status: "completed", step: "writeLesson"))
+      wait.apply(GenerationEvent(status: "started", step: first))
+
+      XCTAssertEqual(
+        wait.visiblePhases.map(\.state), [.done, .done, .working, .working],
+        "\(first) starting starts the step beside it too")
+
+      wait.apply(GenerationEvent(status: "started", step: second))
+      wait.apply(GenerationEvent(status: "completed", step: first))
+
+      let (done, running) = first == "markLesson" ? (2, 3) : (3, 2)
+      XCTAssertEqual(wait.visiblePhases[done].state, .done)
+      XCTAssertEqual(wait.visiblePhases[running].state, .working, "\(second) is still running")
+      XCTAssertFalse(wait.isDone)
+
+      wait.apply(GenerationEvent(status: "completed", step: second))
+
+      XCTAssertEqual(wait.visiblePhases.map(\.state), [.done, .done, .done, .done])
+      XCTAssertFalse(wait.isDone, "the lesson opens on lessonReady, after both")
+
+      wait.apply(GenerationEvent(status: "completed", step: "lessonReady"))
+
+      XCTAssertTrue(wait.isDone)
+    }
+  }
+
   func testIgnoresStepsItDoesntKnow() {
     var wait = GenerationWait(kind: .curriculum)
 

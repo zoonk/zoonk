@@ -63,15 +63,16 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
-import com.zoonk.android.feature.goalcontent.PageLoading
 import com.zoonk.android.feature.goalcontent.WithPlanGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.api.models.MindMapImage
 import com.zoonk.api.models.MindMapOutline
@@ -116,7 +117,7 @@ fun MindMapScreen(
 
         when (viewed) {
             Viewed.Loading -> {
-                TaskScaffold(onClose = close) { PageLoading(it) }
+                TaskScaffold(onClose = close) { PageLoading(Modifier.padding(it), MaterialTheme.colorScheme.tertiary) }
             }
 
             Viewed.Missing -> {
@@ -190,12 +191,15 @@ internal fun MindMapViewer(
                         onFrame = { frame = it },
                         modifier = Modifier.weight(1f).fillMaxWidth(),
                     )
-                    ZoomControls(
-                        scale = view.scale,
-                        onZoomOut = { view = view.zoomAt(frame, Offset.Zero, view.scale / PanZoom.ZOOM_STEP) },
-                        onFit = { view = PanZoom.FIT },
-                        onZoomIn = { view = view.zoomAt(frame, Offset.Zero, view.scale * PanZoom.ZOOM_STEP) },
-                    )
+                    BeforeFold { beforeFold ->
+                        ZoomControls(
+                            scale = view.scale,
+                            onZoomOut = { view = view.zoomAt(frame, Offset.Zero, view.scale / PanZoom.ZOOM_STEP) },
+                            onFit = { view = PanZoom.FIT },
+                            onZoomIn = { view = view.zoomAt(frame, Offset.Zero, view.scale * PanZoom.ZOOM_STEP) },
+                            modifier = beforeFold,
+                        )
+                    }
                 }
 
                 if (outlineBeside) {
@@ -311,9 +315,10 @@ private fun ZoomControls(
     onZoomOut: () -> Unit,
     onFit: () -> Unit,
     onZoomIn: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {

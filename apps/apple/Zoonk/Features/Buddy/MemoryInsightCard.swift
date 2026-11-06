@@ -15,7 +15,7 @@ struct MemoryInsightCard: View {
     GroupBox {
       VStack(alignment: .leading, spacing: 12) {
         if let answer {
-          answered(answer)
+          Text(answered(answer))
             .foregroundStyle(.mutedForeground)
         } else {
           Text(insight.message)
@@ -23,15 +23,16 @@ struct MemoryInsightCard: View {
         }
 
         if failed {
-          Text(
-            "We couldn't save your answer. Try again.", tableName: "Buddy",
-            comment: "Answering an insight failed"
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't save your answer. Try again.", table: "Buddy",
+              comment: "Answering an insight failed")
           )
           .typeStyle(.note)
-          .foregroundStyle(.destructiveText)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
+      .announcesStatus(answer.map(answered))
     } label: {
       Label {
         Text(
@@ -125,27 +126,27 @@ struct MemoryInsightCard: View {
     }
   }
 
-  private func answered(_ accepted: Bool) -> Text {
+  private func answered(_ accepted: Bool) -> String {
     switch insight.kind {
     case .planChange:
       accepted
-        ? Text(
-          "Your plan follows it from now on.", tableName: "Buddy",
+        ? String(
+          localized: "Your plan follows it from now on.", table: "Buddy",
           comment: "An insight's plan change was accepted")
-        : Text(
-          "Your plan stays as it was.", tableName: "Buddy",
+        : String(
+          localized: "Your plan stays as it was.", table: "Buddy",
           comment: "An insight's plan change was declined")
     case .scheduleIdea:
       accepted
-        ? Text(
-          "Study time moved.", tableName: "Buddy",
+        ? String(
+          localized: "Study time moved.", table: "Buddy",
           comment: "A schedule idea was accepted: the time of day the learner studies moved")
-        : Text(
-          "Your study time stays the same.", tableName: "Buddy",
+        : String(
+          localized: "Your study time stays the same.", table: "Buddy",
           comment:
             "A schedule idea was declined: the time of day the learner studies stays the same")
     case .tip:
-      Text("Noted.", tableName: "Buddy", comment: "A tip was acknowledged")
+      String(localized: "Noted.", table: "Buddy", comment: "A tip was acknowledged")
     }
   }
 

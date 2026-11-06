@@ -17,7 +17,7 @@ import { buildTutor } from "../_test-utils/tutor-config";
 import { getStrugglePauseMs } from "../lesson/_utils/lesson-struggle";
 import { type PlayableLibraryStep } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
-import { teachingStep } from "../preview/preview-steps";
+import { contentStep, teachingStep } from "../preview/preview-steps";
 import { type LessonQuestionNavigation } from "../questions/lesson-question-navigation";
 
 const PHONE = { height: 812, width: 375 };
@@ -1222,6 +1222,37 @@ describe("the learner's buddy", () => {
     });
   });
 
+  it('explains the screen more simply in one tap on "I didn\'t get this"', async () => {
+    const reading = teachingStep("explanation");
+    const { api, lesson } = lessonWithTutor({ steps: [reading] });
+    api.next("answer", () => Promise.resolve(tutorAnswerResponse(TUTOR_ANSWER)));
+    playLesson({ lesson });
+
+    await page.getByRole("button", { name: "I didn't get this" }).click();
+    await expect.element(page.getByRole("dialog").getByText(TUTOR_ANSWER)).toBeVisible();
+
+    expect(api.inputs).toStrictEqual([
+      expect.objectContaining({
+        context: expect.objectContaining({ kind: "step", stepId: reading.id }),
+        question: "Explain it more simply",
+        suggestion: "simpler",
+      }),
+    ]);
+  });
+
+  it("leaves out \"I didn't get this\" for a guest, who can't ask the buddy", async () => {
+    const { lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    renderLessonPlayer({ lesson, tutor: { ...buildTutor(), canAsk: false } });
+
+    await expect
+      .element(page.getByRole("heading", { name: "A cloud, not a little ball" }))
+      .toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "I didn't get this" }))
+      .not.toBeInTheDocument();
+  });
+
   it("shows a tapped suggestion as sent, with the buddy thinking, before the server saves it", async () => {
     const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
     const saveQuestion = api.hold("create");
@@ -1434,7 +1465,7 @@ describe("docked beside the lesson", () => {
       .toBeVisible();
   });
 
-  it("offers the lesson's simpler and deeper takes on a reading screen, one tap each", async () => {
+  it("offers the lesson's takes on a reading screen, one tap each", async () => {
     const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
     playLesson({ lesson });
 
@@ -1442,19 +1473,41 @@ describe("docked beside the lesson", () => {
     await expectCount(suggestions.getByRole("button"), 2);
 
     await expect
-      .element(suggestions.getByRole("button", { name: "I want to go deeper" }))
+      .element(suggestions.getByRole("button", { name: "Give me another example" }))
       .toBeVisible();
 
-    await suggestions.getByRole("button", { name: "Explain it more simply" }).click();
+    await suggestions.getByRole("button", { name: "I want to go deeper" }).click();
     await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
 
-    expect(api.inputs[0]).toMatchObject({
-      question: "Explain it more simply",
-      suggestion: "simpler",
-    });
+    expect(api.inputs[0]).toMatchObject({ question: "I want to go deeper", suggestion: "deeper" });
 
     await dockedConversation().getByRole("button", { name: "From the lesson" }).click();
     await expect.element(suggestions).not.toBeInTheDocument();
+  });
+
+  it('leaves the simpler take out of the aside only on a screen whose "I didn\'t get this" asks it', async () => {
+    const { lesson } = lessonWithTutor({
+      steps: [
+        contentStep("hook", { content: { text: "An electron isn't a ball.", variant: "text" } }),
+        teachingStep("explanation"),
+      ],
+    });
+
+    playLesson({ lesson });
+    const suggestions = lessonAside().getByRole("list", { name: "Suggested questions" });
+    const simpler = suggestions.getByRole("button", { name: "Explain it more simply" });
+    const didntGetIt = page.getByRole("button", { name: "I didn't get this" });
+
+    await expect.element(simpler).toBeVisible();
+    await expect.element(didntGetIt).not.toBeInTheDocument();
+
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await expect.element(didntGetIt).toBeVisible();
+    await expect.element(simpler).not.toBeInTheDocument();
+
+    await expect
+      .element(suggestions.getByRole("button", { name: "I want to go deeper" }))
+      .toBeVisible();
   });
 
   it("offers no suggestions beside the lesson while a question is still on its way", async () => {
@@ -1463,7 +1516,7 @@ describe("docked beside the lesson", () => {
     playLesson({ lesson });
 
     const suggestions = lessonAside().getByRole("list", { name: "Suggested questions" });
-    await suggestions.getByRole("button", { name: "Explain it more simply" }).click();
+    await suggestions.getByRole("button", { name: "I want to go deeper" }).click();
     await dockedConversation().getByRole("button", { name: "From the lesson" }).click();
     await expect.element(suggestions).not.toBeInTheDocument();
 
@@ -1589,10 +1642,11 @@ describe("docked beside the lesson", () => {
     await expect.element(dockedConversation().getByText("Why a cloud?")).toBeVisible();
   });
 
-  it("offers help after a long pause only on a screen the learner hasn't asked the buddy about", async () => {
+  it("offers help after a long pause in a language lesson, only on a screen the learner hasn't asked the buddy about", async () => {
     freezeClock();
     const reading = teachingStep("explanation");
-    const { lesson } = lessonWithTutor({ steps: [reading, teachingStep("explanation")] });
+    const lesson = buildLesson([reading, teachingStep("explanation")], { targetLanguage: "es" });
+    stubTutorApi({ lesson });
     const pauseMs = getStrugglePauseMs(reading) ?? 0;
     const offer = page.getByText("Taking your time? Pip can explain it another way.");
 
@@ -1619,5 +1673,100 @@ describe("docked beside the lesson", () => {
     await page.getByRole("button", { name: /^Next/u }).click();
     await pause();
     await expect.element(offer).toBeVisible();
+  });
+
+  it('fills in the simpler suggestion when "I didn\'t get this" is tapped while a question is on its way', async () => {
+    const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    const saveQuestion = api.hold("create");
+    playLesson({ lesson });
+
+    const didntGetIt = page.getByRole("button", { name: "I didn't get this" });
+    await didntGetIt.click();
+    await expect.element(dockedConversation().getByText("Explain it more simply")).toBeVisible();
+
+    await didntGetIt.click();
+    await expect.element(asideComposer()).toHaveValue("Explain it more simply");
+
+    await saveQuestion();
+    expect(api.requests.create).toBe(1);
+  });
+
+  it('fills in the simpler suggestion when "I didn\'t get this" is tapped before an unanswered question has loaded', async () => {
+    const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    const earlier = api.question({ question: "Why a cloud?", status: "failed" });
+    api.questions = [earlier];
+
+    api.next("create", (serve) =>
+      api.questions.some(({ status }) => status !== "completed")
+        ? Promise.resolve(Response.json({ error: "Unfinished question" }, { status: 409 }))
+        : serve(),
+    );
+
+    const releasePreload = api.hold("thread");
+    playLesson({ lesson });
+    await expect.poll(() => api.requests.thread).toBe(1);
+
+    await page.getByRole("button", { name: "I didn't get this" }).click();
+    await expect.poll(() => api.requests.thread).toBe(2);
+    await releasePreload();
+
+    const conversation = dockedConversation();
+    await expect.element(conversation.getByText(earlier.question)).toBeVisible();
+    await expect.element(asideComposer()).toHaveValue("Explain it more simply");
+
+    await conversation.getByRole("button", { name: "Try again" }).click();
+    await expect.element(conversation.getByText(TUTOR_ANSWER)).toBeVisible();
+    await asideComposer().click();
+    await press("Enter");
+    await expectCount(conversation.getByText(TUTOR_ANSWER), 2);
+
+    expect(api.inputs.at(-1)).toMatchObject({
+      question: "Explain it more simply",
+      suggestion: "simpler",
+    });
+  });
+
+  it('keeps "I didn\'t get this" in the composer when the conversation fails to refresh after the server turns it away', async () => {
+    const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    api.questions = [api.question({ question: "Why a cloud?", status: "failed" })];
+    const releasePreload = api.hold("thread");
+    api.fail("thread", 503);
+    api.fail("create", 409);
+    playLesson({ lesson });
+    await expect.poll(() => api.requests.thread).toBe(1);
+
+    await page.getByRole("button", { name: "I didn't get this" }).click();
+    await expect.poll(() => api.requests.thread).toBe(2);
+    await releasePreload();
+
+    await expect.element(asideComposer()).toHaveValue("Explain it more simply");
+  });
+
+  it('leaves the composer empty once "I didn\'t get this" is taken while its answer is checked', async () => {
+    freezeClock();
+    const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    const preloadReads = Promise.withResolvers<null>();
+
+    api.next("thread", async (serve) => {
+      await preloadReads.promise;
+      return serve();
+    });
+
+    const releaseCreate = api.hold("create");
+    playLesson({ lesson });
+    await expect.poll(() => api.requests.thread).toBe(1);
+
+    await page.getByRole("button", { name: "I didn't get this" }).click();
+    await expect.poll(() => api.questions).toHaveLength(1);
+    preloadReads.resolve(null);
+    const asked = dockedConversation().getByText("Explain it more simply").first();
+    await expect.element(asked).toBeVisible();
+    await nextFrames();
+    await vi.advanceTimersByTimeAsync(FIRST_POLL_MS);
+    await expect.poll(() => api.requests.question).toBe(1);
+
+    await releaseCreate();
+    await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
+    await expect.element(asideComposer()).toHaveValue("");
   });
 });

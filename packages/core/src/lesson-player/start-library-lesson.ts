@@ -26,7 +26,6 @@ import {
   loadProgressAnswers,
   loadProgressRuns,
 } from "./_utils/lesson-runs";
-import { getRunLessonSupport, loadLessonSupport } from "./_utils/lesson-support";
 import { getLatePictureStepIds } from "./_utils/screen-pictures";
 import { type LibraryLessonRun, type LibraryLessonStartInput } from "./contract";
 
@@ -41,15 +40,16 @@ export type LibraryLessonStartOutcome =
 
 type RunSource = {
   lesson: { homeChapterId: string | null; id: string; title: string };
+  now: Date;
   studySessionId: string | null;
   timeZone: string;
   userId: string;
 };
 
-async function openLessonRun({ lesson, studySessionId, timeZone, userId }: RunSource) {
+async function openLessonRun({ lesson, now, studySessionId, timeZone, userId }: RunSource) {
   const [goalId, existing] = await Promise.all([
     findActiveGoalId(userId),
-    findResumableRun(prisma, { lessonId: lesson.id, now: new Date(), userId }),
+    findResumableRun(prisma, { lessonId: lesson.id, now, userId }),
   ]);
 
   if (existing) {
@@ -57,23 +57,15 @@ async function openLessonRun({ lesson, studySessionId, timeZone, userId }: RunSo
   }
 
   return writeLearnerChange({ planInputs: true, userId }, async (tx) => {
-    const now = new Date();
     const resumable = await findResumableRun(tx, { lessonId: lesson.id, now, userId });
 
     if (resumable) {
       return unchanged({ isNew: false, run: resumable });
     }
 
-    const [first] = await loadProgressRuns({ client: tx, lessonId: lesson.id, until: now, userId });
-
-    const support =
-      (first && getRunLessonSupport(first)) ??
-      (await loadLessonSupport({ client: tx, lessonId: lesson.id, userId }));
-
     const run = await startLearningEvent(tx, {
       contentIds: {
         lessonId: lesson.id,
-        ...(support && { support }),
         ...(lesson.homeChapterId && { chapterId: lesson.homeChapterId }),
         ...(studySessionId && { studySessionId }),
       },
@@ -128,22 +120,14 @@ async function readRun({
   run: LearningEvent;
   userId: string;
 }): Promise<LibraryLessonRun | null> {
-  const [progress, hyperdrive, support, replay] = await Promise.all([
+  const [progress, hyperdrive, replay] = await Promise.all([
     loadRunProgress({ lessonId, run, userId }),
     getRunHyperdrive({ lessonId, run, studySessionId: getRunStudySessionId(run), userId }),
-    getRunLessonSupport(run) ?? loadLessonSupport({ lessonId, userId }),
     hasFinishedLessonBefore(prisma, { lessonId, runId: run.id, userId }),
   ]);
 
   return progress
-    ? {
-        ...progress,
-        hyperdrive,
-        replay,
-        runId: run.id,
-        startedAt: run.startedAt.toISOString(),
-        support,
-      }
+    ? { ...progress, hyperdrive, replay, runId: run.id, startedAt: run.startedAt.toISOString() }
     : null;
 }
 
@@ -184,8 +168,10 @@ export async function startLibraryLesson({
     return { status: "notFound" };
   }
 
-  // Save today before starting so a standalone lesson can settle its existing block.
-  await saveDayBeforeActivity({ timeZone: input.timeZone, userId });
+  // A standalone lesson settles the block of the day it began in, so the day saved here and the run's start share one instant.
+  const now = new Date();
+
+  await saveDayBeforeActivity({ now, timeZone: input.timeZone, userId });
 
   // Quick explanations already claimed their own allowance and must not consume a lesson allowance too.
   if (!isOwnExplanation(lesson)) {
@@ -208,6 +194,7 @@ export async function startLibraryLesson({
 
   const { isNew, run } = await openLessonRun({
     lesson,
+    now,
     studySessionId,
     timeZone: await getLearnerTimeZone({ timeZone: input.timeZone, userId }),
     userId,

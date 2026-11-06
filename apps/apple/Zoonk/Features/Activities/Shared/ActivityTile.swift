@@ -127,11 +127,6 @@ struct ActivityCaption: View {
   }
 }
 
-@MainActor
-func announceActivityChange(_ text: String) {
-  AccessibilityNotification.Announcement(text).post()
-}
-
 struct ActivityNumberKey: ViewModifier {
   let index: Int
 

@@ -18,7 +18,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -56,6 +55,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import kotlinx.coroutines.launch
 
 /**
@@ -71,7 +71,10 @@ fun rememberTutor(
     val account = (session as? SessionState.SignedIn)?.session?.localId
     val summary by app.learnerSummary.summary.collectShown()
     val activeGoalId = summary.value?.activeGoalId?.toString()
-    val vm = viewModel(key = "tutor:${scope.thread}:$account") { TutorViewModel(scope, app.tutor, createSavedStateHandle()) }
+    val vm =
+        viewModel(key = "tutor:${scope.thread}:$account") {
+            TutorViewModel(scope, app.tutor, createSavedStateHandle(), app.studyOpener::openMission)
+        }
     SideEffect {
         vm.scope = scope
         vm.activeGoalId = activeGoalId
@@ -259,14 +262,14 @@ internal fun TutorSheet(
     identity: TutorIdentity,
     onDismiss: () -> Unit,
     lessonSuggestions: List<TutorSuggestion> = emptyList(),
-    offer: TutorSuggestion? = null,
+    offer: TutorOffer? = null,
     onOfferTaken: () -> Unit = {},
 ) {
     val vm = rememberTutor(scope, app)
     // Taken once, so a sheet made again by a fold keeps what the learner made of it.
     LaunchedEffect(offer) {
         if (offer != null) {
-            vm.offer(offer)
+            if (offer.asked) vm.ask(offer.suggestion) else vm.offer(offer.suggestion)
             onOfferTaken()
         }
     }
@@ -285,7 +288,7 @@ internal fun TutorSheet(
             open = open,
             startCall = app.conversations,
         )
-    val tall = currentWindowAdaptiveInfoV2().windowSizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
+    val tall = windowAdaptiveInfo().windowSizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
     // The sheet already sits above the keyboard, so typing takes all the height that's left.
     val share = if (tall && !WindowInsets.isImeVisible) SHEET_SHARE else 1f
 

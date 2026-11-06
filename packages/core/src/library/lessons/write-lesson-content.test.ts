@@ -142,7 +142,7 @@ describe(writeLessonContent, () => {
     );
   });
 
-  it("publishes a lesson as soon as its code checks pass, leaving the reviewer to the check after it", async () => {
+  it("saves a lesson as soon as its code checks pass, leaving its readiness to the workflow and the reviewer to the check after it", async () => {
     const { lesson, skill, workflowRunId } = await createClaimedLesson();
     const written = writtenTemperatureLesson();
     const draft = mockDraft(written);
@@ -163,14 +163,9 @@ describe(writeLessonContent, () => {
       prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
     ]);
 
-    expect(stored.contentStatus).toBe("completed");
+    expect(stored).toMatchObject({ contentRunId: workflowRunId, contentStatus: "running" });
 
-    expect(stored.summary).toStrictEqual({
-      ideas: [
-        { text: "A rise moves up the thermometer, even below zero." },
-        { text: "Count up to zero first, then the degrees above it." },
-      ],
-    });
+    expect(stored.summary).toStrictEqual(writtenTemperatureLesson().summary);
 
     expect(steps.map((step) => [step.position, step.kind, step.runId, step.skillId])).toStrictEqual(
       [
@@ -225,7 +220,7 @@ describe(writeLessonContent, () => {
       { position: 1, quote: "A rise always moves **up** the thermometer." },
       undefined,
       undefined,
-      { position: 4, quote: "Count the degrees to zero, then the degrees after it." },
+      { position: 2, quote: "First climb to zero: that takes 3 degrees." },
       null,
     ]);
   });
@@ -233,7 +228,13 @@ describe(writeLessonContent, () => {
   it("fixes what the code checks found, then records the fix's run on the screens it changed", async () => {
     const { lesson, workflowRunId } = await createClaimedLesson();
     const written = writtenTemperatureLesson();
-    const draft = mockDraft(withScreen(written, 1, explanation("In this lesson, a rise goes up.")));
+
+    const framed = {
+      ...written.screens[1],
+      text: "In this lesson, see why. A rise always moves **up** the thermometer.",
+    } as WrittenScreen;
+
+    const draft = mockDraft(withScreen(written, 1, framed));
     const fix = mockFix({ changedScreens: [1], lesson: written });
 
     const result = await writeLessonContent({ lessonId: lesson.id, workflowRunId });
@@ -313,15 +314,18 @@ describe(writeLessonContent, () => {
     const user = await userFixture();
     const { lesson, workflowRunId } = await createClaimedLesson({ ownerId: user.id });
     const written = writtenTemperatureLesson();
-    const [guess] = written.screens;
+    const application = written.screens.at(-1);
 
-    if (guess?.kind !== "hookGuess") {
-      throw new Error("The temperature lesson opens on a guess.");
+    if (application?.kind !== "check") {
+      throw new Error("The temperature lesson ends on a check.");
     }
 
-    const twin = withScreen(written, 0, {
-      ...guess,
-      options: [...guess.options, { isCorrect: false, text: "2.0 °C" }],
+    const twin = withScreen(written, 7, {
+      ...application,
+      options: [
+        ...application.options,
+        { isCorrect: false, picture: null, reason: "Same as 3 °C.", text: "3.0 °C" },
+      ],
     });
 
     mockDraft(withScreen(twin, 4, explanation("_Zero is a mark.\nCount past it._")));
@@ -333,19 +337,18 @@ describe(writeLessonContent, () => {
     expect(fixLessonDraft).not.toHaveBeenCalled();
 
     const steps = await listSteps(lesson.id);
-    const opening = steps.find((step) => step.position === 0);
+    const closing = steps.find((step) => step.position === 7);
     const stored = steps.find((step) => step.position === 4);
 
     expect(stored && parseStepContent("explanation", stored.content).text).toBe(
       "Zero is a mark.\nCount past it.",
     );
 
-    const content = opening?.content as { options?: { text: string }[] } | undefined;
+    const content = closing?.content as { options?: { text: string }[] } | undefined;
     const options = content?.options ?? [];
 
-    expect(options.map((option) => option.text).toSorted()).toStrictEqual(
-      ["2 °C", "8 °C", "−8 °C"].toSorted(),
-    );
+    expect(options.map((option) => option.text)).not.toContain("3.0 °C");
+    expect(options.map((option) => option.text)).toContain("3 °C");
   });
 
   it("never stores what code can't repair: a private lesson's code checks send it to the fix pass, with no review", async () => {
@@ -488,11 +491,8 @@ describe(writeLessonContent, () => {
     const early = {
       ...written,
       screens: written.screens.map((screen, index) => {
-        if (index === 0 && hook?.kind === "hookGuess") {
-          return {
-            ...hook,
-            question: "It's −3 °C and the TMP rises 5 degrees. What does it show?",
-          };
+        if (index === 0 && hook?.kind === "hookText") {
+          return { ...hook, text: "It's −3 °C and the TMP rises 5 degrees. What does it show?" };
         }
 
         return index === 1 ? explanation("The **TMP** reading goes up with every degree.") : screen;

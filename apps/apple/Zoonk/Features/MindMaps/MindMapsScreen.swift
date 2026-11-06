@@ -143,7 +143,7 @@ private struct MindMapTile: View {
 
       if drawing {
         Label {
-          Text("Drawing…", tableName: "MindMaps", comment: "A map being drawn")
+          Text(drawingLine)
         } icon: {
           ProgressView()
         }
@@ -151,9 +151,8 @@ private struct MindMapTile: View {
         .foregroundStyle(.mutedForeground)
       } else if map.status == .available || map.status == .failed {
         if let failure = store.failures[map.chapterId] {
-          failureText(failure)
+          FailureLine(message: failureMessage(failure))
             .typeStyle(.note)
-            .foregroundStyle(.destructiveText)
         } else if map.status == .failed {
           Text(
             "It couldn't be made this time.", tableName: "MindMaps", comment: "A map that failed"
@@ -175,12 +174,17 @@ private struct MindMapTile: View {
         .controlSize(.small)
       }
     }
+    .announcesStatus(drawing ? drawingLine : nil)
     // Read only: a map already being drawn when the page opened is followed until it's done.
     .task(id: map.status) {
       if map.status == .generating {
         await store.follow(goalId: goalId, chapterId: map.chapterId)
       }
     }
+  }
+
+  private var drawingLine: String {
+    String(localized: "Drawing…", table: "MindMaps", comment: "A map being drawn")
   }
 
   @ViewBuilder
@@ -197,16 +201,16 @@ private struct MindMapTile: View {
     }
   }
 
-  private func failureText(_ failure: MindMapRequestFailure) -> Text {
+  private func failureMessage(_ failure: MindMapRequestFailure) -> String {
     switch failure {
     case .limit:
-      Text(
-        "Your plan made all its mind maps for now.", tableName: "MindMaps",
+      String(
+        localized: "Your plan made all its mind maps for now.", table: "MindMaps",
         comment: "A map refused by the learner's plan limit")
     case .unreachable:
-      Text(
-        "We couldn't reach the server.", tableName: "MindMaps", comment: "A map request that failed"
-      )
+      String(
+        localized: "We couldn't reach the server.", table: "MindMaps",
+        comment: "A map request that failed")
     }
   }
 }

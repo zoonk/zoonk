@@ -2,7 +2,6 @@ package com.zoonk.android.feature.planlink
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -55,6 +54,7 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -144,7 +144,7 @@ internal fun PlanLinkScreen(
             }
 
             LoadState.Idle, LoadState.Loading -> {
-                Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                PageLoading(Modifier.padding(padding))
             }
         }
     }

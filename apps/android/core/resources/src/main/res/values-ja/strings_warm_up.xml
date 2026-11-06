@@ -2,6 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "warm_up_deck_end": "e0138c291a6d4d9ae197627c3335fd0f6f10d1b3e839164871f7f383280e6ed4",
+  "warm_up_guess_hint": "f19c210469e1dd995c2292aa2903c1ab18ea7c3ae102f74fbcdd7246607c271b",
   "warm_up_lesson_ready": "02c629a763050a84279e07b12999cda9cc56a1041860803694df0b1889a03e51",
   "warm_up_next": "8035b4031aed63ddb042195ffbf9612d2ee2f81677354f871ded3fda369dc16b",
   "warm_up_plan_ready": "0087789b7978eb2ae8560aae375b754f65fe949e7059dde32abb8a996e1abff4",
@@ -19,6 +20,8 @@
     <string name="warm_up_next">次の問題へ</string>
     <!-- Under the last question's answer: there are no more questions to guess. -->
     <string name="warm_up_deck_end">今はここまでです。</string>
+    <!-- Under a warm-up question: a guess never counts -->
+    <string name="warm_up_guess_hint">ここで間違えると、あとで覚えやすくなります。</string>
     <!-- Title of the plan's wait once the plan is ready and the learner is still guessing. -->
     <string name="warm_up_plan_ready">学習計画ができました</string>
     <!-- Under "Your plan is ready" on the daily study time question, which comes before the plan shows. -->

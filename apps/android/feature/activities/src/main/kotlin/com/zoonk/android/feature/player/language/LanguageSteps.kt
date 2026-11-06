@@ -73,6 +73,9 @@ data class LessonLanguages(
 ) {
     val target: String get() = lessonTarget ?: learner
 
+    /** A language lesson keeps its own look; the lesson marks, maps and icons are for knowledge lessons. */
+    val isLanguageLesson: Boolean get() = lessonTarget != null
+
     /** A lesson in the learner's own language defines words instead of translating them. */
     val definesWords: Boolean get() = lessonTarget != null && learner.substringBefore('-') == lessonTarget.substringBefore('-')
 }

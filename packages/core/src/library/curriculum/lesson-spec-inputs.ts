@@ -69,6 +69,7 @@ export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpec
       chapterTitle: chapter?.title ?? lesson.title,
       courseTitle: chapter?.homeCourse?.title ?? chapter?.title ?? lesson.title,
       exams: material.length > 0 ? [] : exams,
+      isPrivate: lesson.visibility === "private",
       language: lesson.language,
       lessonCanDo: lesson.canDo ?? undefined,
       lessonDescription: lesson.description,

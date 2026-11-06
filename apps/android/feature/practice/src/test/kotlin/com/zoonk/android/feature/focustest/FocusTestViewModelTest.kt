@@ -99,7 +99,7 @@ class FocusTestViewModelTest {
     private fun result(): FocusTestResult =
         ApiJson.decodeFromString(
             FocusTestResult.serializer(),
-            """{"ceremony":null,"reached":{"energy":null,"level":null},"changeId":"00000000-0000-4000-8000-0000000000c1",
+            """{"ceremony":null,"certificates":[],"reached":{"energy":null,"level":null},"changeId":"00000000-0000-4000-8000-0000000000c1",
             "focusAreas":["History"],"areas":[
               {"answers":[true,true],"chosen":false,"correct":2,"label":"Math","name":"math","total":2},
               {"answers":[false,true],"chosen":true,"correct":1,"label":"History","name":"history","total":2}]}""",

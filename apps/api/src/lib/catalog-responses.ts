@@ -176,7 +176,7 @@ export function toCatalogLesson(lesson: PublicLesson) {
     firstScreen: lesson.firstScreen,
     id: lesson.id,
     language: lesson.language,
-    summaryIdeas: lesson.summaryIdeas,
+    summary: lesson.summary,
     title: lesson.title,
   };
 }

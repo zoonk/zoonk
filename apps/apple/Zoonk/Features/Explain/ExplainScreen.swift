@@ -64,6 +64,10 @@ private struct ExplanationView: View {
 
   var body: some View {
     content
+      // Quiet during a retry, so one that goes through says it again.
+      .announcesStatus(
+        explanation.lesson == nil && !isRetrying && !retryFailed ? stillWriting : nil
+      )
       .task {
         if readsAtOnce, !hasPlayed, let lesson = explanation.lesson {
           hasPlayed = true
@@ -167,19 +171,21 @@ private struct ExplanationView: View {
     } footer: {
       SectionFooter {
         if retryFailed {
-          Text(
-            "We couldn't get this started.", tableName: "Explain",
-            comment: "A slow explanation couldn't be asked again"
-          )
-          .foregroundStyle(.destructiveText)
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't get this started.", table: "Explain",
+              comment: "A slow explanation couldn't be asked again"))
         } else {
-          Text(
-            "Still writing your explanation. It shows up here as soon as it's ready.",
-            tableName: "Explain",
-            comment: "Under a quick explanation that's still being written")
+          Text(stillWriting)
         }
       }
     }
+  }
+
+  private var stillWriting: String {
+    String(
+      localized: "Still writing your explanation. It shows up here as soon as it's ready.",
+      table: "Explain", comment: "Under a quick explanation that's still being written")
   }
 
   private var recap: some View {

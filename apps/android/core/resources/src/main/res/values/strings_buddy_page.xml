@@ -10,7 +10,6 @@
     <!-- Read aloud for a count shown as "2/6", like glasses earned of all. -->
     <string name="buddy_page_count">%1$s of %2$s</string>
     <string name="buddy_page_save_failed">That didn\'t save. Try again.</string>
-    <string name="buddy_page_open_failed">That didn\'t open. Try again.</string>
 
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="buddy_page_greeting">Hi! I\'m %1$s, your AI study buddy. Ask me anything about what you\'re studying, or tell me what you\'d like to change in your plan.</string>

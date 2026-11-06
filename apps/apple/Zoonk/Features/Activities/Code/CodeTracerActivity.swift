@@ -396,7 +396,7 @@ private struct CodeTracerCanvas: View {
     step = next
     furthest = max(furthest, next)
     let line = fields.trace.indices.contains(next) ? fields.trace[next].line : nil
-    announceActivityChange(
+    announcePolitely(
       line.map {
         String(
           localized: "Step \(next + 1) of \(lastStep + 1). Line \($0) ran.",

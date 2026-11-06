@@ -4,16 +4,21 @@ import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
-import { CURRENT_STEPS } from "../lessons/lesson-versions";
+import { toPreparedSteps } from "../lessons/lesson-versions";
 import {
   type ImageAnalytics,
   type LibraryPicture,
   drawLibraryImage,
 } from "./_utils/draw-library-image";
-import { getOptionPictureRequests, getStepImageRequest } from "./_utils/step-image-request";
+import {
+  findStepsSharingPicture,
+  getOptionPictureRequests,
+  getStepImageRequest,
+} from "./_utils/step-image-request";
 
 export type StepImageOutcome =
-  | { status: "generated" | "reused"; mediaAssetId: string }
+  | { status: "generated"; mediaAssetId: string; alt: string }
+  | { status: "reused"; mediaAssetId: string }
   | { status: "failed" | "none" };
 
 const categorySelect = {
@@ -59,42 +64,53 @@ function getLessonPictureScope(lesson: StepForImage["lesson"]) {
   };
 }
 
-function toOutcome(picture: LibraryPicture): StepImageOutcome {
-  return { mediaAssetId: picture.assetId, status: picture.drawn ? "generated" : "reused" };
+function toOutcome({ alt, picture }: { alt: string; picture: LibraryPicture }): StepImageOutcome {
+  return picture.drawn
+    ? { alt, mediaAssetId: picture.assetId, status: "generated" }
+    : { mediaAssetId: picture.assetId, status: "reused" };
 }
 
 export async function listLessonImageSteps({ lessonId }: { lessonId: string }): Promise<string[]> {
-  const lesson = await prisma.lesson.findUnique({
-    select: {
-      steps: {
-        orderBy: { position: "asc" },
-        select: { content: true, id: true, kind: true, mediaAssetId: true },
-        where: CURRENT_STEPS,
-      },
-    },
-    where: { id: lessonId },
+  const steps = await prisma.step.findMany({
+    orderBy: { position: "asc" },
+    select: { content: true, id: true, kind: true, mediaAssetId: true, staged: true },
+    where: { lessonId, retiredAt: null },
   });
 
-  return (lesson?.steps ?? [])
-    .filter((step) => !step.mediaAssetId && getStepImageRequest(step))
+  const pending = toPreparedSteps(steps).filter(
+    (step) => !step.mediaAssetId && getStepImageRequest(step),
+  );
+
+  return pending
+    .filter((step) => findStepsSharingPicture({ step, steps: pending })[0]?.id === step.id)
     .map((step) => step.id);
 }
 
+/**
+ * Links the picture to every screen of the step's own version that asks for it, so a job queued
+ * before a regeneration finishes the version it was for and never fills the new one.
+ */
 async function linkStepImage({
-  lessonId,
   mediaAssetId,
-  stepId,
+  step,
 }: {
-  lessonId: string;
   mediaAssetId: string;
-  stepId: string;
+  step: StepForImage;
 }): Promise<void> {
-  await prisma.step.updateMany({
-    data: { mediaAssetId, pictureAvailableAt: new Date() },
-    where: { id: stepId, mediaAssetId: null },
+  const peers = await prisma.step.findMany({
+    select: { content: true, id: true, kind: true },
+    where: { lessonId: step.lessonId, mediaAssetId: null, version: step.version },
   });
 
-  revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
+  await prisma.step.updateMany({
+    data: { mediaAssetId, pictureAvailableAt: new Date() },
+    where: {
+      id: { in: findStepsSharingPicture({ step, steps: peers }).map((peer) => peer.id) },
+      mediaAssetId: null,
+    },
+  });
+
+  revalidateCacheTags([getLibraryLessonCacheTag(step.lessonId)]);
 }
 
 /** Internal workflow bridge, not an app authorization boundary. */
@@ -116,6 +132,7 @@ export async function createStepImage({
 
   const picture = await drawLibraryImage({
     ...getLessonPictureScope(lesson),
+    alt: request.alt,
     analytics,
     numberedParts: request.parts,
     request: request.prompt,
@@ -127,16 +144,14 @@ export async function createStepImage({
     return { status: "failed" };
   }
 
-  const { error } = await safeAsync(() =>
-    linkStepImage({ lessonId: lesson.id, mediaAssetId: picture.assetId, stepId }),
-  );
+  const { error } = await safeAsync(() => linkStepImage({ mediaAssetId: picture.assetId, step }));
 
   if (error) {
     logError("The optional lesson picture could not be linked", error);
     return { status: "failed" };
   }
 
-  return toOutcome(picture);
+  return toOutcome({ alt: request.alt, picture });
 }
 
 export type OptionPictureTarget = { optionId: string; stepId: string };
@@ -146,23 +161,19 @@ export async function listLessonOptionPictures({
 }: {
   lessonId: string;
 }): Promise<OptionPictureTarget[]> {
-  const lesson = await prisma.lesson.findUnique({
+  const steps = await prisma.step.findMany({
+    orderBy: { position: "asc" },
     select: {
-      steps: {
-        orderBy: { position: "asc" },
-        select: {
-          content: true,
-          id: true,
-          kind: true,
-          optionPictures: { select: { optionId: true } },
-        },
-        where: { ...CURRENT_STEPS, kind: "check" },
-      },
+      content: true,
+      id: true,
+      kind: true,
+      optionPictures: { select: { optionId: true } },
+      staged: true,
     },
-    where: { id: lessonId },
+    where: { lessonId, retiredAt: null },
   });
 
-  return (lesson?.steps ?? []).flatMap((step) => {
+  return toPreparedSteps(steps).flatMap((step) => {
     const drawn = new Set(step.optionPictures.map((picture) => picture.optionId));
 
     return getOptionPictureRequests(step)
@@ -197,7 +208,9 @@ export async function createStepOptionPicture({
 
   const picture = await drawLibraryImage({
     ...getLessonPictureScope(lesson),
+    alt: request.alt,
     analytics,
+    canvas: "square",
     request: request.prompt,
     screenText: request.screenText,
     textAllowed: false,
@@ -221,5 +234,5 @@ export async function createStepOptionPicture({
 
   revalidateCacheTags([getLibraryLessonCacheTag(lesson.id)]);
 
-  return toOutcome(picture);
+  return toOutcome({ alt: request.alt, picture });
 }

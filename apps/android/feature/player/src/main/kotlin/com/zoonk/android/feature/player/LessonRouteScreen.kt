@@ -45,6 +45,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.AccountFailure
 import com.zoonk.android.feature.account.accountFailure
 import com.zoonk.android.feature.activities.code.LocalCodeSandbox
+import com.zoonk.android.feature.ceremonies.CertificateCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.goalLimitMessage
@@ -61,6 +62,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
 
@@ -89,9 +91,7 @@ fun LessonRouteScreen(
 
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
-            LessonFrame(title = null, onClose = exits::close) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-            }
+            LessonFrame(title = null, onClose = exits::close, scrolls = false) { PageLoading() }
         }
 
         is LoadState.Failed -> {
@@ -219,6 +219,9 @@ internal fun PlayingLesson(
             buddy = summary.value?.buddy,
             ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
             tutor = tutor,
+            certificatesMoment = { awarded, onClose ->
+                CertificateCeremony(app, awarded, onClose, onSeePlus = { navigator.open(AppRoute.Subscription) }, app.timeSource)
+            },
         )
         LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
     }
@@ -239,6 +242,7 @@ internal fun LessonFrame(
         modifier = modifier,
         title = { title?.let { LessonTitle(it) } },
         bottomBar = bottomBar,
+        lonePage = true,
     ) { padding ->
         val scroll = if (scrolls) Modifier.verticalScroll(rememberScrollState()) else Modifier
         Box(Modifier.fillMaxSize().padding(padding).then(scroll)) { content() }

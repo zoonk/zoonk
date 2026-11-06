@@ -72,45 +72,6 @@ export const societyReasoningActivities = {
     prompt: "Link each cause to its effect.",
     template: "causeEffectChain",
   },
-  decisionTree: {
-    check: interactionCheck,
-    fields: {
-      case: {
-        answers: [
-          { branch: "Needles", nodeId: "q1" },
-          { branch: "In bundles", nodeId: "q2" },
-        ],
-        description: "Needles grow in bundles of two.",
-        outcomeId: "pine",
-      },
-      nodes: [
-        {
-          branches: [
-            { label: "Needles", next: "q2" },
-            { label: "Broad leaves", next: "oak" },
-          ],
-          id: "q1",
-          kind: "question",
-          question: "What are the leaves like?",
-        },
-        {
-          branches: [
-            { label: "In bundles", next: "pine" },
-            { label: "Single", next: "spruce" },
-          ],
-          id: "q2",
-          kind: "question",
-          question: "How do the needles grow?",
-        },
-        { id: "pine", kind: "outcome", label: "Pine" },
-        { id: "spruce", kind: "outcome", label: "Spruce" },
-        { id: "oak", kind: "outcome", label: "Oak" },
-      ],
-      rootId: "q1",
-    },
-    prompt: "Name the tree from one leaf.",
-    template: "decisionTree",
-  },
   findError: {
     check: interactionCheck,
     fields: {

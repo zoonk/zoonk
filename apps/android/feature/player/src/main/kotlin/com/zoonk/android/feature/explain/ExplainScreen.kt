@@ -51,9 +51,7 @@ import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
-import com.zoonk.android.feature.player.LessonColumn
 import com.zoonk.android.feature.player.LessonColumnBeforeFold
-import com.zoonk.android.feature.player.LessonEndPages
 import com.zoonk.android.feature.player.LessonEndSlot
 import com.zoonk.android.feature.player.LessonPlayerExits
 import com.zoonk.android.feature.player.LessonReadouts
@@ -69,11 +67,15 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SuccessEyebrow
+import com.zoonk.android.ui.components.taskBarColumn
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonk
@@ -109,7 +111,7 @@ fun ExplainScreen(
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
             TaskScaffold(onClose = navigator::closeTask) { padding ->
-                Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                PageLoading(Modifier.padding(padding))
             }
         }
 
@@ -229,11 +231,12 @@ internal fun ExplainWaiting(
 
     TaskScaffold(
         onClose = navigator::closeTask,
+        lonePage = true,
         bottomBar =
             if (ready) {
                 {
-                    LessonColumn(Modifier.padding(vertical = 12.dp)) {
-                        Button(onClick = onStart, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.explain_see)) }
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Button(onClick = onStart, modifier = Modifier.taskBarColumn()) { Text(stringResource(R.string.explain_see)) }
                     }
                 }
             } else {
@@ -438,8 +441,9 @@ internal fun ExplainEnding(
     // The course to go further is linked a few seconds after the explanation can be read.
     LaunchedEffect(Unit) { if (explanation.goFurther.course == null) readAgain() }
 
-    LessonEndPages(
+    ResultPages(
         withMoment = !saving,
+        columnModifier = Modifier.taskColumn(),
         done = {
             ExplainHeading(explanation.title) {
                 SuccessEyebrow(stringResource(R.string.explain_now_you_know))

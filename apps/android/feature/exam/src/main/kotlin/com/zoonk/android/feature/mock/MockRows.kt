@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,7 +17,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.subscription.PlusMark
+import com.zoonk.android.feature.subscription.ButtonPlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonSize
@@ -128,20 +127,9 @@ fun MockEntryButton(
             modifier = Modifier.padding(start = ButtonDefaults.IconSpacing),
         )
         if (!running && options.access == MockOptions.Access.PLUS_REQUIRED) {
-            OnButton { PlusMark(Modifier.padding(start = ButtonDefaults.IconSpacing)) }
+            ButtonPlusMark()
         }
     }
 }
 
-/** The shared Plus chip inside a filled button, drawn in the button's content color as main's is. */
-@Composable
-private fun OnButton(content: @Composable () -> Unit) {
-    val color = LocalContentColor.current
-    MaterialTheme(
-        colorScheme = MaterialTheme.colorScheme.copy(onSurfaceVariant = color, outline = color.copy(alpha = PLUS_MARK_EDGE_ALPHA)),
-        content = content,
-    )
-}
-
-private const val PLUS_MARK_EDGE_ALPHA = 0.5f
 private const val TRAILING_SHARE = 0.3f

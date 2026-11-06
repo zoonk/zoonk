@@ -36,7 +36,6 @@
   "buddy_page_missions_done": "813e3a8aa8d5318288ea6e0faddfae2a756b112b060d936b6997df48085d27c4",
   "buddy_page_more": "d2e2efbe8b325c0e96c19db10f02fd7ac1940a54d670b9f3e5c8c71c0b86ef6a",
   "buddy_page_not_yet": "1263ae6921dbdff59f8c9dbc5710b953ec5eb49e4bff902393609994baee5d4a",
-  "buddy_page_open_failed": "07ff6d69a77ff7b21e410b0fce4c181c3f1a891a9247c299f1e9e6656021c039",
   "buddy_page_placeholder": "89f45b9c20f19234e9cf4698a59ab335f6ec6b962e3cf3841fb1927f00af3795",
   "buddy_page_remembers": "7b78494209f08566a61bd1aa290c3c37d3c92599bd991518a555807f3523d52c",
   "buddy_page_save_failed": "0ad54fbc0b82bd698b3439de229e5ae88c9e2307d00a4eb2c99a73e086de2d70",
@@ -69,7 +68,6 @@
     <!-- Read aloud for a count shown as "2/6", like glasses earned of all. -->
     <string name="buddy_page_count">%1$s sur %2$s</string>
     <string name="buddy_page_save_failed">L’enregistrement a échoué. Réessaie.</string>
-    <string name="buddy_page_open_failed">L’ouverture a échoué. Réessaie.</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="buddy_page_greeting">Salut ! Je suis %1$s, ton compagnon d’étude IA. Pose-moi tes questions sur ce que tu apprends ou dis-moi ce que tu veux changer dans ton plan.</string>
     <string name="buddy_page_goal_placeholder">Ce que tu veux apprendre</string>

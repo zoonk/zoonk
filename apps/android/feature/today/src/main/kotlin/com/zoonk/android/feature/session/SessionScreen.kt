@@ -1,11 +1,14 @@
 package com.zoonk.android.feature.session
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -13,12 +16,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +31,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -36,7 +40,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AnalyticsEvent
@@ -46,7 +49,9 @@ import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.ceremonies.CertificateCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
+import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.LessonNotWrittenNotice
 import com.zoonk.android.feature.player.LessonWriting
 import com.zoonk.android.feature.player.LessonWritingProgress
@@ -69,12 +74,21 @@ import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
+import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.scaffold.PageSpan
+import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.spreadFold
+import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.StudyBlock
@@ -243,6 +257,14 @@ private fun SessionSummaryContent(
         return
     }
 
+    // A completion whose answer was lost brings its certificates back here, before the session's milestone.
+    val certificates = summary.certificates.map { it.naming }
+    var certificatesClosed by rememberSaveable(certificates.map { it.code }) { mutableStateOf(false) }
+    if (certificates.isNotEmpty() && !certificatesClosed) {
+        CertificateCeremony(app, certificates, { certificatesClosed = true }, { navigator.open(AppRoute.Subscription) }, app.timeSource)
+        return
+    }
+
     viewModel.ceremony(summary.ceremony)?.let { milestone ->
         LaunchedEffect(milestone) { viewModel.holdCeremony(milestone) }
         SessionCeremony(app, milestone, viewModel::closeCeremony)
@@ -305,211 +327,246 @@ internal fun NextStop(
     navigator: AppNavigator,
     warmUps: WarmUpStore,
 ) {
-    val refused = notWritten?.takeIf { step.isUnwrittenLesson() }
-    val unwritten = refresh != null && refused == null && step.kind == StudyBlock.Kind.LEARN && step.screen != StudyBlock.Screen.LESSON
-    val watched = step.lessonId?.takeIf { unwritten }
-    val picking = unwritten && watched == null && asked
-    val known = viewModel.lesson?.takeIf { it.id == watched }
-    val refusal = refused ?: LessonWriting.SetAside.takeIf { known?.setAside == true }
-    val lesson =
-        when {
-            !unwritten || refusal != null -> null
-            known?.status == LessonReadiness.Status.GENERATING -> NextStopLesson.Writing
-            known?.status == LessonReadiness.Status.FAILED -> NextStopLesson.Failed
-            asked -> NextStopLesson.NotStarted
-            else -> null
-        }
-    val waiting = lesson != null
-    val run by viewModel.run.collectAsStateWithLifecycle()
-    val failure =
-        when {
-            lesson == NextStopLesson.Failed -> GenerationFailure.Generation
-            lesson == null || viewModel.stuckWait != step.position to lesson -> null
-            lesson == NextStopLesson.NotStarted -> GenerationFailure.NotStarted
-            else -> GenerationFailure.Generation
-        }
-    val busy = viewModel.busy != null
-    val ready = !waiting && refusal == null
-    val hold = rememberReadyHold(ready)
-    val warmUpId = viewModel.lesson?.takeIf { it.id == step.lessonId && refusal == null && !hold.over }?.warmUpId
-    val guessing = if (warmUpId != null) Modifier.watchTouches(hold) else Modifier
-    val startsFor = goalId?.takeIf { ready }
-    val written = startsFor != null && viewModel.writtenWhileWaiting == step.position
-    val startFocus = remember { FocusRequester() }
-    var screenFocused by remember { mutableStateOf(false) }
-    val instead = alternative?.takeIf { !ready && goalId != null }
-    // Main stacks the actions full width below its large breakpoint once an alternative joins them.
-    val stacked =
-        instead != null &&
-            !currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
-    val actionWidth = if (stacked) Modifier.fillMaxWidth() else Modifier
+    ResultScreen {
+        val refused = notWritten?.takeIf { step.isUnwrittenLesson() }
+        val unwritten = refresh != null && refused == null && step.kind == StudyBlock.Kind.LEARN && step.screen != StudyBlock.Screen.LESSON
+        val watched = step.lessonId?.takeIf { unwritten }
+        val picking = unwritten && watched == null && asked
+        val known = viewModel.lesson?.takeIf { it.id == watched }
+        val refusal = refused ?: LessonWriting.SetAside.takeIf { known?.setAside == true }
+        val lesson =
+            when {
+                !unwritten || refusal != null -> null
+                known?.status == LessonReadiness.Status.GENERATING -> NextStopLesson.Writing
+                known?.status == LessonReadiness.Status.FAILED -> NextStopLesson.Failed
+                asked -> NextStopLesson.NotStarted
+                else -> null
+            }
+        val waiting = lesson != null
+        val run by viewModel.run.collectAsStateWithLifecycle()
+        val failure =
+            when {
+                lesson == NextStopLesson.Failed -> GenerationFailure.Generation
+                lesson == null || viewModel.stuckWait != step.position to lesson -> null
+                lesson == NextStopLesson.NotStarted -> GenerationFailure.NotStarted
+                else -> GenerationFailure.Generation
+            }
+        val busy = viewModel.busy != null
+        val ready = !waiting && refusal == null
+        val hold = rememberReadyHold(ready)
+        val warmUpId = viewModel.lesson?.takeIf { it.id == step.lessonId && refusal == null && !hold.over }?.warmUpId
+        val guessing = if (warmUpId != null) Modifier.watchTouches(hold) else Modifier
+        val startsFor = goalId?.takeIf { ready }
+        val written = startsFor != null && viewModel.writtenWhileWaiting == step.position
+        val startFocus = remember { FocusRequester() }
+        var screenFocused by remember { mutableStateOf(false) }
+        val instead = alternative?.takeIf { !ready && goalId != null }
 
-    LaunchedEffect(step.position, waiting, step.screen) {
-        when {
-            waiting -> viewModel.waitForLesson(step.position)
-            step.screen == StudyBlock.Screen.LESSON -> viewModel.lessonWritten(step.position)
-        }
-    }
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
-    LaunchedEffect(picking) {
-        val readDay = refresh?.takeIf { picking } ?: return@LaunchedEffect
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            while (true) {
-                delay(LESSON_CHECK_MILLIS)
-                readDay()
+        LaunchedEffect(step.position, waiting, step.screen) {
+            when {
+                waiting -> viewModel.waitForLesson(step.position)
+                step.screen == StudyBlock.Screen.LESSON -> viewModel.lessonWritten(step.position)
             }
         }
-    }
-    LaunchedEffect(watched, asked) {
-        val lessonId = watched ?: return@LaunchedEffect
-        val readDay = refresh ?: return@LaunchedEffect
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { viewModel.followLesson(lessonId, asked, readDay) }
-    }
-    val runWrote = run.status == GenerationRun.Status.Ready && lesson == NextStopLesson.Writing
-    LaunchedEffect(runWrote) { if (runWrote) refresh?.invoke() }
-    LaunchedEffect(step.position, lesson) {
-        val after = STUCK_AFTER_MILLIS[lesson] ?: return@LaunchedEffect
-        viewModel.awaitStuck(step.position, lesson ?: return@LaunchedEffect, after)
-    }
-    val retry = { goalId?.let { viewModel.start(day, step, it) } }
-
-    TaskScaffold(
-        onClose = navigator::closeTask,
-        modifier = Modifier.onFocusChanged { screenFocused = it.hasFocus }.then(guessing),
-        title = { Text(stringResource(R.string.session_summary_eyebrow), maxLines = 1, style = MaterialTheme.typography.titleSmall) },
-        bottomBar =
-            if (startsFor != null || instead != null || onStop != null || viewModel.failed != null) {
-                {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        when (viewModel.failed) {
-                            SessionAction.Start -> ErrorLine(stringResource(R.string.today_open_failed))
-                            SessionAction.Stop -> ErrorLine(stringResource(R.string.session_next_stop_failed))
-                            else -> Unit
-                        }
-                        FlowRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            onStop?.let {
-                                OutlinedButton(
-                                    onClick = it,
-                                    modifier = actionWidth,
-                                    enabled = !busy,
-                                ) { Text(stringResource(R.string.session_next_stop)) }
-                            }
-                            startsFor?.let { goal ->
-                                LaunchedEffect(written) { if (written && !screenFocused) startFocus.requestFocus() }
-                                Button(
-                                    onClick = { viewModel.start(day, step, goal) },
-                                    Modifier.focusRequester(startFocus),
-                                    enabled = !busy,
-                                ) {
-                                    Text(stringResource(R.string.session_next_start))
-                                }
-                            }
-                            instead?.let { other ->
-                                Button(
-                                    onClick = { goalId?.let { viewModel.start(day, other, it) } },
-                                    modifier = actionWidth,
-                                    enabled = !busy,
-                                ) {
-                                    Text(
-                                        stringResource(
-                                            if (refusal != null) R.string.session_next_instead else R.string.session_next_while_waiting,
-                                            blockTitle(other),
-                                        ),
-                                    )
-                                }
-                            }
-                        }
-                    }
+        val lifecycle = LocalLifecycleOwner.current.lifecycle
+        LaunchedEffect(picking) {
+            val readDay = refresh?.takeIf { picking } ?: return@LaunchedEffect
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (true) {
+                    delay(LESSON_CHECK_MILLIS)
+                    readDay()
                 }
-            } else {
-                null
-            },
-    ) { padding ->
-        Column(Modifier.padding(padding).fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-            SessionSegments(day, step, Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth().padding(horizontal = 16.dp))
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 16.dp, vertical = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Eyebrow(stringResource(R.string.session_next_eyebrow))
-                    Text(blockTitle(step), Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-                    blockDetail(step)?.let {
-                        Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-                    }
-                    StepFacts(step)
-                    if (written) {
-                        Text(
-                            stringResource(R.string.session_next_lesson_ready),
-                            Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                    refusal?.let { reason ->
-                        Surface(
-                            Modifier.padding(top = 16.dp).fillMaxWidth(),
-                            color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                            shape = MaterialTheme.shapes.medium,
-                        ) {
-                            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                LessonNotWrittenNotice(
-                                    reason,
-                                    onRetry = { goalId?.let { viewModel.start(day, step, it) } },
-                                    onOpen = navigator::open,
-                                )
+            }
+        }
+        LaunchedEffect(watched, asked) {
+            val lessonId = watched ?: return@LaunchedEffect
+            val readDay = refresh ?: return@LaunchedEffect
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { viewModel.followLesson(lessonId, asked, readDay) }
+        }
+        val runWrote = run.status == GenerationRun.Status.Ready && lesson == NextStopLesson.Writing
+        LaunchedEffect(runWrote) { if (runWrote) refresh?.invoke() }
+        LaunchedEffect(step.position, lesson) {
+            val after = STUCK_AFTER_MILLIS[lesson] ?: return@LaunchedEffect
+            viewModel.awaitStuck(step.position, lesson ?: return@LaunchedEffect, after)
+        }
+        val retry = { goalId?.let { viewModel.start(day, step, it) } }
+
+        TaskScaffold(
+            onClose = navigator::closeTask,
+            modifier = Modifier.onFocusChanged { screenFocused = it.hasFocus }.then(guessing),
+            title = { Text(stringResource(R.string.session_summary_eyebrow), maxLines = 1, style = MaterialTheme.typography.titleSmall) },
+            bottomBar =
+                if (startsFor != null || instead != null || onStop != null || viewModel.failed != null) {
+                    {
+                        TaskActionBar {
+                            when (viewModel.failed) {
+                                SessionAction.Start -> ErrorLine(stringResource(R.string.today_open_failed))
+                                SessionAction.Stop -> ErrorLine(stringResource(R.string.session_next_stop_failed))
+                                else -> Unit
+                            }
+                            TaskActions { main ->
+                                onStop?.let {
+                                    // Main stacks the actions on a narrow layout once an alternative joins them.
+                                    OutlinedButton(
+                                        onClick = it,
+                                        modifier = if (instead != null) Modifier.taskOption() else Modifier,
+                                        enabled = !busy,
+                                    ) { Text(stringResource(R.string.session_next_stop)) }
+                                }
+                                startsFor?.let { goal ->
+                                    LaunchedEffect(written) { if (written && !screenFocused) startFocus.requestFocus() }
+                                    Button(
+                                        onClick = { viewModel.start(day, step, goal) },
+                                        main.focusRequester(startFocus),
+                                        enabled = !busy,
+                                    ) {
+                                        Text(stringResource(R.string.session_next_start))
+                                    }
+                                }
+                                instead?.let { other ->
+                                    Button(
+                                        onClick = { goalId?.let { viewModel.start(day, other, it) } },
+                                        modifier = main,
+                                        enabled = !busy,
+                                    ) {
+                                        Text(
+                                            stringResource(
+                                                if (refusal != null) R.string.session_next_instead else R.string.session_next_while_waiting,
+                                                blockTitle(other),
+                                            ),
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
-                    if (waiting) {
-                        Column(Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                            if (failure != null) {
-                                GenerationFailureNotice(failure, onRetry = { retry() })
-                            } else {
-                                LessonWritingProgress(
-                                    run = if (lesson == NextStopLesson.Writing) run else GenerationRun(),
-                                    onRetry = { if (run.failure == GenerationFailure.Connection) viewModel.reconnect() else retry() },
-                                    note = stringResource(R.string.session_next_writing_note),
+                } else {
+                    null
+                },
+        ) { padding ->
+            var span by remember { mutableStateOf<PageSpan?>(null) }
+
+            BoxWithConstraints(Modifier.padding(padding).fillMaxSize().onPageSpan { span = it }) {
+                val fold = spreadFold(maxWidth, span)
+
+                if (fold != null) {
+                    SessionSegments(
+                        day,
+                        step,
+                        Modifier.width(fold.start).padding(horizontal = 16.dp, vertical = 24.dp).semantics { isTraversalGroup = true },
+                        counted = true,
+                    )
+                }
+                // What's next keeps its place in the composition, only padded past a fold, so folding keeps a guess on its card.
+                Column(
+                    Modifier.fillMaxSize().padding(start = fold?.end ?: 0.dp).semantics { isTraversalGroup = true },
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    if (fold ==
+                        null
+                    ) {
+                        SessionSegments(day, step, Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth().padding(horizontal = 16.dp))
+                    }
+                    Column(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState())
+                                .padding(horizontal = 16.dp, vertical = 24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Eyebrow(stringResource(R.string.session_next_eyebrow))
+                            Text(blockTitle(step), Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+                            blockDetail(step)?.let {
+                                Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                            }
+                            StepFacts(step)
+                            if (written) {
+                                Text(
+                                    stringResource(R.string.session_next_lesson_ready),
+                                    Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                                    style = MaterialTheme.typography.bodyMedium,
                                 )
                             }
+                            refusal?.let { reason ->
+                                Surface(
+                                    Modifier.padding(top = 16.dp).fillMaxWidth(),
+                                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    shape = MaterialTheme.shapes.medium,
+                                ) {
+                                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                        LessonNotWrittenNotice(
+                                            reason,
+                                            onRetry = { goalId?.let { viewModel.start(day, step, it) } },
+                                            onOpen = navigator::open,
+                                        )
+                                    }
+                                }
+                            }
+                            if (waiting) {
+                                Column(Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                                    if (failure != null) {
+                                        GenerationFailureNotice(failure, onRetry = { retry() })
+                                    } else {
+                                        LessonWritingProgress(
+                                            run = if (lesson == NextStopLesson.Writing) run else GenerationRun(),
+                                            onRetry = {
+                                                if (run.failure ==
+                                                    GenerationFailure.Connection
+                                                ) {
+                                                    viewModel.reconnect()
+                                                } else {
+                                                    retry()
+                                                }
+                                            },
+                                            note = stringResource(R.string.session_next_writing_note),
+                                        )
+                                    }
+                                }
+                            }
+                            WarmUpCard(warmUpId, warmUps, AnalyticsEvent.WarmUpSurface.LessonWait, hold, Modifier.padding(top = 16.dp))
                         }
                     }
-                    WarmUpCard(warmUpId, warmUps, AnalyticsEvent.WarmUpSurface.LessonWait, hold, Modifier.padding(top = 16.dp))
                 }
             }
         }
     }
 }
 
-/** Main's session header segments: the day's work by its minutes, done in blue and the shown step as the learner's place. */
+/**
+ * Main's session header segments: the day's work by its minutes, done in blue and the shown step as
+ * the learner's place. [counted] says how many are done above them, for a page of their own.
+ */
 @Composable
 private fun SessionSegments(
     day: DayView,
     step: DayStep,
     modifier: Modifier,
+    counted: Boolean = false,
 ) {
     val steps = day.steps.filter { it.status != StudyBlock.Status.SKIPPED }
     if (steps.isEmpty()) return
 
-    TaskSegments(
+    val segments =
         steps.map {
             when {
                 it.status == StudyBlock.Status.COMPLETED -> TaskSegment.Done
                 it.position == step.position -> TaskSegment.Current
                 else -> TaskSegment.Ahead
             }
-        },
-        modifier,
-        weights = steps.map { it.estimatedMinutes.toFloat() },
-        contentDescription = stepsDone(steps.count(DayStep::isFinished), steps.size),
-    )
+        }
+    val weights = steps.map { it.estimatedMinutes.toFloat() }
+    val progress = stepsDone(steps.count(DayStep::isFinished), steps.size)
+
+    if (counted) {
+        Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(progress, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
+            TaskSegments(segments, weights = weights)
+        }
+    } else {
+        TaskSegments(segments, modifier, weights = weights, contentDescription = progress)
+    }
 }
 
 @Composable
@@ -533,15 +590,7 @@ private fun ErrorLine(text: String) {
 
 @Composable
 private fun SessionLoading(onClose: () -> Unit) {
-    TaskScaffold(onClose = onClose) { padding ->
-        Column(
-            Modifier.padding(padding).fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            CircularProgressIndicator()
-        }
-    }
+    TaskScaffold(onClose = onClose) { padding -> PageLoading(Modifier.padding(padding)) }
 }
 
 /** Main's `findAlternativeStudyBlock`: other work to do while [step]'s lesson waits, never work that waits itself. */
@@ -554,5 +603,5 @@ private fun StudySession.alternativeTo(step: StudyBlock): DayStep? =
 private val OPEN = setOf(StudyBlock.Status.ACTIVE, StudyBlock.Status.PENDING)
 
 /** Main's `STUCK_AFTER_MS`: when a wait that hasn't moved says so, with Try again. */
-private val STUCK_AFTER_MILLIS = mapOf(NextStopLesson.NotStarted to 20_000L, NextStopLesson.Writing to 300_000L)
+private val STUCK_AFTER_MILLIS = mapOf(NextStopLesson.NotStarted to 20_000L, NextStopLesson.Writing to 600_000L)
 private val CONTENT_WIDTH = 640.dp

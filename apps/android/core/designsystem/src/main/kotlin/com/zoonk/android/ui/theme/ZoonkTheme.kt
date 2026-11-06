@@ -17,10 +17,12 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import com.zoonk.android.ui.scaffold.ReadWindowPosture
 
 /**
  * Never the wallpaper's colors: they would drop what each color means. The mapping:
- * `.agents/skills/android-material-guidelines/references/design-system.md`.
+ * `.agents/skills/android-material-guidelines/references/design-system.md`. It also reads the
+ * window's folds for every layout inside ([com.zoonk.android.ui.scaffold.windowAdaptiveInfo]).
  */
 @Composable
 fun ZoonkTheme(
@@ -45,7 +47,9 @@ fun ZoonkTheme(
         LocalZoonkTypography provides roles,
         LocalMoreContrast provides moreContrast,
     ) {
-        MaterialTheme(colorScheme = scheme.material, typography = typography, shapes = ZoonkMaterialShapes, content = content)
+        MaterialTheme(colorScheme = scheme.material, typography = typography, shapes = ZoonkMaterialShapes) {
+            ReadWindowPosture(content)
+        }
     }
 }
 

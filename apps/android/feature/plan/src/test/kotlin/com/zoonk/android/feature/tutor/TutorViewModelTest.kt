@@ -13,6 +13,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.plan.planChange
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -64,16 +66,72 @@ class TutorViewModelTest {
         scope: TutorScope = this.scope,
         cache: AppCache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher)),
         saved: SavedStateHandle = SavedStateHandle(),
+        openMission: suspend (UUID) -> MutationResult<AppRoute?> = { MutationResult.Obsolete },
     ): TutorViewModel =
         TutorViewModel(
             scope,
-            TutorStore(api, cache, session, { true }) { _, _, status -> decision(status) },
+            TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) },
             saved,
+            openMission,
         ).also { it.thread.load() }
 
     private val TutorViewModel.turns get() =
         thread.state.value.value!!
             .turns
+
+    @Test
+    fun aStepLinkOpensOneAtATimeAndSaysWhyWhenItDidnt() =
+        runTest(dispatcher) {
+            val asked = mutableListOf<UUID>()
+            var answer = CompletableDeferred<MutationResult<AppRoute?>>()
+            val vm =
+                conversation(openMission = {
+                    asked += it
+                    answer.await()
+                })
+            val routes = mutableListOf<AppRoute>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.blockRoutes.collect { routes += it } }
+
+            vm.openBlock("turn-1", BLOCK)
+            vm.openBlock("turn-2", BLOCK)
+            advanceUntilIdle()
+            assertEquals(listOf(BLOCK), asked)
+
+            answer.complete(MutationResult.Done(null))
+            advanceUntilIdle()
+            assertEquals(BlockNotice("turn-1", closed = true), vm.blockNotice)
+
+            answer = CompletableDeferred()
+            vm.openBlock("turn-2", BLOCK)
+            assertNull(vm.blockNotice)
+            answer.complete(MutationResult.Failed(ApiError.Network))
+            advanceUntilIdle()
+            assertEquals(BlockNotice("turn-2", closed = false), vm.blockNotice)
+
+            answer = CompletableDeferred()
+            vm.openBlock("turn-2", BLOCK)
+            answer.complete(MutationResult.Done(AppRoute.Today))
+            advanceUntilIdle()
+            assertEquals(listOf<AppRoute>(AppRoute.Today), routes)
+            assertNull(vm.blockNotice)
+            assertFalse(vm.isOpeningBlock)
+
+            answer = CompletableDeferred()
+            vm.openBlock("turn-2", BLOCK)
+            advanceUntilIdle()
+            vm.leave()
+            answer.complete(MutationResult.Done(AppRoute.Exam))
+            advanceUntilIdle()
+            assertEquals("a step that opens after the learner left leads nowhere", listOf<AppRoute>(AppRoute.Today), routes)
+
+            answer = CompletableDeferred()
+            vm.openBlock("turn-2", BLOCK)
+            advanceUntilIdle()
+            vm.leave()
+            answer.complete(MutationResult.Failed(ApiError.Network))
+            advanceUntilIdle()
+            assertNull("nor says anything once they come back", vm.blockNotice)
+        }
 
     @Test
     fun sendingAddsTheQuestionAndStreamsItsAnswer() =
@@ -283,6 +341,161 @@ class TutorViewModelTest {
             )
             assertNull(vm.state.value.unresolvedQuestion)
             assertTrue(vm.state.value.offersSuggestions(vm.turns))
+        }
+
+    @Test
+    fun aScreensAskWaitsInTheComposerWhileAnEarlierQuestionIsUnanswered() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            val simpler = TutorSuggestion("Explain it more simply", "simpler")
+            api.refusal = ApiException(ApiError.Network)
+            vm.draft.setTextAndPlaceCursorAtEnd("Why?")
+            vm.send()
+            advanceUntilIdle()
+
+            vm.ask(simpler)
+            advanceUntilIdle()
+
+            assertEquals(listOf("Why?"), api.asked.map { it.question })
+            assertEquals("Explain it more simply", vm.draft.text.toString())
+        }
+
+    @Test
+    fun aScreensAskDropsWhenTheLearnerLeavesBeforeTheConversationLoads() =
+        runTest(dispatcher) {
+            val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
+            val store = TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) }
+            val vm = TutorViewModel(scope, store, SavedStateHandle()) { MutationResult.Obsolete }
+
+            vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
+            advanceUntilIdle()
+            vm.leave()
+            vm.thread.load()
+            advanceUntilIdle()
+
+            assertTrue(api.asked.isEmpty())
+        }
+
+    @Test
+    fun aScreensAskKeepsWhatTheLearnerTypedWhileTheConversationLoaded() =
+        runTest(dispatcher) {
+            api.thread = TutorThread(listOf(turn("q1", TutorTurn.Status.Running, null)), hasMore = false, nextCursor = null)
+            val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
+            val store = TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) }
+            val vm = TutorViewModel(scope, store, SavedStateHandle()) { MutationResult.Obsolete }
+
+            vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
+            advanceUntilIdle()
+            vm.draft.setTextAndPlaceCursorAtEnd("What's a cell wall?")
+            vm.thread.load()
+            advanceUntilIdle()
+
+            assertEquals("What's a cell wall?", vm.draft.text.toString())
+            assertTrue(api.asked.isEmpty())
+        }
+
+    @Test
+    fun aScreensAskWaitsInTheComposerWhenTheConversationCantBeRead() =
+        runTest(dispatcher) {
+            api.threadFailure = ApiException(ApiError.Network)
+            val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
+            val store = TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) }
+            val vm = TutorViewModel(scope, store, SavedStateHandle()) { MutationResult.Obsolete }
+
+            vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
+            vm.thread.load()
+            advanceUntilIdle()
+
+            assertTrue(api.asked.isEmpty())
+            assertEquals("Explain it more simply", vm.draft.text.toString())
+
+            api.threadFailure = null
+            vm.thread.refresh()
+            advanceUntilIdle()
+            vm.send()
+            advanceUntilIdle()
+
+            assertEquals(listOf("simpler"), api.asked.map { it.suggestion })
+        }
+
+    @Test
+    fun aScreensAskGoesAtOnceWhenNothingIsUnanswered() =
+        runTest(dispatcher) {
+            val vm = conversation()
+
+            vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
+            advanceUntilIdle()
+
+            assertEquals(listOf("simpler"), api.asked.map { it.suggestion })
+            assertEquals("", vm.draft.text.toString())
+        }
+
+    /** Another device asked first: the screen's ask waits in the composer, still going by its suggestion. */
+    @Test
+    fun aScreensAskTheServerTurnsAwayWaitsInTheComposerWithItsSuggestion() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            api.refusal = ApiException(ApiError.Unavailable, status = 409)
+            api.thread = TutorThread(listOf(turn("elsewhere", TutorTurn.Status.Running, null)), hasMore = false, nextCursor = null)
+
+            vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
+            advanceUntilIdle()
+
+            assertEquals(listOf("elsewhere"), vm.turns.map { it.id })
+            assertEquals("Explain it more simply", vm.draft.text.toString())
+
+            api.refusal = null
+            api.thread = TutorThread(listOf(turn("elsewhere", TutorTurn.Status.Completed, "Done.")), hasMore = false, nextCursor = null)
+            vm.thread.refresh()
+            vm.send()
+            advanceUntilIdle()
+
+            assertEquals(listOf("simpler", "simpler"), api.asked.map { it.suggestion })
+        }
+
+    @Test
+    fun aScreensAskTheServerTurnsAwayKeepsWhatTheLearnerTypedMeanwhile() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            api.refusal = ApiException(ApiError.Unavailable, status = 409)
+            api.askGate = CompletableDeferred()
+
+            vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
+            advanceUntilIdle()
+            vm.draft.setTextAndPlaceCursorAtEnd("What's a cell wall?")
+            api.askGate?.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals("What's a cell wall?", vm.draft.text.toString())
+        }
+
+    @Test
+    fun aQuestionSentWhileARefusedAskReadsTheConversationKeepsItsWords() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            api.refusal = ApiException(ApiError.Unavailable, status = 409)
+            val suggestionAsk = CompletableDeferred<Unit>()
+            api.askGate = suggestionAsk
+            vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
+            advanceUntilIdle()
+            vm.draft.setTextAndPlaceCursorAtEnd("What's a cell wall?")
+
+            api.thread = TutorThread(listOf(turn("elsewhere", TutorTurn.Status.Running, null)), hasMore = false, nextCursor = null)
+            val read = CompletableDeferred<Unit>()
+            api.gate = read
+            val typedAsk = CompletableDeferred<Unit>()
+            api.askGate = typedAsk
+            suggestionAsk.complete(Unit)
+            advanceUntilIdle()
+            vm.send()
+            advanceUntilIdle()
+            read.complete(Unit)
+            advanceUntilIdle()
+            typedAsk.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(listOf("Explain it more simply", "What's a cell wall?"), api.asked.map { it.question })
+            assertEquals("What's a cell wall?", vm.draft.text.toString())
         }
 
     @Test
@@ -576,5 +789,6 @@ class TutorViewModelTest {
     private companion object {
         const val GOAL = "7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val OTHER_CHANGE = "9a1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
+        val BLOCK: UUID = UUID.fromString("5d1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f")
     }
 }

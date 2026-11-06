@@ -181,11 +181,23 @@
       }
     },
     {
-      "classification": { "expected": "pass", "predicted": "pass" },
+      "classification": { "expected": "pass", "predicted": "fail" },
       "steps": [
-        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected pass; got fail. extra supporting object: soil mound and pebble",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected pass; got fail. extra supporting object: soil mound and pebble",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected pass; got fail. extra supporting object: soil mound and pebble",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "passed": true },
@@ -208,17 +220,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'Sun' unrequested text: 'Earth' unrequested text: 'Nucleus' unrequested text: 'Electron'",
+          "conclusion": "Expected fail; got fail. orbits are not the same size",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'Sun' unrequested text: 'Earth' unrequested text: 'Nucleus' unrequested text: 'Electron'",
+          "conclusion": "Expected fail; got fail. orbits are not the same size",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'Sun' unrequested text: 'Earth' unrequested text: 'Nucleus' unrequested text: 'Electron'",
+          "conclusion": "Expected fail; got fail. orbits are not the same size",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -247,17 +259,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. microwave and soup repeated in unchanged sequence panels several panels",
+          "conclusion": "Expected fail; got fail. sequence repeats the water-molecule inset and label extra right-pointing arrow between microwave scenes",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. microwave and soup repeated in unchanged sequence panels several panels",
+          "conclusion": "Expected fail; got fail. sequence repeats the water-molecule inset and label extra right-pointing arrow between microwave scenes",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. microwave and soup repeated in unchanged sequence panels several panels",
+          "conclusion": "Expected fail; got fail. sequence repeats the water-molecule inset and label extra right-pointing arrow between microwave scenes",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -319,17 +331,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. wrong focal object: house and key sign instead of microwave, soup, and spinning water molecule missing label: 'water molecules'",
+          "conclusion": "Expected fail; got fail. wrong focal object: a house and key sign instead of a microwave and soup missing water molecule, dashed link, spinning arrows, and label",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. wrong focal object: house and key sign instead of microwave, soup, and spinning water molecule missing label: 'water molecules'",
+          "conclusion": "Expected fail; got fail. wrong focal object: a house and key sign instead of a microwave and soup missing water molecule, dashed link, spinning arrows, and label",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. wrong focal object: house and key sign instead of microwave, soup, and spinning water molecule missing label: 'water molecules'",
+          "conclusion": "Expected fail; got fail. wrong focal object: a house and key sign instead of a microwave and soup missing water molecule, dashed link, spinning arrows, and label",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -355,17 +367,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. old price is R$ 80 instead of R$ 90 new price is R$ 60 instead of R$ 70 unrequested text: 'antes R$ 80' unrequested text: 'você paga R$ 60'",
+          "conclusion": "Expected fail; got fail. wrong old price: image says “R$ 80” instead of “R$ 90” wrong new price: image says “R$ 60” instead of “R$ 70”",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. old price is R$ 80 instead of R$ 90 new price is R$ 60 instead of R$ 70 unrequested text: 'antes R$ 80' unrequested text: 'você paga R$ 60'",
+          "conclusion": "Expected fail; got fail. wrong old price: image says “R$ 80” instead of “R$ 90” wrong new price: image says “R$ 60” instead of “R$ 70”",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. old price is R$ 80 instead of R$ 90 new price is R$ 60 instead of R$ 70 unrequested text: 'antes R$ 80' unrequested text: 'você paga R$ 60'",
+          "conclusion": "Expected fail; got fail. wrong old price: image says “R$ 80” instead of “R$ 90” wrong new price: image says “R$ 60” instead of “R$ 70”",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -431,17 +443,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. wrong focal object: a leaf and sun instead of a red apple on a white plate",
+          "conclusion": "Expected fail; got fail. wrong focal object: leaf with sun instead of red apple on a white plate",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. wrong focal object: a leaf and sun instead of a red apple on a white plate",
+          "conclusion": "Expected fail; got fail. wrong focal object: leaf with sun instead of red apple on a white plate",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. wrong focal object: a leaf and sun instead of a red apple on a white plate",
+          "conclusion": "Expected fail; got fail. wrong focal object: leaf with sun instead of red apple on a white plate",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -467,17 +479,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. wrong-language text: 'water molecules'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules'",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. wrong-language text: 'water molecules'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules'",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. wrong-language text: 'water molecules'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules'",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -502,9 +514,21 @@
     {
       "classification": { "expected": "pass", "predicted": "pass" },
       "steps": [
-        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected pass; got pass. The divider creates two panels rather than a comparison layout without a split.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected pass; got pass. The divider creates two panels rather than a comparison layout without a split.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected pass; got pass. The divider creates two panels rather than a comparison layout without a split.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": { "passed": true },
@@ -527,11 +551,23 @@
       }
     },
     {
-      "classification": { "expected": "pass", "predicted": "pass" },
+      "classification": { "expected": "pass", "predicted": "fail" },
       "steps": [
-        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected pass; got fail. particle is suspended above the device, not sitting on top",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected pass; got fail. particle is suspended above the device, not sitting on top",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected pass; got fail. particle is suspended above the device, not sitting on top",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "passed": true },
@@ -581,17 +617,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'electron'",
+          "conclusion": "Expected fail; got fail. focal object is a large blue sphere, not a small dot unrequested text: 'electron'",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'electron'",
+          "conclusion": "Expected fail; got fail. focal object is a large blue sphere, not a small dot unrequested text: 'electron'",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'electron'",
+          "conclusion": "Expected fail; got fail. focal object is a large blue sphere, not a small dot unrequested text: 'electron'",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -656,17 +692,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. missing steaming soup, wavy lines, water molecule, dashed link, and spinning arrows photorealistic, dark image unrequested text: '0:45'",
+          "conclusion": "Expected fail; got fail. missing water molecule in a circle and spinning arrows missing dashed link from soup to molecule missing steaming soup and wavy lines unrequested text: '0:45'",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. missing steaming soup, wavy lines, water molecule, dashed link, and spinning arrows photorealistic, dark image unrequested text: '0:45'",
+          "conclusion": "Expected fail; got fail. missing water molecule in a circle and spinning arrows missing dashed link from soup to molecule missing steaming soup and wavy lines unrequested text: '0:45'",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. missing steaming soup, wavy lines, water molecule, dashed link, and spinning arrows photorealistic, dark image unrequested text: '0:45'",
+          "conclusion": "Expected fail; got fail. missing water molecule in a circle and spinning arrows missing dashed link from soup to molecule missing steaming soup and wavy lines unrequested text: '0:45'",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -692,17 +728,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. Scene mismatch: multi-panel water-cycle infographic rather than a single lake-to-cloud illustration Style mismatch: busy infographic with multiple panels and dense text Unrequested text: 'The Water Cycle', 'Evaporation & Transpiration', 'Ocean', 'Clouds'",
+          "conclusion": "Expected fail; got fail. wrong layout: infographic with multiple panels wrong scene: shows the entire water cycle, not just water evaporating from a lake into a cloud unrequested text: 'The Water Cycle' unrequested text: 'Same Water. Different Places. Constantly Moving.' unrequested text: 'Evaporation & Transpiration' unrequested text: 'Condensation' unrequested text: 'Precipitation' unrequested text: 'Infiltration & Percolation' unrequested text: 'Collection & Storage' unrequested text: 'The Cycle Continues' unrequested text: 'Legend' unrequested text: 'The Water Cycle in Action' unrequested text: 'Why It Matters' unrequested text: 'Water moves. Life flows.' unrequested text: 'Ocean' unrequested text: 'Clouds' unrequested text: 'Rain' unrequested text: 'Snow' unrequested text: 'Runoff' unrequested text: 'Topsoil' unrequested text: 'Subsoil' unrequested text: 'Fractured rock' unrequested text: 'Groundwater' unrequested text: 'Glaciers & ice caps' unrequested text: 'Snowpack' unrequested text: 'Rlak ers' unrequested text: 'Rivers' unrequested text: 'Wetlands' unrequested text: 'Oceans' unrequested text: 'Groundwater storage' unrequested text: 'Healthy water cycles build a more resilient planet.' unrequested text: 'Evaporation' unrequested text: 'Transpiration'",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. Scene mismatch: multi-panel water-cycle infographic rather than a single lake-to-cloud illustration Style mismatch: busy infographic with multiple panels and dense text Unrequested text: 'The Water Cycle', 'Evaporation & Transpiration', 'Ocean', 'Clouds'",
+          "conclusion": "Expected fail; got fail. wrong layout: infographic with multiple panels wrong scene: shows the entire water cycle, not just water evaporating from a lake into a cloud unrequested text: 'The Water Cycle' unrequested text: 'Same Water. Different Places. Constantly Moving.' unrequested text: 'Evaporation & Transpiration' unrequested text: 'Condensation' unrequested text: 'Precipitation' unrequested text: 'Infiltration & Percolation' unrequested text: 'Collection & Storage' unrequested text: 'The Cycle Continues' unrequested text: 'Legend' unrequested text: 'The Water Cycle in Action' unrequested text: 'Why It Matters' unrequested text: 'Water moves. Life flows.' unrequested text: 'Ocean' unrequested text: 'Clouds' unrequested text: 'Rain' unrequested text: 'Snow' unrequested text: 'Runoff' unrequested text: 'Topsoil' unrequested text: 'Subsoil' unrequested text: 'Fractured rock' unrequested text: 'Groundwater' unrequested text: 'Glaciers & ice caps' unrequested text: 'Snowpack' unrequested text: 'Rlak ers' unrequested text: 'Rivers' unrequested text: 'Wetlands' unrequested text: 'Oceans' unrequested text: 'Groundwater storage' unrequested text: 'Healthy water cycles build a more resilient planet.' unrequested text: 'Evaporation' unrequested text: 'Transpiration'",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. Scene mismatch: multi-panel water-cycle infographic rather than a single lake-to-cloud illustration Style mismatch: busy infographic with multiple panels and dense text Unrequested text: 'The Water Cycle', 'Evaporation & Transpiration', 'Ocean', 'Clouds'",
+          "conclusion": "Expected fail; got fail. wrong layout: infographic with multiple panels wrong scene: shows the entire water cycle, not just water evaporating from a lake into a cloud unrequested text: 'The Water Cycle' unrequested text: 'Same Water. Different Places. Constantly Moving.' unrequested text: 'Evaporation & Transpiration' unrequested text: 'Condensation' unrequested text: 'Precipitation' unrequested text: 'Infiltration & Percolation' unrequested text: 'Collection & Storage' unrequested text: 'The Cycle Continues' unrequested text: 'Legend' unrequested text: 'The Water Cycle in Action' unrequested text: 'Why It Matters' unrequested text: 'Water moves. Life flows.' unrequested text: 'Ocean' unrequested text: 'Clouds' unrequested text: 'Rain' unrequested text: 'Snow' unrequested text: 'Runoff' unrequested text: 'Topsoil' unrequested text: 'Subsoil' unrequested text: 'Fractured rock' unrequested text: 'Groundwater' unrequested text: 'Glaciers & ice caps' unrequested text: 'Snowpack' unrequested text: 'Rlak ers' unrequested text: 'Rivers' unrequested text: 'Wetlands' unrequested text: 'Oceans' unrequested text: 'Groundwater storage' unrequested text: 'Healthy water cycles build a more resilient planet.' unrequested text: 'Evaporation' unrequested text: 'Transpiration'",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -761,17 +797,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. B pointer touches the thick outer boundary instead of the thin inner line",
+          "conclusion": "Expected fail; got fail. B pointer touches the thick outer boundary, not the thin inner line",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. B pointer touches the thick outer boundary instead of the thin inner line",
+          "conclusion": "Expected fail; got fail. B pointer touches the thick outer boundary, not the thin inner line",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. B pointer touches the thick outer boundary instead of the thin inner line",
+          "conclusion": "Expected fail; got fail. B pointer touches the thick outer boundary, not the thin inner line",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -792,6 +828,269 @@
             "motion": null,
             "relation": null,
             "supportingObjects": []
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "numbered-animal-cell-1",
+        "userInput": {
+          "imageFile": "numbered-animal-cell.webp",
+          "language": "en",
+          "scene": {
+            "focalObject": "an animal cell as seen under a microscope, cut open: the cell membrane around it, the nucleus with its nucleolus, several mitochondria, the Golgi apparatus and the rough endoplasmic reticulum",
+            "labels": [
+              { "target": "pointing at the cell membrane", "text": "1" },
+              { "target": "pointing at the nucleus", "text": "2" },
+              { "target": "pointing at the nucleolus", "text": "3" },
+              { "target": "pointing at the mitochondrion", "text": "4" },
+              { "target": "pointing at the Golgi apparatus", "text": "5" },
+              { "target": "pointing at the rough endoplasmic reticulum", "text": "6" }
+            ],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": []
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "numbered-flower-1",
+        "userInput": {
+          "imageFile": "numbered-flower.webp",
+          "language": "en",
+          "scene": {
+            "focalObject": "a flower cut in half lengthwise to show its petals, sepals, stamens with anthers, the stigma on top of the style and the ovary at the base",
+            "labels": [
+              { "target": "pointing at the petal", "text": "1" },
+              { "target": "pointing at the sepal", "text": "2" },
+              { "target": "pointing at the anther", "text": "3" },
+              { "target": "pointing at the stigma", "text": "4" },
+              { "target": "pointing at the ovary", "text": "5" }
+            ],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": []
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "numbered-bicycle-tire-1",
+        "userInput": {
+          "imageFile": "numbered-bicycle.webp",
+          "language": "en",
+          "scene": {
+            "focalObject": "a bicycle seen from the side",
+            "labels": [
+              { "target": "pointing at the handlebars", "text": "1" },
+              { "target": "pointing at the saddle", "text": "2" },
+              { "target": "pointing at the chain", "text": "3" },
+              { "target": "pointing at the pedal", "text": "4" },
+              { "target": "pointing at the front wheel", "text": "5" },
+              { "target": "pointing at the frame", "text": "6" }
+            ],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": []
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. extra second scene below divider: a man sells a bicycle for banknotes unrequested text: none",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. extra second scene below divider: a man sells a bicycle for banknotes unrequested text: none",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. extra second scene below divider: a man sells a bicycle for banknotes unrequested text: none",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "two-scenes-for-one-1",
+        "userInput": {
+          "imageFile": "flare-two-scenes-salary.webp",
+          "language": "pt",
+          "scene": {
+            "focalObject": "a man sitting at an office desk with a laptop, receiving an envelope with banknotes from a coworker's hand",
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": ["a wall calendar behind him"]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. wrong main scene: man is exchanging a toaster at a counter, not sitting at an office desk typing missing monitor and keyboard missing low side table, open computer tower, and toolbox",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. wrong main scene: man is exchanging a toaster at a counter, not sitting at an office desk typing missing monitor and keyboard missing low side table, open computer tower, and toolbox",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. wrong main scene: man is exchanging a toaster at a counter, not sitting at an office desk typing missing monitor and keyboard missing low side table, open computer tower, and toolbox",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "repair-counter-for-office-1",
+        "userInput": {
+          "imageFile": "flare-repair-counter.webp",
+          "language": "pt",
+          "scene": {
+            "focalObject": "a man sitting at an office desk in front of a monitor, typing on a keyboard",
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": "a toolbox and an opened computer tower rest on a low table beside the desk",
+            "supportingObjects": ["a small side table holding an open computer tower and a toolbox"]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "repair-counter-matches-alt-1",
+        "userInput": {
+          "imageFile": "flare-repair-counter.webp",
+          "alt": "Igor entrega uma torradeira consertada a um cliente no balcão da oficina.",
+          "language": "pt",
+          "scene": {
+            "focalObject": "a repairman in an apron behind a wooden counter, handing a repaired yellow toaster to a customer whose hands reach in from the right",
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": "a pegboard with a screwdriver and a wrench hangs on the wall behind him",
+            "supportingObjects": ["a pegboard with a screwdriver and a wrench"]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. ALT describes Igor receiving a salary envelope, seated at an office desk; none of these are shown.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. ALT describes Igor receiving a salary envelope, seated at an office desk; none of these are shown.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. ALT describes Igor receiving a salary envelope, seated at an office desk; none of these are shown.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "repair-counter-contradicts-alt-1",
+        "userInput": {
+          "imageFile": "flare-repair-counter.webp",
+          "alt": "Igor recebe um envelope de salário sentado à mesa do escritório.",
+          "language": "pt",
+          "scene": {
+            "focalObject": "a repairman in an apron behind a wooden counter, handing a repaired yellow toaster to a customer whose hands reach in from the right",
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": "a pegboard with a screwdriver and a wrench hangs on the wall behind him",
+            "supportingObjects": ["a pegboard with a screwdriver and a wrench"]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. ALT describes Igor writing the amount received in a notebook at home at night, which is not shown",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. ALT describes Igor writing the amount received in a notebook at home at night, which is not shown",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. ALT describes Igor writing the amount received in a notebook at home at night, which is not shown",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "repair-counter-drops-alt-moment-1",
+        "userInput": {
+          "imageFile": "flare-repair-counter.webp",
+          "alt": "Igor entrega uma torradeira consertada no balcão e, à noite, anota o valor recebido num caderno em casa.",
+          "language": "pt",
+          "scene": {
+            "focalObject": "a repairman in an apron behind a wooden counter, handing a repaired yellow toaster to a customer whose hands reach in from the right",
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": "a pegboard with a screwdriver and a wrench hangs on the wall behind him",
+            "supportingObjects": ["a pegboard with a screwdriver and a wrench"]
           }
         }
       }

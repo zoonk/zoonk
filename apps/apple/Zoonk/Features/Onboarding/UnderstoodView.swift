@@ -392,12 +392,12 @@ private struct UnderstoodRowView: View {
       .disabled(isSaving)
 
       if failed {
-        Text(
-          "That didn't save. Try again.", tableName: "Onboarding",
-          comment: "A change couldn't be saved"
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't save. Try again.", table: "Onboarding",
+            comment: "A change couldn't be saved")
         )
         .typeStyle(.note)
-        .foregroundStyle(.destructiveText)
       }
     }
   }
@@ -532,12 +532,12 @@ private struct RowEditor: View {
       }
 
       if failed {
-        Text(
-          "That didn't save. Try again.", tableName: "Onboarding",
-          comment: "A change couldn't be saved"
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't save. Try again.", table: "Onboarding",
+            comment: "A change couldn't be saved")
         )
         .typeStyle(.note)
-        .foregroundStyle(.destructiveText)
       }
 
       ButtonRow {
@@ -717,23 +717,17 @@ private struct InstrumentOutcome: View {
 
         switch waitlist {
         case .joined:
-          Text(
-            "You're on the list. We'll let you know when lessons for playing are ready.",
-            tableName: "Onboarding", comment: "After joining the instrument waitlist"
-          )
-          .foregroundStyle(.successText)
+          Text(Self.note(.joined))
+            .foregroundStyle(.successText)
         case .signInRequired:
-          Text(
-            "Create an account so we can let you know.", tableName: "Onboarding",
-            comment: "A guest or visitor tried to join the waitlist")
+          Text(Self.note(.signInRequired))
           CreateAccountButton()
         case nil:
           if joinFailed {
-            Text(
-              "That didn't save. Try again.", tableName: "Onboarding",
-              comment: "A change couldn't be saved"
-            )
-            .foregroundStyle(.destructiveText)
+            FailureLine(
+              message: LocalizedStringResource(
+                "That didn't save. Try again.", table: "Onboarding",
+                comment: "A change couldn't be saved"))
           }
         }
       }
@@ -760,6 +754,20 @@ private struct InstrumentOutcome: View {
           Task { await join() }
         }
       }
+    }
+    .announcesStatus(waitlist.map(Self.note))
+  }
+
+  private static func note(_ outcome: WaitlistOutcome) -> String {
+    switch outcome {
+    case .joined:
+      String(
+        localized: "You're on the list. We'll let you know when lessons for playing are ready.",
+        table: "Onboarding", comment: "After joining the instrument waitlist")
+    case .signInRequired:
+      String(
+        localized: "Create an account so we can let you know.", table: "Onboarding",
+        comment: "A guest or visitor tried to join the waitlist")
     }
   }
 

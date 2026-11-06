@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -62,6 +61,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -138,7 +138,7 @@ internal fun CourseStartScreen(
                             }
                         }
                     } else {
-                        Loading()
+                        PageLoading()
                     }
                 }
 
@@ -155,16 +155,11 @@ internal fun CourseStartScreen(
                 }
 
                 LoadState.Idle, LoadState.Loading -> {
-                    Loading()
+                    PageLoading()
                 }
             }
         }
     }
-}
-
-@Composable
-private fun Loading() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
 }
 
 @Composable

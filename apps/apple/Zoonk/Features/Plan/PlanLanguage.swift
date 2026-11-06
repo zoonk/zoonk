@@ -120,11 +120,10 @@ struct PlanAlphabetRow: View {
       .disabled(isSkipping)
 
       if failed {
-        Text(
-          "That didn't work. Try again in a moment.", tableName: "Plan",
-          comment: "Says skipping the alphabet failed"
-        )
-        .foregroundStyle(.destructiveText)
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't work. Try again in a moment.", table: "Plan",
+            comment: "Says skipping the alphabet failed"))
       }
     }
   }

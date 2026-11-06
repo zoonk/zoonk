@@ -12,7 +12,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +24,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.navigation.AppRoute
@@ -47,6 +45,7 @@ import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.weekdayNames
+import com.zoonk.android.ui.scaffold.isMediumLayout
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.StudySessionWeekDaysInner
@@ -93,7 +92,7 @@ private fun WeekHeader(day: DayView) {
     val studied = days.count { it.studied }
     val locale = currentLocale()
     val time = day.week.time
-    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val wide = isMediumLayout()
     val studiedText = formatMinutes(time.studiedMinutes.toInt(), locale)
     val planned = formatMinutes(time.targetMinutes.roundToInt(), locale)
     val timeDescription = stringResource(R.string.today_week_time, studiedText, planned)

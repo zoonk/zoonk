@@ -2,6 +2,8 @@ const LESSON_CONTENT_STEPS = [
   "joinRunningLesson",
   "planLesson",
   "writeLesson",
+  "markLesson",
+  "drawPictures",
   "lessonReady",
 ] as const;
 

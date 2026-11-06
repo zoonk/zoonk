@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 
-/** On "started", the host has already opened it. */
+/** On "started", the host has already opened it, or the learner went elsewhere before it could. */
 export type AreaPracticeOutcome = "dailyLimit" | "failed" | "nothingToPractice" | "started";
 
 export function usePracticeRun(run: () => Promise<AreaPracticeOutcome>) {
@@ -11,7 +11,7 @@ export function usePracticeRun(run: () => Promise<AreaPracticeOutcome>) {
 
   const practice = () => {
     startTransition(async () => {
-      setOutcome(await run());
+      setOutcome(await run().catch((): AreaPracticeOutcome => "failed"));
     });
   };
 

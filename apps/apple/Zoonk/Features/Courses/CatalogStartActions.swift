@@ -15,6 +15,7 @@ struct CatalogStartActions: View {
   var note: Text?
 
   @State private var switchingTo: LearnerGoal.ID?
+  @State private var switchFailed = false
 
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
@@ -33,12 +34,23 @@ struct CatalogStartActions: View {
           return
         }
 
-        if await learner.switchGoal(to: switchingTo), !Task.isCancelled {
+        switch await learner.switchGoal(to: switchingTo) {
+        case .done where !Task.isCancelled:
           router.showRoot(of: .today)
+        case .failed:
+          switchFailed = true
+        case .done, .obsolete:
+          break
         }
 
         self.switchingTo = nil
       }
+      .alert(
+        Text(
+          "We couldn't switch goals. Try again.", tableName: "Courses",
+          comment: "Continuing the plan of a goal that follows this course didn't go through"),
+        isPresented: $switchFailed
+      ) {}
 
       if let note {
         note

@@ -27,7 +27,7 @@ const ANSWERED_AT = "2026-10-05T10:01:00.000Z";
 function play(steps: PlayableLibraryStep[], actions: LessonPlayerAction[]): LessonPlayerState {
   return actions.reduce(
     (state, action) => lessonPlayerReducer(state, action),
-    createInitialState({ id: "lesson", steps }),
+    createInitialState({ hasMap: false, id: "lesson", steps }),
   );
 }
 
@@ -359,7 +359,7 @@ describe(lessonPlayerReducer, () => {
   });
 
   it("opens an empty lesson ready to finish, without saving on entry", () => {
-    expect(createInitialState({ id: "empty", steps: [] })).toMatchObject({
+    expect(createInitialState({ hasMap: false, id: "empty", steps: [] })).toMatchObject({
       completion: { status: "ready" },
       phase: "completed",
     });

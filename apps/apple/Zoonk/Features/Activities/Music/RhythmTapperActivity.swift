@@ -32,7 +32,7 @@ private struct RhythmTapperCanvas: View {
   }
 
   var body: some View {
-    MusicCanvas {
+    MusicCanvas(audio: audio) {
       if !isChecked, storedDelay == nil || isCalibrating {
         RhythmCalibrationView(audio: audio) { delayMs in
           storedDelay = String(Int(delayMs))
@@ -50,8 +50,6 @@ private struct RhythmTapperCanvas: View {
           isCalibrating = true
         }
       }
-
-      MusicSoundNote(audio: audio)
     }
     .onDisappear { audio.close() }
   }
@@ -116,6 +114,10 @@ private struct RhythmRunView: View {
           RhythmFeedback(hits: results.hits, extraTaps: results.extraTaps)
         }
       }
+      .announcesStatus(
+        results.map {
+          RhythmFeedback.lines(hits: $0.hits, extraTaps: $0.extraTaps).joinedSentences()
+        })
     }
     .onAppear {
       audio.onInterruption = { run.reset() }
@@ -323,48 +325,52 @@ private struct RhythmFeedback: View {
   let hits: [Rhythm.HitResult]
   let extraTaps: Int
 
-  var body: some View {
+  static func lines(hits: [Rhythm.HitResult], extraTaps: Int) -> [String] {
     let onTime = hits.filter { $0.status == .onTime }.count
-    let worst = Rhythm.worstHit(hits)
+    let extra =
+      extraTaps > 0
+      ? String(
+        localized: "\(extraTaps) extra taps.", table: "ActivitiesMusic",
+        comment: "Rhythm result: the learner's taps on the screen that matched no beat")
+      : nil
 
+    return [
+      String(
+        localized: "\(onTime) of \(hits.count) taps on time.", table: "ActivitiesMusic",
+        comment: "How many of the rhythm's taps were on time"),
+      Rhythm.worstHit(hits).flatMap { detail($0.hit, tap: $0.index + 1) },
+      extra,
+    ].compactMap(\.self)
+  }
+
+  var body: some View {
     VStack(alignment: .leading, spacing: 2) {
-      Text(
-        "\(onTime) of \(hits.count) taps on time.", tableName: "ActivitiesMusic",
-        comment: "How many of the rhythm's taps were on time")
-
-      if let worst {
-        detail(worst.hit, tap: worst.index + 1)
-      }
-
-      if extraTaps > 0 {
-        Text(
-          "\(extraTaps) extra taps.", tableName: "ActivitiesMusic",
-          comment: "Rhythm result: the learner's taps on the screen that matched no beat")
+      ForEach(Self.lines(hits: hits, extraTaps: extraTaps), id: \.self) { line in
+        Text(line)
       }
     }
     .typeStyle(.body)
     .accessibilityElement(children: .combine)
   }
 
-  @ViewBuilder
-  private func detail(_ hit: Rhythm.HitResult, tap: Int) -> some View {
+  private static func detail(_ hit: Rhythm.HitResult, tap: Int) -> String? {
     let ms = Int(abs(hit.offsetMs ?? 0))
 
     switch hit.status {
     case .early:
-      Text(
-        "Tap \(tap) came \(ms) ms early.", tableName: "ActivitiesMusic",
+      return String(
+        localized: "Tap \(tap) came \(ms) ms early.", table: "ActivitiesMusic",
         comment: "The tap furthest off the beat came early")
     case .late:
-      Text(
-        "Tap \(tap) came \(ms) ms late.", tableName: "ActivitiesMusic",
+      return String(
+        localized: "Tap \(tap) came \(ms) ms late.", table: "ActivitiesMusic",
         comment: "The tap furthest off the beat came late")
     case .missed:
-      Text(
-        "Tap \(tap) was missed.", tableName: "ActivitiesMusic",
+      return String(
+        localized: "Tap \(tap) was missed.", table: "ActivitiesMusic",
         comment: "A beat of the rhythm got no tap")
     case .onTime:
-      EmptyView()
+      return nil
     }
   }
 }
@@ -394,7 +400,7 @@ private struct RhythmCalibrationView: View {
           .typeStyle(.body.weight(.semibold))
           .accessibilityAddTraits(.isHeader)
 
-          status(phase)
+          Text(status(phase))
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
@@ -407,6 +413,8 @@ private struct RhythmCalibrationView: View {
           buttons(phase)
         }
       }
+      // Only the reading: speech over the clicks would throw off the taps it times.
+      .announcesStatus(reading(phase))
     }
     .onAppear {
       audio.onInterruption = { calibration.cancel() }
@@ -461,31 +469,40 @@ private struct RhythmCalibrationView: View {
     }
   }
 
-  private func status(_ phase: RhythmCalibration.Phase) -> Text {
+  private func reading(_ phase: RhythmCalibration.Phase) -> String? {
+    if case .done = phase { status(phase) } else { nil }
+  }
+
+  private func status(_ phase: RhythmCalibration.Phase) -> String {
     switch phase {
     case .countIn:
-      Text(
-        "Listen to the clicks…", tableName: "ActivitiesMusic", comment: "The sound check counts in")
+      String(
+        localized: "Listen to the clicks…", table: "ActivitiesMusic",
+        comment: "The sound check counts in")
     case .tapping(let click):
-      Text(
-        "Tap with each click\u{00A0}· \(min(click, Rhythm.calibrationClicks)) of \(Rhythm.calibrationClicks)",
-        tableName: "ActivitiesMusic", comment: "The sound check: which click of how many")
+      String(
+        localized:
+          "Tap with each click\u{00A0}· \(min(click, Rhythm.calibrationClicks)) of \(Rhythm.calibrationClicks)",
+        table: "ActivitiesMusic", comment: "The sound check: which click of how many")
     case .done(nil):
-      Text(
-        "We couldn't match enough taps to the clicks. Try again, tapping with each one.",
-        tableName: "ActivitiesMusic", comment: "The sound check got too few taps")
+      String(
+        localized:
+          "We couldn't match enough taps to the clicks. Try again, tapping with each one.",
+        table: "ActivitiesMusic", comment: "The sound check got too few taps")
     case .done(let delay?) where delay < Self.onTimeMs:
-      Text(
-        "Sound on this device arrives on time.", tableName: "ActivitiesMusic",
+      String(
+        localized: "Sound on this device arrives on time.", table: "ActivitiesMusic",
         comment: "The sound check found no delay")
     case .done(let delay?):
-      Text(
-        "Sound on this device arrives about \(Int(delay)) ms late. Rhythms here take that out.",
-        tableName: "ActivitiesMusic", comment: "The sound check's reading, in milliseconds")
+      String(
+        localized:
+          "Sound on this device arrives about \(Int(delay)) ms late. Rhythms here take that out.",
+        table: "ActivitiesMusic", comment: "The sound check's reading, in milliseconds")
     case .idle:
-      Text(
-        "Headphones can play sound a little late. Tap along with \(Rhythm.calibrationClicks) clicks once, and rhythms on this device are timed fairly.",
-        tableName: "ActivitiesMusic", comment: "Why the sound check runs, before it starts")
+      String(
+        localized:
+          "Headphones can play sound a little late. Tap along with \(Rhythm.calibrationClicks) clicks once, and rhythms on this device are timed fairly.",
+        table: "ActivitiesMusic", comment: "Why the sound check runs, before it starts")
     }
   }
 }

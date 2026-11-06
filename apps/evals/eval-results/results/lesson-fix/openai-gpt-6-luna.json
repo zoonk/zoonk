@@ -4,17 +4,17 @@
     {
       "steps": [
         {
-          "conclusion": "Screen 4: Its basis names screen 5; name an earlier hook text, explanation or worked example.",
+          "conclusion": "Screen 1: Planned as hook but written as hookGuess; write it as hookText.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Screen 4: Its basis names screen 5; name an earlier hook text, explanation or worked example.",
+          "conclusion": "Screen 1: Planned as hook but written as hookGuess; write it as hookText.",
           "kind": "minorErrors",
           "score": 6
         },
         {
-          "conclusion": "Screen 4: Its basis names screen 5; name an earlier hook text, explanation or worked example.",
+          "conclusion": "Screen 1: Planned as hook but written as hookGuess; write it as hookText.",
           "kind": "potentialImprovements",
           "score": 6
         }
@@ -166,10 +166,19 @@
                 "visual": null
               }
             ],
-            "summary": [
-              "A rise moves up the thermometer, even below zero.",
-              "Count up to zero first, then the degrees above it."
-            ]
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Rising below zero",
+                  "text": "A rise moves up the thermometer, even below zero."
+                },
+                {
+                  "label": "Count up to zero",
+                  "text": "Count up to zero first, then the degrees above it."
+                }
+              ],
+              "shape": "hub"
+            }
           },
           "level": "beginner",
           "shortAnswers": true,
@@ -268,19 +277,19 @@
     {
       "steps": [
         {
-          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "conclusion": "Screen 1: Planned as hook but written as hookGuess; write it as hookText. Screen 4: Its basis quotes words screen 2 doesn't have: \"a rise always moves **up** the thermometer.\". Copy the sentence exactly as that screen says it.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "conclusion": "Screen 1: Planned as hook but written as hookGuess; write it as hookText. Screen 4: Its basis quotes words screen 2 doesn't have: \"a rise always moves **up** the thermometer.\". Copy the sentence exactly as that screen says it.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "conclusion": "Screen 1: Planned as hook but written as hookGuess; write it as hookText. Screen 4: Its basis quotes words screen 2 doesn't have: \"a rise always moves **up** the thermometer.\". Copy the sentence exactly as that screen says it.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -430,10 +439,19 @@
                 "visual": null
               }
             ],
-            "summary": [
-              "A rise moves up the thermometer, even below zero.",
-              "Count up to zero first, then the degrees above it."
-            ]
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Rising below zero",
+                  "text": "A rise moves up the thermometer, even below zero."
+                },
+                {
+                  "label": "Count up to zero",
+                  "text": "Count up to zero first, then the degrees above it."
+                }
+              ],
+              "shape": "hub"
+            }
           },
           "level": "beginner",
           "shortAnswers": true,
@@ -532,19 +550,19 @@
     {
       "steps": [
         {
-          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "conclusion": "Screen 1: Planned as hook but written as hookGuess; write it as hookText.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "conclusion": "Screen 1: Planned as hook but written as hookGuess; write it as hookText.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "conclusion": "Screen 1: Planned as hook but written as hookGuess; write it as hookText.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -693,10 +711,19 @@
                 "visual": null
               }
             ],
-            "summary": [
-              "A rise moves up the thermometer, even below zero.",
-              "Count up to zero first, then the degrees above it."
-            ]
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Rising below zero",
+                  "text": "A rise moves up the thermometer, even below zero."
+                },
+                {
+                  "label": "Count up to zero",
+                  "text": "Count up to zero first, then the degrees above it."
+                }
+              ],
+              "shape": "hub"
+            }
           },
           "level": "beginner",
           "shortAnswers": true,
@@ -791,19 +818,19 @@
     {
       "steps": [
         {
-          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "conclusion": "Screen 1: Planned as hook but written as hookGuess; write it as hookText.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "conclusion": "Screen 1: Planned as hook but written as hookGuess; write it as hookText.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "conclusion": "Screen 1: Planned as hook but written as hookGuess; write it as hookText.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -956,10 +983,19 @@
                 "visual": null
               }
             ],
-            "summary": [
-              "A rise moves up the thermometer, even below zero.",
-              "Count up to zero first, then the degrees above it."
-            ]
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Rising below zero",
+                  "text": "A rise moves up the thermometer, even below zero."
+                },
+                {
+                  "label": "Count up to zero",
+                  "text": "Count up to zero first, then the degrees above it."
+                }
+              ],
+              "shape": "hub"
+            }
           },
           "level": "beginner",
           "shortAnswers": true,
@@ -1416,11 +1452,23 @@
                 "question": "Quanto tempo {fornosNovos} fornos levam para assar {paesNovos} pães?"
               }
             ],
-            "summary": [
-              "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo.",
-              "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
-              "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção."
-            ]
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Trabalho ou capacidade fixa",
+                  "text": "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo."
+                },
+                {
+                  "label": "Regra de três simples",
+                  "text": "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou."
+                },
+                {
+                  "label": "Regra de três composta",
+                  "text": "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção."
+                }
+              ],
+              "shape": "hub"
+            }
           },
           "level": "intermediate",
           "spec": {

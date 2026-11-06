@@ -23,7 +23,8 @@ export type LearnerPalette = {
   canAskBuddy: boolean;
   explanations: { id: string; title: string }[];
   goals: { id: string; kind: string; title: string }[];
-  onSwitchGoal: (goalId: string) => Promise<void>;
+  /** Resolves to whether the goal is now the active one. */
+  onSwitchGoal: (goalId: string) => Promise<boolean>;
   places: LearnerSummary["places"];
   today: LearnerSummary["today"];
 };
@@ -37,6 +38,7 @@ export const UNREAD_LEARNER_PALETTE: LearnerPalette = {
   goals: [],
   onSwitchGoal: switchGoal,
   places: {
+    certificates: false,
     completedLessons: false,
     exam: false,
     mindMaps: false,
@@ -141,6 +143,11 @@ export function useLearnerPaletteGroups({
         label: t("Completed lessons"),
         menu: getMenu("completedLessons"),
       }),
+    createNavigationPaletteItem({
+      id: "certificates",
+      label: t("Certificates"),
+      menu: getMenu("certificates"),
+    }),
     places.exam &&
       createNavigationPaletteItem({ id: "exam", label: t("Exam"), menu: getMenu("exam") }),
     places.speaking &&

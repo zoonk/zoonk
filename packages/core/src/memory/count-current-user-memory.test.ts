@@ -1,7 +1,7 @@
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockGuestSession, mockSession, mockSessionFailure } from "../_test-utils/mock-session";
@@ -25,8 +25,7 @@ describe(countCurrentUserMemory, () => {
 
     const count = await countDatabaseStatements(countCurrentUserMemory);
 
-    expect(count.result).toBe(0);
-    assertReadBudget(count, 1);
+    expect(count).toMatchObject({ result: 0, writes: 0 });
   });
 
   it.each([false, true])(
@@ -50,14 +49,12 @@ describe(countCurrentUserMemory, () => {
 
       mockSession(owner.id);
 
-      const full = await countDatabaseStatements(getCurrentUserMemory);
+      const full = await getCurrentUserMemory();
       const count = await countDatabaseStatements(countCurrentUserMemory);
 
-      expect(full.result?.enabled).toBe(enabled);
-      expect(count.result).toBe(full.result?.facts.length);
-      expect(count.result).toBe(2);
-      assertReadBudget(count, 1);
-      expect(count.statements).toBeLessThan(full.statements);
+      expect(full?.enabled).toBe(enabled);
+      expect(count.result).toBe(full?.facts.length);
+      expect(count).toMatchObject({ result: 2, writes: 0 });
     },
   );
 

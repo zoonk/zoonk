@@ -138,7 +138,7 @@ describe(createLessonQuestion, () => {
       expect.objectContaining({
         distinctId: user.id,
         name: "Tutor Asked",
-        properties: { lesson_id: lesson.id, scope: "lesson" },
+        properties: { lesson_id: lesson.id, scope: "lesson", suggestion: null },
       }),
     );
 
@@ -153,6 +153,38 @@ describe(createLessonQuestion, () => {
         where: { thread: { libraryLessonId: lesson.id, userId: user.id } },
       }),
     ).resolves.toBe(1);
+  });
+
+  it("records which suggestion a screen's button asked, for every client, and none for a typed question", async () => {
+    const { lesson, steps, user } = await createLesson();
+    const step = steps[0];
+
+    if (!step) {
+      throw new Error("Expected the lesson's first screen");
+    }
+
+    mockSession(user.id);
+    const flush = runDeferredWork();
+
+    await createLessonQuestion({
+      input: {
+        context: { kind: "step", stepId: step.id, stepNumber: step.position + 1 },
+        question: "Explain it more simply",
+        requestId: randomUUID(),
+        suggestion: "simpler",
+      },
+      target: { kind: "lesson", lessonId: lesson.id },
+      wordSuggestion: async () => "Explain it more simply",
+    });
+
+    await flush();
+
+    expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        name: "Tutor Asked",
+        properties: { lesson_id: lesson.id, scope: "screen", suggestion: "simpler" },
+      }),
+    );
   });
 
   it("atomically rejects a second unfinished turn", async () => {

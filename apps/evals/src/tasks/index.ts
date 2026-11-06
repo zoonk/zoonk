@@ -36,6 +36,7 @@ import { goalSpecificityTask } from "./goal-specificity/task";
 import { goalTutorTask } from "./goal-tutor/task";
 import { gradeEssayTask } from "./grade-essay/task";
 import { gradeTypedAnswerTask } from "./grade-typed-answer/task";
+import { iconMatchTask } from "./icon-match/task";
 import { imageCheckTask } from "./image-check/task";
 import { imageInputSafetyRewriteTask } from "./image-prompt-safety-rewrite/task";
 import { imageSceneTask } from "./image-scene/task";
@@ -43,6 +44,7 @@ import { languageAudioTask } from "./language-audio/task";
 import { languageLessonTask } from "./language-lesson/task";
 import { lessonFixTask } from "./lesson-fix/task";
 import { lessonImageTask } from "./lesson-image/task";
+import { lessonMarksTask } from "./lesson-marks/task";
 import { lessonQualityCheckTask } from "./lesson-quality-check/task";
 import { lessonQuestionTask } from "./lesson-question/task";
 import { lessonSpecTask } from "./lesson-spec/task";
@@ -50,6 +52,7 @@ import { lessonWriterTask } from "./lesson-writer/task";
 import { levelTestBankTask } from "./level-test-bank/task";
 import { libraryIdentityDecisionTask } from "./library-identity-decision/task";
 import { librarySearchTermsTask } from "./library-search-terms/task";
+import { liveConversationTask } from "./live-conversation/task";
 import { memoryExtractionTask } from "./memory-extraction/task";
 import { memoryGateTask } from "./memory-gate/task";
 import { memoryInsightTask } from "./memory-insight/task";
@@ -115,6 +118,8 @@ export const TASKS: readonly RegisteredTask[] = [
   imageInputSafetyRewriteTask,
   imageSceneTask,
   lessonImageTask,
+  lessonMarksTask,
+  iconMatchTask,
   imageCheckTask,
   mindMapImageTask,
   generateItemsTask,
@@ -171,6 +176,7 @@ export const TASKS: readonly RegisteredTask[] = [
   examSpeakingCardTask,
   conversationFeedbackTask,
   conversationObjectivesTask,
+  liveConversationTask,
   speakingScoreTask,
   mistakePatternTask,
   levelTestBankTask,

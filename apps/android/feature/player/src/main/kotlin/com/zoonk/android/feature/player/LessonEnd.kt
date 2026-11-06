@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -33,12 +34,17 @@ import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.ceremonies.momentBuddy
+import com.zoonk.android.feature.certificates.CertificateName
+import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
+import com.zoonk.android.feature.player.engine.lessonMap
 import com.zoonk.android.feature.player.engine.screen
 import com.zoonk.android.feature.player.model.PlayableLesson
+import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.android.feature.player.steps.LessonMapView
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.ownBrainPower
@@ -53,15 +59,18 @@ import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.needsAccount
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.LearnerSummaryBuddy
@@ -241,6 +250,12 @@ internal fun LibraryLessonCompletion.ceremonyMilestone(): Milestone? {
     return block.ceremony
 }
 
+/** Its certificates come the same way as its ceremony. */
+internal fun LibraryLessonCompletion.awardedCertificates(): List<CertificateName> =
+    (studyBlock?.certificates ?: certificates).map {
+        it.naming
+    }
+
 /** What the lesson's end says (main's `LessonCompletionMoment`): its title, then the score and the day's moment once saved. */
 @Composable
 fun LessonCompletionView(
@@ -252,8 +267,9 @@ fun LessonCompletionView(
     val title = stringResource(if (completion.testedOut) R.string.player_already_knew else R.string.player_lesson_complete)
 
     if (completion.status == CompletionStatus.Ready) {
-        LessonEndPages(
+        ResultPages(
             withMoment = false,
+            columnModifier = Modifier.taskColumn(),
             done = {
                 Text(
                     stringResource(R.string.player_nothing_left_title),
@@ -271,8 +287,9 @@ fun LessonCompletionView(
         return
     }
 
-    LessonEndPages(
+    ResultPages(
         withMoment = completion.status == CompletionStatus.Saved,
+        columnModifier = Modifier.taskColumn(),
         done = {
             Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
@@ -285,14 +302,15 @@ fun LessonCompletionView(
                 }
                 if (completion.status == CompletionStatus.Saved) LessonReadouts(state)
             }
-        },
-        next = {
             val result = completion.result
             if (completion.status == CompletionStatus.Saved && result != null) {
                 val moment = buddy.momentBuddy()
                 DayMoment(result, moment.look, moment.name)
             }
-
+        },
+        // On a spread the lesson's map sits under what was done; one column keeps it behind ⋮.
+        doneWhenSplit = { state.lessonMap?.let { LessonEndMap(it) } },
+        next = {
             if (completion.status == CompletionStatus.Saved && ending.guest) {
                 ending.fit?.let { WhereItFits(it) }
                 Text(
@@ -303,6 +321,13 @@ fun LessonCompletionView(
             }
         },
     )
+}
+
+@Composable
+private fun LessonEndMap(map: StepContent.Map) {
+    HorizontalDivider()
+    SectionHeader(stringResource(R.string.player_lesson_map))
+    LessonMapView(map)
 }
 
 /** How many were right and the Brain Power earned, with when the lesson comes back for review unless [withReview] is off. */

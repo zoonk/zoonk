@@ -5,7 +5,7 @@ import {
 } from "@zoonk/ai/evaluate/models";
 import { type Reasoning } from "@zoonk/ai/provider-options";
 
-type ModelKind = "generation" | "evaluation" | "image" | "speech" | "transcription";
+type ModelKind = "generation" | "evaluation" | "image" | "realtime" | "speech" | "transcription";
 
 export type ModelConfig = {
   id: string;
@@ -53,6 +53,8 @@ const GENERATION_MODELS: { id: string; name: string }[] = [
   { id: "openai/gpt-5.5", name: "gpt-5.5" },
   { id: "openai/gpt-5.4-mini", name: "gpt-5.4-mini" },
   { id: "xiaomi/mimo-v2.6-pro", name: "mimo-v2.6-pro" },
+  { id: "moonshotai/kimi-k3.1-pro", name: "kimi-k3.1-pro" },
+  { id: "spacexai/grok-4.7", name: "grok-4.7" },
 ];
 
 const EVALUATION_MODELS: { gatewayModelId: string; name: string }[] = [
@@ -87,6 +89,10 @@ const TRANSCRIPTION_MODELS: { id: string; name: string }[] = [
   { id: "spacexai/grok-stt", name: "grok-stt" },
 ];
 
+const REALTIME_MODELS: { id: string; name: string }[] = [
+  { id: "openai/gpt-live-1", name: "gpt-live-1" },
+];
+
 export const EVAL_MODELS: ModelConfig[] = [
   ...GENERATION_MODELS.map((model) => ({
     ...model,
@@ -110,6 +116,11 @@ export const EVAL_MODELS: ModelConfig[] = [
     ...model,
     gatewayModelId: model.id,
     kind: "transcription" as const,
+  })),
+  ...REALTIME_MODELS.map((model) => ({
+    ...model,
+    gatewayModelId: model.id,
+    kind: "realtime" as const,
   })),
 ];
 

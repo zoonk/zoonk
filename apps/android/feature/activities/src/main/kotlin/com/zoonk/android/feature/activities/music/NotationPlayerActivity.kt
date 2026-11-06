@@ -52,9 +52,9 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf32Fields
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf31Fields
 import kotlin.math.roundToInt
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf32Value as NotationPlayerContent
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf31Value as NotationPlayerContent
 
 val notationPlayerRenderer =
     ActivityRenderer(
@@ -72,7 +72,7 @@ private fun NotationPlayerActivity(props: ActivityProps) {
     val audio = rememberMusicAudio()
     val playback = rememberNotationPlayback(audio)
     val labels = rememberMusicLabels()
-    var showsTab by rememberSaveable { mutableStateOf(fields.view == PlayableLibraryStepAnyOfContentOneOf32Fields.View.TAB) }
+    var showsTab by rememberSaveable { mutableStateOf(fields.view == PlayableLibraryStepAnyOfContentOneOf31Fields.View.TAB) }
     var tempo by rememberSaveable { mutableIntStateOf(fields.tempo.toInt()) }
     val bars = tune.outline
     val outline =

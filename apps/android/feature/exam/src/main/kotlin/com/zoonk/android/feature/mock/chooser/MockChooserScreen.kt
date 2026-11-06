@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +31,8 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.rememberPressFocus
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.MockOptionsPlacementMock
@@ -65,7 +66,7 @@ fun MockChooserScreen(
         }
 
         else -> {
-            ChooserFrame(navigator) { ChooserLoading() }
+            ChooserFrame(navigator) { PageLoading() }
         }
     }
 }
@@ -106,6 +107,22 @@ internal fun MockChooser(
     val listState = rememberLazyListState()
     val loaded = state.value
     val exit = opened?.let(ChooserExit::ToMock) ?: chooserExit(state, placement, goalId)
+    val writing = status == ChooserStatus.Writing
+    val focus =
+        rememberPressFocus(
+            when {
+                loaded == null -> null
+                writing -> "wait"
+                loaded.access != MockOptions.Access.OPEN -> "plus"
+                else -> "start"
+            },
+            // On a phone the action is in the list's first row, which can be scrolled away.
+            reveal = { listState.scrollToItem(0) },
+        )
+    val retry = {
+        focus.pressInHolder()
+        viewModel.retry()
+    }
 
     LifecycleStartEffect(viewModel) {
         viewModel.onShown(true)
@@ -120,10 +137,10 @@ internal fun MockChooser(
     ChooserFrame(navigator, title = loaded?.let { chooserTitle(placement) }) {
         when {
             loaded == null && state is LoadState.Failed -> LoadFailedMessage(onRetry = { scope.launch { options.refresh() } })
-            loaded == null -> ChooserLoading()
-            status == ChooserStatus.Writing -> MockWriting(run, onRetry = viewModel::retry)
-            placement -> PlacementChooser(loaded, viewModel, navigator, listState)
-            else -> PracticeChooser(loaded, viewModel, navigator, listState)
+            loaded == null -> PageLoading()
+            writing -> MockWriting(run, onRetry = retry, titleFocus = focus.requester)
+            placement -> PlacementChooser(loaded, viewModel, navigator, listState, focus.requester, focus::press)
+            else -> PracticeChooser(loaded, viewModel, navigator, listState, focus.requester, focus::press)
         }
     }
 }
@@ -172,7 +189,7 @@ private fun Leave(
     exit: ChooserExit,
     navigator: AppNavigator,
 ) {
-    ChooserFrame(navigator) { ChooserLoading() }
+    ChooserFrame(navigator) { PageLoading() }
     LaunchedEffect(exit) {
         navigator.back()
         when (exit) {
@@ -195,9 +212,4 @@ private fun ChooserFrame(
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) { content() }
     }
-}
-
-@Composable
-private fun ChooserLoading() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
 }

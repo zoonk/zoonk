@@ -1,16 +1,27 @@
+import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { findSharedPicture } from "@zoonk/ai/tasks/lesson-spec/visuals";
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { repairNegativeMoney } from "@zoonk/utils/negative-money";
 import { repairMarkdown } from "@zoonk/utils/text-repairs";
 import { dropEquivalentOptions } from "../_utils/option-checks";
-import { mapScreenTexts } from "./_utils/screen-texts";
+import { mapActivityProse, mapScreenTexts } from "./_utils/screen-texts";
 
 const MIN_OPTIONS = 2;
 
-function repairScreenMarkdown(screen: WrittenScreen): WrittenScreen {
+function repairScreenText(screen: WrittenScreen): WrittenScreen {
+  if (screen.kind === "activity") {
+    return {
+      ...screen,
+      content: mapActivityProse(screen.content, (text) => repairNegativeMoney({ text })),
+    };
+  }
+
   return mapScreenTexts(screen, ({ layout, text }) =>
-    layout ? repairMarkdown({ layout, text }) : text,
+    layout ? repairNegativeMoney({ text: repairMarkdown({ layout, text }) }) : text,
   );
 }
 
+/** A quote must match its screen's repaired sentence character for character. */
 function repairBasisQuote(screen: WrittenScreen): WrittenScreen {
   if (screen.kind !== "check" && screen.kind !== "mathCheck" && screen.kind !== "typedAnswer") {
     return screen;
@@ -21,7 +32,9 @@ function repairBasisQuote(screen: WrittenScreen): WrittenScreen {
         ...screen,
         basis: {
           ...screen.basis,
-          quote: repairMarkdown({ layout: "inline", text: screen.basis.quote }),
+          quote: repairNegativeMoney({
+            text: repairMarkdown({ layout: "inline", text: screen.basis.quote }),
+          }),
         },
       }
     : screen;
@@ -56,18 +69,53 @@ function repairOptions({
   return screen;
 }
 
+type PictureRequest = { alt: string; prompt: string };
+
+function getPicture(screen: WrittenScreen | undefined): PictureRequest | null {
+  return screen && screen.kind !== "check" && "image" in screen ? screen.image : null;
+}
+
+/**
+ * A screen planned to keep the picture the screens before it show gets that exact picture, so the
+ * app draws it once and the learner sees the same one while the screens explain more of it.
+ */
+function repeatSharedPictures({
+  screens,
+  spec,
+}: {
+  screens: readonly WrittenScreen[];
+  spec: LessonSpec;
+}): WrittenScreen[] {
+  return screens.map((screen, index) => {
+    const first = findSharedPicture(spec.screens, index);
+    const image = first === null ? null : getPicture(screens[first]);
+
+    return image && screen.kind !== "check" && "image" in screen ? { ...screen, image } : screen;
+  });
+}
+
 export function repairWrittenLesson({
   language,
   lesson,
+  spec,
 }: {
   language: string;
   lesson: WrittenLesson;
+  spec: LessonSpec;
 }): WrittenLesson {
+  const screens = lesson.screens.map((screen) =>
+    repairOptions({ language, screen: repairBasisQuote(repairScreenText(screen)) }),
+  );
+
   return {
     ...lesson,
-    screens: lesson.screens.map((screen) =>
-      repairOptions({ language, screen: repairBasisQuote(repairScreenMarkdown(screen)) }),
-    ),
-    summary: lesson.summary.map((idea) => repairMarkdown({ layout: "inline", text: idea })),
+    screens: repeatSharedPictures({ screens, spec }),
+    summary: {
+      ...lesson.summary,
+      ideas: lesson.summary.ideas.map((idea) => ({
+        ...idea,
+        text: repairNegativeMoney({ text: repairMarkdown({ layout: "inline", text: idea.text }) }),
+      })),
+    },
   };
 }

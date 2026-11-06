@@ -32,6 +32,7 @@
 - “session” (study): “nauka” (“dzisiejsza nauka”), not “sesja”, which is the sign-in session or the exam period
 - “subject” (of an exam or a plan): “przedmiot”
 - “topic”: “temat”
+- “idea” (one of a lesson map’s ideas, as in “Idea 2 of 4”): “zagadnienie”, not “myśl”
 - “area” (a weighted part of an exam or a goal): “obszar”
 - “material” (the learner's own files and notes): “materiały”
 - “notice” (an exam's official notice): “ogłoszenie”; an official guide: “informator”
