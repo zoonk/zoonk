@@ -607,5 +607,5 @@ private fun StudySession.alternativeTo(step: StudyBlock): DayStep? =
 private val OPEN = setOf(StudyBlock.Status.ACTIVE, StudyBlock.Status.PENDING)
 
 /** Main's `STUCK_AFTER_MS`: when a wait that hasn't moved says so, with Try again. */
-private val STUCK_AFTER_MILLIS = mapOf(NextStopLesson.NotStarted to 20_000L, NextStopLesson.Writing to 300_000L)
+private val STUCK_AFTER_MILLIS = mapOf(NextStopLesson.NotStarted to 20_000L, NextStopLesson.Writing to 600_000L)
 private val CONTENT_WIDTH = 640.dp
