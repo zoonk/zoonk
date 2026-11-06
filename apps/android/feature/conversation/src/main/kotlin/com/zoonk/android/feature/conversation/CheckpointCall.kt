@@ -262,7 +262,7 @@ private fun CheckpointPreparing(
     val writing by model.writing.generationId.collectAsStateWithLifecycle()
 
     if (writing != null) {
-        CallFrame(title = { CallTitle(title) }, onClose = exits::close) {
+        CallFrame(title = { CallTitle(title) }, onClose = exits::close, lonePage = true) {
             item(key = "wait") {
                 WritingWait(model.writing, hint = null, modifier = Modifier.callItem()) {
                     Text(
@@ -292,6 +292,7 @@ private fun CheckpointPreparing(
                 label = stringResource(R.string.conversation_get_ready),
             )
         },
+        lonePage = true,
     ) {
         item(key = "header") {
             Column(Modifier.callItem(), verticalArrangement = Arrangement.spacedBy(8.dp)) {

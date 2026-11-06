@@ -80,7 +80,12 @@ internal fun DroppedCallScreen(
 ) {
     // Leaving a dropped call ends it, so what was said still gets its feedback.
     BackHandler(onBack = actions.onEnd)
-    CallFrame(title = { CallTitle(title) }, onClose = actions.onEnd, bottomBar = { DroppedActions(dropped.retry, actions) }) {
+    CallFrame(
+        title = { CallTitle(title) },
+        onClose = actions.onEnd,
+        bottomBar = { DroppedActions(dropped.retry, actions) },
+        lonePage = true,
+    ) {
         item(key = "dropped") {
             CallOffMessage(stringResource(R.string.conversation_dropped_title), Modifier.callItem()) {
                 DroppedReasonText(dropped.reason, limit, characterName, actions)
