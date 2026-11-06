@@ -228,8 +228,8 @@ private struct SpeakingPaperView: View {
     return VStack(alignment: .leading, spacing: 8) {
       if !task.criteria.isEmpty {
         Text(
-          "Rated on \(task.criteria.map { speakingCriterionName($0.key, officialName: $0.name) }.formatted(.list(type: .and)))",
-          tableName: "Voice", comment: "The official criteria a speaking task is rated on"
+          speakingRatedOn(
+            task.criteria.map { speakingCriterionName($0.key, officialName: $0.name) })
         )
         .font(.subheadline)
         .foregroundStyle(.secondary)
