@@ -125,7 +125,7 @@ describe(getFreshnessCommandAccess, () => {
     await expect(getFreshnessCommandAccess(target)).resolves.toStrictEqual({ status: "notFound" });
   });
 
-  it("names the target by its stored id, however the request capitalizes it", async () => {
+  it("names the target by its stored id, however each of several requests at once capitalizes it", async () => {
     const [admin, exam, source] = await Promise.all([
       userFixture({ role: "admin" }),
       examBlueprintFixture(),
@@ -133,15 +133,21 @@ describe(getFreshnessCommandAccess, () => {
     ]);
 
     mockSessionWithRole({ role: "admin", userId: admin.id });
+    const examTarget = { examBlueprintId: exam.id, kind: "exam" as const };
+    const sourceTarget = { kind: "source" as const, sourceId: source.id };
 
     await expect(
       Promise.all([
-        getFreshnessCommandAccess({ examBlueprintId: exam.id.toUpperCase(), kind: "exam" }),
-        getFreshnessCommandAccess({ kind: "source", sourceId: source.id.toUpperCase() }),
+        getFreshnessCommandAccess(examTarget),
+        getFreshnessCommandAccess({ ...examTarget, examBlueprintId: exam.id.toUpperCase() }),
+        getFreshnessCommandAccess(sourceTarget),
+        getFreshnessCommandAccess({ ...sourceTarget, sourceId: source.id.toUpperCase() }),
       ]),
     ).resolves.toStrictEqual([
-      { status: "ready", target: { examBlueprintId: exam.id, kind: "exam" } },
-      { status: "ready", target: { kind: "source", sourceId: source.id } },
+      { status: "ready", target: examTarget },
+      { status: "ready", target: examTarget },
+      { status: "ready", target: sourceTarget },
+      { status: "ready", target: sourceTarget },
     ]);
   });
 });

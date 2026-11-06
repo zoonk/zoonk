@@ -12,7 +12,9 @@ export type FreshnessCommandAccess =
 
 async function findTarget(target: FreshnessTarget): Promise<FreshnessTarget | null> {
   if (target.kind === "exam") {
-    const exam = await prisma.examBlueprint.findUnique({
+    // Prisma batches `findUnique` calls made together and matches rows back by exact id, so a
+    // capitalized id finds nothing while the lowercase one is looked up at the same time.
+    const exam = await prisma.examBlueprint.findFirst({
       select: { id: true },
       where: { id: target.examBlueprintId },
     });
