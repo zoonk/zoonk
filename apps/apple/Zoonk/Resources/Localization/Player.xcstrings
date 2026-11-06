@@ -4845,65 +4845,6 @@
         }
       }
     },
-    "Getting it wrong now helps you remember later." : {
-      "comment" : "Under a hook's options: a guess never counts",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Auch wenn du jetzt falsch liegst, hilft dir das, dich später zu erinnern."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Equivocarte ahora te ayuda a recordar después."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Te tromper maintenant t’aide à retenir la réponse plus tard."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sbagliare ora ti aiuta a ricordare più avanti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ここで間違えると、あとで覚えやすくなります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지금 틀려 보면 나중에 더 잘 기억할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jeśli teraz się pomylisz, łatwiej zapamiętasz odpowiedź na później."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Errar agora ajuda você a lembrar depois."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Şimdi yanlış yapman daha sonra hatırlamanı kolaylaştırır."
-          }
-        }
-      }
-    },
     "Good guess!" : {
       "comment" : "A hook's guess was right",
       "localizations" : {
@@ -5549,65 +5490,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Henüz bilmiyorum"
-          }
-        }
-      }
-    },
-    "Idea %lld" : {
-      "comment" : "VoiceOver: one of the lesson map's ideas (its main points), by its number. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"%lld ideas to discover in this lesson\".",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kerngedanke %lld"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Idea %lld"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Idée %lld"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Concetto %lld"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ポイント%lld"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "개념 %lld"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zagadnienie %lld"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ideia %lld"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fikir %lld"
           }
         }
       }

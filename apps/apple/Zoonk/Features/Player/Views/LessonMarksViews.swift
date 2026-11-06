@@ -4,6 +4,9 @@ import SwiftUI
 /// together, so this draws both.
 struct LessonScreenText: View {
   let title: String?
+  /// An explanation's title is main's small heading over its text; a worked example's is its
+  /// problem, asked as a question.
+  var titleIsHeading = false
   let text: String
   let marks: StepMarks?
 
@@ -11,9 +14,9 @@ struct LessonScreenText: View {
     let parts = marks.map { LessonTextParts(text, marks: $0) }
     let cornerIcon = parts?.example == nil ? marks?.icon : nil
 
-    VStack(alignment: .leading, spacing: 20) {
+    VStack(alignment: .leading, spacing: titleIsHeading ? 8 : 20) {
       if let title {
-        LessonQuestionText(text: title)
+        titleText(title)
           .besideCornerIcon(cornerIcon)
 
         screenText(parts)
@@ -21,6 +24,19 @@ struct LessonScreenText: View {
         screenText(parts)
           .besideCornerIcon(cornerIcon)
       }
+    }
+  }
+
+  @ViewBuilder
+  private func titleText(_ title: String) -> some View {
+    if titleIsHeading {
+      LessonRichText(title)
+        .typeStyle(.screenTitle)
+        .foregroundStyle(Color(.foreground))
+        .fixedSize(horizontal: false, vertical: true)
+        .accessibilityAddTraits(.isHeader)
+    } else {
+      LessonQuestionText(text: title)
     }
   }
 
