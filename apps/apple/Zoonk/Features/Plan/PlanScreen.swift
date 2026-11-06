@@ -165,7 +165,7 @@ private struct PlanContent: View {
     let structure = syllabus.flatMap { $0.hasSubjectPages ? $0 : nil }
     let context = PlanContext(
       goal: goal, plan: plan, adjust: { adjusting = $0 }, report: { isReporting = true },
-      show: { sheet = $0 }, claimCertificate: claimCertificate)
+      show: { sheet = $0 }, claimCertificate: claimCertificate, showClaim: show)
 
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
@@ -232,21 +232,29 @@ private struct PlanContent: View {
 
   /// The learner asked for them, so when every moment already played, the certificate opens
   /// instead.
-  private func claimCertificate() async -> Bool {
+  private func claimCertificate() async -> PlanClaim? {
     switch await certificates.claim(goalID: goal.id) {
     case .done(let claimed) where !claimed.isEmpty:
       let unshown = claimed.filter { !$0.wasShown }.map(\.facts)
 
       if !unshown.isEmpty {
-        self.claimed = unshown
+        return .moments(unshown)
       } else if let only = claimed.first, claimed.count == 1 {
-        sheet = .certificate(code: only.facts.code)
+        return .certificate(code: only.facts.code)
       } else {
-        router.present(.account(.certificates))
+        return .certificates
       }
-      return true
-    case .done, .failed: return false
-    case .obsolete: return true
+    case .done, .failed: return nil
+    case .obsolete: return .unchanged
+    }
+  }
+
+  private func show(_ claim: PlanClaim) {
+    switch claim {
+    case .moments(let facts): claimed = facts
+    case .certificate(let code): sheet = .certificate(code: code)
+    case .certificates: router.present(.account(.certificates))
+    case .unchanged: break
     }
   }
 
@@ -266,14 +274,24 @@ private struct PlanContent: View {
   }
 }
 
+/// What claiming the plan's certificates earned, for the Plan to show.
+enum PlanClaim {
+  /// Moments that haven't played yet.
+  case moments([CertificateFacts])
+  case certificate(code: String)
+  case certificates
+  case unchanged
+}
+
 struct PlanContext {
   let goal: LearnerGoal
   let plan: GoalPlan
   var adjust: (AdjustPlanSheet.Section) -> Void
   var report: () -> Void = {}
   var show: (PlanSheet) -> Void
-  /// False when it didn't save; the Plan plays the certificate's moment.
-  var claimCertificate: () async -> Bool = { false }
+  /// Nil when it didn't save; `showClaim` shows what it earned.
+  var claimCertificate: () async -> PlanClaim? = { nil }
+  var showClaim: (PlanClaim) -> Void = { _ in }
 
   var isPaused: Bool { goal.status == .paused }
 }

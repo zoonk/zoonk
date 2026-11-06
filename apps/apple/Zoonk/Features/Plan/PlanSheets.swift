@@ -35,6 +35,7 @@ private struct PlanSheets: ViewModifier {
 
   private enum Then {
     case adjust(AdjustPlanSheet.Section)
+    case showClaim(PlanClaim)
     case open(AppRoute)
   }
 
@@ -70,8 +71,7 @@ private struct PlanSheets: ViewModifier {
             CertificateSheet(code: code)
           case .suggestion(let item):
             SuggestionSheet {
-              PlanSuggestionSection(
-                context: handingOffAdjust, answer: $slotAnswer, sheetItem: item)
+              PlanSuggestionSection(context: handingOff, answer: $slotAnswer, sheetItem: item)
             }
           }
         }
@@ -86,11 +86,16 @@ private struct PlanSheets: ViewModifier {
       }
   }
 
-  /// The plan's editor is a sheet too, so the suggestion closes before it opens.
-  private var handingOffAdjust: PlanContext {
+  /// The plan's editor and a certificate's moment are presented by the screen too, so the
+  /// suggestion closes before either opens.
+  private var handingOff: PlanContext {
     var context = context
     context.adjust = { section in
       then = .adjust(section)
+      sheet = nil
+    }
+    context.showClaim = { claim in
+      then = .showClaim(claim)
       sheet = nil
     }
     return context
@@ -99,6 +104,7 @@ private struct PlanSheets: ViewModifier {
   private func doThen() {
     switch then {
     case .adjust(let section): context.adjust(section)
+    case .showClaim(let claim): context.showClaim(claim)
     case .open(let route): router.open(route)
     case nil: break
     }

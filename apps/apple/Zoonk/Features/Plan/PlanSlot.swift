@@ -849,8 +849,13 @@ private struct CertificateClaimButton: View {
     Button {
       Task {
         isClaiming = true
-        failed = !(await context.claimCertificate())
+        let claim = await context.claimCertificate()
+        failed = claim == nil
         isClaiming = false
+
+        if let claim {
+          context.showClaim(claim)
+        }
 
         if failed {
           AccessibilityNotification.Announcement(failure).post()
