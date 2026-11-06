@@ -735,6 +735,46 @@ Obs.: a prova tem 5 questões abertas e 5 de marcar. Não cai divisão celular (
   },
   {
     expectations: `
+      - MUST be in US English
+      - Exactly one chapter, titled "What's new in Next.js 16", teaching only what the new release adds: Cache Components, the proxy file that replaces middleware, and the new caching calls
+      - Every required skill key is tagged on that chapter: cache-components, proxy, cache-apis
+      - No lesson teaches again what OTHER_LEVEL_CHAPTERS already teaches (project setup, routing, data fetching), and lessons say which release brings each feature
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-whats-new-chapter",
+    userInput: {
+      courseTitle: "Next.js",
+      language: "en",
+      level: "intermediate",
+      otherLevelChapters: [
+        "Create and run a Next.js project",
+        "Pages, layouts and navigation",
+        "Fetch and cache data",
+      ],
+      requiredSkills: [
+        {
+          description: "Turn on Cache Components and mark cached functions with use cache.",
+          key: "cache-components",
+          name: "Cache pages with Cache Components",
+        },
+        {
+          description: "Move request-time logic from middleware.ts to proxy.ts.",
+          key: "proxy",
+          name: "Run code before requests with proxy.ts",
+        },
+        {
+          description:
+            "Choose between revalidateTag with a cacheLife profile, updateTag and refresh.",
+          key: "cache-apis",
+          name: "Refresh cached data after a change",
+        },
+      ],
+      whatsNew: "What's new in Next.js 16",
+    },
+  },
+  {
+    expectations: `
       - MUST be in natural Korean in 해요체, never 합니다체 or 반말
       - Beginner band of statistics: types of data, tables and charts, center and spread, probability, the normal distribution, sampling and bias, correlation, and a first look at estimation and hypothesis tests, with Korean examples (amounts in 원, 통계청 data, 수능 scores)
       - Objectives, can-do lines and skills end in ~ㄹ 수 있어요 (계산할 수 있어요, 읽을 수 있어요), never as an order (~하세요, ~해 보세요) or a bare noun

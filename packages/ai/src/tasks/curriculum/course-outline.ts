@@ -61,6 +61,8 @@ export type CourseOutlineParams = {
   /** A private course's class material, which the outline teaches exactly instead of the band. */
   material?: string;
   product?: PromptProduct | null;
+  /** The title of the one chapter a product's new release adds, teaching `requiredSkills`. */
+  whatsNew?: string;
   model?: string;
   serviceTier?: ServiceTier;
   useFallback?: boolean;
@@ -122,6 +124,7 @@ function toPromptVariants(params: CourseOutlineParams) {
     extend: Boolean(params.extendSkills?.length),
     material: Boolean(params.material),
     product: Boolean(params.product),
+    whatsNew: Boolean(params.whatsNew),
     withoutTools,
   };
 }
@@ -139,6 +142,7 @@ function formatBandInputs(params: CourseOutlineParams): string {
     `COURSE_TITLE: ${params.courseTitle}`,
     params.product && formatProduct(params.product),
     `LEVEL: ${params.level}`,
+    variants.whatsNew && `WHATS_NEW: ${params.whatsNew}`,
     `REQUIRED_SKILLS: ${formatRequiredSkills(params.requiredSkills ?? [])}`,
     (variants.extend || variants.examSkills) &&
       `EXTEND_SKILLS: ${formatExtendSkills(params.extendSkills ?? [])}`,

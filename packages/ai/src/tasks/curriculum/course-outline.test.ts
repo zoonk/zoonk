@@ -139,13 +139,21 @@ describe(generateCourseOutline, () => {
     ["a skill's next chapter", { ...BAND, extendSkills: [EXTEND_SKILL] }],
     ["an exam's band whose skills sit in its subjects", SUBJECT_BAND],
     ["a product course's band", { ...BAND, product: PRODUCT }],
+    ["a new release's chapter", { ...BAND, whatsNew: "What's new in version 8" }],
   ])("sends %s every input its instructions mention and no other variant's", async (_, params) => {
     const { instructions, prompt } = await sendOutline(params);
     const mentioned = findMentionedInputs(instructions);
 
     expect(mentioned.filter((name) => !isSent({ name, prompt }))).toStrictEqual([]);
 
-    for (const name of ["WITHOUT_TOOLS", "EXAMS", "EXTEND_SKILLS", "MATERIAL", "PRODUCT"]) {
+    for (const name of [
+      "WITHOUT_TOOLS",
+      "EXAMS",
+      "EXTEND_SKILLS",
+      "MATERIAL",
+      "PRODUCT",
+      "WHATS_NEW",
+    ]) {
       expect(isSent({ name, prompt })).toBe(mentioned.includes(name));
     }
 
