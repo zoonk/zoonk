@@ -34,6 +34,8 @@ extension View {
             BusySpinner()
           }
         }
+        // Accessibility leaves out what has no opacity, which would leave a busy button nameless.
+        .accessibilityRepresentation { self }
     }
   }
 
