@@ -222,15 +222,24 @@ describe(loadLessonSpecInputs, () => {
         title: "Parear o controle",
       }),
       sourceFixture({
-        extractedText: "To pair the remote, hold the base station button until the light blinks.",
+        extractedText: "To pair the remote, hold the dock button until the light blinks.",
         productId: product.id,
         structure: { images: 0, pages: null, topic: "product" },
       }),
     ]);
 
+    const unrelated = await sourceFixture({
+      extractedText: "Regras de trânsito para bicicletas elétricas. ".repeat(130),
+      fetchedAt: new Date(Date.now() + 60_000),
+      structure: { images: 0, pages: null, topic: "regulation" },
+    });
+
+    await libraryStepFixture({ lessonId: lesson.id, sourceId: unrelated.id });
+
     const inputs = await loadLessonSpecInputs(lesson.id);
 
-    expect(inputs?.prompt.sources).toContain("hold the base station button");
+    expect(inputs?.prompt.sources).toContain("hold the dock button");
+    expect(inputs?.prompt.sources).not.toContain("bicicletas");
   });
 
   it("plans a lesson outside any chapter without other lessons", async () => {

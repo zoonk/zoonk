@@ -69,13 +69,30 @@ async function loadLessonSourcePages({
     .filter((source) => statesFacts(source))
     .flatMap((source) => (source.extractedText ? [{ ...source, text: source.extractedText }] : []));
 
-  return selectSourcePages({
+  const productSourceIds = new Set(
+    documents.flatMap((source) => (source.productId ? [source.id] : [])),
+  );
+
+  const pages = toMaterialPages(documents);
+
+  // A product's own pages are about its lessons whatever words they share, often in another language.
+  const productPages = selectSourcePages({
     maxCharacters: LESSON_SOURCE_CHARACTERS,
-    // A product's own pages are about the lesson whatever words they share, often in another language.
-    minShared: documents.some((source) => source.productId) ? 0 : MIN_SHARED_TERMS,
-    pages: toMaterialPages(documents),
+    minShared: 0,
+    pages: pages.filter((page) => productSourceIds.has(page.sourceId)),
     query,
   });
+
+  const used = productPages.reduce((total, page) => total + page.text.length, 0);
+
+  const otherPages = selectSourcePages({
+    maxCharacters: LESSON_SOURCE_CHARACTERS - used,
+    minShared: MIN_SHARED_TERMS,
+    pages: pages.filter((page) => !productSourceIds.has(page.sourceId)),
+    query,
+  });
+
+  return [...productPages, ...otherPages];
 }
 
 /** Internal workflow bridge: the lesson must come from the workflow planning or writing it. */
