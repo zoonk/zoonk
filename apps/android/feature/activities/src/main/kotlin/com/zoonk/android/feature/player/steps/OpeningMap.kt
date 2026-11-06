@@ -58,7 +58,7 @@ internal val LessonMap.opensLesson: Boolean
 /**
  * The opening scene's map (concept 3): the lesson's ideas, numbered, with their icons, around a
  * plain dot, where the strip's drawing later marks the learner's place. An idea with an `about` line
- * opens it in a popover, which says what the idea covers without giving its answer.
+ * opens a popover with its name and that line, which says what the idea covers without giving its answer.
  */
 @Composable
 internal fun OpeningMap(
@@ -130,7 +130,6 @@ private fun OpeningIdea(
     idea: LessonMapIdeasInner,
 ) {
     val number = count(index + 1)
-    // Before the lesson, an idea is its number: its name is often the term the lesson teaches.
     val name = stringResource(R.string.player_opening_map_idea, number)
     val about = idea.about
     val tooltip = rememberTooltipState(isPersistent = true)
@@ -187,7 +186,7 @@ private fun OpeningIdea(
 
     TooltipBox(
         positionProvider = remember(below) { BelowIdea(below) },
-        tooltip = { RichTooltip { Text(about) } },
+        tooltip = { RichTooltip(title = idea.label?.let { { Text(it) } }) { Text(about) } },
         state = tooltip,
     ) {
         place(

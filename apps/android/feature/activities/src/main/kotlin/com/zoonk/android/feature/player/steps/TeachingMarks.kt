@@ -73,7 +73,7 @@ internal fun LessonIconImage(
 
 /**
  * Where a teaching screen or question sits in the lesson (concept 3's strip): its idea's place
- * among the map's ideas, drawn small, "Idea 2 of 4" and the idea's icon. Nothing when the screen
+ * among the map's ideas, drawn small, "Idea 2 of 4", its name and its icon. Nothing when the screen
  * names no idea of [map].
  */
 @Composable
@@ -83,6 +83,7 @@ internal fun IdeaStrip(
 ) {
     val index = marks?.ideaIndex?.toInt()?.takeIf { map != null && it in map.ideas.indices } ?: return
     val ideas = map?.ideas ?: return
+    val idea = ideas[index]
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(
@@ -91,15 +92,16 @@ internal fun IdeaStrip(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IdeasDrawing(ideas.size, index)
-            // Never the idea's name: it could name terms before the screen teaches them, and the screen's title is its heading.
-            Text(
-                stringResource(R.string.player_idea_position, count(index + 1), count(ideas.size)),
-                Modifier.weight(1f),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-            )
-            // The icon's room is kept while it's drawn, so its arrival moves nothing.
-            Box(Modifier.size(STRIP_ICON)) { ideas[index].icon?.let { LessonIconImage(it, STRIP_ICON) } }
+            Column(Modifier.weight(1f)) {
+                Text(
+                    stringResource(R.string.player_idea_position, count(index + 1), count(ideas.size)),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                )
+                idea.label?.let { Text(it, style = MaterialTheme.typography.titleMedium) }
+            }
+            // The icon's room is kept while it's drawn, so its arrival never moves the name.
+            Box(Modifier.size(STRIP_ICON)) { idea.icon?.let { LessonIconImage(it, STRIP_ICON) } }
         }
         HorizontalDivider()
     }
