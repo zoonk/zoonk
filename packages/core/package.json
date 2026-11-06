@@ -379,6 +379,7 @@
     "./library/products/find": "./src/library/products/find-product.ts",
     "./library/products/keys": "./src/library/products/product-keys.ts",
     "./library/products/link-goal": "./src/library/products/link-goal-product.ts",
+    "./library/products/product-reading": "./src/library/products/product-reading.ts",
     "./library/products/save-research": "./src/library/products/save-product-research.ts",
     "./library/quality/code-checks": "./src/library/quality/lesson-code-checks.ts",
     "./library/quality/later-reviews": "./src/library/quality/later-reviews.ts",

@@ -1,0 +1,60 @@
+import { generateText } from "ai";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createGenerateTextResult } from "../_test-utils/generate-text-result";
+import { readProductPages } from "./read-product-pages";
+import type * as Ai from "ai";
+
+vi.mock("server-only", () => ({}));
+
+vi.mock("./read-product-pages.prompt.md", () => ({
+  default:
+    "Read.\n{{#new}}\nBrand and product.\n{{/new}}\n{{#known}}\nReleases only.\n{{/known}}\n{{#release}}\nThe learner's release.\n{{/release}}\n",
+}));
+
+vi.mock("ai", async (importOriginal) => {
+  const actual = await importOriginal<typeof Ai>();
+  return { ...actual, generateText: vi.fn() };
+});
+
+const HINTS = { brand: "Lumen Works", name: "Orbit Notes", release: null };
+
+const PAGE = {
+  text: "Orbit Notes 5 shipped on October 21st, 2025.",
+  title: "Releases",
+  url: "https://lumen.example/releases",
+};
+
+describe(readProductPages, () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(generateText).mockResolvedValue(createGenerateTextResult({ releases: [] }));
+  });
+
+  it("reads only releases for a known product, with no brand or product claims", async () => {
+    const { data, systemPrompt } = await readProductPages({
+      hints: HINTS,
+      known: true,
+      pages: [PAGE],
+    });
+
+    expect(systemPrompt).toBe("Read.\nReleases only.\n");
+    expect(data).toStrictEqual({ brand: null, learnerRelease: null, product: null, releases: [] });
+  });
+
+  it("asks for the learner's release only when they named one", async () => {
+    const named = await readProductPages({
+      hints: { ...HINTS, release: "Orbit Notes 5" },
+      pages: [PAGE],
+    });
+
+    expect(named.systemPrompt).toBe("Read.\nBrand and product.\nThe learner's release.\n");
+  });
+
+  it("sends each page as a numbered document", async () => {
+    await readProductPages({ hints: HINTS, pages: [PAGE] });
+
+    const prompt = JSON.stringify(vi.mocked(generateText).mock.lastCall?.[0].prompt);
+
+    expect(prompt).toContain("DOCUMENT 1: Releases (https://lumen.example/releases)");
+  });
+});

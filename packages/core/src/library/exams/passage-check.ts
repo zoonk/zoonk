@@ -88,17 +88,34 @@ export function findNamesInDocument({
   );
 }
 
+function isLongEnough(normalizedPassage: string): boolean {
+  return normalizedPassage.length >= MIN_PASSAGE_LENGTH;
+}
+
+/**
+ * Word for word after normalizing, for claims a near match could fake (a date, a release's name):
+ * the word-share fallback of `isPassageInDocument` would pass a passage with one word swapped.
+ */
+export function isPassageExactlyInDocument({
+  passage,
+  text,
+}: {
+  passage: string;
+  text: string;
+}): boolean {
+  const normalizedPassage = normalizeText(passage);
+
+  return (
+    isLongEnough(normalizedPassage) && checkedDocument(text).normalized.includes(normalizedPassage)
+  );
+}
+
 export function isPassageInDocument({ passage, text }: { passage: string; text: string }): boolean {
   const normalizedPassage = normalizeText(passage);
 
-  if (normalizedPassage.length < MIN_PASSAGE_LENGTH) {
-    return false;
-  }
-
-  const document = checkedDocument(text);
-
   return (
-    document.normalized.includes(normalizedPassage) ||
-    sharesWordsAndNumbers({ document, passage: normalizedPassage })
+    isPassageExactlyInDocument({ passage, text }) ||
+    (isLongEnough(normalizedPassage) &&
+      sharesWordsAndNumbers({ document: checkedDocument(text), passage: normalizedPassage }))
   );
 }
