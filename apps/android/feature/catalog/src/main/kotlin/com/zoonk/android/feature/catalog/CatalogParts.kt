@@ -57,6 +57,7 @@ import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.flagEmoji
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatMinutes
@@ -216,12 +217,6 @@ internal fun languageFlagLabel(
     flag: String,
     locale: Locale,
 ): String = languageName("${language.substringBefore('-')}-${flag.uppercase()}", locale).replaceFirstChar { it.titlecase(locale) }
-
-/** A country's two letters as its flag; regions (`es-ct`, `arab`) have no standard emoji. */
-internal fun flagEmoji(code: String): String? {
-    if (code.length != 2 || !code.all { it.isLetter() }) return null
-    return code.uppercase().map { Character.toChars(REGIONAL_INDICATOR_A + (it - 'A')).concatToString() }.joinToString("")
-}
 
 @Composable
 internal fun LineWithIcon(
@@ -578,4 +573,3 @@ private const val MARK_SIZE = 40
 private const val ICON_SIZE = 16
 private const val MINUTES_PER_HOUR = 60L
 private const val SECONDS_PER_MINUTE = 60L
-private const val REGIONAL_INDICATOR_A = 0x1F1E6

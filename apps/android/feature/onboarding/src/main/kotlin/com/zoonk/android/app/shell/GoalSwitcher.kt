@@ -121,7 +121,7 @@ fun GoalSwitcher(
 @Composable
 private fun SwitcherTitle(selected: LearnerSummaryGoal?) {
     if (selected != null) {
-        GoalMark(selected.title)
+        GoalMark(selected.title, selected.languageFlag)
     } else {
         Icon(painterResource(R.drawable.ic_add), contentDescription = null, modifier = Modifier.size(18.dp))
     }
@@ -162,7 +162,7 @@ private fun MenuItems(
                         GoalLine(goal)
                     }
                 },
-                leadingIcon = { GoalMark(goal.title) },
+                leadingIcon = { GoalMark(goal.title, goal.languageFlag) },
                 trailingIcon = if (isSelected) ({ Icon(painterResource(R.drawable.ic_check), contentDescription = null) }) else null,
                 onClick = {
                     onDismiss()
