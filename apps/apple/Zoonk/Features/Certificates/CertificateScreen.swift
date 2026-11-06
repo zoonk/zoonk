@@ -597,7 +597,13 @@ private struct CertificateCovered: View {
     if !lines.isEmpty {
       Section {
         ForEach(lines, id: \.self) { line in
-          Text(line)
+          MarkedRow {
+            StatusMark(status: .done)
+          } content: {
+            Text(line)
+          } end: {
+            EmptyView()
+          }
         }
       } header: {
         SectionTitle(
@@ -607,7 +613,12 @@ private struct CertificateCovered: View {
               comment: "Heading over the chapters a course certificate covers")
             : Text(
               "Can do", tableName: "Certificates",
-              comment: "Heading over what a language certificate's learner can do"))
+              comment: "Heading over what a language certificate's learner can do")
+        ) {
+          if facts.kind == .course {
+            Text(lines.count, format: .number)
+          }
+        }
       }
     }
   }
