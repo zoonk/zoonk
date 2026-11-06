@@ -390,6 +390,7 @@ internal fun PhaseChapters(
                 onClick = { showAll = !showAll },
                 indent = indent,
                 leading = { Icon(painterResource(if (showAll) R.drawable.ic_remove else R.drawable.ic_add), contentDescription = null) },
+                chevron = false,
             )
         }
         checkpoint?.let { CheckpointRow(page, it, links, indent, brief) }

@@ -11,11 +11,11 @@ import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.intellij.psi.PsiMethod
 import org.jetbrains.uast.UCallExpression
 
-/** Material's buttons and text fields, which the design system wraps in Zoonk's look. */
+/** Material's buttons, text fields and list items, which the design system draws in Zoonk's look. */
 class MaterialComponentDetector :
     Detector(),
     SourceCodeScanner {
-    override fun getApplicableMethodNames(): List<String> = BUTTONS + SECONDARY_BUTTONS + FIELDS
+    override fun getApplicableMethodNames(): List<String> = BUTTONS + SECONDARY_BUTTONS + FIELDS + LIST_ITEMS
 
     override fun visitMethodCall(
         context: JavaContext,
@@ -27,6 +27,10 @@ class MaterialComponentDetector :
                 .orEmpty()
                 .startsWith("androidx.compose.material3.")
         ) {
+            return
+        }
+        if (method.name in LIST_ITEMS) {
+            context.report(LIST_ITEM, node, context.getNameLocation(node), "Use `com.zoonk.android.ui.components.ListRow`")
             return
         }
         val field = method.name in FIELDS
@@ -52,6 +56,7 @@ class MaterialComponentDetector :
         private val BUTTONS = listOf("Button", "TextButton", "OutlinedButton", "OutlinedIconButton")
         private val SECONDARY_BUTTONS = listOf("FilledTonalButton", "ElevatedButton")
         private val FIELDS = listOf("OutlinedTextField", "TextField")
+        private val LIST_ITEMS = listOf("ListItem")
 
         val BUTTON: Issue =
             Issue.create(
@@ -76,6 +81,20 @@ class MaterialComponentDetector :
                     "Zoonk's `OutlinedTextField` in `ui/components/TextFields.kt` is main's field: the label above " +
                         "it, an `input` line with `lg` corners, 40dp on one line and an ink focus ring, on Material's " +
                         "own text field pieces. Material's fields float their label inside a taller box.",
+                category = Category.CORRECTNESS,
+                priority = 6,
+                severity = Severity.ERROR,
+                implementation = Implementation(MaterialComponentDetector::class.java, Scope.JAVA_FILE_SCOPE),
+            )
+
+        val LIST_ITEM: Issue =
+            Issue.create(
+                id = "MaterialListItem",
+                briefDescription = "Material's list item instead of Zoonk's row",
+                explanation =
+                    "Zoonk's `ListRow` in `ui/components/ListRow.kt` is main's row: as dense as main's and iOS's, " +
+                        "its mark, title, description and mono data, the learner's place on `muted`, and the chevron " +
+                        "of a row that opens a page. Material's `ListItem` is 56dp and up, with its own type and colors.",
                 category = Category.CORRECTNESS,
                 priority = 6,
                 severity = Severity.ERROR,

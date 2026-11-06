@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "certificates_about_duration": "7e995818f6930485dd6a39049deb863db3635eeaa967f3cb523caa6b86309274",
   "certificates_add_to_linkedin": "01ab5ac5f5ed85a9c3a57ee99ea162a344481254c0515fa66af8a6dfe068d4bf",
   "certificates_alt_course": "50f4adf6bc4e4d64980c8ff998dcb1ee21aa0e59dff70f9a6167af0d797093a4",
   "certificates_alt_dated": "6109e6f2853cd08f359efd9f9bf05e5a48ac818272fc3ff2d1faf80ea35c4b9d",
@@ -19,23 +20,33 @@
   "certificates_copied": "d640653e665de1d799a3509e78dbfbf09e9fd5a24b8f0bc6211419faaaff8c78",
   "certificates_copy": "09b02d8b01f3ab3a46aafbbb43507b6a3af3464ef680b1c375b727c293e695ea",
   "certificates_copy_field": "37762551e606e339e10ca962a10658c7833559d57fb9646ddeb3e8203f35e134",
-  "certificates_copy_link": "b06cb88db85d95efe782e725c48602d9de6d8dfd3106f42c20bb86470eff06ef",
   "certificates_count": "6258aeae9c0068d163622bcb83bf543bddc1ea76b64dbc117ee38fca5f1853d9",
   "certificates_course_complete": "7423e499c90f5b377eff2740e680d3163e9a15d9472712021c7a1a3cc0900a89",
   "certificates_course_level": "cd2964a3f3f5b3e4c9a7302f68b20cd566a8cd8413aab61ece714831b33bd7a2",
+  "certificates_course_on_zoonk": "271188463ac522f341cbd221131950de0be845bed772f9f92905f91bd3ead7ff",
   "certificates_course_ready": "80f892379964b9006679d9e859ee98d740e64ef4fa6dbfda62687733471cc714",
+  "certificates_detail_completed": "c235b83dd2398a72b0d561b7f329de693a7471fd1531374b1de25e39ba84362b",
+  "certificates_detail_id": "a9598f49c2186214f2c53fc0a643c033e47cb1312953035bcd913d56f38e4776",
+  "certificates_detail_lessons_studied": "da576e2a7ac5eb6dcf88f1413cae9b4cb858e9e20dfd1e0ab24d67bf73a297ac",
+  "certificates_detail_level": "13ed6d6eda846d292bfcfb029dd4256ea16807fb33f6223ae28ec1c05a32b6ec",
+  "certificates_detail_link": "c507ab5e362bf5787202539cd47b6c0d6d1268ce9319a8912d83c5147568a8cf",
+  "certificates_detail_passed_by_test": "c482abbb074d247851726f4305e963844af6c51c853ad18d217dff7b9c7d81b1",
+  "certificates_detail_study_time": "186521fa49a5b1c6aaa170a4e8cdca5b5d6605b64af1f8497332a0b6ba174514",
+  "certificates_details": "208c5e88c21d30e3499f0ed686337b21855b00b5fcb226c336929b471b247b4e",
   "certificates_download": "a7ef56337b4757bbefd8d71a0ba278236afd3035ca445e7942d371643ab4fdab",
   "certificates_downloaded": "862c8e9ae03463d24baa71aabbcab1fc448e39fca1f7da5b6657bbd45a2e418d",
   "certificates_earned": "1a5c8500bd794b75aa094f43c5db66da29cd8a8156af92b3666e1c055faec035",
   "certificates_empty_description": "f2f0529dcb33e25a11c1ef94a0745a2f67757fd06d577a4af041d0cc942ab3cb",
   "certificates_empty_title": "a1647625f3b3cfd4e2af45bde1d985d8f2048ac49168f96ab580b8f6f160cfc5",
   "certificates_get": "549d5f8fbbba6eb8771c1395f237372d6791d9ebabb3c283bc1ce05406f07b72",
+  "certificates_issued_on": "bd25682561692e9dab9f2345d4b68af85c610f1f32d5ec7e01e0e14145352f87",
   "certificates_kind_completion": "f417e86beb3e24e610d49ca7ab105f21929aad6fa8d2f7343c6293ae52a529c1",
   "certificates_language_level": "9a929089174b475ba8499786dc5907e76d95c0a0a217b247b927293f7cceb9f1",
   "certificates_language_ready": "d8ee76c9cefe0e4b5c949d102698aff299a16dbd34b0cf91057670c5b7851eb9",
   "certificates_lead": "9bf4e1b8863f15cb4208b49563b4e607bc87136ed022f6c2db6f5144ed8af49d",
   "certificates_lessons": "cbb5836737560926feadde2fe45c4afbc1b6d1f6fbf752d37b789e6f58fd4614",
   "certificates_level_complete": "eff50704b3c23634ac951b3803c3488999df00f18779993f7d9d4c98f626b33f",
+  "certificates_level_on_zoonk": "9942b3dbadd42dcbcca5d7ed39320047e6d5993073c83fc9f7429db4eb11e765",
   "certificates_link_copied": "9855b0eef3cb17904436b02b463f568dab7101093c52932576d6a66842f9227f",
   "certificates_link_note": "0ee0180d27e1d6eb4e2130a8f0b3cf48b42c42f4982fa6b8aa9cc77d1e0b6015",
   "certificates_linkedin_credential_id": "ccb6a6c383eaa93c7ca6ad5482c6adaf727b84115d2728b685e548e833226cf0",
@@ -51,7 +62,6 @@
   "certificates_name_hint_new": "a932c7d52c83a3a310d6e79c697f17bddd0d04a63197645377a1fae05390af21",
   "certificates_name_label": "f7708abd8b65b140db0313d88e397eba271970366712ddb04e6d1c6999d18f0f",
   "certificates_name_label_new": "5aed9cbf577505eb38d8534ef89c7bf52b7fb159b1d3ebea2be8c5e69313806b",
-  "certificates_name_on_certificate": "f7e59597fa219f034f9fd488d62d1722568b890d3e56db46f99c8beda392e27a",
   "certificates_name_placeholder": "8b1db3f4da370df7ed234a5a04162a414d72619229b2e408ced7ea32c83cd7f1",
   "certificates_name_save_failed": "9250e952475765a70a917dfd5deb3c6b7fbee31c14dfcbc68720ec17a4b8f683",
   "certificates_not_found": "32b562ec63ca8c3120392afd941c3d07415f4d9e14aa1d178443db930f58c290",
@@ -61,6 +71,7 @@
   "certificates_plus_list_title": "604f989f52c65decb1c97b85bc457a816568ecc7d7743b4cd4868573a2ab3a69",
   "certificates_plus_title": "0f635d9398fb384c3ca712b8a088b53ff2063480fbd8a410551349c636106c75",
   "certificates_print": "76cc37eab3020054d4093ebed2127b220546291aec2a37657bde322110f6c353",
+  "certificates_recipient_name": "cf0c1ac82646884dcbe82670a60b9b088cfee8ab6b42e1cc0f2ee1aeee811fbb",
   "certificates_save": "b390ac37e7061ea024360fef33c44f7a52741c28e25e1bbaa903e4d7989bac1f",
   "certificates_saved_one": "1b46ce1bba34a353b5e5aa0fb05908088aa86d97200b1967cc09df943551c685",
   "certificates_saved_several": "27bc86dee99d919f859a2e0e60fc56f5a37368079458d8f9af5c5dfcb381c8d4",
@@ -70,6 +81,7 @@
   "certificates_up_next": "0dfb34b367f38d98e6438440531f2ca2ac9a4f973ce8b903724abbf05f9c01d8",
   "certificates_up_next_course": "b90c6948ccf42a5f570434f3e7992def8f7f35d1833f7194e9c4e972741c5b63",
   "certificates_up_next_language": "36853c5708a9690e40e3743489fc6c629cb77e4290597fc7992003aaf195d78e",
+  "certificates_verified": "6b2c2671b4baab1b5a9cb13eaf08ef21aac89a6729e5753a9e2d848a09393c10",
   "certificates_view": "b87fa67ace2226d0aaffe0d0be896252de9ff1ab57cda8c1f742803944ceb003",
   "certificates_view_several": "61f8df18fe7dcae29c34e337258b9308bf536eae4e9aaecd0a0663a269433808"
 }
@@ -147,19 +159,41 @@
     <string name="certificates_print">인쇄</string>
     <!-- Saves the certificate's picture to the phone's Pictures. -->
     <string name="certificates_download">다운로드</string>
-    <string name="certificates_copy_link">링크 복사</string>
     <string name="certificates_link_copied">링크를 복사했어요</string>
-    <!-- A row showing the learner's name as their certificates print it, opening a field to change it. -->
-    <string name="certificates_name_on_certificate">인증서에 표시되는 이름</string>
     <string name="certificates_link_note">링크가 있으면 누구나 이 인증서를 볼 수 있어요. 이 페이지는 검색 결과에 나오지 않아요.</string>
     <!-- A short message after the certificate's picture was saved to the phone's Pictures. -->
     <string name="certificates_downloaded">Pictures 폴더에 저장했어요</string>
     <string name="certificates_picture_failed">인증서를 불러오지 못했어요. 다시 시도해 보세요.</string>
     <string name="certificates_not_found">이 인증서를 찾을 수 없어요</string>
-    <!-- TalkBack reads the certificate's picture. %1$s is the learner's name and %2$s the course's title. -->
+    <!-- A certificate page's headline, which TalkBack also reads for its picture. %1$s is the learner's name and %2$s the certificate's name, such as "Python · Beginner". -->
     <string name="certificates_alt_course">%1$s님이 %2$s 코스를 마쳤어요</string>
-    <!-- TalkBack reads the certificate's picture. %1$s is the learner's name, %2$s the CEFR level, such as "B1", and %3$s the language, such as "Spanish". -->
+    <!-- A certificate page's headline, which TalkBack also reads for its picture. %1$s is the learner's name, %2$s the CEFR level, such as "B1", and %3$s the language, such as "Spanish". -->
     <string name="certificates_alt_level">%1$s님이 %2$s 레벨의 %3$s 과정을 마쳤어요</string>
+    <!-- A certificate page's headline before the learner gave a name. %1$s is the certificate's name, such as "Python · Beginner". -->
+    <string name="certificates_course_on_zoonk">%1$s 코스를 Zoonk에서 수료했어요</string>
+    <!-- A certificate page's headline before the learner gave a name. %1$s is the CEFR level, such as "B1", and %2$s the language, such as "Spanish". -->
+    <string name="certificates_level_on_zoonk">%1$s 레벨의 %2$s 과정을 Zoonk에서 수료했어요</string>
+    <!-- Above a certificate's headline on its page, beside a check mark. -->
+    <string name="certificates_verified">검증된 인증서 · Zoonk 발급</string>
+    <!-- Under a certificate's headline on its page. %1$s is the day it was issued, such as "October 28, 2026". -->
+    <string name="certificates_issued_on">%1$s에 발급한 수료 인증서예요.</string>
+    <!-- The heading over a certificate's facts on its page. -->
+    <string name="certificates_details">상세 정보</string>
+    <!-- Labels the learner's full name, as their certificates print it. -->
+    <string name="certificates_recipient_name">성명</string>
+    <!-- Labels the course level a certificate is for, such as "Beginner". -->
+    <string name="certificates_detail_level">레벨</string>
+    <!-- Labels the day a certificate was earned. -->
+    <string name="certificates_detail_completed">완료일</string>
+    <string name="certificates_detail_lessons_studied">학습한 레슨</string>
+    <!-- Labels how many of a certificate's lessons the learner skipped by passing their test. -->
+    <string name="certificates_detail_passed_by_test">테스트로 통과한 레슨</string>
+    <string name="certificates_detail_study_time">학습 시간</string>
+    <string name="certificates_detail_id">인증서 ID</string>
+    <!-- Labels the address of a certificate's public page. -->
+    <string name="certificates_detail_link">링크</string>
+    <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
+    <string name="certificates_about_duration">약 %1$s</string>
     <!-- TalkBack reads the certificate's picture: what it certifies, then the day it was earned, such as "Ana Souza completed Python, November 3, 2026". -->
     <string name="certificates_alt_dated">%1$s, %2$s</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title and %2$s the lessons they studied, such as "148 lessons". -->

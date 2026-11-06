@@ -76,33 +76,37 @@ fun CertificateName.kindLine(): String =
         formatDate(completedOn.toJavaLocalDate(), currentLocale(), DateStyle.Short),
     )
 
-/** What the picture says, for TalkBack: main's page heading and the day it was earned. */
+/** Main's `useCertificateSentence`: the certificate page's headline, which a reader checks. */
+@Composable
+@ReadOnlyComposable
+fun OwnedCertificate.sentence(): String {
+    val recipient = recipientName
+    val level = level?.value.orEmpty()
+    return when {
+        naming.kind == CertificateKind.LanguageLevel && recipient != null -> {
+            stringResource(R.string.certificates_alt_level, recipient, level, naming.languageWord())
+        }
+
+        naming.kind == CertificateKind.LanguageLevel -> {
+            stringResource(R.string.certificates_level_on_zoonk, level, naming.languageWord())
+        }
+
+        recipient != null -> {
+            stringResource(R.string.certificates_alt_course, recipient, naming.words())
+        }
+
+        else -> {
+            stringResource(R.string.certificates_course_on_zoonk, naming.words())
+        }
+    }
+}
+
+/** What the picture says, for TalkBack: the page's headline and the day it was earned. */
 @Composable
 @ReadOnlyComposable
 fun OwnedCertificate.pictureLabel(): String {
-    val recipient = recipientName
-    val level = level?.value.orEmpty()
-    val heading =
-        when {
-            recipient == null -> {
-                factsLine(stringResource(R.string.certificates_kind_completion), naming.words())
-            }
-
-            naming.kind == CertificateKind.Course -> {
-                stringResource(R.string.certificates_alt_course, recipient, naming.words())
-            }
-
-            else -> {
-                stringResource(
-                    R.string.certificates_alt_level,
-                    recipient,
-                    level,
-                    naming.languageWord(),
-                )
-            }
-        }
     val day = formatDate(completedOn.toJavaLocalDate(), currentLocale(), DateStyle.LongYear)
-    return stringResource(R.string.certificates_alt_dated, heading, day)
+    return stringResource(R.string.certificates_alt_dated, sentence(), day)
 }
 
 /** The text a share suggests, as Main words it: lessons studied, never lessons skipped, and the study time only when known. */

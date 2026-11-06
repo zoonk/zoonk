@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.onboarding
 
 import android.view.KeyEvent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
@@ -8,8 +9,6 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -27,6 +26,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.theme.zoonk
 
@@ -86,12 +86,14 @@ fun <T> ChoiceList(
         choices.forEachIndexed { index, choice ->
             if (index > 0) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
             val selected = choice.value == value
-            ListItem(
-                headlineContent = { Text(choice.label, style = MaterialTheme.typography.titleSmall) },
-                supportingContent = choice.description?.let { { Text(it, style = MaterialTheme.typography.bodySmall) } },
-                trailingContent = { RadioButton(selected = selected, onClick = null) },
-                colors = ListItemDefaults.colors(containerColor = if (selected) MaterialTheme.zoonk.selectedTint else Color.Transparent),
-                modifier = Modifier.selectable(selected = selected, enabled = !readOnly, role = Role.RadioButton) { choose(choice) },
+            ListRow(
+                headline = { Text(choice.label) },
+                modifier =
+                    Modifier
+                        .background(if (selected) MaterialTheme.zoonk.selectedTint else Color.Transparent)
+                        .selectable(selected = selected, enabled = !readOnly, role = Role.RadioButton) { choose(choice) },
+                supporting = choice.description?.let { { Text(it) } },
+                trailing = { RadioButton(selected = selected, onClick = null) },
             )
         }
     }
@@ -115,15 +117,15 @@ fun <T> CheckList(
             if (index > 0) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
             val checked = choice.value in value
             val open = checked || !full
-            ListItem(
-                headlineContent = { Text(choice.label, style = MaterialTheme.typography.titleSmall) },
-                supportingContent = choice.description?.let { { Text(it, style = MaterialTheme.typography.bodySmall) } },
-                trailingContent = { Checkbox(checked = checked, onCheckedChange = null) },
-                colors = ListItemDefaults.colors(containerColor = if (checked) MaterialTheme.zoonk.selectedTint else Color.Transparent),
+            ListRow(
+                headline = { Text(choice.label) },
                 modifier =
                     Modifier
+                        .background(if (checked) MaterialTheme.zoonk.selectedTint else Color.Transparent)
                         .alpha(if (open) 1f else DISABLED_ALPHA)
                         .toggleable(checked, enabled = open && !readOnly, role = Role.Checkbox) { onToggle(choice.value) },
+                supporting = choice.description?.let { { Text(it) } },
+                trailing = { Checkbox(checked = checked, onCheckedChange = null) },
             )
         }
     }

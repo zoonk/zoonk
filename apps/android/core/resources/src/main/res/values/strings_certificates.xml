@@ -76,19 +76,41 @@
     <string name="certificates_print">Print</string>
     <!-- Saves the certificate's picture to the phone's Pictures. -->
     <string name="certificates_download">Download</string>
-    <string name="certificates_copy_link">Copy link</string>
     <string name="certificates_link_copied">Link copied</string>
-    <!-- A row showing the learner's name as their certificates print it, opening a field to change it. -->
-    <string name="certificates_name_on_certificate">Name on certificate</string>
     <string name="certificates_link_note">Anyone with the link can see this certificate. Its page doesn\'t show up in search.</string>
     <!-- A short message after the certificate's picture was saved to the phone's Pictures. -->
     <string name="certificates_downloaded">Saved to Pictures</string>
     <string name="certificates_picture_failed">The certificate didn\'t load. Try again.</string>
     <string name="certificates_not_found">We couldn\'t find this certificate</string>
-    <!-- TalkBack reads the certificate's picture. %1$s is the learner's name and %2$s the course's title. -->
+    <!-- A certificate page's headline, which TalkBack also reads for its picture. %1$s is the learner's name and %2$s the certificate's name, such as "Python · Beginner". -->
     <string name="certificates_alt_course">%1$s completed %2$s</string>
-    <!-- TalkBack reads the certificate's picture. %1$s is the learner's name, %2$s the CEFR level, such as "B1", and %3$s the language, such as "Spanish". -->
+    <!-- A certificate page's headline, which TalkBack also reads for its picture. %1$s is the learner's name, %2$s the CEFR level, such as "B1", and %3$s the language, such as "Spanish". -->
     <string name="certificates_alt_level">%1$s completed level %2$s in %3$s</string>
+    <!-- A certificate page's headline before the learner gave a name. %1$s is the certificate's name, such as "Python · Beginner". -->
+    <string name="certificates_course_on_zoonk">%1$s, completed on Zoonk</string>
+    <!-- A certificate page's headline before the learner gave a name. %1$s is the CEFR level, such as "B1", and %2$s the language, such as "Spanish". -->
+    <string name="certificates_level_on_zoonk">Level %1$s in %2$s, completed on Zoonk</string>
+    <!-- Above a certificate's headline on its page, beside a check mark. -->
+    <string name="certificates_verified">Verified certificate · issued by Zoonk</string>
+    <!-- Under a certificate's headline on its page. %1$s is the day it was issued, such as "October 28, 2026". -->
+    <string name="certificates_issued_on">Certificate of completion, issued on %1$s.</string>
+    <!-- The heading over a certificate's facts on its page. -->
+    <string name="certificates_details">Details</string>
+    <!-- Labels the learner's full name, as their certificates print it. -->
+    <string name="certificates_recipient_name">Name</string>
+    <!-- Labels the course level a certificate is for, such as "Beginner". -->
+    <string name="certificates_detail_level">Level</string>
+    <!-- Labels the day a certificate was earned. -->
+    <string name="certificates_detail_completed">Completed</string>
+    <string name="certificates_detail_lessons_studied">Lessons studied</string>
+    <!-- Labels how many of a certificate's lessons the learner skipped by passing their test. -->
+    <string name="certificates_detail_passed_by_test">Passed by test</string>
+    <string name="certificates_detail_study_time">Study time</string>
+    <string name="certificates_detail_id">Certificate ID</string>
+    <!-- Labels the address of a certificate's public page. -->
+    <string name="certificates_detail_link">Link</string>
+    <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
+    <string name="certificates_about_duration">about %1$s</string>
     <!-- TalkBack reads the certificate's picture: what it certifies, then the day it was earned, such as "Ana Souza completed Python, November 3, 2026". -->
     <string name="certificates_alt_dated">%1$s, %2$s</string>
 

@@ -3,13 +3,16 @@ package com.zoonk.android.feature.catalog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,13 +21,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AnalyticsEvent
@@ -36,8 +49,6 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.MeterPart
-import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.Subject
 import com.zoonk.android.ui.components.SubjectGlyph
 import com.zoonk.android.ui.components.colors
@@ -47,7 +58,10 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.theme.LocalMoreContrast
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.CatalogTryLesson
 import com.zoonk.api.models.CourseChapter
@@ -271,7 +285,7 @@ internal fun CourseEyebrow(
     }
 }
 
-/** Main's `ChapterStrip`: where the chapter sits among the course's levels, and the chapters after it. */
+/** Main's `ChapterStrip`: where the chapter sits among the course's levels, and the chapters after it on the course's route. */
 @Composable
 private fun ChapterStrip(
     navigator: AppNavigator,
@@ -280,7 +294,6 @@ private fun ChapterStrip(
 ) {
     val locale = currentLocale()
     val chapterId = place.chapter.id.toString()
-    val levels = detail.chapters.groupBy { it.level }
     val position =
         stringResource(
             R.string.catalog_chapter_position,
@@ -289,65 +302,154 @@ private fun ChapterStrip(
         )
     val label = position + FACT_SEPARATOR + place.chapter.level.label()
     val stretch = detail.chapters.drop(place.number - 1).take(NEXT_CHAPTERS + 1)
-    val ink = MaterialTheme.colorScheme.onSurface
+    val subject =
+        Subject
+            .of(
+                detail.course.categories
+                    .firstOrNull()
+                    ?.value,
+            ).colors.color
+    val route = if (LocalMoreContrast.current) subject else subject.copy(alpha = ROUTE_LINE_ALPHA)
 
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
         SectionTitle(stringResource(R.string.catalog_chapter_strip))
 
-        MeterParts(
-            parts =
-                levels.map { (level, chapters) ->
-                    MeterPart(
-                        if (level ==
-                            place.chapter.level
-                        ) {
-                            MeterPart.Fill.Solid(ink)
-                        } else {
-                            MeterPart.Fill.Track
-                        },
-                        chapters.size.toFloat(),
-                    )
-                },
-        )
-        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium.withTabularFigures())
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            CourseMap(
+                detail.chapters
+                    .groupBy { it.level }
+                    .values
+                    .toList(),
+                chapterId,
+                route,
+            )
+            Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+        }
 
         Column {
             stretch.forEachIndexed { offset, chapter ->
-                val isHere = chapter.id.toString() == chapterId
-
-                Column(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .then(
-                                if (isHere) {
-                                    Modifier.semantics { selected = true }
-                                } else {
-                                    Modifier.clickable {
-                                        navigator.open(
-                                            AppRoute.CatalogChapter(chapter.id.toString(), detail.course.id.toString()),
-                                        )
-                                    }
-                                },
-                            ).padding(vertical = 14.dp),
-                ) {
-                    if (offset < 2) {
-                        Text(
-                            stringResource(if (isHere) R.string.catalog_this_chapter else R.string.catalog_after_this_chapter),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.labelMedium,
-                        )
-                    }
-                    Text(
-                        chapter.title,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = if (isHere) FontWeight.SemiBold else FontWeight.Normal,
-                    )
-                }
+                RouteStop(
+                    title = chapter.title,
+                    note =
+                        when (offset) {
+                            0 -> stringResource(R.string.catalog_this_chapter)
+                            1 -> stringResource(R.string.catalog_after_this_chapter)
+                            else -> null
+                        },
+                    here = offset == 0,
+                    last = offset == stretch.lastIndex,
+                    line = route,
+                    stop = subject,
+                    onOpen =
+                        if (offset == 0) {
+                            null
+                        } else {
+                            { navigator.open(AppRoute.CatalogChapter(chapter.id.toString(), detail.course.id.toString())) }
+                        },
+                )
             }
         }
     }
 }
+
+/** Main's `CourseMap`: each level a band as long as its chapters, the route through them, and a ring on this chapter. */
+@Composable
+private fun CourseMap(
+    levels: List<List<CourseChapter>>,
+    chapterId: String,
+    line: Color,
+) {
+    val band = MaterialTheme.zoonk.ground
+    val ink = MaterialTheme.colorScheme.onSurface
+
+    Row(Modifier.fillMaxWidth().clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        levels.forEach { chapters ->
+            val here = chapters.indexOfFirst { it.id.toString() == chapterId }
+            Box(
+                Modifier
+                    .weight(chapters.size.toFloat())
+                    .height(28.dp)
+                    .background(band, RoundedCornerShape(ZoonkRadius.md))
+                    .drawBehind {
+                        val thickness = ROUTE_WIDTH.toPx()
+                        drawRect(line, Offset(0f, (size.height - thickness) / 2), Size(size.width, thickness))
+                        if (here >= 0) {
+                            val inset = 4.dp.toPx()
+                            val slot = (size.width - inset * 2) / chapters.size
+                            val start = inset + slot * (here + 0.5f)
+                            val x = if (layoutDirection == LayoutDirection.Rtl) size.width - start else start
+                            val ring = 3.dp.toPx()
+                            val radius = 7.dp.toPx()
+                            drawCircle(band, radius, Offset(x, size.height / 2))
+                            drawCircle(ink, radius - ring / 2, Offset(x, size.height / 2), style = Stroke(ring))
+                        }
+                    },
+            )
+        }
+    }
+}
+
+/**
+ * Main's chapter on the route: a station on the line beside its title, this chapter's a ring in
+ * ink, the line fading out after the [last] one. [onOpen] opens a chapter after this one.
+ */
+@Composable
+private fun RouteStop(
+    title: String,
+    note: String?,
+    here: Boolean,
+    last: Boolean,
+    line: Color,
+    stop: Color,
+    onOpen: (() -> Unit)?,
+) {
+    val ink = MaterialTheme.colorScheme.onSurface
+    val ground = MaterialTheme.colorScheme.surface
+
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .then(if (onOpen == null) Modifier.semantics { selected = true } else Modifier.clickable(onClick = onOpen))
+            .drawBehind {
+                val x = ROUTE_X.toPx()
+                val top = ROUTE_X.toPx()
+                val width = ROUTE_WIDTH.toPx()
+                val left = if (layoutDirection == LayoutDirection.Rtl) size.width - x - width / 2 else x - width / 2
+                val brush =
+                    if (last) {
+                        Brush.verticalGradient(
+                            listOf(line, Color.Transparent),
+                            startY = top,
+                            endY = size.height,
+                        )
+                    } else {
+                        SolidColor(line)
+                    }
+                drawRect(brush, Offset(left, top), Size(width, size.height - top))
+                val center = Offset(left + width / 2, top)
+                val ring = (if (here) 3.dp else 2.5.dp).toPx()
+                val radius = (if (here) 8.dp else 7.dp).toPx()
+                drawCircle(ground, radius, center)
+                drawCircle(if (here) ink else stop, radius - ring / 2, center, style = Stroke(ring))
+            }.padding(start = ROUTE_INSET, bottom = if (last) 0.dp else 20.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
+        note?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall) }
+        Text(
+            title,
+            style = MaterialTheme.typography.titleMedium.copy(fontSize = 15.sp, lineHeight = 21.sp),
+            fontWeight = if (here) FontWeight.SemiBold else FontWeight.Medium,
+        )
+    }
+}
+
+/** Main's route: `--route-x`, `--route-inset` and its line's width. */
+private val ROUTE_X = 8.dp
+private val ROUTE_INSET = 28.dp
+private val ROUTE_WIDTH = 4.dp
+
+/** Main's `--route-line`: the subject's color at 35%, whole with more contrast. */
+private const val ROUTE_LINE_ALPHA = 0.35f
 
 /** Main's `ChapterLessons`: the chapter's lessons under their facts ("Chapter 2 of 9 · 4 short lessons · 30 min"). */
 @Composable

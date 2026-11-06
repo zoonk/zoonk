@@ -29,8 +29,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -542,6 +540,8 @@ private fun StatusMarks() {
             onClick = {},
         )
         ListDivider()
+        ListRow(headline = { Text("Memory") }, onClick = {}, meta = { Text("5") })
+        ListDivider()
         ListRow(headline = { Text("Daily reminder") }, trailing = { Switch(checked = true, onCheckedChange = {}) })
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             DoneMark()
@@ -554,11 +554,10 @@ private fun StatusMarks() {
 private fun Kinds() {
     Column {
         LearnKind.entries.forEach { kind ->
-            ListItem(
-                headlineContent = { Text(kind.name) },
-                leadingContent = { KindMark(kind) },
-                trailingContent = { KindDot(kind) },
-                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+            ListRow(
+                headline = { Text(kind.name) },
+                leading = { KindMark(kind) },
+                trailing = { KindDot(kind) },
             )
         }
     }

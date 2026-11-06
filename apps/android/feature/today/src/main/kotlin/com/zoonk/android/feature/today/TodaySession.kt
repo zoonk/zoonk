@@ -636,6 +636,7 @@ private fun QueueRow(
             supporting = supporting,
             meta = meta,
             verticalAlignment = if (isNext) Alignment.Top else Alignment.CenterVertically,
+            chevron = false,
         )
         if (!isNext && divider) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
     }

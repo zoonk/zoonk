@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -46,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupPositionProvider
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.GeistMono
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LessonMap
 import com.zoonk.api.models.LessonMapIdeasInner
@@ -137,7 +138,8 @@ private fun OpeningIdea(
     val tooltip = rememberTooltipState(isPersistent = true)
     val scope = rememberCoroutineScope()
     val ground = MaterialTheme.colorScheme.surface
-    val line = MaterialTheme.colorScheme.outline
+    val ink = MaterialTheme.colorScheme.onSurface
+    val ring = if (tooltip.isVisible || LocalMoreContrast.current) ink else ink.copy(alpha = RING_ALPHA)
     val showLabel = stringResource(R.string.player_opening_map_show)
     val below = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below)
 
@@ -147,17 +149,13 @@ private fun OpeningIdea(
                 placeModifier
                     .size(OPENING_NODE)
                     .drawBehind {
+                        val width = RING.toPx()
                         drawCircle(ground)
-                        if (idea.icon == null) {
-                            drawCircle(
-                                line,
-                                style =
-                                    Stroke(
-                                        1.5.dp.toPx(),
-                                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(4.dp.toPx(), 3.dp.toPx())),
-                                    ),
-                            )
-                        }
+                        drawCircle(
+                            ring,
+                            radius = (size.minDimension - width) / 2,
+                            style = Stroke(width, pathEffect = PathEffect.dashPathEffect(floatArrayOf(RING_DASH.toPx(), RING_GAP.toPx()))),
+                        )
                     },
                 contentAlignment = Alignment.Center,
             ) {
@@ -177,7 +175,8 @@ private fun OpeningIdea(
                             .align(Alignment.TopStart)
                             .offset(x = -BADGE_OUTSET, y = -BADGE_OUTSET)
                             .defaultMinSize(BADGE, BADGE)
-                            .background(MaterialTheme.colorScheme.surfaceContainerHighest, CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh, CircleShape)
+                            .wrapContentHeight()
                             .padding(horizontal = 4.dp),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.zoonkType.data,
@@ -194,7 +193,11 @@ private fun OpeningIdea(
 
     TooltipBox(
         positionProvider = remember(below) { BelowIdea(below) },
-        tooltip = { RichTooltip(title = idea.label?.let { { Text(it) } }) { Text(about) } },
+        tooltip = {
+            RichTooltip(title = idea.label?.let { { Text(it, color = ink, style = MaterialTheme.typography.titleSmall) } }) {
+                Text(about, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+            }
+        },
         state = tooltip,
     ) {
         place(
@@ -224,10 +227,14 @@ private class BelowIdea(
     }
 }
 
-private val OPENING_MAP_WIDTH = 240.dp
-private val OPENING_NODE = 56.dp
+private val OPENING_MAP_WIDTH = 248.dp
+private val OPENING_NODE = 64.dp
 private val OPENING_ROW_GAP = 80.dp
 private val OPENING_ICON = 44.dp
 private val CENTER_DOT = 5.dp
-private val BADGE = 20.dp
+private val BADGE = 24.dp
 private val BADGE_OUTSET = 4.dp
+private val RING = 2.dp
+private val RING_DASH = 6.dp
+private val RING_GAP = 4.dp
+private const val RING_ALPHA = 0.3f

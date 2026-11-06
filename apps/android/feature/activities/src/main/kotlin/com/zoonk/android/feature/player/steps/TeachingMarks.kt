@@ -31,18 +31,20 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.zoonk.android.R
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.richtext.isNumberedItem
 import com.zoonk.android.ui.richtext.plainText
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LessonIcon
 import com.zoonk.api.models.LessonMap
@@ -99,7 +101,12 @@ internal fun IdeaStrip(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.zoonkType.data,
                 )
-                idea.label?.let { Text(it, style = MaterialTheme.typography.titleMedium) }
+                idea.label?.let {
+                    Text(
+                        it,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold, lineHeight = 22.sp),
+                    )
+                }
             }
             idea.icon?.let { LessonIconImage(it, STRIP_ICON) }
         }
@@ -113,10 +120,9 @@ private fun IdeasDrawing(
     count: Int,
     current: Int,
 ) {
-    val line = MaterialTheme.colorScheme.outline
+    val faint = MaterialTheme.zoonk.faint
+    val line = faint.copy(alpha = LINE_ALPHA)
     val place = MaterialTheme.colorScheme.tertiary
-    val hub = MaterialTheme.colorScheme.onSurfaceVariant
-    val ground = MaterialTheme.colorScheme.surface
     val slots = remember(count) { ideaSlots(count) }
     val rows = slotRows(slots)
 
@@ -128,14 +134,13 @@ private fun IdeasDrawing(
         val node = DRAWING_NODE.toPx()
 
         points.forEach { drawLine(line, center, it, stroke) }
-        drawCircle(hub, DRAWING_HUB.toPx(), center)
+        drawCircle(faint, DRAWING_HUB.toPx(), center)
         points.forEachIndexed { index, point ->
             if (index == current) {
                 drawCircle(place.copy(alpha = HALO_ALPHA), node * 2, point)
                 drawCircle(place, node * 1.15f, point)
             } else {
-                drawCircle(ground, node, point)
-                drawCircle(line, node, point, style = Stroke(stroke))
+                drawCircle(faint, node, point)
             }
         }
     }
@@ -162,14 +167,25 @@ internal fun TeachingText(
         @Composable { part: String, at: Int ->
             RichText(
                 text = part,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.zoonkType.lessonText,
                 underline = underline.takeIf { at == underlined },
                 marksTerms = marksTerms,
             )
         }
     val heading =
         @Composable { modifier: Modifier ->
-            if (title != null) RichInlineText(title, modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+            if (title != null) {
+                RichInlineText(
+                    title,
+                    modifier.semantics { heading() },
+                    style =
+                        MaterialTheme.typography.titleMedium.copy(
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            lineHeight = 21.sp,
+                        ),
+                )
+            }
         }
 
     if (example == null) {
@@ -327,6 +343,7 @@ private fun Density.exampleFrame(
 
 private const val SMALL_ICON_PIXELS = 96
 private const val HALO_ALPHA = 0.25f
+private const val LINE_ALPHA = 0.6f
 private const val FRAME_TILT = -0.6f
 
 private val DRAWING_COLUMN = 17.5.dp

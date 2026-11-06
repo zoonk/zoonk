@@ -12,6 +12,8 @@ import androidx.compose.ui.graphics.Color
 data class ZoonkColors(
     /** Quieter than `onSurfaceVariant`: an eyebrow, a stat's label, a list's numbers. */
     val faint: Color,
+    /** Main's `ground`: a quiet band a shade lighter than `muted`, such as a placeholder or a course map's levels. */
+    val ground: Color,
     /** A mistake's mark, such as an invalid field's line; words about it take Material's `error`. */
     val destructive: Color,
     /** Brain Power and nothing else. */
@@ -49,6 +51,7 @@ data class ZoonkColors(
 internal fun ZoonkPalette.zoonkColors() =
     ZoonkColors(
         faint = faint,
+        ground = ground,
         destructive = destructive,
         brain = brain,
         brainText = brainText,

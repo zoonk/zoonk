@@ -17,14 +17,18 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
 
-/** Main's `PageEyebrow`: the small line above a page's title, uppercase for the eye and as written for TalkBack. */
+/**
+ * Main's `PageEyebrow`: the small line above a page's title, uppercase for the eye and as written
+ * for TalkBack; [uppercase] `false` is main's `normal-case`, for a count ("2 certificates").
+ */
 @Composable
 fun Eyebrow(
     text: AnnotatedString,
     modifier: Modifier = Modifier,
+    uppercase: Boolean = true,
 ) {
     Text(
-        text = text.toUpperCase(LocaleList.current),
+        text = if (uppercase) text.toUpperCase(LocaleList.current) else text,
         modifier = modifier.clearAndSetSemantics { this.text = text },
         color = MaterialTheme.zoonk.faint,
         style = MaterialTheme.zoonkType.eyebrow,
@@ -35,8 +39,9 @@ fun Eyebrow(
 fun Eyebrow(
     text: String,
     modifier: Modifier = Modifier,
+    uppercase: Boolean = true,
 ) {
-    Eyebrow(AnnotatedString(text), modifier)
+    Eyebrow(AnnotatedString(text), modifier, uppercase)
 }
 
 /** Main's `SuccessEyebrow`: an eyebrow saying something is done. */
