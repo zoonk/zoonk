@@ -48,6 +48,8 @@ final class LessonPlayerStore {
   private(set) var writingProgress = GenerationWait(kind: .lesson).started
   private var progressRun: String?
   private(set) var warmUp: WarmUp?
+  /// What's ready to do while the lesson is written, or instead of it.
+  private(set) var alternative: Components.Schemas.ReadyAlternative?
   private(set) var lesson: PlayableLesson?
   private(set) var state: LessonPlayerState?
   private(set) var soundsEnabled = true
@@ -349,6 +351,8 @@ final class LessonPlayerStore {
     if let deckID = lesson?.warmUpId {
       warmUp = WarmUp(deckID: deckID, outline: outline)
     }
+
+    alternative = lesson?.alternative?.value1
 
     switch lesson?.status {
     case .generating: waitForWriting(outline)

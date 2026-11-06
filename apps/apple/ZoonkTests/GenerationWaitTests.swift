@@ -52,7 +52,9 @@ final class GenerationWaitTests: XCTestCase {
 
     wait.apply(GenerationEvent(status: "completed", step: "findExplanation"))
 
-    XCTAssertEqual(wait.visiblePhases.map(\.state), [.done, .done, .waiting])
+    XCTAssertEqual(
+      wait.visiblePhases.map(\.state), [.done, .done, .working],
+      "a finished stage starts the next, as main's wait does")
     XCTAssertFalse(wait.isDone)
 
     wait.apply(GenerationEvent(status: "completed", step: "writeExplanation"))
@@ -87,6 +89,59 @@ final class GenerationWaitTests: XCTestCase {
 
       XCTAssertTrue(wait.isDone)
     }
+  }
+
+  func testEachPhasesClockRunsOnFromTheOneBeforeInTheServersTime() {
+    let start = Date(timeIntervalSince1970: 1_000)
+    var wait = GenerationWait(kind: .lesson).started
+
+    // The device's clock runs 30 seconds ahead; a replayed event arrives late, so the smallest gap
+    // is the clocks' difference.
+    wait.apply(
+      GenerationEvent(at: start, status: "started", step: "planLesson"),
+      receivedAt: start.addingTimeInterval(90))
+    wait.apply(
+      GenerationEvent(at: start.addingTimeInterval(52), status: "completed", step: "planLesson"),
+      receivedAt: start.addingTimeInterval(82))
+    wait.apply(
+      GenerationEvent(at: start.addingTimeInterval(55), status: "started", step: "writeLesson"),
+      receivedAt: start.addingTimeInterval(85))
+
+    let plan = wait.visiblePhases[0]
+    let write = wait.visiblePhases[1]
+    XCTAssertEqual(plan.endedAt?.timeIntervalSince(plan.startedAt ?? .distantPast), 52)
+    XCTAssertEqual(
+      write.startedAt, start.addingTimeInterval(52), "writing's clock starts as planning ends")
+    XCTAssertEqual(wait.clockOffset, 30)
+  }
+
+  func testTheBarWeighsEachPhaseByItsUsualTime() {
+    var wait = GenerationWait(kind: .lesson).started
+
+    wait.apply(GenerationEvent(status: "completed", step: "planLesson"))
+
+    let progress = wait.progress
+    XCTAssertEqual(progress.share, 40.0 / 145, accuracy: 0.001)
+    XCTAssertEqual(progress.target, 90.0 / 145, accuracy: 0.001, "up to the end of writing")
+    XCTAssertEqual(progress.runningSeconds, 50)
+
+    wait.apply(GenerationEvent(status: "completed", step: "lessonReady"))
+
+    XCTAssertEqual(wait.progress.share, 1)
+    XCTAssertEqual(wait.visiblePhases.map(\.state), [.done, .done, .done, .done])
+  }
+
+  func testWritingALessonCountsItsScreensWithAChecksBetweenThenKeepsChecking() {
+    let write = GenerationWait(kind: .lesson).phases[1]
+    let lines = (0..<10).map { write.detailLine(tick: $0).map { String(localized: $0) } }
+
+    XCTAssertEqual(
+      lines,
+      [
+        "Writing screen 1…", "Writing screen 2…", "Checking the answers…", "Writing screen 3…",
+        "Writing screen 4…", "Checking the answers…", "Writing screen 5…", "Writing screen 6…",
+        "Checking the answers…", "Checking the answers…",
+      ])
   }
 
   func testIgnoresStepsItDoesntKnow() {

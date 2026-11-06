@@ -203,25 +203,45 @@ struct LessonCompletionView: View {
   }
 }
 
-/// Never a dead end.
+/// Never a dead end. `isNotice` is main's `LessonNotWrittenNotice`: a lesson its writing was
+/// refused for says so under its description, start-aligned with small buttons, instead of the
+/// centered state a lesson that can't open takes.
 struct LessonUnavailableView: View {
   @Environment(\.dismiss) private var dismiss
 
   let refusal: LessonRunRefusal
+  var isNotice = false
   let retry: () -> Void
 
   var body: some View {
-    ContentUnavailableView {
-      Label {
-        Text(title)
-      } icon: {
-        Image(systemName: symbol)
+    if isNotice {
+      VStack(alignment: .leading, spacing: 12) {
+        LessonNoticeText(title: Text(title), description: Text(description))
+
+        HStack(spacing: 8) {
+          actions
+        }
+        .controlSize(.small)
       }
-    } description: {
-      Text(description)
-    } actions: {
-      actions
+      .frame(maxWidth: .infinity, alignment: .leading)
+    } else {
+      ContentUnavailableView {
+        Label {
+          Text(title)
+        } icon: {
+          Image(systemName: symbol)
+        }
+      } description: {
+        Text(description)
+      } actions: {
+        actions
+      }
     }
+  }
+
+  /// A notice's buttons are all quiet: the screen's own bar holds its main action.
+  private var mainStyle: ZoonkButtonStyle {
+    isNotice ? .outline : .mainAction
   }
 
   var said: String {
@@ -235,7 +255,7 @@ struct LessonUnavailableView: View {
       Button(action: retry) {
         Text("Try again", tableName: "Player", comment: "Tries opening the lesson again")
       }
-      .buttonStyle(.mainAction)
+      .buttonStyle(mainStyle)
     case .slowDown:
       Button(action: retry) {
         Text("Try again", tableName: "Player", comment: "Tries opening the lesson again")
@@ -243,15 +263,21 @@ struct LessonUnavailableView: View {
       .buttonStyle(.outline)
     case .plusRequired, .limitReached(tier: .free, _):
       SeePlusButton()
-        .buttonStyle(.mainAction)
+        .buttonStyle(mainStyle)
         .onAppear {
           UsageAnalytics.track(.subscriptionGateShown)
         }
-      backButton
+
+      if !isNotice {
+        backButton
+      }
     case .limitReached(tier: .guest, _):
       SignUpButton()
+        .buttonStyle(mainStyle)
     case .limitReached(tier: .plus, _), .notFound:
-      backButton
+      if !isNotice {
+        backButton
+      }
     }
   }
 
@@ -449,7 +475,6 @@ private struct SignUpButton: View {
       Text(
         "Create a free account", tableName: "Player", comment: "Opens account creation for a guest")
     }
-    .buttonStyle(.mainAction)
   }
 }
 
@@ -463,6 +488,7 @@ struct LessonHelpLimitNote: View {
       switch refusal {
       case .limitReached(.guest, _):
         SignUpButton()
+          .buttonStyle(.mainAction)
       case .limitReached(.free, _):
         SeePlusButton()
           .buttonStyle(.outline)
@@ -495,81 +521,149 @@ struct LessonHelpLimitNote: View {
   }
 }
 
-/// Only the learner asks for the lesson to be written: it runs AI.
+/// Main's `LessonWaiting`: the lesson's description, then how its writing stands, and once that
+/// takes a while something ready to do meanwhile. Only the learner asks for the lesson to be
+/// written: it runs AI.
 struct LessonWaitingView: View {
   static let lessonReady = LocalizedStringResource(
     "Your lesson is ready. Start it whenever you like.", table: "Player",
     comment: "A goal's first lesson is written while the learner still guesses on its wait")
 
+  /// Main's `ALTERNATIVE_AFTER_MS`: a wait this long offers what's ready meanwhile.
+  private static let lateAfter = Duration.seconds(15)
+
   let outline: LessonOutline
   let writing: LessonPlayerStore.LessonWriting
   let progress: GenerationWait
+  var alternative: Components.Schemas.ReadyAlternative?
   var warmUpID: String?
   var holding: WarmUpHolding?
   let write: () -> Void
 
+  @State private var isLate = false
+
   var body: some View {
-    if let warmUpID {
-      ZoonkList {
-        Section {
-          notice
+    Group {
+      if let warmUpID {
+        ZoonkList {
+          Section {
+            page
+          }
+          .listRowBackground(Color.clear)
+          .listRowSeparator(.hidden)
+
+          WarmUpSection(deckID: warmUpID)
+
+          if let shownAlternative {
+            Section {
+              shownAlternative
+            }
+            .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
+          }
         }
-        .listRowBackground(Color.clear)
-
-        WarmUpSection(deckID: warmUpID)
+        .warmUpDeck(warmUpID)
+        .warmUpHoldBar(
+          holding,
+          label: Text(
+            "Start this lesson", tableName: "Player",
+            comment: "Opens a goal's first lesson, written while the learner guessed on its wait"))
+      } else {
+        ScrollView {
+          VStack(alignment: .leading, spacing: 24) {
+            page
+            shownAlternative
+          }
+          .frame(maxWidth: 680, alignment: .leading)
+          .frame(maxWidth: .infinity)
+          .scenePadding()
+        }
       }
-      .warmUpDeck(warmUpID)
-      .warmUpHoldBar(
-        holding,
-        label: Text(
-          "Start this lesson", tableName: "Player",
-          comment: "Opens a goal's first lesson, written while the learner guessed on its wait"))
-    } else {
-      notice
     }
-  }
-
-  private var notice: some View {
-    noticeContent
-      .announcesStatus(notWrittenLine)
-  }
-
-  @ViewBuilder
-  private var noticeContent: some View {
-    if holding == nil, case .refused(let refusal) = writing {
-      LessonUnavailableView(refusal: refusal, retry: write)
-    } else {
-      unavailable
-    }
-  }
-
-  private var unavailable: some View {
-    ContentUnavailableView {
-      Label {
-        Text(outline.title)
-      } icon: {
-        Image(systemName: symbol)
-      }
-    } description: {
-      Text(description)
-    } actions: {
-      switch (holding, writing) {
-      case (_?, _):
-        EmptyView()
-      case (nil, .notStarted), (nil, .failed):
+    .safeAreaBar(edge: .bottom) {
+      if holding == nil, writing == .notStarted {
         Button(action: write) {
           Text(
             "Start this lesson", tableName: "Player",
-            comment: "Starts a lesson that isn't written yet: it's written, then opens")
+            comment: "Starts a lesson that isn't written yet: it's written, then opens"
+          )
+          .frame(maxWidth: .infinity)
         }
         .buttonStyle(.mainAction)
-      case (nil, .writing):
-        LessonWritingSteps(phases: progress.visiblePhases)
-      case (nil, .written):
-        ProgressView()
-      case (nil, .refused), (nil, .setAside):
-        EmptyView()
+        .controlSize(.large)
+        .keyboardShortcut(.defaultAction)
+        .frame(maxWidth: 680)
+        .frame(maxWidth: .infinity)
+        .scenePadding()
       }
+    }
+    .announcesStatus(notWrittenLine)
+    .task(id: writing) {
+      isLate = false
+
+      guard writing == .writing else {
+        return
+      }
+
+      try? await Task.sleep(for: Self.lateAfter)
+      isLate = !Task.isCancelled
+    }
+  }
+
+  private var page: some View {
+    VStack(alignment: .leading, spacing: 24) {
+      Text(outline.description)
+        .typeStyle(.reading)
+        .foregroundStyle(.mutedForeground)
+
+      status
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  @ViewBuilder
+  private var status: some View {
+    switch (holding, writing) {
+    case (nil, .notStarted):
+      LessonNoticeText(
+        title: Text(
+          "This lesson isn't written yet", tableName: "Player",
+          comment: "Under a lesson's description, before the learner starts it and it's written"),
+        description: Text(
+          "Zoonk writes it when you start. It takes a few minutes.", tableName: "Player",
+          comment: "A lesson not written yet"))
+    case (nil, .refused(let refusal)):
+      LessonUnavailableView(refusal: refusal, isNotice: true, retry: write)
+    case (nil, .setAside):
+      LessonNoticeText(title: Text(Self.setAsideTitle), description: Text(Self.setAsideLine))
+    case (nil, .failed):
+      // A run that reported a phase stopped there; otherwise it never got going.
+      GenerationTimeline(
+        wait: progress,
+        failure: progress.phases.contains(where: \.isReported) ? .generation : .notStarted,
+        act: write)
+    case (_?, _), (nil, .writing), (nil, .written):
+      VStack(alignment: .leading, spacing: 24) {
+        GenerationTimeline(
+          wait: holding == nil && writing == .writing ? progress : progress.finished)
+
+        Text(holding == nil ? Self.writingLine : Self.lessonReady)
+          .typeStyle(.body)
+          .foregroundStyle(.mutedForeground)
+      }
+    }
+  }
+
+  private var shownAlternative: LessonWaitAlternative? {
+    guard let alternative, holding == nil else {
+      return nil
+    }
+
+    return switch writing {
+    case .refused, .setAside: LessonWaitAlternative(alternative: alternative, isInstead: true)
+    case .failed: LessonWaitAlternative(alternative: alternative, isInstead: false)
+    case .writing where isLate: LessonWaitAlternative(alternative: alternative, isInstead: false)
+    default: nil
     }
   }
 
@@ -580,93 +674,119 @@ struct LessonWaitingView: View {
 
     return switch writing {
     case .refused(let refusal): LessonUnavailableView(refusal: refusal) {}.said
-    case .setAside: String(localized: description)
+    case .setAside:
+      [String(localized: Self.setAsideTitle), String(localized: Self.setAsideLine)]
+        .joinedSentences()
     default: nil
     }
   }
 
-  private var symbol: String {
-    guard holding == nil else {
-      return "doc.text"
-    }
+  private static let writingLine = LocalizedStringResource(
+    "It usually takes a few minutes. The lesson opens here as soon as it's ready.",
+    table: "Player",
+    comment: "While a lesson is written")
 
-    switch writing {
-    case .writing, .written: return "pencil.and.scribble"
-    case .failed, .setAside: return "exclamationmark.circle"
-    default: return "doc.text"
-    }
-  }
+  private static let setAsideTitle = LocalizedStringResource(
+    "This lesson isn't available", table: "Player",
+    comment: "Every draft of a lesson was held back by its quality checks")
 
-  private var description: LocalizedStringResource {
-    guard holding == nil else {
-      return Self.lessonReady
-    }
+  private static let setAsideLine = LocalizedStringResource(
+    "It didn't pass our quality checks, so your plan goes on without it.", table: "Player",
+    comment: "Every draft of a lesson was held back by its quality checks")
+}
 
-    return switch writing {
-    case .notStarted:
-      LocalizedStringResource(
-        "Zoonk writes it when you start. It takes a few minutes.", table: "Player",
-        comment: "A lesson not written yet")
-    case .writing, .written:
-      LocalizedStringResource(
-        "It usually takes a few minutes. The lesson opens here as soon as it's ready.",
-        table: "Player",
-        comment: "While a lesson is written")
-    case .failed:
-      LocalizedStringResource(
-        "We couldn't write this lesson. Try again.", table: "Player",
-        comment: "Writing a lesson failed")
-    case .setAside:
-      LocalizedStringResource(
-        "This lesson didn't pass our checks, so your plan moved on without it.", table: "Player",
-        comment: "Every draft of a lesson was held back")
-    case .refused:
-      LocalizedStringResource(
-        "This lesson isn't written yet.", table: "Player",
-        comment: "A lesson not written yet, writing refused")
+/// Main's notice under a lesson's description: what happened in medium words, then its line.
+private struct LessonNoticeText: View {
+  let title: Text
+  let description: Text
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 4) {
+      title
+        .typeStyle(.rowTitle)
+        .foregroundStyle(Color(.foreground))
+
+      description
+        .foregroundStyle(.mutedForeground)
     }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .accessibilityElement(children: .combine)
   }
 }
 
-private struct LessonWritingSteps: View {
-  /// `StatusMark`'s width, so the spinner's step lines up with the others.
-  @ScaledMetric(relativeTo: .body) private var markWidth = 20.0
+/// Main's `Alternative`: a lesson that's written, or the reviews that are due, ready to do now.
+private struct LessonWaitAlternative: View {
+  @Environment(AppRouter.self) private var router
 
-  let phases: [GenerationWait.Phase]
+  let alternative: Components.Schemas.ReadyAlternative
+  /// Offered in place of a lesson that won't be written, rather than while it is.
+  let isInstead: Bool
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 12) {
-      ForEach(phases) { phase in
-        Label {
-          Text(phase.label)
-            .foregroundStyle(phase.state == .waiting ? Color.mutedForeground : Color(.foreground))
-        } icon: {
-          if phase.state == .working {
-            ProgressView()
-              .frame(width: markWidth)
-              .accessibilityHidden(true)
-          } else {
-            StatusMark(status: phase.state == .done ? .done : .todo)
-          }
+    VStack(alignment: .leading, spacing: 8) {
+      Group {
+        if isInstead {
+          Text(
+            "Ready to do instead", tableName: "Player",
+            comment:
+              "Heading over a lesson or review the learner can start now, because this lesson couldn't be written."
+          )
+        } else {
+          Text(
+            "Ready while you wait", tableName: "Player",
+            comment:
+              "Heading over a lesson or review the learner can start while a lesson is written"
+          )
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityValue(state(phase.state))
       }
+      .typeStyle(.label)
+      .foregroundStyle(.mutedForeground)
+      .accessibilityAddTraits(.isHeader)
+
+      Button(action: open) {
+        HStack(spacing: 12) {
+          KindMark(kind: kind)
+
+          title
+            .typeStyle(.rowTitle)
+            .foregroundStyle(Color(.foreground))
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+          DisclosureChevron()
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 11)
+        .frame(minHeight: 44)
+        .background(.muted, in: .rect(cornerRadius: Radius.lg, style: .continuous))
+        .contentShape(.rect)
+      }
+      .buttonStyle(.plain)
+      .padding(.horizontal, -10)
     }
   }
 
-  private func state(_ state: GenerationWait.PhaseState) -> Text {
-    switch state {
-    case .waiting:
+  private var kind: LearnKind {
+    if case .case1 = alternative { .lesson } else { .review }
+  }
+
+  private var title: Text {
+    switch alternative {
+    case .case1(let lesson):
+      Text(lesson.title)
+    case .case2(let review):
       Text(
-        "Not started yet", tableName: "Onboarding",
-        comment: "VoiceOver: a step of a wait that hasn't started")
-    case .working:
-      Text(
-        "In progress", tableName: "Onboarding",
-        comment: "VoiceOver: the step of a wait that's running")
-    case .done:
-      Text("Done", tableName: "Onboarding", comment: "A finished step of a wait")
+        "Review \(review.dueSkills) ideas", tableName: "Player",
+        comment: "Opens Today, where the ideas due for review are: ready while a lesson is written")
+    }
+  }
+
+  private func open() {
+    switch alternative {
+    case .case1(let lesson):
+      router.dismissTask()
+      router.open(.lesson(lessonId: lesson.lessonId))
+    case .case2:
+      router.showRoot(of: .today)
     }
   }
 }

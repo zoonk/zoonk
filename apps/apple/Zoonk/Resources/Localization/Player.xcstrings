@@ -2721,6 +2721,65 @@
         }
       }
     },
+    "Checking the answers…" : {
+      "comment" : "What the wait is doing between screens while a lesson is written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir prüfen die Antworten…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobando las respuestas…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérification des réponses…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo controllando le risposte…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "答え合わせをしています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "정답을 확인하고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprawdzamy odpowiedzi…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conferindo as respostas…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cevapları kontrol ediyoruz…"
+          }
+        }
+      }
+    },
     "Checking your answer" : {
       "comment" : "The main button while a written answer is graded",
       "localizations" : {
@@ -2776,6 +2835,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cevabını kontrol ediyoruz"
+          }
+        }
+      }
+    },
+    "Choosing what to cover…" : {
+      "comment" : "What the wait is doing while a lesson is planned",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir wählen die Inhalte aus…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eligiendo qué incluir…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choix des sujets à aborder…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo scegliendo gli argomenti da trattare…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "扱う内容を選んでいます…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다룰 내용을 고르고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybieramy, co omówić…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolhendo o que abordar…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neleri işleyeceğimizi seçiyoruz…"
           }
         }
       }
@@ -3488,6 +3606,65 @@
         }
       }
     },
+    "Drawing an icon for each idea…" : {
+      "comment" : "What the wait is doing while a lesson's pictures are drawn. \"Idea\" is one of the lesson map's ideas, as in \"Idea 2 of 4\".",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir zeichnen für jede Idee ein Symbol…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dibujando un ícono para cada idea…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On dessine une icône pour chaque idée…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo disegnando un’icona per ogni idea…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "それぞれのポイントを表すアイコンを描いています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "각 개념을 나타내는 아이콘을 그리고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rysujemy ikonę dla każdego zagadnienia…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desenhando um ícone para cada ideia…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her kavram için bir simge çiziyoruz…"
+          }
+        }
+      }
+    },
     "Drawing the picture…" : {
       "comment" : "While a screen's picture is drawn",
       "localizations" : {
@@ -3602,6 +3779,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Resimleri çiziyoruz"
+          }
+        }
+      }
+    },
+    "Drawing what each screen describes…" : {
+      "comment" : "What the wait is doing while a lesson's pictures are drawn",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir zeichnen, was auf jeder Seite beschrieben wird…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dibujando lo que describe cada pantalla…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On dessine ce que décrit chaque écran…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo disegnando ciò che ogni schermata descrive…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "各画面の内容を絵にしています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "각 화면의 내용에 맞춰 그림을 그리고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rysujemy to, co opisano na każdym ekranie…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desenhando o que cada tela descreve…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her ekranda anlatılanları çiziyoruz…"
           }
         }
       }
@@ -5559,6 +5795,65 @@
         }
       }
     },
+    "It didn't pass our quality checks, so your plan goes on without it." : {
+      "comment" : "Every draft of a lesson was held back by its quality checks",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sie hat unsere Qualitätsprüfung nicht bestanden, deshalb geht dein Plan ohne sie weiter."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pasó nuestros controles de calidad, así que tu plan sigue sin ella."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elle n’a pas passé nos contrôles qualité, donc ton plan continue sans elle."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non ha superato i nostri controlli di qualità, quindi il tuo piano prosegue senza includerla."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "品質基準を満たさなかったため、このレッスンを含めずに学習計画を進めます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "품질 기준에 맞지 않아 이 레슨을 빼고 계획을 이어 가요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie przeszła naszej kontroli jakości, więc twój plan jej nie uwzględnia."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ela não passou pelas nossas verificações de qualidade, então seu plano continua sem ela."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kalite kontrollerimizden geçemediği için planın bu ders olmadan devam ediyor."
+          }
+        }
+      }
+    },
     "It usually takes a few minutes. The lesson opens here as soon as it's ready." : {
       "comment" : "While a lesson is written",
       "localizations" : {
@@ -6505,6 +6800,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Çiftleri eşleştir."
+          }
+        }
+      }
+    },
+    "Matching each screen to its idea…" : {
+      "comment" : "What the wait is doing while a lesson's key ideas are highlighted. \"Idea\" is one of the lesson map's ideas, as in \"Idea 2 of 4\".",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir ordnen jede Seite der passenden Idee zu…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relacionando cada pantalla con su idea…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On associe chaque écran à son idée…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo abbinando ogni schermata alla sua idea…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "各画面とそこで伝えるポイントを対応させています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "각 화면을 그에 맞는 개념과 연결하고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przypisujemy każdy ekran do odpowiedniego zagadnienia…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Associando cada tela à sua ideia…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her ekranı ilgili kavramla eşleştiriyoruz…"
           }
         }
       }
@@ -7512,6 +7866,65 @@
         }
       }
     },
+    "Picking the best way to explain it…" : {
+      "comment" : "What the wait is doing while a lesson is planned. \"It\" is the lesson's topic.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir überlegen, wie wir das am besten erklären…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eligiendo la mejor forma de explicar el tema…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On choisit la meilleure façon d’expliquer le sujet…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo scegliendo come spiegare al meglio l’argomento…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いちばんわかりやすい説明のしかたを選んでいます…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주제를 가장 잘 설명할 방법을 고르고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybieramy, jak najlepiej wyjaśnić temat…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolhendo o melhor jeito de explicar o tópico…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konuyu anlatmanın en iyi yolunu seçiyoruz…"
+          }
+        }
+      }
+    },
     "Place in time" : {
       "comment" : "What the learner does in an activity, named above its prompt",
       "localizations" : {
@@ -8285,6 +8698,124 @@
         }
       }
     },
+    "Ready to do instead" : {
+      "comment" : "Heading over a lesson or review the learner can start now, because this lesson couldn't be written.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das kannst du stattdessen machen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otra opción disponible"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À faire à la place"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Da fare in alternativa"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "代わりに今できること"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대신 바로 할 수 있는 학습"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Możesz zacząć coś innego"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outra opção para começar agora"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bunun yerine başlayabilirsin"
+          }
+        }
+      }
+    },
+    "Ready while you wait" : {
+      "comment" : "Heading over a lesson or review the learner can start while a lesson is written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bereit für deine Wartezeit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para hacer mientras esperas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À faire en attendant"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Da fare nell’attesa"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待っている間にできること"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기다리는 동안 할 수 있는 학습"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na czas oczekiwania"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pronto para fazer enquanto espera"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beklerken başlayabilirsin"
+          }
+        }
+      }
+    },
     "Reply" : {
       "comment" : "What the learner does in an activity, named above its prompt",
       "localizations" : {
@@ -8399,6 +8930,179 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sonuç"
+          }
+        }
+      }
+    },
+    "Review %lld ideas" : {
+      "comment" : "Opens Today, where the ideas due for review are: ready while a lesson is written",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Idee wiederholen"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Ideen wiederholen"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Review %lld idea"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Review %lld ideas"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Repasar %lld idea"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Repasar %lld ideas"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Réviser %lld idée"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Réviser %lld idées"
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Ripassa %lld idea"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Ripassa %lld idee"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "要点を%lld個復習する"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "개념 %lld개 복습하기"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Powtórz %lld zagadnień"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Powtórz %lld zagadnienie"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Powtórz %lld zagadnienia"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Revisar %lld ideia"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Revisar %lld ideias"
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld kavramı tekrar et"
+                }
+              }
+            }
           }
         }
       }
@@ -11176,61 +11880,61 @@
         }
       }
     },
-    "This lesson didn't pass our checks, so your plan moved on without it." : {
-      "comment" : "Every draft of a lesson was held back",
+    "This lesson isn't available" : {
+      "comment" : "Every draft of a lesson was held back by its quality checks",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Lektion hat unsere Prüfung nicht bestanden. Dein Plan geht deshalb ohne sie weiter."
+            "value" : "Diese Lektion ist nicht verfügbar"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta lección no pasó nuestras revisiones, así que tu plan siguió adelante sin ella."
+            "value" : "Esta lección no está disponible"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette leçon n’a pas passé nos vérifications, alors ton plan a continué sans elle."
+            "value" : "Cette leçon n’est pas disponible"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questa lezione non ha superato i nostri controlli, quindi il tuo piano è proseguito senza includerla."
+            "value" : "Questa lezione non è disponibile"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "品質チェックに通らなかったため、このレッスンを含めずに学習計画を進めました。"
+            "value" : "このレッスンは利用できません"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 레슨은 검토를 통과하지 못해 계획에서 제외됐어요."
+            "value" : "이 레슨은 이용할 수 없어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ta lekcja nie przeszła naszych kontroli, więc pominięto ją w twoim planie."
+            "value" : "Ta lekcja jest niedostępna"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta aula não passou nas nossas verificações, então seu plano seguiu sem ela."
+            "value" : "Esta aula não está disponível"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu ders kontrollerimizden geçemediği için planın onsuz devam etti."
+            "value" : "Bu ders kullanılamıyor"
           }
         }
       }
@@ -11294,61 +11998,61 @@
         }
       }
     },
-    "This lesson isn't written yet." : {
-      "comment" : "A lesson not written yet, writing refused",
+    "This lesson isn't written yet" : {
+      "comment" : "Under a lesson's description, before the learner starts it and it's written",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Lektion ist noch nicht erstellt."
+            "value" : "Diese Lektion ist noch nicht erstellt"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta lección aún no está preparada."
+            "value" : "Esta lección aún no está preparada"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette leçon n’est pas encore préparée."
+            "value" : "Cette leçon n’est pas encore prête"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questa lezione non è ancora stata preparata."
+            "value" : "Questa lezione è ancora da preparare"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このレッスンはまだ作成されていません。"
+            "value" : "このレッスンはまだ作成されていません"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 레슨은 아직 만들어지지 않았어요."
+            "value" : "아직 만들지 않은 레슨이에요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie przygotowaliśmy jeszcze tej lekcji."
+            "value" : "Ta lekcja nie jest jeszcze przygotowana"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta aula ainda não foi criada."
+            "value" : "Esta aula ainda não foi criada"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu ders henüz hazırlanmadı."
+            "value" : "Bu ders henüz hazırlanmadı"
           }
         }
       }
@@ -12002,6 +12706,65 @@
         }
       }
     },
+    "Underlining what matters most…" : {
+      "comment" : "What the wait is doing while a lesson's key ideas are highlighted",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir unterstreichen, was am wichtigsten ist…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subrayando lo más importante…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On souligne l’essentiel…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo sottolineando ciò che conta di più…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "特に大事なところに下線を引いています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가장 중요한 내용에 밑줄을 긋고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Podkreślamy to, co najważniejsze…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sublinhando o que mais importa…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En önemli noktaların altını çiziyoruz…"
+          }
+        }
+      }
+    },
     "Usage:" : {
       "comment" : "Before a word's usage note",
       "localizations" : {
@@ -12411,65 +13174,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu dersi kaydedemedik. Birazdan tekrar dene. Yaptıkların kaybolmadı."
-          }
-        }
-      }
-    },
-    "We couldn't write this lesson. Try again." : {
-      "comment" : "Writing a lesson failed",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir konnten diese Lektion nicht erstellen. Versuch es noch einmal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No pudimos preparar esta lección. Inténtalo de nuevo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nous n’avons pas pu préparer cette leçon. Réessaie."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non siamo riusciti a preparare questa lezione. Riprova."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このレッスンを作成できませんでした。もう一度試してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 레슨을 만들지 못했어요. 다시 시도해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie udało nam się przygotować tej lekcji. Spróbuj ponownie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não conseguimos criar esta aula. Tente de novo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu dersi hazırlayamadık. Tekrar dene."
           }
         }
       }
@@ -13005,6 +13709,65 @@
         }
       }
     },
+    "Writing screen %lld…" : {
+      "comment" : "What the wait is doing while a lesson is written: the screen it's on",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen Seite %lld…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando la pantalla %lld…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation de l’écran %lld…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo preparando la schermata %lld…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lldページ目を作成しています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld번째 화면을 만들고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy ekran %lld…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criando a tela %lld…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld. ekranı hazırlıyoruz…"
+          }
+        }
+      }
+    },
     "Writing the lesson" : {
       "comment" : "A step of the wait while a lesson is written",
       "localizations" : {
@@ -13060,6 +13823,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dersi hazırlıyoruz"
+          }
+        }
+      }
+    },
+    "Writing your lesson" : {
+      "comment" : "VoiceOver: the bar of a lesson's wait",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen deine Lektion"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando tu lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation de ta leçon"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo preparando la tua lezione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスンを作成しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레슨을 만들고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy twoją lekcję"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criando sua aula"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dersini hazırlıyoruz"
           }
         }
       }
