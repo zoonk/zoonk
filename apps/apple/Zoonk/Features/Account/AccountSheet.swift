@@ -274,7 +274,7 @@ struct AccountSheet: View {
           tableName: "Account",
           comment: "Explains that a temporary account load failure did not remove the session")
       } actions: {
-        Button {
+        BusyButton(isBusy: session.isWorking) {
           Task {
             await session.retryRestore()
           }
@@ -282,7 +282,6 @@ struct AccountSheet: View {
           Text("Try again", tableName: "Account", comment: "Retries loading the saved account")
         }
         .buttonStyle(.mainAction)
-        .disabled(session.isWorking)
       }
       .navigationTitle(accountTitle)
       .toolbarTitleDisplayMode(.inline)
@@ -433,6 +432,7 @@ private struct SettingsHubView: View {
             }
           } label: {
             Text("Log out", tableName: "Account", comment: "Account log-out action")
+              .spinnerAtEndWhenSlow(session.isWorking)
           }
           .disabled(session.isWorking)
         }

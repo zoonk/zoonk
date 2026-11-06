@@ -40,7 +40,7 @@ struct SuggestedGoalSection: View {
           .foregroundStyle(.secondary)
       }
 
-      Button {
+      BusyButton(isBusy: answering == true) {
         answer(accepted: true)
       } label: {
         Text("Build my plan", tableName: "Today", comment: "Accepts the suggested goal")
@@ -49,7 +49,7 @@ struct SuggestedGoalSection: View {
       .buttonStyle(.mainAction)
       .controlSize(.large)
 
-      Button {
+      BusyButton(isBusy: answering == false) {
         answer(accepted: false)
       } label: {
         Text("Not now", tableName: "Today", comment: "Dismisses the suggested goal")
@@ -116,12 +116,11 @@ struct TodayExamChoiceSection: View {
         Text(sentence)
 
         if change.canUndo {
-          Button {
+          BusyButton(isBusy: editor.isSaving) {
             Task { await editor.undo() }
           } label: {
             Text("Undo", tableName: "Today", comment: "Undoes a plan change the learner applied")
           }
-          .disabled(editor.isSaving)
         }
 
         failure

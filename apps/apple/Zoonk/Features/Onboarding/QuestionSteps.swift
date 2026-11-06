@@ -130,6 +130,7 @@ struct StepButtons: View {
   var continueLabel: Text?
   var skipLabel: Text?
   var note: Text?
+  var isSkipping = false
   let onContinue: () -> Void
   var onSkip: (() -> Void)?
 
@@ -147,7 +148,7 @@ struct StepButtons: View {
         .disabled(!canContinue)
 
         if let onSkip {
-          Button(action: onSkip) {
+          BusyButton(isBusy: isSkipping, action: onSkip) {
             (skipLabel
               ?? Text(
                 "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question"))

@@ -576,7 +576,7 @@ private struct PlanToolChoiceSheet: View {
         }
 
         ToolbarItem(placement: .confirmationAction) {
-          Button(role: .confirm) {
+          BusyButton(isBusy: editor.isSaving, role: .confirm) {
             saving = Task {
               if await save() {
                 dismiss()
@@ -585,7 +585,6 @@ private struct PlanToolChoiceSheet: View {
           } label: {
             Text("Save", tableName: "Plan", comment: "Saves the tool choice")
           }
-          .disabled(editor.isSaving)
         }
       }
     }

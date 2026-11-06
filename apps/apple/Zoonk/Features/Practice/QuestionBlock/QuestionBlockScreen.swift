@@ -508,13 +508,12 @@ private struct PauseSuggestionView: View {
           tableName: "Practice", comment: "Suggests a break after accuracy dropped.")
       }
 
-      Button(action: stop) {
+      BusyButton(isBusy: isStopping, action: stop) {
         Text(
           "Stop for today", tableName: "Practice",
           comment: "Stops today's session from the pause suggestion.")
       }
       .buttonStyle(.bordered)
-      .disabled(isStopping)
 
       if failed {
         FailureLine(

@@ -1009,13 +1009,12 @@ private struct MockPlanSection: View {
         }
 
         ButtonRow {
-          Button {
+          BusyButton(isBusy: answers.applying) {
             Task { await apply() }
           } label: {
             Text("Apply", tableName: "Mock", comment: "Applies the mock's plan change")
           }
           .buttonStyle(.bordered)
-          .disabled(answers.applying)
 
           Button {
             for offer in open { answers.byOffer[offer] = .declined }

@@ -61,7 +61,7 @@ struct ConversationResultView: View {
         if isWritingAgain {
           writingAgain
         } else if let input = againInput {
-          Button {
+          BusyButton(isBusy: isStartingAgain) {
             again = Task { await startAgain(input) }
           } label: {
             if conversation.kind == .speakingMock {
@@ -73,7 +73,6 @@ struct ConversationResultView: View {
             }
           }
           .buttonStyle(.borderless)
-          .disabled(isStartingAgain)
         }
       }
       .scenePadding()

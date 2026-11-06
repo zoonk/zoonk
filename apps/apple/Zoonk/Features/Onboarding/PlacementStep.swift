@@ -240,7 +240,8 @@ struct PlacementStep: View {
           "Start", tableName: "Onboarding", comment: "Starts placement's questions"),
         skipLabel: Text(
           "Skip and start from the basics", tableName: "Onboarding",
-          comment: "Skips placement; the plan starts at the beginning")
+          comment: "Skips placement; the plan starts at the beginning"),
+        isSkipping: isSaving
       ) {
         Task { await start() }
       } onSkip: {
@@ -338,6 +339,7 @@ struct PlacementStep: View {
       ) {
         finish(fromScratch: false)
       }
+      .environment(\.isSavingAnswer, isSaving)
     }
     .onboardingColumn()
     .disabled(isSaving)

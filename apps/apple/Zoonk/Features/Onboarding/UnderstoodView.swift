@@ -723,13 +723,13 @@ private struct InstrumentOutcome: View {
 
       if error?.needsAccount != true {
         StepButtons(
-          canSkip: !isJoining && waitlist != .joined,
+          canSkip: waitlist != .joined,
           continueLabel: Text(
             "Start musicianship", tableName: "Onboarding", comment: "Starts a musicianship goal"),
           skipLabel: Text(
             "Join the waitlist", tableName: "Onboarding",
             comment: "Joins the waitlist for lessons that teach playing an instrument"),
-          onContinue: onStartMusicianship
+          isSkipping: isJoining, onContinue: onStartMusicianship
         ) {
           Task { await join() }
         }

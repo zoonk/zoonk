@@ -702,7 +702,7 @@ struct LessonGuestGateView: View {
       Text(outline.description)
     } actions: {
       if let start = guestStart.start {
-        Button {
+        BusyButton(isBusy: isStarting) {
           isStarting = true
           startFailed = false
           starting = Task {
@@ -719,7 +719,6 @@ struct LessonGuestGateView: View {
             comment: "A visitor starts a public lesson as a guest")
         }
         .buttonStyle(.mainAction)
-        .disabled(isStarting)
 
         if startFailed {
           FailureLine(

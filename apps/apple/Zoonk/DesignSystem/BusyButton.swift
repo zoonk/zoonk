@@ -11,11 +11,12 @@ extension Duration {
 /// plain `Button`, disabled while busy, whose mark or end shows the spinner.
 struct BusyButton<Label: View>: View {
   let isBusy: Bool
+  var role: ButtonRole?
   let action: () -> Void
   @ViewBuilder let label: Label
 
   var body: some View {
-    Button(action: action) {
+    Button(role: role, action: action) {
       label.coveredBySpinnerWhenSlow(isBusy)
     }
     .disabled(isBusy)

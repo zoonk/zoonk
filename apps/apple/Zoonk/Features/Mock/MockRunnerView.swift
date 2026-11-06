@@ -577,7 +577,7 @@ private struct MockAnswerSheet: View {
       }
     }
     .safeAreaBar(edge: .bottom) {
-      Button(action: onHandIn) {
+      BusyButton(isBusy: run.busy == .submit, action: onHandIn) {
         Text("Hand in", tableName: "Mock", comment: "Hands in from the answer sheet")
           .frame(maxWidth: .infinity)
       }

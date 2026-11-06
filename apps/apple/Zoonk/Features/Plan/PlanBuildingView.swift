@@ -57,6 +57,7 @@ struct PlanBuildingView: View {
             Task { await restart() }
           } label: {
             Text("Try again", tableName: "Plan", comment: "Starts building the plan again")
+              .spinnerAtEndWhenSlow(isRestarting)
           }
           .disabled(isRestarting)
 

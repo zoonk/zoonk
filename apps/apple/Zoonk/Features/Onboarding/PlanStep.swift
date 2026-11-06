@@ -282,6 +282,7 @@ private struct RevealNoticeDay: View {
             use(noticeDay.date)
           } label: {
             Text("Use this date", tableName: "Plan", comment: "Takes the notice's day as the date")
+              .spinnerAtEndWhenSlow(isSaving)
           }
 
           failure

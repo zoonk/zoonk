@@ -182,6 +182,7 @@ struct PlanBasesView: View {
             Task { await save(changed) }
           } label: {
             Text("Save choices", tableName: "Plan", comment: "Saves the prerequisites' choices")
+              .spinnerAtEndWhenSlow(editor.isSaving)
           }
           .disabled(!preview.canSave || editor.isSaving)
         }

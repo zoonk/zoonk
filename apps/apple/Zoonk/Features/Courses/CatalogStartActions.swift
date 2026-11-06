@@ -71,7 +71,7 @@ struct CatalogStartActions: View {
   @ViewBuilder
   private var startButtons: some View {
     if let goal {
-      Button {
+      BusyButton(isBusy: switchingTo != nil) {
         continuePlan(goal)
       } label: {
         Text(
@@ -79,7 +79,6 @@ struct CatalogStartActions: View {
           comment: "Takes a learner whose goal follows this course back to Today")
       }
       .buttonStyle(.mainAction)
-      .disabled(switchingTo != nil)
     } else {
       Button {
         router.open(.courseStart(courseId: courseID, chapterId: chapterID))

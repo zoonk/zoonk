@@ -376,7 +376,7 @@ struct SessionSummaryView: View {
   }
 
   private func keepGoingButton(_ next: StudyBlock, sharesLine: Bool) -> some View {
-    Button {
+    BusyButton(isBusy: isBusy) {
       keepGoing(next)
     } label: {
       choiceLabel(
@@ -384,7 +384,6 @@ struct SessionSummaryView: View {
         sharesLine: sharesLine)
     }
     .buttonStyle(.bordered)
-    .disabled(isBusy)
   }
 
   /// Main's `SHARED_ROW_ACTION_CLASS`: the two split a shared line evenly, and neither cuts its label

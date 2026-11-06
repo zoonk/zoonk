@@ -163,6 +163,7 @@ private struct MistakeListSections: View {
             Task { await loadMore() }
           } label: {
             Text("Show more", tableName: "Practice", comment: "Loads the notebook's next page.")
+              .spinnerAtEndWhenSlow(isLoadingMore)
           }
           .disabled(isLoadingMore)
         }

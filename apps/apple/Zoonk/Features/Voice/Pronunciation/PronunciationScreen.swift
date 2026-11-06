@@ -297,7 +297,7 @@ private struct PronunciationRoundView: View {
           .controlSize(.large)
         }
 
-        Button {
+        BusyButton(isBusy: round.isPending) {
           Task { await round.next() }
         } label: {
           Group {
@@ -312,7 +312,6 @@ private struct PronunciationRoundView: View {
         .buttonStyle(.mainAction)
         .controlSize(.large)
         .keyboardShortcut(.defaultAction)
-        .disabled(round.isPending)
       }
     case .ready:
       if recorder.isDenied {

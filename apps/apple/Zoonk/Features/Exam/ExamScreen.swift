@@ -460,6 +460,7 @@ private struct ExamResultSection: View {
         Task { await save() }
       } label: {
         Text("Save my result", tableName: "Exam", comment: "Saves the official result")
+          .spinnerAtEndWhenSlow(form.saving)
       }
       .disabled(form.saving || (parsedScore == nil && form.passed == .unknown))
     } header: {

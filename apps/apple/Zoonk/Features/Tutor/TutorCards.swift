@@ -79,7 +79,7 @@ struct TutorPlanChangeCard: View {
       }
       .disabled(isSaving)
     case .applied where change.canUndo:
-      Button {
+      BusyButton(isBusy: isSaving) {
         decide(.undone)
       } label: {
         Label {
@@ -89,7 +89,6 @@ struct TutorPlanChangeCard: View {
         }
       }
       .buttonStyle(.bordered)
-      .disabled(isSaving)
     case .applied, .declined, .undone, .replaced:
       EmptyView()
     }

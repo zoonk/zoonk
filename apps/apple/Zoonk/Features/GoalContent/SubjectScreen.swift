@@ -503,14 +503,13 @@ private struct SubjectNotPlannedNotice: View {
       .foregroundStyle(.secondary)
 
       if reason == "skipped" {
-        Button {
+        BusyButton(isBusy: isRestoring) {
           Task { await restore() }
         } label: {
           Text(
             "Bring it back", tableName: "Plan", comment: "Puts a skipped subject back in the plan")
         }
         .buttonStyle(.bordered)
-        .disabled(isRestoring)
       } else if reason == "time" {
         Button {
           router.showRoot(of: .plan)

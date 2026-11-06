@@ -19,6 +19,7 @@ struct TodayUpNextSection: View {
           Text(studyDuration(minutes: lesson.minutes))
             .font(.footnote.monospacedDigit())
             .foregroundStyle(.secondary)
+            .coveredBySpinnerWhenSlow(index == 0 && isBusy, alignment: .trailing)
         }
 
         if index == 0 {
@@ -225,7 +226,7 @@ struct TodayPlanChangeSection: View {
             Text("Next suggestion", tableName: "Today", comment: "Shows the next plan suggestion")
           }
         } else if decision == .applied, change.canUndo {
-          Button {
+          BusyButton(isBusy: isSaving) {
             answer(.undone)
           } label: {
             Label {
@@ -234,7 +235,6 @@ struct TodayPlanChangeSection: View {
               Image(systemName: "arrow.uturn.backward")
             }
           }
-          .disabled(isSaving)
         }
       } else if let behind = change.behind, change.kind == "missedDays" {
         Label {

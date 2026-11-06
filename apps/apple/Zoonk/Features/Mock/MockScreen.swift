@@ -385,7 +385,7 @@ private struct MockBreakView: View {
     }
     .safeAreaBar(edge: .bottom) {
       MockActionBar(run: run) {
-        Button {
+        BusyButton(isBusy: run.busy == .endBreak) {
           Task { await run.endBreak() }
         } label: {
           Text("Start the next section", tableName: "Mock", comment: "Ends a mock's break early")
@@ -462,7 +462,7 @@ private struct MockSpeakingView: View {
       MockActionBar(run: run) {
         if view.speaking == nil {
           if !run.isWritingPaper {
-            Button {
+            BusyButton(isBusy: run.busy == .startSpeaking) {
               Task { await run.startSpeaking() }
             } label: {
               Text("Start the speaking part", tableName: "Mock", comment: "Starts mock speaking")
@@ -472,7 +472,7 @@ private struct MockSpeakingView: View {
             .disabled(run.pending)
           }
         } else {
-          Button {
+          BusyButton(isBusy: run.busy == .submit) {
             confirmsHandIn = true
           } label: {
             handInLabel

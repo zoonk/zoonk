@@ -206,7 +206,9 @@ struct AccountDeletionView: View {
           Text(
             "Delete account",
             tableName: "Account",
-            comment: "Starts permanent account deletion")
+            comment: "Starts permanent account deletion"
+          )
+          .spinnerAtEndWhenSlow(session.isWorking)
         }
         .disabled(session.isWorking)
       }

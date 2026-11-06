@@ -145,7 +145,7 @@ struct TestOutScreen: View {
       }
     } actions: {
       if let changeId = result.changeId, undo != .done {
-        Button {
+        BusyButton(isBusy: undo == .pending) {
           Task { await undoSkip(changeId) }
         } label: {
           Text(
@@ -156,7 +156,6 @@ struct TestOutScreen: View {
         }
         .buttonStyle(.glass)
         .controlSize(.large)
-        .disabled(undo == .pending)
       }
 
       PracticeMainButton(

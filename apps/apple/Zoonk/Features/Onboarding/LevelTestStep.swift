@@ -382,11 +382,11 @@ private struct LevelTestIntro: View {
       }
 
       StepButtons(
-        canContinue: !isSaving && !isStarting, canSkip: !isSaving && !isStarting,
+        canContinue: !isSaving, canSkip: !isStarting,
         continueLabel: Text("Start", tableName: "Onboarding", comment: "Starts the level test"),
         skipLabel: Text(
           "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test"),
-        onContinue: onStart, onSkip: onSkip)
+        isSkipping: isSaving, onContinue: onStart, onSkip: onSkip)
 
       if offersOwnLanguage, let settings = URL(string: UIApplication.openSettingsURLString) {
         Section {
@@ -669,11 +669,12 @@ private struct LevelTestDone: View {
       }
 
       StepButtons(
-        canContinue: !isSaving,
         continueLabel: Text(
           "Build my plan", tableName: "Onboarding", comment: "Ends the level test to build the plan"
         ),
-        onContinue: onContinue)
+        onContinue: onContinue
+      )
+      .environment(\.isSavingAnswer, isSaving)
     }
     .onboardingColumn()
   }
