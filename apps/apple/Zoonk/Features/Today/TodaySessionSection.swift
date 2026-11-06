@@ -18,6 +18,8 @@ struct TodaySessionSection: View {
   let writingStalled: Bool
   @Binding var disclosures: TodayDisclosures
   let open: (StudyBlock, Bool) -> Void
+  /// Main's tablet column heads the day with its action instead (`TodaySessionAction`).
+  var showsAction = true
   let prepare: () -> Void
 
   /// Done blocks shown before folding them into one row, and upcoming ones before "+N more".
@@ -56,9 +58,10 @@ struct TodaySessionSection: View {
       }
     }
 
-    if let action {
+    if showsAction, TodaySessionAction.offers(view) {
       Section {
-        action
+        TodaySessionAction(
+          view: view, busy: busy, failed: failed, open: open, prepare: prepare)
       }
       .listRowBackground(Color.clear)
       .listRowInsets(.vertical, 0)
@@ -202,6 +205,44 @@ struct TodaySessionSection: View {
       && session.missions.contains { !$0.isDone && $0.waitReason == nil && $0.opens(block) }
   }
 
+}
+
+/// The day's one main action: start or continue the session, get its lessons, its summary, or the
+/// Plan once the goal's date passed.
+struct TodaySessionAction: View {
+  @Environment(AppRouter.self) private var router
+
+  let view: TodayView
+  let busy: TodayDayView.Tap?
+  let failed: TodayDayView.Tap?
+  let open: (StudyBlock, Bool) -> Void
+  let prepare: () -> Void
+  /// Beside the page's title rather than across the column.
+  var isInHeader = false
+
+  private var session: StudyDay { view.session }
+
+  /// Whether the day has one, so a place that holds it can leave itself out.
+  static func offers(_ view: TodayView) -> Bool {
+    if view.isPastDate {
+      return true
+    }
+
+    if !view.upNextLessons.isEmpty {
+      return false
+    }
+
+    switch view.session.state {
+    case .underway: return view.session.nextBlock != nil
+    case .done, .prepare: return true
+    case .ahead, .limit, .rest, .waiting: return false
+    }
+  }
+
+  var body: some View {
+    action?.inHeader(isInHeader)
+  }
+
   private var action: TodayMainAction? {
     let state = session.state
 
@@ -255,10 +296,25 @@ struct TodayMainAction: View {
   let kind: Kind
   let isBusy: Bool
   let failed: Bool
+  /// Beside the page's title, its own width, rather than across the column.
+  private var isInHeader = false
   let action: () -> Void
 
+  init(kind: Kind, isBusy: Bool, failed: Bool, action: @escaping () -> Void) {
+    self.kind = kind
+    self.isBusy = isBusy
+    self.failed = failed
+    self.action = action
+  }
+
+  func inHeader(_ isInHeader: Bool) -> Self {
+    var shown = self
+    shown.isInHeader = isInHeader
+    return shown
+  }
+
   var body: some View {
-    VStack(spacing: 8) {
+    VStack(alignment: isInHeader ? .trailing : .center, spacing: 8) {
       Button(action: action) {
         HStack {
           if isBusy {
@@ -267,7 +323,7 @@ struct TodayMainAction: View {
 
           title
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: isInHeader ? nil : .infinity)
       }
       .buttonStyle(.mainAction)
       .controlSize(.large)
