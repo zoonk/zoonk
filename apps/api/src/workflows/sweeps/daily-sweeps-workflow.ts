@@ -4,6 +4,7 @@ import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
+import { startPictureChecks } from "../images/start-picture-checks";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
@@ -12,6 +13,7 @@ import {
   deleteRetiredStepsStep,
   listDueFreshnessTargetsStep,
   listLessonsForLaterReviewStep,
+  listOwedPictureChecksStep,
   purgeEvaluationRunsStep,
   purgeExpiredAuthRecordsStep,
   purgeExpiredVerificationsStep,
@@ -32,6 +34,7 @@ export type DailySweepsResult = {
   itemsRecalibrated: number;
   laterReviews: number;
   memoryFactsPurged: number;
+  pictureChecks: number;
   retiredStepsDeleted: number;
   verificationsPurged: number;
 };
@@ -56,6 +59,13 @@ async function startOldFollowUps(): Promise<number> {
   );
 
   return userIds.length;
+}
+
+async function checkOwedPictures(): Promise<number> {
+  const assetIds = await listOwedPictureChecksStep();
+  await startPictureChecks({ assetIds });
+
+  return assetIds.length;
 }
 
 async function deleteGuests(): Promise<number> {
@@ -107,6 +117,7 @@ export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
     verifications,
     access,
     followUps,
+    pictures,
   ] = await Promise.allSettled([
     checkFreshness(),
     deleteGuests(),
@@ -119,6 +130,7 @@ export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
     purgeExpiredVerificationsStep(),
     purgeExpiredAuthRecordsStep(),
     startOldFollowUps(),
+    checkOwedPictures(),
   ]);
 
   return {
@@ -131,6 +143,7 @@ export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
     itemsRecalibrated: countOf(items),
     laterReviews: countOf(reviews),
     memoryFactsPurged: countOf(facts),
+    pictureChecks: countOf(pictures),
     retiredStepsDeleted: countOf(retired),
     sessionsPurged: access.status === "fulfilled" ? access.value.sessionsPurged : 0,
     verificationsPurged: countOf(verifications),

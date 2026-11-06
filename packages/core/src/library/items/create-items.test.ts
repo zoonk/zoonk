@@ -187,6 +187,35 @@ describe(createItems, () => {
     await expect(prisma.item.count({ where: { runId: provenance.runId } })).resolves.toBe(2);
   });
 
+  it("keeps a picture owing its check when the step that stored it fails before starting it and the retry reuses it", async () => {
+    mockUploads();
+    const skill = await biologySkill();
+    const pictured = generatedMultipleChoice({ context: FIGURE_CONTEXT, image: figure });
+
+    mockImageScene(testScene({ focalObject: `a plant cell ${randomUUID()}` }));
+    mockSearchTerms([]);
+    mockDrawnImages([await drawTestImage()]);
+
+    const input = {
+      format: "multipleChoice" as const,
+      items: [pictured],
+      language: "pt",
+      provenance: generatedProvenance(),
+      skillId: skill.id,
+    };
+
+    const stored = await createItems(input);
+    const retried = await createItems(input);
+    const assetId = stored.unchecked[0];
+
+    expect(retried.created.map((item) => item.mediaAssetId)).toStrictEqual([assetId]);
+    expect(retried.unchecked).toStrictEqual([]);
+
+    await expect(
+      prisma.mediaAsset.findUniqueOrThrow({ where: { id: assetId } }),
+    ).resolves.toMatchObject({ checkOwedAt: expect.any(Date) });
+  });
+
   it("leaves the check of a picture two questions drew at once to the one that stored it", async () => {
     mockUploads();
     const skill = await biologySkill();

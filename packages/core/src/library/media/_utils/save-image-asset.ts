@@ -76,6 +76,7 @@ export async function saveImageAsset(
 
       return prisma.mediaAsset.create({
         data: {
+          checkOwedAt: new Date(),
           kind: "image",
           language: input.language,
           mimeType: IMAGE_MIME_TYPE,

@@ -8,6 +8,7 @@ import {
 } from "@zoonk/ai/tasks/images/scene-schema";
 import { type ImageCanvas, getImagePalette } from "@zoonk/ai/tasks/images/style";
 import { prisma } from "@zoonk/db";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { logInfo } from "@zoonk/utils/logger";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
@@ -20,6 +21,10 @@ import { type ImageAnalytics } from "./_utils/draw-library-image";
 import { uploadImageFile } from "./_utils/save-image-asset";
 
 const CHECK_TIER = chooseServiceTier({ wait: "later" });
+
+const OWED_PICTURES_PER_SWEEP = 100;
+const STORING_STEP_CHECKS_WITHIN_MS = 3_600_000;
+const SWEEPS_GIVE_UP_AFTER_MS = 7 * MS_PER_DAY;
 
 export type PictureRedraw = Awaited<ReturnType<typeof uploadImageFile>> & {
   provenance: LibraryProvenance;
@@ -114,11 +119,15 @@ export async function checkImageAsset({
     serviceTier: CHECK_TIER,
   });
 
-  if (review.usable) {
-    return { status: "passed" };
+  if (!review.usable) {
+    return { findings: review.problems, status: "rejected" };
   }
 
-  return { findings: review.problems, status: "rejected" };
+  if (!redraw) {
+    await prisma.mediaAsset.updateMany({ data: { checkOwedAt: null }, where: { id: assetId } });
+  }
+
+  return { status: "passed" };
 }
 
 /**
@@ -204,6 +213,7 @@ export async function replaceImageAsset({
     prisma.mediaAsset.updateMany({
       data: {
         ...toProvenanceData(redraw.provenance),
+        checkOwedAt: null,
         height: redraw.height,
         prompt: describeImageScene(redraw.scene),
         reuseKey: redraw.reuseKey,
@@ -218,6 +228,28 @@ export async function replaceImageAsset({
   ]);
 
   revalidateCacheTags([getMediaAssetCacheTag(assetId), ...lessonTags]);
+}
+
+/**
+ * Internal bridge for the daily sweep. A picture owed for over a week kept failing its check, so the
+ * sweep stops paying for it.
+ */
+export async function listOwedPictureChecks(): Promise<string[]> {
+  const now = Date.now();
+
+  const pictures = await prisma.mediaAsset.findMany({
+    orderBy: { checkOwedAt: "desc" },
+    select: { id: true },
+    take: OWED_PICTURES_PER_SWEEP,
+    where: {
+      checkOwedAt: {
+        gte: new Date(now - SWEEPS_GIVE_UP_AFTER_MS),
+        lt: new Date(now - STORING_STEP_CHECKS_WITHIN_MS),
+      },
+    },
+  });
+
+  return pictures.map((picture) => picture.id);
 }
 
 /** Drops the questions about the picture, since they can't be asked without it. */

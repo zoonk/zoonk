@@ -21,6 +21,7 @@ import {
 import {
   type PictureRedraw,
   checkImageAsset,
+  listOwedPictureChecks,
   planImageAssetAgain,
   redrawImageAsset,
   removeImageAsset,
@@ -30,9 +31,19 @@ import { createStepImage } from "./lesson-images";
 
 const alt = "Mão com um pequeno corte na pele e micróbios entrando pelo corte.";
 
+const HOUR_MS = 3_600_000;
+
+async function owedCheckOf(assetId: string) {
+  const { checkOwedAt } = await prisma.mediaAsset.findUniqueOrThrow({ where: { id: assetId } });
+  return checkOwedAt;
+}
+
 async function shownPicture() {
   const [asset, lesson, skill] = await Promise.all([
-    mediaAssetFixture({ scene: testScene({ focalObject: `a ${randomUUID()} map` }) }),
+    mediaAssetFixture({
+      checkOwedAt: new Date(),
+      scene: testScene({ focalObject: `a ${randomUUID()} map` }),
+    }),
     libraryLessonFixture(),
     skillFixture(),
   ]);
@@ -78,7 +89,7 @@ describe(checkImageAsset, () => {
     });
   });
 
-  it("passes a shown picture its check accepts, checking it at flex", async () => {
+  it("passes a shown picture its check accepts, checking it at flex, so it no longer owes its check", async () => {
     const { asset } = await shownPicture();
     mockImageChecks([true]);
 
@@ -88,9 +99,10 @@ describe(checkImageAsset, () => {
 
     expect(readStoredFile).toHaveBeenCalledWith(asset.url);
     expect(checkLessonImage).toHaveBeenCalledWith(expect.objectContaining({ serviceTier: "flex" }));
+    await expect(owedCheckOf(asset.id)).resolves.toBeNull();
   });
 
-  it("returns what the check found", async () => {
+  it("returns what the check found, and the picture still owes its check until a redraw replaces it", async () => {
     const { asset } = await shownPicture();
     mockImageChecks([false]);
 
@@ -98,9 +110,11 @@ describe(checkImageAsset, () => {
       findings: ["shows a different object"],
       status: "rejected",
     });
+
+    await expect(owedCheckOf(asset.id)).resolves.toStrictEqual(asset.checkOwedAt);
   });
 
-  it("checks a redraw's own file against its own scene", async () => {
+  it("checks a redraw's own file against its own scene, leaving the picture owed until the redraw replaces it", async () => {
     const { asset } = await shownPicture();
     const redraw = redrawOf();
     mockImageChecks([true]);
@@ -114,6 +128,8 @@ describe(checkImageAsset, () => {
     expect(checkLessonImage).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ alt, scene: redraw.scene }),
     );
+
+    await expect(owedCheckOf(asset.id)).resolves.toStrictEqual(asset.checkOwedAt);
   });
 
   it("does nothing for a picture that's gone", async () => {
@@ -201,7 +217,13 @@ describe(replaceImageAsset, () => {
       prisma.item.findUniqueOrThrow({ where: { id: item.id } }),
     ]);
 
-    expect(stored).toMatchObject({ runId: "redraw-run", scene: redraw.scene, url: redraw.url });
+    expect(stored).toMatchObject({
+      checkOwedAt: null,
+      runId: "redraw-run",
+      scene: redraw.scene,
+      url: redraw.url,
+    });
+
     expect(screen.mediaAssetId).toBe(asset.id);
     expect(screen.pictureAvailableAt).toStrictEqual(step.pictureAvailableAt);
     expect(screen.updatedAt.getTime()).toBeGreaterThan(step.updatedAt.getTime());
@@ -244,6 +266,26 @@ describe(replaceImageAsset, () => {
     await expect(createStepImage({ stepId: step.id })).resolves.toMatchObject({
       status: "generated",
     });
+  });
+});
+
+describe(listOwedPictureChecks, () => {
+  it("lists pictures owing their check for over an hour, past the check their storing step starts, until a week of sweeps gave up on them", async () => {
+    const now = Date.now();
+
+    const [owed, justStored, givenUp, checked] = await Promise.all([
+      mediaAssetFixture({ checkOwedAt: new Date(now - 2 * HOUR_MS) }),
+      mediaAssetFixture({ checkOwedAt: new Date(now - 60_000) }),
+      mediaAssetFixture({ checkOwedAt: new Date(now - 8 * 24 * HOUR_MS) }),
+      mediaAssetFixture({ checkOwedAt: null }),
+    ]);
+
+    const listed = await listOwedPictureChecks();
+
+    expect(listed).toContain(owed.id);
+    expect(listed).not.toContain(justStored.id);
+    expect(listed).not.toContain(givenUp.id);
+    expect(listed).not.toContain(checked.id);
   });
 });
 

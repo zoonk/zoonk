@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { evaluationRunFixture } from "@zoonk/testing/fixtures/evaluation-runs";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
@@ -14,6 +14,7 @@ import { start } from "workflow/api";
 import { getStartMock } from "../_test-utils/start-mock";
 import { followUpsWorkflow } from "../follow-ups/follow-ups-workflow";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
+import { pictureChecksWorkflow } from "../images/picture-checks-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import { dailySweepsWorkflow } from "./daily-sweeps-workflow";
@@ -169,6 +170,23 @@ describe(dailySweepsWorkflow, () => {
     );
 
     expect(result.followUpsStarted).toBeGreaterThanOrEqual(1);
+  });
+
+  it("starts the check of pictures still owing one, such as a picture whose storing step failed before starting it", async () => {
+    const [owed, justStored] = await Promise.all([
+      mediaAssetFixture({ checkOwedAt: new Date(Date.now() - DAY_MS) }),
+      mediaAssetFixture({ checkOwedAt: new Date() }),
+    ]);
+
+    const result = await dailySweepsWorkflow();
+
+    const checked = getStartMock()
+      .mock.calls.filter(([workflow]) => workflow === pictureChecksWorkflow)
+      .flatMap(([, args]) => (args as [{ assetIds: string[] }])[0].assetIds);
+
+    expect(checked).toContain(owed.id);
+    expect(checked).not.toContain(justStored.id);
+    expect(result.pictureChecks).toBe(checked.length);
   });
 
   it("starts the rewrite of what a changed source left flagged", async () => {
