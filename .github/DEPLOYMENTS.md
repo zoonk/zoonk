@@ -16,7 +16,7 @@ GitHub Actions owns every deployment. The Vercel projects keep the Git connectio
 
 Production domains move automatically when each deployment succeeds. Apps switch independently, so a failed release can leave a successful app on the new version while another remains on the old version. Production releases are serialized with GitHub's `queue: max`; up to 100 runs can wait without replacing one another.
 
-Staging is on request, for trying `main` before a release: pushing to `main` deploys nothing. `pnpm staging` starts the Staging workflow on `main`'s newest commit, which waits for that commit's CI like a release does and fails if CI failed. A new request cancels a running one along with the Vercel builds it started. Staging deploys only `main`: a run started from another branch is skipped, since staging's shared database must only receive migrations that reached `main`.
+Staging is on request, for trying `main` before a release: a push to `main` doesn't deploy it. `pnpm staging` starts the Staging workflow on `main`'s newest commit, which waits for that commit's CI like a release does and fails if CI failed. A new request cancels a running one along with the Vercel builds it started. Staging deploys only `main`, since its shared database must only receive migrations that reached `main`: a run started from another branch is skipped and leaves a running deploy alone.
 
 ## Configuration contract
 

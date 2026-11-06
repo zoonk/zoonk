@@ -4,10 +4,6 @@ name: Staging
 on:
   workflow_dispatch:
 
-concurrency:
-  group: staging
-  cancel-in-progress: true
-
 permissions:
   contents: read
   actions: read
@@ -22,6 +18,9 @@ jobs:
   staging:
     # Staging's database is shared, so it only takes migrations that reached `main`.
     if: github.ref == 'refs/heads/main'
+    concurrency:
+      group: staging
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     timeout-minutes: 95
     env:
