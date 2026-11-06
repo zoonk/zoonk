@@ -1,5 +1,4 @@
 import { type CallWait } from "@zoonk/ai/provider-options";
-import { PICTURE_WAIT_MS } from "@zoonk/core/lesson-player/picture-wait";
 import { MAX_LESSON_DRAFTS } from "@zoonk/core/library/generation/held-back-drafts";
 import { LESSON_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { type PlanGenerationManifest } from "@zoonk/core/lookahead/speculative-lessons";
@@ -11,25 +10,19 @@ import { deliverCourseContent } from "../_shared/course-content-notification";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken, joinRun } from "../_shared/run-token";
-import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
-import { lessonMarksWorkflow } from "../marks/lesson-marks-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import {
   type LessonContentResult,
   getLessonContentHookToken,
   lessonContentResultSchema,
 } from "./lesson-content-result";
+import { markAndDraw } from "./mark-and-draw";
 import { admitLessonContentStep, claimLessonContentStep } from "./steps/claim-lesson-content-step";
 import { failLessonContentStep } from "./steps/fail-lesson-content-step";
 import { lessonProgressStep } from "./steps/lesson-progress-step";
-import {
-  type MarksAndPictures,
-  completeLessonContentStep,
-  readMarksAndPicturesStep,
-} from "./steps/lesson-ready-steps";
+import { completeLessonContentStep } from "./steps/lesson-ready-steps";
 import { readLessonStatusStep } from "./steps/read-lesson-status-step";
 import {
-  type ImageScope,
   type LessonWriteOutcome,
   type LessonWriteStage,
   type WriteInput,
@@ -59,9 +52,6 @@ const LESSON_TASK = "lesson-content";
 
 const WAIT_INTERVAL = "5s";
 const MAX_WAITS = 36;
-
-const SETTLE_POLL_MS = 5000;
-const MAX_SETTLE_POLLS = PICTURE_WAIT_MS / SETTLE_POLL_MS;
 
 async function finish({ lessonId, status }: LessonContentResult): Promise<LessonContentResult> {
   await lessonProgressStep(
@@ -241,56 +231,6 @@ async function planAndWrite({
   }
 }
 
-async function reportSettled({
-  lessonId,
-  previous,
-  settled,
-}: {
-  lessonId: string;
-  previous?: MarksAndPictures;
-  settled: MarksAndPictures;
-}): Promise<void> {
-  await Promise.all([
-    settled.marked && !previous?.marked
-      ? lessonProgressStep({ entityId: lessonId, status: "completed", step: "markLesson" })
-      : null,
-    settled.drawn && !previous?.drawn
-      ? lessonProgressStep({ entityId: lessonId, status: "completed", step: "drawPictures" })
-      : null,
-  ]);
-}
-
-/** Once the screens' picture wait ends, the lesson opens with what it has, so a stuck drawing never holds a learner. */
-async function markAndDraw({
-  imageScope,
-  input: { analytics, lessonId, wait },
-}: {
-  imageScope: NonNullable<ImageScope>;
-  input: LessonContentInput;
-}): Promise<void> {
-  const [marks, pictures] = await Promise.all([
-    start(lessonMarksWorkflow, [{ analytics, lessonId, wait }]),
-    start(lessonImagesWorkflow, [
-      { analytics: { ...analytics, contentScope: imageScope }, lessonId },
-    ]),
-    lessonProgressStep({ entityId: lessonId, status: "started", step: "markLesson" }),
-    lessonProgressStep({ entityId: lessonId, status: "started", step: "drawPictures" }),
-  ]);
-
-  const runs = { lessonId, marksRunId: marks.runId, picturesRunId: pictures.runId };
-
-  await repeatUntil<MarksAndPictures>({
-    done: (settled) => settled.marked && settled.drawn,
-    run: async (previous) => {
-      await sleep(SETTLE_POLL_MS);
-      const settled = await readMarksAndPicturesStep(runs);
-      await reportSettled({ lessonId, previous, settled });
-      return settled;
-    },
-    times: MAX_SETTLE_POLLS,
-  });
-}
-
 export async function lessonContentWorkflow(
   input: LessonContentInput,
 ): Promise<LessonContentResult> {
@@ -336,7 +276,8 @@ export async function lessonContentWorkflow(
   }
 
   if (outcome.imageScope) {
-    await markAndDraw({ imageScope: outcome.imageScope, input });
+    const { analytics, wait } = input;
+    await markAndDraw({ analytics, imageScope: outcome.imageScope, lessonId, wait });
   }
 
   const completed = await completeLessonContentStep({ lessonId, workflowRunId });
