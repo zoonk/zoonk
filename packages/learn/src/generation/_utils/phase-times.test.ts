@@ -35,6 +35,31 @@ describe(getPhaseTimes, () => {
     ]);
   });
 
+  it("times a lesson's marking and drawing from when writing ended, each to its own finish", () => {
+    expect(
+      timesOf(
+        {
+          stepTimes: {
+            drawPictures: { completed: 70_000, started: 50_000 },
+            markLesson: { started: 50_000 },
+            planLesson: { completed: 20_000, started: 1000 },
+            writeLesson: { completed: 50_000, started: 20_000 },
+          },
+          steps: {
+            drawPictures: "completed",
+            markLesson: "started",
+            planLesson: "completed",
+            writeLesson: "completed",
+          },
+        },
+        "lesson",
+      ).slice(2),
+    ).toStrictEqual([
+      { endedAt: null, startedAt: 50_000 },
+      { endedAt: 70_000, startedAt: 50_000 },
+    ]);
+  });
+
   it("ends a phase whose finish wasn't reported as the next one begins", () => {
     expect(
       timesOf({

@@ -120,6 +120,36 @@ describe(getPhaseProgress, () => {
     ).toStrictEqual(["plan:active", "write:pending", "mark:pending", "draw:pending"]);
   });
 
+  it("runs a lesson's marking and drawing side by side, each done on its own steps", () => {
+    const written = { planLesson: "completed", writeLesson: "completed" } as const;
+
+    expect(
+      statusesOf("lesson", {
+        steps: { ...written, drawPictures: "started", markLesson: "started" },
+      }),
+    ).toStrictEqual(["plan:completed", "write:completed", "mark:active", "draw:active"]);
+
+    expect(
+      statusesOf("lesson", {
+        steps: { ...written, drawPictures: "started", markLesson: "completed" },
+      }),
+    ).toStrictEqual(["plan:completed", "write:completed", "mark:completed", "draw:active"]);
+
+    const drawnFirst = progressOf("lesson", {
+      steps: { ...written, drawPictures: "completed", markLesson: "started" },
+    });
+
+    expect(drawnFirst.phases.map((phase) => `${phase.id}:${phase.status}`)).toStrictEqual([
+      "plan:completed",
+      "write:completed",
+      "mark:active",
+      "draw:completed",
+    ]);
+
+    expect(drawnFirst.progress).toBeLessThan(100);
+    expect(drawnFirst.activeMs).toBe(10_000);
+  });
+
   it("has nothing running when the run never started", () => {
     const result = progressOf("firstLesson", { failure: "notStarted", status: "failed" });
 
