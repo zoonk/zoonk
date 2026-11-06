@@ -643,8 +643,11 @@ describe(lessonContentWorkflow, () => {
       return { runId: "started-run" } as never;
     });
 
+    let polledAt = 0;
+
     vi.mocked(sleep).mockImplementation(async (ms) => {
-      vi.setSystemTime(Date.now() + ms + 1000);
+      polledAt = Date.now() + ms + 1000;
+      vi.setSystemTime(polledAt);
     });
 
     await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
@@ -652,7 +655,8 @@ describe(lessonContentWorkflow, () => {
       status: "ready",
     });
 
-    expect(Date.now() - (savedAt ?? Date.now())).toBeLessThanOrEqual(5 * 60_000 + 6000);
+    // The lesson opens right after its last poll; a sampled lesson check may start later.
+    expect(polledAt - (savedAt ?? polledAt)).toBeLessThanOrEqual(5 * 60_000 + 6000);
 
     expect(
       getStreamedEvents()
