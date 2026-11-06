@@ -269,7 +269,7 @@ private struct PlanContent: View {
 struct PlanContext {
   let goal: LearnerGoal
   let plan: GoalPlan
-  let adjust: (AdjustPlanSheet.Section) -> Void
+  var adjust: (AdjustPlanSheet.Section) -> Void
   var report: () -> Void = {}
   var show: (PlanSheet) -> Void
   /// False when it didn't save; the Plan plays the certificate's moment.

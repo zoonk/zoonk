@@ -34,7 +34,7 @@ private struct PlanSheets: ViewModifier {
   let syllabus: GoalSyllabus?
 
   private enum Then {
-    case adjust
+    case adjust(AdjustPlanSheet.Section)
     case open(AppRoute)
   }
 
@@ -59,7 +59,7 @@ private struct PlanSheets: ViewModifier {
           case .pace:
             NavigationStack {
               PlanPaceSheet(context: context) {
-                then = .adjust
+                then = .adjust(.top)
                 self.sheet = nil
               }
             }
@@ -70,7 +70,8 @@ private struct PlanSheets: ViewModifier {
             CertificateSheet(code: code)
           case .suggestion(let item):
             SuggestionSheet {
-              PlanSuggestionSection(context: context, answer: $slotAnswer, sheetItem: item)
+              PlanSuggestionSection(
+                context: handingOffAdjust, answer: $slotAnswer, sheetItem: item)
             }
           }
         }
@@ -85,9 +86,19 @@ private struct PlanSheets: ViewModifier {
       }
   }
 
+  /// The plan's editor is a sheet too, so the suggestion closes before it opens.
+  private var handingOffAdjust: PlanContext {
+    var context = context
+    context.adjust = { section in
+      then = .adjust(section)
+      sheet = nil
+    }
+    return context
+  }
+
   private func doThen() {
     switch then {
-    case .adjust: context.adjust(.top)
+    case .adjust(let section): context.adjust(section)
     case .open(let route): router.open(route)
     case nil: break
     }
