@@ -136,8 +136,7 @@ struct PlanSuggestionSection: View {
 
             // A new suggestion starts closed, so an answer in the sheet never shows the next one there.
             SuggestionLine {
-              Image(systemName: summary.systemImage)
-                .foregroundStyle(.warning)
+              SuggestionMark(kind: summary.mark)
             } summary: {
               summary.text
                 .accessibilityFocused($focus, equals: .item)
@@ -194,7 +193,7 @@ struct PlanSuggestionSection: View {
     // An exam choice keeps its question, as main's does.
     if case .choice(let choice) = answer.item {
       header(
-        choiceTitle(choice), icon: Image(systemName: "list.bullet").foregroundStyle(.warning))
+        choiceTitle(choice), icon: SuggestionMark(kind: .symbol("signpost.right")))
     } else {
       header(
         Text("Plan updated", tableName: "Plan", comment: "Title once a plan suggestion is applied"),
@@ -395,7 +394,7 @@ struct PlanSuggestionSection: View {
       PlanPausedSlot(context: context)
     case .choice(let choice) where choice.take > 1:
       card(
-        title: choiceTitle(choice), systemImage: "list.bullet",
+        title: choiceTitle(choice), mark: .symbol("signpost.right"),
         description: Text(choice.leftOut.line),
         options: {
           Text.examPickLimit(choice.take)
@@ -423,7 +422,7 @@ struct PlanSuggestionSection: View {
         })
     case .choice(let choice):
       card(
-        title: choiceTitle(choice), systemImage: "list.bullet",
+        title: choiceTitle(choice), mark: .symbol("signpost.right"),
         description: Text(choice.leftOut.line)
       ) {
         Menu {
@@ -441,7 +440,7 @@ struct PlanSuggestionSection: View {
         title: Text(
           "Your date came", tableName: "Plan",
           comment: "Title of the Plan's notice when the goal's date came"),
-        systemImage: "calendar.badge.exclamationmark", description: Text(text)
+        mark: .symbol("calendar.badge.clock"), description: Text(text)
       ) {
         Button {
           context.adjust(.date)
@@ -454,7 +453,7 @@ struct PlanSuggestionSection: View {
     case .fitLessons:
       fitLessons(item)
     case .coverage(let text):
-      card(title: Text(text), systemImage: "clock", description: nil) {
+      card(title: Text(text), mark: .sparkle, description: nil) {
         Button {
           context.adjust(.time)
         } label: {
@@ -483,7 +482,7 @@ struct PlanSuggestionSection: View {
         title: Text(
           "Your plan no longer fits", tableName: "Plan",
           comment: "Title of the Plan's notice when the plan no longer fits"),
-        systemImage: "calendar.badge.clock", description: nil
+        mark: .symbol("calendar.badge.clock"), description: nil
       ) {
         Button {
           context.adjust(.top)
@@ -497,7 +496,7 @@ struct PlanSuggestionSection: View {
         title: Text(
           "A little to catch up", tableName: "Plan",
           comment: "Title of the Plan's notice when behind"),
-        systemImage: "calendar.badge.clock", description: Text(text)
+        mark: .symbol("calendar.badge.clock"), description: Text(text)
       ) {
         Button {
           router.select(.today)
@@ -514,45 +513,45 @@ struct PlanSuggestionSection: View {
 
   /// What the line says for each suggestion, as main's `SuggestionSummary`: its title, or for a pace
   /// that's behind, how to catch up.
-  private func summary(_ item: PlanSlotItem) -> (text: Text, systemImage: String) {
+  private func summary(_ item: PlanSlotItem) -> (text: Text, mark: SuggestionMark.Kind) {
     switch item {
     case .paused:
       (
         Text(
           "\(context.goal.title) is paused", tableName: "Plan",
-          comment: "Title of the Plan's notice for a paused goal"), "pause"
+          comment: "Title of the Plan's notice for a paused goal"), .symbol("pause")
       )
     case .choice(let choice):
-      (choiceTitle(choice), "list.bullet")
+      (choiceTitle(choice), .symbol("signpost.right"))
     case .pastDate:
       (
         Text(
           "Your date came", tableName: "Plan",
           comment: "Title of the Plan's notice when the goal's date came"),
-        "calendar.badge.exclamationmark"
+        .symbol("calendar.badge.clock")
       )
     case .fitLessons:
-      (context.plan.fitOffer.map(fitTitle) ?? Text(verbatim: ""), "sparkles")
+      (context.plan.fitOffer.map(fitTitle) ?? Text(verbatim: ""), .sparkle)
     case .coverage(let text):
-      (Text(text), "clock")
+      (Text(text), .sparkle)
     case .courseComplete:
-      (completeTitle, "checkmark.circle")
+      (completeTitle, .done)
     case .finished:
       (
         Text("You finished your plan", tableName: "Plan", comment: "Title once the plan is over"),
-        "checkmark.circle"
+        .done
       )
     case .tooTight:
       (
         Text(
           "Your plan no longer fits", tableName: "Plan",
           comment: "Title of the Plan's notice when the plan no longer fits"),
-        "calendar.badge.clock"
+        .symbol("calendar.badge.clock")
       )
     case .behind(let text):
-      (Text(text), "calendar.badge.clock")
+      (Text(text), .symbol("calendar.badge.clock"))
     case .freeWeekOver:
-      (Text(FreeWeekOverNotice.title), "sparkles")
+      (Text(FreeWeekOverNotice.title), .symbol("sparkles"))
     }
   }
 
@@ -585,7 +584,7 @@ struct PlanSuggestionSection: View {
       let title = fitTitle(offer)
 
       card(
-        title: title, systemImage: "sparkles",
+        title: title, mark: .sparkle,
         description: topicsMoved(offer.effect).map(Text.init),
         effect: offer.effect
       ) {
@@ -603,12 +602,12 @@ struct PlanSuggestionSection: View {
   }
 
   private func card(
-    title: Text, systemImage: String, description: Text?, effect: PlanEffect? = nil,
+    title: Text, mark: SuggestionMark.Kind, description: Text?, effect: PlanEffect? = nil,
     @ViewBuilder options: () -> some View = { EmptyView() },
     @ViewBuilder actions: () -> some View
   ) -> some View {
     VStack(alignment: .leading, spacing: 8) {
-      header(title, icon: Image(systemName: systemImage).foregroundStyle(.warning))
+      header(title, icon: SuggestionMark(kind: mark))
 
       if let description {
         description
@@ -734,8 +733,7 @@ private struct PlanPausedSlot: View {
         )
         .typeStyle(.body.weight(.semibold))
       } icon: {
-        Image(systemName: "pause")
-          .foregroundStyle(.warning)
+        SuggestionMark(kind: .symbol("pause"))
       }
 
       Group {
@@ -973,6 +971,31 @@ func planLevelName(_ level: String) -> String {
   case "beginner": String(localized: "Beginner", table: "Plan", comment: "A course level")
   case "intermediate": String(localized: "Intermediate", table: "Plan", comment: "A course level")
   default: String(localized: "Advanced", table: "Plan", comment: "A course level")
+  }
+}
+
+/// Main's `SuggestionMark`: a suggestion's own mark is muted; one without (an offer of more lessons
+/// or of more time) takes the warning sparkle.
+private struct SuggestionMark: View {
+  enum Kind {
+    case sparkle
+    case done
+    case symbol(String)
+  }
+
+  let kind: Kind
+
+  var body: some View {
+    switch kind {
+    case .sparkle:
+      Image(systemName: "sparkle")
+        .foregroundStyle(.warning)
+    case .done:
+      StatusMark(status: .done)
+    case .symbol(let name):
+      Image(systemName: name)
+        .foregroundStyle(.mutedForeground)
+    }
   }
 }
 

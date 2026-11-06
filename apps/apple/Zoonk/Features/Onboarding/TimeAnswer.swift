@@ -377,7 +377,7 @@ struct TimeAnswer: View {
     }
   }
 
-  private static func shareWords(_ share: Double, exam: Bool, month: Bool, date: String) -> String {
+  static func shareWords(_ share: Double, exam: Bool, month: Bool, date: String) -> String {
     let percent = Self.percent(share)
 
     return switch (exam, month) {
