@@ -1,115 +1,27 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { type OfficeContentNode, parseOffice } from "officeparser";
 import { fetchDocument } from "../sources/fetch-document";
 import { toRegistrableDomain } from "./product-keys";
 
-const INERT_START = /<!--|<(?<element>script|style|template|noscript)\b/giu;
-const TEMPLATE_TAG = /<(?<closing>\/?)template\b[^>]*>/giu;
-
-const TAG = /<(?<name>a|link|meta)\b(?<attributes>[^>]*)>/giu;
+const LINK_TAG = /<link\b(?<attributes>[^>]*)>/giu;
 
 const ATTRIBUTE =
   /(?<key>[\w:-]+)\s*=\s*(?:"(?<double>[^"]*)"|'(?<single>[^']*)'|(?<bare>[^\s"'>]+))/gu;
 
 const SIZE = /^(?<width>\d+)x\d+$/iu;
+
 const SVG = /\.svg(?:$|\?)/iu;
-const ENTITIES: Record<string, string> = { "&#39;": "'", "&amp;": "&", "&quot;": '"' };
-const ENTITY = /&(?:amp|quot|#39);/gu;
 
 /** A scalable icon draws at any size, so it ranks above every bitmap. */
 const SCALABLE = 10_000;
 
-type Tag = { attributes: Map<string, string>; name: string };
-
 export type PageTags = {
-  /** Absolute addresses of the page's links, without their fragment. */
+  /** Absolute addresses of the links a visitor can follow, without their fragment. */
   links: string[];
   iconUrl: string | null;
   imageUrl: string | null;
 };
-
-function readAttributes(text: string): Map<string, string> {
-  return new Map(
-    [...text.matchAll(ATTRIBUTE)].map(({ groups }) => [
-      groups?.key?.toLowerCase() ?? "",
-      (groups?.double ?? groups?.single ?? groups?.bare ?? "").replaceAll(
-        ENTITY,
-        (entity) => ENTITIES[entity] ?? entity,
-      ),
-    ]),
-  );
-}
-
-/** Where a template ends, counting the templates nested in it; -1 when it never does. */
-function findTemplateEnd({ html, start }: { html: string; start: number }): number {
-  let depth = 0;
-
-  for (const tag of html.slice(start).matchAll(TEMPLATE_TAG)) {
-    depth += tag.groups?.closing ? -1 : 1;
-
-    if (depth === 0) {
-      return start + tag.index + tag[0].length;
-    }
-  }
-
-  return -1;
-}
-
-/** Where a comment or raw-text element (a script, a style) ends; -1 when it never does. */
-function findInertEnd({
-  element,
-  html,
-  start,
-}: {
-  element: string | undefined;
-  html: string;
-  start: number;
-}): number {
-  if (!element) {
-    const end = html.indexOf("-->", start + "<!--".length);
-    return end === -1 ? -1 : end + "-->".length;
-  }
-
-  if (element.toLowerCase() === "template") {
-    return findTemplateEnd({ html, start });
-  }
-
-  const closing = html.toLowerCase().indexOf(`</${element.toLowerCase()}`, start);
-  const end = closing === -1 ? -1 : html.indexOf(">", closing);
-  return end === -1 ? -1 : end + 1;
-}
-
-/**
- * Comments, scripts and templates aren't links a visitor follows, so they never tie two sites. One
- * left open hides the rest of the page, as a browser would.
- */
-function removeInert(html: string): string {
-  let visible = "";
-  let index = 0;
-
-  for (;;) {
-    INERT_START.lastIndex = index;
-    const match = INERT_START.exec(html);
-
-    if (!match) {
-      return visible + html.slice(index);
-    }
-
-    visible += html.slice(index, match.index);
-    index = findInertEnd({ element: match.groups?.element, html, start: match.index });
-
-    if (index === -1) {
-      return visible;
-    }
-  }
-}
-
-function readTags(html: string): Tag[] {
-  return [...removeInert(html).matchAll(TAG)].map(({ groups }) => ({
-    attributes: readAttributes(groups?.attributes ?? ""),
-    name: groups?.name?.toLowerCase() ?? "",
-  }));
-}
 
 function toAbsoluteUrl({ base, href }: { base: string; href: string | undefined }): string | null {
   if (!href || !URL.canParse(href.trim(), base)) {
@@ -126,52 +38,75 @@ function toAbsoluteUrl({ base, href }: { base: string; href: string | undefined 
   return url.toString();
 }
 
-function hasRel(tag: Tag, rel: string): boolean {
-  return (tag.attributes.get("rel") ?? "").toLowerCase().split(/\s+/u).includes(rel);
+function collectLinks(nodes: readonly OfficeContentNode[] | undefined): string[] {
+  return (nodes ?? []).flatMap((node) => [
+    ...(node.metadata && "link" in node.metadata && typeof node.metadata.link === "string"
+      ? [node.metadata.link]
+      : []),
+    ...collectLinks(node.children),
+  ]);
 }
 
-function rankIcon(tag: Tag): number {
-  const href = tag.attributes.get("href") ?? "";
+function readAttributes(text: string): Map<string, string> {
+  return new Map(
+    [...text.matchAll(ATTRIBUTE)].map(({ groups }) => [
+      groups?.key?.toLowerCase() ?? "",
+      groups?.double ?? groups?.single ?? groups?.bare ?? "",
+    ]),
+  );
+}
 
-  if (tag.attributes.get("type") === "image/svg+xml" || SVG.test(href)) {
+function rankIcon(attributes: Map<string, string>): number {
+  const href = attributes.get("href") ?? "";
+
+  if (attributes.get("type") === "image/svg+xml" || SVG.test(href)) {
     return SCALABLE;
   }
 
-  const sizes = (tag.attributes.get("sizes") ?? "").split(/\s+/u);
+  const sizes = (attributes.get("sizes") ?? "").split(/\s+/u);
   return Math.max(0, ...sizes.map((size) => Number(SIZE.exec(size)?.groups?.width ?? 0)));
 }
 
-/** The site's own icon: an apple-touch-icon, else its largest declared icon. */
-function pickIcon({ base, tags }: { base: string; tags: Tag[] }): string | null {
-  const links = tags.filter((tag) => tag.name === "link");
-  const touch = links.find((tag) => hasRel(tag, "apple-touch-icon"));
+/**
+ * The site's own icon: an apple-touch-icon, else its largest declared icon. Read from the raw tags,
+ * since only a logo copy depends on it, never a site's identity.
+ */
+function pickIcon({ base, html }: { base: string; html: string }): string | null {
+  const icons = [...html.matchAll(LINK_TAG)]
+    .map(({ groups }) => readAttributes(groups?.attributes ?? ""))
+    .map((attributes) => ({
+      attributes,
+      rels: (attributes.get("rel") ?? "").toLowerCase().split(/\s+/u),
+    }));
 
-  const [best] = links
-    .filter((tag) => hasRel(tag, "icon"))
-    .toSorted((first, second) => rankIcon(second) - rankIcon(first));
+  const touch = icons.find((icon) => icon.rels.includes("apple-touch-icon"));
+
+  const [best] = icons
+    .filter((icon) => icon.rels.includes("icon"))
+    .toSorted((first, second) => rankIcon(second.attributes) - rankIcon(first.attributes));
 
   return toAbsoluteUrl({ base, href: (touch ?? best)?.attributes.get("href") });
 }
 
-function pickShareImage({ base, tags }: { base: string; tags: Tag[] }): string | null {
-  const meta = tags.find(
-    (tag) => tag.name === "meta" && tag.attributes.get("property")?.toLowerCase() === "og:image",
-  );
+/**
+ * Links come from the same HTML parser that reads pages' text, which leaves out comments, scripts
+ * and templates: what no visitor can follow never ties two sites.
+ */
+export async function readPageTags({
+  base,
+  bytes,
+}: {
+  base: string;
+  bytes: Uint8Array;
+}): Promise<PageTags> {
+  const ast = await parseOffice(Buffer.from(bytes), { fileType: "html", ignoreComments: true });
+  const shareImage: unknown = ast.metadata.nativeProperties?.["og:image"];
 
-  return toAbsoluteUrl({ base, href: meta?.attributes.get("content") });
-}
-
-/** Best effort over raw HTML: a page whose markup this misses only loses its links or media. */
-export function readPageTags({ base, html }: { base: string; html: string }): PageTags {
-  const tags = readTags(html);
-
-  const links = tags
-    .filter((tag) => tag.name === "a")
-    .flatMap((tag) => toAbsoluteUrl({ base, href: tag.attributes.get("href") }) ?? []);
+  const links = collectLinks(ast.content).flatMap((href) => toAbsoluteUrl({ base, href }) ?? []);
 
   return {
-    iconUrl: pickIcon({ base, tags }),
-    imageUrl: pickShareImage({ base, tags }),
+    iconUrl: pickIcon({ base, html: new TextDecoder().decode(bytes) }),
+    imageUrl: typeof shareImage === "string" ? toAbsoluteUrl({ base, href: shareImage }) : null,
     links: [...new Set(links)],
   };
 }
@@ -236,8 +171,11 @@ async function inspectPage(url: string): Promise<InspectedPage | null> {
     return null;
   }
 
-  const html = new TextDecoder().decode(fetched.bytes);
-  return { domain, tags: readPageTags({ base: fetched.url, html }), url: fetched.url };
+  return {
+    domain,
+    tags: await readPageTags({ base: fetched.url, bytes: fetched.bytes }),
+    url: fetched.url,
+  };
 }
 
 /**

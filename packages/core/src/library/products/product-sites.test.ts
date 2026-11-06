@@ -7,17 +7,21 @@ function page({ domain, links }: { domain: string; links: string[] }) {
   return { domain, tags: { iconUrl: null, imageUrl: null, links }, url: `https://${domain}/` };
 }
 
+function readHtml(html: string, base = BASE) {
+  return readPageTags({ base, bytes: new TextEncoder().encode(html) });
+}
+
 describe(readPageTags, () => {
-  it("reads absolute links, the touch icon and the share image", () => {
-    const html = `<head>
+  it("reads absolute links, the touch icon and the share image", async () => {
+    const html = `<html><head>
       <link rel="icon" href="/favicon-32.png" sizes="32x32">
       <link rel='apple-touch-icon' href='/touch.png'>
       <meta property="og:image" content="https://cdn.orbit.example/share.png?a=1&amp;b=2">
-    </head>
+    </head><body>
     <a href="../docs#start">Docs</a><a href="https://lumen.example">Lumen</a>
-    <a href="mailto:hi@orbit.example">Mail</a><a href=/pricing>Pricing</a>`;
+    <a href="mailto:hi@orbit.example">Mail</a><a href=/pricing>Pricing</a></body></html>`;
 
-    expect(readPageTags({ base: BASE, html })).toStrictEqual({
+    await expect(readHtml(html)).resolves.toStrictEqual({
       iconUrl: "https://orbit.example/touch.png",
       imageUrl: "https://cdn.orbit.example/share.png?a=1&b=2",
       links: [
@@ -28,22 +32,47 @@ describe(readPageTags, () => {
     });
   });
 
-  it("prefers a scalable icon, then the largest bitmap", () => {
+  it("prefers a scalable icon, then the largest bitmap", async () => {
     const icons = `<link rel="icon" href="/16.png" sizes="16x16"><link rel="shortcut icon" href="/64.png" sizes="64x64">`;
 
-    expect(readPageTags({ base: BASE, html: icons }).iconUrl).toBe("https://orbit.example/64.png");
+    await expect(readHtml(icons)).resolves.toMatchObject({
+      iconUrl: "https://orbit.example/64.png",
+    });
 
-    expect(
-      readPageTags({ base: BASE, html: `${icons}<link rel="icon" href="/logo.svg">` }).iconUrl,
-    ).toBe("https://orbit.example/logo.svg");
+    await expect(readHtml(`${icons}<link rel="icon" href="/logo.svg">`)).resolves.toMatchObject({
+      iconUrl: "https://orbit.example/logo.svg",
+    });
   });
 
-  it("finds nothing in a page without tags", () => {
-    expect(readPageTags({ base: BASE, html: "plain text" })).toStrictEqual({
+  it("finds nothing in a page without tags", async () => {
+    await expect(readHtml("plain text")).resolves.toStrictEqual({
       iconUrl: null,
       imageUrl: null,
       links: [],
     });
+  });
+
+  it("ignores links no visitor can follow and keeps the visible ones around them", async () => {
+    const html = `<html><body>
+      <!-- <a href="https://hidden.example/1">old</a> -->
+      <template><!-- </template> --><a href="https://hidden.example/2">x</a></template>
+      <template><template></template><a href="https://hidden.example/3">x</a></template>
+      <script type="application/json">"</scripture><a href='https://hidden.example/4'>x</a>"</script>
+      <div data-example="<script>">Example</div><a href="https://visible.example/1">Product</a>
+      <script type="application/json">"İİİİİİİİİİ"</script><a href="https://visible.example/2">More</a>
+      </body></html>`;
+
+    await expect(readHtml(html)).resolves.toMatchObject({
+      links: ["https://visible.example/1", "https://visible.example/2"],
+    });
+  });
+
+  it.each([
+    ["an unterminated comment", "<!-- <a href='https://hidden.example/'>x</a>"],
+    ["an unterminated script", "<script>const a = \"<a href='https://hidden.example/'>x</a>\";"],
+  ])("ignores a link inside %s", async (_case, html) => {
+    const { links } = await readHtml(`<html><body>${html}</body></html>`);
+    expect(links).not.toContain("https://hidden.example/");
   });
 });
 
@@ -64,36 +93,6 @@ describe(isProductOfBrand, () => {
         product: page({ domain: "orbit.example", links: ["https://www.lumen.example/about"] }),
       }),
     ).toBe(true);
-  });
-
-  it("ignores links in comments and scripts, which no visitor follows", () => {
-    const hidden = readPageTags({
-      base: "https://lumen.example/",
-      html: `<!-- <a href="https://impostor.example/">old</a> --><script>"<a href='https://impostor.example/x'>"</script><a href="/about">About</a>`,
-    });
-
-    expect(hidden.links).toStrictEqual(["https://lumen.example/about"]);
-
-    expect(
-      isProductOfBrand({
-        brand: { ...page({ domain: "lumen.example", links: [] }), tags: hidden },
-        product: page({ domain: "impostor.example", links: ["https://lumen.example/"] }),
-      }),
-    ).toBe(false);
-  });
-
-  it.each([
-    [
-      "a nested template",
-      "<template><template></template><a href='https://impostor.example/'>x</a></template>",
-    ],
-    ["an unterminated comment", "<!-- <a href='https://impostor.example/'>x</a>"],
-    ["an unterminated script", "<script>const a = \"<a href='https://impostor.example/'>x</a>\";"],
-  ])("ignores a link inside %s", (_case, html) => {
-    expect(
-      readPageTags({ base: "https://lumen.example/", html: `${html}<a href="/about">About</a>` })
-        .links,
-    ).not.toContain("https://impostor.example/");
   });
 
   it("refuses a page that links to a brand the brand never links back to", () => {
