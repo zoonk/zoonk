@@ -1841,7 +1841,7 @@ describe("work an earlier day left", () => {
     );
   });
 
-  it("keeps a shown phase end on its day when what the day before left fills it", () => {
+  it("keeps a shown phase end's challenge ahead of next-phase lessons the day before handed out", () => {
     const input = planInput({
       goal: { dailyMinutes: 15, kind: "learn", targetDate: null },
       graph: {
@@ -1862,19 +1862,12 @@ describe("work an earlier day left", () => {
     const given = lessonsOn(first, wednesday).slice(0, 2);
     const items = store(first, new Set(lessonsOn(first, monday)));
 
-    const settledInput: BuildPlanInput = {
+    const next = buildPlan({
       ...input,
       carryOver: { lessonIds: given.map((key) => key.replace("lesson:", "")) },
       items,
       phaseEnds: new Map([[0, tuesday]]),
       today: tuesday,
-    };
-
-    const next = buildPlan(settledInput);
-
-    const withoutRoom = buildPlan({
-      ...settledInput,
-      settings: { ...input.settings, weekdayMinutes: [15, 15, 15, 15, 15, 15, 15] },
     });
 
     const onTuesday = next.items.filter(
@@ -1884,19 +1877,14 @@ describe("work an earlier day left", () => {
     expect(first.phases[0]?.endDate).toBe("2026-09-29");
     expect(first.items.find((item) => item.key === "boss:0")?.minutes).toBe(15);
     expect(given).toHaveLength(2);
-    expect(lessonsOn(next, tuesday)[0]).toBe(given[0]);
+    expect(lessonsOn(next, wednesday)).toStrictEqual(given);
     expect(next.phases[0]?.endDate).toBe("2026-09-29");
     expect(todoLessons(next)).toStrictEqual(todoLessons({ items }));
 
     expect(onTuesday.map((item) => [item.key, item.minutes])).toStrictEqual([
-      [given[0], 6],
       ["boss:0", 15],
+      ["lesson:s2-0", 6],
     ]);
-
-    expect(onTuesday.reduce((minutes, item) => minutes + item.minutes, 0)).toBe(21);
-    expect(lessonsOn(withoutRoom, tuesday)).toStrictEqual([]);
-    expect(withoutRoom.phases[0]?.endDate).toBe("2026-09-29");
-    expect(todoLessons(withoutRoom)).toStrictEqual(todoLessons({ items }));
   });
 
   it("leaves a lesson given ahead where its phase has it while an earlier phase has days of work left", () => {
