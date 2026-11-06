@@ -17,7 +17,7 @@ import {
 import { getSkillOwners, loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
-import { getGoalField, getItemAudienceFilter } from "../library/items/item-field";
+import { IN_BANK, getGoalField, getItemAudienceFilter } from "../library/items/item-field";
 import { ITEM_IMAGE_INCLUDE } from "../library/items/item-image";
 import { type ItemSetView } from "../library/items/item-set-view";
 import { ITEM_SET_INCLUDE, toItemSetView } from "../library/items/item-sets";
@@ -119,7 +119,11 @@ async function loadDrillMaterial({
 
   const questionSkillIds = [...new Set(skillIds.flatMap((id) => [id, ownerOf.get(id) ?? id]))];
 
-  const where = { format: { in: [...GRADABLE_ITEM_FORMATS] }, skillId: { in: questionSkillIds } };
+  const where = {
+    ...IN_BANK,
+    format: { in: [...GRADABLE_ITEM_FORMATS] },
+    skillId: { in: questionSkillIds },
+  };
 
   const [bank, lessons] = await Promise.all([
     prisma.item.findMany({

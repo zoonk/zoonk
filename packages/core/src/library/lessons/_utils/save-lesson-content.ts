@@ -14,9 +14,14 @@ import {
 import { resolveReviewFlags } from "../../sources/content-review-flags";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
 import { type ScreenMathItem } from "../../steps/written-screens";
-import { CURRENT_STEPS, lockCurrentLessonVersion, startLessonVersion } from "../lesson-versions";
+import {
+  CURRENT_STEPS,
+  lockCurrentLessonVersion,
+  retireUnaskedQuestions,
+  startLessonVersion,
+} from "../lesson-versions";
 import { getLessonScreenSkillId, isNotebookQuestionStep } from "./lesson-screen-skill";
-import { createQuestionItem, parseScreenQuestion, toScreenQuestion } from "./screen-question-item";
+import { parseScreenQuestion, saveQuestionItems, toScreenQuestion } from "./screen-question-item";
 import { toStepData } from "./step-data";
 
 class LessonPublicationLostError extends Error {
@@ -126,20 +131,19 @@ async function writeScreens(
     staged = false,
   }: { language: string; lessonId: string; screens: LessonScreenToSave[]; staged?: boolean },
 ): Promise<number> {
-  const version = await startLessonVersion(tx, lessonId, { staged });
-
   const itemIds = staged
     ? []
-    : await Promise.all(
-        screens.map((screen) =>
-          createQuestionItem(tx, {
-            language,
-            provenance: screen.provenance,
-            question: toScreenQuestion(screen.mathItem),
-            skillId: screen.skillId,
-          }),
-        ),
-      );
+    : await saveQuestionItems(tx, {
+        language,
+        lessonId,
+        screens: screens.map((screen) => ({
+          provenance: screen.provenance,
+          question: toScreenQuestion(screen.mathItem),
+          skillId: screen.skillId,
+        })),
+      });
+
+  const version = await startLessonVersion(tx, lessonId, { staged });
 
   await tx.step.createMany({
     data: screens.map((screen, position) => ({
@@ -163,6 +167,7 @@ async function writeScreens(
     })),
   });
 
+  await retireUnaskedQuestions(tx, { lessonId });
   await resolveReviewFlags({ target: { lessonId }, tx, writtenAt: new Date() });
 
   return version;
@@ -318,27 +323,30 @@ export async function publishStagedLessonVersion({
       return null;
     }
 
+    const itemIds = await saveQuestionItems(tx, {
+      language: lesson.language,
+      lessonId,
+      screens: lesson.steps.map((step) => ({
+        provenance: step,
+        question: parseScreenQuestion(step.stagedItem),
+        skillId: step.skillId,
+      })),
+    });
+
     await tx.step.updateMany({
       data: { retiredAt: new Date() },
       where: { lessonId, ...CURRENT_STEPS },
     });
 
     await Promise.all(
-      lesson.steps.map(async (step) => {
-        const itemId = await createQuestionItem(tx, {
-          language: lesson.language,
-          provenance: step,
-          question: parseScreenQuestion(step.stagedItem),
-          skillId: step.skillId,
-        });
-
-        if (itemId) {
-          await tx.step.update({ data: { itemId }, where: { id: step.id } });
-        }
+      lesson.steps.flatMap((step, index) => {
+        const itemId = itemIds[index];
+        return itemId ? [tx.step.update({ data: { itemId }, where: { id: step.id } })] : [];
       }),
     );
 
     await tx.step.updateMany({ data: { staged: false, stagedItem: DbNull }, where: staged });
+    await retireUnaskedQuestions(tx, { lessonId });
 
     await tx.lesson.update({
       data: { stagedSummary: DbNull, summary: lesson.stagedSummary ?? DbNull },
