@@ -90,17 +90,19 @@ export function placeBoss({
 }
 
 /**
- * Records the minutes `boss` runs past its day in `pastDays`, moves it to the next study day, or
- * leaves it out (day -1) when none is left.
+ * Records the minutes `boss` runs past its day in `pastDays`, moves it to a later study day up to
+ * `lastDay`, or leaves it out (day -1).
  */
-export function keepDayOverrun({
+function keepDayOverrun({
   boss,
   cumulative,
+  lastDay,
   state,
   unit,
 }: {
   boss: PlacedBoss;
   cumulative: readonly number[];
+  lastDay: number;
   state: { pastDays: Map<number, number>; used: number };
   unit: QueueUnit;
 }): PlacedBoss {
@@ -113,12 +115,12 @@ export function keepDayOverrun({
   const before = pastDays.get(boss.dayIndex) ?? 0;
 
   // A day runs past the learner's time by one challenge at most; another waits for the next study
-  // day, and only a plan out of days leaves it out.
+  // day, unless that would put it after a later phase's challenge or past the plan's last day.
   if (before + past > unit.minutes + PLAN_EPSILON) {
     const next =
       boss.dayIndex < 0 ? -1 : findLessonDayFrom({ cumulative, from: boss.dayIndex + 1 });
 
-    if (next === -1) {
+    if (next === -1 || next > lastDay) {
       return { ...boss, dayIndex: -1, used };
     }
 
@@ -127,6 +129,7 @@ export function keepDayOverrun({
     return keepDayOverrun({
       boss: leadDay({ cumulative, dayIndex: next, start, unit, used }),
       cumulative,
+      lastDay,
       state,
       unit,
     });
@@ -137,6 +140,43 @@ export function keepDayOverrun({
   }
 
   return boss;
+}
+
+type HeldChallenge = { day: number; phase: number };
+
+export function listHeldChallenges(units: readonly QueueUnit[]): HeldChallenge[] {
+  return units.flatMap((unit) =>
+    unit.kind === "boss" && unit.heldOn !== undefined
+      ? [{ day: unit.heldOn, phase: unit.phase }]
+      : [],
+  );
+}
+
+export function layBoss({
+  cumulative,
+  held,
+  state,
+  unit,
+}: {
+  cumulative: readonly number[];
+  held: readonly HeldChallenge[];
+  state: { boss: PlacedBoss | null; dayIndex: number; pastDays: Map<number, number>; used: number };
+  unit: QueueUnit;
+}): PlacedBoss | null {
+  const placed = placeBoss({
+    cumulative,
+    from: state.dayIndex,
+    previous: state.boss,
+    unit,
+    used: state.used,
+  });
+
+  const later = held.flatMap((other) => (other.phase > unit.phase ? [other.day] : []));
+
+  return (
+    placed &&
+    keepDayOverrun({ boss: placed, cumulative, lastDay: Math.min(Infinity, ...later), state, unit })
+  );
 }
 
 export function withKeptLessons({
