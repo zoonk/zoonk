@@ -158,6 +158,13 @@ class NextStopWarmUpScreenshots {
     @Config(qualifiers = "w707dp-h823dp-xhdpi")
     fun smallBookStop() = captureStop("small-book", fold = true)
 
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookStopAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureStop("book-font200", fold = true)
+    }
+
     private fun captureStop(
         name: String,
         fold: Boolean = false,

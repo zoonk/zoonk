@@ -86,7 +86,9 @@ fun supportingPaneBeside(
  * width, so large text keeps a page and its aside a page each: one column could be no wider than
  * the page before the fold. [atFoldOnly] keeps one column where there's no fold, and [alone]
  * everywhere. Where a fold crosses a page too narrow for two panes, its one pane keeps to the page
- * before the fold if that page holds a phone's column.
+ * before the fold if that page holds a phone's column. A lone pane is measured with its text, as a
+ * spread is, or inside a [SpreadScreen] or [ResultScreen] where that screen's pages show, so a
+ * result's frame keeps both pages at any text size.
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -101,7 +103,7 @@ fun pageDirective(
     val room = pageRoom(width, span, panesTouch, halfWidth, atFoldOnly)
     val fold = room.fold
     val window = room.window
-    val panesFit = room.fits(withText = fold == null || alone)
+    val panesFit = LocalSpread.current?.takeIf { alone }?.shows ?: room.fits(withText = fold == null || alone)
     val twoPanes = !alone && panesFit
     val excluded =
         when {

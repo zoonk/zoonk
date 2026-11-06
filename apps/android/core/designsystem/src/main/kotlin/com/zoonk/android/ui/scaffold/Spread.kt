@@ -14,13 +14,28 @@ import androidx.window.core.layout.WindowSizeClass
 /**
  * A screen that shows as two pages: across an unfolded book's fold, and down the middle of a window
  * Material calls expanded (840dp and wider) with or without one. It decides once for the whole
- * screen, so its top bar, docked action bar, snackbars, sheets and pages ([spreadFold]) agree on
- * every frame. Phones, an outer display and narrower windows stay one column, and so does text too
- * large for two pages. Dialogs keep to the fold alone ([pageFold]): off a fold they stay centered.
+ * screen, so its frame, top bar, docked action bar, snackbars, sheets and pages ([spreadFold]) agree
+ * on every frame. Phones, an outer display and narrower windows stay one column, and so does text too
+ * large for two pages, except while the screen shows its [result] ([ResultPages]): the fold sets each
+ * page's width, so a result keeps its two pages there at any text size. Dialogs keep to the fold alone
+ * ([pageFold]): off a fold they stay centered.
  */
 @Composable
-fun SpreadScreen(content: @Composable () -> Unit) {
-    CompositionLocalProvider(LocalSpread provides spread(), content = content)
+fun SpreadScreen(
+    result: Boolean = false,
+    content: @Composable () -> Unit,
+) {
+    CompositionLocalProvider(LocalSpread provides spread(acrossWindow = true, result = result), content = content)
+}
+
+/**
+ * A result outside a [SpreadScreen] (a run's, a summary, the logbook): as a spread does, it decides
+ * once for the screen where its pages ([ResultPages]) and bars meet, which is only across an unfolded
+ * book's fold, at any text size there. Elsewhere it's one column.
+ */
+@Composable
+fun ResultScreen(content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalSpread provides spread(acrossWindow = false, result = true), content = content)
 }
 
 /** Whether the [SpreadScreen] around this shows its two pages, for what's decided beside them, such as an action bar. */
@@ -53,7 +68,7 @@ fun screenSplit(
     return spread.split?.let { foldAt(listOf(it), width, span) }
 }
 
-/** Where the screen's pages meet ([split], or none), and whether they show at the text's size. */
+/** Where the screen's pages meet ([split], or none), and whether they show. */
 @Immutable
 internal data class Spread(
     val split: Rect?,
@@ -63,18 +78,20 @@ internal data class Spread(
 internal val LocalSpread = compositionLocalOf<Spread?> { null }
 
 @Composable
-private fun spread(): Spread {
+private fun spread(
+    acrossWindow: Boolean,
+    result: Boolean,
+): Spread {
     val info = windowAdaptiveInfo()
     val density = LocalDensity.current
     val window = LocalWindowInfo.current.containerSize
     val hinge = info.windowPosture.allVerticalHingeBounds.firstOrNull()
     val middle =
         Rect(window.width / 2f, 0f, window.width / 2f, window.height.toFloat())
-            .takeIf { info.windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND) }
+            .takeIf { acrossWindow && info.windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND) }
     val pages = hinge ?: middle
-    val shows =
-        pages != null &&
-            with(density) { minOf(pages.left, window.width - pages.right).toDp() } >= MINIMUM_PANE * density.fontScale.coerceAtLeast(1f)
+    val textScale = if (result && hinge != null) 1f else density.fontScale.coerceAtLeast(1f)
+    val shows = pages != null && with(density) { minOf(pages.left, window.width - pages.right).toDp() } >= MINIMUM_PANE * textScale
 
     // A fold stays where bars keep off even when the text is too large for two pages; a window's middle is only a split
     // while the pages show.

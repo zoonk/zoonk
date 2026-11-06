@@ -367,7 +367,7 @@ private struct PracticeDoneView: View {
   let close: () -> Void
 
   var body: some View {
-    PracticeTaskLayout {
+    PracticeTaskLayout(isResult: true) {
       PracticeResultTitle(
         title: LocalizedStringResource(
           "Practice done", table: "Practice", comment: "End of a practice run."),

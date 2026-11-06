@@ -23951,6 +23951,65 @@
         }
       }
     },
+    "Plan updated" : {
+      "comment" : "Title once a plan suggestion is applied",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan aktualisiert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan actualizado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan mis à jour"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Piano aggiornato"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画を更新しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획을 바꿨어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan zaktualizowany"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plano atualizado"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan güncellendi"
+          }
+        }
+      }
+    },
     "planned" : {
       "comment" : "Spoken state of a day ahead",
       "localizations" : {
@@ -27205,7 +27264,7 @@
       }
     },
     "That didn't save. Try again." : {
-      "comment" : "The tool choice didn't save; Save tries again",
+      "comment" : "A plan suggestion's change or its Undo didn't save; trying again may work\nThe tool choice didn't save; Save tries again",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -27672,6 +27731,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ücretsiz pakette aynı anda tek bir hedef üzerinde çalışabilirsin. Bu hedefe devam etmek için diğer hedefini duraklat veya daha fazla hedef için Plus’a geç."
+          }
+        }
+      }
+    },
+    "The lessons your time fits come into your plan." : {
+      "comment" : "Says a plan change brought in the lessons the learner's study time fits",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Lektionen, die in deine verfügbare Zeit passen, kommen in deinen Plan."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan incluye las lecciones que puedes hacer en el tiempo disponible."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les leçons qui tiennent dans le temps prévu entrent dans ton plan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano include le lezioni per cui hai tempo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習時間に収まる分のレッスンが学習計画に入ります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 시간에 맞는 분량의 레슨이 계획에 포함돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do twojego planu trafiają lekcje, na które masz czas."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As aulas que cabem no seu tempo entram no seu plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çalışma sürene sığan dersler planına eklenir."
           }
         }
       }
@@ -32831,65 +32949,6 @@
         }
       }
     },
-    "Your plan is updated." : {
-      "comment" : "An offer applied",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Plan wurde aktualisiert."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu plan se actualizó."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton plan est à jour."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo piano è stato aggiornato."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習計画を更新しました。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계획을 수정했어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój plan został zaktualizowany."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu plano foi atualizado."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planın güncellendi."
-          }
-        }
-      }
-    },
     "Your plan no longer fits" : {
       "comment" : "Title of the Plan's notice when the plan no longer fits",
       "localizations" : {
@@ -33191,7 +33250,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Plan sieht %1$@ für %2$@ vor."
+            "value" : "Dein Plan umfasst %1$@ für %2$@."
           }
         },
         "en" : {
@@ -33203,13 +33262,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan cubre %1$@ para %2$@."
+            "value" : "En tu plan estudias %1$@ para %2$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton plan prévoit d’étudier %1$@ pour %2$@."
+            "value" : "Ton plan porte sur %1$@ pour %2$@."
           }
         },
         "it" : {
@@ -33221,19 +33280,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習計画では、%1$@を%2$@の学習内容にしています。"
+            "value" : "%1$@を%2$@向けに学ぶ計画です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 내용을 계획의 %2$@ 항목에서 학습해요."
+            "value" : "%1$@ 학습을 %2$@에 맞춰 계획해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twój plan obejmuje: %1$@ (w ramach wyboru: %2$@)."
+            "value" : "Twój plan obejmuje przedmiot: %1$@, z myślą o: %2$@."
           }
         },
         "pt" : {
@@ -33245,7 +33304,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planında %1$@ seçeneği %2$@ için yer alır."
+            "value" : "Planında %1$@ konusunu %2$@ için çalışırsın."
           }
         }
       }

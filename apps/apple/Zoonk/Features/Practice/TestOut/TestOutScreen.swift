@@ -119,7 +119,7 @@ struct TestOutScreen: View {
   }
 
   private func resultView(_ result: Components.Schemas.ChapterTestOutResult) -> some View {
-    PracticeTaskLayout {
+    PracticeTaskLayout(isResult: true) {
       PracticeResultTitle(
         title: result.passed
           ? LocalizedStringResource(
