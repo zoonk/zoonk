@@ -551,6 +551,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
+      '@types/pg':
+        specifier: 8.23.1
+        version: 8.23.1
       '@types/react':
         specifier: 'catalog:'
         version: 19.3.0
@@ -578,6 +581,9 @@ importers:
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
+      pg:
+        specifier: 8.23.1
+        version: 8.23.1
       raw-loader:
         specifier: 'catalog:'
         version: 4.0.2(webpack@5.112.2(@swc/core@1.15.3(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6)))

@@ -1,5 +1,13 @@
 import { type Client } from "pg";
-import { type TableRows, getRowKey, getUpsertClause, insertRows, mapColumn } from "./rows";
+import {
+  type TableRows,
+  getColumnValues,
+  getRowKey,
+  getUpsertClause,
+  insertRows,
+  mapColumn,
+  readRows,
+} from "./rows";
 import { type SourceCatalog } from "./source";
 
 export type IdMap = ReadonlyMap<string, string>;
@@ -49,6 +57,35 @@ function withOrganization({
   return { ...data, rows: data.rows.map((row) => ({ ...row, organization_id: organizationId })) };
 }
 
+/**
+ * A brand is its domain: research may have saved the same brand here under another slug. Each source
+ * brand takes the id and slug of the local brand with its domain, else of the one with its slug.
+ */
+async function matchLocalBrands({
+  data,
+  destination,
+}: {
+  data: TableRows;
+  destination: Client;
+}): Promise<TableRows> {
+  const local = await readRows({
+    client: destination,
+    params: [getColumnValues(data, "domain"), getColumnValues(data, "slug")],
+    query: "SELECT id, slug, domain FROM organizations WHERE domain = ANY($1) OR slug = ANY($2)",
+  });
+
+  const byDomain = new Map(local.rows.map((row) => [row.domain, row]));
+  const bySlug = new Map(local.rows.map((row) => [row.slug, row]));
+
+  return {
+    ...data,
+    rows: data.rows.map((row) => {
+      const match = (row.domain && byDomain.get(row.domain)) || bySlug.get(row.slug);
+      return match ? { ...row, id: match.id ?? null, slug: match.slug ?? null } : row;
+    }),
+  };
+}
+
 export async function upsertOrganizations({
   catalog,
   destination,
@@ -60,15 +97,20 @@ export async function upsertOrganizations({
   organizationId: string;
   sourceOrganizationId: string;
 }): Promise<SourceCatalog> {
-  const brands = await upsertRows({
-    conflict: ["slug"],
-    data: catalog.organizations,
+  const brands = await matchLocalBrands({ data: catalog.organizations, destination });
+
+  await upsertRows({
+    conflict: ["id"],
+    data: brands,
     destination,
     keep: ["created_at"],
     table: "organizations",
   });
 
-  const organizationIds = new Map([[sourceOrganizationId, organizationId], ...brands]);
+  const organizationIds = new Map([
+    [sourceOrganizationId, organizationId],
+    ...catalog.organizations.rows.map((row, index) => [row.id, brands.rows[index]?.id] as const),
+  ]);
 
   const remap = (data: TableRows) =>
     mapColumn({ column: "organization_id", data, map: (id) => organizationIds.get(id) ?? null });
