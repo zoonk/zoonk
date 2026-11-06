@@ -1,4 +1,5 @@
 import { type GoalKind } from "@zoonk/db";
+import { lowercaseUuid } from "@zoonk/utils/uuid";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type MockIdentity } from "../plans/planner/mock-identity";
@@ -8,7 +9,7 @@ const MAX_PLAN_ITEM_KEY_LENGTH = 120;
 const MAX_AREA_ID_LENGTH = 100;
 
 /** An area of the goal's map: a chapter's id, or `phase:N` for skills not in a chapter yet. */
-export const areaIdSchema = z.string().min(1).max(MAX_AREA_ID_LENGTH);
+export const areaIdSchema = z.string().min(1).max(MAX_AREA_ID_LENGTH).overwrite(lowercaseUuid);
 
 /** A scheduled mock fixes its exam day and length when the day is built. */
 export const mockIdentitySchema: z.ZodType<MockIdentity> = z
