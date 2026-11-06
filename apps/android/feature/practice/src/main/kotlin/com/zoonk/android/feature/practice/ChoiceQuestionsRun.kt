@@ -140,14 +140,19 @@ internal fun ChoiceQuestionsRun(
                     if (failed && !pending) SaveErrorText(onSend)
                     TaskActions { width ->
                         if (question != null) {
-                            NotSureButton(onClick = { onAnswer(question, Answer.DontKnow) }, enabled = !locked, dontKnowYet = true)
+                            NotSureButton(
+                                onClick = { onAnswer(question, Answer.DontKnow) },
+                                enabled = !locked,
+                                focusableWhenDisabled = pending,
+                                dontKnowYet = true,
+                            )
                         }
                         BusyButton(
                             busy = pending && question == null,
                             onClick = { next?.invoke() },
                             modifier = width,
-                            enabled =
-                                next != null,
+                            enabled = next != null,
+                            focusableWhenDisabled = pending,
                         ) {
                             Text(
                                 stringResource(
