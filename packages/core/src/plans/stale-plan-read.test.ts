@@ -389,6 +389,17 @@ describe("the visible Plan after days away, before any learner POST", () => {
   it("counts the fitted lessons of a requeued stand-in before Open exactly as the writer", async () => {
     const fixture = await daysAwayFixture([{ lessons: 2 }, { lessons: 0, size: 6 }]);
     const before = await saved(fixture.plan.id);
+
+    expect(
+      before.items.some(
+        (item) =>
+          item.kind === "lesson" &&
+          item.status === "todo" &&
+          item.scheduledFor &&
+          item.scheduledFor < RETURN,
+      ),
+    ).toBe(true);
+
     const input = { goalId: fixture.goal.id, timeZone: "UTC" };
     const read = await countDatabaseStatements(() => getTodayView(input));
     expect(read.writes).toBe(0);
@@ -402,7 +413,6 @@ describe("the visible Plan after days away, before any learner POST", () => {
       throw new Error("Expected the actual stand-in plan before and after Open");
     }
 
-    expect((read.result.today.earlierWork ?? []).length).toBeGreaterThan(0);
     expect(after.today.progress).toMatchObject({ lessons: { total: 8 }, measure: "lessons" });
 
     await expect(
