@@ -211,6 +211,20 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertTrue(api.suggestions.isEmpty)
   }
 
+  func testAnOfferLeftBeforeTheThreadLoadsIsNeverAsked() async {
+    let api = TutorAPIStub()
+    let conversation = makeConversation(api: api)
+    let simpler = TutorSuggestion(
+      id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
+    var pending: Task<Void, Never>?
+    api.beforeThread = { pending?.cancel() }
+
+    pending = Task { await conversation.ask(TutorDraft(suggestion: simpler, offer: UUID())) }
+    await pending?.value
+
+    XCTAssertTrue(api.requestIDs.isEmpty)
+  }
+
   func testAQuestionShowsAsSentAtOnceAndGoesBackToTheComposerIfItFails() async {
     let api = TutorAPIStub(askFailures: [APIError.network, APIError.network])
     let conversation = makeConversation(api: api)

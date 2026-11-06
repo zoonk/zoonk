@@ -48,6 +48,7 @@ private struct TutorConversationView<Header: View>: View {
   let header: Header
 
   @State private var position = ScrollPosition(idType: String.self)
+  @State private var pendingAsk: Task<Void, Never>?
 
   var body: some View {
     ScrollView {
@@ -82,11 +83,12 @@ private struct TutorConversationView<Header: View>: View {
       }
 
       if draft.sendsAtOnce {
-        Task { await conversation.ask(draft) }
+        pendingAsk = Task { await conversation.ask(draft) }
       } else {
         conversation.prepare(draft)
       }
     }
+    .onDisappear { pendingAsk?.cancel() }
     .onChange(of: conversation.turns.last?.id) { previous, latest in
       if previous != nil || conversation.turns.count == 1 {
         reveal(latest)

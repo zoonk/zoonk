@@ -133,11 +133,15 @@ final class TutorConversation {
   }
 
   /// While an earlier question still needs its answer, the suggestion waits in the composer, unless
-  /// the learner typed there while the thread loaded.
+  /// the learner typed there while the thread loaded. A learner who left meanwhile isn't asked for.
   func ask(_ draft: TutorDraft) async {
     guard preparedOffers.insert(draft.offer).inserted else { return }
     let typed = self.draft
     await thread.load()
+
+    if Task.isCancelled {
+      return
+    }
 
     if canAsk {
       await send(draft.suggestion)
