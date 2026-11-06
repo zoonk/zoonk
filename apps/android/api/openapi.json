@@ -37157,6 +37157,9 @@
                             "nullable": true,
                             "type": "string"
                           },
+                          "courseId": {
+                            "type": "string"
+                          },
                           "lessons": {
                             "type": "integer",
                             "minimum": 1,

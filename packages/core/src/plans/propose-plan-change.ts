@@ -1,5 +1,6 @@
 import "server-only";
 import { type AppliedChange, proposeChange } from "./_utils/apply-plan-change";
+import { type PlanChangePayload } from "./_utils/plan-change-payload";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { type PlanChangeRecord } from "./_utils/replan";
 import { withPlanRetry } from "./plan-conflict";
@@ -12,14 +13,19 @@ export type PlanProposalResult = AppliedChange | { status: "notFound" | "saved" 
  * learner sees, in their language.
  */
 export async function proposePlanChange({
+  approval,
   goalId,
   operations,
+  payload,
   provenance = null,
   reason,
   retryOnConflict = true,
   source,
 }: {
+  /** "always" asks the learner even for a change small enough to apply at once. */
+  approval?: "always" | "whenLarge";
   goalId: string;
+  payload?: Pick<PlanChangePayload, "releaseId">;
   operations: readonly PlanOperation[];
   provenance?: PlanChangeRecord["provenance"];
   reason: string;
@@ -33,7 +39,7 @@ export async function proposePlanChange({
       return { status: "notFound" };
     }
 
-    return proposeChange({ context, operations, provenance, reason, source });
+    return proposeChange({ approval, context, operations, payload, provenance, reason, source });
   };
 
   return retryOnConflict ? withPlanRetry(propose) : propose();

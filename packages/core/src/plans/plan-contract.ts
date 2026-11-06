@@ -218,6 +218,8 @@ const addSkillsOperationSchema = z.object({
       area: z.string().nullable().default(null),
       /** Null puts it at the start of the plan's first phase. */
       beforeSkillId: z.string().nullable().default(null),
+      /** The course that teaches it, when it isn't the goal's own. */
+      courseId: z.string().optional(),
       lessons: z.int().min(1),
       name: z.string(),
       skillId: z.string(),
