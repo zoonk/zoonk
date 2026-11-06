@@ -221,6 +221,12 @@ struct TodayPlanChangeSection: View {
 
   private var change: TodayView.PlanChange { shown.change }
 
+  private var isBehind: Bool { change.kind == "missedDays" && change.behind != nil }
+
+  /// The proposal's Apply and Not now are in its sheet, so while it's open a failed answer shows
+  /// there, beside them; the page keeps it for Undo and the missed-days choices.
+  private var answersInSheet: Bool { isOpen && shown.decision == nil && !isBehind }
+
   var body: some View {
     Section {
       if let decision = shown.decision {
@@ -253,7 +259,7 @@ struct TodayPlanChangeSection: View {
           .controlSize(.small)
         }
         .listRowSeparator(.hidden)
-      } else if let behind = change.behind, change.kind == "missedDays" {
+      } else if isBehind, let behind = change.behind {
         Label {
           Text(behindSentence(behind))
         } icon: {
@@ -277,12 +283,16 @@ struct TodayPlanChangeSection: View {
               .foregroundStyle(Color(.foreground))
 
             details
+
+            if failed {
+              SuggestionSaveError()
+            }
           }
         }
         .listRowSeparator(.hidden)
       }
 
-      if failed {
+      if failed, !answersInSheet {
         FailureLine(
           message: LocalizedStringResource(
             "We couldn't save your answer. Try again.", table: "Today",

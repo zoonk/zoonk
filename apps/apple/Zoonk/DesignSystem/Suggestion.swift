@@ -105,3 +105,18 @@ struct SuggestionOpen<Content: View>: View {
     }
   }
 }
+
+/// Main's `SuggestionSaveError`: an answer or its Undo didn't save. It sits with the buttons that
+/// made it, in the sheet when they're there, and VoiceOver hears it as it appears.
+struct SuggestionSaveError: View {
+  private static let message = LocalizedStringResource(
+    "That didn't save. Try again.", table: "Plan",
+    comment: "A plan suggestion's change or its Undo didn't save; trying again may work")
+
+  var body: some View {
+    Text(Self.message)
+      .typeStyle(.note)
+      .foregroundStyle(.destructiveText)
+      .announcesAlert(String(localized: Self.message))
+  }
+}

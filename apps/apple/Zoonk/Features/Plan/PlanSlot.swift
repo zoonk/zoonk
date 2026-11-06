@@ -219,7 +219,7 @@ struct PlanSuggestionSection: View {
     }
 
     if answer.editor.failed {
-      saveError
+      SuggestionSaveError()
     }
   }
 
@@ -244,7 +244,7 @@ struct PlanSuggestionSection: View {
     }
 
     if answer.editor.failed {
-      saveError
+      SuggestionSaveError()
     }
   }
 
@@ -266,7 +266,7 @@ struct PlanSuggestionSection: View {
     if currentAnswer?.item == item, currentAnswer?.editor.latest == nil,
       currentAnswer?.editor.failed == true
     {
-      saveError
+      SuggestionSaveError()
     }
   }
 
@@ -300,15 +300,6 @@ struct PlanSuggestionSection: View {
     if answer?.editor === shown.editor {
       answer?.until = .now.addingTimeInterval(Self.resultSeconds)
     }
-  }
-
-  private var saveError: some View {
-    Text(
-      "That didn't save. Try again.", tableName: "Plan",
-      comment: "A plan suggestion's change or its Undo didn't save; trying again may work"
-    )
-    .typeStyle(.note)
-    .foregroundStyle(.destructiveText)
   }
 
   /// Hidden in place while a result shows, as main's is, so the result doesn't move and nobody pages
