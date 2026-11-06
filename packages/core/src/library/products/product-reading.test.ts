@@ -118,14 +118,16 @@ describe(checkProductReading, () => {
     expect(checked.releases[0]?.releasedAt).toBeNull();
   });
 
-  it("keeps a release's version only when its passage states it", () => {
+  it("keeps a release's version only when its name and passage state it", () => {
     const checked = checkProductReading({
       pages,
       productName: "Orbit Notes",
-      reading: reading({ releases: [release(), release({ version: "999" })] }),
+      reading: reading({
+        releases: [release(), release({ version: "999" }), release({ version: "2025" })],
+      }),
     });
 
-    expect(checked.releases.map((item) => item.version)).toStrictEqual(["5", null]);
+    expect(checked.releases.map((item) => item.version)).toStrictEqual(["5", null, null]);
   });
 
   it("drops an invalid calendar date", () => {

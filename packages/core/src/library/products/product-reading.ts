@@ -85,8 +85,9 @@ function isClaimStated({
 }
 
 /**
- * A release keeps its version only when its passage states it. A row naming no product counts by its
- * version alone when the release's name names the product, so another product's row can't pass.
+ * A release keeps its version only when its name and passage state it, so a year in its date never
+ * passes for one. A row naming no product counts by its version alone when the release's name names
+ * the product, so another product's row can't pass.
  */
 function checkRelease({
   pages,
@@ -120,7 +121,10 @@ function checkRelease({
     passage: release.passage,
     releasedAt: toStatedDate({ ...dated, value: release.releasedOn }),
     supportEndsAt: toStatedDate({ ...dated, value: release.supportEndsOn }),
-    version: version && hasVersionToken({ text: release.passage, version }) ? version : null,
+    version:
+      version && [release.name, release.passage].every((text) => hasVersionToken({ text, version }))
+        ? version
+        : null,
   };
 }
 
