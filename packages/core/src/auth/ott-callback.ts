@@ -1,6 +1,11 @@
 import "server-only";
 import { auth } from "@zoonk/auth";
-import { type NextRequest } from "next/server";
+import { getAuthError } from "@zoonk/auth/errors";
+import { safeAsync } from "@zoonk/utils/error";
+import { LOCALE_COOKIE } from "@zoonk/utils/locale";
+import { getLocaleFromRequest } from "@zoonk/utils/locale-request";
+import { type NextRequest, after } from "next/server";
+import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { getSafeAppRelativePath } from "./ott-redirect";
 import { ONE_TIME_TOKEN_LOGIN_STATE_COOKIE } from "./ott-state";
 
@@ -65,22 +70,37 @@ export async function verifyOneTimeTokenCallback(request: NextRequest): Promise<
     return authFailure(request);
   }
 
-  const response = await auth.api.verifyOneTimeToken({
-    asResponse: true,
-    body: { token },
-    headers: request.headers,
-  });
+  const { data: verified, error } = await safeAsync(() =>
+    auth.api.verifyOneTimeToken({ body: { token }, headers: request.headers, returnHeaders: true }),
+  );
 
-  if (!response.ok) {
-    return authFailure(request);
+  if (error) {
+    if (getAuthError(error)) {
+      return authFailure(request);
+    }
+
+    throw error;
   }
 
   const headers = new Headers({ Location: getSafeNextPath(request) ?? AUTH_SUCCESS_REDIRECT });
   headers.append("set-cookie", getExpiredLoginStateCookie());
 
-  for (const cookie of response.headers.getSetCookie()) {
+  for (const cookie of verified.headers.getSetCookie()) {
     headers.append("set-cookie", cookie);
   }
+
+  const locale = getLocaleFromRequest({
+    acceptLanguage: request.headers.get("accept-language"),
+    cookieLocale: request.cookies.get(LOCALE_COOKIE)?.value,
+  });
+
+  after(() =>
+    trackLearnerEvents({
+      events: [{ name: "Sign In Completed" }],
+      locale,
+      userId: verified.response.user.id,
+    }),
+  );
 
   return new Response(null, { headers, status: 302 });
 }

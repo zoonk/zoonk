@@ -1,7 +1,11 @@
 import { API_URL } from "@zoonk/utils/url";
-import { describe, expect, it } from "vitest";
+import { USAGE_DATA_COOKIE } from "@zoonk/utils/usage-data";
+import { describe, expect, it, vi } from "vitest";
 import { startOneTimeTokenLogin } from "./ott-login-route";
 import { ONE_TIME_TOKEN_LOGIN_STATE_COOKIE } from "./ott-state";
+import type * as NextServer from "next/server";
+
+const { NextRequest } = await vi.importActual<typeof NextServer>("next/server");
 
 function getAuthUrl(response: Response): URL {
   return new URL(response.headers.get("location") ?? "");
@@ -16,7 +20,7 @@ describe(startOneTimeTokenLogin, () => {
     const response = startOneTimeTokenLogin({
       callbackPath: "/auth/callback?next=%2Fpt%2Ftoday",
       locale: "pt",
-      request: new Request("http://localhost:3000/pt/login"),
+      request: new NextRequest("http://localhost:3000/pt/login"),
     });
 
     const authUrl = getAuthUrl(response);
@@ -29,6 +33,7 @@ describe(startOneTimeTokenLogin, () => {
     expect(`${authUrl.origin}${authUrl.pathname}`).toBe(new URL("/auth/login", API_URL).href);
     expect(authUrl.searchParams.get("locale")).toBe("pt");
     expect(authUrl.searchParams.get("error")).toBeNull();
+    expect(authUrl.searchParams.get("usageData")).toBeNull();
 
     expect(`${callbackUrl.origin}${callbackUrl.pathname}`).toBe(
       "http://localhost:3000/auth/callback",
@@ -46,7 +51,7 @@ describe(startOneTimeTokenLogin, () => {
     const response = startOneTimeTokenLogin({
       callbackPath: "/auth/callback",
       locale: "en",
-      request: new Request("http://localhost:3000/login", {
+      request: new NextRequest("http://localhost:3000/login", {
         headers: {
           "x-forwarded-host": "zoonk.com, internal.example",
           "x-forwarded-proto": "https",
@@ -63,18 +68,30 @@ describe(startOneTimeTokenLogin, () => {
       callbackPath: "/auth/callback",
       expired: true,
       locale: "en",
-      request: new Request("http://localhost:3000/login"),
+      request: new NextRequest("http://localhost:3000/login"),
     });
 
     expect(getAuthUrl(response).searchParams.get("error")).toBe("expired");
     expect(getCallbackUrl(response).searchParams.get("error")).toBe("auth");
   });
 
+  it("tells central auth the usage-data choice this browser made, which its cookie can't carry there", () => {
+    const response = startOneTimeTokenLogin({
+      callbackPath: "/auth/callback",
+      locale: "en",
+      request: new NextRequest("http://localhost:3000/login", {
+        headers: { cookie: `${USAGE_DATA_COOKIE}=off` },
+      }),
+    });
+
+    expect(getAuthUrl(response).searchParams.get("usageData")).toBe("off");
+  });
+
   it("makes the router load the page as a document instead of binding a state", () => {
     const response = startOneTimeTokenLogin({
       callbackPath: "/auth/callback",
       locale: "en",
-      request: new Request("http://localhost:3000/login", { headers: { rsc: "1" } }),
+      request: new NextRequest("http://localhost:3000/login", { headers: { rsc: "1" } }),
     });
 
     expect(response.status).toBe(204);
