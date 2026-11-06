@@ -52,9 +52,9 @@ export async function findWhatsNewChapter({
     },
     where: {
       courses: { some: { courseId } },
+      goalSkills: { some: { skill: { identityKey: { startsWith: `whats-new:${releaseId}:` } } } },
       // A chapter whose lessons failed to save goes through the save again, which claims it anew.
       outlineStatus: "completed",
-      goalSkills: { some: { skill: { identityKey: { startsWith: `whats-new:${releaseId}:` } } } },
     },
   });
 
