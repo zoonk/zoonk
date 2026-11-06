@@ -1,7 +1,7 @@
 "use client";
 
 import { useTaskFootHeight } from "@zoonk/learn/task-foot-height";
-import { TASK_ASIDE_PLACE_CLASS } from "@zoonk/learn/task-layout";
+import { TASK_ASIDE_PLACE_CLASS, TASK_WRAPPING_ACTION_CLASS } from "@zoonk/learn/task-layout";
 import { Button } from "@zoonk/ui/components/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -249,7 +249,7 @@ export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
   if (buddy.missed && !quiet) {
     return (
       <Button
-        className="lg:hidden"
+        className={cn(TASK_WRAPPING_ACTION_CLASS, "ml-auto lg:hidden")}
         onClick={() => buddy.open()}
         size="lg"
         type="button"
@@ -268,7 +268,7 @@ export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
         onClick={() => buddy.open()}
         render={
           <Button
-            className="size-11 shrink-0 lg:hidden"
+            className="ml-auto size-11 shrink-0 lg:hidden"
             size="icon"
             type="button"
             variant="outline"

@@ -2,6 +2,7 @@
 
 import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { StepDots } from "../../_components/step-dots";
@@ -79,9 +80,10 @@ function SummaryButtons({
   const canSeeMistakes = mistakesHref !== null && summary.mistakesSaved > 0;
   const crowded = stopped && canSeeMistakes;
   const sharedRow = crowded ? SHARED_ROW_ACTION_CLASS : undefined;
+  const ownRow = crowded && "max-lg:basis-full";
 
   return (
-    <TaskActions className={crowded ? "max-lg:flex-wrap" : undefined}>
+    <TaskActions>
       {rewards.open && <StepsBackButton onClick={rewards.close} />}
       {!rewards.open && canSeeMistakes && (
         <SeeMistakesLink className={sharedRow} href={mistakesHref} />
@@ -89,12 +91,12 @@ function SummaryButtons({
       {stopped && <KeepGoingButton className={sharedRow} keepGoing={keepGoing} />}
 
       {continuesToRewards && (
-        <TaskMainButton className="lg:hidden" onClick={rewards.show}>
+        <TaskMainButton className={cn("lg:hidden", ownRow)} onClick={rewards.show}>
           {t("Continue")}
         </TaskMainButton>
       )}
 
-      <FinishLink className={continuesToRewards ? "max-lg:hidden" : undefined} />
+      <FinishLink className={cn(continuesToRewards && "max-lg:hidden", ownRow)} />
     </TaskActions>
   );
 }
