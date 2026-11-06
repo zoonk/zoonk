@@ -224,25 +224,35 @@ struct TodayPlanChangeSection: View {
   var body: some View {
     Section {
       if let decision = shown.decision {
-        Text(result(decision))
-          .accessibilityFocused($isResultFocused)
-
-        if next != nil {
-          Button(action: showNext) {
-            Text("Next suggestion", tableName: "Today", comment: "Shows the next plan suggestion")
-          }
-        } else if decision == .applied, change.canUndo {
-          Button {
-            answer(.undone)
-          } label: {
-            Label {
-              Text("Undo", tableName: "Today", comment: "Undoes a plan change the learner applied")
-            } icon: {
-              Image(systemName: "arrow.uturn.backward")
+        // Main's answered line: the done mark, what the answer did, then Next or Undo.
+        SuggestionLine {
+          StatusMark(status: .done)
+        } summary: {
+          Text(result(decision))
+            .typeWeight(.medium)
+            .foregroundStyle(Color(.foreground))
+            .accessibilityFocused($isResultFocused)
+        } action: {
+          Group {
+            if next != nil {
+              Button(action: showNext) {
+                Text(
+                  "Next suggestion", tableName: "Today", comment: "Shows the next plan suggestion")
+              }
+            } else if decision == .applied, change.canUndo {
+              Button {
+                answer(.undone)
+              } label: {
+                Text(
+                  "Undo", tableName: "Today", comment: "Undoes a plan change the learner applied")
+              }
+              .disabled(isSaving)
             }
           }
-          .disabled(isSaving)
+          .buttonStyle(.outline)
+          .controlSize(.small)
         }
+        .listRowSeparator(.hidden)
       } else if let behind = change.behind, change.kind == "missedDays" {
         Label {
           Text(behindSentence(behind))
@@ -255,15 +265,21 @@ struct TodayPlanChangeSection: View {
         }
         .disabled(isSaving)
       } else {
-        DisclosureGroup(isExpanded: $isOpen) {
-          details
-        } label: {
-          Label {
+        // Main's `Suggestion`: the sentence on a panel, "View" opening the whole change.
+        SuggestionLine {
+          SuggestionMark(kind: change.source == "notice" ? .symbol("doc.badge.clock") : .sparkle)
+        } summary: {
+          Text(summary)
+        } action: {
+          SuggestionOpen(isOpen: $isOpen) {
             Text(summary)
-          } icon: {
-            Image(systemName: "sparkles")
+              .typeStyle(.body.weight(.semibold))
+              .foregroundStyle(Color(.foreground))
+
+            details
           }
         }
+        .listRowSeparator(.hidden)
       }
 
       if failed {
@@ -487,9 +503,9 @@ struct TodayMissionsSection: View {
   var body: some View {
     let earned = view.session.fullMeal.earned
 
-    Section {
+    PageSection(isPanel: true) {
       MissionsSummary(missions: missions, bonus: view.session.fullMeal.bonus, earned: earned)
-        .listRowSeparator(.hidden, edges: .bottom)
+        .rowSeparatorHiddenBelow()
 
       if !earned, isBesideTheDay || !onlyOpensBlocks {
         ForEach(Array(missions.enumerated()), id: \.offset) { _, mission in
@@ -612,7 +628,7 @@ struct TodayWeekSection: View {
     // previous day's session.
     let localDate = week.days.first(where: \.isToday)?.date ?? view.session.localDate
 
-    Section {
+    PageSection {
       HStack {
         ForEach(week.days, id: \.date) { day in
           WeekDayMark(
@@ -916,7 +932,7 @@ struct TodayProgressSection: View {
   private func card(
     title: Text, value: String?, detail: Text?, @ViewBuilder content: () -> some View
   ) -> some View {
-    Section {
+    PageSection {
       Button {
         router.select(.plan)
       } label: {
@@ -1015,13 +1031,13 @@ struct TodayPracticeSection: View {
   var body: some View {
     let places = learner.summary.value?.places
 
-    Section {
+    PageSection {
       if places?.exam == true {
         TodayMockRow(options: exam.mockOptions(goalId: view.goal.id))
       }
 
       if let speaking = language?.speaking {
-        NavigationLink(value: AppRoute.speaking) {
+        PageLink(route: .speaking) {
           HStack {
             Label {
               VStack(alignment: .leading, spacing: 2) {
@@ -1048,7 +1064,7 @@ struct TodayPracticeSection: View {
         }
       }
 
-      NavigationLink(value: AppRoute.mistakes) {
+      PageLink(route: .mistakes) {
         IconLabeledContent {
           if let ready = places?.readyMistakes, ready > 0 {
             Text(ready, format: .number)
@@ -1067,7 +1083,7 @@ struct TodayPracticeSection: View {
       }
 
       if places?.completedLessons == true {
-        NavigationLink(value: AppRoute.completedLessons) {
+        PageLink(route: .completedLessons) {
           Label {
             VStack(alignment: .leading, spacing: 2) {
               Text(

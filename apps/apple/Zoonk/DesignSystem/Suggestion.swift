@@ -1,0 +1,96 @@
+import SwiftUI
+
+/// Main's `SuggestionMark`: a suggestion's own mark is muted; one without (an offer of more lessons
+/// or of more time) takes the warning sparkle.
+struct SuggestionMark: View {
+  enum Kind {
+    case sparkle
+    case done
+    case symbol(String)
+  }
+
+  let kind: Kind
+
+  var body: some View {
+    switch kind {
+    case .sparkle:
+      Image(systemName: "sparkle")
+        .foregroundStyle(.warning)
+    case .done:
+      StatusMark(status: .done)
+    case .symbol(let name):
+      Image(systemName: name)
+        .foregroundStyle(.mutedForeground)
+    }
+  }
+}
+
+/// Main's `SuggestionLine`: a panel with the suggestion's mark, its summary in two lines at most,
+/// and one small action at its end.
+struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
+  @ViewBuilder let mark: Mark
+  @ViewBuilder let summary: Summary
+  @ViewBuilder let action: Action
+
+  var body: some View {
+    HStack(spacing: 10) {
+      mark
+        .accessibilityHidden(true)
+
+      summary
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+        .lineLimit(2)
+        .frame(maxWidth: .infinity, alignment: .leading)
+
+      action
+    }
+    .padding(.leading, 12)
+    .padding(.trailing, 8)
+    .padding(.vertical, 8)
+    .frame(minHeight: 48)
+    .panel()
+  }
+}
+
+/// Main's `SuggestionOpen`: "View", which opens the whole suggestion in a sheet. An answer that
+/// replaces the line takes the button away, and the sheet closes with it. `isOpen` keeps it open
+/// across a fold where the screen owns that state.
+struct SuggestionOpen<Content: View>: View {
+  var isOpen: Binding<Bool>?
+  @ViewBuilder let content: Content
+
+  @State private var isOpenHere = false
+
+  private var shown: Binding<Bool> { isOpen ?? $isOpenHere }
+
+  var body: some View {
+    Button {
+      shown.wrappedValue = true
+    } label: {
+      Text("View", tableName: "Plan", comment: "Opens the Plan's suggestion in full")
+    }
+    .buttonStyle(.outline)
+    .controlSize(.small)
+    .sheet(isPresented: shown) {
+      NavigationStack {
+        ScrollView {
+          VStack(alignment: .leading, spacing: 8) {
+            content
+          }
+          .controlSize(.large)
+          .padding()
+        }
+        .toolbar {
+          ToolbarItem(placement: .topBarTrailing) {
+            Button(role: .close) {
+              shown.wrappedValue = false
+            }
+          }
+        }
+      }
+      .presentationDetents([.medium, .large])
+      .zoonkStyles()
+    }
+  }
+}

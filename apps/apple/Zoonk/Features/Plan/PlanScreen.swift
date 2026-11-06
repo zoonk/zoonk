@@ -147,6 +147,7 @@ private struct PlanSetupLeft: View {
 }
 
 private struct PlanContent: View {
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(AppRouter.self) private var router
   @Environment(CertificatesStore.self) private var certificates
   @Environment(PlanStore.self) private var store
@@ -187,8 +188,18 @@ private struct PlanContent: View {
         PlanNumbersSection(context: context, syllabus: syllabus)
         PlanSuggestionSection(context: context, answer: $slotAnswer)
         structureSections(context: context, structure: structure, namesChoices: true)
-        NextOnPathSection(context: context)
-        PlanMoreSection(goal: goal)
+
+        // Main's tablet column: what's next beside the other places.
+        if horizontalSizeClass == .regular {
+          BlockGridSection {
+            NextOnPathSection(context: context)
+            PlanMoreSection(goal: goal)
+          }
+        } else {
+          NextOnPathSection(context: context)
+          PlanMoreSection(goal: goal)
+        }
+
         PlanSettingsSection(context: context)
       }
     }

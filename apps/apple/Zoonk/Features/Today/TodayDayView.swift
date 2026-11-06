@@ -54,8 +54,17 @@ struct TodayDayView: View {
         header(actionInHeader: actionInHeader)
         day(showsAction: !actionInHeader)
         notice
-        aside
-        TodayPracticeSection(view: view, language: language)
+
+        // Main's tablet column: missions beside the week, preparation beside practice.
+        if actionInHeader {
+          BlockGridSection {
+            aside
+            TodayPracticeSection(view: view, language: language)
+          }
+        } else {
+          aside
+          TodayPracticeSection(view: view, language: language)
+        }
       }
     }
     .announcesStatus(TodayDayStatus(view: view, writingStalled: writingStalled)?.announcement)

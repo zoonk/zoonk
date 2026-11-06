@@ -491,7 +491,7 @@ struct NextOnPathSection: View {
     let chapter = isExam ? nil : plan.nextChapter
 
     if mockDate != nil || chapter?.chapterId != nil || checkpoint != nil || isExam {
-      Section {
+      PageSection {
         if let mockDate {
           Button {
             router.open(.exam)
@@ -504,7 +504,7 @@ struct NextOnPathSection: View {
         }
 
         if let chapter, let chapterId = chapter.chapterId {
-          NavigationLink(value: chapterRoute(chapterId)) {
+          PageLink(route: chapterRoute(chapterId)) {
             PlanPathRow {
               Label {
                 Text(chapter.title)
@@ -620,9 +620,9 @@ struct PlanMoreSection: View {
     let mindMaps = learner.summary.value?.places.mindMaps == true
 
     if tabBarPlacement?.listsStudyPlaces != true, goal.kind == .exam || mindMaps {
-      Section {
+      PageSection {
         if goal.kind == .exam {
-          NavigationLink(value: AppRoute.exam) {
+          PageLink(route: .exam) {
             Label {
               Text("About the exam", tableName: "Plan", comment: "Opens the exam's page")
             } icon: {
@@ -632,7 +632,7 @@ struct PlanMoreSection: View {
         }
 
         if mindMaps {
-          NavigationLink(value: AppRoute.mindMaps) {
+          PageLink(route: .mindMaps) {
             Label {
               Text("Mind maps", tableName: "Plan", comment: "Opens the goal's mind maps")
             } icon: {
