@@ -55,12 +55,7 @@ import { z } from "zod";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { mockLastRunEvent } from "../../../mocks/workflow-runtime";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
-import {
-  outlineResult,
-  recordedOutput,
-  replayStreamedOutline,
-  taskResult,
-} from "../_test-utils/recorded-outputs";
+import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
 import { getWorkflowWriteMock } from "../_test-utils/workflow-mock";
 import { courseDetailsWorkflow } from "../courses/course-details-workflow";
@@ -438,7 +433,7 @@ describe(goalContentWorkflow, () => {
     );
 
     vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(graph));
-    vi.mocked(generateCourseOutline).mockResolvedValue(outlineResult(recordedOutline));
+    vi.mocked(generateCourseOutline).mockResolvedValue(taskResult(recordedOutline));
 
     vi.mocked(streamCourseOutline).mockImplementation(
       replayStreamedOutline(recordedOutline) as never,

@@ -9,6 +9,7 @@ import {
   type OutputEntry,
   type RegisteredTask,
   type TestCase,
+  toModelCall,
   toTokenUsage,
 } from "./types";
 
@@ -64,6 +65,7 @@ async function generateOutputForTestCase({
     extraCalls: result.extraCalls,
     output: JSON.stringify(result.data, null, 2),
     probabilities: result.probabilities,
+    setAside: result.setAside?.map((call) => toModelCall(call)),
     systemPrompt: result.systemPrompt,
     testCaseId: getTestCaseRunId({ runNumber, testCaseId: testCase.id }),
     userPrompt: result.userPrompt,

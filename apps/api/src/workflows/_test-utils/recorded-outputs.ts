@@ -28,6 +28,7 @@ export function taskResult<T>(data: T, model = "openai/gpt-6-sol") {
       runId: randomUUID(),
       usage: {},
     },
+    setAside: [],
     systemPrompt: "",
     usage: {
       inputTokenDetails: {
@@ -42,10 +43,6 @@ export function taskResult<T>(data: T, model = "openai/gpt-6-sol") {
     },
     userPrompt: "",
   };
-}
-
-export function outlineResult<T>(data: T) {
-  return { ...taskResult(data), setAside: [] };
 }
 
 type StreamedOutline<Chapter> = { chapters: readonly Chapter[] };
