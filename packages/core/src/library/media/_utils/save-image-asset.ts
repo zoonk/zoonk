@@ -65,10 +65,12 @@ export async function uploadImageFile({
   return { height, url: upload.data, width };
 }
 
-export async function saveImageAsset(input: SaveImageAssetInput): Promise<MediaAsset> {
+export async function saveImageAsset(
+  input: SaveImageAssetInput,
+): Promise<{ created: boolean; row: MediaAsset }> {
   assertIdentityKeyScope({ key: input.reuseKey, ownerId: input.ownerId });
 
-  const { row } = await createOrFindByIdentity({
+  return createOrFindByIdentity({
     create: async () => {
       const file = await uploadImageFile({ image: input.image, ownerId: input.ownerId });
 
@@ -90,6 +92,4 @@ export async function saveImageAsset(input: SaveImageAssetInput): Promise<MediaA
     },
     findExisting: () => prisma.mediaAsset.findUnique({ where: { reuseKey: input.reuseKey } }),
   });
-
-  return row;
 }
