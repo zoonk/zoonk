@@ -6,6 +6,7 @@
   "certificates_alt_course": "2b9b5fbc952d3945f97c5480620014a0fa116e07b18a544b313cfa559631a7f2",
   "certificates_alt_dated": "05997604ed96a9a055ba0c5f410b51bf488428e00b78c3846e6f9371738e3919",
   "certificates_alt_level": "016a2daf2bb1e15d3b45797214497a4379e788d5586fe49ba22b8fab93bc63e1",
+  "certificates_can_do": "9feecdad3669dd375c2514b367985cd254c386d1544fac1ad4a44e20fe463505",
   "certificates_cancel": "32c293c97313c4e69f3284d4e849cb119f41f53dc33b3df4ac2ad02b0b757d6e",
   "certificates_caption_course": "71194aea20e2d75daff7cd96538423b2569bdf25c5caf727951b05045189b337",
   "certificates_caption_course_hours": "6644f3d7237c73f0fc4ee8554feb6f866cd9255f734de188c6c3d8322c8055c3",
@@ -78,6 +79,7 @@
   "certificates_several_ready": "073ffec1236c6be09a118bd84a34c6c47025f1e8bc92c95071237a118ba0d0ae",
   "certificates_share": "4c3a5da69a15aaf1ca2099a659e636500ed56799c4af708be59233eb2418327f",
   "certificates_title": "daeb36638a0014e4fb3b3219c01a37492ae9fc77f6fc2c2e8ed91dd23a4b49ef",
+  "certificates_topics_covered": "57df60e51bafc8b4c56ff00aae720a6b9756a16fcadbe9c0f020ec1a51872ce8",
   "certificates_up_next": "948d9b0706eac4ff5fa241069a9b7ee983950cfdd70a4c1ecd5d8ac3b14f270b",
   "certificates_up_next_course": "acfcbbb862e18069aa5a9aa6638edecda11e6f416c8db467e1d828d4de7f5b2d",
   "certificates_up_next_language": "ffde1e94918d8ca36517f751a856698f59610c41be3ae65936a1da90fc9220ea",
@@ -196,6 +198,10 @@
     <string name="certificates_detail_link">Link</string>
     <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
     <string name="certificates_about_duration">etwa %1$s</string>
+    <!-- Heading over the chapters a course certificate covers -->
+    <string name="certificates_topics_covered">Behandelte Themen</string>
+    <!-- Heading over what a language certificate's learner can do -->
+    <string name="certificates_can_do">Fähigkeiten</string>
     <!-- TalkBack reads the certificate's picture: what it certifies, then the day it was earned, such as "Ana Souza completed Python, November 3, 2026". -->
     <string name="certificates_alt_dated">%1$s, %2$s</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title and %2$s the lessons they studied, such as "148 lessons". -->

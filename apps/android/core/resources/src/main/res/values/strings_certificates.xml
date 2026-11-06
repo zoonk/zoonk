@@ -111,6 +111,10 @@
     <string name="certificates_detail_link">Link</string>
     <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
     <string name="certificates_about_duration">about %1$s</string>
+    <!-- Heading over the chapters a course certificate covers -->
+    <string name="certificates_topics_covered">Topics covered</string>
+    <!-- Heading over what a language certificate's learner can do -->
+    <string name="certificates_can_do">Can do</string>
     <!-- TalkBack reads the certificate's picture: what it certifies, then the day it was earned, such as "Ana Souza completed Python, November 3, 2026". -->
     <string name="certificates_alt_dated">%1$s, %2$s</string>
 

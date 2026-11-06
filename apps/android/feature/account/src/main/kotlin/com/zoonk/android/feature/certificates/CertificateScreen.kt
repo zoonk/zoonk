@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
@@ -52,8 +53,10 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -74,9 +77,10 @@ import kotlinx.datetime.toJavaLocalDate
 
 /**
  * Main's `/c/<code>` for its owner: the certificate's headline, Share, Print, Download and Add to
- * LinkedIn, its picture and its details (the name, with Change, and the link, with Copy), or, earned
- * without Plus, locked with the Plus notice. It reads the learner's list, so a rename or a
- * subscription shows here at once, and a locked one, which the public read refuses, shows at all.
+ * LinkedIn, its picture, its details (the name, with Change, and the link, with Copy) and what it
+ * covers, or, earned without Plus, locked with the Plus notice. It reads the learner's list, so a
+ * rename or a subscription shows here at once, and a locked one, which the public read refuses,
+ * shows at all.
  */
 @Composable
 fun CertificateScreen(
@@ -131,8 +135,8 @@ fun CertificateScreen(
 }
 
 /**
- * Main's page, in its order: the headline, what the learner can do with it, the picture and the
- * details, which on an open book take the page after the fold.
+ * Main's page, in its order: the headline, what the learner can do with it, the picture, the
+ * details and what it covers, which on an open book take the page after the fold.
  */
 @Composable
 private fun Certificate(
@@ -147,7 +151,13 @@ private fun Certificate(
     val pageScroll = rememberScrollState()
     val detailsScroll = rememberScrollState()
     val naming = certificate.naming
-    val details = @Composable { modifier: Modifier -> CertificateDetails(certificate, name, actions, modifier) }
+    val details =
+        @Composable { modifier: Modifier ->
+            Column(modifier) {
+                CertificateDetails(certificate, name, actions)
+                CertificateCovered(certificate, Modifier.padding(top = 32.dp))
+            }
+        }
 
     PageWithSupportingPane(
         supportingPane = { DetailColumn(detailsScroll) { details(Modifier) } },
@@ -411,6 +421,44 @@ private fun certificateFacts(certificate: OwnedCertificate): List<CertificateFac
                 CertificateFact(stringResource(R.string.certificates_detail_id), formatCertificateCode(certificate.code), mono = true)
             },
         )
+}
+
+/** Main's `CertificateCovered`: a course's topics, counted, or what a language level's learner can do. */
+@Composable
+private fun CertificateCovered(
+    certificate: OwnedCertificate,
+    modifier: Modifier = Modifier,
+) {
+    val course = certificate.kind == OwnedCertificate.Kind.COURSE
+    val items = if (course) certificate.topics else certificate.canDo
+    if (items.isEmpty()) return
+
+    Column(modifier) {
+        Row(Modifier.semantics(mergeDescendants = true) { heading() }, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                stringResource(if (course) R.string.certificates_topics_covered else R.string.certificates_can_do),
+                Modifier.alignByBaseline(),
+                style = MaterialTheme.typography.titleMedium.copy(fontSize = 15.sp, fontWeight = FontWeight.SemiBold, lineHeight = 21.sp),
+            )
+            if (course) {
+                Text(
+                    formatNumber(items.size.toDouble(), currentLocale()),
+                    Modifier.alignByBaseline(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.zoonkType.data,
+                )
+            }
+        }
+        Column(Modifier.padding(top = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items.forEach { item ->
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    StatusMark(MarkStatus.Done)
+                    // bodyLarge's line is the mark's box, so the check sits on the first line at any font size.
+                    Text(item, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge.copy(fontSize = 15.sp))
+                }
+            }
+        }
+    }
 }
 
 /** Main's `roundStudyMinutes`: the plan's estimate, so whole hours past the first one. */
