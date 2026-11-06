@@ -10,7 +10,7 @@ import {
   getTestCaseLanguage,
   summarizeByLanguage,
 } from "@/lib/case-languages";
-import { getCallCost } from "@/lib/cost";
+import { getRunCost } from "@/lib/cost";
 import { getTaskResults, removeModelResultRuns, runEval } from "@/lib/eval-runner";
 import {
   formatDollars,
@@ -415,11 +415,15 @@ async function runBattle({
 
   const outputs = onlyRuns({ modelIds, outputs: await getAllOutputsForTask(task.id), runIds });
 
-  const spentBy = (modelId: string) =>
-    (outputs.get(modelId)?.outputs ?? []).reduce(
-      (total, usage) => total + getCallCost({ modelId, prices: GATEWAY_PRICES, usage }),
+  const spentBy = (modelId: string) => {
+    const model = getModelById(modelId) ?? fail(`Unknown model: ${modelId}`);
+
+    return (outputs.get(modelId)?.outputs ?? []).reduce(
+      (total, run) =>
+        total + getRunCost({ modelId: model.gatewayModelId, prices: GATEWAY_PRICES, run }),
       0,
     );
+  };
 
   const generationSpent = modelIds.reduce((total, modelId) => total + spentBy(modelId), 0);
   const judgeSpent = sumJudgeCost(matchups);
