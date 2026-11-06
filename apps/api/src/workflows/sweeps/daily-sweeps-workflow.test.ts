@@ -132,9 +132,11 @@ describe(dailySweepsWorkflow, () => {
       ]),
     ).resolves.toStrictEqual([null, expect.objectContaining({ id: expiredCode.id })]);
 
-    expect(start).toHaveBeenCalledWith(freshnessWorkflow, [
-      { examBlueprintId: exam.id, kind: "exam" },
-    ]);
+    expect(start).toHaveBeenCalledWith(
+      freshnessWorkflow,
+      [{ examBlueprintId: exam.id, kind: "exam" }],
+      { experimental_hook: { token: `freshness:exam:${exam.id}` } },
+    );
 
     expect(result.freshnessChecks).toBeGreaterThanOrEqual(1);
 
@@ -253,9 +255,11 @@ describe(dailySweepsWorkflow, () => {
     const result = await dailySweepsWorkflow(scheduledRun());
     assert(result.status === "swept");
 
-    expect(start).toHaveBeenCalledWith(freshnessWorkflow, [
-      { examBlueprintId: exam.id, kind: "exam" },
-    ]);
+    expect(start).toHaveBeenCalledWith(
+      freshnessWorkflow,
+      [{ examBlueprintId: exam.id, kind: "exam" }],
+      { experimental_hook: { token: `freshness:exam:${exam.id}` } },
+    );
 
     expect(result.freshnessChecks).toBe(0);
     expect(result.evaluationRunsPurged).toBeGreaterThanOrEqual(1);

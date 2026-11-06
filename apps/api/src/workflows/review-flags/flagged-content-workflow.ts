@@ -1,5 +1,5 @@
 import { getWorkflowMetadata } from "workflow";
-import { startOnce } from "../_shared/run-token";
+import { startOnce, waitForRunToken } from "../_shared/run-token";
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { pullLessonStep } from "../quality/steps/later-review-steps";
@@ -17,6 +17,10 @@ export async function flaggedContentWorkflow({
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
+
+  // The daily sweep's run and an admin's Rewrite now can list the same flags; taking turns means
+  // each lists them only after the run before it resolved what it rewrote.
+  await waitForRunToken("flagged-content");
   const { drillGroups, lessonIds } = await prepareFlaggedContentStep({ flagIds });
 
   const pulled = await Promise.all(

@@ -1,10 +1,10 @@
+import { startFreshnessCheck } from "@/lib/freshness";
 import { createHook } from "workflow";
 import { start } from "workflow/api";
 import { repeatUntil } from "../_shared/repeat-until";
 import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
-import { freshnessWorkflow } from "../freshness/freshness-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
@@ -47,7 +47,7 @@ function countOf(result: PromiseSettledResult<number>): number {
 
 async function checkFreshness(): Promise<number> {
   const targets = await listDueFreshnessTargetsStep();
-  await Promise.all(targets.map((target) => start(freshnessWorkflow, [target])));
+  await Promise.all(targets.map((target) => startFreshnessCheck(target)));
 
   return targets.length;
 }
