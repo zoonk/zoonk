@@ -1,6 +1,7 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { getLanguageFlagCode } from "@zoonk/utils/language-flags";
 import { type findActiveSubscription } from "../../auth/subscription";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { countLessonProgress } from "../../plans/_utils/work-progress";
@@ -126,6 +127,7 @@ function toGoalView({
     isActive: goal.id === activeGoalId,
     kind: goal.kind,
     language: goal.language,
+    languageFlag: goal.targetLanguage ? getLanguageFlagCode(goal.targetLanguage) : null,
     plan: plan ? toPlanSummary({ plan, progress }) : null,
     primaryCourseId: goal.primaryCourseId,
     prompt: goal.prompt,

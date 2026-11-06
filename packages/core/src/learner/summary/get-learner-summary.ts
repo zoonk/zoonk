@@ -1,6 +1,7 @@
 import "server-only";
 import { type Goal, type Subscription, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { getLanguageFlagCode } from "@zoonk/utils/language-flags";
 import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
 import { getActiveSubscription } from "../../auth/subscription";
@@ -77,6 +78,7 @@ function toSummaryGoals({
         isActive: goal.id === activeGoalId,
         isSettingUp: isGoalSetupLeft(goal),
         kind: goal.kind,
+        languageFlag: goal.targetLanguage ? getLanguageFlagCode(goal.targetLanguage) : null,
         status: goal.status,
         targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
         targetLanguage: goal.targetLanguage,

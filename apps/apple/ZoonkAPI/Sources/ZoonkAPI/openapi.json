@@ -35086,6 +35086,11 @@
           "language": {
             "type": "string"
           },
+          "languageFlag": {
+            "nullable": true,
+            "description": "A language goal's flag, as a language course's: a country's two-letter code, or a region's (`es-ct`, `gb-wls`, `arab`), as flag-icons names them; null for other goals",
+            "type": "string"
+          },
           "plan": {
             "nullable": true,
             "type": "object",
@@ -35193,6 +35198,7 @@
           "isActive",
           "kind",
           "language",
+          "languageFlag",
           "plan",
           "primaryCourseId",
           "prompt",
@@ -41862,6 +41868,11 @@
               "exam"
             ]
           },
+          "languageFlag": {
+            "nullable": true,
+            "description": "A language goal's flag, as a language course's: a country's two-letter code, or a region's (`es-ct`, `gb-wls`, `arab`), as flag-icons names them; null for other goals",
+            "type": "string"
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -41894,6 +41905,7 @@
           "isActive",
           "isSettingUp",
           "kind",
+          "languageFlag",
           "status",
           "targetDate",
           "targetLanguage",

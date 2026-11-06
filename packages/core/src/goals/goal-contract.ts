@@ -179,6 +179,8 @@ export type GoalView = {
   isActive: boolean;
   kind: GoalKind;
   language: string;
+  /** The language's flag, as a language course's: a `flag-icons` code; null without one. */
+  languageFlag: string | null;
   plan: {
     /** False until the planner has written the plan's phases. */
     ready: boolean;

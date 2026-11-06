@@ -31,6 +31,8 @@ export type LearnerSummaryGoal = {
   /** Questions are left before its plan is set, so continuing it opens its setup instead of Today. */
   isSettingUp: boolean;
   kind: GoalKind;
+  /** The language's flag, as a language course's: a `flag-icons` code; null without one. */
+  languageFlag: string | null;
   status: GoalStatus;
   /** `YYYY-MM-DD`, or null for a goal without a date. */
   targetDate: string | null;
