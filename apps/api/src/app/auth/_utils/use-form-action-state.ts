@@ -20,6 +20,7 @@ export function useFormActionState<State>({
   const isHydrated = useIsMounted();
 
   return useActionState(
+    // oxlint-disable-next-line zoonk/no-uncaught-transition-await -- Before hydration the form posts natively, which needs the Server Action itself.
     isHydrated
       ? (previous: Awaited<State>, formData: FormData) =>
           action(previous, formData).catch((error: unknown) => {
