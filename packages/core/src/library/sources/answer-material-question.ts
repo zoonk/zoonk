@@ -27,7 +27,11 @@ export type MaterialQuestionResult =
 
 async function findOwnMaterial({ sourceIds, userId }: { sourceIds: string[]; userId: string }) {
   const links = await prisma.learnerSource.findMany({
-    select: { source: { select: { extractedText: true, id: true, mimeType: true, title: true } } },
+    select: {
+      source: {
+        select: { contentHash: true, extractedText: true, id: true, mimeType: true, title: true },
+      },
+    },
     where: { source: { extractedText: { not: null } }, sourceId: { in: sourceIds }, userId },
   });
 

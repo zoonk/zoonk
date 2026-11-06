@@ -58,7 +58,9 @@ export async function lockCurrentLessonVersion(
   tx: TransactionClient,
   lessonId: string,
 ): Promise<number | null> {
-  await tx.$queryRaw(sql`SELECT id FROM library_lessons WHERE id = ${lessonId}::uuid FOR UPDATE`);
+  await tx.$queryRaw(
+    sql`SELECT id FROM library_lessons WHERE id = ${lessonId}::uuid FOR NO KEY UPDATE`,
+  );
 
   const current = await tx.step.findFirst({
     select: { version: true },

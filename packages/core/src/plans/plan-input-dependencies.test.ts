@@ -125,9 +125,9 @@ describe("question-bank plan invalidation", () => {
     const scope = await contentScope();
     const before = await readVersions(scope);
 
-    await expect(createItems({ ...scope.input, sourceId: randomUUID() })).rejects.toMatchObject({
-      code: "P2003",
-    });
+    await expect(
+      createItems({ ...scope.input, source: { contentHash: "hash", sourceId: randomUUID() } }),
+    ).rejects.toMatchObject({ code: "P2003" });
 
     await expect(readVersions(scope)).resolves.toStrictEqual(before);
 

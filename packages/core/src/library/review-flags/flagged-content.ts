@@ -22,6 +22,7 @@ export type FlaggedDrillGroup = {
   language: string;
   preparedAt: Date;
   law: { shortName: string; title: string; url: string | null };
+  sourceHash: string;
   sourceId: string;
   style: (typeof STYLE_BY_FORMAT)[DrillFormat];
 };
@@ -44,25 +45,28 @@ function readArticleReference(citation: string): string {
   return citation.split(",").at(-1)?.trim() ?? citation;
 }
 
+type LawText = { contentHash: string; text: string };
+
 function toDrillGroup({
   items,
+  laws,
   preparedAt,
-  texts,
 }: {
   items: readonly FlaggedItem[];
+  laws: ReadonlyMap<string, LawText>;
   preparedAt: Date;
-  texts: ReadonlyMap<string, string>;
 }): FlaggedDrillGroup | null {
   const [first] = items;
   const source = first?.source;
+  const law = source && laws.get(source.id);
 
-  if (!first?.sourceCitation || !source || !isDrillFormat(first.format)) {
+  if (!first?.sourceCitation || !source || !law || !isDrillFormat(first.format)) {
     return null;
   }
 
   const reference = readArticleReference(first.sourceCitation);
 
-  const article = splitStatuteArticles(texts.get(source.id) ?? "").find(
+  const article = splitStatuteArticles(law.text).find(
     (candidate) => candidate.reference === reference,
   );
 
@@ -78,6 +82,7 @@ function toDrillGroup({
     language: first.language,
     law: { shortName: toStatuteShortName(source.title), title: source.title, url: source.url },
     preparedAt,
+    sourceHash: law.contentHash,
     sourceId: source.id,
     style: STYLE_BY_FORMAT[first.format],
   };
@@ -95,11 +100,16 @@ async function toDrillGroups({
   );
 
   const sources = await prisma.source.findMany({
-    select: { extractedText: true, id: true },
+    select: { contentHash: true, extractedText: true, id: true },
     where: { id: { in: [...new Set(drills.flatMap((item) => item.source?.id ?? []))] } },
   });
 
-  const texts = new Map(sources.map((source) => [source.id, source.extractedText ?? ""]));
+  const laws = new Map(
+    sources.map((source) => [
+      source.id,
+      { contentHash: source.contentHash, text: source.extractedText ?? "" },
+    ]),
+  );
 
   const groups = Map.groupBy(
     drills,
@@ -107,7 +117,7 @@ async function toDrillGroups({
   );
 
   return [...groups.values()].flatMap(
-    (group) => toDrillGroup({ items: group, preparedAt, texts }) ?? [],
+    (group) => toDrillGroup({ items: group, laws, preparedAt }) ?? [],
   );
 }
 

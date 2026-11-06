@@ -5,32 +5,34 @@ import { fixLessonDraft } from "@zoonk/ai/tasks/lesson-writer/fix";
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { type CitedDocuments, citeMaterial } from "@zoonk/ai/tasks/material/cite";
 import { safeAsync } from "@zoonk/utils/error";
-import { type LibraryProvenance } from "../../_utils/library-rows";
 import {
   type LessonGateProblem,
   type LessonWritingContext,
   runLessonQualityGate,
 } from "../../quality/lesson-quality-gate";
 import { repairWrittenLesson } from "../../quality/lesson-repairs";
+import { type SourceVersion, toSourceVersions } from "../../sources/content-review-flags";
 import { formatMaterialPages } from "../../sources/material-pages";
 import { addQuestionBases } from "../../steps/question-bases";
 import { type ConvertedScreen } from "../../steps/written-screens";
 import { getFixReach } from "./fix-reach";
 import { type LessonWritingInputs } from "./lesson-writing-inputs";
-import { type LessonScreenToSave } from "./save-lesson-content";
+import { type LessonScreenToSave, type ScreenProvenance } from "./save-lesson-content";
 import { type ScreenCitation, describeWrittenScreen, toScreenCitations } from "./screen-citations";
 
 export type LessonAnalytics = Parameters<typeof writeLessonDraft>[0]["analytics"];
 
-export type WrittenVersion = { lesson: WrittenLesson; provenanceByScreen: LibraryProvenance[] };
+export type WrittenVersion = { lesson: WrittenLesson; provenanceByScreen: ScreenProvenance[] };
 
 export type GateResult = Awaited<ReturnType<typeof runLessonQualityGate>>;
 
+/** `sources` are the versions of the documents `context` gives the writer. */
 export type LessonGate = {
   analytics?: LessonAnalytics;
   context: LessonWritingContext;
   reuse: CallReuse;
   serviceTier?: ServiceTier;
+  sources: SourceVersion[];
   writerModel: string;
 };
 
@@ -44,6 +46,10 @@ function getLessonDocumentKind(inputs: LessonWritingInputs): CitedDocuments {
 
 export function getLessonDocuments(inputs: LessonWritingInputs) {
   return getLessonDocumentKind(inputs) === "material" ? inputs.material : inputs.sources;
+}
+
+export function readLessonSources(inputs: LessonWritingInputs): SourceVersion[] {
+  return toSourceVersions(getLessonDocuments(inputs));
 }
 
 export function toScreensToSave({
@@ -197,11 +203,12 @@ export async function fixVersionDraft({
     spec: gate.context.spec,
   });
 
+  const fixed = { ...fix.provenance, sources: gate.sources };
+
   return {
     lesson: repaired,
     provenanceByScreen: fix.data.lesson.screens.map(
-      (_, index) =>
-        (changed.has(index) ? fix.provenance : draft.provenanceByScreen[index]) ?? fix.provenance,
+      (_, index) => (changed.has(index) ? fixed : draft.provenanceByScreen[index]) ?? fixed,
     ),
   };
 }

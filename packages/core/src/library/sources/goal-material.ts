@@ -17,7 +17,11 @@ async function findMaterial(goalIds: readonly string[]): Promise<MaterialSource[
 
   const links = await prisma.learnerSource.findMany({
     orderBy: { createdAt: "asc" },
-    select: { source: { select: { extractedText: true, id: true, mimeType: true, title: true } } },
+    select: {
+      source: {
+        select: { contentHash: true, extractedText: true, id: true, mimeType: true, title: true },
+      },
+    },
     take: MAX_MATERIAL_SOURCES,
     where: {
       goalId: { in: [...goalIds] },

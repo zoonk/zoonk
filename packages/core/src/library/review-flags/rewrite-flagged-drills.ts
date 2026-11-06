@@ -5,7 +5,7 @@ import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write
 import { checkItem } from "../items/item-checks";
 import { toStoredItem } from "../items/item-content";
 import { repairItem } from "../items/item-repairs";
-import { resolveReviewFlags } from "../sources/content-review-flags";
+import { reconcileItemReviewFlags } from "../sources/content-review-flags";
 import { type FlaggedDrillGroup, recordFailedDrillRewrites } from "./flagged-content";
 
 /** Internal workflow bridge: the drills must come from the flagged group the sweep listed. */
@@ -20,8 +20,6 @@ export async function replaceFlaggedDrills({
   optionCount: number;
   provenance: LibraryProvenance;
 }): Promise<number> {
-  const writtenAt = new Date(provenance.generatedAt);
-
   const pairs = group.itemIds.flatMap((itemId, index) => {
     const drill = drills.filter((candidate) => candidate.format === group.format)[index];
 
@@ -61,6 +59,7 @@ export async function replaceFlaggedDrills({
             ...toProvenanceData({ ...provenance, runId: `${provenance.runId}:${index}` }),
             discrimination: null,
             sourceCitation: group.citation,
+            sourceHash: group.sourceHash,
           },
           where: { id: itemId },
         }),
@@ -73,9 +72,10 @@ export async function replaceFlaggedDrills({
       tx,
     });
 
-    await Promise.all(
-      pairs.map(({ itemId }) => resolveReviewFlags({ target: { itemId }, tx, writtenAt })),
-    );
+    await reconcileItemReviewFlags(tx, {
+      itemIds: pairs.map(({ itemId }) => itemId),
+      source: { contentHash: group.sourceHash, sourceId: group.sourceId },
+    });
   });
 
   return pairs.length;
