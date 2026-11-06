@@ -3,6 +3,7 @@ package com.zoonk.android.feature.conversation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,6 +39,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.WritingWait
+import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.api.models.LanguageCheckpointCall
 import com.zoonk.api.models.LanguageCheckpointCallIntro
 import kotlinx.coroutines.launch
@@ -161,16 +163,14 @@ internal fun CheckpointCallContent(
     val scope = rememberCoroutineScope()
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
-            CallFrame(title = { CallTitle(stringResource(R.string.conversation_unit_challenge)) }, onClose = exits::close) {
-                item(key = "loading") { PageLoading(Modifier.callItem()) }
+            TaskScaffold(onClose = exits::close, title = { CallTitle(stringResource(R.string.conversation_unit_challenge)) }) { padding ->
+                PageLoading(Modifier.padding(padding))
             }
         }
 
         is LoadState.Failed -> {
-            CallFrame(title = { CallTitle(stringResource(R.string.conversation_unit_challenge)) }, onClose = exits::close) {
-                item(
-                    key = "failed",
-                ) { LoadFailedMessage(onRetry = { scope.launch { model.call.refresh() } }, modifier = Modifier.callItem()) }
+            TaskScaffold(onClose = exits::close, title = { CallTitle(stringResource(R.string.conversation_unit_challenge)) }) { padding ->
+                LoadFailedMessage(onRetry = { scope.launch { model.call.refresh() } }, modifier = Modifier.padding(padding))
             }
         }
 
