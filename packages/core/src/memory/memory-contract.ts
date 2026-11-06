@@ -5,6 +5,7 @@ import {
   MemoryInsightStatus,
   type MemoryOrigin,
 } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type PlanEffect } from "../plans/planner/plan-effect";
 import { MAX_MEMORY_STATEMENT_LENGTH } from "./memory-limits";
@@ -64,9 +65,11 @@ export type MemorySettingsUpdateInput = z.infer<typeof memorySettingsUpdateSchem
  */
 const memoryChangeReferenceSchema = z
   .object({
-    factId: z.uuid().nullable().default(null).meta({ description: "The fact the change added" }),
-    previousFactId: z
-      .uuid()
+    factId: uuidSchema()
+      .nullable()
+      .default(null)
+      .meta({ description: "The fact the change added" }),
+    previousFactId: uuidSchema()
       .nullable()
       .default(null)
       .meta({ description: "The fact the change replaced or removed" }),
@@ -87,7 +90,7 @@ export const memoryUndoInputSchema = z
 export type MemoryUndoInput = z.infer<typeof memoryUndoInputSchema>;
 
 export const memoryInsightQuerySchema = z
-  .object({ goalId: z.uuid().optional().meta({ description: "Only insights for this goal" }) })
+  .object({ goalId: uuidSchema().optional().meta({ description: "Only insights for this goal" }) })
   .strict()
   .meta({ id: "MemoryInsightQuery" });
 

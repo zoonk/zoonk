@@ -1,4 +1,5 @@
 import { CourseLevel } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const planCourseLevelSchema = z
@@ -21,7 +22,7 @@ export const planCourseSchema = z
         description: "With `courseSlug`, the course's public page; null for private courses",
       }),
     chapterCount: z.int().min(0).meta({ description: "Chapters in the course, at every level" }),
-    courseId: z.uuid(),
+    courseId: uuidSchema(),
     courseSlug: z.string(),
     levels: z
       .array(planCourseLevelSchema)

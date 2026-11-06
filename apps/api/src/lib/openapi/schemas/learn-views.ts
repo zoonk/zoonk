@@ -2,6 +2,7 @@ import { skillStateCountsSchema } from "@zoonk/core/learner/contract";
 import { type ContentView } from "@zoonk/core/view-models/content/get";
 import { type ProgressView } from "@zoonk/core/view-models/progress/get";
 import { GoalKind, MasteryState } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { goalPreparationResponseSchema } from "./preparation";
 import { logicalDateSchema, studyBlockSchema } from "./study-sessions";
@@ -11,7 +12,7 @@ const masteryStateSchema = z.enum(MasteryState);
 const stillNeededAreaSchema = z.object({
   areaId: z.string(),
   left: z
-    .array(z.object({ name: z.string(), skillId: z.uuid() }))
+    .array(z.object({ name: z.string(), skillId: uuidSchema() }))
     .meta({ description: "The area's skills still below their bar, in plan order" }),
   minutes: z
     .number()
@@ -45,7 +46,7 @@ const stillNeededSchema = z
 export const goalProgressResponseSchema = z
   .object({
     goal: z.object({
-      id: z.uuid(),
+      id: uuidSchema(),
       kind: z.enum(GoalKind),
       targetDate: logicalDateSchema.nullable(),
       title: z.string(),
@@ -75,7 +76,7 @@ const contentCardSchema = z
       .min(0)
       .meta({ description: "Different days it was remembered; Mastered at three" }),
     retrievability: z.number().min(0).max(1).nullable(),
-    skillId: z.uuid(),
+    skillId: uuidSchema(),
     state: masteryStateSchema,
   })
   .meta({ id: "ContentCard" });
@@ -90,7 +91,7 @@ export const goalContentResponseSchema = z
         .meta({ description: "Skills due for review today (time capsules)" }),
     }),
     counts: skillStateCountsSchema.meta({ description: "The goal's skills by state" }),
-    goal: z.object({ id: z.uuid(), kind: z.enum(GoalKind), title: z.string() }),
+    goal: z.object({ id: uuidSchema(), kind: z.enum(GoalKind), title: z.string() }),
     groups: z
       .array(
         z.object({
@@ -117,6 +118,6 @@ export const goalContentResponseSchema = z
 export const areaPracticeResponseSchema = z
   .object({
     block: studyBlockSchema,
-    sessionId: z.uuid().meta({ description: "Today's session the block was added to" }),
+    sessionId: uuidSchema().meta({ description: "Today's session the block was added to" }),
   })
   .meta({ id: "AreaPractice" });

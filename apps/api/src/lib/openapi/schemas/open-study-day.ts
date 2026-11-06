@@ -3,6 +3,7 @@ import {
   dayTargetStatusSchema,
   openStudyDayInputSchema,
 } from "@zoonk/core/sessions/open-day-contract";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { logicalDateSchema, studyBlockSchema, studySessionResponseSchema } from "./study-sessions";
 
@@ -11,7 +12,7 @@ export const openStudyDayBodySchema = openStudyDayInputSchema.omit({ goalId: tru
 export const openedStudyDayResponseSchema = z
   .object({
     created: z.boolean(),
-    goalId: z.uuid(),
+    goalId: uuidSchema(),
     localDate: logicalDateSchema,
     opening: studyBlockOpeningSchema
       .nullable()
@@ -20,7 +21,7 @@ export const openedStudyDayResponseSchema = z
           "Where the target opens, as `POST /v1/study-block-openings` would open it, so a tap on a day not saved yet is one request. Null when no target was asked for or it can't start (`targetStatus`). `session` and `target` show the day as it opened, before this start",
       }),
     session: studySessionResponseSchema,
-    sessionId: z.uuid(),
+    sessionId: uuidSchema(),
     status: z.literal("opened"),
     target: studyBlockSchema.nullable(),
     targetStatus: dayTargetStatusSchema.nullable(),

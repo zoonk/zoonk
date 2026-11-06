@@ -2,6 +2,7 @@ import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { type FoundSourceDocument } from "@zoonk/ai/tasks/research/find-official-sources";
 import { type ExamResearchPlan } from "@zoonk/ai/tasks/research/plan";
 import { type SourceResearchPlan } from "@zoonk/ai/tasks/research/source-plan";
+import { hasOwnFreshnessChecks } from "@zoonk/core/library/sources/contract";
 import { type ResearchSourceTopic } from "@zoonk/core/library/sources/stored";
 import { scheduleFreshnessChecksStep } from "../freshness/steps/schedule-freshness-checks-step";
 import { type ResearchAnalytics, toPlanAnalytics } from "./_utils/research-analytics";
@@ -255,8 +256,8 @@ export async function researchSources({
 
   await linkGoalToSourcesStep({ goalId: goal.id, sourceIds });
 
-  // Uploads never change and syllabi are reused for a year.
-  if (uploads.length === 0 && topic !== "syllabus") {
+  // Uploads never change.
+  if (uploads.length === 0 && hasOwnFreshnessChecks(topic)) {
     await scheduleFreshnessChecksStep(
       sourceIds.map((sourceId) => ({ kind: "source" as const, sourceId })),
     );

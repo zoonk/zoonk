@@ -27,6 +27,7 @@ export type StatuteDrillTarget = {
   language: string;
   law: { shortName: string; title: string; url: string | null };
   skillId: string;
+  sourceHash: string;
   sourceId: string;
   style: StatuteDrillStyle;
 };
@@ -114,6 +115,7 @@ export async function loadStatuteDrillTargets(goalId: string): Promise<StatuteDr
                 url: source.url,
               },
               skillId,
+              sourceHash: source.contentHash,
               sourceId: source.id,
               style,
             },
@@ -155,8 +157,8 @@ export async function writeStatuteDrills({
                 runId: `${provenance.runId}:${first.format}:${first.reference}`,
               },
               skillId: target.skillId,
+              source: { contentHash: target.sourceHash, sourceId: target.sourceId },
               sourceCitation: `${target.law.shortName}, ${first.reference}`,
-              sourceId: target.sourceId,
             }).then((result) => result.created.length),
           ]
         : [];

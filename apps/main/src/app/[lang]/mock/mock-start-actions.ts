@@ -5,9 +5,9 @@ import {
   type StartAnytimeMockResult,
   startAnytimeMock,
 } from "@zoonk/core/exams/mocks/start-anytime";
-import { z } from "zod";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 
-const goalIdSchema = z.uuid();
+const goalIdSchema = uuidSchema();
 
 export type MockStartOutcome =
   | { id: string; status: "running" | "started" }

@@ -5,7 +5,7 @@ import {
   Status,
   Type,
 } from "@apple/app-store-server-library";
-import { z } from "zod";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { type AppleSubscriptionEnvironment, normalizeAppleEnvironment } from "./apple-store-config";
 import { AppleStoreError } from "./apple-store-error";
 
@@ -25,7 +25,7 @@ export type VerifiedAppleSubscription = {
   transactionSignedDate: Date;
 };
 
-const accountTokenSchema = z.uuid();
+const accountTokenSchema = uuidSchema();
 const activeSubscriptionStatuses = new Set<number>([Status.ACTIVE, Status.BILLING_GRACE_PERIOD]);
 
 function getRequiredString(value: string | undefined) {

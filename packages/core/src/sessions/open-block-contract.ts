@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../learner/contract";
 
@@ -5,20 +6,19 @@ const studyBlockOpeningTargetSchema = z
   .discriminatedUnion("kind", [
     z
       .object({
-        expectedBlockId: z
-          .uuid()
+        expectedBlockId: uuidSchema()
           .optional()
           .meta({
             description:
               "The step the learner saw as next. When the session's next step changed to or from a mock, nothing opens (`changed`), so Continue never begins a mock the learner didn't see",
           }),
         kind: z.literal("next"),
-        sessionId: z.uuid(),
+        sessionId: uuidSchema(),
       })
       .strict()
       .meta({ description: "Continue: the session's next step", id: "StudyBlockOpeningNext" }),
     z
-      .object({ blockId: z.uuid(), kind: z.literal("block") })
+      .object({ blockId: uuidSchema(), kind: z.literal("block") })
       .strict()
       .meta({
         description:
@@ -26,7 +26,7 @@ const studyBlockOpeningTargetSchema = z
         id: "StudyBlockOpeningBlock",
       }),
     z
-      .object({ blockId: z.uuid(), kind: z.literal("mission") })
+      .object({ blockId: uuidSchema(), kind: z.literal("mission") })
       .strict()
       .meta({
         description:
@@ -43,12 +43,14 @@ export const openStudyBlockInputSchema = z
 
 export type OpenStudyBlockInput = z.infer<typeof openStudyBlockInputSchema>;
 
-const sessionIdSchema = z.uuid().meta({ description: "The study session the block belongs to" });
+const sessionIdSchema = uuidSchema().meta({
+  description: "The study session the block belongs to",
+});
 
 export const studyBlockOpeningSchema = z
   .discriminatedUnion("kind", [
     z
-      .object({ kind: z.literal("lesson"), lessonId: z.uuid(), sessionId: sessionIdSchema })
+      .object({ kind: z.literal("lesson"), lessonId: uuidSchema(), sessionId: sessionIdSchema })
       .strict()
       .meta({
         description: "The block started: open the lesson player",
@@ -56,9 +58,9 @@ export const studyBlockOpeningSchema = z
       }),
     z
       .object({
-        blockId: z.uuid(),
+        blockId: uuidSchema(),
         kind: z.literal("unwrittenLesson"),
-        lessonId: z.uuid(),
+        lessonId: uuidSchema(),
         sessionId: sessionIdSchema,
       })
       .strict()
@@ -68,7 +70,11 @@ export const studyBlockOpeningSchema = z
         id: "StudyBlockOpeningUnwrittenLesson",
       }),
     z
-      .object({ blockId: z.uuid(), kind: z.literal("preparingLesson"), sessionId: sessionIdSchema })
+      .object({
+        blockId: uuidSchema(),
+        kind: z.literal("preparingLesson"),
+        sessionId: sessionIdSchema,
+      })
       .strict()
       .meta({
         description:
@@ -76,11 +82,11 @@ export const studyBlockOpeningSchema = z
         id: "StudyBlockOpeningPreparingLesson",
       }),
     z
-      .object({ blockId: z.uuid(), kind: z.literal("essay"), sessionId: sessionIdSchema })
+      .object({ blockId: uuidSchema(), kind: z.literal("essay"), sessionId: sessionIdSchema })
       .strict()
       .meta({ description: "The block started: open the essay", id: "StudyBlockOpeningEssay" }),
     z
-      .object({ blockId: z.uuid(), kind: z.literal("checkpoint"), sessionId: sessionIdSchema })
+      .object({ blockId: uuidSchema(), kind: z.literal("checkpoint"), sessionId: sessionIdSchema })
       .strict()
       .meta({
         description:
@@ -88,14 +94,18 @@ export const studyBlockOpeningSchema = z
         id: "StudyBlockOpeningCheckpoint",
       }),
     z
-      .object({ blockId: z.uuid(), kind: z.literal("mock"), sessionId: sessionIdSchema })
+      .object({ blockId: uuidSchema(), kind: z.literal("mock"), sessionId: sessionIdSchema })
       .strict()
       .meta({
         description: "Open the mock's screen, which starts it",
         id: "StudyBlockOpeningMock",
       }),
     z
-      .object({ kind: z.literal("challenge"), planItemId: z.uuid(), sessionId: sessionIdSchema })
+      .object({
+        kind: z.literal("challenge"),
+        planItemId: uuidSchema(),
+        sessionId: sessionIdSchema,
+      })
       .strict()
       .meta({
         description:
@@ -104,8 +114,7 @@ export const studyBlockOpeningSchema = z
       }),
     z
       .object({
-        blockId: z
-          .uuid()
+        blockId: uuidSchema()
           .nullable()
           .meta({
             description:

@@ -2,6 +2,7 @@ import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labe
 import { missionSchema, questionAnswerSchema } from "@zoonk/core/sessions/completion-contract";
 import { StudyFreshStart, StudySessionStatus } from "@zoonk/db";
 import { formatDuration } from "@zoonk/utils/duration";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { catchUpSchema } from "./catch-up";
 import { checkpointAnsweredQuestionsSchema } from "./checkpoint-evidence";
@@ -23,7 +24,7 @@ const EXAMPLE_FUNDED_DAILY_MINUTES = 14.875;
 const EXAMPLE_DAILY_MINUTES = 15;
 
 export const logicalDateSchema = z.iso.date().meta({ description: "Learner-local calendar date" });
-const idSchema = z.uuid();
+const idSchema = uuidSchema();
 
 const hyperdriveSchema = z.object({
   level: z.number().int().min(1),

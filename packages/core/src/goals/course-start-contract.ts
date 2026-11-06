@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { ownLevelSchema } from "../learner/placement/placement-contract";
 import { goalCreateInputSchema } from "./goal-contract";
@@ -5,8 +6,7 @@ import { goalCreateInputSchema } from "./goal-contract";
 export const courseGoalStartInputSchema = goalCreateInputSchema
   .pick({ studyDays: true, studyTime: true, timeZone: true })
   .extend({
-    chapterId: z
-      .uuid()
+    chapterId: uuidSchema()
       .optional()
       .meta({ description: "A chapter of the course where the plan starts" }),
     dailyMinutes: goalCreateInputSchema.shape.dailyMinutes

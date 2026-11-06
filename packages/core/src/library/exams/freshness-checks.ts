@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { owesSourceNotice } from "../sources/unnoticed-changes";
 import { type FreshnessTarget } from "./check-freshness";
 import { type FreshnessCommandAccess, getFreshnessCommandAccess } from "./freshness-access";
 
@@ -44,7 +45,7 @@ export async function stopFreshnessChecks(
 ): Promise<FreshnessCommandAccess> {
   const access = await getFreshnessCommandAccess(target);
 
-  if (access.status !== "ready") {
+  if (access !== "ready") {
     return access;
   }
 
@@ -62,20 +63,27 @@ export async function stopFreshnessChecks(
 export async function listDueFreshnessTargets({ now = new Date() }: { now?: Date } = {}): Promise<
   FreshnessTarget[]
 > {
-  const where = { nextCheckAt: { lt: new Date(now.getTime() + SWEEP_INTERVAL_MS) } };
+  const nextSweep = new Date(now.getTime() + SWEEP_INTERVAL_MS);
+  const due = { nextCheckAt: { lt: nextSweep } };
+
+  const owesNotice = {
+    ...owesSourceNotice,
+    nextCheckAt: { not: null },
+    unnoticedChangedAt: { lt: nextSweep },
+  };
 
   const [exams, sources] = await Promise.all([
     prisma.examBlueprint.findMany({
       orderBy: { nextCheckAt: "desc" },
       select: { id: true },
       take: MAX_DUE_TARGETS,
-      where,
+      where: due,
     }),
     prisma.source.findMany({
       orderBy: { nextCheckAt: "desc" },
       select: { id: true },
       take: MAX_DUE_TARGETS,
-      where,
+      where: { OR: [due, owesNotice] },
     }),
   ]);
 

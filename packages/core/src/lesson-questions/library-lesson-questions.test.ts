@@ -121,7 +121,7 @@ describe("questions about a Library lesson", () => {
     expect(parseLessonQuestionContextSnapshot(stored.contextSnapshot)).toMatchObject({
       lesson: { kind: "library", title: lesson.title },
       scope: { kind: "step" },
-      step: { kind: "explanation", stepNumber: 2 },
+      step: { answerable: false, kind: "explanation", stepNumber: 2 },
     });
 
     expect(thread).toMatchObject({
@@ -153,6 +153,7 @@ describe("questions about a Library lesson", () => {
         isCorrect: false,
         selectedAnswer: "The electron's size",
       },
+      step: { answerable: true, kind: "check" },
     });
   });
 

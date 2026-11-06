@@ -1,10 +1,11 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const skillOutlineChapterSchema = z
   .object({
-    chapterId: z
-      .uuid()
-      .meta({ description: "Its page is `GET /v1/goals/{goalId}/chapters/{chapterId}`" }),
+    chapterId: uuidSchema().meta({
+      description: "Its page is `GET /v1/goals/{goalId}/chapters/{chapterId}`",
+    }),
     title: z.string(),
   })
   .meta({ id: "SkillOutlineChapter" });

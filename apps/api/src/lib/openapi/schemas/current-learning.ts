@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { nullableOrganizationSummarySchema, resourcePageQuerySchema } from "./catalog-resources";
 import { paginationSchema } from "./common";
@@ -15,7 +16,7 @@ export const currentUserCoursesQuerySchema = resourcePageQuerySchema
 const currentUserCourseSchema = z
   .object({
     description: z.string().nullable(),
-    id: z.uuid(),
+    id: uuidSchema(),
     imageUrl: z.string().nullable(),
     language: z.string(),
     organization: nullableOrganizationSummarySchema,

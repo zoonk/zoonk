@@ -2,6 +2,7 @@ import { goalCreateInputSchema } from "@zoonk/core/goals/contract";
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import { BuddyGlasses, BuddyKind, CourseLevel, GoalKind, GoalStatus } from "@zoonk/db";
 import { BELT_COLORS_ORDER } from "@zoonk/utils/belt-level";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const beltColorSchema = z.enum(BELT_COLORS_ORDER);
@@ -9,15 +10,13 @@ const millisecondsSchema = z.int().meta({ description: "Milliseconds since the e
 
 const learnerSummaryGoalSchema = z
   .object({
-    courseChapterId: z
-      .uuid()
+    courseChapterId: uuidSchema()
       .nullable()
       .meta({
         description:
           "The chapter of `courseId`'s course that holds the goal's next lesson, so that course's page marks where the learner is; null when `courseId` is null, the goal has no lesson left, or its next lesson isn't written into a chapter yet",
       }),
-    courseId: z
-      .uuid()
+    courseId: uuidSchema()
       .nullable()
       .meta({
         description:
@@ -31,7 +30,7 @@ const learnerSummaryGoalSchema = z
           "The level of the goal's next lesson in `courseId`'s course, so that course's page opens its outline there instead of at its first level; null when `courseId` is null or the goal has no lesson left",
       }),
     dailyMinutes: z.int(),
-    id: z.uuid(),
+    id: uuidSchema(),
     isActive: z.boolean().meta({ description: "The goal the tabs show" }),
     isSettingUp: z
       .boolean()
@@ -50,7 +49,7 @@ const learnerSummaryGoalSchema = z
 const learnerSummarySchema = z
   .object({
     account: z.object({ email: z.string(), image: z.string().nullable(), name: z.string() }),
-    activeGoalId: z.uuid().nullable().meta({ description: "The goal the tabs show" }),
+    activeGoalId: uuidSchema().nullable().meta({ description: "The goal the tabs show" }),
     analytics: z
       .object({
         disabled: z.boolean().meta({ description: "Zoonk keeps the account out of its analytics" }),
@@ -90,7 +89,7 @@ const learnerSummarySchema = z
       })
       .meta({ description: "The buddy as the tabs draw it" }),
     day: z
-      .object({ goalId: z.uuid(), localDate: z.iso.date() })
+      .object({ goalId: uuidSchema(), localDate: z.iso.date() })
       .nullable()
       .meta({
         description:
@@ -103,7 +102,7 @@ const learnerSummarySchema = z
       expiresAt: millisecondsSchema.meta({ description: "When the session ends" }),
       isAnonymous: z.boolean().meta({ description: "A guest without an account yet" }),
       signedInAt: millisecondsSchema,
-      userId: z.uuid(),
+      userId: uuidSchema(),
     }),
     level: z
       .object({ color: beltColorSchema, level: z.int() })
@@ -152,7 +151,7 @@ const learnerSummarySchema = z
       .object({
         blocksLeft: z.int(),
         next: z
-          .object({ minutes: z.number(), sessionId: z.uuid(), title: z.string().nullable() })
+          .object({ minutes: z.number(), sessionId: uuidSchema(), title: z.string().nullable() })
           .nullable(),
       })
       .nullable()

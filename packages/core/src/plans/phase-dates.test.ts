@@ -78,7 +78,11 @@ async function setup({
         });
 
         await Promise.all([
-          chapterLessonFixture({ chapterId, lessonId: lesson.id, position: 500 + index }),
+          chapterLessonFixture({
+            chapterId,
+            lessonId: lesson.id,
+            position: 500 + skill * 100 + index,
+          }),
           lessonSkillFixture({ lessonId: lesson.id, skillId: spec?.skillId ?? "" }),
         ]);
       }),
@@ -859,6 +863,53 @@ describe("phase dates through system refreshes", () => {
     });
 
     await expect(readProposals(plan.id)).resolves.toHaveLength(0);
+  });
+
+  it("asks again from the end missed days moved it to, after the learner kept the one it replaced", async () => {
+    const { goal, outline, plan } = await setup({
+      skills: [
+        { lessons: 4, phase: 0 },
+        { lessons: 0, phase: 0, size: 10 },
+        { lessons: 0, phase: 0, size: 5 },
+        { lessons: 6, phase: 1 },
+      ],
+      targetDate: FAR,
+    });
+
+    const ends = await readPhaseEnds(plan.id);
+
+    await outline({ outline: { count: 14, minutes: 10 }, skill: 1 });
+    await refreshGoalPlan({ goalId: goal.id });
+
+    const declined = await readProposedMoves(plan.id);
+
+    expect(declined.moves).toStrictEqual([
+      { after: expect.any(String), before: ends[0], lessonsFirst: true, name: "Basics" },
+    ]);
+
+    await decidePlanChange({
+      changeId: declined.proposal?.id ?? "",
+      goalId: goal.id,
+      input: { status: "declined", timeZone: "UTC" },
+    });
+
+    vi.setSystemTime(new Date("2020-09-29T12:00:00Z"));
+    await refreshGoalPlan({ goalId: goal.id });
+
+    const [end] = await readPhaseEnds(plan.id);
+
+    expect(end && ends[0] && end > ends[0]).toBe(true);
+
+    await outline({ outline: { count: 6, minutes: 8 }, skill: 2 });
+    await refreshGoalPlan({ goalId: goal.id });
+
+    const { moves } = await readProposedMoves(plan.id);
+
+    await expect(readPhaseEnds(plan.id)).resolves.toStrictEqual([end, ends[1]]);
+
+    expect(moves).toStrictEqual([
+      { after: expect.any(String), before: end, lessonsFirst: true, name: "Basics" },
+    ]);
   });
 
   it("still moves the dates when the learner changes their plan", async () => {

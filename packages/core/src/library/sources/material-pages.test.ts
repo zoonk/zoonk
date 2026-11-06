@@ -10,6 +10,7 @@ import {
 import { PAGE_BREAK, PPTX_CONTENT_TYPE } from "./source-contract";
 
 const slides = {
+  contentHash: "deck-hash",
   id: "deck",
   mimeType: PPTX_CONTENT_TYPE,
   text: ["Glicólise", "", "Fase de investimento: gasta 2 ATP", "Saldo: 2 ATP por glicose"].join(
@@ -19,6 +20,7 @@ const slides = {
 };
 
 const notes = {
+  contentHash: "notes-hash",
   id: "notes",
   mimeType: "text/plain",
   text: "Krebs cycle notes.\n\nEach acetyl-CoA gives 3 NADH.",
@@ -28,10 +30,19 @@ const notes = {
 describe(toMaterialPages, () => {
   it("numbers slides as the deck does, skips empty ones and keeps unpaged text as sections", () => {
     expect(toMaterialPages([slides, notes])).toStrictEqual([
-      { page: 1, ref: "S1:1", sourceId: "deck", text: "Glicólise", title: "Aula 5", unit: "slide" },
+      {
+        page: 1,
+        ref: "S1:1",
+        sourceHash: "deck-hash",
+        sourceId: "deck",
+        text: "Glicólise",
+        title: "Aula 5",
+        unit: "slide",
+      },
       {
         page: 3,
         ref: "S1:3",
+        sourceHash: "deck-hash",
         sourceId: "deck",
         text: "Fase de investimento: gasta 2 ATP",
         title: "Aula 5",
@@ -40,6 +51,7 @@ describe(toMaterialPages, () => {
       {
         page: 4,
         ref: "S1:4",
+        sourceHash: "deck-hash",
         sourceId: "deck",
         text: "Saldo: 2 ATP por glicose",
         title: "Aula 5",
@@ -48,6 +60,7 @@ describe(toMaterialPages, () => {
       {
         page: null,
         ref: "S2:1",
+        sourceHash: "notes-hash",
         sourceId: "notes",
         text: "Krebs cycle notes.\n\nEach acetyl-CoA gives 3 NADH.",
         title: "My notes",

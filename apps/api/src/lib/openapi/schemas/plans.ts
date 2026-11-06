@@ -11,6 +11,7 @@ import { TOOL_CHOICES, TOOL_SYSTEMS } from "@zoonk/core/plans/tools-contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { writtenPracticeSchema } from "@zoonk/core/plans/written-practice-contract";
 import { GoalKind } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { noSittingSchema, noticeDaySchema } from "./notice-dates";
 import { planAreaSchema } from "./plan-areas";
@@ -135,11 +136,11 @@ export const planResponseSchema = z
     feasibility: planFeasibilitySchema.nullable(),
     fitOffer: planFitOfferSchema,
     fundedMocks: z
-      .array(planItemSchema.extend({ id: z.uuid() }))
+      .array(planItemSchema.extend({ id: uuidSchema() }))
       .describe(
         "Actual future todo mock items whose saved funding has started, with their real duration. Move them using the existing plan operation and item ID.",
       ),
-    goalId: z.uuid(),
+    goalId: uuidSchema(),
     notice: z
       .enum(["reading", "usual"])
       .nullable()
@@ -152,7 +153,7 @@ export const planResponseSchema = z
       .nullable()
       .meta({ description: "The level the learner gave; null when they didn't say" }),
     phases: z.array(planPhaseSchema),
-    planId: z.uuid(),
+    planId: uuidSchema(),
     ready: z.boolean().meta({ description: "False while the planner is building the plan" }),
 
     schedule: z.object({
@@ -239,7 +240,7 @@ export const ownLevelChangeSchema = z
     direction: z.enum(["higher", "lower", "same"]),
     level: ownLevelSchema,
     testOuts: z
-      .array(z.object({ chapterId: z.uuid(), title: z.string() }))
+      .array(z.object({ chapterId: uuidSchema(), title: z.string() }))
       .meta({
         description:
           "Higher levels: chapters the new level covers, to test out of (GET /goals/{goalId}/chapters/{chapterId}/test-out); nothing is skipped until a test-out is passed",
@@ -287,7 +288,7 @@ export const planLinkResponseSchema = z
       targetLanguage: z.string().nullable(),
     }),
     owner: z
-      .object({ goalId: z.uuid() })
+      .object({ goalId: uuidSchema() })
       .nullable()
       .meta({
         description: "Set only when the viewer made the plan, so the client shows their own plan",

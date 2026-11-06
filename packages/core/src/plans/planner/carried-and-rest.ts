@@ -8,7 +8,6 @@ import { type QueueUnit } from "./plan-units";
 import { scheduleRest } from "./rest-schedule";
 import { type PlanDay } from "./schedule-units";
 import { scoreSkillTopics } from "./topic-weights";
-import { markKeptLessons } from "./whole-boss";
 
 function listKeptOutside({
   kept,
@@ -45,16 +44,16 @@ export function scheduleCarriedAndRest({
   unitsByKey: ReadonlyMap<string, QueueUnit>;
 }) {
   const layOut = (yielded: ReadonlySet<string>) => {
-    const placed = placeCarriedWork({ days, input, phaseEnds, units, yielded });
-
-    const rest = markKeptLessons({
-      kept: placed.schedule.units.map((unit) => ({
-        kind: unit.kind,
-        phase: unit.phase,
-        scheduledFor: unit.teachingEnd ?? unit.date,
-      })),
-      units: placed.rest,
+    const placed = placeCarriedWork({
+      days,
+      input,
+      keepsEnds: !queue.rates && !learnedOrder,
+      phaseEnds,
+      units,
+      yielded,
     });
+
+    const { rest } = placed;
 
     const learned =
       learnedOrder &&

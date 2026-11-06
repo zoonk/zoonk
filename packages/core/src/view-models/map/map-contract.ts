@@ -1,4 +1,5 @@
 import { CourseLevel, GoalKind, MasteryState } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { skillStateCountsSchema } from "../../learner/contract";
 import { planCourseSchema } from "../../plans/plan-course-contract";
@@ -20,7 +21,7 @@ export const mapSkillSchema = z
     fading: z.boolean().meta({ description: "Its chance of recall dropped: a review relights it" }),
     name: z.string(),
     prerequisiteIds: z
-      .array(z.uuid())
+      .array(uuidSchema())
       .meta({ description: "Skills of the goal learned before this one: the map's links" }),
     retrievability: z
       .number()
@@ -28,7 +29,7 @@ export const mapSkillSchema = z
       .max(1)
       .nullable()
       .meta({ description: "The chance of recalling it now; null when never studied" }),
-    skillId: z.uuid(),
+    skillId: uuidSchema(),
     state: z.enum(MasteryState),
   })
   .meta({ id: "MapSkill" });
@@ -38,9 +39,11 @@ const mapAreaSchema = z
     areaId: z
       .string()
       .meta({ description: "The chapter's id, or `phase:N` for skills not in a chapter yet" }),
-    chapterId: z.uuid().nullable().meta({ description: "Null before the skills have a chapter" }),
+    chapterId: uuidSchema()
+      .nullable()
+      .meta({ description: "Null before the skills have a chapter" }),
     counts: skillStateCountsSchema,
-    courseId: z.uuid().nullable().meta({ description: "The course the chapter belongs to" }),
+    courseId: uuidSchema().nullable().meta({ description: "The course the chapter belongs to" }),
     current: z.boolean().meta({ description: "The learner is here: the plan's next lesson" }),
     phase: z.int().min(0),
     skills: z.array(mapSkillSchema),
@@ -60,7 +63,7 @@ const mapPhaseSchema = z
 
 const courseLinkSchema = z.object({
   brandSlug: z.string().meta({ description: "With `courseSlug`, the course's public page" }),
-  courseId: z.uuid(),
+  courseId: uuidSchema(),
   courseSlug: z.string(),
   title: z.string(),
 });
@@ -70,7 +73,7 @@ const studyNextSchema = z
     nextLevel: z
       .object({
         chapterCount: countSchema.meta({ description: "Chapters outlined at that level so far" }),
-        courseId: z.uuid(),
+        courseId: uuidSchema(),
         level: z.enum(CourseLevel),
         title: z.string(),
       })
@@ -122,9 +125,9 @@ export const fieldMapViewSchema = z
     counts: skillStateCountsSchema,
     course: planCourseSchema.nullable(),
     courses: z
-      .array(z.object({ courseId: z.uuid(), title: z.string() }))
+      .array(z.object({ courseId: uuidSchema(), title: z.string() }))
       .meta({ description: "The courses the chapters come from, for the map's course view" }),
-    goal: z.object({ id: z.uuid(), kind: z.enum(GoalKind), title: z.string() }),
+    goal: z.object({ id: uuidSchema(), kind: z.enum(GoalKind), title: z.string() }),
     next: studyNextSchema
       .nullable()
       .meta({
@@ -142,7 +145,7 @@ export const fieldMapViewSchema = z
             z.object({
               name: z.string(),
               retrievability: z.number().min(0).max(1).nullable(),
-              skillId: z.uuid(),
+              skillId: uuidSchema(),
             }),
           )
           .meta({ description: "Skills fading now, most faded first" }),

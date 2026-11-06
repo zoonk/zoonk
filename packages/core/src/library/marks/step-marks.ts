@@ -1,5 +1,6 @@
 import { isExampleQuote, isUnderlineQuote } from "@zoonk/ai/tasks/lesson-marks/quotes";
 import { isMarkdownTableStart } from "@zoonk/utils/markdown-table";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type LessonIcon } from "../icons/lesson-icon-contract";
 import { type StepContentByKind } from "../steps/contract/step-contract";
@@ -14,7 +15,7 @@ export const iconNeedSchema = z.object({
 /** `Step.marks`: what tagging found, with the icon linked once it's drawn. */
 const savedStepMarksSchema = z.object({
   example: z.string().nullable(),
-  iconId: z.uuid().nullable(),
+  iconId: uuidSchema().nullable(),
   iconNeed: iconNeedSchema.nullable().optional(),
   /** The icon `iconNeed` asks for isn't linked or given up yet. */
   iconPending: z.boolean(),

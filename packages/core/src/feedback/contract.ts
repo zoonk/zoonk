@@ -1,4 +1,5 @@
 import { type FeedbackContentKind } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const MAX_FEEDBACK_MESSAGE_LENGTH = 5000;
@@ -26,7 +27,7 @@ const feedbackPlatformSchema = z.enum(["android", "ios", "web"]);
 
 const feedbackContextSchema = z.object({
   appVersion: z.string().trim().max(MAX_APP_VERSION_LENGTH).optional(),
-  contentId: z.uuid().optional(),
+  contentId: uuidSchema().optional(),
   contentKind: feedbackContentKindSchema.optional(),
   platform: feedbackPlatformSchema.optional(),
   screen: z.string().trim().max(MAX_FEEDBACK_SCREEN_LENGTH).optional(),

@@ -3,7 +3,7 @@ import { generateStatuteDrills } from "@zoonk/ai/tasks/items/statute-drills";
 import { recordSourceChangeNotice } from "@zoonk/core/library/sources/notices";
 import { prisma } from "@zoonk/db";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { sourceFixture } from "@zoonk/testing/fixtures/sources";
+import { sourceFixture, unnoticedSourceChangeFixture } from "@zoonk/testing/fixtures/sources";
 import { assert, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
 import { taskResult } from "../_test-utils/recorded-outputs";
@@ -58,16 +58,19 @@ async function flaggedDrill() {
     sourceId: law.id,
   });
 
+  const owed = await unnoticedSourceChangeFixture({ previousHash: "old", sourceId: law.id });
+
   const notice = await recordSourceChangeNotice({
+    ...owed,
     contentHash: "new",
     fields: ["text"],
     language: "pt",
     message: "A lei mudou: a posse agora ocorre em quinze dias.",
-    previousHash: "old",
     provenance: { generatedAt: new Date(), model: "test", promptVersion: "v1", runId: "r1" },
     sourceId: law.id,
   });
 
+  assert(notice, "The owed change should get its notice.");
   const flags = await prisma.contentReviewFlag.findMany({ where: { noticeId: notice.id } });
   return flags.map((flag) => flag.id);
 }

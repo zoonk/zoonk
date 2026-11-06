@@ -3,6 +3,7 @@ import { spokenAnswerFieldsSchema } from "@zoonk/core/library/language/spoken-an
 import { noticedPatternSchema } from "@zoonk/core/view-models/language/contract";
 import { LiveCallEndReason } from "@zoonk/db/live-call-enums";
 import { MAX_CEFR_SCORE } from "@zoonk/utils/cefr";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 /** Only documents the multipart form: the route reads its fields with `spokenAnswerFieldsSchema`. */
@@ -18,11 +19,11 @@ export const spokenAnswerRequestSchema = spokenAnswerFieldsSchema
   .meta({ id: "SpokenAnswerRequest" });
 
 export const languageConversationPathParamsSchema = z
-  .object({ conversationId: z.uuid().meta({ description: "Live conversation ID" }) })
+  .object({ conversationId: uuidSchema().meta({ description: "Live conversation ID" }) })
   .meta({ id: "LanguageConversationPathParams" });
 
 export const languageConversationConnectionPathParamsSchema = languageConversationPathParamsSchema
-  .extend({ connectionId: z.uuid().meta({ description: "Reserved live-call connection ID" }) })
+  .extend({ connectionId: uuidSchema().meta({ description: "Reserved live-call connection ID" }) })
   .meta({ id: "LanguageConversationConnectionPathParams" });
 
 export const liveCallEndResponseSchema = z
@@ -39,17 +40,18 @@ export const liveCallEndResponseSchema = z
   .meta({ id: "LiveCallEndResponse" });
 
 export const mistakePatternPathParamsSchema = z
-  .object({ patternId: z.uuid().meta({ description: "Mistake pattern ID" }) })
+  .object({ patternId: uuidSchema().meta({ description: "Mistake pattern ID" }) })
   .meta({ id: "MistakePatternPathParams" });
 
 export const languageUnitPathParamsSchema = z
-  .object({ chapterId: z.uuid().meta({ description: "Library chapter ID of a language unit" }) })
+  .object({
+    chapterId: uuidSchema().meta({ description: "Library chapter ID of a language unit" }),
+  })
   .meta({ id: "LanguageUnitPathParams" });
 
 export const languageUnitQuerySchema = z
   .object({
-    goalId: z
-      .uuid()
+    goalId: uuidSchema()
       .optional()
       .meta({
         description:
@@ -70,7 +72,7 @@ export const levelTestSpokenAnswerRequestSchema = z
   .meta({ id: "LanguageLevelTestSpokenAnswerRequest" });
 
 export const languageConversationCreatedSchema = z
-  .object({ conversationId: z.uuid() })
+  .object({ conversationId: uuidSchema() })
   .meta({ id: "LanguageConversationCreated" });
 
 export const languageLevelTestSpokenResultSchema = z

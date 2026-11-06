@@ -7,10 +7,10 @@ import { withQuery } from "@/lib/with-query";
 import { getLanguageConversation } from "@zoonk/core/language/conversations/get";
 import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
-import { z } from "zod";
 import { ConversationClient } from "./conversation-client";
 
 type Props = PageProps<"/[lang]/conversation/[conversationId]">;
@@ -60,7 +60,7 @@ async function ConversationContent({ params, searchParams }: Props) {
         buddy={buddy}
         conversation={result.conversation}
         fromExam={query.from === "exam"}
-        fromMock={z.uuid().safeParse(query.mock).data ?? null}
+        fromMock={uuidSchema().safeParse(query.mock).data ?? null}
       />
     </MainLearnProvider>
   );

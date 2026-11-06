@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { languageConversationViewSchema } from "./conversation-contract";
 
@@ -27,7 +28,7 @@ export type LanguageConversationIntro = z.infer<typeof languageConversationIntro
 export const languageCheckpointCallSchema = z
   .discriminatedUnion("status", [
     z
-      .object({ conversationId: z.uuid(), status: z.literal("ready") })
+      .object({ conversationId: uuidSchema(), status: z.literal("ready") })
       .meta({
         description:
           "The call exists, finished or not: open it (`GET /v1/language-conversations/{conversationId}`)",

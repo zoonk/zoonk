@@ -95,6 +95,8 @@ model Item {
   examBlueprint         ExamBlueprint?         @relation(fields: [examBlueprintId], references: [id], onDelete: SetNull)
   sourceId              String?                @map("source_id") @db.Uuid
   source                Source?                @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  /// The source's `contentHash` the item was written from; null when it wasn't recorded.
+  sourceHash            String?                @map("source_hash")
   sourceCitation        String?                @map("source_citation")
   mediaAssetId          String?                @map("media_asset_id") @db.Uuid
   mediaAsset            MediaAsset?            @relation(fields: [mediaAssetId], references: [id], onDelete: SetNull)

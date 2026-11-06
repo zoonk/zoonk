@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { del, get } from "@vercel/blob";
 import { prisma } from "@zoonk/db";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { Response as PageResponse, fetch } from "undici";
@@ -197,6 +199,47 @@ describe(shareSourceUpload, () => {
 
     expect(links.map((link) => link.userId).toSorted()).toStrictEqual(
       [first.id, second.id, both.id].toSorted(),
+    );
+  });
+
+  it("moves what lessons read from the duplicate to the shared copy at the version they read", async () => {
+    const [first, second] = await Promise.all([userFixture(), userFixture()]);
+    const text = noticeText();
+    servePublisherCopy(text);
+
+    const shared = await privateUploadFixture({ text, userId: first.id });
+    await shareNotice(shared.id);
+
+    const duplicate = await privateUploadFixture({ text, userId: second.id });
+    const lesson = await libraryLessonFixture({ ownerId: second.id, visibility: "private" });
+
+    const [readOne, readBoth] = await Promise.all([
+      libraryStepFixture({ lessonId: lesson.id, position: 0 }),
+      libraryStepFixture({ lessonId: lesson.id, position: 1 }),
+    ]);
+
+    await prisma.stepSource.createMany({
+      data: [
+        { contentHash: "version-read", sourceId: duplicate.id, stepId: readOne.id },
+        { contentHash: duplicate.contentHash, sourceId: duplicate.id, stepId: readBoth.id },
+        { contentHash: shared.contentHash, sourceId: shared.id, stepId: readBoth.id },
+      ],
+    });
+
+    await expect(shareNotice(duplicate.id)).resolves.toMatchObject({ merged: true });
+
+    const reads = await prisma.stepSource.findMany({
+      select: { contentHash: true, sourceId: true, stepId: true },
+      where: { step: { lessonId: lesson.id } },
+    });
+
+    expect(reads).toHaveLength(2);
+
+    expect(reads).toStrictEqual(
+      expect.arrayContaining([
+        { contentHash: "version-read", sourceId: shared.id, stepId: readOne.id },
+        { contentHash: shared.contentHash, sourceId: shared.id, stepId: readBoth.id },
+      ]),
     );
   });
 

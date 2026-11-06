@@ -303,6 +303,7 @@ describe(buildSearchQueries, () => {
       lesson: { description: null, kind: "explanation", language: "pt", title: "Cessão" },
       lessonSteps: [
         {
+          answerable: false,
           content: { text: "A cessão de honorários ao empregador depende do contrato." },
           kind: "static",
           sentence: null,

@@ -1,7 +1,8 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 export const reviewFlagPathParamsSchema = z
-  .object({ flagId: z.uuid().meta({ description: "Content review flag ID" }) })
+  .object({ flagId: uuidSchema().meta({ description: "Content review flag ID" }) })
   .meta({ id: "ReviewFlagPathParams" });
 
 export const reviewFlagRewriteSchema = z
