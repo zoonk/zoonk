@@ -165,6 +165,7 @@ struct CallLoadFailed: View {
       }
       .buttonStyle(.bordered)
     }
+    .lonePage()
   }
 }
 
