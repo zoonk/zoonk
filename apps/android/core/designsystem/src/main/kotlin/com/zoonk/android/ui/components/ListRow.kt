@@ -42,7 +42,8 @@ import com.zoonk.android.ui.theme.withTabularFigures
  * Material's list item, as every list draws its rows: [highlighted] is the learner's place, and a row
  * with [expanded] opens what's under it, TalkBack hearing whether it's open after [stateDescription].
  * [meta] (numbers, a date, the Plus mark) ends the headline and moves under it when the words would
- * get too little room. Rows reach the list's edges and inset their own content; a nested row moves its
+ * get too little room. A [busy] row's mark turns into a spinner once the wait turns slow ([BusyContent]).
+ * Rows reach the list's edges and inset their own content; a nested row moves its
  * mark and words in by [indent], so its highlight still spans the list.
  */
 @Composable
@@ -51,6 +52,7 @@ fun ListRow(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     enabled: Boolean = true,
+    busy: Boolean = false,
     highlighted: Boolean = false,
     indent: Dp = 0.dp,
     expanded: Boolean? = null,
@@ -82,7 +84,7 @@ fun ListRow(
             modifier
                 .then(
                     if (onClick != null) {
-                        Modifier.clickable(enabled = enabled, role = Role.Button, onClick = onClick)
+                        Modifier.busyClickable(busy, enabled, onClick = onClick)
                     } else {
                         Modifier.semantics(mergeDescendants = true) {}
                     },
@@ -102,7 +104,7 @@ fun ListRow(
                     Box(
                         Modifier.padding(start = indent).size(markSize()),
                         contentAlignment = Alignment.Center,
-                    ) { it() }
+                    ) { BusyContent(busy, it) }
                 }
             },
         supportingContent = supporting,

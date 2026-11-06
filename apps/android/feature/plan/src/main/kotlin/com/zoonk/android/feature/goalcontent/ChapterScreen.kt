@@ -391,7 +391,7 @@ private fun PracticeChapterRow(
             )
         },
         onClick = onPractice,
-        enabled = !practice.running,
+        busy = practice.running,
         leading = { KindDot(LearnKind.Practice) },
     )
     practiceMessage(practice.outcome)?.let {

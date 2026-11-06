@@ -70,6 +70,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.BusyOutlinedButton
+import com.zoonk.android.ui.components.BusyTextButton
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
@@ -265,7 +266,11 @@ fun CodeEntry(
                 style = MaterialTheme.typography.bodyMedium,
             )
             // Not while a code is checked: its answer would land on the new code's empty box.
-            TextButton(onClick = signIn::resendCode, enabled = work == null) { Text(stringResource(R.string.account_send_again)) }
+            BusyTextButton(
+                work == SignInWork.Resend,
+                signIn::resendCode,
+                enabled = work == null,
+            ) { Text(stringResource(R.string.account_send_again)) }
         }
         TextButton(onClick = signIn::changeEmail, enabled = work != SignInWork.CheckCode) {
             Text(stringResource(R.string.account_change_email))

@@ -584,7 +584,7 @@ private fun ColumnScope.PlacementOutcome(
     OnboardingHeading(title, description)
     OnboardingActions {
         FinishFailed(failed)
-        Button(onClick = onContinue, enabled = !pending, modifier = Modifier.fillMaxWidth()) {
+        BusyButton(pending, onContinue, Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_placement_see_plan))
         }
     }

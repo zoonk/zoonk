@@ -67,6 +67,7 @@ import com.zoonk.android.feature.questions.savedAnswerText
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.BusyOutlinedButton
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.Facts
@@ -483,7 +484,7 @@ private fun LazyListScope.notebookMore(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-            OutlinedButton(onClick = actions.onMore, enabled = !page.loadingMore) { Text(stringResource(R.string.mistakes_show_more)) }
+            BusyOutlinedButton(page.loadingMore, actions.onMore) { Text(stringResource(R.string.mistakes_show_more)) }
         }
     }
 }

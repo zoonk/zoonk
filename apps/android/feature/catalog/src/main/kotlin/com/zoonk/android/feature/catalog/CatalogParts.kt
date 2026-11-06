@@ -53,6 +53,8 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
+import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.BusyTonalButton
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
@@ -320,15 +322,9 @@ internal fun StartActions(
             }
 
             if (secondary) {
-                FilledTonalButton(
-                    onClick = start,
-                    enabled = !saving,
-                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-                ) { label() }
+                BusyTonalButton(saving, start, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) { label() }
             } else {
-                Button(onClick = start, enabled = !saving, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
-                    label()
-                }
+                BusyButton(saving, start, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) { label() }
             }
 
             if (onTryLesson != null) {

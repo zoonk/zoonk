@@ -39,6 +39,7 @@ import com.zoonk.android.feature.onboarding.goalErrorMessage
 import com.zoonk.android.feature.onboarding.goalLimitMessage
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.BusyTextButton
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
@@ -320,10 +321,11 @@ internal fun ColumnScope.InstrumentGoal(
             onStartMusicianship,
             Modifier.fillMaxWidth(),
         ) { Text(stringResource(R.string.onboarding_start_musicianship)) }
-        TextButton(
+        BusyTextButton(
+            busy = isJoining,
             onClick = onJoinWaitlist,
-            enabled = !isJoining && waitlist != WaitlistOutcome.Joined,
             modifier = Modifier.fillMaxWidth(),
+            enabled = waitlist != WaitlistOutcome.Joined,
         ) { Text(stringResource(R.string.onboarding_join_waitlist)) }
     }
 }

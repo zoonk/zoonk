@@ -14,7 +14,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -34,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.recode
+import com.zoonk.android.ui.components.BusyTextButton
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
@@ -80,7 +80,7 @@ private fun TryCallAgain(
         WritingWait(writing, hint)
         return
     }
-    TextButton(onClick = again.onStart, enabled = !again.starting) { Text(label) }
+    BusyTextButton(again.starting, again.onStart) { Text(label) }
     if (again.failed) {
         Text(
             stringResource(R.string.conversation_start_failed),

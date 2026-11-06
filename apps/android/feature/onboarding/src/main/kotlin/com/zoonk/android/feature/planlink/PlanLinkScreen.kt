@@ -50,6 +50,7 @@ import com.zoonk.android.feature.plan.phaseKindName
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.Eyebrow
@@ -185,7 +186,7 @@ private fun StartForm(
     Column(Modifier.widthIn(max = FORM_WIDTH), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(stringResource(R.string.planlink_minutes_label), fontWeight = FontWeight.Medium)
         DailyTimePicker(times, vm.minutes, stringResource(R.string.onboarding_schedule_time_label), vm::pick)
-        Button(onClick = onStart, enabled = !vm.isStarting, modifier = Modifier.fillMaxWidth()) {
+        BusyButton(vm.isStarting, onStart, Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.planlink_start))
         }
         vm.failure?.let {

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +34,7 @@ import com.zoonk.android.ui.characters.BuddyGlassesPicker
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.BuddyPicker
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.ModalBottomSheet
 
 /**
@@ -103,7 +103,7 @@ fun BuddyEditor(
                     Spacer(Modifier.weight(1f))
                 }
                 TextButton(onClick = onClose) { Text(stringResource(R.string.settings_cancel)) }
-                Button(onClick = { onSave(kind, glasses, typed) }, enabled = !isSaving) { Text(stringResource(R.string.settings_save)) }
+                BusyButton(isSaving, { onSave(kind, glasses, typed) }) { Text(stringResource(R.string.settings_save)) }
             }
         }
     }

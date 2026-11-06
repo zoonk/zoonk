@@ -93,7 +93,7 @@ private fun ChangeNotice(
                     SuggestionAction(
                         text = stringResource(R.string.today_undo),
                         onClick = { viewModel.decidePlanChange(state.read, answer.change, PlanChangeDecisionInput.Status.UNDONE) },
-                        enabled = !saving,
+                        busy = saving,
                         secondary = true,
                     )
                 }

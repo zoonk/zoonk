@@ -314,7 +314,7 @@ internal fun FitLessonsSuggestion(slot: Slot) {
                 SuggestionAction(
                     stringResource(R.string.plan_apply),
                     onClick = { slot.apply(SlotItem.FitLessons, offer.operations.map { it.op }) },
-                    enabled = !slot.edits.isPending(PlanPart.Suggestion),
+                    busy = slot.edits.isPending(PlanPart.Suggestion),
                 )
             }
             SuggestionAction(stringResource(R.string.plan_not_now), onClick = { slot.dismiss(SlotItem.FitLessons) }, secondary = true)

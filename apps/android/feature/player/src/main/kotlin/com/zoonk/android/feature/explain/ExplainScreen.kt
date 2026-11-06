@@ -64,9 +64,9 @@ import com.zoonk.android.feature.player.model.toPlayableLesson
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.BusyOutlinedButton
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
-import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.taskBarColumn
@@ -411,16 +411,13 @@ private fun SlowWait(
             style = MaterialTheme.typography.bodyMedium,
         )
         if (!joined) {
-            OutlinedButton(
-                onClick = {
-                    retrying = true
-                    scope.launch {
-                        joined = viewModel.retrySlow(explanation)
-                        retrying = false
-                    }
-                },
-                enabled = !retrying,
-            ) { Text(stringResource(R.string.explain_try_again)) }
+            BusyOutlinedButton(retrying, {
+                retrying = true
+                scope.launch {
+                    joined = viewModel.retrySlow(explanation)
+                    retrying = false
+                }
+            }) { Text(stringResource(R.string.explain_try_again)) }
         }
     }
 }

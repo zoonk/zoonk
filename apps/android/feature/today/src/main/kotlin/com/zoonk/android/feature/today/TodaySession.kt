@@ -72,6 +72,7 @@ import com.zoonk.android.feature.session.practisesTopics
 import com.zoonk.android.feature.session.shortTopicList
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.BusyContent
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
@@ -79,6 +80,7 @@ import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.busyClickable
 import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.format.DateStyle
@@ -386,7 +388,7 @@ private fun LazyListScope.upNext(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleSmall,
             )
-            Minutes(lesson.minutes)
+            BusyContent(first && busy) { Minutes(lesson.minutes) }
         }
     }
 }
@@ -457,7 +459,7 @@ private fun StepRow(
                     tint = MaterialTheme.zoonk.brain,
                 )
             }
-            Minutes(step.estimatedMinutes)
+            BusyContent(busy) { Minutes(step.estimatedMinutes) }
         }
     }
 }
@@ -635,7 +637,7 @@ private fun RowFrame(
                             Modifier
                         },
                     ).clip(MaterialTheme.shapes.medium)
-                    .then(if (onClick != null) Modifier.clickable(enabled = !busy, role = Role.Button, onClick = onClick) else Modifier)
+                    .then(if (onClick != null) Modifier.busyClickable(busy, onClick = onClick) else Modifier)
                     .alpha(if (busy) OPENING_ROW_ALPHA else 1f)
                     .heightIn(min = 48.dp)
                     .padding(horizontal = if (isNext) NEXT_BLEED else 0.dp, vertical = 10.dp),

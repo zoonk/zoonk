@@ -42,11 +42,13 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.BusyContent
 import com.zoonk.android.ui.components.BusyIconButton
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.busyClickable
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -266,14 +268,8 @@ private fun ActionRow(
 ) {
     ListItem(
         headlineContent = { Text(text) },
-        modifier = Modifier.clickable(enabled = enabled, role = Role.Button, onClick = onClick),
-        leadingContent = {
-            if (busy) {
-                CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
-            } else {
-                Icon(painterResource(icon), contentDescription = null)
-            }
-        },
+        modifier = Modifier.busyClickable(busy, enabled, onClick = onClick),
+        leadingContent = { BusyContent(busy) { Icon(painterResource(icon), contentDescription = null) } },
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
     )
 }

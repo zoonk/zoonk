@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -458,7 +457,7 @@ private fun ColumnScope.LevelTestDone(
     if (levels.isNotEmpty()) LevelRows(levels)
     OnboardingActions {
         FinishFailed(failed)
-        Button(onClick = onContinue, enabled = !pending, modifier = Modifier.fillMaxWidth()) {
+        BusyButton(pending, onContinue, Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_language_test_build_plan))
         }
     }

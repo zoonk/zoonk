@@ -43,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.formatPlanDate
 import com.zoonk.android.feature.plan.noticeDayText
+import com.zoonk.android.ui.components.BusyTonalButton
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.android.ui.format.DateStyle
@@ -191,7 +192,7 @@ internal fun NoticeDatesCard(
                         noticeDayText(noticeDay.date.toJavaLocalDate(), noticeDay.estimated, exam.examDocument),
                         style = MaterialTheme.typography.titleSmall,
                     )
-                    FilledTonalButton(onClick = { viewModel.useDate(noticeDay.date.toJavaLocalDate()) }, enabled = !pending) {
+                    BusyTonalButton(pending, { viewModel.useDate(noticeDay.date.toJavaLocalDate()) }) {
                         Text(stringResource(R.string.exam_use_this_date))
                     }
                 } else if (noSitting != null) {

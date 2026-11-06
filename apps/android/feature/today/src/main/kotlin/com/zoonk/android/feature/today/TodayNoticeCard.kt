@@ -174,7 +174,7 @@ private fun ExamChoiceNotice(
                     SuggestionAction(
                         stringResource(R.string.today_undo),
                         { viewModel.undoExamChoice(made) },
-                        enabled = !saving,
+                        busy = saving,
                         secondary = true,
                     )
                 }

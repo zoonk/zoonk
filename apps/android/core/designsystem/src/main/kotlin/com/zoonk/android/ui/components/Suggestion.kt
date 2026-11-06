@@ -224,8 +224,9 @@ fun SuggestionAction(
     text: String,
     onClick: () -> Unit,
     enabled: Boolean = true,
+    busy: Boolean = false,
     secondary: Boolean = false,
-) = SuggestionAction(onClick, enabled = enabled, secondary = secondary) { Text(text) }
+) = SuggestionAction(onClick, enabled = enabled, busy = busy, secondary = secondary) { Text(text) }
 
 @Composable
 fun SuggestionAction(

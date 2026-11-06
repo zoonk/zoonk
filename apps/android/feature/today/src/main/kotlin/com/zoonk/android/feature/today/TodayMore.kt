@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.BusyOutlinedButton
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.OutlinedButton
@@ -87,7 +88,9 @@ private fun MoreTime(
     val minutes = formatNumber(extraTime.minutes.toDouble(), currentLocale())
     val label = if (model.today.studiedToday) R.string.today_study_more_minutes else R.string.today_study_minutes
 
-    OutlinedButton(onClick = actions.keepLearning, enabled = viewModel.pending == null) { Text(stringResource(label, minutes)) }
+    BusyOutlinedButton(viewModel.pending == TodayTap.KeepLearning, actions.keepLearning, enabled = viewModel.pending == null) {
+        Text(stringResource(label, minutes))
+    }
     if (viewModel.failed == TodayTap.KeepLearning) Failure(stringResource(R.string.today_save_failed))
 }
 

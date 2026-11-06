@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.player
 
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,7 +14,8 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.BusyOutlinedButton
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.taskOption
 import kotlinx.coroutines.CoroutineScope
@@ -95,11 +95,11 @@ fun SessionEndActions(
     }
     TaskActions { width ->
         if (canStop && !completed) {
-            OutlinedButton(onClick = onStop, enabled = !move.busy, modifier = Modifier.taskOption()) {
+            BusyOutlinedButton(move.pending == SessionStep.Stop, onStop, Modifier.taskOption(), enabled = !move.busy) {
                 Text(stringResource(R.string.player_stop_for_today))
             }
         }
-        Button(onClick = onContinue, enabled = !move.busy, modifier = width) {
+        BusyButton(move.pending == SessionStep.Continue, onContinue, width, enabled = !move.busy) {
             Text(stringResource(if (completed) R.string.player_see_todays_summary else R.string.player_action_continue))
         }
     }

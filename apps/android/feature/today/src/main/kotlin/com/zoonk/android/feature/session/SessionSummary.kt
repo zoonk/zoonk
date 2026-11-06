@@ -51,6 +51,8 @@ import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltDot
 import com.zoonk.android.ui.components.BeltTicks
+import com.zoonk.android.ui.components.BusyOutlinedButton
+import com.zoonk.android.ui.components.BusyTextButton
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.MomentReadouts
@@ -582,7 +584,8 @@ private fun SummaryBar(
             OutlinedButton(onClick = actions.seeMistakes) { Text(stringResource(R.string.session_summary_see_mistakes)) }
         }
         if (facts.stopped) {
-            OutlinedButton(
+            BusyOutlinedButton(
+                busy = busy == SessionAction.KeepGoing,
                 onClick = actions.keepGoing,
                 enabled = busy == null,
             ) { Text(stringResource(R.string.session_summary_keep_going)) }
@@ -600,7 +603,7 @@ private fun SummaryBar(
             }
         }
         extraTime?.let { extra ->
-            TextButton(onClick = actions.extraTime, modifier = Modifier.taskOption(), enabled = busy == null) {
+            BusyTextButton(busy == SessionAction.ExtraTime, actions.extraTime, Modifier.taskOption(), enabled = busy == null) {
                 Text(
                     if (extra.lessons.isNotEmpty()) {
                         stringResource(R.string.today_keep_learning)

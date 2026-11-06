@@ -56,8 +56,10 @@ import com.zoonk.android.ui.characters.Buddy
 import com.zoonk.android.ui.characters.BuddyCrop
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.Trickster
+import com.zoonk.android.ui.components.BusyContent
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
+import com.zoonk.android.ui.components.busyClickable
 import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -336,7 +338,7 @@ fun MissionListRow(
                 .fillMaxWidth()
                 .then(
                     if (onOpen != null) {
-                        Modifier.clickable(enabled = !busy, role = Role.Button, onClickLabel = openLabel, onClick = onOpen)
+                        Modifier.busyClickable(busy, onClickLabel = openLabel, onClick = onOpen)
                     } else {
                         Modifier
                     },
@@ -347,7 +349,7 @@ fun MissionListRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(Modifier.width(20.dp), contentAlignment = Alignment.Center) { mark() }
+        Box(Modifier.width(20.dp), contentAlignment = Alignment.Center) { BusyContent(busy, mark) }
 
         Column(Modifier.weight(1f)) {
             Text(
