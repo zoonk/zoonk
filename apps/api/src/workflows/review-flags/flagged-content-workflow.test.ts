@@ -6,7 +6,9 @@ import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { start } from "workflow/api";
+import { getRun, start } from "workflow/api";
+import { mockHookConflict } from "../../../mocks/workflow";
+import { mockLastRunEvent } from "../../../mocks/workflow-runtime";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { flaggedContentWorkflow } from "./flagged-content-workflow";
 
@@ -172,5 +174,51 @@ describe(flaggedContentWorkflow, () => {
     expect(failedFlag).toMatchObject({ rewriteFailedAt: expect.any(Date), status: "open" });
     expect(failedDrill.content).toStrictEqual(failed?.content);
     expect(start).not.toHaveBeenCalled();
+  });
+
+  it("leaves the flags for a later run when the run before it is still working after the longest wait", async () => {
+    const [law, skill] = await Promise.all([
+      sourceFixture({
+        extractedText: LAW_TEXT,
+        language: "pt",
+        title: "Lei nº 8.112, de 11 de dezembro de 1990",
+      }),
+      skillFixture(),
+    ]);
+
+    const drill = await itemFixture({
+      format: "trueFalse",
+      generatedAt: new Date(Date.now() - DAY_MS),
+      language: "pt",
+      skillId: skill.id,
+      sourceCitation: "Lei nº 8.112, Art. 13",
+      sourceId: law.id,
+    });
+
+    const flagIds = await flagLawChange(law.id);
+    vi.mocked(generateStatuteDrills).mockResolvedValue(drillResult());
+
+    vi.mocked(getRun).mockReturnValue({
+      exists: Promise.resolve(true),
+      status: Promise.resolve("running"),
+    } as unknown as ReturnType<typeof getRun>);
+
+    mockLastRunEvent("sweep-run", { createdAt: new Date(), eventType: "step_started" });
+
+    mockHookConflict(
+      { returnValue: Promise.withResolvers<never>().promise, runId: "sweep-run" },
+      { tokens: /^flagged-content$/u },
+    );
+
+    await expect(flaggedContentWorkflow({ flagIds })).resolves.toStrictEqual({
+      drillsRewritten: 0,
+      lessonsPulled: [],
+    });
+
+    expect(generateStatuteDrills).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.contentReviewFlag.findFirstOrThrow({ where: { itemId: drill.id } }),
+    ).resolves.toMatchObject({ rewriteFailedAt: null, status: "open" });
   });
 });

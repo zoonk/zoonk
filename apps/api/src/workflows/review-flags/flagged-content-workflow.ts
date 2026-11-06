@@ -19,8 +19,12 @@ export async function flaggedContentWorkflow({
   const { workflowRunId } = getWorkflowMetadata();
 
   // The daily sweep's run and an admin's Rewrite now can list the same flags; taking turns means
-  // each lists them only after the run before it resolved what it rewrote.
-  await waitForRunToken("flagged-content");
+  // each lists them only after the run before it resolved what it rewrote. Flags a run never got to
+  // stay open for the next one.
+  if (!(await waitForRunToken("flagged-content"))) {
+    return { drillsRewritten: 0, lessonsPulled: [] };
+  }
+
   const { drillGroups, lessonIds } = await prepareFlaggedContentStep({ flagIds });
 
   const pulled = await Promise.all(

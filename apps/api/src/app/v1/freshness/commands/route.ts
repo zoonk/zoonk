@@ -21,15 +21,15 @@ async function sendFreshnessCommand(request: NextRequest) {
       ? await stopFreshnessChecks(target)
       : await getFreshnessCommandAccess(target);
 
-  if (access === "unauthorized") {
+  if (access.status === "unauthorized") {
     return errors.unauthorized();
   }
 
-  if (access === "forbidden") {
+  if (access.status === "forbidden") {
     return errors.forbidden();
   }
 
-  if (access === "notFound") {
+  if (access.status === "notFound") {
     return errors.notFound("Exam or source not found");
   }
 
@@ -37,9 +37,11 @@ async function sendFreshnessCommand(request: NextRequest) {
     return NextResponse.json({ status: "stopped" });
   }
 
-  await (target.kind === "exam" && command === "readAgain"
-    ? startNoticeReadingAgain(target.examBlueprintId)
-    : startFreshnessCheck(target));
+  const stored = access.target;
+
+  await (stored.kind === "exam" && command === "readAgain"
+    ? startNoticeReadingAgain(stored.examBlueprintId)
+    : startFreshnessCheck(stored));
 
   return NextResponse.json({ status: "started" });
 }

@@ -103,19 +103,45 @@ describe(getFreshnessCommandAccess, () => {
     const blueprint = await examBlueprintFixture();
     const target = { examBlueprintId: blueprint.id, kind: "exam" as const };
 
-    await expect(getFreshnessCommandAccess(target)).resolves.toBe("unauthorized");
+    await expect(getFreshnessCommandAccess(target)).resolves.toStrictEqual({
+      status: "unauthorized",
+    });
 
     mockSessionWithRole({ role: "user", userId: learner.id });
-    await expect(getFreshnessCommandAccess(target)).resolves.toBe("forbidden");
+    await expect(getFreshnessCommandAccess(target)).resolves.toStrictEqual({ status: "forbidden" });
 
     mockSessionWithRole({ role: "admin", userId: admin.id });
-    await expect(getFreshnessCommandAccess(target)).resolves.toBe("ready");
+
+    await expect(getFreshnessCommandAccess(target)).resolves.toStrictEqual({
+      status: "ready",
+      target,
+    });
 
     await expect(
       getFreshnessCommandAccess({ kind: "source", sourceId: randomUUID() }),
-    ).resolves.toBe("notFound");
+    ).resolves.toStrictEqual({ status: "notFound" });
 
     await prisma.examBlueprint.delete({ where: { id: blueprint.id } });
-    await expect(getFreshnessCommandAccess(target)).resolves.toBe("notFound");
+    await expect(getFreshnessCommandAccess(target)).resolves.toStrictEqual({ status: "notFound" });
+  });
+
+  it("names the target by its stored id, however the request capitalizes it", async () => {
+    const [admin, exam, source] = await Promise.all([
+      userFixture({ role: "admin" }),
+      examBlueprintFixture(),
+      sourceFixture(),
+    ]);
+
+    mockSessionWithRole({ role: "admin", userId: admin.id });
+
+    await expect(
+      Promise.all([
+        getFreshnessCommandAccess({ examBlueprintId: exam.id.toUpperCase(), kind: "exam" }),
+        getFreshnessCommandAccess({ kind: "source", sourceId: source.id.toUpperCase() }),
+      ]),
+    ).resolves.toStrictEqual([
+      { status: "ready", target: { examBlueprintId: exam.id, kind: "exam" } },
+      { status: "ready", target: { kind: "source", sourceId: source.id } },
+    ]);
   });
 });
