@@ -9,6 +9,7 @@ import {
   type OutputEntry,
   type RegisteredTask,
   type TestCase,
+  toModelCall,
   toTokenUsage,
 } from "./types";
 
@@ -57,11 +58,12 @@ async function generateOutputForTestCase({
   const startTime = performance.now();
   const result = await runTask(input as never);
   const duration = performance.now() - startTime;
+  const extraCalls = [...(result.extraCalls ?? []), ...(result.setAside ?? []).map((call) => toModelCall(call))];
 
   return {
     ...toTokenUsage(result.usage),
     duration,
-    extraCalls: result.extraCalls,
+    extraCalls: extraCalls.length > 0 ? extraCalls : undefined,
     output: JSON.stringify(result.data, null, 2),
     probabilities: result.probabilities,
     systemPrompt: result.systemPrompt,

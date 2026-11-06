@@ -37,7 +37,6 @@ import { mockHookConflict, workflowWriteMock } from "../../../mocks/workflow";
 import { mockLastRunEvent } from "../../../mocks/workflow-runtime";
 import { courseContentNotificationWorkflow } from "../_shared/course-content-notification-workflow";
 import {
-  outlineResult,
   recordedOutput,
   replayStreamedOutline,
   taskResult,
@@ -128,7 +127,7 @@ async function markPlanUntil({
 function outlineOneChapter() {
   const oneChapter = { ...recordedOutline, chapters: recordedOutline.chapters.slice(0, 1) };
 
-  vi.mocked(generateCourseOutline).mockResolvedValue(outlineResult(oneChapter));
+  vi.mocked(generateCourseOutline).mockResolvedValue(taskResult(oneChapter));
   vi.mocked(streamCourseOutline).mockImplementation(replayStreamedOutline(oneChapter) as never);
 }
 
@@ -371,7 +370,7 @@ describe(courseOutlineWorkflow, () => {
       );
 
     vi.mocked(decideLibraryIdentity).mockReset().mockResolvedValue({ match: null, verdicts: [] });
-    vi.mocked(generateCourseOutline).mockReset().mockResolvedValue(outlineResult(recordedOutline));
+    vi.mocked(generateCourseOutline).mockReset().mockResolvedValue(taskResult(recordedOutline));
 
     vi.mocked(streamCourseOutline)
       .mockReset()
@@ -501,7 +500,7 @@ describe(courseOutlineWorkflow, () => {
       });
 
       vi.mocked(generateCourseOutline).mockImplementation(async (params) =>
-        outlineResult({
+        taskResult({
           chapters: (params.extendSkills ?? []).map((skill) =>
             interviewChapter(`Mais ${skill.name} ${skill.chapters.length}`, [skill.key]),
           ),
@@ -620,7 +619,7 @@ describe(courseOutlineWorkflow, () => {
       });
 
       vi.mocked(generateCourseOutline).mockImplementation(async (params) =>
-        outlineResult({
+        taskResult({
           chapters: (params.extendSkills ?? []).map((skill) =>
             interviewChapter(`${skill.chapters[0]?.title} ${skill.chapters.length + 1}`, [
               skill.key,
@@ -771,7 +770,7 @@ describe(courseOutlineWorkflow, () => {
       );
 
       vi.mocked(generateCourseOutline).mockResolvedValue(
-        outlineResult({
+        taskResult({
           chapters: [interviewChapter("Problemas na hospedagem", [complain.id])],
           uncoveredSkillKeys: [],
         }),
@@ -834,7 +833,7 @@ describe(courseOutlineWorkflow, () => {
       );
 
       vi.mocked(generateCourseOutline).mockResolvedValue(
-        outlineResult({
+        taskResult({
           chapters: [
             interviewChapter("Problemas na hospedagem", [complain.id]),
             interviewChapter("Saída da hospedagem", [checkout.id]),
@@ -1004,7 +1003,7 @@ describe(courseOutlineWorkflow, () => {
         });
 
       vi.mocked(generateCourseOutline).mockImplementation(async (params) =>
-        outlineResult({
+        taskResult({
           chapters: [
             interviewChapter(
               written,
@@ -1246,7 +1245,7 @@ describe(courseOutlineWorkflow, () => {
     const secondStarted = new Promise<boolean>((resolve) => {
       vi.mocked(generateCourseOutline).mockImplementation(async (params) => {
         resolve(params.level === "beginner");
-        return outlineResult(recordedOutline);
+        return taskResult(recordedOutline);
       });
 
       const timeout = setTimeout(() => resolve(false), 5000);
@@ -1521,7 +1520,7 @@ describe(courseOutlineWorkflow, () => {
     const [first, ...rest] = recordedOutline.chapters;
 
     vi.mocked(generateCourseOutline).mockResolvedValue(
-      outlineResult({
+      taskResult({
         ...recordedOutline,
         chapters: [...(first ? [{ ...first, skillKeys: [] }] : []), ...rest],
       }),
@@ -2001,7 +2000,7 @@ describe(courseOutlineWorkflow, () => {
     const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
 
     vi.mocked(generateCourseOutline).mockResolvedValue(
-      outlineResult({
+      taskResult({
         chapters: [
           interviewChapter("Candidaturas e entrevistas", [ref.key]),
           interviewChapter("Entrevistas com perguntas situacionais", [ref.key]),
@@ -2094,7 +2093,7 @@ describe(courseOutlineWorkflow, () => {
     const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
 
     vi.mocked(generateCourseOutline).mockResolvedValue(
-      outlineResult({
+      taskResult({
         chapters: [interviewChapter("Entrevistas com perguntas situacionais", [ref.key])],
         uncoveredSkillKeys: [],
       }),
@@ -2155,7 +2154,7 @@ describe(courseOutlineWorkflow, () => {
     });
 
     vi.mocked(generateCourseOutline).mockResolvedValue(
-      outlineResult({
+      taskResult({
         chapters: [
           interviewChapter("Entrevistas com perguntas situacionais", [extended.id]),
           interviewChapter("Negociação de salário", [missing.id]),

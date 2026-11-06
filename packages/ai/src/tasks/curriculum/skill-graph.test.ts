@@ -57,12 +57,12 @@ const NOTICE: ExamOutline = {
 
 async function* noPartials() {}
 
-function answer(output: unknown) {
+function answer(output: unknown, used: LanguageModelUsage = usage) {
   const step = {
     model: { modelId: MODEL, provider: "gateway" },
     providerMetadata: {},
     response: { modelId: MODEL },
-    usage,
+    usage: used,
   };
 
   async function* partialOutputStream() {
@@ -74,7 +74,7 @@ function answer(output: unknown) {
     output,
     partialOutputStream: partialOutputStream(),
     steps: [step],
-    usage,
+    usage: used,
   };
 }
 
@@ -235,7 +235,7 @@ describe(generateSkillGraph, () => {
     ).rejects.toBe(providerError);
   });
 
-  it("writes the graph once more when code finds it flawed, and keeps the better one", async () => {
+  it("writes the graph once more when code finds it flawed, keeps the better one and reports the other's call", async () => {
     const skills = (chained: boolean) =>
       ["Ler", "Interpretar", "Resumir", "Comparar", "Argumentar", "Revisar"].map((verb, index) => ({
         ...WHOLE_GRAPH.skills[0]!,
@@ -249,11 +249,13 @@ describe(generateSkillGraph, () => {
 
     vi.mocked(streamText)
       .mockReturnValueOnce(answer({ ...WHOLE_GRAPH, skills: skills(true) }) as never)
-      .mockReturnValueOnce(answer({ ...WHOLE_GRAPH, skills: skills(false) }) as never);
+      .mockReturnValueOnce(
+        answer({ ...WHOLE_GRAPH, skills: skills(false) }, { ...usage, inputTokens: 2000 }) as never,
+      );
 
     const named: string[] = [];
 
-    const { data } = await generateSkillGraph({
+    const { data, provenance, setAside } = await generateSkillGraph({
       goal: "ENEM",
       goalKind: "exam",
       language: "pt",
@@ -264,6 +266,8 @@ describe(generateSkillGraph, () => {
 
     expect(streamText).toHaveBeenCalledTimes(2);
     expect(data.skills.every((skill) => skill.prerequisites.length === 0)).toBe(true);
+    expect(provenance.usage.inputTokens).toBe(2000);
+    expect(setAside.map((call) => call.usage.inputTokens)).toStrictEqual([1000]);
 
     const names = skills(false).map((skill) => skill.name);
     expect(named).toStrictEqual([...names, ...names]);
