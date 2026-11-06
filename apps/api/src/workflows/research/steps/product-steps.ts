@@ -93,7 +93,8 @@ export type KnownProduct = {
 export async function findProductStep(hints: LookupHints): Promise<KnownProduct | null> {
   "use step";
 
-  const found = await findProduct({ hints });
+  const now = new Date();
+  const found = await findProduct({ hints, now });
   const organization = found?.product.organization;
   const productDomain = found ? toRegistrableDomain(found.product.website) : null;
 
@@ -115,6 +116,7 @@ export async function findProductStep(hints: LookupHints): Promise<KnownProduct 
     link: toGoalProductLink({
       current: found.currentRelease,
       named: found.namedRelease,
+      now,
       productId: product.id,
     }),
     product: {

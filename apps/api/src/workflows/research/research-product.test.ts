@@ -255,6 +255,45 @@ describe("product research", () => {
     await expect(prisma.learnerSource.count({ where: { userId: goal.userId } })).resolves.toBe(0);
   });
 
+  it("pins a named older model when the models page gives only years", async () => {
+    const site = newSite();
+    const goal = await productGoal();
+    planProduct({ release: "Orbit Notes 13", site });
+    findPages(site);
+
+    servePages({
+      releases:
+        "<p>Orbit Notes 15</p><p>Year introduced: 2025</p><p>Orbit Notes 13</p><p>Year introduced: 2021</p>",
+      site,
+    });
+
+    readPages({
+      ...READING,
+      learnerRelease: "Orbit Notes 13",
+      releases: ["Orbit Notes 15", "Orbit Notes 13"].map((name) => ({
+        document: 4,
+        name,
+        passage: `${name} Year introduced`,
+        releasedOn: null,
+        supportEndsOn: null,
+        version: null,
+      })),
+    });
+
+    await researchWorkflow({ goalId: goal.id });
+
+    const named = await prisma.productRelease.findFirstOrThrow({
+      where: { name: "Orbit Notes 13", product: { organization: { domain: site.brand } } },
+    });
+
+    expect(named.releasedAt).toBeNull();
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      productId: named.productId,
+      productReleaseId: named.id,
+    });
+  });
+
   it("links a known, fresh product with no search, fetch or reading", async () => {
     const site = newSite();
     const [goal, product] = await Promise.all([productGoal(), savedProduct(site)]);

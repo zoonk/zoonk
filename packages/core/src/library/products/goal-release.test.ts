@@ -7,28 +7,21 @@ const CURRENT = { id: "current", releasedAt: new Date("2026-10-01T00:00:00Z") };
 const ANNOUNCED = { id: "announced", releasedAt: new Date("2027-01-01T00:00:00Z") };
 
 describe(toGoalProductLink, () => {
-  it("keeps a named release older than the current one", () => {
-    expect(toGoalProductLink({ current: CURRENT, named: OLD, productId: "p" })).toStrictEqual({
-      productId: "p",
-      productReleaseId: "old",
-    });
+  function pinned(named: { id: string; releasedAt: Date | null } | null, current = CURRENT) {
+    return toGoalProductLink({ current, named, now: NOW, productId: "p" }).productReleaseId;
+  }
+
+  it("pins a named release older than the current one", () => {
+    expect(pinned(OLD)).toBe("old");
   });
 
-  it("follows the main course for the current, an announced or an undated release", () => {
-    const named = [CURRENT, ANNOUNCED, { id: "undated", releasedAt: null }, null];
-
-    expect(
-      named.map(
-        (release) =>
-          toGoalProductLink({ current: CURRENT, named: release, productId: "p" }).productReleaseId,
-      ),
-    ).toStrictEqual([null, null, null, null]);
+  it("pins a named release with no stated date, as a model page giving only years", () => {
+    expect(pinned({ id: "undated", releasedAt: null })).toBe("undated");
+    expect(pinned({ id: "undated", releasedAt: null }, null)).toBe("undated");
   });
 
-  it("follows the main course when no release is current", () => {
-    expect(
-      toGoalProductLink({ current: null, named: OLD, productId: "p" }).productReleaseId,
-    ).toBeNull();
+  it("follows the main course for the current release, an announced one or none named", () => {
+    expect([pinned(CURRENT), pinned(ANNOUNCED), pinned(null)]).toStrictEqual([null, null, null]);
   });
 });
 
