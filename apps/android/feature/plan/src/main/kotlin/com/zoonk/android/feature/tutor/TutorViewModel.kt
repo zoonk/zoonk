@@ -15,6 +15,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.value
@@ -203,7 +204,7 @@ class TutorViewModel internal constructor(
     /**
      * A suggestion the learner asked for from the screen ("I didn't get this"): sent once the
      * conversation has loaded, or put in the composer while an earlier question is unanswered,
-     * which goes first, as on main.
+     * which goes first, as on main, or when the conversation couldn't be read.
      */
     fun ask(suggestion: TutorSuggestion) {
         val written = draft.text.toString()
@@ -212,11 +213,11 @@ class TutorViewModel internal constructor(
             viewModelScope.launch {
                 val turns =
                     thread.state
-                        .first { it.value != null }
+                        .first { it.value != null || it is LoadState.Failed }
                         .value
-                        ?.turns ?: return@launch
+                        ?.turns
                 when {
-                    unresolved == null && state.value.canAsk(turns) -> send(suggestion)
+                    turns != null && unresolved == null && state.value.canAsk(turns) -> send(suggestion)
 
                     // What the learner wrote while the conversation loaded is theirs to send.
                     draft.text.toString() == written -> offer(suggestion)

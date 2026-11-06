@@ -395,6 +395,30 @@ class TutorViewModelTest {
         }
 
     @Test
+    fun aScreensAskWaitsInTheComposerWhenTheConversationCantBeRead() =
+        runTest(dispatcher) {
+            api.threadFailure = ApiException(ApiError.Network)
+            val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
+            val store = TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) }
+            val vm = TutorViewModel(scope, store, SavedStateHandle()) { MutationResult.Obsolete }
+
+            vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
+            vm.thread.load()
+            advanceUntilIdle()
+
+            assertTrue(api.asked.isEmpty())
+            assertEquals("Explain it more simply", vm.draft.text.toString())
+
+            api.threadFailure = null
+            vm.thread.refresh()
+            advanceUntilIdle()
+            vm.send()
+            advanceUntilIdle()
+
+            assertEquals(listOf("simpler"), api.asked.map { it.suggestion })
+        }
+
+    @Test
     fun aScreensAskGoesAtOnceWhenNothingIsUnanswered() =
         runTest(dispatcher) {
             val vm = conversation()
