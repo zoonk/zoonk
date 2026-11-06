@@ -1,8 +1,8 @@
 "use client";
 
 import { AdminActionSubmitButton } from "@/components/admin-action-submit-button";
+import { useAdminActionState } from "@/lib/use-admin-action-state";
 import { RotateCcwIcon } from "lucide-react";
-import { useActionState } from "react";
 import {
   type ResetExamSkillGraphState,
   resetExamSkillGraphAction,
@@ -11,7 +11,10 @@ import {
 const INITIAL_STATE: ResetExamSkillGraphState = { error: null, reset: false, submissionId: 0 };
 
 export function ResetExamSkillGraphForm({ examBlueprintId }: { examBlueprintId: string }) {
-  const [state, formAction] = useActionState(resetExamSkillGraphAction, INITIAL_STATE);
+  const [state, formAction] = useAdminActionState({
+    action: resetExamSkillGraphAction,
+    initialState: INITIAL_STATE,
+  });
 
   return (
     <div className="flex flex-col items-end gap-1">

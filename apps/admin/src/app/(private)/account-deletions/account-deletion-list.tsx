@@ -1,4 +1,3 @@
-import { AdminActionSubmitButton } from "@/components/admin-action-submit-button";
 import {
   type AdminTableColumn,
   AdminTableColumns,
@@ -7,8 +6,7 @@ import {
 import { listPendingAccountDeletions } from "@/data/account-deletions/list-pending-account-deletions";
 import { formatDateTime } from "@/lib/format";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
-import { CheckIcon } from "lucide-react";
-import { markAnalyticsRemovedAction } from "./_actions/mark-analytics-removed";
+import { MarkAnalyticsRemovedForm } from "./mark-analytics-removed-form";
 
 const COLUMNS: AdminTableColumn[] = [
   { label: "PostHog distinct id" },
@@ -34,12 +32,7 @@ export async function AccountDeletionList() {
             {formatDateTime(deletion.deletedAt)}
           </TableCell>
           <TableCell className="text-right">
-            <form action={markAnalyticsRemovedAction}>
-              <input name="deletionId" type="hidden" value={deletion.id} />
-              <AdminActionSubmitButton icon={<CheckIcon />}>
-                Mark analytics removed
-              </AdminActionSubmitButton>
-            </form>
+            <MarkAnalyticsRemovedForm deletionId={deletion.id} />
           </TableCell>
         </TableRow>
       ))}
