@@ -14,14 +14,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
@@ -68,7 +67,6 @@ import com.zoonk.android.feature.questions.QuestionFeedback
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.QuotedSource
-import com.zoonk.android.feature.questions.ShowAnswersButton
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.isLongText
 import com.zoonk.android.feature.tutor.TutorAskButton
@@ -80,6 +78,8 @@ import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.focusMoveTarget
+import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.scaffold.PageSpan
@@ -320,6 +320,9 @@ internal fun RunQuestion(
     val checked = phase as? RunPhase.Checked
     val openLesson: (String) -> Unit = { lessonId -> navigator.open(AppRoute.Lesson(lessonId)) }
     val previous = questions.getOrNull(run.index - 1)
+    val answers = remember { FocusRequester() }
+    val moveFocus = rememberMoveFocus()
+    val revealing = remember { run.stage == DrillStage.Reading }
 
     if (drill != null && run.stage == DrillStage.Ideas) {
         if (part.showsScreen) DrillIdeas(drill, openLesson)
@@ -370,6 +373,7 @@ internal fun RunQuestion(
     }
 
     if (part.showsScreen && question.format != QuestionFormat.TrueFalse) QuestionTitle(question.question, graded = checked != null)
+    if (revealing && part.showsTurn) LaunchedEffect(Unit) { moveFocus(answers) }
 
     QuestionAnswer(
         question = question,
@@ -380,6 +384,7 @@ internal fun RunQuestion(
         enabled = run.canAnswer,
         onAnswer = onDraft,
         onSubmit = { controls.submit(question, it) },
+        modifier = Modifier.focusMoveTarget(answers),
         part = part,
     )
 
@@ -427,52 +432,54 @@ internal fun AnswerActions(
     notSureOnEvery: Boolean = false,
 ) {
     val phase = run.phase
+    val checked = phase is RunPhase.Checked
 
-    when {
-        phase is RunPhase.Checked -> {
-            TaskActions { width ->
-                Button(onClick = { controls.next(questions) }, modifier = width) { Text(stringResource(R.string.practice_continue)) }
-                ask()
+    if (!checked && run.stage == DrillStage.Ideas) {
+        TaskActions { width -> DrillStartButton(onStart = { controls.startDrill(questions) }, modifier = width) }
+        return
+    }
+
+    val reading = !checked && run.stage == DrillStage.Reading
+    key(run.index) {
+        val main = remember { FocusRequester() }
+        val moveFocus = rememberMoveFocus()
+        var notSureSent by rememberSaveable { mutableStateOf(false) }
+        LaunchedEffect(checked) { if (checked && notSureSent) moveFocus(main) }
+
+        if (phase == RunPhase.AnswerFailed) SaveErrorText(onRetry = controls::retry.takeIf { controls.canRetry })
+        TaskActions { width ->
+            notSureOffer(question, every = notSureOnEvery)?.takeUnless { checked || reading }?.let { offer ->
+                NotSureButton(
+                    onClick = {
+                        notSureSent = true
+                        controls.submit(question, Answer.DontKnow)
+                    },
+                    enabled = run.canAnswer,
+                    busy = notSureSent && phase == RunPhase.Checking,
+                    dontKnowYet = offer == NotSure.DontKnowYet,
+                )
             }
-        }
-
-        run.stage == DrillStage.Ideas -> {
-            TaskActions { width -> DrillStartButton(onStart = { controls.startDrill(questions) }, modifier = width) }
-        }
-
-        run.stage == DrillStage.Reading -> {
-            TaskActions { width -> ShowAnswersButton(onReveal = controls::reveal, modifier = width) }
-        }
-
-        else -> {
-            if (phase == RunPhase.AnswerFailed) SaveErrorText(onRetry = controls::retry.takeIf { controls.canRetry })
-            TaskActions { width ->
-                when (notSureOffer(question, every = notSureOnEvery)) {
-                    NotSure.Drill -> {
-                        NotSureButton(onClick = { controls.submit(question, Answer.DontKnow) }, enabled = run.canAnswer)
-                    }
-
-                    NotSure.DontKnowYet -> {
-                        NotSureButton(
-                            onClick = { controls.submit(question, Answer.DontKnow) },
-                            enabled = run.canAnswer,
-                            dontKnowYet = true,
-                        )
-                    }
-
-                    null -> {}
+            // One button through Show the answers, Check and Continue, so focus stays on it as it changes.
+            BusyButton(
+                stringResource(
+                    when {
+                        checked -> R.string.practice_continue
+                        reading -> R.string.questions_drill_show_answers
+                        else -> R.string.practice_check
+                    },
+                ),
+                busy = phase == RunPhase.Checking,
+                enabled = checked || reading || (run.canAnswer && draft != null),
+                modifier = width.focusMoveTarget(main),
+                icon = R.drawable.ic_visibility.takeIf { reading },
+            ) {
+                when {
+                    checked -> controls.next(questions)
+                    reading -> controls.reveal()
+                    else -> draft?.let { controls.submit(question, it) }
                 }
-                BusyButton(
-                    stringResource(R.string.practice_check),
-                    busy = phase == RunPhase.Checking,
-                    enabled =
-                        run.canAnswer && draft != null,
-                    modifier = width,
-                ) {
-                    draft?.let { controls.submit(question, it) }
-                }
-                ask()
             }
+            if (!reading) ask()
         }
     }
 }
