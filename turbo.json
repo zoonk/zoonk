@@ -11,7 +11,6 @@
       "AUTH_COOKIE_CACHE_ENABLED",
       "BETTER_AUTH_SECRET",
       "BLOB_*",
-      "CRON_SECRET",
       "E2E_API_URL",
       "E2E_TESTING",
       "GOOGLE_*",
