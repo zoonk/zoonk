@@ -876,7 +876,10 @@ private struct CertificateClaimButton: View {
     }
     .buttonStyle(.mainAction)
     .disabled(claiming != nil)
-    .onDisappear { claiming?.cancel() }
+    .onDisappear {
+      claiming?.cancel()
+      claiming = nil
+    }
 
     if failed {
       Text(failure)
