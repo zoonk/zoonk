@@ -229,6 +229,24 @@ async function flagChangedLessons({
   return flags.map((flag) => flag.id);
 }
 
+/**
+ * A lesson not written yet plans again for the new release, and one being written loses its claim,
+ * so it can't publish what it planned for the old one.
+ */
+async function dropUnwrittenPlans({ courseId, tx }: { courseId: string; tx: TransactionClient }) {
+  const unwritten = {
+    contentStatus: { not: "completed" as const },
+    homeChapter: { homeCourseId: courseId },
+  };
+
+  await tx.lesson.updateMany({
+    data: { contentStatus: "pending" },
+    where: { ...unwritten, contentStatus: "running" },
+  });
+
+  await tx.lesson.updateMany({ data: { specStatus: "pending" }, where: unwritten });
+}
+
 async function replayAdvance(comparison: ReleaseComparisonResult): Promise<string[] | null> {
   const notice = await prisma.sourceChangeNotice.findFirst({
     include: { reviewFlags: { select: { id: true } } },
@@ -277,6 +295,8 @@ export async function advanceCourseRelease({
     if (count === 0) {
       return null;
     }
+
+    await dropUnwrittenPlans({ courseId, tx });
 
     if (!comparison) {
       return [];

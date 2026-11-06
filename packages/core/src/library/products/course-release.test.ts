@@ -12,6 +12,8 @@ import {
 import { sourceChangeNoticeFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { claimLibraryGeneration } from "../claims/generation-claim";
+import { completeLessonContent } from "../generation/lesson-generation-state";
 import { listCoursesBehind, loadCourseRelease } from "./course-release";
 import {
   type ReleaseComparisonResult,
@@ -250,6 +252,49 @@ describe(advanceCourseRelease, () => {
     await expect(
       prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
     ).resolves.toMatchObject({ productReleaseId: second.id });
+  });
+
+  it("drops the old release's plans for lessons not written yet, also one being written", async () => {
+    const { course, first, page, second } = await mainCourse();
+    const chapter = await libraryChapterFixture({ homeCourseId: course.id });
+    const writerRunId = randomUUID();
+
+    const [failed, writing] = await Promise.all([
+      libraryLessonFixture({
+        contentStatus: "failed",
+        homeChapterId: chapter.id,
+        specStatus: "completed",
+      }),
+      libraryLessonFixture({
+        contentRunId: writerRunId,
+        contentStatus: "running",
+        homeChapterId: chapter.id,
+        specStatus: "completed",
+      }),
+    ]);
+
+    await advanceCourseRelease({
+      comparison: comparison(page),
+      courseId: course.id,
+      fromReleaseId: first.id,
+      toReleaseId: second.id,
+    });
+
+    await expect(
+      completeLessonContent({ lessonId: writing.id, workflowRunId: writerRunId }),
+    ).resolves.toBe(false);
+
+    const replans = await Promise.all(
+      [failed, writing].map((lesson) =>
+        claimLibraryGeneration({
+          id: lesson.id,
+          target: "lessonSpec",
+          workflowRunId: randomUUID(),
+        }),
+      ),
+    );
+
+    expect(replans).toStrictEqual(["claimed", "claimed"]);
   });
 
   it("returns the committed move again on a retry, and nothing for a course that moved", async () => {
