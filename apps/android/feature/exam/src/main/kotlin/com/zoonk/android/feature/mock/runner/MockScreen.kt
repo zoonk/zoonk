@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -63,13 +62,13 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
-import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamCurrent
@@ -225,10 +224,7 @@ internal fun StepColumn(
         key(step) {
             Box(beforeFold.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
                 Column(
-                    Modifier
-                        .widthIn(max = COLUMN_WIDTH)
-                        .fillMaxWidth()
-                        .padding(detailPagePadding()),
+                    Modifier.taskColumn().padding(vertical = 24.dp),
                     verticalArrangement = Arrangement.spacedBy(24.dp),
                 ) { content() }
             }
@@ -543,5 +539,4 @@ private fun MockExpired(
     }
 }
 
-internal val COLUMN_WIDTH = 640.dp
 private const val SECONDS_PER_MINUTE = 60L
