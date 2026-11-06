@@ -32,13 +32,9 @@ struct LessonIdeaStrip: View {
       }
       .frame(maxWidth: .infinity, alignment: .leading)
 
-      // The idea's icon can come after the strip shows, so its place is kept for it.
-      ZStack {
-        if let icon = idea.icon {
-          LessonIconImage(icon: icon, size: 44)
-        }
+      if let icon = idea.icon {
+        LessonIconImage(icon: icon, size: 44)
       }
-      .frame(width: 44, height: 44)
     }
     .padding(.bottom, 12)
     .overlay(alignment: .bottom) {

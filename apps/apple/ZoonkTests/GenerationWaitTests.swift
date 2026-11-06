@@ -60,6 +60,26 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertTrue(wait.isDone)
   }
 
+  func testALessonsMarksAndPicturesRunAlongsideEachOther() {
+    var wait = GenerationWait(kind: .lesson)
+
+    wait.apply(GenerationEvent(status: "started", step: "markLesson"))
+    wait.apply(GenerationEvent(status: "started", step: "drawPictures"))
+
+    XCTAssertEqual(
+      wait.visiblePhases.map(\.state), [.done, .done, .working, .working],
+      "the pictures starting leaves the marks working")
+
+    wait.apply(GenerationEvent(status: "completed", step: "drawPictures"))
+
+    XCTAssertEqual(wait.visiblePhases.map(\.state), [.done, .done, .working, .done])
+    XCTAssertFalse(wait.isDone)
+
+    wait.apply(GenerationEvent(status: "completed", step: "lessonReady"))
+
+    XCTAssertTrue(wait.isDone)
+  }
+
   func testIgnoresStepsItDoesntKnow() {
     var wait = GenerationWait(kind: .curriculum)
 

@@ -7,6 +7,7 @@ struct GenerationWait: Equatable, Sendable {
     case curriculum
     case explanation
     case levelTestBank
+    case lesson
   }
 
   enum PhaseState: Equatable, Sendable {
@@ -20,6 +21,7 @@ struct GenerationWait: Equatable, Sendable {
     let label: LocalizedStringResource
     /// Shown only once one of its steps is reported: runs skip it when it doesn't apply.
     let isOptional: Bool
+    var runsAlongside = false
     var state = PhaseState.waiting
     var isReported = false
     var skillName: String?
@@ -63,8 +65,9 @@ struct GenerationWait: Equatable, Sendable {
         return
       }
 
-      // Earlier phases are done once a later one reports.
-      for earlier in phases.indices where earlier < index {
+      // Earlier phases are done once a later one reports, unless they run alongside it.
+      for earlier in phases.indices
+      where earlier < index && !(phases[earlier].runsAlongside && phases[index].runsAlongside) {
         phases[earlier].state = .done
       }
 
@@ -107,6 +110,11 @@ struct GenerationWait: Equatable, Sendable {
     case (.explanation, "explanationReady"): .done
     case (.levelTestBank, "writeLevelTestBank"): .phase("bank")
     case (.levelTestBank, "levelTestBankReady"): .done
+    case (.lesson, "planLesson"): .phase("plan")
+    case (.lesson, "writeLesson"): .phase("write")
+    case (.lesson, "markLesson"): .phase("mark")
+    case (.lesson, "drawPictures"): .phase("draw")
+    case (.lesson, "lessonReady"): .done
     default: nil
     }
   }
@@ -184,6 +192,35 @@ struct GenerationWait: Equatable, Sendable {
             "Writing the level test questions", table: "Onboarding",
             comment: "The step of the wait while a language's level test questions are written"),
           isOptional: false)
+      ]
+    case .lesson:
+      [
+        Phase(
+          id: "plan",
+          label: LocalizedStringResource(
+            "Planning the lesson", table: "Player",
+            comment: "A step of the wait while a lesson is written"),
+          isOptional: false),
+        Phase(
+          id: "write",
+          label: LocalizedStringResource(
+            "Writing the lesson", table: "Player",
+            comment: "A step of the wait while a lesson is written"),
+          isOptional: false),
+        Phase(
+          id: "mark",
+          label: LocalizedStringResource(
+            "Highlighting the key ideas", table: "Player",
+            comment:
+              "A step of the wait while a lesson is written: marking each screen's key sentence, its example and the lesson's main ideas"
+          ),
+          isOptional: false, runsAlongside: true),
+        Phase(
+          id: "draw",
+          label: LocalizedStringResource(
+            "Drawing the pictures", table: "Player",
+            comment: "A step of the wait while a lesson is written: drawing its pictures and icons"),
+          isOptional: false, runsAlongside: true),
       ]
     }
   }

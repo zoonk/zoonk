@@ -121,10 +121,8 @@ private struct LessonPlayerContent: View {
     }
     .sheet(isPresented: $isShowingMap) {
       if let lesson = store.lesson, let summary = lesson.summary {
-        LessonMapSheet(
-          title: lesson.title, summary: summary, keepsIconRoom: lesson.expectsIdeaIcons
-        )
-        .accessibilitySizeStyles()
+        LessonMapSheet(title: lesson.title, summary: summary)
+          .accessibilitySizeStyles()
       }
     }
     // A lesson opened while the saved session is still being checked waits for it, so it reads once.
@@ -144,7 +142,7 @@ private struct LessonPlayerContent: View {
     }
     // Per opening: a lesson written on the learner's tap opens after `load()` has returned.
     .task(id: store.openedAt) {
-      await store.followLateContent()
+      await store.followLatePictures()
     }
     // A visitor who starts the lesson as a guest gets the session first and the summary after it.
     .onChange(of: learnerSummary?.summary.value?.identity.isAnonymous, initial: true) {
@@ -177,7 +175,8 @@ private struct LessonPlayerContent: View {
         switch stage {
         case .waiting(let holding):
           LessonWaitingView(
-            outline: warmUp.outline, writing: writing, warmUpID: warmUp.deckID, holding: holding
+            outline: warmUp.outline, writing: writing, progress: store.writingProgress,
+            warmUpID: warmUp.deckID, holding: holding
           ) {
             Task { await store.writeLesson() }
           }
@@ -216,7 +215,7 @@ private struct LessonPlayerContent: View {
       }
       .lonePage()
     case .waiting(let outline, let writing):
-      LessonWaitingView(outline: outline, writing: writing) {
+      LessonWaitingView(outline: outline, writing: writing, progress: store.writingProgress) {
         Task { await store.writeLesson() }
       }
       .lonePage()

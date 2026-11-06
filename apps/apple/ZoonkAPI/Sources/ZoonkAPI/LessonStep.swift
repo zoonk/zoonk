@@ -190,13 +190,6 @@ extension LessonStep {
       pictureWaitStartedAt: pictureWaitStartedAt, marks: marks, content: content)
   }
 
-  public func withMarks(_ marks: StepMarks?) -> LessonStep {
-    LessonStep(
-      id: id, position: position, skillId: skillId, citation: citation, image: image,
-      imagePending: imagePending, picture: picture, optionPictures: optionPictures,
-      pictureWaitStartedAt: pictureWaitStartedAt, marks: marks, content: content)
-  }
-
   public var withoutPendingPictures: LessonStep {
     LessonStep(
       id: id, position: position, skillId: skillId, citation: citation, image: image,
@@ -204,14 +197,14 @@ extension LessonStep {
       pictureWaitStartedAt: pictureWaitStartedAt, marks: marks, content: content)
   }
 
-  public static let lateWait: TimeInterval = 5 * 60
-
   public func isWaitingForPicture(openedAt: Date, now: Date = .now) -> Bool {
-    imagePending && now.timeIntervalSince(waitStart(openedAt: openedAt)) < Self.lateWait
-  }
+    guard imagePending else {
+      return false
+    }
 
-  public func waitStart(openedAt: Date) -> Date {
-    pictureWaitStartedAt.map { Date(timeIntervalSince1970: Double($0) / 1000) } ?? openedAt
+    let start =
+      pictureWaitStartedAt.map { Date(timeIntervalSince1970: Double($0) / 1000) } ?? openedAt
+    return now.timeIntervalSince(start) < 5 * 60
   }
 }
 
