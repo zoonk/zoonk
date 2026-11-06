@@ -32,13 +32,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
@@ -271,10 +272,9 @@ private fun OwnerActions(
                 ) {
                     ActionLabel(R.drawable.ic_share, stringResource(R.string.certificates_share), actions.busy == CertificateAction.Share)
                 }
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                SideBySideOrStacked {
                     OutlinedButton(
                         onClick = { actions.print(certificate, fileName) },
-                        modifier = Modifier.weight(1f),
                         enabled = actions.busy == null,
                         size = ButtonSize.Large,
                     ) {
@@ -286,7 +286,6 @@ private fun OwnerActions(
                     }
                     OutlinedButton(
                         onClick = { actions.download(certificate, fileName) },
-                        modifier = Modifier.weight(1f),
                         enabled = actions.busy == null,
                         size = ButtonSize.Large,
                     ) {
@@ -317,7 +316,35 @@ private fun ActionLabel(
         Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
     }
     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-    Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+    Text(text, textAlign = TextAlign.Center)
+}
+
+/**
+ * Main's two columns for Print and Download, one under the other when either's words need more than
+ * half the width, so a long word (German's "Herunterladen") or a large font never cuts them.
+ */
+@Composable
+private fun SideBySideOrStacked(content: @Composable () -> Unit) {
+    Layout(content) { buttons, constraints ->
+        val gap = 8.dp.roundToPx()
+        val half = (constraints.maxWidth - gap) / 2
+        val sideBySide = buttons.all { it.maxIntrinsicWidth(Constraints.Infinity) <= half }
+        val width = if (sideBySide) half else constraints.maxWidth
+        val placed = buttons.map { it.measure(Constraints(minWidth = width, maxWidth = width)) }
+        val height = if (sideBySide) placed.maxOf { it.height } else placed.sumOf { it.height } + gap * (placed.size - 1)
+
+        layout(constraints.maxWidth, height) {
+            var y = 0
+            placed.forEachIndexed { index, button ->
+                if (sideBySide) {
+                    button.placeRelative(index * (width + gap), 0)
+                } else {
+                    button.placeRelative(0, y)
+                    y += button.height + gap
+                }
+            }
+        }
+    }
 }
 
 /**
