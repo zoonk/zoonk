@@ -1725,4 +1725,48 @@ describe("docked beside the lesson", () => {
       suggestion: "simpler",
     });
   });
+
+  it('keeps "I didn\'t get this" in the composer when the conversation fails to refresh after the server turns it away', async () => {
+    const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    api.questions = [api.question({ question: "Why a cloud?", status: "failed" })];
+    const releasePreload = api.hold("thread");
+    api.fail("thread", 503);
+    api.fail("create", 409);
+    playLesson({ lesson });
+    await expect.poll(() => api.requests.thread).toBe(1);
+
+    await page.getByRole("button", { name: "I didn't get this" }).click();
+    await expect.poll(() => api.requests.thread).toBe(2);
+    await releasePreload();
+
+    await expect.element(asideComposer()).toHaveValue("Explain it more simply");
+  });
+
+  it('leaves the composer empty once "I didn\'t get this" is taken while its answer is checked', async () => {
+    freezeClock();
+    const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    const preloadReads = Promise.withResolvers<null>();
+
+    api.next("thread", async (serve) => {
+      await preloadReads.promise;
+      return serve();
+    });
+
+    const releaseCreate = api.hold("create");
+    playLesson({ lesson });
+    await expect.poll(() => api.requests.thread).toBe(1);
+
+    await page.getByRole("button", { name: "I didn't get this" }).click();
+    await expect.poll(() => api.questions).toHaveLength(1);
+    preloadReads.resolve(null);
+    const asked = dockedConversation().getByText("Explain it more simply").first();
+    await expect.element(asked).toBeVisible();
+    await nextFrames();
+    await vi.advanceTimersByTimeAsync(FIRST_POLL_MS);
+    await expect.poll(() => api.requests.question).toBe(1);
+
+    await releaseCreate();
+    await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
+    await expect.element(asideComposer()).toHaveValue("");
+  });
 });

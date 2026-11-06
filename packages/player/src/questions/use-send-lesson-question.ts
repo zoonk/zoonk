@@ -138,8 +138,13 @@ export function useSendLessonQuestion({
       }
 
       if (result.status === "error") {
-        if (result.error.kind === "conflict" && (await reconcileThread(context))) {
-          return;
+        if (result.error.kind === "conflict") {
+          const reconciled = await reconcileThread(context);
+          dispatch({ type: "questionCreateConflicted" });
+
+          if (reconciled) {
+            return;
+          }
         }
 
         dispatch({ reason: result.error, type: "questionCreateFailed" });

@@ -118,24 +118,6 @@ export function endQuestionCreate({
   return { creating: null, draft: draft || (creating?.draft ?? "") };
 }
 
-export function returnQuestionToComposer({
-  creating,
-  draft,
-  suggestion,
-}: Pick<LessonQuestionState, "creating" | "draft" | "suggestion">) {
-  if (!creating || draft) {
-    return { creating: null, draft, suggestion };
-  }
-
-  return {
-    creating: null,
-    draft: creating.draft || creating.question,
-    suggestion: creating.suggestion
-      ? { question: creating.question, suggestion: creating.suggestion }
-      : suggestion,
-  };
-}
-
 export function isSameDraftContext({
   current,
   next,

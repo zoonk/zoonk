@@ -77,6 +77,7 @@ export type LessonQuestionAction =
   | { question: string; suggestion?: LessonScreenSuggestion; type: "questionCreateStarted" }
   | { question: LessonQuestionResource; type: "questionCreated" }
   | { reason: LessonQuestionApiError; type: "questionCreateFailed" }
+  | { type: "questionCreateConflicted" }
   | { questionId: string; type: "answerStarted" }
   | { chunk: string; questionId: string; type: "answerChunkReceived" }
   | { questionId: string; type: "answerCompleted" }
@@ -147,6 +148,23 @@ function reduceQuestionCreated({
   };
 }
 
+function reduceQuestionCreateConflicted(state: LessonQuestionState): LessonQuestionState {
+  const { creating, draft } = state;
+
+  if (!creating || draft) {
+    return { ...state, creating: null };
+  }
+
+  return {
+    ...state,
+    creating: null,
+    draft: creating.draft || creating.question,
+    suggestion: creating.suggestion
+      ? { question: creating.question, suggestion: creating.suggestion }
+      : state.suggestion,
+  };
+}
+
 export function lessonQuestionReducer(
   state: LessonQuestionState,
   action: LessonQuestionAction,
@@ -198,6 +216,8 @@ export function lessonQuestionReducer(
         error: "create",
         requestError: action.reason,
       };
+    case "questionCreateConflicted":
+      return reduceQuestionCreateConflicted(state);
     case "memoryUpdated":
       return {
         ...state,

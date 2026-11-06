@@ -4,7 +4,6 @@ import {
   getReconciledAnswerError,
   mergeEarlierQuestions,
   mergeLatestQuestions,
-  returnQuestionToComposer,
 } from "./lesson-question-state-helpers";
 
 type LessonQuestionThreadAction = Extract<
@@ -125,7 +124,6 @@ export function reduceLessonQuestionThreadAction({
           answerError: state.answerError,
           questions: action.questions,
         }),
-        ...returnQuestionToComposer(state),
         error: null,
         ...mergeServerQuestions({ latestQuestions: action.questions, state }),
         requestError: null,

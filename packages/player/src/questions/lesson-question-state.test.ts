@@ -589,12 +589,7 @@ describe(lessonQuestionReducer, () => {
       type: "questionCreateStarted",
     });
 
-    const unfinished = { questions: [questionResource({ status: "failed" })] };
-
-    const returned = lessonQuestionReducer(asked, {
-      ...unfinished,
-      type: "latestThreadReconciled",
-    });
+    const returned = lessonQuestionReducer(asked, { type: "questionCreateConflicted" });
 
     expect(returned).toMatchObject({
       creating: null,
@@ -603,8 +598,7 @@ describe(lessonQuestionReducer, () => {
     });
 
     const typed = lessonQuestionReducer(asked, { draft: "Why a cloud?", type: "draftChanged" });
-
-    const kept = lessonQuestionReducer(typed, { ...unfinished, type: "latestThreadReconciled" });
+    const kept = lessonQuestionReducer(typed, { type: "questionCreateConflicted" });
 
     expect(kept).toMatchObject({ creating: null, draft: "Why a cloud?", suggestion: null });
   });
