@@ -49,6 +49,65 @@ function withOrganization({
   return { ...data, rows: data.rows.map((row) => ({ ...row, organization_id: organizationId })) };
 }
 
+export async function upsertOrganizations({
+  catalog,
+  destination,
+  organizationId,
+  sourceOrganizationId,
+}: {
+  catalog: SourceCatalog;
+  destination: Client;
+  organizationId: string;
+  sourceOrganizationId: string;
+}): Promise<SourceCatalog> {
+  const brands = await upsertRows({
+    conflict: ["slug"],
+    data: catalog.organizations,
+    destination,
+    keep: ["created_at"],
+    table: "organizations",
+  });
+
+  const organizationIds = new Map([[sourceOrganizationId, organizationId], ...brands]);
+
+  const remap = (data: TableRows) =>
+    mapColumn({ column: "organization_id", data, map: (id) => organizationIds.get(id) ?? null });
+
+  return { ...catalog, courses: remap(catalog.courses), products: remap(catalog.products) };
+}
+
+export async function upsertProducts({
+  destination,
+  products,
+  releases,
+}: {
+  destination: Client;
+  products: TableRows;
+  releases: TableRows;
+}): Promise<{ productIds: IdMap; releaseIds: IdMap }> {
+  const productIds = await upsertRows({
+    conflict: ["organization_id", "normalized_name"],
+    data: products,
+    destination,
+    keep: ["created_at"],
+    table: "products",
+  });
+
+  const releaseIds = await upsertRows({
+    conflict: ["product_id", "normalized_name"],
+    data: mapColumn({
+      column: "product_id",
+      data: releases,
+      map: (id) => productIds.get(id) ?? null,
+    }),
+    destination,
+    keep: ["created_at"],
+    table: "product_releases",
+  });
+
+  return { productIds, releaseIds };
+}
+
 /**
  * Courses are updated in place by slug instead of being replaced, so everything that points at a
  * local course keeps its id.
@@ -56,11 +115,9 @@ function withOrganization({
 export async function upsertCourses({
   catalog,
   destination,
-  organizationId,
 }: {
   catalog: SourceCatalog;
   destination: Client;
-  organizationId: string;
 }): Promise<IdMap> {
   await insertRows({
     data: catalog.course_families,
@@ -69,13 +126,11 @@ export async function upsertCourses({
     table: "course_families",
   });
 
-  const courses = withOrganization({ data: catalog.courses, organizationId });
-
   return upsertRows({
     conflict: ["organization_id", "slug"],
     data: {
-      ...courses,
-      rows: courses.rows.map((row) => ({ ...row, user_count: "0", user_id: null })),
+      ...catalog.courses,
+      rows: catalog.courses.rows.map((row) => ({ ...row, user_count: "0", user_id: null })),
     },
     destination,
     keep: ["user_count", "user_id"],
