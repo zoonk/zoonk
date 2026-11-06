@@ -14,20 +14,18 @@ function filed(key: string, skillId: string, date: string) {
   };
 }
 
+function skill(skillId: string, phase: number) {
+  return { area: null, lessons: 1, name: skillId, phase, skillId, weight: null };
+}
+
 describe(listEndsBeforeLessons, () => {
   const end = fromIsoDate("2026-10-18");
   const ends = new Map([[0, end]]);
 
   const input = {
-    graph: {
-      phases: [],
-      skills: [
-        { phase: 0, skillId: "arrival" },
-        { phase: 1, skillId: "renting" },
-      ],
-    },
+    graph: { phases: [], skills: [skill("arrival", 0), skill("renting", 1)] },
     lessons: [],
-  } as unknown as Parameters<typeof listEndsBeforeLessons>[0]["input"];
+  };
 
   it("reads a lesson filed under the next phase by its own skill's phase", () => {
     const items = [filed("a", "arrival", "2026-10-19"), filed("b", "renting", "2026-10-20")];
@@ -42,8 +40,17 @@ describe(listEndsBeforeLessons, () => {
 
     const course = {
       ...input,
-      lessons: [{ courseOrder: { phase: 1, position: 4 }, lessonId: "a" }],
-    } as unknown as typeof input;
+      lessons: [
+        {
+          chapterId: "revisit",
+          courseOrder: { phase: 1, position: 4 },
+          lessonId: "a",
+          minutes: 4,
+          skillIds: ["arrival"],
+          title: "a",
+        },
+      ],
+    };
 
     expect(
       listEndsBeforeLessons({ ends, input: course, items, units: [{ depth: false, key: "a" }] }),
