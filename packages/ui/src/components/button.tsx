@@ -51,15 +51,16 @@ const buttonVariants = cva(
 const BUSY_DELAY = { animationDelay: `${SLOW_WAIT_MS}ms` };
 
 /**
- * For a control that marks itself `aria-busy` and carries `group/busy relative`: once busy for
- * `SLOW_WAIT_MS`, its content turns invisible, keeping its place and still read, under a spinner.
+ * For a control that carries `group/busy relative` and is busy while it's `aria-busy` or holds a
+ * `data-busy` mark (a link that learns it's pending inside, as main's `LearningLink` does): once busy
+ * for `SLOW_WAIT_MS`, its content turns invisible, keeping its place and still read, under a spinner.
  * CSS keeps the time, so it works before the page hydrates.
  */
 function BusyContent({ children }: { children: React.ReactNode }) {
   return (
     <>
       <span
-        className="group-aria-busy/busy:animate-busy-conceal [display:inherit] min-w-0 grow [flex-direction:inherit] [flex-wrap:inherit] [place-content:inherit] [place-items:inherit] gap-[inherit]"
+        className="group-aria-busy/busy:animate-busy-conceal group-has-data-busy/busy:animate-busy-conceal [display:inherit] min-w-0 grow [flex-direction:inherit] [flex-wrap:inherit] [place-content:inherit] [place-items:inherit] gap-[inherit]"
         data-slot="busy-content"
         style={BUSY_DELAY}
       >
@@ -68,11 +69,11 @@ function BusyContent({ children }: { children: React.ReactNode }) {
 
       <span
         aria-hidden="true"
-        className="group-aria-busy/busy:animate-busy-reveal pointer-events-none absolute inset-0 flex items-center justify-center opacity-0"
+        className="group-aria-busy/busy:animate-busy-reveal group-has-data-busy/busy:animate-busy-reveal pointer-events-none absolute inset-0 flex items-center justify-center opacity-0"
         data-slot="busy-spinner"
         style={BUSY_DELAY}
       >
-        <Loader2Icon className="group-aria-busy/busy:animate-spin" />
+        <Loader2Icon className="group-has-data-busy/busy:animate-spin group-aria-busy/busy:animate-spin" />
       </span>
     </>
   );

@@ -12,6 +12,7 @@ const LESSON_PATH = /^\/learn\/(?<lessonId>[\da-f-]{36})$/u;
 /** Next marks a link pending for every navigation, and a prefetched page takes up to ~300 ms on a slow phone. */
 const PENDING_MARK_DELAY_MS = 400;
 
+/** `data-busy` from the tap, for a link drawn with `BusyContent`; `data-link-pending` once late, for a tab's look. */
 function LinkPendingMark() {
   const { pending } = useLinkStatus();
   const [late, setLate] = useState(false);
@@ -29,7 +30,7 @@ function LinkPendingMark() {
     };
   }, [pending]);
 
-  return pending && late ? <span data-link-pending="" hidden /> : null;
+  return pending ? <span data-busy="" data-link-pending={late ? "" : undefined} hidden /> : null;
 }
 
 /** Only lessons not known to be written ask for writing before navigation; prefetches only read. */
