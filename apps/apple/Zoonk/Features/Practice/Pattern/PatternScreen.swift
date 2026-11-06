@@ -188,6 +188,12 @@ struct PatternScreen: View {
         }
       }
     }
+    .announcesStatus(
+      result.map {
+        [String(localized: PracticeVerdict(isCorrect: $0.isCorrect).label), item.feedback]
+          .compactMap(\.self).joinedSentences()
+      }
+    )
     .navigationTitle(
       Text("Mistake pattern", tableName: "Practice", comment: "Title of a mistake pattern screen.")
     )

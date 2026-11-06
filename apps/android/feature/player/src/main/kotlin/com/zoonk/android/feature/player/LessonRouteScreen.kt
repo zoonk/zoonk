@@ -91,9 +91,7 @@ fun LessonRouteScreen(
 
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
-            LessonFrame(title = null, onClose = exits::close) {
-                PageLoading()
-            }
+            LessonFrame(title = null, onClose = exits::close, scrolls = false) { PageLoading() }
         }
 
         is LoadState.Failed -> {
@@ -244,6 +242,7 @@ internal fun LessonFrame(
         modifier = modifier,
         title = { title?.let { LessonTitle(it) } },
         bottomBar = bottomBar,
+        lonePage = true,
     ) { padding ->
         val scroll = if (scrolls) Modifier.verticalScroll(rememberScrollState()) else Modifier
         Box(Modifier.fillMaxSize().padding(padding).then(scroll)) { content() }

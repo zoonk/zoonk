@@ -73,6 +73,7 @@ struct MistakePracticeScreen: View {
         } actions: {
           stepActions(step)
         }
+        .announcesStatus(feedback)
       }
     }
   }
@@ -123,6 +124,20 @@ struct MistakePracticeScreen: View {
         }
       }
     }
+  }
+
+  private var feedback: String? {
+    guard let graded else {
+      return nil
+    }
+
+    let verdict = PracticeVerdict(
+      isCorrect: graded.grade.isCorrect, notSure: graded.answer.isDontKnow && !graded.timedOut)
+
+    return [
+      graded.timedOut ? DrillAnswerNotes.timesUp : nil, String(localized: verdict.label),
+      graded.grade.explanation,
+    ].compactMap(\.self).joinedSentences()
   }
 
   private var graded: (answer: PracticeAnswer, grade: MistakePracticeGrade, timedOut: Bool)? {

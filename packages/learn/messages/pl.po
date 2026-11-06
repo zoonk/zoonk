@@ -13185,6 +13185,16 @@ msgid "Start a goal"
 msgstr "Wyznacz cel"
 
 #: src/shell/goal-switcher.tsx
+msgctxt "goalSwitcher.JIzivc"
+msgid "We couldn't switch goals. Try again."
+msgstr "Nie udało się zmienić celu. Spróbuj ponownie."
+
+#: src/shell/goal-switcher.tsx
+msgctxt "goalSwitcher.9_0KQP"
+msgid "We couldn't start this goal. Try again."
+msgstr "Nie udało się rozpocząć pracy nad tym celem. Spróbuj ponownie."
+
+#: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.GuLJJS"
 msgid ", current goal. Switch goal"
 msgstr ", aktualny cel. Zmień cel"

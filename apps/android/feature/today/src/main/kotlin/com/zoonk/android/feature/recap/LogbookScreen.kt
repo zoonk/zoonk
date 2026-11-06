@@ -68,7 +68,9 @@ import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
+import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
@@ -176,10 +178,12 @@ internal fun Logbook(
                 onClose = onClose,
                 title = { if (!pages) StepDots(steps.size, index) },
                 bottomBar = {
-                    if (pages) {
-                        TaskActions(content = letsGo)
-                    } else {
-                        StepPagerActions(steps.size, index, onIndexChange = { index = it }, finalAction = letsGo)
+                    TaskActionBar {
+                        if (pages) {
+                            TaskActions(content = letsGo)
+                        } else {
+                            StepPagerActions(steps.size, index, onIndexChange = { index = it }, finalAction = letsGo)
+                        }
                     }
                 },
             ) { padding ->
@@ -187,7 +191,7 @@ internal fun Logbook(
                     ResultPages(
                         modifier = Modifier.padding(padding),
                         withMoment = false,
-                        columnModifier = Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = 24.dp),
+                        columnModifier = Modifier.taskColumn(),
                         done = { RecapStepContent(RecapStep.Week, recap, learnerName) },
                         next = {
                             steps.drop(1).forEachIndexed { position, step ->
@@ -204,9 +208,8 @@ internal fun Logbook(
                             recap,
                             learnerName,
                             Modifier
-                                .widthIn(max = COLUMN_WIDTH)
-                                .fillMaxWidth()
-                                .padding(24.dp)
+                                .taskColumn()
+                                .padding(vertical = 24.dp)
                                 .semantics { liveRegion = LiveRegionMode.Polite },
                         )
                     }
@@ -520,7 +523,6 @@ private fun LearnedRow(
     }
 }
 
-private val COLUMN_WIDTH = 560.dp
 private const val DAYS_PER_WEEK = 7
 private const val CHART_RATIO = 2.5f
 private const val MILLIS_PER_DAY = 86_400_000L

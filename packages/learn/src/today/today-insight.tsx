@@ -2,6 +2,7 @@
 
 import { INSIGHT_EVENT_KINDS } from "@zoonk/core/analytics/events";
 import { type MemoryInsightView } from "@zoonk/core/memory/contract";
+import { safeAsync } from "@zoonk/utils/error";
 import { LightbulbIcon, ListPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
@@ -107,7 +108,10 @@ function useInsightAnswer(insight: MemoryInsightView) {
 
   const answer = (status: InsightAnswer) => {
     startTransition(async () => {
-      const saved = await actions.answerInsight({ insightId: insight.id, status });
+      const { data: saved } = await safeAsync(() =>
+        actions.answerInsight({ insightId: insight.id, status }),
+      );
+
       setState(saved ? { answer: status } : { failed: true });
     });
   };

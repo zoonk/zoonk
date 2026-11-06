@@ -200,7 +200,7 @@ private struct MatchPairsCanvas: View {
 
     if MatchPairs.isMatch(left, right) {
       miss = nil
-      announceActivityChange(
+      announcePolitely(
         String(
           localized:
             "Matched \(leftText) with \(rightText). \(next.matched.count) of \(pairIds.count) pairs matched.",
@@ -218,7 +218,7 @@ private struct MatchPairsCanvas: View {
     miss = Miss(
       left: left.id, right: right.id, explanation: explanation.isEmpty ? nil : explanation)
 
-    announceActivityChange(
+    announcePolitely(
       [
         String(
           localized: "\(leftText) and \(rightText) don't go together.", table: "Activities",

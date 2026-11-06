@@ -12,6 +12,7 @@ import {
 } from "@zoonk/ui/components/alert-dialog";
 import { DropdownMenuGroup, DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { showErrorToast } from "@zoonk/ui/components/toast";
+import { safeAsync } from "@zoonk/utils/error";
 import { ArchiveIcon, PauseIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useTransition } from "react";
@@ -68,10 +69,10 @@ export function useSetGoalStatus(onSetStatus: GoalStatusControl["onSetStatus"] |
     }
 
     startTransition(async () => {
-      const outcome = await onSetStatus(status);
+      const { data: outcome } = await safeAsync(() => onSetStatus(status));
 
       if (outcome !== "saved") {
-        showError(outcome);
+        showError(outcome ?? "failed");
       }
     });
   };

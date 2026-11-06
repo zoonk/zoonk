@@ -199,11 +199,11 @@ private struct CertificateDetail: View {
       Button {
         UIPasteboard.general.string = certificate.url.absoluteString
         linkCopied = true
+        announcePolitely(String(localized: Self.linkCopiedLine))
       } label: {
         if linkCopied {
           Label {
-            Text(
-              "Link copied", tableName: "Certificates", comment: "A certificate's link was copied")
+            Text(Self.linkCopiedLine)
           } icon: {
             Image(systemName: "checkmark")
           }
@@ -266,6 +266,11 @@ private struct CertificateDetail: View {
     Text(
       "Anyone with the link can see this certificate. Its page doesn't show up in search.",
       tableName: "Certificates", comment: "Who can see a certificate's page")
+  }
+
+  private static var linkCopiedLine: LocalizedStringResource {
+    LocalizedStringResource(
+      "Link copied", table: "Certificates", comment: "A certificate's link was copied")
   }
 
   private func printCertificate() {

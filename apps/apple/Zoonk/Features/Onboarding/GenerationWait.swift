@@ -284,6 +284,7 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
       }
     }
     .warmUpDeck(deckID)
+    .announcesStatus(workingLabel)
     .task(id: Following(id: runID, connection: connection)) {
       failure = nil
 
@@ -308,6 +309,15 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
 
   private var shown: GenerationWait {
     wait ?? GenerationWait(kind: kind).started
+  }
+
+  private var workingLabel: String? {
+    guard failure == nil, let phase = shown.visiblePhases.first(where: { $0.state == .working })
+    else {
+      return nil
+    }
+
+    return String(localized: phase.label)
   }
 
   private var shownDescription: LocalizedStringResource {

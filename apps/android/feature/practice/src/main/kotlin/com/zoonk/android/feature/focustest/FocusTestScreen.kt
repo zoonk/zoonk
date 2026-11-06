@@ -60,7 +60,6 @@ import com.zoonk.android.feature.practice.RunPage
 import com.zoonk.android.feature.practice.UndoAction
 import com.zoonk.android.feature.practice.UndoState
 import com.zoonk.android.feature.practice.UpcomingQuestions
-import com.zoonk.android.feature.practice.runColumn
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -78,6 +77,7 @@ import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.rememberPressFocus
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
@@ -396,7 +396,7 @@ internal fun FocusTestResult(
                     ResultPages(
                         modifier = Modifier.padding(padding),
                         withMoment = true,
-                        columnModifier = Modifier.runColumn(),
+                        columnModifier = Modifier.taskColumn(),
                         done = {
                             if (whole || shown == 0) {
                                 CelebrationScope(play = ui.celebrate && !leftFirst) {

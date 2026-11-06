@@ -166,6 +166,7 @@ struct TestOutScreen: View {
         dismiss()
       }
     }
+    .announcesStatus(String(localized: resultDetail(result)))
   }
 
   private func resultDetail(_ result: Components.Schemas.ChapterTestOutResult)

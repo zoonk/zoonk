@@ -99,7 +99,7 @@ export function UploadRequestCard({
   const run = (action: () => Promise<Failure | null>, done: CardState) =>
     startTransition(async () => {
       setFailure(null);
-      const failed = await action();
+      const failed = await action().catch((): Failure => "failed");
       setFailure(failed);
 
       if (!failed) {

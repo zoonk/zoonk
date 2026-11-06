@@ -243,11 +243,23 @@ private struct WorkedExampleStepView: View {
         .accessibilityElement(children: .combine)
       }
     }
+    .announcesStatus(newestStep)
 
     if shown >= content.steps.count {
       LessonTextBlocks(content.result)
         .font(.headline)
     }
+  }
+
+  /// The step "Show the next step" just added; the first one is there as the screen opens.
+  private var newestStep: String? {
+    guard shown > 1, content.steps.indices.contains(shown - 1) else {
+      return nil
+    }
+
+    let step = content.steps[shown - 1]
+    return [LessonRichText.spoken(step.text), step.math.map { LessonMath.typeset($0).said }]
+      .compactMap(\.self).joinedSentences()
   }
 }
 
@@ -448,15 +460,15 @@ private struct SpokenAnswerStepView: View {
           content: content,
           isLocked: context.isLocked,
           onGraded: context.resolveSpoken,
-          onBlocked: { store.isMicBlocked = true }))
+          onBlocked: {
+            store.isMicBlocked = true
+            announcePolitely(Self.micBlockedLine)
+          }))
     } else {
       if store.isMicBlocked, !context.isLocked {
         VStack(alignment: .leading, spacing: 4) {
-          Text(
-            "The microphone is blocked. Type your answer instead.", tableName: "Player",
-            comment: "A spoken screen falls back to typing when the microphone is off"
-          )
-          .foregroundStyle(.secondary)
+          Text(Self.micBlockedLine)
+            .foregroundStyle(.secondary)
 
           if let settings = URL(string: UIApplication.openSettingsURLString) {
             Link(destination: settings) {
@@ -479,6 +491,12 @@ private struct SpokenAnswerStepView: View {
     }
 
     modeSwitch
+  }
+
+  private static var micBlockedLine: String {
+    String(
+      localized: "The microphone is blocked. Type your answer instead.", table: "Player",
+      comment: "A spoken screen falls back to typing when the microphone is off")
   }
 
   /// An answer started one way doesn't carry over, and asking to speak tries the microphone again.

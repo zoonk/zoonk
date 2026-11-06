@@ -297,6 +297,11 @@ class ChallengeScreenshots {
 
     @Test
     @Config(qualifiers = BOOK)
+    fun bookMovedRightToLeft() =
+        show("book-moved-rtl", "kind" to "weekly", "canMove" to true, moved = true, fold = true, rightToLeft = true)
+
+    @Test
+    @Config(qualifiers = BOOK)
     fun bookWriting() = show("book-writing", writing = true, fold = true)
 
     @Test

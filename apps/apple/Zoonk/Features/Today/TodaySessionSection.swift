@@ -650,7 +650,7 @@ private struct FoldRow: View {
   }
 }
 
-private struct TodayDayStatus: View {
+struct TodayDayStatus: View {
   let view: TodayView
   private let sentence: String
   private let clause: String?
@@ -770,6 +770,10 @@ private struct TodayDayStatus: View {
     case .limit, .underway:
       return nil
     }
+  }
+
+  var announcement: String {
+    [sentence, clause].compactMap(\.self).joinedSentences()
   }
 
   var body: some View {

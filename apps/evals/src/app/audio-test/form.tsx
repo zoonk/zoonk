@@ -23,7 +23,10 @@ export function AudioTestForm() {
   async function handleSubmit(formData: FormData) {
     startTransition(async () => {
       setResult(null);
-      const response = await generateAudioAction(formData);
+
+      const response = await generateAudioAction(formData).catch(() => ({
+        error: "The server couldn't be reached.",
+      }));
 
       if ("error" in response) {
         setResult({ error: response.error });

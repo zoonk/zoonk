@@ -4,14 +4,17 @@ import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.ANA
@@ -133,6 +136,10 @@ class ExplainScreenshots {
         capture("book-font200", fold = true)
     }
 
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookRightToLeft() = capture("book-rtl", fold = true, rightToLeft = true)
+
     private val written =
         explanation(
             outline = OUTLINE,
@@ -157,6 +164,7 @@ class ExplainScreenshots {
         dark: Boolean = false,
         moreContrast: Boolean = false,
         fold: Boolean = false,
+        rightToLeft: Boolean = false,
     ) {
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
@@ -204,7 +212,9 @@ class ExplainScreenshots {
         viewModel.show(explanation())
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                Surface(color = MaterialTheme.colorScheme.surface) { key(index) { screens[index].second() } }
+                CompositionLocalProvider(LocalLayoutDirection provides if (rightToLeft) LayoutDirection.Rtl else LayoutDirection.Ltr) {
+                    Surface(color = MaterialTheme.colorScheme.surface) { key(index) { screens[index].second() } }
+                }
             }
         }
         if (fold) compose.unfoldBook(folds)

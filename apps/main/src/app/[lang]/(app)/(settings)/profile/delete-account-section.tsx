@@ -32,7 +32,7 @@ const DELETE_BUTTON_CLASS = cn(
 );
 
 async function leaveDeletedAccount() {
-  await forgetDeletedSession();
+  await safeAsync(forgetDeletedSession);
   rememberAccountDeleted();
   globalThis.location.assign("/");
 }

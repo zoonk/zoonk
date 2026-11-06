@@ -416,6 +416,7 @@
   "onboarding_weekend_time_label": "c748dcd9ace7ffe3cbd101ed1482f8b155b562696ccf6200ccc5a34cb522660d",
   "onboarding_what_you_wrote": "3cfe32255e34a7f3b3814e9b7fa90b73e5a0f96ffee62859f0e7345f33f52b2e",
   "onboarding_write_again": "a4ae5c82602063a7b070e838387447d1a778939ff4b4d97a6dbae09df2c1b76b",
+  "onboarding_you_picked": "5c6e9294c71428364038fa91055f7fdbe23e81b8f973c7831b26018820c8ba97",
   "onboarding_your_answer": "17cb2aba66ff04830c9eda17fb6b58996b491b78e7abef66a2eabed722c5caa3",
   "onboarding_your_question": "01a2a2a781dc8e914ed37ef8b5c589babe7a192095147c03c9b65470568beb30",
   "onboarding_your_text": "86b1ebc425210bc039b55d1fe8bf687f253656355db7afd05f1d2a0ea1335c5f"
@@ -872,6 +873,8 @@
     <string name="onboarding_level_title">Bu konuda ne kadar bilgin var?</string>
     <string name="onboarding_level_description">Bu sadece planının nereden başlayacağını değiştirir.</string>
     <string name="onboarding_level_label">Seviyen</string>
+    <!-- Screen reader, as a one-answer question moves on: the answer picked. -->
+    <string name="onboarding_you_picked">Seçtiğin cevap: %1$s</string>
     <string name="onboarding_course_chapter_description">Planın bu üniteden başlar ve kurstaki dersleri her gün ayırabildiğin süreye göre düzenler.</string>
     <string name="onboarding_course_follows">Planın bu kurstaki dersleri her gün ayırabildiğin süreye göre düzenler.</string>
     <!-- Before the lessons' count, like "3 chapters · 12 lessons". -->

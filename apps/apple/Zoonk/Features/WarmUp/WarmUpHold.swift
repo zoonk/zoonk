@@ -183,7 +183,7 @@ struct WarmUpHold<Content: View>: View {
     visit.isHolding = true
 
     if let announcement {
-      AccessibilityNotification.Announcement(String(localized: announcement)).post()
+      announcePolitely(String(localized: announcement))
     }
   }
 

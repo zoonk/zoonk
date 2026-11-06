@@ -118,7 +118,16 @@ export function ProfileForm({
   const t = useExtracted();
   const nameHintId = useId();
   const usernameHintId = useId();
-  const [state, formAction] = useActionState(profileFormAction, initialState);
+
+  const [state, formAction] = useActionState(
+    (previous: typeof initialState, formData: FormData) =>
+      profileFormAction(previous, formData).catch(() => ({
+        ...previous,
+        status: "error" as const,
+      })),
+    initialState,
+  );
+
   const { setUsername, status, username } = useUsernameAvailability(defaultUsername);
   const [name, setName] = useState(defaultName);
 

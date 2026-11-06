@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -70,12 +69,12 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
-import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -125,11 +124,7 @@ internal fun MockRunnerView(
         aside =
             TaskAside(
                 title = stringResource(R.string.mock_answer_sheet),
-                footer = {
-                    OutlinedButton(onClick = handIn, enabled = !run.pending, modifier = Modifier.fillMaxWidth()) {
-                        Text(stringResource(R.string.mock_hand_in))
-                    }
-                },
+                footer = { SheetHandIn(run, onClick = handIn) },
             ) {
                 SheetCounts(run)
                 SectionClock(current.deadline, large = true)
@@ -141,9 +136,9 @@ internal fun MockRunnerView(
 
         // The whole pane scrolls, margins included, with the question held to a readable column.
         Box(Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
-            Column(Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth()) {
+            Column(Modifier.taskColumn()) {
                 RunnerProgress(run, titled = !beside, onQuestionTimeUp = viewModel::timeOutQuestion)
-                Column(Modifier.padding(detailPagePadding()), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                Column(Modifier.padding(vertical = 24.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
                     key(question.question.set?.id) { MockRecording(viewModel, run, question, audio) }
                     key(question.itemId) { MockQuestionCard(viewModel, run, question) }
                     if (!beside) {
@@ -180,20 +175,26 @@ internal fun MockRunnerView(
                 }
                 HorizontalDivider(Modifier.padding(top = 16.dp))
                 Box(Modifier.padding(horizontal = 24.dp, vertical = 16.dp)) {
-                    OutlinedButton(
-                        onClick = {
-                            sheetOpen = false
-                            handIn()
-                        },
-                        enabled = !run.pending,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) { Text(stringResource(R.string.mock_hand_in)) }
+                    SheetHandIn(run) {
+                        sheetOpen = false
+                        handIn()
+                    }
                 }
             }
         }
     }
 
     if (confirming) HandInDialog(run, onDismiss = { confirming = false }, onHandIn = { viewModel.submitSection() })
+}
+
+@Composable
+private fun SheetHandIn(
+    run: MockRun,
+    onClick: () -> Unit,
+) {
+    OutlinedButton(onClick = onClick, enabled = !run.pending, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+        Text(stringResource(R.string.mock_hand_in))
+    }
 }
 
 @Composable
@@ -274,7 +275,7 @@ private fun RunnerProgress(
             drawStopIndicator = {},
         )
         Row(
-            Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp).semantics(mergeDescendants = true) {
+            Modifier.fillMaxWidth().padding(vertical = 8.dp).semantics(mergeDescendants = true) {
                 contentDescription =
                     spokenPlace
             },

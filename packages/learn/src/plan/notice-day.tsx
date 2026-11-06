@@ -3,6 +3,7 @@
 import { type ExamDocument } from "@zoonk/core/exams/document";
 import { type NoSitting, type NoticeDay } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
+import { safeAsync } from "@zoonk/utils/error";
 import { CalendarDaysIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Fragment, useState, useTransition } from "react";
@@ -64,24 +65,21 @@ export function NoSittingWords({
 }
 
 export function UseDateButton({
+  disabled,
   onUse,
   variant = "outline",
 }: {
-  onUse: () => Promise<unknown>;
+  disabled: boolean;
+  onUse: () => void;
   variant?: "outline" | "secondary";
 }) {
   const t = useExtracted();
-  const [isPending, startTransition] = useTransition();
 
   return (
     <Button
-      disabled={isPending}
+      disabled={disabled}
       focusableWhenDisabled
-      onClick={() =>
-        startTransition(async () => {
-          await onUse();
-        })
-      }
+      onClick={onUse}
       size="sm"
       type="button"
       variant={variant}
@@ -112,11 +110,14 @@ function NoticeDayCard({
 }) {
   const text = useNoticeDayText();
   const [failed, setFailed] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  const use = async () => {
-    setFailed(false);
-    setFailed(!(await onUse()));
-  };
+  const use = () =>
+    startTransition(async () => {
+      setFailed(false);
+      const { data: saved } = await safeAsync(onUse);
+      setFailed(!saved);
+    });
 
   return (
     <NoticeCard data-slot="notice-day">
@@ -125,7 +126,7 @@ function NoticeDayCard({
       <NoticeCardContent>
         <NoticeCardTitle>{text({ ...day, document })}</NoticeCardTitle>
         <NoticeCardActions>
-          <UseDateButton onUse={use} variant="secondary" />
+          <UseDateButton disabled={isPending} onUse={use} variant="secondary" />
         </NoticeCardActions>
 
         {failed && <ChangeSaveError className="mt-2" />}
@@ -150,7 +151,8 @@ function NoSittingCard({
   const use = (date: string) =>
     startTransition(async () => {
       setFailed(false);
-      setFailed(!(await onUse(date)));
+      const { data: saved } = await safeAsync(() => onUse(date));
+      setFailed(!saved);
     });
 
   return (
