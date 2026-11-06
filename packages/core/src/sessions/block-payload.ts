@@ -48,7 +48,7 @@ const blockPayloadSchema = z.object({
   /** A chapter whose next lesson isn't written yet: it's generated just in time. */
   chapterId: z.string().nullable().default(null),
   checkpoint: checkpointSchema.nullable().default(null),
-  /** A started checkpoint ended without a verdict because none of its questions remained. */
+  /** A started question block ended without a verdict because none of its questions remained. */
   checkpointAbandoned: z.boolean().default(false),
   /** Question identities survive content deletion while a checkpoint is still being played. */
   checkpointAnswers: z.array(z.object({ attemptId: z.uuid(), itemId: z.uuid() })).default([]),

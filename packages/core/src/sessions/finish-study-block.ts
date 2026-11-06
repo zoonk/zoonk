@@ -3,7 +3,7 @@ import { type StudySessionBlock, prisma } from "@zoonk/db";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { completeBlockMoment } from "./_utils/block-completion";
-import { finishEmptyCheckpoint } from "./_utils/finish-empty-checkpoint";
+import { finishEmptyBlock } from "./_utils/finish-empty-block";
 import {
   findLessonFinish,
   getLessonComesBack,
@@ -153,8 +153,8 @@ async function finishQuestionBlock(
       ? await readSettledQuestionBlock(owned)
       : await settleQuestionBlock(owned);
 
-  if (settled.status === "emptyCheckpoint") {
-    return finishEmptyCheckpoint(owned);
+  if (settled.status === "emptyBlock") {
+    return finishEmptyBlock(owned);
   }
 
   if (settled.status !== "ready") {
@@ -306,7 +306,7 @@ export async function finishStudyBlock({
 
   if (owned.block.status === "skipped") {
     if (readBlockPayload(owned.block).checkpointAbandoned) {
-      return finishEmptyCheckpoint(context);
+      return finishEmptyBlock(context);
     }
 
     return { status: "blockFinished" };

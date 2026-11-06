@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import {
   goalFixture,
@@ -12,7 +13,6 @@ import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { type Page, expect, test } from "./fixtures";
-import { expectHydrated } from "./hydration";
 import { asPersona } from "./learn-personas";
 
 async function readStory(page: Page, screens: number): Promise<void> {

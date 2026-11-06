@@ -16,8 +16,15 @@ struct MistakePracticeScreen: View {
   @State private var labels = PracticeTrueFalseLabels.trueFalse
   @State private var shownAt = Date.now
   @State private var attempt: (id: String, index: Int)?
+  @FocusState private var focus: PracticeFocus?
+  @AccessibilityFocusState private var voiceOverFocus: PracticeFocus?
+  @State private var pressedWithFocus: PracticeFocus?
 
   private var goalId: String? { summary.summary.value?.activeGoalID }
+
+  private var focuses: PracticeFocusState {
+    PracticeFocusState(keyboard: $focus, voiceOver: $voiceOverFocus)
+  }
 
   init(skillId: String? = nil) {
     self.skillId = skillId
@@ -74,6 +81,8 @@ struct MistakePracticeScreen: View {
           stepActions(step)
         }
         .announcesStatus(feedback)
+        .environment(\.practiceFocus, focuses)
+        .onChange(of: state.phase) { _, phase in followPress(to: phase) }
       }
     }
   }
@@ -185,7 +194,11 @@ struct MistakePracticeScreen: View {
         title: LocalizedStringResource(
           "I've read it. Show the answers", table: "Practice",
           comment: "Shows a misread drill's answers once the question was read.")
-      ) { state.reveal() }
+      ) {
+        if focuses.has(.reveal) { focuses.move(to: .answer) }
+        state.reveal()
+      }
+      .practiceFocus(.reveal)
     case .feedback(_, let grade, _):
       PracticeActionRow {
         PracticeMainButton(
@@ -194,6 +207,7 @@ struct MistakePracticeScreen: View {
         ) {
           next()
         }
+        .practiceFocus(.next)
         ask(step, answered: true, missed: !grade.isCorrect)
       }
     case .answering, .checking, .answerFailed:
@@ -214,7 +228,11 @@ struct MistakePracticeScreen: View {
           systemImage: step.entry.drill.kind == .noGuessing ? "questionmark.circle" : nil,
           isBusy: checking == .notSure,
           isDisabled: !state.acceptsAnswer
-        ) { Task { await check(.dontKnow, by: .notSure) } }
+        ) {
+          press(.notSure)
+          Task { await check(.dontKnow, by: .notSure) }
+        }
+        .practiceFocus(.notSure)
 
         PracticeMainButton(
           title: LocalizedStringResource(
@@ -222,8 +240,12 @@ struct MistakePracticeScreen: View {
           isBusy: checking == .check,
           isDisabled: !state.acceptsAnswer || draft?.complete == nil
         ) {
-          if let answer = draft?.complete { Task { await check(answer, by: .check) } }
+          if let answer = draft?.complete {
+            press(.check)
+            Task { await check(answer, by: .check) }
+          }
         }
+        .practiceFocus(.check)
 
         ask(step, answered: false, missed: false)
       }
@@ -338,6 +360,26 @@ struct MistakePracticeScreen: View {
       state.answerFailed()
     case .obsolete:
       break
+    }
+  }
+
+  private func press(_ control: PracticeFocus) {
+    pressedWithFocus = focuses.has(control) ? control : nil
+  }
+
+  private func followPress(to phase: MistakePracticePhase) {
+    guard let pressed = pressedWithFocus else { return }
+
+    switch phase {
+    case .checking:
+      break
+    case .answerFailed:
+      focuses.move(to: pressed)
+    case .feedback:
+      focuses.move(to: .next)
+      pressedWithFocus = nil
+    default:
+      pressedWithFocus = nil
     }
   }
 

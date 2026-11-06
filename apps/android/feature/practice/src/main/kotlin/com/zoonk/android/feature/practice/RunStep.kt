@@ -7,21 +7,25 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
@@ -36,10 +40,13 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -68,7 +75,6 @@ import com.zoonk.android.feature.questions.QuestionFeedback
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.QuotedSource
-import com.zoonk.android.feature.questions.ShowAnswersButton
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.isLongText
 import com.zoonk.android.feature.tutor.TutorAskButton
@@ -81,6 +87,8 @@ import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.focusMoveTarget
+import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.scaffold.PageSpan
@@ -118,6 +126,7 @@ interface RunControls {
         seconds: Int,
     )
 
+    /** Continue: after a verdict, or after [RunPhase.AlreadyAnswered] in a session's block. */
     fun next(questions: List<Question>)
 }
 
@@ -322,6 +331,9 @@ internal fun RunQuestion(
     val checked = phase as? RunPhase.Checked
     val openLesson: (String) -> Unit = { lessonId -> navigator.open(AppRoute.Lesson(lessonId)) }
     val previous = questions.getOrNull(run.index - 1)
+    val answers = remember { FocusRequester() }
+    val moveFocus = rememberMoveFocus()
+    val revealing = remember { run.stage == DrillStage.Reading }
 
     if (drill != null && run.stage == DrillStage.Ideas) {
         if (part.showsScreen) DrillIdeas(drill, openLesson)
@@ -372,6 +384,7 @@ internal fun RunQuestion(
     }
 
     if (part.showsScreen && question.format != QuestionFormat.TrueFalse) QuestionTitle(question.question, graded = checked != null)
+    if (revealing && part.showsTurn) LaunchedEffect(Unit) { moveFocus(answers) }
 
     QuestionAnswer(
         question = question,
@@ -382,6 +395,7 @@ internal fun RunQuestion(
         enabled = run.canAnswer,
         onAnswer = onDraft,
         onSubmit = { controls.submit(question, it) },
+        modifier = Modifier.focusMoveTarget(answers),
         part = part,
     )
 
@@ -410,7 +424,7 @@ internal fun answerAction(
     controls: RunControls,
 ): (() -> Unit)? =
     when {
-        run.phase is RunPhase.Checked -> ({ controls.next(questions) })
+        run.phase is RunPhase.Checked || run.phase == RunPhase.AlreadyAnswered -> ({ controls.next(questions) })
         question == null -> null
         run.stage == DrillStage.Ideas -> ({ controls.startDrill(questions) })
         run.stage == DrillStage.Reading -> controls::reveal
@@ -429,57 +443,80 @@ internal fun AnswerActions(
     notSureOnEvery: Boolean = false,
 ) {
     val phase = run.phase
+    val answeredElsewhere = phase == RunPhase.AlreadyAnswered
+    val done = phase is RunPhase.Checked || answeredElsewhere
 
-    when {
-        phase is RunPhase.Checked -> {
-            TaskActions { width ->
-                Button(onClick = { controls.next(questions) }, modifier = width) { Text(stringResource(R.string.practice_continue)) }
-                ask()
+    if (!done && run.stage == DrillStage.Ideas) {
+        TaskActions { width -> DrillStartButton(onStart = { controls.startDrill(questions) }, modifier = width) }
+        return
+    }
+
+    val reading = !done && run.stage == DrillStage.Reading
+    val sender = (phase as? RunPhase.Checking)?.sender
+    key(run.index) {
+        val main = remember { FocusRequester() }
+        val moveFocus = rememberMoveFocus()
+        var notSureSent by rememberSaveable { mutableStateOf(false) }
+        LaunchedEffect(done) { if (done && notSureSent) moveFocus(main) }
+
+        if (phase == RunPhase.AnswerFailed) SaveErrorText(onRetry = controls::retry.takeIf { controls.canRetry })
+        if (answeredElsewhere) AlreadyAnsweredText()
+        TaskActions { width ->
+            notSureOffer(question, every = notSureOnEvery)?.takeUnless { done || reading }?.let { offer ->
+                NotSureButton(
+                    onClick = {
+                        notSureSent = true
+                        controls.submit(question, Answer.DontKnow, AnswerSender.NotSure)
+                    },
+                    enabled = run.canAnswer,
+                    busy = sender == AnswerSender.NotSure,
+                    dontKnowYet = offer == NotSure.DontKnowYet,
+                )
             }
-        }
-
-        run.stage == DrillStage.Ideas -> {
-            TaskActions { width -> DrillStartButton(onStart = { controls.startDrill(questions) }, modifier = width) }
-        }
-
-        run.stage == DrillStage.Reading -> {
-            TaskActions { width -> ShowAnswersButton(onReveal = controls::reveal, modifier = width) }
-        }
-
-        else -> {
-            if (phase == RunPhase.AnswerFailed) SaveErrorText(onRetry = controls::retry.takeIf { controls.canRetry })
-            val sender = (phase as? RunPhase.Checking)?.sender
-            TaskActions { width ->
-                when (notSureOffer(question, every = notSureOnEvery)) {
-                    NotSure.Drill -> {
-                        NotSureButton(
-                            onClick = { controls.submit(question, Answer.DontKnow, AnswerSender.NotSure) },
-                            enabled = run.canAnswer,
-                            busy = sender == AnswerSender.NotSure,
-                        )
+            // One button through Show the answers, Check and Continue, so focus stays on it as it changes.
+            BusyButton(
+                busy = sender == AnswerSender.Check,
+                onClick = {
+                    when {
+                        done -> controls.next(questions)
+                        reading -> controls.reveal()
+                        else -> draft?.let { controls.submit(question, it) }
                     }
-
-                    NotSure.DontKnowYet -> {
-                        NotSureButton(
-                            onClick = { controls.submit(question, Answer.DontKnow, AnswerSender.NotSure) },
-                            enabled = run.canAnswer,
-                            busy = sender == AnswerSender.NotSure,
-                            dontKnowYet = true,
-                        )
-                    }
-
-                    null -> {}
+                },
+                modifier = width.focusMoveTarget(main),
+                enabled = done || reading || (run.canAnswer && draft != null),
+            ) {
+                if (reading) {
+                    Icon(
+                        painterResource(R.drawable.ic_visibility),
+                        contentDescription = null,
+                        modifier = Modifier.size(ButtonDefaults.IconSize),
+                    )
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 }
-                BusyButton(
-                    busy = sender == AnswerSender.Check,
-                    onClick = { draft?.let { controls.submit(question, it) } },
-                    modifier = width,
-                    enabled = run.canAnswer && draft != null,
-                ) { Text(stringResource(R.string.practice_check)) }
-                ask()
+                Text(
+                    stringResource(
+                        when {
+                            done -> R.string.practice_continue
+                            reading -> R.string.questions_drill_show_answers
+                            else -> R.string.practice_check
+                        },
+                    ),
+                )
             }
+            if (!reading && !answeredElsewhere) ask()
         }
     }
+}
+
+@Composable
+private fun AlreadyAnsweredText() {
+    Text(
+        stringResource(R.string.practice_already_answered),
+        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyMedium,
+    )
 }
 
 /** The tutor on a question; not on a placement question, nor on a timed one before its answer, as main. */

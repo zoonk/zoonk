@@ -10,7 +10,7 @@ import { logError } from "@zoonk/utils/logger";
 import { redirect } from "next/navigation";
 import { getCallbackHref } from "../../_utils/auth-redirect";
 
-type SetupState = { status: "error" | "idle" | "nameTooLong" | "usernameTaken" };
+export type SetupState = { status: "error" | "idle" | "nameTooLong" | "usernameTaken" };
 
 export async function setupProfileAction(
   redirectTo: string | null,

@@ -209,6 +209,35 @@ describe("a finished block's day settles even when its request fails after the b
     });
   });
 
+  it("celebrates the belt the owed settlement awarded while the finish ran", async () => {
+    freezeClock();
+    vi.setSystemTime(SESSION_NOW);
+    const { request, user } = await practiceDay({ brainPower: 2499n });
+
+    vi.mocked(settleSessionDay).mockImplementationOnce(async (input) => {
+      await runOwedSettlements(user.id);
+      return settleSessionDay(input);
+    });
+
+    await expect(finishStudyBlock(request)).resolves.toMatchObject({
+      completion: { ceremony: { key: "yellow", kind: "belt" } },
+      status: "ready",
+    });
+  });
+
+  it("celebrates the belt on a retry after the owed settlement awarded it", async () => {
+    freezeClock();
+    vi.setSystemTime(SESSION_NOW);
+    const { request, user } = await practiceDay({ brainPower: 2499n });
+    await failFinish(request);
+    await runOwedSettlements(user.id);
+
+    await expect(finishStudyBlock(request)).resolves.toMatchObject({
+      completion: { ceremony: { key: "yellow", kind: "belt" } },
+      status: "ready",
+    });
+  });
+
   it("keeps an empty checkpoint's neutral ending when its day is recovered", async () => {
     freezeClock();
     vi.setSystemTime(SESSION_NOW);
@@ -290,7 +319,11 @@ describe("a finished block's day settles even when its request fails after the b
     await runOwedSettlements(user.id);
     await expect(readBelts(user.id)).resolves.toStrictEqual([{ key: "yellow" }]);
 
-    await expect(complete()).resolves.toMatchObject({ status: "completed" });
+    await expect(complete()).resolves.toMatchObject({
+      completion: { studyBlock: { ceremony: { key: "yellow", kind: "belt" } } },
+      status: "completed",
+    });
+
     await expect(readBelts(user.id)).resolves.toStrictEqual([{ key: "yellow" }]);
   });
 

@@ -1,17 +1,23 @@
 import { type ContentAnalytics } from "@/workflows/_shared/content-analytics";
+import { startOnce } from "@/workflows/_shared/run-token";
 import {
   type ListeningSetsInput,
+  getListeningSetsToken,
   listeningSetsWorkflow,
 } from "@/workflows/listening/listening-sets-workflow";
-import { start } from "workflow/api";
 
 /**
- * Callable from routes, steps and workflows alike, so it imports nothing but the workflow:
+ * Callable from routes, steps and workflows alike, so it imports nothing but workflow code:
  * workflow code can't load core, ai or the database.
  */
 export async function startListeningSets(
   input: ListeningSetsInput & { analytics?: ContentAnalytics },
 ): Promise<{ generationId: string }> {
-  const run = await start(listeningSetsWorkflow, [input]);
-  return { generationId: run.runId };
+  const generationId = await startOnce(
+    listeningSetsWorkflow,
+    [input],
+    getListeningSetsToken(input.goalId),
+  );
+
+  return { generationId };
 }

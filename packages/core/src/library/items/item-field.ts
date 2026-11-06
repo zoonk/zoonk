@@ -42,17 +42,23 @@ export function getGoalField(details: unknown): WorkField | null {
   return isWorkField(details.field) ? details.field : null;
 }
 
-export function getItemAudienceFilter({
-  examBlueprintId = null,
-  field = null,
-  inSets = false,
-  keepIds = [],
-}: {
+type ItemAudience = {
   examBlueprintId?: string | null;
   field?: string | null;
   inSets?: boolean;
   keepIds?: readonly string[];
-}) {
+};
+
+/** New picks skip a retired question, even a kept one, such as a mistake's original. */
+export const IN_BANK = { retiredAt: null } as const;
+
+/** For a question already asked, which stays answerable once retired from the bank. */
+export function getAskedItemFilter({
+  examBlueprintId = null,
+  field = null,
+  inSets = false,
+  keepIds = [],
+}: ItemAudience) {
   const kept = keepIds.length > 0 ? [{ id: { in: [...keepIds] } }] : [];
 
   return {
@@ -64,6 +70,10 @@ export function getItemAudienceFilter({
       ...(inSets ? [] : [{ OR: [{ setId: null }, ...kept] }]),
     ],
   };
+}
+
+export function getItemAudienceFilter(audience: ItemAudience) {
+  return { AND: [...getAskedItemFilter(audience).AND, IN_BANK] };
 }
 
 export function getFieldRank({

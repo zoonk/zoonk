@@ -62,6 +62,7 @@ describe("picture check durability", () => {
     const replanned = sceneFor(`a hand with a small cut ${randomUUID()}`);
 
     const asset = await mediaAssetFixture({
+      checkOwedAt: new Date(),
       scene: original,
       url: `${STORED}${randomUUID()}.webp`,
     });
@@ -98,11 +99,12 @@ describe("picture check durability", () => {
 
     await expect(
       prisma.mediaAsset.findUniqueOrThrow({ where: { id: asset.id } }),
-    ).resolves.toMatchObject({ scene: replanned, url: storedUrl });
+    ).resolves.toMatchObject({ checkOwedAt: null, scene: replanned, url: storedUrl });
   });
 
   it("takes a rejected picture out of use once every redraw is a blank frame", async () => {
     const asset = await mediaAssetFixture({
+      checkOwedAt: new Date(),
       scene: sceneFor(`a skin section ${randomUUID()}`),
       url: `${STORED}${randomUUID()}.webp`,
     });
@@ -128,5 +130,74 @@ describe("picture check durability", () => {
     await expect(run.returnValue).resolves.toStrictEqual({ passed: 0, removed: 1, replaced: 0 });
     expect(generateLessonImage).toHaveBeenCalledTimes(4);
     await expect(prisma.mediaAsset.findUnique({ where: { id: asset.id } })).resolves.toBeNull();
+  });
+
+  it("checks a picture once when a second run starts checking it while the first still is", async () => {
+    const asset = await mediaAssetFixture({
+      checkOwedAt: new Date(),
+      scene: sceneFor(`a skin section ${randomUUID()}`),
+      url: `${STORED}${randomUUID()}.webp`,
+    });
+
+    serveStoredPictures();
+    const checking = Promise.withResolvers<null>();
+    const release = Promise.withResolvers<null>();
+
+    vi.mocked(checkLessonImage).mockImplementation(async () => {
+      checking.resolve(null);
+      await release.promise;
+      return passedCheck as never;
+    });
+
+    const first = await start(pictureChecksWorkflow, [{ assetIds: [asset.id] }]);
+    await checking.promise;
+    const second = await start(pictureChecksWorkflow, [{ assetIds: [asset.id] }]);
+
+    await expect(second.returnValue).resolves.toStrictEqual({ passed: 0, removed: 0, replaced: 0 });
+    release.resolve(null);
+    await expect(first.returnValue).resolves.toStrictEqual({ passed: 1, removed: 0, replaced: 0 });
+    expect(checkLessonImage).toHaveBeenCalledOnce();
+  });
+
+  it("records a check that failed after its retries and checks the picture again in a later run", async () => {
+    const asset = await mediaAssetFixture({
+      checkOwedAt: new Date(),
+      scene: sceneFor(`a skin section ${randomUUID()}`),
+      url: `${STORED}${randomUUID()}.webp`,
+    });
+
+    serveStoredPictures();
+    vi.mocked(checkLessonImage).mockRejectedValue(new Error("Gateway unavailable"));
+
+    const failed = await start(pictureChecksWorkflow, [{ assetIds: [asset.id] }]);
+    await expect(failed.returnValue).resolves.toStrictEqual({ passed: 0, removed: 0, replaced: 0 });
+
+    await expect(
+      prisma.mediaAsset.findUniqueOrThrow({ where: { id: asset.id } }),
+    ).resolves.toMatchObject({ checkFailures: 1, checkOwedAt: expect.any(Date) });
+
+    vi.mocked(checkLessonImage).mockResolvedValue(passedCheck as never);
+    const later = await start(pictureChecksWorkflow, [{ assetIds: [asset.id] }]);
+    await expect(later.returnValue).resolves.toStrictEqual({ passed: 1, removed: 0, replaced: 0 });
+
+    await expect(
+      prisma.mediaAsset.findUniqueOrThrow({ where: { id: asset.id } }),
+    ).resolves.toMatchObject({ checkFailures: 1, checkOwedAt: null });
+  });
+
+  it("checks no picture that owes no check or whose checks kept failing", async () => {
+    const [checked, failing] = await Promise.all([
+      mediaAssetFixture({ checkOwedAt: null, scene: sceneFor(`a map ${randomUUID()}`) }),
+      mediaAssetFixture({
+        checkFailures: 3,
+        checkOwedAt: new Date(),
+        scene: sceneFor(`a cell ${randomUUID()}`),
+      }),
+    ]);
+
+    const run = await start(pictureChecksWorkflow, [{ assetIds: [checked.id, failing.id] }]);
+
+    await expect(run.returnValue).resolves.toStrictEqual({ passed: 0, removed: 0, replaced: 0 });
+    expect(checkLessonImage).not.toHaveBeenCalled();
   });
 });

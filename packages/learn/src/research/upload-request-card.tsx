@@ -171,6 +171,7 @@ export function UploadRequestCard({
       {state === "uploading" && (
         <AttachControls
           attach={actions.attach}
+          autoFocus
           language={language}
           onAttached={(source) => run(() => answer(source.id), "answered")}
         />

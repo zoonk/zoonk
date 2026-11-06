@@ -1,7 +1,9 @@
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { holdScripts } from "@zoonk/e2e/hydration";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
+import { clickWithConnectionDown } from "./helpers/server-actions";
 import { E2E_MAIN_APP_URL } from "./main-app-url";
 
 const REDIRECT_URL = `${E2E_MAIN_APP_URL}/test`;
@@ -97,7 +99,35 @@ test.describe("Profile Setup Flow", () => {
     await cleanupVerifications(email);
   });
 
-  test("revisiting the callback writes nothing; a named account without a username confirms one on the setup", async ({
+  test("a name typed and sent before the page loaded stays when another learner took the username meanwhile", async ({
+    page,
+  }) => {
+    const prefix = `e2eearly${Date.now()}`;
+    const email = `${prefix}@zoonk.test`;
+
+    await signInToSetup({ email, page });
+
+    const loadScripts = await holdScripts(page);
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await expect(page.getByText(`Your username: @${prefix}`)).toBeVisible();
+
+    await prisma.user.create({
+      data: { email: `other-${email}`, emailVerified: true, name: "Other", username: prefix },
+    });
+
+    const name = page.getByRole("textbox", { exact: true, name: "Name" });
+    await name.fill("Early Learner");
+    await page.getByRole("button", { name: /^continue$/iu }).click();
+    await loadScripts();
+
+    await expect(page.getByText(`${prefix} is already taken`)).toBeVisible();
+    await expect(name).toHaveValue("Early Learner");
+    await expect(page.getByRole("textbox", { exact: true, name: "Username" })).toHaveValue(prefix);
+
+    await cleanupVerifications(email);
+  });
+
+  test("revisiting the callback writes nothing; a named account without a username confirms one on the setup, after a dropped connection", async ({
     page,
   }) => {
     const prefix = `e2enamed${Date.now()}`;
@@ -120,16 +150,20 @@ test.describe("Profile Setup Flow", () => {
       unnamed,
     );
 
-    await expect(page.getByRole("textbox", { exact: true, name: "Name" })).toHaveValue(
-      "Named Learner",
-    );
+    const name = page.getByRole("textbox", { exact: true, name: "Name" });
+    const submit = page.getByRole("button", { name: /^continue$/iu });
+    await expect(name).toHaveValue("Named Learner");
+
+    await clickWithConnectionDown(submit);
+    await expect(page.getByText("We couldn't save your profile. Try again.")).toBeVisible();
+    await expect(name).toHaveValue("Named Learner");
 
     const handoff = page.waitForRequest((req) => {
       const url = req.url();
       return url.startsWith(REDIRECT_URL) && new URL(url).searchParams.has("token");
     });
 
-    await page.getByRole("button", { name: /^continue$/iu }).click();
+    await submit.click();
     await handoff;
 
     const saved = await prisma.user.findUniqueOrThrow({ where: { email } });

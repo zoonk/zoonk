@@ -72,6 +72,10 @@ async function setup(
   return { block, finish, user };
 }
 
+function markCeremoniesShown(userId: string) {
+  return prisma.milestone.updateMany({ data: { shownAt: new Date() }, where: { userId } });
+}
+
 async function readPaid({ block, user }: Awaited<ReturnType<typeof setup>>) {
   const [progress, saved, events, milestones] = await Promise.all([
     prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
@@ -129,6 +133,7 @@ describe("finishing a block that already finished", () => {
     const paid = await readPaid(day);
     expect(paid.blockBrainPower).toBeGreaterThan(0);
 
+    await markCeremoniesShown(day.user.id);
     const sent = vi.mocked(trackServerEvent).mock.calls.length;
     const retried = await day.finish();
 
@@ -200,7 +205,7 @@ describe("finishing a block that already finished", () => {
     });
   });
 
-  it("says the belt level and the tenth of Energy it reached, with its ceremony", async () => {
+  it("says the belt level and the tenth of Energy it reached, with its ceremony until it's shown", async () => {
     const day = await setup(null, { missions: PRACTICE_MISSION });
 
     const progress = { currentEnergy: 79.9, lastActiveAt: new Date(), totalBrainPower: 2490n };
@@ -218,6 +223,12 @@ describe("finishing a block that already finished", () => {
       },
       status: "ready",
     });
+
+    await expect(day.finish()).resolves.toMatchObject({
+      completion: { ceremony: { key: "yellow", kind: "belt" }, reached: NOTHING },
+    });
+
+    await markCeremoniesShown(day.user.id);
 
     await expect(day.finish()).resolves.toMatchObject({
       completion: { ceremony: null, reached: NOTHING },

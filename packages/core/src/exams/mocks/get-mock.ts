@@ -8,6 +8,7 @@ import { EXAM_DAY_CHECKLIST } from "../../checkpoints/weekly-challenge-rules";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type PassMarks, getPassMarks } from "../../library/exams/pass-marks";
 import { getTrueFalseLabels } from "../../library/exams/true-false-labels";
+import { isStillAsked } from "../../library/items/item-image";
 import { NO_RESULT_MOMENTS, loadResultMoments } from "../../milestones/load-ceremony";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { BRAIN_POWER_BONUS } from "../../sessions/brain-power";
@@ -41,6 +42,7 @@ import {
   getSectionDeadline,
 } from "./_utils/owned-mock";
 import { readMockSizeSource } from "./_utils/read-mock-structure";
+import { isMockAnswerPresent } from "./mock-answer-presence";
 import { type MockConditions, type MockView, mockResultSchema } from "./mock-contract";
 import { type MockTypedPart, listSatMockLeftOut } from "./mock-left-out";
 import { getMockDays } from "./mock-plan";
@@ -82,10 +84,16 @@ async function loadCurrentSection({
 
   const first = getFirstNumber({ conditions: mock.conditions, section: mock.sectionIndex });
 
+  const answered = new Set(
+    mock.answers.flatMap((answer) =>
+      isMockAnswerPresent(readMockAnswer(answer.answer)) ? [answer.itemId] : [],
+    ),
+  );
+
   const questions = section.itemIds.flatMap((itemId, index): MockQuestion[] => {
     const item = items.get(itemId);
 
-    return item
+    return item && isStillAsked({ answered: answered.has(itemId), item })
       ? [
           {
             ...toMockQuestionView({ item, mockId: mock.id }),

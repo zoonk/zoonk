@@ -32,6 +32,7 @@ import {
 const DESKTOP = { height: 900, width: 1280 };
 const TABLET_WITH_KEYBOARD = { height: 1180, width: 820 };
 const SHORT_DESKTOP = { height: 450, width: 1440 };
+const SMALL_PHONE = { height: 700, width: 320 };
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 const SUMMARY_IDEA = "Electrons live in clouds.";
 
@@ -200,6 +201,46 @@ describe("lesson by keyboard", () => {
 
       await press("PageDown");
       await expect.poll(() => map.element().scrollTop).toBeGreaterThan(0);
+    });
+  });
+
+  it("a formula wider than its column takes Tab and scrolls with the arrows instead of turning the screen", async () => {
+    await atViewport(SMALL_PHONE, async () => {
+      const worked = teachingStep("workedExample");
+
+      openLesson({
+        steps: [
+          {
+            ...worked,
+            content: {
+              ...worked.content,
+              steps: [
+                {
+                  math: String.raw`1.200{,}00 + 600{,}00 + 250{,}00 = 2.050{,}00`,
+                  text: "Add the three bills.",
+                },
+                { math: "a + b = c", text: "A line that fits." },
+              ],
+            },
+          },
+          teachingStep("check"),
+        ],
+      });
+
+      await press("Enter");
+      await expect.element(page.getByText("A line that fits.")).toBeVisible();
+
+      const stops = document.querySelectorAll("[data-slot='display-math'] > [tabindex]");
+      expect(stops).toHaveLength(1);
+
+      const formula = page.elementLocator(stops[0]!);
+      await tabTo(formula);
+      expect(formula.element().scrollLeft).toBe(0);
+
+      await press("ArrowRight");
+
+      await expect.poll(() => formula.element().scrollLeft).toBeGreaterThan(0);
+      await expect.element(page.getByText("A line that fits.")).toBeVisible();
     });
   });
 

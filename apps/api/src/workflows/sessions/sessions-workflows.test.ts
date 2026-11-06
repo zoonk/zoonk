@@ -585,14 +585,18 @@ describe(sessionPreparationWorkflow, () => {
 
     await sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id });
 
-    expect(start).toHaveBeenCalledWith(callContentWorkflow, [
-      {
-        kind: "unitScenario",
-        level: "B1",
-        unit: expect.objectContaining({ id: renting.id, title: renting.title }),
-        userId: user.id,
-      },
-    ]);
+    expect(start).toHaveBeenCalledWith(
+      callContentWorkflow,
+      [
+        {
+          kind: "unitScenario",
+          level: "B1",
+          unit: expect.objectContaining({ id: renting.id, title: renting.title }),
+          userId: user.id,
+        },
+      ],
+      { experimental_hook: { token: `scenario:${renting.id}:B1` } },
+    );
 
     expect(generateConversationScenario).not.toHaveBeenCalled();
   });

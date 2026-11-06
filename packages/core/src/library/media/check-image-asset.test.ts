@@ -21,7 +21,10 @@ import {
 import {
   type PictureRedraw,
   checkImageAsset,
+  findOwedPictureCheck,
+  listOwedPictureChecks,
   planImageAssetAgain,
+  recordFailedPictureCheck,
   redrawImageAsset,
   removeImageAsset,
   replaceImageAsset,
@@ -30,9 +33,20 @@ import { createStepImage } from "./lesson-images";
 
 const alt = "Mão com um pequeno corte na pele e micróbios entrando pelo corte.";
 
+const DAY_MS = 86_400_000;
+
+async function owedCheckOf(assetId: string) {
+  const { checkOwedAt } = await prisma.mediaAsset.findUniqueOrThrow({ where: { id: assetId } });
+  return checkOwedAt;
+}
+
 async function shownPicture() {
   const [asset, lesson, skill] = await Promise.all([
-    mediaAssetFixture({ scene: testScene({ focalObject: `a ${randomUUID()} map` }) }),
+    mediaAssetFixture({
+      alt,
+      checkOwedAt: new Date(),
+      scene: testScene({ focalObject: `a ${randomUUID()} map` }),
+    }),
     libraryLessonFixture(),
     skillFixture(),
   ]);
@@ -78,7 +92,7 @@ describe(checkImageAsset, () => {
     });
   });
 
-  it("passes a shown picture its check accepts, checking it at flex", async () => {
+  it("passes a shown picture its check accepts against the alt it was drawn for, checking it at flex, so it no longer owes its check", async () => {
     const { asset } = await shownPicture();
     mockImageChecks([true]);
 
@@ -87,10 +101,15 @@ describe(checkImageAsset, () => {
     });
 
     expect(readStoredFile).toHaveBeenCalledWith(asset.url);
-    expect(checkLessonImage).toHaveBeenCalledWith(expect.objectContaining({ serviceTier: "flex" }));
+
+    expect(checkLessonImage).toHaveBeenCalledWith(
+      expect.objectContaining({ alt, serviceTier: "flex" }),
+    );
+
+    await expect(owedCheckOf(asset.id)).resolves.toBeNull();
   });
 
-  it("returns what the check found", async () => {
+  it("returns what the check found, and the picture still owes its check until a redraw replaces it", async () => {
     const { asset } = await shownPicture();
     mockImageChecks([false]);
 
@@ -98,14 +117,16 @@ describe(checkImageAsset, () => {
       findings: ["shows a different object"],
       status: "rejected",
     });
+
+    await expect(owedCheckOf(asset.id)).resolves.toStrictEqual(asset.checkOwedAt);
   });
 
-  it("checks a redraw's own file against its own scene", async () => {
+  it("checks a redraw's own file against its own scene, leaving the picture owed until the redraw replaces it", async () => {
     const { asset } = await shownPicture();
     const redraw = redrawOf();
     mockImageChecks([true]);
 
-    await expect(checkImageAsset({ alt, assetId: asset.id, redraw })).resolves.toStrictEqual({
+    await expect(checkImageAsset({ assetId: asset.id, redraw })).resolves.toStrictEqual({
       status: "passed",
     });
 
@@ -114,6 +135,8 @@ describe(checkImageAsset, () => {
     expect(checkLessonImage).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ alt, scene: redraw.scene }),
     );
+
+    await expect(owedCheckOf(asset.id)).resolves.toStrictEqual(asset.checkOwedAt);
   });
 
   it("does nothing for a picture that's gone", async () => {
@@ -126,11 +149,12 @@ describe(checkImageAsset, () => {
 });
 
 describe(planImageAssetAgain, () => {
-  it("plans the scene again from the alt and the check's findings, keeping its labels", async () => {
+  it("plans the scene again from the alt it was drawn for and the check's findings, keeping its labels", async () => {
     vi.resetAllMocks();
     const labels = [{ target: "the cut", text: "corte" }];
 
     const asset = await mediaAssetFixture({
+      alt,
       language: "pt",
       scene: testScene({ focalObject: `a ${randomUUID()} skin section`, labels }),
     });
@@ -139,7 +163,7 @@ describe(planImageAssetAgain, () => {
     const sceneSpy = mockImageScene(replanned);
     const findings = ["shows a skin section with no hand"];
 
-    await expect(planImageAssetAgain({ alt, assetId: asset.id, findings })).resolves.toStrictEqual({
+    await expect(planImageAssetAgain({ assetId: asset.id, findings })).resolves.toStrictEqual({
       ...replanned,
       labels,
     });
@@ -201,7 +225,13 @@ describe(replaceImageAsset, () => {
       prisma.item.findUniqueOrThrow({ where: { id: item.id } }),
     ]);
 
-    expect(stored).toMatchObject({ runId: "redraw-run", scene: redraw.scene, url: redraw.url });
+    expect(stored).toMatchObject({
+      checkOwedAt: null,
+      runId: "redraw-run",
+      scene: redraw.scene,
+      url: redraw.url,
+    });
+
     expect(screen.mediaAssetId).toBe(asset.id);
     expect(screen.pictureAvailableAt).toStrictEqual(step.pictureAvailableAt);
     expect(screen.updatedAt.getTime()).toBeGreaterThan(step.updatedAt.getTime());
@@ -247,8 +277,51 @@ describe(replaceImageAsset, () => {
   });
 });
 
+describe(findOwedPictureCheck, () => {
+  it("owes a stored picture's check until it failed three times, counting a retried failure once", async () => {
+    const { id: assetId } = await mediaAssetFixture({ checkFailures: 1, checkOwedAt: new Date() });
+
+    await expect(findOwedPictureCheck(assetId)).resolves.toStrictEqual({ checkFailures: 1 });
+    await recordFailedPictureCheck({ assetId, checkFailures: 1 });
+    await recordFailedPictureCheck({ assetId, checkFailures: 1 });
+    await expect(findOwedPictureCheck(assetId)).resolves.toStrictEqual({ checkFailures: 2 });
+    await recordFailedPictureCheck({ assetId, checkFailures: 2 });
+    await expect(findOwedPictureCheck(assetId)).resolves.toBeNull();
+  });
+
+  it("owes nothing for a picture that was checked or is gone", async () => {
+    const asset = await mediaAssetFixture({ checkOwedAt: null });
+
+    await expect(findOwedPictureCheck(asset.id)).resolves.toBeNull();
+    await expect(findOwedPictureCheck(randomUUID())).resolves.toBeNull();
+  });
+});
+
+describe(listOwedPictureChecks, () => {
+  it("lists the pictures still owing a check, longest-owed first, leaving checked ones and those whose checks kept failing", async () => {
+    const now = Date.now();
+
+    const [older, newer, checked, failing] = await Promise.all([
+      mediaAssetFixture({ checkOwedAt: new Date(now - 30 * DAY_MS) }),
+      mediaAssetFixture({ checkFailures: 2, checkOwedAt: new Date(now - 29 * DAY_MS) }),
+      mediaAssetFixture({ checkOwedAt: null }),
+      mediaAssetFixture({ checkFailures: 3, checkOwedAt: new Date(now - 31 * DAY_MS) }),
+    ]);
+
+    const listed = await listOwedPictureChecks();
+
+    expect(listed.filter((id) => id === older.id || id === newer.id)).toStrictEqual([
+      older.id,
+      newer.id,
+    ]);
+
+    expect(listed).not.toContain(checked.id);
+    expect(listed).not.toContain(failing.id);
+  });
+});
+
 describe(removeImageAsset, () => {
-  it("takes a picture out of use, dropping the questions about it", async () => {
+  it("takes a picture out of use, retiring the questions about it", async () => {
     const { asset, item, step } = await shownPicture();
 
     await removeImageAsset({ assetId: asset.id });
@@ -262,7 +335,7 @@ describe(removeImageAsset, () => {
     expect(stored).toBeNull();
     expect(screen.mediaAssetId).toBeNull();
     expect(screen.pictureAvailableAt).toBeNull();
-    expect(question).toBeNull();
+    expect(question).toMatchObject({ mediaAssetId: null, retiredAt: expect.any(Date) });
   });
 
   it("takes an option's picture out of its question, and does nothing once it's gone", async () => {

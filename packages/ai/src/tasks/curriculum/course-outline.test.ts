@@ -214,8 +214,6 @@ describe(generateCourseOutline, () => {
       "Charts",
       "Multimodal texts",
     ]);
-
-    expect(outline.setAside).toStrictEqual([{ model: MODEL, usage }]);
   });
 
   it("splits a chapter that mixes subjects in code, without another call, when its lessons name them", async () => {
@@ -237,7 +235,5 @@ describe(generateCourseOutline, () => {
       ["Visual panels", ["charts"]],
       ["Visual panels 2", ["multimodal"]],
     ]);
-
-    expect(outline.setAside).toStrictEqual([]);
   });
 });

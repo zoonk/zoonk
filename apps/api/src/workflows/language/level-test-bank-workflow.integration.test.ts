@@ -76,8 +76,6 @@ function voiced(): Awaited<ReturnType<typeof generateLanguageAudio>> {
   };
 }
 
-const OWNER_WRITING_MS = 10_000;
-
 function uniquePair() {
   return { language: `x${crypto.randomUUID().slice(0, 8)}`, targetLanguage: "ja" };
 }
@@ -106,36 +104,6 @@ describe(levelTestBankWorkflow, () => {
     await expect(readStreamToEnd(run)).resolves.toStrictEqual(
       expect.stringContaining(`"step":"${WORKFLOW_ERROR_STEP}"`),
     );
-  });
-
-  it("ends a joining run's stream once it hands over to the run writing the bank", async () => {
-    const writing = Promise.withResolvers<null>();
-    const pair = uniquePair();
-
-    vi.mocked(generateLevelTestBank).mockReset();
-    vi.mocked(generateLanguageAudio).mockResolvedValue(voiced());
-
-    vi.mocked(generateLevelTestBank).mockImplementation(async () => {
-      await writing.promise;
-      return bankOf(crypto.randomUUID());
-    });
-
-    const owner = await start(levelTestBankWorkflow, [{ pair }]);
-
-    await vi.waitFor(() => expect(generateLevelTestBank).toHaveBeenCalledOnce(), {
-      timeout: OWNER_WRITING_MS,
-    });
-
-    const joining = await start(levelTestBankWorkflow, [{ pair }]);
-
-    await expect(joining.returnValue).resolves.toStrictEqual({ status: "joined" });
-
-    await expect(readStreamToEnd(joining)).resolves.toStrictEqual(
-      expect.stringContaining(`"step":"joinLevelTestBank"`),
-    );
-
-    writing.resolve(null);
-    await expect(owner.returnValue).resolves.toStrictEqual({ status: "written" });
   });
 
   it("retries a failed clip alone and finishes with its questions ready when one never voices", async () => {

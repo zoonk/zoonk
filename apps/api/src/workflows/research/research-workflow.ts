@@ -1,10 +1,10 @@
 import { type ExamResearchPlan } from "@zoonk/ai/tasks/research/plan";
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
 import { getWorkflowMetadata } from "workflow";
-import { type Run, start } from "workflow/api";
-import { claimRunToken, joinRun } from "../_shared/run-token";
+import { type Run } from "workflow/api";
+import { claimRunToken, joinRun, startOnce } from "../_shared/run-token";
 import { scheduleFreshnessChecksStep } from "../freshness/steps/schedule-freshness-checks-step";
-import { goalContentWorkflow } from "../goals/goal-content-workflow";
+import { getGoalContentToken, goalContentWorkflow } from "../goals/goal-content-workflow";
 import { type ResearchAnalytics, toResearchAnalytics } from "./_utils/research-analytics";
 import { describeExam, readExamBlueprint } from "./read-exam-blueprint";
 import { type ResearchResult, researchResultSchema } from "./research-result";
@@ -228,15 +228,6 @@ export async function researchWorkflow(input: ResearchInput): Promise<ResearchRe
 
   const { workflowRunId } = getWorkflowMetadata();
 
-  if (!input.sourceIds?.length) {
-    const { conflict } = await claimRunToken(`research-goal:${input.goalId}`);
-    const joined = conflict ? researchResultSchema.safeParse(await joinRun(conflict)) : null;
-
-    if (joined?.success) {
-      return joined.data;
-    }
-  }
-
   await recordResearchRunStep({ goalId: input.goalId, runId: workflowRunId });
   const goal = await loadResearchGoalStep(input.goalId);
 
@@ -249,7 +240,8 @@ export async function researchWorkflow(input: ResearchInput): Promise<ResearchRe
   await recordResearchOutcomeStep({ goalId: goal.id, result });
 
   if (input.sourceIds?.length && result.status === "ready") {
-    await start(goalContentWorkflow, [{ goalId: goal.id, rebuild: true }]);
+    const rebuild = { goalId: goal.id, rebuild: true };
+    await startOnce(goalContentWorkflow, [rebuild], getGoalContentToken(rebuild));
   }
 
   return result;

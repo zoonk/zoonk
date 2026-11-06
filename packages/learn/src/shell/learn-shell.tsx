@@ -111,12 +111,14 @@ export function PageWithAside({
   aside,
   asideClassName,
   asideLabel,
+  asideRef,
   children,
   className,
 }: {
   aside?: React.ReactNode;
   asideClassName?: string;
   asideLabel: string;
+  asideRef?: React.Ref<HTMLElement>;
   children: React.ReactNode;
   className?: string;
 }) {
@@ -138,11 +140,14 @@ export function PageWithAside({
         <aside
           aria-label={asideLabel}
           className={cn(
-            "flex min-w-0 flex-col gap-8",
+            "flex min-w-0 flex-col gap-8 outline-none",
             "min-[72rem]:border-border min-[72rem]:sticky min-[72rem]:top-0 min-[72rem]:flex min-[72rem]:h-dvh min-[72rem]:w-[300px] min-[72rem]:overflow-y-auto min-[72rem]:border-l min-[72rem]:px-6 min-[72rem]:py-8 xl:w-80",
             asideClassName,
           )}
           data-slot="page-aside"
+          ref={asideRef}
+          // Focus moves here when a card in it goes away while it holds focus.
+          tabIndex={-1}
         >
           {aside}
         </aside>

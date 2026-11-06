@@ -8,8 +8,6 @@ import { POST as createResearch } from "./route";
 
 vi.mock("@zoonk/core/library/sources/upload-request", () => ({ answerGoalUploadRequest: vi.fn() }));
 
-vi.mock("@/workflows/research/research-workflow", () => ({ researchWorkflow: vi.fn() }));
-
 const GOAL_ID = "019c9bd7-bf11-73cb-9cc8-fe371298190b";
 const SOURCE_ID = "019c9bd7-bf11-73cb-9cc8-fe371298190c";
 
@@ -76,7 +74,10 @@ describe("POST /v1/research", () => {
 
     expect([retried.status, first.status]).toStrictEqual([202, 202]);
     expect(start).toHaveBeenCalledTimes(2);
-    expect(start).toHaveBeenCalledWith(researchWorkflow, [{ goalId: GOAL_ID, sourceIds: [] }]);
+
+    expect(start).toHaveBeenCalledWith(researchWorkflow, [{ goalId: GOAL_ID, sourceIds: [] }], {
+      experimental_hook: { token: `research-goal:${GOAL_ID}` },
+    });
   });
 
   it("starts again when the goal's run says it's running but stalled, as a restart leaves it", async () => {
@@ -92,9 +93,11 @@ describe("POST /v1/research", () => {
 
     expect(response.headers.get("Location")).toBe("/v1/research/wrun_new");
 
-    expect(start).toHaveBeenCalledExactlyOnceWith(researchWorkflow, [
-      { goalId: GOAL_ID, sourceIds: [] },
-    ]);
+    expect(start).toHaveBeenCalledExactlyOnceWith(
+      researchWorkflow,
+      [{ goalId: GOAL_ID, sourceIds: [] }],
+      { experimental_hook: { token: `research-goal:${GOAL_ID}` } },
+    );
   });
 
   it("follows a run that's asleep until its next check, however long ago it went to sleep", async () => {
@@ -113,7 +116,7 @@ describe("POST /v1/research", () => {
     expect(start).not.toHaveBeenCalled();
   });
 
-  it("reads the uploads that answer the goal's ask in a new run", async () => {
+  it("reads the uploads that answer the goal's ask in a new run, even beside a running one", async () => {
     goalWithRun("wrun_first", [SOURCE_ID]);
     lastRun({ status: "running" });
 

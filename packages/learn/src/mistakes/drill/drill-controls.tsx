@@ -1,22 +1,24 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { useEnterKey } from "@zoonk/ui/hooks/keyboard";
-import { EyeIcon, HelpCircleIcon } from "lucide-react";
+import { HelpCircleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { EnterButton } from "../../_components/enter-button";
+import { useEffect, useRef } from "react";
 
-export function ShowAnswersButton({ onReveal }: { onReveal: () => void }) {
-  const t = useExtracted();
+/** For the answers' wrapper: once "Show the answers" reveals them, focus moves to the first. */
+export function useFocusAnswersOnReveal(reading: boolean) {
+  const answers = useRef<HTMLDivElement>(null);
+  const wasReading = useRef(reading);
 
-  useEnterKey(onReveal);
+  useEffect(() => {
+    if (wasReading.current && !reading) {
+      answers.current?.querySelector<HTMLElement>("button:enabled, input")?.focus();
+    }
 
-  return (
-    <EnterButton onClick={onReveal}>
-      <EyeIcon aria-hidden="true" />
-      {t("I've read it. Show the answers")}
-    </EnterButton>
-  );
+    wasReading.current = reading;
+  }, [reading]);
+
+  return answers;
 }
 
 export function NotSureButton({

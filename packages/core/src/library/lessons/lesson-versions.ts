@@ -1,5 +1,6 @@
 import "server-only";
-import { type TransactionClient, prisma, sql } from "@zoonk/db";
+import { type StepWhereInput, type TransactionClient, prisma, sql } from "@zoonk/db";
+import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 
 /** Read by step id without this filter when finishing a learner's already-open retired version. */
 export const CURRENT_STEPS = { retiredAt: null, staged: false } as const;
@@ -76,12 +77,41 @@ export async function readCurrentLessonVersion(lessonId: string): Promise<number
   return current?.version ?? null;
 }
 
+/**
+ * A replaced question may have been wrong, so it leaves the practice bank once no current screen
+ * of a lesson still taught asks it.
+ */
+export async function retireUnaskedQuestions(
+  tx: TransactionClient,
+  askedBy: StepWhereInput,
+): Promise<void> {
+  const unasked = await tx.item.findMany({
+    select: { id: true, skillId: true },
+    where: {
+      retiredAt: null,
+      steps: { none: { ...CURRENT_STEPS, lesson: { setAsideAt: null } }, some: askedBy },
+    },
+  });
+
+  if (unasked.length === 0) {
+    return;
+  }
+
+  await lockPlanSourceWrite(tx, { skillIds: [...new Set(unasked.map(({ skillId }) => skillId))] });
+
+  await tx.item.updateMany({
+    data: { retiredAt: new Date() },
+    where: { id: { in: unasked.map(({ id }) => id) } },
+  });
+}
+
 export async function deleteRetiredSteps({
   now = new Date(),
 }: { now?: Date } = {}): Promise<number> {
-  const { count } = await prisma.step.deleteMany({
-    where: { retiredAt: { lt: new Date(now.getTime() - RETIRED_STEPS_KEPT_MS) } },
-  });
+  const retired = { retiredAt: { lt: new Date(now.getTime() - RETIRED_STEPS_KEPT_MS) } };
+
+  await writePlanInputs((tx) => retireUnaskedQuestions(tx, retired));
+  const { count } = await prisma.step.deleteMany({ where: retired });
 
   return count;
 }

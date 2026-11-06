@@ -8,10 +8,11 @@ import * as logger from "@zoonk/utils/logger";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { listOwed } from "../../_test-utils/follow-ups";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
+import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
 import { askForLessons } from "../../lookahead/lessons-ask";
 import { OUTLINE_STALE_AFTER_MS } from "../../lookahead/outline-ahead";
 import { pickSpeculativeLessons } from "../../lookahead/speculative-lessons";
-import { markPlanInputsUntil } from "../../plans/_test-utils/mark-plan-inputs";
+import * as planToken from "../../plans/_utils/plan-token";
 import { openStudyDay } from "../../sessions/open-study-day";
 import { answerOnboardingQuestion } from "../../view-models/onboarding/answer-onboarding-question";
 import { getTodayView } from "../../view-models/today/get-today-view";
@@ -29,6 +30,20 @@ import {
 } from "./replan-waiting-goals";
 
 const POPULAR_BAND_GOALS = 12;
+
+function markPlanAfterRead({ goalId, planId }: { goalId: string; planId: string }) {
+  const load = planToken.loadPlanAtToken;
+
+  return vi.spyOn(planToken, "loadPlanAtToken").mockImplementation(async (id, options) => {
+    const context = await load(id, options);
+
+    if (id === goalId) {
+      await prisma.$transaction((tx) => markPlansChanged(tx, { planIds: [planId] }));
+    }
+
+    return context;
+  });
+}
 
 describe(replanGoalsWaitingOnSkills, () => {
   beforeEach(() => {
@@ -58,20 +73,14 @@ describe(replanGoalsWaitingOnSkills, () => {
     }
   });
 
-  it("reports a goal whose plan kept changing, for later, and re-plans the others", async () => {
+  it("reports a goal whose plan changed while it re-planned, for later, and re-plans the others", async () => {
     const skill = await skillFixture();
     const [busy, other] = await Promise.all([waitingGoal(skill), waitingGoal(skill)]);
     const lessonIds = await outlineSkill(skill);
     const error = vi.spyOn(logger, "logError");
-    const stop = new AbortController();
-    const marking = markPlanInputsUntil({ planId: busy.plan.id, signal: stop.signal });
-    const replanning = replanGoalsWaitingOnSkills({ skillIds: [skill.id] });
+    const reads = markPlanAfterRead({ goalId: busy.goal.id, planId: busy.plan.id });
 
-    await Promise.allSettled([replanning.finally(() => stop.abort()), marking]);
-
-    await expect(marking).resolves.toBeGreaterThan(0);
-
-    await expect(replanning).resolves.toStrictEqual({
+    await expect(replanGoalsWaitingOnSkills({ skillIds: [skill.id] })).resolves.toStrictEqual({
       failedGoalIds: [busy.goal.id],
       goalIds: [other.goal.id],
     });
@@ -84,6 +93,7 @@ describe(replanGoalsWaitingOnSkills, () => {
     await expect(plannedLessons(busy.plan.id)).resolves.toStrictEqual([skill.id]);
     await expect(plannedLessons(other.plan.id)).resolves.toStrictEqual(lessonIds);
 
+    reads.mockRestore();
     await replanWaitingGoal(busy.goal.id);
     await expect(plannedLessons(busy.plan.id)).resolves.toStrictEqual(lessonIds);
   });

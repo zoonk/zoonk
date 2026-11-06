@@ -3,7 +3,9 @@ import {
   type ImageAssetCheck,
   type PictureRedraw,
   checkImageAsset,
+  findOwedPictureCheck,
   planImageAssetAgain,
+  recordFailedPictureCheck,
   redrawImageAsset,
   removeImageAsset,
   replaceImageAsset,
@@ -17,6 +19,22 @@ export async function checkPictureStep(
   "use step";
 
   return checkImageAsset(input);
+}
+
+export async function findOwedPictureCheckStep(
+  assetId: string,
+): Promise<{ checkFailures: number } | null> {
+  "use step";
+
+  return findOwedPictureCheck(assetId);
+}
+
+export async function recordFailedPictureCheckStep(
+  input: Parameters<typeof recordFailedPictureCheck>[0],
+): Promise<void> {
+  "use step";
+
+  await recordFailedPictureCheck(input);
 }
 
 export async function planPictureAgainStep(

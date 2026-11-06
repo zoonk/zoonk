@@ -114,6 +114,13 @@ struct QuestionBlockView: View {
   @Environment(\.dismiss) private var dismiss
   @State private var stopFailed = false
   @State private var isStopping = false
+  @FocusState private var focus: PracticeFocus?
+  @AccessibilityFocusState private var voiceOverFocus: PracticeFocus?
+  @State private var pressedWithFocus: PracticeFocus?
+
+  private var focuses: PracticeFocusState {
+    PracticeFocusState(keyboard: $focus, voiceOver: $voiceOverFocus)
+  }
 
   var body: some View {
     let phase = run.state.phase
@@ -133,12 +140,15 @@ struct QuestionBlockView: View {
         } actions: {
           actions(phase: phase)
         }
+        .environment(\.practiceFocus, focuses)
       }
     }
     .onChange(of: phase) { _, phase in
       if case .finished(let completion) = phase {
         onFinished?(completion)
       }
+
+      followPress(to: phase)
     }
     .announcesStatus(announcement(phase))
     .onChange(of: run.needsRefresh) { _, needsRefresh in
@@ -312,6 +322,7 @@ struct QuestionBlockView: View {
         .font(.subheadline)
         .foregroundStyle(.secondary)
       PracticeMainButton(title: continueTitle) { onRefresh() }
+        .practiceFocus(.next)
     case .finishReady:
       PracticeMainButton(title: finishTitle) { Task { await run.finish() } }
     case .finishFailed:
@@ -321,6 +332,7 @@ struct QuestionBlockView: View {
     case .feedback(_, let feedback):
       PracticeActionRow {
         PracticeMainButton(title: continueTitle) { Task { await run.next() } }
+          .practiceFocus(.next)
         ask(answered: true, missed: !feedback.isCorrect)
       }
     case .answering, .checking, .answerFailed:
@@ -339,7 +351,11 @@ struct QuestionBlockView: View {
           title: LocalizedStringResource(
             "I've read it. Show the answers", table: "Practice",
             comment: "Shows a misread drill's answers once the question was read.")
-        ) { run.revealAnswers() }
+        ) {
+          if focuses.has(.reveal) { focuses.move(to: .answer) }
+          run.revealAnswers()
+        }
+        .practiceFocus(.reveal)
       } else {
         answerButtons(phase: phase)
       }
@@ -352,23 +368,23 @@ struct QuestionBlockView: View {
     let accepts = phase.acceptsAnswer
 
     PracticeActionRow {
-      if run.drill?.kind == .noGuessing, phase.isAnswering {
+      if run.drill?.kind == .noGuessing {
         PracticeSecondaryButton(
           title: LocalizedStringResource(
             "I'm not sure", table: "Practice",
             comment: "Honest way out of a guess in a no-guessing drill."),
-          systemImage: "questionmark.circle",
-          isBusy: phase.checking == .notSure,
-          isDisabled: !accepts
-        ) { Task { await run.submit(.dontKnow, by: .notSure) } }
-      } else if question?.placement == true || question?.format == .typed, phase.isAnswering {
+          systemImage: "questionmark.circle", isBusy: phase.checking == .notSure,
+          isDisabled: !accepts, action: notSure
+        )
+        .practiceFocus(.notSure)
+      } else if question?.placement == true || question?.format == .typed {
         PracticeSecondaryButton(
           title: LocalizedStringResource(
             "I don't know yet", table: "Practice", comment: "Answers a question as not known yet."),
-          systemImage: "questionmark.circle",
-          isBusy: phase.checking == .notSure,
-          isDisabled: !accepts
-        ) { Task { await run.submit(.dontKnow, by: .notSure) } }
+          systemImage: "questionmark.circle", isBusy: phase.checking == .notSure,
+          isDisabled: !accepts, action: notSure
+        )
+        .practiceFocus(.notSure)
       }
 
       PracticeMainButton(
@@ -377,8 +393,12 @@ struct QuestionBlockView: View {
         isBusy: phase.checking == .check,
         isDisabled: !accepts || run.draft?.complete == nil
       ) {
-        if let answer = run.draft?.complete { Task { await run.submit(answer) } }
+        if let answer = run.draft?.complete {
+          press(.check)
+          Task { await run.submit(answer) }
+        }
       }
+      .practiceFocus(.check)
 
       ask(answered: false, missed: false)
     }
@@ -391,6 +411,31 @@ struct QuestionBlockView: View {
         PracticeAskTarget(
           itemId: question.itemId, question: question.question, blockId: run.detail.block.id,
           answered: answered, missed: missed))
+    }
+  }
+
+  private func notSure() {
+    press(.notSure)
+    Task { await run.submit(.dontKnow, by: .notSure) }
+  }
+
+  private func press(_ control: PracticeFocus) {
+    pressedWithFocus = focuses.has(control) ? control : nil
+  }
+
+  private func followPress(to phase: QuestionBlockPhase) {
+    guard let pressed = pressedWithFocus else { return }
+
+    switch phase {
+    case .checking:
+      break
+    case .answerFailed:
+      focuses.move(to: pressed)
+    case .feedback, .alreadyAnswered:
+      focuses.move(to: .next)
+      pressedWithFocus = nil
+    default:
+      pressedWithFocus = nil
     }
   }
 

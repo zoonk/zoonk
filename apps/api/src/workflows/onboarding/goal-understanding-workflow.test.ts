@@ -12,7 +12,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { normalizeString } from "@zoonk/utils/string";
 import { describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
-import { mockHookConflict } from "../../../mocks/workflow";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { taskResult } from "../_test-utils/recorded-outputs";
 import { levelTestBankWorkflow } from "../language/level-test-bank-workflow";
@@ -274,9 +273,11 @@ describe(goalUnderstandingWorkflow, () => {
 
     await goalUnderstandingWorkflow({ draftId: draft.id });
 
-    expect(start).toHaveBeenCalledExactlyOnceWith(levelTestBankWorkflow, [
-      { analytics: { distinctId: draft.userId }, pair: { language: "en", targetLanguage: "ja" } },
-    ]);
+    expect(start).toHaveBeenCalledExactlyOnceWith(
+      levelTestBankWorkflow,
+      [{ analytics: { distinctId: draft.userId }, pair: { language: "en", targetLanguage: "ja" } }],
+      { experimental_hook: { token: "level-test-bank:en:ja" } },
+    );
 
     expect(getStreamedEvents().at(-1)).toStrictEqual({
       entityId: draft.id,
@@ -367,23 +368,6 @@ describe(goalUnderstandingWorkflow, () => {
 
     expect(getStreamedEvents()).toStrictEqual([
       { entityId: draft.id, status: "completed", step: "understandingReady" },
-    ]);
-  });
-
-  it("joins the run already reading the draft", async () => {
-    mockModels();
-    mockHookConflict({ returnValue: Promise.resolve(null), runId: "running-run" });
-    const draft = await createDraft();
-
-    await expect(goalUnderstandingWorkflow({ draftId: draft.id })).resolves.toStrictEqual({
-      draftId: draft.id,
-      status: "joined",
-    });
-
-    expect(understandGoal).not.toHaveBeenCalled();
-
-    expect(getStreamedEvents()).toStrictEqual([
-      { entityId: "running-run", status: "started", step: "joinRunningUnderstanding" },
     ]);
   });
 

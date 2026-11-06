@@ -170,13 +170,11 @@ describe(shortPlanPracticeWorkflow, () => {
   it("asks the bank's share of questions for every skill short of it", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 2 });
 
-    await expect(
-      shortPlanPracticeWorkflow({
-        analytics: context.analytics,
-        goalId: goal.id,
-        need: { questionsPerSkill: 6, skillIds },
-      }),
-    ).resolves.toStrictEqual({ status: "written" });
+    await shortPlanPracticeWorkflow({
+      analytics: context.analytics,
+      goalId: goal.id,
+      need: { questionsPerSkill: 6, skillIds },
+    });
 
     expect(
       vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params.quickCount),
@@ -409,6 +407,7 @@ describe(placementItemsWorkflow, () => {
             need: { questionsPerSkill: 8, skillIds },
           },
         ],
+        { experimental_hook: { token: `short-plan-practice:${goal.id}` } },
       ],
     ]);
   });

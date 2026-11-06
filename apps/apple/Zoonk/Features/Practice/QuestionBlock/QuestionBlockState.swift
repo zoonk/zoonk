@@ -13,8 +13,6 @@ enum QuestionBlockPhase: Equatable {
   case finishReady
   case finishing
 
-  var isAnswering: Bool { acceptsAnswer || checking != nil }
-
   var acceptsAnswer: Bool { self == .answering || self == .answerFailed }
 
   var checking: AnswerSender? {

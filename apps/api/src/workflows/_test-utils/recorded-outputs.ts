@@ -44,10 +44,6 @@ export function taskResult<T>(data: T, model = "openai/gpt-6-sol") {
   };
 }
 
-export function outlineResult<T>(data: T) {
-  return { ...taskResult(data), setAside: [] };
-}
-
 type StreamedOutline<Chapter> = { chapters: readonly Chapter[] };
 
 export function replayStreamedOutline<Chapter>(outline: StreamedOutline<Chapter>) {

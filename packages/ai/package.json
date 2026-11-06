@@ -10,6 +10,7 @@
     "./evaluate/timeout": "./src/evaluate/evaluation-timeout.ts",
     "./ai-generation-event": "./src/provenance/ai-generation-event.ts",
     "./ai-generation-sink": "./src/provenance/ai-generation-sink.ts",
+    "./billed-calls": "./src/provenance/billed-calls.ts",
     "./evaluation-run-sink": "./src/evaluate/evaluation-run-sink.ts",
     "./block-test-gateway-fetch": "./src/_utils/block-test-gateway-fetch.ts",
     "./gateway": "./src/gateway.ts",

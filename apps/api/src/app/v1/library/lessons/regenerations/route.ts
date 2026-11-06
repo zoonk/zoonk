@@ -2,10 +2,11 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { lessonRegenerationRequestSchema } from "@/lib/openapi/schemas/lesson-regenerations";
 import { readBody } from "@/lib/request-input";
+import { startOnce } from "@/workflows/_shared/run-token";
+import { getLessonContentHookToken } from "@/workflows/lessons/lesson-content-result";
 import { lessonContentWorkflow } from "@/workflows/lessons/lesson-content-workflow";
 import { pullLessonsForRegeneration } from "@zoonk/core/library/lessons/regenerate";
 import { type NextRequest, NextResponse } from "next/server";
-import { start } from "workflow/api";
 
 const ACCEPTED = 202;
 
@@ -32,7 +33,11 @@ async function createLessonRegeneration(request: NextRequest) {
 
   await Promise.all(
     result.lessonIds.map((lessonId) =>
-      start(lessonContentWorkflow, [{ forceReview: true, lessonId }]),
+      startOnce(
+        lessonContentWorkflow,
+        [{ forceReview: true, lessonId }],
+        getLessonContentHookToken(lessonId),
+      ),
     ),
   );
 

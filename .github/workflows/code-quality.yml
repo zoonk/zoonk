@@ -62,6 +62,9 @@ jobs:
       - name: Check generated OpenAPI artifact
         run: pnpm openapi:check
 
+      - name: Check the agent rules Next.js and Turborepo write
+        run: pnpm agent-rules:check
+
       - name: Check for i18n errors
         run: pnpm i18n:lint
 

@@ -2,17 +2,17 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useEffect, useRef } from "react";
-import { useKeptTyping } from "../../use-kept-typing";
 
 export const GOAL_FIELD_TEXT_CLASS = "py-2.5 text-[17px] leading-6";
 
 const GOAL_FIELD = "goal";
 
 /**
- * The box is uncontrolled (`defaultValue`, with `field` spread on it), so a tap before the form's
- * code arrived is sent once it has, with what was typed.
+ * The box is uncontrolled (`defaultValue`), so a tap before the form's code arrived is sent once it
+ * has, with what was typed.
  */
 export function useGoalFieldAction({
   canSendEmpty = false,
@@ -113,13 +113,7 @@ export function GoalFieldText({
   const ownRef = useRef<HTMLTextAreaElement>(null);
   const fieldRef = ref ?? ownRef;
 
-  const kept = useKeptTyping((typed) => {
-    const field = fieldRef.current;
-
-    if (field && field.value !== typed) {
-      field.value = typed;
-    }
-  });
+  const kept = useKeptTyping(props);
 
   useEffect(() => {
     const field = fieldRef.current;
@@ -166,8 +160,7 @@ export function GoalFieldText({
       ref={fieldRef}
       rows={1}
       {...props}
-      {...kept.field}
-      defaultValue={kept.typed ?? props.defaultValue}
+      {...kept}
     />
   );
 }

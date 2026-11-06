@@ -4,8 +4,6 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createHook } from "workflow";
-import { mockHookConflict } from "../../../mocks/workflow";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { taskResult } from "../_test-utils/recorded-outputs";
 import { challengeQuestionsWorkflow } from "./challenge-questions-workflow";
@@ -81,10 +79,6 @@ describe(challengeQuestionsWorkflow, () => {
       }),
     ).resolves.toStrictEqual({ status: "written" });
 
-    expect(vi.mocked(createHook)).toHaveBeenCalledWith({
-      token: "challenge-questions:phase-skills",
-    });
-
     expect(generatePlacementItems).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         quickCount: 2,
@@ -120,26 +114,6 @@ describe(challengeQuestionsWorkflow, () => {
     expect(streamedSteps()).toStrictEqual([
       "writeChallengeQuestions:started",
       "workflowError:error",
-    ]);
-  });
-
-  it("joins the run already writing the same skills' questions", async () => {
-    mockHookConflict({ returnValue: Promise.resolve(null), runId: "writing-run" });
-
-    await expect(
-      challengeQuestionsWorkflow({
-        goalId: "goal-id",
-        key: "phase-skills",
-        later: false,
-        quickFormat: "multipleChoice",
-        writes: [{ questionsPerSkill: 3, skillIds: ["skill-id"], target: 3 }],
-      }),
-    ).resolves.toStrictEqual({ status: "joined" });
-
-    expect(generatePlacementItems).not.toHaveBeenCalled();
-
-    expect(getStreamedEvents()).toStrictEqual([
-      { entityId: "writing-run", status: "started", step: "joinChallengeQuestions" },
     ]);
   });
 });

@@ -283,18 +283,6 @@ internal fun announcedSeconds(
         else -> announced
     }
 
-/** "I've read it. Show the answers", a read-carefully drill's main action before its options show. */
-@Composable
-fun ShowAnswersButton(
-    onReveal: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Button(onClick = onReveal, modifier = modifier) {
-        Icon(painterResource(R.drawable.ic_visibility), contentDescription = null, modifier = Modifier.padding(end = 8.dp).size(18.dp))
-        Text(stringResource(R.string.questions_drill_show_answers))
-    }
-}
-
 /** A no-guessing drill's "I'm not sure", or "I don't know yet" elsewhere: quieter than Check, as main's. */
 @Composable
 fun NotSureButton(

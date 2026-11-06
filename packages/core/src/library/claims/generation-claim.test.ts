@@ -1,12 +1,17 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
 import { describe, expect, it } from "vitest";
+import { holdPlanLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
+import { placeChapterLessons } from "../lessons/place-chapter-lessons";
 import { claimLibraryGeneration, finishLibraryGeneration } from "./generation-claim";
 
 describe(claimLibraryGeneration, () => {
@@ -60,6 +65,67 @@ describe(claimLibraryGeneration, () => {
     await expect(prisma.step.findUniqueOrThrow({ where: { id: step.id } })).resolves.toMatchObject({
       retiredAt: expect.any(Date),
     });
+  });
+
+  it("takes a pulled lesson's questions out of the bank when a new run claims its content", async () => {
+    const [lesson, skill] = await Promise.all([
+      libraryLessonFixture({ contentStatus: "failed" }),
+      skillFixture(),
+    ]);
+
+    const [asked, bank] = await Promise.all([
+      itemFixture({ skillId: skill.id }),
+      itemFixture({ skillId: skill.id }),
+    ]);
+
+    await libraryStepFixture({ itemId: asked.id, kind: "check", lessonId: lesson.id });
+
+    await claimLibraryGeneration({
+      id: lesson.id,
+      target: "lessonContent",
+      workflowRunId: randomUUID(),
+    });
+
+    await expect(
+      prisma.item.findMany({ select: { id: true }, where: { retiredAt: null, skillId: skill.id } }),
+    ).resolves.toStrictEqual([{ id: bank.id }]);
+  });
+
+  it("claims a pulled lesson while its chapter places it, both waiting on the same plan", async () => {
+    const [lesson, skill, chapter, user] = await Promise.all([
+      libraryLessonFixture({ contentStatus: "failed" }),
+      skillFixture(),
+      libraryChapterFixture(),
+      userFixture(),
+    ]);
+
+    const question = await itemFixture({ skillId: skill.id });
+    const goal = await goalFixture({ userId: user.id });
+
+    const [plan] = await Promise.all([
+      planFixture({ goalId: goal.id, sourceSkillIds: [skill.id] }),
+      lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
+      libraryStepFixture({ itemId: question.id, kind: "check", lessonId: lesson.id }),
+    ]);
+
+    const lock = holdPlanLock({ planId: plan.id });
+    const pid = await lock.pid;
+    const placing = placeChapterLessons({ chapterId: chapter.id, lessonIds: [lesson.id] });
+    const claim = { id: lesson.id, target: "lessonContent" as const, workflowRunId: randomUUID() };
+
+    const claiming = waitForBlockedStatement(pid, /FOR UPDATE OF plan/u).then(() =>
+      claimLibraryGeneration(claim),
+    );
+
+    try {
+      await waitForBlockedStatement(pid, /FOR UPDATE OF plan/u, 2);
+    } finally {
+      lock.release();
+      await lock.done;
+    }
+
+    const settled = await Promise.allSettled([placing, claiming]);
+    expect(settled.map((outcome) => outcome.status)).toStrictEqual(["fulfilled", "fulfilled"]);
   });
 
   it("claims the outline of a course made before outlines existed", async () => {

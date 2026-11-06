@@ -11,7 +11,7 @@ import { issueEarnedCertificates } from "../certificate-issuance";
 import { getCheckoutSessionParams } from "./checkout-session-params";
 import { stripeClient } from "./client";
 import { endWebPlusBesideStorePlus } from "./settle-web-plus";
-import { saveSubscription } from "./stop-web-plus";
+import { isPendingCancel, saveSubscription } from "./stop-web-plus";
 import { reportSubscriptionChange } from "./subscription-events";
 import type Stripe from "stripe";
 
@@ -132,14 +132,16 @@ const settleReturnedCheckout = createAuthMiddleware(async (context) => {
   }
 });
 
-async function settleEndedSubscriptions(event: Stripe.Event) {
+async function settleSubscriptions(event: Stripe.Event) {
   if (event.type === "customer.subscription.deleted") {
     await saveSubscription(event.data.object);
     return;
   }
 
+  // Stripe delivers events in any order and retries a failed one for days, and Better Auth saves
+  // each update's snapshot even when it's older than our copy (better-auth/better-auth#12255).
   if (event.type === "customer.subscription.updated") {
-    await saveIfEnded(await stripeClient.subscriptions.retrieve(event.data.object.id));
+    await saveSubscription(await stripeClient.subscriptions.retrieve(event.data.object.id));
     return;
   }
 
@@ -164,12 +166,13 @@ async function settleEndedSubscriptions(event: Stripe.Event) {
 
 /**
  * Runs after Better Auth's own handling of each event. Unlike its callbacks, a failure here fails
- * the webhook, so Stripe delivers it again: until the learner holds one Plus, until a subscription
- * Stripe ended is saved, since Better Auth only logs a failed save and our copy would go on giving
- * Plus, and until a grant has issued the learner's certificates.
+ * the webhook, so Stripe delivers it again: until the learner holds one Plus, until our copy of an
+ * updated or ended subscription matches Stripe's, since Better Auth only logs a failed save and our
+ * copy would go on giving Plus or withholding it, and until a grant has issued the learner's
+ * certificates.
  */
 async function onStripeEvent(event: Stripe.Event) {
-  await settleEndedSubscriptions(event);
+  await settleSubscriptions(event);
   const granted = await findGrantedLearner(event);
 
   if (granted) {
@@ -193,8 +196,16 @@ export function stripePlugin() {
         return { params: await getCheckoutSessionParams({ annual: annual === true, locale }) };
       },
       // Canceling keeps Plus until the period ends, so the decision counts when it becomes
-      // pending; a subscription ended right away (or by failed payments) was never pending.
-      onSubscriptionCancel: ({ subscription }) => reportChange("canceled", subscription),
+      // pending; a subscription ended right away (or by failed payments) was never pending. Better
+      // Auth decides from the event's snapshot, which a late delivery brings after the learner
+      // kept Plus and Zoonk already counted their cancel.
+      onSubscriptionCancel: async ({ stripeSubscription, subscription }) => {
+        const live = await stripeClient.subscriptions.retrieve(stripeSubscription.id);
+
+        if (isPendingCancel(live)) {
+          await reportChange("canceled", subscription);
+        }
+      },
       onSubscriptionComplete: ({ subscription }) => reportChange("started", subscription),
       onSubscriptionDeleted: async ({ subscription }) => {
         if (!subscription.cancelAtPeriodEnd && !subscription.cancelAt) {

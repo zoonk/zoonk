@@ -1,5 +1,6 @@
 import { useMathMarkup } from "#math-renderer";
 import { Suspense } from "react";
+import { DisplayMath } from "./display-math";
 import { speakMath } from "./math-speech";
 import { MathMarkupView } from "./spoken-math";
 import { useMathWords } from "./use-spoken-text";
@@ -15,15 +16,11 @@ export type RichInlineSegment = (
 
 type MathSegment = Extract<RichInlineSegment, { kind: "displayMath" | "math" }>;
 
-function mathClassName(segment: MathSegment) {
-  return segment.kind === "displayMath" ? "my-3 block overflow-x-auto" : undefined;
-}
-
 function MathSource({ segment }: { segment: MathSegment }) {
   const words = useMathWords();
 
   return (
-    <span className={mathClassName(segment)}>
+    <span>
       <span aria-hidden="true">{segment.text}</span>
       <span className="sr-only">{speakMath({ latex: segment.text, words })}</span>
     </span>
@@ -38,13 +35,7 @@ function MathView({ segment }: { segment: MathSegment }) {
     return <MathSource segment={segment} />;
   }
 
-  return (
-    <MathMarkupView
-      className={mathClassName(segment)}
-      markup={markup}
-      words={speakMath({ latex: segment.text, words })}
-    />
-  );
+  return <MathMarkupView markup={markup} words={speakMath({ latex: segment.text, words })} />;
 }
 
 function RichInlineSegmentView({ segment }: { segment: RichInlineSegment }) {
@@ -66,11 +57,13 @@ function RichInlineSegmentView({ segment }: { segment: RichInlineSegment }) {
 
   if (segment.kind === "math" || segment.kind === "displayMath") {
     // Its own boundary, so hydration keeps the server's drawing while KaTeX loads.
-    return (
+    const formula = (
       <Suspense fallback={<MathSource segment={segment} />}>
         <MathView segment={segment} />
       </Suspense>
     );
+
+    return segment.kind === "displayMath" ? <DisplayMath>{formula}</DisplayMath> : formula;
   }
 
   return <span>{segment.text}</span>;

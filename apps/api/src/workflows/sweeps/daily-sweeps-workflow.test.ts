@@ -4,22 +4,28 @@ import { prisma } from "@zoonk/db";
 import { evaluationRunFixture } from "@zoonk/testing/fixtures/evaluation-runs";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { assert, describe, expect, it } from "vitest";
 import { start } from "workflow/api";
+import { mockHookConflict } from "../../../mocks/workflow";
 import { getStartMock } from "../_test-utils/start-mock";
 import { followUpsWorkflow } from "../follow-ups/follow-ups-workflow";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
+import { pictureChecksWorkflow } from "../images/picture-checks-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import { dailySweepsWorkflow } from "./daily-sweeps-workflow";
 
 const DAY_MS = 86_400_000;
 const LEARNERS_TO_RECALIBRATE = 20;
+
+function scheduledRun() {
+  return { executionId: randomUUID() };
+}
 
 function verificationFixture(expiresAt: Date) {
   return prisma.verification.create({
@@ -99,7 +105,8 @@ describe(dailySweepsWorkflow, () => {
       }),
     ]);
 
-    const result = await dailySweepsWorkflow();
+    const result = await dailySweepsWorkflow(scheduledRun());
+    assert(result.status === "swept");
 
     expect(result.sessionsPurged).toBeGreaterThanOrEqual(1);
     expect(result.accessRecordsPurged).toBeGreaterThanOrEqual(1);
@@ -156,11 +163,40 @@ describe(dailySweepsWorkflow, () => {
       ],
     });
 
-    const result = await dailySweepsWorkflow();
+    const result = await dailySweepsWorkflow(scheduledRun());
+    assert(result.status === "swept");
 
-    expect(start).toHaveBeenCalledWith(followUpsWorkflow, [{ userId: waiting.id }]);
-    expect(start).not.toHaveBeenCalledWith(followUpsWorkflow, [{ userId: recent.id }]);
+    expect(start).toHaveBeenCalledWith(followUpsWorkflow, [{ userId: waiting.id }], {
+      experimental_hook: { token: `follow-ups:${waiting.id}` },
+    });
+
+    expect(start).not.toHaveBeenCalledWith(
+      followUpsWorkflow,
+      [{ userId: recent.id }],
+      expect.anything(),
+    );
+
     expect(result.followUpsStarted).toBeGreaterThanOrEqual(1);
+  });
+
+  it("starts the check of pictures still owing one, such as a picture whose storing step failed before starting it", async () => {
+    const [owed, checked] = await Promise.all([
+      // The sweep takes the longest-owed first, so other tests' owed pictures can't push this one out
+      // of its batch.
+      mediaAssetFixture({ checkOwedAt: new Date(Date.now() - 30 * DAY_MS) }),
+      mediaAssetFixture({ checkOwedAt: null }),
+    ]);
+
+    const result = await dailySweepsWorkflow(scheduledRun());
+    assert(result.status === "swept");
+
+    const started = getStartMock()
+      .mock.calls.filter(([workflow]) => workflow === pictureChecksWorkflow)
+      .flatMap(([, args]) => (args as [{ assetIds: string[] }])[0].assetIds);
+
+    expect(started).toContain(owed.id);
+    expect(started).not.toContain(checked.id);
+    expect(result.pictureChecks).toBe(started.length);
   });
 
   it("starts the rewrite of what a changed source left flagged", async () => {
@@ -185,9 +221,38 @@ describe(dailySweepsWorkflow, () => {
       sourceId: law.id,
     });
 
-    await expect(dailySweepsWorkflow()).resolves.toMatchObject({ flaggedContentStarted: true });
+    await expect(dailySweepsWorkflow(scheduledRun())).resolves.toMatchObject({
+      flaggedContentStarted: true,
+    });
 
     expect(start).toHaveBeenCalledWith(flaggedContentWorkflow, [{}]);
+  });
+
+  it("starts nothing when another delivery of the same scheduled run already took it", async () => {
+    const executionId = randomUUID();
+
+    await examBlueprintFixture({ nextCheckAt: new Date(Date.now() + DAY_MS - 60_000) });
+
+    mockHookConflict(
+      { returnValue: Promise.resolve(null), runId: "first-delivery" },
+      { tokens: new RegExp(`^daily-sweeps:${executionId}$`, "u") },
+    );
+
+    await expect(dailySweepsWorkflow({ executionId })).resolves.toStrictEqual({
+      runId: "first-delivery",
+      status: "alreadyRan",
+    });
+
+    expect(start).not.toHaveBeenCalled();
+  });
+
+  it("sweeps the next scheduled run while the one before still holds its own", async () => {
+    mockHookConflict(
+      { returnValue: Promise.resolve(null), runId: "yesterdays-sweep" },
+      { tokens: /^daily-sweeps:yesterdays-execution$/u },
+    );
+
+    await expect(dailySweepsWorkflow(scheduledRun())).resolves.toMatchObject({ status: "swept" });
   });
 
   it("counts a sweep that failed as nothing and still runs the others", async () => {
@@ -206,7 +271,8 @@ describe(dailySweepsWorkflow, () => {
       return { runId: "started-run" } as Awaited<ReturnType<typeof start>>;
     });
 
-    const result = await dailySweepsWorkflow();
+    const result = await dailySweepsWorkflow(scheduledRun());
+    assert(result.status === "swept");
 
     expect(start).toHaveBeenCalledWith(freshnessWorkflow, [
       { examBlueprintId: exam.id, kind: "exam" },

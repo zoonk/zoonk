@@ -3,6 +3,7 @@
   "modelId": "openai/gpt-image-2.5-flare",
   "outputs": [
     {
+      "images": 1,
       "inputTokens": 207,
       "outputTokens": 196,
       "duration": 9468.784249999999,
@@ -12,6 +13,7 @@
       "userPrompt": "Create a minimalist 3D app-style icon representing a topic.\n\nIMPORTANT:\n\n- Use exactly ONE single object only.\n- Do NOT combine multiple objects.\n- Do NOT create a scene.\n- Do NOT add supporting elements.\n- Do NOT repeat symbols.\n- No stacked objects.\n- No background props.\n\nThe icon must:\n\n- Be centered\n- Have a strong, clean silhouette\n- Be instantly recognizable\n- Feel like a standalone app icon\n- Use smooth matte 3D material\n- Use 2–4 colors maximum\n- Have soft realistic lighting\n- Have a subtle shadow underneath\n- Be isolated on a white background\n- Square format (1:1)\n\nChoose ONE simple metaphor object that best represents the topic. If more than one object is generated, the image is incorrect.\n\nCONTENT TO REPRESENT:\nTOPIC: Immunology\nCONTEXT: Immunology is how the body tells friend from foe. The course covers germs, antibodies, memory cells and how vaccines train the immune system.\n"
     },
     {
+      "images": 1,
       "inputTokens": 206,
       "outputTokens": 196,
       "duration": 8112.910209000001,
@@ -21,6 +23,7 @@
       "userPrompt": "Create a minimalist 3D app-style icon representing a topic.\n\nIMPORTANT:\n\n- Use exactly ONE single object only.\n- Do NOT combine multiple objects.\n- Do NOT create a scene.\n- Do NOT add supporting elements.\n- Do NOT repeat symbols.\n- No stacked objects.\n- No background props.\n\nThe icon must:\n\n- Be centered\n- Have a strong, clean silhouette\n- Be instantly recognizable\n- Feel like a standalone app icon\n- Use smooth matte 3D material\n- Use 2–4 colors maximum\n- Have soft realistic lighting\n- Have a subtle shadow underneath\n- Be isolated on a white background\n- Square format (1:1)\n\nChoose ONE simple metaphor object that best represents the topic. If more than one object is generated, the image is incorrect.\n\nCONTENT TO REPRESENT:\nTOPIC: Economia\nCONTEXT: Economia estuda como pessoas, empresas e governos fazem escolhas com recursos escassos: preços, juros, inflação e o papel do governo.\n"
     },
     {
+      "images": 1,
       "inputTokens": 202,
       "outputTokens": 196,
       "duration": 9252.785625,

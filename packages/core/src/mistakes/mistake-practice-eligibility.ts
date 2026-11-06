@@ -2,7 +2,7 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { listDrillableMistakes } from "../exams/listening/listening-skills";
 import { GRADABLE_ITEM_FORMATS } from "../learner/_utils/choice-items";
-import { getGoalField, getItemAudienceFilter } from "../library/items/item-field";
+import { IN_BANK, getGoalField, getItemAudienceFilter } from "../library/items/item-field";
 
 export type PracticeMistake = { createdAt: Date; id: string; skillId: string | null };
 
@@ -61,7 +61,7 @@ export async function filterMistakesWithPracticeMaterial<
     ownItemIds.length > 0
       ? await prisma.item.findMany({
           select: { id: true, skillId: true },
-          where: { format: { in: formats }, id: { in: ownItemIds } },
+          where: { ...IN_BANK, format: { in: formats }, id: { in: ownItemIds } },
         })
       : [];
 

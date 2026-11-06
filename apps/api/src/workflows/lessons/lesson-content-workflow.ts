@@ -4,18 +4,14 @@ import { LESSON_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { type PlanGenerationManifest } from "@zoonk/core/lookahead/speculative-lessons";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata, sleep } from "workflow";
-import { type Run, start } from "workflow/api";
+import { start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { deliverCourseContent } from "../_shared/course-content-notification";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
-import { claimRunToken, joinRun } from "../_shared/run-token";
+import { claimRunToken } from "../_shared/run-token";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
-import {
-  type LessonContentResult,
-  getLessonContentHookToken,
-  lessonContentResultSchema,
-} from "./lesson-content-result";
+import { type LessonContentResult, getLessonContentHookToken } from "./lesson-content-result";
 import { markAndDraw } from "./mark-and-draw";
 import { admitLessonContentStep, claimLessonContentStep } from "./steps/claim-lesson-content-step";
 import { failLessonContentStep } from "./steps/fail-lesson-content-step";
@@ -67,19 +63,6 @@ async function finish({ lessonId, status }: LessonContentResult): Promise<Lesson
   );
 
   return { lessonId, status };
-}
-
-async function joinRunningLesson({
-  lessonId,
-  run,
-}: {
-  lessonId: string;
-  run: Run<unknown>;
-}): Promise<LessonContentResult> {
-  await lessonProgressStep({ entityId: run.runId, status: "started", step: "joinRunningLesson" });
-
-  const joined = lessonContentResultSchema.safeParse(await joinRun(run));
-  return finish(joined.success ? joined.data : { lessonId, status: "missing" });
 }
 
 async function waitForOwner(lessonId: string) {
@@ -251,8 +234,9 @@ export async function lessonContentWorkflow(
   const { workflowRunId } = getWorkflowMetadata();
   const { conflict } = await claimRunToken(getLessonContentHookToken(lessonId));
 
+  // Only a plan's run meets a holder here, and nothing follows its stream.
   if (conflict) {
-    return joinRunningLesson({ lessonId, run: conflict });
+    return { lessonId, status: "busy" };
   }
 
   const claim = await claimLessonContentStep({ lessonId, workflowRunId });
