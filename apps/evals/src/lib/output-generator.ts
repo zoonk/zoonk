@@ -59,17 +59,13 @@ async function generateOutputForTestCase({
   const result = await runTask(input as never);
   const duration = performance.now() - startTime;
 
-  const extraCalls = [
-    ...(result.extraCalls ?? []),
-    ...(result.setAside ?? []).map((call) => toModelCall(call)),
-  ];
-
   return {
     ...toTokenUsage(result.usage),
     duration,
-    extraCalls: extraCalls.length > 0 ? extraCalls : undefined,
+    extraCalls: result.extraCalls,
     output: JSON.stringify(result.data, null, 2),
     probabilities: result.probabilities,
+    setAside: result.setAside?.map((call) => toModelCall(call)),
     systemPrompt: result.systemPrompt,
     testCaseId: getTestCaseRunId({ runNumber, testCaseId: testCase.id }),
     userPrompt: result.userPrompt,

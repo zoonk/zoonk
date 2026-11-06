@@ -98,7 +98,7 @@ type TaskResult<T = unknown> = {
   data: T;
   usage: TaskUsage;
   extraCalls?: ModelCall[];
-  /** Drafts a task wrote and didn't keep; their calls count with `extraCalls`. */
+  /** Drafts a task wrote and didn't keep: part of what the run cost, unlike `extraCalls`. */
   setAside?: readonly CallProvenance[];
   userPrompt: string;
   systemPrompt: string;
@@ -171,6 +171,7 @@ export type EvalResult = TokenUsage & {
   testCase: TestCase;
   output: string;
   extraCalls?: ModelCall[];
+  setAside?: ModelCall[];
   steps: Score["steps"];
   categoryScores?: CategoryScore[];
   classification?: ClassificationOutcome;
@@ -211,6 +212,7 @@ export type OutputEntry = TokenUsage & {
   testCaseId: string;
   output: string;
   extraCalls?: ModelCall[];
+  setAside?: ModelCall[];
   duration: number;
   systemPrompt: string;
   userPrompt: string;
