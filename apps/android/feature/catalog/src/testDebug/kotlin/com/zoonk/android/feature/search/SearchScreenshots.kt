@@ -16,7 +16,7 @@ import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.unit.Dp
@@ -140,7 +140,8 @@ class SearchScreenshots {
 
     private fun write(name: String) {
         compose.waitForIdle()
-        val bitmap = compose.onRoot().captureRender().asAndroidBitmap()
+        // The open search draws in its own window over the page's.
+        val bitmap = compose.onAllNodes(isRoot()).onLast().captureRender().asAndroidBitmap()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
         file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
