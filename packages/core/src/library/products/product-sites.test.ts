@@ -224,6 +224,16 @@ describe(isOfficialPage, () => {
     expect(isOfficialPage({ sites, url: `${repository}/wiki/Releases` })).toBe(false);
   });
 
+  it.each(["issues/123", "discussions/7", "pull/5", "-/merge_requests/3", "wiki/Releases"])(
+    "refuses a %s page even when the product page links straight to it",
+    (path) => {
+      const link = `https://code.example/lumen/orbit/${path}`;
+      const linked = { ...sites, product: { ...sites.product, links: [link] } };
+
+      expect(isOfficialPage({ sites: linked, url: link })).toBe(false);
+    },
+  );
+
   it("accepts a release under a stored releases page", () => {
     const stored = {
       ...sites,
