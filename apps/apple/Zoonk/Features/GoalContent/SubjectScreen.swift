@@ -90,7 +90,10 @@ struct SubjectScreen: View {
 
 private struct SubjectContent: View {
   @Environment(AppRouter.self) private var router
+  // Above the panes, so a fold or a resize that rebuilds them keeps what the learner opened.
   @State private var showsAllChapters = false
+  @State private var showsDoneChapters = false
+  @State private var openTopics: Set<SyllabusSubject.Topic.ID> = []
 
   let goal: LearnerGoal
   let syllabus: GoalSyllabus
@@ -233,7 +236,7 @@ private struct SubjectContent: View {
   @ViewBuilder
   private var topics: some View {
     if !subject.topics.isEmpty {
-      SubjectTopicsSection(goal: goal, syllabus: syllabus, subject: subject)
+      SubjectTopicsSection(goal: goal, syllabus: syllabus, subject: subject, open: $openTopics)
     }
   }
 
@@ -249,7 +252,7 @@ private struct SubjectContent: View {
     if !chapters.isEmpty {
       Section {
         if !done.isEmpty {
-          SubjectDoneChapters(goal: goal, chapters: done)
+          SubjectDoneChapters(goal: goal, chapters: done, isExpanded: $showsDoneChapters)
         }
 
         ForEach(shown) { chapter in
@@ -418,9 +421,10 @@ private struct SubjectPreparation: View {
 private struct SubjectDoneChapters: View {
   let goal: LearnerGoal
   let chapters: [SyllabusSubject.Chapter]
+  @Binding var isExpanded: Bool
 
   var body: some View {
-    DisclosureGroup {
+    DisclosureGroup(isExpanded: $isExpanded) {
       ForEach(chapters) { chapter in
         SubjectChapterRow(goal: goal, chapter: chapter)
       }
@@ -462,6 +466,7 @@ private struct SubjectTopicsSection: View {
   let goal: LearnerGoal
   let syllabus: GoalSyllabus
   let subject: SyllabusSubject
+  @Binding var open: Set<SyllabusSubject.Topic.ID>
 
   var body: some View {
     let headings = subject.topics.reduce(into: [String?]()) { headings, topic in
@@ -473,7 +478,13 @@ private struct SubjectTopicsSection: View {
     ForEach(Array(headings.enumerated()), id: \.offset) { index, heading in
       Section {
         ForEach(subject.topics.filter { $0.heading == heading }) { topic in
-          SubjectTopicRow(goal: goal, topic: topic)
+          SubjectTopicRow(
+            goal: goal, topic: topic,
+            isExpanded: Binding {
+              open.contains(topic.id)
+            } set: { isOpen in
+              if isOpen { open.insert(topic.id) } else { open.remove(topic.id) }
+            })
         }
       } header: {
         if index == 0 {
@@ -519,12 +530,13 @@ private struct SubjectTopicsSection: View {
 private struct SubjectTopicRow: View {
   let goal: LearnerGoal
   let topic: SyllabusSubject.Topic
+  @Binding var isExpanded: Bool
 
   var body: some View {
     if topic.chapters.isEmpty {
       label
     } else {
-      DisclosureGroup {
+      DisclosureGroup(isExpanded: $isExpanded) {
         ForEach(topic.chapters) { chapter in
           if let chapterId = chapter.chapterId {
             NavigationLink(
