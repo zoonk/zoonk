@@ -1,29 +1,29 @@
 import { type LessonScreen, type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import {
+  type LessonMap,
   type WrittenLesson,
   type WrittenScreen,
   getWrittenKinds,
 } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { type CourseLevel } from "@zoonk/db";
 import { removeMarkdownTables } from "@zoonk/utils/markdown-table";
-import { normalizeString } from "@zoonk/utils/string";
 import { findOptionPositionReferences } from "../_utils/answer-options";
-import { safeParseStepContent } from "../steps/contract/step-contract";
 import { type ConvertedScreen, toStepContent } from "../steps/written-screens";
 import { findArithmeticErrors } from "./_utils/arithmetic";
+import { getLessonMapProblems } from "./_utils/lesson-map-checks";
 import { findLessonPhrases } from "./_utils/lesson-phrases";
-import { findLongSentences, getMaxExplanationCharacters } from "./_utils/reading-level";
+import { findLongSentences } from "./_utils/reading-level";
 import { type RepeatedExample, findRepeatedExamples } from "./_utils/repeated-examples";
 import { findRepeatedQuestions } from "./_utils/repeated-questions";
 import { findAnswerFlaws, findTextFlaws } from "./_utils/screen-flaws";
+import { findOverweightTexts } from "./_utils/screen-length";
 import { getScreenTexts } from "./_utils/screen-texts";
 import { canHaveImage, getScreenVisualProblems } from "./_utils/screen-visuals";
 import { findTermsUsedBeforeExplained } from "./_utils/term-order";
-
-const MAX_SUMMARY_SENTENCES = 2;
-const SENTENCE_END = /[.!?…](?:\s|$)/gu;
+import { type LessonFlowCheckCode, checkLessonFlow } from "./lesson-flow-checks";
 
 type LessonCheckCode =
+  | LessonFlowCheckCode
   | "activityProgram"
   | "activityTemplate"
   | "answerKey"
@@ -41,7 +41,6 @@ type LessonCheckCode =
   | "repeatedQuestion"
   | "screenCount"
   | "screenKind"
-  | "screenLength"
   | "summary"
   | "termOrder"
   | "visual";
@@ -129,17 +128,7 @@ function getTextProblems({
     ];
   });
 
-  const maxCharacters = getMaxExplanationCharacters(level);
-
-  return [
-    ...textProblems,
-    screen.kind === "explanation" &&
-      removeMarkdownTables(screen.text).length > maxCharacters && {
-        code: "screenLength",
-        problem: `The text has ${removeMarkdownTables(screen.text).length} characters besides its tables; one screen holds one idea in under ${maxCharacters}. Cut words or keep only this screen's idea.`,
-      },
-    ...findAnswerFlaws({ language, screen }),
-  ];
+  return [...textProblems, ...findAnswerFlaws({ language, screen })];
 }
 
 export function checkScreenText(input: {
@@ -162,7 +151,7 @@ function checkScreen(input: ScreenCheckInput): {
   const converted = toStepContent(input.screen, { allowImage, language: input.language });
 
   const contentProblems: Problem[] = converted.ok
-    ? []
+    ? findOverweightTexts(converted).map((problem) => ({ code: "screenLength", problem }))
     : converted.problems.map((problem) => ({ code: "invalidContent", problem }));
 
   const problems = [
@@ -177,50 +166,6 @@ function checkScreen(input: ScreenCheckInput): {
     .map((problem) => ({ ...problem, screen: input.index }));
 
   return { converted, problems };
-}
-
-function countSentences(text: string): number {
-  return Math.max(1, [...text.matchAll(SENTENCE_END)].length);
-}
-
-function getSummaryProblems({
-  language,
-  summary,
-}: {
-  language: string;
-  summary: readonly string[];
-}): LessonCheckProblem[] {
-  const parsed = safeParseStepContent("summary", {
-    ideas: summary.map((text) => ({ text: text.trim() })),
-  });
-
-  const normalized = summary.map((idea) => normalizeString(idea));
-
-  const writing = summary.flatMap((idea) => findTextFlaws({ layout: "inline", text: idea }));
-
-  const problems: Problem[] = [
-    ...writing,
-    !parsed.success && {
-      code: "summary",
-      problem: `The summary card is invalid: ${parsed.error?.issues.map((issue) => issue.message).join("; ")}.`,
-    },
-    summary.some((idea) => countSentences(idea) > MAX_SUMMARY_SENTENCES) && {
-      code: "summary",
-      problem: "Each summary idea is one sentence.",
-    },
-    new Set(normalized).size !== normalized.length && {
-      code: "summary",
-      problem: "Two summary ideas say the same thing.",
-    },
-    summary.some((idea) => findLessonPhrases({ language, text: idea }).framing.length > 0) && {
-      code: "lessonFraming",
-      problem: "The summary talks about the lesson itself; state each idea directly.",
-    },
-  ];
-
-  return problems
-    .filter((problem) => problem !== false)
-    .map((problem) => ({ ...problem, screen: null }));
 }
 
 function getTermOrderProblems(lesson: WrittenLesson): LessonCheckProblem[] {
@@ -263,7 +208,7 @@ export function toReviewedLesson({
 }: {
   lesson: WrittenLesson;
   screens: readonly ConvertedScreen[];
-}): { screens: { content: unknown; kind: string }[]; summary: string[] } {
+}): { screens: { content: unknown; kind: string }[]; summary: LessonMap } {
   return {
     screens: lesson.screens.map((written, index) => {
       const converted = screens[index];
@@ -315,10 +260,13 @@ export function checkWrittenLesson({
           },
         ];
 
+  const screens = checked.map((result) => result.converted);
+
   return {
     problems: [
       ...countProblem,
       ...checked.flatMap((result) => result.problems),
+      ...checkLessonFlow({ lesson, screens, spec }),
       ...getTermOrderProblems(lesson),
       ...getRepeatProblems({
         chapterLessons,
@@ -328,8 +276,8 @@ export function checkWrittenLesson({
         spec,
       }),
       ...getRepeatedQuestionProblems(lesson.screens),
-      ...getSummaryProblems({ language, summary: lesson.summary }),
+      ...getLessonMapProblems({ language, map: lesson.summary }),
     ],
-    screens: checked.map((result) => result.converted),
+    screens,
   };
 }

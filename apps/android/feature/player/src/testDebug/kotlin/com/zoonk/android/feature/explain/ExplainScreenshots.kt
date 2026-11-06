@@ -67,7 +67,7 @@ private const val RECAP =
        "So blue reaches your eyes from every direction."]"""
 private const val LESSON =
     """{"id":"$LESSON_ID","title":"Why is the sky blue?","description":"Light and air.","estimatedMinutes":5,"language":"en",
-       "level":"overview","skills":[],"steps":[],"summaryIdeas":[],"targetLanguage":null,"canDo":null,"chapter":null}"""
+       "level":"overview","skills":[],"steps":[],"summary":null,"targetLanguage":null,"canDo":null,"chapter":null}"""
 
 private fun explanation(
     outline: String = "[]",

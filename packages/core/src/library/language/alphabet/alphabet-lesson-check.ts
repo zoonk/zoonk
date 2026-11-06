@@ -38,7 +38,10 @@ export function toAlphabetLessonCheck({
     chapterTitle: lesson.title,
     courseTitle: getLanguageName({ targetLanguage, userLanguage: "en" }),
     language: learnerLanguage,
-    lesson: { screens: listAlphabetScreens(lesson), summary: lesson.summary },
+    lesson: {
+      screens: listAlphabetScreens(lesson),
+      summary: { ideas: lesson.summary.map((text) => ({ text })), shape: "hub" },
+    },
     level: "beginner",
     spec: {
       canDo: lesson.canDo,
@@ -46,7 +49,6 @@ export function toAlphabetLessonCheck({
       estimatedMinutes: ALPHABET_LESSON_MINUTES,
       screens: [],
       skills: [],
-      supportMode: "explanationFirst",
       title: lesson.title,
     },
   };

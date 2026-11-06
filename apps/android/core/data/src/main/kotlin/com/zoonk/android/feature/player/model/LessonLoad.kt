@@ -6,6 +6,7 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ActivityBaseMap
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.ExplanationLesson
+import com.zoonk.api.models.LessonMap
 import com.zoonk.api.models.LessonTutorSuggestion
 import com.zoonk.api.models.PlayableLibraryLessonResponse
 import com.zoonk.api.models.PlayableLibraryLessonResponseOneOf1Lesson
@@ -19,6 +20,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOf9Exercise
 import com.zoonk.api.models.PlayableLibraryStepAnyOfImage
 import com.zoonk.api.models.PlayableLibraryStepAnyOfOptionPicturesValue
 import com.zoonk.api.models.ScreenPicture
+import com.zoonk.api.models.StepMarks
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -61,7 +63,7 @@ data class PlayableLesson(
     val targetLanguage: String?,
     val chapterId: String?,
     val steps: List<LessonStep>,
-    val summaryIdeas: List<String>,
+    val map: LessonMap?,
     val tutorSuggestions: List<LessonTutorSuggestion>,
 )
 
@@ -79,7 +81,7 @@ fun PlayableLibraryLessonResponse.toLessonLoad(): LessonLoad =
                     targetLanguage = lesson.targetLanguage,
                     chapterId = lesson.chapter?.id?.toString(),
                     steps = lesson.steps.map(PlayableLibraryStep::toLessonStep),
-                    summaryIdeas = lesson.summaryIdeas,
+                    map = lesson.summary.withIdeas(),
                     tutorSuggestions = value.tutorSuggestions,
                 ),
             )
@@ -105,9 +107,11 @@ fun ExplanationLesson.toPlayableLesson(): PlayableLesson =
         targetLanguage = targetLanguage,
         chapterId = chapter?.id?.toString(),
         steps = steps.map(PlayableLibraryStep::toLessonStep),
-        summaryIdeas = summaryIdeas,
+        map = summary.withIdeas(),
         tutorSuggestions = emptyList(),
     )
+
+private fun LessonMap?.withIdeas() = this?.takeIf { it.ideas.isNotEmpty() }
 
 private fun PlayableLibraryLessonResponseOneOf1Lesson.toOutline() =
     LessonOutline(id = id.toString(), title = title, description = description, estimatedMinutes = estimatedMinutes)
@@ -127,6 +131,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation = citation,
                     picture = picture,
                     position = position.toInt(),
+                    marks = marks,
                 )
             }
         }
@@ -144,6 +149,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation,
                     picture,
                     position.toInt(),
+                    marks,
                 )
             }
         }
@@ -161,6 +167,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation,
                     picture,
                     position.toInt(),
+                    marks,
                 )
             }
         }
@@ -178,6 +185,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation,
                     picture,
                     position.toInt(),
+                    marks,
                 )
             }
         }
@@ -200,6 +208,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation,
                     picture,
                     position.toInt(),
+                    marks,
                 )
             }
         }
@@ -217,6 +226,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation,
                     picture,
                     position.toInt(),
+                    marks,
                 )
             }
         }
@@ -234,6 +244,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation,
                     picture,
                     position.toInt(),
+                    marks,
                 )
             }
         }
@@ -251,6 +262,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation,
                     picture,
                     position.toInt(),
+                    marks,
                 )
             }
         }
@@ -268,6 +280,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation,
                     picture,
                     position.toInt(),
+                    marks,
                 )
             }
         }
@@ -296,6 +309,7 @@ private fun teaching(
     citation: StepCitation?,
     picture: ScreenPicture?,
     position: Int,
+    marks: StepMarks?,
 ) = LessonStep(
     id = id,
     skillId = skillId,
@@ -310,6 +324,7 @@ private fun teaching(
     citation = citation,
     picture = picture,
     position = position,
+    marks = marks,
 )
 
 /** Main's `toCanvasContent`: the explore's template, fields and data, drawn as an activity with nothing to ask. */

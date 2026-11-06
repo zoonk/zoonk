@@ -35,7 +35,7 @@
   "catalog_expand": "9b58eb9922b245c8ac30dc2a30a56d5a4c91164a2e074509da4daa81db23be47",
   "catalog_go_to_chapter": "a83d8f2f63fee5f5940ead4a1dec2040ebb1db63fa8e618d0252e5e095c44103",
   "catalog_goal_example": "28fd058e21eede48f1131b85022157d4463e7e87ddb85a7628e1cb09c4ff8d91",
-  "catalog_guess_first": "bc53580f58328e28bb9e6ccc8a00012d76392deb72d559f59810e5ffdc4b2997",
+  "catalog_guess_chip": "ff3447ebe2e42fb744d009382c70ba41dcb87b4fe487aced77bedd782c1a6ae0",
   "catalog_guess_note": "e20a2f6fea6b5c8ca6db3f3c930a5e4c9ace1afd712ecd9d493b227ff1857c9a",
   "catalog_ideas": "69b7fcb24d57fef7d9b7760f17d50ec3966475872ecf6627f051323bca013160",
   "catalog_left_out": "794302591aef23ce14b225f1b68ef14680a1f3aab23ba80ff9364cb59852828f",
@@ -183,7 +183,8 @@
     <string name="catalog_start_free">Comece grátis, sem precisar criar uma conta.</string>
     <string name="catalog_try_title">Experimente uma aula · grátis · %1$s</string>
     <string name="catalog_try_place">%1$s · aula %2$s</string>
-    <string name="catalog_guess_first">Dê um palpite primeiro. Não conta.</string>
+    <!-- Chip above a lesson's opening question on a course page, which the learner answers before being taught. Guesses are never scored. -->
+    <string name="catalog_guess_chip">Só um palpite, não vale ponto</string>
     <string name="catalog_quick_question">Pergunta rápida</string>
     <string name="catalog_guess_note">Sua resposta dá início à aula de %1$s min.</string>
     <string name="catalog_check_note">Sua escolha abre a aula de %1$s min. Confira sua resposta lá.</string>

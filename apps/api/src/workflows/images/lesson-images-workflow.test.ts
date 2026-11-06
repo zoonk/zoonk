@@ -12,6 +12,9 @@ import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/l
 import { pictureCheckContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { buildImageReuseKey } from "@zoonk/utils/identity-key";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { sleep } from "workflow";
+import { getRun } from "workflow/api";
+import { mockHookConflict } from "../../../mocks/workflow";
 import { TEST_IMAGE, imageProvenance, passedCheck, sceneFor } from "./_test-utils/image-results";
 import { lessonImagesWorkflow } from "./lesson-images-workflow";
 
@@ -23,7 +26,7 @@ function serveStoredPictures() {
 }
 
 function explanation(prompt: string) {
-  return { image: { alt: "A picture", prompt }, text: "One idea on this screen." };
+  return { image: { alt: `A drawing of a ${prompt}`, prompt }, text: "One idea on this screen." };
 }
 
 function markedScreens({ lessonId, prompts }: { lessonId: string; prompts: string[] }) {
@@ -33,6 +36,27 @@ function markedScreens({ lessonId, prompts }: { lessonId: string; prompts: strin
     ),
   );
 }
+
+function runStatuses(initial: Record<string, string>): Record<string, string> {
+  const statuses = { ...initial };
+
+  vi.mocked(getRun).mockImplementation(
+    (runId) =>
+      ({
+        exists: Promise.resolve(true),
+        status: Promise.resolve(statuses[runId] ?? "completed"),
+      }) as never,
+  );
+
+  return statuses;
+}
+
+async function linkPicture(stepId?: string) {
+  const asset = await mediaAssetFixture();
+  await prisma.step.update({ data: { mediaAssetId: asset.id }, where: { id: stepId } });
+}
+
+const rejectedCheck = { data: { ...passedCheck.data, passed: false, problems: ["wrong object"] } };
 
 function lessonPictures(lessonId: string) {
   return prisma.step.findMany({
@@ -72,16 +96,19 @@ describe(lessonImagesWorkflow, () => {
     vi.unstubAllGlobals();
   });
 
-  it("shows each new picture before its check, then replaces one its check rejects with a redraw", async () => {
+  it("shows each new picture before its check against its alt, then replaces one its check rejects with a redraw", async () => {
     const lesson = await libraryLessonFixture();
     const [rejectedPrompt, passedPrompt] = [`globe ${randomUUID()}`, `compass ${randomUUID()}`];
     await markedScreens({ lessonId: lesson.id, prompts: [rejectedPrompt, passedPrompt] });
 
+    const isRejected = (scene: { focalObject: string }) =>
+      scene.focalObject.includes(rejectedPrompt);
+
     vi.mocked(checkLessonImage).mockImplementation(async ({ scene }) =>
-      scene.focalObject.includes(rejectedPrompt) &&
-      vi.mocked(checkLessonImage).mock.calls.filter(([params]) => params.scene === scene).length ===
-        1
-        ? ({ data: { ...passedCheck.data, passed: false, problems: ["wrong object"] } } as never)
+      isRejected(scene) &&
+      vi.mocked(checkLessonImage).mock.calls.filter(([params]) => isRejected(params.scene))
+        .length === 1
+        ? (rejectedCheck as never)
         : (passedCheck as never),
     );
 
@@ -103,6 +130,18 @@ describe(lessonImagesWorkflow, () => {
       vi.mocked(checkLessonImage).mock.calls.every(([params]) => params.serviceTier === "flex"),
     ).toBe(true);
 
+    const alts = vi.mocked(checkLessonImage).mock.calls.map(([params]) => params.alt);
+
+    expect(alts.filter((alt) => alt === `A drawing of a ${rejectedPrompt}`)).toHaveLength(2);
+    expect(alts.filter((alt) => alt === `A drawing of a ${passedPrompt}`)).toHaveLength(1);
+
+    expect(generateImageScene).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        alt: `A drawing of a ${rejectedPrompt}`,
+        findings: ["wrong object"],
+      }),
+    );
+
     expect(generateLessonImage).toHaveBeenLastCalledWith(
       expect.objectContaining({ corrections: ["wrong object"] }),
     );
@@ -114,6 +153,113 @@ describe(lessonImagesWorkflow, () => {
     expect(steps[1]?.mediaAsset?.url).not.toBe(redraw?.data);
   });
 
+  it("takes a picture out of use when its one redraw fails its check too", async () => {
+    const lesson = await libraryLessonFixture();
+    await markedScreens({ lessonId: lesson.id, prompts: [`kidney ${randomUUID()}`] });
+    vi.mocked(checkLessonImage).mockResolvedValue(rejectedCheck as never);
+
+    await expect(lessonImagesWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
+      failed: 0,
+      generated: 1,
+      reused: 0,
+    });
+
+    expect(generateLessonImage).toHaveBeenCalledTimes(2);
+    expect(checkLessonImage).toHaveBeenCalledTimes(2);
+    await expect(lessonPictures(lesson.id)).resolves.toStrictEqual([{ mediaAssetId: null }]);
+  });
+
+  it("checks the redraw of a lesson's opening scene like any picture's", async () => {
+    const lesson = await libraryLessonFixture();
+    const alt = `Fábio corta a mão numa lata ${randomUUID()}`;
+
+    await libraryStepFixture({
+      content: {
+        image: { alt, prompt: "A hand with a small cut" },
+        text: "Fábio corta a mão.",
+        variant: "text",
+      },
+      kind: "hook",
+      lessonId: lesson.id,
+    });
+
+    vi.mocked(checkLessonImage).mockResolvedValue(rejectedCheck as never);
+
+    await lessonImagesWorkflow({ lessonId: lesson.id });
+
+    expect(checkLessonImage).toHaveBeenCalledTimes(2);
+    expect(generateLessonImage).toHaveBeenCalledTimes(2);
+
+    expect(generateImageScene).toHaveBeenLastCalledWith(
+      expect.objectContaining({ alt, findings: ["wrong object"] }),
+    );
+
+    await expect(lessonPictures(lesson.id)).resolves.toStrictEqual([{ mediaAssetId: null }]);
+  });
+
+  it("waits for the images run already drawing the lesson, then draws only what it left", async () => {
+    const lesson = await libraryLessonFixture();
+
+    const [drawnByOther, left] = await markedScreens({
+      lessonId: lesson.id,
+      prompts: [`atlas ${randomUUID()}`, `sextant ${randomUUID()}`],
+    });
+
+    const statuses = runStatuses({ "drawing-run": "running" });
+    mockHookConflict({ returnValue: Promise.resolve(null), runId: "drawing-run" });
+
+    vi.mocked(sleep).mockImplementationOnce(async () => {
+      await linkPicture(drawnByOther?.id);
+      statuses["drawing-run"] = "completed";
+      mockHookConflict(null);
+    });
+
+    await expect(lessonImagesWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
+      failed: 0,
+      generated: 1,
+      reused: 0,
+    });
+
+    expect(sleep).toHaveBeenCalledOnce();
+    expect(generateLessonImage).toHaveBeenCalledOnce();
+
+    await expect(prisma.step.findUniqueOrThrow({ where: { id: left?.id } })).resolves.toMatchObject(
+      { mediaAssetId: expect.any(String) },
+    );
+  });
+
+  it("takes its turn after another waiting run that took the token first, drawing nothing it drew", async () => {
+    const lesson = await libraryLessonFixture();
+
+    const [missing] = await markedScreens({
+      lessonId: lesson.id,
+      prompts: [`quill ${randomUUID()}`],
+    });
+
+    const statuses = runStatuses({ "drawing-run": "running", "waiting-run": "running" });
+    mockHookConflict({ returnValue: Promise.resolve(null), runId: "drawing-run" });
+
+    vi.mocked(sleep)
+      .mockImplementationOnce(async () => {
+        statuses["drawing-run"] = "completed";
+        mockHookConflict({ returnValue: Promise.resolve(null), runId: "waiting-run" });
+      })
+      .mockImplementationOnce(async () => {
+        await linkPicture(missing?.id);
+        statuses["waiting-run"] = "completed";
+        mockHookConflict(null);
+      });
+
+    await expect(lessonImagesWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
+      failed: 0,
+      generated: 0,
+      reused: 0,
+    });
+
+    expect(sleep).toHaveBeenCalledTimes(2);
+    expect(generateLessonImage).not.toHaveBeenCalled();
+  });
+
   it("reuses a picture of the same scene and draws the rest", async () => {
     const [reusedPrompt, drawnPrompt] = [`scale ${randomUUID()}`, `coin ${randomUUID()}`];
     const reusedScene = sceneFor(reusedPrompt);
@@ -122,7 +268,11 @@ describe(lessonImagesWorkflow, () => {
       libraryLessonFixture(),
       mediaAssetFixture({
         prompt: describeImageScene(reusedScene),
-        reuseKey: buildImageReuseKey({ language: null, prompt: describeImageScene(reusedScene) }),
+        reuseKey: buildImageReuseKey({
+          canvas: "landscape",
+          language: null,
+          prompt: describeImageScene(reusedScene),
+        }),
         styleVersion: IMAGE_STYLE_VERSION,
       }),
     ]);

@@ -196,7 +196,8 @@ struct CatalogLesson: Decodable, Equatable, Sendable {
   /// Nil until the lesson is written.
   let firstScreen: FirstScreen?
   let id: String
-  let summaryIdeas: [String]
+  /// Nil until the lesson is written.
+  let summary: LessonSummary?
   let title: String
 }
 

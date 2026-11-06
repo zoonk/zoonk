@@ -2540,9 +2540,9 @@ msgid "Your lesson is ready. Start it whenever you like."
 msgstr "レッスンの準備ができました。好きなときに始められます。"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "X6rSIT"
-msgid "It usually takes a minute or two. The lesson opens here as soon as it's ready."
-msgstr "通常1〜2分ほどかかります。準備ができ次第、ここでレッスンが開きます。"
+msgctxt "ILYIbj"
+msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
+msgstr "通常、数分ほどかかります。準備ができ次第、ここでレッスンが開きます。"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "Dr8j6a"
@@ -2550,9 +2550,9 @@ msgid "This lesson isn't written yet"
 msgstr "このレッスンはまだ作成されていません"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "kCHykv"
-msgid "Zoonk writes it when you start. It takes a minute or two."
-msgstr "始めると、Zoonkがレッスンを作成します。1〜2分ほどかかります。"
+msgctxt "BdqTEJ"
+msgid "Zoonk writes it when you start. It takes a few minutes."
+msgstr "始めると、Zoonkがレッスンを作成します。数分ほどかかります。"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "RFCwI6"
@@ -2864,10 +2864,11 @@ msgctxt "mElWfu"
 msgid "You are here"
 msgstr "現在地"
 
+#. Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored.
 #: src/components/catalog/first-question.tsx
-msgctxt "xpsuUj"
-msgid "Guess first. It doesn't count."
-msgstr "まずは予想してみてください。スコアには影響しません。"
+msgctxt "AlhfZ4"
+msgid "Just a guess, it doesn't count"
+msgstr "予想なので、採点されません"
 
 #: src/components/catalog/first-question.tsx
 msgctxt "ShLQAa"

@@ -7,17 +7,22 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { waitForBlockedStatement } from "../../../_test-utils/learner-lock";
 import { mockSession } from "../../../_test-utils/mock-session";
+import { listCheckpointQuestions } from "../../../checkpoints/_utils/checkpoint-candidates";
 import { learnerGoalFixture } from "../../../learner/_test-utils/learner-goal";
 import { lessonRunFixture } from "../../../lesson-player/_test-utils/lesson-run-fixture";
 import { checkLessonStep } from "../../../lesson-player/check-lesson-step";
 import { mistakeListInputSchema } from "../../../mistakes/contract";
 import { listCurrentUserMistakes } from "../../../mistakes/list-current-user-mistakes";
+import { loadPracticeItems } from "../../../sessions/_utils/load-practice";
+import { completeLessonContent } from "../../generation/lesson-generation-state";
 import { writtenTemperatureLesson } from "../../quality/_test-utils/written-lessons";
 import { toStepContent } from "../../steps/written-screens";
+import { readLessonMap } from "../lesson-map";
 import {
   type LessonScreenToSave,
+  publishStagedLessonVersion,
   saveLessonContent,
-  saveLessonVersion,
+  stageLessonVersion,
 } from "./save-lesson-content";
 
 const content = {
@@ -44,6 +49,17 @@ function screen(skillId: string | null = null): LessonScreenToSave {
   };
 }
 
+function numericScreen(skillId: string): LessonScreenToSave {
+  const written = writtenTemperatureLesson().screens[3];
+  const converted = written && toStepContent(written, { allowImage: false, language: "en" });
+
+  if (!converted?.ok) {
+    throw new Error("Expected a valid numeric screen");
+  }
+
+  return { ...screen(skillId), ...converted };
+}
+
 async function claimedLesson() {
   const workflowRunId = randomUUID();
 
@@ -54,6 +70,11 @@ async function claimedLesson() {
 
   await lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id });
   return { lesson, skill, workflowRunId };
+}
+
+async function saveReadyLesson(input: Parameters<typeof saveLessonContent>[0]) {
+  await saveLessonContent(input);
+  await completeLessonContent(input);
 }
 
 describe(saveLessonContent, () => {
@@ -70,7 +91,7 @@ describe(saveLessonContent, () => {
       language: "en",
       lessonId: lesson.id,
       screens: [screen(duplicate.id)],
-      summary: [],
+      summary: { ideas: [], shape: "hub" },
       workflowRunId,
     });
 
@@ -112,7 +133,7 @@ describe(saveLessonContent, () => {
       language: "en",
       lessonId: lesson.id,
       screens: [{ ...screen(), ...converted, skillId: duplicate.id }],
-      summary: [],
+      summary: { ideas: [], shape: "hub" },
       workflowRunId,
     });
 
@@ -148,7 +169,7 @@ describe(saveLessonContent, () => {
       language: "en",
       lessonId: lesson.id,
       screens: [{ ...screen(), ...converted }],
-      summary: [],
+      summary: { ideas: [], shape: "hub" },
       workflowRunId,
     });
 
@@ -166,7 +187,7 @@ describe(saveLessonContent, () => {
       language: "en",
       lessonId: lesson.id,
       screens: [screen(), screen(unrelated.id), screen(second.id)],
-      summary: ["A whole contains two halves."],
+      summary: { ideas: [{ text: "A whole contains two halves." }], shape: "hub" },
       workflowRunId,
     });
 
@@ -199,7 +220,7 @@ describe(saveLessonContent, () => {
       language: "en",
       lessonId: lesson.id,
       screens: [screen()],
-      summary: [],
+      summary: { ideas: [], shape: "hub" },
       workflowRunId,
     });
 
@@ -254,7 +275,7 @@ describe(saveLessonContent, () => {
         language: "en",
         lessonId: lesson.id,
         screens: [screen()],
-        summary: [],
+        summary: { ideas: [], shape: "hub" },
         workflowRunId,
       }),
     ).rejects.toThrow("no linked skill");
@@ -270,51 +291,242 @@ describe(saveLessonContent, () => {
     });
   });
 
-  it("marks each plan reading the lesson changed content when publishing it and its next version, once", async () => {
+  it("marks each plan reading the lesson changed content when publishing it and staging its next version, once", async () => {
     const { lesson, skill, workflowRunId } = await claimedLesson();
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
     const plan = await planFixture({ goalId: goal.id, sourceSkillIds: [skill.id] });
     const readPlan = () => prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
 
-    await saveLessonContent({
+    await saveReadyLesson({
       language: "en",
       lessonId: lesson.id,
       screens: [screen(skill.id)],
-      summary: [],
+      summary: { ideas: [], shape: "hub" },
       workflowRunId,
     });
 
     await expect(readPlan()).resolves.toMatchObject({ sourceVersion: plan.sourceVersion + 1 });
 
-    await saveLessonVersion({
+    await stageLessonVersion({
       language: "en",
       lessonId: lesson.id,
       replaces: 1,
       screens: [screen(skill.id)],
-      summary: [],
+      summary: { ideas: [], shape: "hub" },
     });
 
     await expect(readPlan()).resolves.toMatchObject({ sourceVersion: plan.sourceVersion + 2 });
   });
 
-  it("repairs skills in replacement versions too", async () => {
+  it("keeps the whole lesson map, its labels and shape, when publishing and when a staged version replaces it", async () => {
     const { lesson, skill, workflowRunId } = await claimedLesson();
 
-    await saveLessonContent({
+    const nested = {
+      ideas: [
+        { label: "Organism", text: "An organism is one living thing." },
+        { label: "Population", text: "A population is one species in one place." },
+      ],
+      shape: "nested" as const,
+    };
+
+    const hub = {
+      ideas: [{ label: "Community", text: "A community is every population in one place." }],
+      shape: "hub" as const,
+    };
+
+    const readMap = async () => {
+      const stored = await prisma.lesson.findUniqueOrThrow({
+        select: { summary: true },
+        where: { id: lesson.id },
+      });
+
+      return readLessonMap(stored.summary);
+    };
+
+    await saveReadyLesson({
       language: "en",
       lessonId: lesson.id,
       screens: [screen(skill.id)],
-      summary: [],
+      summary: nested,
       workflowRunId,
     });
 
-    await saveLessonVersion({
+    await expect(readMap()).resolves.toStrictEqual(nested);
+
+    const version = await stageLessonVersion({
+      language: "en",
+      lessonId: lesson.id,
+      replaces: 1,
+      screens: [screen(skill.id)],
+      summary: hub,
+    });
+
+    await expect(readMap()).resolves.toStrictEqual(nested);
+    await publishStagedLessonVersion({ lessonId: lesson.id, version: version ?? 0 });
+    await expect(readMap()).resolves.toStrictEqual(hub);
+  });
+
+  it("keeps a staged version's numeric questions out of practice and checkpoints until it's published", async () => {
+    const [{ lesson, skill, workflowRunId }, user] = await Promise.all([
+      claimedLesson(),
+      userFixture(),
+    ]);
+
+    await saveReadyLesson({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [screen(skill.id)],
+      summary: { ideas: [], shape: "hub" },
+      workflowRunId,
+    });
+
+    const version = await stageLessonVersion({
+      language: "en",
+      lessonId: lesson.id,
+      replaces: 1,
+      screens: [numericScreen(skill.id)],
+      summary: { ideas: [], shape: "hub" },
+    });
+
+    const listAskable = async () => {
+      const [checkpoint, practice] = await Promise.all([
+        listCheckpointQuestions({ examBlueprintId: null, skillIds: [skill.id] }),
+        loadPracticeItems({
+          difficultyBias: "standard",
+          everySkill: true,
+          examBlueprintId: null,
+          excludeItemIds: new Set(),
+          field: null,
+          maxMinutes: 45,
+          now: new Date(),
+          skillIds: [skill.id],
+          typed: true,
+          userId: user.id,
+        }),
+      ]);
+
+      return {
+        checkpoint: checkpoint.map((item) => item.id),
+        practice: practice.map((item) => item.itemId),
+      };
+    };
+
+    await expect(listAskable()).resolves.toStrictEqual({ checkpoint: [], practice: [] });
+
+    await publishStagedLessonVersion({ lessonId: lesson.id, version: version ?? 0 });
+
+    const step = await prisma.step.findFirstOrThrow({
+      where: { lessonId: lesson.id, version: version ?? 0 },
+    });
+
+    expect(step.itemId).not.toBeNull();
+
+    await expect(listAskable()).resolves.toStrictEqual({
+      checkpoint: [step.itemId],
+      practice: [step.itemId],
+    });
+  });
+
+  it("publishes a staged question while a newer fix is staged at once, without a deadlock", async () => {
+    const { lesson, skill, workflowRunId } = await claimedLesson();
+
+    await saveReadyLesson({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [screen(skill.id)],
+      summary: { ideas: [], shape: "hub" },
+      workflowRunId,
+    });
+
+    const stage = () =>
+      stageLessonVersion({
+        language: "en",
+        lessonId: lesson.id,
+        replaces: 1,
+        screens: [numericScreen(skill.id)],
+        summary: { ideas: [], shape: "hub" },
+      });
+
+    const version = await stage();
+    const held = Promise.withResolvers<number>();
+    const released = Promise.withResolvers<null>();
+
+    const learnerWrite = prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM library_lessons WHERE id = ${lesson.id}::uuid FOR KEY SHARE`;
+      const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+      held.resolve(backend?.pid ?? 0);
+      await released.promise;
+    });
+
+    learnerWrite.catch((error: unknown) => held.reject(error));
+    const pid = await held.promise;
+    const publishing = publishStagedLessonVersion({ lessonId: lesson.id, version: version ?? 0 });
+    let staging: ReturnType<typeof stage> = Promise.resolve(null);
+
+    try {
+      await waitForBlockedStatement(pid, /library_lessons WHERE id = \$1::uuid FOR UPDATE/u);
+      staging = stage();
+      await waitForBlockedStatement(pid, /FOR NO KEY UPDATE/u);
+    } finally {
+      released.resolve(null);
+      await learnerWrite;
+    }
+
+    const settled = await Promise.allSettled([publishing, staging]);
+    expect(settled.map((result) => result.status)).toStrictEqual(["fulfilled", "fulfilled"]);
+  });
+
+  it("leaves no bank questions behind for a staged version a newer one replaced", async () => {
+    const { lesson, skill, workflowRunId } = await claimedLesson();
+
+    await saveReadyLesson({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [screen(skill.id)],
+      summary: { ideas: [], shape: "hub" },
+      workflowRunId,
+    });
+
+    const stage = () =>
+      stageLessonVersion({
+        language: "en",
+        lessonId: lesson.id,
+        replaces: 1,
+        screens: [numericScreen(skill.id)],
+        summary: { ideas: [], shape: "hub" },
+      });
+
+    await stage();
+    const version = await stage();
+    await publishStagedLessonVersion({ lessonId: lesson.id, version: version ?? 0 });
+
+    const published = await prisma.step.findFirstOrThrow({
+      where: { lessonId: lesson.id, version: version ?? 0 },
+    });
+
+    await expect(
+      prisma.item.findMany({ select: { id: true }, where: { skillId: skill.id } }),
+    ).resolves.toStrictEqual([{ id: published.itemId }]);
+  });
+
+  it("repairs skills in replacement versions too", async () => {
+    const { lesson, skill, workflowRunId } = await claimedLesson();
+
+    await saveReadyLesson({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [screen(skill.id)],
+      summary: { ideas: [], shape: "hub" },
+      workflowRunId,
+    });
+
+    await stageLessonVersion({
       language: "en",
       lessonId: lesson.id,
       replaces: 1,
       screens: [screen()],
-      summary: [],
+      summary: { ideas: [], shape: "hub" },
     });
 
     await expect(

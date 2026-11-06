@@ -33,7 +33,7 @@ async function writtenLessonFixture({
 }
 
 describe(pullLessonsForRegeneration, () => {
-  it("pulls the published lessons a prompt version wrote and leaves the others", async () => {
+  it("pulls the published lessons a prompt version wrote and leaves the others, a staged fix's included", async () => {
     const admin = await userFixture({ role: "admin" });
     const promptVersion = `test-${randomUUID()}`;
     const model = `test/model-${randomUUID()}`;
@@ -44,7 +44,17 @@ describe(pullLessonsForRegeneration, () => {
       libraryLessonFixture({ contentStatus: "pending", specStatus: "completed" }),
     ]);
 
-    await libraryStepFixture({ lessonId: unpublished.id, model, position: 0, promptVersion });
+    await Promise.all([
+      libraryStepFixture({ lessonId: unpublished.id, model, position: 0, promptVersion }),
+      libraryStepFixture({
+        lessonId: otherPrompt.id,
+        model,
+        position: 0,
+        promptVersion,
+        staged: true,
+        version: 2,
+      }),
+    ]);
 
     mockAdminSession(admin.id);
 

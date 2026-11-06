@@ -2,14 +2,22 @@
   "modelId": "openai/gpt-6-luna",
   "results": [
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -28,14 +36,14 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -262,22 +270,14 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "decorative" },
+      "classification": { "expected": "decorative", "predicted": "teaches" },
       "steps": [
+        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got decorative.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected decorative; got decorative.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -374,14 +374,14 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -426,14 +426,14 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -452,14 +452,14 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -478,18 +478,18 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
-        "expected": { "teaches": false },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-ligacao-covalente-1-1",
         "language": "pt",
         "userInput": {
@@ -660,14 +660,22 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -902,14 +910,14 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -928,14 +936,22 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -980,14 +996,22 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -1108,14 +1132,14 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -1134,14 +1158,14 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -1186,18 +1210,18 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
-        "expected": { "teaches": false },
+        "expected": { "teaches": true },
         "id": "plan-pt-eletron-nucleo-overview-5-1",
         "language": "pt",
         "userInput": {
@@ -1272,18 +1296,18 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
-        "expected": { "teaches": true },
+        "expected": { "teaches": false },
         "id": "plan-en-tree-key-beginner-2-1",
         "language": "en",
         "userInput": {
@@ -1324,14 +1348,22 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -1350,20 +1382,20 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
         "expected": { "teaches": true },
         "id": "plan-pt-imagens-e-legendas-beginner-1-1",
-        "language": "pt",
+        "language": "en",
         "userInput": {
           "lesson": "Imagens e legendas",
           "picture": "Danilo standing at a door, holding a closed red umbrella; no rain.",
@@ -1389,7 +1421,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "plan-pt-imagens-e-legendas-beginner-5-1",
-        "language": "pt",
+        "language": "en",
         "userInput": {
           "lesson": "Imagens e legendas",
           "picture": "Two panels labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box.",
@@ -1397,6 +1429,324 @@
           "screen": {
             "brief": "Two scenes side by side, labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of it. The learner picks which scene fits 'Nayara coloca um livro na caixa vermelha'. Tempting wrong answer: scene 2 (same box and book, opposite action).",
             "kind": "application"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "steps": [
+        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
+        {
+          "conclusion": "Expected decorative; got teaches.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": false },
+        "id": "plan-pt-patrimonio-liquido-beginner-0-1",
+        "language": "pt",
+        "userInput": {
+          "lesson": "Patrimônio líquido",
+          "picture": "A oficina de Davi com suas ferramentas, um cliente que ainda vai pagar e um documento de dívida com o banco, sem valores.",
+          "previousPicture": null,
+          "screen": {
+            "brief": "Mostre a oficina de Davi: ferramentas, um cliente que ainda vai pagar e uma dívida com o banco. Termine com a pergunta da aula, sem pedir resposta: quanto da oficina é de Davi de verdade?",
+            "kind": "hook"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "steps": [
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        {
+          "conclusion": "Expected teaches; got decorative.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": true },
+        "id": "plan-pt-niveis-ecologicos-beginner-2-1",
+        "language": "pt",
+        "userInput": {
+          "lesson": "Níveis de organização ecológica",
+          "picture": "O lago com todos os sapos-cururus destacados como um grupo; plantas aquáticas e água ao redor.",
+          "previousPicture": "O lago com um sapo-cururu destacado e outros sapos-cururus da mesma espécie visíveis.",
+          "screen": {
+            "brief": "Explique que uma população reúne os organismos de uma mesma espécie que vivem em uma área ao mesmo tempo. No lago, todos os sapos-cururus formam uma população.",
+            "kind": "explanation"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "decorative", "predicted": "decorative" },
+      "steps": [
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": false },
+        "id": "plan-pt-receitas-regulares-overview-1-1",
+        "language": "pt",
+        "userInput": {
+          "lesson": "Receitas regulares e eventuais",
+          "picture": "No local de trabalho, Igor recebendo dinheiro pelo seu trabalho, com o dinheiro em destaque.",
+          "previousPicture": "Igor recebendo um pagamento no local de trabalho, com um calendário na parede.",
+          "screen": {
+            "brief": "Explique que receita é o dinheiro que uma pessoa recebe. O pagamento que entra para Igor pelo seu trabalho é um exemplo.",
+            "kind": "explanation"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "steps": [
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        {
+          "conclusion": "Expected teaches; got decorative.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": true },
+        "id": "check-pt-eletrons-valencia-camadas-1",
+        "language": "pt",
+        "userInput": {
+          "lesson": "Átomos e elétrons de valência",
+          "picture": "Um átomo com o núcleo no centro e dois anéis ao redor: 2 pontos no anel de dentro e 4 pontos no anel de fora.",
+          "previousPicture": null,
+          "screen": {
+            "brief": "Um átomo tem 2 elétrons na camada de dentro e 4 na camada de fora. Pergunte quantos são de valência. Erro tentador: somar todos e responder 6.",
+            "kind": "check"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "steps": [
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected teaches; got teaches.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": true },
+        "id": "check-en-series-circuit-bulb-out-1",
+        "language": "en",
+        "userInput": {
+          "lesson": "Series and parallel circuits",
+          "picture": "A battery wired in one loop through two bulbs labeled A and B, one after the other, with no branches.",
+          "previousPicture": null,
+          "screen": {
+            "brief": "Two bulbs are wired one after the other in a single loop with a battery. Bulb A burns out. Ask what happens to bulb B. Tempting wrong answer: B gets brighter because it gets all the current.",
+            "kind": "check"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "steps": [
+        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
+        {
+          "conclusion": "Expected decorative; got teaches.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": false },
+        "id": "check-en-series-circuit-shows-answer-1",
+        "language": "en",
+        "userInput": {
+          "lesson": "Series and parallel circuits",
+          "picture": "A single loop with a battery and two bulbs labeled A and B; bulb A is broken and bulb B is dark.",
+          "previousPicture": null,
+          "screen": {
+            "brief": "Two bulbs are wired one after the other in a single loop with a battery. Bulb A burns out. Ask what happens to bulb B. Tempting wrong answer: B gets brighter because it gets all the current.",
+            "kind": "check"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "steps": [
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected teaches; got teaches.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": true },
+        "id": "guess-pt-mitose-cromossomos-1",
+        "language": "pt",
+        "userInput": {
+          "lesson": "Mitose",
+          "picture": "Uma célula com quatro cromossomos em forma de X alinhados no meio e fios ligando cada lado de cada X aos dois polos da célula.",
+          "previousPicture": null,
+          "screen": {
+            "brief": "Os cromossomos se alinharam no meio da célula, presos por fios aos dois lados. Pergunte o que acontece a seguir: cada X se separa em duas metades que vão para lados opostos; erro tentador: os X inteiros vão metade para cada lado.",
+            "kind": "guess"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "decorative", "predicted": "decorative" },
+      "steps": [
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": false },
+        "id": "hook-en-supply-demand-market-1",
+        "language": "en",
+        "userInput": {
+          "lesson": "Supply and demand",
+          "picture": "Maya at a farmers market stall looking at a sign with the price of strawberries.",
+          "previousPicture": null,
+          "screen": {
+            "brief": "Maya buys strawberries every week. This week the box costs twice as much after a frost hit the farms. Why did the price jump?",
+            "kind": "hook"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "decorative", "predicted": "decorative" },
+      "steps": [
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": false },
+        "id": "explanation-pt-custos-aluguel-1",
+        "language": "pt",
+        "userInput": {
+          "lesson": "Custos fixos e variáveis",
+          "picture": "Cauê entregando o dinheiro do aluguel ao dono da loja, na porta do ateliê.",
+          "previousPicture": null,
+          "screen": {
+            "brief": "O aluguel do ateliê de Cauê é R$ 800,00 por mês, faça ele 10 ou 60 peças. Esse gasto que não acompanha a produção é um custo fixo.",
+            "kind": "explanation"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "steps": [
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected teaches; got teaches.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": true },
+        "id": "explanation-en-burn-skin-layers-1",
+        "language": "en",
+        "userInput": {
+          "lesson": "First aid for burns",
+          "picture": "A cross-section of skin with three labeled layers, the outer layer, the middle layer and the fat below, and a burn reaching only the outer layer.",
+          "previousPicture": null,
+          "screen": {
+            "brief": "A first-degree burn harms only the skin's outer layer: red and painful, no blisters. Name it and show where it stops.",
+            "kind": "explanation"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "decorative", "predicted": "decorative" },
+      "steps": [
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": false },
+        "id": "hook-en-ph-lemon-1",
+        "language": "en",
+        "userInput": {
+          "lesson": "The pH scale",
+          "picture": "Dana squeezing a lemon over a plate of fish in her kitchen.",
+          "previousPicture": null,
+          "screen": {
+            "brief": "Dana squeezes lemon over fish and the fish turns white at the edges, as if cooked. What in the lemon did that?",
+            "kind": "hook"
           }
         }
       }

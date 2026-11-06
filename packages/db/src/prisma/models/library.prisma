@@ -150,6 +150,8 @@ model Lesson {
   setAsideAt        DateTime?              @map("set_aside_at")
   /// Public on SEO pages.
   summary           Json?
+  /// The map of the version staged on its steps (`Step.staged`), until it replaces `summary`.
+  stagedSummary     Json?                  @map("staged_summary")
   /// They belong to the lesson, not the goal that first asked, so every reuse gets them.
   relatedQuestions  String[]               @default([]) @map("related_questions")
   goFurtherCourseId String?                @map("go_further_course_id") @db.Uuid
@@ -205,6 +207,11 @@ model Step {
   version            Int                 @default(1) @db.SmallInt
   /// Null for current screens, the only ones lessons read. Retired screens are deleted a day later.
   retiredAt          DateTime?           @map("retired_at")
+  /// A fixed version waits unread until its marks and pictures settle, then replaces the current one.
+  staged             Boolean             @default(false)
+  /// A staged screen's numeric question as written. It joins the practice bank as the screen's
+  /// item when its version is published, so learners never get it before.
+  stagedItem         Json?               @map("staged_item")
   kind               StepKind
   contractVersion    Int                 @default(1) @map("contract_version") @db.SmallInt
   content            Json
@@ -224,6 +231,9 @@ model Step {
   source             Source?             @relation(fields: [sourceId], references: [id], onDelete: SetNull)
   /// Starts at 1.
   sourcePage         Int?                @map("source_page") @db.SmallInt
+  /// What the tagging step found on a teaching screen (core's `savedStepMarksSchema`); null until
+  /// the lesson is tagged.
+  marks              Json?
   model              String
   promptVersion      String              @map("prompt_version")
   runId              String              @map("run_id")
@@ -337,6 +347,34 @@ model MediaAsset {
 
   @@index([ownerId])
   @@map("media_assets")
+}
+
+/// A small drawing in the lessons' house style. Every lesson shares it, private ones included, so
+/// its words are English and name a generic thing, never anything of a learner's.
+model LessonIcon {
+  id            String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  /// Lowercase and singular ("rubber stamp"); unique, so the library keeps one drawing per name.
+  name          String           @unique
+  /// More English search words; with the name they make the icon's text-search document.
+  tags          String[]
+  /// What the drawing shows, in one English sentence.
+  description   String
+  /// `running` while the one lesson that claimed the name draws it, then `completed`, or `failed`
+  /// when the model couldn't draw it, so later lessons skip the name.
+  status        GenerationStatus
+  /// The workflow run whose insert claimed the name, so a retry of its claim step still draws it.
+  runId         String           @map("run_id")
+  /// 256 px WebP with its sticker border.
+  url           String?
+  /// 96 px WebP with its sticker border.
+  smallUrl      String?          @map("small_url")
+  styleVersion  Int              @map("style_version") @db.SmallInt
+  model         String?
+  promptVersion String?          @map("prompt_version")
+  generatedAt   DateTime?        @map("generated_at")
+  createdAt     DateTime         @default(now()) @map("created_at")
+
+  @@map("lesson_icons")
 }
 
 /// A private chapter's picture stays in its owner's private files. A picture with serious mistakes

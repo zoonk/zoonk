@@ -11,6 +11,7 @@ export const MATERIAL_LESSON_SPEC: LessonSpec = {
       kind: "hook",
       skills: [],
       visual: null,
+      visualKind: "none",
     },
     {
       activityTemplate: null,
@@ -19,6 +20,7 @@ export const MATERIAL_LESSON_SPEC: LessonSpec = {
       kind: "explanation",
       skills: [0],
       visual: null,
+      visualKind: "none",
     },
     {
       activityTemplate: null,
@@ -27,6 +29,7 @@ export const MATERIAL_LESSON_SPEC: LessonSpec = {
       kind: "explanation",
       skills: [0],
       visual: null,
+      visualKind: "none",
     },
     {
       activityTemplate: null,
@@ -34,6 +37,7 @@ export const MATERIAL_LESSON_SPEC: LessonSpec = {
       kind: "check",
       skills: [0],
       visual: null,
+      visualKind: "none",
     },
     {
       activityTemplate: null,
@@ -41,6 +45,7 @@ export const MATERIAL_LESSON_SPEC: LessonSpec = {
       kind: "check",
       skills: [0],
       visual: null,
+      visualKind: "none",
     },
   ],
   skills: [
@@ -53,6 +58,5 @@ export const MATERIAL_LESSON_SPEC: LessonSpec = {
       useCase: "Questões de prova que pedem o saldo de ATP de cada etapa",
     },
   ],
-  supportMode: "explanationFirst",
   title: "Saldo de ATP da glicólise",
 };

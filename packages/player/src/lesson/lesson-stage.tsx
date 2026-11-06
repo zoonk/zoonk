@@ -10,6 +10,7 @@ import { FILL_FOR_WORD_BANK_CLASS, PlayerContentFrame } from "../components/step
 import { LessonCitation } from "./_components/lesson-citation";
 import { UpcomingPictures } from "./_components/lesson-pictures";
 import { LessonEyebrow } from "./_components/lesson-step-text";
+import { OrientationStrip } from "./_components/orientation-strip";
 import { LESSON_CONTENT_ID, focusLessonAfterTurn } from "./_utils/lesson-focus";
 import { isLanguageStep } from "./_utils/lesson-steps";
 import { AskBuddyOffer } from "./controls/ask-buddy-offer";
@@ -125,7 +126,7 @@ const TURN_CLASS: Record<ScreenTurn, string> = {
     "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-right-8 motion-safe:duration-base motion-safe:ease-out",
 };
 
-function LessonScreenFrame({
+export function LessonScreenFrame({
   children,
   turn,
 }: {
@@ -173,6 +174,7 @@ export function LessonStage({
 
   return (
     <div className={cn("flex w-full flex-col", FILL_FOR_WORD_BANK_CLASS)} data-slot="lesson-stage">
+      <OrientationStrip step={step} />
       {isShown && <LessonNotice />}
 
       <LessonScreenFrame turn={turn}>

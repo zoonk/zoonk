@@ -1,6 +1,6 @@
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { describe, expect, it } from "vitest";
-import { formatLocalContext } from "./language-context";
+import { formatLocalContext, formatMoneyContext } from "./language-context";
 
 const PACK_LINES = [
   "Place",
@@ -37,5 +37,19 @@ describe(formatLocalContext, () => {
 
   it("has no pack for languages outside the app's languages", () => {
     expect(formatLocalContext("ar")).toBe("LOCAL_CONTEXT: none");
+  });
+});
+
+describe(formatMoneyContext, () => {
+  it.each([
+    ["pt", "MONEY: R$\u00A02.400,00 or R$\u00A02.400"],
+    ["fr", "MONEY: 2\u202F400,00\u00A0€ or 2\u202F400\u00A0€"],
+    ["ja", "MONEY: ￥2,400"],
+  ])("writes %s's own currency with cents and without", (language, expected) => {
+    expect(formatMoneyContext(language)).toBe(expected);
+  });
+
+  it("has no money format for languages outside the app's languages", () => {
+    expect(formatMoneyContext("ar")).toBe("MONEY: none");
   });
 });

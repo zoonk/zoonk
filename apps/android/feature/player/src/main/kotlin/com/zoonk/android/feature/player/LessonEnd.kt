@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -42,8 +43,11 @@ import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.Segment
+import com.zoonk.android.feature.player.engine.lessonMap
 import com.zoonk.android.feature.player.engine.screen
 import com.zoonk.android.feature.player.model.PlayableLesson
+import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.android.feature.player.steps.LessonMapView
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.ownBrainPower
@@ -303,6 +307,8 @@ fun LessonCompletionView(
                 DayMoment(result, moment.look, moment.name)
             }
         },
+        // On a spread the lesson's map sits under what was done; one column keeps it behind ⋮.
+        doneWhenSplit = { state.lessonMap?.let { LessonEndMap(it) } },
         next = {
             if (completion.status == CompletionStatus.Saved && ending.guest) {
                 ending.fit?.let { WhereItFits(it) }
@@ -314,6 +320,13 @@ fun LessonCompletionView(
             }
         },
     )
+}
+
+@Composable
+private fun LessonEndMap(map: StepContent.Map) {
+    HorizontalDivider()
+    Text(stringResource(R.string.player_lesson_map), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+    LessonMapView(map)
 }
 
 /** How many were right and the Brain Power earned, with when the lesson comes back for review unless [withReview] is off. */

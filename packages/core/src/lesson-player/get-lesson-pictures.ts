@@ -29,6 +29,7 @@ export async function getLessonPictures({
           orderBy: { position: "asc" },
           where: {
             OR: [{ mediaAssetId: { not: null } }, { optionPictures: { some: {} } }],
+            staged: false,
             ...(stepIds ? { id: { in: [...stepIds] } } : {}),
           },
         },

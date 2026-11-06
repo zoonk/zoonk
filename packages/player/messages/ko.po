@@ -67,11 +67,6 @@ msgid "Find the error"
 msgstr "오류 찾기"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "nC6XLx"
-msgid "Follow the questions"
-msgstr "문제 따라 풀기"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "XsJOM5"
 msgid "Hands on"
 msgstr "직접 해 보기"
@@ -618,7 +613,6 @@ msgstr "양쪽을 각각 {count}묶음으로 똑같이 나누기"
 
 #: src/activities/balance/balance-controls.tsx
 #: src/activities/categorize/categorize-sorting.tsx
-#: src/activities/decision-tree/decision-tree-activity.tsx
 #: src/activities/molecule-builder/molecule-palette.tsx
 msgctxt "JkS37H"
 msgid "Undo"
@@ -1071,51 +1065,6 @@ msgstr "{number}번 칸에는 어떤 유전자형이 들어가나요?"
 msgctxt "_Z7gdQ"
 msgid "What goes in square {number}?"
 msgstr "{number}번 칸에는 무엇이 들어가나요?"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "rUq4jt"
-msgid "The case"
-msgstr "사례"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "8LkSSl"
-msgid "Still possible"
-msgstr "아직 가능한 결과"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "5m07cc"
-msgid "Your answers"
-msgstr "내 답변"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "aI6870"
-msgid "Your answers lead to"
-msgstr "답변에 따른 결과"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "PTXFe3"
-msgid "You reached {outcome} after {count, plural, =0 {# questions} one {# question} other {# questions}}."
-msgstr "{outcome}에 도달하기까지 {count, plural, =0 {문제 #개} other {#개의 문제}}에 답했어요."
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "MtII9q"
-msgid "Question {number}. Still possible: {outcomes}."
-msgstr "{number}번 문제예요. 아직 가능한 결과: {outcomes}."
-
-#: src/activities/decision-tree/decision-tree-review.tsx
-msgctxt "GSaFJS"
-msgid "The walk for this case"
-msgstr "이 사례의 판단 과정"
-
-#: src/activities/decision-tree/decision-tree-review.tsx
-msgctxt "mJLCHX"
-msgid "You chose {branch}"
-msgstr "선택한 답변: {branch}"
-
-#: src/activities/decision-tree/decision-tree-review.tsx
-msgctxt "eU5-OH"
-msgid "It leads to {outcome}."
-msgstr "{outcome}에 도달해요."
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "9-BMAt"
@@ -3079,11 +3028,35 @@ msgctxt "G8bo_b"
 msgid "Not in your material"
 msgstr "내 자료에 없는 내용"
 
+#. Under a lesson map whose ideas are levels, the smallest first, such as an organism inside a population.
+#: src/lesson/_components/lesson-map.tsx
+msgctxt "pHv5DW"
+msgid "Each level sits inside the next one."
+msgstr "각 단계는 다음 단계 안에 들어 있어요."
+
 #: src/lesson/_components/lesson-picture-options.tsx
 #: src/lesson/_components/lesson-pictures.tsx
 msgctxt "ct0jk_"
 msgid "Drawing the picture…"
 msgstr "그림을 그리고 있어요…"
+
+#. Label on the dashed frame around the sentences of a lesson screen that give an example.
+#: src/lesson/_components/marked-text.tsx
+msgctxt "xrCRnH"
+msgid "Example"
+msgstr "예시"
+
+#. Above a lesson screen: which of the lesson map's ideas the screen teaches, such as 'Idea 2 of 4'.
+#: src/lesson/_components/opening-map.tsx
+#: src/lesson/_components/orientation-strip.tsx
+msgctxt "CCQ4rY"
+msgid "Idea {current} of {total}"
+msgstr "{current}번째 개념 (총 {total}개)"
+
+#: src/lesson/_components/opening-map.tsx
+msgctxt "JHFGf_"
+msgid "{count, plural, one {# idea to discover in this lesson} other {# ideas to discover in this lesson}}"
+msgstr "{count, plural, other {이번 레슨에서 알아볼 개념 #개}}"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "P0MjYO"
@@ -3246,20 +3219,28 @@ msgctxt "c-JYNI"
 msgid "No thanks"
 msgstr "괜찮아요"
 
+#. Quiet button under a lesson's explanation, in the learner's own words when they didn't understand it, as short as they'd say it (Portuguese: 'Não entendi'). Tapping it asks their study buddy to explain the screen more simply.
+#: src/lesson/controls/didnt-get-it-button.tsx
+msgctxt "hmESnc"
+msgid "I didn't get this"
+msgstr "이해가 안 돼요"
+
 #. Button the learner taps to see the lesson's explanation before answering this question.
 #: src/lesson/controls/explain-first-button.tsx
 msgctxt "cd_q95"
 msgid "Explain first"
 msgstr "설명 먼저 보기"
 
-#: src/lesson/controls/summary-sheet.tsx
+#. A small diagram of this lesson's main ideas, drawn by the app. Not the chapter's mind map.
+#: src/lesson/controls/lesson-map-sheet.tsx
 #: src/lesson/lesson-aside.tsx
+#: src/lesson/lesson-map-screen.tsx
 #: src/lesson/lesson-screen-menu.tsx
-msgctxt "y7Zy67"
-msgid "Lesson summary"
-msgstr "레슨 요약"
+msgctxt "Oku1XG"
+msgid "Lesson map"
+msgstr "레슨 개념도"
 
-#: src/lesson/controls/summary-sheet.tsx
+#: src/lesson/controls/lesson-map-sheet.tsx
 msgctxt "NYTGIb"
 msgid "Got it"
 msgstr "확인"
@@ -3391,6 +3372,12 @@ msgstr "답을 확인하고 있어요"
 msgctxt "N2IrpM"
 msgid "Confirm"
 msgstr "확인"
+
+#: src/lesson/lesson-action-bar.tsx
+#: src/lesson/steps/typed-answer-step.tsx
+msgctxt "h5CuXu"
+msgid "I don't know yet"
+msgstr "아직 모르겠어요"
 
 #: src/lesson/lesson-action-bar.tsx
 msgctxt "9-Ddtu"
@@ -3650,11 +3637,11 @@ msgctxt "ziwOEf"
 msgid "Your example"
 msgstr "내 예시"
 
-#. Over a question the learner answers with a guess; “first” means before the lesson teaches the answer.
+#. Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored.
 #: src/lesson/steps/hook-step.tsx
-msgctxt "p6MDZm"
-msgid "Guess first"
-msgstr "먼저 예상해 보기"
+msgctxt "AlhfZ4"
+msgid "Just a guess, it doesn't count"
+msgstr "예상일 뿐, 점수에는 반영되지 않아요"
 
 #: src/lesson/steps/lesson-answer-field.tsx
 #: src/lesson/steps/spoken-answer-step.tsx
@@ -3733,11 +3720,6 @@ msgstr "지금은 쓸 수 없어요"
 msgctxt "lZZnLn"
 msgid "In your own words"
 msgstr "내 말로 설명하기"
-
-#: src/lesson/steps/typed-answer-step.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "아직 모르겠어요"
 
 #: src/lesson/steps/word-hints.tsx
 msgctxt "YgghdL"

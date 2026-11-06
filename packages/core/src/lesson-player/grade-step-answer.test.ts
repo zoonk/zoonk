@@ -21,6 +21,7 @@ function teachingStep<TKind extends TeachingStepKind>(
     image: null,
     imagePending: false,
     kind,
+    marks: null,
     position: 0,
     skillId: null,
   };

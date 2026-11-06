@@ -4144,15 +4144,82 @@ msgctxt "q8l1Sf"
 msgid "This didn't start"
 msgstr "La preparazione non è iniziata"
 
-#: src/generation/use-generation-copy.ts
-msgctxt "K-ogAc"
-msgid "Writing question {number}…"
-msgstr "Stiamo preparando la domanda {number}…"
+#: src/generation/lesson-generation-copy.ts
+msgctxt "57Hm5c"
+msgid "Writing your lesson"
+msgstr "Stiamo preparando la tua lezione"
 
+#. A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it.
+#: src/generation/lesson-generation-copy.ts
+msgctxt "FXibMW"
+msgid "Drawing the pictures"
+msgstr "Stiamo disegnando le immagini"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "b9LtBx"
+msgid "Drawing what each screen describes…"
+msgstr "Stiamo disegnando ciò che ogni schermata descrive…"
+
+#. Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4".
+#: src/generation/lesson-generation-copy.ts
+msgctxt "iztB5A"
+msgid "Drawing an icon for each idea…"
+msgstr "Stiamo disegnando un’icona per ogni idea…"
+
+#. A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it. "Ideas" are the lesson map's ideas, as in "Idea 2 of 4".
+#: src/generation/lesson-generation-copy.ts
+msgctxt "j9wN0e"
+msgid "Highlighting the key ideas"
+msgstr "Stiamo evidenziando le idee chiave"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "SfG70y"
+msgid "Underlining what matters most…"
+msgstr "Stiamo sottolineando ciò che conta di più…"
+
+#. Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4".
+#: src/generation/lesson-generation-copy.ts
+msgctxt "T2D5Nn"
+msgid "Matching each screen to its idea…"
+msgstr "Stiamo abbinando ogni schermata alla sua idea…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "qE4faw"
+msgid "Planning the lesson"
+msgstr "Stiamo pianificando la lezione"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "UfNh0L"
+msgid "Choosing what to cover…"
+msgstr "Stiamo scegliendo gli argomenti da trattare…"
+
+#. Zoonk at work on a lesson. "It" is the lesson's topic.
+#: src/generation/lesson-generation-copy.ts
+msgctxt "0rFPyc"
+msgid "Picking the best way to explain it…"
+msgstr "Stiamo scegliendo come spiegare al meglio l’argomento…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "Dwuk2D"
+msgid "Writing the lesson"
+msgstr "Stiamo preparando la lezione"
+
+#: src/generation/lesson-generation-copy.ts
+#: src/generation/use-generation-copy.ts
+msgctxt "gGJukf"
+msgid "Writing screen {number}…"
+msgstr "Stiamo preparando la schermata {number}…"
+
+#: src/generation/lesson-generation-copy.ts
 #: src/generation/use-generation-copy.ts
 msgctxt "phPNe2"
 msgid "Checking the answers…"
 msgstr "Stiamo controllando le risposte…"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "K-ogAc"
+msgid "Writing question {number}…"
+msgstr "Stiamo preparando la domanda {number}…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "289EPU"
@@ -4384,11 +4451,6 @@ msgid "Writing about 5 short screens"
 msgstr "Stiamo preparando circa 5 brevi schermate"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "gGJukf"
-msgid "Writing screen {number}…"
-msgstr "Stiamo preparando la schermata {number}…"
-
-#: src/generation/use-generation-copy.ts
 msgctxt "hSi5Cg"
 msgid "Checking the facts…"
 msgstr "Stiamo verificando i fatti…"
@@ -4427,32 +4489,6 @@ msgstr "Stiamo preparando la tua simulazione"
 msgctxt "M1AYoH"
 msgid "Writing questions like the exam's"
 msgstr "Stiamo preparando domande simili a quelle dell’esame"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "57Hm5c"
-msgid "Writing your lesson"
-msgstr "Stiamo preparando la tua lezione"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "qE4faw"
-msgid "Planning the lesson"
-msgstr "Stiamo pianificando la lezione"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "UfNh0L"
-msgid "Choosing what to cover…"
-msgstr "Stiamo scegliendo gli argomenti da trattare…"
-
-#. Zoonk at work on a lesson. "It" is the lesson's topic.
-#: src/generation/use-generation-copy.ts
-msgctxt "0rFPyc"
-msgid "Picking the best way to explain it…"
-msgstr "Stiamo scegliendo come spiegare al meglio l’argomento…"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "Dwuk2D"
-msgid "Writing the lesson"
-msgstr "Stiamo preparando la lezione"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "_49owu"
@@ -12675,9 +12711,9 @@ msgid "Saving your progress…"
 msgstr "Stiamo salvando i tuoi progressi…"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "m3SPlD"
-msgid "This lesson is being written for you. It's usually ready in about two minutes."
-msgstr "Stiamo preparando questa lezione per te. Di solito è pronta in circa due minuti."
+msgctxt "Icwcge"
+msgid "This lesson is being written for you. It's usually ready in a few minutes."
+msgstr "Stiamo preparando questa lezione per te. Di solito è pronta in qualche minuto."
 
 #: src/session/next-stop-wait.tsx
 msgctxt "J05b6v"

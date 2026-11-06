@@ -35,7 +35,7 @@
   "catalog_expand": "3a755161ad2862062b181f3465b90d9ddafa282c58937d1880a72c521326034e",
   "catalog_go_to_chapter": "5ad2d7d0e852cfb10f6a7af268e09a901aef4bbfcfa3c715cc1bc09cf8d57ce8",
   "catalog_goal_example": "cbcf819bc132d4cb77ab1b3dde2b05346092047bd7336acc83ce515f1e1cee04",
-  "catalog_guess_first": "804bad78f13b8e6935ad4ec2274c6db009f238c09d4479eec189b2218e28d462",
+  "catalog_guess_chip": "1d578aaf3876476eb36d4e7e266f0db5c81460c3aa819c5cc03dd501b8cc63c2",
   "catalog_guess_note": "3d45d281bbe96e7c2bd40d1ad3922a505dd9c6aea4906c9c254214fe49878960",
   "catalog_ideas": "6d80f34d2db3e3b5f3a6a79835f951e31a1882524796f161ec6efd01ac9b9a76",
   "catalog_left_out": "70aeaa8f7da8ec68a203d57459a4e6bbabdc8c074cb27c21a4400e5a76b58e6e",
@@ -177,7 +177,8 @@
     <string name="catalog_start_free">アカウントなしで無料で始められます。</string>
     <string name="catalog_try_title">レッスンを体験する · 無料 · %1$s</string>
     <string name="catalog_try_place">%1$s · レッスン%2$s</string>
-    <string name="catalog_guess_first">まずは予想してみてください。スコアには影響しません。</string>
+    <!-- Chip above a lesson's opening question on a course page, which the learner answers before being taught. Guesses are never scored. -->
+    <string name="catalog_guess_chip">予想なので、採点されません</string>
     <string name="catalog_quick_question">まずは1問</string>
     <string name="catalog_guess_note">答えると、%1$s分のレッスンが始まります。</string>
     <string name="catalog_check_note">選ぶと、%1$s分のレッスンに進みます。そこで答え合わせをしましょう。</string>

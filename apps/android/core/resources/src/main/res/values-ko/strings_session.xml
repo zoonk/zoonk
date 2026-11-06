@@ -40,7 +40,7 @@
   "session_next_stop": "0c3ea72636d0f181528d259ebb0a3ec93bd94cceddc2d77f9c88c398b6d4e360",
   "session_next_stop_failed": "7fc4f563b2bcc965a405745f3d9c19f917a3e2a6006ac6a3f44719aaac24e1a8",
   "session_next_while_waiting": "de950ac6ae4cc7ae0fe8b154cd9c9efa80ad6e55acc4845e17b9b8eea6daf53f",
-  "session_next_writing_note": "63cd560c92141bf1034eb5dcf419c4337d2518629630b329178ffa7472ccb906",
+  "session_next_writing_note": "fb563baa8dfcfa12262c114035a5b50348a203e94ffa8eddbc9bba510bc3b681",
   "session_opening_slow": "6910940508c5ce305852f8c8f5da24274aef65f6c7e1b122971ad459d22ff19f",
   "session_opening_very_slow": "db62f4bf88f9522ac8b876b8e0216011ec76fe72fedf55ecaf41a4fe72ee77e2",
   "session_summary_back_on": "12006d67abedff1315b90191483ca472da61f984982a6ecc069ae33c2829b986",
@@ -183,7 +183,7 @@
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">다음 단계</string>
     <string name="session_next_start">시작하기</string>
-    <string name="session_next_writing_note">맞춤 레슨을 만들고 있어요. 보통 2분 정도면 준비돼요.</string>
+    <string name="session_next_writing_note">맞춤 레슨을 만들고 있어요. 보통 몇 분이면 준비돼요.</string>
     <string name="session_next_lesson_ready">레슨이 준비됐어요.</string>
     <string name="session_next_stop">오늘 학습 마치기</string>
     <string name="session_next_stop_failed">학습을 중단하지 못했어요. 다시 시도해 보세요.</string>

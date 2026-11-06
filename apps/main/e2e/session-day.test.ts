@@ -330,7 +330,12 @@ test.describe("Today's session", () => {
 
     await expect(
       page.getByRole("list", { name: "Writing your lesson" }).getByRole("listitem"),
-    ).toHaveText([/^Planning the lesson, done/u, /^Writing the lesson, in progress/u]);
+    ).toHaveText([
+      /^Planning the lesson, done/u,
+      /^Writing the lesson, in progress/u,
+      /^Highlighting the key ideas, not started yet/u,
+      /^Drawing the pictures, not started yet/u,
+    ]);
 
     await writeStudyLesson(lesson.id);
     events.push({ entityId: lesson.id, status: "completed", step: "lessonReady" });

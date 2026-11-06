@@ -32,6 +32,15 @@ fun LessonPlayerState.enterPosition(
 internal fun LessonPlayerState.complete(status: CompletionStatus = CompletionStatus.Saving): LessonPlayerState =
     copy(completion = LessonCompletion(status, testedOut = quickCheck != null), phase = LessonPhase.Completed)
 
+/** Once no other screen is left, retries included, the lesson's map comes before its end; "I already know this" skips it. */
+fun LessonPlayerState.finish(
+    status: CompletionStatus,
+    now: Long,
+): LessonPlayerState {
+    if (!isMapAhead) return complete(status)
+    return copy(notice = null, queue = queue + LESSON_MAP_STEP_ID).enterPosition(queue.size, now)
+}
+
 private fun LessonPlayerState.leaveQuickCheck(now: Long): LessonPlayerState {
     val quick = quickCheck ?: return this
     val answered = queue.filter(results::containsKey)
@@ -53,7 +62,7 @@ fun LessonPlayerState.advance(now: Long): LessonPlayerState {
     val next = position + 1
     val state = if (available.size == queue.size) this else copy(queue = available)
 
-    if (next >= available.size) return state.complete()
+    if (next >= available.size) return state.finish(CompletionStatus.Saving, now)
 
     return state.copy(notice = null).enterPosition(next, now)
 }
@@ -75,7 +84,7 @@ fun LessonPlayerState.leaveOutAhead(
     if (next.queue.getOrNull(position) == queue.getOrNull(position)) return next
 
     return if (position >= next.queue.size) {
-        next.complete(completionStatus)
+        next.finish(completionStatus, now)
     } else {
         next.copy(notice = null).enterPosition(position, now)
     }
@@ -124,7 +133,16 @@ fun LessonPlayerState.continueChallenge(): LessonPlayerState {
 }
 
 val LessonPlayerState.canGoBack: Boolean
-    get() = phase == LessonPhase.Playing && position > 0 && quickCheck == null && run !is LessonRun.Refused && !comesBackLater(position - 1)
+    get() =
+        phase == LessonPhase.Playing && position > 0 && quickCheck == null && run !is LessonRun.Refused &&
+            !comesBackLater(position - 1) && !isUnplayedBeforeMap()
+
+/** A run resumed on the map has no results this sitting, so its last question would show unanswered. */
+private fun LessonPlayerState.isUnplayedBeforeMap(): Boolean {
+    if (currentStep?.kind != StepKind.Map) return false
+    val previousId = queue[position - 1]
+    return previousId !in results && steps[previousId]?.isReadStep != true
+}
 
 /** A question that comes back plays its attempt there, so its earlier copy, with no result, isn't played again. */
 private fun LessonPlayerState.comesBackLater(index: Int): Boolean {
@@ -232,34 +250,6 @@ fun LessonPlayerState.startQuickCheck(now: Long): LessonPlayerState {
     return copy(
         notice = null,
         queue = checks,
-        quickCheck = QuickCheck(missed = false, returnPosition = position, returnQueue = queue),
+        quickCheck = QuickCheck(missed = false, returnPosition = position, returnQueue = queue - LESSON_MAP_STEP_ID),
     ).enterPosition(0, now)
-}
-
-/** With `questionFirst`, the first question of the opening skill comes before its explanations. */
-internal fun orderLessonOpening(
-    queue: List<String>,
-    steps: Map<String, LessonStep>,
-    support: LessonSupport?,
-): List<String> {
-    val start = queue.indexOfFirst { steps[it]?.kind != StepKind.Hook }
-
-    if (support != LessonSupport.QuestionFirst || start == -1) return queue
-
-    val opening = steps[queue[start]]
-
-    if (opening == null || !opening.isExplainingStep) return queue
-
-    val questionIndex =
-        queue.indices.firstOrNull { index ->
-            val step = steps[queue[index]]
-            index > start && step != null && !step.isExplainingStep
-        } ?: return queue
-    val question = steps.getValue(queue[questionIndex])
-    val asksSameSkill = question.isRetryStep && (question.skillId == null || opening.skillId == null || question.skillId == opening.skillId)
-
-    if (!asksSameSkill) return queue
-
-    val rest = queue.filterNot { it == question.id }
-    return rest.take(start) + question.id + rest.drop(start)
 }

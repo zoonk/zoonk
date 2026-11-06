@@ -13,9 +13,148 @@ const ENEM_EXAM = {
 };
 
 export const WALK_LESSONS: Record<
-  "pt-grupos-de-animais" | "pt-piramide-energia" | "pt-precisao-sensores",
+  "pt-ciclo-celular" | "pt-grupos-de-animais" | "pt-piramide-energia" | "pt-precisao-sensores",
   WalkLesson
 > = {
+  /** Its plan wasn't saved, so it's rebuilt from the screens the walk played. */
+  "pt-ciclo-celular": {
+    chapterTitle: "Células e divisão celular",
+    courseTitle: "Biologia",
+    language: "pt",
+    level: "beginner",
+    spec: {
+      canDo: "Ordenar as fases do ciclo celular e dizer o que a célula faz em cada uma",
+      description:
+        "Mostra as fases em que uma célula cresce, copia o DNA, se prepara e se divide em duas, e como elas se repetem.",
+      estimatedMinutes: 4,
+      screens: [
+        {
+          activityTemplate: null,
+          brief:
+            "Jussara rala o joelho e, em alguns dias, a pele fecha o machucado com células novas. Termine na pergunta aberta, sem opções: o que uma célula faz antes de virar duas?",
+          kind: "hook",
+          skills: [],
+          visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Cada célula da pele carrega um manual de instruções que segue para produzir as peças de que precisa para funcionar. Esse manual se chama DNA.",
+          kind: "explanation",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Uma célula da pele passa várias horas sem se separar em duas. Pergunte o que ela faz durante esse tempo. Opções: cresce e se prepara para se dividir; fica parada, sem fazer nada; morre e é trocada por outra. Revele que ela cresce e se prepara, sem explicar as fases ainda.",
+          kind: "guess",
+          skills: [0],
+          visual: "Uma célula da pele, redonda e pequena, entre outras células iguais a ela.",
+          visualKind: "picture",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Uma célula que acabou de se formar é pequena, por isso primeiro cresce e produz as peças que usa no dia a dia, seguindo o DNA. Essa fase de crescimento se chama G1.",
+          kind: "explanation",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Depois de crescer, a célula faz uma cópia do seu DNA inteiro e continua sendo uma célula só, agora com o manual em dobro. Essa fase de cópia se chama fase S.",
+          kind: "explanation",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Uma célula da pele já cresceu e está no meio da cópia do seu DNA, ainda uma célula só. Pergunte em que fase ela está: fase S. Inclua G1 como a alternativa tentadora, porque ela ainda não se dividiu.",
+          kind: "check",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Com o DNA já copiado, a célula ainda não se divide: antes, produz os materiais que vai usar na divisão. Essa preparação final se chama G2.",
+          kind: "explanation",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Por fim, a célula reparte seu conteúdo e cada lado leva uma cópia do DNA, então uma célula vira duas. Essa etapa de divisão se chama fase M.",
+          kind: "explanation",
+          skills: [0],
+          visual:
+            "Uma célula se estreitando no meio e se separando em duas células menores, cada uma com seu núcleo.",
+          visualKind: "picture",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Em G1, S e G2 a célula ainda é uma só, mas está ativa: cresce, copia o DNA e se prepara. Juntas, essas três fases se chamam intérfase, e depois dela vem a fase M.",
+          kind: "explanation",
+          skills: [0],
+          visual:
+            "Um círculo dividido em quatro trechos em sequência, marcados G1, S, G2 e M, com setas no sentido horário; G1, S e G2 juntos formam um arco maior marcado intérfase.",
+          visualKind: "picture",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Uma célula nova passa por G1, S, G2 e M e vira duas; se essas células também se dividem, cada uma recomeça em G1. Essa sequência que se repete se chama ciclo celular.",
+          kind: "explanation",
+          skills: [0],
+          visual:
+            "Um círculo dividido em quatro trechos em sequência, marcados G1, S, G2 e M, com setas no sentido horário; G1, S e G2 juntos formam um arco maior marcado intérfase.",
+          visualKind: "picture",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Uma célula recém-formada cresce em G1, copia o DNA em S e depois se divide em M. Pergunte qual fase fica entre a cópia do DNA e a divisão: G2. Inclua G1 como a alternativa tentadora.",
+          kind: "check",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "No laboratório, Jussara vê que uma célula da pele terminou de copiar o DNA, e o relatório anota que ela vai se dividir imediatamente e que ainda está na intérfase. Pergunte qual afirmação precisa ser corrigida: a de que vai se dividir imediatamente, porque antes passa por G2.",
+          kind: "application",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
+        },
+      ],
+      skills: [
+        {
+          description:
+            "Uma célula cresce em G1, copia o DNA na fase S, se prepara em G2 e se divide em duas na fase M; G1, S e G2 formam a intérfase.",
+          example:
+            "Uma célula da pele que terminou de copiar o DNA ainda passa por G2 antes de se dividir.",
+          hard: false,
+          name: "Ordenar as fases do ciclo celular",
+          topic: "Ciclo celular",
+          useCase: "Dizer em que fase está uma célula pelo que ela faz.",
+        },
+      ],
+      title: "Fases do ciclo celular",
+    },
+  },
   "pt-grupos-de-animais": {
     chapterTitle: "Dados de biodiversidade e classificação",
     courseTitle: "ENEM",
@@ -31,18 +170,12 @@ export const WALK_LESSONS: Record<
         {
           activityTemplate: null,
           brief:
-            "Edson encontrou um caranguejo no litoral. Pergunte com qual animal ele deve agrupá-lo pelos traços do corpo: A) caracol-marinho, B) camarão, C) estrela-do-mar, D) peixe, E) água-viva. Revele imediatamente B: caranguejo e camarão têm cobertura rígida e pernas que se dobram em juntas; deixe a explicação do critério para as telas seguintes.",
+            "Edson acha um caranguejo e uma estrela-do-mar na mesma poça do litoral, e um amigo diz que os dois são do mesmo grupo porque vivem no mar. Mostre a cena numa figura e termine na pergunta aberta, sem opções: o que decide o grupo de um animal?",
           kind: "hook",
           skills: [],
-          visual: null,
-        },
-        {
-          activityTemplate: null,
-          brief:
-            "Marília compara um morcego e uma libélula. Peça que escolha a observação mais útil para separá-los em grandes grupos: ossos que sustentam o morcego por dentro, em contraste com a cobertura rígida e as pernas com juntas da libélula. Inclua como alternativa tentadora o fato de ambos terem asas.",
-          kind: "check",
-          skills: [0],
-          visual: null,
+          visual:
+            "Edson agachado numa poça de maré entre as rochas, olhando um caranguejo e uma estrela-do-mar lado a lado na água rasa.",
+          visualKind: "picture",
         },
         {
           activityTemplate: null,
@@ -52,6 +185,16 @@ export const WALK_LESSONS: Record<
           skills: [0],
           visual:
             "Esponja inteira presa a uma rocha, com poros pequenos distribuídos pelo corpo, abertura maior no alto e setas mostrando a entrada e a saída da água.",
+          visualKind: "picture",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Edson olha de novo o caranguejo. Pergunte, sem valer ponto, com qual animal ele deve agrupá-lo pelos traços do corpo: caracol-marinho, camarão, estrela-do-mar ou água-viva. Revele camarão assim que a pessoa escolher: caranguejo e camarão têm cobertura rígida e pernas que se dobram em juntas; deixe a explicação do critério para as telas seguintes.",
+          kind: "guess",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -61,6 +204,7 @@ export const WALK_LESSONS: Record<
           skills: [0],
           visual:
             "Água-viva inteira, com centro do corpo, tentáculos distribuídos ao redor e detalhe ampliado de uma célula que pica em um tentáculo.",
+          visualKind: "picture",
         },
         {
           activityTemplate: null,
@@ -69,6 +213,7 @@ export const WALK_LESSONS: Record<
           kind: "check",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -78,6 +223,7 @@ export const WALK_LESSONS: Record<
           skills: [0],
           visual:
             "Caranguejo inteiro com a cobertura rígida destacada e juntas marcadas em duas pernas; as demais pernas permanecem visíveis.",
+          visualKind: "picture",
         },
         {
           activityTemplate: null,
@@ -87,6 +233,16 @@ export const WALK_LESSONS: Record<
           skills: [0],
           visual:
             "Peixe visto de lado, com contorno do corpo, ossos internos e coluna ao longo das costas destacados.",
+          visualKind: "picture",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Marília compara um morcego e uma libélula. Peça que escolha a observação mais útil para separá-los em grandes grupos: ossos que sustentam o morcego por dentro, em contraste com a cobertura rígida e as pernas com juntas da libélula. Inclua como alternativa tentadora o fato de ambos terem asas.",
+          kind: "check",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: "categorize",
@@ -95,6 +251,7 @@ export const WALK_LESSONS: Record<
           kind: "activity",
           skills: [0],
           visual: null,
+          visualKind: "template",
         },
         {
           activityTemplate: null,
@@ -104,6 +261,7 @@ export const WALK_LESSONS: Record<
           skills: [0],
           visual:
             "Dois desenhos lado a lado, identificados como 1 e 2: animal de corpo mole dentro de uma concha, sem pernas; caranguejo com cobertura rígida e pernas com juntas.",
+          visualKind: "picture",
         },
         {
           activityTemplate: null,
@@ -112,6 +270,7 @@ export const WALK_LESSONS: Record<
           kind: "check",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -120,6 +279,7 @@ export const WALK_LESSONS: Record<
           kind: "application",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
       ],
       skills: [
@@ -134,7 +294,6 @@ export const WALK_LESSONS: Record<
           useCase: "Revisar a classificação de animais em um levantamento de biodiversidade.",
         },
       ],
-      supportMode: "questionFirst",
       title: "Grupos de animais",
     },
   },
@@ -153,10 +312,11 @@ export const WALK_LESSONS: Record<
         {
           activityTemplate: null,
           brief:
-            "Em Macapá, Nayara registra 1.000 unidades de energia nas algas, 120 nos crustáceos que as comem e 14 nos peixes que comem os crustáceos. Mostre esses valores em um gráfico de barras e pergunte: se a energia continuar diminuindo, qual valor poderia aparecer no grupo que come esses peixes? Opções: 10, 120, 140, 1.000 ou 1.140 unidades; revele 10 assim que você escolher, sem explicar o motivo ainda.",
+            "Em Macapá, Nayara registra a energia de uma cadeia do rio: 1.000 unidades nas algas, 120 nos crustáceos que as comem e 14 nos peixes que comem os crustáceos. Mostre esses valores em um gráfico de barras e termine na pergunta aberta, sem opções: para onde vai a energia que some de um grupo para o outro?",
           kind: "hook",
-          skills: [0],
+          skills: [],
           visual: null,
+          visualKind: "chart",
         },
         {
           activityTemplate: null,
@@ -165,6 +325,16 @@ export const WALK_LESSONS: Record<
           kind: "explanation",
           skills: [0],
           visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Em Macapá, Nayara registra 1.000 unidades de energia nas algas, 120 nos crustáceos que as comem e 14 nos peixes que comem os crustáceos. Volte ao gráfico de Nayara e pergunte: se a energia continuar diminuindo, qual valor poderia aparecer no grupo que come esses peixes? Opções: 10, 120, 140, 1.000 ou 1.140 unidades; revele 10 assim que você escolher, sem explicar o motivo ainda.",
+          kind: "guess",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -173,6 +343,7 @@ export const WALK_LESSONS: Record<
           kind: "explanation",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -181,6 +352,7 @@ export const WALK_LESSONS: Record<
           kind: "check",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -189,6 +361,7 @@ export const WALK_LESSONS: Record<
           kind: "explanation",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -197,6 +370,7 @@ export const WALK_LESSONS: Record<
           kind: "explanation",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: "categorize",
@@ -205,6 +379,7 @@ export const WALK_LESSONS: Record<
           kind: "activity",
           skills: [0],
           visual: null,
+          visualKind: "template",
         },
         {
           activityTemplate: null,
@@ -213,6 +388,7 @@ export const WALK_LESSONS: Record<
           kind: "application",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
       ],
       skills: [
@@ -228,7 +404,6 @@ export const WALK_LESSONS: Record<
             "Interpretar dados de energia em uma sequência alimentar e comparar grupos de organismos.",
         },
       ],
-      supportMode: "explanationFirst",
       title: "Fluxo de energia e pirâmides tróficas",
     },
   },
@@ -247,26 +422,29 @@ export const WALK_LESSONS: Record<
         {
           activityTemplate: null,
           brief:
-            "Renan mede uma peça cuja referência é 50,0 mm. Mostre numa tabela três leituras de cada um de cinco sensores: A: 49,8; 49,9; 50,0 mm; B: 51,0; 51,0; 51,1 mm; C: 48,0; 50,0; 52,0 mm; D: 49,0; 50,0; 51,0 mm; E: 50,4; 50,6; 50,8 mm. Pergunte qual sensor dá leituras agrupadas e perto da referência. Revele A assim que você escolher, sem explicar o motivo ainda.",
+            "Renan confere uma peça de 50,0 mm com dois sensores do laboratório. Mostre numa tabela as três leituras de cada um: A: 49,8; 49,9; 50,0 mm; C: 48,0; 50,0; 52,0 mm. Os dois acertam 50,0 mm uma vez. Pergunte, sem opções, se os dois são igualmente confiáveis.",
           kind: "hook",
           skills: [],
           visual: null,
+          visualKind: "table",
         },
         {
           activityTemplate: null,
           brief:
-            "Com referência de 20,0 cm, o grupo X leu 22,0; 22,1; 22,2 cm e o grupo Y leu 19,0; 20,0; 21,0 cm. Mostre as leituras numa tabela e pergunte qual grupo tem leituras mais agrupadas, mesmo longe da referência. Resposta: X; inclua como alternativa tentadora escolher Y por estar perto da referência.",
-          kind: "check",
-          skills: [0],
-          visual: null,
-        },
-        {
-          activityTemplate: null,
-          brief:
-            "Apresente a precisão como o agrupamento das leituras: quanto mais próximas umas das outras, maior a precisão. Use X e Y do caso anterior e deixe claro que a precisão sozinha não diz se o resultado está perto da referência.",
+            "Apresente a precisão como o agrupamento das leituras: quanto mais próximas umas das outras, maior a precisão. Mostre numa tabela, com referência de 20,0 cm, o grupo X (22,0; 22,1; 22,2 cm) e o grupo Y (19,0; 20,0; 21,0 cm): X é mais preciso. Deixe claro que a precisão sozinha não diz se o resultado está perto da referência.",
           kind: "explanation",
           skills: [0],
           visual: null,
+          visualKind: "table",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Um terceiro sensor de Renan lê 51,0; 51,0; 51,1 mm na peça de 50,0 mm. Pergunte o que ele é: preciso e exato; preciso, mas não exato; exato, mas não preciso; nem um nem outro. Resposta: preciso, mas não exato; a próxima tela mostra por quê.",
+          kind: "guess",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -275,6 +453,16 @@ export const WALK_LESSONS: Record<
           kind: "explanation",
           skills: [0],
           visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Com referência de 5,00 V, o multímetro P leu 5,30; 5,31; 5,30 V e o multímetro Q leu 4,80; 5,00; 5,20 V. Mostre as leituras numa tabela e peça que o aluno escolha a descrição correta: P é mais preciso e Q tem o resultado central mais exato. Inclua como alternativa tentadora que o mais preciso também é o mais exato.",
+          kind: "check",
+          skills: [0],
+          visual: null,
+          visualKind: "table",
         },
         {
           activityTemplate: null,
@@ -283,6 +471,7 @@ export const WALK_LESSONS: Record<
           kind: "check",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -291,6 +480,7 @@ export const WALK_LESSONS: Record<
           kind: "explanation",
           skills: [1],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -299,6 +489,7 @@ export const WALK_LESSONS: Record<
           kind: "workedExample",
           skills: [1],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -307,6 +498,7 @@ export const WALK_LESSONS: Record<
           kind: "check",
           skills: [1],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -315,6 +507,7 @@ export const WALK_LESSONS: Record<
           kind: "check",
           skills: [1],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -323,6 +516,7 @@ export const WALK_LESSONS: Record<
           kind: "application",
           skills: [0, 1],
           visual: null,
+          visualKind: "none",
         },
       ],
       skills: [
@@ -346,7 +540,6 @@ export const WALK_LESSONS: Record<
           useCase: "Comunicar o resultado de uma medição feita várias vezes.",
         },
       ],
-      supportMode: "questionFirst",
       title: "Precisão, exatidão e incerteza",
     },
   },

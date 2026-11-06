@@ -15,17 +15,12 @@ import {
 } from "../_test-utils/activity-player";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
-import { activityStep, inlineImage } from "../preview/preview-steps";
+import { activityStep } from "../preview/preview-steps";
 
 const NUMBERED_BEAKERS = {
   alt: "Two beakers side by side, numbered 1 and 2",
   parts: ["left beaker", "right beaker"],
   prompt: "Two beakers on a lab bench",
-};
-
-const LEAF = {
-  alt: "A long, thin needle growing in a bundle of two from the twig",
-  prompt: "Two long pine needles joined at the base on a twig",
 };
 
 async function expectHeard(text: string) {
@@ -324,54 +319,6 @@ describe("reasoning activities", () => {
     await expect.element(table.getByRole("cell", { name: "E12" })).toBeVisible();
     await expect.element(page.getByText("how many distinct requests")).toBeVisible();
     await expect.element(page.getByText("|---|", { exact: false })).not.toBeInTheDocument();
-  });
-
-  it("decision tree: following the case reaches its outcome", async () => {
-    openActivity({ template: "decisionTree" });
-
-    await expect
-      .element(page.getByRole("list", { name: "Still possible" }))
-      .toMatchTextContent("Oak");
-
-    await page.getByRole("button", { name: "Needles" }).click();
-
-    await expect
-      .element(page.getByRole("list", { name: "Still possible" }))
-      .not.toMatchTextContent("Oak");
-
-    await page.getByRole("button", { name: "In bundles" }).click();
-    await expect.element(page.getByText("Your answers lead to")).toBeVisible();
-    await checkActivity();
-    await expectVerdict("Correct!");
-    await expect.element(page.getByText("It leads to Pine.")).toBeVisible();
-  });
-
-  it("decision tree: the case comes with its picture, or its description until drawn", async () => {
-    const content = { ...activityContentFixtures.decisionTree, image: LEAF };
-
-    const drawn = openActivity({
-      content,
-      image: inlineImage({ alt: LEAF.alt }),
-      template: "decisionTree",
-    });
-
-    await expect.element(page.getByRole("img", { name: LEAF.alt })).toBeVisible();
-    drawn.unmount();
-
-    openActivity({ content, template: "decisionTree" });
-    await expect.element(page.getByText(LEAF.alt)).toBeVisible();
-    await expectCount(page.getByRole("img", { name: LEAF.alt }), 0);
-  });
-
-  it("decision tree: undo steps back, and a wrong branch is shown", async () => {
-    openActivity({ template: "decisionTree" });
-    await page.getByRole("button", { name: "Broad leaves" }).click();
-    await page.getByRole("button", { name: "Undo" }).click();
-    await page.getByRole("button", { name: "Needles" }).click();
-    await page.getByRole("button", { name: "Single" }).click();
-    await checkActivity();
-    await expectVerdict("Not quite");
-    await expect.element(page.getByText("You chose Single")).toBeVisible();
   });
 });
 

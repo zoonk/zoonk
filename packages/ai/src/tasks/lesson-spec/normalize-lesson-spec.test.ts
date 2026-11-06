@@ -10,6 +10,7 @@ function rawScreen(overrides: Partial<RawLessonScreen>): RawLessonScreen {
     kind: "explanation",
     skills: [1],
     visual: null,
+    visualKind: "none",
     ...overrides,
   };
 }
@@ -29,7 +30,6 @@ function rawSpec(screens: RawLessonScreen[]): RawLessonSpec {
         useCase: " Price rises ",
       },
     ],
-    supportMode: "explanationFirst",
     title: " Percent change ",
   };
 }
@@ -54,36 +54,6 @@ describe(normalizeLessonSpec, () => {
     expect(spec.canDo).toBe("Calculate a percent change");
     expect(spec.skills[0]?.topic).toBe("Calculate a percent change");
     expect(spec.estimatedMinutes).toBe(2);
-  });
-
-  it("takes the support mode from the screen after the hook, which the writer builds on", () => {
-    const explained = normalizeLessonSpec({
-      exploreIds,
-      raw: {
-        ...rawSpec([
-          rawScreen({ kind: "hook", skills: [] }),
-          rawScreen({ kind: "explanation" }),
-          rawScreen({ kind: "check" }),
-          rawScreen({ kind: "application" }),
-        ]),
-        supportMode: "questionFirst",
-      },
-      templateIds,
-    });
-
-    const asked = normalizeLessonSpec({
-      exploreIds,
-      raw: rawSpec([
-        rawScreen({ kind: "hook", skills: [] }),
-        rawScreen({ kind: "check" }),
-        rawScreen({ kind: "explanation" }),
-        rawScreen({ kind: "application" }),
-      ]),
-      templateIds,
-    });
-
-    expect(explained.supportMode).toBe("explanationFirst");
-    expect(asked.supportMode).toBe("questionFirst");
   });
 
   it("turns skill numbers into indexes and drops unknown or repeated ones", () => {
@@ -181,5 +151,47 @@ describe(normalizeLessonSpec, () => {
     });
 
     expect(spec.screens.map((screen) => screen.visual)).toStrictEqual([null, "A price tag."]);
+  });
+
+  it("keeps one visual per screen, of the kind the plan names when it can be shown", () => {
+    const spec = normalizeLessonSpec({
+      exploreIds,
+      raw: rawSpec([
+        rawScreen({ visual: "A shop", visualKind: "table" }),
+        rawScreen({ activityTemplate: "number-line", visual: "A shop", visualKind: "picture" }),
+        rawScreen({ activityTemplate: "number-line", visual: "A shop", visualKind: "template" }),
+        rawScreen({ visual: null, visualKind: "picture" }),
+        rawScreen({ visual: "A shop", visualKind: "none" }),
+        rawScreen({ kind: "check", visual: "A shop", visualKind: "template" }),
+        rawScreen({ activityTemplate: "find-error", kind: "activity", visual: "A worked answer" }),
+      ]),
+      templateIds,
+    });
+
+    expect(
+      spec.screens.map((screen) => [screen.visualKind, screen.visual, screen.activityTemplate]),
+    ).toStrictEqual([
+      ["table", null, null],
+      ["picture", "A shop", null],
+      ["template", null, "number-line"],
+      ["none", null, null],
+      ["picture", "A shop", null],
+      ["picture", "A shop", null],
+      ["template", "A worked answer", "find-error"],
+    ]);
+  });
+
+  it("keeps a scene planned with nothing bare, and a planned visual as planned", () => {
+    const moment = "Lia finds the soda can burst in the freezer. How can cold break metal?";
+
+    const [bare, table] = [
+      rawScreen({ brief: moment, kind: "hook", skills: [] }),
+      rawScreen({ brief: moment, kind: "hook", skills: [], visualKind: "table" }),
+    ].map(
+      (hook) => normalizeLessonSpec({ exploreIds, raw: rawSpec([hook]), templateIds }).screens[0],
+    );
+
+    expect([bare?.visualKind, bare?.visual]).toStrictEqual(["none", null]);
+    expect([table?.visualKind, table?.visual]).toStrictEqual(["table", null]);
   });
 });

@@ -24,6 +24,9 @@ vi.mock("./lesson-spec.prompt.md", () => ({
     "{{#shortAnswers}}",
     "Ask it in their own words.",
     "{{/shortAnswers}}",
+    "{{#novice}}",
+    "Show it to a newcomer.",
+    "{{/novice}}",
     "Check the plan.",
   ].join("\n"),
 }));
@@ -47,16 +50,20 @@ function rawSkill(topic: string) {
 }
 
 function rawScreen(kind: string, skills: number[], activityTemplate: string | null = null) {
-  return { activityTemplate, brief: kind, kind, skills, visual: null };
+  return { activityTemplate, brief: kind, kind, skills, visual: null, visualKind: "none" };
 }
 
 function oneSkillLesson({ kinds, title }: { kinds: string[]; title: string }) {
   return {
     canDo: "Read a thermometer",
     description: "Temperatures below zero.",
-    screens: kinds.map((kind) => rawScreen(kind, kind === "hook" ? [] : [1])),
+    screens: kinds.map((kind, index) => ({
+      ...rawScreen(kind, kind === "hook" ? [] : [1]),
+      ...(["hook", "explanation", "workedExample"].includes(kind)
+        ? { visual: `A thermometer below zero ${index}`, visualKind: "picture" }
+        : {}),
+    })),
     skills: [rawSkill("Temperature")],
-    supportMode: "explanationFirst",
     title,
   };
 }
@@ -86,7 +93,6 @@ describe(generateLessonSpec, () => {
               rawScreen("application", [1, 2, 3, 4]),
             ],
             skills: ["Mean", "Median", "Mode", "Range"].map((topic) => rawSkill(topic)),
-            supportMode: "explanationFirst",
             title: "Summarizing a data set",
           },
         ],
@@ -127,13 +133,15 @@ describe(generateLessonSpec, () => {
   });
 
   it("plans the lesson again when its plan breaks a shape rule, and keeps the better plan", async () => {
-    // Four teaching screens in a row: a check comes every 2 or 3 screens.
+    // Five teaching screens in a row: a check comes after at most four.
     const longRun = oneSkillLesson({
       kinds: [
         "hook",
         "explanation",
+        "guess",
         "explanation",
         "workedExample",
+        "explanation",
         "explanation",
         "check",
         "application",
@@ -145,9 +153,10 @@ describe(generateLessonSpec, () => {
       kinds: [
         "hook",
         "explanation",
+        "guess",
+        "workedExample",
         "check",
         "explanation",
-        "workedExample",
         "check",
         "application",
       ],
@@ -187,6 +196,35 @@ describe(generateLessonSpec, () => {
     expect(generateText).toHaveBeenCalledTimes(5);
   });
 
+  it("keeps teaching screens planned with nothing bare, without planning again", async () => {
+    const bare = oneSkillLesson({
+      kinds: ["hook", "explanation", "guess", "explanation", "check", "application"],
+      title: "Bare",
+    });
+
+    const screens = bare.screens.map((screen) => ({ ...screen, visual: null, visualKind: "none" }));
+
+    vi.mocked(generateText).mockResolvedValueOnce(
+      createGenerateTextResult({ lessons: [{ ...bare, screens }] }),
+    );
+
+    const { data } = await generateLessonSpec({
+      activityTemplates: [],
+      chapterTitle: "Temperature",
+      courseTitle: "Weather",
+      language: "en",
+      lessonDescription: "Temperatures below zero.",
+      lessonTitle: "Below zero",
+      level: "beginner",
+    });
+
+    expect(generateText).toHaveBeenCalledOnce();
+
+    expect(data.lessons[0]?.screens.map((screen) => screen.visualKind)).toStrictEqual(
+      screens.map(() => "none"),
+    );
+  });
+
   it("plans a quick lesson as one lesson, never split, with the quick lesson rules only for it", async () => {
     const lesson = {
       canDo: "Relacionar estrutura proteica e função",
@@ -201,7 +239,6 @@ describe(generateLessonSpec, () => {
         rawScreen("application", [1, 2]),
       ],
       skills: ["Estrutura", "Enzima"].map((topic) => rawSkill(topic)),
-      supportMode: "explanationFirst",
       title: "Proteínas e enzimas",
     };
 
@@ -245,7 +282,6 @@ describe(generateLessonSpec, () => {
             description: "Temperatures.",
             screens: [rawScreen("hook", []), rawScreen("explanation", [1])],
             skills: [rawSkill("Temperature")],
-            supportMode: "explanationFirst",
             title: "Temperatures",
           },
         ],
@@ -259,22 +295,31 @@ describe(generateLessonSpec, () => {
       language: "en",
       lessonDescription: "Temperatures.",
       lessonTitle: "Temperatures",
-      level: "beginner",
+      level: "intermediate",
     } satisfies Parameters<typeof generateLessonSpec>[0];
 
     const exams = [{ name: "ENEM", style: "Multiple choice with a text." }];
 
-    const [regular, exam, material, sources, setup, quickExam, written] = await Promise.all([
-      generateLessonSpec(params),
-      generateLessonSpec({ ...params, exams }),
-      generateLessonSpec({ ...params, exams: [], material: "<page>Slides</page>" }),
-      generateLessonSpec({ ...params, sources: "<page>Law</page>" }),
-      generateLessonSpec({ ...params, setup: true }),
-      generateLessonSpec({ ...params, exams, quick: true }),
-      generateLessonSpec({ ...params, shortAnswers: true }),
-    ]);
+    const [regular, beginner, beginnerExam, exam, material, sources, setup, quickExam, written] =
+      await Promise.all([
+        generateLessonSpec(params),
+        generateLessonSpec({ ...params, level: "beginner" }),
+        generateLessonSpec({ ...params, exams, level: "beginner" }),
+        generateLessonSpec({ ...params, exams }),
+        generateLessonSpec({ ...params, exams: [], material: "<page>Slides</page>" }),
+        generateLessonSpec({ ...params, sources: "<page>Law</page>" }),
+        generateLessonSpec({ ...params, setup: true }),
+        generateLessonSpec({ ...params, exams, quick: true }),
+        generateLessonSpec({ ...params, shortAnswers: true }),
+      ]);
 
     expect(regular.systemPrompt).toBe("Plan the lesson.\nCheck the plan.");
+    expect(beginner.systemPrompt).toBe("Plan the lesson.\nShow it to a newcomer.\nCheck the plan.");
+
+    expect(beginnerExam.systemPrompt).toBe(
+      "Plan the lesson.\nPlan it for the exams.\nCheck the plan.",
+    );
+
     expect(exam.systemPrompt).toBe("Plan the lesson.\nPlan it for the exams.\nCheck the plan.");
 
     expect(material.systemPrompt).toBe(

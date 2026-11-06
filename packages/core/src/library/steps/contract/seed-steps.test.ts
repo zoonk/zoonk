@@ -30,4 +30,18 @@ describe("seeded lesson steps", () => {
     expect(seededSteps.length).toBeGreaterThan(0);
     expect(issues).toStrictEqual([]);
   });
+
+  it("open on a scene to read, never on a guess", () => {
+    const openings = courses.flatMap((course) =>
+      course.chapters
+        .flatMap((chapter) => chapter.lessons)
+        .flatMap((lesson) => {
+          const [first] = lesson.steps ?? [];
+          const variant = first?.kind === "hook" ? first.content.variant : "none";
+          return variant === "guess" ? [`${course.key}/${lesson.key}`] : [];
+        }),
+    );
+
+    expect(openings).toStrictEqual([]);
+  });
 });

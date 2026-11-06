@@ -1,9 +1,14 @@
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
+import { type LessonVisualKind } from "./lesson-visuals";
 
-/** `application` becomes a check (or an activity) set in a realistic situation. */
+/**
+ * `application` becomes a check (or an activity) set in a realistic situation. `guess` is the
+ * unscored question that follows the first explanation.
+ */
 export const LESSON_SCREEN_KINDS = [
   "hook",
   "explanation",
+  "guess",
   "workedExample",
   "check",
   "activity",
@@ -11,11 +16,6 @@ export const LESSON_SCREEN_KINDS = [
 ] as const;
 
 export type LessonScreenKind = (typeof LESSON_SCREEN_KINDS)[number];
-
-/** New ideas start with the explanation; ideas most learners partly know start with a question. */
-export const SUPPORT_MODES = ["explanationFirst", "questionFirst"] as const;
-
-export type SupportMode = (typeof SUPPORT_MODES)[number];
 
 export type LessonSpecSkill = {
   name: string;
@@ -33,8 +33,10 @@ export type LessonScreen = {
   /** Indexes into the lesson's `skills`. */
   skills: number[];
   brief: string;
+  visualKind: LessonVisualKind;
+  /** The picture's description, only when `visualKind` is a picture. */
   visual: string | null;
-  /** Only on activity screens. */
+  /** On activity screens, and on an explanation that shows a template to explore. */
   activityTemplate: string | null;
 };
 
@@ -42,53 +44,61 @@ export type LessonSpec = {
   title: string;
   description: string;
   canDo: string;
-  supportMode: SupportMode;
   skills: LessonSpecSkill[];
   screens: LessonScreen[];
   /** Computed from the screen plan, never written by a model. */
   estimatedMinutes: number;
+  /** Set on each lesson after the first that the code split off one plan: the plan's guess stays in the first. */
+  laterPart?: boolean;
 };
 
+/** Screens are a tweet long, so a lesson goes deep in more of them rather than longer ones. */
 export const LESSON_SIZE = {
   maxMinutes: 5,
-  maxScreens: 12,
-  maxScreensWithoutCheck: 3,
+  maxScreens: 16,
+  maxScreensWithoutCheck: 4,
   maxSkills: 3,
   /** An advanced idea that can't be split, such as a derivation. */
   maxUnsplittableMinutes: 6,
   minMinutes: 2,
   minScreens: 5,
+  noviceTeachingBeforeFirstCheck: 2,
+  teachingBeforeFirstCheck: 1,
 } as const;
 
 const SECONDS_PER_MINUTE = 60;
 
-/** Reading or doing time per screen for a typical learner, calibrated to 5 to 12 screens in 2 to 5 minutes. */
+/** Reading or doing time per screen for a typical learner, calibrated to 5 to 16 screens in 2 to 5 minutes. */
 const SCREEN_SECONDS: Record<LessonScreenKind, number> = {
   activity: 40,
   application: 40,
   check: 20,
-  explanation: 25,
+  explanation: 15,
+  guess: 20,
   hook: 15,
   workedExample: 45,
 };
 
 const TEACHING_KINDS: ReadonlySet<LessonScreenKind> = new Set(["explanation", "workedExample"]);
+
 const PRACTICE_KINDS: ReadonlySet<LessonScreenKind> = new Set(["check", "activity", "application"]);
 
 const SKILL_TEACHING_KINDS: ReadonlySet<LessonScreenKind> = new Set([
-  ...TEACHING_KINDS,
   "activity",
+  "explanation",
+  "workedExample",
 ]);
 
 type LessonSpecIssueCode =
   | "activityTemplate"
   | "application"
   | "checkGap"
+  | "earlyCheck"
+  | "guess"
   | "hook"
   | "screenCount"
   | "skillCount"
   | "skillReference"
-  | "supportMode"
   | "tooLong"
   | "unpracticedSkill"
   | "untaughtSkill"
@@ -130,14 +140,14 @@ export function fitsLesson({ level, spec }: { level: CourseLevel; spec: LessonSp
   );
 }
 
-export function getSupportModeFromScreens(screens: readonly LessonScreen[]): SupportMode {
-  const first = screens.find((screen) => screen.kind !== "hook");
-  return first && isPracticeScreen(first.kind) ? "questionFirst" : "explanationFirst";
-}
-
+/** The guess isn't practice, so teaching around it counts as one run. */
 function getLongestTeachingRun(screens: readonly LessonScreen[]): number {
   return screens.reduce(
     (state, screen) => {
+      if (screen.kind === "guess") {
+        return state;
+      }
+
       const current = isTeachingScreen(screen.kind) ? state.current + 1 : 0;
       return { current, longest: Math.max(state.longest, current) };
     },
@@ -166,7 +176,54 @@ function getSizeIssues({ level, spec }: { level: CourseLevel; spec: LessonSpec }
   ].filter((issue) => issue !== false);
 }
 
-function getShapeIssues(spec: LessonSpec) {
+function countTeachingBeforePractice(screens: readonly LessonScreen[]): number {
+  const firstPractice = screens.findIndex((screen) => isPracticeScreen(screen.kind));
+  const before = firstPractice === -1 ? screens : screens.slice(0, firstPractice);
+
+  return before.filter((screen) => isTeachingScreen(screen.kind)).length;
+}
+
+function getEarlyCheckIssue({
+  novice,
+  screens,
+}: {
+  novice: boolean;
+  screens: readonly LessonScreen[];
+}) {
+  const teaching = countTeachingBeforePractice(screens);
+
+  const needed = novice
+    ? LESSON_SIZE.noviceTeachingBeforeFirstCheck
+    : LESSON_SIZE.teachingBeforeFirstCheck;
+
+  return (
+    teaching < needed && {
+      code: "earlyCheck" as const,
+      detail: `Has ${teaching} explanations or worked examples before the first check; this lesson needs ${needed}.`,
+    }
+  );
+}
+
+function getGuessIssue({ laterPart, screens }: LessonSpec) {
+  const guesses = screens.filter((screen) => screen.kind === "guess").length;
+  const firstTeaching = screens.findIndex((screen) => isTeachingScreen(screen.kind));
+  const at = screens.findIndex((screen) => screen.kind === "guess");
+  const next = screens[at + 1];
+
+  if (laterPart && guesses === 0) {
+    return false;
+  }
+
+  return (
+    (guesses !== 1 || at !== firstTeaching + 1 || !next || !isTeachingScreen(next.kind)) && {
+      code: "guess" as const,
+      detail:
+        "A lesson has exactly one guess, right after its first explanation or worked example and followed by another.",
+    }
+  );
+}
+
+function getShapeIssues({ novice, spec }: { novice: boolean; spec: LessonSpec }) {
   const { screens } = spec;
   const hooks = screens.filter((screen) => screen.kind === "hook").length;
   const applications = screens.filter((screen) => screen.kind === "application").length;
@@ -183,16 +240,14 @@ function getShapeIssues(spec: LessonSpec) {
     },
     longestRun > LESSON_SIZE.maxScreensWithoutCheck && {
       code: "checkGap" as const,
-      detail: `Has ${longestRun} teaching screens in a row; a check comes every 2 or 3 screens.`,
+      detail: `Has ${longestRun} teaching screens in a row; a check comes after at most ${LESSON_SIZE.maxScreensWithoutCheck}.`,
     },
-    getSupportModeFromScreens(screens) !== spec.supportMode && {
-      code: "supportMode" as const,
-      detail: `Says ${spec.supportMode} but the screen after the hook doesn't match.`,
-    },
+    getEarlyCheckIssue({ novice, screens }),
     screens.some((screen) => screen.kind === "activity" && !screen.activityTemplate) && {
       code: "activityTemplate" as const,
       detail: "An activity screen has no template from the catalog.",
     },
+    getGuessIssue(spec),
   ].filter((issue) => issue !== false);
 }
 
@@ -248,13 +303,19 @@ function getSkillIssues(spec: LessonSpec): LessonSpecIssue[] {
   ];
 }
 
-/** An empty list means the spec passes. */
+/** `novice` is `readsNoviceRules` for the lesson. */
 export function getLessonSpecIssues({
   level,
+  novice = false,
   spec,
 }: {
   level: CourseLevel;
+  novice?: boolean;
   spec: LessonSpec;
 }): LessonSpecIssue[] {
-  return [...getSizeIssues({ level, spec }), ...getShapeIssues(spec), ...getSkillIssues(spec)];
+  return [
+    ...getSizeIssues({ level, spec }),
+    ...getShapeIssues({ novice, spec }),
+    ...getSkillIssues(spec),
+  ];
 }

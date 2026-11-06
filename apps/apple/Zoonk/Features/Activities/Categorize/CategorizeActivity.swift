@@ -154,7 +154,7 @@ private struct CategorizeCanvas: View {
       Label {
         Text(
           "Undo", tableName: "Activities",
-          comment: "Takes back a decision tree's last answer or the last card sorted")
+          comment: "Takes back the last card sorted")
       } icon: {
         Image(systemName: "arrow.uturn.backward")
       }

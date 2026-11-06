@@ -13,13 +13,14 @@ fun LessonPlayerState.abandonEvent(): AnalyticsEvent.ActivityAbandoned? {
     )
 }
 
-/** Wrong verdicts since the last right one, counting each screen seen so far once, at its latest answer. */
+/** Counted wrong verdicts since the last right one, each screen seen so far once, at its latest answer. */
 private fun LessonPlayerState.wrongInARow(): Int {
     val verdicts =
         queue
             .take(position + 1)
             .asReversed()
             .distinct()
+            .filter { it in firstVerdicts }
             .mapNotNull { results[it]?.takeIf { result -> result.checked }?.isCorrect }
     val firstRight = verdicts.indexOf(true)
     return if (firstRight == -1) verdicts.size else firstRight

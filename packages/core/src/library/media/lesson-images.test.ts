@@ -4,7 +4,6 @@ import { checkLessonImage } from "@zoonk/ai/tasks/images/check";
 import { describeImageScene } from "@zoonk/ai/tasks/images/scene-schema";
 import { IMAGE_STYLE_VERSION } from "@zoonk/ai/tasks/images/style";
 import { prisma } from "@zoonk/db";
-import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -39,8 +38,19 @@ import {
 
 const image = { alt: "A price tag before and after a discount", prompt: "A discounted price tag" };
 
-function explanation(withImage = true) {
-  return { text: "You pay 75% of the old price.", title: "Discounts", ...(withImage && { image }) };
+type Picture = typeof image;
+
+/** Each screen asks for its own picture, since screens asking for the same one share a drawing. */
+function pictureOf(subject: string): Picture {
+  return { alt: `A drawing of ${subject}`, prompt: `A ${subject}` };
+}
+
+function explanation(picture: Picture | null = image) {
+  return {
+    text: "You pay 75% of the old price.",
+    title: "Discounts",
+    ...(picture && { image: picture }),
+  };
 }
 
 async function scienceLesson(attrs?: Parameters<typeof libraryLessonFixture>[0]) {
@@ -56,6 +66,7 @@ async function scienceLesson(attrs?: Parameters<typeof libraryLessonFixture>[0])
 
 function stepKey(scene: ReturnType<typeof testScene>) {
   return buildImageReuseKey({
+    canvas: "landscape",
     language: scene.labels.length > 0 ? "en" : null,
     prompt: describeImageScene(scene),
   });
@@ -64,12 +75,12 @@ function stepKey(scene: ReturnType<typeof testScene>) {
 describe(listLessonImageSteps, () => {
   it("lists every picture a screen still asks for, skipping drawn ones", async () => {
     const [lesson, asset] = await Promise.all([libraryLessonFixture(), mediaAssetFixture()]);
-    const hook = { image, text: "A shop cuts a price.", variant: "text" };
+    const hook = { image: pictureOf("shop"), text: "A shop cuts a price.", variant: "text" };
 
     const steps = await Promise.all([
       libraryStepFixture({ content: hook, kind: "hook", lessonId: lesson.id, position: 0 }),
       libraryStepFixture({ content: explanation(), lessonId: lesson.id, position: 1 }),
-      libraryStepFixture({ content: explanation(false), lessonId: lesson.id, position: 2 }),
+      libraryStepFixture({ content: explanation(null), lessonId: lesson.id, position: 2 }),
       libraryStepFixture({
         content: { image, text: "Not a contract" },
         kind: "summary",
@@ -82,8 +93,16 @@ describe(listLessonImageSteps, () => {
         mediaAssetId: asset.id,
         position: 4,
       }),
-      libraryStepFixture({ content: explanation(), lessonId: lesson.id, position: 5 }),
-      libraryStepFixture({ content: explanation(), lessonId: lesson.id, position: 6 }),
+      libraryStepFixture({
+        content: explanation(pictureOf("receipt")),
+        lessonId: lesson.id,
+        position: 5,
+      }),
+      libraryStepFixture({
+        content: explanation(pictureOf("wallet")),
+        lessonId: lesson.id,
+        position: 6,
+      }),
     ]);
 
     await expect(listLessonImageSteps({ lessonId: lesson.id })).resolves.toStrictEqual([
@@ -92,6 +111,28 @@ describe(listLessonImageSteps, () => {
       steps[5]?.id,
       steps[6]?.id,
     ]);
+  });
+
+  it("lists only what a fixed version staged to replace the current one still asks for, its question pictures included", async () => {
+    const lesson = await libraryLessonFixture();
+    const check = { content: pictureCheckContent, kind: "check" as const, position: 1 };
+    const current = { lessonId: lesson.id, staged: false, version: 1 };
+    const staged = { lessonId: lesson.id, staged: true, version: 2 };
+
+    const [stagedExplanation, stagedCheck] = await Promise.all([
+      libraryStepFixture({ ...staged, content: explanation(), position: 0 }),
+      libraryStepFixture({ ...staged, ...check }),
+      libraryStepFixture({ ...current, content: explanation(), position: 0 }),
+      libraryStepFixture({ ...current, ...check }),
+    ]);
+
+    await expect(listLessonImageSteps({ lessonId: lesson.id })).resolves.toStrictEqual([
+      stagedExplanation.id,
+    ]);
+
+    await expect(listLessonOptionPictures({ lessonId: lesson.id })).resolves.toStrictEqual(
+      ["gothic", "romanesque", "baroque"].map((optionId) => ({ optionId, stepId: stagedCheck.id })),
+    );
   });
 
   it("lists the pictures questions are about and those that teach alike, in screen order", async () => {
@@ -103,23 +144,46 @@ describe(listLessonImageSteps, () => {
     ];
 
     const guess = {
-      image,
+      image: pictureOf("man at a door"),
       options: options.map(({ id, isCorrect, text }) => ({ id, isCorrect, text })),
       question: "Which caption fits?",
       reveal: "He stands.",
       variant: "guess",
     };
 
-    const check = { basis: null, image, options, question: "Which caption fits the picture?" };
+    const check = (subject: string) => ({
+      basis: null,
+      image: pictureOf(subject),
+      options,
+      question: "Which caption fits the picture?",
+    });
 
     const steps = await Promise.all([
       libraryStepFixture({ content: guess, kind: "hook", lessonId: lesson.id, position: 0 }),
       libraryStepFixture({ content: explanation(), lessonId: lesson.id, position: 1 }),
-      libraryStepFixture({ content: check, kind: "check", lessonId: lesson.id, position: 2 }),
-      libraryStepFixture({ content: check, kind: "check", lessonId: lesson.id, position: 3 }),
-      libraryStepFixture({ content: explanation(), lessonId: lesson.id, position: 4 }),
       libraryStepFixture({
-        content: { image, text: "Na placa da imagem, o Centro fica em frente.", title: "Setas" },
+        content: check("man on a bike"),
+        kind: "check",
+        lessonId: lesson.id,
+        position: 2,
+      }),
+      libraryStepFixture({
+        content: check("man on a bus"),
+        kind: "check",
+        lessonId: lesson.id,
+        position: 3,
+      }),
+      libraryStepFixture({
+        content: explanation(pictureOf("sign")),
+        lessonId: lesson.id,
+        position: 4,
+      }),
+      libraryStepFixture({
+        content: {
+          image: pictureOf("road sign"),
+          text: "Na placa da imagem, o Centro fica em frente.",
+          title: "Setas",
+        },
         lessonId: lesson.id,
         position: 5,
       }),
@@ -129,21 +193,21 @@ describe(listLessonImageSteps, () => {
       steps.map((step) => step.id),
     );
   });
-});
 
-describe("activity pictures", () => {
-  it("lists the picture a decision tree's case asks for", async () => {
+  it("lists a picture the lesson keeps across screens once, on its first screen", async () => {
     const lesson = await libraryLessonFixture();
-    const leaf = { alt: "A leaf with toothed edges and veins in pairs", prompt: "A beech leaf" };
+    const heart = pictureOf("heart from the front");
 
-    const step = await libraryStepFixture({
-      content: { ...activityContentFixtures.decisionTree, image: leaf },
-      kind: "activity",
-      lessonId: lesson.id,
-      position: 0,
-    });
+    const steps = await Promise.all(
+      [heart, heart, pictureOf("lungs"), heart].map((picture, position) =>
+        libraryStepFixture({ content: explanation(picture), lessonId: lesson.id, position }),
+      ),
+    );
 
-    await expect(listLessonImageSteps({ lessonId: lesson.id })).resolves.toStrictEqual([step.id]);
+    await expect(listLessonImageSteps({ lessonId: lesson.id })).resolves.toStrictEqual([
+      steps[0]?.id,
+      steps[2]?.id,
+    ]);
   });
 });
 
@@ -249,12 +313,89 @@ describe(createStepImage, () => {
     });
   });
 
+  it("links one drawing to every screen asking for the same picture, and to no other", async () => {
+    const lesson = await libraryLessonFixture();
+    const heart = pictureOf("heart from the front");
+
+    const first = await libraryStepFixture({
+      content: explanation(heart),
+      lessonId: lesson.id,
+      position: 0,
+    });
+
+    await Promise.all(
+      [heart, pictureOf("lungs"), heart].map((picture, index) =>
+        libraryStepFixture({
+          content: explanation(picture),
+          lessonId: lesson.id,
+          position: index + 1,
+        }),
+      ),
+    );
+
+    mockSearchTerms([]);
+    mockImageScene(testScene({ focalObject: `a ${randomUUID()} heart` }));
+    const drawSpy = mockDrawnImages([await drawTestImage()]);
+
+    const outcome = await createStepImage({ stepId: first.id });
+    expect(outcome).toMatchObject({ status: "generated" });
+    expect(drawSpy).toHaveBeenCalledOnce();
+
+    const steps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      select: { mediaAssetId: true },
+      where: { lessonId: lesson.id },
+    });
+
+    const assetId = "mediaAssetId" in outcome ? outcome.mediaAssetId : null;
+
+    expect(steps.map((step) => step.mediaAssetId)).toStrictEqual([assetId, assetId, null, assetId]);
+  });
+
+  it("links a drawing only within its screen's version, so a retired screen's job leaves the new version alone", async () => {
+    const lesson = await libraryLessonFixture();
+    const heart = explanation(pictureOf("heart from the front"));
+    const retiredAt = new Date();
+
+    const [retired, retiredPeer, current] = await Promise.all([
+      libraryStepFixture({ content: heart, lessonId: lesson.id, position: 0, retiredAt }),
+      libraryStepFixture({ content: heart, lessonId: lesson.id, position: 1, retiredAt }),
+      libraryStepFixture({ content: heart, lessonId: lesson.id, position: 0, version: 2 }),
+    ]);
+
+    mockSearchTerms([]);
+    mockImageScene(testScene({ focalObject: `a ${randomUUID()} heart` }));
+    mockDrawnImages([await drawTestImage()]);
+
+    const outcome = await createStepImage({ stepId: retired.id });
+    const assetId = "mediaAssetId" in outcome ? outcome.mediaAssetId : null;
+
+    const linked = await prisma.step.findMany({
+      select: { id: true, mediaAssetId: true },
+      where: { id: { in: [retired.id, retiredPeer.id, current.id] } },
+    });
+
+    expect(Object.fromEntries(linked.map((step) => [step.id, step.mediaAssetId]))).toStrictEqual({
+      [current.id]: null,
+      [retired.id]: assetId,
+      [retiredPeer.id]: assetId,
+    });
+  });
+
   it("draws a blank frame once more and ships the screen without a picture after two", async () => {
     const lesson = await libraryLessonFixture();
 
     const [retried, abandoned] = await Promise.all([
-      libraryStepFixture({ content: explanation(), lessonId: lesson.id, position: 0 }),
-      libraryStepFixture({ content: explanation(), lessonId: lesson.id, position: 2 }),
+      libraryStepFixture({
+        content: explanation(pictureOf("coin")),
+        lessonId: lesson.id,
+        position: 0,
+      }),
+      libraryStepFixture({
+        content: explanation(pictureOf("bill")),
+        lessonId: lesson.id,
+        position: 2,
+      }),
     ]);
 
     mockSearchTerms([]);
@@ -419,7 +560,7 @@ describe("pictures questions are asked about", () => {
     ]);
   });
 
-  it("draws a picture option alone, without text or its name, and links it to its option", async () => {
+  it("draws a picture option alone and square, without text or its name, and links it to its option", async () => {
     const lesson = await libraryLessonFixture();
 
     const step = await libraryStepFixture({
@@ -430,11 +571,12 @@ describe("pictures questions are asked about", () => {
 
     const sceneSpy = mockImageScene(testScene({ focalObject: `a ${randomUUID()} doorway` }));
     mockSearchTerms([]);
-    mockDrawnImages([await drawTestImage()]);
+    const drawSpy = mockDrawnImages([await drawTestImage()]);
 
     const outcome = await createStepOptionPicture({ optionId: "gothic", stepId: step.id });
 
     expect(outcome).toMatchObject({ status: "generated" });
+    expect(drawSpy).toHaveBeenCalledWith(expect.objectContaining({ canvas: "square" }));
 
     expect(sceneSpy).toHaveBeenCalledWith(
       expect.objectContaining({ screenText: pictureCheckContent.question, textAllowed: false }),

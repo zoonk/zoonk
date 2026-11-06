@@ -1,6 +1,6 @@
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { describe, expect, it } from "vitest";
-import { writtenTemperatureLesson } from "../../quality/_test-utils/written-lessons";
+import { hubMap, writtenTemperatureLesson } from "../../quality/_test-utils/written-lessons";
 import { type LessonGateProblem } from "../../quality/lesson-quality-gate";
 import { getFixReach } from "./fix-reach";
 
@@ -58,7 +58,7 @@ describe(getFixReach, () => {
 
   it("strays when the fix rewrote the summary card and no problem was about the whole lesson", () => {
     const draft = writtenTemperatureLesson();
-    const fixed = { ...rewrite(draft, [3]), summary: ["A rise always ends above zero."] };
+    const fixed = { ...rewrite(draft, [3]), summary: hubMap(["A rise always ends above zero."]) };
 
     expect(getFixReach({ draft, fixed, incorrect: [], problems: [problem(3)] }).strayed).toBe(true);
 
@@ -102,7 +102,7 @@ describe(getFixReach, () => {
     expect(
       getFixReach({
         draft,
-        fixed: { ...draft, summary: ["A rise moves up, even below zero."] },
+        fixed: { ...draft, summary: hubMap(["A rise moves up, even below zero."]) },
         incorrect: [wrongSummary],
         problems: [wrongSummary],
       }).unfixed,

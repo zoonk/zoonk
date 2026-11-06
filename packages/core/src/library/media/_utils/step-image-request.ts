@@ -19,6 +19,32 @@ export type StepImageRequest = {
   screenText: string;
 };
 
+type StepWithContent = { content: unknown; kind: StepKind };
+
+/**
+ * What decides a step's picture: its prompt, alt and numbered parts, so a drawing is reused only
+ * where all three match (a lesson copies a picture it keeps across screens whole). Null without one.
+ */
+export function getPictureKey(step: StepWithContent): string | null {
+  const request = getStepImageRequest(step);
+  return request ? JSON.stringify([request.prompt, request.alt, request.parts]) : null;
+}
+
+/**
+ * The steps that ask for the same picture as `step` (itself included), so a picture the lesson
+ * keeps across screens is drawn once and shown on each of them.
+ */
+export function findStepsSharingPicture<STEP extends StepWithContent>({
+  step,
+  steps,
+}: {
+  step: StepWithContent;
+  steps: readonly STEP[];
+}): STEP[] {
+  const key = getPictureKey(step);
+  return key === null ? [] : steps.filter((other) => getPictureKey(other) === key);
+}
+
 function getScreenText(content: Record<string, unknown>): string {
   return SCREEN_TEXT_FIELDS.map((field) => content[field])
     .filter((value): value is string => typeof value === "string")

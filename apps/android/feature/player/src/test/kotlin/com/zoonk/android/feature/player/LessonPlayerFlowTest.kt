@@ -65,6 +65,14 @@ class LessonPlayerFlowTest {
 
     private fun tap(text: String) = rule.onNodeWithText(text).performClick()
 
+    @Test
+    fun aPracticedLearnerReadsTheExplanationBeforeTheCheckEvenWhenTheRunSaysQuestionFirst() {
+        play(listOf(explanationStep("idea"), checkStep("quiz"))) { support = "\"questionFirst\"" }
+
+        assertTrue(viewModel.state.value?.run is LessonRun.Started)
+        assertEquals(listOf("idea", "quiz"), viewModel.state.value?.queue)
+    }
+
     /** A lesson reopened after a plan change plays the screens read again, not the copy the app kept. */
     @Test
     fun aLessonReopenedAfterAPlanChangePlaysItsFreshScreens() {

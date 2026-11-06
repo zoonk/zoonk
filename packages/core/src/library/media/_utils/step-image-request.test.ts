@@ -4,7 +4,11 @@ import {
   pictureCheckContent,
 } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it } from "vitest";
-import { getOptionPictureRequests, getStepImageRequest } from "./step-image-request";
+import {
+  findStepsSharingPicture,
+  getOptionPictureRequests,
+  getStepImageRequest,
+} from "./step-image-request";
 
 const heart = activityContentFixtures.labeledDiagram;
 
@@ -61,5 +65,33 @@ describe(getOptionPictureRequests, () => {
     };
 
     expect(getOptionPictureRequests({ content: words, kind: "check" })).toStrictEqual([]);
+  });
+});
+
+describe(findStepsSharingPicture, () => {
+  it("finds the steps asking for the same picture, prompt, alt and parts alike, and none without one", () => {
+    const flower = { ...numberedCheckContent, image: { alt: "A flower", prompt: "A flower" } };
+    const asked = { content: flower, id: "first", kind: "check" as const };
+    const otherAlt = { ...flower, image: { alt: "A wilted flower", prompt: "A flower" } };
+    const none = { content: { ...flower, image: null }, id: "none", kind: "check" as const };
+
+    const steps = [
+      asked,
+      {
+        content: { ...flower, question: "What does the flower show?" },
+        id: "again",
+        kind: "check" as const,
+      },
+      { content: numberedCheckContent, id: "numbered", kind: "check" as const },
+      { content: otherAlt, id: "other alt", kind: "check" as const },
+      none,
+    ];
+
+    expect(findStepsSharingPicture({ step: asked, steps }).map((step) => step.id)).toStrictEqual([
+      "first",
+      "again",
+    ]);
+
+    expect(findStepsSharingPicture({ step: none, steps })).toStrictEqual([]);
   });
 });

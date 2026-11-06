@@ -151,7 +151,7 @@ describe("held-back lessons", () => {
 
     expect(vi.mocked(writeLessonDraft).mock.calls[1]?.[0]).toMatchObject({
       heldBackProblems: [expect.objectContaining({ screen: 4 })],
-      model: undefined,
+      model: OPUS,
     });
 
     await expect(readLesson(lesson.id)).resolves.toMatchObject({
@@ -207,7 +207,7 @@ describe("held-back lessons", () => {
     ]);
 
     await expect(readLesson(lesson.id)).resolves.toMatchObject({
-      contentStatus: "completed",
+      contentStatus: "running",
       heldBackDrafts: [],
       setAsideAt: null,
     });

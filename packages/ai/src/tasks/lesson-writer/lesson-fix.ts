@@ -1,10 +1,11 @@
 import "server-only";
-import { Output, generateText } from "ai";
+import { generateText } from "ai";
 import { z } from "zod";
-import { acceptOmittedNulls } from "../../_utils/omitted-nulls";
+import { schemaInPrompt } from "../../_utils/schema-in-prompt";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
+import { readsNoviceRules } from "../_utils/novice-rules";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import {
   type LessonProblem,
@@ -13,27 +14,35 @@ import {
   formatLessonProblems,
 } from "./format-lesson-plan";
 import fixPrompt from "./lesson-fix.prompt.md";
+import { normalizeLessonMap } from "./lesson-map";
+import { getScreenCharacterLimit } from "./screen-length";
+import { fitWrittenBounds } from "./written-lesson-bounds";
 import {
   type WrittenLesson,
   type WrittenScreen,
+  numberedScreenSchema,
   writtenLessonSchema,
-  writtenScreenSchema,
 } from "./written-lesson-schema";
 
 /**
  * A fix rewrites a few flagged screens, so the cheapest model that fixes them leads: Luna fixed 4
- * of 5 cases and Terra all 5 (30 Oct 2026). Gemini rejects the screens' schema as too large, so
- * it's no fallback.
+ * of 5 cases and Terra all 5 (30 Oct 2026). Opus keeps another family in the chain; on the one case
+ * that could be scored cleanly (3 Nov 2026) it fixed the flagged screen but left a 921-character
+ * screen over the 750 limit, a new problem the next check catches.
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;
 
-/* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the screen number comes before its content. */
+/**
+ * Each fixed screen comes back as `LESSON` shows it, its number among its fields: with the screen
+ * nested under `content` instead, Sonnet 5.5 answered flat in 3 of 7 tries (3 Nov 2026).
+ */
 const schema = z.object({
-  screens: z.array(z.object({ screen: z.number().int(), content: writtenScreenSchema })),
+  screens: z.array(numberedScreenSchema),
   summary: writtenLessonSchema.shape.summary.nullable(),
 });
-/* oxlint-enable eslint/sort-keys */
+
+const fixOutput = schemaInPrompt(schema, { repair: fitWrittenBounds });
 
 export type FixLessonDraftParams = LessonWritingContext & {
   lesson: WrittenLesson;
@@ -62,7 +71,7 @@ function applyLessonFixes({
 }): { changedScreens: number[]; lesson: WrittenLesson } {
   const replacements = new Map(
     fixes.screens
-      .map((fix): [number, WrittenScreen] => [fix.screen - 1, fix.content])
+      .map(({ screen, ...content }): [number, WrittenScreen] => [screen - 1, content])
       .filter(([index]) => index >= 0 && index < screenCount),
   );
 
@@ -73,7 +82,10 @@ function applyLessonFixes({
 
   return {
     changedScreens: [...replacements.keys()].toSorted((first, second) => first - second),
-    lesson: { screens, summary: fixes.summary ?? lesson.summary },
+    lesson: {
+      screens,
+      summary: fixes.summary ? normalizeLessonMap(fixes.summary) : lesson.summary,
+    },
   };
 }
 
@@ -90,10 +102,14 @@ export async function fixLessonDraft(params: FixLessonDraftParams) {
 
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
-  const systemPrompt = selectPromptVariants({
+  const novice = readsNoviceRules(params);
+
+  const rules = selectPromptVariants({
     template: fixPrompt,
-    variants: { shortAnswers: Boolean(params.shortAnswers) },
-  });
+    variants: { novice, shortAnswers: Boolean(params.shortAnswers) },
+  }).replaceAll("{{SCREEN_CHARACTERS}}", String(getScreenCharacterLimit(params.language)));
+
+  const systemPrompt = `${rules}\n\n${fixOutput.outputRules}`;
 
   const userPrompt = `${formatLessonPlan(params)}
 LESSON:
@@ -109,7 +125,7 @@ ${formatLessonProblems(params.problems)}
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema: acceptOmittedNulls(schema) }),
+        output: fixOutput.output,
         prompt: userPrompt,
         providerOptions,
         reasoning,

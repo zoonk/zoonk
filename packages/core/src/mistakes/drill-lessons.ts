@@ -1,7 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
-import { toSummaryIdeas } from "../library/lessons/_utils/summary-ideas";
+import { readLessonMapSentences } from "../library/lessons/lesson-map";
 import { type DrillLesson, type DrillView, type MistakeDrill } from "./mistake-drills";
 
 /** Returns only lessons visible to this learner. */
@@ -42,7 +42,7 @@ export async function loadDrillLessons(
   return new Map(
     lessons.map((lesson) => [
       lesson.id,
-      { id: lesson.id, ideas: toSummaryIdeas(lesson.summary), title: lesson.title },
+      { id: lesson.id, ideas: readLessonMapSentences(lesson.summary), title: lesson.title },
     ]),
   );
 }

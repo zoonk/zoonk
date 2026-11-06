@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Reading the thread is the only request it makes on its own: an answer (paid AI) comes only after
 /// the learner sends something. A `draft` suggestion waits in the composer for the learner's own
-/// send.
+/// send, unless the tap that opened the panel already asked for it.
 struct TutorThreadView<Header: View>: View {
   @Environment(TutorStore.self) private var tutor
   @Environment(LearnerSummaryStore.self) private var summary
@@ -48,6 +48,7 @@ private struct TutorConversationView<Header: View>: View {
   let header: Header
 
   @State private var position = ScrollPosition(idType: String.self)
+  @State private var pendingAsk: Task<Void, Never>?
 
   var body: some View {
     ScrollView {
@@ -77,10 +78,17 @@ private struct TutorConversationView<Header: View>: View {
     }
     .modifier(LoadsThread(thread: conversation.thread, isActive: canTalk))
     .onChange(of: draft, initial: true) { _, draft in
-      if let draft {
+      guard let draft else {
+        return
+      }
+
+      if draft.sendsAtOnce {
+        pendingAsk = Task { await conversation.ask(draft) }
+      } else {
         conversation.prepare(draft)
       }
     }
+    .onDisappear { pendingAsk?.cancel() }
     .onChange(of: conversation.turns.last?.id) { previous, latest in
       if previous != nil || conversation.turns.count == 1 {
         reveal(latest)

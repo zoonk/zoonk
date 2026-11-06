@@ -10,6 +10,7 @@ import { start } from "workflow/api";
 import { recordedLessonFixture } from "../_test-utils/recorded-lesson";
 import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
+import { lessonMarksWorkflow } from "../marks/lesson-marks-workflow";
 import { laterReviewWorkflow } from "./later-review-workflow";
 
 type RecordedDraft = Awaited<ReturnType<typeof writeLessonDraft>>["data"];
@@ -64,7 +65,7 @@ describe(laterReviewWorkflow, () => {
     ]);
 
     vi.mocked(checkLessonQuality).mockImplementation(async ({ lesson }) =>
-      review(lesson.summary.includes(wrong) ? "blocking" : "minor"),
+      review(JSON.stringify(lesson.summary).includes(wrong) ? "blocking" : "minor"),
     );
 
     await expect(
@@ -108,9 +109,13 @@ describe(laterReviewWorkflow, () => {
       steps.filter((step) => step.version === 1).every((step) => step.retiredAt !== null),
     ).toBe(true);
 
-    expect(start).toHaveBeenCalledExactlyOnceWith(lessonImagesWorkflow, [
+    expect(start).toHaveBeenCalledTimes(2);
+
+    expect(start).toHaveBeenCalledWith(lessonImagesWorkflow, [
       { analytics: { contentScope: "shared" }, lessonId: failing.id },
     ]);
+
+    expect(start).toHaveBeenCalledWith(lessonMarksWorkflow, [{ lessonId: failing.id }]);
   });
 
   it("takes a lesson out of play when it's wrong and no fresh draft passes", async () => {

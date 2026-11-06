@@ -1,5 +1,6 @@
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { EXAM_PREP_LESSON } from "../lesson-writer/exam-prep-lesson-spec";
+import { openOnScene } from "./scene-first";
 
 const lesson: WrittenLesson = {
   screens: [
@@ -203,11 +204,39 @@ const lesson: WrittenLesson = {
       visual: null,
     },
   ],
-  summary: [
-    "Pelo art. 44, I, do Estatuto da Advocacia, a OAB defende interesses da sociedade, como os direitos humanos e a justiça social.",
-    "A OAB pode cobrar a boa aplicação das leis e a rápida administração da justiça, mas essas finalidades não lhe dão poder para julgar recursos.",
-    "Pelo art. 44, II, a OAB promove com exclusividade a representação, a defesa, a seleção e a disciplina dos advogados em todo o Brasil; isso não elimina suas finalidades voltadas à sociedade.",
-  ],
+  summary: {
+    ideas: [
+      {
+        label: "Finalidades sociais",
+        text: "Pelo art. 44, I, do Estatuto da Advocacia, a OAB defende interesses da sociedade, como os direitos humanos e a justiça social.",
+      },
+      {
+        label: "Limites dessas finalidades",
+        text: "A OAB pode cobrar a boa aplicação das leis e a rápida administração da justiça, mas essas finalidades não lhe dão poder para julgar recursos.",
+      },
+      {
+        label: "Finalidades corporativas",
+        text: "Pelo art. 44, II, a OAB promove com exclusividade a representação, a defesa, a seleção e a disciplina dos advogados em todo o Brasil; isso não elimina suas finalidades voltadas à sociedade.",
+      },
+    ],
+    shape: "hub",
+  },
 };
 
-export const EXAM_PREP_BASE_LESSON = { ...EXAM_PREP_LESSON, lesson };
+/** Recorded before every lesson opened on a scene; its plan already does, so only the lesson moves. */
+export const EXAM_PREP_BASE_LESSON = openOnScene(
+  { ...EXAM_PREP_LESSON, lesson },
+  {
+    order: [2, 0, 3, 1, 4, 5, 6, 7],
+    scene: {
+      image: {
+        alt: "Lorena, advogada, ouve no fórum um senhor com uma pasta grossa de processo.",
+        prompt:
+          "Lorena, advogada de terno, sentada na sala de espera de um fórum, ouvindo um senhor idoso que segura uma pasta grossa de processo.",
+      },
+      kind: "hookText",
+      text: "Lorena, advogada, espera no fórum e ouve um senhor contar que o processo da aposentadoria dele está parado há dois anos. Ela pensa em levar a queixa à OAB. A OAB pode agir num caso desses, que nem envolve advogados?",
+      visual: null,
+    },
+  },
+);

@@ -2942,7 +2942,7 @@
     },
     "/library/lessons/{lessonId}/readiness": {
       "get": {
-        "description": "What a lesson page shows while a lesson isn't written yet: its status, the run writing it (stream GET /generations/{generationId}/events for live steps: `planLesson`, `writeLesson`, then `lessonReady`) and a ready alternative from the learner's plan, so there is never a dead end. Uncached.",
+        "description": "What a lesson page shows while a lesson isn't written yet: its status, the run writing it (stream GET /generations/{generationId}/events for live steps: `planLesson`, `writeLesson`, then `markLesson` and `drawPictures` side by side, either finishing first, and `lessonReady` once the lesson is complete) and a ready alternative from the learner's plan, so there is never a dead end. Uncached.",
         "operationId": "getLibraryLessonReadiness",
         "security": [
           {
@@ -30059,12 +30059,14 @@
           "language": {
             "type": "string"
           },
-          "summaryIdeas": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "What the lesson teaches, each idea in one sentence; empty until it's written. Rich text: the lesson Markdown subset and `$…$` math"
+          "summary": {
+            "nullable": true,
+            "description": "What the lesson teaches; null until it's written. Each idea's `text` is Rich text: the lesson Markdown subset and `$…$` math",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LessonMap"
+              }
+            ]
           },
           "title": {
             "type": "string"
@@ -30076,7 +30078,7 @@
           "firstScreen",
           "id",
           "language",
-          "summaryIdeas",
+          "summary",
           "title"
         ],
         "additionalProperties": false
@@ -30169,6 +30171,81 @@
         ],
         "additionalProperties": false,
         "description": "A first screen with nothing to show before the lesson"
+      },
+      "LessonMap": {
+        "type": "object",
+        "properties": {
+          "ideas": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "about": {
+                  "description": "One line in the lesson's language on what the idea covers, without giving away its answer, for before the lesson (the opening map's popover). Null until the lesson is tagged",
+                  "nullable": true,
+                  "type": "string"
+                },
+                "icon": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/LessonIcon"
+                    }
+                  ]
+                },
+                "label": {
+                  "description": "The idea's short name, which learners read before the lesson too; maps written before labels have none",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 400,
+                  "description": "The idea in one complete sentence"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "shape": {
+            "type": "string",
+            "enum": [
+              "hub",
+              "nested"
+            ],
+            "description": "`nested`: each idea is a level inside the next, smallest first. `hub`: ideas under the lesson's title"
+          }
+        },
+        "required": [
+          "ideas",
+          "shape"
+        ],
+        "additionalProperties": false,
+        "description": "A small map of what the lesson teaches: its ideas, each in one complete sentence"
+      },
+      "LessonIcon": {
+        "nullable": true,
+        "description": "A small drawing in the lesson's house style, with a white sticker border baked in, so one file works in light and dark. Decorative: screen readers skip it, since the text beside it says the same. Null until it's drawn",
+        "type": "object",
+        "properties": {
+          "smallUrl": {
+            "type": "string",
+            "description": "96 px square WebP, for small spots such as the maps and the strip"
+          },
+          "url": {
+            "type": "string",
+            "description": "256 px square WebP, for the corner of a text block"
+          }
+        },
+        "required": [
+          "smallUrl",
+          "url"
+        ],
+        "additionalProperties": false
       },
       "CatalogSearchResponse": {
         "type": "object",
@@ -41937,12 +42014,14 @@
                       "$ref": "#/components/schemas/PlayableLibraryStep"
                     }
                   },
-                  "summaryIdeas": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "The summary card, each idea in one sentence; empty until it's written"
+                  "summary": {
+                    "nullable": true,
+                    "description": "The lesson map, shown as its own screen after the last one (except after testing out) and from the lesson's menu once it ends. Null for a lesson that ends on its own summary screen, for a challenge, and before its map is written",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/LessonMap"
+                      }
+                    ]
                   },
                   "targetLanguage": {
                     "nullable": true,
@@ -41960,7 +42039,7 @@
                   "level",
                   "skills",
                   "steps",
-                  "summaryIdeas",
+                  "summary",
                   "targetLanguage"
                 ],
                 "additionalProperties": false
@@ -47478,6 +47557,7 @@
                               "type": "object",
                               "properties": {
                                 "icon": {
+                                  "default": "workflow",
                                   "type": "string",
                                   "enum": [
                                     "activity",
@@ -54879,463 +54959,6 @@
                       "fields": {
                         "type": "object",
                         "properties": {
-                          "case": {
-                            "type": "object",
-                            "properties": {
-                              "answers": {
-                                "minItems": 1,
-                                "maxItems": 15,
-                                "type": "array",
-                                "items": {
-                                  "type": "object",
-                                  "properties": {
-                                    "branch": {
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 40
-                                    },
-                                    "nodeId": {
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 40
-                                    }
-                                  },
-                                  "required": [
-                                    "branch",
-                                    "nodeId"
-                                  ],
-                                  "additionalProperties": false
-                                }
-                              },
-                              "description": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 400
-                              },
-                              "outcomeId": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 40
-                              }
-                            },
-                            "required": [
-                              "answers",
-                              "description",
-                              "outcomeId"
-                            ],
-                            "additionalProperties": false
-                          },
-                          "nodes": {
-                            "minItems": 3,
-                            "maxItems": 15,
-                            "type": "array",
-                            "items": {
-                              "oneOf": [
-                                {
-                                  "type": "object",
-                                  "properties": {
-                                    "branches": {
-                                      "minItems": 2,
-                                      "maxItems": 4,
-                                      "type": "array",
-                                      "items": {
-                                        "type": "object",
-                                        "properties": {
-                                          "label": {
-                                            "type": "string",
-                                            "minLength": 1,
-                                            "maxLength": 40
-                                          },
-                                          "next": {
-                                            "type": "string",
-                                            "minLength": 1,
-                                            "maxLength": 40
-                                          }
-                                        },
-                                        "required": [
-                                          "label",
-                                          "next"
-                                        ],
-                                        "additionalProperties": false
-                                      }
-                                    },
-                                    "id": {
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 40
-                                    },
-                                    "kind": {
-                                      "type": "string",
-                                      "enum": [
-                                        "question"
-                                      ]
-                                    },
-                                    "question": {
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 240
-                                    }
-                                  },
-                                  "required": [
-                                    "branches",
-                                    "id",
-                                    "kind",
-                                    "question"
-                                  ],
-                                  "additionalProperties": false
-                                },
-                                {
-                                  "type": "object",
-                                  "properties": {
-                                    "id": {
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 40
-                                    },
-                                    "kind": {
-                                      "type": "string",
-                                      "enum": [
-                                        "outcome"
-                                      ]
-                                    },
-                                    "label": {
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 40
-                                    }
-                                  },
-                                  "required": [
-                                    "id",
-                                    "kind",
-                                    "label"
-                                  ],
-                                  "additionalProperties": false
-                                }
-                              ],
-                              "type": "object"
-                            }
-                          },
-                          "rootId": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 40
-                          }
-                        },
-                        "required": [
-                          "case",
-                          "nodes",
-                          "rootId"
-                        ],
-                        "additionalProperties": false
-                      },
-                      "image": {
-                        "type": "object",
-                        "properties": {
-                          "alt": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 160
-                          },
-                          "prompt": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 400
-                          },
-                          "parts": {
-                            "minItems": 2,
-                            "maxItems": 6,
-                            "type": "array",
-                            "items": {
-                              "type": "string",
-                              "minLength": 1,
-                              "maxLength": 80
-                            }
-                          }
-                        },
-                        "required": [
-                          "alt",
-                          "prompt"
-                        ],
-                        "additionalProperties": false
-                      },
-                      "prompt": {
-                        "type": "string",
-                        "minLength": 1,
-                        "maxLength": 240
-                      },
-                      "template": {
-                        "type": "string",
-                        "enum": [
-                          "decisionTree"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "check",
-                      "fields",
-                      "prompt",
-                      "template"
-                    ],
-                    "additionalProperties": false
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "check": {
-                        "oneOf": [
-                          {
-                            "type": "object",
-                            "properties": {
-                              "inputs": {
-                                "maxItems": 6,
-                                "type": "array",
-                                "items": {
-                                  "type": "object",
-                                  "properties": {
-                                    "name": {
-                                      "type": "string",
-                                      "pattern": "^[A-Z_a-z]\\w{0,31}$"
-                                    },
-                                    "value": {
-                                      "type": "number"
-                                    }
-                                  },
-                                  "required": [
-                                    "name",
-                                    "value"
-                                  ],
-                                  "additionalProperties": false
-                                }
-                              },
-                              "output": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 40
-                              },
-                              "kind": {
-                                "type": "string",
-                                "enum": [
-                                  "choice"
-                                ]
-                              },
-                              "options": {
-                                "minItems": 2,
-                                "maxItems": 5,
-                                "type": "array",
-                                "items": {
-                                  "type": "object",
-                                  "properties": {
-                                    "id": {
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 40
-                                    },
-                                    "isCorrect": {
-                                      "type": "boolean"
-                                    },
-                                    "reason": {
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 400
-                                    },
-                                    "text": {
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 160
-                                    },
-                                    "value": {
-                                      "type": "number"
-                                    }
-                                  },
-                                  "required": [
-                                    "id",
-                                    "isCorrect",
-                                    "reason",
-                                    "text"
-                                  ],
-                                  "additionalProperties": false
-                                }
-                              },
-                              "question": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 240
-                              }
-                            },
-                            "required": [
-                              "kind",
-                              "options",
-                              "question"
-                            ],
-                            "additionalProperties": false
-                          },
-                          {
-                            "type": "object",
-                            "properties": {
-                              "explanation": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 400
-                              },
-                              "kind": {
-                                "type": "string",
-                                "enum": [
-                                  "interaction"
-                                ]
-                              }
-                            },
-                            "required": [
-                              "explanation",
-                              "kind"
-                            ],
-                            "additionalProperties": false
-                          },
-                          {
-                            "type": "object",
-                            "properties": {
-                              "inputs": {
-                                "maxItems": 6,
-                                "type": "array",
-                                "items": {
-                                  "type": "object",
-                                  "properties": {
-                                    "name": {
-                                      "type": "string",
-                                      "pattern": "^[A-Z_a-z]\\w{0,31}$"
-                                    },
-                                    "value": {
-                                      "type": "number"
-                                    }
-                                  },
-                                  "required": [
-                                    "name",
-                                    "value"
-                                  ],
-                                  "additionalProperties": false
-                                }
-                              },
-                              "output": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 40
-                              },
-                              "answer": {
-                                "type": "number"
-                              },
-                              "explanation": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 400
-                              },
-                              "kind": {
-                                "type": "string",
-                                "enum": [
-                                  "numeric"
-                                ]
-                              },
-                              "question": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 240
-                              },
-                              "tolerance": {
-                                "type": "object",
-                                "properties": {
-                                  "kind": {
-                                    "type": "string",
-                                    "enum": [
-                                      "absolute",
-                                      "relative"
-                                    ]
-                                  },
-                                  "value": {
-                                    "type": "number",
-                                    "minimum": 0
-                                  }
-                                },
-                                "required": [
-                                  "kind",
-                                  "value"
-                                ],
-                                "additionalProperties": false
-                              },
-                              "unit": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 16
-                              }
-                            },
-                            "required": [
-                              "answer",
-                              "explanation",
-                              "kind",
-                              "question",
-                              "tolerance"
-                            ],
-                            "additionalProperties": false
-                          }
-                        ],
-                        "type": "object"
-                      },
-                      "data": {
-                        "anyOf": [
-                          {
-                            "type": "object",
-                            "properties": {
-                              "isExample": {
-                                "type": "boolean",
-                                "enum": [
-                                  true
-                                ]
-                              }
-                            },
-                            "required": [
-                              "isExample"
-                            ],
-                            "additionalProperties": false
-                          },
-                          {
-                            "type": "object",
-                            "properties": {
-                              "source": {
-                                "type": "object",
-                                "properties": {
-                                  "publisher": {
-                                    "type": "string",
-                                    "minLength": 1,
-                                    "maxLength": 40
-                                  },
-                                  "title": {
-                                    "type": "string",
-                                    "minLength": 1,
-                                    "maxLength": 160
-                                  },
-                                  "url": {
-                                    "type": "string",
-                                    "format": "uri"
-                                  },
-                                  "year": {
-                                    "type": "integer",
-                                    "minimum": -9007199254740991,
-                                    "maximum": 9007199254740991
-                                  }
-                                },
-                                "required": [
-                                  "title"
-                                ],
-                                "additionalProperties": false
-                              }
-                            },
-                            "required": [
-                              "source"
-                            ],
-                            "additionalProperties": false
-                          }
-                        ]
-                      },
-                      "fields": {
-                        "type": "object",
-                        "properties": {
                           "byEar": {
                             "type": "boolean"
                           },
@@ -56694,6 +56317,9 @@
                   "activity"
                 ]
               },
+              "marks": {
+                "$ref": "#/components/schemas/StepMarks"
+              },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
                 "type": "object",
@@ -56780,6 +56406,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture",
               "baseMap",
               "minTolerance"
@@ -57426,6 +57053,9 @@
                   "challenge"
                 ]
               },
+              "marks": {
+                "$ref": "#/components/schemas/StepMarks"
+              },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
                 "type": "object",
@@ -57486,6 +57116,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture"
             ],
             "additionalProperties": false
@@ -57928,6 +57559,9 @@
                   "check"
                 ]
               },
+              "marks": {
+                "$ref": "#/components/schemas/StepMarks"
+              },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
                 "type": "object",
@@ -57988,6 +57622,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture"
             ],
             "additionalProperties": false
@@ -60053,6 +59688,7 @@
                                   "type": "object",
                                   "properties": {
                                     "icon": {
+                                      "default": "workflow",
                                       "type": "string",
                                       "enum": [
                                         "activity",
@@ -62148,230 +61784,6 @@
                           "fields": {
                             "type": "object",
                             "properties": {
-                              "case": {
-                                "type": "object",
-                                "properties": {
-                                  "answers": {
-                                    "minItems": 1,
-                                    "maxItems": 15,
-                                    "type": "array",
-                                    "items": {
-                                      "type": "object",
-                                      "properties": {
-                                        "branch": {
-                                          "type": "string",
-                                          "minLength": 1,
-                                          "maxLength": 40
-                                        },
-                                        "nodeId": {
-                                          "type": "string",
-                                          "minLength": 1,
-                                          "maxLength": 40
-                                        }
-                                      },
-                                      "required": [
-                                        "branch",
-                                        "nodeId"
-                                      ],
-                                      "additionalProperties": false
-                                    }
-                                  },
-                                  "description": {
-                                    "type": "string",
-                                    "minLength": 1,
-                                    "maxLength": 400
-                                  },
-                                  "outcomeId": {
-                                    "type": "string",
-                                    "minLength": 1,
-                                    "maxLength": 40
-                                  }
-                                },
-                                "required": [
-                                  "answers",
-                                  "description",
-                                  "outcomeId"
-                                ],
-                                "additionalProperties": false
-                              },
-                              "nodes": {
-                                "minItems": 3,
-                                "maxItems": 15,
-                                "type": "array",
-                                "items": {
-                                  "oneOf": [
-                                    {
-                                      "type": "object",
-                                      "properties": {
-                                        "branches": {
-                                          "minItems": 2,
-                                          "maxItems": 4,
-                                          "type": "array",
-                                          "items": {
-                                            "type": "object",
-                                            "properties": {
-                                              "label": {
-                                                "type": "string",
-                                                "minLength": 1,
-                                                "maxLength": 40
-                                              },
-                                              "next": {
-                                                "type": "string",
-                                                "minLength": 1,
-                                                "maxLength": 40
-                                              }
-                                            },
-                                            "required": [
-                                              "label",
-                                              "next"
-                                            ],
-                                            "additionalProperties": false
-                                          }
-                                        },
-                                        "id": {
-                                          "type": "string",
-                                          "minLength": 1,
-                                          "maxLength": 40
-                                        },
-                                        "kind": {
-                                          "type": "string",
-                                          "enum": [
-                                            "question"
-                                          ]
-                                        },
-                                        "question": {
-                                          "type": "string",
-                                          "minLength": 1,
-                                          "maxLength": 240
-                                        }
-                                      },
-                                      "required": [
-                                        "branches",
-                                        "id",
-                                        "kind",
-                                        "question"
-                                      ],
-                                      "additionalProperties": false
-                                    },
-                                    {
-                                      "type": "object",
-                                      "properties": {
-                                        "id": {
-                                          "type": "string",
-                                          "minLength": 1,
-                                          "maxLength": 40
-                                        },
-                                        "kind": {
-                                          "type": "string",
-                                          "enum": [
-                                            "outcome"
-                                          ]
-                                        },
-                                        "label": {
-                                          "type": "string",
-                                          "minLength": 1,
-                                          "maxLength": 40
-                                        }
-                                      },
-                                      "required": [
-                                        "id",
-                                        "kind",
-                                        "label"
-                                      ],
-                                      "additionalProperties": false
-                                    }
-                                  ],
-                                  "type": "object"
-                                }
-                              },
-                              "rootId": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 40
-                              }
-                            },
-                            "required": [
-                              "case",
-                              "nodes",
-                              "rootId"
-                            ],
-                            "additionalProperties": false
-                          },
-                          "template": {
-                            "type": "string",
-                            "enum": [
-                              "decisionTree"
-                            ]
-                          }
-                        },
-                        "required": [
-                          "fields",
-                          "template"
-                        ],
-                        "additionalProperties": false
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "data": {
-                            "anyOf": [
-                              {
-                                "type": "object",
-                                "properties": {
-                                  "isExample": {
-                                    "type": "boolean",
-                                    "enum": [
-                                      true
-                                    ]
-                                  }
-                                },
-                                "required": [
-                                  "isExample"
-                                ],
-                                "additionalProperties": false
-                              },
-                              {
-                                "type": "object",
-                                "properties": {
-                                  "source": {
-                                    "type": "object",
-                                    "properties": {
-                                      "publisher": {
-                                        "type": "string",
-                                        "minLength": 1,
-                                        "maxLength": 40
-                                      },
-                                      "title": {
-                                        "type": "string",
-                                        "minLength": 1,
-                                        "maxLength": 160
-                                      },
-                                      "url": {
-                                        "type": "string",
-                                        "format": "uri"
-                                      },
-                                      "year": {
-                                        "type": "integer",
-                                        "minimum": -9007199254740991,
-                                        "maximum": 9007199254740991
-                                      }
-                                    },
-                                    "required": [
-                                      "title"
-                                    ],
-                                    "additionalProperties": false
-                                  }
-                                },
-                                "required": [
-                                  "source"
-                                ],
-                                "additionalProperties": false
-                              }
-                            ]
-                          },
-                          "fields": {
-                            "type": "object",
-                            "properties": {
                               "byEar": {
                                 "type": "boolean"
                               },
@@ -63076,6 +62488,9 @@
                   "explanation"
                 ]
               },
+              "marks": {
+                "$ref": "#/components/schemas/StepMarks"
+              },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
                 "type": "object",
@@ -63161,6 +62576,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture",
               "baseMap"
             ],
@@ -63767,6 +63183,9 @@
                   "hook"
                 ]
               },
+              "marks": {
+                "$ref": "#/components/schemas/StepMarks"
+              },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
                 "type": "object",
@@ -63827,6 +63246,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture"
             ],
             "additionalProperties": false
@@ -64029,6 +63449,9 @@
                 "enum": [
                   "spokenAnswer"
                 ]
+              },
+              "marks": {
+                "$ref": "#/components/schemas/StepMarks"
               },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
@@ -66873,6 +66296,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture",
               "listening"
             ],
@@ -67070,6 +66494,9 @@
                   "summary"
                 ]
               },
+              "marks": {
+                "$ref": "#/components/schemas/StepMarks"
+              },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
                 "type": "object",
@@ -67130,6 +66557,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture"
             ],
             "additionalProperties": false
@@ -67512,6 +66940,9 @@
                   "typedAnswer"
                 ]
               },
+              "marks": {
+                "$ref": "#/components/schemas/StepMarks"
+              },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
                 "type": "object",
@@ -67572,6 +67003,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture"
             ],
             "additionalProperties": false
@@ -67967,6 +67399,9 @@
                   "workedExample"
                 ]
               },
+              "marks": {
+                "$ref": "#/components/schemas/StepMarks"
+              },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
                 "type": "object",
@@ -68027,6 +67462,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture"
             ],
             "additionalProperties": false
@@ -70879,6 +70315,40 @@
           }
         ]
       },
+      "StepMarks": {
+        "nullable": true,
+        "description": "Light marks on a teaching screen. The marked text is an explanation's `text` or a worked example's `problem`; on every other screen all fields are null. `icon` sits on the corner of the example's frame, or of the text block when there's no example, only on an explanation with no picture, visual or activity of its own, and never the same icon as its idea's, which the orientation strip already shows. Null until the lesson is tagged, and on screens it never tags",
+        "type": "object",
+        "properties": {
+          "example": {
+            "nullable": true,
+            "description": "Whole sentences of the screen's marked text to frame as its example: an exact substring of it, markup included, so splitting the text around it never cuts a run of markup. Null when the screen has none",
+            "type": "string"
+          },
+          "icon": {
+            "$ref": "#/components/schemas/LessonIcon"
+          },
+          "ideaIndex": {
+            "nullable": true,
+            "description": "The lesson map idea this teaching screen teaches, as an index into `summary.ideas` from 0, for the orientation strip. Null on questions and guesses, whose idea would give their answer away, when the lesson has no map, and when the screen belongs to none of its ideas",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "underline": {
+            "nullable": true,
+            "description": "The phrase that states the screen's main point, to underline: plain words found in the marked text once its `**` marks are removed, so look for it in the rendered text, where it may start, end or run through a bold term. Often null",
+            "type": "string"
+          }
+        },
+        "required": [
+          "example",
+          "icon",
+          "ideaIndex",
+          "underline"
+        ],
+        "additionalProperties": false
+      },
       "ScreenPicture": {
         "nullable": true,
         "description": "The screen's own picture, drawn or not (`image` once it's drawn). Null when the screen has none; option pictures are in `content`",
@@ -72431,15 +71901,6 @@
             "type": "string",
             "format": "date-time",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
-          "support": {
-            "nullable": true,
-            "description": "Lesson opening; null keeps its order",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/LessonSupport"
-              }
-            ]
           }
         },
         "required": [
@@ -72447,18 +71908,9 @@
           "hyperdrive",
           "replay",
           "runId",
-          "startedAt",
-          "support"
+          "startedAt"
         ],
         "additionalProperties": false
-      },
-      "LessonSupport": {
-        "type": "string",
-        "enum": [
-          "explanationFirst",
-          "questionFirst"
-        ],
-        "description": "`explanationFirst` when the learner never answered the skill the lesson opens with; `questionFirst` when they have. Reorder only the lesson's opening: move the explanations after the first question in front of it, or the first question after the opening explanations in front of them"
       },
       "AnswerExplanation": {
         "type": "object",
@@ -86320,12 +85772,14 @@
                   "$ref": "#/components/schemas/PlayableLibraryStep"
                 }
               },
-              "summaryIdeas": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "description": "The summary card, each idea in one sentence; empty until it's written"
+              "summary": {
+                "nullable": true,
+                "description": "The lesson map, shown as its own screen after the last one (except after testing out) and from the lesson's menu once it ends. Null for a lesson that ends on its own summary screen, for a challenge, and before its map is written",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LessonMap"
+                  }
+                ]
               },
               "targetLanguage": {
                 "nullable": true,
@@ -86343,7 +85797,7 @@
               "level",
               "skills",
               "steps",
-              "summaryIdeas",
+              "summary",
               "targetLanguage"
             ],
             "additionalProperties": false

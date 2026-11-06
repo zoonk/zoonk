@@ -10,16 +10,17 @@ import { deliverCourseContent } from "../_shared/course-content-notification";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken, joinRun } from "../_shared/run-token";
-import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import {
   type LessonContentResult,
   getLessonContentHookToken,
   lessonContentResultSchema,
 } from "./lesson-content-result";
+import { markAndDraw } from "./mark-and-draw";
 import { admitLessonContentStep, claimLessonContentStep } from "./steps/claim-lesson-content-step";
 import { failLessonContentStep } from "./steps/fail-lesson-content-step";
 import { lessonProgressStep } from "./steps/lesson-progress-step";
+import { completeLessonContentStep } from "./steps/lesson-ready-steps";
 import { readLessonStatusStep } from "./steps/read-lesson-status-step";
 import {
   type LessonWriteOutcome,
@@ -29,7 +30,12 @@ import {
   fixLessonContentStep,
   writeLessonContentStep,
 } from "./steps/write-lesson-content-step";
-import { type LessonSpecOutcome, writeLessonSpecStep } from "./steps/write-lesson-spec-step";
+import {
+  type LessonSpecOutcome,
+  judgeLessonPictureStep,
+  planLessonSpecStep,
+  saveLessonSpecStep,
+} from "./steps/write-lesson-spec-step";
 
 export type LessonContentInput = {
   lessonId: string;
@@ -89,6 +95,28 @@ async function waitForOwner(lessonId: string) {
   return finish({ lessonId, status: status === "ready" ? "ready" : "busy" });
 }
 
+async function planLessonSpec({
+  input,
+  workflowRunId,
+}: {
+  input: LessonContentInput;
+  workflowRunId: string;
+}): Promise<LessonSpecOutcome> {
+  const planned = await deliverCourseContent(planLessonSpecStep({ ...input, workflowRunId }));
+
+  if (planned.status !== "planned") {
+    return planned.status;
+  }
+
+  const { analytics, pictures } = planned;
+
+  const judged = await Promise.all(
+    pictures.map((picture) => judgeLessonPictureStep({ analytics, picture })),
+  );
+
+  return deliverCourseContent(saveLessonSpecStep({ judged, planned }));
+}
+
 function planWhenFree({
   input,
   workflowRunId,
@@ -98,7 +126,7 @@ function planWhenFree({
 }): Promise<LessonSpecOutcome> {
   return repeatUntil({
     done: (outcome) => outcome !== "waiting",
-    run: () => deliverCourseContent(writeLessonSpecStep({ ...input, workflowRunId })),
+    run: () => planLessonSpec({ input, workflowRunId }),
     times: MAX_WAITS,
     wait: () => sleep(WAIT_INTERVAL),
   });
@@ -247,13 +275,13 @@ export async function lessonContentWorkflow(
     return finish({ lessonId, status: outcome.status === "heldBack" ? "heldBack" : "missing" });
   }
 
-  // The lesson plays without its pictures and model checks, so the waiting screens open it first.
-  const ready = await finish({ lessonId, status: "ready" });
-
   if (outcome.imageScope) {
-    const analytics = { ...input.analytics, contentScope: outcome.imageScope };
-    await start(lessonImagesWorkflow, [{ analytics, lessonId }]);
+    const { analytics, wait } = input;
+    await markAndDraw({ analytics, imageScope: outcome.imageScope, lessonId, wait });
   }
+
+  const completed = await completeLessonContentStep({ lessonId, workflowRunId });
+  const ready = await finish({ lessonId, status: completed ? "ready" : "missing" });
 
   if (outcome.check && (outcome.check.review || outcome.check.cite)) {
     const check = { analytics: input.analytics, forExam: input.forExam, lessonId };

@@ -453,7 +453,7 @@ private struct NextStopView: View {
     return AnyView(
       Label {
         Text(
-          "This lesson is being written for you. It's usually ready in about two minutes.",
+          "This lesson is being written for you. It's usually ready in a few minutes.",
           tableName: "Session", comment: "A lesson being written")
       } icon: {
         ProgressView()

@@ -8,7 +8,14 @@ function screen(
   brief: string,
   visual: string | null = null,
 ): LessonSpec["screens"][number] {
-  return { activityTemplate: null, brief, kind, skills: kind === "hook" ? [] : [0], visual };
+  return {
+    activityTemplate: null,
+    brief,
+    kind,
+    skills: kind === "hook" ? [] : [0],
+    visual,
+    visualKind: visual ? "picture" : "none",
+  };
 }
 
 export const PRICE_IMPACT_SPEC: LessonSpec = {
@@ -61,7 +68,6 @@ export const PRICE_IMPACT_SPEC: LessonSpec = {
         "When placing a stock order, understand why not every share may trade at the first price shown.",
     },
   ],
-  supportMode: "explanationFirst",
   title: "Large orders and price impact",
 };
 

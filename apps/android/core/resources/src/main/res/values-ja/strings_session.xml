@@ -40,7 +40,7 @@
   "session_next_stop": "997f163d8c69a622c59acd19bacfbd87de4f7c240030312b1ebe78194bba27a8",
   "session_next_stop_failed": "7a3cb9b8d680f26657130b8d535d7c21120afee3d186d761a363c87406da264d",
   "session_next_while_waiting": "b38dd8dde2adf1c20c155347059c2f1407a4bab41c0bd0bc2d15cb231c671c26",
-  "session_next_writing_note": "f999dc1e723211288c9a6eb1057d3ddd4836e7ad07a3b9093a7700919e8a3feb",
+  "session_next_writing_note": "36b1374e65878001f19c9bf1ce4391246d42f3735b7138e74d488d7afc2762a6",
   "session_opening_slow": "6061836f7e7b4108249b9b59bb760cff69dacd5ef39f880686d7453defdd3df4",
   "session_opening_very_slow": "887a5727365922affbc611fdb1baccfd1e556d27e05b182beca673ba6b99ac06",
   "session_summary_back_on": "861946b66c2017f503b86b4460526ba814ac15455e045013d0d2267f1ae6abf2",
@@ -183,7 +183,7 @@
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">次は</string>
     <string name="session_next_start">始める</string>
-    <string name="session_next_writing_note">このレッスンを作成しています。通常2分ほどで完成します。</string>
+    <string name="session_next_writing_note">レッスンを作成しています。通常は数分で準備が整います。</string>
     <string name="session_next_lesson_ready">レッスンの準備ができました。</string>
     <string name="session_next_stop">今日はここまでにする</string>
     <string name="session_next_stop_failed">学習を終了できませんでした。もう一度お試しください。</string>

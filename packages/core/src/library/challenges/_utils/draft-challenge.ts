@@ -1,5 +1,6 @@
 import "server-only";
 import { type ChallengeCaseParams, generateChallengeCase } from "@zoonk/ai/tasks/challenge/case";
+import { type LessonMap } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { type Lesson } from "@zoonk/db";
 import { checkWrittenChallenge } from "../challenge-case-content";
 import { type ChallengeLessonSpec } from "../challenge-lesson-spec";
@@ -38,7 +39,7 @@ type DraftedChallenge = {
   content: ReturnType<typeof checkWrittenChallenge>["content"];
   problems: string[];
   provenance: Awaited<ReturnType<typeof generateChallengeCase>>["provenance"];
-  summary: string[];
+  summary: LessonMap;
 };
 
 export async function draftChallengeCase({
@@ -66,7 +67,13 @@ export async function draftChallengeCase({
     return {
       ...checked,
       provenance: written.provenance,
-      summary: written.data.summary.map((idea) => idea.trim()).filter(Boolean),
+      summary: {
+        ideas: written.data.summary
+          .map((idea) => idea.trim())
+          .filter(Boolean)
+          .map((text) => ({ text })),
+        shape: "hub",
+      },
     };
   };
 

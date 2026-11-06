@@ -15,6 +15,7 @@ export const LESSON_SPECS = {
         skills: [],
         visual:
           "A row of glowing vials from blue to red, each labeled with its dot diameter from about 2 nm to 6 nm.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -24,6 +25,7 @@ export const LESSON_SPECS = {
         skills: [0],
         visual:
           "Potential diagram: a flat floor from 0 to L with infinitely tall walls, with ψ = 0 marked outside and pinned points at x = 0 and x = L.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -32,6 +34,7 @@ export const LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -40,6 +43,7 @@ export const LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -49,6 +53,7 @@ export const LESSON_SPECS = {
         skills: [0, 1],
         visual:
           "A step-by-step derivation column with the key condition sin kL = 0 highlighted and the allowed k_n shown as evenly spaced points on a k axis.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -57,6 +62,7 @@ export const LESSON_SPECS = {
         kind: "check",
         skills: [0, 1],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -66,6 +72,7 @@ export const LESSON_SPECS = {
         skills: [2],
         visual:
           "Energy ladder with levels at 1, 4, 9 and 16 times E_1, with ψ_1 to ψ_4 drawn on each rung and their nodes marked.",
+        visualKind: "picture",
       },
       {
         activityTemplate: "formulaModel",
@@ -75,6 +82,7 @@ export const LESSON_SPECS = {
         skills: [1, 2],
         visual:
           "Graph of ψ_n(x) and |ψ_n(x)|² on 0 to L with an n slider and a live readout of E_n/E_1.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -83,6 +91,7 @@ export const LESSON_SPECS = {
         kind: "workedExample",
         skills: [1],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -91,6 +100,7 @@ export const LESSON_SPECS = {
         kind: "check",
         skills: [1],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -100,6 +110,7 @@ export const LESSON_SPECS = {
         skills: [0, 1, 2],
         visual:
           "Side-by-side energy ladders for a 6 nm and a 3 nm box drawn to scale, with the emitted photon arrows colored red and blue.",
+        visualKind: "picture",
       },
     ],
     skills: [
@@ -136,7 +147,6 @@ export const LESSON_SPECS = {
           "Reading probability densities and node patterns in molecular orbitals and semiconductor devices.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Particle in a box",
   },
   "en-percent-change-beginner": {
@@ -153,6 +163,7 @@ export const LESSON_SPECS = {
         skills: [],
         visual:
           "A price tag reading $100, an arrow down labeled -50%, then an arrow up labeled +50% ending at a tag with a question mark.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -162,6 +173,7 @@ export const LESSON_SPECS = {
         skills: [0],
         visual:
           "Two bars side by side: a $20 bar and a $25 bar, with the extra $5 piece highlighted on top.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -171,6 +183,7 @@ export const LESSON_SPECS = {
         skills: [0],
         visual:
           "The formula 'percent change = (new − old) ÷ old × 100' with each piece labeled: 'the change', 'the starting value', 'turn into percent'.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -179,6 +192,7 @@ export const LESSON_SPECS = {
         kind: "workedExample",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -187,6 +201,7 @@ export const LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -196,6 +211,7 @@ export const LESSON_SPECS = {
         skills: [0],
         visual:
           "A bar for $80 with the top $20 section shaded and crossed out, leaving $60, labeled '20 out of 80 = 25% off'.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -204,6 +220,7 @@ export const LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -213,6 +230,7 @@ export const LESSON_SPECS = {
         skills: [1],
         visual:
           "Before-and-after: left, $100 bar with half removed (−50% of 100); right, $50 bar doubled back to $100 (+100% of 50).",
+        visualKind: "picture",
       },
       {
         activityTemplate: "guessReveal",
@@ -221,6 +239,7 @@ export const LESSON_SPECS = {
         kind: "activity",
         skills: [0, 1],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -229,6 +248,7 @@ export const LESSON_SPECS = {
         kind: "application",
         skills: [0, 1],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -251,7 +271,6 @@ export const LESSON_SPECS = {
         useCase: "Understanding why a stock or pay cut takes a bigger percent rise to recover.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Percent change",
   },
   "pt-eletron-nucleo-overview": {
@@ -268,6 +287,7 @@ export const LESSON_SPECS = {
         skills: [],
         visual:
           "Núcleo no centro e elétron representado por uma região ao redor, com uma seta indicando a atração.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -277,6 +297,7 @@ export const LESSON_SPECS = {
         skills: [0],
         visual:
           "Lado a lado: órbita de bolinha riscada e região difusa ao redor do núcleo identificada como nuvem eletrônica.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -286,6 +307,7 @@ export const LESSON_SPECS = {
         skills: [0],
         visual:
           "A mesma nuvem em dois tamanhos: espalhada ao redor do núcleo e muito comprimida junto a ele, com indicação de que comprimir exige energia.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -294,6 +316,7 @@ export const LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -303,6 +326,7 @@ export const LESSON_SPECS = {
         skills: [0],
         visual:
           "Núcleo cercado por uma nuvem de tamanho definido, contrastada com um ponto minúsculo no centro marcado como concentração excessiva.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -311,6 +335,7 @@ export const LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -319,6 +344,7 @@ export const LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -334,7 +360,6 @@ export const LESSON_SPECS = {
           "Entender por que os átomos que formam objetos cotidianos, como um celular, permanecem estáveis.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Por que o elétron não cai no núcleo",
   },
   "pt-partes-da-celula-hobby": {
@@ -350,6 +375,7 @@ export const LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -358,6 +384,7 @@ export const LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: "Uma célula com a membrana em destaque no contorno.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -366,6 +393,7 @@ export const LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -374,6 +402,7 @@ export const LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -383,6 +412,7 @@ export const LESSON_SPECS = {
         skills: [0],
         visual:
           "Uma célula com a membrana, o citoplasma preenchendo o interior e o material genético, as três partes rotuladas.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -391,6 +421,7 @@ export const LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -399,6 +430,7 @@ export const LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -413,7 +445,6 @@ export const LESSON_SPECS = {
         useCase: "Entender esquemas de células em livros, museus e documentários de ciência.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Membrana, citoplasma e material genético",
   },
   "pt-regra-de-tres-intermediate": {
@@ -429,14 +460,7 @@ export const LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
-      },
-      {
-        activityTemplate: null,
-        brief:
-          "Peça que o aluno escolha o que acontece com o prazo em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
-        kind: "check",
-        skills: [0],
-        visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -446,6 +470,16 @@ export const LESSON_SPECS = {
         skills: [0],
         visual:
           "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes.",
+        visualKind: "picture",
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Peça que o aluno classifique dois casos novos: um carro que roda mais quilômetros com o mesmo consumo gasta mais combustível (direta); uma piscina enchida por mais torneiras iguais fica cheia em menos tempo (inversa). Inclua a opção tentadora de que as duas relações são diretas.",
+        kind: "check",
+        skills: [0],
+        visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -454,6 +488,7 @@ export const LESSON_SPECS = {
         kind: "explanation",
         skills: [1],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -462,6 +497,7 @@ export const LESSON_SPECS = {
         kind: "workedExample",
         skills: [0, 1],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -470,6 +506,7 @@ export const LESSON_SPECS = {
         kind: "check",
         skills: [0, 1],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -478,6 +515,7 @@ export const LESSON_SPECS = {
         kind: "explanation",
         skills: [2],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -486,6 +524,7 @@ export const LESSON_SPECS = {
         kind: "workedExample",
         skills: [0, 2],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -494,6 +533,7 @@ export const LESSON_SPECS = {
         kind: "check",
         skills: [0, 2],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -502,6 +542,7 @@ export const LESSON_SPECS = {
         kind: "application",
         skills: [0, 1, 2],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -535,7 +576,6 @@ export const LESSON_SPECS = {
           "Planejar prazos quando mudam ao mesmo tempo o tamanho do pedido e os recursos disponíveis.",
       },
     ],
-    supportMode: "questionFirst",
     title: "Regra de três simples e composta",
   },
 } satisfies Record<string, LessonSpec>;

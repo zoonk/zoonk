@@ -1,10 +1,11 @@
+import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { toError } from "@zoonk/utils/error";
 import { logError, logInfo } from "@zoonk/utils/logger";
-import { getBattleLeaderboard } from "./battle-loader";
+import { buildBattleLeaderboard } from "./battle-loader";
 import { resolveBattleMatchupModelIds } from "./battle-mapping";
-import { generateBattleRankings } from "./battle-score";
+import { addUsage, generateBattleRankings } from "./battle-score";
 import { canJudge } from "./models";
 import {
   getAllOutputsForTask,
@@ -14,10 +15,14 @@ import {
 import { formatExpectationsWithCategories } from "./score-categories";
 import { getTestCaseRunId } from "./test-case-runs";
 import {
+  type BattleCodeChecks,
   type BattleMatchup,
+  type CategoryScore,
   type ModelOutputs,
+  type ModelRanking,
   type RegisteredTask,
   type ScoreCategory,
+  type TaskCodeChecks,
   type TestCase,
   getJudgeExpectations,
   supportsJudgeMode,
@@ -25,12 +30,29 @@ import {
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
+const OUTPUT_HASH_LENGTH = 16;
 
-const BATTLE_JUDGES_CONFIG: readonly string[] = [
+export const BATTLE_JUDGES: readonly string[] = [
   "anthropic/claude-opus-5.5",
   "google/gemini-4-argon",
   "openai/gpt-6-astra",
 ];
+
+type ModelOutput = { modelId: string; output: string };
+type Mapping = { anonymousId: string; modelId: string }[];
+type AnonymizedOutput = { anonymousId: string; output: string }[];
+type Judgment = BattleMatchup["judgments"][number];
+type JudgeRunResult = { failures: Error[]; judgments: Judgment[] };
+
+export type BattleOptions = {
+  /** Exactly these models; otherwise the models with an output for every case. */
+  modelIds?: string[];
+  runsPerTestCase?: number;
+  /** Read saved judgments only: a case-run without one for these outputs is listed, not judged. */
+  saved?: boolean;
+  /** Each judge ranks the outputs in both orders, and its scores are averaged. */
+  swapped?: boolean;
+};
 
 async function ensureBattlesDir(taskId: string) {
   const taskDir = path.join(BATTLES_DIR, taskId);
@@ -54,23 +76,34 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-function anonymizeOutputs(outputs: { modelId: string; output: string }[]): {
-  anonymizedOutputs: { anonymousId: string; output: string }[];
-  mapping: { anonymousId: string; modelId: string }[];
+function anonymizeOutputs(outputs: ModelOutput[]): {
+  anonymizedOutputs: AnonymizedOutput;
+  mapping: Mapping;
 } {
-  const shuffled = shuffleArray(outputs);
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-  const anonymizedOutputs: { anonymousId: string; output: string }[] = [];
-  const mapping: { anonymousId: string; modelId: string }[] = [];
+  const labeled = shuffleArray(outputs).map((item, index) => ({
+    ...item,
+    anonymousId: `Model ${letters[index]}`,
+  }));
 
-  shuffled.forEach((item, index) => {
-    const anonymousId = `Model ${letters[index]}`;
-    anonymizedOutputs.push({ anonymousId, output: item.output });
-    mapping.push({ anonymousId, modelId: item.modelId });
-  });
+  return {
+    anonymizedOutputs: labeled.map(({ anonymousId, output }) => ({ anonymousId, output })),
+    mapping: labeled.map(({ anonymousId, modelId }) => ({ anonymousId, modelId })),
+  };
+}
 
-  return { anonymizedOutputs, mapping };
+function relabelOutputs(
+  outputs: ModelOutput[],
+  mapping: Mapping,
+): { anonymizedOutputs: AnonymizedOutput; mapping: Mapping } {
+  return {
+    anonymizedOutputs: outputs.flatMap(({ modelId, output }) => {
+      const entry = mapping.find((candidate) => candidate.modelId === modelId);
+      return entry ? [{ anonymousId: entry.anonymousId, output }] : [];
+    }),
+    mapping,
+  };
 }
 
 async function loadExistingMatchup(
@@ -87,57 +120,86 @@ async function loadExistingMatchup(
   }
 }
 
+/** So regenerated outputs get judged again instead of reusing the old outputs' rankings. */
+export async function removeBattleMatchups({
+  taskId,
+  testCaseIds,
+}: {
+  taskId: string;
+  testCaseIds: string[];
+}): Promise<void> {
+  await Promise.all(
+    testCaseIds.map((testCaseId) => fs.rm(getMatchupFilePath(taskId, testCaseId), { force: true })),
+  );
+}
+
 async function saveMatchup(matchup: BattleMatchup): Promise<void> {
   await ensureBattlesDir(matchup.taskId);
   const filePath = getMatchupFilePath(matchup.taskId, matchup.testCaseId);
   await fs.writeFile(filePath, JSON.stringify(matchup, null, 2));
 }
 
-function extractMappingFromMatchup(
-  matchup: BattleMatchup,
-): { anonymousId: string; modelId: string }[] {
-  const firstJudgment = matchup.judgments[0];
+function hashOutputs(outputs: ModelOutput[]): Record<string, string> {
+  return Object.fromEntries(
+    outputs.map(({ modelId, output }) => [
+      modelId,
+      createHash("sha256").update(output).digest("hex").slice(0, OUTPUT_HASH_LENGTH),
+    ]),
+  );
+}
 
-  if (!firstJudgment) {
-    return [];
+function hasSameOutputs({
+  current,
+  judged,
+}: {
+  current: Record<string, string>;
+  judged?: Record<string, string>;
+}): boolean {
+  const models = Object.keys(current);
+
+  return (
+    judged !== undefined &&
+    Object.keys(judged).length === models.length &&
+    models.every((modelId) => judged[modelId] === current[modelId])
+  );
+}
+
+/** Every model's label, from every judge: each judge leaves out its own family's models. */
+function getMatchupMapping(matchup: BattleMatchup): Mapping {
+  const mapping = new Map<string, string>();
+
+  for (const ranking of matchup.judgments.flatMap((judgment) => judgment.rankings)) {
+    if (!mapping.has(ranking.modelId)) {
+      mapping.set(ranking.modelId, ranking.anonymousId);
+    }
   }
 
-  return firstJudgment.rankings.map((ranking) => ({
-    anonymousId: ranking.anonymousId,
-    modelId: ranking.modelId,
-  }));
+  return [...mapping].map(([modelId, anonymousId]) => ({ anonymousId, modelId }));
+}
+
+/**
+ * A saved matchup is reused only for the same outputs, models, rubric and order: a judgment of
+ * another cohort, an older output or another rubric would compare something else.
+ */
+function canReuse(
+  existing: BattleMatchup | null,
+  {
+    expectations,
+    outputs,
+    swapped,
+  }: { expectations: string; outputs: Record<string, string>; swapped: boolean },
+): existing is BattleMatchup {
+  return (
+    existing !== null &&
+    existing.expectations === expectations &&
+    Boolean(existing.swapped) === swapped &&
+    hasSameOutputs({ current: outputs, judged: existing.outputs })
+  );
 }
 
 function canJudgeAny({ judgeId, modelIds }: { judgeId: string; modelIds: string[] }): boolean {
   return modelIds.some((modelId) => canJudge({ judgeId, modelId }));
 }
-
-function getMissingJudges({
-  matchup,
-  modelIds,
-}: {
-  matchup: BattleMatchup;
-  modelIds: string[];
-}): string[] {
-  const existingJudges = new Set(matchup.judgments.map((judgment) => judgment.judgeId));
-
-  return BATTLE_JUDGES_CONFIG.filter(
-    (judgeId) => !existingJudges.has(judgeId) && canJudgeAny({ judgeId, modelIds }),
-  );
-}
-
-function hasNewModels(existingMatchup: BattleMatchup, currentModelIds: string[]): boolean {
-  const existingModelIds = new Set(
-    extractMappingFromMatchup(existingMatchup).map((item) => item.modelId),
-  );
-
-  return currentModelIds.some((modelId) => !existingModelIds.has(modelId));
-}
-
-type ModelOutput = { modelId: string; output: string };
-type Mapping = { anonymousId: string; modelId: string }[];
-type AnonymizedOutput = { anonymousId: string; output: string }[];
-type JudgeRunResult = { failures: Error[]; judgments: BattleMatchup["judgments"] };
 
 function isFulfilled<T>(result: PromiseSettledResult<T>): result is PromiseFulfilledResult<T> {
   return result.status === "fulfilled";
@@ -177,22 +239,31 @@ function collectModelOutputsForTestCase(
   return { outputs, userPrompt };
 }
 
-function getAnonymizationForBattle(
-  modelOutputs: ModelOutput[],
-  existingMatchup: BattleMatchup | null,
-): { mapping: Mapping; anonymizedOutputs: AnonymizedOutput } {
-  if (!existingMatchup) {
-    return anonymizeOutputs(modelOutputs);
-  }
-
-  const mapping = extractMappingFromMatchup(existingMatchup);
-
-  const anonymizedOutputs = modelOutputs.map((item) => {
-    const mapEntry = mapping.find((entry) => entry.modelId === item.modelId);
-    return { anonymousId: mapEntry?.anonymousId ?? item.modelId, output: item.output };
+function averageCategoryScores(
+  first?: CategoryScore[],
+  second?: CategoryScore[],
+): CategoryScore[] | undefined {
+  return first?.map((category) => {
+    const other = second?.find((score) => score.categoryId === category.categoryId);
+    return other ? { ...category, score: (category.score + other.score) / 2 } : category;
   });
+}
 
-  return { anonymizedOutputs, mapping };
+function averageRankings(first: ModelRanking[], second: ModelRanking[]): ModelRanking[] {
+  return first.map((ranking) => {
+    const other = second.find((candidate) => candidate.modelId === ranking.modelId);
+
+    if (!other) {
+      return ranking;
+    }
+
+    return {
+      ...ranking,
+      categoryScores: averageCategoryScores(ranking.categoryScores, other.categoryScores),
+      reasoning: `${ranking.reasoning}\n\nIn the reverse order: ${other.reasoning}`,
+      score: (ranking.score + other.score) / 2,
+    };
+  });
 }
 
 async function runJudge(params: {
@@ -202,56 +273,93 @@ async function runJudge(params: {
   userPrompt: string;
   mapping: Mapping;
   scoreCategories?: ScoreCategory[];
-}): Promise<BattleMatchup["judgments"][number]> {
-  const { judgeId, anonymizedOutputs, expectations, userPrompt, mapping, scoreCategories } = params;
+  swapped: boolean;
+}): Promise<Judgment> {
+  const { judgeId, anonymizedOutputs, mapping, swapped } = params;
   const eligibleMapping = mapping.filter((entry) => canJudge({ judgeId, modelId: entry.modelId }));
   const eligibleIds = new Set(eligibleMapping.map((entry) => entry.anonymousId));
+  const eligibleOutputs = anonymizedOutputs.filter((output) => eligibleIds.has(output.anonymousId));
 
-  const { rankings, usage } = await generateBattleRankings({
-    anonymizedOutputs: anonymizedOutputs.filter((output) => eligibleIds.has(output.anonymousId)),
-    expectations,
+  const rank = (outputs: AnonymizedOutput) =>
+    generateBattleRankings({
+      anonymizedOutputs: outputs,
+      expectations: params.expectations,
+      judgeId,
+      mapping: eligibleMapping,
+      scoreCategories: params.scoreCategories,
+      userPrompt: params.userPrompt,
+    });
+
+  const first = await rank(eligibleOutputs);
+
+  if (!swapped) {
+    return { judgeId, rankings: first.rankings, usage: first.usage };
+  }
+
+  const reversed = await rank(eligibleOutputs.toReversed());
+
+  return {
     judgeId,
-    mapping: eligibleMapping,
-    scoreCategories,
-    userPrompt,
-  });
-
-  return { judgeId, rankings, usage };
+    rankings: averageRankings(first.rankings, reversed.rankings),
+    usage: addUsage(first.usage, reversed.usage),
+  };
 }
 
-async function runJudges(params: {
+async function runJudges({
+  judgesToRun,
+  ...params
+}: Omit<Parameters<typeof runJudge>[0], "judgeId"> & {
   judgesToRun: readonly string[];
-  anonymizedOutputs: AnonymizedOutput;
-  expectations: string;
-  userPrompt: string;
-  mapping: Mapping;
-  scoreCategories?: ScoreCategory[];
 }): Promise<JudgeRunResult> {
-  const { judgesToRun, anonymizedOutputs, expectations, userPrompt, mapping, scoreCategories } =
-    params;
-
   const results = await Promise.allSettled(
-    judgesToRun.map((judgeId) =>
-      runJudge({ anonymizedOutputs, expectations, judgeId, mapping, scoreCategories, userPrompt }),
-    ),
+    judgesToRun.map((judgeId) => runJudge({ ...params, judgeId })),
   );
 
   return { failures: getRejectedErrors(results), judgments: getFulfilledValues(results) };
 }
 
+/** The checks a code-scored task's scorer runs, so a battle reports them beside its judges. */
+async function checkOutputs({
+  outputs,
+  task,
+  testCase,
+}: {
+  outputs: ModelOutput[];
+  task: RegisteredTask;
+  testCase: TestCase;
+}): Promise<Record<string, BattleCodeChecks> | undefined> {
+  const check = task.codeChecks as TaskCodeChecks | undefined;
+
+  if (!check) {
+    return undefined;
+  }
+
+  const results = await Promise.all(
+    outputs.map(async ({ modelId, output }): Promise<[string, BattleCodeChecks]> => {
+      const { passed, problems, total } = await check({ output, testCase });
+      return [modelId, { passed, problems, total }];
+    }),
+  );
+
+  return Object.fromEntries(results);
+}
+
+type CaseRunResult = { matchup: BattleMatchup | null; testCaseId: string };
+
 async function runBattleForTestCase({
   allOutputs,
-  existingMatchup,
+  options,
+  runNumber,
   task,
   testCase,
 }: {
   allOutputs: Map<string, ModelOutputs>;
-  existingMatchup: BattleMatchup | null;
+  options: Required<Pick<BattleOptions, "saved" | "swapped">>;
+  runNumber: number;
   task: RegisteredTask;
   testCase: TestCase;
-}): Promise<BattleMatchup> {
-  const testCaseId = getTestCaseRunId({ runNumber: 1, testCaseId: testCase.id });
-  const expectations = getJudgeExpectations(testCase);
+}): Promise<CaseRunResult> {
+  const testCaseId = getTestCaseRunId({ runNumber, testCaseId: testCase.id });
 
   const { outputs: modelOutputs, userPrompt } = collectModelOutputsForTestCase(
     testCaseId,
@@ -259,47 +367,72 @@ async function runBattleForTestCase({
   );
 
   if (modelOutputs.length < 2) {
+    if (options.saved) {
+      return { matchup: null, testCaseId };
+    }
+
     throw new Error(`Need at least 2 models with outputs for test case ${testCaseId}`);
   }
 
-  const currentModelIds = modelOutputs.map((item) => item.modelId);
-  const newModelsDetected = existingMatchup && hasNewModels(existingMatchup, currentModelIds);
+  const judgeExpectations = getJudgeExpectations(testCase);
 
-  if (newModelsDetected) {
-    logInfo(`New models detected for ${testCaseId}, re-running all judges`);
+  const expectations = formatExpectationsWithCategories({
+    categories: task.scoreCategories,
+    expectations: judgeExpectations,
+  });
+
+  const outputs = hashOutputs(modelOutputs);
+  const existing = await loadExistingMatchup(task.id, testCaseId);
+
+  const reusable = canReuse(existing, { expectations, outputs, swapped: options.swapped })
+    ? existing
+    : null;
+
+  const codeChecks = await checkOutputs({ outputs: modelOutputs, task, testCase });
+
+  if (options.saved) {
+    return { matchup: reusable ? { ...reusable, codeChecks } : null, testCaseId };
   }
 
-  const effectiveExisting = newModelsDetected ? null : existingMatchup;
-  const { mapping, anonymizedOutputs } = getAnonymizationForBattle(modelOutputs, effectiveExisting);
+  const modelIds = modelOutputs.map((item) => item.modelId);
+  const reusedMapping = reusable ? getMatchupMapping(reusable) : [];
 
-  const judgesToRun = effectiveExisting
-    ? getMissingJudges({ matchup: effectiveExisting, modelIds: currentModelIds })
-    : BATTLE_JUDGES_CONFIG.filter((judgeId) => canJudgeAny({ judgeId, modelIds: currentModelIds }));
+  const keepsJudgments =
+    reusable !== null &&
+    modelIds.every((modelId) => reusedMapping.some((entry) => entry.modelId === modelId));
 
-  if (judgesToRun.length === 0 && effectiveExisting) {
-    return effectiveExisting;
-  }
+  const { anonymizedOutputs, mapping } = keepsJudgments
+    ? relabelOutputs(modelOutputs, reusedMapping)
+    : anonymizeOutputs(modelOutputs);
+
+  const keptJudgments = keepsJudgments && reusable ? reusable.judgments : [];
+
+  const judged = new Set(keptJudgments.map((judgment) => judgment.judgeId));
+
+  const judgesToRun = BATTLE_JUDGES.filter(
+    (judgeId) => !judged.has(judgeId) && canJudgeAny({ judgeId, modelIds }),
+  );
 
   const judgeResults = await runJudges({
     anonymizedOutputs,
-    expectations,
+    expectations: judgeExpectations,
     judgesToRun,
     mapping,
     scoreCategories: task.scoreCategories,
+    swapped: options.swapped,
     userPrompt,
   });
 
-  const allJudgments = effectiveExisting
-    ? [...effectiveExisting.judgments, ...judgeResults.judgments]
-    : judgeResults.judgments;
-
   const matchup: BattleMatchup = {
-    expectations: formatExpectationsWithCategories({
-      categories: task.scoreCategories,
-      expectations,
-    }),
-    judgedAt: new Date().toISOString(),
-    judgments: allJudgments,
+    codeChecks,
+    expectations,
+    judgedAt:
+      judgeResults.judgments.length === 0 && reusable
+        ? reusable.judgedAt
+        : new Date().toISOString(),
+    judgments: [...keptJudgments, ...judgeResults.judgments],
+    outputs,
+    swapped: options.swapped,
     taskId: task.id,
     testCaseId,
   };
@@ -319,63 +452,56 @@ async function runBattleForTestCase({
     );
   }
 
-  return matchup;
-}
-
-async function runBattleTestCase({
-  completeOutputs,
-  task,
-  testCase,
-}: {
-  completeOutputs: Map<string, ModelOutputs>;
-  task: RegisteredTask;
-  testCase: TestCase;
-}): Promise<BattleMatchup> {
-  const testCaseId = getTestCaseRunId({ runNumber: 1, testCaseId: testCase.id });
-  const existingMatchup = await loadExistingMatchup(task.id, testCaseId);
-
-  const result = await runBattleForTestCase({
-    allOutputs: completeOutputs,
-    existingMatchup,
-    task,
-    testCase,
-  });
-
   logInfo(`Battle complete for ${testCaseId}`);
-  return result;
+  return { matchup, testCaseId };
 }
 
-export async function runBattleMode(task: RegisteredTask): Promise<void> {
+/**
+ * Ranks the models with outputs for every case, or exactly `modelIds` (the CLI's `--battle`),
+ * where a case a model failed to write is ranked without it. Returns the matchups, and with
+ * `saved`, the case-runs that have no saved judgment for these outputs.
+ */
+export async function runBattleMode(
+  task: RegisteredTask,
+  { modelIds, runsPerTestCase = 1, saved = false, swapped = false }: BattleOptions = {},
+): Promise<{ matchups: BattleMatchup[]; unjudged: string[] }> {
   if (!supportsJudgeMode(task)) {
     throw new Error(`Task ${task.id} does not support judge mode.`);
   }
 
   logInfo(`\n=== Starting Battle Mode for task: ${task.name} ===\n`);
 
-  const completeModels = await getModelsWithCompleteOutputs({ runsPerTestCase: 1, task });
+  const battleModels = modelIds ?? (await getModelsWithCompleteOutputs({ runsPerTestCase, task }));
 
-  if (completeModels.length < 2) {
-    throw new Error(
-      `Need at least 2 models with complete outputs. Found: ${completeModels.length}`,
-    );
+  if (battleModels.length < 2) {
+    throw new Error(`Need at least 2 models with outputs. Found: ${battleModels.length}`);
   }
 
-  logInfo(`Found ${completeModels.length} models with complete outputs`);
+  logInfo(`Ranking ${battleModels.length} models`);
 
   const allOutputs = await getAllOutputsForTask(task.id);
 
-  const completeOutputs = new Map<string, ModelOutputs>();
+  const battleOutputs = new Map(
+    battleModels.flatMap((modelId): [string, ModelOutputs][] => {
+      const outputs = allOutputs.get(modelId);
+      return outputs ? [[modelId, outputs]] : [];
+    }),
+  );
 
-  for (const modelId of completeModels) {
-    const outputs = allOutputs.get(modelId);
-
-    if (outputs) {
-      completeOutputs.set(modelId, outputs);
-    }
-  }
+  const caseRuns = task.testCases.flatMap((testCase) =>
+    Array.from({ length: runsPerTestCase }, (_, index) => ({ runNumber: index + 1, testCase })),
+  );
 
   const battleResults = await Promise.allSettled(
-    task.testCases.map((testCase) => runBattleTestCase({ completeOutputs, task, testCase })),
+    caseRuns.map(({ runNumber, testCase }) =>
+      runBattleForTestCase({
+        allOutputs: battleOutputs,
+        options: { saved, swapped },
+        runNumber,
+        task,
+        testCase,
+      }),
+    ),
   );
 
   const battleFailures = getRejectedErrors(battleResults);
@@ -387,7 +513,9 @@ export async function runBattleMode(task: RegisteredTask): Promise<void> {
     );
   }
 
-  const leaderboard = await getBattleLeaderboard(task.id);
+  const results = getFulfilledValues(battleResults);
+  const matchups = results.flatMap((result) => (result.matchup ? [result.matchup] : []));
+  const leaderboard = buildBattleLeaderboard({ allOutputs: battleOutputs, matchups });
 
   logInfo("\n=== Battle Mode Complete ===");
   logInfo("Top 3 models:");
@@ -395,4 +523,9 @@ export async function runBattleMode(task: RegisteredTask): Promise<void> {
   leaderboard.slice(0, 3).forEach((entry, i) => {
     logInfo(`  ${i + 1}. ${entry.modelName}: ${entry.averageScore.toFixed(2)} average`);
   });
+
+  return {
+    matchups,
+    unjudged: results.flatMap((result) => (result.matchup ? [] : [result.testCaseId])),
+  };
 }

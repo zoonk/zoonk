@@ -23,7 +23,14 @@ const places = [
   },
 ];
 
-const stepBase = { citation: null, image: null, imagePending: false, position: 0, skillId: null };
+const stepBase = {
+  citation: null,
+  image: null,
+  imagePending: false,
+  marks: null,
+  position: 0,
+  skillId: null,
+};
 
 const mapActivity = {
   ...stepBase,

@@ -19,7 +19,7 @@ const PAUSE_READING_FACTOR = 3;
 
 const MS_PER_MINUTE = 60_000;
 
-function isExplaining(step: PlayableLibraryStep | undefined): step is ExplainingStep {
+export function isExplaining(step: PlayableLibraryStep | null | undefined): step is ExplainingStep {
   return step?.kind === "explanation" || step?.kind === "workedExample";
 }
 

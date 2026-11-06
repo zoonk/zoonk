@@ -13,6 +13,7 @@ export const EXPLORE_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "formulaModel",
@@ -21,6 +22,7 @@ export const EXPLORE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -29,6 +31,7 @@ export const EXPLORE_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -37,6 +40,7 @@ export const EXPLORE_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -49,7 +53,6 @@ export const EXPLORE_LESSON_SPECS = {
         useCase: "Choosing a savings account or a pension fund.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "How the rate changes compound growth",
   },
   "en-heart-chambers-explore": {
@@ -64,6 +67,7 @@ export const EXPLORE_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "labeledDiagram",
@@ -72,6 +76,7 @@ export const EXPLORE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -80,6 +85,7 @@ export const EXPLORE_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -88,6 +94,7 @@ export const EXPLORE_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -101,7 +108,6 @@ export const EXPLORE_LESSON_SPECS = {
         useCase: "Understanding a heart exam or a diagnosis.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "The chambers of the heart",
   },
   "pt-fotossintese-explore": {
@@ -116,6 +122,7 @@ export const EXPLORE_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "processOrder",
@@ -124,6 +131,7 @@ export const EXPLORE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -132,6 +140,7 @@ export const EXPLORE_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -140,6 +149,7 @@ export const EXPLORE_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -153,7 +163,6 @@ export const EXPLORE_LESSON_SPECS = {
         useCase: "Entender por que a produção de uma lavoura depende de luz e de gás carbônico.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "As etapas da fotossíntese",
   },
   "pt-imperio-romano-explore": {
@@ -168,6 +177,7 @@ export const EXPLORE_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "mapExplorer",
@@ -176,6 +186,7 @@ export const EXPLORE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -184,6 +195,7 @@ export const EXPLORE_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -192,6 +204,7 @@ export const EXPLORE_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -204,7 +217,6 @@ export const EXPLORE_LESSON_SPECS = {
         useCase: "Entender por que o latim e o direito romano chegaram a tantos países.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Até onde chegou o Império Romano",
   },
 } satisfies Record<string, LessonSpec>;

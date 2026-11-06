@@ -16,7 +16,6 @@ import {
 } from "@zoonk/core/lesson-player/get";
 import { type PlayableLibraryLesson } from "@zoonk/core/lesson-player/playable-lesson";
 import { getLessonProgress } from "@zoonk/core/lesson-player/progress";
-import { getLessonSupport } from "@zoonk/core/lesson-player/support";
 import { getChallengeTeam } from "@zoonk/core/library/challenges/get-team";
 import { getWarmUp } from "@zoonk/core/library/warm-ups/get";
 import { getLessonWaitingState } from "@zoonk/core/lookahead/lesson-waiting-state";
@@ -216,7 +215,6 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
     profile,
     fit,
     sessionContext,
-    support,
     resume,
     tutor,
     [challengeTeam, tutorSuggestions, waiting],
@@ -227,7 +225,6 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
     getLearningProfile(),
     getLessonFit({ lessonId }),
     sessionContextRead,
-    getLessonSupport({ lessonId }),
     getLessonProgress({ lessonId }),
     getTutorViewer(),
     lessonDetailsRead,
@@ -259,7 +256,6 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
           routing={routing}
           soundsEnabled={soundsEnabled}
           studySessionId={null}
-          support={support}
           tutor={tutor}
         />
       )}
@@ -275,7 +271,6 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
           sessionContext={sessionContext}
           soundsEnabled={soundsEnabled}
           studySessionId={studySessionId}
-          support={support}
           tutor={tutor}
           tutorSuggestions={tutorSuggestions}
         />

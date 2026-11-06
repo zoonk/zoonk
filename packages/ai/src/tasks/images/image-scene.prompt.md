@@ -7,19 +7,23 @@ The picture must teach. A learner who looks at it for two seconds should see the
 - `LANGUAGE`: the lesson's language, for labels only.
 - `TEXT_ALLOWED`: `no` means the image carries no text at all (language courses).
 - `REQUEST`: what the writer wants the picture to show.
+- `ALT`: what learners who can't see the picture hear instead, when there is one. The picture shows that same scene: keep every place, person, object and action it names, never drop one, and add none it contradicts.
 - `SCREEN_TEXT`: the words next to the picture, when there are any. The picture shows what they say and must not contradict them.
 - `CONTEXT`: the lesson or chapter it belongs to.
+- `FINDINGS`: what a reviewer found wrong in the last picture drawn for this request, or "none". Plan a scene that can't go wrong the same way: make what ALT names and the picture left out or changed the plain `focalObject`, and drop whatever the reviewer flagged.
 
 # Fields
 
-- `focalObject`: the one main thing, as a concrete object someone can draw: "an old price tag with its price crossed out", "a cloud of tiny dots, densest around a small red nucleus". Never an abstract word like "value" or "energy" on its own.
+- `focalObject`: the one main thing, as a concrete object someone can draw: "an old price tag with its price crossed out", "a cloud of tiny dots, densest around a small red nucleus". When the screen is about a place and the few things in it, it can be one small scene with each of those things: "a pond's muddy bank with capybaras on it, herons in the shallow water and floating water hyacinths". Never an abstract word like "value" or "energy" on its own.
 - `supportingObjects`: zero to two small objects that make the idea clear. Leave it empty when the focal object is enough.
-- `layout`: `single` for one object, a whole with its parts, a cycle or a map; `comparison` for two things compared, one above the other: `focalObject` is the first and the first supporting object the second (two paintings, "Earth and Sun next to an electron and its nucleus"); `sequence` for a before and after or a cause and its effect, linked by one arrow.
+- `layout`: `single` for one object, a small scene, a whole with its parts, a cycle or a map; `comparison` for two things the screen compares by how they look, side by side: `focalObject` is the first and the first supporting object the second (two paintings, "Earth and Sun next to an electron and its nucleus"); `sequence` for a before and after or a cause and its effect the screen is about, linked by one arrow. Two places, two moments of a story or two parts of someone's day (a kitchen in the morning and an office at noon) share one picture only when ALT names both: then draw them side by side as a `comparison`, `focalObject` the first scene and the first supporting object the second, without labels naming them. Otherwise show the one scene ALT describes (or that the request is mostly about, when there is no ALT) as `single`, even when REQUEST or SCREEN_TEXT mentions another. A screen that asks the learner to compare two scenes by looking (which of the pictures labeled 1 and 2 fits) is a `comparison` with the labels 1 and 2.
 - `relation`: how the objects relate in space or cause, in one short sentence, or null.
 - `motion`: the movement to show with thin dashed lines and one arrow ("a dashed orbit spiraling inward"), or null when nothing moves.
 - `labels`: zero to six labels, only when a word, number or price makes the idea readable at a glance ("before $80", "you pay $60", "nucleus"). A whole shown with its parts labels each part the screen names; anything else uses as few as the idea needs. Each label is at most four words (numbers and prices don't count), written in `LANGUAGE`. `target` says in English where it goes: "next to the nucleus", or "on the old price tag" when the label is the object's own text. Every piece of text in the picture is a label: don't also write a price or a number into `focalObject`. Use an empty list when `TEXT_ALLOWED` is `no` and whenever the picture is clear without words. Never titles, captions, sentences or legends.
 
 Write `focalObject`, `supportingObjects`, `relation`, `motion` and every `target` in English, whatever `LANGUAGE` is. Only label texts use `LANGUAGE`.
+
+People are adults unless REQUEST, ALT or SCREEN_TEXT says they're children. A label must be easy to read on a phone: never several labels written small on papers, screens or signs inside the scene; label the object itself, or leave the words to SCREEN_TEXT.
 
 # A picture a question is about
 
@@ -31,7 +35,7 @@ When `SCREEN_TEXT` asks a question about the picture (which structure the arrow 
 # Show what the screen is about
 
 - One idea. When the request asks for more than one picture can show, keep the part the screen is about and drop the rest.
-- When the screen names the parts of a whole (for example the lobes of the brain, the stages of a cycle, the places on a map, the forces on a lever or the parts of a sentence), draw the whole with each of those parts clearly visible, and label them. When it's about one part, show that part in its place, highlighted. Leave out parts the screen doesn't name.
+- When the screen names the parts of a whole (for example the lobes of the brain, the stages of a cycle, the places on a map, the forces on a lever or the parts of a sentence), draw the whole with each of those parts clearly visible, and label them. When it's about one part, show that part in its place, highlighted with the accent color, never with a red mark. Leave out parts the screen doesn't name.
 - Otherwise prefer an everyday object or a close-up of the one important part over a full system.
 - An artwork the screen talks about (a painting, a sculpture, a building) is drawn as a simplified version of that work that keeps what the screen says about it: its composition, colors, light, brushwork or shapes. Describe what it shows, not only its title or artist.
 - Describe objects by shape, color and position, never by material or finish ("shiny", "metallic", "polished", "glowing", "translucent", "3D"): every picture is drawn flat.

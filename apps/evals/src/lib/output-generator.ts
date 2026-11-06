@@ -81,11 +81,19 @@ function shouldSkipTestCase(
 
 type TestCaseRun = { testCase: TestCase; runNumber: number };
 
-function collectTestCaseRuns(testCases: TestCase[], existingEntries: OutputEntry[]): TestCaseRun[] {
+function collectTestCaseRuns({
+  existingEntries,
+  runsPerTestCase,
+  testCases,
+}: {
+  existingEntries: OutputEntry[];
+  runsPerTestCase: number;
+  testCases: TestCase[];
+}): TestCaseRun[] {
   const runs: TestCaseRun[] = [];
 
   for (const testCase of testCases) {
-    for (let runNumber = 1; runNumber <= RUNS_PER_TEST_CASE; runNumber += 1) {
+    for (let runNumber = 1; runNumber <= runsPerTestCase; runNumber += 1) {
       if (!shouldSkipTestCase(existingEntries, testCase.id, runNumber)) {
         runs.push({ runNumber, testCase });
       }
@@ -116,6 +124,7 @@ function createModelOutputs(taskId: string, modelId: string, outputs: OutputEntr
 export async function generateOutputs(
   task: RegisteredTask,
   modelId: string,
+  { runsPerTestCase = RUNS_PER_TEST_CASE }: { runsPerTestCase?: number } = {},
 ): Promise<ModelOutputs> {
   const safeModelId = modelId.replaceAll(/[\r\n]/gu, "");
   const model = getModelById(modelId);
@@ -127,14 +136,19 @@ export async function generateOutputs(
   logInfo(`\nGenerating outputs for task: ${task.name}, model: [${safeModelId}]`);
 
   logInfo(
-    `Total test cases: ${task.testCases.length} (${task.testCases.length * RUNS_PER_TEST_CASE} runs)`,
+    `Total test cases: ${task.testCases.length} (${task.testCases.length * runsPerTestCase} runs)`,
   );
 
   const existingOutputs = await loadModelOutputs(task.id, modelId);
   const existingEntries = existingOutputs?.outputs ?? [];
   logInfo(`Found ${existingEntries.length} existing outputs`);
 
-  const runsToExecute = collectTestCaseRuns(task.testCases, existingEntries);
+  const runsToExecute = collectTestCaseRuns({
+    existingEntries,
+    runsPerTestCase,
+    testCases: task.testCases,
+  });
+
   logInfo(`Generating ${runsToExecute.length} new outputs`);
 
   if (runsToExecute.length === 0) {

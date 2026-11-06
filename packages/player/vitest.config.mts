@@ -3,7 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
 import { assertBrowserLaunchAllowed } from "@zoonk/testing/browser-preflight";
-import { type CDPSession, type Page } from "playwright";
+import { type CDPSession, type Page, type Route } from "playwright";
 import { defineConfig } from "vitest/config";
 import { type BrowserCommand } from "vitest/node";
 
@@ -62,6 +62,53 @@ const touch: BrowserCommand<[TouchStep[]]> = async ({ page }, steps) => {
   }
 };
 
+/** A 3 × 2 grey PNG: the shape a scene is drawn at, small enough to inline. */
+const SCENE_PNG = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAIAAAASFvFNAAAADklEQVR4nGM4AwMMcBYAj4QOWXZs8u4AAAAASUVORK5CYII=",
+  "base64",
+);
+
+type HeldPictures = { answered: Set<string>; waiting: Map<string, Route> };
+
+const heldPictures = new WeakMap<Page, HeldPictures>();
+
+function sendPicture(route: Route) {
+  return route.fulfill({ body: SCENE_PNG, contentType: "image/png" });
+}
+
+const holdPictures: BrowserCommand<[]> = async ({ page }) => {
+  if (heldPictures.has(page)) {
+    return;
+  }
+
+  const held: HeldPictures = { answered: new Set(), waiting: new Map() };
+  heldPictures.set(page, held);
+
+  await page.context().route("**/held-pictures/**", (route) => {
+    const url = new URL(route.request().url());
+
+    if (url.searchParams.has("probe")) {
+      return route.fulfill({ status: 204 });
+    }
+
+    if (held.answered.has(url.pathname)) {
+      return sendPicture(route);
+    }
+
+    held.waiting.set(url.pathname, route);
+  });
+};
+
+const answerPicture: BrowserCommand<[string]> = async ({ page }, path) => {
+  const held = heldPictures.get(page);
+  held?.answered.add(path);
+  const route = held?.waiting.get(path);
+
+  if (route) {
+    await sendPicture(route);
+  }
+};
+
 const tap: BrowserCommand<[{ x: number; y: number }]> = async ({ page }, { x, y }) => {
   await page.touchscreen.tap(x, y);
 };
@@ -92,7 +139,7 @@ export default defineConfig({
         extends: true,
         test: {
           browser: {
-            commands: { emulateMedia, tap, touch },
+            commands: { answerPicture, emulateMedia, holdPictures, tap, touch },
             enabled: true,
             headless: true,
             instances: [

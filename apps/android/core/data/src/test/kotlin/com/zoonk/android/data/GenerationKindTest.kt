@@ -2,6 +2,7 @@ package com.zoonk.android.data
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class GenerationKindTest {
@@ -87,6 +88,80 @@ class GenerationKindTest {
                 ).phases[2]
         assertEquals(30_000L, done.startedAt)
         assertEquals(54_000L, done.endedAt)
+    }
+
+    @Test
+    fun aLessonsMarkingAndDrawingRunSideBySideEachDoneOnItsOwnSteps() {
+        val written = arrayOf("planLesson" to StepState.Completed, "writeLesson" to StepState.Completed)
+
+        fun statuses(vararg steps: Pair<String, StepState>) =
+            GenerationKind.Lesson
+                .progress(run(*written, *steps))
+                .phases
+                .map { it.status }
+
+        assertEquals(
+            listOf(PhaseStatus.Completed, PhaseStatus.Completed, PhaseStatus.Active, PhaseStatus.Active),
+            statuses("markLesson" to StepState.Started, "drawPictures" to StepState.Started),
+        )
+        assertEquals(
+            listOf(PhaseStatus.Completed, PhaseStatus.Completed, PhaseStatus.Completed, PhaseStatus.Active),
+            statuses("markLesson" to StepState.Completed, "drawPictures" to StepState.Started),
+        )
+
+        val drawnFirst =
+            GenerationKind.Lesson.progress(
+                run(
+                    *written,
+                    "markLesson" to StepState.Started,
+                    "drawPictures" to StepState.Completed,
+                ),
+            )
+        assertEquals(
+            listOf(PhaseStatus.Completed, PhaseStatus.Completed, PhaseStatus.Active, PhaseStatus.Completed),
+            drawnFirst.phases.map { it.status },
+        )
+        assertTrue(drawnFirst.share < 1f)
+        assertEquals(10_000L, drawnFirst.activeMillis)
+    }
+
+    @Test
+    fun aLessonsMarkingAndDrawingStartWhenWritingEndsAndEachEndsAtItsOwnFinish() {
+        val written =
+            mapOf(
+                "planLesson" to StepTimes(started = 1_000, completed = 20_000),
+                "writeLesson" to StepTimes(started = 20_000, completed = 50_000),
+            )
+        val steps = arrayOf("planLesson" to StepState.Completed, "writeLesson" to StepState.Completed)
+
+        val markingFirst =
+            GenerationKind.Lesson.progress(
+                run(
+                    *steps,
+                    "markLesson" to StepState.Started,
+                    times =
+                        written + ("markLesson" to StepTimes(started = 50_000)),
+                ),
+            )
+        assertEquals(listOf(50_000L to null, 50_000L to null), markingFirst.phases.drop(2).map { it.startedAt to it.endedAt })
+
+        val ready =
+            GenerationKind.Lesson.progress(
+                run(
+                    *steps,
+                    "markLesson" to StepState.Completed,
+                    "drawPictures" to StepState.Completed,
+                    "lessonReady" to StepState.Completed,
+                    times =
+                        written +
+                            mapOf(
+                                "drawPictures" to StepTimes(started = 50_000, completed = 70_000),
+                                "markLesson" to StepTimes(started = 50_000, completed = 250_000),
+                                "lessonReady" to StepTimes(completed = 250_010),
+                            ),
+                ),
+            )
+        assertEquals(listOf(50_000L to 250_000L, 50_000L to 70_000L), ready.phases.drop(2).map { it.startedAt to it.endedAt })
     }
 
     @Test

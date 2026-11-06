@@ -45,6 +45,8 @@ final class LessonPlayerStore {
   /// the app, a guest's lesson ends as a learner's.
   private let fromCatalog: Bool
   private(set) var screen = Screen.loading
+  private(set) var writingProgress = GenerationWait(kind: .lesson).started
+  private var progressRun: String?
   private(set) var warmUp: WarmUp?
   private(set) var lesson: PlayableLesson?
   private(set) var state: LessonPlayerState?
@@ -68,7 +70,7 @@ final class LessonPlayerStore {
   /// Any touch or scroll on the screen: a learner who touches it isn't stuck.
   var touches = 0
   var isAsking = false
-  private(set) var askingOffer: LessonTutorOffer?
+  private var askingOffer: LessonTutorOffer?
   /// The lesson shows as a spread, where Ask opens beside it; elsewhere Ask is a sheet. Kept by the
   /// stage, which measures it. Once Ask is beside the lesson, closing iPhone Duo doesn't bring its
   /// sheet back.
@@ -147,10 +149,30 @@ final class LessonPlayerStore {
     return work
   }
 
-  func ask(suggestionId: String? = nil) {
-    askingOffer = suggestionId.map { LessonTutorOffer(suggestionId: $0) }
+  /// Ask stays open as the lesson moves on, and only the screen an offer was made about starts with
+  /// it, so moving on never asks again.
+  func startingOffer(about stepId: String?) -> LessonTutorOffer? {
+    askingOffer.flatMap { $0.stepId == stepId ? $0 : nil }
+  }
+
+  func ask(suggestionId: String? = nil, sendsAtOnce: Bool = false) {
+    askingOffer = lesson?.tutorSuggestions.first { $0.id.rawValue == suggestionId }.map {
+      LessonTutorOffer(suggestion: $0, stepId: state?.currentStep?.id, sendsAtOnce: sendsAtOnce)
+    }
     isAskingInSheet = !isSpread
     isAsking = true
+  }
+
+  /// What the buddy offers beside the lesson. Beside a screen with "I didn't get this", that button
+  /// is the one way to ask for `simpler`.
+  var suggestionsBeside: [Components.Schemas.LessonTutorSuggestion] {
+    let suggestions = lesson?.tutorSuggestions ?? []
+
+    guard let lesson, let step = state?.currentStep, lesson.offersDidntGetIt(on: step) else {
+      return suggestions
+    }
+
+    return suggestions.filter { $0.id != .simpler }
   }
 
   /// An unwritten lesson waits for the learner's tap, since writing it runs AI.
@@ -228,13 +250,14 @@ final class LessonPlayerStore {
     case .obsolete: return
     }
 
-    var state = LessonPlayerState(lessonId: lesson.id, steps: lesson.steps)
+    var state = LessonPlayerState(
+      lessonId: lesson.id, steps: lesson.steps, hasMap: lesson.summary != nil)
 
     switch run {
     case .success(let run):
       state.startRun(
         runId: run.runId, answers: run.answers, startedAt: run.startedAt,
-        hyperdrive: run.hyperdrive, optionalStepIds: run.optionalStepIds, support: run.support)
+        hyperdrive: run.hyperdrive, optionalStepIds: run.optionalStepIds)
     case .failure(let refusal):
       state.refuseRun(refusal)
     }
@@ -328,7 +351,7 @@ final class LessonPlayerStore {
     }
 
     switch lesson?.status {
-    case .generating: screen = .waiting(outline, .writing)
+    case .generating: waitForWriting(outline)
     case .ready: await load(refresh: true)
     case .failed: screen = .waiting(outline, .failed)
     case .notStarted, nil: screen = .waiting(outline, .notStarted)
@@ -354,7 +377,7 @@ final class LessonPlayerStore {
       return
     }
 
-    screen = .waiting(outline, .writing)
+    waitForWriting(outline)
     let api = api
     let written = await write { token in try await api.writeLesson(id: outline.id, token: token) }
     guard isCurrent(identity) else { return }
@@ -382,7 +405,10 @@ final class LessonPlayerStore {
     _ outline: LessonOutline, run: String?, identity: AuthenticatedSession
   ) async {
     let lesson = await signingOutOnUnauthorized(identity) {
-      try await api.followWriting(id: outline.id, run: run, token: identity.bearerToken)
+      try await api.followWriting(id: outline.id, run: run, token: identity.bearerToken) {
+        [weak self] run, event in
+        self?.recordProgress(event, of: run, for: identity)
+      }
     }
 
     guard !Task.isCancelled, isCurrent(identity), case .waiting(_, .writing) = screen else {
@@ -395,6 +421,28 @@ final class LessonPlayerStore {
     case .failed, nil: screen = .waiting(outline, .failed)
     case .generating, .notStarted: screen = .waiting(outline, .notStarted)
     }
+  }
+
+  private func waitForWriting(_ outline: LessonOutline) {
+    screen = .waiting(outline, .writing)
+    progressRun = nil
+    writingProgress = GenerationWait(kind: .lesson).started
+  }
+
+  /// A run that takes over from one that stopped starts the steps over.
+  private func recordProgress(
+    _ event: GenerationEvent, of run: String, for identity: AuthenticatedSession
+  ) {
+    guard isCurrent(identity) else {
+      return
+    }
+
+    if run != progressRun {
+      progressRun = run
+      writingProgress = GenerationWait(kind: .lesson).started
+    }
+
+    writingProgress.apply(event)
   }
 
   private func readiness(_ lessonId: String, identity: AuthenticatedSession) async

@@ -28,7 +28,7 @@ function answer(stepId: string, isCorrect: boolean): LessonPlayerAction[] {
 function play(steps: PlayableLibraryStep[], actions: LessonPlayerAction[]) {
   return actions.reduce(
     (state, action) => lessonPlayerReducer(state, action),
-    createInitialState({ id: "lesson", steps }),
+    createInitialState({ hasMap: false, id: "lesson", steps }),
   );
 }
 
@@ -81,12 +81,12 @@ describe(getStruggleOffer, () => {
   });
 
   it("offers the explanation after a question that opens the lesson, and none without one", () => {
-    const questionFirst = [
+    const opensWithQuestion = [
       withSkill(checkStep("try"), "skill-a"),
       withSkill(workedExampleStep("example"), "skill-a"),
     ];
 
-    const missedTwice = play(questionFirst, [
+    const missedTwice = play(opensWithQuestion, [
       ...answer("try", false),
       { type: "continue" },
       { type: "continue" },

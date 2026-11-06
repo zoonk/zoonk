@@ -59,9 +59,21 @@
     {
       "classification": { "expected": "pass", "predicted": "pass" },
       "steps": [
-        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected pass; got pass. layout is sequence but image shows a single microwave scene with a side circle, not two parts forming a sequence focal object microwave with soup is present and recognizable; water molecule spinning with curved arrows shown; label 'water molecules' present and spelled correctly",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected pass; got pass. layout is sequence but image shows a single microwave scene with a side circle, not two parts forming a sequence focal object microwave with soup is present and recognizable; water molecule spinning with curved arrows shown; label 'water molecules' present and spelled correctly",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected pass; got pass. layout is sequence but image shows a single microwave scene with a side circle, not two parts forming a sequence focal object microwave with soup is present and recognizable; water molecule spinning with curved arrows shown; label 'water molecules' present and spelled correctly",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": { "passed": true },
@@ -208,17 +220,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'Sun' unrequested text: 'Earth' unrequested text: 'Nucleus' unrequested text: 'Electron' orbits are not the same size: Sun-Earth orbit is much larger than nucleus-electron orbit",
+          "conclusion": "Expected fail; got fail. unrequested text: 'Sun' unrequested text: 'Earth' unrequested text: 'Nucleus' unrequested text: 'Electron' labels placed on pills above objects rather than as requested captions under the objects orbits are not the same size: Earth's orbit is much larger than the electron's, violating 'same size' relation",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'Sun' unrequested text: 'Earth' unrequested text: 'Nucleus' unrequested text: 'Electron' orbits are not the same size: Sun-Earth orbit is much larger than nucleus-electron orbit",
+          "conclusion": "Expected fail; got fail. unrequested text: 'Sun' unrequested text: 'Earth' unrequested text: 'Nucleus' unrequested text: 'Electron' labels placed on pills above objects rather than as requested captions under the objects orbits are not the same size: Earth's orbit is much larger than the electron's, violating 'same size' relation",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'Sun' unrequested text: 'Earth' unrequested text: 'Nucleus' unrequested text: 'Electron' orbits are not the same size: Sun-Earth orbit is much larger than nucleus-electron orbit",
+          "conclusion": "Expected fail; got fail. unrequested text: 'Sun' unrequested text: 'Earth' unrequested text: 'Nucleus' unrequested text: 'Electron' labels placed on pills above objects rather than as requested captions under the objects orbits are not the same size: Earth's orbit is much larger than the electron's, violating 'same size' relation",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -247,17 +259,17 @@
       "classification": { "expected": "fail", "predicted": "pass" },
       "steps": [
         {
-          "conclusion": "Expected fail; got pass. scene asks for a sequence layout with a single relation; image shows two panels with a dashed arrow between them, which is acceptable as sequence, so no failure there the spinning molecule has curved arrows but the dashed link from soup to molecule is present; matches scene",
+          "conclusion": "Expected fail; got pass. unrequested second 'water molecules' label under the right-hand molecule, scene asked for one label relation line links soup to molecule, but the image shows two microwave panels in sequence, matching the sequence layout requested",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Expected fail; got pass. scene asks for a sequence layout with a single relation; image shows two panels with a dashed arrow between them, which is acceptable as sequence, so no failure there the spinning molecule has curved arrows but the dashed link from soup to molecule is present; matches scene",
+          "conclusion": "Expected fail; got pass. unrequested second 'water molecules' label under the right-hand molecule, scene asked for one label relation line links soup to molecule, but the image shows two microwave panels in sequence, matching the sequence layout requested",
           "kind": "minorErrors",
           "score": 6
         },
         {
-          "conclusion": "Expected fail; got pass. scene asks for a sequence layout with a single relation; image shows two panels with a dashed arrow between them, which is acceptable as sequence, so no failure there the spinning molecule has curved arrows but the dashed link from soup to molecule is present; matches scene",
+          "conclusion": "Expected fail; got pass. unrequested second 'water molecules' label under the right-hand molecule, scene asked for one label relation line links soup to molecule, but the image shows two microwave panels in sequence, matching the sequence layout requested",
           "kind": "potentialImprovements",
           "score": 6
         }
@@ -319,17 +331,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. scene requires a microwave oven with soup, but image shows a house with a key sign no spinning water molecule, dashed link, or curved motion arrows present label 'water molecules' is absent from the image",
+          "conclusion": "Expected fail; got fail. image shows a house with a chimney and a key sign, not a microwave oven with soup and water molecules focal object (microwave with soup) missing no sequence of parts; single house scene no water molecule, dashed link, or spinning arrows depicted label 'water molecules' not present in image",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. scene requires a microwave oven with soup, but image shows a house with a key sign no spinning water molecule, dashed link, or curved motion arrows present label 'water molecules' is absent from the image",
+          "conclusion": "Expected fail; got fail. image shows a house with a chimney and a key sign, not a microwave oven with soup and water molecules focal object (microwave with soup) missing no sequence of parts; single house scene no water molecule, dashed link, or spinning arrows depicted label 'water molecules' not present in image",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. scene requires a microwave oven with soup, but image shows a house with a key sign no spinning water molecule, dashed link, or curved motion arrows present label 'water molecules' is absent from the image",
+          "conclusion": "Expected fail; got fail. image shows a house with a chimney and a key sign, not a microwave oven with soup and water molecules focal object (microwave with soup) missing no sequence of parts; single house scene no water molecule, dashed link, or spinning arrows depicted label 'water molecules' not present in image",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -431,17 +443,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. focal object is a green leaf, not a red apple on a white plate unrequested depiction: sun with light rays image shows a leaf and sun instead of the requested apple and plate",
+          "conclusion": "Expected fail; got fail. scene asks for a red apple on a white plate but image shows a green leaf with a sun focal object missing and wrong",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. focal object is a green leaf, not a red apple on a white plate unrequested depiction: sun with light rays image shows a leaf and sun instead of the requested apple and plate",
+          "conclusion": "Expected fail; got fail. scene asks for a red apple on a white plate but image shows a green leaf with a sun focal object missing and wrong",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. focal object is a green leaf, not a red apple on a white plate unrequested depiction: sun with light rays image shows a leaf and sun instead of the requested apple and plate",
+          "conclusion": "Expected fail; got fail. scene asks for a red apple on a white plate but image shows a green leaf with a sun focal object missing and wrong",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -467,17 +479,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules' label text is in English instead of required 'moléculas de água' in Português Brasileiro",
+          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules' (English, label should be 'moléculas de água' in Português Brasileiro)",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules' label text is in English instead of required 'moléculas de água' in Português Brasileiro",
+          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules' (English, label should be 'moléculas de água' in Português Brasileiro)",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules' label text is in English instead of required 'moléculas de água' in Português Brasileiro",
+          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules' (English, label should be 'moléculas de água' in Português Brasileiro)",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -502,9 +514,21 @@
     {
       "classification": { "expected": "pass", "predicted": "pass" },
       "steps": [
-        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected pass; got pass. vertical divider line splits image into two panels; layout is comparison so this is acceptable",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected pass; got pass. vertical divider line splits image into two panels; layout is comparison so this is acceptable",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected pass; got pass. vertical divider line splits image into two panels; layout is comparison so this is acceptable",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": { "passed": true },
@@ -617,17 +641,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'Particle' unrequested text: 'Indicator lamp' unrequested text: 'Display screen' particle sits inside a glass dome, not on top of the device above the screen '0' and '1' labels sit above the two lamps rather than left and right of the screen as requested",
+          "conclusion": "Expected fail; got fail. unrequested text: 'Particle' unrequested text: 'Indicator lamp' unrequested text: 'Display screen' particle is inside a glass dome above the device rather than sitting directly on top of it above the screen",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'Particle' unrequested text: 'Indicator lamp' unrequested text: 'Display screen' particle sits inside a glass dome, not on top of the device above the screen '0' and '1' labels sit above the two lamps rather than left and right of the screen as requested",
+          "conclusion": "Expected fail; got fail. unrequested text: 'Particle' unrequested text: 'Indicator lamp' unrequested text: 'Display screen' particle is inside a glass dome above the device rather than sitting directly on top of it above the screen",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'Particle' unrequested text: 'Indicator lamp' unrequested text: 'Display screen' particle sits inside a glass dome, not on top of the device above the screen '0' and '1' labels sit above the two lamps rather than left and right of the screen as requested",
+          "conclusion": "Expected fail; got fail. unrequested text: 'Particle' unrequested text: 'Indicator lamp' unrequested text: 'Display screen' particle is inside a glass dome above the device rather than sitting directly on top of it above the screen",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -656,17 +680,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. photorealistic photo instead of flat illustration dark busy background no dashed line, water molecule circle, or curved spinning arrows shown unrequested text: '0:45' on display unrequested text: '1' on oven panel",
+          "conclusion": "Expected fail; got fail. layout is sequence but image shows a single photographed scene, not two parts no dashed line linking soup to a water molecule no water molecule in a circle drawn beside the oven no curved arrows showing spinning motion photorealistic dark photo rather than flat illustration unrequested text: '0:45' on microwave display unrequested text: '1' on oven interior label",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. photorealistic photo instead of flat illustration dark busy background no dashed line, water molecule circle, or curved spinning arrows shown unrequested text: '0:45' on display unrequested text: '1' on oven panel",
+          "conclusion": "Expected fail; got fail. layout is sequence but image shows a single photographed scene, not two parts no dashed line linking soup to a water molecule no water molecule in a circle drawn beside the oven no curved arrows showing spinning motion photorealistic dark photo rather than flat illustration unrequested text: '0:45' on microwave display unrequested text: '1' on oven interior label",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. photorealistic photo instead of flat illustration dark busy background no dashed line, water molecule circle, or curved spinning arrows shown unrequested text: '0:45' on display unrequested text: '1' on oven panel",
+          "conclusion": "Expected fail; got fail. layout is sequence but image shows a single photographed scene, not two parts no dashed line linking soup to a water molecule no water molecule in a circle drawn beside the oven no curved arrows showing spinning motion photorealistic dark photo rather than flat illustration unrequested text: '0:45' on microwave display unrequested text: '1' on oven interior label",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -692,17 +716,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. multi-panel infographic with many parts instead of single focal illustration unrequested text: 'The Water Cycle' unrequested text: 'Evaporation' unrequested text: 'Transpiration' unrequested text: 'Condensation' unrequested text: 'Precipitation' unrequested text: 'Infiltration & Percolation' unrequested text: 'Collection & Storage' unrequested text: 'The Cycle Continues' unrequested text: 'Legend' unrequested text: 'Why It Matters' unrequested text: 'Clouds' unrequested text: 'Ocean' unrequested text: 'Snow' unrequested text: 'Rain' unrequested text: 'Groundwater'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'The Water Cycle' title unrequested text: 'Same Water. Different Places. Constantly Moving.' unrequested text: 'Evaporation', 'Ocean', 'Transpiration', 'Condensation', 'Clouds', 'Precipitation', 'Rain', 'Snow', 'Collection', 'Groundwater storage', 'Rivers', 'Oceans', 'Wetlands' image is a multi-panel six-step infographic, not a single scene layout is a grid of six panels with a legend and text box, not a single illustration photorealistic-style scenes with many parts, not a simple flat single focal point",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. multi-panel infographic with many parts instead of single focal illustration unrequested text: 'The Water Cycle' unrequested text: 'Evaporation' unrequested text: 'Transpiration' unrequested text: 'Condensation' unrequested text: 'Precipitation' unrequested text: 'Infiltration & Percolation' unrequested text: 'Collection & Storage' unrequested text: 'The Cycle Continues' unrequested text: 'Legend' unrequested text: 'Why It Matters' unrequested text: 'Clouds' unrequested text: 'Ocean' unrequested text: 'Snow' unrequested text: 'Rain' unrequested text: 'Groundwater'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'The Water Cycle' title unrequested text: 'Same Water. Different Places. Constantly Moving.' unrequested text: 'Evaporation', 'Ocean', 'Transpiration', 'Condensation', 'Clouds', 'Precipitation', 'Rain', 'Snow', 'Collection', 'Groundwater storage', 'Rivers', 'Oceans', 'Wetlands' image is a multi-panel six-step infographic, not a single scene layout is a grid of six panels with a legend and text box, not a single illustration photorealistic-style scenes with many parts, not a simple flat single focal point",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. multi-panel infographic with many parts instead of single focal illustration unrequested text: 'The Water Cycle' unrequested text: 'Evaporation' unrequested text: 'Transpiration' unrequested text: 'Condensation' unrequested text: 'Precipitation' unrequested text: 'Infiltration & Percolation' unrequested text: 'Collection & Storage' unrequested text: 'The Cycle Continues' unrequested text: 'Legend' unrequested text: 'Why It Matters' unrequested text: 'Clouds' unrequested text: 'Ocean' unrequested text: 'Snow' unrequested text: 'Rain' unrequested text: 'Groundwater'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'The Water Cycle' title unrequested text: 'Same Water. Different Places. Constantly Moving.' unrequested text: 'Evaporation', 'Ocean', 'Transpiration', 'Condensation', 'Clouds', 'Precipitation', 'Rain', 'Snow', 'Collection', 'Groundwater storage', 'Rivers', 'Oceans', 'Wetlands' image is a multi-panel six-step infographic, not a single scene layout is a grid of six panels with a legend and text box, not a single illustration photorealistic-style scenes with many parts, not a simple flat single focal point",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -761,17 +785,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. unrequested text: none (no extra text visible)",
+          "conclusion": "Expected fail; got fail. label 'B' pointer ends on the thick outer green boundary instead of the thin inner line",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. unrequested text: none (no extra text visible)",
+          "conclusion": "Expected fail; got fail. label 'B' pointer ends on the thick outer green boundary instead of the thin inner line",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. unrequested text: none (no extra text visible)",
+          "conclusion": "Expected fail; got fail. label 'B' pointer ends on the thick outer green boundary instead of the thin inner line",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -860,21 +884,9 @@
     {
       "classification": { "expected": "pass", "predicted": "pass" },
       "steps": [
-        {
-          "conclusion": "Expected pass; got pass. label 5 pointer ends on the tire's outer edge, which is part of the front wheel, so it passes label 6 pointer ends on the top tube of the frame, correct",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected pass; got pass. label 5 pointer ends on the tire's outer edge, which is part of the front wheel, so it passes label 6 pointer ends on the top tube of the frame, correct",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected pass; got pass. label 5 pointer ends on the tire's outer edge, which is part of the front wheel, so it passes label 6 pointer ends on the top tube of the frame, correct",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": { "passed": true },
@@ -896,6 +908,78 @@
             "motion": null,
             "relation": null,
             "supportingObjects": []
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. layout is single but image shows two separate scenes split by a horizontal line (office desk above, bicycle sale below)",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. layout is single but image shows two separate scenes split by a horizontal line (office desk above, bicycle sale below)",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. layout is single but image shows two separate scenes split by a horizontal line (office desk above, bicycle sale below)",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "two-scenes-for-one-1",
+        "userInput": {
+          "imageFile": "flare-two-scenes-salary.webp",
+          "language": "pt",
+          "scene": {
+            "focalObject": "a man sitting at an office desk with a laptop, receiving an envelope with banknotes from a coworker's hand",
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": ["a wall calendar behind him"]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. focal object wrong: man is standing behind a counter handing over a yellow toaster, not sitting at a desk typing at a monitor no monitor, keyboard, computer tower or toolbox shown image shows a different idea (customer repair handoff) than the scene describes",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. focal object wrong: man is standing behind a counter handing over a yellow toaster, not sitting at a desk typing at a monitor no monitor, keyboard, computer tower or toolbox shown image shows a different idea (customer repair handoff) than the scene describes",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. focal object wrong: man is standing behind a counter handing over a yellow toaster, not sitting at a desk typing at a monitor no monitor, keyboard, computer tower or toolbox shown image shows a different idea (customer repair handoff) than the scene describes",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "repair-counter-for-office-1",
+        "userInput": {
+          "imageFile": "flare-repair-counter.webp",
+          "language": "pt",
+          "scene": {
+            "focalObject": "a man sitting at an office desk in front of a monitor, typing on a keyboard",
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": "a toolbox and an opened computer tower rest on a low table beside the desk",
+            "supportingObjects": ["a small side table holding an open computer tower and a toolbox"]
           }
         }
       }

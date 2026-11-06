@@ -30,11 +30,15 @@ import {
 } from "../preview/preview-steps";
 
 const DESKTOP = { height: 900, width: 1280 };
+const TABLET_WITH_KEYBOARD = { height: 1180, width: 820 };
+const SHORT_DESKTOP = { height: 450, width: 1440 };
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 const SUMMARY_IDEA = "Electrons live in clouds.";
 
 function openLesson({ steps }: { steps: PlayableLibraryStep[] }) {
-  return renderLessonPlayer({ lesson: buildLesson(steps, { summaryIdeas: [SUMMARY_IDEA] }) });
+  return renderLessonPlayer({
+    lesson: buildLesson(steps, { summary: { ideas: [{ text: SUMMARY_IDEA }], shape: "hub" } }),
+  });
 }
 
 function verdict(text: string) {
@@ -118,7 +122,7 @@ describe("lesson by keyboard", () => {
   });
 
   it("a focused control keeps Enter, and a menu or a sheet holds the lesson's keys", async () => {
-    await atViewport(DESKTOP, async () => {
+    await atViewport(TABLET_WITH_KEYBOARD, async () => {
       openLesson({ steps: [teachingStep("explanation"), teachingStep("check")] });
       await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
 
@@ -148,21 +152,54 @@ describe("lesson by keyboard", () => {
       await press("Enter");
       await expect.element(verdict("Correct!")).toBeVisible();
       await press("Enter");
+      await expect.element(page.getByRole("heading", { name: "Lesson map" })).toBeVisible();
+      await press("ArrowLeft");
+      await expect.element(verdict("Correct!")).toBeVisible();
+      await press("Enter");
+      await expect.element(page.getByRole("heading", { name: "Lesson map" })).toBeVisible();
+      await press("Enter");
       await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
       await tabTo(page.getByRole("button", { name: "Screen options" }));
       await press("Enter");
 
-      const summaryItem = page.getByRole("menuitem", { name: "Lesson summary" });
+      const summaryItem = page.getByRole("menuitem", { name: "Lesson map" });
       await press("End");
       await expect.element(summaryItem).toHaveFocus();
       await press("Enter");
 
-      const summary = page.getByRole("dialog", { name: "Lesson summary" });
+      const summary = page.getByRole("dialog", { name: "Lesson map" });
       await expect.element(summary.getByText(SUMMARY_IDEA)).toBeVisible();
       await press("Escape");
       await expect.element(summary).not.toBeInTheDocument();
       await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+    });
+  });
+
+  it("the lesson end's map in the aside takes the keyboard and scrolls with Page Down", async () => {
+    await atViewport(SHORT_DESKTOP, async () => {
+      const ideas = Array.from({ length: 10 }, (_, index) => ({
+        label: `Idea ${index + 1}`,
+        text: `Idea ${index + 1} explains one more part of where an electron is likely to be.`,
+      }));
+
+      renderLessonPlayer({
+        lesson: buildLesson([teachingStep("check")], { summary: { ideas, shape: "hub" } }),
+      });
+
+      await press("2");
+      await press("Enter");
+      await expect.element(verdict("Correct!")).toBeVisible();
+      await press("Enter");
+      await press("Enter");
+      await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+
+      const map = page.getByRole("region", { name: "Lesson map" });
+      await tabTo(map);
+      expect(map.element().scrollTop).toBe(0);
+
+      await press("PageDown");
+      await expect.poll(() => map.element().scrollTop).toBeGreaterThan(0);
     });
   });
 

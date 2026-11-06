@@ -71,6 +71,11 @@ class LessonWaitScreenshots {
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun compactWithoutDeck() = capture("without-deck-compact", deck = false)
 
+    /** Written, with its marks and pictures still on their way. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun compactDrawing() = capture("drawing-compact", deck = false, written = true)
+
     @Test
     @Config(qualifiers = "w700dp-h1200dp-xhdpi")
     fun medium() = capture("medium")
@@ -157,6 +162,7 @@ class LessonWaitScreenshots {
         dark: Boolean = false,
         moreContrast: Boolean = false,
         deck: Boolean = true,
+        written: Boolean = false,
         notStarted: Boolean = false,
         fold: Boolean = false,
         rightToLeft: Boolean = false,
@@ -172,6 +178,11 @@ class LessonWaitScreenshots {
         val events = MutableSharedFlow<GenerationEvent>(replay = 10)
         events.tryEmit(GenerationEvent(at = 0, status = "completed", step = "planLesson"))
         events.tryEmit(GenerationEvent(at = 6_000, status = "started", step = "writeLesson"))
+        if (written) {
+            events.tryEmit(GenerationEvent(at = 50_000, status = "completed", step = "writeLesson"))
+            events.tryEmit(GenerationEvent(at = 50_100, status = "started", step = "markLesson"))
+            events.tryEmit(GenerationEvent(at = 50_200, status = "started", step = "drawPictures"))
+        }
         val generations =
             object : GenerationSource {
                 override fun events(id: String) = events

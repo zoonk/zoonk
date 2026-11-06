@@ -8,10 +8,10 @@ import { loadSkippedActivities } from "../language/activities/skipped-activities
 import { readActiveGoal } from "../learner/facts/learning-profile";
 import { getLearnerLessonPlanCacheTags } from "../library/_utils/learner-lesson-plan";
 import { canViewLibraryRow } from "../library/_utils/library-visibility";
-import { toSummaryIdeas } from "../library/lessons/_utils/summary-ideas";
 import { CURRENT_STEPS } from "../library/lessons/lesson-versions";
 import { getSession } from "../users/get-session";
 import { withLearnerLessonVersions } from "./_utils/learner-lesson-versions";
+import { withLessonMarks } from "./_utils/lesson-marks";
 import { playableStepInclude } from "./_utils/lesson-rows";
 import { loadPlayableSteps } from "./_utils/load-playable-steps";
 import { type PlayableLibraryLesson } from "./playable-lesson";
@@ -60,11 +60,22 @@ async function toLoadedPlayableLesson(lesson: PlayableLessonRow): Promise<Loaded
     title: lesson.title,
   };
 
-  const steps = await loadPlayableSteps({ lesson, rows: lesson.steps });
+  const playable = await loadPlayableSteps({ lesson, rows: lesson.steps });
 
-  if (lesson.contentStatus !== "completed" || steps.length === 0) {
+  if (lesson.contentStatus !== "completed" || playable.length === 0) {
     return { access, result: { lesson: outline, status: "notGenerated" } };
   }
+
+  const endsOnItsOwn = playable.some(
+    (step) => step.kind === "summary" || step.kind === "challenge",
+  );
+
+  const { steps, summary } = await withLessonMarks({
+    rows: lesson.steps,
+    steps: playable,
+    summary: endsOnItsOwn ? null : lesson.summary,
+    targetLanguage: lesson.targetLanguage,
+  });
 
   return {
     access,
@@ -76,7 +87,7 @@ async function toLoadedPlayableLesson(lesson: PlayableLessonRow): Promise<Loaded
         level: lesson.level,
         skills: lesson.skills.map((item) => item.skill),
         steps,
-        summaryIdeas: toSummaryIdeas(lesson.summary),
+        summary,
         targetLanguage: lesson.targetLanguage,
       },
       status: "ready",

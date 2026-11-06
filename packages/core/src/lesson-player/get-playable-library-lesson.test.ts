@@ -6,6 +6,8 @@ import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import {
   languageLessonFixture,
+  lessonIconFixture,
+  markedPlayableLessonFixture,
   playableLessonFixture,
 } from "@zoonk/testing/fixtures/playable-lessons";
 import {
@@ -18,6 +20,8 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { validateActivity } from "../library/activities/validate-activity";
+import { readSavedLessonMap } from "../library/lessons/lesson-map";
+import { readSavedStepMarks } from "../library/marks/step-marks";
 import { PPTX_CONTENT_TYPE } from "../library/sources/source-contract";
 import { getLibraryLessonOutline, getPlayableLibraryLesson } from "./get-playable-library-lesson";
 
@@ -111,29 +115,194 @@ describe(getPlayableLibraryLesson, () => {
     );
   });
 
-  it("serves the lesson's summary card for the lesson menu, and none when it has none", async () => {
-    const [withSummary, withoutSummary] = await Promise.all([
+  it("serves the lesson map, saved labels and shape included, and none for a lesson that ends on its own summary or a challenge", async () => {
+    const steps = TEACHING_LESSON_STEPS.filter((kind) => kind !== "summary");
+
+    const nested = {
+      ideas: [
+        { label: "Organism", text: "An organism is one living thing." },
+        { label: "Population", text: "A population is one species in one place." },
+      ],
+      shape: "nested",
+    };
+
+    const [saved, labeled, endsOnSummary, unwritten, challenge] = await Promise.all([
       playableLessonFixture({
         lesson: {
           summary: {
             ideas: [{ text: "Electrons live in clouds." }, { text: "Clouds are fuzzy." }],
           },
         },
+        steps,
       }),
-      playableLessonFixture(),
+      playableLessonFixture({ lesson: { summary: nested }, steps }),
+      playableLessonFixture({ lesson: { summary: { ideas: [{ text: "A recap." }] } } }),
+      playableLessonFixture({ steps }),
+      playableLessonFixture({
+        lesson: { summary: { ideas: [{ text: "A won case shows the idea." }] } },
+        steps: ["challenge"],
+      }),
     ]);
 
-    const [first, second] = await Promise.all([
-      getPlayableLibraryLesson({ lessonId: withSummary.lesson.id }),
-      getPlayableLibraryLesson({ lessonId: withoutSummary.lesson.id }),
+    const maps = await Promise.all(
+      [saved, labeled, endsOnSummary, unwritten, challenge].map(async (fixture) => {
+        const result = await getPlayableLibraryLesson({ lessonId: fixture.lesson.id });
+        return result?.status === "ready" ? result.lesson.summary : "not ready";
+      }),
+    );
+
+    const untagged = { about: null, icon: null };
+
+    expect(maps).toStrictEqual([
+      {
+        ideas: [
+          { ...untagged, text: "Electrons live in clouds." },
+          { ...untagged, text: "Clouds are fuzzy." },
+        ],
+        shape: "hub",
+      },
+      { ...nested, ideas: nested.ideas.map((idea) => ({ ...idea, ...untagged })) },
+      null,
+      null,
+      null,
+    ]);
+  });
+
+  it("serves a tagged lesson's marks, about lines and drawn icons", async () => {
+    const { icons, lesson } = await markedPlayableLessonFixture();
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const playable = result?.status === "ready" ? result.lesson : null;
+    const cloud = { smallUrl: icons.cloud.smallUrl, url: icons.cloud.url };
+
+    expect(playable?.summary?.ideas.map(({ about, icon }) => ({ about, icon }))).toStrictEqual([
+      { about: "What the electron does around the nucleus", icon: cloud },
+      {
+        about: "How to read the cloud",
+        icon: { smallUrl: icons.nucleus.smallUrl, url: icons.nucleus.url },
+      },
     ]);
 
-    expect(first?.status === "ready" && first.lesson.summaryIdeas).toStrictEqual([
-      "Electrons live in clouds.",
-      "Clouds are fuzzy.",
+    expect(playable?.steps.map((step) => ("marks" in step ? step.marks : "none"))).toStrictEqual([
+      { example: null, icon: null, ideaIndex: null, underline: null },
+      {
+        example: "The electron doesn't circle the nucleus like a planet.",
+        icon: { smallUrl: icons.planet.smallUrl, url: icons.planet.url },
+        ideaIndex: 0,
+        underline: "a map of where it might be",
+      },
+      { example: null, icon: null, ideaIndex: 1, underline: "darkest just around the nucleus" },
+      { example: null, icon: null, ideaIndex: null, underline: null },
     ]);
+  });
 
-    expect(second?.status === "ready" && second.lesson.summaryIdeas).toStrictEqual([]);
+  it("never shows a screen the icon its idea's strip already shows, even when marks stored it", async () => {
+    const { icons, lesson } = await markedPlayableLessonFixture();
+    const example = "The electron doesn't circle the nucleus like a planet.";
+    const underline = "a map of where it might be";
+
+    await prisma.step.updateMany({
+      data: {
+        marks: { example, iconId: icons.cloud.id, iconPending: false, ideaIndex: 0, underline },
+      },
+      where: { kind: "explanation", lessonId: lesson.id },
+    });
+
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const shown = result?.status === "ready" ? result.lesson.steps[1] : null;
+
+    expect(shown && "marks" in shown ? shown.marks : null).toStrictEqual({
+      example,
+      icon: null,
+      ideaIndex: 0,
+      underline,
+    });
+  });
+
+  it("never shows two of the map's ideas one icon, even when the map stored it twice", async () => {
+    const { icons, lesson } = await markedPlayableLessonFixture();
+    const saved = readSavedLessonMap(lesson.summary);
+    const ideas = saved?.ideas.map((idea) => ({ ...idea, iconId: icons.cloud.id }));
+
+    await prisma.lesson.update({
+      data: { summary: { ...saved, ideas } },
+      where: { id: lesson.id },
+    });
+
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const shown = result?.status === "ready" ? result.lesson.summary?.ideas : [];
+
+    expect(shown?.map((idea) => idea.icon)).toStrictEqual([
+      { smallUrl: icons.cloud.smallUrl, url: icons.cloud.url },
+      null,
+    ]);
+  });
+
+  it("sends a question or a guess without its idea, which would name its answer, though tagging stored one", async () => {
+    const { lesson } = await markedPlayableLessonFixture();
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = result?.status === "ready" ? result.lesson.steps : [];
+    const questions = steps.filter((step) => step.kind === "hook" || step.kind === "check");
+
+    const stored = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      select: { marks: true },
+      where: { kind: { in: ["hook", "check"] }, lessonId: lesson.id },
+    });
+
+    expect(stored.map((step) => readSavedStepMarks(step.marks)?.ideaIndex)).toStrictEqual([0, 1]);
+
+    expect(
+      questions.map((step) => ("marks" in step ? step.marks?.ideaIndex : "none")),
+    ).toStrictEqual([null, null]);
+  });
+
+  it("drops marks the screen can't show: a quote it doesn't have, half a sentence, an idea past the map, an icon beside a picture, an icon not drawn yet", async () => {
+    const icon = await lessonIconFixture();
+    const drawing = await lessonIconFixture({ smallUrl: null, status: "failed", url: null });
+    const text = playableStepContent.explanation.text;
+
+    const marks = {
+      example: "doesn't circle the nucleus like a planet.",
+      iconId: icon.id,
+      iconPending: false,
+      ideaIndex: 3,
+      underline: "a **cloud of possibilities**",
+    };
+
+    const { lesson } = await playableLessonFixture({
+      lesson: { summary: { ideas: [{ text: "Electrons live in clouds." }] } },
+      steps: [
+        { kind: "explanation", marks },
+        {
+          content: {
+            ...playableStepContent.explanation,
+            image: { alt: "A fuzzy cloud", prompt: "Electron cloud" },
+          },
+          kind: "explanation",
+          marks: { ...marks, example: text.slice(0, text.indexOf(" It ")), ideaIndex: 0 },
+        },
+        { kind: "explanation", marks: { ...marks, iconId: drawing.id, underline: "in the text" } },
+      ],
+    });
+
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = result?.status === "ready" ? result.lesson.steps : [];
+
+    expect(steps.map((step) => ("marks" in step ? step.marks : "none"))).toStrictEqual([
+      {
+        example: null,
+        icon: { smallUrl: icon.smallUrl, url: icon.url },
+        ideaIndex: null,
+        underline: null,
+      },
+      {
+        example: "The electron doesn't circle the nucleus like a planet.",
+        icon: null,
+        ideaIndex: 0,
+        underline: null,
+      },
+      { example: null, icon: null, ideaIndex: null, underline: null },
+    ]);
   });
 
   it("serves the shared fixture content of every kind, so tests play valid lessons", async () => {
@@ -311,6 +480,35 @@ describe(getPlayableLibraryLesson, () => {
     expect(unheard?.status === "ready" && unheard.lesson.steps.at(-1)).toMatchObject({
       kind: "spokenAnswer",
       listening: null,
+    });
+  });
+
+  it("serves a check's setup picture and reserves a pending picture without one", async () => {
+    const image = { alt: "Two atoms sharing a pair of electrons", prompt: "A covalent bond" };
+    const asset = await mediaAssetFixture({ height: 1024, width: 1536 });
+
+    const { lesson } = await playableLessonFixture({
+      steps: [
+        { content: { ...playableStepContent.check, image }, kind: "check", mediaAssetId: asset.id },
+        { content: { ...playableStepContent.check, image }, kind: "check" },
+      ],
+    });
+
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = result?.status === "ready" ? result.lesson.steps : [];
+
+    expect(steps[0]).toMatchObject({
+      content: { image },
+      image: { alt: image.alt, height: 1024, id: asset.id, url: asset.url, width: 1536 },
+      imagePending: false,
+      kind: "check",
+    });
+
+    expect(steps[1]).toMatchObject({
+      content: { image },
+      image: null,
+      imagePending: true,
+      kind: "check",
     });
   });
 

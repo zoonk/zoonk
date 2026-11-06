@@ -829,6 +829,173 @@
         }
       }
     },
+    "%lld ideas to discover in this lesson" : {
+      "comment" : "Under the lesson map on a lesson's opening screen; its numbers open each idea. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"%lld ideas to discover in this lesson\".",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "In dieser Lektion entdeckst du %lld Kerngedanken"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld idea to discover in this lesson"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld ideas to discover in this lesson"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld idea por descubrir en esta lección"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ideas por descubrir en esta lección"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld idée à découvrir dans cette leçon"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld idées à découvrir dans cette leçon"
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld concetto da scoprire in questa lezione"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld concetti da scoprire in questa lezione"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "このレッスンで学ぶ%lld個のポイント"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "이 레슨에서 알아볼 개념 %lld개"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "W tej lekcji poznasz %lld zagadnień"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "W tej lekcji poznasz %lld zagadnienie"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "W tej lekcji poznasz %lld zagadnienia"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ideia para descobrir nesta aula"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ideias para descobrir nesta aula"
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Bu derste keşfedeceğin %lld fikir"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld of %lld key points" : {
       "comment" : "How many key points a typed answer stated",
       "localizations" : {
@@ -3380,6 +3547,124 @@
         }
       }
     },
+    "Drawing the pictures" : {
+      "comment" : "A step of the wait while a lesson is written, like \"Planning the lesson\" and \"Writing the lesson\" before it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir zeichnen die Bilder"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dibujando las imágenes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Création des illustrations"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo disegnando le immagini"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "絵を描いています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그림을 그리고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rysujemy ilustracje"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desenhando as imagens"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resimleri çiziyoruz"
+          }
+        }
+      }
+    },
+    "Each level sits inside the next one." : {
+      "comment" : "Under a lesson map whose ideas are levels, the smallest first, such as an organism inside a population.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jede Ebene liegt innerhalb der nächstgrößeren."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada nivel está dentro del siguiente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaque niveau est à l’intérieur du suivant."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ogni livello si trova dentro quello successivo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "各階層は、次の階層の中に入っています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "각 단계는 다음 단계 안에 들어 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Każdy poziom mieści się w kolejnym."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada nível fica dentro do próximo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her katman bir sonrakinin içinde yer alır."
+          }
+        }
+      }
+    },
     "Each question is checked a few times a day. Compare your answer with this one:" : {
       "comment" : "A typed answer that wasn't graded, before the sample answer",
       "localizations" : {
@@ -3553,6 +3838,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Önce tahmin et"
+          }
+        }
+      }
+    },
+    "Example" : {
+      "comment" : "Label on the frame around a lesson screen's example sentences",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beispiel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ejemplo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exemple"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esempio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "예시"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przykład"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exemplo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Örnek"
           }
         }
       }
@@ -4147,65 +4491,6 @@
         }
       }
     },
-    "Follow the questions" : {
-      "comment" : "What the learner does in an activity, named above its prompt",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Folg den Fragen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guíate por las preguntas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suis les questions"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lasciati guidare dalle domande"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "問題に沿って考える"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "문제 따라가기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Odpowiadaj na pytania"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Siga as perguntas"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Soruları takip et"
-          }
-        }
-      }
-    },
     "From the lesson" : {
       "comment" : "Heading of the row under a question that recaps the screen it comes after",
       "localizations" : {
@@ -4383,65 +4668,6 @@
         }
       }
     },
-    "Guess first" : {
-      "comment" : "Above a hook's question: a guess never counts",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rate zuerst"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Primero, haz una suposición"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Essaie de deviner"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prima prova a indovinare"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "まず予想する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "먼저 예상하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Najpierw zgadnij"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dê seu palpite primeiro"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Önce tahmin et"
-          }
-        }
-      }
-    },
     "Hands on" : {
       "comment" : "What the learner does in an activity, named above its prompt",
       "localizations" : {
@@ -4590,7 +4816,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "答えはこちら"
+            "value" : "答えはこちらです"
           }
         },
         "ko" : {
@@ -4608,13 +4834,72 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Veja a resposta"
+            "value" : "Aqui está a resposta"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "İşte cevap"
+          }
+        }
+      }
+    },
+    "Highlighting the key ideas" : {
+      "comment" : "A step of the wait while a lesson is written, like \"Planning the lesson\" and \"Writing the lesson\" before it. \"Ideas\" are the lesson map's ideas, as in \"Idea 2 of 4\".",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir heben die wichtigsten Ideen hervor"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resaltando las ideas clave"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mise en évidence des idées clés"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo evidenziando le idee chiave"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大事なポイントを強調しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "핵심 개념을 강조하고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wyróżniamy najważniejsze zagadnienia"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Destacando as ideias principais"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temel kavramları vurguluyoruz"
           }
         }
       }
@@ -4855,8 +5140,67 @@
         }
       }
     },
+    "I didn't get this" : {
+      "comment" : "Quiet button under a lesson's explanation, in the learner's own voice: what they'd say when the screen lost them (\"Não entendi\" in Portuguese). Tapping it has the buddy explain the screen more simply.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das habe ich nicht verstanden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No entendí"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je n’ai pas compris"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non ho capito"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "よくわからない"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이해가 안 돼요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie rozumiem"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não entendi"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anlamadım"
+          }
+        }
+      }
+    },
     "I don't know yet" : {
-      "comment" : "Shows a good answer to a written question",
+      "comment" : "Reveals the answer: a good answer to a written question, or the answer to the lesson's opening guess",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4910,6 +5254,130 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Henüz bilmiyorum"
+          }
+        }
+      }
+    },
+    "Idea %lld" : {
+      "comment" : "VoiceOver: one of the lesson map's ideas (its main points), by its number. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"%lld ideas to discover in this lesson\".",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kerngedanke %lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idea %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idée %lld"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concetto %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ポイント%lld"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개념 %lld"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zagadnienie %lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ideia %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fikir %lld"
+          }
+        }
+      }
+    },
+    "Idea %lld of %lld" : {
+      "comment" : "Above a lesson screen: which of the lesson map's ideas (its main points) it teaches. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"%lld ideas to discover in this lesson\".",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kerngedanke %1$lld von %2$lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Idea %1$lld of %2$lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idea %1$lld de %2$lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idée %1$lld sur %2$lld"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concetto %1$lld di %2$lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ポイント%1$lld（全%2$lld個）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개념 %1$lld/%2$lld"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zagadnienie %1$lld z %2$lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ideia %1$lld de %2$lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fikir %1$lld / %2$lld"
           }
         }
       }
@@ -5032,61 +5500,120 @@
         }
       }
     },
-    "It usually takes a minute or two. The lesson opens here as soon as it's ready." : {
+    "It usually takes a few minutes. The lesson opens here as soon as it's ready." : {
       "comment" : "While a lesson is written",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das dauert meist ein bis zwei Minuten. Die Lektion öffnet sich hier, sobald sie fertig ist."
+            "value" : "Das dauert normalerweise ein paar Minuten. Die Lektion öffnet sich hier, sobald sie fertig ist."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suele tardar uno o dos minutos. La lección se abrirá aquí en cuanto esté lista."
+            "value" : "Suele tardar unos minutos. La lección se abrirá aquí en cuanto esté lista."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cela prend généralement une ou deux minutes. La leçon s’ouvrira ici dès qu’elle sera prête."
+            "value" : "Cela prend généralement quelques minutes. La leçon s’ouvrira ici dès qu’elle sera prête."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Di solito ci vogliono uno o due minuti. La lezione si aprirà qui appena sarà pronta."
+            "value" : "Di solito ci vuole qualche minuto. La lezione si apre qui appena è pronta."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通常は1〜2分かかります。準備ができ次第、ここにレッスンが表示されます。"
+            "value" : "通常、数分ほどかかります。準備ができ次第、ここでレッスンが開きます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "보통 1~2분 정도 걸려요. 준비되면 여기서 바로 레슨이 열려요."
+            "value" : "보통 몇 분 정도 걸려요. 준비되면 여기서 바로 레슨이 열려요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zwykle zajmuje nam to minutę lub dwie. Lekcja otworzy się tutaj, gdy tylko będzie gotowa."
+            "value" : "Zwykle trwa to kilka minut. Lekcja otworzy się tutaj, gdy tylko będzie gotowa."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Geralmente leva um ou dois minutos. A aula abre aqui assim que estiver pronta."
+            "value" : "Geralmente leva alguns minutos. A aula abre aqui assim que estiver pronta."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Genellikle bir iki dakika sürer. Dersi hazır olur olmaz burada açacağız."
+            "value" : "Genellikle birkaç dakika sürer. Ders hazır olur olmaz burada açılır."
+          }
+        }
+      }
+    },
+    "Just a guess, it doesn't count" : {
+      "comment" : "Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur eine Vermutung, wird nicht gewertet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es solo una suposición, no cuenta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Juste une supposition, ça ne compte pas"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "È solo un’ipotesi, non conta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "予想なので、スコアには影響しません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "예상일 뿐, 점수에는 반영되지 않아요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To tylko strzał, nie wpływa na wynik"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Só um palpite, não vale ponto"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sadece bir tahmin, puanını etkilemez"
           }
         }
       }
@@ -5451,6 +5978,65 @@
         }
       }
     },
+    "Lesson map" : {
+      "comment" : "A small diagram of this lesson's main ideas, drawn by the app. Not the chapter's mind map.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektionsübersicht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de la lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carte de la leçon"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mappa della lezione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスンマップ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레슨 개념도"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa lekcji"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa da aula"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ders haritası"
+          }
+        }
+      }
+    },
     "Lesson not available" : {
       "comment" : "The lesson doesn't exist anymore",
       "localizations" : {
@@ -5565,65 +6151,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ders ilerlemesi"
-          }
-        }
-      }
-    },
-    "Lesson summary" : {
-      "comment" : "Opens the lesson's summary card",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zusammenfassung der Lektion"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resumen de la lección"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Résumé de la leçon"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apri il riepilogo della lezione"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レッスンのまとめ"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "레슨 요약"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zobacz podsumowanie lekcji"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resumo da aula"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ders özeti"
           }
         }
       }
@@ -7040,6 +7567,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yerleştir"
+          }
+        }
+      }
+    },
+    "Planning the lesson" : {
+      "comment" : "A step of the wait while a lesson is written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir planen die Lektion"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planeando la lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planification de la leçon"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo pianificando la lezione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスンの構成を考えています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레슨을 계획하고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planujemy lekcję"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planejando a aula"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dersi planlıyoruz"
           }
         }
       }
@@ -8580,6 +9166,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sonraki adımı göster"
+          }
+        }
+      }
+    },
+    "Shows what it covers" : {
+      "comment" : "VoiceOver hint on an idea of the lesson map on a lesson's opening screen",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeigt, worum es geht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muestra lo que abarca"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche le contenu de cette notion"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra di cosa tratta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学ぶ内容を表示します"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "배울 내용을 보여 줘요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokazuje, czego dotyczy zagadnienie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra o conteúdo dessa ideia"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İçeriğini gösterir"
           }
         }
       }
@@ -12301,6 +12946,65 @@
         }
       }
     },
+    "Writing the lesson" : {
+      "comment" : "A step of the wait while a lesson is written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen die Lektion"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando la lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation de la leçon"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo preparando la lezione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスンを作成しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레슨을 만들고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy lekcję"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criando a aula"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dersi hazırlıyoruz"
+          }
+        }
+      }
+    },
     "You already knew this" : {
       "comment" : "Title after \"I already know this\" passed every check",
       "localizations" : {
@@ -13127,6 +13831,65 @@
         }
       }
     },
+    "Your buddy explains this screen more simply" : {
+      "comment" : "VoiceOver hint of the \"I didn't get this\" button under an explanation",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Kumpel erklärt dir diese Seite einfacher"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu compañero te explica esta pantalla de forma más sencilla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton compagnon t’explique cet écran plus simplement"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo compagno di studio ti spiega questa schermata in modo più semplice"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相棒がこの画面の内容をもっとわかりやすく説明します"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "짝꿍이 이 화면의 내용을 더 쉽게 설명해 줘요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój kumpel prościej wyjaśni treść tego ekranu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu parceiro explica essa tela de um jeito mais simples"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ders arkadaşın bu ekrandaki konuyu daha sade anlatır"
+          }
+        }
+      }
+    },
     "Your example: %@" : {
       "comment" : "VoiceOver label of the learner's personal example",
       "localizations" : {
@@ -13363,61 +14126,61 @@
         }
       }
     },
-    "Zoonk writes it when you start. It takes a minute or two." : {
+    "Zoonk writes it when you start. It takes a few minutes." : {
       "comment" : "A lesson not written yet",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk erstellt sie, wenn du beginnst. Das dauert ein bis zwei Minuten."
+            "value" : "Zoonk erstellt sie, wenn du startest. Das dauert ein paar Minuten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk la prepara cuando empiezas. Tarda uno o dos minutos."
+            "value" : "Zoonk la prepara cuando empiezas. Tarda unos minutos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk la prépare quand tu commences. Cela prend une ou deux minutes."
+            "value" : "Zoonk la prépare quand tu commences. Cela prend quelques minutes."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk la prepara quando inizi. Ci vuole un minuto o due."
+            "value" : "Zoonk la prepara quando inizi. Ci vuole qualche minuto."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "開始するとZoonkがレッスンを作成します。1〜2分かかります。"
+            "value" : "始めると、Zoonkがレッスンを作成します。数分ほどかかります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "시작하면 Zoonk가 레슨을 만들어요. 1~2분 정도 걸려요."
+            "value" : "시작하면 Zoonk가 레슨을 만들어요. 몇 분 정도 걸려요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk przygotuje ją, gdy zaczniesz. Zajmie to minutę lub dwie."
+            "value" : "Zoonk przygotuje ją, gdy zaczniesz. Zajmuje to kilka minut."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Zoonk cria a aula quando você começa. Leva um ou dois minutos."
+            "value" : "O Zoonk cria a aula quando você começa. Leva alguns minutos."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sen başlayınca Zoonk dersi hazırlar. Bir iki dakika sürer."
+            "value" : "Başladığında Zoonk dersi hazırlar. Birkaç dakika sürer."
           }
         }
       }

@@ -1,5 +1,9 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
-import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import {
+  type LessonMap,
+  type WrittenLesson,
+  type WrittenScreen,
+} from "@zoonk/ai/tasks/lesson-writer/schema";
 
 export function temperatureSpec(): LessonSpec {
   return {
@@ -9,10 +13,12 @@ export function temperatureSpec(): LessonSpec {
     screens: [
       {
         activityTemplate: null,
-        brief: "Guess the temperature after a rise.",
+        brief:
+          "At dawn the window thermometer shows −3 °C, and the forecast says 5 degrees warmer by noon. Where will the mark end up?",
         kind: "hook",
         skills: [],
-        visual: null,
+        visual: "A window thermometer at dawn reading −3 °C.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -20,6 +26,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "explanation",
         skills: [0],
         visual: "A thermometer from −5 °C to 5 °C with an arrow going up.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -27,6 +34,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "workedExample",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -34,6 +42,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -41,6 +50,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "numberLine",
@@ -48,6 +58,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -55,6 +66,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -62,6 +74,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -74,7 +87,6 @@ export function temperatureSpec(): LessonSpec {
         useCase: "Reading a weather forecast.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Temperature changes across zero",
   };
 }
@@ -100,19 +112,40 @@ const numberLineActivity = {
   prompt: "At 7 am it's −3 °C. By noon it's 8 degrees warmer.",
 };
 
+/** A hub map, each idea labeled by its first words. */
+export function hubMap(ideas: readonly string[]): LessonMap {
+  return {
+    ideas: ideas.map((text) => ({ label: text.split(" ").slice(0, 3).join(" "), text })),
+    shape: "hub",
+  };
+}
+
+/** A guess about the rise, for the screen the plan gives the guess. */
+export function temperatureGuess(): Extract<WrittenScreen, { kind: "hookGuess" }> {
+  return {
+    image: null,
+    kind: "hookGuess",
+    options: [
+      { isCorrect: true, text: "2 °C" },
+      { isCorrect: false, text: "8 °C" },
+      { isCorrect: false, text: "−8 °C" },
+    ],
+    question: "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
+    reveal: "It shows 2 °C. Guessing first helps you remember the rule.",
+    visual: null,
+  };
+}
+
 export function writtenTemperatureLesson(): WrittenLesson {
   return {
     screens: [
       {
-        image: null,
-        kind: "hookGuess",
-        options: [
-          { isCorrect: true, text: "2 °C" },
-          { isCorrect: false, text: "8 °C" },
-          { isCorrect: false, text: "−8 °C" },
-        ],
-        question: "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
-        reveal: "It shows 2 °C. Guessing first helps you remember the rule.",
+        image: {
+          alt: "A window thermometer at dawn, its mark at −3 °C.",
+          prompt: "A window thermometer at dawn reading −3 °C.",
+        },
+        kind: "hookText",
+        text: "It's −3 °C at dawn, and by noon the air is 5 degrees warmer. Where does the thermometer's mark end up?",
         visual: null,
       },
       {
@@ -143,6 +176,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
         basis: { quote: "A rise always moves **up** the thermometer.", screen: 2 },
         context: null,
         correctReason: "You start at {start} °C and move {rise} degrees up.",
+        image: null,
         kind: "mathCheck",
         math: {
           answer: 3,
@@ -186,7 +220,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
       },
       { content: JSON.stringify(numberLineActivity), kind: "activity", template: "numberLine" },
       {
-        basis: { quote: "Count the degrees to zero, then the degrees after it.", screen: 5 },
+        basis: { quote: "First climb to zero: that takes 3 degrees.", screen: 3 },
         context: null,
         image: null,
         kind: "check",
@@ -243,10 +277,10 @@ export function writtenTemperatureLesson(): WrittenLesson {
         visual: null,
       },
     ],
-    summary: [
+    summary: hubMap([
       "A rise moves up the thermometer, even below zero.",
       "Count up to zero first, then the degrees above it.",
-    ],
+    ]),
   };
 }
 

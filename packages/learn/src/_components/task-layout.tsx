@@ -1,5 +1,6 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
+import { useId } from "react";
 import { PageSectionTitle } from "./page";
 
 export const TASK_COLUMN_CLASS = "max-w-column mx-auto w-full px-4";
@@ -86,14 +87,18 @@ const TASK_ASIDE_RAIL_CLASS =
 
 export const TASK_ASIDE_PLACE_CLASS = "lg:fixed lg:right-0 lg:w-[calc(var(--task-aside)-1px)]";
 
+export const HIDDEN_WITH_TASK_ASIDE_CLASS = "lg:hidden";
+
 export function TaskAsideHeader({
   className,
   meta,
   title,
+  titleId,
 }: {
   className?: string;
   meta?: React.ReactNode;
   title?: React.ReactNode;
+  titleId?: string;
 }) {
   return (
     <div
@@ -103,7 +108,11 @@ export function TaskAsideHeader({
       )}
       data-slot="task-aside-header"
     >
-      {title && <h2 className="text-label min-w-0 truncate">{title}</h2>}
+      {title && (
+        <h2 className="text-label min-w-0 truncate" id={titleId}>
+          {title}
+        </h2>
+      )}
       {meta && (
         <p className="text-muted-foreground ml-auto shrink-0 font-mono text-xs tabular-nums empty:hidden">
           {meta}
@@ -118,14 +127,18 @@ export function TaskAside({
   footer,
   label,
   meta,
+  scrollsByKeyboard = false,
   title,
 }: {
   children?: React.ReactNode;
   footer?: React.ReactNode;
   label: string;
   meta?: React.ReactNode;
+  scrollsByKeyboard?: boolean;
   title?: React.ReactNode;
 }) {
+  const titleId = useId();
+
   return (
     <aside
       aria-label={label}
@@ -135,11 +148,19 @@ export function TaskAside({
       )}
       data-slot="task-aside"
     >
-      <TaskAsideHeader meta={meta} title={title} />
+      <TaskAsideHeader meta={meta} title={title} titleId={titleId} />
 
       <div
-        className="flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto px-5 pb-6"
+        aria-labelledby={scrollsByKeyboard ? titleId : undefined}
+        className={cn(
+          "flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto px-5 pb-6",
+          scrollsByKeyboard &&
+            "focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px] focus-visible:ring-inset",
+        )}
         data-slot="task-aside-body"
+        role={scrollsByKeyboard ? "region" : undefined}
+        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- WebKit scrolls a container by keyboard only when it takes focus (https://bugs.webkit.org/show_bug.cgi?id=277290).
+        tabIndex={scrollsByKeyboard ? 0 : undefined}
       >
         {children}
       </div>

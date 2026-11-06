@@ -53,6 +53,12 @@ function checkLabelCount({ expected, scene }: { expected: ImageSceneExpected; sc
   return null;
 }
 
+function checkLayout({ layout, scene }: { layout: ImageScene["layout"]; scene: ImageScene }) {
+  return scene.layout === layout
+    ? null
+    : `This screen needs the ${layout} layout, but the scene's layout is ${scene.layout}.`;
+}
+
 function checkLabelNumbers({
   scene,
   screenText,
@@ -76,6 +82,7 @@ function checkScene(testCase: TestCase<ImageSceneExpected>) {
     const results = [
       checkLabelCount({ expected, scene }),
       checkLabelNumbers({ scene, screenText }),
+      ...(expected.layout ? [checkLayout({ layout: expected.layout, scene })] : []),
     ];
 
     const problems = results.filter((problem) => problem !== null);

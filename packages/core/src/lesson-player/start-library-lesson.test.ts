@@ -310,8 +310,8 @@ describe(startLibraryLesson, () => {
     });
 
     expect(runs.map((run) => run.contentIds)).toStrictEqual([
-      { lessonId: lesson.id, support: "explanationFirst" },
-      { lessonId: lesson.id, support: "explanationFirst" },
+      { lessonId: lesson.id },
+      { lessonId: lesson.id },
     ]);
 
     expect(

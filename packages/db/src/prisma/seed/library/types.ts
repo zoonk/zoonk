@@ -60,7 +60,6 @@ export type SeedLesson = {
   canDo?: Localized;
   minutes: number;
   skills: readonly string[];
-  supportMode?: "explanationFirst" | "questionFirst";
   steps?: readonly SeedStep[];
   words?: readonly SeedLessonWord[];
   sentences?: readonly SeedLessonSentence[];

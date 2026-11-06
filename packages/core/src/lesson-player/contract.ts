@@ -77,16 +77,6 @@ export const libraryLessonStartInputSchema = z
 
 export type LibraryLessonStartInput = z.infer<typeof libraryLessonStartInputSchema>;
 
-const lessonSupportSchema = z
-  .enum(["explanationFirst", "questionFirst"])
-  .meta({
-    description:
-      "`explanationFirst` when the learner never answered the skill the lesson opens with; `questionFirst` when they have. Reorder only the lesson's opening: move the explanations after the first question in front of it, or the first question after the opening explanations in front of them",
-    id: "LessonSupport",
-  });
-
-export type LessonSupport = z.infer<typeof lessonSupportSchema>;
-
 /** Answers are ordered by arrival. */
 const lessonRunAnswerSchema = z.object({
   answeredAt: z.iso
@@ -132,7 +122,6 @@ export const libraryLessonRunSchema = z
       }),
     runId: z.uuid().meta({ description: "Send it with every answer and with the completion" }),
     startedAt: z.iso.datetime(),
-    support: lessonSupportSchema.nullable().describe("Lesson opening; null keeps its order"),
   })
   .meta({ id: "LibraryLessonRun" });
 

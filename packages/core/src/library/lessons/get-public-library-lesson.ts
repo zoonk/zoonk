@@ -4,7 +4,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { type PublicFirstScreen, toPublicFirstScreen } from "./_utils/public-first-screen";
-import { toSummaryIdeas } from "./_utils/summary-ideas";
+import { readLessonMap } from "./lesson-map";
 import { CURRENT_STEPS } from "./lesson-versions";
 
 async function getCachedPublicLesson(lessonId: string) {
@@ -56,7 +56,7 @@ export async function getPublicLibraryLesson({ lessonId }: { lessonId: string })
     id: lesson.id,
     language: lesson.language,
     slug: lesson.slug,
-    summaryIdeas: toSummaryIdeas(lesson.summary),
+    summary: readLessonMap(lesson.summary),
     title: lesson.title,
     updatedAt: lesson.updatedAt,
   };

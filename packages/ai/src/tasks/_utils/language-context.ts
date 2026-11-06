@@ -1,4 +1,5 @@
-import { type SupportedLocale, getContentLocale } from "@zoonk/utils/locale";
+import { countryToCurrency } from "@zoonk/utils/currency";
+import { type SupportedLocale, getContentLocale, getFormattingLocale } from "@zoonk/utils/locale";
 
 /** Each language teaches one regional variant (`prompt-language.ts`); its pack is that place. */
 type LocalContextPack = {
@@ -219,4 +220,26 @@ export function formatLocalContext(
   }
 
   return `LOCAL_CONTEXT:\n${formatPack(LOCAL_CONTEXT_PACKS[locale], { register })}`;
+}
+
+const MONEY_EXAMPLE = 2400;
+
+export function formatMoneyContext(language: string): string {
+  if (!getContentLocale(language)) {
+    return "MONEY: none";
+  }
+
+  const locale = getFormattingLocale(language);
+  const currency = countryToCurrency(new Intl.Locale(locale).maximize().region ?? "");
+  const withCents = new Intl.NumberFormat(locale, { currency, style: "currency" });
+
+  const whole = new Intl.NumberFormat(locale, {
+    currency,
+    maximumFractionDigits: 0,
+    minimumFractionDigits: 0,
+    style: "currency",
+  });
+
+  const forms = new Set([withCents.format(MONEY_EXAMPLE), whole.format(MONEY_EXAMPLE)]);
+  return `MONEY: ${[...forms].join(" or ")}`;
 }

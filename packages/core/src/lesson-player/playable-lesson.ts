@@ -1,6 +1,8 @@
 import { type CourseLevel } from "@zoonk/db";
 import { type ActivityExpected } from "../library/activities/activity-expected-answer";
 import { type ActivityTolerance } from "../library/activities/activity-schemas";
+import { type LessonMap } from "../library/lessons/lesson-map";
+import { type StepMarks } from "../library/marks/step-marks-contract";
 import { type MaterialCitation } from "../library/sources/material-question-contract";
 import { type SourceCitation } from "../library/sources/source-citation";
 import { type StepContentByKind } from "../library/steps/contract/step-contract";
@@ -47,6 +49,7 @@ export type PlayableTeachingStepOf<TKind extends TeachingStepKind> = PlayableSte
   /** Original screen-generation time in epoch milliseconds; reopening does not restart its wait. */
   pictureWaitStartedAt?: number;
   kind: TKind;
+  marks: StepMarks | null;
   /** Missing option pictures must fall back to their descriptions. */
   optionPictures?: Readonly<Record<string, PlayableStepImage>>;
 };
@@ -95,7 +98,11 @@ export type PlayableLibraryLesson = {
   level: CourseLevel;
   skills: { id: string; name: string }[];
   steps: PlayableLibraryStep[];
-  summaryIdeas: string[];
+  /**
+   * The map shown after the lesson's last screen. Null for a lesson that ends on its own summary
+   * and for a challenge, whose result is the moment it earned.
+   */
+  summary: LessonMap | null;
   targetLanguage: string | null;
   title: string;
 };

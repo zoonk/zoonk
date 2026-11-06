@@ -6,6 +6,8 @@ struct LessonCompletionView: View {
   let answered: Int
   let soundsEnabled: Bool
   var guestEnding: LessonGuestEnding?
+  /// A spread shows the lesson's map under what was done; one column keeps it in the menu.
+  var lesson: PlayableLesson?
   let finish: () -> Void
   let close: () -> Void
 
@@ -14,6 +16,10 @@ struct LessonCompletionView: View {
       page {
         moment
         dayMoment
+
+        if let lesson, let summary = lesson.summary {
+          LessonMapSection(title: lesson.title, summary: summary)
+        }
       }
     } secondary: {
       page {
@@ -442,32 +448,6 @@ private struct LessonGuestEndingView: View {
   }
 }
 
-struct LessonSummarySheet: View {
-  @Environment(\.dismiss) private var dismiss
-
-  let ideas: [String]
-
-  var body: some View {
-    NavigationStack {
-      List(Array(ideas.enumerated()), id: \.offset) { _, idea in
-        LessonRichText(idea)
-      }
-      .navigationTitle(
-        Text("Lesson summary", tableName: "Player", comment: "Opens the lesson's summary card")
-      )
-      .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .confirmationAction) {
-          Button(role: .close) {
-            dismiss()
-          }
-        }
-      }
-    }
-    .presentationDetents([.medium, .large])
-  }
-}
-
 private struct SignUpButton: View {
   @Environment(\.lessonPlayerRoutes) private var routes
 
@@ -532,6 +512,7 @@ struct LessonWaitingView: View {
 
   let outline: LessonOutline
   let writing: LessonPlayerStore.LessonWriting
+  let progress: GenerationWait
   var warmUpID: String?
   var holding: WarmUpHolding?
   let write: () -> Void
@@ -591,7 +572,9 @@ struct LessonWaitingView: View {
             comment: "Starts a lesson that isn't written yet: it's written, then opens")
         }
         .buttonStyle(.mainAction)
-      case (nil, .writing), (nil, .written):
+      case (nil, .writing):
+        LessonWritingSteps(phases: progress.visiblePhases)
+      case (nil, .written):
         ProgressView()
       case (nil, .refused), (nil, .setAside):
         EmptyView()
@@ -631,11 +614,11 @@ struct LessonWaitingView: View {
     return switch writing {
     case .notStarted:
       LocalizedStringResource(
-        "Zoonk writes it when you start. It takes a minute or two.", table: "Player",
+        "Zoonk writes it when you start. It takes a few minutes.", table: "Player",
         comment: "A lesson not written yet")
     case .writing, .written:
       LocalizedStringResource(
-        "It usually takes a minute or two. The lesson opens here as soon as it's ready.",
+        "It usually takes a few minutes. The lesson opens here as soon as it's ready.",
         table: "Player",
         comment: "While a lesson is written")
     case .failed:
@@ -650,6 +633,49 @@ struct LessonWaitingView: View {
       LocalizedStringResource(
         "This lesson isn't written yet.", table: "Player",
         comment: "A lesson not written yet, writing refused")
+    }
+  }
+}
+
+private struct LessonWritingSteps: View {
+  /// `StatusMark`'s width, so the spinner's step lines up with the others.
+  @ScaledMetric(relativeTo: .body) private var markWidth = 20.0
+
+  let phases: [GenerationWait.Phase]
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      ForEach(phases) { phase in
+        Label {
+          Text(phase.label)
+            .foregroundStyle(phase.state == .waiting ? .secondary : .primary)
+        } icon: {
+          if phase.state == .working {
+            ProgressView()
+              .frame(width: markWidth)
+              .accessibilityHidden(true)
+          } else {
+            StatusMark(status: phase.state == .done ? .done : .todo)
+          }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityValue(state(phase.state))
+      }
+    }
+  }
+
+  private func state(_ state: GenerationWait.PhaseState) -> Text {
+    switch state {
+    case .waiting:
+      Text(
+        "Not started yet", tableName: "Onboarding",
+        comment: "VoiceOver: a step of a wait that hasn't started")
+    case .working:
+      Text(
+        "In progress", tableName: "Onboarding",
+        comment: "VoiceOver: the step of a wait that's running")
+    case .done:
+      Text("Done", tableName: "Onboarding", comment: "A finished step of a wait")
     }
   }
 }

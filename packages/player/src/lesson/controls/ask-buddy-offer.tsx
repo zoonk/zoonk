@@ -5,7 +5,8 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { useTutorBuddy } from "../../questions/tutor-buddy";
 import { type ExplainingStep } from "../_utils/lesson-struggle";
-import { useLessonPlayer } from "../lesson-player-context";
+import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
+import { DidntGetItButton, hasDidntGetIt } from "./didnt-get-it-button";
 import { useStrugglePause } from "./use-struggle-pause";
 
 export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
@@ -52,9 +53,19 @@ export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
   );
 }
 
-export function StrugglePauseOffer({ step }: { step: ExplainingStep }) {
+function StrugglePauseOffer({ step }: { step: ExplainingStep }) {
   const { screen } = useLessonPlayer();
   const isStuck = useStrugglePause(step);
 
   return isStuck && !screen.quickCheck ? <AskBuddyOffer reason="pause" /> : null;
+}
+
+export function ExplainingScreenHelp({ step }: { step: ExplainingStep }) {
+  const { lesson } = useLessonPlayerConfig();
+
+  return hasDidntGetIt({ step, targetLanguage: lesson.targetLanguage }) ? (
+    <DidntGetItButton />
+  ) : (
+    <StrugglePauseOffer step={step} />
+  );
 }

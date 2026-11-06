@@ -35,7 +35,7 @@
   "catalog_expand": "a36c3478113b9a0e9a6a5df68fc66e8ae9807e90bc4719ec525e9b9eb9e10b17",
   "catalog_go_to_chapter": "beef7f66b7e02950c5090017f11b0209a864d7475f6a4ee52d6adf58341566a6",
   "catalog_goal_example": "72b2915923596ee1e137a6560eb9ab7d3a57f530d27dd283519f524671804980",
-  "catalog_guess_first": "80277253377fdc9ddea6da5fee9e07dda9efd9b659493573095ab64cb0de5629",
+  "catalog_guess_chip": "70352bbf4260f7ecddf8ba96f809d70fa59006a2c3839e3f4bc39067afc419f8",
   "catalog_guess_note": "ed6182d404a19e1996472dd73d2ec3db7034ebd09fac34fb8e38409fec091c55",
   "catalog_ideas": "91aaeec5ff08cc06da8c15892bd0156723b72f330f18db54c4bf0773a7ea1acd",
   "catalog_left_out": "289f48fc33c16f894a06855f8766943cc0ee52f314cd76bc43106de79889fe36",
@@ -183,7 +183,8 @@
     <string name="catalog_start_free">Inizia gratis, senza account.</string>
     <string name="catalog_try_title">Prova una lezione · gratis · %1$s</string>
     <string name="catalog_try_place">%1$s · lezione %2$s</string>
-    <string name="catalog_guess_first">Prima prova a indovinare. Non conta.</string>
+    <!-- Chip above a lesson's opening question on a course page, which the learner answers before being taught. Guesses are never scored. -->
+    <string name="catalog_guess_chip">È solo un’ipotesi, non fa punteggio</string>
     <string name="catalog_quick_question">Una domanda al volo</string>
     <string name="catalog_guess_note">La tua risposta avvia la lezione da %1$s minuti.</string>
     <string name="catalog_check_note">La tua scelta apre la lezione da %1$s minuti. Lì puoi controllare la tua risposta.</string>

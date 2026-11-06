@@ -9,7 +9,7 @@ import { Activity, useRef } from "react";
 import { PlayerAudioProvider } from "../player-audio-context";
 import { getPlayerStepAudioUrl } from "../player-step";
 import { LESSON_CONTENT_ID } from "./_utils/lesson-focus";
-import { isLanguageStep } from "./_utils/lesson-steps";
+import { isLanguageStep, isReadStep } from "./_utils/lesson-steps";
 import { LessonAccessScreen } from "./access/lesson-access-screen";
 import { LessonCompletionMoment } from "./completion/lesson-completion-moment";
 import { LessonCompletionReady } from "./completion/lesson-completion-ready";
@@ -17,6 +17,7 @@ import { useCompletionProps } from "./completion/use-completion-props";
 import { LessonActionBar } from "./lesson-action-bar";
 import { LessonAside } from "./lesson-aside";
 import { LessonLeaveProvider } from "./lesson-leave";
+import { LessonMapScreen } from "./lesson-map-screen";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
 import { LessonPlayerHeader } from "./lesson-player-header";
 import { type PlayableLibraryStep } from "./lesson-player-types";
@@ -81,6 +82,10 @@ function LessonContent() {
     return <LessonCompletion />;
   }
 
+  if (state.phase === "map") {
+    return <LessonMapScreen />;
+  }
+
   if (!shown) {
     return null;
   }
@@ -112,9 +117,25 @@ export function LessonPlayerShell() {
   );
 }
 
+/** Reading screens and the map sit on a teacher's dotted paper; questions keep a plain ground for their answers. */
+function useDotPaper(): boolean {
+  const { lesson } = useLessonPlayerConfig();
+  const { screen, state } = useLessonPlayer();
+
+  if (lesson.targetLanguage || state.run.status === "refused") {
+    return false;
+  }
+
+  return (
+    state.phase === "map" ||
+    (state.phase !== "completed" && Boolean(screen.step && isReadStep(screen.step)))
+  );
+}
+
 function LessonPlayerFrame() {
   const t = useExtracted();
   const { state } = useLessonPlayer();
+  const dotPaper = useDotPaper();
   const mainRef = useRef<HTMLElement>(null);
   const asideRoot = getTaskAsideRootProps();
 
@@ -139,7 +160,10 @@ function LessonPlayerFrame() {
 
       <main
         aria-label={t("Lesson content")}
-        className="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto outline-none"
+        className={cn(
+          "flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto outline-none",
+          dotPaper && "dot-paper",
+        )}
         id={LESSON_CONTENT_ID}
         ref={mainRef}
         tabIndex={-1}

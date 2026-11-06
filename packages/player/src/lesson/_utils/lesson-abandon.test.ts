@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   checkStep,
   explanationStep,
+  hookGuessStep,
   stepResult,
   typedAnswerStep,
 } from "../_test-utils/lesson-steps";
@@ -33,10 +34,10 @@ function answer(stepId: string, isCorrect: boolean): LessonPlayerAction[] {
   ];
 }
 
-function play(actions: LessonPlayerAction[], steps = STEPS) {
+function play(actions: LessonPlayerAction[], steps = STEPS, hasMap = false) {
   return actions.reduce(
     (state, action) => lessonPlayerReducer(state, action),
-    createInitialState({ id: "lesson", steps }),
+    createInitialState({ hasMap, id: "lesson", steps }),
   );
 }
 
@@ -56,6 +57,37 @@ describe(getAbandonEvent, () => {
       name: "Activity Abandoned",
       properties: { lesson_id: "lesson", screen: 4, step_kind: "check", wrong_in_a_row: 3 },
     });
+  });
+
+  it("names the lesson map, not the last question, when the learner leaves on it", () => {
+    const state = play(
+      [STARTED, ...answer("q1", true), { type: "continue" }],
+      [checkStep("q1")],
+      true,
+    );
+
+    expect(state.phase).toBe("map");
+
+    expect(getAbandonEvent(state)).toStrictEqual({
+      name: "Activity Abandoned",
+      properties: { lesson_id: "lesson", screen: 2, step_kind: "map", wrong_in_a_row: 0 },
+    });
+  });
+
+  it("leaves out an opening guess, which never counts", () => {
+    const steps = [hookGuessStep("guess"), checkStep("q1")];
+
+    const revealed = play(
+      [
+        STARTED,
+        { counts: false, result: stepResult(false), stepId: "guess", type: "checkResolved" },
+        { type: "continue" },
+        ...answer("q1", false),
+      ],
+      steps,
+    );
+
+    expect(getAbandonEvent(revealed)?.properties).toMatchObject({ wrong_in_a_row: 1 });
   });
 
   it("starts counting again after a right answer", () => {

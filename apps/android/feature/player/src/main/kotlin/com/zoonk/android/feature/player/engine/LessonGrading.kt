@@ -5,18 +5,19 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepResult
 
-/** A hook's guess reveals the answer whatever the pick, with the reveal as the why. It never counts. */
+/** A hook's guess reveals the answer whatever the pick, or with none ("I don't know yet"), with the reveal as the why. It never counts. */
 fun revealGuess(
     step: LessonStep,
-    optionId: String,
+    optionId: String?,
 ): StepResult? {
     val guess = (step.content as? StepContent.Guess)?.content ?: return null
-    val picked = guess.options.find { it.id == optionId } ?: return null
+    val picked = optionId?.let { id -> guess.options.find { it.id == id } ?: return null }
+    val isCorrect = picked?.isCorrect == true
 
     return StepResult(
-        isCorrect = picked.isCorrect,
-        answerText = picked.text,
-        correctAnswer = if (picked.isCorrect) null else guess.options.find { it.isCorrect }?.text,
+        isCorrect = isCorrect,
+        answerText = picked?.text,
+        correctAnswer = if (isCorrect) null else guess.options.find { it.isCorrect }?.text,
         feedback = guess.reveal,
     )
 }

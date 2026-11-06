@@ -1,6 +1,9 @@
 import { type ImageSceneInput } from "@zoonk/ai/tasks/images/scene";
 
-export type ImageSceneExpected = { labels: "any" | "none" | "some" };
+export type ImageSceneExpected = {
+  labels: "any" | "none" | "some";
+  layout?: "comparison" | "single";
+};
 
 type ImageSceneCase = {
   id: string;
@@ -136,7 +139,7 @@ export const TEST_CASES: ImageSceneCase[] = [
   },
   {
     expectations:
-      "Two paintings compared, one above the other, labeled only 1 and 2: a calm, symmetrical Renaissance scene with soft even light, and a dramatic Baroque scene with a strong diagonal and a bright light against deep shadow. No titles, artists or style names written in the picture, since the question asks which is which.",
+      "Two paintings compared side by side, labeled only 1 and 2: a calm, symmetrical Renaissance scene with soft even light, and a dramatic Baroque scene with a strong diagonal and a bright light against deep shadow. No titles, artists or style names written in the picture, since the question asks which is which.",
     expected: { labels: "some" },
     id: "paintings-comparison-pt",
     userInput: {
@@ -173,6 +176,107 @@ export const TEST_CASES: ImageSceneCase[] = [
       request: "A lever lifting a heavy rock with the fulcrum close to the rock",
       screenText:
         "Put the fulcrum close to the load and push on the far end: a small effort lifts a heavy rock.",
+      textAllowed: true,
+    },
+  },
+  {
+    expectations:
+      "One scene at Igor's workplace: Igor receiving his salary envelope, with his repair toolbox beside him, exactly as the alt says. Never two scenes stacked or side by side (an office above a workbench), and nothing the alt doesn't name, such as a toaster or a second place. Igor is an adult. No labels are needed.",
+    expected: { labels: "any", layout: "single" },
+    id: "one-place-not-two-pt",
+    userInput: {
+      alt: "Igor recebe um envelope no trabalho, com uma caixa de ferramentas ao lado.",
+      context: "Educação financeira › Organização das receitas › Receitas regulares e eventuais",
+      language: "pt",
+      request:
+        "Igor no trabalho recebe um envelope de salário de outra pessoa. Ao lado de Igor está sua caixa de ferramentas de conserto. Cena cotidiana, sem texto.",
+      screenText:
+        "Igor recebe seu salário no trabalho. Fora dali, às vezes ele conserta aparelhos e recebe por esses serviços.",
+      textAllowed: true,
+    },
+  },
+  {
+    expectations:
+      "The request asks for two scenes of Igor's life (his job's pay and selling his bike). A picture shows one scene: the one place the screen is mostly about (his monthly pay at work, or the bike sale), never both stacked or side by side. Igor is an adult. No labels are needed.",
+    expected: { labels: "any", layout: "single" },
+    id: "two-moments-become-one-pt",
+    userInput: {
+      alt: "Igor recebe o pagamento combinado no trabalho.",
+      context: "Educação financeira › Organização das receitas › Receitas regulares e eventuais",
+      language: "pt",
+      request:
+        "Duas cenas lado a lado: na primeira, Igor recebe dinheiro no local de trabalho; na segunda, Igor entrega sua bicicleta a um comprador. Estilo simples e claro, sem texto.",
+      screenText:
+        "Igor recebe um pagamento combinado todo mês e vendeu sua bicicleta uma única vez. Qual entrada ele pode esperar novamente no próximo mês?",
+      textAllowed: true,
+    },
+  },
+  {
+    expectations:
+      "ALT names two moments of Fábio's day that the screen doesn't ask the learner to compare: in the morning he hands a product to a customer at a shop counter, and at night he writes the sale in a notebook at home. The picture keeps both, side by side as a comparison, never only one of them. Fábio is an adult. No labels are needed.",
+    expected: { labels: "any", layout: "comparison" },
+    id: "alt-names-two-moments-pt",
+    userInput: {
+      alt: "De manhã, Fábio entrega um produto a um cliente no balcão; à noite, ele anota a venda num caderno em casa.",
+      context:
+        "Contabilidade › Introdução à contabilidade › Usuários e finalidade da contabilidade",
+      language: "pt",
+      request: "Fábio vende um produto de manhã e anota a venda à noite.",
+      screenText:
+        "Fábio vende durante o dia e anota cada venda à noite. Assim ele sabe quanto entrou no caixa.",
+      textAllowed: true,
+    },
+  },
+  {
+    expectations:
+      "The question asks which of two scenes fits a caption, so the picture is one comparison of the two scenes, labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box. No text but the labels 1 and 2. Nayara is an adult.",
+    expected: { labels: "some", layout: "comparison" },
+    id: "two-scenes-to-compare-pt",
+    userInput: {
+      alt: "Em 1, Nayara coloca um livro numa caixa vermelha; em 2, ela tira um livro da mesma caixa.",
+      context: "Língua Portuguesa › Interpretação de imagens › Imagens e legendas",
+      language: "pt",
+      request:
+        "Duas cenas lado a lado, rotuladas 1 e 2: em 1 Nayara coloca um livro numa caixa vermelha; em 2 ela tira um livro da mesma caixa.",
+      screenText:
+        "Qual cena, 1 ou 2, combina com a legenda: Nayara coloca um livro na caixa vermelha?",
+      textAllowed: true,
+    },
+  },
+  {
+    expectations:
+      "Fábio's hand, seen close, with a small cut on its skin and tiny rod and round microbes entering the cut. The hand is the focal object: ALT names a hand, so a magnified view keeps the hand and never becomes a skin cross-section without it. No text.",
+    expected: { labels: "none", layout: "single" },
+    id: "hand-cut-microbes-pt",
+    userInput: {
+      alt: "Mão com um pequeno corte na pele e micróbios minúsculos entrando pelo corte.",
+      context:
+        "Imunologia › Reconhecimento e imunidade inata › Drenagem linfática e vigilância esplênica",
+      language: "pt",
+      request:
+        "Ilustração científica simples da mão de um homem adulto com um pequeno corte na pele, vista ampliada, com micróbios minúsculos (bactérias em forma de bastão e de esfera) entrando pelo corte. Sem texto.",
+      screenText:
+        "Fábio corta a mão numa lata e micróbios entram pelo corte. As células de defesa que vão reagir estão longe dali. Como partes desses micróbios chegam até elas?",
+      textAllowed: true,
+    },
+  },
+  {
+    expectations:
+      "The last picture showed a skin cross-section with no hand, so the new plan makes Fábio's hand with its small cut the focal object, with tiny microbes entering the cut, and drops the cross-section. No text.",
+    expected: { labels: "none", layout: "single" },
+    id: "hand-cut-microbes-findings-pt",
+    userInput: {
+      alt: "Mão com um pequeno corte na pele e micróbios minúsculos entrando pelo corte.",
+      context:
+        "Imunologia › Reconhecimento e imunidade inata › Drenagem linfática e vigilância esplênica",
+      findings: [
+        "ALT describes a hand with a small cut on the skin, but the image shows a skin cross-section block with no hand",
+      ],
+      language: "pt",
+      request:
+        "Ilustração científica simples da mão de um homem adulto com um pequeno corte na pele, vista ampliada, com micróbios minúsculos (bactérias em forma de bastão e de esfera) entrando pelo corte. Sem texto.",
+      screenText:
+        "Fábio corta a mão numa lata e micróbios entram pelo corte. As células de defesa que vão reagir estão longe dali. Como partes desses micróbios chegam até elas?",
       textAllowed: true,
     },
   },

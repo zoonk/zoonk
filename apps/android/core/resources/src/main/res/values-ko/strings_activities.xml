@@ -4,7 +4,6 @@
   "activities_badge_before_after": "277f387b07f32ba78b2d2f35f7adcf70f4eb93dff98b3c108f392e61f932b499",
   "activities_badge_estimate_first": "96428613179db39539390caaed205b8e78f465ed278286bd7587c7559a8f321e",
   "activities_badge_find_error": "f3358b0149ff4c750ea1646b2eb418e18d0d8d705d36aa636e31f8881e604f59",
-  "activities_badge_follow_questions": "92ba5b63ae7509959531be2849b7a1ff9547bb56a2f8e999a563a84842ff21e2",
   "activities_badge_read_chart": "0a2e4bcb5cec9819352d898dffc79a9157622d52a3b597889c86ea167d7e0c33",
   "activities_badge_reply": "56bff0481244c980555d9118ea22a85aaf02a738d164ad384a991f94332ce4cd",
   "activities_badge_spot_pattern": "5f65e4434742838cd79f0426638d873cdb96c2bf4fc81bb68208dc03bdf6ada0",
@@ -58,23 +57,13 @@
   "activities_sortable_move_up": "20f5ddead4a5ec3a05f3f338cdde50408985fc464d060d3507eb761e750134de",
   "activities_sortable_over": "0b6c993768c955ed389e04c6a688d41fe516dd7c60d82475d33fa70026ffa010",
   "activities_sortable_picked_up": "fee24134070b8cd8c8bc3725ba7fd569dbf54dd641dd10df70f06e8a53d840b2",
-  "activities_sortable_stopped": "5257ff3dbd35cedddf6ce3087c35821e54b7fd5571f7e961f0565116a1fd2ec3",
-  "activities_tree_case": "21c2afc5319d4bec5266c3c9efb87f1f7926c04751fbe1457cbf0b331088c96d",
-  "activities_tree_it_leads_to": "b69eecfeb2e42350367cc16d9a2f70d8bf906de5559c81121b3ebf0b427e5c92",
-  "activities_tree_leads_to": "8ea70011eae28227645d27adb012d8f9c81e27914b0684371b333173bd98e792",
-  "activities_tree_still_possible": "cf0cba74810dd165473c5ddab9f0cc658fa6ba1e172307a876e4e17f4aa1a450",
-  "activities_tree_undo": "ce53bd60f60fc91a5adf080760d6d7bcf1b9313499979416c1f36e0af72a0ad9",
-  "activities_tree_walk": "25417d17e58cd509088c5046217b155b03b968f76eac76ae6762dc9a0e644f5f",
-  "activities_tree_you_chose": "4cc3b80bb3e19c66d9ace34e0c408fd476ae9fd2151dd9726b913cda85de19ad",
-  "activities_tree_your_answers": "20ea0b619233e19b2248e27b2a5cb6888dc48bc761550247f273a39826efb3a0"
+  "activities_sortable_stopped": "5257ff3dbd35cedddf6ce3087c35821e54b7fd5571f7e961f0565116a1fd2ec3"
 }
 -->
 <resources>
     <string name="activities_badge_estimate_first">먼저 예상하기</string>
     <string name="activities_badge_read_chart">차트 읽기</string>
     <string name="activities_badge_before_after">전후 비교</string>
-    <!-- A key here is an identification key: questions that branch until they name something, like a key to trees. -->
-    <string name="activities_badge_follow_questions">문제 따라가기</string>
     <string name="activities_badge_find_error">오류 찾기</string>
     <string name="activities_badge_step_by_step">단계별로 풀기</string>
     <string name="activities_badge_spot_pattern">규칙 찾기</string>
@@ -112,18 +101,6 @@
     <string name="activities_chart_spans">측정할 구간</string>
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s(%2$s당)</string>
-    <!-- The panel with the case the learner follows through the questions. -->
-    <string name="activities_tree_case">사례</string>
-    <!-- The outcomes the learner's answers can still reach from here. -->
-    <string name="activities_tree_still_possible">남은 가능성</string>
-    <string name="activities_tree_your_answers">내 답변</string>
-    <string name="activities_tree_leads_to">답변에 따른 결과</string>
-    <string name="activities_tree_undo">실행 취소</string>
-    <string name="activities_tree_walk">이 사례의 판단 과정</string>
-    <!-- The branch the learner took where the key went another way, like "You chose Single". -->
-    <string name="activities_tree_you_chose">선택한 항목: %1$s</string>
-    <!-- The outcome the right walk reaches, like "It leads to Pine." -->
-    <string name="activities_tree_it_leads_to">%1$s에 도달해요.</string>
     <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->
     <string name="activities_find_error_ai_asked">누군가 AI 도우미에게 물었어요</string>
     <string name="activities_find_error_problem">문제</string>

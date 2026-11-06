@@ -10,7 +10,7 @@ const step = challengeStep("case");
 function play(actions: LessonPlayerAction[]) {
   return actions.reduce(
     (state, action) => lessonPlayerReducer(state, action),
-    createInitialState({ id: "lesson", steps: [step] }),
+    createInitialState({ hasMap: false, id: "lesson", steps: [step] }),
   );
 }
 

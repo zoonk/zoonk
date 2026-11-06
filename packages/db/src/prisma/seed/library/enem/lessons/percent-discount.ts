@@ -17,21 +17,11 @@ export const percentDiscountLesson: SeedLesson = {
   steps: [
     {
       content: {
-        options: [
-          guess("discount", t("R$ 20", "R$ 20")),
-          guess("fifty-five", t("R$ 55", "R$ 55")),
-          guess("sixty", t("R$ 60", "R$ 60"), true),
-          guess("sixty-four", t("R$ 64", "R$ 64")),
-        ],
-        question: t(
-          "An R$ 80 T-shirt is 25% off. How much do you pay?",
-          "Uma camiseta de R$ 80 está com 25% de desconto. Quanto você paga?",
+        text: t(
+          "Ana spots an R$ 80 T-shirt with a sign: 25% off. At the register she's charged R$ 60. She frowns: shouldn't she pay R$ 20? Who got it right, Ana or the register?",
+          "Ana vê uma camiseta de R$ 80 com uma placa: 25% de desconto. No caixa, cobram R$ 60. Ela estranha: não devia pagar R$ 20? Quem acertou, Ana ou o caixa?",
         ),
-        reveal: t(
-          "R$ 60. The R$ 20 is what you save; you pay the rest. Mixing up the two is one of the most common slips in percentage questions.",
-          "R$ 60. Os R$ 20 são o que você economiza; você paga o resto. Confundir os dois é um dos deslizes mais comuns em questões de porcentagem.",
-        ),
-        variant: "guess",
+        variant: "text",
       },
       kind: "hook",
     },
@@ -51,6 +41,26 @@ export const percentDiscountLesson: SeedLesson = {
       },
       kind: "explanation",
       skill: "percent-discount",
+    },
+    {
+      content: {
+        options: [
+          guess("nine", t("R$ 9", "R$ 9"), true),
+          guess("fifteen", t("R$ 15", "R$ 15")),
+          guess("six", t("R$ 6", "R$ 6")),
+          guess("fifty-one", t("R$ 51", "R$ 51")),
+        ],
+        question: t(
+          "No calculator at hand: R$ 60 shorts are 15% off. How much is the discount?",
+          "Sem calculadora: um short de R$ 60 tem 15% de desconto. De quanto é o desconto?",
+        ),
+        reveal: t(
+          "R$ 9. The next screen shows a shortcut to get there in your head.",
+          "R$ 9. A próxima tela mostra um atalho para chegar lá de cabeça.",
+        ),
+        variant: "guess",
+      },
+      kind: "hook",
     },
     {
       content: {
@@ -322,6 +332,5 @@ export const percentDiscountLesson: SeedLesson = {
       kind: "summary",
     },
   ],
-  supportMode: "questionFirst",
   title: t("Percentages and discounts", "Porcentagem e descontos"),
 };

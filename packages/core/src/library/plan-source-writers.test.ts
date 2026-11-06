@@ -26,7 +26,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
-import { serveStoredFile, storeBlobUploads } from "../_test-utils/blob-uploads";
+import { storeBlobUploads } from "../_test-utils/blob-uploads";
 import { waitForBlockedStatement } from "../_test-utils/learner-lock";
 import {
   ENGLISH,
@@ -64,20 +64,14 @@ import { getAlphabetIdentityKey } from "./language/alphabet/alphabet-identity";
 import { publishAlphabetLesson } from "./language/alphabet/write-alphabet-lesson";
 import {
   type LessonScreenToSave,
+  publishStagedLessonVersion,
   saveLessonContent,
-  saveLessonVersion,
+  stageLessonVersion,
 } from "./lessons/_utils/save-lesson-content";
 import { createLibraryLesson } from "./lessons/create-library-lesson";
 import { placeChapterLessons } from "./lessons/place-chapter-lessons";
 import { voiceListeningSet } from "./listening/voice-listening-set";
-import {
-  drawTestImage,
-  mockDrawnImages,
-  mockImageChecks,
-  resetImageModels,
-  testScene,
-} from "./media/_test-utils/image-mocks";
-import { checkImageAsset } from "./media/check-image-asset";
+import { removeImageAsset } from "./media/check-image-asset";
 import { temperatureSpec, writtenTemperatureLesson } from "./quality/_test-utils/written-lessons";
 import { setAsidePublishedLesson } from "./quality/published-lesson-check";
 import { replaceFlaggedDrills } from "./review-flags/rewrite-flagged-drills";
@@ -326,7 +320,14 @@ const REGISTRY: Record<string, Registration[]> = {
     {
       verdict: "marks",
       why: "bank items on the screens' skills",
-      writes: ["item.create", "lesson.update", "lesson.updateMany"],
+      writes: ["lesson.update", "lesson.updateMany"],
+    },
+  ],
+  "library/lessons/_utils/screen-question-item.ts": [
+    {
+      verdict: "covered",
+      why: "its callers in `save-lesson-content.ts` lock the question's skill first",
+      writes: ["item.create"],
     },
   ],
   "library/lessons/create-library-lesson.ts": [
@@ -341,6 +342,15 @@ const REGISTRY: Record<string, Registration[]> = {
   ],
   "library/listening/voice-listening-set.ts": [
     { verdict: "marks", why: "a voiced set joins the recordings", writes: ["itemSet.updateMany"] },
+  ],
+  "library/marks/tag-lesson-marks.ts": [
+    {
+      fields: ["stagedSummary", "summary"],
+      readElsewhere: { "plans/_utils/replan.ts": "a plan's posted summary" },
+      verdict: "excluded",
+      why: "adds the map's about lines, icon needs and icons, which no plan reads",
+      writes: ["lesson.updateMany"],
+    },
   ],
   "library/media/check-image-asset.ts": [
     { verdict: "marks", why: "removes bank items", writes: ["item.deleteMany"] },
@@ -715,7 +725,7 @@ async function publishLessonCase(): Promise<WriterCase> {
 
   return {
     expectWritten: () =>
-      expect(readLesson(lesson.id)).resolves.toMatchObject({ contentStatus: "completed" }),
+      expect(prisma.step.count({ where: { lessonId: lesson.id } })).resolves.toBe(1),
     plan,
     root: lessonRoot(lesson.id),
     write: () =>
@@ -723,21 +733,26 @@ async function publishLessonCase(): Promise<WriterCase> {
         language: "en",
         lessonId: lesson.id,
         screens: [checkScreen(skill.id)],
-        summary: [],
+        summary: { ideas: [], shape: "hub" },
         workflowRunId,
       }),
   };
 }
 
-async function mathItemCase(): Promise<WriterCase> {
-  const { lesson, skill, workflowRunId } = await claimedLesson();
-  const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
+function mathScreen(skillId: string): LessonScreenToSave {
   const written = writtenTemperatureLesson().screens[3];
   const converted = written && toStepContent(written, { allowImage: false, language: "en" });
 
   if (!converted?.ok) {
     throw new Error("Expected a numeric screen");
   }
+
+  return { ...checkScreen(skillId), ...converted };
+}
+
+async function mathItemCase(): Promise<WriterCase> {
+  const { lesson, skill, workflowRunId } = await claimedLesson();
+  const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
 
   return {
     expectWritten: () =>
@@ -748,10 +763,32 @@ async function mathItemCase(): Promise<WriterCase> {
       saveLessonContent({
         language: "en",
         lessonId: lesson.id,
-        screens: [{ ...checkScreen(skill.id), ...converted }],
-        summary: [],
+        screens: [mathScreen(skill.id)],
+        summary: { ideas: [], shape: "hub" },
         workflowRunId,
       }),
+  };
+}
+
+async function stagedMathItemCase(): Promise<WriterCase> {
+  const { lesson, skill } = await publishedLesson();
+
+  const version = await stageLessonVersion({
+    language: "en",
+    lessonId: lesson.id,
+    replaces: 1,
+    screens: [mathScreen(skill.id)],
+    summary: { ideas: [], shape: "hub" },
+  });
+
+  const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
+
+  return {
+    expectWritten: () =>
+      expect(prisma.item.count({ where: { skillId: skill.id } })).resolves.toBe(1),
+    plan,
+    root: skillRoot(skill.id),
+    write: () => publishStagedLessonVersion({ lessonId: lesson.id, version: version ?? 0 }),
   };
 }
 
@@ -765,12 +802,12 @@ async function lessonVersionCase(): Promise<WriterCase> {
     plan,
     root: lessonRoot(lesson.id),
     write: () =>
-      saveLessonVersion({
+      stageLessonVersion({
         language: "en",
         lessonId: lesson.id,
         replaces: 1,
         screens: [checkScreen(skill.id)],
-        summary: [],
+        summary: { ideas: [], shape: "hub" },
       }),
   };
 }
@@ -1220,27 +1257,16 @@ async function drillsCase(): Promise<WriterCase> {
 }
 
 async function pictureCase(): Promise<WriterCase> {
-  const [asset, skill, image] = await Promise.all([
-    mediaAssetFixture({ scene: testScene({ focalObject: `a ${randomUUID()} map` }) }),
-    skillFixture(),
-    drawTestImage(),
-  ]);
-
+  const [asset, skill] = await Promise.all([mediaAssetFixture(), skillFixture()]);
   const question = await itemFixture({ mediaAssetId: asset.id, skillId: skill.id });
   const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
-
-  serveStoredFile({ data: new Uint8Array(image), mediaType: "image/webp" });
-  storeBlobUploads();
-  resetImageModels();
-  mockImageChecks([false, false, false]);
-  mockDrawnImages([image, image]);
 
   return {
     expectWritten: () =>
       expect(prisma.item.findUnique({ where: { id: question.id } })).resolves.toBeNull(),
     plan,
     root: skillRoot(skill.id),
-    write: () => checkImageAsset({ assetId: asset.id }),
+    write: () => removeImageAsset({ assetId: asset.id }),
   };
 }
 
@@ -1559,14 +1585,15 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "library/items/past-questions.ts": { savePastQuestions: pastQuestionsCase },
   "library/language/alphabet/write-alphabet-lesson.ts": { publishAlphabetLesson: alphabetCase },
   "library/lessons/_utils/save-lesson-content.ts": {
+    "publishStagedLessonVersion (a math item's skill)": stagedMathItemCase,
     "saveLessonContent (a math item's skill)": mathItemCase,
     "saveLessonContent (the lesson)": publishLessonCase,
-    "saveLessonVersion (the lesson)": lessonVersionCase,
+    "stageLessonVersion (the lesson)": lessonVersionCase,
   },
   "library/lessons/create-library-lesson.ts": { createLibraryLesson: newLessonCase },
   "library/lessons/place-chapter-lessons.ts": { placeChapterLessons: placeLessonsCase },
   "library/listening/voice-listening-set.ts": { voiceListeningSet: listeningCase },
-  "library/media/check-image-asset.ts": { checkImageAsset: pictureCase },
+  "library/media/check-image-asset.ts": { removeImageAsset: pictureCase },
   "library/quality/published-lesson-check.ts": { setAsidePublishedLesson: setAsideCase },
   "library/review-flags/rewrite-flagged-drills.ts": { replaceFlaggedDrills: drillsCase },
 };

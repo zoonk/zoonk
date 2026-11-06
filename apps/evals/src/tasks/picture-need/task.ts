@@ -7,7 +7,10 @@ import { type PictureNeedExpected, type PictureNeedInput, TEST_CASES } from "./t
 type PictureNeedOutput = { teaches: boolean };
 
 const route = createBooleanEvaluation({
-  classifier: pictureNeedClassifier,
+  classifier: {
+    ...pictureNeedClassifier,
+    toInput: (input: PictureNeedInput) => pictureNeedClassifier.toInput(input),
+  },
   toOutput: (teaches): PictureNeedOutput => ({ teaches }),
 });
 

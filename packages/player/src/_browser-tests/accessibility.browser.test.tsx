@@ -99,14 +99,16 @@ function openHostedLesson() {
   const typedAnswer = teachingStep("typedAnswer");
 
   const lesson = buildLesson(
-    [
-      teachingStep("hook"),
-      teachingStep("explanation"),
-      teachingStep("check"),
-      typedAnswer,
-      teachingStep("summary"),
-    ],
-    { summaryIdeas: playableStepContent.summary.ideas.map((idea) => idea.text) },
+    [teachingStep("hook"), teachingStep("explanation"), teachingStep("check"), typedAnswer],
+    {
+      summary: {
+        ideas: playableStepContent.summary.ideas.map((idea, index) => ({
+          label: `Idea ${index + 1}`,
+          text: idea.text,
+        })),
+        shape: "nested",
+      },
+    },
   );
 
   const graded = buildAdapters(lesson);
@@ -148,7 +150,7 @@ describe("lesson player accessibility", () => {
     await atViewport(TABLET_PORTRAIT, async () => {
       openHostedLesson();
 
-      await expect.element(page.getByText("Guess first")).toBeVisible();
+      await expect.element(page.getByText("Just a guess, it doesn't count")).toBeVisible();
       await pick("3", "No");
       await enterTo(verdict("Good guess!"));
       await expectAccessibleScreen("a guess's reveal");
@@ -174,11 +176,12 @@ describe("lesson player accessibility", () => {
       await press("Enter");
       await expect.element(verdict("Correct!")).toBeVisible();
       await expectAccessibleScreen("a written answer's grade");
-      await enterTo(page.getByRole("heading", { name: "Summary" }));
 
       await enterTo(page.getByText('What does the electron "cloud" show?'));
       await pick("2", RIGHT_OPTION);
       await enterTo(verdict("Correct!"));
+      await enterTo(page.getByRole("heading", { name: "Lesson map" }));
+      await expectAccessibleScreen("the lesson map");
       await enterTo(page.getByRole("heading", { level: 2, name: "Lesson complete" }));
       await expectAccessibleScreen("the completion moment");
     });

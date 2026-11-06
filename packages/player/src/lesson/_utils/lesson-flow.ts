@@ -1,11 +1,13 @@
 import { type LessonPlayerState, getCurrentStep } from "../lesson-player-state";
 import { type LessonStepResult, type PlayableLibraryStep } from "../lesson-player-types";
 import { getChallengeProgress } from "./challenge-progress";
+import { finishScreens, isAtEnd } from "./lesson-end";
 import {
   canSelfCorrect,
   getExplanationsAfter,
   getQuickCheckQueue,
   isQuestionStep,
+  isReadStep,
   isRetryStep,
 } from "./lesson-steps";
 
@@ -42,17 +44,6 @@ export function enterPosition(state: LessonPlayerState, position: number): Lesso
     position,
     reviewing: false,
     stepStartedAt: Date.now(),
-  };
-}
-
-function complete(
-  state: LessonPlayerState,
-  status: "ready" | "saving" = "saving",
-): LessonPlayerState {
-  return {
-    ...state,
-    completion: { result: null, status, testedOut: state.quickCheck !== null },
-    phase: "completed",
   };
 }
 
@@ -96,7 +87,7 @@ export function advance(state: LessonPlayerState): LessonPlayerState {
   const next = state.position + 1;
 
   if (next >= queue.length) {
-    return complete(available);
+    return finishScreens(available);
   }
 
   return enterPosition({ ...available, notice: null }, next);
@@ -107,7 +98,7 @@ export function leaveOutAhead(
   isLeftOut: (stepId: string) => boolean,
   completionStatus: "ready" | "saving",
 ): LessonPlayerState {
-  if (state.phase === "completed") {
+  if (isAtEnd(state)) {
     return state;
   }
 
@@ -125,7 +116,7 @@ export function leaveOutAhead(
   }
 
   return state.position >= next.queue.length
-    ? complete(next, completionStatus)
+    ? finishScreens(next, completionStatus)
     : enterPosition({ ...next, notice: null }, state.position);
 }
 
@@ -183,7 +174,8 @@ export function continueChallenge(state: LessonPlayerState): LessonPlayerState {
 }
 
 export function goBack(state: LessonPlayerState): LessonPlayerState {
-  const previousId = state.queue[state.position - 1];
+  const position = state.phase === "map" ? state.position : state.position - 1;
+  const previousId = state.queue[position];
 
   if (!canGoBack(state) || !previousId) {
     return state;
@@ -197,7 +189,7 @@ export function goBack(state: LessonPlayerState): LessonPlayerState {
     checkIssue: null,
     notice: null,
     phase: reviewing ? "feedback" : "playing",
-    position: state.position - 1,
+    position,
     reviewing,
     stepStartedAt: Date.now(),
   };
@@ -212,7 +204,23 @@ function isEarlierCopy(state: LessonPlayerState, position: number): boolean {
   return !(id in state.results) && state.queue.includes(id, position + 1);
 }
 
+/** A run resumed on the map has no results this sitting, so its last question would show unanswered. */
+function canLeaveMap(state: LessonPlayerState): boolean {
+  const lastId = state.queue[state.position] ?? "";
+  const last = state.steps[lastId];
+
+  return (
+    state.run.status !== "refused" &&
+    last !== undefined &&
+    (lastId in state.results || isReadStep(last))
+  );
+}
+
 export function canGoBack(state: LessonPlayerState): boolean {
+  if (state.phase === "map") {
+    return canLeaveMap(state);
+  }
+
   return (
     state.phase === "playing" &&
     state.position > 0 &&

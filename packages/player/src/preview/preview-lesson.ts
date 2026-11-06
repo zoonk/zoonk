@@ -28,7 +28,7 @@ export function buildLesson(
     level: "beginner",
     skills: [],
     steps: steps.map((step, position) => ({ ...step, position })),
-    summaryIdeas: [],
+    summary: null,
     targetLanguage: null,
     title: "Preview lesson",
     ...overrides,

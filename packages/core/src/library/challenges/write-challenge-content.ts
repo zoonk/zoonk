@@ -44,7 +44,7 @@ async function loadChallengeInputs({
   return { inputs: toChallengeCaseInputs({ lesson, spec }), status: "ready" };
 }
 
-/** Internal: the calling workflow must hold the lesson's content claim. */
+/** Internal: the calling workflow must hold the lesson's content claim and report it ready once saved. */
 export async function writeChallengeLessonContent({
   analytics,
   lessonId,

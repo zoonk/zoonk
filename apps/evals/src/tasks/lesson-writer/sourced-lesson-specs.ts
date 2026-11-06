@@ -44,6 +44,7 @@ export const SOURCED_LESSONS: Record<"en-tax-deadlines" | "pt-estabilidade", Sou
           kind: "hook",
           skills: [],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -52,6 +53,7 @@ export const SOURCED_LESSONS: Record<"en-tax-deadlines" | "pt-estabilidade", Sou
           kind: "explanation",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -60,6 +62,7 @@ export const SOURCED_LESSONS: Record<"en-tax-deadlines" | "pt-estabilidade", Sou
           kind: "explanation",
           skills: [1],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -68,6 +71,7 @@ export const SOURCED_LESSONS: Record<"en-tax-deadlines" | "pt-estabilidade", Sou
           kind: "check",
           skills: [1],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -76,6 +80,7 @@ export const SOURCED_LESSONS: Record<"en-tax-deadlines" | "pt-estabilidade", Sou
           kind: "application",
           skills: [0, 1],
           visual: null,
+          visualKind: "none",
         },
       ],
       skills: [
@@ -96,7 +101,6 @@ export const SOURCED_LESSONS: Record<"en-tax-deadlines" | "pt-estabilidade", Sou
           useCase: "Avoiding penalties when a return isn't ready in time.",
         },
       ],
-      supportMode: "explanationFirst",
       title: "Federal tax deadlines and extensions",
     },
   },
@@ -119,6 +123,7 @@ export const SOURCED_LESSONS: Record<"en-tax-deadlines" | "pt-estabilidade", Sou
           kind: "hook",
           skills: [],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -127,6 +132,7 @@ export const SOURCED_LESSONS: Record<"en-tax-deadlines" | "pt-estabilidade", Sou
           kind: "explanation",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -135,6 +141,7 @@ export const SOURCED_LESSONS: Record<"en-tax-deadlines" | "pt-estabilidade", Sou
           kind: "check",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -143,6 +150,7 @@ export const SOURCED_LESSONS: Record<"en-tax-deadlines" | "pt-estabilidade", Sou
           kind: "explanation",
           skills: [1],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -151,6 +159,7 @@ export const SOURCED_LESSONS: Record<"en-tax-deadlines" | "pt-estabilidade", Sou
           kind: "application",
           skills: [1],
           visual: null,
+          visualKind: "none",
         },
       ],
       skills: [
@@ -174,7 +183,6 @@ export const SOURCED_LESSONS: Record<"en-tax-deadlines" | "pt-estabilidade", Sou
           useCase: "Questões de concurso sobre direitos do servidor.",
         },
       ],
-      supportMode: "explanationFirst",
       title: "Estabilidade do servidor público",
     },
   },

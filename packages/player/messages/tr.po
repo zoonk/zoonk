@@ -67,11 +67,6 @@ msgid "Find the error"
 msgstr "Hatayı bul"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "nC6XLx"
-msgid "Follow the questions"
-msgstr "Soruları takip et"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "XsJOM5"
 msgid "Hands on"
 msgstr "Uygula"
@@ -618,7 +613,6 @@ msgstr "İki tarafı da {count} eşit gruba ayır"
 
 #: src/activities/balance/balance-controls.tsx
 #: src/activities/categorize/categorize-sorting.tsx
-#: src/activities/decision-tree/decision-tree-activity.tsx
 #: src/activities/molecule-builder/molecule-palette.tsx
 msgctxt "JkS37H"
 msgid "Undo"
@@ -1071,51 +1065,6 @@ msgstr "{number} numaralı kareye hangi genotip gelmeli?"
 msgctxt "_Z7gdQ"
 msgid "What goes in square {number}?"
 msgstr "{number} numaralı kareye ne gelmeli?"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "rUq4jt"
-msgid "The case"
-msgstr "Durum"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "8LkSSl"
-msgid "Still possible"
-msgstr "Kalan olasılıklar"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "5m07cc"
-msgid "Your answers"
-msgstr "Cevapların"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "aI6870"
-msgid "Your answers lead to"
-msgstr "Cevaplarına göre sonuç"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "PTXFe3"
-msgid "You reached {outcome} after {count, plural, =0 {# questions} one {# question} other {# questions}}."
-msgstr "{outcome} sonucuna {count, plural, =0 {# sorudan} other {# sorudan}} sonra ulaştın."
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "MtII9q"
-msgid "Question {number}. Still possible: {outcomes}."
-msgstr "Soru {number}. Kalan olasılıklar: {outcomes}."
-
-#: src/activities/decision-tree/decision-tree-review.tsx
-msgctxt "GSaFJS"
-msgid "The walk for this case"
-msgstr "Bu durum için izlenen yol"
-
-#: src/activities/decision-tree/decision-tree-review.tsx
-msgctxt "mJLCHX"
-msgid "You chose {branch}"
-msgstr "{branch} seçeneğini seçtin"
-
-#: src/activities/decision-tree/decision-tree-review.tsx
-msgctxt "eU5-OH"
-msgid "It leads to {outcome}."
-msgstr "Bu yol {outcome} sonucuna götürür."
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "9-BMAt"
@@ -3079,11 +3028,35 @@ msgctxt "G8bo_b"
 msgid "Not in your material"
 msgstr "Materyalinde yok"
 
+#. Under a lesson map whose ideas are levels, the smallest first, such as an organism inside a population.
+#: src/lesson/_components/lesson-map.tsx
+msgctxt "pHv5DW"
+msgid "Each level sits inside the next one."
+msgstr "Her katman bir sonrakinin içinde yer alır."
+
 #: src/lesson/_components/lesson-picture-options.tsx
 #: src/lesson/_components/lesson-pictures.tsx
 msgctxt "ct0jk_"
 msgid "Drawing the picture…"
 msgstr "Resmi çiziyoruz…"
+
+#. Label on the dashed frame around the sentences of a lesson screen that give an example.
+#: src/lesson/_components/marked-text.tsx
+msgctxt "xrCRnH"
+msgid "Example"
+msgstr "Örnek"
+
+#. Above a lesson screen: which of the lesson map's ideas the screen teaches, such as 'Idea 2 of 4'.
+#: src/lesson/_components/opening-map.tsx
+#: src/lesson/_components/orientation-strip.tsx
+msgctxt "CCQ4rY"
+msgid "Idea {current} of {total}"
+msgstr "Kavram {current} / {total}"
+
+#: src/lesson/_components/opening-map.tsx
+msgctxt "JHFGf_"
+msgid "{count, plural, one {# idea to discover in this lesson} other {# ideas to discover in this lesson}}"
+msgstr "{count, plural, other {Bu derste keşfedeceğin # kavram}}"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "P0MjYO"
@@ -3246,20 +3219,28 @@ msgctxt "c-JYNI"
 msgid "No thanks"
 msgstr "Hayır, teşekkürler"
 
+#. Quiet button under a lesson's explanation, in the learner's own words when they didn't understand it, as short as they'd say it (Portuguese: 'Não entendi'). Tapping it asks their study buddy to explain the screen more simply.
+#: src/lesson/controls/didnt-get-it-button.tsx
+msgctxt "hmESnc"
+msgid "I didn't get this"
+msgstr "Anlamadım"
+
 #. Button the learner taps to see the lesson's explanation before answering this question.
 #: src/lesson/controls/explain-first-button.tsx
 msgctxt "cd_q95"
 msgid "Explain first"
 msgstr "Önce açıklamayı gör"
 
-#: src/lesson/controls/summary-sheet.tsx
+#. A small diagram of this lesson's main ideas, drawn by the app. Not the chapter's mind map.
+#: src/lesson/controls/lesson-map-sheet.tsx
 #: src/lesson/lesson-aside.tsx
+#: src/lesson/lesson-map-screen.tsx
 #: src/lesson/lesson-screen-menu.tsx
-msgctxt "y7Zy67"
-msgid "Lesson summary"
-msgstr "Ders özeti"
+msgctxt "Oku1XG"
+msgid "Lesson map"
+msgstr "Ders haritası"
 
-#: src/lesson/controls/summary-sheet.tsx
+#: src/lesson/controls/lesson-map-sheet.tsx
 msgctxt "NYTGIb"
 msgid "Got it"
 msgstr "Anladım"
@@ -3391,6 +3372,12 @@ msgstr "Cevabını kontrol ediyoruz"
 msgctxt "N2IrpM"
 msgid "Confirm"
 msgstr "Onayla"
+
+#: src/lesson/lesson-action-bar.tsx
+#: src/lesson/steps/typed-answer-step.tsx
+msgctxt "h5CuXu"
+msgid "I don't know yet"
+msgstr "Henüz bilmiyorum"
 
 #: src/lesson/lesson-action-bar.tsx
 msgctxt "9-Ddtu"
@@ -3650,11 +3637,11 @@ msgctxt "ziwOEf"
 msgid "Your example"
 msgstr "Senin örneğin"
 
-#. Over a question the learner answers with a guess; “first” means before the lesson teaches the answer.
+#. Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored.
 #: src/lesson/steps/hook-step.tsx
-msgctxt "p6MDZm"
-msgid "Guess first"
-msgstr "Önce tahmin et"
+msgctxt "AlhfZ4"
+msgid "Just a guess, it doesn't count"
+msgstr "Sadece bir tahmin, puanlanmaz"
 
 #: src/lesson/steps/lesson-answer-field.tsx
 #: src/lesson/steps/spoken-answer-step.tsx
@@ -3733,11 +3720,6 @@ msgstr "Şu an yazamıyorum"
 msgctxt "lZZnLn"
 msgid "In your own words"
 msgstr "Kendi cümlelerinle"
-
-#: src/lesson/steps/typed-answer-step.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "Henüz bilmiyorum"
 
 #: src/lesson/steps/word-hints.tsx
 msgctxt "YgghdL"

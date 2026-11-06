@@ -52,43 +52,63 @@ function getFinishedShare<TPhase extends string>({
   return steps.length === 0 ? 0 : finished / steps.length;
 }
 
-/** The furthest phase the run reported a step of, since runs don't report every step. */
+/** Phases that run at the same time make one stage, and stages run in order. */
+export function toStages<TItem extends { alongside?: boolean }>(
+  phases: readonly TItem[],
+): TItem[][] {
+  const starts = phases.flatMap((phase, index) => (phase.alongside && index > 0 ? [] : [index]));
+  return starts.map((start, index) => phases.slice(start, starts[index + 1]));
+}
+
+/** The furthest stage the run reported a step of, since runs don't report every step. */
 function getActiveIndex<TPhase extends string>({
   definition,
-  phases,
   run,
+  stages,
 }: {
   definition: Definition<TPhase>;
-  phases: readonly { id: TPhase }[];
   run: RunState;
+  stages: readonly (readonly { id: TPhase }[])[];
 }): number {
-  const reported = phases.map((phase) =>
-    getPhaseSteps(definition, phase.id).some((step) => isReported(run, step)),
+  const reported = stages.map((stage) =>
+    stage.some((phase) =>
+      getPhaseSteps(definition, phase.id).some((step) => isReported(run, step)),
+    ),
   );
 
   const latest = Math.max(reported.lastIndexOf(true), 0);
-  const latestPhase = phases[latest];
-  const isLast = latest === phases.length - 1;
+  const latestStage = stages[latest];
+  const isLast = latest === stages.length - 1;
 
-  if (!latestPhase || isLast) {
+  if (!latestStage || isLast) {
     return latest;
   }
 
-  const finished = getFinishedShare({ definition, phase: latestPhase.id, run }) === 1;
+  const finished = latestStage.every(
+    (phase) => getFinishedShare({ definition, phase: phase.id, run }) === 1,
+  );
+
   return finished ? latest + 1 : latest;
 }
 
+/** A phase running alongside others is done once its own steps are, while they go on. */
 function getStatus({
   activeIndex,
   index,
+  isDoneAlongside,
   run,
 }: {
   activeIndex: number;
   index: number;
+  isDoneAlongside: boolean;
   run: RunState;
 }): PhaseStatus {
   if (index !== activeIndex) {
     return index < activeIndex ? "completed" : "pending";
+  }
+
+  if (isDoneAlongside) {
+    return "completed";
   }
 
   if (run.failure === "generation") {
@@ -125,21 +145,42 @@ export function getPhaseProgress<TPhase extends string>({
     };
   }
 
-  const activeIndex = getActiveIndex({ definition, phases, run });
-  const active = phases[activeIndex];
-  const finished = sumOf(phases.slice(0, activeIndex).map((phase) => phase.seconds));
-  const activeSeconds = active?.seconds ?? 0;
+  const stages = toStages(phases);
+  const activeIndex = getActiveIndex({ definition, run, stages });
 
-  const activeShare = active ? getFinishedShare({ definition, phase: active.id, run }) : 0;
+  const finished = sumOf(
+    stages.slice(0, activeIndex).flatMap((stage) => stage.map((phase) => phase.seconds)),
+  );
+
+  const active = (stages[activeIndex] ?? []).map((phase) => ({
+    seconds: phase.seconds,
+    share: getFinishedShare({ definition, phase: phase.id, run }),
+  }));
+
+  const running = active.filter((phase) => phase.share < 1);
 
   return {
-    activeMs: run.status === "failed" || !active ? null : activeSeconds * 1000,
-    phases: phases.map((phase, index) => ({
-      id: phase.id,
-      seconds: phase.seconds,
-      status: getStatus({ activeIndex, index, run }),
-    })),
-    progress: toPercent(finished + activeShare * activeSeconds, total),
-    target: toPercent(finished + activeSeconds, total),
+    activeMs:
+      run.status === "failed" || active.length === 0
+        ? null
+        : Math.max(...(running.length > 0 ? running : active).map((phase) => phase.seconds)) * 1000,
+    phases: stages.flatMap((stage, index) =>
+      stage.map((phase) => ({
+        id: phase.id,
+        seconds: phase.seconds,
+        status: getStatus({
+          activeIndex,
+          index,
+          isDoneAlongside:
+            stage.length > 1 && getFinishedShare({ definition, phase: phase.id, run }) === 1,
+          run,
+        }),
+      })),
+    ),
+    progress: toPercent(
+      finished + sumOf(active.map((phase) => phase.share * phase.seconds)),
+      total,
+    ),
+    target: toPercent(finished + sumOf(active.map((phase) => phase.seconds)), total),
   };
 }

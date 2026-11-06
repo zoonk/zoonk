@@ -1,5 +1,8 @@
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
-import { numberedCheckContent } from "@zoonk/testing/fixtures/playable-step-contents";
+import {
+  numberedCheckContent,
+  playableStepContent,
+} from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
@@ -9,6 +12,7 @@ import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 import {
   activityStep,
+  contentStep,
   explanationStep,
   inlineImage,
   numberedCheckStep,
@@ -75,6 +79,47 @@ describe("numbered pictures", () => {
           .toBeEnabled();
       }),
     );
+  });
+
+  it("keeps an opening guess's answer hidden until its numbered picture is drawn", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+
+    const step = contentStep("hook", {
+      content: { ...playableStepContent.hook, image: numberedCheckContent.image },
+      imagePending: true,
+    });
+
+    const lesson = buildLesson([step]);
+
+    const getLessonPictures = vi
+      .fn<NonNullable<LessonPlayerAdapters["getLessonPictures"]>>()
+      .mockResolvedValue([]);
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
+
+    const dontKnow = page.getByRole("button", { exact: true, name: "I don't know yet" });
+    const revealed = page.getByRole("status").filter({ hasText: "Here's the answer" });
+    await expect.element(dontKnow).toBeDisabled();
+
+    await press("Enter");
+    await expect.element(revealed).not.toBeInTheDocument();
+
+    getLessonPictures.mockResolvedValue([
+      { image: inlineImage({ alt: numberedCheckContent.image.alt }), stepId: step.id },
+    ]);
+
+    await vi.advanceTimersByTimeAsync(PICTURE_POLL_MS);
+
+    await expect
+      .element(page.getByRole("img", { name: numberedCheckContent.image.alt }))
+      .toBeVisible();
+
+    await dontKnow.click();
+    await expect.element(revealed).toBeVisible();
   });
 
   it("waits for a labeled diagram's numbered picture before taking labels", async () => {

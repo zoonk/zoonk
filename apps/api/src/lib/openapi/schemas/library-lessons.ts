@@ -2,6 +2,7 @@ import { type TeachingStepKind } from "@zoonk/core/lesson-player/playable-lesson
 import { lessonTutorSuggestionSchema } from "@zoonk/core/lesson-questions/contract";
 import { activityExpectedSchema } from "@zoonk/core/library/activities/expected-answer";
 import { toleranceSchema } from "@zoonk/core/library/activities/schemas";
+import { stepMarksSchema } from "@zoonk/core/library/marks/contract";
 import { stepContentSchemas } from "@zoonk/core/library/steps/contract";
 import { EXERCISE_KINDS } from "@zoonk/core/player/contracts/exercise-content";
 import { type LessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
@@ -9,6 +10,7 @@ import { CourseLevel } from "@zoonk/db";
 import { baseMapViewSchema } from "@zoonk/player/base-map-view";
 import { z } from "zod";
 import { serializedStepSchema } from "./language-exercise";
+import { lessonMapResponseSchema } from "./lesson-map";
 
 const stepBaseShape = {
   id: z.uuid(),
@@ -93,6 +95,7 @@ function teachingStepSchema<TKind extends TeachingStepKind>(kind: TKind) {
           "The screen asks for a picture that is still being drawn (the lesson was written moments ago): read the lesson again in a few seconds for `image`",
       }),
     kind: z.literal(kind),
+    marks: stepMarksSchema,
     optionPictures: z
       .record(z.string(), stepImageObjectSchema)
       .optional()
@@ -194,10 +197,11 @@ export const playableLibraryLessonResponseSchema = z
         level: z.enum(CourseLevel),
         skills: z.array(lessonSkillSchema),
         steps: z.array(playableStepSchema),
-        summaryIdeas: z
-          .array(z.string())
+        summary: lessonMapResponseSchema
+          .nullable()
           .meta({
-            description: "The summary card, each idea in one sentence; empty until it's written",
+            description:
+              "The lesson map, shown as its own screen after the last one (except after testing out) and from the lesson's menu once it ends. Null for a lesson that ends on its own summary screen, for a challenge, and before its map is written",
           }),
         targetLanguage: z.string().nullable(),
       }),

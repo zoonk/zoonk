@@ -2,6 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "warm_up_deck_end": "f8d641e958ae8cb71d4ba45171795f1623ec1d6e3b4106b93f3b5d202a3d75a6",
+  "warm_up_guess_hint": "da8b75caba92202a5ef53024f48289f7110aaed36789a20ffee68e680166de1f",
   "warm_up_lesson_ready": "52720e3f82323d74e6ec4fb3241fe6456874240442fcf117b913a406ebc2519a",
   "warm_up_next": "bf2d83e99c5e4a014213e11a209b4b62021f456725fab29dc09750f2266ee52e",
   "warm_up_plan_ready": "d5d103ee65a8d8f781fa913cb8b8911bdc8ce4e499612093ef4343fd0ac4b114",
@@ -19,6 +20,8 @@
     <string name="warm_up_next">다음 문제</string>
     <!-- Under the last question's answer: there are no more questions to guess. -->
     <string name="warm_up_deck_end">지금은 여기까지예요.</string>
+    <!-- Under a warm-up question: a guess never counts -->
+    <string name="warm_up_guess_hint">지금 틀려 보면 나중에 더 잘 기억할 수 있어요.</string>
     <!-- Title of the plan's wait once the plan is ready and the learner is still guessing. -->
     <string name="warm_up_plan_ready">계획이 준비됐어요</string>
     <!-- Under "Your plan is ready" on the daily study time question, which comes before the plan shows. -->

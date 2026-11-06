@@ -3,8 +3,10 @@ package com.zoonk.android.feature.player.steps
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.unit.Dp
 import com.zoonk.android.data.Resource
 import com.zoonk.android.feature.activities.choiceAnswer
 import com.zoonk.android.feature.audio.GradeOutcome
@@ -15,6 +17,7 @@ import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.challengeProgress
 import com.zoonk.android.feature.player.engine.isRequiredPictureDrawing
+import com.zoonk.android.feature.player.engine.lessonMap
 import com.zoonk.android.feature.player.engine.pickChallengeChoice
 import com.zoonk.android.feature.player.language.LanguageStepView
 import com.zoonk.android.feature.player.language.LessonLanguage
@@ -27,6 +30,15 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLi
 
 /** The action bar's main button, for a screen that hands it keyboard focus once its answer is complete. */
 val LocalPrimaryFocus = staticCompositionLocalOf<FocusRequester?> { null }
+
+/** How tall a screen's one column shows at once; null where the screen isn't in one column. */
+val LocalStepViewHeight = compositionLocalOf<Dp?> { null }
+
+/**
+ * "I didn't get this" on a knowledge lesson's explanation: opens the buddy on the screen, already
+ * asking it to explain it more simply; null where the buddy can't be asked.
+ */
+val LocalAskSimpler = compositionLocalOf<(() -> Unit)?> { null }
 
 /** What a screen's view can ask the player to do. */
 @Stable
@@ -91,16 +103,19 @@ fun StepView(
     val answer = state.answers[step.id]
     val result = state.results[step.id]
     val locked = state.phase != LessonPhase.Playing || step.isRequiredPictureDrawing
+    // Language lessons keep their look; a knowledge lesson's screens read the map its strip and opening draw.
+    val marking = if (language.languages.isLanguageLesson) null else LessonMarking(state.lessonMap?.map)
 
     CompositionLocalProvider(LocalStepChecked provides (state.phase == LessonPhase.Feedback)) {
         when (val content = step.content) {
-            is StepContent.Guess -> GuessHookView(step, content, answer, result, locked, actions, part)
-            is StepContent.Fact -> FactHookView(step, content, part)
-            is StepContent.Explanation -> ExplanationView(step, content, actions, part)
-            is StepContent.WorkedExample -> WorkedExampleView(step, content, revealed = state.revealed[step.id] ?: 1, part)
-            is StepContent.Check -> CheckView(content, answer, result, locked, screen, actions, part)
+            is StepContent.Guess -> GuessHookView(step, content, answer, result, locked, actions, part, marking)
+            is StepContent.Fact -> FactHookView(step, content, part, marking)
+            is StepContent.Explanation -> ExplanationView(step, content, actions, part, marking)
+            is StepContent.WorkedExample -> WorkedExampleView(step, content, revealed = state.revealed[step.id] ?: 1, part, marking)
+            is StepContent.Check -> CheckView(content, answer, result, locked, screen, actions, part, marking)
             is StepContent.Summary -> if (part.showsScreen) SummaryView(content)
-            is StepContent.TypedAnswer -> TypedAnswerView(step, content, answer, state, screen, actions, part)
+            is StepContent.Map -> if (part.showsScreen) LessonMapStepView(content)
+            is StepContent.TypedAnswer -> TypedAnswerView(step, content, answer, state, screen, actions, part, marking)
             is StepContent.SpokenAnswer -> SpokenAnswerView(step, content, answer, state, actions, navigator, language, part)
             is StepContent.Activity -> ActivityView(step, content, answer, result, state, actions, part)
             is StepContent.Challenge -> ChallengeView(step, content, answer, result, state, actions, part)

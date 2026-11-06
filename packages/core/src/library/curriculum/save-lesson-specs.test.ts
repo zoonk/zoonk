@@ -166,6 +166,11 @@ describe(saveLessonSpecs, () => {
       specRunId: workflowRunId,
       specStatus: "completed",
     });
+
+    expect([stored.spec, split.spec]).toStrictEqual([
+      expect.objectContaining({ plannedAt: expect.any(String) }),
+      expect.objectContaining({ plannedAt: expect.any(String) }),
+    ]);
   });
 
   it("resolves several split parts together, with one search-terms call for their skills and one for the lessons", async () => {

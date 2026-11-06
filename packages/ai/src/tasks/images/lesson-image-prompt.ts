@@ -1,18 +1,20 @@
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { type ImageScene } from "./image-scene-schema";
-import { type ImagePalette } from "./image-style";
+import { type ImageCanvas, type ImagePalette } from "./image-style";
 import styleBlock from "./image-style.prompt.md";
 
 const LAYOUT_RULES: Record<ImageScene["layout"], string> = {
   comparison:
-    "Two things compared, one above the other with a thin horizontal divider between them: the focal object in the top half and the first supporting object in the bottom half, each drawn once, so what differs between them is easy to see.",
+    "Two things compared side by side with a thin vertical divider between them: the focal object in the left half and the first supporting object in the right half, each drawn once, so what differs between them is easy to see.",
   sequence:
-    "A before and an after (or a cause and its effect) one above the other, linked by one thin dashed arrow pointing down.",
-  single: "One object, or one whole with its parts, in the center.",
+    "A before and an after (or a cause and its effect) side by side, linked by one thin dashed arrow pointing right.",
+  single: "One object, one whole with its parts, or one small scene of one place, in the center.",
 };
 
-const CANVAS_RULE =
-  "Portrait canvas (4:5). Keep everything inside the canvas with comfortable margins.";
+const CANVAS_RULES: Record<ImageCanvas, string> = {
+  landscape: "Landscape canvas (3:2). Keep everything inside the canvas with comfortable margins.",
+  square: "Square canvas (1:1). Keep everything inside the canvas with comfortable margins.",
+};
 
 function formatPalette(palette: ImagePalette): string {
   return `Soft colors: ${palette.colors.join(", ")}. Accent: ${palette.accent}.`;
@@ -81,21 +83,25 @@ export function formatImageSceneInput({
 }
 
 export function buildLessonImagePrompt({
+  canvas,
   palette,
   sceneInput,
 }: {
+  canvas: ImageCanvas;
   palette: ImagePalette;
   sceneInput: string;
 }): string {
   return [
     styleBlock.trim(),
-    `# Canvas\n\n${CANVAS_RULE}`,
+    `# Canvas\n\n${CANVAS_RULES[canvas]}`,
     `# Palette\n\n${formatPalette(palette)}`,
     sceneInput,
   ].join("\n\n");
 }
 
 /** Provenance hashes it, so any change shows as a new prompt version on later images. */
-export const LESSON_IMAGE_TEMPLATE = [styleBlock, JSON.stringify(LAYOUT_RULES), CANVAS_RULE].join(
-  "\n",
-);
+export const LESSON_IMAGE_TEMPLATE = [
+  styleBlock,
+  JSON.stringify(LAYOUT_RULES),
+  JSON.stringify(CANVAS_RULES),
+].join("\n");

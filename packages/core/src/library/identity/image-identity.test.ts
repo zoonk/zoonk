@@ -12,12 +12,14 @@ import { resolveLibraryIdentity } from "./resolve-library-identity";
 
 function imageRequest(overrides: {
   prompt: string;
+  canvas?: "landscape" | "square";
   hasLabels?: boolean;
   language?: string;
   ownerId?: string | null;
   textAllowed?: boolean;
 }) {
   return {
+    canvas: "landscape" as const,
     hasLabels: false,
     kind: "image" as const,
     language: "pt",
@@ -26,8 +28,16 @@ function imageRequest(overrides: {
   };
 }
 
-function imageKey({ language, prompt }: { language: string | null; prompt: string }) {
-  return buildImageReuseKey({ language, prompt });
+function imageKey({
+  canvas = "landscape",
+  language,
+  prompt,
+}: {
+  canvas?: "landscape" | "square";
+  language: string | null;
+  prompt: string;
+}) {
+  return buildImageReuseKey({ canvas, language, prompt });
 }
 
 describe("image identity", () => {
@@ -141,6 +151,58 @@ describe("image identity", () => {
     });
 
     expect(searchSpy).toHaveBeenCalledOnce();
+  });
+
+  it("reuses only pictures of the slot's shape: square for an option, wide or older portrait for a screen", async () => {
+    const word = uniqueWord();
+    const prompt = `Focal object: a ${word} leaf.`;
+
+    const [wide, portrait, square] = await Promise.all([
+      mediaAssetFixture({
+        height: 1024,
+        prompt,
+        reuseKey: imageKey({ language: null, prompt }),
+        styleVersion: 1,
+        width: 1536,
+      }),
+      mediaAssetFixture({
+        height: 1280,
+        prompt,
+        reuseKey: imageKey({ language: null, prompt: `${prompt} 2` }),
+        styleVersion: 1,
+        width: 1024,
+      }),
+      mediaAssetFixture({
+        height: 1024,
+        prompt,
+        reuseKey: imageKey({ canvas: "square", language: null, prompt: `${prompt} 3` }),
+        styleVersion: 1,
+        width: 1024,
+      }),
+    ]);
+
+    mockSearchTerms([word]);
+    const decisionSpy = mockDecision(null);
+
+    await expect(
+      resolveLibraryIdentity({ request: imageRequest({ canvas: "square", prompt }) }),
+    ).resolves.toMatchObject({
+      identityKey: imageKey({ canvas: "square", language: null, prompt }),
+      kind: "generate",
+    });
+
+    expect(getCandidateIds(decisionSpy)).toStrictEqual([square.id]);
+
+    await expect(
+      resolveLibraryIdentity({ request: imageRequest({ prompt }) }),
+    ).resolves.toMatchObject({ id: wide.id, match: "exact" });
+
+    decisionSpy.mockClear();
+    await resolveLibraryIdentity({ request: imageRequest({ prompt: `A ${word} on a branch` }) });
+
+    expect(getCandidateIds(decisionSpy).toSorted()).toStrictEqual(
+      [wide.id, portrait.id].toSorted(),
+    );
   });
 
   it("never gives a private image to another learner", async () => {

@@ -170,14 +170,19 @@ describe(buildSourceIdentityKey, () => {
 });
 
 describe(buildImageReuseKey, () => {
-  it("matches the same scene and label language, whatever style drew it", () => {
-    const scene = { language: null, prompt: "A red apple on a table" };
+  it("matches the same scene, canvas and label language, whatever style drew it", () => {
+    const scene = {
+      canvas: "landscape" as const,
+      language: null,
+      prompt: "A red apple on a table",
+    };
 
     const key = buildImageReuseKey(scene);
 
     expect(buildImageReuseKey({ ...scene, prompt: "a red apple on a table." })).toBe(key);
     expect(key).toMatch(/^image:any:/u);
     expect(buildImageReuseKey({ ...scene, language: "pt" })).not.toBe(key);
+    expect(buildImageReuseKey({ ...scene, canvas: "square" })).toMatch(/^image:square:any:/u);
   });
 });
 

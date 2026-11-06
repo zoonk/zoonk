@@ -17,6 +17,27 @@ export const foodChainEnergyLesson: SeedLesson = {
   steps: [
     {
       content: {
+        text: t(
+          "Duda's class keeps a terrarium with grass, grasshoppers and one frog. The grass soaks up sunlight all day, yet the tank can only feed a single frog. Where does all that energy go?",
+          "A turma da Duda mantém um terrário com capim, gafanhotos e um sapo. O capim recebe sol o dia todo, mas o terrário só sustenta um sapo. Para onde vai tanta energia?",
+        ),
+        variant: "text",
+      },
+      kind: "hook",
+    },
+    {
+      content: {
+        text: t(
+          "Each link of a food chain is a **trophic level**:\n\n- **Producers** make their own food from sunlight: the grass\n- **Primary consumers** eat producers: the grasshopper\n- **Secondary consumers** eat them: the frog\n- **Tertiary consumers** come next: the snake\n\nEnergy enters as sunlight and moves up one meal at a time.",
+          "Cada elo de uma cadeia alimentar é um **nível trófico**:\n\n- **Produtores** fazem o próprio alimento com a luz do sol: o capim\n- **Consumidores primários** comem os produtores: o gafanhoto\n- **Consumidores secundários** comem esses: o sapo\n- **Consumidores terciários** vêm depois: a cobra\n\nA energia entra como luz do sol e sobe uma refeição de cada vez.",
+        ),
+        title: t("Levels in a food chain", "Os níveis de uma cadeia alimentar"),
+      },
+      kind: "explanation",
+      skill: "energy-flow",
+    },
+    {
+      content: {
         options: [
           guess("most", t("About 7,500 kcal", "Cerca de 7.500 kcal")),
           guess("tenth", t("About 1,000 kcal", "Cerca de 1.000 kcal")),
@@ -34,17 +55,6 @@ export const foodChainEnergyLesson: SeedLesson = {
         variant: "guess",
       },
       kind: "hook",
-    },
-    {
-      content: {
-        text: t(
-          "Each link of a food chain is a **trophic level**:\n\n- **Producers** make their own food from sunlight: the grass\n- **Primary consumers** eat producers: the grasshopper\n- **Secondary consumers** eat them: the frog\n- **Tertiary consumers** come next: the snake\n\nEnergy enters as sunlight and moves up one meal at a time.",
-          "Cada elo de uma cadeia alimentar é um **nível trófico**:\n\n- **Produtores** fazem o próprio alimento com a luz do sol: o capim\n- **Consumidores primários** comem os produtores: o gafanhoto\n- **Consumidores secundários** comem esses: o sapo\n- **Consumidores terciários** vêm depois: a cobra\n\nA energia entra como luz do sol e sobe uma refeição de cada vez.",
-        ),
-        title: t("Levels in a food chain", "Os níveis de uma cadeia alimentar"),
-      },
-      kind: "explanation",
-      skill: "energy-flow",
     },
     {
       content: {
@@ -291,6 +301,5 @@ export const foodChainEnergyLesson: SeedLesson = {
       kind: "summary",
     },
   ],
-  supportMode: "explanationFirst",
   title: t("Energy in food chains", "Energia nas cadeias alimentares"),
 };

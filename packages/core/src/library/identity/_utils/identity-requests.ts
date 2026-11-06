@@ -1,4 +1,5 @@
 import { type LibraryIdentitySubject } from "@zoonk/ai/tasks/identity/subject";
+import { type ImageCanvas } from "@zoonk/ai/tasks/images/style";
 import { type CourseLevel } from "@zoonk/db";
 import { type TextSearch } from "./text-search-sql";
 
@@ -57,6 +58,7 @@ export type SourceIdentityRequest = IdentityRequestBase & {
 
 export type ImageIdentityRequest = IdentityRequestBase & {
   kind: "image";
+  canvas: ImageCanvas;
   prompt: string;
   hasLabels: boolean;
   textAllowed: boolean;

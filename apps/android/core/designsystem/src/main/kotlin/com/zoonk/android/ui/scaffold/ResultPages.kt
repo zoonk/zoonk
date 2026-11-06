@@ -33,7 +33,8 @@ import com.zoonk.android.ui.components.CelebrationScope
  * was done and how it went (the title, its detail, the saving or failed line, the numbers and what
  * they break down into, and what it earned, such as the day's moment). [next] goes after it, above
  * the docked way on: what's next. A result with nothing for [next] still splits, its page after the
- * split holding only the way on, rather than spanning the fold.
+ * split holding only the way on, rather than spanning the fold. [doneWhenSplit] follows [done] on its
+ * page only when the result splits, where that page has room the one column doesn't.
  * Every page reads in [columnModifier], the caller's own column width, so a screen keeps its edges
  * without a split. [withMoment] is whether the moment is on screen yet, which waits for the save.
  */
@@ -43,6 +44,7 @@ fun ResultPages(
     withMoment: Boolean,
     columnModifier: Modifier,
     done: @Composable ColumnScope.() -> Unit,
+    doneWhenSplit: @Composable ColumnScope.() -> Unit = {},
     next: @Composable ColumnScope.() -> Unit,
 ) {
     // The moment plays once: made again after a fold or a rotation, the result shows it as it finished.
@@ -73,8 +75,10 @@ fun ResultPages(
                     doneScroll,
                     Alignment.End,
                     columnModifier,
-                    done,
-                )
+                ) {
+                    done()
+                    doneWhenSplit()
+                }
                 ResultPage(
                     Modifier.fillMaxSize().padding(start = fold.end).semantics { isTraversalGroup = true },
                     nextScroll,

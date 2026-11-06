@@ -5,13 +5,14 @@ import { type LessonScreenKind } from "../lesson-spec/lesson-spec-rules";
 import { lessonVisualSchema } from "../visuals/visual-schema";
 
 const MIN_OPTIONS = 2;
-const MAX_GUESS_OPTIONS = 4;
-const MAX_CHECK_OPTIONS = 5;
+export const MAX_GUESS_OPTIONS = 4;
+export const MAX_CHECK_OPTIONS = 5;
 const MIN_WORKED_STEPS = 2;
 const MAX_WORKED_STEPS = 8;
 const MAX_KEY_POINTS = 5;
 const MAX_ACCEPTED_ANSWERS = 5;
-const MAX_SUMMARY_IDEAS = 5;
+
+export const LESSON_MAP_SHAPES = ["hub", "nested"] as const;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the kind comes first, then the setup, then the answers. */
 
@@ -91,6 +92,7 @@ const mathCheckScreen = z.object({
   math: GENERATED_ITEM_SCHEMAS.numeric.shape.math,
   /** Why the right answer is right, with `{name}` placeholders instead of computed numbers. */
   correctReason: z.string(),
+  image: imageRequestSchema,
 });
 
 const typedAnswerScreen = z.object({
@@ -120,6 +122,12 @@ const checkScreenWithBasis = checkScreen.extend({ basis });
 const mathCheckScreenWithBasis = mathCheckScreen.extend({ basis });
 const typedAnswerScreenWithBasis = typedAnswerScreen.extend({ basis });
 
+/** The lesson map; code cleans it without cutting ideas (`normalizeLessonMap`). */
+const lessonMapSchema = z.object({
+  shape: z.enum(LESSON_MAP_SHAPES),
+  ideas: z.array(z.object({ label: z.string(), text: z.string() })),
+});
+
 /* oxlint-enable eslint/sort-keys */
 
 /** One schema per written kind, so variants can ask for exactly the kind they rewrite. */
@@ -134,32 +142,54 @@ export const WRITTEN_SCREEN_SCHEMAS = {
   workedExample: workedExampleScreen,
 } as const;
 
-export const writtenScreenSchema = z.union([
-  hookGuessScreen,
-  hookTextScreen,
-  explanationScreen,
-  workedExampleScreen,
-  checkScreenWithBasis,
-  mathCheckScreenWithBasis,
-  typedAnswerScreenWithBasis,
-  activityScreen,
-]);
+function screenUnion<LEAD extends z.ZodRawShape>(lead: LEAD) {
+  const withLead = <SHAPE extends z.ZodRawShape>(screen: z.ZodObject<SHAPE>) =>
+    z.object({ ...lead, ...screen.shape });
+
+  return z.union([
+    withLead(hookGuessScreen),
+    withLead(hookTextScreen),
+    withLead(explanationScreen),
+    withLead(workedExampleScreen),
+    withLead(checkScreenWithBasis),
+    withLead(mathCheckScreenWithBasis),
+    withLead(typedAnswerScreenWithBasis),
+    withLead(activityScreen),
+  ]);
+}
+
+const writtenScreenSchema = screenUnion({});
+
+/** A screen with its number first, the shape the fix reads its lesson in and answers in. */
+export const numberedScreenSchema = screenUnion({ screen: z.number().int() });
 
 export const writtenLessonSchema = z.object({
   screens: z.array(writtenScreenSchema),
-  summary: z.array(z.string()).min(1).max(MAX_SUMMARY_IDEAS),
+  summary: lessonMapSchema,
 });
 
 export type WrittenScreen = z.infer<typeof writtenScreenSchema>;
 export type WrittenScreenKind = WrittenScreen["kind"];
-export type WrittenLesson = z.infer<typeof writtenLessonSchema>;
+export type WrittenLessonMap = z.infer<typeof lessonMapSchema>;
+
+/** A lesson map as it's saved and drawn; maps saved before labels existed have none. */
+export type LessonMap = {
+  ideas: { label?: string; text: string }[];
+  shape: (typeof LESSON_MAP_SHAPES)[number];
+};
+
+/** The writer's lesson, its map already through `normalizeLessonMap`. */
+export type WrittenLesson = Omit<z.infer<typeof writtenLessonSchema>, "summary"> & {
+  summary: LessonMap;
+};
 
 const WRITTEN_KINDS_BY_SCREEN: Readonly<Record<LessonScreenKind, readonly WrittenScreenKind[]>> = {
   activity: ["activity"],
   application: ["check", "mathCheck"],
   check: ["check", "mathCheck"],
   explanation: ["explanation"],
-  hook: ["hookGuess", "hookText"],
+  guess: ["hookGuess"],
+  hook: ["hookText"],
   workedExample: ["workedExample"],
 };
 

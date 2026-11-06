@@ -19,6 +19,7 @@ internal class FakeTutorApi : TutorApi {
     var earlier: TutorThread? = null
     var threadReads = 0
     var refusal: ApiException? = null
+    var threadFailure: ApiException? = null
     var answers: (String) -> Flow<TutorAnswerEvent> = { flow { emit(TutorAnswerEvent.Finish) } }
     var question: (String) -> TutorTurn = { id -> turn(id, TutorTurn.Status.Completed, "") }
     val asked = mutableListOf<Ask>()
@@ -38,6 +39,7 @@ internal class FakeTutorApi : TutorApi {
         threadReads++
         val read = thread
         gate?.await()
+        threadFailure?.let { throw it }
         return read
     }
 

@@ -67,11 +67,6 @@ msgid "Find the error"
 msgstr "Encuentra el error"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "nC6XLx"
-msgid "Follow the questions"
-msgstr "Guíate por las preguntas"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "XsJOM5"
 msgid "Hands on"
 msgstr "Manos a la obra"
@@ -618,7 +613,6 @@ msgstr "Dividir ambos lados en {count} grupos iguales"
 
 #: src/activities/balance/balance-controls.tsx
 #: src/activities/categorize/categorize-sorting.tsx
-#: src/activities/decision-tree/decision-tree-activity.tsx
 #: src/activities/molecule-builder/molecule-palette.tsx
 msgctxt "JkS37H"
 msgid "Undo"
@@ -1071,51 +1065,6 @@ msgstr "¿Qué genotipo va en la casilla {number}?"
 msgctxt "_Z7gdQ"
 msgid "What goes in square {number}?"
 msgstr "¿Qué va en la casilla {number}?"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "rUq4jt"
-msgid "The case"
-msgstr "El caso"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "8LkSSl"
-msgid "Still possible"
-msgstr "Opciones aún posibles"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "5m07cc"
-msgid "Your answers"
-msgstr "Tus respuestas"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "aI6870"
-msgid "Your answers lead to"
-msgstr "Tus respuestas llevan a"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "PTXFe3"
-msgid "You reached {outcome} after {count, plural, =0 {# questions} one {# question} other {# questions}}."
-msgstr "Llegaste a {outcome} después de {count, plural, =0 {# preguntas} one {# pregunta} other {# preguntas}}."
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "MtII9q"
-msgid "Question {number}. Still possible: {outcomes}."
-msgstr "Pregunta {number}. Opciones aún posibles: {outcomes}."
-
-#: src/activities/decision-tree/decision-tree-review.tsx
-msgctxt "GSaFJS"
-msgid "The walk for this case"
-msgstr "El recorrido para este caso"
-
-#: src/activities/decision-tree/decision-tree-review.tsx
-msgctxt "mJLCHX"
-msgid "You chose {branch}"
-msgstr "Elegiste {branch}"
-
-#: src/activities/decision-tree/decision-tree-review.tsx
-msgctxt "eU5-OH"
-msgid "It leads to {outcome}."
-msgstr "Lleva a {outcome}."
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "9-BMAt"
@@ -3079,11 +3028,35 @@ msgctxt "G8bo_b"
 msgid "Not in your material"
 msgstr "No aparece en tu material"
 
+#. Under a lesson map whose ideas are levels, the smallest first, such as an organism inside a population.
+#: src/lesson/_components/lesson-map.tsx
+msgctxt "pHv5DW"
+msgid "Each level sits inside the next one."
+msgstr "Cada nivel está dentro del siguiente."
+
 #: src/lesson/_components/lesson-picture-options.tsx
 #: src/lesson/_components/lesson-pictures.tsx
 msgctxt "ct0jk_"
 msgid "Drawing the picture…"
 msgstr "Dibujando la imagen…"
+
+#. Label on the dashed frame around the sentences of a lesson screen that give an example.
+#: src/lesson/_components/marked-text.tsx
+msgctxt "xrCRnH"
+msgid "Example"
+msgstr "Ejemplo"
+
+#. Above a lesson screen: which of the lesson map's ideas the screen teaches, such as 'Idea 2 of 4'.
+#: src/lesson/_components/opening-map.tsx
+#: src/lesson/_components/orientation-strip.tsx
+msgctxt "CCQ4rY"
+msgid "Idea {current} of {total}"
+msgstr "Idea {current} de {total}"
+
+#: src/lesson/_components/opening-map.tsx
+msgctxt "JHFGf_"
+msgid "{count, plural, one {# idea to discover in this lesson} other {# ideas to discover in this lesson}}"
+msgstr "{count, plural, one {# idea por descubrir en esta lección} other {# ideas por descubrir en esta lección}}"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "P0MjYO"
@@ -3246,20 +3219,28 @@ msgctxt "c-JYNI"
 msgid "No thanks"
 msgstr "No, gracias"
 
+#. Quiet button under a lesson's explanation, in the learner's own words when they didn't understand it, as short as they'd say it (Portuguese: 'Não entendi'). Tapping it asks their study buddy to explain the screen more simply.
+#: src/lesson/controls/didnt-get-it-button.tsx
+msgctxt "hmESnc"
+msgid "I didn't get this"
+msgstr "No entendí"
+
 #. Button the learner taps to see the lesson's explanation before answering this question.
 #: src/lesson/controls/explain-first-button.tsx
 msgctxt "cd_q95"
 msgid "Explain first"
 msgstr "Ver primero la explicación"
 
-#: src/lesson/controls/summary-sheet.tsx
+#. A small diagram of this lesson's main ideas, drawn by the app. Not the chapter's mind map.
+#: src/lesson/controls/lesson-map-sheet.tsx
 #: src/lesson/lesson-aside.tsx
+#: src/lesson/lesson-map-screen.tsx
 #: src/lesson/lesson-screen-menu.tsx
-msgctxt "y7Zy67"
-msgid "Lesson summary"
-msgstr "Resumen de la lección"
+msgctxt "Oku1XG"
+msgid "Lesson map"
+msgstr "Mapa de la lección"
 
-#: src/lesson/controls/summary-sheet.tsx
+#: src/lesson/controls/lesson-map-sheet.tsx
 msgctxt "NYTGIb"
 msgid "Got it"
 msgstr "Entendido"
@@ -3391,6 +3372,12 @@ msgstr "Comprobando tu respuesta"
 msgctxt "N2IrpM"
 msgid "Confirm"
 msgstr "Confirmar"
+
+#: src/lesson/lesson-action-bar.tsx
+#: src/lesson/steps/typed-answer-step.tsx
+msgctxt "h5CuXu"
+msgid "I don't know yet"
+msgstr "Aún no lo sé"
 
 #: src/lesson/lesson-action-bar.tsx
 msgctxt "9-Ddtu"
@@ -3650,11 +3637,11 @@ msgctxt "ziwOEf"
 msgid "Your example"
 msgstr "Tu ejemplo"
 
-#. Over a question the learner answers with a guess; “first” means before the lesson teaches the answer.
+#. Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored.
 #: src/lesson/steps/hook-step.tsx
-msgctxt "p6MDZm"
-msgid "Guess first"
-msgstr "Primero, haz una suposición"
+msgctxt "AlhfZ4"
+msgid "Just a guess, it doesn't count"
+msgstr "Solo una suposición, no cuenta"
 
 #: src/lesson/steps/lesson-answer-field.tsx
 #: src/lesson/steps/spoken-answer-step.tsx
@@ -3733,11 +3720,6 @@ msgstr "No puedo escribir ahora"
 msgctxt "lZZnLn"
 msgid "In your own words"
 msgstr "Con tus propias palabras"
-
-#: src/lesson/steps/typed-answer-step.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "Aún no lo sé"
 
 #: src/lesson/steps/word-hints.tsx
 msgctxt "YgghdL"

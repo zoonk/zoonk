@@ -1,4 +1,6 @@
 import { getWorkflowMetadata } from "workflow";
+import { waitForRunToken } from "../_shared/run-token";
+import { checkPicture } from "./check-picture";
 import {
   type ImageAnalytics,
   createStepImageStep,
@@ -6,7 +8,6 @@ import {
   listLessonImageStepsStep,
   listLessonOptionPicturesStep,
 } from "./steps/lesson-image-steps";
-import { checkPictureStep } from "./steps/picture-check-steps";
 
 export type LessonImagesInput = { lessonId: string; analytics?: ImageAnalytics };
 
@@ -34,6 +35,7 @@ export async function lessonImagesWorkflow({
 
   const { workflowRunId } = getWorkflowMetadata();
   const context = { contentScope: "shared" as const, traceId: workflowRunId, ...analytics };
+  await waitForRunToken(`lesson-images:${lessonId}`);
 
   const [stepIds, options] = await Promise.all([
     listLessonImageStepsStep(lessonId),
@@ -48,7 +50,13 @@ export async function lessonImagesWorkflow({
   await Promise.allSettled(
     outcomes.flatMap((outcome) =>
       outcome.status === "fulfilled" && outcome.value.status === "generated"
-        ? [checkPictureStep({ analytics: context, assetId: outcome.value.mediaAssetId })]
+        ? [
+            checkPicture({
+              alt: outcome.value.alt,
+              analytics: context,
+              assetId: outcome.value.mediaAssetId,
+            }),
+          ]
         : [],
     ),
   );

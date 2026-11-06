@@ -1,22 +1,60 @@
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { type CourseLevel } from "@zoonk/db";
 import { describe, expect, it } from "vitest";
 import {
+  hubMap,
+  temperatureGuess,
   temperatureSpec,
   writtenTemperatureLesson,
   writtenTypedAnswer,
 } from "./_test-utils/written-lessons";
 import { checkScreenText, checkWrittenLesson } from "./lesson-code-checks";
 
-type CheckOptions = { allowActivityFallback?: boolean; shortAnswers?: boolean };
+type CheckOptions = {
+  allowActivityFallback?: boolean;
+  language?: string;
+  level?: CourseLevel;
+  shortAnswers?: boolean;
+  spec?: ReturnType<typeof temperatureSpec>;
+};
 
 function check(lesson: WrittenLesson, options: CheckOptions = {}) {
   return checkWrittenLesson({
-    ...options,
     language: "en",
     lesson,
     level: "beginner",
     spec: temperatureSpec(),
+    ...options,
   });
+}
+
+const INTERMEDIATE: CheckOptions = { level: "intermediate" };
+
+const GUESS_AT = 2;
+
+function guessPlanned(): CheckOptions {
+  const spec = temperatureSpec();
+
+  const guess = {
+    ...spec.screens[1]!,
+    kind: "guess" as const,
+    visual: null,
+    visualKind: "none" as const,
+  };
+
+  return { spec: { ...spec, screens: spec.screens.toSpliced(GUESS_AT, 0, guess) } };
+}
+
+function withGuess(guess: WrittenScreen): WrittenLesson {
+  const lesson = writtenTemperatureLesson();
+
+  const screens = lesson.screens.map((screen) =>
+    "basis" in screen && screen.basis && screen.basis.screen > GUESS_AT
+      ? { ...screen, basis: { ...screen.basis, screen: screen.basis.screen + 1 } }
+      : screen,
+  );
+
+  return { ...lesson, screens: screens.toSpliced(GUESS_AT, 0, guess) };
 }
 
 function withScreen(index: number, screen: WrittenScreen): WrittenLesson {
@@ -107,6 +145,91 @@ describe(checkWrittenLesson, () => {
     expect(codesOf(withScreen(4, explanation("The chart below shows the morning.")))).toStrictEqual(
       [[4, "visual"]],
     );
+  });
+
+  it("keeps the picture the plan gives a question, and flags a question planned with one that shows none", () => {
+    const question = writtenTemperatureLesson().screens[6];
+
+    if (question?.kind !== "check") {
+      throw new Error("Screen 7 is a check.");
+    }
+
+    const spec = temperatureSpec();
+
+    const planned = {
+      ...spec,
+      screens: spec.screens.map((screen, index) =>
+        index === 6
+          ? {
+              ...screen,
+              visual: "Two thermometers, at −2 °C and at 3 °C.",
+              visualKind: "picture" as const,
+            }
+          : screen,
+      ),
+    };
+
+    const image = {
+      alt: "Two thermometers side by side: the left one at −2 °C, the right one at 3 °C.",
+      parts: null,
+      prompt: "Two thermometers side by side, the left at −2 °C and the right at 3 °C.",
+    };
+
+    const pictured = check(withScreen(6, { ...question, image }), { spec: planned });
+
+    expect(pictured.problems).toStrictEqual([]);
+
+    expect(pictured.screens[6]?.ok && pictured.screens[6].content).toMatchObject({
+      image: { alt: image.alt, prompt: image.prompt },
+    });
+
+    expect(codesOf(writtenTemperatureLesson(), { spec: planned })).toContainEqual([
+      6,
+      "plannedVisual",
+    ]);
+
+    const optionPictures = {
+      ...question,
+      options: question.options.map((option, index) => ({
+        ...option,
+        picture: { alt: `Thermometer ${index + 1}`, prompt: `A thermometer, number ${index + 1}` },
+      })),
+    };
+
+    expect(codesOf(withScreen(6, optionPictures), { spec: planned })).not.toContainEqual([
+      6,
+      "plannedVisual",
+    ]);
+  });
+
+  it("keeps the picture the plan gives a question that calculates, and flags one that shows none", () => {
+    const question = writtenTemperatureLesson().screens[3];
+
+    if (question?.kind !== "mathCheck") {
+      throw new Error("Screen 4 is a math check.");
+    }
+
+    const spec = temperatureSpec();
+
+    const planned = {
+      ...spec,
+      screens: spec.screens.map((screen, index) =>
+        index === 3
+          ? { ...screen, visual: "A thermometer and its scale.", visualKind: "picture" as const }
+          : screen,
+      ),
+    };
+
+    const image = { alt: "A thermometer with a scale.", prompt: "A thermometer with a scale." };
+    const pictured = check(withScreen(3, { ...question, image }), { spec: planned });
+
+    expect(pictured.problems).toStrictEqual([]);
+    expect(pictured.screens[3]?.ok && pictured.screens[3].content).toMatchObject({ image });
+
+    expect(codesOf(writtenTemperatureLesson(), { spec: planned })).toContainEqual([
+      3,
+      "plannedVisual",
+    ]);
   });
 
   it("keeps the numbered picture a question asks about, even where the plan drew none", () => {
@@ -209,6 +332,18 @@ describe(checkWrittenLesson, () => {
     expect(content && "options" in content && content.options).toStrictEqual(
       expect.arrayContaining([expect.objectContaining({ picture: expect.any(Object) })]),
     );
+
+    const bothDrawings = {
+      alt: "1 is a glass tube; 2 is a screen",
+      prompt: "Two thermometers, 1 and 2",
+    };
+
+    const samePicture = {
+      ...pictured,
+      options: pictured.options.map((option) => ({ ...option, picture: bothDrawings })),
+    };
+
+    expect(codesOf(withScreen(7, samePicture))).toStrictEqual([[7, "visual"]]);
   });
 
   it("draws the picture a teaching screen points at, even a diagram the plan didn't ask for", () => {
@@ -304,7 +439,11 @@ describe(checkWrittenLesson, () => {
       throw new Error("Screen 8 is a check.");
     }
 
-    const fallback = { ...application, question: "Where does the dot stop after the rise?" };
+    const fallback = {
+      ...application,
+      basis: { quote: "First climb to zero: that takes 3 degrees.", screen: 3 },
+      question: "Where does the dot stop after the rise?",
+    };
 
     expect(codesOf(withScreen(5, fallback))).toContainEqual([5, "screenKind"]);
     expect(codesOf(withScreen(5, fallback), { allowActivityFallback: true })).toStrictEqual([]);
@@ -395,23 +534,18 @@ describe(checkWrittenLesson, () => {
   });
 
   it("rejects options a learner can't tell apart", () => {
-    const hook = writtenTemperatureLesson().screens[0];
-
-    if (hook?.kind !== "hookGuess") {
-      throw new Error("Screen 1 is a guess.");
-    }
+    const hook = temperatureGuess();
 
     const duplicated = { ...hook, options: [...hook.options, { isCorrect: false, text: "2 °c" }] };
 
-    expect(codesOf(withScreen(0, duplicated))).toContainEqual([0, "duplicateOptions"]);
+    expect(codesOf(withGuess(duplicated), guessPlanned())).toContainEqual([
+      GUESS_AT,
+      "duplicateOptions",
+    ]);
   });
 
   it("rejects options the screen's data disagrees with, as sensors A to E against options A to D", () => {
-    const hook = writtenTemperatureLesson().screens[0];
-
-    if (hook?.kind !== "hookGuess") {
-      throw new Error("Screen 1 is a guess.");
-    }
+    const hook = temperatureGuess();
 
     const sensors = {
       ...hook,
@@ -420,7 +554,7 @@ describe(checkWrittenLesson, () => {
         "Which sensor is the most precise?\n\n| Sensor | mm |\n|---|---:|\n| A | 49,8 |\n| B | 50,4 |\n| C | 50,0 |\n| D | 49,6 |\n| E | 50,1 |",
     };
 
-    expect(codesOf(withScreen(0, sensors))).toStrictEqual([[0, "optionData"]]);
+    expect(codesOf(withGuess(sensors), guessPlanned())).toStrictEqual([[GUESS_AT, "optionData"]]);
   });
 
   it("sends a typed answer to the fix pass unless the lesson's learners' exams ask written answers", () => {
@@ -450,32 +584,30 @@ describe(checkWrittenLesson, () => {
   it("rejects Markdown the player shows as marks and text a writer left unfinished", () => {
     const split = explanation("_The speaker opens the session.\nThe floor is yours._");
 
-    expect(codesOf(withScreen(1, split))).toStrictEqual([
-      [1, "markdown"],
-      [1, "markdown"],
+    expect(codesOf(withScreen(4, split))).toStrictEqual([
+      [4, "markdown"],
+      [4, "markdown"],
     ]);
 
-    expect(codesOf(withScreen(1, explanation("[Insert an example here]")))).toStrictEqual([
-      [1, "placeholder"],
+    expect(codesOf(withScreen(4, explanation("[Insert an example here]")))).toStrictEqual([
+      [4, "placeholder"],
     ]);
 
     const lesson = writtenTemperatureLesson();
 
-    expect(codesOf({ ...lesson, summary: ["A rise moves up.", "## Recap"] })).toStrictEqual([
-      [null, "markdown"],
-    ]);
+    expect(codesOf({ ...lesson, summary: hubMap(["A rise moves up.", "## Recap"]) })).toStrictEqual(
+      [[null, "markdown"]],
+    );
   });
 
   it("rejects a guess's reveal that points at an option by its place", () => {
-    const hook = writtenTemperatureLesson().screens[0];
-
-    if (hook?.kind !== "hookGuess") {
-      throw new Error("Screen 1 is a guess.");
-    }
+    const hook = temperatureGuess();
 
     const byPlace = { ...hook, reveal: "The right answer is the second." };
 
-    expect(codesOf(withScreen(0, byPlace))).toStrictEqual([[0, "optionPosition"]]);
+    expect(codesOf(withGuess(byPlace), guessPlanned())).toStrictEqual([
+      [GUESS_AT, "optionPosition"],
+    ]);
   });
 
   it("rejects a check that asks an earlier check's question with other numbers", () => {
@@ -499,11 +631,70 @@ describe(checkWrittenLesson, () => {
     const lesson = writtenTemperatureLesson();
 
     expect(
-      codesOf({ ...lesson, summary: ["A rise moves up.", "A rise moves up."] }),
+      codesOf({ ...lesson, summary: hubMap(["A rise moves up.", "A rise moves up."]) }),
     ).toContainEqual([null, "summary"]);
 
-    expect(codesOf({ ...lesson, summary: ["One. Two. Three."] })).toContainEqual([null, "summary"]);
-    expect(codesOf({ ...lesson, summary: [] })).toContainEqual([null, "summary"]);
+    expect(codesOf({ ...lesson, summary: hubMap(["One. Two. Three."]) })).toContainEqual([
+      null,
+      "summary",
+    ]);
+
+    expect(codesOf({ ...lesson, summary: hubMap([]) })).toContainEqual([null, "summary"]);
+  });
+
+  it("counts a Japanese summary idea's sentences, which end on 。 with no space after", () => {
+    const lesson = writtenTemperatureLesson();
+
+    const japanese = (text: string) =>
+      codesOf({ ...lesson, summary: hubMap([text]) }, { language: "ja" });
+
+    expect(
+      japanese("資産は会社が持つものです。負債は返すお金です。純資産は残りです。"),
+    ).toContainEqual([null, "summary"]);
+
+    expect(japanese("資産は会社が持つものです。")).not.toContainEqual([null, "summary"]);
+  });
+
+  it("opens every lesson with a scene and writes a guess only where the plan puts one", () => {
+    const openingGuess = withScreen(0, temperatureGuess());
+    const sceneKind: [number, string] = [0, "screenKind"];
+    const guessKind: [number, string] = [GUESS_AT, "screenKind"];
+    const sceneAsGuess = withGuess(writtenTemperatureLesson().screens[0]!);
+
+    expect(codesOf(openingGuess)).toContainEqual(sceneKind);
+    expect(codesOf(openingGuess, INTERMEDIATE)).toContainEqual(sceneKind);
+    expect(codesOf(openingGuess, { ...guessPlanned(), ...INTERMEDIATE })).toContainEqual(sceneKind);
+    expect(codesOf(withGuess(temperatureGuess()), guessPlanned())).toStrictEqual([]);
+    expect(codesOf(sceneAsGuess, guessPlanned())).toContainEqual(guessKind);
+    expect(codesOf(writtenTemperatureLesson())).not.toContainEqual(sceneKind);
+  });
+
+  it("lets two named ideas share a sentence, as two things with the same trait", () => {
+    const lesson = writtenTemperatureLesson();
+
+    const summary = {
+      ideas: [
+        { label: "Solid", text: "It keeps a fixed volume." },
+        { label: "Liquid", text: "It keeps a fixed volume." },
+      ],
+      shape: "hub" as const,
+    };
+
+    expect(codesOf({ ...lesson, summary })).not.toContainEqual([null, "summary"]);
+  });
+
+  it("keeps two ideas that differ only in accents, as a grandmother and a grandfather", () => {
+    const lesson = writtenTemperatureLesson();
+
+    const summary = {
+      ideas: [
+        { label: "Avó", text: "Mora no interior." },
+        { label: "Avô", text: "Mora no interior." },
+      ],
+      shape: "hub" as const,
+    };
+
+    expect(codesOf({ ...lesson, summary })).not.toContainEqual([null, "summary"]);
   });
 });
 

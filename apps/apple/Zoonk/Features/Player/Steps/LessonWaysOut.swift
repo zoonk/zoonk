@@ -32,9 +32,7 @@ struct LessonWaysOut: View {
             store.dontKnow()
           } label: {
             Label {
-              Text(
-                "I don't know yet", tableName: "Player",
-                comment: "Shows a good answer to a written question")
+              Text(Self.dontKnowTitle)
             } icon: {
               Image(systemName: "questionmark.circle")
             }
@@ -57,6 +55,12 @@ struct LessonWaysOut: View {
     .buttonStyle(.borderless)
     .font(.subheadline)
   }
+
+  static let dontKnowTitle = LocalizedStringResource(
+    "I don't know yet", table: "Player",
+    comment:
+      "Reveals the answer: a good answer to a written question, or the answer to the lesson's opening guess"
+  )
 }
 
 struct LessonExampleLine: View {
@@ -102,7 +106,7 @@ struct LessonScreenHelp: View {
       .foregroundStyle(.secondary)
 
       FlowLayout {
-        ForEach((store.lesson?.tutorSuggestions ?? []).prefix(2), id: \.id) { suggestion in
+        ForEach(store.suggestionsBeside.prefix(2), id: \.id) { suggestion in
           Button {
             store.ask(suggestionId: suggestion.id.rawValue)
           } label: {
@@ -125,7 +129,7 @@ struct LessonScreenHelp: View {
   }
 }
 
-/// After two misses in a row on the same idea, or a long pause on an explanation.
+/// After two misses in a row on the same idea, or a long pause on a language lesson's explanation.
 struct LessonAskBuddyOffer: View {
   enum Reason {
     case misses, pause
@@ -280,5 +284,45 @@ extension LessonStep {
     let words = WordCount.count(text)
     let readingSeconds = Double(words) / 150 * 60
     return .seconds(max(45, readingSeconds * 3))
+  }
+}
+
+extension PlayableLesson {
+  /// Every explanation and worked example of a knowledge lesson.
+  func offersDidntGetIt(on step: LessonStep) -> Bool {
+    step.isExplaining && targetLanguage == nil
+  }
+}
+
+/// Learners who don't follow a screen rarely think to ask the buddy, so one tap asks for them.
+struct LessonDidntGetIt: View {
+  @Environment(\.lessonTutor) private var tutor
+
+  let store: LessonPlayerStore
+
+  var body: some View {
+    // A guest can't talk with the buddy yet: the tap would ask them to sign up instead.
+    if tutor.panel != nil, !store.isGuest {
+      Button {
+        store.ask(suggestionId: "simpler", sendsAtOnce: true)
+      } label: {
+        Label {
+          Text(
+            "I didn't get this", tableName: "Player",
+            comment:
+              "Quiet button under a lesson's explanation, in the learner's own voice: what they'd say when the screen lost them (\"Não entendi\" in Portuguese). Tapping it has the buddy explain the screen more simply."
+          )
+        } icon: {
+          Image(systemName: "questionmark.bubble")
+        }
+      }
+      .buttonStyle(.borderless)
+      .font(.subheadline)
+      .foregroundStyle(.secondary)
+      .accessibilityHint(
+        Text(
+          "Your buddy explains this screen more simply", tableName: "Player",
+          comment: "VoiceOver hint of the \"I didn't get this\" button under an explanation"))
+    }
   }
 }

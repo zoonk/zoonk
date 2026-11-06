@@ -92,9 +92,12 @@ struct LessonVerdictView: View {
     .accessibilityElement(children: .contain)
   }
 
+  /// A guess's reveal already names the right option, and the option list marks it.
   @ViewBuilder
   private var correctAnswerLine: some View {
-    if !result.isCorrect, let correctAnswer = result.correctAnswer, step.kind != .typedAnswer {
+    if !result.isCorrect, let correctAnswer = result.correctAnswer, step.kind != .typedAnswer,
+      step.kind != .hook
+    {
       LabeledText(
         label: Text(
           "Correct answer", tableName: "Player", comment: "Before the right answer after a miss"),

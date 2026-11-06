@@ -58,7 +58,7 @@ type LessonPlayerConfig = {
   exampleLinesWriting: Promise<unknown> | null;
   lesson: Pick<
     PlayableLibraryLesson,
-    "estimatedMinutes" | "id" | "language" | "summaryIdeas" | "targetLanguage" | "title"
+    "estimatedMinutes" | "id" | "language" | "summary" | "targetLanguage" | "title"
   >;
   linkComponent: PlayerLinkComponent;
   onExit: () => void;

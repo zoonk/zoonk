@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.activities
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -34,65 +35,67 @@ class ActivityKitFlowTest {
     private fun shows(text: String) = rule.onNodeWithText(text, substring = true).performScrollTo().assertIsDisplayed()
 
     @Test
-    fun aCanvasAnswerComesBackAfterAndroidClosesTheAppInTheBackground() {
+    fun aPartialCanvasComesBackAfterAndroidClosesTheAppInTheBackground() {
         val restoration = StateRestorationTester(rule)
-        harness.play(listOf(ActivityFixtures.step("decisionTree")), restoration = restoration) {
-            grade = { _, _ -> checkResult(true, expected = ActivityFixtures.expected("decisionTree")) }
+        harness.play(listOf(ActivityFixtures.step("stepSolver")), restoration = restoration) {
+            grade = { _, _ -> checkResult(true, expected = ActivityFixtures.expected("stepSolver")) }
         }
-        tap("Needles")
-        tap("In bundles")
+        tap("Take 25% off")
 
         harness.viewModel = harness.openAgain()
         restoration.emulateSavedInstanceStateRestore()
 
+        rule.onNodeWithContentDescription("Step 2 of 2.").assertExists()
+        rule.onNodeWithText("Check").assertIsNotEnabled()
+        tap("$45")
         rule.onNodeWithText("Check").assertIsEnabled()
         harness.tap("Check")
-        shows("It leads to Pine.")
+        shows("You pay tax on what you pay.")
     }
 
-    /** A missed check that comes back starts a new round, which Android keeps when it closes the app, so its path and answer come back together. */
     @Test
     fun aCanvasInALaterRoundComesBackWholeAfterAndroidClosesTheAppInTheBackground() {
         val restoration = StateRestorationTester(rule)
-        harness.play(listOf(ActivityFixtures.step("decisionTree", id = TREE)), restoration = restoration) {
-            grade = { _, _ -> checkResult(false, expected = ActivityFixtures.expected("decisionTree")) }
+        harness.play(listOf(ActivityFixtures.step("stepSolver", id = ACTIVITY)), restoration = restoration) {
+            grade = { _, _ -> checkResult(false, expected = ActivityFixtures.expected("stepSolver")) }
         }
-        tap("Needles")
-        tap("In bundles")
+        tap("Take 25% off")
+        tap("$45")
         harness.tap("Check")
         harness.tap("Continue")
-        tap("Needles")
-        tap("In bundles")
+        tap("Take 25% off")
 
         // The server has the missed check, so the run it resumes is rebuilt from it.
-        harness.api.runAnswers = """[{"answeredAt":"2026-10-28T10:01:00Z","isCorrect":false,"stepId":"$TREE"}]"""
+        harness.api.runAnswers = """[{"answeredAt":"2026-10-28T10:01:00Z","isCorrect":false,"stepId":"$ACTIVITY"}]"""
         harness.viewModel = harness.openAgain()
         restoration.emulateSavedInstanceStateRestore()
 
-        rule.onNodeWithContentDescription("Your answers").assertExists()
+        rule.onNodeWithContentDescription("Step 2 of 2.").assertExists()
+        rule.onNodeWithText("Check").assertIsNotEnabled()
+        tap("$45")
         rule.onNodeWithText("Check").assertIsEnabled()
     }
 
-    /** Android closing the app on a missed check's feedback brings back its retry, which starts over rather than showing the missed path. */
     @Test
     fun aMissedChecksRetryStartsOverAfterAndroidClosesTheAppOnItsFeedback() {
         val restoration = StateRestorationTester(rule)
-        harness.play(listOf(ActivityFixtures.step("decisionTree", id = TREE)), restoration = restoration) {
-            grade = { _, _ -> checkResult(false, expected = ActivityFixtures.expected("decisionTree")) }
+        harness.play(listOf(ActivityFixtures.step("stepSolver", id = ACTIVITY)), restoration = restoration) {
+            grade = { _, _ -> checkResult(false, expected = ActivityFixtures.expected("stepSolver")) }
         }
-        tap("Needles")
-        tap("In bundles")
+        tap("Take 25% off")
+        tap("$45")
         harness.tap("Check")
 
-        harness.api.runAnswers = """[{"answeredAt":"2026-10-28T10:01:00Z","isCorrect":false,"stepId":"$TREE"}]"""
+        harness.api.runAnswers = """[{"answeredAt":"2026-10-28T10:01:00Z","isCorrect":false,"stepId":"$ACTIVITY"}]"""
         harness.viewModel = harness.openAgain()
         restoration.emulateSavedInstanceStateRestore()
 
-        rule.onNodeWithContentDescription("Your answers").assertDoesNotExist()
+        rule.onNodeWithContentDescription("Step 1 of 2.").assertExists()
+        rule.onNodeWithText("Take 25% off").assertHasClickAction()
         rule.onNodeWithText("Check").assertIsNotEnabled()
     }
 
     private companion object {
-        const val TREE = "00000000-0000-4000-8000-000000000201"
+        const val ACTIVITY = "00000000-0000-4000-8000-000000000201"
     }
 }

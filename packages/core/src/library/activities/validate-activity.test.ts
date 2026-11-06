@@ -9,6 +9,7 @@ import {
   activityTemplates,
   exploreActivitySchema,
 } from "./activity-templates";
+import { DEFAULT_PROCESS_ICON } from "./process-icons";
 import { validateActivity, validateExploreActivity } from "./validate-activity";
 
 const fixtures = activityContentFixtures satisfies Record<ActivityTemplateId, unknown>;
@@ -367,15 +368,25 @@ describe(validateActivity, () => {
     expect(validateActivity(placed).ok).toBe(true);
   });
 
-  it("offers only icons the player draws for process steps", () => {
+  it("keeps a process whose step names an icon the player can't draw, with the default icon", () => {
     const madeUpIcon = structuredClone(fixtures.processOrder);
 
-    madeUpIcon.fields.steps = madeUpIcon.fields.steps.map((step) => ({
-      ...step,
-      icon: "sunshine",
-    }));
+    madeUpIcon.fields.steps = madeUpIcon.fields.steps.map((step, index) =>
+      index === 0 ? { ...step, icon: "sunshine" } : step,
+    );
 
-    expect(issueCodes(madeUpIcon)).toContain("invalidSchema");
+    const activity = validateActivity(madeUpIcon);
+
+    const explore = validateExploreActivity({
+      ...explored("processOrder"),
+      fields: madeUpIcon.fields,
+    });
+
+    const firstIcon = (result: typeof activity | typeof explore) =>
+      result.ok ? (result.content.fields as typeof madeUpIcon.fields).steps[0]?.icon : null;
+
+    expect(firstIcon(activity)).toBe(DEFAULT_PROCESS_ICON);
+    expect(firstIcon(explore)).toBe(DEFAULT_PROCESS_ICON);
   });
 
   it("rejects molecules that can't be built with at most triple bonds or are too big", () => {

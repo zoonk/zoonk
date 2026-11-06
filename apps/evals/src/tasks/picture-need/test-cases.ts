@@ -166,6 +166,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
       kind: "check",
     },
   }),
+  // The scene's sentence already says everything the tray shows.
   pictureCase({
     decorative: true,
     id: "spec-visual-en-water-cycle-1",
@@ -283,7 +284,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
     },
   }),
   pictureCase({
-    decorative: true,
+    decorative: false,
     id: "spec-visual-pt-ligacao-covalente-1",
     language: "pt",
     lesson: "Ligação covalente",
@@ -370,6 +371,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
       kind: "explanation",
     },
   }),
+  // Everyone knows a camel's hump, and the question doesn't depend on seeing it.
   pictureCase({
     decorative: true,
     id: "spec-visual-pt-camelo-adaptacoes-1",
@@ -383,6 +385,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
       kind: "hook",
     },
   }),
+  // The same camel again with the hump everyone knows now labeled.
   pictureCase({
     decorative: true,
     id: "spec-visual-pt-camelo-adaptacoes-2",
@@ -656,7 +659,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
     },
   }),
   pictureCase({
-    decorative: true,
+    decorative: false,
     id: "plan-pt-eletron-nucleo-overview-5",
     language: "pt",
     lesson: "Por que o elétron não cai no núcleo",
@@ -696,8 +699,9 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
       kind: "explanation",
     },
   }),
+  // The brief already walks the key question by question, so branches would draw its text again.
   pictureCase({
-    decorative: false,
+    decorative: true,
     id: "plan-en-tree-key-beginner-2",
     language: "en",
     lesson: "Name a tree from one leaf",
@@ -763,6 +767,164 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
       brief:
         "Two scenes side by side, labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of it. The learner picks which scene fits 'Nayara coloca um livro na caixa vermelha'. Tempting wrong answer: scene 2 (same box and book, opposite action).",
       kind: "application",
+    },
+  }),
+  // A workshop scene shows nothing the question about ownership needs.
+  pictureCase({
+    decorative: true,
+    id: "plan-pt-patrimonio-liquido-beginner-0",
+    language: "pt",
+    lesson: "Patrimônio líquido",
+    picture:
+      "A oficina de Davi com suas ferramentas, um cliente que ainda vai pagar e um documento de dívida com o banco, sem valores.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Mostre a oficina de Davi: ferramentas, um cliente que ainda vai pagar e uma dívida com o banco. Termine com a pergunta da aula, sem pedir resposta: quanto da oficina é de Davi de verdade?",
+      kind: "hook",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "plan-pt-niveis-ecologicos-beginner-2",
+    language: "pt",
+    lesson: "Níveis de organização ecológica",
+    picture:
+      "O lago com todos os sapos-cururus destacados como um grupo; plantas aquáticas e água ao redor.",
+    previousPicture:
+      "O lago com um sapo-cururu destacado e outros sapos-cururus da mesma espécie visíveis.",
+    screen: {
+      brief:
+        "Explique que uma população reúne os organismos de uma mesma espécie que vivem em uma área ao mesmo tempo. No lago, todos os sapos-cururus formam uma população.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "plan-pt-receitas-regulares-overview-1",
+    language: "pt",
+    lesson: "Receitas regulares e eventuais",
+    picture:
+      "No local de trabalho, Igor recebendo dinheiro pelo seu trabalho, com o dinheiro em destaque.",
+    previousPicture:
+      "Igor recebendo um pagamento no local de trabalho, com um calendário na parede.",
+    screen: {
+      brief:
+        "Explique que receita é o dinheiro que uma pessoa recebe. O pagamento que entra para Igor pelo seu trabalho é um exemplo.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "check-pt-eletrons-valencia-camadas",
+    language: "pt",
+    lesson: "Átomos e elétrons de valência",
+    picture:
+      "Um átomo com o núcleo no centro e dois anéis ao redor: 2 pontos no anel de dentro e 4 pontos no anel de fora.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Um átomo tem 2 elétrons na camada de dentro e 4 na camada de fora. Pergunte quantos são de valência. Erro tentador: somar todos e responder 6.",
+      kind: "check",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "check-en-series-circuit-bulb-out",
+    language: "en",
+    lesson: "Series and parallel circuits",
+    picture:
+      "A battery wired in one loop through two bulbs labeled A and B, one after the other, with no branches.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Two bulbs are wired one after the other in a single loop with a battery. Bulb A burns out. Ask what happens to bulb B. Tempting wrong answer: B gets brighter because it gets all the current.",
+      kind: "check",
+    },
+  }),
+  // It shows the answer the learner is asked to predict.
+  pictureCase({
+    decorative: true,
+    id: "check-en-series-circuit-shows-answer",
+    language: "en",
+    lesson: "Series and parallel circuits",
+    picture:
+      "A single loop with a battery and two bulbs labeled A and B; bulb A is broken and bulb B is dark.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Two bulbs are wired one after the other in a single loop with a battery. Bulb A burns out. Ask what happens to bulb B. Tempting wrong answer: B gets brighter because it gets all the current.",
+      kind: "check",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "guess-pt-mitose-cromossomos",
+    language: "pt",
+    lesson: "Mitose",
+    picture:
+      "Uma célula com quatro cromossomos em forma de X alinhados no meio e fios ligando cada lado de cada X aos dois polos da célula.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Os cromossomos se alinharam no meio da célula, presos por fios aos dois lados. Pergunte o que acontece a seguir: cada X se separa em duas metades que vão para lados opostos; erro tentador: os X inteiros vão metade para cada lado.",
+      kind: "guess",
+    },
+  }),
+  // An everyday scene its sentence already describes in full.
+  pictureCase({
+    decorative: true,
+    id: "hook-en-supply-demand-market",
+    language: "en",
+    lesson: "Supply and demand",
+    picture: "Maya at a farmers market stall looking at a sign with the price of strawberries.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Maya buys strawberries every week. This week the box costs twice as much after a frost hit the farms. Why did the price jump?",
+      kind: "hook",
+    },
+  }),
+  // A person doing what the sentence says, with nothing to see that teaches the idea.
+  pictureCase({
+    decorative: true,
+    id: "explanation-pt-custos-aluguel",
+    language: "pt",
+    lesson: "Custos fixos e variáveis",
+    picture: "Cauê entregando o dinheiro do aluguel ao dono da loja, na porta do ateliê.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "O aluguel do ateliê de Cauê é R$ 800,00 por mês, faça ele 10 ou 60 peças. Esse gasto que não acompanha a produção é um custo fixo.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "explanation-en-burn-skin-layers",
+    language: "en",
+    lesson: "First aid for burns",
+    picture:
+      "A cross-section of skin with three labeled layers, the outer layer, the middle layer and the fat below, and a burn reaching only the outer layer.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "A first-degree burn harms only the skin's outer layer: red and painful, no blisters. Name it and show where it stops.",
+      kind: "explanation",
+    },
+  }),
+  // The words say everything the picture would show, and everyone knows the look of a lemon.
+  pictureCase({
+    decorative: true,
+    id: "hook-en-ph-lemon",
+    language: "en",
+    lesson: "The pH scale",
+    picture: "Dana squeezing a lemon over a plate of fish in her kitchen.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Dana squeezes lemon over fish and the fish turns white at the edges, as if cooked. What in the lemon did that?",
+      kind: "hook",
     },
   }),
 ];

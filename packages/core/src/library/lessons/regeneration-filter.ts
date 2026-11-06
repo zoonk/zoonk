@@ -1,3 +1,5 @@
+import { CURRENT_STEPS } from "./lesson-versions";
+
 export const MAX_LESSONS_PER_REGENERATION = 25;
 
 export type LessonRegenerationFilter = { model?: string | null; promptVersion?: string | null };
@@ -8,7 +10,7 @@ export function getLessonRegenerationWhere({ model, promptVersion }: LessonRegen
     specStatus: "completed" as const,
     steps: {
       some: {
-        retiredAt: null,
+        ...CURRENT_STEPS,
         ...(model ? { model } : {}),
         ...(promptVersion ? { promptVersion } : {}),
       },

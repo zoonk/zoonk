@@ -13,6 +13,10 @@ export type CurriculumScope = {
 
 const PRIVATE_CONTENT_MODEL = "google/gemini-3.8-flash";
 
+/**
+ * On 8 private lessons (4 Nov 2026), Luna's plans tied Terra's and Sol's (8.15, 8.18, 8.10) at a
+ * tenth of Sol's price, ahead of Gemini 3.8 Flash (7.61).
+ */
 const PRIVATE_LESSON_SPEC_MODEL = "openai/gpt-6-luna";
 
 export function getScopeModel(scope: Pick<CurriculumScope, "ownerId">): string | undefined {

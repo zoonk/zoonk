@@ -11,14 +11,12 @@ import { getLessonWaitingState } from "../lookahead/get-lesson-waiting-state";
 import { signedInCourseGoal } from "../view-models/_test-utils/course-goal";
 import { setupPlayableLesson } from "./_test-utils/playable-lesson-setup";
 import { getLessonProgress } from "./get-lesson-progress";
-import { getLessonSupport } from "./get-lesson-support";
 import { getLibraryLessonOutline, getPlayableLibraryLesson } from "./get-playable-library-lesson";
 
 describe("lesson render reads", () => {
   it.each([
     "playable",
     "outline",
-    "support",
     "progress",
     "generation",
     "stored team",
@@ -50,7 +48,6 @@ describe("lesson render reads", () => {
       playable: () => getPlayableLibraryLesson(input),
       progress: () => getLessonProgress(input),
       "stored team": () => getChallengeTeam(input),
-      support: () => getLessonSupport(input),
     };
 
     const counts = await countDatabaseStatements<unknown>(readers[name]);
@@ -63,7 +60,6 @@ describe("lesson render reads", () => {
       playable: expect.objectContaining({ status: "ready" }),
       progress: expect.any(Array),
       "stored team": expect.objectContaining({ status: "ready" }),
-      support: "explanationFirst",
     };
 
     expect(counts.result).toStrictEqual(expected[name]);

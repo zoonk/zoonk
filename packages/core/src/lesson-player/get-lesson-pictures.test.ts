@@ -11,6 +11,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
+import { publishStagedLessonVersion } from "../library/lessons/_utils/save-lesson-content";
 import { getLessonPictures } from "./get-lesson-pictures";
 import { getPlayableLibraryLesson } from "./get-playable-library-lesson";
 
@@ -85,6 +86,38 @@ describe(getLessonPictures, () => {
     const pictures = await getLessonPictures({ lessonId: lesson.id, stepIds: [waiting!.id] });
 
     expect(pictures.map((drawn) => drawn.stepId)).toStrictEqual([waiting?.id]);
+  });
+
+  it("never hands over a staged fix's pictures, and keeps a replaced version's for a lesson already open", async () => {
+    const { lesson, steps } = await playableLessonFixture({
+      steps: [{ content: check, kind: "check" }],
+    });
+
+    const opened = steps[0]?.id ?? "";
+    const [current, fixed] = await Promise.all([mediaAssetFixture(), mediaAssetFixture()]);
+    await prisma.step.update({ data: { mediaAssetId: current.id }, where: { id: opened } });
+
+    const staged = await libraryStepFixture({
+      content: check,
+      kind: "check",
+      lessonId: lesson.id,
+      mediaAssetId: fixed.id,
+      position: 0,
+      staged: true,
+      version: 2,
+    });
+
+    const listStepIds = async (stepIds?: string[]) => {
+      const pictures = await getLessonPictures({ lessonId: lesson.id, stepIds });
+      return pictures.map((drawn) => drawn.stepId);
+    };
+
+    await expect(listStepIds()).resolves.toStrictEqual([opened]);
+    await expect(listStepIds([staged.id])).resolves.toStrictEqual([]);
+
+    await publishStagedLessonVersion({ lessonId: lesson.id, version: 2 });
+
+    await expect(listStepIds([opened])).resolves.toStrictEqual([opened]);
   });
 
   it("marks an explanation's picture pending too, since a screen asks only for pictures it needs", async () => {

@@ -1,6 +1,7 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import { type LessonSpec, getLessonSpecIssues } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { readsNoviceRules } from "@zoonk/ai/tasks/novice-rules";
 import { isJsonObject } from "@zoonk/utils/json";
 import { LESSON_SPEC_SCORE_CATEGORIES } from "./score-categories";
 import { type LessonSpecExpected } from "./visual-test-cases";
@@ -81,17 +82,19 @@ function getTemplateProblem({
 function checkLessonSpecs({
   expected,
   level,
+  novice,
   output,
 }: {
   expected: LessonSpecExpected | undefined;
   level: LessonLevel;
+  novice: boolean;
   output: string;
 }): CodeCheckResult {
   const lessons = parseLessons(output);
 
   const results = lessons.map((lesson, index) => ({
     lesson,
-    problems: getLessonSpecIssues({ level, spec: lesson }).map(
+    problems: getLessonSpecIssues({ level, novice, spec: lesson }).map(
       (issue) => `Lesson ${index + 1} ("${lesson.title}"): ${issue.detail}`,
     ),
   }));
@@ -123,13 +126,24 @@ function checkLessonSpecs({
   };
 }
 
-export const scoreLessonSpec: TaskScorer<LessonSpecExpected> = ({ output, testCase }) => {
+export const checkLessonSpecOutput: TaskCodeChecks<LessonSpecExpected> = ({ output, testCase }) => {
   const level = getLevel(testCase.userInput);
+  const { exams, material } = testCase.userInput;
+  const materialText = typeof material === "string" ? material : undefined;
 
-  return scoreWithCodeChecks({
-    check: (value) => checkLessonSpecs({ expected: testCase.expected, level, output: value }),
+  const novice = readsNoviceRules({
+    exams: Array.isArray(exams) ? exams : [],
+    level,
+    material: materialText,
+  });
+
+  return checkLessonSpecs({ expected: testCase.expected, level, novice, output });
+};
+
+export const scoreLessonSpec: TaskScorer<LessonSpecExpected> = ({ output, testCase }) =>
+  scoreWithCodeChecks({
+    check: (value) => checkLessonSpecOutput({ output: value, testCase }),
     output,
     scoreCategories: LESSON_SPEC_SCORE_CATEGORIES,
     testCase,
   });
-};

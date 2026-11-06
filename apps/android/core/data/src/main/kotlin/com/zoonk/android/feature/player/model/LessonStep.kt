@@ -3,6 +3,7 @@ package com.zoonk.android.feature.player.model
 import androidx.compose.runtime.Immutable
 import com.zoonk.api.models.ActivityBaseMap
 import com.zoonk.api.models.ActivityExpected
+import com.zoonk.api.models.LessonMap
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer
 import com.zoonk.api.models.PlayableLibraryStepAnyOf1Content
 import com.zoonk.api.models.PlayableLibraryStepAnyOf1ContentEndingsInner
@@ -38,6 +39,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfData
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfImage
 import com.zoonk.api.models.PlayableLibraryStepAnyOfMinTolerance
 import com.zoonk.api.models.ScreenPicture
+import com.zoonk.api.models.StepMarks
 
 // The contract's names for each screen's content, so code reads by meaning, not by union position.
 typealias ActivityStepContent = PlayableLibraryStepAnyOfContent
@@ -81,6 +83,7 @@ enum class StepKind {
     Check,
     Explanation,
     Hook,
+    Map,
     SpokenAnswer,
     Summary,
     TypedAnswer,
@@ -163,6 +166,14 @@ sealed interface StepContent {
         override val kind get() = StepKind.Summary
     }
 
+    /** The map that ends a lesson, rooted on its [title]; the player adds it, so it has no screen on the server. */
+    data class Map(
+        val map: LessonMap,
+        val title: String,
+    ) : StepContent {
+        override val kind get() = StepKind.Map
+    }
+
     data class TypedAnswer(
         val content: TypedAnswerStepContent,
     ) : StepContent {
@@ -185,7 +196,9 @@ sealed interface StepContent {
 /**
  * [imagePending] while the screen's picture is still being drawn; its wait started at
  * [pictureWaitStartedAt] (epoch milliseconds), so reopening the lesson doesn't restart it.
- * [position] is its place in the lesson as written, which a question's `basis` names.
+ * [position] is its place in the lesson as written, which a question's `basis` names. [marks] say
+ * which of the lesson map's ideas a teaching screen or question is about and how its text is
+ * marked; a screen written before they existed has none.
  */
 @Immutable
 data class LessonStep(
@@ -199,6 +212,7 @@ data class LessonStep(
     val citation: StepCitation? = null,
     val picture: ScreenPicture? = null,
     val position: Int = 0,
+    val marks: StepMarks? = null,
 ) {
     val kind: StepKind get() = content.kind
 }

@@ -5,11 +5,13 @@ import com.zoonk.android.feature.player.checkStep
 import com.zoonk.android.feature.player.explanationStep
 import com.zoonk.android.feature.player.fillBlankStep
 import com.zoonk.android.feature.player.hookGuessStep
+import com.zoonk.android.feature.player.lessonMapStep
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.PictureDescription
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepImage
+import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.numberAnswerStep
 import com.zoonk.android.feature.player.stepResult
 import com.zoonk.android.feature.player.summaryStep
@@ -59,7 +61,7 @@ class LessonPlayerReducerTest {
     @Test
     fun showsTheSampleAnswerOfAnOpenAnswerTheLearnerDoesNotKnowWithoutAVerdict() {
         val steps = listOf(typedAnswerStep("first"), explanationStep("tip"), typedAnswerStep("last"))
-        val shown = play(steps, LessonAction.SkipWriting(stepId = "first"))
+        val shown = play(steps, LessonAction.DontKnow("first"))
 
         assertEquals(LessonPhase.Feedback, shown.phase)
         assertNull(shown.notice)
@@ -74,6 +76,135 @@ class LessonPlayerReducerTest {
         val next = shown.then(LessonAction.Continue)
         assertEquals("tip", next.currentId)
         assertEquals(listOf("first", "tip", "last"), next.queue)
+    }
+
+    @Test
+    fun revealsTheGuessWithoutAPickOrAVerdictWhenTheLearnerDoesNotKnowYet() {
+        val steps = listOf(hookGuessStep("hook"), explanationStep("e1"))
+        val shown = play(steps, LessonAction.DontKnow("hook"))
+
+        assertEquals(LessonPhase.Feedback, shown.phase)
+        assertNull(shown.answers["hook"])
+        assertEquals(StepResult(isCorrect = false, correctAnswer = "No", feedback = "No, and here's why."), shown.results["hook"])
+        assertEquals(emptyMap<String, Boolean>(), shown.firstVerdicts)
+        assertEquals(emptyList<Miss>(), shown.misses)
+        assertEquals(emptyList<String>(), shown.skippedWritingStepIds)
+        assertEquals(Segment.Read, shown.screen().segments.first())
+        assertEquals("e1", shown.then(LessonAction.Continue).currentId)
+    }
+
+    @Test
+    fun countsOnlyCountedAnswersInTheWrongStreakOfAnAbandonedLesson() {
+        val steps = listOf(hookGuessStep("hook"), checkStep("q1"), explanationStep("e1"))
+        val revealed = play(steps, started(), LessonAction.DontKnow("hook"))
+        val guessedWrong =
+            play(
+                steps,
+                started(),
+                LessonAction.SelectAnswer("hook", LessonAnswer.Hook("yes")),
+                LessonAction.CheckResolved("hook", revealGuess(steps.first(), "yes")!!, counts = false),
+            )
+
+        assertEquals(0, revealed.abandonEvent()?.wrongInARow)
+        assertEquals(0, guessedWrong.abandonEvent()?.wrongInARow)
+        assertEquals(
+            1,
+            revealed
+                .then(LessonAction.Continue)
+                .let { onCheck ->
+                    answerCheck("q1", false).fold(onCheck, LessonPlayerState::then)
+                }.abandonEvent()
+                ?.wrongInARow,
+        )
+    }
+
+    @Test
+    fun offersIDontKnowYetUntilAGuessIsPickedThenSeeTheAnswerThenContinue() {
+        val steps = listOf(hookGuessStep("hook"), explanationStep("e1"))
+        val fresh = play(steps)
+
+        assertEquals(PrimaryAction(isCheck = false, label = PrimaryLabel.DontKnowYet), fresh.screen().primary)
+
+        val picked = fresh.then(LessonAction.SelectAnswer("hook", LessonAnswer.Hook("yes")))
+        assertEquals(PrimaryAction(isCheck = true, label = PrimaryLabel.SeeAnswer), picked.screen().primary)
+        assertEquals(
+            PrimaryLabel.DontKnowYet,
+            picked
+                .then(LessonAction.SelectAnswer("hook", null))
+                .screen()
+                .primary
+                ?.label,
+        )
+
+        assertEquals(
+            PrimaryLabel.Continue,
+            fresh
+                .then(LessonAction.DontKnow("hook"))
+                .screen()
+                .primary
+                ?.label,
+        )
+    }
+
+    @Test
+    fun endsWithTheLessonMapOnlyOnceTheMissedCheckCameBack() {
+        val steps = listOf(explanationStep("e1"), checkStep("q1"), explanationStep("e2"), lessonMapStep())
+        val missed = arrayOf(LessonAction.Continue, *answerCheck("q1", false))
+        val missedState = play(steps, *missed)
+
+        assertEquals(listOf("e1", "q1", "e2", "q1"), missedState.queue)
+        assertEquals(5, missedState.screen().segments.size)
+
+        val onMap = play(steps, *missed, LessonAction.Continue, LessonAction.Continue, *answerCheck("q1", true), LessonAction.Continue)
+
+        assertEquals(LESSON_MAP_STEP_ID, onMap.currentId)
+        assertEquals(LessonPhase.Playing, onMap.phase)
+        assertEquals(listOf("e1", "q1", "e2", "q1", LESSON_MAP_STEP_ID), onMap.queue)
+        assertEquals(PrimaryLabel.Continue, onMap.screen().primary?.label)
+
+        val back = onMap.then(LessonAction.GoBack)
+        assertEquals("q1" to LessonPhase.Feedback, back.currentId to back.phase)
+        assertEquals(LESSON_MAP_STEP_ID, back.then(LessonAction.Continue).currentId)
+
+        val done = onMap.then(LessonAction.Continue)
+        assertEquals(LessonPhase.Completed to CompletionStatus.Saving, done.phase to done.completion?.status)
+    }
+
+    @Test
+    fun opensAResumedRunWithEveryScreenAnsweredOnTheMapWhoseContinueSaves() {
+        val steps = listOf(explanationStep("e1"), checkStep("q1"), lessonMapStep())
+        val resumed = play(steps, started(RunAnswer("q1", true, ANSWERED_AT)))
+
+        assertEquals(LESSON_MAP_STEP_ID to LessonPhase.Playing, resumed.currentId to resumed.phase)
+        assertNull(resumed.completion)
+        assertFalse(resumed.screen().canGoBack)
+        assertSame(resumed, resumed.then(LessonAction.GoBack))
+
+        val done = resumed.then(LessonAction.Continue)
+        assertEquals(LessonPhase.Completed to CompletionStatus.Saving, done.phase to done.completion?.status)
+
+        val resynced = done.then(LessonAction.RunResynced(null, listOf(RunAnswer("q1", true, ANSWERED_AT))))
+        assertEquals(LessonPhase.Completed to CompletionStatus.Failed, resynced.phase to resynced.completion?.status)
+        assertNull(resynced.notice)
+    }
+
+    @Test
+    fun skipsTheLessonMapWhenIKnowThisGetsEveryCheckRight() {
+        val steps = listOf(explanationStep("e"), checkStep("q1"), lessonMapStep())
+        val state = play(steps, LessonAction.KnowThis, *answerCheck("q1", true), LessonAction.Continue)
+
+        assertEquals(LessonCompletion(CompletionStatus.Saving, testedOut = true), state.completion)
+        assertFalse(LESSON_MAP_STEP_ID in state.queue)
+    }
+
+    @Test
+    fun reportsTheMapAsItsOwnScreenWhenTheLessonIsLeftThere() {
+        val steps = listOf(explanationStep("e1"), checkStep("q1"), lessonMapStep())
+        val onMap = play(steps, started(), LessonAction.Continue, *answerCheck("q1", true), LessonAction.Continue)
+
+        assertEquals(LESSON_MAP_STEP_ID, onMap.currentId)
+        assertEquals(3, onMap.abandonEvent()?.screen)
+        assertEquals("map", onMap.abandonEvent()?.properties?.get("step_kind"))
     }
 
     @Test
@@ -534,18 +665,6 @@ class LessonPlayerReducerTest {
 
         assertEquals(LessonRun.Started("run-1", hyperdrive, emptySet()), done.run)
         assertEquals(CompletionStatus.Saving, done.completion?.status)
-    }
-
-    @Test
-    fun putsTheFirstQuestionBeforeTheExplanationsForASkillTheLearnerAlreadyAnswered() {
-        val steps = listOf(hookGuessStep("hook"), explanationStep("e1", "s"), explanationStep("e2", "s"), checkStep("q1", "s"))
-        val opening = LessonPlayerState.initial("lesson", steps, LessonSupport.QuestionFirst, now = 0)
-
-        assertEquals(listOf("hook", "q1", "e1", "e2"), opening.queue)
-        assertEquals(
-            listOf("hook", "e1", "e2", "q1"),
-            LessonPlayerState.initial("lesson", steps, LessonSupport.ExplanationFirst, now = 0).queue,
-        )
     }
 
     @Test

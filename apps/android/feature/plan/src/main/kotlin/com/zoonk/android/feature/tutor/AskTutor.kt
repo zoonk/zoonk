@@ -111,7 +111,7 @@ fun TutorAskButton(
     open: Boolean,
     onOpenChange: (Boolean) -> Unit,
     lessonSuggestions: List<TutorSuggestion> = emptyList(),
-    offer: TutorSuggestion? = null,
+    offer: TutorOffer? = null,
     onOfferTaken: () -> Unit = {},
 ) {
     val summary by app.learnerSummary.summary.collectShown()

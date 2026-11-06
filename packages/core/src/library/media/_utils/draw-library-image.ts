@@ -1,11 +1,11 @@
 import "server-only";
 import { type ImageSceneParams, generateImageScene } from "@zoonk/ai/tasks/images/scene";
 import { type ImageScene, describeImageScene } from "@zoonk/ai/tasks/images/scene-schema";
-import { getImagePalette } from "@zoonk/ai/tasks/images/style";
+import { type ImageCanvas, getImagePalette } from "@zoonk/ai/tasks/images/style";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { resolveLibraryIdentity } from "../../identity/resolve-library-identity";
-import { drawImage } from "./draw-checked-image";
+import { drawImage } from "./draw-image";
 import { canStorePicture } from "./picture-store";
 import { saveImageAsset } from "./save-image-asset";
 
@@ -13,6 +13,8 @@ export type ImageAnalytics = ImageSceneParams["analytics"];
 
 export type LibraryImageRequest = {
   request: string;
+  alt?: string | null;
+  canvas?: ImageCanvas;
   screenText?: string | null;
   context?: string | null;
   language: string;
@@ -32,9 +34,15 @@ function numberLabels(parts: readonly string[]): ImageScene["labels"] {
   }));
 }
 
-/** The caller must dispatch the background image check when the returned picture is newly drawn. */
+/**
+ * The caller must dispatch the background image check when the returned picture is newly drawn.
+ * Only the call that stored it says so, even when another drew the same scene at once, so each
+ * picture is checked, and repaired, once.
+ */
 export async function drawLibraryImage({
+  alt,
   analytics,
+  canvas = "landscape",
   category,
   context,
   language,
@@ -51,6 +59,7 @@ export async function drawLibraryImage({
   const parts = numberedParts ?? [];
 
   const { data: planned } = await generateImageScene({
+    alt,
     analytics,
     context,
     language,
@@ -68,7 +77,7 @@ export async function drawLibraryImage({
 
   const resolution = await resolveLibraryIdentity({
     analytics,
-    request: { hasLabels, kind: "image", language, ownerId, prompt, textAllowed },
+    request: { canvas, hasLabels, kind: "image", language, ownerId, prompt, textAllowed },
   });
 
   if (resolution.kind === "existing") {
@@ -76,13 +85,13 @@ export async function drawLibraryImage({
   }
 
   const palette = getImagePalette(category);
-  const drawn = await drawImage({ analytics, language, palette, scene });
+  const drawn = await drawImage({ analytics, attempts: 2, canvas, language, palette, scene });
 
   if (!drawn) {
     return null;
   }
 
-  const { data: asset, error } = await safeAsync(() =>
+  const { data: saved, error } = await safeAsync(() =>
     saveImageAsset({
       image: drawn.image,
       language: hasLabels ? language : null,
@@ -100,5 +109,5 @@ export async function drawLibraryImage({
     return null;
   }
 
-  return { assetId: asset.id, drawn: true };
+  return { assetId: saved.row.id, drawn: saved.created };
 }
