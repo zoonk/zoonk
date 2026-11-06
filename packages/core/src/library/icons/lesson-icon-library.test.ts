@@ -79,7 +79,7 @@ describe(drawLessonIcon, () => {
     storeBlobUploads();
   });
 
-  it("draws a claimed name into its two files and completes its row", async () => {
+  it("draws a claimed name into its two files and completes its row, and a replayed step draws nothing more", async () => {
     const need = needFor(`${randomWord()} bank`);
     const { iconId } = await claimOne(need);
 
@@ -88,6 +88,9 @@ describe(drawLessonIcon, () => {
     );
 
     await drawLessonIcon({ iconId, need });
+    await drawLessonIcon({ iconId, need });
+
+    expect(generateLessonIconImage).toHaveBeenCalledOnce();
 
     await expect(
       prisma.lessonIcon.findUniqueOrThrow({ where: { name: need.name } }),

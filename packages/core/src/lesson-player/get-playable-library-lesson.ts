@@ -133,7 +133,7 @@ async function findLessonVersion(lessonId: string): Promise<string | null> {
 /**
  * Each app has separate caches, so fresh version keys must detect publication changes made
  * elsewhere. An icon still drawing when the lesson was cached lands without touching the lesson, so
- * how many of those have landed since is part of the key.
+ * the ones that have landed since are part of the key.
  */
 async function getCurrentPlayableLesson(lessonId: string): Promise<LoadedPlayableLesson | null> {
   const version = await findLessonVersion(lessonId);
@@ -148,13 +148,18 @@ async function getCurrentPlayableLesson(lessonId: string): Promise<LoadedPlayabl
     return cached;
   }
 
-  const landed = await prisma.lessonIcon.count({
+  const landed = await prisma.lessonIcon.findMany({
+    orderBy: { id: "asc" },
+    select: { id: true },
     where: { id: { in: cached.drawingIconIds }, status: { not: "running" } },
   });
 
-  return landed === 0
+  return landed.length === 0
     ? cached
-    : getCachedPlayableLesson({ lessonId, version: `${version}:${landed}` });
+    : getCachedPlayableLesson({
+        lessonId,
+        version: [version, ...landed.map((icon) => icon.id)].join(":"),
+      });
 }
 
 function toOutline(lesson: PlayableLibraryLesson): LessonOutline {

@@ -125,6 +125,16 @@ export async function drawLessonIcon({
   iconId: string;
   need: IconNeed;
 }): Promise<void> {
+  const icon = await prisma.lessonIcon.findUnique({
+    select: { status: true },
+    where: { id: iconId },
+  });
+
+  // A step replayed after its row completed has nothing left to draw.
+  if (icon?.status !== "running") {
+    return;
+  }
+
   const drawn = await drawFiles({ analytics, need });
 
   await prisma.lessonIcon.updateMany({
