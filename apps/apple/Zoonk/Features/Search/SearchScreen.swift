@@ -91,7 +91,7 @@ struct SearchScreen: View {
           .foregroundStyle(.primary)
         }
       } header: {
-        SectionTitle(Text(group.title))
+        SearchGroupLabel(title: Text(group.title))
       }
     }
   }
@@ -121,8 +121,9 @@ struct SearchScreen: View {
           }
         }
       } header: {
-        SectionTitle(
-          Text("In the catalog", tableName: "Search", comment: "Search results from the catalog"))
+        SearchGroupLabel(
+          title: Text(
+            "In the catalog", tableName: "Search", comment: "Search results from the catalog"))
       }
     }
   }
@@ -224,5 +225,18 @@ struct SearchScreen: View {
         }
       }
     }
+  }
+}
+
+/// Main's `CommandGroupLabel`: a search group's small uppercase label, quieter than a page's
+/// section titles.
+private struct SearchGroupLabel: View {
+  let title: Text
+
+  var body: some View {
+    title
+      .typeStyle(.label)
+      .foregroundStyle(.faint)
+      .accessibilityAddTraits(.isHeader)
   }
 }

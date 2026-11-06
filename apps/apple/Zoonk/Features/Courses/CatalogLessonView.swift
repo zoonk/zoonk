@@ -9,6 +9,9 @@ struct CatalogLessonView: View {
 
   var body: some View {
     let resource = catalog.lesson(lesson.key)
+    // The chapter page that opened this lesson read both already.
+    let chapter = catalog.chapter(lesson.chapter.key)
+    let course = catalog.course(id: lesson.chapter.courseID)
 
     Group {
       switch resource.state {
@@ -16,10 +19,13 @@ struct CatalogLessonView: View {
         ProgressView()
           .frame(maxWidth: .infinity, maxHeight: .infinity)
       case .loaded(let value):
-        CatalogLessonList(lesson: lesson, value: value)
-          .onAppear {
-            UsageAnalytics.track(.publicPageViewed(contentID: lesson.id, page: .lesson))
-          }
+        CatalogLessonList(
+          lesson: lesson, value: value, subject: course.value?.course.subject,
+          chapterLessons: chapter.value?.lessons.sorted { $0.position < $1.position } ?? []
+        )
+        .onAppear {
+          UsageAnalytics.track(.publicPageViewed(contentID: lesson.id, page: .lesson))
+        }
       case .empty:
         CatalogFailureRecoveryView(context: .lesson, failure: .notFound) {
           await resource.refresh()
@@ -30,7 +36,7 @@ struct CatalogLessonView: View {
         }
       }
     }
-    .loads(resource)
+    .loads(resource, chapter, course)
   }
 }
 
@@ -40,14 +46,20 @@ private struct CatalogLessonList: View {
 
   let lesson: LessonReference
   let value: CatalogLesson
+  let subject: CourseCategory?
+  let chapterLessons: [CourseLesson]
 
   var body: some View {
     ZoonkList {
       Section {
         VStack(alignment: .leading, spacing: 12) {
-          Text(lesson.chapter.courseTitle)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+          Label {
+            Text(lesson.chapter.courseTitle)
+          } icon: {
+            SubjectGlyph(subject: subject)
+          }
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
 
           Text(value.title)
             .typeStyle(.heroTitle)
@@ -167,23 +179,74 @@ private struct CatalogLessonList: View {
         }
       }
 
+      LessonPlanDay(lesson: lesson, chapterLessons: chapterLessons)
+    }
+  }
+}
+
+/// Main's `LessonPlanDay`: the course this lesson belongs to, as a day of its plan would hold it
+/// (the lesson before, this one, the next).
+private struct LessonPlanDay: View {
+  private static let dayLessons = 3
+
+  let lesson: LessonReference
+  let chapterLessons: [CourseLesson]
+
+  var body: some View {
+    let index = chapterLessons.firstIndex { $0.id == lesson.id }
+
+    if let index {
+      let start = max(0, min(index - 1, chapterLessons.count - Self.dayLessons))
+      let day = Array(chapterLessons[start..<min(start + Self.dayLessons, chapterLessons.count)])
+      let minutes = day.reduce(0) { $0 + $1.estimatedMinutes }
+
       Section {
-        LabeledContent {
-          Text(
-            "Lesson \(lesson.number) of \(lesson.lessonCount)", tableName: "Courses",
-            comment: "A lesson's place in its chapter")
-        } label: {
-          if let number = lesson.chapterNumber {
-            Text(
-              "Chapter \(number): \(lesson.chapter.title)", tableName: "Courses",
-              comment: "The chapter a lesson is in, with its number")
-          } else {
-            Text(lesson.chapter.title)
+        Text(
+          "This lesson is part of the \(lesson.chapter.courseTitle) course.", tableName: "Courses",
+          comment: "Heads a lesson's example plan on its Library page; the argument is the course"
+        )
+        .typeStyle(.section)
+        .foregroundStyle(Color(.foreground))
+        .accessibilityAddTraits(.isHeader)
+        .listRowSeparator(.hidden)
+      }
+
+      Section {
+        ForEach(Array(day.enumerated()), id: \.element.id) { offset, item in
+          let position = start + offset
+          let isDone = position < index
+
+          ListRow(
+            Text(item.displayTitle()),
+            description: isDone ? nil : Text(lesson.chapter.title)
+          ) {
+            if isDone {
+              StatusMark(status: .done)
+            } else {
+              KindMark(kind: .lesson)
+            }
+          } trailing: {
+            Text(studyDuration(minutes: item.estimatedMinutes))
           }
+          .accessibilityElement(children: .combine)
+          .currentRow(position == index)
         }
       } header: {
         SectionTitle(
-          Text("In this course", tableName: "Courses", comment: "Header of a lesson's place"))
+          Text(
+            "Example plan", tableName: "Courses", comment: "Heads a lesson's example day of a plan")
+        ) {
+          Text(
+            "\(day.count) lessons\u{00A0}· \(studyDuration(minutes: minutes))",
+            tableName: "Courses",
+            comment: "How many lessons an example plan's first day has, and how long")
+        }
+      } footer: {
+        SectionFooter {
+          Text(
+            "An example. Your plan follows your answers, so it can start later and end sooner.",
+            tableName: "Courses", comment: "Under a lesson's example plan")
+        }
       }
     }
   }

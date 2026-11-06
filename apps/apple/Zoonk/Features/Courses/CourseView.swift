@@ -145,7 +145,8 @@ private struct CourseHeroSection: View {
         CourseMark(detail.course)
 
         if detail.course.subject != nil || exam != nil {
-          AccessibilityStack(spacing: 8, stackedSpacing: 6) {
+          // Main's wrapping row: the eyebrow takes its own line once both don't fit.
+          FlowLayout(spacing: 12, rowSpacing: 8) {
             if let subject = detail.course.subject {
               CourseSubjectLabel(subject: subject)
             }
@@ -200,7 +201,7 @@ private struct CourseExamEyebrow: View {
           comment: "An exam course's next sitting: its days, then how long until it")
       }
     }
-    .typeStyle(.data)
+    .typeStyle(.eyebrow)
     .foregroundStyle(.mutedForeground)
   }
 
