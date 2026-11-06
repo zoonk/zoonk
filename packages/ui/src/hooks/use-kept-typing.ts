@@ -6,12 +6,19 @@ type FieldValue = ComponentProps<"input">["value"];
 /**
  * React hydrates a text field with its value tracker holding the words on screen, so an input event
  * carrying them reads as no change. Writing the field's own value through the tracker first makes
- * them a change, which the event hands to the field's handlers.
+ * them a change, which the event hands to the field's handlers. Those writes move the caret to the
+ * end, so it goes back where the learner left it.
  */
 function typeAgain(field: HTMLInputElement | HTMLTextAreaElement, own: string, typed: string) {
+  const { selectionDirection, selectionEnd, selectionStart } = field;
+
   field.value = own;
   Object.getOwnPropertyDescriptor(Object.getPrototypeOf(field), "value")?.set?.call(field, typed);
   field.dispatchEvent(new Event("input", { bubbles: true }));
+
+  if (selectionStart !== null && selectionEnd !== null && document.activeElement === field) {
+    field.setSelectionRange(selectionStart, selectionEnd, selectionDirection ?? undefined);
+  }
 }
 
 /**
