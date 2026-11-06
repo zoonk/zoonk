@@ -13,7 +13,7 @@ struct CertificatesScreen: View {
       switch store.list.state {
       case .loaded(let certificates):
         ZoonkList {
-          CertificatesHeader()
+          CertificatesHeader(count: certificates.count)
           CertificatesPlusSection()
 
           Section {
@@ -43,7 +43,10 @@ struct CertificatesScreen: View {
     Button {
       open(certificate.id)
     } label: {
-      ListRow(Text(certificate.facts.name), description: Text(certificate.facts.summary)) {
+      ListRow(
+        Text(certificate.facts.name), description: Text(certificate.facts.summary),
+        alignment: .center
+      ) {
         Group {
           switch certificate {
           case .issued(let issued):
@@ -64,18 +67,40 @@ struct CertificatesScreen: View {
   }
 }
 
-/// Main's `CertificatesHeader`: the page's title and what earns a certificate.
+/// The sidebar's Certificates on iPad, where a certificate opens on the tab's own stack rather than
+/// the account sheet's.
+struct CertificatesTabScreen: View {
+  @Environment(AppRouter.self) private var router
+
+  var body: some View {
+    CertificatesScreen { code in
+      router.open(.certificate(code: code))
+    }
+  }
+}
+
+/// Main's `CertificatesHeader`: how many there are, the page's title and what earns a certificate.
 private struct CertificatesHeader: View {
   static let title = Text(
     "Certificates", tableName: "Certificates", comment: "Title of the learner's certificates")
+
+  /// Nil while there are none.
+  var count: Int?
 
   var body: some View {
     Section {
       PageHeader(
         Self.title,
+        eyebrow: count.map {
+          Text(
+            "\($0) certificates", tableName: "Certificates",
+            comment: "Over the learner's certificates: how many they have")
+        },
         supporting: Text(
           "A certificate for every level and plan you finish.", tableName: "Certificates",
-          comment: "Under the learner's certificates: what earns one"))
+          comment: "Under the learner's certificates: what earns one")
+      )
+      .eyebrowAsWritten()
     }
   }
 }
@@ -87,14 +112,14 @@ private struct CertificatesPlusSection: View {
   var body: some View {
     if let tier = learner.summary.value?.tier, tier != .plus {
       Section {
-        CertificatePlusNotice(isList: true, isInset: true)
+        CertificatePlusNotice(isList: true)
       }
     }
   }
 }
 
-/// Main's empty page: how certificates are earned, then each goal that can still earn one. The
-/// goals arrive after the page, so they join its list below what's already there.
+/// Main's empty page: a placeholder certificate, how certificates are earned, then each goal that
+/// can still earn one. The goals arrive after the page, so they join its list below what's there.
 private struct EmptyCertificates: View {
   @Environment(AppRouter.self) private var router
   @Environment(CertificatesStore.self) private var store
@@ -102,21 +127,29 @@ private struct EmptyCertificates: View {
   var body: some View {
     ZoonkList {
       CertificatesHeader()
+      CertificatesPlusSection()
 
       Section {
-        ContentUnavailableView {
-          Label {
-            Text(
-              "No certificates yet", tableName: "Certificates",
-              comment: "Title when the learner has no certificate")
-          } icon: {
-            Image(systemName: "rosette")
-          }
-        } description: {
+        VStack(alignment: .leading, spacing: 6) {
+          GhostCertificate()
+            .frame(maxWidth: 416)
+            .padding(.bottom, 18)
+
+          Text(
+            "No certificates yet", tableName: "Certificates",
+            comment: "Title when the learner has no certificate"
+          )
+          .typeStyle(.reading.weight(.semibold))
+          .foregroundStyle(Color(.foreground))
+          .accessibilityAddTraits(.isHeader)
+
           Text(
             "Your certificates show up here when you finish a level or a plan.",
-            tableName: "Certificates", comment: "How the learner earns certificates")
-        } actions: {
+            tableName: "Certificates", comment: "How the learner earns certificates"
+          )
+          .typeStyle(.body)
+          .foregroundStyle(.mutedForeground)
+
           Button {
             router.sheet = nil
             router.showRoot(of: .today)
@@ -126,13 +159,13 @@ private struct EmptyCertificates: View {
               comment: "Goes to Today from the empty certificates page")
           }
           .buttonStyle(.mainAction)
+          .controlSize(.large)
+          .padding(.top, 14)
         }
+        .listRowSeparator(.hidden)
       }
-      .listRowBackground(Color.clear)
 
-      CertificatesPlusSection()
-
-      if let upNext = store.upNext.value {
+      if let upNext = store.upNext.value, !upNext.isEmpty {
         Section {
           ForEach(upNext) { goal in
             UpNextRow(goal: goal)
@@ -150,6 +183,44 @@ private struct EmptyCertificates: View {
   }
 }
 
+/// Main's `GhostCertificate`: shapes that stand for a certificate without saying one, so nothing
+/// reads as a real one.
+private struct GhostCertificate: View {
+  private static let bars: [(x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat)] = [
+    (0.07, 0.10, 0.16, 0.05),
+    (0.07, 0.30, 0.28, 0.04),
+    (0.07, 0.38, 0.52, 0.10),
+    (0.07, 0.53, 0.40, 0.06),
+    (0.07, 0.84, 0.46, 0.05),
+    (0.83, 0.82, 0.10, 0.14),
+  ]
+
+  var body: some View {
+    let shape = RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
+
+    Canvas { context, size in
+      func bar(_ x: CGFloat, _ y: CGFloat, _ width: CGFloat, _ height: CGFloat) -> Path {
+        Path(
+          roundedRect: CGRect(
+            x: x * size.width, y: y * size.height, width: width * size.width,
+            height: height * size.height),
+          cornerRadius: 4, style: .continuous)
+      }
+
+      for shown in Self.bars {
+        context.fill(
+          bar(shown.x, shown.y, shown.width, shown.height), with: .color(.surface3))
+      }
+
+      context.fill(bar(0.07, 0.76, 0.86, 0.02), with: .color(.input))
+    }
+    .aspectRatio(CertificateFacts.aspectRatio, contentMode: .fit)
+    .background(Color.muted.opacity(0.5), in: shape)
+    .overlay(shape.strokeBorder(.input, style: StrokeStyle(lineWidth: 1, dash: [4, 3])))
+    .accessibilityHidden(true)
+  }
+}
+
 /// Main's `UpNextRow`: the goal, when it earns its certificate, and how much of its plan is done.
 private struct UpNextRow: View {
   let goal: CertificateUpNext
@@ -158,7 +229,7 @@ private struct UpNextRow: View {
 
   var body: some View {
     ListRow(Text(goal.title), description: description) {
-      EmptyView()
+      GoalMark(title: goal.title)
     } trailing: {
       if let progress = goal.progress {
         HStack(spacing: 8) {

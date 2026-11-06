@@ -109,9 +109,5 @@ private struct CertificateFrame: ViewModifier {
         RoundedRectangle(cornerRadius: corner, style: .continuous)
           .strokeBorder(colorScheme == .dark ? Color.white.opacity(0.1) : Color.border)
       }
-      .shadow(
-        color: size == .page && colorScheme == .light ? .black.opacity(0.08) : .clear,
-        radius: 16, y: 6
-      )
   }
 }

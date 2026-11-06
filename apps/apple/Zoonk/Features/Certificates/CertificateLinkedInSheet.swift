@@ -67,8 +67,7 @@ struct CertificateLinkedInSheet: View {
           }
           .buttonStyle(.mainAction)
           .controlSize(.large)
-          .listRowInsets(EdgeInsets())
-          .listRowBackground(Color.clear)
+          .listRowSeparator(.hidden)
         }
       }
       .navigationTitle(

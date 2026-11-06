@@ -125,6 +125,7 @@ struct AppTabView: View {
       case .speaking: places?.speaking == true
       case .mindMaps: places?.mindMaps == true
       case .completedLessons: places?.completedLessons == true
+      case .certificates: places?.certificates == true
       default: true
       }
     }
