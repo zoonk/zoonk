@@ -54,7 +54,7 @@ export type QuestionBlockSettlement = {
 export type SettleQuestionBlockResult =
   | { settlement: QuestionBlockSettlement; status: "ready" }
   | { status: "blockFinished" }
-  | { status: "emptyCheckpoint" }
+  | { status: "emptyBlock" }
   | { status: "noAnswers" }
   | { status: "unanswered" };
 
@@ -92,7 +92,7 @@ export async function prepareQuestionBlock({
   block,
   session,
   userId,
-}: SettleInput): Promise<PreparedBlock | "emptyCheckpoint" | "noAnswers" | "unanswered"> {
+}: SettleInput): Promise<PreparedBlock | "emptyBlock" | "noAnswers" | "unanswered"> {
   const payload = readBlockPayload(block);
 
   const answers = await loadSessionAnswers({
@@ -107,13 +107,14 @@ export async function prepareQuestionBlock({
   if (!firstAnsweredAt) {
     const itemIds = getBlockItemIds(payload);
 
+    // An essay is never a session question, so a produce block would always count as empty.
     if (
       block.status === "active" &&
-      payload.checkpoint &&
+      block.kind !== "produce" &&
       itemIds.length > 0 &&
       (await countAskableQuestions({ itemIds })) === 0
     ) {
-      return "emptyCheckpoint";
+      return "emptyBlock";
     }
 
     return "noAnswers";
@@ -217,7 +218,7 @@ export async function settleQuestionBlock(
 ): Promise<SettleQuestionBlockResult> {
   const prepared = await prepareQuestionBlock(input);
 
-  if (prepared === "emptyCheckpoint" || prepared === "noAnswers" || prepared === "unanswered") {
+  if (prepared === "emptyBlock" || prepared === "noAnswers" || prepared === "unanswered") {
     return { status: prepared };
   }
 
