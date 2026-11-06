@@ -202,7 +202,7 @@ internal fun FocusTestIntro(
     val minutes = maxOf(1, (read.total * SECONDS_PER_QUESTION / SECONDS_PER_MINUTE.toFloat()).roundToInt())
     val refused = ui.refused
 
-    TaskScaffold(
+    RunPage(
         onClose = navigator::closeTask,
         bottomBar = {
             TaskActionBar {
@@ -229,19 +229,17 @@ internal fun FocusTestIntro(
                 }
             }
         },
-    ) { padding ->
-        RunPage(Modifier.padding(padding)) {
-            RunIntro(
-                stringResource(R.string.focustest_intro_title),
-                stringResource(R.string.focustest_intro_detail),
-                facts =
-                    listOf(
-                        pluralStringResource(R.plurals.focustest_subjects, read.areas.size, read.areas.size),
-                        pluralStringResource(R.plurals.focustest_questions, read.total, read.total),
-                        stringResource(R.string.focustest_about, formatMinutes(minutes, currentLocale())),
-                    ),
-            )
-        }
+    ) {
+        RunIntro(
+            stringResource(R.string.focustest_intro_title),
+            stringResource(R.string.focustest_intro_detail),
+            facts =
+                listOf(
+                    pluralStringResource(R.plurals.focustest_subjects, read.areas.size, read.areas.size),
+                    pluralStringResource(R.plurals.focustest_questions, read.total, read.total),
+                    stringResource(R.string.focustest_about, formatMinutes(minutes, currentLocale())),
+                ),
+        )
     }
 }
 
@@ -266,15 +264,13 @@ private fun FocusTestWaitScreen(
     onClose: () -> Unit,
     titleFocus: FocusRequester?,
 ) {
-    TaskScaffold(onClose = onClose) { padding ->
-        RunPage(Modifier.padding(padding)) {
-            GenerationWait(GenerationKind.FocusTestQuestions, run, onRetry) {
-                RunIntro(
-                    stringResource(R.string.focustest_writing_title),
-                    stringResource(R.string.focustest_writing_detail),
-                    titleFocus = titleFocus,
-                )
-            }
+    RunPage(onClose = onClose) {
+        GenerationWait(GenerationKind.FocusTestQuestions, run, onRetry) {
+            RunIntro(
+                stringResource(R.string.focustest_writing_title),
+                stringResource(R.string.focustest_writing_detail),
+                titleFocus = titleFocus,
+            )
         }
     }
 }

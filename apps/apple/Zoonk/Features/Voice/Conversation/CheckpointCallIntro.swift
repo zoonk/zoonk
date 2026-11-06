@@ -64,12 +64,14 @@ struct CheckpointCallIntro: View {
           startButton(writesFirst: true, callee: nil)
         }
       }
+      .lonePage()
     case .loaded(.plusRequired):
       VStack(spacing: 12) {
         CallStartFooter(isLocked: true, callee: nil) {}
       }
       .scenePadding()
       .frame(maxHeight: .infinity)
+      .lonePage()
     case .empty, .failed(.notFound), .loaded(.notLanguage):
       NotFoundView()
     case .failed(let error) where error != .unauthorized:

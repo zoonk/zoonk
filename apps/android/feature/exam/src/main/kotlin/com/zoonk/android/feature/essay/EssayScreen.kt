@@ -79,6 +79,7 @@ import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
 import com.zoonk.android.feature.player.leaveTaskFor
 import com.zoonk.android.feature.practice.BusyButton
+import com.zoonk.android.feature.practice.RunColumn
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunPage
@@ -348,7 +349,7 @@ private fun EssayWriteColumn(
                 }
             }
         } else {
-            RunPage(
+            RunColumn(
                 if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true },
                 if (fold == null) scroll else boxScroll,
             ) {
@@ -356,7 +357,7 @@ private fun EssayWriteColumn(
                 guide()
                 EssayBox(ui, rubric, box, value, onValueChange, viewModel::write, Modifier.heightIn(min = BOX_HEIGHT))
             }
-            if (fold != null) RunPage(Modifier.width(fold.start).semantics { isTraversalGroup = true }, content = prompt)
+            if (fold != null) RunColumn(Modifier.width(fold.start).semantics { isTraversalGroup = true }, content = prompt)
         }
     }
 }
@@ -582,7 +583,7 @@ internal fun EssayGradeSteps(
             val beside = !tooShort && supportingPaneBeside(maxWidth)
             val step: @Composable (Modifier) -> Unit = { modifier ->
                 CompositionLocalProvider(LocalStepHeading provides heading) {
-                    RunPage(modifier, stepScroll) {
+                    RunColumn(modifier, stepScroll) {
                         when {
                             tooShort -> TooShort(closed)
                             shown == 0 -> EssayGradeCard(grade, rubric)
@@ -673,7 +674,7 @@ internal fun SkippedEssay(
     essay: Essay,
     navigator: AppNavigator,
 ) {
-    TaskScaffold(
+    RunPage(
         onClose = navigator::closeTask,
         title = { EssayTitle(promptLabel(EssayRubric.of(essay.rubric.value))) },
         bottomBar = {
@@ -685,15 +686,13 @@ internal fun SkippedEssay(
                 }
             }
         },
-    ) { padding ->
-        RunPage(Modifier.padding(padding)) {
-            QuestionTitle(essay.question)
-            Text(
-                stringResource(R.string.essay_skipped),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyLarge,
-            )
-        }
+    ) {
+        QuestionTitle(essay.question)
+        Text(
+            stringResource(R.string.essay_skipped),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyLarge,
+        )
     }
 }
 

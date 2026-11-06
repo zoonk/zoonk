@@ -313,6 +313,14 @@ class ChallengeScreenshots {
     fun bookWritingRightToLeft() = show("book-writing-rtl", writing = true, fold = true, rightToLeft = true)
 
     @Test
+    @Config(qualifiers = BOOK)
+    fun bookWritingDark() = show("book-writing-dark-more-contrast", writing = true, fold = true, dark = true)
+
+    @Test
+    @Config(qualifiers = BOOK, fontScale = 2f)
+    fun bookWritingLargeFont() = show("book-writing-font200", writing = true, fold = true)
+
+    @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneWriting() = show("phone-writing", writing = true)
 

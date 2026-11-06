@@ -7,7 +7,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -173,19 +172,15 @@ internal fun ConversationContent(
 
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
-            CallFrame(title = {}, onClose = exits::close) {
-                item(key = "loading") { PageLoading(Modifier.callItem()) }
-            }
+            TaskScaffold(onClose = exits::close) { padding -> PageLoading(Modifier.padding(padding)) }
         }
 
         is LoadState.Failed -> {
             if (state.error == ApiError.NotFound) {
                 NotFound(exits)
             } else {
-                CallFrame(title = {}, onClose = exits::close) {
-                    item(
-                        key = "failed",
-                    ) { LoadFailedMessage(onRetry = { scope.launch { model.conversation.refresh() } }, modifier = Modifier.callItem()) }
+                TaskScaffold(onClose = exits::close) { padding ->
+                    LoadFailedMessage(onRetry = { scope.launch { model.conversation.refresh() } }, modifier = Modifier.padding(padding))
                 }
             }
         }

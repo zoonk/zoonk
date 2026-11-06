@@ -94,6 +94,7 @@ internal fun CallFrame(
     bottomBar: (@Composable () -> Unit)? = null,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
     barUnderAside: Boolean = false,
+    lonePage: Boolean = false,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
     val wide = isWideLayout()
@@ -121,6 +122,7 @@ internal fun CallFrame(
             exitConfirmation = exitConfirmation,
             bottomBar = bar.takeUnless { barAfterFold },
             aside = aside?.let { TaskAside(footer = bar.takeIf { barAfterFold }, content = it) },
+            lonePage = lonePage,
         ) { padding ->
             val beside = taskAsideBeside()
             Column(Modifier.fillMaxSize().padding(padding), horizontalAlignment = Alignment.CenterHorizontally) {
