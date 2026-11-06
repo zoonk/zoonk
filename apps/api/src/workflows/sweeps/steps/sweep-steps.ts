@@ -6,6 +6,7 @@ import { type FreshnessTarget } from "@zoonk/core/library/exams/check-freshness"
 import { listDueFreshnessTargets } from "@zoonk/core/library/exams/freshness-checks";
 import { recalibrateItemDifficulties } from "@zoonk/core/library/items/recalibrate";
 import { deleteRetiredSteps } from "@zoonk/core/library/lessons/versions";
+import { listCoursesBehind } from "@zoonk/core/library/products/course-release";
 import { listLessonsForLaterReview } from "@zoonk/core/library/quality/later-reviews";
 import { countOpenReviewFlags } from "@zoonk/core/library/review-flags/flagged";
 import { purgeMemoryFacts } from "@zoonk/core/memory/purge";
@@ -14,6 +15,13 @@ export async function listDueFreshnessTargetsStep(): Promise<FreshnessTarget[]> 
   "use step";
 
   return listDueFreshnessTargets();
+}
+
+/** Main courses whose product has a newer release than they teach, such as an announced one now out. */
+export async function listCoursesBehindStep(): Promise<string[]> {
+  "use step";
+
+  return listCoursesBehind();
 }
 
 /** One batch of inactive guests per step, so each step stays within a function's time. */

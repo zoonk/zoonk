@@ -11,6 +11,7 @@ import {
 } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { findOfficialSources } from "@zoonk/ai/tasks/research/find-official-sources";
 import { type ExamResearchPlan, generateExamResearchPlan } from "@zoonk/ai/tasks/research/plan";
+import { readProductPages } from "@zoonk/ai/tasks/research/read-product-pages";
 import { generateSourceChangeNotice } from "@zoonk/ai/tasks/research/source-change-notice";
 import { toBlueprintContent } from "@zoonk/core/library/exams/blueprint-content";
 import { examEditionSchema } from "@zoonk/core/library/exams/blueprint-contract";
@@ -18,12 +19,20 @@ import { listBlueprintFacts } from "@zoonk/core/library/exams/blueprint-facts";
 import { saveExamBlueprint } from "@zoonk/core/library/exams/save";
 import { storeWebSource } from "@zoonk/core/library/sources/web";
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  brandFixture,
+  productFixture,
+  productReleaseFixture,
+} from "@zoonk/testing/fixtures/products";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture, learnerSourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { Response as PageResponse, fetch } from "undici";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { getStartMock } from "../_test-utils/start-mock";
+import { courseReleaseWorkflow } from "../products/course-release-workflow";
 import { findAndStoreSources } from "../research/research-sources";
 import { freshnessWorkflow } from "./freshness-workflow";
 import { readNoticeAgainWorkflow } from "./read-notice-again-workflow";
@@ -671,6 +680,96 @@ describe(freshnessWorkflow, () => {
       prisma.sourceChangeNotice.findMany({ where: { sourceId: source.id } }),
     ).resolves.toMatchObject([
       { examBlueprintId: null, message: "A lei mudou: a alíquota agora é de 17%." },
+    ]);
+  });
+
+  it("reads a product's changed releases page and starts the update of each followed main course", async () => {
+    const released = "Test Product 2 was released on January 10, 2026.";
+    serveNotice("Test Product 1 was released on January 10, 2025.");
+
+    const page = await storeWebSource({
+      kind: "official",
+      language: "en",
+      publisher: null,
+      title: "Releases",
+      topic: "product",
+      url: `https://product.example/${randomUUID()}/releases`,
+    });
+
+    const brand = await brandFixture();
+
+    const product = await productFixture({
+      organizationId: brand.id,
+      releasesHash: page.contentHash,
+      releasesSourceId: page.id,
+    });
+
+    const first = await productReleaseFixture({
+      productId: product.id,
+      releasedAt: new Date("2025-01-10"),
+    });
+
+    const courses = await Promise.all(
+      [false, false, true].map((isPinned) =>
+        courseFixture({
+          isPinned,
+          organizationId: brand.id,
+          productId: product.id,
+          productReleaseId: first.id,
+        }),
+      ),
+    );
+
+    const [followed, , pinned] = courses;
+    const users = await Promise.all([userFixture(), userFixture()]);
+
+    await Promise.all(
+      [followed, pinned].map((course, index) =>
+        goalFixture({ primaryCourseId: course?.id ?? null, userId: users[index]?.id ?? "" }),
+      ),
+    );
+
+    serveNotice(released);
+
+    vi.mocked(readProductPages).mockResolvedValue({
+      ...TASK,
+      data: {
+        brand: null,
+        learnerRelease: null,
+        product: null,
+        releases: [
+          {
+            document: 1,
+            name: "Test Product 2",
+            passage: released,
+            releasedOn: "2026-01-10",
+            supportEndsOn: null,
+            version: "2",
+          },
+        ],
+      },
+    });
+
+    await freshnessWorkflow({ kind: "source", sourceId: page.id });
+
+    expect(generateSourceChangeNotice).not.toHaveBeenCalled();
+
+    const started = getStartMock()
+      .mock.calls.filter(([workflow]) => workflow === courseReleaseWorkflow)
+      .map(([, args]) => args);
+
+    expect(started).toStrictEqual([[{ courseId: followed?.id }]]);
+
+    const saved = await prisma.product.findUniqueOrThrow({
+      include: { releases: { orderBy: { releasedAt: "asc" } } },
+      where: { id: product.id },
+    });
+
+    expect(saved.releasesHash).not.toBe(page.contentHash);
+
+    expect(saved.releases.map((release) => release.name)).toStrictEqual([
+      first.name,
+      "Test Product 2",
     ]);
   });
 

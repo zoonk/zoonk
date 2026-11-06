@@ -4,12 +4,14 @@ import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
+import { courseReleaseWorkflow, getCourseReleaseToken } from "../products/course-release-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
   countOpenReviewFlagsStep,
   deleteInactiveGuestsStep,
   deleteRetiredStepsStep,
+  listCoursesBehindStep,
   listDueFreshnessTargetsStep,
   listLessonsForLaterReviewStep,
   purgeEvaluationRunsStep,
@@ -23,6 +25,7 @@ const MAX_GUEST_BATCHES = 20;
 
 export type DailySweepsResult = {
   accessRecordsPurged: number;
+  courseReleaseUpdates: number;
   sessionsPurged: number;
   evaluationRunsPurged: number;
   flaggedContentStarted: boolean;
@@ -45,6 +48,19 @@ async function checkFreshness(): Promise<number> {
   await Promise.all(targets.map((target) => start(freshnessWorkflow, [target])));
 
   return targets.length;
+}
+
+/** Also catches an update whose start failed. */
+async function updateCoursesBehind(): Promise<number> {
+  const courseIds = await listCoursesBehindStep();
+
+  await Promise.all(
+    courseIds.map((courseId) =>
+      startOnce(courseReleaseWorkflow, [{ courseId }], getCourseReleaseToken(courseId)),
+    ),
+  );
+
+  return courseIds.length;
 }
 
 /** Owed work whose start failed, such as an API that didn't answer the learner's request. */
@@ -107,6 +123,7 @@ export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
     verifications,
     access,
     followUps,
+    courseReleases,
   ] = await Promise.allSettled([
     checkFreshness(),
     deleteGuests(),
@@ -119,10 +136,12 @@ export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
     purgeExpiredVerificationsStep(),
     purgeExpiredAuthRecordsStep(),
     startOldFollowUps(),
+    updateCoursesBehind(),
   ]);
 
   return {
     accessRecordsPurged: access.status === "fulfilled" ? access.value.recordsPurged : 0,
+    courseReleaseUpdates: countOf(courseReleases),
     evaluationRunsPurged: countOf(runs),
     flaggedContentStarted: flagged.status === "fulfilled" && flagged.value,
     followUpsStarted: countOf(followUps),

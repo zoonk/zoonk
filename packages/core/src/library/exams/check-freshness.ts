@@ -34,6 +34,8 @@ export type FreshnessCheck =
       blueprintUpdate: { examBlueprintId: string } | null;
       nextCheckAt: string;
       nextNotice: { examBlueprintId: string } | null;
+      /** A product's releases page whose text isn't the one its releases were read from. */
+      releasesUpdate: { productId: string } | null;
       sourceChange: SourceChange | null;
       status: "scheduled";
     };
@@ -123,6 +125,7 @@ async function searchNextNotice({
     blueprintUpdate: null,
     nextCheckAt: nextCheckAt.toISOString(),
     nextNotice: { examBlueprintId },
+    releasesUpdate: null,
     sourceChange: null,
     status: "scheduled",
   };
@@ -184,6 +187,7 @@ async function checkExam({
     blueprintUpdate: isBehind ? { examBlueprintId: blueprint.id } : null,
     nextCheckAt: nextCheckAt.toISOString(),
     nextNotice: null,
+    releasesUpdate: null,
     sourceChange: null,
     status: "scheduled",
   };
@@ -220,7 +224,11 @@ async function checkSource({
   sourceId: string;
 }): Promise<FreshnessCheck> {
   const [source, learners] = await Promise.all([
-    prisma.source.findUnique({ omit: { extractedText: true }, where: { id: sourceId } }),
+    prisma.source.findUnique({
+      include: { releasesOf: { select: { id: true, releasesHash: true } } },
+      omit: { extractedText: true },
+      where: { id: sourceId },
+    }),
     countActiveSourceGoals(sourceId),
   ]);
 
@@ -248,11 +256,19 @@ async function checkSource({
 
   await prisma.source.update({ data: { nextCheckAt }, where: { id: source.id } });
 
+  // A releases page is read for its releases, never turned into a notice for learners.
+  const [product] = source.releasesOf;
+  const contentHash = refresh?.source.contentHash ?? source.contentHash;
+
   return {
     blueprintUpdate: null,
     nextCheckAt: nextCheckAt.toISOString(),
     nextNotice: null,
-    sourceChange: toSourceChange({ language: source.language, refresh, title: source.title }),
+    releasesUpdate:
+      product && product.releasesHash !== contentHash ? { productId: product.id } : null,
+    sourceChange: product
+      ? null
+      : toSourceChange({ language: source.language, refresh, title: source.title }),
     status: "scheduled",
   };
 }

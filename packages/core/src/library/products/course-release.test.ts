@@ -1,0 +1,267 @@
+import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import {
+  brandFixture,
+  productFixture,
+  productReleaseFixture,
+} from "@zoonk/testing/fixtures/products";
+import { sourceChangeNoticeFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { describe, expect, it } from "vitest";
+import { listCoursesBehind, loadCourseRelease } from "./course-release";
+import { type ReleaseComparisonResult, advanceCourseRelease } from "./release-advance";
+
+const NOW = new Date("2026-11-06T12:00:00Z");
+
+async function productWithReleases() {
+  const brand = await brandFixture();
+  const page = await sourceFixture({ extractedText: "Version 2 renames the export menu." });
+
+  const product = await productFixture({
+    organizationId: brand.id,
+    releasesHash: page.contentHash,
+    releasesSourceId: page.id,
+  });
+
+  const [first, second] = await Promise.all([
+    productReleaseFixture({ productId: product.id, releasedAt: new Date("2025-01-10") }),
+    productReleaseFixture({ productId: product.id, releasedAt: new Date("2026-01-10") }),
+  ]);
+
+  return { brand, first, page, product, second };
+}
+
+async function mainCourse({ pinned = false }: { pinned?: boolean } = {}) {
+  const setup = await productWithReleases();
+
+  const course = await courseFixture({
+    isPinned: pinned,
+    organizationId: setup.brand.id,
+    productId: setup.product.id,
+    productReleaseId: setup.first.id,
+  });
+
+  return { ...setup, course };
+}
+
+async function follow(courseId: string, how: "primary" | "graph" = "primary") {
+  const user = await userFixture();
+
+  if (how === "primary") {
+    return goalFixture({ primaryCourseId: courseId, userId: user.id });
+  }
+
+  const goal = await goalFixture({ userId: user.id });
+
+  await planFixture({
+    goalId: goal.id,
+    graph: {
+      phases: [{ name: "Basics" }],
+      skills: [{ courseIds: [courseId], lessons: 1, name: "Export", phase: 0, skillId: "s1" }],
+    },
+  });
+
+  return goal;
+}
+
+async function homedLessons(courseId: string, count: number) {
+  const chapter = await libraryChapterFixture({ homeCourseId: courseId });
+
+  return Promise.all(
+    Array.from({ length: count }, () =>
+      libraryLessonFixture({
+        contentStatus: "completed",
+        homeChapterId: chapter.id,
+        specStatus: "completed",
+      }),
+    ),
+  );
+}
+
+function comparison(
+  page: { contentHash: string; id: string },
+  attrs: Partial<ReleaseComparisonResult> = {},
+): ReleaseComparisonResult {
+  return {
+    changedLessonIds: [],
+    page: { contentHash: page.contentHash, sourceId: page.id },
+    provenance: {
+      generatedAt: NOW.toISOString(),
+      model: "google/gemini-3.8-flash",
+      promptVersion: "v1",
+      runId: randomUUID(),
+    },
+    release: "Test Product 2",
+    whatsNew: null,
+    ...attrs,
+  };
+}
+
+describe(listCoursesBehind, () => {
+  it("lists a product's main courses behind its current release that a learner follows", async () => {
+    const [byPrimary, byGraph, unfollowed, pinned, current] = await Promise.all([
+      mainCourse(),
+      mainCourse(),
+      mainCourse(),
+      mainCourse({ pinned: true }),
+      mainCourse(),
+    ]);
+
+    await prisma.course.update({
+      data: { productReleaseId: current.second.id },
+      where: { id: current.course.id },
+    });
+
+    await Promise.all([
+      follow(byPrimary.course.id),
+      follow(byGraph.course.id, "graph"),
+      follow(pinned.course.id),
+      follow(current.course.id),
+    ]);
+
+    const listed = await Promise.all(
+      [byPrimary, byGraph, unfollowed, pinned, current].map(({ product }) =>
+        listCoursesBehind({ productId: product.id }),
+      ),
+    );
+
+    expect(listed).toStrictEqual([[byPrimary.course.id], [byGraph.course.id], [], [], []]);
+  });
+});
+
+describe(loadCourseRelease, () => {
+  it("waits while a lesson its last move flagged is still being rewritten", async () => {
+    const { course, page, second } = await mainCourse();
+    await follow(course.id);
+
+    await expect(loadCourseRelease({ courseId: course.id })).resolves.toStrictEqual({
+      fromReleaseId: course.productReleaseId,
+      pageSourceIds: [page.id],
+      status: "behind",
+      toReleaseId: second.id,
+    });
+
+    const [lesson] = await homedLessons(course.id, 1);
+    const notice = await sourceChangeNoticeFixture({ sourceId: page.id });
+    await prisma.contentReviewFlag.create({ data: { lessonId: lesson?.id, noticeId: notice.id } });
+
+    await expect(loadCourseRelease({ courseId: course.id })).resolves.toStrictEqual({
+      status: "rewriting",
+    });
+  });
+
+  it("moves one release at a time, never to an announced or undated release and never back", async () => {
+    const brand = await brandFixture();
+    const product = await productFixture({ organizationId: brand.id });
+
+    const [first, second, current, announced, undated] = await Promise.all(
+      ["2024-05-01", "2025-05-01", "2026-05-01", "2099-05-01", null].map((date) =>
+        productReleaseFixture({ productId: product.id, releasedAt: date ? new Date(date) : null }),
+      ),
+    );
+
+    const teaching = [null, first, second, current, announced, undated];
+
+    const states = await Promise.all(
+      teaching.map(async (release) => {
+        const course = await courseFixture({
+          organizationId: brand.id,
+          productId: product.id,
+          productReleaseId: release?.id ?? null,
+        });
+
+        await follow(course.id);
+        const state = await loadCourseRelease({ courseId: course.id });
+        return state.status === "behind" ? state.toReleaseId : state.status;
+      }),
+    );
+
+    expect(states).toStrictEqual([
+      current?.id,
+      second?.id,
+      current?.id,
+      "current",
+      "current",
+      current?.id,
+    ]);
+  });
+
+  it("leaves pinned and unfollowed courses alone", async () => {
+    const [pinned, unfollowed] = await Promise.all([mainCourse({ pinned: true }), mainCourse()]);
+    await follow(pinned.course.id);
+
+    await expect(loadCourseRelease({ courseId: pinned.course.id })).resolves.toStrictEqual({
+      status: "notMain",
+    });
+
+    await expect(loadCourseRelease({ courseId: unfollowed.course.id })).resolves.toStrictEqual({
+      status: "unfollowed",
+    });
+  });
+});
+
+describe(advanceCourseRelease, () => {
+  it("moves the course and flags only the lessons the release changed, for a new plan", async () => {
+    const { course, first, page, second } = await mainCourse();
+    const [changed, kept] = await homedLessons(course.id, 2);
+    const state = { courseId: course.id, fromReleaseId: first.id, toReleaseId: second.id };
+
+    const advance = await advanceCourseRelease({
+      ...state,
+      comparison: comparison(page, { changedLessonIds: [changed?.id ?? ""] }),
+    });
+
+    const flags = await prisma.contentReviewFlag.findMany({
+      where: { id: { in: advance?.flagIds } },
+    });
+
+    expect(flags.map((flag) => flag.lessonId)).toStrictEqual([changed?.id]);
+
+    const lessons = await prisma.lesson.findMany({
+      select: { id: true, specStatus: true },
+      where: { id: { in: [changed?.id ?? "", kept?.id ?? ""] } },
+    });
+
+    expect(
+      Object.fromEntries(lessons.map((lesson) => [lesson.id, lesson.specStatus])),
+    ).toStrictEqual({ [changed?.id ?? ""]: "pending", [kept?.id ?? ""]: "completed" });
+
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+    ).resolves.toMatchObject({ productReleaseId: second.id });
+  });
+
+  it("returns the committed move again on a retry, and nothing for a course that moved", async () => {
+    const { course, first, page, second } = await mainCourse();
+    const [changed] = await homedLessons(course.id, 1);
+    const state = { courseId: course.id, fromReleaseId: first.id, toReleaseId: second.id };
+
+    const compared = comparison(page, {
+      changedLessonIds: [changed?.id ?? ""],
+      whatsNew: {
+        level: "beginner",
+        offer: "Learn the new export panel.",
+        skills: [{ description: "Export from the new panel.", name: "Export a file" }],
+        title: "What's new in Test Product 2",
+      },
+    });
+
+    const advanced = await advanceCourseRelease({ ...state, comparison: compared });
+    const retried = await advanceCourseRelease({ ...state, comparison: compared });
+
+    expect(retried).toStrictEqual(advanced);
+    expect(advanced?.skills).toHaveLength(1);
+
+    await expect(
+      advanceCourseRelease({ ...state, comparison: comparison(page) }),
+    ).resolves.toBeNull();
+
+    await expect(
+      prisma.contentReviewFlag.count({ where: { lessonId: changed?.id } }),
+    ).resolves.toBe(1);
+  });
+});

@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { brandFixture, productFixture } from "@zoonk/testing/fixtures/products";
 import {
   examBlueprintFixture,
   learnerSourceFixture,
@@ -68,6 +70,30 @@ async function examWithLearner({
   return { blueprint, source };
 }
 
+async function productReleasesPage({ releasesHash }: { releasesHash?: string } = {}) {
+  const source = await storeWebSource({
+    kind: "official",
+    language: "en",
+    publisher: null,
+    title: "Releases",
+    topic: "product",
+    url: `https://product.example/${randomUUID()}/releases`,
+  });
+
+  const brand = await brandFixture();
+
+  const product = await productFixture({
+    organizationId: brand.id,
+    releasesHash: releasesHash ?? source.contentHash,
+    releasesSourceId: source.id,
+  });
+
+  await prisma.source.update({ data: { productId: product.id }, where: { id: source.id } });
+
+  const course = await courseFixture({ organizationId: brand.id, productId: product.id });
+  return { course, product, source };
+}
+
 describe(checkFreshness, () => {
   it("checks tomorrow while registration is open, without a model when nothing changed", async () => {
     const { blueprint } = await examWithLearner({
@@ -84,6 +110,7 @@ describe(checkFreshness, () => {
       blueprintUpdate: null,
       nextCheckAt: daysFromNow(1).toISOString(),
       nextNotice: null,
+      releasesUpdate: null,
       sourceChange: null,
       status: "scheduled",
     });
@@ -148,6 +175,7 @@ describe(checkFreshness, () => {
       blueprintUpdate: null,
       nextCheckAt: daysFromNow(7).toISOString(),
       nextNotice: { examBlueprintId: blueprint.id },
+      releasesUpdate: null,
       sourceChange: null,
       status: "scheduled",
     });
@@ -227,6 +255,37 @@ describe(checkFreshness, () => {
       },
       status: "scheduled",
     });
+  });
+
+  it("asks for a product's releases to be read when its releases page changed, never a notice", async () => {
+    servePage("Version 1 is out.");
+    const [{ course, source }, user] = await Promise.all([productReleasesPage(), userFixture()]);
+    await goalFixture({ primaryCourseId: course.id, userId: user.id });
+
+    servePage("Version 2 is out.");
+
+    await expect(
+      checkFreshness({ now: NOW, target: { kind: "source", sourceId: source.id } }),
+    ).resolves.toMatchObject({
+      releasesUpdate: { productId: course.productId },
+      sourceChange: null,
+      status: "scheduled",
+    });
+  });
+
+  it("reads the releases again when an earlier check saved the new page but didn't read it", async () => {
+    servePage("Version 2 is out.");
+
+    const [{ product, source }, user] = await Promise.all([
+      productReleasesPage({ releasesHash: "read-before" }),
+      userFixture(),
+    ]);
+
+    await goalFixture({ productId: product.id, userId: user.id });
+
+    await expect(
+      checkFreshness({ now: NOW, target: { kind: "source", sourceId: source.id } }),
+    ).resolves.toMatchObject({ releasesUpdate: { productId: product.id }, status: "scheduled" });
   });
 
   it("stops checking a source nobody studies", async () => {

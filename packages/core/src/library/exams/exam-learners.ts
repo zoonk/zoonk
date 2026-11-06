@@ -7,6 +7,7 @@ import { getPlanState } from "../../plans/_utils/plan-context";
 import { applyPlanOperations } from "../../plans/planner/plan-operations";
 import { getReferenceSyllabusNeed } from "../curriculum/goal-curriculum-inputs";
 import { toExamIdentity, toSharedContext } from "../curriculum/shared-graph-prompt";
+import { courseFollowersFilter } from "../products/course-release";
 import { type ExamStructure, examStructureSchema } from "./blueprint-contract";
 import { readTestedLanguage } from "./blueprint-language";
 
@@ -26,10 +27,25 @@ export function countNextEditionGoals({
   });
 }
 
-export function countActiveSourceGoals(sourceId: string): Promise<number> {
+/** A product's page counts the goals about its product and the learners of its main courses. */
+export async function countActiveSourceGoals(sourceId: string): Promise<number> {
+  const mainCourses = await prisma.course.findMany({
+    select: { id: true },
+    where: {
+      isPinned: false,
+      product: { OR: [{ releasesSourceId: sourceId }, { sources: { some: { id: sourceId } } }] },
+      userId: null,
+    },
+  });
+
   return prisma.goal.count({
     where: {
-      OR: [{ learnerSources: { some: { sourceId } } }, { examBlueprint: { sourceId } }],
+      OR: [
+        { learnerSources: { some: { sourceId } } },
+        { examBlueprint: { sourceId } },
+        { product: { sources: { some: { id: sourceId } } } },
+        ...mainCourses.flatMap((course) => courseFollowersFilter(course.id).OR),
+      ],
       status: "active",
     },
   });
