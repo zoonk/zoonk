@@ -99,6 +99,7 @@ type ComputePlanRequest = {
   mode: PlanningMode;
   movedEnds?: ReadonlyMap<number, string>;
   now?: Date;
+  openedKeys?: readonly string[];
   pace?: "sampled" | "saved";
   releasedPhases?: ReadonlySet<number>;
   setAsideLeftWork?: boolean;
@@ -189,6 +190,7 @@ export async function computePlan({
         (loadedCarry) =>
           loadedCarry && {
             ...loadedCarry,
+            openedKeys: options.openedKeys,
             todayExceptAreas: options.todayExceptAreas ?? loadedCarry.todayExceptAreas ?? null,
           },
       ),

@@ -14,8 +14,9 @@ import { type DayView } from "../day-view";
 import { loadUnstartedDayView } from "./load-unstarted-day";
 import { planStudyDay } from "./plan-study-day";
 import { readSavedDayView } from "./read-saved-day-view";
+import { readSavedDayPlan } from "./saved-day-plan";
 import { findSavedDaySession } from "./saved-day-session";
-import { type SelectedDayPlan, readSavedDayPlan } from "./selected-day-plan";
+import { type SelectedDayPlan } from "./selected-day-plan";
 
 export type ReadStudyDay = {
   /** The goal's exam blueprint, read once for the day and whatever else the request shows. */
