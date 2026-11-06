@@ -4,6 +4,8 @@ import { type LessonMap } from "@zoonk/core/library/lessons/map";
 import {
   Popover,
   PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
   PopoverTitle,
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
@@ -41,7 +43,7 @@ function OpeningMapIdea({
 }) {
   const t = useExtracted();
 
-  const name = t({
+  const ideaOfTotal = t({
     description:
       "Above a lesson screen: which of the lesson map's ideas the screen teaches, such as 'Idea 2 of 4'.",
     message: "Idea {current} of {total}",
@@ -51,7 +53,7 @@ function OpeningMapIdea({
   return (
     <Popover>
       <PopoverTrigger
-        aria-label={name}
+        aria-label={ideaOfTotal}
         className="bg-background border-foreground/30 hover:border-foreground/60 data-popup-open:border-foreground contrast-more:border-foreground absolute grid size-16 -translate-1/2 place-items-center rounded-full border-2 border-dashed transition-colors"
         data-slot="opening-map-idea"
         style={position}
@@ -73,11 +75,13 @@ function OpeningMapIdea({
         )}
       </PopoverTrigger>
 
-      <PopoverContent className="w-64 max-w-(--available-width) gap-1">
-        <PopoverTitle className="text-muted-foreground font-mono text-xs font-normal tabular-nums">
-          {name}
-        </PopoverTitle>
-        <p className="text-foreground text-sm leading-snug text-pretty">{about}</p>
+      <PopoverContent className="w-64 max-w-(--available-width)">
+        <PopoverHeader>
+          <PopoverTitle className="text-pretty wrap-break-word hyphens-auto">
+            {idea.label ?? ideaOfTotal}
+          </PopoverTitle>
+          <PopoverDescription className="leading-snug text-pretty">{about}</PopoverDescription>
+        </PopoverHeader>
       </PopoverContent>
     </Popover>
   );

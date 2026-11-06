@@ -68,7 +68,7 @@ function strip() {
 function shownStrips() {
   return [...document.querySelectorAll('[data-slot="orientation-strip"]')]
     .filter((shown) => shown.checkVisibility())
-    .map((shown) => shown.textContent);
+    .map((shown) => [...shown.querySelectorAll("p")].map((line) => line.textContent));
 }
 
 function boxOf(text: string) {
@@ -138,7 +138,7 @@ describe("lesson marks", () => {
     await expect.element(page.getByText("A cloud, not an orbit")).not.toBeInTheDocument();
 
     await page.getByRole("button", { name: "Idea 2 of 2" }).click();
-    const about = page.getByRole("dialog", { name: "Idea 2 of 2" });
+    const about = page.getByRole("dialog", { name: "Reading the cloud" });
     await expect.element(about).toMatchTextContent("How to read the cloud");
 
     await userEvent.keyboard("{Escape}");
@@ -148,12 +148,24 @@ describe("lesson marks", () => {
     expect(onExit).not.toHaveBeenCalled();
   });
 
+  it("names an opening map idea above the line on what it covers", async () => {
+    renderLessonPlayer({ lesson: lesson() });
+    await page.getByRole("button", { name: "Idea 1 of 2" }).click();
+
+    const about = page.getByRole("dialog", { name: "A cloud, not an orbit" });
+    const line = "What the electron does around the nucleus";
+    await expect.element(about).toHaveAccessibleDescription(line);
+
+    const name = about.getByText("A cloud, not an orbit").element().getBoundingClientRect();
+    const covers = about.getByText(line).element().getBoundingClientRect();
+    expect(name.bottom).toBeLessThanOrEqual(covers.top);
+  });
+
   it("marks an explanation's idea, main point, example and new term without changing its words", async () => {
     renderLessonPlayer({ lesson: lesson() });
     await next();
 
-    await expect.poll(shownStrips).toStrictEqual(["Idea 1 of 2"]);
-    await expect.element(page.getByText("A cloud, not an orbit")).not.toBeInTheDocument();
+    await expect.poll(shownStrips).toStrictEqual([["Idea 1 of 2", "A cloud, not an orbit"]]);
     expect(underlined()).toStrictEqual(["a map of where it might be"]);
 
     await expect.element(page.getByText("Example", { exact: true })).toBeVisible();
@@ -184,8 +196,7 @@ describe("lesson marks", () => {
     await next();
     await next();
 
-    await expect.poll(shownStrips).toStrictEqual(["Idea 2 of 2"]);
-    await expect.element(page.getByText("Reading the cloud")).not.toBeInTheDocument();
+    await expect.poll(shownStrips).toStrictEqual([["Idea 2 of 2", "Reading the cloud"]]);
 
     await answerCheck();
 
@@ -254,7 +265,7 @@ describe("lesson marks", () => {
     await expect.element(strip()).toHaveTextContent("Idea 2 of 2");
 
     await page.getByRole("button", { name: "Previous screen" }).click();
-    await expect.poll(shownStrips).toStrictEqual(["Idea 1 of 2"]);
+    await expect.poll(shownStrips).toStrictEqual([["Idea 1 of 2", "A cloud, not an orbit"]]);
     expect(underlined()).toStrictEqual(["a map of where it might be"]);
 
     await page.getByRole("button", { name: "Previous screen" }).click();
