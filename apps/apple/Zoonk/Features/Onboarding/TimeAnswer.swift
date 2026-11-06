@@ -115,7 +115,7 @@ struct TimeAnswer: View {
     planDurationText(minutes: Double(minutes))
   }
 
-  private static func percent(_ share: Double) -> String {
+  nonisolated private static func percent(_ share: Double) -> String {
     share.formatted(.percent.precision(.fractionLength(0)))
   }
 
@@ -377,7 +377,9 @@ struct TimeAnswer: View {
     }
   }
 
-  static func shareWords(_ share: Double, exam: Bool, month: Bool, date: String) -> String {
+  nonisolated static func shareWords(_ share: Double, exam: Bool, month: Bool, date: String)
+    -> String
+  {
     let percent = Self.percent(share)
 
     return switch (exam, month) {

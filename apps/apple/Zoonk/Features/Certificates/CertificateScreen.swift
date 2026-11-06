@@ -158,7 +158,8 @@ private struct CertificateDetail: View {
         shareLink
           .buttonStyle(.mainAction)
 
-        ButtonRow(spacing: 8) {
+        // Not a `ButtonRow`, whose buttons take their own width side by side: these share it.
+        AccessibilityStack(spacing: 8) {
           Button(action: printCertificate) {
             Label {
               Text("Print", tableName: "Certificates", comment: "Prints a certificate")

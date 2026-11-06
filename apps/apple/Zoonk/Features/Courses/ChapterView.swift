@@ -393,8 +393,9 @@ private struct CourseMapBar: View {
   let parts: [Part]
   let line: Color
 
-  @ScaledMetric(relativeTo: .caption) private var height = 28.0
-  @ScaledMetric(relativeTo: .caption) private var stationSize = 14.0
+  // Main's map keeps its size while the words around it grow.
+  private let height: CGFloat = 28
+  private let stationSize: CGFloat = 14
 
   private static let spacing: CGFloat = 4
 
@@ -463,8 +464,9 @@ private struct ChapterRouteStop: View {
   let line: Color
   let stop: Color
 
-  @ScaledMetric(relativeTo: .caption) private var pageSize = 16.0
-  @ScaledMetric(relativeTo: .caption) private var stopSize = 14.0
+  // Main's stations keep their size; the line stays on the words' first line as they grow.
+  private let pageSize: CGFloat = 16
+  private let stopSize: CGFloat = 14
 
   var body: some View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -493,7 +495,9 @@ private struct ChapterRouteStop: View {
       GeometryReader { proxy in
         if let anchor {
           let center = proxy[anchor]
-          let top = isHere ? center.y : 0
+          // Past the row's edges, over the hairline's room a hidden separator keeps between rows.
+          let overlap: CGFloat = 2
+          let top = isHere ? center.y : -overlap
 
           VStack(spacing: 0) {
             Rectangle()
@@ -508,7 +512,7 @@ private struct ChapterRouteStop: View {
                       colors: [line, line.opacity(0)], startPoint: .top, endPoint: .bottom))
                   : AnyShapeStyle(line)
               )
-              .frame(height: max(proxy.size.height - center.y, 0))
+              .frame(height: max(proxy.size.height - center.y + (isLast ? 0 : overlap), 0))
           }
           .frame(width: 4)
           .offset(x: center.x - 2, y: top)

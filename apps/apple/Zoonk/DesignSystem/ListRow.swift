@@ -73,6 +73,8 @@ struct ListRow<Leading: View, Trailing: View>: View {
         value
       }
     }
+    // A list sized a stacked row beside a picture short at accessibility sizes and cut a line.
+    .fixedSize(horizontal: false, vertical: true)
   }
 
   private var value: some View {

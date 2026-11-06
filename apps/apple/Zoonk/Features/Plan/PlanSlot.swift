@@ -141,9 +141,16 @@ struct PlanSuggestionSection: View {
               summary.text
                 .accessibilityFocused($focus, equals: .item)
             } action: {
-              SuggestionOpen {
-                slot(item)
-                answerFailure(item)
+              // Main's free-week line offers Plus itself; the others open in full.
+              if item == .freeWeekOver {
+                SeePlusButton()
+                  .buttonStyle(.outline)
+                  .controlSize(.small)
+              } else {
+                SuggestionOpen {
+                  slot(item)
+                  answerFailure(item)
+                }
               }
             }
             .id(item)

@@ -1192,7 +1192,6 @@ private struct ExamAreaRow: View {
       }
       .typeStyle(.data)
     }
-    .frame(minHeight: 44)
     .accessibilityElement(children: .combine)
   }
 }
