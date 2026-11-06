@@ -106,15 +106,6 @@ private fun whole(
 private fun icon(id: Int): @Composable (Modifier) -> Unit =
     { modifier -> Icon(painterResource(id), contentDescription = null, modifier = modifier) }
 
-@Composable
-private fun tonedIcon(
-    id: Int,
-    tone: StatTone,
-): @Composable (Modifier) -> Unit {
-    val tint = tone.color
-    return { modifier -> Icon(painterResource(id), contentDescription = null, modifier = modifier, tint = tint) }
-}
-
 private fun beltOf(color: String) = Belt.entries.first { it.name.equals(color, ignoreCase = true) }
 
 /** A read the overview shows beside its own: a wheel while nothing is cached, and a retry when it failed. */
@@ -189,7 +180,7 @@ private fun OverviewContent(
                                 stringResource(R.string.stats_energy_average, metricPercent(it.averageEnergy, locale))
                             },
                         tone = StatTone.Energy,
-                        icon = tonedIcon(R.drawable.ic_bolt, StatTone.Energy),
+                        icon = icon(R.drawable.ic_bolt),
                         onClick = { context.open(StatsPage.Energy) },
                         modifier = modifier,
                     )
@@ -208,7 +199,7 @@ private fun OverviewContent(
                             formatDuration(progress.activity.totalLearningSeconds, locale),
                         ),
                     tone = StatTone.Success,
-                    icon = tonedIcon(R.drawable.ic_bar_chart, StatTone.Success),
+                    icon = icon(R.drawable.ic_bar_chart),
                     onClick = { context.open(StatsPage.Activity) },
                     modifier = modifier,
                 )
@@ -223,7 +214,7 @@ private fun OverviewContent(
                             stringResource(R.string.stats_right_count, whole(it.correctAnswers, locale), whole(it.totalAnswers, locale))
                         } ?: stringResource(R.string.stats_right_last_90),
                     tone = StatTone.Success,
-                    icon = tonedIcon(R.drawable.ic_target, StatTone.Success),
+                    icon = icon(R.drawable.ic_target),
                     onClick = { context.open(StatsPage.Score) },
                     modifier = modifier,
                 )
@@ -377,7 +368,7 @@ internal fun LevelPage(context: StatsContext) {
                             value = whole(level.totalBrainPower, locale),
                             detail = stringResource(R.string.stats_never_goes_down),
                             tone = StatTone.Brain,
-                            icon = tonedIcon(R.drawable.ic_psychology, StatTone.Brain),
+                            icon = icon(R.drawable.ic_psychology),
                             modifier = modifier,
                         )
                     },
@@ -612,7 +603,7 @@ internal fun EnergyPage(context: StatsContext) {
                             value = percent(energy.currentEnergy, locale),
                             detail = stringResource(R.string.stats_today),
                             tone = StatTone.Energy,
-                            icon = tonedIcon(R.drawable.ic_bolt, StatTone.Energy),
+                            icon = icon(R.drawable.ic_bolt),
                             modifier = modifier,
                         )
                     },
@@ -622,7 +613,7 @@ internal fun EnergyPage(context: StatsContext) {
                             value = insights?.let { metricPercent(it.averageEnergy, locale) } ?: DASH,
                             detail = stringResource(R.string.stats_since_start),
                             tone = StatTone.Energy,
-                            icon = tonedIcon(R.drawable.ic_speed, StatTone.Energy),
+                            icon = icon(R.drawable.ic_speed),
                             modifier = modifier,
                         )
                     },
@@ -635,7 +626,7 @@ internal fun EnergyPage(context: StatsContext) {
                                 } ?: DASH,
                             detail = stringResource(R.string.stats_full_energy_days),
                             tone = StatTone.Energy,
-                            icon = tonedIcon(R.drawable.ic_battery_full, StatTone.Energy),
+                            icon = icon(R.drawable.ic_battery_full),
                             modifier = modifier,
                         )
                     },
@@ -698,7 +689,7 @@ internal fun ActivityPage(context: StatsContext) {
                             value = whole(activity.learningDays, locale),
                             detail = stringResource(R.string.stats_any_day_studied),
                             tone = StatTone.Success,
-                            icon = tonedIcon(R.drawable.ic_calendar_month, StatTone.Success),
+                            icon = icon(R.drawable.ic_calendar_month),
                             modifier = modifier,
                         )
                     },
@@ -708,7 +699,7 @@ internal fun ActivityPage(context: StatsContext) {
                             value = whole(activity.totalLessonCompletions, locale),
                             detail = stringResource(R.string.stats_finished),
                             tone = StatTone.Success,
-                            icon = tonedIcon(R.drawable.ic_menu_book, StatTone.Success),
+                            icon = icon(R.drawable.ic_menu_book),
                             modifier = modifier,
                         )
                     },
@@ -790,7 +781,7 @@ internal fun ScorePage(context: StatsContext) {
                             value = metricPercent(score.score, locale),
                             detail = stringResource(R.string.stats_right_answers),
                             tone = StatTone.Success,
-                            icon = tonedIcon(R.drawable.ic_target, StatTone.Success),
+                            icon = icon(R.drawable.ic_target),
                             modifier = modifier,
                         )
                     },
@@ -803,7 +794,7 @@ internal fun ScorePage(context: StatsContext) {
                             spokenValue = stringResource(R.string.stats_correct_of_total, correct, total),
                             detail = stringResource(R.string.stats_of_all_answers),
                             tone = StatTone.Success,
-                            icon = tonedIcon(R.drawable.ic_check_circle, StatTone.Success),
+                            icon = icon(R.drawable.ic_check_circle),
                             modifier = modifier,
                         )
                     },
@@ -858,7 +849,7 @@ internal fun PatternsPage(context: StatsContext) {
                             value = bestDayName(summary.days) ?: DASH,
                             detail = verdictDetail(summary.days),
                             tone = StatTone.Success,
-                            icon = tonedIcon(R.drawable.ic_calendar_month, StatTone.Success),
+                            icon = icon(R.drawable.ic_calendar_month),
                             modifier = modifier,
                         )
                     },
@@ -868,7 +859,7 @@ internal fun PatternsPage(context: StatsContext) {
                             value = bestTimeName(summary.times) ?: DASH,
                             detail = verdictDetail(summary.times),
                             tone = StatTone.Success,
-                            icon = tonedIcon(R.drawable.ic_schedule, StatTone.Success),
+                            icon = icon(R.drawable.ic_schedule),
                             modifier = modifier,
                         )
                     },

@@ -33,6 +33,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -65,8 +66,8 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.components.taskOption
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
@@ -322,7 +323,11 @@ private fun SessionNumbers(
                         label = goalLabel,
                         value = goalNumber.after,
                         modifier = modifier,
-                        detail = goalNumber.before?.let { "$it → ${goalNumber.after}" },
+                        detail =
+                            goalNumber.before?.let { before ->
+                                val change = "$before → ${goalNumber.after}"
+                                if (goalNumber.dropped) change else successText(change)
+                            },
                         tone = if (goalNumber.dropped) StatTone.Neutral else StatTone.Success,
                         icon = summaryIcon(if (goalNumber.dropped) R.drawable.ic_trending_down else R.drawable.ic_trending_up),
                     )
@@ -343,15 +348,21 @@ private fun SessionNumbers(
 private fun summaryIcon(icon: Int): @Composable (Modifier) -> Unit = { modifier -> Icon(painterResource(icon), null, modifier) }
 
 @Composable
-private fun rightDetail(summary: StudySessionSummary): String? {
+private fun rightDetail(summary: StudySessionSummary): CharSequence? {
     val locale = currentLocale()
-    val parts =
-        listOfNotNull(
-            summary.accuracy?.let { formatPercent(it, locale) },
-            summary.netScore?.let { stringResource(R.string.session_summary_net, formatNumber(it.toDouble(), locale)) },
-        )
-    return parts.takeIf { it.isNotEmpty() }?.factsLine()
+    val accuracy = summary.accuracy?.let { successText(formatPercent(it, locale)) }
+    val net = summary.netScore?.let { stringResource(R.string.session_summary_net, formatNumber(it.toDouble(), locale)) }
+    if (accuracy == null || net == null) return accuracy ?: net
+    return buildAnnotatedString {
+        append(accuracy)
+        append(FACT_SEPARATOR)
+        append(net)
+    }
 }
+
+@Composable
+private fun successText(text: String): AnnotatedString =
+    buildAnnotatedString { withStyle(SpanStyle(color = MaterialTheme.colorScheme.onTertiaryContainer)) { append(text) } }
 
 private class GoalNumber(
     val exam: Boolean,

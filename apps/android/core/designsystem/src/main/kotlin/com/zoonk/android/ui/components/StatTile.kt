@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,13 +47,14 @@ val StatTone.color: Color
 /**
  * Main's `StatTile`: a label with its symbol, a number and a line about it, read by TalkBack as one.
  * [spokenValue] is what TalkBack says for a value written for the eye, such as "45 of 60" for "45/60".
+ * A [detail] given as an `AnnotatedString` keeps its own colors, as main colors a fact in it.
  */
 @Composable
 fun StatTile(
     label: String,
     value: String,
     modifier: Modifier = Modifier,
-    detail: String? = null,
+    detail: CharSequence? = null,
     tone: StatTone = StatTone.Neutral,
     icon: (@Composable (Modifier) -> Unit)? = null,
     onClick: (() -> Unit)? = null,
@@ -61,14 +64,16 @@ fun StatTile(
     val content = @Composable {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                icon?.invoke(
-                    Modifier.size(
-                        with(LocalDensity.current) {
-                            MaterialTheme.typography.labelLarge.fontSize
-                                .toDp()
-                        },
-                    ),
-                )
+                CompositionLocalProvider(LocalContentColor provides tone.color) {
+                    icon?.invoke(
+                        Modifier.size(
+                            with(LocalDensity.current) {
+                                MaterialTheme.typography.labelLarge.fontSize
+                                    .toDp()
+                            },
+                        ),
+                    )
+                }
                 Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
             }
             val style =
@@ -83,7 +88,13 @@ fun StatTile(
             } else {
                 Text(value, spoken, style = style.withTabularFigures().copy(fontWeight = FontWeight.SemiBold))
             }
-            detail?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall) }
+            detail?.let {
+                Text(
+                    it as? AnnotatedString ?: AnnotatedString(it.toString()),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
             footer?.invoke()
         }
     }
