@@ -130,6 +130,15 @@ describe(inspectProductSites, () => {
     ).resolves.toBeNull();
   });
 
+  it("takes a product site at its domain's root as its own brand when no brand page was found", async () => {
+    serve({ "https://orbit.example/": [], "https://www.orbit.example/": [] });
+
+    await expect(inspect(null, "https://www.orbit.example/")).resolves.toMatchObject({
+      brand: { domain: "orbit.example", url: "https://orbit.example/" },
+      product: { domain: "orbit.example" },
+    });
+  });
+
   it("gives a project on a code host with no brand page no brand", async () => {
     serve({ "https://code.example/": [], "https://code.example/someone/orbit": [] });
 

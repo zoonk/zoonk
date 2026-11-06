@@ -163,16 +163,19 @@ async function inspectPage(url: string): Promise<InspectedPage | null> {
 }
 
 /**
- * A brand is a site, named by its homepage. With no brand page found, a product on a brand's
- * subdomain ("developer.lumen.example") names its registrable domain's homepage. A page with a path,
- * such as an organization on a code host, or a product on a host of its own names no brand.
+ * A brand is a site, named by its homepage. With no brand page found, a product's registrable
+ * domain's homepage names it: a product site's root is its maker's site, and a product on a
+ * subdomain ("developer.lumen.example") belongs to its domain. A page with a path, such as an
+ * organization on a code host, names no brand, nor does a product under a path on a host of its own.
  */
 function findBrandHome({ brandUrl, product }: { brandUrl: string | null; product: InspectedPage }) {
   if (brandUrl) {
     return toPath(brandUrl) === "" ? brandUrl : null;
   }
 
-  return toHost(product.url) === product.domain ? null : `https://${product.domain}/`;
+  return toHost(product.url) === product.domain && toPath(product.url) !== ""
+    ? null
+    : `https://${product.domain}/`;
 }
 
 /**
