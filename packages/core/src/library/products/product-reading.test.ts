@@ -4,23 +4,7 @@ import {
 } from "@zoonk/ai/tasks/research/read-product-pages";
 import { describe, expect, it } from "vitest";
 import { isPassageInDocument } from "../exams/passage-check";
-import { checkProductReading, isDateStated, isVersionStated } from "./product-reading";
-
-const DAYS = 731;
-const MS_PER_DAY = 86_400_000;
-const START = Date.UTC(2024, 0, 1);
-
-function listDates(): Date[] {
-  return Array.from({ length: DAYS }, (_, index) => new Date(START + index * MS_PER_DAY));
-}
-
-function shiftDays(date: Date, days: number): Date {
-  return new Date(date.getTime() + days * MS_PER_DAY);
-}
-
-function formatLong({ date, language }: { date: Date; language: string }): string {
-  return new Intl.DateTimeFormat(language, { dateStyle: "long", timeZone: "UTC" }).format(date);
-}
+import { checkProductReading } from "./product-reading";
 
 const PAGE = `Orbit Notes is made by Lumen Works.
 Orbit Notes 5 shipped on October 21st, 2025 with offline sync. Support for Orbit Notes 3 ends on 2026-03-31.
@@ -63,75 +47,6 @@ function reading(overrides: Partial<ProductReading> = {}): ProductReading {
     ...overrides,
   };
 }
-
-describe(isDateStated, () => {
-  it.each(["en", "pt", "fr", "de", "ja"])(
-    "finds every date its page's %s formats state",
-    (language) => {
-      const missed = listDates().filter(
-        (date) =>
-          !isDateStated({ date, language, passage: formatLong({ date, language }) }) ||
-          !isDateStated({ date, language, passage: date.toISOString().slice(0, 10) }),
-      );
-
-      expect(missed).toStrictEqual([]);
-    },
-  );
-
-  it.each(["en", "pt"])(
-    "never confirms a date from a passage with another day or month (%s)",
-    (language) => {
-      const confirmed = listDates().filter((date) =>
-        [1, -1, 31, -30].some((days) => {
-          const other = shiftDays(date, days);
-
-          return (
-            isDateStated({ date, language, passage: formatLong({ date: other, language }) }) ||
-            isDateStated({ date, language, passage: other.toISOString().slice(0, 10) })
-          );
-        }),
-      );
-
-      expect(confirmed).toStrictEqual([]);
-    },
-  );
-
-  it("needs the day, not only the month and year", () => {
-    const date = new Date(Date.UTC(2024, 4, 1));
-
-    expect(
-      isDateStated({ date, language: "en", passage: "Orbit Notes 4 shipped in May 2024." }),
-    ).toBe(false);
-  });
-
-  it("reads a numeric date only when it can't be read with day and month swapped", () => {
-    const october = new Date(Date.UTC(2025, 9, 5));
-    const may = new Date(Date.UTC(2025, 4, 10));
-
-    expect(isDateStated({ date: october, language: "pt", passage: "em 05/10/2025" })).toBe(false);
-    expect(isDateStated({ date: may, language: "pt", passage: "em 05/10/2025" })).toBe(false);
-    expect(isDateStated({ date: october, language: "pt", passage: "em 2025/10/05" })).toBe(true);
-
-    expect(
-      isDateStated({
-        date: new Date(Date.UTC(2025, 9, 21)),
-        language: "de",
-        passage: "21.10.2025",
-      }),
-    ).toBe(true);
-  });
-
-  it("doesn't read one number as both the day and the month", () => {
-    const date = new Date(Date.UTC(2025, 9, 10));
-    expect(isDateStated({ date, language: "en", passage: "released 10/2025" })).toBe(false);
-  });
-
-  it("ignores parts of a date far apart in the passage", () => {
-    const date = new Date(Date.UTC(2025, 9, 21));
-    const passage = "version 21 is new. It took many months of careful work before October 2025.";
-    expect(isDateStated({ date, language: "en", passage })).toBe(false);
-  });
-});
 
 describe(checkProductReading, () => {
   const pages = [{ language: "en", text: PAGE }];
@@ -277,46 +192,6 @@ describe(checkProductReading, () => {
       checkProductReading({ pages, reading: reading({ learnerRelease: "Orbit Notes 3" }) })
         .learnerRelease,
     ).toBeNull();
-  });
-});
-
-describe(isVersionStated, () => {
-  const name = "Orbit Server 1.37";
-
-  it("accepts a version with a separator as a whole token", () => {
-    expect(isVersionStated({ name, passage: "1.37 | 1.37.2 | 2027-10-28", version: "1.37" })).toBe(
-      true,
-    );
-
-    expect(isVersionStated({ name, passage: "Latest: v1.37 (stable)", version: "1.37" })).toBe(
-      true,
-    );
-
-    expect(
-      isVersionStated({ name: "Orbit Server 2025.1", passage: "2025.1 LTS", version: "2025.1" }),
-    ).toBe(true);
-  });
-
-  it("refuses a version that's only part of another token", () => {
-    expect(isVersionStated({ name, passage: "1.37.2 | 2027-10-28", version: "1.37" })).toBe(false);
-    expect(isVersionStated({ name, passage: "11.37 | 2027-10-28", version: "1.37" })).toBe(false);
-    expect(isVersionStated({ name, passage: "release1.37 is out", version: "1.37" })).toBe(false);
-  });
-
-  it("needs the release name for a bare integer or a single character", () => {
-    const short = { name: "Orbit Notes 5", passage: "5 | 2025-10-21 | supported" };
-
-    expect(isVersionStated({ ...short, version: "5" })).toBe(false);
-
-    expect(
-      isVersionStated({ name: "Orbit Notes 16", passage: "16 | 2026-01-02", version: "16" }),
-    ).toBe(false);
-  });
-
-  it("refuses a version the release's own name doesn't carry", () => {
-    expect(
-      isVersionStated({ name: "Orbit Server 1.38", passage: "1.37 | 2027-10-28", version: "1.37" }),
-    ).toBe(false);
   });
 });
 

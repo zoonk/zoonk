@@ -58,7 +58,7 @@ export type ProductReading = {
   releases: ProductReleaseClaim[];
 };
 
-export type ProductPage = { text: string; title: string; url: string };
+type ProductPage = { text: string; title: string; url: string };
 
 export type ReadProductPagesParams = {
   /** Numbered from 1 in this order; claims cite a page by its number. */
