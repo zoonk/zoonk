@@ -71,7 +71,8 @@ private struct PlanSheets: ViewModifier {
             CertificateSheet(code: code)
           case .suggestion(let item):
             SuggestionSheet {
-              PlanSuggestionSection(context: handingOff, answer: $slotAnswer, sheetItem: item)
+              PlanSuggestionSection(
+                context: handingOff(from: item), answer: $slotAnswer, sheetItem: item)
             }
           }
         }
@@ -87,16 +88,23 @@ private struct PlanSheets: ViewModifier {
   }
 
   /// The plan's editor and a certificate's moment are presented by the screen too, so the
-  /// suggestion closes before either opens.
-  private var handingOff: PlanContext {
+  /// suggestion closes before either opens. A claim answers later: if its suggestion closed
+  /// meanwhile, the screen shows it, unless another sheet is up, which it leaves alone; its moment
+  /// then plays with the learner's next result, which carries it until it's closed.
+  private func handingOff(from item: PlanSlotItem) -> PlanContext {
+    let showClaim = context.showClaim
     var context = context
     context.adjust = { section in
       then = .adjust(section)
       sheet = nil
     }
     context.showClaim = { claim in
-      then = .showClaim(claim)
-      sheet = nil
+      if sheet == .suggestion(item) {
+        then = .showClaim(claim)
+        sheet = nil
+      } else if sheet == nil {
+        showClaim(claim)
+      }
     }
     return context
   }
