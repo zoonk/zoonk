@@ -13,6 +13,7 @@ import {
   lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
+import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
@@ -20,9 +21,10 @@ import { mockSession } from "../_test-utils/mock-session";
 import { updateGoal } from "../goals/update-goal";
 import { testOutKnownPlanItems } from "../learner/_utils/known-skills";
 import { writeLearnerChange } from "../learner/_utils/write-learner-change";
+import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
+import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { celebrateProgress } from "../milestones/celebrate-progress";
 import { completePlanItem } from "../sessions/_utils/plan-items";
-import { settleFinishedLesson } from "../sessions/settle-finished-lesson";
 import { reconcileAppleSubscription } from "../subscriptions/reconcile-apple-subscription";
 import { getFieldMapView } from "../view-models/map/get-field-map-view";
 import { claimCourseCertificate } from "./claim-course-certificate";
@@ -82,7 +84,7 @@ async function courseGoal({
         libraryChapterFixture({ level: spec.level ?? "beginner", title: spec.title }),
       ),
     ),
-    Promise.all(items.map(() => libraryLessonFixture())),
+    Promise.all(items.map(() => playableLessonFixture({ steps: ["explanation"] }))),
   ]);
 
   await Promise.all([
@@ -119,7 +121,7 @@ async function courseGoal({
         completedAt:
           item.status === "todo" ? null : (item.completedAt ?? new Date("2026-11-02T15:00:00Z")),
         kind: item.kind ?? "lesson",
-        lessonId: isChallenge ? null : (lessons[index]?.id ?? null),
+        lessonId: isChallenge ? null : (lessons[index]?.lesson.id ?? null),
         minutes: item.minutes === undefined ? 30 : item.minutes,
         phase: item.phase ?? 0,
         status: item.status ?? "todo",
@@ -146,16 +148,22 @@ function lastTodo({ plan }: CourseGoal) {
   return item;
 }
 
-function finishLesson(fixture: CourseGoal, item = lastTodo(fixture)) {
-  if (!item.lessonId) {
+async function finishLesson(fixture: CourseGoal, item = lastTodo(fixture)) {
+  const { lessonId } = item;
+
+  if (!lessonId) {
     throw new Error("Expected a lesson item");
   }
 
-  return settleFinishedLesson({
-    lessonId: item.lessonId,
-    timeZone: TIME_ZONE,
-    userId: fixture.user.id,
-  });
+  const started = await startLibraryLesson({ input: { timeZone: TIME_ZONE }, lessonId });
+
+  if (started.status !== "started") {
+    throw new Error(`Expected the lesson to start, not ${started.status}`);
+  }
+
+  await expect(
+    completeLibraryLesson({ input: { runId: started.run.runId, timeZone: TIME_ZONE }, lessonId }),
+  ).resolves.toMatchObject({ status: "completed" });
 }
 
 function listCertificates(userId: string) {
