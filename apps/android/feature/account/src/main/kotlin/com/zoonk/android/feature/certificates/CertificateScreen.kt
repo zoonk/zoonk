@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -503,7 +504,11 @@ private fun skillName(skill: CertificateSkillLevel.Skill): String =
         },
     )
 
-/** Main's `DetailRow`: a fact's label and its value at the row's end, with the [action] that changes or copies it. */
+/**
+ * Main's `DetailRow`: a fact's label and its value at the row's end, with the [action] that changes
+ * or copies it. A value that doesn't fit beside its label goes under it, so a large font never
+ * splits a date or a code mid-word.
+ */
 @Composable
 private fun DetailRow(
     label: String,
@@ -517,26 +522,25 @@ private fun DetailRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
+        FlowRow(
             Modifier.weight(1f).semantics(mergeDescendants = true) {},
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
                 label,
-                Modifier.alignByBaseline(),
+                Modifier.padding(end = 16.dp).alignByBaseline(),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
                 value,
-                Modifier.weight(1f).alignByBaseline(),
+                Modifier.alignByBaseline(),
                 style =
                     if (mono) {
                         MaterialTheme.zoonkType.data.copy(color = MaterialTheme.colorScheme.onSurface)
                     } else {
                         MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
                     },
-                textAlign = TextAlign.End,
             )
         }
         action?.invoke()
