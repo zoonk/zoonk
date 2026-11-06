@@ -30,6 +30,7 @@
 ## Follow-ups and generation
 
 - A write calls `oweFollowUps` in the branch that actually changes the row (the first time a session ends, not a repeat call that finds it ended), never returning a "start this next" result for apps. A workflow that makes the write starts its next run itself, from the step's result.
+- Shared content has no learner to owe work to, so the work its write owes (a picture's check, an exam's freshness check) is a column on its row that the write sets and the work clears, such as `MediaAsset.checkOwedAt`. The daily sweep starts what's still owed, and every run doing that work holds the row's run token and claims an attempt first, so it never runs twice at once or keeps paying for a failure no retry fixes.
 - A capability that needs content nobody has written returns what to write and its key instead of writing it, before it starts, charges or reserves anything, since the client sends the same request again once that content is written. The API turns that into a run.
 
 ## Learner data

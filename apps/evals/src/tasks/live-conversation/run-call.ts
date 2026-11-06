@@ -1,4 +1,3 @@
-import { type ModelCall, toTokenUsage } from "@/lib/types";
 import { checkConversationObjectives } from "@zoonk/ai/tasks/language/conversation-objectives";
 import {
   type LiveConversationInstructionsParams,
@@ -25,13 +24,7 @@ type RolePlayCall = Omit<
 
 export type LiveConversationInput = { call: RolePlayCall; learner: SimulatedLearner };
 
-type CallProgress = {
-  calls: ModelCall[];
-  met: string[];
-  turns: CallTurn[];
-  allMet: boolean;
-  saidGoodbye: boolean;
-};
+type CallProgress = { met: string[]; turns: CallTurn[]; allMet: boolean; saidGoodbye: boolean };
 
 type CallContext = {
   call: RolePlayCall;
@@ -97,7 +90,7 @@ async function checkObjectives({
     (objective) => !progress.met.includes(objective.label),
   );
 
-  const { data, provenance, usage } = await checkConversationObjectives({
+  const { data } = await checkConversationObjectives({
     characterNotes: call.scenario.characterBrief,
     learnerLanguage: call.learnerLanguage,
     objectives: open,
@@ -112,7 +105,6 @@ async function checkObjectives({
 
   return {
     allMet: open.every((objective) => met.includes(objective.label)),
-    calls: [...progress.calls, { modelId: provenance.requestedModel, usage: toTokenUsage(usage) }],
     met,
     saidGoodbye: data.goodbye,
     turns: progress.turns.map((turn, index) =>
@@ -143,7 +135,7 @@ async function playStep({
     writeLearnerLine({ step: instruction, systemPrompt: learnerPrompt, turns: progress.turns }),
   ]);
 
-  const heard = { ...(checked ?? progress), calls: [...(checked ?? progress).calls, line.call] };
+  const heard = checked ?? progress;
 
   if (heard.saidGoodbye) {
     return heard;
@@ -157,7 +149,7 @@ async function playStep({
       ? getObjectivesProgressCue({ met: heard.met, open })
       : undefined;
 
-  const answered = await say({ context, line: line.text, note, progress: heard });
+  const answered = await say({ context, line, note, progress: heard });
 
   if (!heard.allMet && step < learner.plan.length) {
     return playStep({ context, progress: answered, step: step + 1 });
@@ -201,7 +193,6 @@ export async function runLiveCall({ call, learner }: LiveConversationInput) {
       context,
       progress: {
         allMet: false,
-        calls: [],
         met: [],
         saidGoodbye: false,
         turns: [characterTurn(opening.reply)],
@@ -211,7 +202,7 @@ export async function runLiveCall({ call, learner }: LiveConversationInput) {
 
     const seconds = await live.close();
 
-    return { extraCalls: ended.calls, instructions, learnerPrompt, seconds, turns: ended.turns };
+    return { instructions, learnerPrompt, seconds, turns: ended.turns };
   } catch (error) {
     await live.close();
     throw error;

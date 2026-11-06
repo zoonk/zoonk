@@ -5,7 +5,7 @@ import { type MistakeAvailability } from "@zoonk/core/mistakes/contract";
 import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { useExtracted } from "next-intl";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Page } from "../_components/page";
 import { usePoll } from "../_utils/use-poll";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
@@ -98,6 +98,7 @@ export function TodayScreen({
 }) {
   const t = useExtracted();
   const analytics = useLearnAnalytics();
+  const aside = useRef<HTMLElement>(null);
 
   useEffect(() => {
     analytics.track({ name: "Today Viewed" });
@@ -121,7 +122,7 @@ export function TodayScreen({
       <PageWithAside
         aside={
           <>
-            <TodayNotice className={NOTICE_CLASS} />
+            <TodayNotice className={NOTICE_CLASS} fallbackFocus={aside} />
             <TodayMissions className={ASIDE_LEAD_CLASS} />
             <TodayWeek className={ASIDE_LEAD_CLASS} />
             <TodayPreparation className={ASIDE_LEAD_CLASS} level={level} syllabus={syllabus} />
@@ -135,6 +136,7 @@ export function TodayScreen({
         }
         asideClassName={TODAY_ASIDE_CLASS}
         asideLabel={t("Your week")}
+        asideRef={aside}
       >
         <Page data-slot="today">
           <section aria-label={t("Today's session")} className={TODAY_MAIN_CLASS}>

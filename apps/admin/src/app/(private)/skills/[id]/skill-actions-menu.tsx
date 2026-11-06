@@ -1,5 +1,6 @@
 "use client";
 
+import { type AdminActionState, useAdminActionState } from "@/lib/use-admin-action-state";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -11,6 +12,7 @@ import {
 } from "@zoonk/ui/components/alert-dialog";
 import { DetailMenu } from "@zoonk/ui/components/detail";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
+import { FieldError } from "@zoonk/ui/components/field";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
@@ -42,28 +44,53 @@ export function SkillActionsMenu({ skillId }: { skillId: string }) {
             </AlertDialogDescription>
           </AlertDialogHeader>
 
-          <form
-            action={async (formData) => {
-              await mergeSkillAction(formData);
-              setOpen(false);
-            }}
-          >
-            <input name="duplicateId" type="hidden" value={skillId} />
-
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="survivorId">Surviving skill id</Label>
-              <Input id="survivorId" name="survivorId" required />
-            </div>
-
-            <AlertDialogFooter className="mt-6">
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <SubmitButton className="w-auto" variant="destructive">
-                Merge
-              </SubmitButton>
-            </AlertDialogFooter>
-          </form>
+          <MergeSkillForm onMerged={() => setOpen(false)} skillId={skillId} />
         </AlertDialogContent>
       </AlertDialog>
     </>
+  );
+}
+
+function MergeSkillForm({ onMerged, skillId }: { onMerged: () => void; skillId: string }) {
+  // React resets uncontrolled fields after a form action, and a failed merge keeps the id to fix.
+  const [survivorId, setSurvivorId] = useState("");
+
+  const [state, formAction] = useAdminActionState<AdminActionState>({
+    action: async (previous, formData) => {
+      const merged = await mergeSkillAction(previous, formData);
+
+      if (!merged.error) {
+        onMerged();
+      }
+
+      return merged;
+    },
+    initialState: { error: null, submissionId: 0 },
+  });
+
+  return (
+    <form action={formAction} className="flex flex-col gap-6">
+      <input name="duplicateId" type="hidden" value={skillId} />
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="survivorId">Surviving skill id</Label>
+        <Input
+          id="survivorId"
+          name="survivorId"
+          onChange={(event) => setSurvivorId(event.target.value)}
+          required
+          value={survivorId}
+        />
+      </div>
+
+      <FieldError key={state.submissionId}>{state.error}</FieldError>
+
+      <AlertDialogFooter>
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <SubmitButton className="w-auto" variant="destructive">
+          Merge
+        </SubmitButton>
+      </AlertDialogFooter>
+    </form>
   );
 }

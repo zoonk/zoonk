@@ -1,6 +1,8 @@
 import "server-only";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { buildAuthLoginUrl } from "@zoonk/utils/origin";
+import { USAGE_DATA_COOKIE, parseUsageDataCookie } from "@zoonk/utils/usage-data";
+import { type NextRequest } from "next/server";
 import { getRouterPayloadFallback } from "../navigation/document-route";
 import {
   ONE_TIME_TOKEN_LOGIN_STATE_COOKIE,
@@ -48,7 +50,7 @@ export function startOneTimeTokenLogin({
   callbackPath: string;
   expired?: boolean;
   locale: SupportedLocale;
-  request: Request;
+  request: NextRequest;
 }): Response {
   const routerFallback = getRouterPayloadFallback(request);
 
@@ -65,10 +67,11 @@ export function startOneTimeTokenLogin({
   }
 
   const callbackUrl = addLoginStateToCallbackUrl({ callbackUrl: returnUrl.toString(), state });
+  const shareUsageData = parseUsageDataCookie(request.cookies.get(USAGE_DATA_COOKIE)?.value);
 
   const headers = new Headers({
     "Cache-Control": "no-store",
-    Location: buildAuthLoginUrl({ callbackUrl, expired, locale }),
+    Location: buildAuthLoginUrl({ callbackUrl, expired, locale, shareUsageData }),
   });
 
   headers.append("set-cookie", getLoginStateCookie({ secure: origin.startsWith("https:"), state }));

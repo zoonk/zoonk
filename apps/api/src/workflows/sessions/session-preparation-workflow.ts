@@ -6,8 +6,7 @@ import { start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { type PlanStepOutcome, retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { repeatUntil } from "../_shared/repeat-until";
-import { claimRunToken } from "../_shared/run-token";
-import { challengeQuestionsWorkflow } from "../goals/challenge-questions-workflow";
+import { claimRunToken, startOnce } from "../_shared/run-token";
 import {
   listPlanOutlines,
   startAll,
@@ -21,7 +20,9 @@ import {
   readGoalField,
 } from "../goals/steps/field-items-steps";
 import { endLessonsAskStep, readGoalLookaheadStep } from "../goals/steps/goal-lookahead-steps";
+import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
+import { startChallengeQuestions } from "./challenge-question-starts";
 import { writeLanguageCalls } from "./steps/language-call-steps";
 import {
   listLearnerVersionTargetsStep,
@@ -30,7 +31,6 @@ import {
 } from "./steps/personal-versions-steps";
 import {
   type ClaimQuestions,
-  type PreparationDecision,
   type SessionPreparationRequest,
   decidePreparationStep,
 } from "./steps/preparation-decision-step";
@@ -279,22 +279,6 @@ async function outlineGuestLessons({
   });
 }
 
-function startChallengeQuestions(decision: Extract<PreparationDecision, { status: "ready" }>) {
-  const request = decision.challengeQuestions;
-
-  if (!request) {
-    return [];
-  }
-
-  const { analytics, challenges, quickFormat } = request;
-
-  return challenges.map(({ key, later, writes }) =>
-    start(challengeQuestionsWorkflow, [
-      { analytics, goalId: decision.goalId, key, later, quickFormat, writes },
-    ]),
-  );
-}
-
 export async function sessionPreparationWorkflow(
   request: SessionPreparationRequest,
 ): Promise<SessionPreparationResult> {
@@ -321,7 +305,9 @@ export async function sessionPreparationWorkflow(
     const analytics = { distinctId: userId, goalId: goalId ?? undefined, platform };
 
     await Promise.all([
-      lesson ? start(lessonContentWorkflow, [lesson]) : null,
+      lesson
+        ? startOnce(lessonContentWorkflow, [lesson], getLessonContentHookToken(lesson.lessonId))
+        : null,
       goalId ? outlineGuestLessons({ analytics, goalId, lessonsAskedAt }) : null,
     ]);
 

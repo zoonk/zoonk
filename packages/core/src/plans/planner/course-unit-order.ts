@@ -1,5 +1,17 @@
 import { type PlannerLesson, type QueueUnit } from "./plan-units";
 
+export function keepCourseLevels({
+  lessons,
+  units,
+}: {
+  lessons: readonly PlannerLesson[];
+  units: QueueUnit[];
+}): QueueUnit[] {
+  return lessons.some((lesson) => lesson.courseOrder)
+    ? units.toSorted((a, b) => a.phase - b.phase)
+    : units;
+}
+
 export function followCourseLessonOrder({
   lessons,
   units,
@@ -17,29 +29,22 @@ export function followCourseLessonOrder({
 
   const positioned = units.toReversed().map((unit, index) => {
     const placement = unit.lessonId ? order.get(unit.lessonId) : undefined;
-    const phase = placement?.phase ?? unit.phase;
-    const position = placement?.position ?? firstRemainingInPhase.get(phase) ?? Infinity;
+    const position = placement?.position ?? firstRemainingInPhase.get(unit.phase) ?? Infinity;
 
     if (placement) {
       firstRemainingInPhase.set(
-        phase,
-        Math.min(position, firstRemainingInPhase.get(phase) ?? Infinity),
+        unit.phase,
+        Math.min(position, firstRemainingInPhase.get(unit.phase) ?? Infinity),
       );
     }
 
-    return {
-      before: !placement,
-      index: units.length - index,
-      phase,
-      position,
-      unit: { ...unit, phase },
-    };
+    return { before: !placement, index: units.length - index, position, unit };
   });
 
   return positioned
     .toSorted(
       (a, b) =>
-        a.phase - b.phase ||
+        a.unit.phase - b.unit.phase ||
         a.position - b.position ||
         Number(b.before) - Number(a.before) ||
         a.index - b.index,

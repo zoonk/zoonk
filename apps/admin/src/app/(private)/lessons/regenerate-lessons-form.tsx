@@ -1,8 +1,8 @@
 "use client";
 
 import { AdminActionSubmitButton } from "@/components/admin-action-submit-button";
+import { useAdminActionState } from "@/lib/use-admin-action-state";
 import { RefreshCwIcon } from "lucide-react";
-import { useActionState } from "react";
 import {
   type RegenerateLessonsState,
   regenerateLessonsAction,
@@ -25,7 +25,11 @@ export function RegenerateLessonsForm({
   model?: string;
   promptVersion?: string;
 }) {
-  const [state, formAction] = useActionState(regenerateLessonsAction, INITIAL_STATE);
+  const [state, formAction] = useAdminActionState({
+    action: regenerateLessonsAction,
+    initialState: INITIAL_STATE,
+    onRejected: (previous) => ({ ...previous, regenerated: null }),
+  });
 
   return (
     <form

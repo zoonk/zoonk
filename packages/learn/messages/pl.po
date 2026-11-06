@@ -7606,11 +7606,6 @@ msgid "The trap:"
 msgstr "Pułapka:"
 
 #: src/mistakes/drill/drill-controls.tsx
-msgctxt "tvAkCd"
-msgid "I've read it. Show the answers"
-msgstr "Przeczytane. Pokaż odpowiedzi"
-
-#: src/mistakes/drill/drill-controls.tsx
 msgctxt "XUx7zX"
 msgid "I'm not sure"
 msgstr "Nie mam pewności"
@@ -9145,6 +9140,12 @@ msgstr "Twoje materiały"
 msgctxt "G5e8UX"
 msgid "Remove {title}"
 msgstr "Usuń: {title}"
+
+#. Read by screen readers once material is added. {title} is a file's name, a link or “Your text”.
+#: src/onboarding/entry/goal-attachments.tsx
+msgctxt "B7hTRC"
+msgid "Added to your material: {title}"
+msgstr "Dodano do twoich materiałów: {title}"
 
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "ng8fsM"
@@ -12814,6 +12815,11 @@ msgstr "Kilka pomyłek z rzędu. Krótka przerwa często pomaga, a cała dzisiej
 msgctxt "lTfSB-"
 msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
 msgstr "Dopracowujemy twój plan. Pomyłki w tym zadaniu nigdy nie trafiają do zeszytu błędów."
+
+#: src/session/question-block/question-actions.tsx
+msgctxt "tvAkCd"
+msgid "I've read it. Show the answers"
+msgstr "Przeczytane. Pokaż odpowiedzi"
 
 #: src/session/question-block/question-block-header.tsx
 msgctxt "JJytYK"

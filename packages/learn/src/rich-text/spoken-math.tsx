@@ -12,21 +12,12 @@ export function SpokenMath({ children }: { children: React.ReactNode }) {
   return <SpokenMathContext value>{children}</SpokenMathContext>;
 }
 
-export function MathMarkupView({
-  className,
-  markup,
-  words,
-}: {
-  className?: string;
-  markup: string;
-  words: string;
-}) {
+export function MathMarkupView({ markup, words }: { markup: string; words: string }) {
   const spoken = use(SpokenMathContext);
 
   const drawing = (
     <span
       aria-hidden={spoken || undefined}
-      className={className}
       // eslint-disable-next-line react/no-danger -- KaTeX returns escaped MathML with trust disabled, which lets formulas render without allowing AI-provided HTML.
       dangerouslySetInnerHTML={{ __html: markup }}
     />

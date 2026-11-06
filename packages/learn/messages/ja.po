@@ -7606,11 +7606,6 @@ msgid "The trap:"
 msgstr "ひっかけ："
 
 #: src/mistakes/drill/drill-controls.tsx
-msgctxt "tvAkCd"
-msgid "I've read it. Show the answers"
-msgstr "読み終えたので答えを見る"
-
-#: src/mistakes/drill/drill-controls.tsx
 msgctxt "XUx7zX"
 msgid "I'm not sure"
 msgstr "自信がない"
@@ -9145,6 +9140,12 @@ msgstr "資料"
 msgctxt "G5e8UX"
 msgid "Remove {title}"
 msgstr "{title}を取り除く"
+
+#. Read by screen readers once material is added. {title} is a file's name, a link or “Your text”.
+#: src/onboarding/entry/goal-attachments.tsx
+msgctxt "B7hTRC"
+msgid "Added to your material: {title}"
+msgstr "資料に追加しました：{title}"
 
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "ng8fsM"
@@ -12814,6 +12815,11 @@ msgstr "何問か間違いが続いています。ひと休みすると、集中
 msgctxt "lTfSB-"
 msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
 msgstr "学習計画を調整しています。ここで間違えても、間違いノートには保存されません。"
+
+#: src/session/question-block/question-actions.tsx
+msgctxt "tvAkCd"
+msgid "I've read it. Show the answers"
+msgstr "読み終えたので答えを見る"
 
 #: src/session/question-block/question-block-header.tsx
 msgctxt "JJytYK"

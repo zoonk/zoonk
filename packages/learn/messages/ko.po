@@ -7606,11 +7606,6 @@ msgid "The trap:"
 msgstr "함정:"
 
 #: src/mistakes/drill/drill-controls.tsx
-msgctxt "tvAkCd"
-msgid "I've read it. Show the answers"
-msgstr "읽기 완료. 정답 보기"
-
-#: src/mistakes/drill/drill-controls.tsx
 msgctxt "XUx7zX"
 msgid "I'm not sure"
 msgstr "잘 모르겠어요"
@@ -9145,6 +9140,12 @@ msgstr "내 자료"
 msgctxt "G5e8UX"
 msgid "Remove {title}"
 msgstr "{title} 삭제하기"
+
+#. Read by screen readers once material is added. {title} is a file's name, a link or “Your text”.
+#: src/onboarding/entry/goal-attachments.tsx
+msgctxt "B7hTRC"
+msgid "Added to your material: {title}"
+msgstr "자료에 추가했어요: {title}"
 
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "ng8fsM"
@@ -12814,6 +12815,11 @@ msgstr "몇 문제 연속으로 틀렸어요. 잠깐 쉬어 가면 도움이 될
 msgctxt "lTfSB-"
 msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
 msgstr "계획을 다듬고 있어요. 여기서 틀려도 오답 노트에 저장되지 않아요."
+
+#: src/session/question-block/question-actions.tsx
+msgctxt "tvAkCd"
+msgid "I've read it. Show the answers"
+msgstr "읽기 완료. 정답 보기"
 
 #: src/session/question-block/question-block-header.tsx
 msgctxt "JJytYK"

@@ -1,6 +1,7 @@
 import { getEnvironment, isLocalhostSupported } from "./environment";
 import { type SupportedLocale } from "./locale";
 import { API_URL } from "./url";
+import { formatUsageDataCookie } from "./usage-data";
 
 const NEXT_DEFAULT_PORT = 3000;
 
@@ -38,14 +39,18 @@ export function getBaseUrl(): string {
 /** @public */
 export const AUTH_LOGIN_EXPIRED_ERROR = "expired";
 
+export const AUTH_LOGIN_USAGE_DATA_PARAM = "usageData";
+
 export function buildAuthLoginUrl({
   callbackUrl,
   expired = false,
   locale,
+  shareUsageData = null,
 }: {
   callbackUrl: string;
   expired?: boolean;
   locale: SupportedLocale;
+  shareUsageData?: boolean | null;
 }): string {
   const authUrl = new URL("/auth/login", API_URL);
   authUrl.searchParams.set("locale", locale);
@@ -53,6 +58,10 @@ export function buildAuthLoginUrl({
 
   if (expired) {
     authUrl.searchParams.set("error", AUTH_LOGIN_EXPIRED_ERROR);
+  }
+
+  if (shareUsageData !== null) {
+    authUrl.searchParams.set(AUTH_LOGIN_USAGE_DATA_PARAM, formatUsageDataCookie(shareUsageData));
   }
 
   return authUrl.toString();

@@ -16,54 +16,35 @@ import {
 import { UploadRequestCard, useRequestCopy } from "@zoonk/learn/upload-request";
 import { FileSearchIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
 
-type RequestState = "answered" | "asking" | "dismissed";
-
+/**
+ * The host keeps the learner's answer, so it thanks after `onAnswered` and takes the ask away after
+ * `onDismissed`.
+ */
 export function UploadRequestClient({
-  answered = false,
+  answered,
   onAnswered,
+  onDismissed,
   request,
 }: {
-  answered?: boolean;
-  onAnswered?: () => void;
+  answered: boolean;
+  onAnswered: () => void;
+  onDismissed: () => void;
   request: GoalUploadRequest;
 }) {
   const t = useExtracted();
   const router = useRouter();
   const copy = useRequestCopy(request);
-  const [answer, setAnswer] = useState<RequestState>("asking");
-
-  // The host's word wins, so an ask shown again before the answer arrived still thanks.
-  const state: RequestState = answered ? "answered" : answer;
   const { goalId } = request;
-
-  const settle = (done: RequestState) => (saved: boolean) => {
-    if (saved) {
-      setAnswer(done);
-    }
-
-    // The API leaves the page alone, so the page reads itself again to keep the ask answered.
-    if (saved && done === "answered") {
-      onAnswered?.();
-      router.refresh();
-    }
-
-    return saved;
-  };
-
-  if (state === "dismissed") {
-    return null;
-  }
 
   return (
     <Suggestion
-      answered={state === "answered"}
+      answered={answered}
       label={t("Your plan needs a document")}
       mark={<FileSearchIcon />}
     >
       <SuggestionLine>
-        {state === "answered" ? (
+        {answered ? (
           <SuggestionResult>
             {t("Thanks. We're reading it now, and your plan will update in a few minutes.")}
           </SuggestionResult>
@@ -76,7 +57,7 @@ export function UploadRequestClient({
       </SuggestionLine>
 
       <SuggestionContent>
-        {state === "answered" ? (
+        {answered ? (
           <SuggestionResult>
             {t("Thanks. We're reading it now, and your plan will update in a few minutes.")}
           </SuggestionResult>
@@ -85,7 +66,13 @@ export function UploadRequestClient({
             actions={{
               answer: async (sourceIds) => {
                 const outcome = await answerUploadRequest({ goalId, sourceIds });
-                settle("answered")(outcome === "answered");
+
+                // The API leaves the page alone, so the page reads itself again to keep the ask answered.
+                if (outcome === "answered") {
+                  onAnswered();
+                  router.refresh();
+                }
+
                 return outcome;
               },
               attach: {
@@ -93,7 +80,15 @@ export function UploadRequestClient({
                 link: (input) => attachGoalLink({ ...input, goalId }),
                 text: (input) => attachGoalText({ ...input, goalId }),
               },
-              dismiss: () => dismissUploadRequestAction(goalId).then(settle("dismissed")),
+              dismiss: async () => {
+                const dismissed = await dismissUploadRequestAction(goalId);
+
+                if (dismissed) {
+                  onDismissed();
+                }
+
+                return dismissed;
+              },
             }}
             className="rounded-none bg-transparent p-0"
             language={request.language}

@@ -54,21 +54,28 @@ function usePrefetchSessionFrame(href: string) {
   }, [href, router]);
 }
 
-/** An upload ask answered here shows its thanks while the learner stays, whatever Today read since. */
+/**
+ * An upload ask answered here shows its thanks while the learner stays, whatever Today read since,
+ * and one dismissed here stays away.
+ */
 function toHostNotices({
   answeredUpload,
   data,
   goalId,
   onUploadAnswered,
+  onUploadDismissed,
+  uploadDismissed,
 }: {
   answeredUpload: GoalUploadRequest | null;
   data: TodayScreenData;
   goalId: string;
   onUploadAnswered: (request: GoalUploadRequest) => void;
+  onUploadDismissed: () => void;
+  uploadDismissed: boolean;
 }): TodayHostNotices {
   const { language, today } = data;
   const hasPractice = Boolean(today.pattern ?? language?.pronunciation);
-  const upload = answeredUpload ?? today.uploadRequest;
+  const upload = answeredUpload ?? (uploadDismissed ? null : today.uploadRequest);
 
   return {
     practice:
@@ -86,6 +93,7 @@ function toHostNotices({
       <UploadRequestClient
         answered={answeredUpload !== null}
         onAnswered={() => onUploadAnswered(upload)}
+        onDismissed={onUploadDismissed}
         request={upload}
       />
     ) : null,
@@ -138,6 +146,7 @@ export function TodayClient({
 
   const missionLinks = useMissionLinks(today.goal.id, { learner: userId, openStep, refresh });
   const [answeredUpload, setAnsweredUpload] = useState<GoalUploadRequest | null>(null);
+  const [uploadDismissed, setUploadDismissed] = useState(false);
   const answerSuggestedGoal = useAnswerSuggestedGoal({ hasGoal: true });
   const startTestOut = useStartTestOut();
   const sessionHref = getSessionHref({ goalId, limit: null });
@@ -218,6 +227,8 @@ export function TodayClient({
         data,
         goalId: today.goal.id,
         onUploadAnswered: setAnsweredUpload,
+        onUploadDismissed: () => setUploadDismissed(true),
+        uploadDismissed,
       })}
       planEnd={data.planEnd}
       speakingEntry={

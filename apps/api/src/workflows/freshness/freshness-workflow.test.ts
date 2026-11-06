@@ -47,8 +47,6 @@ const TASK = {
   userPrompt: "",
 };
 
-const READING = { ...TASK, formatsProvenance: null };
-
 const PROVENANCE = {
   generatedAt: "2026-09-26T12:00:00.000Z",
   model: "google/gemini-3.8-flash",
@@ -297,7 +295,6 @@ describe(freshnessWorkflow, () => {
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
       data: withExamDate({ extraction, line: NEW_DATE_LINE }),
-      formatsProvenance: null,
       provenance: {
         ...PROVENANCE,
         costUsd: 0,
@@ -382,7 +379,7 @@ describe(freshnessWorkflow, () => {
     const current = withExamDate({ extraction, line: OLD_DATE_LINE });
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
-      ...READING,
+      ...TASK,
       data: {
         ...current,
         dates: current.dates.map((date) =>
@@ -465,7 +462,7 @@ describe(freshnessWorkflow, () => {
     });
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
-      ...READING,
+      ...TASK,
       data: {
         ...extraction,
         dates: extraction.dates.map((date) =>
@@ -571,7 +568,6 @@ describe(freshnessWorkflow, () => {
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
       data: withExamDate({ extraction, line: NEW_DATE_LINE }),
-      formatsProvenance: null,
       provenance: {
         ...PROVENANCE,
         costUsd: 0,

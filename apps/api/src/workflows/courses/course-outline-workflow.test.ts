@@ -1120,7 +1120,11 @@ describe(courseOutlineWorkflow, () => {
 
     expect(vi.mocked(start).mock.calls).toStrictEqual([
       [courseIconWorkflow, [{ analytics: undefined, courseId: course.id }]],
-      [courseDetailsWorkflow, [{ analytics: undefined, courseId: course.id }]],
+      [
+        courseDetailsWorkflow,
+        [{ analytics: undefined, courseId: course.id }],
+        { experimental_hook: { token: `course-details:${course.id}` } },
+      ],
     ]);
   });
 
@@ -1472,7 +1476,12 @@ describe(courseOutlineWorkflow, () => {
 
     expect(items.length).toBeGreaterThan(0);
     expect(items.every((item) => item.lessonId === null)).toBe(true);
-    expect(start).not.toHaveBeenCalledWith(courseDetailsWorkflow, expect.anything());
+
+    expect(start).not.toHaveBeenCalledWith(
+      courseDetailsWorkflow,
+      expect.anything(),
+      expect.anything(),
+    );
   });
 
   it("gives a private course no details or other bands", async () => {
@@ -1757,7 +1766,11 @@ describe(courseOutlineWorkflow, () => {
     ).resolves.toMatchObject({ description: null, imageUrl: null, outlineStatus: "completed" });
 
     expect(vi.mocked(start).mock.calls).toStrictEqual([
-      [courseDetailsWorkflow, [{ analytics: undefined, courseId: course.id }]],
+      [
+        courseDetailsWorkflow,
+        [{ analytics: undefined, courseId: course.id }],
+        { experimental_hook: { token: `course-details:${course.id}` } },
+      ],
     ]);
   });
 
@@ -1793,7 +1806,11 @@ describe(courseOutlineWorkflow, () => {
     ).resolves.toStrictEqual({ bandsWritten: 0, chapterIds: [], status: "written" });
 
     expect(vi.mocked(start).mock.calls).toStrictEqual([
-      [courseDetailsWorkflow, [{ analytics: undefined, courseId: course.id }]],
+      [
+        courseDetailsWorkflow,
+        [{ analytics: undefined, courseId: course.id }],
+        { experimental_hook: { token: `course-details:${course.id}` } },
+      ],
     ]);
   });
 
@@ -1914,9 +1931,11 @@ describe(courseOutlineWorkflow, () => {
 
     expect(generateCourseOutline).not.toHaveBeenCalled();
 
-    expect(start).toHaveBeenCalledWith(courseDetailsWorkflow, [
-      { analytics: undefined, courseId: course.id },
-    ]);
+    expect(start).toHaveBeenCalledWith(
+      courseDetailsWorkflow,
+      [{ analytics: undefined, courseId: course.id }],
+      { experimental_hook: { token: `course-details:${course.id}` } },
+    );
   });
 
   it("writes a skill's next chapter right after its last one, under a new title, and swaps its lessons into the plan", async () => {

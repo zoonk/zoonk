@@ -1,6 +1,7 @@
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { holdScripts } from "@zoonk/e2e/hydration";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
 import { clickWithConnectionDown } from "./helpers/server-actions";
 import { E2E_MAIN_APP_URL } from "./main-app-url";
@@ -94,6 +95,34 @@ test.describe("Profile Setup Flow", () => {
       name: "Test User",
       username: chosen,
     });
+
+    await cleanupVerifications(email);
+  });
+
+  test("a name typed and sent before the page loaded stays when another learner took the username meanwhile", async ({
+    page,
+  }) => {
+    const prefix = `e2eearly${Date.now()}`;
+    const email = `${prefix}@zoonk.test`;
+
+    await signInToSetup({ email, page });
+
+    const loadScripts = await holdScripts(page);
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await expect(page.getByText(`Your username: @${prefix}`)).toBeVisible();
+
+    await prisma.user.create({
+      data: { email: `other-${email}`, emailVerified: true, name: "Other", username: prefix },
+    });
+
+    const name = page.getByRole("textbox", { exact: true, name: "Name" });
+    await name.fill("Early Learner");
+    await page.getByRole("button", { name: /^continue$/iu }).click();
+    await loadScripts();
+
+    await expect(page.getByText(`${prefix} is already taken`)).toBeVisible();
+    await expect(name).toHaveValue("Early Learner");
+    await expect(page.getByRole("textbox", { exact: true, name: "Username" })).toHaveValue(prefix);
 
     await cleanupVerifications(email);
   });

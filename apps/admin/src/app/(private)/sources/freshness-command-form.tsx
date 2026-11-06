@@ -1,8 +1,8 @@
 "use client";
 
 import { AdminActionSubmitButton } from "@/components/admin-action-submit-button";
+import { useAdminActionState } from "@/lib/use-admin-action-state";
 import { CircleStopIcon, RefreshCwIcon } from "lucide-react";
-import { useActionState } from "react";
 import {
   type FreshnessCommandState,
   type FreshnessTargetKind,
@@ -35,7 +35,10 @@ export function FreshnessCommandForm({
   targetId: string;
   targetKind: FreshnessTargetKind;
 }) {
-  const [state, formAction] = useActionState(sendFreshnessCommandAction, INITIAL_STATE);
+  const [state, formAction] = useAdminActionState({
+    action: sendFreshnessCommandAction,
+    initialState: INITIAL_STATE,
+  });
 
   return (
     <div className="flex flex-col gap-1 md:items-end">
