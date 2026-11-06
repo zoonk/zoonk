@@ -392,6 +392,15 @@ class TutorViewModel internal constructor(
                 is MutationResult.Failed -> {
                     if (result.status == CONFLICT) {
                         unresolved = null
+                        // An earlier question goes first, so this one waits in the composer, still going by its
+                        // suggestion. It's there before the read, so a question sent during it can't be overwritten.
+                        if (draft.text.isEmpty()) {
+                            if (pending.suggestion == null) {
+                                draft.setTextAndPlaceCursorAtEnd(pending.question)
+                            } else {
+                                offer(TutorSuggestion(pending.question, pending.suggestion))
+                            }
+                        }
                         thread.refresh()
                         return@launch
                     }
