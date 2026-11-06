@@ -32,6 +32,8 @@ const LAW_TEXT = [
   "Art. 14. A posse em cargo público dependerá de prévia inspeção médica oficial.",
 ].join("\n");
 
+const NEW_LAW_HASH = "law-after-the-change";
+
 const PROVENANCE = {
   generatedAt: new Date(),
   model: "test/model",
@@ -48,7 +50,7 @@ async function noticeFor(sourceId: string) {
 
   const notice = await recordSourceChangeNotice({
     ...owed,
-    contentHash: `new-${crypto.randomUUID()}`,
+    contentHash: NEW_LAW_HASH,
     fields: ["text"],
     language: "pt",
     message: "A lei mudou: a posse agora ocorre em quinze dias.",
@@ -84,7 +86,7 @@ async function lawWithDependents() {
       sourceCitation: "Lei nº 8.112, Art. 13",
       sourceId: law.id,
     }),
-    itemFixture({ generatedAt: daysAgo(-1), skillId: skill.id, sourceId: law.id }),
+    itemFixture({ skillId: skill.id, sourceHash: NEW_LAW_HASH, sourceId: law.id }),
     libraryStepFixture({ generatedAt: daysAgo(3), lessonId: citing.id, sourceId: law.id }),
     libraryStepFixture({ generatedAt: daysAgo(3), lessonId: other.id }),
   ]);
@@ -177,7 +179,7 @@ describe("a rewritten lesson", () => {
           content: { text: "A posse ocorre em quinze dias.", title: "A posse" },
           kind: "explanation",
           mathItem: null,
-          provenance: PROVENANCE,
+          provenance: { ...PROVENANCE, sources: [] },
           skillId: null,
         },
       ],
@@ -220,6 +222,7 @@ describe("the flag sweep", () => {
           url: law.url,
         },
         preparedAt: expect.any(Date),
+        sourceHash: law.contentHash,
         sourceId: law.id,
         style: "cebraspe",
       },

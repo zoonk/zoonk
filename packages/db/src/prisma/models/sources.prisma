@@ -48,6 +48,7 @@ model Source {
   learnerSources     LearnerSource[]
   changeNotices      SourceChangeNotice[]
   steps              Step[]
+  stepSources        StepSource[]
   uploads            SourceUpload[]
 
   @@unique([language, identityKey], name: "languageIdentity")

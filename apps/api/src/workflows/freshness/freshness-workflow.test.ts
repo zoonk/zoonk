@@ -722,15 +722,20 @@ describe(freshnessWorkflow, () => {
     const skill = await skillFixture();
 
     const fromOldText = await itemFixture({
-      generatedAt: new Date(Date.now() - DAY_MS),
       skillId: skill.id,
+      sourceHash: source.contentHash,
       sourceId: source.id,
     });
 
     serveNotice(LAW_AFTER);
-    await storeLawAgain(source);
+    const stored = await storeLawAgain(source);
 
-    const fromNewText = await itemFixture({ skillId: skill.id, sourceId: source.id });
+    const fromNewText = await itemFixture({
+      skillId: skill.id,
+      sourceHash: stored.contentHash,
+      sourceId: source.id,
+    });
+
     writeLawNotice();
 
     await freshnessWorkflow({ kind: "source", sourceId: source.id });
@@ -754,8 +759,8 @@ describe(freshnessWorkflow, () => {
     const briefVersion = await storeLawAgain(source);
 
     const fromBriefVersion = await itemFixture({
-      generatedAt: briefVersion.fetchedAt,
       skillId: skill.id,
+      sourceHash: briefVersion.contentHash,
       sourceId: source.id,
     });
 

@@ -74,6 +74,7 @@ describe(loadLessonDocuments, () => {
       {
         page: 2,
         ref: "S1:2",
+        sourceHash: law.contentHash,
         sourceId: law.id,
         text: STATUTE_PAGES[1],
         title: "Law 8,112 of 1990",
@@ -97,6 +98,26 @@ describe(loadLessonDocuments, () => {
     ]);
 
     await prisma.user.delete({ where: { id: user.id } });
+
+    const documents = await loadLessonDocuments({
+      chapterId: null,
+      courseId: null,
+      lessonId: lesson.id,
+      query: QUERY,
+    });
+
+    expect(documents.sources.map((page) => [page.sourceId, page.text])).toStrictEqual([
+      [law.id, STATUTE_PAGES[1]],
+    ]);
+  });
+
+  it("keeps reading the law its screens were written from, even when no screen cites it", async () => {
+    const [lesson, law] = await Promise.all([libraryLessonFixture(), statute()]);
+    const step = await libraryStepFixture({ lessonId: lesson.id });
+
+    await prisma.stepSource.create({
+      data: { contentHash: law.contentHash, sourceId: law.id, stepId: step.id },
+    });
 
     const documents = await loadLessonDocuments({
       chapterId: null,

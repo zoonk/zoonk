@@ -85,5 +85,5 @@ export async function unnoticedSourceChangeFixture({
     where: { id: sourceId },
   });
 
-  return { changedAt, previousHash, revision: source.unnoticedRevision };
+  return { previousHash, revision: source.unnoticedRevision };
 }

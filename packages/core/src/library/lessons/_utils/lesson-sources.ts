@@ -15,7 +15,10 @@ const MIN_SHARED_TERMS = 3;
 /** Exam notices describe one exam's syllabus; using them as factual sources would leak that context into shared lessons. */
 const FACT_TOPICS: ReadonlySet<SourceTopic | null> = new Set(["regulation", "software"]);
 
-type LessonSourceRow = Pick<Source, "extractedText" | "id" | "mimeType" | "structure" | "title">;
+type LessonSourceRow = Pick<
+  Source,
+  "contentHash" | "extractedText" | "id" | "mimeType" | "structure" | "title"
+>;
 
 function statesFacts(source: LessonSourceRow): boolean {
   if (source.structure === null) {
@@ -41,10 +44,21 @@ async function loadLessonSourcePages({
 
   const sources = await prisma.source.findMany({
     orderBy: { fetchedAt: "desc" },
-    select: { extractedText: true, id: true, mimeType: true, structure: true, title: true },
+    select: {
+      contentHash: true,
+      extractedText: true,
+      id: true,
+      mimeType: true,
+      structure: true,
+      title: true,
+    },
     take: MAX_LESSON_SOURCES,
     where: {
-      OR: [{ learnerSources: { some: { goal: goals } } }, { steps: { some: { lessonId } } }],
+      OR: [
+        { learnerSources: { some: { goal: goals } } },
+        { steps: { some: { lessonId } } },
+        { stepSources: { some: { step: { lessonId } } } },
+      ],
       extractedText: { not: null },
       kind: { not: "upload" },
       visibility: "public",

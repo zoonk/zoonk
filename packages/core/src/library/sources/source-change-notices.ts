@@ -13,7 +13,6 @@ const NOTICE_DAYS = 14;
 const MAX_GOAL_NOTICES = 3;
 
 export type SourceNoticeInput = {
-  changedAt: Date;
   contentHash: string;
   fields: string[];
   language: string;
@@ -32,7 +31,7 @@ export type SourceNoticeInput = {
 export function recordSourceChangeNotice(
   input: SourceNoticeInput,
 ): Promise<SourceChangeNotice | null> {
-  const { changedAt, provenance, revision, ...notice } = input;
+  const { provenance, revision, ...notice } = input;
 
   return prisma.$transaction(async (tx) => {
     const { count } = await tx.source.updateMany({
@@ -51,7 +50,6 @@ export function recordSourceChangeNotice(
     }
 
     return createSourceChangeNotice({
-      builtBefore: changedAt,
       data: { ...notice, examBlueprintId: null, ...toProvenanceData(provenance) },
       tx,
     });

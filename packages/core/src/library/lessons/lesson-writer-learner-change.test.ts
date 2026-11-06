@@ -36,6 +36,7 @@ function screen(invalidSource = false): LessonScreenToSave {
       model: "test/fixture",
       promptVersion: "test",
       runId: crypto.randomUUID(),
+      sources: [],
     },
     skillId: null,
   };

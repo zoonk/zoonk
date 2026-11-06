@@ -22,7 +22,6 @@ type OwedColumns = Pick<
 
 export type OwedSourceChange = {
   change: string;
-  changedAt: Date;
   contentHash: string;
   noticeFailures: number;
   previousHash: string;
@@ -98,7 +97,6 @@ export function getOwedSourceChange(source: OwedColumns): OwedSourceChange | nul
 
   return {
     change: unnoticedChanges,
-    changedAt: unnoticedChangedAt,
     contentHash: source.contentHash,
     noticeFailures,
     previousHash: unnoticedFromHash,

@@ -310,7 +310,6 @@ describe(refreshWebSource, () => {
     assert(owed, "The change should be owed.");
 
     await recordSourceChangeNotice({
-      changedAt: owed.changedAt,
       contentHash: owed.contentHash,
       fields: ["text"],
       language: "pt",
