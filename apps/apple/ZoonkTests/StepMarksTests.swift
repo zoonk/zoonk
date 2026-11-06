@@ -191,6 +191,25 @@ final class StepMarksTests: XCTestCase {
     }
   }
 
+  func testMarksAreAwaitedWhileAnyScreenIsWithinItsWait() throws {
+    let now = Date.now
+    let written = { (minutesAgo: Double) in
+      Int(now.addingTimeInterval(-minutesAgo * 60).timeIntervalSince1970 * 1000)
+    }
+    let kept = try step(
+      #"{"id": "kept", "position": 0, "kind": "explanation", "pictureWaitStartedAt": \#(written(10)), "content": {"title": null, "text": "Cells make up living things."}}"#
+    )
+    let rewritten = try step(
+      #"{"id": "rewritten", "position": 1, "kind": "explanation", "pictureWaitStartedAt": \#(written(1)), "content": {"title": null, "text": "Cells divide."}}"#
+    )
+    let lesson = PlayableLesson(
+      id: "lesson", title: "A lesson", language: "en", targetLanguage: nil, chapterTitle: nil,
+      steps: [kept, rewritten], summary: nil, tutorSuggestions: [], marksPending: true)
+
+    XCTAssertTrue(lesson.isWaitingForMarks(openedAt: now, now: now))
+    XCTAssertFalse(lesson.isWaitingForMarks(openedAt: now, now: now.addingTimeInterval(5 * 60)))
+  }
+
   private func step(_ json: String) throws -> LessonStep {
     try JSONDecoder().decode(LessonStep.self, from: Data(json.utf8))
   }

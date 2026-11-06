@@ -49,9 +49,10 @@ struct LessonTextParts: Equatable {
 }
 
 extension PlayableLesson {
-  /// The API's wait: marks come within a late picture's wait from when the lesson was written.
+  /// The API's wait: marks come within a late picture's wait while any screen is within it. A fixed
+  /// lesson keeps its unchanged screens' older times, so the newest one decides.
   func isWaitingForMarks(openedAt: Date, now: Date = .now) -> Bool {
-    let start = steps.map { $0.waitStart(openedAt: openedAt) }.min() ?? openedAt
+    let start = steps.map { $0.waitStart(openedAt: openedAt) }.max() ?? openedAt
     return marksPending && now.timeIntervalSince(start) < LessonStep.lateWait
   }
 
