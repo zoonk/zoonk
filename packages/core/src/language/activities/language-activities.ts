@@ -27,3 +27,17 @@ export function filterSkippedSteps<TStep extends { kind: StepKind }>({
 
   return kept.some((step) => step.kind !== "summary") ? kept : [...steps];
 }
+
+export function findUnfinishedActivities({
+  doneStepIds,
+  steps,
+}: {
+  doneStepIds: ReadonlySet<string>;
+  steps: readonly { id: string; kind: StepKind }[];
+}): LanguageActivityType[] {
+  return LANGUAGE_ACTIVITY_TYPES.filter((activity) =>
+    steps.some(
+      (step) => ACTIVITY_STEP_KINDS[activity].includes(step.kind) && !doneStepIds.has(step.id),
+    ),
+  );
+}

@@ -8053,7 +8053,7 @@
     },
     "/library/lessons/{lessonId}": {
       "get": {
-        "description": "A Library lesson ready to play: its screens in order (hook, explanations, worked examples, checks, typed and spoken answers, activities, the summary and language exercises) with image URLs. The content is the same for everyone and includes the answers, so the app can give feedback at once. The screens load only with a session, a guest's included (POST /guests): without one, a written lesson returns its outline with `status: \"sessionRequired\"`, so lessons can't be scraped. While the content is being written, returns the outline with `status: \"notGenerated\"`. A private lesson is only visible to its owner.",
+        "description": "A Library lesson ready to play: its screens in order (hook, explanations, worked examples, checks, typed and spoken answers, activities, the summary and language exercises) with image URLs. The content includes the answers, so the app can give feedback at once. A language lesson leaves out the kinds of practice the learner's plan skips (words, listening, writing or speaking), unless only the summary would be left, so its screens change with the plan. The screens load only with a session, a guest's included (POST /guests): without one, a written lesson returns its outline with `status: \"sessionRequired\"`, so lessons can't be scraped. While the content is being written, returns the outline with `status: \"notGenerated\"`. A private lesson is only visible to its owner.",
         "operationId": "getLibraryLesson",
         "security": [
           {},
@@ -8212,7 +8212,7 @@
     },
     "/library/lessons/{lessonId}/completions": {
       "post": {
-        "description": "Finishes a run once every screen that takes an answer was answered or explicitly skipped through `skippedWritingStepIds`, or once \"I know this\" got every check right. Only typed-answer screens can be explicitly skipped, in any lesson: these choices are recorded on the run without calling the grader, adding an answer verdict or changing future runs. Adds Brain Power, Energy and the day's totals; a replay counts as a review. Repeating it returns the same result without counting twice.",
+        "description": "Finishes a run once every screen that takes an answer was answered or explicitly skipped through `skippedWritingStepIds`, or once \"I know this\" got every check right. Only typed-answer screens can be explicitly skipped, in any lesson: these choices are recorded on the run without calling the grader, adding an answer verdict or changing future runs. In a language lesson of a language the learner has a plan for, it accepts any screens their plan could have served, since the app's copy may predate a plan change: a kind of practice (words, listening, writing or speaking) they didn't finish isn't needed, unless only the summary would be left; an answered screen of it still counts. Adds Brain Power, Energy and the day's totals; a replay counts as a review. Repeating it returns the same result without counting twice.",
         "operationId": "createLibraryLessonCompletion",
         "security": [
           {

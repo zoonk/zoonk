@@ -85,6 +85,7 @@ class FakeLessonPlayerApi(
     var checkFailures = 0
     var grade: (String, LessonStepCheckInput) -> LessonStepCheckResult = { _, _ -> checkResult(isCorrect = true) }
     var gate: CompletableDeferred<Unit>? = null
+    var lessonGate: CompletableDeferred<Unit>? = null
     val readinessStates = ArrayDeque<String>()
     var warmUpId: String? = null
     var writes = 0
@@ -93,7 +94,10 @@ class FakeLessonPlayerApi(
     override suspend fun lesson(
         session: AuthenticatedSession?,
         lessonId: String,
-    ) = load
+    ): LessonLoad {
+        lessonGate?.await()
+        return load
+    }
 
     override suspend fun challengeTeam(
         session: AuthenticatedSession,
