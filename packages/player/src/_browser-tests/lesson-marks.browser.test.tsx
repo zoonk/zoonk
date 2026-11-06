@@ -103,7 +103,7 @@ describe("lesson marks", () => {
   it("opens on the lesson's ideas, each saying what it covers without its answer", async () => {
     const { onExit } = renderLessonPlayer({ lesson: lesson() });
 
-    await expect.element(page.getByText("2 ideas to discover in this lesson")).toBeVisible();
+    await expect.element(page.getByText("Tap an idea to see what it covers")).toBeVisible();
     await expect.element(page.getByText("A cloud, not an orbit")).not.toBeInTheDocument();
 
     await page.getByRole("button", { name: "Idea 2 of 2" }).click();
@@ -115,6 +115,18 @@ describe("lesson marks", () => {
     await expect.element(page.getByRole("alertdialog")).not.toBeInTheDocument();
     await expect.element(page.getByText(SCENE)).toBeVisible();
     expect(onExit).not.toHaveBeenCalled();
+  });
+
+  it("opens another opening map idea with one tap while one is open", async () => {
+    renderLessonPlayer({ lesson: lesson() });
+    const first = page.getByRole("dialog", { name: "A cloud, not an orbit" });
+
+    await page.getByRole("button", { name: "Idea 1 of 2" }).click();
+    await expect.element(first).toBeVisible();
+
+    await page.getByRole("button", { name: "Idea 2 of 2" }).click();
+    await expect.element(page.getByRole("dialog", { name: "Reading the cloud" })).toBeVisible();
+    await expect.element(first).not.toBeInTheDocument();
   });
 
   it("names an opening map idea above the line on what it covers", async () => {
@@ -228,7 +240,7 @@ describe("lesson marks", () => {
     renderLessonPlayer({ lesson: lesson({ summary: plainMap, tagged: false }) });
 
     await expect.element(page.getByText(SCENE)).toBeVisible();
-    await expect.element(page.getByText(/ideas to discover/u)).not.toBeInTheDocument();
+    await expect.element(page.getByText(/Tap an idea/u)).not.toBeInTheDocument();
     await next();
 
     const text = playableStepContent.explanation.text.replaceAll("**", "");

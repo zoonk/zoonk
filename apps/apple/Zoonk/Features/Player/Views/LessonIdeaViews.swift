@@ -20,7 +20,7 @@ struct LessonIdeaStrip: View {
         Text(
           "Idea \(index + 1) of \(summary.ideas.count)", tableName: "Player",
           comment:
-            "Above a lesson screen: which of the lesson map's ideas (its main points) it teaches. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"%lld ideas to discover in this lesson\"."
+            "Above a lesson screen: which of the lesson map's ideas (its main points) it teaches. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"Tap an idea to see what it covers\"."
         )
         .font(.caption.monospaced())
         .foregroundStyle(.secondary)
@@ -147,9 +147,9 @@ struct LessonOpeningMap: View {
       .frame(width: size.width, height: size.height)
 
       Text(
-        "\(summary.ideas.count) ideas to discover in this lesson", tableName: "Player",
+        "Tap an idea to see what it covers", tableName: "Player",
         comment:
-          "Under the lesson map on a lesson's opening screen; its numbers open each idea. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"%lld ideas to discover in this lesson\"."
+          "Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers."
       )
       .font(.footnote)
       .foregroundStyle(.secondary)
@@ -243,7 +243,7 @@ private struct LessonOpeningIdea: View {
     Text(
       "Idea \(index + 1)", tableName: "Player",
       comment:
-        "VoiceOver: one of the lesson map's ideas (its main points), by its number. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"%lld ideas to discover in this lesson\"."
+        "VoiceOver: one of the lesson map's ideas (its main points), by its number. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"Tap an idea to see what it covers\"."
     )
   }
 
