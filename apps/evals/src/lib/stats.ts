@@ -18,7 +18,13 @@ export type TaskStats = {
   classification: ClassificationSummary | null;
 };
 
-function getCallsCost({ calls, prices }: { calls: ModelCall[]; prices: GatewayPrices }): number {
+export function getCallsCost({
+  calls,
+  prices,
+}: {
+  calls: ModelCall[];
+  prices: GatewayPrices;
+}): number {
   return sum(
     calls.map((call) => getCallCost({ modelId: call.modelId, prices, usage: call.usage })),
   );

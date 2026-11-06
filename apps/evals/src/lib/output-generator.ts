@@ -1,6 +1,7 @@
 import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { settleWithConcurrency } from "./concurrency";
+import { keepCallsOnFailure } from "./failed-calls";
 import { type ModelConfig, getModelById } from "./models";
 import { loadModelOutputs, saveModelOutputs } from "./output-loader";
 import { getTestCaseRunId } from "./test-case-runs";
@@ -160,7 +161,7 @@ export async function generateOutputs(
     concurrency: GENERATION_CONCURRENCY,
     items: runsToExecute,
     run: ({ testCase, runNumber }) =>
-      generateOutputForTestCase({ model, runNumber, task, testCase }),
+      keepCallsOnFailure(() => generateOutputForTestCase({ model, runNumber, task, testCase })),
   });
 
   const allOutputs = [...existingEntries, ...extractSuccessfulOutputs(results)];

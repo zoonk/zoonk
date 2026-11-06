@@ -12,6 +12,7 @@ import {
 } from "@/lib/case-languages";
 import { getCallCost } from "@/lib/cost";
 import { getTaskResults, removeModelResultRuns, runEval } from "@/lib/eval-runner";
+import { takeFailedCalls, trackFailedCalls } from "@/lib/failed-calls";
 import {
   formatDollars,
   formatLatencyBudget,
@@ -24,8 +25,8 @@ import { calculateAverageScore } from "@/lib/leaderboard";
 import { getModelById, getModelDisplayName } from "@/lib/models";
 import { generateOutputs } from "@/lib/output-generator";
 import { getAllOutputsForTask, removeModelOutputRuns } from "@/lib/output-loader";
-import { type TaskStats, getSpent, getStatsFromResults } from "@/lib/stats";
-import { getTestCaseRunId } from "@/lib/test-case-runs";
+import { type TaskStats, getCallsCost, getSpent, getStatsFromResults } from "@/lib/stats";
+import { getTestCaseRunIds } from "@/lib/test-case-runs";
 import {
   type ModelOutputs,
   type RegisteredTask,
@@ -45,6 +46,7 @@ type ReportRow = {
   modelId: string;
   sampled: number;
   scored: number;
+  spent: number;
   stats: TaskStats;
 };
 
@@ -174,14 +176,8 @@ function sampleTestCases({
     .slice(0, limit);
 }
 
-function getRunIds(testCases: TestCase[], runs = RUNS_PER_TEST_CASE): Set<string> {
-  return new Set(
-    testCases.flatMap((testCase) =>
-      Array.from({ length: runs }, (_, index) =>
-        getTestCaseRunId({ runNumber: index + 1, testCaseId: testCase.id }),
-      ),
-    ),
-  );
+function getRunIds(testCases: TestCase[], runsPerTestCase = RUNS_PER_TEST_CASE): Set<string> {
+  return new Set(getTestCaseRunIds({ runsPerTestCase, testCases }));
 }
 
 async function generateAndScore({
@@ -231,6 +227,7 @@ async function runModel({
   };
 
   const stats = getStatsFromResults({ evalResults, prices });
+  const failedSpent = getCallsCost({ calls: takeFailedCalls(), prices });
 
   return {
     averageScore: calculateAverageScore(evalResults),
@@ -245,6 +242,7 @@ async function runModel({
     modelId,
     sampled: runIds.size,
     scored: evalResults.results.length,
+    spent: getSpent(stats) + failedSpent,
     stats,
   };
 }
@@ -272,7 +270,7 @@ function formatRow({ hasBudget, row }: { hasBudget: boolean; row: ReportRow }): 
     formatSeconds(row.stats.latencyP50),
     formatSeconds(row.stats.latencyP95),
     ...(hasBudget ? [formatLatencyVerdict(row.meetsBudget)] : []),
-    formatDollars(getSpent(row.stats)),
+    formatDollars(row.spent),
     formatDollars(row.stats.costPer1000Runs),
   ].join(" | ");
 }
@@ -421,7 +419,10 @@ async function runBattle({
       0,
     );
 
-  const generationSpent = modelIds.reduce((total, modelId) => total + spentBy(modelId), 0);
+  const generationSpent =
+    modelIds.reduce((total, modelId) => total + spentBy(modelId), 0) +
+    getCallsCost({ calls: takeFailedCalls(), prices: GATEWAY_PRICES });
+
   const judgeSpent = sumJudgeCost(matchups);
 
   const report = formatBattleReport({
@@ -442,6 +443,7 @@ async function runBattle({
 
 async function main() {
   globalThis.AI_SDK_DEFAULT_PROVIDER = zoonkDefaultProvider;
+  trackFailedCalls();
 
   const { battle, caseIds, fresh, languages, limit, modelIds, runs, saved, swapped, tasks } =
     parseCliArgs();
@@ -477,7 +479,7 @@ async function main() {
 
   const totalSpent = reports
     .flatMap((report) => report.rows)
-    .reduce((total, row) => total + getSpent(row.stats), 0);
+    .reduce((total, row) => total + row.spent, 0);
 
   const output = [
     ...reports.map((report) => formatReport(report)),

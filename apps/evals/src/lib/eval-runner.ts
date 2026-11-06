@@ -1,9 +1,12 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { cache } from "react";
+import { keepCallsOnFailure } from "./failed-calls";
 import { findTestCaseForOutput, loadModelOutputs } from "./output-loader";
 import { generateScore } from "./score";
+import { getTestCaseRunIds } from "./test-case-runs";
 import {
   type OutputEntry,
   type RegisteredTask,
@@ -134,8 +137,13 @@ export async function runEval(task: RegisteredTask, modelId: string): Promise<Ta
   const existingResults = await loadExistingScoredResults(task.id, modelId);
   logInfo(`Found ${existingResults.length} existing scored results`);
 
+  const runIds = new Set(
+    getTestCaseRunIds({ runsPerTestCase: RUNS_PER_TEST_CASE, testCases: task.testCases }),
+  );
+
   const outputsToScore = modelOutputs.outputs.filter(
-    (output) => !isAlreadyScored(existingResults, output.testCaseId),
+    (output) =>
+      runIds.has(output.testCaseId) && !isAlreadyScored(existingResults, output.testCaseId),
   );
 
   logInfo(`Scoring ${outputsToScore.length} outputs`);
@@ -153,7 +161,7 @@ export async function runEval(task: RegisteredTask, modelId: string): Promise<Ta
         return Promise.reject(new Error(`Test case not found for output: ${output.testCaseId}`));
       }
 
-      return scoreOutput({ output, task, testCase });
+      return keepCallsOnFailure(() => scoreOutput({ output, task, testCase }));
     }),
   );
 

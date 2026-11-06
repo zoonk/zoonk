@@ -16,7 +16,7 @@ export function getTestCaseRunId({
   return `${testCaseId}-${runNumber}`;
 }
 
-function getExpectedTestCaseRunIds({
+export function getTestCaseRunIds({
   runsPerTestCase,
   testCases,
 }: {
@@ -40,7 +40,7 @@ export function getTestCaseRunProgress({
   testCases: Pick<TestCase, "id">[];
 }): TestCaseRunProgress {
   const completedRunIdSet = new Set(completedRunIds);
-  const expectedRunIdSet = new Set(getExpectedTestCaseRunIds({ runsPerTestCase, testCases }));
+  const expectedRunIdSet = new Set(getTestCaseRunIds({ runsPerTestCase, testCases }));
 
   const completedRuns = [...expectedRunIdSet].filter((runId) =>
     completedRunIdSet.has(runId),
