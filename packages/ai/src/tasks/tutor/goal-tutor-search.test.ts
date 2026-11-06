@@ -11,6 +11,7 @@ const SUCUMBENCIA = {
   earlierQuestion: null,
   goal: "OAB 1ª fase",
   question: "o contrato pode dizer que a sucumbência vai pra empresa?",
+  screen: undefined,
 };
 
 function verdict(probability: number) {

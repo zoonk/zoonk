@@ -1,3 +1,4 @@
+import { collectJsonStrings } from "@zoonk/utils/json";
 import {
   type ChapterScopeContext,
   type ExamFactsContext,
@@ -10,22 +11,6 @@ import {
 } from "../lessons/lesson-question-context";
 
 const YEAR_LENGTH = 4;
-
-function collectStrings(value: unknown): string[] {
-  if (typeof value === "string") {
-    return [value];
-  }
-
-  if (Array.isArray(value)) {
-    return value.flatMap((item) => collectStrings(item));
-  }
-
-  if (value && typeof value === "object") {
-    return Object.values(value).flatMap((item) => collectStrings(item));
-  }
-
-  return [];
-}
 
 /** An exam's names and the years of its days, as its notice gives them (the same for everyone). */
 function examText(exam: ExamFactsContext): (string | null)[] {
@@ -53,7 +38,7 @@ function lessonText(screen: LessonScopeContext): (string | null)[] {
     screen.chapter.description,
     screen.lesson.title,
     screen.lesson.description,
-    ...collectStrings([screen.lessonSteps, screen.step]),
+    ...collectJsonStrings([screen.lessonSteps, screen.step]),
   ];
 }
 

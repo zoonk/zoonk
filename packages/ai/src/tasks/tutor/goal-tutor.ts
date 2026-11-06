@@ -201,6 +201,7 @@ function createGenerationOptions({
         earlierQuestion: input.priorTurns.at(-1)?.question ?? null,
         goal: input.contextSnapshot.goal.title,
         question: input.question,
+        screen: input.contextSnapshot.screen,
       })
     : Promise.resolve(false);
 
