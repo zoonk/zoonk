@@ -123,6 +123,12 @@
   "player_opening_map_ideas": "add47e8b59805cdd344ac48985980e51cb0b7ce69a44b008173c1ff8b8f3aabc",
   "player_opening_map_show": "ae0b195ed02462fc0e80c0cbb7221dcb67f3ffc668e33cac6e25db6d93abdf36",
   "player_part_of": "c9d745c1a3c7affefaecc365a89d28eacab7de5bfbd34e4709b693536252a865",
+  "player_phase_draw": "d9dc454637ae1726131338e10da07261f471963c8f83560810f78652722cc1f7",
+  "player_phase_draw_line_1": "ed8c00d727270e18f4fb2f460314b3387b07687298623e7bfc577015fbf5743c",
+  "player_phase_draw_line_2": "3d293ac4f093457c14d7894632d28080227b0ea5f0be7df3bf2c81623084df36",
+  "player_phase_mark": "eff471ed63d81c4f4bba149ce44c9d1ab54f92b01d7db629734749faf29ced85",
+  "player_phase_mark_line_1": "e32d4d0d1e4e6e42d2ec7398e96a0ad5c7c594931b2369bb083e92918de907a6",
+  "player_phase_mark_line_2": "381a053bde2cfc1683d9f32c90646ac8d5a708bf111a37ce635f7e239b524bac",
   "player_phase_plan": "67b12d10a891196200cdfd39b2a59c166bce88543a818a077927fce4625acfd5",
   "player_phase_plan_line_1": "34644611866735be908ddd4e690e9085b0bb2a4556cd7c6ec1d7f21654e0d829",
   "player_phase_plan_line_2": "9a0bca44fd04311af798c6f6fbf990e7c01356183b745be27b7024e1b9c210df",
@@ -310,6 +316,16 @@
     <string name="player_phase_plan_line_2">Konuyu anlatmanın en iyi yolunu seçiyoruz…</string>
     <string name="player_phase_write">Dersi hazırlıyoruz</string>
     <string name="player_phase_write_line">%1$d. ekranı hazırlıyoruz…</string>
+    <!-- A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it. "Ideas" are the lesson map's ideas, as in "Idea 2 of 4". -->
+    <string name="player_phase_mark">Temel kavramları vurguluyoruz</string>
+    <string name="player_phase_mark_line_1">En önemli noktaların altını çiziyoruz…</string>
+    <!-- Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4". -->
+    <string name="player_phase_mark_line_2">Her ekranı ilgili kavramla eşleştiriyoruz…</string>
+    <!-- A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it. -->
+    <string name="player_phase_draw">Resimleri çiziyoruz</string>
+    <string name="player_phase_draw_line_1">Her ekranda anlatılanları çiziyoruz…</string>
+    <!-- Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4". -->
+    <string name="player_phase_draw_line_2">Her kavram için bir simge çiziyoruz…</string>
     <string name="player_writing_note">Genellikle birkaç dakika sürer. Ders hazır olur olmaz burada açılır.</string>
     <string name="player_ready_while_waiting">Beklerken başlayabilirsin</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->

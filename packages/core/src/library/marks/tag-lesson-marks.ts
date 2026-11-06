@@ -7,6 +7,7 @@ import { type MarksScreen, type ScreenMarks } from "@zoonk/ai/tasks/lesson-marks
 import { DbNull, type StepKind, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
+import { PICTURE_WAIT_MS } from "../../lesson-player/picture-wait";
 import {
   type SavedLessonMap,
   type SavedLessonMapIdea,
@@ -33,7 +34,6 @@ type TaggedStep = { id: string; marks: SavedStepMarks | null; screen: MarksScree
 function findLessonToTag(lessonId: string) {
   return prisma.lesson.findUnique({
     select: {
-      contentStatus: true,
       id: true,
       language: true,
       ownerId: true,
@@ -247,7 +247,7 @@ export async function tagLessonMarks({
 }): Promise<TaggedLesson | null> {
   const lesson = await findLessonToTag(lessonId);
 
-  if (!lesson || lesson.contentStatus !== "completed" || lesson.targetLanguage) {
+  if (!lesson || lesson.targetLanguage) {
     return null;
   }
 
@@ -281,4 +281,39 @@ export async function tagLessonMarks({
     contentScope,
     requests: collectRequests({ ideas: markedMap?.ideas ?? [], steps: tagged }),
   };
+}
+
+/**
+ * Internal workflow bridge. An icon still drawing after the picture wait counts as stuck, so a
+ * drawing that never finished doesn't hold every lesson that links it.
+ */
+export async function readLessonMarking(
+  lessonId: string,
+): Promise<{ drawingIcons: boolean; tagged: boolean }> {
+  const lesson = await findLessonToTag(lessonId);
+
+  if (!lesson) {
+    return { drawingIcons: false, tagged: true };
+  }
+
+  const steps = toTaggedSteps(lesson);
+  const ideas = readSavedLessonMap(lesson.summary)?.ideas ?? [];
+
+  const iconIds = [
+    ...steps.flatMap(({ marks }) => (marks?.iconId ? [marks.iconId] : [])),
+    ...ideas.flatMap(({ iconId }) => (iconId ? [iconId] : [])),
+  ];
+
+  const drawing =
+    iconIds.length === 0
+      ? 0
+      : await prisma.lessonIcon.count({
+          where: {
+            createdAt: { gt: new Date(Date.now() - PICTURE_WAIT_MS) },
+            id: { in: iconIds },
+            status: "running",
+          },
+        });
+
+  return { drawingIcons: drawing > 0, tagged: steps.every((step) => step.marks) };
 }

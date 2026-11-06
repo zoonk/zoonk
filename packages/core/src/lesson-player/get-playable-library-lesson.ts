@@ -28,7 +28,6 @@ export type PlayableLibraryLessonResult =
 
 type LoadedPlayableLesson = {
   access: { ownerId: string | null; visibility: LibraryVisibility };
-  drawingIconIds: string[];
   result: PlayableLibraryLessonResult;
 };
 
@@ -63,14 +62,14 @@ async function toLoadedPlayableLesson(lesson: PlayableLessonRow): Promise<Loaded
   const playable = await loadPlayableSteps({ lesson, rows: lesson.steps });
 
   if (lesson.contentStatus !== "completed" || playable.length === 0) {
-    return { access, drawingIconIds: [], result: { lesson: outline, status: "notGenerated" } };
+    return { access, result: { lesson: outline, status: "notGenerated" } };
   }
 
   const endsOnItsOwn = playable.some(
     (step) => step.kind === "summary" || step.kind === "challenge",
   );
 
-  const { drawingIconIds, marksPending, steps, summary } = await withLessonMarks({
+  const { steps, summary } = await withLessonMarks({
     rows: lesson.steps,
     steps: playable,
     summary: endsOnItsOwn ? null : lesson.summary,
@@ -79,14 +78,12 @@ async function toLoadedPlayableLesson(lesson: PlayableLessonRow): Promise<Loaded
 
   return {
     access,
-    drawingIconIds,
     result: {
       lesson: {
         ...outline,
         canDo: lesson.canDo,
         chapter: lesson.homeChapter,
         level: lesson.level,
-        marksPending,
         skills: lesson.skills.map((item) => item.skill),
         steps,
         summary,
@@ -130,36 +127,10 @@ async function findLessonVersion(lessonId: string): Promise<string | null> {
   return lesson ? `${lesson.updatedAt.getTime()}:${steps._max.updatedAt?.getTime() ?? 0}` : null;
 }
 
-/**
- * Each app has separate caches, so fresh version keys must detect publication changes made
- * elsewhere. An icon still drawing when the lesson was cached lands without touching the lesson, so
- * the ones that have landed since are part of the key.
- */
+/** Each app has separate caches, so fresh version keys must detect publication changes made elsewhere. */
 async function getCurrentPlayableLesson(lessonId: string): Promise<LoadedPlayableLesson | null> {
   const version = await findLessonVersion(lessonId);
-
-  if (!version) {
-    return null;
-  }
-
-  const cached = await getCachedPlayableLesson({ lessonId, version });
-
-  if (!cached || cached.drawingIconIds.length === 0) {
-    return cached;
-  }
-
-  const landed = await prisma.lessonIcon.findMany({
-    orderBy: { id: "asc" },
-    select: { id: true },
-    where: { id: { in: cached.drawingIconIds }, status: { not: "running" } },
-  });
-
-  return landed.length === 0
-    ? cached
-    : getCachedPlayableLesson({
-        lessonId,
-        version: [version, ...landed.map((icon) => icon.id)].join(":"),
-      });
+  return version ? getCachedPlayableLesson({ lessonId, version }) : null;
 }
 
 function toOutline(lesson: PlayableLibraryLesson): LessonOutline {

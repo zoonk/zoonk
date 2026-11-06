@@ -142,7 +142,7 @@ describe(writeLessonContent, () => {
     );
   });
 
-  it("publishes a lesson as soon as its code checks pass, leaving the reviewer to the check after it", async () => {
+  it("saves a lesson as soon as its code checks pass, leaving its readiness to the workflow and the reviewer to the check after it", async () => {
     const { lesson, skill, workflowRunId } = await createClaimedLesson();
     const written = writtenTemperatureLesson();
     const draft = mockDraft(written);
@@ -163,7 +163,7 @@ describe(writeLessonContent, () => {
       prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
     ]);
 
-    expect(stored.contentStatus).toBe("completed");
+    expect(stored).toMatchObject({ contentRunId: workflowRunId, contentStatus: "running" });
 
     expect(stored.summary).toStrictEqual(writtenTemperatureLesson().summary);
 

@@ -13,6 +13,7 @@ data class NumberedLines(
 /**
  * [seconds] is its usual duration on real runs, which weighs it in the bar; an [optional] phase
  * shows once the run reports a step of it. [lines] say what it's doing while it runs, then cycle.
+ * An [alongside] phase runs at the same time as the one before it, so each finishes on its own steps.
  */
 data class GenerationPhase(
     val id: String,
@@ -21,6 +22,7 @@ data class GenerationPhase(
     val lines: List<Int> = emptyList(),
     val numbered: NumberedLines? = null,
     val optional: Boolean = false,
+    val alongside: Boolean = false,
 )
 
 sealed interface StepPlace {
@@ -221,11 +223,26 @@ enum class GenerationKind(
                     R.string.player_phase_write,
                     numbered = NumberedLines(6, R.string.player_phase_write_line, R.string.generation_question_review),
                 ),
+                GenerationPhase(
+                    "mark",
+                    10,
+                    R.string.player_phase_mark,
+                    listOf(R.string.player_phase_mark_line_1, R.string.player_phase_mark_line_2),
+                ),
+                GenerationPhase(
+                    "draw",
+                    45,
+                    R.string.player_phase_draw,
+                    listOf(R.string.player_phase_draw_line_1, R.string.player_phase_draw_line_2),
+                    alongside = true,
+                ),
             ),
         steps =
             mapOf(
+                "drawPictures" to StepPlace.Phase("draw"),
                 "joinRunningLesson" to StepPlace.Join,
                 "lessonReady" to StepPlace.Done,
+                "markLesson" to StepPlace.Phase("mark"),
                 "planLesson" to StepPlace.Phase("plan"),
                 "writeLesson" to StepPlace.Phase("write"),
             ),
@@ -463,73 +480,87 @@ data class RunProgress(
     val activeMillis: Long?,
 )
 
-/** Main's `getPhaseProgress` and `getPhaseTimes`: an optional phase shows once a step of it is reported. */
+/**
+ * Main's `getPhaseProgress` and `getPhaseTimes`: an optional phase shows once a step of it is reported.
+ * Phases that run at the same time make one stage, and stages run in order: the wait moves past a stage
+ * once all of its phases finish, and the bar drifts over the longest one still running.
+ */
 fun GenerationKind.progress(run: GenerationRun): RunProgress {
     val visible = phases.filter { phase -> !phase.optional || stepsOf(phase.id).any(run.steps::containsKey) }
+    val stages = stages(visible)
     val total = visible.sumOf { it.seconds }.toFloat()
     val done = run.status == GenerationRun.Status.Ready || isDone(run.steps)
-    val activeIndex = if (done) visible.size else activeIndex(visible, run)
+    val activeIndex = if (done) stages.size else activeIndex(stages, run)
 
-    val statuses =
-        visible.indices.map { index ->
-            when {
-                index < activeIndex -> PhaseStatus.Completed
-                index > activeIndex -> PhaseStatus.Pending
-                run.failure == GenerationFailure.Generation -> PhaseStatus.Failed
-                run.failure == GenerationFailure.NotStarted -> PhaseStatus.Pending
-                else -> PhaseStatus.Active
-            }
-        }
-
-    val reported = visible.map { phase -> reportedTimes(phase.id, run.stepTimes) }
+    val reported = stages.map { stage -> stage.map { phase -> reportedTimes(phase.id, run.stepTimes) } }
+    val stageTimes = reported.map(::stageTimes)
     val doneAt = doneAt(run.stepTimes)
     val progress =
-        visible.mapIndexed { index, phase ->
-            val status = statuses[index]
-            val startedAt = passedAt(reported, index - 1, doneAt)
-            when (status) {
-                PhaseStatus.Pending -> {
-                    PhaseProgress(phase, status, null, null)
-                }
+        stages.flatMapIndexed { index, stage ->
+            val startedAt = passedAt(stageTimes, index - 1, doneAt)
+            stage.mapIndexed { at, phase ->
+                val times = reported[index][at]
+                when (val status = status(index, activeIndex, stage.size > 1 && finishedShare(phase.id, run) == 1f, run)) {
+                    PhaseStatus.Pending -> {
+                        PhaseProgress(phase, status, null, null)
+                    }
 
-                PhaseStatus.Completed -> {
-                    PhaseProgress(
-                        phase,
-                        status,
-                        startedAt,
-                        listOfNotNull(passedAt(reported, index, doneAt), reported[index].finished).maxOrNull(),
-                    )
-                }
+                    PhaseStatus.Completed -> {
+                        val ownFinish = times.allFinished.takeIf { stage.size > 1 }
+                        val endedAt = ownFinish ?: listOfNotNull(passedAt(stageTimes, index, doneAt), times.finished).maxOrNull()
+                        PhaseProgress(phase, status, startedAt, endedAt)
+                    }
 
-                else -> {
-                    PhaseProgress(phase, status, startedAt, null)
+                    else -> {
+                        PhaseProgress(phase, status, startedAt, null)
+                    }
                 }
             }
         }
 
     if (done) return RunProgress(progress, share = 1f, target = 1f, activeMillis = null)
 
-    val active = visible.getOrNull(activeIndex)
-    val finished = visible.take(activeIndex).sumOf { it.seconds }
-    val activeSeconds = active?.seconds ?: 0
-    val activeShare = active?.let { finishedShare(it.id, run) } ?: 0f
+    val finished = stages.take(activeIndex).flatten().sumOf { it.seconds }
+    val active = stages.getOrNull(activeIndex).orEmpty()
+    val running = active.filter { finishedShare(it.id, run) < 1f }.ifEmpty { active }
 
     return RunProgress(
         phases = progress,
-        share = share(finished + activeShare * activeSeconds, total),
-        target = share(finished + activeSeconds.toFloat(), total),
-        activeMillis = active?.takeIf { run.status != GenerationRun.Status.Failed }?.let { it.seconds * 1000L },
+        share = share(finished + active.sumOf { finishedShare(it.id, run).toDouble() * it.seconds }.toFloat(), total),
+        target = share(finished + active.sumOf { it.seconds }.toFloat(), total),
+        activeMillis = running.maxOfOrNull { it.seconds * 1000L }?.takeIf { run.status != GenerationRun.Status.Failed },
     )
 }
 
-/** The furthest phase the run reported a step of, or the next one once all of its steps completed. */
+private fun stages(phases: List<GenerationPhase>): List<List<GenerationPhase>> =
+    phases.fold(emptyList()) { stages, phase ->
+        if (phase.alongside && stages.isNotEmpty()) stages.dropLast(1) + listOf(stages.last() + phase) else stages + listOf(listOf(phase))
+    }
+
+/** A phase running alongside others is done once its own steps are, while they go on. */
+private fun status(
+    index: Int,
+    activeIndex: Int,
+    isDoneAlongside: Boolean,
+    run: GenerationRun,
+): PhaseStatus =
+    when {
+        index < activeIndex -> PhaseStatus.Completed
+        index > activeIndex -> PhaseStatus.Pending
+        isDoneAlongside -> PhaseStatus.Completed
+        run.failure == GenerationFailure.Generation -> PhaseStatus.Failed
+        run.failure == GenerationFailure.NotStarted -> PhaseStatus.Pending
+        else -> PhaseStatus.Active
+    }
+
+/** The furthest stage the run reported a step of, or the next one once all of its steps completed. */
 private fun GenerationKind.activeIndex(
-    visible: List<GenerationPhase>,
+    stages: List<List<GenerationPhase>>,
     run: GenerationRun,
 ): Int {
-    val latest = visible.indexOfLast { phase -> stepsOf(phase.id).any(run.steps::containsKey) }.coerceAtLeast(0)
-    val phase = visible.getOrNull(latest) ?: return latest
-    return if (latest < visible.lastIndex && finishedShare(phase.id, run) == 1f) latest + 1 else latest
+    val latest = stages.indexOfLast { stage -> stage.any { phase -> stepsOf(phase.id).any(run.steps::containsKey) } }.coerceAtLeast(0)
+    val stage = stages.getOrNull(latest) ?: return latest
+    return if (latest < stages.lastIndex && stage.all { finishedShare(it.id, run) == 1f }) latest + 1 else latest
 }
 
 private fun GenerationKind.finishedShare(
@@ -559,20 +590,32 @@ private fun GenerationKind.reportedTimes(
     )
 }
 
+private data class StageTimes(
+    val started: Long?,
+    val allFinished: Long?,
+)
+
+/** A stage starts with the first of its phases and is finished once all of them are. */
+private fun stageTimes(phases: List<ReportedTimes>) =
+    StageTimes(
+        started = phases.mapNotNull { it.started }.minOrNull(),
+        allFinished = if (phases.all { it.allFinished != null }) phases.mapNotNull { it.allFinished }.maxOrNull() else null,
+    )
+
 /** When the run reported what [GenerationKind.isDone] ends it on. */
 private fun GenerationKind.doneAt(stepTimes: Map<String, StepTimes>): Long? {
     val done = steps.filterValues { it == StepPlace.Done }.keys.mapNotNull { step -> stepTimes[step]?.let { it.started ?: it.completed } }
     return (done + listOfNotNull(doneOnCompleted?.let { stepTimes[it]?.completed })).minOrNull()
 }
 
-/** [progress] moves past a phase once a later one reports a step, every step of one before the last finished, or the run is done. */
+/** [progress] moves past a stage once a later one reports a step, every step of one before the last finished, or the run is done. */
 private fun passedAt(
-    reported: List<ReportedTimes>,
+    stages: List<StageTimes>,
     index: Int,
     doneAt: Long?,
 ): Long? {
-    val finished = reported.getOrNull(index)?.allFinished?.takeIf { index < reported.lastIndex }
-    return (listOfNotNull(finished, doneAt) + reported.drop(index + 1).mapNotNull { it.started }).minOrNull()
+    val finished = stages.getOrNull(index)?.allFinished?.takeIf { index < stages.lastIndex }
+    return (listOfNotNull(finished, doneAt) + stages.drop(index + 1).mapNotNull { it.started }).minOrNull()
 }
 
 private fun share(

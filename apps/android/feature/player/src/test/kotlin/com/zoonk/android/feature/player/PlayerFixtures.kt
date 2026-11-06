@@ -146,7 +146,6 @@ fun lessonMapStep() =
         StepContent.Map(
             LessonMap(ideas = listOf(LessonMapIdeasInner(text = "A cloud is tiny droplets.")), shape = LessonMap.Shape.HUB),
             "Clouds",
-            keepsIconRoom = false,
         ),
     )
 

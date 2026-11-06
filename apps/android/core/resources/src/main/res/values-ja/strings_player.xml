@@ -123,6 +123,12 @@
   "player_opening_map_ideas": "625eaecc917287dd8150856451c3ab447aded980128f7487a69eb6e835222b73",
   "player_opening_map_show": "fbf3228b7bbebe65741b778352f356f3959fef8191c9ca0b6eae38c62452bcf3",
   "player_part_of": "401ba3aa3f710678f9cb3b3b8022424ea40f51340f0413596cea7e7ed5e6bbf3",
+  "player_phase_draw": "3fd99af78b49241cd98725ab49e373822c31ec25fafeefe5de17a162718b1700",
+  "player_phase_draw_line_1": "22d80d0e08f4645ddc456c90f3ea56ecd9f12b4cc7db9d58e47c3140169b6f04",
+  "player_phase_draw_line_2": "7bd5fd3a8dfbe467e5cf489431da633c7d83232c170c99d86ce1c3a827058438",
+  "player_phase_mark": "4c5cfd78cfbb972b25c9103d13c488082308a91ba712fc5a1cd9cb650bd1fd09",
+  "player_phase_mark_line_1": "9acd10944fd4011f30b6b3ae760c7f388e833870c0bd8381371b727a01a2bd46",
+  "player_phase_mark_line_2": "add8e50996a9f9cf491275cf5ad308f886ebef8c7e42eae561cdf71c1c9dc5bc",
   "player_phase_plan": "313130240643a35889136e30a17b47e03f0083815abe3000586508ec64a99383",
   "player_phase_plan_line_1": "85a2508f21b5639cb487aef3d6d8acfa9d32ff2e2998c78f1b0a01aa39a0c028",
   "player_phase_plan_line_2": "cebe915152e0d1211a086ad0a1739ab477b79ce58c158d4795b1ebe620e2a6da",
@@ -307,6 +313,16 @@
     <string name="player_phase_plan_line_2">いちばんわかりやすい説明のしかたを選んでいます…</string>
     <string name="player_phase_write">レッスンを作成しています</string>
     <string name="player_phase_write_line">%1$dページ目を作成しています…</string>
+    <!-- A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it. "Ideas" are the lesson map's ideas, as in "Idea 2 of 4". -->
+    <string name="player_phase_mark">大事なポイントを強調しています</string>
+    <string name="player_phase_mark_line_1">特に大事なところに下線を引いています…</string>
+    <!-- Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4". -->
+    <string name="player_phase_mark_line_2">各画面とそこで伝えるポイントを対応させています…</string>
+    <!-- A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it. -->
+    <string name="player_phase_draw">絵を描いています</string>
+    <string name="player_phase_draw_line_1">各画面の内容を絵にしています…</string>
+    <!-- Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4". -->
+    <string name="player_phase_draw_line_2">それぞれのポイントを表すアイコンを描いています…</string>
     <string name="player_writing_note">通常、数分ほどかかります。準備ができ次第、ここでレッスンが開きます。</string>
     <string name="player_ready_while_waiting">待っている間にできること</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->

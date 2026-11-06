@@ -65,8 +65,6 @@ data class PlayableLesson(
     val steps: List<LessonStep>,
     val map: LessonMap?,
     val tutorSuggestions: List<LessonTutorSuggestion>,
-    /** The screens' marks and the map's `about` lines and icons are still on their way: read the lesson again within the picture wait. */
-    val marksPending: Boolean = false,
 )
 
 fun PlayableLibraryLessonResponse.toLessonLoad(): LessonLoad =
@@ -85,7 +83,6 @@ fun PlayableLibraryLessonResponse.toLessonLoad(): LessonLoad =
                     steps = lesson.steps.map(PlayableLibraryStep::toLessonStep),
                     map = lesson.summary.withIdeas(),
                     tutorSuggestions = value.tutorSuggestions,
-                    marksPending = lesson.marksPending == true,
                 ),
             )
         }
@@ -112,7 +109,6 @@ fun ExplanationLesson.toPlayableLesson(): PlayableLesson =
         steps = steps.map(PlayableLibraryStep::toLessonStep),
         map = summary.withIdeas(),
         tutorSuggestions = emptyList(),
-        marksPending = marksPending == true,
     )
 
 private fun LessonMap?.withIdeas() = this?.takeIf { it.ideas.isNotEmpty() }

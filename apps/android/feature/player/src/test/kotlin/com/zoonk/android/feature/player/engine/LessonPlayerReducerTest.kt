@@ -13,7 +13,6 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.numberAnswerStep
-import com.zoonk.android.feature.player.playable
 import com.zoonk.android.feature.player.stepResult
 import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.android.feature.player.typedAnswerStep
@@ -21,9 +20,7 @@ import com.zoonk.android.feature.player.workedExampleStep
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
-import com.zoonk.api.models.LessonIcon
 import com.zoonk.api.models.ScreenPicture
-import com.zoonk.api.models.StepMarks
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -711,7 +708,7 @@ class LessonPlayerReducerTest {
 
         assertEquals(false, waiting.screen().primary?.enabled)
 
-        val drawn = waiting.then(LessonAction.LessonRead(listOf(numberedCheckStep("parts").copy(image = PICTURE)), openedAt = 0))
+        val drawn = waiting.then(LessonAction.PicturesRead(listOf(numberedCheckStep("parts").copy(image = PICTURE)), openedAt = 0))
 
         assertEquals(PICTURE, drawn.currentStep?.image)
         assertEquals(true, drawn.screen().primary?.enabled)
@@ -724,7 +721,7 @@ class LessonPlayerReducerTest {
 
         assertEquals(true, waiting.screen().primary?.enabled)
 
-        val drawn = waiting.then(LessonAction.LessonRead(listOf(checkWithPicture("q").copy(image = PICTURE)), openedAt = 0))
+        val drawn = waiting.then(LessonAction.PicturesRead(listOf(checkWithPicture("q").copy(image = PICTURE)), openedAt = 0))
 
         assertEquals(PICTURE, drawn.currentStep?.image)
         assertEquals(LessonAnswer.Check("right"), drawn.answers["q"])
@@ -751,74 +748,8 @@ class LessonPlayerReducerTest {
                 ).copy(image = null, imagePending = true, pictureWaitStartedAt = 0)
         val opened = play(listOf(explanationStep("idea"), diagram, summaryStep("end")), started())
 
-        val waitOver = reduce(opened, LessonAction.LessonRead(emptyList(), openedAt = 0), 300_000)
+        val waitOver = reduce(opened, LessonAction.PicturesRead(emptyList(), openedAt = 0), 300_000)
         assertEquals(listOf("idea", "end"), waitOver.queue)
-    }
-
-    @Test
-    fun theScreenOnViewTakesOnlyItsUnderlineUntilTheLearnerLeavesItWhileTheMapTakesMarksAtOnce() {
-        val opened = play(listOf(explanationStep("seen"), explanationStep("ahead"), lessonMapStep()), started())
-        val marks = StepMarks(example = null, icon = null, ideaIndex = 0, underline = "Idea")
-        val map = lessonMapStep().content as StepContent.Map
-        val tagged = map.copy(map = map.map.copy(ideas = map.map.ideas.map { it.copy(about = "What a cloud is made of") }))
-
-        val read =
-            opened.then(
-                LessonAction.LessonRead(
-                    listOf(
-                        explanationStep("seen").copy(marks = marks),
-                        explanationStep("ahead").copy(marks = marks),
-                        lessonMapStep().copy(content = tagged),
-                    ),
-                    openedAt = 0,
-                ),
-            )
-
-        assertEquals(StepMarks(example = null, icon = null, ideaIndex = null, underline = "Idea"), read.steps["seen"]?.marks)
-        assertEquals(marks, read.steps["ahead"]?.marks)
-        assertEquals(
-            "What a cloud is made of",
-            read.lessonMap
-                ?.map
-                ?.ideas
-                ?.single()
-                ?.about,
-        )
-        assertEquals(marks, read.then(LessonAction.Continue).steps["seen"]?.marks)
-    }
-
-    @Test
-    fun aTaggedLessonsMapKeepsItsIconRoomThroughLateReadsWhileAnUntaggedOnesHasNone() {
-        val map = (lessonMapStep().content as StepContent.Map).map
-        val drawn =
-            map.copy(
-                ideas =
-                    map.ideas.map {
-                        it.copy(icon = LessonIcon(smallUrl = "https://zoonk.test/s.webp", url = "https://zoonk.test/l.webp"))
-                    },
-            )
-        val tagging = playable(listOf(explanationStep("idea")), map).copy(marksPending = true)
-        val opened = play(tagging.playedSteps, started())
-        val iconsCame = opened.then(LessonAction.LessonRead(tagging.copy(map = drawn, marksPending = false).playedSteps, openedAt = 0))
-        val iconsNeverCame = opened.then(LessonAction.LessonRead(tagging.copy(marksPending = false).playedSteps, openedAt = 0))
-        val untagged = play(playable(listOf(explanationStep("idea")), map).playedSteps, started())
-
-        assertEquals(true, opened.lessonMap?.keepsIconRoom)
-        assertEquals(true, iconsCame.lessonMap?.keepsIconRoom)
-        assertEquals(true, iconsNeverCame.lessonMap?.keepsIconRoom)
-        assertEquals(false, untagged.lessonMap?.keepsIconRoom)
-    }
-
-    @Test
-    fun marksAreAwaitedWhileAnyScreenIsWithinItsWait() {
-        val repaired =
-            play(
-                listOf(explanationStep("old").copy(pictureWaitStartedAt = 0), explanationStep("new").copy(pictureWaitStartedAt = 300_000)),
-                started(),
-            )
-
-        assertTrue(repaired.isWaitingForMarks(openedAt = 360_000, now = 360_000))
-        assertFalse(repaired.isWaitingForMarks(openedAt = 360_000, now = 600_000))
     }
 
     @Test
@@ -826,10 +757,10 @@ class LessonPlayerReducerTest {
         val drawing = numberedCheckStep("parts").copy(imagePending = true, pictureWaitStartedAt = 0)
         val opened = play(listOf(explanationStep("idea"), drawing, summaryStep("end")), started())
 
-        val stillWaiting = reduce(opened, LessonAction.LessonRead(emptyList(), openedAt = 0), 60_000)
+        val stillWaiting = reduce(opened, LessonAction.PicturesRead(emptyList(), openedAt = 0), 60_000)
         assertEquals(listOf("idea", "parts", "end"), stillWaiting.queue)
 
-        val waitOver = reduce(opened, LessonAction.LessonRead(emptyList(), openedAt = 0), 300_000)
+        val waitOver = reduce(opened, LessonAction.PicturesRead(emptyList(), openedAt = 0), 300_000)
         assertEquals(listOf("idea", "end"), waitOver.queue)
     }
 }

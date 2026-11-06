@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { fixLessonDraft } from "@zoonk/ai/tasks/lesson-writer/fix";
 import { checkLessonQuality } from "@zoonk/ai/tasks/quality/lesson-check";
+import { completeLessonContent } from "@zoonk/core/library/generation/state";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -81,6 +82,8 @@ async function publishedLesson() {
   if (written.status !== "published") {
     throw new Error(`The test lesson wasn't published: ${written.status}`);
   }
+
+  await completeLessonContent({ lessonId: lesson.id, workflowRunId });
 
   const input: LessonCheckInput = { forExam: true, lessonId: lesson.id, plan: written.check };
 

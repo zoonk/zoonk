@@ -6,6 +6,7 @@ import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { fixLessonDraft } from "@zoonk/ai/tasks/lesson-writer/fix";
 import { checkLessonQuality } from "@zoonk/ai/tasks/quality/lesson-check";
 import { trackSystemEvent } from "@zoonk/core/analytics/server";
+import { getLessonGenerationState } from "@zoonk/core/library/generation/state";
 import { ensureQuickLessons } from "@zoonk/core/library/quick-lessons";
 import {
   admitPlanLessons,
@@ -32,6 +33,7 @@ import { mockHookConflict } from "../../../mocks/workflow";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { recordedLessonFixture } from "../_test-utils/recorded-lesson";
 import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
+import { getStartMock } from "../_test-utils/start-mock";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { lessonMarksWorkflow } from "../marks/lesson-marks-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
@@ -237,6 +239,10 @@ describe(lessonContentWorkflow, () => {
       "planLesson:completed",
       "writeLesson:started",
       "writeLesson:completed",
+      "markLesson:started",
+      "drawPictures:started",
+      "markLesson:completed",
+      "drawPictures:completed",
       "lessonReady:completed",
     ]);
 
@@ -549,21 +555,96 @@ describe(lessonContentWorkflow, () => {
     });
   });
 
-  it("tells the waiting screens the lesson is ready before its pictures start", async () => {
+  it("keeps the lesson generating until its marks and pictures settle, reporting each as it does", async () => {
     const lesson = await outlinedLesson();
-    const readyWhenPicturesStart: boolean[] = [];
+    const states: (string | undefined)[] = [];
 
-    vi.mocked(start).mockImplementationOnce(async () => {
-      readyWhenPicturesStart.push(
-        getStreamedEvents().some((event) => event.step === "lessonReady"),
-      );
+    const runs = new Map([
+      ["marks-run", "running"],
+      ["pictures-run", "running"],
+    ]);
 
-      return { runId: "pictures-run" } as Awaited<ReturnType<typeof start>>;
+    getStartMock().mockImplementation(
+      async (workflow) =>
+        ({ runId: workflow === lessonMarksWorkflow ? "marks-run" : "pictures-run" }) as never,
+    );
+
+    vi.mocked(getRun).mockImplementation(
+      (runId) =>
+        ({
+          exists: Promise.resolve(true),
+          status: Promise.resolve(runs.get(runId) ?? "completed"),
+        }) as never,
+    );
+
+    vi.mocked(sleep).mockImplementation(async () => {
+      const state = await getLessonGenerationState(lesson.id);
+      states.push(state?.status);
+
+      if (states.length === 1) {
+        await prisma.step.updateMany({
+          data: {
+            marks: {
+              example: null,
+              iconId: null,
+              iconPending: false,
+              ideaIndex: 0,
+              underline: null,
+            },
+          },
+          where: { lessonId: lesson.id },
+        });
+      } else {
+        runs.set("marks-run", "completed").set("pictures-run", "completed");
+      }
     });
 
-    await lessonContentWorkflow({ lessonId: lesson.id });
+    await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
+      lessonId: lesson.id,
+      status: "ready",
+    });
 
-    expect(readyWhenPicturesStart).toStrictEqual([true]);
+    expect(states).toStrictEqual(["generating", "generating"]);
+
+    expect(
+      getStreamedEvents().map((event) => `${String(event.step)}:${String(event.status)}`),
+    ).toStrictEqual([
+      "planLesson:started",
+      "planLesson:completed",
+      "writeLesson:started",
+      "writeLesson:completed",
+      "markLesson:started",
+      "drawPictures:started",
+      "markLesson:completed",
+      "drawPictures:completed",
+      "lessonReady:completed",
+    ]);
+
+    await expect(getLessonGenerationState(lesson.id)).resolves.toStrictEqual({ status: "ready" });
+  });
+
+  it("opens the lesson with what it has once the picture wait ends without its marks and pictures", async () => {
+    const lesson = await outlinedLesson();
+
+    vi.mocked(getRun).mockImplementation(
+      () => ({ exists: Promise.resolve(true), status: Promise.resolve("running") }) as never,
+    );
+
+    await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
+      lessonId: lesson.id,
+      status: "ready",
+    });
+
+    const waited = vi.mocked(sleep).mock.calls.reduce((total, [ms]) => total + ms, 0);
+    expect(waited).toBe(5 * 60_000);
+
+    expect(getStreamedEvents().slice(-3)).toStrictEqual([
+      { entityId: lesson.id, status: "started", step: "markLesson" },
+      { entityId: lesson.id, status: "started", step: "drawPictures" },
+      { entityId: lesson.id, status: "completed", step: "lessonReady" },
+    ]);
+
+    await expect(getLessonGenerationState(lesson.id)).resolves.toStrictEqual({ status: "ready" });
   });
 
   it("gives a lesson made for one learner its pictures, counted as theirs", async () => {

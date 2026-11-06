@@ -1,8 +1,6 @@
 import { type StepKind } from "@zoonk/db";
 import { getStepImageRequest } from "../library/media/_utils/step-image-request";
-
-/** Include generation retries within the five-minute picture wait. */
-const PICTURE_WAIT_MS = 300_000;
+import { PICTURE_WAIT_MS } from "./picture-wait";
 
 export function isPicturePending({ now, startedAt }: { now: number; startedAt: number }): boolean {
   return now - startedAt < PICTURE_WAIT_MS;
