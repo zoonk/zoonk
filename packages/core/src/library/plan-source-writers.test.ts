@@ -1018,7 +1018,6 @@ async function lessonSpecsCase(): Promise<WriterCase> {
         2,
       );
     },
-    marks: 2,
     plan,
     root: lessonRoot(lesson.id),
     write: () =>
