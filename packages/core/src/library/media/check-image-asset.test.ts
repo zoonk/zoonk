@@ -21,9 +21,10 @@ import {
 import {
   type PictureRedraw,
   checkImageAsset,
-  claimPictureCheck,
   listOwedPictureChecks,
+  owesPictureCheck,
   planImageAssetAgain,
+  recordFailedPictureCheck,
   redrawImageAsset,
   removeImageAsset,
   replaceImageAsset,
@@ -276,24 +277,22 @@ describe(replaceImageAsset, () => {
   });
 });
 
-describe(claimPictureCheck, () => {
-  it("claims an attempt at an owed picture's check until three were started", async () => {
-    const asset = await mediaAssetFixture({ checkAttempts: 1, checkOwedAt: new Date() });
+describe(owesPictureCheck, () => {
+  it("owes a stored picture's check until it failed three times", async () => {
+    const asset = await mediaAssetFixture({ checkFailures: 1, checkOwedAt: new Date() });
 
-    await expect(claimPictureCheck(asset.id)).resolves.toBe(true);
-    await expect(claimPictureCheck(asset.id)).resolves.toBe(true);
-    await expect(claimPictureCheck(asset.id)).resolves.toBe(false);
-
-    await expect(
-      prisma.mediaAsset.findUniqueOrThrow({ where: { id: asset.id } }),
-    ).resolves.toMatchObject({ checkAttempts: 3 });
+    await expect(owesPictureCheck(asset.id)).resolves.toBe(true);
+    await recordFailedPictureCheck(asset.id);
+    await expect(owesPictureCheck(asset.id)).resolves.toBe(true);
+    await recordFailedPictureCheck(asset.id);
+    await expect(owesPictureCheck(asset.id)).resolves.toBe(false);
   });
 
-  it("claims nothing for a picture that owes no check or is gone", async () => {
+  it("owes nothing for a picture that was checked or is gone", async () => {
     const asset = await mediaAssetFixture({ checkOwedAt: null });
 
-    await expect(claimPictureCheck(asset.id)).resolves.toBe(false);
-    await expect(claimPictureCheck(randomUUID())).resolves.toBe(false);
+    await expect(owesPictureCheck(asset.id)).resolves.toBe(false);
+    await expect(owesPictureCheck(randomUUID())).resolves.toBe(false);
   });
 });
 
@@ -303,9 +302,9 @@ describe(listOwedPictureChecks, () => {
 
     const [older, newer, checked, failing] = await Promise.all([
       mediaAssetFixture({ checkOwedAt: new Date(now - 30 * DAY_MS) }),
-      mediaAssetFixture({ checkAttempts: 2, checkOwedAt: new Date(now - 29 * DAY_MS) }),
+      mediaAssetFixture({ checkFailures: 2, checkOwedAt: new Date(now - 29 * DAY_MS) }),
       mediaAssetFixture({ checkOwedAt: null }),
-      mediaAssetFixture({ checkAttempts: 3, checkOwedAt: new Date(now - 31 * DAY_MS) }),
+      mediaAssetFixture({ checkFailures: 3, checkOwedAt: new Date(now - 31 * DAY_MS) }),
     ]);
 
     const listed = await listOwedPictureChecks();

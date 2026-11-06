@@ -21,7 +21,7 @@ import { uploadImageFile } from "./_utils/save-image-asset";
 
 const CHECK_TIER = chooseServiceTier({ wait: "later" });
 
-const CHECK_ATTEMPTS = 3;
+const CHECK_FAILURES = 3;
 const OWED_PICTURES_PER_SWEEP = 100;
 
 export type PictureRedraw = Awaited<ReturnType<typeof uploadImageFile>> & {
@@ -224,17 +224,23 @@ export async function replaceImageAsset({
   revalidateCacheTags([getMediaAssetCacheTag(assetId), ...lessonTags]);
 }
 
-/**
- * Internal workflow bridge: claims an attempt at the picture's check before it starts. A picture
- * that owes none, or whose checks kept failing, gets none, since another try would only pay again.
- */
-export async function claimPictureCheck(assetId: string): Promise<boolean> {
-  const { count } = await prisma.mediaAsset.updateMany({
-    data: { checkAttempts: { increment: 1 } },
-    where: { checkAttempts: { lt: CHECK_ATTEMPTS }, checkOwedAt: { not: null }, id: assetId },
-  });
+const owesCheck = { checkFailures: { lt: CHECK_FAILURES }, checkOwedAt: { not: null } };
 
-  return count > 0;
+/**
+ * Internal workflow bridge. A picture whose check failed three times isn't checked again, since
+ * another try would only pay again.
+ */
+export async function owesPictureCheck(assetId: string): Promise<boolean> {
+  const owed = await prisma.mediaAsset.count({ where: { ...owesCheck, id: assetId } });
+  return owed > 0;
+}
+
+/** Internal workflow bridge: a check that failed after its retries. */
+export async function recordFailedPictureCheck(assetId: string): Promise<void> {
+  await prisma.mediaAsset.updateMany({
+    data: { checkFailures: { increment: 1 } },
+    where: { id: assetId },
+  });
 }
 
 /** Internal bridge for the daily sweep. */
@@ -243,7 +249,7 @@ export async function listOwedPictureChecks(): Promise<string[]> {
     orderBy: { checkOwedAt: "asc" },
     select: { id: true },
     take: OWED_PICTURES_PER_SWEEP,
-    where: { checkAttempts: { lt: CHECK_ATTEMPTS }, checkOwedAt: { not: null } },
+    where: owesCheck,
   });
 
   return pictures.map((picture) => picture.id);

@@ -3,8 +3,9 @@ import {
   type ImageAssetCheck,
   type PictureRedraw,
   checkImageAsset,
-  claimPictureCheck,
+  owesPictureCheck,
   planImageAssetAgain,
+  recordFailedPictureCheck,
   redrawImageAsset,
   removeImageAsset,
   replaceImageAsset,
@@ -20,10 +21,16 @@ export async function checkPictureStep(
   return checkImageAsset(input);
 }
 
-export async function claimPictureCheckStep(assetId: string): Promise<boolean> {
+export async function owesPictureCheckStep(assetId: string): Promise<boolean> {
   "use step";
 
-  return claimPictureCheck(assetId);
+  return owesPictureCheck(assetId);
+}
+
+export async function recordFailedPictureCheckStep(assetId: string): Promise<void> {
+  "use step";
+
+  await recordFailedPictureCheck(assetId);
 }
 
 export async function planPictureAgainStep(

@@ -3,8 +3,9 @@ import { claimRunToken } from "../_shared/run-token";
 import {
   type PictureAnalytics,
   checkPictureStep,
-  claimPictureCheckStep,
+  owesPictureCheckStep,
   planPictureAgainStep,
+  recordFailedPictureCheckStep,
   redrawPictureStep,
   removePictureStep,
   replacePictureStep,
@@ -31,22 +32,15 @@ async function redrawPicture({
 /**
  * A rejected picture is planned again from what its check found and drawn once more, and keeps that
  * redraw only if it passes its own check. Otherwise it's taken out of use, also when a redraw step
- * runs out of retries. Every run checking a picture holds its token, since two checks at once could
- * each remove the redraw the other just showed.
+ * runs out of retries.
  */
-export async function checkPicture({
+async function checkOwedPicture({
   analytics,
   assetId,
 }: {
   analytics?: PictureAnalytics;
   assetId: string;
 }): Promise<PictureCheckStatus> {
-  using claim = await claimRunToken(`picture-check:${assetId}`);
-
-  if (claim.conflict || !(await claimPictureCheckStep(assetId))) {
-    return "skipped";
-  }
-
   const check = await checkPictureStep({ analytics, assetId });
 
   if (check.status !== "rejected") {
@@ -63,4 +57,26 @@ export async function checkPicture({
 
   await replacePictureStep({ assetId, redraw });
   return "replaced";
+}
+
+/**
+ * Every run checking a picture holds its token, since two checks at once could each remove the
+ * redraw the other just showed.
+ */
+export async function checkPicture(input: {
+  analytics?: PictureAnalytics;
+  assetId: string;
+}): Promise<PictureCheckStatus> {
+  using claim = await claimRunToken(`picture-check:${input.assetId}`);
+
+  if (claim.conflict || !(await owesPictureCheckStep(input.assetId))) {
+    return "skipped";
+  }
+
+  try {
+    return await checkOwedPicture(input);
+  } catch (error) {
+    await recordFailedPictureCheckStep(input.assetId);
+    throw error;
+  }
 }

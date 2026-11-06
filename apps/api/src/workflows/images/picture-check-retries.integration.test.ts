@@ -159,11 +159,37 @@ describe("picture check durability", () => {
     expect(checkLessonImage).toHaveBeenCalledOnce();
   });
 
+  it("records a check that failed after its retries and checks the picture again in a later run", async () => {
+    const asset = await mediaAssetFixture({
+      checkOwedAt: new Date(),
+      scene: sceneFor(`a skin section ${randomUUID()}`),
+      url: `${STORED}${randomUUID()}.webp`,
+    });
+
+    serveStoredPictures();
+    vi.mocked(checkLessonImage).mockRejectedValue(new Error("Gateway unavailable"));
+
+    const failed = await start(pictureChecksWorkflow, [{ assetIds: [asset.id] }]);
+    await expect(failed.returnValue).resolves.toStrictEqual({ passed: 0, removed: 0, replaced: 0 });
+
+    await expect(
+      prisma.mediaAsset.findUniqueOrThrow({ where: { id: asset.id } }),
+    ).resolves.toMatchObject({ checkFailures: 1, checkOwedAt: expect.any(Date) });
+
+    vi.mocked(checkLessonImage).mockResolvedValue(passedCheck as never);
+    const later = await start(pictureChecksWorkflow, [{ assetIds: [asset.id] }]);
+    await expect(later.returnValue).resolves.toStrictEqual({ passed: 1, removed: 0, replaced: 0 });
+
+    await expect(
+      prisma.mediaAsset.findUniqueOrThrow({ where: { id: asset.id } }),
+    ).resolves.toMatchObject({ checkFailures: 1, checkOwedAt: null });
+  });
+
   it("checks no picture that owes no check or whose checks kept failing", async () => {
     const [checked, failing] = await Promise.all([
       mediaAssetFixture({ checkOwedAt: null, scene: sceneFor(`a map ${randomUUID()}`) }),
       mediaAssetFixture({
-        checkAttempts: 3,
+        checkFailures: 3,
         checkOwedAt: new Date(),
         scene: sceneFor(`a cell ${randomUUID()}`),
       }),
