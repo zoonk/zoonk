@@ -60,24 +60,33 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertTrue(wait.isDone)
   }
 
-  func testALessonsMarksAndPicturesRunAlongsideEachOther() {
-    var wait = GenerationWait(kind: .lesson)
+  func testALessonsMarksAndPicturesEachFinishOnTheirOwnStepInEitherOrder() {
+    for (first, second) in [("markLesson", "drawPictures"), ("drawPictures", "markLesson")] {
+      var wait = GenerationWait(kind: .lesson)
+      wait.apply(GenerationEvent(status: "completed", step: "writeLesson"))
+      wait.apply(GenerationEvent(status: "started", step: first))
 
-    wait.apply(GenerationEvent(status: "started", step: "markLesson"))
-    wait.apply(GenerationEvent(status: "started", step: "drawPictures"))
+      XCTAssertEqual(
+        wait.visiblePhases.map(\.state), [.done, .done, .working, .working],
+        "\(first) starting starts the step beside it too")
 
-    XCTAssertEqual(
-      wait.visiblePhases.map(\.state), [.done, .done, .working, .working],
-      "the pictures starting leaves the marks working")
+      wait.apply(GenerationEvent(status: "started", step: second))
+      wait.apply(GenerationEvent(status: "completed", step: first))
 
-    wait.apply(GenerationEvent(status: "completed", step: "drawPictures"))
+      let (done, running) = first == "markLesson" ? (2, 3) : (3, 2)
+      XCTAssertEqual(wait.visiblePhases[done].state, .done)
+      XCTAssertEqual(wait.visiblePhases[running].state, .working, "\(second) is still running")
+      XCTAssertFalse(wait.isDone)
 
-    XCTAssertEqual(wait.visiblePhases.map(\.state), [.done, .done, .working, .done])
-    XCTAssertFalse(wait.isDone)
+      wait.apply(GenerationEvent(status: "completed", step: second))
 
-    wait.apply(GenerationEvent(status: "completed", step: "lessonReady"))
+      XCTAssertEqual(wait.visiblePhases.map(\.state), [.done, .done, .done, .done])
+      XCTAssertFalse(wait.isDone, "the lesson opens on lessonReady, after both")
 
-    XCTAssertTrue(wait.isDone)
+      wait.apply(GenerationEvent(status: "completed", step: "lessonReady"))
+
+      XCTAssertTrue(wait.isDone)
+    }
   }
 
   func testIgnoresStepsItDoesntKnow() {

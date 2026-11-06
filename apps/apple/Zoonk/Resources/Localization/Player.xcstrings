@@ -3483,7 +3483,7 @@
       }
     },
     "Drawing the pictures" : {
-      "comment" : "A step of the wait while a lesson is written: drawing its pictures and icons",
+      "comment" : "A step of the wait while a lesson is written, like \"Planning the lesson\" and \"Writing the lesson\" before it",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4781,7 +4781,7 @@
       }
     },
     "Highlighting the key ideas" : {
-      "comment" : "A step of the wait while a lesson is written: marking each screen's key sentence, its example and the lesson's main ideas",
+      "comment" : "A step of the wait while a lesson is written, like \"Planning the lesson\" and \"Writing the lesson\" before it. \"Ideas\" are the lesson map's ideas, as in \"Idea 2 of 4\".",
       "localizations" : {
         "de" : {
           "stringUnit" : {

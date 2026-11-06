@@ -21,6 +21,7 @@ struct GenerationWait: Equatable, Sendable {
     let label: LocalizedStringResource
     /// Shown only once one of its steps is reported: runs skip it when it doesn't apply.
     let isOptional: Bool
+    /// Runs at the same time as the phase before it, so each finishes on its own steps.
     var runsAlongside = false
     var state = PhaseState.waiting
     var isReported = false
@@ -65,10 +66,15 @@ struct GenerationWait: Equatable, Sendable {
         return
       }
 
-      // Earlier phases are done once a later one reports, unless they run alongside it.
-      for earlier in phases.indices
-      where earlier < index && !(phases[earlier].runsAlongside && phases[index].runsAlongside) {
+      let stage = stage(of: index)
+
+      // Earlier stages are done once a later one reports, and a stage's phases run together.
+      for earlier in phases.indices where earlier < stage.lowerBound {
         phases[earlier].state = .done
+      }
+
+      for alongside in stage where phases[alongside].state == .waiting {
+        phases[alongside].state = .working
       }
 
       phases[index].isReported = true
@@ -83,6 +89,13 @@ struct GenerationWait: Equatable, Sendable {
         isDone = true
       }
     }
+  }
+
+  /// The phases that run at the same time as the one at `index`, itself included.
+  private func stage(of index: Int) -> Range<Int> {
+    let start = phases[...index].lastIndex { !$0.runsAlongside } ?? 0
+    let end = phases[(index + 1)...].firstIndex { !$0.runsAlongside } ?? phases.endIndex
+    return start..<end
   }
 
   private enum Place {
@@ -212,14 +225,16 @@ struct GenerationWait: Equatable, Sendable {
           label: LocalizedStringResource(
             "Highlighting the key ideas", table: "Player",
             comment:
-              "A step of the wait while a lesson is written: marking each screen's key sentence, its example and the lesson's main ideas"
+              "A step of the wait while a lesson is written, like \"Planning the lesson\" and \"Writing the lesson\" before it. \"Ideas\" are the lesson map's ideas, as in \"Idea 2 of 4\"."
           ),
-          isOptional: false, runsAlongside: true),
+          isOptional: false),
         Phase(
           id: "draw",
           label: LocalizedStringResource(
             "Drawing the pictures", table: "Player",
-            comment: "A step of the wait while a lesson is written: drawing its pictures and icons"),
+            comment:
+              "A step of the wait while a lesson is written, like \"Planning the lesson\" and \"Writing the lesson\" before it"
+          ),
           isOptional: false, runsAlongside: true),
       ]
     }
