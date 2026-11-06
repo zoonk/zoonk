@@ -1,5 +1,5 @@
 import "server-only";
-import { Output, generateText } from "ai";
+import { type LanguageModelUsage, Output, generateText } from "ai";
 import { z } from "zod";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
@@ -107,7 +107,7 @@ export async function fitPlanToRoutineFacts(
   data: PlanRoutineFit;
   provenance: Awaited<ReturnType<typeof runTaskGeneration>>["provenance"];
   systemPrompt: string;
-  usage: Awaited<ReturnType<typeof runTaskGeneration>>["result"]["usage"];
+  usage: LanguageModelUsage;
   userPrompt: string;
 }> {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;

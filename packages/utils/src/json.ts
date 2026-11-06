@@ -56,6 +56,20 @@ export function stringifyUnknown(value: unknown): string {
   }
 }
 
+export function collectJsonStrings(value: unknown): string[] {
+  if (typeof value === "string") {
+    return [value];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap((entry) => collectJsonStrings(entry));
+  }
+
+  return isJsonObject(value)
+    ? Object.values(value).flatMap((entry) => collectJsonStrings(entry))
+    : [];
+}
+
 export function mapJsonStrings(value: unknown, rewrite: (text: string) => string): unknown {
   if (typeof value === "string") {
     return rewrite(value);

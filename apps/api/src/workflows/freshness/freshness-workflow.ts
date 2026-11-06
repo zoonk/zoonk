@@ -3,6 +3,7 @@ import {
   type FreshnessCheck,
   type FreshnessStopReason,
   type FreshnessTarget,
+  type SourceChange,
 } from "@zoonk/core/library/exams/check-freshness";
 import { getWorkflowMetadata } from "workflow";
 import { readProductReleases } from "../products/product-releases";
@@ -13,7 +14,10 @@ import { checkFreshnessStep } from "./steps/check-freshness-step";
 import { loadBlueprintIdentityStep } from "./steps/load-blueprint-identity-step";
 import { loadBlueprintNoticeStep } from "./steps/load-blueprint-notice-step";
 import { planNextNoticeStep } from "./steps/plan-next-notice-step";
-import { recordSourceNoticeStep } from "./steps/record-source-notice-step";
+import {
+  recordFailedSourceNoticeStep,
+  recordSourceNoticeStep,
+} from "./steps/record-source-notice-step";
 
 export type FreshnessRunResult =
   | { reason: FreshnessStopReason; status: "stopped" }
@@ -55,6 +59,21 @@ async function searchNextNotice({
   });
 }
 
+async function recordSourceNotice({
+  analytics,
+  change,
+}: {
+  analytics: ResearchAnalytics;
+  change: SourceChange;
+}): Promise<void> {
+  try {
+    await recordSourceNoticeStep({ analytics, change });
+  } catch (error) {
+    await recordFailedSourceNoticeStep(change);
+    throw error;
+  }
+}
+
 async function applyChanges({
   analytics,
   check,
@@ -81,7 +100,7 @@ async function applyChanges({
   }
 
   if (check.sourceChange) {
-    await recordSourceNoticeStep({ analytics, change: check.sourceChange });
+    await recordSourceNotice({ analytics, change: check.sourceChange });
   }
 
   if (check.releasesUpdate) {

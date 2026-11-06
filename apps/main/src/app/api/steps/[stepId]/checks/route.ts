@@ -2,9 +2,9 @@ import { appPostRoute, readJsonBody } from "@/lib/http/app-post-route";
 import { checkLessonStep } from "@zoonk/core/lesson-player/check";
 import { lessonStepCheckInputSchema } from "@zoonk/core/lesson-player/contract";
 import { type LessonCheckOutcome } from "@zoonk/player/lesson/types";
-import { z } from "zod";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 
-const stepIdSchema = z.uuid();
+const stepIdSchema = uuidSchema();
 
 /** The player resends a 500; a finished run or an answer that doesn't fit the screen is a refusal no retry changes. */
 export const POST = appPostRoute<{ stepId: string }>(

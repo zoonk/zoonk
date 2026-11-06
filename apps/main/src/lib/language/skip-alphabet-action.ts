@@ -1,10 +1,10 @@
 "use server";
 
 import { skipAlphabetIntro } from "@zoonk/core/language/alphabet/skip";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 
-const goalIdSchema = z.uuid();
+const goalIdSchema = uuidSchema();
 
 export async function skipAlphabetAction(goalId: unknown): Promise<boolean> {
   const parsed = goalIdSchema.safeParse(goalId);

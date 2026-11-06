@@ -1,41 +1,63 @@
 "use client";
 
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { useEnterKey } from "@zoonk/ui/hooks/keyboard";
+import { ignoreHeldEnter, useEnterKey } from "@zoonk/ui/hooks/keyboard";
+import { EyeIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { EnterButton } from "../../_components/enter-button";
+import { useFocusOnRemovedControl } from "../../_components/suggestion-focus";
 import { TaskActions } from "../../_components/task-layout";
 
-const QUESTION_CHECK_ID = "question-check";
+const QUESTION_MAIN_ID = "question-main-action";
 
-export function CheckButton({
+/**
+ * One button turns from "Show the answers" into Check and then Continue, so keyboard focus stays on
+ * it through a question. Enter pressed elsewhere moves focus to it, since an answer option locks
+ * while it's checked. A held Enter acts once, so it can't check and then skip the verdict.
+ */
+export function QuestionMainButton({
+  action,
   busy = false,
-  disabled,
-  onCheck,
+  disabled = false,
+  onPress,
 }: {
+  action: "check" | "continue" | "reveal";
   busy?: boolean;
-  disabled: boolean;
-  onCheck: () => void;
+  disabled?: boolean;
+  onPress: () => void;
 }) {
   const t = useExtracted();
+  const ref = useRef<HTMLButtonElement>(null);
+  const ready = !disabled && !busy;
 
-  useEnterKey(onCheck, { enabled: !disabled && !busy });
+  useEnterKey(
+    () => {
+      ref.current?.focus();
+      onPress();
+    },
+    { enabled: ready },
+  );
+
+  const labels = {
+    check: t("Check"),
+    continue: t("Continue"),
+    reveal: t("I've read it. Show the answers"),
+  };
 
   return (
-    <EnterButton disabled={disabled || busy} id={QUESTION_CHECK_ID} onClick={onCheck}>
+    <EnterButton
+      disabled={!ready}
+      id={QUESTION_MAIN_ID}
+      onClick={onPress}
+      onKeyDown={ignoreHeldEnter}
+      ref={ref}
+    >
       {busy && <Spinner aria-hidden="true" />}
-      {t("Check")}
+      {action === "reveal" && <EyeIcon aria-hidden="true" />}
+      {labels[action]}
     </EnterButton>
   );
-}
-
-export function ContinueButton({ onContinue }: { onContinue: () => void }) {
-  const t = useExtracted();
-
-  useEnterKey(onContinue);
-
-  return <EnterButton onClick={onContinue}>{t("Continue")}</EnterButton>;
 }
 
 /**
@@ -51,7 +73,7 @@ export function useFocusCheckWhenComplete({
 }) {
   useEffect(() => {
     if (complete && containerRef.current?.contains(document.activeElement)) {
-      document.querySelector<HTMLElement>(`#${QUESTION_CHECK_ID}`)?.focus();
+      document.querySelector<HTMLElement>(`#${QUESTION_MAIN_ID}`)?.focus();
     }
   }, [complete, containerRef]);
 }
@@ -63,8 +85,12 @@ export function QuestionActionsRow({
   ask: React.ReactNode;
   children: React.ReactNode;
 }) {
+  const row = useRef<HTMLDivElement>(null);
+
+  useFocusOnRemovedControl(row, () => document.querySelector<HTMLElement>(`#${QUESTION_MAIN_ID}`));
+
   return (
-    <TaskActions>
+    <TaskActions ref={row}>
       {children}
       {ask}
     </TaskActions>

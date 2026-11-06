@@ -1,6 +1,7 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
-const stepIdSchema = z.uuid().meta({ description: "The lesson screen's id" });
+const stepIdSchema = uuidSchema().meta({ description: "The lesson screen's id" });
 
 export const stepPathParamsSchema = z
   .object({ stepId: stepIdSchema })

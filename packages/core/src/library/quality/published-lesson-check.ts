@@ -19,6 +19,7 @@ import {
   citeScreens,
   citeScreensIfPossible,
   fixVersion,
+  readLessonSources,
   toScreensToSave,
 } from "../lessons/_utils/checked-version";
 import { pickDraftWriter } from "../lessons/_utils/draft-writer";
@@ -209,7 +210,10 @@ export async function redraftPublishedLesson({
   const checked = await checkVersion({
     draft: {
       lesson: draft.data,
-      provenanceByScreen: draft.data.screens.map(() => draft.provenance),
+      provenanceByScreen: draft.data.screens.map(() => ({
+        ...draft.provenance,
+        sources: readLessonSources(inputs),
+      })),
     },
     gate: loaded.gate,
     review: true,

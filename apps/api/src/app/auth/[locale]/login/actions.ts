@@ -10,7 +10,7 @@ import { parseFormField } from "@zoonk/utils/form";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getOtpHref, readRedirectToParam } from "../../_utils/auth-redirect";
+import { getOtpHref } from "../../_utils/auth-redirect";
 
 export type VerificationOTPState = {
   email?: string;
@@ -43,17 +43,6 @@ function getExpectedVerificationOTPErrorState(error: unknown): VerificationOTPSt
   }
 
   return statusCode >= CLIENT_ERROR && statusCode < SERVER_ERROR ? { status: "error" } : null;
-}
-
-/** A form sent before the page's script loaded has no address of its own; the Referer names the page. */
-function readSenderRedirectTo(requestHeaders: Headers): string | null {
-  const referer = requestHeaders.get("referer");
-
-  if (!referer || !URL.canParse(referer)) {
-    return null;
-  }
-
-  return readRedirectToParam(new URL(referer).searchParams);
 }
 
 /** A Server Action has no request URL; Better Auth resolves its host from the headers. */
@@ -98,6 +87,5 @@ export async function sendVerificationOTPAction(
     throw error;
   }
 
-  const redirectTo = parseFormField(formData, "redirectTo") || readSenderRedirectTo(requestHeaders);
-  redirect(getOtpHref({ email, locale, redirectTo }));
+  redirect(getOtpHref({ email, locale, redirectTo: parseFormField(formData, "redirectTo") }));
 }

@@ -1,15 +1,21 @@
 import "server-only";
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { prisma } from "@zoonk/db";
-import { type LibraryProvenance } from "../../_utils/library-rows";
 import { type HeldBackDraft } from "../../generation/held-back-drafts";
-import { type LessonAnalytics, type LessonGate } from "../../lessons/_utils/checked-version";
+import {
+  type LessonAnalytics,
+  type LessonGate,
+  readLessonSources,
+} from "../../lessons/_utils/checked-version";
 import {
   type LessonWritingInputs,
   loadPublishedLessonInputs,
   toWritingContext,
 } from "../../lessons/_utils/lesson-writing-inputs";
-import { type LessonScreenToSave } from "../../lessons/_utils/save-lesson-content";
+import {
+  type LessonScreenToSave,
+  type ScreenProvenance,
+} from "../../lessons/_utils/save-lesson-content";
 import { loadLessonReuse } from "../../lessons/lesson-reuse";
 import { readCurrentLessonVersion } from "../../lessons/lesson-versions";
 import { getPictureKey } from "../../media/_utils/step-image-request";
@@ -66,6 +72,7 @@ export async function loadCheck({
       context: toWritingContext(inputs),
       reuse,
       serviceTier: BACKGROUND_TIER,
+      sources: readLessonSources(inputs),
       writerModel,
     },
     inputs,
@@ -89,6 +96,8 @@ export async function loadVersionSteps({
       model: true,
       promptVersion: true,
       runId: true,
+      sourceId: true,
+      sources: { select: { contentHash: true, sourceId: true } },
     },
     where: { lessonId, version },
   });
@@ -96,12 +105,16 @@ export async function loadVersionSteps({
 
 type VersionStep = Awaited<ReturnType<typeof loadVersionSteps>>[number];
 
-export function toProvenance(step: VersionStep): LibraryProvenance {
+/** A screen cited before versions were recorded keeps its citation as a read of unknown version. */
+export function toProvenance(step: VersionStep): ScreenProvenance {
+  const cited = step.sourceId ? [{ contentHash: null, sourceId: step.sourceId }] : [];
+
   return {
     generatedAt: step.generatedAt,
     model: step.model,
     promptVersion: step.promptVersion,
     runId: step.runId,
+    sources: step.sources.length > 0 ? step.sources : cited,
   };
 }
 

@@ -2,8 +2,9 @@ import "server-only";
 import { type Reasoning, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { generateText, streamText } from "ai";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
-import { runTaskGeneration, startTaskGeneration } from "../../provenance/run-task-generation";
+import { runTaskGeneration, streamTaskGeneration } from "../../provenance/run-task-generation";
 import { type TaskProvenance } from "../../provenance/task-provenance";
+import { selectPromptVariants } from "../_utils/prompt-variants";
 import beyondLessonPrompt from "./lesson-question-beyond.prompt.md";
 import chapterPrompt from "./lesson-question-chapter.prompt.md";
 import {
@@ -13,6 +14,7 @@ import {
 import lessonPrompt from "./lesson-question-lesson.prompt.md";
 import mockPrompt from "./lesson-question-mock.prompt.md";
 import systemPrompt from "./lesson-question.prompt.md";
+import { getLessonScreenVariants } from "./lesson-screen-variants";
 
 export const LESSON_QUESTION_MODEL = "openai/gpt-6-luna";
 /**
@@ -36,7 +38,12 @@ const SCOPE_PROMPTS = {
 } satisfies Record<LessonTutorContextSnapshot["scope"]["kind"], string>;
 
 function getSystemPrompt(contextSnapshot: LessonTutorContextSnapshot): string {
-  return `${systemPrompt}\n${SCOPE_PROMPTS[contextSnapshot.scope.kind]}`;
+  const scopePrompt = selectPromptVariants({
+    template: SCOPE_PROMPTS[contextSnapshot.scope.kind],
+    variants: getLessonScreenVariants(contextSnapshot),
+  });
+
+  return `${systemPrompt}\n${scopePrompt}`;
 }
 
 export type LessonQuestionAnswerCompletion = {
@@ -222,30 +229,23 @@ export function streamLessonQuestionAnswer({
   generation: ReturnType<typeof streamText>;
   provenance: Promise<TaskProvenance>;
 } {
-  const run = startTaskGeneration({
+  const { generation, provenance } = streamTaskGeneration({
     analytics: { contentScope: "personal", ...analytics },
+    stream: () =>
+      streamText({
+        ...createLessonQuestionGenerationOptions({
+          contextSnapshot,
+          learnerMemory,
+          model: LESSON_QUESTION_MODEL,
+          priorTurns,
+          question,
+          useFallback: true,
+        }),
+        onError: suppressLessonQuestionProviderError,
+      }),
     systemPrompt: getSystemPrompt(contextSnapshot),
     task: LESSON_QUESTION_TASK,
   });
-
-  const generation = streamText({
-    ...createLessonQuestionGenerationOptions({
-      contextSnapshot,
-      learnerMemory,
-      model: LESSON_QUESTION_MODEL,
-      priorTurns,
-      question,
-      useFallback: true,
-    }),
-    onError: suppressLessonQuestionProviderError,
-  });
-
-  const provenance = Promise.all([generation.finalStep, generation.steps, generation.usage]).then(
-    ([finalStep, steps, usage]) => run.finish({ finalStep, steps, usage }),
-  );
-
-  // A failed stream rejects this too; nothing else may be waiting for it.
-  void provenance.catch(() => null);
 
   return { generation, provenance };
 }

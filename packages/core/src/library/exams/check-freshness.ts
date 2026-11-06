@@ -5,6 +5,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { addDays } from "../../plans/planner/plan-calendar";
 import { getNextExamCheck, getNextSourceCheck } from "../sources/freshness-schedule";
+import { type OwedSourceChange, getOwedSourceChange } from "../sources/unnoticed-changes";
 import { refreshWebSource } from "../sources/web-sources";
 import {
   countActiveExamGoals,
@@ -19,14 +20,7 @@ export type FreshnessTarget =
 
 export type FreshnessStopReason = "examPassed" | "missing" | "noLearners" | "noUrl";
 
-export type SourceChange = {
-  change: string | null;
-  contentHash: string;
-  language: string;
-  previousHash: string;
-  sourceId: string;
-  title: string;
-};
+export type SourceChange = OwedSourceChange & { language: string; sourceId: string; title: string };
 
 export type FreshnessCheck =
   | { reason: FreshnessStopReason; status: "stopped" }
@@ -193,29 +187,6 @@ async function checkExam({
   };
 }
 
-function toSourceChange({
-  language,
-  refresh,
-  title,
-}: {
-  language: string;
-  refresh: Awaited<ReturnType<typeof refreshSafely>>;
-  title: string;
-}): SourceChange | null {
-  if (refresh?.status !== "changed") {
-    return null;
-  }
-
-  return {
-    change: refresh.change,
-    contentHash: refresh.source.contentHash,
-    language,
-    previousHash: refresh.previousHash,
-    sourceId: refresh.source.id,
-    title,
-  };
-}
-
 async function checkSource({
   now,
   sourceId,
@@ -259,6 +230,7 @@ async function checkSource({
   // A releases page is read for its releases, never turned into a notice for learners.
   const contentHash = refresh?.source.contentHash ?? source.contentHash;
   const unread = source.releasesOf.filter((product) => product.releasesHash !== contentHash);
+  const owed = getOwedSourceChange(refresh?.source ?? source);
 
   return {
     blueprintUpdate: null,
@@ -266,9 +238,9 @@ async function checkSource({
     nextNotice: null,
     releasesUpdate: unread.length > 0 ? { productIds: unread.map((product) => product.id) } : null,
     sourceChange:
-      source.releasesOf.length > 0
-        ? null
-        : toSourceChange({ language: source.language, refresh, title: source.title }),
+      source.releasesOf.length === 0 && owed
+        ? { ...owed, language: source.language, sourceId: source.id, title: source.title }
+        : null,
     status: "scheduled",
   };
 }

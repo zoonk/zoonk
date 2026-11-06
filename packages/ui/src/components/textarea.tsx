@@ -1,8 +1,13 @@
+"use client";
+
+import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import type * as React from "react";
 
 /** A field waiting on its submit takes `readOnly`, not `disabled`, so keyboard focus isn't dropped to the page. */
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
+  const kept = useKeptTyping(props);
+
   return (
     <textarea
       className={cn(
@@ -11,6 +16,7 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
       )}
       data-slot="textarea"
       {...props}
+      {...kept}
     />
   );
 }

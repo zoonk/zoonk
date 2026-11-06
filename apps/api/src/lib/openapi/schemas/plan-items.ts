@@ -1,26 +1,26 @@
 import { PlanItemKind, PlanItemStatus } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const isoDateSchema = z.iso.date();
 
 export const planItemSchema = z
   .object({
-    chapterId: z.uuid().nullable(),
-    id: z
-      .uuid()
+    chapterId: uuidSchema().nullable(),
+    id: uuidSchema()
       .nullable()
       .meta({
         description:
           "null for selected in-memory work until the learner opens the day; show the row without an action link",
       }),
     kind: z.enum(PlanItemKind),
-    lessonId: z.uuid().nullable(),
+    lessonId: uuidSchema().nullable(),
     minutes: z.number().nullable(),
     requiresPlus: z
       .boolean()
       .meta({ description: "Free exam plans cover the first week and no mock exams" }),
     scheduledFor: isoDateSchema.nullable(),
-    skillId: z.uuid().nullable(),
+    skillId: uuidSchema().nullable(),
     status: z.enum(PlanItemStatus),
     title: z
       .string()

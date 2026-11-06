@@ -74,6 +74,7 @@ describe(loadLessonWritingInputs, () => {
           model: "test/fixture",
           promptVersion: "test-v1",
           runId: workflowRunId,
+          sources: [],
         })),
       },
     });

@@ -2,9 +2,9 @@ import { type CourseProgress } from "@/components/catalog/course-progress-contra
 import { hasStartedLesson } from "@zoonk/core/lesson-player/progress";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
-import { z } from "zod";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 
-const idSchema = z.uuid();
+const idSchema = uuidSchema();
 
 /**
  * Public pages are static, so the browser asks for the learner's bits after the page shows. It only

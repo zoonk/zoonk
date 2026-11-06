@@ -11,13 +11,13 @@ import { getNextBlockId, getSessionBar } from "./session-view";
 import { settleSessionDay } from "./settle-session-day";
 import { type StudySessionRow } from "./study-session-access";
 
-/** Roll back the early learner mark if another request already abandoned this empty duel. */
-class EmptyCheckpointUnchangedError extends Error {
-  override name = "EmptyCheckpointUnchangedError";
+/** Roll back the early learner mark if another request already ended this empty block. */
+class EmptyBlockUnchangedError extends Error {
+  override name = "EmptyBlockUnchangedError";
 }
 
 /** Empty attempts end neutrally, without a verdict or reward. */
-export async function finishEmptyCheckpoint({
+export async function finishEmptyBlock({
   block,
   session,
   timeZone,
@@ -50,14 +50,14 @@ export async function finishEmptyCheckpoint({
         });
 
         if (count === 0) {
-          throw new EmptyCheckpointUnchangedError("The empty checkpoint was already settled");
+          throw new EmptyBlockUnchangedError("The empty block was already settled");
         }
 
         await oweDaySettlement(tx, { block, rewardMissions: false, timeZone, userId });
       }),
     );
 
-    if (error instanceof EmptyCheckpointUnchangedError) {
+    if (error instanceof EmptyBlockUnchangedError) {
       return { status: "blockFinished" };
     }
 

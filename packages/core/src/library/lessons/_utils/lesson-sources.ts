@@ -17,7 +17,7 @@ const FACT_TOPICS: ReadonlySet<SourceTopic | null> = new Set(["product", "regula
 
 type LessonSourceRow = Pick<
   Source,
-  "extractedText" | "id" | "mimeType" | "productId" | "structure" | "title"
+  "contentHash" | "extractedText" | "id" | "mimeType" | "productId" | "structure" | "title"
 >;
 
 function statesFacts(source: LessonSourceRow): boolean {
@@ -45,6 +45,7 @@ async function loadLessonSourcePages({
   const sources = await prisma.source.findMany({
     orderBy: { fetchedAt: "desc" },
     select: {
+      contentHash: true,
       extractedText: true,
       id: true,
       mimeType: true,
@@ -57,6 +58,7 @@ async function loadLessonSourcePages({
       OR: [
         { learnerSources: { some: { goal: goals } } },
         { steps: { some: { lessonId } } },
+        { stepSources: { some: { step: { lessonId } } } },
         ...(courseId ? [{ product: { courses: { some: { id: courseId } } } }] : []),
       ],
       extractedText: { not: null },

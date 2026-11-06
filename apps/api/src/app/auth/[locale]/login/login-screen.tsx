@@ -15,6 +15,7 @@ import { readRedirectTo } from "../../_utils/auth-redirect";
 import { getReturnAppUrl } from "../../_utils/return-app";
 import { EmailLoginForm } from "./email-login-form";
 import { SocialLogin } from "./social-login";
+import { USAGE_DATA_SCRIPT } from "./usage-data-script";
 
 function TermsLink(children: ReactNode) {
   return <a href={TERMS_URL}>{children}</a>;
@@ -40,6 +41,11 @@ export async function LoginScreen({
 
   return (
     <AuthFrame appUrl={appUrl}>
+      <script
+        // oxlint-disable-next-line react/no-danger -- A fixed script that must run before the learner can sign in.
+        dangerouslySetInnerHTML={{ __html: USAGE_DATA_SCRIPT }}
+      />
+
       <Login>
         <LoginHeader>
           <LoginTitle>{t("Sign in or create an account")}</LoginTitle>

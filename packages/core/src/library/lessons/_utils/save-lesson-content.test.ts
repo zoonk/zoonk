@@ -50,6 +50,7 @@ function screen(skillId: string | null = null): LessonScreenToSave {
       model: "test/fixture",
       promptVersion: "test-v1",
       runId: randomUUID(),
+      sources: [],
     },
     skillId,
   };
@@ -622,25 +623,25 @@ describe(saveLessonContent, () => {
     const held = Promise.withResolvers<number>();
     const released = Promise.withResolvers<null>();
 
-    const learnerWrite = prisma.$transaction(async (tx) => {
-      await tx.$queryRaw`SELECT id FROM library_lessons WHERE id = ${lesson.id}::uuid FOR KEY SHARE`;
+    const holder = prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM library_lessons WHERE id = ${lesson.id}::uuid FOR SHARE`;
       const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
       held.resolve(backend?.pid ?? 0);
       await released.promise;
     });
 
-    learnerWrite.catch((error: unknown) => held.reject(error));
+    holder.catch((error: unknown) => held.reject(error));
     const pid = await held.promise;
     const publishing = publishStagedLessonVersion({ lessonId: lesson.id, version: version ?? 0 });
     let staging: ReturnType<typeof stage> = Promise.resolve(null);
 
     try {
-      await waitForBlockedStatement(pid, /library_lessons WHERE id = \$1::uuid FOR UPDATE/u);
-      staging = stage();
       await waitForBlockedStatement(pid, /FOR NO KEY UPDATE/u);
+      staging = stage();
+      await waitForBlockedStatement(pid, /FOR NO KEY UPDATE/u, 2);
     } finally {
       released.resolve(null);
-      await learnerWrite;
+      await holder;
     }
 
     const settled = await Promise.allSettled([publishing, staging]);

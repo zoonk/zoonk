@@ -1,4 +1,5 @@
 import { type StudySessionBlock } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../../learner/contract";
 
@@ -8,8 +9,7 @@ const MAX_WRITING_MS = 5_400_000;
 
 export const essaySubmissionInputSchema = z
   .object({
-    attemptId: z
-      .uuid()
+    attemptId: uuidSchema()
       .optional()
       .describe(
         "Your id for this draft: sent again with it (a retry), it's graded and recorded once",

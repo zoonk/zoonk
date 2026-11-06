@@ -90,7 +90,7 @@ export async function writeChallengeLessonContent({
         content: result.content,
         kind: "challenge",
         mathItem: null,
-        provenance: result.provenance,
+        provenance: { ...result.provenance, sources: [] },
         skillId: null,
       },
     ],

@@ -27,11 +27,7 @@ function createStep(gateway?: ProviderMetadata[string], stepUsage = usage) {
 function buildWithSteps(steps: ReturnType<typeof createStep>[]) {
   return buildTaskProvenance({
     generatedAt: "2026-09-26T12:00:00.000Z",
-    generation: {
-      finalStep: steps.at(-1) ?? createStep(),
-      steps,
-      usage: sumLanguageModelUsage(steps.map((step) => step.usage)),
-    },
+    generation: { finalStep: steps.at(-1) ?? createStep(), steps },
     latencyMs: 10,
     promptVersion: "version",
     runId: "run-1",

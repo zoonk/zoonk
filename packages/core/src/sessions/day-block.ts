@@ -1,4 +1,6 @@
 import { type GoalKind } from "@zoonk/db";
+import { lowercaseUuid } from "@zoonk/utils/uuid";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type MockIdentity } from "../plans/planner/mock-identity";
 import { type DayView } from "./day-view";
@@ -7,7 +9,7 @@ const MAX_PLAN_ITEM_KEY_LENGTH = 120;
 const MAX_AREA_ID_LENGTH = 100;
 
 /** An area of the goal's map: a chapter's id, or `phase:N` for skills not in a chapter yet. */
-export const areaIdSchema = z.string().min(1).max(MAX_AREA_ID_LENGTH);
+export const areaIdSchema = z.string().min(1).max(MAX_AREA_ID_LENGTH).overwrite(lowercaseUuid);
 
 /** A scheduled mock fixes its exam day and length when the day is built. */
 export const mockIdentitySchema: z.ZodType<MockIdentity> = z
@@ -31,7 +33,7 @@ export const checkpointRefSchema = z.discriminatedUnion("mock", [
 export const dayBlockRefSchema = z
   .object({
     areaId: areaIdSchema.nullable(),
-    chapterId: z.uuid().nullable(),
+    chapterId: uuidSchema().nullable(),
     checkpoint: checkpointRefSchema.nullable(),
     flags: z
       .object({
@@ -44,7 +46,7 @@ export const dayBlockRefSchema = z
       })
       .strict(),
     kind: z.enum(["learn", "review", "practice", "produce", "checkpoint"]),
-    lessonId: z.uuid().nullable(),
+    lessonId: uuidSchema().nullable(),
     planItemKey: z.string().max(MAX_PLAN_ITEM_KEY_LENGTH).nullable(),
     position: z.int().nonnegative(),
   })

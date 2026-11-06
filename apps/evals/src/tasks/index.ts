@@ -35,6 +35,7 @@ import { findTargetCutoffTask } from "./find-target-cutoff/task";
 import { findTopicFrequencyTask } from "./find-topic-frequency/task";
 import { generateItemsTask } from "./generate-items/task";
 import { goalSpecificityTask } from "./goal-specificity/task";
+import { goalTutorSearchTask } from "./goal-tutor-search/task";
 import { goalTutorTask } from "./goal-tutor/task";
 import { gradeEssayTask } from "./grade-essay/task";
 import { gradeTypedAnswerTask } from "./grade-typed-answer/task";
@@ -158,6 +159,7 @@ export const TASKS: readonly RegisteredTask[] = [
   libraryIdentityDecisionTask,
   goalSpecificityTask,
   goalTutorTask,
+  goalTutorSearchTask,
   mistakeCauseTask,
   planEditIntentTask,
   planRoutineFitTask,

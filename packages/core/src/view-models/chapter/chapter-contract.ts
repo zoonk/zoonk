@@ -1,11 +1,12 @@
 import { CourseLevel, GoalKind } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { skillStateCountsSchema } from "../../learner/contract";
 import { mapSkillSchema } from "../map/map-contract";
 
 const chapterLessonSchema = z
   .object({
-    lessonId: z.uuid(),
+    lessonId: uuidSchema(),
     minutes: z.int().min(0),
     plusRequired: z
       .boolean()
@@ -14,7 +15,7 @@ const chapterLessonSchema = z
           "A free exam plan past its first week opens this new lesson with Plus only: show it marked Plus; starting it answers 402",
       }),
     skillIds: z
-      .array(z.uuid())
+      .array(uuidSchema())
       .meta({ description: "Skills it teaches, so tapping a skill on the map lists its lessons" }),
     state: z
       .enum(["done", "next", "upcoming"])
@@ -32,7 +33,7 @@ const chapterLessonSchema = z
 export const chapterViewSchema = z
   .object({
     chapter: z.object({
-      chapterId: z.uuid(),
+      chapterId: uuidSchema(),
       level: z.enum(CourseLevel),
       position: z
         .int()
@@ -55,7 +56,7 @@ export const chapterViewSchema = z
       title: z.string(),
     }),
     counts: skillStateCountsSchema,
-    goal: z.object({ id: z.uuid(), kind: z.enum(GoalKind), title: z.string() }),
+    goal: z.object({ id: uuidSchema(), kind: z.enum(GoalKind), title: z.string() }),
     lessons: z
       .array(chapterLessonSchema)
       .meta({ description: "The plan's lessons in this chapter" }),
@@ -70,7 +71,7 @@ export const chapterViewSchema = z
     }),
     skills: z.array(mapSkillSchema).meta({ description: "The chapter's map, in plan order" }),
     summaries: z
-      .array(z.object({ ideas: z.array(z.string()), lessonId: z.uuid(), title: z.string() }))
+      .array(z.object({ ideas: z.array(z.string()), lessonId: uuidSchema(), title: z.string() }))
       .meta({ description: "Summary cards of the chapter's finished lessons, in lesson order" }),
     testOut: z.object({
       available: z

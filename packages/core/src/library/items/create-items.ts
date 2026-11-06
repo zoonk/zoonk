@@ -4,6 +4,7 @@ import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { type ImageAnalytics } from "../media/_utils/draw-library-image";
 import { drawItemImage, getItemImageRequest, loadItemImageScope } from "../media/item-images";
+import { type SourceVersion, reconcileItemReviewFlags } from "../sources/content-review-flags";
 import { checkItem } from "./item-checks";
 import { type ItemAnswerFormat, toStoredItem } from "./item-content";
 import { repairItem } from "./item-repairs";
@@ -20,8 +21,8 @@ type ItemRows = {
   language: string;
   provenance: LibraryProvenance;
   skillId: string;
+  source: SourceVersion | null;
   sourceCitation: string | null;
-  sourceId: string | null;
 };
 
 const PICTURE_FAILED = "Its picture couldn't be drawn, so the question can't be asked.";
@@ -35,7 +36,7 @@ async function storeBatch({
   pictured: boolean;
   rows: ItemRows;
 }): Promise<Item[]> {
-  const { answerFormat, format, provenance, skillId, ...shared } = rows;
+  const { answerFormat, format, provenance, skillId, source, ...shared } = rows;
 
   return writePlanInputs(async (transaction) => {
     const existing = await transaction.item.findMany({
@@ -57,15 +58,26 @@ async function storeBatch({
       skillIds: [skillId],
     });
 
-    return transaction.item.createManyAndReturn({
+    const created = await transaction.item.createManyAndReturn({
       data: entries.map(({ item, mediaAssetId }) => ({
         ...toStoredItem(item, { ...answerFormat, citesSource: shared.sourceCitation !== null }),
         ...shared,
         mediaAssetId,
         skillId,
+        sourceHash: source?.contentHash ?? null,
+        sourceId: source?.sourceId ?? null,
         ...toProvenanceData(provenance),
       })),
     });
+
+    if (source) {
+      await reconcileItemReviewFlags(transaction, {
+        itemIds: created.map((item) => item.id),
+        source,
+      });
+    }
+
+    return created;
   });
 }
 
@@ -143,8 +155,8 @@ export async function createItems({
   provenance,
   select,
   skillId,
+  source = null,
   sourceCitation = null,
-  sourceId = null,
 }: ItemAnswerFormat & {
   analytics?: ImageAnalytics;
   examBlueprintId?: string | null;
@@ -155,8 +167,8 @@ export async function createItems({
   optionCount?: number | null;
   provenance: LibraryProvenance;
   skillId: string;
+  source?: SourceVersion | null;
   sourceCitation?: string | null;
-  sourceId?: string | null;
 }): Promise<{ created: Item[]; rejected: RejectedItem[]; unchecked: string[] }> {
   const answerFormat = { entry, select };
 
@@ -174,8 +186,8 @@ export async function createItems({
     language,
     provenance,
     skillId,
+    source,
     sourceCitation,
-    sourceId,
   };
 
   const [plain, pictures] = await Promise.all([

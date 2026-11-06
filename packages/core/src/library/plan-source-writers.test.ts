@@ -357,7 +357,7 @@ const REGISTRY: Record<string, Registration[]> = {
     },
   ],
   "library/media/check-image-asset.ts": [
-    { verdict: "marks", why: "removes bank items", writes: ["item.deleteMany"] },
+    { verdict: "marks", why: "retires bank items", writes: ["item.updateMany"] },
     {
       fields: ["updatedAt"],
       verdict: "excluded",
@@ -698,7 +698,7 @@ function checkScreen(skillId: string): LessonScreenToSave {
     },
     kind: "check",
     mathItem: null,
-    provenance: generatedProvenance(),
+    provenance: { ...generatedProvenance(), sources: [] },
     skillId,
   };
 }
@@ -1263,6 +1263,7 @@ async function drillsCase(): Promise<WriterCase> {
           language: "pt",
           law: { shortName: "Lei nº 8.112", title: law.title, url: law.url },
           preparedAt: new Date(),
+          sourceHash: law.contentHash,
           sourceId: law.id,
           style: "cebraspe",
         },
@@ -1297,7 +1298,9 @@ async function pictureCase(): Promise<WriterCase> {
 
   return {
     expectWritten: () =>
-      expect(prisma.item.findUnique({ where: { id: question.id } })).resolves.toBeNull(),
+      expect(
+        prisma.item.findUniqueOrThrow({ select: { retiredAt: true }, where: { id: question.id } }),
+      ).resolves.toStrictEqual({ retiredAt: expect.any(Date) }),
     plan,
     root: skillRoot(skill.id),
     write: () => removeImageAsset({ assetId: asset.id }),

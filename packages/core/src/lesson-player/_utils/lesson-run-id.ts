@@ -1,5 +1,5 @@
-import { z } from "zod";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 
-export const lessonRunIdSchema = z
-  .uuid()
-  .meta({ description: "The lesson run returned by the start, which answers count toward" });
+export const lessonRunIdSchema = uuidSchema().meta({
+  description: "The lesson run returned by the start, which answers count toward",
+});

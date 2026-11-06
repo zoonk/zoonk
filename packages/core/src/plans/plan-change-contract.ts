@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { examDocumentSchema } from "../exams/exam-document";
 import { anyPlanOperationSchema } from "./plan-contract";
@@ -53,7 +54,7 @@ export const planChangeSchema = z
           "A proposal on Today is previewed against the current plan before Apply is offered, and Today carries none whose preview would change nothing. Null when the plan is not ready or its operations cannot apply; never offer Apply without an effect",
       }),
     examDocument: examDocumentSchema,
-    id: z.uuid(),
+    id: uuidSchema(),
     kind: z
       .string()
       .meta({

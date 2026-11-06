@@ -1,5 +1,6 @@
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
 import { progressCelebrationShape } from "@zoonk/core/sessions/progress-celebration";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { bankQuestionWith } from "./bank-question-with";
 
@@ -14,7 +15,7 @@ export const focusTestResponseSchema = z
           "The plan's areas it asks about, in the plan's order: the ones worth most (at most ten), never a written test's or the plan's own extras. Names as plan changes (`focusAreas`) take them",
       }),
     needsItems: z
-      .array(z.uuid())
+      .array(uuidSchema())
       .meta({
         description:
           "Skills without a question for their place yet: POST .../focus-test/generations writes them when the learner starts the test, while `questions` are asked",
@@ -75,8 +76,7 @@ export const focusTestResultSchema = z
         description:
           "Each area answered at least three times, in the plan's order; others aren't scored",
       }),
-    changeId: z
-      .uuid()
+    changeId: uuidSchema()
       .nullable()
       .meta({
         description:

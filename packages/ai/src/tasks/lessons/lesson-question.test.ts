@@ -9,7 +9,12 @@ import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
 vi.mock("./lesson-question.prompt.md", () => ({ default: "Tutor the learner." }));
-vi.mock("./lesson-question-lesson.prompt.md", () => ({ default: "Hint, never reveal." }));
+
+vi.mock("./lesson-question-lesson.prompt.md", () => ({
+  default:
+    "{{#questionScreen}}Hint, never reveal.{{/questionScreen}}{{#teachingScreen}}Answer directly.{{/teachingScreen}}",
+}));
+
 vi.mock("./lesson-question-beyond.prompt.md", () => ({ default: "Beyond a lesson." }));
 vi.mock("./lesson-question-chapter.prompt.md", () => ({ default: "Chapter rules." }));
 vi.mock("./lesson-question-mock.prompt.md", () => ({ default: "Mock rules." }));
@@ -49,15 +54,24 @@ const MOCK = {
   version: 1,
 } satisfies Snapshot;
 
-function lessonSnapshot(kind: "answer" | "lesson" | "step"): Snapshot {
+function lessonSnapshot(kind: "answer" | "lesson" | "step", answerable = true): Snapshot {
+  const step = {
+    answerable,
+    content: {},
+    kind: "check",
+    sentence: null,
+    stepNumber: 1,
+    word: null,
+  };
+
   return {
     answer: null,
     chapter: { description: null, title: "Orbits" },
     course: { description: null, language: "en", targetLanguage: null, title: "Physics" },
     lesson: { description: null, kind: "explanation", language: "en", title: "Orbits" },
-    lessonSteps: [],
+    lessonSteps: [step],
     scope: { kind },
-    step: null,
+    step: kind === "lesson" ? null : step,
     version: 1,
   };
 }
@@ -90,6 +104,10 @@ describe(generateLessonQuestionAnswer, () => {
 
     await expect(getInstructions(lessonSnapshot("answer"))).resolves.toBe(
       "Tutor the learner.\nHint, never reveal.",
+    );
+
+    await expect(getInstructions(lessonSnapshot("step", false))).resolves.toBe(
+      "Tutor the learner.\nAnswer directly.",
     );
 
     await expect(getInstructions(CHAPTER)).resolves.toBe(

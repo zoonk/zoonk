@@ -1,10 +1,11 @@
 import { learningBuddySchema } from "@zoonk/core/profile/contract";
 import { BuddyGlasses } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 export const learningProfileSchema = z
   .object({
-    activeGoalId: z.uuid().nullable().meta({ description: "The goal the tabs show" }),
+    activeGoalId: uuidSchema().nullable().meta({ description: "The goal the tabs show" }),
     availableGlasses: z
       .array(z.enum(BuddyGlasses))
       .meta({ description: "Glasses the buddy can wear: round plus the earned ones" }),

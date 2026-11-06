@@ -119,8 +119,8 @@
   "player_offer_tricky": "4969f2941607cfa6eef98d9ef0dcd36ff5bb288773e178b87aa683c6a49f1bd5",
   "player_open_failed": "e8610177db5bf9f53da2121140733dc789f92fe14676c8523932f9c8bda6ad62",
   "player_opening_lesson": "618017a49e2989cd25325d46e02b675a2825b32184dac3a73c4ce2f50f1b40b9",
+  "player_opening_map_hint": "9846055835d876425a0cddc24b524dcbfa275171c57e32b36cef082a5e74331e",
   "player_opening_map_idea": "ba4033b2f2dc2133e1c08fb0fddf82376890ab914149f19f1feea26df6366b34",
-  "player_opening_map_ideas": "a5e5730b66655b6a5b68ee14e61d299a6bd01d584b96cdc2cf807665257147c4",
   "player_opening_map_show": "eeaf907949be242fb93afa853ac80b4c0696023539b4f755fbcf2f19e9716ace",
   "player_part_of": "da683991d2b6a583fbffd98ab2d3a1201ed78462ebff6eb9b132c8cf6cc83e5f",
   "player_phase_draw": "be77300cce4ba36e21c2f912cb0decb87cb3d21a6046a86ef7f2d58111438420",
@@ -207,10 +207,8 @@
     <string name="player_idea_position">개념 %1$s/%2$s</string>
     <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
     <string name="player_example">예시</string>
-    <!-- Under the small map of the lesson's ideas on its opening screen, before the learner has studied them. -->
-    <plurals name="player_opening_map_ideas">
-        <item quantity="other">이번 레슨에서 알아볼 개념 %1$s개</item>
-    </plurals>
+    <!-- Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers. -->
+    <string name="player_opening_map_hint">개념을 눌러 어떤 내용을 다루는지 확인해 보세요</string>
     <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
     <string name="player_opening_map_idea">%1$s번째 개념</string>
     <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->

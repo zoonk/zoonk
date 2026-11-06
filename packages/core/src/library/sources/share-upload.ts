@@ -38,6 +38,19 @@ async function mergeIntoPublicSource({
       WHERE id IN (SELECT user_id FROM learner_sources WHERE source_id = ${privateSourceId}::uuid)
       ORDER BY id FOR NO KEY UPDATE
     `,
+    // A lesson write waiting to save what it read from the upload saves it before the move, or
+    // finds the upload gone.
+    prisma.$queryRaw`SELECT id FROM sources WHERE id = ${privateSourceId}::uuid FOR UPDATE`,
+    prisma.stepSource.deleteMany({
+      where: {
+        sourceId: privateSourceId,
+        step: { sources: { some: { sourceId: publicSourceId } } },
+      },
+    }),
+    prisma.stepSource.updateMany({
+      data: { sourceId: publicSourceId },
+      where: { sourceId: privateSourceId },
+    }),
     // A learner who already follows the shared copy keeps that link: it takes on their upload and
     // the ask it answered, so sending it again can't answer another ask.
     prisma.$executeRaw`

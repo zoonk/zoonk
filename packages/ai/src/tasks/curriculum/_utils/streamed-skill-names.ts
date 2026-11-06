@@ -1,13 +1,16 @@
 import { safeAsync } from "@zoonk/utils/error";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { toPlainLine } from "@zoonk/utils/text-repairs";
-import { type FinishedGeneration } from "../../../provenance/task-provenance";
+import { type LanguageModelUsage } from "ai";
+import { type StreamedGeneration } from "../../../provenance/task-provenance";
 
 export type OnSkillNamed = (name: string) => Promise<void>;
 
-type StreamedPart<TOutput> = {
-  [Key in keyof FinishedGeneration]: PromiseLike<FinishedGeneration[Key]>;
-} & { output: PromiseLike<TOutput>; partialOutputStream: AsyncIterable<unknown> };
+type StreamedPart<TOutput> = StreamedGeneration & {
+  output: PromiseLike<TOutput>;
+  partialOutputStream: AsyncIterable<unknown>;
+  usage: PromiseLike<LanguageModelUsage>;
+};
 
 function readSkillName(skill: unknown): string {
   const name = getString(skill, "name");

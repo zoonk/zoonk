@@ -1,5 +1,6 @@
 import { SPEAKING_EXAMS } from "@zoonk/ai/tasks/language/exam-speaking-exams";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const speakingExamSchema = z
@@ -48,7 +49,7 @@ const speakingPaperTaskSchema = speakingTaskViewSchema
     lastTry: z
       .object({
         atLevel: z.int().meta({ description: "How many of its estimates reach the exam's level" }),
-        conversationId: z.uuid().meta({ description: "The call, to see its result again" }),
+        conversationId: uuidSchema().meta({ description: "The call, to see its result again" }),
         nearLevel: z
           .int()
           .meta({ description: "How many only reach it at the top of their range" }),
@@ -189,8 +190,7 @@ export const examTaskViewSchema = z
         description: "The paper's next task's key, to open it after this one; null for the last",
       }),
     number: z.int().meta({ description: "The task's place in its paper, from 1" }),
-    sectionId: z
-      .uuid()
+    sectionId: uuidSchema()
       .nullable()
       .meta({ description: "The whole paper this task belongs to; null for a single task" }),
     task: speakingTaskViewSchema,
@@ -288,13 +288,13 @@ export const speakingSectionViewSchema = z
         description:
           "The estimated points on the paper's own total once every task is graded, never an official score",
       }),
-    id: z.uuid(),
+    id: uuidSchema(),
     pass: speakingPassRuleSchema,
     prepMinutes: z.number(),
     prepTasks: z.array(z.string()),
     tasks: z.array(
       speakingTaskViewSchema.extend({
-        conversationId: z.uuid(),
+        conversationId: uuidSchema(),
         status: z.enum(["ready", "completed"]),
       }),
     ),

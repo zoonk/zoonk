@@ -227,6 +227,7 @@ model Step {
   mediaAsset         MediaAsset?         @relation(fields: [mediaAssetId], references: [id], onDelete: SetNull)
   /// Null on older links; ordinary screen edits never change it.
   pictureAvailableAt DateTime?           @map("picture_available_at")
+  /// The screen's citation, shown to learners. What its writer read is in `sources`.
   sourceId           String?             @map("source_id") @db.Uuid
   source             Source?             @relation(fields: [sourceId], references: [id], onDelete: SetNull)
   /// Starts at 1.
@@ -248,6 +249,7 @@ model Step {
   mistakes           Mistake[]
   questions          LessonQuestion[]
   sharedTutorAnswers TutorSharedAnswer[]
+  sources            StepSource[]
 
   @@unique([lessonId, version, position], name: "lessonVersionPosition")
   @@index([retiredAt])
@@ -258,6 +260,21 @@ model Step {
   @@index([mediaAssetId])
   @@index([sourceId])
   @@map("library_steps")
+}
+
+/// A source the screen's writer read, at the `contentHash` it read, so a change to the source flags
+/// the screens written from its earlier text. Null when the version wasn't recorded, such as a
+/// screen cited before versions were.
+model StepSource {
+  stepId      String  @map("step_id") @db.Uuid
+  step        Step    @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  sourceId    String  @map("source_id") @db.Uuid
+  source      Source  @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  contentHash String? @map("content_hash")
+
+  @@id([stepId, sourceId])
+  @@index([sourceId])
+  @@map("library_step_sources")
 }
 
 /// When a picture is taken out of use its row goes with it, and the option shows its description.
@@ -339,6 +356,14 @@ model MediaAsset {
   promptVersion String              @map("prompt_version")
   runId         String              @map("run_id")
   generatedAt   DateTime            @default(now()) @map("generated_at")
+  /// What the screen or question a picture was drawn for tells learners who can't see it. Its check
+  /// holds the picture to it, so a check started later checks it the same way.
+  alt           String?
+  /// Set when a drawn picture is stored and cleared once its check passes it or replaces it, so the
+  /// daily sweep checks a picture whose storing step failed before starting its check.
+  checkOwedAt   DateTime?           @map("check_owed_at")
+  /// Checks that failed after their retries; a picture whose checks keep failing isn't checked again.
+  checkFailures Int                 @default(0) @map("check_failures")
   createdAt     DateTime            @default(now()) @map("created_at")
   steps         Step[]
   stepOptions   StepOptionPicture[]
@@ -346,6 +371,7 @@ model MediaAsset {
   itemSets      ItemSet[]
 
   @@index([ownerId])
+  @@index([checkOwedAt])
   @@map("media_assets")
 }
 

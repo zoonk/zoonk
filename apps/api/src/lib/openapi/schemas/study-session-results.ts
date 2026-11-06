@@ -1,10 +1,11 @@
 import { unshownCertificatesSchema } from "@zoonk/core/certificates/contract";
 import { milestoneSchema, missionSchema } from "@zoonk/core/sessions/completion-contract";
 import { MasteryState, StudySessionStatus } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { extraTimeSchema, logicalDateSchema } from "./study-sessions";
 
-const idSchema = z.uuid();
+const idSchema = uuidSchema();
 const masteryStateSchema = z.enum(MasteryState);
 
 const beltSchema = z.object({

@@ -26,7 +26,7 @@ import {
   productFixture,
   productReleaseFixture,
 } from "@zoonk/testing/fixtures/products";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture, learnerSourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { Response as PageResponse, fetch } from "undici";
@@ -55,8 +55,6 @@ const TASK = {
   usage: {} as never,
   userPrompt: "",
 };
-
-const READING = { ...TASK, formatsProvenance: null };
 
 const PROVENANCE = {
   generatedAt: "2026-09-26T12:00:00.000Z",
@@ -212,6 +210,39 @@ async function lawWithLearner(text: string) {
   return source;
 }
 
+const LAW_BEFORE = "Art. 1º A alíquota é de 15%.";
+const LAW_AFTER = "Art. 1º A alíquota é de 17%.";
+const LAW_CHANGES = `- ${LAW_BEFORE}\n+ ${LAW_AFTER}`;
+const LAW_NOTICE = "A lei mudou: a alíquota agora é de 17%.";
+
+function storeLawAgain(source: { publisher: string | null; title: string; url: string | null }) {
+  return storeWebSource({
+    kind: "official",
+    language: "pt",
+    publisher: source.publisher,
+    title: source.title,
+    topic: "regulation",
+    url: source.url ?? "",
+  });
+}
+
+function writeLawNotice() {
+  vi.mocked(generateSourceChangeNotice).mockResolvedValue({
+    data: { message: LAW_NOTICE },
+    provenance: {
+      ...PROVENANCE,
+      costUsd: 0,
+      latencyMs: 1,
+      provider: "openai",
+      requestedModel: "openai/gpt-6-luna",
+      usage: {},
+    },
+    systemPrompt: "",
+    usage: {} as never,
+    userPrompt: "",
+  });
+}
+
 describe(freshnessWorkflow, () => {
   beforeEach(() => {
     vi.mocked(generateSearchTerms).mockImplementation(
@@ -306,7 +337,6 @@ describe(freshnessWorkflow, () => {
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
       data: withExamDate({ extraction, line: NEW_DATE_LINE }),
-      formatsProvenance: null,
       provenance: {
         ...PROVENANCE,
         costUsd: 0,
@@ -391,7 +421,7 @@ describe(freshnessWorkflow, () => {
     const current = withExamDate({ extraction, line: OLD_DATE_LINE });
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
-      ...READING,
+      ...TASK,
       data: {
         ...current,
         dates: current.dates.map((date) =>
@@ -474,7 +504,7 @@ describe(freshnessWorkflow, () => {
     });
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
-      ...READING,
+      ...TASK,
       data: {
         ...extraction,
         dates: extraction.dates.map((date) =>
@@ -580,7 +610,6 @@ describe(freshnessWorkflow, () => {
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
       data: withExamDate({ extraction, line: NEW_DATE_LINE }),
-      formatsProvenance: null,
       provenance: {
         ...PROVENANCE,
         costUsd: 0,
@@ -648,29 +677,15 @@ describe(freshnessWorkflow, () => {
   });
 
   it("writes one line when a law learners rely on changed", async () => {
-    const source = await lawWithLearner("Art. 1º A alíquota é de 15%.");
-    serveNotice("Art. 1º A alíquota é de 17%.");
-
-    vi.mocked(generateSourceChangeNotice).mockResolvedValue({
-      data: { message: "A lei mudou: a alíquota agora é de 17%." },
-      provenance: {
-        ...PROVENANCE,
-        costUsd: 0,
-        latencyMs: 1,
-        provider: "openai",
-        requestedModel: "openai/gpt-6-luna",
-        usage: {},
-      },
-      systemPrompt: "",
-      usage: {} as never,
-      userPrompt: "",
-    });
+    const source = await lawWithLearner(LAW_BEFORE);
+    serveNotice(LAW_AFTER);
+    writeLawNotice();
 
     await freshnessWorkflow({ kind: "source", sourceId: source.id });
 
     expect(generateSourceChangeNotice).toHaveBeenCalledWith(
       expect.objectContaining({
-        changes: "- Art. 1º A alíquota é de 15%.\n+ Art. 1º A alíquota é de 17%.",
+        changes: LAW_CHANGES,
         serviceTier: chooseServiceTier({ wait: "later" }),
         source: "Lei nº 99.999/2026",
       }),
@@ -678,9 +693,99 @@ describe(freshnessWorkflow, () => {
 
     await expect(
       prisma.sourceChangeNotice.findMany({ where: { sourceId: source.id } }),
-    ).resolves.toMatchObject([
-      { examBlueprintId: null, message: "A lei mudou: a alíquota agora é de 17%." },
-    ]);
+    ).resolves.toMatchObject([{ examBlueprintId: null, message: LAW_NOTICE }]);
+  });
+
+  it("writes the line at the next check when the run that saw the law change failed", async () => {
+    const source = await lawWithLearner(LAW_BEFORE);
+    serveNotice(LAW_AFTER);
+
+    vi.mocked(generateSourceChangeNotice).mockRejectedValueOnce(new Error("Gateway timeout"));
+
+    await expect(freshnessWorkflow({ kind: "source", sourceId: source.id })).rejects.toThrow(
+      "Gateway timeout",
+    );
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+    ).resolves.toMatchObject({ noticeFailures: 1 });
+
+    writeLawNotice();
+    await freshnessWorkflow({ kind: "source", sourceId: source.id });
+
+    expect(generateSourceChangeNotice).toHaveBeenLastCalledWith(
+      expect.objectContaining({ changes: LAW_CHANGES }),
+    );
+
+    await expect(
+      prisma.sourceChangeNotice.findMany({ where: { sourceId: source.id } }),
+    ).resolves.toMatchObject([{ message: LAW_NOTICE, previousHash: source.contentHash }]);
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+    ).resolves.toMatchObject({ noticeFailures: 0, unnoticedChanges: null });
+  });
+
+  it("writes the line when research stored the changed law first, flagging only what was written from the old text", async () => {
+    const source = await lawWithLearner(LAW_BEFORE);
+    const skill = await skillFixture();
+
+    const fromOldText = await itemFixture({
+      skillId: skill.id,
+      sourceHash: source.contentHash,
+      sourceId: source.id,
+    });
+
+    serveNotice(LAW_AFTER);
+    const stored = await storeLawAgain(source);
+
+    const fromNewText = await itemFixture({
+      skillId: skill.id,
+      sourceHash: stored.contentHash,
+      sourceId: source.id,
+    });
+
+    writeLawNotice();
+
+    await freshnessWorkflow({ kind: "source", sourceId: source.id });
+
+    expect(generateSourceChangeNotice).toHaveBeenCalledWith(
+      expect.objectContaining({ changes: LAW_CHANGES }),
+    );
+
+    const flags = await prisma.contentReviewFlag.findMany({
+      where: { itemId: { in: [fromOldText.id, fromNewText.id] } },
+    });
+
+    expect(flags.map((flag) => flag.itemId)).toStrictEqual([fromOldText.id]);
+  });
+
+  it("flags what was written from a version the law's page then went back from", async () => {
+    const source = await lawWithLearner(LAW_BEFORE);
+    const skill = await skillFixture();
+
+    serveNotice(LAW_AFTER);
+    const briefVersion = await storeLawAgain(source);
+
+    const fromBriefVersion = await itemFixture({
+      skillId: skill.id,
+      sourceHash: briefVersion.contentHash,
+      sourceId: source.id,
+    });
+
+    serveNotice(LAW_BEFORE);
+    await storeLawAgain(source);
+    writeLawNotice();
+
+    await freshnessWorkflow({ kind: "source", sourceId: source.id });
+
+    expect(generateSourceChangeNotice).toHaveBeenCalledWith(
+      expect.objectContaining({ changes: `${LAW_CHANGES}\n- ${LAW_AFTER}\n+ ${LAW_BEFORE}` }),
+    );
+
+    await expect(
+      prisma.contentReviewFlag.count({ where: { itemId: fromBriefVersion.id } }),
+    ).resolves.toBe(1);
   });
 
   it("reads a product's changed releases page and starts the update of each followed main course", async () => {

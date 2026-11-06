@@ -1,11 +1,18 @@
 import { normalizeString } from "@zoonk/utils/string";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "./source-contract";
 
-export type MaterialSource = { id: string; mimeType: string | null; text: string; title: string };
+export type MaterialSource = {
+  contentHash: string;
+  id: string;
+  mimeType: string | null;
+  text: string;
+  title: string;
+};
 
 export type MaterialPage = {
   page: number | null;
   ref: string;
+  sourceHash: string;
   sourceId: string;
   text: string;
   title: string;
@@ -55,6 +62,7 @@ function toSourcePages({
     return toSections(source.text).map((text, section) => ({
       page: null,
       ref: `${sourceRef}:${section + 1}`,
+      sourceHash: source.contentHash,
       sourceId: source.id,
       text,
       title: source.title,
@@ -67,6 +75,7 @@ function toSourcePages({
     .map((text, page) => ({
       page: page + 1,
       ref: `${sourceRef}:${page + 1}`,
+      sourceHash: source.contentHash,
       sourceId: source.id,
       text: text.trim(),
       title: source.title,

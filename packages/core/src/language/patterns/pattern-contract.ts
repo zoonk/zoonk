@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../../learner/contract";
 import { activityBrainPowerSchema, missionMomentSchema } from "../../sessions/completion-contract";
@@ -24,7 +25,7 @@ export const mistakePatternContentSchema = z.object({
 
 export const mistakePatternViewSchema = mistakePatternContentSchema
   .extend({
-    id: z.uuid(),
+    id: uuidSchema(),
     kind: z.enum(["pattern", "typos"]),
     occurrences: z
       .int()
@@ -43,12 +44,10 @@ export const mistakePatternPracticeInputSchema = z
       .array(z.string().max(MAX_DRILL_ANSWER_LENGTH))
       .max(MAX_DRILL_QUESTIONS)
       .meta({ description: "The option chosen for each drill question, in order" }),
-    requestId: z
-      .uuid()
-      .meta({
-        description:
-          "The drill's own id, made when it starts. Sending the same pattern's drill again with it (a retry) returns what it already counted instead of counting it twice.",
-      }),
+    requestId: uuidSchema().meta({
+      description:
+        "The drill's own id, made when it starts. Sending the same pattern's drill again with it (a retry) returns what it already counted instead of counting it twice.",
+    }),
     timeZone: answerTimeZoneSchema,
   })
   .strict()

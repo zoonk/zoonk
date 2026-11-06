@@ -1,5 +1,6 @@
 "use client";
 
+import { useAdminFormAction } from "@/lib/use-admin-action-state";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -9,10 +10,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@zoonk/ui/components/alert-dialog";
+import { FieldError } from "@zoonk/ui/components/field";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
+import { useState } from "react";
 import { banUserAction } from "./_actions/ban-user";
 
 export function BanUserDialog({
@@ -36,34 +39,58 @@ export function BanUserDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <form
-          action={async (formData) => {
-            await banUserAction(formData);
-            onOpenChange(false);
-          }}
-        >
-          <input type="hidden" name="userId" value={userId} />
-
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="reason">Reason (optional)</Label>
-              <Textarea id="reason" name="reason" placeholder="Reason for banning…" />
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="expires">Expires (optional)</Label>
-              <Input id="expires" name="expires" type="date" />
-            </div>
-          </div>
-
-          <AlertDialogFooter className="mt-6">
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <SubmitButton className="w-auto" variant="destructive">
-              Ban user
-            </SubmitButton>
-          </AlertDialogFooter>
-        </form>
+        <BanUserForm onBanned={() => onOpenChange(false)} userId={userId} />
       </AlertDialogContent>
     </AlertDialog>
+  );
+}
+
+function BanUserForm({ onBanned, userId }: { onBanned: () => void; userId: string }) {
+  // React resets uncontrolled fields after a form action, and a failed ban keeps what was typed.
+  const [reason, setReason] = useState("");
+  const [expires, setExpires] = useState("");
+
+  const [state, formAction] = useAdminFormAction(async (formData) => {
+    await banUserAction(formData);
+    onBanned();
+  });
+
+  return (
+    <form action={formAction} className="flex flex-col gap-6">
+      <input type="hidden" name="userId" value={userId} />
+
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="reason">Reason (optional)</Label>
+          <Textarea
+            id="reason"
+            name="reason"
+            onChange={(event) => setReason(event.target.value)}
+            placeholder="Reason for banning…"
+            value={reason}
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="expires">Expires (optional)</Label>
+          <Input
+            id="expires"
+            name="expires"
+            onChange={(event) => setExpires(event.target.value)}
+            type="date"
+            value={expires}
+          />
+        </div>
+      </div>
+
+      <FieldError key={state.submissionId}>{state.error}</FieldError>
+
+      <AlertDialogFooter>
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <SubmitButton className="w-auto" variant="destructive">
+          Ban user
+        </SubmitButton>
+      </AlertDialogFooter>
+    </form>
   );
 }

@@ -3,7 +3,7 @@ import { Output, generateText, streamText } from "ai";
 import { z } from "zod";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
-import { runTaskGeneration, startTaskGeneration } from "../../provenance/run-task-generation";
+import { runTaskGeneration, streamTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { draftAgainWhenFlawed } from "../_utils/draft-again";
 import { formatLocalContext } from "../_utils/language-context";
@@ -179,7 +179,6 @@ export async function generateCourseOutline(params: CourseOutlineParams) {
   return {
     data: kept.data,
     provenance: kept.provenance,
-    setAside: kept.setAside,
     systemPrompt: kept.systemPrompt,
     usage: kept.usage,
     userPrompt: kept.userPrompt,
@@ -272,17 +271,24 @@ export async function streamCourseOutline<T>({
   const userPrompt = buildUserPrompt(params);
   const requiredSkillKeys = toRequiredSkillKeys(params);
   const skillAreas = toSkillAreas(params);
-  const run = startTaskGeneration({ analytics, systemPrompt, task: "course-outline" });
   const earlyChapter = Promise.withResolvers<Omit<StreamedChapter, "provenance"> | null>();
 
-  const generation = streamText({
-    instructions: systemPrompt,
-    model,
-    output: Output.object({ schema }),
-    prompt: userPrompt,
-    providerOptions: buildProviderOptions({ fallbackModels, model, serviceTier, useFallback }),
-    reasoning,
+  const run = streamTaskGeneration({
+    analytics,
+    stream: () =>
+      streamText({
+        instructions: systemPrompt,
+        model,
+        output: Output.object({ schema }),
+        prompt: userPrompt,
+        providerOptions: buildProviderOptions({ fallbackModels, model, serviceTier, useFallback }),
+        reasoning,
+      }),
+    systemPrompt,
+    task: "course-outline",
   });
+
+  const { generation } = run;
 
   const provenance = {
     generatedAt: new Date().toISOString(),
@@ -308,12 +314,7 @@ export async function streamCourseOutline<T>({
 
     earlyChapter.resolve(null);
 
-    const [output, finalStep, steps, usage] = await Promise.all([
-      generation.output,
-      generation.finalStep,
-      generation.steps,
-      generation.usage,
-    ]);
+    const [output, usage] = await Promise.all([generation.output, generation.usage]);
 
     return {
       data: normalizeCourseOutline({
@@ -322,7 +323,7 @@ export async function streamCourseOutline<T>({
         requiredSkillKeys,
         skillAreas,
       }),
-      provenance: await run.finish({ finalStep, steps, usage }),
+      provenance: await run.provenance,
       usage,
     };
   };

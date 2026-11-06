@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../learner/contract";
 import { type StudyBlockView, type StudySessionView } from "./_utils/session-view";
@@ -6,7 +7,7 @@ import { type StudyBlockOpening } from "./open-block-contract";
 
 export const openStudyDayInputSchema = z
   .object({
-    goalId: z.uuid(),
+    goalId: uuidSchema(),
     keepEmpty: z.boolean().optional(),
     shownDate: z.iso.date(),
     target: z

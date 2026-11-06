@@ -3053,10 +3053,11 @@ msgctxt "CCQ4rY"
 msgid "Idea {current} of {total}"
 msgstr "Idea {current} de {total}"
 
+#. Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers.
 #: src/lesson/_components/opening-map.tsx
-msgctxt "JHFGf_"
-msgid "{count, plural, one {# idea to discover in this lesson} other {# ideas to discover in this lesson}}"
-msgstr "{count, plural, one {# idea por descubrir en esta lección} other {# ideas por descubrir en esta lección}}"
+msgctxt "twXJ5H"
+msgid "Tap an idea to see what it covers"
+msgstr "Toca una idea para ver de qué trata"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "P0MjYO"

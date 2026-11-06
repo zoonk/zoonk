@@ -1,10 +1,11 @@
 import { type EssayView, essayGradeSchema } from "@zoonk/core/exams/essays/contract";
 import { StudyBlockStatus } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 export const essayViewResponseSchema = z
   .object({
-    blockId: z.uuid(),
+    blockId: uuidSchema(),
     context: z.string().nullable(),
     drafts: z.array(
       z.object({ grade: essayGradeSchema, submittedAt: z.iso.datetime(), text: z.string() }),
@@ -17,7 +18,7 @@ export const essayViewResponseSchema = z
         description:
           "The official rubric: ENEM, OAB, AP scoring guidelines (rows with their own points) or the item's own criteria",
       }),
-    sessionId: z.uuid(),
+    sessionId: uuidSchema(),
     status: z.enum(StudyBlockStatus),
   })
   .meta({ id: "Essay" }) satisfies z.ZodType<EssayView>;

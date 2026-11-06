@@ -50,6 +50,11 @@ const SOURCE_TOPICS = ["exam", "product", "regulation", "software", "syllabus"] 
 
 export type SourceTopic = (typeof SOURCE_TOPICS)[number];
 
+/** Syllabi are reused for a year, and an exam's notice is checked with its blueprint. */
+export function hasOwnFreshnessChecks(topic: SourceTopic): boolean {
+  return topic === "regulation" || topic === "software";
+}
+
 export const sourceStructureSchema = z.object({
   images: z.number().int().nonnegative(),
   pages: z.number().int().nonnegative().nullable(),

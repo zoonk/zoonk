@@ -63,3 +63,27 @@ export async function sourceChangeNoticeFixture(
     },
   });
 }
+
+export async function unnoticedSourceChangeFixture({
+  changedAt = new Date(),
+  changes = "- Test source text before it changed.\n+ Test source text after it changed.",
+  previousHash = `test-hash-${randomUUID()}`,
+  sourceId,
+}: {
+  changedAt?: Date;
+  changes?: string;
+  previousHash?: string;
+  sourceId: string;
+}) {
+  const source = await prisma.source.update({
+    data: {
+      unnoticedChangedAt: changedAt,
+      unnoticedChanges: changes,
+      unnoticedFromHash: previousHash,
+      unnoticedRevision: { increment: 1 },
+    },
+    where: { id: sourceId },
+  });
+
+  return { previousHash, revision: source.unnoticedRevision };
+}

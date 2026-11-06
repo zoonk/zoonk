@@ -10,6 +10,7 @@ import {
   EXPONENTS_CHAPTER,
   RAW_SCORED_MOCK,
   REVIEWS_LESSON,
+  SUBJECT_HEAD_SCREEN,
 } from "./screen-contexts";
 
 const SHARED_EXPECTATIONS = `
@@ -17,7 +18,7 @@ EVALUATION CRITERIA:
 
 1. GROUNDED ACCURACY: The answer must use the lesson context as its primary anchor. Reliable general knowledge may be used for directly related clarifications, comparisons, examples, and follow-up questions. Penalize contradictions, invented lesson facts, false attribution of added information to the lesson, unsupported specific claims, or unsupported certainty.
 
-2. SCOPE BEHAVIOR: The answer must follow the active scope. An unanswered step gets guidance without the correct option or completed solution. A validated answer gets a direct explanation of why it is correct or incorrect. A lesson-scoped question may use all supplied lesson steps and reliable general knowledge for directly related follow-ups. It should not refuse a useful clarification merely because the exact detail is absent from the lesson. An unrelated question or one requiring missing course-specific details should be identified as outside the available material.
+2. SCOPE BEHAVIOR: The answer must follow the active scope. An unanswered step that asks something (answerable) gets guidance without the correct option or completed solution; a step that only teaches gets a direct answer that confirms or corrects what the learner understood. A validated answer gets a direct explanation of why it is correct or incorrect. A lesson-scoped question may use all supplied lesson steps and reliable general knowledge for directly related follow-ups. It should not refuse a useful clarification merely because the exact detail is absent from the lesson. An unrelated question or one requiring missing course-specific details should be identified as outside the available material.
 
 3. CURRENT CONTEXT PRIORITY: The active step and current snapshot outrank earlier conversation turns. Prior turns may resolve follow-up references but must not override newer lesson facts.
 
@@ -30,7 +31,7 @@ EVALUATION CRITERIA:
 7. OUTPUT: Return one non-empty answer in the answer field. Markdown is allowed when it makes a short explanation easier to scan.
 
 MAJOR-ERROR CAPS:
-- Revealing the correct option or completed solution for an unanswered step: 6.5 or lower
+- Revealing the correct option or completed solution for an unanswered step that asks something: 6.5 or lower
 - Contradicting validated answer details: 6.5 or lower
 - Refusing a directly related clarification solely because the exact detail is absent from the lesson: 6.5 or lower
 - Inventing unsupported specifics or answering an unrelated question as though the lesson supports it: 6.5 or lower
@@ -60,6 +61,7 @@ MAJOR-ERROR CAPS:
 `;
 
 const ORBIT_STEP = {
+  answerable: true,
   content: {
     options: [
       { id: "no-gravity", text: "There is no gravity in orbit" },
@@ -97,6 +99,7 @@ const ORBIT_CONTEXT = {
 } satisfies LessonScopeContext;
 
 const ACCOUNTING_RECOGNITION_STEP = {
+  answerable: false,
   content: {
     text: "No regime de competência, a receita é reconhecida quando é gerada, mesmo que o dinheiro seja recebido depois. No regime de caixa, o registro acompanha a entrada ou saída do dinheiro.",
     title: "Competência e caixa observam momentos diferentes",
@@ -109,6 +112,7 @@ const ACCOUNTING_RECOGNITION_STEP = {
 } satisfies LessonQuestionStepContext;
 
 const ACCOUNTING_ANSWER_STEP = {
+  answerable: true,
   content: {
     options: [
       { id: "invoice", text: "Quando a empresa conclui o serviço e ganha o direito de cobrar" },
@@ -149,6 +153,7 @@ const ACCOUNTING_CONTEXT = {
 } satisfies LessonScopeContext;
 
 const HTTP_STEP = {
+  answerable: false,
   content: {
     text: "An HTTP status code summarizes the result of a request. A 404 response means the server was reached but could not find the requested resource.",
     title: "The server answers with a status",
@@ -183,6 +188,7 @@ const HTTP_CONTEXT = {
 } satisfies LessonScopeContext;
 
 const ENGLISH_GREETING_STEP = {
+  answerable: false,
   content: {
     text: '"Hello" and "hi" both mean "olá". "Hello" is neutral and works in most situations, while "hi" is more informal.',
     title: "Hello or hi?",
@@ -302,6 +308,24 @@ ${SHARED_EXPECTATIONS}
       contextSnapshot: ORBIT_CONTEXT,
       priorTurns: [],
       question: "I'm stuck. How should I think about this without giving me the answer?",
+    },
+  },
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: Answer in Portuguese.
+
+CASE-SPECIFIC GUIDANCE:
+- The active step only teaches (an explanation, with nothing to answer), and the learner checks their understanding of it.
+- Confirm plainly, in the first sentence, that yes, the núcleo is "envio", then say why in a sentence or two: it's what was late, "dos relatórios" only says which envio, and the verb agrees with it in the singular.
+- Not confirming, answering with a question back, or telling the learner to work it out or check it on the next screen: 4.0 or lower.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-explanation-step-confirms-understanding",
+    userInput: {
+      contextSnapshot: SUBJECT_HEAD_SCREEN,
+      priorTurns: [],
+      question: "o núcleo aqui é o envio, correto?",
     },
   },
   {

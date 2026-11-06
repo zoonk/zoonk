@@ -53,10 +53,7 @@ describe("blueprint extraction durability", () => {
 
     const source = await sourceFixture({ extractedText: text, mimeType: "text/plain" });
 
-    vi.mocked(extractExamBlueprint).mockResolvedValue({
-      ...taskResult(extraction),
-      formatsProvenance: null,
-    });
+    vi.mocked(extractExamBlueprint).mockResolvedValue(taskResult(extraction));
 
     vi.mocked(extractQuestionFormats).mockResolvedValue(taskResult(extraction.formats));
 
