@@ -75,19 +75,21 @@ function UsernameLine({ onChange, username }: { onChange: () => void; username: 
   const t = useExtracted();
 
   return (
-    <p className="text-muted-foreground flex flex-wrap items-center gap-x-1 text-sm">
+    <div className="flex items-center justify-between gap-3 text-sm">
       <input name="username" type="hidden" value={username} />
-      {t("Your username: @{username}", { username })}
-      <span aria-hidden="true">{" · "}</span>
+      {/* Korean's keep-all (globals.css) makes WebKit break between the @ and the username. */}
+      <p className="text-muted-foreground min-w-0 break-normal wrap-break-word">
+        {t("Your username: @{username}", { username })}
+      </p>
       <button
         aria-label={t("Change username")}
-        className="text-foreground focus-visible:ring-ring/50 inline-flex min-h-11 items-center rounded-md px-1 font-medium underline-offset-4 outline-none hover:underline focus-visible:ring-[3px]"
+        className="text-foreground focus-visible:ring-ring/50 -me-1 inline-flex min-h-11 shrink-0 items-center rounded-md px-1 font-medium underline-offset-4 outline-none hover:underline focus-visible:ring-[3px]"
         onClick={onChange}
         type="button"
       >
         {t("Change")}
       </button>
-    </p>
+    </div>
   );
 }
 
