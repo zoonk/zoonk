@@ -15,10 +15,8 @@ export function AccountDropdownItem({ status }: { status: "account" | "guest" | 
 
   if (status === "visitor") {
     return (
-      <DropdownMenuItem
-        closeOnClick={false}
-        render={<PendingLink href={loginHref} icon={<LogInIcon aria-hidden="true" />} />}
-      >
+      <DropdownMenuItem closeOnClick={false} render={<PendingLink href={loginHref} />}>
+        <LogInIcon aria-hidden="true" />
         {t("Log in")}
       </DropdownMenuItem>
     );
@@ -27,16 +25,12 @@ export function AccountDropdownItem({ status }: { status: "account" | "guest" | 
   if (status === "guest") {
     return (
       <>
-        <DropdownMenuItem
-          closeOnClick={false}
-          render={<PendingLink href={loginHref} icon={<UserPlusIcon aria-hidden="true" />} />}
-        >
+        <DropdownMenuItem closeOnClick={false} render={<PendingLink href={loginHref} />}>
+          <UserPlusIcon aria-hidden="true" />
           {t("Create an account")}
         </DropdownMenuItem>
-        <DropdownMenuItem
-          closeOnClick={false}
-          render={<PendingLink href={loginHref} icon={<LogInIcon aria-hidden="true" />} />}
-        >
+        <DropdownMenuItem closeOnClick={false} render={<PendingLink href={loginHref} />}>
+          <LogInIcon aria-hidden="true" />
           {t("Log in")}
         </DropdownMenuItem>
       </>

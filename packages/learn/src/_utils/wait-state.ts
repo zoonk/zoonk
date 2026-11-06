@@ -1,4 +1,4 @@
-const SLOW_MS = 1500;
+import { SLOW_WAIT_MS } from "@zoonk/ui/lib/wait";
 
 const VERY_SLOW_MS = 15_000;
 
@@ -9,11 +9,11 @@ export function getWaitState(elapsedMs: number): WaitState {
     return "verySlow";
   }
 
-  return elapsedMs >= SLOW_MS ? "slow" : "none";
+  return elapsedMs >= SLOW_WAIT_MS ? "slow" : "none";
 }
 
 export function getWaitChanges(elapsedMs: number): number[] {
-  return [SLOW_MS, VERY_SLOW_MS]
+  return [SLOW_WAIT_MS, VERY_SLOW_MS]
     .filter((threshold) => threshold > elapsedMs)
     .map((threshold) => threshold - elapsedMs);
 }

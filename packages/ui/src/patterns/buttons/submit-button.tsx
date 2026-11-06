@@ -2,13 +2,11 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { Loader2Icon } from "lucide-react";
 import { useFormStatus } from "react-dom";
 
 export function SubmitButton({
   children,
   className,
-  disabled,
   full,
   icon,
   ...props
@@ -17,14 +15,13 @@ export function SubmitButton({
 
   return (
     <Button
+      busy={status.pending}
       className={cn(full ? "w-full" : "w-max", className)}
-      disabled={status.pending || disabled}
       focusableWhenDisabled
       type="submit"
       {...props}
     >
-      {!status.pending && icon}
-      {status.pending && <Loader2Icon className="animate-spin" />}
+      {icon}
       {children}
     </Button>
   );

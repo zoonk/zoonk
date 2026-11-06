@@ -1,6 +1,8 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { SLOW_WAIT_MS } from "@zoonk/ui/lib/wait";
 import { type VariantProps, cva } from "class-variance-authority";
+import { Loader2Icon } from "lucide-react";
 import { Skeleton } from "./skeleton";
 
 const buttonVariants = cva(
@@ -46,19 +48,63 @@ const buttonVariants = cva(
   },
 );
 
-/** A button waiting on a save takes `focusableWhenDisabled` with `disabled`, so keyboard focus isn't dropped to the page. */
+const BUSY_DELAY = { animationDelay: `${SLOW_WAIT_MS}ms` };
+
+/**
+ * For a control that marks itself `aria-busy` and carries `group/busy relative`: once busy for
+ * `SLOW_WAIT_MS`, its content turns invisible, keeping its place and still read, under a spinner.
+ * CSS keeps the time, so it works before the page hydrates.
+ */
+function BusyContent({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <span
+        className="group-aria-busy/busy:animate-busy-conceal [display:inherit] min-w-0 grow [flex-direction:inherit] [flex-wrap:inherit] [place-content:inherit] [place-items:inherit] gap-[inherit]"
+        data-slot="busy-content"
+        style={BUSY_DELAY}
+      >
+        {children}
+      </span>
+
+      <span
+        aria-hidden="true"
+        className="group-aria-busy/busy:animate-busy-reveal pointer-events-none absolute inset-0 flex items-center justify-center opacity-0"
+        data-slot="busy-spinner"
+        style={BUSY_DELAY}
+      >
+        <Loader2Icon className="group-aria-busy/busy:animate-spin" />
+      </span>
+    </>
+  );
+}
+
+/**
+ * `busy` while its action runs: from the press it ignores presses and keeps focus, and after
+ * `SLOW_WAIT_MS` a spinner covers its content without changing its size.
+ */
 function Button({
+  busy,
+  children,
   className,
+  disabled,
+  focusableWhenDisabled,
   variant = "default",
   size = "default",
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants> & { busy?: boolean }) {
+  const canBeBusy = busy !== undefined;
+
   return (
     <ButtonPrimitive
-      className={cn(buttonVariants({ className, size, variant }))}
+      aria-busy={busy || undefined}
+      className={cn(buttonVariants({ className, size, variant }), canBeBusy && "group/busy")}
       data-slot="button"
+      disabled={busy || disabled}
+      focusableWhenDisabled={busy || focusableWhenDisabled}
       {...props}
-    />
+    >
+      {canBeBusy ? <BusyContent>{children}</BusyContent> : children}
+    </ButtonPrimitive>
   );
 }
 
@@ -87,4 +133,4 @@ function ButtonSkeleton({ children, className, size, variant }: ButtonSkeletonPr
   );
 }
 
-export { Button, ButtonSkeleton, buttonVariants };
+export { BusyContent, Button, ButtonSkeleton, buttonVariants };

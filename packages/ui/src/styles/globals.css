@@ -98,6 +98,8 @@
   --color-belt-gray: var(--belt-gray);
   --color-belt-black: var(--belt-black);
   --animate-breathe: breathe 2s ease-in-out infinite;
+  --animate-busy-conceal: busy-conceal 0s forwards;
+  --animate-busy-reveal: busy-reveal 0s forwards;
 }
 
 /*
@@ -557,6 +559,18 @@
   50% {
     transform: scale(1.3);
     opacity: 0.3;
+  }
+}
+
+@keyframes busy-conceal {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes busy-reveal {
+  to {
+    opacity: 1;
   }
 }
 
