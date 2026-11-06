@@ -51,26 +51,38 @@ function restore({ path, content }: { path: string; content: string | null }) {
   writeFileSync(path, content);
 }
 
-const before = AGENT_FILES.map((path) => ({ content: readOptional(path), path }));
+function syncAgentRules() {
+  for (const appDir of NEXT_APPS) {
+    syncNextRules(appDir);
+  }
 
-for (const appDir of NEXT_APPS) {
-  syncNextRules(appDir);
+  syncTurboRules();
 }
 
-syncTurboRules();
+function findStaleAgentRules(): string[] {
+  const before = AGENT_FILES.map((path) => ({ content: readOptional(path), path }));
+
+  try {
+    syncAgentRules();
+
+    return before
+      .filter(({ content, path }) => readOptional(path) !== content)
+      .map(({ path }) => relative(ROOT, path));
+  } finally {
+    for (const file of before) {
+      restore(file);
+    }
+  }
+}
 
 if (process.argv.includes("--check")) {
-  const stale = before.filter(({ content, path }) => readOptional(path) !== content);
-
-  for (const file of stale) {
-    restore(file);
-  }
+  const stale = findStaleAgentRules();
 
   if (stale.length > 0) {
-    const paths = stale.map(({ path }) => relative(ROOT, path)).join(", ");
-
     throw new Error(
-      `Agent rules are stale in ${paths}. Run pnpm agent-rules:sync and commit them.`,
+      `Agent rules are stale in ${stale.join(", ")}. Run pnpm agent-rules:sync and commit them.`,
     );
   }
+} else {
+  syncAgentRules();
 }
