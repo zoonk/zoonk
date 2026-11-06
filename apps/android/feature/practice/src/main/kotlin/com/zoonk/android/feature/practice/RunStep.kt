@@ -470,6 +470,7 @@ internal fun AnswerActions(
                     },
                     enabled = run.canAnswer,
                     busy = sender == AnswerSender.NotSure,
+                    focusableWhenDisabled = sender != null,
                     dontKnowYet = offer == NotSure.DontKnowYet,
                 )
             }
@@ -485,6 +486,7 @@ internal fun AnswerActions(
                 },
                 modifier = width.focusMoveTarget(main),
                 enabled = done || reading || (run.canAnswer && draft != null),
+                focusableWhenDisabled = sender != null,
             ) {
                 if (reading) {
                     Icon(

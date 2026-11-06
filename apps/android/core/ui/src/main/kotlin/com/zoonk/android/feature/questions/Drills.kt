@@ -290,9 +290,10 @@ fun NotSureButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     busy: Boolean = false,
+    focusableWhenDisabled: Boolean = false,
     dontKnowYet: Boolean = false,
 ) {
-    BusyOutlinedButton(busy, onClick = onClick, modifier = modifier, enabled = enabled) {
+    BusyOutlinedButton(busy, onClick = onClick, modifier = modifier, enabled = enabled, focusableWhenDisabled = focusableWhenDisabled) {
         if (!dontKnowYet) {
             Icon(
                 painterResource(R.drawable.ic_help),

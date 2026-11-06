@@ -34,7 +34,8 @@ import androidx.compose.ui.unit.dp
  * drop, and reads as unavailable. Once the wait turns slow, [BusyContent] covers its content with a
  * spinner, so the button never changes size; the content is back the moment the work ends. A label
  * stays as it was at rest. The content padding goes inside [BusyContent], so the spinner centers on
- * the whole button however that padding leans.
+ * the whole button however that padding leans. A disabled button that is [focusableWhenDisabled], as
+ * main's is, keeps its focus the same way, with no spinner.
  */
 
 @Composable
@@ -43,16 +44,20 @@ fun BusyButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    focusableWhenDisabled: Boolean = false,
     colors: ButtonColors = ButtonDefaults.buttonColors(),
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     content: @Composable RowScope.() -> Unit,
-) = Button(
-    onClick = { if (!busy) onClick() },
-    modifier = modifier.busy(busy),
-    enabled = enabled || busy,
-    colors = colors.disabledWhen(busy),
-    contentPadding = NO_PADDING,
-) { BusyRow(busy, contentPadding, content) }
+) {
+    val held = held(busy, enabled, focusableWhenDisabled)
+    Button(
+        onClick = { if (!held) onClick() },
+        modifier = modifier.busy(held),
+        enabled = enabled || held,
+        colors = colors.disabledWhen(held),
+        contentPadding = NO_PADDING,
+    ) { BusyRow(busy, contentPadding, content) }
+}
 
 @Composable
 fun BusyTonalButton(
@@ -78,16 +83,20 @@ fun BusyOutlinedButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    focusableWhenDisabled: Boolean = false,
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     content: @Composable RowScope.() -> Unit,
-) = OutlinedButton(
-    onClick = { if (!busy) onClick() },
-    modifier = modifier.busy(busy),
-    enabled = enabled || busy,
-    colors = outlinedButtonColors().disabledWhen(busy),
-    border = outlinedButtonBorder(enabled && !busy),
-    contentPadding = NO_PADDING,
-) { BusyRow(busy, contentPadding, content) }
+) {
+    val held = held(busy, enabled, focusableWhenDisabled)
+    OutlinedButton(
+        onClick = { if (!held) onClick() },
+        modifier = modifier.busy(held),
+        enabled = enabled || held,
+        colors = outlinedButtonColors().disabledWhen(held),
+        border = outlinedButtonBorder(enabled && !busy),
+        contentPadding = NO_PADDING,
+    ) { BusyRow(busy, contentPadding, content) }
+}
 
 @Composable
 fun BusyTextButton(
@@ -141,6 +150,12 @@ fun Modifier.busyClickable(
     onClickLabel: String? = null,
     onClick: () -> Unit,
 ): Modifier = clickable(enabled = enabled || busy, onClickLabel = onClickLabel, role = Role.Button) { if (!busy) onClick() }.busy(busy)
+
+private fun held(
+    busy: Boolean,
+    enabled: Boolean,
+    focusableWhenDisabled: Boolean,
+) = busy || (focusableWhenDisabled && !enabled)
 
 private fun Modifier.busy(busy: Boolean): Modifier = semantics { if (busy) disabled() }
 
