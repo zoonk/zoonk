@@ -7606,11 +7606,6 @@ msgid "The trap:"
 msgstr "ひっかけ："
 
 #: src/mistakes/drill/drill-controls.tsx
-msgctxt "tvAkCd"
-msgid "I've read it. Show the answers"
-msgstr "読み終えたので答えを見る"
-
-#: src/mistakes/drill/drill-controls.tsx
 msgctxt "XUx7zX"
 msgid "I'm not sure"
 msgstr "自信がない"
@@ -12820,6 +12815,11 @@ msgstr "何問か間違いが続いています。ひと休みすると、集中
 msgctxt "lTfSB-"
 msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
 msgstr "学習計画を調整しています。ここで間違えても、間違いノートには保存されません。"
+
+#: src/session/question-block/question-actions.tsx
+msgctxt "tvAkCd"
+msgid "I've read it. Show the answers"
+msgstr "読み終えたので答えを見る"
 
 #: src/session/question-block/question-block-header.tsx
 msgctxt "JJytYK"

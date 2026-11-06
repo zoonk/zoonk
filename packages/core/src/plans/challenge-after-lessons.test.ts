@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -40,6 +41,93 @@ async function comeBack({ days, goalId }: { days: number; goalId: string }) {
   await refreshGoalPlan({ goalId });
 }
 
+async function studyToday({
+  goal,
+  planId,
+}: {
+  goal: { id: string; userId: string };
+  planId: string;
+}) {
+  const now = new Date();
+
+  const next = await prisma.planItem.findFirstOrThrow({
+    orderBy: { position: "asc" },
+    where: { kind: "lesson", planId, status: "todo" },
+  });
+
+  await Promise.all([
+    prisma.planItem.update({ data: { completedAt: now, status: "done" }, where: { id: next.id } }),
+    studySessionFixture({
+      goalId: goal.id,
+      localDate: new Date(`${now.toISOString().slice(0, 10)}T00:00:00Z`),
+      userId: goal.userId,
+    }),
+  ]);
+}
+
+async function studyWholeDay({
+  goal,
+  planId,
+}: {
+  goal: { id: string; userId: string };
+  planId: string;
+}) {
+  const now = new Date();
+  const localDate = new Date(`${now.toISOString().slice(0, 10)}T00:00:00Z`);
+
+  await Promise.all([
+    prisma.planItem.updateMany({
+      data: { completedAt: now, status: "done" },
+      where: { kind: { in: ["boss", "lesson"] }, planId, scheduledFor: localDate, status: "todo" },
+    }),
+    studySessionFixture({ goalId: goal.id, localDate, userId: goal.userId }),
+  ]);
+}
+
+const PHASES_IN_ORDER = [1, 2, 3, 4].flatMap((phase) => [
+  `Phase ${phase} lessons`,
+  `Phase ${phase} challenge`,
+]);
+
+/** Names a lesson by its skill's graph phase, not the phase whose time it's filed under. */
+async function readPhaseRuns({
+  library,
+  planId,
+}: {
+  library: Awaited<ReturnType<typeof setup>>["library"];
+  planId: string;
+}) {
+  const phaseOf = new Map(library.graph.skills.map((skill) => [skill.skillId, skill.phase]));
+
+  const items = await prisma.planItem.findMany({
+    orderBy: [{ scheduledFor: "asc" }, { position: "asc" }],
+    where: { kind: { in: ["boss", "lesson"] }, planId, status: "todo" },
+  });
+
+  return items.reduce<{ first: number; last: number; name: string }[]>((runs, item) => {
+    const phase = item.kind === "boss" ? item.phase : (phaseOf.get(item.skillId ?? "") ?? -1);
+    const name = `Phase ${phase + 1} ${item.kind === "boss" ? "challenge" : "lessons"}`;
+    const day = item.scheduledFor?.getTime() ?? Number.NaN;
+    const run = runs.at(-1);
+
+    if (run?.name === name) {
+      run.last = day;
+    } else {
+      runs.push({ first: day, last: day, name });
+    }
+
+    return runs;
+  }, []);
+}
+
+function listDaysAfterLessons(runs: Awaited<ReturnType<typeof readPhaseRuns>>): number[] {
+  return runs.flatMap((run, index) =>
+    run.name.endsWith("challenge")
+      ? [(run.first - (runs[index - 1]?.last ?? Number.NaN)) / DAY]
+      : [],
+  );
+}
+
 describe("a phase's challenge after missed days", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -72,5 +160,48 @@ describe("a phase's challenge after missed days", () => {
       );
 
     expect(lessonsAfter).toStrictEqual([]);
+  });
+
+  it.each([
+    { away: 7, studied: true },
+    { away: 7, studied: false },
+    { away: 14, studied: true },
+  ])(
+    "comes the day after its own lessons, before the next phase's that came due ($away days away, studied: $studied)",
+    async ({ away, studied }) => {
+      const { goal, library, plan } = await setup({ dailyMinutes: 12, lessons: [8, 8, 8, 8] });
+
+      if (studied) {
+        await studyToday({ goal, planId: plan.id });
+      }
+
+      await comeBack({ days: away, goalId: goal.id });
+
+      const runs = await readPhaseRuns({ library, planId: plan.id });
+      const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+      const phases = saved.phases as { challengeLeftOut?: boolean; name: string }[];
+
+      expect(runs.map((run) => run.name)).toStrictEqual(PHASES_IN_ORDER);
+      expect(listDaysAfterLessons(runs)).toStrictEqual([1, 1, 1, 1]);
+      expect(phases.filter((phase) => phase.challengeLeftOut)).toStrictEqual([]);
+    },
+  );
+
+  it("leaves no empty week for a learner who studies every day after two weeks away", async () => {
+    const { goal, library, plan } = await setup({ dailyMinutes: 12, lessons: [8, 8, 8, 8] });
+
+    await studyToday({ goal, planId: plan.id });
+    await comeBack({ days: 14, goalId: goal.id });
+
+    await [15, 16, 17, 18, 19, 20, 21].reduce(async (previous, day) => {
+      await previous;
+      await studyWholeDay({ goal, planId: plan.id });
+      await comeBack({ days: day, goalId: goal.id });
+    }, Promise.resolve());
+
+    const runs = await readPhaseRuns({ library, planId: plan.id });
+
+    expect(runs.map((run) => run.name)).toStrictEqual(PHASES_IN_ORDER.slice(2));
+    expect(runs[0]?.first).toBe(Date.parse("2020-10-19"));
   });
 });

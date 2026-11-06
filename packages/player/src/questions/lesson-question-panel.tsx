@@ -97,6 +97,26 @@ function getFinalFocus(): HTMLElement | true {
   return getLessonFocusTarget() ?? true;
 }
 
+function keepThreadInView(body: HTMLDivElement | null) {
+  if (!body) {
+    return;
+  }
+
+  const observer = new ResizeObserver(() => {
+    const thread = body.querySelector("[data-slot=drawer-content]");
+
+    const hiddenBelow =
+      (thread?.getBoundingClientRect().bottom ?? 0) - body.getBoundingClientRect().bottom;
+
+    if (hiddenBelow > 0) {
+      body.scrollTop += hiddenBelow;
+    }
+  });
+
+  observer.observe(body);
+  return () => observer.disconnect();
+}
+
 export function LessonQuestionDrawer({
   identity,
   navigation,
@@ -116,17 +136,23 @@ export function LessonQuestionDrawer({
       <Drawer onOpenChange={(next) => !next && controller.close()} open={open}>
         <DrawerPopup
           backdropClassName="[--backdrop-opacity:0.4] dark:[--backdrop-opacity:0.4]"
-          className="h-[70dvh] max-h-[70dvh] outline-none"
+          className="h-[max(70dvh,27rem)] max-h-[calc(100dvh-1rem)] outline-none sm:max-h-[calc(100dvh-2rem)]"
           data-slot="lesson-question-drawer"
           finalFocus={getFinalFocus}
         >
-          <LessonQuestionPanelHeader controller={controller} identity={identity} />
+          {/* When the sheet is short (landscape, large text, a keyboard), the header and quote scroll away instead of leaving the thread no room. */}
+          <div
+            className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain *:shrink-0"
+            ref={keepThreadInView}
+          >
+            <LessonQuestionPanelHeader controller={controller} identity={identity} />
 
-          {quote}
+            {quote}
 
-          <DrawerContent className="min-h-0 flex-1 overflow-hidden px-0 pb-0">
-            <QuestionThread identity={identity} />
-          </DrawerContent>
+            <DrawerContent className="min-h-[min(100%,8rem)] flex-1 overflow-hidden px-0 pb-0">
+              <QuestionThread identity={identity} />
+            </DrawerContent>
+          </div>
 
           {canAskQuestions && (
             <QuestionComposer

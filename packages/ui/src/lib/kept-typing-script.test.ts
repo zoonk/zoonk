@@ -5,10 +5,12 @@ import { KEEP_TYPING_ATTRIBUTE, KEEP_TYPING_SCRIPT } from "./kept-typing-script"
 class TextField {
   value: string;
   readonly key: string | null;
+  readonly type: string;
 
-  constructor(value: string, key: string | null) {
+  constructor(value: string, key: string | null, type = "text") {
     this.value = value;
     this.key = key;
+    this.type = type;
   }
 
   getAttribute(name: string) {
@@ -16,13 +18,17 @@ class TextField {
   }
 }
 
+const TextArea = {
+  [Symbol.hasInstance]: (field: unknown) => field instanceof TextField && field.type === "textarea",
+};
+
 type Listener = (event: { target: unknown }) => void;
 
 function openPage() {
   const listeners: { listener: Listener; options: unknown; type: string }[] = [];
 
   vi.stubGlobal("HTMLInputElement", TextField);
-  vi.stubGlobal("HTMLTextAreaElement", TextField);
+  vi.stubGlobal("HTMLTextAreaElement", TextArea);
 
   vi.stubGlobal("document", {
     addEventListener: (type: string, listener: Listener, options: unknown) => {
@@ -47,8 +53,8 @@ describe("the keeper of words typed before a field's code arrives", () => {
 
   it("keeps the last words typed into each field that opted in, by its key", () => {
     const { type } = openPage();
-    const goal = new TextField("learn", "goal");
-    const date = new TextField("2027-06-01", "date");
+    const goal = new TextField("learn", "goal", "textarea");
+    const date = new TextField("2027-06-01", "date", "date");
 
     type(goal);
     goal.value = "learn to cook";
@@ -68,6 +74,16 @@ describe("the keeper of words typed before a field's code arrives", () => {
 
     type(new TextField("search", null));
     type({ getAttribute: () => "goal", value: "not a field" });
+
+    expect(globalThis.zoonkKeptTyping?.typed.size).toBe(0);
+  });
+
+  it("ignores a choice or a file, whose value isn't typed words", () => {
+    const { type } = openPage();
+
+    type(new TextField("on", "agree", "checkbox"));
+    type(new TextField("weekly", "often", "radio"));
+    type(new TextField(String.raw`C:\fakepath\notes.pdf`, "notes", "file"));
 
     expect(globalThis.zoonkKeptTyping?.typed.size).toBe(0);
   });

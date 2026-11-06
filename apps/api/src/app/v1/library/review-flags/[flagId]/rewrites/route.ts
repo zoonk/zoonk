@@ -2,10 +2,10 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { reviewFlagPathParamsSchema } from "@/lib/openapi/schemas/review-flags";
 import { readPathParams } from "@/lib/request-input";
+import { startOnce } from "@/workflows/_shared/run-token";
 import { flaggedContentWorkflow } from "@/workflows/review-flags/flagged-content-workflow";
 import { getOpenReviewFlagForAdmin } from "@zoonk/core/library/review-flags/admin";
 import { NextResponse } from "next/server";
-import { start } from "workflow/api";
 
 const ACCEPTED = 202;
 
@@ -29,9 +29,13 @@ async function createReviewFlagRewrite(
     return errors.notFound("Open review flag not found");
   }
 
-  const run = await start(flaggedContentWorkflow, [{ flagIds: [result.flagId] }]);
+  const runId = await startOnce(
+    flaggedContentWorkflow,
+    [{ flagIds: [result.flagId] }],
+    `review-flag-rewrite:${result.flagId}`,
+  );
 
-  return NextResponse.json({ runId: run.runId }, { status: ACCEPTED });
+  return NextResponse.json({ runId }, { status: ACCEPTED });
 }
 
 export const POST = withApiErrorBoundary(createReviewFlagRewrite);

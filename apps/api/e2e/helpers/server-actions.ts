@@ -3,10 +3,7 @@ import { expectHydrated } from "@zoonk/e2e/hydration";
 
 const AUTH_PAGES = "**/auth/**";
 
-/**
- * Before hydration the form posts natively, which no `next-action` header marks, so this waits for it.
- * Only the click's Server Action fails; later ones go through.
- */
+/** Only the click's Server Action fails; later ones go through. */
 export async function clickWithConnectionDown(submit: Locator): Promise<void> {
   const page = submit.page();
 

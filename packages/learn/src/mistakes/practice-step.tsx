@@ -16,7 +16,7 @@ import { ItemSupport, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { useSpokenText } from "../rich-text/use-spoken-text";
 import { ChoiceQuestion, type ChoiceResult } from "../session/question-block/choice-question";
-import { CheckButton, ContinueButton } from "../session/question-block/question-actions";
+import { QuestionMainButton } from "../session/question-block/question-actions";
 import { useVerdict } from "../session/question-block/question-feedback";
 import { QuestionTitle } from "../session/question-block/question-title";
 import {
@@ -24,7 +24,7 @@ import {
   type TrueFalseResult,
 } from "../session/question-block/true-false-question";
 import { DrillAnswerNotes } from "./drill/drill-answer-notes";
-import { NotSureButton, ShowAnswersButton } from "./drill/drill-controls";
+import { NotSureButton, useFocusAnswersOnReveal } from "./drill/drill-controls";
 import { DrillCountdown } from "./drill/drill-countdown";
 import { DrillIntro } from "./drill/drill-intro";
 import { type LessonHref, isIdeaFirst, isReadFirst } from "./drill/drill-types";
@@ -74,44 +74,52 @@ function getTrueFalseResult({
   };
 }
 
-export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
-  const t = useExtracted();
+function getMainAction(run: Run): React.ComponentProps<typeof QuestionMainButton> {
   const { phase } = run.state;
 
   if (phase.kind === "reading") {
-    return <ShowAnswersButton onReveal={run.reveal} />;
+    return { action: "reveal", onPress: run.reveal };
   }
 
   if (phase.kind === "feedback") {
-    return <ContinueButton onContinue={run.next} />;
+    return { action: "continue", onPress: run.next };
   }
 
   const selected = phase.kind === "answering" ? phase.selected : null;
-  const retry = phase.kind === "answerFailed" ? phase.answer : null;
-  const answer = selected ?? retry;
+  const answer = selected ?? (phase.kind === "answerFailed" ? phase.answer : null);
+
+  return {
+    action: "check",
+    busy: phase.kind === "checking",
+    disabled: !answer,
+    onPress: () => (answer ? run.check(answer) : undefined),
+  };
+}
+
+export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
+  const t = useExtracted();
+  const { phase } = run.state;
+  const answering = phase.kind !== "reading" && phase.kind !== "feedback";
   const checking = phase.kind === "checking";
 
   return (
     <>
-      {step.entry.drill.kind === "noGuessing" ? (
-        <NotSureButton disabled={checking} onClick={run.notSure} />
-      ) : (
-        <Button
-          disabled={checking}
-          focusableWhenDisabled
-          onClick={run.notSure}
-          size="lg"
-          variant="outline"
-        >
-          {t("I don't know yet")}
-        </Button>
-      )}
+      {answering &&
+        (step.entry.drill.kind === "noGuessing" ? (
+          <NotSureButton disabled={checking} onClick={run.notSure} />
+        ) : (
+          <Button
+            disabled={checking}
+            focusableWhenDisabled
+            onClick={run.notSure}
+            size="lg"
+            variant="outline"
+          >
+            {t("I don't know yet")}
+          </Button>
+        ))}
 
-      <CheckButton
-        busy={checking}
-        disabled={!answer}
-        onCheck={() => (answer ? run.check(answer) : undefined)}
-      />
+      <QuestionMainButton {...getMainAction(run)} />
     </>
   );
 }
@@ -189,6 +197,7 @@ export function PracticeStepView({
   const { drill } = step.entry;
   const { question } = step;
   const runId = useMemo(() => crypto.randomUUID(), []);
+  const answers = useFocusAnswersOnReveal(phase.kind === "reading");
 
   // The earlier answer belongs to the mistake's own question; next to another one it misleads.
   const lastAnswer = isMistakeQuestion(step) ? answerText(step.entry.snapshot.answer) : null;
@@ -248,24 +257,26 @@ export function PracticeStepView({
               withTitle={question.format !== "trueFalse"}
             />
 
-            {question.format === "trueFalse" ? (
-              <TrueFalseQuestion
-                allowBlank={false}
-                disabled={disabled}
-                onChange={run.select}
-                result={graded ? getTrueFalseResult(graded) : null}
-                statement={question.question}
-                trueFalseLabels={trueFalseLabels}
-              />
-            ) : (
-              <ChoiceQuestion
-                disabled={disabled}
-                onChange={run.select}
-                options={question.options ?? []}
-                result={graded ? getChoiceResult(graded) : null}
-                select={question.select}
-              />
-            )}
+            <div ref={answers}>
+              {question.format === "trueFalse" ? (
+                <TrueFalseQuestion
+                  allowBlank={false}
+                  disabled={disabled}
+                  onChange={run.select}
+                  result={graded ? getTrueFalseResult(graded) : null}
+                  statement={question.question}
+                  trueFalseLabels={trueFalseLabels}
+                />
+              ) : (
+                <ChoiceQuestion
+                  disabled={disabled}
+                  onChange={run.select}
+                  options={question.options ?? []}
+                  result={graded ? getChoiceResult(graded) : null}
+                  select={question.select}
+                />
+              )}
+            </div>
           </>
         )}
       </section>

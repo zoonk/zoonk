@@ -8,7 +8,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.InputMode
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInputModeManager
@@ -34,6 +37,13 @@ fun rememberMoveFocus(): (FocusRequester) -> Unit {
     val moves = rememberFocusMoves()
     return remember(moves) { { requester -> if (moves()) requester.requestFocus() } }
 }
+
+/**
+ * Where [rememberMoveFocus] can land: this control, or the first one inside it. Compose takes no
+ * button or option into focus in touch mode, which TalkBack never leaves, so a move would otherwise
+ * reach one only from a keyboard.
+ */
+fun Modifier.focusMoveTarget(requester: FocusRequester): Modifier = focusRequester(requester).focusProperties { canFocus = true }
 
 /** Put [requester] on whatever holds the pressed control's place. */
 class PressFocus internal constructor(

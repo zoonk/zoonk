@@ -1,4 +1,5 @@
 import { getAuthPageLocale } from "@/i18n/page-locale";
+import { KEEP_TYPING_SCRIPT } from "@zoonk/ui/lib/kept-typing-script";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
@@ -23,6 +24,12 @@ export default async function AuthLayout({ children }: LayoutProps<"/auth/[local
 
   return (
     <html lang={appLocale}>
+      <head>
+        <script
+          // oxlint-disable-next-line react/no-danger -- A fixed script that must run before the first paint.
+          dangerouslySetInnerHTML={{ __html: KEEP_TYPING_SCRIPT }}
+        />
+      </head>
       <body className="bg-background font-sans antialiased">
         <NextIntlClientProvider>
           <main className="relative flex min-h-dvh w-full flex-col items-center justify-center px-4 py-16">

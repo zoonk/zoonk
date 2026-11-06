@@ -1,4 +1,5 @@
 import { keepCarriedAfterBases, listBegunSkillIds } from "./carried-bases";
+import { keepCarriedBeforeChallenges } from "./carried-challenges";
 import { markAfterCarried, scheduleCarriedWork, shiftReserved } from "./carried-schedule";
 import { findChapterInProgress } from "./chapter-in-progress";
 import { takeFocusedToday } from "./focused-today";
@@ -208,7 +209,7 @@ export function placeCarriedWork({
 
   const keys = keepCarriedAfterBases({
     begun: listBegunSkillIds({ carried: [], items: input.items }),
-    keys: left,
+    keys: keepCarriedBeforeChallenges({ keys: left, today, units }),
     prerequisites: input.prerequisites,
     today,
     units,
