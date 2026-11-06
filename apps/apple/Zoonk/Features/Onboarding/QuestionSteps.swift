@@ -138,16 +138,10 @@ struct StepButtons: View {
   var body: some View {
     Section {
       VStack(spacing: 12) {
-        Button(action: onContinue) {
-          HStack(spacing: 8) {
-            if isSaving {
-              ProgressView()
-            }
-
-            continueLabel
-              ?? Text("Continue", tableName: "Onboarding", comment: "Saves an onboarding answer")
-          }
-          .frame(maxWidth: .infinity)
+        BusyButton(isBusy: isSaving, action: onContinue) {
+          (continueLabel
+            ?? Text("Continue", tableName: "Onboarding", comment: "Saves an onboarding answer"))
+            .frame(maxWidth: .infinity)
         }
         .buttonStyle(.mainAction)
         .disabled(!canContinue)

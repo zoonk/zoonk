@@ -244,19 +244,13 @@ struct PracticeMainButton: View {
   let action: () -> Void
 
   var body: some View {
-    Button(action: action) {
-      HStack(spacing: 8) {
-        if isBusy {
-          ProgressView()
-            .controlSize(.small)
-        }
-        Text(title)
-      }
-      .frame(maxWidth: .infinity)
+    BusyButton(isBusy: isBusy, action: action) {
+      Text(title)
+        .frame(maxWidth: .infinity)
     }
     .buttonStyle(.mainAction)
     .controlSize(.large)
-    .disabled(isDisabled || isBusy)
+    .disabled(isDisabled)
     .keyboardShortcut(.defaultAction)
   }
 }

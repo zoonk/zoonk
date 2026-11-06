@@ -184,15 +184,11 @@ private struct UnderstoodCard: View {
 
         if error?.needsAccount != true {
           StepButtons(
-            canContinue: !isCreating && !rewriting,
+            canContinue: !rewriting,
             canSkip: !isCreating && !rewriting,
-            continueLabel: isCreating
-              ? Text(
-                "Saving your goal…", tableName: "Onboarding",
-                comment: "While the confirmed goals are created")
-              : Text(
-                "Looks right", tableName: "Onboarding",
-                comment: "Confirms what was understood and creates the goals"),
+            continueLabel: Text(
+              "Looks right", tableName: "Onboarding",
+              comment: "Confirms what was understood and creates the goals"),
             skipLabel: Text(
               "Fix something", tableName: "Onboarding",
               comment: "Opens the typed words to change and read again"),
@@ -200,6 +196,7 @@ private struct UnderstoodCard: View {
           ) {
             rewriting = true
           }
+          .environment(\.isSavingAnswer, isCreating)
         }
       }
     }
@@ -536,15 +533,11 @@ private struct RowEditor: View {
       }
 
       ButtonRow {
-        Button(action: save) {
-          if isSaving {
-            Text("Saving…", tableName: "Onboarding", comment: "While a fix is saved")
-          } else {
-            Text("Save", tableName: "Onboarding", comment: "Saves a fix to an understood fact")
-          }
+        BusyButton(isBusy: isSaving, action: save) {
+          Text("Save", tableName: "Onboarding", comment: "Saves a fix to an understood fact")
         }
         .buttonStyle(.mainAction)
-        .disabled(isSaving || (field.editor == .text && trimmed.isEmpty))
+        .disabled(field.editor == .text && trimmed.isEmpty)
 
         Button(role: .cancel, action: onCancel) {
           Text("Cancel", tableName: "Onboarding", comment: "Stops fixing an understood fact")
@@ -659,15 +652,12 @@ private struct ExplainOutcome: View {
 
       if error?.needsAccount != true {
         StepButtons(
-          canContinue: !isStarting,
-          continueLabel: isStarting
-            ? Text(
-              "Opening your explanation…", tableName: "Onboarding",
-              comment: "While a quick explanation is created")
-            : Text(
-              "Explain it", tableName: "Onboarding",
-              comment: "Starts a quick explanation of the learner's question"),
-          onContinue: onStart)
+          continueLabel: Text(
+            "Explain it", tableName: "Onboarding",
+            comment: "Starts a quick explanation of the learner's question"),
+          onContinue: onStart
+        )
+        .environment(\.isSavingAnswer, isStarting)
       }
     }
   }
@@ -733,14 +723,9 @@ private struct InstrumentOutcome: View {
 
       if error?.needsAccount != true {
         StepButtons(
-          canContinue: !isStarting,
           canSkip: !isJoining && waitlist != .joined,
-          continueLabel: isStarting
-            ? Text(
-              "Saving your goal…", tableName: "Onboarding",
-              comment: "While the confirmed goals are created")
-            : Text(
-              "Start musicianship", tableName: "Onboarding", comment: "Starts a musicianship goal"),
+          continueLabel: Text(
+            "Start musicianship", tableName: "Onboarding", comment: "Starts a musicianship goal"),
           skipLabel: Text(
             "Join the waitlist", tableName: "Onboarding",
             comment: "Joins the waitlist for lessons that teach playing an instrument"),
@@ -748,6 +733,7 @@ private struct InstrumentOutcome: View {
         ) {
           Task { await join() }
         }
+        .environment(\.isSavingAnswer, isStarting)
       }
     }
     .announcesStatus(waitlist.map(Self.note))

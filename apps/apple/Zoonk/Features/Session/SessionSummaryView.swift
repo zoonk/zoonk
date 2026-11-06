@@ -401,14 +401,10 @@ struct SessionSummaryView: View {
   }
 
   private func extraTimeButton(_ extraTime: StudyDay.ExtraTime) -> some View {
-    Button {
+    BusyButton(isBusy: isBusy) {
       keepLearning()
     } label: {
-      HStack {
-        if isBusy {
-          ProgressView()
-        }
-
+      Group {
         if extraTime.lessons.isEmpty {
           Text(
             "Study \(extraTime.minutes) more minutes", tableName: "Session",
@@ -420,7 +416,6 @@ struct SessionSummaryView: View {
       .frame(maxWidth: .infinity)
     }
     .buttonStyle(.borderless)
-    .disabled(isBusy)
   }
 
   private func failure(_ message: LocalizedStringResource) -> some View {

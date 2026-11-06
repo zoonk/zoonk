@@ -442,7 +442,7 @@ struct LessonActionBar: View {
   @ViewBuilder
   private var primaryButton: some View {
     let primary = primaryAction
-    let button = Button {
+    let button = BusyButton(isBusy: primary.isBusy) {
       switch primary.action {
       case .check:
         Task { await store.check(gradeActivity: activityGrade) }
@@ -452,15 +452,8 @@ struct LessonActionBar: View {
         store.dontKnow()
       }
     } label: {
-      HStack {
-        if primary.isBusy {
-          ProgressView()
-            .controlSize(.small)
-        }
-
-        Text(primary.title)
-      }
-      .frame(maxWidth: .infinity)
+      Text(primary.title)
+        .frame(maxWidth: .infinity)
     }
     .controlSize(.large)
     .disabled(primary.isDisabled)
@@ -502,12 +495,7 @@ struct LessonActionBar: View {
     case .feedback:
       return PrimaryAction(action: .continueLesson, title: Self.continueTitle)
     case .checking:
-      return PrimaryAction(
-        action: .check,
-        title: LocalizedStringResource(
-          "Checking your answer", table: "Player",
-          comment: "The main button while a written answer is graded"),
-        isBusy: true, isDisabled: true)
+      return PrimaryAction(action: .check, title: checkTitle(step), isBusy: true)
     case .playing, .map, .completed:
       break
     }
@@ -562,12 +550,15 @@ struct LessonActionBar: View {
     }
 
     return PrimaryAction(
-      action: .check,
-      title: step.kind == .hook
-        ? LocalizedStringResource(
-          "See the answer", table: "Player", comment: "Reveals a hook's answer after a guess")
-        : LocalizedStringResource("Check", table: "Player", comment: "Checks the learner's answer"),
+      action: .check, title: checkTitle(step),
       isDisabled: !step.canCheck(state.currentAnswer, openedAt: store.openedAt))
+  }
+
+  private func checkTitle(_ step: LessonStep) -> LocalizedStringResource {
+    step.kind == .hook
+      ? LocalizedStringResource(
+        "See the answer", table: "Player", comment: "Reveals a hook's answer after a guess")
+      : LocalizedStringResource("Check", table: "Player", comment: "Checks the learner's answer")
   }
 
   private static let continueTitle = LocalizedStringResource(

@@ -25,22 +25,14 @@ struct DataExportRow: View {
 
         Spacer()
 
-        Button {
+        BusyButton(isBusy: isPreparing) {
           Task {
             await download()
           }
         } label: {
-          if isPreparing {
-            Text(
-              "Preparing…", tableName: "Settings",
-              comment: "Data export button while Zoonk prepares the file to download")
-          } else {
-            Text(
-              "Download", tableName: "Settings", comment: "Downloads a file of the learner's data")
-          }
+          Text("Download", tableName: "Settings", comment: "Downloads a file of the learner's data")
         }
         .buttonStyle(.bordered)
-        .disabled(isPreparing)
         .accessibilityLabel(title)
       }
 

@@ -154,22 +154,16 @@ private struct CertificateDetail: View {
 
   private var actions: some View {
     Section {
-      Button(action: printCertificate) {
-        HStack {
-          Label {
-            Text("Print", tableName: "Certificates", comment: "Prints a certificate")
-          } icon: {
-            Image(systemName: "printer")
-          }
-
-          if printing != nil {
-            Spacer()
-            ProgressView()
-          }
+      BusyButton(isBusy: printing != nil, action: printCertificate) {
+        Label {
+          Text("Print", tableName: "Certificates", comment: "Prints a certificate")
+        } icon: {
+          Image(systemName: "printer")
         }
         .background { PrintAnchorView(anchor: printAnchor) }
+        .frame(maxWidth: .infinity, alignment: .leading)
       }
-      .disabled(printing != nil || !picturesAreCurrent)
+      .disabled(!picturesAreCurrent)
 
       ShareLink(
         item: certificate.document,

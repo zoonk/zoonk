@@ -153,14 +153,9 @@ struct PlanDateSection: View {
         ),
       asksOnAppear: asksStudyEverything
     ) { isPreviewing, ask in
-      Button(action: ask) {
-        LabeledContent {
-          if isPreviewing {
-            ProgressView()
-          }
-        } label: {
-          Text("Study everything", tableName: "Plan", comment: "Drops the goal's deadline")
-        }
+      BusyButton(isBusy: isPreviewing, action: ask) {
+        Text("Study everything", tableName: "Plan", comment: "Drops the goal's deadline")
+          .frame(maxWidth: .infinity, alignment: .leading)
       }
     }
   }

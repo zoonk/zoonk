@@ -329,13 +329,13 @@ private struct MockChooser: View {
 
       Group {
         if isOpen {
-          Button {
+          BusyButton(isBusy: busy) {
             Task { await start() }
           } label: {
             startLabel.frame(maxWidth: .infinity)
           }
           .buttonStyle(.mainAction)
-          .disabled(busy || (!placement && pickedOption == nil))
+          .disabled(!placement && pickedOption == nil)
           .keyboardShortcut(.defaultAction)
         } else {
           SeePlusButton().buttonStyle(.mainAction).frame(maxWidth: .infinity)
@@ -362,10 +362,6 @@ private struct MockChooser: View {
   }
 
   private var startLabel: Text {
-    if busy {
-      return Text("Getting it ready…", tableName: "Mock", comment: "Starting a mock")
-    }
-
     if case .short(let optionId, _, _, _, let questions) = status, optionId == pickedOption?.id {
       return Text(
         "Start with \(questions) questions", tableName: "Mock",

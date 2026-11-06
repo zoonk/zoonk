@@ -47,12 +47,8 @@ struct CertificateNameEditor: View {
         .focused($isFocused)
         .onSubmit(save)
 
-        Button(action: save) {
-          if session.isWorking {
-            ProgressView()
-          } else {
-            Text("Save", tableName: "Certificates", comment: "Saves the name on the certificates")
-          }
+        BusyButton(isBusy: session.isWorking, action: save) {
+          Text("Save", tableName: "Certificates", comment: "Saves the name on the certificates")
         }
         .buttonStyle(.mainAction)
         .disabled(!canSave)

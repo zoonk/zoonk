@@ -131,21 +131,11 @@ private struct FeedbackForm: View {
           }
 
           ToolbarItem(placement: .confirmationAction) {
-            Button(action: submit) {
-              if store.state == .submitting {
-                ProgressView()
-                  .controlSize(.small)
-                  .accessibilityLabel(
-                    Text(
-                      "Sending feedback",
-                      tableName: "Feedback",
-                      comment: "Accessibility status while feedback is being sent."))
-              } else {
-                Text(
-                  "Send",
-                  tableName: "Feedback",
-                  comment: "Submits the feedback form.")
-              }
+            BusyButton(isBusy: store.state == .submitting, action: submit) {
+              Text(
+                "Send",
+                tableName: "Feedback",
+                comment: "Submits the feedback form.")
             }
             .disabled(!store.canSubmit)
           }

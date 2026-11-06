@@ -229,7 +229,7 @@ struct MissionRow: View {
         ? Text("Done", tableName: "Today", comment: "A mission that's done") : Text(""))
 
     if let open, opensSomewhere {
-      Button(action: open) {
+      BusyButton(isBusy: isBusy, action: open) {
         row
       }
       .tint(.primary)
@@ -275,9 +275,7 @@ struct MissionRow: View {
         .accessibilityHidden(true)
     }
 
-    if isBusy {
-      ProgressView()
-    } else if opensSomewhere {
+    if opensSomewhere {
       DisclosureChevron()
     }
   }

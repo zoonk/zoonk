@@ -149,7 +149,8 @@ struct ProfileEditorView: View {
       }
 
       if isRequiredSetup {
-        StepButtons(canContinue: isValid && !session.isWorking, onContinue: save)
+        StepButtons(canContinue: isValid, onContinue: save)
+          .environment(\.isSavingAnswer, session.isWorking)
       }
 
       if let deleteAccount {
@@ -224,15 +225,10 @@ struct ProfileEditorView: View {
     .toolbar {
       if !isRequiredSetup {
         ToolbarItem(placement: .confirmationAction) {
-          Button(action: save) {
-            if session.isWorking {
-              ProgressView()
-                .controlSize(.small)
-            } else {
-              Text("Save", tableName: "Account", comment: "Button that saves profile changes")
-            }
+          BusyButton(isBusy: session.isWorking, action: save) {
+            Text("Save", tableName: "Account", comment: "Button that saves profile changes")
           }
-          .disabled(!isValid || session.isWorking)
+          .disabled(!isValid)
         }
       }
     }

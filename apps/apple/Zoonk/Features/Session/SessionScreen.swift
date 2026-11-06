@@ -330,21 +330,15 @@ private struct NextStopView: View {
             .accessibilityFocused($isStartFocused)
         }
 
-        Button {
+        BusyButton(isBusy: isStopping) {
           stop()
         } label: {
-          HStack {
-            if isStopping {
-              ProgressView()
-            }
-
-            Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
-          }
-          .frame(maxWidth: .infinity)
+          Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
+            .frame(maxWidth: .infinity)
         }
         .buttonStyle(.bordered)
         .controlSize(.large)
-        .disabled(isStopping || isOpening)
+        .disabled(isOpening)
 
         if failed {
           FailureLine(
@@ -469,21 +463,15 @@ private struct NextStopView: View {
   }
 
   private func mainButton(_ title: Text, block: StudyBlock) -> some View {
-    Button {
+    BusyButton(isBusy: isOpening) {
       open(block)
     } label: {
-      HStack {
-        if isOpening {
-          ProgressView()
-        }
-
-        title
-      }
-      .frame(maxWidth: .infinity)
+      title
+        .frame(maxWidth: .infinity)
     }
     .buttonStyle(.mainAction)
     .controlSize(.large)
-    .disabled(isOpening || isStopping)
+    .disabled(isStopping)
   }
 
   private func open(_ block: StudyBlock) {

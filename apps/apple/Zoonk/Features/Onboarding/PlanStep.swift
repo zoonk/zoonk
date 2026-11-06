@@ -480,7 +480,6 @@ private struct PlanReveal: View {
   @State private var sheet: PlanSheet?
   @State private var showsTopics = false
   @State private var openingToday: Task<Void, Never>?
-  @State private var showsTodayProgress = false
   @State private var isChangingDate = false
   @State private var dateChangeFailed = false
   @State private var slotAnswer: PlanSlotAnswer?
@@ -561,20 +560,14 @@ private struct PlanReveal: View {
 
     Section {
       VStack(spacing: 12) {
-        Button(action: openToday) {
-          HStack {
-            if showsTodayProgress {
-              ProgressView()
-            }
-
-            Text(
-              "Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day")
-          }
+        BusyButton(isBusy: openingToday != nil, action: openToday) {
+          Text(
+            "Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day"
+          )
           .frame(maxWidth: .infinity)
         }
         .buttonStyle(.mainAction)
         .keyboardShortcut(.defaultAction)
-        .disabled(showsTodayProgress)
 
         Button {
           adjusting = .top
@@ -651,21 +644,14 @@ private struct PlanReveal: View {
     }
   }
 
-  /// Today shows once it has read the new plan's day; a read slower than a moment shows on Start.
+  /// Today shows once it has read the new plan's day.
   private func openToday() {
     guard openingToday == nil else {
       return
     }
 
     openingToday = Task {
-      let progress = Task {
-        try await Task.sleep(for: .milliseconds(400))
-        showsTodayProgress = true
-      }
-
       await today.today.load()
-      progress.cancel()
-      showsTodayProgress = false
       openingToday = nil
 
       if !Task.isCancelled {

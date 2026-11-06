@@ -31,17 +31,11 @@ struct EarlierQuestionsScreen: View {
           }
 
           if page.nextCursor != nil {
-            Button {
+            BusyButton(isBusy: store.isLoadingOlder) {
               Task { await store.loadOlderQuestions() }
             } label: {
-              if store.isLoadingOlder {
-                ProgressView()
-              } else {
-                Text(
-                  "Older questions", tableName: "Buddy", comment: "Shows older earlier questions")
-              }
+              Text("Older questions", tableName: "Buddy", comment: "Shows older earlier questions")
             }
-            .disabled(store.isLoadingOlder)
           }
 
           if store.olderFailed {

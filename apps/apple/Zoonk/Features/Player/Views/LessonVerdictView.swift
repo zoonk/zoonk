@@ -233,28 +233,18 @@ private struct LessonExplainAnswerView: View {
       }
     } else {
       VStack(alignment: .leading, spacing: 8) {
-        Button {
+        BusyButton(isBusy: state == .loading) {
           Task { await store.explainAnswer() }
         } label: {
-          if state == .loading {
-            HStack {
-              ProgressView()
-              Text(
-                "Explaining your answer", tableName: "Player",
-                comment: "While the explanation of a typed answer is written")
-            }
-          } else {
-            Label {
-              Text(
-                "Explain my answer", tableName: "Player",
-                comment: "Asks why a typed answer is wrong")
-            } icon: {
-              Image(systemName: "lightbulb")
-            }
+          Label {
+            Text(
+              "Explain my answer", tableName: "Player",
+              comment: "Asks why a typed answer is wrong")
+          } icon: {
+            Image(systemName: "lightbulb")
           }
         }
         .buttonStyle(.bordered)
-        .disabled(state == .loading)
 
         switch state {
         case .failed:

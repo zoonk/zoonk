@@ -212,11 +212,10 @@ struct TodaySessionSection: View {
   private func blockButton(_ block: StudyBlock, isNext: Bool) -> some View {
     let row = BlockRow(
       block: block, view: view, isNext: isNext, countsTowardMission: countsTowardMission(block),
-      isBusy: busy == .block(block.position) || (isNext && busy == .main),
       failed: failed == .block(block.position))
 
     if block.waitReason == nil {
-      Button {
+      BusyButton(isBusy: busy == .block(block.position)) {
         open(block, false)
       } label: {
         row
@@ -308,19 +307,12 @@ struct TodayMainAction: View {
 
   var body: some View {
     VStack(spacing: 8) {
-      Button(action: action) {
-        HStack {
-          if isBusy {
-            ProgressView()
-          }
-
-          title
-        }
-        .frame(maxWidth: .infinity)
+      BusyButton(isBusy: isBusy, action: action) {
+        title
+          .frame(maxWidth: .infinity)
       }
       .buttonStyle(.mainAction)
       .controlSize(.large)
-      .disabled(isBusy)
 
       if failed {
         FailureLine(message: failure)
@@ -400,7 +392,6 @@ struct BlockRow: View {
   let view: TodayView?
   let isNext: Bool
   let countsTowardMission: Bool
-  var isBusy = false
   var failed = false
   var showsDetail = false
 
@@ -442,9 +433,7 @@ struct BlockRow: View {
 
   @ViewBuilder
   private var trailing: some View {
-    if isBusy {
-      ProgressView()
-    } else if !block.isFinished {
+    if !block.isFinished {
       HStack(spacing: 6) {
         if countsTowardMission {
           Image(systemName: "target")
@@ -526,7 +515,7 @@ private struct ComingLessonsRow: View {
   var body: some View {
     switch coming {
     case .toPrepare:
-      Button(action: prepare) {
+      BusyButton(isBusy: isBusy, action: prepare) {
         row
       }
       .tint(.primary)
@@ -575,11 +564,7 @@ private struct ComingLessonsRow: View {
           .font(.footnote)
         }
       }
-
-      if isBusy {
-        Spacer(minLength: 8)
-        ProgressView()
-      }
+      .frame(maxWidth: .infinity, alignment: .leading)
     }
   }
 }

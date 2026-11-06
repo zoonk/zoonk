@@ -157,16 +157,14 @@ struct MockRunnerView: View {
   }
 
   private var nextButton: some View {
-    Button {
+    BusyButton(isBusy: run.busy == .submit) {
       if isLastQuestion {
         confirmsHandIn = true
       } else {
         run.go(to: run.position + 1)
       }
     } label: {
-      if run.busy == .submit {
-        Text("Handing in…", tableName: "Mock", comment: "A section is being handed in")
-      } else if !isLastQuestion {
+      if !isLastQuestion {
         Text("Next", tableName: "Mock", comment: "The next question")
       } else if view.isLastSectionCurrent {
         Text("Hand in the mock exam", tableName: "Mock", comment: "Hands in the last section")

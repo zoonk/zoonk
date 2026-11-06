@@ -248,43 +248,44 @@ struct AccountDeletionView: View {
         )
         .disabled(session.isWorking)
 
-        Button(role: .destructive) {
+        BusyButton(isBusy: session.isWorking, role: .destructive) {
           pendingDeletion = .email
           isConfirmingDeletion = true
         } label: {
-          workingLabel(
-            title: Text(
-              "Verify and delete",
-              tableName: "Account",
-              comment: "Verifies the email code and permanently deletes the account"))
+          Text(
+            "Verify and delete",
+            tableName: "Account",
+            comment: "Verifies the email code and permanently deletes the account"
+          )
+          .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .disabled(normalizedCode.count != 6 || session.isWorking)
+        .disabled(normalizedCode.count != 6)
 
-        Button {
+        BusyButton(isBusy: session.isWorking) {
           Task {
             await sendEmailCode()
           }
         } label: {
-          workingLabel(
-            title: Text(
-              "Send a new code",
-              tableName: "Account",
-              comment: "Sends a replacement account deletion verification code"))
+          Text(
+            "Send a new code",
+            tableName: "Account",
+            comment: "Sends a replacement account deletion verification code"
+          )
+          .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .disabled(session.isWorking)
       } else {
-        Button {
+        BusyButton(isBusy: session.isWorking) {
           Task {
             await sendEmailCode()
           }
         } label: {
-          workingLabel(
-            title: Text(
-              "Send verification code",
-              tableName: "Account",
-              comment: "Sends an email code for account deletion reauthorization"))
+          Text(
+            "Send verification code",
+            tableName: "Account",
+            comment: "Sends an email code for account deletion reauthorization"
+          )
+          .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .disabled(session.isWorking)
       }
     } header: {
       Text(
@@ -434,19 +435,6 @@ struct AccountDeletionView: View {
         tableName: "Account",
         comment:
           "Warns that Google Play billing continues independently of Zoonk account deletion")
-    }
-  }
-
-  private func workingLabel(title: Text) -> some View {
-    HStack {
-      title
-
-      Spacer()
-
-      if session.isWorking {
-        ProgressView()
-          .controlSize(.small)
-      }
     }
   }
 
