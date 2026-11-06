@@ -76,6 +76,30 @@ async function startLessonBeforeMidnight() {
   return { blockId: block?.id ?? "", goal, lesson, runId, second, session };
 }
 
+async function startLessonOutsideSessionBeforeMidnight() {
+  vi.setSystemTime(BEFORE_MIDNIGHT);
+
+  const { lesson, skill, steps, user } = await setupPlayableLesson({ steps: ["check"] });
+  const goal = await goalFixture({ timezone: TIME_ZONE, userId: user.id });
+
+  await planFixture({ goalId: goal.id, items: [{ lessonId: lesson.id, skillId: skill.id }] });
+
+  const started = await startLibraryLesson({ input: { timeZone: TIME_ZONE }, lessonId: lesson.id });
+  const runId = started.status === "started" ? started.run.runId : "";
+
+  await checkLessonStep({
+    input: {
+      answer: { kind: "check", optionId: "likely" },
+      durationMs: 4000,
+      runId,
+      timeZone: TIME_ZONE,
+    },
+    stepId: stepOfKind(steps, "check").id,
+  });
+
+  return { goal, lesson, runId };
+}
+
 describe("a session the learner is in when midnight comes", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -129,5 +153,45 @@ describe("a session the learner is in when midnight comes", () => {
     expect(today.localDate).toStrictEqual(new Date("2026-10-01T00:00:00Z"));
     expect(today.current).toBe(true);
     expect(yesterday).toMatchObject({ session: { current: false }, status: "ready" });
+  });
+});
+
+describe("a lesson begun outside the session when midnight comes", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("finishes as a block of the day it began in, with that day's full meal", async () => {
+    const { goal, lesson, runId } = await startLessonOutsideSessionBeforeMidnight();
+
+    vi.setSystemTime(AFTER_MIDNIGHT);
+
+    const outcome = await completeLibraryLesson({
+      input: { runId, timeZone: TIME_ZONE },
+      lessonId: lesson.id,
+    });
+
+    expect(outcome).toMatchObject({
+      completion: { studyBlock: { fullMeal: { paid: true }, sessionCompleted: true } },
+      status: "completed",
+    });
+
+    await expect(
+      prisma.studySession.findFirstOrThrow({ where: { goalId: goal.id } }),
+    ).resolves.toMatchObject({ localDate: new Date("2026-09-30T00:00:00Z"), status: "completed" });
+  });
+
+  it("finishes on its own once the learner has been away past the day's carry-over", async () => {
+    const { lesson, runId } = await startLessonOutsideSessionBeforeMidnight();
+
+    vi.setSystemTime(NEXT_MORNING);
+
+    await expect(
+      completeLibraryLesson({ input: { runId, timeZone: TIME_ZONE }, lessonId: lesson.id }),
+    ).resolves.toMatchObject({ completion: { studyBlock: null }, status: "completed" });
   });
 });

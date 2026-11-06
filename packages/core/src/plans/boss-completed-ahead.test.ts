@@ -370,57 +370,40 @@ async function expectTuesdayStable({
 }
 
 describe("a boss's actual completed teaching day stays fixed as today advances", () => {
-  const running = { body: Promise.resolve() };
-
-  function runCase(body: () => Promise<void>) {
-    running.body = body();
-    return running.body;
-  }
-
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2020-09-28T12:00:00Z"));
   });
 
-  afterEach(async () => {
-    // Vitest's timeout does not cancel async SQL: drain the body before another case owns Date/auth.
-    await Promise.allSettled([running.body]);
+  afterEach(() => {
     vi.useRealTimers();
   });
 
-  it("keeps Tuesday due when a genuinely future Wednesday lesson was completed Monday", () =>
-    runCase(async () => {
-      const fixture = await setup("UTC");
+  it("keeps Tuesday due when a genuinely future Wednesday lesson was completed Monday", async () => {
+    const fixture = await setup("UTC");
 
-      const finished = await completeAhead(fixture, [
-        "2020-09-28T12:05:00Z",
-        "2020-09-28T12:10:00Z",
-      ]);
+    const finished = await completeAhead(fixture, ["2020-09-28T12:05:00Z", "2020-09-28T12:10:00Z"]);
 
-      expect(finished[1]).toMatchObject({
-        completedAt: new Date("2020-09-28T12:10:00Z"),
-        scheduledFor: new Date(WEDNESDAY),
-        status: "done",
-      });
+    expect(finished[1]).toMatchObject({
+      completedAt: new Date("2020-09-28T12:10:00Z"),
+      scheduledFor: new Date(WEDNESDAY),
+      status: "done",
+    });
 
-      await expectTuesdayStable({ finished, fixture, nextMorning: "2020-09-29T12:00:00Z" });
-    }));
+    await expectTuesdayStable({ finished, fixture, nextMorning: "2020-09-29T12:00:00Z" });
+  });
 
-  it("uses Monday's Brazil completion day even when the real completion instant is UTC Tuesday", () =>
-    runCase(async () => {
-      const fixture = await setup("America/Sao_Paulo");
+  it("uses Monday's Brazil completion day even when the real completion instant is UTC Tuesday", async () => {
+    const fixture = await setup("America/Sao_Paulo");
 
-      const finished = await completeAhead(fixture, [
-        "2020-09-29T02:49:00Z",
-        "2020-09-29T02:59:00Z",
-      ]);
+    const finished = await completeAhead(fixture, ["2020-09-29T02:49:00Z", "2020-09-29T02:59:00Z"]);
 
-      expect(finished[1]).toMatchObject({
-        completedAt: new Date("2020-09-29T02:59:00Z"),
-        scheduledFor: new Date(WEDNESDAY),
-        status: "done",
-      });
+    expect(finished[1]).toMatchObject({
+      completedAt: new Date("2020-09-29T02:59:00Z"),
+      scheduledFor: new Date(WEDNESDAY),
+      status: "done",
+    });
 
-      await expectTuesdayStable({ finished, fixture, nextMorning: "2020-09-29T03:01:00Z" });
-    }));
+    await expectTuesdayStable({ finished, fixture, nextMorning: "2020-09-29T03:01:00Z" });
+  });
 });
