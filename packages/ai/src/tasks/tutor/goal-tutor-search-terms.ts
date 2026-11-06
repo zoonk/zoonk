@@ -10,6 +10,12 @@ const FUNCTION_WORDS = [
   "der die das ein eine des dem den und oder in im am an auf für mit ohne nach vor seit",
 ] as const;
 
+/** They ask for what's current, never about what. */
+const QUALIFIERS = [
+  "nova novo novas novos atual atualizado atualizada atualização vigente vigência vigor",
+  "new current latest update updated actual",
+] as const;
+
 const WORDS = [
   "direito direitos lei leis artigo artigos art arts inciso incisos parágrafo parágrafos alínea caput",
   "súmula súmulas vinculante jurisprudência entendimento tese teses tema temas repercussão geral",
@@ -20,8 +26,8 @@ const WORDS = [
   "empresarial comercial consumidor ambiental eleitoral previdenciário previdenciária internacional",
   "humanos ética estatuto regulamento regimento resolução provimento portaria instrução normativa",
   "decreto emenda medida provisória complementar ordinária revogação revogado revogada revogou",
-  "alteração alterações alterado alterada alterou nova novo novas novos redação vigência vigente vigor",
-  "atual atualizado atualizada atualização prazo prazos prescrição decadência competência",
+  "alteração alterações alterado alterada alterou redação",
+  "prazo prazos prescrição decadência competência",
   "contrato contratos cláusula cláusulas nula nulo nulidade válida válido validade",
   "honorários sucumbência sucumbenciais advocatícios contratuais advogado advogados advocacia",
   "sociedade empregado empregados empregador empregadores salário férias jornada rescisão demissão",
@@ -36,11 +42,11 @@ const WORDS = [
   "objetiva oficial resultado recursos regras regra",
   "law laws act acts article articles section sections clause clauses statute statutes regulation",
   "regulations rule rules ruling rulings court courts supreme decision decisions case cases precedent",
-  "amendment amendments repeal repealed new current latest update updated valid invalid contract",
+  "amendment amendments repeal repealed valid invalid contract",
   "contracts employee employer tax taxes federal state constitution constitutional",
   "exam exams test tests board syllabus notice date dates deadline registration score scores",
   "cutoff passing official requirements format section",
-  "ley leyes artículo artículos decreto reforma derogación derogado vigente actual sentencia",
+  "ley leyes artículo artículos decreto reforma derogación derogado sentencia",
   "tribunal supremo constitucional jurisprudencia contrato examen convocatoria oposiciones temario",
   "suprema corte nación amparo admisión ingreso aciertos reactivos guía",
   "fecha plazo requisitos",
@@ -78,9 +84,15 @@ function toSet(lines: readonly string[]): ReadonlySet<string> {
   return new Set(lines.flatMap((line) => line.split(" ")).map((word) => normalizeSearchWord(word)));
 }
 
-export const SEARCH_TERMS = toSet([...FUNCTION_WORDS, ...WORDS, ...ACRONYMS, ROMAN_NUMERALS]);
+export const SEARCH_TERMS = toSet([
+  ...FUNCTION_WORDS,
+  ...QUALIFIERS,
+  ...WORDS,
+  ...ACRONYMS,
+  ROMAN_NUMERALS,
+]);
 
-export const SEARCH_FUNCTION_WORDS = toSet(FUNCTION_WORDS);
+export const SEARCH_FILLER_WORDS = toSet([...FUNCTION_WORDS, ...QUALIFIERS, ROMAN_NUMERALS]);
 
 export const SEARCH_REFERENCE_WORDS = toSet(REFERENCE_WORDS);
 

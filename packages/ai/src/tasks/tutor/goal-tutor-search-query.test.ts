@@ -361,6 +361,20 @@ describe(buildSearchQueries, () => {
         `what changed in ${thisYear}`,
       ]),
     ).toStrictEqual([]);
+
+    // A product's or a pronoun's name taken out leaves only a qualifier or a Roman numeral.
+    expect(
+      build(asking(SOFIA_PLAN), ["current FooWidget version", "latest FooWidget", "I versus me"]),
+    ).toStrictEqual([]);
+  });
+
+  it("sends a law's number alone as the reference it is", () => {
+    const course = { ...SOFIA_PLAN.course, description: "Lei 8.906/1994 e IN 128/2022" };
+
+    expect(build(asking({ ...SOFIA_PLAN, course }), ["8.906/1994", "IN 128/2022"])).toStrictEqual([
+      "8.906/1994",
+      "IN 128/2022",
+    ]);
   });
 
   it("sends at most three queries of up to 200 characters, each once", () => {

@@ -1,7 +1,7 @@
 import { type PlanScopeContext } from "../lessons/lesson-question-context";
 import { collectPublicText } from "./goal-tutor-search-public-text";
 import {
-  SEARCH_FUNCTION_WORDS,
+  SEARCH_FILLER_WORDS,
   SEARCH_LAW_WORDS,
   SEARCH_REFERENCE_WORDS,
   SEARCH_TERMS,
@@ -333,9 +333,15 @@ function cutAtWord(query: string): string {
   return end === -1 ? "" : cut.slice(0, end);
 }
 
-/** "do" or "in 2026" alone would search the web at random. */
+/** "do", "in 2026" or "current" alone would search the web at random; a law's number names one. */
 function hasSubject(query: string): boolean {
-  return toRuns(query).some((run) => !PLAIN_NUMBER.test(run) && !SEARCH_FUNCTION_WORDS.has(run));
+  return query
+    .split(WHITESPACE)
+    .some(
+      (word) =>
+        LAW_NUMBER.test(word.replaceAll(EDGE_PUNCTUATION, "")) ||
+        toRuns(word).some((run) => !PLAIN_NUMBER.test(run) && !SEARCH_FILLER_WORDS.has(run)),
+    );
 }
 
 function dedupe(queries: readonly string[]): string[] {
