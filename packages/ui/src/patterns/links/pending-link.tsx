@@ -20,22 +20,13 @@ function markPendingLinks(attribute: string) {
       const isPlain =
         event.button === 0 && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey;
 
-      if (!link || !isPlain) {
-        return;
+      if (link && isPlain) {
+        setTimeout(() => {
+          if (!event.defaultPrevented) {
+            link.setAttribute("aria-busy", "true");
+          }
+        }, 0);
       }
-
-      // A busy link is already on its way; another tap or Enter would only send it again.
-      if (link.getAttribute("aria-busy") === "true") {
-        event.preventDefault();
-        return;
-      }
-
-      setTimeout(() => {
-        if (!event.defaultPrevented) {
-          link.setAttribute("aria-busy", "true");
-          link.setAttribute("aria-disabled", "true");
-        }
-      }, 0);
     },
     { capture: true },
   );
@@ -44,7 +35,6 @@ function markPendingLinks(attribute: string) {
   globalThis.addEventListener("pageshow", () => {
     for (const link of document.querySelectorAll(`a[${attribute}][aria-busy]`)) {
       link.removeAttribute("aria-busy");
-      link.removeAttribute("aria-disabled");
     }
   });
 }
@@ -54,14 +44,18 @@ export const PENDING_LINK_SCRIPT = `(${markPendingLinks.toString()})(${JSON.stri
 /**
  * For a link that loads another document in this tab, such as sign-in on another site: the browser
  * keeps this page as it was until that one answers. With `PENDING_LINK_SCRIPT` in the page, the link
- * is busy from the tap, as a busy `Button` is, even before the page hydrates.
+ * is busy from the tap, even before the page hydrates. It still takes another tap, which retries a
+ * navigation the browser stopped (Esc, its stop button), since no `pageshow` clears the mark then.
  */
 export function PendingLink({ children, className, ...props }: ComponentProps<"a">) {
   return (
     <a
       {...props}
       {...{ [PENDING_LINK_ATTRIBUTE]: "" }}
-      className={cn("group/busy relative [&_svg:not([class*='size-'])]:size-4", className)}
+      className={cn(
+        "group/busy relative aria-busy:cursor-progress aria-busy:opacity-60 [&_svg:not([class*='size-'])]:size-4",
+        className,
+      )}
       // The script marks a link tapped before the page hydrates.
       suppressHydrationWarning
     >

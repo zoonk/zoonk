@@ -4,7 +4,6 @@ import { NOTICE_SOURCE, PHASE_DATES_SOURCE } from "@zoonk/core/plans/change-cont
 import { type PlanChangeDecisionInput } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
-import { usePressed } from "@zoonk/ui/hooks/pressed";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
@@ -90,21 +89,14 @@ function useAnsweredText() {
 
 function ChangeActions({
   change,
+  disabled,
   onAnswer,
-  pending,
 }: {
   change: Change;
+  disabled: boolean;
   onAnswer: (answer: Decision) => void;
-  pending: boolean;
 }) {
   const t = useExtracted();
-  const pressed = usePressed<Decision>(pending);
-
-  const answer = (decision: Decision) => {
-    pressed.press(decision);
-    onAnswer(decision);
-  };
-
   const keepOfficialDate = useKeepOfficialDateLabel();
   const overridesNotice = change.officialDate !== null;
   // Answering the notice or the phase dates keeps what the learner has, and the answer stays.
@@ -113,21 +105,12 @@ function ChangeActions({
   return (
     <SuggestionActions>
       {change.canApply && (
-        <SuggestionAction
-          busy={pressed.busy("applied")}
-          disabled={pending}
-          onClick={() => answer("applied")}
-        >
+        <SuggestionAction disabled={disabled} onClick={() => onAnswer("applied")}>
           {overridesNotice ? t("Use my date anyway") : t("Apply")}
         </SuggestionAction>
       )}
 
-      <SuggestionAction
-        busy={pressed.busy("declined")}
-        disabled={pending}
-        onClick={() => answer("declined")}
-        variant="outline"
-      >
+      <SuggestionAction disabled={disabled} onClick={() => onAnswer("declined")} variant="outline">
         {keepsMine && !overridesNotice && t("Keep mine")}
         {overridesNotice && keepOfficialDate(change.examDocument)}
         {!keepsMine && !overridesNotice && t("Not now")}
@@ -206,7 +189,7 @@ function AfterAnswer({
 
   if (state.answer === "applied" && state.answered.canUndo) {
     return (
-      <SuggestionAction busy={isPending} onClick={() => answer("undone")} variant="outline">
+      <SuggestionAction disabled={isPending} onClick={() => answer("undone")} variant="outline">
         {t("Undo")}
       </SuggestionAction>
     );
@@ -270,7 +253,7 @@ function PlanChangeNotice({
             {after && <SuggestionActions>{after}</SuggestionActions>}
           </>
         ) : (
-          <ChangeActions change={change} onAnswer={answer} pending={isPending} />
+          <ChangeActions change={change} disabled={isPending} onAnswer={answer} />
         )}
 
         {failed && <SuggestionSaveError />}

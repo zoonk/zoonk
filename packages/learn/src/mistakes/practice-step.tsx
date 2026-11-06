@@ -2,7 +2,6 @@
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { Button } from "@zoonk/ui/components/button";
-import { usePressed } from "@zoonk/ui/hooks/pressed";
 import { useExtracted } from "next-intl";
 import { useMemo } from "react";
 import {
@@ -78,7 +77,6 @@ function getTrueFalseResult({
 export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
   const t = useExtracted();
   const { phase } = run.state;
-  const pressed = usePressed<"check" | "notSure">(phase.kind === "checking");
 
   if (phase.kind === "reading") {
     return <ShowAnswersButton onReveal={run.reveal} />;
@@ -93,28 +91,15 @@ export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
   const answer = selected ?? retry;
   const checking = phase.kind === "checking";
 
-  const notSure = () => {
-    pressed.press("notSure");
-    run.notSure();
-  };
-
-  const check = () => {
-    if (answer) {
-      pressed.press("check");
-      run.check(answer);
-    }
-  };
-
   return (
     <>
       {step.entry.drill.kind === "noGuessing" ? (
-        <NotSureButton busy={pressed.busy("notSure")} disabled={checking} onClick={notSure} />
+        <NotSureButton disabled={checking} onClick={run.notSure} />
       ) : (
         <Button
-          busy={pressed.busy("notSure")}
           disabled={checking}
           focusableWhenDisabled
-          onClick={notSure}
+          onClick={run.notSure}
           size="lg"
           variant="outline"
         >
@@ -122,7 +107,11 @@ export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
         </Button>
       )}
 
-      <CheckButton busy={pressed.busy("check")} disabled={!answer || checking} onCheck={check} />
+      <CheckButton
+        busy={checking}
+        disabled={!answer}
+        onCheck={() => (answer ? run.check(answer) : undefined)}
+      />
     </>
   );
 }

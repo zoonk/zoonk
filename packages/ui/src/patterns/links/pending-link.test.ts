@@ -36,10 +36,9 @@ describe("the pending-link script", () => {
     vi.useRealTimers();
   });
 
-  it("marks a sign-in link busy and disabled as soon as it's tapped, from any part of it", () => {
+  it("marks a sign-in link as soon as it's tapped, from any part of it", () => {
     click(loginLink().querySelector("span")!);
     expect(loginLink().getAttribute("aria-busy")).toBe("true");
-    expect(loginLink().getAttribute("aria-disabled")).toBe("true");
   });
 
   it("marks a link whose click the page stops on its way up, as React does while it hydrates", () => {
@@ -58,15 +57,16 @@ describe("the pending-link script", () => {
 
     click(document.querySelector('a[href="#pricing"]')!);
 
-    expect(document.querySelectorAll("[aria-busy], [aria-disabled]")).toHaveLength(0);
+    expect(document.querySelectorAll("[aria-busy]")).toHaveLength(0);
   });
 
-  it("ignores another tap or Enter on a link already on its way, keeping focus", () => {
+  it("lets a busy link be tapped again, so a navigation the browser stopped can be retried", () => {
     loginLink().focus();
     expect(click(loginLink())).toBe(true);
 
-    expect(click(loginLink().querySelector("span")!)).toBe(false);
-    expect(click(loginLink(), { metaKey: true })).toBe(true);
+    expect(click(loginLink().querySelector("span")!)).toBe(true);
+    expect(loginLink().getAttribute("aria-busy")).toBe("true");
+    expect(loginLink().hasAttribute("aria-disabled")).toBe(false);
     expect(document.activeElement).toBe(loginLink());
   });
 
@@ -75,6 +75,5 @@ describe("the pending-link script", () => {
     globalThis.dispatchEvent(new Event("pageshow"));
 
     expect(loginLink().hasAttribute("aria-busy")).toBe(false);
-    expect(loginLink().hasAttribute("aria-disabled")).toBe(false);
   });
 });

@@ -183,9 +183,9 @@ function DateFieldStep({
         {noSittingShown && (
           <p className="text-muted-foreground text-sm text-pretty" data-slot="no-sitting">
             <NoSittingWords
+              disabled={pending}
               noSitting={noSittingShown}
               onUse={(targetDate) => onAnswer({ question: "targetDate", targetDate })}
-              pending={pending}
             />
           </p>
         )}

@@ -20,27 +20,18 @@ export function ShowAnswersButton({ onReveal }: { onReveal: () => void }) {
 }
 
 export function NotSureButton({
-  busy = false,
-  disabled = false,
+  disabled,
   label,
   onClick,
 }: {
-  busy?: boolean;
-  disabled?: boolean;
+  disabled: boolean;
   label?: string;
   onClick: () => void;
 }) {
   const t = useExtracted();
 
   return (
-    <Button
-      busy={busy}
-      disabled={disabled}
-      focusableWhenDisabled
-      onClick={onClick}
-      size="lg"
-      variant="outline"
-    >
+    <Button disabled={disabled} focusableWhenDisabled onClick={onClick} size="lg" variant="outline">
       <HelpCircleIcon aria-hidden="true" />
       {label ?? t("I'm not sure")}
     </Button>

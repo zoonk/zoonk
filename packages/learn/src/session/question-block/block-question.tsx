@@ -300,11 +300,15 @@ export function BlockQuestionActions({
 
   return (
     <>
-      {drill?.kind === "noGuessing" && answering && <NotSureButton onClick={notSure} />}
+      {drill?.kind === "noGuessing" && answering && (
+        <NotSureButton disabled={false} onClick={notSure} />
+      )}
 
       {(question.placement || question.format === "typed") &&
         drill?.kind !== "noGuessing" &&
-        answering && <NotSureButton label={t("I don't know yet")} onClick={notSure} />}
+        answering && (
+          <NotSureButton disabled={false} label={t("I don't know yet")} onClick={notSure} />
+        )}
 
       <CheckButton
         busy={phase.kind === "checking"}

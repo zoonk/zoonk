@@ -108,9 +108,8 @@ function PasteText({ onAdd, pending }: { onAdd: (text: string) => void; pending:
         value={text}
       />
       <Button
-        busy={pending}
         className="self-start"
-        disabled={!text.trim()}
+        disabled={pending || !text.trim()}
         focusableWhenDisabled
         size="sm"
         type="submit"

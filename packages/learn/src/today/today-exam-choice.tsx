@@ -1,7 +1,6 @@
 "use client";
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { usePressed } from "@zoonk/ui/hooks/pressed";
 import { safeAsync } from "@zoonk/utils/error";
 import { SignpostIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -64,7 +63,6 @@ function ChoiceQuestion({
 }) {
   const t = useExtracted();
   const leftOutLine = useChoiceLeftOutLine();
-  const pressed = usePressed<string>(isPending);
 
   const question =
     choice.take > 1
@@ -85,21 +83,17 @@ function ChoiceQuestion({
         {choice.take > 1 ? (
           <ExamChoicePicks
             choice={choice}
+            disabled={isPending}
             onSave={(subjects) => onPick({ group: choice.group, subjects })}
-            pending={isPending}
           />
         ) : (
           // Equal options, so one under the other in their order, never one as the main answer.
           <SuggestionActions className="flex-col items-stretch">
             {choice.options.map((option) => (
               <SuggestionAction
-                busy={pressed.busy(option.name)}
                 disabled={isPending}
                 key={option.name}
-                onClick={() => {
-                  pressed.press(option.name);
-                  onPick({ group: choice.group, subjects: [option.name] });
-                }}
+                onClick={() => onPick({ group: choice.group, subjects: [option.name] })}
                 variant="outline"
               >
                 {option.shortName ?? option.name}
@@ -124,7 +118,7 @@ function ChoicePicked({ change, onUndone }: { change: PlanChangeView; onUndone: 
     save(() => actions.decidePlanChange({ changeId: change.id, status: "undone" }), onUndone);
 
   const undoButton = change.canUndo && (
-    <SuggestionAction busy={isPending} onClick={undo} variant="outline">
+    <SuggestionAction disabled={isPending} onClick={undo} variant="outline">
       {t("Undo")}
     </SuggestionAction>
   );

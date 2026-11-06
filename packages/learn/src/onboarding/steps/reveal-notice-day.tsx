@@ -29,12 +29,17 @@ export function RevealNoticeDay() {
           <>
             <span>{noticeDayText({ ...noticeDay, document: plan.examDocument })}</span>
             {space}
-            <Button busy={isPending} onClick={() => use(noticeDay.date)} variant="link">
+            <Button
+              disabled={isPending}
+              focusableWhenDisabled
+              onClick={() => use(noticeDay.date)}
+              variant="link"
+            >
               {t("Use this date")}
             </Button>
           </>
         ) : (
-          noSitting && <NoSittingWords noSitting={noSitting} onUse={use} pending={isPending} />
+          noSitting && <NoSittingWords disabled={isPending} noSitting={noSitting} onUse={use} />
         )}
       </p>
 

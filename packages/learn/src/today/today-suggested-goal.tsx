@@ -2,7 +2,6 @@
 
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { usePressed } from "@zoonk/ui/hooks/pressed";
 import { safeAsync } from "@zoonk/utils/error";
 import { CompassIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -28,18 +27,15 @@ type SuggestedGoalAnswer = "accepted" | "dismissed";
 function useSuggestedGoalAnswer(onAnswer: (status: SuggestedGoalAnswer) => Promise<boolean>) {
   const [failed, setFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const pressed = usePressed<SuggestedGoalAnswer>(isPending);
 
   const answer = (status: SuggestedGoalAnswer) => {
-    pressed.press(status);
-
     startTransition(async () => {
       const { data: saved } = await safeAsync(() => onAnswer(status));
       setFailed(!saved);
     });
   };
 
-  return { answer, busy: pressed.busy, failed, isPending };
+  return { answer, failed, isPending };
 }
 
 /** `onAnswer` resolves to whether it worked. */
@@ -51,7 +47,7 @@ function SuggestedGoalCard({
   suggestion: SuggestedGoalView;
 }) {
   const t = useExtracted();
-  const { answer, busy, failed, isPending } = useSuggestedGoalAnswer(onAnswer);
+  const { answer, failed, isPending } = useSuggestedGoalAnswer(onAnswer);
   const question = t("Continue {course}?", { course: suggestion.title });
 
   return (
@@ -66,16 +62,11 @@ function SuggestedGoalCard({
         <SuggestionDescription>{t("Build a plan in 1 minute.")}</SuggestionDescription>
 
         <SuggestionActions>
-          <SuggestionAction
-            busy={busy("accepted")}
-            disabled={isPending}
-            onClick={() => answer("accepted")}
-          >
+          <SuggestionAction disabled={isPending} onClick={() => answer("accepted")}>
             {t("Build my plan")}
           </SuggestionAction>
 
           <SuggestionAction
-            busy={busy("dismissed")}
             disabled={isPending}
             onClick={() => answer("dismissed")}
             variant="outline"
@@ -97,7 +88,7 @@ export function SuggestedGoalOffer({
   suggestion: SuggestedGoalView;
 }) {
   const t = useExtracted();
-  const { answer, busy, failed, isPending } = useSuggestedGoalAnswer(onAnswer);
+  const { answer, failed, isPending } = useSuggestedGoalAnswer(onAnswer);
   const space = useSentenceSpace();
 
   return (
@@ -115,7 +106,6 @@ export function SuggestedGoalOffer({
 
       <div className="flex gap-2 [&>*:first-child]:flex-1 sm:[&>*:first-child]:flex-none">
         <Button
-          busy={busy("accepted")}
           disabled={isPending}
           focusableWhenDisabled
           onClick={() => answer("accepted")}
@@ -124,7 +114,6 @@ export function SuggestedGoalOffer({
           {t("Build my plan")}
         </Button>
         <Button
-          busy={busy("dismissed")}
           disabled={isPending}
           focusableWhenDisabled
           onClick={() => answer("dismissed")}
