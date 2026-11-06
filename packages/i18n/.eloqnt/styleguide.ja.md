@@ -18,6 +18,7 @@
 ## Glossary
 
 - “lesson”: “レッスン”, not “授業”; lessons are counted “#レッスン”, not with “件”, “回” or “つ”
+- “idea” (one of the main points on a lesson's map): “ポイント”, never “アイデア”
 - “certificate” (what a finished course or level earns) and the Certificates page: “証明書”, never “修了証” or “認定証”; “Certificate of completion”: “修了証明書”
 - the language “placement test” or “level test”: “レベル診断テスト”
 - “goal” (the learner's goal): “目標”

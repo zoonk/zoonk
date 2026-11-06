@@ -3220,12 +3220,6 @@ msgctxt "Ko-avu"
 msgid "Write to us at {email} and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
 msgstr "Mande um e-mail para {email} e a gente analisa o caso. Compras na App Store ou via Google Play seguem as regras de reembolso definidas por Apple ou Google."
 
-#: src/components/pricing/plus-questions.tsx
-#: src/components/public/public-footer.tsx
-msgctxt "xkr-zo"
-msgid "Terms"
-msgstr "Termos"
-
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "4YTeTA"
 msgid "{days, plural, =7 {Diagnostic and week 1} one {Diagnostic and day 1} other {Diagnostic and the first # days}}"
@@ -3391,6 +3385,11 @@ msgstr "A gente não encontrou esta página"
 msgctxt "Vge-RX"
 msgid "Footer"
 msgstr "Rodapé"
+
+#: src/components/public/public-footer.tsx
+msgctxt "xkr-zo"
+msgid "Terms"
+msgstr "Termos"
 
 #: src/components/public/public-footer.tsx
 msgctxt "k7JNE3"

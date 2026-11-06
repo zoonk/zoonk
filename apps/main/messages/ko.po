@@ -3220,12 +3220,6 @@ msgctxt "Ko-avu"
 msgid "Write to us at {email} and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
 msgstr "{email}로 문의해 주시면 확인해 볼게요. App Store나 Google Play에서 구매한 경우 Apple이나 Google의 환불 정책이 적용돼요."
 
-#: src/components/pricing/plus-questions.tsx
-#: src/components/public/public-footer.tsx
-msgctxt "xkr-zo"
-msgid "Terms"
-msgstr "이용약관"
-
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "4YTeTA"
 msgid "{days, plural, =7 {Diagnostic and week 1} one {Diagnostic and day 1} other {Diagnostic and the first # days}}"
@@ -3391,6 +3385,11 @@ msgstr "페이지를 찾을 수 없어요"
 msgctxt "Vge-RX"
 msgid "Footer"
 msgstr "하단 메뉴"
+
+#: src/components/public/public-footer.tsx
+msgctxt "xkr-zo"
+msgid "Terms"
+msgstr "이용약관"
 
 #: src/components/public/public-footer.tsx
 msgctxt "k7JNE3"
