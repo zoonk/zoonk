@@ -106,78 +106,43 @@ private fun DrawScope.drawHighlight(
     )
 }
 
-/** The pen's two passes under a phrase, as points on each line it covers. */
-internal class UnderlineStroke(
-    val pen: List<List<Offset>>,
-    val echo: List<List<Offset>>,
-)
-
 /**
- * A pen's underline, as the concept draws it ("Lousa"): one wavy stroke just under the descenders
- * and a thinner pass under it. Each pass is one line along the whole phrase whose waves keep their
- * length at the text's size, so a phrase that wraps gives each line its slice of the same stroke,
- * never a whole squiggle squeezed into a short word. The pen lifts with a small curl only where the
- * phrase ends, never at a line break.
+ * A pen's underline, as the concept draws it ("Lousa"): one wavy stroke just under the descenders,
+ * as points on each line the phrase covers. The stroke runs along the whole phrase and its waves
+ * keep their length at the text's size, so a phrase that wraps gives each line its slice of the
+ * same stroke, never a whole squiggle squeezed into a short word. The pen lifts with a small curl
+ * only where the phrase ends, never at a line break.
  */
 internal fun underlineStroke(
     spans: List<LineSpan>,
     em: Float,
-): UnderlineStroke {
-    val length = spans.sumOf { (it.right - it.left).toDouble() }.toFloat()
-    val curl = minOf(em * CURL_LENGTH, length / 3, spans.lastOrNull()?.let { it.right - it.left } ?: 0f)
-
-    return UnderlineStroke(
-        pen =
-            alongPhrase(spans, em, trim = 0f) { at ->
-                val lift = if (at > length - curl) em * CURL_LIFT * ((at - (length - curl)) / curl).pow(2) else 0f
-                em * (PEN_DROP + PEN_SWAY * sin(TAU * at / (em * PEN_WAVE)) + PEN_RIPPLE * sin(TAU * at / (em * RIPPLE_WAVE) + 1.3f)) - lift
-            },
-        echo =
-            alongPhrase(
-                spans,
-                em,
-                trim = em * ECHO_TRIM,
-            ) { at -> em * (ECHO_DROP + ECHO_SWAY * sin(TAU * at / (em * ECHO_WAVE) + 2.1f)) },
-    )
-}
-
-/**
- * Points every [em] / 6 along the phrase, read as one line across [spans] and kept [trim] away from
- * its two ends, with [depth] giving how far below the baseline the stroke runs at each distance.
- */
-private fun alongPhrase(
-    spans: List<LineSpan>,
-    em: Float,
-    trim: Float,
-    depth: (Float) -> Float,
 ): List<List<Offset>> {
     val length = spans.sumOf { (it.right - it.left).toDouble() }.toFloat()
+    val curl = minOf(em * CURL_LENGTH, length / 3, spans.lastOrNull()?.let { it.right - it.left } ?: 0f)
     val step = em / 6
     val starts = spans.runningFold(0f) { start, span -> start + span.right - span.left }
 
     return spans.zip(starts).mapNotNull { (span, start) ->
-        val from = maxOf(start, trim)
-        val to = minOf(start + span.right - span.left, length - trim)
-        if (to <= from) return@mapNotNull null
-        val between = (floor(from / step).toInt() + 1..ceil(to / step).toInt() - 1).map { it * step }
+        val end = start + span.right - span.left
+        if (end <= start) return@mapNotNull null
+        val between = (floor(start / step).toInt() + 1..ceil(end / step).toInt() - 1).map { it * step }
 
-        (listOf(from) + between + to).map { at ->
-            Offset(if (span.rtl) span.right - (at - start) else span.left + (at - start), span.baseline + depth(at))
+        (listOf(start) + between + end).map { at ->
+            val lift = if (at > length - curl) em * CURL_LIFT * ((at - (length - curl)) / curl).pow(2) else 0f
+            val depth =
+                em * (PEN_DROP + PEN_SWAY * sin(TAU * at / (em * PEN_WAVE)) + PEN_RIPPLE * sin(TAU * at / (em * RIPPLE_WAVE) + 1.3f))
+            Offset(if (span.rtl) span.right - (at - start) else span.left + (at - start), span.baseline + depth - lift)
         }
     }
 }
 
 private fun DrawScope.drawUnderline(
-    stroke: UnderlineStroke,
+    lines: List<List<Offset>>,
     em: Float,
     color: Color,
 ) {
-    val width = maxOf(em * UNDERLINE_WIDTH, 1.5.dp.toPx())
-    val echo = color.copy(alpha = color.alpha * UNDERLINE_ECHO_ALPHA)
-    stroke.pen.forEach { drawPath(it.toPath(), color, style = Stroke(width, cap = StrokeCap.Round, join = StrokeJoin.Round)) }
-    stroke.echo.forEach {
-        drawPath(it.toPath(), echo, style = Stroke(maxOf(width / 2, 1.dp.toPx()), cap = StrokeCap.Round, join = StrokeJoin.Round))
-    }
+    val stroke = Stroke(maxOf(em * UNDERLINE_WIDTH, 1.5.dp.toPx()), cap = StrokeCap.Round, join = StrokeJoin.Round)
+    lines.forEach { drawPath(it.toPath(), color, style = stroke) }
 }
 
 private fun List<Offset>.toPath() =
@@ -193,7 +158,7 @@ private const val HIGHLIGHT_CORNER = 0.25f
 private const val TAU = 2 * PI.toFloat()
 
 // In ems: the pen's height below the baseline, its sway and the length of one wave, with a faster
-// ripple over it as a hand's; the curl's length and lift; the echo pass likewise, trimmed at the ends.
+// ripple over it as a hand's; the curl's length and lift.
 private const val PEN_DROP = 0.27f
 private const val PEN_SWAY = 0.05f
 private const val PEN_WAVE = 6.5f
@@ -201,9 +166,4 @@ private const val PEN_RIPPLE = 0.015f
 private const val RIPPLE_WAVE = 3.7f
 private const val CURL_LENGTH = 0.7f
 private const val CURL_LIFT = 0.12f
-private const val ECHO_DROP = 0.4f
-private const val ECHO_SWAY = 0.03f
-private const val ECHO_WAVE = 13f
-private const val ECHO_TRIM = 0.35f
 private const val UNDERLINE_WIDTH = 0.12f
-private const val UNDERLINE_ECHO_ALPHA = 0.65f
