@@ -1,14 +1,62 @@
 import SwiftUI
 
+/// Without an example frame to sit on, the screen's icon sits on the corner of its title and text
+/// together, so this draws both.
 struct LessonScreenText: View {
+  let title: String?
   let text: String
   let marks: StepMarks?
 
   var body: some View {
-    if let marks {
-      LessonMarkedText(parts: LessonTextParts(text, marks: marks), icon: marks.icon)
+    let parts = marks.map { LessonTextParts(text, marks: $0) }
+    let cornerIcon = parts?.example == nil ? marks?.icon : nil
+
+    VStack(alignment: .leading, spacing: 20) {
+      if let title {
+        LessonQuestionText(text: title)
+          .besideCornerIcon(cornerIcon)
+
+        screenText(parts)
+      } else {
+        screenText(parts)
+          .besideCornerIcon(cornerIcon)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private func screenText(_ parts: LessonTextParts?) -> some View {
+    if let parts {
+      LessonMarkedText(parts: parts, icon: marks?.icon)
     } else {
       LessonTextBlocks(text)
+    }
+  }
+}
+
+/// Main wraps the lines beside its floated icon, which SwiftUI can't. Here what leads the block keeps
+/// clear of the icon for its whole height, and what follows starts below the icon, which may reach
+/// into the space between them.
+private struct BesideCornerIcon: ViewModifier {
+  let icon: LessonIcon
+
+  func body(content: Content) -> some View {
+    VStack(alignment: .leading, spacing: 20) { content }
+      .padding(.trailing, LessonCornerIcon.size + 12)
+      .frame(maxWidth: .infinity, minHeight: LessonCornerIcon.size - 12, alignment: .topLeading)
+      .overlay(alignment: .topTrailing) {
+        LessonIconImage(icon: icon, size: LessonCornerIcon.size)
+      }
+  }
+}
+
+extension View {
+  @ViewBuilder
+  fileprivate func besideCornerIcon(_ icon: LessonIcon?) -> some View {
+    if let icon {
+      modifier(BesideCornerIcon(icon: icon))
+    } else {
+      self
     }
   }
 }
@@ -20,12 +68,7 @@ private struct LessonMarkedText: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
       if let before = parts.before {
-        if parts.example == nil {
-          blocks(before)
-            .lessonCornerIcon(icon, inset: 0)
-        } else {
-          blocks(before)
-        }
+        blocks(before)
       }
 
       if let example = parts.example {
