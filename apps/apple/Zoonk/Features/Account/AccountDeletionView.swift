@@ -248,7 +248,7 @@ struct AccountDeletionView: View {
         )
         .disabled(session.isWorking)
 
-        BusyButton(isBusy: session.isWorking, role: .destructive) {
+        Button(role: .destructive) {
           pendingDeletion = .email
           isConfirmingDeletion = true
         } label: {
@@ -257,11 +257,11 @@ struct AccountDeletionView: View {
             tableName: "Account",
             comment: "Verifies the email code and permanently deletes the account"
           )
-          .frame(maxWidth: .infinity, alignment: .leading)
+          .spinnerAtEndWhenSlow(session.isWorking)
         }
-        .disabled(normalizedCode.count != 6)
+        .disabled(normalizedCode.count != 6 || session.isWorking)
 
-        BusyButton(isBusy: session.isWorking) {
+        Button {
           Task {
             await sendEmailCode()
           }
@@ -271,10 +271,11 @@ struct AccountDeletionView: View {
             tableName: "Account",
             comment: "Sends a replacement account deletion verification code"
           )
-          .frame(maxWidth: .infinity, alignment: .leading)
+          .spinnerAtEndWhenSlow(session.isWorking)
         }
+        .disabled(session.isWorking)
       } else {
-        BusyButton(isBusy: session.isWorking) {
+        Button {
           Task {
             await sendEmailCode()
           }
@@ -284,8 +285,9 @@ struct AccountDeletionView: View {
             tableName: "Account",
             comment: "Sends an email code for account deletion reauthorization"
           )
-          .frame(maxWidth: .infinity, alignment: .leading)
+          .spinnerAtEndWhenSlow(session.isWorking)
         }
+        .disabled(session.isWorking)
       }
     } header: {
       Text(

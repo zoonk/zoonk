@@ -153,9 +153,9 @@ struct PlanDateSection: View {
         ),
       asksOnAppear: asksStudyEverything
     ) { isPreviewing, ask in
-      BusyButton(isBusy: isPreviewing, action: ask) {
+      Button(action: ask) {
         Text("Study everything", tableName: "Plan", comment: "Drops the goal's deadline")
-          .frame(maxWidth: .infinity, alignment: .leading)
+          .spinnerAtEndWhenSlow(isPreviewing)
       }
     }
   }

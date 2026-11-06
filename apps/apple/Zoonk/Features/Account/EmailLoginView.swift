@@ -66,15 +66,15 @@ struct EmailLoginView: View {
 
       Section {
         if hasSentCode {
-          BusyButton(isBusy: session.isWorking, action: signIn) {
+          Button(action: signIn) {
             Text(
               "Sign in",
               tableName: "Account",
               comment: "Button that verifies an email code"
             )
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .spinnerAtEndWhenSlow(session.isWorking)
           }
-          .disabled(!isCodeValid)
+          .disabled(!isCodeValid || session.isWorking)
 
           Button {
             code = ""
@@ -88,15 +88,15 @@ struct EmailLoginView: View {
           }
           .disabled(session.isWorking)
         } else {
-          BusyButton(isBusy: session.isWorking, action: sendEmailCode) {
+          Button(action: sendEmailCode) {
             Text(
               "Send code",
               tableName: "Account",
               comment: "Button that sends an email sign-in code"
             )
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .spinnerAtEndWhenSlow(session.isWorking)
           }
-          .disabled(!isEmailValid)
+          .disabled(!isEmailValid || session.isWorking)
         }
       }
 

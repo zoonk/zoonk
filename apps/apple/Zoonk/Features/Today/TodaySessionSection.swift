@@ -212,10 +212,10 @@ struct TodaySessionSection: View {
   private func blockButton(_ block: StudyBlock, isNext: Bool) -> some View {
     let row = BlockRow(
       block: block, view: view, isNext: isNext, countsTowardMission: countsTowardMission(block),
-      failed: failed == .block(block.position))
+      isBusy: busy == .block(block.position), failed: failed == .block(block.position))
 
     if block.waitReason == nil {
-      BusyButton(isBusy: busy == .block(block.position)) {
+      Button {
         open(block, false)
       } label: {
         row
@@ -392,6 +392,7 @@ struct BlockRow: View {
   let view: TodayView?
   let isNext: Bool
   let countsTowardMission: Bool
+  var isBusy = false
   var failed = false
   var showsDetail = false
 
@@ -448,6 +449,7 @@ struct BlockRow: View {
           .font(.footnote.monospacedDigit())
           .foregroundStyle(.secondary)
       }
+      .coveredBySpinnerWhenSlow(isBusy, alignment: .trailing)
     }
   }
 
@@ -515,8 +517,9 @@ private struct ComingLessonsRow: View {
   var body: some View {
     switch coming {
     case .toPrepare:
-      BusyButton(isBusy: isBusy, action: prepare) {
+      Button(action: prepare) {
         row
+          .spinnerAtEndWhenSlow(isBusy)
       }
       .tint(.primary)
     case .beingWritten:
@@ -564,7 +567,6 @@ private struct ComingLessonsRow: View {
           .font(.footnote)
         }
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
     }
   }
 }

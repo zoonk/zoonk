@@ -690,7 +690,7 @@ private struct WebPlusSection: View {
       }
 
       if web.state == .ending {
-        BusyButton(isBusy: change != nil) {
+        Button {
           run { await settings.keepWebPlus() }
         } label: {
           Text(
@@ -698,10 +698,11 @@ private struct WebPlusSection: View {
             comment:
               "Turns the stopped renewal of Plus bought on the web back on, so it renews as before"
           )
-          .frame(maxWidth: .infinity, alignment: .leading)
+          .spinnerAtEndWhenSlow(change != nil)
         }
+        .disabled(change != nil)
       } else {
-        BusyButton(isBusy: change != nil) {
+        Button {
           failed = false
           isConfirmingCancel = true
         } label: {
@@ -710,8 +711,9 @@ private struct WebPlusSection: View {
             comment:
               "Cancels Plus bought on the web: the button, and the confirmation in its dialog"
           )
-          .frame(maxWidth: .infinity, alignment: .leading)
+          .spinnerAtEndWhenSlow(change != nil)
         }
+        .disabled(change != nil)
         .confirmationDialog(
           Text(
             "Cancel Plus?", tableName: "Account", comment: "Title of the dialog that cancels Plus"),

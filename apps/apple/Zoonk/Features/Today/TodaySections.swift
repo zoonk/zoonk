@@ -89,7 +89,7 @@ struct TodayMoreSection: View {
           }
 
           if (state == .done || state == .rest) && view.session.extraTime.available {
-            BusyButton(isBusy: busy == .keepLearning, action: addTime) {
+            Button(action: addTime) {
               Label {
                 VStack(alignment: .leading, spacing: 2) {
                   view.studiedToday
@@ -106,8 +106,8 @@ struct TodayMoreSection: View {
                 }
               } icon: {
                 Image(systemName: "plus.circle")
+                  .coveredBySpinnerWhenSlow(busy == .keepLearning)
               }
-              .frame(maxWidth: .infinity, alignment: .leading)
             }
             .disabled(busy != nil)
           }
@@ -115,7 +115,7 @@ struct TodayMoreSection: View {
           if let later = view.session.catchUp?.later, later.offered,
             state == .underway || state == .done
           {
-            BusyButton(isBusy: busy == .catchUp, action: catchUp) {
+            Button(action: catchUp) {
               Label {
                 VStack(alignment: .leading, spacing: 2) {
                   Text(
@@ -129,8 +129,8 @@ struct TodayMoreSection: View {
                 }
               } icon: {
                 Image(systemName: "arrow.uturn.forward")
+                  .coveredBySpinnerWhenSlow(busy == .catchUp)
               }
-              .frame(maxWidth: .infinity, alignment: .leading)
             }
             .disabled(busy != nil)
           }

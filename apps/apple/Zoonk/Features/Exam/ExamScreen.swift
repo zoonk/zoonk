@@ -993,13 +993,15 @@ private struct SpeakingMockSection: View {
             "Your mock opens as soon as it's ready.", tableName: "Exam",
             comment: "A speaking mock opens by itself once it's written"))
       } else {
-        BusyButton(isBusy: start.isStarting) {
+        Button {
           start.start(.case3(.init(goalId: goalId, kind: .speakingMock)), voice: voice) {
             router.open(.conversation(conversationId: $0))
           }
         } label: {
           Text("Start the mock", tableName: "Exam", comment: "Starts the speaking mock")
+            .spinnerAtEndWhenSlow(start.isStarting)
         }
+        .disabled(start.isStarting)
 
         switch start.refusal {
         case .limit(let limit):
