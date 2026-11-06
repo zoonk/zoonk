@@ -225,22 +225,29 @@ describe(practiceReducer, () => {
     expect(state.reached).toStrictEqual({ energy: 60, level: { color: "yellow", level: 1 } });
   });
 
-  it("keeps the answer to check again when grading fails", () => {
-    const practice = [entry("time", { kind: "timed", timeLimitSeconds: 45 })];
-    const reduce = practiceReducer;
+  it.each(["notSure", "timer"] as const)(
+    "sends the failed answer again as %s sent it",
+    (sender) => {
+      const practice = [entry("time", { kind: "timed", timeLimitSeconds: 45 })];
+      const reduce = practiceReducer;
 
-    const checking = reduce(createPracticeState(practice), {
-      answer: { dontKnow: true },
-      sender: "timer",
-      type: "check",
-    });
+      const checking = reduce(createPracticeState(practice), {
+        answer: { dontKnow: true },
+        sender,
+        type: "check",
+      });
 
-    expect(reduce(checking, { type: "answerFailed" }).phase).toStrictEqual({
-      answer: { dontKnow: true },
-      kind: "answerFailed",
-      sender: "timer",
-    });
-  });
+      const failed = reduce(checking, { type: "answerFailed" });
+
+      expect(failed.phase).toStrictEqual({
+        answer: { dontKnow: true },
+        kind: "answerFailed",
+        sender,
+      });
+
+      expect(reduce(failed, { type: "retry" }).phase).toStrictEqual(checking.phase);
+    },
+  );
 });
 
 describe(getPracticeSegments, () => {

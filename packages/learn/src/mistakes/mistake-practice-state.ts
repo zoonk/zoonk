@@ -77,6 +77,7 @@ type PracticeAction =
   | { answer: ChoiceAnswer; sender: AnswerSender; type: "check" }
   | { feedback: Graded; mistakeId: string; type: "answered" }
   | { type: "answerFailed" }
+  | { type: "retry" }
   | { type: "next" }
   | { type: "end" }
   | { summary: MistakePracticeSummary | null; type: "ended" };
@@ -188,6 +189,10 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
     case "answerFailed":
       return state.phase.kind === "checking"
         ? { ...state, phase: { ...state.phase, kind: "answerFailed" } }
+        : state;
+    case "retry":
+      return state.phase.kind === "answerFailed"
+        ? { ...state, phase: { ...state.phase, kind: "checking" } }
         : state;
     case "next":
       return {
