@@ -2,14 +2,9 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { refreshWebSource } from "../sources/web-sources";
-import { pickCurrentRelease } from "./current-release";
+import { isNewer, isReleased, pickCurrentRelease } from "./current-release";
 
 type DatedRelease = { id: string; releasedAt: Date | null };
-
-function isNewer(first: DatedRelease, second: DatedRelease): boolean {
-  const byDate = (first.releasedAt?.getTime() ?? 0) - (second.releasedAt?.getTime() ?? 0);
-  return byDate === 0 ? first.id > second.id : byDate > 0;
-}
 
 /**
  * The release a course teaching `fromId` moves to next: the oldest one out after it, so each
@@ -40,7 +35,7 @@ function pickNextRelease<TRelease extends DatedRelease>({
   }
 
   return releases
-    .filter((release) => release.releasedAt && release.releasedAt <= now && isNewer(release, from))
+    .filter((release) => isReleased({ now, release }) && isNewer(release, from))
     .reduce((oldest, release) => (isNewer(oldest, release) ? release : oldest), current);
 }
 

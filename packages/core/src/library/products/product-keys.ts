@@ -21,6 +21,11 @@ export function toNameKey(name: string): string {
   );
 }
 
+/** A product is named by its own name's key or one of its aliases. */
+export function whereProductNamed(nameKey: string) {
+  return { OR: [{ normalizedName: nameKey }, { aliases: { has: nameKey } }] };
+}
+
 /** "v16" and "16" are the same version. */
 export function toVersionKey(version: string): string {
   return toNameKey(version).replace(VERSION_PREFIX, "");

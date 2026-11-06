@@ -2,7 +2,7 @@ import "server-only";
 import { type ProductRelease, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { pickCurrentRelease } from "./current-release";
-import { toNameKey, toRegistrableDomain, toVersionKey } from "./product-keys";
+import { toNameKey, toRegistrableDomain, toVersionKey, whereProductNamed } from "./product-keys";
 
 const FRESH_RELEASES_DAYS = 7;
 
@@ -20,7 +20,7 @@ function loadCandidates(nameKey: string) {
       releases: true,
       releasesSource: { select: { contentHash: true, fetchedAt: true } },
     },
-    where: { OR: [{ normalizedName: nameKey }, { aliases: { has: nameKey } }] },
+    where: whereProductNamed(nameKey),
   });
 }
 

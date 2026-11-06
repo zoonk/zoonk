@@ -3,7 +3,7 @@ import { type Course, prisma } from "@zoonk/db";
 import { findOrCreateGoalCourse } from "../curriculum/find-or-create-goal-course";
 import { type GoalProduct } from "./goal-product";
 import { findOrCreateProductCourse } from "./product-course";
-import { toNameKey } from "./product-keys";
+import { toNameKey, whereProductNamed } from "./product-keys";
 
 type GoalCourseRequest = Parameters<typeof findOrCreateGoalCourse>[0] & {
   product: GoalProduct | null;
@@ -14,7 +14,7 @@ async function findKnownProductId(nameKey: string): Promise<string | null> {
   const products = await prisma.product.findMany({
     select: { id: true },
     take: 2,
-    where: { OR: [{ aliases: { has: nameKey } }, { normalizedName: nameKey }] },
+    where: whereProductNamed(nameKey),
   });
 
   const [only] = products;
