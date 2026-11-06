@@ -402,8 +402,14 @@ struct MockSpeaking: Hashable, Decodable, Sendable {
       case completed
     }
 
+    struct Minutes: Hashable, Decodable, Sendable {
+      var max: Double
+      var min: Double
+    }
+
     var conversationId: String
     var key: String
+    var minutes: Minutes
     var name: String
     var status: Status
 

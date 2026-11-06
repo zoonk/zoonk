@@ -456,7 +456,7 @@ private fun PhaseBand(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(height)
+                // Before the height, so the ticks meet the band rather than the 48dp touch target Surface centers on it.
                 .drawBehind {
                     todayShare ?: return@drawBehind
                     val x = size.width * if (layoutDirection == LayoutDirection.Rtl) 1 - todayShare else todayShare
@@ -464,7 +464,8 @@ private fun PhaseBand(
                     val line = 1.5.dp.toPx()
                     drawRect(ink, Offset(x, -tick), Size(line, tick))
                     drawRect(ink, Offset(x, size.height), Size(line, tick))
-                }.semantics { contentDescription = label },
+                }.height(height)
+                .semantics { contentDescription = label },
         shape = MaterialTheme.shapes.small,
         color = container,
         contentColor = content,
@@ -518,7 +519,7 @@ private fun PhaseLane(
 
     FractionRow(
         Modifier
-            .padding(top = 4.dp)
+            .padding(top = 8.dp)
             .height(16.dp)
             .fillMaxWidth()
             .clearAndSetSemantics {},
