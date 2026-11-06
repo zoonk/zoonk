@@ -93,7 +93,8 @@ extension PageSection where Footer == EmptyView {
 }
 
 /// Main's tablet column under its list (`sm:grid-cols-2`): the page's sections as blocks, two to a
-/// row, each row as tall as its taller block. One column where text stacks or two don't fit.
+/// row, each row as tall as its taller block. One column where text stacks, two don't fit or
+/// there's only one.
 struct BlockGridSection<Content: View>: View {
   @Environment(\.stacksContent) private var isStacked
 
@@ -131,7 +132,7 @@ private struct BlockGrid: Layout {
   func placeSubviews(
     in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
   ) {
-    let columns = columns(for: bounds.width)
+    let columns = columns(for: bounds.width, count: subviews.count)
     var y = bounds.minY
 
     for (row, height) in rowHeights(subviews, width: bounds.width).enumerated() {
@@ -145,8 +146,10 @@ private struct BlockGrid: Layout {
     }
   }
 
-  private func columns(for width: CGFloat) -> (count: Int, width: CGFloat) {
-    guard !isStacked, width >= minimumColumn * 2 + columnSpacing else {
+  /// A lone block takes the whole width, such as the Plan's next steps where the tab bar already
+  /// lists the other places.
+  private func columns(for width: CGFloat, count: Int) -> (count: Int, width: CGFloat) {
+    guard !isStacked, count > 1, width >= minimumColumn * 2 + columnSpacing else {
       return (1, width)
     }
 
@@ -154,7 +157,7 @@ private struct BlockGrid: Layout {
   }
 
   private func rowHeights(_ subviews: Subviews, width: CGFloat) -> [CGFloat] {
-    let columns = columns(for: width)
+    let columns = columns(for: width, count: subviews.count)
 
     return stride(from: 0, to: subviews.count, by: columns.count).map { start in
       subviews[start..<min(start + columns.count, subviews.count)]

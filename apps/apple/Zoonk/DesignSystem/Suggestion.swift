@@ -26,22 +26,33 @@ struct SuggestionMark: View {
 }
 
 /// Main's `SuggestionLine`: a panel with the suggestion's mark, its summary in two lines at most,
-/// and one small action at its end.
+/// and one small action at its end; stacked, the whole summary and the action under it.
 struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
+  @Environment(\.stacksContent) private var isStacked
+
   @ViewBuilder let mark: Mark
   @ViewBuilder let summary: Summary
   @ViewBuilder let action: Action
 
   var body: some View {
-    HStack(spacing: 10) {
-      mark
-        .accessibilityHidden(true)
+    // Stacked, two lines of large text say too little, so the summary wraps whole and the action
+    // goes under it.
+    let layout =
+      isStacked
+      ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+      : AnyLayout(HStackLayout(spacing: 10))
 
-      summary
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-        .lineLimit(2)
-        .frame(maxWidth: .infinity, alignment: .leading)
+    layout {
+      HStack(alignment: isStacked ? .firstTextBaseline : .center, spacing: 10) {
+        mark
+          .accessibilityHidden(true)
+
+        summary
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+          .lineLimit(isStacked ? nil : 2)
+          .frame(maxWidth: .infinity, alignment: .leading)
+      }
 
       action
     }
