@@ -246,7 +246,12 @@ describe(followUpsWorkflow, () => {
   it("starts one run for a learner however many ask together, and runs their rows once", async () => {
     const { mistakeId, userId } = await owedCause();
 
-    const runIds = await Promise.all([startFollowUps(userId), startFollowUps(userId)]);
+    // A run gives up its token once it ends its rows, and a start decided after that rightly starts
+    // a new run, so the row stays locked until every ask is answered.
+    const runIds = await prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM follow_ups WHERE user_id = ${userId}::uuid FOR UPDATE`;
+      return Promise.all([startFollowUps(userId), startFollowUps(userId)]);
+    });
 
     expect(new Set(runIds).size).toBe(1);
     await getRun(runIds[0] ?? "").returnValue;
