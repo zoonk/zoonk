@@ -186,14 +186,21 @@ const lesson = {
   phases: [
     { id: "plan", seconds: 40 },
     { id: "write", seconds: 50 },
+    { id: "mark", seconds: 10 },
+    { id: "draw", seconds: 45 },
   ],
   steps: {
+    drawPictures: "draw",
     joinRunningLesson: "join",
     lessonReady: "done",
+    markLesson: "mark",
     planLesson: "plan",
     writeLesson: "write",
   },
-} as const satisfies GenerationKindDefinition<LessonContentStepName, "plan" | "write">;
+} as const satisfies GenerationKindDefinition<
+  LessonContentStepName,
+  "draw" | "mark" | "plan" | "write"
+>;
 
 const CALL_STEPS = { callReady: "done", joinRunningCall: "join", writeCall: "write" } as const;
 

@@ -4144,15 +4144,82 @@ msgctxt "q8l1Sf"
 msgid "This didn't start"
 msgstr "준비가 시작되지 않았어요"
 
-#: src/generation/use-generation-copy.ts
-msgctxt "K-ogAc"
-msgid "Writing question {number}…"
-msgstr "{number}번 문제를 만들고 있어요…"
+#: src/generation/lesson-generation-copy.ts
+msgctxt "57Hm5c"
+msgid "Writing your lesson"
+msgstr "레슨을 만들고 있어요"
 
+#. A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it.
+#: src/generation/lesson-generation-copy.ts
+msgctxt "FXibMW"
+msgid "Drawing the pictures"
+msgstr "그림을 그리고 있어요"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "b9LtBx"
+msgid "Drawing what each screen describes…"
+msgstr "각 화면의 내용에 맞춰 그림을 그리고 있어요…"
+
+#. Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4".
+#: src/generation/lesson-generation-copy.ts
+msgctxt "iztB5A"
+msgid "Drawing an icon for each idea…"
+msgstr "각 개념을 나타내는 아이콘을 그리고 있어요…"
+
+#. A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it. "Ideas" are the lesson map's ideas, as in "Idea 2 of 4".
+#: src/generation/lesson-generation-copy.ts
+msgctxt "j9wN0e"
+msgid "Highlighting the key ideas"
+msgstr "핵심 개념을 강조하고 있어요"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "SfG70y"
+msgid "Underlining what matters most…"
+msgstr "가장 중요한 내용에 밑줄을 긋고 있어요…"
+
+#. Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4".
+#: src/generation/lesson-generation-copy.ts
+msgctxt "T2D5Nn"
+msgid "Matching each screen to its idea…"
+msgstr "각 화면을 그에 맞는 개념과 연결하고 있어요…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "qE4faw"
+msgid "Planning the lesson"
+msgstr "레슨을 계획하고 있어요"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "UfNh0L"
+msgid "Choosing what to cover…"
+msgstr "다룰 내용을 고르고 있어요…"
+
+#. Zoonk at work on a lesson. "It" is the lesson's topic.
+#: src/generation/lesson-generation-copy.ts
+msgctxt "0rFPyc"
+msgid "Picking the best way to explain it…"
+msgstr "주제를 가장 잘 설명할 방법을 고르고 있어요…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "Dwuk2D"
+msgid "Writing the lesson"
+msgstr "레슨을 만들고 있어요"
+
+#: src/generation/lesson-generation-copy.ts
+#: src/generation/use-generation-copy.ts
+msgctxt "gGJukf"
+msgid "Writing screen {number}…"
+msgstr "{number}번째 화면을 만들고 있어요…"
+
+#: src/generation/lesson-generation-copy.ts
 #: src/generation/use-generation-copy.ts
 msgctxt "phPNe2"
 msgid "Checking the answers…"
 msgstr "정답을 확인하고 있어요…"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "K-ogAc"
+msgid "Writing question {number}…"
+msgstr "{number}번 문제를 만들고 있어요…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "289EPU"
@@ -4384,11 +4451,6 @@ msgid "Writing about 5 short screens"
 msgstr "짧은 설명 화면을 5개 정도 만들고 있어요"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "gGJukf"
-msgid "Writing screen {number}…"
-msgstr "{number}번째 화면을 만들고 있어요…"
-
-#: src/generation/use-generation-copy.ts
 msgctxt "hSi5Cg"
 msgid "Checking the facts…"
 msgstr "내용이 사실과 맞는지 확인하고 있어요…"
@@ -4427,32 +4489,6 @@ msgstr "모의고사를 만들고 있어요"
 msgctxt "M1AYoH"
 msgid "Writing questions like the exam's"
 msgstr "실제 시험과 비슷한 문제를 만들고 있어요"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "57Hm5c"
-msgid "Writing your lesson"
-msgstr "레슨을 만들고 있어요"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "qE4faw"
-msgid "Planning the lesson"
-msgstr "레슨을 계획하고 있어요"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "UfNh0L"
-msgid "Choosing what to cover…"
-msgstr "다룰 내용을 고르고 있어요…"
-
-#. Zoonk at work on a lesson. "It" is the lesson's topic.
-#: src/generation/use-generation-copy.ts
-msgctxt "0rFPyc"
-msgid "Picking the best way to explain it…"
-msgstr "주제를 가장 잘 설명할 방법을 고르고 있어요…"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "Dwuk2D"
-msgid "Writing the lesson"
-msgstr "레슨을 만들고 있어요"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "_49owu"

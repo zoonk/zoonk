@@ -4144,15 +4144,82 @@ msgctxt "q8l1Sf"
 msgid "This didn't start"
 msgstr "Das wurde nicht gestartet"
 
-#: src/generation/use-generation-copy.ts
-msgctxt "K-ogAc"
-msgid "Writing question {number}…"
-msgstr "Wir erstellen Frage {number}…"
+#: src/generation/lesson-generation-copy.ts
+msgctxt "57Hm5c"
+msgid "Writing your lesson"
+msgstr "Wir erstellen deine Lektion"
 
+#. A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it.
+#: src/generation/lesson-generation-copy.ts
+msgctxt "FXibMW"
+msgid "Drawing the pictures"
+msgstr "Wir zeichnen die Bilder"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "b9LtBx"
+msgid "Drawing what each screen describes…"
+msgstr "Wir zeichnen, was auf jeder Seite beschrieben wird…"
+
+#. Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4".
+#: src/generation/lesson-generation-copy.ts
+msgctxt "iztB5A"
+msgid "Drawing an icon for each idea…"
+msgstr "Wir zeichnen für jede Idee ein Symbol…"
+
+#. A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it. "Ideas" are the lesson map's ideas, as in "Idea 2 of 4".
+#: src/generation/lesson-generation-copy.ts
+msgctxt "j9wN0e"
+msgid "Highlighting the key ideas"
+msgstr "Wir heben die wichtigsten Ideen hervor"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "SfG70y"
+msgid "Underlining what matters most…"
+msgstr "Wir unterstreichen, was am wichtigsten ist…"
+
+#. Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4".
+#: src/generation/lesson-generation-copy.ts
+msgctxt "T2D5Nn"
+msgid "Matching each screen to its idea…"
+msgstr "Wir ordnen jede Seite der passenden Idee zu…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "qE4faw"
+msgid "Planning the lesson"
+msgstr "Wir planen die Lektion"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "UfNh0L"
+msgid "Choosing what to cover…"
+msgstr "Wir wählen die Inhalte aus…"
+
+#. Zoonk at work on a lesson. "It" is the lesson's topic.
+#: src/generation/lesson-generation-copy.ts
+msgctxt "0rFPyc"
+msgid "Picking the best way to explain it…"
+msgstr "Wir überlegen, wie wir das am besten erklären…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "Dwuk2D"
+msgid "Writing the lesson"
+msgstr "Wir erstellen die Lektion"
+
+#: src/generation/lesson-generation-copy.ts
+#: src/generation/use-generation-copy.ts
+msgctxt "gGJukf"
+msgid "Writing screen {number}…"
+msgstr "Wir erstellen Seite {number}…"
+
+#: src/generation/lesson-generation-copy.ts
 #: src/generation/use-generation-copy.ts
 msgctxt "phPNe2"
 msgid "Checking the answers…"
 msgstr "Wir prüfen die Antworten…"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "K-ogAc"
+msgid "Writing question {number}…"
+msgstr "Wir erstellen Frage {number}…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "289EPU"
@@ -4384,11 +4451,6 @@ msgid "Writing about 5 short screens"
 msgstr "Wir erstellen etwa 5 kurze Seiten"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "gGJukf"
-msgid "Writing screen {number}…"
-msgstr "Wir erstellen Seite {number}…"
-
-#: src/generation/use-generation-copy.ts
 msgctxt "hSi5Cg"
 msgid "Checking the facts…"
 msgstr "Wir prüfen die Fakten…"
@@ -4427,32 +4489,6 @@ msgstr "Wir erstellen deine Probeprüfung"
 msgctxt "M1AYoH"
 msgid "Writing questions like the exam's"
 msgstr "Wir erstellen Fragen wie in der Prüfung"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "57Hm5c"
-msgid "Writing your lesson"
-msgstr "Wir erstellen deine Lektion"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "qE4faw"
-msgid "Planning the lesson"
-msgstr "Wir planen die Lektion"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "UfNh0L"
-msgid "Choosing what to cover…"
-msgstr "Wir wählen die Inhalte aus…"
-
-#. Zoonk at work on a lesson. "It" is the lesson's topic.
-#: src/generation/use-generation-copy.ts
-msgctxt "0rFPyc"
-msgid "Picking the best way to explain it…"
-msgstr "Wir überlegen, wie wir das am besten erklären…"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "Dwuk2D"
-msgid "Writing the lesson"
-msgstr "Wir erstellen die Lektion"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "_49owu"

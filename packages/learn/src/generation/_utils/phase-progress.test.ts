@@ -117,7 +117,7 @@ describe(getPhaseProgress, () => {
         status: "failed",
         steps: { planLesson: "started" },
       }),
-    ).toStrictEqual(["plan:active", "write:pending"]);
+    ).toStrictEqual(["plan:active", "write:pending", "mark:pending", "draw:pending"]);
   });
 
   it("has nothing running when the run never started", () => {
