@@ -25,6 +25,20 @@ function QuestionScrollTarget({ questionId }: { questionId: string | null | unde
   return null;
 }
 
+const THREAD_INSET_CLASS = "px-4 py-6 sm:px-5";
+
+const SHORT_PANEL_CLASS =
+  "[@container(max-height:10rem)]:py-3 [@container(max-height:10rem)]:**:data-[slot=empty-icon]:hidden";
+
+/** Reads from the top, unlike the conversation, which opens at its latest message. */
+export function ThreadPanel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="scroll-fade-b @container-size size-full min-h-0 scrollbar-thin scrollbar-gutter-stable overflow-y-auto overscroll-contain">
+      <div className={cn(THREAD_INSET_CLASS, SHORT_PANEL_CLASS)}>{children}</div>
+    </div>
+  );
+}
+
 export function ThreadViewport({
   children,
   className,
@@ -39,7 +53,7 @@ export function ThreadViewport({
       <MessageScroller>
         {/* The scroller preserves message positions; native anchoring would apply a second scroll adjustment. */}
         <MessageScrollerViewport
-          className={cn("px-4 py-6 [overflow-anchor:none] sm:px-5", className)}
+          className={cn(THREAD_INSET_CLASS, "[overflow-anchor:none]", className)}
           {...props}
         >
           {children}
