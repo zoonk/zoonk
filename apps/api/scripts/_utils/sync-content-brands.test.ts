@@ -105,4 +105,23 @@ describe(upsertOrganizations, () => {
 
     await expect(readBrand(local.id)).resolves.toMatchObject({ domain: `lumen-${key}.example` });
   });
+
+  it("keeps a local brand with another domain under the slug, syncing the source brand apart", async () => {
+    const key = randomUUID().slice(0, 8);
+    const slug = `orbit-${key}`;
+    const local = await brandFixture({ domain: `orbit-tools-${key}.example`, slug });
+    const incoming = sourceBrand({ domain: `orbit-foods-${key}.example`, slug });
+
+    await expect(sync([incoming])).resolves.toStrictEqual([incoming.id]);
+
+    await expect(readBrand(local.id)).resolves.toStrictEqual({
+      domain: `orbit-tools-${key}.example`,
+      slug: `orbit-${key}`,
+    });
+
+    await expect(readBrand(incoming.id)).resolves.toStrictEqual({
+      domain: `orbit-foods-${key}.example`,
+      slug: `orbit-${key}-2`,
+    });
+  });
 });

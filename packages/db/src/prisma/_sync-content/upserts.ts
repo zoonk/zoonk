@@ -1,3 +1,4 @@
+import { pickAvailableSlug } from "@zoonk/utils/string";
 import { type Client } from "pg";
 import {
   type TableRows,
@@ -59,7 +60,8 @@ function withOrganization({
 
 /**
  * A brand is its domain: research may have saved the same brand here under another slug. Each source
- * brand takes the id and slug of the local brand with its domain, else of the one with its slug.
+ * brand takes the id and slug of the local brand with its domain, else of a local brand with its slug
+ * and no domain. One whose slug a different local brand holds is a new brand with a free slug.
  */
 async function matchLocalBrands({
   data,
@@ -70,18 +72,28 @@ async function matchLocalBrands({
 }): Promise<TableRows> {
   const local = await readRows({
     client: destination,
-    params: [getColumnValues(data, "domain"), getColumnValues(data, "slug")],
-    query: "SELECT id, slug, domain FROM organizations WHERE domain = ANY($1) OR slug = ANY($2)",
+    query: "SELECT id, slug, domain FROM organizations",
   });
 
-  const byDomain = new Map(local.rows.map((row) => [row.domain, row]));
+  const byDomain = new Map(local.rows.flatMap((row) => (row.domain ? [[row.domain, row]] : [])));
   const bySlug = new Map(local.rows.map((row) => [row.slug, row]));
+  const taken = [...getColumnValues(local, "slug"), ...getColumnValues(data, "slug")];
 
   return {
     ...data,
     rows: data.rows.map((row) => {
-      const match = (row.domain && byDomain.get(row.domain)) || bySlug.get(row.slug);
-      return match ? { ...row, id: match.id ?? null, slug: match.slug ?? null } : row;
+      const sameSlug = bySlug.get(row.slug);
+
+      const match =
+        (row.domain && byDomain.get(row.domain)) || (sameSlug?.domain ? null : sameSlug);
+
+      if (match) {
+        return { ...row, id: match.id ?? null, slug: match.slug ?? null };
+      }
+
+      return sameSlug && row.slug
+        ? { ...row, slug: pickAvailableSlug({ base: row.slug, taken }) }
+        : row;
     }),
   };
 }
