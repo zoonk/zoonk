@@ -67,6 +67,7 @@ async function writeWhatsNewChapter({
       courseId,
       level: whatsNew.level,
       provenance: outline.provenance,
+      releaseId,
       skills,
       workflowRunId,
     }),

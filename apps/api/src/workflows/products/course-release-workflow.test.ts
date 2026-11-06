@@ -119,6 +119,27 @@ describe(courseReleaseWorkflow, () => {
     );
   });
 
+  it("saves the What's new chapter and its lessons without asking a model who they are", async () => {
+    const { course } = await productCourse();
+    await follow(course.id);
+    compareWith({ changed: [], whatsNew: WHATS_NEW }, UNCHANGED);
+    vi.mocked(generateCourseOutline).mockImplementation(async () => exportOutline() as never);
+
+    await courseReleaseWorkflow({ courseId: course.id });
+
+    expect(generateSearchTerms).not.toHaveBeenCalled();
+    expect(decideLibraryIdentity).not.toHaveBeenCalled();
+
+    const lessons = await prisma.chapterLesson.findMany({
+      select: { lesson: { select: { skills: { select: { skill: true } } } } },
+      where: { chapter: { courses: { some: { courseId: course.id } } } },
+    });
+
+    expect(lessons.flatMap(({ lesson }) => lesson.skills.map(({ skill }) => skill.name))).toContain(
+      WHATS_NEW.skills[0]?.name,
+    );
+  });
+
   it("applies each release in turn until the course teaches the current one", async () => {
     const { course, releases } = await productCourse();
     await follow(course.id);

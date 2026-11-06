@@ -3,6 +3,7 @@ import { type CourseLevel, type TransactionClient, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
 import { type GoalSkillRef } from "../curriculum/curriculum-scope";
+import { type OutlineKeys } from "../curriculum/save-outline-chapter";
 import { readLessonMap } from "../lessons/lesson-map";
 import { toNameKey } from "./product-keys";
 
@@ -131,11 +132,20 @@ export type ReleaseComparisonResult = {
   whatsNew: WhatsNew | null;
 };
 
+/** A release's What's new is its own: one chapter, lessons and skills per release and language. */
+export function toWhatsNewKeys(releaseId: string): OutlineKeys {
+  const prefix = `whats-new:${releaseId}`;
+
+  return {
+    chapter: prefix,
+    lesson: (title) => `${prefix}:lesson:${toNameKey(title)}`,
+    skill: (name) => `${prefix}:${toNameKey(name)}`,
+  };
+}
+
 function toSkillKeys({ releaseId, whatsNew }: { releaseId: string; whatsNew: WhatsNew }) {
-  return whatsNew.skills.map((skill) => ({
-    ...skill,
-    identityKey: `whats-new:${releaseId}:${toNameKey(skill.name)}`,
-  }));
+  const keys = toWhatsNewKeys(releaseId);
+  return whatsNew.skills.map((skill) => ({ ...skill, identityKey: keys.skill(skill.name) }));
 }
 
 async function findWhatsNewSkills({

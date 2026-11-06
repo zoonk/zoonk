@@ -145,9 +145,7 @@ export async function saveWhatsNewChapterStep(
 ): Promise<CourseContentWrite<{ lessonIds: string[] }>> {
   "use step";
 
-  return collectCourseContentTags(() =>
-    saveWhatsNewChapter({ ...input, analytics: toAnalytics(input.workflowRunId) }),
-  );
+  return collectCourseContentTags(() => saveWhatsNewChapter(input));
 }
 
 export async function findWhatsNewChapterStep(

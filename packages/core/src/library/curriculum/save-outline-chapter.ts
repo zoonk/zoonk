@@ -10,7 +10,9 @@ import { createLibraryChapter } from "../chapters/create-library-chapter";
 import { claimLibraryGeneration, finishLibraryGeneration } from "../claims/generation-claim";
 import { type IdentityCourse } from "../identity/_utils/identity-requests";
 import { resolveLibraryIdentity } from "../identity/resolve-library-identity";
+import { createHomeChapterLessons } from "../lessons/create-library-lesson";
 import { placeChapterLessons } from "../lessons/place-chapter-lessons";
+import { createSkill } from "../skills/create-skill";
 import {
   type CurriculumAnalytics,
   type CurriculumScope,
@@ -22,10 +24,21 @@ import { tagChapterSkills } from "./teaching-chapters";
 export type CourseOutline = Awaited<ReturnType<typeof generateCourseOutline>>["data"];
 export type OutlineChapter = CourseOutline["chapters"][number];
 
+/**
+ * Identities for a chapter that's new with new lessons, such as a release's What's new, so nothing
+ * is matched against the library and a retry finds what an earlier try saved.
+ */
+export type OutlineKeys = {
+  chapter: string;
+  lesson: (title: string) => string;
+  skill: (name: string) => string;
+};
+
 type ChapterContext = {
   analytics?: CurriculumAnalytics;
   courseId: string;
   goalSkills: readonly GoalSkillRef[];
+  keys?: OutlineKeys;
   level: CourseLevel;
   provenance: LibraryProvenance;
   scope: CurriculumScope;
@@ -43,23 +56,25 @@ async function resolveChapter({
   chapter: OutlineChapter;
   context: OutlineContext;
 }): Promise<string> {
-  const { analytics, course, level, provenance, scope } = context;
+  const { analytics, course, keys, level, provenance, scope } = context;
 
-  const resolution = await resolveLibraryIdentity({
-    analytics,
-    request: {
-      course,
-      description: chapter.description,
-      goal: scope.generalGoal,
-      kind: "chapter",
-      language: scope.language,
-      level,
-      objectives: chapter.objectives,
-      ownerId: scope.ownerId,
-      targetLanguage: scope.targetLanguage,
-      title: chapter.title,
-    },
-  });
+  const resolution = keys
+    ? { identityKey: keys.chapter, kind: "generate" as const }
+    : await resolveLibraryIdentity({
+        analytics,
+        request: {
+          course,
+          description: chapter.description,
+          goal: scope.generalGoal,
+          kind: "chapter",
+          language: scope.language,
+          level,
+          objectives: chapter.objectives,
+          ownerId: scope.ownerId,
+          targetLanguage: scope.targetLanguage,
+          title: chapter.title,
+        },
+      });
 
   if (resolution.kind === "existing") {
     return resolution.id;
@@ -81,6 +96,65 @@ async function resolveChapter({
   return created.chapter.id;
 }
 
+async function createKeyedLessons({
+  chapter,
+  chapterId,
+  context,
+  keys,
+}: {
+  chapter: OutlineChapter;
+  chapterId: string;
+  context: OutlineContext;
+  keys: OutlineKeys;
+}): Promise<string[]> {
+  const { level, provenance, scope } = context;
+
+  const named = new Map(
+    chapter.lessons.flatMap((lesson) =>
+      lesson.skills.map((name) => [name, lesson.canDo || lesson.description] as const),
+    ),
+  );
+
+  const skills = await Promise.all(
+    [...named].map(async ([name, description]) => {
+      const { skill } = await createSkill({
+        description,
+        example: null,
+        identityKey: keys.skill(name),
+        language: scope.language,
+        level,
+        name,
+        ownerId: scope.ownerId,
+        provenance,
+        targetLanguage: scope.targetLanguage,
+      });
+
+      return [name, skill.id] as const;
+    }),
+  );
+
+  const skillIds = new Map(skills);
+
+  const created = await createHomeChapterLessons({
+    homeChapterId: chapterId,
+    lessons: chapter.lessons.map((lesson) => ({
+      canDo: lesson.canDo,
+      description: lesson.description,
+      estimatedMinutes: lesson.estimatedMinutes,
+      identityKey: keys.lesson(lesson.title),
+      language: scope.language,
+      level,
+      provenance,
+      skillIds: lesson.skills.flatMap((name) => skillIds.get(name) ?? []),
+      targetLanguage: scope.targetLanguage,
+      title: lesson.title,
+    })),
+    ownerId: scope.ownerId,
+  });
+
+  return created.map(({ lesson }) => lesson.id);
+}
+
 async function resolveChapterLessons({
   chapter,
   chapterId,
@@ -90,6 +164,10 @@ async function resolveChapterLessons({
   chapterId: string;
   context: OutlineContext;
 }): Promise<(string | null)[]> {
+  if (context.keys) {
+    return createKeyedLessons({ chapter, chapterId, context, keys: context.keys });
+  }
+
   return resolveScopeLessons({
     ...context,
     homeChapterId: chapterId,

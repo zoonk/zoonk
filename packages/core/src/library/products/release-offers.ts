@@ -2,13 +2,14 @@ import "server-only";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { proposePlanChange } from "../../plans/propose-plan-change";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
-import { type CurriculumAnalytics, type GoalSkillRef } from "../curriculum/curriculum-scope";
+import { type GoalSkillRef } from "../curriculum/curriculum-scope";
 import {
   type OutlineChapter,
   type SavedOutlineChapter,
   saveOutlineChapter,
 } from "../curriculum/save-outline-chapter";
 import { courseFollowersFilter } from "./course-release";
+import { toWhatsNewKeys } from "./release-advance";
 
 const OFFER_PAGE_SIZE = 50;
 
@@ -70,19 +71,19 @@ export async function findWhatsNewChapter({
 
 /** Internal workflow bridge: the chapter goes last in its band of the product's main course. */
 export async function saveWhatsNewChapter({
-  analytics,
   chapter,
   courseId,
   level,
   provenance,
+  releaseId,
   skills,
   workflowRunId,
 }: {
-  analytics?: CurriculumAnalytics;
   chapter: OutlineChapter;
   courseId: string;
   level: CourseLevel;
   provenance: LibraryProvenance;
+  releaseId: string;
   skills: GoalSkillRef[];
   workflowRunId: string;
 }): Promise<SavedOutlineChapter> {
@@ -96,10 +97,10 @@ export async function saveWhatsNewChapter({
   ]);
 
   return saveOutlineChapter({
-    analytics,
     chapter,
     courseId,
     goalSkills: skills,
+    keys: toWhatsNewKeys(releaseId),
     level,
     position: (last?.position ?? -1) + 1,
     provenance,
