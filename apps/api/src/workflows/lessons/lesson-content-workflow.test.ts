@@ -438,29 +438,18 @@ describe(lessonContentWorkflow, () => {
     ).toStrictEqual(["priority", "priority"]);
   });
 
-  it("joins the run already writing the lesson and ends with its result", async () => {
+  it("leaves a lesson another run holds to that run, without writing to a stream nobody follows", async () => {
     const lesson = await outlinedLesson();
 
-    vi.mocked(getRun).mockImplementation(
-      () => ({ exists: Promise.resolve(true), status: Promise.resolve("completed") }) as never,
-    );
-
-    mockHookConflict({
-      returnValue: Promise.resolve({ lessonId: lesson.id, status: "ready" }),
-      runId: "owner-run",
-    });
+    mockHookConflict({ returnValue: new Promise(() => {}), runId: "learner-run" });
 
     await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
       lessonId: lesson.id,
-      status: "ready",
+      status: "busy",
     });
 
     expect(generateLessonSpec).not.toHaveBeenCalled();
-
-    expect(getStreamedEvents()).toStrictEqual([
-      { entityId: "owner-run", status: "started", step: "joinRunningLesson" },
-      { entityId: lesson.id, status: "completed", step: "lessonReady" },
-    ]);
+    expect(getStreamedEvents()).toStrictEqual([]);
   });
 
   it("answers at once for a lesson already written", async () => {

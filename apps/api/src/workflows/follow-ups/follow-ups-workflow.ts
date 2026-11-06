@@ -1,13 +1,16 @@
 import { type OwedFollowUp } from "@zoonk/core/follow-ups/contract";
+import { getCallWritingKey } from "@zoonk/core/language/conversations/call-writing";
+import { createHook } from "workflow";
 import { start } from "workflow/api";
 import { repeatUntil } from "../_shared/repeat-until";
-import { claimRunToken } from "../_shared/run-token";
+import { startOnce } from "../_shared/run-token";
 import { callContentWorkflow } from "../calls/call-content-workflow";
+import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
 import { sourceVisibilityWorkflow } from "../research/source-visibility-workflow";
 import { sessionPreparationWorkflow } from "../sessions/session-preparation-workflow";
-import { backgroundTaskWorkflow } from "./background-task-workflow";
+import { backgroundTaskWorkflow, getBackgroundTaskToken } from "./background-task-workflow";
 import {
   countFollowUpsStep,
   endFollowUpStep,
@@ -19,7 +22,9 @@ const MAX_PASSES = 20;
 
 export type FollowUpsInput = { userId: string };
 
-export type FollowUpsResult = { status: "alreadyRunning" | "done" };
+export function getFollowUpsToken(userId: string): string {
+  return `follow-ups:${userId}`;
+}
 
 /** `start()` in a workflow is a step, so a replay never starts the same run twice. */
 async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
@@ -36,7 +41,11 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       const writing = await requestLessonWritingStep({ lessonId: followUp.input.lessonId, userId });
 
       if (writing) {
-        await start(lessonContentWorkflow, [writing]);
+        await startOnce(
+          lessonContentWorkflow,
+          [writing],
+          getLessonContentHookToken(writing.lessonId),
+        );
       }
 
       return;
@@ -51,11 +60,12 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
     case "rememberSession":
     case "settleSessionDay":
     case "voiceWord":
-      await start(backgroundTaskWorkflow, [followUp]);
+      await startOnce(backgroundTaskWorkflow, [followUp], getBackgroundTaskToken(followUp));
       return;
     case "writeSpeakingPaper": {
       const { mockId } = followUp.input;
-      await start(callContentWorkflow, [{ kind: "speakingPaper", mockId, userId }]);
+      const writing = { kind: "speakingPaper", mockId, userId } as const;
+      await startOnce(callContentWorkflow, [writing], getCallWritingKey(writing));
       return;
     }
     case "reviewAlphabetLesson": {
@@ -86,13 +96,10 @@ async function runPass(userId: string): Promise<number> {
   return followUps.length;
 }
 
-/** One run per learner at a time; a stopped holder's rows stay for the next one. */
-async function runOwedWork(userId: string): Promise<boolean> {
-  using claim = await claimRunToken(`follow-ups:${userId}`);
+export async function followUpsWorkflow({ userId }: FollowUpsInput): Promise<void> {
+  "use workflow";
 
-  if (claim.conflict) {
-    return false;
-  }
+  const startHook = createHook({ token: getFollowUpsToken(userId) });
 
   await repeatUntil({
     done: (count) => count === 0,
@@ -100,20 +107,11 @@ async function runOwedWork(userId: string): Promise<boolean> {
     times: MAX_PASSES,
   });
 
-  return true;
-}
+  // Releases the run's start token, so it can start its successor for work asked for while it ran:
+  // those starts found this run.
+  startHook.dispose();
 
-export async function followUpsWorkflow({ userId }: FollowUpsInput): Promise<FollowUpsResult> {
-  "use workflow";
-
-  if (!(await runOwedWork(userId))) {
-    return { status: "alreadyRunning" };
-  }
-
-  // Work asked for while this run held the learner went to a run that saw it and exited.
   if ((await countFollowUpsStep(userId)) > 0) {
-    await start(followUpsWorkflow, [{ userId }]);
+    await startOnce(followUpsWorkflow, [{ userId }], getFollowUpsToken(userId));
   }
-
-  return { status: "done" };
 }

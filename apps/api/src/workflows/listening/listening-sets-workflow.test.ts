@@ -10,8 +10,6 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { listeningExamFixture } from "@zoonk/testing/fixtures/listening";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createHook } from "workflow";
-import { mockHookConflict } from "../../../mocks/workflow";
 import { listeningSetsWorkflow } from "./listening-sets-workflow";
 
 function provenance() {
@@ -98,7 +96,6 @@ describe(listeningSetsWorkflow, () => {
       { status: "prepared", voiced: 2 },
     );
 
-    expect(createHook).toHaveBeenCalledWith({ token: `listening-sets:${first.id}` });
     expect(writeListeningSet).toHaveBeenCalledTimes(2);
     expect(voiceListeningScript).toHaveBeenCalledTimes(2);
 
@@ -169,19 +166,6 @@ describe(listeningSetsWorkflow, () => {
 
     expect(writeListeningSet).toHaveBeenCalledTimes(2);
     expect(voiceListeningScript).toHaveBeenCalledTimes(3);
-  });
-
-  it("joins the run already preparing the goal's recordings", async () => {
-    const exam = await listeningExamFixture();
-    const goal = await examGoal(exam);
-    mockHookConflict({ returnValue: Promise.resolve(null), runId: "other-run" });
-
-    await expect(listeningSetsWorkflow({ goalId: goal.id, wait: "later" })).resolves.toStrictEqual({
-      status: "joined",
-      voiced: 0,
-    });
-
-    expect(writeListeningSet).not.toHaveBeenCalled();
   });
 
   it("has nothing to make for a goal without listening", async () => {

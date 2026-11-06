@@ -15,6 +15,10 @@ export type FocusTestQuestionsInput = {
   skillIds: string[];
 };
 
+export function getFocusTestQuestionsToken(goalId: string): string {
+  return `focus-test-questions:${goalId}`;
+}
+
 export async function focusTestQuestionsWorkflow(
   input: FocusTestQuestionsInput,
 ): Promise<QuestionWritingResult> {
@@ -24,12 +28,7 @@ export async function focusTestQuestionsWorkflow(
   const { workflowRunId } = getWorkflowMetadata();
 
   return runQuestionWriting<FocusTestQuestionsStepName>({
-    steps: {
-      join: "joinFocusTestQuestions",
-      ready: FOCUS_TEST_QUESTIONS_READY_STEP,
-      write: "writeFocusTestQuestions",
-    },
-    token: `focus-test-questions:${goalId}`,
+    steps: { ready: FOCUS_TEST_QUESTIONS_READY_STEP, write: "writeFocusTestQuestions" },
     write: async () => {
       const { failed, written } = await preparePlacementItems({
         analytics,

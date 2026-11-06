@@ -3,10 +3,13 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
-import { focusTestQuestionsWorkflow } from "@/workflows/goals/focus-test-questions-workflow";
+import { startOnce } from "@/workflows/_shared/run-token";
+import {
+  focusTestQuestionsWorkflow,
+  getFocusTestQuestionsToken,
+} from "@/workflows/goals/focus-test-questions-workflow";
 import { requestFocusTestQuestions } from "@zoonk/core/plans/focus-test/request-questions";
 import { NextResponse } from "next/server";
-import { start } from "workflow/api";
 
 const ACCEPTED = 202;
 
@@ -34,19 +37,26 @@ async function createFocusTestGeneration(
     return NextResponse.json({ generationId: null, status: "ready" });
   }
 
-  const run = await start(focusTestQuestionsWorkflow, [
-    {
-      analytics: result.analytics,
-      format: result.format,
-      goalId: path.goalId,
-      questionsPerSkill: result.questionsPerSkill,
-      skillIds: result.skillIds,
-    },
-  ]);
+  const generationId = await startOnce(
+    focusTestQuestionsWorkflow,
+    [
+      {
+        analytics: result.analytics,
+        format: result.format,
+        goalId: path.goalId,
+        questionsPerSkill: result.questionsPerSkill,
+        skillIds: result.skillIds,
+      },
+    ],
+    getFocusTestQuestionsToken(path.goalId),
+  );
 
   return NextResponse.json(
-    { generationId: run.runId, status: "generating" },
-    { headers: { Location: `/v1/generations/${encodeURIComponent(run.runId)}` }, status: ACCEPTED },
+    { generationId, status: "generating" },
+    {
+      headers: { Location: `/v1/generations/${encodeURIComponent(generationId)}` },
+      status: ACCEPTED,
+    },
   );
 }
 

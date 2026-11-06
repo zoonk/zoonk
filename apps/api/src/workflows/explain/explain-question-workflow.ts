@@ -5,7 +5,6 @@ import { getWorkflowMetadata } from "workflow";
 import { start } from "workflow/api";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
-import { claimRunToken } from "../_shared/run-token";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { setUpPlan } from "../goals/plan-setup";
 import { listPlanSetupTasksStep } from "../goals/steps/goal-plan-steps";
@@ -28,7 +27,7 @@ import {
 export type ExplainQuestionResult = {
   goalId: string;
   lessonId: string | null;
-  status: "failed" | "joined" | "missing" | "ready" | "reused";
+  status: "failed" | "missing" | "ready" | "reused";
 };
 
 const MAX_WRITES = 2;
@@ -223,6 +222,10 @@ async function answer({
   return { result: { goalId, lessonId: saved.lessonId, status: "ready" } };
 }
 
+export function getExplainQuestionToken(goalId: string): string {
+  return `explain:${goalId}`;
+}
+
 export async function explainQuestionWorkflow({
   goalId,
   platform,
@@ -233,16 +236,6 @@ export async function explainQuestionWorkflow({
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
-  const { conflict } = await claimRunToken(`explain:${goalId}`);
-
-  if (conflict) {
-    await explainProgressStep(
-      { entityId: conflict.runId, status: "started", step: "joinRunningExplanation" },
-      { last: true },
-    );
-
-    return { goalId, lessonId: null, status: "joined" };
-  }
 
   const { goFurther, result } = await answer({ goalId, platform, workflowRunId }).catch(
     async (error: unknown) => {

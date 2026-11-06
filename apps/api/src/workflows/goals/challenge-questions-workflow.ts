@@ -11,7 +11,6 @@ import { type QuestionWritingResult, runQuestionWriting } from "./question-writi
 export type ChallengeQuestionsInput = {
   analytics?: ContentAnalytics;
   goalId: string;
-  /** A run writing the same key is joined. */
   key: string;
   later: boolean;
   quickFormat: "multipleChoice" | "trueFalse";
@@ -28,6 +27,10 @@ function sumWritten(results: readonly PlacementItemsWritten[]): PlacementItemsWr
   );
 }
 
+export function getChallengeQuestionsToken({ key }: Pick<ChallengeQuestionsInput, "key">): string {
+  return `challenge-questions:${key}`;
+}
+
 export async function challengeQuestionsWorkflow(
   input: ChallengeQuestionsInput,
 ): Promise<QuestionWritingResult> {
@@ -37,12 +40,7 @@ export async function challengeQuestionsWorkflow(
   const { workflowRunId } = getWorkflowMetadata();
 
   return runQuestionWriting<ChallengeQuestionsStepName>({
-    steps: {
-      join: "joinChallengeQuestions",
-      ready: CHALLENGE_QUESTIONS_READY_STEP,
-      write: "writeChallengeQuestions",
-    },
-    token: `challenge-questions:${input.key}`,
+    steps: { ready: CHALLENGE_QUESTIONS_READY_STEP, write: "writeChallengeQuestions" },
     write: async () => {
       const results = await Promise.all(
         writes.map((write) =>
