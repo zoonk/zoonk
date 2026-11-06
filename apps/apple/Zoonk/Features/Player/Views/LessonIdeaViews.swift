@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Without the idea's name: the screen's title is its only heading, and a name could use a term the
-/// screen hasn't taught yet.
+/// The idea's name shows even when it repeats the screen's title: the strip, the opening map and the
+/// end map all name an idea by its `label`.
 struct LessonIdeaStrip: View {
   @Environment(\.stacksContent) private var isStacked
 
@@ -9,23 +9,32 @@ struct LessonIdeaStrip: View {
   let index: Int
 
   var body: some View {
+    let idea = summary.ideas[index]
+
     HStack(spacing: 12) {
       if !isStacked {
         LessonIdeaMiniMap(count: summary.ideas.count, current: index)
       }
 
-      Text(
-        "Idea \(index + 1) of \(summary.ideas.count)", tableName: "Player",
-        comment:
-          "Above a lesson screen: which of the lesson map's ideas (its main points) it teaches. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"%lld ideas to discover in this lesson\"."
-      )
-      .font(.caption.monospaced())
-      .foregroundStyle(.secondary)
+      VStack(alignment: .leading, spacing: 2) {
+        Text(
+          "Idea \(index + 1) of \(summary.ideas.count)", tableName: "Player",
+          comment:
+            "Above a lesson screen: which of the lesson map's ideas (its main points) it teaches. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"%lld ideas to discover in this lesson\"."
+        )
+        .font(.caption.monospaced())
+        .foregroundStyle(.secondary)
+
+        if let label = idea.label {
+          Text(label)
+            .font(.headline)
+        }
+      }
       .frame(maxWidth: .infinity, alignment: .leading)
 
       // The idea's icon can come after the strip shows, so its place is kept for it.
       ZStack {
-        if let icon = summary.ideas[index].icon {
+        if let icon = idea.icon {
           LessonIconImage(icon: icon, size: 44)
         }
       }
@@ -106,7 +115,8 @@ private struct LessonIdeaMiniMap: View {
   }
 }
 
-/// A number opens what its idea is about, never its answer, which the lesson hasn't taught yet.
+/// A number opens its idea's name and what it covers, never its answer, which the lesson hasn't
+/// taught yet.
 struct LessonOpeningMap: View {
   let summary: LessonSummary
 
@@ -184,7 +194,7 @@ private struct LessonOpeningIdea: View {
   /// The icon, or the ring that stands in for it.
   static let size: CGFloat = 52
 
-  @State private var isShowingAbout = false
+  @State private var isShowingIdea = false
 
   let index: Int
   let idea: LessonSummary.Idea
@@ -192,7 +202,7 @@ private struct LessonOpeningIdea: View {
   var body: some View {
     if let about = idea.about {
       Button {
-        isShowingAbout = true
+        isShowingIdea = true
       } label: {
         mark
       }
@@ -203,16 +213,28 @@ private struct LessonOpeningIdea: View {
           "Shows what it covers", tableName: "Player",
           comment: "VoiceOver hint on an idea of the lesson map on a lesson's opening screen")
       )
-      .popover(isPresented: $isShowingAbout, arrowEdge: .top) {
-        Text(about)
-          .font(.body)
+      .popover(isPresented: $isShowingIdea, arrowEdge: .top) {
+        // A popover takes its content's ideal size, which measures a flexible width unwrapped, and
+        // at the largest text sizes a long name with its line can outgrow the room under the map.
+        ScrollView {
+          VStack(alignment: .leading, spacing: 4) {
+            if let label = idea.label {
+              Text(label)
+                .font(.headline)
+                .accessibilityAddTraits(.isHeader)
+            }
+
+            Text(about)
+              .font(.body)
+          }
           .foregroundStyle(.primary)
-          .fixedSize(horizontal: false, vertical: true)
-          .frame(maxWidth: 280, alignment: .leading)
+          .frame(width: 280, alignment: .leading)
           .padding(.horizontal)
           .padding(.vertical, 12)
-          .presentationCompactAdaptation(.popover)
-          .accessibilitySizeStyles()
+        }
+        .scrollBounceBehavior(.basedOnSize)
+        .presentationCompactAdaptation(.popover)
+        .accessibilitySizeStyles()
       }
     } else {
       mark
