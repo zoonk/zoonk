@@ -91,28 +91,21 @@ async function flagContentBuiltOnSource({
 }): Promise<number> {
   const builtOn = { in: [...new Set(sourceIds)] };
   const otherVersion = { not: notice.contentHash };
+  const readLessons = { distinct: ["lessonId" as const], select: { lessonId: true } };
 
-  const [lessons, items] = await Promise.all([
-    tx.lesson.findMany({
-      select: { id: true },
+  const [read, cited, items] = await Promise.all([
+    tx.step.findMany({
+      ...readLessons,
       where: {
-        steps: {
-          some: {
-            ...CURRENT_STEPS,
-            OR: [
-              {
-                sources: {
-                  some: {
-                    OR: [{ contentHash: otherVersion }, { contentHash: null }],
-                    sourceId: builtOn,
-                  },
-                },
-              },
-              { sourceId: builtOn, sources: { none: {} } },
-            ],
-          },
+        ...CURRENT_STEPS,
+        sources: {
+          some: { OR: [{ contentHash: otherVersion }, { contentHash: null }], sourceId: builtOn },
         },
       },
+    }),
+    tx.step.findMany({
+      ...readLessons,
+      where: { ...CURRENT_STEPS, sourceId: builtOn, sources: { none: {} } },
     }),
     tx.item.findMany({
       select: { id: true },
@@ -120,9 +113,11 @@ async function flagContentBuiltOnSource({
     }),
   ]);
 
+  const lessonIds = new Set([...read, ...cited].map((step) => step.lessonId));
+
   const { count } = await tx.contentReviewFlag.createMany({
     data: [
-      ...lessons.map((lesson) => ({ lessonId: lesson.id, noticeId: notice.id })),
+      ...[...lessonIds].map((lessonId) => ({ lessonId, noticeId: notice.id })),
       ...items.map((item) => ({ itemId: item.id, noticeId: notice.id })),
     ],
     skipDuplicates: true,
