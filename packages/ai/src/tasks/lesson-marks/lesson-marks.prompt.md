@@ -25,4 +25,4 @@ An icon is a small drawing beside the text; the text carries the lesson.
 - Icons are shared by every lesson, so name generic things only: never a person, a face, a feeling, a brand or logo, a named place, letters, words or numbers.
 - The same thing keeps the same name across the whole lesson.
 - `searchWords`: up to 5 more English words to look the icon up by: synonyms and the thing's category.
-- `description`: one short English sentence on what the drawing shows ("A wooden rubber stamp over a red ink pad").
+- `description`: one short English sentence on what the drawing shows ("A wooden rubber stamp over a red ink pad"). Describe the thing itself, never an amount, a currency, a written label or anything tied to one country: the same drawing serves lessons in every language.

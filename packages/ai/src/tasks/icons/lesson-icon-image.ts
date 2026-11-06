@@ -15,7 +15,7 @@ const DEFAULT_QUALITY: ImageGenerationQuality = "low";
 const ICON_SIZE = "1024x1024";
 
 /** Bump it when the style changes, so icons drawn before can be found and redrawn. */
-export const LESSON_ICON_STYLE_VERSION = 1;
+export const LESSON_ICON_STYLE_VERSION = 2;
 
 function buildIconPrompt({ input }: { input: string }): string {
   return stylePrompt.replace("{{SUBJECT}}", () => input);
