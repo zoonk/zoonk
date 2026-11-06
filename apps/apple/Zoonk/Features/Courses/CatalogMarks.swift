@@ -159,6 +159,31 @@ extension CourseMark {
   }
 }
 
+/// Main's `LANGUAGE_FLAGS` (`packages/utils/src/language-flags.ts`), kept in step with it by hand:
+/// the country whose variety a language's courses teach, as a `flag-icons` code. A course carries
+/// its own flag from the API; a goal only its language.
+private let languageFlags: [String: String] = [
+  "af": "za", "am": "et", "ar": "arab", "az": "az", "be": "by", "bg": "bg", "bn": "bd", "bs": "ba",
+  "ca": "es-ct", "cs": "cz", "cy": "gb-wls", "da": "dk", "de": "de", "el": "gr", "en": "us",
+  "es": "mx", "et": "ee", "eu": "es-pv", "fa": "ir", "fi": "fi", "fil": "ph", "fr": "fr",
+  "ga": "ie",
+  "gl": "es-ga", "gu": "in", "he": "il", "hi": "in", "hr": "hr", "hu": "hu", "hy": "am", "id": "id",
+  "is": "is", "it": "it", "ja": "jp", "jv": "id", "ka": "ge", "kk": "kz", "km": "kh", "kn": "in",
+  "ko": "kr", "lo": "la", "lt": "lt", "lv": "lv", "mg": "mg", "mi": "nz", "mk": "mk", "ml": "in",
+  "mn": "mn", "mr": "in", "ms": "my", "my": "mm", "nb": "no", "ne": "np", "nl": "nl", "no": "no",
+  "or": "in", "pa": "in", "pl": "pl", "ps": "af", "pt": "br", "ro": "ro", "ru": "ru", "sd": "pk",
+  "si": "lk", "sk": "sk", "sl": "si", "sq": "al", "sr": "rs", "sv": "se", "sw": "tz", "ta": "in",
+  "te": "in", "th": "th", "tl": "ph", "tr": "tr", "uk": "ua", "ur": "pk", "uz": "uz", "vi": "vn",
+  "yue": "hk", "zh": "cn", "zh-TW": "tw", "zu": "za",
+]
+
+/// Main's `getLanguageFlagCode`: a variety with its own flag (`zh-TW`) keeps it, others take their
+/// base language's.
+func languageFlagCode(_ language: String) -> String? {
+  languageFlags[language]
+    ?? Locale.Language(identifier: language).languageCode.flatMap { languageFlags[$0.identifier] }
+}
+
 /// Nil for a region with no emoji, such as Catalonia or the Arab League.
 func flagEmoji(_ code: String) -> String? {
   let letters = code.lowercased().unicodeScalars

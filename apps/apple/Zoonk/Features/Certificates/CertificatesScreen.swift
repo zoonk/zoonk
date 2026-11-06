@@ -229,7 +229,8 @@ private struct UpNextRow: View {
 
   var body: some View {
     ListRow(Text(goal.title), description: description) {
-      GoalMark(title: goal.title)
+      GoalMark(
+        title: goal.title, flag: goal.targetLanguage.flatMap(languageFlagCode).flatMap(flagEmoji))
     } trailing: {
       if let progress = goal.progress {
         HStack(spacing: 8) {

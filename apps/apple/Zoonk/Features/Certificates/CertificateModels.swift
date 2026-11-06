@@ -103,6 +103,8 @@ struct Certificate: Decodable, Hashable, Identifiable, Sendable {
 struct CertificateUpNext: Equatable, Identifiable, Sendable {
   let id: String
   let title: String
+  /// A language goal's language, whose flag marks it.
+  var targetLanguage: String?
   /// The plan's share of lessons done, 0 to 1; nil for a language, which earns one by levels.
   let progress: Double?
 }
