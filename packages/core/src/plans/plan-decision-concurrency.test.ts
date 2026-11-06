@@ -12,10 +12,12 @@ import {
 import { mockSession } from "../_test-utils/mock-session";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import * as followToday from "./_utils/follow-plan-today";
 import { parsePlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { proposePlanChange } from "./propose-plan-change";
+import * as refresh from "./refresh-goal-plan";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
 /** A rejected sibling must finish before the body releases its clock and authenticated actor. */
@@ -180,6 +182,56 @@ describe("plan decisions preserve the first committed answer", () => {
     });
 
     await expect(listOwed(declined.user.id)).resolves.toStrictEqual([]);
+  });
+
+  it("owes an applied proposal's lessons even when the request dies after its commit", async () => {
+    const fixture = await setup();
+    vi.spyOn(followToday, "followPlanToday").mockRejectedValueOnce(new Error("request died"));
+
+    await expect(
+      decidePlanChange({
+        changeId: fixture.changeId,
+        goalId: fixture.goal.id,
+        input: { status: "applied", timeZone: "UTC" },
+      }),
+    ).rejects.toThrow("request died");
+
+    await expect(listOwed(fixture.user.id)).resolves.toStrictEqual([
+      {
+        input: { goalId: fixture.goal.id, lessonsAskedAt: NOW.getTime() },
+        key: fixture.goal.id,
+        kind: "prepareGoalLessons",
+      },
+    ]);
+  });
+
+  it("owes an undo's lessons even when the request dies after its commit", async () => {
+    const fixture = await setup();
+
+    await decidePlanChange({
+      changeId: fixture.changeId,
+      goalId: fixture.goal.id,
+      input: { status: "applied", timeZone: "UTC" },
+    });
+
+    await prisma.followUp.deleteMany({ where: { userId: fixture.user.id } });
+    vi.spyOn(refresh, "refreshSavedGoalPlanAdvice").mockRejectedValueOnce(new Error("died"));
+
+    await expect(
+      decidePlanChange({
+        changeId: fixture.changeId,
+        goalId: fixture.goal.id,
+        input: { status: "undone", timeZone: "UTC" },
+      }),
+    ).rejects.toThrow("died");
+
+    await expect(listOwed(fixture.user.id)).resolves.toStrictEqual([
+      {
+        input: { goalId: fixture.goal.id, lessonsAskedAt: NOW.getTime() },
+        key: fixture.goal.id,
+        kind: "prepareGoalLessons",
+      },
+    ]);
   });
 
   it("commits only one decline when two taps read the same waiting proposal", async () => {
