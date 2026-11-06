@@ -1,5 +1,6 @@
 import { EXAM_SCALES } from "@zoonk/core/exams/scales";
 import { skillStateCountsSchema } from "@zoonk/core/learner/contract";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const shareSchema = z.number().min(0).max(1);
@@ -184,7 +185,7 @@ export const goalPreparationResponseSchema = z
         description:
           "Only for an exam goal once its last three mock exams hold at least 30 questions and not one subject alone, always a range labeled Estimated. Null before that: after a mock (components.mocks.taken > 0), say that more mocks of the whole exam or half of it bring the estimate",
       }),
-    goalId: z.uuid(),
+    goalId: uuidSchema(),
     sections: z
       .array(
         z.object({

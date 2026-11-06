@@ -1,9 +1,10 @@
 import { EXAM_DAY_CHECKLIST } from "@zoonk/core/checkpoints/weekly-challenge-rules";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { mockLeftOutSchema } from "./mock-left-out";
 import { logicalDateSchema } from "./study-sessions";
 
-const idSchema = z.uuid();
+const idSchema = uuidSchema();
 
 const mockWrittenTaskSchema = z.object({
   count: z

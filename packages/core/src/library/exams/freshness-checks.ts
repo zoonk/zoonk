@@ -44,7 +44,7 @@ export async function stopFreshnessChecks(
 ): Promise<FreshnessCommandAccess> {
   const access = await getFreshnessCommandAccess(target);
 
-  if (access.status !== "ready") {
+  if (access !== "ready") {
     return access;
   }
 

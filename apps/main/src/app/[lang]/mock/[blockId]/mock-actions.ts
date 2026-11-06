@@ -20,9 +20,10 @@ import {
   type MockPlanOfferOutcome,
   type MockPlayOutcome,
 } from "@zoonk/learn/mock";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
-const blockIdSchema = z.uuid();
+const blockIdSchema = uuidSchema();
 const writingSchema = z.object({ generationId: z.string() });
 const sectionSchema = z.int().min(0);
 

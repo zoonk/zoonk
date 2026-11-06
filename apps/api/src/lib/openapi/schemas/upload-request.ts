@@ -1,10 +1,11 @@
 import { examDocumentSchema } from "@zoonk/core/exams/document";
 import { GoalKind, ResearchUploadReason } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 export const uploadRequestSchema = z.object({
   examDocument: examDocumentSchema,
-  goalId: z.uuid(),
+  goalId: uuidSchema(),
   goalKind: z.enum(GoalKind),
   language: z
     .string()

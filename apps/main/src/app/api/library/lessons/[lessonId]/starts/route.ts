@@ -3,9 +3,9 @@ import { libraryLessonStartInputSchema } from "@zoonk/core/lesson-player/contrac
 import { startLibraryLesson } from "@zoonk/core/lesson-player/start";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
-import { z } from "zod";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 
-const lessonIdSchema = z.uuid();
+const lessonIdSchema = uuidSchema();
 
 /**
  * A plain HTTP request, not a Server Action: an action's React Flight response could replace a

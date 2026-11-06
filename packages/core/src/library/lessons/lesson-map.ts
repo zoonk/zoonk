@@ -1,5 +1,6 @@
 import { getLessonMapShape } from "@zoonk/ai/tasks/lesson-writer/map";
 import { LESSON_MAP_SHAPES } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type LessonIcon, lessonIconSchema } from "../icons/lesson-icon-contract";
 import { iconNeedSchema } from "../marks/step-marks";
@@ -48,7 +49,7 @@ const savedIdeaSchema = ideaSchema
   .omit({ about: true, icon: true })
   .extend({
     about: z.string().optional(),
-    iconId: z.uuid().nullish(),
+    iconId: uuidSchema().nullish(),
     iconNeed: iconNeedSchema.optional(),
     iconPending: z.boolean().optional(),
   });

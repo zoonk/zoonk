@@ -5,12 +5,13 @@ import { readBody } from "@/lib/request-input";
 import { startOnce } from "@/workflows/_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "@/workflows/follow-ups/follow-ups-workflow";
 import { FOLLOW_UP_SECRET_HEADER } from "@zoonk/core/follow-ups/contract";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const ACCEPTED = 202;
 
-const followUpsRequestSchema = z.object({ userId: z.uuid() });
+const followUpsRequestSchema = z.object({ userId: uuidSchema() });
 
 /** Fixed-size digests keep the comparison constant-time even when the lengths differ. */
 function hasFollowUpSecret(request: Request): boolean {

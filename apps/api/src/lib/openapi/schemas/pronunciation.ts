@@ -1,13 +1,14 @@
 import { pronunciationAnswerFieldsSchema } from "@zoonk/core/language/pronunciation/contract";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 export const pronunciationReviewPathParamsSchema = z
-  .object({ reviewId: z.uuid().meta({ description: "Pronunciation review ID" }) })
+  .object({ reviewId: uuidSchema().meta({ description: "Pronunciation review ID" }) })
   .meta({ id: "PronunciationReviewPathParams" });
 
 export const pronunciationRoundPathParamsSchema = z
   .object({
-    roundId: z.uuid().meta({ description: "The round's ID, sent with each of its answers" }),
+    roundId: uuidSchema().meta({ description: "The round's ID, sent with each of its answers" }),
   })
   .meta({ id: "PronunciationRoundPathParams" });
 

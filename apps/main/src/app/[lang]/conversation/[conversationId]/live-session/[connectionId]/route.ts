@@ -1,9 +1,10 @@
 import { postAsLearner } from "@/lib/api/learner-api";
 import { isSameOriginRequest } from "@/lib/http/is-same-origin-request";
 import { liveCallSdpInputSchema } from "@zoonk/core/language/conversations/contract";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
-const pathSchema = z.object({ connectionId: z.uuid(), conversationId: z.uuid() });
+const pathSchema = z.object({ connectionId: uuidSchema(), conversationId: uuidSchema() });
 
 const HTTP_OK = 200;
 const HTTP_NO_CONTENT = 204;

@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 export const COMPLETED_LESSON_PAGE_SIZE = 50;
@@ -5,7 +6,7 @@ const MAX_PAGE_SIZE = 1000;
 
 export const completedLessonListInputSchema = z
   .object({
-    goalId: z.uuid().meta({ description: "The goal whose completed lessons to list" }),
+    goalId: uuidSchema().meta({ description: "The goal whose completed lessons to list" }),
     limit: z.coerce.number().int().min(1).max(MAX_PAGE_SIZE).default(COMPLETED_LESSON_PAGE_SIZE),
     offset: z.coerce.number().int().min(0).default(0),
   })
@@ -27,7 +28,7 @@ export const completedLessonSchema = z
         description:
           "The learner-local day the learner last finished the lesson, as `YYYY-MM-DD`: a replay moves the lesson to its day",
       }),
-    lessonId: z.uuid(),
+    lessonId: uuidSchema(),
     title: z.string().meta({ description: "The lesson's current title" }),
   })
   .meta({ id: "CompletedLesson" });

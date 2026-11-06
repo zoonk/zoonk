@@ -4,6 +4,7 @@ import {
   ONBOARDING_QUESTIONS,
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { goalSchema } from "./goals";
 import { playableLibraryLessonResponseSchema } from "./library-lessons";
@@ -89,13 +90,13 @@ export const onboardingResponseSchema = z
       }),
     goal: goalSchema,
     goalIds: z
-      .array(z.uuid())
+      .array(uuidSchema())
       .meta({ description: "Goals created in the same onboarding, which share the day's time" }),
     libraryCourse: z
       .object({
         brandSlug: z.string(),
         chapterCount: z.int(),
-        courseId: z.uuid().meta({ description: "Open it at GET /v1/courses/{courseId}" }),
+        courseId: uuidSchema().meta({ description: "Open it at GET /v1/courses/{courseId}" }),
         courseSlug: z.string(),
         title: z.string(),
       })
@@ -155,18 +156,16 @@ export const explanationResponseSchema = z
           chapterCount: z.int(),
           courseSlug: z.string(),
           description: z.string().nullable(),
-          id: z
-            .uuid()
-            .meta({
-              description: "Starts a plan from this course: `POST /v1/courses/{courseId}/goals`",
-            }),
+          id: uuidSchema().meta({
+            description: "Starts a plan from this course: `POST /v1/courses/{courseId}/goals`",
+          }),
           title: z.string(),
         })
         .nullable()
         .meta({ description: "The subject's Overview course" }),
       questions: z.array(z.string()).meta({ description: "Related quick questions" }),
     }),
-    goalId: z.uuid(),
+    goalId: uuidSchema(),
     hasStudyGoal: z
       .boolean()
       .meta({

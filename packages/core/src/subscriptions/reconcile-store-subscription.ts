@@ -7,7 +7,7 @@ import {
   isPrismaUniqueConstraintError,
   prisma,
 } from "@zoonk/db";
-import { z } from "zod";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getCertificatesCacheTag, getUserSubscriptionCacheTag } from "../cache/tags";
 import { type FollowUp } from "../follow-ups/follow-up-contract";
@@ -306,7 +306,7 @@ export async function findNotificationOwner({
     return existingReferenceId;
   }
 
-  if (!accountId || !z.uuid().safeParse(accountId).success) {
+  if (!accountId || !uuidSchema().safeParse(accountId).success) {
     return null;
   }
 

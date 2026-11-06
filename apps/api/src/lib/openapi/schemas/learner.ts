@@ -3,10 +3,11 @@ import { placementStatusSchema } from "@zoonk/core/learner/placement/contract";
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
 import { progressCelebrationShape } from "@zoonk/core/sessions/progress-celebration";
 import { MasteryState } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { questionImageSchema, questionSelectSchema, questionVisualSchema } from "./common";
 
-const skillIdSchema = z.uuid().meta({ description: "Skill ID" });
+const skillIdSchema = uuidSchema().meta({ description: "Skill ID" });
 
 const probabilitySchema = z.number().min(0).max(1);
 
@@ -82,7 +83,7 @@ export const reviewScheduleResponseSchema = z
 const questionBaseShape = {
   context: z.string().nullable().meta({ description: "A situation shown before the question" }),
   image: questionImageSchema,
-  itemId: z.uuid().meta({ description: "Answer with this item ID" }),
+  itemId: uuidSchema().meta({ description: "Answer with this item ID" }),
   skillId: skillIdSchema,
   visual: questionVisualSchema,
 };
@@ -216,7 +217,7 @@ export const placementCompletionResponseSchema = z
       }),
     knownSkillIds: z.array(skillIdSchema),
     phases: z.array(phaseStartSchema),
-    testedOutPlanItemIds: z.array(z.uuid()),
+    testedOutPlanItemIds: z.array(uuidSchema()),
   })
   .meta({ id: "PlacementCompletion" });
 
@@ -229,7 +230,7 @@ export const nothingToSkipSchema = z
 
 export const chapterTestOutResponseSchema = z
   .object({
-    chapterId: z.uuid(),
+    chapterId: uuidSchema(),
     needsItems: z
       .array(skillIdSchema)
       .meta({
@@ -276,8 +277,7 @@ export const chapterTestOutRecordSchema = z
         description:
           "Whether its plan change can still be undone through the goal's plan changes: the plan is exactly as the skip left it",
       }),
-    changeId: z
-      .uuid()
+    changeId: uuidSchema()
       .nullable()
       .meta({ description: "The plan change that skipped its lessons; null when it skipped none" }),
     correct: z.int().min(0),
@@ -296,8 +296,7 @@ export const chapterTestOutRecordSchema = z
 export const chapterTestOutResultSchema = z
   .object({
     ...progressCelebrationShape,
-    changeId: z
-      .uuid()
+    changeId: uuidSchema()
       .nullable()
       .meta({
         description:

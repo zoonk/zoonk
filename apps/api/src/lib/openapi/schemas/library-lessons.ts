@@ -8,15 +8,15 @@ import { EXERCISE_KINDS } from "@zoonk/core/player/contracts/exercise-content";
 import { type LessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
 import { CourseLevel } from "@zoonk/db";
 import { baseMapViewSchema } from "@zoonk/player/base-map-view";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { serializedStepSchema } from "./language-exercise";
 import { lessonMapResponseSchema } from "./lesson-map";
 
 const stepBaseShape = {
-  id: z.uuid(),
+  id: uuidSchema(),
   position: z.int().min(0),
-  skillId: z
-    .uuid()
+  skillId: uuidSchema()
     .nullable()
     .meta({ description: "The skill the screen teaches or checks, when it has its own" }),
 };
@@ -24,7 +24,7 @@ const stepBaseShape = {
 const stepImageObjectSchema = z.object({
   alt: z.string(),
   height: z.int().nullable(),
-  id: z.uuid().meta({ description: "The image's media asset, to vote on the image itself" }),
+  id: uuidSchema().meta({ description: "The image's media asset, to vote on the image itself" }),
   url: z.string(),
   width: z.int().nullable(),
 });
@@ -175,14 +175,14 @@ const playableStepSchema = z
   ])
   .meta({ id: "PlayableLibraryStep" });
 
-const lessonChapterSchema = z.object({ id: z.uuid(), title: z.string() }).nullable();
+const lessonChapterSchema = z.object({ id: uuidSchema(), title: z.string() }).nullable();
 
-const lessonSkillSchema = z.object({ id: z.uuid(), name: z.string() });
+const lessonSkillSchema = z.object({ id: uuidSchema(), name: z.string() });
 
 const lessonOutlineShape = {
   description: z.string(),
   estimatedMinutes: z.int(),
-  id: z.uuid(),
+  id: uuidSchema(),
   language: z.string(),
   title: z.string(),
 };
@@ -237,7 +237,7 @@ export const libraryLessonProgressSchema = z
 export const lessonFitSchema = z
   .object({
     chapter: z.object({
-      id: z.uuid(),
+      id: uuidSchema(),
       lessonCount: z.int().min(0),
       lessonNumber: z
         .int()
@@ -248,10 +248,9 @@ export const lessonFitSchema = z
     course: z
       .object({
         chapterCount: z.int().min(0),
-        id: z.uuid(),
+        id: uuidSchema(),
         minutes: z.int().min(0).meta({ description: "Every lesson of the course, in minutes" }),
-        startChapterId: z
-          .uuid()
+        startChapterId: uuidSchema()
           .nullable()
           .meta({
             description:

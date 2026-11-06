@@ -1,4 +1,5 @@
 import { normalizeContentType } from "@zoonk/utils/upload";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { answerTimeZoneSchema } from "../../learner/contract";
@@ -23,7 +24,7 @@ export const spokenAnswerFieldsSchema = z
       .min(0)
       .max(MAX_SPOKEN_ANSWER_DURATION_MS)
       .meta({ description: "How long the learner spoke, in milliseconds" }),
-    studySessionId: z.uuid().optional().meta({ description: "Today's study session, if any" }),
+    studySessionId: uuidSchema().optional().meta({ description: "Today's study session, if any" }),
     timeZone: answerTimeZoneSchema,
   })
   .strict();
@@ -63,7 +64,7 @@ const spokenPracticeWordSchema = spokenWordResultSchema
 
 export const spokenAnswerGradeSchema = z
   .object({
-    attemptId: z.uuid(),
+    attemptId: uuidSchema(),
     explanation: z
       .string()
       .nullable()

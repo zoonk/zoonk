@@ -18,17 +18,18 @@ import { type StudyFinishOutcome } from "@zoonk/learn/session/types";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const sessionInputSchema = z.object({
-  sessionId: z.uuid(),
+  sessionId: uuidSchema(),
   timeZone: z.string().refine(isValidTimeZone),
 });
 
-const blockInputSchema = sessionInputSchema.extend({ blockId: z.uuid() });
+const blockInputSchema = sessionInputSchema.extend({ blockId: uuidSchema() });
 
 const missionDayInputSchema = z.object({
-  goalId: z.uuid(),
+  goalId: uuidSchema(),
   timeZone: z.string().refine(isValidTimeZone),
 });
 
@@ -170,7 +171,7 @@ export async function catchUpTodayAction(input: SessionInput): Promise<boolean> 
 
 /** Awaits the API so the next read already says the lessons are coming. */
 export async function prepareTodayLessonsAction(input: { goalId: string }): Promise<boolean> {
-  const parsed = z.object({ goalId: z.uuid() }).safeParse(input);
+  const parsed = z.object({ goalId: uuidSchema() }).safeParse(input);
 
   if (!parsed.success) {
     return false;
@@ -184,7 +185,7 @@ export async function prepareTodayLessonsAction(input: { goalId: string }): Prom
 }
 
 const insightAnswerSchema = z.object({
-  insightId: z.uuid(),
+  insightId: uuidSchema(),
   status: z.enum(["accepted", "dismissed"]),
 });
 

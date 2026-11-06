@@ -2,10 +2,11 @@
 
 import { getPlanChangedSince } from "@zoonk/core/plans/changed-since";
 import { type PlanWatch, planWatchSchema } from "@zoonk/core/plans/changed-since-contract";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const inputSchema = z.object({
-  goalId: z.uuid(),
+  goalId: uuidSchema(),
   since: z.number().int().nonnegative(),
   watch: planWatchSchema,
 });

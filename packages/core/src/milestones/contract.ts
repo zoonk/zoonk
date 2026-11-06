@@ -1,10 +1,10 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../learner/contract";
 
 export const weeklyRecapInputSchema = z
   .object({
-    goalId: z
-      .uuid()
+    goalId: uuidSchema()
       .optional()
       .meta({ description: "Adds the goal's phases finished that week and next week's focus" }),
     timeZone: answerTimeZoneSchema,

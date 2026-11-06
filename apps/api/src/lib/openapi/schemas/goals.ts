@@ -1,6 +1,7 @@
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { GoalKind } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { weekdayNumberSchema } from "./weekday-number";
 
@@ -11,8 +12,8 @@ export const goalSchema = z
     createdAt: z.iso.datetime(),
     dailyMinutes: z.int(),
     details: z.record(z.string(), z.unknown()).meta({ description: "What onboarding understood" }),
-    examBlueprintId: z.uuid().nullable(),
-    id: z.uuid(),
+    examBlueprintId: uuidSchema().nullable(),
+    id: uuidSchema(),
     isActive: z
       .boolean()
       .meta({ description: "The goal the tabs show: the main goal, whose session comes first" }),
@@ -37,7 +38,7 @@ export const goalSchema = z
         ready: z.boolean().meta({ description: "False while the planner is building the plan" }),
       })
       .nullable(),
-    primaryCourseId: z.uuid().nullable(),
+    primaryCourseId: uuidSchema().nullable(),
     prompt: z.string().meta({ description: "What the learner typed" }),
     status: z.enum(["active", "archived", "completed", "paused"]),
     studyDays: z
@@ -53,7 +54,7 @@ export const goalSchema = z
 
 export const goalListResponseSchema = z
   .object({
-    activeGoalId: z.uuid().nullable(),
+    activeGoalId: uuidSchema().nullable(),
     dailyMinutes: z.int().meta({ description: "The day's total across active goals" }),
     goals: z
       .array(goalSchema)
@@ -76,7 +77,7 @@ export const goalCreateResponseSchema = z
       .array(
         z.object({
           generationId: z.string(),
-          goalId: z.uuid(),
+          goalId: uuidSchema(),
           kind: z
             .enum(["curriculum", "explanation"])
             .meta({
@@ -100,7 +101,7 @@ export const goalCreateResponseSchema = z
       )
       .meta({ description: "Goals the learner's plan didn't allow; the others were created" }),
     research: z
-      .array(z.object({ goalId: z.uuid(), researchId: z.string() }))
+      .array(z.object({ goalId: uuidSchema(), researchId: z.string() }))
       .meta({
         description: "Research started for exam and learn goals: poll GET /research/{researchId}",
       }),

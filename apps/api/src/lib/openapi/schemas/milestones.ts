@@ -7,6 +7,7 @@ import {
   missionWaitReasonSchema,
 } from "@zoonk/core/sessions/completion-contract";
 import { BuddyGlasses, MasteryState } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { logicalDateSchema } from "./study-sessions";
 
@@ -100,7 +101,7 @@ export const weeklyRecapResponseSchema = z
         ),
         reason: z.enum(["gold", "solid", "practice"]),
         rememberedOn: z.array(logicalDateSchema),
-        skillId: z.uuid(),
+        skillId: uuidSchema(),
         state: z.enum(MasteryState),
         to: z.number().min(0).max(1),
       })
@@ -150,7 +151,7 @@ export const buddyStatusResponseSchema = z
     today: z
       .object({
         fullMeal: z.object({ bonus: countSchema, earned: z.boolean() }),
-        goalId: z.uuid().meta({ description: "The goal whose session the missions are" }),
+        goalId: uuidSchema().meta({ description: "The goal whose session the missions are" }),
         localDate: logicalDateSchema.meta({
           description:
             "That session's learner-local date, the night before's while it carries over",

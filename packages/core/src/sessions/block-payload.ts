@@ -1,5 +1,6 @@
 import { type StudySessionBlock } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { brainPowerRewardSchema } from "../milestones/milestone-reward";
 import { MISTAKE_DRILL_KINDS } from "../mistakes/mistake-drills";
@@ -51,10 +52,12 @@ const blockPayloadSchema = z.object({
   /** A started question block ended without a verdict because none of its questions remained. */
   checkpointAbandoned: z.boolean().default(false),
   /** Question identities survive content deletion while a checkpoint is still being played. */
-  checkpointAnswers: z.array(z.object({ attemptId: z.uuid(), itemId: z.uuid() })).default([]),
+  checkpointAnswers: z
+    .array(z.object({ attemptId: uuidSchema(), itemId: uuidSchema() }))
+    .default([]),
   drills: z.array(drillSchema).default([]),
   /** The retained locked calls whose freed time this once-only entitlement replacement filled. */
-  entitlementReplacementFor: z.array(z.uuid()).default([]),
+  entitlementReplacementFor: z.array(uuidSchema()).default([]),
   /** Extra study earns capped Brain Power. */
   extra: z.boolean().default(false),
   /** Stands in for a missing mock as preparation's test in real conditions. */

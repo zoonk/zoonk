@@ -2,9 +2,9 @@ import { appPostRoute, readJsonBody } from "@/lib/http/app-post-route";
 import { mistakePracticeAnswerInputSchema } from "@zoonk/core/mistakes/contract";
 import { answerMistakePractice } from "@zoonk/core/mistakes/practice-answer";
 import { type MistakePracticeFeedback } from "@zoonk/learn/mistakes/practice";
-import { z } from "zod";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 
-const mistakeIdSchema = z.uuid();
+const mistakeIdSchema = uuidSchema();
 
 export const POST = appPostRoute<{ mistakeId: string }>(
   "mistakePracticeAnswerRoute",

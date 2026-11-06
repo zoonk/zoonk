@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 export const courseCompletionResponseSchema = z
@@ -5,7 +6,7 @@ export const courseCompletionResponseSchema = z
     chapters: z
       .array(
         z.object({
-          chapterId: z.uuid().meta({ description: "Chapter ID" }),
+          chapterId: uuidSchema().meta({ description: "Chapter ID" }),
           completedLessons: z
             .number()
             .int()
@@ -31,7 +32,7 @@ export const chapterCompletionResponseSchema = z
       .array(
         z.object({
           isCompleted: z.boolean().meta({ description: "Whether the lesson is completed" }),
-          lessonId: z.uuid().meta({ description: "Lesson ID" }),
+          lessonId: uuidSchema().meta({ description: "Lesson ID" }),
         }),
       )
       .meta({ description: "Completion status per lesson" }),
@@ -59,10 +60,10 @@ const nextLessonChapterResponseSchema = z
     canPrefetch: z
       .literal(false)
       .meta({ description: "Whether the next lesson can be prefetched" }),
-    chapterId: z.uuid().meta({ description: "Chapter ID" }),
+    chapterId: uuidSchema().meta({ description: "Chapter ID" }),
     chapterSlug: z.string().meta({ description: "Chapter slug" }),
     completed: z.literal(false).meta({ description: "Whether all lessons are completed" }),
-    courseId: z.uuid().meta({ description: "Course ID" }),
+    courseId: uuidSchema().meta({ description: "Course ID" }),
     courseSlug: z.string().meta({ description: "Course slug" }),
     hasStarted: z.boolean().meta({ description: "Whether the user has started" }),
     organizationSlug: z
@@ -80,13 +81,13 @@ const nextLessonChapterResponseSchema = z
 const nextLessonLessonResponseSchema = z
   .object({
     canPrefetch: z.boolean().meta({ description: "Whether the next lesson can be prefetched" }),
-    chapterId: z.uuid().meta({ description: "Chapter ID" }),
+    chapterId: uuidSchema().meta({ description: "Chapter ID" }),
     chapterSlug: z.string().meta({ description: "Chapter slug" }),
     completed: z.boolean().meta({ description: "Whether all lessons are completed" }),
-    courseId: z.uuid().meta({ description: "Course ID" }),
+    courseId: uuidSchema().meta({ description: "Course ID" }),
     courseSlug: z.string().meta({ description: "Course slug" }),
     hasStarted: z.boolean().meta({ description: "Whether the user has started" }),
-    lessonId: z.uuid().meta({ description: "Lesson ID" }),
+    lessonId: uuidSchema().meta({ description: "Lesson ID" }),
     lessonPosition: z
       .number()
       .int()

@@ -11,13 +11,14 @@ import {
   studySessionTimeZoneInputSchema,
 } from "@zoonk/core/sessions/contract";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { RedirectType } from "next/navigation";
 import { z } from "zod";
 import { MOVED_PARAM } from "./challenge-params";
 
-const planItemIdSchema = z.uuid();
-const changeIdSchema = z.uuid();
-const sessionIdSchema = z.uuid();
+const planItemIdSchema = uuidSchema();
+const changeIdSchema = uuidSchema();
+const sessionIdSchema = uuidSchema();
 const localeSchema = z.enum(SUPPORTED_LOCALES);
 
 type ChallengePage = { locale: unknown; sessionId: unknown };

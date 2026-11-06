@@ -1,4 +1,5 @@
 import { type MistakeCause, type MistakeStatus } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { answerTimeZoneSchema, itemAnswerInputSchema } from "../learner/contract";
 
@@ -25,10 +26,10 @@ export type MistakeAvailability = z.infer<typeof mistakeAvailabilitySchema>;
 export const mistakeListInputSchema = z
   .object({
     cause: z.enum(["gap", "misread", "trap", "time", "guess"] satisfies MistakeCause[]).optional(),
-    goalId: z.uuid().optional().meta({ description: "Only mistakes on this goal's skills" }),
+    goalId: uuidSchema().optional().meta({ description: "Only mistakes on this goal's skills" }),
     limit: z.coerce.number().int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE),
     offset: z.coerce.number().int().min(0).default(0),
-    skillId: z.uuid().optional(),
+    skillId: uuidSchema().optional(),
     status: z.enum(["open", "fixed"] satisfies MistakeStatus[]).optional(),
     timeZone: answerTimeZoneSchema,
   })
@@ -38,9 +39,8 @@ export type MistakeListInput = z.infer<typeof mistakeListInputSchema>;
 
 export const mistakePracticeInputSchema = z
   .object({
-    goalId: z.uuid().optional().meta({ description: "Only mistakes on this goal's skills" }),
-    skillId: z
-      .uuid()
+    goalId: uuidSchema().optional().meta({ description: "Only mistakes on this goal's skills" }),
+    skillId: uuidSchema()
       .optional()
       .meta({
         description: "Only this skill's mistakes (\"Practice this skill\"), within the goal's",
@@ -55,18 +55,16 @@ const MAX_PRACTICE_ANSWERS = 50;
 
 export const mistakePracticeAnswerInputSchema = itemAnswerInputSchema
   .extend({
-    attemptId: z
-      .uuid()
+    attemptId: uuidSchema()
       .optional()
       .describe("Your id for this answer: sent again with it (a retry), it's recorded once"),
     run: z
       .object({
         answerIds: z
-          .array(z.uuid())
+          .array(uuidSchema())
           .max(MAX_PRACTICE_ANSWERS - 1)
           .meta({ description: "The run's earlier answers, as their answers returned them" }),
-        goalId: z
-          .uuid()
+        goalId: uuidSchema()
           .optional()
           .meta({ description: "The goal the run practiced, when scoped" }),
       })
@@ -86,7 +84,7 @@ export type MistakePracticeAnswerInput = z.infer<typeof mistakePracticeAnswerInp
 export const mistakePracticeFinishInputSchema = z
   .object({
     answerIds: z
-      .array(z.uuid())
+      .array(uuidSchema())
       .min(1)
       .max(MAX_PRACTICE_ANSWERS)
       .meta({
@@ -97,7 +95,9 @@ export const mistakePracticeFinishInputSchema = z
       .boolean()
       .optional()
       .meta({ description: "True once, when the learner reached the end or stopped early" }),
-    goalId: z.uuid().optional().meta({ description: "The goal the run practiced, when scoped" }),
+    goalId: uuidSchema()
+      .optional()
+      .meta({ description: "The goal the run practiced, when scoped" }),
     timeZone: answerTimeZoneSchema,
   })
   .strict()

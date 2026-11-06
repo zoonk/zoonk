@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const generationIdSchema = z
@@ -20,7 +21,7 @@ export const lessonGenerationSchema = z
 
 const readyAlternativeSchema = z
   .discriminatedUnion("kind", [
-    z.object({ kind: z.literal("lesson"), lessonId: z.uuid(), title: z.string() }),
+    z.object({ kind: z.literal("lesson"), lessonId: uuidSchema(), title: z.string() }),
     z.object({
       dueSkills: z.int().min(1).meta({ description: "Skills whose reviews are due now" }),
       kind: z.literal("review"),
@@ -54,8 +55,7 @@ export const lessonReadinessSchema = z
         description:
           "`generating`: stream the run for live progress. `notStarted`, or `failed` and not `setAside`: POST /library/lessons/{lessonId}/generations to write it now",
       }),
-    warmUpId: z
-      .uuid()
+    warmUpId: uuidSchema()
       .nullable()
       .meta({
         description:
@@ -79,7 +79,7 @@ export const sessionPreparationSchema = z
 export const goalGenerationSchema = z
   .object({
     generationId: generationIdSchema,
-    goalId: z.uuid(),
+    goalId: uuidSchema(),
     kind: z.enum(["curriculum", "explanation"]),
   })
   .meta({ id: "GoalGeneration" });

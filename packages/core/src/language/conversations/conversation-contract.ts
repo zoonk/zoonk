@@ -1,5 +1,6 @@
 import { SPEAKING_MOCK_EXAMS } from "@zoonk/ai/tasks/language/exam-speaking-exams";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../../learner/contract";
 import { activityBrainPowerSchema, missionMomentSchema } from "../../sessions/completion-contract";
@@ -81,9 +82,8 @@ export const languageConversationStartInputSchema = z
   .discriminatedUnion("kind", [
     z
       .object({
-        chapterId: z.uuid().meta({ description: "The unit to practice" }),
-        goalId: z
-          .uuid()
+        chapterId: uuidSchema().meta({ description: "The unit to practice" }),
+        goalId: uuidSchema()
           .optional()
           .meta({ description: "The language goal; the active one when left out" }),
         kind: z.literal("practice"),
@@ -94,29 +94,25 @@ export const languageConversationStartInputSchema = z
       .strict(),
     z
       .object({
-        blockId: z.uuid().meta({ description: "Today's checkpoint block of a language goal" }),
+        blockId: uuidSchema().meta({ description: "Today's checkpoint block of a language goal" }),
         kind: z.literal("checkpoint"),
       })
       .strict(),
     z
       .object({
-        goalId: z
-          .uuid()
-          .meta({
-            description:
-              "An English goal preparing for IELTS or TOEFL iBT (a language goal, or the exam goal it moved to); the mock follows that exam",
-          }),
+        goalId: uuidSchema().meta({
+          description:
+            "An English goal preparing for IELTS or TOEFL iBT (a language goal, or the exam goal it moved to); the mock follows that exam",
+        }),
         kind: z.literal("speakingMock"),
       })
       .strict(),
     z
       .object({
-        goalId: z
-          .uuid()
-          .meta({
-            description:
-              "A goal preparing for DELE, DELF or DALF, a Goethe-Zertifikat or Cambridge English, in that exam's language (`speaking` on the goal's exam or language view)",
-          }),
+        goalId: uuidSchema().meta({
+          description:
+            "A goal preparing for DELE, DELF or DALF, a Goethe-Zertifikat or Cambridge English, in that exam's language (`speaking` on the goal's exam or language view)",
+        }),
         kind: z.literal("examSpeaking"),
         task: z
           .string()
@@ -139,12 +135,10 @@ const conversationTurnsSchema = z
 
 export const languageConversationCompletionInputSchema = z
   .object({
-    connectionId: z
-      .uuid()
-      .meta({
-        description:
-          "The originating connection reservation; preserve it when completing this attempt",
-      }),
+    connectionId: uuidSchema().meta({
+      description:
+        "The originating connection reservation; preserve it when completing this attempt",
+    }),
     spokenSeconds: z.int().min(0).max(MAX_SPOKEN_SECONDS),
     timeZone: answerTimeZoneSchema,
     turns: conversationTurnsSchema,
@@ -174,9 +168,9 @@ export const languageConversationViewSchema = z
       .meta({
         description: "The exam task an `examSpeaking` call practices; null for other calls",
       }),
-    goalId: z.uuid().nullable(),
+    goalId: uuidSchema().nullable(),
     hints: z.array(z.string()),
-    id: z.uuid(),
+    id: uuidSchema(),
     kind: z.enum(["practice", "checkpoint", "speakingMock", "examSpeaking"]),
     level: z.enum(CEFR_LEVELS),
     locked: z
@@ -202,7 +196,7 @@ export const languageConversationViewSchema = z
     status: z.enum(["ready", "completed"]),
     targetLanguage: z.string(),
     title: z.string(),
-    unit: z.object({ chapterId: z.uuid(), title: z.string() }).nullable(),
+    unit: z.object({ chapterId: uuidSchema(), title: z.string() }).nullable(),
   })
   .meta({ id: "LanguageConversation" });
 
@@ -216,7 +210,7 @@ export type CompletedLanguageConversation = z.infer<typeof completedLanguageConv
 
 export const languageConversationSetupSchema = z
   .object({
-    connectionId: z.uuid(),
+    connectionId: uuidSchema(),
     continuesCall: z
       .boolean()
       .meta({
@@ -296,7 +290,9 @@ export const liveCallSdpResponseSchema = z
 
 export const languageConversationObjectiveCheckInputSchema = z
   .object({
-    connectionId: z.uuid().meta({ description: "The live connection the learner is talking on" }),
+    connectionId: uuidSchema().meta({
+      description: "The live connection the learner is talking on",
+    }),
     turns: conversationTurnsSchema,
   })
   .strict()

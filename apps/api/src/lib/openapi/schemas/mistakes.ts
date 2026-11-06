@@ -9,6 +9,7 @@ import {
 import { progressCelebrationShape } from "@zoonk/core/sessions/progress-celebration";
 import { reachedSchema } from "@zoonk/core/sessions/reached";
 import { MistakeCause, MistakeStatus } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { bankQuestionWith } from "./bank-question-with";
 import { paginationSchema } from "./common";
@@ -30,10 +31,10 @@ const mistakeSchema = z
       .meta({ description: "Null while the cause is being named" }),
     createdAt: z.iso.datetime(),
     fixedAt: z.iso.datetime().nullable(),
-    id: z.uuid(),
-    itemId: z.uuid().nullable(),
+    id: uuidSchema(),
+    itemId: uuidSchema().nullable(),
     lesson: z
-      .object({ id: z.uuid(), title: z.string() })
+      .object({ id: uuidSchema(), title: z.string() })
       .nullable()
       .meta({
         description:
@@ -52,7 +53,7 @@ const mistakeSchema = z
           "This open mistake has drill material and becomes available on the next learner-local day",
       }),
     skill: z
-      .object({ id: z.uuid(), name: z.string() })
+      .object({ id: uuidSchema(), name: z.string() })
       .nullable()
       .meta({
         description:
@@ -104,7 +105,7 @@ export const mistakeDrillSchema = z
       }),
     lesson: z
       .object({
-        id: z.uuid(),
+        id: uuidSchema(),
         ideas: z
           .array(z.string())
           .meta({ description: "The lesson's summary card, one idea each" }),
@@ -139,7 +140,7 @@ export const mistakePracticeResponseSchema = z
       z.object({
         cause: mistakeCauseSchema.nullable(),
         drill: mistakeDrillSchema,
-        mistakeId: z.uuid(),
+        mistakeId: uuidSchema(),
         questions: z
           .array(mistakeQuestionSchema)
           .meta({ description: "The original question first" }),
@@ -155,9 +156,9 @@ export const mistakePracticeResponseSchema = z
 
 export const mistakePracticeFeedbackSchema = z
   .object({
-    answerId: z
-      .uuid()
-      .meta({ description: "The answer's id: send the run's answer ids when it finishes" }),
+    answerId: uuidSchema().meta({
+      description: "The answer's id: send the run's answer ids when it finishes",
+    }),
     correctAnswer: z.union([
       z.object({ selectedIndex: z.number().int().min(0) }),
       z.object({ selectedIndexes: z.array(z.number().int().min(0)) }),
@@ -166,7 +167,7 @@ export const mistakePracticeFeedbackSchema = z
     explanation: z.string().nullable(),
     fixed: z.boolean().meta({ description: "This answer fixed the practiced notebook entry" }),
     fixedMistakeIds: z
-      .array(z.uuid())
+      .array(uuidSchema())
       .meta({
         description:
           "Every notebook entry fixed by this answer; deduplicate these for the run correction count",
