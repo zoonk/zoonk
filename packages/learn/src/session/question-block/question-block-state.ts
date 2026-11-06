@@ -7,7 +7,7 @@ import {
 
 export type QuestionBlockPhase =
   | { kind: "answering" }
-  | { kind: "checking" }
+  | { answer: StudyQuestionAnswer; kind: "checking" }
   | { answer: StudyQuestionAnswer; feedback: StudyAnswerFeedback; kind: "feedback" }
   | { kind: "answerFailed" }
   | { kind: "alreadyAnswered" }
@@ -24,7 +24,7 @@ export type QuestionBlockState = {
 };
 
 type QuestionBlockAction =
-  | { type: "check" }
+  | { answer: StudyQuestionAnswer; type: "check" }
   | { answer: StudyQuestionAnswer; feedback: StudyAnswerFeedback; itemId: string; type: "answered" }
   | { type: "answerFailed" }
   | { type: "alreadyAnswered" }
@@ -66,7 +66,7 @@ export function questionBlockReducer(
   return (state, action) => {
     switch (action.type) {
       case "check":
-        return { ...state, phase: { kind: "checking" } };
+        return { ...state, phase: { answer: action.answer, kind: "checking" } };
       case "answered":
         return {
           ...state,

@@ -117,7 +117,7 @@ describe(questionBlockReducer, () => {
   );
 
   it("shows the grade after an answer and carries Hyperdrive", () => {
-    const checking = reduce(start, { type: "check" });
+    const checking = reduce(start, { answer: { selectedIndex: 0 }, type: "check" });
 
     const graded = reduce(checking, {
       answer: { selectedIndex: 0 },

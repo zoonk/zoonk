@@ -69,7 +69,7 @@ export function useQuestionBlock({
       return;
     }
 
-    dispatch({ type: "check" });
+    dispatch({ answer, type: "check" });
 
     const outcome = await actions
       .answer({

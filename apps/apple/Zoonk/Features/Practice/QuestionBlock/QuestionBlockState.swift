@@ -4,7 +4,7 @@ enum QuestionBlockPhase: Equatable {
   case alreadyAnswered
   case answerFailed
   case answering
-  case checking
+  case checking(answer: PracticeAnswer)
   case feedback(answer: PracticeAnswer, feedback: PracticeFeedback)
   case finishFailed
   case finished(Components.Schemas.StudyBlockCompletion)
@@ -13,9 +13,13 @@ enum QuestionBlockPhase: Equatable {
   case finishReady
   case finishing
 
-  var isAnswering: Bool { self == .answering || self == .checking || self == .answerFailed }
+  var isAnswering: Bool { acceptsAnswer || checking != nil }
 
   var acceptsAnswer: Bool { self == .answering || self == .answerFailed }
+
+  var checking: PracticeAnswer? {
+    if case .checking(let answer) = self { answer } else { nil }
+  }
 }
 
 /// A wrong answer cancels a right one.
@@ -49,8 +53,8 @@ struct QuestionBlockState: Equatable {
 
   var total: Int { questions.count }
 
-  mutating func check() {
-    phase = .checking
+  mutating func check(_ answer: PracticeAnswer) {
+    phase = .checking(answer: answer)
   }
 
   mutating func answered(_ answer: PracticeAnswer, feedback: PracticeFeedback, itemId: String) {

@@ -292,7 +292,10 @@ export function BlockQuestionActions({
   const { phase } = run.state;
   const { drill, stage } = blockDrill;
   const answering = phase.kind === "answering" || phase.kind === "answerFailed";
+  const checking = phase.kind === "checking";
+  const notSureChecking = checking && "dontKnow" in phase.answer;
   const notSure = () => void run.submit(NOT_SURE);
+  const notSureBusy = notSureChecking && !blockDrill.timedOut;
 
   if (stage === "reading") {
     return <ShowAnswersButton onReveal={blockDrill.reveal} />;
@@ -300,18 +303,23 @@ export function BlockQuestionActions({
 
   return (
     <>
-      {drill?.kind === "noGuessing" && answering && (
-        <NotSureButton disabled={false} onClick={notSure} />
+      {drill?.kind === "noGuessing" && (answering || checking) && (
+        <NotSureButton busy={notSureBusy} disabled={checking} onClick={notSure} />
       )}
 
       {(question.placement || question.format === "typed") &&
         drill?.kind !== "noGuessing" &&
-        answering && (
-          <NotSureButton disabled={false} label={t("I don't know yet")} onClick={notSure} />
+        (answering || checking) && (
+          <NotSureButton
+            busy={notSureBusy}
+            disabled={checking}
+            label={t("I don't know yet")}
+            onClick={notSure}
+          />
         )}
 
       <CheckButton
-        busy={phase.kind === "checking"}
+        busy={checking && !notSureChecking}
         disabled={!answering || draft.answer === null}
         onCheck={() => (draft.answer ? void run.submit(draft.answer) : undefined)}
       />

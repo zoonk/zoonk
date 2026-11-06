@@ -27,7 +27,7 @@ final class QuestionBlockStateTests: XCTestCase {
   func testAnsweringTheLastQuestionMovesToFinishing() {
     var state = QuestionBlockState(questions: [makeQuestion("a")])
 
-    state.check()
+    state.check(.choice(1))
     state.answered(.choice(1), feedback: makeFeedback(isCorrect: true, level: 2), itemId: "a")
     XCTAssertEqual(state.hyperdrive, 2)
     XCTAssertEqual(state.segments, [.right])
@@ -141,7 +141,9 @@ final class QuestionBlockRunTests: XCTestCase {
 
     await run.submit(.choice(0))
 
-    XCTAssertEqual(run.state.phase, .checking, "no grade, no failure, no retry for someone else")
+    XCTAssertEqual(
+      run.state.phase, .checking(answer: .choice(0)),
+      "no grade, no failure, no retry for someone else")
   }
 
   func testFailedFinishOffersItAgain() async {

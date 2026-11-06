@@ -93,7 +93,7 @@ final class QuestionBlockRun {
   func submit(_ answer: PracticeAnswer, minDurationMs: Int = 0) async {
     guard let question, state.phase.acceptsAnswer else { return }
 
-    state.check()
+    state.check(answer)
     let durationMs = max(minDurationMs, Int(now().timeIntervalSince(shownAt) * 1000))
 
     do {
