@@ -4,7 +4,7 @@ import { type MindMapStatus } from "@zoonk/core/mind-maps/contract";
 import { useState, useTransition } from "react";
 import { type MindMapLimit } from "../_components/help-limit-notice";
 import { usePoll } from "../_utils/use-poll";
-import { type MindMapActions } from "./mind-map-actions";
+import { type MindMapActions, type MindMapRequestOutcome } from "./mind-map-actions";
 
 const POLL_MS = 4000;
 
@@ -66,7 +66,9 @@ export function useMindMapRequest({
 
   const create = () =>
     startTransition(async () => {
-      const outcome = await actions.request(chapterId);
+      const outcome = await actions
+        .request(chapterId)
+        .catch((): MindMapRequestOutcome => ({ status: "failed" }));
 
       if (outcome.status === "ready") {
         actions.refresh();

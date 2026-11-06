@@ -416,6 +416,7 @@
   "onboarding_weekend_time_label": "32aa08aa3c654d14ba0d940b7ce7f038973380cea2278370ea71392ddce92a98",
   "onboarding_what_you_wrote": "848465ee8a9f9a4972a55fbe326c05ebb9c44d7b76006e455097fc98517efff9",
   "onboarding_write_again": "2d30db65fd572f5a46320e40bea446f4b4108e1f923f75b2c7562057bdb038f4",
+  "onboarding_you_picked": "93e541a7def3a86dbfb03cf6baa09df8e28975fccccfa1a4f77348d6bbe95492",
   "onboarding_your_answer": "c219b6159a71dffbf41560ff393877d7ba684f6eaaaaf9689266d8b26b72bdd0",
   "onboarding_your_question": "a0f8e207c64d7cf09e64d4313f21d41f972513eb5b5f1f29306d1ecb59300019",
   "onboarding_your_text": "786603ffcb8cd94b0c1fd1c029521c6e8ba21bb704cf3a316152d616c57be7da"
@@ -855,6 +856,8 @@
     <string name="onboarding_level_title">이미 어느 정도 알고 있나요?</string>
     <string name="onboarding_level_description">계획의 시작 지점만 달라져요.</string>
     <string name="onboarding_level_label">내 수준</string>
+    <!-- Screen reader, as a one-answer question moves on: the answer picked. -->
+    <string name="onboarding_you_picked">%1$s 선택했어요</string>
     <string name="onboarding_course_chapter_description">계획은 이 챕터부터 시작해 매일 공부할 수 있는 시간에 맞춰 코스를 따라 진행돼요.</string>
     <string name="onboarding_course_follows">하루에 공부할 수 있는 시간에 맞춰 이 코스 순서대로 계획을 세워요.</string>
     <!-- Before the lessons' count, like "3 chapters · 12 lessons". -->

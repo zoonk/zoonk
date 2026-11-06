@@ -861,6 +861,16 @@ private struct MatchColumnsView: View {
       rightItems: exercise.matchColumnsRightItems, matched: matched)
   }
 
+  private var allMatchedLine: String? {
+    guard matched.count == pairs.count, !pairs.isEmpty, context.result == nil else {
+      return nil
+    }
+
+    return String(
+      localized: "All pairs matched. Press Check to continue.", table: "Player",
+      comment: "Every pair of a match exercise is matched")
+  }
+
   var body: some View {
     let board = board
 
@@ -896,14 +906,12 @@ private struct MatchColumnsView: View {
         }
       }
     }
+    .announcesStatus(allMatchedLine)
 
-    if matched.count == pairs.count, !pairs.isEmpty, context.result == nil {
-      Text(
-        "All pairs matched. Press Check to continue.", tableName: "Player",
-        comment: "Every pair of a match exercise is matched"
-      )
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+    if let allMatchedLine {
+      Text(allMatchedLine)
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
     }
   }
 

@@ -227,6 +227,7 @@ fun LessonNotWrittenNotice(
                 subject = LimitSubject.Lessons,
                 onCreateAccount = { onOpen(AppRoute.Login) },
                 onSeePlus = { onOpen(AppRoute.Subscription) },
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
             )
             if (refusal.limit is Limit.SlowDown) OutlinedButton(onClick = onRetry) { Text(stringResource(R.string.player_try_again)) }
         }

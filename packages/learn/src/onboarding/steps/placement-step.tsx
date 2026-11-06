@@ -12,6 +12,7 @@ import {
   type PlacementOutcome,
   type PlacementQuestion,
 } from "../onboarding-actions";
+import { saveFinish } from "./placement-finish";
 import { PlacementQuestionScreen } from "./placement-question";
 import {
   PlacementDone,
@@ -158,6 +159,7 @@ export function PlacementStep({
   goalId,
   mockHrefs,
   onDone,
+  onFinishFailed,
   run,
   subject,
 }: {
@@ -166,6 +168,8 @@ export function PlacementStep({
   goalId: string;
   mockHrefs: { mock: (mockId: string) => string; start: string };
   onDone: () => void;
+  /** Says a finish that didn't save, until the learner's next try. */
+  onFinishFailed: (failed: boolean) => void;
   run: GenerationRun | null;
   subject: string;
 }) {
@@ -183,12 +187,17 @@ export function PlacementStep({
 
   const finish = (fromScratch: boolean, stopMockId: string | null = null) =>
     startTransition(async () => {
-      if (stopMockId) {
-        await actions.stopPlacementMock(stopMockId);
-      }
+      onFinishFailed(false);
 
-      await actions.finishPlacement({ fromScratch, goalId });
-      onDone();
+      const { data: saved } = await safeAsync(() =>
+        saveFinish({ actions, fromScratch, goalId, stopMockId }),
+      );
+
+      onFinishFailed(!saved);
+
+      if (saved) {
+        onDone();
+      }
     });
 
   const show = (outcome: PlacementOutcome) => {
@@ -218,12 +227,11 @@ export function PlacementStep({
     (question: PlacementQuestion, answered: number) =>
     (choice: PlacementAnswer, durationMs: number) =>
       startTransition(async () => {
-        const outcome = await actions.answerPlacement({
-          answer: choice,
-          durationMs,
-          goalId,
-          itemId: question.itemId,
-        });
+        onFinishFailed(false);
+
+        const outcome = await actions
+          .answerPlacement({ answer: choice, durationMs, goalId, itemId: question.itemId })
+          .catch((): PlacementOutcome => ({ status: "failed" }));
 
         setAnswerFailed(outcome.status === "failed");
 
@@ -250,7 +258,10 @@ export function PlacementStep({
           areaCount={areaCount}
           mock={mockOffer && { ...mockOffer, href: mockHrefs.start }}
           onScratch={() => finish(true)}
-          onStart={() => startStarting(start)}
+          onStart={() => {
+            onFinishFailed(false);
+            startStarting(start);
+          }}
           pending={isPending}
           starting={isStarting}
           subject={subject}

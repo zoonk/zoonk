@@ -73,6 +73,8 @@ struct PlanBasesView: View {
             "All prerequisites", tableName: "Plan",
             comment: "Picks one choice for every prerequisite")
         }
+        .announcesStatus(adviceLine)
+        .announcesStatus(changed.isEmpty ? nil : previewLine)
 
         switch advice {
         case .none:
@@ -86,18 +88,10 @@ struct PlanBasesView: View {
         case .asking:
           ProgressView()
         case .building, .failed:
-          Group {
-            if advice == .building {
-              Text(
-                "Your plan is still being built. Try again in a moment.", tableName: "Plan",
-                comment: "Advice asked while the plan was being built")
-            } else {
-              Text(
-                "We couldn't get a recommendation.", tableName: "Plan",
-                comment: "Asking for the app's recommendation failed")
-            }
+          if let adviceLine {
+            Text(adviceLine)
+              .foregroundStyle(.secondary)
           }
-          .foregroundStyle(.secondary)
 
           Button {
             Task { await advise() }
@@ -105,8 +99,8 @@ struct PlanBasesView: View {
             Text("Try again", tableName: "Plan", comment: "Asks again after it failed")
           }
         case .shown:
-          if let recommended {
-            Text(adviceText(recommended))
+          if let adviceLine {
+            Text(adviceLine)
               .foregroundStyle(.secondary)
           }
         }
@@ -161,9 +155,9 @@ struct PlanBasesView: View {
               ProgressView()
             }
           case .failed:
-            Text(
-              "We couldn't check what changes.", tableName: "Plan",
-              comment: "A change's preview failed to load")
+            if let previewLine {
+              Text(previewLine)
+            }
 
             Button {
               previewAttempt += 1
@@ -171,8 +165,9 @@ struct PlanBasesView: View {
               Text("Try again", tableName: "Plan", comment: "Asks again after it failed")
             }
           case .unchanged:
-            Text(
-              "Your plan stays as it is.", tableName: "Plan", comment: "A preview with no change")
+            if let previewLine {
+              Text(previewLine)
+            }
           case .changes(let previewed):
             PlanEffectDiff(effect: previewed.effect, today: plan.today)
 
@@ -231,14 +226,44 @@ struct PlanBasesView: View {
     return picked.count == 1 ? picked.first : nil
   }
 
-  private func adviceText(_ choice: BaseChoice) -> String {
-    choice == .deep
-      ? String(
+  private var adviceLine: String? {
+    switch advice {
+    case .building:
+      String(
+        localized: "Your plan is still being built. Try again in a moment.", table: "Plan",
+        comment: "Advice asked while the plan was being built")
+    case .failed:
+      String(
+        localized: "We couldn't get a recommendation.", table: "Plan",
+        comment: "Asking for the app's recommendation failed")
+    case .shown where recommended == .deep:
+      String(
         localized: "Your time covers everything, so we recommend each prerequisite in depth.",
         table: "Plan", comment: "The app's recommendation for prerequisites")
-      : String(
+    case .shown where recommended != nil:
+      String(
         localized: "We recommend the essentials, so the topics that build on them make sense.",
         table: "Plan", comment: "The app's recommendation for prerequisites")
+    case .asking, .none, .shown:
+      nil
+    }
+  }
+
+  private var previewLine: String? {
+    switch preview {
+    case .checking:
+      nil
+    case .failed:
+      String(
+        localized: "We couldn't check what changes.", table: "Plan",
+        comment: "A change's preview failed to load")
+    case .unchanged:
+      String(
+        localized: "Your plan stays as it is.", table: "Plan", comment: "A preview with no change")
+    case .changes(let previewed):
+      (PlanEffectLines.lines(previewed.effect, today: plan.today).map(\.spoken)
+        + [footnote(previewed)].compactMap(\.self)).joined(separator: "\n")
+    }
   }
 
   private func advise() async {

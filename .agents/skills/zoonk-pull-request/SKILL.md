@@ -21,7 +21,7 @@ A task is done when its pull request is ready for the user's review: no check fa
 
 ## 2. Watch it
 
-CI runs on every push, AI reviewers review the PR on their own, and people may review it while you watch. If your harness can watch a PR and wake you when checks or comments change, use it. Otherwise wait inside your turn ([orchestration guide](../../guides/orchestration.md)) on `gh pr checks <pr> --watch` in the background, then read the reviews.
+CI runs on every push, AI reviewers review the PR on their own, and people may review it while you watch. If your harness can watch a PR and wake you when checks or comments change, use it, and start it again before your turn ends after every push, in follow-up turns too (merging main, a fix after you handed back): a watch from an earlier turn may have ended, and a turn that ends without one hands the PR back while CI still runs. Say you're watching only once the watch is on. Otherwise wait inside your turn ([orchestration guide](../../guides/orchestration.md)) on `gh pr checks <pr> --watch` in the background, then read the reviews.
 
 - **CI** is done when no workflow run on the head commit is still going (`gh run list --commit <full head sha>`) and no check failed; passed and skipped checks are both fine. Don't stop at a "checks passed" notice alone: re-running failed jobs hides the checks that wait on them until the re-run ends.
 - **AI reviewers** show they're still working with a pending check or an 👀 reaction on the PR, and post findings as review threads or PR comments. Some review every push, others only when the PR opens. Wait until none is still working on the latest commit.

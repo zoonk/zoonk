@@ -62,6 +62,7 @@ import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.needsAccount
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -267,7 +268,7 @@ fun LessonCompletionView(
     if (completion.status == CompletionStatus.Ready) {
         ResultPages(
             withMoment = false,
-            columnModifier = Modifier.lessonColumnWidth(),
+            columnModifier = Modifier.taskColumn(),
             done = {
                 Text(
                     stringResource(R.string.player_nothing_left_title),
@@ -287,7 +288,7 @@ fun LessonCompletionView(
 
     ResultPages(
         withMoment = completion.status == CompletionStatus.Saved,
-        columnModifier = Modifier.lessonColumnWidth(),
+        columnModifier = Modifier.taskColumn(),
         done = {
             Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)

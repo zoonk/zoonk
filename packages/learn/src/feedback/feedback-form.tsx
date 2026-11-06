@@ -91,11 +91,13 @@ async function sendMessage({
 }): Promise<FormStatus> {
   const { adapters } = feedback;
 
-  const sent = await adapters.sendMessage({
-    context: { ...context, platform: adapters.platform, url: globalThis.location.pathname },
-    email,
-    message,
-  });
+  const sent = await adapters
+    .sendMessage({
+      context: { ...context, platform: adapters.platform, url: globalThis.location.pathname },
+      email,
+      message,
+    })
+    .catch(() => false);
 
   if (!sent) {
     return "error";

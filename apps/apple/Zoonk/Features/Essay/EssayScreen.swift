@@ -184,6 +184,7 @@ private struct EssayContent: View {
     .scenePadding(.horizontal)
     .padding(.vertical, 10)
     .keepsOffFold()
+    .announcesStatus(statusNote)
   }
 
   @ViewBuilder
@@ -309,40 +310,55 @@ private struct EssayContent: View {
           message: LocalizedStringResource(
             "That didn't go through. Your text is still here. Try again in a moment.",
             table: "Essay", comment: "Grading failed"))
-      } else if writer.isWriting, writer.status == .dailyLimitReached {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(
-            "You've reached your daily time limit. Your text stays here.", tableName: "Essay",
-            comment: "The daily time limit is a setting that stops study for the day"
-          )
-          .foregroundStyle(.secondary)
-          ChangeLimitButton()
-        }
       } else if writer.isWriting, writer.status == .signUpRequired {
         HelpLimitNotice(limit: .signUpRequired)
-      } else if writer.isWriting, writer.status == .limitReached || essay.gradesLeft == 0 {
-        Text(
-          "You've used today's essay grades. Your text stays here; send it tomorrow.",
-          tableName: "Essay", comment: "No essay grades left today"
-        )
-        .foregroundStyle(.secondary)
-      } else if writer.status == .grading {
-        Group {
-          if writer.slow {
-            Text(
-              "Still grading. This is taking longer than usual.", tableName: "Essay",
-              comment: "Grading is slow")
-          } else {
-            Text(
-              "Reading your essay against each criterion. It can take up to 30 seconds.",
-              tableName: "Essay", comment: "Grading a draft")
+      } else if let statusNote {
+        VStack(alignment: .leading, spacing: 2) {
+          Text(statusNote)
+            .foregroundStyle(.secondary)
+
+          if writer.status == .dailyLimitReached {
+            ChangeLimitButton()
           }
         }
-        .foregroundStyle(.secondary)
       }
     }
     .font(.subheadline)
     .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  private var statusNote: String? {
+    guard !finishFailed, writer.status != .failed else {
+      return nil
+    }
+
+    if writer.isWriting, writer.status == .dailyLimitReached {
+      return String(
+        localized: "You've reached your daily time limit. Your text stays here.", table: "Essay",
+        comment: "The daily time limit is a setting that stops study for the day")
+    }
+
+    if writer.isWriting, writer.status == .signUpRequired {
+      return HelpLimit.signUpRequired.message
+    }
+
+    if writer.isWriting, writer.status == .limitReached || essay.gradesLeft == 0 {
+      return String(
+        localized: "You've used today's essay grades. Your text stays here; send it tomorrow.",
+        table: "Essay", comment: "No essay grades left today")
+    }
+
+    if writer.status == .grading {
+      return writer.slow
+        ? String(
+          localized: "Still grading. This is taking longer than usual.", table: "Essay",
+          comment: "Grading is slow")
+        : String(
+          localized: "Reading your essay against each criterion. It can take up to 30 seconds.",
+          table: "Essay", comment: "Grading a draft")
+    }
+
+    return nil
   }
 
   private func finish() async {

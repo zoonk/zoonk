@@ -424,6 +424,7 @@ private struct CallEndedStatus: View {
         .controlSize(.large)
       }
     }
+    .announcesStatus(isSlow ? detail : nil)
     .task(id: state) {
       isSlow = false
 

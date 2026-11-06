@@ -23,7 +23,8 @@ export type LearnerPalette = {
   canAskBuddy: boolean;
   explanations: { id: string; title: string }[];
   goals: { id: string; kind: string; title: string }[];
-  onSwitchGoal: (goalId: string) => Promise<void>;
+  /** Resolves to whether the goal is now the active one. */
+  onSwitchGoal: (goalId: string) => Promise<boolean>;
   places: LearnerSummary["places"];
   today: LearnerSummary["today"];
 };

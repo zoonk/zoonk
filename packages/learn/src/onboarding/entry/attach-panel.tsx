@@ -142,7 +142,7 @@ export function AttachControls({ attach, language, onAttached }: AttachControlsP
   const add = (run: () => Promise<AttachOutcome>) =>
     startTransition(async () => {
       setError(null);
-      const outcome = await run();
+      const outcome = await run().catch((): AttachOutcome => ({ status: "failed" }));
 
       if (outcome.status === "attached") {
         setPasting(null);

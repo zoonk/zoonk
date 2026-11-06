@@ -8,7 +8,7 @@ import {
 } from "../learner/_utils/lesson-plan-skills";
 import { scoreLessonAnswers } from "../sessions/score-lesson-answers";
 import { getSession } from "../users/get-session";
-import { loadCompletionSteps } from "./_utils/completion-steps";
+import { findOptionalStepIds, loadCompletionSteps } from "./_utils/completion-steps";
 import { announceFinishedRun, finishLessonRun } from "./_utils/finish-lesson-run";
 import { isOwnExplanation } from "./_utils/lesson-rows";
 import { findLessonRun, toSittings } from "./_utils/lesson-runs";
@@ -132,7 +132,7 @@ export async function completeLibraryLesson({
 
   const tally = tallyLessonRun({
     attempts,
-    optionalStepIds: completionSteps.optionalStepIds,
+    optionalStepIds: findOptionalStepIds({ answers: attempts, completionSteps }),
     steps: completionSteps.steps,
   });
 

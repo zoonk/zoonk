@@ -360,12 +360,12 @@ private struct CategorizeCanvas: View {
     let label = LessonRichText.spoken(group.label)
 
     if let next = sorting.cardInHand(from: items) {
-      announceActivityChange(
+      announcePolitely(
         String(
           localized: "\(item) is in \(label). Next: \(LessonRichText.spoken(next.text)).",
           table: "Activities", comment: "VoiceOver, after a card is sorted, with the next card"))
     } else {
-      announceActivityChange(
+      announcePolitely(
         String(
           localized: "\(item) is in \(label).", table: "Activities",
           comment: "VoiceOver, after the last card is sorted or a card is moved"))
@@ -386,7 +386,7 @@ private struct CategorizeCanvas: View {
       return
     }
 
-    announceActivityChange(
+    announcePolitely(
       String(
         localized: "Took back \(LessonRichText.spoken(item.text)).", table: "Activities",
         comment: "VoiceOver, after Undo puts the last card sorted back in hand"))
@@ -405,7 +405,7 @@ private struct CategorizeCanvas: View {
   private func move(_ item: CategorizeFields.Item, to group: CategorizeFields.Group) {
     sorting.move(item.id, to: group.id)
     context.setAnswer(CategorizePlacements.answer(items, sorting.placements))
-    announceActivityChange(
+    announcePolitely(
       String(
         localized:
           "\(LessonRichText.spoken(item.text)) is in \(LessonRichText.spoken(group.label)).",

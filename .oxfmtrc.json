@@ -36,6 +36,7 @@
     "apps/apple/ZoonkAPI/Sources/ZoonkAPI/openapi.json",
     "apps/android/api/openapi.json",
     "apps/android/core/resources/src/main/assets/sandbox/index.html",
+    "apps/evals/eval-results",
     "**/messages/**",
     ".turbo",
     "pnpm-lock.yaml"

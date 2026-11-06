@@ -2,7 +2,7 @@ import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { isCurrentSession } from "./current-session";
+import { isCurrentSession, isRunStartDay } from "./current-session";
 import { STUDY_SESSION_INCLUDE } from "./study-session-access";
 
 /** A block completed before the run began belongs to an earlier play of the lesson. */
@@ -35,8 +35,10 @@ export async function findDayLessonBlock({
     },
   });
 
-  const current = blocks.filter((block) =>
-    isCurrentSession({ now, session: block.session, timeZone }),
+  const current = blocks.filter(
+    ({ session }) =>
+      isCurrentSession({ now, session, timeZone }) ||
+      isRunStartDay({ now, runStartedAt, session, timeZone }),
   );
 
   return current.find((block) => block.status === "active") ?? current[0] ?? null;

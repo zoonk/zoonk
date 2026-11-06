@@ -37,6 +37,7 @@ import {
   type StudySession,
   type StudySessionSummary,
 } from "@zoonk/learn/session/types";
+import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useCallback, useEffect, useEffectEvent, useTransition } from "react";
 
@@ -107,10 +108,12 @@ function useApplyTap({ entry, tap }: { entry: DayEntry | null; tap: NextStopTap 
         return;
       }
 
-      const went = await go(result.destination, {
-        here: entry.here,
-        onSessionAddress: (address) => moveDayEntry(entry.id, address),
-      });
+      const { data: went } = await safeAsync(() =>
+        go(result.destination, {
+          here: entry.here,
+          onSessionAddress: (address) => moveDayEntry(entry.id, address),
+        }),
+      );
 
       if (!went) {
         failDayEntry(entry.id);

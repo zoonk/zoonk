@@ -94,7 +94,6 @@ import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.ceremonies.MomentCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.feature.ceremonies.momentBuddy
-import com.zoonk.android.feature.player.lessonColumnWidth
 import com.zoonk.android.feature.player.segmentParts
 import com.zoonk.android.feature.questions.ItemLine
 import com.zoonk.android.feature.session.DayMoment
@@ -114,6 +113,7 @@ import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -308,6 +308,7 @@ private fun WordStep(
                             LimitSubject.Help,
                             onCreateAccount = { navigator.open(AppRoute.Login) },
                             onSeePlus = { navigator.open(AppRoute.Subscription) },
+                            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                         )
                     }
 
@@ -343,7 +344,7 @@ private fun WordPages(
             Box(
                 (if (fold == null) Modifier.fillMaxWidth() else Modifier.width(fold.start))
                     .wrapContentWidth(if (fold == null) Alignment.CenterHorizontally else Alignment.End)
-                    .lessonColumnWidth()
+                    .taskColumn()
                     .padding(top = 8.dp, bottom = 16.dp),
             ) { meter() }
             Box(Modifier.weight(1f).fillMaxWidth()) {
@@ -380,7 +381,7 @@ private fun WordPage(
             .verticalScroll(scroll)
             .padding(bottom = 16.dp)
             .wrapContentWidth(align)
-            .lessonColumnWidth(),
+            .taskColumn(),
         verticalArrangement = Arrangement.spacedBy(20.dp),
         content = content,
     )
@@ -673,7 +674,7 @@ private fun RoundEnd(
             ResultPages(
                 modifier = Modifier.padding(padding),
                 withMoment = true,
-                columnModifier = Modifier.lessonColumnWidth(),
+                columnModifier = Modifier.taskColumn(),
                 done = {
                     Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(20.dp)) {
                         if (noWords) {

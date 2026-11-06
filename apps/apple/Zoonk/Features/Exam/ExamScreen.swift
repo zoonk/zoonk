@@ -396,23 +396,33 @@ private struct ExamResultSection: View {
     Double(form.score.replacingOccurrences(of: ",", with: "."))
   }
 
+  private var savedLine: String? {
+    guard form.saved || exam.result != nil else {
+      return nil
+    }
+
+    if let value = exam.result?.score, !form.saved || parsedScore == nil {
+      return String(
+        localized: "Result saved: \(MockLabels.number(value)). Thank you for telling us.",
+        table: "Exam", comment: "A reported result")
+    }
+
+    if form.saved, let parsedScore {
+      return String(
+        localized: "Result saved: \(MockLabels.number(parsedScore)). Thank you for telling us.",
+        table: "Exam", comment: "A reported result")
+    }
+
+    return String(
+      localized: "Result saved. Thank you for telling us.", table: "Exam",
+      comment: "A reported result without a score")
+  }
+
   var body: some View {
     Section {
-      if form.saved || exam.result != nil {
+      if let savedLine {
         Label {
-          if let value = exam.result?.score, !form.saved || parsedScore == nil {
-            Text(
-              "Result saved: \(MockLabels.number(value)). Thank you for telling us.",
-              tableName: "Exam", comment: "A reported result")
-          } else if form.saved, let parsedScore {
-            Text(
-              "Result saved: \(MockLabels.number(parsedScore)). Thank you for telling us.",
-              tableName: "Exam", comment: "A reported result")
-          } else {
-            Text(
-              "Result saved. Thank you for telling us.", tableName: "Exam",
-              comment: "A reported result without a score")
-          }
+          Text(savedLine)
         } icon: {
           Image(systemName: "checkmark.circle.fill").foregroundStyle(.success)
         }
@@ -493,7 +503,11 @@ private struct ExamResultSection: View {
         try await api.reportResult(token: token, goalId: goalId, input: input)
       })
     {
-    case .done(true): form.saved = true
+    case .done(true):
+      form.saved = true
+      if let savedLine {
+        announcePolitely(savedLine)
+      }
     case .done(false), .failed: form.failed = true
     case .obsolete: break
     }

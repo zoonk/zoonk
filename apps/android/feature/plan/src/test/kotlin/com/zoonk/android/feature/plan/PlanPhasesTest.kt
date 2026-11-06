@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.plan
 
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import com.zoonk.api.models.LearnerSummaryGoal
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -69,6 +71,21 @@ class PlanPhasesTest {
     @Test
     fun partsShareWhatsLeftAfterTheirMinimumByWeight() {
         assertEquals(listOf(30f, 50f), weightedWidths(listOf(1f, 3f), total = 82f, minimums = listOf(20f, 20f), gap = 2f))
+    }
+
+    @Test
+    fun axisLabelsStayInsideTheirPhaseAndTakeTheNextLineWhenTheyMeet() {
+        val line = IntSize(26, 16)
+        assertEquals(
+            listOf(IntOffset(7, 0), IntOffset(6, 16)),
+            axisLabelPlaces(listOf(0.1f, 1f), listOf(IntSize(60, 16), IntSize(66, 16)), width = 72, gap = 8),
+        )
+        assertEquals(
+            listOf(IntOffset(214, 0), IntOffset(327, 0)),
+            axisLabelPlaces(listOf(0.6f, 1f), listOf(line, IntSize(73, 16)), width = 400, gap = 8),
+        )
+        assertEquals(listOf(IntOffset(0, 0)), axisLabelPlaces(listOf(0.3f), listOf(IntSize(72, 32)), width = 72, gap = 8))
+        assertEquals(listOf(IntOffset(46, 0)), axisLabelPlaces(listOf(0.9f), listOf(line), width = 80, gap = 8))
     }
 
     @Test

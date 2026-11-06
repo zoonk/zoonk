@@ -355,6 +355,12 @@ msgid "Couldn't open your next step. Try again."
 msgstr "Sıradaki adımını açamadık. Tekrar dene."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+#: src/components/catalog/course-progress.tsx
+msgctxt "JIzivc"
+msgid "We couldn't switch goals. Try again."
+msgstr "Hedefini değiştiremedik. Tekrar dene."
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "60v8Pt"
 msgid "Search or ask"
 msgstr "Ara veya sor"

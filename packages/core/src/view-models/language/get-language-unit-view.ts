@@ -8,6 +8,7 @@ import { CEFR_BANDS } from "../../language/levels/skill-level-rules";
 import { findFreshMistakePattern } from "../../language/patterns/find-fresh-pattern";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readDuePronunciation } from "../../learner/facts/due-pronunciation";
+import { readActiveGoal } from "../../learner/facts/learning-profile";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
@@ -70,7 +71,11 @@ export async function getLanguageUnitView({
   }
 
   const userId = session.user.id;
-  const chapter = isUuid(chapterId) ? await findVisibleUnit({ chapterId, userId }) : null;
+
+  const [chapter, activeGoal] = await Promise.all([
+    isUuid(chapterId) ? findVisibleUnit({ chapterId, userId }) : null,
+    readActiveGoal(userId),
+  ]);
 
   if (!chapter) {
     return { status: "notFound" };
@@ -82,7 +87,8 @@ export async function getLanguageUnitView({
     return { status: "notLanguage" };
   }
 
-  const goal = await findLearnerLanguageGoal({ goalId, targetLanguage, userId });
+  const goal = await findLearnerLanguageGoal({ activeGoal, goalId, targetLanguage, userId });
+
   const lessonIds = chapter.lessons.map(({ lesson }) => lesson.id);
 
   const plan = goal

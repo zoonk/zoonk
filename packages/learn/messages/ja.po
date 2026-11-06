@@ -13221,6 +13221,16 @@ msgid "Start a goal"
 msgstr "目標を始める"
 
 #: src/shell/goal-switcher.tsx
+msgctxt "goalSwitcher.JIzivc"
+msgid "We couldn't switch goals. Try again."
+msgstr "目標を切り替えられませんでした。もう一度試してください。"
+
+#: src/shell/goal-switcher.tsx
+msgctxt "goalSwitcher.9_0KQP"
+msgid "We couldn't start this goal. Try again."
+msgstr "この目標を始められませんでした。もう一度お試しください。"
+
+#: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.GuLJJS"
 msgid ", current goal. Switch goal"
 msgstr "、現在の目標。目標を切り替える"

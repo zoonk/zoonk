@@ -355,6 +355,12 @@ msgid "Couldn't open your next step. Try again."
 msgstr "Não foi possível abrir seu próximo passo. Tente de novo."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+#: src/components/catalog/course-progress.tsx
+msgctxt "JIzivc"
+msgid "We couldn't switch goals. Try again."
+msgstr "Não conseguimos trocar de objetivo. Tente de novo."
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "60v8Pt"
 msgid "Search or ask"
 msgstr "Busque ou pergunte"

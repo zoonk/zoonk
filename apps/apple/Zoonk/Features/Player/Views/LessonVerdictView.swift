@@ -258,19 +258,31 @@ private struct LessonExplainAnswerView: View {
 
         switch state {
         case .failed:
-          Text(
-            "We couldn't explain it right now. Try again in a moment.", tableName: "Player",
-            comment: "The explanation of a typed answer failed"
-          )
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          Text(Self.failedLine)
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
         case .refused(let refusal):
           LessonHelpLimitNote(refusal: refusal)
         default:
           EmptyView()
         }
       }
+      .announcesStatus(statusLine)
     }
+  }
+
+  private var statusLine: String? {
+    switch store.explanations[step.id] {
+    case .failed: Self.failedLine
+    case .refused(let refusal): LessonHelpLimitNote.message(refusal)
+    default: nil
+    }
+  }
+
+  private static var failedLine: String {
+    String(
+      localized: "We couldn't explain it right now. Try again in a moment.", table: "Player",
+      comment: "The explanation of a typed answer failed")
   }
 }
 

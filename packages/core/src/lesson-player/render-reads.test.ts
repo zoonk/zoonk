@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
-import { planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
@@ -8,6 +9,7 @@ import { getChallengeTeam } from "../library/challenges/get-challenge-team";
 import { getLessonGenerationState } from "../library/generation/lesson-generation-state";
 import { getLessonWaitingState } from "../lookahead/get-lesson-waiting-state";
 import { signedInCourseGoal } from "../view-models/_test-utils/course-goal";
+import { setupPlayableLesson } from "./_test-utils/playable-lesson-setup";
 import { getLessonProgress } from "./get-lesson-progress";
 import { getLibraryLessonOutline, getPlayableLibraryLesson } from "./get-playable-library-lesson";
 
@@ -73,5 +75,36 @@ describe("lesson render reads", () => {
 
     expect(counts.writes).toBe(0);
     expect(counts.result).toMatchObject({ state: { status: "notStarted" }, status: "ready" });
+  });
+
+  it("reads a language lesson with what the chosen goal skips", async () => {
+    const { lesson, user } = await setupPlayableLesson({
+      steps: ["explanation", "typedAnswer", "summary"],
+    });
+
+    const [goal] = await Promise.all([
+      goalFixture({ kind: "language", language: "pt", targetLanguage: "en", userId: user.id }),
+      prisma.lesson.update({
+        data: { language: "pt", targetLanguage: "en" },
+        where: { id: lesson.id },
+      }),
+    ]);
+
+    await Promise.all([
+      planFixture({ goalId: goal.id, settings: { skippedActivities: ["writing"] } }),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    ]);
+
+    const counts = await countDatabaseStatements(() =>
+      getPlayableLibraryLesson({ lessonId: lesson.id }),
+    );
+
+    expect(counts.writes).toBe(0);
+
+    expect(
+      counts.result?.status === "ready"
+        ? counts.result.lesson.steps.map((step) => step.kind)
+        : null,
+    ).toStrictEqual(["explanation", "summary"]);
   });
 });

@@ -98,11 +98,12 @@ private struct TutorConversationView<Header: View>: View {
       reveal(asking)
 
       if asking != nil {
-        AccessibilityNotification.Announcement(
+        announcePolitely(
           String(localized: "Thinking…", table: "Tutor", comment: "The buddy is writing its answer")
-        ).post()
+        )
       }
     }
+    .announcesStatus(conversation.missionMoment.map(TutorMissionMoment.said))
   }
 
   /// A question just sent moves to the top, so its answer has the room to come in under it.

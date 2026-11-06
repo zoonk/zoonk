@@ -178,6 +178,7 @@ export function OnboardingStepScreen({
   isGuest,
   onAnswer,
   onPlacementDone,
+  onPlacementFinishFailed,
   pending,
   plan,
   refreshPages,
@@ -191,6 +192,7 @@ export function OnboardingStepScreen({
   isGuest: boolean;
   onAnswer: (input: OnboardingAnswerInput) => void;
   onPlacementDone: () => void;
+  onPlacementFinishFailed: (failed: boolean) => void;
   pending: boolean;
   plan: { initialPlan: RevealedPlan | null; planActions: PlanActions };
   refreshPages: () => void;
@@ -244,6 +246,7 @@ export function OnboardingStepScreen({
             goal={{ language: getNativeLanguage(view), targetLanguage: view.goal.targetLanguage }}
             goalId={view.goal.id}
             onDone={onPlacementDone}
+            onFinishFailed={onPlacementFinishFailed}
           />
         );
       }
@@ -255,6 +258,7 @@ export function OnboardingStepScreen({
           goalId={view.goal.id}
           mockHrefs={{ mock: routes.mock, start: routes.placementMock(view.goal.id) }}
           onDone={onPlacementDone}
+          onFinishFailed={onPlacementFinishFailed}
           run={run}
           subject={subject}
         />

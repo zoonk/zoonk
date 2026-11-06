@@ -117,9 +117,7 @@ struct WarmUpSection: View {
       warmUps.guessed(card: position, deckID: deckID)
 
       let verdict = LessonVerdict.guess(isRight: option.correct)
-      AccessibilityNotification.Announcement(
-        [String(localized: verdict.title), card.reveal].joinedSentences()
-      ).post()
+      announcePolitely([String(localized: verdict.title), card.reveal].joinedSentences())
     } label: {
       LabeledContent {
         if let tag {

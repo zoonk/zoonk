@@ -82,7 +82,7 @@ struct SessionSummaryView: View {
         page(.rewards, visit: visit) {
           rewards(summary, isStep: false)
         }
-        .safeAreaBar(edge: .bottom) { actionBar(summary, at: nil) }
+        .pageBar { actionBar(summary, at: nil) }
       } single: {
         if !stopped, summary.hasRewardsBeyondBrainPower {
           TabView(selection: $step) {
@@ -99,17 +99,16 @@ struct SessionSummaryView: View {
           .tabViewStyle(.page(indexDisplayMode: .always))
           .indexViewStyle(.page(backgroundDisplayMode: .always))
           .background(Color(.systemGroupedBackground))
-          .safeAreaBar(edge: .bottom) {
+          .pageBar {
             // Only the page slides: the buttons change at once, as they do after a swipe.
             actionBar(summary, at: step)
               .animation(nil, value: step)
-              .keepsOffFold()
           }
         } else {
           page(.done, visit: visit) {
             doneStep(summary, showsBrainPower: true)
           }
-          .safeAreaBar(edge: .bottom) { actionBar(summary, at: nil).keepsOffFold() }
+          .pageBar { actionBar(summary, at: nil) }
         }
       }
       .onChange(of: step) { previous, current in
@@ -128,6 +127,7 @@ struct SessionSummaryView: View {
       content()
     }
     .contentMargins(.top, 0, for: .scrollContent)
+    .pageMargins()
     .listSectionSpacing(.compact)
     .celebratesOnce(id: "\(visit):\(shown)")
     .transformEnvironment(\.celebrates) { celebrates in
@@ -269,9 +269,6 @@ struct SessionSummaryView: View {
       }
     }
     .controlSize(.large)
-    .frame(maxWidth: 680)
-    .frame(maxWidth: .infinity)
-    .scenePadding()
   }
 
   /// See mistakes and Keep going sit before Finish, which takes the rest of the line. A stopped
@@ -510,7 +507,11 @@ private struct SummaryTiles: View {
           label: goal.label, value: Text(verbatim: goal.value),
           systemImage: goal.dropped ? "chart.line.downtrend.xyaxis" : "chart.line.uptrend.xyaxis",
           tone: goal.dropped ? .neutral : .success,
-          detail: goal.before.map { Text(verbatim: "\($0) → \(goal.value)") })
+          detail: goal.before.map { before in
+            let change = Text(verbatim: "\(before) → \(goal.value)")
+            // A number that went down says so quietly, never in the color of progress.
+            return goal.dropped ? change : change.foregroundStyle(.success)
+          })
       }
 
       StatTile(
@@ -537,14 +538,18 @@ private struct SummaryTiles: View {
   }
 
   private var rightDetail: Text? {
-    let parts = [
-      summary.accuracy.map { $0.formatted(.percent.precision(.fractionLength(0))) },
-      summary.netScore.map {
-        String(localized: "net \($0)", table: "Session", comment: "Right minus wrong answers")
-      },
-    ].compactMap(\.self)
+    let accuracy = summary.accuracy.map {
+      Text($0, format: .percent.precision(.fractionLength(0))).foregroundStyle(.success)
+    }
+    let net = summary.netScore.map {
+      Text("net \($0)", tableName: "Session", comment: "Right minus wrong answers")
+    }
 
-    return parts.isEmpty ? nil : Text(verbatim: parts.joinedFacts())
+    guard let accuracy, let net else {
+      return accuracy ?? net
+    }
+
+    return Text("\(accuracy)\u{00A0}· \(net)")
   }
 
   /// A language goal has no number here; an exam shows its preparation, any other goal its

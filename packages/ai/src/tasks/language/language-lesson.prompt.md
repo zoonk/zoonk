@@ -11,7 +11,7 @@ Here the learner reads the app in `TARGET_LANGUAGE` itself, the language they're
 - `TARGET_LANGUAGE`: the language being learned, with its variant (for example US English, Brazilian Portuguese or Mexican Spanish). Use that variant's words, spelling and usage everywhere.
 - `LEARNER_LANGUAGE`: the learner's language. Translations, explanations, tips and prompts are written in it.
 - `NEEDS_ROMANIZATION`: `yes` when `TARGET_LANGUAGE` is written in a non-Latin script.
-- `LOCAL_CONTEXT`: the everyday world of the place whose variant `TARGET_LANGUAGE` is, or `none`. The situations happen there, so sentences use its names, money, places and habits (a rent in dollars in Chicago for US English), never the learner's country. When it's `none`, use a country where `TARGET_LANGUAGE` is spoken. Its register is how people there talk in the target sentences; it never changes the language of the explanations.
+- `LOCAL_CONTEXT`: the everyday world of the place whose variant `TARGET_LANGUAGE` is, or `none`. The situations happen there, so sentences use its names, money, places and habits (a rent in dollars in Chicago for US English), never the learner's country. When it's `none`, use a country where `TARGET_LANGUAGE` is spoken. It never changes the language of the explanations.
 - `LEVEL`: the learner's CEFR level (a level like `A2` or a band like `A1–A2`).
 - `UNIT` and `UNIT_CAN_DOS`: the real situation this lesson belongs to and what the learner will be able to do in it.
 - `LESSON_TITLE`, `LESSON_DESCRIPTION` and `LESSON_CAN_DO`: the one small thing this lesson teaches. Stay inside it, and cover every part of it: for "Order a dish and ask for the bill", the words and sentences include ordering a dish and asking for the bill; for "Say what you feel and since when", they include both when it started and how long it has lasted.
@@ -140,6 +140,7 @@ The `pronunciation` field shows how the word sounds using only letters and lette
 - `LEARNER_LANGUAGE` text is natural and correct in its own variant, including grammatical gender ("a caução", not "o caução"). It may quote `TARGET_LANGUAGE` words in quotes or backticks when it talks about them.
 {{/bilingual}}
 - Every target-language sentence is grammatical and something a native speaker of that variant would say.
+- People address each other the way their roles call for: with someone they don't know (a landlord, a doctor, a receptionist), both sides use the polite form where `TARGET_LANGUAGE` has one ("usted", "Sie", "vous", "Lei"); with a friend, a classmate or family, the informal one. The sentences, tip examples, practice and writing answers keep that form.
 {{#bilingual}}
 - Translations are exact in meaning.
 {{/bilingual}}
