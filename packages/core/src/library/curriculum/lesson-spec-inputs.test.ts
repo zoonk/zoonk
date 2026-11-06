@@ -11,8 +11,13 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import {
+  brandFixture,
+  productFixture,
+  productReleaseFixture,
+} from "@zoonk/testing/fixtures/products";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
-import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { buildSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { describe, expect, it } from "vitest";
@@ -124,6 +129,7 @@ describe(loadLessonSpecInputs, () => {
     const inputs = await loadLessonSpecInputs(lesson.id);
 
     expect(inputs?.prompt.chapterLessons).toStrictEqual([]);
+    expect(inputs?.prompt.product).toBeNull();
   });
 
   it("plans a setup lesson with the setup rules, and other lessons without them", async () => {
@@ -149,6 +155,51 @@ describe(loadLessonSpecInputs, () => {
 
     expect(setup?.prompt.setup).toBe(true);
     expect(other?.prompt.setup).toBe(false);
+  });
+
+  it("plans a product course's lesson for its product and release, from the product's pages", async () => {
+    const brand = await brandFixture({ name: "Acme" });
+    const product = await productFixture({ name: "Gizmo", organizationId: brand.id });
+
+    const release = await productReleaseFixture({
+      name: "Gizmo 2",
+      productId: product.id,
+      releasedAt: new Date("2026-03-01"),
+    });
+
+    const course = await courseFixture({
+      organizationId: brand.id,
+      productId: product.id,
+      productReleaseId: release.id,
+      title: "Gizmo",
+    });
+
+    const chapter = await libraryChapterFixture({ homeCourseId: course.id });
+
+    const [lesson] = await Promise.all([
+      libraryLessonFixture({
+        description: "Pair the gizmo remote with the gizmo base station.",
+        homeChapterId: chapter.id,
+        title: "Pair the gizmo remote",
+      }),
+      sourceFixture({
+        extractedText:
+          "To pair the gizmo remote, hold the base station button until the remote light blinks.",
+        productId: product.id,
+        structure: { images: 0, pages: null, topic: "product" },
+        title: "Gizmo help: pairing",
+      }),
+    ]);
+
+    const inputs = await loadLessonSpecInputs(lesson.id);
+
+    expect(inputs?.prompt.product).toStrictEqual({
+      brand: "Acme",
+      name: "Gizmo",
+      release: { name: "Gizmo 2", releasedOn: "2026-03-01" },
+    });
+
+    expect(inputs?.prompt.sources).toContain("hold the base station button");
   });
 
   it("plans a lesson outside any chapter without other lessons", async () => {

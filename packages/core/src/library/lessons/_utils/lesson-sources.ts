@@ -13,7 +13,7 @@ const LESSON_SOURCE_CHARACTERS = 6000;
 const MIN_SHARED_TERMS = 3;
 
 /** Exam notices describe one exam's syllabus; using them as factual sources would leak that context into shared lessons. */
-const FACT_TOPICS: ReadonlySet<SourceTopic | null> = new Set(["regulation", "software"]);
+const FACT_TOPICS: ReadonlySet<SourceTopic | null> = new Set(["product", "regulation", "software"]);
 
 type LessonSourceRow = Pick<Source, "extractedText" | "id" | "mimeType" | "structure" | "title">;
 
@@ -44,7 +44,11 @@ async function loadLessonSourcePages({
     select: { extractedText: true, id: true, mimeType: true, structure: true, title: true },
     take: MAX_LESSON_SOURCES,
     where: {
-      OR: [{ learnerSources: { some: { goal: goals } } }, { steps: { some: { lessonId } } }],
+      OR: [
+        { learnerSources: { some: { goal: goals } } },
+        { steps: { some: { lessonId } } },
+        ...(courseId ? [{ product: { courses: { some: { id: courseId } } } }] : []),
+      ],
       extractedText: { not: null },
       kind: { not: "upload" },
       visibility: "public",

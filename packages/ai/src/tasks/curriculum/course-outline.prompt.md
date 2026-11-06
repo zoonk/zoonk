@@ -19,6 +19,17 @@ The beginner, intermediate and advanced bands together are the full path to mast
 
 When `TAUGHT_ELSEWHERE` lists skills, the learners of this band already learn them in other chapters of this course. Never write a lesson that teaches them again, even under another name: a chapter next to one of them covers only what's still missing, and names itself for that.
 
+{{#product}}
+# A product course
+
+`PRODUCT` names the branded product this course teaches people to use, the organization that makes it and, when the product has releases, the release the course is written for and when it came out. Learners come to get things done with it, so:
+
+- Chapters are tasks done in the product, named for what the learner gets done ("Pull your first espresso", "Keep the machine clean"), never a tour of its menus or a tree of concepts. A concept is taught inside the task that needs it.
+- The first lessons of the first chapter, the learner's first session, end with a real result in the product: something made, set up or done that they can see. Setting the product up comes only as far as that result needs.
+- Teach the release the course is written for. Name a release or a model in a title, description or objective only when a feature depends on it, and then say which releases or models have it, so the outline stays right when the course moves to a later release.
+- Required skills the size of a tutorial (one task, or a few steps of one) are one chapter, not spread over several.
+
+{{/product}}
 {{#examSkills}}
 # Skills an exam needs
 

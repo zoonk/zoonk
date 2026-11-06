@@ -8,6 +8,7 @@ import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../pr
 import { draftAgainWhenFlawed } from "../_utils/draft-again";
 import { formatLocalContext } from "../_utils/language-context";
 import { type LessonExam, formatLessonExams } from "../_utils/lesson-exams";
+import { type PromptProduct, formatProduct } from "../_utils/product";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { getVerbForm } from "../_utils/verb-form";
@@ -59,6 +60,7 @@ export type CourseOutlineParams = {
   exams?: LessonExam[];
   /** A private course's class material, which the outline teaches exactly instead of the band. */
   material?: string;
+  product?: PromptProduct | null;
   model?: string;
   serviceTier?: ServiceTier;
   useFallback?: boolean;
@@ -119,6 +121,7 @@ function toPromptVariants(params: CourseOutlineParams) {
     exams,
     extend: Boolean(params.extendSkills?.length),
     material: Boolean(params.material),
+    product: Boolean(params.product),
     withoutTools,
   };
 }
@@ -134,6 +137,7 @@ function formatBandInputs(params: CourseOutlineParams): string {
     `LANGUAGE: ${getPromptLanguageName({ language: params.language })}`,
     `VERB_FORM: ${getVerbForm(params.language)}`,
     `COURSE_TITLE: ${params.courseTitle}`,
+    params.product && formatProduct(params.product),
     `LEVEL: ${params.level}`,
     `REQUIRED_SKILLS: ${formatRequiredSkills(params.requiredSkills ?? [])}`,
     (variants.extend || variants.examSkills) &&
