@@ -112,6 +112,7 @@ Read the scoped `AGENTS.md` files governing paths you change, including when wor
 | Addressing, fixing or verifying a GitHub issue                  | [Addressing an issue](.agents/skills/zoonk-address-issue/SKILL.md)                 |
 | Reporting a bug for someone                                     | [Bug report](.agents/skills/zoonk-bug-report/SKILL.md)                             |
 | Requesting a feature for someone (Discussions, not issues)      | [Feature request](.agents/skills/zoonk-feature-request/SKILL.md)                   |
+| Creating a release (production deploy and release notes)        | [Release](.agents/skills/zoonk-release/SKILL.md)                                   |
 | Turborepo configuration or commands                             | The installed `turbo` package's `docs/README.md`, then its relevant pages          |
 
 ## Maintaining these instructions
