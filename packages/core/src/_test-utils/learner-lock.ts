@@ -92,3 +92,9 @@ export function holdPlanLock({
     lock: (tx) => tx.$queryRaw`SELECT id FROM plans WHERE id = ${planId}::uuid FOR UPDATE`,
   });
 }
+
+export function holdSourceLock(sourceId: string) {
+  return holdLock({
+    lock: (tx) => tx.$queryRaw`SELECT id FROM sources WHERE id = ${sourceId}::uuid FOR UPDATE`,
+  });
+}

@@ -4,6 +4,7 @@ import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { buildSourceIdentityKey } from "@zoonk/utils/identity-key";
 import { Response as PageResponse, fetch } from "undici";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { holdSourceLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import {
   getCandidateIds,
   mockDecision,
@@ -30,6 +31,8 @@ const NOTICE_TEXT = [
 ].join(" ");
 
 const SCRIPT_PAGE_TEXT = "É necessário habilitar o javascript para ver esta página corretamente.";
+
+const SOURCE_WRITE = /\bsources\b|unnoticed_source_changes/u;
 
 const EDITAL = { kind: "official", language: "pt", publisher: null, title: "Edital" } as const;
 
@@ -247,6 +250,33 @@ describe(refreshWebSource, () => {
         sourceId: law.id,
       },
     ]);
+  });
+
+  it("keeps what each of two saves at once changed in a law, whichever saves first", async () => {
+    const url = `https://example.gov.br/${randomUUID()}`;
+    const law = { ...EDITAL, topic: "regulation" as const, url };
+    servePage("<p>Art. 1º A alíquota é de 15%.</p>");
+    const source = await storeWebSource(law);
+    const held = holdSourceLock(source.id);
+    const holder = await held.pid;
+
+    servePage("<p>Art. 1º A alíquota é de 17%.</p>");
+    const research = storeWebSource(law);
+    await waitForBlockedStatement(holder, SOURCE_WRITE);
+
+    servePage("<p>Art. 1º A alíquota é de 15%.</p><p>Art. 2º Declare até maio.</p>");
+    const check = refreshWebSource(source.id);
+    await waitForBlockedStatement(holder, SOURCE_WRITE, 2);
+
+    held.release();
+    await Promise.all([research, check, held.done]);
+
+    const owed = await prisma.unnoticedSourceChange.findUniqueOrThrow({
+      where: { sourceId: source.id },
+    });
+
+    expect(owed.changes).toContain("+ Art. 1º A alíquota é de 17%.");
+    expect(owed.changes).toContain("+ Art. 2º Declare até maio.");
   });
 
   it("returns null for a source without an address", async () => {

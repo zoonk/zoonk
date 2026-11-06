@@ -32,6 +32,9 @@ export async function oweSourceChangeNotice({
     return;
   }
 
+  // Saves of one page at once take turns, so each diffs against the text the one before it saved.
+  await tx.$queryRaw`SELECT id FROM sources WHERE id = ${sourceId}::uuid FOR NO KEY UPDATE`;
+
   const stored = await tx.source.findUniqueOrThrow({
     select: { contentHash: true, extractedText: true, unnoticedChange: true },
     where: { id: sourceId },
