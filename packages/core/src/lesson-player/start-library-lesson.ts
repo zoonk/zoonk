@@ -41,15 +41,16 @@ export type LibraryLessonStartOutcome =
 
 type RunSource = {
   lesson: { homeChapterId: string | null; id: string; title: string };
+  now: Date;
   studySessionId: string | null;
   timeZone: string;
   userId: string;
 };
 
-async function openLessonRun({ lesson, studySessionId, timeZone, userId }: RunSource) {
+async function openLessonRun({ lesson, now, studySessionId, timeZone, userId }: RunSource) {
   const [goalId, existing] = await Promise.all([
     findActiveGoalId(userId),
-    findResumableRun(prisma, { lessonId: lesson.id, now: new Date(), userId }),
+    findResumableRun(prisma, { lessonId: lesson.id, now, userId }),
   ]);
 
   if (existing) {
@@ -57,7 +58,6 @@ async function openLessonRun({ lesson, studySessionId, timeZone, userId }: RunSo
   }
 
   return writeLearnerChange({ planInputs: true, userId }, async (tx) => {
-    const now = new Date();
     const resumable = await findResumableRun(tx, { lessonId: lesson.id, now, userId });
 
     if (resumable) {
@@ -184,8 +184,10 @@ export async function startLibraryLesson({
     return { status: "notFound" };
   }
 
-  // Save today before starting so a standalone lesson can settle its existing block.
-  await saveDayBeforeActivity({ timeZone: input.timeZone, userId });
+  // A standalone lesson settles the block of the day it began in, so the day saved here and the run's start share one instant.
+  const now = new Date();
+
+  await saveDayBeforeActivity({ now, timeZone: input.timeZone, userId });
 
   // Quick explanations already claimed their own allowance and must not consume a lesson allowance too.
   if (!isOwnExplanation(lesson)) {
@@ -208,6 +210,7 @@ export async function startLibraryLesson({
 
   const { isNew, run } = await openLessonRun({
     lesson,
+    now,
     studySessionId,
     timeZone: await getLearnerTimeZone({ timeZone: input.timeZone, userId }),
     userId,

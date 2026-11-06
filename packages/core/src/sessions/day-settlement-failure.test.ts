@@ -82,6 +82,40 @@ async function practiceDay({ brainPower }: { brainPower?: bigint } = {}) {
   return { block, goal, request, session, user };
 }
 
+/** Starting a lesson from the plan page opens its planned day, so finishing it finishes that day's block. */
+async function failPlanPageLesson({ brainPower }: { brainPower?: bigint } = {}) {
+  vi.setSystemTime(new Date("2026-09-30T15:00:00Z"));
+
+  const { lesson, skill, user } = await setupPlayableLesson({ steps: ["explanation", "summary"] });
+
+  if (brainPower !== undefined) {
+    await prisma.userProgress.create({ data: { totalBrainPower: brainPower, userId: user.id } });
+  }
+
+  const goal = await goalFixture({ timezone: "UTC", userId: user.id });
+  await planFixture({ goalId: goal.id, items: [{ lessonId: lesson.id, skillId: skill.id }] });
+
+  const started = await startLibraryLesson({ input: { timeZone: "UTC" }, lessonId: lesson.id });
+
+  if (started.status !== "started") {
+    throw new Error(`Expected the lesson to start, got ${started.status}`);
+  }
+
+  const day = await prisma.studySession.findFirstOrThrow({ where: { goalId: goal.id } });
+  expect(day.status).toBe("planned");
+
+  const complete = () =>
+    completeLibraryLesson({
+      input: { runId: started.run.runId, timeZone: "UTC" },
+      lessonId: lesson.id,
+    });
+
+  vi.mocked(settleSessionDay).mockRejectedValueOnce(new Error("Connection lost"));
+  await expect(complete()).rejects.toThrow("Connection lost");
+
+  return { complete, day, goal, user };
+}
+
 describe("a finished block's day settles even when its request fails after the block commits", () => {
   it("completes the day and pays its full meal for a learner who leaves without retrying", async () => {
     freezeClock();
@@ -239,33 +273,7 @@ describe("a finished block's day settles even when its request fails after the b
 
   it("settles a planned day whose lesson finished from the plan page", async () => {
     freezeClock();
-    vi.setSystemTime(new Date("2026-09-30T15:00:00Z"));
-
-    const { lesson, skill, user } = await setupPlayableLesson({
-      steps: ["explanation", "summary"],
-    });
-
-    const goal = await goalFixture({ timezone: "UTC", userId: user.id });
-    await planFixture({ goalId: goal.id, items: [{ lessonId: lesson.id, skillId: skill.id }] });
-
-    const started = await startLibraryLesson({ input: { timeZone: "UTC" }, lessonId: lesson.id });
-
-    if (started.status !== "started") {
-      throw new Error(`Expected the lesson to start, got ${started.status}`);
-    }
-
-    const day = await prisma.studySession.findFirstOrThrow({ where: { goalId: goal.id } });
-    expect(day.status).toBe("planned");
-
-    vi.mocked(settleSessionDay).mockRejectedValueOnce(new Error("Connection lost"));
-
-    await expect(
-      completeLibraryLesson({
-        input: { runId: started.run.runId, timeZone: "UTC" },
-        lessonId: lesson.id,
-      }),
-    ).rejects.toThrow("Connection lost");
-
+    const { day, goal, user } = await failPlanPageLesson();
     await runOwedSettlements(user.id);
 
     vi.setSystemTime(new Date("2026-10-01T09:00:00Z"));
@@ -274,6 +282,16 @@ describe("a finished block's day settles even when its request fails after the b
     await expect(
       prisma.studySession.findUniqueOrThrow({ where: { id: day.id } }),
     ).resolves.toMatchObject({ fullMealAt: new Date("2026-09-30T15:00:00Z"), status: "completed" });
+  });
+
+  it("awards the belt a plan page lesson crossed when its day is recovered", async () => {
+    freezeClock();
+    const { complete, user } = await failPlanPageLesson({ brainPower: 2499n });
+    await runOwedSettlements(user.id);
+    await expect(readBelts(user.id)).resolves.toStrictEqual([{ key: "yellow" }]);
+
+    await expect(complete()).resolves.toMatchObject({ status: "completed" });
+    await expect(readBelts(user.id)).resolves.toStrictEqual([{ key: "yellow" }]);
   });
 
   it("settles a call's day when nobody waits for the call's review", async () => {

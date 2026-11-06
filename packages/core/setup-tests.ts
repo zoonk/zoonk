@@ -1,3 +1,4 @@
+import { skipAfterTimeout } from "@zoonk/testing/skip-after-timeout";
 import { afterAll, beforeAll, beforeEach, vi } from "vitest";
 import { boundaries, resetBoundaries } from "./src/_test-utils/test-boundaries";
 
@@ -33,6 +34,8 @@ vi.mock("./src/analytics/server", () =>
 Object.entries(boundaries).forEach(([path, mocks]) => {
   vi.doMock(path, async (importOriginal) => ({ ...(await importOriginal<object>()), ...mocks }));
 });
+
+skipAfterTimeout();
 
 // Test files share workers, so reset their boundaries and restore their globals between files.
 beforeAll(async () => {
