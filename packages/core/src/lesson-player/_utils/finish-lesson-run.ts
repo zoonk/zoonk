@@ -139,13 +139,20 @@ export async function finishLessonRun({
 
     const languageGoals = await completeLessonPlanItems(tx, { lessonId, now: completedAt, userId });
 
+    const brainPower = {
+      after: Number(progress.totalBrainPower),
+      before: Number(progress.totalBrainPower) - score.brainPower,
+    };
+
     const blockDone =
       block !== null &&
       (await completeRunBlock(tx, {
         block,
-        brainPower: score.brainPower,
+        brainPower,
         now: completedAt,
         run: currentRun,
+        timeZone,
+        userId,
       }));
 
     const explanationsFinished = await finishExplanations(tx, { lessonId, userId });
@@ -164,13 +171,7 @@ export async function finishLessonRun({
       explanationsFinished,
       languageGoals,
       modelChanged: changed,
-      progress: {
-        brainPower: {
-          after: Number(progress.totalBrainPower),
-          before: Number(progress.totalBrainPower) - score.brainPower,
-        },
-        energy: { after: clampedEnergy, before: currentEnergy },
-      },
+      progress: { brainPower, energy: { after: clampedEnergy, before: currentEnergy } },
     };
   });
 }
