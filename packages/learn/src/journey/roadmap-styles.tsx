@@ -1,4 +1,5 @@
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type CSSProperties } from "react";
 
 /* In a module of their own so server components (the public pages) can draw the bands too. */
@@ -41,32 +42,66 @@ export function getBandColumnsStyle(weights: readonly number[]): CSSProperties {
   };
 }
 
-export const AXIS_CLASS = "@container/phase relative flex min-h-4 flex-wrap";
+export const AXIS_CLASS = "@container/phase relative flex min-h-4 flex-wrap gap-x-2";
 
 export const AXIS_TEXT_CLASS =
-  "text-faint font-mono text-[0.6875rem] leading-4 whitespace-nowrap tabular-nums";
+  "text-faint max-w-[100cqw] shrink-0 font-mono text-[0.6875rem] leading-4 text-balance whitespace-normal tabular-nums";
 
 const MIDDLE_SHARE = 0.5;
 
 const PERCENT = 100;
 
-/**
- * Right-aligned so a label with no room after its point moves back inside the phase; one ending at
- * its point is at least as wide as its text, so it never starts before the phase does.
- */
-export const AXIS_POINT_CLASS = "flex max-w-full justify-end";
-
 export function getPointSide(share: number): "left" | "right" {
   return share < MIDDLE_SHARE ? "left" : "right";
 }
 
-export function getAxisPointStyle(share: number): CSSProperties {
-  const at = `${share * PERCENT}%`;
+function getAxisLabelBox({ after, share }: { after: boolean; share: number }): {
+  className: string;
+  style: CSSProperties;
+} {
+  if (after) {
+    return {
+      className: "ml-auto flex max-w-full text-right",
+      style: { paddingRight: `${(1 - share) * PERCENT}%` },
+    };
+  }
 
-  return getPointSide(share) === "left"
-    ? { paddingLeft: at }
-    : { minWidth: "fit-content", width: at };
+  if (getPointSide(share) === "left") {
+    return {
+      className: "flex max-w-full justify-end",
+      style: { paddingLeft: `${share * PERCENT}%` },
+    };
+  }
+
+  return {
+    className: "flex max-w-full min-w-fit justify-end text-right",
+    style: { width: `${share * PERCENT}%` },
+  };
 }
 
-/** Right-aligned so a label wider than the phase runs left, not past the roadmap's edge. */
-export const AXIS_END_CLASS = "ml-auto flex max-w-full justify-end pl-2";
+/**
+ * Every label under a phase stays inside it: it sits at its point, slides back when there's no
+ * room past it, takes the next line when it meets the label before it, and breaks between words
+ * when it's wider than the phase. The phase's first label is placed from the phase's start and one
+ * `after` it, always in the second half, from the phase's end, so the first can't push it off its
+ * point. Its child carries `AXIS_TEXT_CLASS`.
+ */
+export function AxisLabel({
+  after = false,
+  children,
+  className,
+  share,
+}: {
+  after?: boolean;
+  children: React.ReactNode;
+  className?: string;
+  share: number;
+}) {
+  const box = getAxisLabelBox({ after, share });
+
+  return (
+    <span className={cn(box.className, className)} style={box.style}>
+      {children}
+    </span>
+  );
+}
