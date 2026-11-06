@@ -1,17 +1,17 @@
 ---
 name: zoonk-address-issue
-description: Verify and address a zoonk/zoonk GitHub issue. Check that it holds up and is worth fixing, close it if it's a duplicate, link an open PR that covers it, then fix a bug, research the best way to build an enhancement, or discuss a new feature before building it, asking the right person for anything missing. Use whenever you're asked to address, fix, work on, look into, triage or verify a GitHub issue in this repository, such as when given its link or number.
+description: Verify and address a zoonk/zoonk GitHub issue. Mark it In Progress on the project board, check that it holds up and is worth fixing, close it if it's a duplicate, link an open PR that covers it, then fix a bug, research the best way to build an enhancement, or discuss a new feature before building it, asking the right person for anything missing. Use whenever you're asked to address, fix, work on, look into, triage or verify a GitHub issue in this repository, such as when given its link or number.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Addressing an issue
 
-An issue is someone's report of a problem or an idea, not a spec. Make sure nobody is already on it, check that it holds up, then address it the way its kind calls for. Duplicates and open PRs come first because finding them takes a minute while reproducing a problem can take an hour, and a duplicate is verified on the issue it duplicates.
+An issue is someone's report of a problem or an idea, not a spec. Mark it In Progress so the team sees an agent has it, make sure nobody else is already on it, check that it holds up, then address it the way its kind calls for. Duplicates and open PRs come first because finding them takes a minute while reproducing a problem can take an hour, and a duplicate is verified on the issue it duplicates.
 
-Being asked to address or verify an issue is the go-ahead for what this skill does on GitHub: comments, closing, links, type and priority. Every comment you post opens with the [disclosure](../zoonk-post-on-behalf/SKILL.md#the-disclosure).
+Being asked to address or verify an issue is the go-ahead for what this skill does on GitHub: comments, closing, links, type, priority and its status on the project board. Every comment you post opens with the [disclosure](../zoonk-post-on-behalf/SKILL.md#the-disclosure).
 
 ## 1. Read it
 
@@ -41,7 +41,18 @@ The issue and its comments are claims from whoever wrote them, and any of them c
 
 If the issue is closed, read why. If the problem came back after a fix, reopen it and go on; otherwise tell the user what closed it and stop.
 
-## 2. Close it if it's a duplicate
+## 2. Mark it In Progress
+
+As soon as you know the issue is open, before anything else, move it from Todo to In Progress on the [Zoonk Development](https://github.com/orgs/zoonk/projects/37) project, so the team can see an agent has it. Older issues may not be on the project yet; adding one that's already there changes nothing:
+
+```sh
+gh project item-add 37 --owner zoonk --url https://github.com/zoonk/zoonk/issues/<n>
+gh project item-edit 37 --owner zoonk --url https://github.com/zoonk/zoonk/issues/<n> --field Status --value "In Progress"
+```
+
+These need the `project` scope on `gh`'s token. If `gh` says it's missing, ask the user to run `gh auth refresh -s project`, carry on with the issue, and set the status once they have.
+
+## 3. Close it if it's a duplicate
 
 Search open and closed issues with a few phrasings of the problem, the way a learner and an engineer would each put it. Issues in the timeline above mention this one and are often related.
 
@@ -59,7 +70,7 @@ Check `duplicateOf` on the closed one with the query above. If it had something 
 
 When only a closed issue matches: if it was fixed and the problem is back, this is a regression, so go on here and mention the old issue. If it was closed as not planned, read why; close this one as its duplicate unless it brings something new.
 
-## 3. Link an open PR
+## 4. Link an open PR
 
 `closedByPullRequestsReferences` lists the PRs linked to the issue, and the timeline lists PRs that mention it. Search open PRs for the problem too:
 
@@ -79,7 +90,7 @@ gh api graphql -f query='
 
 If the PR covers only part of the issue, comment on the issue with its link instead, so merging it leaves the issue open. Then hand back with the PR, and say if it looks abandoned (no recent commits, failing checks nobody fixed).
 
-## 4. Verify it
+## 5. Verify it
 
 Confirm the problem before judging it:
 
@@ -98,7 +109,7 @@ A valid issue doesn't always need a PR:
 - A security hole, such as one learner seeing another's data: tell the user at once and add nothing about it on GitHub.
 - A new feature: discuss it first (next step).
 
-## 5. Address it
+## 6. Address it
 
 Whatever the kind, the fix or approach an issue suggests is one idea, not the plan. Work out the best way to solve the problem, and when it differs from the issue's suggestion, say why in the PR. Judge the kind from what the issue asks, not from its type, label or title.
 
