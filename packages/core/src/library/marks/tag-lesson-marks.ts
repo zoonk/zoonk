@@ -179,7 +179,10 @@ function toSavedMarks(marks: ScreenMarks): SavedStepMarks {
   };
 }
 
-/** Saves the map of the version `toPreparedVersion` read, unless something rewrote it since `read`. */
+/**
+ * Saves the map of the version `toPreparedVersion` read, unless something rewrote it since `read`.
+ * A staged map published meanwhile is saved where publishing moved it.
+ */
 export function savePreparedMap({
   lessonId,
   map,
@@ -191,15 +194,20 @@ export function savePreparedMap({
   read: NonNullable<Lesson["summary"]>;
   staged: boolean;
 }) {
+  const current = { id: lessonId, summary: { equals: read } };
+
   return staged
-    ? prisma.lesson.updateMany({
-        data: { stagedSummary: map },
-        where: { id: lessonId, stagedSummary: { equals: read } },
-      })
-    : prisma.lesson.updateMany({
-        data: { summary: map },
-        where: { id: lessonId, summary: { equals: read } },
-      });
+    ? [
+        prisma.lesson.updateMany({
+          data: { stagedSummary: map },
+          where: { id: lessonId, stagedSummary: { equals: read } },
+        }),
+        prisma.lesson.updateMany({
+          data: { summary: map },
+          where: { ...current, stagedSummary: { equals: DbNull } },
+        }),
+      ]
+    : [prisma.lesson.updateMany({ data: { summary: map }, where: current })];
 }
 
 /** Writes only over untagged screens and the same map, so a lesson rewritten meanwhile keeps its own. */
@@ -214,7 +222,7 @@ async function saveMarks({
 }) {
   const mapUpdate =
     map && lesson.summary !== null
-      ? [savePreparedMap({ lessonId: lesson.id, map, read: lesson.summary, staged: lesson.staged })]
+      ? savePreparedMap({ lessonId: lesson.id, map, read: lesson.summary, staged: lesson.staged })
       : [];
 
   await prisma.$transaction([

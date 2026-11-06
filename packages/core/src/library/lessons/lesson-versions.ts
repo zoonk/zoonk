@@ -41,13 +41,16 @@ export function toPreparedVersion<Step extends { staged: boolean }, Summary>({
   return { staged, steps: toPreparedSteps(steps), summary: staged ? stagedSummary : summary };
 }
 
-export async function readStagedLessonVersion(lessonId: string): Promise<number | null> {
-  const staged = await prisma.step.findFirst({
-    select: { version: true },
+export async function readStagedLessonVersion(
+  lessonId: string,
+  db: TransactionClient = prisma,
+): Promise<{ savedAt: number; version: number } | null> {
+  const staged = await db.step.findFirst({
+    select: { createdAt: true, version: true },
     where: { lessonId, retiredAt: null, staged: true },
   });
 
-  return staged?.version ?? null;
+  return staged && { savedAt: staged.createdAt.getTime(), version: staged.version };
 }
 
 export async function lockCurrentLessonVersion(

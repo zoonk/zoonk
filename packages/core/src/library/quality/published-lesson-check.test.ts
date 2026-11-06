@@ -200,7 +200,7 @@ describe(checkPublishedLesson, () => {
 
     await expect(
       checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
-    ).resolves.toStrictEqual({ status: "republished", version: 2 });
+    ).resolves.toStrictEqual({ savedAt: expect.any(Number), status: "republished", version: 2 });
 
     expect(checkLessonQuality).toHaveBeenCalledOnce();
     expect(fixLessonDraft).toHaveBeenCalledWith(expect.objectContaining({ serviceTier: "flex" }));
@@ -286,7 +286,12 @@ describe(checkPublishedLesson, () => {
 
     await check();
 
-    await expect(check()).resolves.toStrictEqual({ status: "republished", version: 2 });
+    await expect(check()).resolves.toStrictEqual({
+      savedAt: expect.any(Number),
+      status: "republished",
+      version: 2,
+    });
+
     await publishFixedVersion({ lessonId: lesson.id, version: 2 });
     await expect(check()).resolves.toStrictEqual({ status: "replaced" });
 
@@ -335,7 +340,7 @@ describe(redraftPublishedLesson, () => {
         version: plan.version,
         workflowRunId: randomUUID(),
       }),
-    ).resolves.toStrictEqual({ status: "republished", version: 2 });
+    ).resolves.toStrictEqual({ savedAt: expect.any(Number), status: "republished", version: 2 });
 
     expect(writeLessonDraft).toHaveBeenLastCalledWith(
       expect.objectContaining({ heldBackProblems: heldBack.problems, serviceTier: "flex" }),
@@ -525,6 +530,23 @@ describe(setAsidePublishedLesson, () => {
     expect(steps.every((step) => step.retiredAt === null)).toBe(true);
 
     await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 7 })).resolves.toBe(false);
+  });
+
+  it("keeps a lesson in play while a fix of its version is staged, so the fix goes live playable", async () => {
+    const { lesson, plan } = await publishLesson({ lesson: writtenWrong() });
+    mockReview([wrongRise]);
+    mockFix({ changedScreens: [4], lesson: writtenRight() });
+    await checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() });
+
+    await expect(
+      setAsidePublishedLesson({ lessonId: lesson.id, version: plan.version }),
+    ).resolves.toBe(false);
+
+    await expect(publishFixedVersion({ lessonId: lesson.id, version: 2 })).resolves.toBe(true);
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ).resolves.toMatchObject({ contentStatus: "completed", setAsideAt: null });
   });
 });
 

@@ -19,8 +19,12 @@ import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { lessonMarksWorkflow } from "../marks/lesson-marks-workflow";
-import { type LessonCheckInput, lessonCheckWorkflow } from "./lesson-check-workflow";
-import { citePublishedLessonStep } from "./steps/lesson-check-steps";
+import {
+  type LessonCheckInput,
+  lessonCheckWorkflow,
+  settlePublishedLesson,
+} from "./lesson-check-workflow";
+import { checkPublishedLessonStep, citePublishedLessonStep } from "./steps/lesson-check-steps";
 import type * as CheckSteps from "./steps/lesson-check-steps";
 
 vi.mock("@zoonk/core/users/session", () => ({ getSession: vi.fn() }));
@@ -246,6 +250,69 @@ describe(lessonCheckWorkflow, () => {
     expect(Date.now() - startedAt).toBeGreaterThanOrEqual(5 * 60_000);
     expect(Date.now() - startedAt).toBeLessThanOrEqual(5 * 60_000 + 6000);
     await expect(learnersGetTheFix(lesson.id)).resolves.toBe(true);
+  });
+
+  it("gives learners the fix five minutes after its text was saved, however late its wait starts", async () => {
+    const { input, lesson } = await publishedLesson();
+    vi.mocked(checkLessonQuality).mockResolvedValue(wrong);
+
+    vi.mocked(fixLessonDraft).mockResolvedValue(
+      taskResult({ changedScreens: [2], lesson: fixedDraft }),
+    );
+
+    vi.useFakeTimers({ toFake: ["Date"] });
+
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+
+    const { plan, ...check } = input;
+    const context = { ...check, workflowRunId: randomUUID() };
+    const outcome = await checkPublishedLessonStep({ ...context, plan });
+
+    const { createdAt } = await prisma.step.findFirstOrThrow({
+      where: { lessonId: lesson.id, staged: true },
+    });
+
+    const savedAt = createdAt.getTime();
+    vi.setSystemTime(savedAt + 4 * 60_000);
+
+    const seen = recordWhatLearnersGetWhileSettling({
+      lessonId: lesson.id,
+      onSleep: (ms) => {
+        vi.setSystemTime(Date.now() + ms + 1000);
+      },
+      running: () => true,
+    });
+
+    await expect(settlePublishedLesson({ context, outcome, version: plan.version })).resolves.toBe(
+      "republished",
+    );
+
+    expect(seen).not.toContain(true);
+    expect(Date.now() - savedAt).toBeLessThanOrEqual(5 * 60_000 + 6000);
+    await expect(learnersGetTheFix(lesson.id)).resolves.toBe(true);
+  });
+
+  it("starts tagging and drawing a fix while its citations are still being found", async () => {
+    const { input } = await publishedLesson();
+    vi.mocked(checkLessonQuality).mockResolvedValue(wrong);
+
+    vi.mocked(fixLessonDraft).mockResolvedValue(
+      taskResult({ changedScreens: [2], lesson: fixedDraft }),
+    );
+
+    const citing = Promise.withResolvers<number>();
+    vi.mocked(citePublishedLessonStep).mockReturnValue(citing.promise);
+
+    getStartMock().mockImplementation(async () => {
+      citing.resolve(0);
+      return { runId: "started-run" } as never;
+    });
+
+    await expect(
+      lessonCheckWorkflow({ ...input, plan: { ...input.plan, cite: true } }),
+    ).resolves.toStrictEqual({ cited: 0, status: "republished" });
   });
 
   it("drafts a version no fix put right afresh, and takes a wrong one out of play when no draft passes", async () => {

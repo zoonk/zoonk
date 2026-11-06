@@ -53,7 +53,7 @@ import { runLessonQualityGate } from "./lesson-quality-gate";
 
 export type PublishedLessonOutcome =
   | { status: "passed" | "replaced" }
-  | { status: "republished"; version: number }
+  | { savedAt: number; status: "republished"; version: number }
   | { draft: HeldBackDraft; incorrect: boolean; status: "heldBack" };
 
 async function stageFixedVersion({
@@ -92,13 +92,15 @@ async function stageFixedVersion({
     summary: checked.version.lesson.summary,
   });
 
-  return version === null ? { status: "replaced" } : { status: "republished", version };
+  return version === null
+    ? { status: "replaced" }
+    : { savedAt: Date.now(), status: "republished", version };
 }
 
 /** A step run again after staging its fix answers with that fix instead of writing another. */
 async function readStagedFix(lessonId: string): Promise<PublishedLessonOutcome | null> {
-  const version = await readStagedLessonVersion(lessonId);
-  return version === null ? null : { status: "republished", version };
+  const staged = await readStagedLessonVersion(lessonId);
+  return staged && { ...staged, status: "republished" };
 }
 
 function toReviewFindings(gate: GateResult): GateResult {
@@ -282,7 +284,7 @@ class PublishedLessonReplacedError extends Error {
   override name = "PublishedLessonReplacedError";
 }
 
-/** Returns false if `version` was replaced; callers must leave the newer version playable. */
+/** Returns false if `version` was replaced or has a fix staged; callers must leave the newer version playable. */
 export async function setAsidePublishedLesson({
   lessonId,
   version,
@@ -312,7 +314,10 @@ export async function setAsidePublishedLesson({
       const dependentPlanIds = await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
       await markLockedPlanInputsChanged(tx, { planIds: dependentPlanIds });
 
-      if ((await lockCurrentLessonVersion(tx, lessonId)) !== version) {
+      if (
+        (await lockCurrentLessonVersion(tx, lessonId)) !== version ||
+        (await readStagedLessonVersion(lessonId, tx))
+      ) {
         throw new PublishedLessonReplacedError();
       }
 

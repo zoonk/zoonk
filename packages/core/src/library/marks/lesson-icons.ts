@@ -165,19 +165,17 @@ export async function linkLessonIcons({
 
   const mapUpdate =
     map?.ideas.some((idea) => idea.iconPending) && lesson.summary !== null
-      ? [
-          savePreparedMap({
-            lessonId,
-            map: {
-              ...map,
-              ideas: map.ideas.map((idea) =>
-                idea.iconPending ? linkIcon({ linked, saved: idea }) : idea,
-              ),
-            },
-            read: lesson.summary,
-            staged: lesson.staged,
-          }),
-        ]
+      ? savePreparedMap({
+          lessonId,
+          map: {
+            ...map,
+            ideas: map.ideas.map((idea) =>
+              idea.iconPending ? linkIcon({ linked, saved: idea }) : idea,
+            ),
+          },
+          read: lesson.summary,
+          staged: lesson.staged,
+        })
       : [];
 
   await prisma.$transaction([...stepUpdates, ...mapUpdate]);

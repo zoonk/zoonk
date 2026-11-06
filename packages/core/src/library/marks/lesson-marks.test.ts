@@ -10,6 +10,7 @@ import {
 } from "@zoonk/testing/fixtures/playable-lessons";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it, vi } from "vitest";
+import { publishStagedLessonVersion } from "../lessons/_utils/save-lesson-content";
 import { readSavedLessonMap } from "../lessons/lesson-map";
 import { linkLessonIcons, pickLessonIcons } from "./lesson-icons";
 import { readLessonMarking, tagLessonMarks } from "./tag-lesson-marks";
@@ -185,6 +186,37 @@ describe(tagLessonMarks, () => {
       { about: "What the electron does", iconId: drawn.id },
       { about: "How to read the cloud", iconId: null },
     ]);
+  });
+
+  it("saves a staged map's marks where publishing moved it when the picture wait ran out first", async () => {
+    const [cloud, nucleus] = [uniqueName("electron cloud"), uniqueName("atom")];
+    taggedAs({ cloud, nucleus });
+    const map = { ideas, shape: "hub" };
+    const tagged = vi.mocked(tagLesson).getMockImplementation();
+
+    const { lesson } = await playableLessonFixture({
+      lesson: { stagedSummary: map, summary: map },
+      steps: ["explanation"],
+    });
+
+    await libraryStepFixture({
+      content: playableStepContent.explanation,
+      lessonId: lesson.id,
+      position: 0,
+      staged: true,
+      version: 2,
+    });
+
+    vi.mocked(tagLesson).mockImplementation(async (input) => {
+      await publishStagedLessonVersion({ lessonId: lesson.id, version: 2 });
+      return tagged?.(input) ?? Promise.reject(new Error("No tagging mock"));
+    });
+
+    await tagLessonMarks({ lessonId: lesson.id });
+
+    await expect(readMarks(lesson.id)).resolves.toMatchObject({
+      ideas: [{ about: "What the electron does" }, { about: "How to read the cloud" }],
+    });
   });
 
   it("leaves a language lesson alone and never writes over a map rewritten meanwhile", async () => {

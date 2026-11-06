@@ -180,8 +180,14 @@ describe("lesson writer plan marks", () => {
       });
 
       await expect(
-        prisma.step.findFirstOrThrow({ where: { lessonId: context.lesson.id, retiredAt: null } }),
-      ).resolves.toMatchObject({ version: writer === "holdback" ? 1 : 2 });
+        prisma.step.findFirstOrThrow({
+          orderBy: { version: "desc" },
+          where: { lessonId: context.lesson.id, retiredAt: null },
+        }),
+      ).resolves.toMatchObject({
+        staged: writer === "version",
+        version: writer === "holdback" ? 1 : 2,
+      });
     },
   );
 

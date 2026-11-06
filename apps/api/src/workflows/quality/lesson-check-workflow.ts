@@ -82,7 +82,7 @@ export async function settlePublishedLesson({
     const imageScope = await readLessonImageScopeStep(lessonId);
 
     if (imageScope) {
-      await markAndDraw({ analytics, imageScope, lessonId });
+      await markAndDraw({ analytics, imageScope, lessonId, savedAt: settled.savedAt });
     }
 
     await publishFixedVersionStep({ lessonId, version: settled.version });
@@ -96,6 +96,20 @@ export async function settlePublishedLesson({
   return settled.status;
 }
 
+async function checkAndSettle({
+  context,
+  plan,
+}: {
+  context: CheckContext;
+  plan: LessonCheckPlan;
+}): Promise<LessonCheckStatus> {
+  const outcome: PublishedLessonOutcome = plan.review
+    ? await checkPublishedLessonStep({ ...context, plan })
+    : { status: "passed" };
+
+  return settlePublishedLesson({ context, outcome, version: plan.version });
+}
+
 export async function lessonCheckWorkflow({
   plan,
   ...input
@@ -105,15 +119,12 @@ export async function lessonCheckWorkflow({
   const { workflowRunId } = getWorkflowMetadata();
   const context: CheckContext = { ...input, workflowRunId };
 
-  // Citations are extra: the version goes without them once their step gives up.
-  const [cited, outcome] = await Promise.all([
+  // Citations are extra: the version goes without them once their step gives up, and a fix
+  // doesn't wait for them before its marks and pictures start.
+  const [cited, status] = await Promise.all([
     plan.cite ? citePublishedLessonStep({ ...context, plan }).catch(() => 0) : 0,
-    plan.review
-      ? checkPublishedLessonStep({ ...context, plan })
-      : ({ status: "passed" } satisfies PublishedLessonOutcome),
+    checkAndSettle({ context, plan }),
   ]);
-
-  const status = await settlePublishedLesson({ context, outcome, version: plan.version });
 
   return { cited, status };
 }
