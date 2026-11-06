@@ -115,7 +115,7 @@ private struct SpeakingPaperView: View {
         Text(paper.title)
           .font(.title2.weight(.semibold))
         Text(
-          "\(paper.tasks.count) tasks\u{00A0}· \(minutesText(min: paper.minutes.min, max: paper.minutes.max)) in the exam",
+          "\(paper.tasks.count) tasks\u{00A0}· \(speakingTaskMinutes(min: paper.minutes.min, max: paper.minutes.max)) in the exam",
           tableName: "Voice",
           comment: "How many tasks the speaking paper has and how long it is"
         )
@@ -312,7 +312,7 @@ private struct SpeakingPaperView: View {
       : String(
         localized: "With an examiner (AI)", table: "Voice", comment: "Whom the learner talks to")
 
-    var facts = [role, minutesText(min: task.minutes.min, max: task.minutes.max)]
+    var facts = [role, speakingTaskMinutes(min: task.minutes.min, max: task.minutes.max)]
 
     if task.prepMinutes > 0 {
       facts.append(
@@ -323,13 +323,6 @@ private struct SpeakingPaperView: View {
     }
 
     return facts.joinedFacts()
-  }
-
-  private func minutesText(min: Double, max: Double) -> String {
-    min == max
-      ? String(localized: "\(Int(min)) min", table: "Voice", comment: "A task's length")
-      : String(
-        localized: "\(Int(min))–\(Int(max)) min", table: "Voice", comment: "A task's length range")
   }
 
   private func lastTryText(

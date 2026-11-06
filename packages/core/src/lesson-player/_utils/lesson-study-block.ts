@@ -4,9 +4,11 @@ import { getString, isJsonObject } from "@zoonk/utils/json";
 import { celebrateProgress } from "../../milestones/celebrate-progress";
 import { findDayLessonBlock } from "../../sessions/_utils/day-lesson-block";
 import { type ProgressChange } from "../../sessions/_utils/session-progress";
+import { readBlockPayload } from "../../sessions/block-payload";
 import { serializeStudyBlockCompletion } from "../../sessions/completion-contract";
 import { NOTHING_REACHED } from "../../sessions/reached";
 import { settleFinishedLesson } from "../../sessions/settle-finished-lesson";
+import { oweDaySettlement } from "../../sessions/settle-owed-session-day";
 import { type LibraryLessonCompletion } from "../contract";
 
 export type RunCompletion = Omit<
@@ -53,7 +55,7 @@ export async function lockRunBlock({
 
 type RunBlock = NonNullable<Awaited<ReturnType<typeof lockRunBlock>>>;
 
-/** Commits the block with the run that finished it, so a failed settlement still leaves it done and a retry on a later day still settles its day. */
+/** Commits the block with the run that finished it and the Brain Power it paid, and owes its day's settlement, so a request that fails or ends before settling still leaves the block done, its day settled and its milestones awarded. */
 export async function completeRunBlock(
   tx: TransactionClient,
   {
@@ -61,21 +63,43 @@ export async function completeRunBlock(
     brainPower,
     now,
     run,
-  }: { block: RunBlock; brainPower: number; now: Date; run: LearningEvent },
+    timeZone,
+    userId,
+  }: {
+    block: RunBlock;
+    brainPower: ProgressChange;
+    now: Date;
+    run: Pick<LearningEvent, "id">;
+    timeZone: string;
+    userId: string;
+  },
 ): Promise<boolean> {
   if (block.status !== "active" && block.status !== "pending") {
     return false;
   }
 
+  // Earlier writes in this transaction, the run's duration and skipped steps, changed both rows after they were read.
+  const [current, currentRun] = await Promise.all([
+    tx.studySessionBlock.findUniqueOrThrow({ select: { payload: true }, where: { id: block.id } }),
+    tx.learningEvent.findUniqueOrThrow({ select: { contentIds: true }, where: { id: run.id } }),
+  ]);
+
   await tx.studySessionBlock.update({
-    data: { brainPower, completedAt: now, status: "completed" },
+    data: {
+      brainPower: brainPower.after - brainPower.before,
+      completedAt: now,
+      payload: { ...readBlockPayload(current), milestoneReward: { bossWon: false, brainPower } },
+      status: "completed",
+    },
     where: { id: block.id },
   });
+
+  await oweDaySettlement(tx, { block, timeZone, userId });
 
   await tx.learningEvent.update({
     data: {
       contentIds: {
-        ...(isJsonObject(run.contentIds) ? run.contentIds : {}),
+        ...(isJsonObject(currentRun.contentIds) ? currentRun.contentIds : {}),
         studySessionBlockId: block.id,
         studySessionId: block.sessionId,
       },
