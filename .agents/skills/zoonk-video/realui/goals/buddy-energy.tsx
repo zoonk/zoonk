@@ -1,3 +1,5 @@
+import { getGlassesProgress } from "@repo/packages/core/src/milestones/milestone-rules.ts";
+import { BRAIN_POWER_BONUS } from "@repo/packages/core/src/sessions/brain-power.ts";
 import { BuddyScreen, useBuddyTutor } from "@repo/packages/learn/src/buddies/buddy-screen.tsx";
 import { TutorConversation } from "@repo/packages/player/src/questions/tutor-conversation.tsx";
 import { calculateBeltLevel, getBeltStartBrainPower } from "@repo/packages/utils/src/belt-level.ts";
@@ -49,17 +51,16 @@ export function buddyStatus({
       studiedToday: studied,
     },
     firstSteps: null,
-    glasses: [
-      { current: 0, earned: true, glasses: "round", target: 0 },
-      { current: 7, earned: true, glasses: "star", target: 7 },
-      { current: 12, earned: false, glasses: "aviator", target: 30 },
-      { current: 4, earned: false, glasses: "catEye", target: 10 },
-      { current: 1, earned: false, glasses: "retro", target: 3 },
-      { current: 0, earned: false, glasses: "monocle", target: 1 },
-    ],
+    glasses: getGlassesProgress({
+      bigChallenges: 0,
+      bossesWon: 1,
+      capsulesOpened: 12,
+      finalBossesWon: 0,
+      fullMeals: 4,
+    }),
     thisWeek: { fixes: 3, newIdeas: 6, reviews: 4 },
     today: {
-      fullMeal: { bonus: 20, earned: false },
+      fullMeal: { bonus: BRAIN_POWER_BONUS.fullMeal, earned: false },
       goalId: "exam",
       localDate: "2026-11-03",
       missions: studied

@@ -4,6 +4,7 @@
 import { mkdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
+import { pinStoryClock } from "./story-clock.mjs";
 
 const [list, ...only] = process.argv.slice(2);
 const stills = Object.entries(JSON.parse(readFileSync(list, "utf8"))).filter(
@@ -21,6 +22,7 @@ const context = await browser.newContext({
   colorScheme: "light",
   hasTouch: true,
 });
+await pinStoryClock(context);
 const page = await context.newPage();
 let errors = [];
 page.on("pageerror", (e) => errors.push(e.message.split("\n")[0]));

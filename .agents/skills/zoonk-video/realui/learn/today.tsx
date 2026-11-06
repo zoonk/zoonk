@@ -1,3 +1,4 @@
+import { BRAIN_POWER_BONUS } from "@repo/packages/core/src/sessions/brain-power.ts";
 import { TodayChangeNotice } from "@repo/packages/learn/src/today/today-change-notice.tsx";
 // Today (/today) on a phone for the career goal, from the repo's TodayScreen with a realistic TodayView.
 import { TodayScreen } from "@repo/packages/learn/src/today/today-screen.tsx";
@@ -192,7 +193,11 @@ function buildToday({
     examTomorrow: false,
     extraTime: { available: false, lessons: [], minutes: 15, reason: "sessionNotFinished" },
     freshStart: null,
-    fullMeal: { bonus: 20, earned: dayMissions.every((m) => m.status === "done"), ready: false },
+    fullMeal: {
+      bonus: BRAIN_POWER_BONUS.fullMeal,
+      earned: dayMissions.every((m) => m.status === "done"),
+      ready: false,
+    },
     goalId: CAREER_GOAL_ID,
     hyperdrive: { level: 0, streak: 0 },
     id: "session-1",

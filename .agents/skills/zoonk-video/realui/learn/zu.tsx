@@ -1,3 +1,5 @@
+import { getGlassesProgress } from "@repo/packages/core/src/milestones/milestone-rules.ts";
+import { BRAIN_POWER_BONUS } from "@repo/packages/core/src/sessions/brain-power.ts";
 import {
   BuddyScreen,
   type BuddyStatusView,
@@ -29,17 +31,16 @@ function buddyStatus(): BuddyStatusView {
     buddy: { glasses: "round", kind: "zu", name: null, picked: true },
     energy: { current: 72, state: "awake", studiedToday: false },
     firstSteps: null,
-    glasses: [
-      { current: 0, earned: true, glasses: "round", target: 0 },
-      { current: 0, earned: false, glasses: "star", target: 1 },
-      { current: 0, earned: false, glasses: "aviator", target: 1 },
-      { current: 2, earned: false, glasses: "catEye", target: 7 },
-      { current: 0, earned: false, glasses: "retro", target: 1 },
-      { current: 0, earned: false, glasses: "monocle", target: 1 },
-    ],
+    glasses: getGlassesProgress({
+      bigChallenges: 0,
+      bossesWon: 0,
+      capsulesOpened: 0,
+      finalBossesWon: 0,
+      fullMeals: 2,
+    }),
     thisWeek: { fixes: 0, newIdeas: 6, reviews: 2 },
     today: {
-      fullMeal: { bonus: 10, earned: false },
+      fullMeal: { bonus: BRAIN_POWER_BONUS.fullMeal, earned: false },
       goalId: CAREER_GOAL_ID,
       localDate: TODAY_ISO,
       missions: [

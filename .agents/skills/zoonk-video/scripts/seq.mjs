@@ -3,6 +3,7 @@ import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 // node scripts/seq.mjs <scenario> <lang> [dpr]   → assets/real/<lang>/seq/<scenario>/NNN.png + manifest.json
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
+import { pinStoryClock } from "./story-clock.mjs";
 
 const [name, lang = "en", dpr = "3"] = process.argv.slice(2);
 const pt = lang === "pt";
@@ -23,6 +24,7 @@ const ctx = await b.newContext({
   reducedMotion: "no-preference",
   colorScheme: "light",
 });
+await pinStoryClock(ctx);
 const page = await ctx.newPage();
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));

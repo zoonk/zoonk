@@ -3,6 +3,7 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
+import { pinStoryClock } from "./story-clock.mjs";
 
 const [lang, dpr = "3", step = "2"] = process.argv.slice(2);
 const view = `http://localhost:5199/?view=goal-entry&lang=${lang}`;
@@ -13,13 +14,13 @@ mkdirSync(out, { recursive: true });
 const browser = await chromium.launch({
   args: ["--force-color-profile=srgb", "--font-render-hinting=none"],
 });
-const page = await (
-  await browser.newContext({
-    viewport: { width: 390, height: 794 },
-    deviceScaleFactor: +dpr,
-    reducedMotion: "reduce",
-  })
-).newPage();
+const context = await browser.newContext({
+  viewport: { width: 390, height: 794 },
+  deviceScaleFactor: +dpr,
+  reducedMotion: "reduce",
+});
+await pinStoryClock(context);
+const page = await context.newPage();
 await page.goto(view, { waitUntil: "networkidle" });
 const total = await page.$eval("textarea", (e) => e.value.length);
 

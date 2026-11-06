@@ -6,6 +6,7 @@ import { learnMessages } from "@repo/packages/learn/src/messages.ts";
 import { playerMessages } from "@repo/packages/player/src/messages.ts";
 import { NextIntlClientProvider } from "next-intl";
 import { createRoot } from "react-dom/client";
+import { TODAY } from "./story";
 
 type View = (p: { lang: "en" | "pt"; state: string; q: URLSearchParams }) => any;
 
@@ -36,7 +37,7 @@ createRoot(document.getElementById("root")!).render(
   <NextIntlClientProvider
     locale={lang === "pt" ? "pt-BR" : "en-US"}
     messages={messages}
-    now={new Date("2026-11-03T12:00:00-03:00")}
+    now={new Date(TODAY)}
     timeZone="America/Sao_Paulo"
   >
     <View lang={lang} state={q.get("state") ?? "answering"} q={q} />

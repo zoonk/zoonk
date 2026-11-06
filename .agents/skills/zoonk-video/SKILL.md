@@ -88,7 +88,7 @@ A Zoonk video shows the real product, says only what the code backs, and ships i
 
 - `scripts/`
   - Setup: `init.mjs` builds a studio; `export-art.mjs` saves the buddy SVGs.
-  - Captures: `snap.mjs` (stills), `seq.mjs` (interactions), `typing.mjs`, `manifests.py`.
+  - Captures: `snap.mjs` (stills), `seq.mjs` (interactions), `typing.mjs`, `manifests.py`; `story-clock.mjs` pins their clock to the story's date.
   - Video: `render.mjs` turns a page into frames, then an MP4 or stills; `cues.mjs` lists a page's sound cues.
   - Audio:
     - `narration.py`: spec, fit and captions.
