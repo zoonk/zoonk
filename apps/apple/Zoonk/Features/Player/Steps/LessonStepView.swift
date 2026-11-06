@@ -144,8 +144,6 @@ private struct HookStepView: View {
         .typeStyle(.lessonText)
 
       if showsOpeningMap, let openingMap {
-        // On one page the map takes the room the scene leaves at its bottom.
-        Spacer(minLength: 8)
         LessonOpeningMap(summary: openingMap)
       }
     }
@@ -161,14 +159,6 @@ private struct HookStepView: View {
         isLocked: context.isLocked || context.waitsForPicture,
         isGuess: true
       ) { context.select(.hookGuess(optionId: $0)) }
-
-      if context.result == nil {
-        Text(
-          "Getting it wrong now helps you remember later.", tableName: "Player",
-          comment: "Under a hook's options: a guess never counts"
-        )
-        .foregroundStyle(.mutedForeground)
-      }
     } else if isPaneSplit {
       StepMedia(step: step, visual: content.visual, hero: true)
     }
@@ -196,8 +186,10 @@ private struct ExplanationStepView: View {
         StepMedia(step: step, visual: content.visual, hero: true)
       }
 
-      LessonScreenText(title: content.title, text: content.text, marks: step.marks)
-        .typeStyle(.lessonText)
+      LessonScreenText(
+        title: content.title, titleIsHeading: true, text: content.text, marks: step.marks
+      )
+      .typeStyle(.lessonText)
     case .turn:
       if isPaneSplit {
         StepMedia(step: step, visual: content.visual, hero: true)

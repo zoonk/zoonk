@@ -27,7 +27,7 @@ struct LessonIdeaStrip: View {
 
         if let label = idea.label {
           Text(label)
-            .typeStyle(.body.weight(.semibold))
+            .typeStyle(.reading.weight(.semibold))
             .foregroundStyle(Color(.foreground))
         }
       }
@@ -82,8 +82,7 @@ private struct LessonIdeaMiniMap: View {
         var spoke = Path()
         spoke.move(to: center)
         spoke.addLine(to: point)
-        context.stroke(
-          spoke, with: .color(.faint), style: StrokeStyle(lineWidth: 1, dash: [2, 2]))
+        context.stroke(spoke, with: .color(.faint.opacity(0.6)), lineWidth: scale)
       }
 
       context.fill(Self.dot(at: center, radius: 2 * scale), with: .color(.faint))
@@ -94,9 +93,7 @@ private struct LessonIdeaMiniMap: View {
             Self.dot(at: point, radius: 6 * scale), with: .color(.success.opacity(0.25)))
           context.fill(Self.dot(at: point, radius: 3.5 * scale), with: .color(.success))
         } else {
-          context.fill(Self.dot(at: point, radius: 3 * scale), with: .style(.background))
-          context.stroke(
-            Self.dot(at: point, radius: 3 * scale), with: .color(.faint), lineWidth: 1)
+          context.fill(Self.dot(at: point, radius: 3 * scale), with: .color(.faint))
         }
       }
     }
@@ -117,10 +114,12 @@ private struct LessonIdeaMiniMap: View {
 /// A number opens its idea's name and what it covers, never its answer, which the lesson hasn't
 /// taught yet.
 struct LessonOpeningMap: View {
+  @Environment(\.colorSchemeContrast) private var contrast
+
   let summary: LessonSummary
 
   private static let gaps = CGSize(width: 92, height: 80)
-  private static let centerSize: CGFloat = 14
+  private static let centerSize: CGFloat = 10
 
   var body: some View {
     let slots = LessonIdeaSlot.slots(count: summary.ideas.count)
@@ -132,9 +131,9 @@ struct LessonOpeningMap: View {
       x: size.width / 2, y: node / 2 + CGFloat(-rows.lowerBound) * Self.gaps.height)
     let points = LessonIdeaSlot.points(of: slots, around: center, gaps: Self.gaps)
 
-    VStack(spacing: 8) {
+    VStack(spacing: 16) {
       ZStack {
-        Self.spokes(from: center, to: points)
+        spokes(from: center, to: points)
 
         Circle()
           .fill(Color(.foreground).opacity(0.3))
@@ -143,7 +142,7 @@ struct LessonOpeningMap: View {
           .accessibilityHidden(true)
 
         ForEach(Array(summary.ideas.enumerated()), id: \.offset) { index, idea in
-          LessonOpeningIdea(index: index, idea: idea)
+          LessonOpeningIdea(index: index, count: summary.ideas.count, idea: idea)
             .position(points[index])
         }
       }
@@ -154,49 +153,41 @@ struct LessonOpeningMap: View {
         comment:
           "Under the lesson map on a lesson's opening screen; its numbers open each idea. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"%lld ideas to discover in this lesson\"."
       )
-      .typeStyle(.note)
+      .typeStyle(.body)
       .foregroundStyle(.mutedForeground)
       .multilineTextAlignment(.center)
     }
+    .padding(.top, 8)
     .frame(maxWidth: .infinity)
     .accessibilityElement(children: .contain)
   }
 
-  private static func spokes(from center: CGPoint, to points: [CGPoint]) -> some View {
-    Canvas { context, _ in
+  /// Main's spokes run from the center to each idea, under its ring.
+  private func spokes(from center: CGPoint, to points: [CGPoint]) -> some View {
+    let ink = Color(.foreground).opacity(contrast == .increased ? 1 : 0.25)
+
+    return Canvas { context, _ in
       for end in points {
-        let length = hypot(end.x - center.x, end.y - center.y)
-        let from = centerSize / 2 + 4
-        let to = length - LessonOpeningIdea.size / 2
-
-        guard to > from else {
-          continue
-        }
-
-        let along = { (distance: CGFloat) in
-          CGPoint(
-            x: center.x + (end.x - center.x) * distance / length,
-            y: center.y + (end.y - center.y) * distance / length)
-        }
         var spoke = Path()
-        spoke.move(to: along(from))
-        spoke.addLine(to: along(to))
-        context.stroke(
-          spoke, with: .color(Color(.foreground).opacity(0.25)),
-          style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
+        spoke.move(to: center)
+        spoke.addLine(to: end)
+        context.stroke(spoke, with: .color(ink), style: StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
       }
     }
     .accessibilityHidden(true)
   }
 }
 
+/// Main's `OpeningMapIdea`: the idea's icon in a dashed ring, in ink while its popover is open,
+/// with its number on the top corner; without an icon, the number in the ring.
 private struct LessonOpeningIdea: View {
-  /// The icon, or the ring that stands in for it.
-  static let size: CGFloat = 52
+  static let size: CGFloat = 64
 
+  @Environment(\.colorSchemeContrast) private var contrast
   @State private var isShowingIdea = false
 
   let index: Int
+  let count: Int
   let idea: LessonSummary.Idea
 
   var body: some View {
@@ -218,17 +209,16 @@ private struct LessonOpeningIdea: View {
         // at the largest text sizes a long name with its line can outgrow the room under the map.
         ScrollView {
           VStack(alignment: .leading, spacing: 4) {
-            if let label = idea.label {
-              Text(label)
-                .typeStyle(.body.weight(.semibold))
-                .accessibilityAddTraits(.isHeader)
-            }
+            (idea.label.map { Text($0) } ?? name)
+              .typeStyle(.rowTitle)
+              .foregroundStyle(Color(.foreground))
+              .accessibilityAddTraits(.isHeader)
 
             Text(about)
               .typeStyle(.body)
+              .foregroundStyle(.mutedForeground)
           }
-          .foregroundStyle(Color(.foreground))
-          .frame(width: 280, alignment: .leading)
+          .frame(width: 256, alignment: .leading)
           .padding(.horizontal)
           .padding(.vertical, 12)
         }
@@ -243,45 +233,47 @@ private struct LessonOpeningIdea: View {
     }
   }
 
+  /// Main's "Idea 2 of 5".
   private var name: Text {
     Text(
-      "Idea \(index + 1)", tableName: "Player",
+      "Idea \(index + 1) of \(count)", tableName: "Player",
       comment:
-        "VoiceOver: one of the lesson map's ideas (its main points), by its number. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"%lld ideas to discover in this lesson\"."
+        "Above a lesson screen: which of the lesson map's ideas (its main points) it teaches. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"%lld ideas to discover in this lesson\"."
     )
   }
 
-  /// The idea's icon with its number on the corner, or the number alone in a dashed ring.
-  @ViewBuilder
   private var mark: some View {
-    if let icon = idea.icon {
-      LessonIconImage(icon: icon, size: Self.size - 8)
-        .frame(width: Self.size, height: Self.size)
-        .overlay(alignment: .bottomTrailing) {
-          // The map keeps its size at every text size; past this one the number outgrows its ring.
-          number
-            .dynamicTypeSize(...DynamicTypeSize.xxLarge)
-            .frame(minWidth: 22, minHeight: 22)
-            .background(.muted, in: .circle)
-        }
-        .contentShape(.rect)
-    } else {
-      number
-        .frame(width: Self.size, height: Self.size)
-        .overlay {
-          Circle()
-            .strokeBorder(
-              Color(.foreground).opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [3, 3])
-            )
-            .padding(4)
-        }
-        .contentShape(.rect)
+    ZStack {
+      Circle()
+        .fill(Color(.systemBackground))
+        .strokeBorder(ring, style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
+
+      if let icon = idea.icon {
+        LessonIconImage(icon: icon, size: 44)
+      } else {
+        Text(index + 1, format: .number)
+          .typeStyle(.data.weight(.regular))
+          .dynamicTypeSize(...DynamicTypeSize.xxLarge)
+          .foregroundStyle(.mutedForeground)
+      }
     }
+    .frame(width: Self.size, height: Self.size)
+    .overlay(alignment: .topLeading) {
+      if idea.icon != nil {
+        // The map keeps its size at every text size; past this one the number outgrows its badge.
+        Text(index + 1, format: .number)
+          .typeStyle(.data)
+          .dynamicTypeSize(...DynamicTypeSize.xxLarge)
+          .foregroundStyle(.mutedForeground)
+          .frame(minWidth: 24, minHeight: 24)
+          .background(.muted, in: .circle)
+          .offset(x: -4, y: -4)
+      }
+    }
+    .contentShape(.circle)
   }
 
-  private var number: some View {
-    Text(index + 1, format: .number)
-      .typeStyle(.data.weight(.semibold))
-      .foregroundStyle(.mutedForeground)
+  private var ring: Color {
+    isShowingIdea || contrast == .increased ? Color(.foreground) : Color(.foreground).opacity(0.3)
   }
 }

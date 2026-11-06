@@ -41,6 +41,9 @@ extension TypeStyle {
   /// A lesson's question.
   static let question = TypeStyle(
     size: 19, relativeTo: .title3, weight: .semibold, tracking: -0.02)
+  /// An explanation's heading over its running text.
+  static let screenTitle = TypeStyle(
+    size: 15, relativeTo: .subheadline, weight: .semibold, lineHeight: 1.375)
   /// A lesson's running text.
   static let lessonText = TypeStyle(
     size: 18, relativeTo: .body, weight: .regular, lineHeight: 1.625)

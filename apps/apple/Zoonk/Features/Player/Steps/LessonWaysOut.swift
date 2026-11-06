@@ -293,15 +293,19 @@ extension PlayableLesson {
   }
 }
 
-/// Learners who don't follow a screen rarely think to ask the buddy, so one tap asks for them.
+/// Learners who don't follow a screen rarely think to ask the buddy, so one tap asks for them: the
+/// buddy's face beside their own words, as main's.
 struct LessonDidntGetIt: View {
   @Environment(\.lessonTutor) private var tutor
+  @Environment(LearnerSummaryStore.self) private var learnerSummary: LearnerSummaryStore?
 
   let store: LessonPlayerStore
 
   var body: some View {
     // A guest can't talk with the buddy yet: the tap would ask them to sign up instead.
     if tutor.panel != nil, !store.isGuest {
+      let buddy = learnerSummary?.summary.value?.buddy ?? BuddyLook()
+
       Button {
         store.ask(suggestionId: "simpler", sendsAtOnce: true)
       } label: {
@@ -312,11 +316,11 @@ struct LessonDidntGetIt: View {
               "Quiet button under a lesson's explanation, in the learner's own voice: what they'd say when the screen lost them (\"Não entendi\" in Portuguese). Tapping it has the buddy explain the screen more simply."
           )
         } icon: {
-          Image(systemName: "questionmark.bubble")
+          BuddyFace(kind: buddy.kind, glasses: buddy.glasses)
         }
       }
       .buttonStyle(.borderless)
-      .typeStyle(.body)
+      .typeStyle(.smallButton)
       .foregroundStyle(.mutedForeground)
       .accessibilityHint(
         Text(

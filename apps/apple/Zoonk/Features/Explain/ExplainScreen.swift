@@ -312,26 +312,10 @@ private struct ExplanationWait: View {
 
   var body: some View {
     Section {
-      ForEach(wait.visiblePhases) { phase in
-        LabeledContent {
-          switch phase.state {
-          case .waiting:
-            EmptyView()
-          case .working:
-            ProgressView()
-          case .done:
-            Image(systemName: "checkmark")
-              .fontWeight(.semibold)
-              .foregroundStyle(.success)
-              .accessibilityLabel(
-                Text("Done", tableName: "Explain", comment: "A finished step of a wait"))
-          }
-        } label: {
-          Text(phase.label)
-            .foregroundStyle(phase.state == .waiting ? .mutedForeground : .primary)
-        }
-      }
+      GenerationTimeline(wait: wait)
     }
+    .listRowBackground(Color.clear)
+    .listRowSeparator(.hidden)
     .task(id: generationID) {
       do {
         for try await event in onboarding.events(generationID: generationID) {

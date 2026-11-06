@@ -15,7 +15,11 @@
       if let section {
         content.fullScreenCover(isPresented: .constant(true)) {
           NavigationStack {
-            ComponentGallery(start: section)
+            if let writing = DebugLessonWait.writing(section) {
+              DebugLessonWait(writing: writing)
+            } else {
+              ComponentGallery(start: section)
+            }
           }
           .zoonkStyles()
         }
@@ -46,6 +50,7 @@
           ListSample()
           GallerySection(id: "panels", title: "Panels and tiles") { Panels() }
           GallerySection(id: "meters", title: "Meters") { Meters() }
+          GallerySection(id: "waits", title: "Waits") { Waits() }
           GallerySection(id: "marks", title: "Marks, kinds and belts") { Marks() }
           GallerySection(id: "options", title: "Answer options") { Options() }
           GallerySection(id: "fields", title: "Fields") { Fields() }
@@ -325,6 +330,81 @@
           Text(verbatim: "3 right in a row")
         }
         .feedbackPanel()
+      }
+    }
+  }
+
+  /// A run's wait at a few points, from events stamped as a real run's are, without running one.
+  private struct Waits: View {
+    var body: some View {
+      VStack(alignment: .leading, spacing: 32) {
+        GenerationTimeline(wait: DebugLessonWait.sample(reported: 3))
+        GenerationTimeline(
+          wait: DebugLessonWait.sample(reported: 1), failure: .generation, act: {})
+        GenerationTimeline(
+          wait: DebugLessonWait.sample(reported: 3), failure: .connection, act: {})
+        GenerationTimeline(wait: DebugLessonWait.sample(reported: 3).finished)
+      }
+      .padding(.vertical, 8)
+    }
+  }
+
+  /// `ZOONK_DEBUG_GALLERY=lessonWait` (or `lessonUnwritten`, `lessonFailed`, `lessonSetAside`) opens
+  /// a lesson's wait as the player shows it, with a run's first minute already reported.
+  private struct DebugLessonWait: View {
+    let writing: LessonPlayerStore.LessonWriting
+
+    static func writing(_ section: String) -> LessonPlayerStore.LessonWriting? {
+      switch section {
+      case "lessonWait": .writing
+      case "lessonUnwritten": .notStarted
+      case "lessonFailed": .failed
+      case "lessonSetAside": .setAside
+      default: nil
+      }
+    }
+
+    /// `reported` of the lesson's events: planning started, planning finished, writing started.
+    static func sample(reported: Int) -> GenerationWait {
+      let now = Date.now
+      let events = [
+        GenerationEvent(at: now.addingTimeInterval(-60), status: "started", step: "planLesson"),
+        GenerationEvent(at: now.addingTimeInterval(-8), status: "completed", step: "planLesson"),
+        GenerationEvent(at: now.addingTimeInterval(-7), status: "started", step: "writeLesson"),
+      ]
+      var wait = GenerationWait(kind: .lesson).started
+
+      for event in events.prefix(reported) {
+        wait.apply(event, receivedAt: event.at ?? now)
+      }
+
+      return wait
+    }
+
+    private let outline = LessonOutline(
+      id: "debug", title: "Porcentagem e descontos",
+      description:
+        "Quanto você paga de verdade numa promoção, e o desconto real por trás do “leve 3, pague 2”.",
+      estimatedMinutes: 5)
+
+    var body: some View {
+      LessonWaitingView(
+        outline: outline, writing: writing,
+        progress: writing == .failed ? Self.sample(reported: 3) : Self.sample(reported: 1),
+        alternative: .case2(.init(dueSkills: 1, kind: .review))
+      ) {}
+      .lonePage()
+      .navigationTitle(outline.title)
+      .navigationBarTitleDisplayMode(.inline)
+      .taskClose {
+        Button {
+        } label: {
+          Label {
+            Text(verbatim: "Close lesson")
+          } icon: {
+            Image(systemName: "xmark")
+          }
+        }
       }
     }
   }
