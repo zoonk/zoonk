@@ -1,11 +1,12 @@
 import { keepCarriedAfterBases, listBegunSkillIds } from "./carried-bases";
+import { keepCarriedBeforeChallenges } from "./carried-challenges";
 import { findChapterInProgress } from "./chapter-in-progress";
 import { takeFocusedToday } from "./focused-today";
 import { getSkillArea } from "./graph-areas";
 import { LEARN_KINDS, PHASE_WORK_KINDS } from "./plan-item-rules";
 import { type ExistingPlanItem, getItemKey } from "./plan-items";
 import { type PlanGraph } from "./plan-state";
-import { type QueueUnit } from "./plan-units";
+import { type QueueUnit, getLessonKey } from "./plan-units";
 import { type PlanDay, getLessonCapacity, scheduleUnits } from "./schedule-units";
 
 export type CarryOver = {
@@ -293,10 +294,11 @@ export function placeCarriedWork({
   const today = listKeptTodayKeys(input);
 
   const left = listCarriedKeys(input).filter((key) => today.has(key) || !yielded.has(key));
+  const given = (input.carryOver?.lessonIds ?? []).map((lessonId) => getLessonKey(lessonId));
 
   const keys = keepCarriedAfterBases({
     begun: listBegunSkillIds({ carried: [], items: input.items }),
-    keys: left,
+    keys: keepCarriedBeforeChallenges({ given: new Set([...today, ...given]), keys: left, units }),
     prerequisites: input.prerequisites,
     today,
     units,
