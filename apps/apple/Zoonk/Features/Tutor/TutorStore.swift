@@ -320,10 +320,9 @@ final class TutorConversation {
     switch error {
     case TutorFailure.conflict:
       unresolved = nil
-      await thread.refresh()
 
       // An earlier question goes first, so this one waits in the composer, still going by its
-      // suggestion.
+      // suggestion. It's there before the read, so a question sent during it can't be overwritten.
       if draft.isEmpty {
         draft = request.question
 
@@ -332,6 +331,8 @@ final class TutorConversation {
             id: suggestion, label: request.question, lessonSuggestionID: suggestion)
         }
       }
+
+      await thread.refresh()
     case let failure as TutorFailure:
       unresolved = nil
       askFailure = failure
