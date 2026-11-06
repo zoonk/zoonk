@@ -47,7 +47,7 @@ function storedSource({
   });
 }
 
-function request(word: string, topic: "product" | "regulation" | "syllabus" = "regulation") {
+function request(word: string, topic: "regulation" | "syllabus" = "regulation") {
   return {
     country: "BR",
     language: "pt",

@@ -45,7 +45,7 @@ export const reusePolicySchema = z.object({
 
 export type ReusePolicy = z.infer<typeof reusePolicySchema>;
 
-/** `software` is only read: rows from before products keep it, and research now writes `product`. */
+/** `software` is only read: rows from before products keep it, and product research writes `product`. */
 const SOURCE_TOPICS = ["exam", "product", "regulation", "software", "syllabus"] as const;
 
 export type SourceTopic = (typeof SOURCE_TOPICS)[number];
