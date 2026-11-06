@@ -72,9 +72,10 @@ final class CertificatesStore {
     }
   }
 
-  /// A failed mark only means the moment may play again after the learner's next task.
+  /// A failed mark only means the moment may play again after the learner's next task. No read
+  /// shows the mark, so like main's it expires nothing.
   private func markShown(_ code: String) async {
-    _ = await cache.mutate(invalidating: [.certificates]) { identity in
+    _ = await cache.mutate { identity in
       try await api.markShown(token: identity.bearerToken, code: code)
     }
   }
