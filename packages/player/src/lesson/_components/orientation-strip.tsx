@@ -30,14 +30,21 @@ export function OrientationStrip({ step }: { step: PlayableLibraryStep }) {
       >
         <IdeaMiniMap count={ideas.length} current={index} />
 
-        <p className="text-muted-foreground font-mono text-xs text-balance tabular-nums">
-          {t({
-            description:
-              "Above a lesson screen: which of the lesson map's ideas the screen teaches, such as 'Idea 2 of 4'.",
-            message: "Idea {current} of {total}",
-            values: { current: String(index + 1), total: String(ideas.length) },
-          })}
-        </p>
+        <div className="flex min-h-11 min-w-0 flex-col justify-center">
+          <p className="text-muted-foreground font-mono text-xs text-balance tabular-nums">
+            {t({
+              description:
+                "Above a lesson screen: which of the lesson map's ideas the screen teaches, such as 'Idea 2 of 4'.",
+              message: "Idea {current} of {total}",
+              values: { current: String(index + 1), total: String(ideas.length) },
+            })}
+          </p>
+          {idea.label && (
+            <p className="text-foreground text-base leading-snug font-semibold text-pretty wrap-break-word hyphens-auto">
+              {idea.label}
+            </p>
+          )}
+        </div>
 
         {idea.icon ? (
           <LessonIconImage className={ICON_SLOT_CLASS} icon={idea.icon} size={44} />
