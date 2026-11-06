@@ -1,15 +1,19 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { buildSourceIdentityKey } from "@zoonk/utils/identity-key";
 import { Response as PageResponse, fetch } from "undici";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { assert, beforeEach, describe, expect, it, vi } from "vitest";
+import { holdSourceLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import {
   getCandidateIds,
   mockDecision,
   mockSearchTerms,
   uniqueWord,
 } from "../identity/_test-utils/identity-mocks";
+import { recordSourceChangeNotice } from "./source-change-notices";
+import { getOwedSourceChange } from "./unnoticed-changes";
 import {
   findWebSourceCopy,
   listReadableSourceIds,
@@ -30,6 +34,14 @@ const NOTICE_TEXT = [
 ].join(" ");
 
 const SCRIPT_PAGE_TEXT = "É necessário habilitar o javascript para ver esta página corretamente.";
+
+const SOURCE_WRITE = /\bsources\b/u;
+
+function newUrl() {
+  return `https://example.gov.br/${randomUUID()}`;
+}
+
+const EDITAL = { kind: "official", language: "pt", publisher: null, title: "Edital" } as const;
 
 function noticePage({ questions, token }: { questions: number; token: string }) {
   return `<html><body><input type="hidden" value="${token}"><h1>Edital 2026</h1><p>A prova terá ${questions} questões.</p></body></html>`;
@@ -205,39 +217,113 @@ describe(refreshWebSource, () => {
 
     servePage(noticePage({ questions: 50, token: "c" }));
 
-    await expect(refreshWebSource(source.id)).resolves.toMatchObject({
-      change: null,
-      status: "unchanged",
-    });
+    await expect(refreshWebSource(source.id)).resolves.toMatchObject({ status: "unchanged" });
   });
 
-  it("stores a new version and describes what changed", async () => {
-    const url = `https://example.gov.br/${randomUUID()}`;
+  it("stores a new version, and keeps a law's earlier text until a notice covers the change", async () => {
     servePage(noticePage({ questions: 50, token: "a" }));
 
-    const source = await storeWebSource({
-      kind: "official",
-      language: "pt",
-      publisher: null,
-      title: "Edital",
-      topic: "exam",
-      url,
-    });
+    const [exam, law] = await Promise.all([
+      storeWebSource({ ...EDITAL, topic: "exam", url: `https://example.gov.br/${randomUUID()}` }),
+      storeWebSource({
+        ...EDITAL,
+        topic: "regulation",
+        url: `https://example.gov.br/${randomUUID()}`,
+      }),
+    ]);
 
     servePage(noticePage({ questions: 60, token: "d" }));
 
-    const refresh = await refreshWebSource(source.id);
+    await expect(
+      Promise.all([refreshWebSource(exam.id), refreshWebSource(law.id)]),
+    ).resolves.toMatchObject([{ status: "changed" }, { status: "changed" }]);
 
-    expect(refresh).toMatchObject({
-      change: expect.stringContaining("+ A prova terá 60 questões."),
-      previousHash: source.contentHash,
-      status: "changed",
+    const [storedExam, storedLaw] = await Promise.all(
+      [exam.id, law.id].map((id) => prisma.source.findUniqueOrThrow({ where: { id } })),
+    );
+
+    expect([storedExam?.extractedText, storedLaw?.extractedText]).toStrictEqual([
+      expect.stringContaining("60 questões"),
+      expect.stringContaining("60 questões"),
+    ]);
+
+    expect(storedExam).toMatchObject({ unnoticedChangedAt: null, unnoticedChanges: null });
+
+    expect(storedLaw).toMatchObject({
+      unnoticedChanges: expect.stringContaining("- A prova terá 50 questões."),
+      unnoticedFromHash: law.contentHash,
+    });
+  });
+
+  it("keeps what each of two saves at once changed in a law, whichever saves first", async () => {
+    const url = `https://example.gov.br/${randomUUID()}`;
+    const law = { ...EDITAL, topic: "regulation" as const, url };
+    servePage("<p>Art. 1º A alíquota é de 15%.</p>");
+    const source = await storeWebSource(law);
+    const held = holdSourceLock(source.id);
+    const holder = await held.pid;
+
+    servePage("<p>Art. 1º A alíquota é de 17%.</p>");
+    const research = storeWebSource(law);
+    await waitForBlockedStatement(holder, SOURCE_WRITE);
+
+    servePage("<p>Art. 1º A alíquota é de 15%.</p><p>Art. 2º Declare até maio.</p>");
+    const check = refreshWebSource(source.id);
+    await waitForBlockedStatement(holder, SOURCE_WRITE, 2);
+
+    held.release();
+    await Promise.all([research, check, held.done]);
+
+    const { unnoticedChanges } = await prisma.source.findUniqueOrThrow({
+      where: { id: source.id },
     });
 
-    const stored = await prisma.source.findUniqueOrThrow({ where: { id: source.id } });
+    expect(unnoticedChanges).toContain("+ Art. 1º A alíquota é de 17%.");
+    expect(unnoticedChanges).toContain("+ Art. 2º Declare até maio.");
+  });
 
-    expect(stored.extractedText).toContain("60 questões");
-    expect(stored.contentHash).not.toBe(source.contentHash);
+  it("flags what was written from a law's old text while its new text waited to be saved", async () => {
+    servePage("<p>Art. 1º A alíquota é de 15%.</p>");
+    const source = await storeWebSource({ ...EDITAL, topic: "regulation", url: newUrl() });
+    const held = holdSourceLock(source.id);
+    const holder = await held.pid;
+
+    servePage("<p>Art. 1º A alíquota é de 17%.</p>");
+    const check = refreshWebSource(source.id);
+    await waitForBlockedStatement(holder, SOURCE_WRITE);
+
+    const skill = await skillFixture();
+
+    const fromOldText = await itemFixture({
+      generatedAt: new Date(Date.now() - 1),
+      skillId: skill.id,
+      sourceId: source.id,
+    });
+
+    held.release();
+    await Promise.all([check, held.done]);
+
+    const owed = getOwedSourceChange(
+      await prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+    );
+
+    assert(owed, "The change should be owed.");
+
+    await recordSourceChangeNotice({
+      changedAt: owed.changedAt,
+      contentHash: owed.contentHash,
+      fields: ["text"],
+      language: "pt",
+      message: "A lei mudou: a alíquota agora é de 17%.",
+      previousHash: owed.previousHash,
+      provenance: { generatedAt: new Date(), model: "test", promptVersion: "v1", runId: "r1" },
+      revision: owed.revision,
+      sourceId: source.id,
+    });
+
+    await expect(
+      prisma.contentReviewFlag.count({ where: { itemId: fromOldText.id } }),
+    ).resolves.toBe(1);
   });
 
   it("returns null for a source without an address", async () => {

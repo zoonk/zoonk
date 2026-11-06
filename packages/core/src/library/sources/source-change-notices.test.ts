@@ -1,14 +1,21 @@
+import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import {
   examBlueprintFixture,
   learnerSourceFixture,
   sourceChangeNoticeFixture,
   sourceFixture,
+  unnoticedSourceChangeFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
-import { listGoalChangeNotices, recordSourceChangeNotice } from "./source-change-notices";
+import {
+  listGoalChangeNotices,
+  recordFailedSourceNotice,
+  recordSourceChangeNotice,
+} from "./source-change-notices";
+import { getOwedSourceChange } from "./unnoticed-changes";
 
 const DAY_MS = 86_400_000;
 const MINUTE_MS = 60_000;
@@ -125,24 +132,25 @@ describe(listGoalChangeNotices, () => {
   });
 });
 
+const DOCS_NOTICE = {
+  contentHash: "new",
+  fields: ["text"],
+  language: "en",
+  message: "The documentation changed: version 5 removed the old API.",
+  provenance: {
+    generatedAt: "2026-09-26T12:00:00.000Z",
+    model: "openai/gpt-6-luna",
+    promptVersion: "v1",
+    runId: "r1",
+  },
+};
+
 describe(recordSourceChangeNotice, () => {
   it("stores the line with the model that wrote it", async () => {
     const source = await sourceFixture();
+    const owed = await unnoticedSourceChangeFixture({ sourceId: source.id });
 
-    const notice = await recordSourceChangeNotice({
-      contentHash: "new",
-      fields: ["text"],
-      language: "en",
-      message: "The documentation changed: version 5 removed the old API.",
-      previousHash: source.contentHash,
-      provenance: {
-        generatedAt: "2026-09-26T12:00:00.000Z",
-        model: "openai/gpt-6-luna",
-        promptVersion: "v1",
-        runId: "r1",
-      },
-      sourceId: source.id,
-    });
+    const notice = await recordSourceChangeNotice({ ...DOCS_NOTICE, ...owed, sourceId: source.id });
 
     expect(notice).toMatchObject({
       examBlueprintId: null,
@@ -150,5 +158,54 @@ describe(recordSourceChangeNotice, () => {
       model: "openai/gpt-6-luna",
       sourceId: source.id,
     });
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+    ).resolves.toMatchObject({ unnoticedChangedAt: null, unnoticedChanges: null });
+  });
+
+  it("covers a change once, and leaves a newer change owed, though it reads the same at the same millisecond", async () => {
+    const source = await sourceFixture();
+    const owed = await unnoticedSourceChangeFixture({ sourceId: source.id });
+
+    const newer = await unnoticedSourceChangeFixture({ ...owed, sourceId: source.id });
+
+    const covering = { ...DOCS_NOTICE, sourceId: source.id };
+
+    await expect(recordSourceChangeNotice({ ...covering, ...owed })).resolves.toBeNull();
+
+    const [first, second] = await Promise.all([
+      recordSourceChangeNotice({ ...covering, ...newer }),
+      recordSourceChangeNotice({ ...covering, ...newer }),
+    ]);
+
+    expect([first, second].filter(Boolean)).toHaveLength(1);
+
+    await expect(prisma.sourceChangeNotice.count({ where: { sourceId: source.id } })).resolves.toBe(
+      1,
+    );
+  });
+
+  it("counts a failed notice run once, and stops trying after three until the page changes", async () => {
+    const source = await sourceFixture();
+    const { revision } = await unnoticedSourceChangeFixture({ sourceId: source.id });
+    const failed = { revision, sourceId: source.id };
+
+    const readOwed = async () =>
+      getOwedSourceChange(await prisma.source.findUniqueOrThrow({ where: { id: source.id } }));
+
+    for (const noticeFailures of [0, 1, 2]) {
+      // oxlint-disable-next-line no-await-in-loop -- Each failure is counted from the one before.
+      await Promise.all([
+        recordFailedSourceNotice({ ...failed, noticeFailures }),
+        recordFailedSourceNotice({ ...failed, noticeFailures }),
+      ]);
+    }
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+    ).resolves.toMatchObject({ noticeFailures: 3 });
+
+    await expect(readOwed()).resolves.toBeNull();
   });
 });

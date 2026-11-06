@@ -4,8 +4,8 @@ import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { sourceFixture } from "@zoonk/testing/fixtures/sources";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { sourceFixture, unnoticedSourceChangeFixture } from "@zoonk/testing/fixtures/sources";
+import { assert, beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
@@ -47,16 +47,19 @@ function drillResult() {
 }
 
 async function flagLawChange(sourceId: string): Promise<string[]> {
+  const owed = await unnoticedSourceChangeFixture({ previousHash: "old", sourceId });
+
   const notice = await recordSourceChangeNotice({
+    ...owed,
     contentHash: "new",
     fields: ["text"],
     language: "pt",
     message: "A lei mudou: a posse agora ocorre em quinze dias.",
-    previousHash: "old",
     provenance: { generatedAt: new Date(), model: "test", promptVersion: "v1", runId: "r1" },
     sourceId,
   });
 
+  assert(notice, "The owed change should get its notice.");
   const flags = await prisma.contentReviewFlag.findMany({ where: { noticeId: notice.id } });
   return flags.map((flag) => flag.id);
 }

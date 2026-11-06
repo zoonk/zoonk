@@ -13,25 +13,69 @@ const NOTICE_DAYS = 14;
 const MAX_GOAL_NOTICES = 3;
 
 export type SourceNoticeInput = {
+  changedAt: Date;
   contentHash: string;
   fields: string[];
   language: string;
   message: string;
   previousHash: string;
   provenance: LibraryProvenance;
+  revision: number;
   sourceId: string;
 };
 
-/** For source changes; record exam notices through `saveExamBlueprint` so the notice and blueprint commit together. */
-export function recordSourceChangeNotice(input: SourceNoticeInput): Promise<SourceChangeNotice> {
-  const { provenance, ...notice } = input;
+/**
+ * Covers the owed change a check read at `revision`; null when another run already covered it or
+ * the page changed again since, which leaves the newer change owed. Record exam notices through
+ * `saveExamBlueprint` so the notice and blueprint commit together.
+ */
+export function recordSourceChangeNotice(
+  input: SourceNoticeInput,
+): Promise<SourceChangeNotice | null> {
+  const { changedAt, provenance, revision, ...notice } = input;
 
-  return prisma.$transaction((tx) =>
-    createSourceChangeNotice({
+  return prisma.$transaction(async (tx) => {
+    const { count } = await tx.source.updateMany({
+      data: {
+        noticeFailures: 0,
+        unnoticedChangedAt: null,
+        unnoticedChanges: null,
+        unnoticedFromHash: null,
+        unnoticedRevision: { increment: 1 },
+      },
+      where: { id: notice.sourceId, unnoticedRevision: revision },
+    });
+
+    if (count === 0) {
+      return null;
+    }
+
+    return createSourceChangeNotice({
+      builtBefore: changedAt,
       data: { ...notice, examBlueprintId: null, ...toProvenanceData(provenance) },
       tx,
-    }),
-  );
+    });
+  });
+}
+
+/**
+ * Internal workflow bridge: a notice run that failed after its retries. It moves the count on from
+ * the one its check read, so a retry of this write counts the failure once, and a page that changed
+ * since keeps its fresh attempts.
+ */
+export async function recordFailedSourceNotice({
+  noticeFailures,
+  revision,
+  sourceId,
+}: {
+  noticeFailures: number;
+  revision: number;
+  sourceId: string;
+}): Promise<void> {
+  await prisma.source.updateMany({
+    data: { noticeFailures: noticeFailures + 1 },
+    where: { id: sourceId, noticeFailures, unnoticedRevision: revision },
+  });
 }
 
 async function listNoticesInPlanChanges(goalId: string): Promise<Set<string>> {

@@ -2,9 +2,13 @@ import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  examBlueprintFixture,
+  sourceFixture,
+  unnoticedSourceChangeFixture,
+} from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { assert, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getSession } from "../../users/get-session";
 import { saveLessonContent } from "../lessons/_utils/save-lesson-content";
@@ -39,16 +43,21 @@ function daysAgo(days: number) {
   return new Date(Date.now() - days * DAY_MS);
 }
 
-function noticeFor(sourceId: string) {
-  return recordSourceChangeNotice({
+async function noticeFor(sourceId: string) {
+  const owed = await unnoticedSourceChangeFixture({ previousHash: "old", sourceId });
+
+  const notice = await recordSourceChangeNotice({
+    ...owed,
     contentHash: `new-${crypto.randomUUID()}`,
     fields: ["text"],
     language: "pt",
     message: "A lei mudou: a posse agora ocorre em quinze dias.",
-    previousHash: "old",
     provenance: PROVENANCE,
     sourceId,
   });
+
+  assert(notice, "The owed change should get its notice.");
+  return notice;
 }
 
 async function lawWithDependents() {
