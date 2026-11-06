@@ -1,5 +1,6 @@
 "use client";
 
+import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
@@ -127,6 +128,7 @@ export function PatternTesterActivity({
   }
 
   const { fieldRef, insert } = useInsertSnippet({ onChange: change, value: pattern });
+  const kept = useKeptTyping({ value: pattern });
 
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
@@ -163,6 +165,7 @@ export function PatternTesterActivity({
             ref={fieldRef}
             spellCheck={false}
             value={pattern}
+            {...kept}
           />
 
           {isRegex && (

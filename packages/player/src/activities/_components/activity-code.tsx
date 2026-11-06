@@ -1,5 +1,6 @@
 "use client";
 
+import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useLayoutEffect, useRef } from "react";
 import {
@@ -140,6 +141,8 @@ export function ActivityCodeLineInput({
   onChange: (value: string) => void;
   value: string;
 }) {
+  const kept = useKeptTyping({ value });
+
   return (
     <span className={cn("grid min-w-0 flex-1", className)} data-slot="activity-code-line-input">
       <span aria-hidden="true" className="col-start-1 row-start-1 self-center whitespace-pre">
@@ -156,6 +159,7 @@ export function ActivityCodeLineInput({
         type="text"
         value={value}
         {...props}
+        {...kept}
       />
     </span>
   );
@@ -177,6 +181,7 @@ export function ActivityCodeEditor({
   value: string;
 }) {
   const lines = value.split("\n");
+  const kept = useKeptTyping({ value });
 
   return (
     <div
@@ -214,6 +219,7 @@ export function ActivityCodeEditor({
             value={value}
             wrap="off"
             {...props}
+            {...kept}
           />
         </div>
       </div>

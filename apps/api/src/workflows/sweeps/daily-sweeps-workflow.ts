@@ -5,6 +5,7 @@ import { repeatUntil } from "../_shared/repeat-until";
 import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
+import { startPictureChecks } from "../images/start-picture-checks";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
@@ -13,6 +14,7 @@ import {
   deleteRetiredStepsStep,
   listDueFreshnessTargetsStep,
   listLessonsForLaterReviewStep,
+  listOwedPictureChecksStep,
   purgeEvaluationRunsStep,
   purgeExpiredAuthRecordsStep,
   purgeExpiredVerificationsStep,
@@ -33,6 +35,7 @@ type SweepCounts = {
   itemsRecalibrated: number;
   laterReviews: number;
   memoryFactsPurged: number;
+  pictureChecks: number;
   retiredStepsDeleted: number;
   verificationsPurged: number;
 };
@@ -61,6 +64,13 @@ async function startOldFollowUps(): Promise<number> {
   );
 
   return userIds.length;
+}
+
+async function checkOwedPictures(): Promise<number> {
+  const assetIds = await listOwedPictureChecksStep();
+  await startPictureChecks({ assetIds });
+
+  return assetIds.length;
 }
 
 async function deleteGuests(): Promise<number> {
@@ -110,6 +120,7 @@ async function sweep(): Promise<SweepCounts> {
     verifications,
     access,
     followUps,
+    pictures,
   ] = await Promise.allSettled([
     checkFreshness(),
     deleteGuests(),
@@ -122,6 +133,7 @@ async function sweep(): Promise<SweepCounts> {
     purgeExpiredVerificationsStep(),
     purgeExpiredAuthRecordsStep(),
     startOldFollowUps(),
+    checkOwedPictures(),
   ]);
 
   return {
@@ -134,6 +146,7 @@ async function sweep(): Promise<SweepCounts> {
     itemsRecalibrated: countOf(items),
     laterReviews: countOf(reviews),
     memoryFactsPurged: countOf(facts),
+    pictureChecks: countOf(pictures),
     retiredStepsDeleted: countOf(retired),
     sessionsPurged: access.status === "fulfilled" ? access.value.sessionsPurged : 0,
     verificationsPurged: countOf(verifications),
