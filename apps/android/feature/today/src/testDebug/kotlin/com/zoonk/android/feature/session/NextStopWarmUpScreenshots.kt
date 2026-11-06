@@ -8,7 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -26,6 +25,8 @@ import com.zoonk.android.feature.warmup.WARM_UP_ID
 import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.beekeepingDeck
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Generation
 import com.zoonk.api.models.LessonReadiness
@@ -113,12 +114,37 @@ class NextStopWarmUpScreenshots {
 
     @Test
     @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookWithWorkMeanwhile() =
-        capture("book-meanwhile", fold = true, alternative = step(2, kind = StudyBlock.Kind.PRACTICE).copy(title = "Pollen and nectar"))
+    fun bookWithWorkMeanwhile() = capture("book-meanwhile", fold = true, alternative = MEANWHILE, stop = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun compactWithWorkMeanwhile() = capture("compact-meanwhile", alternative = MEANWHILE, stop = true)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun expandedWithWorkMeanwhile() = capture("expanded-meanwhile", alternative = MEANWHILE, stop = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookWithWorkMeanwhile() = capture("small-book-meanwhile", fold = true, alternative = MEANWHILE, stop = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookWithWorkMeanwhileAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("book-meanwhile-font200", fold = true, alternative = MEANWHILE, stop = true)
+    }
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun compactStop() = captureStop("compact")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun compactStopAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureStop("compact-font200")
+    }
 
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
@@ -131,6 +157,13 @@ class NextStopWarmUpScreenshots {
     @Test
     @Config(qualifiers = "w707dp-h823dp-xhdpi")
     fun smallBookStop() = captureStop("small-book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookStopAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureStop("book-font200", fold = true)
+    }
 
     private fun captureStop(
         name: String,
@@ -173,15 +206,8 @@ class NextStopWarmUpScreenshots {
                 )
             }
         }
-        shown(fold)
+        if (fold) compose.unfoldBook(folds) else compose.waitForIdle()
         write("next-stop-$name")
-    }
-
-    private fun shown(fold: Boolean) {
-        compose.waitForIdle()
-        if (fold) {
-            folds.unfoldBook(compose.activity, compose::waitForIdle)
-        }
     }
 
     private fun capture(
@@ -191,6 +217,7 @@ class NextStopWarmUpScreenshots {
         fold: Boolean = false,
         layoutDirection: LayoutDirection = LayoutDirection.Ltr,
         alternative: DayStep? = null,
+        stop: Boolean = false,
     ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
@@ -240,7 +267,7 @@ class NextStopWarmUpScreenshots {
                         notWritten = null,
                         alternative = alternative,
                         refresh = { shown = shown.copy(screen = StudyBlock.Screen.LESSON) },
-                        onStop = null,
+                        onStop = if (stop) ({}) else null,
                         navigator = rememberAppNavigator(),
                         warmUps = warmUps,
                     )
@@ -249,19 +276,19 @@ class NextStopWarmUpScreenshots {
         }
 
         compose.mainClock.advanceTimeBy(1_000)
-        shown(fold)
+        if (fold) compose.unfoldBook(folds) else compose.waitForIdle()
         write("first-lesson-wait-$name")
         compose.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
-        shown(fold)
+        compose.waitForIdle()
         write("first-lesson-wait-guessed-$name")
         status = LessonReadiness.Status.READY
         compose.mainClock.advanceTimeBy(5_000)
-        shown(fold)
+        compose.waitForIdle()
         write("first-lesson-wait-ready-$name")
     }
 
     private fun write(name: String) {
-        val bitmap = compose.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = compose.onRoot().captureRender().asAndroidBitmap()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
         file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
         println("Screenshot ${file.path}")
@@ -269,5 +296,6 @@ class NextStopWarmUpScreenshots {
 
     private companion object {
         val LESSON: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2f00")
+        val MEANWHILE = step(2, kind = StudyBlock.Kind.PRACTICE).copy(title = "Pollen and nectar")
     }
 }

@@ -3,16 +3,12 @@ package com.zoonk.android.feature.conversation
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.feature.livecall.CallReservation
 import com.zoonk.android.feature.livecall.LiveServerEvent
@@ -22,6 +18,8 @@ import com.zoonk.android.feature.livecall.setup
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -84,6 +82,25 @@ class ConversationScreenshots {
     fun galaxyFold() {
         folded = true
         walk("galaxy-fold")
+    }
+
+    @Test
+    @Config(qualifiers = "w700dp-h1000dp-xhdpi")
+    fun medium() = walk("medium")
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun bookDark() {
+        folded = true
+        walk("book-dark", dark = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookLargeFont() {
+        folded = true
+        RuntimeEnvironment.setFontScale(2f)
+        walk("book-font200")
     }
 
     @Test
@@ -213,23 +230,8 @@ class ConversationScreenshots {
     }
 
     private fun shot(name: String) {
-        compose.waitForIdle()
-        // Each screen reads the window afresh, and the publisher doesn't replay a fold to a late reader.
-        if (folded) {
-            folds.overrideWindowLayoutInfo(
-                TestWindowLayoutInfo(
-                    listOf(
-                        FoldingFeature(
-                            compose.activity,
-                            state = FoldingFeature.State.FLAT,
-                            orientation = FoldingFeature.Orientation.VERTICAL,
-                        ),
-                    ),
-                ),
-            )
-            compose.waitForIdle()
-        }
-        val bitmap = compose.onRoot().captureToImage().asAndroidBitmap()
+        if (folded) compose.unfoldBook(folds) else compose.waitForIdle()
+        val bitmap = compose.onRoot().captureRender().asAndroidBitmap()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
         file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }

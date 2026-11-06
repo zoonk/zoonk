@@ -41,7 +41,7 @@ function checkWriteItemSetOutput(output: string, input: WriteItemSetCase): CodeC
       null,
       2,
     ),
-    passed: passing.length + (check.set.length === 0 ? SET_CHECKS : 0),
+    passed: passing.length === 0 ? 0 : passing.length + (check.set.length === 0 ? SET_CHECKS : 0),
     problems: [...check.set, ...checked.flatMap((entry) => entry.problems)],
     total: checked.length + SET_CHECKS,
   };

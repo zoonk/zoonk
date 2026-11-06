@@ -101,8 +101,6 @@
   "conversation_no_score_title": "395e89ac3fd3dbe29419b58ed41e2f49503f532f8d834279830deafe414c32b7",
   "conversation_not_connected": "765e0bbad6626c3f92b1e3364e1e2f704f52325a84685803bb0ace1fd5ae057a",
   "conversation_not_connected_title": "9ab39d2c058336171ba274d38ebeb5b847f6d35d5d7b52aa99e7d23dcc8ef3e9",
-  "conversation_not_found_description": "171e2029d2e9df926b61801ee6b204f6f1cc4cbf1c22521d6a961ee51a7fc4a5",
-  "conversation_not_found_title": "21e8b8249d8cf7149651f19c8a36c036f07e8f6647f1958c70cab56a06b5a8a4",
   "conversation_not_rated": "25e07a8a5837b77f563081da373dad50953b0ea9d0e7b62ac6821020fe2c11ab",
   "conversation_not_this_time": "56aa468d1359f4b23ab2c53f4371460ce5ed646ed0e639cd64dff46c580f286f",
   "conversation_opens_and_card": "2c83022ccba4e52a2f7366df509c052902cab83406c3b4aadc416feff70c3fc3",
@@ -218,8 +216,6 @@
     <string name="conversation_mic_off">%1$s ile konuşmak için Ayarlar’dan mikrofon izni ver ya da sohbete yazarak katıl.</string>
     <!-- Starts the call without the microphone, answering by typing. -->
     <string name="conversation_type_instead">Yazarak devam et</string>
-    <string name="conversation_not_found_title">Bu sohbeti bulamadık</string>
-    <string name="conversation_not_found_description">Bağlantı eski veya yanlış yazılmış olabilir.</string>
     <!-- Read before what the learner said in the call's transcript. -->
     <string name="conversation_you_said">Sen: %1$s</string>
     <!-- Read before what the character said in the call's transcript: the character's name, then the words. -->

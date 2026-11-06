@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
+import { type findActiveSubscription } from "../../auth/subscription";
 import { CHECKPOINT_CALL_BLOCK_MINUTES } from "../../language/conversations/conversation-rules";
 import { type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
 import { getItemKey } from "../../plans/planner/plan-items";
@@ -81,13 +82,16 @@ type BossInput = {
   itemSkillIds: ReadonlyMap<string, readonly string[]>;
   items: readonly SessionPlanItem[];
   listeningSkillIds?: ReadonlySet<string>;
+  readSubscription?: typeof findActiveSubscription;
   skills: readonly GoalSkillNode[];
   today: Date;
   userId: string;
 };
 
 export async function loadSessionBosses(input: BossInput): Promise<SessionBosses> {
-  if (!(await arePhaseChallengesRequired({ goalKind: input.goal.kind, userId: input.userId }))) {
+  const { goal, readSubscription, userId } = input;
+
+  if (!(await arePhaseChallengesRequired({ goalKind: goal.kind, readSubscription, userId }))) {
     return { checkpoints: [], reinforcement: [] };
   }
 

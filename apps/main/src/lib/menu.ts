@@ -1,4 +1,5 @@
 import {
+  AwardIcon,
   Brain,
   BrainCircuitIcon,
   CalendarCheckIcon,
@@ -34,6 +35,7 @@ const menu = {
   appearance: { icon: PaletteIcon, url: "/settings/appearance" },
   blog: { icon: Newspaper, url: "/blog" },
   buddy: { icon: SmileIcon, url: "/buddy" },
+  certificates: { icon: AwardIcon, url: "/certificates" },
   completedLessons: { icon: HistoryIcon, url: "/completed-lessons" },
   courses: { icon: LayoutGrid, url: "/courses" },
   energy: { icon: ZapIcon, url: "/energy" },

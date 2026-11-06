@@ -40,13 +40,20 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Plan") };
 }
 
-async function loadStudyNext({ goalId, over }: { goalId: string; over: boolean }) {
-  if (!over) {
+/** An exam's course can finish before its plan does: its exam-day mocks come after. */
+async function loadGoalMapEnd({
+  goal,
+  over,
+}: {
+  goal: { id: string; kind: string };
+  over: boolean;
+}) {
+  if (!over && goal.kind !== "exam") {
     return null;
   }
 
-  const result = await getFieldMapView({ goalId });
-  return result.status === "ready" ? result.map.next : null;
+  const result = await getFieldMapView({ goalId: goal.id });
+  return result.status === "ready" ? result.map : null;
 }
 
 function getGoalStatus(goal: { status: string } | null) {
@@ -137,8 +144,8 @@ async function JourneyContent() {
 
   const goalStatus = getGoalStatus(activeGoal);
 
-  const [next, resume, completedLessons] = await Promise.all([
-    loadStudyNext({ goalId: goal.id, over: plan.end !== null }),
+  const [end, resume, completedLessons] = await Promise.all([
+    loadGoalMapEnd({ goal, over: plan.end !== null }),
     loadResumePreview({ goalId: goal.id, paused: goalStatus === "paused" }),
     hasCompletedLessons(goal.id),
   ]);
@@ -167,13 +174,18 @@ async function JourneyContent() {
         }
       }
       buddy={buddy}
+      certificates={end?.certificates ?? null}
       completedLessons={completedLessons}
       goal={{ kind: goal.kind, title: goal.title }}
       goalId={goal.id}
       goalStatus={goalStatus}
       hasMindMaps={hasMindMaps}
       language={language.status === "ready" ? language.progress : null}
-      next={next && { onContinue: continueNextLevelAction.bind(null, goal.id), view: next }}
+      next={
+        end?.next
+          ? { onContinue: continueNextLevelAction.bind(null, goal.id), view: end.next }
+          : null
+      }
       plan={plan}
       readAt={readAt}
       resume={resume}

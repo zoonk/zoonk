@@ -1,5 +1,5 @@
 import "server-only";
-import { type AuthEvent, registerAuthEventSink } from "@zoonk/auth/auth-events";
+import { type AuthEvent } from "@zoonk/auth/auth-events";
 import { prisma } from "@zoonk/db";
 import { after } from "next/server";
 import { type AnalyticsEvent } from "./events";
@@ -27,10 +27,8 @@ async function toAnalyticsEvent(event: AuthEvent): Promise<AnalyticsEvent> {
   };
 }
 
-export function registerAuthAnalytics(): void {
-  registerAuthEventSink(async (event) => {
-    after(async () => {
-      await trackLearnerEvents({ events: [await toAnalyticsEvent(event)], userId: event.userId });
-    });
+export function trackAuthEvent(event: AuthEvent): void {
+  after(async () => {
+    await trackLearnerEvents({ events: [await toAnalyticsEvent(event)], userId: event.userId });
   });
 }

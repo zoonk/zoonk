@@ -22,6 +22,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
+import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.practice.AnswerActions
 import com.zoonk.android.feature.practice.Draft
 import com.zoonk.android.feature.practice.RunAskButton
@@ -29,7 +30,6 @@ import com.zoonk.android.feature.practice.RunFinished
 import com.zoonk.android.feature.practice.RunFrame
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
-import com.zoonk.android.feature.practice.RunNotFound
 import com.zoonk.android.feature.practice.RunPhase
 import com.zoonk.android.feature.practice.RunQuestion
 import com.zoonk.android.feature.practice.RunSegments
@@ -43,6 +43,7 @@ import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.StatusMessage
@@ -70,7 +71,7 @@ fun MistakePracticeScreen(
     LaunchedEffect(closed) { if (closed) navigator.closeTask() }
 
     when (val shown = state) {
-        null -> PracticeRead(viewModel, onClose = navigator::closeTask)
+        null -> PracticeRead(viewModel, navigator)
         else -> PracticeRun(shown, viewModel, app, navigator)
     }
 }
@@ -79,8 +80,9 @@ fun MistakePracticeScreen(
 @Composable
 private fun PracticeRead(
     viewModel: MistakePracticeViewModel,
-    onClose: () -> Unit,
+    navigator: AppNavigator,
 ) {
+    val onClose = navigator::closeTask
     val loaded by viewModel.practice.collectShown()
     val scope = rememberCoroutineScope()
 
@@ -98,7 +100,7 @@ private fun PracticeRead(
 
         is LoadState.Failed -> {
             if (read.error == ApiError.NotFound) {
-                RunNotFound(onClose, stringResource(R.string.mistakes_not_found_description))
+                TaskNotFound(navigator)
             } else {
                 RunLoadFailed(onClose, onRetry = { scope.launch { viewModel.practice.refresh() } })
             }
@@ -123,7 +125,7 @@ internal fun PracticeRun(
     BackHandler(onBack = viewModel::leave)
 
     if (ending) {
-        PracticeDone(state, app, onClose = viewModel::leave)
+        PracticeDone(state, app, onClose = viewModel::leave) { navigator.open(AppRoute.Subscription) }
         return
     }
 
@@ -181,13 +183,14 @@ private fun PracticeDone(
     state: PracticeState,
     app: AppContainer,
     onClose: () -> Unit,
+    onSeePlus: () -> Unit,
 ) {
     val end = state.end
     val summary = end?.summary
     val fixed = state.fixedIds.size
     val comesBack = if (summary != null) summary.correct < summary.total else fixed == 0
 
-    MomentAfterCeremony(app, summary?.ceremony) { buddy ->
+    MomentAfterCeremony(app, summary?.ceremony, summary?.certificates.orEmpty().map { it.naming }, onSeePlus) { buddy ->
         RunFinished(
             title = stringResource(R.string.practice_done_title),
             action = stringResource(R.string.navigation_back),

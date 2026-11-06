@@ -197,11 +197,10 @@ struct PlacementStep: View {
   @ViewBuilder private var saveFailure: some View {
     if failed {
       Section {
-        Text(
-          "That didn't save. Try again.", tableName: "Onboarding",
-          comment: "A change couldn't be saved"
-        )
-        .foregroundStyle(.destructive)
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't save. Try again.", table: "Onboarding",
+            comment: "A change couldn't be saved"))
       }
     }
   }
@@ -580,11 +579,10 @@ struct PlacementQuestionScreen<Media: View>: View {
       asked.response
 
       if failed {
-        Text(
-          "That didn't save. Try again.", tableName: "Onboarding",
-          comment: "A change couldn't be saved"
-        )
-        .foregroundStyle(.destructive)
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't save. Try again.", table: "Onboarding",
+            comment: "A change couldn't be saved"))
       }
     } actions: {
       PracticeMainButton(

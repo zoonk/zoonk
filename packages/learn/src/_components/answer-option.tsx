@@ -92,6 +92,7 @@ export function AnswerOption({
         ANSWER_OPTION_CLASS,
         "focus-visible:outline-ring enabled:hover:bg-muted/60 press outline-none select-none [--press-scale:0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:cursor-default",
         ANSWER_TONE.idle,
+        layout === "row" && "flex-wrap",
         layout === "stacked" && "flex-col items-stretch p-2",
         picked && !result && cn(ANSWER_TONE.picked, "enabled:hover:bg-selected-tint"),
         result === "guess" && ANSWER_TONE.guess,
@@ -112,11 +113,25 @@ export function AnswerOption({
         <Kbd className="[&_svg]:size-3">{marker}</Kbd>
       </LineMarker>
 
-      <span className="flex min-w-0 flex-1 flex-col">
-        <SpokenMath>{children}</SpokenMath>
-      </span>
+      <span
+        className={cn(
+          "flex min-w-0 grow basis-1/2 flex-wrap items-start justify-between gap-x-3 gap-y-1",
+          layout === "stacked" && "contents",
+        )}
+      >
+        <span
+          className={cn(
+            "flex flex-col",
+            layout === "stacked" ? "min-w-0 flex-1" : "w-full max-w-max grow basis-1/2",
+          )}
+        >
+          <SpokenMath>{children}</SpokenMath>
+        </span>
 
-      {shownTag && <LineMarker>{shownTag}</LineMarker>}
+        {shownTag && (
+          <LineMarker className="h-auto min-h-lh min-w-0 flex-initial">{shownTag}</LineMarker>
+        )}
+      </span>
     </button>
   );
 }

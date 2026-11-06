@@ -18,11 +18,10 @@ import androidx.compose.ui.test.performTextInputSelection
 import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.closeBook
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -66,11 +65,11 @@ class EssayDraftFoldTest {
         val scrolled = page().scrollValue()
 
         restoration.emulateSavedInstanceStateRestore()
-        publish(fold = true)
+        rule.unfoldBook(folds)
         box().assert(hasText(text)).assertSelection(cursor)
 
         restoration.emulateSavedInstanceStateRestore()
-        publish(fold = false)
+        rule.closeBook(folds)
         box().assert(hasText(text)).assertSelection(cursor)
         assertEquals(scrolled, page().scrollValue())
     }
@@ -91,16 +90,16 @@ class EssayDraftFoldTest {
         box().performTextInputSelection(cursor)
         box().assertSelection(cursor)
 
-        publish(fold = true)
+        rule.unfoldBook(folds)
         box().assert(hasText(text)).assertSelection(cursor)
         page().performSemanticsAction(SemanticsActions.ScrollBy) { it(0f, -SCROLL_ALL) }
         page().performSemanticsAction(SemanticsActions.ScrollBy) { it(0f, SCROLLED) }
         val scrolled = page().scrollValue()
         assertTrue(scrolled > 0f)
 
-        publish(fold = false)
+        rule.closeBook(folds)
         box().assert(hasText(text)).assertSelection(cursor)
-        publish(fold = true)
+        rule.unfoldBook(folds)
         box().assert(hasText(text)).assertSelection(cursor)
         assertEquals(scrolled, page().scrollValue())
     }
@@ -113,19 +112,6 @@ class EssayDraftFoldTest {
 
     private fun SemanticsNodeInteraction.assertSelection(range: TextRange) =
         assertEquals(range, fetchSemanticsNode().config[SemanticsProperties.TextSelectionRange])
-
-    private fun publish(fold: Boolean) {
-        rule.waitForIdle()
-        folds.overrideWindowLayoutInfo(
-            TestWindowLayoutInfo(
-                listOfNotNull(
-                    FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)
-                        .takeIf { fold },
-                ),
-            ),
-        )
-        rule.waitForIdle()
-    }
 
     private companion object {
         const val SCROLL_ALL = 100_000f

@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.practice
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,9 +21,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -43,8 +46,8 @@ import com.zoonk.android.feature.questions.savedAnswerText
 import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.PendingLabel
-import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.DateStyle
@@ -52,6 +55,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.ResultPages
+import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
 import java.time.Instant
@@ -130,8 +134,8 @@ private fun timeMachineText(
 
 /**
  * A run's result in place of its questions: the title first and saving while [saving], so nothing
- * moves when the score arrives. Where the screen splits ([ResultPages]) the title leads and
- * [content], the numbers and the day's moment, faces it above the way on.
+ * moves when the score arrives, then [content], the numbers and the day's moment. Where the screen
+ * splits ([ResultPages]) all of it takes the page before the split, and the way on the page after.
  */
 @Composable
 private fun RunDone(
@@ -164,9 +168,11 @@ private fun RunDone(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyLarge,
                 )
+            } else {
+                content()
             }
         },
-        next = { if (!saving) content() },
+        next = {},
     )
 }
 
@@ -198,10 +204,12 @@ fun RunIntro(
     title: String,
     detail: String,
     facts: List<String> = emptyList(),
+    titleFocus: FocusRequester? = null,
 ) {
+    val titleModifier = titleFocus?.let { Modifier.focusRequester(it).focusable() } ?: Modifier
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(text = title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+            Text(text = title, modifier = titleModifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
             Text(text = detail, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
         }
         if (facts.isNotEmpty()) Facts(facts)
@@ -224,26 +232,26 @@ fun RunFinished(
     actions: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    TaskScaffold(
-        onClose = onClose,
-        title = { headerTitle?.let { LessonTitle(it) } },
-        bottomBar = {
-            TaskActionBar {
-                if (actions != null) {
-                    actions()
-                } else {
-                    TaskActions { width -> BusyButton(action, busy = saving, enabled = true, modifier = width, onClick = onClose) }
+    ResultScreen {
+        TaskScaffold(
+            onClose = onClose,
+            title = { headerTitle?.let { LessonTitle(it) } },
+            bottomBar = {
+                TaskActionBar {
+                    if (actions != null) {
+                        actions()
+                    } else {
+                        TaskActions { width -> BusyButton(action, busy = saving, enabled = true, modifier = width, onClick = onClose) }
+                    }
                 }
-            }
-        },
-    ) { padding -> RunDone(title, saving, detail, modifier = Modifier.padding(padding), content = content) }
+            },
+        ) { padding -> RunDone(title, saving, detail, modifier = Modifier.padding(padding), content = content) }
+    }
 }
 
 @Composable
 fun RunLoading(onClose: () -> Unit) {
-    TaskScaffold(onClose = onClose) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-    }
+    TaskScaffold(onClose = onClose) { padding -> PageLoading(Modifier.padding(padding)) }
 }
 
 @Composable
@@ -252,21 +260,6 @@ fun RunLoadFailed(
     onRetry: () -> Unit,
 ) {
     TaskScaffold(onClose = onClose) { padding -> LoadFailedMessage(onRetry = onRetry, modifier = Modifier.padding(padding)) }
-}
-
-@Composable
-fun RunNotFound(
-    onClose: () -> Unit,
-    description: String = stringResource(R.string.practice_not_found_description),
-) {
-    TaskScaffold(onClose = onClose) { padding ->
-        StatusMessage(
-            icon = R.drawable.ic_school,
-            title = stringResource(R.string.practice_not_found_title),
-            description = description,
-            modifier = Modifier.padding(padding),
-        ) { Button(onClick = onClose) { Text(stringResource(R.string.practice_close)) } }
-    }
 }
 
 /** A recording set's place and task; its player comes with the listening milestone. */
@@ -285,7 +278,7 @@ fun ListeningSet(set: ItemSet) {
     }
 }
 
-/** A main action that shows it's working while its write is on its way; it keeps its colors then, as main's, so it doesn't read as unavailable. */
+/** A pending action keeps focus while unavailable, including when its caller disables it during the write. */
 @Composable
 fun BusyButton(
     label: String,
@@ -294,16 +287,11 @@ fun BusyButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    val colors =
-        if (busy) {
-            ButtonDefaults.buttonColors(
-                disabledContainerColor = MaterialTheme.colorScheme.primary,
-                disabledContentColor = MaterialTheme.colorScheme.onPrimary,
-            )
-        } else {
-            ButtonDefaults.buttonColors()
-        }
-    Button(onClick = onClick, enabled = enabled && !busy, modifier = modifier, colors = colors) { PendingLabel(busy, label) }
+    Button(
+        onClick = { if (!busy) onClick() },
+        enabled = enabled || busy,
+        modifier = modifier.semantics { if (busy) disabled() },
+    ) { PendingLabel(busy, label) }
 }
 
 /** [onRetry] sends the same answer again: the only way to resend an "I don't know" or a time-up answer. */

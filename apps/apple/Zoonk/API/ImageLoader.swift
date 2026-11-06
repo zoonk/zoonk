@@ -1,3 +1,4 @@
+import ImageIO
 import SwiftUI
 import UIKit
 
@@ -45,12 +46,15 @@ final class ImageLoader {
   }
 
   /// Nil until the picture is loaded, or for a private picture without that session.
-  func cachedImage(for url: URL, token: String?) -> UIImage? {
-    key(url, token: token).flatMap { cache.object(forKey: $0 as NSString) }
+  func cachedImage(for url: URL, token: String?, maxPixelSize: Int? = nil) -> UIImage? {
+    key(url, token: token, maxPixelSize: maxPixelSize).flatMap {
+      cache.object(forKey: $0 as NSString)
+    }
   }
 
-  func image(for url: URL, token: String?) async -> UIImage? {
-    guard let key = key(url, token: token) else {
+  /// `maxPixelSize` decodes a picture much larger than its place only as large as it's shown.
+  func image(for url: URL, token: String?, maxPixelSize: Int? = nil) async -> UIImage? {
+    guard let key = key(url, token: token, maxPixelSize: maxPixelSize) else {
       return nil
     }
 
@@ -68,7 +72,9 @@ final class ImageLoader {
       request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
     }
 
-    let task = Task { [fetch] in await Self.download(request, fetch: fetch) }
+    let task = Task { [fetch] in
+      await Self.download(request, maxPixelSize: maxPixelSize, fetch: fetch)
+    }
     inFlight[key] = task
     let image = await task.value
     inFlight[key] = nil
@@ -81,25 +87,56 @@ final class ImageLoader {
   }
 
   /// A private picture's key holds its session, so another session never reuses it.
-  private func key(_ url: URL, token: String?) -> String? {
+  private func key(_ url: URL, token: String?, maxPixelSize: Int?) -> String? {
+    let picture = maxPixelSize.map { "\(url.absoluteString) \($0)" } ?? url.absoluteString
+
     guard requiresSession(url) else {
-      return url.absoluteString
+      return picture
     }
 
-    return token.map { "\($0) \(url.absoluteString)" }
+    return token.map { "\($0) \(picture)" }
   }
 
   @concurrent
-  private nonisolated static func download(_ request: URLRequest, fetch: Fetch) async -> UIImage? {
+  private nonisolated static func download(
+    _ request: URLRequest, maxPixelSize: Int?, fetch: Fetch
+  ) async -> UIImage? {
     guard
       let (data, response) = try? await fetch(request),
-      (response as? HTTPURLResponse)?.statusCode == 200,
-      let image = UIImage(data: data)
+      (response as? HTTPURLResponse)?.statusCode == 200
     else {
       return nil
     }
 
+    if let maxPixelSize {
+      return thumbnail(data, maxPixelSize: maxPixelSize)
+    }
+
+    guard let image = UIImage(data: data) else {
+      return nil
+    }
+
     return await image.byPreparingForDisplay() ?? image
+  }
+
+  /// Decodes only the pixels it keeps, never the full picture.
+  private nonisolated static func thumbnail(_ data: Data, maxPixelSize: Int) -> UIImage? {
+    let options = [kCGImageSourceShouldCache: false] as CFDictionary
+
+    guard let source = CGImageSourceCreateWithData(data as CFData, options),
+      let image = CGImageSourceCreateThumbnailAtIndex(
+        source, 0,
+        [
+          kCGImageSourceCreateThumbnailFromImageAlways: true,
+          kCGImageSourceCreateThumbnailWithTransform: true,
+          kCGImageSourceShouldCacheImmediately: true,
+          kCGImageSourceThumbnailMaxPixelSize: maxPixelSize,
+        ] as CFDictionary)
+    else {
+      return nil
+    }
+
+    return UIImage(cgImage: image)
   }
 }
 

@@ -85,6 +85,7 @@ import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.feature.audio.VoiceRecording
+import com.zoonk.android.feature.ceremonies.CertificatesMoment
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.ceremonies.MomentCeremony
 import com.zoonk.android.feature.player.engine.CompletionStatus
@@ -127,6 +128,7 @@ import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedIconButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -224,6 +226,7 @@ fun LessonPlayer(
     buddy: LearnerSummaryBuddy? = null,
     ceremony: MomentCeremony? = null,
     tutor: LessonTutor? = null,
+    certificatesMoment: CertificatesMoment? = null,
 ) {
     val screen = remember(state) { state?.screen() }
     val ownEnd =
@@ -331,7 +334,7 @@ fun LessonPlayer(
     // Escape leaves as back does, so leaving with an unsent answer asks first.
     val leave = { backDispatcher?.onBackPressed() ?: exits.close() }
 
-    SpreadScreen {
+    SpreadScreen(result = state?.phase == LessonPhase.Completed && state.run !is LessonRun.Refused) {
         TaskScaffold(
             onClose = exits::close,
             modifier =
@@ -411,7 +414,7 @@ fun LessonPlayer(
         ) { padding ->
             Column(Modifier.fillMaxSize().padding(padding)) {
                 if (state == null || screen == null) {
-                    Starting()
+                    PageLoading()
                 } else {
                     Segments(screen.segments, state)
                     CompositionLocalProvider(LocalPrimaryFocus provides primaryFocus) {
@@ -427,6 +430,7 @@ fun LessonPlayer(
                             language,
                             buddy,
                             ceremony,
+                            certificatesMoment,
                             offer,
                             help,
                             touches,
@@ -495,11 +499,6 @@ private fun handleKey(
 private val DIGIT_KEYS = listOf(Key.One, Key.Two, Key.Three, Key.Four, Key.Five, Key.Six, Key.Seven, Key.Eight, Key.Nine)
 
 @Composable
-private fun Starting() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-}
-
-@Composable
 private fun Segments(
     segments: List<Segment>,
     state: LessonPlayerState,
@@ -566,6 +565,7 @@ private fun Content(
     language: LessonLanguage,
     buddy: LearnerSummaryBuddy?,
     ceremony: MomentCeremony?,
+    certificatesMoment: CertificatesMoment?,
     offer: (@Composable (BuddyOfferReason) -> Unit)?,
     help: (@Composable () -> Unit)?,
     touches: IntState,
@@ -581,7 +581,8 @@ private fun Content(
         }
 
         state.phase == LessonPhase.Completed -> {
-            MomentAfterCeremony(state.completion?.result?.ceremonyMilestone(), ceremony) {
+            val result = state.completion?.result
+            MomentAfterCeremony(result?.ceremonyMilestone(), ceremony, result?.awardedCertificates().orEmpty(), certificatesMoment) {
                 if (ownEnd == null) LessonCompletionView(state, ending, buddy) else ownEnd.body(state)
             }
         }

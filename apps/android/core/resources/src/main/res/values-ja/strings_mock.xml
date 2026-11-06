@@ -20,7 +20,6 @@
   "mock_flagged_count": "0ad9624bcd7a97c8c48ad2e202eb44bf30f9c3ee890c81f0c2e55395ba694569",
   "mock_full_day": "f33c8021394c5a421926b8ce6029b6218be5d9fc7a944a6dd956c5c099d27dc0",
   "mock_full_day_number": "9bd512bc0091fa59c41a2d091d62bd792a149c899eee079d36e89783b4a5221d",
-  "mock_go_to_today": "b0ed5115f5d8dad5aaf52bfb927321b70485fd533d92a7bf823980dbcb5c181e",
   "mock_grading": "f65e92f01c0b59311f158b01f5b422be4649578ae33a55cff04ea391d22a24b0",
   "mock_half_day": "2336e23e31e7f8eddd59b79d69fa6ad31602e3b3c6aae5d052ed3b4eea951ca0",
   "mock_half_day_number": "04bc5dbc51a9254cc6135fca1cd120eb0f44cb71cc9d591ed6805a3793c1a7c6",
@@ -54,8 +53,6 @@
   "mock_next": "01a02e5f1fd4ed9dda65c2b90cf65a4c6922bf2dac1866d8d958acbff1227cbf",
   "mock_next_named": "feda83fe7c18a7717b4281f20721c29cbfcce562c9e7af4ecb2f66a496236e1a",
   "mock_next_section": "ff464d8b7c8aca10ff628a7398007c2a954ebc76be2822af58d952a59eec34ed",
-  "mock_not_found_description": "c9a0e984a2a8273cc929bbcab2be05842b1e414111b0461021c3204e7d5d1a1e",
-  "mock_not_found_title": "9b98b9a354c07d324852834b3d576b245a24f0aba4a78ddac77c10de5502bdb7",
   "mock_not_saved_retrying": "f15eaac2c004dd987d936fac8e8a3528db817a9de23de4defe7c69b6e1813358",
   "mock_place": "71872615f909946fca7e9bc741ed97b205f02213e846f068751e1c13029998cd",
   "mock_progress_label": "c3413be759f5d2a12f80514f416b944e202146657e7baf520faaf16d9f9b9559",
@@ -135,9 +132,6 @@
     <string name="mock_label">模試</string>
     <!-- %1$s is what the mock covers, such as "Mathematics" or "A full exam day". -->
     <string name="mock_label_shape">模試 · %1$s</string>
-    <string name="mock_not_found_title">ページが見つかりませんでした</string>
-    <string name="mock_not_found_description">リンクが古いか、正しく入力されていない可能性があります。</string>
-    <string name="mock_go_to_today">「今日」へ移動する</string>
     <!-- What screen readers call the section's countdown. -->
     <string name="mock_time_left_label">残り時間</string>
     <!-- Under the section's countdown, such as "1:24:09". -->

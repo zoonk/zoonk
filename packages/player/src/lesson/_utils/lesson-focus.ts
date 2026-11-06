@@ -4,7 +4,11 @@ export const LESSON_PRIMARY_ID = "lesson-primary-action";
 
 export function getReadyLessonPrimary(): HTMLButtonElement | null {
   const primary = document.querySelector(`#${LESSON_PRIMARY_ID}`);
-  return primary instanceof HTMLButtonElement && !primary.disabled ? primary : null;
+
+  return primary instanceof HTMLButtonElement &&
+    !primary.matches(":disabled, [aria-disabled='true']")
+    ? primary
+    : null;
 }
 
 export function getLessonFocusTarget(): HTMLElement | null {

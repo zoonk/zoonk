@@ -63,7 +63,6 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.feature.mock.rememberNow
-import com.zoonk.android.feature.questions.formatClock
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.ModalBottomSheet
@@ -72,6 +71,7 @@ import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.factsLine
+import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold

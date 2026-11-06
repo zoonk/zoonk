@@ -14,7 +14,7 @@ export async function loadPassedOverClaims({
 }: {
   goalId: string;
   known?: Pick<Plan, "createdAt" | "graph" | "id" | "settings"> | null;
-  skillIds: ReadonlySet<string>;
+  skillIds?: ReadonlySet<string>;
 }): Promise<ClaimEvent[]> {
   const plan =
     known === undefined
@@ -36,8 +36,8 @@ export async function loadPassedOverClaims({
     known === undefined ? prisma : "shared",
   );
 
-  const passed = listPassedOver({ graph, prerequisites, settings }).filter((entry) =>
-    skillIds.has(entry.skillId),
+  const passed = listPassedOver({ graph, prerequisites, settings }).filter(
+    (entry) => !skillIds || skillIds.has(entry.skillId),
   );
 
   if (passed.length === 0) {
