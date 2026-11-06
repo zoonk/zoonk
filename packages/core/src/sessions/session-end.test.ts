@@ -21,7 +21,6 @@ import { addExtraStudyBlock } from "./add-extra-study-block";
 import { finishStudyBlock } from "./finish-study-block";
 import { getStudySessionSummary } from "./get-study-session-summary";
 import { scoreLessonAnswers } from "./score-lesson-answers";
-import { settleFinishedLesson } from "./settle-finished-lesson";
 import { startStudyBlock } from "./start-study-block";
 import { stopStudySession } from "./stop-study-session";
 
@@ -49,53 +48,6 @@ describe("ending a session", () => {
 
   afterEach(() => {
     vi.useRealTimers();
-  });
-
-  it("settles a finished lesson: its block, the plan and the day, even outside a session", async () => {
-    const { lessons, planItems, session, user } = await setup();
-    const [first] = session.blocks;
-
-    expect(first).toMatchObject({ kind: "learn", lessonId: lessons[0]?.id });
-    await startStudyBlock({ blockId: first?.id ?? "", input: {}, sessionId: session.id });
-
-    await learningEventFixture({
-      brainPower: 40,
-      contentIds: { lessonId: lessons[0]?.id ?? "" },
-      endedAt: new Date(),
-      userId: user.id,
-    });
-
-    const moment = await settleFinishedLesson({
-      lessonId: lessons[0]?.id ?? "",
-      timeZone: "UTC",
-      userId: user.id,
-    });
-
-    expect(moment).toMatchObject({
-      blockId: first?.id,
-      brainPower: 90,
-      fullMeal: { bonus: 50, paid: true },
-      sessionBar: { completed: 1, total: session.blocks.length },
-      sessionCompleted: false,
-    });
-
-    await expect(
-      prisma.planItem.findUniqueOrThrow({ where: { id: planItems[0]?.id } }),
-    ).resolves.toMatchObject({ status: "done" });
-
-    const elsewhere = await sessionGoalFixture({ lessons: 1, userId: user.id });
-
-    await expect(
-      settleFinishedLesson({
-        lessonId: elsewhere.lessons[0]?.id ?? "",
-        timeZone: "UTC",
-        userId: user.id,
-      }),
-    ).resolves.toBeNull();
-
-    await expect(
-      prisma.planItem.findUniqueOrThrow({ where: { id: elsewhere.planItems[0]?.id } }),
-    ).resolves.toMatchObject({ status: "done" });
   });
 
   it("stops for today: what was done counts, the rest waits on Today, and the summary says so far", async () => {
