@@ -44,11 +44,17 @@ enum PracticeLayout {
   static let readableWidth: CGFloat = 680
 }
 
+private enum PracticeTaskKind {
+  case spread
+  case result
+  /// The way on stays with what it acts on: under it, on the page before a hinge, with the page
+  /// after it blank.
+  case oneDecision
+}
+
 struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   @Environment(\.practiceActionsHidden) private var actionsHidden
-  /// A result keeps a page each at a hinge at any text size; a question's spread becomes one
-  /// column where its text stacks.
-  private let isResult: Bool
+  private let kind: PracticeTaskKind
   private let segments: [PracticeSegment]?
   private let index: Int
   private let stimulus: () -> Stimulus
@@ -61,7 +67,18 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
     @ViewBuilder response: @escaping () -> Response,
     @ViewBuilder actions: @escaping () -> Actions
   ) {
-    self.isResult = isResult
+    self.init(
+      kind: isResult ? .result : .spread, segments: segments, index: index, stimulus: stimulus,
+      response: response, actions: actions)
+  }
+
+  fileprivate init(
+    kind: PracticeTaskKind, segments: [PracticeSegment]?, index: Int,
+    stimulus: @escaping () -> Stimulus,
+    response: @escaping () -> Response,
+    actions: @escaping () -> Actions
+  ) {
+    self.kind = kind
     self.segments = segments
     self.index = index
     self.stimulus = stimulus
@@ -70,14 +87,29 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   }
 
   var body: some View {
-    QuestionSpread(readableWidth: PracticeLayout.readableWidth, spacing: 20, isSpread: !isResult) {
-      segmentsBar
-    } stimulus: {
-      stimulus()
-    } response: {
-      response()
-    } actions: {
-      actionsBar
+    Group {
+      if kind == .oneDecision {
+        QuestionColumn(readableWidth: PracticeLayout.readableWidth, spacing: 20) {
+          segmentsBar
+        } content: {
+          stimulus()
+        } actions: {
+          actionsBar
+        }
+        .lonePage()
+      } else {
+        QuestionSpread(
+          readableWidth: PracticeLayout.readableWidth, spacing: 20, isSpread: kind == .spread
+        ) {
+          segmentsBar
+        } stimulus: {
+          stimulus()
+        } response: {
+          response()
+        } actions: {
+          actionsBar
+        }
+      }
     }
     .background(Color(.systemGroupedBackground))
   }
@@ -105,16 +137,16 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   }
 }
 
-/// An intro, a note or a result with nothing next: it leads, and the trailing page keeps only the
-/// way on.
+/// A result, or a screen with one decision, such as an intro, a wait or a note. A run's step that
+/// asks nothing keeps the spread init, its way on where each answer's was.
 extension PracticeTaskLayout where Response == EmptyView {
   init(
-    isResult: Bool = false, segments: [PracticeSegment]? = nil, index: Int = 0,
+    isResult: Bool = false,
     @ViewBuilder content: @escaping () -> Stimulus,
     @ViewBuilder actions: @escaping () -> Actions
   ) {
     self.init(
-      isResult: isResult, segments: segments, index: index, stimulus: content,
+      kind: isResult ? .result : .oneDecision, segments: nil, index: 0, stimulus: content,
       response: { EmptyView() }, actions: actions)
   }
 }
@@ -160,9 +192,7 @@ struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
   var body: some View {
     ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: content)
       .pageHeader(header)
-      .safeAreaBar(edge: .bottom) {
-        actions().keepsOffFold()
-      }
+      .safeAreaBar(edge: .bottom, content: actions)
   }
 }
 
