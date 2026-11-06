@@ -54,7 +54,12 @@ export function TaskActions({ className, ...props }: React.ComponentProps<"div">
 
 /** For a labeled action in `TaskActions`: a line too narrow for its label wraps its words instead of cutting them off. */
 export const TASK_WRAPPING_ACTION_CLASS =
-  "h-auto min-h-11 shrink py-2 text-center text-balance whitespace-normal";
+  "h-auto min-h-11 max-w-full shrink py-2 text-center text-balance whitespace-normal";
+
+/** A button's bare text can't shrink below its longest word, so a word wider than the whole line would spill out. */
+export function TaskActionLabel({ children }: { children: React.ReactNode }) {
+  return <span className="min-w-0 wrap-break-word">{children}</span>;
+}
 
 /**
  * Its longest word decides when it takes a line of its own. Not `basis-0`, which would squeeze a

@@ -1,7 +1,7 @@
 import { act } from "@testing-library/react";
 import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
-import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { buildAdapters, renderLessonPlayer, startedRun } from "../_test-utils/render-lesson-player";
 import { stubTutorApi } from "../_test-utils/tutor-api";
 import { buildTutor } from "../_test-utils/tutor-config";
 import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
@@ -13,7 +13,7 @@ const LONG_NAME_BUDDY = {
   energy: null,
   glasses: "round",
   kind: "zu",
-  name: "Bartholomew",
+  name: "ProfessorBartholomew",
 } as const;
 
 async function atLargeTextOnSmallPhone() {
@@ -43,8 +43,11 @@ function visibleText(button: HTMLElement) {
 }
 
 function cutOffLabels() {
-  const bar = document.querySelector("[data-slot='lesson-action-bar']");
-  const buttons = [...(bar?.querySelectorAll("button") ?? [])];
+  const bar = document.querySelector(
+    "[data-slot='lesson-action-bar'], [data-slot='task-action-bar']",
+  );
+
+  const buttons = [...(bar?.querySelectorAll<HTMLElement>("a, button") ?? [])];
   const cutOff: string[] = [];
 
   for (const button of buttons.filter((item) => item.getClientRects().length > 0)) {
@@ -83,7 +86,7 @@ describe("the lesson's bottom bar at 200% text on a 320 px phone", () => {
     expect(cutOffLabels()).toStrictEqual([]);
   });
 
-  it("keeps Continue and a long ask label whole after a wrong answer", async () => {
+  it("keeps Continue and an ask label with a long name whole after a wrong answer", async () => {
     await atLargeTextOnSmallPhone();
     const lesson = buildLesson([teachingStep("check")]);
     stubTutorApi({ lesson });
@@ -91,7 +94,10 @@ describe("the lesson's bottom bar at 200% text on a 320 px phone", () => {
 
     await page.getByRole("radio", { name: "The electron's size" }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
-    await expect.element(page.getByRole("button", { name: "Ask Bartholomew" })).toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "Ask ProfessorBartholomew" }))
+      .toBeVisible();
 
     expect(cutOffLabels()).toStrictEqual([]);
   });
@@ -119,5 +125,32 @@ describe("the lesson's bottom bar at 200% text on a 320 px phone", () => {
       pending.resolve({ status: "failed" });
       await pending.promise;
     });
+  });
+
+  it("keeps both links whole at the lesson's end", async () => {
+    await atLargeTextOnSmallPhone();
+    const lesson = buildLesson([teachingStep("check")]);
+
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, { startLesson: async () => startedRun({ replay: false }) }),
+      lesson,
+      routes: {
+        exit: "/chapter",
+        exitTo: "chapter",
+        nextLesson: "/learn/next",
+        signUp: "/login",
+        upgrade: "/subscription",
+      },
+    });
+
+    await page
+      .getByRole("radio", { name: "Where the electron is most likely to be found" })
+      .click();
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect.element(page.getByRole("link", { name: "Back to chapter" })).toBeVisible();
+
+    expect(cutOffLabels()).toStrictEqual([]);
   });
 });

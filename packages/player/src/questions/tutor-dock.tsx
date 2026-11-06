@@ -1,7 +1,11 @@
 "use client";
 
 import { useTaskFootHeight } from "@zoonk/learn/task-foot-height";
-import { TASK_ASIDE_PLACE_CLASS, TASK_WRAPPING_ACTION_CLASS } from "@zoonk/learn/task-layout";
+import {
+  TASK_ASIDE_PLACE_CLASS,
+  TASK_WRAPPING_ACTION_CLASS,
+  TaskActionLabel,
+} from "@zoonk/learn/task-layout";
 import { Button } from "@zoonk/ui/components/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -256,7 +260,7 @@ export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
         variant="outline"
       >
         <MessageCircleQuestionIcon aria-hidden="true" />
-        {label}
+        <TaskActionLabel>{label}</TaskActionLabel>
       </Button>
     );
   }
