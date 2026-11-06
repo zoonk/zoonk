@@ -834,9 +834,11 @@ private struct PlanPausedSlot: View {
   }
 }
 
-/// Writes the certificates of the plan's finished levels or plan; the Plan plays their moment.
+/// Writes the certificates of the plan's finished levels or plan; the Plan plays their moment. The
+/// button owns its claim: once it leaves with its sheet or page, the claim shows nothing, and what
+/// it earned plays with the learner's next result.
 private struct CertificateClaimButton: View {
-  @State private var isClaiming = false
+  @State private var claiming: Task<Void, Never>?
   @State private var failed = false
 
   let context: PlanContext
@@ -847,17 +849,19 @@ private struct CertificateClaimButton: View {
       comment: "The plan's certificate couldn't be written; Get your certificate tries again")
 
     Button {
-      Task {
-        isClaiming = true
+      claiming = Task {
         let claim = await context.claimCertificate()
+
+        guard !Task.isCancelled else {
+          return
+        }
+
+        claiming = nil
         failed = claim == nil
-        isClaiming = false
 
         if let claim {
           context.showClaim(claim)
-        }
-
-        if failed {
+        } else {
           AccessibilityNotification.Announcement(failure).post()
         }
       }
@@ -871,7 +875,8 @@ private struct CertificateClaimButton: View {
       }
     }
     .buttonStyle(.mainAction)
-    .disabled(isClaiming)
+    .disabled(claiming != nil)
+    .onDisappear { claiming?.cancel() }
 
     if failed {
       Text(failure)
