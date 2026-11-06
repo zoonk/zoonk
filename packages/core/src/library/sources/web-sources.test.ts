@@ -242,8 +242,8 @@ describe(refreshWebSource, () => {
 
     expect(owed).toMatchObject([
       {
+        changes: expect.stringContaining("- A prova terá 50 questões."),
         previousHash: law.contentHash,
-        previousText: expect.stringContaining("50 questões"),
         sourceId: law.id,
       },
     ]);

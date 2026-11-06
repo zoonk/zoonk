@@ -71,8 +71,8 @@ export async function unnoticedSourceChangeFixture(
   return prisma.unnoticedSourceChange.create({
     data: {
       changedAt: new Date(),
+      changes: "- Test source text before it changed.\n+ Test source text after it changed.",
       previousHash: `test-hash-${randomUUID()}`,
-      previousText: "Test source text before it changed.",
       ...attrs,
     },
   });

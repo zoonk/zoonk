@@ -3,7 +3,7 @@ CREATE TABLE "unnoticed_source_changes" (
     "id" UUID NOT NULL DEFAULT uuidv7(),
     "source_id" UUID NOT NULL,
     "previous_hash" TEXT NOT NULL,
-    "previous_text" TEXT,
+    "changes" TEXT NOT NULL,
     "changed_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "unnoticed_source_changes_pkey" PRIMARY KEY ("id")

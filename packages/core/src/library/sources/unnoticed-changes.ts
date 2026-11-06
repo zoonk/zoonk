@@ -1,7 +1,7 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { type SourceTopic, hasOwnFreshnessChecks } from "./source-contract";
-import { summarizeTextChange } from "./text-change";
+import { appendTextChange, summarizeTextChange } from "./text-change";
 
 export type OwedSourceChange = {
   change: string;
@@ -11,17 +11,20 @@ export type OwedSourceChange = {
 };
 
 /**
- * Call in the transaction that moves the source's `contentHash`, before the new text is saved. A
- * change already owed keeps its older text, so its notice covers both.
+ * Call in the transaction that moves the source's `contentHash`, before `text` is saved over the
+ * stored one. A change already owed keeps its earlier lines, so a page that changes back still
+ * flags what was written from the version in between.
  */
 export async function oweSourceChangeNotice({
   changedAt,
   sourceId,
+  text,
   topic,
   tx,
 }: {
   changedAt: Date;
   sourceId: string;
+  text: string | null;
   topic: SourceTopic;
   tx: TransactionClient;
 }): Promise<void> {
@@ -29,51 +32,41 @@ export async function oweSourceChangeNotice({
     return;
   }
 
-  const previous = await tx.source.findUniqueOrThrow({
-    select: { contentHash: true, extractedText: true },
+  const stored = await tx.source.findUniqueOrThrow({
+    select: { contentHash: true, extractedText: true, unnoticedChange: true },
     where: { id: sourceId },
   });
 
+  const change = summarizeTextChange({ current: text, previous: stored.extractedText });
+
+  if (!change) {
+    return;
+  }
+
+  const owed = stored.unnoticedChange;
+
   await tx.unnoticedSourceChange.upsert({
-    create: {
+    create: { changedAt, changes: change, previousHash: stored.contentHash, sourceId },
+    update: {
       changedAt,
-      previousHash: previous.contentHash,
-      previousText: previous.extractedText,
-      sourceId,
+      changes: owed ? appendTextChange({ earlier: owed.changes, later: change }) : change,
     },
-    update: { changedAt },
     where: { sourceId },
   });
 }
 
-/** Settles a change with nothing to tell, such as articles moved around or a page changed back. */
 export async function readOwedSourceChange(sourceId: string): Promise<OwedSourceChange | null> {
   const owed = await prisma.unnoticedSourceChange.findUnique({
-    include: { source: { select: { contentHash: true, extractedText: true } } },
+    include: { source: { select: { contentHash: true } } },
     where: { sourceId },
   });
 
-  if (!owed) {
-    return null;
-  }
-
-  const change = summarizeTextChange({
-    current: owed.source.extractedText,
-    previous: owed.previousText,
-  });
-
-  if (!change) {
-    await prisma.unnoticedSourceChange.deleteMany({
-      where: { changedAt: owed.changedAt, sourceId },
-    });
-
-    return null;
-  }
-
-  return {
-    change,
-    changedAt: owed.changedAt,
-    contentHash: owed.source.contentHash,
-    previousHash: owed.previousHash,
-  };
+  return (
+    owed && {
+      change: owed.changes,
+      changedAt: owed.changedAt,
+      contentHash: owed.source.contentHash,
+      previousHash: owed.previousHash,
+    }
+  );
 }

@@ -262,16 +262,16 @@ model SourceChangeNotice {
   @@map("source_change_notices")
 }
 
-/// A page change of a regulation or software source that no notice covers yet. The write that moves
-/// `contentHash` keeps the text before it here, and the notice for the change deletes the row, so a
-/// failed notice run or research storing the new page first can't lose the change. `changedAt` is
-/// the latest move: content written after it was written from the new text.
+/// The page changes of a regulation or software source that no notice covers yet. The write that
+/// moves `contentHash` adds what it changed here, and the notice for them deletes the row, so a
+/// failed notice run or research storing the new page first can't lose a change. `changedAt` is the
+/// latest move: content written after it was written from the current text.
 model UnnoticedSourceChange {
   id           String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   sourceId     String   @unique @map("source_id") @db.Uuid
   source       Source   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
   previousHash String   @map("previous_hash")
-  previousText String?  @map("previous_text")
+  changes      String
   changedAt    DateTime @map("changed_at")
 
   @@map("unnoticed_source_changes")

@@ -206,6 +206,17 @@ const LAW_AFTER = "Art. 1º A alíquota é de 17%.";
 const LAW_CHANGES = `- ${LAW_BEFORE}\n+ ${LAW_AFTER}`;
 const LAW_NOTICE = "A lei mudou: a alíquota agora é de 17%.";
 
+function storeLawAgain(source: { publisher: string | null; title: string; url: string | null }) {
+  return storeWebSource({
+    kind: "official",
+    language: "pt",
+    publisher: source.publisher,
+    title: source.title,
+    topic: "regulation",
+    url: source.url ?? "",
+  });
+}
+
 function writeLawNotice() {
   vi.mocked(generateSourceChangeNotice).mockResolvedValue({
     data: { message: LAW_NOTICE },
@@ -709,15 +720,7 @@ describe(freshnessWorkflow, () => {
     });
 
     serveNotice(LAW_AFTER);
-
-    await storeWebSource({
-      kind: "official",
-      language: "pt",
-      publisher: source.publisher,
-      title: source.title,
-      topic: "regulation",
-      url: source.url ?? "",
-    });
+    await storeLawAgain(source);
 
     const fromNewText = await itemFixture({ skillId: skill.id, sourceId: source.id });
     writeLawNotice();
@@ -733,6 +736,34 @@ describe(freshnessWorkflow, () => {
     });
 
     expect(flags.map((flag) => flag.itemId)).toStrictEqual([fromOldText.id]);
+  });
+
+  it("flags what was written from a version the law's page then went back from", async () => {
+    const source = await lawWithLearner(LAW_BEFORE);
+    const skill = await skillFixture();
+
+    serveNotice(LAW_AFTER);
+    const briefVersion = await storeLawAgain(source);
+
+    const fromBriefVersion = await itemFixture({
+      generatedAt: briefVersion.fetchedAt,
+      skillId: skill.id,
+      sourceId: source.id,
+    });
+
+    serveNotice(LAW_BEFORE);
+    await storeLawAgain(source);
+    writeLawNotice();
+
+    await freshnessWorkflow({ kind: "source", sourceId: source.id });
+
+    expect(generateSourceChangeNotice).toHaveBeenCalledWith(
+      expect.objectContaining({ changes: `${LAW_CHANGES}\n- ${LAW_AFTER}\n+ ${LAW_BEFORE}` }),
+    );
+
+    await expect(
+      prisma.contentReviewFlag.count({ where: { itemId: fromBriefVersion.id } }),
+    ).resolves.toBe(1);
   });
 
   it("writes no line, and runs no model, when a law's page only moved its articles around", async () => {
