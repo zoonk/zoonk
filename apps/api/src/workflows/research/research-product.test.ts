@@ -579,6 +579,39 @@ describe("product research", () => {
     });
   });
 
+  it("takes the brand from the product site's domain when the search finds no brand page", async () => {
+    const site = newSite();
+    const goal = await productGoal();
+    planProduct({ site });
+    servePages({ site });
+    readPages({ ...READING, releases: [] });
+
+    vi.mocked(findProductPages).mockResolvedValue({
+      ...TASK_RESULT,
+      data: {
+        brandUrl: null,
+        docsUrl: null,
+        productUrl: `https://developer.${site.brand}/orbit`,
+        releaseUrl: null,
+        releasesUrl: null,
+        searchCalls: 1,
+      },
+    });
+
+    await researchWorkflow({ goalId: goal.id });
+
+    const brand = await prisma.organization.findUniqueOrThrow({
+      include: { products: true },
+      where: { domain: site.brand },
+    });
+
+    expect(brand.website).toBe(`https://${site.brand}/`);
+
+    expect(brand.products.map((product) => product.website)).toStrictEqual([
+      `https://developer.${site.brand}/orbit`,
+    ]);
+  });
+
   it("saves nothing when the brand's site doesn't link back to the product's", async () => {
     const site = newSite();
     const goal = await productGoal();

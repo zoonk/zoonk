@@ -99,12 +99,16 @@ async function researchNewProduct(research: Research): Promise<GoalProductLink |
     officialDomains: plan.officialDomains,
   });
 
-  if (!pages.brandUrl || !pages.productUrl) {
+  if (!pages.productUrl) {
     return null;
   }
 
   const [inspected] = await Promise.allSettled([
-    inspectProductSitesStep({ brandUrl: pages.brandUrl, productUrl: pages.productUrl }),
+    inspectProductSitesStep({
+      brandUrl: pages.brandUrl,
+      productName: hints.name,
+      productUrl: pages.productUrl,
+    }),
   ]);
 
   const sites = inspected.status === "fulfilled" ? inspected.value : null;

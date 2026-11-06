@@ -1,167 +1,101 @@
-import { describe, expect, it } from "vitest";
-import {
-  type ProductSites,
-  decodeHtml,
-  isOfficialPage,
-  isProductOfBrand,
-  readPageTags,
-} from "./product-sites";
+import { Response as PageResponse, fetch } from "undici";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { type ProductSites, inspectProductSites, isOfficialPage } from "./product-sites";
 
-const BASE = "https://orbit.example/notes/";
+function requestedUrl(input: Parameters<typeof fetch>[0]): string {
+  if (typeof input === "string") {
+    return input;
+  }
 
-function page({ domain, links }: { domain: string; links: string[] }) {
-  return { domain, tags: { iconUrl: null, imageUrl: null, links }, url: `https://${domain}/` };
+  return "href" in input ? input.href : input.url;
 }
 
-function readHtml(html: string) {
-  return readPageTags({ html, url: BASE });
+/** Serves each address's page, linking to the addresses given; anything else is a 404. */
+function serve(pages: Record<string, string[]>) {
+  vi.mocked(fetch).mockImplementation(async (input) => {
+    const links = pages[requestedUrl(input)];
+
+    if (!links) {
+      return new PageResponse("", { status: 404 });
+    }
+
+    const anchors = links.map((link) => `<a href="${link}">link</a>`).join("");
+
+    return new PageResponse(`<html><body>${anchors}</body></html>`, {
+      headers: { "content-type": "text/html" },
+    });
+  });
 }
 
-describe(readPageTags, () => {
-  it("reads absolute links, the touch icon and the share image", () => {
-    const html = `<html><head>
-      <link rel="icon" href="/favicon-32.png" sizes="32x32">
-      <link rel='apple-touch-icon' href='/touch.png'>
-      <meta property="og:image" content="https://cdn.orbit.example/share.png?a=1&amp;b=2">
-    </head><body>
-    <a href="../docs#start">Docs</a><a href="https://lumen.example">Lumen</a>
-    <a href="mailto:hi@orbit.example">Mail</a><a href=/pricing>Pricing</a></body></html>`;
+function inspect(brandUrl: string | null, productUrl = "https://orbit.example/") {
+  return inspectProductSites({ brandUrl, productName: "Orbit Notes", productUrl });
+}
 
-    expect(readHtml(html)).toStrictEqual({
-      iconUrl: "https://orbit.example/touch.png",
-      imageUrl: "https://cdn.orbit.example/share.png?a=1&b=2",
-      links: [
-        "https://orbit.example/docs",
-        "https://lumen.example/",
-        "https://orbit.example/pricing",
-      ],
+describe(inspectProductSites, () => {
+  beforeEach(() => {
+    vi.mocked(fetch).mockReset();
+  });
+
+  it("ties a product on the brand's own domain", async () => {
+    serve({ "https://lumen.example/": [], "https://lumen.example/orbit": [] });
+
+    await expect(
+      inspect("https://lumen.example/", "https://lumen.example/orbit"),
+    ).resolves.toMatchObject({
+      brand: { domain: "lumen.example" },
+      product: { domain: "lumen.example" },
     });
   });
 
-  it("prefers a scalable icon, then the largest bitmap", () => {
-    const icons = `<link rel="icon" href="/16.png" sizes="16x16"><link rel="shortcut icon" href="/64.png" sizes="64x64">`;
+  it("ties a product site and a brand site that link to each other", async () => {
+    serve({
+      "https://lumen.example/": ["https://docs.orbit.example/x"],
+      "https://orbit.example/": ["https://www.lumen.example/about"],
+    });
 
-    expect(readHtml(icons)).toMatchObject({ iconUrl: "https://orbit.example/64.png" });
+    await expect(inspect("https://lumen.example/")).resolves.not.toBeNull();
+  });
 
-    expect(readHtml(`${icons}<link rel="icon" href="/logo.svg">`)).toMatchObject({
-      iconUrl: "https://orbit.example/logo.svg",
+  it("ties when the brand's own page about the product, one hop away, links to its site", async () => {
+    serve({
+      "https://lumen.example/": ["/careers", "/products/orbit-notes"],
+      "https://lumen.example/products/orbit-notes": ["https://orbit.example/"],
+      "https://orbit.example/": ["https://lumen.example/"],
+    });
+
+    await expect(inspect("https://lumen.example/")).resolves.toMatchObject({
+      brand: { domain: "lumen.example" },
+      product: { domain: "orbit.example" },
     });
   });
 
-  it("finds nothing in a page without tags", () => {
-    expect(readHtml("plain text")).toStrictEqual({ iconUrl: null, imageUrl: null, links: [] });
-  });
-
-  it("ignores links no visitor can follow and keeps the visible ones around them", () => {
-    const html = `<html><body>
-      <!-- <a href="https://hidden.example/1">old</a> -->
-      <template><!-- </template> --><a href="https://hidden.example/2">x</a></template>
-      <template><template></template><a href="https://hidden.example/3">x</a></template>
-      <script type="application/json">"</scripture><a href='https://hidden.example/4'>x</a>"</script>
-      <div data-example="<script>">Example</div><a href="https://visible.example/1">Product</a>
-      <script type="application/json">"İİİİİİİİİİ"</script><a href="https://visible.example/2">More</a>
-      </body></html>`;
-
-    expect(readHtml(html)).toMatchObject({
-      links: ["https://visible.example/1", "https://visible.example/2"],
+  it("refuses a third-party site that links to a brand that never links back", async () => {
+    serve({
+      "https://copycat.example/": ["https://lumen.example/"],
+      "https://lumen.example/": ["/careers", "/products/orbit-notes"],
+      "https://lumen.example/products/orbit-notes": ["https://orbit.example/"],
     });
+
+    await expect(inspect("https://lumen.example/", "https://copycat.example/")).resolves.toBeNull();
   });
 
-  it("keeps a card link around block content and an image-only or SVG-only link", () => {
-    const html = `<a href="https://card.example/"><h2>Product</h2><p>Explore</p></a>
-      <a href="https://image.example/"><img src="/x.png" alt=""></a>
-      <a href="https://svg.example/"><svg viewBox="0 0 1 1"><path d="M0 0h1"/></svg></a>`;
+  it("refuses a vouching page the brand's homepage doesn't link to", async () => {
+    serve({
+      "https://lumen.example/": ["/careers"],
+      "https://lumen.example/products/orbit-notes": ["https://orbit.example/"],
+      "https://orbit.example/": ["https://lumen.example/"],
+    });
 
-    expect(readHtml(html).links).toStrictEqual([
-      "https://card.example/",
-      "https://image.example/",
-      "https://svg.example/",
-    ]);
+    await expect(inspect("https://lumen.example/")).resolves.toBeNull();
   });
 
-  it("counts a link's address, never a wiki attribute", () => {
-    const html = `<a href="/about" data-wikilink-page="https://hidden.example/">About</a>
-      <a data-wikilink data-target="https://hidden.example/2">Wiki</a>`;
+  it("takes the product site's registrable domain as the brand when no brand page was found", async () => {
+    serve({ "https://developer.lumen.example/orbit": [], "https://lumen.example/": [] });
 
-    expect(readHtml(html).links).toStrictEqual(["https://orbit.example/about"]);
-  });
-
-  it("reads a directory page with a hundred thousand links", () => {
-    const html = `<ul>${"<li><a href='/x'>x</a></li>".repeat(130_000)}</ul>`;
-    expect(readHtml(html).links).toStrictEqual(["https://orbit.example/x"]);
-  });
-
-  it("resolves links against the page's base address", () => {
-    expect(
-      readHtml(`<base href="https://cdn.orbit.example/"><a href="docs">Docs</a>`).links,
-    ).toStrictEqual(["https://cdn.orbit.example/docs"]);
-  });
-
-  it.each([
-    [
-      "an escaped script",
-      `<script><!--<script></script><a href="https://hidden.example/">X</a></script>`,
-    ],
-    ["plaintext", `<plaintext><a href="https://hidden.example/">X</a>`],
-    ["an unterminated comment", "<!-- <a href='https://hidden.example/'>x</a>"],
-    ["an unterminated script", "<script>const a = \"<a href='https://hidden.example/'>x</a>\";"],
-  ])("ignores a link inside %s", (_case, html) => {
-    const { links } = readHtml(`<html><body>${html}</body></html>`);
-    expect(links).not.toContain("https://hidden.example/");
-  });
-});
-
-describe(decodeHtml, () => {
-  it("decodes a page in the charset it declares", () => {
-    const html = `<meta charset="windows-1252"><a href="https://caf\u00E9.example/">Caf\u00E9</a>`;
-    const bytes = Uint8Array.from(html, (character) => character.codePointAt(0) ?? 0);
-
-    expect(readPageTags({ html: decodeHtml(bytes), url: BASE }).links).toStrictEqual([
-      "https://xn--caf-dma.example/",
-    ]);
-  });
-
-  it("decodes a UTF-16 page by its byte-order mark", () => {
-    const html = `<a href="https://lumen.example/">Lumen</a>`;
-    const withMark = `\uFEFF${html}`;
-    const units = Uint16Array.from(withMark, (character) => character.codePointAt(0) ?? 0);
-    const bytes = new Uint8Array(units.buffer);
-
-    expect(decodeHtml(bytes)).toBe(html);
-  });
-
-  it("reads UTF-8 when the page declares nothing or a charset no decoder knows", () => {
-    const html = `<meta charset="x-unknown"><p>caf\u00E9</p>`;
-    expect(decodeHtml(new TextEncoder().encode(html))).toBe(html);
-  });
-});
-
-describe(isProductOfBrand, () => {
-  it("ties a product on the brand's own domain", () => {
-    expect(
-      isProductOfBrand({
-        brand: page({ domain: "lumen.example", links: [] }),
-        product: page({ domain: "lumen.example", links: [] }),
-      }),
-    ).toBe(true);
-  });
-
-  it("ties a product site and a brand site that link to each other", () => {
-    expect(
-      isProductOfBrand({
-        brand: page({ domain: "lumen.example", links: ["https://docs.orbit.example/x"] }),
-        product: page({ domain: "orbit.example", links: ["https://www.lumen.example/about"] }),
-      }),
-    ).toBe(true);
-  });
-
-  it("refuses a page that links to a brand the brand never links back to", () => {
-    expect(
-      isProductOfBrand({
-        brand: page({ domain: "lumen.example", links: ["https://lumen.example/careers"] }),
-        product: page({ domain: "copycat.example", links: ["https://lumen.example/"] }),
-      }),
-    ).toBe(false);
+    await expect(inspect(null, "https://developer.lumen.example/orbit")).resolves.toMatchObject({
+      brand: { domain: "lumen.example", url: "https://lumen.example/" },
+      product: { domain: "lumen.example" },
+    });
   });
 });
 

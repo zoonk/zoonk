@@ -161,7 +161,8 @@ export async function findProductPagesStep({
 }
 
 export async function inspectProductSitesStep(pages: {
-  brandUrl: string;
+  brandUrl: string | null;
+  productName: string;
   productUrl: string;
 }): Promise<ProductSites | null> {
   "use step";

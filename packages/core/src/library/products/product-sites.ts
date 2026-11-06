@@ -1,144 +1,8 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { type DefaultTreeAdapterMap, parse } from "parse5";
 import { fetchDocument } from "../sources/fetch-document";
-import { toRegistrableDomain } from "./product-keys";
-
-const SIZE = /^(?<width>\d+)x\d+$/iu;
-const SVG = /\.svg(?:$|\?)/iu;
-
-/** A scalable icon draws at any size, so it ranks above every bitmap. */
-const SCALABLE = 10_000;
-
-type Element = DefaultTreeAdapterMap["element"];
-
-export type PageTags = {
-  /** Absolute addresses of the page's links, without their fragment. */
-  links: string[];
-  iconUrl: string | null;
-  imageUrl: string | null;
-};
-
-function toAbsoluteUrl({ base, href }: { base: string; href: string | undefined }): string | null {
-  if (!href || !URL.canParse(href.trim(), base)) {
-    return null;
-  }
-
-  const url = new URL(href.trim(), base);
-
-  if (url.protocol !== "https:" && url.protocol !== "http:") {
-    return null;
-  }
-
-  url.hash = "";
-  return url.toString();
-}
-
-/**
- * The document's elements in order. A template's content and a script's text aren't child elements
- * in the parsed tree, so what no visitor can follow is never listed.
- */
-function listElements(html: string): Element[] {
-  const elements: Element[] = [];
-  const pending: DefaultTreeAdapterMap["parentNode"][] = [parse(html)];
-
-  for (let node = pending.pop(); node; node = pending.pop()) {
-    const children = node.childNodes.filter((child): child is Element => "tagName" in child);
-    // One at a time: spreading a directory's 100,000 siblings into `push` overflows the stack.
-    for (const child of children.toReversed()) {
-      pending.push(child);
-    }
-
-    for (const child of children) {
-      elements.push(child);
-    }
-  }
-
-  return elements;
-}
-
-function readAttribute(element: Element, name: string): string | undefined {
-  return element.attrs.find((attribute) => attribute.name === name)?.value;
-}
-
-function hasToken(element: Element, { name, token }: { name: string; token: string }): boolean {
-  return (readAttribute(element, name) ?? "").toLowerCase().split(/\s+/u).includes(token);
-}
-
-function rankIcon(element: Element): number {
-  const href = readAttribute(element, "href") ?? "";
-
-  if (readAttribute(element, "type") === "image/svg+xml" || SVG.test(href)) {
-    return SCALABLE;
-  }
-
-  const sizes = (readAttribute(element, "sizes") ?? "").split(/\s+/u);
-  return Math.max(0, ...sizes.map((size) => Number(SIZE.exec(size)?.groups?.width ?? 0)));
-}
-
-/** The site's own icon: an apple-touch-icon, else its largest declared icon. */
-function pickIcon(links: Element[]): Element | undefined {
-  const touch = links.find((link) => hasToken(link, { name: "rel", token: "apple-touch-icon" }));
-
-  const [best] = links
-    .filter((link) => hasToken(link, { name: "rel", token: "icon" }))
-    .toSorted((first, second) => rankIcon(second) - rankIcon(first));
-
-  return touch ?? best;
-}
-
-/** From the parsed document, as a browser builds it, so a link it wouldn't show never counts. */
-export function readPageTags({ html, url }: { html: string; url: string }): PageTags {
-  const elements = listElements(html);
-  const byName = (name: string) => elements.filter((element) => element.tagName === name);
-
-  const baseHref = byName("base")
-    .map((element) => readAttribute(element, "href"))
-    .find(Boolean);
-
-  const base = toAbsoluteUrl({ base: url, href: baseHref }) ?? url;
-  const resolve = (href: string | undefined) => toAbsoluteUrl({ base, href });
-
-  const shareImage = byName("meta").find(
-    (meta) => readAttribute(meta, "property")?.toLowerCase() === "og:image",
-  );
-
-  const links = byName("a").flatMap((anchor) => resolve(readAttribute(anchor, "href")) ?? []);
-  const icon = pickIcon(byName("link"));
-
-  return {
-    iconUrl: icon ? resolve(readAttribute(icon, "href")) : null,
-    imageUrl: shareImage ? resolve(readAttribute(shareImage, "content")) : null,
-    links: [...new Set(links)],
-  };
-}
-
-/** Byte-order marks as their bytes read in windows-1252, the prescan's decoding. */
-const BYTE_ORDER_MARKS = [
-  { label: "utf8", marks: "\u00EF\u00BB\u00BF" },
-  { label: "utf-16le", marks: "\u00FF\u00FE" },
-  { label: "utf-16be", marks: "\u00FE\u00FF" },
-];
-
-const META_CHARSET = /<meta\b[^>]*charset\s*=\s*["']?\s*(?<charset>[\w.:-]+)/iu;
-const PRESCAN_BYTES = 1024;
-
-/**
- * As a browser decodes a page: its byte-order mark, else the charset its `<meta>` declares in the
- * first kilobyte, else UTF-8. A declared UTF-16 can't be, since the bytes read as ASCII.
- */
-export function decodeHtml(bytes: Uint8Array): string {
-  const head = new TextDecoder("windows-1252").decode(bytes.subarray(0, PRESCAN_BYTES));
-  const bom = BYTE_ORDER_MARKS.find(({ marks }) => head.startsWith(marks));
-  const declared = META_CHARSET.exec(head)?.groups?.charset?.toLowerCase();
-  const label = bom?.label ?? (declared?.startsWith("utf-16") ? "utf8" : declared) ?? "utf8";
-
-  try {
-    return new TextDecoder(label).decode(bytes);
-  } catch {
-    return new TextDecoder().decode(bytes);
-  }
-}
+import { type PageTags, decodeHtml, readPageTags } from "./page-tags";
+import { toNameKey, toRegistrableDomain } from "./product-keys";
 
 type InspectedPage = { domain: string; tags: PageTags; url: string };
 
@@ -151,21 +15,65 @@ function linksToDomain({ domain, page }: { domain: string; page: InspectedPage }
   return page.tags.links.some((link) => toRegistrableDomain(link) === domain);
 }
 
+/** Enough for a homepage's menu entry and a footer link about the product. */
+const MAX_PRODUCT_LINKS = 3;
+
+/**
+ * The brand links to the product's site from its homepage, or from one of its own pages about the
+ * product (an address carrying the product's name) one hop away, as many brands do.
+ */
+async function vouchesFor({
+  brand,
+  product,
+  productName,
+}: {
+  brand: InspectedPage;
+  product: InspectedPage;
+  productName: string;
+}): Promise<boolean> {
+  if (linksToDomain({ domain: product.domain, page: brand })) {
+    return true;
+  }
+
+  const nameKey = toNameKey(productName);
+
+  const pages = brand.tags.links
+    .filter(
+      (link) =>
+        link !== brand.url &&
+        toRegistrableDomain(link) === brand.domain &&
+        nameKey !== "" &&
+        toNameKey(new URL(link).pathname).includes(nameKey),
+    )
+    .slice(0, MAX_PRODUCT_LINKS);
+
+  const visited = await Promise.allSettled(pages.map((url) => inspectPage(url)));
+
+  return visited.some(
+    (result) =>
+      result.status === "fulfilled" &&
+      result.value?.domain === brand.domain &&
+      linksToDomain({ domain: product.domain, page: result.value }),
+  );
+}
+
 /**
  * Decision 4: one registrable domain, or each site links to the other. A product page linking to a
  * brand alone would let any third-party page claim the brand.
  */
-export function isProductOfBrand({
+async function isProductOfBrand({
   brand,
   product,
+  productName,
 }: {
   brand: InspectedPage;
   product: InspectedPage;
-}): boolean {
+  productName: string;
+}): Promise<boolean> {
   return (
     brand.domain === product.domain ||
     (linksToDomain({ domain: brand.domain, page: product }) &&
-      linksToDomain({ domain: product.domain, page: brand }))
+      (await vouchesFor({ brand, product, productName })))
   );
 }
 
@@ -208,19 +116,24 @@ async function inspectPage(url: string): Promise<InspectedPage | null> {
 }
 
 /**
- * Brand identity is the domain of the address the server fetched, never a model's word. Null when
- * either page isn't an HTML page on a registrable domain or the two sites aren't tied.
+ * Brand identity is the domain of the address the server fetched, never a model's word. With no
+ * brand page found, the brand is the product site's registrable domain, so a product on a brand's
+ * subdomain ties to it. Null when a page isn't HTML on a registrable domain or the sites aren't tied.
  */
 export async function inspectProductSites({
   brandUrl,
+  productName,
   productUrl,
 }: {
-  brandUrl: string;
+  brandUrl: string | null;
+  /** A search hint, only choosing which brand pages to read for a link to the product. */
+  productName: string;
   productUrl: string;
 }): Promise<ProductSites | null> {
-  const [brand, product] = await Promise.all([inspectPage(brandUrl), inspectPage(productUrl)]);
+  const product = await inspectPage(productUrl);
+  const brand = product && (await inspectPage(brandUrl ?? `https://${product.domain}/`));
 
-  if (!brand || !product || !isProductOfBrand({ brand, product })) {
+  if (!product || !brand || !(await isProductOfBrand({ brand, product, productName }))) {
     return null;
   }
 
