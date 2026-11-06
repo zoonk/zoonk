@@ -117,7 +117,12 @@ describe(questionBlockReducer, () => {
   );
 
   it("shows the grade after an answer and carries Hyperdrive", () => {
-    const checking = reduce(start, { sender: "check", type: "check" });
+    const checking = reduce(start, {
+      answer: { selectedIndex: 0 },
+      minDurationMs: 0,
+      sender: "check",
+      type: "check",
+    });
 
     const graded = reduce(checking, {
       answer: { selectedIndex: 0 },
@@ -142,10 +147,18 @@ describe(questionBlockReducer, () => {
     expect(end).toMatchObject({ index: 2, phase: { kind: "finishing" } });
   });
 
-  it("keeps the question open when an answer couldn't be saved", () => {
-    const failed = reduce(start, { type: "answerFailed" });
+  it.each([
+    { minDurationMs: 0, sender: "notSure" },
+    { minDurationMs: 45_000, sender: "timer" },
+  ] as const)(
+    "keeps the question open when an answer couldn't be saved, to send again as $sender sent it",
+    ({ minDurationMs, sender }) => {
+      const sent = { answer: { dontKnow: true }, minDurationMs, sender } as const;
+      const checking = reduce(start, { ...sent, type: "check" });
+      const failed = reduce(checking, { type: "answerFailed" });
 
-    expect(failed.index).toBe(0);
-    expect(failed.phase).toStrictEqual({ kind: "answerFailed" });
-  });
+      expect(failed.index).toBe(0);
+      expect(failed.phase).toStrictEqual({ ...sent, kind: "answerFailed" });
+    },
+  );
 });

@@ -70,7 +70,7 @@ export function useQuestionBlock({
       return;
     }
 
-    dispatch({ sender, type: "check" });
+    dispatch({ answer, minDurationMs, sender, type: "check" });
 
     const outcome = await actions
       .answer({
@@ -105,6 +105,11 @@ export function useQuestionBlock({
     },
     question,
     refresh: actions.refresh,
+    retry: () => {
+      if (state.phase.kind === "answerFailed") {
+        void submit(state.phase.answer, state.phase);
+      }
+    },
     retryFinish: () => dispatch({ type: "finish" }),
     state,
     submit,
