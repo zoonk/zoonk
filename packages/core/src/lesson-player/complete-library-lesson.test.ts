@@ -15,8 +15,8 @@ import { describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
+import { publishLessonVersion } from "../_test-utils/publish-lesson-version";
 import { trackServerEvent } from "../analytics/server";
-import { saveLessonVersion } from "../library/lessons/_utils/save-lesson-content";
 import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { checkLessonStep } from "./check-lesson-step";
@@ -140,7 +140,7 @@ describe(completeLibraryLesson, () => {
       await prisma.lesson.update({ data: { targetLanguage }, where: { id: setup.lesson.id } });
       const runId = await startRun(setup.lesson.id);
 
-      await saveLessonVersion({
+      await publishLessonVersion({
         language: setup.lesson.language,
         lessonId: setup.lesson.id,
         replaces: 1,
@@ -629,7 +629,7 @@ describe(completeLibraryLesson, () => {
       where: { lessonId: setup.lesson.id },
     });
 
-    const fixed = await saveLessonVersion({
+    const fixed = await publishLessonVersion({
       language: setup.lesson.language,
       lessonId: setup.lesson.id,
       replaces: 1,

@@ -22,6 +22,7 @@ import { temperatureSpec, writtenTemperatureLesson } from "./_test-utils/written
 import {
   checkPublishedLesson,
   citePublishedLesson,
+  publishFixedVersion,
   redraftPublishedLesson,
   setAsidePublishedLesson,
 } from "./published-lesson-check";
@@ -181,7 +182,7 @@ describe(checkPublishedLesson, () => {
     expect(steps.every((step) => step.version === 1 && step.retiredAt === null)).toBe(true);
   });
 
-  it("publishes the fix of what the reviewer found as the next version, its map included, keeping the one learners opened", async () => {
+  it("stages the fix of what the reviewer found as the next version, its map included, which replaces the one learners get once published", async () => {
     const map = {
       ideas: [
         { label: "Below zero", text: "A temperature below zero sits under the zero mark." },
@@ -199,24 +200,36 @@ describe(checkPublishedLesson, () => {
 
     await expect(
       checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
-    ).resolves.toStrictEqual({ status: "republished", version: 2 });
+    ).resolves.toStrictEqual({ savedAt: expect.any(Number), status: "republished", version: 2 });
 
     expect(checkLessonQuality).toHaveBeenCalledOnce();
     expect(fixLessonDraft).toHaveBeenCalledWith(expect.objectContaining({ serviceTier: "flex" }));
 
-    const [steps, stored] = await Promise.all([
-      listSteps(lesson.id),
-      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
-    ]);
+    const readVersions = () =>
+      Promise.all([
+        listSteps(lesson.id),
+        prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+      ]);
 
+    const [staged, before] = await readVersions();
+
+    expect(readLessonMap(before.stagedSummary)).toStrictEqual(map);
+    expect(staged).toHaveLength(16);
+    expect(staged.every((step) => step.retiredAt === null)).toBe(true);
+    expect(staged.every((step) => step.staged === (step.version === 2))).toBe(true);
+
+    await expect(publishFixedVersion({ lessonId: lesson.id, version: 2 })).resolves.toBe(true);
+    await expect(publishFixedVersion({ lessonId: lesson.id, version: 2 })).resolves.toBe(false);
+
+    const [steps, stored] = await readVersions();
     const opened = steps.filter((step) => step.version === 1);
     const fixed = steps.filter((step) => step.version === 2);
 
-    expect(stored.contentStatus).toBe("completed");
+    expect(stored).toMatchObject({ contentStatus: "completed", stagedSummary: null });
     expect(readLessonMap(stored.summary)).toStrictEqual(map);
     expect(opened).toHaveLength(8);
     expect(opened.every((step) => step.retiredAt !== null)).toBe(true);
-    expect(fixed.every((step) => step.retiredAt === null)).toBe(true);
+    expect(fixed.every((step) => step.retiredAt === null && !step.staged)).toBe(true);
 
     expect(fixed.map((step) => step.runId)).toStrictEqual(
       fixed.map((step) => (step.position === 4 ? fix.runId : draft.runId)),
@@ -263,15 +276,24 @@ describe(checkPublishedLesson, () => {
     ).resolves.toMatchObject({ incorrect: true, status: "heldBack" });
   });
 
-  it("changes nothing when another version took the lesson's place meanwhile", async () => {
+  it("answers a check run again with the fix it staged, and changes nothing once that fix took the lesson's place", async () => {
     const { lesson, plan } = await publishLesson({ lesson: writtenWrong() });
     mockReview([wrongRise]);
     mockFix({ changedScreens: [4], lesson: writtenRight() });
-    await checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() });
 
-    await expect(
-      checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
-    ).resolves.toStrictEqual({ status: "replaced" });
+    const check = () =>
+      checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() });
+
+    await check();
+
+    await expect(check()).resolves.toStrictEqual({
+      savedAt: expect.any(Number),
+      status: "republished",
+      version: 2,
+    });
+
+    await publishFixedVersion({ lessonId: lesson.id, version: 2 });
+    await expect(check()).resolves.toStrictEqual({ status: "replaced" });
 
     expect(checkLessonQuality).toHaveBeenCalledOnce();
   });
@@ -289,11 +311,11 @@ describe(checkPublishedLesson, () => {
     mockFix({ changedScreens: [4], lesson: writtenRight() });
     await checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() });
 
-    const current = await prisma.step.findFirstOrThrow({
-      where: { lessonId: lesson.id, position: 1, retiredAt: null },
+    const fixed = await prisma.step.findFirstOrThrow({
+      where: { lessonId: lesson.id, position: 1, version: 2 },
     });
 
-    expect(current).toMatchObject({ mediaAssetId: picture.id, version: 2 });
+    expect(fixed.mediaAssetId).toBe(picture.id);
   });
 });
 
@@ -318,7 +340,7 @@ describe(redraftPublishedLesson, () => {
         version: plan.version,
         workflowRunId: randomUUID(),
       }),
-    ).resolves.toStrictEqual({ status: "republished", version: 2 });
+    ).resolves.toStrictEqual({ savedAt: expect.any(Number), status: "republished", version: 2 });
 
     expect(writeLessonDraft).toHaveBeenLastCalledWith(
       expect.objectContaining({ heldBackProblems: heldBack.problems, serviceTier: "flex" }),
@@ -326,8 +348,8 @@ describe(redraftPublishedLesson, () => {
 
     expect(checkLessonQuality).toHaveBeenCalledOnce();
 
-    const current = await prisma.step.findMany({ where: { lessonId: lesson.id, retiredAt: null } });
-    expect(current.every((step) => step.version === 2 && step.runId === redraft.runId)).toBe(true);
+    const staged = await prisma.step.findMany({ where: { lessonId: lesson.id, staged: true } });
+    expect(staged.every((step) => step.version === 2 && step.runId === redraft.runId)).toBe(true);
   });
 });
 
@@ -508,6 +530,23 @@ describe(setAsidePublishedLesson, () => {
     expect(steps.every((step) => step.retiredAt === null)).toBe(true);
 
     await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 7 })).resolves.toBe(false);
+  });
+
+  it("keeps a lesson in play while a fix of its version is staged, so the fix goes live playable", async () => {
+    const { lesson, plan } = await publishLesson({ lesson: writtenWrong() });
+    mockReview([wrongRise]);
+    mockFix({ changedScreens: [4], lesson: writtenRight() });
+    await checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() });
+
+    await expect(
+      setAsidePublishedLesson({ lessonId: lesson.id, version: plan.version }),
+    ).resolves.toBe(false);
+
+    await expect(publishFixedVersion({ lessonId: lesson.id, version: 2 })).resolves.toBe(true);
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ).resolves.toMatchObject({ contentStatus: "completed", setAsideAt: null });
   });
 });
 

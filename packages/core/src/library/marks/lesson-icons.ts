@@ -8,9 +8,9 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { type IconRow, findIconsByName, searchIconCandidates } from "../icons/lesson-icon-library";
 import { readSavedLessonMap } from "../lessons/lesson-map";
-import { CURRENT_STEPS } from "../lessons/lesson-versions";
+import { toPreparedVersion } from "../lessons/lesson-versions";
 import { readSavedStepMarks } from "./step-marks";
-import { type LessonIconRequest } from "./tag-lesson-marks";
+import { type LessonIconRequest, savePreparedMap } from "./tag-lesson-marks";
 
 /** `iconId` is the library icon to reuse, or null for one to draw. */
 export type PickedIcon = { iconId: string | null; name: string; need: IconNeed };
@@ -131,14 +131,20 @@ export async function linkLessonIcons({
   lessonId: string;
   picked: readonly { iconId: string | null; name: string }[];
 }): Promise<void> {
-  const lesson = await prisma.lesson.findUnique({
-    select: { steps: { select: { id: true, marks: true }, where: CURRENT_STEPS }, summary: true },
+  const found = await prisma.lesson.findUnique({
+    select: {
+      stagedSummary: true,
+      steps: { select: { id: true, marks: true, staged: true }, where: { retiredAt: null } },
+      summary: true,
+    },
     where: { id: lessonId },
   });
 
-  if (!lesson) {
+  if (!found) {
     return;
   }
+
+  const lesson = toPreparedVersion(found);
 
   const linked = new Map(picked.flatMap(({ iconId, name }) => (iconId ? [[name, iconId]] : [])));
 
@@ -159,19 +165,17 @@ export async function linkLessonIcons({
 
   const mapUpdate =
     map?.ideas.some((idea) => idea.iconPending) && lesson.summary !== null
-      ? [
-          prisma.lesson.updateMany({
-            data: {
-              summary: {
-                ...map,
-                ideas: map.ideas.map((idea) =>
-                  idea.iconPending ? linkIcon({ linked, saved: idea }) : idea,
-                ),
-              },
-            },
-            where: { id: lessonId, summary: { equals: lesson.summary } },
-          }),
-        ]
+      ? savePreparedMap({
+          lessonId,
+          map: {
+            ...map,
+            ideas: map.ideas.map((idea) =>
+              idea.iconPending ? linkIcon({ linked, saved: idea }) : idea,
+            ),
+          },
+          read: lesson.summary,
+          staged: lesson.staged,
+        })
       : [];
 
   await prisma.$transaction([...stepUpdates, ...mapUpdate]);

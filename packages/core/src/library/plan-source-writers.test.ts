@@ -65,7 +65,7 @@ import { publishAlphabetLesson } from "./language/alphabet/write-alphabet-lesson
 import {
   type LessonScreenToSave,
   saveLessonContent,
-  saveLessonVersion,
+  stageLessonVersion,
 } from "./lessons/_utils/save-lesson-content";
 import { createLibraryLesson } from "./lessons/create-library-lesson";
 import { placeChapterLessons } from "./lessons/place-chapter-lessons";
@@ -335,21 +335,12 @@ const REGISTRY: Record<string, Registration[]> = {
   "library/listening/voice-listening-set.ts": [
     { verdict: "marks", why: "a voiced set joins the recordings", writes: ["itemSet.updateMany"] },
   ],
-  "library/marks/lesson-icons.ts": [
-    {
-      fields: ["summary"],
-      readElsewhere: { "plans/_utils/replan.ts": "a plan's posted summary" },
-      verdict: "excluded",
-      why: "links the map's icons, which no plan reads",
-      writes: ["lesson.updateMany"],
-    },
-  ],
   "library/marks/tag-lesson-marks.ts": [
     {
-      fields: ["summary"],
+      fields: ["stagedSummary", "summary"],
       readElsewhere: { "plans/_utils/replan.ts": "a plan's posted summary" },
       verdict: "excluded",
-      why: "adds the map's about lines and icon needs, which no plan reads",
+      why: "adds the map's about lines, icon needs and icons, which no plan reads",
       writes: ["lesson.updateMany"],
     },
   ],
@@ -776,7 +767,7 @@ async function lessonVersionCase(): Promise<WriterCase> {
     plan,
     root: lessonRoot(lesson.id),
     write: () =>
-      saveLessonVersion({
+      stageLessonVersion({
         language: "en",
         lessonId: lesson.id,
         replaces: 1,
@@ -1561,7 +1552,7 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "library/lessons/_utils/save-lesson-content.ts": {
     "saveLessonContent (a math item's skill)": mathItemCase,
     "saveLessonContent (the lesson)": publishLessonCase,
-    "saveLessonVersion (the lesson)": lessonVersionCase,
+    "stageLessonVersion (the lesson)": lessonVersionCase,
   },
   "library/lessons/create-library-lesson.ts": { createLibraryLesson: newLessonCase },
   "library/lessons/place-chapter-lessons.ts": { placeChapterLessons: placeLessonsCase },

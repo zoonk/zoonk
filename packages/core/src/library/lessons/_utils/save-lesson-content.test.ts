@@ -18,8 +18,9 @@ import { toStepContent } from "../../steps/written-screens";
 import { readLessonMap } from "../lesson-map";
 import {
   type LessonScreenToSave,
+  publishStagedLessonVersion,
   saveLessonContent,
-  saveLessonVersion,
+  stageLessonVersion,
 } from "./save-lesson-content";
 
 const content = {
@@ -277,7 +278,7 @@ describe(saveLessonContent, () => {
     });
   });
 
-  it("marks each plan reading the lesson changed content when publishing it and its next version, once", async () => {
+  it("marks each plan reading the lesson changed content when publishing it and staging its next version, once", async () => {
     const { lesson, skill, workflowRunId } = await claimedLesson();
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
@@ -294,7 +295,7 @@ describe(saveLessonContent, () => {
 
     await expect(readPlan()).resolves.toMatchObject({ sourceVersion: plan.sourceVersion + 1 });
 
-    await saveLessonVersion({
+    await stageLessonVersion({
       language: "en",
       lessonId: lesson.id,
       replaces: 1,
@@ -305,7 +306,7 @@ describe(saveLessonContent, () => {
     await expect(readPlan()).resolves.toMatchObject({ sourceVersion: plan.sourceVersion + 2 });
   });
 
-  it("keeps the whole lesson map, its labels and shape, when publishing and when a new version replaces it", async () => {
+  it("keeps the whole lesson map, its labels and shape, when publishing and when a staged version replaces it", async () => {
     const { lesson, skill, workflowRunId } = await claimedLesson();
 
     const nested = {
@@ -340,7 +341,7 @@ describe(saveLessonContent, () => {
 
     await expect(readMap()).resolves.toStrictEqual(nested);
 
-    await saveLessonVersion({
+    const version = await stageLessonVersion({
       language: "en",
       lessonId: lesson.id,
       replaces: 1,
@@ -348,6 +349,8 @@ describe(saveLessonContent, () => {
       summary: hub,
     });
 
+    await expect(readMap()).resolves.toStrictEqual(nested);
+    await publishStagedLessonVersion({ lessonId: lesson.id, version: version ?? 0 });
     await expect(readMap()).resolves.toStrictEqual(hub);
   });
 
@@ -362,7 +365,7 @@ describe(saveLessonContent, () => {
       workflowRunId,
     });
 
-    await saveLessonVersion({
+    await stageLessonVersion({
       language: "en",
       lessonId: lesson.id,
       replaces: 1,

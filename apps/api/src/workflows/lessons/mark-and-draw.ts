@@ -32,20 +32,22 @@ async function reportSettled({
   ]);
 }
 
-/** When the screens' picture wait ends, the lesson opens with what it has, so a stuck drawing never holds a learner. */
+/** When the screens' picture wait ends, the lesson or its fixed version goes live with what it has, so a stuck drawing never holds a learner. */
 export async function markAndDraw({
   analytics,
   imageScope,
   lessonId,
+  // Workflow code reads the run's logical clock, the same on every replay.
+  savedAt = Date.now(),
   wait,
 }: {
   analytics?: ContentAnalytics;
   imageScope: NonNullable<ImageScope>;
   lessonId: string;
+  savedAt?: number;
   wait?: CallWait;
 }): Promise<void> {
-  // Workflow code reads the run's logical clock, the same on every replay.
-  const opensAt = Date.now() + PICTURE_WAIT_MS;
+  const opensAt = savedAt + PICTURE_WAIT_MS;
 
   const [marks, pictures] = await Promise.all([
     start(lessonMarksWorkflow, [{ analytics, lessonId, wait }]),

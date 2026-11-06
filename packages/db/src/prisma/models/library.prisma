@@ -150,6 +150,8 @@ model Lesson {
   setAsideAt        DateTime?              @map("set_aside_at")
   /// Public on SEO pages.
   summary           Json?
+  /// The map of the version staged on its steps (`Step.staged`), until it replaces `summary`.
+  stagedSummary     Json?                  @map("staged_summary")
   /// They belong to the lesson, not the goal that first asked, so every reuse gets them.
   relatedQuestions  String[]               @default([]) @map("related_questions")
   goFurtherCourseId String?                @map("go_further_course_id") @db.Uuid
@@ -205,6 +207,8 @@ model Step {
   version            Int                 @default(1) @db.SmallInt
   /// Null for current screens, the only ones lessons read. Retired screens are deleted a day later.
   retiredAt          DateTime?           @map("retired_at")
+  /// A fixed version waits unread until its marks and pictures settle, then replaces the current one.
+  staged             Boolean             @default(false)
   kind               StepKind
   contractVersion    Int                 @default(1) @map("contract_version") @db.SmallInt
   content            Json

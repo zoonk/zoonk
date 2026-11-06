@@ -1,6 +1,6 @@
 import "server-only";
 import { type LessonMap } from "@zoonk/ai/tasks/lesson-writer/schema";
-import { type StepKind, type TransactionClient } from "@zoonk/db";
+import { DbNull, type StepKind, type TransactionClient } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
@@ -15,7 +15,7 @@ import { toStoredItem } from "../../items/item-content";
 import { resolveReviewFlags } from "../../sources/content-review-flags";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
 import { type ScreenMathItem } from "../../steps/written-screens";
-import { lockCurrentLessonVersion, startLessonVersion } from "../lesson-versions";
+import { CURRENT_STEPS, lockCurrentLessonVersion, startLessonVersion } from "../lesson-versions";
 import { getLessonScreenSkillId, isNotebookQuestionStep } from "./lesson-screen-skill";
 import { toStepData } from "./step-data";
 
@@ -150,9 +150,10 @@ async function writeScreens(
     language,
     lessonId,
     screens,
-  }: { language: string; lessonId: string; screens: LessonScreenToSave[] },
+    staged = false,
+  }: { language: string; lessonId: string; screens: LessonScreenToSave[]; staged?: boolean },
 ): Promise<number> {
-  const version = await startLessonVersion(tx, lessonId);
+  const version = await startLessonVersion(tx, lessonId, { staged });
 
   const itemIds = await Promise.all(
     screens.map((screen) => createMathItem({ language, screen, tx })),
@@ -174,6 +175,7 @@ async function writeScreens(
       position,
       sourceId: screen.citation?.sourceId ?? null,
       sourcePage: screen.citation?.page ?? null,
+      staged,
       version,
     })),
   });
@@ -246,8 +248,11 @@ export async function saveLessonContent({
   });
 }
 
-/** Returns null if `replaces` is no longer current; never overwrites a newer version. */
-export async function saveLessonVersion({
+/**
+ * Stages the version that replaces `replaces`, which learners keep getting until
+ * `publishStagedLessonVersion`. Returns null if `replaces` is no longer current.
+ */
+export async function stageLessonVersion({
   language,
   lessonId,
   replaces,
@@ -263,7 +268,7 @@ export async function saveLessonVersion({
   return publishVersion(lessonId, async (tx) => {
     const existing = await tx.step.findFirst({
       select: { version: true },
-      where: { lesson: { contentStatus: "completed" }, lessonId, retiredAt: null },
+      where: { lesson: { contentStatus: "completed" }, lessonId, ...CURRENT_STEPS },
     });
 
     if (existing?.version !== replaces) {
@@ -278,7 +283,45 @@ export async function saveLessonVersion({
       throw new LessonPublicationLostError();
     }
 
-    await tx.lesson.update({ data: { summary }, where: { id: lessonId } });
-    return writeScreens(tx, { language, lessonId, screens: prepared });
+    await tx.lesson.update({ data: { stagedSummary: summary }, where: { id: lessonId } });
+    return writeScreens(tx, { language, lessonId, screens: prepared, staged: true });
+  });
+}
+
+/** Returns null when `version` is no longer staged, such as when a newer one replaced it. */
+export async function publishStagedLessonVersion({
+  lessonId,
+  version,
+}: {
+  lessonId: string;
+  version: number;
+}): Promise<number | null> {
+  const staged = { lessonId, retiredAt: null, staged: true, version };
+
+  return publishVersion(lessonId, async (tx) => {
+    await lockCurrentLessonVersion(tx, lessonId);
+
+    const lesson = await tx.lesson.findUniqueOrThrow({
+      select: { stagedSummary: true, steps: { select: { id: true }, take: 1, where: staged } },
+      where: { id: lessonId },
+    });
+
+    if (lesson.steps.length === 0) {
+      return null;
+    }
+
+    await tx.step.updateMany({
+      data: { retiredAt: new Date() },
+      where: { lessonId, ...CURRENT_STEPS },
+    });
+
+    await tx.step.updateMany({ data: { staged: false }, where: staged });
+
+    await tx.lesson.update({
+      data: { stagedSummary: DbNull, summary: lesson.stagedSummary ?? DbNull },
+      where: { id: lessonId },
+    });
+
+    return version;
   });
 }

@@ -113,6 +113,28 @@ describe(listLessonImageSteps, () => {
     ]);
   });
 
+  it("lists only what a fixed version staged to replace the current one still asks for, its question pictures included", async () => {
+    const lesson = await libraryLessonFixture();
+    const check = { content: pictureCheckContent, kind: "check" as const, position: 1 };
+    const current = { lessonId: lesson.id, staged: false, version: 1 };
+    const staged = { lessonId: lesson.id, staged: true, version: 2 };
+
+    const [stagedExplanation, stagedCheck] = await Promise.all([
+      libraryStepFixture({ ...staged, content: explanation(), position: 0 }),
+      libraryStepFixture({ ...staged, ...check }),
+      libraryStepFixture({ ...current, content: explanation(), position: 0 }),
+      libraryStepFixture({ ...current, ...check }),
+    ]);
+
+    await expect(listLessonImageSteps({ lessonId: lesson.id })).resolves.toStrictEqual([
+      stagedExplanation.id,
+    ]);
+
+    await expect(listLessonOptionPictures({ lessonId: lesson.id })).resolves.toStrictEqual(
+      ["gothic", "romanesque", "baroque"].map((optionId) => ({ optionId, stepId: stagedCheck.id })),
+    );
+  });
+
   it("lists the pictures questions are about and those that teach alike, in screen order", async () => {
     const lesson = await libraryLessonFixture({ language: "pt" });
 
