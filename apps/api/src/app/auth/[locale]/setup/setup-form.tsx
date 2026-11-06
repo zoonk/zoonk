@@ -18,8 +18,9 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/componen
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { unstable_rethrow } from "next/navigation";
 import { useActionState, useId, useState } from "react";
-import { setupProfileAction } from "./actions";
+import { type SetupState, setupProfileAction } from "./actions";
 
 function UsernameDescription({
   id,
@@ -105,8 +106,17 @@ export function SetupProfileForm({
   const [name, setName] = useState(defaultName);
   const { setUsername, status, username } = useUsernameAvailability(defaultUsername);
   const [isChangingUsername, setIsChangingUsername] = useState(!defaultUsername);
-  const boundAction = setupProfileAction.bind(null, redirectTo);
-  const [state, formAction] = useActionState(boundAction, { status: "idle" as const });
+
+  const [state, formAction] = useActionState(
+    (previous: SetupState, formData: FormData) =>
+      setupProfileAction(redirectTo, previous, formData).catch((error: unknown) => {
+        // Next rejects with the redirect onward when the profile saved.
+        unstable_rethrow(error);
+        return { status: "error" as const };
+      }),
+    { status: "idle" as const },
+  );
+
   const isNameTooLong = isNameChangeTooLong({ name, savedName: defaultName });
   const canSubmit = !isNameTooLong && (status === "idle" || status === "available");
   const showsUsernameField = isChangingUsername || state.status === "usernameTaken";
