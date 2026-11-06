@@ -2,7 +2,8 @@ import SwiftUI
 import UIKit
 
 /// The learner's own certificate, as main's page: what it says, what they can do with it, its
-/// picture and its details. A locked one leads with the Plus notice, then its card and facts.
+/// picture, its details, what it means and what it covers. A locked one leads with the Plus notice,
+/// then its card and facts.
 struct CertificateScreen: View {
   @Environment(CertificatesStore.self) private var store
 
@@ -112,6 +113,7 @@ private struct CertificateDetail: View {
         SectionFooter { linkNote }
       }
 
+      CertificateMeaning(facts: certificate.facts)
       CertificateCovered(facts: certificate.facts)
     }
     .barTitleAfterHero(certificate.facts.name)
@@ -337,6 +339,7 @@ private struct LockedCertificateDetail: View {
         EmptyView()
       }
 
+      CertificateMeaning(facts: facts)
       CertificateCovered(facts: facts)
     }
     .barTitleAfterHero(facts.name)
@@ -495,6 +498,91 @@ private struct CertificateDetailRow<Value: View>: View {
       label
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
+    }
+  }
+}
+
+/// Main's `CertificateMeaning`: how Zoonk decided to issue this kind of certificate, and what it
+/// isn't.
+private struct CertificateMeaning: View {
+  /// Main's `BAND_ABOVE`: a level is finished when every counted skill reaches the band above it.
+  private static let bandAbove = ["A1": "A2", "A2": "B1", "B1": "B2", "B2": "C1", "C1": "C2"]
+
+  /// Main's `leading-relaxed` paragraphs at 15pt.
+  private static let paragraphStyle = TypeStyle(
+    size: 15, relativeTo: .subheadline, weight: .regular, lineHeight: 1.625)
+
+  @ScaledMetric(relativeTo: .subheadline) private var paragraphSpacing = 10.0
+
+  let facts: CertificateFacts
+
+  private var paragraphs: [String] {
+    let nameNote = String(
+      localized:
+        "The name is the one the learner gave their Zoonk account; Zoonk doesn't check IDs.",
+      table: "Certificates",
+      comment: "Ends a certificate's explanation: the name on it is the one the learner gave")
+
+    if facts.kind == .languageLevel {
+      let band = facts.level.flatMap { Self.bandAbove[$0] } ?? ""
+
+      return [
+        String(
+          localized:
+            "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached \(band).",
+          table: "Certificates",
+          comment:
+            "How a language level certificate is earned; the argument is a CEFR band, such as B2"),
+        String(
+          localized:
+            "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result.",
+          table: "Certificates",
+          comment: "What a language certificate's level is, before the note about its name")
+          + " " + nameNote,
+      ]
+    }
+
+    let issued =
+      facts.courseLevel == nil
+      ? String(
+        localized:
+          "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it.",
+        table: "Certificates", comment: "How a certificate for a course's whole plan is earned")
+      : String(
+        localized:
+          "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it.",
+        table: "Certificates", comment: "How a certificate for a course's level is earned")
+
+    return [
+      issued,
+      String(
+        localized: "It's a record of completion on Zoonk, not academic credit.",
+        table: "Certificates",
+        comment: "What a course certificate is, before the note about its name")
+        + " " + nameNote,
+    ]
+  }
+
+  // The title scrolls with its paragraphs, as main's: a plain list pins a section's header, and
+  // at the largest sizes this one would cover a third of the screen.
+  var body: some View {
+    Section {
+      VStack(alignment: .leading, spacing: paragraphSpacing) {
+        Text(
+          "What this certificate means", tableName: "Certificates",
+          comment: "Heading over how Zoonk issues a certificate and what it isn't"
+        )
+        .typeStyle(.section)
+        .foregroundStyle(Color(.foreground))
+        .accessibilityAddTraits(.isHeader)
+
+        ForEach(paragraphs, id: \.self) { paragraph in
+          Text(verbatim: paragraph)
+            .typeStyle(Self.paragraphStyle)
+            .foregroundStyle(.mutedForeground)
+        }
+      }
+      .listRowSeparator(.hidden)
     }
   }
 }
