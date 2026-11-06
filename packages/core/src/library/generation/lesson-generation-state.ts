@@ -2,6 +2,7 @@ import "server-only";
 import { type Lesson, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
+import { CURRENT_STEPS } from "../lessons/lesson-versions";
 import { parseHeldBackDrafts } from "./held-back-drafts";
 
 export type LessonGenerationState =
@@ -62,6 +63,55 @@ export async function getLessonGenerationState(
 ): Promise<LessonGenerationState | null> {
   const states = await getLessonGenerationStates([lessonId]);
   return states.get(lessonId) ?? null;
+}
+
+/**
+ * Claiming the lesson retires its screens, so screens current under this run's claim are the ones
+ * it saved, whether or not it has reported the lesson ready yet.
+ */
+export async function isLessonSavedByRun({
+  lessonId,
+  workflowRunId,
+}: {
+  lessonId: string;
+  workflowRunId: string;
+}): Promise<boolean> {
+  const saved = await prisma.lesson.count({
+    where: {
+      contentRunId: workflowRunId,
+      contentStatus: { in: ["running", "completed"] },
+      id: lessonId,
+      steps: { some: CURRENT_STEPS },
+    },
+  });
+
+  return saved > 0;
+}
+
+/** Internal workflow bridge: true once the run's lesson is ready, also when it already was. */
+export async function completeLessonContent({
+  lessonId,
+  workflowRunId,
+}: {
+  lessonId: string;
+  workflowRunId: string;
+}): Promise<boolean> {
+  const { count } = await prisma.lesson.updateMany({
+    data: { contentStatus: "completed" },
+    where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
+  });
+
+  if (count > 0) {
+    revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
+    return true;
+  }
+
+  const lesson = await prisma.lesson.findUnique({
+    select: { contentRunId: true, contentStatus: true },
+    where: { id: lessonId },
+  });
+
+  return lesson?.contentStatus === "completed" && lesson.contentRunId === workflowRunId;
 }
 
 export async function releaseStaleLessonClaims({

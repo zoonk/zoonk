@@ -207,7 +207,7 @@ describe("held-back lessons", () => {
     ]);
 
     await expect(readLesson(lesson.id)).resolves.toMatchObject({
-      contentStatus: "completed",
+      contentStatus: "running",
       heldBackDrafts: [],
       setAsideAt: null,
     });

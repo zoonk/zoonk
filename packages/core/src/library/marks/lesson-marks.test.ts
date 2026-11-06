@@ -10,7 +10,7 @@ import {
 import { describe, expect, it, vi } from "vitest";
 import { readSavedLessonMap } from "../lessons/lesson-map";
 import { linkLessonIcons, pickLessonIcons } from "./lesson-icons";
-import { tagLessonMarks } from "./tag-lesson-marks";
+import { readLessonMarking, tagLessonMarks } from "./tag-lesson-marks";
 
 const ideas = [
   { label: "A cloud", text: "The electron spreads around the nucleus as a cloud." },
@@ -299,6 +299,44 @@ describe(linkLessonIcons, () => {
     expect(saved.map(({ iconId, iconPending }) => ({ iconId, iconPending }))).toStrictEqual([
       { iconId: drawing.id, iconPending: false },
       { iconId: null, iconPending: false },
+    ]);
+  });
+});
+
+describe(readLessonMarking, () => {
+  it("waits for tagging and for an icon still being drawn, but not for one stuck past the picture wait", async () => {
+    const marks = {
+      example: null,
+      iconId: null,
+      iconPending: false,
+      ideaIndex: null,
+      underline: null,
+    };
+
+    const unfinished = { smallUrl: null, status: "running", url: null } as const;
+
+    const [drawing, stuck] = await Promise.all([
+      lessonIconFixture(unfinished),
+      lessonIconFixture({ ...unfinished, createdAt: new Date(Date.now() - 10 * 60_000) }),
+    ]);
+
+    const lessons = await Promise.all([
+      playableLessonFixture({ steps: ["explanation"] }),
+      playableLessonFixture({
+        steps: [{ kind: "explanation", marks: { ...marks, iconId: drawing.id } }],
+      }),
+      playableLessonFixture({
+        lesson: { summary: { ideas: [{ iconId: stuck.id, text: "Electrons live in clouds." }] } },
+        steps: [{ kind: "explanation", marks }],
+      }),
+    ]);
+
+    await expect(
+      Promise.all(lessons.map(({ lesson }) => readLessonMarking(lesson.id))),
+    ).resolves.toStrictEqual([
+      { drawingIcons: false, tagged: false },
+      { drawingIcons: true, tagged: true },
+      { drawingIcons: false, tagged: true },
     ]);
   });
 });

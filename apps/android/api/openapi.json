@@ -2942,7 +2942,7 @@
     },
     "/library/lessons/{lessonId}/readiness": {
       "get": {
-        "description": "What a lesson page shows while a lesson isn't written yet: its status, the run writing it (stream GET /generations/{generationId}/events for live steps: `planLesson`, `writeLesson`, then `lessonReady`) and a ready alternative from the learner's plan, so there is never a dead end. Uncached.",
+        "description": "What a lesson page shows while a lesson isn't written yet: its status, the run writing it (stream GET /generations/{generationId}/events for live steps: `planLesson`, `writeLesson`, then `markLesson` and `drawPictures` side by side, either finishing first, and `lessonReady` once the lesson is complete) and a ready alternative from the learner's plan, so there is never a dead end. Uncached.",
         "operationId": "getLibraryLessonReadiness",
         "security": [
           {
@@ -41986,10 +41986,6 @@
                       "intermediate",
                       "advanced"
                     ]
-                  },
-                  "marksPending": {
-                    "description": "The screens' `marks` and the map's `about` lines and icons are still on their way (the lesson was written moments ago): play without them and read the lesson again in a few seconds, for at most five minutes from the screens' `pictureWaitStartedAt`",
-                    "type": "boolean"
                   },
                   "skills": {
                     "type": "array",
@@ -85748,10 +85744,6 @@
                   "intermediate",
                   "advanced"
                 ]
-              },
-              "marksPending": {
-                "description": "The screens' `marks` and the map's `about` lines and icons are still on their way (the lesson was written moments ago): play without them and read the lesson again in a few seconds, for at most five minutes from the screens' `pictureWaitStartedAt`",
-                "type": "boolean"
               },
               "skills": {
                 "type": "array",

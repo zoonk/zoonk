@@ -204,7 +204,10 @@ async function publishVersion(
   return version;
 }
 
-/** Returns null when the generation claim was lost; otherwise returns the published version. */
+/**
+ * Saves the screens under the run's claim, which stays running until the run reports the lesson
+ * ready (`completeLessonContent`). Returns null when the claim was lost; otherwise the version.
+ */
 export async function saveLessonContent({
   language,
   lessonId,
@@ -231,7 +234,7 @@ export async function saveLessonContent({
     const prepared = await lockPreparedScreens(tx, { lessonId, screens });
 
     const claimed = await tx.lesson.updateMany({
-      data: { contentStatus: "completed", heldBackDrafts: [], summary },
+      data: { heldBackDrafts: [], summary },
       where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
     });
 

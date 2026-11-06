@@ -1,4 +1,5 @@
 import { type CallWait } from "@zoonk/ai/provider-options";
+import { PICTURE_WAIT_MS } from "@zoonk/core/lesson-player/picture-wait";
 import { MAX_LESSON_DRAFTS } from "@zoonk/core/library/generation/held-back-drafts";
 import { LESSON_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { type PlanGenerationManifest } from "@zoonk/core/lookahead/speculative-lessons";
@@ -21,8 +22,14 @@ import {
 import { admitLessonContentStep, claimLessonContentStep } from "./steps/claim-lesson-content-step";
 import { failLessonContentStep } from "./steps/fail-lesson-content-step";
 import { lessonProgressStep } from "./steps/lesson-progress-step";
+import {
+  type MarksAndPictures,
+  completeLessonContentStep,
+  readMarksAndPicturesStep,
+} from "./steps/lesson-ready-steps";
 import { readLessonStatusStep } from "./steps/read-lesson-status-step";
 import {
+  type ImageScope,
   type LessonWriteOutcome,
   type LessonWriteStage,
   type WriteInput,
@@ -52,6 +59,9 @@ const LESSON_TASK = "lesson-content";
 
 const WAIT_INTERVAL = "5s";
 const MAX_WAITS = 36;
+
+const SETTLE_POLL_MS = 5000;
+const MAX_SETTLE_POLLS = PICTURE_WAIT_MS / SETTLE_POLL_MS;
 
 async function finish({ lessonId, status }: LessonContentResult): Promise<LessonContentResult> {
   await lessonProgressStep(
@@ -231,6 +241,56 @@ async function planAndWrite({
   }
 }
 
+async function reportSettled({
+  lessonId,
+  previous,
+  settled,
+}: {
+  lessonId: string;
+  previous?: MarksAndPictures;
+  settled: MarksAndPictures;
+}): Promise<void> {
+  await Promise.all([
+    settled.marked && !previous?.marked
+      ? lessonProgressStep({ entityId: lessonId, status: "completed", step: "markLesson" })
+      : null,
+    settled.drawn && !previous?.drawn
+      ? lessonProgressStep({ entityId: lessonId, status: "completed", step: "drawPictures" })
+      : null,
+  ]);
+}
+
+/** Once the screens' picture wait ends, the lesson opens with what it has, so a stuck drawing never holds a learner. */
+async function markAndDraw({
+  imageScope,
+  input: { analytics, lessonId, wait },
+}: {
+  imageScope: NonNullable<ImageScope>;
+  input: LessonContentInput;
+}): Promise<void> {
+  const [marks, pictures] = await Promise.all([
+    start(lessonMarksWorkflow, [{ analytics, lessonId, wait }]),
+    start(lessonImagesWorkflow, [
+      { analytics: { ...analytics, contentScope: imageScope }, lessonId },
+    ]),
+    lessonProgressStep({ entityId: lessonId, status: "started", step: "markLesson" }),
+    lessonProgressStep({ entityId: lessonId, status: "started", step: "drawPictures" }),
+  ]);
+
+  const runs = { lessonId, marksRunId: marks.runId, picturesRunId: pictures.runId };
+
+  await repeatUntil<MarksAndPictures>({
+    done: (settled) => settled.marked && settled.drawn,
+    run: async (previous) => {
+      await sleep(SETTLE_POLL_MS);
+      const settled = await readMarksAndPicturesStep(runs);
+      await reportSettled({ lessonId, previous, settled });
+      return settled;
+    },
+    times: MAX_SETTLE_POLLS,
+  });
+}
+
 export async function lessonContentWorkflow(
   input: LessonContentInput,
 ): Promise<LessonContentResult> {
@@ -275,14 +335,12 @@ export async function lessonContentWorkflow(
     return finish({ lessonId, status: outcome.status === "heldBack" ? "heldBack" : "missing" });
   }
 
-  // The lesson plays without its pictures, marks and model checks, so the waiting screens open it first.
-  const ready = await finish({ lessonId, status: "ready" });
-
   if (outcome.imageScope) {
-    const analytics = { ...input.analytics, contentScope: outcome.imageScope };
-    await start(lessonMarksWorkflow, [{ analytics: input.analytics, lessonId, wait: input.wait }]);
-    await start(lessonImagesWorkflow, [{ analytics, lessonId }]);
+    await markAndDraw({ imageScope: outcome.imageScope, input });
   }
+
+  const completed = await completeLessonContentStep({ lessonId, workflowRunId });
+  const ready = await finish({ lessonId, status: completed ? "ready" : "missing" });
 
   if (outcome.check && (outcome.check.review || outcome.check.cite)) {
     const check = { analytics: input.analytics, forExam: input.forExam, lessonId };
