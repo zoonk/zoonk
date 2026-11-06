@@ -27,7 +27,7 @@ import { DrillAnswerNotes } from "./drill/drill-answer-notes";
 import { NotSureButton, useFocusAnswersOnReveal } from "./drill/drill-controls";
 import { DrillCountdown } from "./drill/drill-countdown";
 import { DrillIntro } from "./drill/drill-intro";
-import { type LessonHref, isIdeaFirst, isReadFirst } from "./drill/drill-types";
+import { type LessonHref, isIdeaFirst, isReadFirst, pressesCheck } from "./drill/drill-types";
 import {
   type MistakePracticeFeedback,
   type PracticeStep as Step,
@@ -90,7 +90,7 @@ function getMainAction(run: Run): React.ComponentProps<typeof QuestionMainButton
 
   return {
     action: "check",
-    busy: phase.kind === "checking" && phase.sender === "check",
+    busy: phase.kind === "checking" && pressesCheck(phase.sender),
     disabled: !answer,
     onPress: () => (answer ? run.check(answer) : undefined),
   };

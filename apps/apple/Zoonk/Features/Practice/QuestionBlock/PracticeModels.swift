@@ -48,6 +48,8 @@ enum PracticeSelect: Hashable, Sendable, Decodable {
 /// clock.
 enum AnswerSender: Sendable {
   case check, notSure, timer
+
+  var pressesCheck: Bool { self == .check || self == .timer }
 }
 
 enum PracticeAnswer: Hashable, Sendable, Codable {

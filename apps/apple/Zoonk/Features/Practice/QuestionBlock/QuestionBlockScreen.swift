@@ -390,7 +390,7 @@ struct QuestionBlockView: View {
       PracticeMainButton(
         title: LocalizedStringResource(
           "Check", table: "Practice", comment: "Sends the answer to be graded."),
-        isBusy: phase.checking == .check,
+        isBusy: phase.checking?.pressesCheck == true,
         isDisabled: !accepts || run.draft?.complete == nil
       ) {
         if let answer = run.draft?.complete {

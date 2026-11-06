@@ -13,6 +13,7 @@ import {
   type LessonHref,
   isIdeaFirst,
   isReadFirst,
+  pressesCheck,
 } from "../../mistakes/drill/drill-types";
 import { ItemSetStimulus } from "../../questions/item-set-stimulus";
 import { ItemSupport } from "../../questions/item-text";
@@ -309,7 +310,7 @@ function getMainAction({
 
   return {
     action: "check",
-    busy: phase.kind === "checking" && phase.sender === "check",
+    busy: phase.kind === "checking" && pressesCheck(phase.sender),
     disabled: phase.kind === "checking" || draft.answer === null,
     onPress: () => (draft.answer ? void run.submit(draft.answer) : undefined),
   };

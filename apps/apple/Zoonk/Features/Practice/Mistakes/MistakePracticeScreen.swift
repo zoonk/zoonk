@@ -237,7 +237,7 @@ struct MistakePracticeScreen: View {
         PracticeMainButton(
           title: LocalizedStringResource(
             "Check", table: "Practice", comment: "Sends the answer to be graded."),
-          isBusy: checking == .check,
+          isBusy: checking?.pressesCheck == true,
           isDisabled: !state.acceptsAnswer || draft?.complete == nil
         ) {
           if let answer = draft?.complete {

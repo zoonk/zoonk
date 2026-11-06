@@ -476,7 +476,7 @@ internal fun AnswerActions(
             }
             // One button through Show the answers, Check and Continue, so focus stays on it as it changes.
             BusyButton(
-                busy = sender == AnswerSender.Check,
+                busy = sender == AnswerSender.Check || sender == AnswerSender.Timer,
                 onClick = {
                     when {
                         done -> controls.next(questions)

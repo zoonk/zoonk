@@ -83,7 +83,7 @@ class AnswerActionsTest {
     }
 
     @Test
-    fun checkKeepsFocusWithoutASpinnerWhileTheClocksAnswerIsChecked() {
+    fun checkKeepsFocusAndSpinsWhileTheClocksAnswerIsChecked() {
         show()
         rule.onNodeWithText("Check").requestFocus().assertIsFocused()
 
@@ -94,19 +94,19 @@ class AnswerActionsTest {
             .assertIsFocused()
             .assertIsNotEnabled()
             .performClick()
-        spinners().assertCountEquals(0)
+        spinners().assertCountEquals(1)
         assertEquals(emptyList<AnswerSender>(), sent)
     }
 
     @Test
-    fun notSureKeepsFocusWithoutASpinnerWhileTheClocksAnswerIsChecked() {
+    fun notSureKeepsFocusAndOnlyCheckSpinsWhileTheClocksAnswerIsChecked() {
         show()
         rule.onNodeWithText("I don't know yet").requestFocus().assertIsFocused()
 
         checking(AnswerSender.Timer)
 
         rule.onNodeWithText("I don't know yet").assertIsFocused().assertIsNotEnabled()
-        spinners().assertCountEquals(0)
+        spinners().assertCountEquals(1)
     }
 
     @Test
