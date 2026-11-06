@@ -46,6 +46,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.feedback.rememberReportProblem
 import com.zoonk.android.feature.language.LanguageUnitScreen
 import com.zoonk.android.feature.mindmaps.ChapterMindMapCard
 import com.zoonk.android.feature.tutor.AskTutor
@@ -116,21 +117,21 @@ fun ChapterScreen(
 
             else -> {
                 val key = ChapterKey(goal.id, chapterId)
+                val report =
+                    rememberReportProblem(
+                        app,
+                        FeedbackTarget(
+                            screen = "chapter",
+                            contentKind = FeedbackSubmissionContext.ContentKind.CHAPTER,
+                            contentId = chapterId,
+                        ),
+                    )
+
                 ChapterContent(
                     key = key,
                     store = app.goalContent,
                     navigator = navigator,
-                    menu = {
-                        ReportProblemMenu(
-                            app,
-                            FeedbackTarget(
-                                screen = "chapter",
-                                contentKind = FeedbackSubmissionContext.ContentKind.CHAPTER,
-                                contentId = chapterId,
-                            ),
-                            inPage = true,
-                        )
-                    },
+                    menu = { ReportProblemMenu(report, inPage = true) },
                     ask = { AskTutor(TutorScope.Chapter(route.chapterId), app, navigator, appearance = it) },
                     mindMap = {
                         val map by app.mindMaps.chapter[key].collectShown()

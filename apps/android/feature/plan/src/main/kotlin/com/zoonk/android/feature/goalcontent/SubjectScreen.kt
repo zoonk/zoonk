@@ -25,6 +25,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.feedback.rememberReportProblem
 import com.zoonk.android.feature.plan.FarTopic
 import com.zoonk.android.feature.plan.FarTopicSheet
 import com.zoonk.android.feature.plan.FarTopicViewModel
@@ -68,13 +69,15 @@ fun SubjectScreen(
     navigator: AppNavigator,
 ) {
     WithPlanGoal(app.learnerSummary.summary, navigator) { goal ->
+        val report = rememberReportProblem(app, FeedbackTarget(screen = "subject"))
+
         SubjectContent(
             goalId = goal.id,
             subjectKey = route.subjectKey,
             syllabus = app.plans.syllabus[goal.id],
             plans = app.plans,
             navigator = navigator,
-            menu = { ReportProblemMenu(app, FeedbackTarget(screen = "subject"), inPage = true) },
+            menu = { ReportProblemMenu(report, inPage = true) },
             ask = { AskTutor(TutorScope.Subject(goal.id.toString(), route.subjectKey), app, navigator, appearance = it) },
             mindMapChapters = {
                 val maps by app.mindMaps.list[goal.id].collectShown()

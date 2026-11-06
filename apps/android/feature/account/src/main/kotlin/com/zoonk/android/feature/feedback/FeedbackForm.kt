@@ -250,8 +250,17 @@ fun ReportProblemMenu(
     app: AppContainer,
     target: FeedbackTarget,
     inPage: Boolean = false,
+) = ReportProblemMenu(rememberReportProblem(app, target), inPage)
+
+/**
+ * [ReportProblemMenu] for a [report] remembered above a layout the window size changes, so resizing
+ * while writing keeps the sheet open with its draft.
+ */
+@Composable
+fun ReportProblemMenu(
+    report: FeedbackSheet,
+    inPage: Boolean = false,
 ) {
-    val report = rememberReportProblem(app, target)
     var isOpen by rememberSaveable { mutableStateOf(false) }
 
     Box {
