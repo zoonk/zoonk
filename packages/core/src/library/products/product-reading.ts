@@ -3,7 +3,7 @@ import {
   type ProductReleaseClaim,
 } from "@zoonk/ai/tasks/research/read-product-pages";
 import { findNamesInDocument, isPassageExactlyInDocument } from "../exams/passage-check";
-import { isDateStated, isVersionStated } from "./release-claims";
+import { hasVersionToken, isDateStated, isVersionStated } from "./release-claims";
 
 /** A page's language names its months ("21 de outubro de 2025"). */
 export type ReadProductPage = { language: string; text: string };
@@ -84,24 +84,35 @@ function isClaimStated({
   return isQuoted({ claim, pages }) && isNamed({ name, passage: claim.passage });
 }
 
+/**
+ * A release keeps its version only when its passage states it. A row naming no product counts by its
+ * version alone when the release's name names the product, so another product's row can't pass.
+ */
 function checkRelease({
   pages,
+  productNames,
   release,
 }: {
   pages: readonly ReadProductPage[];
+  productNames: readonly string[];
   release: ProductReleaseClaim;
 }): CheckedProductRelease | null {
   const page = pages[release.document - 1];
 
+  const isVersionOfProduct =
+    isVersionStated(release) &&
+    findNamesInDocument({ names: productNames, text: release.name }).size > 0;
+
   if (
     !page ||
     !isQuoted({ claim: release, pages }) ||
-    !(isNamed({ name: release.name, passage: release.passage }) || isVersionStated(release))
+    !(isNamed({ name: release.name, passage: release.passage }) || isVersionOfProduct)
   ) {
     return null;
   }
 
   const dated = { language: page.language, passage: release.passage };
+  const { version } = release;
 
   return {
     document: release.document,
@@ -109,7 +120,7 @@ function checkRelease({
     passage: release.passage,
     releasedAt: toStatedDate({ ...dated, value: release.releasedOn }),
     supportEndsAt: toStatedDate({ ...dated, value: release.supportEndsOn }),
-    version: release.version,
+    version: version && hasVersionToken({ text: release.passage, version }) ? version : null,
   };
 }
 
@@ -138,13 +149,21 @@ function checkProduct({
  */
 export function checkProductReading({
   pages,
+  productName,
   reading,
 }: {
   pages: readonly ReadProductPage[];
+  /** A known product's stored name, which its releases name when the reading has no product. */
+  productName: string;
   reading: ProductReading;
 }): CheckedProductReading {
   const { brand } = reading;
-  const releases = reading.releases.flatMap((release) => checkRelease({ pages, release }) ?? []);
+  const product = checkProduct({ pages, product: reading.product });
+  const productNames = product ? [product.name, ...product.aliases] : [productName];
+
+  const releases = reading.releases.flatMap(
+    (release) => checkRelease({ pages, productNames, release }) ?? [],
+  );
 
   return {
     brand:
@@ -154,7 +173,7 @@ export function checkProductReading({
     learnerRelease: releases.some((release) => release.name === reading.learnerRelease)
       ? reading.learnerRelease
       : null,
-    product: checkProduct({ pages, product: reading.product }),
+    product,
     releases,
   };
 }

@@ -41,7 +41,10 @@ async function generate(input: ReadProductPagesInput) {
 
   return {
     ...result,
-    data: { checked: checkProductReading({ pages, reading: result.data }), reading: result.data },
+    data: {
+      checked: checkProductReading({ pages, productName: input.hints.name, reading: result.data }),
+      reading: result.data,
+    },
   };
 }
 

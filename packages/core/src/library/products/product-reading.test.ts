@@ -52,7 +52,7 @@ describe(checkProductReading, () => {
   const pages = [{ language: "en", text: PAGE }];
 
   it("keeps claims whose passages the page states word for word", () => {
-    const checked = checkProductReading({ pages, reading: reading() });
+    const checked = checkProductReading({ pages, productName: "Orbit Notes", reading: reading() });
 
     expect(checked.brand?.name).toBe("Lumen Works");
     expect(checked.product?.name).toBe("Orbit Notes");
@@ -72,6 +72,7 @@ describe(checkProductReading, () => {
   it("drops a release whose passage differs from the page by one word", () => {
     const checked = checkProductReading({
       pages,
+      productName: "Orbit Notes",
       reading: reading({
         releases: [
           release({ passage: "Orbit Notes 5 shipped on October 21st, 2025 with online sync" }),
@@ -92,6 +93,7 @@ describe(checkProductReading, () => {
   it("drops a release whose passage names another release", () => {
     const checked = checkProductReading({
       pages,
+      productName: "Orbit Notes",
       reading: reading({ releases: [release({ name: "Orbit Notes 6" })] }),
     });
 
@@ -101,6 +103,7 @@ describe(checkProductReading, () => {
   it("keeps a release with an unknown date when its passage doesn't state the claimed one", () => {
     const checked = checkProductReading({
       pages,
+      productName: "Orbit Notes",
       reading: reading({
         releases: [
           release({
@@ -115,9 +118,20 @@ describe(checkProductReading, () => {
     expect(checked.releases[0]?.releasedAt).toBeNull();
   });
 
+  it("keeps a release's version only when its passage states it", () => {
+    const checked = checkProductReading({
+      pages,
+      productName: "Orbit Notes",
+      reading: reading({ releases: [release(), release({ version: "999" })] }),
+    });
+
+    expect(checked.releases.map((item) => item.version)).toStrictEqual(["5", null]);
+  });
+
   it("drops an invalid calendar date", () => {
     const checked = checkProductReading({
       pages,
+      productName: "Orbit Notes",
       reading: reading({ releases: [release({ releasedOn: "2025-02-30" })] }),
     });
 
@@ -127,6 +141,7 @@ describe(checkProductReading, () => {
   it("reads a date in the page's language", () => {
     const checked = checkProductReading({
       pages: [{ language: "pt", text: PT_PAGE }],
+      productName: "Orbit Notes",
       reading: reading({
         brand: null,
         product: null,
@@ -140,6 +155,7 @@ describe(checkProductReading, () => {
   it("drops a brand or product the cited page doesn't hold, or a page that doesn't exist", () => {
     const checked = checkProductReading({
       pages,
+      productName: "Orbit Notes",
       reading: reading({
         brand: {
           description: "",
@@ -167,6 +183,7 @@ describe(checkProductReading, () => {
 
     const checked = checkProductReading({
       pages,
+      productName: "Orbit Notes",
       reading: reading({ brand: steward && { ...steward, steward: true } }),
     });
 
@@ -176,6 +193,7 @@ describe(checkProductReading, () => {
   it("keeps only aliases the pages use", () => {
     const checked = checkProductReading({
       pages,
+      productName: "Orbit Notes",
       reading: reading({ product: { ...PRODUCT, aliases: ["Orbit", "Orbit Pad"] } }),
     });
 
@@ -184,13 +202,19 @@ describe(checkProductReading, () => {
 
   it("keeps the learner's release only when it's among the kept releases", () => {
     expect(
-      checkProductReading({ pages, reading: reading({ learnerRelease: "Orbit Notes 5" }) })
-        .learnerRelease,
+      checkProductReading({
+        pages,
+        productName: "Orbit Notes",
+        reading: reading({ learnerRelease: "Orbit Notes 5" }),
+      }).learnerRelease,
     ).toBe("Orbit Notes 5");
 
     expect(
-      checkProductReading({ pages, reading: reading({ learnerRelease: "Orbit Notes 3" }) })
-        .learnerRelease,
+      checkProductReading({
+        pages,
+        productName: "Orbit Notes",
+        reading: reading({ learnerRelease: "Orbit Notes 3" }),
+      }).learnerRelease,
     ).toBeNull();
   });
 });
@@ -209,6 +233,7 @@ describe("a releases table that lists versions without the product's name", () =
   it("keeps a row whose version has a separator and drops one with a bare integer", () => {
     const checked = checkProductReading({
       pages: [{ language: "en", text: table }],
+      productName: "Orbit Server",
       reading: reading({
         brand: null,
         product: null,
@@ -220,5 +245,21 @@ describe("a releases table that lists versions without the product's name", () =
     });
 
     expect(checked.releases.map((item) => item.name)).toStrictEqual(["Orbit Server 1.37"]);
+  });
+
+  it("drops a version row whose release names another product", () => {
+    const checked = checkProductReading({
+      pages: [{ language: "en", text: table }],
+      productName: "Orbit Server",
+      reading: reading({
+        brand: null,
+        product: null,
+        releases: [
+          tableRelease("Comet Phone 1.37", "1.37", "| 1.37    | 1.37.2       | 2026-09-15 |"),
+        ],
+      }),
+    });
+
+    expect(checked.releases).toStrictEqual([]);
   });
 });

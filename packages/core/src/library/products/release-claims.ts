@@ -114,7 +114,8 @@ export function isDateStated({
   );
 }
 
-function hasVersionToken({ text, version }: { text: string; version: string }): boolean {
+/** The text states the version on its own ("v1.37", "1.37"), not inside "1.370" or "21.37". */
+export function hasVersionToken({ text, version }: { text: string; version: string }): boolean {
   const escaped = version.replaceAll(/[.*+?^${}()|[\]\\]/gu, String.raw`\$&`);
 
   return new RegExp(`(?<![\\p{L}\\p{N}.])v?${escaped}(?![\\p{L}\\p{N}]|\\.\\p{N})`, "iu").test(

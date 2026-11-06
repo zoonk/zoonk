@@ -72,6 +72,7 @@ export async function readProductSources({
 
   const checked = checkProductReading({
     pages: sources.map((source) => ({ language, text: source.text })),
+    productName: hints.name,
     reading: data,
   });
 
