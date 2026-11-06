@@ -320,7 +320,14 @@ const REGISTRY: Record<string, Registration[]> = {
     {
       verdict: "marks",
       why: "bank items on the screens' skills",
-      writes: ["item.create", "lesson.update", "lesson.updateMany"],
+      writes: ["lesson.update", "lesson.updateMany"],
+    },
+  ],
+  "library/lessons/_utils/screen-question-item.ts": [
+    {
+      verdict: "covered",
+      why: "its callers in `save-lesson-content.ts` lock the question's skill first",
+      writes: ["item.create"],
     },
   ],
   "library/lessons/create-library-lesson.ts": [
