@@ -2,7 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { AnswersSaveError } from "../../_components/save-error";
-import { ContinueButton, QuestionActionsRow } from "./question-actions";
+import { QuestionActionsRow, QuestionMainButton } from "./question-actions";
 import { type QuestionBlockPhase } from "./question-block-state";
 
 export function QuestionBlockStatus({
@@ -25,7 +25,7 @@ export function QuestionBlockStatus({
           {t("You already answered this question.")}
         </p>
         <QuestionActionsRow ask={null}>
-          <ContinueButton onContinue={onContinue} />
+          <QuestionMainButton action="continue" onPress={onContinue} />
         </QuestionActionsRow>
       </>
     );

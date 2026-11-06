@@ -25,7 +25,7 @@ import {
 } from "./block-question";
 import { getBlockTutorItem, withTutorAside } from "./block-tutor-item";
 import { PauseSuggestion } from "./pause-suggestion";
-import { ContinueButton, QuestionActionsRow } from "./question-actions";
+import { QuestionActionsRow } from "./question-actions";
 import { QuestionBlockClose, QuestionBlockHeader } from "./question-block-header";
 import { type QuestionBlockPhase, type QuestionBlockState } from "./question-block-state";
 import { QuestionBlockStatus } from "./question-block-status";
@@ -96,8 +96,13 @@ function FinishedBlock({
   );
 }
 
-function isAnswerPhase(phase: QuestionBlockPhase): boolean {
-  return phase.kind === "answering" || phase.kind === "checking" || phase.kind === "answerFailed";
+function isQuestionPhase(phase: QuestionBlockPhase): boolean {
+  return (
+    phase.kind === "answering" ||
+    phase.kind === "checking" ||
+    phase.kind === "answerFailed" ||
+    phase.kind === "feedback"
+  );
 }
 
 function getAnswerResult(phase: QuestionBlockPhase): "correct" | "wrong" | null {
@@ -261,13 +266,7 @@ export function QuestionBlock({
 
           <FinishReadyActions onFinish={run.retryFinish} phase={phase} />
 
-          {phase.kind === "feedback" && (
-            <QuestionActionsRow ask={askButton}>
-              <ContinueButton onContinue={run.next} />
-            </QuestionActionsRow>
-          )}
-
-          {question && isAnswerPhase(phase) && (
+          {question && isQuestionPhase(phase) && (
             <QuestionActionsRow ask={askButton}>
               <BlockQuestionActions
                 blockDrill={blockDrill}

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { TaskAsideContent } from "../../_components/task-layout";
 import { type ListeningQuestions } from "../../listening/listening-stimulus";
 import { DrillAnswerNotes } from "../../mistakes/drill/drill-answer-notes";
-import { NotSureButton, ShowAnswersButton } from "../../mistakes/drill/drill-controls";
+import { NotSureButton, useFocusAnswersOnReveal } from "../../mistakes/drill/drill-controls";
 import { DrillCountdown } from "../../mistakes/drill/drill-countdown";
 import { DrillIntro } from "../../mistakes/drill/drill-intro";
 import {
@@ -24,7 +24,7 @@ import {
   type StudyQuestionAnswer,
 } from "../session-types";
 import { PlacementNote } from "./placement-note";
-import { CheckButton } from "./question-actions";
+import { QuestionMainButton } from "./question-actions";
 import { type QuestionBlockPhase } from "./question-block-state";
 import { QuestionTitle } from "./question-title";
 import { QuestionView } from "./question-view";
@@ -218,6 +218,7 @@ export function BlockQuestion({
   const spoken = useSpokenText();
   const { phase } = run.state;
   const { drill, stage } = blockDrill;
+  const answers = useFocusAnswersOnReveal(stage === "reading");
 
   if (drill && stage === "idea") {
     return <DrillIntro drill={drill} lessonHref={lessonHref} onStart={blockDrill.start} />;
@@ -263,13 +264,15 @@ export function BlockQuestion({
               graded={phase.kind === "feedback"}
               question={question}
             />
-            <QuestionView
-              detail={detail}
-              onChange={draft.set}
-              onSubmit={(answer) => void run.submit(answer)}
-              phase={phase}
-              question={question}
-            />
+            <div ref={answers}>
+              <QuestionView
+                detail={detail}
+                onChange={draft.set}
+                onSubmit={(answer) => void run.submit(answer)}
+                phase={phase}
+                question={question}
+              />
+            </div>
           </>
         )}
       </section>
@@ -277,44 +280,57 @@ export function BlockQuestion({
   );
 }
 
-export function BlockQuestionActions({
-  blockDrill,
-  draft,
-  question,
-  run,
-}: {
+type BlockActionsProps = {
   blockDrill: BlockDrill;
   draft: DraftAnswer;
   question: StudyQuestion;
   run: Run;
-}) {
-  const t = useExtracted();
-  const { phase } = run.state;
-  const { drill, stage } = blockDrill;
-  const answering = phase.kind === "answering" || phase.kind === "answerFailed";
-  const notSure = () => void run.submit(NOT_SURE);
+};
 
-  if (stage === "reading") {
-    return <ShowAnswersButton onReveal={blockDrill.reveal} />;
+function getMainAction({
+  blockDrill,
+  draft,
+  run,
+}: BlockActionsProps): React.ComponentProps<typeof QuestionMainButton> {
+  const { phase } = run.state;
+
+  if (blockDrill.stage === "reading") {
+    return { action: "reveal", onPress: blockDrill.reveal };
   }
+
+  if (phase.kind === "feedback") {
+    return { action: "continue", onPress: run.next };
+  }
+
+  return {
+    action: "check",
+    busy: phase.kind === "checking",
+    disabled: draft.answer === null,
+    onPress: () => (draft.answer ? void run.submit(draft.answer) : undefined),
+  };
+}
+
+export function BlockQuestionActions(props: BlockActionsProps) {
+  const t = useExtracted();
+  const { drill, stage } = props.blockDrill;
+  const { phase } = props.run.state;
+  const answering = phase.kind === "answering" || phase.kind === "answerFailed";
+  const offersNotSure = stage !== "reading" && answering;
+  const notSure = () => void props.run.submit(NOT_SURE);
 
   return (
     <>
-      {drill?.kind === "noGuessing" && answering && (
+      {drill?.kind === "noGuessing" && offersNotSure && (
         <NotSureButton disabled={false} onClick={notSure} />
       )}
 
-      {(question.placement || question.format === "typed") &&
+      {(props.question.placement || props.question.format === "typed") &&
         drill?.kind !== "noGuessing" &&
-        answering && (
+        offersNotSure && (
           <NotSureButton disabled={false} label={t("I don't know yet")} onClick={notSure} />
         )}
 
-      <CheckButton
-        busy={phase.kind === "checking"}
-        disabled={!answering || draft.answer === null}
-        onCheck={() => (draft.answer ? void run.submit(draft.answer) : undefined)}
-      />
+      <QuestionMainButton {...getMainAction(props)} />
     </>
   );
 }
