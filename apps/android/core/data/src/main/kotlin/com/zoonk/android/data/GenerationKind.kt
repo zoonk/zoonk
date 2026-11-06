@@ -223,13 +223,13 @@ enum class GenerationKind(
                 ),
                 GenerationPhase(
                     "mark",
-                    20,
+                    10,
                     R.string.player_phase_mark,
                     listOf(R.string.player_phase_mark_line_1, R.string.player_phase_mark_line_2),
                 ),
                 GenerationPhase(
                     "draw",
-                    60,
+                    45,
                     R.string.player_phase_draw,
                     listOf(R.string.player_phase_draw_line_1, R.string.player_phase_draw_line_2),
                 ),

@@ -124,11 +124,11 @@
   "player_opening_map_show": "c03b292ab22af65b45a15130b078028240350a08ff8c7d47c03482d778477139",
   "player_part_of": "cdb1f90504622cc27073b1bbecccbb560297032c5bd43b9a9fd02fb8ce8edc63",
   "player_phase_draw": "d3271e244cac99f8dfe75466a90b2583252025c145dbf4d4ba77a2b2f82825e5",
-  "player_phase_draw_line_1": "4dd41a867ccb2e07cc3bb609acc7f1ebad7993a1e810935c78d86201ba848826",
-  "player_phase_draw_line_2": "be138cb73a822e3f907474f715de673036cb509afcc368bbac6ae4fbf22b7b07",
-  "player_phase_mark": "f7b2a659e95c0e6ac38cad9690cdf50eb0dc45b28c9c4e381f81935c2b3bc1ee",
+  "player_phase_draw_line_1": "43529835072727646c2b99ac02f8df51bfc70bb9e80bc495dad7aec0c6c35d84",
+  "player_phase_draw_line_2": "7bac47a1a264ddbf2456d81ed98e0f33308d5e967403af70f821bf27e85c1e02",
+  "player_phase_mark": "9f08789c33652cdfbd24cd5be657c772004018b67fefdf49fc5f5e5838cc21d0",
   "player_phase_mark_line_1": "f05f5384c4fa64e7290c6953c28ce076a4185c6f4f2aad20d356c71b8a351c52",
-  "player_phase_mark_line_2": "9f22ac73e6461cc5001df4caa92630fcf4484b8f3e1f171c0053c000cfff324e",
+  "player_phase_mark_line_2": "3f36cfabadc59c3333fe23593d90e7dd39887cedca38a72de9e65be91faaa82b",
   "player_phase_plan": "3a723da8fb8a3e1bc196e5651207f1c28d61d37452c20145f04e734a5a5bf15b",
   "player_phase_plan_line_1": "1cc8cd8120e9ac09e4aef7c5c415c9cb39abd3e2c00b03631efc3117d6c16b41",
   "player_phase_plan_line_2": "9cb70c2ea118cd8119bcab265e1fd74cdf005a338492eba90f511dba0ff623ac",
@@ -322,15 +322,16 @@
     <string name="player_phase_plan_line_2">Wybieramy, jak najlepiej wyjaśnić temat…</string>
     <string name="player_phase_write">Przygotowujemy lekcję</string>
     <string name="player_phase_write_line">Przygotowujemy ekran %1$d…</string>
-    <!-- A step while Zoonk prepares a lesson: underlining each screen's key phrase, framing its example and tagging which of the lesson's main ideas it teaches. -->
-    <string name="player_phase_mark">Wyróżniamy najważniejsze myśli</string>
+    <!-- A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it. "Ideas" are the lesson map's ideas, as in "Idea 2 of 4". -->
+    <string name="player_phase_mark">Wyróżniamy najważniejsze zagadnienia</string>
     <string name="player_phase_mark_line_1">Podkreślamy to, co najważniejsze…</string>
-    <!-- "Its idea": which of the lesson's few main ideas each screen teaches. -->
-    <string name="player_phase_mark_line_2">Łączymy każdy ekran z odpowiednią myślą lekcji…</string>
-    <!-- A step while Zoonk prepares a lesson: drawing the lesson's pictures and a small icon for each of its main ideas. -->
+    <!-- Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4". -->
+    <string name="player_phase_mark_line_2">Przypisujemy każdy ekran do odpowiedniego zagadnienia…</string>
+    <!-- A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it. -->
     <string name="player_phase_draw">Rysujemy ilustracje</string>
-    <string name="player_phase_draw_line_1">Dodajemy ilustracje do ekranów…</string>
-    <string name="player_phase_draw_line_2">Rysujemy ikonę dla każdej głównej myśli…</string>
+    <string name="player_phase_draw_line_1">Rysujemy to, co opisano na każdym ekranie…</string>
+    <!-- Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4". -->
+    <string name="player_phase_draw_line_2">Rysujemy ikonę dla każdego zagadnienia…</string>
     <string name="player_writing_note">Zwykle trwa to kilka minut. Lekcja otworzy się tutaj, gdy tylko będzie gotowa.</string>
     <string name="player_ready_while_waiting">Na czas oczekiwania</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->

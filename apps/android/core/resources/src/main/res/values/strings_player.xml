@@ -125,14 +125,15 @@
     <string name="player_phase_plan_line_2">Picking the best way to explain it…</string>
     <string name="player_phase_write">Writing the lesson</string>
     <string name="player_phase_write_line">Writing screen %1$d…</string>
-    <!-- A step while Zoonk prepares a lesson: underlining each screen's key phrase, framing its example and tagging which of the lesson's main ideas it teaches. -->
+    <!-- A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it. "Ideas" are the lesson map's ideas, as in "Idea 2 of 4". -->
     <string name="player_phase_mark">Highlighting the key ideas</string>
     <string name="player_phase_mark_line_1">Underlining what matters most…</string>
-    <!-- "Its idea": which of the lesson's few main ideas each screen teaches. -->
-    <string name="player_phase_mark_line_2">Linking each screen to its idea…</string>
-    <!-- A step while Zoonk prepares a lesson: drawing the lesson's pictures and a small icon for each of its main ideas. -->
+    <!-- Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4". -->
+    <string name="player_phase_mark_line_2">Matching each screen to its idea…</string>
+    <!-- A step Zoonk shows while it prepares a lesson, saying what it is doing, like "Planning the lesson" and "Writing the lesson" before it. -->
     <string name="player_phase_draw">Drawing the pictures</string>
-    <string name="player_phase_draw_line_1">Adding pictures to the screens…</string>
+    <string name="player_phase_draw_line_1">Drawing what each screen describes…</string>
+    <!-- Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4". -->
     <string name="player_phase_draw_line_2">Drawing an icon for each idea…</string>
     <string name="player_writing_note">It usually takes a few minutes. The lesson opens here as soon as it\'s ready.</string>
     <string name="player_ready_while_waiting">Ready while you wait</string>
