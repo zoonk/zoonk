@@ -415,7 +415,7 @@ private struct CourseMapBar: View {
               .frame(height: 4)
 
             if let here = part.here {
-              RouteStation(isHere: true, color: line)
+              RouteStation(isHere: true, color: line, fill: Color(.ground))
                 .frame(width: stationSize, height: stationSize)
                 .offset(
                   x: 4 + (width - 8) * (CGFloat(here) + 0.5) / CGFloat(part.count) - stationSize / 2
@@ -423,8 +423,7 @@ private struct CourseMapBar: View {
             }
           }
           .frame(width: width, height: height)
-          .background(
-            Color.muted.opacity(0.5), in: .rect(cornerRadius: Radius.sm, style: .continuous))
+          .background(Color(.ground), in: .rect(cornerRadius: Radius.sm, style: .continuous))
         }
       }
     }
@@ -438,11 +437,13 @@ private struct CourseMapBar: View {
 private struct RouteStation: View {
   let isHere: Bool
   let color: Color
+  /// What it sits on, so the line doesn't show through it: the page, or the map's bar.
+  var fill = Color(.systemBackground)
 
   var body: some View {
     Circle()
       .strokeBorder(isHere ? Color(.foreground) : color, lineWidth: isHere ? 3 : 2.5)
-      .background(Circle().fill(Color(.background)))
+      .background(Circle().fill(fill))
   }
 }
 

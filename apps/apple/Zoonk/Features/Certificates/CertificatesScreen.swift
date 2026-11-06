@@ -215,7 +215,7 @@ private struct GhostCertificate: View {
       context.fill(bar(0.07, 0.76, 0.86, 0.02), with: .color(.input))
     }
     .aspectRatio(CertificateFacts.aspectRatio, contentMode: .fit)
-    .background(Color.muted.opacity(0.5), in: shape)
+    .background(Color(.ground), in: shape)
     .overlay(shape.strokeBorder(.input, style: StrokeStyle(lineWidth: 1, dash: [4, 3])))
     .accessibilityHidden(true)
   }
