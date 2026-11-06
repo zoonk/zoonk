@@ -6,9 +6,8 @@ import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getRun, start } from "workflow/api";
+import { start } from "workflow/api";
 import { mockHookConflict } from "../../../mocks/workflow";
-import { mockLastRunEvent } from "../../../mocks/workflow-runtime";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { flaggedContentWorkflow } from "./flagged-content-workflow";
 
@@ -197,13 +196,6 @@ describe(flaggedContentWorkflow, () => {
 
     const flagIds = await flagLawChange(law.id);
     vi.mocked(generateStatuteDrills).mockResolvedValue(drillResult());
-
-    vi.mocked(getRun).mockReturnValue({
-      exists: Promise.resolve(true),
-      status: Promise.resolve("running"),
-    } as unknown as ReturnType<typeof getRun>);
-
-    mockLastRunEvent("sweep-run", { createdAt: new Date(), eventType: "step_started" });
 
     mockHookConflict(
       { returnValue: Promise.withResolvers<never>().promise, runId: "sweep-run" },
