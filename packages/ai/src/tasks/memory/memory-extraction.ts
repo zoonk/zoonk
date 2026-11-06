@@ -6,16 +6,25 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
-import systemPrompt from "./memory-extraction.prompt.md";
-import { memoryCategorySchema } from "./memory-facts";
+import { selectPromptVariants } from "../_utils/prompt-variants";
+import {
+  type ConversationTurn,
+  formatConversationTranscript,
+} from "../language/_utils/conversation-transcript";
+import promptTemplate from "./memory-extraction.prompt.md";
+import { type MemoryFactCategory, memoryCategorySchema } from "./memory-facts";
 
 /** Luna tied Gemini 3.8 Flash on the memory-extraction eval at a sixteenth of the cost. */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;
 
-const MEMORY_SOURCES = ["onboarding", "chat"] as const;
-
-type MemorySourceKind = (typeof MEMORY_SOURCES)[number];
+/** A call teaches memory only about the learner's life, never how they study or speak. */
+const CALL_CATEGORIES: ReadonlySet<MemoryFactCategory> = new Set([
+  "goals",
+  "background",
+  "routine",
+  "context",
+]);
 
 const extractedFactSchema = z.object({
   category: memoryCategorySchema,
@@ -31,25 +40,67 @@ const schema = z.object({ facts: z.array(extractedFactSchema) });
 export type ExtractedMemoryFact = z.infer<typeof extractedFactSchema>;
 export type MemoryExtractionSchema = z.infer<typeof schema>;
 
-export type MemoryExtractionParams = {
+/** The scene as the learner saw it, so what it asked of them isn't taken for their life. */
+export type MemoryCallInput = {
+  source: "call";
+  /** In the learner's language: what they were told to do. */
+  scenario: { situation: string; objectives: string[] };
+  targetLanguage: string;
+  /** Learner turns are untrusted input. */
+  turns: readonly ConversationTurn[];
+};
+
+type MemoryWrittenInput = { source: "onboarding" | "chat"; input: string };
+
+export type MemoryExtractionInput = MemoryCallInput | MemoryWrittenInput;
+
+export type MemoryExtractionParams = MemoryExtractionInput & {
   language: string;
-  source: MemorySourceKind;
   /** To resolve "next Friday" into an expiry date. */
   today: string;
-  input: string;
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
 };
 
-function buildUserPrompt({ input, language, source, today }: MemoryExtractionParams) {
+function buildCallLines(params: MemoryCallInput & { language: string }): string[] {
+  const practiced = getPromptLanguageName({
+    language: params.targetLanguage,
+    userLanguage: params.language,
+  });
+
   return [
-    `LANGUAGE: ${getPromptLanguageName({ language })}`,
-    `SOURCE: ${source}`,
-    `TODAY: ${today}`,
-    formatUntrustedInput({ INPUT: input }),
-  ].join("\n");
+    `PRACTICED_LANGUAGE: ${practiced}`,
+    `SITUATION: ${params.scenario.situation}`,
+    "TASKS:",
+    ...params.scenario.objectives.map((objective) => `- ${objective}`),
+    formatUntrustedInput({
+      INPUT: formatConversationTranscript({
+        labels: { character: "Character", learner: "Learner" },
+        turns: params.turns,
+      }),
+    }),
+  ];
+}
+
+function buildUserPrompt(params: MemoryExtractionParams) {
+  const header = [
+    `LANGUAGE: ${getPromptLanguageName({ language: params.language })}`,
+    `SOURCE: ${params.source}`,
+    `TODAY: ${params.today}`,
+  ];
+
+  const input =
+    params.source === "call"
+      ? buildCallLines(params)
+      : [formatUntrustedInput({ INPUT: params.input })];
+
+  return [...header, ...input].join("\n");
+}
+
+function keepCallFacts(facts: ExtractedMemoryFact[]): ExtractedMemoryFact[] {
+  return facts.filter((fact) => fact.origin === "said" && CALL_CATEGORIES.has(fact.category));
 }
 
 /**
@@ -63,6 +114,13 @@ export async function extractMemoryFacts({
   useFallback = true,
   ...params
 }: MemoryExtractionParams) {
+  const isCall = params.source === "call";
+
+  const systemPrompt = selectPromptVariants({
+    template: promptTemplate,
+    variants: { call: isCall, written: !isCall },
+  });
+
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
@@ -81,5 +139,7 @@ export async function extractMemoryFacts({
     task: "memory-extraction",
   });
 
-  return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
+  const facts = isCall ? keepCallFacts(result.output.facts) : result.output.facts;
+
+  return { data: { facts }, provenance, systemPrompt, usage: result.usage, userPrompt };
 }

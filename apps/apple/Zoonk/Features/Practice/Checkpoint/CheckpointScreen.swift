@@ -73,6 +73,9 @@ struct CheckpointScreen: View {
                 CheckpointResultView(load: loaded, state: state, showsReview: $showsReview) {
                   dismiss()
                 }
+                .completionMoments(
+                  certificates: state.completion?.certificates ?? [],
+                  ceremony: state.completion?.ceremony?.value1)
               } else {
                 duel(loaded, state: state)
               }
@@ -352,9 +355,6 @@ private struct CheckpointResultView: View {
   let state: CheckpointDuelState
   @Binding var showsReview: Bool
   let close: () -> Void
-  @Environment(\.practiceHooks) private var hooks
-  @State private var ceremonyClosed = false
-
   var body: some View {
     let checkpoint = load.checkpoint
     let result = state.completion?.checkpoint
@@ -364,82 +364,86 @@ private struct CheckpointResultView: View {
     let correct = result?.correct ?? checkpoint.result?.correct ?? state.correct
     let total = result?.total ?? checkpoint.result?.total ?? state.questionCount
 
-    if let milestone = state.completion?.ceremony?.value1, !ceremonyClosed,
-      let ceremony = hooks.ceremony
-    {
-      ceremony(milestone) { ceremonyClosed = true }
-    } else {
-      PracticeTaskLayout {
-        if checkpoint.endedWithoutQuestions == true {
-          PracticeResultTitle(
-            title: LocalizedStringResource(
-              "The questions were removed", table: "Practice",
-              comment: "A checkpoint ended without questions."),
-            detail: LocalizedStringResource(
-              "You hadn't answered any yet, so this challenge isn't scored. Nothing is lost.",
-              table: "Practice",
-              comment: "Why a checkpoint without questions isn't scored."))
-        } else {
-          // A result opened again draws him still.
-          if checkpoint.kind != .weekly {
-            TricksterCharacter(beaten: passed, reacts: state.completion != nil)
-              .frame(width: 112, height: 112)
-          }
-
-          PracticeResultTitle(
-            title: CheckpointCopy.resultTitle(kind: checkpoint.kind, passed: passed),
-            detail: CheckpointCopy.resultDetail(
-              kind: checkpoint.kind, passed: passed, lessons: state.reinforcementLessons))
-        }
-      } response: {
-        if checkpoint.endedWithoutQuestions != true {
-          PracticeResultNumbers(
-            correct: correct, total: total,
-            // A win's Brain Power is its rewards' first row, as on main.
-            brainPower: won ? 0 : state.completion?.ownBrainPower ?? 0,
-            facts: won
-              ? []
-              : (result?.passMark).map { passMark in
-                [
-                  String(
-                    localized: "\(passMark) of \(state.questionCount) right to win",
-                    table: "Practice",
-                    comment: "Under a lost phase challenge's score: the right answers it needed.")
-                ]
-              } ?? [],
-            day: state.completion.flatMap { try? StudyJSON.recode($0, as: BlockMoment.self) }?.day)
-
-          if won {
-            CheckpointRewards(
-              checkpoint: checkpoint,
-              brainPower: state.completion?.ownBrainPower ?? checkpoint.reward.brainPower)
-          } else if let next = checkpoint.nextPhase?.value1 {
-            Label {
-              Text(
-                "The next phase, \(next.name), is already open.", tableName: "Practice",
-                comment: "After a phase challenge not won: the plan goes on.")
-            } icon: {
-              Image(systemName: "arrow.forward")
-            }
-          }
-
-          if let answers = result?.answers, !answers.isEmpty {
-            DisclosureGroup(isExpanded: $showsReview) {
-              CheckpointReview(load: load, answers: answers, given: state.given)
-            } label: {
-              Text(
-                "Review the answers", tableName: "Practice",
-                comment: "Opens a finished checkpoint's answers with why."
-              )
-              .font(.headline)
-            }
-          }
-        }
-      } actions: {
-        PracticeMainButton(
+    PracticeTaskLayout(isResult: true) {
+      if checkpoint.endedWithoutQuestions == true {
+        PracticeResultTitle(
           title: LocalizedStringResource(
-            "Continue", table: "Practice", comment: "Moves on after a grade."), action: close)
+            "The questions were removed", table: "Practice",
+            comment: "A checkpoint ended without questions."),
+          detail: LocalizedStringResource(
+            "You hadn't answered any yet, so this challenge isn't scored. Nothing is lost.",
+            table: "Practice",
+            comment: "Why a checkpoint without questions isn't scored."))
+      } else {
+        // A result opened again draws him still.
+        if checkpoint.kind != .weekly {
+          TricksterCharacter(beaten: passed, reacts: state.completion != nil)
+            .frame(width: 112, height: 112)
+        }
+
+        PracticeResultTitle(
+          title: CheckpointCopy.resultTitle(kind: checkpoint.kind, passed: passed))
+
+        PracticeResultNumbers(
+          correct: correct, total: total,
+          // A win's Brain Power is its rewards' first row, as on main.
+          brainPower: won ? 0 : state.completion?.ownBrainPower ?? 0,
+          facts: won
+            ? []
+            : (result?.passMark).map { passMark in
+              [
+                String(
+                  localized: "\(passMark) of \(state.questionCount) right to win",
+                  table: "Practice",
+                  comment: "Under a lost phase challenge's score: the right answers it needed.")
+              ]
+            } ?? [],
+          day: state.completion.flatMap { try? StudyJSON.recode($0, as: BlockMoment.self) }?.day)
       }
+    } response: {
+      if checkpoint.endedWithoutQuestions != true {
+        if won {
+          CheckpointRewards(
+            checkpoint: checkpoint,
+            brainPower: state.completion?.ownBrainPower ?? checkpoint.reward.brainPower)
+        }
+
+        if let retry = CheckpointCopy.retryLine(
+          kind: checkpoint.kind, passed: passed, lessons: state.reinforcementLessons)
+        {
+          Label {
+            Text(retry)
+          } icon: {
+            Image(systemName: "arrow.counterclockwise")
+          }
+        }
+
+        if !won, let next = checkpoint.nextPhase?.value1 {
+          Label {
+            Text(
+              "The next phase, \(next.name), is already open.", tableName: "Practice",
+              comment: "After a phase challenge not won: the plan goes on.")
+          } icon: {
+            Image(systemName: "arrow.forward")
+          }
+        }
+
+        if let answers = result?.answers, !answers.isEmpty {
+          DisclosureGroup(isExpanded: $showsReview) {
+            CheckpointReview(load: load, answers: answers, given: state.given)
+          } label: {
+            Text(
+              "Review the answers", tableName: "Practice",
+              comment: "Opens a finished checkpoint's answers with why."
+            )
+            .font(.headline)
+          }
+        }
+      }
+    } actions: {
+      PracticeMainButton(
+        title: LocalizedStringResource(
+          "Continue", table: "Practice", comment: "Moves on after a grade."), action: close)
     }
   }
 }
@@ -584,7 +588,7 @@ enum CheckpointCopy {
         "Not this time", table: "Practice", comment: "A lost phase challenge.")
   }
 
-  static func resultDetail(
+  static func retryLine(
     kind: Components.Schemas.Checkpoint.KindPayload, passed: Bool, lessons: Int
   )
     -> LocalizedStringResource?

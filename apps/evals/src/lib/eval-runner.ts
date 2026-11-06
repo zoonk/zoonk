@@ -191,6 +191,7 @@ function combineOutputsAndResults(
     }
 
     return {
+      audioSeconds: output.audioSeconds,
       cacheReadTokens: output.cacheReadTokens,
       cacheWriteTokens: output.cacheWriteTokens,
       categoryScores: scored.categoryScores,

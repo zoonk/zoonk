@@ -168,6 +168,23 @@ export const milestonePathParamsSchema = z
   .object({ milestoneId: z.uuid().meta({ description: "Milestone ID" }) })
   .meta({ id: "MilestonePathParams" });
 
+/** Longer than a code typed with dashes and spaces between its groups. */
+const MAX_CERTIFICATE_CODE_INPUT_LENGTH = 32;
+
+export const certificatePathParamsSchema = z
+  .object({
+    code: z
+      .string()
+      .trim()
+      .min(1)
+      .max(MAX_CERTIFICATE_CODE_INPUT_LENGTH)
+      .meta({
+        description:
+          "The certificate's code, in any case and with or without dashes (K7QF-2M9X-HD4P)",
+      }),
+  })
+  .meta({ id: "CertificatePathParams" });
+
 export const ownFilePathParamsSchema = z
   .object({
     folder: z

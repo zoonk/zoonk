@@ -15,11 +15,9 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -27,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -60,6 +57,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.DetailPage
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.mainActionWidth
@@ -86,7 +84,7 @@ fun ExamScreen(
     ExamFrame(navigator, title = null) {
         when {
             summary is LoadState.Failed -> LoadFailedMessage(onRetry = { scope.launch { app.learnerSummary.summary.refresh() } })
-            summary.value == null -> ExamLoading()
+            summary.value == null -> PageLoading()
             else -> NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) })
         }
     }
@@ -141,7 +139,7 @@ internal fun GoalExam(
                 }
 
                 else -> {
-                    ExamLoading()
+                    PageLoading()
                 }
             }
         }
@@ -162,11 +160,6 @@ private fun ExamFrame(
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) { content() }
     }
-}
-
-@Composable
-private fun ExamLoading() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
 }
 
 /**

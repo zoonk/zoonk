@@ -22,12 +22,10 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assume.assumeTrue
@@ -107,21 +105,10 @@ class SearchScreenshots {
             }
         }
         compose.runOnIdle { search.open() }
-        unfold()
+        compose.unfoldBook(folds)
         compose.onAllNodes(hasSetTextAction()).onLast().performTextInput("set")
         compose.mainClock.advanceTimeBy(500)
         write("search-over-page-open-book")
-    }
-
-    private fun unfold() {
-        compose.waitForIdle()
-        folds.overrideWindowLayoutInfo(
-            TestWindowLayoutInfo(
-                listOf(
-                    FoldingFeature(compose.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
-                ),
-            ),
-        )
     }
 
     private fun capture(
@@ -142,7 +129,7 @@ class SearchScreenshots {
                 }
             }
         }
-        if (fold) unfold()
+        if (fold) compose.unfoldBook(folds)
         write("$name-closed")
         compose.onNodeWithText("Search or ask…").performClick()
         write("$name-open")

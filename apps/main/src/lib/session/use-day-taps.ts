@@ -2,12 +2,12 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
-import { getLearnerGeneration } from "@/lib/learner/learner-store";
+import { learnerStaying } from "@/lib/learner/learner-store";
 import { type OpenStudyDayInput } from "@zoonk/core/sessions/open-day-contract";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useCallback } from "react";
-import { type TapDay, type TapResult, type TapStep } from "./day-entry";
-import { beginDayEntry, endDayEntry, updateDayEntry } from "./day-entry-registry";
+import { type TapDay, type TapResult, type TapStep, hasLeftEntry } from "./day-entry";
+import { beginDayEntry, endDayEntry, getDayEntry, updateDayEntry } from "./day-entry-registry";
 import { sendDayOpen, toDestinationResult, toTapResult } from "./day-tap";
 import {
   addExtraStudyBlockAction,
@@ -15,16 +15,13 @@ import {
   openStudyBlockAction,
   prepareTodayLessonsAction,
 } from "./study-session-actions";
+import { answerHere, openingHere, stayingHere } from "./tap-answer";
 import {
   SESSION_PATH,
   getCurrentLocation,
   getSessionHref,
   useGoToStudyDestination,
 } from "./use-study-navigation";
-
-function isStill({ generation, origin }: { generation: number; origin: string }): boolean {
-  return generation === getLearnerGeneration() && origin === getCurrentLocation();
-}
 
 function toShownDate(localDate: Date): string {
   return localDate.toISOString().slice(0, 10);
@@ -40,7 +37,7 @@ type TapRequest = {
   openInput: (fields: Pick<OpenStudyDayInput, "keepEmpty" | "target">) => OpenStudyDayInput;
   sessionId: string | null;
   step: TapStep;
-  stillHere: () => boolean;
+  stillHere: () => Promise<boolean>;
 };
 
 /** A day not opened yet opens with the step's work (`ref`), so no tap names an id the day doesn't have. */
@@ -76,7 +73,40 @@ function requestTap({
   return noteAppWrite(action).then(toDestinationResult, (): TapResult => ({ kind: "failed" }));
 }
 
-/** Nothing here starts AI work on its own: only a tapped step's start does. */
+/**
+ * An answer for a learner who's gone, or a failure that lands after the learner left the step's
+ * screen, ends its entry: they never see it when they come back.
+ */
+async function settleEntry({
+  id,
+  learnerHere,
+  origin,
+  result,
+}: {
+  id: number;
+  learnerHere: () => Promise<boolean>;
+  origin: string;
+  result: TapResult;
+}) {
+  const stayed = await learnerHere();
+  const entry = getDayEntry();
+
+  const left =
+    result.kind === "failed" &&
+    entry?.id === id &&
+    hasLeftEntry({ at: getCurrentLocation(), entry, origin });
+
+  if (!stayed || left) {
+    endDayEntry(id);
+  } else {
+    updateDayEntry(id, { result });
+  }
+}
+
+/**
+ * Nothing here starts AI work on its own: only a tapped step's start does. A tap that stops because
+ * the learner left resolves true: the screen they left has nothing to report, even when they return.
+ */
 export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void }) {
   const router = useRouter();
   const go = useGoToStudyDestination({ refresh });
@@ -99,7 +129,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
   );
 
   const applyHere = useCallback(
-    (result: TapResult): Promise<boolean> | boolean => {
+    (result: TapResult, here: () => Promise<boolean>): Promise<boolean> | boolean => {
       if (result.kind === "failed") {
         return false;
       }
@@ -109,15 +139,16 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
         return true;
       }
 
-      return go(result.destination);
+      return go(result.destination, { here });
     },
     [go, refresh],
   );
 
   const tap = useCallback(
     async ({ next, step }: { next: boolean; step: TapStep }): Promise<boolean> => {
-      const generation = getLearnerGeneration();
+      const learnerHere = learnerStaying(shown.userId);
       const origin = getCurrentLocation();
+      const here = openingHere(shown.userId);
       const focusMain = isFocusOnControl();
 
       const href =
@@ -129,23 +160,13 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
             )
           : null;
 
-      const stillHere = () =>
-        generation === getLearnerGeneration() && [origin, href].includes(getCurrentLocation());
+      const stillHere = async () =>
+        (await learnerHere()) && [origin, href].includes(getCurrentLocation());
 
       // Sent before navigating, so the navigation never holds it back.
       const answer = request({ next, step, stillHere });
 
       if (href) {
-        const entry = beginDayEntry({
-          day,
-          focusMain,
-          generation,
-          href,
-          next,
-          step,
-          tappedAt: Date.now(),
-        });
-
         // Within the session screen the step replaces the one shown; Back still leads to Today.
         if (href !== origin && (origin === SESSION_PATH || origin.startsWith(`${SESSION_PATH}?`))) {
           router.replace(href);
@@ -153,85 +174,118 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
           router.push(href);
         }
 
-        void answer.then((result) => updateDayEntry(entry.id, { result }));
+        const entry = beginDayEntry({
+          day,
+          focusMain,
+          here: stayingHere(shown.userId),
+          href,
+          next,
+          step,
+          tappedAt: Date.now(),
+        });
+
+        void answer.then((result) => settleEntry({ id: entry.id, learnerHere, origin, result }));
+
         return true;
       }
 
-      const result = await answer;
+      const answered = await answerHere(answer, here);
 
-      if (!isStill({ generation, origin })) {
-        return false;
+      if (typeof answered === "boolean") {
+        return answered;
       }
 
-      if (result.kind !== "failed") {
+      if (answered.answer.kind !== "failed") {
         endDayEntry();
       }
 
-      return applyHere(result);
+      return applyHere(answered.answer, here);
     },
     [applyHere, day, request, router, shown],
   );
 
   const openKept = useCallback(
-    async (scope: { generation: number; origin: string }): Promise<string | null> => {
+    async (here: () => Promise<boolean>): Promise<{ answer: string } | boolean> => {
       if (sessionId !== null) {
-        return sessionId;
+        return { answer: sessionId };
       }
 
-      const outcome = await sendDayOpen({
-        input: openInput({ keepEmpty: true }),
-        stillHere: () => isStill(scope),
-      });
+      const opened = await answerHere(
+        sendDayOpen({ input: openInput({ keepEmpty: true }), stillHere: here }),
+        here,
+      );
 
-      return outcome.status === "opened" && isStill(scope) ? outcome.sessionId : null;
+      if (typeof opened === "boolean") {
+        return opened;
+      }
+
+      return opened.answer.status === "opened" ? { answer: opened.answer.sessionId } : false;
     },
     [openInput, sessionId],
   );
 
   return {
     addExtraTime: async () => {
-      const scope = { generation: getLearnerGeneration(), origin: getCurrentLocation() };
-      const opened = await openKept(scope);
+      const here = openingHere(shown.userId);
+      const kept = await openKept(here);
 
-      if (!opened) {
-        return false;
+      if (typeof kept === "boolean") {
+        return kept;
       }
 
-      const destination = await noteAppWrite(
-        addExtraStudyBlockAction({ sessionId: opened, timeZone: getLocalTimeZone() }),
+      const added = await answerHere(
+        noteAppWrite(
+          addExtraStudyBlockAction({ sessionId: kept.answer, timeZone: getLocalTimeZone() }),
+        ),
+        here,
       );
 
-      return isStill(scope) ? applyHere(toDestinationResult(destination)) : false;
+      return typeof added === "boolean"
+        ? added
+        : applyHere(toDestinationResult(added.answer), here);
     },
     catchUp: async () => {
-      const scope = { generation: getLearnerGeneration(), origin: getCurrentLocation() };
-      const opened = await openKept(scope);
+      const here = stayingHere(shown.userId);
+      const kept = await openKept(here);
 
-      if (!opened) {
-        return false;
+      if (typeof kept === "boolean") {
+        return kept;
       }
 
-      const added = await noteAppWrite(
-        catchUpTodayAction({ sessionId: opened, timeZone: getLocalTimeZone() }),
+      const added = await answerHere(
+        noteAppWrite(catchUpTodayAction({ sessionId: kept.answer, timeZone: getLocalTimeZone() })),
+        here,
       );
 
-      if (added && isStill(scope)) {
+      if (typeof added === "boolean") {
+        return added;
+      }
+
+      if (added.answer) {
         refresh();
       }
 
-      return added;
+      return added.answer;
     },
     next: (step: TapStep) => tap({ next: true, step }),
     open: (step: TapStep) => tap({ next: false, step }),
     prepareLessons: async () => {
-      const scope = { generation: getLearnerGeneration(), origin: getCurrentLocation() };
-      const prepared = await noteAppWrite(prepareTodayLessonsAction({ goalId: day.shown.goalId }));
+      const here = stayingHere(shown.userId);
 
-      if (prepared && isStill(scope)) {
+      const prepared = await answerHere(
+        noteAppWrite(prepareTodayLessonsAction({ goalId: day.shown.goalId })),
+        here,
+      );
+
+      if (typeof prepared === "boolean") {
+        return prepared;
+      }
+
+      if (prepared.answer) {
         refresh();
       }
 
-      return prepared;
+      return prepared.answer;
     },
   };
 }

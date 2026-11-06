@@ -59,6 +59,7 @@ function Picks({ choice, disabled, onSave }: ExamChoicePicksProps) {
       <Button
         className="self-start"
         disabled={disabled || draft.length === 0 || isSaved}
+        focusableWhenDisabled
         onClick={() =>
           onSave(
             choice.options.flatMap((option) => (draft.includes(option.name) ? [option.name] : [])),

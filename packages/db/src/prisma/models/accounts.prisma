@@ -50,6 +50,7 @@ model User {
   aiCalls               AiCall[]
   pronunciationReviews  PronunciationReview[]
   milestones            Milestone[]
+  certificates          Certificate[]
   stepExampleLines      StepExampleLine[]
   feedback              Feedback[]
   learningEvents        LearningEvent[]

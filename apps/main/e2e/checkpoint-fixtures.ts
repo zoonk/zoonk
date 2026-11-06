@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { type Page, expect } from "@playwright/test";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -17,9 +18,23 @@ const QUESTIONS_PER_SKILL = 3;
 export const CHECKPOINT_QUESTIONS = SKILL_NAMES.length * QUESTIONS_PER_SKILL;
 const CHECKPOINT_PASS_MARK = 5;
 
+/** A course written for the learner certifies their plan whole, named by its title. */
 async function createGoalLearner() {
   const user = await createE2EUser(getBaseURL());
-  const goal = await goalFixture({ timezone: "UTC", title: "Learn percentages", userId: user.id });
+
+  const course = await courseFixture({
+    format: "personalized",
+    title: "Percentages",
+    userId: user.id,
+    visibility: "private",
+  });
+
+  const goal = await goalFixture({
+    primaryCourseId: course.id,
+    timezone: "UTC",
+    title: "Learn percentages",
+    userId: user.id,
+  });
 
   await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
 

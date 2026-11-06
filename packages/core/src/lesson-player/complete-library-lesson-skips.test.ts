@@ -1,8 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { checkLessonStep } from "./check-lesson-step";
 import { completeLibraryLesson } from "./complete-library-lesson";
@@ -71,6 +73,34 @@ describe("non-language open-answer skips", () => {
         lessonId: setup.lesson.id,
       }),
     ).resolves.toStrictEqual({ status: "invalid" });
+  });
+
+  it("keeps a skipped screen on a run that finished its day's block", async () => {
+    freezeClock();
+    vi.setSystemTime(new Date("2026-09-30T15:00:00Z"));
+    const setup = await setupPlayableLesson({ steps: ["typedAnswer", "summary"] });
+    const goal = await goalFixture({ timezone: TIME_ZONE, userId: setup.user.id });
+
+    await planFixture({
+      goalId: goal.id,
+      items: [{ lessonId: setup.lesson.id, skillId: setup.skill.id }],
+    });
+
+    const runId = await startRun(setup.lesson.id);
+    const skippedWritingStepIds = [stepOfKind(setup.steps, "typedAnswer").id];
+
+    await expect(
+      completeLibraryLesson({
+        input: { runId, skippedWritingStepIds, timeZone: TIME_ZONE },
+        lessonId: setup.lesson.id,
+      }),
+    ).resolves.toMatchObject({ completion: { studyBlock: { sessionCompleted: true } } });
+
+    await expect(
+      prisma.learningEvent.findUniqueOrThrow({ where: { id: runId } }),
+    ).resolves.toMatchObject({
+      contentIds: { skippedWritingStepIds, studySessionBlockId: expect.any(String) },
+    });
   });
 
   it("skips only the named screen and keeps recorded answers in the completion tally", async () => {

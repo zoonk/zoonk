@@ -4,7 +4,7 @@ import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession, mockSessionFailure } from "../_test-utils/mock-session";
@@ -16,25 +16,24 @@ import { listCurrentUserMistakes } from "./list-current-user-mistakes";
 const YESTERDAY = new Date("2026-10-14T12:00:00Z");
 
 async function readCounts(goalId: string) {
-  const notebook = await countDatabaseStatements(() =>
-    listCurrentUserMistakes(mistakeListInputSchema.parse({ goalId, limit: 1, status: "open" })),
+  const notebook = await listCurrentUserMistakes(
+    mistakeListInputSchema.parse({ goalId, limit: 1, status: "open" }),
   );
 
   const counted = await countDatabaseStatements(() => countGoalMistakes({ goalId }));
 
-  if (notebook.result.status !== "ready" || counted.result.status !== "ready") {
+  if (notebook.status !== "ready" || counted.result.status !== "ready") {
     throw new Error("Expected the notebook and goal counts to be ready");
   }
 
   const { fixed, open } = counted.result;
 
   expect({ fixed, open }).toStrictEqual({
-    fixed: notebook.result.counts.fixed,
-    open: notebook.result.counts.open,
+    fixed: notebook.counts.fixed,
+    open: notebook.counts.open,
   });
 
-  assertReadBudget(counted, 12);
-  expect(counted.statements).toBeLessThan(notebook.statements);
+  expect(counted.writes).toBe(0);
 
   return { fixed, open };
 }

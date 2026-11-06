@@ -14,6 +14,7 @@ enum FollowUpKind {
   checkUploadVisibility @map("check_upload_visibility")
   endWebPlusBesideStore      @map("end_web_plus_beside_store")
   askToCancelSecondStorePlus @map("ask_to_cancel_second_store_plus")
+  settleSessionDay           @map("settle_session_day")
 }
 
 /// Work owed after a learner's write; ended by the run that started it unless asked again since,

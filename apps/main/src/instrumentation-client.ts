@@ -1,6 +1,7 @@
 import { noteAppWritesSent } from "@/lib/http/app-write-ledger";
 import { noteRouterTransition } from "@/lib/http/refresh-stale-pages";
 import { reportRouterTransition, startSentryAfterPageLoad } from "@/lib/sentry/report-error";
+import { noteNavigationStart } from "@/lib/session/tap-answer";
 import { waitForSharedProperties } from "@zoonk/core/analytics/posthog-browser";
 import { initBotId } from "botid/client/core";
 import { type RouterTransitionType } from "next";
@@ -19,6 +20,7 @@ waitForSharedProperties();
 noteAppWritesSent();
 
 export function onRouterTransitionStart(url: string, navigationType: RouterTransitionType) {
+  noteNavigationStart();
   noteRouterTransition(navigationType);
   reportRouterTransition(url, navigationType);
 }

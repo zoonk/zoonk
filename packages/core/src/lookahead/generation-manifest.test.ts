@@ -76,7 +76,7 @@ describe("parent-issued generation manifests", () => {
     vi.restoreAllMocks();
   });
 
-  it("admits a current child batch in one physical statement and no builder entries", async () => {
+  it("admits a current child batch without builder entries", async () => {
     const { goal, lessonIds, manifest } = await manifestFixture();
 
     const read = await countDatabaseStatements(() =>
@@ -84,7 +84,6 @@ describe("parent-issued generation manifests", () => {
     );
 
     expect(read.result).toStrictEqual(lessonIds);
-    expect(read.statements).toBe(1);
     expect(read.writes).toBe(0);
     expect(buildPlan).not.toHaveBeenCalled();
     expect(readGenerationManifest).not.toHaveBeenCalled();

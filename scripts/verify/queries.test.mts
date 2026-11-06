@@ -19,8 +19,8 @@ const ITEM =
 
 const INSIDE = { at: 1500 };
 
-function statement(sql: string, overrides: { at?: number; rows?: number } = {}) {
-  return { at: overrides.at ?? 1000, ms: 2, rows: overrides.rows ?? 1, sql };
+function statement(sql: string, overrides: { at?: number; ms?: number; rows?: number } = {}) {
+  return { at: overrides.at ?? 1000, ms: overrides.ms ?? 2, rows: overrides.rows ?? 1, sql };
 }
 
 describe("a render's database work", () => {
@@ -46,12 +46,12 @@ describe("a render's database work", () => {
     }
   });
 
-  it("asks about a read repeated per item and a result too large to show", () => {
+  it("asks about a read repeated per item, a result too large to show and a slow statement", () => {
     const statements = [
       statement(GOALS, { rows: 4000 }),
       statement(ITEM),
-      statement(ITEM),
-      statement(ITEM),
+      statement(ITEM, { ms: 100 }),
+      statement(ITEM, { ms: 240.6 }),
       statement("COMMIT"),
     ];
 
@@ -62,7 +62,7 @@ describe("a render's database work", () => {
 
     assert.deepEqual(
       queryFindings(summary).map((finding) => `${finding.check} ${finding.value}`),
-      ["repeated query 3", "large result 4000"],
+      ["repeated query 3", "large result 4000", "slow query 241"],
     );
   });
 

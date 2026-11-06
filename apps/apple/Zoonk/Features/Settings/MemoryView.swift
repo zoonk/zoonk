@@ -23,8 +23,8 @@ struct MemoryView: View {
 
             if memory.enabled {
               Text(
-                "Personal examples and plans that fit your week", tableName: "Settings",
-                comment: "What memory does while it's on")
+                "Personal examples, plans that fit your week and calls that remember your news",
+                tableName: "Settings", comment: "What memory does while it's on")
             } else {
               Text(
                 "Memory is off. Nothing new is learned, and these facts aren't used.",
@@ -234,17 +234,17 @@ private struct MemoryFactRow: View {
 
 private struct MemoryUpdatedNotice: View {
   let fact: MemoryFact
-  let status: SettingsStore.UndoStatus
+  let status: MemoryUndo?
   let undo: () -> Void
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      switch status {
-      case .idle, .undoing:
-        Text(
-          "\(Text("Memory updated:", tableName: "Settings", comment: "Starts the line saying a fact was deleted").fontWeight(.medium).foregroundStyle(.primary)) \(Text(fact.statement).strikethrough())",
-          tableName: "Settings", comment: "A deleted fact, struck through after “Memory updated:”")
+      Text(
+        "\(Text("Memory updated:", tableName: "Settings", comment: "Starts the line saying a fact was deleted").fontWeight(.medium).foregroundStyle(.primary)) \(Text(fact.statement).strikethrough())",
+        tableName: "Settings", comment: "A deleted fact, struck through after “Memory updated:”")
 
+      switch status {
+      case .failed, .undoing, nil:
         Button(action: undo) {
           Text("Undo", tableName: "Settings", comment: "Brings a deleted fact back")
             .underline()
@@ -252,14 +252,20 @@ private struct MemoryUpdatedNotice: View {
         .buttonStyle(.borderless)
         .foregroundStyle(.primary)
         .disabled(status == .undoing)
+
+        if status == .failed {
+          FailureLine(
+            message: LocalizedStringResource(
+              "Couldn't undo. Try again.", table: "Settings",
+              comment: "A deleted fact didn't come back, and Undo stays to try again"))
+        }
       case .undone:
         Text("Change undone", tableName: "Settings", comment: "Says a deleted fact came back")
-      case .failed:
-        Text(
-          "Couldn't undo. It changed since.", tableName: "Settings",
-          comment: "Says a deleted fact couldn't come back"
-        )
-        .foregroundStyle(.destructive)
+      case .changedSince:
+        FailureLine(
+          message: LocalizedStringResource(
+            "Couldn't undo. It changed since.", table: "Settings",
+            comment: "Says a deleted fact couldn't come back"))
       }
     }
     .font(.footnote)
@@ -298,6 +304,12 @@ extension MemoryFact.Source {
       Text(
         "You told us", tableName: "Settings",
         comment: "Source of a fact the learner told Zoonk themselves (\"us\" is Zoonk)")
+    case .call:
+      Text(
+        "From a call", tableName: "Settings",
+        comment:
+          "Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor."
+      )
     case .chat:
       Text("From a chat", tableName: "Settings", comment: "Source of a fact from a chat")
     case .onboarding:

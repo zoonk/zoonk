@@ -46,6 +46,9 @@ enum PracticeLayout {
 
 struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   @Environment(\.practiceActionsHidden) private var actionsHidden
+  /// A result keeps a page each at a hinge at any text size; a question's spread becomes one
+  /// column where its text stacks.
+  private let isResult: Bool
   private let segments: [PracticeSegment]?
   private let index: Int
   private let stimulus: () -> Stimulus
@@ -53,11 +56,12 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   private let actions: () -> Actions
 
   init(
-    segments: [PracticeSegment]? = nil, index: Int = 0,
+    isResult: Bool = false, segments: [PracticeSegment]? = nil, index: Int = 0,
     @ViewBuilder stimulus: @escaping () -> Stimulus,
     @ViewBuilder response: @escaping () -> Response,
     @ViewBuilder actions: @escaping () -> Actions
   ) {
+    self.isResult = isResult
     self.segments = segments
     self.index = index
     self.stimulus = stimulus
@@ -66,7 +70,7 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   }
 
   var body: some View {
-    QuestionSpread(readableWidth: PracticeLayout.readableWidth, spacing: 20) {
+    QuestionSpread(readableWidth: PracticeLayout.readableWidth, spacing: 20, isSpread: !isResult) {
       segmentsBar
     } stimulus: {
       stimulus()
@@ -101,16 +105,17 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   }
 }
 
-/// An intro or a note: it leads, and the trailing page keeps only the way on.
+/// An intro, a note or a result with nothing next: it leads, and the trailing page keeps only the
+/// way on.
 extension PracticeTaskLayout where Response == EmptyView {
   init(
-    segments: [PracticeSegment]? = nil, index: Int = 0,
+    isResult: Bool = false, segments: [PracticeSegment]? = nil, index: Int = 0,
     @ViewBuilder content: @escaping () -> Stimulus,
     @ViewBuilder actions: @escaping () -> Actions
   ) {
     self.init(
-      segments: segments, index: index, stimulus: content, response: { EmptyView() },
-      actions: actions)
+      isResult: isResult, segments: segments, index: index, stimulus: content,
+      response: { EmptyView() }, actions: actions)
   }
 }
 
@@ -119,13 +124,14 @@ extension PracticeTaskLayout where Response == EmptyView {
 struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: View>: View {
   let readableWidth: CGFloat
   let spacing: CGFloat
+  var isSpread = true
   @ViewBuilder let header: () -> Header
   @ViewBuilder let stimulus: () -> Stimulus
   @ViewBuilder let response: () -> Response
   @ViewBuilder let actions: () -> Actions
 
   var body: some View {
-    PaneSplit(isSpread: true) {
+    PaneSplit(isSpread: isSpread) {
       ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: stimulus)
         .pageHeader(header)
     } secondary: {
@@ -283,12 +289,13 @@ struct PracticeSaveError: View {
 
   var body: some View {
     HStack {
-      Text(
-        "Your answer wasn't saved. Check your connection.", tableName: "Practice",
-        comment: "Shown over a run's actions when an answer or the finish didn't reach the server."
+      FailureLine(
+        message: LocalizedStringResource(
+          "Your answer wasn't saved. Check your connection.", table: "Practice",
+          comment:
+            "Shown over a run's actions when an answer or the finish didn't reach the server.")
       )
       .font(.subheadline)
-      .foregroundStyle(.destructive)
 
       Spacer()
 

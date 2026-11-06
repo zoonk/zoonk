@@ -2,17 +2,17 @@ package com.zoonk.android.feature.practice
 
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ANA
@@ -22,6 +22,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.practice.block.BlockFinished
 import com.zoonk.android.feature.practice.block.Runner
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.StudyBlockCompletion
@@ -103,25 +104,7 @@ class QuestionBlockScreenshots {
             }
         }
 
-        if (open) {
-            // Android tells a listener that starts after the fold about it; window-testing doesn't, so a frame
-            // rebuilt as the fold drops the passage's aside hears it again.
-            repeat(2) {
-                rule.waitForIdle()
-                folds.overrideWindowLayoutInfo(
-                    TestWindowLayoutInfo(
-                        listOf(
-                            FoldingFeature(
-                                rule.activity,
-                                state = FoldingFeature.State.FLAT,
-                                orientation = FoldingFeature.Orientation.VERTICAL,
-                            ),
-                        ),
-                    ),
-                )
-            }
-            rule.waitForIdle()
-        }
+        if (open) rule.unfoldBook(folds)
         if (check) {
             rule.onNodeWithText("Moon", substring = true).performClick()
             rule.onNodeWithText("Check").performClick()
@@ -254,7 +237,12 @@ class QuestionBlockScreenshots {
             },
         )
 
-    private fun showDone(name: String) {
+    private fun showDone(
+        name: String,
+        fold: Boolean = false,
+        dark: Boolean = false,
+        direction: LayoutDirection = LayoutDirection.Ltr,
+    ) {
         val completion: StudyBlockCompletion =
             com.zoonk.android.feature.session.decodeFixture(
                 "study-block-completion",
@@ -275,23 +263,53 @@ class QuestionBlockScreenshots {
             )
         val viewModel = practiceViewModel(cache, blockDetail(emptyList()))
         rule.setContent {
-            ZoonkTheme {
-                BlockFinished(
-                    completion,
-                    review = false,
-                    AppContainer.preview(rule.activity),
-                    viewModel,
-                    onClose = {},
-                )
+            ZoonkTheme(darkTheme = dark, moreContrast = dark) {
+                CompositionLocalProvider(LocalLayoutDirection provides direction) {
+                    BlockFinished(
+                        completion,
+                        review = false,
+                        AppContainer.preview(rule.activity),
+                        viewModel,
+                        onClose = {},
+                    )
+                }
             }
         }
         rule.mainClock.advanceTimeBy(10_000)
+        if (fold) rule.unfoldBook(folds)
         write(name)
     }
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneDone() = showDone("phone-block-done")
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookDone() = showDone("book-block-done", fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookDone() = showDone("small-book-block-done", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun bookDoneDarkMoreContrast() = showDone("book-block-done-dark-more-contrast", fold = true, dark = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookDoneAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        showDone("book-block-done-font200", fold = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookDoneRightToLeft() = showDone("book-block-done-rtl", fold = true, direction = LayoutDirection.Rtl)
+
+    @Test
+    @Config(qualifiers = "w700dp-h840dp-xhdpi")
+    fun mediumDone() = showDone("medium-block-done")
 
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")

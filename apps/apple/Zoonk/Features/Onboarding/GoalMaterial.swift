@@ -235,8 +235,7 @@ struct MaterialAttachControls<Label: View>: View {
     }
 
     if let error {
-      Text(error)
-        .foregroundStyle(.destructive)
+      FailureLine(message: error)
     }
   }
 
@@ -423,8 +422,7 @@ struct MaterialQuestionsView: View {
               .foregroundStyle(.secondary)
             }
           case .failure(let error):
-            Text(Self.message(for: error))
-              .foregroundStyle(.destructive)
+            FailureLine(message: Self.message(for: error))
           }
         }
       }

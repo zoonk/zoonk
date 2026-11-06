@@ -120,6 +120,7 @@
     <string name="today_lessons_not_written">Today\'s lessons aren\'t written yet.</string>
     <string name="today_get_lessons">Get today\'s lessons</string>
     <string name="today_open_failed">We couldn\'t open the next step. Try again.</string>
+    <string name="today_step_open_failed">We couldn\'t open this step. Try again.</string>
     <string name="today_keep_learning_failed">We couldn\'t open your next lessons. Try again.</string>
 
     <string name="today_welcome_back">Welcome back</string>
@@ -153,7 +154,6 @@
     <string name="today_building_plan_detail">It usually takes a minute or two. Your first day opens here as soon as it\'s ready.</string>
     <string name="today_quick_explanation">Quick explanation</string>
     <string name="today_continue_explanation">Continue explanation</string>
-    <string name="today_session_ended_description">Each day\'s lessons, reviews and practice for your goal.</string>
     <string name="today_week_title">This week</string>
     <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
     <plurals name="today_week_days">

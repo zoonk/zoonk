@@ -1,8 +1,10 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
+import { StepOpenFailed } from "../_components/step-open-failed";
 import { LearnLink } from "../learn-link";
 import { type DayStep } from "../session/session-types";
 import { useBlockTitle } from "../session/use-block-copy";
@@ -12,7 +14,7 @@ import { useTodayScreen } from "./today-context";
  * Its `::after` stretches over the whole row, so the row is one target with its focus ring there.
  */
 export const ROW_OPEN_CLASS =
-  "flex min-w-0 text-left outline-none after:absolute after:top-1/2 after:h-full after:min-h-11 after:-translate-y-1/2 after:rounded-[0.625rem] focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50 disabled:cursor-default";
+  "flex min-w-0 text-left outline-none after:absolute after:top-1/2 after:h-full after:min-h-11 after:-translate-y-1/2 after:rounded-[0.625rem] focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50 aria-disabled:cursor-default";
 
 export function RowOpen({
   block,
@@ -29,25 +31,33 @@ export function RowOpen({
   const t = useExtracted();
   const title = useBlockTitle();
   const [pending, startTransition] = useTransition();
+  const [failed, setFailed] = useState(false);
 
   const open = () => {
+    setFailed(false);
+
     startTransition(async () => {
-      await actions.openBlock(block);
+      const { data: opened } = await safeAsync(() => actions.openBlock(block));
+      setFailed(!opened);
     });
   };
 
   return (
-    <button
-      aria-busy={pending || undefined}
-      aria-label={`${title(block)}${countsTowardMission ? t(", counts toward a mission") : ""}`}
-      className={cn(ROW_OPEN_CLASS, isNext ? "after:inset-x-0" : "after:-inset-x-2.5")}
-      data-slot="today-row-open"
-      disabled={pending}
-      onClick={open}
-      type="button"
-    >
-      {children}
-    </button>
+    <>
+      <button
+        aria-busy={pending || undefined}
+        aria-disabled={pending || undefined}
+        aria-label={`${title(block)}${countsTowardMission ? t(", counts toward a mission") : ""}`}
+        className={cn(ROW_OPEN_CLASS, isNext ? "after:inset-x-0" : "after:-inset-x-2.5")}
+        data-slot="today-row-open"
+        onClick={pending ? undefined : open}
+        type="button"
+      >
+        {children}
+      </button>
+
+      {failed && <StepOpenFailed />}
+    </>
   );
 }
 

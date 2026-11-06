@@ -30,7 +30,7 @@ const studyBlockOpeningTargetSchema = z
       .strict()
       .meta({
         description:
-          "A mission card's block. It opens only while the block is still free to start; otherwise nothing opens (`changed`)",
+          "A block a mission card or a buddy answer links. It opens only while it's still free to start on today's session; otherwise nothing opens (`changed`), a block that's finished, from a day that's over or gone after a plan change included",
         id: "StudyBlockOpeningMission",
       }),
   ])
@@ -129,7 +129,7 @@ export const studyBlockOpeningSchema = z
       .strict()
       .meta({
         description:
-          "Nothing opened: what the learner saw changed (a mock they didn't see, a mission no longer free to start). Read the screen again so they see the change first",
+          "Nothing opened: what the learner saw changed (a mock they didn't see, a mission or buddy answer's block no longer free to start). Read the screen again so they see the change first; a buddy answer, which can't show it, says the step isn't available anymore",
         id: "StudyBlockOpeningChanged",
       }),
   ])

@@ -186,12 +186,8 @@ final class PlanStoreTests: XCTestCase {
     let earlier = PlanStore.SuggestionKey(
       owner: AuthenticatedSession(bearerToken: "earlier-session"), goalId: "goal")
 
-    store.setSuggestionState(earlier) {
-      $0.isWorking = true
-      $0.dismissed.insert(.tooTight)
-    }
+    store.setSuggestionState(earlier) { $0.dismissed.insert(.tooTight) }
 
-    XCTAssertFalse(store.suggestionState(goalId: "goal").isWorking)
     XCTAssertEqual(store.suggestionState(goalId: "goal").dismissed, [])
 
     store.setSuggestionState(store.suggestionKey(goalId: "goal")) { $0.dismissed.insert(.tooTight) }
@@ -279,7 +275,9 @@ private actor PlanAPIStub: PlanAPIClient {
   func languageUnits(token: String, goalId: String) async throws -> LanguageUnitsOverview {
     throw APIError.notFound
   }
-  func studyNext(token: String, goalId: String) async throws -> StudyNext? { nil }
+  func planEnd(token: String, goalId: String) async throws -> PlanEnd {
+    PlanEnd(certificates: nil, next: nil)
+  }
   func resumeChangesPlan(token: String, goalId: String) async throws -> Bool { false }
   func setStatus(token: String, goalId: String, status: GoalStatusChange) async throws
     -> GoalStatusOutcome

@@ -12,6 +12,8 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.certificates.CertificateName
+import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.practice.GradedAnswer
 import com.zoonk.android.feature.practice.UndoState
@@ -48,6 +50,7 @@ data class FocusTestOutcome(
     val changeId: UUID?,
     val ceremony: Milestone?,
     val reached: ReachedFacts,
+    val certificates: List<CertificateName> = emptyList(),
 )
 
 @Immutable
@@ -329,4 +332,5 @@ private fun FocusTestResult.outcome() =
         changeId = changeId,
         ceremony = ceremony,
         reached = ReachedFacts(reached.level, reached.energy),
+        certificates = certificates.map { it.naming },
     )

@@ -437,6 +437,7 @@ test.describe("Language goal API", () => {
     const finished = await apiContext.post(`${path}/completions`);
 
     expect(finished.status()).toBe(200);
+    expect(Object.keys(await finished.json())).toStrictEqual(["levels"]);
 
     await apiContext.dispose();
   });

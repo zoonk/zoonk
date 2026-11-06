@@ -11,6 +11,7 @@ struct FocusTestScreen: View {
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<FocusTestQuestions> = .loading
   @State private var started = false
+  @State private var isStarting = false
   @State private var isWriting = false
   @State private var writingEnded = false
   @State private var writeFailure: (any Error)?
@@ -20,7 +21,6 @@ struct FocusTestScreen: View {
   @State private var result: Components.Schemas.FocusTestResult?
   @State private var undone = false
   @State private var undoFailed = false
-  @State private var ceremonyClosed = false
 
   private var draftKey: String { "focus-test:\(goalId)" }
 
@@ -28,13 +28,7 @@ struct FocusTestScreen: View {
     NavigationStack {
       Group {
         if let result {
-          if let milestone = result.ceremony?.value1, !ceremonyClosed,
-            let ceremony = hooks.ceremony
-          {
-            ceremony(milestone) { ceremonyClosed = true }
-          } else {
-            resultView(result)
-          }
+          resultView(result)
         } else {
           switch load {
           case .loading:
@@ -50,7 +44,9 @@ struct FocusTestScreen: View {
                 hint: { $0.area ?? "" },
                 upcomingTotal: test.needsItems.isEmpty
                   ? nil : test.areas.count * test.questionsPerArea,
-                upcomingEnded: writingEnded, isPending: isSubmitting, failed: submitFailed
+                upcomingEnded: writingEnded,
+                upcomingLimit: (writeFailure as? PracticeAPIError)?.helpLimit,
+                isPending: isSubmitting, failed: submitFailed
               ) { answers in Task { await submit(answers) } }
             } else {
               intro(test)
@@ -66,7 +62,11 @@ struct FocusTestScreen: View {
         PracticeCloseButton { dismiss() }
       }
     }
+    .completionMoments(
+      certificates: result?.certificates ?? [], ceremony: result?.ceremony?.value1
+    )
     .task(id: session.authenticatedSession) { await read() }
+    .clearsRefusal { writeFailure = nil }
   }
 
   private func intro(_ test: FocusTestQuestions) -> some View {
@@ -96,14 +96,39 @@ struct FocusTestScreen: View {
             "About \(Duration.seconds(minutes * 60).formatted(.units(allowed: [.minutes], width: .wide)))",
           table: "Practice", comment: "About how long a test takes."),
       ],
-      isWriting: isWriting && questions.isEmpty, failure: writeFailure
+      isStarting: isStarting, isWriting: isWriting && questions.isEmpty, failure: writeFailure
     ) { Task { await start(test) } }
   }
 
   private func resultView(_ result: Components.Schemas.FocusTestResult) -> some View {
     let chosen = result.areas.filter(\.chosen).map(\.label)
 
-    return PracticeTaskLayout {
+    return PracticeTaskLayout(isResult: true) {
+      VStack(alignment: .leading, spacing: 12) {
+        Text(
+          "How you did", tableName: "Practice",
+          comment: "Heading over a focus test's results by subject."
+        )
+        .font(.largeTitle.bold())
+
+        ForEach(result.areas, id: \.name) { area in
+          HStack(spacing: 12) {
+            Text(area.label).frame(maxWidth: .infinity, alignment: .leading)
+            HStack(spacing: 3) {
+              ForEach(Array(area.answers.enumerated()), id: \.offset) { _, isCorrect in
+                Capsule().fill(isCorrect ? Color.success : Color.destructive).frame(
+                  width: 14, height: 4)
+              }
+            }
+            Text("\(area.correct)/\(area.total)").font(.subheadline.monospacedDigit())
+              .foregroundStyle(.secondary)
+          }
+          .accessibilityElement(children: .combine)
+        }
+      }
+
+      PracticeResultNumbers(day: DayResult(result))
+    } response: {
       if undone {
         Text(
           "Your plan is back as it was", tableName: "Practice",
@@ -132,38 +157,14 @@ struct FocusTestScreen: View {
           .foregroundStyle(.secondary)
         }
       }
-    } response: {
-      VStack(alignment: .leading, spacing: 12) {
-        Text(
-          "How you did", tableName: "Practice",
-          comment: "Heading over a focus test's results by subject."
-        )
-        .font(.headline)
-
-        ForEach(result.areas, id: \.name) { area in
-          HStack(spacing: 12) {
-            Text(area.label).frame(maxWidth: .infinity, alignment: .leading)
-            HStack(spacing: 3) {
-              ForEach(Array(area.answers.enumerated()), id: \.offset) { _, isCorrect in
-                Capsule().fill(isCorrect ? Color.success : Color.destructive).frame(
-                  width: 14, height: 4)
-              }
-            }
-            Text("\(area.correct)/\(area.total)").font(.subheadline.monospacedDigit())
-              .foregroundStyle(.secondary)
-          }
-          .accessibilityElement(children: .combine)
-        }
-      }
-
-      PracticeResultNumbers(day: DayResult(result))
 
       if undoFailed {
-        Text(
-          "We couldn't undo it. Try again.", tableName: "Practice",
-          comment: "Undoing a focus test's change failed."
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't undo it. Try again.", table: "Practice",
+            comment: "Undoing a focus test's change failed.")
         )
-        .font(.subheadline).foregroundStyle(.destructive)
+        .font(.subheadline)
       }
     } actions: {
       if let changeId = result.changeId, !undone {
@@ -218,16 +219,20 @@ struct FocusTestScreen: View {
       return
     }
 
-    isWriting = true
+    isStarting = true
     writeFailure = nil
     started = !questions.isEmpty
-    defer { isWriting = false }
+    defer {
+      isStarting = false
+      isWriting = false
+    }
 
     let goalId = goalId
     let written = await practice.write(.answered) { identity in
       if case .generating(let generationId) = try await practice.api.writeFocusTest(
         token: identity.bearerToken, goalId: goalId)
       {
+        isWriting = true
         try await practice.api.waitForQuestions(
           token: identity.bearerToken, generationId: generationId,
           readyStep: "focusTestQuestionsReady")
@@ -241,10 +246,10 @@ struct FocusTestScreen: View {
       if case .loaded(let updated) = load, !updated.needsItems.isEmpty { writingEnded = true }
     case .refused(let refusal):
       writingEnded = true
-      if questions.isEmpty { writeFailure = refusal }
+      writeFailure = refusal
     case .failed(let error):
       writingEnded = true
-      if questions.isEmpty { writeFailure = error }
+      writeFailure = error
     case .obsolete:
       break
     }

@@ -84,7 +84,7 @@ export async function loadLaterCatchUp({
   const items = await loadCatchUpItems(goalId);
   const later = listLater({ blocks, items });
 
-  return { items, lessons: later.length > 0 ? await loadPlanLessons({ items: later }) : [] };
+  return { items, lessons: await loadPlanLessons({ items: later }) };
 }
 
 /** A long break leaves thousands of lessons for later: count and size them without loading them. */

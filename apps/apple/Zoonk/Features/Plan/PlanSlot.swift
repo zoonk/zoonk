@@ -4,6 +4,7 @@ import SwiftUI
 enum PlanSlotItem: Hashable {
   case behind(String)
   case choice(GoalPlan.ExamChoice)
+  case courseComplete
   case coverage(String)
   case finished
   case fitLessons
@@ -12,7 +13,10 @@ enum PlanSlotItem: Hashable {
   case paused
   case tooTight
 
-  static func items(plan: GoalPlan, isPaused: Bool, isExam: Bool) -> [PlanSlotItem] {
+  /// `courseComplete` while a finished part's certificate isn't written yet.
+  static func items(
+    plan: GoalPlan, isPaused: Bool, isExam: Bool, courseComplete: Bool
+  ) -> [PlanSlotItem] {
     let fix = planPaceFix(plan, isExam: isExam)
     let status = plan.status?.kind
     let finished = plan.end != nil
@@ -23,7 +27,7 @@ enum PlanSlotItem: Hashable {
       open && !(plan.feasibility?.timeCovers ?? false) ? coverage.map { .coverage($0) } : nil,
     ].compactMap(\.self)
 
-    var items: [PlanSlotItem] = []
+    var items: [PlanSlotItem] = !finished && courseComplete ? [.courseComplete] : []
 
     if isPaused {
       items.append(.paused)
@@ -60,32 +64,256 @@ enum PlanSlotItem: Hashable {
   }
 }
 
-/// One thing at a time: "Not now" moves on to the next for as long as the app runs.
+/// An answer given in the suggestion slot and the editor that saved it. Its screen keeps it above
+/// the panes a fold rebuilds, for its window alone, as main keeps it for one page.
+struct PlanSlotAnswer {
+  let key: PlanStore.SuggestionKey
+  let item: PlanSlotItem
+  let editor: PlanEditor
+  /// When what it did stops showing; set once it first shows. Leaving the screen and coming back
+  /// later finds it gone, as main's page does.
+  var until: Date?
+
+  var isOver: Bool { until.map { $0 <= .now } ?? false }
+}
+
+/// One thing at a time, paged as main's slot is: "Not now" puts one off for as long as the app runs.
+/// An answer that changes the plan says what it did, with Undo, for a moment.
 struct PlanSuggestionSection: View {
+  private enum Focus: Hashable {
+    case item
+    case result
+    case undo
+  }
+
+  private static let resultSeconds: TimeInterval = 8
+
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
+  @AccessibilityFocusState private var focus: Focus?
+  @State private var isHovering = false
 
   let context: PlanContext
+  @Binding var answer: PlanSlotAnswer?
 
   var body: some View {
     let state = store.suggestionState(goalId: context.goal.id)
+    let isExam = context.goal.kind == .exam
+    let unclaimed =
+      isExam ? store.planEnd(goalId: context.goal.id).value?.certificates?.unclaimed ?? [] : []
     let items = PlanSlotItem.items(
-      plan: context.plan, isPaused: context.isPaused, isExam: context.goal.kind == .exam
+      plan: context.plan, isPaused: context.isPaused, isExam: isExam,
+      courseComplete: !unclaimed.isEmpty
     ).filter { !state.dismissed.contains($0) }
+    let index = min(state.position, max(items.count - 1, 0))
+    let answer = currentAnswer
+    let applied: (change: AppliedPlanChange, sentence: String)? =
+      if case .applied(let change, let sentence) = answer?.editor.latest, answer?.isOver == false {
+        (change, sentence)
+      } else {
+        nil
+      }
+    let paged = items.indices.contains(index) ? items[index] : nil
 
-    if let item = items.first {
+    if let item = applied == nil ? paged : answer?.item {
       Section {
-        slot(item)
-          .padding(.vertical, 4)
-      } footer: {
+        // One row whichever shows, so a pointer resting on it stays on it.
+        VStack(alignment: .leading, spacing: 8) {
+          if let answer, let applied {
+            result(answer, change: applied.change, sentence: applied.sentence)
+          } else {
+            slot(item)
+
+            if answer?.item == item, answer?.editor.latest == nil, answer?.editor.failed == true {
+              saveError
+            }
+          }
+        }
+        .padding(.vertical, 4)
+        .onHover { isHovering = $0 }
+        .task(id: applied?.change.id) {
+          if let answer, applied != nil {
+            await settle(answer)
+          }
+        }
+      } header: {
+        // Above the card, so paging to a taller or shorter one never moves it under the finger.
+        // Hidden in place while a result shows, as main's is, so the result doesn't move either.
         if items.count > 1 {
-          Text(
-            "1 of \(items.count)", tableName: "Plan",
-            comment: "The suggestion shown of the Plan's suggestions")
+          pager(index: index, count: items.count)
+            .opacity(applied == nil ? 1 : 0)
+            .allowsHitTesting(applied == nil)
+            .accessibilityHidden(applied != nil)
         }
       }
-      .disabled(state.isWorking)
+      .disabled(answer?.editor.isSaving == true)
+      .onChange(of: applied?.change.id) { _, shown in
+        // The control used leaves with the answer, so VoiceOver lands on what it did, and after
+        // Undo on what shows next.
+        if shown != nil {
+          focus = .result
+        } else if currentAnswer?.editor.latest == .undone {
+          focus = .item
+        }
+      }
     }
+  }
+
+  /// Only the session and goal that gave it see it.
+  private var currentAnswer: PlanSlotAnswer? {
+    answer.flatMap { $0.key == store.suggestionKey(goalId: context.goal.id) ? $0 : nil }
+  }
+
+  @ViewBuilder
+  private func result(
+    _ answer: PlanSlotAnswer, change: AppliedPlanChange, sentence: String
+  ) -> some View {
+    // An exam choice keeps its question, as main's does.
+    if case .choice(let choice) = answer.item {
+      header(
+        choiceTitle(choice), icon: Image(systemName: "list.bullet").foregroundStyle(.warning))
+    } else {
+      header(
+        Text("Plan updated", tableName: "Plan", comment: "Title once a plan suggestion is applied"),
+        icon: StatusMark(status: .done))
+    }
+
+    Text(sentence)
+      .font(.subheadline)
+      .accessibilityFocused($focus, equals: .result)
+
+    if change.canUndo {
+      ButtonRow {
+        Button {
+          Task {
+            await answer.editor.undo()
+            // A failed Undo gets the whole moment again, so there's time to try once more.
+            extend(answer)
+          }
+        } label: {
+          Text("Undo", tableName: "Plan", comment: "Undoes the latest plan change")
+        }
+        .accessibilityFocused($focus, equals: .undo)
+      }
+      .buttonStyle(.bordered)
+    }
+
+    if answer.editor.failed {
+      saveError
+    }
+  }
+
+  /// Clears the answer once its moment is over, later while the learner is on it or its Undo is
+  /// saving.
+  private func settle(_ shown: PlanSlotAnswer) async {
+    if shown.until == nil {
+      extend(shown)
+    }
+
+    while answer?.editor === shown.editor, let until = answer?.until {
+      do {
+        try await Task.sleep(for: .seconds(max(0, until.timeIntervalSinceNow)))
+      } catch {
+        return
+      }
+
+      if answer?.until != until {
+        continue
+      }
+
+      if focus != nil || isHovering || shown.editor.isSaving {
+        extend(shown)
+      } else {
+        answer = nil
+      }
+    }
+  }
+
+  private func extend(_ shown: PlanSlotAnswer) {
+    if answer?.editor === shown.editor {
+      answer?.until = .now.addingTimeInterval(Self.resultSeconds)
+    }
+  }
+
+  private var saveError: some View {
+    Text(
+      "That didn't save. Try again.", tableName: "Plan",
+      comment: "A plan suggestion's change or its Undo didn't save; trying again may work"
+    )
+    .font(.footnote)
+    .foregroundStyle(.destructive)
+  }
+
+  private func pager(index: Int, count: Int) -> some View {
+    HStack(spacing: 0) {
+      Spacer()
+
+      pageButton(
+        Text(
+          "Previous", tableName: "Plan",
+          comment: "Goes back to the previous of the Plan's suggestions"),
+        systemImage: "chevron.left"
+      ) {
+        move(to: index - 1, count: count)
+      }
+
+      Text(
+        "\(index + 1) of \(count)", tableName: "Plan",
+        comment: "The suggestion shown of the Plan's suggestions"
+      )
+      .font(.footnote)
+      .foregroundStyle(.secondary)
+      .monospacedDigit()
+
+      pageButton(
+        Text("Next", tableName: "Plan", comment: "Goes on to the next of the Plan's suggestions"),
+        systemImage: "chevron.right"
+      ) {
+        move(to: index + 1, count: count)
+      }
+    }
+  }
+
+  private func pageButton(
+    _ title: Text, systemImage: String, action: @escaping () -> Void
+  ) -> some View {
+    Button(action: action) {
+      Label {
+        title
+      } icon: {
+        Image(systemName: systemImage)
+          .font(.body)
+          .frame(minWidth: 44, minHeight: 44)
+          .contentShape(.rect)
+      }
+      .labelStyle(.iconOnly)
+    }
+    .buttonStyle(.borderless)
+  }
+
+  private func move(to index: Int, count: Int) {
+    store.setSuggestionState(store.suggestionKey(goalId: context.goal.id)) {
+      $0.position = (index + count) % count
+    }
+  }
+
+  /// "Beginner complete" when the claim certifies one level, else "Course complete".
+  private var completeTitle: Text {
+    let unclaimed = store.planEnd(goalId: context.goal.id).value?.certificates?.unclaimed ?? []
+
+    if let level = unclaimed.first?.courseLevel, unclaimed.count == 1 {
+      return Text(
+        "\(String(localized: level.localizedTitle)) complete", tableName: "Plan",
+        comment:
+          "A Plan suggestion's title once every lesson and challenge of a course level is done, such as \"Beginner complete\", before the plan's end"
+      )
+    }
+
+    return Text(
+      "Course complete", tableName: "Plan",
+      comment:
+        "A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead"
+    )
   }
 
   @ViewBuilder
@@ -95,12 +323,7 @@ struct PlanSuggestionSection: View {
       PlanPausedSlot(context: context)
     case .choice(let choice) where choice.take > 1:
       card(
-        title: Text(
-          "\(choice.group): which ones will you take?", tableName: "Plan",
-          comment:
-            "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several"
-        ),
-        systemImage: "list.bullet",
+        title: choiceTitle(choice), systemImage: "list.bullet",
         description: Text(choice.leftOut.line),
         options: {
           Text.examPickLimit(choice.take)
@@ -119,7 +342,7 @@ struct PlanSuggestionSection: View {
         },
         actions: {
           Button {
-            Task { await choose(draft(choice), in: choice) }
+            choose(draft(choice), in: choice, item: item)
           } label: {
             Text(
               "Save", tableName: "Plan", comment: "Saves the options picked for an exam's choice")
@@ -128,17 +351,13 @@ struct PlanSuggestionSection: View {
         })
     case .choice(let choice):
       card(
-        title: Text(
-          "\(choice.group): which one will you take?", tableName: "Plan",
-          comment:
-            "Asks which option of an exam's choice, like its foreign language, the learner takes"),
-        systemImage: "list.bullet",
+        title: choiceTitle(choice), systemImage: "list.bullet",
         description: Text(choice.leftOut.line)
       ) {
         Menu {
           ForEach(choice.options, id: \.self) { option in
             Button(option.name) {
-              Task { await choose([option.name], in: choice) }
+              choose([option.name], in: choice, item: item)
             }
           }
         } label: {
@@ -174,6 +393,17 @@ struct PlanSuggestionSection: View {
 
         notNow(item)
       }
+    case .courseComplete:
+      VStack(alignment: .leading, spacing: 8) {
+        Label {
+          completeTitle
+            .font(.headline)
+        } icon: {
+          StatusMark(status: .done)
+        }
+
+        CertificateClaimButton(context: context)
+      }
     case .finished:
       PlanFinishedSlot(context: context)
     case .tooTight:
@@ -206,8 +436,21 @@ struct PlanSuggestionSection: View {
         }
       }
     case .freeWeekOver:
-      FreeWeekOverNotice()
+      FreeWeekOverNotice(isInset: true)
     }
+  }
+
+  private func choiceTitle(_ choice: GoalPlan.ExamChoice) -> Text {
+    choice.take > 1
+      ? Text(
+        "\(choice.group): which ones will you take?", tableName: "Plan",
+        comment:
+          "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several"
+      )
+      : Text(
+        "\(choice.group): which one will you take?", tableName: "Plan",
+        comment:
+          "Asks which option of an exam's choice, like its foreign language, the learner takes")
   }
 
   private func fitTitle(_ offer: GoalPlan.FitOffer) -> Text {
@@ -232,7 +475,7 @@ struct PlanSuggestionSection: View {
       ) {
         if offer.canApply {
           Button {
-            Task { await applyOffer(offer) }
+            applyOffer(offer, item: item)
           } label: {
             Text("Apply", tableName: "Plan", comment: "Applies a plan offer")
           }
@@ -249,12 +492,7 @@ struct PlanSuggestionSection: View {
     @ViewBuilder actions: () -> some View
   ) -> some View {
     VStack(alignment: .leading, spacing: 8) {
-      Label {
-        title.font(.headline)
-      } icon: {
-        Image(systemName: systemImage)
-          .foregroundStyle(.warning)
-      }
+      header(title, icon: Image(systemName: systemImage).foregroundStyle(.warning))
 
       if let description {
         description
@@ -271,6 +509,15 @@ struct PlanSuggestionSection: View {
       }
       .buttonStyle(.bordered)
     }
+  }
+
+  private func header(_ title: Text, icon: some View) -> some View {
+    Label {
+      title.font(.headline)
+    } icon: {
+      icon
+    }
+    .accessibilityFocused($focus, equals: .item)
   }
 
   /// Main's `useTopicsMovedSentence`, naming two topics.
@@ -317,35 +564,46 @@ struct PlanSuggestionSection: View {
     store.suggestionState(goalId: context.goal.id).choiceDrafts[choice.group] ?? []
   }
 
-  private func choose(_ subjects: [String], in choice: GoalPlan.ExamChoice) async {
-    let key = store.suggestionKey(goalId: context.goal.id)
-    store.setSuggestionState(key) { $0.isWorking = true }
-    defer { store.setSuggestionState(key) { $0.isWorking = false } }
-
-    if await planEditor.chooseExamOptions(subjects, in: choice.group) {
-      store.setSuggestionState(key) { $0.choiceDrafts[choice.group] = nil }
+  private func choose(_ subjects: [String], in choice: GoalPlan.ExamChoice, item: PlanSlotItem) {
+    apply(item) { editor in
+      await editor.chooseExamOptions(subjects, in: choice.group)
+    } saved: {
+      $0.choiceDrafts[choice.group] = nil
     }
   }
 
-  private func applyOffer(_ offer: GoalPlan.FitOffer) async {
-    let key = store.suggestionKey(goalId: context.goal.id)
-    store.setSuggestionState(key) { $0.isWorking = true }
-    defer { store.setSuggestionState(key) { $0.isWorking = false } }
-
-    await planEditor.change(
-      offer.operations.map { .operation($0) },
-      sentence: String(
-        localized: "Your plan is updated.", table: "Plan", comment: "An offer applied"))
+  /// Main words the change from its one operation, `fitLessons`.
+  private func applyOffer(_ offer: GoalPlan.FitOffer, item: PlanSlotItem) {
+    apply(item) { editor in
+      await editor.change(
+        offer.operations.map { .operation($0) },
+        sentence: String(
+          localized: "The lessons your time fits come into your plan.", table: "Plan",
+          comment: "Says a plan change brought in the lessons the learner's study time fits"))
+    }
   }
 
-  private var planEditor: PlanEditor {
-    PlanEditor(goalId: context.goal.id, store: store)
+  /// A new editor for each answer, so the last answer's result never shows as this one's.
+  private func apply(
+    _ item: PlanSlotItem, _ write: @escaping (PlanEditor) async -> Bool,
+    saved: @escaping (inout PlanStore.SuggestionState) -> Void = { _ in }
+  ) {
+    let key = store.suggestionKey(goalId: context.goal.id)
+    let editor = PlanEditor(goalId: context.goal.id, store: store)
+    answer = PlanSlotAnswer(key: key, item: item, editor: editor)
+
+    Task {
+      if await write(editor) {
+        store.setSuggestionState(key, saved)
+      }
+    }
   }
 }
 
 private struct PlanPausedSlot: View {
   @Environment(PlanStore.self) private var store
   @State private var isResuming = false
+  @State private var failure: GoalStatusOutcome?
 
   let context: PlanContext
 
@@ -379,18 +637,137 @@ private struct PlanPausedSlot: View {
       .foregroundStyle(.secondary)
 
       Button {
-        Task {
-          isResuming = true
-          _ = await store.setStatus(.active, goalId: context.goal.id)
-          isResuming = false
-        }
+        Task { await resume() }
       } label: {
         Text("Resume", tableName: "Plan", comment: "Resumes the paused goal")
       }
       .buttonStyle(.bordered)
       .disabled(isResuming)
+
+      switch failure {
+      case .limitReached:
+        FailureLine(
+          message: LocalizedStringResource(
+            "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
+            table: "Plan", comment: "Explains why resuming a goal failed on the free plan")
+        )
+        .font(.footnote)
+      case .failed:
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't save. Try again.", table: "Plan",
+            comment: "Resuming the paused goal didn't save")
+        )
+        .font(.footnote)
+      case .saved, nil:
+        EmptyView()
+      }
     }
     .loads(preview, refreshable: false)
+  }
+
+  private func resume() async {
+    isResuming = true
+    failure = nil
+
+    switch await store.setStatus(.active, goalId: context.goal.id) {
+    case .done(.saved), .obsolete:
+      break
+    case .done(let refused):
+      failure = refused
+    case .failed:
+      failure = .failed
+    }
+
+    isResuming = false
+  }
+}
+
+/// Writes the certificates of the plan's finished levels or plan; the Plan plays their moment.
+private struct CertificateClaimButton: View {
+  @State private var isClaiming = false
+  @State private var failed = false
+
+  let context: PlanContext
+
+  var body: some View {
+    let failure = String(
+      localized: "That didn't save. Try again.", table: "Plan",
+      comment: "The plan's certificate couldn't be written; Get your certificate tries again")
+
+    Button {
+      Task {
+        isClaiming = true
+        failed = !(await context.claimCertificate())
+        isClaiming = false
+
+        if failed {
+          AccessibilityNotification.Announcement(failure).post()
+        }
+      }
+    } label: {
+      Label {
+        Text(
+          "Get your certificate", tableName: "Plan",
+          comment: "Writes the certificate of the plan's finished course or level and shows it")
+      } icon: {
+        Image(systemName: "rosette")
+      }
+    }
+    .buttonStyle(.mainAction)
+    .disabled(isClaiming)
+
+    if failed {
+      Text(failure)
+        .font(.subheadline)
+        .foregroundStyle(.destructive)
+    }
+  }
+}
+
+/// One certificate opens; several open Certificates.
+private struct PlanCertificatesButton: View {
+  @Environment(AppRouter.self) private var router
+
+  let context: PlanContext
+  let earned: [PlanEnd.Certificates.Earned]
+
+  var body: some View {
+    if let only = earned.first, earned.count == 1 {
+      Button {
+        context.show(.certificate(code: only.code))
+      } label: {
+        label(
+          Text(
+            "View certificate", tableName: "Plan",
+            comment: "Opens the certificate of the finished plan's course or level"))
+      }
+      .buttonStyle(.bordered)
+    } else if !earned.isEmpty {
+      Button {
+        router.present(.account(.certificates))
+      } label: {
+        label(
+          Text(
+            "View certificates", tableName: "Plan",
+            comment: "Opens the learner's certificates, from a plan that earned several"))
+      }
+      .buttonStyle(.bordered)
+    }
+  }
+
+  private func label(_ title: Text) -> some View {
+    HStack {
+      Label {
+        title
+      } icon: {
+        Image(systemName: "rosette")
+      }
+
+      if earned.contains(where: \.locked) {
+        PlusMark()
+      }
+    }
   }
 }
 
@@ -403,7 +780,7 @@ private struct PlanFinishedSlot: View {
   let context: PlanContext
 
   var body: some View {
-    let next = store.studyNext(goalId: context.goal.id)
+    let end = store.planEnd(goalId: context.goal.id)
 
     VStack(alignment: .leading, spacing: 8) {
       Label {
@@ -413,7 +790,15 @@ private struct PlanFinishedSlot: View {
         StatusMark(status: .done)
       }
 
-      if let value = next.value, value.nextLevel != nil || !value.related.isEmpty {
+      if let certificates = end.value?.certificates {
+        if certificates.unclaimed.isEmpty {
+          PlanCertificatesButton(context: context, earned: certificates.earned)
+        } else {
+          CertificateClaimButton(context: context)
+        }
+      }
+
+      if let value = end.value?.next, value.nextLevel != nil || !value.related.isEmpty {
         Text(
           "Here's what to study next.", tableName: "Plan", comment: "Leads to what to study next"
         )
@@ -444,15 +829,15 @@ private struct PlanFinishedSlot: View {
       }
 
       if failed {
-        Text(
-          "That didn't work. Try again in a moment.", tableName: "Plan",
-          comment: "Says the next level didn't start"
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't work. Try again in a moment.", table: "Plan",
+            comment: "Says the next level didn't start")
         )
         .font(.subheadline)
-        .foregroundStyle(.destructive)
       }
     }
-    .loads(next, refreshable: false)
+    .loads(end, refreshable: false)
   }
 
   private func continueAtNextLevel() async {
@@ -472,19 +857,5 @@ func planLevelName(_ level: String) -> String {
   case "beginner": String(localized: "Beginner", table: "Plan", comment: "A course level")
   case "intermediate": String(localized: "Intermediate", table: "Plan", comment: "A course level")
   default: String(localized: "Advanced", table: "Plan", comment: "A course level")
-  }
-}
-
-/// A free exam plan's first week ended, on the Plan and Today.
-struct FreeWeekOverNotice: View {
-  var body: some View {
-    PlusNotice(
-      title: Text(
-        "Your free week of exam prep is over", tableName: "Plan",
-        comment: "Title of the Plan's notice when a free exam plan's first week ended"),
-      description: Text(
-        "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.",
-        tableName: "Plan", comment: "What stays free and what Plus opens after the free week"),
-      isInset: true)
   }
 }

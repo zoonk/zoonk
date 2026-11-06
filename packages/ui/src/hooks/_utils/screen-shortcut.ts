@@ -61,13 +61,23 @@ function isKeptByField(event: KeyboardEvent): boolean {
   return !(event.key === "Enter" && isEnterFree(target));
 }
 
-/** A radio stops Enter from toggling it, yet Enter on a picked answer still goes on, as in a form. */
+/**
+ * A radio stops Enter from toggling it, yet Enter on a picked answer still goes on, as in a form. A
+ * button that keeps focus while it waits (`focusableWhenDisabled`) stops every key but Tab without
+ * handling any, so Escape still leaves the screen.
+ */
 function isHandledByControl(event: KeyboardEvent): boolean {
   if (!event.defaultPrevented) {
     return false;
   }
 
-  const isRadio = event.target instanceof Element && event.target.closest("[role='radio']");
+  const target = event.target instanceof Element ? event.target : null;
+
+  if (target?.matches("button[aria-disabled='true']")) {
+    return false;
+  }
+
+  const isRadio = target?.closest("[role='radio']");
   return !(event.key === "Enter" && isRadio);
 }
 

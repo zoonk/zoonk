@@ -39,7 +39,7 @@
     <string name="account_setup_title">What should we call you?</string>
     <string name="account_setup_description">You can change it later in your profile.</string>
     <string name="account_name">Name</string>
-    <string name="account_name_description">How Zoonk and your buddy call you</string>
+    <string name="account_name_description">How Zoonk and your buddy call you, and the name on your certificates.</string>
     <string name="account_name_too_long">Use 150 characters or fewer.</string>
     <string name="account_username">Username</string>
     <!-- %1$s is a username. -->
