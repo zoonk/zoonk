@@ -23,12 +23,12 @@ struct MemoryInsightCard: View {
         }
 
         if failed {
-          Text(
-            "We couldn't save your answer. Try again.", tableName: "Buddy",
-            comment: "Answering an insight failed"
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't save your answer. Try again.", table: "Buddy",
+              comment: "Answering an insight failed")
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)

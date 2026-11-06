@@ -105,7 +105,7 @@
   "onboarding_language_test_play": "a5f557ba5a236ddae87c6e709ff753830d7c362ae7bd6eb1e216d149f86a7a59",
   "onboarding_language_test_play_again": "cab320e380d9f1ea91eda59247d91b8c831c905f4810cf15368df218af53e23e",
   "onboarding_language_test_preparing_description": "007d53574a12f5be0ead492f5e1cdf90916880d0104516f846a71e6a88227139",
-  "onboarding_language_test_preparing_title": "b217e897c5e66b54c6a645d1570dc4a23ecbb3d461ecef14b03ca5a3d1876240",
+  "onboarding_language_test_preparing_title": "2f230c19dedb46084ffc7695a5531e878bc3eb67c9cf26d1c788d9fe66b5ba10",
   "onboarding_language_test_reading": "7d5c4d036fd25eac8ec7a96ff29c8e9137edd163bba985fd899a3d0b5a7efc6b",
   "onboarding_language_test_say_it": "f003a1125f16219cfbb5fa4930597deebc1c910a5340920f14fde3137f5bba41",
   "onboarding_language_test_skip": "77e6bfa2f2e93bc983fd543c2f3dc938c08480d25f071c2c8c6bcef8e5f4c997",
@@ -690,7 +690,7 @@
     <string name="onboarding_language_test_skip">Testi atla</string>
     <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
     <string name="onboarding_language_test_use_app_in">Uygulamayı %1$s dilinde kullan</string>
-    <string name="onboarding_language_test_preparing_title">Seviye testini hazırlıyoruz</string>
+    <string name="onboarding_language_test_preparing_title">Seviye tespit testini hazırlıyoruz</string>
     <!-- %1$s is the name of the language the learner is learning, such as "Italian". -->
     <string name="onboarding_language_test_preparing_description">%1$s testi senin dilinde yeni olduğu için sorularını şimdi hazırlıyoruz. Genellikle bir iki dakika sürer ve yalnızca bu sefer beklemen gerekir.</string>
     <string name="onboarding_language_test_skip_note">Planın belirttiğin seviyeden başlar ve ilk çalışmalarına göre ayarlanır.</string>

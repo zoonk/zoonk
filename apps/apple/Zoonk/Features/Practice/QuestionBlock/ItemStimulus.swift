@@ -374,9 +374,12 @@ private struct ListeningPlayerView: View {
       }
 
       if recordings.failed.contains(playsKey) {
-        Text(recordingFailed)
-          .font(.footnote)
-          .foregroundStyle(.destructive)
+        FailureLine(
+          message: LocalizedStringResource(
+            "The recording didn't load. Check your connection and try again.",
+            table: "Practice", comment: "Shown when a set's recording fails to load.")
+        )
+        .font(.footnote)
       }
 
       if let questions, !questions.prompts.isEmpty {
@@ -456,19 +459,10 @@ private struct ListeningPlayerView: View {
       set: { recordings.panels[playsKey, default: .init()].transcript = $0 })
   }
 
-  private var recordingFailed: String {
-    String(
-      localized: "The recording didn't load. Check your connection and try again.",
-      table: "Practice", comment: "Shown when a set's recording fails to load.")
-  }
-
-  /// Silent while an exam recording plays: speech over it would cover what the learner must hear.
+  /// Silent while an exam recording plays, since speech over it would cover what the learner must
+  /// hear, and while its failure line says the recording didn't load.
   private func announcement(answered: Bool, playsLeft: Int, isPlaying: Bool) -> String? {
-    if recordings.failed.contains(playsKey) {
-      return recordingFailed
-    }
-
-    if isPlaying, !answered {
+    if recordings.failed.contains(playsKey) || (isPlaying && !answered) {
       return nil
     }
 

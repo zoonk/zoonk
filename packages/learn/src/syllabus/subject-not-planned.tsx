@@ -32,6 +32,7 @@ function RestoreButton({
     <div className="flex flex-col items-start gap-1.5">
       <Button
         disabled={isPending}
+        focusableWhenDisabled
         onClick={() =>
           startTransition(async () => {
             setFailed(!(await restore(areas)));

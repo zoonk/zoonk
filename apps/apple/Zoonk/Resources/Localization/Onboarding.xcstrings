@@ -15250,7 +15250,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seviye testini hazırlıyoruz"
+            "value" : "Seviye tespit testini hazırlıyoruz"
           }
         }
       }
@@ -25917,7 +25917,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seviye testi sorularını hazırlıyoruz"
+            "value" : "Seviye tespit testi sorularını hazırlıyoruz"
           }
         }
       }

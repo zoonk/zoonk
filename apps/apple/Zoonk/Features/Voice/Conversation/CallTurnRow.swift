@@ -4,11 +4,12 @@ import SwiftUI
 struct CallTurnRow: View {
   let call: LiveCall
   let conversation: LanguageConversation
+  @ScaledMetric(relativeTo: .body) private var markSize = 36.0
 
   var body: some View {
     HStack(spacing: 12) {
       mark
-        .frame(width: 36, height: 36)
+        .frame(width: markSize, height: markSize)
         .accessibilityHidden(true)
 
       VStack(alignment: .leading, spacing: 2) {

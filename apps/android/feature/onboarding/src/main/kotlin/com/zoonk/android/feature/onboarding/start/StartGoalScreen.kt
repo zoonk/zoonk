@@ -38,7 +38,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -48,7 +47,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -76,6 +74,7 @@ import com.zoonk.android.ui.components.GoalExamples
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.rememberGoalExamples
+import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -117,7 +116,7 @@ fun StartGoalScreen(
     LaunchedEffect(sessionKey) { vm.followSession(sessionKey) }
     val caps by allowance.collectShown()
     val upFront = caps.value?.goalStartLimit()
-    val language = appLanguage()
+    val language = currentLocale().language
     val screen = vm.flow.screen
     val actions =
         StartActions(
@@ -572,10 +571,4 @@ private fun HowItWorks(hasAccount: Boolean) {
     }
 }
 
-/** The language the app shows, which reads the learner's words and writes their titles. */
-@Composable
-internal fun appLanguage(): String =
-    ConfigurationCompat.getLocales(LocalConfiguration.current).getFirstMatch(APP_LANGUAGES)?.language ?: "en"
-
-private val APP_LANGUAGES = arrayOf("en", "de", "es", "fr", "it", "ja", "ko", "pl", "pt", "tr")
 private const val MAX_QUESTION_LENGTH = 500

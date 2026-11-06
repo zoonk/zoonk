@@ -43,9 +43,15 @@ export async function loadPlanLessons({
 }: {
   items: readonly LearnItem[];
 }): Promise<PlannedLesson[]> {
+  const lessonIds = items.flatMap((item) => item.lessonId ?? []);
+
+  if (lessonIds.length === 0) {
+    return [];
+  }
+
   const lessons = await prisma.lesson.findMany({
     include: LESSON_INCLUDE,
-    where: { id: { in: items.flatMap((item) => item.lessonId ?? []) }, setAsideAt: null },
+    where: { id: { in: lessonIds }, setAsideAt: null },
   });
 
   return items.flatMap((item) => {

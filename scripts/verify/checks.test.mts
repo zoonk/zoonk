@@ -4,7 +4,6 @@ import {
   type LoadMeasurement,
   cumulativeLayoutShift,
   judgeLoad,
-  markBusy,
   totalBlockingTime,
 } from "./checks.mts";
 import {
@@ -14,7 +13,7 @@ import {
   pathOf,
   redactQuery,
 } from "./requests.mts";
-import { parseCpuTime } from "./server-process.mts";
+import { parseCpuTime, parseListeningPid } from "./server-process.mts";
 
 const PAGE = "http://localhost:3000";
 const STEADY_GAP_MS = 800;
@@ -201,29 +200,6 @@ describe("judging a page load", () => {
   });
 });
 
-describe("judging on a busy machine", () => {
-  it("keeps timing to look at, marked inconclusive, and everything else as it was", () => {
-    const findings = markBusy([
-      { check: "content", level: "fail", message: "over 2500 ms", unit: "ms", value: 3000 },
-      { check: "navigation", level: "fail", message: "the tap didn't reach the page" },
-      {
-        check: "blank frame",
-        level: "fail",
-        message: "the viewport was blank",
-        unit: "ms",
-        value: 40,
-      },
-    ]);
-
-    assert.deepEqual(
-      findings.map((finding) => `${finding.level} ${finding.check}`),
-      ["warn content", "fail navigation", "fail blank frame"],
-    );
-
-    assert.match(findings[0]?.message ?? "", /inconclusive: the machine was busy/u);
-  });
-});
-
 describe("main-thread blocking and cut-off text", () => {
   it("counts each long task's time past 50 ms, from the first paint", () => {
     const tasks = [
@@ -283,5 +259,13 @@ describe("server CPU time", () => {
     { ms: 3_723_000, text: "01:02:03" },
   ])("reads $text as $ms ms", ({ ms, text }) => {
     assert.equal(parseCpuTime(text), ms);
+  });
+
+  it("finds the server listening on a port in ss's listing, and none when nothing listens", () => {
+    const pid = 4297;
+    const listing = `LISTEN 0 511 *:4246 *:* users:(("next-server (v1",pid=${pid},fd=21))`;
+
+    assert.equal(parseListeningPid(listing), pid);
+    assert.equal(parseListeningPid(""), null);
   });
 });

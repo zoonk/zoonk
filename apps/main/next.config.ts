@@ -65,6 +65,10 @@ const nextConfig: NextConfig = {
     ],
   },
   logging: { browserToTerminal: true },
+  // fontconfig finds the shaping fonts through fonts.conf, which no import reaches.
+  outputFileTracingIncludes: {
+    "/\\[lang\\]/c/\\[code\\]/image/\\[variant\\]": ["./src/lib/certificates/fonts/**/*"],
+  },
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   partialPrefetching: true,
   reactCompiler: true,

@@ -1,11 +1,9 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { finishExplanations } from "./_utils/finish-explanations";
 import { updateGoal } from "./update-goal";
 
 async function setup() {
@@ -89,73 +87,6 @@ describe("goal metadata plan marks", () => {
       updateGoal({ goalId: fixture.goal.id, input: { title: "Someone else's change" } }),
     ).resolves.toStrictEqual({ status: "notFound" });
 
-    await expect(versions(fixture)).resolves.toStrictEqual(before);
-  });
-});
-
-describe("explanation completion plan marks", () => {
-  it("marks once with the completed explanations and active-profile move, retaining another learner's goal", async () => {
-    const fixture = await setup();
-
-    const [lesson, foreignUser, explanation] = await Promise.all([
-      libraryLessonFixture(),
-      userFixture(),
-      goalFixture({ kind: "explain", userId: fixture.user.id }),
-    ]);
-
-    const foreign = await goalFixture({ kind: "explain", userId: foreignUser.id });
-
-    const [ownPlan, foreignPlan] = await Promise.all([
-      planFixture({ goalId: explanation.id }),
-      planFixture({ goalId: foreign.id }),
-    ]);
-
-    await Promise.all([
-      planItemFixture({ kind: "lesson", lessonId: lesson.id, planId: ownPlan.id }),
-      planItemFixture({ kind: "lesson", lessonId: lesson.id, planId: foreignPlan.id }),
-      prisma.userLearningProfile.update({
-        data: { activeGoalId: explanation.id },
-        where: { userId: fixture.user.id },
-      }),
-    ]);
-
-    const before = await versions(fixture);
-    const foreignBefore = await prisma.user.findUniqueOrThrow({ where: { id: foreignUser.id } });
-
-    await Promise.all(
-      Array.from({ length: 3 }, () =>
-        finishExplanations({ lessonId: lesson.id, userId: fixture.user.id }),
-      ),
-    );
-
-    await expect(
-      prisma.goal.findUniqueOrThrow({ where: { id: explanation.id } }),
-    ).resolves.toMatchObject({ status: "completed" });
-
-    await expect(activeGoal(fixture.user.id)).resolves.toBe(fixture.goal.id);
-
-    await expect(versions(fixture)).resolves.toStrictEqual({
-      inputVersion: before.inputVersion + 1,
-    });
-
-    await expect(
-      prisma.goal.findUniqueOrThrow({ where: { id: foreign.id } }),
-    ).resolves.toMatchObject({ status: "active" });
-
-    await expect(
-      prisma.user.findUniqueOrThrow({ where: { id: foreignUser.id } }),
-    ).resolves.toStrictEqual(foreignBefore);
-
-    await expect(
-      prisma.plan.findUniqueOrThrow({ where: { id: foreignPlan.id } }),
-    ).resolves.toMatchObject({ inputVersion: foreignPlan.inputVersion });
-  });
-
-  it("does not mark a lesson that completes no active explanation", async () => {
-    const fixture = await setup();
-    const lesson = await libraryLessonFixture();
-    const before = await versions(fixture);
-    await finishExplanations({ lessonId: lesson.id, userId: fixture.user.id });
     await expect(versions(fixture)).resolves.toStrictEqual(before);
   });
 });

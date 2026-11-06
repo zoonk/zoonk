@@ -28,6 +28,7 @@ struct TodayDayView: View {
     case catchUp
     case keepLearning
     case main
+    case mission(Int)
     case planChange
     case prepare
   }
@@ -56,7 +57,9 @@ struct TodayDayView: View {
     .announcesStatus(TodayDayStatus(view: view, writingStalled: writingStalled)?.announcement)
     .onAppear(perform: startVisit)
     .onChange(of: isCovered) {
-      if !isCovered {
+      if isCovered {
+        tapTask?.cancel()
+      } else {
         startVisit()
       }
     }
@@ -96,13 +99,15 @@ struct TodayDayView: View {
     }
 
     if !view.upNextLessons.isEmpty {
-      TodayUpNextSection(view: view, isBusy: busy == .keepLearning) {
+      TodayUpNextSection(
+        view: view, isBusy: busy == .keepLearning, failed: failed == .keepLearning
+      ) {
         run(.keepLearning) { await store.addExtraTime(in: view) }
       }
     }
 
     TodayMoreSection(
-      view: view, busy: busy,
+      view: view, busy: busy, failed: failed,
       addTime: { run(.keepLearning) { await store.addExtraTime(in: view) } },
       catchUp: {
         perform(.catchUp) { await store.catchUp(in: view) }
@@ -170,7 +175,7 @@ struct TodayDayView: View {
       }
     case .examAccess:
       Section {
-        FreeWeekOverNotice()
+        FreeWeekOverNotice(isInset: true)
       }
     case .examChoice:
       TodayExamChoiceSection(
@@ -196,7 +201,7 @@ struct TodayDayView: View {
   @ViewBuilder
   private var aside: some View {
     if !view.session.missions.isEmpty {
-      TodayMissionsSection(view: view, open: openMission)
+      TodayMissionsSection(view: view, busy: busy, failed: failed, open: openMission)
     }
 
     TodayWeekSection(view: view)
@@ -250,13 +255,13 @@ struct TodayDayView: View {
   }
 
   private func openMission(_ block: StudyBlock) {
-    run(.block(block.position)) {
+    run(.mission(block.position)) {
       await store.open(block, as: .mission, in: view)
     }
   }
 
-  /// A tap whose screen went (another day, another tab) or whose learner left is cancelled and opens
-  /// nothing.
+  /// A tap whose screen went (another day, another tab, a task over it) or whose learner left is
+  /// cancelled: it opens nothing and says nothing.
   private func run(_ tap: Tap, _ action: @escaping () async -> MutationResult<StudyDestination>) {
     guard busy == nil else {
       return
@@ -364,28 +369,22 @@ struct TodayDayView: View {
 }
 
 extension AppRouter {
-  /// A mission's block no longer free to start shows Today as it stands. Nothing opens when it
-  /// couldn't, or once the learner moved on.
+  /// Nothing opens when it couldn't, or once the learner moved on, which comes back `obsolete` so
+  /// nothing says it failed.
   static func openingTodayBlocks(today: TodayStore) -> BlockOpener {
     { blockID, router in
       let shown = router.shown
+      let result = await today.open(blockID: blockID)
 
-      Task {
-        let result = await today.open(blockID: blockID)
-
-        guard shown == router.shown else {
-          return
-        }
-
-        switch result {
-        case .done(.changed):
-          router.showRoot(of: .today)
-        case .done(let destination):
-          router.openStudy(destination)
-        case .failed, .obsolete:
-          break
-        }
+      guard shown == router.shown else {
+        return .obsolete
       }
+
+      if case .done(let destination) = result {
+        router.openStudy(destination)
+      }
+
+      return result
     }
   }
 

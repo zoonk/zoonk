@@ -7817,65 +7817,6 @@
         }
       }
     },
-    "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams." : {
-      "comment" : "A free exam plan past its first week",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wiederholungen und das Korrigieren deiner Fehler bleiben kostenlos. Mit Plus erhältst du Zugang zu neuen Lektionen, dem Rest deines Plans und Probeprüfungen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Los repasos y la corrección de tus errores siguen siendo gratis. Plus te da acceso a nuevas lecciones, al resto de tu plan y a los simulacros."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les révisions et la correction de tes erreurs restent gratuites. Plus donne accès à de nouvelles leçons, au reste de ton plan et aux examens blancs."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puoi sempre ripassare e correggere i tuoi errori gratis. Plus sblocca nuove lezioni, il resto del tuo piano e le simulazioni."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "復習と間違えた問題のやり直しは、引き続き無料です。Plusでは新しいレッスンや学習計画の続き、模試に取り組めます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "복습과 오답 고치기는 계속 무료예요. Plus를 구독하면 새 레슨, 계획의 나머지 부분, 모의고사를 이용할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Powtórki i poprawianie błędów nadal są bezpłatne. Plus daje dostęp do nowych lekcji, dalszej części planu i egzaminów próbnych."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As revisões e a correção dos seus erros continuam grátis. O Plus libera novas aulas, o resto do seu plano e simulados."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tekrar yapmak ve yanlışlarını düzeltmek ücretsiz kalır. Plus ile yeni derslere, planının kalanına ve deneme sınavlarına erişebilirsin."
-          }
-        }
-      }
-    },
     "Right" : {
       "comment" : "Label under the lesson's score",
       "localizations" : {
@@ -13241,65 +13182,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Senin örneğin: %@"
-          }
-        }
-      }
-    },
-    "Your free week of exam prep is over" : {
-      "comment" : "A free exam plan past its first week",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine kostenlose Woche Prüfungsvorbereitung ist vorbei"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminó tu semana gratis de preparación para el examen"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta semaine gratuite de préparation à l’examen est terminée"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua settimana gratuita di preparazione all’esame è finita"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "試験対策の無料期間（1週間）が終了しました"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시험 준비 일주일 무료 체험이 끝났어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój bezpłatny tydzień przygotowań do egzaminu dobiegł końca"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua semana grátis de preparo para a prova acabou"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz sınava hazırlık haftan bitti"
           }
         }
       }

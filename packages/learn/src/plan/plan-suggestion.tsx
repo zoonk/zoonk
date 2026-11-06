@@ -16,6 +16,7 @@ import {
   SuggestionOpen,
   SuggestionSummary,
 } from "../_components/suggestion";
+import { CourseCompleteSuggestion } from "../journey/course-certificate";
 import { GoalPausedSuggestion } from "../journey/goal-actions";
 import { StudyNextSuggestion } from "../journey/study-next";
 import { useLearnRoutes } from "../learn-context";
@@ -65,8 +66,10 @@ function usePlanSuggestions(host: PlanSuggestionHost): SlotItem[] {
   const timeItems = useTimeItems();
   const status = plan.status?.kind;
   const finished = host.next !== null;
+  const claimable = Boolean(host.certificates?.unclaimed.length);
 
   const items: (SlotItem | false)[] = [
+    !finished && claimable && { key: "courseComplete", kind: "courseComplete" },
     host.goalStatus?.status === "paused" && { key: "paused", kind: "paused" },
     ...plan.examChoices
       .filter((choice) => choice.subjects.length === 0)
@@ -230,10 +233,27 @@ function SlotSuggestion({ item }: { item: SlotItem }) {
       return <PaceSuggestion item={item} />;
     case "choice":
       return <ExamChoiceSuggestion item={item} />;
+    case "courseComplete":
+      return (
+        host.certificates && (
+          <CourseCompleteSuggestion
+            onClaim={host.certificates.onClaim}
+            unclaimed={host.certificates.unclaimed}
+          />
+        )
+      );
     case "coverage":
       return <CoverageSuggestion coverage={coverage} />;
     case "finished":
-      return host.next && <StudyNextSuggestion courseHref={host.courseHref} next={host.next} />;
+      return (
+        host.next && (
+          <StudyNextSuggestion
+            certificates={host.certificates}
+            courseHref={host.courseHref}
+            next={host.next}
+          />
+        )
+      );
     case "fitLessons":
       return <FitLessonsSuggestion item={item} />;
     case "freeWeekOver":

@@ -57,15 +57,20 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
   );
 }
 
+/**
+ * Base UI draws no backdrop for a dialog opened inside another one; `overNested` draws it anyway,
+ * for a dialog over a full-screen dialog that has no backdrop of its own.
+ */
 function DialogContent({
   className,
   children,
   closeLabel,
+  overNested,
   ...props
-}: DialogPrimitive.Popup.Props & { closeLabel?: string }) {
+}: DialogPrimitive.Popup.Props & { closeLabel?: string; overNested?: boolean }) {
   return (
     <DialogPortal>
-      <DialogOverlay />
+      <DialogOverlay forceRender={overNested} />
       <DialogPrimitive.Popup
         className={cn(
           "data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 bg-background ring-foreground/10 data-closed:animate-out data-open:animate-in fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-6 rounded-xl p-6 text-sm ring-1 duration-100 outline-none sm:max-w-md",

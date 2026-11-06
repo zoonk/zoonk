@@ -237,12 +237,9 @@ private struct FeedbackForm: View {
 
       if case .failed(let failure) = store.state {
         Section {
-          Label {
-            Text(failureMessage(failure))
-          } icon: {
-            Image(systemName: "exclamationmark.triangle")
-          }
-          .foregroundStyle(.destructive)
+          FailureLine(
+            message: failureMessage(failure), systemImage: "exclamationmark.triangle"
+          )
           .accessibilityAddTraits(.isStaticText)
         }
       }

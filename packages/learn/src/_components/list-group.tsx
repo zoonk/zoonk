@@ -83,16 +83,24 @@ export function ListRowLink({
   );
 }
 
+/**
+ * `disabled` keeps the row in focus, as Button's `focusableWhenDisabled` does, so a row waiting on
+ * its press doesn't drop keyboard focus to the page.
+ */
 export function ListRowButton({
   children,
   className,
   chevron = true,
+  disabled = false,
+  onClick,
   ...props
 }: React.ComponentProps<"button"> & { chevron?: boolean }) {
   return (
     <button
-      className={cn(LIST_ROW_INTERACTIVE_CLASS, className)}
+      aria-disabled={disabled || undefined}
+      className={cn(LIST_ROW_INTERACTIVE_CLASS, "aria-disabled:pointer-events-none", className)}
       data-slot="list-row"
+      onClick={disabled ? undefined : onClick}
       type="button"
       {...props}
     >

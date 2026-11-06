@@ -236,8 +236,7 @@ struct MaterialAttachControls<Label: View>: View {
     }
 
     if let error {
-      Text(error)
-        .foregroundStyle(.destructive)
+      FailureLine(message: error)
     }
   }
 
@@ -429,8 +428,7 @@ struct MaterialQuestionsView: View {
               .foregroundStyle(.secondary)
             }
           case .failure(let error):
-            Text(Self.message(for: error))
-              .foregroundStyle(.destructive)
+            FailureLine(message: Self.message(for: error))
           }
         }
       }
@@ -443,7 +441,7 @@ struct MaterialQuestionsView: View {
         .foregroundStyle(.secondary)
       }
     }
-    .announcesStatus(isAsking ? Self.reading : turns.last.map(Self.spoken))
+    .announcesStatus(isAsking ? Self.reading : turns.last.flatMap(Self.spoken))
     .safeAreaInset(edge: .bottom) {
       HStack(alignment: .bottom, spacing: 8) {
         MultilineTextField(
@@ -498,10 +496,11 @@ struct MaterialQuestionsView: View {
       comment: "While a question about the learner's material is answered")
   }
 
-  private static func spoken(_ turn: Turn) -> String {
+  /// A failed answer is a `FailureLine`, which reads itself out.
+  private static func spoken(_ turn: Turn) -> String? {
     switch turn.answer {
     case .success(let answer): answer.answer
-    case .failure(let error): String(localized: message(for: error))
+    case .failure: nil
     }
   }
 

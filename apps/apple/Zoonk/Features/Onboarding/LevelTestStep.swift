@@ -86,11 +86,10 @@ struct LevelTestStep: View {
   @ViewBuilder private var skipSection: some View {
     if failed {
       Section {
-        Text(
-          "That didn't work. Try again in a moment.", tableName: "Onboarding",
-          comment: "Starting or skipping the level test failed"
-        )
-        .foregroundStyle(.destructive)
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't work. Try again in a moment.", table: "Onboarding",
+            comment: "Starting or skipping the level test failed"))
       }
     }
 
@@ -375,11 +374,10 @@ private struct LevelTestIntro: View {
 
       if failed {
         Section {
-          Text(
-            "That didn't work. Try again in a moment.", tableName: "Onboarding",
-            comment: "Starting or skipping the level test failed"
-          )
-          .foregroundStyle(.destructive)
+          FailureLine(
+            message: LocalizedStringResource(
+              "That didn't work. Try again in a moment.", table: "Onboarding",
+              comment: "Starting or skipping the level test failed"))
         }
       }
 
@@ -663,11 +661,10 @@ private struct LevelTestDone: View {
 
       if failed {
         Section {
-          Text(
-            "That didn't work. Try again in a moment.", tableName: "Onboarding",
-            comment: "Starting or skipping the level test failed"
-          )
-          .foregroundStyle(.destructive)
+          FailureLine(
+            message: LocalizedStringResource(
+              "That didn't work. Try again in a moment.", table: "Onboarding",
+              comment: "Starting or skipping the level test failed"))
         }
       }
 

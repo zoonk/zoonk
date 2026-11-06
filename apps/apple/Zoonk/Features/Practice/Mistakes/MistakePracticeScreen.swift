@@ -62,6 +62,8 @@ struct MistakePracticeScreen: View {
       PracticeDoneView(summary: summary, fixed: state.fixedIds.count, reached: state.reached) {
         dismiss()
       }
+      .completionMoments(
+        certificates: summary?.certificates ?? [], ceremony: summary?.ceremony?.value1)
     default:
       if let step = state.step {
         PracticeTaskLayout(segments: state.segments, index: state.index) {
@@ -378,36 +380,29 @@ private struct PracticeDoneView: View {
   let fixed: Int
   let reached: PracticeReached
   let close: () -> Void
-  @Environment(\.practiceHooks) private var hooks
-  @State private var ceremonyClosed = false
 
   var body: some View {
-    if let milestone = summary?.ceremony, !ceremonyClosed, let ceremony = hooks.ceremony {
-      ceremony(milestone.value1) { ceremonyClosed = true }
-    } else {
-      PracticeTaskLayout {
-        PracticeResultTitle(
-          title: LocalizedStringResource(
-            "Practice done", table: "Practice", comment: "End of a practice run."),
-          detail: comesBack
-            ? LocalizedStringResource(
-              "The rest come back another day, when they stick better.", table: "Practice",
-              comment: "End of a mistakes practice run with a miss.") : nil)
-      } response: {
-        PracticeResultNumbers(
-          correct: summary?.correct, total: summary?.total, brainPower: summary?.brainPower ?? 0,
-          facts: fixed > 0
-            ? [
-              String(
-                localized: "\(fixed) mistakes fixed", table: "Practice",
-                comment: "How many mistakes a run fixed.")
-            ] : [],
-          day: day)
-      } actions: {
-        PracticeMainButton(
-          title: LocalizedStringResource(
-            "Back", table: "Practice", comment: "Leaves a finished run."), action: close)
-      }
+    PracticeTaskLayout(isResult: true) {
+      PracticeResultTitle(
+        title: LocalizedStringResource(
+          "Practice done", table: "Practice", comment: "End of a practice run."),
+        detail: comesBack
+          ? LocalizedStringResource(
+            "The rest come back another day, when they stick better.", table: "Practice",
+            comment: "End of a mistakes practice run with a miss.") : nil)
+      PracticeResultNumbers(
+        correct: summary?.correct, total: summary?.total, brainPower: summary?.brainPower ?? 0,
+        facts: fixed > 0
+          ? [
+            String(
+              localized: "\(fixed) mistakes fixed", table: "Practice",
+              comment: "How many mistakes a run fixed.")
+          ] : [],
+        day: day)
+    } actions: {
+      PracticeMainButton(
+        title: LocalizedStringResource(
+          "Back", table: "Practice", comment: "Leaves a finished run."), action: close)
     }
   }
 
@@ -415,7 +410,8 @@ private struct PracticeDoneView: View {
   private var day: DayResult {
     let completion = summary.flatMap { DayResult($0) }
     return DayResult(
-      ceremony: completion?.ceremony, missionMoment: completion?.missionMoment,
+      ceremony: completion?.ceremony, certificates: completion?.certificates ?? [],
+      missionMoment: completion?.missionMoment,
       reached: DayResult.Reached(
         energy: reached.energy,
         level: reached.level.map { DayResult.Reached.Level(color: $0.color, level: $0.level) }))

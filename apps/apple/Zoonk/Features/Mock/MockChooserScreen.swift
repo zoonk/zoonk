@@ -149,6 +149,8 @@ private struct MockChooser: View {
   @State private var length: PlacementMockOption.Length?
   @State private var status: ChooserStatus = .choosing
   @State private var busy = false
+  @State private var isOnScreen = false
+  @AccessibilityFocusState private var isPlusNoticeFocused: Bool
 
   let goalId: String
   let view: MockOptions
@@ -186,7 +188,14 @@ private struct MockChooser: View {
       }
       .safeAreaBar(edge: .bottom) { startBar.keepsOffFold() }
     }
-    .announcesStatus(startLine)
+    .onAppear { isOnScreen = true }
+    .onDisappear { isOnScreen = false }
+    // See Plus took the place of the Start the learner pressed.
+    .onChange(of: isOpen) {
+      if !isOpen, status == .plusRequired {
+        isPlusNoticeFocused = true
+      }
+    }
   }
 
   @ViewBuilder
@@ -290,7 +299,10 @@ private struct MockChooser: View {
             : Text(
               "Mock exams come with Plus: whenever you want, and every week in your plan.",
               tableName: "Mock", comment: "Mocks without Plus"),
-          showsSeePlus: false, isInset: true)
+          showsSeePlus: false, isInset: true
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityFocused($isPlusNoticeFocused)
       }
     }
   }
@@ -394,76 +406,67 @@ private struct MockChooser: View {
       } icon: {
         ProgressView()
       }
-    case .short(_, let examQuestions, let limit, let minutes, let questions)?:
-      VStack(alignment: .leading, spacing: 4) {
-        Text(readyNow(questions: questions, of: examQuestions, minutes: minutes))
-        Text(moreLater(limit))
-      }
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+    case .short?:
+      outcomeLines.foregroundStyle(.secondary)
     case .notEnoughQuestions?:
-      Text(notEnoughQuestions)
-        .font(.subheadline)
-        .foregroundStyle(.destructive)
+      FailureLine(
+        message: LocalizedStringResource(
+          "There aren't enough questions for this mock yet. Try the full exam or another subject.",
+          table: "Mock", comment: "Too few questions for a mock")
+      )
+      .font(.subheadline)
     case .failed?:
-      Text(couldntStart)
-        .font(.subheadline)
-        .foregroundStyle(.destructive)
+      FailureLine(
+        message: LocalizedStringResource(
+          "We couldn't start the mock. Try again.", table: "Mock",
+          comment: "Start failed")
+      )
+      .font(.subheadline)
     case .refused(let limit)?:
       HelpLimitNotice(limit: limit)
     }
   }
 
-  private var startLine: String? {
-    switch shownStatus {
-    case .short(_, let examQuestions, let limit, let minutes, let questions)?:
-      [readyNow(questions: questions, of: examQuestions, minutes: minutes), moreLater(limit)]
-        .joinedSentences()
-    case .notEnoughQuestions?:
-      notEnoughQuestions
-    case .failed?:
-      couldntStart
-    case .refused(let limit)?:
-      limit.message
-    case .choosing?, .writing?, .plusRequired?, nil:
-      nil
+  private var outcomeLines: some View {
+    VStack(alignment: .leading, spacing: 4) {
+      ForEach(outcome, id: \.self) { Text($0) }
     }
+    .font(.subheadline)
   }
 
-  private func readyNow(questions: Int, of examQuestions: Int, minutes: Int) -> String {
-    String(
-      localized:
-        "\(questions) of the \(examQuestions) questions are ready now, so this mock takes about \(MockLabels.duration(minutes: minutes)).",
-      table: "Mock", comment: "A mock that can ask only part of its questions")
-  }
+  /// What the last Start led to, in words: VoiceOver stays on Start and hears it. A failure is a
+  /// `FailureLine`, which reads itself out.
+  private var outcome: [String] {
+    switch status {
+    case .short(_, let examQuestions, let limit, let minutes, let questions):
+      let more =
+        switch limit {
+        case .day:
+          String(
+            localized: "More can be written for your mocks tomorrow.", table: "Mock",
+            comment: "Daily question limit")
+        case .month:
+          String(
+            localized: "More can be written for your mocks next month.", table: "Mock",
+            comment: "Monthly question limit")
+        case .total, nil:
+          String(
+            localized: "The question bank doesn't have more new ones for it yet.", table: "Mock",
+            comment: "No more questions")
+        }
 
-  private func moreLater(_ limit: MockStartOutcome.Limit?) -> String {
-    switch limit {
-    case .day:
-      String(
-        localized: "More can be written for your mocks tomorrow.", table: "Mock",
-        comment: "Daily question limit")
-    case .month:
-      String(
-        localized: "More can be written for your mocks next month.", table: "Mock",
-        comment: "Monthly question limit")
-    case .total, nil:
-      String(
-        localized: "The question bank doesn't have more new ones for it yet.", table: "Mock",
-        comment: "No more questions")
+      return [
+        String(
+          localized:
+            "\(questions) of the \(examQuestions) questions are ready now, so this mock takes about \(MockLabels.duration(minutes: minutes)).",
+          table: "Mock", comment: "A mock that can ask only part of its questions"),
+        more,
+      ]
+    case .refused(let limit):
+      return [limit.message]
+    case .choosing, .writing, .plusRequired, .notEnoughQuestions, .failed:
+      return []
     }
-  }
-
-  private var notEnoughQuestions: String {
-    String(
-      localized:
-        "There aren't enough questions for this mock yet. Try the full exam or another subject.",
-      table: "Mock", comment: "Too few questions for a mock")
-  }
-
-  private var couldntStart: String {
-    String(
-      localized: "We couldn't start the mock. Try again.", table: "Mock", comment: "Start failed")
   }
 
   /// Main's `PickedMock`: what Start starts.
@@ -706,6 +709,11 @@ private struct MockChooser: View {
       status = .failed
     case .obsolete:
       status = .choosing
+    }
+
+    // A start that ends after the learner left for another tab isn't read out over it.
+    if isOnScreen, !outcome.isEmpty {
+      announcePolitely(outcome.joinedSentences())
     }
   }
 }

@@ -101,8 +101,6 @@
   "conversation_no_score_title": "396b24efa284d6e96b2686afce6532ea372265dbc8e763cb60747206311535b4",
   "conversation_not_connected": "4c9c80d1803cd5bf27c73408d0d5bfa7d8ee9dd138165df2da58ee7d51baf48f",
   "conversation_not_connected_title": "bf244e2965e627cfbc32412217b5339b5331dd0561547f41f6773735a5e67bed",
-  "conversation_not_found_description": "38adde77863fa1987182da35ec909cbe66d33bb150bd3be68055e0d85bc7beea",
-  "conversation_not_found_title": "500690a93af9574d29d47fd8a18788eb1018c1a590114b97d062c3426926af9c",
   "conversation_not_rated": "c41120fefd35ff5433366237ecf86b347a04f14b118af310dfa1ea3e26388125",
   "conversation_not_this_time": "cf03fdb17f422778b5bc030c55f0ffa74b2a5bfc260916d66655112b587e817d",
   "conversation_opens_and_card": "2e2b64e4f5449a4eeee456ab4ad31de6e027f0b659fac0a1390776fab1feba73",
@@ -218,8 +216,6 @@
     <string name="conversation_mic_off">Permite el acceso al micrófono en Configuración para hablar con %1$s, o escribe tus respuestas.</string>
     <!-- Starts the call without the microphone, answering by typing. -->
     <string name="conversation_type_instead">Responder por escrito</string>
-    <string name="conversation_not_found_title">No pudimos encontrar esta llamada</string>
-    <string name="conversation_not_found_description">El enlace puede estar desactualizado o mal escrito.</string>
     <!-- Read before what the learner said in the call's transcript. -->
     <string name="conversation_you_said">Tú: %1$s</string>
     <!-- Read before what the character said in the call's transcript: the character's name, then the words. -->

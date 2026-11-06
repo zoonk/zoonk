@@ -331,10 +331,13 @@ private struct LessonCheckNote: View {
       .foregroundStyle(.destructive)
     }
 
-    if let checkFailedLine = state.checkFailedLine {
-      Text(checkFailedLine)
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+    if state.checkFailed {
+      FailureLine(
+        message: LocalizedStringResource(
+          "We couldn't check your answer this time. Try again.", table: "Player",
+          comment: "The server couldn't grade a written or spoken answer")
+      )
+      .font(.subheadline)
     }
 
     if isSlow, state.phase == .checking {
@@ -380,16 +383,6 @@ extension LessonPlayerState {
   /// What the stage's notice says; a quick check shows its progress there instead.
   var noticeLine: String? {
     quickCheckProgress == nil ? notice?.line : nil
-  }
-
-  var checkFailedLine: String? {
-    guard checkFailed else {
-      return nil
-    }
-
-    return String(
-      localized: "We couldn't check your answer this time. Try again.", table: "Player",
-      comment: "The server couldn't grade a written or spoken answer")
   }
 }
 

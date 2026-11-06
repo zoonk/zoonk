@@ -62,6 +62,8 @@ import com.zoonk.android.feature.session.BlockMark
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.feature.session.MissionOpens
+import com.zoonk.android.feature.session.OPENING_ROW_ALPHA
+import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.challengePhase
@@ -221,7 +223,6 @@ private fun LazyListScope.sessionQueue(
     val upcoming = queue.after.size + coming + model.day.plusLessons.size
     val more = (upcoming - rows).coerceAtLeast(0)
     val shownAfter = if (folds.moreOpen) queue.after else queue.after.take(rows)
-    val pending = (viewModel.pending as? TodayTap.Step)?.position
 
     item(key = "queue-top", contentType = "spacer") { Box(Modifier.padding(top = 12.dp)) }
 
@@ -250,7 +251,8 @@ private fun LazyListScope.sessionQueue(
             step = step,
             isNext = isNext,
             opens = replay != null || (!step.isFinished && step.waitReason == null),
-            busy = pending == step.position || (isNext && viewModel.pending == TodayTap.Continue),
+            busy = viewModel.pending == TodayTap.Step(step.position) || (isNext && viewModel.pending == TodayTap.Continue),
+            openFailed = viewModel.failed == TodayTap.Step(step.position),
             onOpen = { if (replay != null) actions.navigate(AppRoute.Lesson(replay.toString())) else actions.open(step) },
             modifier = Modifier.pageItem(),
             onNavigate = actions.navigate,
@@ -409,6 +411,7 @@ private fun StepRow(
     busy: Boolean,
     onOpen: () -> Unit,
     modifier: Modifier,
+    openFailed: Boolean = false,
     onNavigate: (AppRoute) -> Unit = {},
     divider: Boolean = true,
 ) {
@@ -440,6 +443,7 @@ private fun StepRow(
                 style = MaterialTheme.typography.titleSmall,
             )
 
+            if (openFailed) StepOpenFailed()
             if (!finished) StepLines(model, step)
             if (isNext && step.canTestOut) step.chapterId?.let { TestOutLink(model, it, onNavigate) }
         }
@@ -632,7 +636,7 @@ private fun RowFrame(
                         },
                     ).clip(MaterialTheme.shapes.medium)
                     .then(if (onClick != null) Modifier.clickable(enabled = !busy, role = Role.Button, onClick = onClick) else Modifier)
-                    .alpha(if (busy) BUSY_ALPHA else 1f)
+                    .alpha(if (busy) OPENING_ROW_ALPHA else 1f)
                     .heightIn(min = 48.dp)
                     .padding(horizontal = if (isNext) NEXT_BLEED else 0.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -748,9 +752,9 @@ private fun DayMeta(
 ) {
     val done = model.day.steps.count(DayStep::isFinished)
 
-    // While the action waits or failed, its words take the line, as main's meta does.
+    // While Continue waits or failed, its words take the line, as main's meta does.
     Row(modifier, verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (status.speaking) {
+        if (status.tap == TodayTap.Continue && status.speaking) {
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.End) { TodayActionStatus(status) }
         } else {
             Text(
@@ -906,6 +910,5 @@ private const val PHONE_DONE_ROWS = 2
 private const val OPEN_BACKLOG_LIMIT = 5
 private const val PHONE_UPCOMING_ROWS = 6
 private const val WIDE_UPCOMING_ROWS = 12
-private const val BUSY_ALPHA = 0.6f
 private const val SKIPPED_ALPHA = 0.25f
 private const val AHEAD_ALPHA = 0.5f

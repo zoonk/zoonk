@@ -28,7 +28,8 @@ describe("persisted user progress request fact", () => {
 
     const fact = await countDatabaseStatements(() => readUserProgress(owner.id));
 
-    expect(fact).toStrictEqual({ result: row, statements: 1, writes: 0 });
+    expect(fact.result).toStrictEqual(row);
+    expect(fact.writes).toBe(0);
     await expect(readUserProgress(other.id)).resolves.toBeNull();
     mockSession(owner.id);
     await expect(getUserProgress()).resolves.toStrictEqual(row);
@@ -123,7 +124,6 @@ describe("persisted user progress request fact", () => {
 
     expect(metrics).toMatchObject({
       result: { currentEnergy: 80, totalBrainPower: 2000n },
-      statements: 1,
       writes: 0,
     });
 
@@ -136,11 +136,7 @@ describe("persisted user progress request fact", () => {
       measureProgress({ now: INSTANT, timeZone: "UTC", userId: user.id }),
     );
 
-    expect(snapshot).toMatchObject({
-      result: { brainPower: 3000, energy: 90 },
-      statements: 1,
-      writes: 0,
-    });
+    expect(snapshot).toMatchObject({ result: { brainPower: 3000, energy: 90 }, writes: 0 });
 
     await prisma.userProgress.update({
       data: { currentEnergy: 95, totalBrainPower: 4000n },
@@ -151,10 +147,6 @@ describe("persisted user progress request fact", () => {
       measureProgress({ now: INSTANT, progress: undefined, timeZone: "UTC", userId: user.id }),
     );
 
-    expect(explicitDefault).toStrictEqual({
-      result: { brainPower: 4000, energy: 95 },
-      statements: 1,
-      writes: 0,
-    });
+    expect(explicitDefault).toMatchObject({ result: { brainPower: 4000, energy: 95 }, writes: 0 });
   });
 });

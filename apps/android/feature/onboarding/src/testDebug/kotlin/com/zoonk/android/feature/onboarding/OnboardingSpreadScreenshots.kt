@@ -20,9 +20,6 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -42,6 +39,7 @@ import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.LanguageLevelTest
@@ -125,6 +123,7 @@ class OnboardingSpreadScreenshots {
                 }
             }
         }
+        if (open) rule.unfoldBook(folds)
         SCREENS.forEachIndexed { screen, shown ->
             // Each navigation entry has its own ViewModels in the app.
             rule.activity.viewModelStore.clear()
@@ -132,21 +131,6 @@ class OnboardingSpreadScreenshots {
             rule.waitForIdle()
             if (shown.start) {
                 rule.onNodeWithText("Start").performScrollTo().performClick()
-                rule.waitForIdle()
-            }
-            // A screen opened after the fold hears none from window-testing, so each one is told of it.
-            if (open) {
-                folds.overrideWindowLayoutInfo(
-                    TestWindowLayoutInfo(
-                        listOf(
-                            FoldingFeature(
-                                rule.activity,
-                                state = FoldingFeature.State.FLAT,
-                                orientation = FoldingFeature.Orientation.VERTICAL,
-                            ),
-                        ),
-                    ),
-                )
                 rule.waitForIdle()
             }
             val bitmap = rule.onRoot().captureRender().asAndroidBitmap()

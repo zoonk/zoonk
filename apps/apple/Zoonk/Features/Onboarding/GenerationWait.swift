@@ -506,7 +506,7 @@ struct GenerationFailureSection: View {
         VStack(alignment: .leading, spacing: 4) {
           title
             .font(.headline)
-          description
+          Text(description)
         }
       } icon: {
         Image(
@@ -514,6 +514,7 @@ struct GenerationFailureSection: View {
         )
         .foregroundStyle(.secondary)
       }
+      .announcesAlert(description)
 
       if let act {
         Button(action: act) {
@@ -536,18 +537,19 @@ struct GenerationFailureSection: View {
     }
   }
 
-  private var description: Text {
+  private var description: String {
     switch failure {
     case .connection:
-      Text(
-        "We stopped getting updates. It may still be working.", tableName: "Onboarding",
+      String(
+        localized: "We stopped getting updates. It may still be working.", table: "Onboarding",
         comment: "Why a wait stopped getting updates")
     case .generation:
-      Text(
-        "Something went wrong on our side.", tableName: "Onboarding", comment: "Why a run failed")
+      String(
+        localized: "Something went wrong on our side.", table: "Onboarding",
+        comment: "Why a run failed")
     case .notStarted:
-      Text(
-        "We couldn't get this started.", tableName: "Onboarding",
+      String(
+        localized: "We couldn't get this started.", table: "Onboarding",
         comment: "Why a run never started")
     }
   }

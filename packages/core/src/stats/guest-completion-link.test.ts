@@ -237,7 +237,12 @@ describe("guest completion during account linking", () => {
     const complete = () =>
       completeLibraryLesson({ input: { runId: run.id, timeZone: "UTC" }, lessonId: lesson.id });
 
-    await linkBeforeSettlement({ account, guest, rejection: { code: "P2003" }, settle: complete });
+    await linkBeforeSettlement({
+      account,
+      guest,
+      rejection: { message: "Cannot lock a missing learner" },
+      settle: complete,
+    });
 
     await expect(
       prisma.learningEvent.findUniqueOrThrow({ where: { id: run.id } }),

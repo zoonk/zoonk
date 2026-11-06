@@ -74,3 +74,7 @@ export function getGoalsCacheTag(userId: string): string {
 export function getInstrumentWaitlistCacheTag(userId: string): string {
   return `instrument-waitlist:${userId}`;
 }
+
+export function getCertificatesCacheTag(userId: string): string {
+  return `certificates:${userId}`;
+}

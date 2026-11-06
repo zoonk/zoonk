@@ -33,6 +33,7 @@ export function summaryOf(userId: string, activeGoalId: string | null = null): L
     missions: null,
     nextChangeAt: now + DAY_MS,
     places: {
+      certificates: false,
       completedLessons: false,
       exam: false,
       mindMaps: false,

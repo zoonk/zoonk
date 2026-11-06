@@ -14,15 +14,10 @@ struct EssayScreen: View {
         switch essay.state {
         case .idle, .loading:
           ProgressView()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .lonePage()
         case .empty, .failed(.notFound):
-          ContentUnavailableView {
-            Label {
-              Text("This essay isn't here", tableName: "Essay", comment: "A missing essay block")
-            } icon: {
-              Image(systemName: "text.document")
-            }
-          }
-          .lonePage()
+          NotFoundView()
         case .failed:
           ContentUnavailableView {
             Label {
@@ -105,13 +100,14 @@ private struct EssayContent: View {
       } else if let grade = essay.drafts.first?.grade {
         PaneSplit {
           List {
-            EssayGradeSections(grade: grade, isClosed: writer.isClosed)
+            EssayScoreSections(grade: grade, isClosed: writer.isClosed)
+            EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
           }
         } secondary: {
           List {
-            EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
+            EssayNextStepSections(grade: grade)
           }
-          // An essay too short to grade has no comments, and an empty list draws the plain
+          // An essay too short to grade has no next step, and an empty list draws the plain
           // background.
           .scrollContentBackground(.hidden)
           .background(Color(.systemGroupedBackground))
@@ -135,6 +131,7 @@ private struct EssayContent: View {
           }
         }
         .safeAreaBar(edge: .bottom) { actionBar }
+        .lonePage()
       }
     }
     .toolbar {
@@ -304,17 +301,15 @@ private struct EssayContent: View {
   private var statusLine: some View {
     Group {
       if finishFailed {
-        Text(
-          "That didn't go through. Try again in a moment.", tableName: "Essay",
-          comment: "Finishing the block failed"
-        )
-        .foregroundStyle(.destructive)
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't go through. Try again in a moment.", table: "Essay",
+            comment: "Finishing the block failed"))
       } else if writer.status == .failed {
-        Text(
-          "That didn't go through. Your text is still here. Try again in a moment.",
-          tableName: "Essay", comment: "Grading failed"
-        )
-        .foregroundStyle(.destructive)
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't go through. Your text is still here. Try again in a moment.",
+            table: "Essay", comment: "Grading failed"))
       } else if writer.isWriting, writer.status == .signUpRequired {
         HelpLimitNotice(limit: .signUpRequired)
       } else if let statusNote {

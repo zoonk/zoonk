@@ -230,11 +230,10 @@ private struct ExamHero: View {
               comment: "The official calendar's day; the argument is a date like 'Tuesday, May 5'")
           }
           if dateFailed {
-            Text(
-              "That didn't go through. Try again in a moment.", tableName: "Exam",
-              comment: "Changing the date failed"
-            )
-            .foregroundStyle(.destructive)
+            FailureLine(
+              message: LocalizedStringResource(
+                "That didn't go through. Try again in a moment.", table: "Exam",
+                comment: "Changing the date failed"))
           }
           Button {
             Task { await useDate(noticeDay.date) }
@@ -292,11 +291,10 @@ private struct ExamHero: View {
         }
 
         if dateFailed {
-          Text(
-            "That didn't go through. Try again in a moment.", tableName: "Exam",
-            comment: "Changing the date failed"
-          )
-          .foregroundStyle(.destructive)
+          FailureLine(
+            message: LocalizedStringResource(
+              "That didn't go through. Try again in a moment.", table: "Exam",
+              comment: "Changing the date failed"))
         }
       }
     }
@@ -452,11 +450,10 @@ private struct ExamResultSection: View {
       }
 
       if form.failed {
-        Text(
-          "That didn't go through. Try again in a moment.", tableName: "Exam",
-          comment: "Saving the result failed"
-        )
-        .foregroundStyle(.destructive)
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't go through. Try again in a moment.", table: "Exam",
+            comment: "Saving the result failed"))
       }
 
       Button {
@@ -1011,26 +1008,21 @@ private struct SpeakingMockSection: View {
 
         switch start.refusal {
         case .limit(let limit):
-          Group {
-            if limit.period == .month {
-              Text(
-                "Not enough call time this month for this mock", tableName: "Exam",
+          FailureLine(
+            message: limit.period == .month
+              ? String(
+                localized: "Not enough call time this month for this mock", table: "Exam",
                 comment: "The call time left this month can't fit the mock")
-            } else {
-              Text(
-                "Not enough call time today for this mock", tableName: "Exam",
-                comment: "The call time left today can't fit the mock")
-            }
-          }
-          .foregroundStyle(.destructive)
+              : String(
+                localized: "Not enough call time today for this mock", table: "Exam",
+                comment: "The call time left today can't fit the mock"))
         case nil:
           EmptyView()
         case .some:
-          Text(
-            "The mock didn't start. Try again in a moment.", tableName: "Exam",
-            comment: "Starting the speaking mock failed"
-          )
-          .foregroundStyle(.destructive)
+          FailureLine(
+            message: LocalizedStringResource(
+              "The mock didn't start. Try again in a moment.", table: "Exam",
+              comment: "Starting the speaking mock failed"))
         }
       }
     }

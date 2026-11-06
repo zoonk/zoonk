@@ -45,7 +45,7 @@ final class TutorConversation {
   private(set) var askFailure: TutorFailure?
   private(set) var answerFailures: [String: TutorFailure] = [:]
   private(set) var memoryChanges: [String: [TutorMemoryChange]] = [:]
-  private(set) var memoryUndos: [String: TutorMemoryUndo] = [:]
+  private(set) var memoryUndos: [String: MemoryUndo] = [:]
   private(set) var missionMoment: Components.Schemas.StudyMissionMoment?
   private(set) var isLoadingEarlier = false
   private(set) var earlierFailed = false
@@ -212,9 +212,8 @@ final class TutorConversation {
     }
   }
 
-  /// Once per turn: the server answers a second undo of the same changes with a conflict.
   func undoMemory(of turnID: String) async {
-    guard let changes = memoryChanges[turnID], memoryUndos[turnID] == nil else {
+    guard let changes = memoryChanges[turnID], memoryUndos[turnID]?.canUndo ?? true else {
       return
     }
 
@@ -225,9 +224,12 @@ final class TutorConversation {
     }
 
     switch result {
-    case .done: memoryUndos[turnID] = .undone
-    case .failed: memoryUndos[turnID] = .failed
-    case .obsolete: memoryUndos[turnID] = nil
+    case .done(let undone):
+      memoryUndos[turnID] = undone ? .undone : .changedSince
+    case .failed:
+      memoryUndos[turnID] = .failed
+    case .obsolete:
+      memoryUndos[turnID] = nil
     }
   }
 

@@ -27,12 +27,12 @@ struct TutorPlanChangeCard: View {
         actions
 
         if failed {
-          Text(
-            "We couldn't save your answer. Try again.", tableName: "Tutor",
-            comment: "Answering a plan change the buddy proposed failed"
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't save your answer. Try again.", table: "Tutor",
+              comment: "Answering a plan change the buddy proposed failed")
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -171,10 +171,12 @@ struct TutorMemoryUpdate: View {
       switch undo {
       case .undone:
         Text(undone)
-      case .failed:
-        Text(undoFailed)
-          .foregroundStyle(.destructive)
-      case .undoing, nil:
+      case .changedSince:
+        FailureLine(
+          message: LocalizedStringResource(
+            "Couldn't undo. It changed since.", table: "Tutor",
+            comment: "Undoing a memory change failed"))
+      case .failed, .undoing, nil:
         Label {
           Text(Self.line(changes))
         } icon: {
@@ -182,37 +184,28 @@ struct TutorMemoryUpdate: View {
         }
 
         Button {
-          Task {
-            await conversation.undoMemory(of: turnID)
-          }
+          Task { await conversation.undoMemory(of: turnID) }
         } label: {
           Text("Undo", tableName: "Tutor", comment: "Undoes what the buddy remembered")
         }
         .buttonStyle(.borderless)
         .disabled(undo == .undoing)
+
+        if undo == .failed {
+          FailureLine(
+            message: LocalizedStringResource(
+              "Couldn't undo. Try again.", table: "Tutor",
+              comment: "Undoing a memory change didn't go through, and Undo stays to try again"))
+        }
       }
     }
     .font(.footnote)
     .foregroundStyle(.secondary)
-    .announcesStatus(announcement(undo))
-  }
-
-  private func announcement(_ undo: TutorMemoryUndo?) -> String? {
-    switch undo {
-    case .undone: undone
-    case .failed: undoFailed
-    case .undoing, nil: nil
-    }
+    .announcesStatus(undo == .undone ? undone : nil)
   }
 
   private var undone: String {
     String(localized: "Change undone", table: "Tutor", comment: "A memory change was undone")
-  }
-
-  private var undoFailed: String {
-    String(
-      localized: "Couldn't undo. It changed since.", table: "Tutor",
-      comment: "Undoing a memory change failed")
   }
 
   static func line(_ changes: [TutorMemoryChange]) -> String {

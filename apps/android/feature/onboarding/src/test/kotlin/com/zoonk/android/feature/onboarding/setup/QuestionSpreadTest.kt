@@ -13,9 +13,6 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -33,6 +30,8 @@ import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.closeBook
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -78,20 +77,9 @@ class QuestionSpreadTest {
         rule.waitForIdle()
     }
 
-    private fun open() {
-        rule.waitForIdle()
-        folds.overrideWindowLayoutInfo(
-            TestWindowLayoutInfo(
-                listOf(FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)),
-            ),
-        )
-        rule.waitForIdle()
-    }
+    private fun open() = rule.unfoldBook(folds)
 
-    private fun close() {
-        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(emptyList()))
-        rule.waitForIdle()
-    }
+    private fun close() = rule.closeBook(folds)
 
     /** Android recreates the screen as the book folds; window-testing tells the new one of no fold. */
     private fun recreate() {

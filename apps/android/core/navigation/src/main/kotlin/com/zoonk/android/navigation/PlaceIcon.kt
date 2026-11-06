@@ -23,6 +23,9 @@ enum class PlaceIcon(
     /** lucide History, SF clock.arrow.circlepath; Material's filled history is the same drawing. */
     CompletedLessons(R.drawable.ic_history, R.drawable.ic_history),
 
+    /** lucide Award, SF rosette. */
+    Certificates(R.drawable.ic_workspace_premium, R.drawable.ic_workspace_premium_filled),
+
     /** lucide GraduationCap, SF graduationcap. */
     Exam(R.drawable.ic_school, R.drawable.ic_school_filled),
 

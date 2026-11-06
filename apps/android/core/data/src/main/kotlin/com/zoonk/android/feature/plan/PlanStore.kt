@@ -20,6 +20,7 @@ import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBasesAdvice
+import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.PlanChangeInput
@@ -158,11 +159,10 @@ interface PlanApi {
         skillId: UUID,
     ): SkillOutlineGeneration
 
-    /** Null until the plan is finished. */
-    suspend fun studyNext(
+    suspend fun end(
         session: AuthenticatedSession,
         goalId: UUID,
-    ): StudyNext?
+    ): GoalEnd
 
     /** Completes the goal and starts its course's next level as the active goal, with its research and writing. */
     suspend fun continueAtNextLevel(
@@ -288,10 +288,10 @@ class LivePlanApi(
         skillId: UUID,
     ) = perform { api.clients(session).learner.createSkillOutlineGeneration(goalId, skillId) }
 
-    override suspend fun studyNext(
+    override suspend fun end(
         session: AuthenticatedSession,
         goalId: UUID,
-    ) = perform { api.clients(session).learner.getGoalMap(goalId) }.next
+    ) = perform { api.clients(session).learner.getGoalMap(goalId) }.let { map -> GoalEnd(map.next, map.certificates) }
 
     override suspend fun continueAtNextLevel(
         session: AuthenticatedSession,
@@ -304,6 +304,12 @@ class LivePlanApi(
 
     private fun deviceTimeZone() = ZoneId.systemDefault().id
 }
+
+/** From the goal map: what to study next once the plan is finished, and the certificates its finished units earned or still owe. */
+data class GoalEnd(
+    val next: StudyNext?,
+    val certificates: PlanCertificates?,
+)
 
 /** The Plan tab's reads, by goal; the subject pages read [syllabus] too. */
 class PlanStore(
@@ -325,9 +331,9 @@ class PlanStore(
     val resumeChangesPlan: KeyedResources<UUID, Boolean> =
         cache.keyed(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId -> session?.let { api.resumeChangesPlan(it, goalId) } }
 
-    /** Read only once the plan has ended (`plan.end`): before, there's nothing to study next. */
-    val studyNext: KeyedResources<UUID, StudyNext> =
-        cache.keyed(Audience.SignedIn, READ_DOMAINS) { session, goalId -> session?.let { api.studyNext(it, goalId) } }
+    /** Read once the plan has ended (`plan.end`), and for an exam, whose course can finish before its exam-day mocks. */
+    val end: KeyedResources<UUID, GoalEnd> =
+        cache.keyed(Audience.SignedIn, READ_DOMAINS + DataDomain.Certificates) { session, goalId -> session?.let { api.end(it, goalId) } }
 
     suspend fun buildingRunId(
         session: AuthenticatedSession,

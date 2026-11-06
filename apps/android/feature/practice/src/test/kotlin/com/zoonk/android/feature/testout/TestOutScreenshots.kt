@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
@@ -24,6 +25,7 @@ import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.ChapterTestOutInput
@@ -56,7 +58,10 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class TestOutScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val rule = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -98,7 +103,8 @@ class TestOutScreenshots {
                 ) = SubmitChapterTestOut200Response.ChapterTestOutResultValue(
                     ChapterTestOutResult(
                         ceremony = null,
-                        reached = MistakePatternPracticeResultReached(energy = null, level = null),
+                        certificates = emptyList(),
+                        reached = MistakePatternPracticeResultReached(energy = 64, level = null),
                         changeId = UUID.randomUUID().takeIf { passed },
                         correct = if (passed) 3 else 1,
                         lessonsSkipped = if (passed) 4 else 0,
@@ -138,14 +144,17 @@ class TestOutScreenshots {
     private fun intro(
         name: String,
         plusRequired: Boolean = false,
+        writing: Boolean = false,
+        fold: Boolean = false,
     ) {
         val viewModel = viewModel()
         rule.setContent {
             ZoonkTheme {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
-                TestOutPreparing(viewModel, ui, page.title, plusRequired, rememberAppNavigator())
+                TestOutPreparing(viewModel, ui.copy(writing = writing), page.title, plusRequired, rememberAppNavigator())
             }
         }
+        if (fold) rule.unfoldBook(folds)
         write(name)
     }
 
@@ -171,6 +180,7 @@ class TestOutScreenshots {
     private fun result(
         name: String,
         passed: Boolean = true,
+        fold: Boolean = false,
     ) {
         val viewModel = viewModel(passed)
         viewModel.begin(questions)
@@ -179,10 +189,11 @@ class TestOutScreenshots {
         rule.setContent {
             ZoonkTheme {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
-                ui.outcome?.let { TestOutResult(it, ui, viewModel, AppContainer.preview(rule.activity)) {} }
+                ui.outcome?.let { TestOutResult(it, ui, viewModel, AppContainer.preview(rule.activity), onClose = {}) }
             }
         }
         rule.mainClock.advanceTimeBy(10_000)
+        if (fold) rule.unfoldBook(folds)
         write(name)
     }
 
@@ -227,4 +238,35 @@ class TestOutScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tabletPassed() = result("tablet-passed")
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookIntro() = intro("testout-book-intro", fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookIntro() = intro("testout-small-book-intro", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookWriting() = intro("testout-book-writing", writing = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookWriting() = intro("testout-small-book-writing", writing = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookPassed() = result("testout-book-passed", fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookPassed() = result("testout-small-book-passed", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookPassedAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        result("testout-book-passed-font200", fold = true)
+    }
 }
