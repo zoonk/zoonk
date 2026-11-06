@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toDeadlineError } from "../../evaluate/evaluation-timeout";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
-import { startTaskGeneration } from "../../provenance/run-task-generation";
+import { streamTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { pointsScoringShape } from "./blueprint-points-schema";
 import { cited, citedMany } from "./cited-passages";
@@ -203,11 +203,7 @@ export type ExtractExamBlueprintParams = {
  */
 export async function extractExamBlueprint(
   params: ExtractExamBlueprintParams,
-): Promise<
-  Awaited<ReturnType<typeof readBlueprint>> & {
-    formatsProvenance: Awaited<ReturnType<typeof extractQuestionFormats>>["provenance"] | null;
-  }
-> {
+): Promise<Awaited<ReturnType<typeof readBlueprint>>> {
   const reading = await readWithFallback(params);
 
   const formats =
@@ -227,11 +223,7 @@ export async function extractExamBlueprint(
 
   const found = formats?.data?.data ?? [];
 
-  return {
-    ...reading,
-    data: applyQuestionFormats({ extraction: reading.data, found }),
-    formatsProvenance: formats?.data?.provenance ?? null,
-  };
+  return { ...reading, data: applyQuestionFormats({ extraction: reading.data, found }) };
 }
 
 async function readWithFallback(
@@ -319,49 +311,46 @@ async function readBlueprint({
   const instructions = getInstructions(corrections);
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
-  const run = startTaskGeneration({
+  const streamErrors: unknown[] = [];
+
+  const run = streamTaskGeneration({
     analytics,
+    stream: () =>
+      streamText({
+        instructions,
+        model,
+        onError: ({ error }) => {
+          streamErrors.push(error);
+        },
+        output: Output.object({ schema: extractionSchema }),
+        prompt: [
+          {
+            content: [
+              { text: intro, type: "text" },
+              ...toDocumentParts(documents),
+              ...toCorrectionParts(corrections),
+            ],
+            role: "user",
+          },
+        ],
+        providerOptions,
+        reasoning: getReadingReasoning({ documents, reasoning }),
+        timeout: READING_TIMEOUT,
+      }),
     systemPrompt: instructions,
     task: "extract-exam-blueprint",
   });
 
-  const streamErrors: unknown[] = [];
-
-  const generation = streamText({
-    instructions,
-    model,
-    onError: ({ error }) => {
-      streamErrors.push(error);
-    },
-    output: Output.object({ schema: extractionSchema }),
-    prompt: [
-      {
-        content: [
-          { text: intro, type: "text" },
-          ...toDocumentParts(documents),
-          ...toCorrectionParts(corrections),
-        ],
-        role: "user",
-      },
-    ],
-    providerOptions,
-    reasoning: getReadingReasoning({ documents, reasoning }),
-    timeout: READING_TIMEOUT,
-  });
-
   try {
-    const [output, finalStep, steps, usage] = await Promise.all([
-      generation.output,
-      generation.finalStep,
-      generation.steps,
-      generation.usage,
+    const [output, provenance, usage] = await Promise.all([
+      run.generation.output,
+      run.provenance,
+      run.generation.usage,
     ]);
-
-    const provenance = await run.finish({ finalStep, steps, usage });
 
     return { data: output, provenance, systemPrompt: instructions, usage, userPrompt: intro };
   } catch (error) {
-    const finish = await safeAsync(async () => generation.finishReason);
+    const finish = await safeAsync(async () => run.generation.finishReason);
 
     if (finish.data === CONTENT_FILTER) {
       throw new ContentFilteredError(model);
