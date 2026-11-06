@@ -123,6 +123,12 @@
   "player_opening_map_ideas": "625eaecc917287dd8150856451c3ab447aded980128f7487a69eb6e835222b73",
   "player_opening_map_show": "fbf3228b7bbebe65741b778352f356f3959fef8191c9ca0b6eae38c62452bcf3",
   "player_part_of": "401ba3aa3f710678f9cb3b3b8022424ea40f51340f0413596cea7e7ed5e6bbf3",
+  "player_phase_draw": "3fd99af78b49241cd98725ab49e373822c31ec25fafeefe5de17a162718b1700",
+  "player_phase_draw_line_1": "24220f0b38d13cbd7240b3dc1318dcd7a4739eb3d8ab580279b6678b55d9f09a",
+  "player_phase_draw_line_2": "607533f1820c0c8030f43c5cc16b441f192802340e93f384436d9f01749f0542",
+  "player_phase_mark": "d960317dd5bdeade5198aa04aca3e112c08c0960919e1ccaac89b9b23579e27b",
+  "player_phase_mark_line_1": "a90fe39364a5b886df21a81a8a96b2f6d3e6bcdfdf4ef3657852d93eff4d5ca9",
+  "player_phase_mark_line_2": "3febd3578a403af51360af3afa3f7209a8b31eeb71316085eddbe202a062c6c5",
   "player_phase_plan": "313130240643a35889136e30a17b47e03f0083815abe3000586508ec64a99383",
   "player_phase_plan_line_1": "85a2508f21b5639cb487aef3d6d8acfa9d32ff2e2998c78f1b0a01aa39a0c028",
   "player_phase_plan_line_2": "cebe915152e0d1211a086ad0a1739ab477b79ce58c158d4795b1ebe620e2a6da",
@@ -307,6 +313,15 @@
     <string name="player_phase_plan_line_2">いちばんわかりやすい説明のしかたを選んでいます…</string>
     <string name="player_phase_write">レッスンを作成しています</string>
     <string name="player_phase_write_line">%1$dページ目を作成しています…</string>
+    <!-- A step while Zoonk prepares a lesson: underlining each screen's key phrase, framing its example and tagging which of the lesson's main ideas it teaches. -->
+    <string name="player_phase_mark">大切なポイントを強調しています</string>
+    <string name="player_phase_mark_line_1">特に大切な箇所に下線を引いています…</string>
+    <!-- "Its idea": which of the lesson's few main ideas each screen teaches. -->
+    <string name="player_phase_mark_line_2">各画面と学ぶポイントを結び付けています…</string>
+    <!-- A step while Zoonk prepares a lesson: drawing the lesson's pictures and a small icon for each of its main ideas. -->
+    <string name="player_phase_draw">絵を描いています</string>
+    <string name="player_phase_draw_line_1">各画面に絵を加えています…</string>
+    <string name="player_phase_draw_line_2">ポイントごとにアイコンを描いています…</string>
     <string name="player_writing_note">通常、数分ほどかかります。準備ができ次第、ここでレッスンが開きます。</string>
     <string name="player_ready_while_waiting">待っている間にできること</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->

@@ -123,6 +123,12 @@
   "player_opening_map_ideas": "71ef40ab3fbb2d5686bd87f713287240d58c5e59cfcaf73b5fa37ed697480773",
   "player_opening_map_show": "b92663d75c350d84e70ef01808dad7bac499750cd0dc82a7cd7149ff0cf85ef2",
   "player_part_of": "4eda0724244cd2fd23edc92f0a9bcc87a7390ccf9be9d253bd8e0af327de89bc",
+  "player_phase_draw": "559e2e3a380419099e68918c859c74ecb76c8a9cad6e3e6b0e4297849ad0d61b",
+  "player_phase_draw_line_1": "66dbb747d49d928cf69ad57c54921a9d940a4e9580dae8a0d62816b37517c8d9",
+  "player_phase_draw_line_2": "6b655a91a60bc961d9cd67ab074d223708aef1647427e0eec93980b03e6b4374",
+  "player_phase_mark": "7de26f73d992b8c7fcfa00d2178216c540cf358b2a72971482650d2b56b61686",
+  "player_phase_mark_line_1": "c55387e95d4b46dee9b4816d82db798ed7e9aed0a3c0327ef94748143a5a96ba",
+  "player_phase_mark_line_2": "1f170cd61abfc9e02f138eae43a9cca9078351bf2c31e8d720755b76dfcac209",
   "player_phase_plan": "64e290a1f6db20fc49f22b0d71fc746e41ba39cbb9d5aac7384ab0f32d7331e1",
   "player_phase_plan_line_1": "122454ecd495f4a08a59f9e7ff03827d836418882072ee77dc37c3d099839605",
   "player_phase_plan_line_2": "147a03a2868416ac8ee6086878af3ef5a809ff6b9538f6c131cc46edd27d6ea4",
@@ -313,6 +319,15 @@
     <string name="player_phase_plan_line_2">Stiamo scegliendo come spiegare al meglio l’argomento…</string>
     <string name="player_phase_write">Stiamo preparando la lezione</string>
     <string name="player_phase_write_line">Stiamo preparando la schermata %1$d…</string>
+    <!-- A step while Zoonk prepares a lesson: underlining each screen's key phrase, framing its example and tagging which of the lesson's main ideas it teaches. -->
+    <string name="player_phase_mark">Stiamo evidenziando le idee chiave</string>
+    <string name="player_phase_mark_line_1">Stiamo sottolineando ciò che conta di più…</string>
+    <!-- "Its idea": which of the lesson's few main ideas each screen teaches. -->
+    <string name="player_phase_mark_line_2">Stiamo collegando ogni schermata all’idea che spiega…</string>
+    <!-- A step while Zoonk prepares a lesson: drawing the lesson's pictures and a small icon for each of its main ideas. -->
+    <string name="player_phase_draw">Stiamo disegnando le immagini</string>
+    <string name="player_phase_draw_line_1">Stiamo aggiungendo immagini alle schermate…</string>
+    <string name="player_phase_draw_line_2">Stiamo disegnando un’icona per ogni idea…</string>
     <string name="player_writing_note">Di solito ci vuole qualche minuto. La lezione si apre qui appena è pronta.</string>
     <string name="player_ready_while_waiting">Da fare nell’attesa</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->

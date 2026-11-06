@@ -123,6 +123,12 @@
   "player_opening_map_ideas": "a5e5730b66655b6a5b68ee14e61d299a6bd01d584b96cdc2cf807665257147c4",
   "player_opening_map_show": "eeaf907949be242fb93afa853ac80b4c0696023539b4f755fbcf2f19e9716ace",
   "player_part_of": "da683991d2b6a583fbffd98ab2d3a1201ed78462ebff6eb9b132c8cf6cc83e5f",
+  "player_phase_draw": "be77300cce4ba36e21c2f912cb0decb87cb3d21a6046a86ef7f2d58111438420",
+  "player_phase_draw_line_1": "9c0b2d96a9d586644eea6059ed13fa601bcd36ab5f7d907b72ae8a8ed2389c9e",
+  "player_phase_draw_line_2": "e33455a650957c6c4d343c6576d6e9b04191827c73cd174c09891c1be7a9b1c9",
+  "player_phase_mark": "5b83be15f77795b79301a40d7003376678c58a75fa185e9d31cd824e0326e5c1",
+  "player_phase_mark_line_1": "30a9783fae5bf1efa81ab77214b7ae0e0c5ccbdf9c11b8a6560d65383ae7756c",
+  "player_phase_mark_line_2": "38a8b2dfe78434e923e787302c2dfcf8e05ded7f83811a8667008c66081b5a28",
   "player_phase_plan": "aea5c2cd2526ec9a65a0d31fb31cf7c69b3a1b66fc59d376fb9734e6c425277f",
   "player_phase_plan_line_1": "9e366d5c8515c16b9d55e0996f85db4cd984a5797797329e3a38dccc623bdcce",
   "player_phase_plan_line_2": "e6f870e3154ff6cc8acec3a701baa4dfc442c07ec93cd426690807c909feba1e",
@@ -307,6 +313,15 @@
     <string name="player_phase_plan_line_2">주제를 가장 잘 설명할 방법을 고르고 있어요…</string>
     <string name="player_phase_write">레슨을 만들고 있어요</string>
     <string name="player_phase_write_line">%1$d번째 화면을 만들고 있어요…</string>
+    <!-- A step while Zoonk prepares a lesson: underlining each screen's key phrase, framing its example and tagging which of the lesson's main ideas it teaches. -->
+    <string name="player_phase_mark">핵심 내용을 강조하고 있어요</string>
+    <string name="player_phase_mark_line_1">가장 중요한 내용에 밑줄을 긋고 있어요…</string>
+    <!-- "Its idea": which of the lesson's few main ideas each screen teaches. -->
+    <string name="player_phase_mark_line_2">각 화면을 핵심 내용과 연결하고 있어요…</string>
+    <!-- A step while Zoonk prepares a lesson: drawing the lesson's pictures and a small icon for each of its main ideas. -->
+    <string name="player_phase_draw">그림을 그리고 있어요</string>
+    <string name="player_phase_draw_line_1">화면에 그림을 넣고 있어요…</string>
+    <string name="player_phase_draw_line_2">핵심 내용마다 아이콘을 그리고 있어요…</string>
     <string name="player_writing_note">보통 몇 분 정도 걸려요. 준비되면 여기서 바로 레슨이 열려요.</string>
     <string name="player_ready_while_waiting">기다리는 동안 할 수 있는 학습</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->

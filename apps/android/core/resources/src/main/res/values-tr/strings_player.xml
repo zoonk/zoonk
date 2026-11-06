@@ -123,6 +123,12 @@
   "player_opening_map_ideas": "add47e8b59805cdd344ac48985980e51cb0b7ce69a44b008173c1ff8b8f3aabc",
   "player_opening_map_show": "ae0b195ed02462fc0e80c0cbb7221dcb67f3ffc668e33cac6e25db6d93abdf36",
   "player_part_of": "c9d745c1a3c7affefaecc365a89d28eacab7de5bfbd34e4709b693536252a865",
+  "player_phase_draw": "3d75554ee8150a5a4da14a542518d952a1890fc96bf8f976dea75055ed2a35f3",
+  "player_phase_draw_line_1": "ec1fde7adb5c000785f67b8d8a992ce9be614765d26b2fa45d2104d93b31f9b4",
+  "player_phase_draw_line_2": "b198fec398c210dc9fdb7b556694818397c248bdc63a85e0715b1349881cd25d",
+  "player_phase_mark": "a158ea9c4dd92774db66a54268a5ec02bf8cac2db6ac68ed7ba1c2bfdc41649f",
+  "player_phase_mark_line_1": "e32d4d0d1e4e6e42d2ec7398e96a0ad5c7c594931b2369bb083e92918de907a6",
+  "player_phase_mark_line_2": "a51aa49d11ca6d4dcf2e9b524acb8e594801d91f6ce40af5f366aaa3d9bca630",
   "player_phase_plan": "67b12d10a891196200cdfd39b2a59c166bce88543a818a077927fce4625acfd5",
   "player_phase_plan_line_1": "34644611866735be908ddd4e690e9085b0bb2a4556cd7c6ec1d7f21654e0d829",
   "player_phase_plan_line_2": "9a0bca44fd04311af798c6f6fbf990e7c01356183b745be27b7024e1b9c210df",
@@ -310,6 +316,15 @@
     <string name="player_phase_plan_line_2">Konuyu anlatmanın en iyi yolunu seçiyoruz…</string>
     <string name="player_phase_write">Dersi hazırlıyoruz</string>
     <string name="player_phase_write_line">%1$d. ekranı hazırlıyoruz…</string>
+    <!-- A step while Zoonk prepares a lesson: underlining each screen's key phrase, framing its example and tagging which of the lesson's main ideas it teaches. -->
+    <string name="player_phase_mark">Ana fikirlerin vurgulanması</string>
+    <string name="player_phase_mark_line_1">En önemli noktaların altını çiziyoruz…</string>
+    <!-- "Its idea": which of the lesson's few main ideas each screen teaches. -->
+    <string name="player_phase_mark_line_2">Her ekranı ilgili ana fikirle eşleştiriyoruz…</string>
+    <!-- A step while Zoonk prepares a lesson: drawing the lesson's pictures and a small icon for each of its main ideas. -->
+    <string name="player_phase_draw">Resimlerin çizilmesi</string>
+    <string name="player_phase_draw_line_1">Ekranlara resimler ekliyoruz…</string>
+    <string name="player_phase_draw_line_2">Her ana fikir için bir simge çiziyoruz…</string>
     <string name="player_writing_note">Genellikle birkaç dakika sürer. Ders hazır olur olmaz burada açılır.</string>
     <string name="player_ready_while_waiting">Beklerken başlayabilirsin</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->

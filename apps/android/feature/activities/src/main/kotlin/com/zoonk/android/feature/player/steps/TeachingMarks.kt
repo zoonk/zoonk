@@ -100,8 +100,7 @@ internal fun IdeaStrip(
                 )
                 idea.label?.let { Text(it, style = MaterialTheme.typography.titleMedium) }
             }
-            // The icon's room is kept while it's drawn, so its arrival never moves the name.
-            Box(Modifier.size(STRIP_ICON)) { idea.icon?.let { LessonIconImage(it, STRIP_ICON) } }
+            idea.icon?.let { LessonIconImage(it, STRIP_ICON) }
         }
         HorizontalDivider()
     }

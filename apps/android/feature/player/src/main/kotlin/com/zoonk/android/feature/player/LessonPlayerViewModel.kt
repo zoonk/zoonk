@@ -37,7 +37,6 @@ import com.zoonk.android.feature.player.engine.abandonEvent
 import com.zoonk.android.feature.player.engine.gradeOnDevice
 import com.zoonk.android.feature.player.engine.hasExampleLineSlot
 import com.zoonk.android.feature.player.engine.isServerGradedAnswer
-import com.zoonk.android.feature.player.engine.isWaitingForMarks
 import com.zoonk.android.feature.player.engine.isWaitingForPicture
 import com.zoonk.android.feature.player.engine.playedSteps
 import com.zoonk.android.feature.player.engine.reduce
@@ -487,7 +486,7 @@ class LessonPlayerViewModel(
                         if (sessions.current != owner) return@launch
                         replay = outcome.run.replay
                         mutableState.value = state
-                        work.launch { followLateContent(lesson.marksPending) }
+                        work.launch { followLatePictures() }
                     }
 
                     is StartOutcome.Refused -> {
@@ -531,7 +530,7 @@ class LessonPlayerViewModel(
 
         state = reduce(state, LessonAction.SkipSteps(unplayable), started)
         openedAt = started
-        state = reduce(state, LessonAction.LessonRead(emptyList(), openedAt), started)
+        state = reduce(state, LessonAction.PicturesRead(emptyList(), openedAt), started)
 
         val session = owner
         if (session != null && choices.isChosen(session, TodayChoice.CantWrite)) {
@@ -552,27 +551,20 @@ class LessonPlayerViewModel(
         return resumed.copy(answers = resumed.answers + answers, revealed = resumed.revealed + revealed, rounds = resumed.rounds + rounds)
     }
 
-    /**
-     * Main's and Apple's: the lesson is read again every few seconds until its pictures and marks come
-     * or their wait ends. Pictures still pending when it ends take one last read, which stops their wait.
-     */
-    private suspend fun followLateContent(marksPending: Boolean) {
-        var marksComing = marksPending
+    /** Main's and Apple's: the lesson is read again every few seconds until its pictures come or their wait ends. */
+    private suspend fun followLatePictures() {
         while (true) {
-            val state = mutableState.value ?: return
-            val steps = state.steps.values
-            val waitsForMarks = marksComing && state.isWaitingForMarks(openedAt, now())
-            if (steps.none(LessonStep::imagePending) && !waitsForMarks) return
+            val steps = mutableState.value?.steps?.values ?: return
+            if (steps.none(LessonStep::imagePending)) return
 
-            val isLastRead = !waitsForMarks && steps.none { it.isWaitingForPicture(openedAt, now()) }
+            val isLastRead = steps.none { it.isWaitingForPicture(openedAt, now()) }
             if (!isLastRead) delay(PICTURE_POLL)
 
             val read = store.lesson(lessonId)
             read.refresh()
-            val fresh = (read.state.value.value as? LessonLoad.Ready)?.lesson
+            val fresh = (read.state.value.value as? LessonLoad.Ready)?.lesson?.steps.orEmpty()
             if (sessions.current != owner) return
-            dispatch(LessonAction.LessonRead(fresh?.playedSteps.orEmpty(), openedAt))
-            marksComing = fresh?.marksPending ?: marksComing
+            dispatch(LessonAction.PicturesRead(fresh, openedAt))
 
             if (isLastRead) return
         }

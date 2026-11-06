@@ -72,8 +72,8 @@ sealed interface LessonAction {
         val optionalStepIds: List<String> = emptyList(),
     ) : LessonAction
 
-    /** A fresh read of the lesson's screens, map included, while some pictures or marks were still on their way. */
-    data class LessonRead(
+    /** A fresh read of the lesson's screens while some pictures were still being drawn. */
+    data class PicturesRead(
         val fresh: List<LessonStep>,
         val openedAt: Long,
     ) : LessonAction
@@ -101,12 +101,6 @@ sealed interface LessonAction {
 
 /** Main's `lessonPlayerReducer`: one pure step from a state and an action; [now] is epoch milliseconds. */
 fun reduce(
-    state: LessonPlayerState,
-    action: LessonAction,
-    now: Long,
-): LessonPlayerState = act(state, action, now).releasingHeldMarks()
-
-private fun act(
     state: LessonPlayerState,
     action: LessonAction,
     now: Long,
@@ -178,8 +172,8 @@ private fun act(
             state.startRun(action, now)
         }
 
-        is LessonAction.LessonRead -> {
-            state.withLateContent(action.fresh, action.openedAt, now)
+        is LessonAction.PicturesRead -> {
+            state.withPictures(action.fresh, action.openedAt, now)
         }
 
         is LessonAction.RunResynced -> {

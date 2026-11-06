@@ -221,11 +221,25 @@ enum class GenerationKind(
                     R.string.player_phase_write,
                     numbered = NumberedLines(6, R.string.player_phase_write_line, R.string.generation_question_review),
                 ),
+                GenerationPhase(
+                    "mark",
+                    20,
+                    R.string.player_phase_mark,
+                    listOf(R.string.player_phase_mark_line_1, R.string.player_phase_mark_line_2),
+                ),
+                GenerationPhase(
+                    "draw",
+                    60,
+                    R.string.player_phase_draw,
+                    listOf(R.string.player_phase_draw_line_1, R.string.player_phase_draw_line_2),
+                ),
             ),
         steps =
             mapOf(
+                "drawPictures" to StepPlace.Phase("draw"),
                 "joinRunningLesson" to StepPlace.Join,
                 "lessonReady" to StepPlace.Done,
+                "markLesson" to StepPlace.Phase("mark"),
                 "planLesson" to StepPlace.Phase("plan"),
                 "writeLesson" to StepPlace.Phase("write"),
             ),
