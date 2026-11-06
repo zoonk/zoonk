@@ -44,7 +44,15 @@ export function scheduleCarriedAndRest({
   unitsByKey: ReadonlyMap<string, QueueUnit>;
 }) {
   const layOut = (yielded: ReadonlySet<string>) => {
-    const placed = placeCarriedWork({ days, input, phaseEnds, units, yielded });
+    const placed = placeCarriedWork({
+      days,
+      input,
+      keepsEnds: !queue.rates && !learnedOrder,
+      phaseEnds,
+      units,
+      yielded,
+    });
+
     const { rest } = placed;
 
     const learned =

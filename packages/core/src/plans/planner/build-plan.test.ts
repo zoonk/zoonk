@@ -2022,6 +2022,77 @@ describe("work an earlier day left", () => {
     },
   );
 
+  it("keeps an undated exam's study cycle as it was when lessons are left after a missed fortnight", () => {
+    const minutes = [
+      [5, 16, 5, 2, 5, 16, 5, 2],
+      [4, 7, 5, 7, 5, 2],
+      [5, 3, 4, 7, 7, 7, 2, 5, 4, 5],
+      [4, 3, 4, 2, 3, 5],
+    ];
+
+    const lessons = minutes.flatMap((durations, phase) =>
+      durations.map((duration, index) => ({
+        ...lesson(`l${phase}-${index}`, [`s${phase}`], duration),
+        chapterId: `chapter-${phase}`,
+      })),
+    );
+
+    const input = planInput({
+      bossFacts: {
+        bank: {
+          recordingSets: [],
+          textCounts: new Map(minutes.map((_, phase) => [`s${phase}`, 30])),
+        },
+        listeningSkillIds: new Set(),
+        rows: {
+          chapterLessons: [],
+          lessonSkills: lessons.map((entry) => ({
+            lesson: { homeChapterId: entry.chapterId },
+            lessonId: entry.lessonId,
+            skillId: entry.skillIds[0] ?? "",
+          })),
+        },
+        survivors: new Map(),
+      },
+      fullMockMinutes: 75,
+      goal: { dailyMinutes: 90, kind: "exam", targetDate: null },
+      graph: {
+        phases: minutes.map((_, phase) => ({ milestone: null, name: `Phase ${phase}` })),
+        skills: minutes.map((durations, phase) =>
+          skill(`s${phase}`, {
+            area: `area-${phase % 3}`,
+            lessons: durations.length,
+            phase,
+            weight: [3, 2, 1, 4][phase] ?? 1,
+          }),
+        ),
+      },
+      lessons,
+      mockClocks: [{ day: null, fullMinutes: 75, minutes: 38 }],
+      mockMinutes: 38,
+      settings: parsePlanSettings({
+        startDate: toIsoDate(TODAY),
+        weekdayMinutes: [0, 5, 90, 0, 20, 10, 5],
+      }),
+    });
+
+    const first = buildPlan(input);
+    const items = store(first, new Set(first.items[0] ? [first.items[0].key] : []));
+
+    const back = buildPlan({
+      ...input,
+      carryOver: { lessonIds: [] },
+      items,
+      phaseEnds: getShownPhaseEnds({ items, phases: first.phases }),
+      setAsideLeftWork: true,
+      settings: { ...input.settings, mockFunding: first.mockFunding },
+      today: addDays(TODAY, 15),
+    });
+
+    expect(back.items.filter((item) => item.kind === "lesson")).toHaveLength(30);
+    expect(back.phases.at(-1)?.endDate).toBe("2026-11-12");
+  });
+
   it("leaves a lesson given ahead where its phase has it while an earlier phase has days of work left", () => {
     const input = planInput({
       graph: {

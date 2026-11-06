@@ -187,6 +187,7 @@ export function reserveCarriedTime({
 export function placeCarriedWork({
   days,
   input,
+  keepsEnds,
   phaseEnds,
   units,
   yielded = new Set(),
@@ -199,6 +200,7 @@ export function placeCarriedWork({
     prerequisites: ReadonlyMap<string, readonly string[]>;
     today: Date;
   };
+  keepsEnds: boolean;
   phaseEnds: ReadonlyMap<number, Date>;
   units: readonly QueueUnit[];
   yielded?: ReadonlySet<string>;
@@ -217,10 +219,14 @@ export function placeCarriedWork({
 
   const { carried, rest } = splitCarriedUnits({ keys, units });
 
+  // Only a rest laid out keeping phase ends lets an end go once its challenge's lessons reach it
+  // (`keepPhaseEnds`; a study cycle or a learned order don't). A focus day gives the rest of today
+  // to focus lessons, where letting time go could stack challenges tomorrow past what a day keeps
+  // and leave one out (#2227).
   const { room, roomed, schedule } = scheduleCarriedWork({
     carried,
     days,
-    focusDay: Boolean(input.carryOver?.todayExceptAreas),
+    letGo: keepsEnds && !input.carryOver?.todayExceptAreas,
     phaseEnds,
     rest,
     today,
