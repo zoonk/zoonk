@@ -690,6 +690,18 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   },
   {
     expectations: `
+      - MUST be in Brazilian Portuguese, for beginners who never studied the cell
+      - G1 is growth, S the copy of the whole DNA while the cell is still one, G2 the preparation for dividing and M the division into two cells; G1, S and G2 together are the intérfase, and the cycle restarts in G1
+      - The checks use the planned traps (G1 for a cell copying its DNA, G1 between the copy and the division), and in the application the note that is wrong is "vai se dividir imediatamente", since the cell still goes through G2
+      - Every idea's \`label\` reads to a newcomer before the lesson starts, since the app shows it above the idea's screens: a phase's code (G1, S, G2, M) or "intérfase" never stands alone as a label, but comes with the lesson's plain words for what the cell does then (crescer, copiar o DNA, se preparar, se dividir), and no two ideas share a label
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-ciclo-celular-idea-names",
+    userInput: toInput(WALK_LESSONS["pt-ciclo-celular"]),
+  },
+  {
+    expectations: `
       - MUST be in Brazilian Portuguese, for intermediate learners, explanation first
       - Every number is written the Brazilian way: a decimal comma (3,844), thousands grouped with a dot (384.400; 203.000.000 or 203 milhões), and inside LaTeX math the decimal comma braced (3{,}844 \\times 10^{5}) so it reads as one number
       - The form a × 10ⁿ, with a from 1 to less than 10, is explained by counting how far the comma moves and which way, for large and small numbers

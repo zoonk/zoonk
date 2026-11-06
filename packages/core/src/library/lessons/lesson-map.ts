@@ -22,7 +22,8 @@ const ideaSchema = z
       .min(1)
       .optional()
       .meta({
-        description: "The idea's name in 1 to 4 words; maps written before labels have none",
+        description:
+          "The idea's short name, which learners read before the lesson too; maps written before labels have none",
       }),
     text: explanationSchema.meta({ description: "The idea in one complete sentence" }),
   })

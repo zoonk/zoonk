@@ -156,10 +156,10 @@ Text fields use plain sentences with light Markdown: **bold** for the one key te
 
 # Summary card
 
-`summary`: a small map of what the lesson taught, which the app draws on the lesson's last card.
+`summary`: a small map of the lesson's ideas. The app names each idea before the lesson and above the screens that teach it, and draws the whole map on the lesson's last card.
 
 - `shape`: `nested` whenever each idea is a level that contains the one before it, the smallest first (a cell inside a tissue inside an organ), so the app draws them as boxes inside boxes; otherwise `hub`, which the app draws under the lesson's title.
-- `ideas`: 2 to 5, in teaching order. `label` names what the idea adds in 1 to 4 words, in the lesson's own words: the term a screen explained for it, or its case, never a synonym the lesson didn't use and never the lesson's title. `text` states it in one complete sentence that names its subject, so it reads on its own without the label.
+- `ideas`: 2 to 5, in teaching order. `label` is the idea's name, so it makes sense to this learner before the lesson teaches it: 1 to 4 words, in the lesson's own words, naming what the idea adds (the term a screen explained for it, or its case). A term the learner can't read yet (a code, an abbreviation, a symbol or a technical name) never stands alone: the name pairs it with up to 4 plain words from the lesson that say what it is. Every idea gets a different name, never a synonym the lesson didn't use and never the lesson's title. `text` states it in one complete sentence that names its subject, so it reads on its own without the label.
 - Only what the hook, explanations and worked examples stated, in words those screens used, so a learner can study the card on its own. Each idea is exactly as precise as the lesson: a summary that simplifies a rule until it's wrong is worse than none.
 
 # Language

@@ -13,9 +13,148 @@ const ENEM_EXAM = {
 };
 
 export const WALK_LESSONS: Record<
-  "pt-grupos-de-animais" | "pt-piramide-energia" | "pt-precisao-sensores",
+  "pt-ciclo-celular" | "pt-grupos-de-animais" | "pt-piramide-energia" | "pt-precisao-sensores",
   WalkLesson
 > = {
+  /** Its plan wasn't saved, so it's rebuilt from the screens the walk played. */
+  "pt-ciclo-celular": {
+    chapterTitle: "Células e divisão celular",
+    courseTitle: "Biologia",
+    language: "pt",
+    level: "beginner",
+    spec: {
+      canDo: "Ordenar as fases do ciclo celular e dizer o que a célula faz em cada uma",
+      description:
+        "Mostra as fases em que uma célula cresce, copia o DNA, se prepara e se divide em duas, e como elas se repetem.",
+      estimatedMinutes: 4,
+      screens: [
+        {
+          activityTemplate: null,
+          brief:
+            "Jussara rala o joelho e, em alguns dias, a pele fecha o machucado com células novas. Termine na pergunta aberta, sem opções: o que uma célula faz antes de virar duas?",
+          kind: "hook",
+          skills: [],
+          visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Cada célula da pele carrega um manual de instruções que segue para produzir as peças de que precisa para funcionar. Esse manual se chama DNA.",
+          kind: "explanation",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Uma célula da pele passa várias horas sem se separar em duas. Pergunte o que ela faz durante esse tempo. Opções: cresce e se prepara para se dividir; fica parada, sem fazer nada; morre e é trocada por outra. Revele que ela cresce e se prepara, sem explicar as fases ainda.",
+          kind: "guess",
+          skills: [0],
+          visual: "Uma célula da pele, redonda e pequena, entre outras células iguais a ela.",
+          visualKind: "picture",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Uma célula que acabou de se formar é pequena, por isso primeiro cresce e produz as peças que usa no dia a dia, seguindo o DNA. Essa fase de crescimento se chama G1.",
+          kind: "explanation",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Depois de crescer, a célula faz uma cópia do seu DNA inteiro e continua sendo uma célula só, agora com o manual em dobro. Essa fase de cópia se chama fase S.",
+          kind: "explanation",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Uma célula da pele já cresceu e está no meio da cópia do seu DNA, ainda uma célula só. Pergunte em que fase ela está: fase S. Inclua G1 como a alternativa tentadora, porque ela ainda não se dividiu.",
+          kind: "check",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Com o DNA já copiado, a célula ainda não se divide: antes, produz os materiais que vai usar na divisão. Essa preparação final se chama G2.",
+          kind: "explanation",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Por fim, a célula reparte seu conteúdo e cada lado leva uma cópia do DNA, então uma célula vira duas. Essa etapa de divisão se chama fase M.",
+          kind: "explanation",
+          skills: [0],
+          visual:
+            "Uma célula se estreitando no meio e se separando em duas células menores, cada uma com seu núcleo.",
+          visualKind: "picture",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Em G1, S e G2 a célula ainda é uma só, mas está ativa: cresce, copia o DNA e se prepara. Juntas, essas três fases se chamam intérfase, e depois dela vem a fase M.",
+          kind: "explanation",
+          skills: [0],
+          visual:
+            "Um círculo dividido em quatro trechos em sequência, marcados G1, S, G2 e M, com setas no sentido horário; G1, S e G2 juntos formam um arco maior marcado intérfase.",
+          visualKind: "picture",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Uma célula nova passa por G1, S, G2 e M e vira duas; se essas células também se dividem, cada uma recomeça em G1. Essa sequência que se repete se chama ciclo celular.",
+          kind: "explanation",
+          skills: [0],
+          visual:
+            "Um círculo dividido em quatro trechos em sequência, marcados G1, S, G2 e M, com setas no sentido horário; G1, S e G2 juntos formam um arco maior marcado intérfase.",
+          visualKind: "picture",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Uma célula recém-formada cresce em G1, copia o DNA em S e depois se divide em M. Pergunte qual fase fica entre a cópia do DNA e a divisão: G2. Inclua G1 como a alternativa tentadora.",
+          kind: "check",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "No laboratório, Jussara vê que uma célula da pele terminou de copiar o DNA, e o relatório anota que ela vai se dividir imediatamente e que ainda está na intérfase. Pergunte qual afirmação precisa ser corrigida: a de que vai se dividir imediatamente, porque antes passa por G2.",
+          kind: "application",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
+        },
+      ],
+      skills: [
+        {
+          description:
+            "Uma célula cresce em G1, copia o DNA na fase S, se prepara em G2 e se divide em duas na fase M; G1, S e G2 formam a intérfase.",
+          example:
+            "Uma célula da pele que terminou de copiar o DNA ainda passa por G2 antes de se dividir.",
+          hard: false,
+          name: "Ordenar as fases do ciclo celular",
+          topic: "Ciclo celular",
+          useCase: "Dizer em que fase está uma célula pelo que ela faz.",
+        },
+      ],
+      title: "Fases do ciclo celular",
+    },
+  },
   "pt-grupos-de-animais": {
     chapterTitle: "Dados de biodiversidade e classificação",
     courseTitle: "ENEM",
