@@ -33,7 +33,7 @@ function need(name: string) {
 }
 
 describe("lesson marks durability", () => {
-  it("retries only the drawing whose upload failed, never tagging the lesson or drawing the other icon again", async () => {
+  it("retries only the drawing whose upload failed, never tagging the lesson, claiming its name or drawing the other icon again", async () => {
     const [first, second] = [`${randomWord()} ${randomWord()}`, `${randomWord()} ${randomWord()}`];
 
     vi.mocked(tagLesson).mockResolvedValue({
@@ -73,11 +73,16 @@ describe("lesson marks durability", () => {
         .toSorted(),
     ).toStrictEqual([first, second, second].toSorted());
 
-    const [step] = await prisma.step.findMany({
-      select: { marks: true },
-      where: { lessonId: lesson.id },
-    });
+    const [step, icons] = await Promise.all([
+      prisma.step.findFirstOrThrow({ select: { marks: true }, where: { lessonId: lesson.id } }),
+      prisma.lessonIcon.findMany({ where: { name: { in: [first, second] } } }),
+    ]);
 
-    expect(step?.marks).toMatchObject({ iconId: expect.any(String), iconPending: false });
+    expect(icons.map((icon) => icon.status)).toStrictEqual(["completed", "completed"]);
+
+    expect(step.marks).toMatchObject({
+      iconId: icons.find((icon) => icon.name === first)?.id,
+      iconPending: false,
+    });
   });
 });

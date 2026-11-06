@@ -236,26 +236,34 @@ describe(pickLessonIcons, () => {
     ]);
   });
 
-  it("skips a name the model failed to draw for an earlier lesson, without paying for it again", async () => {
-    const failed = await lessonIconFixture({
-      name: uniqueName("compass"),
-      smallUrl: null,
-      status: "failed",
-      url: null,
-    });
+  it("links a name another lesson is still drawing and skips one that failed, without paying for either", async () => {
+    const [drawing, failed] = await Promise.all([
+      lessonIconFixture({ name: uniqueName("map"), smallUrl: null, status: "running", url: null }),
+      lessonIconFixture({
+        name: uniqueName("compass"),
+        smallUrl: null,
+        status: "failed",
+        url: null,
+      }),
+    ]);
 
     await expect(
       pickLessonIcons({
-        requests: [{ forIdea: false, need: need(failed.name), usedFor: "a screen" }],
+        requests: [
+          { forIdea: false, need: need(drawing.name), usedFor: "a screen" },
+          { forIdea: false, need: need(failed.name), usedFor: "a screen" },
+        ],
       }),
-    ).resolves.toStrictEqual([]);
+    ).resolves.toStrictEqual([
+      { iconId: drawing.id, name: drawing.name, need: need(drawing.name) },
+    ]);
 
     expect(matchLessonIcons).not.toHaveBeenCalled();
   });
 });
 
 describe(linkLessonIcons, () => {
-  it("links drawn icons to every screen and idea that asked for them and stops waiting for the others", async () => {
+  it("links each icon, drawn or still drawing, to every screen and idea that asked for it and stops waiting for the others", async () => {
     const [cloud, nucleus] = [uniqueName("electron cloud"), uniqueName("atom")];
     taggedAs({ cloud, nucleus });
 
@@ -266,28 +274,30 @@ describe(linkLessonIcons, () => {
 
     await tagLessonMarks({ lessonId: lesson.id });
 
-    const [drawn, failed] = await Promise.all([
-      lessonIconFixture({ name: cloud }),
-      lessonIconFixture({ name: nucleus, smallUrl: null, status: "failed", url: null }),
-    ]);
+    const drawing = await lessonIconFixture({
+      name: cloud,
+      smallUrl: null,
+      status: "running",
+      url: null,
+    });
 
     await linkLessonIcons({
       lessonId: lesson.id,
       picked: [
-        { iconId: drawn.id, name: cloud },
-        { iconId: failed.id, name: nucleus },
+        { iconId: drawing.id, name: cloud },
+        { iconId: null, name: nucleus },
       ],
     });
 
     const { ideas: saved, steps } = await readMarks(lesson.id);
 
     expect(steps.map((step) => step.marks)).toMatchObject([
-      { iconId: drawn.id, iconPending: false },
-      { iconId: drawn.id, iconPending: false },
+      { iconId: drawing.id, iconPending: false },
+      { iconId: drawing.id, iconPending: false },
     ]);
 
     expect(saved.map(({ iconId, iconPending }) => ({ iconId, iconPending }))).toStrictEqual([
-      { iconId: drawn.id, iconPending: false },
+      { iconId: drawing.id, iconPending: false },
       { iconId: null, iconPending: false },
     ]);
   });

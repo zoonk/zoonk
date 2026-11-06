@@ -5,7 +5,12 @@ import { lessonIconFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import { blankIcon, drawnIcon } from "./_test-utils/icon-images";
-import { drawLessonIcon, failLessonIcon, searchIconCandidates } from "./lesson-icon-library";
+import {
+  claimLessonIcons,
+  drawLessonIcon,
+  failLessonIcon,
+  searchIconCandidates,
+} from "./lesson-icon-library";
 
 function randomWord() {
   return `zq${randomUUID().replaceAll(/[\d-]/gu, "").slice(0, 10)}`;
@@ -13,6 +18,16 @@ function randomWord() {
 
 function needFor(name: string, searchWords: string[] = []) {
   return { description: `A drawing of a ${name}`, name, searchWords };
+}
+
+async function claimOne(need: ReturnType<typeof needFor>) {
+  const [claim] = await claimLessonIcons([need]);
+
+  if (!claim) {
+    throw new Error(`No row for ${need.name}`);
+  }
+
+  return claim;
 }
 
 async function drawnImage(image: Buffer) {
@@ -44,26 +59,43 @@ describe(searchIconCandidates, () => {
   });
 });
 
+describe(claimLessonIcons, () => {
+  it("gives a new name to one claim when two lessons ask at once, and both get the same running row", async () => {
+    const need = needFor(`${randomWord()} stamp`);
+
+    const [first, second] = await Promise.all([claimOne(need), claimOne(need)]);
+
+    expect([first.claimed, second.claimed].filter(Boolean)).toHaveLength(1);
+    expect(second.iconId).toBe(first.iconId);
+
+    await expect(
+      prisma.lessonIcon.findMany({ select: { status: true }, where: { name: need.name } }),
+    ).resolves.toStrictEqual([{ status: "running" }]);
+  });
+});
+
 describe(drawLessonIcon, () => {
   beforeEach(() => {
     storeBlobUploads();
   });
 
-  it("draws a name the library lacks into its two files, and returns the row it has after that", async () => {
+  it("draws a claimed name into its two files and completes its row, and a replayed step draws nothing more", async () => {
     const need = needFor(`${randomWord()} bank`);
+    const { iconId } = await claimOne(need);
 
     vi.mocked(generateLessonIconImage).mockResolvedValue(
       (await drawnImage(await drawnIcon())) as never,
     );
 
-    const drawn = await drawLessonIcon({ need });
+    await drawLessonIcon({ iconId, need });
+    await drawLessonIcon({ iconId, need });
 
-    await expect(drawLessonIcon({ need })).resolves.toStrictEqual(drawn);
     expect(generateLessonIconImage).toHaveBeenCalledOnce();
 
     await expect(
-      prisma.lessonIcon.findUniqueOrThrow({ where: { id: drawn.id } }),
+      prisma.lessonIcon.findUniqueOrThrow({ where: { name: need.name } }),
     ).resolves.toMatchObject({
+      id: iconId,
       model: "openai/gpt-image-2.5-flare",
       smallUrl: expect.stringContaining("-96.webp"),
       status: "completed",
@@ -71,32 +103,21 @@ describe(drawLessonIcon, () => {
     });
   });
 
-  it("keeps one row when two lessons draw the same new name at once, each paying for its drawing", async () => {
-    const need = needFor(`${randomWord()} stamp`);
-
-    vi.mocked(generateLessonIconImage).mockResolvedValue(
-      (await drawnImage(await drawnIcon())) as never,
-    );
-
-    const [first, second] = await Promise.all([drawLessonIcon({ need }), drawLessonIcon({ need })]);
-
-    expect(second.id).toBe(first.id);
-    expect(generateLessonIconImage).toHaveBeenCalledTimes(2);
-    await expect(prisma.lessonIcon.count({ where: { name: need.name } })).resolves.toBe(1);
-  });
-
-  it("throws on a file code can't use, so its step retries, and records the name as failed afterward", async () => {
+  it("throws on a file code can't use, so its step retries, and records the name as failed afterward so no lesson claims it again", async () => {
     const need = needFor(`${randomWord()} glass`);
+    const { iconId } = await claimOne(need);
 
     vi.mocked(generateLessonIconImage).mockResolvedValue(
       (await drawnImage(await blankIcon())) as never,
     );
 
-    await expect(drawLessonIcon({ need })).rejects.toThrow("no drawing");
-    const failed = await failLessonIcon(need);
+    await expect(drawLessonIcon({ iconId, need })).rejects.toThrow("no drawing");
+    await failLessonIcon(iconId);
 
-    expect(failed.status).toBe("failed");
-    await expect(drawLessonIcon({ need })).resolves.toStrictEqual(failed);
-    expect(generateLessonIconImage).toHaveBeenCalledOnce();
+    await expect(
+      prisma.lessonIcon.findUniqueOrThrow({ select: { status: true }, where: { id: iconId } }),
+    ).resolves.toStrictEqual({ status: "failed" });
+
+    await expect(claimOne(need)).resolves.toStrictEqual({ claimed: false, iconId, need });
   });
 });

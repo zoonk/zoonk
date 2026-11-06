@@ -6,12 +6,7 @@ import { type IconNeed } from "@zoonk/ai/tasks/icons/need";
 import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
-import {
-  type IconRow,
-  findIconsById,
-  findIconsByName,
-  searchIconCandidates,
-} from "../icons/lesson-icon-library";
+import { type IconRow, findIconsByName, searchIconCandidates } from "../icons/lesson-icon-library";
 import { readSavedLessonMap } from "../lessons/lesson-map";
 import { CURRENT_STEPS } from "../lessons/lesson-versions";
 import { readSavedStepMarks } from "./step-marks";
@@ -81,9 +76,9 @@ function keepIdeasApart({
 }
 
 /**
- * Internal workflow bridge: a drawn icon of the same name is reused as is, and a name that failed
- * before is skipped; otherwise a text search finds candidates and one model call decides reuse or
- * draw.
+ * Internal workflow bridge: an icon of the same name is reused as is, even one another lesson is
+ * still drawing, and a name that failed before is skipped; otherwise a text search finds candidates
+ * and one model call decides reuse or draw.
  */
 export async function pickLessonIcons({
   analytics,
@@ -111,7 +106,7 @@ export async function pickLessonIcons({
     const icon = named.get(need.name);
 
     if (icon) {
-      return icon.status === "completed" ? [{ iconId: icon.id, name: need.name, need }] : [];
+      return icon.status === "failed" ? [] : [{ iconId: icon.id, name: need.name, need }];
     }
 
     return [{ iconId: reused.get(need.name) ?? null, name: need.name, need }];
@@ -120,14 +115,14 @@ export async function pickLessonIcons({
 
 function linkIcon<
   T extends { iconId?: string | null; iconNeed?: IconNeed | null; iconPending?: boolean },
->({ ready, saved }: { ready: ReadonlyMap<string, string>; saved: T }): T {
-  const iconId = (saved.iconNeed && ready.get(saved.iconNeed.name)) || null;
+>({ linked, saved }: { linked: ReadonlyMap<string, string>; saved: T }): T {
+  const iconId = (saved.iconNeed && linked.get(saved.iconNeed.name)) || null;
   return { ...saved, iconId, iconPending: false };
 }
 
 /**
- * Internal workflow bridge: links each drawn icon to the screens and ideas that asked for it and
- * stops waiting for the rest, so the lesson's next read shows them and stops asking again.
+ * Internal workflow bridge: links each icon, drawn or still drawing, to the screens and ideas that
+ * asked for it and stops waiting for the rest; reads show an icon once its row is completed.
  */
 export async function linkLessonIcons({
   lessonId,
@@ -136,23 +131,16 @@ export async function linkLessonIcons({
   lessonId: string;
   picked: readonly { iconId: string | null; name: string }[];
 }): Promise<void> {
-  const [lesson, icons] = await Promise.all([
-    prisma.lesson.findUnique({
-      select: { steps: { select: { id: true, marks: true }, where: CURRENT_STEPS }, summary: true },
-      where: { id: lessonId },
-    }),
-    findIconsById(picked.flatMap((icon) => (icon.iconId ? [icon.iconId] : []))),
-  ]);
+  const lesson = await prisma.lesson.findUnique({
+    select: { steps: { select: { id: true, marks: true }, where: CURRENT_STEPS }, summary: true },
+    where: { id: lessonId },
+  });
 
   if (!lesson) {
     return;
   }
 
-  const drawn = new Set(icons.filter((icon) => icon.status === "completed").map((icon) => icon.id));
-
-  const ready = new Map(
-    picked.flatMap(({ iconId, name }) => (iconId && drawn.has(iconId) ? [[name, iconId]] : [])),
-  );
+  const linked = new Map(picked.flatMap(({ iconId, name }) => (iconId ? [[name, iconId]] : [])));
 
   const stepUpdates = lesson.steps.flatMap((step) => {
     const saved = readSavedStepMarks(step.marks);
@@ -160,7 +148,7 @@ export async function linkLessonIcons({
     return saved?.iconPending
       ? [
           prisma.step.updateMany({
-            data: { marks: linkIcon({ ready, saved }) },
+            data: { marks: linkIcon({ linked, saved }) },
             where: { id: step.id, marks: { equals: saved } },
           }),
         ]
@@ -177,7 +165,7 @@ export async function linkLessonIcons({
               summary: {
                 ...map,
                 ideas: map.ideas.map((idea) =>
-                  idea.iconPending ? linkIcon({ ready, saved: idea }) : idea,
+                  idea.iconPending ? linkIcon({ linked, saved: idea }) : idea,
                 ),
               },
             },

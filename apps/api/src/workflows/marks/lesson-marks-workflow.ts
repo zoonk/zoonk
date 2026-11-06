@@ -1,9 +1,11 @@
 import { type CallWait } from "@zoonk/ai/provider-options";
+import { type IconClaim } from "@zoonk/core/library/icons/library";
 import { type PickedIcon } from "@zoonk/core/library/marks/icons";
 import { getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { waitForRunToken } from "../_shared/run-token";
 import {
+  claimLessonIconsStep,
   drawLessonIconStep,
   failLessonIconStep,
   linkLessonIconsStep,
@@ -24,17 +26,17 @@ type IconContext = {
 
 async function drawIcon({
   analytics,
-  icon,
+  claim: { iconId, need },
 }: {
   analytics: IconContext;
-  icon: PickedIcon;
+  claim: IconClaim;
 }): Promise<{ iconId: string | null; name: string }> {
   try {
-    const drawn = await drawLessonIconStep({ analytics, need: icon.need });
-    return { iconId: drawn.status === "completed" ? drawn.id : null, name: icon.name };
+    await drawLessonIconStep({ analytics, iconId, need });
+    return { iconId, name: need.name };
   } catch {
-    await failLessonIconStep(icon.need);
-    return { iconId: null, name: icon.name };
+    await failLessonIconStep(iconId);
+    return { iconId: null, name: need.name };
   }
 }
 
@@ -75,13 +77,20 @@ export async function lessonMarksWorkflow({
 
   const picked = await pickIcons({ analytics: context, lessonId, requests: tagged.requests, wait });
 
+  const newNames = picked.flatMap((icon) => (icon.iconId ? [] : [icon.need]));
+  const claims = newNames.length > 0 ? await claimLessonIconsStep(newNames) : [];
+
   const drawn = await Promise.all(
-    picked.filter((icon) => !icon.iconId).map((icon) => drawIcon({ analytics: context, icon })),
+    claims.filter((claim) => claim.claimed).map((claim) => drawIcon({ analytics: context, claim })),
+  );
+
+  const claimedByOthers = claims.flatMap(({ claimed, iconId, need }) =>
+    claimed ? [] : [{ iconId, name: need.name }],
   );
 
   await linkLessonIconsStep({
     lessonId,
-    picked: [...picked.filter((icon) => icon.iconId), ...drawn],
+    picked: [...picked.filter((icon) => icon.iconId), ...claimedByOthers, ...drawn],
   });
 
   return {
