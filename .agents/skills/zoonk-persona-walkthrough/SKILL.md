@@ -38,6 +38,7 @@ Use it for any change a learner can see or feel: screens, flows, copy, plan beha
   - Is anything here unnecessary, repeated, confusing, slow or dishonest?
   - Could fewer steps, choices or words do the same job?
   - Would I come back tomorrow?
+- At the end of each journey, answer zoonk-design's [regular-person questions](../zoonk-design/SKILL.md#use-it-as-a-regular-person) as the persona.
 
 ## 4. Fix, push back, and lock it in
 
