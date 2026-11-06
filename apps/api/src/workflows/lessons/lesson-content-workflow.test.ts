@@ -25,7 +25,7 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { createHook, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { buildPlan } from "../../../../../packages/core/src/plans/planner/build-plan";
@@ -623,25 +623,47 @@ describe(lessonContentWorkflow, () => {
     await expect(getLessonGenerationState(lesson.id)).resolves.toStrictEqual({ status: "ready" });
   });
 
-  it("opens the lesson with what it has once the picture wait ends without its marks and pictures", async () => {
+  it("opens the lesson with what it has five minutes after its text, however long starting and checking take", async () => {
     const lesson = await outlinedLesson();
+    vi.useFakeTimers({ toFake: ["Date"] });
+
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
 
     vi.mocked(getRun).mockImplementation(
       () => ({ exists: Promise.resolve(true), status: Promise.resolve("running") }) as never,
     );
+
+    let savedAt: number | null = null;
+
+    getStartMock().mockImplementation(async () => {
+      savedAt ??= Date.now();
+      vi.setSystemTime(Date.now() + 60_000);
+      return { runId: "started-run" } as never;
+    });
+
+    vi.mocked(sleep).mockImplementation(async (ms) => {
+      vi.setSystemTime(Date.now() + ms + 1000);
+    });
 
     await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
       lessonId: lesson.id,
       status: "ready",
     });
 
-    const waited = vi.mocked(sleep).mock.calls.reduce((total, [ms]) => total + ms, 0);
-    expect(waited).toBe(5 * 60_000);
+    expect(Date.now() - (savedAt ?? Date.now())).toBeLessThanOrEqual(5 * 60_000 + 6000);
 
-    expect(getStreamedEvents().slice(-3)).toStrictEqual([
-      { entityId: lesson.id, status: "started", step: "markLesson" },
-      { entityId: lesson.id, status: "started", step: "drawPictures" },
-      { entityId: lesson.id, status: "completed", step: "lessonReady" },
+    expect(
+      getStreamedEvents()
+        .slice(-5)
+        .map((event) => `${String(event.step)}:${String(event.status)}`),
+    ).toStrictEqual([
+      "markLesson:started",
+      "drawPictures:started",
+      "markLesson:completed",
+      "drawPictures:completed",
+      "lessonReady:completed",
     ]);
 
     await expect(getLessonGenerationState(lesson.id)).resolves.toStrictEqual({ status: "ready" });
