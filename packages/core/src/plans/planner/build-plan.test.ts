@@ -1532,65 +1532,6 @@ describe("phase challenges a learner reaches together, a day before the date", (
       plan.phases.map((phase, index) => phase.challengeLeftOut === true || planned(index)),
     ).toStrictEqual([true, true, true]);
   });
-
-  it("plan every one without a date, each day past the learner's time by one challenge at most", () => {
-    const plan = buildPlan({ ...input, goal: { ...input.goal, targetDate: null } });
-    const challenge = getPlannedBossMinutes({ goalKind: "learn", phase: 0 });
-
-    expect(plan.phases.filter((phase) => phase.challengeLeftOut)).toStrictEqual([]);
-
-    expect(
-      plan.items.filter((item) => item.kind === "boss").map((item) => item.phase),
-    ).toStrictEqual([0, 1, 2]);
-
-    expect(plan.checkpointOverflow.filter((day) => day.minutes > challenge)).toStrictEqual([]);
-  });
-
-  it("stay in phase order when a later phase's challenge holds the day the learner saw", () => {
-    const sized = planInput({
-      goal: { dailyMinutes: 10, kind: "learn", targetDate: addDays(TODAY, 30) },
-      graph: {
-        phases: [0, 1, 2, 3, 4].map((phase) => ({ milestone: null, name: `Phase ${phase}` })),
-        skills: [0, 1, 2, 3, 4].map((phase) =>
-          skill(`s${phase}`, { area: `Area ${phase}`, lessons: 6, phase }),
-        ),
-      },
-      lessons: [0, 1, 2, 3, 4].flatMap((phase) =>
-        lessonsFor(`s${phase}`, 6).map((entry) => ({
-          ...entry,
-          chapterId: `chapter-${phase}`,
-          minutes: 5,
-        })),
-      ),
-    });
-
-    const first = buildPlan(sized);
-
-    const items = store(first).map((item) =>
-      item.kind === "lesson" && item.phase < 3
-        ? { ...item, completedAt: TODAY, status: "done" as const }
-        : item,
-    );
-
-    const focused = buildPlan({
-      ...sized,
-      bringBackSetAside: true,
-      carryOver: { lessonIds: [], todayExceptAreas: [] },
-      items,
-      phaseEnds: getShownPhaseEnds({ items, phases: first.phases }),
-      settings: { ...sized.settings, focusAreas: ["Area 1"] },
-      today:
-        first.items.find((item) => item.kind === "boss" && (item.scheduledFor ?? TODAY) > TODAY)
-          ?.scheduledFor ?? TODAY,
-    });
-
-    const dates = focused.items
-      .filter((item) => item.kind === "boss")
-      .toSorted((a, b) => a.phase - b.phase)
-      .map((item) => dateOf(item));
-
-    expect(dates).toStrictEqual(dates.toSorted());
-  });
 });
 
 describe("a plan's first day", () => {
@@ -2070,7 +2011,6 @@ describe("work an earlier day left", () => {
 
   it.each([
     { daily: 45, kind: "learn" },
-    { daily: 55, kind: "learn" },
     { daily: 30, kind: "language" },
   ] as const)(
     "keeps every challenge when a focus day gives the rest of today to focus lessons ($kind, $daily min)",

@@ -7,30 +7,6 @@ import { type PlanDay } from "./schedule-units";
 
 export type PlacedBoss = { beside: boolean; dayIndex: number; start: number; used: number };
 
-function leadDay({
-  cumulative,
-  dayIndex,
-  start,
-  unit,
-  used,
-}: {
-  cumulative: readonly number[];
-  dayIndex: number;
-  start: number;
-  unit: QueueUnit;
-  used: number;
-}): PlacedBoss {
-  const dayEnd = cumulative[dayIndex] ?? start;
-  const end = start + unit.minutes;
-
-  return {
-    beside: false,
-    dayIndex,
-    start,
-    used: Math.max(used, end <= dayEnd + PLAN_EPSILON ? end : dayEnd),
-  };
-}
-
 export function placeBoss({
   cumulative,
   from,
@@ -48,8 +24,17 @@ export function placeBoss({
     return null;
   }
 
-  const lead = (dayIndex: number, start: number) =>
-    leadDay({ cumulative, dayIndex, start, unit, used });
+  const lead = (dayIndex: number, start: number): PlacedBoss => {
+    const dayEnd = cumulative[dayIndex] ?? start;
+    const end = start + unit.minutes;
+
+    return {
+      beside: false,
+      dayIndex,
+      start,
+      used: Math.max(used, end <= dayEnd + PLAN_EPSILON ? end : dayEnd),
+    };
+  };
 
   if (unit.heldOn !== undefined) {
     return lead(unit.heldOn, unit.startsAt ?? cumulative[unit.heldOn - 1] ?? 0);
@@ -89,50 +74,27 @@ export function placeBoss({
   return { beside: true, dayIndex: lastDay, start: floor, used: floor };
 }
 
-/**
- * Records the minutes `boss` runs past its day in `pastDays`, moves it to a later study day up to
- * `lastDay`, or leaves it out (day -1).
- */
-function keepDayOverrun({
+/** Records the minutes `boss` runs past its day in `pastDays`, or leaves it out (day -1). */
+export function keepDayOverrun({
   boss,
   cumulative,
-  lastDay,
-  state,
+  state: { pastDays, used },
   unit,
 }: {
   boss: PlacedBoss;
   cumulative: readonly number[];
-  lastDay: number;
   state: { pastDays: Map<number, number>; used: number };
   unit: QueueUnit;
 }): PlacedBoss {
-  const { pastDays, used } = state;
-
   const past = boss.beside
     ? unit.minutes
     : Math.max(0, boss.start + unit.minutes - (cumulative[boss.dayIndex] ?? 0));
 
   const before = pastDays.get(boss.dayIndex) ?? 0;
 
-  // A day runs past the learner's time by one challenge at most; another waits for the next study
-  // day, unless that would put it after a later phase's challenge or past the plan's last day.
+  // A day runs past the learner's time by one challenge at most; another has no room.
   if (before + past > unit.minutes + PLAN_EPSILON) {
-    const next =
-      boss.dayIndex < 0 ? -1 : findLessonDayFrom({ cumulative, from: boss.dayIndex + 1 });
-
-    if (next === -1 || next > lastDay) {
-      return { ...boss, dayIndex: -1, used };
-    }
-
-    const start = Math.max(boss.start, cumulative[next - 1] ?? 0);
-
-    return keepDayOverrun({
-      boss: leadDay({ cumulative, dayIndex: next, start, unit, used }),
-      cumulative,
-      lastDay,
-      state,
-      unit,
-    });
+    return { ...boss, dayIndex: -1, used };
   }
 
   if (boss.dayIndex >= 0 && past > 0) {
@@ -140,43 +102,6 @@ function keepDayOverrun({
   }
 
   return boss;
-}
-
-type HeldChallenge = { day: number; phase: number };
-
-export function listHeldChallenges(units: readonly QueueUnit[]): HeldChallenge[] {
-  return units.flatMap((unit) =>
-    unit.kind === "boss" && unit.heldOn !== undefined
-      ? [{ day: unit.heldOn, phase: unit.phase }]
-      : [],
-  );
-}
-
-export function layBoss({
-  cumulative,
-  held,
-  state,
-  unit,
-}: {
-  cumulative: readonly number[];
-  held: readonly HeldChallenge[];
-  state: { boss: PlacedBoss | null; dayIndex: number; pastDays: Map<number, number>; used: number };
-  unit: QueueUnit;
-}): PlacedBoss | null {
-  const placed = placeBoss({
-    cumulative,
-    from: state.dayIndex,
-    previous: state.boss,
-    unit,
-    used: state.used,
-  });
-
-  const later = held.flatMap((other) => (other.phase > unit.phase ? [other.day] : []));
-
-  return (
-    placed &&
-    keepDayOverrun({ boss: placed, cumulative, lastDay: Math.min(Infinity, ...later), state, unit })
-  );
 }
 
 export function withKeptLessons({

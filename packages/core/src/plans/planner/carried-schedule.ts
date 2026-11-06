@@ -162,28 +162,29 @@ function listHeldRooms({
 export function scheduleCarriedWork({
   carried,
   days,
+  focusDay,
   phaseEnds,
   rest,
   today,
 }: {
   carried: readonly QueueUnit[];
   days: readonly PlanDay[];
+  focusDay: boolean;
   phaseEnds: ReadonlyMap<number, Date>;
   rest: readonly QueueUnit[];
   today: ReadonlySet<string>;
 }) {
   const first = days[0]?.date;
 
-  const rooms =
+  const all =
     carried.length > 0 && first
-      ? listHeldRooms({
-          carried,
-          days,
-          rest,
-          rooms: listChallengeRooms({ ends: phaseEnds, from: first, units: rest }),
-          today,
-        })
+      ? listChallengeRooms({ ends: phaseEnds, from: first, units: rest })
       : [];
+
+  // A focus day gives the rest of today to focus lessons (`takeFocusedToday`), so letting a
+  // challenge's time go moves what tomorrow holds, which can stack challenges there past what a day
+  // keeps and leave one out (#2227).
+  const rooms = focusDay ? all : listHeldRooms({ carried, days, rest, rooms: all, today });
 
   const room = sumRoomMinutes(rooms);
   const roomed = shiftReserved({ days, minutes: room });

@@ -5,7 +5,7 @@ import { findLargestCount, makeRoomForOutcomes } from "./outcome-room";
 import { addDays } from "./plan-calendar";
 import { PLAN_EPSILON } from "./plan-precision";
 import { type QueueUnit } from "./plan-units";
-import { type PlacedBoss, layBoss, listHeldChallenges, withKeptLessons } from "./whole-boss";
+import { type PlacedBoss, keepDayOverrun, placeBoss, withKeptLessons } from "./whole-boss";
 
 export type FixedEvent = {
   beside?: boolean;
@@ -135,8 +135,6 @@ function layUnits({
   cumulative: readonly number[];
   units: readonly QueueUnit[];
 }) {
-  const held = listHeldChallenges(units);
-
   return units.reduce<{
     boss: PlacedBoss | null;
     dayIndex: number;
@@ -145,7 +143,15 @@ function layUnits({
     used: number;
   }>(
     (state, unit) => {
-      const boss = layBoss({ cumulative, held, state, unit });
+      const placedBoss = placeBoss({
+        cumulative,
+        from: state.dayIndex,
+        previous: state.boss,
+        unit,
+        used: state.used,
+      });
+
+      const boss = placedBoss && keepDayOverrun({ boss: placedBoss, cumulative, state, unit });
 
       if (boss) {
         state.placed.push({

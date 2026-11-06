@@ -216,7 +216,14 @@ export function placeCarriedWork({
 
   const { carried, rest } = splitCarriedUnits({ keys, units });
 
-  const { room, roomed, schedule } = scheduleCarriedWork({ carried, days, phaseEnds, rest, today });
+  const { room, roomed, schedule } = scheduleCarriedWork({
+    carried,
+    days,
+    focusDay: Boolean(input.carryOver?.todayExceptAreas),
+    phaseEnds,
+    rest,
+    today,
+  });
 
   const reserved = shiftReserved({
     days: reserveCarriedTime({
