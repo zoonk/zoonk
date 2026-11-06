@@ -230,9 +230,11 @@ describe("lesson by keyboard", () => {
       await press("Enter");
       await expect.element(page.getByText("A line that fits.")).toBeVisible();
 
-      const formula = page.getByRole("region", { name: /2\.050,00$/u });
+      const stops = document.querySelectorAll("[data-slot='display-math'] > [tabindex]");
+      expect(stops).toHaveLength(1);
+
+      const formula = page.elementLocator(stops[0]!);
       await tabTo(formula);
-      await expect.element(page.getByRole("region", { name: /c$/u })).not.toBeInTheDocument();
       expect(formula.element().scrollLeft).toBe(0);
 
       await press("ArrowRight");

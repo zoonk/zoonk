@@ -63,11 +63,7 @@ function RichInlineSegmentView({ segment }: { segment: RichInlineSegment }) {
       </Suspense>
     );
 
-    return segment.kind === "displayMath" ? (
-      <DisplayMath latex={segment.text}>{formula}</DisplayMath>
-    ) : (
-      formula
-    );
+    return segment.kind === "displayMath" ? <DisplayMath>{formula}</DisplayMath> : formula;
   }
 
   return <span>{segment.text}</span>;

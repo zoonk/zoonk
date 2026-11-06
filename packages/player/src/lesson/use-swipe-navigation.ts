@@ -1,5 +1,6 @@
 "use client";
 
+import { scrollsAlong } from "@zoonk/ui/lib/scroll-overflow";
 import { type RefObject, useEffect, useEffectEvent } from "react";
 
 const SWIPE_DISTANCE = 48;
@@ -32,12 +33,8 @@ type Gesture = { id: number; startedAt: number; x: number; y: number };
 const BROWSER_TOUCH_ACTIONS = new Set(["auto", "manipulation"]);
 
 function handlesOwnTouch(element: Element): boolean {
-  const { overflowX, touchAction } = getComputedStyle(element);
-
-  const scrollsSideways =
-    element.scrollWidth > element.clientWidth && (overflowX === "auto" || overflowX === "scroll");
-
-  return scrollsSideways || !BROWSER_TOUCH_ACTIONS.has(touchAction);
+  const { touchAction } = getComputedStyle(element);
+  return scrollsAlong(element, "x") || !BROWSER_TOUCH_ACTIONS.has(touchAction);
 }
 
 function startsOnOwnGesture(target: EventTarget | null, boundary: Element): boolean {

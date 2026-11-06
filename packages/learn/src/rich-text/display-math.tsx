@@ -1,24 +1,37 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { speakMath } from "./math-speech";
-import { useMathWords } from "./use-spoken-text";
 
-function useScrollsSideways() {
+/** A control stays one Tab stop: a stop inside it would take focus without pressing it. */
+const CONTROL_SELECTOR = [
+  "a[href]",
+  "button",
+  "label",
+  "summary",
+  "[role='button']",
+  "[role='checkbox']",
+  "[role='link']",
+  "[role='option']",
+  "[role='radio']",
+  "[role='switch']",
+  "[role='tab']",
+].join(", ");
+
+function useTakesKeyboard() {
   const scrollerRef = useRef<HTMLSpanElement>(null);
   const contentRef = useRef<HTMLSpanElement>(null);
-  const [scrolls, setScrolls] = useState(false);
+  const [takesKeyboard, setTakesKeyboard] = useState(false);
 
   useEffect(() => {
     const scroller = scrollerRef.current;
     const content = contentRef.current;
 
-    if (!scroller || !content) {
+    if (!scroller || !content || scroller.closest(CONTROL_SELECTOR)) {
       return;
     }
 
     const observer = new ResizeObserver(() => {
-      setScrolls(scroller.scrollWidth > scroller.clientWidth);
+      setTakesKeyboard(scroller.scrollWidth > scroller.clientWidth);
     });
 
     observer.observe(scroller);
@@ -26,12 +39,11 @@ function useScrollsSideways() {
     return () => observer.disconnect();
   }, []);
 
-  return { contentRef, scrollerRef, scrolls };
+  return { contentRef, scrollerRef, takesKeyboard };
 }
 
-export function DisplayMath({ children, latex }: { children: React.ReactNode; latex: string }) {
-  const words = useMathWords();
-  const { contentRef, scrollerRef, scrolls } = useScrollsSideways();
+export function DisplayMath({ children }: { children: React.ReactNode }) {
+  const { contentRef, scrollerRef, takesKeyboard } = useTakesKeyboard();
 
   return (
     <span
@@ -39,12 +51,10 @@ export function DisplayMath({ children, latex }: { children: React.ReactNode; la
       data-slot="display-math"
     >
       <span
-        aria-label={scrolls ? speakMath({ latex, words }) : undefined}
         className="scroll-fade-x block overflow-x-auto overflow-y-hidden p-1 outline-none"
         ref={scrollerRef}
-        role={scrolls ? "region" : undefined}
-        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A formula wider than its column scrolls sideways, which needs focus by keyboard, and WebKit doesn't give a scroller focus (https://bugs.webkit.org/show_bug.cgi?id=277290). As a region it keeps the arrow keys for scrolling instead of turning the screen.
-        tabIndex={scrolls ? 0 : undefined}
+        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A formula wider than its column scrolls sideways, which needs focus by keyboard, and WebKit doesn't give a scroller focus (https://bugs.webkit.org/show_bug.cgi?id=277290).
+        tabIndex={takesKeyboard ? 0 : undefined}
       >
         <span className="block w-max min-w-full" ref={contentRef}>
           {children}

@@ -1,3 +1,5 @@
+import { scrollsAlong } from "@zoonk/ui/lib/scroll-overflow";
+
 const MAX_NUMBER_KEY = 9;
 
 export const POPUP_SELECTOR =
@@ -81,6 +83,13 @@ function isHandledByControl(event: KeyboardEvent): boolean {
   return !(event.key === "Enter" && isRadio);
 }
 
+function scrollsToward(element: Element | null, arrow: string): boolean {
+  return (
+    element !== null &&
+    scrollsAlong(element, arrow === "ArrowLeft" || arrow === "ArrowRight" ? "x" : "y")
+  );
+}
+
 /** A held key acts once, so holding Enter never skips screens. */
 export function isScreenShortcut(
   event: KeyboardEvent,
@@ -92,8 +101,11 @@ export function isScreenShortcut(
 
   const element = shortcutTarget(event);
 
-  // A focusable region keeps arrows for native scrolling.
-  if (event.key.startsWith("Arrow") && element?.closest("[role='region'][tabindex='0']")) {
+  // A focusable region, or a focused element with more to show that way, keeps arrows for native scrolling.
+  if (
+    event.key.startsWith("Arrow") &&
+    (element?.closest("[role='region'][tabindex='0']") || scrollsToward(element, event.key))
+  ) {
     return false;
   }
 
