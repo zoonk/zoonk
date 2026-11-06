@@ -227,19 +227,30 @@ export async function replaceImageAsset({
 const owesCheck = { checkFailures: { lt: CHECK_FAILURES }, checkOwedAt: { not: null } };
 
 /**
- * Internal workflow bridge. A picture whose check failed three times isn't checked again, since
- * another try would only pay again.
+ * Internal workflow bridge: null when the picture owes no check. One whose check failed three times
+ * owes none, since another try would only pay again.
  */
-export async function owesPictureCheck(assetId: string): Promise<boolean> {
-  const owed = await prisma.mediaAsset.count({ where: { ...owesCheck, id: assetId } });
-  return owed > 0;
+export function findOwedPictureCheck(assetId: string): Promise<{ checkFailures: number } | null> {
+  return prisma.mediaAsset.findFirst({
+    select: { checkFailures: true },
+    where: { ...owesCheck, id: assetId },
+  });
 }
 
-/** Internal workflow bridge: a check that failed after its retries. */
-export async function recordFailedPictureCheck(assetId: string): Promise<void> {
+/**
+ * Internal workflow bridge: a check that failed after its retries. It moves the count on from the
+ * one its check read, so a retry of this write counts the failure once.
+ */
+export async function recordFailedPictureCheck({
+  assetId,
+  checkFailures,
+}: {
+  assetId: string;
+  checkFailures: number;
+}): Promise<void> {
   await prisma.mediaAsset.updateMany({
-    data: { checkFailures: { increment: 1 } },
-    where: { id: assetId },
+    data: { checkFailures: checkFailures + 1 },
+    where: { checkFailures, id: assetId },
   });
 }
 

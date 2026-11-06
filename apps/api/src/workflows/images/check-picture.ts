@@ -3,7 +3,7 @@ import { claimRunToken } from "../_shared/run-token";
 import {
   type PictureAnalytics,
   checkPictureStep,
-  owesPictureCheckStep,
+  findOwedPictureCheckStep,
   planPictureAgainStep,
   recordFailedPictureCheckStep,
   redrawPictureStep,
@@ -68,15 +68,16 @@ export async function checkPicture(input: {
   assetId: string;
 }): Promise<PictureCheckStatus> {
   using claim = await claimRunToken(`picture-check:${input.assetId}`);
+  const owed = claim.conflict ? null : await findOwedPictureCheckStep(input.assetId);
 
-  if (claim.conflict || !(await owesPictureCheckStep(input.assetId))) {
+  if (!owed) {
     return "skipped";
   }
 
   try {
     return await checkOwedPicture(input);
   } catch (error) {
-    await recordFailedPictureCheckStep(input.assetId);
+    await recordFailedPictureCheckStep({ ...owed, assetId: input.assetId });
     throw error;
   }
 }

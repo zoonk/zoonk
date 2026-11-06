@@ -21,8 +21,8 @@ import {
 import {
   type PictureRedraw,
   checkImageAsset,
+  findOwedPictureCheck,
   listOwedPictureChecks,
-  owesPictureCheck,
   planImageAssetAgain,
   recordFailedPictureCheck,
   redrawImageAsset,
@@ -277,22 +277,23 @@ describe(replaceImageAsset, () => {
   });
 });
 
-describe(owesPictureCheck, () => {
-  it("owes a stored picture's check until it failed three times", async () => {
-    const asset = await mediaAssetFixture({ checkFailures: 1, checkOwedAt: new Date() });
+describe(findOwedPictureCheck, () => {
+  it("owes a stored picture's check until it failed three times, counting a retried failure once", async () => {
+    const { id: assetId } = await mediaAssetFixture({ checkFailures: 1, checkOwedAt: new Date() });
 
-    await expect(owesPictureCheck(asset.id)).resolves.toBe(true);
-    await recordFailedPictureCheck(asset.id);
-    await expect(owesPictureCheck(asset.id)).resolves.toBe(true);
-    await recordFailedPictureCheck(asset.id);
-    await expect(owesPictureCheck(asset.id)).resolves.toBe(false);
+    await expect(findOwedPictureCheck(assetId)).resolves.toStrictEqual({ checkFailures: 1 });
+    await recordFailedPictureCheck({ assetId, checkFailures: 1 });
+    await recordFailedPictureCheck({ assetId, checkFailures: 1 });
+    await expect(findOwedPictureCheck(assetId)).resolves.toStrictEqual({ checkFailures: 2 });
+    await recordFailedPictureCheck({ assetId, checkFailures: 2 });
+    await expect(findOwedPictureCheck(assetId)).resolves.toBeNull();
   });
 
   it("owes nothing for a picture that was checked or is gone", async () => {
     const asset = await mediaAssetFixture({ checkOwedAt: null });
 
-    await expect(owesPictureCheck(asset.id)).resolves.toBe(false);
-    await expect(owesPictureCheck(randomUUID())).resolves.toBe(false);
+    await expect(findOwedPictureCheck(asset.id)).resolves.toBeNull();
+    await expect(findOwedPictureCheck(randomUUID())).resolves.toBeNull();
   });
 });
 
