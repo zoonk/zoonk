@@ -392,8 +392,8 @@ class TutorViewModel internal constructor(
                 is MutationResult.Failed -> {
                     if (result.status == CONFLICT) {
                         unresolved = null
-                        thread.refresh()
-                        // An earlier question goes first, so this one waits in the composer, still going by its suggestion.
+                        // An earlier question goes first, so this one waits in the composer, still going by its
+                        // suggestion. It's there before the read, so a question sent during it can't be overwritten.
                         if (draft.text.isEmpty()) {
                             if (pending.suggestion == null) {
                                 draft.setTextAndPlaceCursorAtEnd(pending.question)
@@ -401,6 +401,7 @@ class TutorViewModel internal constructor(
                                 offer(TutorSuggestion(pending.question, pending.suggestion))
                             }
                         }
+                        thread.refresh()
                         return@launch
                     }
                     val failure = result.toTutorFailure()

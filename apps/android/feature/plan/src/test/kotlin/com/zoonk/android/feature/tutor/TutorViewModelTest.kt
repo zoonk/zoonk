@@ -446,6 +446,35 @@ class TutorViewModelTest {
         }
 
     @Test
+    fun aQuestionSentWhileARefusedAskReadsTheConversationKeepsItsWords() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            api.refusal = ApiException(ApiError.Unavailable, status = 409)
+            val suggestionAsk = CompletableDeferred<Unit>()
+            api.askGate = suggestionAsk
+            vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
+            advanceUntilIdle()
+            vm.draft.setTextAndPlaceCursorAtEnd("What's a cell wall?")
+
+            api.thread = TutorThread(listOf(turn("elsewhere", TutorTurn.Status.Running, null)), hasMore = false, nextCursor = null)
+            val read = CompletableDeferred<Unit>()
+            api.gate = read
+            val typedAsk = CompletableDeferred<Unit>()
+            api.askGate = typedAsk
+            suggestionAsk.complete(Unit)
+            advanceUntilIdle()
+            vm.send()
+            advanceUntilIdle()
+            read.complete(Unit)
+            advanceUntilIdle()
+            typedAsk.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(listOf("Explain it more simply", "What's a cell wall?"), api.asked.map { it.question })
+            assertEquals("What's a cell wall?", vm.draft.text.toString())
+        }
+
+    @Test
     fun aConflictReadsTheConversationAgain() =
         runTest(dispatcher) {
             val vm = conversation()
