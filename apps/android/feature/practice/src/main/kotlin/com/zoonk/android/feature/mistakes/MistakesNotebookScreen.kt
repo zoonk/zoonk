@@ -407,6 +407,7 @@ private fun WideNotebook(
                             highlighted = groupKey == selectedKey,
                             leading = group.fixedMark(),
                             meta = { Text(group.size.toString()) },
+                            chevron = false,
                         )
                     }
                 }

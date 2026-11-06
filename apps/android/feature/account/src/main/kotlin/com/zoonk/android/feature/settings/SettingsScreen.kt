@@ -170,6 +170,7 @@ fun SettingsScreen(
                                 }
                             }
                         },
+                        chevron = false,
                     )
                 }
             }

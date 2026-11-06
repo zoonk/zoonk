@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -58,7 +59,9 @@ import com.zoonk.android.ui.theme.zoonkType
  * larger picture (an avatar). Rows reach the list's edges and inset their own content by
  * [LIST_ITEM_INSET]; a nested row moves its mark and words in by [indent], so its highlight still
  * spans the list. [verticalAlignment] `Top` keeps the mark on the title's first line when lines
- * under it run long (main's `items-start`).
+ * under it run long (main's `items-start`). A row that opens a page ends with main's chevron; one
+ * that acts in place (a "Show more", logging out) passes [chevron] `false`, and one whose [trailing]
+ * is a value rather than a control passes `true`.
  */
 @Composable
 fun ListRow(
@@ -75,6 +78,7 @@ fun ListRow(
     meta: (@Composable () -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
+    chevron: Boolean = onClick != null && expanded == null && trailing == null,
 ) {
     val openWords = expanded?.let { stringResource(if (it) R.string.disclosure_expanded else R.string.disclosure_collapsed) }
     val state =
@@ -163,7 +167,20 @@ fun ListRow(
         }
 
         trailing?.invoke()
+
+        if (chevron) ListRowChevron()
     }
+}
+
+/** Main's `ListRowChevron`: what a row that opens a page ends with, quieter than its words. */
+@Composable
+fun ListRowChevron() {
+    Icon(
+        painterResource(R.drawable.ic_chevron_right),
+        contentDescription = null,
+        modifier = Modifier.size(16.dp),
+        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+    )
 }
 
 /** Where a row's words start, past its mark, for what opens under a row to line up with them. */

@@ -58,6 +58,7 @@ import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
+import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -368,6 +369,7 @@ fun MissionListRow(
         }
 
         trailing?.invoke()
+        if (onOpen != null && trailing == null) ListRowChevron()
     }
 }
 

@@ -389,6 +389,7 @@ internal fun LazyListScope.subjectChapters(
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     },
+                    chevron = false,
                 )
             }
         }
@@ -859,6 +860,7 @@ internal fun LazyListScope.subjectMatrix(matrix: List<String>) {
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     },
+                    chevron = false,
                 )
             }
         }

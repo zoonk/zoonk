@@ -365,6 +365,7 @@ private fun LanguageSection() {
             supporting = { Text(stringResource(R.string.settings_preferences_on_this_device)) },
             trailing = { SettingValue(locale.getDisplayLanguage(locale).replaceFirstChar { it.titlecase(locale) }) },
             onClick = { context.startActivity(Intent(Settings.ACTION_APP_LOCALE_SETTINGS, "package:${context.packageName}".toUri())) },
+            chevron = true,
         )
     }
 }
