@@ -92,7 +92,10 @@ export const SEARCH_TERMS = toSet([
   ROMAN_NUMERALS,
 ]);
 
-export const SEARCH_FILLER_WORDS = toSet([...FUNCTION_WORDS, ...QUALIFIERS, ROMAN_NUMERALS]);
+export const SEARCH_FUNCTION_WORDS = toSet(FUNCTION_WORDS);
+
+/** Alone, they name something only where the public text does ("Laravel Nova", "Marketing on X"). */
+export const SEARCH_MODIFIERS = toSet([...QUALIFIERS, ROMAN_NUMERALS]);
 
 export const SEARCH_REFERENCE_WORDS = toSet(REFERENCE_WORDS);
 

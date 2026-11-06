@@ -368,6 +368,14 @@ describe(buildSearchQueries, () => {
     ).toStrictEqual([]);
   });
 
+  it("sends a name the public text gives, even one spelled like a qualifier or a numeral", () => {
+    const course = { ...SOFIA_PLAN.course, title: "Marketing on X with Laravel Nova" };
+
+    expect(
+      build(asking({ ...SOFIA_PLAN, course }), ["X latest update", "Nova latest", "on the do"]),
+    ).toStrictEqual(["X latest update", "Nova latest"]);
+  });
+
   it("sends a law's number alone as the reference it is", () => {
     const course = { ...SOFIA_PLAN.course, description: "Lei 8.906/1994 e IN 128/2022" };
 

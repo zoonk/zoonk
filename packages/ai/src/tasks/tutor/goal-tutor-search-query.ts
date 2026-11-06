@@ -1,8 +1,9 @@
 import { type PlanScopeContext } from "../lessons/lesson-question-context";
 import { collectPublicText } from "./goal-tutor-search-public-text";
 import {
-  SEARCH_FILLER_WORDS,
+  SEARCH_FUNCTION_WORDS,
   SEARCH_LAW_WORDS,
+  SEARCH_MODIFIERS,
   SEARCH_REFERENCE_WORDS,
   SEARCH_TERMS,
   normalizeSearchWord,
@@ -333,14 +334,22 @@ function cutAtWord(query: string): string {
   return end === -1 ? "" : cut.slice(0, end);
 }
 
+function isSubjectRun({ allowed, run }: { allowed: Allowed; run: string }): boolean {
+  if (PLAIN_NUMBER.test(run) || SEARCH_FUNCTION_WORDS.has(run)) {
+    return false;
+  }
+
+  return !SEARCH_MODIFIERS.has(run) || allowed.public.has(run);
+}
+
 /** "do", "in 2026" or "current" alone would search the web at random; a law's number names one. */
-function hasSubject(query: string): boolean {
+function hasSubject({ allowed, query }: { allowed: Allowed; query: string }): boolean {
   return query
     .split(WHITESPACE)
     .some(
       (word) =>
         LAW_NUMBER.test(word.replaceAll(EDGE_PUNCTUATION, "")) ||
-        toRuns(word).some((run) => !PLAIN_NUMBER.test(run) && !SEARCH_FILLER_WORDS.has(run)),
+        toRuns(word).some((run) => isSubjectRun({ allowed, run })),
     );
 }
 
@@ -369,5 +378,5 @@ export function buildSearchQueries({
     cutAtWord(keepWords({ allowed, words: toPublicShapedWords(query) }).join(" ")),
   );
 
-  return dedupe(built.filter((query) => hasSubject(query))).slice(0, MAX_QUERIES);
+  return dedupe(built.filter((query) => hasSubject({ allowed, query }))).slice(0, MAX_QUERIES);
 }
