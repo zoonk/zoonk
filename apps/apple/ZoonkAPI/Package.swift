@@ -6,8 +6,8 @@ let package = Package(
   platforms: [.iOS(.v26)],
   products: [.library(name: "ZoonkAPI", targets: ["ZoonkAPI"])],
   dependencies: [
-    .package(url: "https://github.com/apple/swift-openapi-generator", exact: "1.14.3"),
-    .package(url: "https://github.com/apple/swift-openapi-runtime", from: "1.13.3"),
+    .package(url: "https://github.com/apple/swift-openapi-generator", exact: "1.14.4"),
+    .package(url: "https://github.com/apple/swift-openapi-runtime", from: "1.13.4"),
     .package(url: "https://github.com/apple/swift-http-types", from: "1.8.0"),
   ],
   targets: [

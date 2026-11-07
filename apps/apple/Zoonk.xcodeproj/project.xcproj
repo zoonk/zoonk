@@ -29,19 +29,19 @@
       "kind": "remote",
       "repository": "https://github.com/PostHog/posthog-ios",
       "version": {
-        "up-to-next-major-version": "3.93.1",
+        "up-to-next-major-version": "3.93.6",
       },
     }, {
       "kind": "remote",
       "repository": "https://github.com/getsentry/sentry-cocoa",
       "version": {
-        "up-to-next-major-version": "9.32.0",
+        "up-to-next-major-version": "9.33.0",
       },
     }, {
       "kind": "remote",
       "repository": "https://github.com/stasel/WebRTC",
       "version": {
-        "up-to-next-major-version": "156.0.0",
+        "up-to-next-major-version": "157.0.0",
       },
     }, {
       "kind": "local",
@@ -50,7 +50,7 @@
       "kind": "remote",
       "repository": "https://github.com/apple/swift-openapi-runtime",
       "version": {
-        "up-to-next-major-version": "1.13.3",
+        "up-to-next-major-version": "1.13.4",
       },
     }, {
       "kind": "remote",
