@@ -131,11 +131,7 @@ struct RemindersView: View {
         get: { reminder.pushOn },
         set: { on in
           Task {
-            if on, reminder.phone == nil {
-              await setUpPush { await reminders.turnOnPush() }
-            } else {
-              await reminders.change(StudyReminderChange(pushOn: on))
-            }
+            await setUpPush { await reminders.setPush(on, in: reminder) }
           }
         }),
       title: Text(
@@ -167,14 +163,15 @@ struct RemindersView: View {
     }
   }
 
-  private func setUpPush(_ setUp: () async -> PushSetup) async {
+  /// Nil when no setup ran: a plain save, which says its own failure.
+  private func setUpPush(_ setUp: () async -> PushSetup?) async {
     isSettingUpPush = true
     pushFailed = false
     let result = await setUp()
     isSettingUpPush = false
 
     switch result {
-    case .on:
+    case .on, nil:
       break
     case .denied:
       notificationsOff = true

@@ -4,20 +4,20 @@ import XCTest
 
 @MainActor
 final class StudyRemindersTests: XCTestCase {
-  func testRemindMeSelectsThisPhoneBeforeTurningPushOn() async {
-    let api = StudyRemindersAPIStub()
-    let store = makeStore(api: api, push: PushStub(allows: true, token: "token-1"))
+  func testRemindMeSelectsThisPhoneBeforeTurningPushOn() async throws {
+    let api = RemindersAPIStub()
+    let store = try await makeStore(api: api, push: PushStub(token: "phone"))
 
     let result = await store.turnOnPush(at: "20:30")
 
     XCTAssertEqual(result, .on)
     let calls = await api.calls
-    XCTAssertEqual(calls, ["select token-1", "update time 20:30 push true"])
+    XCTAssertEqual(calls, ["select a phone", "update a 20:30 push true"])
   }
 
-  func testRemindMeWithoutPermissionSavesNothing() async {
-    let api = StudyRemindersAPIStub()
-    let store = makeStore(api: api, push: PushStub(allows: false, token: "token-1"))
+  func testRemindMeWithoutPermissionSavesNothing() async throws {
+    let api = RemindersAPIStub()
+    let store = try await makeStore(api: api, push: PushStub(token: "phone", allows: false))
 
     let result = await store.turnOnPush(at: "20:30")
 
@@ -26,34 +26,88 @@ final class StudyRemindersTests: XCTestCase {
     XCTAssertEqual(calls, [])
   }
 
-  func testRemindMeIsntOnWhenPushFailsAfterThePhoneSaved() async {
-    let api = StudyRemindersAPIStub(updateError: .unavailable)
-    let store = makeStore(api: api, push: PushStub(allows: true, token: "token-1"))
+  func testRemindMeIsntOnWhenPushFailsAfterThePhoneSaved() async throws {
+    let api = RemindersAPIStub(updateFails: true)
+    let store = try await makeStore(api: api, push: PushStub(token: "phone"))
 
     let result = await store.turnOnPush(at: "20:30")
 
     XCTAssertEqual(result, .failed)
     let calls = await api.calls
-    XCTAssertEqual(calls, ["select token-1", "update time 20:30 push true"])
+    XCTAssertEqual(calls, ["select a phone", "update a 20:30 push true"])
   }
 
-  func testANewTokenAtLaunchMovesPushOnlyWhenThisWasThePhone() async {
-    let defaults = UserDefaults(suiteName: UUID().uuidString)!
-    let push = PushStub(allows: true, token: "token-1")
-    _ = await makeStore(api: StudyRemindersAPIStub(), push: push, defaults: defaults)
-      .turnOnPush()
-    push.token = "token-2"
+  func testSettingsTurnsPushOnForThisPhoneOnlyWithPermission() async throws {
+    let context = try await context(token: "a")
+    context.defaults.set("phone", forKey: "studyReminderPushToken")
+    let api = RemindersAPIStub(phones: ["a": "phone"])
+    let store = StudyRemindersStore(
+      api: api, cache: AppCache(session: context.session),
+      push: PushStub(token: "phone", allows: false), defaults: context.defaults)
+    await store.reminder.load()
+    let reminder = try XCTUnwrap(store.reminder.value)
 
-    let selected = StudyRemindersAPIStub(phoneToken: "token-1")
-    await makeStore(api: selected, push: push, defaults: defaults).refreshPhoneToken()
-    let other = StudyRemindersAPIStub(phoneToken: "another-phone")
-    await makeStore(api: other, push: push, defaults: .init(suiteName: UUID().uuidString)!)
-      .refreshPhoneToken()
+    let result = await store.setPush(true, in: reminder)
 
-    let selectedCalls = await selected.calls
-    XCTAssertEqual(selectedCalls, ["get", "select token-2"])
-    let otherCalls = await other.calls
-    XCTAssertEqual(otherCalls, [], "an installation that never chose push asks for nothing")
+    XCTAssertEqual(result, .denied)
+    let calls = await api.calls
+    XCTAssertEqual(calls, ["get a"], "blocked notifications never turn push on")
+  }
+
+  func testRegistrationStartedByACannotEnablePushForB() async throws {
+    let context = try await context(token: "a")
+    let registration = RegistrationGate()
+    let api = RemindersAPIStub()
+    let store = StudyRemindersStore(
+      api: api, cache: AppCache(session: context.session),
+      push: PushStub(token: "phone", registration: registration), defaults: context.defaults)
+    let setup = Task { await store.turnOnPush(at: "20:30") }
+    await registration.waitUntilStarted()
+
+    try context.credentials.save("b")
+    await context.session.reconcileSynchronizedCredential()
+    XCTAssertEqual(context.session.authenticatedSession?.bearerToken, "b")
+    registration.finish()
+    _ = await setup.value
+
+    let calls = await api.calls
+    XCTAssertEqual(calls, [], "A's pending setup must not select a phone or enable push for B")
+  }
+
+  func testLaunchingBDoesNotLoseTheTokenRefreshOwedToA() async throws {
+    let context = try await context(token: "b")
+    context.defaults.set("old-token", forKey: "studyReminderPushToken")
+    let api = RemindersAPIStub(phones: ["a": "old-token"])
+    let store = StudyRemindersStore(
+      api: api, cache: AppCache(session: context.session), push: PushStub(token: "new-token"),
+      defaults: context.defaults)
+    await store.refreshPhoneToken()
+
+    try context.credentials.save("a")
+    await context.session.reconcileSynchronizedCredential()
+    await store.refreshPhoneToken()
+
+    let phone = await api.phone(for: "a")
+    XCTAssertEqual(phone, "new-token", "A still selected this installation and needs its new token")
+  }
+
+  func testSignOutWaitsUntilThePhoneIsRemoved() async throws {
+    let context = try await context(token: "a")
+    context.defaults.set("phone", forKey: "studyReminderPushToken")
+    let api = RemindersAPIStub(phones: ["a": "phone"], removalFails: true)
+    let store = StudyRemindersStore(
+      api: api, cache: AppCache(session: context.session), push: PushStub(token: "phone"),
+      defaults: context.defaults)
+    context.session.willSignOut = { try await store.forgetThisPhone($0) }
+
+    await context.session.signOut()
+
+    let phone = await api.phone(for: "a")
+    XCTAssertEqual(phone, "phone")
+    XCTAssertEqual(
+      context.session.authenticatedSession?.bearerToken, "a",
+      "a sign-out that left this phone receiving A's reminders didn't happen, so it can be retried")
+    XCTAssertEqual(context.session.failure, .network)
   }
 
   func testATappedReminderMakesItsGoalActiveThenOpensToday() async throws {
@@ -77,82 +131,164 @@ final class StudyRemindersTests: XCTestCase {
     XCTAssertEqual(router.tasks, [])
   }
 
-  private func makeStore(
-    api: StudyRemindersAPIStub, push: PushStub,
-    defaults: UserDefaults = UserDefaults(suiteName: UUID().uuidString)!
-  ) -> StudyRemindersStore {
-    StudyRemindersStore(api: api, cache: signedInCache(), push: push, defaults: defaults)
+  private func makeStore(api: RemindersAPIStub, push: PushStub) async throws
+    -> StudyRemindersStore
+  {
+    let context = try await context(token: "a")
+    return StudyRemindersStore(
+      api: api, cache: AppCache(session: context.session), push: push, defaults: context.defaults)
+  }
+
+  private func context(token: String) async throws -> (
+    session: SessionStore, credentials: InMemorySessionCredentialStore, defaults: UserDefaults
+  ) {
+    let credentials = InMemorySessionCredentialStore(token: token)
+    let session = SessionStore(
+      api: AccountAPIStub(), credentialStore: credentials,
+      googleAuthentication: GoogleAuthenticationStub())
+    await session.restore()
+    XCTAssertEqual(session.authenticatedSession?.bearerToken, token)
+    let defaults = try XCTUnwrap(UserDefaults(suiteName: UUID().uuidString))
+    return (session, credentials, defaults)
   }
 }
 
 @MainActor
-private func signedInCache() -> AppCache {
-  AppCache(
-    session: .preview(
-      account: CurrentAccount(
-        account: AccountAccess(
-          deletion: AccountDeletionRequirements(hasAppleAccount: false), subscription: nil),
-        user: AccountUser(
-          email: "learner@zoonk.test", id: "reminders-test-user", image: nil, name: "Learner",
-          username: "learner"))))
+private final class RegistrationGate {
+  private var continuation: CheckedContinuation<Void, Never>?
+  private var started: CheckedContinuation<Void, Never>?
+
+  func wait() async {
+    await withCheckedContinuation { continuation in
+      self.continuation = continuation
+      started?.resume()
+      started = nil
+    }
+  }
+
+  func waitUntilStarted() async {
+    guard continuation == nil else {
+      return
+    }
+
+    await withCheckedContinuation { started = $0 }
+  }
+
+  func finish() {
+    continuation?.resume()
+    continuation = nil
+  }
 }
 
 @MainActor
 private final class PushStub: PushAccess {
+  let token: String
   let allows: Bool
-  var token: String?
+  let registration: RegistrationGate?
 
-  init(allows: Bool, token: String?) {
-    self.allows = allows
+  init(token: String, allows: Bool = true, registration: RegistrationGate? = nil) {
     self.token = token
+    self.allows = allows
+    self.registration = registration
   }
 
   func requestAuthorization() async -> Bool { allows }
-  func deviceToken() async -> String? { token }
   func isAuthorized() async -> Bool { allows }
+
+  func deviceToken() async -> String? {
+    await registration?.wait()
+    return token
+  }
 }
 
-private actor StudyRemindersAPIStub: StudyRemindersAPIClient {
+/// One reminder per account, keyed by its bearer token.
+private actor RemindersAPIStub: StudyRemindersAPIClient {
   private(set) var calls: [String] = []
-  private let updateError: APIError?
-  private let phoneToken: String?
+  private var phones: [String: String]
+  private let removalFails: Bool
+  private let updateFails: Bool
 
-  init(updateError: APIError? = nil, phoneToken: String? = nil) {
-    self.updateError = updateError
-    self.phoneToken = phoneToken
+  init(phones: [String: String] = [:], removalFails: Bool = false, updateFails: Bool = false) {
+    self.phones = phones
+    self.removalFails = removalFails
+    self.updateFails = updateFails
   }
 
+  func phone(for token: String) -> String? { phones[token] }
+
   func getReminder(token: String) async throws -> StudyReminder {
-    calls.append("get")
-    return reminder(phoneToken: phoneToken)
+    calls.append("get \(token)")
+    return reminder(token)
   }
 
   func updateReminder(token: String, _ change: StudyReminderChange) async throws -> StudyReminder {
     calls.append(
-      "update time \(change.time ?? "-") push \(change.pushOn.map(String.init) ?? "-")")
+      "update \(token) \(change.time ?? "-") push \(change.pushOn.map(String.init) ?? "-")")
 
-    if let updateError {
-      throw updateError
+    if updateFails {
+      throw APIError.unavailable
     }
 
-    return change.applied(to: reminder(phoneToken: phoneToken))
+    return change.applied(to: reminder(token))
   }
 
   func claimOffer(token: String) async throws -> Bool { true }
 
   func selectPhone(token: String, pushToken: String) async throws -> StudyReminder {
-    calls.append("select \(pushToken)")
-    return reminder(phoneToken: pushToken)
+    calls.append("select \(token) \(pushToken)")
+    phones[token] = pushToken
+    return reminder(token)
   }
 
   func removePhone(token: String, pushToken: String) async throws {
-    calls.append("remove \(pushToken)")
+    calls.append("remove \(token) \(pushToken)")
+
+    if removalFails {
+      throw APIError.network
+    }
+
+    if phones[token] == pushToken {
+      phones[token] = nil
+    }
   }
 
-  private func reminder(phoneToken: String?) -> StudyReminder {
+  private func reminder(_ token: String) -> StudyReminder {
     StudyReminder(
       time: "19:00", timeZone: "America/Sao_Paulo", emailOn: false,
-      emailAddress: "learner@zoonk.test", pushOn: false,
-      phone: phoneToken.map { StudyReminder.Phone(label: "iPhone", token: $0) }, quiet: false)
+      emailAddress: "\(token)@zoonk.test", pushOn: false,
+      phone: phones[token].map { StudyReminder.Phone(label: "iPhone", token: $0) }, quiet: false)
+  }
+}
+
+private struct AccountAPIStub: AccountAPIClient {
+  func getCurrentAccount(token: String) async throws -> CurrentAccount {
+    CurrentAccount(
+      account: AccountAccess(
+        deletion: AccountDeletionRequirements(hasAppleAccount: false), subscription: nil),
+      user: AccountUser(
+        email: "\(token)@zoonk.test", id: token, image: nil, name: token, username: token))
+  }
+
+  func signInWithEmailCode(email: String, code: String, guestToken: String?) async throws -> String
+  {
+    "b"
+  }
+
+  func signOut(token: String) async throws {}
+
+  func synchronizeAppleSubscription(token: String, signedTransaction: String) async throws
+    -> AppleSubscriptionSynchronization
+  {
+    throw AccountAPIError.invalidResponse
+  }
+}
+
+@MainActor
+private struct GoogleAuthenticationStub: GoogleAuthenticating {
+  let isAvailable = false
+  func handle(_ url: URL) {}
+  func signOut() {}
+  func signIn(from anchor: GoogleAuthenticationAnchor) async throws -> String {
+    throw GoogleAuthenticationError.unavailable
   }
 }

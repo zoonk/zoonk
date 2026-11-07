@@ -110,45 +110,67 @@ final class StudyRemindersStore {
     }
   }
 
-  /// At launch: push keeps reaching this phone when the system gave it a new token.
+  /// At launch: push keeps reaching this phone when the system gave it a new token. The saved token
+  /// moves on only once the learner whose phone it is gets the new one; another learner signed in
+  /// here leaves it for them.
   func refreshPhoneToken() async {
+    let owner = cache.session.authenticatedSession
+
     guard let saved = savedToken, await push.isAuthorized(), let current = await push.deviceToken(),
-      current != saved
+      current != saved, cache.session.authenticatedSession == owner
     else {
       return
     }
 
     let result = await cache.mutate(invalidating: [.studyReminder]) { [api] identity in
-      if try await api.getReminder(token: identity.bearerToken).phone?.token == saved {
-        _ = try await api.selectPhone(token: identity.bearerToken, pushToken: current)
+      guard try await api.getReminder(token: identity.bearerToken).phone?.token == saved else {
+        return false
       }
+
+      _ = try await api.selectPhone(token: identity.bearerToken, pushToken: current)
+      return true
     }
 
-    if case .done = result {
+    if case .done(true) = result {
       savedToken = current
     }
   }
 
-  /// Before signing out, so push stops reaching this phone for the learner who left it. The server
+  /// Before signing out, so push stops reaching this phone for the learner who leaves it. The server
   /// removes the phone only while it's still this one.
-  func forgetThisPhone(_ identity: AuthenticatedSession) async {
+  func forgetThisPhone(_ identity: AuthenticatedSession) async throws {
     guard let savedToken else {
       return
     }
 
-    try? await api.removePhone(token: identity.bearerToken, pushToken: savedToken)
+    try await api.removePhone(token: identity.bearerToken, pushToken: savedToken)
   }
 
+  /// Turning push on for no phone yet, or for this one, asks for permission first; for another
+  /// device it's that device's consent alone.
+  func setPush(_ on: Bool, in reminder: StudyReminder) async -> PushSetup? {
+    guard on, reminder.phone == nil || isThisPhone(reminder) else {
+      await change(StudyReminderChange(pushOn: on))
+      return nil
+    }
+
+    return await turnOnPush()
+  }
+
+  /// The permission prompt and the system's registration take a while: a learner who signs out
+  /// meanwhile never gets push turned on for whoever signs in next.
   private func selectThisPhone(
     then save:
       @escaping @Sendable (AuthenticatedSession, StudyReminder) async throws ->
       StudyReminder
   ) async -> PushSetup {
+    let owner = cache.session.authenticatedSession
+
     guard await push.requestAuthorization() else {
       return .denied
     }
 
-    guard let token = await push.deviceToken() else {
+    guard let token = await push.deviceToken(), cache.session.authenticatedSession == owner else {
       return .failed
     }
 
