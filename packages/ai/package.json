@@ -73,6 +73,7 @@
     "./tasks/items/work-fields": "./src/tasks/items/work-fields.ts",
     "./tasks/items/write-set": "./src/tasks/items/write-item-set.ts",
     "./tasks/language/assess-pronunciation": "./src/tasks/language/assess-pronunciation.ts",
+    "./tasks/language/check-sentence-orders": "./src/tasks/language/check-sentence-orders.ts",
     "./tasks/language/check-word-pronunciation": "./src/tasks/language/check-word-pronunciation.ts",
     "./tasks/language/conversation-feedback": "./src/tasks/language/conversation-feedback.ts",
     "./tasks/language/conversation-objectives": "./src/tasks/language/conversation-objectives.ts",

@@ -1,7 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
-import { reordersWords } from "@/lib/words";
-import { type LanguageSentenceOrders } from "@zoonk/ai/tasks/language/language-sentence-orders";
 import {
   type SentenceOrders,
   keepSentenceOrders,
@@ -11,6 +9,11 @@ import { isSameLanguage } from "@zoonk/utils/languages";
 import { SENTENCE_ORDERS_SCORE_CATEGORIES } from "./score-categories";
 import { type SentenceOrdersExpected, type SentenceOrdersInput } from "./test-cases";
 
+/** What the pipeline saves for each sentence, with the candidates its review read. */
+export type CheckedSentenceOrders = {
+  sentences: (SentenceOrders & { candidates?: SentenceOrders })[];
+};
+
 type Side = keyof SentenceOrders;
 type Sentence = SentenceOrdersInput["sentences"][number];
 
@@ -19,9 +22,9 @@ const SIDES = [
   { expected: "translationOrders", side: "otherTranslationOrders" },
 ] as const;
 
-function parseOutput(output: string): LanguageSentenceOrders | null {
+function parseOutput(output: string): CheckedSentenceOrders | null {
   try {
-    return JSON.parse(output) as LanguageSentenceOrders;
+    return JSON.parse(output) as CheckedSentenceOrders;
   } catch {
     return null;
   }
@@ -53,47 +56,40 @@ function keepOne({
   return kept[side][0] ?? null;
 }
 
+/** Each side scores one part for keeping no real error and one per valid order kept. */
 function checkSide({
   expected,
+  kept,
   sameLanguage,
   sentence,
   side,
-  written,
 }: {
   expected: SentenceOrdersExpected["sentences"][number]["orders"];
+  kept: string[];
   sameLanguage: boolean;
   sentence: Sentence;
   side: Side;
-  written: string[];
 }): Omit<CodeCheckResult, "judgedOutput"> {
-  const keep = (order: string) => keepOne({ order, sameLanguage, sentence, side });
+  const toKey = (order: string) =>
+    toOrderKey(keepOne({ order, sameLanguage, sentence, side }) ?? "");
 
-  const toKeys = (orders: readonly string[]) =>
-    new Set(orders.flatMap((order) => keep(order) ?? []).map((kept) => toOrderKey(kept)));
+  const keptKeys = new Set(kept.map((order) => toOrderKey(order)));
+  const invalidKeys = new Set(expected.invalid.map((order) => toKey(order)));
 
-  const keptKeys = toKeys(written);
-  const invalidKeys = toKeys(expected.invalid);
-  const text = side === "otherOrders" ? sentence.sentence : sentence.translation;
-
-  const unbuildable = written.filter((order) => !keep(order) && !reordersWords({ order, text }));
-  const wrong = written.filter((order) => invalidKeys.has(toOrderKey(keep(order) ?? "")));
-  const missed = expected.valid.filter((order) => !keptKeys.has(toOrderKey(keep(order) ?? "")));
+  const errors = kept.filter((order) => invalidKeys.has(toOrderKey(order)));
+  const missed = expected.valid.filter((order) => !keptKeys.has(toKey(order)));
 
   return {
-    passed:
-      (unbuildable.length + wrong.length === 0 ? 1 : 0) + expected.valid.length - missed.length,
+    passed: (errors.length === 0 ? 1 : 0) + expected.valid.length - missed.length,
     problems: [
-      ...unbuildable.map(
-        (order) => `"${order}" isn't another order of "${sentence.sentence}"'s words.`,
-      ),
-      ...wrong.map((order) => `"${order}" is listed but wrong.`),
+      ...errors.map((order) => `"${order}" is kept but wrong.`),
       ...missed.map((order) => `"${order}" is missing.`),
     ],
     total: 1 + expected.valid.length,
   };
 }
 
-/** Precision on every written order and recall on the orders a teacher expects, per side. */
+/** Real errors among the kept orders, and the valid orders a teacher expects that were missed. */
 function checkOrders({
   expected,
   input,
@@ -121,28 +117,22 @@ function checkOrders({
     sides.map(({ expected: expectedSide, side }) =>
       checkSide({
         expected: expected.sentences[index]?.[expectedSide] ?? { invalid: [], valid: [] },
+        kept: parsed.sentences[index]?.[side] ?? [],
         sameLanguage,
         sentence,
         side,
-        written: parsed.sentences[index]?.[side] ?? [],
       }),
     ),
   );
 
-  const kept = input.sentences.map((sentence, index) => ({
+  const judged = input.sentences.map((sentence, index) => ({
     ...sentence,
-    ...keepSentenceOrders({
-      sameLanguage,
-      sentence: {
-        ...sentence,
-        otherOrders: parsed.sentences[index]?.otherOrders ?? [],
-        otherTranslationOrders: parsed.sentences[index]?.otherTranslationOrders ?? [],
-      },
-    }),
+    otherOrders: parsed.sentences[index]?.otherOrders ?? [],
+    otherTranslationOrders: parsed.sentences[index]?.otherTranslationOrders ?? [],
   }));
 
   return {
-    judgedOutput: JSON.stringify({ sentences: kept }),
+    judgedOutput: JSON.stringify({ sentences: judged }),
     passed: checks.reduce((sum, check) => sum + check.passed, 0),
     problems: checks.flatMap((check) => check.problems),
     total: checks.reduce((sum, check) => sum + check.total, 0),

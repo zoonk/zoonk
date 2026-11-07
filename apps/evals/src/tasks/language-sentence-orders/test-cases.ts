@@ -6,7 +6,7 @@ export type SentenceOrdersInput = Omit<
   "analytics" | "model" | "reasoning" | "serviceTier" | "useFallback"
 >;
 
-/** `valid` orders a teacher accepts and the task should find; `invalid` ones it must never write. */
+/** `valid` orders a teacher accepts and the pipeline should keep; `invalid` ones it must never keep. */
 type ExpectedOrders = { invalid: string[]; valid: string[] };
 
 export type SentenceOrdersExpected = {
@@ -25,7 +25,7 @@ export const TEST_CASES: TestCase<SentenceOrdersExpected, SentenceOrdersInput>[]
           },
           translationOrders: {
             invalid: ["Quando o ônibus chegou, chovia"],
-            valid: ["O ônibus chegou quando chovia"],
+            valid: ["O ônibus chegou quando chovia", "Chegou o ônibus quando chovia"],
           },
         },
         {
@@ -35,7 +35,7 @@ export const TEST_CASES: TestCase<SentenceOrdersExpected, SentenceOrdersInput>[]
           },
           translationOrders: {
             invalid: ["Hoje eu peguei não o guarda-chuva"],
-            valid: ["Eu não peguei o guarda-chuva hoje"],
+            valid: ["Eu não peguei o guarda-chuva hoje", "Eu não peguei hoje o guarda-chuva"],
           },
         },
       ],
@@ -107,11 +107,14 @@ export const TEST_CASES: TestCase<SentenceOrdersExpected, SentenceOrdersInput>[]
       sentences: [
         {
           orders: {
-            invalid: ["Se eu fico em casa, chover amanhã"],
+            invalid: ["Se eu fico em casa, chover amanhã", "Amanhã, se chover, eu fico em casa"],
             valid: ["Eu fico em casa se chover amanhã"],
           },
           translationOrders: {
-            invalid: ["If I'll stay home, it rains tomorrow"],
+            invalid: [
+              "If I'll stay home, it rains tomorrow",
+              "Tomorrow, if it rains, I'll stay home",
+            ],
             valid: ["I'll stay home if it rains tomorrow"],
           },
         },
@@ -197,7 +200,7 @@ export const TEST_CASES: TestCase<SentenceOrdersExpected, SentenceOrdersInput>[]
     },
   },
   {
-    expectations: `Brazilian Portuguese speaker learning US English. Who does what to whom is fixed by word order in both sentences: swapping the subject and the object makes a different, wrong sentence. Only the time phrase moves.`,
+    expectations: `Brazilian Portuguese speaker learning US English. Who does what to whom is fixed by word order in both sentences: swapping the subject and the object makes a different, wrong sentence. Moving the time phrase is fine.`,
     expected: {
       sentences: [
         {
@@ -233,12 +236,29 @@ export const TEST_CASES: TestCase<SentenceOrdersExpected, SentenceOrdersInput>[]
     },
   },
   {
-    expectations: `Brazilian Portuguese speaker learning US English. Moving "only" or "always" changes what it applies to ("Only I drink tea" means nobody else does; "always doesn't" means never), so no order that moves them is listed. Writing no other order is right here.`,
+    expectations: `Brazilian Portuguese speaker learning US English. Moving "only" or "always" changes what it applies to ("Only I drink tea" means nobody else does; "always doesn't" means never), so no order that moves them is kept, and neither is one that moves the morning away from what "only"/"só" limits ("In the morning, I only drink tea", "De manhã eu só bebo chá"). Keeping no other order is right here.`,
     expected: {
       sentences: [
         {
-          orders: { invalid: ["Only I drink tea in the morning"], valid: [] },
-          translationOrders: { invalid: ["Só eu bebo chá de manhã"], valid: [] },
+          orders: {
+            invalid: [
+              "Only I drink tea in the morning",
+              "In the morning, I only drink tea",
+              "In the morning I drink only tea",
+              "I drink only tea in the morning",
+            ],
+            valid: [],
+          },
+          translationOrders: {
+            invalid: [
+              "Só eu bebo chá de manhã",
+              "De manhã eu só bebo chá",
+              "Eu de manhã só bebo chá",
+              "De manhã eu bebo só chá",
+              "Eu bebo só chá de manhã",
+            ],
+            valid: [],
+          },
         },
         {
           orders: { invalid: ["She always doesn't eat breakfast"], valid: [] },
@@ -254,6 +274,56 @@ export const TEST_CASES: TestCase<SentenceOrdersExpected, SentenceOrdersInput>[]
         {
           sentence: "She doesn't always eat breakfast",
           translation: "Ela nem sempre toma café da manhã",
+        },
+      ],
+      targetLanguage: "en",
+    },
+  },
+  {
+    expectations: `Brazilian Portuguese speaker learning US English, renting a flat. An English yes-or-no question keeps its verb first and a statement keeps its subject first: "Utilities are included in the rent?" and "The rent is how much?" are not correct answers, and "Included in the rent is water" is literary. In Portuguese the subject can follow "estar incluído" ("Está incluída no aluguel a água"), but "Incluída no aluguel está a água" sounds poetic.`,
+    expected: {
+      sentences: [
+        {
+          orders: { invalid: ["The rent is how much?"], valid: [] },
+          translationOrders: { invalid: [], valid: ["O aluguel é quanto?"] },
+        },
+        {
+          orders: {
+            invalid: [
+              "Utilities are included in the rent?",
+              "In the rent, utilities are included?",
+            ],
+            valid: [],
+          },
+          translationOrders: {
+            invalid: ["As contas de serviços, no aluguel, estão incluídas?"],
+            valid: ["Estão incluídas no aluguel as contas de serviços?"],
+          },
+        },
+        {
+          orders: {
+            invalid: ["Included in the rent is water", "In the rent, water is included"],
+            valid: [],
+          },
+          translationOrders: {
+            invalid: ["Incluída no aluguel está a água", "A água, no aluguel, está incluída"],
+            valid: ["Está incluída no aluguel a água"],
+          },
+        },
+      ],
+    },
+    id: "pt-en-renting-questions",
+    userInput: {
+      learnerLanguage: "pt",
+      sentences: [
+        { sentence: "How much is the rent?", translation: "Quanto é o aluguel?" },
+        {
+          sentence: "Are utilities included in the rent?",
+          translation: "As contas de serviços estão incluídas no aluguel?",
+        },
+        {
+          sentence: "Water is included in the rent",
+          translation: "A água está incluída no aluguel",
         },
       ],
       targetLanguage: "en",

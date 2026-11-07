@@ -1,12 +1,41 @@
+import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
 import {
   type OwedSentenceOrdersStatus,
-  writeOwedSentenceOrders,
+  type SentenceOrderCandidates,
+  type SentenceOrderCandidatesResult,
+  generateSentenceOrderCandidates,
+  writeCheckedSentenceOrders,
 } from "@zoonk/core/library/language/write-owed-sentence-orders";
+import { type ContentAnalytics } from "../../_shared/content-analytics";
 
-export async function writeOwedSentenceOrdersStep(
-  lessonId: string,
-): Promise<OwedSentenceOrdersStatus> {
+type OrdersStepInput = { analytics?: ContentAnalytics; lessonId: string; wait: CallWait };
+
+export async function generateSentenceOrdersStep({
+  analytics,
+  lessonId,
+  wait,
+}: OrdersStepInput): Promise<SentenceOrderCandidatesResult> {
   "use step";
 
-  return writeOwedSentenceOrders({ lessonId });
+  return generateSentenceOrderCandidates({
+    analytics,
+    lessonId,
+    serviceTier: chooseServiceTier({ wait }),
+  });
+}
+
+export async function writeSentenceOrdersStep({
+  analytics,
+  candidates,
+  lessonId,
+  wait,
+}: OrdersStepInput & { candidates: SentenceOrderCandidates }): Promise<OwedSentenceOrdersStatus> {
+  "use step";
+
+  return writeCheckedSentenceOrders({
+    analytics,
+    candidates,
+    lessonId,
+    serviceTier: chooseServiceTier({ wait }),
+  });
 }

@@ -1,21 +1,51 @@
 import { type Task } from "@/lib/types";
+import { generateLanguageSentenceOrders } from "@zoonk/ai/tasks/language/language-sentence-orders";
 import {
-  type LanguageSentenceOrders,
-  generateLanguageSentenceOrders,
-} from "@zoonk/ai/tasks/language/language-sentence-orders";
+  checkOrderCandidates,
+  toOrderCandidates,
+} from "@zoonk/core/library/language/sentence-orders";
+import { isSameLanguage } from "@zoonk/utils/languages";
 import { SENTENCE_ORDERS_SCORE_CATEGORIES } from "./score-categories";
-import { checkLanguageSentenceOrders, scoreLanguageSentenceOrders } from "./scorer";
+import {
+  type CheckedSentenceOrders,
+  checkLanguageSentenceOrders,
+  scoreLanguageSentenceOrders,
+} from "./scorer";
 import { type SentenceOrdersExpected, type SentenceOrdersInput, TEST_CASES } from "./test-cases";
+
+/** The pipeline production runs: the model under test generates, then the reviewer keeps what a teacher accepts. */
+async function generateCheckedOrders(input: Parameters<typeof generateLanguageSentenceOrders>[0]) {
+  const generated = await generateLanguageSentenceOrders(input);
+
+  const candidates = toOrderCandidates({
+    generated: generated.data,
+    sameLanguage: isSameLanguage(input),
+    sentences: input.sentences,
+  });
+
+  const kept = await checkOrderCandidates({
+    candidates,
+    learnerLanguage: input.learnerLanguage,
+    sentences: input.sentences,
+    targetLanguage: input.targetLanguage,
+  });
+
+  const data: CheckedSentenceOrders = {
+    sentences: kept.map((orders, index) => ({ ...orders, candidates: candidates[index] })),
+  };
+
+  return { ...generated, data };
+}
 
 export const languageSentenceOrdersTask: Task<
   SentenceOrdersInput,
-  LanguageSentenceOrders,
+  CheckedSentenceOrders,
   SentenceOrdersExpected
 > = {
   codeChecks: checkLanguageSentenceOrders,
   description:
-    "Write the other word orders a native teacher accepts for a lesson's sentences and their translations, so learners building them from tiles aren't marked wrong for a correct order",
-  generate: generateLanguageSentenceOrders,
+    "Generate other word orders for a lesson's sentences and their translations, keep the buildable ones and review them, so learners building them from tiles aren't marked wrong for a correct order",
+  generate: generateCheckedOrders,
   id: "language-sentence-orders",
   name: "Language Sentence Orders",
   score: scoreLanguageSentenceOrders,

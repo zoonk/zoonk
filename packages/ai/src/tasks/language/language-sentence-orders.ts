@@ -8,19 +8,26 @@ import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../pr
 import { getLanguagePromptContext } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import basePrompt from "./language-sentence-orders.prompt.md";
-import { withSentenceOrdersRule } from "./sentence-orders-rule";
 
-/** Judges orders by the rule the lesson writer follows, so it runs on the lesson writer's models. */
+/**
+ * Finds candidates generously, since `checkSentenceOrders` reviews each one: with that reviewer,
+ * Terra's candidates kept the most valid orders for the fewest errors (7 Nov 2026).
+ */
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;
 
-const schema = z.object({
-  sentences: z.array(
-    z.object({ otherOrders: z.array(z.string()), otherTranslationOrders: z.array(z.string()) }),
-  ),
+const orders = z.array(z.string());
+
+const bilingualSchema = z.object({
+  sentences: z.array(z.object({ otherOrders: orders, otherTranslationOrders: orders })),
 });
 
-export type LanguageSentenceOrders = z.infer<typeof schema>;
+/** A learner reading the app in the language they learn builds the sentence itself both ways. */
+const sameLanguageSchema = z.object({ sentences: z.array(z.object({ otherOrders: orders })) });
+
+export type LanguageSentenceOrders = {
+  sentences: { otherOrders: string[]; otherTranslationOrders?: string[] }[];
+};
 
 export type LanguageSentenceOrdersParams = {
   learnerLanguage: string;
@@ -33,43 +40,50 @@ export type LanguageSentenceOrdersParams = {
   analytics?: AiGenerationContext;
 };
 
-function getSystemPrompt(
-  languages: Pick<LanguageSentenceOrdersParams, "learnerLanguage" | "targetLanguage">,
-): string {
-  const sameLanguage = isSameLanguage(languages);
-
-  return selectPromptVariants({
-    template: withSentenceOrdersRule(basePrompt),
-    variants: { bilingual: !sameLanguage, sameLanguage },
-  });
-}
-
-function buildUserPrompt(params: LanguageSentenceOrdersParams): string {
+function buildUserPrompt({
+  params,
+  sameLanguage,
+}: {
+  params: LanguageSentenceOrdersParams;
+  sameLanguage: boolean;
+}): string {
   const languages = getLanguagePromptContext({
     targetLanguage: params.targetLanguage,
     userLanguage: params.learnerLanguage,
   });
 
   const sentences = params.sentences
-    .map(
-      (item, index) => `
+    .map((item, index) =>
+      sameLanguage
+        ? `
+    ${index + 1}. sentence: ${item.sentence}`
+        : `
     ${index + 1}. sentence: ${item.sentence}
        translation: ${item.translation}`,
     )
     .join("");
 
+  const learnerLanguage = sameLanguage
+    ? ""
+    : `\n    LEARNER_LANGUAGE: ${languages.userLanguageName}`;
+
   return `
-    TARGET_LANGUAGE: ${languages.targetLanguageName}
-    LEARNER_LANGUAGE: ${languages.userLanguageName}
+    TARGET_LANGUAGE: ${languages.targetLanguageName}${learnerLanguage}
     SENTENCES:${sentences}
   `;
 }
 
-/** Other word orders for sentences written before lessons had them. */
+/** Candidate other word orders for a lesson's sentences and their translations. */
 export async function generateLanguageSentenceOrders(params: LanguageSentenceOrdersParams) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
-  const systemPrompt = getSystemPrompt(params);
-  const userPrompt = buildUserPrompt(params);
+  const sameLanguage = isSameLanguage(params);
+
+  const systemPrompt = selectPromptVariants({
+    template: basePrompt,
+    variants: { bilingual: !sameLanguage, sameLanguage },
+  });
+
+  const userPrompt = buildUserPrompt({ params, sameLanguage });
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
@@ -78,7 +92,7 @@ export async function generateLanguageSentenceOrders(params: LanguageSentenceOrd
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema }),
+        output: Output.object({ schema: sameLanguage ? sameLanguageSchema : bilingualSchema }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
@@ -88,5 +102,7 @@ export async function generateLanguageSentenceOrders(params: LanguageSentenceOrd
     task: "language-sentence-orders",
   });
 
-  return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
+  const data: LanguageSentenceOrders = result.output;
+
+  return { data, provenance, systemPrompt, usage: result.usage, userPrompt };
 }

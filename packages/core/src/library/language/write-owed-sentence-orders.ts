@@ -1,16 +1,14 @@
 import "server-only";
-import { chooseServiceTier } from "@zoonk/ai/provider-options";
+import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { generateLanguageSentenceOrders } from "@zoonk/ai/tasks/language/language-sentence-orders";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { isSameLanguage } from "@zoonk/utils/languages";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
-import { type SentenceOrders, keepSentenceOrders } from "./sentence-orders";
+import { type SentenceOrders, checkOrderCandidates, toOrderCandidates } from "./sentence-orders";
 
 type Analytics = Parameters<typeof generateLanguageSentenceOrders>[0]["analytics"];
-
-const ORDERS_TIER = chooseServiceTier({ wait: "later" });
 
 /** Every try claims one, a step's retries included, so two runs' tries end a failure no retry fixes. */
 const MAX_ATTEMPTS = 8;
@@ -18,23 +16,40 @@ const OWED_LESSONS_PER_SWEEP = 100;
 
 export type OwedSentenceOrdersStatus = "changed" | "skipped" | "written";
 
+type OwedSentence = { sentence: string; sentenceId: string; translation: string };
+
+export type SentenceOrderCandidates = {
+  candidates: SentenceOrders[];
+  learnerLanguage: string;
+  sentences: OwedSentence[];
+  targetLanguage: string;
+};
+
+export type SentenceOrderCandidatesResult =
+  | { candidates: SentenceOrderCandidates; status: "generated" }
+  | { status: "skipped" };
+
 class SentencesChangedError extends Error {
   override name = "SentencesChangedError";
 }
 
-function readSentences(client: TransactionClient, lessonId: string) {
-  return client.lessonSentence.findMany({
+async function readSentences(client: TransactionClient, lessonId: string): Promise<OwedSentence[]> {
+  const rows = await client.lessonSentence.findMany({
     orderBy: { position: "asc" },
     select: { sentence: { select: { sentence: true } }, sentenceId: true, translation: true },
     where: { lessonId },
   });
+
+  return rows.map((row) => ({
+    sentence: row.sentence.sentence,
+    sentenceId: row.sentenceId,
+    translation: row.translation,
+  }));
 }
 
-type LessonSentences = Awaited<ReturnType<typeof readSentences>>;
-
-function toSentencesKey(sentences: LessonSentences): string {
+function toSentencesKey(sentences: readonly OwedSentence[]): string {
   return JSON.stringify(
-    sentences.map((item) => [item.sentenceId, item.sentence.sentence, item.translation]),
+    sentences.map((item) => [item.sentenceId, item.sentence, item.translation]),
   );
 }
 
@@ -78,7 +93,7 @@ async function writeOrders({
 }: {
   lessonId: string;
   orders: SentenceOrders[];
-  sentences: LessonSentences;
+  sentences: readonly OwedSentence[];
 }): Promise<boolean> {
   const { error } = await safeAsync(() =>
     prisma.$transaction(async (tx) => {
@@ -122,73 +137,76 @@ async function writeOrders({
   return true;
 }
 
-async function writeOwedOrders({
-  analytics,
-  lesson,
-  lessonId,
-}: {
-  analytics?: Analytics;
-  lesson: NonNullable<Awaited<ReturnType<typeof readOwedLesson>>>;
-  lessonId: string;
-}): Promise<boolean> {
-  if (lesson.sentences.length === 0) {
-    return writeOrders({ lessonId, orders: [], sentences: [] });
-  }
-
-  const sameLanguage = isSameLanguage(lesson);
-
-  const { data } = await generateLanguageSentenceOrders({
-    analytics: { contentScope: "shared", ...analytics },
-    learnerLanguage: lesson.learnerLanguage,
-    sentences: lesson.sentences.map((item) => ({
-      sentence: item.sentence.sentence,
-      translation: item.translation,
-    })),
-    serviceTier: ORDERS_TIER,
-    targetLanguage: lesson.targetLanguage,
-  });
-
-  if (data.sentences.length !== lesson.sentences.length) {
-    throw new Error("Sentence orders must include one result per requested sentence, in order.");
-  }
-
-  const orders = lesson.sentences.map((item, index) =>
-    keepSentenceOrders({
-      sameLanguage,
-      sentence: {
-        ...data.sentences[index],
-        sentence: item.sentence.sentence,
-        translation: item.translation,
-      },
-    }),
-  );
-
-  return writeOrders({ lessonId, orders, sentences: lesson.sentences });
-}
-
 /**
- * Internal workflow bridge: writes the other word orders of a lesson written before it had them.
- * The caller holds the lesson's run token. A lesson rewritten meanwhile keeps what its new write
- * wrote.
+ * Internal workflow bridge, the first of a lesson's two orders steps: candidate orders a learner can
+ * build from its tiles, for `writeCheckedSentenceOrders` to review. The caller holds the lesson's run
+ * token.
  */
-export async function writeOwedSentenceOrders({
+export async function generateSentenceOrderCandidates({
   analytics,
   lessonId,
+  serviceTier,
 }: {
   analytics?: Analytics;
   lessonId: string;
-}): Promise<OwedSentenceOrdersStatus> {
+  serviceTier?: ServiceTier;
+}): Promise<SentenceOrderCandidatesResult> {
   if (!(await claimAttempt(lessonId))) {
-    return "skipped";
+    return { status: "skipped" };
   }
 
   const lesson = await readOwedLesson(lessonId);
 
   if (!lesson) {
+    return { status: "skipped" };
+  }
+
+  const { data } = await generateLanguageSentenceOrders({
+    analytics: { contentScope: "shared", ...analytics },
+    learnerLanguage: lesson.learnerLanguage,
+    sentences: lesson.sentences,
+    serviceTier,
+    targetLanguage: lesson.targetLanguage,
+  });
+
+  const candidates = toOrderCandidates({
+    generated: data,
+    sameLanguage: isSameLanguage(lesson),
+    sentences: lesson.sentences,
+  });
+
+  return { candidates: { ...lesson, candidates }, status: "generated" };
+}
+
+/**
+ * Internal workflow bridge, the second step: saves the candidates a native teacher accepts. The
+ * caller holds the lesson's run token. A lesson rewritten meanwhile keeps what its new write wrote
+ * and still owes its orders.
+ */
+export async function writeCheckedSentenceOrders({
+  analytics,
+  candidates,
+  lessonId,
+  serviceTier,
+}: {
+  analytics?: Analytics;
+  candidates: SentenceOrderCandidates;
+  lessonId: string;
+  serviceTier?: ServiceTier;
+}): Promise<OwedSentenceOrdersStatus> {
+  if (!(await claimAttempt(lessonId))) {
     return "skipped";
   }
 
-  return (await writeOwedOrders({ analytics, lesson, lessonId })) ? "written" : "changed";
+  const orders = await checkOrderCandidates({
+    ...candidates,
+    analytics: { contentScope: "shared", ...analytics },
+    serviceTier,
+  });
+
+  return (await writeOrders({ lessonId, orders, sentences: candidates.sentences }))
+    ? "written"
+    : "changed";
 }
 
 /** Internal bridge for the daily sweep. */

@@ -82,7 +82,7 @@ async function writeOwedSentenceOrders(): Promise<number> {
   const lessonIds = await listOwedSentenceOrdersStep();
 
   if (lessonIds.length > 0) {
-    await start(sentenceOrdersWorkflow, [{ lessonIds }]);
+    await start(sentenceOrdersWorkflow, [{ lessonIds, wait: "later" }]);
   }
 
   return lessonIds.length;
