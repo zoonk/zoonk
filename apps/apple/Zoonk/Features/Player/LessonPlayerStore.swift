@@ -629,6 +629,7 @@ final class LessonPlayerStore {
     }
 
     state?.resolve(stepId, result: result)
+    sendHeldAnswers()
   }
 
   /// Each screen sends its held answers oldest first, so a miss lands before its retry, and stops at
@@ -731,7 +732,18 @@ final class LessonPlayerStore {
       return
     }
 
-    // Every answer reaches the server before the run is finished.
+    // Every answer reaches the server before the run is finished, other windows' included. This
+    // window's answers keep the order they were given, so a clock set back can't send a retry
+    // before its miss; only another window's answers are placed by time.
+    let othersHeld = (heldOnDevice?.read() ?? [])
+      .filter { kept in !held.contains { $0.attemptId == kept.attemptId } }
+      .sorted { $0.answeredAt < $1.answeredAt }
+
+    for other in othersHeld {
+      let later = held.firstIndex { $0.stepId == other.stepId && $0.answeredAt > other.answeredAt }
+      held.insert(other, at: later ?? held.endIndex)
+    }
+
     sendHeldAnswers()
     await heldAnswersSent()
     guard isCurrent(identity) else { return }

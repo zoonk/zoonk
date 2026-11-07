@@ -279,6 +279,70 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(store.state?.completion?.status, .saved)
   }
 
+  /// Two windows play the same lesson: the other one's miss couldn't be saved, and this one
+  /// finishes.
+  func testFinishingSendsAnotherWindowsHeldAnswersInTheOrderTheyWereGiven() async throws {
+    let defaults = try temporaryDefaults()
+    let kept = HeldLessonAnswers(
+      learnerId: "lesson-loading-test-user", lessonId: "lesson", defaults: defaults)
+    let transport = HeldAnswersTransport(runAnswers: "[]")
+    let other = try checksPlayer(steps: ["one"], defaults: defaults, transport: transport)
+    let store = try checksPlayer(steps: ["one"], defaults: defaults, transport: transport)
+    await other.load()
+    await store.load()
+    await transport.failChecks(on: ["one"])
+
+    other.select(.check(optionId: "wrong"))
+    await other.check()
+    let miss = try XCTUnwrap(other.held.first?.attemptId)
+    await waitUntil { other.hasUnsavedAnswers }
+    store.select(.check(optionId: "right"))
+    await store.check()
+    let right = try XCTUnwrap(store.held.first?.attemptId)
+    store.continueLesson()
+    await waitUntil { store.state?.completion?.status == .failed }
+
+    await transport.failChecks(on: [])
+    await store.finish()
+
+    let requests = await transport.requests
+    XCTAssertEqual(requests.suffix(3), ["check \(miss)", "check \(right)", "complete"])
+    XCTAssertEqual(store.state?.completion?.status, .saved)
+    XCTAssertEqual(kept.read(), [])
+  }
+
+  /// The server saves a spoken answer as it grades it.
+  func testASpokenAnswerSendsTheHeldAnswersAgain() async throws {
+    let defaults = try temporaryDefaults()
+    HeldLessonAnswers(learnerId: "lesson-loading-test-user", lessonId: "lesson", defaults: defaults)
+      .keep(heldAnswer("one", attemptId: "held", isCorrect: true))
+    let transport = HeldAnswersTransport(runAnswers: "[]")
+    await transport.failChecks(on: ["one"])
+    let store = try checksPlayer(
+      steps: ["one", "spoken"], spoken: ["spoken"], defaults: defaults, transport: transport)
+    await store.load()
+    XCTAssertEqual(store.state?.currentStep?.id, "spoken")
+    await transport.failChecks(on: [])
+
+    store.resolveSpoken(
+      SpokenAnswerVerdict(
+        isCorrect: true, score: 1, transcript: "Bonjour", feedback: nil,
+        heard: SpokenHeard(words: [], wordsToPractice: [])),
+      stepId: "spoken")
+    await waitUntil { store.held.isEmpty }
+
+    let requests = await transport.requests
+    XCTAssertEqual(requests.last, "check held")
+  }
+
+  private func waitUntil(_ condition: () -> Bool) async {
+    for _ in 0..<10_000 where !condition() {
+      await Task.yield()
+    }
+
+    XCTAssertTrue(condition(), "the change never showed")
+  }
+
   private func temporaryDefaults(name: String = #function) throws -> UserDefaults {
     let defaults = try XCTUnwrap(UserDefaults(suiteName: name))
     defaults.removePersistentDomain(forName: name)
@@ -294,11 +358,11 @@ final class LessonPlayerLoadingTests: XCTestCase {
   }
 
   private func checksPlayer(
-    steps: [String] = ["one", "two", "three"], defaults: UserDefaults,
+    steps: [String] = ["one", "two", "three"], spoken: Set<String> = [], defaults: UserDefaults,
     transport: HeldAnswersTransport
   ) throws -> LessonPlayerStore {
     let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
-    let lesson = try checkLesson(steps)
+    let lesson = try checkLesson(steps, spoken: spoken)
     let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in .ready(lesson) }
     return player(cache: cache, content: content, transport: transport, defaults: defaults)
   }
@@ -319,16 +383,23 @@ final class LessonPlayerLoadingTests: XCTestCase {
   }
 }
 
-private func checkLesson(_ ids: [String]) throws -> PlayableLesson {
+private func checkLesson(_ ids: [String], spoken: Set<String> = []) throws -> PlayableLesson {
+  let check = """
+    "kind": "check", "content": {"question": "Capital of France?", "basis": null, "options": [
+      {"id": "right", "isCorrect": true, "reason": "It is.", "text": "Paris"},
+      {"id": "wrong", "isCorrect": false, "reason": "That's Lyon.", "text": "Lyon"}]}
+    """
+  let speak = """
+    "kind": "spokenAnswer", "content": {"language": "fr", "prompt": "Say hello.",
+      "targetText": "Bonjour", "romanization": null, "translation": null}
+    """
   let steps = try ids.enumerated().map { index, id in
     try JSONDecoder().decode(
       LessonStep.self,
       from: Data(
         """
-        {"id": "\(id)", "position": \(index), "pictureWaitStartedAt": 0, "kind": "check",
-         "content": {"question": "Capital of France?", "basis": null, "options": [
-           {"id": "right", "isCorrect": true, "reason": "It is.", "text": "Paris"},
-           {"id": "wrong", "isCorrect": false, "reason": "That's Lyon.", "text": "Lyon"}]}}
+        {"id": "\(id)", "position": \(index), "pictureWaitStartedAt": 0,
+         \(spoken.contains(id) ? speak : check)}
         """.utf8))
   }
 
