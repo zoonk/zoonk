@@ -58,10 +58,13 @@ async function listCourseSkills({
       WHERE chapter.visibility = 'public' AND chapter.language = ${language}
         AND chapter.target_language IS NULL
     ), taught AS (
-      SELECT chapter.skill_id, chapter.course_id, lesson.lesson_id
+      SELECT chapter.skill_id, chapter.course_id, lesson.id AS lesson_id
       FROM chapter_teaching AS chapter
-      LEFT JOIN lesson_chapters AS lesson ON lesson.chapter_id = chapter.chapter_id
-      WHERE (chapter.course_id = ANY(${[...courseIds]}::uuid[]) AND lesson.lesson_id IS NOT NULL)
+      LEFT JOIN chapter_lessons AS placement ON placement.chapter_id = chapter.chapter_id
+      LEFT JOIN library_lessons AS lesson ON lesson.id = placement.lesson_id
+        AND lesson.visibility = 'public' AND lesson.set_aside_at IS NULL
+        AND lesson.language = ${language} AND lesson.target_language IS NULL
+      WHERE (chapter.course_id = ANY(${[...courseIds]}::uuid[]) AND lesson.id IS NOT NULL)
         OR chapter.skill_id = ANY(${[...skillIds]}::uuid[])
       UNION ALL
       SELECT link.skill_id, placement.course_id, lesson.id
@@ -70,7 +73,8 @@ async function listCourseSkills({
       JOIN lesson_chapters ON lesson_chapters.lesson_id = lesson.id
       JOIN library_chapters AS chapter ON chapter.id = lesson_chapters.chapter_id
       JOIN chapter_courses AS placement ON placement.chapter_id = chapter.id
-      WHERE lesson.visibility = 'public' AND lesson.language = ${language}
+      WHERE lesson.visibility = 'public' AND lesson.set_aside_at IS NULL
+        AND lesson.language = ${language}
         AND lesson.target_language IS NULL
         AND chapter.visibility = 'public' AND chapter.language = ${language}
         AND chapter.target_language IS NULL

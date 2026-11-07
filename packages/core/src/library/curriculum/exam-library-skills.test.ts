@@ -90,7 +90,11 @@ describe("Library skills", () => {
     const chapter = await libraryChapterFixture({ homeCourseId: course.id, language: "pt" });
     const sharedChapter = await libraryChapterFixture({ language: "pt" });
     const lessons = await libraryLessonsFixture(2, { homeChapterId: chapter.id, language: "pt" });
-    await libraryLessonsFixture(1, { homeChapterId: sharedChapter.id, language: "pt" });
+
+    const sharedLessons = await libraryLessonsFixture(1, {
+      homeChapterId: sharedChapter.id,
+      language: "pt",
+    });
 
     await Promise.all([
       courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
@@ -101,6 +105,13 @@ describe("Library skills", () => {
         [chapter, sharedChapter].map((placed) =>
           chapterLessonFixture({ chapterId: placed.id, lessonId: lesson.id, position }),
         ),
+      ),
+      ...sharedLessons.map((lesson, index) =>
+        chapterLessonFixture({
+          chapterId: sharedChapter.id,
+          lessonId: lesson.id,
+          position: lessons.length + index,
+        }),
       ),
     ]);
 
@@ -170,7 +181,9 @@ describe("Library skills", () => {
     await Promise.all([
       chapterSkillFixture({ chapterId: chapter.id, skillId: taught.id }),
       chapterSkillFixture({ chapterId: chapter.id, skillId: placed.id }),
-      ...lessons.map((lesson) => lessonSkillFixture({ lessonId: lesson.id, skillId: placed.id })),
+      ...lessons.map((lesson, position) =>
+        chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position }),
+      ),
       examGraphFixture({
         blueprint: otherBlueprint,
         graph: toPlanGraph([{ course, lessons: 1, skill: placed }]),
@@ -373,7 +386,8 @@ describe("reusing another exam's skills", () => {
       data: { prerequisiteId: base!.id, skillId: placed!.id },
     });
 
-    const skillCount = await prisma.skill.count();
+    const where = { name: { in: [base!.name, placed!.name] } };
+    const skillCount = await prisma.skill.count({ where });
 
     const skills = [
       graphSkill(base!, { key: "base", libraryId: base!.id }),
@@ -383,7 +397,7 @@ describe("reusing another exam's skills", () => {
     const idsByKey = await saveGoalSkills({ provenance, scope, skills });
 
     expect(idsByKey).toStrictEqual({ base: base!.id, placed: placed!.id });
-    await expect(prisma.skill.count()).resolves.toBe(skillCount);
+    await expect(prisma.skill.count({ where })).resolves.toBe(skillCount);
 
     await linkGoalSkillPrerequisites({ idsByKey, skills });
 

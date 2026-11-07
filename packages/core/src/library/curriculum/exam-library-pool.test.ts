@@ -6,6 +6,7 @@ import {
 } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
+  lessonSkillFixture,
   libraryLessonsFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -103,8 +104,39 @@ describe("an exam's reusable Library skill pool", () => {
     await Promise.all([
       chapterSkillFixture({ chapterId: chapter.id, skillId: skill.id }),
       prisma.lesson.update({ data: { setAsideAt: new Date() }, where: { id: setAside!.id } }),
+      itemFixture({ examBlueprintId: blueprint.id, language: "pt", skillId: skill.id }),
+      lessonSkillFixture({ lessonId: setAside!.id, skillId: skill.id }),
       chapterLessonFixture({ chapterId: chapter.id, lessonId: kept!.id, position: 0 }),
       chapterLessonFixture({ chapterId: chapter.id, lessonId: setAside!.id, position: 1 }),
+    ]);
+
+    const library = await findExamLibrary({
+      courseIdsByKey: { subject: course.id },
+      examBlueprintId: blueprint.id,
+      language: "pt",
+    });
+
+    expect(library.skills).toMatchObject([{ id: skill.id, lessons: 1 }]);
+  });
+
+  it("does not count private or unplaced lessons in a chapter skill's size", async () => {
+    const [course, blueprint, skill] = await Promise.all([
+      courseFixture({ language: "pt" }),
+      examBlueprintFixture({ language: "pt" }),
+      skillFixture({ language: "pt" }),
+    ]);
+
+    const chapter = await libraryChapterFixture({ homeCourseId: course.id, language: "pt" });
+    const lessons = await libraryLessonsFixture(3, { homeChapterId: chapter.id, language: "pt" });
+
+    await Promise.all([
+      chapterSkillFixture({ chapterId: chapter.id, skillId: skill.id }),
+      prisma.lesson.update({ data: { visibility: "private" }, where: { id: lessons[1]!.id } }),
+      ...lessons
+        .slice(0, 2)
+        .map((lesson, position) =>
+          chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position }),
+        ),
     ]);
 
     const library = await findExamLibrary({
