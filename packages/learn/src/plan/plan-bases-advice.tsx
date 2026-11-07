@@ -9,9 +9,21 @@ import { usePlanScreen } from "./plan-context";
 import { type RecommendedBases, useAdviceText } from "./use-bases-texts";
 import { requestWithin } from "./use-time-to-cover";
 
+type AdviceFailure = "building" | "failed";
+
+/** A retry keeps the failure it answers, so the button and its line stay put until it settles. */
 type AdviceState =
-  | { status: "building" | "failed" | "idle" | "pending" }
+  | { status: "idle" | AdviceFailure }
+  | { retrying: AdviceFailure | null; status: "pending" }
   | { advice: RecommendedBases; status: "answered" };
+
+function getFailure(state: AdviceState): AdviceFailure | null {
+  if (state.status === "pending") {
+    return state.retrying;
+  }
+
+  return state.status === "building" || state.status === "failed" ? state.status : null;
+}
 
 /**
  * Only when the learner asks, never for the page. Nothing is saved, so the plan isn't read again.
@@ -21,7 +33,7 @@ export function useBasesAdvice() {
   const [state, setState] = useState<AdviceState>({ status: "idle" });
 
   const ask = async () => {
-    setState({ status: "pending" });
+    setState((current) => ({ retrying: getFailure(current), status: "pending" }));
     const data = await requestWithin(() => actions.adviseOnBases());
 
     if (data?.ready && data.recommended) {
@@ -53,11 +65,12 @@ export function BasesAdvice({
   const space = useSentenceSpace();
   const answer = useRef<HTMLParagraphElement>(null);
   const pending = state.status === "pending";
-  const retry = state.status === "failed" || state.status === "building";
+  const failure = getFailure(state);
+  const retry = failure !== null;
   const answered = state.status === "answered";
 
   const retryText =
-    state.status === "building"
+    failure === "building"
       ? t("Your plan is still being built. Try again in a moment.")
       : t("We couldn't get a recommendation.");
 
@@ -72,8 +85,7 @@ export function BasesAdvice({
   return (
     <div className="text-muted-foreground flex flex-col items-start gap-2 text-sm">
       <p aria-live="polite" className="sr-only">
-        {pending && t("Getting a recommendation…")}
-        {retry && retryText}
+        {pending ? t("Getting a recommendation…") : retry && retryText}
       </p>
 
       {state.status === "answered" && (
