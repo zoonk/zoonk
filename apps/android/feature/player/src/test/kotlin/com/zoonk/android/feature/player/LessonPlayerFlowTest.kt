@@ -289,6 +289,26 @@ class LessonPlayerFlowTest {
     }
 
     @Test
+    fun aReopenedLessonsHeldAnswerShowsNoIndicatorWhenItsResendSucceeds() {
+        play(listOf(checkStep("quiz"), summaryStep("end"))) { checkFailures = 1 }
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        api.gate = CompletableDeferred()
+
+        val reopened = openAgain()
+        rule.waitUntil { api.checks.size == 2 }
+
+        try {
+            assertTrue(!reopened.hasUnsent)
+        } finally {
+            api.gate?.complete(Unit)
+        }
+        rule.waitUntil { reopened.state.value?.run is LessonRun.Started }
+        assertTrue(!reopened.hasUnsent)
+    }
+
+    @Test
     fun aRunStartsAfterAHeldAnswerEvenWhenItsResendFails() {
         play(listOf(checkStep("quiz"), summaryStep("end"))) { checkFailures = 2 }
 
@@ -301,6 +321,7 @@ class LessonPlayerFlowTest {
         rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run != null && reopened.state.value?.run !is LessonRun.Starting }
 
         assertTrue(reopened.state.value?.run is LessonRun.Started)
+        assertTrue(reopened.hasUnsent)
         assertEquals(
             "end",
             reopened.state.value

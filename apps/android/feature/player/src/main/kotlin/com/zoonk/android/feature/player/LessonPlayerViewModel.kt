@@ -508,7 +508,6 @@ class LessonPlayerViewModel(
                     .map { PendingCheck(it.stepId, ApiJson.decodeFromJsonElement(it.input), it.isCorrect, it.answeredAt) }
                     .filterNot { it.attemptId in queued }
                     .forEach { unsaved.getOrPut(it.stepId) { mutableListOf() } += it }
-                hasUnsent = unsaved.values.any { it.isNotEmpty() }
                 sendUnsent()
                 val outcome = start(runId = null)
                 if (outcome !is StartOutcome.Started) reading.cancel()
