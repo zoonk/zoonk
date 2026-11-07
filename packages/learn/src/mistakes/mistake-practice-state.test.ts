@@ -132,6 +132,24 @@ describe(practiceReducer, () => {
     });
   });
 
+  it("keeps an answer that failed to save, with its time, when the same pick is made again", () => {
+    const failed = [
+      { answer: { isTrue: true }, durationMs: 30_000, sender: "check", type: "check" },
+      { type: "answerFailed" },
+    ] as const;
+
+    const state = failed.reduce(
+      (current, action) => practiceReducer(current, action),
+      createPracticeState([entry("timed", { kind: "timed", timeLimitSeconds: 45 })]),
+    );
+
+    expect(practiceReducer(state, { answer: { isTrue: true }, type: "select" })).toBe(state);
+
+    expect(
+      practiceReducer(state, { answer: { isTrue: false }, type: "select" }).phase,
+    ).toStrictEqual({ kind: "answering", selected: { isTrue: false } });
+  });
+
   it("counts other notebook entries fixed by overlapping drills", () => {
     const initial = createPracticeState([entry("first"), entry("other")]);
 
