@@ -4,6 +4,7 @@ import { seededShuffle } from "@zoonk/utils/seeded-random";
 type MatchFields = ActivityContentFor<"matchPairs">["fields"];
 
 export type MatchCard = { id: string; isTrap: boolean; text: string; why: string | null };
+type MatchRow = { left: MatchCard | null; right: MatchCard | null };
 
 const MAX_ATTEMPTS = 32;
 
@@ -46,6 +47,25 @@ export function arrangeMatchColumns(fields: MatchFields): {
   const right = candidates.find((candidate) => !hasAlignedPair(left, candidate)) ?? rightCards;
 
   return { left, right };
+}
+
+export function solvedRows({
+  left,
+  right,
+}: {
+  left: readonly MatchCard[];
+  right: readonly MatchCard[];
+}): MatchRow[] {
+  const leftRows = left.map((card) => ({
+    left: card,
+    right: card.isTrap ? null : (right.find((other) => other.id === card.id) ?? null),
+  }));
+
+  const rightTrapRows = right
+    .filter((card) => card.isTrap)
+    .map((card) => ({ left: null, right: card }));
+
+  return [...leftRows, ...rightTrapRows];
 }
 
 export function explainMismatch({ left, right }: { left: MatchCard; right: MatchCard }): {

@@ -1,10 +1,11 @@
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
-import { page } from "vitest/browser";
+import { type Locator, page } from "vitest/browser";
 import {
   checkActivity,
   expectCount,
   expectMathVisible,
+  expectSideBySide,
   expectVerdict,
   focusOn,
   openActivity,
@@ -31,6 +32,21 @@ async function expectHeard(text: string) {
 async function matchCards(left: string, right: string) {
   await page.getByRole("button", { exact: true, name: left }).click();
   await page.getByRole("button", { exact: true, name: right }).click();
+}
+
+async function expectAloneInItsRow(card: Locator) {
+  await expect
+    .poll(() => {
+      const top = card.element().getBoundingClientRect().top;
+
+      return page
+        .getByRole("group", { name: "Cards to match" })
+        .getByRole("button")
+        .elements()
+        .filter((other) => other !== card.element() && other.getBoundingClientRect().top === top)
+        .map((other) => other.getAttribute("aria-label"));
+    })
+    .toStrictEqual([]);
 }
 
 describe("reasoning activities", () => {
@@ -240,6 +256,27 @@ describe("reasoning activities", () => {
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText("Look-alikes with no match")).toBeVisible();
+  });
+
+  it("match pairs: puts each card beside its match and each look-alike in a row of its own once every pair is matched", async () => {
+    openActivity({ template: "matchPairs" });
+    const pairs = activityContentFixtures.matchPairs.fields.pairs;
+
+    for (const { left, right } of pairs) {
+      // oxlint-disable-next-line no-await-in-loop -- A pair is matched by tapping its sides in turn.
+      await matchCards(left, right);
+    }
+
+    for (const { left, right } of pairs) {
+      // oxlint-disable-next-line no-await-in-loop -- Each pair is checked once the board settles.
+      await expectSideBySide(
+        page.getByRole("button", { name: `${left}, matched` }),
+        page.getByRole("button", { name: `${right}, matched` }),
+      );
+    }
+
+    await expectAloneInItsRow(page.getByRole("button", { name: "embarrassed, no match" }));
+    await expectAloneInItsRow(page.getByRole("button", { name: "library, no match" }));
   });
 
   it("match pairs: a trap explains itself, stays marked and the first try counts", async () => {

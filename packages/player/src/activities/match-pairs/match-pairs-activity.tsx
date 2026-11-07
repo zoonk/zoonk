@@ -14,6 +14,7 @@ import {
 } from "../_components/activity-canvas";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
+import { MatchPairsBoard } from "./match-pairs-board";
 import { type MatchCardState, MatchPairsCard } from "./match-pairs-card";
 import { type MatchCard, arrangeMatchColumns, explainMismatch } from "./match-pairs-columns";
 import {
@@ -152,24 +153,17 @@ export function MatchPairsActivity({
     return state === "noMatch" ? t("{text}, no match", { text }) : text;
   }
 
-  function column(side: Side, cards: readonly MatchCard[]) {
-    return (
-      <div className="flex flex-col gap-2">
-        {cards.map((card) => {
-          const state = cardState({ card, isComplete, miss, progress, selection, side });
+  function cardButton(side: Side, card: MatchCard) {
+    const state = cardState({ card, isComplete, miss, progress, selection, side });
 
-          return (
-            <MatchPairsCard
-              isDisabled={isChecked || state === "matched" || state === "noMatch"}
-              key={card.id}
-              label={cardLabel(card, state)}
-              onPick={() => pick(side, card)}
-              state={state}
-              text={card.text}
-            />
-          );
-        })}
-      </div>
+    return (
+      <MatchPairsCard
+        isDisabled={isChecked || state === "matched" || state === "noMatch"}
+        label={cardLabel(card, state)}
+        onPick={() => pick(side, card)}
+        state={state}
+        text={card.text}
+      />
     );
   }
 
@@ -191,14 +185,13 @@ export function MatchPairsActivity({
         )}
       </ActivityCanvasLabel>
 
-      <div
-        aria-label={t("Cards to match")}
-        className="grid grid-cols-2 items-start gap-2.5"
-        role="group"
-      >
-        {column("left", left)}
-        {column("right", right)}
-      </div>
+      <MatchPairsBoard
+        isComplete={isComplete}
+        label={t("Cards to match")}
+        left={left}
+        renderCard={cardButton}
+        right={right}
+      />
 
       {miss && (
         <div className="bg-destructive/10 flex gap-2.5 rounded-xl px-3.5 py-3 text-sm leading-snug">
