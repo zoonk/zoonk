@@ -48,7 +48,15 @@ async function saveLevel({ context, level }: { context: PlanContext; level: OwnL
       return unchanged(goal);
     }
 
-    return tx.goal.update({ data: { details: { ...details, level } }, where: { id: goal.id } });
+    const saved = await tx.goal.update({
+      data: { details: { ...details, level } },
+      where: { id: goal.id },
+    });
+
+    // The level decides what's written ahead, such as where lessons likely start.
+    await oweGoalLessons({ db: tx, goalId: goal.id, userId: goal.userId });
+
+    return saved;
   });
 
   revalidateCacheTags([getGoalsCacheTag(context.goal.userId)]);
@@ -64,6 +72,8 @@ async function addFoundations(context: PlanContext): Promise<PlanChangeView | nu
 
   const result = await applyChangeNow({
     context,
+    extraWrites: (tx) =>
+      oweGoalLessons({ db: tx, goalId: context.goal.id, userId: context.goal.userId }),
     followToday: true,
     operations,
     reason: OWN_LEVEL_NOTE,
@@ -106,8 +116,10 @@ export async function changeOwnLevel({
         : [],
     ]);
 
-    await refreshGoalPlan({ goalId });
-    await oweGoalLessons({ goalId, userId: current.context.goal.userId });
+    await refreshGoalPlan({
+      extraWrites: (tx) => oweGoalLessons({ db: tx, goalId, userId: current.context.goal.userId }),
+      goalId,
+    });
 
     return { ownLevel: { change, direction, level: input.level, testOuts }, status: "ready" };
   });

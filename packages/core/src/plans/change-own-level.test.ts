@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { skillFixture, skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { listOwed } from "../_test-utils/follow-ups";
 import { mockSession } from "../_test-utils/mock-session";
 import * as goalSkillGraph from "../learner/_utils/goal-skill-graph";
 import { markPlansChanged } from "../learner/_utils/mark-learner-changed";
@@ -257,5 +258,25 @@ describe(changeOwnLevel, () => {
         where: { id: plan.id },
       }),
     ).resolves.toStrictEqual(saved);
+  });
+
+  it("owes the lessons a new level prepares even when the plan's layout stays the same", async () => {
+    const { goal, plan, user } = await setup();
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    await change(goal.id, "advanced");
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      lessonsAskedAt: NOW,
+      version: before.version,
+    });
+
+    await expect(listOwed(user.id)).resolves.toStrictEqual([
+      {
+        input: { goalId: goal.id, lessonsAskedAt: NOW.getTime() },
+        key: goal.id,
+        kind: "prepareGoalLessons",
+      },
+    ]);
   });
 });
