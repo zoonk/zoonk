@@ -1052,7 +1052,7 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     let readingBefore = queue[..<open].lastIndex { isAnswerable($0) }
-    position = readingBefore.map { $0 + 1 } ?? 0
+    enter(readingBefore.map { $0 + 1 } ?? 0, now: .now)
   }
 }
 

@@ -429,6 +429,17 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertNil(state.currentResult)
   }
 
+  func testAResumeOpeningOnAMissedCheckComingBackStartsItOver() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: [try step(check(id: "check"))])
+    state.startRun(runId: "run", answers: [runAnswer("check", isCorrect: false)])
+
+    XCTAssertEqual(state.position, 1)
+    XCTAssertEqual(state.phase, .playing)
+    XCTAssertNil(state.currentAnswer)
+    XCTAssertNil(state.currentResult)
+    XCTAssertEqual(state.firstVerdicts, ["check": false])
+  }
+
   func testIKnowThisAfterAResumeAsksAMissedCheckAgain() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
     state.startRun(runId: "run", answers: [runAnswer("check", isCorrect: false)])
