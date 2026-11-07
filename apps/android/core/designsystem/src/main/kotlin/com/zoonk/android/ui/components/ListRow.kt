@@ -141,9 +141,10 @@ fun ListRow(
                         headline()
                     } else {
                         TitleAndMeta(
+                            metaBusy = busy && !chevron,
                             meta = {
                                 CompositionLocalProvider(LocalContentColor provides quiet) {
-                                    ProvideTextStyle(MaterialTheme.zoonkType.data) { BusyContent(busy && !chevron, meta) }
+                                    ProvideTextStyle(MaterialTheme.zoonkType.data, meta)
                                 }
                             },
                         ) {
@@ -207,6 +208,7 @@ fun MarkedLine(
 
 @Composable
 private fun TitleAndMeta(
+    metaBusy: Boolean,
     meta: @Composable () -> Unit,
     title: @Composable () -> Unit,
 ) {
@@ -216,7 +218,11 @@ private fun TitleAndMeta(
                 Column {
                     title()
                 }
-            }, { Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) { meta() } }),
+            }, {
+                BusyContent(metaBusy) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) { meta() }
+                }
+            }),
     ) { (titles, metas), constraints ->
         val width = constraints.maxWidth
         val gap = 12.dp.roundToPx()
