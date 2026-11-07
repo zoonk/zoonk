@@ -74,25 +74,37 @@ export async function loadStudyWeek({
   }));
 
   // Dates before a goal existed must not appear as missed study or chosen rest days.
+  const getGoalMinutes = (
+    { goal, planSettings, startDate }: (typeof started)[number],
+    date: Date,
+  ): number =>
+    date < startDate
+      ? 0
+      : (getPastMinutes(goal.id, date) ?? getGoalDayMinutes({ date, goal, planSettings }));
+
   const getDayMinutes = (date: Date): number =>
-    started.reduce(
-      (sum, { goal, planSettings, startDate }) =>
-        date < startDate
-          ? sum
-          : sum +
-            (getPastMinutes(goal.id, date) ?? getGoalDayMinutes({ date, goal, planSettings })),
-      0,
-    );
+    started.reduce((sum, entry) => sum + getGoalMinutes(entry, date), 0);
+
+  const hasFinished = (goalId: string, date: Date): boolean =>
+    completed.some((day) => day.goalId === goalId && day.localDate.getTime() === date.getTime());
+
+  const isDayFinished = (date: Date): boolean =>
+    started
+      .filter((entry) => getGoalMinutes(entry, date) > 0)
+      .every(({ goal }) => hasFinished(goal.id, date));
 
   const getPlanDay = (date: Date): PlanDay => {
     const goalMinutes = getDayMinutes(date);
     return { goalMinutes, kind: getWeekDayKind({ date, goalMinutes, goals: started }) };
   };
 
+  const studiedDates = completed.map((day) => day.localDate);
+
   const week = getWeekDays({
-    completedDates: completed.map((day) => day.localDate),
     days: days.map((day) => ({ date: day.date, seconds: day.timeSpentSeconds })),
+    finishedDates: studiedDates.filter((date) => isDayFinished(date)),
     getPlanDay,
+    studiedDates,
     today: localDate,
   });
 
