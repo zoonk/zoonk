@@ -12,7 +12,7 @@
 @custom-variant signed-in (&:where([data-signed-in] *));
 @custom-variant usage-notice (&:where([data-usage-notice] *));
 
-/* Recharts keeps the first and last axis labels inside the chart by measuring them in `#recharts_measurement_span`, which it gives only their size and letter spacing, so both get one face here; otherwise a long last date runs past the edge. */
+/* Recharts keeps the first and last axis labels inside the chart by measuring them in `#recharts_measurement_span`, which it gives only their size and letter spacing, so both get one face here; otherwise a long last date runs past the edge (https://github.com/recharts/recharts/issues/8187). */
 .recharts-cartesian-axis-tick-value,
 #recharts_measurement_span {
   @apply font-mono;
