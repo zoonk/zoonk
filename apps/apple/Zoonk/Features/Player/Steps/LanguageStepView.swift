@@ -880,7 +880,7 @@ private struct MatchColumnsView: View {
             pickedLeft = index
           } label: {
             Text(pairs[index].left)
-              .frame(maxHeight: .infinity, alignment: .leading)
+              .frame(maxHeight: .infinity, alignment: .topLeading)
           }
           .buttonStyle(
             LessonOptionStyle(
@@ -892,7 +892,7 @@ private struct MatchColumnsView: View {
             pick(right: index)
           } label: {
             Text(isSolved ? pairs[index].right : exercise.matchColumnsRightItems[index])
-              .frame(maxHeight: .infinity, alignment: .leading)
+              .frame(maxHeight: .infinity, alignment: .topLeading)
           }
           .buttonStyle(
             LessonOptionStyle(mark: isRightMatched ? .right : lastMiss == index ? .wrong : .plain)
