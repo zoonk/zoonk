@@ -175,7 +175,7 @@ describe(writeLanguageLessonContent, () => {
 
     expect(saved).toMatchObject({ contentStatus: "completed" });
     expect(saved.sentences).toHaveLength(3);
-    expect(saved.sentences.every((row) => row.ordersOwedAt === null)).toBe(true);
+    expect(saved.sentences.every((row) => row.ordersOwedAt !== null)).toBe(true);
 
     expect(saved.summary).toStrictEqual({
       ideas: [
@@ -222,14 +222,6 @@ describe(writeLanguageLessonContent, () => {
       [`How much is the rent? ${key}`, "Quanto é o aluguel?"],
       [`Is there a deposit? ${key}`, "Tem caução?"],
       [`Utilities are included ${key}`, "As contas estão incluídas"],
-    ]);
-
-    expect(
-      saved.sentences.map((row) => [row.otherSentenceOrders, row.otherTranslationOrders]),
-    ).toStrictEqual([
-      [[], ["o aluguel? é Quanto"]],
-      [[], []],
-      [[], ["estão incluídas As contas"]],
     ]);
 
     expect(saved.steps.every((step) => step.skillId === skill.id)).toBe(true);

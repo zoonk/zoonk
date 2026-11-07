@@ -12,7 +12,6 @@ import respellingForEnglish from "./language-lesson-respelling-en.prompt.md";
 import respellingForSpanish from "./language-lesson-respelling-es.prompt.md";
 import respellingForPortuguese from "./language-lesson-respelling-pt.prompt.md";
 import basePrompt from "./language-lesson.prompt.md";
-import { withSentenceOrdersRule } from "./sentence-orders-rule";
 
 /**
  * Written once per pair and shared, so quality wins: Terra scored 8.91 against GPT-6.1 Sol's 8.75
@@ -56,7 +55,7 @@ function getSystemPrompt({
   const sameLanguage = isSameLanguage({ learnerLanguage, targetLanguage });
 
   return selectPromptVariants({
-    template: withSentenceOrdersRule(basePrompt),
+    template: basePrompt,
     variants: { bilingual: !sameLanguage, sameLanguage },
   }).replace("{{READER_RESPELLING}}\n", () => respelling);
 }
@@ -87,8 +86,6 @@ const schema = z.object({
       z.object({
         sentence: z.string(),
         translation: z.string(),
-        otherOrders: z.array(z.string()),
-        otherTranslationOrders: z.array(z.string()),
         explanation: z.string(),
         romanization: z.string().nullable(),
         distractors: sentenceDistractors,

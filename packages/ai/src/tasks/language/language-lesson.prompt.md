@@ -58,15 +58,10 @@ Choose them at `LEVEL`. From B1 up, the learner already says the basics of any s
 - `sentence`: entirely in `TARGET_LANGUAGE`. Keep question marks (and the opening "¿" in Spanish); drop decorative final periods and exclamation marks, because the sentence is split into word tiles.
 {{#bilingual}}
 - `translation`: natural `LEARNER_LANGUAGE` with the same meaning and register, not word for word. Same punctuation rule.
-{{/bilingual}}
-{{#sameLanguage}}
-- `translation`: the sentence itself, exactly.
-{{/sameLanguage}}
-{{SENTENCE_ORDERS}}
-{{#bilingual}}
 - `explanation`: 1 or 2 sentences in `LEARNER_LANGUAGE` on why the sentence is built this way, compared with how the learner would say it in `LEARNER_LANGUAGE` (word order, a word choice, a structure their language doesn't have). Be accurate about what each part does in this sentence.
 {{/bilingual}}
 {{#sameLanguage}}
+- `translation`: the sentence itself, exactly.
 - `explanation`: 1 or 2 sentences on why the sentence is built this way (word order, a word choice, a structure), without comparing it with another language. Be accurate about what each part does in this sentence.
 {{/sameLanguage}}
 - `romanization`: as for words, for the whole sentence, or `null`.
@@ -170,4 +165,3 @@ The `pronunciation` field shows how the word sounds using only letters and lette
 {{/sameLanguage}}
 9. The words and sentences cover every part of `LESSON_CAN_DO`.
 10. In a lesson about sounds, no practice question asks about a sound or a letter in writing.
-11. Every other order of a sentence or translation uses exactly its words, and a native teacher would accept it without hesitation.
