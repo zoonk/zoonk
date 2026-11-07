@@ -63,17 +63,6 @@ export async function settleFinishedChapters(
   return rows.map(({ chapterId, goalId, title }) => ({ chapterId, goalId, title }));
 }
 
-/** The chapter a completion reports: the one in its own goal, or the first it finished. */
-function pickFinishedChapter({
-  finished,
-  goalId,
-}: {
-  finished: readonly FinishedChapter[];
-  goalId: string | null;
-}): FinishedChapter | null {
-  return finished.find((chapter) => chapter.goalId === goalId) ?? finished[0] ?? null;
-}
-
 /** For a completion's learning event, so its retries report the same finish. */
 export function toFinishedChapterIds(chapter: FinishedChapter | null): Record<string, string> {
   return chapter ? { finishedChapterId: chapter.chapterId, finishedGoalId: chapter.goalId } : {};
@@ -104,8 +93,9 @@ async function recordFinishedChapter(
 }
 
 /**
- * For a write that completed a lesson's plan items: settles the chapters it finished and records the
- * one it reports on the lesson's learning event. `goalId` is the session's goal, when there is one.
+ * For a write that completed a lesson's plan items, a replay's included: settles every chapter it
+ * finished, in any of the learner's goals, and records on the lesson's learning event the one it
+ * reports, which must be in the goal being studied: the session's (`goalId`), else the active one.
  */
 export async function finishLessonChapters(
   tx: TransactionClient,
@@ -117,12 +107,15 @@ export async function finishLessonChapters(
   }: { eventId: string; goalId: string | null; planItemIds: readonly string[]; userId: string },
 ): Promise<void> {
   const finished = await settleFinishedChapters(tx, { planItemIds, userId });
-  const ownGoalId = goalId ?? (finished.length > 1 ? await findActiveGoalId(userId) : null);
 
-  await recordFinishedChapter(tx, {
-    chapter: pickFinishedChapter({ finished, goalId: ownGoalId }),
-    eventId,
-  });
+  if (finished.length === 0) {
+    return;
+  }
+
+  const studied = goalId ?? (await findActiveGoalId(userId));
+  const chapter = finished.find((candidate) => candidate.goalId === studied) ?? null;
+
+  await recordFinishedChapter(tx, { chapter, eventId });
 }
 
 /** Reads the finish a learning event recorded, with the chapter's title as it is now. */

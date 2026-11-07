@@ -1,5 +1,6 @@
 import { type GoalKind, prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
@@ -164,6 +165,51 @@ describe("a finished chapter", () => {
     await expect(owedMaps(user.id)).resolves.toStrictEqual([
       { input: { chapterId: chapter.chapter.id, goalId: goal.id }, key: chapter.chapter.id },
     ]);
+  });
+
+  it("reports only a finish in the goal being studied, yet owes every finished chapter's map", async () => {
+    const chapter = await chapterOfTwoLessons();
+    const { goal: studied, user } = await learnerOf(chapter);
+    const lessonId = chapter.last.id;
+
+    await learningProfileFixture({ activeGoalId: studied.id, userId: user.id });
+    await finishRun({ lessonId, runId: await startRun({ lessonId }) });
+
+    const [other, later] = await Promise.all([
+      goalFixture({ timezone: TIME_ZONE, userId: user.id }),
+      goalFixture({ timezone: TIME_ZONE, userId: user.id }),
+    ]);
+
+    const [otherPlan, laterPlan] = await Promise.all([
+      planFixture({ goalId: other.id }),
+      planFixture({ goalId: later.id }),
+      studySessionFixture({ goalId: later.id, userId: user.id }),
+    ]);
+
+    await planItemFixture({ chapterId: chapter.chapter.id, lessonId, planId: otherPlan.id });
+
+    await expect(
+      finishRun({ lessonId, runId: await startRun({ lessonId }) }),
+    ).resolves.toMatchObject({ finishedChapter: null, isFirstCompletion: false });
+
+    await expect(owedMaps(user.id)).resolves.toStrictEqual([
+      { input: { chapterId: chapter.chapter.id, goalId: other.id }, key: chapter.chapter.id },
+    ]);
+
+    await Promise.all([
+      planItemFixture({ chapterId: chapter.chapter.id, lessonId, planId: laterPlan.id }),
+      prisma.userLearningProfile.update({
+        data: { activeGoalId: later.id },
+        where: { userId: user.id },
+      }),
+    ]);
+
+    await expect(
+      finishRun({ lessonId, runId: await startRun({ lessonId }) }),
+    ).resolves.toMatchObject({
+      finishedChapter: { chapterId: chapter.chapter.id, goalId: later.id, title: "Cells" },
+      isFirstCompletion: false,
+    });
   });
 
   it("reports nothing for a lesson that leaves the chapter unfinished", async () => {
