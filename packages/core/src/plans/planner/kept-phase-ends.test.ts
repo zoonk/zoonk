@@ -200,4 +200,89 @@ describe(keepPhaseEnds, () => {
 
     expect(listStrainedEnds({ days, ends, units: scheduled.units })).toStrictEqual([]);
   });
+
+  describe("earlier challenges longer than a day, before a later phase's kept end", () => {
+    const short = Array.from({ length: 8 }, (_, offset) => ({
+      date: addDays(today, offset),
+      shape: { events: [], minutes: 10, open: true, phase: null, share: 1 },
+    }));
+
+    const ends = new Map([[2, addDays(today, 5)]]);
+
+    const schedule = (lessons: number) => {
+      const units = [
+        ...Array.from({ length: lessons }, (_, index) =>
+          unit({ key: `lesson:${index}`, kind: "lesson", minutes: 10, phase: 0 }),
+        ),
+        ...[0, 1, 2].map((index) =>
+          unit({ key: `boss:${index}`, kind: "boss", minutes: 15, phase: index }),
+        ),
+      ];
+
+      const scheduled = scheduleUnits({
+        days: short,
+        units: keepPhaseEnds({ days: short, ends, units }),
+      });
+
+      return {
+        bosses: scheduled.units
+          .filter((entry) => entry.kind === "boss")
+          .map((entry) => [entry.key, toIsoDate(entry.date)]),
+        dropped: scheduled.dropped.map((entry) => entry.key),
+      };
+    };
+
+    it("puts each on a day of its own before that end, which stays", () => {
+      expect(schedule(3)).toStrictEqual({
+        bosses: [
+          ["boss:0", "2026-10-30"],
+          ["boss:1", "2026-10-31"],
+          ["boss:2", "2026-11-01"],
+        ],
+        dropped: [],
+      });
+    });
+
+    it("keeps that end by moving the phases' depth lessons after it", () => {
+      const start = fromIsoDate("2026-10-04");
+
+      const restsFirst = [0, 10, 10, 10, 0, 10].map((minutes, offset) => ({
+        date: addDays(start, offset),
+        shape: { events: [], minutes, open: true, phase: null, share: 1 },
+      }));
+
+      const units = [
+        { ...unit({ key: "lesson:depth", kind: "lesson", minutes: 5, phase: 0 }), depth: true },
+        unit({ key: "boss:0", kind: "boss", minutes: 15, phase: 0 }),
+        unit({ key: "boss:1", kind: "boss", minutes: 15, phase: 1 }),
+      ];
+
+      const shown = new Map([
+        [0, addDays(start, 1)],
+        [1, addDays(start, 2)],
+      ]);
+
+      const scheduled = scheduleUnits({
+        days: restsFirst,
+        units: keepPhaseEnds({ days: restsFirst, ends: shown, units }),
+      });
+
+      expect(scheduled.units.map((entry) => [entry.key, toIsoDate(entry.date)])).toStrictEqual([
+        ["boss:0", "2026-10-05"],
+        ["boss:1", "2026-10-06"],
+        ["lesson:depth", "2026-10-07"],
+      ]);
+    });
+
+    it("moves that end to just after them when they reach its day", () => {
+      expect(schedule(4)).toStrictEqual({
+        bosses: [
+          ["boss:0", "2026-10-31"],
+          ["boss:1", "2026-11-01"],
+          ["boss:2", "2026-11-02"],
+        ],
+        dropped: [],
+      });
+    });
+  });
 });

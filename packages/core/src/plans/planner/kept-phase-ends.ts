@@ -1,4 +1,5 @@
 import { findDayIndex, isLessonRoom } from "./day-index";
+import { findLargestCount } from "./outcome-room";
 import { canHoldPhaseChallenge } from "./phase-challenge-days";
 import { listWonPhases } from "./phase-time";
 import { fromIsoDate, toIsoDate } from "./plan-calendar";
@@ -95,55 +96,28 @@ function pullPhaseDepth({
   return count === -1 ? candidates : candidates.slice(0, count);
 }
 
-function keepAfterEarlierChallenges({
-  after,
-  before,
-  boss,
+/**
+ * How many of `fitting` stay before the earlier challenges: all but the fewest depth lessons at its
+ * end that let those challenges end by `start`.
+ */
+function countKeptBefore({
   cumulative,
-  endDay,
-  late,
+  earlier,
+  fitting,
   start,
 }: {
-  after: readonly QueueUnit[];
-  before: readonly QueueUnit[];
-  boss: QueueUnit;
   cumulative: readonly number[];
-  endDay: number;
-  late: number;
+  earlier: readonly QueueUnit[];
+  fitting: readonly QueueUnit[];
   start: number;
-}): QueueUnit[] {
-  const isEarlier = (unit: QueueUnit, index: number) =>
-    index >= late && unit.kind === "boss" && unit.phase < boss.phase;
+}): number {
+  const depthFrom = fitting.findLastIndex((unit) => unit.kind !== "lesson" || !unit.depth) + 1;
 
-  const challenges = before
-    .filter((unit, index) => isEarlier(unit, index))
-    .toSorted((first, second) => first.phase - second.phase);
+  const fits = (count: number) =>
+    getUsedAfterUnits({ cumulative, units: [...fitting.slice(0, count), ...earlier] }) <=
+    start + PLAN_EPSILON;
 
-  const rest = before.filter((unit, index) => !isEarlier(unit, index));
-  const minutes = challenges.reduce((total, unit) => total + unit.minutes, 0);
-  const room = Math.max(0, start - minutes);
-
-  const restLate = placeUnits({ cumulative, units: rest }).findIndex(
-    ({ dayIndex, start: unitStart, unit }) =>
-      dayIndex < 0 || unitStart + unit.minutes > room + PLAN_EPSILON,
-  );
-
-  const count = restLate === -1 ? rest.length : restLate;
-  const first = rest.slice(0, count);
-
-  const held = placeUnits({ cumulative, units: [...first, ...challenges] })
-    .slice(first.length)
-    .map(({ dayIndex, unit }) =>
-      dayIndex < 0 || dayIndex > endDay ? { ...unit, heldOn: endDay } : unit,
-    );
-
-  return [
-    ...first,
-    ...held,
-    { ...boss, heldOn: endDay, startsAt: start },
-    ...rest.slice(count),
-    ...after,
-  ];
+  return findLargestCount({ high: fitting.length, low: depthFrom, works: fits }) ?? fitting.length;
 }
 
 function keepPhaseEnd({
@@ -176,17 +150,28 @@ function keepPhaseEnd({
     return [...units];
   }
 
-  const earlier = before.findLastIndex((unit) => unit.kind === "boss" && unit.phase < boss.phase);
+  const held = { ...boss, heldOn: endDay, startsAt: start };
 
-  if (late !== -1 && late <= earlier) {
-    return keepAfterEarlierChallenges({ after, before, boss, cumulative, endDay, late, start });
-  }
-
+  // Only challenges run past the shown day here. Earlier phases' stay before this one, and the
+  // depth lessons before them may go after it to keep its day (R40 lets depth come later). When
+  // that isn't enough, it gives way to them (`placeBoss`).
   if (late !== -1) {
+    const passing = before.slice(late);
+
+    const earlier = passing
+      .filter((unit) => unit.phase < boss.phase)
+      .toSorted((first, second) => first.phase - second.phase);
+
+    const others = passing.filter((unit) => unit.phase >= boss.phase);
+    const fitting = before.slice(0, late);
+    const kept = countKeptBefore({ cumulative, earlier, fitting, start });
+
     return [
-      ...before.slice(0, late),
-      { ...boss, heldOn: endDay, startsAt: start },
-      ...before.slice(late),
+      ...fitting.slice(0, kept),
+      ...earlier,
+      held,
+      ...fitting.slice(kept),
+      ...others,
       ...after,
     ];
   }
@@ -199,12 +184,7 @@ function keepPhaseEnd({
 
   const pulledKeys = new Set(pulled.map((unit) => unit.key));
 
-  return [
-    ...before,
-    ...pulled,
-    { ...boss, heldOn: endDay, startsAt: start },
-    ...after.filter((unit) => !pulledKeys.has(unit.key)),
-  ];
+  return [...before, ...pulled, held, ...after.filter((unit) => !pulledKeys.has(unit.key))];
 }
 
 export function keepPhaseEnds({
