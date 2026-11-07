@@ -8,7 +8,11 @@ type Answer = {
 };
 
 /** Output that fails its schema after these fails again on a retry. */
-const FINISHED: ReadonlySet<FinishReason | undefined> = new Set(["content-filter", "stop"]);
+const FINISHED: ReadonlySet<FinishReason | undefined> = new Set([
+  "content-filter",
+  "length",
+  "stop",
+]);
 
 /**
  * Wraps an object answer's call. The AI SDK fails output its schema can't accept as missing an

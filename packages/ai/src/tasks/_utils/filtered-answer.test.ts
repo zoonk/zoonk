@@ -33,7 +33,7 @@ function answer({
 }
 
 describe(failUnfinishedAnswer, () => {
-  it.each(["stop", "content-filter"] as const)(
+  it.each(["stop", "content-filter", "length"] as const)(
     "keeps output the schema can't accept after a %s finish as the failure no retry fixes",
     async (finishReason) => {
       await expect(answer({ finishReason, text: '{"releases": 1}' })).rejects.toMatchObject({
@@ -43,15 +43,12 @@ describe(failUnfinishedAnswer, () => {
     },
   );
 
-  it.each(["error", "length"] as const)(
-    "fails an answer cut off by a %s finish as an ordinary error, which a retry can fix",
-    async (finishReason) => {
-      const failed = answer({ finishReason, text: '{"releases":' });
+  it("fails an answer the provider cut off as an ordinary error, which a retry can fix", async () => {
+    const failed = answer({ finishReason: "error", text: '{"releases":' });
 
-      await expect(failed).rejects.toMatchObject({ name: "Error" });
-      await expect(failed).rejects.not.toHaveProperty("cause");
-    },
-  );
+    await expect(failed).rejects.toMatchObject({ name: "Error" });
+    await expect(failed).rejects.not.toHaveProperty("cause");
+  });
 
   it("leaves any other failure as it is", async () => {
     const outage = new APICallError({
