@@ -10,6 +10,7 @@ import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.BuildConfig
 import com.zoonk.android.data.ContentWritingWait
+import com.zoonk.android.data.DeviceRestoreKeys
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.EncryptedSessionCredentials
 import com.zoonk.android.data.LearnerSummaryStore
@@ -19,6 +20,7 @@ import com.zoonk.android.data.LiveLearningProfileApi
 import com.zoonk.android.data.LiveSessionApi
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.PrivateImages
+import com.zoonk.android.data.RestoreKeys
 import com.zoonk.android.data.SessionCredentials
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SessionStore
@@ -160,9 +162,14 @@ class AppContainer private constructor(
     val api = ApiClients("${BuildConfig.API_BASE_URL}/v1/".toHttpUrl(), apiHttpClient { buildTypeSetup() })
     val images = PrivateImages(api.baseUrl, imageLoader(context, api.http))
     val drafts = DraftStore(File(context.filesDir, "drafts"), scope)
+    private val integrity =
+        BuildConfig.PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER
+            .toLongOrNull()
+            ?.takeIf { previewAccess == null }
+            ?.let { PlayIntegrity(context, it, scope) }
     val sessions: SessionStore =
         SessionStore(
-            api = LiveSessionApi(api),
+            api = LiveSessionApi(api, integrity),
             appleClientId = BuildConfig.APPLE_CLIENT_ID,
             appleReflectorUrl = api.baseUrl.resolve("/auth/apple/android").toString(),
             credentials = credentials,
@@ -175,6 +182,7 @@ class AppContainer private constructor(
                 }
             },
             clearCredentialState = { clearCredentialState(context) },
+            restoreKeys = if (previewAccess == null) DeviceRestoreKeys(context) else RestoreKeys.None,
         )
     val cache = AppCache(sessions, scope, timeSource)
 
@@ -201,11 +209,6 @@ class AppContainer private constructor(
     val mindMaps = MindMapStore(LiveMindMapApi(api, images), cache)
 
     // Account and Plus (L1).
-    private val integrity =
-        BuildConfig.PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER
-            .toLongOrNull()
-            ?.takeIf { previewAccess == null }
-            ?.let { PlayIntegrity(context, it, scope) }
     val account = AccountStore(LiveAccountApi(api, integrity), sessions, cache)
     val memory = MemoryStore(LiveMemoryApi(api), cache)
     val feedback = FeedbackSender(LiveFeedbackApi(api), sessions)
@@ -334,6 +337,7 @@ class AppContainer private constructor(
 
     init {
         scope.launch { sessions.restore() }
+        scope.launch { sessions.keepRestoreKeys() }
     }
 
     companion object {
@@ -386,4 +390,8 @@ private object NoStoredSession : SessionCredentials {
     override suspend fun pendingApple(): com.zoonk.android.data.PendingAppleSignIn? = null
 
     override suspend fun writePendingApple(pending: com.zoonk.android.data.PendingAppleSignIn?) = Unit
+
+    override suspend fun restoreChecked() = true
+
+    override suspend fun markRestoreChecked() = Unit
 }

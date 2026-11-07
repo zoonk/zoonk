@@ -13,6 +13,7 @@ export const APP_ATTEST_OPERATIONS = {
   emailCode: "email-code",
   emailSession: "email-session",
   guest: "guest",
+  restoreKey: "restore-key",
 } as const;
 
 type AppAttestOperation = (typeof APP_ATTEST_OPERATIONS)[keyof typeof APP_ATTEST_OPERATIONS];

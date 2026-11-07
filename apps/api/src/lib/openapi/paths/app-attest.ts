@@ -11,7 +11,7 @@ export const appAttestPaths = {
   "/app-attest/challenges": {
     post: {
       description:
-        "A one-time challenge for the apps' bot proof. The iOS app asks for one before attesting its App Attest key and before each request that needs bot proof (`POST /v1/guests`, `POST /v1/email-sign-in-codes`, `POST /v1/sessions/email-code`), where it sends the assertion in the `X-App-Attest-*` headers instead of BotID's browser proof; the Android app asks for one before each of those requests and sends a Play Integrity token in the `X-Play-Integrity-*` headers.",
+        "A one-time challenge for the apps' bot proof. The iOS app asks for one before attesting its App Attest key and before each request that needs bot proof (`POST /v1/guests`, `POST /v1/email-sign-in-codes`, `POST /v1/sessions/email-code`), where it sends the assertion in the `X-App-Attest-*` headers instead of BotID's browser proof; the Android app asks for one before each of those requests and sends a Play Integrity token in the `X-Play-Integrity-*` headers. The Android app also asks for one before creating or redeeming a restore key (`POST /v1/sessions/current/restore-keys`, `POST /v1/sessions/restore-key`), as its WebAuthn challenge.",
       operationId: "createAppAttestChallenge",
       responses: {
         "201": {

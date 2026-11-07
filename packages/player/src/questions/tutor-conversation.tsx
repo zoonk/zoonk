@@ -53,7 +53,7 @@ type TutorConversationProps = TutorCards & {
 
 const GOAL_CONTEXT = { kind: "plan" } as const;
 
-const TURN_CLASS = "flex scroll-mt-4 flex-col gap-5 lg:scroll-mt-24";
+const TURN_CLASS = "flex scroll-mt-4 flex-col gap-5";
 
 const COMPOSER_POSITION =
   "sticky bottom-[calc(4rem+1px+env(safe-area-inset-bottom))] lg:bottom-0 z-10 -mx-4 bg-linear-to-t from-background from-75% to-transparent px-4 pt-6 pb-3 lg:pb-6";

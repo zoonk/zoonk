@@ -832,6 +832,7 @@ private struct CheckedWord: View {
 
 /// A right pair locks, a wrong one counts as a mistake.
 private struct MatchColumnsView: View {
+  @Environment(\.stacksContent) private var isStacked
   @ActivityState("pickedLeft") private var pickedLeft: Int? = nil
   @ActivityState("mistakes") private var mistakes = 0
   @State private var lastMiss: Int?
@@ -868,47 +869,76 @@ private struct MatchColumnsView: View {
   }
 
   var body: some View {
-    let board = board
-
-    Grid(horizontalSpacing: 12, verticalSpacing: 10) {
-      ForEach(pairs.indices, id: \.self) { index in
-        let isLeftMatched = board.matchedLeft.contains(index)
-        let isRightMatched = board.matchedRight.contains(index)
-
-        GridRow {
-          Button {
-            pickedLeft = index
-          } label: {
-            Text(pairs[index].left)
-              .frame(maxHeight: .infinity, alignment: .topLeading)
-          }
-          .buttonStyle(
-            LessonOptionStyle(
-              mark: isLeftMatched ? .right : pickedLeft == index ? .selected : .plain)
-          )
-          .disabled(isLeftMatched || context.isLocked)
-
-          Button {
-            pick(right: index)
-          } label: {
-            Text(isSolved ? pairs[index].right : exercise.matchColumnsRightItems[index])
-              .frame(maxHeight: .infinity, alignment: .topLeading)
-          }
-          .buttonStyle(
-            LessonOptionStyle(mark: isRightMatched ? .right : lastMiss == index ? .wrong : .plain)
-          )
-          .disabled(isRightMatched || context.isLocked || pickedLeft == nil)
-        }
-      }
-    }
-    .fixedSize(horizontal: false, vertical: true)
-    .announcesStatus(allMatchedLine)
+    tiles(board)
+      .fixedSize(horizontal: false, vertical: true)
+      .announcesStatus(allMatchedLine)
 
     if let allMatchedLine {
       Text(allMatchedLine)
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
     }
+  }
+
+  @ViewBuilder
+  private func tiles(_ board: MatchColumnsBoard) -> some View {
+    if isStacked {
+      VStack(spacing: 16) {
+        if isSolved {
+          ForEach(pairs.indices, id: \.self) { index in
+            VStack(spacing: 8) {
+              leftTile(index, board: board)
+              rightTile(index, board: board)
+            }
+          }
+        } else {
+          VStack(spacing: 8) {
+            ForEach(pairs.indices, id: \.self) { leftTile($0, board: board) }
+          }
+
+          VStack(spacing: 8) {
+            ForEach(pairs.indices, id: \.self) { rightTile($0, board: board) }
+          }
+        }
+      }
+    } else {
+      Grid(horizontalSpacing: 12, verticalSpacing: 10) {
+        ForEach(pairs.indices, id: \.self) { index in
+          GridRow {
+            leftTile(index, board: board)
+            rightTile(index, board: board)
+          }
+        }
+      }
+    }
+  }
+
+  private func leftTile(_ index: Int, board: MatchColumnsBoard) -> some View {
+    let isMatched = board.matchedLeft.contains(index)
+
+    return Button {
+      pickedLeft = index
+    } label: {
+      Text(pairs[index].left)
+        .frame(maxHeight: .infinity, alignment: .topLeading)
+    }
+    .buttonStyle(
+      LessonOptionStyle(mark: isMatched ? .right : pickedLeft == index ? .selected : .plain)
+    )
+    .disabled(isMatched || context.isLocked)
+  }
+
+  private func rightTile(_ index: Int, board: MatchColumnsBoard) -> some View {
+    let isMatched = board.matchedRight.contains(index)
+
+    return Button {
+      pick(right: index)
+    } label: {
+      Text(isSolved ? pairs[index].right : exercise.matchColumnsRightItems[index])
+        .frame(maxHeight: .infinity, alignment: .topLeading)
+    }
+    .buttonStyle(LessonOptionStyle(mark: isMatched ? .right : lastMiss == index ? .wrong : .plain))
+    .disabled(isMatched || context.isLocked || pickedLeft == nil)
   }
 
   private func pick(right index: Int) {

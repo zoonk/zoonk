@@ -1,12 +1,19 @@
 package com.zoonk.android.data
 
+import androidx.credentials.exceptions.restorecredential.E2eeUnavailableException
 import com.zoonk.api.models.MeResponse
+import com.zoonk.api.models.RestoreKeySessionResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.IOException
+import java.security.SecureRandom
+import java.util.Base64
 import java.util.UUID
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -19,6 +26,17 @@ interface SessionApi {
         request: com.zoonk.api.models.AppleSessionRequest,
         guest: AuthenticatedSession?,
     ): String
+
+    /** Single-use for five minutes, and already unpadded base64url as WebAuthn wants. */
+    suspend fun challenge(): String
+
+    suspend fun registerRestoreKey(
+        session: AuthenticatedSession,
+        registrationResponseJson: String,
+    )
+
+    /** [ApiError.Unauthorized] only when the key itself can't sign in again; other refusals may pass on a retry. */
+    suspend fun restoreKeySession(authenticationResponseJson: String): RestoreKeySessionResponse
 }
 
 interface SessionCredentials {
@@ -29,12 +47,18 @@ interface SessionCredentials {
     suspend fun pendingApple(): PendingAppleSignIn?
 
     suspend fun writePendingApple(pending: PendingAppleSignIn?)
+
+    /** Whether this device has looked for a restore key, which it does only on its first launch. */
+    suspend fun restoreChecked(): Boolean
+
+    suspend fun markRestoreChecked()
 }
 
 @kotlinx.serialization.Serializable
 data class StoredSession(
     val session: AuthenticatedSession,
     val isGuest: Boolean = false,
+    val hasRestoreKey: Boolean = false,
 )
 
 sealed interface SessionState {
@@ -87,10 +111,11 @@ class SessionStore(
     private val drafts: DraftStore,
     private val onChange: (previous: AuthenticatedSession?, next: AuthenticatedSession?) -> Unit,
     private val clearCredentialState: suspend () -> Unit,
+    private val restoreKeys: RestoreKeys = RestoreKeys.None,
     private val appleClientId: String = "",
     private val appleReflectorUrl: String = "",
     private val now: () -> Long = System::currentTimeMillis,
-    private val newSecret: () -> String = ::appleSecret,
+    private val newSecret: () -> String = ::randomSecret,
     private val newLocalId: () -> String = { UUID.randomUUID().toString() },
 ) : SessionSource {
     private val mutableState = MutableStateFlow<SessionState>(SessionState.Restoring)
@@ -204,14 +229,16 @@ class SessionStore(
         started: AuthenticatedSession?,
         wasGuest: Boolean,
         asGuest: Boolean,
+        isStillWanted: () -> Boolean = { current == started },
     ): SignInResult {
         var installed = false
         drafts.follow {
-            if (current != started) return@follow null
+            if (!isStillWanted()) return@follow null
             val session = AuthenticatedSession(account.user.id.toString(), token, newLocalId())
             try {
                 credentials.writePendingApple(null)
                 credentials.write(StoredSession(session, asGuest))
+                credentials.markRestoreChecked()
             } catch (_: IOException) {
                 // A failed credential write keeps this session in memory until process death.
             }
@@ -278,14 +305,7 @@ class SessionStore(
             } catch (e: IOException) {
                 null
             }
-        if (stored == null) {
-            drafts.follow {
-                if (mutableState.value != SessionState.Restoring) return@follow null
-                publish(SessionState.SignedOut())
-                DraftsChange(next = null)
-            }
-            return
-        }
+        if (stored == null) return restoreFromKey()
         if (mutableState.value != SessionState.Restoring) return
         if (restoring == null) {
             restoring = stored
@@ -315,6 +335,122 @@ class SessionStore(
             val session = identity
             publish(SessionState.SignedIn(session, account, stored.isGuest))
             DraftsChange(next = session.accountId)
+        }
+    }
+
+    /**
+     * A new phone's first launch, where Google may have moved the old phone's restore key: the API
+     * trades it for a fresh session of the same learner. Without a key nothing reaches the network.
+     */
+    private suspend fun restoreFromKey() {
+        val firstLaunch =
+            try {
+                !credentials.restoreChecked()
+            } catch (e: IOException) {
+                false
+            }
+        if (!firstLaunch) return endRestore()
+        val probe =
+            try {
+                restoreKeys.sign(restoreKeyRequest(newSecret()))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                return endRestore()
+            }
+        if (probe == null) return endRestore(checked = true)
+        val restored: RestoreKeySessionResponse
+        try {
+            val signed = restoreKeys.sign(restoreKeyRequest(api.challenge())) ?: return endRestore(checked = true)
+            restored = api.restoreKeySession(signed)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            val refused = e.toApiError() == ApiError.Unauthorized || (e as? ApiException)?.status == 403
+            return if (refused) endRestore(checked = true, refused = true) else showUnavailable()
+        }
+        val account =
+            try {
+                api.currentUser(restored.token)
+            } catch (e: CancellationException) {
+                revokeQuietly(restored.token)
+                throw e
+            } catch (e: Exception) {
+                revokeQuietly(restored.token)
+                return showUnavailable()
+            }
+        // Whatever the learner did meanwhile wins, even a sign-in they've already signed out of.
+        signInMutex.withLock {
+            install(restored.token, account, started = null, wasGuest = false, asGuest = restored.isGuest) {
+                mutableState.value == SessionState.Restoring
+            }
+        }
+    }
+
+    /** [checked] once this device has its answer, so later launches don't look for a key; a [refused] key is deleted. */
+    private suspend fun endRestore(
+        checked: Boolean = false,
+        refused: Boolean = false,
+    ) = drafts.follow {
+        if (mutableState.value != SessionState.Restoring) return@follow null
+        if (refused) clearCredentialState()
+        if (checked) {
+            try {
+                credentials.markRestoreChecked()
+            } catch (e: IOException) {
+                // The next launch looks again.
+            }
+        }
+        publish(SessionState.SignedOut())
+        DraftsChange(next = null)
+    }
+
+    private fun showUnavailable() {
+        if (mutableState.value == SessionState.Restoring) mutableState.value = SessionState.Unavailable
+    }
+
+    /**
+     * Runs for the app's life: each signed-in session gets this device's restore key once, so the
+     * learner's next phone starts signed in. A failure tries again on the next validated launch.
+     */
+    suspend fun keepRestoreKeys() {
+        state
+            .map { (it as? SessionState.SignedIn)?.session }
+            .distinctUntilChanged()
+            .collectLatest { session -> session?.let { enrollRestoreKey(it) } }
+    }
+
+    private suspend fun enrollRestoreKey(session: AuthenticatedSession) {
+        val stored =
+            try {
+                credentials.read()
+            } catch (e: IOException) {
+                return
+            }
+        if (stored?.session != session || stored.hasRestoreKey) return
+        try {
+            val request = restoreKeyCreation(api.challenge(), userId = newSecret())
+            val registration =
+                try {
+                    restoreKeys.create(request, isCloudBackupEnabled = true)
+                } catch (e: E2eeUnavailableException) {
+                    // Without a Google account or a screen lock there's no encrypted cloud backup; a phone-to-phone transfer still moves the key.
+                    restoreKeys.create(request, isCloudBackupEnabled = false)
+                } ?: return
+            api.registerRestoreKey(session, registration)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            return
+        }
+        drafts.follow {
+            if (current != session) return@follow null
+            try {
+                credentials.write(stored.copy(hasRestoreKey = true))
+            } catch (e: IOException) {
+                // The next validated launch registers a new key.
+            }
+            null
         }
     }
 
@@ -354,3 +490,10 @@ class SessionStore(
         }
     }
 }
+
+internal fun randomSecret(): String =
+    Base64.getUrlEncoder().withoutPadding().encodeToString(
+        ByteArray(32).also {
+            SecureRandom().nextBytes(it)
+        },
+    )

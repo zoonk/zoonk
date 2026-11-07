@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.account
 
 import com.zoonk.android.data.ApiClients
-import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.perform
 import com.zoonk.api.models.AccountDataExport
@@ -70,13 +69,12 @@ sealed interface BotProofRequest {
         val email: String,
         val code: String,
     ) : BotProofRequest
-}
 
-/** A Play Integrity token and the single-use challenge its request hash covers. */
-private data class PlayIntegrityProof(
-    val token: String,
-    val challenge: String,
-)
+    /** [credentialId] is the `id` of the restore key's registration. */
+    data class RestoreKey(
+        val credentialId: String,
+    ) : BotProofRequest
+}
 
 class LiveAccountApi(
     private val api: ApiClients,
@@ -157,15 +155,5 @@ class LiveAccountApi(
         return perform { api.clients(session).account.deleteCurrentUser(body) }.appleAuthorizationRevoked
     }
 
-    /** Without a proof the request goes anyway, and the server decides as it does for iOS. */
-    private suspend fun proof(request: BotProofRequest): PlayIntegrityProof? {
-        val integrity = integrity ?: return null
-        val challenge =
-            try {
-                perform { api.clients(null).sessions.createAppAttestChallenge() }.challenge
-            } catch (e: ApiException) {
-                return null
-            }
-        return integrity.token(request.requestHash(challenge))?.let { PlayIntegrityProof(it, challenge) }
-    }
+    private suspend fun proof(request: BotProofRequest) = integrity?.proof(api, request)
 }

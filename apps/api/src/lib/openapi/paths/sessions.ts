@@ -1,8 +1,9 @@
 import { nativeAppleCredentialsSchema } from "@zoonk/auth/native-apple-contract";
+import { RESTORE_KEY_RP_ID } from "@zoonk/auth/restore-key-contract";
 import { z } from "zod";
 import { accessErrorCodes } from "../../access-error-codes";
 import { sessionErrorCodes } from "../../session-error-codes";
-import { appProofHeaderParamsSchema } from "../schemas/app-attest";
+import { appProofHeaderParamsSchema, playIntegrityHeaderParamsSchema } from "../schemas/app-attest";
 import {
   badRequestResponse,
   forbiddenResponse,
@@ -14,6 +15,9 @@ import {
   emailCodeSessionRequestSchema,
   emailSignInCodeRequestSchema,
   googleSessionRequestSchema,
+  restoreKeyRequestBodySchema,
+  restoreKeySessionRequestBodySchema,
+  restoreKeySessionResponseSchema,
   sessionTokenResponseSchema,
 } from "../schemas/sessions";
 import { AUTHENTICATED_SECURITY, OPTIONAL_BEARER_SECURITY, PUBLIC_SECURITY } from "../security";
@@ -58,6 +62,13 @@ const EMAIL_CODE_BOT_CHECK = `Requests must pass Vercel BotID, which runs in a b
 const googleAuthorizationResponse = {
   ...unauthorizedResponse,
   description: `Google authorization is invalid or expired. Error code: ${sessionErrorCodes.googleAuthorizationInvalid}.`,
+} as const;
+
+const RESTORE_KEY_CHALLENGE = `Make the key's WebAuthn request over a fresh challenge from \`POST /v1/app-attest/challenges\`, with the RP ID \`${RESTORE_KEY_RP_ID}\`.`;
+
+const restoreKeyChallengeResponse = {
+  ...badRequestResponse,
+  description: `Request validation failed, the challenge wasn't issued here or was already used or expired, or the JSON isn't a credential response. Keep the key and try again with a new challenge. Error codes include: ${sessionErrorCodes.restoreKeyChallengeInvalid}, ${sessionErrorCodes.restoreKeyResponseMalformed}.`,
 } as const;
 
 export const authRateLimitResponse = {
@@ -126,6 +137,33 @@ export const sessionPaths = {
       tags: ["Sessions"],
     },
   },
+  "/sessions/current/restore-keys": {
+    post: {
+      description: `Registers the restore key the Android app made with Credential Manager's Restore Credentials after this session signed in, so the learner's next phone signs in with \`POST /v1/sessions/restore-key\`. ${RESTORE_KEY_CHALLENGE} Use ES256 or RS256, attestation \`none\` and a discoverable credential; user verification isn't required. In production, the request also carries a Play Integrity token in the \`X-Play-Integrity-*\` headers, made over a second challenge from \`POST /v1/app-attest/challenges\` with the operation \`restore-key\` and the registration's \`id\`. The key signs in only while this session lasts: signing out, deleting the account or a guest creating an account ends it on every phone. A session keeps one key: registering another replaces it, and registering the same key again is a no-op.`,
+      operationId: "createRestoreKey",
+      requestBody: {
+        content: { "application/json": { schema: restoreKeyRequestBodySchema } },
+        required: true,
+      },
+      requestParams: { header: playIntegrityHeaderParamsSchema },
+      responses: {
+        "204": { description: "Restore key registered, or already registered for this session" },
+        "400": {
+          ...badRequestResponse,
+          description: `Request validation failed, the challenge wasn't issued here or was already used or expired, the registration is malformed, doesn't verify (origin, RP ID, algorithm) or names a key another session registered, or the session is an admin's impersonation of a learner. Error codes include: ${sessionErrorCodes.restoreKeyChallengeInvalid}, ${sessionErrorCodes.restoreKeyResponseMalformed}, ${sessionErrorCodes.restoreKeyRegistrationInvalid}.`,
+        },
+        "401": unauthorizedResponse,
+        "403": {
+          ...forbiddenResponse,
+          description: `In production, the request had no valid Play Integrity proof for this key. Error code: ${accessErrorCodes.botDetected}.`,
+        },
+        "429": authRateLimitResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Register a restore key",
+      tags: ["Sessions"],
+    },
+  },
   "/sessions/email-code": {
     post: {
       description: `Signs in with the code from \`POST /v1/email-sign-in-codes\`, creating the account the first time. ${EMAIL_CODE_BOT_CHECK}`,
@@ -162,6 +200,32 @@ export const sessionPaths = {
       },
       security: PUBLIC_SECURITY,
       summary: "Sign in with Google",
+      tags: ["Sessions"],
+    },
+  },
+  "/sessions/restore-key": {
+    post: {
+      description: `Signs a new phone in with the restore key Google moved to it from the learner's previous phone, creating a new session for that learner, guests included. The previous phone keeps its own session, and this key signs in only while that session lasts, so register a new key for the new session with \`POST /v1/sessions/current/restore-keys\`. ${RESTORE_KEY_CHALLENGE} No bot proof is needed: the key's signature is the proof. A 5xx means keys can't be checked right now, so keep the key and try again later.`,
+      operationId: "createRestoreKeySession",
+      requestBody: {
+        content: { "application/json": { schema: restoreKeySessionRequestBodySchema } },
+        required: true,
+      },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: restoreKeySessionResponseSchema } },
+          description: "Zoonk bearer session created for the key's learner",
+        },
+        "400": restoreKeyChallengeResponse,
+        "401": {
+          ...unauthorizedResponse,
+          description: `This restore key can't sign in: it's unknown, its signature or RP ID is wrong, or the session that registered it ended. Delete the key. Error code: ${sessionErrorCodes.restoreKeyInvalid}.`,
+        },
+        "403": accountDisabledResponse,
+        "429": authRateLimitResponse,
+      },
+      security: PUBLIC_SECURITY,
+      summary: "Sign in with a restore key",
       tags: ["Sessions"],
     },
   },
