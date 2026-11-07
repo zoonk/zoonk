@@ -274,6 +274,30 @@ describe(keepPhaseEnds, () => {
       ]);
     });
 
+    it("keeps that end by moving the rest of the chapter in progress after it", () => {
+      const tenEach: PlanDay[] = [10, 10, 10].map((minutes, offset) => ({
+        date: addDays(today, offset),
+        shape: { events: [], minutes, open: true, phase: null, share: 1 },
+      }));
+
+      const units = [
+        { ...unit({ key: "lesson:rest", kind: "lesson", minutes: 5, phase: 0 }), pastCore: true },
+        unit({ key: "boss:0", kind: "boss", minutes: 8, phase: 0 }),
+        unit({ key: "boss:1", kind: "boss", minutes: 8, phase: 1 }),
+      ];
+
+      const scheduled = scheduleUnits({
+        days: tenEach,
+        units: keepPhaseEnds({ days: tenEach, ends: new Map([[1, addDays(today, 1)]]), units }),
+      });
+
+      expect(scheduled.units.map((entry) => [entry.key, toIsoDate(entry.date)])).toStrictEqual([
+        ["boss:0", "2026-10-27"],
+        ["boss:1", "2026-10-28"],
+        ["lesson:rest", "2026-10-29"],
+      ]);
+    });
+
     it("moves that end to just after them when they reach its day", () => {
       expect(schedule(4)).toStrictEqual({
         bosses: [

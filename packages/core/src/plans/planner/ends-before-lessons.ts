@@ -1,22 +1,34 @@
+import { listCoreLessonItems } from "../_utils/core-lessons";
 import { type BuildPlanInput } from "./build-plan";
+import { isPastCore, withPlannedLessons } from "./core-first";
 import { listWonPhases } from "./phase-time";
 import { LEARN_KINDS } from "./plan-item-rules";
 import { type PlannedItem } from "./plan-items";
 import { type ScheduledUnit } from "./schedule-units";
 
 export function listEndsBeforeLessons({
-  ends,
   given,
   items,
-  units,
+  laidOut,
+  phaseEnds,
+  skillLessons,
 }: {
-  ends: ReadonlyMap<number, Date>;
   given: Pick<BuildPlanInput, "graph" | "lessons">;
   items: readonly Pick<
     PlannedItem,
-    "key" | "kind" | "lessonId" | "phase" | "scheduledFor" | "skillId" | "status"
+    | "chapterId"
+    | "key"
+    | "kind"
+    | "lessonId"
+    | "lessons"
+    | "phase"
+    | "scheduledFor"
+    | "skillId"
+    | "status"
   >[];
-  units: readonly Pick<ScheduledUnit, "depth" | "key">[];
+  laidOut: readonly Pick<ScheduledUnit, "depth" | "key" | "pastCore">[];
+  phaseEnds: ReadonlyMap<number, Date>;
+  skillLessons: ReadonlyMap<string, number>;
 }): number[] {
   const skillPhases = new Map(given.graph.skills.map((skill) => [skill.skillId, skill.phase]));
 
@@ -26,11 +38,23 @@ export function listEndsBeforeLessons({
     ),
   );
 
-  const core = new Set(units.flatMap((unit) => (unit.depth ? [] : [unit.key])));
+  const laidOutKeys = new Set(laidOut.map((unit) => unit.key));
+  const laidOutCore = new Set(laidOut.flatMap((unit) => (isPastCore(unit) ? [] : [unit.key])));
 
-  const depth = new Set(
-    units.flatMap((unit) => (unit.depth && !core.has(unit.key) ? [unit.key] : [])),
+  const { skills } = withPlannedLessons({ graph: given.graph, skillLessons });
+
+  const keptCore = new Set(
+    [...listCoreLessonItems({ graphSkills: skills, items }).values()]
+      .flat()
+      .map((item) => item.key),
   );
+
+  // Lessons this week's run kept as they were carry no flags, so they're sized as this build's
+  // challenges size their skills' cores.
+  const isWaitedFor = (item: (typeof items)[number]) =>
+    laidOutKeys.has(item.key)
+      ? laidOutCore.has(item.key)
+      : item.kind !== "lesson" || keptCore.has(item.key);
 
   // A lesson that spills past its phase's end is filed under the next phase but still belongs to
   // its skill's phase, or to its chapter's level in a course.
@@ -45,12 +69,12 @@ export function listEndsBeforeLessons({
       LEARN_KINDS.has(item.kind) &&
       item.status === "todo" &&
       item.scheduledFor !== null &&
-      !depth.has(item.key),
+      isWaitedFor(item),
   );
 
   const won = listWonPhases(home);
 
-  return [...ends].flatMap(([phase, date]) =>
+  return [...phaseEnds].flatMap(([phase, date]) =>
     !won.has(phase) &&
     lessons.some(
       (item) => item.phase <= phase && item.scheduledFor !== null && item.scheduledFor > date,
