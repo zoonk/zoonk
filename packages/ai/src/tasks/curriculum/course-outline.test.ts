@@ -1,5 +1,6 @@
 import { type LanguageModelUsage, generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { answerCutOffOnce, answerEmptyOnce } from "../_test-utils/answer-once-with";
 import { type CourseOutlineParams, generateCourseOutline } from "./course-outline";
 import type * as Ai from "ai";
 
@@ -50,6 +51,12 @@ const SUBJECT_BAND: CourseOutlineParams = {
   ],
 };
 
+const PRODUCT = {
+  brand: "Acme",
+  name: "Gizmo",
+  release: { name: "Gizmo 2", releasedOn: "2026-03-01" },
+};
+
 const MODEL = "openai/gpt-6-sol";
 
 const usage: LanguageModelUsage = {
@@ -68,7 +75,7 @@ function answer(output: unknown) {
     usage,
   };
 
-  return { finalStep: step, output, steps: [step], usage };
+  return { finalStep: step, finishReason: "stop", output, steps: [step], usage };
 }
 
 function outlineChapter({
@@ -132,13 +139,22 @@ describe(generateCourseOutline, () => {
     ["a learner's private course", { ...BAND, material: "[p1] Mean and median." }],
     ["a skill's next chapter", { ...BAND, extendSkills: [EXTEND_SKILL] }],
     ["an exam's band whose skills sit in its subjects", SUBJECT_BAND],
+    ["a product course's band", { ...BAND, product: PRODUCT }],
+    ["a new release's chapter", { ...BAND, whatsNew: "What's new in version 8" }],
   ])("sends %s every input its instructions mention and no other variant's", async (_, params) => {
     const { instructions, prompt } = await sendOutline(params);
     const mentioned = findMentionedInputs(instructions);
 
     expect(mentioned.filter((name) => !isSent({ name, prompt }))).toStrictEqual([]);
 
-    for (const name of ["WITHOUT_TOOLS", "EXAMS", "EXTEND_SKILLS", "MATERIAL"]) {
+    for (const name of [
+      "WITHOUT_TOOLS",
+      "EXAMS",
+      "EXTEND_SKILLS",
+      "MATERIAL",
+      "PRODUCT",
+      "WHATS_NEW",
+    ]) {
       expect(isSent({ name, prompt })).toBe(mentioned.includes(name));
     }
 
@@ -153,6 +169,18 @@ describe(generateCourseOutline, () => {
     );
 
     expect(prompt).not.toMatch(/WITHOUT_TOOLS|EXAMS|EXTEND_SKILLS/u);
+  });
+
+  it("outlines a product course as tasks in the product, for the release it's written for", async () => {
+    const { instructions, prompt } = await sendOutline({ ...BAND, product: PRODUCT });
+
+    expect(instructions).toContain("# A product course");
+    expect(prompt).toContain("PRODUCT: Gizmo by Acme, written for Gizmo 2 (released 2026-03-01)");
+
+    vi.mocked(generateText).mockClear();
+    const unreleased = await sendOutline({ ...BAND, product: { ...PRODUCT, release: null } });
+
+    expect(unreleased.prompt).toContain("PRODUCT: Gizmo by Acme\n");
   });
 
   it("gives an exam's band the rules for teaching its skills the way the exam asks them", async () => {
@@ -235,5 +263,26 @@ describe(generateCourseOutline, () => {
       ["Visual panels", ["charts"]],
       ["Visual panels 2", ["multimodal"]],
     ]);
+  });
+
+  it("fails an empty answer the provider's filter stopped as an outline the schema can't accept", async () => {
+    await answerEmptyOnce("content-filter");
+
+    await expect(generateCourseOutline(BAND)).rejects.toMatchObject({
+      finishReason: "content-filter",
+      name: "AI_NoObjectGeneratedError",
+    });
+  });
+
+  it("fails an empty answer the provider failed as an ordinary error, which a retry can fix", async () => {
+    await answerEmptyOnce("error");
+
+    await expect(generateCourseOutline(BAND)).rejects.toMatchObject({ name: "Error" });
+  });
+
+  it("fails an outline the provider cut off as an ordinary error, which a retry can fix", async () => {
+    await answerCutOffOnce();
+
+    await expect(generateCourseOutline(BAND)).rejects.toMatchObject({ name: "Error" });
   });
 });

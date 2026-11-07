@@ -1,12 +1,9 @@
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
-import {
-  planChangeDecisionInputSchema,
-  planChangeInputSchema,
-  planToolChoiceInputSchema,
-} from "@zoonk/core/plans/contract";
+import { planChangeDecisionInputSchema, planChangeInputSchema } from "@zoonk/core/plans/contract";
 import { focusTestInputSchema } from "@zoonk/core/plans/focus-test/contract";
 import { planLinkStartInputSchema } from "@zoonk/core/plans/link-contract";
 import { ownLevelChangeInputSchema } from "@zoonk/core/plans/own-level-contract";
+import { planToolChoiceInputSchema } from "@zoonk/core/plans/tool-choice-contract";
 import { z } from "zod";
 import { contentWritingResponse } from "../schemas/content-writing";
 import {

@@ -392,11 +392,35 @@ describe(generateSkillGraph, () => {
     expect(sent?.instructions).toBe("Write the skill graph.\nLearn rules.\n");
     expect(sent?.prompt).toContain("PURPOSE: overview");
 
-    for (const absent of ["EXAM_BLUEPRINT", "SECTION", "TARGET_LANGUAGE", "LESSON_BUDGET"]) {
+    for (const absent of [
+      "EXAM_BLUEPRINT",
+      "SECTION",
+      "TARGET_LANGUAGE",
+      "LESSON_BUDGET",
+      "PRODUCT",
+    ]) {
       expect(sent?.prompt).not.toContain(absent);
     }
 
     expect(provenance.promptVersion).not.toBe(SKILL_GRAPH_PROMPT_VERSION);
+  });
+
+  it("tells a product goal's graph the product and the title of its course", async () => {
+    vi.mocked(streamText).mockReset();
+    vi.mocked(streamText).mockReturnValue(answer(WHOLE_GRAPH) as never);
+
+    await generateSkillGraph({
+      goal: "Get more out of my gizmo",
+      goalKind: "learn",
+      language: "en",
+      product: { brand: "Acme", courseTitle: "Gizmo 2", name: "Gizmo" },
+      purpose: "work",
+    });
+
+    const [sent] = sentPrompts();
+
+    expect(sent?.prompt).toContain("PRODUCT: Gizmo by Acme\n");
+    expect(sent?.prompt).toContain("PRODUCT_COURSE: Gizmo 2\n");
   });
 
   it("gives a language goal only the language rules and its target language", async () => {

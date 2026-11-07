@@ -822,4 +822,98 @@ A prof disse: vai ter questão de completar a tabela das organelas e uma dissert
       purpose: "deep",
     },
   },
+  {
+    expectations: `
+      - MUST be in US English
+      - A goal about using a product: the course that teaches using it is titled exactly "iPhone", never "Mobile photography", "Photography" or "iPhone camera", and every skill done on the phone sits in it
+      - Skills are tasks done on the phone, named as actions (framing with the grid, focus and exposure lock, portrait and night shots, editing in the Photos app), in the order a new user needs them; photography ideas (light, composition) are taught inside the tasks that use them, or in a supporting course with its own canonical title that holds only what the phone skills build on
+      - The first phase opens with skills that get a better photo on the phone within the first few lessons, not with theory
+      - No skills for gear or apps the goal doesn't need
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-product-iphone-camera",
+    userInput: {
+      goal: "Use my iPhone camera better",
+      goalKind: "learn",
+      language: "en",
+      ownLevel: "basic",
+      product: { brand: "Apple", courseTitle: "iPhone", name: "iPhone" },
+      purpose: "deep",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in US English
+      - The course that teaches using the phone is titled exactly "iPhone 13", the release the learner owns, never "iPhone" or a photography title, and every skill done on the phone sits in it
+      - Skills cover only what an iPhone 13 can do: no skills for camera features later models added, such as the Camera Control button, Action mode, the 48 MP main camera or macro photography
+      - Skills are tasks done on the phone, and the first phase gets a better photo within the first few lessons
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-product-iphone-13-camera-pinned",
+    userInput: {
+      goal: "Use my iPhone 13 camera better",
+      goalKind: "learn",
+      language: "en",
+      ownLevel: "basic",
+      product: { brand: "Apple", courseTitle: "iPhone 13", name: "iPhone" },
+      purpose: "deep",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in US English
+      - The course that teaches the framework is titled exactly "Next.js"; JavaScript, React or web basics the learner lacks stay in supporting courses with their own canonical titles ("JavaScript", "React"), holding only what the Next.js skills build on, never folded into the Next.js course or renamed after it
+      - Next.js skills are tasks done with it (create an app, add pages and layouts, link between them, fetch data, handle forms, deploy), in the order a new user needs them, using the framework's current conventions (the App Router)
+      - The first phase reaches a page running in the learner's own app within the first few lessons
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-product-nextjs",
+    userInput: {
+      goal: "Learn Next.js",
+      goalKind: "learn",
+      language: "en",
+      ownLevel: "basic",
+      product: { brand: "Vercel", courseTitle: "Next.js", name: "Next.js" },
+      purpose: "deep",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Switching tools: the course that teaches the destination is titled exactly "Linear", never "Gestão de projetos", "Migração de ferramentas" or "Jira"; no course teaches Jira
+      - Skills are tasks done in Linear for a team moving from Jira: importing the Jira issues, mapping Jira's projects, statuses and fields to Linear's teams, workflows and labels, planning cycles and projects, and getting the team to work in it day to day
+      - The first phase gets the team's real work into Linear within the first few lessons
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-product-jira-to-linear",
+    userInput: {
+      goal: "Migrar meu time do Jira para o Linear",
+      goalKind: "learn",
+      language: "pt",
+      ownLevel: "basic",
+      product: { brand: "Linear", courseTitle: "Linear", name: "Linear" },
+      purpose: "work",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in US English
+      - A tutorial-size goal: a few skills (about 2 to 5) in one phase, all in the course titled exactly "iPhone", sized in a handful of lessons, never a path through the phone's other features
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-product-iphone-face-id-tutorial",
+    userInput: {
+      goal: "Set up Face ID on my iPhone",
+      goalKind: "learn",
+      language: "en",
+      ownLevel: "none",
+      product: { brand: "Apple", courseTitle: "iPhone", name: "iPhone" },
+      purpose: "overview",
+    },
+  },
 ];

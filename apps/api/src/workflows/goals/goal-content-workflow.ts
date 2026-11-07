@@ -5,6 +5,7 @@ import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata } from "workflow";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { closeStepStream } from "../_shared/stream-status";
+import { updateCoursesBehind } from "../products/product-releases";
 import { prepareAhead, startPairLevelTest } from "./goal-ahead";
 import { isBuiltBeforeResearch } from "./goal-content-inputs";
 import { followPlanStart } from "./goal-lookahead";
@@ -236,6 +237,7 @@ async function loadInitialCurriculum({
 
   try {
     await prepareCourseGoalPlanStep({ goalId: input.goalId, platform: input.platform ?? null });
+    await updateCoursesBehind([initial.startedCourse.id]);
     const prepared = await loadGoalCurriculumStep(goalId);
     return prepared ? { context, initial: prepared } : null;
   } catch (error) {

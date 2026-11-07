@@ -1,5 +1,12 @@
 import "server-only";
-import { type Goal, type GoalKind, type Plan, type TransactionClient, prisma } from "@zoonk/db";
+import {
+  type Goal,
+  type GoalKind,
+  type Plan,
+  type ProductWhereInput,
+  type TransactionClient,
+  prisma,
+} from "@zoonk/db";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { findNamedChoices } from "../../exams/choices/named-exam-choices";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
@@ -7,6 +14,8 @@ import { getPlanState } from "../../plans/_utils/plan-context";
 import { applyPlanOperations } from "../../plans/planner/plan-operations";
 import { getReferenceSyllabusNeed } from "../curriculum/goal-curriculum-inputs";
 import { toExamIdentity, toSharedContext } from "../curriculum/shared-graph-prompt";
+import { courseFollowersFilter } from "../products/course-release";
+import { readsProductPage } from "../products/product-pages";
 import { type ExamStructure, examStructureSchema } from "./blueprint-contract";
 import { readTestedLanguage } from "./blueprint-language";
 
@@ -26,13 +35,40 @@ export function countNextEditionGoals({
   });
 }
 
-export function countActiveSourceGoals(sourceId: string): Promise<number> {
+/** The goals about the products `product` finds and the learners of their main courses. */
+async function listProductGoalFilters(product: ProductWhereInput) {
+  const mainCourses = await prisma.course.findMany({
+    select: { id: true },
+    where: { isPinned: false, product, userId: null },
+  });
+
+  return [{ product }, ...mainCourses.flatMap((course) => courseFollowersFilter(course.id).OR)];
+}
+
+/** A product's page counts the goals about its product and the learners of its main courses. */
+export async function countActiveSourceGoals(sourceId: string): Promise<number> {
+  const productGoals = await listProductGoalFilters(readsProductPage(sourceId));
+
   return prisma.goal.count({
     where: {
-      OR: [{ learnerSources: { some: { sourceId } } }, { examBlueprint: { sourceId } }],
+      OR: [
+        { learnerSources: { some: { sourceId } } },
+        { examBlueprint: { sourceId } },
+        ...productGoals,
+      ],
       status: "active",
     },
   });
+}
+
+/** The product has active learners, counted as `countActiveSourceGoals` counts a product's page. */
+export async function hasActiveProductGoals(productId: string): Promise<boolean> {
+  const goal = await prisma.goal.findFirst({
+    select: { id: true },
+    where: { OR: await listProductGoalFilters({ id: productId }), status: "active" },
+  });
+
+  return goal !== null;
 }
 
 async function saveNamedChoices(
@@ -204,6 +240,11 @@ function toResearchedExam({ details, title }: { details: unknown; title: string 
   return name && position ? `${name}, ${position}` : (name ?? title);
 }
 
+/** What the learner typed, after the title onboarding gave it. */
+export function toLearnerWords(goal: { prompt: string; title: string }): string {
+  return `${goal.title}\n${goal.prompt}`;
+}
+
 export function toResearchPlanInput(goal: {
   details: unknown;
   kind: GoalKind;
@@ -215,11 +256,7 @@ export function toResearchPlanInput(goal: {
   const ownMaterial = goal.uploadIds.length > 0 || details.materialIntent === "exam";
 
   if (ownMaterial) {
-    return {
-      details: JSON.stringify(details),
-      goal: `${goal.title}\n${goal.prompt}`,
-      personal: true,
-    };
+    return { details: JSON.stringify(details), goal: toLearnerWords(goal), personal: true };
   }
 
   return {

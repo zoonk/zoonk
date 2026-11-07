@@ -1,9 +1,12 @@
+import { readProductPages } from "@zoonk/ai/tasks/research/read-product-pages";
 import { generateSourceChangeNotice } from "@zoonk/ai/tasks/research/source-change-notice";
 import { storeWebSource } from "@zoonk/core/library/sources/web";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { brandFixture, productFixture } from "@zoonk/testing/fixtures/products";
 import { learnerSourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { NoObjectGeneratedError } from "ai";
 import { Response as PageResponse, fetch } from "undici";
 import { describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
@@ -18,6 +21,11 @@ vi.mock("undici", async (importOriginal) => ({
 vi.mock("@zoonk/ai/tasks/research/source-change-notice", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   generateSourceChangeNotice: vi.fn(),
+}));
+
+vi.mock("@zoonk/ai/tasks/research/read-product-pages", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  readProductPages: vi.fn(),
 }));
 
 function serveLaw(text: string) {
@@ -61,5 +69,52 @@ describe("law change durability", () => {
     ).resolves.toMatchObject([
       { message: "A lei mudou: a alíquota agora é de 17%.", previousHash: law.contentHash },
     ]);
+  });
+
+  it("records a releases page the model can't read after its retries, so the next check skips it", async () => {
+    serveLaw("Test Product 1 was released on January 10, 2025.");
+
+    const page = await storeWebSource({
+      kind: "official",
+      language: "en",
+      publisher: null,
+      title: "Releases",
+      topic: "product",
+      url: `https://product.example/${crypto.randomUUID()}/releases`,
+    });
+
+    const brand = await brandFixture();
+
+    const product = await productFixture({
+      organizationId: brand.id,
+      releasesHash: page.contentHash,
+      releasesSourceId: page.id,
+    });
+
+    const user = await userFixture();
+    await goalFixture({ productId: product.id, userId: user.id });
+
+    serveLaw("Test Product 2 is out.");
+
+    vi.mocked(readProductPages).mockRejectedValue(
+      new NoObjectGeneratedError({
+        finishReason: "content-filter",
+        message: "No object generated: could not parse the response.",
+        response: {} as never,
+        text: "I can't help with that page.",
+        usage: {} as never,
+      }),
+    );
+
+    const run = await start(freshnessWorkflow, [{ kind: "source", sourceId: page.id }]);
+    await expect(run.returnValue).resolves.toMatchObject({ status: "checked" });
+
+    const unreadable = await prisma.source.findUniqueOrThrow({ where: { id: page.id } });
+
+    await expect(
+      prisma.product.findUniqueOrThrow({ where: { id: product.id } }),
+    ).resolves.toMatchObject({ unreadableReleasesHash: unreadable.contentHash });
+
+    expect(readProductPages).toHaveBeenCalledTimes(4);
   });
 });

@@ -1,16 +1,18 @@
 import { logInfo } from "@zoonk/utils/logger";
 import { type Client, escapeIdentifier, escapeLiteral } from "pg";
-import { CATALOG_ROWS, CONTENT_TABLES, type ContentTable, NOT_SEEDED } from "./metadata";
+import {
+  CATALOG_ORGANIZATIONS,
+  CATALOG_ROWS,
+  CONTENT_TABLES,
+  type ContentTable,
+  NOT_SEEDED,
+} from "./metadata";
 import { LEARNER_REFERENCES } from "./preserve";
-import { runInOrder } from "./rows";
+import { type TableRows, getColumnValues, runInOrder } from "./rows";
 
 const PUBLIC_LIBRARY_TABLES = ["library_lessons", "library_chapters", "skills"] as const;
 
-const PICTURE_LINKS = [
-  { column: "media_asset_id", table: "library_steps" },
-  { column: "image_asset_id", table: "library_lessons" },
-  { column: "image_asset_id", table: "library_chapters" },
-] as const;
+const PICTURE_LINKS = [{ column: "media_asset_id", table: "library_steps" }] as const;
 
 const CHILD_REMOVALS = [
   { column: "lesson_id", parent: "library_lessons", table: "library_steps" },
@@ -53,17 +55,21 @@ type ForeignKey = { column_name: string; referenced_table: string; table_name: s
  * they show.
  */
 export async function markRemovedContent({
-  courseSlugs,
+  courses,
   destination,
-  organizationId,
 }: {
-  courseSlugs: string[];
+  courses: TableRows;
   destination: Client;
-  organizationId: string;
 }): Promise<void> {
+  const courseKeys = [
+    getColumnValues(courses, "organization_id"),
+    getColumnValues(courses, "slug"),
+  ];
+
   const ownCourses = await destination.query<{ slug: string }>(
-    "SELECT slug FROM courses WHERE organization_id = $1 AND user_id IS NOT NULL AND slug = ANY($2)",
-    [organizationId, courseSlugs],
+    `SELECT slug FROM courses WHERE user_id IS NOT NULL
+      AND (organization_id, slug) IN (SELECT * FROM unnest($1::uuid[], $2::text[]))`,
+    courseKeys,
   );
 
   if (ownCourses.rows[0]) {
@@ -81,8 +87,9 @@ export async function markRemovedContent({
   await destination.query(
     `INSERT INTO sync_removed
      SELECT 'courses', id FROM courses
-      WHERE organization_id = $1 AND user_id IS NULL AND ${NOT_SEEDED} AND slug <> ALL($2::text[])`,
-    [organizationId, courseSlugs],
+      WHERE organization_id IN (${CATALOG_ORGANIZATIONS}) AND user_id IS NULL AND ${NOT_SEEDED}
+        AND (organization_id, slug) NOT IN (SELECT * FROM unnest($1::uuid[], $2::text[]))`,
+    courseKeys,
   );
 
   await destination.query(
@@ -171,17 +178,15 @@ export async function assertNoUnkeptReferences(destination: Client): Promise<voi
       .join(", ");
 
     throw new Error(
-      `Local rows point at AI catalog content the sync replaces and can't restore: ${list}`,
+      `Local rows point at catalog content the sync replaces and can't restore: ${list}`,
     );
   }
 }
 
 export async function clearDestinationContent({
   destination,
-  organizationId,
 }: {
   destination: Client;
-  organizationId: string;
 }): Promise<void> {
   const removed = await runInOrder(
     ["courses", ...PUBLIC_LIBRARY_TABLES, "media_assets"].map((table) => async () => {
@@ -198,8 +203,8 @@ export async function clearDestinationContent({
   await destination.query(
     `DELETE FROM course_categories
       WHERE course_id IN (SELECT id FROM courses
-                           WHERE organization_id = $1 AND user_id IS NULL AND ${NOT_SEEDED})`,
-    [organizationId],
+                           WHERE organization_id IN (${CATALOG_ORGANIZATIONS})
+                             AND user_id IS NULL AND ${NOT_SEEDED})`,
   );
 
   logInfo(`Removed ${removed.join(", ")} from local zoonk`);

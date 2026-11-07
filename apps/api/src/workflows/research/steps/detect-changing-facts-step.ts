@@ -2,6 +2,7 @@ import {
   type ChangingFactsTopic,
   detectChangingFacts,
 } from "@zoonk/ai/tasks/research/changing-facts";
+import { toLearnerWords } from "@zoonk/core/library/exams/learners";
 import { type ResearchGoal } from "./load-research-goal-step";
 
 export async function detectChangingFactsStep({
@@ -21,6 +22,6 @@ export async function detectChangingFactsStep({
 
   return detectChangingFacts({
     analytics: { contentScope: "personal", distinctId: goal.userId, goalId: goal.id },
-    goal: `${goal.title}\n${goal.prompt}`,
+    goal: toLearnerWords(goal),
   });
 }

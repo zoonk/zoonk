@@ -42,6 +42,19 @@ describe(buildSkillGraphSystemPrompt, () => {
     expect(prompt).toContain("(with `LESSON_BUDGET`, in a skill of its own)");
   });
 
+  it("tells only a product goal how to title and fill the product's course", () => {
+    const product = { brand: "Acme", courseTitle: "Gizmo", name: "Gizmo" };
+    const withProduct = buildSkillGraphSystemPrompt({ goalKind: "learn", product });
+    const without = buildSkillGraphSystemPrompt({ goalKind: "learn" });
+
+    for (const input of ["`PRODUCT`", "`PRODUCT_COURSE`"]) {
+      expect(withProduct).toContain(input);
+      expect(without).not.toContain(input);
+    }
+
+    expect(withProduct).not.toContain("{{");
+  });
+
   it.each(["none", "basic"] as const)(
     "adds subject-first rules for a deep beginner at %s",
     (ownLevel) => {

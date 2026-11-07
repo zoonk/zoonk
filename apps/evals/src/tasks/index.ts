@@ -9,6 +9,7 @@ import { checkCitedFactsTask } from "./check-cited-facts/task";
 import { checkExamReadingTask } from "./check-exam-reading/task";
 import { checkWordPronunciationTask } from "./check-word-pronunciation/task";
 import { citeMaterialTask } from "./cite-material/task";
+import { compareReleaseLessonsTask } from "./compare-release-lessons/task";
 import { conversationFeedbackTask } from "./conversation-feedback/task";
 import { conversationObjectivesTask } from "./conversation-objectives/task";
 import { conversationScenarioTask } from "./conversation-scenario/task";
@@ -28,6 +29,7 @@ import { findChoiceOptionsTask } from "./find-choice-options/task";
 import { findCourseWeightsTask } from "./find-course-weights/task";
 import { findExamDateTask } from "./find-exam-date/task";
 import { findOfficialSourcesTask } from "./find-official-sources/task";
+import { findProductPagesTask } from "./find-product-pages/task";
 import { findSubjectQuestionsTask } from "./find-subject-questions/task";
 import { findTargetCutoffTask } from "./find-target-cutoff/task";
 import { findTopicFrequencyTask } from "./find-topic-frequency/task";
@@ -71,6 +73,7 @@ import { planEditIntentTask } from "./plan-edit-intent/task";
 import { planRoutineFitTask } from "./plan-routine-fit/task";
 import { questionGeneralityTask } from "./question-generality/task";
 import { quickExplanationTask } from "./quick-explanation/task";
+import { readProductPagesTask } from "./read-product-pages/task";
 import { researchPlanTask } from "./research-plan/task";
 import { setupLessonOutlineTask } from "./setup-lesson-outline/task";
 import { skillGraphTask } from "./skill-graph/task";
@@ -98,6 +101,9 @@ export const TASKS: readonly RegisteredTask[] = [
   researchPlanTask,
   sourceResearchPlanTask,
   findOfficialSourcesTask,
+  findProductPagesTask,
+  readProductPagesTask,
+  compareReleaseLessonsTask,
   findExamDateTask,
   findCourseWeightsTask,
   findSubjectQuestionsTask,

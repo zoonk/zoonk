@@ -100,6 +100,8 @@ const planChangePayloadSchema = z.object({
   operations: z.array(anyPlanOperationSchema).default([]),
   planItemIds: z.array(z.string()).default([]),
   previewBasis: planPreviewBasisSchema.nullable().default(null),
+  /** The product release a "What's new" offer is for, so a plan gets one offer per release. */
+  releaseId: z.string().nullable().default(null),
   replannedSince: z.literal(true).optional(),
   seenAt: z.iso.datetime().nullable().default(null),
   source: z.string().default("system"),

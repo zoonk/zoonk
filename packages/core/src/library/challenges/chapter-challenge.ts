@@ -4,7 +4,11 @@ import { scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { type SupportedLocale, getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { type LibraryProvenance } from "../_utils/library-rows";
 import { createLibraryLesson } from "../lessons/create-library-lesson";
-import { type ChallengeLessonSpec, getChallengeVariant } from "./challenge-lesson-spec";
+import {
+  CHALLENGE_KEY_PREFIX,
+  type ChallengeLessonSpec,
+  getChallengeVariant,
+} from "./challenge-lesson-spec";
 
 type ChallengeCopy = { canDo: string; description: string; title: string };
 
@@ -146,7 +150,7 @@ function getChallengeIdentityKey({
   chapterId: string;
   ownerId: string | null;
 }): string {
-  return scopeIdentityKey({ key: `challenge:${chapterId}`, ownerId });
+  return scopeIdentityKey({ key: `${CHALLENGE_KEY_PREFIX}${chapterId}`, ownerId });
 }
 
 function getChallengeCopy({
