@@ -463,6 +463,7 @@ msgid "Plus"
 msgstr "Plus"
 
 #: src/_components/plus-lock.tsx
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "fi0FtL"
 msgid "Available with Plus"
 msgstr "Available with Plus"
@@ -7057,9 +7058,9 @@ msgid "In short:"
 msgstr "In short:"
 
 #: src/mind-maps/mind-map-row.tsx
-msgctxt "Vx6AAM"
-msgid "{count, plural, one {# lesson to write first} other {# lessons to write first}}"
-msgstr "{count, plural, one {# lesson to write first} other {# lessons to write first}}"
+msgctxt "tc8knM"
+msgid "Lessons not written yet"
+msgstr "Lessons not written yet"
 
 #: src/mind-maps/mind-map-row.tsx
 msgctxt "TS33yQ"
@@ -7077,6 +7078,13 @@ msgid "Its main ideas in one picture"
 msgstr "Its main ideas in one picture"
 
 #: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "1Ed5Dt"
+msgid "As text"
+msgstr "As text"
+
+#: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-viewer.tsx
 msgctxt "Vxnu0A"
 msgid "Its picture had mistakes, so here's the mind map as text."
 msgstr "Its picture had mistakes, so here's the mind map as text."
@@ -7137,11 +7145,6 @@ msgid "Zoom in"
 msgstr "Zoom in"
 
 #: src/mind-maps/mind-map-viewer.tsx
-msgctxt "1Ed5Dt"
-msgid "As text"
-msgstr "As text"
-
-#: src/mind-maps/mind-map-viewer.tsx
 msgctxt "Mxc7gH"
 msgid "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
 msgstr "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
@@ -7171,10 +7174,17 @@ msgctxt "V-r52O"
 msgid "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan."
 msgstr "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan."
 
+#. "These" are the chapters listed below whose lessons aren't written yet.
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "L3DF5i"
-msgid "When a chapter's lessons aren't written yet, they get written first and count toward your free lessons."
-msgstr "When a chapter's lessons aren't written yet, they get written first and count toward your free lessons."
+msgctxt "KAJONh"
+msgid "Making a map for one of these writes its lessons first, so it takes a few minutes."
+msgstr "Making a map for one of these writes its lessons first, so it takes a few minutes."
+
+#. "These" are the chapters listed below whose lessons aren't written yet.
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "Jg8HrT"
+msgid "Making a map for one of these writes its lessons first, which counts toward your free lessons."
+msgstr "Making a map for one of these writes its lessons first, which counts toward your free lessons."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "b3Jpo7"

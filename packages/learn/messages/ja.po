@@ -463,6 +463,7 @@ msgid "Plus"
 msgstr "Plus"
 
 #: src/_components/plus-lock.tsx
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "fi0FtL"
 msgid "Available with Plus"
 msgstr "Plusで利用できます"
@@ -7057,9 +7058,9 @@ msgid "In short:"
 msgstr "まとめ："
 
 #: src/mind-maps/mind-map-row.tsx
-msgctxt "Vx6AAM"
-msgid "{count, plural, one {# lesson to write first} other {# lessons to write first}}"
-msgstr "{count, plural, other {先に#レッスンの作成が必要}}"
+msgctxt "tc8knM"
+msgid "Lessons not written yet"
+msgstr "未作成のレッスン"
 
 #: src/mind-maps/mind-map-row.tsx
 msgctxt "TS33yQ"
@@ -7077,6 +7078,13 @@ msgid "Its main ideas in one picture"
 msgstr "この章のポイントを1枚の図に"
 
 #: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "1Ed5Dt"
+msgid "As text"
+msgstr "テキストで見る"
+
+#: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-viewer.tsx
 msgctxt "Vxnu0A"
 msgid "Its picture had mistakes, so here's the mind map as text."
 msgstr "図に間違いがあったため、マインドマップをテキストで表示しています。"
@@ -7137,11 +7145,6 @@ msgid "Zoom in"
 msgstr "拡大"
 
 #: src/mind-maps/mind-map-viewer.tsx
-msgctxt "1Ed5Dt"
-msgid "As text"
-msgstr "テキストで見る"
-
-#: src/mind-maps/mind-map-viewer.tsx
 msgctxt "Mxc7gH"
 msgid "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
 msgstr "ピンチ操作やスクロール、+と-で拡大・縮小できます。ドラッグや矢印キーで移動できます。"
@@ -7171,10 +7174,17 @@ msgctxt "V-r52O"
 msgid "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan."
 msgstr "章のポイントを1枚の図にまとめます。学習を終えた章ごとに作成されます。学習計画にあるほかの章でも作成できます。"
 
+#. "These" are the chapters listed below whose lessons aren't written yet.
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "L3DF5i"
-msgid "When a chapter's lessons aren't written yet, they get written first and count toward your free lessons."
-msgstr "章のレッスンがまだ作成されていない場合は、先に作成し、その分も無料レッスンの利用数に含めます。"
+msgctxt "KAJONh"
+msgid "Making a map for one of these writes its lessons first, so it takes a few minutes."
+msgstr "以下の章のマップを作成するときは、先にレッスンを作成するため、数分かかります。"
+
+#. "These" are the chapters listed below whose lessons aren't written yet.
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "Jg8HrT"
+msgid "Making a map for one of these writes its lessons first, which counts toward your free lessons."
+msgstr "以下の章のマップを作成するときは、先にレッスンを作成し、その分だけ無料レッスンの枠を使います。"
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "b3Jpo7"

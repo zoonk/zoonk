@@ -77,11 +77,9 @@ export function MindMapsScreen({
   const groups = groupBySubject(mindMaps.chapters);
   const ready = mindMaps.chapters.filter((chapter) => chapter.status === "ready").length;
 
-  const writesFreeLessons =
-    !plus &&
-    mindMaps.chapters.some(
-      (chapter) => chapter.status === "available" && chapter.lessonsToWrite > 0,
-    );
+  const writesLessons = mindMaps.chapters.some(
+    (chapter) => chapter.status === "available" && chapter.lessonsToWrite > 0,
+  );
 
   return (
     <DetailLayout
@@ -99,20 +97,26 @@ export function MindMapsScreen({
           </DetailHeroText>
         </DetailHero>
 
-        <div className="text-muted-foreground flex max-w-prose flex-col gap-2 text-sm text-pretty">
-          <p>
-            {t(
-              "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan.",
-            )}
-          </p>
-          {writesFreeLessons && (
-            <p>
-              {t(
-                "When a chapter's lessons aren't written yet, they get written first and count toward your free lessons.",
-              )}
-            </p>
+        <p className="text-muted-foreground max-w-prose text-sm text-pretty">
+          {t(
+            "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan.",
           )}
-        </div>
+          {writesLessons && " "}
+          {writesLessons &&
+            (plus
+              ? t({
+                  description:
+                    '"These" are the chapters listed below whose lessons aren\'t written yet.',
+                  message:
+                    "Making a map for one of these writes its lessons first, so it takes a few minutes.",
+                })
+              : t({
+                  description:
+                    '"These" are the chapters listed below whose lessons aren\'t written yet.',
+                  message:
+                    "Making a map for one of these writes its lessons first, which counts toward your free lessons.",
+                }))}
+        </p>
       </DetailAside>
 
       <DetailContent>

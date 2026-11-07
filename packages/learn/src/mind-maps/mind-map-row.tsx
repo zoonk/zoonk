@@ -17,7 +17,6 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "../_components/list-group";
-import { PlusMark } from "../_components/plus-lock";
 import { StatusRegion } from "../_components/status-region";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
@@ -80,9 +79,7 @@ function useAvailableLine({ place, plus, shown, view }: RowCopyInput): string | 
   const writesLessons = view.lessonsToWrite > 0 && shown !== "plusRequired";
 
   if (writesLessons && place === "library") {
-    return t("{count, plural, one {# lesson to write first} other {# lessons to write first}}", {
-      count: view.lessonsToWrite,
-    });
+    return t("Lessons not written yet");
   }
 
   if (writesLessons) {
@@ -105,7 +102,9 @@ function useReadyLine({ place, view }: RowCopyInput): string | null {
   const t = useExtracted();
 
   if (!view.image) {
-    return t("Its picture had mistakes, so here's the mind map as text.");
+    return place === "library"
+      ? t("As text")
+      : t("Its picture had mistakes, so here's the mind map as text.");
   }
 
   if (place === "finish") {
@@ -153,9 +152,11 @@ function RowText({ input, titleId }: { input: RowCopyInput; titleId: string }) {
 
   return (
     <ListRowContent aria-live="polite">
-      <ListRowTitle className="flex min-w-0 items-center gap-2" id={titleId}>
-        <span className="min-w-0 truncate">{place === "chapter" ? t("Mind map") : view.title}</span>
-        {shown === "plusRequired" && <PlusMark />}
+      <ListRowTitle className="wrap-break-word" id={titleId}>
+        {place === "chapter" ? t("Mind map") : view.title}
+        {shown === "plusRequired" && (
+          <span className="sr-only">{` (${t("Available with Plus")})`}</span>
+        )}
       </ListRowTitle>
 
       {(line || place === "library") && (

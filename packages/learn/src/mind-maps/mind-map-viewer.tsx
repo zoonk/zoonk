@@ -131,10 +131,19 @@ function ZoomFrame({
   );
 }
 
-function OutlinePane({ outline }: { outline: Outline }) {
+function OutlinePane({ outline, pictureFailed }: { outline: Outline; pictureFailed: boolean }) {
+  const t = useExtracted();
+
   return (
     <div className="min-h-0 flex-1 overflow-y-auto px-4 pt-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-      <MindMapOutline className="max-w-column mx-auto" outline={outline} />
+      <div className="max-w-column mx-auto flex flex-col gap-5">
+        {pictureFailed && (
+          <p className="text-muted-foreground text-sm text-pretty">
+            {t("Its picture had mistakes, so here's the mind map as text.")}
+          </p>
+        )}
+        <MindMapOutline outline={outline} />
+      </div>
     </div>
   );
 }
@@ -244,7 +253,9 @@ export function MindMapViewer({
             </div>
           )}
 
-          {(!image || asText) && outline && <OutlinePane outline={outline} />}
+          {(!image || asText) && outline && (
+            <OutlinePane outline={outline} pictureFailed={!image} />
+          )}
         </DialogPopup>
       </DialogPortal>
     </Dialog>

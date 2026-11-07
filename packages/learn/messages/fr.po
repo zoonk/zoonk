@@ -463,6 +463,7 @@ msgid "Plus"
 msgstr "Plus"
 
 #: src/_components/plus-lock.tsx
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "fi0FtL"
 msgid "Available with Plus"
 msgstr "Disponible avec Plus"
@@ -7057,9 +7058,9 @@ msgid "In short:"
 msgstr "En bref :"
 
 #: src/mind-maps/mind-map-row.tsx
-msgctxt "Vx6AAM"
-msgid "{count, plural, one {# lesson to write first} other {# lessons to write first}}"
-msgstr "{count, plural, one {# leçon à préparer d’abord} other {# leçons à préparer d’abord}}"
+msgctxt "tc8knM"
+msgid "Lessons not written yet"
+msgstr "Leçons pas encore préparées"
 
 #: src/mind-maps/mind-map-row.tsx
 msgctxt "TS33yQ"
@@ -7077,6 +7078,13 @@ msgid "Its main ideas in one picture"
 msgstr "Ses idées principales en une image"
 
 #: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "1Ed5Dt"
+msgid "As text"
+msgstr "En texte"
+
+#: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-viewer.tsx
 msgctxt "Vxnu0A"
 msgid "Its picture had mistakes, so here's the mind map as text."
 msgstr "L’image contenait des erreurs, voici donc la carte mentale sous forme de texte."
@@ -7137,11 +7145,6 @@ msgid "Zoom in"
 msgstr "Zoomer"
 
 #: src/mind-maps/mind-map-viewer.tsx
-msgctxt "1Ed5Dt"
-msgid "As text"
-msgstr "En texte"
-
-#: src/mind-maps/mind-map-viewer.tsx
 msgctxt "Mxc7gH"
 msgid "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
 msgstr "Pince l’écran, fais défiler ou utilise + et - pour zoomer ; fais glisser ou utilise les flèches pour te déplacer."
@@ -7171,10 +7174,17 @@ msgctxt "V-r52O"
 msgid "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan."
 msgstr "Les idées principales d’un chapitre en une image. Chaque chapitre que tu termines a sa carte mentale ; tu peux en créer une pour n’importe quel autre chapitre de ton plan."
 
+#. "These" are the chapters listed below whose lessons aren't written yet.
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "L3DF5i"
-msgid "When a chapter's lessons aren't written yet, they get written first and count toward your free lessons."
-msgstr "Si les leçons d’un chapitre ne sont pas encore préparées, elles le sont d’abord et comptent dans ton quota de leçons gratuites."
+msgctxt "KAJONh"
+msgid "Making a map for one of these writes its lessons first, so it takes a few minutes."
+msgstr "Pour créer une carte mentale sur l’un de ces chapitres, on prépare d’abord ses leçons, ce qui prend quelques minutes."
+
+#. "These" are the chapters listed below whose lessons aren't written yet.
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "Jg8HrT"
+msgid "Making a map for one of these writes its lessons first, which counts toward your free lessons."
+msgstr "Pour créer une carte mentale sur l’un de ces chapitres, on prépare d’abord ses leçons, qui sont décomptées de tes leçons gratuites."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "b3Jpo7"

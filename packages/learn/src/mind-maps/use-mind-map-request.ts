@@ -8,7 +8,6 @@ import { type MindMapActions, type MindMapRequestOutcome } from "./mind-map-acti
 
 const DRAWING_POLL_MS = 4000;
 const WRITING_POLL_MS = 15_000;
-const WRITING_TIMEOUT_MS = 30 * 60 * 1000;
 
 export type MindMapShown = MindMapStatus | "refused" | "unreachable";
 
@@ -75,7 +74,8 @@ export function useMindMapRequest({
         setLocal({ shown: next });
       }
     },
-    timeoutMs: shown === "writingLessons" ? WRITING_TIMEOUT_MS : undefined,
+    // The server turns a run that stops reporting into `failed`; writing lessons can outlast any limit here.
+    timeoutMs: Number.POSITIVE_INFINITY,
   });
 
   const create = () =>
@@ -99,7 +99,7 @@ export function useMindMapRequest({
       );
     });
 
-  const isStuck = poll.status === "failed" || poll.status === "timedOut";
+  const isStuck = poll.status === "failed";
 
   return {
     create,
