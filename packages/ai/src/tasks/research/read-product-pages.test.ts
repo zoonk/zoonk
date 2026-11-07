@@ -1,6 +1,6 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { answerEmptyOnce } from "../_test-utils/answer-once-with";
+import { answerCutOffOnce, answerEmptyOnce } from "../_test-utils/answer-once-with";
 import { readGatewayOptions } from "../_test-utils/gateway-options";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { readProductPages } from "./read-product-pages";
@@ -95,5 +95,13 @@ describe(readProductPages, () => {
     await expect(
       readProductPages({ hints: HINTS, known: true, pages: [PAGE] }),
     ).rejects.toMatchObject({ name: "AI_NoOutputGeneratedError" });
+  });
+
+  it("fails a reading the provider cut off as an ordinary error, which a retry can fix", async () => {
+    await answerCutOffOnce();
+
+    await expect(
+      readProductPages({ hints: HINTS, known: true, pages: [PAGE] }),
+    ).rejects.toMatchObject({ name: "Error" });
   });
 });

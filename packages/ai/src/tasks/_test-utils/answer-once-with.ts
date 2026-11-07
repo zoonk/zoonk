@@ -46,3 +46,8 @@ export async function answerOnceWith(answer: unknown): Promise<void> {
 export async function answerEmptyOnce(finishReason: "content-filter" | "error"): Promise<void> {
   await generateOnceWith({ content: [], finishReason });
 }
+
+/** Like `answerOnceWith`, with an answer the provider failed partway through. */
+export async function answerCutOffOnce(): Promise<void> {
+  await generateOnceWith({ content: [{ text: '{"', type: "text" }], finishReason: "error" });
+}

@@ -4,7 +4,7 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { failFilteredAnswer } from "../_utils/filtered-answer";
+import { failFilteredAnswer, failUnfinishedAnswer } from "../_utils/filtered-answer";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { cited } from "./cited-passages";
 import promptTemplate from "./read-product-pages.prompt.md";
@@ -119,19 +119,21 @@ export async function readProductPages({
   const { provenance, result } = await runTaskGeneration({
     analytics,
     generate: () =>
-      generateText({
-        instructions: systemPrompt,
-        model,
-        output: Output.object({ schema: chooseSchema({ hasRelease, known }) }),
-        prompt: [
-          {
-            content: [{ text: userPrompt, type: "text" }, ...toDocumentParts(documents)],
-            role: "user",
-          },
-        ],
-        providerOptions,
-        reasoning,
-      }),
+      failUnfinishedAnswer(
+        generateText({
+          instructions: systemPrompt,
+          model,
+          output: Output.object({ schema: chooseSchema({ hasRelease, known }) }),
+          prompt: [
+            {
+              content: [{ text: userPrompt, type: "text" }, ...toDocumentParts(documents)],
+              role: "user",
+            },
+          ],
+          providerOptions,
+          reasoning,
+        }),
+      ),
     libraryInput: known && !hasRelease,
     systemPrompt,
     task: "read-product-pages",

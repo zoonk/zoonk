@@ -224,7 +224,41 @@ describe(courseReleaseWorkflow, () => {
     ).resolves.toMatchObject({ productReleaseId: releases[1]?.id });
   });
 
-  it("leaves the course behind, to try again, when its What's new chapter can't be written", async () => {
+  it.each<[string, () => void]>([
+    ["refuses", () => vi.mocked(generateCourseOutline).mockRejectedValue(REFUSAL)],
+    [
+      "outlines no chapter",
+      () =>
+        vi.mocked(generateCourseOutline).mockResolvedValue(taskResult({ chapters: [] }) as never),
+    ],
+  ])(
+    "moves the course without a What's new chapter when the model %s, and doesn't pay for it again",
+    async (_, outline) => {
+      const { course, releases } = await productCourse();
+      await follow(course.id);
+      compareWith({ changed: [], whatsNew: WHATS_NEW }, UNCHANGED);
+      outline();
+      const offers = vi.spyOn(releaseSteps, "offerWhatsNewStep");
+
+      const current = { releasesApplied: 2, status: "current" };
+      const run = () => courseReleaseWorkflow({ courseId: course.id });
+
+      await expect(run()).resolves.toStrictEqual(current);
+      await expect(run()).resolves.toStrictEqual({ ...current, releasesApplied: 0 });
+
+      expect(compareReleaseLessons).toHaveBeenCalledTimes(2);
+      expect(generateCourseOutline).toHaveBeenCalledOnce();
+      expect(offers).not.toHaveBeenCalled();
+
+      await expect(prisma.courseChapter.count({ where: { courseId: course.id } })).resolves.toBe(0);
+
+      await expect(
+        prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+      ).resolves.toMatchObject({ productReleaseId: releases[2]?.id });
+    },
+  );
+
+  it("leaves the course behind, to try again, when its What's new chapter fails for a reason a later run can fix", async () => {
     const { course, releases } = await productCourse();
     await follow(course.id);
     compareWith({ changed: [], whatsNew: WHATS_NEW });

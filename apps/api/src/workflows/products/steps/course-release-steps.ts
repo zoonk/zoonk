@@ -27,6 +27,7 @@ import {
   offerWhatsNew,
   saveWhatsNewChapter,
 } from "@zoonk/core/library/products/release-offers";
+import { UnusableOutputError } from "../../_shared/unusable-output";
 
 type Behind = Extract<CourseReleaseState, { status: "behind" }>;
 
@@ -146,7 +147,9 @@ export async function outlineWhatsNewChapterStep({
   const [chapter] = data.chapters;
 
   if (!chapter || chapter.lessons.length === 0) {
-    throw new Error(`The outline for course ${courseId} has no "What's new" chapter.`);
+    throw new UnusableOutputError(
+      `The outline for course ${courseId} has no "What's new" chapter.`,
+    );
   }
 
   return {
