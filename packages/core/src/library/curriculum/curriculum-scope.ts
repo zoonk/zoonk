@@ -64,7 +64,7 @@ export type CourseBandNeed = {
   withToolChapters?: boolean;
 };
 
-/** `skillAreas`: an exam goal's subject for each of its skills in the course. */
+/** `skillAreas`: an exam goal's subject for each skill of its plan graph, options included. */
 export type CourseOutlineNeed = {
   bands: CourseBandNeed[];
   courseId: string;
