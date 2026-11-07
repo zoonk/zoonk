@@ -53,7 +53,7 @@ describe(endLessonsAsk, () => {
   });
 
   it.each([false, true])(
-    "REVIEW #2286: a second outline under the same ask still owes its lessons (first outline followed: %s)",
+    "a second outline under the same ask still owes its lessons (first outline followed: %s)",
     async (followed) => {
       const [first, second, user] = await Promise.all([
         skillFixture(),

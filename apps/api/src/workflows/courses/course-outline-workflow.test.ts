@@ -1240,7 +1240,7 @@ describe(courseOutlineWorkflow, () => {
     },
   );
 
-  it("REVIEW #2286: an opened day shows the early chapter's lessons or keeps waiting while the band is written", async () => {
+  it("an opened day shows the early chapter's lessons or keeps waiting while the band is written", async () => {
     const [{ bandSkills }, course, user] = await Promise.all([
       waitingGoal(),
       courseFixture({ outlineStatus: "pending", title: "Immunology" }),

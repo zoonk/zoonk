@@ -286,7 +286,7 @@ describe("today's session the learner was shown", () => {
     },
   );
 
-  it("REVIEW #2286: shows an early chapter's lessons on an opened day, or keeps waiting for them", async () => {
+  it("shows an early chapter's lessons on an opened day, or keeps waiting for them", async () => {
     const { course, goal, library } = await setupDayWithStandIn();
     const opened = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
 
