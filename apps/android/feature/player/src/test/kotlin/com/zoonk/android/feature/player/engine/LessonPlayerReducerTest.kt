@@ -586,40 +586,6 @@ class LessonPlayerReducerTest {
     }
 
     @Test
-    fun aReplayedMissRestoresItsRetryWhenOnlyTheNumberOfTriesChanges() {
-        val steps = listOf(checkStep("q1"), explanationStep("e2"), checkStep("q2"))
-        val miss = RunAnswer("q1", false, ANSWERED_AT)
-        val duplicate = play(steps, started(miss, miss))
-        val replayed = duplicate.then(started(miss))
-
-        assertEquals("e2", replayed.currentId)
-        assertEquals(listOf("q1", "e2", "q2", "q1"), replayed.queue)
-    }
-
-    @Test
-    fun aReplayedMissMovesToItsRetryWhenThatIsTheOnlyOpenScreen() {
-        val steps = listOf(checkStep("q1"))
-        val miss = RunAnswer("q1", false, ANSWERED_AT)
-        val duplicate = play(steps, started(miss, miss))
-        val replayed = duplicate.then(started(miss))
-
-        assertEquals(LessonPhase.Playing, replayed.phase)
-        assertEquals(1, replayed.position)
-        assertEquals(listOf("q1", "q1"), replayed.queue)
-    }
-
-    @Test
-    fun aReplayedMissKeepsTheRetryTheLearnerIsAlreadyOn() {
-        val first = RunAnswer("q1", false, ANSWERED_AT)
-        val second = RunAnswer("q2", false, ANSWERED_AT)
-        val duplicate = play(listOf(checkStep("q1"), checkStep("q2")), started(first, second, second))
-        val replayed = duplicate.then(started(first, second))
-
-        assertEquals(listOf("q1", "q2", "q1", "q2"), replayed.queue)
-        assertEquals(2, replayed.position)
-    }
-
-    @Test
     fun heldAnswersPlaceTheLearnerWithoutBeingCarriedFromAnEarlierSitting() {
         val held = RunAnswer("q1", true, STARTED_AT - kotlin.time.Duration.parse("1m"))
         val action = started().copy(heldAnswers = listOf(held))

@@ -264,22 +264,10 @@ private fun LessonPlayerState.startRun(
             .skipSteps(action.optionalStepIds, now)
     val isUntouched = results.isEmpty() && quickCheck == null
     val answers = (action.answers + action.heldAnswers).filter { it.stepId in steps }.sortedBy(RunAnswer::answeredAt)
-    val sameVerdicts = firstVerdicts == runVerdicts(answers)
 
-    if (!isUntouched || (sameVerdicts && resumeTries == answers.groupingBy(RunAnswer::stepId).eachCount())) return started
+    if (!isUntouched || firstVerdicts == runVerdicts(answers)) return started
 
-    val resumed = started.resumeFrom(answers, now)
-    val current = currentStep?.id
-    val occurrence = queue.take(position).count { it == current }
-    val currentPosition =
-        resumed.queue.indices
-            .filter { resumed.queue[it] == current }
-            .getOrNull(occurrence)
-    return if (sameVerdicts && phase == LessonPhase.Playing && currentPosition != null) {
-        resumed.copy(position = currentPosition, answers = this.answers, revealed = revealed, rounds = rounds)
-    } else {
-        resumed
-    }
+    return started.resumeFrom(answers, now)
 }
 
 private val LessonPlayerState.isAllAnswered: Boolean

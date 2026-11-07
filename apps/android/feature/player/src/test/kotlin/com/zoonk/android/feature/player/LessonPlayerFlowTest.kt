@@ -325,6 +325,123 @@ class LessonPlayerFlowTest {
     }
 
     @Test
+    fun theLessonFinishesOnlyOnceAnAnswerHeldDuringAnotherResendIsSaved() {
+        var firstOffline = true
+        var secondOffline = false
+        play(listOf(checkStep("first"), checkStep("second"), summaryStep("end"))) {
+            grade = { id, _ ->
+                if (id == "first" && firstOffline) throw ApiException(ApiError.Network)
+                if (id == "second" && secondOffline) throw ApiException(ApiError.Network)
+                checkResult(isCorrect = true)
+            }
+        }
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+
+        firstOffline = false
+        secondOffline = true
+        api.gate = CompletableDeferred()
+        rule.runOnIdle { viewModel.resendAnswers() }
+
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+        api.gate?.complete(Unit)
+        rule.waitForIdle()
+
+        assertTrue("second's answer is still held", viewModel.hasUnsent)
+        assertEquals("completion must wait for every held answer", emptyList<String>(), api.completions)
+    }
+
+    @Test
+    fun continueAloneLetsTheLessonFinishBeforeTheLastAnswerIsSaved() {
+        var firstOffline = true
+        var secondOffline = false
+        play(listOf(checkStep("first"), checkStep("second"), summaryStep("end"))) {
+            grade = { id, _ ->
+                if (id == "first" && firstOffline) throw ApiException(ApiError.Network)
+                if (id == "second" && secondOffline) throw ApiException(ApiError.Network)
+                checkResult(isCorrect = true)
+            }
+        }
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        firstOffline = false
+        secondOffline = true
+        api.gate = CompletableDeferred()
+        tap("Continue")
+        rule.waitForIdle()
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+        api.gate?.complete(Unit)
+        rule.waitForIdle()
+
+        assertTrue(viewModel.hasUnsent)
+        assertEquals(emptyList<String>(), api.completions)
+    }
+
+    @Test
+    fun controlWithoutAnOverlappingResendTheFinishWaits() {
+        var secondOffline = false
+        play(listOf(checkStep("first"), checkStep("second"), summaryStep("end"))) {
+            grade = { id, _ ->
+                if (id == "second" && secondOffline) throw ApiException(ApiError.Network)
+                checkResult(isCorrect = true)
+            }
+        }
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+        secondOffline = true
+        api.gate = CompletableDeferred()
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+        api.gate?.complete(Unit)
+        rule.waitForIdle()
+
+        assertTrue(viewModel.hasUnsent)
+        assertEquals(emptyList<String>(), api.completions)
+    }
+
+    @Test
+    fun controlALostReplyMissResentAtReopenKeepsItsRetry() {
+        val quiz = "00000000-0000-4000-8000-000000000101"
+        val idea = "00000000-0000-4000-8000-000000000102"
+        val next = "00000000-0000-4000-8000-000000000103"
+        play(listOf(checkStep(quiz), explanationStep(idea), checkStep(next))) { checkFailures = 1 }
+        tap("Wrong")
+        tap("Check")
+        rule.waitForIdle()
+
+        api.runAnswers = """[{"answeredAt":"2026-10-28T10:01:00Z","isCorrect":false,"stepId":"$quiz"}]"""
+        val reopened = openAgain()
+        rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run is LessonRun.Started }
+
+        assertTrue(!reopened.hasUnsent)
+        assertEquals(listOf(quiz, idea, next, quiz), reopened.state.value?.queue)
+    }
+
+    @Test
     fun aSavedCheckSendsOtherScreensHeldAnswers() {
         var offline = true
         play(listOf(checkStep("first"), checkStep("second"), summaryStep("end"))) {

@@ -46,13 +46,7 @@ internal fun LessonPlayerState.resume(
     val missed = missedOnce(known)
     val resumedQueue = queue + missed
     val position = resumePosition(resumedQueue, known.map(RunAnswer::stepId).toSet(), queue.size)
-    val resumed =
-        copy(
-            firstVerdicts = runVerdicts(known),
-            resumeTries = known.groupingBy(RunAnswer::stepId).eachCount(),
-            queue = resumedQueue,
-            retried = retriedIn(known) + missed,
-        )
+    val resumed = copy(firstVerdicts = runVerdicts(known), queue = resumedQueue, retried = retriedIn(known) + missed)
 
     if (position >= resumedQueue.size) return resumed.copy(position = resumedQueue.size - 1).finish(CompletionStatus.Ready, now)
 

@@ -691,7 +691,7 @@ class LessonPlayerViewModel(
     }
 
     private suspend fun sendUnsent(): Boolean {
-        resending?.takeIf { it.isActive }?.let { return it.await() }
+        resending?.takeIf { it.isActive }?.await()
         if (unsaved.isEmpty()) return true
         val pass =
             work.async(start = CoroutineStart.LAZY) {
@@ -703,7 +703,7 @@ class LessonPlayerViewModel(
                     .all { it }
             }
         resending = pass
-        return pass.await()
+        return pass.await() && unsaved.isEmpty()
     }
 
     private suspend fun keepUnsent() =

@@ -101,7 +101,6 @@ data class LessonPlayerState(
     val rounds: Map<String, Int> = emptyMap(),
     val results: Map<String, StepResult> = emptyMap(),
     val firstVerdicts: Map<String, Boolean> = emptyMap(),
-    val resumeTries: Map<String, Int> = emptyMap(),
     val checkFailed: Boolean = false,
     val checkIssue: CheckIssue? = null,
     val completion: LessonCompletion? = null,
