@@ -206,6 +206,17 @@ final class AppRouter {
     self.sheet = sheet
   }
 
+  /// Today on the goal that still has work, made the active goal as the goal switcher does; when
+  /// that fails, Today on the active goal.
+  func openStudyReminder(
+    goalID: String, switchGoal: (String) async -> MutationResult<Void>
+  ) async {
+    _ = await switchGoal(goalID)
+    sheet = nil
+    popToRoots()
+    select(.today)
+  }
+
   func dismissTask() {
     _ = tasks.popLast()
   }

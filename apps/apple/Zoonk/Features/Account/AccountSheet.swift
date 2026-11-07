@@ -9,6 +9,7 @@ private enum AccountDestination: Hashable {
   case preferences
   case plus(AccountSubscription)
   case profile
+  case reminders
   case subscription(UUID)
 }
 
@@ -150,7 +151,7 @@ struct AccountSheet: View {
   private func page(_ destination: AccountDestination, isBeside: Bool) -> some View {
     let isSection =
       switch destination {
-      case .certificate, .deleteAccount: false
+      case .certificate, .deleteAccount, .reminders: false
       default: true
       }
 
@@ -186,7 +187,13 @@ struct AccountSheet: View {
     case .memory:
       MemoryView()
     case .preferences:
-      PreferencesView()
+      PreferencesView {
+        path.append(.reminders)
+      }
+    case .reminders:
+      RemindersView {
+        path.append(.createAccount)
+      }
     case .profile:
       // A guest has no profile: creating the account gives them one.
       if isGuest {
@@ -307,7 +314,7 @@ struct AccountSheet: View {
     case .signedOut, .unavailable:
       switch path.last {
       case .certificate, .certificates, .createAccount, .memory, .plus, .preferences, .profile,
-        .subscription:
+        .reminders, .subscription:
         path.removeAll()
       case .deleteAccount, nil:
         break

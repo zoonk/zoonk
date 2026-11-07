@@ -5,7 +5,10 @@ struct PreferencesView: View {
   @Environment(\.openURL) private var openURL
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SettingsStore.self) private var settings
+  @Environment(StudyRemindersStore.self) private var reminders
   @State private var isEditingBuddy = false
+
+  let openReminders: () -> Void
 
   var body: some View {
     ZoonkList {
@@ -78,6 +81,27 @@ struct PreferencesView: View {
                 "Stop for the day after this much study.", tableName: "Settings",
                 comment: "Explains the daily time limit"))
           }
+
+          Button(action: openReminders) {
+            ListRow(
+              Text("Reminders", tableName: "Settings", comment: "Row opening the reminder settings")
+            ) {
+              EmptyView()
+            } trailing: {
+              Group {
+                if let reminder = reminders.reminder.value {
+                  if reminder.emailOn || reminder.pushOn {
+                    Text(ReminderTime.formatted(reminder.time))
+                  } else {
+                    Text("Off", tableName: "Settings", comment: "Reminders are off")
+                  }
+                }
+              }
+              .typeStyle(.meta)
+            }
+            .disclosureChevron()
+          }
+          .foregroundStyle(.primary)
         } header: {
           SectionTitle(
             Text("Lessons", tableName: "Settings", comment: "Preferences section about lessons"))
@@ -145,7 +169,7 @@ struct PreferencesView: View {
         }
       }
     }
-    .loads(settings.preferences)
+    .loads(settings.preferences, reminders.reminder)
     .sheet(isPresented: $isEditingBuddy) {
       if let preferences = settings.preferences.value {
         BuddyEditor(choice: preferences.buddy, availableGlasses: preferences.availableGlasses) {

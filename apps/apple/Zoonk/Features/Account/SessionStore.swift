@@ -30,6 +30,8 @@ final class SessionStore {
   @ObservationIgnored var subscriptionChanged: (@MainActor () -> Void)?
   /// The same learner's name changed, here or on another device.
   @ObservationIgnored var nameChanged: (@MainActor () -> Void)?
+  /// Runs while the session can still make requests, and its failures don't stop signing out.
+  @ObservationIgnored var willSignOut: (@MainActor (AuthenticatedSession) async -> Void)?
 
   private let api: any AccountAPIClient
   private let credentialStore: any SessionCredentialStoring
@@ -442,6 +444,8 @@ final class SessionStore {
     let workingRevision = startWorkingOperation()
     failure = nil
     defer { finishWorkingOperation(workingRevision) }
+
+    await willSignOut?(AuthenticatedSession(bearerToken: token))
 
     do {
       try await api.signOut(token: token)

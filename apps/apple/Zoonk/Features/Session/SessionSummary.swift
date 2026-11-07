@@ -92,6 +92,7 @@ struct BlockMoment: Decodable, Hashable, Sendable {
   /// The block the session goes on to; nil once it's done.
   let nextBlockId: String?
   let reached: DayResult.Reached?
+  let reminderOffer: ReminderOffer?
   let sessionCompleted: Bool
   let total: Int
 

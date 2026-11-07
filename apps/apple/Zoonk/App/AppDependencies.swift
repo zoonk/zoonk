@@ -18,6 +18,7 @@ struct AppDependencies {
   let progressStore: ProgressStore
   let sessionStore: SessionStore
   let settingsStore: SettingsStore
+  let studyRemindersStore: StudyRemindersStore
   let studySessionStore: StudySessionStore
   let subscriptionStore: AppStoreSubscriptionStore
   let todayStore: TodayStore
@@ -85,6 +86,12 @@ struct AppDependencies {
       api: progressAPI ?? ProgressAPI(clients: clients),
       cache: cache)
     sessionStore = session
+    let studyRemindersStore = StudyRemindersStore(
+      api: StudyRemindersAPI(clients: clients), cache: cache, push: PushNotifications.shared)
+    self.studyRemindersStore = studyRemindersStore
+    session.willSignOut = { [weak studyRemindersStore] in
+      await studyRemindersStore?.forgetThisPhone($0)
+    }
     self.subscriptionStore = subscriptionStore
     tutorStore = TutorStore(api: tutorAPI ?? TutorAPI(clients: clients), cache: cache)
     voice = VoiceServices(clients: clients, cache: cache)
