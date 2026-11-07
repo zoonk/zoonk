@@ -64,7 +64,7 @@ Vitest and both E2E suites run on PRs and again on every push to `main`, whose C
 
 Previews are on request: `pnpm preview` previews the current branch's PR, and `pnpm preview <number>` any open PR from this repository. Both start the PR Preview workflow from the PR's branch, which deploys the PR's current commit. Pushing to a PR deploys nothing; request a new preview to see later commits.
 
-The workflow deploys only the apps the PR changes. A change under `apps/blog` deploys a blog preview, which needs no database: a PR that changes only the blog, such as a new post, gets just the blog, in about two minutes. A change anywhere else creates the PR's Neon branch and deploys the three database-connected apps.
+The workflow deploys only the apps the PR changes. A change under `apps/blog` deploys a blog preview, which needs no database: a PR that changes only the blog, such as a new post, gets just the blog, in about a minute. A change anywhere else creates the PR's Neon branch and deploys the three database-connected apps.
 
 The database-connected apps build at once. Each points at the others through the branch URL Vercel gives every project (`<project>-git-<branch>-<team>.vercel.app`), which always serves the branch's latest deployment: main/admin receive the API's as `NEXT_PUBLIC_API_URL`, and the API receives main's as `MAIN_APP_URL` for links back to the app. Sign-in pages link back to the trusted app that started the sign-in. When a branch name is long enough for Vercel to shorten its URL, the API deploys first and main/admin receive its actual deployment URL instead. All three receive the same PR database URLs. The API preview uses its own Vercel hostname for self-references. Preview URLs appear in the Actions job summary.
 
