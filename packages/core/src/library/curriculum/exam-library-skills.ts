@@ -24,13 +24,21 @@ async function listCourseSkills({
       WHERE home_chapter_id IS NOT NULL
       UNION
       SELECT lesson_id, chapter_id FROM chapter_lessons
-    ), taught AS (
-      SELECT link.skill_id, placement.course_id, NULL::uuid AS lesson_id
+    ), chapter_teaching AS (
+      SELECT link.skill_id, placement.course_id, chapter.id AS chapter_id
       FROM chapter_skills AS link
       JOIN library_chapters AS chapter ON chapter.id = link.chapter_id
       JOIN chapter_courses AS placement ON placement.chapter_id = chapter.id
       WHERE chapter.visibility = 'public' AND chapter.language = ${language}
         AND chapter.target_language IS NULL
+    ), taught AS (
+      SELECT chapter.skill_id, chapter.course_id, lesson.lesson_id
+      FROM chapter_teaching AS chapter
+      JOIN lesson_chapters AS lesson ON lesson.chapter_id = chapter.chapter_id
+      WHERE chapter.course_id = ANY(${[...courseIds]}::uuid[])
+      UNION ALL
+      SELECT skill_id, course_id, NULL::uuid AS lesson_id
+      FROM chapter_teaching WHERE skill_id = ANY(${[...skillIds]}::uuid[])
       UNION ALL
       SELECT link.skill_id, placement.course_id, lesson.id
       FROM lesson_skills AS link
@@ -42,18 +50,21 @@ async function listCourseSkills({
         AND lesson.target_language IS NULL
         AND chapter.visibility = 'public' AND chapter.language = ${language}
         AND chapter.target_language IS NULL
+        AND link.skill_id = ANY(${[...skillIds]}::uuid[])
     ), memberships AS (
-      SELECT skill_id::text, course_id::text, GREATEST(COUNT(DISTINCT lesson_id), 1)::int AS lessons
+      SELECT skill_id::text, course_id::text,
+        GREATEST(COUNT(DISTINCT lesson_id), 1)::int AS lessons, false AS is_placed
       FROM taught GROUP BY skill_id, course_id
       UNION ALL
-      SELECT entry->>'skillId', placed.course_id, COALESCE((entry->>'lessons')::int, 1)
+      SELECT entry->>'skillId', placed.course_id, COALESCE((entry->>'lessons')::int, 1), true
       FROM exam_skill_graphs AS graph
       CROSS JOIN LATERAL jsonb_array_elements(graph.graph->'skills') AS entry
       CROSS JOIN LATERAL jsonb_array_elements_text(entry->'courseIds') AS placed(course_id)
       WHERE graph.exam_blueprint_id <> ${examBlueprintId}::uuid
     )
     SELECT membership.course_id AS "courseId", membership.skill_id AS "skillId",
-      MAX(membership.lessons) AS lessons
+      COALESCE(MAX(membership.lessons) FILTER (WHERE membership.is_placed),
+        MAX(membership.lessons)) AS lessons
     FROM memberships AS membership
     JOIN courses AS course ON course.id::text = membership.course_id
     WHERE course.visibility = 'public' AND course.language = ${language}
@@ -61,7 +72,7 @@ async function listCourseSkills({
       AND (membership.course_id = ANY(${[...courseIds]}::text[])
         OR membership.skill_id = ANY(${[...skillIds]}::text[]))
     GROUP BY membership.course_id, membership.skill_id
-    ORDER BY membership.course_id, membership.skill_id
+    ORDER BY BOOL_OR(membership.is_placed) DESC, membership.course_id, membership.skill_id
   `;
 }
 
