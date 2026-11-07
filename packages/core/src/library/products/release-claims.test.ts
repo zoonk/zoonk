@@ -79,6 +79,35 @@ describe(isDateStated, () => {
     expect(isDateStated({ date, language: "en", passage: "released 10/2025" })).toBe(false);
   });
 
+  it("never takes a release number beside the month and year for the day", () => {
+    const date = new Date(Date.UTC(2024, 4, 4));
+
+    const confirmed = [
+      "Orbit Notes 4 shipped in May 2024.",
+      "| Orbit Notes 4 | May 2024 |",
+      "Orbit Notes 4 - May 2024",
+      "Orbit Notes 4: May 2024",
+      "Orbit Notes 4\nMay 2024",
+    ].filter((passage) => isDateStated({ date, language: "en", passage }));
+
+    expect(confirmed).toStrictEqual([]);
+  });
+
+  it("reads a day written in the date's own expression", () => {
+    const date = new Date(Date.UTC(2024, 4, 4));
+
+    const missed = [
+      "May 4th, 2024",
+      "the 4th of May 2024",
+      "Tuesday, 4 May 2024",
+      "4-May-2024",
+      "2024/05/04",
+      "Orbit Notes 5 shipped on May 4, 2024",
+    ].filter((passage) => !isDateStated({ date, language: "en", passage }));
+
+    expect(missed).toStrictEqual([]);
+  });
+
   it("ignores parts of a date far apart in the passage", () => {
     const date = new Date(Date.UTC(2025, 9, 21));
     const passage = "version 21 is new. It took many months of careful work before October 2025.";
