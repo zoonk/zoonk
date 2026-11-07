@@ -115,6 +115,7 @@ Read the scoped `AGENTS.md` files governing paths you change, including when wor
 | Reporting a bug for someone                                     | [Bug report](.agents/skills/zoonk-bug-report/SKILL.md)                             |
 | Requesting a feature for someone (Discussions, not issues)      | [Feature request](.agents/skills/zoonk-feature-request/SKILL.md)                   |
 | Creating a release (production deploy and release notes)        | [Release](.agents/skills/zoonk-release/SKILL.md)                                   |
+| Writing a blog post, such as a release post                     | [Blog post](.agents/skills/zoonk-blog-post/SKILL.md)                               |
 
 ## Maintaining these instructions
 
