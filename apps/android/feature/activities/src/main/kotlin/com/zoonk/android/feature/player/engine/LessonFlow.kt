@@ -64,15 +64,14 @@ private fun LessonPlayerState.leaveQuickCheck(now: Long): LessonPlayerState {
         .enterPosition(quick.returnPosition, now)
 }
 
-/** After a recovery, Continue goes to the next screen still to answer or a retry, then to the end. */
-private fun LessonPlayerState.nextPosition(): Int {
-    val next = position + 1
-    if (recovery.isEmpty() || quickCheck != null) return next
-    return (next until queue.size).firstOrNull { index ->
-        val id = queue[index]
-        (steps[id]?.isAnswerable == true && id !in results) || queue.indexOf(id) < index
-    } ?: queue.size
+/** Continue stops at every screen; after a recovery, only at a screen still to answer or a retry. */
+internal fun LessonPlayerState.continueStopsAt(index: Int): Boolean {
+    if (recovery.isEmpty() || quickCheck != null) return true
+    val id = queue[index]
+    return (steps[id]?.isAnswerable == true && id !in results) || queue.indexOf(id) < index
 }
+
+private fun LessonPlayerState.nextPosition(): Int = (position + 1 until queue.size).firstOrNull { continueStopsAt(it) } ?: queue.size
 
 fun LessonPlayerState.advance(now: Long): LessonPlayerState {
     if (quickCheck?.missed == true) return leaveQuickCheck(now)

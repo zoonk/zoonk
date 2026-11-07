@@ -712,6 +712,65 @@ class LessonPlayerReducerTest {
     }
 
     @Test
+    fun aRecoveryShowsWhatTheRunHasAheadSoTheBarEndsWhenTheLessonDoes() {
+        val steps =
+            listOf(
+                explanationStep("e1"),
+                checkStep("q1"),
+                explanationStep("e2"),
+                checkStep("q2"),
+                explanationStep("e3"),
+                checkStep("q3"),
+                summaryStep("end"),
+            )
+        val finished =
+            play(
+                steps,
+                started(),
+                LessonAction.Continue,
+                *answerCheck("q1", true),
+                LessonAction.Continue,
+                LessonAction.Continue,
+                *answerCheck("q2", true),
+                LessonAction.Continue,
+                LessonAction.Continue,
+                *answerCheck("q3", false),
+                LessonAction.Continue,
+                LessonAction.Continue,
+                *answerCheck("q3", true),
+                LessonAction.Continue,
+            )
+
+        val resynced = finished.then(LessonAction.RunResynced(null, listOf(saved("q1", true), saved("q3", false))))
+        assertEquals("q2", resynced.currentId)
+        assertEquals(
+            listOf(
+                TaskSegment.Read,
+                TaskSegment.Right,
+                TaskSegment.Read,
+                TaskSegment.Current,
+                TaskSegment.Read,
+                TaskSegment.Wrong,
+                TaskSegment.Read,
+                TaskSegment.Ahead,
+            ),
+            resynced.screen().segments,
+        )
+    }
+
+    @Test
+    fun aReopenShowsAScreenAnsweredAheadOfTheLearnerAsAnswered() {
+        val steps = listOf(explanationStep("e1"), checkStep("q1"), explanationStep("e2"), checkStep("q2"))
+        val resumed = play(steps, started(saved("q2", false)))
+
+        assertEquals("e1", resumed.currentId)
+        assertEquals(
+            listOf(TaskSegment.Current, TaskSegment.Ahead, TaskSegment.Ahead, TaskSegment.Wrong, TaskSegment.Ahead),
+            resumed.screen().segments,
+        )
+    }
+
+    @Test
     fun aRecoveryWithNoSavedAnswersStartsAtTheFirstQuestionAndKeepsTheGuess() {
         val steps = listOf(hookGuessStep("hook"), explanationStep("e1"), checkStep("q1"), explanationStep("e2"), checkStep("q2"))
         val guess = revealGuess(steps.first(), "yes")!!
