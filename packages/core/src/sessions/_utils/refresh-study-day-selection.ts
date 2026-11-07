@@ -3,6 +3,7 @@ import { type Goal, prisma } from "@zoonk/db";
 import { withPlanRetry } from "../../plans/plan-conflict";
 import { appendLandedLessons } from "./append-landed-lessons";
 import { AWAITING_OUTLINES_VERSION } from "./day-plan-version";
+import { getDayOutlines } from "./outlining-stand-ins";
 import { selectDayPlan } from "./selected-day-plan";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
@@ -35,11 +36,23 @@ async function refreshStudyDaySelection({
       return current;
     }
 
+    const samePlan = !selection.computed && !selection.inputKeyUpdate;
+
+    if (samePlan && current.planVersion === selection.context.plan.version) {
+      return current;
+    }
+
+    // A waiting day takes the plan's day once the lessons it waited for are written into the plan.
+    // While it still holds unwritten ones, it waits, or fills from the plan's next lessons once
+    // nobody is writing them.
     if (
-      !selection.computed &&
-      !selection.inputKeyUpdate &&
-      (current.planVersion === selection.context.plan.version ||
-        current.planVersion === AWAITING_OUTLINES_VERSION)
+      samePlan &&
+      current.planVersion === AWAITING_OUTLINES_VERSION &&
+      (await getDayOutlines({
+        goal: current.goal,
+        graph: selection.state.graph,
+        localDate: current.localDate,
+      })) !== null
     ) {
       return current;
     }

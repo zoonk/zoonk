@@ -190,11 +190,13 @@ async function replaceNotStartedBlocks({
   // A rest day must not fill from future lessons outside its selected allocation.
   const selection = selected ?? (await selectDayPlan(context)) ?? undefined;
 
-  // A day built from the plan's selection keeps following it while lessons are pending, so the
-  // lessons written later arrive through it, within the day's allocation.
-  const dayVersion = selection
-    ? null
-    : await loadDayPlanVersion({ goal: day.goal, localDate: session.localDate });
+  const planVersion = await loadDayPlanVersion({
+    goal: day.goal,
+    localDate: session.localDate,
+    plan: selection
+      ? { graph: selection.state.graph, version: selection.context.plan.version }
+      : undefined,
+  });
 
   const unstarted = session.status === "planned" && session.startedAt === null && kept.length === 0;
 
@@ -212,6 +214,11 @@ async function replaceNotStartedBlocks({
   const prepared = selection
     ? await prepareSelectedPlanSave({ selection, shown: persistsPlan })
     : null;
+
+  const savedVersion =
+    planVersion === AWAITING_OUTLINES_VERSION || !selection
+      ? planVersion
+      : selection.context.plan.version + Number(prepared?.kind === "computed");
 
   const facts = await loadRebuildMissionFacts({
     blocks: planned,
@@ -241,10 +248,9 @@ async function replaceNotStartedBlocks({
         return "kept";
       }
 
-      const savedVersion =
-        selection && prepared
-          ? await saveSelectedPlan({ context: selection.context, prepared, tx: transaction })
-          : dayVersion;
+      if (selection && prepared) {
+        await saveSelectedPlan({ context: selection.context, prepared, tx: transaction });
+      }
 
       if (unchanged) {
         // Ended days keep their binding; the outline append owns clearing its waiting marker.

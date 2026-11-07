@@ -322,17 +322,37 @@ describe(chooseExamOption, () => {
   });
 
   it.each([
-    { case: "a pick on a started day", picks: [SPANISH], started: true, undo: false },
+    {
+      case: "a pick on a started day",
+      pickFirst: false,
+      picks: [SPANISH],
+      started: true,
+      undo: false,
+    },
+    {
+      case: "a day opened after the pick, while its lessons are pending",
+      pickFirst: true,
+      picks: [SPANISH],
+      started: true,
+      undo: false,
+    },
     {
       case: "a second pick while the first one's are pending",
+      pickFirst: false,
       picks: [ENGLISH, SPANISH],
       started: false,
       undo: false,
     },
-    { case: "an undo while the pick's are pending", picks: [SPANISH], started: true, undo: true },
+    {
+      case: "an undo while the pick's are pending",
+      pickFirst: false,
+      picks: [SPANISH],
+      started: true,
+      undo: true,
+    },
   ])(
     "keeps the day to its own lessons once the lessons it waits on are written: $case",
-    async ({ picks, started, undo }) => {
+    async ({ pickFirst, picks, started, undo }) => {
       await keepPaceOwn();
 
       const [user, blueprint, course] = await Promise.all([
@@ -363,6 +383,23 @@ describe(chooseExamOption, () => {
       await createGoalPlan({ goalId: goal.id, graph: library.graph });
       mockSession(user.id);
 
+      const pickAll = async (): Promise<string> => {
+        let changeId = "";
+
+        for (const subject of picks) {
+          // oxlint-disable-next-line no-await-in-loop -- The second pick comes while the first one's lessons are pending.
+          const result = await chooseExamOption({
+            goalId: goal.id,
+            input: { ...spanish, subjects: [subject] },
+          });
+
+          changeId = result.status === "applied" ? (result.change?.id ?? "") : "";
+        }
+
+        return changeId;
+      };
+
+      const pickedFirst = pickFirst ? await pickAll() : "";
       const opened = await openToday(goal.id);
       const [first] = opened.blocks;
 
@@ -374,17 +411,7 @@ describe(chooseExamOption, () => {
         });
       }
 
-      let changeId = "";
-
-      for (const subject of picks) {
-        // oxlint-disable-next-line no-await-in-loop -- The second pick comes while the first one's lessons are pending.
-        const result = await chooseExamOption({
-          goalId: goal.id,
-          input: { ...spanish, subjects: [subject] },
-        });
-
-        changeId = result.status === "applied" ? (result.change?.id ?? "") : "";
-      }
+      const changeId = pickFirst ? pickedFirst : await pickAll();
 
       if (undo) {
         await decidePlanChange({

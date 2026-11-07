@@ -15,6 +15,7 @@ import { askForLessons, endLessonsAsk } from "../lookahead/lessons-ask";
 import { keepPaceOwn } from "../plans/_test-utils/keep-pace-own";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { readSelectedItemFacts } from "../plans/_utils/selected-item-contract";
+import { changeGoalPlan } from "../plans/change-goal-plan";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { getTodayStudySession } from "./_test-utils/open-today";
@@ -467,6 +468,31 @@ describe("today's session the learner was shown", () => {
     );
 
     expect(after.blocks.length).toBeGreaterThan(before.blocks.length);
+  });
+
+  it("fills the rest of a day a plan change followed once the outline it waited for ends without its lessons", async () => {
+    const { course, goal } = await setupDayWithStandIn({ dailyMinutes: 30, laterLessons: 32 });
+    const opened = await readToday(goal.id);
+
+    await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ kind: "setDailyMinutes", minutes: 45 }], timeZone: "UTC" },
+    });
+
+    const before = await prisma.studySession.findUniqueOrThrow({ where: { id: opened.id } });
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    await prisma.course.update({ data: { outlineStatus: "completed" }, where: { id: course.id } });
+
+    await endLessonsAsk({
+      askedAt: plan.lessonsAskedAt?.getTime() ?? 0,
+      goalId: goal.id,
+      startedCourseIds: [],
+    });
+
+    const after = await readToday(goal.id);
+
+    expect(after.minutes.planned).toBeGreaterThan(before.plannedMinutes);
   });
 
   it("plans what the shown day can't hold on later days, not as work the day left", async () => {
