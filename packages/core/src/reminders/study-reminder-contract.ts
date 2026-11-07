@@ -1,7 +1,7 @@
 import { PushPlatform } from "@zoonk/db/enums";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { z } from "zod";
-import { studyTimeSchema } from "../goals/goal-contract";
+import { studyTimeSchema } from "../goals/study-time";
 
 export const DEFAULT_REMINDER_TIME = "19:00";
 

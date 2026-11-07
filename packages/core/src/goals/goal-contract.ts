@@ -6,12 +6,12 @@ import { z } from "zod";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
 import { DAYS_PER_WEEK } from "../plans/planner/plan-state";
 import { MAX_GOAL_DETAILS_LENGTH, MAX_GOAL_PROMPT_LENGTH } from "./goal-input-limits";
+import { studyTimeSchema } from "./study-time";
 
 const MAX_TITLE_LENGTH = 120;
 const MAX_GOALS_AT_ONCE = 3;
 const MAX_GOAL_SOURCES = 5;
 const MAX_LANGUAGE_LENGTH = 10;
-const STUDY_TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
 
 const languageSchema = z
   .string()
@@ -38,11 +38,6 @@ const studyDaysSchema = z
     description:
       "Weekdays the learner studies, Sunday (0) to Saturday (6); every day when left out",
   });
-
-export const studyTimeSchema = z
-  .string()
-  .regex(STUDY_TIME_PATTERN)
-  .meta({ description: 'Preferred local study time, such as "20:00"' });
 
 const timeZoneSchema = z
   .string()
