@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { readChallengeReadiness } from "../../checkpoints/_utils/challenge-readiness";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { getAllowance } from "../../entitlements/get-allowance";
 import { loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
@@ -129,6 +130,18 @@ function readPlanStatus({
   });
 }
 
+function buildSteeringView({
+  items,
+  settings,
+}: Pick<PlanReadContext, "items"> & { settings: PlanSettings }): PlanView["steering"] {
+  return {
+    difficultyBias: settings.difficultyBias,
+    lessonsStudied: items.filter((item) => item.kind === "lesson" && item.status === "done").length,
+    practiceBias: settings.practiceBias,
+    skippedActivities: settings.skippedActivities,
+  };
+}
+
 type PlanViewInput = { context: PlanContext; now: Date };
 
 export async function buildPlanView({
@@ -177,6 +190,7 @@ export async function buildPlanView({
     todayBlocks,
     partAreas,
     taughtSkillIds,
+    readiness,
   ] = await Promise.all([
     loadPlanChangeViews({
       context: savedContext,
@@ -202,6 +216,7 @@ export async function buildPlanView({
     readTodayLearnBlocks(goal.userId, goal.id),
     loadGraphPartAreas({ examBlueprintId: goal.examBlueprintId, graph: state.graph }),
     readTaughtStandInSkills(goal.userId, goal.id),
+    readChallengeReadiness({ goal, items, phases, state, today: context.today }),
   ]);
 
   const skillAreas = getSkillAreas({
@@ -269,6 +284,7 @@ export async function buildPlanView({
       estimateMinutes:
         summary?.selected.totalMinutes ?? (context.plan.estimateHours ?? 0) * MINUTES_PER_HOUR,
       phaseChallengesRequired,
+      readiness,
       shortPlan,
       skillAreas,
       taughtSkillIds,
@@ -279,13 +295,7 @@ export async function buildPlanView({
     schedule: buildScheduleView({ calendar, context, dateKind, fullCourse, noticeDates }),
     shortPlan: toShortPlanView({ items, shape: shortPlan }),
     status,
-    steering: {
-      difficultyBias: state.settings.difficultyBias,
-      lessonsStudied: items.filter((item) => item.kind === "lesson" && item.status === "done")
-        .length,
-      practiceBias: state.settings.practiceBias,
-      skippedActivities: state.settings.skippedActivities,
-    },
+    steering: buildSteeringView({ items, settings: state.settings }),
     tools: toPlanToolViews({ settings: state.settings, tools }),
     ...buildPlanTimingView({ access, calendar, context, skillAreas, studiedDates }),
     weekTime: studyWeek.time,

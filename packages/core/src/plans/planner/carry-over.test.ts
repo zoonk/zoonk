@@ -21,15 +21,17 @@ const graph: PlanGraph = {
   })),
 };
 
-const lessons = graph.skills.flatMap((skill) =>
-  Array.from({ length: skill.lessons }, (_, index) => ({
-    chapterId: `chapter-${skill.skillId}`,
-    lessonId: `${skill.skillId}-${index}`,
-    minutes: 4,
-    skillIds: [skill.skillId],
-    title: `${skill.name} ${index}`,
-  })),
-);
+function listLessons(minutesOf: (lessonId: string) => number = () => 4) {
+  return graph.skills.flatMap((skill) =>
+    Array.from({ length: skill.lessons }, (_, index) => ({
+      chapterId: `chapter-${skill.skillId}`,
+      lessonId: `${skill.skillId}-${index}`,
+      minutes: minutesOf(`${skill.skillId}-${index}`),
+      skillIds: [skill.skillId],
+      title: `${skill.name} ${index}`,
+    })),
+  );
+}
 
 function listTodayLessons(items: readonly PlannedItem[]): string[] {
   return items.flatMap((item) =>
@@ -41,7 +43,7 @@ function listTodayLessons(items: readonly PlannedItem[]): string[] {
   );
 }
 
-function reduceAtSlowerPace() {
+function reduceAtSlowerPace(lessons = listLessons()) {
   const targetDate = addDays(TODAY, 40);
   const settings = parsePlanSettings({ startDate: toIsoDate(TODAY) });
   const operations: PlanOperation[] = [{ areas: ["Ética"], kind: "reduceAreas" }];
@@ -77,18 +79,20 @@ function reduceAtSlowerPace() {
     throw new Error("The change doesn't apply.");
   }
 
-  const after = buildPlan({
+  const built = buildPlan({
     ...input,
     carryOver: { lessonIds: [], todayExceptAreas: ["Ética"] },
     items: shown,
     paceFactor: 1.5,
     settings: applied.state.settings,
-  }).items;
+  });
 
+  const after = built.items;
   const plan = { goal: input.goal, graph, settings: applied.state.settings };
 
   return {
     after,
+    built,
     context: {
       after: { ...plan, items: after, phases: [] },
       before: { ...plan, items: shown, phases: [] },
@@ -113,14 +117,46 @@ describe("a change of focus when today's time no longer holds today's lessons", 
     expect(checkSteeringKeepsToday(context)).toStrictEqual([]);
   });
 
-  it("leaves tomorrow's time to tomorrow's lessons when today's run past the plan's days", () => {
-    const sizes = [3, 5, 4, 2, 6];
+  it("gives each lesson it keeps on today all its time on today", () => {
+    const { after, built } = reduceAtSlowerPace();
+    const today = toIsoDate(TODAY);
 
+    const elsewhere = after
+      .filter((item) => item.scheduledFor?.getTime() === TODAY.getTime())
+      .flatMap((item) =>
+        [...(built.lessonDayMinutes.get(item.key)?.keys() ?? [])].flatMap((day) =>
+          day === today ? [] : [`${item.key} on ${day}`],
+        ),
+      );
+
+    expect(elsewhere).toStrictEqual([]);
+  });
+
+  it("leaves tomorrow's time to tomorrow's lessons", () => {
+    const { built } = reduceAtSlowerPace(
+      listLessons((lessonId) => (lessonId === "Civil-2" ? 7 : 4)),
+    );
+
+    expect([...(built.lessonDayMinutes.get("lesson:Civil-2")?.keys() ?? [])]).toStrictEqual([
+      toIsoDate(addDays(TODAY, 1)),
+    ]);
+  });
+
+  it("leaves tomorrow's time to tomorrow's lessons when today's run past the plan's days", () => {
     const input: BuildPlanInput = {
       goal: { dailyMinutes: 10, kind: "learn", targetDate: addDays(TODAY, 2) },
-      graph,
+      graph: {
+        phases: [{ milestone: null, name: "Only" }],
+        skills: [{ area: "A", lessons: 4, name: "A", phase: 0, skillId: "A", weight: 1 }],
+      },
       items: [],
-      lessons: lessons.map((lesson, index) => ({ ...lesson, minutes: sizes[index % 5] ?? 0 })),
+      lessons: [3, 3, 3, 2].map((minutes, index) => ({
+        chapterId: "chapter-A",
+        lessonId: `A-${index}`,
+        minutes,
+        skillIds: ["A"],
+        title: `A ${index}`,
+      })),
       mockMinutes: 180,
       mode: "forced",
       paceFactor: 1,
@@ -141,15 +177,15 @@ describe("a change of focus when today's time no longer holds today's lessons", 
       carryOver: { lessonIds: [], todayExceptAreas: [] },
       items: shown,
       paceFactor: 2,
-      settings: { ...input.settings, focusAreas: ["Penal"] },
+      settings: { ...input.settings, focusAreas: ["A"] },
     }).items;
 
     const findDate = (key: string) =>
       after.find((item) => item.key === key)?.scheduledFor?.getTime();
 
-    expect(listTodayLessons(shown)).toStrictEqual(["Civil-0", "Civil-1"]);
-    expect(listTodayLessons(after)).toStrictEqual(["Civil-0", "Civil-1"]);
-    expect(findDate("lesson:Penal-0")).toBe(addDays(TODAY, 1).getTime());
+    expect(listTodayLessons(shown)).toStrictEqual(["A-0", "A-1", "A-2"]);
+    expect(listTodayLessons(after)).toStrictEqual(["A-0", "A-1", "A-2"]);
+    expect(findDate("lesson:A-3")).toBe(addDays(TODAY, 1).getTime());
     expect(findDate("boss:0")).toBe(addDays(TODAY, 1).getTime());
   });
 });
