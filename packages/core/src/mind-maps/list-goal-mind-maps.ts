@@ -2,7 +2,10 @@ import "server-only";
 import { readEntitlementViewer } from "../entitlements/_utils/entitlement-viewer";
 import { getRequestInstant } from "../learner/facts/request-instant";
 import { resolveViewGoal } from "../view-models/_utils/resolve-view-goal";
-import { loadChapterNumbering } from "../view-models/syllabus/_utils/chapter-numbers";
+import {
+  type ChapterNumbering,
+  loadChapterNumbering,
+} from "../view-models/syllabus/_utils/chapter-numbers";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
 import { toChapterMindMapView } from "./_utils/mind-map-view";
 import { type GoalMindMapView, type GoalMindMapsView } from "./mind-map-contract";
@@ -15,6 +18,22 @@ function isListed(
   view: ReturnType<typeof toChapterMindMapView>,
 ): view is Omit<GoalMindMapView, "subject"> {
   return view.status !== "unavailable";
+}
+
+type ListedRow = { number: ReturnType<ChapterNumbering>; planPosition: number };
+
+/** Subjects as their pages list them, each by chapter number; chapters in no subject last. */
+function toSyllabusPlace({ number, planPosition }: ListedRow): [number, number] {
+  return number.subjectOrder === null
+    ? [Number.MAX_SAFE_INTEGER, planPosition]
+    : [number.subjectOrder, number.position];
+}
+
+function compareBySyllabus(first: ListedRow, second: ListedRow): number {
+  const [firstSubject, firstChapter] = toSyllabusPlace(first);
+  const [secondSubject, secondChapter] = toSyllabusPlace(second);
+
+  return firstSubject - secondSubject || firstChapter - secondChapter;
 }
 
 /** Read-only saved-plan list, defaulting to the active goal: every chapter that can have a map. */
@@ -37,12 +56,16 @@ export async function listGoalMindMaps(
     getRequestInstant(),
   ]);
 
-  const chapters = facts.flatMap((chapter) => {
+  const listed = facts.flatMap((chapter) => {
     const number = numbering({ chapterId: chapter.chapterId, planPosition: chapter.position });
     const view = toChapterMindMapView({ facts: chapter, now, position: number.position });
 
-    return isListed(view) ? [{ ...view, subject: number.subject }] : [];
+    return isListed(view)
+      ? [{ number, planPosition: chapter.position, view: { ...view, subject: number.subject } }]
+      : [];
   });
+
+  const chapters = listed.toSorted(compareBySyllabus).map((row) => row.view);
 
   return { mindMaps: { chapters, goal: { id: goal.id, title: goal.title } }, status: "ready" };
 }

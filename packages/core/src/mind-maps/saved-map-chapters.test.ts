@@ -1,12 +1,14 @@
 import { createRequire } from "node:module";
 import { prisma } from "@zoonk/db";
-import { planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
   lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, describe, expect, it } from "vitest";
@@ -47,6 +49,90 @@ async function writeLessons(lessonIds: string[]) {
     data: { contentStatus: "completed" },
     where: { id: { in: lessonIds } },
   });
+}
+
+function noticeSubject(name: string, topic: string) {
+  return {
+    citation: { passage: "Conteúdo programático", sourceId: "notice" },
+    name,
+    questions: 10,
+    topics: [topic],
+    weight: null,
+  };
+}
+
+function graphSkill(skill: { id: string; name: string }, area: string) {
+  return { area, lessons: 1, name: skill.name, phase: 0, skillId: skill.id };
+}
+
+/**
+ * An exam whose plan schedules a later subject first, then a subject's second chapter before its
+ * first: the syllabus numbers a subject's finished chapters first.
+ */
+async function examScheduledOutOfOrder() {
+  const user = await userFixture();
+
+  const [blueprint, spelling, law, cohesion] = await Promise.all([
+    examBlueprintFixture({
+      structure: {
+        formats: [],
+        mock: null,
+        rules: [],
+        subjects: [
+          noticeSubject("Língua Portuguesa", "Ortografia"),
+          noticeSubject("Direito Constitucional", "Princípios"),
+        ],
+      },
+    }),
+    skillFixture({ name: "Aplicar a ortografia" }),
+    skillFixture({ name: "Aplicar os princípios" }),
+    skillFixture({ name: "Analisar a coesão" }),
+  ]);
+
+  const [goal, spellingChapter, lawChapter, cohesionChapter] = await Promise.all([
+    goalFixture({ examBlueprintId: blueprint.id, kind: "exam", userId: user.id }),
+    libraryChapterFixture({ title: "Grafia" }),
+    libraryChapterFixture({ title: "A Constituição" }),
+    libraryChapterFixture({ title: "Coesão" }),
+  ]);
+
+  const plan = await planFixture({
+    goalId: goal.id,
+    graph: {
+      phases: [{ name: "Fundamentos" }],
+      skills: [
+        graphSkill(spelling, "Língua Portuguesa"),
+        graphSkill(law, "Direito Constitucional"),
+        graphSkill(cohesion, "Língua Portuguesa"),
+      ],
+    },
+  });
+
+  const scheduled = [
+    { chapter: lawChapter, skill: law, status: "todo" },
+    { chapter: cohesionChapter, skill: cohesion, status: "todo" },
+    { chapter: spellingChapter, skill: spelling, status: "done" },
+  ] as const;
+
+  await Promise.all(
+    scheduled.map(async ({ chapter, skill, status }, position) => {
+      const lesson = await libraryLessonFixture({ title: chapter.title });
+
+      await Promise.all([
+        chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
+        planItemFixture({
+          chapterId: chapter.id,
+          planId: plan.id,
+          position,
+          skillId: skill.id,
+          status,
+        }),
+      ]);
+    }),
+  );
+
+  mockSession(user.id);
+  return goal;
 }
 
 function firstLessons(fixture?: { lessons: { id: string }[] }) {
@@ -141,6 +227,19 @@ describe("mind maps read from the saved plan", () => {
       [],
       [["failed", 2], unwritten],
       [],
+    ]);
+  });
+
+  it("lists chapters as the syllabus numbers them, not as the plan schedules them", async () => {
+    const goal = await examScheduledOutOfOrder();
+    const mindMaps = await readyMindMaps(goal.id);
+
+    expect(
+      mindMaps.chapters.map(({ position, subject, title }) => [subject?.name, position, title]),
+    ).toStrictEqual([
+      ["Língua Portuguesa", 1, "Grafia"],
+      ["Língua Portuguesa", 2, "Coesão"],
+      ["Direito Constitucional", 1, "A Constituição"],
     ]);
   });
 

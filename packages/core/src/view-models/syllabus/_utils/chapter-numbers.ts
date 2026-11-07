@@ -5,7 +5,12 @@ import { hasSubjectPages } from "../subject-pages";
 import { buildSyllabus } from "./build-syllabus";
 import { readSyllabusInput } from "./read-syllabus-input";
 
-type ChapterNumber = { position: number; subject: { key: string; name: string } | null };
+type ChapterNumber = {
+  position: number;
+  subject: { key: string; name: string } | null;
+  /** The subject's place in the syllabus, which orders subject pages; null without one. */
+  subjectOrder: number | null;
+};
 
 /** Falls back to planPosition when no subject or course numbers the chapter. */
 export type ChapterNumbering = (chapter: {
@@ -39,7 +44,7 @@ export async function loadChapterNumbering(goal: Goal): Promise<ChapterNumbering
   const subjects =
     syllabus && hasSubjectPages({ goalKind: goal.kind, syllabus }) ? syllabus.subjects : [];
 
-  const entries = subjects.flatMap((subject) =>
+  const entries = subjects.flatMap((subject, subjectOrder) =>
     subject.chapters.flatMap((chapter) =>
       chapter.chapterId
         ? [
@@ -48,6 +53,7 @@ export async function loadChapterNumbering(goal: Goal): Promise<ChapterNumbering
               {
                 position: chapter.position,
                 subject: { key: subject.key, name: subject.shortName },
+                subjectOrder,
               },
             ] as const,
           ]
@@ -61,5 +67,6 @@ export async function loadChapterNumbering(goal: Goal): Promise<ChapterNumbering
     numbers.get(chapterId) ?? {
       position: courseNumbers.get(chapterId) ?? planPosition,
       subject: null,
+      subjectOrder: null,
     };
 }
