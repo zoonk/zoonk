@@ -418,6 +418,39 @@ describe(buildSessionBlocks, () => {
     expect(plannedMinutes).toBe(30);
   });
 
+  it("keeps the time of lessons still being written free when practice takes the rest of the day", () => {
+    const { blocks, plannedMinutes } = buildSessionBlocks({
+      ...baseInput,
+      capsules: [],
+      dailyMinutes: 30,
+      drills: [],
+      lessons: [lesson("l1", 3)],
+      practice: Array.from({ length: 30 }, (_, index) => ({
+        itemId: `p${index}`,
+        skillId: `s${index % 3}`,
+      })),
+      writingMinutes: 12,
+    });
+
+    expect(blocks.some((block) => block.kind === "practice")).toBe(true);
+    expect(plannedMinutes).toBe(18);
+  });
+
+  it("keeps the time of lessons still being written free when review takes the rest of the day", () => {
+    const { blocks, plannedMinutes } = buildSessionBlocks({
+      ...baseInput,
+      capsules: Array.from({ length: 12 }, (_, index) => capsule(`c${index}`)),
+      dailyMinutes: 30,
+      drills: [],
+      lessons: [],
+      practice: [],
+      writingMinutes: 18,
+    });
+
+    expect(blocks.map((block) => block.kind)).toStrictEqual(["review"]);
+    expect(plannedMinutes).toBeLessThanOrEqual(12);
+  });
+
   it("splits a long day's practice into short blocks, mistakes first, and never a set", () => {
     const sets = Array.from({ length: 4 }, (_set, set) =>
       Array.from({ length: 3 }, (_item, index) => ({

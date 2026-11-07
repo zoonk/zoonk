@@ -1,4 +1,4 @@
-import { generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
+import { generateWholeSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
 import { classifyGoalSpecificity } from "@zoonk/ai/tasks/identity/goal-specificity";
 import { loadGoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -8,11 +8,8 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { getStreamedEvents } from "../../_test-utils/parse-stream-events";
 import { recordedOutput, taskResult } from "../../_test-utils/recorded-outputs";
-import {
-  buildSkillGraphStep,
-  decideGoalScopeStep,
-  keepMaterialPrivate,
-} from "./goal-curriculum-steps";
+import { buildGoalSkillGraph } from "../goal-skill-graph";
+import { decideGoalScopeStep, keepMaterialPrivate } from "./goal-curriculum-steps";
 
 const goal = {
   examBlueprintId: null,
@@ -156,18 +153,18 @@ describe(decideGoalScopeStep, () => {
   });
 });
 
-describe(buildSkillGraphStep, () => {
+describe(buildGoalSkillGraph, () => {
   it("streams each skill's name as the graph is written, between the step's start and end", async () => {
     const user = await userFixture();
     const learnGoal = await goalFixture({ kind: "learn", language: "pt", userId: user.id });
 
-    vi.mocked(generateSkillGraph).mockImplementation(async ({ onSkillNamed }) => {
+    vi.mocked(generateWholeSkillGraph).mockImplementation(async ({ onSkillNamed }) => {
       await onSkillNamed?.("Variáveis");
       await onSkillNamed?.("Laços");
       return { ...taskResult(recordedOutput("skill-graph")), repaired: [] } as never;
     });
 
-    await buildSkillGraphStep({
+    await buildGoalSkillGraph({
       inputs: await loadInputs(learnGoal.id),
       scope: shared,
       workflowRunId: "run",

@@ -13,6 +13,7 @@ import { generateSearchTerms } from "@zoonk/ai/tasks/identity/search-terms";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
 import { listSkillExtensions } from "@zoonk/core/library/curriculum/skill-extensions";
+import { askForLessons, endLessonsAsk } from "@zoonk/core/lookahead/lessons-ask";
 import { OUTLINE_AHEAD_DAYS } from "@zoonk/core/lookahead/outline-ahead";
 import { createGoalPlan } from "@zoonk/core/plans/create";
 import { prisma } from "@zoonk/db";
@@ -28,11 +29,14 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import * as logger from "@zoonk/utils/logger";
 import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { getWorkflowMetadata, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
+import { listDayStandIns } from "../../../../../packages/core/src/lookahead/outline-window";
+import { getDayOutlines } from "../../../../../packages/core/src/sessions/_utils/outlining-stand-ins";
 import { mockHookConflict, workflowWriteMock } from "../../../mocks/workflow";
 import { mockLastRunEvent } from "../../../mocks/workflow-runtime";
 import { courseContentNotificationWorkflow } from "../_shared/course-content-notification-workflow";
@@ -154,6 +158,8 @@ function interviewChapter(title: string, skillKeys: string[]) {
 }
 
 const ITALIAN_SCOPE = { generalGoal: null, language: "pt", ownerId: null, targetLanguage: "it" };
+
+const ENEM_SCOPE = { ...ITALIAN_SCOPE, exams: [{ name: "ENEM", style: "Five-option items." }] };
 
 async function writtenBand({
   chapters,
@@ -940,24 +946,76 @@ describe(courseOutlineWorkflow, () => {
       ]);
     });
 
-    it("leaves an exam's band to the outline, which keeps each chapter to one subject", async () => {
+    it("teaches an exam's skill through the chapter on a part of it, writing no chapter", async () => {
       const course = await courseFixture({ language: "pt", outlineStatus: "completed" });
 
-      const [, skill] = await Promise.all([
+      const [[ratios], skill] = await Promise.all([
         writtenBand({
-          chapters: [{ lessons: ["Porcentagem"], title: "Razões e proporções" }],
+          chapters: [{ lessons: ["Porcentagem", "Juros simples"], title: "Razões e proporções" }],
           courseId: course.id,
         }),
-        italianSkill("Calcular juros simples"),
+        italianSkill("Resolver problemas de matemática financeira"),
       ]);
 
-      await courseOutlineWorkflow({
-        bands: [{ level: "beginner", skills: [toSkillRef(skill)] }],
-        courseId: course.id,
-        scope: { ...ITALIAN_SCOPE, exams: [{ name: "ENEM", style: "Five-option items." }] },
+      vi.mocked(findTeachingChapters).mockResolvedValue(
+        taskResult([{ after: 1, chapter: 1, key: skill.id }]),
+      );
+
+      await expect(
+        courseOutlineWorkflow({
+          bands: [{ level: "beginner", skills: [{ ...toSkillRef(skill), area: "Matemática" }] }],
+          courseId: course.id,
+          scope: ENEM_SCOPE,
+        }),
+      ).resolves.toMatchObject({ chapterIds: [], status: "written" });
+
+      expect(vi.mocked(findTeachingChapters).mock.calls[0]?.[0].exam).toBe(true);
+      expect(generateCourseOutline).not.toHaveBeenCalled();
+
+      const tags = await prisma.chapterSkill.findMany({
+        select: { chapterId: true },
+        where: { skillId: skill.id },
       });
 
-      expect(findTeachingChapters).not.toHaveBeenCalled();
+      expect(tags).toStrictEqual([{ chapterId: ratios?.chapter.id }]);
+    });
+
+    it("writes an exam's skill its own chapter when the one that teaches it holds another of the exam's subjects", async () => {
+      const course = await courseFixture({ language: "pt", outlineStatus: "completed" });
+
+      const [[news], skill, reading] = await Promise.all([
+        writtenBand({
+          chapters: [
+            {
+              lessons: ["Gráficos em notícias", "Porcentagens em manchetes"],
+              title: "Dados na imprensa",
+            },
+          ],
+          courseId: course.id,
+        }),
+        italianSkill("Interpretar gráficos e tabelas"),
+        italianSkill("Ler textos jornalísticos"),
+      ]);
+
+      await lessonSkillFixture({ lessonId: news?.lessons[0]?.id ?? "", skillId: reading.id });
+
+      vi.mocked(findTeachingChapters).mockResolvedValue(
+        taskResult([{ after: 1, chapter: 1, key: skill.id }]),
+      );
+
+      await courseOutlineWorkflow({
+        bands: [{ level: "beginner", skills: [{ ...toSkillRef(skill), area: "Matemática" }] }],
+        courseId: course.id,
+        scope: ENEM_SCOPE,
+        skillAreas: { [reading.id]: "Linguagens", [skill.id]: "Matemática" },
+      });
+
+      const tags = await prisma.chapterSkill.findMany({
+        select: { chapterId: true },
+        where: { skillId: skill.id },
+      });
+
+      expect(tags.map((tag) => tag.chapterId)).not.toContain(news?.chapter.id);
       expect(generateCourseOutline).toHaveBeenCalledOnce();
     });
 
@@ -1127,6 +1185,220 @@ describe(courseOutlineWorkflow, () => {
         { experimental_hook: { token: `course-details:${course.id}` } },
       ],
     ]);
+  });
+
+  it.each([false, true])(
+    "follows an opened day after an outline started by its lessons ask (streamed: %s)",
+    async (streamed) => {
+      const [{ bandSkills, goal }, course] = await Promise.all([
+        waitingGoal(),
+        courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+      ]);
+
+      await prisma.goal.update({
+        data: { primaryCourseId: course.id, timezone: "UTC" },
+        where: { id: goal.id },
+      });
+
+      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+      const day = await studySessionFixture({
+        goalId: goal.id,
+        planVersion: plan.version,
+        plannedMinutes: 0,
+        userId: goal.userId,
+      });
+
+      const askedAt = await askForLessons({ goalId: goal.id });
+
+      await endLessonsAsk({
+        askedAt: askedAt ?? 0,
+        goalId: goal.id,
+        startedCourseIds: [course.id],
+      });
+
+      await courseOutlineWorkflow({
+        bands: [{ level: "overview", skills: bandSkills }],
+        courseId: course.id,
+        scope,
+        waitedSkillId: streamed ? bandSkills[0]?.id : undefined,
+      });
+
+      const [saved, items, ended] = await Promise.all([
+        prisma.studySession.findUniqueOrThrow({ include: { blocks: true }, where: { id: day.id } }),
+        lessonItems(goal.id),
+        prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+      ]);
+
+      const written = new Set(items.flatMap((item) => item.lessonId ?? []));
+
+      expect(saved.blocks.some((block) => block.lessonId && written.has(block.lessonId))).toBe(
+        true,
+      );
+
+      expect(saved.plannedMinutes).toBeGreaterThan(0);
+      expect(ended.lessonsAskedAt).toBeNull();
+    },
+  );
+
+  it("an opened day shows the early chapter's lessons or keeps waiting while the band is written", async () => {
+    const [{ bandSkills }, course, user] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+      userFixture(),
+    ]);
+
+    const waited = bandSkills[0];
+
+    // A day whose only unwritten skill is the one the outline streams early.
+    const goal = await goalFixture({
+      details: { answered: ["purpose", "level", "targetDate", "buddy", "placement", "schedule"] },
+      primaryCourseId: course.id,
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    await prisma.plan.create({
+      data: { goalId: goal.id, settings: { startDate: new Date().toISOString().slice(0, 10) } },
+    });
+
+    await createGoalPlan({
+      goalId: goal.id,
+      graph: {
+        phases: [{ milestone: null, name: "Vaccines" }],
+        skills: [
+          {
+            area: "Vaccines",
+            courseIds: [course.id],
+            lessons: 2,
+            name: waited?.name ?? "",
+            phase: 0,
+            skillId: waited?.id ?? "",
+            weight: null,
+          },
+        ],
+      },
+    });
+
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    const day = await studySessionFixture({
+      goalId: goal.id,
+      planVersion: plan.version,
+      plannedMinutes: 0,
+      userId: goal.userId,
+    });
+
+    const replay = replayStreamedOutline(recordedOutline);
+    const atEarlySave: { outlines?: unknown; planToday?: number; shown?: number } = {};
+
+    vi.mocked(streamCourseOutline).mockImplementation((async (
+      params: Parameters<typeof replay>[0],
+    ) =>
+      replay({
+        ...params,
+        saveEarlyChapter: async (found) => {
+          const saved = await params.saveEarlyChapter(found);
+
+          const [items, blocks, outlines] = await Promise.all([
+            prisma.planItem.findMany({
+              where: {
+                lessonId: { not: null },
+                plan: { goalId: goal.id },
+                scheduledFor: { lte: day.localDate },
+              },
+            }),
+            prisma.studySessionBlock.findMany({ where: { sessionId: day.id } }),
+            getDayOutlines({
+              goal: { id: goal.id, primaryCourseId: course.id },
+              localDate: day.localDate,
+            }),
+          ]);
+
+          const planned = new Set(items.map((item) => item.lessonId));
+
+          atEarlySave.planToday = planned.size;
+          atEarlySave.shown = blocks.filter((block) => planned.has(block.lessonId)).length;
+          atEarlySave.outlines = outlines;
+
+          return saved;
+        },
+      })) as never);
+
+    await courseOutlineWorkflow({
+      analytics: { distinctId: user.id, goalId: goal.id, platform: "web" },
+      bands: [{ level: "overview", skills: bandSkills }],
+      courseId: course.id,
+      scope,
+      waitedSkillId: waited?.id,
+    });
+
+    const endBlocks = await prisma.studySessionBlock.count({
+      where: { lessonId: { not: null }, sessionId: day.id },
+    });
+
+    // The band's end follows the day, but a Today that read "nothing coming" already stopped polling.
+    expect(endBlocks).toBeGreaterThan(0);
+    expect(atEarlySave.planToday).toBeGreaterThan(0);
+
+    const waiting = atEarlySave.outlines === "awaiting";
+
+    expect({ outlines: atEarlySave.outlines, shown: atEarlySave.shown }).toMatchObject({
+      shown: waiting ? atEarlySave.shown : atEarlySave.planToday,
+    });
+  });
+
+  it("stops waiting on today's lessons once the ask's outline is done, even when it left some unwritten", async () => {
+    const [{ bandSkills, goal }, course] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+    ]);
+
+    await prisma.goal.update({
+      data: { primaryCourseId: course.id, timezone: "UTC" },
+      where: { id: goal.id },
+    });
+
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    await studySessionFixture({
+      goalId: goal.id,
+      planVersion: plan.version,
+      plannedMinutes: 0,
+      userId: goal.userId,
+    });
+
+    // The learner's preparation starts this course's outline and leaves the ask for it to end.
+    const askedAt = await askForLessons({ goalId: goal.id });
+    await endLessonsAsk({ askedAt: askedAt ?? 0, goalId: goal.id, startedCourseIds: [course.id] });
+
+    // The model leaves some of the band's skills uncovered (normalizeCourseOutline's uncoveredSkillKeys).
+    outlineOneChapter();
+
+    await courseOutlineWorkflow({
+      bands: [{ level: "overview", skills: bandSkills }],
+      courseId: course.id,
+      scope,
+    });
+
+    const localDate = new Date(`${new Date().toISOString().slice(0, 10)}T00:00:00Z`);
+
+    const [stored, standIns, outlines, ended] = await Promise.all([
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+      listDayStandIns({ goalId: goal.id, localDate }),
+      getDayOutlines({ goal: { id: goal.id, primaryCourseId: course.id }, localDate }),
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ]);
+
+    // Nothing is writing, yet today still holds a stand-in the outline left.
+    expect(stored.outlineStatus).toBe("completed");
+    expect(standIns.length).toBeGreaterThan(0);
+
+    // Today asks the learner to request them instead of saying they're on the way.
+    expect({ lessonsAskedAt: ended.lessonsAskedAt, outlines }).toStrictEqual({
+      lessonsAskedAt: null,
+      outlines: "idle",
+    });
   });
 
   it("keeps a band written when a waiting goal can't take its lessons, and says which", async () => {

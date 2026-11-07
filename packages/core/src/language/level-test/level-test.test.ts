@@ -30,6 +30,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-util
 import * as announcement from "../../plans/announce-tested-out-items";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
+import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { getLanguageTodayView } from "../../view-models/language/get-language-today-view";
 import { readGoalDetails } from "../_utils/language-goal";
 import { skipAlphabetIntro } from "../alphabet/skip-alphabet-intro";
@@ -993,6 +994,53 @@ function holdNextAnnouncement() {
 }
 
 describe("placing a level test's result on the planner's plan", () => {
+  it("retries the other goal's notice after a shared placement committed", async () => {
+    const { goalId, userId } = await plannedLearnerFixture();
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
+    const other = await unplannedGoalFixture({ settings: { startDate: "2020-09-28" }, userId });
+
+    await createGoalPlan({ goalId: other.goal.id, graph: parsePlanGraph(plan.graph) });
+
+    // Fail the announcement boundary after the real placement transaction has committed.
+    const dropped = vi
+      .spyOn(announcement, "announceTestedOutItems")
+      .mockRejectedValueOnce(new Error("Notice interrupted"));
+
+    try {
+      await expect(finishLanguageLevelTest(goalId)).rejects.toThrow("Notice interrupted");
+    } finally {
+      dropped.mockRestore();
+    }
+
+    const unannounced = await prisma.planItem.findMany({
+      where: { planId: other.plan.id, status: "testedOut" },
+    });
+
+    expect(unannounced.length).toBeGreaterThan(0);
+
+    await expect(
+      prisma.planChange.count({ where: { kind: "testedOut", planId: other.plan.id } }),
+    ).resolves.toBe(0);
+
+    await expect(finishLanguageLevelTest(goalId)).resolves.toMatchObject({ status: "ready" });
+
+    const notice = await prisma.planChange.findFirstOrThrow({
+      where: { kind: "testedOut", planId: other.plan.id },
+    });
+
+    expect(notice.payload).toMatchObject({
+      planItemIds: expect.arrayContaining(unannounced.map((item) => item.id)),
+    });
+
+    await expect(
+      decidePlanChange({ changeId: notice.id, goalId: other.goal.id, input: { status: "undone" } }),
+    ).resolves.toMatchObject({ change: { status: "undone" }, status: "updated" });
+
+    await expect(
+      prisma.planItem.count({ where: { planId: other.plan.id, status: "testedOut" } }),
+    ).resolves.toBe(0);
+  });
+
   it("finishes during background input bursts and announces the durable result afterwards", async () => {
     const { goalId, readPlacement, userId } = await plannedLearnerFixture();
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
@@ -1034,6 +1082,30 @@ describe("placing a level test's result on the planner's plan", () => {
       changes: [{ status: "applied" }],
       items: ["testedOut", "testedOut"],
       reps: 1,
+    });
+  });
+
+  it("finishes during input bursts on another goal that shares the skipped lessons", async () => {
+    const { goalId, readPlacement, userId } = await plannedLearnerFixture();
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
+    const other = await unplannedGoalFixture({ settings: { startDate: "2020-09-28" }, userId });
+
+    await createGoalPlan({ goalId: other.goal.id, graph: parsePlanGraph(plan.graph) });
+
+    const stop = new AbortController();
+    const marking = markPlanInputsUntil({ planId: other.plan.id, signal: stop.signal });
+
+    try {
+      // The test goal's own notice tolerates bursts; the other goal's must not fail the finish.
+      await expect(finishLanguageLevelTest(goalId)).resolves.toMatchObject({ status: "ready" });
+    } finally {
+      stop.abort();
+      await expect(marking).resolves.toBeGreaterThan(1);
+    }
+
+    await expect(readPlacement()).resolves.toMatchObject({
+      changes: [{ status: "applied" }],
+      items: ["testedOut", "testedOut"],
     });
   });
 

@@ -157,6 +157,7 @@ export async function announceTestedOutItems({
   pastBasicsAdded = [],
   pastBasicsAreas = [],
   planItemIds,
+  skipBlocks = true,
   timeZone,
 }: {
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
@@ -170,6 +171,8 @@ export async function announceTestedOutItems({
   pastBasicsAdded?: readonly string[];
   pastBasicsAreas?: readonly string[];
   planItemIds: readonly string[];
+  /** Shared notices save every goal's undo snapshot before pending blocks are skipped. */
+  skipBlocks?: boolean;
   timeZone: string;
 }): Promise<{ changeId: string | null; lessonsSkipped: number; planVersion: number } | null> {
   if (planItemIds.length === 0) {
@@ -206,7 +209,9 @@ export async function announceTestedOutItems({
       startsAdded.length === 0 &&
       planItemIds.every((id) => recorded.planItemIds.includes(id))
     ) {
-      await skipTestedOutBlocks({ goalId, notStarted: !followToday, planItemIds });
+      if (skipBlocks) {
+        await skipTestedOutBlocks({ goalId, notStarted: !followToday, planItemIds });
+      }
 
       if (followToday) {
         await followPlanToday({ changeId: unseen.change.id, context });
@@ -302,7 +307,9 @@ export async function announceTestedOutItems({
           extraWrites,
         });
 
-    await skipTestedOutBlocks({ goalId, notStarted: !followToday, planItemIds });
+    if (skipBlocks) {
+      await skipTestedOutBlocks({ goalId, notStarted: !followToday, planItemIds });
+    }
 
     if (followToday) {
       await followPlanToday({ changeId, context });

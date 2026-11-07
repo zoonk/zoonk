@@ -3,6 +3,8 @@
 {
   "goalcontent_adjust_plan": "d9aa3e27c9d36f31f6d2815ee42d18338bf7c49e0925a4888f2aae70a3fec3ce",
   "goalcontent_also": "6e6eb5196914a4e0d147bc256934a39dadb96c4fb47be6f2b59b9a9e2123a043",
+  "goalcontent_also_in_exam_count": "b319c8bf446c2cc25408ce4e98195208b09d93ae55c0001b45ee8f50d1b8e8d2",
+  "goalcontent_also_in_exams": "b893196db94fd4cf59e1de9ab211f8f56509d1e5834f8eee6959ea936319c773",
   "goalcontent_also_in_plan": "110153ee5e8cbbbe23a0c04c941f19c20903d3bb72ea00c014969d5f83dbda59",
   "goalcontent_appears_a_lot": "b40e7ddcbd875eca662cc145aa8ae5b2580be28fb09072e14c900665f0ae58f1",
   "goalcontent_beyond_guide": "989967682bdbf3f8d7951a6230865af3b4f86cec33fb6cf67d1f8b2c4fb8a5af",
@@ -63,6 +65,9 @@
   "goalcontent_save_failed": "3622d3d6c61a27177592b8aa029cc598e1f6f097129b42d16aabacbc6934191e",
   "goalcontent_see_all": "d15382a6e1855dca0077f291de8574b440f0a3e45c8ed34efe852c8457d68a7f",
   "goalcontent_share_of_exam": "37ebcb387da2021d5be4b7d9e22ab95ff4596936b6f57da87d9e5161031acff7",
+  "goalcontent_shared_exams_counted": "cd465353242facc74f29e44eeaddbd536294d2d2566ee0705e5c892d679feb52",
+  "goalcontent_shared_exams_named": "4361acd4e78d3f12dbc32198aeeee66c7620536564e456f50a14b65d8be36707",
+  "goalcontent_shared_exams_practice": "a9800be2aceea954a6f3d640548c3404d3782b9ae9f5dda22624e62e1311fda8",
   "goalcontent_skill_count": "30d1dad919c98caa01e0ed81e878d67175b603c5e679a3ef953f0ed622216e27",
   "goalcontent_skill_learning": "72e3f3fa5e568f3acfb6e9e0dc82f08ae245eb1f49375eb02d362e027da971bd",
   "goalcontent_skill_mastered": "724e5ce1f00ed8d753be2892ec68dad6a74f8b6e859a35582ab1626c96eed65f",
@@ -174,6 +179,24 @@
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">%1$s bölümü için %2$s şu alanlara daha fazla ağırlık verir: %3$s. Bu yüzden planın bu alanlara daha fazla zaman ayırır. Ağırlıkların kaynağı: %4$s.</string>
     <string name="goalcontent_course_weights_even">%1$s bölümü için %2$s sınavın tüm alanlarına eşit ağırlık verir. Ağırlıkların kaynağı: %3$s.</string>
+    <!-- On one exam's plan. %1$s names the learner's other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_named">
+        <item quantity="one">%1$s ile ortak konulara bir kez çalışman her iki sınav için de geçerli olur.</item>
+        <item quantity="other">%1$s ile ortak konulara bir kez çalışman, bu konuların yer aldığı tüm sınavlar için geçerli olur.</item>
+    </plurals>
+    <!-- On one exam's plan, when the learner has several other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_counted">
+        <item quantity="one">Diğer %d sınavınla ortak konulara bir kez çalışman her iki sınav için de geçerli olur.</item>
+        <item quantity="other">Diğer %d sınavınla ortak konulara bir kez çalışman, bu konuların yer aldığı tüm sınavlar için geçerli olur.</item>
+    </plurals>
+    <string name="goalcontent_shared_exams_practice">Alıştırmalar her sınavın tarzına göre hazırlanır.</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams named in %1$s also test. -->
+    <string name="goalcontent_also_in_exams">%1$s ile de ortak</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams also test. -->
+    <plurals name="goalcontent_also_in_exam_count">
+        <item quantity="one">%d sınavla da ortak</item>
+        <item quantity="other">%d sınavla da ortak</item>
+    </plurals>
     <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
     <string name="goalcontent_subject">Branş</string>
     <!-- Eyebrow of a subject's page for a module of the learner's plan. -->

@@ -521,12 +521,19 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
     let total: Int
   }
 
+  struct SharedExam: Decodable, Equatable, Sendable {
+    let goalId: String
+    let name: String
+  }
+
   let examDocument: ExamDocument
   let fromMaterial: Bool
   let goal: Goal
   /// `notice` (an exam's own subjects) or `modules`.
   let kind: String
   let lessons: Lessons
+  /// The learner's other exams whose plans teach some of these subjects with the same lessons.
+  let sharedExams: [SharedExam]
   let subjects: [SyllabusSubject]
   let topicCount: Int
   /// The plan says which skills teach which topic, so topics have a status.
@@ -534,6 +541,10 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
 
   var hasSubjectPages: Bool {
     goal.kind == "exam" ? !subjects.isEmpty : subjects.count >= 2
+  }
+
+  func sharedExams(of subject: SyllabusSubject) -> [SharedExam] {
+    sharedExams.filter { subject.sharedWith.contains($0.goalId) }
   }
 }
 
@@ -598,6 +609,8 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
   let notPlannedReason: String?
   let preparation: Double?
   let questions: Int?
+  /// Goal ids from the syllabus's `sharedExams`.
+  let sharedWith: [String]
   let shortName: String
   let source: String
   let topics: [Topic]

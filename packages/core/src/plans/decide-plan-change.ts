@@ -76,6 +76,8 @@ async function acceptProposal({ change, context }: Decision) {
         source: payload.source,
         tx,
       });
+
+      await oweGoalLessons({ db: tx, goalId: context.goal.id, userId: context.goal.userId });
     },
     phaseDates: {
       ...getChangePlanning(payload.operations),
@@ -208,12 +210,6 @@ export async function decidePlanChange({
 
     if (refusal) {
       return refusal;
-    }
-
-    // An applied change or an undo can bring in topics whose lessons nobody started writing.
-    if (input.status === "applied" || input.status === "undone") {
-      const { goal } = owned.context;
-      await oweGoalLessons({ goalId: goal.id, userId: goal.userId });
     }
 
     const payload = parsePlanChangePayload(change.payload);

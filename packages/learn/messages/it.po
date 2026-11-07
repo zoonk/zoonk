@@ -13266,6 +13266,35 @@ msgctxt "5ZjoJT"
 msgid "Appears a lot"
 msgstr "Esce spesso"
 
+#. On one exam's plan. {exams} names the learner's other exams that test some of the same topics.
+#: src/syllabus/shared-exams.tsx
+msgctxt "FdA2rE"
+msgid "{count, plural, one {Topics shared with {exams} count for both exams, so you study them once.} other {Topics shared with {exams} count for every exam that has them, so you study them once.}}"
+msgstr "{count, plural, one {Gli argomenti in comune con {exams} valgono per entrambi gli esami, così li studi una sola volta.} other {Gli argomenti in comune con {exams} valgono per tutti gli esami che li prevedono, così li studi una sola volta.}}"
+
+#. On one exam's plan, when the learner has several other exams that test some of the same topics.
+#: src/syllabus/shared-exams.tsx
+msgctxt "r3nJf6"
+msgid "{count, plural, one {Topics shared with your # other exam count for both exams, so you study them once.} other {Topics shared with your # other exams count for every exam that has them, so you study them once.}}"
+msgstr "{count, plural, one {Gli argomenti in comune con # altro esame valgono per entrambi gli esami, così li studi una sola volta.} other {Gli argomenti in comune con # altri esami valgono per tutti gli esami che li prevedono, così li studi una sola volta.}}"
+
+#: src/syllabus/shared-exams.tsx
+msgctxt "A9RghR"
+msgid "Practice stays in each exam's style."
+msgstr "Gli esercizi seguono lo stile di ogni esame."
+
+#. Marks a subject on one exam's plan that the learner's other exams named in {exams} also test.
+#: src/syllabus/shared-exams.tsx
+msgctxt "xnjHg5"
+msgid "Also in {exams}"
+msgstr "Anche in {exams}"
+
+#. Marks a subject on one exam's plan that the learner's other exams also test.
+#: src/syllabus/shared-exams.tsx
+msgctxt "I4mdto"
+msgid "{count, plural, one {Also in # exam} other {Also in # exams}}"
+msgstr "{count, plural, one {Anche in # altro esame} other {Anche in # altri esami}}"
+
 #: src/syllabus/subject-aside.tsx
 msgctxt "kc79d3"
 msgid "Topics"

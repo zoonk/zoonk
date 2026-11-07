@@ -1,7 +1,6 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
-import { generateSkillGraph, isEmptySkillGraphError } from "@zoonk/ai/tasks/curriculum/skill-graph";
+import { type generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { classifyGoalSpecificity } from "@zoonk/ai/tasks/identity/goal-specificity";
 import { applyGraphCoverage } from "@zoonk/core/library/curriculum/add-coverage-skills";
 import { getStartedCourseScope } from "@zoonk/core/library/curriculum/course-start-graph";
@@ -16,14 +15,12 @@ import {
   linkGoalSkillPrerequisites,
   saveGoalSkills,
 } from "@zoonk/core/library/curriculum/save-goal-skills";
-import { type CurriculumScope, getScopeModel } from "@zoonk/core/library/curriculum/scope";
+import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import {
   toLanguageGoal,
   toScopedGraphPrompt,
 } from "@zoonk/core/library/curriculum/shared-graph-prompt";
-import { safeAsync } from "@zoonk/utils/error";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
-import { type GoalStreamStep } from "./goal-progress-step";
 
 type GraphProvenance = Awaited<ReturnType<typeof generateSkillGraph>>["provenance"];
 
@@ -98,70 +95,6 @@ export async function decideGoalScopeStep({
   return { ...shared, exams: inputs.exams, generalGoal };
 }
 
-async function generateGraph({
-  analytics,
-  onSkillNamed,
-  prompt,
-  scope,
-}: {
-  analytics: ReturnType<typeof toContentAnalytics>;
-  onSkillNamed: (name: string) => Promise<void>;
-  prompt: GoalCurriculumInputs["graphPrompt"];
-  scope: CurriculumScope;
-}) {
-  const model = getScopeModel(scope);
-
-  const params = {
-    ...prompt,
-    analytics,
-    onSkillNamed,
-    serviceTier: chooseServiceTier({ wait: "learner" }),
-  };
-
-  if (!model) {
-    return generateSkillGraph(params);
-  }
-
-  const cheaper = await safeAsync(() => generateSkillGraph({ ...params, model }));
-
-  if (cheaper.data) {
-    return cheaper.data;
-  }
-
-  if (isEmptySkillGraphError(cheaper.error)) {
-    return generateSkillGraph(params);
-  }
-
-  throw cheaper.error;
-}
-
-export async function buildSkillGraphStep({
-  analytics,
-  inputs,
-  scope,
-  workflowRunId,
-}: RunScope & { inputs: GoalCurriculumInputs; scope: CurriculumScope }): Promise<{
-  graph: GoalSkillGraph;
-  provenance: GraphProvenance;
-}> {
-  "use step";
-
-  await using stream = createStepStream<GoalStreamStep>();
-  const report = { entityId: inputs.goal.id, step: "buildSkillGraph" } as const;
-  await stream.status({ ...report, status: "started" });
-
-  const { data, provenance } = await generateGraph({
-    analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
-    onSkillNamed: (skillName) => stream.status({ ...report, skillName, status: "started" }),
-    prompt: toScopedGraphPrompt({ inputs, scope }),
-    scope,
-  });
-
-  await stream.status({ ...report, status: "completed" });
-
-  return { graph: data, provenance };
-}
-
 export async function checkGraphCoverageStep({
   analytics,
   graph,
@@ -185,6 +118,7 @@ export async function checkGraphCoverageStep({
 
   const coverage = await checkCoverage({
     analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+    courses: graph.courses.map(({ key, title }) => ({ key, title })),
     examOutline: outline,
     goal: prompt.goal,
     goalKind: prompt.goalKind,

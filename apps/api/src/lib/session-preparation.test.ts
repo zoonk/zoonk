@@ -23,8 +23,11 @@ import {
   mockGuestSession,
   mockSession,
 } from "../../../../packages/core/src/_test-utils/mock-session";
-import { finishCourseOutline } from "../../../../packages/core/src/library/curriculum/course-outline-state";
-import { isDayAwaitingOutlines } from "../../../../packages/core/src/sessions/_utils/outlining-stand-ins";
+import {
+  claimCourseOutline,
+  finishCourseOutline,
+} from "../../../../packages/core/src/library/curriculum/course-outline-state";
+import { getDayOutlines } from "../../../../packages/core/src/sessions/_utils/outlining-stand-ins";
 import { getTodayView } from "../../../../packages/core/src/view-models/today/get-today-view";
 import { mockHookConflict } from "../../mocks/workflow";
 import { getStartMock } from "../workflows/_test-utils/start-mock";
@@ -309,10 +312,12 @@ async function readCourse({ course }: PlacedGuest) {
 }
 
 async function isDayComing({ goal }: PlacedGuest): Promise<boolean> {
-  return isDayAwaitingOutlines({
+  const outlines = await getDayOutlines({
     goal,
     localDate: getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE }),
   });
+
+  return outlines === "awaiting";
 }
 
 type GoalOwner = { goal: { id: string }; user: { id: string } };
@@ -429,6 +434,8 @@ describe("preparing a guest's lessons", () => {
     await startGoalPreparation({ goalId: guest.goal.id });
     await settle();
 
+    await expect(isDayComing(guest)).resolves.toBe(true);
+
     await finishCourseOutline({
       courseId: guest.course.id,
       status: "completed",
@@ -436,6 +443,46 @@ describe("preparing a guest's lessons", () => {
     });
 
     await expect(isDayComing(guest)).resolves.toBe(true);
+  });
+
+  it("keeps the guest's lessons coming while their own outline waits behind another learner's", async () => {
+    const guest = await placedGuestFixture();
+
+    await prisma.course.update({
+      data: { outlineRunId: "beginner-outline", outlineStatus: "running" },
+      where: { id: guest.course.id },
+    });
+
+    await startGoalPreparation({ goalId: guest.goal.id });
+    await settle();
+
+    expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
+      expect.objectContaining({ courseId: guest.course.id, waitedSkillId: guest.next.id }),
+    ]);
+
+    const beforeOther = await readEmptyDay(guest);
+
+    await finishCourseOutline({
+      courseId: guest.course.id,
+      status: "completed",
+      workflowRunId: "beginner-outline",
+    });
+
+    const gap = { coming: await isDayComing(guest), emptyDay: await readEmptyDay(guest) };
+
+    const claim = await claimCourseOutline({
+      courseId: guest.course.id,
+      workflowRunId: "guest-outline",
+    });
+
+    const afterClaim = { coming: await isDayComing(guest), emptyDay: await readEmptyDay(guest) };
+
+    expect({ afterClaim, beforeOther, claim, gap }).toStrictEqual({
+      afterClaim: { coming: true, emptyDay: "lessonsComing" },
+      beforeOther: "lessonsComing",
+      claim: "claimed",
+      gap: { coming: true, emptyDay: "lessonsComing" },
+    });
   });
 
   it.each([

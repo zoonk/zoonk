@@ -6,10 +6,17 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Fragment } from "react";
 import { CoverageBar, CoverageLegend } from "../_components/coverage-bar";
-import { LIST_GROUP_CLASS, ListRowLink, ListRowTrailing } from "../_components/list-group";
+import {
+  LIST_GROUP_CLASS,
+  ListRowDescription,
+  ListRowLink,
+  ListRowTitle,
+  ListRowTrailing,
+} from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { useFormatProgressShare } from "../_utils/percent";
 import { type SubjectGroup, groupSubjects } from "./group-subjects";
+import { SharedExamsNote, useAlsoIn } from "./shared-exams";
 import { CourseWeightsNote, QuestionsSourceNote, useGroupName } from "./syllabus-notes";
 import { type SyllabusSectionSubject, type SyllabusSectionView } from "./syllabus-section-view";
 import { getSubjectShare, useSubjectProgress } from "./use-subject-progress";
@@ -60,7 +67,7 @@ function useSectionCount(syllabus: SyllabusSectionView): string {
 
 const ROW_GRID_CLASS = cn(
   "flex min-h-11 min-w-0 flex-1 flex-col justify-center gap-2 py-3",
-  "@lg/subjects:grid @lg/subjects:grid-cols-[minmax(0,1fr)_minmax(7rem,14rem)] @lg/subjects:items-center @lg/subjects:gap-x-3.5 @lg/subjects:py-0",
+  "@lg/subjects:grid @lg/subjects:grid-cols-[minmax(0,1fr)_minmax(7rem,14rem)] @lg/subjects:items-center @lg/subjects:gap-x-3.5 @lg/subjects:py-2",
   "@2xl/subjects:grid-cols-[minmax(0,1fr)_6.5rem_minmax(8rem,14rem)]",
 );
 
@@ -80,24 +87,31 @@ function BarsMeaning({ syllabus }: { syllabus: SyllabusSectionView }) {
 
 const SHARE_CLASS = "w-10 justify-end";
 
-function SubjectRow({ href, subject }: { href: string; subject: SyllabusSectionSubject }) {
+function SubjectRow({
+  href,
+  sharedExams,
+  subject,
+}: {
+  href: string;
+  sharedExams: SyllabusView["sharedExams"];
+  subject: SyllabusSectionSubject;
+}) {
   const t = useExtracted();
   const formatShare = useFormatProgressShare();
   const progress = useSubjectProgress()(subject);
+  const alsoIn = useAlsoIn({ sharedExams, sharedWith: subject.sharedWith });
   const notPlanned = subject.notPlannedReason !== null;
   const share = progress.bar ? getSubjectShare(progress.bar) : subject.preparation;
 
   return (
     <ListRowLink href={href}>
       <span className={ROW_GRID_CLASS}>
-        <span
-          className={cn(
-            "text-sm leading-snug font-medium text-pretty @lg/subjects:truncate",
-            notPlanned && "text-muted-foreground",
-          )}
-          title={subject.name}
-        >
-          {subject.name}
+        <span className="flex min-w-0 flex-col gap-0.5">
+          <ListRowTitle className={cn("wrap-anywhere", notPlanned && "text-muted-foreground")}>
+            {subject.name}
+          </ListRowTitle>
+
+          {alsoIn && <ListRowDescription className="text-pretty">{alsoIn}</ListRowDescription>}
         </span>
 
         <span className="text-muted-foreground hidden text-right font-mono text-xs whitespace-nowrap tabular-nums @2xl/subjects:block">
@@ -177,6 +191,7 @@ export function SyllabusSection({
         <BarsMeaning syllabus={syllabus} />
       </PageSectionHeader>
 
+      <SharedExamsNote sharedExams={syllabus.sharedExams} />
       {children}
 
       <div className={LIST_GROUP_CLASS}>
@@ -192,7 +207,11 @@ export function SyllabusSection({
             <ul aria-labelledby={group.extra || group.name ? getGroupId(index) : SECTION_TITLE_ID}>
               {group.subjects.map((subject) => (
                 <li key={subject.key}>
-                  <SubjectRow href={subjectHref(subject.key)} subject={subject} />
+                  <SubjectRow
+                    href={subjectHref(subject.key)}
+                    sharedExams={syllabus.sharedExams}
+                    subject={subject}
+                  />
                 </li>
               ))}
             </ul>

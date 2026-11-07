@@ -3,6 +3,8 @@
 {
   "goalcontent_adjust_plan": "3d7265c4323202eefcda27104464ac78ef11e7fabcab634ef2d05948220d10fd",
   "goalcontent_also": "e2c98a30e29826de664a5ca9a464302f0612a2c69eaaa78694cbc95a731e7cdc",
+  "goalcontent_also_in_exam_count": "f59428d55a41aec5a38f4c59d6762d34ecc6345951610c9f1c4d200e7c5b37c7",
+  "goalcontent_also_in_exams": "238fa410145c103d7b1604b8a3b30c5a0bd382929cdef4850161d3d833a33f78",
   "goalcontent_also_in_plan": "40b142a39287bf335dded0d1b18aaee0c92192bb211858ffd656a437fe31fe0e",
   "goalcontent_appears_a_lot": "d1d78d753889ed7d71556be7e106d0595a607f02436d2bd87fdc4a49c61f6c1e",
   "goalcontent_beyond_guide": "4cd619bc3347242e1bc1dca0abc7fcdc3eca8b668dbcde6364e8385759825364",
@@ -63,6 +65,9 @@
   "goalcontent_save_failed": "19c0474d2e9a74dd9da8f57cdd417b4d141101a68a3d96f70503cdf425b1b86a",
   "goalcontent_see_all": "a6d0ff5be922d08f6b4bb803821e9866386a7b0cbf30606461ccedc87972f983",
   "goalcontent_share_of_exam": "ea3db7fd65a51b92b410f077a168bc177d7beeb0d78c1edb145dbcd4e3c868df",
+  "goalcontent_shared_exams_counted": "8557f4ac88750952096b58af00b4a5d906e9fa93ee96ca0d3e931f2c260585e1",
+  "goalcontent_shared_exams_named": "0c99d72035546ddb6669347ab73df248df1913a9899a503b37e8a3ba9153efd4",
+  "goalcontent_shared_exams_practice": "44df300bbe3f3a9096b48d57a28e9743095845e4932b142cc45852440fa0cc40",
   "goalcontent_skill_count": "c7aa888d621084b48b2edd0e36dde070ef2c3f8bf2f568eea145f77be0cda103",
   "goalcontent_skill_learning": "b8ca8f676c7f814d2c95ddf36babcbf6f6d680afaaeea754c983dfe9bd256100",
   "goalcontent_skill_mastered": "680f7b9b8bfb4f3a023c77860ba6d01aea83ceaa7ea4d19cf957c685696ab208",
@@ -174,6 +179,24 @@
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">Für %1$s an %2$s werden %3$s stärker gewichtet. Deshalb sieht dein Plan dafür mehr Zeit vor. Gewichtung laut %4$s.</string>
     <string name="goalcontent_course_weights_even">Bei %1$s an %2$s zählen alle Prüfungsteile gleich viel. Gewichtung nach %3$s.</string>
+    <!-- On one exam's plan. %1$s names the learner's other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_named">
+        <item quantity="one">Themen, die auch bei %1$s geprüft werden, zählen für beide Prüfungen. Du lernst sie also nur einmal.</item>
+        <item quantity="other">Themen, die auch bei %1$s geprüft werden, zählen für alle Prüfungen, in denen sie vorkommen. Du lernst sie also nur einmal.</item>
+    </plurals>
+    <!-- On one exam's plan, when the learner has several other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_counted">
+        <item quantity="one">Themen, die auch in deiner %d anderen Prüfung vorkommen, zählen für beide Prüfungen. Du lernst sie also nur einmal.</item>
+        <item quantity="other">Themen, die auch in deinen %d anderen Prüfungen vorkommen, zählen für alle Prüfungen, in denen sie geprüft werden. Du lernst sie also nur einmal.</item>
+    </plurals>
+    <string name="goalcontent_shared_exams_practice">Du übst weiter im Stil der jeweiligen Prüfung.</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams named in %1$s also test. -->
+    <string name="goalcontent_also_in_exams">Auch bei %1$s</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams also test. -->
+    <plurals name="goalcontent_also_in_exam_count">
+        <item quantity="one">Auch in %d Prüfung</item>
+        <item quantity="other">Auch in %d Prüfungen</item>
+    </plurals>
     <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
     <string name="goalcontent_subject">Fach</string>
     <!-- Eyebrow of a subject's page for a module of the learner's plan. -->

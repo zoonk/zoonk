@@ -12,6 +12,7 @@ import {
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { parsePlanPhases } from "../../plans/planner/plan-state";
 import { getExamCalendar, toExamDates } from "../_utils/exam-calendar";
+import { getExamName } from "../exam-name";
 import {
   getExamDayChecklist,
   getExamStage,
@@ -88,7 +89,7 @@ export async function loadExamMoment({
     checklist: hasChecklist ? getExamDayChecklist(blueprint) : [],
     day: pickDay({ days: calendar.days, today }),
     dayBefore: getDayBeforePlan({ includesMockExams, shortPlan, today }),
-    examName: blueprint?.name ?? goal.title,
+    examName: getExamName({ blueprint, goal }),
     mocksTaken,
     prepared: work.prepared,
     resultReported: result !== null,

@@ -5,6 +5,7 @@ import { displayWeightSchema } from "../../exams/display-weight-contract";
 import { examDocumentSchema } from "../../exams/exam-document";
 import { TOPIC_FREQUENCY_LEVELS } from "../../library/exams/blueprint-past-contract";
 import { passMarksSchema } from "../../library/exams/pass-marks";
+import { sharedExamsSchema, sharedWithSchema } from "../../plans/shared-exams-contract";
 import { writtenPracticeSchema } from "../../plans/written-practice-contract";
 
 const countSchema = z.int().min(0);
@@ -183,6 +184,7 @@ const syllabusSubjectSchema = z
     share: shareSchema
       .nullable()
       .meta({ description: "Its share of the exam; for a qualifying test, what passing it takes" }),
+    sharedWith: sharedWithSchema,
     shortName: z
       .string()
       .meta({
@@ -278,6 +280,7 @@ export const syllabusViewSchema = z
         description:
           "Where the subjects' `questions` come from when the notice gives none: the exam's latest edition, as one source counted it",
       }),
+    sharedExams: sharedExamsSchema,
     subjects: z
       .array(syllabusSubjectSchema)
       .meta({

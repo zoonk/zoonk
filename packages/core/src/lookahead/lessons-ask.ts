@@ -4,9 +4,13 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { replanWaitingGoal } from "../library/curriculum/replan-waiting-goals";
 import { afterPlanInputWrite, withPlanRetry } from "../plans/plan-conflict";
-import { loadDayStandInCourseIds } from "../sessions/_utils/outlining-stand-ins";
+import {
+  hasOutliningCourses,
+  loadDayStandInCourseIds,
+} from "../sessions/_utils/outlining-stand-ins";
 import { followSavedDay } from "../sessions/_utils/refresh-study-day-selection";
 import { findSavedDaySession } from "../sessions/_utils/saved-day-session";
+import { getOutlineStaleBefore } from "./outline-ahead";
 
 /**
  * The learner asked for their plan's lessons, so their day reads as getting them while the
@@ -27,30 +31,87 @@ export async function askForLessons({
   return count > 0 ? now.getTime() : null;
 }
 
-async function followShownDay({
-  goal,
-  timeZone,
+async function clearLessonsAsk({ askedAt, goalId }: { askedAt: number; goalId: string }) {
+  await prisma.plan.updateMany({
+    data: { lessonsAskedAt: null },
+    where: { goalId, lessonsAskedAt: new Date(askedAt) },
+  });
+}
+
+async function hasUnfinishedOutlines({
+  askedAt,
+  courseIds,
+  now = new Date(),
 }: {
-  goal: { id: string; userId: string };
-  timeZone: string;
+  askedAt: number;
+  courseIds: readonly string[];
+  now?: Date;
+}): Promise<boolean> {
+  if (courseIds.length === 0) {
+    return false;
+  }
+
+  const since = new Date(askedAt);
+
+  if (since <= getOutlineStaleBefore(now)) {
+    return hasOutliningCourses({ courseIds, now });
+  }
+
+  const ended = await prisma.course.count({
+    where: {
+      id: { in: [...courseIds] },
+      outlineStatus: { in: ["completed", "failed"] },
+      updatedAt: { gte: since },
+    },
+  });
+
+  return ended < courseIds.length;
+}
+
+/** Trusted preparation only: the goal must come from an authorized POST or its workflow. */
+export async function followWrittenLessons({
+  askedAt,
+  goalId,
+}: {
+  askedAt: number | null;
+  goalId: string;
 }): Promise<void> {
+  const goal = await prisma.goal.findUnique({ where: { id: goalId } });
+
+  if (!goal) {
+    return;
+  }
+
+  const timeZone = getAnswerTimeZone({ goal });
+  const now = new Date();
+
+  if (askedAt !== null) {
+    const courseIds = await loadDayStandInCourseIds({
+      goal,
+      localDate: getDateInTimeZone({ date: now, timeZone }),
+    });
+
+    if (!(await hasUnfinishedOutlines({ askedAt, courseIds, now }))) {
+      await clearLessonsAsk({ askedAt, goalId });
+    }
+  }
+
   const session = await findSavedDaySession({
     goalId: goal.id,
-    now: new Date(),
+    now,
     timeZone,
     userId: goal.userId,
   });
 
-  if (session?.goal) {
-    const { goal: sessionGoal } = session;
-    await afterPlanInputWrite(() => followSavedDay({ goal: sessionGoal, session, timeZone }));
+  if (session) {
+    await followSavedDay({ session, timeZone });
   }
 }
 
 /**
- * A preparation that started an outline for a course the day needs keeps its ask until it goes
- * stale; otherwise it brings in the day's lessons written since the plan was saved and ends the
- * ask, unless a newer request has replaced it.
+ * A preparation that started an outline for a course the day needs leaves its ask for that
+ * outline to end; otherwise it brings in the day's written lessons and ends the ask, unless a
+ * newer request has replaced it.
  */
 export async function endLessonsAsk({
   askedAt,
@@ -74,7 +135,12 @@ export async function endLessonsAsk({
   const localDate = getDateInTimeZone({ date: new Date(), timeZone });
   const dayCourseIds = await loadDayStandInCourseIds({ goal, localDate });
 
-  if (dayCourseIds.some((courseId) => startedCourseIds.includes(courseId))) {
+  if (
+    await hasUnfinishedOutlines({
+      askedAt,
+      courseIds: dayCourseIds.filter((courseId) => startedCourseIds.includes(courseId)),
+    })
+  ) {
     return;
   }
 
@@ -82,13 +148,6 @@ export async function endLessonsAsk({
     await afterPlanInputWrite(() => withPlanRetry(() => replanWaitingGoal(goalId)));
   }
 
-  await prisma.plan.updateMany({
-    data: { lessonsAskedAt: null },
-    where: { goalId, lessonsAskedAt: new Date(askedAt) },
-  });
-
-  // While the ask is fresh the day reads as awaiting outlines, and Continue's append waits for them.
-  if (dayCourseIds.length > 0) {
-    await followShownDay({ goal, timeZone });
-  }
+  await clearLessonsAsk({ askedAt, goalId });
+  await afterPlanInputWrite(() => followWrittenLessons({ askedAt: null, goalId }));
 }

@@ -4,7 +4,6 @@ import { isDeepStrictEqual } from "node:util";
 import { type LanguageSkillGraph, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString } from "@zoonk/utils/string";
-import { loadCourseExam } from "../../goals/_utils/course-exam";
 import { loadCourseOutline } from "../../goals/_utils/course-outline";
 import { getExamCourseSkills } from "../../goals/_utils/exam-course-skills";
 import { joinOptionSkills } from "../../plans/planner/option-skills";
@@ -128,12 +127,7 @@ async function findReusableExam({
     scope,
   });
 
-  if (!examBlueprintId || !startedCourse) {
-    return examBlueprintId;
-  }
-
-  const exam = startedCourse.ownerId === null ? await loadCourseExam(startedCourse.id) : null;
-  return exam?.blueprint.id === examBlueprintId ? examBlueprintId : null;
+  return startedCourse?.ownerId ? null : examBlueprintId;
 }
 
 /** The same typed goal and shared answers share a language graph, whatever title the goal got. */

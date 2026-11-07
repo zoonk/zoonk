@@ -1,12 +1,22 @@
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import {
+  chapterLessonFixture,
+  lessonSkillFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { endLessonsAsk } from "../../lookahead/lessons-ask";
+import { keepPaceOwn } from "../../plans/_test-utils/keep-pace-own";
 import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
+import { loadDayLessonIds } from "../../sessions/_test-utils/todays-lessons";
 import { openStudyDay } from "../../sessions/open-study-day";
+import { startStudyBlock } from "../../sessions/start-study-block";
 import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
 import {
   ENGLISH,
@@ -25,6 +35,7 @@ import {
 import { chooseExamOption } from "./choose-exam-option";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
+const TODAY = "2020-09-28";
 const TIME_ZONE = "America/Sao_Paulo";
 
 async function setup({ built = true }: { built?: boolean } = {}) {
@@ -64,6 +75,44 @@ async function loadChoices(planId: string) {
 
 const spanish = { group: FOREIGN, subjects: [SPANISH], timeZone: TIME_ZONE };
 
+async function openToday(goalId: string) {
+  const opened = await openStudyDay({ goalId, shownDate: TODAY, timeZone: TIME_ZONE });
+
+  if (opened.status !== "opened") {
+    throw new Error(`Expected today to open, got ${opened.status}`);
+  }
+
+  return opened.session;
+}
+
+async function writeStandInLessons(
+  library: Awaited<ReturnType<typeof planLibraryFixture>>,
+): Promise<string[]> {
+  const [chapter] = library.chapters;
+  const skillId = library.skills[1]?.id ?? "";
+
+  return Promise.all(
+    Array.from({ length: 4 }, async (_, index) => {
+      const lesson = await libraryLessonFixture({
+        estimatedMinutes: 3,
+        homeChapterId: chapter?.id ?? null,
+        title: `Written lesson ${index + 1} ${crypto.randomUUID()}`,
+      });
+
+      await Promise.all([
+        chapterLessonFixture({
+          chapterId: chapter?.id ?? "",
+          lessonId: lesson.id,
+          position: 150 + index,
+        }),
+        lessonSkillFixture({ lessonId: lesson.id, skillId }),
+      ]);
+
+      return lesson.id;
+    }),
+  );
+}
+
 describe(chooseExamOption, () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -71,6 +120,7 @@ describe(chooseExamOption, () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 
@@ -254,6 +304,127 @@ describe(chooseExamOption, () => {
       status: "notFound",
     });
   });
+
+  it.each([
+    {
+      case: "a pick on a started day",
+      pickFirst: false,
+      picks: [SPANISH],
+      started: true,
+      undo: false,
+    },
+    {
+      case: "a day opened after the pick, while its lessons are pending",
+      pickFirst: true,
+      picks: [SPANISH],
+      started: true,
+      undo: false,
+    },
+    {
+      case: "a second pick while the first one's are pending",
+      pickFirst: false,
+      picks: [ENGLISH, SPANISH],
+      started: false,
+      undo: false,
+    },
+    {
+      case: "an undo while the pick's are pending",
+      pickFirst: false,
+      picks: [SPANISH],
+      started: true,
+      undo: true,
+    },
+  ])(
+    "keeps the day to its own lessons once the lessons it waits on are written: $case",
+    async ({ pickFirst, picks, started, undo }) => {
+      await keepPaceOwn();
+
+      const [user, blueprint, course] = await Promise.all([
+        userFixture(),
+        choiceBlueprintFixture(),
+        courseFixture({ outlineStatus: "completed" }),
+      ]);
+
+      const library = await planLibraryFixture({
+        skills: [
+          { area: LANGUAGES, lessons: 2 },
+          { area: MATH, lessons: 0, size: 4 },
+          { area: ENGLISH, lessons: 2 },
+          { area: SPANISH, lessons: 2 },
+          { area: MATH, lessons: 12 },
+        ],
+      });
+
+      const { goal } = await unplannedGoalFixture({
+        dailyMinutes: 30,
+        examBlueprintId: blueprint.id,
+        kind: "exam",
+        primaryCourseId: course.id,
+        settings: { startDate: TODAY },
+        userId: user.id,
+      });
+
+      await createGoalPlan({ goalId: goal.id, graph: library.graph });
+      mockSession(user.id);
+
+      const pickAll = async (): Promise<string> => {
+        let changeId = "";
+
+        for (const subject of picks) {
+          // oxlint-disable-next-line no-await-in-loop -- The second pick comes while the first one's lessons are pending.
+          const result = await chooseExamOption({
+            goalId: goal.id,
+            input: { ...spanish, subjects: [subject] },
+          });
+
+          changeId = result.status === "applied" ? (result.change?.id ?? "") : "";
+        }
+
+        return changeId;
+      };
+
+      const pickedFirst = pickFirst ? await pickAll() : "";
+      const opened = await openToday(goal.id);
+      const [first] = opened.blocks;
+
+      if (started) {
+        await startStudyBlock({
+          blockId: first?.id ?? "",
+          input: { timeZone: TIME_ZONE },
+          sessionId: opened.id,
+        });
+      }
+
+      const changeId = pickFirst ? pickedFirst : await pickAll();
+
+      if (undo) {
+        await decidePlanChange({
+          changeId,
+          goalId: goal.id,
+          input: { status: "undone", timeZone: TIME_ZONE },
+        });
+      }
+
+      const written = await writeStandInLessons(library);
+
+      const { lessonsAskedAt } = await prisma.plan.findUniqueOrThrow({
+        where: { goalId: goal.id },
+      });
+
+      await endLessonsAsk({
+        askedAt: lessonsAskedAt?.getTime() ?? 0,
+        goalId: goal.id,
+        startedCourseIds: [],
+      });
+
+      const day = await openToday(goal.id);
+      const todays = await loadDayLessonIds({ goalId: goal.id, today: TODAY });
+      const lessonIds = day.blocks.flatMap((block) => block.lessonId ?? []);
+
+      expect(lessonIds.some((id) => written.includes(id))).toBe(true);
+      expect(lessonIds.filter((id) => !todays.has(id))).toStrictEqual([]);
+    },
+  );
 
   it("changes one choice of an exam with several and keeps the others", async () => {
     const user = await userFixture();

@@ -1,18 +1,8 @@
-import {
-  getGoalCourseFormat,
-  setGoalPrimaryCourse,
-} from "@zoonk/core/library/curriculum/goal-primary-course";
-import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
-import {
-  type CourseExtensionRequest,
-  listSkillExtensions,
-} from "@zoonk/core/library/curriculum/skill-extensions";
-import { findGoalCourse } from "@zoonk/core/library/products/goal-courses";
-import { type GoalProduct } from "@zoonk/core/library/products/goal-product";
+import { type CourseOutlineNeed } from "@zoonk/core/library/curriculum/scope";
+import { listSkillExtensions } from "@zoonk/core/library/curriculum/skill-extensions";
 import { type LearnerLookahead, getGoalLookahead } from "@zoonk/core/lookahead/learner-lookahead";
 import { endLessonsAsk } from "@zoonk/core/lookahead/lessons-ask";
 import {
-  type PlanOutlineNeed,
   listPlanOutlineNeeds,
   listPlanSkillIdsWithin,
   listSoonStandInCourseIds,
@@ -25,61 +15,11 @@ import {
   pickSpeculativeLessons,
   readPlanOpeningToken,
 } from "@zoonk/core/lookahead/speculative-lessons";
-import { type GoalKind, prisma } from "@zoonk/db";
-import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
+import { prisma } from "@zoonk/db";
 import { catchPlanConflict } from "../../_shared/plan-conflict-outcome";
 import { type PlanStepOutcome } from "../../_shared/plan-conflict-retry";
 
 type OwnLevel = Parameters<typeof pickSpeculativeLessons>[0]["ownLevel"];
-
-type CourseProvenance = Parameters<typeof findGoalCourse>[0]["provenance"];
-
-export async function findGoalCoursesStep({
-  analytics,
-  courses,
-  goal,
-  product,
-  provenance,
-  scope,
-  workflowRunId,
-}: {
-  analytics?: ContentAnalytics;
-  courses: { key: string; title: string }[];
-  goal: { id: string; kind: GoalKind };
-  /** The product the graph was told about, so a graph built without it gets no product course. */
-  product: GoalProduct | null;
-  provenance: CourseProvenance;
-  scope: CurriculumScope;
-  workflowRunId: string;
-}): Promise<Record<string, string>> {
-  "use step";
-
-  const format = getGoalCourseFormat({ kind: goal.kind, ownerId: scope.ownerId });
-  const context = toContentAnalytics({ analytics, scope, workflowRunId });
-
-  const found = await Promise.all(
-    courses.map(async (need) => {
-      const { course } = await findGoalCourse({
-        analytics: context,
-        format,
-        product,
-        provenance,
-        scope,
-        title: need.title,
-      });
-
-      return [need.key, course.id] as const;
-    }),
-  );
-
-  const [first] = found;
-
-  if (first) {
-    await setGoalPrimaryCourse({ courseId: first[1], goalId: goal.id });
-  }
-
-  return Object.fromEntries(found);
-}
 
 const OPENING_LESSONS = 4;
 
@@ -138,7 +78,7 @@ export async function createGoalGenerationManifestStep(input: {
 export async function listPlanOutlineNeedsStep(input: {
   days: number;
   goalId: string;
-}): Promise<PlanOutlineNeed[]> {
+}): Promise<CourseOutlineNeed[]> {
   "use step";
 
   return listPlanOutlineNeeds(input);
@@ -147,7 +87,7 @@ export async function listPlanOutlineNeedsStep(input: {
 export async function listSkillExtensionsStep(input: {
   days: number;
   goalId: string;
-}): Promise<CourseExtensionRequest[]> {
+}): Promise<CourseOutlineNeed[]> {
   "use step";
 
   return listSkillExtensions(input);

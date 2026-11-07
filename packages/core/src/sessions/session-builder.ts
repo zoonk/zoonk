@@ -76,6 +76,8 @@ export type SessionBuildInput = {
   weakestReview?: boolean;
   /** Minutes left under the learner's daily limit, or null without one. */
   remainingLimitMinutes: number | null;
+  /** Today's minutes for lessons someone is still writing: practice and review leave them free so those lessons fit once written. */
+  writingMinutes?: number;
   /** Each practice topic's name and area as the plan shows them (`getPlanTopics`). */
   topics: ReadonlyMap<string, PracticeTopic>;
   /** Minutes held by preserved blocks; rebuilding fills only the remaining time. */
@@ -178,7 +180,11 @@ function fillReview({
   input: SessionBuildInput;
 }): PlannedBlock[] {
   const others = blocks.filter((block) => block.kind !== "review");
-  const left = budget - others.reduce((sum, block) => sum + block.estimatedMinutes, 0);
+
+  const left =
+    budget -
+    (input.writingMinutes ?? 0) -
+    others.reduce((sum, block) => sum + block.estimatedMinutes, 0);
 
   const fillsDay =
     !input.weakestReview &&
@@ -296,7 +302,7 @@ export function buildSessionBlocks(input: SessionBuildInput): {
     ...buildPracticeBlocks({
       drills: input.drills,
       fullReviewSkillIds: input.fullReviewSkillIds,
-      minutes: Math.max(0, remaining - learnMinutes),
+      minutes: Math.max(0, remaining - learnMinutes - (input.writingMinutes ?? 0)),
       netScored: input.netScored,
       planItemId: input.reviewPlanItemId,
       planItemKey: input.reviewPlanItemKey,

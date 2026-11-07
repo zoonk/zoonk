@@ -8,9 +8,10 @@ import { type RefusedUsage } from "../entitlements/contract";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { getBandRank } from "../learner/placement/placement-graph";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
+import { type CourseOutlineNeed } from "../library/curriculum/curriculum-scope";
 import { refreshGoalPlan } from "../plans/refresh-goal-plan";
 import { getOutlineStaleBefore } from "./outline-ahead";
-import { type PlanOutlineNeed, findSkillOutlineNeed, readSkillCourses } from "./plan-outline-needs";
+import { findSkillOutlineNeed, readSkillCourses } from "./plan-outline-needs";
 import { type SkillOutline } from "./skill-outline-contract";
 
 type OwnedSkillOutline<TResult> = TResult | { status: "notFound" } | { status: "unauthorized" };
@@ -140,7 +141,7 @@ export type SkillOutlineRequest =
   | {
       analytics: { distinctId: string; goalId: string; platform: AnalyticsPlatform | null };
       forGuest: boolean;
-      need: PlanOutlineNeed;
+      need: CourseOutlineNeed;
       status: "start";
     }
   | { decision: RefusedUsage; status: "refused" };

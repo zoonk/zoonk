@@ -21,7 +21,9 @@ export function parseChallengeLessonSpec(spec: unknown): ChallengeLessonSpec | n
 
 export const CHALLENGE_KEY_PREFIX = "challenge:";
 
-const CHALLENGE_IDENTITY_PATTERN = new RegExp(`(?:^|:)${CHALLENGE_KEY_PREFIX}[\\da-f-]{36}$`, "u");
+export const CHALLENGE_LESSON_KEY_SQL_PATTERN = `(^|:)${CHALLENGE_KEY_PREFIX}[0-9a-f-]{36}$`;
+
+const CHALLENGE_IDENTITY_PATTERN = new RegExp(CHALLENGE_LESSON_KEY_SQL_PATTERN, "u");
 
 export function isChallengeIdentityKey(identityKey: string): boolean {
   return CHALLENGE_IDENTITY_PATTERN.test(identityKey);

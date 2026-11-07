@@ -53,7 +53,7 @@ internal fun syllabus(): Syllabus =
     ApiJson.decodeFromString(
         """
         {"examDocument":"guide","fromMaterial":false,"goal":{"id":"$GOAL","kind":"learn","title":"Learn Python"},
-         "kind":"modules","knownTopicsReturn":"practice","lessons":{"done":0,"known":0,"total":0},"subjects":[],
+         "kind":"modules","knownTopicsReturn":"practice","lessons":{"done":0,"known":0,"total":0},"sharedExams":[],"subjects":[],
          "topicCount":0,"topicsMapped":true}
         """.trimIndent(),
     )

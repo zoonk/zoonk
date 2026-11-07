@@ -1,4 +1,5 @@
 import { withinLessonScope } from "../../../plans/_utils/plan-end";
+import { type SharedExams } from "../../../plans/_utils/shared-exams";
 import { countItemLessons } from "../../../plans/_utils/stand-in-lessons";
 import { findUpNextItem } from "../../../plans/_utils/up-next-item";
 import { getSubjectMastery, getSubjectPreparation } from "../../../preparation/section-preparation";
@@ -24,6 +25,17 @@ import {
   namesAnyTopic,
   withHeadingStatuses,
 } from "./syllabus-topics";
+
+function getSharedWith({
+  areas,
+  shared,
+}: {
+  areas: readonly string[];
+  shared?: SharedExams;
+}): string[] {
+  const goalIds = new Set(areas.flatMap((area) => shared?.areas.get(area) ?? []));
+  return (shared?.exams ?? []).flatMap((exam) => (goalIds.has(exam.goalId) ? [exam.goalId] : []));
+}
 
 /** Count each plan item once across subjects, including tested-out items covering multiple skills. */
 function sumPlannedLessons({
@@ -87,7 +99,7 @@ function measureSubject({
 /** Topic status requires evidence from mapped plan skills; otherwise display notice topics without claiming coverage. */
 export function buildSyllabus(
   input: SyllabusInput,
-): Omit<SyllabusView, "examDocument" | "goal" | "knownTopicsReturn"> {
+): Omit<SyllabusView, "examDocument" | "goal" | "knownTopicsReturn" | "sharedExams"> {
   const {
     areaCourses,
     chapterTitles,
@@ -97,6 +109,7 @@ export function buildSyllabus(
     outlinedUntil,
     pastBasicsSkillIds,
     sections = null,
+    shared,
     skills,
     skippedAreas,
     skippedBaseIds,
@@ -181,6 +194,7 @@ export function buildSyllabus(
       notPlannedReason,
       questions: draft.questions,
       share: draft.share,
+      sharedWith: getSharedWith({ areas: draft.areas, shared }),
       shortName: getShortName({ areaCourses, draft }),
       source: draft.source,
       topicFrequencySource: draft.frequencySource ?? null,

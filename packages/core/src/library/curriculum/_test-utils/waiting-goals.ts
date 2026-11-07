@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
+import { type Course, prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { type skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -45,8 +45,11 @@ export async function waitingGoal(skill: Skill, { dailyMinutes }: { dailyMinutes
   return { goal, plan };
 }
 
-export async function outlineSkill(skill: Skill): Promise<string[]> {
-  const course = await courseFixture({ outlineStatus: "running" });
+export async function outlineSkill(
+  skill: Skill,
+  { course: givenCourse }: { course?: Pick<Course, "id"> } = {},
+): Promise<string[]> {
+  const course = givenCourse ?? (await courseFixture({ outlineStatus: "running" }));
   const word = uniqueWord();
 
   const saved = await saveOutlineChapter({

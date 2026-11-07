@@ -1,4 +1,5 @@
 import "server-only";
+import { type TransactionClient } from "@zoonk/db";
 import { trackPlanEdited } from "../analytics/track-plan-edited";
 import { oweGoalLessons } from "../follow-ups/owe-goal-lessons";
 import {
@@ -80,8 +81,6 @@ export async function changeGoalPlan({
     const setBack = await undoSetBack({ context: owned.context, operations: input.operations });
 
     if (setBack) {
-      await oweGoalLessons({ goalId: goal.id, userId: goal.userId });
-
       trackPlanEdited({
         changeKind: input.operations.map((operation) => operation.kind).join(","),
         enabled: trackAnalytics,
@@ -94,6 +93,8 @@ export async function changeGoalPlan({
 
     const request = {
       context: owned.context,
+      extraWrites: (tx: TransactionClient) =>
+        oweGoalLessons({ db: tx, goalId: goal.id, userId: goal.userId }),
       followToday: !input.operations.every((operation) => isChallengeMove(operation)),
       operations: input.operations,
       reason: LEARNER_CHANGE_NOTE,
@@ -108,7 +109,6 @@ export async function changeGoalPlan({
     }
 
     const change = result.status === "saved" ? null : await loadPlanChangeView(result.changeId);
-    await oweGoalLessons({ goalId: goal.id, userId: goal.userId });
 
     trackPlanEdited({
       changeKind: input.operations.map((operation) => operation.kind).join(","),

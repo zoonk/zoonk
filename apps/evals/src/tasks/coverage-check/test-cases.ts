@@ -29,6 +29,7 @@ function placed({
 }
 
 const CAMARA_SUBJECTS = { politics: "Ciência Política", portuguese: "Língua Portuguesa" };
+const LAW_SUBJECT = "Conhecimentos em Direito";
 
 export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] = [
   {
@@ -41,6 +42,7 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
     },
     id: "pt-enem-matematica-planted-gaps",
     userInput: {
+      courses: [{ key: "matematica", title: "Matemática" }],
       goal: "Passar no ENEM 2026",
       goalKind: "exam",
       language: "pt",
@@ -85,6 +87,7 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
     },
     id: "en-intro-stats-syllabus",
     userInput: {
+      courses: [{ key: "statistics", title: "Statistics" }],
       goal: "Learn introductory statistics at a university level",
       goalKind: "learn",
       language: "en",
@@ -130,6 +133,7 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
     },
     id: "en-quantum-mechanics-two-syllabi",
     userInput: {
+      courses: [{ key: "quantum", title: "Quantum mechanics" }],
       goal: "Master quantum physics from scratch",
       goalKind: "learn",
       language: "en",
@@ -172,6 +176,7 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
     expected: { gaps: [] },
     id: "es-python-no-gaps",
     userInput: {
+      courses: [{ key: "python", title: "Python" }],
       goal: "Aprender a programar en Python",
       goalKind: "learn",
       language: "es",
@@ -206,11 +211,16 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
   {
     expected: {
       examWeights: [{ key: "linear-equations", max: 5, min: 4 }],
+      gapCourses: ["english"],
       gapWeights: [{ max: 4, min: 2 }],
       gaps: ["Expression of ideas"],
     },
     id: "en-sat-blueprint-weights",
     userInput: {
+      courses: [
+        { key: "english", title: "English language" },
+        { key: "math", title: "Mathematics" },
+      ],
       goal: "Pass the SAT in March",
       goalKind: "exam",
       language: "en",
@@ -255,6 +265,7 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
   },
   {
     expected: {
+      gapCourses: ["ciencia-politica"],
       gaps: ["5 Sistemas eleitorais"],
       placements: [
         { key: "crase", topics: ["5.7 Emprego do sinal indicativo de crase"] },
@@ -263,6 +274,10 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
     },
     id: "pt-camara-notice-topics",
     userInput: {
+      courses: [
+        { key: "ciencia-politica", title: CAMARA_SUBJECTS.politics },
+        { key: "portugues", title: CAMARA_SUBJECTS.portuguese },
+      ],
       examOutline: {
         name: "Concurso da Câmara dos Deputados, Analista Legislativo",
         notes: ["Scoring: cada item errado anula um item certo"],
@@ -345,9 +360,62 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
     },
   },
   {
+    expected: {
+      gapCourses: ["penal", "administrativo"],
+      gaps: ["1 Crimes de falsidade documental", "4 Improbidade administrativa"],
+    },
+    id: "pt-notice-subject-combines-disciplines",
+    userInput: {
+      courses: [
+        { key: "administrativo", title: "Direito Administrativo" },
+        { key: "penal", title: "Direito Penal" },
+      ],
+      examOutline: {
+        name: "Concurso do Tribunal de Justiça, Escrevente Técnico Judiciário",
+        notes: [],
+        subjects: [
+          {
+            group: null,
+            name: LAW_SUBJECT,
+            questions: null,
+            topics: [
+              "1 Crimes de falsidade documental",
+              "2 Atos administrativos",
+              "3 Peculato e concussão",
+              "4 Improbidade administrativa",
+            ],
+            weight: null,
+          },
+        ],
+        topicFrequency: [],
+      },
+      goal: "quero passar no concurso de escrevente do tribunal de justiça",
+      goalKind: "exam",
+      language: "pt",
+      references: [],
+      skills: [
+        placed({
+          area: LAW_SUBJECT,
+          examWeight: 3,
+          key: "atos",
+          name: "Aplicar as regras dos atos administrativos",
+          topics: ["2 Atos administrativos"],
+        }),
+        placed({
+          area: LAW_SUBJECT,
+          examWeight: 3,
+          key: "peculato",
+          name: "Distinguir peculato de concussão",
+          topics: ["3 Peculato e concussão"],
+        }),
+      ],
+    },
+  },
+  {
     expected: { gaps: ["第6回：標本分布と中心極限定理", "第9回：カイ二乗検定"] },
     id: "ja-intro-stats-syllabus",
     userInput: {
+      courses: [{ key: "statistics", title: "統計学" }],
       goal: "大学の統計学入門の単位を取る",
       goalKind: "learn",
       language: "ja",
@@ -383,6 +451,7 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
     expected: { gaps: ["7주차: 딕셔너리와 집합", "10주차: 예외 처리"] },
     id: "ko-python-syllabus",
     userInput: {
+      courses: [{ key: "python", title: "파이썬" }],
       goal: "교양 파이썬 수업에서 좋은 학점 받기",
       goalKind: "learn",
       language: "ko",
@@ -419,6 +488,7 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
     expected: { gaps: ["5. Hafta: Kâr ve zarar hesapları", "8. Hafta: Bileşik faiz"] },
     id: "tr-business-math-syllabus",
     userInput: {
+      courses: [{ key: "ticari-matematik", title: "Ticari Matematik" }],
       goal: "Ticari matematik dersini geçmek",
       goalKind: "learn",
       language: "tr",

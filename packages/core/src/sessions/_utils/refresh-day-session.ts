@@ -8,7 +8,6 @@ import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-mi
 import { type PlannedBlock, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { ONE_PER_DAY, hasSameContent } from "./day-block-content";
 import { loadDayPlan } from "./day-plan";
-import { AWAITING_OUTLINES_VERSION, loadDayPlanVersion } from "./day-plan-version";
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
 import { oweStartedDaySettlements } from "./owe-started-day-settlements";
@@ -190,14 +189,6 @@ async function replaceNotStartedBlocks({
   // A rest day must not fill from future lessons outside its selected allocation.
   const selection = selected ?? (await selectDayPlan(context)) ?? undefined;
 
-  const planVersion = await loadDayPlanVersion({
-    goal: day.goal,
-    localDate: session.localDate,
-    plan: selection
-      ? { graph: selection.state.graph, version: selection.context.plan.version }
-      : undefined,
-  });
-
   const unstarted = session.status === "planned" && session.startedAt === null && kept.length === 0;
 
   const { blocks: planned, plan } =
@@ -215,10 +206,9 @@ async function replaceNotStartedBlocks({
     ? await prepareSelectedPlanSave({ selection, shown: persistsPlan })
     : null;
 
-  const savedVersion =
-    planVersion === AWAITING_OUTLINES_VERSION || !selection
-      ? planVersion
-      : selection.context.plan.version + Number(prepared?.kind === "computed");
+  const savedVersion = selection
+    ? selection.context.plan.version + Number(prepared?.kind === "computed")
+    : null;
 
   const facts = await loadRebuildMissionFacts({
     blocks: planned,
@@ -253,12 +243,8 @@ async function replaceNotStartedBlocks({
       }
 
       if (unchanged) {
-        // Ended days keep their binding; the outline append owns clearing its waiting marker.
-        if (
-          locked.status !== "completed" &&
-          locked.planVersion !== AWAITING_OUTLINES_VERSION &&
-          locked.planVersion !== savedVersion
-        ) {
+        // Ended days keep their binding.
+        if (locked.status !== "completed" && locked.planVersion !== savedVersion) {
           await transaction.studySession.update({
             data: { planVersion: savedVersion },
             where: { id: session.id },

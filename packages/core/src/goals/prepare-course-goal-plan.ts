@@ -4,7 +4,6 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { type AnalyticsPlatform } from "../analytics/shared-properties";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { parsePlanGraph } from "../plans/planner/plan-state";
-import { loadCourseExam } from "./_utils/course-exam";
 import { loadCourseOutline, plansFromCourseOutline } from "./_utils/course-outline";
 import { toCoursePlanGraph } from "./_utils/course-plan-graph";
 import { readCourseStart } from "./course-start-details";
@@ -36,8 +35,12 @@ export async function prepareCourseGoalPlan({
 
   const [outline, exam] = await Promise.all([
     loadCourseOutline({ courseId: course.id, userId: goal.userId }),
-    loadCourseExam(course.id),
+    goal.examBlueprintId
+      ? prisma.examSkillGraph.findUnique({ where: { examBlueprintId: goal.examBlueprintId } })
+      : null,
   ]);
+
+  const examGraph = exam ? parsePlanGraph(exam.graph) : null;
 
   if (
     !plansFromCourseOutline({
@@ -45,7 +48,7 @@ export async function prepareCourseGoalPlan({
       chapters: outline,
       courseFormat: course.format,
       courseId: course.id,
-      examGraph: exam?.graph ?? null,
+      examGraph,
       outlineStatus: course.outlineStatus,
     })
   ) {
@@ -55,7 +58,7 @@ export async function prepareCourseGoalPlan({
   const graph = toCoursePlanGraph({
     chapters: outline,
     course,
-    examGraph: exam?.graph,
+    examGraph,
     startChapterId: start.chapterId,
   });
 

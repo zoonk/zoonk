@@ -3,6 +3,8 @@
 {
   "goalcontent_adjust_plan": "82f960a5d67f7b4628176172034c2e7886ba926c8e32191c60bb49a99f14cabb",
   "goalcontent_also": "c9171495ed1b95ac9a14b3365e6e09905216f925c859ccbed372e11858dfc185",
+  "goalcontent_also_in_exam_count": "b99e38ce17c607fa171a2b1c4b35b783b0b427b74372cf01b3cfe1c916f19e59",
+  "goalcontent_also_in_exams": "cb509c44a2b9ffe6b9b605e29a90a097d60129edb6ceabf3c9dbf17b5b2b313c",
   "goalcontent_also_in_plan": "0d6be97279fc0db18500117b2271abe42f235c2e5b1e6c3b020540643c8e1f42",
   "goalcontent_appears_a_lot": "e429d92222de9ec090cea92d5051b02b3db77f5104ce6167b38248d46841c918",
   "goalcontent_beyond_guide": "bb7b439bfac35c1e8886411f7229d7cf34357e8c50288d6cb2dbc72f2545287e",
@@ -63,6 +65,9 @@
   "goalcontent_save_failed": "af0a00389dae73c8b5deb7763fd81afb0fe22f7e5bb376b733e36b12b04d5903",
   "goalcontent_see_all": "e00b920319e041e1a88b8010462446b2a153080faabbe0b75d44305c3b72d665",
   "goalcontent_share_of_exam": "a6b7cc6517f53797bcb27ebf758d2154ef77a3d3b120c53aca3193f61bea587d",
+  "goalcontent_shared_exams_counted": "3072fcd2ddd79be93bd29b97f5a50e1fb13dd6a37ffd429086ad7b5c4f88d6de",
+  "goalcontent_shared_exams_named": "ae45f1d6b0f713bf97cd2006c4df6063af59ca87dfe7b922b893f6c773cee8f7",
+  "goalcontent_shared_exams_practice": "ddd88115abff20afef4149f262a37197ba3850aba75adaecbbb23a0bbda66f57",
   "goalcontent_skill_count": "95e0f3a374b98886b1c14ddac2ca46c43b39a7bd6105ba6fd3ed06edfec4c292",
   "goalcontent_skill_learning": "a9dc2c9441e033c7a2af41cb951a0d0159745338a108b6c583e2012c7ff9f290",
   "goalcontent_skill_mastered": "79a73b9146e45380a68c0b627dfc01e3e8ade0d9a8286b06c56b501c3aec4f89",
@@ -184,6 +189,27 @@
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">%1$s, à %2$s, compte %3$s de plus, alors ton plan leur consacre plus de temps. Pondérations fournies par %4$s.</string>
     <string name="goalcontent_course_weights_even">%1$s, à %2$s, accorde le même poids à chaque partie de l’examen. Pondérations fournies par %3$s.</string>
+    <!-- On one exam's plan. %1$s names the learner's other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_named">
+        <item quantity="one">Les sujets aussi au programme de %1$s comptent pour les deux examens : tu ne les étudies qu’une fois.</item>
+        <item quantity="many">Les sujets aussi au programme de %1$s comptent pour chaque examen concerné : tu ne les étudies qu’une fois.</item>
+        <item quantity="other">Les sujets aussi au programme de %1$s comptent pour chaque examen concerné : tu ne les étudies qu’une fois.</item>
+    </plurals>
+    <!-- On one exam's plan, when the learner has several other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_counted">
+        <item quantity="one">Les sujets aussi au programme de %d autre examen comptent pour les deux examens : tu ne les étudies qu’une fois.</item>
+        <item quantity="many">Les sujets aussi au programme de %d autres examens comptent pour chaque examen concerné : tu ne les étudies qu’une fois.</item>
+        <item quantity="other">Les sujets aussi au programme de %d autres examens comptent pour chaque examen concerné : tu ne les étudies qu’une fois.</item>
+    </plurals>
+    <string name="goalcontent_shared_exams_practice">L’entraînement respecte le format de chaque examen.</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams named in %1$s also test. -->
+    <string name="goalcontent_also_in_exams">Aussi au programme de %1$s</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams also test. -->
+    <plurals name="goalcontent_also_in_exam_count">
+        <item quantity="one">Aussi au programme de %d examen</item>
+        <item quantity="many">Aussi au programme de %d examens</item>
+        <item quantity="other">Aussi au programme de %d examens</item>
+    </plurals>
     <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
     <string name="goalcontent_subject">Matière</string>
     <!-- Eyebrow of a subject's page for a module of the learner's plan. -->

@@ -1,5 +1,7 @@
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
+import { courseChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { followPlanToday } from "../plans/_utils/follow-plan-today";
@@ -36,7 +38,31 @@ async function openPlannedDay(persona: "buddy" | "hugeGoal" = "hugeGoal") {
   });
 
   const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
-  const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+
+  const original = await prisma.goal.findUniqueOrThrow({
+    include: { primaryCourse: { include: { courseChapters: true } } },
+    where: { id: goalId },
+  });
+
+  const course = await courseFixture({
+    format: original.primaryCourse?.format,
+    language: original.language,
+    outlineStatus: "completed",
+    targetLanguage: original.targetLanguage,
+    updatedAt: new Date(Date.now() - 1),
+  });
+
+  await Promise.all(
+    (original.primaryCourse?.courseChapters ?? []).map((placement) =>
+      courseChapterFixture({ ...placement, courseId: course.id }),
+    ),
+  );
+
+  const goal = await prisma.goal.update({
+    data: { primaryCourseId: course.id },
+    where: { id: goalId },
+  });
+
   const timeZone = goal.timezone ?? "UTC";
 
   await prisma.studySession.delete({ where: { id: seeded.id } });
@@ -102,7 +128,7 @@ describe("an unstarted day after a plan change", () => {
     vi.useRealTimers();
   });
 
-  it("keeps today's blocks and says no session change for a future rest day", async () => {
+  it("rebuilds an unstarted day to hold lesson-writing time after a future rest day is added", async () => {
     const { before, goal, plan, timeZone } = await openPlannedSunday();
 
     const { changed, proposal } = await applyFutureRestDay({
@@ -117,8 +143,21 @@ describe("an unstarted day after a plan change", () => {
     });
 
     const savedPlan = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
-    expect.soft(after).toStrictEqual({ ...before, planVersion: savedPlan.version });
-    expect.soft(changed).toMatchObject({ change: { todaySession: null }, status: "updated" });
+
+    expect(after).toStrictEqual({
+      ...before,
+      blocks: after.blocks,
+      planVersion: savedPlan.version,
+      plannedMinutes: 25,
+    });
+
+    expect(after.blocks).toMatchObject([
+      { estimatedMinutes: 5, kind: "learn", lessonId: before.blocks[0]?.lessonId },
+      { estimatedMinutes: 5, kind: "practice" },
+      { estimatedMinutes: 15, kind: "checkpoint", payload: before.blocks[2]?.payload },
+    ]);
+
+    expect(changed).toMatchObject({ change: { todaySession: "changed" }, status: "updated" });
 
     const context = await loadPlanContext({ goal, now: NOW, timeZone });
 
@@ -203,7 +242,7 @@ describe("a started day after a plan change", () => {
     vi.useRealTimers();
   });
 
-  it("keeps the rest of the day for a future rest day, without lessons from later days", async () => {
+  it("keeps started work and rebuilds the rest to hold lesson-writing time without later lessons", async () => {
     const { before, goal, plan, timeZone } = await openPlannedDay();
     const first = before.blocks[0];
 
@@ -225,7 +264,20 @@ describe("a started day after a plan change", () => {
     });
 
     const savedPlan = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
-    expect.soft(after).toStrictEqual({ ...started, planVersion: savedPlan.version });
-    expect.soft(changed).toMatchObject({ change: { todaySession: null }, status: "updated" });
+
+    expect(after).toStrictEqual({
+      ...started,
+      blocks: after.blocks,
+      planVersion: savedPlan.version,
+      plannedMinutes: 9,
+    });
+
+    expect(after.blocks).toMatchObject([
+      started.blocks[0],
+      { estimatedMinutes: 5, kind: "learn", lessonId: started.blocks[1]?.lessonId },
+      { estimatedMinutes: 3, kind: "practice" },
+    ]);
+
+    expect(changed).toMatchObject({ change: { todaySession: "changed" }, status: "updated" });
   });
 });

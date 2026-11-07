@@ -74,6 +74,7 @@ async function SubjectBody({ params }: Props) {
         kind: result.syllabus.kind,
         knownTopicsReturn: result.syllabus.knownTopicsReturn,
         questionsSource: result.syllabus.questionsSource,
+        sharedExams: result.syllabus.sharedExams,
         writtenPractice: result.syllabus.writtenPractice,
       }}
       tutor={tutor}

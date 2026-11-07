@@ -3,9 +3,21 @@
   "results": [
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -78,9 +90,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -153,12 +177,26 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "gaps": [] },
+        "expected": {
+          "gaps": []
+        },
         "id": "es-python-no-gaps-1",
         "userInput": {
           "goal": "Aprender a programar en Python",
@@ -217,183 +255,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": {
-          "examWeights": [{ "key": "linear-equations", "max": 5, "min": 4 }],
-          "gapWeights": [{ "max": 4, "min": 2 }],
-          "gaps": ["Expression of ideas"]
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
         },
-        "id": "en-sat-blueprint-weights-1",
-        "userInput": {
-          "goal": "Pass the SAT in March",
-          "goalKind": "exam",
-          "language": "en",
-          "references": [
-            {
-              "text": "EXAM: SAT\nSUBJECTS:\n- Reading and Writing (weight 50%): Craft and structure; Information and ideas; Standard English conventions; Expression of ideas\n- Math (weight 50%): Algebra; Advanced math; Problem-solving and data analysis; Geometry and trigonometry\nTOPIC_FREQUENCY:\n- Math / Algebra: high\n- Math / Advanced math: high\n- Math / Problem-solving and data analysis: medium\n- Math / Geometry and trigonometry: low\n- Reading and Writing / Standard English conventions: high\n- Reading and Writing / Information and ideas: medium\n- Reading and Writing / Craft and structure: medium\n- Reading and Writing / Expression of ideas: medium",
-              "title": "SAT"
-            }
-          ],
-          "skills": [
-            {
-              "description": "Solve linear equations, inequalities and systems.",
-              "key": "linear-equations",
-              "name": "Solve linear equations, inequalities and systems",
-              "examWeight": 1
-            },
-            {
-              "description": "Solve quadratic, exponential and other nonlinear equations.",
-              "key": "nonlinear",
-              "name": "Solve quadratic, exponential and other nonlinear equations",
-              "examWeight": 5
-            },
-            {
-              "description": "Interpret ratios, percentages, probability and data displays.",
-              "key": "data-analysis",
-              "name": "Interpret ratios, percentages, probability and data displays",
-              "examWeight": 3
-            },
-            {
-              "description": "Find areas, volumes, circle measures and right-triangle ratios.",
-              "key": "geometry",
-              "name": "Find areas, volumes, circle measures and right-triangle ratios",
-              "examWeight": 2
-            },
-            {
-              "description": "Apply standard English grammar, usage and punctuation.",
-              "key": "conventions",
-              "name": "Apply standard English grammar, usage and punctuation",
-              "examWeight": 5
-            },
-            {
-              "description": "Find central ideas, inferences and supporting evidence.",
-              "key": "central-ideas",
-              "name": "Find central ideas, inferences and supporting evidence",
-              "examWeight": 3
-            },
-            {
-              "description": "Determine a word's meaning and a text's structure and purpose.",
-              "key": "words-in-context",
-              "name": "Determine a word's meaning and a text's structure and purpose",
-              "examWeight": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": {
-          "gaps": ["5 Sistemas eleitorais"],
-          "placements": [
-            { "key": "crase", "topics": ["5.7 Emprego do sinal indicativo de crase"] },
-            { "key": "concordancia", "topics": ["5.5 Concordância verbal e nominal"] }
-          ]
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
         },
-        "id": "pt-camara-notice-topics-1",
-        "userInput": {
-          "examOutline": {
-            "name": "Concurso da Câmara dos Deputados, Analista Legislativo",
-            "notes": ["Scoring: cada item errado anula um item certo"],
-            "subjects": [
-              {
-                "group": "Conhecimentos básicos (P1)",
-                "name": "Língua Portuguesa",
-                "questions": null,
-                "topics": [
-                  "1 Compreensão e interpretação de textos de gêneros variados",
-                  "3 Domínio da ortografia",
-                  "5 Domínio da estrutura morfossintática do período",
-                  "5.5 Concordância verbal e nominal",
-                  "5.7 Emprego do sinal indicativo de crase"
-                ],
-                "weight": null
-              },
-              {
-                "group": "Conhecimentos específicos (P2)",
-                "name": "Ciência Política",
-                "questions": null,
-                "topics": [
-                  "1 Regimes políticos",
-                  "2 Sistemas e formas de governo",
-                  "5 Sistemas eleitorais"
-                ],
-                "weight": null
-              }
-            ],
-            "topicFrequency": []
-          },
-          "goal": "quero passar no concurso da câmara dos deputados para analista legislativo",
-          "goalKind": "exam",
-          "language": "pt",
-          "references": [],
-          "skills": [
-            {
-              "description": "Interpretar textos de gêneros variados.",
-              "key": "leitura",
-              "name": "Interpretar textos de gêneros variados",
-              "examWeight": 4,
-              "area": "Língua Portuguesa",
-              "topics": ["1 Compreensão e interpretação de textos de gêneros variados"]
-            },
-            {
-              "description": "Aplicar as regras de ortografia.",
-              "key": "ortografia",
-              "name": "Aplicar as regras de ortografia",
-              "examWeight": 3,
-              "area": "Língua Portuguesa",
-              "topics": ["3 Domínio da ortografia"]
-            },
-            {
-              "description": "Empregar o acento grave indicativo de crase.",
-              "key": "crase",
-              "name": "Empregar o acento grave indicativo de crase",
-              "examWeight": 4,
-              "area": "Língua Portuguesa",
-              "topics": []
-            },
-            {
-              "description": "Fazer a concordância do verbo e do nome.",
-              "key": "concordancia",
-              "name": "Fazer a concordância do verbo e do nome",
-              "examWeight": 4,
-              "area": "Língua Portuguesa",
-              "topics": []
-            },
-            {
-              "description": "Comparar regimes políticos.",
-              "key": "regimes",
-              "name": "Comparar regimes políticos",
-              "examWeight": 3,
-              "area": "Ciência Política",
-              "topics": ["1 Regimes políticos"]
-            },
-            {
-              "description": "Distinguir sistemas e formas de governo.",
-              "key": "governo",
-              "name": "Distinguir sistemas e formas de governo",
-              "examWeight": 3,
-              "area": "Ciência Política",
-              "topics": ["2 Sistemas e formas de governo"]
-            }
-          ]
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
         }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
@@ -460,12 +336,29 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "gaps": ["第6回：標本分布と中心極限定理", "第9回：カイ二乗検定"] },
+        "expected": {
+          "gaps": [
+            "第6回：標本分布と中心極限定理",
+            "第9回：カイ二乗検定"
+          ]
+        },
         "id": "ja-intro-stats-syllabus-1",
         "userInput": {
           "goal": "大学の統計学入門の単位を取る",
@@ -519,12 +412,29 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "gaps": ["7주차: 딕셔너리와 집합", "10주차: 예외 처리"] },
+        "expected": {
+          "gaps": [
+            "7주차: 딕셔너리와 집합",
+            "10주차: 예외 처리"
+          ]
+        },
         "id": "ko-python-syllabus-1",
         "userInput": {
           "goal": "교양 파이썬 수업에서 좋은 학점 받기",
@@ -578,12 +488,29 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "gaps": ["5. Hafta: Kâr ve zarar hesapları", "8. Hafta: Bileşik faiz"] },
+        "expected": {
+          "gaps": [
+            "5. Hafta: Kâr ve zarar hesapları",
+            "8. Hafta: Bileşik faiz"
+          ]
+        },
         "id": "tr-business-math-syllabus-1",
         "userInput": {
           "goal": "Ticari matematik dersini geçmek",
@@ -601,7 +528,11 @@
               "key": "ratios",
               "name": "Oran ve orantı problemlerini çözmek"
             },
-            { "description": "Yüzde hesaplamak.", "key": "percent", "name": "Yüzde hesaplamak" },
+            {
+              "description": "Yüzde hesaplamak.",
+              "key": "percent",
+              "name": "Yüzde hesaplamak"
+            },
             {
               "description": "KDV dahil ve hariç fiyatı bulmak.",
               "key": "vat",
@@ -621,6 +552,354 @@
               "description": "Taksitli ödemenin toplam maliyetini bulmak.",
               "key": "installments",
               "name": "Taksitli ödemenin toplam maliyetini bulmak"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "examWeights": [
+            {
+              "key": "linear-equations",
+              "max": 5,
+              "min": 4
+            }
+          ],
+          "gapCourses": [
+            "english"
+          ],
+          "gapWeights": [
+            {
+              "max": 4,
+              "min": 2
+            }
+          ],
+          "gaps": [
+            "Expression of ideas"
+          ]
+        },
+        "id": "en-sat-blueprint-weights-1",
+        "userInput": {
+          "courses": [
+            {
+              "key": "english",
+              "title": "English language"
+            },
+            {
+              "key": "math",
+              "title": "Mathematics"
+            }
+          ],
+          "goal": "Pass the SAT in March",
+          "goalKind": "exam",
+          "language": "en",
+          "references": [
+            {
+              "text": "EXAM: SAT\nSUBJECTS:\n- Reading and Writing (weight 50%): Craft and structure; Information and ideas; Standard English conventions; Expression of ideas\n- Math (weight 50%): Algebra; Advanced math; Problem-solving and data analysis; Geometry and trigonometry\nTOPIC_FREQUENCY:\n- Math / Algebra: high\n- Math / Advanced math: high\n- Math / Problem-solving and data analysis: medium\n- Math / Geometry and trigonometry: low\n- Reading and Writing / Standard English conventions: high\n- Reading and Writing / Information and ideas: medium\n- Reading and Writing / Craft and structure: medium\n- Reading and Writing / Expression of ideas: medium",
+              "title": "SAT"
+            }
+          ],
+          "skills": [
+            {
+              "description": "Solve linear equations, inequalities and systems.",
+              "key": "linear-equations",
+              "name": "Solve linear equations, inequalities and systems",
+              "examWeight": 1
+            },
+            {
+              "description": "Solve quadratic, exponential and other nonlinear equations.",
+              "key": "nonlinear",
+              "name": "Solve quadratic, exponential and other nonlinear equations",
+              "examWeight": 5
+            },
+            {
+              "description": "Interpret ratios, percentages, probability and data displays.",
+              "key": "data-analysis",
+              "name": "Interpret ratios, percentages, probability and data displays",
+              "examWeight": 3
+            },
+            {
+              "description": "Find areas, volumes, circle measures and right-triangle ratios.",
+              "key": "geometry",
+              "name": "Find areas, volumes, circle measures and right-triangle ratios",
+              "examWeight": 2
+            },
+            {
+              "description": "Apply standard English grammar, usage and punctuation.",
+              "key": "conventions",
+              "name": "Apply standard English grammar, usage and punctuation",
+              "examWeight": 5
+            },
+            {
+              "description": "Find central ideas, inferences and supporting evidence.",
+              "key": "central-ideas",
+              "name": "Find central ideas, inferences and supporting evidence",
+              "examWeight": 3
+            },
+            {
+              "description": "Determine a word's meaning and a text's structure and purpose.",
+              "key": "words-in-context",
+              "name": "Determine a word's meaning and a text's structure and purpose",
+              "examWeight": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gapCourses": [
+            "ciencia-politica"
+          ],
+          "gaps": [
+            "5 Sistemas eleitorais"
+          ],
+          "placements": [
+            {
+              "key": "crase",
+              "topics": [
+                "5.7 Emprego do sinal indicativo de crase"
+              ]
+            },
+            {
+              "key": "concordancia",
+              "topics": [
+                "5.5 Concordância verbal e nominal"
+              ]
+            }
+          ]
+        },
+        "id": "pt-camara-notice-topics-1",
+        "userInput": {
+          "courses": [
+            {
+              "key": "ciencia-politica",
+              "title": "Ciência Política"
+            },
+            {
+              "key": "portugues",
+              "title": "Língua Portuguesa"
+            }
+          ],
+          "examOutline": {
+            "name": "Concurso da Câmara dos Deputados, Analista Legislativo",
+            "notes": [
+              "Scoring: cada item errado anula um item certo"
+            ],
+            "subjects": [
+              {
+                "group": "Conhecimentos básicos (P1)",
+                "name": "Língua Portuguesa",
+                "questions": null,
+                "topics": [
+                  "1 Compreensão e interpretação de textos de gêneros variados",
+                  "3 Domínio da ortografia",
+                  "5 Domínio da estrutura morfossintática do período",
+                  "5.5 Concordância verbal e nominal",
+                  "5.7 Emprego do sinal indicativo de crase"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos específicos (P2)",
+                "name": "Ciência Política",
+                "questions": null,
+                "topics": [
+                  "1 Regimes políticos",
+                  "2 Sistemas e formas de governo",
+                  "5 Sistemas eleitorais"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "quero passar no concurso da câmara dos deputados para analista legislativo",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Interpretar textos de gêneros variados.",
+              "key": "leitura",
+              "name": "Interpretar textos de gêneros variados",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": [
+                "1 Compreensão e interpretação de textos de gêneros variados"
+              ]
+            },
+            {
+              "description": "Aplicar as regras de ortografia.",
+              "key": "ortografia",
+              "name": "Aplicar as regras de ortografia",
+              "examWeight": 3,
+              "area": "Língua Portuguesa",
+              "topics": [
+                "3 Domínio da ortografia"
+              ]
+            },
+            {
+              "description": "Empregar o acento grave indicativo de crase.",
+              "key": "crase",
+              "name": "Empregar o acento grave indicativo de crase",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": []
+            },
+            {
+              "description": "Fazer a concordância do verbo e do nome.",
+              "key": "concordancia",
+              "name": "Fazer a concordância do verbo e do nome",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": []
+            },
+            {
+              "description": "Comparar regimes políticos.",
+              "key": "regimes",
+              "name": "Comparar regimes políticos",
+              "examWeight": 3,
+              "area": "Ciência Política",
+              "topics": [
+                "1 Regimes políticos"
+              ]
+            },
+            {
+              "description": "Distinguir sistemas e formas de governo.",
+              "key": "governo",
+              "name": "Distinguir sistemas e formas de governo",
+              "examWeight": 3,
+              "area": "Ciência Política",
+              "topics": [
+                "2 Sistemas e formas de governo"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Found 0 of 2 gaps with 0 false alarms. Missed: 1 Crimes de falsidade documental; 4 Improbidade administrativa.",
+          "kind": "majorErrors",
+          "score": 8.67
+        },
+        {
+          "conclusion": "Found 0 of 2 gaps with 0 false alarms. Missed: 1 Crimes de falsidade documental; 4 Improbidade administrativa.",
+          "kind": "minorErrors",
+          "score": 8.67
+        },
+        {
+          "conclusion": "Found 0 of 2 gaps with 0 false alarms. Missed: 1 Crimes de falsidade documental; 4 Improbidade administrativa.",
+          "kind": "potentialImprovements",
+          "score": 8.67
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gapCourses": [
+            "penal",
+            "administrativo"
+          ],
+          "gaps": [
+            "1 Crimes de falsidade documental",
+            "4 Improbidade administrativa"
+          ]
+        },
+        "id": "pt-notice-subject-combines-disciplines-1",
+        "userInput": {
+          "courses": [
+            {
+              "key": "administrativo",
+              "title": "Direito Administrativo"
+            },
+            {
+              "key": "penal",
+              "title": "Direito Penal"
+            }
+          ],
+          "examOutline": {
+            "name": "Concurso do Tribunal de Justiça, Escrevente Técnico Judiciário",
+            "notes": [],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Conhecimentos em Direito",
+                "questions": null,
+                "topics": [
+                  "1 Crimes de falsidade documental",
+                  "2 Atos administrativos",
+                  "3 Peculato e concussão",
+                  "4 Improbidade administrativa"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "quero passar no concurso de escrevente do tribunal de justiça",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Aplicar as regras dos atos administrativos.",
+              "key": "atos",
+              "name": "Aplicar as regras dos atos administrativos",
+              "examWeight": 3,
+              "area": "Conhecimentos em Direito",
+              "topics": [
+                "2 Atos administrativos"
+              ]
+            },
+            {
+              "description": "Distinguir peculato de concussão.",
+              "key": "peculato",
+              "name": "Distinguir peculato de concussão",
+              "examWeight": 3,
+              "area": "Conhecimentos em Direito",
+              "topics": [
+                "3 Peculato e concussão"
+              ]
             }
           ]
         }

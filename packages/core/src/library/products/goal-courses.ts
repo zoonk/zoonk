@@ -42,16 +42,33 @@ async function findProductCourseKey({ product, title }: { product: GoalProduct; 
  * course is that product's course, and a course titled as another stored product is that product's
  * main course. Everything else, and every course of a private graph, is found as before.
  */
+export async function findGoalProductCourse({
+  product,
+  provenance,
+  scope,
+  title,
+}: Pick<GoalCourseRequest, "product" | "provenance" | "scope" | "title">) {
+  if (!product || scope.ownerId !== null) {
+    return null;
+  }
+
+  const key = await findProductCourseKey({ product, title });
+
+  if (!key) {
+    return null;
+  }
+
+  return findOrCreateProductCourse({ ...key, language: scope.language, provenance });
+}
+
 export async function findGoalCourse({
   product,
   ...request
 }: GoalCourseRequest): Promise<{ course: Course; created: boolean }> {
-  const { provenance, scope, title } = request;
-  const shared = product && scope.ownerId === null;
-  const key = shared ? await findProductCourseKey({ product, title }) : null;
+  const productCourse = await findGoalProductCourse({ product, ...request });
 
-  if (key) {
-    return findOrCreateProductCourse({ ...key, language: scope.language, provenance });
+  if (productCourse) {
+    return productCourse;
   }
 
   return findOrCreateGoalCourse(request);

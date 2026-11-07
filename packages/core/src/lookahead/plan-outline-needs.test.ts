@@ -238,7 +238,7 @@ describe(listPlanOutlineNeeds, () => {
       examBlueprintFixture({ name: "OAB Exame de Ordem", role: "1ª fase" }),
     ]);
 
-    const [goal, course, skill] = await Promise.all([
+    const [goal, course, otherCourse, skill, otherSkill, option] = await Promise.all([
       goalFixture({
         examBlueprintId: blueprint.id,
         kind: "exam",
@@ -246,12 +246,27 @@ describe(listPlanOutlineNeeds, () => {
         userId: user.id,
       }),
       courseFixture({ language: "pt" }),
+      courseFixture({ language: "pt" }),
+      skillFixture({ level: "intermediate" }),
+      skillFixture({ level: "intermediate" }),
       skillFixture({ level: "intermediate" }),
     ]);
 
     const plan = await planFixture({
       goalId: goal.id,
       graph: {
+        optionSkills: [
+          {
+            after: null,
+            area: "Língua Estrangeira",
+            courseIds: [course.id],
+            lessons: 4,
+            name: option.name,
+            phase: 0,
+            skillId: option.id,
+            weight: 2,
+          },
+        ],
         phases: [{ milestone: null, name: "One" }],
         skills: [
           {
@@ -261,6 +276,15 @@ describe(listPlanOutlineNeeds, () => {
             name: skill.name,
             phase: 0,
             skillId: skill.id,
+            weight: 3,
+          },
+          {
+            area: "Direito Constitucional",
+            courseIds: [otherCourse.id],
+            lessons: 4,
+            name: otherSkill.name,
+            phase: 1,
+            skillId: otherSkill.id,
             weight: 3,
           },
         ],
@@ -287,6 +311,13 @@ describe(listPlanOutlineNeeds, () => {
     expect(need?.scope.generalGoal).toBe("OAB Exame de Ordem, 1ª fase");
 
     expect(need?.bands[0]?.skills.map((ref) => ref.area)).toStrictEqual(["Ética Profissional"]);
+
+    // A lesson in this course can carry the exam's skill from another course, or an option it left out.
+    expect(need?.skillAreas).toStrictEqual({
+      [option.id]: "Língua Estrangeira",
+      [otherSkill.id]: "Direito Constitucional",
+      [skill.id]: "Ética Profissional",
+    });
   });
 
   it("lists only the stand-ins due within the window", async () => {

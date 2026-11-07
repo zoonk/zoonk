@@ -7,6 +7,17 @@ import {
   logReplanFailureStep,
   replanWaitingGoalStep,
 } from "./steps/course-outline-steps";
+import { followWrittenLessonsStep } from "./steps/follow-written-lessons-step";
+
+async function replanAndFollow(goalId: string) {
+  const outcome = await replanWaitingGoalStep(goalId);
+
+  if (!outcome.conflict) {
+    await followWrittenLessonsStep({ askedAt: outcome.value, goalId });
+  }
+
+  return outcome;
+}
 
 /**
  * A goal that still fails to re-plan leaves the band written, not failed: its plan stays usable on
@@ -34,7 +45,7 @@ export async function replanWaitingGoals({
 
   for (const goalId of waiting) {
     // oxlint-disable-next-line no-await-in-loop -- Bound the transactions started for a popular course's waiting plans.
-    const { data, error } = await safeAsync(() => replanWaitingGoalStep(goalId));
+    const { data, error } = await safeAsync(() => replanAndFollow(goalId));
 
     if (error) {
       failures.push({ goalId, reason: error });
@@ -45,7 +56,7 @@ export async function replanWaitingGoals({
 
   for (const goalId of conflicts) {
     // oxlint-disable-next-line no-await-in-loop -- Healthy goals have already been planned before durable conflict retries wait.
-    const { error } = await safeAsync(() => retryPlanConflicts(replanWaitingGoalStep, goalId));
+    const { error } = await safeAsync(() => retryPlanConflicts(replanAndFollow, goalId));
 
     if (error) {
       failures.push({ goalId, reason: error });

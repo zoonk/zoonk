@@ -42,6 +42,7 @@ const MISSING = {
 
 async function sendCheck(params: Partial<Parameters<typeof checkCoverage>[0]>) {
   const result = await checkCoverage({
+    courses: [{ key: "statistics", title: "Statistics" }],
     goal: "Statistics",
     goalKind: "learn",
     language: "en",

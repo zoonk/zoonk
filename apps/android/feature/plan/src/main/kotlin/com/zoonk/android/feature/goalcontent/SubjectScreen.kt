@@ -278,7 +278,7 @@ private fun SubjectHero(
         )
 
         subjectFacts(subject)?.let { Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle()) }
-        knownLine(subject)?.let {
+        listOfNotNull(knownLine(subject), alsoInLine(syllabus.sharedExams, subject.sharedWith)).forEach {
             Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         }
     }

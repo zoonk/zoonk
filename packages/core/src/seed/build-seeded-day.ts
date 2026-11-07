@@ -1,7 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { type SeededToday } from "@zoonk/db/seed";
-import { loadDayPlanVersion } from "../sessions/_utils/day-plan-version";
 import { loadSessionBuildInput } from "../sessions/_utils/load-build-inputs";
 import { completeLessonPlanItems } from "../sessions/_utils/plan-items";
 import { gradeSessionAnswer, parseSessionItem } from "../sessions/_utils/session-items";
@@ -62,7 +61,7 @@ export async function buildSeededDay({ goalId, today }: { goalId: string; today:
     userId: goal.userId,
   };
 
-  const planVersion = await loadDayPlanVersion(day);
+  const plan = await prisma.plan.findUnique({ select: { version: true }, where: { goalId } });
   const input = await loadSessionBuildInput(day);
   const { blocks, plannedMinutes } = buildSessionBlocks(input);
 
@@ -76,7 +75,7 @@ export async function buildSeededDay({ goalId, today }: { goalId: string; today:
     blocks,
     freshStart: input.freshStart,
     missions: { picks: pickMissions(facts), version: 1 },
-    planVersion,
+    planVersion: plan?.version ?? null,
   });
 
   await Promise.all(
