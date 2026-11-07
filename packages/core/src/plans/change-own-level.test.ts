@@ -8,6 +8,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import * as goalSkillGraph from "../learner/_utils/goal-skill-graph";
 import { markPlansChanged } from "../learner/_utils/mark-learner-changed";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import * as planSnapshot from "./_utils/plan-snapshot";
 import { changeOwnLevel } from "./change-own-level";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
@@ -172,6 +173,94 @@ describe(changeOwnLevel, () => {
       foundation.id,
       ...library.skills.map((skill) => skill.id),
     ]);
+  });
+
+  it("rolls back a lower level when its foundations fail to save and adds them once on retry", async () => {
+    const { goal, library, plan, user } = await setup();
+    const foundation = await skillFixture({ name: `Counting ${randomUUID()}` });
+
+    await skillPrerequisiteFixture({
+      prerequisiteId: foundation.id,
+      skillId: library.skills[0]?.id ?? "",
+    });
+
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    const owedBefore = await listOwed(user.id);
+
+    // A request failure after the level write cannot safely be caused with the real database.
+    vi.spyOn(planSnapshot, "savePlanSnapshot").mockImplementationOnce(async ({ tx }) => {
+      await expect(tx.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+        details: { level: "basic" },
+      });
+
+      throw new Error("request died after saving the level");
+    });
+
+    await expect(change(goal.id, "basic")).rejects.toThrow("request died after saving the level");
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      details: { level: "intermediate" },
+    });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toStrictEqual(
+      before,
+    );
+
+    await expect(listOwed(user.id)).resolves.toStrictEqual(owedBefore);
+
+    await expect(change(goal.id, "basic")).resolves.toMatchObject({
+      ownLevel: { change: { canUndo: true, source: "ownLevel" }, direction: "lower" },
+      status: "ready",
+    });
+
+    await expect(change(goal.id, "basic")).resolves.toMatchObject({
+      ownLevel: { change: null, direction: "same" },
+      status: "ready",
+    });
+
+    await expect(graphSkillIds(plan.id)).resolves.toStrictEqual([
+      foundation.id,
+      ...library.skills.map((skill) => skill.id),
+    ]);
+
+    await expect(
+      prisma.planChange.count({
+        where: { payload: { equals: "ownLevel", path: ["source"] }, planId: plan.id },
+      }),
+    ).resolves.toBe(1);
+
+    await expect(
+      prisma.planItem.count({ where: { planId: plan.id, skillId: foundation.id } }),
+    ).resolves.toBe(1);
+  });
+
+  it("adds foundations once when the same lower level is requested concurrently", async () => {
+    const { goal, library, plan } = await setup();
+    const foundation = await skillFixture({ name: `Counting ${randomUUID()}` });
+
+    await skillPrerequisiteFixture({
+      prerequisiteId: foundation.id,
+      skillId: library.skills[0]?.id ?? "",
+    });
+
+    const results = await Promise.all([change(goal.id, "basic"), change(goal.id, "basic")]);
+    expect(results).toMatchObject([{ status: "ready" }, { status: "ready" }]);
+    await change(goal.id, "basic");
+
+    await expect(graphSkillIds(plan.id)).resolves.toStrictEqual([
+      foundation.id,
+      ...library.skills.map((skill) => skill.id),
+    ]);
+
+    await expect(
+      prisma.planChange.count({
+        where: { payload: { equals: "ownLevel", path: ["source"] }, planId: plan.id },
+      }),
+    ).resolves.toBe(1);
+
+    await expect(
+      prisma.planItem.count({ where: { planId: plan.id, skillId: foundation.id } }),
+    ).resolves.toBe(1);
   });
 
   it("raising still offers the test-outs when another write lands while they're read", async () => {
