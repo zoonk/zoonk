@@ -1,6 +1,7 @@
 import "server-only";
 import { type ExamLibrary, type LibrarySkill } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
 import { type CourseLevel, prisma } from "@zoonk/db";
+import { CHALLENGE_LESSON_KEY_SQL_PATTERN } from "../challenges/challenge-lesson-spec";
 import { findSurvivingSkill } from "../skills/_utils/find-surviving-skill";
 
 async function listExamSkillIds({
@@ -64,6 +65,7 @@ async function listCourseSkills({
       LEFT JOIN library_lessons AS lesson ON lesson.id = placement.lesson_id
         AND lesson.visibility = 'public' AND lesson.set_aside_at IS NULL
         AND lesson.language = ${language} AND lesson.target_language IS NULL
+        AND lesson.identity_key !~ ${CHALLENGE_LESSON_KEY_SQL_PATTERN}
       WHERE (chapter.course_id = ANY(${[...courseIds]}::uuid[]) AND lesson.id IS NOT NULL)
         OR chapter.skill_id = ANY(${[...skillIds]}::uuid[])
       UNION ALL
