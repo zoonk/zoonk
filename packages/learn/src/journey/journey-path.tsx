@@ -6,6 +6,7 @@ import { ChevronRightIcon, FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlusMark } from "../_components/plus-lock";
 import { DoneMark } from "../_components/status-mark";
+import { MarkedText } from "../_components/title-row";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { usePhaseName } from "../plan/use-phase-name";
@@ -124,13 +125,14 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
         </div>
 
         {state === "upcoming" && mocks.count > 0 && (
-          <p className="text-muted-foreground -mt-2.5 flex items-center gap-2 pb-1 text-xs">
-            {mocksLine({
-              count: mocks.count,
-              forNextSitting,
-              nextSitting: plan.schedule.nextSitting,
-            })}
-            {locked && <PlusMark />}
+          <p className="text-muted-foreground -mt-2.5 pb-1 text-xs">
+            <MarkedText mark={locked && <PlusMark />}>
+              {mocksLine({
+                count: mocks.count,
+                forNextSitting,
+                nextSitting: plan.schedule.nextSitting,
+              })}
+            </MarkedText>
           </p>
         )}
 

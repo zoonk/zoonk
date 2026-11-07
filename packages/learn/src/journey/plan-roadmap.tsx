@@ -5,6 +5,7 @@ import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { MeterPart, MeterParts } from "../_components/meter";
 import { StatusMark } from "../_components/status-mark";
+import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { getPhaseWeight, getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
@@ -64,12 +65,16 @@ function RoadmapCompact({
       </MeterParts>
 
       {position && (
-        <span className="flex w-full items-baseline justify-between gap-3 text-xs">
-          <span className="min-w-0 truncate">
-            <span className="font-medium">{position.name}</span>
-            {position.day && <span className="text-muted-foreground">{` · ${position.day}`}</span>}
+        <span className={cn(TITLE_ROW_CLASS, "w-full items-baseline text-xs")}>
+          <span className="flex items-baseline">
+            <span className="stacked:whitespace-normal min-w-0 truncate font-medium">
+              {position.name}
+            </span>
+            {position.day && (
+              <span className="text-muted-foreground shrink-0 whitespace-pre">{` · ${position.day}`}</span>
+            )}
           </span>
-          <span className="text-muted-foreground flex shrink-0 items-center gap-0.5 font-mono tabular-nums">
+          <span className="text-muted-foreground flex items-center gap-0.5 font-mono tabular-nums">
             <span aria-hidden="true">
               {t("{number, number} of {total, number}", {
                 number: position.number,

@@ -6,6 +6,7 @@ import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
 import { PlusMark } from "../_components/plus-lock";
 import { TestOutStartLink } from "../_components/test-out-start-link";
+import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
 import { type MissionView } from "../missions/mission-links";
@@ -229,30 +230,32 @@ export function BlockRow({
         <BlockMark block={block} />
       </span>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-px">
-        <RowTarget
-          block={block}
-          countsTowardMission={countsTowardMission}
-          isNext={isNext}
-          lessonAgainId={lessonAgainId}
-          opens={opens}
-        />
+      <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1", isNext && "items-start")}>
+        <div className="flex flex-col gap-px">
+          <RowTarget
+            block={block}
+            countsTowardMission={countsTowardMission}
+            isNext={isNext}
+            lessonAgainId={lessonAgainId}
+            opens={opens}
+          />
 
-        {!finished && <RowLines block={block} isNext={isNext} wait={wait} />}
+          {!finished && <RowLines block={block} isNext={isNext} wait={wait} />}
+        </div>
+
+        {!finished && (
+          <span className="text-muted-foreground flex h-5 items-center gap-1.5 font-mono text-xs tabular-nums">
+            {countsTowardMission && (
+              <TargetIcon
+                aria-hidden="true"
+                className="text-brain size-3.5"
+                data-slot="mission-row-mark"
+              />
+            )}
+            <RowTime minutes={block.estimatedMinutes} />
+          </span>
+        )}
       </div>
-
-      {!finished && (
-        <span className="text-muted-foreground flex h-5 shrink-0 items-center gap-1.5 font-mono text-xs tabular-nums">
-          {countsTowardMission && (
-            <TargetIcon
-              aria-hidden="true"
-              className="text-brain size-3.5"
-              data-slot="mission-row-mark"
-            />
-          )}
-          <RowTime minutes={block.estimatedMinutes} />
-        </span>
-      )}
     </li>
   );
 }
@@ -273,7 +276,9 @@ export function PlanLessonRow({
   const isNext = onOpen !== null;
 
   const name = (
-    <span className="min-w-0 flex-1 truncate text-sm leading-5 font-medium">{title}</span>
+    <span className="stacked:whitespace-normal min-w-0 flex-1 truncate text-sm leading-5 font-medium">
+      {title}
+    </span>
   );
 
   return (
@@ -288,24 +293,26 @@ export function PlanLessonRow({
         <KindMark kind="lesson" />
       </span>
 
-      {onOpen ? (
-        <button
-          aria-busy={busy || undefined}
-          aria-disabled={disabled || undefined}
-          className={cn(ROW_OPEN_CLASS, "flex-1 after:inset-x-0")}
-          data-slot="today-row-open"
-          onClick={disabled ? undefined : onOpen}
-          type="button"
-        >
-          {name}
-        </button>
-      ) : (
-        name
-      )}
+      <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1")}>
+        {onOpen ? (
+          <button
+            aria-busy={busy || undefined}
+            aria-disabled={disabled || undefined}
+            className={cn(ROW_OPEN_CLASS, "after:inset-x-0")}
+            data-slot="today-row-open"
+            onClick={disabled ? undefined : onOpen}
+            type="button"
+          >
+            {name}
+          </button>
+        ) : (
+          name
+        )}
 
-      <span className="text-muted-foreground flex h-5 shrink-0 items-center font-mono text-xs tabular-nums">
-        <RowTime minutes={minutes} />
-      </span>
+        <span className="text-muted-foreground flex h-5 items-center font-mono text-xs tabular-nums">
+          <RowTime minutes={minutes} />
+        </span>
+      </div>
     </li>
   );
 }

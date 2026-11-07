@@ -19,6 +19,7 @@ import {
 } from "./list-group";
 import { PlusMark } from "./plus-lock";
 import { StatusRegion } from "./status-region";
+import { MarkedText } from "./title-row";
 
 export type TestOutStart =
   | { limit: HelpLimit; status: "refused" }
@@ -113,9 +114,8 @@ export function TestOutStartRow({
           <KindDot kind="practice" />
         </ListRowLeading>
         <ListRowContent>
-          <ListRowTitle className="flex items-center gap-2">
-            {t("Already know this?")}
-            {plusRequired && <PlusMark />}
+          <ListRowTitle>
+            <MarkedText mark={plusRequired && <PlusMark />}>{t("Already know this?")}</MarkedText>
           </ListRowTitle>
           <ListRowDescription>
             {opening && t("Opening the test…")}

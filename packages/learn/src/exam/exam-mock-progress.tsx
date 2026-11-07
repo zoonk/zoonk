@@ -123,14 +123,16 @@ function SubjectRow({ trend, trends }: { trend: SubjectTrend; trends: boolean })
     <li className={cn(TITLE_ROW_CLASS, "min-h-11 py-2.5")}>
       <span className="text-sm leading-snug font-medium text-pretty">{trend.name}</span>
       <span className="flex flex-wrap items-center gap-x-3">
-        {trends ? (
-          <Sparkline values={trend.percents} />
-        ) : (
-          <Meter className="w-20 sm:w-36">
-            <MeterFill className="bg-success" share={latest / PERCENT} />
-          </Meter>
-        )}
-        <span className="w-10 text-right font-mono text-xs tabular-nums">{`${latest}%`}</span>
+        <span className="flex min-w-0 items-center gap-3">
+          {trends ? (
+            <Sparkline values={trend.percents} />
+          ) : (
+            <Meter className="w-20 sm:w-36">
+              <MeterFill className="bg-success" share={latest / PERCENT} />
+            </Meter>
+          )}
+          <span className="w-10 text-right font-mono text-xs tabular-nums">{`${latest}%`}</span>
+        </span>
         {trends && <SubjectChange change={trend.change} />}
       </span>
     </li>

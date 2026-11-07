@@ -7,7 +7,7 @@ import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
 import { PlusMark } from "../_components/plus-lock";
-import { TITLE_ROW_CLASS } from "../_components/title-row";
+import { MarkedText, TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
@@ -68,12 +68,12 @@ export function CheckpointRow({
         <Trickster className="-m-1 size-5" />
       </span>
       <span className={PATH_ROW_BODY_CLASS}>
-        <span
-          className={cn("flex items-center gap-2 font-medium", isDone && "text-muted-foreground")}
+        <MarkedText
+          className={cn("font-medium", isDone && "text-muted-foreground")}
+          mark={checkpoint.locked && <PlusMark />}
         >
           {t("Phase challenge")}
-          {checkpoint.locked && <PlusMark />}
-        </span>
+        </MarkedText>
 
         <span className={cn(EVENT_DATE_CLASS, !onDate && "font-sans")}>
           {isDone && t({ description: "The learner won this phase challenge.", message: "Won" })}
@@ -149,10 +149,9 @@ export function MockRow({
       </span>
       <span className={PATH_ROW_BODY_CLASS}>
         <span className="flex flex-col">
-          <span className="flex min-w-0 items-center gap-2 font-medium text-pretty">
+          <MarkedText className="font-medium text-pretty" mark={locked && <PlusMark />}>
             {forNextSitting ? t("Mock exam for the next sitting") : t("Mock exam")}
-            {locked && <PlusMark />}
-          </span>
+          </MarkedText>
           {funded?.minutes ? (
             <span className="text-muted-foreground font-mono text-xs tabular-nums">
               {formatDuration(funded.minutes)}

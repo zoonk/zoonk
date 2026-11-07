@@ -13,7 +13,8 @@ import { useShortDays } from "../plan/use-short-plan";
 import { CurrentPhaseMark } from "./current-phase-mark";
 import { useRoadmapFinish } from "./use-roadmap";
 
-const TRAILING_CLASS = "text-muted-foreground text-right font-mono text-xs tabular-nums";
+const TRAILING_CLASS =
+  "text-muted-foreground text-right font-mono text-xs tabular-nums stacked:text-left";
 
 export function PhaseLessons({ phase }: { phase: PlanPhaseView }) {
   const t = useExtracted();

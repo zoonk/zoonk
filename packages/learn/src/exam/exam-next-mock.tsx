@@ -14,6 +14,7 @@ import {
 } from "../_components/list-group";
 import { PlusMark } from "../_components/plus-lock";
 import { StatusMark } from "../_components/status-mark";
+import { MarkedText } from "../_components/title-row";
 import { useMockDaySizeLabel } from "../mock/mock-labels";
 import { useExamScreen } from "./exam-context";
 import { useExamDayDate } from "./exam-labels";
@@ -39,9 +40,10 @@ export function ExamNextMock({ current }: { current: boolean }) {
       </ListRowLeading>
       <ListRowBody>
         <ListRowContent>
-          <ListRowTitle className="flex items-center gap-2">
-            {daySize({ fullLength: next.fullLength })}
-            {exam.mocksRequirePlus && <PlusMark />}
+          <ListRowTitle>
+            <MarkedText mark={exam.mocksRequirePlus && <PlusMark />}>
+              {daySize({ fullLength: next.fullLength })}
+            </MarkedText>
           </ListRowTitle>
           <ListRowDescription>
             {t("{count, plural, one {# question} other {# questions}}", { count: next.questions })}

@@ -46,8 +46,10 @@ export function BuddyHeader({
       <BuddyArt buddy={buddy} className="size-8" ref={faceRef} />
       <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1 gap-x-2.5 gap-y-1")}>
         <div className="flex flex-col">
-          <h1 className="truncate text-sm leading-snug font-semibold">{name}</h1>
-          <p className="text-muted-foreground truncate text-xs leading-snug">
+          <h1 className="stacked:whitespace-normal truncate text-sm leading-snug font-semibold">
+            {name}
+          </h1>
+          <p className="text-muted-foreground stacked:whitespace-normal truncate text-xs leading-snug">
             <BuddyLine stage={stage} />
           </p>
         </div>

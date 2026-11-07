@@ -64,9 +64,7 @@ export function ChoiceRows<Value extends string>({
           data-highlighted={choice.value === value || undefined}
           key={choice.value}
         >
-          <ListRowBody
-            className={cn(stackOnPhone && "max-sm:flex-col max-sm:items-start max-sm:gap-y-px")}
-          >
+          <ListRowBody className={cn(stackOnPhone && "max-sm:gap-y-px max-sm:*:first:basis-full")}>
             <ListRowContent>
               <ListRowTitle
                 className={cn(choice.mark && "flex flex-wrap items-center gap-x-2 gap-y-1")}

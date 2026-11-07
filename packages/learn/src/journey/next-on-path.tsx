@@ -13,6 +13,7 @@ import { LIST_GROUP_CLASS } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PlusMark } from "../_components/plus-lock";
 import { StatusMark } from "../_components/status-mark";
+import { MarkedText } from "../_components/title-row";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
@@ -72,7 +73,7 @@ function NextChapterRow({
         <ChapterMark chapter={chapter} isNext />
       </span>
       <span className={PATH_ROW_BODY_CLASS}>
-        <span className="truncate font-medium">{chapter.title}</span>
+        <span className="stacked:whitespace-normal truncate font-medium">{chapter.title}</span>
         <span className="text-muted-foreground font-mono text-xs tabular-nums">
           <span aria-hidden="true">
             {t("{done, number} / {total, number}", {
@@ -144,16 +145,18 @@ function AfterExamRow({ phase }: { phase: PlanPhaseView }) {
       </span>
       <span className={PATH_ROW_BODY_CLASS}>
         <span className="flex flex-col">
-          <span className="truncate font-medium">{phaseName(phase)}</span>
+          <span className="stacked:whitespace-normal truncate font-medium">{phaseName(phase)}</span>
           {phase.mocks.count > 0 && (
-            <span className="text-muted-foreground flex items-center gap-2 text-xs">
+            <MarkedText
+              className="text-muted-foreground text-xs"
+              mark={plan.access.mocksRequirePlus && <PlusMark />}
+            >
               {mocksLine({
                 count: phase.mocks.count,
                 forNextSitting: true,
                 nextSitting: plan.schedule.nextSitting,
               })}
-              {plan.access.mocksRequirePlus && <PlusMark />}
-            </span>
+            </MarkedText>
           )}
         </span>
         {phase.endDate && (
