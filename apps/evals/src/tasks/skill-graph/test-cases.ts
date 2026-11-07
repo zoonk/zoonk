@@ -5,6 +5,7 @@ import { CGU_BLUEPRINT } from "./cgu-blueprint";
 import { ENEM_SCIENCE_BLUEPRINT } from "./enem-science-blueprint";
 import { type SkillGraphCase, type SkillGraphExpected } from "./library-cases";
 import { PIRACEMA_BLUEPRINT } from "./piracema-blueprint";
+import { TJSP_LAW_BLUEPRINT } from "./tjsp-blueprint";
 
 const SHARED_EXPECTATIONS = `
   - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)
@@ -501,6 +502,32 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
     userInput: {
       examBlueprint: CGU_BLUEPRINT,
       goal: "Passar no concurso da CGU",
+      goalKind: "exam",
+      language: "pt",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - The notice lists five law disciplines and the court's internal rules under one subject, "Conhecimentos em Direito": that stays the area of every skill, word for word, but the skills are taught in one course per catalog discipline (Direito Penal, Direito Processual Penal, Direito Processual Civil, Direito Constitucional, Direito Administrativo), each skill in its own discipline's course, never in one course named "Direito" or after the notice's subject
+      - The São Paulo civil-servant statute (Lei 10.261/68) goes in Direito Administrativo, and its skills name the São Paulo statute, never a federal one
+      - Every topic of the subject is taught by some skill
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: {
+      courses: [
+        ["Direito Penal"],
+        ["Direito Processual Penal", "Processo Penal"],
+        ["Direito Processual Civil", "Processo Civil"],
+        ["Direito Constitucional"],
+        ["Direito Administrativo"],
+      ],
+    },
+    id: "pt-tjsp-law-subject-one-course-per-discipline",
+    userInput: {
+      examBlueprint: TJSP_LAW_BLUEPRINT,
+      goal: "Concurso do Tribunal de Justiça de São Paulo, Escrevente Técnico Judiciário",
       goalKind: "exam",
       language: "pt",
     },

@@ -8,8 +8,11 @@ export type SkillGraphCase = Omit<SkillGraphParams, "findLibrarySkills"> & {
   library?: LibraryCourse[];
 };
 
-/** Library skills the graph must reuse, and those it must not (another jurisdiction's law). */
-export type SkillGraphExpected = { noReuse: string[]; reuse: string[] };
+/**
+ * Library skills the graph must reuse and those it must not (another jurisdiction's law), and the
+ * courses it must have, each as the catalog titles accepted for one discipline.
+ */
+export type SkillGraphExpected = { courses?: string[][]; noReuse?: string[]; reuse?: string[] };
 
 function isSameCourse(first: string, second: string): boolean {
   const [a, b] = [normalizeString(first), normalizeString(second)];

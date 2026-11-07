@@ -6,6 +6,7 @@ import {
   type SkillGraphProblem,
   findSkillGraphProblems,
 } from "@zoonk/ai/tasks/curriculum/skill-graph-checks";
+import { normalizeString } from "@zoonk/utils/string";
 import { type SkillGraphCase, type SkillGraphExpected } from "./library-cases";
 import { SKILL_GRAPH_SCORE_CATEGORIES } from "./score-categories";
 
@@ -34,28 +35,65 @@ function toCheck(code: SkillGraphProblem["code"]): GraphCheck {
   return code === "emDash" || code === "markdown" || code === "placeholder" ? "writing" : code;
 }
 
+type ExpectedCheck = { problem: string | null };
+
 function checkReuse({
+  expected,
+  graph,
+}: {
+  expected: SkillGraphExpected;
+  graph: SkillGraphOutput;
+}): ExpectedCheck[] {
+  const reused = new Set(graph.skills.flatMap((skill) => skill.libraryId ?? []));
+  const missed = (expected.reuse ?? []).filter((id) => !reused.has(id));
+  const wrong = (expected.noReuse ?? []).filter((id) => reused.has(id));
+
+  return [
+    ...(expected.reuse
+      ? [{ problem: missed.length > 0 ? `Library skills not reused: ${missed.join(", ")}.` : null }]
+      : []),
+    ...(expected.noReuse
+      ? [
+          {
+            problem:
+              wrong.length > 0
+                ? `Library skills reused for another law: ${wrong.join(", ")}.`
+                : null,
+          },
+        ]
+      : []),
+  ];
+}
+
+/** Each discipline a notice subject combines has its own course, under one of its catalog titles. */
+function checkCourses({
+  expected,
+  graph,
+}: {
+  expected: SkillGraphExpected;
+  graph: SkillGraphOutput;
+}): ExpectedCheck[] {
+  const titles = new Set(graph.courses.map((course) => normalizeString(course.title)));
+
+  return (expected.courses ?? []).map((accepted) => ({
+    problem: accepted.some((title) => titles.has(normalizeString(title)))
+      ? null
+      : `No course titled ${accepted.map((title) => `"${title}"`).join(" or ")}.`,
+  }));
+}
+
+function checkExpected({
   expected,
   graph,
 }: {
   expected?: SkillGraphExpected;
   graph: SkillGraphOutput;
 }): { problems: string[]; total: number } {
-  if (!expected) {
-    return { problems: [], total: 0 };
-  }
+  const checks = expected
+    ? [...checkReuse({ expected, graph }), ...checkCourses({ expected, graph })]
+    : [];
 
-  const reused = new Set(graph.skills.flatMap((skill) => skill.libraryId ?? []));
-  const missed = expected.reuse.filter((id) => !reused.has(id));
-  const wrong = expected.noReuse.filter((id) => reused.has(id));
-
-  return {
-    problems: [
-      ...(missed.length > 0 ? [`Library skills not reused: ${missed.join(", ")}.`] : []),
-      ...(wrong.length > 0 ? [`Library skills reused for another law: ${wrong.join(", ")}.`] : []),
-    ],
-    total: 2,
-  };
+  return { problems: checks.flatMap((check) => check.problem ?? []), total: checks.length };
 }
 
 function checkGraph({
@@ -89,13 +127,13 @@ function checkGraph({
     ...(uncovered.length > 0 ? ["uncoveredTopic" as const] : []),
   ]);
 
-  const reuse = checkReuse({ expected, graph });
+  const cases = checkExpected({ expected, graph });
 
   return {
     judgedOutput: output,
-    passed: CHECKS.length + reuse.total - failing.size - reuse.problems.length,
-    problems: [...problems.map((problem) => problem.problem), ...uncovered, ...reuse.problems],
-    total: CHECKS.length + reuse.total,
+    passed: CHECKS.length + cases.total - failing.size - cases.problems.length,
+    problems: [...problems.map((problem) => problem.problem), ...uncovered, ...cases.problems],
+    total: CHECKS.length + cases.total,
   };
 }
 
