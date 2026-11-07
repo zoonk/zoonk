@@ -524,12 +524,7 @@ private fun EarlierWork(
             )
         }
         if (open) {
-            Text(
-                text = stringResource(R.string.today_earlier_work_detail),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            Column(Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 items.forEach { Text(it.title, style = MaterialTheme.typography.bodyMedium) }
             }
         }

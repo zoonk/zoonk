@@ -34,7 +34,6 @@
   "today_done_count": "851fc29862da807336e55c74c68285e40b5a41f6e55588683ee2543c5f62f791",
   "today_done_day_off": "449d36b73f37e0faa10223abfb0d85fad03946eef7d64443c6fee33b2a4de0a3",
   "today_earlier_work": "8b6caf133ac94709544e7c312ecb65b64d3ed7193a5c3a8b44534e19abf374ee",
-  "today_earlier_work_detail": "5a477151abbb1ce128d312202b51be6c03922ba19dfd75d129a37a91524dadba",
   "today_exam_choice_choose": "f00f538ae0d0895906ce1c25d3e9f7b9ad6c60adb7d27788b440da2a1efbd5ea",
   "today_exam_choice_question": "41060bc694067500d6ae4f7798c5472d7cb41f79e512b4b07d278626508f8936",
   "today_exam_choice_question_several": "720ea6f284ddfb73e30990679c2adad4fc8e7e5018af0e1ba3f5a4d4f39d3dd9",
@@ -401,7 +400,6 @@
     <string name="today_take_the_test">Testi çöz</string>
     <!-- Lessons from earlier days the learner hasn't finished; %1$s is how many, as a number. -->
     <string name="today_earlier_work">Önceki günlerden kalan dersler · %1$s</string>
-    <string name="today_earlier_work_detail">Bunlarla başla. Çalışmaya başladığında planın bugünkü çalışma sürene göre ayarlanır.</string>
     <string name="today_practice_anytime">İstediğin zaman pratik yap</string>
     <string name="today_mistakes_notebook">Yanlış defteri</string>
     <string name="today_mistakes_redo">Yanlış yaptığın soruları tekrar çöz</string>
