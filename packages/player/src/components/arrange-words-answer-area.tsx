@@ -25,12 +25,18 @@ import { WORD_CHIP_CLASS } from "./word-bank-option-content";
 
 export type PlacedWord = WordBankOption & { id: string };
 
-function getWordResultState(
-  word: string,
-  position: number,
-  correctWords: string[],
-): "correct" | "incorrect" {
-  return correctWords[position] === word ? "correct" : "incorrect";
+function getWordResultState({
+  correctWords,
+  isCorrect,
+  position,
+  word,
+}: {
+  correctWords: string[];
+  isCorrect: boolean;
+  position: number;
+  word: string;
+}): "correct" | "incorrect" {
+  return isCorrect || correctWords[position] === word ? "correct" : "incorrect";
 }
 
 function PlacedWordTile({
@@ -175,7 +181,14 @@ export function ArrangeWordsAnswerArea({
                 option={option}
                 position={index}
                 resultState={
-                  result ? getWordResultState(option.word, index, correctWords) : undefined
+                  result
+                    ? getWordResultState({
+                        correctWords,
+                        isCorrect: result.result.isCorrect,
+                        position: index,
+                        word: option.word,
+                      })
+                    : undefined
                 }
               />
             ))

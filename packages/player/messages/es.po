@@ -3334,6 +3334,12 @@ msgctxt "Jj2ROA"
 msgid "What we heard"
 msgstr "Lo que escuchamos"
 
+#. After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too.
+#: src/lesson/feedback/lesson-step-result.tsx
+msgctxt "yDk4bj"
+msgid "Also correct:"
+msgstr "También es correcto:"
+
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "57Nd7h"
 msgid "Each question is checked a few times a day. Compare your answer with this one:"
