@@ -14,17 +14,21 @@ import { type SourceCatalog } from "./source";
 
 export type IdMap = ReadonlyMap<string, string>;
 
+export const PRODUCT_SOURCE_COLUMNS = ["website_source_id", "docs_source_id", "releases_source_id"];
+
 async function upsertRows({
   conflict,
   data,
   destination,
   keep,
+  keepWhenNull,
   table,
 }: {
   conflict: string[];
   data: TableRows;
   destination: Client;
   keep: string[];
+  keepWhenNull?: string[];
   table: string;
 }): Promise<IdMap> {
   const returned = await insertRows({
@@ -34,7 +38,9 @@ async function upsertRows({
       columns: data.columns,
       conflict,
       keep: ["id", ...keep],
+      keepWhenNull,
       returning: ["id", ...conflict],
+      table,
     }),
     table,
   });
@@ -181,6 +187,10 @@ async function matchLocalSlugs({
   };
 }
 
+/**
+ * Sources aren't copied, so a page the destination doesn't know arrives as null and keeps the local
+ * row's link to that page.
+ */
 export async function upsertProducts({
   destination,
   products,
@@ -200,6 +210,7 @@ export async function upsertProducts({
     }),
     destination,
     keep: ["created_at"],
+    keepWhenNull: PRODUCT_SOURCE_COLUMNS,
     table: "products",
   });
 
@@ -219,6 +230,7 @@ export async function upsertProducts({
     }),
     destination,
     keep: ["created_at"],
+    keepWhenNull: ["source_id"],
     table: "product_releases",
   });
 

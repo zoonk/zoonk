@@ -11,7 +11,13 @@ import {
   runInOrder,
 } from "./rows";
 import { type SourceCatalog } from "./source";
-import { type IdMap, upsertCourses, upsertProducts, upsertVocabulary } from "./upserts";
+import {
+  type IdMap,
+  PRODUCT_SOURCE_COLUMNS,
+  upsertCourses,
+  upsertProducts,
+  upsertVocabulary,
+} from "./upserts";
 
 type Transform = (data: TableRows) => TableRows;
 type TableCopy = readonly [ContentTable, TableRows];
@@ -25,8 +31,6 @@ function remap({ column, ids }: { column: string; ids: IdMap }): Transform {
 function keepKnown({ column, known }: { column: string; known: ReadonlySet<string> }): Transform {
   return (data) => keepKnownReferences({ column, data, known });
 }
-
-const PRODUCT_SOURCE_COLUMNS = ["website_source_id", "docs_source_id", "releases_source_id"];
 
 function applyTransforms(data: TableRows, transforms: Transform[]): TableRows {
   return transforms.reduce((current, transform) => transform(current), data);
