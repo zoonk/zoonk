@@ -1,9 +1,13 @@
 import { verifyAuthenticationResponse, verifyRegistrationResponse } from "@simplewebauthn/server";
 import { COSEALG, parseAuthenticatorData } from "@simplewebauthn/server/helpers";
-import { prisma } from "@zoonk/db";
+import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { getAndroidApps } from "@zoonk/utils/android-apps";
+import { getEnvironment } from "@zoonk/utils/environment";
 import { safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
+import { APP_ATTEST_OPERATIONS } from "../app-attest/app-attest-contract";
+import { hasPlayIntegrityProof } from "../play-integrity/play-integrity";
+import { PLAY_INTEGRITY_HEADERS } from "../play-integrity/play-integrity-contract";
 import { consumeAppChallenge } from "../request-guards/app-challenge";
 import { RESTORE_KEY_RP_ID } from "./restore-key-contract";
 
@@ -11,11 +15,16 @@ import { RESTORE_KEY_RP_ID } from "./restore-key-contract";
 const SILENT_REGISTRATION = { requireUserPresence: false, requireUserVerification: false } as const;
 const SILENT_ASSERTION = { advancedFIDOConfig: { userVerification: "discouraged" } } as const;
 
+const MAX_CREDENTIAL_ID_BYTES = 1023;
+const SHA256_BYTES = 32;
+
 const base64urlSchema = z.base64url();
 
 const credentialFields = {
   clientExtensionResults: z.object({}).default({}),
-  id: base64urlSchema,
+  id: base64urlSchema.refine(
+    (id) => Buffer.from(id, "base64url").length <= MAX_CREDENTIAL_ID_BYTES,
+  ),
   rawId: base64urlSchema,
   type: z.literal("public-key"),
 };
@@ -102,16 +111,53 @@ function readCredentialResponse<T extends { response: { clientDataJSON: string }
 
 function toApkKeyHashOrigin(fingerprint: string): string {
   const digest = Buffer.from(fingerprint.replaceAll(":", ""), "hex");
+
+  if (digest.length !== SHA256_BYTES) {
+    throw new Error(`This Android signing fingerprint isn't a SHA-256 digest: ${fingerprint}`);
+  }
+
   return `android:apk-key-hash:${digest.toString("base64url")}`;
 }
 
+/**
+ * Throws instead of refusing: with no app to match, every key would look invalid, and the app
+ * deletes a key it's told is invalid.
+ */
 function getAndroidAppOrigins(): string[] {
-  return getAndroidApps()
+  const origins = getAndroidApps()
     .flatMap((app) => app.fingerprints)
     .map((fingerprint) => toApkKeyHashOrigin(fingerprint));
+
+  if (origins.length === 0) {
+    throw new Error("Set ANDROID_RELEASE_CERT_FINGERPRINTS to accept restore keys");
+  }
+
+  return origins;
 }
 
-/** An ID already bound to another session stays bound to it, so nobody can take over a key whose ID they saw. */
+/**
+ * A stolen bearer could otherwise register a key it made itself, so production takes a key only
+ * from Play's copy of the app on a certified device. Debug builds can't make a token production
+ * accepts, so previews and local runs go without one, but a proof that's sent is still checked.
+ */
+async function hasAppProof({ credentialId, headers }: { credentialId: string; headers: Headers }) {
+  const sentProof =
+    headers.has(PLAY_INTEGRITY_HEADERS.token) || headers.has(PLAY_INTEGRITY_HEADERS.challenge);
+
+  if (!sentProof) {
+    return getEnvironment() !== "production";
+  }
+
+  return hasPlayIntegrityProof({
+    binding: { fields: [credentialId], operation: APP_ATTEST_OPERATIONS.restoreKey },
+    headers,
+  });
+}
+
+/**
+ * One key per session, so a new key replaces the session's previous one. An ID bound to another
+ * session stays bound to it, so nobody can take over a key whose ID they saw.
+ */
 async function bindRestoreKey({
   id,
   publicKey,
@@ -121,32 +167,48 @@ async function bindRestoreKey({
   publicKey: Uint8Array<ArrayBuffer>;
   sessionId: string;
 }): Promise<boolean> {
-  const { count } = await prisma.restoreKey.createMany({
-    data: { id, publicKey, sessionId },
-    skipDuplicates: true,
-  });
+  const { error } = await safeAsync(() =>
+    prisma.restoreKey.upsert({
+      create: { id, publicKey, sessionId },
+      update: { createdAt: new Date(), id, publicKey },
+      where: { sessionId },
+    }),
+  );
 
-  if (count === 1) {
-    return true;
+  if (isPrismaUniqueConstraintError(error)) {
+    return false;
   }
 
-  const existing = await prisma.restoreKey.findUnique({ where: { id } });
-  return existing?.sessionId === sessionId;
+  if (error) {
+    throw error;
+  }
+
+  return true;
 }
 
 export type RestoreKeyRefusal =
+  | "appProofInvalid"
   | "challengeInvalid"
   | "keyInvalid"
   | "registrationInvalid"
   | "responseMalformed";
 
 export async function registerRestoreKey({
+  headers,
   registrationResponseJson,
-  sessionId,
+  session,
 }: {
+  headers: Headers;
   registrationResponseJson: string;
-  sessionId: string;
+  session: { id: string; impersonatedBy?: string | null };
 }): Promise<RestoreKeyRefusal | null> {
+  const expectedOrigin = getAndroidAppOrigins();
+
+  // An admin acting as a learner never leaves behind a key that outlasts the impersonation.
+  if (session.impersonatedBy) {
+    return "registrationInvalid";
+  }
+
   const registration = readCredentialResponse({
     json: registrationResponseJson,
     schema: registrationResponseSchema,
@@ -157,6 +219,10 @@ export async function registerRestoreKey({
     return "responseMalformed";
   }
 
+  if (!(await hasAppProof({ credentialId: registration.response.id, headers }))) {
+    return "appProofInvalid";
+  }
+
   if (!(await consumeAppChallenge(registration.challenge))) {
     return "challengeInvalid";
   }
@@ -165,23 +231,24 @@ export async function registerRestoreKey({
     verifyRegistrationResponse({
       ...SILENT_REGISTRATION,
       expectedChallenge: registration.challenge,
-      expectedOrigin: getAndroidAppOrigins(),
+      expectedOrigin,
       expectedRPID: RESTORE_KEY_RP_ID,
       response: registration.response,
       supportedAlgorithmIDs: [COSEALG.ES256, COSEALG.RS256],
     }),
   );
 
-  if (!verification?.verified) {
+  if (
+    !verification?.verified ||
+    verification.registrationInfo.credential.id !== registration.response.id
+  ) {
     return "registrationInvalid";
   }
 
-  const { credential } = verification.registrationInfo;
-
   const bound = await bindRestoreKey({
-    id: credential.id,
-    publicKey: credential.publicKey,
-    sessionId,
+    id: registration.response.id,
+    publicKey: verification.registrationInfo.credential.publicKey,
+    sessionId: session.id,
   });
 
   return bound ? null : "registrationInvalid";
@@ -208,6 +275,8 @@ export async function redeemRestoreKey(
 ): Promise<
   { refusal: RestoreKeyRefusal } | { refusal: null; user: { id: string; isAnonymous: boolean } }
 > {
+  const expectedOrigin = getAndroidAppOrigins();
+
   const assertion = readCredentialResponse({
     json: authenticationResponseJson,
     schema: authenticationResponseSchema,
@@ -235,7 +304,7 @@ export async function redeemRestoreKey(
       // can't tell a clone from a restore.
       credential: { counter: 0, id: assertion.response.id, publicKey: owner.publicKey },
       expectedChallenge: assertion.challenge,
-      expectedOrigin: getAndroidAppOrigins(),
+      expectedOrigin,
       expectedRPID: RESTORE_KEY_RP_ID,
       response: assertion.response,
     }),

@@ -1,7 +1,9 @@
+import { createHash, randomUUID } from "node:crypto";
 import { auth } from "@zoonk/auth";
 import { prisma } from "@zoonk/db";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { decodePlayIntegrityToken } from "../../../../../../packages/auth/src/play-integrity/decode-play-integrity-token";
 import {
   type RestoreKeyAuthenticator,
   makeAssertionJson,
@@ -12,6 +14,11 @@ import {
 import { POST as createChallenge } from "../app-attest/challenges/route";
 import { POST as createRestoreKey } from "./current/restore-keys/route";
 import { POST as createRestoreKeySession } from "./restore-key/route";
+
+/** Google decrypts Play Integrity tokens; everything Zoonk checks about the answer stays real. */
+vi.mock("../../../../../../packages/auth/src/play-integrity/decode-play-integrity-token", () => ({
+  decodePlayIntegrityToken: vi.fn(),
+}));
 
 vi.mock("@zoonk/auth", async () => {
   const { createRequire } = await import("node:module");
@@ -47,8 +54,18 @@ vi.mock("@zoonk/auth", async () => {
 const BASE_URL = "http://localhost:9002";
 const androidApp = makeSigningCertificate();
 
-function post({ body, path, token }: { body: unknown; path: string; token?: string }) {
-  const headers = new Headers({ "content-type": "application/json" });
+function post({
+  body,
+  headers = new Headers(),
+  path,
+  token,
+}: {
+  body: unknown;
+  headers?: Headers;
+  path: string;
+  token?: string;
+}) {
+  headers.set("content-type", "application/json");
 
   if (token) {
     headers.set("authorization", `Bearer ${token}`);
@@ -68,7 +85,15 @@ async function issueAppChallenge() {
   return challenge;
 }
 
-async function register({ key, token }: { key: RestoreKeyAuthenticator; token?: string }) {
+async function register({
+  headers,
+  key,
+  token,
+}: {
+  headers?: Headers;
+  key: RestoreKeyAuthenticator;
+  token?: string;
+}) {
   const registrationResponseJson = makeRegistrationJson({
     challenge: await issueAppChallenge(),
     key,
@@ -76,8 +101,33 @@ async function register({ key, token }: { key: RestoreKeyAuthenticator; token?: 
   });
 
   return createRestoreKey(
-    post({ body: { registrationResponseJson }, path: "/sessions/current/restore-keys", token }),
+    post({
+      body: { registrationResponseJson },
+      headers,
+      path: "/sessions/current/restore-keys",
+      token,
+    }),
   );
+}
+
+/** What the Android app sends: a Play Integrity token whose request hash covers this key's ID. */
+async function playIntegrityProof(credentialId: string) {
+  const challenge = await issueAppChallenge();
+  const clientData = ["zoonk-app-attest:1", challenge, "restore-key", credentialId].join("\n");
+
+  vi.mocked(decodePlayIntegrityToken).mockResolvedValueOnce({
+    appIntegrity: { appRecognitionVerdict: "PLAY_RECOGNIZED" },
+    deviceIntegrity: { deviceRecognitionVerdict: ["MEETS_DEVICE_INTEGRITY"] },
+    requestDetails: {
+      requestHash: createHash("sha256").update(clientData).digest("base64url"),
+      requestPackageName: "com.zoonk",
+    },
+  });
+
+  return new Headers({
+    "x-play-integrity-challenge": challenge,
+    "x-play-integrity-token": `play-integrity-token-${randomUUID()}`,
+  });
 }
 
 async function redeem({ challenge, key }: { challenge?: string; key: RestoreKeyAuthenticator }) {
@@ -173,5 +223,50 @@ describe("restore keys through the API", () => {
 
     expect(response.status).toBe(403);
     await expect(response.json()).resolves.toMatchObject({ error: { code: "ACCOUNT_DISABLED" } });
+  });
+
+  it("registers a key without app proof outside production", async () => {
+    vi.stubEnv("VERCEL_ENV", "preview");
+    const guest = await auth.api.signInAnonymous();
+
+    const response = await register({ key: makeRestoreKey(), token: guest.token });
+
+    expect(response.status).toBe(204);
+  });
+
+  it("registers a key in production only with a Play Integrity proof for that key", async () => {
+    vi.stubEnv("VERCEL_ENV", "production");
+    vi.mocked(decodePlayIntegrityToken).mockReset();
+
+    const guest = await auth.api.signInAnonymous();
+    const [unproven, otherKey, proven] = [makeRestoreKey(), makeRestoreKey(), makeRestoreKey()];
+
+    const refusals = await Promise.all([
+      register({ key: unproven, token: guest.token }),
+      register({
+        headers: await playIntegrityProof(makeRestoreKey().id),
+        key: otherKey,
+        token: guest.token,
+      }),
+    ]);
+
+    expect(refusals.map((refusal) => refusal.status)).toStrictEqual([403, 403]);
+
+    await expect(Promise.all(refusals.map((refusal) => refusal.json()))).resolves.toMatchObject([
+      { error: { code: "BOT_DETECTED" } },
+      { error: { code: "BOT_DETECTED" } },
+    ]);
+
+    const accepted = await register({
+      headers: await playIntegrityProof(proven.id),
+      key: proven,
+      token: guest.token,
+    });
+
+    expect(accepted.status).toBe(204);
+
+    await expect(
+      prisma.restoreKey.findMany({ where: { id: { in: [unproven.id, otherKey.id, proven.id] } } }),
+    ).resolves.toStrictEqual([expect.objectContaining({ id: proven.id })]);
   });
 });

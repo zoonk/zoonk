@@ -46,13 +46,19 @@ export type RestoreKeyAuthenticator = {
   publicKey: KeyObject;
 };
 
-export function makeRestoreKey(algorithm: RestoreKeyAuthenticator["algorithm"] = "ES256") {
+export function makeRestoreKey({
+  algorithm = "ES256",
+  idBytes = CREDENTIAL_ID_BYTES,
+}: {
+  algorithm?: RestoreKeyAuthenticator["algorithm"];
+  idBytes?: number;
+} = {}): RestoreKeyAuthenticator {
   const pair =
     algorithm === "ES256"
       ? generateKeyPairSync("ec", { namedCurve: "P-256" })
       : generateKeyPairSync("rsa", { modulusLength: 2048 });
 
-  return { algorithm, id: randomBytes(CREDENTIAL_ID_BYTES).toString("base64url"), ...pair };
+  return { algorithm, id: randomBytes(idBytes).toString("base64url"), ...pair };
 }
 
 function bytes(base64url = "") {

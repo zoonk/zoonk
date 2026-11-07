@@ -92,11 +92,11 @@ async function register({
 }) {
   const challenge = await issueAppChallenge();
 
-  return post({
-    body: { registrationResponseJson: makeRegistrationJson({ challenge, key, origin, rpId }) },
-    path: "/restore-key/register",
-    token,
-  });
+  return registerJson({ json: makeRegistrationJson({ challenge, key, origin, rpId }), token });
+}
+
+function registerJson({ json, token }: { json: string; token: string }) {
+  return post({ body: { registrationResponseJson: json }, path: "/restore-key/register", token });
 }
 
 async function redeem({
@@ -166,7 +166,7 @@ async function registeredKey({
   algorithm?: RestoreKeyAuthenticator["algorithm"];
   session: { token: string };
 }) {
-  const key = makeRestoreKey(algorithm);
+  const key = makeRestoreKey({ algorithm });
   const registered = await register({ key, token: session.token });
 
   expect(registered.status).toBe(200);
@@ -225,7 +225,7 @@ describe(restoreKeyPlugin, () => {
 
   it("restores a guest as a guest, with an RS256 key from the debug build", async () => {
     const guest = await signInAsGuest();
-    const key = makeRestoreKey("RS256");
+    const key = makeRestoreKey({ algorithm: "RS256" });
 
     await expect(
       register({ key, origin: debugApp.origin, token: guest.token }),
@@ -391,5 +391,94 @@ describe(restoreKeyPlugin, () => {
       body: { code: "BANNED_USER" },
       status: 403,
     });
+  });
+
+  it("refuses a key for a session an admin is impersonating", async () => {
+    const [admin, learner] = await Promise.all([signUp(), signUp()]);
+    await prisma.user.update({ data: { role: "admin" }, where: { id: admin.userId } });
+
+    const impersonation = await post({
+      body: { userId: learner.userId },
+      path: "/admin/impersonate-user",
+      token: admin.token,
+    });
+
+    const { token } = (impersonation.body as { session: { token: string } }).session;
+    const key = makeRestoreKey();
+
+    await expect(register({ key, token })).resolves.toMatchObject({
+      body: { code: "RESTORE_KEY_REGISTRATION_INVALID" },
+      status: 400,
+    });
+
+    await expect(prisma.restoreKey.findUnique({ where: { id: key.id } })).resolves.toBeNull();
+  });
+
+  it("keeps one key per session, so a new key replaces the session's previous one", async () => {
+    const session = await signUp();
+    const first = await registeredKey({ session });
+    const second = await registeredKey({ session });
+    const registering = await prisma.session.findUniqueOrThrow({ where: { token: session.token } });
+
+    await expect(
+      prisma.restoreKey.findMany({ where: { sessionId: registering.id } }),
+    ).resolves.toStrictEqual([expect.objectContaining({ id: second.id })]);
+
+    await expect(
+      Promise.all([redeem({ key: first }), redeem({ key: second })]),
+    ).resolves.toMatchObject([keyInvalid, { status: 200 }]);
+  });
+
+  it("refuses a credential ID over WebAuthn's 1023 bytes", async () => {
+    const session = await signUp();
+    const longKey = makeRestoreKey({ idBytes: 1024 });
+
+    const registration = JSON.parse(
+      makeRegistrationJson({
+        challenge: await issueAppChallenge(),
+        key: longKey,
+        origin: releaseApp.origin,
+      }),
+    ) as { id: string; rawId: string };
+
+    const shortId = makeRestoreKey().id;
+
+    const refusals = await Promise.all([
+      register({ key: longKey, token: session.token }),
+      registerJson({
+        json: JSON.stringify({ ...registration, id: shortId, rawId: shortId }),
+        token: session.token,
+      }),
+      redeem({ key: makeRestoreKey({ idBytes: 1024 }) }),
+    ]);
+
+    expect(refusals.map((refusal) => refusal.status)).toStrictEqual([400, 400, 400]);
+
+    await expect(
+      register({ key: makeRestoreKey({ idBytes: 1023 }), token: session.token }),
+    ).resolves.toMatchObject({ status: 200 });
+  });
+
+  it("answers 500, never 401, while the Android apps aren't configured", async () => {
+    const [registering, other] = await Promise.all([signUp(), signUp()]);
+    const key = await registeredKey({ session: registering });
+
+    vi.stubEnv("ANDROID_RELEASE_CERT_FINGERPRINTS", "");
+    vi.stubEnv("ANDROID_DEBUG_CERT_FINGERPRINTS", "");
+
+    const answers = await Promise.all([
+      redeem({ key }),
+      register({ key: makeRestoreKey(), token: other.token }),
+    ]);
+
+    expect(answers.map((answer) => answer.status)).toStrictEqual([500, 500]);
+
+    vi.stubEnv("ANDROID_RELEASE_CERT_FINGERPRINTS", `${releaseApp.fingerprint},AB:CD`);
+
+    await expect(redeem({ key })).resolves.toMatchObject({ status: 500 });
+
+    vi.stubEnv("ANDROID_RELEASE_CERT_FINGERPRINTS", releaseApp.fingerprint);
+
+    await expect(redeem({ key })).resolves.toMatchObject({ status: 200 });
   });
 });

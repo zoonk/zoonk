@@ -155,7 +155,7 @@ export function getRestoreKeyErrorResponse(error: unknown) {
     return errors.unauthorized();
   }
 
-  return getRestoreKeyRefusal(error) ?? authRateLimitError(error);
+  return getSharedSessionErrorResponse(error) ?? getRestoreKeyRefusal(error);
 }
 
 export function getRestoreKeySessionErrorResponse(error: unknown) {
