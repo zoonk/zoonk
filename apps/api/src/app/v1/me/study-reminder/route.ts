@@ -22,6 +22,14 @@ function getUpdateErrorResponse(status: Exclude<StudyReminderUpdateResult["statu
     return errors.unauthorized();
   }
 
+  if (status === "timeNotOnQuarterHour") {
+    return createErrorResponse({
+      code: accessErrorCodes.timeNotOnQuarterHour,
+      message: "Reminder times must be on a quarter hour (:00, :15, :30 or :45)",
+      status: httpStatus.unprocessableEntity,
+    });
+  }
+
   if (status === "accountRequired") {
     return createErrorResponse({
       code: accessErrorCodes.accountRequired,

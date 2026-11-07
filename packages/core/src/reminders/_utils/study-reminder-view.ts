@@ -3,6 +3,7 @@ import { type StudyReminder, prisma } from "@zoonk/db";
 import { findActiveGoalId } from "../../goals/_utils/goal-view";
 import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
 import { DEFAULT_REMINDER_TIME, type StudyReminderView } from "../study-reminder-contract";
+import { roundToQuarterHour } from "./quarter-hour";
 import { isReminderQuiet } from "./reminder-quiet";
 
 type ReminderUser = { email: string; id: string; isAnonymous?: boolean | null };
@@ -14,7 +15,7 @@ export async function findDefaultReminderTime(userId: string): Promise<string> {
     ? await prisma.goal.findUnique({ select: { studyTime: true }, where: { id: goalId } })
     : null;
 
-  return goal?.studyTime ?? DEFAULT_REMINDER_TIME;
+  return roundToQuarterHour(goal?.studyTime ?? DEFAULT_REMINDER_TIME);
 }
 
 export async function findLastStudyDate(userId: string): Promise<Date | null> {

@@ -9,7 +9,8 @@ const MAX_PUSH_TOKEN_LENGTH = 4096;
 const MAX_PHONE_LABEL_LENGTH = 100;
 
 const reminderTimeSchema = studyTimeSchema.meta({
-  description: 'Local time the reminder goes out, such as "19:00", in the learner\'s zone',
+  description:
+    'Local time the reminder goes out, such as "19:00", in the learner\'s zone. Always on a quarter hour (:00, :15, :30 or :45), since reminders go out every 15 minutes',
 });
 
 const reminderLocaleSchema = z
@@ -88,7 +89,12 @@ export const studyReminderUpdateSchema = z
         description:
           "Turning it on needs a selected phone (PUT /me/study-reminder/phone first): 422 PHONE_REQUIRED otherwise",
       }),
-    time: reminderTimeSchema.optional(),
+    time: reminderTimeSchema
+      .optional()
+      .meta({
+        description:
+          'Local time, such as "19:15". Minutes other than 00, 15, 30 or 45 get 422 TIME_NOT_ON_QUARTER_HOUR: round the picked time to the nearest quarter hour before showing and saving it',
+      }),
   })
   .strict()
   .meta({ id: "StudyReminderUpdate" });

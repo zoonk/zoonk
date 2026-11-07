@@ -25,6 +25,18 @@ describe("PATCH /v1/me/study-reminder", () => {
     await expect(response.json()).resolves.toMatchObject({ error: { code: "PHONE_REQUIRED" } });
   });
 
+  it("answers a time off the quarter hour with TIME_NOT_ON_QUARTER_HOUR", async () => {
+    mockAccountSession({ user: await userFixture() });
+
+    const response = await patch({ locale: "en", time: "19:10" });
+
+    expect(response.status).toBe(422);
+
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "TIME_NOT_ON_QUARTER_HOUR" },
+    });
+  });
+
   it("saves the time and returns every setting", async () => {
     const user = await userFixture();
     mockAccountSession({ user });

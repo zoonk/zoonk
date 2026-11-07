@@ -49,6 +49,27 @@ describe("study reminder settings", () => {
     await expect(prisma.studyReminder.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
+  it("rounds a goal's study time to the quarter hour reminders go out on", async () => {
+    const user = await accountLearner();
+    const goal = await goalFixture({ studyTime: "07:38", userId: user.id });
+    await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
+
+    await expect(getStudyReminder()).resolves.toMatchObject({ time: "07:45" });
+
+    await prisma.goal.update({ data: { studyTime: "23:53" }, where: { id: goal.id } });
+    await expect(getStudyReminder()).resolves.toMatchObject({ time: "23:45" });
+  });
+
+  it("refuses a time off the quarter hour", async () => {
+    const user = await accountLearner();
+
+    await expect(updateStudyReminder({ locale: "en", time: "19:10" })).resolves.toStrictEqual({
+      status: "timeNotOnQuarterHour",
+    });
+
+    await expect(prisma.studyReminder.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
   it("returns null without a session", async () => {
     mockSession(null);
     await expect(getStudyReminder()).resolves.toBeNull();

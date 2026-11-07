@@ -22389,7 +22389,7 @@
             }
           },
           "422": {
-            "description": "A guest turned email on (ACCOUNT_REQUIRED), or push was turned on with no phone selected (PHONE_REQUIRED).",
+            "description": "A guest turned email on (ACCOUNT_REQUIRED), push was turned on with no phone selected (PHONE_REQUIRED), or the time isn't on a quarter hour (TIME_NOT_ON_QUARTER_HOUR).",
             "content": {
               "application/json": {
                 "schema": {
@@ -29387,9 +29387,9 @@
             "type": "boolean"
           },
           "time": {
+            "description": "Local time, such as \"19:15\". Minutes other than 00, 15, 30 or 45 get 422 TIME_NOT_ON_QUARTER_HOUR: round the picked time to the nearest quarter hour before showing and saving it",
             "type": "string",
-            "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$",
-            "description": "Local time the reminder goes out, such as \"19:00\", in the learner's zone"
+            "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
           }
         },
         "required": [
@@ -72582,7 +72582,7 @@
           "time": {
             "type": "string",
             "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$",
-            "description": "Local time the reminder goes out, such as \"19:00\", in the learner's zone"
+            "description": "Local time the reminder goes out, such as \"19:00\", in the learner's zone. Always on a quarter hour (:00, :15, :30 or :45), since reminders go out every 15 minutes"
           },
           "timeZone": {
             "type": "string",
@@ -89090,7 +89090,7 @@
           "time": {
             "type": "string",
             "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$",
-            "description": "Local time the reminder goes out, such as \"19:00\", in the learner's zone"
+            "description": "Local time the reminder goes out, such as \"19:00\", in the learner's zone. Always on a quarter hour (:00, :15, :30 or :45), since reminders go out every 15 minutes"
           },
           "timeZone": {
             "type": "string",

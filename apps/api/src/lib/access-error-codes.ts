@@ -8,4 +8,5 @@ export const accessErrorCodes = {
   glassesNotEarned: "GLASSES_NOT_EARNED",
   goalNotFound: "GOAL_NOT_FOUND",
   phoneRequired: "PHONE_REQUIRED",
+  timeNotOnQuarterHour: "TIME_NOT_ON_QUARTER_HOUR",
 } as const;

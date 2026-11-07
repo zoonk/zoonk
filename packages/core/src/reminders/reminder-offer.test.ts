@@ -14,7 +14,7 @@ async function finishFirstLesson() {
   mockAccountSession({ user });
 
   const { goal } = await sessionGoalFixture({
-    goal: { studyTime: "07:30" },
+    goal: { studyTime: "07:25" },
     lessons: 2,
     userId: user.id,
   });

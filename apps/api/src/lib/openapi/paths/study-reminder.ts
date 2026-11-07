@@ -54,7 +54,7 @@ export const studyReminderPaths = {
         "401": unauthorizedResponse,
         "422": {
           ...unprocessableEntityResponse,
-          description: `A guest turned email on (${accessErrorCodes.accountRequired}), or push was turned on with no phone selected (${accessErrorCodes.phoneRequired}).`,
+          description: `A guest turned email on (${accessErrorCodes.accountRequired}), push was turned on with no phone selected (${accessErrorCodes.phoneRequired}), or the time isn't on a quarter hour (${accessErrorCodes.timeNotOnQuarterHour}).`,
         },
       },
       security: AUTHENTICATED_SECURITY,

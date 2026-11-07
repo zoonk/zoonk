@@ -4,12 +4,13 @@ import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getStudyReminderCacheTag } from "../cache/tags";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSession } from "../users/get-session";
+import { isQuarterHour } from "./_utils/quarter-hour";
 import { findDefaultReminderTime, findStudyReminderView } from "./_utils/study-reminder-view";
 import { type StudyReminderUpdateInput, type StudyReminderView } from "./study-reminder-contract";
 
 export type StudyReminderUpdateResult =
   | { reminder: StudyReminderView; status: "updated" }
-  | { status: "accountRequired" | "phoneRequired" | "unauthorized" };
+  | { status: "accountRequired" | "phoneRequired" | "timeNotOnQuarterHour" | "unauthorized" };
 
 function turnsChannelOn({
   current,
@@ -52,6 +53,10 @@ export async function updateStudyReminder(
 
   if (!session) {
     return { status: "unauthorized" };
+  }
+
+  if (input.time !== undefined && !isQuarterHour(input.time)) {
+    return { status: "timeNotOnQuarterHour" };
   }
 
   if (input.emailOn && session.user.isAnonymous) {
