@@ -72,10 +72,7 @@ struct ReminderOfferCard: View {
         title: Text(
           "Want a study reminder?", tableName: "Reminders",
           comment: "Title of the offer below a finished lesson"),
-        line: Text(
-          "At \(time) on your study days, when you still have learning left.",
-          tableName: "Reminders", comment: "What the reminder offer below a lesson promises"),
-        symbol: "bell")
+        line: promise(time), symbol: "bell")
 
       if offer.claim == .claimed {
         answers
@@ -98,19 +95,13 @@ struct ReminderOfferCard: View {
         title: Text(
           "Reminders are on.", tableName: "Reminders",
           comment: "Push study reminders were just turned on"),
-        line: Text(
-          "We'll remind you at \(time) on your study days.", tableName: "Reminders",
-          comment: "After push reminders were turned on below a lesson"),
-        symbol: "bell.badge")
+        line: promise(time), symbol: "bell.badge")
     case .emailOn:
       words(
         title: Text(
           "Email reminders are on.", tableName: "Reminders",
           comment: "Email study reminders were just turned on"),
-        line: Text(
-          "We'll email you at \(time) on your study days.", tableName: "Reminders",
-          comment: "After email reminders were turned on below a lesson"),
-        symbol: "envelope")
+        line: promise(time), symbol: "envelope")
     case .dismissed:
       EmptyView()
     }
@@ -151,6 +142,13 @@ struct ReminderOfferCard: View {
     }
     .buttonStyle(.ghost)
     .disabled(offer.isSaving)
+  }
+
+  /// The offer's own promise, kept once it's on: a reminder only comes when learning is left.
+  private func promise(_ time: String) -> Text {
+    Text(
+      "At \(time) on your study days, when you still have learning left.",
+      tableName: "Reminders", comment: "What the reminder offer below a lesson promises")
   }
 
   private func words(title: Text, line: Text, symbol: String) -> some View {

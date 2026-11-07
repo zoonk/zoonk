@@ -72,13 +72,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A las %@ en tus días de estudio, si aún te queda algo por estudiar."
+            "value" : "A las %@ en tus días de estudio, cuando aún te quede algo por estudiar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À %@ les jours d’étude, s’il te reste des choses à apprendre."
+            "value" : "À %@, tes jours d’étude, s’il te reste des activités à faire."
           }
         },
         "it" : {
@@ -90,31 +90,31 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習日の%@に、まだ学習が残っていればお知らせします。"
+            "value" : "学習する日の%@に、まだ学習が残っていればお知らせします。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "학습일에 할 공부가 남아 있으면 %@에 알려 드려요."
+            "value" : "공부하기로 한 날에 할 공부가 남아 있으면 %@에 알려 드려요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O %@ w dni nauki, jeśli masz jeszcze coś do nauki."
+            "value" : "O %@ w dni nauki, jeśli masz jeszcze coś do przerobienia."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Às %@ nos seus dias de estudo, quando ainda tiver o que estudar."
+            "value" : "Às %@ nos seus dias de estudo, se ainda tiver o que estudar."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Çalışma günlerinde, o günkü çalışman bitmediyse %@ saatinde."
+            "value" : "Çalışma günlerinde, tamamlaman gerekenler kaldıysa %@ saatinde."
           }
         }
       }
@@ -326,13 +326,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "メールでの通知をオンにしました。"
+            "value" : "メールでのリマインダーはオンです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이메일 알림을 켰어요."
+            "value" : "이메일 알림이 켜져 있어요."
           }
         },
         "pl" : {
@@ -385,13 +385,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今はしない"
+            "value" : "見送る"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "괜찮아요"
+            "value" : "아니요, 괜찮아요"
           }
         },
         "pl" : {
@@ -656,19 +656,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Während deiner Lernpause pausiert. Sobald du wieder lernst, sind sie wieder aktiv."
+            "value" : "Pausiert, solange du weg bist. Sobald du wieder lernst, sind die Erinnerungen wieder aktiv."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En pausa mientras no estudias. Se reactivan al volver a estudiar."
+            "value" : "En pausa mientras no estás. Se reactivan cuando vuelves a estudiar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En pause pendant ton absence. Les rappels reprennent dès que tu étudies."
+            "value" : "Les rappels sont en pause pendant ton absence. Ils reprennent quand tu te remets à étudier."
           }
         },
         "it" : {
@@ -680,13 +680,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習をお休みしているため、一時停止しています。学習を再開すると、また届くようになります。"
+            "value" : "学習をお休みしている間は一時停止しています。学習を再開すると、リマインダーも再開します。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "쉬는 동안 알림을 잠시 멈췄어요. 공부하면 다시 켜져요."
+            "value" : "쉬는 동안 알림을 일시 중지했어요. 다시 공부하면 켜져요."
           }
         },
         "pl" : {
@@ -698,13 +698,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Em pausa enquanto você não estuda. Voltar a estudar reativa os lembretes."
+            "value" : "Pausados enquanto você não está por aqui. Voltam quando você estudar."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ara verdiğin için duraklatıldı. Çalışmaya başlayınca yeniden açılır."
+            "value" : "Ara verdiğin için duraklatıldı. Çalışmaya dönünce yeniden açılır."
           }
         }
       }
@@ -715,19 +715,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Push-Mitteilungen"
+            "value" : "Push-Benachrichtigungen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Notificaciones"
+            "value" : "Notificaciones push"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Notifications"
+            "value" : "Notifications push"
           }
         },
         "it" : {
@@ -751,13 +751,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Powiadomienia na urządzeniu"
+            "value" : "Powiadomienia push"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Notificações no aparelho"
+            "value" : "Notificações push"
           }
         },
         "tr" : {
@@ -774,19 +774,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erinnerungen aktivieren"
+            "value" : "Erinnerung aktivieren"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activar recordatorios"
+            "value" : "Recordármelo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Me le rappeler"
+            "value" : "Me rappeler d’étudier"
           }
         },
         "it" : {
@@ -798,7 +798,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "リマインダーをオンにする"
+            "value" : "リマインダーを設定する"
           }
         },
         "ko" : {
@@ -810,13 +810,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przypominaj mi"
+            "value" : "Przypomnij mi"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Me lembre"
+            "value" : "Me lembrar"
           }
         },
         "tr" : {
@@ -1016,7 +1016,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se guardó. Inténtalo de nuevo."
+            "value" : "No se pudo guardar. Inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -1028,7 +1028,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non siamo riusciti a salvare. Riprova."
+            "value" : "Il salvataggio non è riuscito. Riprova."
           }
         },
         "ja" : {
@@ -1052,7 +1052,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não deu para salvar. Tente de novo."
+            "value" : "Não foi possível salvar. Tente de novo."
           }
         },
         "tr" : {
@@ -1211,19 +1211,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習リマインダーを設定しますか？"
+            "value" : "学習リマインダーを受け取りますか？"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "학습 알림을 보내 드릴까요?"
+            "value" : "학습 알림을 받아 보실래요?"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przypomnieć ci o nauce?"
+            "value" : "Chcesz przypomnienia o nauce?"
           }
         },
         "pt" : {
@@ -1235,125 +1235,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ders çalışmanı hatırlatalım mı?"
-          }
-        }
-      }
-    },
-    "We'll email you at %@ on your study days." : {
-      "comment" : "After email reminders were turned on below a lesson",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir schicken dir an deinen Lerntagen um %@ eine E-Mail."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Te enviaremos un correo a las %@ en tus días de estudio."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "On t’enverra un e-mail à %@ les jours d’étude."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ti invieremo un’email alle %@ nei tuoi giorni di studio."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習日の%@にメールでお知らせします。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "학습일마다 %@에 이메일로 알려 드려요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W dni nauki wyślemy ci e-mail o %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A gente vai te mandar um e-mail às %@ nos seus dias de estudo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Çalışma günlerinde %@ saatinde sana e-posta göndereceğiz."
-          }
-        }
-      }
-    },
-    "We'll remind you at %@ on your study days." : {
-      "comment" : "After push reminders were turned on below a lesson",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir erinnern dich an deinen Lerntagen um %@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Te enviaremos un recordatorio a las %@ en tus días de estudio."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "On t’enverra un rappel à %@ les jours d’étude."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ti invieremo un promemoria alle %@ nei tuoi giorni di studio."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習日の%@にお知らせします。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "학습일마다 %@에 알려 드려요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W dni nauki przypomnimy ci o %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A gente vai te lembrar às %@ nos seus dias de estudo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Çalışma günlerinde %@ saatinde sana hatırlatma göndereceğiz."
+            "value" : "Çalışma hatırlatması ister misin?"
           }
         }
       }
