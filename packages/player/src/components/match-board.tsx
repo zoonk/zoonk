@@ -5,7 +5,7 @@ import { Fragment, type ReactNode } from "react";
 type Side = "left" | "right";
 type RenderItem<Item> = (side: Side, item: Item, index: number) => ReactNode;
 
-export type MatchBoardRow<Item> = { left: Item | null; right: Item | null };
+type MatchBoardRow<Item> = { left: Item | null; right: Item | null };
 
 type BoardProps<Item> = {
   alignRows?: boolean;
