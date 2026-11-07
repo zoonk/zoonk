@@ -324,14 +324,15 @@ private fun Words(
                         onClick = { actions.share(top, fileName, caption) },
                         modifier = Modifier.weight(1f),
                         enabled = actions.busy == null,
+                        icon = { Icon(painterResource(R.drawable.ic_share), contentDescription = null) },
                     ) {
-                        Icon(painterResource(R.drawable.ic_share), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
-                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                         Text(stringResource(R.string.certificates_share))
                     }
-                    OutlinedButton(onClick = onAddToLinkedIn, modifier = Modifier.weight(1f)) {
-                        Icon(painterResource(R.drawable.ic_north_east), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
-                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    OutlinedButton(
+                        onClick = onAddToLinkedIn,
+                        modifier = Modifier.weight(1f),
+                        icon = { Icon(painterResource(R.drawable.ic_north_east), contentDescription = null) },
+                    ) {
                         Text(stringResource(R.string.certificates_add_to_linkedin))
                     }
                 }

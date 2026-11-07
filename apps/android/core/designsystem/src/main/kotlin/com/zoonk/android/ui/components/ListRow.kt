@@ -55,7 +55,7 @@ import com.zoonk.android.ui.theme.zoonkType
  * moves under it when the words would get too little room. [trailing] is a control at the row's end,
  * such as a switch or a button (main's `SettingRow`). [leading] is a mark at least a line tall, or a
  * larger picture (an avatar). A [busy] row's end (its chevron, or its [meta] without one) turns
- * into a spinner once the wait turns slow ([BusyContent]). Rows reach the list's edges and inset
+ * into a spinner while it works ([BusyContent]). Rows reach the list's edges and inset
  * their own content by [LIST_ITEM_INSET]; a nested row moves its mark and words in by [indent], so its highlight still
  * spans the list. [verticalAlignment] `Top` keeps the mark on the title's first line when lines
  * under it run long (main's `items-start`). A row that opens a page ends with main's chevron; one

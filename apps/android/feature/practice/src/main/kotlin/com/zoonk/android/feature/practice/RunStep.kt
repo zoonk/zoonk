@@ -468,15 +468,8 @@ internal fun AnswerActions(
                 modifier = width.focusMoveTarget(main),
                 enabled = done || reading || (run.canAnswer && draft != null),
                 focusableWhenDisabled = sender != null,
+                icon = if (reading) ({ Icon(painterResource(R.drawable.ic_visibility), contentDescription = null) }) else null,
             ) {
-                if (reading) {
-                    Icon(
-                        painterResource(R.drawable.ic_visibility),
-                        contentDescription = null,
-                        modifier = Modifier.size(ButtonDefaults.IconSize),
-                    )
-                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                }
                 Text(
                     stringResource(
                         when {

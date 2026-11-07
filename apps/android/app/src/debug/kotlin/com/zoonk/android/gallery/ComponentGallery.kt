@@ -5,6 +5,7 @@ package com.zoonk.android.gallery
 
 import android.os.SystemClock
 import android.text.format.DateFormat
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -408,11 +409,20 @@ private fun MaterialComponents() {
 private fun BusyButtons() {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = {}, busy = true) { Text("Start session") }
-            OutlinedButton(onClick = {}, busy = true) { Text("Move to Monday") }
-            SecondaryButton(onClick = {}, busy = true) { Text("I don't know yet") }
-            TextButton(onClick = {}, busy = true) { Text("Skip") }
-            DestructiveButton(onClick = {}, busy = true) { Text("Delete") }
+            Button(onClick = {}, busy = true, icon = { GalleryIcon(R.drawable.ic_play_arrow) }) { Text("Start session") }
+            OutlinedButton(onClick = {}, busy = true, icon = { GalleryIcon(R.drawable.ic_event_upcoming) }) { Text("Move to Monday") }
+            SecondaryButton(onClick = {}, busy = true, icon = { GalleryIcon(R.drawable.ic_help) }) { Text("I don't know yet") }
+            TextButton(onClick = {}, busy = true, icon = { GalleryIcon(R.drawable.ic_undo) }) { Text("Undo") }
+            DestructiveButton(onClick = {}, busy = true, icon = { GalleryIcon(R.drawable.ic_delete) }) { Text("Delete") }
+            OutlinedButton(onClick = {}, busy = true, icon = { GalleryIcon(R.drawable.ic_download) }, size = ButtonSize.Small) {
+                Text("Export")
+            }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Button(onClick = {}, busy = true) { Text("Check") }
+            OutlinedButton(onClick = {}, enabled = false, focusableWhenDisabled = true, icon = { GalleryIcon(R.drawable.ic_help) }) {
+                Text("I'm not sure")
+            }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             OutlinedIconButton(
@@ -420,12 +430,16 @@ private fun BusyButtons() {
                 busy = true,
             ) { Icon(painterResource(R.drawable.ic_contact_support), contentDescription = "Ask") }
             FilledIconButton(onClick = {}, busy = true) { Icon(painterResource(R.drawable.ic_arrow_upward), contentDescription = "Send") }
-            OutlinedButton(onClick = {}, enabled = false, focusableWhenDisabled = true) { Text("Check") }
         }
         ListRow(headline = { Text("Practice this chapter") }, onClick = {}, busy = true)
         ListRow(headline = { Text("Next lesson") }, onClick = {}, busy = true, meta = { Text("5 min") }, chevron = false)
     }
 }
+
+@Composable
+private fun GalleryIcon(
+    @DrawableRes id: Int,
+) = Icon(painterResource(id), contentDescription = null)
 
 @Composable
 private fun Navigation() {

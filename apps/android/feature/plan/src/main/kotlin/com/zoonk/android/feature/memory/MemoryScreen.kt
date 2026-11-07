@@ -182,10 +182,9 @@ private fun Loaded(
             OutlinedButton(
                 onClick = { export.launch(EXPORT_FILE_NAME) },
                 busy = screen.isExporting,
+                icon = { Icon(painterResource(R.drawable.ic_download), contentDescription = null) },
                 size = ButtonSize.Small,
             ) {
-                Icon(painterResource(R.drawable.ic_download), contentDescription = null, modifier = Modifier.size(ICON))
-                Spacer(Modifier.size(6.dp))
                 Text(stringResource(R.string.settings_download))
             }
         },

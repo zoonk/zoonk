@@ -60,8 +60,6 @@ class ChoiceQuestionsRunTest {
         answered = 1
         pending = true
         rule.waitForIdle()
-        rule.mainClock.advanceTimeBy(3_000)
-        rule.waitForIdle()
     }
 
     private fun spinners() = rule.onAllNodes(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true)

@@ -352,15 +352,14 @@ private fun ProviderButton(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         enabled = enabled,
-        contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+        icon = {
+            Icon(
+                painterResource(icon),
+                contentDescription = null,
+                tint = if (tinted) LocalContentColor.current else Color.Unspecified,
+            )
+        },
     ) {
-        Icon(
-            painter = painterResource(icon),
-            contentDescription = null,
-            modifier = Modifier.size(ButtonDefaults.IconSize),
-            tint = if (tinted) LocalContentColor.current else Color.Unspecified,
-        )
-        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
         Text(text)
     }
 }

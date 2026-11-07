@@ -292,14 +292,14 @@ fun NotSureButton(
     focusableWhenDisabled: Boolean = false,
     dontKnowYet: Boolean = false,
 ) {
-    OutlinedButton(busy = busy, onClick = onClick, modifier = modifier, enabled = enabled, focusableWhenDisabled = focusableWhenDisabled) {
-        if (!dontKnowYet) {
-            Icon(
-                painterResource(R.drawable.ic_help),
-                contentDescription = null,
-                modifier = Modifier.padding(end = 8.dp).size(18.dp),
-            )
-        }
+    OutlinedButton(
+        busy = busy,
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        focusableWhenDisabled = focusableWhenDisabled,
+        icon = if (dontKnowYet) null else ({ Icon(painterResource(R.drawable.ic_help), contentDescription = null) }),
+    ) {
         Text(stringResource(if (dontKnowYet) R.string.questions_dont_know_yet else R.string.questions_drill_not_sure))
     }
 }

@@ -168,13 +168,12 @@ internal fun ExplainAnswer(
                 RichText(text = explanation.text, style = MaterialTheme.typography.bodyMedium)
             }
         } else {
-            OutlinedButton(busy = loading, onClick = onExplain, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
-                Icon(
-                    painterResource(R.drawable.ic_lightbulb),
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                )
-                Text(stringResource(R.string.player_explain_answer), Modifier.padding(start = ButtonDefaults.IconSpacing))
+            OutlinedButton(
+                busy = loading,
+                onClick = onExplain,
+                icon = { Icon(painterResource(R.drawable.ic_lightbulb), contentDescription = null) },
+            ) {
+                Text(stringResource(R.string.player_explain_answer))
             }
         }
 

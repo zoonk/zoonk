@@ -105,7 +105,6 @@ class PlanRevealStepFlowTest {
 
         assertNotEquals(AppRoute.Today, navigator.currentRoute)
         rule.onNodeWithText("Start").assertIsNotEnabled()
-        rule.mainClock.advanceTimeBy(2_000)
         rule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate)).assertIsDisplayed()
 
         today.complete(Unit)

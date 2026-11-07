@@ -269,30 +269,38 @@ private fun OwnerActions(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = actions.busy == null,
                     busy = actions.busy == CertificateAction.Share,
+                    icon = { Icon(painterResource(R.drawable.ic_share), contentDescription = null) },
                     size = ButtonSize.Large,
                 ) {
-                    ActionLabel(R.drawable.ic_share, stringResource(R.string.certificates_share))
+                    ActionText(stringResource(R.string.certificates_share))
                 }
                 SideBySideOrStacked {
                     OutlinedButton(
                         onClick = { actions.print(certificate, fileName) },
                         enabled = actions.busy == null,
                         busy = actions.busy == CertificateAction.Print,
+                        icon = { Icon(painterResource(R.drawable.ic_print), contentDescription = null) },
                         size = ButtonSize.Large,
                     ) {
-                        ActionLabel(R.drawable.ic_print, stringResource(R.string.certificates_print))
+                        ActionText(stringResource(R.string.certificates_print))
                     }
                     OutlinedButton(
                         onClick = { actions.download(certificate, fileName) },
                         enabled = actions.busy == null,
                         busy = actions.busy == CertificateAction.Download,
+                        icon = { Icon(painterResource(R.drawable.ic_download), contentDescription = null) },
                         size = ButtonSize.Large,
                     ) {
-                        ActionLabel(R.drawable.ic_download, stringResource(R.string.certificates_download))
+                        ActionText(stringResource(R.string.certificates_download))
                     }
                 }
-                OutlinedButton(onClick = onAddToLinkedIn, modifier = Modifier.fillMaxWidth(), size = ButtonSize.Large) {
-                    ActionLabel(R.drawable.ic_north_east, stringResource(R.string.certificates_add_to_linkedin))
+                OutlinedButton(
+                    onClick = onAddToLinkedIn,
+                    modifier = Modifier.fillMaxWidth(),
+                    icon = { Icon(painterResource(R.drawable.ic_north_east), contentDescription = null) },
+                    size = ButtonSize.Large,
+                ) {
+                    ActionText(stringResource(R.string.certificates_add_to_linkedin))
                 }
             }
         }
@@ -300,14 +308,7 @@ private fun OwnerActions(
 }
 
 @Composable
-private fun ActionLabel(
-    @DrawableRes icon: Int,
-    text: String,
-) {
-    Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
-    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-    Text(text, textAlign = TextAlign.Center)
-}
+private fun ActionText(text: String) = Text(text, textAlign = TextAlign.Center)
 
 /**
  * Main's two columns for Print and Download, one under the other when either's words need more than

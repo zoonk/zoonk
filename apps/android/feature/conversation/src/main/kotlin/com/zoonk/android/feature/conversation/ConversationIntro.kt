@@ -213,9 +213,9 @@ internal fun StartCallButton(
     modifier: Modifier = Modifier,
     label: String = stringResource(R.string.conversation_start),
 ) {
-    Button(busy = starting, onClick = onClick, modifier = modifier) {
-        Icon(painterResource(R.drawable.ic_call), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
-        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+    Button(busy = starting, onClick = onClick, modifier = modifier, icon = {
+        Icon(painterResource(R.drawable.ic_call), contentDescription = null)
+    }) {
         Text(label)
     }
 }
