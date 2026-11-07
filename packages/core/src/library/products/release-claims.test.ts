@@ -128,6 +128,8 @@ describe(isVersionStated, () => {
     expect(stated("- Release 1.36\n- Release 1.37")).toBe(true);
     expect(stated("Version: v1.37")).toBe(true);
     expect(stated("Versão 1.37 - outubro de 2026")).toBe(true);
+    expect(stated("- Release anterior: Release 1.37 - Expedição em Outubro/2026")).toBe(true);
+    expect(stated("Latest release: 1.37")).toBe(true);
   });
 
   it("accepts a version right beside the product's name or an alias", () => {
@@ -140,6 +142,7 @@ describe(isVersionStated, () => {
     expect(stated("Comet Phone 1.37 released on 2026-09-15.")).toBe(false);
     expect(stated("Comet Phone release 1.37")).toBe(false);
     expect(stated("Latest: v1.37 (stable)")).toBe(false);
+    expect(stated("Comet Phone release: 1.37")).toBe(false);
     expect(stated("Neworbit 1.37")).toBe(false);
     expect(stated("the upcoming 1.37 Orbiter release")).toBe(false);
     expect(stated("Comet Phone 1.37 | Orbit Server 1.36")).toBe(false);

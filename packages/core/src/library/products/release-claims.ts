@@ -7,8 +7,18 @@ const NAMING_YEAR = 2000;
 const TOKEN = /\p{L}+|\p{N}+/gu;
 const SHORT_NUMBER = /^\d{1,2}$/u;
 const VERSION_SEPARATOR = /[\p{L}\p{N}][._-][\p{L}\p{N}]/u;
-/** A label a line may open with before its version ("Release 4.2", "Version 1.37"). */
-const RELEASE_WORD = /(?:^|[^\p{L}\p{N}])(?:release|version|versão|versión)$/iu;
+const RELEASE_WORDS = "release|version|versão|versión";
+const RELEASE_WORD = new RegExp(String.raw`(?:^|[^\p{L}\p{N}])(?:${RELEASE_WORDS})$`, "iu");
+
+/**
+ * What may come before a version that opens its line: list or table marks, a label naming a
+ * release ("Next release:", "Release anterior:") and a release word ("Release 4.2").
+ */
+const LINE_OPENING = new RegExp(
+  String.raw`^[^\p{L}\p{N}]*(?:(?:(?:${RELEASE_WORDS})(?:\s+\p{L}+)?|\p{L}+\s+(?:${RELEASE_WORDS}))\s*:[^\p{L}\p{N}]*)?(?:(?:${RELEASE_WORDS})[^\p{L}\p{N}]*)?$`,
+  "iu",
+);
+
 const TRAILING_MARKS = /[^\p{L}\p{N}]+$/u;
 const LEADING_SPACE = /^\s+/u;
 const LETTER_OR_NUMBER = /[\p{L}\p{N}]/u;
@@ -151,9 +161,9 @@ function hasNameAtEdge({
 }
 
 /**
- * On the version's line, only list or table marks and a release word come before it, or the
- * product's own name sits right before it or follows it after a space. A version beside any other
- * name ("Comet Phone 1.37") is another product's.
+ * The version opens its line (`LINE_OPENING`), or the product's own name sits right before it or
+ * follows it after a space. A version beside any other name ("Comet Phone 1.37") is another
+ * product's.
  */
 function isVersionOfLine({
   passage,
@@ -167,8 +177,9 @@ function isVersionOfLine({
   return [...passage.matchAll(toVersionPattern({ flags: "giu", version }))].some((match) => {
     const lineEnd = passage.indexOf("\n", match.index);
 
-    const before = passage
-      .slice(passage.lastIndexOf("\n", match.index) + 1, match.index)
+    const opening = passage.slice(passage.lastIndexOf("\n", match.index) + 1, match.index);
+
+    const before = opening
       .replace(TRAILING_MARKS, "")
       .replace(RELEASE_WORD, "")
       .replace(TRAILING_MARKS, "");
@@ -178,7 +189,7 @@ function isVersionOfLine({
       .replace(LEADING_SPACE, "");
 
     return (
-      !LETTER_OR_NUMBER.test(before) ||
+      LINE_OPENING.test(opening) ||
       productNames.some(
         (name) =>
           hasNameAtEdge({ name, text: before }) ||
