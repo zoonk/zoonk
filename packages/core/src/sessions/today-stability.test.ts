@@ -13,7 +13,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { markPlanSourcesChanged } from "../learner/_utils/mark-learner-changed";
 import { replanGoalsWaitingOnSkills } from "../library/curriculum/replan-waiting-goals";
-import { askForLessons, endLessonsAsk } from "../lookahead/lessons-ask";
+import { askForLessons, endLessonsAsk, followWrittenLessons } from "../lookahead/lessons-ask";
 import { keepPaceOwn } from "../plans/_test-utils/keep-pace-own";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { readSelectedItemFacts } from "../plans/_utils/selected-item-contract";
@@ -294,10 +294,8 @@ describe("today's session the learner was shown", () => {
 
     vi.setSystemTime(A_MINUTE_LATER);
 
-    // What `saveEarlyChapter` (apps/api/src/workflows/courses/steps/waited-band-outline.ts) does
-    // mid-stream: save the waited chapter, then `replanGoalsWaitingOnSkills`. No day follow runs
-    // until the whole band is written, so the course's outline is still running here.
     const landed = await landWaitingLessons({ courseId: course.id, library });
+    await followWrittenLessons({ askedAt: null, goalId: goal.id });
     await prisma.course.update({ data: { outlineStatus: "running" }, where: { id: course.id } });
 
     const after = await getTodayView({ goalId: goal.id, timeZone: "UTC" });

@@ -22,6 +22,7 @@ import {
   pickChapters,
   toOutlineParams,
 } from "./band-outline";
+import { followWrittenLessonsStep } from "./follow-written-lessons-step";
 
 export type BandOutline = {
   chapters: OutlineChapter[];
@@ -81,6 +82,10 @@ async function streamWaitedBand({
           .filter((skill) => chapter.skillKeys.includes(skill.key))
           .map((skill) => skill.id),
       });
+
+      await Promise.all(
+        replanned.goalIds.map((goalId) => followWrittenLessonsStep({ askedAt: null, goalId })),
+      );
 
       const goalIds = [...replanned.goalIds, ...replanned.failedGoalIds];
 
