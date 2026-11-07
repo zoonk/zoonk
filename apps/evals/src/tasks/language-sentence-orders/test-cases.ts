@@ -169,7 +169,7 @@ export const TEST_CASES: TestCase<SentenceOrdersExpected, SentenceOrdersInput>[]
     },
   },
   {
-    expectations: `Japanese speaker learning US English. The Japanese translation's phrases ("土曜日に", "図書館で") can swap as long as the verb stays at the end; in English only "on Saturdays" moves, to the front.`,
+    expectations: `Japanese speaker learning US English. The Japanese translation's phrases ("土曜日に", "図書館で") can swap as long as the verb stays at the end. In English "on Saturdays" can open the sentence or swap places with "at the library" at the end, while "English" stays right after "study".`,
     expected: {
       sentences: [
         {
