@@ -26,7 +26,7 @@
   "reminders_save": "9e604950a370a4c0faef4fe6b10ec17869b682d45306de18547127525a398ddf",
   "reminders_save_failed": "3f258696356444290a1b403aea58187994fa318a43d633ca38884866702e13ad",
   "reminders_study_days": "4b5196df137c96ac14c378af611b4bf02101258949fbdc464a0f328b387ee148",
-  "reminders_time": "ab004b6a0bae8eeb3d715a1361b431f93654a56d1e44a0d8752f403c3c3e6bd1",
+  "reminders_time": "11972025c5144c6104076ec4845cc60dd849ce2f29f719122be2470ad7d33650",
   "reminders_time_in_zone": "b160ee1ee7bdc6ce1a8532d7e927ed7728d8232651bd89564c7da3c28438ccbf",
   "reminders_time_title": "2aad43010734d81afe0f962d63f10802a9e5dd1a0db5e855ad271b640a4a6301",
   "reminders_title": "98df000ca3d6aee547bbb2d40ca1a516ae12e4d8f3b0af59d0c83bb71af42f9b",
@@ -70,7 +70,7 @@
     <!-- The reminders page in Settings. -->
     <string name="reminders_title">Hatırlatmalar</string>
     <string name="reminders_description">Günde bir hatırlatma, yalnızca çalışman kaldıysa.</string>
-    <string name="reminders_time">Süre</string>
+    <string name="reminders_time">Saat</string>
     <!-- %1$s is a time of day and %2$s its time zone, such as "7:00 PM, Brasilia Time". -->
     <string name="reminders_time_in_zone">%1$s, %2$s</string>
     <string name="reminders_email">E-posta</string>

@@ -26,7 +26,7 @@
   "reminders_save": "e0a13da9901e3a49448e845c5af3b4ca32af416a94a2b20061db8c43b766bea6",
   "reminders_save_failed": "e65da486c754f486eff1adbf083ecc9d330d3cd53c0a70e74689fa4219f2eb06",
   "reminders_study_days": "57958d3ab22574771bec5add5d8bbac8001decc57069c3aec93279cead2daa1a",
-  "reminders_time": "fe24ca69ea942da966cae4ab3c08c35efc6f1400106edaf1cf3c1334c9b6e570",
+  "reminders_time": "93167b1d597cdcebf8ae1f0c091c372a9657857424b187b8e5b679c0644c8ddf",
   "reminders_time_in_zone": "700b1de9cf3063882916ddf787bf77800087c21a50feba2611f456a7c2b78ae4",
   "reminders_time_title": "aa7e5d9affdad20afb9382089bc8370ff2738387449aad942de6f93cbee341b7",
   "reminders_title": "6d2b71367c4edccd8afc6c45f1c702f28e7a27eaa75d2112b7831cdf907c6f21",
@@ -70,7 +70,7 @@
     <!-- The reminders page in Settings. -->
     <string name="reminders_title">リマインダー</string>
     <string name="reminders_description">その日の学習が残っているときだけ、1日1回お知らせします。</string>
-    <string name="reminders_time">時間</string>
+    <string name="reminders_time">時刻</string>
     <!-- %1$s is a time of day and %2$s its time zone, such as "7:00 PM, Brasilia Time". -->
     <string name="reminders_time_in_zone">%1$s（%2$s）</string>
     <string name="reminders_email">メールアドレス</string>

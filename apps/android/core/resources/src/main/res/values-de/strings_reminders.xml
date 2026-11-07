@@ -26,7 +26,7 @@
   "reminders_save": "037f893322600786ef0b87f08a4ca2f69da6b71b2228fa482b23f6757f7f7eb6",
   "reminders_save_failed": "f7d78cd51e472948c9a8dace4686d75ffa87160ac7005c91f6ec42c50b4130a5",
   "reminders_study_days": "c9e78ed5aab5650d0f92248de99086fb8bbe3e50e7134c2489c306837d8f8aca",
-  "reminders_time": "9885a67fc78d17aca9507e742007f89de653732bb3c413971c1cd416fba66032",
+  "reminders_time": "159ac45b15ca3b495d7bc65c1c73b0eb650e73c3ec5596227e0fed29b8aeb747",
   "reminders_time_in_zone": "c02b67e5e70afb497afb3fe8cf3680165734b691f95658640203773d8680b76f",
   "reminders_time_title": "bc37c431c9f756da5b57a3bcac15185ad0e883ae20e5830d72c6a96d4d4bd326",
   "reminders_title": "ee6b519edb48eee90919683af4fe169ea27ae0694e3ecc041433a6b0787d3ec3",
@@ -70,7 +70,7 @@
     <!-- The reminders page in Settings. -->
     <string name="reminders_title">Erinnerungen</string>
     <string name="reminders_description">Eine Erinnerung pro Tag, nur wenn du noch etwas zu lernen hast.</string>
-    <string name="reminders_time">Zeit</string>
+    <string name="reminders_time">Uhrzeit</string>
     <!-- %1$s is a time of day and %2$s its time zone, such as "7:00 PM, Brasilia Time". -->
     <string name="reminders_time_in_zone">%1$s, %2$s</string>
     <string name="reminders_email">E-Mail</string>

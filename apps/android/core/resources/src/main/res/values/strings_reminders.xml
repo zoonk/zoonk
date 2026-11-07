@@ -35,6 +35,7 @@
     <!-- The reminders page in Settings. -->
     <string name="reminders_title">Reminders</string>
     <string name="reminders_description">One reminder a day, only when you still have learning left.</string>
+    <!-- The time of day a reminder goes out, not an amount of time. -->
     <string name="reminders_time">Time</string>
     <!-- %1$s is a time of day and %2$s its time zone, such as "7:00 PM, Brasilia Time". -->
     <string name="reminders_time_in_zone">%1$s, %2$s</string>
