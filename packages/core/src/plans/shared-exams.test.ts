@@ -100,7 +100,7 @@ describe("the subjects a plan shares with the learner's other exams", () => {
     });
   });
 
-  it("counts a paused exam and a skill merged into one the plan holds, never a finished one", async () => {
+  it("counts a paused exam and a skill merged into one the plan holds, never a finished or archived one", async () => {
     const user = await userFixture();
     const survivor = await skillFixture();
 
