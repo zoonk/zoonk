@@ -165,9 +165,9 @@ async function createPlanAndOutlines({
   const courses = toGoalCourses({
     courseIdsByKey,
     needs: near,
-    ownerId: scope.ownerId,
+    scope,
     withToolChapters: inputs.usesTools,
-  }).map((course) => ({ ...course, scope }));
+  });
 
   await startOutlines({ context, courses, firstSkillId, forGuest: inputs.isGuest });
 

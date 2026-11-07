@@ -108,9 +108,10 @@ describe(orderGoalCourses, () => {
 describe(toGoalCourses, () => {
   const needs = groupGoalCourseBands({ graph, idsByKey: ids });
   const courseIdsByKey = { a: "course-a", b: "course-b" };
+  const scope = { generalGoal: null, language: "en", ownerId: null, targetLanguage: null };
 
   it("gives each need its Library course and keeps a shared course's bands", () => {
-    const courses = toGoalCourses({ courseIdsByKey, needs, ownerId: null, withToolChapters: true });
+    const courses = toGoalCourses({ courseIdsByKey, needs, scope, withToolChapters: true });
 
     expect(courses.map((course) => course.courseId)).toStrictEqual(["course-b", "course-a"]);
     expect(courses[1]?.bands.map((band) => band.level)).toStrictEqual(["beginner", "intermediate"]);
@@ -120,7 +121,7 @@ describe(toGoalCourses, () => {
     const [, courseA] = toGoalCourses({
       courseIdsByKey,
       needs,
-      ownerId: "learner",
+      scope: { ...scope, ownerId: "learner" },
       withToolChapters: true,
     });
 
@@ -152,16 +153,29 @@ describe(toGoalCourses, () => {
   });
 
   it("asks every band of an exam answered without tools for chapters without tools", () => {
-    const courses = toGoalCourses({
-      courseIdsByKey,
-      needs,
-      ownerId: null,
-      withToolChapters: false,
-    });
+    const courses = toGoalCourses({ courseIdsByKey, needs, scope, withToolChapters: false });
 
     expect(
       courses.flatMap((course) => course.bands.map((band) => band.withToolChapters)),
     ).toStrictEqual([false, false, false]);
+  });
+
+  it("gives an exam's courses the subject of every skill they teach, in bands still to come too", () => {
+    const near = keepNearCourseBands({ nearSkillIds: new Set(["id-a1"]), needs });
+
+    const [courseA] = toGoalCourses({
+      courseIdsByKey,
+      needs: near,
+      scope: { ...scope, exams: [{ name: "ENEM", style: "Five-option items." }] },
+      withToolChapters: true,
+    });
+
+    expect(courseA?.skillAreas).toStrictEqual({ "id-a1": "Course A", "id-a2": "Course A" });
+  });
+
+  it("gives no subjects to a goal that isn't an exam", () => {
+    const courses = toGoalCourses({ courseIdsByKey, needs, scope, withToolChapters: true });
+    expect(courses.map((course) => course.skillAreas)).toStrictEqual([undefined, undefined]);
   });
 });
 

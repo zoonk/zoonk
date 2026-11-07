@@ -8,6 +8,7 @@ import {
 } from "@zoonk/core/library/curriculum/save-outline-chapter";
 import {
   type CourseBandNeed,
+  type CourseOutlineNeed,
   type CurriculumScope,
   type GoalSkillRef,
   getScopeModel,
@@ -103,7 +104,7 @@ export function toChapterMoves({
   });
 }
 
-export type BandInput = {
+export type BandInput = Pick<CourseOutlineNeed, "skillAreas"> & {
   analytics?: ContentAnalytics;
   courseId: string;
   plan: BandPlan;

@@ -1,5 +1,11 @@
 import { type CourseLevel } from "@zoonk/db";
-import { type CourseBandNeed, type GoalSkillRef } from "./curriculum-scope";
+import {
+  type CourseBandNeed,
+  type CourseOutlineNeed,
+  type CurriculumScope,
+  type GoalSkillRef,
+  toExamSkillAreas,
+} from "./curriculum-scope";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
 export type GoalCourseNeed = {
@@ -7,6 +13,8 @@ export type GoalCourseNeed = {
   title: string;
   firstPhase: number;
   bands: (CourseBandNeed & { firstPhase: number })[];
+  /** Every skill of the graph the course teaches, in bands the plan reaches now or later. */
+  skills: { area: string; skillId: string }[];
 };
 
 type GraphSkill = GoalSkillGraph["skills"][number];
@@ -70,8 +78,21 @@ export function groupGoalCourseBands({
 
     const [first] = bands;
 
+    const courseSkills = skills.flatMap((skill) => {
+      const skillId = idsByKey[skill.key];
+      return skillId ? [{ area: skill.area, skillId }] : [];
+    });
+
     return first
-      ? [{ bands, firstPhase: first.firstPhase, key: course.key, title: course.title }]
+      ? [
+          {
+            bands,
+            firstPhase: first.firstPhase,
+            key: course.key,
+            skills: courseSkills,
+            title: course.title,
+          },
+        ]
       : [];
   });
 
@@ -103,21 +124,30 @@ export function orderGoalCourses(graph: GoalSkillGraph): { key: string; title: s
 export function toGoalCourses({
   courseIdsByKey,
   needs,
-  ownerId,
+  scope,
   withToolChapters,
 }: {
   courseIdsByKey: Readonly<Record<string, string>>;
   needs: readonly GoalCourseNeed[];
-  ownerId: string | null;
+  scope: CurriculumScope;
   withToolChapters: boolean;
-}): { bands: CourseBandNeed[]; courseId: string }[] {
+}): CourseOutlineNeed[] {
   return needs.flatMap((need) => {
     const courseId = courseIdsByKey[need.key];
-    const bands = ownerId ? mergePrivateBands(need).bands : need.bands;
+    const bands = scope.ownerId ? mergePrivateBands(need).bands : need.bands;
 
-    return courseId
-      ? [{ bands: bands.map((band) => ({ ...band, withToolChapters })), courseId }]
-      : [];
+    if (!courseId) {
+      return [];
+    }
+
+    return [
+      {
+        bands: bands.map((band) => ({ ...band, withToolChapters })),
+        courseId,
+        scope,
+        ...toExamSkillAreas({ scope, skills: need.skills }),
+      },
+    ];
   });
 }
 

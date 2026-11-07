@@ -11,9 +11,10 @@ import { isChallengeIdentityKey } from "../challenges/challenge-lesson-spec";
 import { needsTool } from "../chapters/chapter-tools";
 import {
   type CourseBandNeed,
-  type CurriculumScope,
+  type CourseOutlineNeed,
   type GoalSkillRef,
   type SkillExtension,
+  toExamSkillAreas,
 } from "./curriculum-scope";
 
 const MAX_EXTENSION_LESSONS = 10;
@@ -26,12 +27,6 @@ export type ExtensionPlan = {
   lessons: number;
   level: CourseLevel;
   skill: GoalSkillRef;
-};
-
-export type CourseExtensionRequest = {
-  bands: CourseBandNeed[];
-  courseId: string;
-  scope: CurriculumScope;
 };
 
 type Placement = Awaited<ReturnType<typeof loadSkillPlacements>>[number];
@@ -223,15 +218,17 @@ function groupByBand({
 
 async function toCourseRequest({
   course,
+  courseSkills,
   extensions,
   goal,
   withToolChapters,
 }: {
   course: ExtensionCourse;
+  courseSkills: readonly PlanGraphSkill[];
   extensions: readonly WantedExtension[];
   goal: Parameters<typeof toPlanCourseScope>[0]["goal"];
   withToolChapters: boolean;
-}): Promise<CourseExtensionRequest[]> {
+}): Promise<CourseOutlineNeed[]> {
   const scope = toPlanCourseScope({ course, goal });
 
   const plans = await planSkillExtensions({
@@ -241,9 +238,10 @@ async function toCourseRequest({
     withToolChapters,
   });
 
-  return plans.length > 0
-    ? [{ bands: groupByBand({ extensions, plans, withToolChapters }), courseId: course.id, scope }]
-    : [];
+  const bands = groupByBand({ extensions, plans, withToolChapters });
+  const areas = toExamSkillAreas({ scope, skills: courseSkills });
+
+  return plans.length > 0 ? [{ bands, courseId: course.id, scope, ...areas }] : [];
 }
 
 function getSkillCourseId({
@@ -263,7 +261,7 @@ export async function listSkillExtensions({
 }: {
   days: number;
   goalId: string;
-}): Promise<CourseExtensionRequest[]> {
+}): Promise<CourseOutlineNeed[]> {
   const goal = await prisma.goal.findUnique({
     select: {
       details: true,
@@ -317,6 +315,9 @@ export async function listSkillExtensions({
     courses.map((course) =>
       toCourseRequest({
         course,
+        courseSkills: graph.skills.filter(
+          (graphSkill) => getSkillCourseId({ goal, skill: graphSkill }) === course.id,
+        ),
         extensions: graphSkills
           .filter((graphSkill) => getSkillCourseId({ goal, skill: graphSkill }) === course.id)
           .flatMap((graphSkill) =>

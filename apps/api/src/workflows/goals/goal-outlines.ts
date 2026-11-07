@@ -1,4 +1,4 @@
-import { type CourseBandNeed, type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
+import { type CourseOutlineNeed } from "@zoonk/core/library/curriculum/scope";
 import { OUTLINE_SOON_DAYS } from "@zoonk/core/lookahead/outline-ahead";
 import { start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
@@ -13,9 +13,7 @@ import {
   readPlanFirstSkillStep,
 } from "./steps/goal-lookahead-steps";
 
-type OutlineCourse = { bands: CourseBandNeed[]; courseId: string; scope: CurriculumScope };
-
-type PlanOutline = OutlineCourse & { background: boolean; waitedSkillId?: string };
+type PlanOutline = CourseOutlineNeed & { background: boolean; waitedSkillId?: string };
 
 /** Waits for every start, so the outlines that did start count, then fails like the first that didn't. */
 export async function startAll(starts: readonly Promise<unknown>[]): Promise<void> {
@@ -62,7 +60,7 @@ export async function startOutlines({
   started = [],
 }: {
   context: GoalRunContext;
-  courses: OutlineCourse[];
+  courses: CourseOutlineNeed[];
   firstSkillId: string | null;
   forGuest: boolean;
   started?: string[];
@@ -120,7 +118,7 @@ function getOutlineWait({
   return firstSkillId ? { background: false, waitedSkillId: firstSkillId } : { background: false };
 }
 
-function mergeCourseRequests(requests: readonly OutlineCourse[]): OutlineCourse[] {
+function mergeCourseRequests(requests: readonly CourseOutlineNeed[]): CourseOutlineNeed[] {
   return [...Map.groupBy(requests, (request) => request.courseId).values()].flatMap(
     ([first, ...rest]) =>
       first ? [{ ...first, bands: [...first.bands, ...rest.flatMap((item) => item.bands)] }] : [],
