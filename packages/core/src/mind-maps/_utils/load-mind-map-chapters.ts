@@ -1,10 +1,5 @@
 import "server-only";
 import { type Goal, prisma, sql } from "@zoonk/db";
-import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
-import { hasPlanDeadline, withinLessonScope } from "../../plans/_utils/plan-end";
-import { findUpNextItem } from "../../plans/_utils/up-next-item";
-import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
-import { parsePlanSettings } from "../../plans/planner/plan-state";
 import {
   type MindMapChapterRow,
   mindMapChapterRows,
@@ -46,50 +41,4 @@ export async function loadMindMapChapters({
     row: toMindMapRow(chapter),
     title: chapter.title,
   }));
-}
-
-/** Read-only; null without a chapter-backed next lesson or remaining lessons. */
-export async function loadUpNextChapter(
-  goal: Pick<Goal, "id" | "kind" | "targetDate" | "userId">,
-): Promise<{ chapterId: string; lessonsLeft: number } | null> {
-  const [plan, todayBlocks] = await Promise.all([
-    prisma.plan.findUnique({
-      select: {
-        items: {
-          orderBy: { position: "asc" },
-          select: {
-            chapterId: true,
-            id: true,
-            kind: true,
-            lessonId: true,
-            phase: true,
-            status: true,
-          },
-          where: { kind: { in: [...LEARN_KINDS] }, status: { in: ["todo", "skipped"] } },
-        },
-        settings: true,
-      },
-      where: { goalId: goal.id },
-    }),
-    readTodayLearnBlocks(goal.userId, goal.id),
-  ]);
-
-  const items = plan?.items ?? [];
-  const next = findUpNextItem({ items, todayBlocks });
-
-  if (!next?.chapterId || next.kind !== "lesson") {
-    return null;
-  }
-
-  const deadline = hasPlanDeadline({
-    studiesPastTarget: goal.kind === "exam" && parsePlanSettings(plan?.settings).fullCourse,
-    targetDate: goal.targetDate,
-  });
-
-  const lessonsLeft = withinLessonScope({ deadline, items }).filter(
-    (item) =>
-      item.kind === "lesson" && item.chapterId === next.chapterId && item.phase === next.phase,
-  ).length;
-
-  return { chapterId: next.chapterId, lessonsLeft };
 }

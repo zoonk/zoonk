@@ -22,7 +22,7 @@ const STRUCTURE = {
 };
 
 describe(getChapterMindMapStatus, () => {
-  it("reads a running map as generating without writing", async () => {
+  it("reads a running map as drawing without writing", async () => {
     const { goal, chapters } = await signedInCourseGoal({
       statuses: ["done", "done", "todo", "todo"],
     });
@@ -35,7 +35,7 @@ describe(getChapterMindMapStatus, () => {
     );
 
     expect(counts.writes).toBe(0);
-    expect(counts.result).toStrictEqual({ mindMap: { status: "generating" }, status: "ready" });
+    expect(counts.result).toStrictEqual({ mindMap: { status: "drawing" }, status: "ready" });
   });
 
   it.each([

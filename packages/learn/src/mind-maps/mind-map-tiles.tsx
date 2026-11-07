@@ -121,7 +121,7 @@ function MapRequestTile({
   });
 
   const isFailure = shown === "failed" || shown === "unreachable";
-  const isGenerating = shown === "generating";
+  const isGenerating = shown === "drawing";
   const isCapped = capped || (limit !== null && limit.status !== "slowDown");
 
   return (

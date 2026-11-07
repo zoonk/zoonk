@@ -7,6 +7,7 @@ import { getLearnerModelCacheTag, getUserProgressCacheTag } from "../../cache/ta
 import { celebrateProgress } from "../../milestones/celebrate-progress";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { type ProgressChange } from "../../sessions/_utils/session-progress";
+import { type FinishedChapter } from "../../sessions/completion-contract";
 import { type ProgressCelebration } from "../../sessions/progress-celebration";
 import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
@@ -33,6 +34,7 @@ const PERCENT = 100;
 type ChapterTestOutOutcome = ProgressCelebration & {
   changeId: string | null;
   correct: number;
+  finishedChapter: FinishedChapter | null;
   lessonsSkipped: number;
   passed: boolean;
   total: number;
@@ -159,6 +161,7 @@ function toReadyResult({
       ...celebration,
       changeId: said.changeId,
       correct: said.correct,
+      finishedChapter: null,
       lessonsSkipped: said.lessonsSkipped,
       passed: said.passed,
       total: said.total,

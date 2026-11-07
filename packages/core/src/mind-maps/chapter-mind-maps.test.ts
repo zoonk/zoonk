@@ -157,6 +157,7 @@ describe("chapter mind maps", () => {
       mindMap: {
         chapterId: finished,
         image: null,
+        lessonsToWrite: 0,
         outline: null,
         position: 1,
         status: "available",
@@ -216,10 +217,10 @@ describe("chapter mind maps", () => {
 
     await expect(
       requestChapterMindMap({ chapterId: finished, goalId: goal.id }),
-    ).resolves.toStrictEqual({ generationId: null, status: "generating" });
+    ).resolves.toStrictEqual({ generationId: null, status: "drawing" });
 
     await expect(getChapterMindMap({ chapterId: finished })).resolves.toMatchObject({
-      mindMap: { status: "generating" },
+      mindMap: { status: "drawing" },
     });
 
     await expect(

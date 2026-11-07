@@ -111,6 +111,7 @@ test.describe("Mind maps API", () => {
     ).resolves.toStrictEqual({
       chapterId: finished.id,
       image: null,
+      lessonsToWrite: 0,
       outline: null,
       position: 1,
       status: "available",
@@ -131,7 +132,7 @@ test.describe("Mind maps API", () => {
       status: ACCEPTED,
     });
 
-    expect(body).toStrictEqual({ generationId: expect.any(String), status: "generating" });
+    expect(body).toStrictEqual({ generationId: expect.any(String), status: "drawing" });
     expect(started.headers().location).toBe(`/v1/generations/${body.generationId}`);
 
     await expect(
@@ -140,7 +141,7 @@ test.describe("Mind maps API", () => {
         schema: mindMapGenerationSchema,
         status: ACCEPTED,
       }),
-    ).resolves.toMatchObject({ status: "generating" });
+    ).resolves.toMatchObject({ status: "drawing" });
 
     await expect(
       prisma.usageRecord.findMany({
@@ -159,15 +160,15 @@ test.describe("Mind maps API", () => {
         {
           chapterId: finished.id,
           image: null,
+          lessonsToWrite: 0,
           outline: null,
           position: 1,
-          status: expect.stringMatching(/^generating$|^failed$/u),
+          status: expect.stringMatching(/^drawing$|^failed$/u),
           subject: null,
           title: finished.title,
         },
       ],
       goal: { id: goal.id, title: "Cells" },
-      nextChapter: { chapterId: current.id, lessonsLeft: 1, title: current.title },
     });
 
     await apiContext.dispose();

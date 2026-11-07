@@ -9,7 +9,16 @@ import { getString } from "@zoonk/utils/json";
 import { useMemo } from "react";
 
 const HTTP_UNPROCESSABLE = 422;
-const STATUSES = new Set<string>(["available", "failed", "generating", "ready", "unavailable"]);
+
+const STATUSES = new Set<string>([
+  "available",
+  "drawing",
+  "failed",
+  "plusRequired",
+  "ready",
+  "unavailable",
+  "writingLessons",
+]);
 
 function isMindMapStatus(value: string | null): value is MindMapStatus {
   return value !== null && STATUSES.has(value);
@@ -49,7 +58,7 @@ async function requestMindMap({
     return { status: "failed" };
   }
 
-  return getString(body, "status") === "ready" ? { status: "ready" } : { status: "generating" };
+  return getString(body, "status") === "ready" ? { status: "ready" } : { status: "drawing" };
 }
 
 async function readMindMapStatus({

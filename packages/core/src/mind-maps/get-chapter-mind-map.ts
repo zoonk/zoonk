@@ -49,6 +49,7 @@ export async function getChapterMindMap({
     mindMap: {
       chapterId,
       image: isReady ? toMindMapImage(facts.row) : null,
+      lessonsToWrite: 0,
       outline: isReady ? toMindMapOutline(facts.row?.structure) : null,
       position: numbering({ chapterId, planPosition: facts.position }).position,
       status,

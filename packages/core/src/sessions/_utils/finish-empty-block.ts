@@ -86,6 +86,7 @@ export async function finishEmptyBlock({
       comesBackOn: null,
       completedMissions: settled.missionResult.completed,
       correct: 0,
+      finishedChapter: null,
       fullMeal: { bonus: getMissionBonus(settled.missions), paid: false },
       milestones: [],
       missions: settled.missions,

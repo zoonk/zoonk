@@ -19,6 +19,7 @@ type BlockResult = Pick<
   | "checkpoint"
   | "comesBackOn"
   | "correct"
+  | "finishedChapter"
   | "netScore"
   | "testOutOffer"
   | "topHyperdrive"

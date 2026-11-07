@@ -1,6 +1,7 @@
 import { skillStateCountsSchema } from "@zoonk/core/learner/contract";
 import { placementStatusSchema } from "@zoonk/core/learner/placement/contract";
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
+import { finishedChapterSchema } from "@zoonk/core/sessions/completion-contract";
 import { progressCelebrationShape } from "@zoonk/core/sessions/progress-celebration";
 import { MasteryState } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -303,6 +304,7 @@ export const chapterTestOutResultSchema = z
           "The plan change that skipped the lessons; undo it through the goal's plan changes. Null when nothing was skipped or the plan isn't built yet.",
       }),
     correct: z.number().int().min(0),
+    finishedChapter: finishedChapterSchema,
     lessonsSkipped: z
       .int()
       .min(0)

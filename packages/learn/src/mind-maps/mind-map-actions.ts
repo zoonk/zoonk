@@ -3,7 +3,7 @@ import { type MindMapLimit } from "../_components/help-limit-notice";
 
 export type MindMapRequestOutcome =
   | { limit: MindMapLimit; status: "refused" }
-  | { status: "failed" | "generating" | "ready" | "unavailable" };
+  | { status: "failed" | "drawing" | "ready" | "unavailable" };
 
 /**
  * `request` is a POST from the learner's tap, never a page load; `readStatus` resolves to null when

@@ -308,6 +308,7 @@ describe("picture loss during a lesson", () => {
           certificates: [],
           correctCount: 1,
           energyDelta: 1,
+          finishedChapter: null,
           incorrectCount: 0,
           isFirstCompletion: true,
           nextReviewAt: null,

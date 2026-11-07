@@ -9,16 +9,17 @@ import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
 import { MIND_MAP_STALE_AFTER_MS, getMindMapStatus } from "./_utils/mind-map-view";
 
-/** On start, the caller must start the claimed run; a generating result may lack generationId until the run records it. */
+/** On start, the caller must start the claimed run; an on-its-way result may lack generationId until the run records it. */
 export type ChapterMindMapRequest =
   | { status: "ready" }
-  | { generationId: string | null; status: "generating" }
+  | { generationId: string | null; status: "drawing" | "writingLessons" }
   | {
       analytics: { distinctId: string; goalId: string; platform: AnalyticsPlatform | null };
       status: "start";
     }
   | { decision: RefusedUsage; status: "refused" }
   | { status: "notFound" }
+  | { status: "plusRequired" }
   | { status: "unauthorized" }
   | { status: "unavailable" };
 
@@ -91,12 +92,12 @@ export async function requestChapterMindMap({
 
   const status = getMindMapStatus({ ...facts, now });
 
-  if (status === "ready" || status === "unavailable") {
+  if (status === "ready" || status === "unavailable" || status === "plusRequired") {
     return { status };
   }
 
-  if (status === "generating") {
-    return { generationId: await findRunId(chapterId), status: "generating" };
+  if (status === "drawing" || status === "writingLessons") {
+    return { generationId: await findRunId(chapterId), status };
   }
 
   const decision = await claimUsage({ generated: true, kind: "mindMap", targetId: chapterId });
@@ -110,7 +111,7 @@ export async function requestChapterMindMap({
   }
 
   if (!(await claimMindMap({ chapterId, now }))) {
-    return { generationId: await findRunId(chapterId), status: "generating" };
+    return { generationId: await findRunId(chapterId), status: "drawing" };
   }
 
   return {

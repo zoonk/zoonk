@@ -86,7 +86,7 @@ const STATE_TEXT_CLASS = "text-muted-foreground text-sm text-pretty";
 function useStateCopy(shown: MindMapShown) {
   const t = useExtracted();
 
-  if (shown === "generating") {
+  if (shown === "drawing") {
     return {
       action: null,
       description: t("It takes about half a minute. You can leave this page; it'll be here."),
@@ -145,14 +145,14 @@ function MindMapRequestCard({
         <KindDot className="-translate-y-px" kind="mindMap" />
         <div
           className="flex min-w-0 flex-col gap-0.5"
-          role={shown === "generating" ? "status" : undefined}
+          role={shown === "drawing" ? "status" : undefined}
         >
           <p className="text-[0.9375rem] font-medium">{copy.title}</p>
           <p className={STATE_TEXT_CLASS}>{copy.description}</p>
         </div>
       </div>
 
-      {shown === "generating" && (
+      {shown === "drawing" && (
         <Spinner
           aria-hidden="true"
           className="text-muted-foreground mx-auto size-5"

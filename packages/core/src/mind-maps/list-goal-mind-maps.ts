@@ -1,7 +1,7 @@
 import "server-only";
 import { resolveViewGoal } from "../view-models/_utils/resolve-view-goal";
 import { loadChapterNumbering } from "../view-models/syllabus/_utils/chapter-numbers";
-import { loadMindMapChapters, loadUpNextChapter } from "./_utils/load-mind-map-chapters";
+import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
 import { getMindMapStatus, toMindMapImage, toMindMapOutline } from "./_utils/mind-map-view";
 import { type GoalMindMapView, type GoalMindMapsView } from "./mind-map-contract";
 
@@ -30,13 +30,10 @@ export async function listGoalMindMaps(
   const { goal } = resolved;
   const now = new Date();
 
-  const [facts, numbering, upNext] = await Promise.all([
+  const [facts, numbering] = await Promise.all([
     loadMindMapChapters({ goal }),
     loadChapterNumbering(goal),
-    loadUpNextChapter(goal),
   ]);
-
-  const nextTitle = facts.find((chapter) => chapter.chapterId === upNext?.chapterId)?.title;
 
   const chapters = facts.flatMap((chapter) => {
     const status = getMindMapStatus({ ...chapter, now });
@@ -51,6 +48,7 @@ export async function listGoalMindMaps(
       {
         chapterId: chapter.chapterId,
         image: status === "ready" ? toMindMapImage(chapter.row) : null,
+        lessonsToWrite: 0,
         outline: status === "ready" ? toMindMapOutline(chapter.row?.structure) : null,
         position: number.position,
         status,
@@ -60,13 +58,5 @@ export async function listGoalMindMaps(
     ];
   });
 
-  const nextChapter =
-    upNext && nextTitle !== undefined && upNext.lessonsLeft > 0
-      ? { ...upNext, title: nextTitle }
-      : null;
-
-  return {
-    mindMaps: { chapters, goal: { id: goal.id, title: goal.title }, nextChapter },
-    status: "ready",
-  };
+  return { mindMaps: { chapters, goal: { id: goal.id, title: goal.title } }, status: "ready" };
 }

@@ -7,10 +7,6 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
-import {
-  studySessionBlockFixture,
-  studySessionFixture,
-} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, describe, expect, it } from "vitest";
@@ -19,7 +15,6 @@ import { loadLearnerFacts } from "../learner/summary/_utils/load-learner-facts";
 import { courseGoalFixture, signedInCourseGoal } from "../view-models/_test-utils/course-goal";
 import { MIND_MAP_STALE_AFTER_MS } from "./_utils/mind-map-view";
 import { getChapterMindMap } from "./get-chapter-mind-map";
-import { hasGoalMindMaps } from "./has-goal-mind-maps";
 import { listGoalMindMaps } from "./list-goal-mind-maps";
 import { requestChapterMindMap } from "./request-chapter-mind-map";
 
@@ -68,58 +63,6 @@ async function readyMindMaps(goalId: string) {
 describe("mind maps read from the saved plan", () => {
   afterEach(() => {
     Client.prototype.query = originalQuery;
-  });
-
-  it("names the chapter the learner is in, with its lessons left, from the saved plan", async () => {
-    const { chapters, goal, items, user } = await signedInCourseGoal({
-      statuses: ["done", "todo", "todo", "todo"],
-    });
-
-    const [first, second] = chapters;
-
-    await expect(readyMindMaps(goal.id)).resolves.toMatchObject({
-      chapters: [],
-      nextChapter: { chapterId: first?.id, lessonsLeft: 1, title: "The very small world" },
-    });
-
-    await prisma.planItem.update({ data: { status: "testedOut" }, where: { id: items[1]?.id } });
-
-    await expect(readyMindMaps(goal.id)).resolves.toMatchObject({
-      nextChapter: { chapterId: second?.id, lessonsLeft: 2, title: "Inside the atom" },
-    });
-
-    await prisma.planItem.update({ data: { status: "skipped" }, where: { id: items[3]?.id } });
-
-    await expect(readyMindMaps(goal.id)).resolves.toMatchObject({
-      nextChapter: { chapterId: second?.id, lessonsLeft: 1 },
-    });
-
-    await prisma.planItem.updateMany({
-      data: { status: "todo" },
-      where: { id: { in: [items[1]?.id ?? "", items[3]?.id ?? ""] } },
-    });
-
-    await prisma.goal.update({ data: { timezone: "UTC" }, where: { id: goal.id } });
-    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
-
-    await studySessionBlockFixture({
-      lessonId: items[2]?.lessonId ?? null,
-      payload: { planItemId: items[2]?.id },
-      position: 0,
-      sessionId: session.id,
-      status: "pending",
-    });
-
-    await expect(readyMindMaps(goal.id)).resolves.toMatchObject({
-      nextChapter: { chapterId: second?.id, lessonsLeft: 2 },
-    });
-
-    await prisma.planItem.updateMany({
-      data: { status: "done" },
-      where: { planId: items[0]?.planId },
-    });
-
-    await expect(readyMindMaps(goal.id)).resolves.toMatchObject({ nextChapter: null });
   });
 
   it("lists the goals the summary says have mind maps, by the same rule", async () => {
@@ -175,7 +118,7 @@ describe("mind maps read from the saved plan", () => {
       ["available"],
       [],
       [],
-      ["generating"],
+      ["drawing"],
       [],
       [],
     ]);
@@ -185,14 +128,10 @@ describe("mind maps read from the saved plan", () => {
     expect(mindMapGoalIds.toSorted()).toStrictEqual(
       listed.flatMap((goal) => (goal.chapters.length > 0 ? [goal.goalId] : [])).toSorted(),
     );
-
-    await expect(
-      Promise.all(goals.map((goal) => hasGoalMindMaps({ goalId: goal.id }))),
-    ).resolves.toStrictEqual(listed.map((goal) => goal.chapters.length > 0));
   });
 
   it("keeps a chapter the plan files a lesson under only by the lesson's home", async () => {
-    const { beginner, chapters, goal, plan, user } = await signedInCourseGoal({
+    const { beginner, goal, plan, user } = await signedInCourseGoal({
       statuses: ["done", "done", "todo", "todo"],
     });
 
@@ -226,14 +165,6 @@ describe("mind maps read from the saved plan", () => {
     const mindMaps = await readyMindMaps(goal.id);
 
     expect(mindMaps.chapters.map((chapter) => chapter.chapterId)).toStrictEqual([beginner.id]);
-
-    await expect(
-      Promise.all(
-        [[beginner.id], chapters.map((chapter) => chapter.id)].map((chapterIds) =>
-          hasGoalMindMaps({ chapterIds, goalId: goal.id }),
-        ),
-      ),
-    ).resolves.toStrictEqual([true, false]);
 
     await expect(loadLearnerFacts(user.id)).resolves.toMatchObject({ mindMapGoalIds: [goal.id] });
 

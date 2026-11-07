@@ -75,7 +75,7 @@ export function getMindMapStatus({
   }
 
   if (row?.status === "running" && isRunActive({ now, row })) {
-    return "generating";
+    return "drawing";
   }
 
   if (!hasWrittenLessons) {

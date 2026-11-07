@@ -23,7 +23,7 @@ function getShown({
     return "unreachable";
   }
 
-  return arriving ? "generating" : shown;
+  return arriving ? "drawing" : shown;
 }
 
 export function useMindMapRequest({
@@ -43,7 +43,7 @@ export function useMindMapRequest({
   const arriving = shown === "ready" && status !== "ready";
 
   const poll = usePoll({
-    active: shown === "generating" || arriving,
+    active: shown === "drawing" || arriving,
     intervalMs: POLL_MS,
     onPoll: async () => {
       if (arriving) {
@@ -57,7 +57,7 @@ export function useMindMapRequest({
         throw new Error("The map's status couldn't be read.");
       }
 
-      if (next !== "generating") {
+      if (next !== "drawing") {
         setLocal({ shown: next });
         actions.refresh();
       }

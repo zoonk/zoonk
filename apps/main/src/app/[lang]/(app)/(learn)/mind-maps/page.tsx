@@ -48,14 +48,11 @@ async function MindMapsBody() {
     );
   }
 
-  const next = result.mindMaps.chapters.length === 0 ? result.mindMaps.nextChapter : null;
-
   return (
     <MindMapsClient
       cap={allowance && getReachedCap({ allowance, kind: "mindMap" })}
       goalId={goal.id}
       mindMaps={result.mindMaps}
-      next={next}
     />
   );
 }

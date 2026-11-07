@@ -13,7 +13,7 @@ import { type LibraryLessonCompletion } from "../contract";
 
 export type RunCompletion = Omit<
   LibraryLessonCompletion,
-  "ceremony" | "certificates" | "reached" | "studyBlock"
+  "ceremony" | "certificates" | "finishedChapter" | "reached" | "studyBlock"
 >;
 
 export type LessonProgress = { brainPower: ProgressChange; energy: ProgressChange };
@@ -137,11 +137,12 @@ export async function withStudyBlock({
       ...completion,
       ceremony: null,
       certificates: [],
+      finishedChapter: studyBlock.finishedChapter,
       reached: NOTHING_REACHED,
       studyBlock: serializeStudyBlockCompletion(studyBlock),
     };
   }
 
   const celebration = await celebrateProgress({ progress: progress ?? null, userId });
-  return { ...completion, ...celebration, studyBlock: null };
+  return { ...completion, ...celebration, finishedChapter: null, studyBlock: null };
 }

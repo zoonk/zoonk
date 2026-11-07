@@ -4,7 +4,7 @@ import { answerDurationSchema, answerTimeZoneSchema } from "../learner/contract"
 import { activityAnswerSchema } from "../library/activities/activity-answer-schema";
 import { activityExpectedSchema } from "../library/activities/activity-expected-answer";
 import { selectedAnswerSchema } from "../player/contracts/_utils/selected-answer-schema";
-import { studyBlockCompletionSchema } from "../sessions/completion-contract";
+import { finishedChapterSchema, studyBlockCompletionSchema } from "../sessions/completion-contract";
 import { progressCelebrationShape } from "../sessions/progress-celebration";
 import { lessonRunIdSchema } from "./_utils/lesson-run-id";
 
@@ -202,6 +202,7 @@ export const libraryLessonCompletionSchema = z
     brainPower: z.int(),
     correctCount: z.int().min(0),
     energyDelta: z.number(),
+    finishedChapter: finishedChapterSchema,
     incorrectCount: z.int().min(0),
     isFirstCompletion: z
       .boolean()
