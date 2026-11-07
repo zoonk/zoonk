@@ -49,9 +49,8 @@ import com.zoonk.android.feature.plan.farTopicLine
 import com.zoonk.android.feature.plan.formatPlanDate
 import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.KindDot
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
-import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.OutlinedButton
@@ -248,7 +247,6 @@ internal fun ColumnScope.SubjectAside(
     syllabus: Syllabus,
     subject: SyllabusSubject,
     today: LocalDate,
-    openMindMaps: (() -> Unit)?,
     ask: (@Composable (AskTutorAppearance) -> Unit)?,
 ) {
     if (subject.notPlannedReason == null || subject.preparation != null) {
@@ -259,24 +257,9 @@ internal fun ColumnScope.SubjectAside(
 
     AsideSection(stringResource(R.string.goalcontent_details)) { SubjectDetails(syllabus, subject, today) }
 
-    if (openMindMaps != null || ask != null) {
-        AsideSection(stringResource(R.string.goalcontent_also)) {
-            Column {
-                if (openMindMaps != null) MindMapsRow(openMindMaps)
-                if (ask != null) ask(AskTutorAppearance.Row)
-            }
-        }
+    if (ask != null) {
+        AsideSection(stringResource(R.string.goalcontent_also)) { ask(AskTutorAppearance.Row) }
     }
-}
-
-/** The goal's mind maps, where this subject's finished chapters have theirs. */
-@Composable
-internal fun MindMapsRow(onClick: () -> Unit) {
-    ListRow(
-        headline = { Text(stringResource(R.string.navigation_mind_maps)) },
-        onClick = onClick,
-        leading = { KindDot(LearnKind.MindMap) },
-    )
 }
 
 @Composable
@@ -322,6 +305,14 @@ private fun SubjectDetails(
     }
 }
 
+/** Opens this subject's group on the Mind maps page, beside its Chapters heading. */
+@Composable
+private fun MindMapsLink(onClick: () -> Unit) {
+    TextButton(onClick = onClick, size = ButtonSize.Small, leadingIcon = { ButtonIcon(R.drawable.ic_lan) }) {
+        Text(stringResource(R.string.navigation_mind_maps))
+    }
+}
+
 internal fun LazyListScope.subjectChapters(
     subject: SyllabusSubject,
     today: LocalDate,
@@ -345,6 +336,7 @@ internal fun LazyListScope.subjectChapters(
                 formatNumber(chapters.size.toDouble(), locale),
             )
         },
+        trailing = actions.openMindMaps?.let { open -> { MindMapsLink(open) } },
     )
 
     if (done.isNotEmpty()) {

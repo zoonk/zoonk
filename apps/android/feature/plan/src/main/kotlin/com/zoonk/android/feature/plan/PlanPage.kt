@@ -380,8 +380,10 @@ internal fun PlanContent(
         }
 
     val hasSuggestion = hasSlotItem(page, edits, slot, slotState)
-    // The drawer lists it where there's one, as main's sidebar does from `lg`.
-    val completedLessonsRow = links.hasCompletedLessons && LocalNavigationSuiteType.current != NavigationSuiteType.NavigationDrawer
+    // The drawer lists them where there's one, as main's sidebar does from `lg`.
+    val withoutDrawer = LocalNavigationSuiteType.current != NavigationSuiteType.NavigationDrawer
+    val completedLessonsRow = links.hasCompletedLessons && withoutDrawer
+    val mindMapsRow = links.hasMindMaps && withoutDrawer
     var pathOpen by rememberSaveable { mutableStateOf(false) }
     val list = rememberLazyListState()
     val main =
@@ -410,8 +412,19 @@ internal fun PlanContent(
                     item(key = "numbers", contentType = "numbers") { numbers(NumberVariant.Tiles) }
                     if (hasSuggestion) item(key = "suggestion", contentType = "suggestion") { suggestion(SuggestionLayout.Line) }
                 }
-                if (completedLessonsRow) {
-                    item(key = "completed-lessons", contentType = "completed-lessons") { CompletedLessonsRow(links) }
+                if (completedLessonsRow || mindMapsRow) {
+                    item(key = "places", contentType = "places") {
+                        Column {
+                            if (completedLessonsRow) {
+                                PlaceRow(
+                                    R.drawable.ic_history,
+                                    R.string.navigation_completed_lessons,
+                                    links::completedLessons,
+                                )
+                            }
+                            if (mindMapsRow) PlaceRow(R.drawable.ic_lan, R.string.plan_mind_maps, links::mindMaps)
+                        }
+                    }
                 }
                 if (structure != null) {
                     item(key = "structure", contentType = "structure") {
@@ -479,13 +492,18 @@ private fun PathSheet(
 
 internal val PAGE_MARGIN = 16.dp
 
+/** A place the drawer lists on wide windows: Completed lessons, then Mind maps. */
 @Composable
-private fun CompletedLessonsRow(links: PlanLinks) {
+private fun PlaceRow(
+    icon: Int,
+    title: Int,
+    onClick: () -> Unit,
+) {
     ListRow(
-        headline = { Text(stringResource(R.string.navigation_completed_lessons)) },
+        headline = { Text(stringResource(title)) },
         modifier = Modifier.bleed(LIST_ITEM_INSET),
-        onClick = links::completedLessons,
-        leading = { Icon(painterResource(R.drawable.ic_history), contentDescription = null) },
+        onClick = onClick,
+        leading = { Icon(painterResource(icon), contentDescription = null) },
     )
 }
 

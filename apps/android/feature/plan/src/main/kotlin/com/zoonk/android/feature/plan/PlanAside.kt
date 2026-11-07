@@ -148,13 +148,12 @@ internal fun MoreSection(
     links: PlanLinks,
     modifier: Modifier = Modifier,
 ) {
-    if (!links.hasExam && !links.hasMindMaps) return
+    if (!links.hasExam) return
 
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.plan_more))
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
-            if (links.hasExam) LinkRow(R.drawable.ic_school, stringResource(R.string.plan_about_exam), links::exam)
-            if (links.hasMindMaps) LinkRow(R.drawable.ic_lan, stringResource(R.string.plan_mind_maps), links::mindMaps)
+            LinkRow(R.drawable.ic_school, stringResource(R.string.plan_about_exam), links::exam)
         }
     }
 }

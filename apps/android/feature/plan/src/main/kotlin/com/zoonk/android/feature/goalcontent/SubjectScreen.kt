@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.goalcontent
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.MaterialTheme
@@ -7,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -70,6 +73,7 @@ fun SubjectScreen(
 ) {
     WithPlanGoal(app.learnerSummary.summary, navigator) { goal ->
         val report = rememberReportProblem(app, FeedbackTarget(screen = "subject"))
+        val summary by app.learnerSummary.summary.collectShown()
 
         SubjectContent(
             goalId = goal.id,
@@ -79,13 +83,7 @@ fun SubjectScreen(
             navigator = navigator,
             menu = { ReportProblemMenu(report, inPage = true) },
             ask = { AskTutor(TutorScope.Subject(goal.id.toString(), route.subjectKey), app, navigator, appearance = it) },
-            mindMapChapters = {
-                val maps by app.mindMaps.list[goal.id].collectShown()
-                maps.value
-                    ?.chapters
-                    ?.mapTo(mutableSetOf()) { it.chapterId }
-                    .orEmpty()
-            },
+            mindMaps = summary.value?.places?.mindMaps == true,
         )
     }
 }
@@ -99,11 +97,10 @@ internal fun SubjectContent(
     navigator: AppNavigator,
     menu: @Composable () -> Unit = {},
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
-    mindMapChapters: @Composable () -> Set<UUID> = { emptySet() },
+    mindMaps: Boolean = false,
 ) {
     val back: () -> Unit = { navigator.back() }
     val state by syllabus.collectShown()
-    val withMindMaps = mindMapChapters()
     val scope = rememberCoroutineScope()
 
     when (val shown = state) {
@@ -134,10 +131,7 @@ internal fun SubjectContent(
                                     )
                                 }
                             },
-                            openMindMaps =
-                                { navigator.open(AppRoute.MindMaps(subject = subject.key)) }.takeIf {
-                                    subject.chapters.any { it.chapterId in withMindMaps }
-                                },
+                            openMindMaps = { navigator.open(AppRoute.MindMaps(subject = subject.key)) }.takeIf { mindMaps },
                         ),
                 )
                 FarTopicSheet(farTopics, navigator) { navigator.open(AppRoute.Chapter(it.toString())) }
@@ -230,7 +224,7 @@ internal fun SubjectPage(
         title = subject.name,
         onBack = actions.back,
         hero = { SubjectHero(syllabus, subject, actions, menu) },
-        aside = { SubjectAside(syllabus, subject, today, actions.openMindMaps, ask) },
+        aside = { SubjectAside(syllabus, subject, today, ask) },
         ask = ask,
         askInAside = true,
     ) { asideBeside ->
@@ -248,13 +242,6 @@ internal fun SubjectPage(
         if (subject.topics.isNotEmpty()) subjectTopics(syllabus, subject, actions)
 
         subjectMatrix(subject.matrix)
-
-        val openMindMaps = actions.openMindMaps
-        if (!asideBeside && openMindMaps != null) {
-            item(key = "also", contentType = "also") {
-                AsideSection(stringResource(R.string.goalcontent_also), Modifier.padding(top = SECTION_GAP)) { MindMapsRow(openMindMaps) }
-            }
-        }
     }
 }
 
@@ -372,9 +359,20 @@ internal fun LazyListScope.sectionTitle(
     key: String,
     title: @Composable () -> String,
     detail: @Composable () -> String? = { null },
+    trailing: (@Composable () -> Unit)? = null,
 ) {
     item(key = key, contentType = "section-title") {
-        SectionHeader(title(), Modifier.padding(horizontal = PAGE_PADDING).padding(top = SECTION_GAP, bottom = 4.dp), detail = detail())
+        val modifier = Modifier.padding(horizontal = PAGE_PADDING).padding(top = SECTION_GAP, bottom = 4.dp)
+        if (trailing == null) {
+            SectionHeader(title(), modifier, detail = detail())
+        } else {
+            SectionHeader(title(), modifier) {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    detail()?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data) }
+                    trailing()
+                }
+            }
+        }
     }
 }
 
