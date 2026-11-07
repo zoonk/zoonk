@@ -7,6 +7,7 @@ import { startOnce } from "../_shared/run-token";
 import { callContentWorkflow } from "../calls/call-content-workflow";
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
+import { chapterMindMapWorkflow } from "../mind-maps/chapter-mind-map-workflow";
 import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
 import { sourceVisibilityWorkflow } from "../research/source-visibility-workflow";
 import { sessionPreparationWorkflow } from "../sessions/session-preparation-workflow";
@@ -16,6 +17,7 @@ import {
   endFollowUpStep,
   listFollowUpsStep,
   requestLessonWritingStep,
+  requestOwedMindMapStep,
 } from "./steps/follow-up-steps";
 
 const MAX_PASSES = 20;
@@ -46,6 +48,15 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
           [writing],
           getLessonContentHookToken(writing.lessonId),
         );
+      }
+
+      return;
+    }
+    case "makeChapterMindMap": {
+      const making = await requestOwedMindMapStep({ ...followUp.input, userId });
+
+      if (making) {
+        await start(chapterMindMapWorkflow, [making]);
       }
 
       return;

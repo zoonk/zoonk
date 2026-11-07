@@ -8,14 +8,11 @@ import { loadLessonReviewSkillIds } from "../../learner/_utils/lesson-plan-skill
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { CAPSULE_LEDGER_KIND } from "../../milestones/award-milestones";
+import { finishLessonChapters } from "../../mind-maps/finished-chapters";
 import { readBlockPayload } from "../block-payload";
 import { capReviewDay, getCapsuleOpening } from "../capsules";
 import { oweDaySettlement } from "../settle-owed-session-day";
-import {
-  type CheckedLanguageGoal,
-  completeLessonPlanItems,
-  scheduleLessonCanDos,
-} from "./plan-items";
+import { completeLessonPlanItems, scheduleLessonCanDos } from "./plan-items";
 import { type StudySessionRow } from "./study-session-access";
 
 const lessonIdsSchema = z.object({ lessonId: z.string() });
@@ -113,12 +110,17 @@ export async function findLessonFinish({
 export async function markLessonBlockDone({
   block,
   brainPower,
+  eventId,
+  goalId,
   lessonId,
   timeZone,
   userId,
 }: {
   block: StudySessionBlock;
   brainPower: number;
+  /** The completion that finished the lesson, which records a chapter the block finishes. */
+  eventId: string;
+  goalId: string | null;
   lessonId: string | null;
   timeZone: string;
   userId: string;
@@ -145,11 +147,19 @@ export async function markLessonBlockDone({
 
       await oweDaySettlement(tx, { block, timeZone, userId });
 
-      const goals: CheckedLanguageGoal[] = lessonId
-        ? await completeLessonPlanItems(tx, { lessonId, now, userId })
-        : [];
+      if (!lessonId) {
+        return { languageGoals: [] };
+      }
 
-      return { languageGoals: goals };
+      const { languageGoals, planItemIds } = await completeLessonPlanItems(tx, {
+        lessonId,
+        now,
+        userId,
+      });
+
+      await finishLessonChapters(tx, { eventId, goalId, planItemIds, userId });
+
+      return { languageGoals };
     }),
   );
 

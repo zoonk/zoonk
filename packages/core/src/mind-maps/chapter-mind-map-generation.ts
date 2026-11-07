@@ -36,6 +36,20 @@ function toContext({
   };
 }
 
+/** Workflow bridge, not authorization: keeps a claimed map on its way while its lessons are written. */
+export async function holdChapterMindMap({
+  chapterId,
+  runId,
+}: {
+  chapterId: string;
+  runId: string;
+}): Promise<void> {
+  await prisma.chapterMindMap.updateMany({
+    data: { runId, updatedAt: new Date() },
+    where: { OR: [{ runId }, { runId: null }], chapterId, status: "running" },
+  });
+}
+
 /** Workflow bridge, not authorization; requires a learner-claimed run and preserves existing text on retries. */
 export async function writeChapterMindMapStructure({
   analytics,

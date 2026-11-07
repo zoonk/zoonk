@@ -4,12 +4,32 @@ import {
   checkChapterMindMapImage,
   drawChapterMindMap,
   failChapterMindMap,
+  holdChapterMindMap,
   removeChapterMindMapImage,
   showChapterMindMap,
   writeChapterMindMapStructure,
 } from "@zoonk/core/mind-maps/generation";
 import { safeAsync } from "@zoonk/utils/error";
 import { FatalError } from "workflow";
+import { isRunActive } from "../../_shared/run-activity";
+
+/** Keeps the map on its way while its lessons are written, and says how many still are. */
+export async function holdMindMapStep({
+  chapterId,
+  lessonRunIds,
+  runId,
+}: {
+  chapterId: string;
+  lessonRunIds: string[];
+  runId: string;
+}): Promise<number> {
+  "use step";
+
+  await holdChapterMindMap({ chapterId, runId });
+
+  const active = await Promise.all(lessonRunIds.map((lessonRunId) => isRunActive(lessonRunId)));
+  return active.filter(Boolean).length;
+}
 
 export async function writeMindMapStructureStep(input: {
   analytics: MindMapAnalytics;

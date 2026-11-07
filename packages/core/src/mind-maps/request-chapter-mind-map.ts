@@ -1,20 +1,32 @@
 import "server-only";
-import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
+import { type Goal, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getRequestPlatform } from "../analytics/request-platform";
 import { type AnalyticsPlatform } from "../analytics/shared-properties";
-import { claimUsage } from "../entitlements/claim-usage";
-import { type RefusedUsage } from "../entitlements/contract";
-import { findOwnedGoal } from "../learner/_utils/owned-goal";
+import {
+  type EntitlementViewer,
+  getEntitlementViewerFor,
+} from "../entitlements/_utils/entitlement-viewer";
+import { claimUsages, claimUsagesFor } from "../entitlements/claim-usage";
+import { type RefusedUsage, type UsageDecision } from "../entitlements/contract";
+import { findGoalFor, findOwnedGoal } from "../learner/_utils/owned-goal";
+import { getLessonGenerationStates } from "../library/generation/lesson-generation-state";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
 import { MIND_MAP_STALE_AFTER_MS, getMindMapStatus } from "./_utils/mind-map-view";
 
-/** On start, the caller must start the claimed run; an on-its-way result may lack generationId until the run records it. */
+type OnItsWay = "drawing" | "writingLessons";
+
+/**
+ * On start, the caller must start the claimed run, which writes `lessonIds` first; an on-its-way
+ * result may lack generationId until the run records it.
+ */
 export type ChapterMindMapRequest =
   | { status: "ready" }
-  | { generationId: string | null; status: "drawing" | "writingLessons" }
+  | { generationId: string | null; status: OnItsWay }
   | {
       analytics: { distinctId: string; goalId: string; platform: AnalyticsPlatform | null };
+      forExam: boolean;
+      lessonIds: string[];
       status: "start";
     }
   | { decision: RefusedUsage; status: "refused" }
@@ -22,6 +34,8 @@ export type ChapterMindMapRequest =
   | { status: "plusRequired" }
   | { status: "unauthorized" }
   | { status: "unavailable" };
+
+type UsageClaims = Parameters<typeof claimUsages>[0];
 
 async function findRunId(chapterId: string): Promise<string | null> {
   const row = await prisma.chapterMindMap.findUnique({
@@ -64,7 +78,112 @@ async function claimMindMap({ chapterId, now }: { chapterId: string; now: Date }
   return count > 0;
 }
 
-/** Learner action only; retries are free per chapter and concurrent learners join the same generation. */
+/**
+ * The chapter's lessons the run writes first: those not written and not set aside. Only the ones
+ * no run is writing are charged; a lesson another run is writing is joined.
+ */
+async function findLessonsToWrite(chapterId: string) {
+  const rows = await prisma.chapterLesson.findMany({
+    select: { lessonId: true },
+    where: { chapterId },
+  });
+
+  const states = await getLessonGenerationStates(rows.map((row) => row.lessonId));
+
+  const toWrite = [...states].filter(
+    ([, state]) => state.status !== "ready" && !(state.status === "failed" && state.setAside),
+  );
+
+  return {
+    charged: toWrite.flatMap(([lessonId, state]) =>
+      state.status === "generating" ? [] : lessonId,
+    ),
+    lessonIds: toWrite.map(([lessonId]) => lessonId),
+  };
+}
+
+function toUsageClaims({
+  chapterId,
+  lessonIds,
+}: {
+  chapterId: string;
+  lessonIds: readonly string[];
+}): UsageClaims {
+  return [
+    { generated: true, kind: "mindMap", targetId: chapterId },
+    ...lessonIds.map((lessonId) => ({
+      generated: true,
+      kind: "lessonStart" as const,
+      targetId: lessonId,
+    })),
+  ];
+}
+
+async function requestFor({
+  chapterId,
+  claim,
+  goal,
+  platform,
+  readViewer,
+}: {
+  chapterId: string;
+  claim: (claims: UsageClaims) => Promise<UsageDecision>;
+  goal: Goal;
+  platform: AnalyticsPlatform | null;
+  readViewer?: () => Promise<EntitlementViewer | null>;
+}): Promise<ChapterMindMapRequest> {
+  if (!isUuid(chapterId)) {
+    return { status: "notFound" };
+  }
+
+  const [facts] = await loadMindMapChapters({ chapterIds: [chapterId], goal, readViewer });
+
+  if (!facts) {
+    return { status: "notFound" };
+  }
+
+  const now = new Date();
+  // The owed follow-up asks through here too, so a map that's only owed still starts.
+  const status = getMindMapStatus({ ...facts, now, owed: false });
+
+  if (status === "ready" || status === "unavailable" || status === "plusRequired") {
+    return { status };
+  }
+
+  if (status === "drawing" || status === "writingLessons") {
+    return { generationId: await findRunId(chapterId), status };
+  }
+
+  const lessons = await findLessonsToWrite(chapterId);
+  const decision = await claim(toUsageClaims({ chapterId, lessonIds: lessons.charged }));
+
+  if (decision.status === "unauthorized") {
+    return decision;
+  }
+
+  if (decision.status !== "allowed") {
+    return { decision, status: "refused" };
+  }
+
+  if (!(await claimMindMap({ chapterId, now }))) {
+    return {
+      generationId: await findRunId(chapterId),
+      status: lessons.lessonIds.length > 0 ? "writingLessons" : "drawing",
+    };
+  }
+
+  return {
+    analytics: { distinctId: goal.userId, goalId: goal.id, platform },
+    forExam: goal.kind === "exam",
+    lessonIds: lessons.lessonIds,
+    status: "start",
+  };
+}
+
+/**
+ * A learner's tap only. The map and each lesson it writes first are claimed together or not at
+ * all; retries are free per target and concurrent learners join the same run.
+ */
 export async function requestChapterMindMap({
   chapterId,
   goalId,
@@ -78,44 +197,35 @@ export async function requestChapterMindMap({
     return owned;
   }
 
-  if (!isUuid(chapterId)) {
-    return { status: "notFound" };
+  return requestFor({
+    chapterId,
+    claim: claimUsages,
+    goal: owned.goal,
+    platform: await getRequestPlatform(),
+  });
+}
+
+/** Internal, for the map a learner's finish owes: `userId` must come from that write. */
+export async function requestChapterMindMapFor({
+  chapterId,
+  goalId,
+  userId,
+}: {
+  chapterId: string;
+  goalId: string;
+  userId: string;
+}): Promise<ChapterMindMapRequest> {
+  const owned = await findGoalFor({ goalId, userId });
+
+  if (owned.status !== "ready") {
+    return owned;
   }
 
-  const [facts] = await loadMindMapChapters({ chapterIds: [chapterId], goal: owned.goal });
-
-  if (!facts) {
-    return { status: "notFound" };
-  }
-
-  const now = new Date();
-
-  const status = getMindMapStatus({ ...facts, now });
-
-  if (status === "ready" || status === "unavailable" || status === "plusRequired") {
-    return { status };
-  }
-
-  if (status === "drawing" || status === "writingLessons") {
-    return { generationId: await findRunId(chapterId), status };
-  }
-
-  const decision = await claimUsage({ generated: true, kind: "mindMap", targetId: chapterId });
-
-  if (decision.status === "unauthorized") {
-    return decision;
-  }
-
-  if (decision.status !== "allowed") {
-    return { decision, status: "refused" };
-  }
-
-  if (!(await claimMindMap({ chapterId, now }))) {
-    return { generationId: await findRunId(chapterId), status: "drawing" };
-  }
-
-  return {
-    analytics: { distinctId: owned.userId, goalId, platform: await getRequestPlatform() },
-    status: "start",
-  };
+  return requestFor({
+    chapterId,
+    claim: (claims) => claimUsagesFor({ claims, userId }),
+    goal: owned.goal,
+    platform: null,
+    readViewer: () => getEntitlementViewerFor(userId),
+  });
 }

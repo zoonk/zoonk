@@ -9,11 +9,11 @@ import { trackCallCanDos } from "./can-do-events";
 type Setup = Awaited<ReturnType<typeof languageGoalFixture>>;
 
 async function finishLesson({ lessonId, userId }: { lessonId: string; userId: string }) {
-  const goals = await prisma.$transaction((tx) =>
+  const { languageGoals } = await prisma.$transaction((tx) =>
     completeLessonPlanItems(tx, { lessonId, now: new Date(), userId }),
   );
 
-  scheduleLessonCanDos({ goals, lessonId, userId });
+  scheduleLessonCanDos({ goals: languageGoals, lessonId, userId });
 }
 
 function renting({ renting: unit, user }: Setup, { won }: { won: boolean }) {

@@ -2,6 +2,7 @@ import "server-only";
 import { type LearningEvent, type TransactionClient, prisma } from "@zoonk/db";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { celebrateProgress } from "../../milestones/celebrate-progress";
+import { readFinishedChapter } from "../../mind-maps/finished-chapters";
 import { findDayLessonBlock } from "../../sessions/_utils/day-lesson-block";
 import { type ProgressChange } from "../../sessions/_utils/session-progress";
 import { readBlockPayload } from "../../sessions/block-payload";
@@ -128,21 +129,22 @@ export async function withStudyBlock({
   const run = await prisma.learningEvent.findUniqueOrThrow({ where: { id: runId } });
   const blockId = getString(run.contentIds, "studySessionBlockId");
 
-  const studyBlock = blockId
-    ? await settleFinishedLesson({ blockId, energy: progress?.energy, timeZone, userId })
-    : null;
+  const [studyBlock, finishedChapter] = await Promise.all([
+    blockId ? settleFinishedLesson({ blockId, energy: progress?.energy, timeZone, userId }) : null,
+    readFinishedChapter(run.contentIds),
+  ]);
 
   if (studyBlock) {
     return {
       ...completion,
       ceremony: null,
       certificates: [],
-      finishedChapter: studyBlock.finishedChapter,
+      finishedChapter,
       reached: NOTHING_REACHED,
       studyBlock: serializeStudyBlockCompletion(studyBlock),
     };
   }
 
   const celebration = await celebrateProgress({ progress: progress ?? null, userId });
-  return { ...completion, ...celebration, finishedChapter: null, studyBlock: null };
+  return { ...completion, ...celebration, finishedChapter, studyBlock: null };
 }

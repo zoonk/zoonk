@@ -22,8 +22,8 @@ const STRUCTURE = {
 };
 
 describe(getChapterMindMapStatus, () => {
-  it("reads a running map as drawing without writing", async () => {
-    const { goal, chapters } = await signedInCourseGoal({
+  it("reads a map on its way, run or owed, without writing", async () => {
+    const { goal, chapters, user } = await signedInCourseGoal({
       statuses: ["done", "done", "todo", "todo"],
     });
 
@@ -35,7 +35,43 @@ describe(getChapterMindMapStatus, () => {
     );
 
     expect(counts.writes).toBe(0);
-    expect(counts.result).toStrictEqual({ mindMap: { status: "drawing" }, status: "ready" });
+    expect(counts.result).toStrictEqual({ mindMap: { status: "writingLessons" }, status: "ready" });
+
+    await prisma.lesson.updateMany({
+      data: { contentStatus: "completed" },
+      where: { chapters: { some: { chapterId } } },
+    });
+
+    await expect(getChapterMindMapStatus({ chapterId, goalId: goal.id })).resolves.toStrictEqual({
+      mindMap: { status: "drawing" },
+      status: "ready",
+    });
+
+    await prisma.chapterMindMap.update({
+      data: { updatedAt: new Date("2020-01-01T00:00:00Z") },
+      where: { chapterId },
+    });
+
+    await prisma.followUp.create({
+      data: {
+        input: { chapterId, goalId: goal.id },
+        key: chapterId,
+        kind: "makeChapterMindMap",
+        userId: user.id,
+      },
+    });
+
+    await expect(getChapterMindMapStatus({ chapterId, goalId: goal.id })).resolves.toStrictEqual({
+      mindMap: { status: "drawing" },
+      status: "ready",
+    });
+
+    await prisma.followUp.deleteMany({ where: { userId: user.id } });
+
+    await expect(getChapterMindMapStatus({ chapterId, goalId: goal.id })).resolves.toStrictEqual({
+      mindMap: { status: "failed" },
+      status: "ready",
+    });
   });
 
   it.each([
@@ -107,12 +143,12 @@ describe(getChapterMindMapStatus, () => {
     });
   });
 
-  it("preserves access and unfinished-chapter rules", async () => {
+  it("reads an unfinished chapter's map and keeps its access rules", async () => {
     const { goal, chapters } = await signedInCourseGoal();
     const chapterId = chapters[0]!.id;
 
     await expect(getChapterMindMapStatus({ chapterId, goalId: goal.id })).resolves.toStrictEqual({
-      mindMap: { status: "unavailable" },
+      mindMap: { status: "available" },
       status: "ready",
     });
 

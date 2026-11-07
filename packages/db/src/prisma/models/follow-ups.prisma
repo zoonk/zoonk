@@ -15,6 +15,7 @@ enum FollowUpKind {
   endWebPlusBesideStore      @map("end_web_plus_beside_store")
   askToCancelSecondStorePlus @map("ask_to_cancel_second_store_plus")
   settleSessionDay           @map("settle_session_day")
+  makeChapterMindMap         @map("make_chapter_mind_map")
 }
 
 /// Work owed after a learner's write; ended by the run that started it unless asked again since,

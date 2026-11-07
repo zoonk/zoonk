@@ -1,4 +1,4 @@
-import { type UsageKind } from "@zoonk/db";
+import { type TransactionClient, type UsageKind } from "@zoonk/db";
 import { type LiveCallReservationResult } from "../../language/conversations/live-call-contract";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { type UsageDecision } from "../contract";
@@ -8,36 +8,55 @@ import { refreshLiveCallViewer } from "./live-call-viewer";
 import { LiveCallReservationRefusedError, reserveLiveCall } from "./reserve-live-call";
 import { lockUsageForViewer } from "./usage-lock";
 
-/** Retries of a used target are free; claims acquire the learner's lock before the usage lock. */
-export async function claimUsageForViewer({
-  generated,
-  kind,
+type ViewerClaim = { generated: boolean; kind: UsageKind; seconds?: number; targetId: string };
+
+type ClaimedAll = { decision: UsageDecision; recorded: boolean };
+
+async function claimEach({
+  claims,
   now,
-  seconds,
-  targetId,
+  transaction,
   viewer,
 }: {
-  generated: boolean;
-  kind: UsageKind;
+  claims: readonly ViewerClaim[];
   now: Date;
-  seconds?: number;
-  targetId: string;
+  transaction: TransactionClient;
+  viewer: EntitlementViewer;
+}): Promise<ClaimedAll> {
+  const [claim, ...rest] = claims;
+
+  if (!claim) {
+    return { decision: { status: "allowed" }, recorded: false };
+  }
+
+  const first = await claimUsageInTransaction({ ...claim, now, transaction, viewer });
+
+  if (first.decision.status !== "allowed") {
+    return first;
+  }
+
+  const others = await claimEach({ claims: rest, now, transaction, viewer });
+  const allowed = others.decision.status === "allowed";
+
+  return { decision: others.decision, recorded: allowed && (first.recorded || others.recorded) };
+}
+
+/** Records every claim or none; retries of a used target are free; acquires the learner's lock before the usage lock. */
+export async function claimUsageForViewer({
+  claims,
+  now,
+  viewer,
+}: {
+  claims: readonly ViewerClaim[];
+  now: Date;
   viewer: EntitlementViewer;
 }): Promise<UsageDecision> {
   return writeLearnerChange({ userId: viewer.userId }, async (transaction) => {
     await lockUsageForViewer({ transaction, userId: viewer.userId });
 
-    const claim = await claimUsageInTransaction({
-      generated,
-      kind,
-      now,
-      seconds,
-      targetId,
-      transaction,
-      viewer,
-    });
+    const claimed = await claimEach({ claims, now, transaction, viewer });
 
-    return claim.recorded ? claim.decision : unchanged(claim.decision);
+    return claimed.recorded ? claimed.decision : unchanged(claimed.decision);
   });
 }
 

@@ -91,30 +91,38 @@ export async function moveLostCheckpoint(
 
 export type CheckedLanguageGoal = { id: string };
 
+export type CompletedLessonItems = {
+  languageGoals: CheckedLanguageGoal[];
+  /** For `finishLessonChapters`, which settles the chapters they finished. */
+  planItemIds: string[];
+};
+
 /** Completes all owned plan occurrences of the lesson; scheduleLessonCanDos must run after commit for returned language goals. */
 export async function completeLessonPlanItems(
   tx: TransactionClient,
   { lessonId, now, userId }: { lessonId: string; now: Date; userId: string },
-): Promise<CheckedLanguageGoal[]> {
+): Promise<CompletedLessonItems> {
   const checked = await tx.planItem.updateManyAndReturn({
     data: { completedAt: now, status: "done" },
-    select: { kind: true, lessonId: true, phase: true, planId: true },
+    select: { id: true, kind: true, lessonId: true, phase: true, planId: true },
     where: { lessonId, plan: { goal: { userId } }, status: "todo" },
   });
 
   await skipSettledLessonBlocks(tx, { lessonIds: [lessonId], userId });
 
   if (checked.length === 0) {
-    return [];
+    return { languageGoals: [], planItemIds: [] };
   }
 
   await reduceCompletedPlans(tx, { checked, userId });
   await awardCourseCertificates(tx, { finished: checked });
 
-  return tx.goal.findMany({
+  const languageGoals = await tx.goal.findMany({
     select: { id: true },
     where: { kind: "language", plan: { id: { in: checked.map((item) => item.planId) } } },
   });
+
+  return { languageGoals, planItemIds: checked.map((item) => item.id) };
 }
 
 /** Call after the completion transaction commits so the checks see its plan items. */

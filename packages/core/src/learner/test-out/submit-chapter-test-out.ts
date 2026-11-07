@@ -161,7 +161,7 @@ function toReadyResult({
       ...celebration,
       changeId: said.changeId,
       correct: said.correct,
-      finishedChapter: null,
+      finishedChapter: said.finishedChapter,
       lessonsSkipped: said.lessonsSkipped,
       passed: said.passed,
       total: said.total,
@@ -251,6 +251,7 @@ async function submitOwnedTestOut({
 
   const testedOut = score.passed
     ? await markPlanItemsTestedOut({
+        finishesChapters: true,
         goalId,
         items: plan.items,
         knownSkillIds: new Set(score.knownSkillIds),
@@ -259,6 +260,7 @@ async function submitOwnedTestOut({
       })
     : await refreshGoalPlan({ goalId }).then(() => ({
         changeId: null,
+        finishedChapters: [],
         lessonsSkipped: 0,
         planVersion: null,
       }));
@@ -266,6 +268,10 @@ async function submitOwnedTestOut({
   const said = {
     changeId: testedOut.changeId,
     correct: score.correct,
+    finishedChapter:
+      testedOut.finishedChapters.find(
+        (chapter) => chapter.chapterId === chapterId && chapter.goalId === goalId,
+      ) ?? null,
     lessonsSkipped: testedOut.lessonsSkipped,
     passed: score.passed,
     planVersion: testedOut.planVersion,

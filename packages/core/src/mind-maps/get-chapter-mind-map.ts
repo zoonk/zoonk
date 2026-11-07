@@ -1,9 +1,11 @@
 import "server-only";
 import { isUuid } from "@zoonk/utils/uuid";
+import { readEntitlementViewer } from "../entitlements/_utils/entitlement-viewer";
+import { getRequestInstant } from "../learner/facts/request-instant";
 import { resolveViewGoal } from "../view-models/_utils/resolve-view-goal";
 import { loadChapterNumbering } from "../view-models/syllabus/_utils/chapter-numbers";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
-import { getMindMapStatus, toMindMapImage, toMindMapOutline } from "./_utils/mind-map-view";
+import { toChapterMindMapView } from "./_utils/mind-map-view";
 import { type ChapterMindMapView } from "./mind-map-contract";
 
 export type ChapterMindMapResult =
@@ -31,30 +33,18 @@ export async function getChapterMindMap({
   }
 
   const { goal } = resolved;
-  const now = new Date();
 
-  const [[facts], numbering] = await Promise.all([
-    loadMindMapChapters({ chapterIds: [chapterId], goal }),
+  const [[facts], numbering, now] = await Promise.all([
+    loadMindMapChapters({ chapterIds: [chapterId], goal, readViewer: readEntitlementViewer }),
     loadChapterNumbering(goal),
+    getRequestInstant(),
   ]);
 
   if (!facts) {
     return { status: "notFound" };
   }
 
-  const status = getMindMapStatus({ ...facts, now });
-  const isReady = status === "ready";
+  const { position } = numbering({ chapterId, planPosition: facts.position });
 
-  return {
-    mindMap: {
-      chapterId,
-      image: isReady ? toMindMapImage(facts.row) : null,
-      lessonsToWrite: 0,
-      outline: isReady ? toMindMapOutline(facts.row?.structure) : null,
-      position: numbering({ chapterId, planPosition: facts.position }).position,
-      status,
-      title: facts.title,
-    },
-    status: "ready",
-  };
+  return { mindMap: toChapterMindMapView({ facts, now, position }), status: "ready" };
 }

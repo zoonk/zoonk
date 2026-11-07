@@ -1,6 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
-import { chapterMindMapSchema, goalMindMapsSchema } from "@zoonk/core/mind-maps/contract";
+import {
+  chapterMindMapSchema,
+  chapterMindMapStatusSchema,
+  goalMindMapsSchema,
+} from "@zoonk/core/mind-maps/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
@@ -12,13 +16,13 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillsFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { mindMapGenerationSchema } from "../src/lib/openapi/schemas/mind-maps";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { readBody } from "./helpers/response";
 
 const ACCEPTED = 202;
 const PAYMENT_REQUIRED = 402;
-const UNPROCESSABLE = 422;
 
 async function createGoal(userId: string) {
   const suffix = randomUUID().slice(0, 6);
@@ -28,7 +32,7 @@ async function createGoal(userId: string) {
     libraryChapterFixture({ title: `Cell parts ${suffix}` }),
     libraryChapterFixture({ title: `Cell energy ${suffix}` }),
     libraryLessonFixture({ contentStatus: "completed" }),
-    libraryLessonFixture({ contentStatus: "completed" }),
+    libraryLessonFixture(),
     skillsFixture([`Cell parts ${suffix}`, `Cell energy ${suffix}`]),
   ]);
 
@@ -54,7 +58,7 @@ async function createGoal(userId: string) {
     }),
   ]);
 
-  return { current, finished, goal };
+  return { current, currentLesson, finished, goal };
 }
 
 test.describe("Mind maps API", () => {
@@ -97,17 +101,44 @@ test.describe("Mind maps API", () => {
     await Promise.all([anonymous.dispose(), apiContext.dispose()]);
   });
 
-  test("makes a finished chapter's map on request, once, and lists the goal's maps", async () => {
+  test("makes any chapter's map on request, writing its lessons first, and lists every chapter", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,
       prefix: "mind-map-make",
     });
 
-    const { current, finished, goal } = await createGoal(user.id);
-    const chapterPath = `/v1/goals/${goal.id}/chapters/${finished.id}/mind-map`;
+    const { current, currentLesson, finished, goal } = await createGoal(user.id);
+    const finishedPath = `/v1/goals/${goal.id}/chapters/${finished.id}/mind-map`;
+    const currentPath = `/v1/goals/${goal.id}/chapters/${current.id}/mind-map`;
+
+    const listed = (status: { current: string; finished: string }) => ({
+      chapters: [
+        {
+          chapterId: finished.id,
+          image: null,
+          lessonsToWrite: 0,
+          outline: null,
+          position: 1,
+          status: status.finished,
+          subject: null,
+          title: finished.title,
+        },
+        {
+          chapterId: current.id,
+          image: null,
+          lessonsToWrite: 1,
+          outline: null,
+          position: 2,
+          status: status.current,
+          subject: null,
+          title: current.title,
+        },
+      ],
+      goal: { id: goal.id, title: "Cells" },
+    });
 
     await expect(
-      readBody({ response: await apiContext.get(chapterPath), schema: chapterMindMapSchema }),
+      readBody({ response: await apiContext.get(finishedPath), schema: chapterMindMapSchema }),
     ).resolves.toStrictEqual({
       chapterId: finished.id,
       image: null,
@@ -118,58 +149,92 @@ test.describe("Mind maps API", () => {
       title: finished.title,
     });
 
-    const notYet = await apiContext.post(
-      `/v1/goals/${goal.id}/chapters/${current.id}/mind-map/generations`,
-    );
+    await expect(
+      readBody({
+        response: await apiContext.get(`/v1/goals/${goal.id}/mind-maps`),
+        schema: goalMindMapsSchema,
+      }),
+    ).resolves.toStrictEqual(listed({ current: "available", finished: "available" }));
 
-    expect(notYet.status()).toBe(UNPROCESSABLE);
+    const writing = await apiContext.post(`${currentPath}/generations`);
 
-    const started = await apiContext.post(`${chapterPath}/generations`);
-
-    const body = await readBody({
-      response: started,
+    const writingBody = await readBody({
+      response: writing,
       schema: mindMapGenerationSchema,
       status: ACCEPTED,
     });
 
-    expect(body).toStrictEqual({ generationId: expect.any(String), status: "drawing" });
-    expect(started.headers().location).toBe(`/v1/generations/${body.generationId}`);
+    expect(writingBody).toStrictEqual({
+      generationId: expect.any(String),
+      status: "writingLessons",
+    });
+
+    expect(writing.headers().location).toBe(`/v1/generations/${writingBody.generationId}`);
+
+    const drawing = await apiContext.post(`${finishedPath}/generations`);
+
+    await expect(
+      readBody({ response: drawing, schema: mindMapGenerationSchema, status: ACCEPTED }),
+    ).resolves.toStrictEqual({ generationId: expect.any(String), status: "drawing" });
 
     await expect(
       readBody({
-        response: await apiContext.post(`${chapterPath}/generations`),
+        response: await apiContext.post(`${finishedPath}/generations`),
         schema: mindMapGenerationSchema,
         status: ACCEPTED,
       }),
     ).resolves.toMatchObject({ status: "drawing" });
 
+    const claimed = await prisma.usageRecord.findMany({
+      select: { kind: true, targetId: true },
+      where: { userId: user.id },
+    });
+
+    expect(claimed.toSorted((a, b) => a.targetId.localeCompare(b.targetId))).toStrictEqual(
+      [
+        { kind: "lessonStart", targetId: currentLesson.id },
+        { kind: "mindMap", targetId: current.id },
+        { kind: "mindMap", targetId: finished.id },
+      ].toSorted((a, b) => a.targetId.localeCompare(b.targetId)),
+    );
+
     await expect(
-      prisma.usageRecord.findMany({
-        select: { kind: true, targetId: true },
-        where: { userId: user.id },
+      readBody({
+        response: await apiContext.get(`${finishedPath}/status`),
+        schema: chapterMindMapStatusSchema,
       }),
-    ).resolves.toStrictEqual([{ kind: "mindMap", targetId: finished.id }]);
+    ).resolves.toStrictEqual({ status: "drawing" });
 
     await expect(
       readBody({
         response: await apiContext.get(`/v1/goals/${goal.id}/mind-maps`),
         schema: goalMindMapsSchema,
       }),
-    ).resolves.toStrictEqual({
-      chapters: [
-        {
-          chapterId: finished.id,
-          image: null,
-          lessonsToWrite: 0,
-          outline: null,
-          position: 1,
-          status: expect.stringMatching(/^drawing$|^failed$/u),
-          subject: null,
-          title: finished.title,
-        },
-      ],
-      goal: { id: goal.id, title: "Cells" },
+    ).resolves.toStrictEqual(listed({ current: "writingLessons", finished: "drawing" }));
+
+    await apiContext.dispose();
+  });
+
+  test("refuses a Plus-only chapter's map on a free exam plan past its first week", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "mind-map-plus",
     });
+
+    const { current, goal } = await createGoal(user.id);
+
+    await prisma.goal.update({
+      data: { createdAt: new Date(Date.now() - 30 * MS_PER_DAY), kind: "exam" },
+      where: { id: goal.id },
+    });
+
+    const refused = await apiContext.post(
+      `/v1/goals/${goal.id}/chapters/${current.id}/mind-map/generations`,
+    );
+
+    expect(refused.status()).toBe(PAYMENT_REQUIRED);
+    await expect(refused.json()).resolves.toMatchObject({ error: { code: "PLUS_REQUIRED" } });
+    await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
 
     await apiContext.dispose();
   });

@@ -41,14 +41,13 @@ describe("row-5 callers read their saved artifacts", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it("the empty mind-map caller names its current chapter without a plan build", async () => {
+  it("the mind-map caller lists the plan's chapters without a plan build", async () => {
     const { chapter, goal } = await savedPlan();
     const maps = await listGoalMindMaps({ goalId: goal.id });
 
     expect(maps).toMatchObject({
       mindMaps: {
-        chapters: [],
-        nextChapter: { chapterId: chapter.id, lessonsLeft: 4, title: chapter.title },
+        chapters: [{ chapterId: chapter.id, status: "available", title: chapter.title }],
       },
       status: "ready",
     });

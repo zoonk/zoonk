@@ -21,6 +21,7 @@ export type BackgroundTask = Exclude<
   {
     kind:
       | "checkUploadVisibility"
+      | "makeChapterMindMap"
       | "prepareGoalLessons"
       | "prepareSession"
       | "reviewAlphabetLesson"

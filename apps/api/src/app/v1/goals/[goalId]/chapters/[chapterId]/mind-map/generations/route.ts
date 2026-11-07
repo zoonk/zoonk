@@ -3,6 +3,7 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { plusRequiredError, usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalChapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
+import { toChapterMindMapInput } from "@/workflows/mind-maps/chapter-mind-map-input";
 import { chapterMindMapWorkflow } from "@/workflows/mind-maps/chapter-mind-map-workflow";
 import { requestChapterMindMap } from "@zoonk/core/mind-maps/request";
 import { NextResponse } from "next/server";
@@ -65,10 +66,13 @@ async function createMindMapGeneration(
   }
 
   const run = await start(chapterMindMapWorkflow, [
-    { analytics: result.analytics, chapterId: path.chapterId },
+    toChapterMindMapInput({ chapterId: path.chapterId, request: result }),
   ]);
 
-  return onItsWay({ generationId: run.runId, status: "drawing" });
+  return onItsWay({
+    generationId: run.runId,
+    status: result.lessonIds.length > 0 ? "writingLessons" : "drawing",
+  });
 }
 
 export const POST = withApiErrorBoundary(createMindMapGeneration);

@@ -1,10 +1,12 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { settleFinishedChapters } from "../../mind-maps/finished-chapters";
 import { announceSharedTestOuts } from "../../plans/announce-shared-test-outs";
 import { announceTestedOutItems } from "../../plans/announce-tested-out-items";
 import { afterPlanInputWrite } from "../../plans/plan-conflict";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { skipTestedOutBlocks } from "../../sessions/_utils/skip-tested-out-blocks";
+import { type FinishedChapter } from "../../sessions/completion-contract";
 import { INFERRED_KNOWN_ANSWER } from "../answer-rating";
 import { NEW_SKILL_MEMORY, reviewSkillMemory } from "../fsrs-scheduler";
 import { type GoalPlanItem, loadGoalPlan } from "./goal-skill-graph";
@@ -64,6 +66,7 @@ export async function markSkillsKnown({
 export async function markPlanItemsTestedOut({
   announceAlso = [],
   extraWrites,
+  finishesChapters = false,
   followToday = true,
   goalId,
   items,
@@ -78,6 +81,11 @@ export async function markPlanItemsTestedOut({
   announceAlso?: readonly string[];
   /** Other writes that must land with the announcement (see `announceTestedOutItems`). */
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
+  /**
+   * Settles the chapters it finishes and owes their maps. Only a chapter's own test-out does:
+   * placement and a mock's adaptation test out in bulk, which mustn't spend the learner's maps.
+   */
+  finishesChapters?: boolean;
   /** Today's blocks not started follow the re-plan (see `announceTestedOutItems`). */
   followToday?: boolean;
   goalId: string;
@@ -91,12 +99,20 @@ export async function markPlanItemsTestedOut({
   timeZone: string;
 }): Promise<{
   changeId: string | null;
+  finishedChapters: FinishedChapter[];
   lessonsSkipped: number;
   pastBasicsAdded: string[];
   planItemIds: string[];
   planVersion: number | null;
 }> {
-  const empty = { changeId: null, lessonsSkipped: 0, planItemIds: [], planVersion: null };
+  const empty = {
+    changeId: null,
+    finishedChapters: [],
+    lessonsSkipped: 0,
+    planItemIds: [],
+    planVersion: null,
+  };
+
   const { ids, leftOut } = findTestOut({ items, knownSkillIds, placedSkills });
   const goal = await prisma.goal.findUnique({ where: { id: goalId } });
 
@@ -104,7 +120,7 @@ export async function markPlanItemsTestedOut({
     return { ...empty, pastBasicsAdded: [] };
   }
 
-  const { pastBasicsAdded: addedBasics, standInIds } =
+  const written =
     knownSkillIds.size > 0 || leftOut.length > 0 || pastBasicsAreas.length > 0
       ? await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
           const changed = await testOutKnownPlanItems(tx, {
@@ -141,7 +157,18 @@ export async function markPlanItemsTestedOut({
             });
           }
 
-          const result = { pastBasicsAdded, standInIds: changed.standInIds };
+          const finished = finishesChapters
+            ? await settleFinishedChapters(tx, {
+                planItemIds: [...changed.itemIds, ...changed.sharedItemIds, ...changed.standInIds],
+                userId: goal.userId,
+              })
+            : [];
+
+          const result = {
+            finishedChapters: finished,
+            pastBasicsAdded,
+            standInIds: changed.standInIds,
+          };
 
           return changed.itemIds.length === 0 &&
             changed.sharedItemIds.length === 0 &&
@@ -150,7 +177,9 @@ export async function markPlanItemsTestedOut({
             ? unchanged(result)
             : result;
         })
-      : { pastBasicsAdded: [], standInIds: [] };
+      : { finishedChapters: [], pastBasicsAdded: [], standInIds: [] };
+
+  const { finishedChapters, pastBasicsAdded: addedBasics, standInIds } = written;
 
   const planItemIds = [...ids, ...standInIds];
   const announced = [...new Set([...announceAlso, ...planItemIds])];
@@ -163,7 +192,7 @@ export async function markPlanItemsTestedOut({
   });
 
   if (announced.length === 0) {
-    return { ...empty, pastBasicsAdded: addedBasics };
+    return { ...empty, finishedChapters, pastBasicsAdded: addedBasics };
   }
 
   const announce = () =>
@@ -186,6 +215,7 @@ export async function markPlanItemsTestedOut({
 
   return {
     changeId: announcement?.changeId ?? null,
+    finishedChapters,
     lessonsSkipped: announcement?.lessonsSkipped ?? planItemIds.length,
     pastBasicsAdded: addedBasics,
     planItemIds,

@@ -2,6 +2,7 @@ import "server-only";
 import { type StudySessionBlock, prisma } from "@zoonk/db";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { readFinishedChapter } from "../mind-maps/finished-chapters";
 import { completeBlockMoment } from "./_utils/block-completion";
 import { finishEmptyBlock } from "./_utils/finish-empty-block";
 import {
@@ -232,9 +233,13 @@ export async function finishLessonBlock({
   const lessonId = owned.block.lessonId ?? readFinishedLessonId(finish.contentIds);
   const progress = await prisma.userProgress.findUnique({ where: { userId: owned.userId } });
 
+  const { goalId } = owned.session;
+
   const done = await markLessonBlockDone({
     block: owned.block,
     brainPower: finish.brainPower,
+    eventId: finish.id,
+    goalId,
     lessonId,
     timeZone: owned.timeZone,
     userId: owned.userId,
@@ -244,9 +249,7 @@ export async function finishLessonBlock({
     trackBlockCompleted({ block: owned.block, seconds: finish.seconds, session: owned.session });
   }
 
-  const { goalId } = owned.session;
-
-  const [comesBackOn, testOutOffer] = await Promise.all([
+  const [comesBackOn, testOutOffer, finishedChapter] = await Promise.all([
     getLessonComesBack({
       lessonId,
       targetDate: owned.session.goal?.targetDate ?? null,
@@ -254,6 +257,10 @@ export async function finishLessonBlock({
       userId: owned.userId,
     }),
     lessonId && goalId ? findTestOutOffer({ goalId, lessonId, userId: owned.userId }) : null,
+    // Read again: marking the block done may have finished the chapter after `finish` was read.
+    prisma.learningEvent
+      .findUniqueOrThrow({ select: { contentIds: true }, where: { id: finish.id } })
+      .then((event) => readFinishedChapter(event.contentIds)),
   ]);
 
   const completion = await completeBlockMoment({
@@ -267,7 +274,7 @@ export async function finishLessonBlock({
       checkpoint: null,
       comesBackOn,
       correct: finish.correctAnswers,
-      finishedChapter: null,
+      finishedChapter,
       netScore: null,
       testOutOffer,
       topHyperdrive: 0,

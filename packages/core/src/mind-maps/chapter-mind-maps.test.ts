@@ -5,9 +5,14 @@ import { generateMindMapImage } from "@zoonk/ai/tasks/mind-maps/image";
 import { type MindMapStructure } from "@zoonk/ai/tasks/mind-maps/schema";
 import { generateMindMapStructure } from "@zoonk/ai/tasks/mind-maps/structure";
 import { prisma } from "@zoonk/db";
-import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
+import {
+  chapterLessonFixture,
+  lessonSkillFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { serveStoredFile, storeBlobUploads } from "../_test-utils/blob-uploads";
 import { mockSession } from "../_test-utils/mock-session";
@@ -24,7 +29,7 @@ import {
 } from "./chapter-mind-map-generation";
 import { getChapterMindMap } from "./get-chapter-mind-map";
 import { listGoalMindMaps } from "./list-goal-mind-maps";
-import { requestChapterMindMap } from "./request-chapter-mind-map";
+import { requestChapterMindMap, requestChapterMindMapFor } from "./request-chapter-mind-map";
 
 const structure: MindMapStructure = {
   branches: [
@@ -103,6 +108,10 @@ async function finishedChapter({ written = true }: { written?: boolean } = {}) {
   return { ...fixture, current: current?.id ?? "", finished: finished?.id ?? "" };
 }
 
+function byId(a: string | undefined = "", b: string | undefined = "") {
+  return a.localeCompare(b);
+}
+
 function runAnalytics() {
   return { runId: `run-${randomUUID()}` };
 }
@@ -132,21 +141,17 @@ describe("chapter mind maps", () => {
     readStoredFile = serveStoredFile({ data: image, mediaType: "image/webp" });
   });
 
-  it("offers a map only for a finished chapter whose lessons are written, to its own learner", async () => {
+  it("offers a map for every chapter of the plan, with the lessons it writes first, to its own learner", async () => {
     const { current, finished, goal } = await finishedChapter({ written: false });
 
     await expect(getChapterMindMap({ chapterId: current })).resolves.toMatchObject({
-      mindMap: { image: null, outline: null, position: 2, status: "unavailable" },
+      mindMap: { image: null, lessonsToWrite: 2, outline: null, position: 2, status: "available" },
       status: "ready",
     });
 
     await expect(getChapterMindMap({ chapterId: finished })).resolves.toMatchObject({
-      mindMap: { status: "unavailable" },
+      mindMap: { lessonsToWrite: 2, status: "available" },
     });
-
-    await expect(
-      requestChapterMindMap({ chapterId: finished, goalId: goal.id }),
-    ).resolves.toStrictEqual({ status: "unavailable" });
 
     await prisma.lesson.updateMany({
       data: { contentStatus: "completed" },
@@ -202,12 +207,14 @@ describe("chapter mind maps", () => {
   });
 
   it("counts a new map toward the learner's mind map limits once, and a second ask joins the run", async () => {
-    const { current, finished, goal, user } = await finishedChapter();
+    const { finished, goal, user } = await finishedChapter();
 
     await expect(
       requestChapterMindMap({ chapterId: finished, goalId: goal.id }),
     ).resolves.toMatchObject({
       analytics: { distinctId: user.id, goalId: goal.id },
+      forExam: false,
+      lessonIds: [],
       status: "start",
     });
 
@@ -226,10 +233,141 @@ describe("chapter mind maps", () => {
     await expect(
       prisma.usageRecord.findMany({ select: { targetId: true }, where: { userId: user.id } }),
     ).resolves.toStrictEqual([{ targetId: finished }]);
+  });
+
+  it("claims the map and each lesson it writes first together, or none of them", async () => {
+    const { current, goal, lessons, user } = await finishedChapter();
+    const [writing, unstarted] = lessons.slice(2).map((lesson) => lesson.id);
+
+    const setAside = await libraryLessonFixture({
+      contentStatus: "failed",
+      setAsideAt: new Date(),
+      title: "Set aside",
+    });
+
+    await chapterLessonFixture({ chapterId: current, lessonId: setAside.id, position: 2 });
+
+    await prisma.usageRecord.createMany({
+      data: Array.from({ length: 19 }, () => ({
+        generated: true,
+        kind: "lessonStart" as const,
+        targetId: randomUUID(),
+        userId: user.id,
+      })),
+    });
 
     await expect(
       requestChapterMindMap({ chapterId: current, goalId: goal.id }),
-    ).resolves.toStrictEqual({ status: "unavailable" });
+    ).resolves.toStrictEqual({
+      decision: {
+        limit: { limit: 20, period: "day", resource: "lessonStart", tier: "free" },
+        status: "limitReached",
+      },
+      status: "refused",
+    });
+
+    await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(19);
+    await expect(prisma.chapterMindMap.count({ where: { chapterId: current } })).resolves.toBe(0);
+
+    await prisma.usageRecord.deleteMany({ where: { userId: user.id } });
+
+    await prisma.lesson.update({
+      data: { contentRunId: "another-run", contentStatus: "running" },
+      where: { id: writing },
+    });
+
+    const started = await requestChapterMindMap({ chapterId: current, goalId: goal.id });
+
+    expect(started).toMatchObject({ forExam: false, status: "start" });
+
+    expect(started.status === "start" && started.lessonIds.toSorted(byId)).toStrictEqual(
+      [writing, unstarted].toSorted(byId),
+    );
+
+    const claimed = await prisma.usageRecord.findMany({
+      select: { generated: true, kind: true, targetId: true },
+      where: { userId: user.id },
+    });
+
+    expect(claimed.toSorted((a, b) => a.kind.localeCompare(b.kind))).toStrictEqual([
+      { generated: true, kind: "lessonStart", targetId: unstarted },
+      { generated: true, kind: "mindMap", targetId: current },
+    ]);
+
+    await expect(getChapterMindMap({ chapterId: current })).resolves.toMatchObject({
+      mindMap: { lessonsToWrite: 2, status: "writingLessons" },
+    });
+
+    await expect(
+      requestChapterMindMap({ chapterId: current, goalId: goal.id }),
+    ).resolves.toStrictEqual({ generationId: null, status: "writingLessons" });
+  });
+
+  it("keeps a chapter whose lessons are Plus-only behind Plus, even with a map made", async () => {
+    const { current, finished, goal, user } = await finishedChapter();
+
+    await Promise.all([
+      prisma.goal.update({
+        data: { createdAt: new Date(Date.now() - 30 * MS_PER_DAY), kind: "exam" },
+        where: { id: goal.id },
+      }),
+      prisma.chapterMindMap.create({
+        data: { chapterId: current, language: "en", status: "completed", structure },
+      }),
+    ]);
+
+    await expect(getChapterMindMap({ chapterId: current })).resolves.toMatchObject({
+      mindMap: { image: null, outline: null, status: "plusRequired" },
+    });
+
+    await expect(listGoalMindMaps()).resolves.toMatchObject({
+      mindMaps: {
+        chapters: [
+          { chapterId: finished, status: "available" },
+          { chapterId: current, status: "plusRequired" },
+        ],
+      },
+    });
+
+    await expect(
+      requestChapterMindMap({ chapterId: current, goalId: goal.id }),
+    ).resolves.toStrictEqual({ status: "plusRequired" });
+
+    await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
+  it("asks for an owed map with the learner's own admission, and leaves it when refused", async () => {
+    const { finished, goal, user } = await finishedChapter();
+    const owed = { chapterId: finished, goalId: goal.id, userId: user.id };
+
+    await prisma.usageRecord.createMany({
+      data: Array.from({ length: 3 }, () => ({
+        generated: true,
+        kind: "mindMap" as const,
+        targetId: randomUUID(),
+        userId: user.id,
+      })),
+    });
+
+    await expect(requestChapterMindMapFor(owed)).resolves.toMatchObject({ status: "refused" });
+    await expect(prisma.chapterMindMap.count({ where: { chapterId: finished } })).resolves.toBe(0);
+
+    await prisma.usageRecord.deleteMany({ where: { userId: user.id } });
+
+    await expect(requestChapterMindMapFor(owed)).resolves.toMatchObject({
+      analytics: { distinctId: user.id, goalId: goal.id, platform: null },
+      lessonIds: [],
+      status: "start",
+    });
+
+    await expect(requestChapterMindMapFor(owed)).resolves.toStrictEqual({
+      generationId: null,
+      status: "drawing",
+    });
+
+    await expect(
+      prisma.usageRecord.findMany({ select: { targetId: true }, where: { userId: user.id } }),
+    ).resolves.toStrictEqual([{ targetId: finished }]);
   });
 
   it("writes and draws the map once, then every learner of the chapter reads it", async () => {
@@ -284,6 +422,7 @@ describe("chapter mind maps", () => {
       mindMaps: {
         chapters: [
           { chapterId: finished, position: 1, status: "ready", title: "The very small world" },
+          { chapterId: current, lessonsToWrite: 2, position: 2, status: "available" },
         ],
         goal: { id: goal.id },
       },
@@ -304,7 +443,6 @@ describe("chapter mind maps", () => {
     expect(generateMindMapStructure).toHaveBeenCalledOnce();
 
     await expect(prisma.usageRecord.count({ where: { userId: other.user.id } })).resolves.toBe(0);
-    expect(current).not.toBe(finished);
   });
 
   it("shows the picture before its check, replaces it after a failed one, and keeps the words when the new one fails too", async () => {

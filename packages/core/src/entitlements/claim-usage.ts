@@ -16,22 +16,19 @@ import { type UsageDecision } from "./contract";
 type UsageClaim = { generated?: boolean; kind: UsageKind; seconds?: number; targetId: string };
 
 async function claimAs({
-  generated = false,
-  kind,
-  seconds,
-  targetId,
+  claims,
   viewer,
-}: UsageClaim & { viewer: EntitlementViewer | null }): Promise<UsageDecision> {
+}: {
+  claims: readonly UsageClaim[];
+  viewer: EntitlementViewer | null;
+}): Promise<UsageDecision> {
   if (!viewer) {
     return { status: "unauthorized" };
   }
 
   const decision = await claimUsageForViewer({
-    generated,
-    kind,
+    claims: claims.map(({ generated = false, ...claim }) => ({ ...claim, generated })),
     now: new Date(),
-    ...(seconds === undefined ? {} : { seconds }),
-    targetId,
     viewer,
   });
 
@@ -44,7 +41,7 @@ async function claimAs({
 
 /** Claim immediately before work and obey the decision; targetId makes retries free. Calls may hold fewer seconds than requested. */
 export async function claimUsage(claim: UsageClaim): Promise<UsageDecision> {
-  return claimAs({ ...claim, viewer: await getEntitlementViewer() });
+  return claimAs({ claims: [claim], viewer: await getEntitlementViewer() });
 }
 
 /** Internal, for workflows: `userId` must come from the learner's own write. */
@@ -52,7 +49,23 @@ export async function claimUsageFor({
   userId,
   ...claim
 }: UsageClaim & { userId: string }): Promise<UsageDecision> {
-  return claimAs({ ...claim, viewer: await getEntitlementViewerFor(userId) });
+  return claimAs({ claims: [claim], viewer: await getEntitlementViewerFor(userId) });
+}
+
+/** For work that costs several kinds at once: every claim is recorded or none, and the first refusal answers. */
+export async function claimUsages(claims: readonly UsageClaim[]): Promise<UsageDecision> {
+  return claimAs({ claims, viewer: await getEntitlementViewer() });
+}
+
+/** Internal, for workflows: `userId` must come from the learner's own write. */
+export async function claimUsagesFor({
+  claims,
+  userId,
+}: {
+  claims: readonly UsageClaim[];
+  userId: string;
+}): Promise<UsageDecision> {
+  return claimAs({ claims, viewer: await getEntitlementViewerFor(userId) });
 }
 
 /** Claim immediately before starting a small AI call. */

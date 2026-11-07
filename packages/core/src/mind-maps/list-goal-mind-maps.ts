@@ -1,8 +1,10 @@
 import "server-only";
+import { readEntitlementViewer } from "../entitlements/_utils/entitlement-viewer";
+import { getRequestInstant } from "../learner/facts/request-instant";
 import { resolveViewGoal } from "../view-models/_utils/resolve-view-goal";
 import { loadChapterNumbering } from "../view-models/syllabus/_utils/chapter-numbers";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
-import { getMindMapStatus, toMindMapImage, toMindMapOutline } from "./_utils/mind-map-view";
+import { toChapterMindMapView } from "./_utils/mind-map-view";
 import { type GoalMindMapView, type GoalMindMapsView } from "./mind-map-contract";
 
 export type GoalMindMapsResult =
@@ -10,12 +12,12 @@ export type GoalMindMapsResult =
   | { status: "noGoal" | "notFound" | "unauthorized" };
 
 function isListed(
-  status: ReturnType<typeof getMindMapStatus>,
-): status is GoalMindMapView["status"] {
-  return status !== "unavailable";
+  view: ReturnType<typeof toChapterMindMapView>,
+): view is Omit<GoalMindMapView, "subject"> {
+  return view.status !== "unavailable";
 }
 
-/** Read-only saved-plan list, defaulting to the active goal; excludes finished chapters with no written lessons. */
+/** Read-only saved-plan list, defaulting to the active goal: every chapter that can have a map. */
 export async function listGoalMindMaps(
   input: { goalId?: string } = {},
 ): Promise<GoalMindMapsResult> {
@@ -28,34 +30,18 @@ export async function listGoalMindMaps(
   }
 
   const { goal } = resolved;
-  const now = new Date();
 
-  const [facts, numbering] = await Promise.all([
-    loadMindMapChapters({ goal }),
+  const [facts, numbering, now] = await Promise.all([
+    loadMindMapChapters({ goal, readViewer: readEntitlementViewer }),
     loadChapterNumbering(goal),
+    getRequestInstant(),
   ]);
 
   const chapters = facts.flatMap((chapter) => {
-    const status = getMindMapStatus({ ...chapter, now });
-
-    if (!isListed(status)) {
-      return [];
-    }
-
     const number = numbering({ chapterId: chapter.chapterId, planPosition: chapter.position });
+    const view = toChapterMindMapView({ facts: chapter, now, position: number.position });
 
-    return [
-      {
-        chapterId: chapter.chapterId,
-        image: status === "ready" ? toMindMapImage(chapter.row) : null,
-        lessonsToWrite: 0,
-        outline: status === "ready" ? toMindMapOutline(chapter.row?.structure) : null,
-        position: number.position,
-        status,
-        subject: number.subject,
-        title: chapter.title,
-      },
-    ];
+    return isListed(view) ? [{ ...view, subject: number.subject }] : [];
   });
 
   return { mindMaps: { chapters, goal: { id: goal.id, title: goal.title } }, status: "ready" };

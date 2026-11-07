@@ -1,11 +1,14 @@
 import "server-only";
 import { type LearningEvent, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { readFinishedChapter, toFinishedChapterIds } from "../../../mind-maps/finished-chapters";
+import { type FinishedChapter } from "../../../sessions/completion-contract";
 
 export type TestOutReceipt = {
   /** The plan change that skipped its lessons; null when it skipped none. */
   changeId: string | null;
   correct: number;
+  finishedChapter: FinishedChapter | null;
   lessonsSkipped: number;
   passed: boolean;
   /** Undo requires this resulting plan version; null when no lessons were skipped. */
@@ -16,6 +19,7 @@ export type TestOutReceipt = {
 export function toTestOutContentIds({
   changeId,
   chapterId,
+  finishedChapter,
   lessonsSkipped,
   passed,
   planVersion,
@@ -23,12 +27,14 @@ export function toTestOutContentIds({
 }: {
   changeId: string | null;
   chapterId: string;
+  finishedChapter: FinishedChapter | null;
   lessonsSkipped: number;
   passed: boolean;
   planVersion: number | null;
   requestId: string;
 }): Record<string, string> {
   return {
+    ...toFinishedChapterIds(finishedChapter),
     chapterId,
     lessonsSkipped: String(lessonsSkipped),
     ...(changeId ? { planChangeId: changeId } : {}),
@@ -38,7 +44,7 @@ export function toTestOutContentIds({
   };
 }
 
-function readTestOutReceipt(event: LearningEvent): TestOutReceipt {
+function readTestOutReceipt(event: LearningEvent): Omit<TestOutReceipt, "finishedChapter"> {
   const content = isJsonObject(event.contentIds) ? event.contentIds : {};
   const planVersion = Number(content.planVersion);
 
@@ -76,5 +82,12 @@ export async function findTestOutReceipt({
     },
   });
 
-  return event ? readTestOutReceipt(event) : null;
+  if (!event) {
+    return null;
+  }
+
+  return {
+    ...readTestOutReceipt(event),
+    finishedChapter: await readFinishedChapter(event.contentIds),
+  };
 }

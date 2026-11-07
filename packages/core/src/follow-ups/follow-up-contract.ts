@@ -33,6 +33,10 @@ export const followUpSchema = z.discriminatedUnion("kind", [
   }),
   z.object({ input: z.object({ lessonId: uuidSchema() }), kind: z.literal("writeLesson") }),
   z.object({
+    input: z.object({ chapterId: uuidSchema(), goalId: uuidSchema() }),
+    kind: z.literal("makeChapterMindMap"),
+  }),
+  z.object({
     input: z.object({ cause: mistakeCauseInputSchema, mistakeId: uuidSchema() }),
     kind: z.literal("classifyMistakeCause"),
   }),

@@ -1,18 +1,55 @@
-import { getWorkflowMetadata } from "workflow";
+import { getWorkflowMetadata, sleep } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
+import { repeatUntil } from "../_shared/repeat-until";
+import { startOnce } from "../_shared/run-token";
+import { getLessonContentHookToken } from "../lessons/lesson-content-result";
+import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
+import { type ChapterMindMapInput } from "./chapter-mind-map-input";
 import {
   checkMindMapStep,
   drawMindMapStep,
   failMindMapStep,
+  holdMindMapStep,
   removeMindMapImageStep,
   writeMindMapStructureStep,
 } from "./steps/chapter-mind-map-steps";
 
-export type ChapterMindMapInput = { analytics?: ContentAnalytics; chapterId: string };
-
 export type ChapterMindMapResult = { hasImage: boolean };
 
 type MindMapRun = Parameters<typeof checkMindMapStep>[0];
+
+const LESSON_POLL = "10s";
+const MAX_LESSON_POLLS = 240;
+
+/** Each lesson is written by its own run, joined when one already writes it; the map waits for all. */
+async function writeLessons({
+  analytics,
+  chapterId,
+  lessons,
+  runId,
+}: {
+  analytics?: ContentAnalytics;
+  chapterId: string;
+  lessons: NonNullable<ChapterMindMapInput["lessons"]>;
+  runId: string;
+}): Promise<void> {
+  const lessonRunIds = await Promise.all(
+    lessons.ids.map((lessonId) =>
+      startOnce(
+        lessonContentWorkflow,
+        [{ analytics, forExam: lessons.forExam, lessonId, wait: "learner" }],
+        getLessonContentHookToken(lessonId),
+      ),
+    ),
+  );
+
+  await repeatUntil({
+    done: (writing) => writing === 0,
+    run: () => holdMindMapStep({ chapterId, lessonRunIds, runId }),
+    times: MAX_LESSON_POLLS,
+    wait: () => sleep(LESSON_POLL),
+  });
+}
 
 async function checkShownMindMap(run: MindMapRun): Promise<ChapterMindMapResult> {
   const first = await checkMindMapStep(run);
@@ -35,6 +72,7 @@ async function checkShownMindMap(run: MindMapRun): Promise<ChapterMindMapResult>
 export async function chapterMindMapWorkflow({
   analytics,
   chapterId,
+  lessons,
 }: ChapterMindMapInput): Promise<ChapterMindMapResult> {
   "use workflow";
 
@@ -50,6 +88,10 @@ export async function chapterMindMapWorkflow({
   };
 
   try {
+    if (lessons && lessons.ids.length > 0) {
+      await writeLessons({ analytics, chapterId, lessons, runId: workflowRunId });
+    }
+
     await writeMindMapStructureStep(run);
     await drawMindMapStep(run);
   } catch (error) {

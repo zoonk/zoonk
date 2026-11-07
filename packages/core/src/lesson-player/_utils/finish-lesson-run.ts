@@ -9,6 +9,7 @@ import {
 } from "../../cache/tags";
 import { finishExplanations } from "../../goals/_utils/finish-explanations";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { finishLessonChapters } from "../../mind-maps/finished-chapters";
 import { clampEnergy } from "../../progress/energy";
 import { completeLessonPlanItems, scheduleLessonCanDos } from "../../sessions/_utils/plan-items";
 import { trackBlockCompleted } from "../../sessions/_utils/session-events";
@@ -153,7 +154,18 @@ export async function finishLessonRun({
         userId,
       }));
 
-    const languageGoals = await completeLessonPlanItems(tx, { lessonId, now: completedAt, userId });
+    const { languageGoals, planItemIds } = await completeLessonPlanItems(tx, {
+      lessonId,
+      now: completedAt,
+      userId,
+    });
+
+    await finishLessonChapters(tx, {
+      eventId: run.id,
+      goalId: block?.session.goalId ?? null,
+      planItemIds,
+      userId,
+    });
 
     const explanationsFinished = await finishExplanations(tx, { lessonId, userId });
 

@@ -246,10 +246,8 @@ describe("guest usage", () => {
     const decisions = await Promise.all(
       guests.map((guest) =>
         claimUsageForViewer({
-          generated: false,
-          kind: "assist",
+          claims: [{ generated: false, kind: "assist", targetId: randomUUID() }],
           now,
-          targetId: randomUUID(),
           viewer: { isGuest: true, tier: "guest", userId: guest.id },
         }),
       ),

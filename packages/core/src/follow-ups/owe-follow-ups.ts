@@ -16,6 +16,8 @@ function getFollowUpKey(followUp: FollowUp): string {
       return followUp.input.goalId;
     case "writeLesson":
       return followUp.input.lessonId;
+    case "makeChapterMindMap":
+      return followUp.input.chapterId;
     case "classifyMistakeCause":
       return followUp.input.mistakeId;
     case "findMistakePattern":
