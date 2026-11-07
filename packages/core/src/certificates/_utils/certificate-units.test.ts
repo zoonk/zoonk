@@ -62,6 +62,7 @@ function units({
   heldKeys = [],
   items = TWO_LEVELS.items,
   levelCourseId = COURSE,
+  phaseChallengesRequired = true,
   phases = [{}, {}],
   studiesPastTarget = false,
 }: {
@@ -70,6 +71,7 @@ function units({
   heldKeys?: string[];
   items?: CertifiableItem[];
   levelCourseId?: string | null;
+  phaseChallengesRequired?: boolean;
   phases?: { challengeLeftOut?: boolean }[];
   studiesPastTarget?: boolean;
 } = {}) {
@@ -79,6 +81,7 @@ function units({
     items,
     levelChapters: chapters,
     levelCourseId,
+    phaseChallengesRequired,
     phases,
     planCreatedAt: PLAN_CREATED_AT,
     studiesPastTarget,
@@ -120,20 +123,40 @@ describe(listCertificateUnits, () => {
     ]);
   });
 
-  it("certifies nothing tested out without one lesson studied", () => {
-    const items = TWO_LEVELS.items.map((entry) =>
-      entry.kind === "lesson" && entry.phase === 0
-        ? { ...entry, status: "testedOut" as const }
-        : entry,
-    );
+  it("certifies a level only when at least half its lessons were studied", () => {
+    const chapters = [chapter("b1"), chapter("b2"), chapter("b3"), chapter("b4")];
 
-    expect(finished(units({ items }))).toStrictEqual(["course:beginner"]);
+    const placed = (studied: number) => [
+      ...chapters.map((entry, index) =>
+        lesson({ chapterId: entry.chapterId, status: index < studied ? "done" : "testedOut" }),
+      ),
+      item("boss"),
+    ];
 
-    const allTestedOut = TWO_LEVELS.items.map((entry) =>
-      entry.kind === "lesson" ? { ...entry, status: "testedOut" as const } : entry,
-    );
+    expect(finished(units({ chapters, items: placed(1), phases: [{}] }))).toStrictEqual([]);
 
-    expect(finished(units({ items: allTestedOut }))).toStrictEqual([]);
+    expect(finished(units({ chapters, items: placed(2), phases: [{}] }))).toStrictEqual([
+      "course:beginner",
+    ]);
+
+    expect(finished(units({ chapters, items: placed(0), phases: [{}] }))).toStrictEqual([]);
+  });
+
+  it("certifies the plan only when at least half its lessons were studied", () => {
+    const items = [
+      lesson({ chapterId: "elsewhere", level: null }),
+      lesson({ chapterId: "elsewhere", level: null, status: "testedOut" }),
+      lesson({ chapterId: "elsewhere", level: null, status: "testedOut" }),
+      item("boss"),
+    ];
+
+    expect(finished(units({ items, levelCourseId: null, phases: [{}] }))).toStrictEqual([]);
+
+    const halfStudied = items.with(1, lesson({ chapterId: "elsewhere", level: null }));
+
+    expect(
+      finished(units({ items: halfStudied, levelCourseId: null, phases: [{}] })),
+    ).toStrictEqual(["goal"]);
   });
 
   it("certifies a level started past its first chapter with the plan, and the next level whole", () => {
@@ -255,8 +278,29 @@ describe(listCertificateUnits, () => {
     expect(finished(units({ items }))).toStrictEqual(["course:overview", "course:beginner"]);
   });
 
-  it("has no units for language and explain goals", () => {
-    expect(units({ goal: { ...GOAL, kind: "language" } })).toStrictEqual([]);
+  it("certifies a language goal's levels like any course's", () => {
+    expect(finished(units({ goal: { ...GOAL, kind: "language" } }))).toStrictEqual([
+      "course:overview",
+      "course:beginner",
+    ]);
+  });
+
+  it("never holds a level back for a challenge the learner can't take without Plus", () => {
+    const items = TWO_LEVELS.items.map((entry) =>
+      entry.kind === "boss" ? { ...entry, completedAt: null, status: "todo" as const } : entry,
+    );
+
+    const phases = [{ challengeLeftOut: true }, {}];
+
+    expect(finished(units({ items, phases }))).toStrictEqual([]);
+
+    expect(finished(units({ items, phaseChallengesRequired: false, phases }))).toStrictEqual([
+      "course:overview",
+      "course:beginner",
+    ]);
+  });
+
+  it("has no units for explain goals", () => {
     expect(units({ goal: { ...GOAL, kind: "explain" } })).toStrictEqual([]);
   });
 });

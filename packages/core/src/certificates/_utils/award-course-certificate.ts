@@ -5,12 +5,16 @@ import { isValidCategory } from "@zoonk/utils/categories";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { countLessons } from "../../plans/_utils/stand-in-lessons";
-import { getWorkProgress, isWorkFinished } from "../../plans/_utils/work-progress";
+import { isWorkFinished } from "../../plans/_utils/work-progress";
 import { PHASE_WORK_KINDS } from "../../plans/planner/plan-item-rules";
 import { parsePlanPhases } from "../../plans/planner/plan-state";
 import { type CourseCertificateDetails } from "../certificate-contract";
 import { createCertificateCode } from "./certificate-code";
-import { type CertifiableItem, type CertificateUnit } from "./certificate-units";
+import {
+  type CertifiableItem,
+  type CertificateUnit,
+  splitCertifiedLessons,
+} from "./certificate-units";
 import {
   UNIT_PLAN_SELECT,
   type UnitGoal,
@@ -18,7 +22,7 @@ import {
   loadCertificateUnits,
 } from "./load-certificate-units";
 
-type CertificateGoal = UnitGoal & Pick<Goal, "language" | "timezone">;
+type CertificateGoal = UnitGoal & Pick<Goal, "language" | "targetLanguage" | "timezone">;
 
 const GOAL_SELECT = {
   id: true,
@@ -26,6 +30,7 @@ const GOAL_SELECT = {
   language: true,
   primaryCourseId: true,
   targetDate: true,
+  targetLanguage: true,
   timezone: true,
   userId: true,
 } as const;
@@ -90,15 +95,12 @@ function buildDetails({
   topics: string[];
   unit: CertificateUnit;
 }): CourseCertificateDetails {
-  const lessons = unit.items.filter((item) => item.kind === "lesson");
-  const studied = lessons.filter((item) => getWorkProgress(item.status) === "studied");
+  const { studied, testedOut } = splitCertifiedLessons(unit.items);
 
   return {
     category: isValidCategory(category) ? category : null,
     lessonsStudied: countLessons(studied),
-    lessonsTestedOut: countLessons(
-      lessons.filter((item) => getWorkProgress(item.status) === "testedOut"),
-    ),
+    lessonsTestedOut: countLessons(testedOut),
     minutes: sumStudiedMinutes(studied),
     topics,
   };
@@ -147,6 +149,7 @@ export async function writeFinishedUnits(
     key: unit.key,
     kind: "course" as const,
     language: goal.language,
+    targetLanguage: goal.kind === "language" ? goal.targetLanguage : null,
     title: unit.title,
     userId: goal.userId,
   }));
@@ -169,7 +172,9 @@ export function loadCertificatePlan(
 
 /**
  * A unit can only finish with the phase of the work that just finished, so a phase with lessons or
- * a challenge left skips its plan before the plan is read.
+ * a challenge left skips its plan before the plan is read. A language plan's challenge doesn't:
+ * a free learner can't take its Plus calls, so only the full read can tell whether it holds a
+ * level back.
  */
 export async function awardCourseCertificates(
   tx: TransactionClient,
@@ -184,6 +189,7 @@ export async function awardCourseCertificates(
   const open = await tx.planItem.groupBy({
     by: ["planId", "phase"],
     where: {
+      NOT: { kind: "boss", plan: { goal: { kind: "language" } } },
       OR: work.map(({ phase, planId }) => ({ phase, planId })),
       kind: { in: [...PHASE_WORK_KINDS] },
       status: "todo",

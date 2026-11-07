@@ -1,5 +1,13 @@
 import "server-only";
-import { type Goal, type Plan, type PlanItem, type TransactionClient, prisma } from "@zoonk/db";
+import {
+  type Course,
+  type Goal,
+  type Plan,
+  type PlanItem,
+  type TransactionClient,
+  prisma,
+} from "@zoonk/db";
+import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { isWorkFinished } from "../../plans/_utils/work-progress";
 import { LEARN_KINDS, isStandIn } from "../../plans/planner/plan-item-rules";
@@ -11,6 +19,8 @@ import {
 } from "./certificate-units";
 
 export type UnitGoal = Pick<Goal, "id" | "kind" | "primaryCourseId" | "targetDate" | "userId">;
+
+const LEVEL_COURSE_FORMATS: ReadonlySet<Course["format"]> = new Set(["core", "language"]);
 
 export type UnitPlan = Pick<Plan, "createdAt" | "graph" | "phases" | "settings"> & {
   items: readonly Pick<
@@ -201,6 +211,12 @@ function loadHeldCertificates(db: TransactionClient, goal: UnitGoal) {
 
 type UnitInput = { goal: UnitGoal; plan: UnitPlan };
 
+function getLevelCourseId({ course, goal }: { course: UnitCourse | null; goal: UnitGoal }) {
+  return course?.visibility === "public" && LEVEL_COURSE_FORMATS.has(course.format)
+    ? goal.primaryCourseId
+    : null;
+}
+
 /**
  * Named by a course, never by the goal's title, which the learner can rename: the primary course,
  * or for a plan without one, the course its first chapter was written for. A unit nothing names
@@ -234,17 +250,22 @@ async function nameUnits(
 
 /**
  * The plan's level and plan certificates, finished or not, with the ones the learner holds and the
- * finished ones they're owed.
+ * finished ones they're owed. Writes keep the fresh Plus check; GET reads pass `readSubscription`.
  */
 export async function loadCertificateUnits(
-  { goal, plan }: UnitInput,
+  {
+    goal,
+    plan,
+    readSubscription,
+  }: UnitInput & Pick<Parameters<typeof arePhaseChallengesRequired>[0], "readSubscription">,
   db: TransactionClient = prisma,
 ) {
-  const [course, homeChapters, standInLevels, held] = await Promise.all([
+  const [course, homeChapters, standInLevels, held, phaseChallengesRequired] = await Promise.all([
     loadPrimaryCourse(db, goal),
     loadHomeChapters(db, plan),
     loadStandInLevels(db, { goal, plan }),
     loadHeldCertificates(db, goal),
+    arePhaseChallengesRequired({ goalKind: goal.kind, readSubscription, userId: goal.userId }),
   ]);
 
   const levels = new Map(course?.courseChapters.map((entry) => [entry.chapterId, entry.level]));
@@ -276,8 +297,8 @@ export async function loadCertificateUnits(
         ...entry,
         taughtInPlan: taught.has(entry.chapterId),
       })) ?? [],
-    levelCourseId:
-      course?.visibility === "public" && course.format === "core" ? goal.primaryCourseId : null,
+    levelCourseId: getLevelCourseId({ course, goal }),
+    phaseChallengesRequired,
     phases: parsePlanPhases(plan.phases),
     planCreatedAt: plan.createdAt,
     studiesPastTarget: goal.kind === "exam" && parsePlanSettings(plan.settings).fullCourse,

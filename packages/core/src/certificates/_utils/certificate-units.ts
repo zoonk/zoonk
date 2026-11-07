@@ -1,13 +1,14 @@
 import { type CourseLevel, type Goal, type PlanItem } from "@zoonk/db";
 import { CourseLevel as COURSE_LEVELS } from "@zoonk/db/enums";
-import { areLessonsFinished, isTodo } from "../../plans/_utils/plan-end";
+import { areLessonsFinished, hasChallengeLeftOut, isTodo } from "../../plans/_utils/plan-end";
+import { countLessons } from "../../plans/_utils/stand-in-lessons";
 import { getWorkProgress } from "../../plans/_utils/work-progress";
 import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { type PlanPhase } from "../../plans/planner/plan-state";
 
 const LEVEL_ORDER = Object.values(COURSE_LEVELS);
 
-const COURSE_GOALS: ReadonlySet<Goal["kind"]> = new Set(["learn", "exam"]);
+const COURSE_GOALS: ReadonlySet<Goal["kind"]> = new Set(["learn", "exam", "language"]);
 
 export type CertifiableItem = Pick<
   PlanItem,
@@ -42,6 +43,11 @@ export type CertificateUnit = {
 
 type UnitDates = { studiesPastTarget: boolean; targetDate: Date | null };
 
+type UnitPhases = {
+  phaseChallengesRequired: boolean;
+  phases: readonly Pick<PlanPhase, "challengeLeftOut">[];
+};
+
 function getCourseLevelKey({ courseId, level }: { courseId: string; level: CourseLevel }) {
   return `${courseId}:${level}`;
 }
@@ -50,9 +56,27 @@ function isStudied(item: CertifiableItem): boolean {
   return getWorkProgress(item.status) === "studied";
 }
 
+/** The lessons a certificate prints: studied ones, and ones passed by test. */
+export function splitCertifiedLessons(items: readonly CertifiableItem[]) {
+  const lessons = items.filter((item) => item.kind === "lesson");
+
+  return {
+    studied: lessons.filter((item) => isStudied(item)),
+    testedOut: lessons.filter((item) => getWorkProgress(item.status) === "testedOut"),
+  };
+}
+
+function isHalfStudied(learn: readonly CertifiableItem[]): boolean {
+  const lessons = splitCertifiedLessons(learn);
+  const studied = countLessons(lessons.studied);
+
+  return studied * 2 >= studied + countLessons(lessons.testedOut);
+}
+
 /**
- * Every lesson studied or tested out, at least one studied, and every challenge of their phases
- * won. An exam's mocks and reviews rehearse the exam rather than teach, so they never count.
+ * Every lesson studied or tested out, at least half of them studied on Zoonk, and every challenge
+ * of their phases won, unless the learner can't take those challenges without Plus. An exam's
+ * mocks and reviews rehearse the exam rather than teach, so they never count.
  */
 function isUnitDone({
   challenges,
@@ -63,13 +87,13 @@ function isUnitDone({
   challenges: readonly CertifiableItem[];
   dates: UnitDates;
   learn: readonly CertifiableItem[];
-  phases: readonly Pick<PlanPhase, "challengeLeftOut">[];
+  phases: UnitPhases;
 }): boolean {
   return (
     areLessonsFinished({ items: learn, ...dates }) &&
-    learn.some((item) => isStudied(item)) &&
-    !phases.some((phase) => phase.challengeLeftOut) &&
-    !challenges.some((item) => isTodo(item))
+    isHalfStudied(learn) &&
+    !hasChallengeLeftOut(phases) &&
+    !(phases.phaseChallengesRequired && challenges.some((item) => isTodo(item)))
   );
 }
 
@@ -113,16 +137,16 @@ export function listCertificateUnits({
   items,
   levelChapters,
   levelCourseId,
+  phaseChallengesRequired,
   phases,
   planCreatedAt,
   studiesPastTarget,
-}: {
+}: UnitPhases & {
   goal: Pick<Goal, "id" | "kind" | "targetDate">;
   heldKeys: ReadonlySet<string>;
   items: readonly CertifiableItem[];
   levelChapters: readonly LevelChapter[];
   levelCourseId: string | null;
-  phases: readonly Pick<PlanPhase, "challengeLeftOut">[];
   planCreatedAt: Date;
   studiesPastTarget: boolean;
 }): CertificateUnit[] {
@@ -152,7 +176,10 @@ export function listCertificateUnits({
             challenges: unitChallenges,
             dates,
             learn: unitLearn,
-            phases: phases.filter((_phase, index) => phaseIndexes.has(index)),
+            phases: {
+              phaseChallengesRequired,
+              phases: phases.filter((_phase, index) => phaseIndexes.has(index)),
+            },
           });
 
         return [
@@ -176,7 +203,7 @@ export function listCertificateUnits({
     courseLevel: null,
     finished:
       learn.some((item) => isStudied(item) && (!item.level || !covered.has(item.level))) &&
-      isUnitDone({ challenges, dates, learn, phases }),
+      isUnitDone({ challenges, dates, learn, phases: { phaseChallengesRequired, phases } }),
     items: [...learn, ...challenges],
     key: goal.id,
   };

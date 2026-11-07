@@ -7,6 +7,7 @@ import {
   loadCertificateUnits,
 } from "../../certificates/_utils/load-certificate-units";
 import { type SavedPlan } from "../../learner/facts/saved-plan";
+import { readActiveSubscription } from "../../learner/facts/subscription";
 import { countSkillStates } from "../../learner/mastery-state";
 import { loadPlanCourse } from "../../plans/_utils/plan-course";
 import { loadGoalMap } from "../_utils/goal-map";
@@ -36,7 +37,11 @@ async function readPlanCertificates({
     return null;
   }
 
-  const { due, held, units } = await loadCertificateUnits({ goal, plan });
+  const { due, held, units } = await loadCertificateUnits({
+    goal,
+    plan,
+    readSubscription: readActiveSubscription,
+  });
 
   const earned = units.flatMap((unit) => {
     const row = held.find((entry) => entry.key === unit.key);
