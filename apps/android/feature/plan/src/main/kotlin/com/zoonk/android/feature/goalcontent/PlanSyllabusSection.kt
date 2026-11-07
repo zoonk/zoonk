@@ -21,7 +21,6 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -119,14 +118,11 @@ private fun SubjectRow(
     val locale = currentLocale()
     val questions = subject.questions?.takeIf { it > 0 }?.toInt()
 
-    // Beside a bar the name keeps to one line, but the exams it's also in always show whole.
     val name: @Composable (Modifier) -> Unit = { nameModifier ->
         Column(nameModifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
                 text = subject.name,
                 color = if (notPlanned) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-                maxLines = if (layout == RowLayout.Stacked) Int.MAX_VALUE else 1,
-                overflow = TextOverflow.Ellipsis,
             )
             if (alsoIn != null) {
                 Text(alsoIn, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
