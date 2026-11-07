@@ -275,15 +275,18 @@ class QuestionBlockViewModelTest {
                         "timeLimitSeconds" to JsonPrimitive(45),
                     ),
                 )
-            val viewModel = viewModel(drill = timed) { 3_000L }
+            var clock = 0L
+            val viewModel = viewModel(drill = timed) { clock }
             val read = started(viewModel)
             answer = { throw ApiException(ApiError.Network) }
 
+            clock = 3_000L
             viewModel.timeUp(read.questions.first(), 45)
             advanceUntilIdle()
             assertEquals(RunPhase.AnswerFailed, viewModel.state.value?.phase)
 
             answer = { feedback(isCorrect = false) }
+            clock = 90_000L
             viewModel.retry()
             assertEquals(RunPhase.Checking(AnswerSender.Timer), viewModel.state.value?.phase)
             advanceUntilIdle()

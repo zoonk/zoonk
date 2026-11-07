@@ -69,7 +69,7 @@ class QuestionBlockViewModel(
         val question: Question,
         val answer: Answer,
         val sender: AnswerSender,
-        val minDurationMs: Long,
+        val durationMs: Long,
     )
 
     override val canRetry: Boolean get() = sent != null
@@ -97,14 +97,22 @@ class QuestionBlockViewModel(
         sender: AnswerSender,
         minDurationMs: Long,
     ) {
+        send(Submission(question, answer, sender, max(minDurationMs, now() - shownAt)))
+    }
+
+    override fun retry() {
+        sent?.let(::send)
+    }
+
+    private fun send(submission: Submission) {
         val current = run.value ?: return
         if (!current.canAnswer) return
-        run.value = current.checking(sender)
-        sent = Submission(question, answer, sender, minDurationMs)
+        run.value = current.checking(submission.sender)
+        sent = submission
 
         viewModelScope.launch {
-            val duration = max(minDurationMs, now() - shownAt)
-            when (val result = store.answer(key, question.itemId, answer, duration)) {
+            val answer = submission.answer
+            when (val result = store.answer(key, submission.question.itemId, answer, submission.durationMs)) {
                 is MutationResult.Done -> {
                     sent = null
                     run.update { it?.answered(answer, result.value.recode<StudyAnswerFeedback, AnswerFeedback>()) }
@@ -121,10 +129,6 @@ class QuestionBlockViewModel(
                 MutationResult.Obsolete -> {}
             }
         }
-    }
-
-    override fun retry() {
-        sent?.let { submit(it.question, it.answer, it.sender, it.minDurationMs) }
     }
 
     override fun timeUp(
