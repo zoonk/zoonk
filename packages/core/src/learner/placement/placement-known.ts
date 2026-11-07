@@ -1,6 +1,7 @@
 import { type OwnAnswer, meetsKnownBar } from "../_utils/skill-claims";
 import {
   type PlacementEvidence,
+  getOwnBeliefs,
   getPlacementBeliefs,
   getPlacementPriors,
 } from "./placement-beliefs";
@@ -91,7 +92,7 @@ function listPointedAt({
   );
 }
 
-/** claimed and inferred remain to confirm until own answers support known; claimed skills are asked first. */
+/** claimed and inferred remain to confirm until own answers support known; claimed skills are asked first. Once a skill's own answers decide it, other skills' answers can't reopen it. */
 export function readSkillStatuses({
   answeredOnly = false,
   answers,
@@ -113,17 +114,21 @@ export function readSkillStatuses({
 }): SkillStatuses {
   const beliefs = getPlacementBeliefs({ answeredOnly, evidence, knownAreas, ownLevel, skills });
   const priors = getPlacementPriors({ answeredOnly, knownAreas, ownLevel, skills });
+  const ownBeliefs = getOwnBeliefs({ evidence, priors });
   const skillIds = skills.map((skill) => skill.id);
   const confirmed = new Set(listKnownSkillIds({ answers, evidence, focusedSkillIds, skillIds }));
   const pointedAt = answeredOnly ? new Set<string>() : listPointedAt({ evidence, skills });
 
   const statusOf = (skillId: string): SkillPlacementStatus => {
-    const believed = getSkillPlacementStatus(beliefs.get(skillId));
-    const open = !confirmed.has(skillId) && !hasMiss({ evidence, skillId });
+    const decided = [ownBeliefs, beliefs]
+      .map((skillBeliefs) => getSkillPlacementStatus(skillBeliefs.get(skillId)))
+      .find((status) => status === "unknown" || (status === "known" && confirmed.has(skillId)));
 
-    if (believed === "unknown" || (believed === "known" && confirmed.has(skillId))) {
-      return believed;
+    if (decided) {
+      return decided;
     }
+
+    const open = !confirmed.has(skillId) && !hasMiss({ evidence, skillId });
 
     if (open && getSkillPlacementStatus(priors.get(skillId)) === "known") {
       return "claimed";
