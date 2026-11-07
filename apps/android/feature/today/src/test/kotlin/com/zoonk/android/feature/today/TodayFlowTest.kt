@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasAnySibling
 import androidx.compose.ui.test.hasProgressBarRangeInfo
@@ -15,6 +17,7 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -295,6 +298,19 @@ class TodayFlowTest {
         rule.onAllNodes(spinning, useUnmergedTree = true).assertCountEquals(1)
         rule.onAllNodes(spinning and hasAnySibling(hasText("Keep learning")), useUnmergedTree = true).assertCountEquals(1)
         rule.onNodeWithText("Membranes").assertIsNotEnabled()
+    }
+
+    @Test
+    fun theWaitingUpNextRowKeepsFocusWhileKeepLearningsRequestRuns() {
+        show("state" to "done", "extraTime" to upNext())
+        val row = rule.onNodeWithText("Membranes")
+        row.performSemanticsAction(SemanticsActions.RequestFocus)
+        row.assertIsFocused()
+
+        rule.onNodeWithText("Keep learning").performClick()
+        rule.waitForIdle()
+
+        row.assertIsNotEnabled().assertIsFocused()
     }
 
     private fun upNext() =

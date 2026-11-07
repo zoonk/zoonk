@@ -26,6 +26,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
@@ -55,7 +56,8 @@ import com.zoonk.android.ui.theme.zoonkType
  * moves under it when the words would get too little room. [trailing] is a control at the row's end,
  * such as a switch or a button (main's `SettingRow`). [leading] is a mark at least a line tall, or a
  * larger picture (an avatar). A [busy] row's end (its chevron, or its [meta] without one) turns
- * into a spinner while it works ([BusyContent]). Rows reach the list's edges and inset
+ * into a spinner while it works ([BusyContent]); a row that isn't [enabled] dims, and with
+ * [focusableWhenDisabled], as one waiting on another control's request, keeps its focus. Rows reach the list's edges and inset
  * their own content by [LIST_ITEM_INSET]; a nested row moves its mark and words in by [indent], so its highlight still
  * spans the list. [verticalAlignment] `Top` keeps the mark on the title's first line when lines
  * under it run long (main's `items-start`). A row that opens a page ends with main's chevron; one
@@ -68,6 +70,7 @@ fun ListRow(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     enabled: Boolean = true,
+    focusableWhenDisabled: Boolean = false,
     busy: Boolean = false,
     highlighted: Boolean = false,
     indent: Dp = 0.dp,
@@ -98,7 +101,7 @@ fun ListRow(
                 // The whole row takes the tap; its ripple stays inside the highlight's rounded shape.
                 .then(
                     if (onClick != null) {
-                        Modifier.busyClickable(busy, interaction, indication = null, enabled = enabled, onClick = onClick)
+                        Modifier.busyClickable(busy, interaction, indication = null, enabled, focusableWhenDisabled, onClick)
                     } else {
                         Modifier.semantics(mergeDescendants = true) {}
                     },
@@ -115,6 +118,7 @@ fun ListRow(
                 .clip(RoundedCornerShape(ZoonkRadius.lg))
                 .background(if (highlighted) MaterialTheme.colorScheme.surfaceContainerHigh else Color.Transparent)
                 .indication(interaction, ripple())
+                .alpha(if (onClick != null && !enabled && !busy) DISABLED_ALPHA else 1f)
                 .padding(start = HIGHLIGHT_OUTSET + indent, end = HIGHLIGHT_OUTSET, top = WORDS_PADDING, bottom = WORDS_PADDING),
         horizontalArrangement = Arrangement.spacedBy(LEADING_GAP),
         verticalAlignment = verticalAlignment,
@@ -273,3 +277,5 @@ private val HIGHLIGHT_INSET = 2.dp
 
 /** Main's 11dp above and below a row's words, less the highlight's inset. */
 private val WORDS_PADDING = 11.dp - HIGHLIGHT_INSET
+
+private const val DISABLED_ALPHA = 0.5f

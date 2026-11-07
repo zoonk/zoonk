@@ -373,7 +373,7 @@ private fun LazyListScope.upNext(
         QueueRow(
             isNext = first,
             busy = first && pending == TodayTap.UpNext,
-            enabled = pending == null || pending == TodayTap.UpNext,
+            waiting = pending != null && pending != TodayTap.UpNext,
             onClick = if (first) actions.upNext else null,
             modifier = Modifier.pageRow(),
             leading = { KindMark(LearnKind.Lesson) },
@@ -614,7 +614,7 @@ private fun QueueRow(
     leading: @Composable () -> Unit,
     isNext: Boolean = false,
     busy: Boolean = false,
-    enabled: Boolean = true,
+    waiting: Boolean = false,
     divider: Boolean = true,
     stateDescription: String? = null,
     supporting: (@Composable () -> Unit)? = null,
@@ -625,7 +625,8 @@ private fun QueueRow(
         ListRow(
             headline = headline,
             onClick = onClick,
-            enabled = enabled,
+            enabled = !waiting,
+            focusableWhenDisabled = waiting,
             busy = busy,
             highlighted = isNext,
             stateDescription = stateDescription,

@@ -36,13 +36,20 @@ import androidx.compose.ui.unit.dp
  * same way but looks disabled and shows no spinner.
  */
 
-/** A row's tap, busy as a button is: ignored while [busy], with the row keeping focus and reading as unavailable. */
+/**
+ * A row's tap, held as a button's is: ignored while [busy], or while disabled but [focusableWhenDisabled],
+ * with the row keeping focus and reading as unavailable.
+ */
 fun Modifier.busyClickable(
     busy: Boolean,
     enabled: Boolean = true,
+    focusableWhenDisabled: Boolean = false,
     onClickLabel: String? = null,
     onClick: () -> Unit,
-): Modifier = clickable(enabled = enabled || busy, onClickLabel = onClickLabel, role = Role.Button) { if (!busy) onClick() }.busy(busy)
+): Modifier {
+    val held = held(busy, enabled, focusableWhenDisabled)
+    return clickable(enabled = enabled || held, onClickLabel = onClickLabel, role = Role.Button) { if (!held) onClick() }.busy(held)
+}
 
 /** [busyClickable] for a row that draws its own [indication] from [interactionSource], such as inside its highlight. */
 fun Modifier.busyClickable(
@@ -50,8 +57,12 @@ fun Modifier.busyClickable(
     interactionSource: MutableInteractionSource?,
     indication: Indication?,
     enabled: Boolean = true,
+    focusableWhenDisabled: Boolean = false,
     onClick: () -> Unit,
-): Modifier = clickable(interactionSource, indication, enabled = enabled || busy, role = Role.Button) { if (!busy) onClick() }.busy(busy)
+): Modifier {
+    val held = held(busy, enabled, focusableWhenDisabled)
+    return clickable(interactionSource, indication, enabled = enabled || held, role = Role.Button) { if (!held) onClick() }.busy(held)
+}
 
 /**
  * [content], or while [busy] a spinner over it at its size: an icon button's icon, a row's mark (its
