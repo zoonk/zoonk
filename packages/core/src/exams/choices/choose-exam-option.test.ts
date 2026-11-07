@@ -322,15 +322,17 @@ describe(chooseExamOption, () => {
   });
 
   it.each([
-    { case: "a pick on a started day", picks: [SPANISH], started: true },
+    { case: "a pick on a started day", picks: [SPANISH], started: true, undo: false },
     {
       case: "a second pick while the first one's are pending",
       picks: [ENGLISH, SPANISH],
       started: false,
+      undo: false,
     },
+    { case: "an undo while the pick's are pending", picks: [SPANISH], started: true, undo: true },
   ])(
     "keeps the day to its own lessons once the lessons it waits on are written: $case",
-    async ({ picks, started }) => {
+    async ({ picks, started, undo }) => {
       await keepPaceOwn();
 
       const [user, blueprint, course] = await Promise.all([
@@ -372,9 +374,24 @@ describe(chooseExamOption, () => {
         });
       }
 
+      let changeId = "";
+
       for (const subject of picks) {
         // oxlint-disable-next-line no-await-in-loop -- The second pick comes while the first one's lessons are pending.
-        await chooseExamOption({ goalId: goal.id, input: { ...spanish, subjects: [subject] } });
+        const result = await chooseExamOption({
+          goalId: goal.id,
+          input: { ...spanish, subjects: [subject] },
+        });
+
+        changeId = result.status === "applied" ? (result.change?.id ?? "") : "";
+      }
+
+      if (undo) {
+        await decidePlanChange({
+          changeId,
+          goalId: goal.id,
+          input: { status: "undone", timeZone: TIME_ZONE },
+        });
       }
 
       const written = await writeStandInLessons(library);
