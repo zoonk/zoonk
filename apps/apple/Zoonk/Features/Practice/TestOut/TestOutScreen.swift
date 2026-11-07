@@ -134,6 +134,10 @@ struct TestOutScreen: View {
             comment: "A test-out's right answers out of its questions.")
         ],
         day: DayResult(result))
+
+      if let chapter = result.finishedChapter?.value1 {
+        FinishedChapterSection(chapter: chapter)
+      }
     } response: {
       if undo == .failed {
         FailureLine(
@@ -205,7 +209,8 @@ struct TestOutScreen: View {
         result = .init(
           ceremony: nil, certificates: [], reached: .init(energy: nil, level: nil),
           changeId: recorded.canUndo ? recorded.changeId : nil, correct: recorded.correct,
-          lessonsSkipped: recorded.lessonsSkipped, passed: recorded.passed, total: recorded.total)
+          finishedChapter: nil, lessonsSkipped: recorded.lessonsSkipped, passed: recorded.passed,
+          total: recorded.total)
         undo = recorded.undone ? .done : .idle
         openResult = Self.address(chapterId: chapterId, resultId: resultId)
         return

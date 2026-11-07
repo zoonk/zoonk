@@ -88,8 +88,8 @@ extension AppRoute {
       ChapterScreen(chapterId: chapterId)
     case .languageUnit(let chapterId):
       LanguageUnitScreen(chapterId: chapterId)
-    case .mindMaps:
-      MindMapsScreen()
+    case .mindMaps(let subjectKey):
+      MindMapsScreen(subjectKey: subjectKey)
     case .exam:
       ExamScreen()
     case .mockChooser:

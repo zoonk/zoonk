@@ -24,7 +24,7 @@ enum AppTab: Hashable, CaseIterable {
     case .certificates: .certificates
     case .exam: .exam
     case .speaking: .speaking
-    case .mindMaps: .mindMaps
+    case .mindMaps: .mindMaps()
     case .statistics: .statistics
     case .today, .plan, .buddy, .search: nil
     }

@@ -107,4 +107,5 @@ struct LessonCompletionSummary: Hashable, Sendable {
   let day: DayResult?
   /// When the lesson was one of the session's blocks.
   let block: BlockMoment?
+  let finishedChapter: Components.Schemas.FinishedChapter?
 }

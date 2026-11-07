@@ -611,33 +611,18 @@ func planFinishText(_ context: PlanContext) -> Text? {
 }
 
 struct PlanMoreSection: View {
-  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(\.tabBarPlacement) private var tabBarPlacement
 
   let goal: LearnerGoal
 
   var body: some View {
-    let mindMaps = learner.summary.value?.places.mindMaps == true
-
-    if tabBarPlacement?.listsStudyPlaces != true, goal.kind == .exam || mindMaps {
+    if tabBarPlacement?.listsStudyPlaces != true, goal.kind == .exam {
       PageSection {
-        if goal.kind == .exam {
-          PageLink(route: .exam) {
-            Label {
-              Text("About the exam", tableName: "Plan", comment: "Opens the exam's page")
-            } icon: {
-              Image(systemName: "graduationcap")
-            }
-          }
-        }
-
-        if mindMaps {
-          PageLink(route: .mindMaps) {
-            Label {
-              Text("Mind maps", tableName: "Plan", comment: "Opens the goal's mind maps")
-            } icon: {
-              KindMark(kind: .mindMap)
-            }
+        PageLink(route: .exam) {
+          Label {
+            Text("About the exam", tableName: "Plan", comment: "Opens the exam's page")
+          } icon: {
+            Image(systemName: "graduationcap")
           }
         }
       } header: {

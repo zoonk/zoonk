@@ -184,6 +184,13 @@ struct SessionSummaryView: View {
       }
     }
 
+    // The block that ended the session finished a chapter: the summary stands for its moment.
+    if let moment = router.playback.moment, moment.sessionCompleted,
+      let chapter = moment.finishedChapter
+    {
+      FinishedChapterSection(chapter: chapter)
+    }
+
     if !stopped, let tomorrow = summary.tomorrow {
       Section {
         Label {

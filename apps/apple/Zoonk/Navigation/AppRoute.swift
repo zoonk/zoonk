@@ -4,7 +4,8 @@ enum AppRoute: Hashable, Identifiable {
   case subject(subjectKey: String)
   case chapter(chapterId: String)
   case languageUnit(chapterId: String)
-  case mindMaps
+  /// `subjectKey` opens it at that subject's maps.
+  case mindMaps(subjectKey: String? = nil)
   case exam
   case mockChooser
   case mistakes

@@ -16,6 +16,7 @@ struct LessonCompletionView: View {
       page {
         moment
         dayMoment
+        finishedChapter
 
         if let lesson, let summary = lesson.summary {
           LessonMapSection(title: lesson.title, summary: summary)
@@ -30,6 +31,7 @@ struct LessonCompletionView: View {
       page {
         moment
         dayMoment
+        finishedChapter
         guestEndingView
       }
       .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
@@ -119,6 +121,13 @@ struct LessonCompletionView: View {
   private var dayMoment: some View {
     if let day, !day.isEmpty {
       DayMomentSections(result: day)
+    }
+  }
+
+  @ViewBuilder
+  private var finishedChapter: some View {
+    if completion.status == .saved, let chapter = completion.summary?.finishedChapter {
+      FinishedChapterSection(chapter: chapter)
     }
   }
 

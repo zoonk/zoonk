@@ -11,7 +11,7 @@ struct PlanPathSection: View {
     let done = phases.filter { $0.state == .done }.count
 
     Section {
-      PlanCompletedLessonsRow()
+      PlanStudyPlaceRows()
 
       if context.goal.kind == .language,
         let alphabet = store.languageUnits(goalId: context.goal.id).value?.alphabet
@@ -500,7 +500,7 @@ struct PlanSyllabusSection: View {
 
     Section {
       SharedExamsNote(exams: syllabus.sharedExams)
-      PlanCompletedLessonsRow()
+      PlanStudyPlaceRows()
 
       ForEach(choices) { choice in
         if let line = choice.followingLine {
@@ -576,20 +576,29 @@ private struct PlanChoiceLine: View {
   }
 }
 
-/// Phones list the study places nowhere else, so the path leads to the lessons already done.
-private struct PlanCompletedLessonsRow: View {
+/// Phones list the study places nowhere else, so the path leads to the lessons already done and to
+/// the chapters' mind maps.
+private struct PlanStudyPlaceRows: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(\.tabBarPlacement) private var tabBarPlacement
 
   var body: some View {
-    if tabBarPlacement?.listsStudyPlaces != true,
-      learner.summary.value?.places.completedLessons == true
-    {
-      NavigationLink(value: AppRoute.completedLessons) {
-        PlanPathLink(systemImage: "clock.arrow.circlepath") {
-          Text(
-            "Completed lessons", tableName: "Plan",
-            comment: "Opens the page of the lessons the learner finished")
+    if tabBarPlacement?.listsStudyPlaces != true, let places = learner.summary.value?.places {
+      if places.completedLessons {
+        NavigationLink(value: AppRoute.completedLessons) {
+          PlanPathLink(systemImage: "clock.arrow.circlepath") {
+            Text(
+              "Completed lessons", tableName: "Plan",
+              comment: "Opens the page of the lessons the learner finished")
+          }
+        }
+      }
+
+      if places.mindMaps {
+        NavigationLink(value: AppRoute.mindMaps()) {
+          PlanPathLink(systemImage: LearnKind.mindMap.systemImage) {
+            Text("Mind maps", tableName: "Plan", comment: "Opens the goal's mind maps")
+          }
         }
       }
     }

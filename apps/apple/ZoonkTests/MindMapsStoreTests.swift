@@ -5,12 +5,12 @@ import XCTest
 @MainActor
 final class MindMapsStoreTests: XCTestCase {
   func testMapAlreadyBeingDrawnIsFollowedUntilItsDoneWithoutAskingAgain() async {
-    let api = MindMapsAPIStub(statuses: [.success(.generating), .success(.ready)])
+    let api = MindMapsAPIStub(statuses: [.success(.drawing), .success(.ready)])
     let store = makeStore(api: api)
     let list = store.list(goalId: "goal")
     await list.load()
 
-    await store.follow(goalId: "goal", chapterId: "chapter")
+    await store.follow(goalId: "goal", chapterId: "chapter", from: .drawing)
 
     let calls = await api.calls
     XCTAssertEqual(calls.status, 2)
@@ -20,45 +20,60 @@ final class MindMapsStoreTests: XCTestCase {
 
   func testDroppedConnectionKeepsFollowingTheMap() async {
     let api = MindMapsAPIStub(statuses: [
-      .success(.generating), .failure(.network), .success(.generating), .success(.failed),
+      .success(.drawing), .failure(.network), .success(.drawing), .success(.failed),
     ])
     let store = makeStore(api: api)
 
-    await store.follow(goalId: "goal", chapterId: "chapter")
+    await store.follow(goalId: "goal", chapterId: "chapter", from: .drawing)
 
     let calls = await api.calls
     XCTAssertEqual(calls.status, 4)
     XCTAssertEqual(calls.list, 1)
-    XCTAssertNil(store.failures["chapter"])
   }
 
-  func testStartedMapIsLeftToItsTileToFollow() async {
-    let api = MindMapsAPIStub(statuses: [.success(.generating)])
+  func testRowSaysTheDrawingStartedOnceTheLessonsAreWritten() async {
+    let api = MindMapsAPIStub(statuses: [
+      .success(.writingLessons), .success(.drawing), .success(.drawing), .success(.ready),
+    ])
     let store = makeStore(api: api)
 
-    await store.create(goalId: "goal", chapterId: "chapter")
+    await store.follow(goalId: "goal", chapterId: "chapter", from: .writingLessons)
 
     let calls = await api.calls
+    XCTAssertEqual(calls.status, 4)
+    XCTAssertEqual(calls.list, 2)
+  }
+
+  func testStartedMapIsLeftToItsRowToFollow() async {
+    let api = MindMapsAPIStub(statuses: [.success(.drawing)])
+    let store = makeStore(api: api)
+
+    let failure = await store.create(goalId: "goal", chapterId: "chapter")
+
+    let calls = await api.calls
+    XCTAssertNil(failure)
     XCTAssertEqual(calls.create, 1)
     XCTAssertEqual(calls.status, 0)
     XCTAssertFalse(store.requesting.contains("chapter"))
   }
 
-  func testRefusedMapSaysThePlanReachedItsMaps() async {
-    let api = MindMapsAPIStub(statuses: [], creates: false)
+  func testRefusedMapSaysWhatRanOut() async {
+    let limit = MindMapLimit(limit: .limitReached(period: .month, tier: .free), isLessons: true)
+    let api = MindMapsAPIStub(statuses: [], request: .refused(limit))
     let store = makeStore(api: api)
 
-    await store.create(goalId: "goal", chapterId: "chapter")
+    let failure = await store.create(goalId: "goal", chapterId: "chapter")
 
-    XCTAssertEqual(store.failures["chapter"], .limit)
+    XCTAssertEqual(failure, .refused(limit))
     let calls = await api.calls
     XCTAssertEqual(calls.status, 0)
+    XCTAssertEqual(calls.list, 0)
   }
 
   private func makeStore(api: MindMapsAPIStub) -> MindMapsStore {
     MindMapsStore(
       api: api, cache: AppCache(session: .preview(account: .mindMapsTestAccount)),
-      pollInterval: .zero)
+      drawingPoll: .zero, writingPoll: .zero)
   }
 }
 
@@ -71,16 +86,16 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
 
   private(set) var calls = Calls()
   private var statuses: [Result<ChapterMindMap.Status, APIError>]
-  private let creates: Bool
+  private let request: MindMapRequest
 
-  init(statuses: [Result<ChapterMindMap.Status, APIError>], creates: Bool = true) {
+  init(statuses: [Result<ChapterMindMap.Status, APIError>], request: MindMapRequest = .read) {
     self.statuses = statuses
-    self.creates = creates
+    self.request = request
   }
 
   func list(token: String, goalId: String) async throws -> GoalMindMaps {
     calls.list += 1
-    return GoalMindMaps(chapters: [], nextChapter: nil)
+    return GoalMindMaps(chapters: [])
   }
 
   func map(token: String, goalId: String, chapterId: String) async throws -> ChapterMindMap {
@@ -94,9 +109,9 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
     return try statuses.isEmpty ? .ready : statuses.removeFirst().get()
   }
 
-  func create(token: String, goalId: String, chapterId: String) async throws -> Bool {
+  func create(token: String, goalId: String, chapterId: String) async throws -> MindMapRequest {
     calls.create += 1
-    return creates
+    return request
   }
 }
 

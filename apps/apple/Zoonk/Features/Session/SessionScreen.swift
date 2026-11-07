@@ -266,6 +266,10 @@ private struct NextStopView: View {
       }
 
       DayMomentSections(result: moment.day)
+
+      if let chapter = moment.finishedChapter {
+        FinishedChapterSection(chapter: chapter)
+      }
     }
 
     Section {
