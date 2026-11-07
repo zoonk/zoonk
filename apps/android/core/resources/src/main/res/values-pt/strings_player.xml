@@ -15,6 +15,7 @@
   "player_activity_your_answer": "58a95da8ce07e675f7fe78dea4314da6bc70056b98084873e27ca4fd508c45bc",
   "player_ai_note": "7b586434692e8d5561a6d49f93e84deb6a43be7e5b0ad26d7797530d76542cfa",
   "player_already_knew": "65a76faa876042fc1cf38f42b77915a2a573a016ca9770ab054d81913c6e5c28",
+  "player_also_correct_label": "5705193257c42e2b8c2b6c4e84f5f8eb78f1018f34641ca86c32ffcba0d00c8d",
   "player_answer_feedback": "ae4a18be314bde2d3344259001fc0226513d8696b7f47dc1d6c9e43863d3c128",
   "player_answer_options": "0c74c21523c4b62bb978156c0bfc878ab8434aafad975fe6d4fa95cc20dec03a",
   "player_ask_something_else": "b1180aeefdd7fe9e5dd7dee525bc4f9c1fe9e872d41b77fb92dd062b0ce26aab",
@@ -244,6 +245,8 @@
     <string name="player_answer_feedback">Feedback da resposta</string>
     <string name="player_spelled">Escrito:</string>
     <string name="player_correct_answer_label">Resposta:</string>
+    <!-- After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too. -->
+    <string name="player_also_correct_label">Também está certo:</string>
     <string name="player_explain_answer">Explicar minha resposta</string>
     <string name="player_explain_answer_failed">Não conseguimos explicar agora. Tente de novo em instantes.</string>
     <string name="player_explain_answer_title">Por que essa resposta não está certa</string>

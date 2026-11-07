@@ -54,6 +54,8 @@
     <string name="player_answer_feedback">Answer feedback</string>
     <string name="player_spelled">Spelled:</string>
     <string name="player_correct_answer_label">Answer:</string>
+    <!-- After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too. -->
+    <string name="player_also_correct_label">Also correct:</string>
     <string name="player_explain_answer">Explain my answer</string>
     <string name="player_explain_answer_failed">We couldn\'t explain it right now. Try again in a moment.</string>
     <string name="player_explain_answer_title">Why that answer misses</string>

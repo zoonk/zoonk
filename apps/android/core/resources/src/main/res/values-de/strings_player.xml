@@ -15,6 +15,7 @@
   "player_activity_your_answer": "c149fa7640916ffa8c7c5777a593c246f11f98b4ea0d617227b0ead2be835263",
   "player_ai_note": "b0004c73467bd55c155dd64826e31248d0309bc4282ab5665575a078ff94ce85",
   "player_already_knew": "9a4b9df1bea7a234d07c51f0b6441694f1bd10e9070adfb6d0aba07266ea04df",
+  "player_also_correct_label": "b668333b4e0b32cab88dd6c699d5d06725580669c631dafe709fce3093152e26",
   "player_answer_feedback": "01d8fe06002ec55304ca3833c1a5caf49e281df362c4751d9e2bd33cfefb04b9",
   "player_answer_options": "9b4a48b2b7c5acebc46d88fcc4faddaa2169a082db98abd1fb0e6325c4d6ef6e",
   "player_ask_something_else": "9dbf3c265653656e8d2d3dc53ecda4b649c6c03464539a56cec631b2c5990e8c",
@@ -244,6 +245,8 @@
     <string name="player_answer_feedback">Feedback zur Antwort</string>
     <string name="player_spelled">Geschrieben:</string>
     <string name="player_correct_answer_label">Antwort:</string>
+    <!-- After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too. -->
+    <string name="player_also_correct_label">Auch richtig:</string>
     <string name="player_explain_answer">Meine Antwort erklären</string>
     <string name="player_explain_answer_failed">Wir konnten es gerade nicht erklären. Versuch es gleich noch einmal.</string>
     <string name="player_explain_answer_title">Warum diese Antwort nicht zutrifft</string>

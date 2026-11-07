@@ -119,7 +119,7 @@ internal fun ArrangeWordsView(
             prompt()
             AnswerArea(
                 placed = placed,
-                correctWords = correctWords.takeIf { checked },
+                marks = result?.let { tileMarks(it, placed, correctWords) },
                 editable = editable,
                 language = language,
                 focus = focus,
@@ -157,6 +157,16 @@ private fun ArrangeKind.answer(words: List<String>): LessonAnswer =
         ArrangeKind.Listening -> LessonAnswer.Listening(words)
     }
 
+/** A right answer may be in another order the lesson accepts, so all its words are right; a miss compares each place with the lesson's order. */
+private fun tileMarks(
+    result: StepResult,
+    placed: List<PlacedWord>,
+    correctWords: List<String>,
+): List<AnswerResult> =
+    placed.mapIndexed { index, word ->
+        if (result.isCorrect || correctWords.getOrNull(index) == word.word) AnswerResult.Right else AnswerResult.Wrong
+    }
+
 private fun initialPlacement(answer: LessonAnswer?): List<PlacedWord> {
     val words =
         when (answer) {
@@ -171,7 +181,7 @@ private fun initialPlacement(answer: LessonAnswer?): List<PlacedWord> {
 @Composable
 private fun AnswerArea(
     placed: List<PlacedWord>,
-    correctWords: List<String>?,
+    marks: List<AnswerResult>?,
     editable: Boolean,
     language: String,
     focus: WordBankFocus,
@@ -218,7 +228,7 @@ private fun AnswerArea(
                     )
                 }
                 placed.forEachIndexed { index, word ->
-                    val result = correctWords?.let { if (it.getOrNull(index) == word.word) AnswerResult.Right else AnswerResult.Wrong }
+                    val result = marks?.getOrNull(index)
                     val verdict = if (result == AnswerResult.Right) correct else incorrect
                     val description =
                         if (result == null) {
