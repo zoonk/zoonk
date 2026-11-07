@@ -786,12 +786,12 @@ describe("answers still being written", () => {
     });
 
     api.questions = [running];
+    const onLine = vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
+    onTestFinished(() => onLine.mockRestore());
     playLesson({ lesson });
     const sheet = await openTutor();
     await expect.element(sheet.getByText(running.question)).toBeVisible();
 
-    const onLine = vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
-    onTestFinished(() => onLine.mockRestore());
     await vi.advanceTimersByTimeAsync(10_000);
     expect(api.requests.question).toBe(0);
 
