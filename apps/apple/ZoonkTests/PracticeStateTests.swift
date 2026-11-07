@@ -210,6 +210,21 @@ final class GradedRunTests: XCTestCase {
     XCTAssertEqual(PracticeAnswerDraft.resumable(saved, questionIds: ["a", "b"]), [])
   }
 
+  func testAResumedDraftKeepsItsRequestIdAndOneForOtherQuestionsGetsANewOne() {
+    let key = "test.\(UUID().uuidString)"
+    defer { PracticeAnswerDraft.clear(key: key) }
+
+    PracticeAnswerDraft.write(
+      [PracticeChoiceAnswer(answer: .choice(0), durationMs: 1, itemId: "a")], key: key)
+    let sent = PracticeAnswerDraft.requestId(key: key)
+
+    XCTAssertEqual(PracticeAnswerDraft.resume(key: key, questionIds: ["a", "b"]).count, 1)
+    XCTAssertEqual(PracticeAnswerDraft.requestId(key: key), sent)
+
+    XCTAssertEqual(PracticeAnswerDraft.resume(key: key, questionIds: ["c", "d"]), [])
+    XCTAssertNotEqual(PracticeAnswerDraft.requestId(key: key), sent)
+  }
+
   func testTextAsTypedStaysOnTheDeviceAndOnlyItsAnswerIsSent() {
     let unfinished = PracticeAnswer.typing("2/", reads: nil)
     let typed = PracticeAnswer.typing("1.", reads: .number(1))

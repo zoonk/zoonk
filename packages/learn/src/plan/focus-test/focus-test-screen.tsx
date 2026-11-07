@@ -6,7 +6,7 @@ import {
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { type HelpLimit, HelpLimitNotice } from "../../_components/help-limit-notice";
 import { AnswersSaveError } from "../../_components/save-error";
 import { StatusRegion } from "../../_components/status-region";
@@ -32,6 +32,9 @@ export type { FocusTestOutcome } from "./focus-test-result";
 const SECONDS_PER_QUESTION = 30;
 
 const SECONDS_PER_MINUTE = 60;
+
+/** Every send of one run carries its `requestId`, so a retry counts the test once. */
+type FocusTestAnswers = { answers: ChoiceQuestionAnswer[]; requestId: string };
 
 type FocusTestQuestion = ChoiceQuestionView & { area: string };
 
@@ -206,13 +209,14 @@ function FocusTestRun({
   closeHref: string;
   doneHref: string;
   limit: HelpLimit | null;
-  onSubmit: (answers: ChoiceQuestionAnswer[]) => Promise<FocusTestOutcome | null>;
+  onSubmit: (input: FocusTestAnswers) => Promise<FocusTestOutcome | null>;
   onUndo: (changeId: string) => Promise<boolean>;
   renderCeremony?: MomentCeremony;
   test: FocusTestView;
   writing: GenerationRun | null;
 }) {
   const t = useExtracted();
+  const requestId = useMemo(() => crypto.randomUUID(), []);
   const [unsent, setUnsent] = useState<ChoiceQuestionAnswer[] | null>(null);
   const [outcome, setOutcome] = useState<FocusTestOutcome | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -235,7 +239,7 @@ function FocusTestRun({
 
   const submit = (answers: ChoiceQuestionAnswer[]) =>
     startTransition(async () => {
-      const graded = await onSubmit(answers).catch(() => null);
+      const graded = await onSubmit({ answers, requestId }).catch(() => null);
       setUnsent(graded ? null : answers);
       setOutcome(graded);
     });
@@ -281,7 +285,7 @@ export function FocusTestScreen({
   buddy?: LearnBuddy | null;
   closeHref: string;
   doneHref: string;
-  onSubmit: (answers: ChoiceQuestionAnswer[]) => Promise<FocusTestOutcome | null>;
+  onSubmit: (input: FocusTestAnswers) => Promise<FocusTestOutcome | null>;
   /** False when it didn't work. */
   onUndo: (changeId: string) => Promise<boolean>;
   /** Null when every question exists. */

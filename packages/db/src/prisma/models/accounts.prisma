@@ -60,7 +60,7 @@ model User {
   mockExams             MockExam[]
   examResults           ExamResult[]
   essayGradeClaims      EssayGradeClaim[]
-  testOutClaims         TestOutClaim[]
+  testSubmissionClaims  TestSubmissionClaim[]
   languageSkillLevels   LanguageSkillLevel[]
   learnerWords          LearnerWord[]
   languageConversations LanguageConversation[]

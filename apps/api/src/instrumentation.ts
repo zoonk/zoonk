@@ -1,23 +1,23 @@
 import { captureRequestError } from "@sentry/nextjs";
-import { zoonkDefaultProvider } from "@zoonk/core/ai";
 
 export async function register() {
-  globalThis.AI_SDK_DEFAULT_PROVIDER = zoonkDefaultProvider;
-
   if (process.env.NEXT_RUNTIME === "nodejs") {
     await import("../sentry.server.config");
 
+    // Imported here only: Next also builds this file for the edge runtime, which can't load them.
     const [
+      { zoonkDefaultProvider },
       { registerServerSinks },
-      // Imported here only: `workflow/api` is Node-only, and this file also compiles for the edge.
       { registerFailedRunReports },
       { registerFollowUpRuns },
     ] = await Promise.all([
+      import("@zoonk/core/ai"),
       import("@zoonk/core/server-sinks"),
       import("@/workflows/_shared/report-failed-runs"),
       import("@/workflows/follow-ups/register-follow-up-runs"),
     ]);
 
+    globalThis.AI_SDK_DEFAULT_PROVIDER = zoonkDefaultProvider;
     registerServerSinks();
     registerFailedRunReports();
     registerFollowUpRuns();

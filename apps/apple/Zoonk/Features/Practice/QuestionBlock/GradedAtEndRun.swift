@@ -177,13 +177,12 @@ struct GradedAtEndRun: View {
     }
   }
 
-  /// Only answers to questions this test still asks, in order.
   private func resume() {
     guard !resumed else { return }
     resumed = true
 
-    let resumable = PracticeAnswerDraft.resumable(
-      PracticeAnswerDraft.read(key: draftKey), questionIds: questions.map(\.itemId))
+    let resumable = PracticeAnswerDraft.resume(
+      key: draftKey, questionIds: questions.map(\.itemId))
 
     if !resumable.isEmpty {
       answers = resumable
@@ -223,6 +222,18 @@ enum PracticeAnswerDraft {
     -> [PracticeChoiceAnswer]
   {
     Array(zip(saved, questionIds).prefix { $0.itemId == $1 }.map(\.0))
+  }
+
+  /// Only answers to questions this test still asks, in order. A draft with none left goes with its
+  /// request id: that test may already have its grade on the server, so the next one is new.
+  static func resume(key: String, questionIds: [String]) -> [PracticeChoiceAnswer] {
+    let kept = resumable(read(key: key), questionIds: questionIds)
+
+    if kept.isEmpty {
+      clear(key: key)
+    }
+
+    return kept
   }
 
   static func requestId(key: String) -> String {
