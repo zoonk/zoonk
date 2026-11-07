@@ -97,6 +97,18 @@ struct StudyReminderTap: Equatable {
 
     self.goalID = goalID
   }
+
+  /// The server sends reminders in this category, so with previews hidden the Lock Screen still
+  /// says what arrived.
+  static var category: UNNotificationCategory {
+    UNNotificationCategory(
+      identifier: "study_reminder", actions: [], intentIdentifiers: [],
+      hiddenPreviewsBodyPlaceholder: String(
+        localized: "Study reminder", table: "Reminders",
+        comment:
+          "Shown on the Lock Screen for a study reminder when notification previews are hidden"
+      ))
+  }
 }
 
 @MainActor
@@ -107,6 +119,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
     UNUserNotificationCenter.current().delegate = self
+    UNUserNotificationCenter.current().setNotificationCategories([StudyReminderTap.category])
     return true
   }
 
