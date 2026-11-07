@@ -34,29 +34,25 @@ function useLoadedReminder(load: ReminderOfferActions["load"]) {
   return reminder;
 }
 
-/** Once per learner: a refused claim (already shown, here or on another device) hides the card. */
-function useClaimOnce({
-  claim,
-  onRefused,
-}: {
-  claim: () => Promise<boolean>;
-  onRefused: () => void;
-}) {
-  const claimed = useRef(false);
+/**
+ * Once per learner, and its answers only after the claim lands: an answer the server never heard
+ * would be asked again after the next lesson. A claim that's refused (shown before, here or on
+ * another device) or fails hides the card.
+ */
+function useClaim(claim: ReminderOfferActions["claim"]) {
+  const [status, setStatus] = useState<"claimed" | "failed" | "unclaimed">("unclaimed");
+  const started = useRef(false);
 
-  return useCallback(() => {
-    if (claimed.current) {
+  const claimOnce = useCallback(() => {
+    if (started.current) {
       return;
     }
 
-    claimed.current = true;
+    started.current = true;
+    void safeAsync(claim).then(({ data }) => setStatus(data ? "claimed" : "failed"));
+  }, [claim]);
 
-    void safeAsync(claim).then(({ data }) => {
-      if (data === false) {
-        onRefused();
-      }
-    });
-  }, [claim, onRefused]);
+  return { claimOnce, status };
 }
 
 function useSeenRef(onSeen: () => void) {
@@ -85,10 +81,12 @@ function useSeenRef(onSeen: () => void) {
 
 function OfferFrame({
   children,
+  claimed,
   description,
   onSeen,
 }: {
   children?: React.ReactNode;
+  claimed: boolean;
   description: React.ReactNode;
   onSeen: () => void;
 }) {
@@ -118,18 +116,20 @@ function OfferFrame({
           </p>
         </div>
 
-        {children}
+        {claimed && children}
       </div>
     </section>
   );
 }
 
 function GuestOffer({
+  claimed,
   onClose,
   onSeen,
   signUpHref,
   time,
 }: {
+  claimed: boolean;
   onClose: () => void;
   onSeen: () => void;
   signUpHref: string;
@@ -140,6 +140,7 @@ function GuestOffer({
 
   return (
     <OfferFrame
+      claimed={claimed}
       description={t("At {time} on your study days, when you still have learning left.", {
         time: formatTime(time),
       })}
@@ -163,6 +164,7 @@ function GuestOffer({
 
 function EmailOffer({
   address,
+  claimed,
   onClose,
   onSeen,
   remindByEmail,
@@ -170,6 +172,7 @@ function EmailOffer({
   timeZone,
 }: {
   address: string;
+  claimed: boolean;
   onClose: () => void;
   onSeen: () => void;
   remindByEmail: ReminderOfferActions["remindByEmail"];
@@ -191,11 +194,12 @@ function EmailOffer({
     });
 
   if (result === "saved") {
-    return <OfferFrame description={t("Email reminders are on.")} onSeen={onSeen} />;
+    return <OfferFrame claimed description={t("Email reminders are on.")} onSeen={onSeen} />;
   }
 
   return (
     <OfferFrame
+      claimed={claimed}
       description={t(
         "We'll email {address} at {time} on your study days, when you still have learning left.",
         { address, time: formatTime(time) },
@@ -232,25 +236,33 @@ function EmailOffer({
 
 function LoadedOffer({ actions, time }: { actions: ReminderOfferActions; time: string }) {
   const reminder = useLoadedReminder(actions.load);
+  const { claimOnce, status } = useClaim(actions.claim);
   const [closed, setClosed] = useState(false);
-  const close = useCallback(() => setClosed(true), []);
-  const claim = useClaimOnce({ claim: actions.claim, onRefused: close });
+  const close = () => setClosed(true);
+  const claimed = status === "claimed";
 
-  if (!reminder || closed) {
+  if (!reminder || closed || status === "failed") {
     return null;
   }
 
   return reminder.email.address ? (
     <EmailOffer
       address={reminder.email.address}
+      claimed={claimed}
       onClose={close}
-      onSeen={claim}
+      onSeen={claimOnce}
       remindByEmail={actions.remindByEmail}
       suggestedTime={time}
       timeZone={reminder.timeZone}
     />
   ) : (
-    <GuestOffer onClose={close} onSeen={claim} signUpHref={actions.signUpHref} time={time} />
+    <GuestOffer
+      claimed={claimed}
+      onClose={close}
+      onSeen={claimOnce}
+      signUpHref={actions.signUpHref}
+      time={time}
+    />
   );
 }
 
