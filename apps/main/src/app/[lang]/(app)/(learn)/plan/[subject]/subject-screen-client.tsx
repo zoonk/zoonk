@@ -28,6 +28,7 @@ export function SubjectScreenClient({
     | "kind"
     | "knownTopicsReturn"
     | "questionsSource"
+    | "sharedExams"
     | "writtenPractice"
   >;
   tutor: TutorViewer;

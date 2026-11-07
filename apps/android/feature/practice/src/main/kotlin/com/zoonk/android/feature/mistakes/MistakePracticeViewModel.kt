@@ -9,6 +9,7 @@ import com.zoonk.android.feature.practice.AnswerSender
 import com.zoonk.android.feature.practice.QuestionRun
 import com.zoonk.android.feature.practice.RunControls
 import com.zoonk.android.feature.practice.RunPhase
+import com.zoonk.android.feature.practice.Submission
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.AnswerFeedback
 import com.zoonk.android.feature.questions.Drill
@@ -77,13 +78,6 @@ class MistakePracticeViewModel(
     /** By step: one item asked under two mistakes is two answers. */
     private val attempts = mutableMapOf<Int, UUID>()
 
-    private data class Submission(
-        val question: Question,
-        val answer: Answer,
-        val sender: AnswerSender,
-        val durationMs: Long,
-    )
-
     override val canRetry: Boolean get() = sent != null
 
     fun begin(practice: MistakePractice) {
@@ -107,7 +101,7 @@ class MistakePracticeViewModel(
         sender: AnswerSender,
         minDurationMs: Long,
     ) {
-        send(Submission(question, answer, sender, max(minDurationMs, now() - shownAt)))
+        send(Submission.of(question, answer, sender, max(minDurationMs, now() - shownAt), unsaved = sent))
     }
 
     override fun retry() {

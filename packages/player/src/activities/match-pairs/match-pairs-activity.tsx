@@ -5,6 +5,7 @@ import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { MatchBoard } from "../../components/match-board";
 import { NotQuiteLead } from "../../components/not-quite-lead";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import {
@@ -15,7 +16,12 @@ import {
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { type MatchCardState, MatchPairsCard } from "./match-pairs-card";
-import { type MatchCard, arrangeMatchColumns, explainMismatch } from "./match-pairs-columns";
+import {
+  type MatchCard,
+  arrangeMatchColumns,
+  explainMismatch,
+  solvedRows,
+} from "./match-pairs-columns";
 import {
   type MatchProgress,
   isMatch,
@@ -152,24 +158,17 @@ export function MatchPairsActivity({
     return state === "noMatch" ? t("{text}, no match", { text }) : text;
   }
 
-  function column(side: Side, cards: readonly MatchCard[]) {
-    return (
-      <div className="flex flex-col gap-2">
-        {cards.map((card) => {
-          const state = cardState({ card, isComplete, miss, progress, selection, side });
+  function cardButton(side: Side, card: MatchCard) {
+    const state = cardState({ card, isComplete, miss, progress, selection, side });
 
-          return (
-            <MatchPairsCard
-              isDisabled={isChecked || state === "matched" || state === "noMatch"}
-              key={card.id}
-              label={cardLabel(card, state)}
-              onPick={() => pick(side, card)}
-              state={state}
-              text={card.text}
-            />
-          );
-        })}
-      </div>
+    return (
+      <MatchPairsCard
+        isDisabled={isChecked || state === "matched" || state === "noMatch"}
+        label={cardLabel(card, state)}
+        onPick={() => pick(side, card)}
+        state={state}
+        text={card.text}
+      />
     );
   }
 
@@ -191,14 +190,14 @@ export function MatchPairsActivity({
         )}
       </ActivityCanvasLabel>
 
-      <div
-        aria-label={t("Cards to match")}
-        className="grid grid-cols-2 items-start gap-2.5"
-        role="group"
-      >
-        {column("left", left)}
-        {column("right", right)}
-      </div>
+      <MatchBoard
+        className="text-sm sm:text-base"
+        label={t("Cards to match")}
+        left={left}
+        renderItem={cardButton}
+        right={right}
+        solvedRows={isComplete ? solvedRows({ left, right }) : undefined}
+      />
 
       {miss && (
         <div className="bg-destructive/10 flex gap-2.5 rounded-xl px-3.5 py-3 text-sm leading-snug">

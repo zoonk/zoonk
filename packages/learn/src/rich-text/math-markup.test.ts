@@ -1,7 +1,8 @@
+import { toOneLine } from "@zoonk/utils/math-spans";
 import { describe, expect, it } from "vitest";
 import { mathMarkupKey } from "./math-key";
 import { collectMathMarkup, renderMathMarkup } from "./math-markup";
-import { parseRichBlocks, parseRichInline, toOneLine } from "./rich-text-parser";
+import { parseRichBlocks, parseRichInline } from "./rich-text-parser";
 
 function shownFormulas(text: string) {
   return parseRichInline(text).flatMap((segment) =>
@@ -75,5 +76,16 @@ describe(collectMathMarkup, () => {
     expect(
       collectMathMarkup({ question: "It costs $5 and then $10.", title: "Saving" }),
     ).toStrictEqual({});
+  });
+});
+
+describe(renderMathMarkup, () => {
+  it("hands a box or a strike over as a row the stylesheet draws, since Chromium draws no menclose", () => {
+    const boxed = renderMathMarkup({ displayMode: false, text: String.raw`\boxed{x = 5}` });
+    const cancelled = renderMathMarkup({ displayMode: false, text: String.raw`\cancel{2}` });
+
+    expect(boxed).toContain('<mrow notation="box">');
+    expect(cancelled).toContain('<mrow notation="updiagonalstrike">');
+    expect(`${boxed}${cancelled}`).not.toContain("menclose");
   });
 });

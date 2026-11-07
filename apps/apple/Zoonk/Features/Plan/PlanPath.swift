@@ -499,6 +499,7 @@ struct PlanSyllabusSection: View {
     let isExam = goalKind == .exam
 
     Section {
+      SharedExamsNote(exams: syllabus.sharedExams)
       PlanCompletedLessonsRow()
 
       ForEach(choices) { choice in
@@ -509,7 +510,8 @@ struct PlanSyllabusSection: View {
 
       ForEach(syllabus.subjects) { subject in
         NavigationLink(value: AppRoute.subject(subjectKey: subject.key)) {
-          SyllabusSubjectRow(subject: subject, isExam: isExam)
+          SyllabusSubjectRow(
+            subject: subject, isExam: isExam, sharedExams: syllabus.sharedExams(of: subject))
         }
       }
     } header: {
@@ -612,15 +614,21 @@ private struct PlanPathLink: View {
 struct SyllabusSubjectRow: View {
   let subject: SyllabusSubject
   let isExam: Bool
+  var sharedExams: [GoalSyllabus.SharedExam] = []
 
   var body: some View {
     let share = isExam ? (subject.preparation ?? 0) : subject.lessonShare
 
     VStack(alignment: .leading, spacing: 6) {
       PlanPathRow {
-        Text(subject.name)
-          .typeStyle(.rowTitle)
-          .foregroundStyle(subject.notPlannedReason == nil ? Color(.foreground) : .mutedForeground)
+        VStack(alignment: .leading, spacing: 2) {
+          Text(subject.name)
+            .typeStyle(.rowTitle)
+            .foregroundStyle(
+              subject.notPlannedReason == nil ? Color(.foreground) : .mutedForeground)
+
+          AlsoInExams(exams: sharedExams)
+        }
       } value: {
         Text(share, format: .percent.precision(.fractionLength(0)))
           .typeStyle(.data)

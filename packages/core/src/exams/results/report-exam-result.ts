@@ -14,6 +14,7 @@ import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
 import { getExamCalendar, toExamDates } from "../_utils/exam-calendar";
 import { loadGoalScoreEstimate } from "../estimates/load-goal-estimate";
+import { getExamName } from "../exam-name";
 import { getExamStage } from "../final-stretch/final-stretch-rules";
 import {
   type ExamResultInput,
@@ -133,7 +134,7 @@ export async function reportExamResult({
     estimateLow: estimate?.low ?? null,
     examBlueprintId: goal.examBlueprintId,
     examDate: firstDay ? fromIsoDate(firstDay) : null,
-    examName: blueprint?.name ?? goal.title,
+    examName: getExamName({ blueprint, goal }),
     maxScore: input.scale === "points" ? input.maxScore : null,
     mocksTaken,
     passed: input.passed,

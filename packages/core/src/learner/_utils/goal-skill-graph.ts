@@ -277,9 +277,9 @@ export function getSkillOwners(
 export function loadGoalPlan(
   goalId: string,
   source?: GoalPlanSource,
-  { sharedLibrary = false }: { sharedLibrary?: boolean } = {},
+  { sharedLibrary = false, tx }: { sharedLibrary?: boolean; tx?: TransactionClient } = {},
 ): Promise<GoalPlan> {
-  return loadPlan({ goalId, sharedLibrary, source, withLeftOut: false });
+  return loadPlan({ goalId, sharedLibrary, source, tx, withLeftOut: false });
 }
 
 async function loadTextTestPlan({ goalId, withLeftOut, tx = prisma }: PlanRead): Promise<GoalPlan> {

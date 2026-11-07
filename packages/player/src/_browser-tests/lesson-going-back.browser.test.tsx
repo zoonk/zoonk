@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import {
   checkActivity,
+  expectSideBySide,
   expectVerdict,
   pressOnSlider,
   sortCard,
@@ -128,6 +129,37 @@ describe("going back to reread", () => {
     await expect.element(valueInput()).toHaveValue(typed);
     await checkActivity();
     await expectVerdict("Not quite");
+  });
+
+  it("shows a finished match board with each word beside its match", async () => {
+    const pairs = [
+      { left: "Electron", right: "Negative charge" },
+      { left: "Proton", right: "Positive charge" },
+    ];
+
+    playLesson([languageStep("matchColumns", { pairs }), reading]);
+
+    for (const { left, right } of pairs) {
+      // oxlint-disable-next-line no-await-in-loop -- A pair is matched by tapping its sides in turn.
+      await page.getByRole("button", { exact: true, name: left }).click();
+      // oxlint-disable-next-line no-await-in-loop -- A pair is matched by tapping its sides in turn.
+      await page.getByRole("button", { exact: true, name: right }).click();
+    }
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(page.getByRole("heading", { name: "Two kinds of change" })).toBeVisible();
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    for (const { left, right } of pairs) {
+      const leftCard = page.getByRole("button", { exact: true, name: left });
+      const rightCard = page.getByRole("button", { exact: true, name: right });
+      // oxlint-disable-next-line no-await-in-loop -- Each pair is checked in turn.
+      await expectSideBySide(leftCard, rightCard);
+      // oxlint-disable-next-line no-await-in-loop -- Each pair is checked in turn.
+      await expect.element(leftCard).toBeDisabled();
+      // oxlint-disable-next-line no-await-in-loop -- Each pair is checked in turn.
+      await expect.element(rightCard).toBeDisabled();
+    }
   });
 
   it("starts a missed activity over when it comes back", async () => {

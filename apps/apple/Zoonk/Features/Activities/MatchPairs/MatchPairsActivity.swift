@@ -22,6 +22,7 @@ private struct MatchPairsCanvas: View {
   let context: ActivityCanvasContext
 
   @Environment(\.legibilityWeight) private var legibilityWeight
+  @Environment(\.stacksContent) private var isStacked
   @ActivityState private var progress: MatchPairs.Progress
   @ActivityState("selection") private var selection: [MatchPairs.Side: String] = [:]
   @ActivityState("miss") private var miss: Miss? = nil
@@ -44,9 +45,13 @@ private struct MatchPairsCanvas: View {
     VStack(alignment: .leading, spacing: 16) {
       ActivityCaption(caption)
 
-      AccessibilityStack(alignment: .top, spacing: 10, stackedSpacing: 16) {
-        column(.left, columns.left, others: columns.right)
-        column(.right, columns.right, others: columns.left)
+      if isComplete {
+        solvedBoard(columns)
+      } else {
+        AccessibilityStack(alignment: .top, spacing: 10, stackedSpacing: 16) {
+          column(.left, columns.left, others: columns.right)
+          column(.right, columns.right, others: columns.left)
+        }
       }
 
       if let miss {
@@ -113,6 +118,29 @@ private struct MatchPairsCanvas: View {
     .frame(maxWidth: .infinity, alignment: .top)
   }
 
+  private func solvedBoard(_ columns: (left: [MatchCard], right: [MatchCard])) -> some View {
+    VStack(spacing: isStacked ? 16 : 8) {
+      ForEach(MatchPairs.solvedRows(left: columns.left, right: columns.right), id: \.self) { row in
+        AccessibilityStack(spacing: 10, stackedSpacing: 8) {
+          solvedCell(row.left, side: .left, others: columns.right)
+          solvedCell(row.right, side: .right, others: columns.left)
+        }
+        .fixedSize(horizontal: false, vertical: true)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private func solvedCell(_ card: MatchCard?, side: MatchPairs.Side, others: [MatchCard])
+    -> some View
+  {
+    if let card {
+      cardButton(card, side: side, others: others)
+    } else if !isStacked {
+      Color.clear
+    }
+  }
+
   private func cardButton(_ card: MatchCard, side: MatchPairs.Side, others: [MatchCard])
     -> some View
   {
@@ -124,6 +152,7 @@ private struct MatchPairsCanvas: View {
       pick(card, side: side, others: others)
     } label: {
       LessonRichText(card.text)
+        .frame(maxHeight: isComplete ? .infinity : nil, alignment: .leading)
     }
     .buttonStyle(MatchCardStyle(state: state))
     .disabled(isChecked || isDone)

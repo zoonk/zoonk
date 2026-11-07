@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useEffectEvent, useReducer, useRef } from "react";
-import { type AnswerSender } from "../../mistakes/drill/drill-types";
+import { type AnswerSender, getSentDurationMs } from "../../mistakes/drill/drill-types";
 import {
   type StudyAnswerOutcome,
   type StudyBlockDetail,
@@ -101,7 +101,11 @@ export function useQuestionBlock({
   ) =>
     send({
       answer,
-      durationMs: Math.max(minDurationMs, Math.round(performance.now() - shownAt.current)),
+      durationMs: getSentDurationMs({
+        answer,
+        failed: state.phase.kind === "answerFailed" ? state.phase : null,
+        measuredMs: Math.max(minDurationMs, Math.round(performance.now() - shownAt.current)),
+      }),
       sender,
     });
 

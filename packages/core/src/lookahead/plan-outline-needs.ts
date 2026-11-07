@@ -1,16 +1,20 @@
 import "server-only";
 import { type Course, type ExamBlueprint, type Goal, type Skill, prisma } from "@zoonk/db";
 import { findUntaughtSkills } from "../library/curriculum/course-outline-state";
-import { type CourseBandNeed, type CurriculumScope } from "../library/curriculum/curriculum-scope";
+import {
+  type CourseBandNeed,
+  type CourseOutlineNeed,
+  type CurriculumScope,
+  toExamSkillAreas,
+} from "../library/curriculum/curriculum-scope";
 import { toSharedGoalName } from "../library/curriculum/shared-graph-prompt";
 import { toGoalCandidateExams } from "../library/exams/candidate-exams";
 import { goalUsesTools } from "../plans/_utils/plan-tools";
+import { joinOptionSkills } from "../plans/planner/option-skills";
 import { isStandIn } from "../plans/planner/plan-item-rules";
 import { type ExistingPlanItem } from "../plans/planner/plan-items";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { type OutlineWindow, getOutlineWindow } from "./outline-window";
-
-export type PlanOutlineNeed = { bands: CourseBandNeed[]; courseId: string; scope: CurriculumScope };
 
 type NeedSkill = Pick<Skill, "description" | "id" | "level" | "name">;
 
@@ -135,7 +139,7 @@ export async function listPlanOutlineNeeds({
 }: {
   days: number;
   goalId: string;
-}): Promise<PlanOutlineNeed[]> {
+}): Promise<CourseOutlineNeed[]> {
   const outlineWindow = await getOutlineWindow({ days, goalId });
   const standIns = await loadStandIns({ goalId, outlineWindow });
 
@@ -155,14 +159,13 @@ function readStandInCourses(standIns: StandIns): Map<string, string> {
   });
 }
 
-async function toOutlineNeeds(standIns: StandIns): Promise<PlanOutlineNeed[]> {
+async function toOutlineNeeds(standIns: StandIns): Promise<CourseOutlineNeed[]> {
   const courseOf = readStandInCourses(standIns);
 
   const courseIds = [...new Set(standIns.skillIds.flatMap((id) => courseOf.get(id) ?? []))];
 
-  const areas = new Map(
-    parsePlanGraph(standIns.graph).skills.map((skill) => [skill.skillId, skill.area] as const),
-  );
+  const graphSkills = joinOptionSkills(parsePlanGraph(standIns.graph)).skills;
+  const areas = new Map(graphSkills.map((skill) => [skill.skillId, skill.area] as const));
 
   const [skills, courses, withToolChapters] = await Promise.all([
     prisma.skill.findMany({
@@ -198,7 +201,12 @@ async function toOutlineNeeds(standIns: StandIns): Promise<PlanOutlineNeed[]> {
         withToolChapters,
       });
 
-      return { bands, courseId: course.id, scope };
+      return {
+        bands,
+        courseId: course.id,
+        scope,
+        ...toExamSkillAreas({ scope, skills: graphSkills }),
+      };
     }),
   );
 
@@ -273,7 +281,7 @@ export async function findSkillOutlineNeed({
   goalId: string;
   skillId: string;
 }): Promise<
-  { courseId: string; status: "taught" } | { need: PlanOutlineNeed; status: "untaught" } | null
+  { courseId: string; status: "taught" } | { need: CourseOutlineNeed; status: "untaught" } | null
 > {
   const standIns = await loadStandIns({ goalId, outlineWindow: null });
 

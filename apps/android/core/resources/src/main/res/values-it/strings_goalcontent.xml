@@ -3,6 +3,8 @@
 {
   "goalcontent_adjust_plan": "f421b664ea47f841c0a4654e9e882b9dabcb70b1db1cade2a17d9cc37f004bbc",
   "goalcontent_also": "e8c35c75fb527fedf6fef7bbca3202c225b2b4a65d8d5032d39afb2858992f61",
+  "goalcontent_also_in_exam_count": "ae4303b485a83e6e5f56dee0f4d7f2c72fe86ed4b80389f140888b32a2a35918",
+  "goalcontent_also_in_exams": "d7a541faf40edd48c0f787a5831462999401a8cc1b9be6dc94ed4ceb7aa41d30",
   "goalcontent_also_in_plan": "e10617a00b12bee24f78da204ded6cb7c9fe1e39581f9d004fe1930ebb21d317",
   "goalcontent_appears_a_lot": "6df51919043a85ae61eb30a6777e4b71a30b3b84dbbe71a03b9bc14d1bdf0d0b",
   "goalcontent_beyond_guide": "fe7406821fedd8ca81caa0f52cdffe18a46f32efb4b62597fe6d20f0406132a3",
@@ -63,6 +65,9 @@
   "goalcontent_save_failed": "a1f113d6723141765b789ec02587e078cd8e6b5dbc420548cc4e2d16b595f424",
   "goalcontent_see_all": "26f5ea24ddb02583ed68a868fd7685b4bfec5de2d1c03c3c630e6d773ad8a607",
   "goalcontent_share_of_exam": "540284c04f70887156a1fa1a2baa88427ee6c8221868c751b370406f47cab9ac",
+  "goalcontent_shared_exams_counted": "9a1ca180e85ce5d24e34b6bd3b2078eeb29aa6dc754b4288b8f9df7fcd9eaf0e",
+  "goalcontent_shared_exams_named": "3bdb1364f6ea779ddc56456b6412ca6e72698ba2408af30f58c2e18af7cff91e",
+  "goalcontent_shared_exams_practice": "06ae0e7dc5e9cd14c6c38278bf0fdeb2dd75fc65f988a84d62eb7a492e95e0af",
   "goalcontent_skill_count": "05075ffd94c35f21cfcab2a427d76f51d566b4051eb18bea1568210f71e492bb",
   "goalcontent_skill_learning": "a197cf1ea592489e45117f78bf8ca1b31d2ef9905357d46856dac4366131ddad",
   "goalcontent_skill_mastered": "b957ba859a7d558cf0406b467e96e70147efb85ce1dbd5988cb7a2cde88ae5f7",
@@ -184,6 +189,27 @@
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">Per %1$s, %2$s dà più peso a %3$s, quindi il tuo piano dedica più tempo a queste parti. Pesi indicati da %4$s.</string>
     <string name="goalcontent_course_weights_even">Per %1$s, %2$s dà lo stesso peso a tutte le parti dell’esame. Pesi indicati da %3$s.</string>
+    <!-- On one exam's plan. %1$s names the learner's other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_named">
+        <item quantity="one">Gli argomenti in comune con %1$s valgono per entrambi gli esami, così li studi una sola volta.</item>
+        <item quantity="many">Gli argomenti in comune con %1$s valgono per tutti gli esami che li prevedono, così li studi una sola volta.</item>
+        <item quantity="other">Gli argomenti in comune con %1$s valgono per tutti gli esami che li prevedono, così li studi una sola volta.</item>
+    </plurals>
+    <!-- On one exam's plan, when the learner has several other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_counted">
+        <item quantity="one">Gli argomenti in comune con %d altro esame valgono per entrambi gli esami, così li studi una sola volta.</item>
+        <item quantity="many">Gli argomenti in comune con %d altri esami valgono per tutti gli esami che li prevedono, così li studi una sola volta.</item>
+        <item quantity="other">Gli argomenti in comune con %d altri esami valgono per tutti gli esami che li prevedono, così li studi una sola volta.</item>
+    </plurals>
+    <string name="goalcontent_shared_exams_practice">Gli esercizi seguono lo stile di ogni esame.</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams named in %1$s also test. -->
+    <string name="goalcontent_also_in_exams">Anche in %1$s</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams also test. -->
+    <plurals name="goalcontent_also_in_exam_count">
+        <item quantity="one">Anche in %d altro esame</item>
+        <item quantity="many">Anche in %d altri esami</item>
+        <item quantity="other">Anche in %d altri esami</item>
+    </plurals>
     <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
     <string name="goalcontent_subject">Materia</string>
     <!-- Eyebrow of a subject's page for a module of the learner's plan. -->

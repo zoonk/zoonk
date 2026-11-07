@@ -2,7 +2,7 @@
 
 import { useEffect, useEffectEvent, useReducer, useRef } from "react";
 import { type ChoiceAnswer } from "../questions/choice-question";
-import { type AnswerSender } from "./drill/drill-types";
+import { type AnswerSender, getSentDurationMs } from "./drill/drill-types";
 import {
   type MistakePracticeAnswer,
   type MistakePracticeFeedback,
@@ -92,7 +92,11 @@ export function useMistakePractice({
 
     const sent = {
       answer,
-      durationMs: sender === "timer" ? Math.max(elapsedMs, limitMs) : elapsedMs,
+      durationMs: getSentDurationMs({
+        answer,
+        failed: state.phase.kind === "answerFailed" ? state.phase : null,
+        measuredMs: sender === "timer" ? Math.max(elapsedMs, limitMs) : elapsedMs,
+      }),
       sender,
     };
 

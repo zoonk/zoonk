@@ -5,6 +5,7 @@ export type CheckedGraphSkill = {
   area: string;
   description: string;
   key: string;
+  libraryId?: string;
   name: string;
   phase: number;
   prerequisites: readonly string[];
@@ -94,11 +95,13 @@ export function toNameWords(name: string): string[] {
     .filter((word) => word && !NAME_STOPWORDS.has(word));
 }
 
-/**
- * Words in any order: "Calcular os juros compostos" and "Calcular juros compostos" are one skill.
- */
+/** Articles do not change an action; its words' order can change its direction. */
 export function toSkillNameKey(name: string): string {
-  return [...new Set(toNameWords(name))].toSorted().join(" ");
+  return toNameWords(name).join(" ");
+}
+
+export function toSkillIdentityKey(skill: Pick<CheckedGraphSkill, "libraryId" | "name">): string {
+  return skill.libraryId ? `library:${skill.libraryId}` : toSkillNameKey(skill.name);
 }
 
 type Graph = ReadonlyMap<string, CheckedGraphSkill>;
@@ -250,7 +253,7 @@ function findOffNoticeFirst(skills: readonly CheckedGraphSkill[]): SkillGraphPro
 }
 
 function findNearDuplicates(skills: readonly CheckedGraphSkill[]): SkillGraphProblem[] {
-  const groups = Map.groupBy(skills, (skill) => toSkillNameKey(skill.name));
+  const groups = Map.groupBy(skills, toSkillIdentityKey);
 
   return [...groups.values()].flatMap((group) =>
     group.length > 1

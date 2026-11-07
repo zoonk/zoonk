@@ -96,7 +96,8 @@ final class QuestionBlockRun {
     await send(
       SentAnswer(
         answer: answer, sender: sender,
-        durationMs: max(minDurationMs, Int(now().timeIntervalSince(shownAt) * 1000))))
+        measuredMs: max(minDurationMs, Int(now().timeIntervalSince(shownAt) * 1000)),
+        failed: state.phase.failed))
   }
 
   func retryAnswer() async {

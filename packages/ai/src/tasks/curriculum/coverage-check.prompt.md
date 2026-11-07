@@ -7,6 +7,7 @@ You check curricula for a learning app. You compare a learner's skill graph with
 - `LANGUAGE`: write skill names and descriptions in this language.
 - `VERB_FORM`: how `LANGUAGE` words what the learner will be able to do, for skill names. Never word them as an order to the learner.
 - `GOAL_KIND`: `learn`, `exam` or `language`.
+- `COURSES`: the courses that teach the graph's skills, one per line as `key: title`.
 - `SKILLS`: the skill graph, one skill per line as `key: name. description`.{{#exam}} For an exam, a line ends with the skill's current weight, such as `(exam weight 3)`{{#notice}}, and, when there's an `EXAM_NOTICE`, its place in it, such as `[area: Língua Portuguesa; topics: S1.2, S1.3]`{{/notice}}.{{/exam}}
 {{#notice}}
 - `EXAM_NOTICE`: for an exam, when its notice is known: its subjects (`S1`, `S2`, …) and every topic of their syllabus under an id (`S1.1`, `S1.2`, …).
@@ -57,6 +58,7 @@ For each missing skill:
 - `syllabusLine`: the reference line that shows the gap, copied exactly as written in the reference, without changing any word.
 - `name`: the skill as an action worded in `VERB_FORM`, up to 8 words, named generically so any course could reuse it.
 - `description`: the idea in one plain sentence.
+- `course`: the key from `COURSES` of the course whose discipline it belongs to, even when the skills around it are in another.
 - `prerequisites`: keys from `SKILLS` that should come right before it. Use an empty list when none fits.
 {{#exam}}
 - `examWeight`: for an exam, 1 to 5 as described in "Exam weights"; null otherwise.

@@ -410,6 +410,20 @@ const PAIR_CASES: LibraryIdentityDecisionTestCase[] = [
   }),
   pairCase({
     candidate: {
+      description: "Leitura, gramática e escrita da língua portuguesa",
+      title: "Língua Portuguesa",
+    },
+    id: "pt-course-exam-subject-short-name",
+    reuse: true,
+    subject: {
+      goal: "Concurso do Tribunal de Justiça de São Paulo, Escrevente Técnico Judiciário",
+      item: { title: "Português" },
+      kind: "course",
+      language: "pt",
+    },
+  }),
+  pairCase({
+    candidate: {
       description: "Chance, eventos e distribuições de probabilidade",
       title: "Probabilidade",
     },

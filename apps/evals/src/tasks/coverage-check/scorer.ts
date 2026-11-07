@@ -10,11 +10,19 @@ type WeightRange = { max: number; min: number };
 export type CoverageCheckExpected = {
   gaps: string[];
   examWeights?: (WeightRange & { key: string })[];
+  /** Each gap's course key, in the order of `gaps`. */
+  gapCourses?: string[];
   gapWeights?: WeightRange[];
   placements?: { key: string; topics: string[] }[];
 };
 
-type Flagged = { examWeight: number | null; name: string; syllabusLine: string };
+type Flagged = {
+  course: string | null;
+  examWeight: number | null;
+  name: string;
+  syllabusLine: string;
+};
+
 type WeightChange = { examWeight: number; key: string };
 type Placement = { key: string; topics: string[] };
 type Output = { flagged: Flagged[]; placements: Placement[]; weightChanges: WeightChange[] };
@@ -40,9 +48,10 @@ function toFlagged(skill: unknown): Flagged[] {
     return [];
   }
 
+  const course = typeof skill.course === "string" ? skill.course : null;
   const examWeight = typeof skill.examWeight === "number" ? skill.examWeight : null;
   const name = typeof skill.name === "string" ? skill.name : "";
-  return [{ examWeight, name, syllabusLine: skill.syllabusLine }];
+  return [{ course, examWeight, name, syllabusLine: skill.syllabusLine }];
 }
 
 function toWeightChange(change: unknown): WeightChange[] {
@@ -99,6 +108,9 @@ function getExpected(expected: unknown): CoverageCheckExpected {
   return {
     examWeights: Array.isArray(expected.examWeights)
       ? (expected.examWeights as CoverageCheckExpected["examWeights"])
+      : undefined,
+    gapCourses: Array.isArray(expected.gapCourses)
+      ? expected.gapCourses.filter((course): course is string => typeof course === "string")
       : undefined,
     gapWeights: Array.isArray(expected.gapWeights)
       ? (expected.gapWeights as CoverageCheckExpected["gapWeights"])
@@ -185,26 +197,71 @@ function scoreWeightChanges({
   };
 }
 
+type GapScore = { details: string[]; shares: number[] };
+
+const NOT_SCORED: GapScore = { details: [], shares: [] };
+
+/** The share of the found gaps whose skill `isRight` accepts, and the lines it doesn't. */
+function scoreFoundGaps({
+  expected,
+  flagged,
+  isRight,
+  problem,
+}: {
+  expected: CoverageCheckExpected;
+  flagged: Flagged[];
+  isRight: (skill: Flagged, index: number) => boolean;
+  problem: string;
+}): GapScore {
+  const checked = expected.gaps.flatMap((line, index) => {
+    const skill = flagged.find((item) => matchesLine({ line, quote: item.syllabusLine }));
+    return skill ? [{ line, ok: isRight(skill, index) }] : [];
+  });
+
+  const off = checked.filter((item) => !item.ok).map((item) => item.line);
+
+  return {
+    details: off.length > 0 ? [`${problem}: ${off.join("; ")}.`] : [],
+    shares: [checked.length === 0 ? 1 : (checked.length - off.length) / checked.length],
+  };
+}
+
 function scoreGapWeights({
   expected,
   flagged,
 }: {
   expected: CoverageCheckExpected;
   flagged: Flagged[];
-}) {
-  const weighed = expected.gaps.flatMap((line, index) => {
-    const skill = flagged.find((item) => matchesLine({ line, quote: item.syllabusLine }));
-    const range = expected.gapWeights?.[index];
+}): GapScore {
+  const ranges = expected.gapWeights;
 
-    return skill ? [{ line, ok: isInRange({ range, weight: skill.examWeight }) }] : [];
-  });
+  return ranges
+    ? scoreFoundGaps({
+        expected,
+        flagged,
+        isRight: (skill, index) => isInRange({ range: ranges[index], weight: skill.examWeight }),
+        problem: "Gap weights out of range",
+      })
+    : NOT_SCORED;
+}
 
-  const off = weighed.filter((item) => !item.ok).map((item) => item.line);
+function scoreGapCourses({
+  expected,
+  flagged,
+}: {
+  expected: CoverageCheckExpected;
+  flagged: Flagged[];
+}): GapScore {
+  const courses = expected.gapCourses;
 
-  return {
-    details: off.length > 0 ? [`Gap weights out of range: ${off.join("; ")}.`] : [],
-    share: weighed.length === 0 ? 1 : (weighed.length - off.length) / weighed.length,
-  };
+  return courses
+    ? scoreFoundGaps({
+        expected,
+        flagged,
+        isRight: (skill, index) => skill.course === courses[index],
+        problem: "Gaps in another discipline's course",
+      })
+    : NOT_SCORED;
 }
 
 function scorePlacements({
@@ -273,9 +330,8 @@ export const scoreCoverageCheck: TaskScorer<CoverageCheckExpected> = ({ output, 
     ? scoreWeightChanges({ expected: expected.examWeights, weightChanges: parsed.weightChanges })
     : null;
 
-  const gapWeights = expected.gapWeights
-    ? scoreGapWeights({ expected, flagged: parsed.flagged })
-    : null;
+  const gapWeights = scoreGapWeights({ expected, flagged: parsed.flagged });
+  const gapCourses = scoreGapCourses({ expected, flagged: parsed.flagged });
 
   const placed = expected.placements
     ? scorePlacements({ expected: expected.placements, placements: parsed.placements })
@@ -291,9 +347,14 @@ export const scoreCoverageCheck: TaskScorer<CoverageCheckExpected> = ({ output, 
       ? 1
       : (parsed.flagged.length - forms.length) / parsed.flagged.length;
 
-  const parts = [gaps.f1, weights?.f1, gapWeights?.share, placed?.f1, formShare].filter(
-    (part) => part !== undefined,
-  );
+  const parts = [
+    gaps.f1,
+    weights?.f1,
+    ...gapWeights.shares,
+    ...gapCourses.shares,
+    placed?.f1,
+    formShare,
+  ].filter((part) => part !== undefined);
 
   const quality = parts.reduce((total, part) => total + part, 0) / parts.length;
   const score = round(MIN_SCORE + (MAX_SCORE - MIN_SCORE) * quality);
@@ -301,7 +362,8 @@ export const scoreCoverageCheck: TaskScorer<CoverageCheckExpected> = ({ output, 
   const details = [
     ...gaps.details,
     ...(weights?.details ?? []),
-    ...(gapWeights?.details ?? []),
+    ...gapWeights.details,
+    ...gapCourses.details,
     ...(placed?.details ?? []),
     ...forms,
   ];

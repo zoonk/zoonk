@@ -1,4 +1,5 @@
 import "server-only";
+import { type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../cache/tags";
@@ -39,31 +40,61 @@ function getDirection({ from, to }: { from: OwnLevel | null; to: OwnLevel }) {
   return after > before ? ("higher" as const) : ("lower" as const);
 }
 
-async function saveLevel({ context, level }: { context: PlanContext; level: OwnLevel }) {
-  await writeLearnerChange({ planInputs: true, userId: context.goal.userId }, async (tx) => {
-    const goal = await tx.goal.findUniqueOrThrow({ where: { id: context.goal.id } });
-    const details = isJsonObject(goal.details) ? goal.details : {};
+async function writeLevel({
+  context,
+  level,
+  tx,
+}: {
+  context: PlanContext;
+  level: OwnLevel;
+  tx: TransactionClient;
+}) {
+  const goal = await tx.goal.findUniqueOrThrow({ where: { id: context.goal.id } });
+  const details = isJsonObject(goal.details) ? goal.details : {};
 
-    if (details.level === level) {
-      return unchanged(goal);
-    }
+  if (details.level === level) {
+    return unchanged(goal);
+  }
 
-    return tx.goal.update({ data: { details: { ...details, level } }, where: { id: goal.id } });
+  const saved = await tx.goal.update({
+    data: { details: { ...details, level } },
+    where: { id: goal.id },
   });
+
+  // The level decides what's written ahead, such as where lessons likely start.
+  await oweGoalLessons({ db: tx, goalId: goal.id, userId: goal.userId });
+
+  return saved;
+}
+
+async function saveLevel({ context, level }: { context: PlanContext; level: OwnLevel }) {
+  await writeLearnerChange({ planInputs: true, userId: context.goal.userId }, (tx) =>
+    writeLevel({ context, level, tx }),
+  );
 
   revalidateCacheTags([getGoalsCacheTag(context.goal.userId)]);
 }
 
-async function addFoundations(context: PlanContext): Promise<PlanChangeView | null> {
+async function addFoundations({
+  context,
+  level,
+}: {
+  context: PlanContext;
+  level: OwnLevel;
+}): Promise<PlanChangeView | null> {
   const plan = await loadGoalPlan(context.goal.id);
   const operations = await findFoundationOperations({ context, plan });
 
   if (operations.length === 0) {
+    await saveLevel({ context, level });
     return null;
   }
 
+  const details = isJsonObject(context.goal.details) ? context.goal.details : {};
+
   const result = await applyChangeNow({
-    context,
+    context: { ...context, goal: { ...context.goal, details: { ...details, level } } },
+    extraWrites: (tx) => writeLevel({ context, level, tx }),
     followToday: true,
     operations,
     reason: OWN_LEVEL_NOTE,
@@ -89,9 +120,6 @@ export async function changeOwnLevel({
   const { context } = owned;
   const direction = getDirection({ from: getOwnLevel({ goal: context.goal }), to: input.level });
 
-  await saveLevel({ context, level: input.level });
-
-  // Only the plan's part retries: the level is already saved, so reading it again would say "same".
   return withPlanRetry(async () => {
     const current = await findOwnedPlan({ goalId, timeZone: input.timeZone });
 
@@ -99,15 +127,23 @@ export async function changeOwnLevel({
       return current;
     }
 
+    if (direction !== "lower") {
+      await saveLevel({ context: current.context, level: input.level });
+    }
+
     const [change, testOuts] = await Promise.all([
-      direction === "lower" ? addFoundations(current.context) : null,
+      direction === "lower"
+        ? addFoundations({ context: current.context, level: input.level })
+        : null,
       direction === "higher"
         ? loadGoalPlan(goalId).then((plan) => findLevelTestOuts({ level: input.level, plan }))
         : [],
     ]);
 
-    await refreshGoalPlan({ goalId });
-    await oweGoalLessons({ goalId, userId: current.context.goal.userId });
+    await refreshGoalPlan({
+      extraWrites: (tx) => oweGoalLessons({ db: tx, goalId, userId: current.context.goal.userId }),
+      goalId,
+    });
 
     return { ownLevel: { change, direction, level: input.level, testOuts }, status: "ready" };
   });

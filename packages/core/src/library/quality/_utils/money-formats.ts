@@ -1,4 +1,5 @@
 import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { hideMath } from "@zoonk/utils/math-spans";
 import { CURRENCY_MARKS, CURRENCY_WORDS, MONEY_MARK, MONEY_WORD } from "@zoonk/utils/money-marks";
 import { getScreenTexts } from "./screen-texts";
 
@@ -46,7 +47,7 @@ export function findMixedMoneyFormats(
 ): { first: MoneyMention; mention: MoneyMention }[] {
   const mentions = screens.flatMap((screen, index) =>
     getScreenTexts(screen).flatMap((piece) =>
-      [...piece.text.matchAll(MONEY)].flatMap((match) => toMention(match, index) ?? []),
+      [...hideMath(piece.text).matchAll(MONEY)].flatMap((match) => toMention(match, index) ?? []),
     ),
   );
 

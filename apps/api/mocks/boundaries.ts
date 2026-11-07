@@ -17,7 +17,11 @@ export const boundaries = {
     streamCourseOutline: vi.fn(),
   },
   "@zoonk/ai/tasks/curriculum/coverage-check": { checkCoverage: vi.fn() },
-  "@zoonk/ai/tasks/curriculum/skill-graph": { generateSkillGraph: vi.fn() },
+  "@zoonk/ai/tasks/curriculum/skill-graph-calls": {
+    generateSkillGraphFrame: vi.fn(),
+    generateSkillGraphSection: vi.fn(),
+    generateWholeSkillGraph: vi.fn(),
+  },
   "@zoonk/ai/tasks/curriculum/teaching-chapters": { findTeachingChapters: vi.fn() },
   "@zoonk/ai/tasks/explain/question-generality": { classifyQuestionGenerality: vi.fn() },
   "@zoonk/ai/tasks/explain/quick-explanation": { generateQuickExplanation: vi.fn() },

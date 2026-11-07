@@ -39,7 +39,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -171,21 +170,29 @@ private fun MatchPairsActivity(props: ActivityProps) {
             )
 
             val cardsLabel = stringResource(R.string.activities_sorting_cards_to_match)
-            Row(Modifier.semantics { contentDescription = cardsLabel }, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                listOf(MatchSide.Left to left, MatchSide.Right to right).forEach { (side, cards) ->
-                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        cards.forEach { card ->
-                            val state = stateOf(card, side)
-                            MatchCardButton(
-                                card = card,
-                                state = state,
-                                enabled = !props.isChecked && !props.isLocked && state != CardState.Matched && state != CardState.NoMatch,
-                                missKey = miss,
-                                onPick = { pick(side, card) },
-                            )
-                        }
-                    }
-                }
+
+            @Composable
+            fun BoardCard(
+                side: MatchSide,
+                card: MatchCard,
+                modifier: Modifier = Modifier,
+            ) {
+                val state = stateOf(card, side)
+                MatchCardButton(
+                    card = card,
+                    state = state,
+                    enabled = !props.isChecked && !props.isLocked && state != CardState.Matched && state != CardState.NoMatch,
+                    missKey = miss,
+                    onPick = { pick(side, card) },
+                    modifier = modifier,
+                )
+            }
+
+            val board = Modifier.semantics { contentDescription = cardsLabel }
+            if (isComplete) {
+                SolvedMatchBoard(solvedRows(left, right), board) { side, card, modifier -> BoardCard(side, card, modifier) }
+            } else {
+                MatchBoard(left, right, alignRows = false, board) { side, card, modifier -> BoardCard(side, card, modifier) }
             }
 
             miss?.let { MissNote(it.explanation) }
@@ -202,6 +209,7 @@ private fun MatchCardButton(
     enabled: Boolean,
     missKey: Miss?,
     onPick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
     val shape = RoundedCornerShape(ZoonkRadius.option)
@@ -239,7 +247,7 @@ private fun MatchCardButton(
     }
 
     Row(
-        Modifier
+        modifier
             .fillMaxWidth()
             .heightIn(min = 48.dp)
             .graphicsLayer { translationX = shake.value * density }
@@ -258,7 +266,6 @@ private fun MatchCardButton(
             style =
                 MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Medium,
-                    hyphens = Hyphens.Auto,
                     lineBreak = LineBreak.Paragraph,
                     color =
                         when (state) {

@@ -832,6 +832,7 @@ private struct CheckedWord: View {
 
 /// A right pair locks, a wrong one counts as a mistake.
 private struct MatchColumnsView: View {
+  @Environment(\.stacksContent) private var isStacked
   @ActivityState("pickedLeft") private var pickedLeft: Int? = nil
   @ActivityState("mistakes") private var mistakes = 0
   @State private var lastMiss: Int?
@@ -855,8 +856,10 @@ private struct MatchColumnsView: View {
       rightItems: exercise.matchColumnsRightItems, matched: matched)
   }
 
+  private var isSolved: Bool { !pairs.isEmpty && matched.count == pairs.count }
+
   private var allMatchedLine: String? {
-    guard matched.count == pairs.count, !pairs.isEmpty, context.result == nil else {
+    guard isSolved, context.result == nil else {
       return nil
     }
 
@@ -866,47 +869,76 @@ private struct MatchColumnsView: View {
   }
 
   var body: some View {
-    let board = board
-
-    HStack(alignment: .top, spacing: 12) {
-      VStack(spacing: 10) {
-        ForEach(pairs.indices, id: \.self) { index in
-          let isMatched = board.matchedLeft.contains(index)
-          Button {
-            pickedLeft = index
-          } label: {
-            Text(pairs[index].left)
-          }
-          .buttonStyle(
-            LessonOptionStyle(mark: isMatched ? .right : pickedLeft == index ? .selected : .plain)
-          )
-          .disabled(isMatched || context.isLocked)
-        }
-      }
-
-      VStack(spacing: 10) {
-        ForEach(exercise.matchColumnsRightItems.indices, id: \.self) { index in
-          let item = exercise.matchColumnsRightItems[index]
-          let isMatched = board.matchedRight.contains(index)
-          Button {
-            pick(right: index)
-          } label: {
-            Text(item)
-          }
-          .buttonStyle(
-            LessonOptionStyle(mark: isMatched ? .right : lastMiss == index ? .wrong : .plain)
-          )
-          .disabled(isMatched || context.isLocked || pickedLeft == nil)
-        }
-      }
-    }
-    .announcesStatus(allMatchedLine)
+    tiles(board)
+      .fixedSize(horizontal: false, vertical: true)
+      .announcesStatus(allMatchedLine)
 
     if let allMatchedLine {
       Text(allMatchedLine)
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
     }
+  }
+
+  @ViewBuilder
+  private func tiles(_ board: MatchColumnsBoard) -> some View {
+    if isStacked {
+      VStack(spacing: 16) {
+        if isSolved {
+          ForEach(pairs.indices, id: \.self) { index in
+            VStack(spacing: 8) {
+              leftTile(index, board: board)
+              rightTile(index, board: board)
+            }
+          }
+        } else {
+          VStack(spacing: 8) {
+            ForEach(pairs.indices, id: \.self) { leftTile($0, board: board) }
+          }
+
+          VStack(spacing: 8) {
+            ForEach(pairs.indices, id: \.self) { rightTile($0, board: board) }
+          }
+        }
+      }
+    } else {
+      Grid(horizontalSpacing: 12, verticalSpacing: 10) {
+        ForEach(pairs.indices, id: \.self) { index in
+          GridRow {
+            leftTile(index, board: board)
+            rightTile(index, board: board)
+          }
+        }
+      }
+    }
+  }
+
+  private func leftTile(_ index: Int, board: MatchColumnsBoard) -> some View {
+    let isMatched = board.matchedLeft.contains(index)
+
+    return Button {
+      pickedLeft = index
+    } label: {
+      Text(pairs[index].left)
+        .frame(maxHeight: .infinity, alignment: .topLeading)
+    }
+    .buttonStyle(
+      LessonOptionStyle(mark: isMatched ? .right : pickedLeft == index ? .selected : .plain)
+    )
+    .disabled(isMatched || context.isLocked)
+  }
+
+  private func rightTile(_ index: Int, board: MatchColumnsBoard) -> some View {
+    let isMatched = board.matchedRight.contains(index)
+
+    return Button {
+      pick(right: index)
+    } label: {
+      Text(isSolved ? pairs[index].right : exercise.matchColumnsRightItems[index])
+        .frame(maxHeight: .infinity, alignment: .topLeading)
+    }
+    .buttonStyle(LessonOptionStyle(mark: isMatched ? .right : lastMiss == index ? .wrong : .plain))
+    .disabled(isMatched || context.isLocked || pickedLeft == nil)
   }
 
   private func pick(right index: Int) {

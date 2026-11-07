@@ -7,6 +7,7 @@ import { getAllowance } from "../../entitlements/get-allowance";
 import { getExamDocument } from "../../exams/exam-document";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
+import { readSharedExams } from "../../plans/_utils/shared-exams";
 import { getOutlinedUntil } from "../../plans/_utils/stand-in-lessons";
 import { getGoalPreparation } from "../../preparation/get-goal-preparation";
 import { getExamPrepAccess } from "../../sessions/_utils/exam-access";
@@ -72,10 +73,11 @@ export async function getSyllabusView(
     cacheTag(getExamBlueprintCacheTag(goal.examBlueprintId));
   }
 
-  const [syllabusInput, todayBlocks, sections] = await Promise.all([
+  const [syllabusInput, todayBlocks, sections, shared] = await Promise.all([
     readSyllabusInput(goal.userId, goal.id),
     readTodayLearnBlocks(goal.userId, goal.id),
     loadSections(goal),
+    readSharedExams(goal),
   ]);
 
   if (!syllabusInput) {
@@ -91,10 +93,12 @@ export async function getSyllabusView(
       examDocument: getExamDocument(goal),
       goal: { id: goal.id, kind: goal.kind, title: goal.title },
       knownTopicsReturn: await getKnownTopicsReturn({ goal, timeZone, today }),
+      sharedExams: shared.exams,
       ...buildSyllabus({
         ...syllabusInput,
         outlinedUntil: getOutlinedUntil(today),
         sections,
+        shared,
         todayBlocks,
       }),
     },

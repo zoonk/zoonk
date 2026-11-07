@@ -2,10 +2,11 @@ import { normalizeString } from "@zoonk/utils/string";
 import { toPlainLine } from "@zoonk/utils/text-repairs";
 import { type ExamOutline, canBuildOn, isWrittenTestSubject, placeInExam } from "../exam-outline";
 import { COURSE_LEVELS, type CourseLevel } from "./course-levels";
+import { EmptySkillGraphError } from "./empty-skill-graph-error";
 import { toExamWeight } from "./exam-weight";
 import { fitLessonBudget } from "./lesson-budget";
 import { orderSkillGraph } from "./order-skill-graph";
-import { toSkillNameKey } from "./skill-graph-checks";
+import { toSkillIdentityKey, toSkillNameKey } from "./skill-graph-checks";
 
 type RawSkillGraphSkill = {
   area: string;
@@ -15,10 +16,14 @@ type RawSkillGraphSkill = {
   examWeight: number | null;
   key: string;
   level: CourseLevel;
+  /** A Library skill the graph reuses (see `applyLibraryReuse`). */
+  libraryId?: string;
   name: string;
   outcome: boolean;
   phase: number;
   prerequisites: string[];
+  /** The `LIBRARY_SKILLS` id the model chose, before code applies it. */
+  reuse?: string | null;
   topics: string[];
 };
 
@@ -50,6 +55,8 @@ type SkillGraphSkill = {
    * and job search): a plan short on time keeps it whole and trims depth elsewhere.
    */
   outcome?: boolean;
+  /** The Library skill this is: it keeps its own name, size, course and prerequisite links. */
+  libraryId?: string;
 };
 
 type SkillGraphCourse = { key: string; title: string; levels: CourseLevel[] };
@@ -77,20 +84,25 @@ function clamp({ max, min, value }: { max: number; min: number; value: number })
   return Math.min(max, Math.max(min, Math.round(value)));
 }
 
-function toKey(value: string): string {
+export function toKey(value: string): string {
   return value.trim().toLowerCase();
 }
 
-/** A dropped duplicate's key becomes an alias, so edges that pointed at it still resolve. */
+/**
+ * A reused skill is a duplicate only of the same Library row, never of a skill whose name has the
+ * same words ("Converter frações em decimais" is not "Converter decimais em frações"). A dropped
+ * duplicate's key becomes an alias, so edges that pointed at it still resolve.
+ */
 function dedupeSkills(skills: readonly RawSkillGraphSkill[]) {
   const survivors = new Map<string, RawSkillGraphSkill>();
   const aliases = new Map<string, string>();
-  const keysByName = new Map<string, string>();
+  const keysByIdentity = new Map<string, string>();
 
   for (const skill of skills) {
     const key = toKey(skill.key || skill.name);
     const name = toSkillNameKey(skill.name) || normalizeString(skill.name);
-    const survivorKey = survivors.has(key) ? key : keysByName.get(name);
+    const identity = toSkillIdentityKey(skill) || name;
+    const survivorKey = survivors.has(key) ? key : keysByIdentity.get(identity);
     const survivor = survivorKey ? survivors.get(survivorKey) : undefined;
 
     if (name && survivorKey && survivor) {
@@ -104,7 +116,7 @@ function dedupeSkills(skills: readonly RawSkillGraphSkill[]) {
       });
     } else if (name) {
       aliases.set(key, key);
-      keysByName.set(name, key);
+      keysByIdentity.set(identity, key);
       survivors.set(key, { ...skill, key, name: toPlainLine(skill.name) });
     }
   }
@@ -141,16 +153,12 @@ export function normalizeCourses({
 }): SkillGraphCourse[] {
   const unique = [...new Map(courses.map((course) => [toKey(course.key), course])).entries()];
 
-  return unique.flatMap(([key, course]) => {
+  return unique.map(([key, course]) => {
     const courseSkills = skills.filter((skill) => skill.course === key);
-
-    if (courseSkills.length === 0) {
-      return [];
-    }
 
     const levels = sortLevels([...course.levels, ...courseSkills.map((skill) => skill.level)]);
 
-    return [{ key, levels, title: toPlainLine(course.title) }];
+    return { key, levels, title: toPlainLine(course.title) };
   });
 }
 
@@ -236,6 +244,7 @@ function toGraphSkill({
     examWeight: toExamWeight(skill.examWeight),
     key: skill.key,
     level: skill.level,
+    ...(skill.libraryId && { libraryId: skill.libraryId }),
     name: skill.name,
     outcome: skill.outcome || isWrittenTestSkill({ area: placed.area, outline }),
     phase: clamp({ max: phaseCount, min: 1, value: skill.phase }),
@@ -265,13 +274,6 @@ function dropChoicePrerequisites({
       canBuildOn({ area: skill.area, outline, prerequisiteArea: areas.get(key) ?? "" }),
     ),
   }));
-}
-
-export class EmptySkillGraphError extends Error {
-  constructor() {
-    super("A skill graph needs at least one course, one phase and one skill.");
-    this.name = "EmptySkillGraphError";
-  }
 }
 
 export function normalizeSkillGraph(

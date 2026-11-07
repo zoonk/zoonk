@@ -27,6 +27,7 @@ import {
 } from "./_utils/session-items";
 import { type StudyBlockView, toStudyBlockView } from "./_utils/session-view";
 import { type OwnedStudyBlock, findOwnedStudyBlock } from "./_utils/study-session-access";
+import { withoutReviewedSkills } from "./_utils/without-reviewed-skills";
 import { type BlockPayload, getBlockItemIds, readBlockPayload } from "./block-payload";
 import { type StudyBlockQuestion, type TimeMachine } from "./study-block-question";
 
@@ -128,10 +129,11 @@ export async function loadStudyBlock(
 ): Promise<StudyBlockDetail> {
   const blockId = owned.block.id;
   const sessionId = owned.session.id;
-  const payload = readBlockPayload(owned.block);
-  const itemIds = getBlockItemIds(payload);
+  const storedPayload = readBlockPayload(owned.block);
+  const storedItemIds = getBlockItemIds(storedPayload);
 
   await io();
+  const now = new Date();
 
   const [rows, storedAnswers, drillLessons, structure, blockedTestOutChapters] = await Promise.all([
     prisma.item.findMany({
@@ -140,33 +142,45 @@ export async function loadStudyBlock(
         ...ITEM_SET_INCLUDE,
         source: { select: citedSourceSelect },
       },
-      where: { id: { in: itemIds } },
+      where: { id: { in: storedItemIds } },
     }),
     prisma.attempt.findMany({
       orderBy: [{ answeredAt: "asc" }, { id: "asc" }],
       select: { answer: true, id: true, isCorrect: true, itemId: true },
       where: {
         OR: [
-          { itemId: { in: itemIds } },
-          { id: { in: payload.checkpointAnswers.map((answer) => answer.attemptId) } },
+          { itemId: { in: storedItemIds } },
+          { id: { in: storedPayload.checkpointAnswers.map((answer) => answer.attemptId) } },
         ],
         studySessionId: sessionId,
         userId: owned.userId,
       },
     }),
-    loadDrillLessons(payload.drills.map((drill) => drill.lessonId)),
+    loadDrillLessons(storedPayload.drills.map((drill) => drill.lessonId)),
     owned.session.goal ? loadExamStructure(owned.session.goal) : null,
-    owned.session.goalId && payload.chapterId && owned.block.kind === "learn"
+    owned.session.goalId && storedPayload.chapterId && owned.block.kind === "learn"
       ? loadBlockedTestOutChapters({
-          chapterIds: [payload.chapterId],
+          chapterIds: [storedPayload.chapterId],
           goalId: owned.session.goalId,
           known: { source: readSavedPlan(owned.userId, owned.session.goalId) },
-          now: new Date(),
+          now,
           timeZone: getAnswerTimeZone({ goal: owned.session.goal }),
           userId: owned.userId,
         })
       : new Set<string>(),
   ]);
+
+  const block = await withoutReviewedSkills({
+    answeredItemIds: new Set(storedAnswers.map((answer) => answer.itemId)),
+    block: owned.block,
+    items: rows,
+    now,
+    session: owned.session,
+    timeZone: getAnswerTimeZone({ goal: owned.session.goal }),
+  });
+
+  const payload = readBlockPayload(block);
+  const itemIds = getBlockItemIds(payload);
 
   const answers = restoreCheckpointAnswers({ answers: storedAnswers, payload });
 
@@ -179,6 +193,7 @@ export async function loadStudyBlock(
   );
 
   const items = rows
+    .filter((row) => itemIds.includes(row.id))
     .map((row) => parseSessionItem(row))
     .filter((item) => item !== null)
     .filter((item) => isStillAsked({ answered: answered.has(item.id), item }));
@@ -239,7 +254,7 @@ export async function loadStudyBlock(
     block: toAskableBlock({
       block: toStudyBlockView({
         answeredItemIds: new Set(answered.keys()),
-        block: owned.block,
+        block,
         blockedTestOutChapters,
         blocks: owned.session.blocks,
       }),

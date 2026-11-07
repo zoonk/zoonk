@@ -14,6 +14,8 @@ import {
   type OutlineChapter,
   saveOutlineChapter,
 } from "@zoonk/core/library/curriculum/save-outline-chapter";
+import { followWrittenLessons } from "@zoonk/core/lookahead/lessons-ask";
+import { safeAsync } from "@zoonk/utils/error";
 import { toContentAnalytics } from "../../_shared/content-analytics";
 import { deliverCourseContent } from "../../_shared/course-content-notification";
 import {
@@ -81,6 +83,12 @@ async function streamWaitedBand({
           .filter((skill) => chapter.skillKeys.includes(skill.key))
           .map((skill) => skill.id),
       });
+
+      // The band's end follows every goal again if this early follow fails.
+      for (const goalId of replanned.goalIds) {
+        // oxlint-disable-next-line no-await-in-loop -- Bound the day-follow transactions for a popular course.
+        await safeAsync(() => followWrittenLessons({ askedAt: null, goalId }));
+      }
 
       const goalIds = [...replanned.goalIds, ...replanned.failedGoalIds];
 

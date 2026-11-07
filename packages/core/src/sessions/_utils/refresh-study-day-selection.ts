@@ -1,13 +1,15 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { withPlanRetry } from "../../plans/plan-conflict";
 import { appendLandedLessons } from "./append-landed-lessons";
-import { AWAITING_OUTLINES_VERSION } from "./day-plan-version";
 import { selectDayPlan } from "./selected-day-plan";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
-/** Continue reuses current inputs; a changed selection can only append to the shown queue. */
-async function refreshStudyDaySelection({
+/**
+ * What Open and Continue do to a saved day: take the plan's selection once the plan changed since
+ * the day was saved. Only appends to the shown queue.
+ */
+export async function followSavedDay({
   session,
   timeZone,
 }: {
@@ -20,26 +22,15 @@ async function refreshStudyDaySelection({
       where: { id: session.id },
     });
 
-    if (!current.goal) {
-      return current;
-    }
-
-    const selection = await selectDayPlan({
-      goal: current.goal,
-      now: new Date(),
-      timeZone,
-      useFreshSaved: true,
-    });
-
-    if (!selection) {
-      return current;
-    }
+    const selection = current.goal
+      ? await selectDayPlan({ goal: current.goal, now: new Date(), timeZone, useFreshSaved: true })
+      : null;
 
     if (
-      !selection.computed &&
-      !selection.inputKeyUpdate &&
-      (current.planVersion === selection.context.plan.version ||
-        current.planVersion === AWAITING_OUTLINES_VERSION)
+      !selection ||
+      (!selection.computed &&
+        !selection.inputKeyUpdate &&
+        current.planVersion === selection.context.plan.version)
     ) {
       return current;
     }
@@ -51,18 +42,4 @@ async function refreshStudyDaySelection({
       timeZone,
     });
   });
-}
-
-/** What Open and Continue do to a saved day: take the plan's current selection, then the lessons that landed since. */
-export async function followSavedDay({
-  goal,
-  session,
-  timeZone,
-}: {
-  goal: Goal;
-  session: StudySessionRow;
-  timeZone: string;
-}): Promise<StudySessionRow> {
-  const selected = await refreshStudyDaySelection({ session, timeZone });
-  return appendLandedLessons({ goal, session: selected, timeZone });
 }

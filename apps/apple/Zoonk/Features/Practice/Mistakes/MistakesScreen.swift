@@ -481,24 +481,22 @@ struct MistakeAnswerRow: View {
   let text: String
   let isRight: Bool
 
-  @Environment(\.legibilityWeight) private var legibilityWeight
-
   var body: some View {
-    AccessibilityStack(alignment: .firstTextBaseline, spacing: 12) {
-      Text(ItemTextBlock.inline(text), legibility: legibilityWeight).frame(
-        maxWidth: .infinity, alignment: .leading)
-      Text(
-        isRight
-          ? LocalizedStringResource(
-            "Correct", table: "Practice",
-            comment: "Mark beside the right option once a question is graded.")
-          : LocalizedStringResource(
-            "Your answer", table: "Practice",
-            comment: "Mark beside the learner's wrong pick once a question is graded.")
-      )
-      .typeStyle(.meta.weight(.semibold))
-      .foregroundStyle(isRight ? Color.successText : Color.destructiveText)
-    }
+    TagBesideOrUnder(
+      text: RichInline(text: ItemTextBlock.inline(text)),
+      tag: AnyView(
+        Text(
+          isRight
+            ? LocalizedStringResource(
+              "Correct", table: "Practice",
+              comment: "Mark beside the right option once a question is graded.")
+            : LocalizedStringResource(
+              "Your answer", table: "Practice",
+              comment: "Mark beside the learner's wrong pick once a question is graded.")
+        )
+        .typeStyle(.meta.weight(.semibold))
+        .foregroundStyle(isRight ? Color.successText : Color.destructiveText))
+    )
     .typeStyle(.body.weight(.medium))
     .padding(12)
     .background(

@@ -121,6 +121,17 @@ async function findRunBehind({ holderId, since }: { holderId: string; since: Dat
   return getRun(behind.runId);
 }
 
+type QueuedMessage = Parameters<Awaited<ReturnType<typeof getWorld>>["queue"]>[1];
+
+function startsBackgroundTask(
+  message: QueuedMessage,
+): message is Extract<QueuedMessage, { runId: string }> {
+  return (
+    "runInput" in message &&
+    Boolean(message.runInput?.workflowName.endsWith("//backgroundTaskWorkflow"))
+  );
+}
+
 function readCause(mistakeId: string) {
   return prisma.mistake.findUniqueOrThrow({ where: { id: mistakeId } }).then((row) => row.cause);
 }
@@ -418,10 +429,7 @@ describe(followUpsWorkflow, () => {
       const result = await queue(...args);
       const [, message] = args;
 
-      if (
-        "runInput" in message &&
-        message.runInput?.workflowName.endsWith("//backgroundTaskWorkflow")
-      ) {
+      if (startsBackgroundTask(message)) {
         const isFirst = queued.size === 0;
         queued.add(message.runId);
 
@@ -444,16 +452,37 @@ describe(followUpsWorkflow, () => {
     await expect(countOwed(user.id)).resolves.toBe(0);
   });
 
-  it("leaves a stopped run's rows to the next one", async () => {
+  it("leaves the rows of a run stopped mid-pass to the next one", async () => {
     const { mistakeId, userId } = await owedCause();
+    const world = await getWorld();
+    const queue = world.queue.bind(world);
+    const startingWork = Promise.withResolvers<null>();
+    const stopped = Promise.withResolvers<null>();
 
-    await getRun(await startFollowUps(userId)).cancel();
+    // `start()` queues the run before it returns, so the run could end before it's stopped unless
+    // it's held as it starts the row's work.
+    const enqueue = vi.spyOn(world, "queue").mockImplementation(async (...args) => {
+      const [, message] = args;
+
+      if (startsBackgroundTask(message)) {
+        startingWork.resolve(null);
+        await stopped.promise;
+      }
+
+      return queue(...args);
+    });
+
+    onTestFinished(() => enqueue.mockRestore());
+
+    const runId = await startFollowUps(userId);
+    await startingWork.promise;
+    await getRun(runId).cancel();
+    stopped.resolve(null);
+
+    await vi.waitFor(() => expect(readCause(mistakeId)).resolves.toBe("trap"), WAIT);
+    await expect(countOwed(userId)).resolves.toBe(1);
 
     await runFollowUps(userId);
-
-    await vi.waitFor(async () => {
-      await expect(readCause(mistakeId)).resolves.toBe("trap");
-      await expect(countOwed(userId)).resolves.toBe(0);
-    }, WAIT);
+    await expect(countOwed(userId)).resolves.toBe(0);
   });
 });

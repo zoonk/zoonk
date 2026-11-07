@@ -1,4 +1,5 @@
 import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { findBareLatex } from "@zoonk/utils/bare-latex";
 import {
   type TextLayout,
   findPlaceholderText,
@@ -11,7 +12,7 @@ import {
 } from "../../_utils/option-checks";
 
 type ScreenFlaw = {
-  code: "answerKey" | "duplicateOptions" | "markdown" | "optionData" | "placeholder";
+  code: "answerKey" | "duplicateOptions" | "markdown" | "optionData" | "placeholder" | "rawMath";
   problem: string;
 };
 
@@ -55,6 +56,10 @@ export function findTextFlaws({
   return [
     ...(layout ? findUnrenderedMarkdown({ layout, text }) : []).map((problem) => ({
       code: "markdown" as const,
+      problem,
+    })),
+    ...(layout ? findBareLatex({ layout, text }) : []).map((problem) => ({
+      code: "rawMath" as const,
       problem,
     })),
     ...findPlaceholderText(text).map((problem) => ({ code: "placeholder" as const, problem })),

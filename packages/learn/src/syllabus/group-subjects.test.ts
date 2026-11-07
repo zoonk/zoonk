@@ -24,6 +24,7 @@ function subject(
     preparation: null,
     questions: null,
     share: null,
+    sharedWith: [],
     shortName: key,
     source: "notice",
     topicFrequencySource: null,

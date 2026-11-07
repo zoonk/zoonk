@@ -43,6 +43,15 @@ class SessionLaunchTest {
                                 request: com.zoonk.api.models.AppleSessionRequest,
                                 guest: AuthenticatedSession?,
                             ) = error("unexpected")
+
+                            override suspend fun challenge() = error("unexpected")
+
+                            override suspend fun registerRestoreKey(
+                                session: AuthenticatedSession,
+                                registrationResponseJson: String,
+                            ) = error("unexpected")
+
+                            override suspend fun restoreKeySession(authenticationResponseJson: String) = error("unexpected")
                         }
                     lateinit var cache: AppCache
                     val sessions =

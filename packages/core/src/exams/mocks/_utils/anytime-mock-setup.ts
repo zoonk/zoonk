@@ -11,6 +11,7 @@ import { getSkillArea } from "../../../plans/planner/graph-areas";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { readExamPicks } from "../../choices/exam-choices";
 import { loadExamPicks } from "../../choices/load-exam-choices";
+import { getExamName } from "../../exam-name";
 import { type AnytimeMockChoice } from "../mock-contract";
 import { getDaySections } from "../mock-day-sections";
 import { getMockFormatMix } from "../mock-format-mix";
@@ -113,7 +114,7 @@ export async function loadAnytimeMockSetup(
   return {
     blueprint,
     essays,
-    examName: blueprint?.name ?? goal.title,
+    examName: getExamName({ blueprint, goal }),
     goalAreas,
     listening: recordings,
     options: buildable

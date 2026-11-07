@@ -4,6 +4,7 @@ import { after } from "next/server";
 import { awardCourseCertificates } from "../../certificates/_utils/award-course-certificate";
 import { trackLessonCanDos } from "../../language/units/can-do-events";
 import { readPlanSummary, reduceCompletedSummary } from "../../plans/_utils/plan-summary";
+import { skipSettledLessonBlocks } from "./skip-tested-out-blocks";
 
 /** Lock each plan before reducing its summary, including callers that did not mark plan inputs first. */
 async function reduceCompletedPlans(
@@ -100,6 +101,8 @@ export async function completeLessonPlanItems(
     select: { kind: true, lessonId: true, phase: true, planId: true },
     where: { lessonId, plan: { goal: { userId } }, status: "todo" },
   });
+
+  await skipSettledLessonBlocks(tx, { lessonIds: [lessonId], userId });
 
   if (checked.length === 0) {
     return [];

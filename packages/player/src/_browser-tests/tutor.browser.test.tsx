@@ -3,8 +3,9 @@ import { MemoryUpdated } from "@zoonk/learn/memory-updated";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
-import { expectCount, focusOn, press } from "../_test-utils/activity-player";
+import { expectCount, expectMathVisible, focusOn, press } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
+import { onDevice } from "../_test-utils/device-media";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import {
   TUTOR_ANSWER,
@@ -442,6 +443,104 @@ describe("tutor answers", () => {
     await Promise.all([import("@streamdown/math"), import("@streamdown/mermaid")]);
     await expectCount(sheet.getByRole("math"), 2);
     await expect.element(sheet.getByRole("document", { name: "How an orbit forms" })).toBeVisible();
+  });
+
+  it("draws an answer's math without downloading a stylesheet for it", async () => {
+    const { api, lesson } = lessonWithTutor();
+
+    api.next("answer", () =>
+      Promise.resolve(tutorAnswerResponse("The speed is:\n\n$$\nv = \\sqrt{\\frac{GM}{r}}\n$$")),
+    );
+
+    playLesson({ lesson });
+    const sheet = await openTutor();
+    await ask(sheet, "How fast is an orbit?");
+
+    await expectMathVisible(sheet.getByRole("math"));
+
+    const stylesheets = performance
+      .getEntriesByType("resource")
+      .filter((entry) => /katex.*\.css/u.test(entry.name));
+
+    expect(stylesheets).toHaveLength(0);
+  });
+
+  it("draws a boxed result's box and a cancelled factor's stroke, in forced colors too", async () => {
+    const { api, lesson } = lessonWithTutor();
+
+    api.next("answer", () =>
+      Promise.resolve(
+        tutorAnswerResponse(
+          String.raw`So $$\frac{\cancel{2}x}{\cancel{\color{red}{2}}} = x$$, and $$\boxed{x = 5}$$.`,
+        ),
+      ),
+    );
+
+    playLesson({ lesson });
+    const sheet = await openTutor();
+    await ask(sheet, "Can you simplify it?");
+    await expectCount(sheet.getByRole("math"), 2);
+
+    /** Whether each enclosure looks different with its box or stroke made invisible. */
+    const drawn = async (notation: string) => {
+      const rows = [...sheet.element().querySelectorAll<HTMLElement>(`[notation~='${notation}']`)];
+
+      return rows.reduce<Promise<boolean[]>>(async (earlier, row) => {
+        const seen = await earlier;
+        const decorated = await page.screenshot({ element: row, save: false });
+        row.style.setProperty("border-color", "transparent", "important");
+        row.style.setProperty("background-image", "none", "important");
+        const bare = await page.screenshot({ element: row, save: false });
+        row.style.removeProperty("border-color");
+        row.style.removeProperty("background-image");
+        return [...seen, decorated !== bare];
+      }, Promise.resolve([]));
+    };
+
+    const struck = async () => {
+      const row = sheet.element().querySelector("[notation~='updiagonalstrike']:has([mathcolor])");
+      const redFactor = row?.querySelector("[mathcolor]");
+
+      return {
+        redFactorInTextColor:
+          row && redFactor
+            ? getComputedStyle(redFactor).color === getComputedStyle(row).color
+            : null,
+        strokes: await drawn("updiagonalstrike"),
+      };
+    };
+
+    await expect(drawn("box")).resolves.toStrictEqual([true]);
+
+    await expect(struck()).resolves.toStrictEqual({
+      redFactorInTextColor: false,
+      strokes: [true, true],
+    });
+
+    await expect(onDevice({ forcedColors: "active" }, struck)).resolves.toStrictEqual({
+      redFactorInTextColor: true,
+      strokes: [true, true],
+    });
+  });
+
+  it("gives Tab to a formula wider than the answer, and not to one that fits", async () => {
+    await atViewport(PHONE, async () => {
+      const { api, lesson } = lessonWithTutor();
+      const wide = String.raw`E = \frac{(6{,}63 \times 10^{-34}\ \text{J·s})(3{,}00 \times 10^{8}\ \text{m/s})}{7{,}00 \times 10^{-7}\ \text{m}} \approx 2{,}84 \times 10^{-19}\ \text{J} \approx 1{,}8\ \text{eV}`;
+
+      api.next("answer", () =>
+        Promise.resolve(tutorAnswerResponse(`$$\n${wide}\n$$\n\n$$\na + b = c\n$$`)),
+      );
+
+      playLesson({ lesson });
+      const sheet = await openTutor();
+      await ask(sheet, "How much energy does a photon carry?");
+      await expectCount(sheet.getByRole("math"), 2);
+
+      await expect
+        .poll(() => sheet.element().querySelectorAll("[data-slot='display-math'] > [tabindex]"))
+        .toHaveLength(1);
+    });
   });
 
   it("is done once it's saved, and what memory learned follows", async () => {

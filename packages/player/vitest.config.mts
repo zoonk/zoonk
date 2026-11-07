@@ -119,8 +119,9 @@ export default defineConfig({
     include: [
       "@streamdown/math",
       "@streamdown/mermaid",
+      "@zoonk/learn > katex",
       "@zoonk/ui > @base-ui/react/alert-dialog",
-      "katex",
+      "rehype-katex",
       "streamdown",
     ],
   },

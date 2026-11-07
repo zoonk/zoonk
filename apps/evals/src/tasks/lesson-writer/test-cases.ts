@@ -11,7 +11,7 @@ import { EXPLORE_LESSON_SPECS } from "./explore-lesson-specs";
 import { LESSON_SPECS } from "./lesson-specs";
 import { MATERIAL_LESSON_SPEC } from "./material-lesson-spec";
 import { NOVICE_LESSON_SPECS } from "./novice-lesson-specs";
-import { SCIENTIFIC_NOTATION_SPEC } from "./number-lesson-spec";
+import { RECORDED_POWERS_OF_TEN_SPEC, SCIENTIFIC_NOTATION_SPEC } from "./number-lesson-spec";
 import { SETUP_LESSON_SPEC } from "./setup-lesson-spec";
 import { SOURCED_LESSONS } from "./sourced-lesson-specs";
 import { VISUAL_LESSON_SPECS } from "./visual-lesson-specs";
@@ -716,6 +716,23 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       language: "pt",
       level: "intermediate",
       spec: SCIENTIFIC_NOTATION_SPEC,
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for beginners
+      - Every power of ten in a sentence, option or reason is math between dollar signs, such as $10^{3}$, never a caret or braces shown as text, as in 10^3 or 10^{-1}
+      - Worked examples and checks have the planned numbers and exponents right: multiplying multiplies the front numbers and adds the exponents, dividing divides them and subtracts the divisor's exponent
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-potencias-de-dez-math-in-dollars",
+    userInput: toInput({
+      chapterTitle: "Potências e notação científica",
+      courseTitle: "Física quântica do zero",
+      language: "pt",
+      level: "beginner",
+      spec: RECORDED_POWERS_OF_TEN_SPEC,
     }),
   },
   {

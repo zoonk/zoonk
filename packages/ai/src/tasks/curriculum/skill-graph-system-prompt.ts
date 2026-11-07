@@ -1,5 +1,5 @@
 import { selectPromptVariants } from "../_utils/prompt-variants";
-import { type SkillGraphParams } from "./skill-graph";
+import { type SkillGraphParams } from "./skill-graph-calls";
 import template from "./skill-graph.prompt.md";
 
 type SubjectStartParams = Pick<
@@ -26,12 +26,13 @@ export function buildSkillGraphSystemPrompt({
   goalKind,
   hasMaterial = false,
   lessonBudget,
+  librarySkills = false,
   ownLevel,
   product,
   purpose,
 }: Pick<
   SkillGraphParams,
-  "goalKind" | "hasMaterial" | "lessonBudget" | "ownLevel" | "product" | "purpose"
+  "goalKind" | "hasMaterial" | "lessonBudget" | "librarySkills" | "ownLevel" | "product" | "purpose"
 >): string {
   return selectPromptVariants({
     template,
@@ -40,6 +41,7 @@ export function buildSkillGraphSystemPrompt({
       exam: goalKind === "exam",
       language: goalKind === "language",
       learn: goalKind === "learn",
+      librarySkills: goalKind === "exam" && librarySkills,
       material: hasMaterial,
       product: Boolean(product),
       subjectStart: startsWithSubject({ goalKind, hasMaterial, ownLevel, purpose }),

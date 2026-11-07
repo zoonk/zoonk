@@ -84,7 +84,7 @@ describe(findSkillGraphProblems, () => {
     ).toStrictEqual(["offNoticeFirst"]);
   });
 
-  it("finds skills whose names say the same thing in other words' order or articles", () => {
+  it("finds skills whose names differ only in articles", () => {
     expect(
       codes([
         skill({ key: "a", name: "Calcular juros compostos", topics: ["1 Juros"] }),
@@ -97,6 +97,24 @@ describe(findSkillGraphProblems, () => {
         skill({ key: "d", name: "Avaliar negócios jurídicos e prazos", topics: ["2 Negócios"] }),
       ]),
     ).toStrictEqual(["nearDuplicate"]);
+  });
+
+  it("keeps inverse actions and distinct Library identities separate", () => {
+    expect(
+      codes([
+        skill({ key: "forward", name: "Converter frações em decimais" }),
+        skill({ key: "reverse", name: "Converter decimais em frações" }),
+        skill({ key: "library-a", libraryId: "a", name: "Converter frações em decimais" }),
+        skill({ key: "library-b", libraryId: "b", name: "Converter frações em decimais" }),
+      ]),
+    ).not.toContain("nearDuplicate");
+
+    expect(
+      codes([
+        skill({ key: "a", libraryId: "shared", name: "Original name" }),
+        skill({ key: "b", libraryId: "shared", name: "Another name" }),
+      ]),
+    ).toContain("nearDuplicate");
   });
 
   it("finds em dashes, placeholders and Markdown in what learners read", () => {
@@ -177,13 +195,17 @@ describe(findSkillGraphProblems, () => {
 });
 
 describe(toSkillNameKey, () => {
-  it("keys a name by its words, without articles, prepositions, case, accents or order", () => {
+  it("keys a name by ordered words, without articles, prepositions, case or accents", () => {
     expect(toSkillNameKey("Calcular os Juros Compostos.")).toBe(
       toSkillNameKey("calcular juros compostos"),
     );
 
     expect(toSkillNameKey("Calcular juros simples")).not.toBe(
       toSkillNameKey("Calcular juros compostos"),
+    );
+
+    expect(toSkillNameKey("Converter frações em decimais")).not.toBe(
+      toSkillNameKey("Converter decimais em frações"),
     );
   });
 });

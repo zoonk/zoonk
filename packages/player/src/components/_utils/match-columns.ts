@@ -15,6 +15,20 @@ export function buildRightMatchItems(labels: string[]): MatchItemData[] {
   return labels.map((label, index) => ({ id: `right:${index}`, label, side: "right" }));
 }
 
+export function buildSolvedMatchBoard(pairs: Pair[]): {
+  matches: MatchAttempt[];
+  rightItems: MatchItemData[];
+} {
+  return {
+    matches: pairs.map((pair, index) => ({
+      leftId: `left:${index}`,
+      pair,
+      rightId: `right:${index}`,
+    })),
+    rightItems: buildRightMatchItems(pairs.map((pair) => pair.right)),
+  };
+}
+
 function getAttemptItemId({ attempt, side }: { attempt: MatchAttempt; side: MatchSide }): string {
   return side === "left" ? attempt.leftId : attempt.rightId;
 }

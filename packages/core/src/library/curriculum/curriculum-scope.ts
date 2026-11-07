@@ -64,6 +64,32 @@ export type CourseBandNeed = {
   withToolChapters?: boolean;
 };
 
+/** `skillAreas`: an exam goal's subject for each skill of its plan graph, options included. */
+export type CourseOutlineNeed = {
+  bands: CourseBandNeed[];
+  courseId: string;
+  scope: CurriculumScope;
+  skillAreas?: Record<string, string>;
+};
+
+export function toExamSkillAreas({
+  scope,
+  skills,
+}: {
+  scope: Pick<CurriculumScope, "exams">;
+  skills: readonly { area?: string | null; skillId: string }[];
+}): Pick<CourseOutlineNeed, "skillAreas"> {
+  if (!scope.exams?.length) {
+    return {};
+  }
+
+  return {
+    skillAreas: Object.fromEntries(
+      skills.flatMap((skill) => (skill.area ? [[skill.skillId, skill.area] as const] : [])),
+    ),
+  };
+}
+
 function uniqueBy<T>(values: readonly T[], getKey: (value: T) => string): T[] {
   return values.filter(
     (value, index) => values.findIndex((other) => getKey(other) === getKey(value)) === index,

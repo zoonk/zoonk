@@ -11,7 +11,7 @@ type Coverage = Awaited<ReturnType<typeof checkCoverage>>["data"];
 
 type MissingSkill = Pick<
   Coverage["missing"][number],
-  "area" | "description" | "examWeight" | "name" | "prerequisites" | "topics"
+  "area" | "course" | "description" | "examWeight" | "name" | "prerequisites" | "topics"
 >;
 
 type GraphSkill = GoalSkillGraph["skills"][number];
@@ -132,11 +132,14 @@ function toGraphSkill({
   const neighbor = graph.skills[after] ?? graph.skills[after + 1];
   const phases = prerequisites.length > 0 ? prerequisites : [neighbor];
 
+  // A subject can combine disciplines, so the neighbor's course is only a fallback.
+  const named = graph.courses.find((course) => course.key === missing.course);
+
   return {
     after,
     skill: {
       area: missing.area ?? neighbor?.area ?? "",
-      course: neighbor?.course ?? graph.courses[0]?.key ?? "",
+      course: named?.key ?? neighbor?.course ?? graph.courses[0]?.key ?? "",
       description: missing.description,
       estimatedLessons: COVERAGE_SKILL_LESSONS,
       examWeight: missing.examWeight,

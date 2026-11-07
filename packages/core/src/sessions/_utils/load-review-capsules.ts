@@ -115,10 +115,7 @@ async function loadDueSkills({
     where: { due: { not: null }, reps: { gt: 0 }, skillId: { in: [...skillIds] }, userId },
   });
 
-  const candidates = rows.filter(
-    (row) =>
-      !againstExam || (row.due !== null && row.due < until) || !isReviewedSince(row, todayStart),
-  );
+  const candidates = rows.filter((row) => !isReviewedSince(row, todayStart));
 
   return selectDueReviews({
     candidates: candidates.map((row) => ({ memory: row, skillId: row.skillId })),

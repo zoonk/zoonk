@@ -1,5 +1,6 @@
 import { safeAsync } from "@zoonk/utils/error";
 import { type ExamOutline } from "../exam-outline";
+import { type LibrarySkill, applyLibraryReuse } from "./library-skills";
 import { type RawSkillGraph, type SkillGraph, normalizeSkillGraph } from "./normalize-skill-graph";
 import { type SkillGraphProblem, findSkillGraphProblems } from "./skill-graph-checks";
 import { getSectionCall, joinSections } from "./skill-graph-sections";
@@ -59,17 +60,22 @@ type SkillsCall = { output: { skills: RawSkillGraph["skills"] } };
 
 function joinDraft({
   frame,
+  library,
   params,
   written,
 }: {
   frame: GraphFrame;
+  library: readonly LibrarySkill[];
   params: DraftParams;
   written: readonly SkillsCall[];
 }): GraphDraft {
   const raw: RawSkillGraph = {
     courses: frame.courses,
     phases: frame.phases,
-    skills: joinSections(written.map((call) => call.output.skills)),
+    skills: applyLibraryReuse({
+      library,
+      skills: joinSections(written.map((call) => call.output.skills)),
+    }),
   };
 
   return normalizeDraft({ params, raw });
@@ -81,16 +87,18 @@ function joinDraft({
  */
 export async function redraftFlawedSections<TCall extends SkillsCall>({
   frame,
+  library = [],
   params,
   rewrite,
   written,
 }: {
   frame: GraphFrame;
+  library?: readonly LibrarySkill[];
   params: DraftParams;
   rewrite: (index: number) => Promise<TCall>;
   written: readonly TCall[];
 }): Promise<GraphDraft & { rewrites: TCall[] }> {
-  const first = joinDraft({ frame, params, written });
+  const first = joinDraft({ frame, library, params, written });
   const count = ({ data }: GraphDraft) => findRedraftProblems({ data, params }).length;
 
   const flawed = new Set(
@@ -109,7 +117,7 @@ export async function redraftFlawedSections<TCall extends SkillsCall>({
   const kept = rewrites.reduce(
     (best, { call, index }) => {
       const swapped = call ? best.written.with(index, call) : best.written;
-      const draft = joinDraft({ frame, params, written: swapped });
+      const draft = joinDraft({ frame, library, params, written: swapped });
 
       return count(draft) < count(best.draft) ? { draft, written: swapped } : best;
     },

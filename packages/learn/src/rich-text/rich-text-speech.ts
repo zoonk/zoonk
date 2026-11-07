@@ -1,7 +1,8 @@
+import { toOneLine } from "@zoonk/utils/math-spans";
 import { speakMath } from "./math-speech";
 import { type MathWords } from "./math-words";
 import { type RichInlineSegment } from "./rich-inline-segments";
-import { type RichBlock, parseRichBlocks, parseRichInline, toOneLine } from "./rich-text-parser";
+import { type RichBlock, parseRichBlocks, parseRichInline } from "./rich-text-parser";
 
 const ENDS_IN_PUNCTUATION = /\p{P}$/u;
 

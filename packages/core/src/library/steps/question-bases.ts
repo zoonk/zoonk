@@ -23,6 +23,23 @@ function toStoredText(text: string): string {
   return typeof stored === "string" ? stored : text.trim();
 }
 
+/** Whether one of a screen's texts holds the quote, both read as they're stored. */
+export function holdsQuote({ quote, texts }: { quote: string; texts: readonly string[] }): boolean {
+  const stored = toStoredText(quote);
+  return texts.some((text) => toStoredText(text).includes(stored));
+}
+
+/** The written fields `getReadingTexts` reads once the screen is converted. */
+export function getQuotableTexts(screen: WrittenScreen | undefined): string[] {
+  if (screen?.kind === "hookText" || screen?.kind === "explanation") {
+    return [screen.text];
+  }
+
+  return screen?.kind === "workedExample"
+    ? [screen.problem, ...screen.steps.map((step) => step.text), screen.result]
+    : [];
+}
+
 function getReadingTexts(screen: ConvertedScreen | undefined): string[] | null {
   if (!screen?.ok) {
     return null;
@@ -62,7 +79,7 @@ function getQuoteProblem({
     return `Its basis quote isn't one sentence of screen ${String(screen)}: "${quote}".`;
   }
 
-  return texts.some((text) => text.includes(quote))
+  return holdsQuote({ quote, texts })
     ? null
     : `Its basis quotes words screen ${String(screen)} doesn't have: "${quote}". Copy the sentence exactly as that screen says it.`;
 }

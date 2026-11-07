@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { getExamName } from "../exams/exam-name";
 import { hasStoredTimeRunOutAway } from "../exams/mocks/_utils/owned-mock";
 import { getWrongPenalty } from "../exams/scoring/mock-scoring";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
@@ -286,7 +287,7 @@ export async function getChallenge({
       dailyLimitReached,
       date: item.scheduledFor ? toIsoDate(item.scheduledFor) : null,
       estimatedMinutes: size.estimatedMinutes,
-      examName: isMock ? (goal.examBlueprint?.name ?? goal.title) : null,
+      examName: isMock ? getExamName({ blueprint: goal.examBlueprint, goal }) : null,
       fullLength: size.fullLength,
       goalId: goal.id,
       kind,

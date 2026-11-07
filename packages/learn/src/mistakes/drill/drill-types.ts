@@ -11,6 +11,26 @@ export function pressesCheck(sender: AnswerSender): boolean {
   return sender === "check" || sender === "timer";
 }
 
+export function isUnchangedAnswer<Answer>(answer: Answer, sent: Answer): boolean {
+  return JSON.stringify(answer) === JSON.stringify(sent);
+}
+
+/**
+ * An answer sent again unchanged after it failed to save keeps the time it first took: a timed
+ * drill grades that time, and the wait on the failure isn't the learner's.
+ */
+export function getSentDurationMs<Answer>({
+  answer,
+  failed,
+  measuredMs,
+}: {
+  answer: Answer;
+  failed: { answer: Answer; durationMs: number } | null;
+  measuredMs: number;
+}): number {
+  return failed && isUnchangedAnswer(answer, failed.answer) ? failed.durationMs : measuredMs;
+}
+
 function getDrillIdeas(drill: Drill | null): string[] {
   return drill?.kind === "reteach" ? (drill.lesson?.ideas ?? []) : [];
 }

@@ -3,6 +3,8 @@
 {
   "goalcontent_adjust_plan": "db6013bb3d3cf8fe22e249938e6911ae04887ebe70330079deb93cb899e3f7c6",
   "goalcontent_also": "f79e32f3dfc299363dc4eee5a64cc9c71bd5a23521792a16551d57597cad4365",
+  "goalcontent_also_in_exam_count": "766f7a1d63d1d796b324c05a74f318ed5caf031bbef95fb56698ce9f880c96c0",
+  "goalcontent_also_in_exams": "c9cbe500ed3aac58c109401763a07807c8162086585902f3c0e781df1f23a02a",
   "goalcontent_also_in_plan": "326abc1ff219d07b0003ccd3df649e638ed57bb1db08caeefff106a49d1737e0",
   "goalcontent_appears_a_lot": "4befbb131636e1e37eeec0b53f2383ed54b8eda972ad01e57a54408c054be1ec",
   "goalcontent_beyond_guide": "5db5fc713491616b8fba6ae2a9114b3251a18c84701fa1552247e685bd58c80c",
@@ -63,6 +65,9 @@
   "goalcontent_save_failed": "b25c8c814a3de421ba9977fe6987ffca4f09e7828338cedac07a13dc09ca0296",
   "goalcontent_see_all": "fcf6c3a689cb37f024fa71121d339c7a5d6a574eaa42090fe4db168e5cca1ed4",
   "goalcontent_share_of_exam": "28f0a75bbcbda2f3dc51acc87c7dcd818868f4f198f0c6d006cf23f37909c414",
+  "goalcontent_shared_exams_counted": "9474b7f385e0e92336c60875015bc0b40f69972415069037b8a8f47ca6016b26",
+  "goalcontent_shared_exams_named": "f0f1f313d099a352069a052f19d3d3340f13d01e59c45b41aaba24802b30c0aa",
+  "goalcontent_shared_exams_practice": "ec8e48a6323e3d08a04c3f0fc7a99c751b26f4cfa6b74ff4ad06c567941adf51",
   "goalcontent_skill_count": "5c596e91f936dbe5f7c0cdd54d608ed25886bfe00095a5bf1f14b0e601375c02",
   "goalcontent_skill_learning": "9834caa29740a1c94245b57ba65277cbf95e8eb34373d5e35cae1ac5046ad9e9",
   "goalcontent_skill_mastered": "069b89048073495c97d63c3b76970c5f2f1aba5591a269069bc12f6f36253248",
@@ -164,6 +169,21 @@
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">%1$s（%2$s）では%3$sの比重が高いため、学習計画でもより多くの時間を割り当てています。配点の出典：%4$s。</string>
     <string name="goalcontent_course_weights_even">%1$s（%2$s）では、試験の各分野の比重は同じです。配点の出典：%3$s。</string>
+    <!-- On one exam's plan. %1$s names the learner's other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_named">
+        <item quantity="other">%1$sと共通するトピックは、一度学べばそれぞれの試験の学習状況に反映されます。</item>
+    </plurals>
+    <!-- On one exam's plan, when the learner has several other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_counted">
+        <item quantity="other">ほかの%d試験と共通するトピックは、一度学べばそれぞれの試験の学習状況に反映されます。</item>
+    </plurals>
+    <string name="goalcontent_shared_exams_practice">練習はそれぞれの試験の形式で行います。</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams named in %1$s also test. -->
+    <string name="goalcontent_also_in_exams">%1$sでも出題</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams also test. -->
+    <plurals name="goalcontent_also_in_exam_count">
+        <item quantity="other">ほかの%d試験でも出題</item>
+    </plurals>
     <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
     <string name="goalcontent_subject">科目</string>
     <!-- Eyebrow of a subject's page for a module of the learner's plan. -->

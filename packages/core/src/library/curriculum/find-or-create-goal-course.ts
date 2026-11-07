@@ -5,12 +5,44 @@ import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { getAvailableCourseSlug } from "../_utils/available-course-slug";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
-import { findCourseByTitle } from "../identity/kinds/course-identity";
+import { findCourseByTitle, getCourseIdentitySearch } from "../identity/kinds/course-identity";
 import { resolveLibraryIdentity } from "../identity/resolve-library-identity";
+import { writeSearchTerms } from "../identity/write-search-terms";
 import { type CurriculumAnalytics, type CurriculumScope } from "./curriculum-scope";
 
 type CourseScope = Pick<CurriculumScope, "language" | "ownerId" | "targetLanguage"> &
   Partial<Pick<CurriculumScope, "generalGoal">>;
+
+function toCourseRequest({ scope, title }: { scope: CourseScope; title: string }) {
+  return {
+    goal: scope.generalGoal,
+    kind: "course" as const,
+    language: scope.language,
+    ownerId: scope.ownerId,
+    targetLanguage: scope.targetLanguage,
+    title,
+  };
+}
+
+/** Search terms and the identity decision run in separate durable steps. */
+export async function writeGoalCourseSearchTerms({
+  analytics,
+  scope,
+  title,
+}: {
+  analytics?: CurriculumAnalytics;
+  scope: CourseScope;
+  title: string;
+}): Promise<string[]> {
+  const search = getCourseIdentitySearch(toCourseRequest({ scope, title }));
+
+  if (scope.ownerId || (await search.findExact())) {
+    return [];
+  }
+
+  const [terms = []] = await writeSearchTerms({ analytics, subjects: [search.aiSubject] });
+  return terms;
+}
 
 async function getCourseHome(ownerId: string | null) {
   if (ownerId) {
@@ -77,24 +109,20 @@ export async function findOrCreateGoalCourse({
   format,
   provenance,
   scope,
+  searchTerms,
   title,
 }: {
   analytics?: CurriculumAnalytics;
   format: CourseFormat;
   provenance: LibraryProvenance;
   scope: CourseScope;
+  searchTerms?: readonly string[];
   title: string;
 }): Promise<{ course: Course; created: boolean }> {
   const resolution = await resolveLibraryIdentity({
     analytics,
-    request: {
-      goal: scope.generalGoal,
-      kind: "course",
-      language: scope.language,
-      ownerId: scope.ownerId,
-      targetLanguage: scope.targetLanguage,
-      title,
-    },
+    request: toCourseRequest({ scope, title }),
+    searchTerms,
   });
 
   if (resolution.kind === "existing") {

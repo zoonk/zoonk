@@ -10,7 +10,6 @@ import { toChosenStructure } from "../../exams/choices/exam-choices";
 import { loadExamPicks } from "../../exams/choices/load-exam-choices";
 import { findNamedChoices } from "../../exams/choices/named-exam-choices";
 import { isWrittenSubject } from "../../exams/mocks/written-subject";
-import { loadCourseExam } from "../../goals/_utils/course-exam";
 import { findActiveGoalId, loadGoalViews } from "../../goals/_utils/goal-view";
 import { readCourseStart } from "../../goals/course-start-details";
 import { getDaySplit } from "../../goals/daily-budget";
@@ -138,21 +137,6 @@ function getNextSittingDays({
     : null;
 }
 
-async function findCourseExamDays({
-  goal,
-  today,
-}: {
-  goal: { kind: string; primaryCourseId: string | null };
-  today: string;
-}): Promise<OnboardingView["examDays"]> {
-  const exam =
-    goal.kind === "exam" && goal.primaryCourseId
-      ? await loadCourseExam(goal.primaryCourseId)
-      : null;
-
-  return exam ? getNextSittingDays({ edition: exam.blueprint.edition, today }) : null;
-}
-
 function getDateProblem({
   goalDate,
   noSitting,
@@ -229,16 +213,13 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
   );
 
-  const [profile, activeGoalId, goalIds, notice, courseExamDays, planReadiness] = await Promise.all(
-    [
-      findLearningProfileView(userId),
-      findActiveGoalId(userId),
-      findOnboardingGoalIds(goal),
-      findExamNotice({ details, goal, goalDate, today }),
-      findCourseExamDays({ goal, today }),
-      readPlanReadiness(goal.id),
-    ],
-  );
+  const [profile, activeGoalId, goalIds, notice, planReadiness] = await Promise.all([
+    findLearningProfileView(userId),
+    findActiveGoalId(userId),
+    findOnboardingGoalIds(goal),
+    findExamNotice({ details, goal, goalDate, today }),
+    readPlanReadiness(goal.id),
+  ]);
 
   const [earlierGoals, [view]] = await Promise.all([
     prisma.goal.count({ where: { id: { notIn: goalIds }, userId } }),
@@ -299,7 +280,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     onboarding: {
       dateProblem,
       examChoices: notice.choices,
-      examDays: courseExamDays ?? notice.examDays,
+      examDays: notice.examDays,
       examSubjects: notice.subjects,
       followUps: getFollowUpQuestions(details),
       generationId: goal.generationRunId,

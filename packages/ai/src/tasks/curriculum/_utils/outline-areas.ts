@@ -16,7 +16,9 @@ type SplitChapter = AreaChapter & {
 
 export type MixedAreaChapter = { areas: string[]; title: string };
 
-function toAreaByKey(skills: readonly OutlineAreaSkill[]): Map<string, string> {
+type AreaSkill = Pick<OutlineAreaSkill, "area" | "key">;
+
+function toAreaByKey(skills: readonly AreaSkill[]): Map<string, string> {
   return new Map(skills.flatMap((skill) => (skill.area ? [[skill.key, skill.area] as const] : [])));
 }
 
@@ -39,7 +41,7 @@ export function findMixedAreaChapters({
   skills,
 }: {
   chapters: readonly AreaChapter[];
-  skills: readonly OutlineAreaSkill[];
+  skills: readonly AreaSkill[];
 }): MixedAreaChapter[] {
   const areaByKey = toAreaByKey(skills);
 

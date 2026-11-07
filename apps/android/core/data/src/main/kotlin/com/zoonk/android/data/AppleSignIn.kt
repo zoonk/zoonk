@@ -9,8 +9,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.security.MessageDigest
-import java.security.SecureRandom
-import java.util.Base64
 
 @Serializable
 data class PendingAppleSignIn(
@@ -50,13 +48,6 @@ internal fun AppleCallback.request(rawNonce: String): AppleSessionRequest? {
         null
     }
 }
-
-internal fun appleSecret(): String =
-    Base64.getUrlEncoder().withoutPadding().encodeToString(
-        ByteArray(32).also {
-            SecureRandom().nextBytes(it)
-        },
-    )
 
 internal fun appleAuthorizeUrl(
     clientId: String,

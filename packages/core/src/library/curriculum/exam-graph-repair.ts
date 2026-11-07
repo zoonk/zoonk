@@ -43,6 +43,7 @@ async function addCoverage({
 
   const coverage = await checkCoverage({
     analytics: { contentScope: "shared" },
+    courses: curriculum.graph.courses.map(({ key, title }) => ({ key, title })),
     examOutline: outline,
     goal: scope.generalGoal ?? blueprint.name,
     goalKind: "exam",

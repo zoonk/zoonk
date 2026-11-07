@@ -1,7 +1,7 @@
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
-import { expectCount } from "../_test-utils/activity-player";
+import { expectCount, expectSideBySide } from "../_test-utils/activity-player";
 import {
   acceptedAnswerCheck,
   buildAdapters,
@@ -270,6 +270,38 @@ describe("language lesson screens", () => {
 
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
+  });
+
+  it("puts each word beside its match once every pair is matched", async () => {
+    const pairs = [
+      { left: "Electron", right: "Negative charge" },
+      { left: "Proton", right: "Positive charge" },
+      { left: "Neutron", right: "No charge" },
+    ];
+
+    const step = languageStep("matchColumns", { pairs });
+    const shuffled = ["Positive charge", "No charge", "Negative charge"];
+
+    renderLessonPlayer({
+      lesson: buildLesson([
+        { ...step, exercise: { ...step.exercise, matchColumnsRightItems: shuffled } },
+      ]),
+    });
+
+    for (const { left, right } of pairs) {
+      // oxlint-disable-next-line no-await-in-loop -- A pair is matched by tapping its sides in turn.
+      await page.getByRole("button", { exact: true, name: left }).click();
+      // oxlint-disable-next-line no-await-in-loop -- A pair is matched by tapping its sides in turn.
+      await page.getByRole("button", { exact: true, name: right }).click();
+    }
+
+    for (const { left, right } of pairs) {
+      // oxlint-disable-next-line no-await-in-loop -- Each pair is checked once the board settles.
+      await expectSideBySide(
+        page.getByRole("button", { exact: true, name: left }),
+        page.getByRole("button", { exact: true, name: right }),
+      );
+    }
   });
 
   it("says a letter as it shows, with the same state on its own control and the bar's", async () => {

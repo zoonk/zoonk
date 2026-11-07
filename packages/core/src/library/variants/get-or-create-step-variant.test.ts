@@ -129,6 +129,19 @@ describe(getOrCreateStepVariant, () => {
     });
   });
 
+  it("saves a draft with LaTeX outside math once code puts it in math, without another model call", async () => {
+    const step = await createStep();
+    mockVariant({ ...version, text: "A glove is 7.02 × 10^{-5} m thick." });
+
+    const result = await getOrCreateStepVariant({ ...TOOL, stepId: step.id });
+
+    expect(result.status === "ready" && result.variant.content).toMatchObject({
+      text: "A glove is 7.02 × $10^{-5}$ m thick.",
+    });
+
+    expect(generateStepVariant).toHaveBeenCalledOnce();
+  });
+
   it("tries once more when a draft fails the checks, then gives up", async () => {
     const step = await createStep();
     const filler = { ...version, text: "It's important to note that 25% is a quarter." };

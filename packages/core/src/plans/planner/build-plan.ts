@@ -303,19 +303,22 @@ function planGoal({
     today: input.today,
   });
 
+  const { skillLessons, ...outline } = summarizePlan({
+    afterExam: afterExam?.span ?? null,
+    challengesLeftOut: listChallengesLeftOut({ dropped, items, taught }),
+    graph: input.graph,
+    items,
+    kept: phaseEnds,
+    queue: [...queue.filter((unit) => finishedKeys.has(unit.key)), ...unplaced],
+    scheduleStart: start,
+    windows: days.windows,
+  });
+
   return {
-    ...summarizePlan({
-      afterExam: afterExam?.span ?? null,
-      challengesLeftOut: listChallengesLeftOut({ dropped, items, taught }),
-      graph: input.graph,
-      items,
-      kept: phaseEnds,
-      queue: [...queue.filter((unit) => finishedKeys.has(unit.key)), ...unplaced],
-      scheduleStart: start,
-      windows: days.windows,
-    }),
+    ...outline,
+    skillLessons,
     ...listDroppedSkills(dropped),
-    endsBeforeLessons: listEndsBeforeLessons({ ends: phaseEnds, given, items, units: laidOut }),
+    endsBeforeLessons: listEndsBeforeLessons({ given, items, laidOut, phaseEnds, skillLessons }),
     items,
     keptKeys: new Set([...kept, ...setAside].map((item) => item.key)),
     ...listLessonDays(units, keptPortions),

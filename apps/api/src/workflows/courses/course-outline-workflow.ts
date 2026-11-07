@@ -1,6 +1,6 @@
 import {
   type CourseBandNeed,
-  type CurriculumScope,
+  type CourseOutlineNeed,
   joinLevelBands,
 } from "@zoonk/core/library/curriculum/scope";
 import { COURSE_OUTLINE_READY_STEP } from "@zoonk/core/library/generation/steps";
@@ -31,10 +31,7 @@ import {
   writeOutlineBandStep,
 } from "./steps/course-outline-steps";
 
-export type CourseOutlineInput = {
-  courseId: string;
-  bands: CourseBandNeed[];
-  scope: CurriculumScope;
+export type CourseOutlineInput = CourseOutlineNeed & {
   analytics?: ContentAnalytics;
   waitedSkillId?: string;
   background?: boolean;
@@ -171,6 +168,15 @@ async function writeClaimedBands({
     ]);
 
     throw error;
+  } finally {
+    await replanWaitingGoals({
+      context,
+      goalIds: [],
+      skillIds: bands.flatMap((plan) => [
+        ...plan.skills.map((skill) => skill.id),
+        ...plan.extensions.map(({ skill }) => skill.id),
+      ]),
+    });
   }
 }
 

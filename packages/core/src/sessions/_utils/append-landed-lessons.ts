@@ -2,7 +2,6 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { PlanConflictError } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
-import { AWAITING_OUTLINES_VERSION, loadDayPlanVersion } from "./day-plan-version";
 import { withSessionAppendLock } from "./extra-blocks";
 import { hasSameBlocks, planRestOfDay } from "./refresh-day-session";
 import { prepareSelectedPlanSave, saveSelectedPlan } from "./save-selected-plan";
@@ -17,51 +16,27 @@ export async function appendLandedLessons({
   timeZone,
   selection,
 }: Parameters<typeof planRestOfDay>[0]["day"] & {
-  selection?: SelectedDayPlan;
+  selection: SelectedDayPlan;
 }): Promise<StudySessionRow> {
-  if (
-    (!selection && session.planVersion !== AWAITING_OUTLINES_VERSION) ||
-    session.status === "completed"
-  ) {
+  if (session.status === "completed") {
     return session;
   }
 
-  const planVersion = await loadDayPlanVersion({
-    goal,
-    localDate: session.localDate,
-    plan: selection && { graph: selection.state.graph, version: selection.context.plan.version },
-  });
-
-  if (!selection && planVersion === AWAITING_OUTLINES_VERSION) {
-    return session;
-  }
-
-  const planned = await planRestOfDay({
+  const lessons = await planRestOfDay({
     day: { goal, session, timeZone },
     kept: session.blocks,
     selection,
   });
 
-  const lessons = selection ? planned : planned.filter((block) => block.kind === "learn");
+  const persistsPlan = selection.computed !== null || selection.inputKeyUpdate !== undefined;
+  const prepared = await prepareSelectedPlanSave({ selection, shown: persistsPlan });
 
-  const persistsPlan =
-    selection !== undefined &&
-    (selection.computed !== null || selection.inputKeyUpdate !== undefined);
-
-  const prepared = selection
-    ? await prepareSelectedPlanSave({ selection, shown: persistsPlan })
-    : null;
-
-  const savedVersion =
-    planVersion === null || planVersion === AWAITING_OUTLINES_VERSION
-      ? planVersion
-      : planVersion + Number(prepared?.kind === "computed");
+  const savedVersion = selection.context.plan.version + Number(prepared.kind === "computed");
 
   await withSessionAppendLock({
-    plan: selection && { id: selection.context.plan.id, write: persistsPlan },
+    plan: { id: selection.context.plan.id, write: persistsPlan },
     run: async ({ session: locked, transaction }) => {
       if (
-        selection &&
         !(await isSelectedPlanCurrent({
           increment: Number(persistsPlan),
           selection,
@@ -78,13 +53,11 @@ export async function appendLandedLessons({
         return;
       }
 
-      if (selection && prepared) {
-        await saveSelectedPlan({ context: selection.context, prepared, tx: transaction });
-      }
+      await saveSelectedPlan({ context: selection.context, prepared, tx: transaction });
 
-      const items = selection?.computed
+      const items = selection.computed
         ? await transaction.planItem.findMany({ where: { planId: selection.context.plan.id } })
-        : (selection?.context.items ?? []);
+        : selection.context.items;
 
       const ids = new Map(items.map((item) => [getItemKey(item), item.id]));
       const firstPosition = Math.max(-1, ...session.blocks.map((block) => block.position)) + 1;

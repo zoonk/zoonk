@@ -38,6 +38,7 @@ const examWeightsSchema = z.array(z.object({ examWeight: z.number(), key: z.stri
 const schema = z.object({
   missing: z.array(
     z.object({
+      course: z.string(),
       description: z.string(),
       name: z.string(),
       prerequisites: z.array(z.string()),
@@ -50,6 +51,7 @@ const examSchema = z.object({
   examWeights: examWeightsSchema,
   missing: z.array(
     z.object({
+      course: z.string(),
       description: z.string(),
       examWeight: z.number().nullable(),
       name: z.string(),
@@ -64,6 +66,7 @@ const noticeSchema = z.object({
   missing: z.array(
     z.object({
       area: z.string(),
+      course: z.string(),
       description: z.string(),
       examWeight: z.number().nullable(),
       name: z.string(),
@@ -79,6 +82,7 @@ type RawCoverage = {
   examWeights?: ExamWeightChange[];
   missing: {
     area?: string;
+    course: string;
     description: string;
     examWeight?: number | null;
     name: string;
@@ -102,6 +106,8 @@ export type CoverageCheckParams = {
   language: string;
   goal: string;
   goalKind: "exam" | "language" | "learn";
+  /** The graph's courses: a missing skill goes in the course of its own discipline. */
+  courses: { key: string; title: string }[];
   skills: CoverageSkill[];
   references: CoverageReference[];
   /**
@@ -196,6 +202,8 @@ function buildUserPrompt(params: CoverageCheckParams): string {
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
     VERB_FORM: ${getVerbForm(params.language)}
     GOAL_KIND: ${params.goalKind}
+    COURSES:
+${params.courses.map((course) => `- ${course.key}: ${course.title}`).join("\n")}
     SKILLS:
 ${params.skills.map((skill) => formatSkill({ outline, skill })).join("\n")}
 ${formatUncovered(params)}

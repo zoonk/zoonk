@@ -26,6 +26,7 @@
     "./permissions": "./src/permissions.ts",
     "./play-integrity-contract": "./src/play-integrity/play-integrity-contract.ts",
     "./profile-update": "./src/profile-update.ts",
+    "./restore-key-contract": "./src/restore-keys/restore-key-contract.ts",
     "./session-hint": "./src/session-hint.ts",
     "./username-rules": "./src/username-rules.ts",
     "./user-blobs": "./src/user-blobs.ts",
@@ -45,6 +46,7 @@
   "dependencies": {
     "@better-auth/prisma-adapter": "1.7.18",
     "@better-auth/stripe": "1.7.18",
+    "@simplewebauthn/server": "14.1.0",
     "@vercel/blob": "2.8.2",
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",

@@ -11,8 +11,10 @@ import {
   getBlockElapsedMs,
   lockStudyBlockClocks,
   pauseOtherStudyBlocks,
+  pausedBlockTiming,
 } from "./_utils/block-timing";
 import { captureSessionSnapshot } from "./_utils/capture-snapshot";
+import { oweStartedDaySettlements } from "./_utils/owe-started-day-settlements";
 import { trackSessionStarted } from "./_utils/session-events";
 import { recordSessionStart } from "./_utils/session-ledger";
 import { type SessionSnapshot } from "./_utils/session-snapshot";
@@ -21,6 +23,7 @@ import {
   type StudySessionRow,
   findOwnedStudyBlock,
 } from "./_utils/study-session-access";
+import { withoutReviewedSkills } from "./_utils/without-reviewed-skills";
 import { readBlockPayload } from "./block-payload";
 import { getStoredBlockWait } from "./block-wait";
 import { type StudyBlockStartInput } from "./contract";
@@ -92,6 +95,51 @@ async function openSession({
   return opened;
 }
 
+async function loadStartableBlock({
+  blockId,
+  now,
+  session,
+  timeZone,
+  tx,
+}: {
+  blockId: string;
+  now: Date;
+  session: StudySessionRow;
+  timeZone: string;
+  tx: TransactionClient;
+}) {
+  const saved = await tx.studySessionBlock.findUnique({ where: { id: blockId } });
+
+  if (!saved || saved.sessionId !== session.id) {
+    throw new StudyBlockStartUnchangedError({ status: "notFound" });
+  }
+
+  if (saved.status === "completed" || saved.status === "skipped") {
+    throw new StudyBlockStartUnchangedError({ status: "blockFinished" });
+  }
+
+  const current = await withoutReviewedSkills({ block: saved, now, session, timeZone, tx });
+
+  if (current !== saved) {
+    await tx.studySessionBlock.update({
+      data: {
+        payload: {
+          ...readBlockPayload(current),
+          ...(current.status === "skipped" && { timing: pausedBlockTiming({ block: saved, now }) }),
+        },
+        status: current.status,
+      },
+      where: { id: blockId },
+    });
+  }
+
+  if (current.status === "skipped") {
+    await oweStartedDaySettlements(tx, [current]);
+  }
+
+  return { block: current, changed: current !== saved };
+}
+
 /** Requires ownership; checks the daily limit before new work, fills checkpoint questions before starting, and owes the session's preparation. */
 export async function startStudyBlock({
   blockId,
@@ -150,14 +198,16 @@ export async function startStudyBlock({
 
       const lockedIds = await lockStudyBlockClocks({ blockId, tx, userId });
 
-      const current = await tx.studySessionBlock.findUnique({ where: { id: blockId } });
+      const { block: current, changed } = await loadStartableBlock({
+        blockId,
+        now,
+        session,
+        timeZone,
+        tx,
+      });
 
-      if (!current || current.sessionId !== sessionId) {
-        throw new StudyBlockStartUnchangedError({ status: "notFound" });
-      }
-
-      if (current.status === "completed" || current.status === "skipped") {
-        throw new StudyBlockStartUnchangedError({ status: "blockFinished" });
+      if (current.status === "skipped") {
+        return { status: "blockFinished" as const };
       }
 
       if (current.status === "pending" && limit?.reached) {
@@ -183,7 +233,7 @@ export async function startStudyBlock({
         throw new StudyBlockStartUnchangedError({ reason: wait, status: "earlierFirst" });
       }
 
-      if (locked.status === "active" && locked.startedAt && isRunningBlock(current)) {
+      if (!changed && locked.status === "active" && locked.startedAt && isRunningBlock(current)) {
         const { id, kind, lessonId, startedAt, status } = current;
 
         throw new StudyBlockStartUnchangedError({
@@ -249,6 +299,10 @@ export async function startStudyBlock({
   }
 
   const result = attempt.data;
+
+  if (result.status === "blockFinished") {
+    return result;
+  }
 
   if (result.opened) {
     trackSessionStarted(result.session);

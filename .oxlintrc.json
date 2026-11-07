@@ -203,7 +203,7 @@
       }
     },
     {
-      "files": ["**/seed/**", "**/seed.ts"],
+      "files": ["**/seed/**", "**/seed.ts", "**/seed-library.ts"],
       "rules": {
         "eslint/max-lines": "off",
         "eslint/max-statements": "off",

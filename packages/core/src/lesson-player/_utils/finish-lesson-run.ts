@@ -137,8 +137,6 @@ export async function finishLessonRun({
       userId,
     });
 
-    const languageGoals = await completeLessonPlanItems(tx, { lessonId, now: completedAt, userId });
-
     const brainPower = {
       after: Number(progress.totalBrainPower),
       before: Number(progress.totalBrainPower) - score.brainPower,
@@ -154,6 +152,8 @@ export async function finishLessonRun({
         timeZone,
         userId,
       }));
+
+    const languageGoals = await completeLessonPlanItems(tx, { lessonId, now: completedAt, userId });
 
     const explanationsFinished = await finishExplanations(tx, { lessonId, userId });
 

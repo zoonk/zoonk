@@ -108,7 +108,7 @@ export async function withDatabaseLock<Result>({
     await new Promise<void>((resolve, reject) => {
       const output: string[] = [];
       child.on("error", reject);
-      child.on("exit", () => reject(new Error(`Cannot lock worktree setup: ${errors.join("")}`)));
+      child.on("exit", () => reject(new Error(`Cannot lock the worktree: ${errors.join("")}`)));
 
       child.stdout.on("data", (chunk: Buffer) => {
         output.push(chunk.toString());
@@ -119,7 +119,7 @@ export async function withDatabaseLock<Result>({
       });
 
       child.stdin.write(
-        `SELECT pg_advisory_lock(hashtext(${sqlLiteral(`zoonk-worktree:${worktree}`)}));\n\\echo zoonk-lock-acquired\n`,
+        `SET lock_timeout = 0;\nSELECT pg_advisory_lock(hashtext(${sqlLiteral(`zoonk-worktree:${worktree}`)}));\n\\echo zoonk-lock-acquired\n`,
       );
     });
 

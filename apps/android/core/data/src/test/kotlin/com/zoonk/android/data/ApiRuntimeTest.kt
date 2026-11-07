@@ -45,7 +45,7 @@ class ApiRuntimeTest {
                 )
             for (guest in listOf(ana, null)) {
                 server.enqueue(json("""{"token":"new-token"}"""))
-                assertEquals("new-token", LiveSessionApi(api).apple(request, guest))
+                assertEquals("new-token", LiveSessionApi(api, integrity = null).apple(request, guest))
                 val sent = server.takeRequest()
                 assertEquals("POST", sent.method)
                 assertEquals("/v1/sessions/apple", sent.url.encodedPath)

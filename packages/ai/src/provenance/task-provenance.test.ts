@@ -1,11 +1,7 @@
 import { type LanguageModelUsage, type ProviderMetadata } from "ai";
 import { describe, expect, it } from "vitest";
-import {
-  type TaskProvenance,
-  buildTaskProvenance,
-  combineTaskProvenance,
-  sumLanguageModelUsage,
-} from "./task-provenance";
+import { combineTaskProvenance, sumLanguageModelUsage } from "./combine-task-provenance";
+import { type TaskProvenance, buildTaskProvenance } from "./task-provenance";
 
 const usage: LanguageModelUsage = {
   inputTokenDetails: { cacheReadTokens: 0, cacheWriteTokens: 0, noCacheTokens: 10 },

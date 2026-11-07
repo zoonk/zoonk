@@ -3,6 +3,7 @@ import { type WrittenVariant } from "@zoonk/ai/tasks/variants/step-variant";
 import { type CourseLevel, type StepKind } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { checkScreenText } from "../../quality/lesson-code-checks";
+import { repairScreenText } from "../../quality/lesson-repairs";
 import { safeParseStepContent } from "../../steps/contract/step-contract";
 import { toStepContent } from "../../steps/written-screens";
 
@@ -40,7 +41,7 @@ export function toVariantContent({
   stepKind: StepKind;
   written: WrittenVariant;
 }): { content: object; ok: true } | { ok: false; problems: string[] } {
-  const screen = toWrittenScreen(written);
+  const screen = repairScreenText(toWrittenScreen(written));
   const converted = toStepContent(screen, { allowImage: false, language });
 
   if (!converted.ok) {
