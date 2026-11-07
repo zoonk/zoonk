@@ -38,7 +38,7 @@ export function createBaseConfig(options: {
         ...getTestEnvironment("e2e"),
         ...getStopWithLauncherEnvironment({
           environment: process.env,
-          launcherPid: String(process.pid),
+          launcherPids: [process.pid],
         }),
         STRIPE_SECRET_KEY: "sk_test_fake",
         ...options.webServerEnv,
