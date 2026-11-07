@@ -3,6 +3,7 @@ import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { type DatabaseMode, ownDevelopmentDatabaseUrl } from "./environment.mts";
+import { readLibrarySource } from "./library-source.mts";
 import {
   postgresEnvironment,
   query,
@@ -48,12 +49,48 @@ function runDatabaseScript({
   });
 }
 
+export function databaseName({ url }: { url: URL }): string {
+  return decodeURIComponent(url.pathname.slice(1));
+}
+
+function urlEnvironment({ url }: { url: URL }): NodeJS.ProcessEnv {
+  return { ...process.env, DATABASE_URL: url.href, DATABASE_URL_UNPOOLED: url.href };
+}
+
+/** Kept on the database itself, so a copy or a rebuilt database starts without it. */
+const LIBRARY_SETTING = "zoonk.seed_library";
+
+function readWrittenLibrary({ url }: { url: URL }): Promise<string> {
+  return query({
+    source: url,
+    sql: `SELECT split_part(setting, '=', 2) FROM pg_db_role_setting, unnest(setconfig) AS setting
+      WHERE setdatabase = (SELECT oid FROM pg_database WHERE datname = ${sqlLiteral(databaseName({ url }))})
+      AND setrole = 0 AND setting LIKE '${LIBRARY_SETTING}=%'`,
+  });
+}
+
 /**
  * A migration can retire stored lessons, the seed's hand-written ones too, so a development
- * database that keeps its rows gets the seed's Library again after its migrations.
+ * database that keeps its rows gets the seed's Library again once the checkout's migrations or seed
+ * change.
  */
-function seedLibrary({ env, worktree }: { env: NodeJS.ProcessEnv; worktree: string }) {
-  return runDatabaseScript({ env, script: "src/prisma/seed-library.ts", worktree });
+async function updateLibrary({ url, worktree }: { url: URL; worktree: string }): Promise<void> {
+  const source = await readLibrarySource(worktree);
+
+  if ((await readWrittenLibrary({ url })) === source) {
+    return;
+  }
+
+  await runDatabaseScript({
+    env: urlEnvironment({ url }),
+    script: "src/prisma/seed-library.ts",
+    worktree,
+  });
+
+  await query({
+    source: url,
+    sql: `ALTER DATABASE "${databaseName({ url })}" SET ${LIBRARY_SETTING} = ${sqlLiteral(source)}`,
+  });
 }
 
 /**
@@ -62,34 +99,22 @@ function seedLibrary({ env, worktree }: { env: NodeJS.ProcessEnv; worktree: stri
  * lock.
  */
 export async function updateDevelopmentDatabase(worktree: string): Promise<void> {
-  const url = ownDevelopmentDatabaseUrl(worktree);
+  const own = ownDevelopmentDatabaseUrl(worktree);
 
-  if (!url) {
+  if (!own) {
     return;
   }
 
-  const env = { ...process.env, DATABASE_URL: url, DATABASE_URL_UNPOOLED: url };
+  const url = new URL(own);
 
   await withDatabaseLock({
     action: async () => {
-      await prisma({ args: ["migrate", "deploy"], env, worktree });
-      await seedLibrary({ env, worktree });
+      await prisma({ args: ["migrate", "deploy"], env: urlEnvironment({ url }), worktree });
+      await updateLibrary({ url, worktree });
     },
-    source: new URL(url),
+    source: url,
     worktree,
   });
-}
-
-export function databaseName(database: CheckoutDatabase): string {
-  return decodeURIComponent(database.url.pathname.slice(1));
-}
-
-function urlEnvironment(database: CheckoutDatabase): NodeJS.ProcessEnv {
-  return {
-    ...process.env,
-    DATABASE_URL: database.url.href,
-    DATABASE_URL_UNPOOLED: database.url.href,
-  };
 }
 
 /** Each database is managed on its own server; `source` names the primary checkout's database for cleanup. */
@@ -271,22 +296,20 @@ export function migrateDatabase({
 }
 
 /** Tests need only the regular seed; a new development database also gets core's Library courses and personas. */
-export function seedDatabase({
+export async function seedDatabase({
   database,
   worktree,
 }: {
   database: CheckoutDatabase;
   worktree: string;
-}): Promise<string> {
+}): Promise<void> {
   const env = urlEnvironment(database);
 
   if (database.mode !== "dev") {
-    return runDatabaseScript({ env, script: "src/prisma/seed.ts", worktree });
+    await runDatabaseScript({ env, script: "src/prisma/seed.ts", worktree });
+  } else if (database.seed) {
+    await prisma({ args: ["db", "seed"], env, worktree });
+  } else {
+    await updateLibrary({ url: database.url, worktree });
   }
-
-  if (database.seed) {
-    return prisma({ args: ["db", "seed"], env, worktree });
-  }
-
-  return seedLibrary({ env, worktree });
 }
