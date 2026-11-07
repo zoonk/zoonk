@@ -214,6 +214,7 @@ export async function checkGraphCoverageStep({
 
   const coverage = await checkCoverage({
     analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+    courses: graph.courses.map(({ key, title }) => ({ key, title })),
     examOutline: outline,
     goal: prompt.goal,
     goalKind: prompt.goalKind,

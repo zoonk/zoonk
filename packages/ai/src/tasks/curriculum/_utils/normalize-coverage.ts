@@ -8,6 +8,7 @@ export type CoverageReference = { title: string; text: string };
 
 type RawMissingSkill = {
   area: string;
+  course?: string;
   description: string;
   examWeight: number | null;
   name: string;
@@ -26,6 +27,8 @@ export type MissingSkill = {
   reference: string;
   area: string | null;
   topics: string[];
+  /** The model's course key, which the graph keeps only when it's one of the graph's courses. */
+  course?: string;
 };
 
 export type SkillPlacement = { area: string; key: string; topics: string[] };
@@ -130,6 +133,7 @@ export function normalizeCoverage({
     return [
       {
         ...toPlace({ outline, skill }),
+        ...(skill.course && { course: skill.course }),
         description: toPlainLine(skill.description),
         examWeight: exam ? toExamWeight(skill.examWeight) : null,
         name,

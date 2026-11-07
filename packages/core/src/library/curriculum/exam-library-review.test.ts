@@ -127,14 +127,31 @@ describe("shared exam Library review reproductions", () => {
     expect(graph.skills.flatMap((skill) => skill.topics)).toHaveLength(2);
 
     const covered = applyGraphCoverage({
-      coverage: { examWeights: [], missing: [], placements: [] },
+      coverage: {
+        examWeights: [],
+        missing: [
+          {
+            area,
+            course: "criminal",
+            description: "Reconhecer os crimes contra a fé pública em documentos.",
+            examWeight: 3,
+            name: "Identificar crimes de falsidade documental",
+            prerequisites: [],
+            reference: "Concurso",
+            syllabusLine: "1. Crimes de falsidade documental",
+            topics: ["1. Crimes de falsidade documental"],
+          },
+        ],
+        placements: [],
+      },
       graph,
       outline,
     });
 
     expect(
-      covered.graph.skills.find((skill) => skill.name === "1. Crimes de falsidade documental")
-        ?.course,
+      covered.graph.skills.find(
+        (skill) => skill.name === "Identificar crimes de falsidade documental",
+      )?.course,
     ).toBe("criminal");
   });
 
