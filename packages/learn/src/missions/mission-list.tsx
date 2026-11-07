@@ -4,6 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import {
   ListRow,
+  ListRowBody,
   ListRowButton,
   ListRowContent,
   ListRowDescription,
@@ -53,14 +54,16 @@ export function MissionListRow({
   const content = (
     <>
       <ListRowLeading className="w-3 justify-center">{mark}</ListRowLeading>
-      <ListRowContent>
-        <ListRowTitle className={cn(muted && "text-muted-foreground")}>
-          {name}
-          {stateLabel && <span className="sr-only">{stateLabel}</span>}
-        </ListRowTitle>
-        {detail && <ListRowDescription className="empty:hidden">{detail}</ListRowDescription>}
-      </ListRowContent>
-      {trailing && <ListRowTrailing>{trailing}</ListRowTrailing>}
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowTitle className={cn(muted && "text-muted-foreground")}>
+            {name}
+            {stateLabel && <span className="sr-only">{stateLabel}</span>}
+          </ListRowTitle>
+          {detail && <ListRowDescription className="empty:hidden">{detail}</ListRowDescription>}
+        </ListRowContent>
+        {trailing && <ListRowTrailing>{trailing}</ListRowTrailing>}
+      </ListRowBody>
     </>
   );
 
