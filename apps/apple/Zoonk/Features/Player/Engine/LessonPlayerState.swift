@@ -640,7 +640,14 @@ struct LessonPlayerState: Equatable, Sendable {
     hyperdriveStart = hyperdrive
     carriedStepIds = Set(runAnswers.filter { $0.answeredAt < startedAt }.map(\.stepId))
     skipSteps(optionalStepIds)
-    resume(from: (runAnswers + held).filter { steps[$0.stepId] != nil })
+
+    // The server records nothing on a screen after its right answer, so a held answer behind one
+    // never counts.
+    let answers = held.reduce(runAnswers) { all, answer in
+      all.contains { $0.stepId == answer.stepId && $0.isCorrect } ? all : all + [answer]
+    }
+
+    resume(from: answers.filter { steps[$0.stepId] != nil })
   }
 
   mutating func refuseRun(_ refusal: LessonRunRefusal) {

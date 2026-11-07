@@ -700,6 +700,19 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.currentAnswer, built)
   }
 
+  func testAHeldAnswerBehindTheRunsRightAnswerIsLeftOut() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    let miss = runAnswer("check", isCorrect: false)
+
+    state.startRun(
+      runId: "run", answers: [miss, runAnswer("check", isCorrect: true)], held: [miss])
+
+    XCTAssertEqual(state.currentStep?.id, "explanation-2")
+    XCTAssertEqual(state.queue, state.lessonOrder)
+    XCTAssertEqual(state.results["check"]?.isCorrect, true)
+    XCTAssertEqual(state.answers["check"], .check(optionId: "right"))
+  }
+
   func testARefusedFinishStartsOverOnlyTheScreensItIsMissing() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
     state.continueLesson()
