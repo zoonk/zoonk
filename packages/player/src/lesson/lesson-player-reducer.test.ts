@@ -244,6 +244,7 @@ describe(lessonPlayerReducer, () => {
 
     const back = lessonPlayerReducer(firstTry, { direction: "prev", type: "navigate" });
     expect(back.notice).toBeNull();
+    expect(getLessonScreen(back).segments).toStrictEqual(["current", "wrong"]);
 
     const again = lessonPlayerReducer(back, { type: "continue" });
 
@@ -837,6 +838,54 @@ describe(lessonPlayerReducer, () => {
     expect(done).toMatchObject({ completion: { status: "saving" }, phase: "completed" });
   });
 
+  it("fills the bar with what the run has while a finished lesson comes back to a screen it still needs", () => {
+    const steps = [
+      explanationStep("e1"),
+      checkStep("q1"),
+      explanationStep("e2"),
+      checkStep("q2"),
+      explanationStep("e3"),
+      checkStep("q3"),
+      summaryStep("sum"),
+    ];
+
+    const finished = play(steps, [
+      { type: "continue" },
+      ...answerCheck("q1", true),
+      { type: "continue" },
+      { type: "continue" },
+      ...answerCheck("q2", true),
+      { type: "continue" },
+      { type: "continue" },
+      ...answerCheck("q3", false),
+      { type: "continue" },
+      { type: "continue" },
+      ...answerCheck("q3", true),
+      { type: "continue" },
+    ]);
+
+    expect(finished.phase).toBe("completed");
+
+    const recovered = lessonPlayerReducer(finished, {
+      answers: [runAnswer("q1", true), runAnswer("q3", false)],
+      type: "runResynced",
+    });
+
+    expect(getCurrentStep(recovered)?.id).toBe("q2");
+
+    expect(getLessonScreen(recovered)).toMatchObject({
+      progress: { current: 6, total: 8 },
+      segments: ["read", "right", "read", "current", "read", "wrong", "read", "ahead"],
+    });
+
+    const retry = playOn(recovered, [...answerCheck("q2", true), { type: "continue" }]);
+
+    expect(getLessonScreen(retry)).toMatchObject({
+      progress: { current: 7, total: 8 },
+      segments: ["read", "right", "read", "right", "read", "wrong", "read", "current"],
+    });
+  });
+
   it('asks every question of "I know this" while a finished lesson comes back to a screen it still needs, and brings back what it missed', () => {
     const steps = [
       explanationStep("e1"),
@@ -871,6 +920,8 @@ describe(lessonPlayerReducer, () => {
       { direction: "prev", type: "navigate" },
       { type: "knowThis" },
     ]);
+
+    expect(getLessonScreen(quickCheck).segments).toStrictEqual(["current", "ahead"]);
 
     const second = playOn(quickCheck, [...answerCheck("q1", true), { type: "continue" }]);
 
@@ -1005,6 +1056,11 @@ describe(lessonPlayerReducer, () => {
     const resumed = play(steps, [runStarted({ answers: [typed, challenge], held: [] })]);
 
     expect(getCurrentStep(resumed)?.id).toBe("e1");
+
+    expect(getLessonScreen(resumed)).toMatchObject({
+      progress: { current: 2, total: 5 },
+      segments: ["current", "ahead", "ahead", "right", "right"],
+    });
 
     const atTyped = playOn(resumed, [
       { type: "continue" },

@@ -99,16 +99,20 @@ function isStillNeeded(state: LessonPlayerState, position: number): boolean {
 }
 
 /**
- * Once a finished lesson comes back incomplete, Continue goes only to what the run still needs,
+ * Once a finished lesson comes back incomplete, Continue stops only at what the run still needs,
  * except through "I know this", whose every check counts.
  */
-function getNextPosition(state: LessonPlayerState): number {
-  if (state.quickCheck || Object.keys(state.missing).length === 0) {
-    return state.position + 1;
-  }
+export function continueStopsAt(state: LessonPlayerState, position: number): boolean {
+  return (
+    state.quickCheck !== null ||
+    Object.keys(state.missing).length === 0 ||
+    isStillNeeded(state, position)
+  );
+}
 
+function getNextPosition(state: LessonPlayerState): number {
   const next = state.queue.findIndex(
-    (_, index) => index > state.position && isStillNeeded(state, index),
+    (_, index) => index > state.position && continueStopsAt(state, index),
   );
 
   return next === -1 ? state.queue.length : next;
