@@ -65,6 +65,11 @@ describe("a selected review that has no persisted ID yet", () => {
       await tx.planItem.deleteMany({
         where: { kind: "review", planId: fixture.plan.id, scheduledFor: TODAY },
       });
+
+      await tx.planItem.updateMany({
+        data: { completedAt: NOW, status: "done" },
+        where: { kind: "lesson", planId: fixture.plan.id, scheduledFor: { lt: TODAY } },
+      });
     });
 
     mockSession(user.id);

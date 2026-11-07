@@ -284,7 +284,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
   });
 
   it("opens the day a learner back from days away was shown, on the first Start", async () => {
-    vi.useRealTimers();
+    vi.setSystemTime(new Date("2026-11-06T15:00:00Z"));
     const { opened, shown } = await startReturningDay({ away: 7, day: 16, persona: "stocks" });
 
     expect(opened.session.blocks.map((block) => toDayBlockRef(block))).toStrictEqual(
