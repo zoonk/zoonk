@@ -98,12 +98,13 @@ internal fun ButtonContent(
         return
     }
 
+    // The words are weighted so they're measured after the icon's spot, wrapping instead of taking it.
     Row(Modifier.padding(padding), verticalAlignment = Alignment.CenterVertically) {
         leadingIcon?.let {
             IconSlot(busy, iconSize, it)
             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
         }
-        content()
+        Row(Modifier.weight(1f, fill = false), verticalAlignment = Alignment.CenterVertically, content = content)
         trailingIcon?.let {
             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
             IconSlot(busy, iconSize, it)

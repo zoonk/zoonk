@@ -5,14 +5,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
@@ -26,6 +30,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.DpRect
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.height
 import androidx.compose.ui.unit.size
@@ -117,6 +122,40 @@ class BusyTest {
         assertTrue(spinnerIn("Start session").right <= wordsOf("Start session").left)
         assertTrue(spinnerIn("Continue").left >= wordsOf("Continue").right)
         assertTrue(wordsOf("Show more").contains(spinnerIn("Show more")))
+
+        busy = false
+        compose.waitForIdle()
+    }
+
+    /** On a narrow phone at 200% font, German's long label gives the trailing spinner its spot, in either direction. */
+    @Test
+    @Config(qualifiers = "de-w320dp-h900dp-xhdpi", fontScale = 2f)
+    fun trailingSpinnerKeepsItsSpotBesideALongLabel() {
+        var busy by mutableStateOf(false)
+        compose.setContent {
+            ZoonkTheme {
+                Column {
+                    for (direction in LayoutDirection.entries) {
+                        CompositionLocalProvider(LocalLayoutDirection provides direction) {
+                            Button(
+                                onClick = {},
+                                modifier = Modifier.width(288.dp),
+                                busy = busy,
+                                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+                            ) {
+                                Text(stringResource(R.string.catalog_continue_plan))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        busy = true
+        compose.waitForIdle()
+
+        val widths = spinners().fetchSemanticsNodes().map { with(compose.density) { it.boundsInRoot.width.toDp() } }
+        assertEquals(listOf(ButtonDefaults.IconSize, ButtonDefaults.IconSize), widths)
 
         busy = false
         compose.waitForIdle()
