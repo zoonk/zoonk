@@ -227,6 +227,107 @@
           "officialDomains": []
         }
       }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "totvs.com"
+          ],
+          "docsUrl": [
+            "tdn.totvs.com"
+          ],
+          "productUrl": [
+            "totvs.com/sistema-de-gestao/totvs-backoffice-linha-protheus",
+            "produtos.totvs.com/produto/totvs-backoffice/totvs-backoffice-linha-protheus"
+          ],
+          "releasesUrl": [
+            "tdn.totvs.com"
+          ]
+        },
+        "id": "protheus-1",
+        "language": "pt",
+        "userInput": {
+          "hints": {
+            "brand": "TOTVS",
+            "name": "Protheus",
+            "release": null
+          },
+          "officialDomains": [
+            "totvs.com",
+            "tdn.totvs.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "totvs.com"
+          ],
+          "docsUrl": [
+            "tdn.totvs.com"
+          ],
+          "productUrl": [
+            "totvs.com/sistema-de-gestao/totvs-backoffice-linha-protheus",
+            "produtos.totvs.com/produto/totvs-backoffice/totvs-backoffice-linha-protheus"
+          ],
+          "releaseUrl": [
+            "tdn.totvs.com"
+          ],
+          "releasesUrl": [
+            "tdn.totvs.com"
+          ]
+        },
+        "id": "protheus-release-1",
+        "language": "pt",
+        "userInput": {
+          "hints": {
+            "brand": "TOTVS",
+            "name": "Protheus",
+            "release": "12.1.2410"
+          },
+          "officialDomains": [
+            "totvs.com",
+            "tdn.totvs.com"
+          ]
+        }
+      }
     }
   ],
   "taskId": "find-product-pages"

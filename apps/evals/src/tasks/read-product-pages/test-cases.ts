@@ -12,6 +12,13 @@ import {
   PAGBANK_MACHINES,
   VERCEL_HOME,
 } from "./page-fixtures";
+import {
+  PROTHEUS_DOCS,
+  PROTHEUS_LIFECYCLE,
+  PROTHEUS_PAGE,
+  PROTHEUS_RELEASE_STUB,
+  TOTVS_HOME,
+} from "./protheus-pages";
 import { type ReadProductPagesExpected, type ReadProductPagesInput } from "./task";
 
 const INJECTED_BLOG = {
@@ -86,6 +93,49 @@ export const TEST_CASES: TestCase<ReadProductPagesExpected, ReadProductPagesInpu
       hints: { brand: "PagBank", name: "Moderninha", release: "Moderninha Plus 2" },
       language: "pt",
       pages: [MODERNINHA_PLUS_2, PAGBANK_MACHINES, PAGBANK_HOME],
+    },
+  },
+  {
+    expected: {
+      brand: "TOTVS",
+      product: "Protheus",
+      releases: [
+        { name: "Protheus 12.1.2410", releasedOn: null },
+        { name: "Protheus 12.1.2310", releasedOn: null },
+        { name: "Protheus 12.1.2210", releasedOn: null },
+      ],
+    },
+    id: "protheus-lifecycle",
+    language: "pt",
+    userInput: {
+      hints: { brand: "TOTVS", name: "Protheus", release: null },
+      language: "pt",
+      pages: [TOTVS_HOME, PROTHEUS_PAGE, PROTHEUS_DOCS, PROTHEUS_LIFECYCLE],
+    },
+  },
+  {
+    expected: {
+      brand: "TOTVS",
+      learnerRelease: "Protheus 12.1.2410",
+      product: "Protheus",
+      releases: [{ name: "Protheus 12.1.2410", releasedOn: null }],
+    },
+    id: "protheus-learner-release",
+    language: "pt",
+    userInput: {
+      hints: { brand: "TOTVS", name: "Protheus", release: "12.1.2410" },
+      language: "pt",
+      pages: [TOTVS_HOME, PROTHEUS_PAGE, PROTHEUS_DOCS, PROTHEUS_LIFECYCLE, PROTHEUS_RELEASE_STUB],
+    },
+  },
+  {
+    expected: { brand: "TOTVS", product: "Protheus", releases: [] },
+    id: "protheus-releases-page-blocked",
+    language: "pt",
+    userInput: {
+      hints: { brand: "TOTVS", name: "Protheus", release: null },
+      language: "pt",
+      pages: [TOTVS_HOME, PROTHEUS_PAGE, PROTHEUS_DOCS],
     },
   },
   {

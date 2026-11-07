@@ -59,6 +59,41 @@ export const TEST_CASES: TestCase<FindProductPagesExpected, FindProductPagesPara
   },
   {
     expected: {
+      brandUrl: ["totvs.com"],
+      docsUrl: ["tdn.totvs.com"],
+      productUrl: [
+        "totvs.com/sistema-de-gestao/totvs-backoffice-linha-protheus",
+        "produtos.totvs.com/produto/totvs-backoffice/totvs-backoffice-linha-protheus",
+      ],
+      releasesUrl: ["tdn.totvs.com"],
+    },
+    id: "protheus",
+    language: "pt",
+    userInput: {
+      hints: { brand: "TOTVS", name: "Protheus", release: null },
+      officialDomains: ["totvs.com", "tdn.totvs.com"],
+    },
+  },
+  {
+    expected: {
+      brandUrl: ["totvs.com"],
+      docsUrl: ["tdn.totvs.com"],
+      productUrl: [
+        "totvs.com/sistema-de-gestao/totvs-backoffice-linha-protheus",
+        "produtos.totvs.com/produto/totvs-backoffice/totvs-backoffice-linha-protheus",
+      ],
+      releaseUrl: ["tdn.totvs.com"],
+      releasesUrl: ["tdn.totvs.com"],
+    },
+    id: "protheus-release",
+    language: "pt",
+    userInput: {
+      hints: { brand: "TOTVS", name: "Protheus", release: "12.1.2410" },
+      officialDomains: ["totvs.com", "tdn.totvs.com"],
+    },
+  },
+  {
+    expected: {
       brandUrl: null,
       docsUrl: null,
       productUrl: null,
