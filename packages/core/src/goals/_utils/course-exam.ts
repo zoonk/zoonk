@@ -49,14 +49,18 @@ async function findQuestionBankExam(course: Pick<Course, "format" | "id" | "lang
 
 /** Linked by its curriculum or question bank, never by its title. */
 export async function loadCourseExam(courseId: string) {
-  const stored = await prisma.examSkillGraph.findFirst({
+  const stored = await prisma.examSkillGraph.findMany({
     include: { examBlueprint: true },
-    orderBy: [{ updatedAt: "desc" }, { id: "asc" }],
+    take: 2,
     where: { examBlueprint: { ownerId: null, visibility: "public" }, primaryCourseId: courseId },
   });
 
-  if (stored) {
-    return { blueprint: stored.examBlueprint, graph: parsePlanGraph(stored.graph) };
+  const [primary] = stored;
+
+  if (stored.length > 0) {
+    return stored.length === 1 && primary
+      ? { blueprint: primary.examBlueprint, graph: parsePlanGraph(primary.graph) }
+      : null;
   }
 
   const course = await prisma.course.findFirst({
