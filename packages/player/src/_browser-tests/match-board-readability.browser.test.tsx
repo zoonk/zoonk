@@ -86,7 +86,7 @@ function unreadableWords(cards: readonly Element[]) {
           box.width;
 
         const isSplit = new Set(lines.map((line) => Math.round(line.top))).size > 1;
-        const fitsWhole = wholeWidth(node, word) <= textRoom + 0.5;
+        const fitsWhole = wholeWidth(node, word) < textRoom - 0.5;
 
         return (
           (isSplit && fitsWhole) ||
