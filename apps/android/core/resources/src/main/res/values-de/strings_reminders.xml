@@ -2,9 +2,8 @@
 <!-- eloqnt-fingerprints-v1
 {
   "reminders_cancel": "dfab330f2362178954a8d22eb7a0a93a55f2b61ca8d68aa018ae435abb9e8c22",
-  "reminders_channel_description": "b7a46becdc27579c498bb4cdbcce524dd3e42d578541c860c2ae579c2572cdc8",
+  "reminders_channel_description": "08756210e76b414a485ab7f0c1025ef30819e2a755717842c81944a0b803d5f5",
   "reminders_channel_name": "9c4729c07ea2ee7852fcbc42bf3ab2972a9d591962a9c426cacd415b173a40fe",
-  "reminders_description": "ea65d9913484819821438cff6070614efa41837ea62bf3c3f7ddcc1eaafa48fa",
   "reminders_email": "19e2fa2290e57911549159a7a18d6921b9e2f6d4778b3e8b15c0ccdcaf1ac652",
   "reminders_email_instead": "ac5df0ad3f573fa522fc291df708e6490155a77e9f82d0c08f19577c55196ad7",
   "reminders_email_needs_account": "186691bb58b65f10e33e64df4e83f0a8fdabd9b9b14604ca8dca930aef5f09d7",
@@ -22,35 +21,32 @@
   "reminders_push": "a5d2f5bf0a6d7df325007a39410f9e85c6d2b7fddaac9535521c0d21850af6b0",
   "reminders_quiet": "0bf48d35ead5dc99894d5a88477448809c3a7e41713aeffcf9eada54c5793349",
   "reminders_remind_me": "3a4e999eab849652ba4e990d56dc492369cd9bbe70a96ee618a4eb57ebabe7fa",
-  "reminders_row": "4a734380e8fcd8df41c933d98319751492f33e1294eab6f28e63e125bef12a80",
   "reminders_save": "037f893322600786ef0b87f08a4ca2f69da6b71b2228fa482b23f6757f7f7eb6",
   "reminders_save_failed": "f7d78cd51e472948c9a8dace4686d75ffa87160ac7005c91f6ec42c50b4130a5",
   "reminders_study_days": "c9e78ed5aab5650d0f92248de99086fb8bbe3e50e7134c2489c306837d8f8aca",
   "reminders_this_device": "311658f314c1dc368fbe8daf17e135b500d909aa8a4bba864ef7cf9912b93e72",
   "reminders_time": "159ac45b15ca3b495d7bc65c1c73b0eb650e73c3ec5596227e0fed29b8aeb747",
-  "reminders_time_in_zone": "c02b67e5e70afb497afb3fe8cf3680165734b691f95658640203773d8680b76f",
   "reminders_time_title": "bc37c431c9f756da5b57a3bcac15185ad0e883ae20e5830d72c6a96d4d4bd326",
   "reminders_title": "ee6b519edb48eee90919683af4fe169ea27ae0694e3ecc041433a6b0787d3ec3",
-  "reminders_turn_on_failed": "a9d508be6edc6019fee79862a8c3c34f5c70bb253e5644855ba35f6015ebea72",
   "reminders_use_this_device": "7f617ca130626aef991b11bccbf5e0a3d1f4cddc17ffcfffb91e3a4e2a0cd46c"
 }
 -->
 <resources>
     <!-- The name of the app's notification channel in Android's settings. -->
     <string name="reminders_channel_name">Lernerinnerungen</string>
-    <string name="reminders_channel_description">Eine Erinnerung pro Lerntag, wenn du noch etwas zu lernen hast.</string>
+    <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
+    <string name="reminders_channel_description">Eine Erinnerung an deinen Lerntagen, wenn du noch etwas zu lernen hast.</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">Möchtest du ans Lernen erinnert werden?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
     <string name="reminders_offer_body">Um %1$s an deinen Lerntagen, wenn du noch etwas zu lernen hast.</string>
     <string name="reminders_remind_me">Mich erinnern</string>
-    <!-- Declines the offer. Keep it neutral and ungendered, like "Not now" (Portuguese: "Agora não"). -->
+    <!-- Declines the offer, which isn't shown again. Portuguese: "Agora não" (ungendered). -->
     <string name="reminders_no_thanks">Jetzt nicht</string>
     <!-- After the learner said yes to reminders on the phone. -->
     <string name="reminders_on">Erinnerungen sind aktiviert.</string>
     <!-- After the learner chose email reminders instead. -->
     <string name="reminders_email_on">E-Mail-Erinnerungen sind aktiviert.</string>
-    <string name="reminders_turn_on_failed">Wir konnten die Erinnerungen nicht aktivieren. Versuch es noch einmal.</string>
     <!-- Android blocks Zoonk's notifications, so the phone can't show reminders. -->
     <string name="reminders_notifications_off">Benachrichtigungen für Zoonk sind deaktiviert.</string>
     <!-- Opens Android's notification settings for Zoonk. -->
@@ -62,19 +58,14 @@
     <string name="reminders_permission_body">Zoonk schickt dir an deinen Lerntagen nur dann eine Erinnerung, wenn du noch etwas zu lernen hast.</string>
     <string name="reminders_permission_continue">Weiter</string>
     <string name="reminders_not_now">Jetzt nicht</string>
-    <!-- The row that shows the reminder's time and opens a clock to change it, and that clock's title. -->
+    <!-- The title of the clock that changes the reminder's time. -->
     <string name="reminders_time_title">Uhrzeit der Erinnerung</string>
     <string name="reminders_save">Speichern</string>
     <string name="reminders_cancel">Abbrechen</string>
-    <!-- The row in Preferences that opens the reminders page. -->
-    <string name="reminders_row">Lernerinnerungen</string>
     <!-- The reminders page in Settings. -->
     <string name="reminders_title">Erinnerungen</string>
-    <string name="reminders_description">Eine Erinnerung pro Tag, nur wenn du noch etwas zu lernen hast.</string>
     <!-- The time of day a reminder goes out, not an amount of time. -->
     <string name="reminders_time">Uhrzeit</string>
-    <!-- %1$s is a time of day and %2$s its time zone, such as "7:00 PM, Brasilia Time". -->
-    <string name="reminders_time_in_zone">%1$s, %2$s</string>
     <string name="reminders_email">E-Mail</string>
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">Konto erstellen, um E-Mail-Erinnerungen zu erhalten</string>

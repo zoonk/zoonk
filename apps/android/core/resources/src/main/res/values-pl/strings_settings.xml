@@ -49,6 +49,7 @@
   "settings_profile": "3afd1a8cc01c5c640f39fce916586cde97065c9a1df61846e4d920dc57c3a78f",
   "settings_profile_description": "acfd1eb812ee4c631907ea4382533a7f2334f56a9dd133917b9d6b18fd2fcacd",
   "settings_profile_needs_account": "56d434f1c69a6347e7d0cd2b75e64e1d40762b001cfa2ac2945e66e90695d4b0",
+  "settings_reminders_off": "4eef9f0e38adca7e6cc4313c713072879ba61e2f4c088683b06a01d114226c53",
   "settings_save": "47114129d2d9f8f624ddf94e1fc5432d4d987387f1a5c176990819ef75764b3f",
   "settings_saved": "0dc1fc728a9b4a211638f519e56fab295c4756c812d7384bfe3c9b55069eece9",
   "settings_your_data": "e6be9168b51721e31a9c9b8a23d34573b0001d7af978f580dc51c35f541ced1a"
@@ -111,4 +112,6 @@
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
     <string name="settings_preferences_share_usage_data">Udostępniasz dane o korzystaniu z aplikacji</string>
     <string name="settings_preferences_share_usage_data_description">Pokazuje nam, jak korzystasz z Zoonka, żebyśmy mogli go ulepszać</string>
+    <!-- Beside "Reminders" in Settings when neither email nor push reminders are on. -->
+    <string name="settings_reminders_off">Wyłączone</string>
 </resources>

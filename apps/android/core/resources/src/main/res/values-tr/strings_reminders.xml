@@ -2,9 +2,8 @@
 <!-- eloqnt-fingerprints-v1
 {
   "reminders_cancel": "79f8def944e0e859ce42d770c81e5a83463cb8120676d08a8585050c0787d8ea",
-  "reminders_channel_description": "dd112391cec7fc9e12d9be02369a4fecdd8528a451c4b4fc155ae311c2aa240f",
+  "reminders_channel_description": "686f0ffb66498d09fe73f8017344ff887a47ee28b00a3ab7b7548c299efdc4ea",
   "reminders_channel_name": "6a17432697e217a52ac214cb4e078e4a4357c7463603ad99c4591b2e9889cb5d",
-  "reminders_description": "1cb70b5d1b23a6c52f3db2c19edc1aac1e066304ea06a4db057fbbd6629c5cf2",
   "reminders_email": "fe303b239b49cb0446ca505db6b9328b0f0c20e3f19498f7d405d3d05010c59f",
   "reminders_email_instead": "b72031fe6916709f11a07b043dcf95005fbbc541484d48e94e2e82123ba5c38b",
   "reminders_email_needs_account": "fcc99fe0add9f8a76ac2a6ce2919c9f3c3693d8d1a6679ec38ec1246190f55f4",
@@ -22,35 +21,32 @@
   "reminders_push": "886b3cc3da33430701bb671c6d6e5dcc1d80130512bb272f074f0995d26e4c6a",
   "reminders_quiet": "1edce3599192f8696082fcf378b5282d453f5ffff4e919874d0d23bfcd24be2f",
   "reminders_remind_me": "0afa86587f02b93d695daee48985484dcf4a57197a636f0ec400cf47d9526242",
-  "reminders_row": "3aef08e40e681c7c20aaba6eb4cefed0a525ada2edd749def214f26bdbd2cd77",
   "reminders_save": "9e604950a370a4c0faef4fe6b10ec17869b682d45306de18547127525a398ddf",
   "reminders_save_failed": "3f258696356444290a1b403aea58187994fa318a43d633ca38884866702e13ad",
   "reminders_study_days": "4b5196df137c96ac14c378af611b4bf02101258949fbdc464a0f328b387ee148",
   "reminders_this_device": "d87fff155b56ba9d059aa0e4f32e2f401989ddccef1ab44a38458fea7e596f00",
   "reminders_time": "11972025c5144c6104076ec4845cc60dd849ce2f29f719122be2470ad7d33650",
-  "reminders_time_in_zone": "b160ee1ee7bdc6ce1a8532d7e927ed7728d8232651bd89564c7da3c28438ccbf",
   "reminders_time_title": "2aad43010734d81afe0f962d63f10802a9e5dd1a0db5e855ad271b640a4a6301",
   "reminders_title": "98df000ca3d6aee547bbb2d40ca1a516ae12e4d8f3b0af59d0c83bb71af42f9b",
-  "reminders_turn_on_failed": "0bdbd752d64e0d850188d91338db9db0c4f8cbb2eb1ae723da87e2a143e289ed",
   "reminders_use_this_device": "b74a06dbd085cb3cc1b0f3e99b3afd0ea224599da950156918418f370bd1b06f"
 }
 -->
 <resources>
     <!-- The name of the app's notification channel in Android's settings. -->
     <string name="reminders_channel_name">Çalışma hatırlatmaları</string>
-    <string name="reminders_channel_description">Çalışma günlerinde, çalışman kaldıysa bir hatırlatma.</string>
+    <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
+    <string name="reminders_channel_description">Çalışma günlerinde, o günkü çalışman bitmediyse bir hatırlatma.</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">Çalışma hatırlatması ister misin?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
     <string name="reminders_offer_body">Çalışma günlerinde, çalışman kaldıysa saat %1$s.</string>
     <string name="reminders_remind_me">Bana hatırlat</string>
-    <!-- Declines the offer. Keep it neutral and ungendered, like "Not now" (Portuguese: "Agora não"). -->
+    <!-- Declines the offer, which isn't shown again. Portuguese: "Agora não" (ungendered). -->
     <string name="reminders_no_thanks">Şimdi değil</string>
     <!-- After the learner said yes to reminders on the phone. -->
     <string name="reminders_on">Hatırlatmalar açık.</string>
     <!-- After the learner chose email reminders instead. -->
     <string name="reminders_email_on">E-posta hatırlatmaları açık.</string>
-    <string name="reminders_turn_on_failed">Hatırlatmaları açamadık. Tekrar dene.</string>
     <!-- Android blocks Zoonk's notifications, so the phone can't show reminders. -->
     <string name="reminders_notifications_off">Zoonk bildirimleri kapalı.</string>
     <!-- Opens Android's notification settings for Zoonk. -->
@@ -62,19 +58,14 @@
     <string name="reminders_permission_body">Zoonk çalışma günlerinde, yalnızca çalışman kaldıysa bir hatırlatma gönderir.</string>
     <string name="reminders_permission_continue">Devam et</string>
     <string name="reminders_not_now">Sonraya bırak</string>
-    <!-- The row that shows the reminder's time and opens a clock to change it, and that clock's title. -->
+    <!-- The title of the clock that changes the reminder's time. -->
     <string name="reminders_time_title">Hatırlatma saati</string>
     <string name="reminders_save">Kaydet</string>
     <string name="reminders_cancel">Vazgeç</string>
-    <!-- The row in Preferences that opens the reminders page. -->
-    <string name="reminders_row">Çalışma hatırlatmaları</string>
     <!-- The reminders page in Settings. -->
     <string name="reminders_title">Hatırlatmalar</string>
-    <string name="reminders_description">Günde bir hatırlatma, yalnızca çalışman kaldıysa.</string>
     <!-- The time of day a reminder goes out, not an amount of time. -->
     <string name="reminders_time">Saat</string>
-    <!-- %1$s is a time of day and %2$s its time zone, such as "7:00 PM, Brasilia Time". -->
-    <string name="reminders_time_in_zone">%1$s, %2$s</string>
     <string name="reminders_email">E-posta</string>
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">E-posta hatırlatmaları almak için hesap oluştur</string>

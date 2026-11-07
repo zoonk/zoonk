@@ -41,6 +41,7 @@ import com.zoonk.android.feature.reminders.openNotificationSettings
 import com.zoonk.android.feature.reminders.rememberCanShowReminders
 import com.zoonk.android.feature.reminders.rememberReminderPermission
 import com.zoonk.android.feature.reminders.reminderTime
+import com.zoonk.android.feature.reminders.reminderZone
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonSize
@@ -51,15 +52,11 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.TimeOfDayDialog
-import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.StudyReminder
 import kotlinx.coroutines.launch
-import java.time.DateTimeException
 import java.time.LocalTime
-import java.time.ZoneId
-import java.time.format.TextStyle
 
 /** A switch shows what it was flipped to while the change saves, and turns back if it doesn't. */
 class RemindersViewModel(
@@ -159,7 +156,7 @@ fun RemindersScreen(
             ) {
                 PageHeader(
                     stringResource(R.string.reminders_title),
-                    stringResource(R.string.reminders_description),
+                    stringResource(R.string.reminders_channel_description),
                     Modifier.padding(horizontal = LIST_ITEM_INSET),
                 )
 
@@ -196,7 +193,8 @@ private fun ReminderSettings(
     Column {
         ListRow(
             headline = { Text(stringResource(R.string.reminders_time)) },
-            supporting = { Text(stringResource(R.string.reminders_time_in_zone, time, zoneName(reminder.timeZone))) },
+            supporting = { Text(reminderZone(reminder.timeZone)) },
+            meta = { Text(time) },
             onClick = { picking = true },
         )
         ListDivider()
@@ -321,15 +319,5 @@ private fun PushRows(
                 }
             },
         )
-    }
-}
-
-@Composable
-private fun zoneName(timeZone: String): String {
-    val locale = currentLocale()
-    return try {
-        ZoneId.of(timeZone).getDisplayName(TextStyle.FULL, locale)
-    } catch (e: DateTimeException) {
-        timeZone
     }
 }

@@ -29,6 +29,7 @@ import com.zoonk.android.data.SignOutResult
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.AccountAvatar
+import com.zoonk.android.feature.reminders.reminderTime
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -43,10 +44,11 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.LearnerSummary
+import com.zoonk.api.models.StudyReminder
 import kotlinx.coroutines.launch
 
 /**
- * Main's settings hub: the account, then Preferences and Memory, then Subscription and Help, and
+ * Main's settings hub: the account, then Preferences, Reminders and Memory, then Subscription and Help, and
  * Log out. A guest is offered an account instead of logging out, which would lose their plan.
  */
 @Composable
@@ -57,6 +59,7 @@ fun SettingsScreen(
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val summary by app.learnerSummary.summary.collectShown()
     val memory by app.memory.memory.collectShown()
+    val reminder by app.reminders.reminder.collectShown()
     val signedIn = session as? SessionState.SignedIn
     val account = signedIn?.takeUnless { it.isGuest }?.account?.user
     val open = { route: AppRoute -> navigator.openSettingsPage(route) }
@@ -126,6 +129,12 @@ fun SettingsScreen(
                     ) { open(AppRoute.Preferences) }
                     ListDivider()
                     PageRow(
+                        title = stringResource(R.string.reminders_title),
+                        selected = navigator.currentRoute == AppRoute.Reminders,
+                        summary = reminder.value?.let { remindersSummary(it) },
+                    ) { open(AppRoute.Reminders) }
+                    ListDivider()
+                    PageRow(
                         title = stringResource(R.string.settings_memory),
                         selected = navigator.currentRoute == AppRoute.Memory,
                         count =
@@ -178,6 +187,11 @@ fun SettingsScreen(
     }
 }
 
+/** The time reminders go out, or that none are on. */
+@Composable
+private fun remindersSummary(reminder: StudyReminder): String =
+    if (reminder.email.on || reminder.push.on) reminderTime(reminder.time) else stringResource(R.string.settings_reminders_off)
+
 /** The buddy's name and the app's language, as main's hub sums up Preferences. */
 @Composable
 private fun preferencesSummary(summary: LearnerSummary?): String {
@@ -218,7 +232,15 @@ private fun PageRow(
 }
 
 private val SETTINGS_PAGES =
-    setOf(AppRoute.Profile, AppRoute.Preferences, AppRoute.Memory, AppRoute.Subscription, AppRoute.Help, AppRoute.Licenses)
+    setOf(
+        AppRoute.Profile,
+        AppRoute.Preferences,
+        AppRoute.Reminders,
+        AppRoute.Memory,
+        AppRoute.Subscription,
+        AppRoute.Help,
+        AppRoute.Licenses,
+    )
 
 /** Beside the hub, a page replaces the one shown, as main's settings tabs do, rather than stacking on it. */
 fun AppNavigator.openSettingsPage(route: AppRoute) {

@@ -49,6 +49,7 @@
   "settings_profile": "57965f55bf442a0f6d46d34423eba254b84f37f9dc3a219fd126589daeb52269",
   "settings_profile_description": "a32195282407b821650be9e064b5b5480ae9b13f8e640e583f4204bbb995b1fb",
   "settings_profile_needs_account": "008ae068b1b82688e2eb223be9bbaf821dee912ab104d23587d6eacc92f57ecd",
+  "settings_reminders_off": "9e42bcd5e114dde14174d098b9c6b73310fa49bfdb2cc67e4eb82a36f6d2aee9",
   "settings_save": "35b8be4801431ac07ee5fa6ec224525c029e447a0affba8c8799168d4dbf9b4c",
   "settings_saved": "b3b251b90045eb9523310ff6fef29ac210104486299e278809b35317696b41ee",
   "settings_your_data": "14310c75319104f6ba78b3d9a0b93ae550d193408eed01a422954cb4020eadd7"
@@ -111,4 +112,6 @@
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
     <string name="settings_preferences_share_usage_data">Kullanım verilerini paylaş</string>
     <string name="settings_preferences_share_usage_data_description">Zoonk’u nasıl kullandığını gösterir, böylece onu geliştirebiliriz</string>
+    <!-- Beside "Reminders" in Settings when neither email nor push reminders are on. -->
+    <string name="settings_reminders_off">Kapalı</string>
 </resources>

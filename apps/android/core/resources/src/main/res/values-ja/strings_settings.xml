@@ -49,6 +49,7 @@
   "settings_profile": "4171c5a7113475bbac170fc53db85122d4b31a7ea4be88a5bd441f71a7fbc7cc",
   "settings_profile_description": "506669db88e9a7e0bbee4311441160276485af36d94827582bb7ecae6ee5eaa9",
   "settings_profile_needs_account": "d70968acc3fa587fc5afccc7fbe1ef3f6c6c02d7345d5a001326e12cb1c2c1d4",
+  "settings_reminders_off": "716a7543c539485c3ccb5af5623ad4339a55d21db72050cdc018037e3c4f79d9",
   "settings_save": "63c19854d80193c0d23d113c064f4c9c484bc396e241eeb93bf7532302d17722",
   "settings_saved": "ec79e4298ac4a376125f4fdc3b9913f630f777a3fec4c34ceb91eb7806bfa4c3",
   "settings_your_data": "87508afc0f81a6964119886dbed36ea867da23e56e2bd9fd74034a35b9546444"
@@ -111,4 +112,6 @@
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
     <string name="settings_preferences_share_usage_data">利用状況データを送信する</string>
     <string name="settings_preferences_share_usage_data_description">Zoonkの利用状況を把握し、改善に役立てます</string>
+    <!-- Beside "Reminders" in Settings when neither email nor push reminders are on. -->
+    <string name="settings_reminders_off">オフ</string>
 </resources>

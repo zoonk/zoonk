@@ -42,7 +42,7 @@ import com.zoonk.android.feature.reminders.openNotificationSettings
 import com.zoonk.android.feature.reminders.rememberCanShowReminders
 import com.zoonk.android.feature.reminders.rememberReminderPermission
 import com.zoonk.android.feature.reminders.reminderTime
-import com.zoonk.android.ui.components.Button
+import com.zoonk.android.feature.reminders.reminderZone
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
@@ -165,21 +165,21 @@ fun ReminderOfferCard(
         Column(Modifier.padding(vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             when (viewModel.step) {
                 OfferStep.Claiming -> {
-                    OfferWords(time)
+                    OfferWords(stringResource(R.string.reminders_offer_title), time)
                 }
 
                 OfferStep.Asking -> {
-                    OfferWords(time)
+                    OfferWords(stringResource(R.string.reminders_offer_title), time)
                     ListRow(
-                        headline = { Text(stringResource(R.string.reminders_time_title)) },
-                        leading = { Icon(painterResource(R.drawable.ic_schedule), contentDescription = null) },
+                        headline = { Text(stringResource(R.string.reminders_time)) },
+                        supporting = { Text(reminderZone(offer.timeZone)) },
                         meta = { Text(time) },
                         onClick = { picking = true },
                         enabled = !viewModel.saving,
                     )
                     Failure(viewModel.failed)
                     OfferActions {
-                        Button(
+                        OutlinedButton(
                             onClick = {
                                 viewModel.asked()
                                 ask()
@@ -209,11 +209,11 @@ fun ReminderOfferCard(
                 }
 
                 OfferStep.PushOn -> {
-                    OfferNote(R.drawable.ic_check_circle, stringResource(R.string.reminders_on))
+                    OfferWords(stringResource(R.string.reminders_on), time, announced = true)
                 }
 
                 OfferStep.EmailOn -> {
-                    OfferNote(R.drawable.ic_check_circle, stringResource(R.string.reminders_email_on))
+                    OfferWords(stringResource(R.string.reminders_email_on), time, announced = true)
                 }
 
                 OfferStep.Gone -> {}
@@ -233,11 +233,21 @@ fun ReminderOfferCard(
     }
 }
 
+/** The offer's question, or once answered what's on, over the promise it keeps at [time]. */
 @Composable
-private fun OfferWords(time: String) {
-    Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+private fun OfferWords(
+    title: String,
+    time: String,
+    announced: Boolean = false,
+) {
+    Column(
+        Modifier
+            .padding(horizontal = LIST_ITEM_INSET)
+            .semantics { if (announced) liveRegion = LiveRegionMode.Polite },
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
         Text(
-            stringResource(R.string.reminders_offer_title),
+            title,
             Modifier.semantics { heading() },
             style = MaterialTheme.typography.titleMedium,
         )
@@ -269,7 +279,7 @@ private fun OfferNote(
 private fun Failure(failed: Boolean) {
     if (!failed) return
     Text(
-        stringResource(R.string.reminders_turn_on_failed),
+        stringResource(R.string.reminders_save_failed),
         Modifier
             .padding(horizontal = LIST_ITEM_INSET)
             .semantics { liveRegion = LiveRegionMode.Polite },

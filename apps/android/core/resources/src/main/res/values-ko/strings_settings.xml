@@ -49,6 +49,7 @@
   "settings_profile": "9f86008b362735deb20b4e79433277e4dad9771d65a6b3fd2b2a87c087232375",
   "settings_profile_description": "240cd86299ddd706add3ffd50a7a43fee81e3796b70ff3776265070e51fb7c96",
   "settings_profile_needs_account": "8f3f37a96cdeb079d947e162eddc009e098a4a3434d48159c73f74408e026aac",
+  "settings_reminders_off": "002bef0605e337f6826033af7c6fad5903e39fb302b217a894c12fa8cecf2fd7",
   "settings_save": "2c82e47d87bd48a981a2363944192cefd4a54300361627e9bef32cedbb9c5fee",
   "settings_saved": "edbdfa4668dd17b7ee7bb0f6723d9f78dc6ab1bf73ead0bc9364eee7ea76d72d",
   "settings_your_data": "6a5b45b67c2eb44d2587e7f3e35387c502a487bc883140421d616a27d1d9ad66"
@@ -111,4 +112,6 @@
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
     <string name="settings_preferences_share_usage_data">앱 사용 데이터 제공</string>
     <string name="settings_preferences_share_usage_data_description">Zoonk를 어떻게 사용하는지 알려 주고 서비스 개선에 도움이 돼요</string>
+    <!-- Beside "Reminders" in Settings when neither email nor push reminders are on. -->
+    <string name="settings_reminders_off">꺼짐</string>
 </resources>

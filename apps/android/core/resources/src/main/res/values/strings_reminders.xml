@@ -2,19 +2,19 @@
 <resources>
     <!-- The name of the app's notification channel in Android's settings. -->
     <string name="reminders_channel_name">Study reminders</string>
+    <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
     <string name="reminders_channel_description">One reminder on your study days, when you still have learning left.</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">Want a study reminder?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
     <string name="reminders_offer_body">At %1$s on your study days, when you still have learning left.</string>
     <string name="reminders_remind_me">Remind me</string>
-    <!-- Declines the offer. Keep it neutral and ungendered, like "Not now" (Portuguese: "Agora não"). -->
+    <!-- Declines the offer, which isn't shown again. Portuguese: "Agora não" (ungendered). -->
     <string name="reminders_no_thanks">No thanks</string>
     <!-- After the learner said yes to reminders on the phone. -->
     <string name="reminders_on">Reminders are on.</string>
     <!-- After the learner chose email reminders instead. -->
     <string name="reminders_email_on">Email reminders are on.</string>
-    <string name="reminders_turn_on_failed">We couldn\'t turn on reminders. Try again.</string>
     <!-- Android blocks Zoonk's notifications, so the phone can't show reminders. -->
     <string name="reminders_notifications_off">Notifications are off for Zoonk.</string>
     <!-- Opens Android's notification settings for Zoonk. -->
@@ -26,19 +26,14 @@
     <string name="reminders_permission_body">Zoonk sends one reminder on your study days, only when you still have learning left.</string>
     <string name="reminders_permission_continue">Continue</string>
     <string name="reminders_not_now">Not now</string>
-    <!-- The row that shows the reminder's time and opens a clock to change it, and that clock's title. -->
+    <!-- The title of the clock that changes the reminder's time. -->
     <string name="reminders_time_title">Reminder time</string>
     <string name="reminders_save">Save</string>
     <string name="reminders_cancel">Cancel</string>
-    <!-- The row in Preferences that opens the reminders page. -->
-    <string name="reminders_row">Study reminders</string>
     <!-- The reminders page in Settings. -->
     <string name="reminders_title">Reminders</string>
-    <string name="reminders_description">One reminder a day, only when you still have learning left.</string>
     <!-- The time of day a reminder goes out, not an amount of time. -->
     <string name="reminders_time">Time</string>
-    <!-- %1$s is a time of day and %2$s its time zone, such as "7:00 PM, Brasilia Time". -->
-    <string name="reminders_time_in_zone">%1$s, %2$s</string>
     <string name="reminders_email">Email</string>
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">Create an account to get email reminders</string>

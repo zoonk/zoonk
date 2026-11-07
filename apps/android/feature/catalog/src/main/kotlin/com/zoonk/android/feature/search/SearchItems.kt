@@ -397,6 +397,13 @@ private fun settingsItems(isLoggedIn: Boolean): List<SearchItem> {
             keywords = keyword + " " + stringResource(R.string.search_appearance),
         ),
         SearchItem(
+            "reminders",
+            stringResource(R.string.reminders_title),
+            SearchAction.Open(AppRoute.Reminders),
+            R.drawable.ic_notifications,
+            keywords = keyword,
+        ),
+        SearchItem(
             "language",
             stringResource(R.string.search_language),
             SearchAction.Open(AppRoute.Preferences),
