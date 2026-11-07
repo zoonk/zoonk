@@ -17,7 +17,6 @@ function renameEnclosures(node: HastNode): void {
   node.children?.forEach(renameEnclosures);
 }
 
-/** `enclosuresAsRows` for Markdown whose math rehype-katex drew. */
 export function rehypeEnclosuresAsRows() {
   return renameEnclosures;
 }
