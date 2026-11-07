@@ -2,10 +2,7 @@
 
 import { type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import {
-  buildAcceptedArrangeWordSequences,
-  getAcceptedArrangeWordLengths,
-} from "@zoonk/core/player/contracts/arrange-words-answers";
+import { buildAcceptedArrangeWordSequences } from "@zoonk/core/player/contracts/arrange-words-answers";
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
@@ -73,6 +70,7 @@ export function ArrangeWordsInteraction({
   answerKind,
   children,
   onSelectAnswer,
+  otherOrders,
   result,
   selectedAnswer,
   wordBankOptions,
@@ -81,6 +79,7 @@ export function ArrangeWordsInteraction({
   answerKind: "reading" | "listening";
   children: React.ReactNode;
   onSelectAnswer: (answer: SelectedAnswer | null) => void;
+  otherOrders: string[][];
   result?: StepResult;
   selectedAnswer?: SelectedAnswer;
   wordBankOptions: WordBankOption[];
@@ -89,11 +88,11 @@ export function ArrangeWordsInteraction({
 
   const acceptedWordSequences = buildAcceptedArrangeWordSequences({
     kind: answerKind,
+    otherOrders,
     text: answer,
   });
 
   const correctWords = acceptedWordSequences[0] ?? [];
-  const acceptedWordLengths = getAcceptedArrangeWordLengths(acceptedWordSequences);
 
   const [placedWords, setPlacedWords] = useState<PlacedWordWithBankIndex[]>(() => {
     if (result?.answer?.kind === answerKind && "arrangedWords" in result.answer) {
@@ -114,12 +113,10 @@ export function ArrangeWordsInteraction({
 
   const { play } = useWordAudio({ preloadUrls: wordBankOptions.map((option) => option.audioUrl) });
 
-  const maxAnswerLength = Math.max(...acceptedWordLengths, correctWords.length);
-
   const syncSelectedAnswer = (next: PlacedWordWithBankIndex[]) => {
     const arrangedWords = next.map((placedWord) => placedWord.word);
 
-    if (acceptedWordLengths.includes(next.length)) {
+    if (next.length === correctWords.length) {
       onSelectAnswer({ arrangedWords, kind: answerKind });
       return;
     }
@@ -130,7 +127,7 @@ export function ArrangeWordsInteraction({
   };
 
   const handlePlace = (tile: WordBankTile) => {
-    if (result || placedWords.length >= maxAnswerLength) {
+    if (result || placedWords.length >= correctWords.length) {
       return;
     }
 

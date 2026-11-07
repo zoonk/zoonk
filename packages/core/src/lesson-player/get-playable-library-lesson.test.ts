@@ -379,7 +379,15 @@ describe(getPlayableLibraryLesson, () => {
   });
 
   it("serves language screens with the pair's translation, note, sound tip and word banks", async () => {
-    const { lesson, word } = await languageLessonFixture();
+    const { lesson, sentence, word } = await languageLessonFixture();
+
+    await prisma.lessonSentence.update({
+      data: {
+        otherSentenceOrders: ["The rent is how much?"],
+        otherTranslationOrders: ["O aluguel é quanto?"],
+      },
+      where: { lessonId_sentenceId: { lessonId: lesson.id, sentenceId: sentence.id } },
+    });
 
     const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
     const steps = result?.status === "ready" ? result.lesson.steps : [];
@@ -412,7 +420,12 @@ describe(getPlayableLibraryLesson, () => {
 
     expect(steps[2]).toMatchObject({
       exercise: {
-        sentence: { sentence: "How much is the rent?", translation: "Quanto é o aluguel?" },
+        sentence: {
+          otherSentenceOrders: [["The", "rent", "is", "how", "much?"]],
+          otherTranslationOrders: [["O", "aluguel", "é", "quanto?"]],
+          sentence: "How much is the rent?",
+          translation: "Quanto é o aluguel?",
+        },
       },
       wordHints: null,
     });
@@ -421,7 +434,12 @@ describe(getPlayableLibraryLesson, () => {
       kind: "spokenAnswer",
       listening: {
         kind: "listening",
-        sentence: { sentence: "How much is the rent?", translation: "Quanto é o aluguel?" },
+        sentence: {
+          otherSentenceOrders: [["The", "rent", "is", "how", "much?"]],
+          otherTranslationOrders: [["O", "aluguel", "é", "quanto?"]],
+          sentence: "How much is the rent?",
+          translation: "Quanto é o aluguel?",
+        },
       },
     });
   });

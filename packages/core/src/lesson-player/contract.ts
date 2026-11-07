@@ -137,7 +137,13 @@ export const lessonStepCheckResultSchema = z
         description:
           "False for a typed answer that wasn't checked: past a few graded answers to the same screen a day, code still recognizes an accepted answer, and anything else is shown with the sample answer (`correctAnswer`) as not checked, not as wrong. It isn't recorded and saves no mistake. True otherwise.",
       }),
-    correctAnswer: z.string().nullable().meta({ description: "The right answer when missed" }),
+    correctAnswer: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          "The lesson's answer when missed or when a word-bank answer is correct in another order; null for the lesson's own order",
+      }),
     corrections: z
       .array(
         z.object({

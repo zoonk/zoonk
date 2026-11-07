@@ -34,6 +34,8 @@ const serializedSentenceSchema = z.object({
   distractors: z.array(z.string()),
   explanation: z.string().nullable(),
   id: z.string(),
+  otherSentenceOrders: z.array(z.array(z.string())),
+  otherTranslationOrders: z.array(z.array(z.string())),
   romanization: z.string().nullable(),
   sentence: z.string(),
   translation: z.string(),

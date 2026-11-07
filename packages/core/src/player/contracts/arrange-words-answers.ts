@@ -18,13 +18,26 @@ function segmentArrangeWords({ kind, text }: ArrangeText): string[] {
 }
 
 /** Blank or punctuation-only text has no accepted sequence. */
-export function buildAcceptedArrangeWordSequences(params: ArrangeText): string[][] {
+export function buildAcceptedArrangeWordSequences(
+  params: ArrangeText & { otherOrders: string[][] },
+): string[][] {
   const words = segmentArrangeWords(params);
-  return words.length > 0 ? [words] : [];
-}
 
-export function getAcceptedArrangeWordLengths(acceptedWordSequences: string[][]): number[] {
-  return acceptedWordSequences.map((words) => words.length);
+  if (words.length === 0) {
+    return [];
+  }
+
+  const sequences = new Map<string, string[]>();
+
+  for (const order of [words, ...params.otherOrders]) {
+    const key = getSequenceKey(order);
+
+    if (!sequences.has(key)) {
+      sequences.set(key, order);
+    }
+  }
+
+  return [...sequences.values()];
 }
 
 /** Matching ignores punctuation, casing, and surrounding whitespace. */

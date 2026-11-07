@@ -112,6 +112,8 @@ async function loadExerciseResources({
       distractors: link.distractors,
       explanation: link.explanation,
       id: link.sentence.id,
+      otherSentenceOrders: link.otherSentenceOrders,
+      otherTranslationOrders: link.otherTranslationOrders,
       romanization: link.sentence.romanization,
       sentence: link.sentence.sentence,
       translation: link.translation,

@@ -4,6 +4,7 @@ import {
   type PlayableTeachingStepOf,
   type TeachingStepKind,
 } from "@zoonk/core/lesson-player/playable-lesson";
+import { languageStep } from "../../preview/preview-steps";
 import { type LessonStepResult } from "../lesson-player-types";
 
 function teachingStep<TKind extends TeachingStepKind>(
@@ -115,6 +116,27 @@ export function fillBlankStep(id: string): PlayableLanguageStep {
 
 export function summaryStep(id: string): PlayableTeachingStep {
   return teachingStep("summary", id, { ideas: [{ text: "One idea." }] });
+}
+
+export function arrangeWordsStep(kind: "reading" | "listening"): PlayableLanguageStep {
+  const step = languageStep(kind);
+  const { sentence } = step.exercise;
+
+  if (!sentence) {
+    throw new Error("Expected a sentence for the word-bank step");
+  }
+
+  return {
+    ...step,
+    exercise: {
+      ...step.exercise,
+      sentence: {
+        ...sentence,
+        otherSentenceOrders: [["The", "rent", "is", "how", "much?"]],
+        otherTranslationOrders: [["O", "aluguel", "é", "quanto?"]],
+      },
+    },
+  };
 }
 
 export function stepResult(isCorrect: boolean): LessonStepResult {

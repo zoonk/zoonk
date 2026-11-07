@@ -53,6 +53,7 @@ export function ListeningStep({
       answer={step.sentence.translation}
       answerKind="listening"
       onSelectAnswer={onSelectAnswer}
+      otherOrders={step.sentence.otherTranslationOrders}
       result={result}
       selectedAnswer={selectedAnswer}
       wordBankOptions={step.wordBankOptions}

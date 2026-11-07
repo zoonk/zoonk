@@ -1,5 +1,6 @@
 import { normalizeDistractorKey } from "@zoonk/utils/distractors";
 import { shuffle } from "@zoonk/utils/shuffle";
+import { segmentLearnerWords, segmentWords } from "@zoonk/utils/string";
 import {
   type StepContentByKind,
   parseStepContent,
@@ -39,6 +40,8 @@ type SentenceDataInput = {
   romanization: string | null;
   audioUrl: string | null;
   translation: string;
+  otherSentenceOrders: string[];
+  otherTranslationOrders: string[];
   translationDistractors: string[];
   explanation: string | null;
 };
@@ -74,6 +77,8 @@ type SerializedSentence = {
   sentence: string;
   distractors: string[];
   translation: string;
+  otherSentenceOrders: string[][];
+  otherTranslationOrders: string[][];
   translationDistractors: string[];
   romanization: string | null;
   explanation: string | null;
@@ -128,6 +133,10 @@ function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
     distractors: [...sentence.distractors],
     explanation: sentence.explanation,
     id: sentence.id,
+    otherSentenceOrders: sentence.otherSentenceOrders.map((order) => segmentWords(order)),
+    otherTranslationOrders: sentence.otherTranslationOrders.map((order) =>
+      segmentLearnerWords(order),
+    ),
     romanization: sentence.romanization,
     sentence: sentence.sentence,
     translation: sentence.translation,

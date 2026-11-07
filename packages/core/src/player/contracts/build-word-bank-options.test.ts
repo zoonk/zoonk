@@ -36,6 +36,8 @@ function makeSentence(overrides: Partial<SerializedSentence> = {}): SerializedSe
     distractors: [],
     explanation: null,
     id: "sentence-1",
+    otherSentenceOrders: [],
+    otherTranslationOrders: [],
     romanization: null,
     sentence: "Guten Morgen, Anna!",
     translation: "Bom dia, Anna!",
