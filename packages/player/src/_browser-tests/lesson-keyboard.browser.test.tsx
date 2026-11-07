@@ -24,6 +24,7 @@ import {
 import { buildLesson } from "../preview/preview-lesson";
 import {
   activityStep,
+  explanationStep,
   languageStep,
   spokenAnswerStep,
   teachingStep,
@@ -283,6 +284,49 @@ describe("lesson by keyboard", () => {
 
       await press("Enter");
       await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
+    });
+  });
+
+  it("a turn keeps keyboard focus on the button pressed, or on Continue where the next screen has none, and leaves a pointer's focus alone", async () => {
+    await atViewport(DESKTOP, async () => {
+      openLesson({
+        steps: [
+          teachingStep("check"),
+          explanationStep({ text: "Electrons spread out.", title: "First idea" }),
+          explanationStep({ text: "Clouds show chances.", title: "Second idea" }),
+        ],
+      });
+
+      const previous = page.getByRole("button", { name: "Previous screen" });
+      const primary = page.getByRole("button", { name: /^(?:Next|Continue)/u });
+
+      await press("2");
+      await press("Enter");
+      await expect.element(verdict("Correct!")).toBeVisible();
+      await press("Enter");
+      await expect.element(page.getByRole("heading", { name: "First idea" })).toBeVisible();
+
+      await tabTo(primary);
+      await press("Enter");
+      await expect.element(page.getByRole("heading", { name: "Second idea" })).toBeVisible();
+      await expect.element(primary).toHaveFocus();
+
+      await tabTo(previous);
+      await press("Enter");
+      await expect.element(page.getByRole("heading", { name: "First idea" })).toBeVisible();
+      await expect.element(previous).toHaveFocus();
+
+      await press("Enter");
+      await expect.element(verdict("Correct!")).toBeVisible();
+      await expect.element(primary).toHaveFocus();
+
+      await press("ArrowRight");
+      await expect.element(page.getByRole("heading", { name: "First idea" })).toBeVisible();
+      await expect.element(primary).toHaveFocus();
+
+      await previous.click();
+      await expect.element(verdict("Correct!")).toBeVisible();
+      await expect.element(primary).not.toHaveFocus();
     });
   });
 

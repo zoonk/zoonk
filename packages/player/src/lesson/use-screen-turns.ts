@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { turnKeepingFocus } from "./_utils/lesson-focus";
 import { useLessonPlayer } from "./lesson-player-context";
 import { useLessonInteraction } from "./lesson-player-interaction";
 import { type LessonPlayerState } from "./lesson-player-state";
@@ -19,7 +20,7 @@ export function useScreenTurns(): { back: () => boolean; forward: () => boolean 
         return false;
       }
 
-      actions.goBack();
+      turnKeepingFocus(actions.goBack);
       return true;
     },
     forward: () => {
@@ -27,7 +28,7 @@ export function useScreenTurns(): { back: () => boolean; forward: () => boolean 
         return false;
       }
 
-      actions.continue();
+      turnKeepingFocus(actions.continue);
       return true;
     },
   };
