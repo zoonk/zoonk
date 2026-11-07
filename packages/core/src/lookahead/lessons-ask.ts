@@ -5,7 +5,7 @@ import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { replanWaitingGoal } from "../library/curriculum/replan-waiting-goals";
 import { afterPlanInputWrite, withPlanRetry } from "../plans/plan-conflict";
 import {
-  hasOutliningCourses,
+  areDayLessonsComing,
   loadDayStandInCourseIds,
 } from "../sessions/_utils/outlining-stand-ins";
 import { followSavedDay } from "../sessions/_utils/refresh-study-day-selection";
@@ -60,7 +60,7 @@ export async function followWrittenLessons({
       localDate: getDateInTimeZone({ date: now, timeZone }),
     });
 
-    if (!(await hasOutliningCourses({ courseIds, now }))) {
+    if (!(await areDayLessonsComing({ askedAt: new Date(askedAt), courseIds, now }))) {
       await clearLessonsAsk({ askedAt, goalId });
     }
   }
@@ -105,7 +105,8 @@ export async function endLessonsAsk({
   const dayCourseIds = await loadDayStandInCourseIds({ goal, localDate });
 
   if (
-    await hasOutliningCourses({
+    await areDayLessonsComing({
+      askedAt: new Date(askedAt),
       courseIds: dayCourseIds.filter((courseId) => startedCourseIds.includes(courseId)),
     })
   ) {

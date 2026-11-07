@@ -1,5 +1,7 @@
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
+import { courseChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { followPlanToday } from "../plans/_utils/follow-plan-today";
@@ -36,7 +38,31 @@ async function openPlannedDay(persona: "buddy" | "hugeGoal" = "hugeGoal") {
   });
 
   const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
-  const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+
+  const original = await prisma.goal.findUniqueOrThrow({
+    include: { primaryCourse: { include: { courseChapters: true } } },
+    where: { id: goalId },
+  });
+
+  const course = await courseFixture({
+    format: original.primaryCourse?.format,
+    language: original.language,
+    outlineStatus: "completed",
+    targetLanguage: original.targetLanguage,
+    updatedAt: new Date(Date.now() - 1),
+  });
+
+  await Promise.all(
+    (original.primaryCourse?.courseChapters ?? []).map((placement) =>
+      courseChapterFixture({ ...placement, courseId: course.id }),
+    ),
+  );
+
+  const goal = await prisma.goal.update({
+    data: { primaryCourseId: course.id },
+    where: { id: goalId },
+  });
+
   const timeZone = goal.timezone ?? "UTC";
 
   await prisma.studySession.delete({ where: { id: seeded.id } });

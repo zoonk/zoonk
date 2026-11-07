@@ -17,7 +17,9 @@ import {
   uniqueWord,
 } from "../library/identity/_test-utils/identity-mocks";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import { getDayOutlines } from "../sessions/_utils/outlining-stand-ins";
 import { askForLessons, endLessonsAsk, followWrittenLessons } from "./lessons-ask";
+import { OUTLINE_STALE_AFTER_MS } from "./outline-ahead";
 import { listDayStandIns } from "./outline-window";
 
 describe(endLessonsAsk, () => {
@@ -149,6 +151,123 @@ describe(endLessonsAsk, () => {
       ).resolves.toMatchObject({ lessonsAskedAt: null });
     },
   );
+
+  it.each(["completed", "failed"] as const)(
+    "waits for a new ask's outline after an older outline %s",
+    async (outlineStatus) => {
+      const [skill, course] = await Promise.all([
+        skillFixture(),
+        courseFixture({ outlineStatus, updatedAt: new Date(WAITING_START.getTime() - 1) }),
+      ]);
+
+      const { goal, plan } = await waitingGoal(skill);
+
+      const ownedGoal = await prisma.goal.update({
+        data: { primaryCourseId: course.id },
+        where: { id: goal.id },
+      });
+
+      const day = { goal: ownedGoal, localDate: new Date("2020-09-28T00:00:00Z") };
+      const askedAt = await askForLessons({ goalId: goal.id });
+      const input = { askedAt: askedAt ?? 0, goalId: goal.id };
+
+      await endLessonsAsk({ ...input, startedCourseIds: [course.id] });
+      await followWrittenLessons(input);
+
+      await expect(getDayOutlines(day)).resolves.toBe("awaiting");
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
+      ).resolves.toMatchObject({ lessonsAskedAt: WAITING_START });
+
+      await prisma.course.update({
+        data: { outlineStatus, updatedAt: WAITING_START },
+        where: { id: course.id },
+      });
+
+      await expect(getDayOutlines(day)).resolves.toBe("idle");
+      await followWrittenLessons(input);
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
+      ).resolves.toMatchObject({ lessonsAskedAt: null });
+    },
+  );
+
+  it("ends a fresh ask's wait only after every course the day needs has ended", async () => {
+    const [first, second, firstCourse, secondCourse] = await Promise.all([
+      skillFixture(),
+      skillFixture(),
+      courseFixture({ outlineStatus: "completed", updatedAt: WAITING_START }),
+      courseFixture({ outlineStatus: "failed", updatedAt: new Date(WAITING_START.getTime() - 1) }),
+    ]);
+
+    const { goal } = await waitingGoal(first);
+
+    await createGoalPlan({
+      goalId: goal.id,
+      graph: {
+        phases: [{ milestone: null, name: "Phase" }],
+        skills: [first, second].map((skill, index) => ({
+          area: "Physics",
+          courseIds: [index === 0 ? firstCourse.id : secondCourse.id],
+          lessons: 2,
+          name: skill.name,
+          phase: 0,
+          skillId: skill.id,
+          weight: null,
+        })),
+      },
+    });
+
+    const askedAt = await askForLessons({ goalId: goal.id });
+
+    const input = {
+      askedAt: askedAt ?? 0,
+      goalId: goal.id,
+      startedCourseIds: [firstCourse.id, secondCourse.id],
+    };
+
+    const day = { goal, localDate: new Date("2020-09-28T00:00:00Z") };
+
+    await endLessonsAsk(input);
+    await expect(getDayOutlines(day)).resolves.toBe("awaiting");
+
+    await prisma.course.update({
+      data: { outlineStatus: "failed", updatedAt: new Date(WAITING_START.getTime() + 1) },
+      where: { id: secondCourse.id },
+    });
+
+    await expect(getDayOutlines(day)).resolves.toBe("idle");
+    await endLessonsAsk(input);
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ).resolves.toMatchObject({ lessonsAskedAt: null });
+  });
+
+  it("stops waiting on an expired ask whose outline never started", async () => {
+    const [skill, course] = await Promise.all([skillFixture(), courseFixture()]);
+    const { goal } = await waitingGoal(skill);
+
+    const ownedGoal = await prisma.goal.update({
+      data: { primaryCourseId: course.id },
+      where: { id: goal.id },
+    });
+
+    const askedAt = await askForLessons({ goalId: goal.id });
+    const day = { goal: ownedGoal, localDate: new Date("2020-09-28T00:00:00Z") };
+
+    await expect(getDayOutlines(day)).resolves.toBe("awaiting");
+    vi.setSystemTime(new Date(WAITING_START.getTime() + OUTLINE_STALE_AFTER_MS));
+
+    await expect(getDayOutlines(day)).resolves.toBe("idle");
+    await followWrittenLessons({ askedAt, goalId: goal.id });
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ).resolves.toMatchObject({ lessonsAskedAt: null });
+  });
 
   it.each(["completed", "failed"] as const)(
     "ends the ask when today's unwritten lessons belong to a %s outline",

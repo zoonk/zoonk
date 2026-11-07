@@ -55,7 +55,10 @@ async function setupDayWithStandIn({
   outlineStatus?: GenerationStatus;
   standInSize?: number;
 } = {}) {
-  const [user, course] = await Promise.all([userFixture(), courseFixture({ outlineStatus })]);
+  const [user, course] = await Promise.all([
+    userFixture(),
+    courseFixture({ outlineStatus, updatedAt: new Date(NOW.getTime() - 1) }),
+  ]);
 
   const library = await planLibraryFixture({
     skills: [
@@ -88,7 +91,7 @@ async function setupDayWithStandIn({
 async function setupPlacedDay() {
   const [user, course] = await Promise.all([
     userFixture(),
-    courseFixture({ outlineStatus: "completed" }),
+    courseFixture({ outlineStatus: "completed", updatedAt: new Date(NOW.getTime() - 1) }),
   ]);
 
   const library = await planLibraryFixture({
@@ -127,7 +130,7 @@ async function setupPlacedDay() {
 async function setupDayWithUnwritableStandIn() {
   const [user, course] = await Promise.all([
     userFixture(),
-    courseFixture({ outlineStatus: "completed" }),
+    courseFixture({ outlineStatus: "completed", updatedAt: new Date(NOW.getTime() - 1) }),
   ]);
 
   const library = await planLibraryFixture({
