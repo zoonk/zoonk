@@ -15,19 +15,19 @@
   "mindmaps_create_spoken": "ca96a4020ef46f6f29ff2eca9e73ba5ceb0c797b662d80225a9454127ee5ef91",
   "mindmaps_download": "b333b45450d635eedd4efa549fd4caa8e85650846a62884b7d00f505a9097d64",
   "mindmaps_drawing": "80ed264a9a7f6d48626aa45683a9a21b23c5666b703d125baf29cb1a7ae3d5a6",
-  "mindmaps_drawing_wait": "9802ab8b8d01b1491573b6e2850823ae6f0f7677f2d10e255866aefbbe4d2f22",
+  "mindmaps_drawing_wait": "bd6efb602cbe1b94f02cf083a25f7ce53ced54d2f0910b77f679fdfa1ffc0f21",
   "mindmaps_empty_description": "7bda2ac4061d3424a17d4f8f81bff23b96d9f54af07ab56a56b4557c8b7a408a",
   "mindmaps_empty_title": "4d322cfa95f53c93ea848dd1236b314dc3311559298f0a02688a27faad3f3567",
   "mindmaps_failed": "292f458295f824ff1bf48df0f01e304a7ec450d6b281e84feda205e843980f40",
   "mindmaps_fit": "13ce7ea637bbd0381a39ca82b622679f58a53abfb0c3e68542dd559d79e512ca",
   "mindmaps_in_short": "510935e0b38e3a3470604c09f491aaa500aa08dad6b824f8660861ff1b97a43a",
-  "mindmaps_intro": "e7920dbc2b277e248046f8e10024cd848fec2f289bbde38f5b3e052db4d05bd6",
+  "mindmaps_intro": "658d8ba4540702b9f71a13be955d83f817e3e8976d8866519b5afce42ea3ce9a",
   "mindmaps_intro_lessons_first_free": "f51b9413b05b02cb6dc05c4745e8866671e5f80d8b9e9fe17778ee80b1a26b69",
   "mindmaps_intro_lessons_first_plus": "0de045f1198f98b70dd65c00f3fb0514b54bbdc4982aa83df974fbfefafb160a",
   "mindmaps_keep_studying": "603b9bd298bee4325ae51f245b74e9d497c695d0e0f4b5f5657cfb3c32c66d0e",
-  "mindmaps_lessons_first_free": "f557d773f892b14ad8b4a88d67c8474676ad4b34e33aeb56e4c8077548f74606",
-  "mindmaps_lessons_first_plus": "b40833340c764cbc3b6884d0169d2f53ac34eac300fabb1ff632f9bc7d5ae16f",
-  "mindmaps_lessons_not_written": "e69dfafd41246f08db86d27b926e425d1b07cf6e96d0f1601e1a172bb0cb47da",
+  "mindmaps_lessons_first_free": "7759eb2ee193fb3cf1827b22b13b45acaa030c45f914d7f6a60e9de8aa5290f0",
+  "mindmaps_lessons_first_plus": "c2e8aecb89017c5c7c3bf7af2e05916b11c69b3640ef1099fa077ed45bce948d",
+  "mindmaps_lessons_not_written": "0accfa6be14ef86555e022752e88847763d15973fedb63d2ace01fda3c986ca3",
   "mindmaps_open": "05b2a0f112825e7ec7a811acb736d631928d5267cf66260c1679a741ed978d1c",
   "mindmaps_open_spoken": "2472b797493afc3cf1b597cf027e762285ca43667a94a3f4d7e1205f6ab27802",
   "mindmaps_ready": "0516c9487d72f6a40140ff66a33990435286e2ab0b8a5d77c4678075d236231d",
@@ -41,7 +41,7 @@
   "mindmaps_unreachable": "c4bff4f3499af906ccc80bdd53c987f1928186e0965d8efc95bf4d7337d0072e",
   "mindmaps_viewer_hint": "a28c6410a24bfc129077d2431de1b49bf2a733df50db809a4a6da38605cea279",
   "mindmaps_writing_lessons": "625dc3d93496f57c1a16c985f32e896b576c9e483a794567a4324a6ec7c6da00",
-  "mindmaps_writing_lessons_wait": "a6b20e83a1427e15a9ccfa62788bf34954bc2dc26d1507f90a1f492597afd38e",
+  "mindmaps_writing_lessons_wait": "d0fe3c39bbc958376bbc91591cecf35cc3b3b753bc96f99b2881928af6f63c66",
   "mindmaps_zoom_in": "dfda8dbaf93e84c2deb134c0366ceeb251d60bf099268627161016b526d519f8",
   "mindmaps_zoom_out": "90e6572e17fb828fb552b0f2a5a0941141332f2476ccfbcf6749a7d68144e0dc"
 }
@@ -53,7 +53,7 @@
         <item quantity="other">%1$s harita</item>
     </plurals>
     <!-- Under the Mind maps page's title. -->
-    <string name="mindmaps_intro">Bir ünitenin ana kavramları tek bir görselde. Bitirdiğin her ünite için bir zihin haritası hazırlanır; planındaki diğer üniteler için de oluşturabilirsin.</string>
+    <string name="mindmaps_intro">Bir ünitenin ana kavramları tek bir görselde. Tamamladığın her ünite için bir zihin haritası hazırlanır; planındaki diğer üniteler için de oluşturabilirsin.</string>
     <!-- The same intro while some chapters' lessons aren't written yet, for a free learner or a guest. -->
     <string name="mindmaps_intro_lessons_first_free">Bir ünitenin temel kavramları tek bir görselde. Tamamladığın her ünite için bir harita hazırlanır; planındaki diğer üniteler için de harita oluşturabilirsin. Bu ünitelerden biri için harita istediğinde önce dersleri hazırlanır; bu dersler ücretsiz ders hakkından düşülür.</string>
     <!-- The same intro while some chapters' lessons aren't written yet, for a Plus learner. -->
@@ -82,15 +82,15 @@
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
     <string name="mindmaps_row_description">Ana kavramları tek bir görselde</string>
     <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. -->
-    <string name="mindmaps_lessons_first_free">Önce ünitenin dersleri hazırlanır; bu dersler ücretsiz ders hakkından düşer.</string>
+    <string name="mindmaps_lessons_first_free">Önce ünitenin dersleri hazırlanır ve ücretsiz ders hakkından düşülür.</string>
     <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
-    <string name="mindmaps_lessons_first_plus">Önce ünitenin dersleri hazırlanacağı için birkaç dakika sürer.</string>
+    <string name="mindmaps_lessons_first_plus">Önce ünitenin dersleri hazırlanır, bu yüzden birkaç dakika sürer.</string>
     <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
-    <string name="mindmaps_lessons_not_written">Dersler henüz hazırlanmadı</string>
+    <string name="mindmaps_lessons_not_written">Henüz hazırlanmamış dersler</string>
     <string name="mindmaps_writing_lessons">Önce dersleri, sonra zihin haritasını hazırlıyoruz…</string>
-    <string name="mindmaps_writing_lessons_wait">Birkaç dakika sürer. Ekrandan ayrılabilirsin; döndüğünde burada olacak.</string>
+    <string name="mindmaps_writing_lessons_wait">Birkaç dakika sürer. Sayfadan ayrılabilirsin; haritan hazır olduğunda burada olacak.</string>
     <string name="mindmaps_drawing">Zihin haritasını çiziyoruz…</string>
-    <string name="mindmaps_drawing_wait">Yaklaşık yarım dakika sürer. Ekrandan ayrılabilirsin; döndüğünde burada olacak.</string>
+    <string name="mindmaps_drawing_wait">Yaklaşık yarım dakika sürer. Sayfadan ayrılabilirsin; haritan hazır olduğunda burada olacak.</string>
     <!-- A finished chapter's mind map that's ready to open, where the chapter ends. -->
     <string name="mindmaps_ready">Zihin haritası hazır</string>
     <!-- Where a lesson or a test ends, over the row of the chapter it finished and its mind map. -->

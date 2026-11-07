@@ -15,17 +15,17 @@
   "mindmaps_create_spoken": "985c93abb4f59c854375f603719967489fc5157a08a2f0c3731b3472591eb6c5",
   "mindmaps_download": "2defac6dc3fa752150a32d5dc750c0e270468a20edf0c6b1e61793b1655c14fc",
   "mindmaps_drawing": "7486db409106687e3545435502533f5cd45311fb38d488a0f895b203ad120e7f",
-  "mindmaps_drawing_wait": "4da2380d6f779cfa5a175b9f7988da41d76f723403552d955c1eaa0a1bd5833e",
+  "mindmaps_drawing_wait": "c378c1c7e1831dfcf2123f599b1a3c7f9d843f2b6ee772302d082030da54117f",
   "mindmaps_empty_description": "a7f61d5cfe5df803f33d01946211abad398558d85d5bcd36b86b8fbd0fc8fb21",
   "mindmaps_empty_title": "f51358c347eb290c7c25a6d5794a90288e8ba27173abe78cc222829a4f22d95f",
   "mindmaps_failed": "74b61dabb8809bb6e6a8b09c56f1a75d1e446de626c0b89e83d6910c4ae7598d",
   "mindmaps_fit": "a154a9336b9fa7471c48139003252174e0e541239f9188717dc06e73d5b78140",
   "mindmaps_in_short": "2c343c5e18f455bb99374e5b181ed87930b26d8a57ba22c5b8dec3fcdfde06e6",
-  "mindmaps_intro": "1286dc6d1e9dd6ca776662f95cc56da2642b8e589c61ae90de12a4e5ab061d1b",
+  "mindmaps_intro": "5b34db8a83cd9959e0de14c51d21c5dd8389eb5892781f4f9cf53779a51c9fb9",
   "mindmaps_intro_lessons_first_free": "c792231b3834c4e9514a0f1298925dce3eba518bccc78e30c22ecd1f51f45117",
   "mindmaps_intro_lessons_first_plus": "3659186692c96e4779128aaa0e5b172bd25eeae00a5595baf56972f8dce26ce8",
   "mindmaps_keep_studying": "fcb001ff7e5e9ca37161a55a816cd0ece03cc9d95924aec7286d2056295685bf",
-  "mindmaps_lessons_first_free": "ce2a504852874259e5e38d83bdced615a3edc361c7f7b579bf7767c0c30e9ed4",
+  "mindmaps_lessons_first_free": "34e7cd130df19966b7d0657d414c93d6ef3b4bc826e3186533551039e36e2884",
   "mindmaps_lessons_first_plus": "104b4e4c006eaf7a6549b23c89670f343d227eb86295287ac2e1215b38b2b50d",
   "mindmaps_lessons_not_written": "a9d33359af27096413285d08168523c8181df31a5f25cf8cede1e44dc3fcd424",
   "mindmaps_open": "995197e0ec3eb3e73d4931368c617075b8671a20521d8ee33e513a89335badc5",
@@ -40,8 +40,8 @@
   "mindmaps_try_again_spoken": "4479e4d331cd1ecfb6ae06606b26a956cc0159be2bfd129d699e78d728d63b5d",
   "mindmaps_unreachable": "0fbb7d6e11d917ef54875c6eb3fbba43b3989059661253b6af426e1f877d387e",
   "mindmaps_viewer_hint": "0ae110878ad27657f0e698c4e32d471c334cad4feda6c9fdac2b7f6b70b192da",
-  "mindmaps_writing_lessons": "b73afd20f4c7f9f593ac4584bc29ad5c5756e3da7d5479d47555cd49c53e468a",
-  "mindmaps_writing_lessons_wait": "d131fe051c0e7934f20d6b6869436c4f627f3545ab34390c7bf9ec581f053cd6",
+  "mindmaps_writing_lessons": "cef298137ad6f46eca2044448dd0cd8a953cb1abd637cbc4761388667cc77dbb",
+  "mindmaps_writing_lessons_wait": "a088a36f37ca76144bb8cf30005b0c01e19ff1f98f6b387fdb419210414eba0a",
   "mindmaps_zoom_in": "eba8254a3614a6b8abb3d378eefe00e42e3fd1090d0be8cd85385526e5e0e21f",
   "mindmaps_zoom_out": "c90250b5828e6ef918bd8d924ca1b92b2a7584d94be9d1235ed9a1e06425ecb5"
 }
@@ -54,7 +54,7 @@
         <item quantity="other">%1$s mapas</item>
     </plurals>
     <!-- Under the Mind maps page's title. -->
-    <string name="mindmaps_intro">Las ideas principales de un capítulo en una imagen. Se crea uno para cada capítulo que completas; puedes crear uno para cualquier otro capítulo de tu plan.</string>
+    <string name="mindmaps_intro">Las ideas principales de un capítulo en una imagen. Cada capítulo que completes tendrá su mapa; puedes crear uno para cualquier otro capítulo de tu plan.</string>
     <!-- The same intro while some chapters' lessons aren't written yet, for a free learner or a guest. -->
     <string name="mindmaps_intro_lessons_first_free">Las ideas principales de un capítulo en una sola imagen. Cada capítulo que completes tendrá su mapa; puedes crear uno para cualquier otro capítulo de tu plan. Para crear el mapa de uno de estos capítulos, primero se preparan sus lecciones, que cuentan para tu límite de lecciones gratis.</string>
     <!-- The same intro while some chapters' lessons aren't written yet, for a Plus learner. -->
@@ -84,15 +84,15 @@
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
     <string name="mindmaps_row_description">Sus ideas principales en una imagen</string>
     <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. -->
-    <string name="mindmaps_lessons_first_free">Primero se preparan sus lecciones, que se descuentan de tus lecciones gratis.</string>
+    <string name="mindmaps_lessons_first_free">Primero se preparan sus lecciones y cuentan para tu límite de lecciones gratis.</string>
     <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
     <string name="mindmaps_lessons_first_plus">Primero se preparan sus lecciones, así que tarda unos minutos.</string>
     <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
     <string name="mindmaps_lessons_not_written">Lecciones aún sin preparar</string>
-    <string name="mindmaps_writing_lessons">Preparando las lecciones y luego el mapa mental…</string>
-    <string name="mindmaps_writing_lessons_wait">Esto tarda unos minutos. Puedes salir; lo encontrarás aquí.</string>
+    <string name="mindmaps_writing_lessons">Preparando las lecciones y después el mapa mental…</string>
+    <string name="mindmaps_writing_lessons_wait">Esto tarda unos minutos. Puedes salir; estará aquí.</string>
     <string name="mindmaps_drawing">Dibujando el mapa mental…</string>
-    <string name="mindmaps_drawing_wait">Aproximadamente medio minuto. Puedes salir; lo encontrarás aquí.</string>
+    <string name="mindmaps_drawing_wait">Aproximadamente medio minuto. Puedes salir; estará aquí.</string>
     <!-- A finished chapter's mind map that's ready to open, where the chapter ends. -->
     <string name="mindmaps_ready">Mapa mental listo</string>
     <!-- Where a lesson or a test ends, over the row of the chapter it finished and its mind map. -->

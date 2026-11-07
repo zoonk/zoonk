@@ -15,19 +15,19 @@
   "mindmaps_create_spoken": "c642b459c7b94fcc16a1c8ff69bb388cc5a6cb9874db97e0d0a342aaafd5695d",
   "mindmaps_download": "c6c4ef3c31ed4cc05847e161eda22e7421162f0bdc5d635e75cfbbd76dd90b75",
   "mindmaps_drawing": "d88412a6dfbe0faad1e97d6fd5f7665082b93f1c92cc980baad34bcb4a2014c9",
-  "mindmaps_drawing_wait": "51ac0e947cb7d856b1564f2f83bcc7686474e9610c9e4bec2d01d063de498c74",
+  "mindmaps_drawing_wait": "f48a7cc3a317724552331148a96e60e302bb8c2f82a69467ab3c904c416c8498",
   "mindmaps_empty_description": "53bb6ac4724543f88639e1590bc6c2e8a010aa20bf95dec6acbae18c7c67ee6e",
   "mindmaps_empty_title": "33736cf3b379e2df0d40e837b8574e6480000bc44e8c97714067469d3109c25d",
   "mindmaps_failed": "e4e62367b44859ec28dbb8a5421b1af5df5f6bd71ebef78244365bc178e8b8e2",
   "mindmaps_fit": "5b0cbb0433980cf81aa01c5f3a46bab5e334ed604db7154eaf6eab0e17518ad6",
   "mindmaps_in_short": "f4ec32fee0f215d1d091d939873ba11c4d5c343440cfdcb6ed6fbee8fe7ee184",
-  "mindmaps_intro": "4aecce018b84cc01d842a5fc7476807a8b2ffa258b5056cff2d31fcf8c9a035d",
+  "mindmaps_intro": "c2309dea4e8bf1dd8e46caf4bc6afcdb5c098f3533d3b906635af7e8578d7d1b",
   "mindmaps_intro_lessons_first_free": "6f877e6724883569bd9e170d50febc4e247ddb6eb4b55a53e80c94a6393501c3",
   "mindmaps_intro_lessons_first_plus": "4776d85b3a86c00f47cb08a14d427d694c05ad9e62d230e124aec868fa63f822",
   "mindmaps_keep_studying": "70ffcca5db70373084f4c2a3d5c1ce330a9b7a9217ff95ec4f24914005f373aa",
-  "mindmaps_lessons_first_free": "a595c0901fd1a4df762dcf8769c06f90580af3ef7391773fba50547143f33b39",
+  "mindmaps_lessons_first_free": "4d4e59bacdeb742c594f817fe2da37e937d5ea550c097ad3a9574be08efd607c",
   "mindmaps_lessons_first_plus": "92821f0181f75df0a0288b5a6be01a0c188dc38296076dde5361b15dca9244fd",
-  "mindmaps_lessons_not_written": "d2a674dfb7c0080e8b5b270322f2a9cc287f57ef8baa227052764f0fe83ec38b",
+  "mindmaps_lessons_not_written": "6cd950e7295b659a193f0526419af221f5a12ffa1a65d46f7174621fc079ab37",
   "mindmaps_open": "5fffd0435577f427958e0e6389553551761187edde5ed88ccac9b571a566d0e5",
   "mindmaps_open_spoken": "4f49306bfbe0752903f6d14a0837baaaaede6f0bee8435a2cf5b2e293426b2c7",
   "mindmaps_ready": "dffdd162f0144d7998be93acfd953a7a72a597211a0b792a4ea508e3a80244e9",
@@ -40,8 +40,8 @@
   "mindmaps_try_again_spoken": "cacc114ffb8d259fda645f14cf33d23e76fcd357be982cd41bd4c6ca74c58842",
   "mindmaps_unreachable": "99e6c001c997627cd95f63048c61a29e1189e9dffcbfe3d7e64fcf0e6545e45e",
   "mindmaps_viewer_hint": "3fc58f812606360e18f40b5c58d8d54180bf3ed7c28e6bcfbc13c8f6bb0f6d75",
-  "mindmaps_writing_lessons": "56dd6857735414b51af9dc35eddfa49cef8c0602e2d8e7a0cb06a3b613091feb",
-  "mindmaps_writing_lessons_wait": "98bc611e6980537bbd3d61b7de0fde9b87968e5428cce0388c5704ab8962a7bf",
+  "mindmaps_writing_lessons": "ad9c10df3b69ab9ca35ab37098e6750cb137421b28ba2ef3306f2dd43e4d035e",
+  "mindmaps_writing_lessons_wait": "b4b41bf177ba95f4b6f8921248ae4b9f17cf6dcf99c6877defd7cc1703f417c2",
   "mindmaps_zoom_in": "c4c9d7f160537bc2f68d505e978f810954c7eeb5d2e5885b76db2225961acd42",
   "mindmaps_zoom_out": "1438a347326823f3c10d04590d3a2048986d8e74703d88680ba75e104ebadbad"
 }
@@ -52,7 +52,7 @@
         <item quantity="other">마인드맵 %1$s개</item>
     </plurals>
     <!-- Under the Mind maps page's title. -->
-    <string name="mindmaps_intro">챕터의 핵심 내용을 그림 한 장으로 정리해요. 챕터를 끝낼 때마다 하나씩 만들어지고, 계획에 있는 다른 챕터의 마인드맵도 만들 수 있어요.</string>
+    <string name="mindmaps_intro">챕터의 핵심 내용을 한 장의 그림으로 정리해요. 완료한 챕터마다 마인드맵이 만들어지고, 계획에 있는 다른 챕터의 마인드맵도 만들 수 있어요.</string>
     <!-- The same intro while some chapters' lessons aren't written yet, for a free learner or a guest. -->
     <string name="mindmaps_intro_lessons_first_free">챕터의 핵심 내용을 한 장의 그림으로 볼 수 있어요. 끝낸 챕터마다 마인드맵이 하나씩 만들어지고, 계획에 있는 다른 챕터의 마인드맵도 만들 수 있어요. 아직 레슨이 없는 챕터는 레슨부터 만든 뒤 마인드맵을 만들어요. 이때 만든 레슨도 무료 레슨 한도에 포함돼요.</string>
     <!-- The same intro while some chapters' lessons aren't written yet, for a Plus learner. -->
@@ -80,15 +80,15 @@
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
     <string name="mindmaps_row_description">핵심 내용을 한 장의 그림으로</string>
     <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. -->
-    <string name="mindmaps_lessons_first_free">챕터의 레슨을 먼저 만들고, 만든 레슨은 무료 레슨 수에 포함돼요.</string>
+    <string name="mindmaps_lessons_first_free">챕터의 레슨을 먼저 만들고, 만든 레슨은 무료 레슨 한도에 포함돼요.</string>
     <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
     <string name="mindmaps_lessons_first_plus">챕터의 레슨을 먼저 만들어야 해서 몇 분 정도 걸려요.</string>
     <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
-    <string name="mindmaps_lessons_not_written">아직 레슨 없음</string>
-    <string name="mindmaps_writing_lessons">레슨을 만들고 있어요. 그다음 마인드맵을 만들 거예요…</string>
-    <string name="mindmaps_writing_lessons_wait">몇 분 정도 걸려요. 이 화면을 나가도 나중에 여기서 볼 수 있어요.</string>
+    <string name="mindmaps_lessons_not_written">아직 만들지 않은 레슨</string>
+    <string name="mindmaps_writing_lessons">레슨, 마인드맵 순서로 만들고 있어요…</string>
+    <string name="mindmaps_writing_lessons_wait">몇 분 정도 걸려요. 화면을 나가도 나중에 여기서 확인할 수 있어요.</string>
     <string name="mindmaps_drawing">마인드맵을 그리고 있어요…</string>
-    <string name="mindmaps_drawing_wait">약 30초 걸려요. 이 화면을 나가도 나중에 여기서 볼 수 있어요.</string>
+    <string name="mindmaps_drawing_wait">30초 정도 걸려요. 화면을 나가도 나중에 여기서 확인할 수 있어요.</string>
     <!-- A finished chapter's mind map that's ready to open, where the chapter ends. -->
     <string name="mindmaps_ready">마인드맵 준비 완료</string>
     <!-- Where a lesson or a test ends, over the row of the chapter it finished and its mind map. -->

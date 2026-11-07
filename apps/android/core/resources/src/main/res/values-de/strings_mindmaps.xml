@@ -21,17 +21,17 @@
   "mindmaps_failed": "3956a173932b8307993c01a0ab1eea017898402fed89af58cd5c2dba4639a5be",
   "mindmaps_fit": "65265aa963046da1dd81f6e13717b0c9f7aca1cfca730591600d94a3b1c848b0",
   "mindmaps_in_short": "1c3594134a5b9a5195a20630a9172feb3e0320955c80bc8cee0d2f313955f3e7",
-  "mindmaps_intro": "64cec77a7e383260cca496dca5332aa37e33adac222870d501daa36a2e8cc151",
+  "mindmaps_intro": "84f8307849382169ec3200602fd244e03cd814386728bcbfefeb4ca2870aff20",
   "mindmaps_intro_lessons_first_free": "640e4284c43716fa20c4fbac4cb261aaabcca618946cac83ad7c5b87a9bbdd10",
   "mindmaps_intro_lessons_first_plus": "fc8188934d28ce05c103cf9382e26f6eb024c2424d82983d941834373427e9bc",
   "mindmaps_keep_studying": "549730140204158ec1d51c1ab3dc52b1ebf993d8fde03ecda3c7d60b6fa91e2b",
-  "mindmaps_lessons_first_free": "6b98ef4271114199054bc20f907911e626520bbea0ff30d3bdbee5742e7627ef",
-  "mindmaps_lessons_first_plus": "e0db4cf3f7e81c833849b334f213483a26a46fdb313c8f66854b67086b5b8cf0",
-  "mindmaps_lessons_not_written": "c21284742998cf0d2a12d9cadee55707ee338e28980f13518dd068e52b7a1657",
+  "mindmaps_lessons_first_free": "ab9e8f8e85ce809e6d3115f335f8ffaf5f2a593d459a5960c823eb1c84703aa7",
+  "mindmaps_lessons_first_plus": "67c6f66bebf7fe80b60e016b8d63b64a75f0b7994b7e8f3189abee2565f50dad",
+  "mindmaps_lessons_not_written": "429622743437af8fe9e210807fd29879a0470792019e1c887500f9bf4790f2f2",
   "mindmaps_open": "cf5266b1c41d0923533810ebf78d8597f2edda572505a331c6cddbf48059a04d",
   "mindmaps_open_spoken": "59f526e5967f3220d6c7b5c2711b435593d13d5349342534f0911617f550a6de",
   "mindmaps_ready": "50fa70d417dc36699f601354ccb12564bd79e4fc9885ccc43634cb9024ebf540",
-  "mindmaps_row_description": "1f09671d9256263ab535507a69ccb5bddbab4698352599124aa57b467a9a8f23",
+  "mindmaps_row_description": "d4d60f0ee47f6b780e36fe8dcc78a80a21286271e4491d104f6de595d9d27fe8",
   "mindmaps_row_title": "53549372867870f90b521a3c808eb2c922ce4c6c11f09b70d12dbc91e47082e0",
   "mindmaps_save_failed": "9ac2641e593586b5c2412d20e590cfc2837363295fe7a18c3f18ae4aa46f62ad",
   "mindmaps_saved": "3f2087db0d86094b81688e8803cec93d627fe3d470f10fa9a98f730ebd3014ec",
@@ -40,7 +40,7 @@
   "mindmaps_try_again_spoken": "a62f659bfc165286a0e093fbf0f543221c35204f361c3963c81498c5e19503a7",
   "mindmaps_unreachable": "1a51b1cc8650c5506f2a8d8936a0ad522256ff1b6e2f4ad4ed1fc831a144eb3b",
   "mindmaps_viewer_hint": "57f78ad45a608dcc6fbbe3a4d628a57f47bfceb742a3903c41d066cb6b7b2dfd",
-  "mindmaps_writing_lessons": "cc96ede06c4f237fd85c5be78c66f05f9c7dfdbb93bf325f7c6bd7ba3267b048",
+  "mindmaps_writing_lessons": "fd6d2e0f90f058b9b9429c367b5d7b28d39a5e8f117ee16ef0481f2573dfe351",
   "mindmaps_writing_lessons_wait": "a9ba433eddc4a4d84bb1c25f289fbc2d452aa8adf4dce9c93a8ef3db12ecccb6",
   "mindmaps_zoom_in": "f7c7804e0013bb2140b497130354d8aa20bc99dbb38b51e92866fa2249a4473d",
   "mindmaps_zoom_out": "6a8784457cbba6c38ea39c494f59c28c720a7da34f518a69a694351960ba518d"
@@ -53,7 +53,7 @@
         <item quantity="other">%1$s Mindmaps</item>
     </plurals>
     <!-- Under the Mind maps page's title. -->
-    <string name="mindmaps_intro">Die wichtigsten Inhalte eines Kapitels in einem Bild. Zu jedem abgeschlossenen Kapitel gibt es eine Mindmap. Du kannst auch für jedes andere Kapitel in deinem Plan eine erstellen.</string>
+    <string name="mindmaps_intro">Das Wichtigste aus einem Kapitel in einem Bild. Für jedes Kapitel, das du abschließt, bekommst du eine Mindmap; für jedes andere Kapitel in deinem Plan kannst du eine erstellen.</string>
     <!-- The same intro while some chapters' lessons aren't written yet, for a free learner or a guest. -->
     <string name="mindmaps_intro_lessons_first_free">Die wichtigsten Gedanken eines Kapitels in einem Bild. Für jedes abgeschlossene Kapitel bekommst du eine Mindmap; für jedes andere Kapitel in deinem Plan kannst du eine erstellen. Fehlen die Lektionen noch, erstellen wir sie zuerst. Sie werden auf deine kostenlosen Lektionen angerechnet.</string>
     <!-- The same intro while some chapters' lessons aren't written yet, for a Plus learner. -->
@@ -80,14 +80,14 @@
     <!-- The title of a chapter's mind map row on the chapter's page. -->
     <string name="mindmaps_row_title">Mindmap</string>
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
-    <string name="mindmaps_row_description">Die wichtigsten Inhalte in einem Bild</string>
+    <string name="mindmaps_row_description">Das Wichtigste aus dem Kapitel in einem Bild</string>
     <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. -->
-    <string name="mindmaps_lessons_first_free">Wir erstellen zuerst die Lektionen des Kapitels. Sie werden auf deine kostenlosen Lektionen angerechnet.</string>
+    <string name="mindmaps_lessons_first_free">Wir erstellen zuerst die Lektionen des Kapitels und rechnen sie auf deine kostenlosen Lektionen an.</string>
     <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
-    <string name="mindmaps_lessons_first_plus">Wir erstellen zuerst die Lektionen des Kapitels. Deshalb dauert es ein paar Minuten.</string>
+    <string name="mindmaps_lessons_first_plus">Wir erstellen zuerst die Lektionen des Kapitels, deshalb dauert es ein paar Minuten.</string>
     <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
-    <string name="mindmaps_lessons_not_written">Lektionen noch nicht erstellt</string>
-    <string name="mindmaps_writing_lessons">Wir erstellen erst die Lektionen, dann die Mindmap…</string>
+    <string name="mindmaps_lessons_not_written">Noch nicht erstellte Lektionen</string>
+    <string name="mindmaps_writing_lessons">Wir erstellen zuerst die Lektionen, dann die Mindmap…</string>
     <string name="mindmaps_writing_lessons_wait">Das dauert ein paar Minuten. Du kannst die Seite verlassen; du findest die Mindmap später hier.</string>
     <string name="mindmaps_drawing">Wir zeichnen die Mindmap…</string>
     <string name="mindmaps_drawing_wait">Etwa eine halbe Minute. Du kannst die Seite verlassen; du findest die Mindmap später hier.</string>
