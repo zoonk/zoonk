@@ -11,6 +11,8 @@ struct RemindersView: View {
 
   /// Read from the system each time the app comes back, since it changes in Settings.
   @State private var notificationsOff = false
+  /// Turning push on here just met blocked notifications.
+  @State private var pushRefused = false
   @State private var pushFailed = false
   @State private var isSettingUpPush = false
 
@@ -158,7 +160,8 @@ struct RemindersView: View {
       .controlSize(.small)
     }
 
-    if notificationsOff, reminder.phone == nil || isThisPhone {
+    // A learner who chose email, or never wanted push, isn't nudged to turn it back on.
+    if notificationsOff, pushRefused || (reminder.pushOn && isThisPhone) {
       NotificationsOffNotice()
     }
   }
@@ -175,6 +178,7 @@ struct RemindersView: View {
       break
     case .denied:
       notificationsOff = true
+      pushRefused = true
     case .failed:
       pushFailed = true
     }

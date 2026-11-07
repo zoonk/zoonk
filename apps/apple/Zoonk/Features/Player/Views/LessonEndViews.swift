@@ -40,7 +40,7 @@ struct LessonCompletionView: View {
     }
     .onChange(of: offeredTime, initial: true) {
       if let offeredTime, reminderOffer == nil {
-        reminderOffer = ReminderOfferState(time: offeredTime)
+        reminderOffer = ReminderOfferState(time: ReminderTime.rounded(offeredTime))
       }
     }
     .completionMoments(day)

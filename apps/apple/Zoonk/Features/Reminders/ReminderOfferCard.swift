@@ -81,7 +81,7 @@ struct ReminderOfferCard: View {
       NotificationsOffNotice {
         if learner.summary.value?.identity.isAnonymous == false {
           BusyButton(isBusy: offer.isSaving, icon: .send) {
-            save { await reminders.turnOnEmail(at: offer.time) ? .on : .failed }
+            save(on: .emailOn) { await reminders.turnOnEmail(at: offer.time) ? .on : .failed }
           } label: {
             Text(
               "Email me instead", tableName: "Reminders",
@@ -129,7 +129,7 @@ struct ReminderOfferCard: View {
   @ViewBuilder
   private var answerButtons: some View {
     BusyButton(isBusy: offer.isSaving, icon: .notify) {
-      save { await reminders.turnOnPush(at: offer.time) }
+      turnOnPush()
     } label: {
       Text("Remind me", tableName: "Reminders", comment: "Turns study reminders on")
     }
@@ -175,8 +175,11 @@ struct ReminderOfferCard: View {
       set: { offer.time = ReminderTime.string($0) })
   }
 
-  private func save(_ setUp: @escaping () async -> PushSetup) {
-    let wasDenied = offer.step == .denied
+  private func turnOnPush() {
+    save(on: .pushOn) { await reminders.turnOnPush(at: offer.time) }
+  }
+
+  private func save(on success: ReminderOfferState.Step, _ setUp: @escaping () async -> PushSetup) {
     offer.isSaving = true
     offer.failed = false
 
@@ -186,7 +189,7 @@ struct ReminderOfferCard: View {
 
       switch result {
       case .on:
-        offer.step = wasDenied ? .emailOn : .pushOn
+        offer.step = success
       case .denied:
         offer.step = .denied
       case .failed:
@@ -213,15 +216,15 @@ struct ReminderOfferCard: View {
     }
   }
 
-  /// Back from Settings with notifications allowed, the learner can say yes again.
+  /// Back from Settings with notifications allowed, the yes the learner already gave goes through.
   private func recheckPermission(_ phase: ScenePhase) {
-    guard phase == .active, offer.step == .denied else {
+    guard phase == .active, offer.step == .denied, !offer.isSaving else {
       return
     }
 
     Task {
-      if await !notifications.isDenied() {
-        offer.step = .asking
+      if await notifications.isAuthorized() {
+        turnOnPush()
       }
     }
   }

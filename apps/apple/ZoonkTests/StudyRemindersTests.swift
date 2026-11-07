@@ -110,6 +110,13 @@ final class StudyRemindersTests: XCTestCase {
     XCTAssertEqual(context.session.failure, .network)
   }
 
+  func testPickedTimesRoundToTheQuarterHourTheyArriveAt() {
+    XCTAssertEqual(ReminderTime.rounded("20:07"), "20:00")
+    XCTAssertEqual(ReminderTime.rounded("20:08"), "20:15")
+    XCTAssertEqual(ReminderTime.rounded("07:52"), "07:45")
+    XCTAssertEqual(ReminderTime.rounded("23:53"), "00:00")
+  }
+
   func testATappedReminderMakesItsGoalActiveThenOpensToday() async throws {
     let tap = try XCTUnwrap(
       StudyReminderTap(["type": "study_reminder", "goalId": "goal-2", "aps": [:]]))
