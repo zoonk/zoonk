@@ -14,6 +14,8 @@ export const TODAY_ACTION_CLASS = cn(
   // Only docked on a phone, so its offset does nothing from `sm`.
   ABOVE_BOTTOM_TABS_CLASS,
   "max-sm:before:from-background max-sm:before:pointer-events-none max-sm:before:absolute max-sm:before:inset-x-0 max-sm:before:bottom-full max-sm:before:h-6 max-sm:before:bg-linear-to-t max-sm:before:to-transparent",
+  // Focus scrolls what it reaches clear of the tab bar, this bar and its fade.
+  "max-sm:[html:has(&)]:scroll-pb-[calc(4rem+1px+env(safe-area-inset-bottom)+4.25rem+1.5rem)]",
 );
 
 /**
