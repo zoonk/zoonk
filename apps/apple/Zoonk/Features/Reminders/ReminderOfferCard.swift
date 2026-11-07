@@ -20,6 +20,7 @@ struct ReminderOfferState: Equatable {
   }
 
   var time: String
+  let timeZone: String
   var step = Step.asking
   var claim = Claim.unseen
   var isSaving = false
@@ -110,7 +111,9 @@ struct ReminderOfferCard: View {
   @ViewBuilder
   private var answers: some View {
     DatePicker(selection: timeBinding, displayedComponents: .hourAndMinute) {
-      Text("Time", tableName: "Reminders", comment: "Row for the time reminders go out")
+      ListRow(
+        Text("Time", tableName: "Reminders", comment: "Row for the time reminders go out"),
+        description: Text(ReminderTime.zoneName(offer.timeZone)))
     }
     .environment(\.timeZone, .gmt)
     .disabled(offer.isSaving)

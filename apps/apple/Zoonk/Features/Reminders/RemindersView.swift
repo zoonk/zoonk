@@ -32,7 +32,7 @@ struct RemindersView: View {
           DatePicker(selection: timeBinding(reminder), displayedComponents: .hourAndMinute) {
             ListRow(
               Text("Time", tableName: "Reminders", comment: "Row for the time reminders go out"),
-              description: Text(reminder.zoneName))
+              description: Text(ReminderTime.zoneName(reminder.timeZone)))
           }
           .environment(\.timeZone, .gmt)
         }
@@ -243,12 +243,5 @@ struct NotificationsOffNotice<Actions: View>: View {
 extension NotificationsOffNotice where Actions == EmptyView {
   init() {
     actions = EmptyView()
-  }
-}
-
-extension StudyReminder {
-  /// The zone reminders follow, named the system's way, as in “Brasília Time”.
-  var zoneName: String {
-    TimeZone(identifier: timeZone)?.localizedName(for: .generic, locale: .current) ?? timeZone
   }
 }

@@ -23,6 +23,7 @@ struct StudyReminder: Equatable, Sendable {
 /// After a plan lesson, while no reminder is on and none was offered before.
 struct ReminderOffer: Decodable, Hashable, Sendable {
   let time: String
+  let timeZone: String
 }
 
 /// What a save changes; the rest stays as the server has it.
@@ -66,6 +67,11 @@ enum ReminderTime {
 
   static func rounded(_ time: String) -> String {
     string(date(time))
+  }
+
+  /// The zone reminders follow, named the system's way, as in “Brasília Time”.
+  static func zoneName(_ identifier: String) -> String {
+    TimeZone(identifier: identifier)?.localizedName(for: .generic, locale: .current) ?? identifier
   }
 
   static func formatted(_ time: String) -> String {

@@ -38,9 +38,10 @@ struct LessonCompletionView: View {
       }
       .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
     }
-    .onChange(of: offeredTime, initial: true) {
-      if let offeredTime, reminderOffer == nil {
-        reminderOffer = ReminderOfferState(time: ReminderTime.rounded(offeredTime))
+    .onChange(of: offer, initial: true) {
+      if let offer, reminderOffer == nil {
+        reminderOffer = ReminderOfferState(
+          time: ReminderTime.rounded(offer.time), timeZone: offer.timeZone)
       }
     }
     .completionMoments(day)
@@ -131,8 +132,8 @@ struct LessonCompletionView: View {
     }
   }
 
-  private var offeredTime: String? {
-    completion.status == .saved ? completion.summary?.block?.reminderOffer?.time : nil
+  private var offer: ReminderOffer? {
+    completion.status == .saved ? completion.summary?.block?.reminderOffer : nil
   }
 
   @ViewBuilder
