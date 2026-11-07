@@ -9,6 +9,23 @@ import { pickKeys } from "./records";
 
 type ShownAnswer = { answer: LessonRunAnswers[number]; step: PlayableLibraryStep };
 
+function isAfterRightAnswer(answer: LessonRunAnswers[number], earlier: LessonRunAnswers): boolean {
+  return earlier.some((other) => other.stepId === answer.stepId && other.isCorrect);
+}
+
+/** The server records nothing on a screen after its right answer, so a held answer behind one never counts. */
+export function addHeldAnswers(
+  answers: LessonRunAnswers,
+  held: LessonRunAnswers,
+): LessonRunAnswers {
+  return [
+    ...answers,
+    ...held.filter(
+      (answer, index) => !isAfterRightAnswer(answer, [...answers, ...held.slice(0, index)]),
+    ),
+  ];
+}
+
 export function getRunVerdicts(answers: LessonRunAnswers): Record<string, boolean> {
   return Object.fromEntries(
     answers

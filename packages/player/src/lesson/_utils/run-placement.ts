@@ -7,7 +7,13 @@ import {
 import { type LessonRunAnswers } from "../lesson-player-types";
 import { isAtEnd, setCompletionStatus } from "./lesson-end";
 import { enterPosition, skipSteps } from "./lesson-flow";
-import { getRunVerdicts, refreshAnswers, requeueRetries, resumeLesson } from "./lesson-resume";
+import {
+  addHeldAnswers,
+  getRunVerdicts,
+  refreshAnswers,
+  requeueRetries,
+  resumeLesson,
+} from "./lesson-resume";
 import { pickKeys } from "./records";
 import { restorePicturedSteps } from "./restore-pictured-steps";
 import { skipWriting } from "./writing-skip";
@@ -93,7 +99,7 @@ export function startRun(
 
   const started = skipSteps({ ...state, run }, action.optionalStepIds ?? []);
 
-  const answers = [...action.answers, ...action.held].filter(
+  const answers = addHeldAnswers(action.answers, action.held).filter(
     (answer) => answer.stepId in state.steps,
   );
 

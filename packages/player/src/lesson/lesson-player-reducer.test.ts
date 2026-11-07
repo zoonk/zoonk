@@ -28,6 +28,7 @@ import { toRunAnswer } from "./use-held-answers";
 
 const STARTED_AT = "2026-10-05T10:00:00.000Z";
 const ANSWERED_AT = "2026-10-05T10:01:00.000Z";
+const LATER = "2026-10-05T10:02:00.000Z";
 const HYPERDRIVE = { knownStepIds: [], streak: 0 };
 
 const CLOUD_PICTURE = {
@@ -1032,6 +1033,25 @@ describe(lessonPlayerReducer, () => {
       "q2",
       draft,
       undefined,
+    ]);
+  });
+
+  it("shows a screen's newest answer when this device still holds an older one the run already has", () => {
+    const steps = [explanationStep("e1"), checkStep("q1"), explanationStep("e2"), checkStep("q2")];
+    const miss = runAnswer("q1", false);
+
+    const started = play(steps, [
+      runStarted({ answers: [miss, runAnswer("q1", true, LATER)], held: [miss] }),
+    ]);
+
+    expect([getCurrentStep(started)?.id, started.queue]).toStrictEqual([
+      "e2",
+      ["e1", "q1", "e2", "q2"],
+    ]);
+
+    expect([started.results.q1?.isCorrect, started.answers.q1]).toStrictEqual([
+      true,
+      { kind: "check", optionId: "right" },
     ]);
   });
 

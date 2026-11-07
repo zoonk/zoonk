@@ -6,7 +6,7 @@ import { usePreloadMath } from "@zoonk/learn/rich-text/preload-math";
 import { useEffectEvent, useLayoutEffect, useMemo, useReducer } from "react";
 import { type PlayerLinkComponent } from "../player-context";
 import { LessonPicturesProvider } from "./_components/lesson-pictures";
-import { resumeLesson } from "./_utils/lesson-resume";
+import { addHeldAnswers, resumeLesson } from "./_utils/lesson-resume";
 import {
   LessonPlayerConfigContext,
   LessonPlayerRuntimeContext,
@@ -168,7 +168,7 @@ export function LessonPlayerProvider({
     }
 
     if (held.length > 0) {
-      dispatch({ answers: [...resume, ...held], type: "unsentPlaced" });
+      dispatch({ answers: addHeldAnswers(resume, held), type: "unsentPlaced" });
       return;
     }
 
