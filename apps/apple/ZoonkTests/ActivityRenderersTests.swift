@@ -412,9 +412,7 @@ final class ActivityRenderersTests: XCTestCase {
   }
 
   func testStepSolverKeepsEachStepsFirstPick() throws {
-    let content = try content(
-      #"{"template":"stepSolver","prompt":"Solve it.","check":{"kind":"interaction","explanation":"x"},"fields":{"problem":"A $60 jacket is 25% off.","steps":[{"choices":[{"id":"a","isCorrect":true,"reason":"First.","text":"Take 25% off"},{"id":"b","isCorrect":false,"reason":"Discount first.","text":"Add the tax"}],"expression":"60 * (1 - 0.25)","id":"discount","math":"60 − 15 = 45","prompt":"What comes first?","value":45},{"choices":[{"id":"a","isCorrect":false,"reason":"Before.","text":"$60"},{"id":"b","isCorrect":true,"reason":"What you pay.","text":"$45"}],"expression":"45 * 0.08","id":"tax","math":"8% of 45","prompt":"Which price?","value":3.6}]}}"#
-    )
+    let content = try stepSolver()
     let steps = try content.fields(as: StepSolverFields.self).steps
     var picks = StepSolver.adding([:], stepId: "discount", choiceId: "a")
 
@@ -429,6 +427,22 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertFalse(
       grade(.stepSolver, content, .assignment(pairs)), "a wrong first pick doesn't count")
     XCTAssertTrue(grade(.stepSolver, content, .assignment(["discount": "a", "tax": "b"])))
+  }
+
+  func testStepSolverShowsASavedAnswersStepsAgain() throws {
+    let steps = try stepSolver().fields(as: StepSolverFields.self).steps
+    let picks = StepSolver.picks(steps, answer: .assignment(["discount": "a", "tax": "a"]))
+
+    XCTAssertEqual(
+      picks, ["discount": ["a"], "tax": ["a", "b"]], "a wrong first pick, then the fix")
+    XCTAssertEqual(StepSolver.firstPicks(steps, picks: picks), ["discount": "a", "tax": "a"])
+    XCTAssertEqual(StepSolver.picks(steps, answer: .numeric(3.6)), [:])
+  }
+
+  private func stepSolver() throws -> ActivityStepContent {
+    try content(
+      #"{"template":"stepSolver","prompt":"Solve it.","check":{"kind":"interaction","explanation":"x"},"fields":{"problem":"A $60 jacket is 25% off.","steps":[{"choices":[{"id":"a","isCorrect":true,"reason":"First.","text":"Take 25% off"},{"id":"b","isCorrect":false,"reason":"Discount first.","text":"Add the tax"}],"expression":"60 * (1 - 0.25)","id":"discount","math":"60 − 15 = 45","prompt":"What comes first?","value":45},{"choices":[{"id":"a","isCorrect":false,"reason":"Before.","text":"$60"},{"id":"b","isCorrect":true,"reason":"What you pay.","text":"$45"}],"expression":"45 * 0.08","id":"tax","math":"8% of 45","prompt":"Which price?","value":3.6}]}}"#
+    )
   }
 
   func testLabeledDiagramNamesEachNumberedSpot() throws {
