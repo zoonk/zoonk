@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
@@ -70,24 +71,30 @@ import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.detailPagePadding
+import com.zoonk.api.models.ChapterMindMap
+import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.MindMapImage
 import com.zoonk.api.models.MindMapOutline
 import java.util.UUID
 import kotlin.math.exp
 
+/** A ready map: its picture, unless that failed its check twice, and its words. */
 internal data class ViewedMap(
     val title: String,
-    val image: MindMapImage,
-    val outline: MindMapOutline?,
+    val image: MindMapImage?,
+    val outline: MindMapOutline,
 )
 
 /**
- * A chapter's map full screen. Opened from the grid it reads the map the grid already has; opened
- * from anywhere else it reads the chapter's map.
+ * A chapter's map full screen. Opened from the Mind maps page it reads the map the page already has;
+ * opened from anywhere else it reads the chapter's map.
  */
 @Composable
 fun MindMapScreen(
@@ -111,8 +118,8 @@ fun MindMapScreen(
         val fromList =
             listed.value
                 ?.chapters
-                ?.firstOrNull { it.chapterId == chapterId }
-                ?.let { map -> map.image?.let { ViewedMap(map.title, it, map.outline) } }
+                ?.firstOrNull { it.chapterId == chapterId && it.status == GoalMindMap.Status.READY }
+                ?.let { map -> map.outline?.let { ViewedMap(map.title, map.image, it) } }
         val viewed = fromList?.let(Viewed::Shown) ?: chapterMap(app, ChapterKey(goal.id, chapterId))
 
         when (viewed) {
@@ -127,7 +134,11 @@ fun MindMapScreen(
             is Viewed.Shown -> {
                 val maps = host.maps(goal.id)
                 CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
-                    MindMapViewer(viewed.map, onClose = close, onSave = rememberSavePicture(maps, viewed.map.image, viewed.map.title))
+                    MindMapViewer(
+                        viewed.map,
+                        onClose = close,
+                        onSave = viewed.map.image?.let { rememberSavePicture(maps, it, viewed.map.title) },
+                    )
                 }
             }
         }
@@ -137,7 +148,7 @@ fun MindMapScreen(
 private sealed interface Viewed {
     data object Loading : Viewed
 
-    /** The chapter has no picture to show. */
+    /** The chapter has no ready map to show. */
     data object Missing : Viewed
 
     data class Shown(
@@ -153,67 +164,121 @@ private fun chapterMap(
     val state by app.mindMaps.chapter[key].collectShown()
     val map = state.value
     return when {
-        map != null -> map.image?.let { Viewed.Shown(ViewedMap(map.title, it, map.outline)) } ?: Viewed.Missing
-        state is LoadState.Failed || state == LoadState.Empty -> Viewed.Missing
-        else -> Viewed.Loading
+        map != null -> {
+            map.outline?.takeIf { map.status == ChapterMindMap.Status.READY }?.let { Viewed.Shown(ViewedMap(map.title, map.image, it)) }
+                ?: Viewed.Missing
+        }
+
+        state is LoadState.Failed || state == LoadState.Empty -> {
+            Viewed.Missing
+        }
+
+        else -> {
+            Viewed.Loading
+        }
     }
 }
 
+/**
+ * The map full screen: its picture to zoom and pan, with its words beside it on a wide window and a
+ * switch to them on a narrower one; a map whose picture failed its check is its words.
+ */
 @Composable
 internal fun MindMapViewer(
     map: ViewedMap,
     onClose: () -> Unit,
-    onSave: () -> Unit,
+    onSave: (() -> Unit)?,
 ) {
     var view by rememberSaveable(stateSaver = PAN_ZOOM_SAVER) { mutableStateOf(PanZoom.FIT) }
     var frame by remember { mutableStateOf(Size.Zero) }
-    val outline = map.outline
+    var asText by rememberSaveable { mutableStateOf(false) }
+    val image = map.image
 
-    TaskScaffold(
-        onClose = onClose,
-        title = { Text(map.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-        actions = {
-            IconButton(onClick = onSave) {
-                Icon(painterResource(R.drawable.ic_download), contentDescription = stringResource(R.string.mindmaps_download))
-            }
-        },
-    ) { padding ->
-        BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
-            val outlineBeside = outline != null && maxWidth >= OUTLINE_BESIDE_FROM
-            Row(Modifier.fillMaxSize()) {
-                Column(Modifier.weight(1f).fillMaxHeight()) {
-                    ZoomFrame(
-                        map = map,
-                        outlineShown = outlineBeside,
-                        view = { view },
-                        onView = { view = it },
-                        frame = { frame },
-                        onFrame = { frame = it },
-                        modifier = Modifier.weight(1f).fillMaxWidth(),
-                    )
-                    BeforeFold { beforeFold ->
-                        ZoomControls(
-                            scale = view.scale,
-                            onZoomOut = { view = view.zoomAt(frame, Offset.Zero, view.scale / PanZoom.ZOOM_STEP) },
-                            onFit = { view = PanZoom.FIT },
-                            onZoomIn = { view = view.zoomAt(frame, Offset.Zero, view.scale * PanZoom.ZOOM_STEP) },
-                            modifier = beforeFold,
+    BoxWithConstraints {
+        val outlineBeside = image != null && maxWidth >= OUTLINE_BESIDE_FROM
+        val textOnly = asText && !outlineBeside
+
+        TaskScaffold(
+            onClose = onClose,
+            title = { Text(map.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+            actions = {
+                if (image != null && !outlineBeside) {
+                    TextButton(onClick = { asText = !asText }) {
+                        Text(stringResource(if (asText) R.string.mindmaps_as_picture else R.string.mindmaps_as_text))
+                    }
+                }
+                if (onSave != null) {
+                    IconButton(onClick = onSave) {
+                        Icon(painterResource(R.drawable.ic_download), contentDescription = stringResource(R.string.mindmaps_download))
+                    }
+                }
+            },
+        ) { padding ->
+            if (image == null || textOnly) {
+                OutlineOnly(map, noted = image == null, Modifier.fillMaxSize().padding(padding))
+            } else {
+                Row(Modifier.fillMaxSize().padding(padding)) {
+                    Column(Modifier.weight(1f).fillMaxHeight()) {
+                        ZoomFrame(
+                            map = map,
+                            image = image,
+                            outlineShown = outlineBeside,
+                            view = { view },
+                            onView = { view = it },
+                            frame = { frame },
+                            onFrame = { frame = it },
+                            modifier = Modifier.weight(1f).fillMaxWidth(),
+                        )
+                        BeforeFold { beforeFold ->
+                            ZoomControls(
+                                scale = view.scale,
+                                onZoomOut = { view = view.zoomAt(frame, Offset.Zero, view.scale / PanZoom.ZOOM_STEP) },
+                                onFit = { view = PanZoom.FIT },
+                                onZoomIn = { view = view.zoomAt(frame, Offset.Zero, view.scale * PanZoom.ZOOM_STEP) },
+                                modifier = beforeFold,
+                            )
+                        }
+                    }
+
+                    if (outlineBeside) {
+                        VerticalDivider()
+                        MindMapOutlineText(
+                            outline = map.outline,
+                            modifier =
+                                Modifier
+                                    .width(OUTLINE_WIDTH)
+                                    .fillMaxHeight()
+                                    .verticalScroll(rememberScrollState())
+                                    .padding(24.dp),
                         )
                     }
                 }
+            }
+        }
+    }
+}
 
-                if (outlineBeside) {
-                    VerticalDivider()
-                    MindMapOutlineText(
-                        outline = outline,
-                        modifier =
-                            Modifier
-                                .width(OUTLINE_WIDTH)
-                                .fillMaxHeight()
-                                .verticalScroll(rememberScrollState())
-                                .padding(24.dp),
+/** The map in words, read before the fold; [noted] says why when its picture had mistakes. */
+@Composable
+private fun OutlineOnly(
+    map: ViewedMap,
+    noted: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier.verticalScroll(rememberScrollState())) {
+        BeforeFold { beforeFold ->
+            Column(
+                beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).padding(detailPagePadding()),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                if (noted) {
+                    Text(
+                        stringResource(R.string.mindmaps_as_text_note),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
                     )
                 }
+                MindMapOutlineText(map.outline)
             }
         }
     }
@@ -222,6 +287,7 @@ internal fun MindMapViewer(
 @Composable
 private fun ZoomFrame(
     map: ViewedMap,
+    image: MindMapImage,
     outlineShown: Boolean,
     view: () -> PanZoom,
     onView: (PanZoom) -> Unit,
@@ -292,7 +358,7 @@ private fun ZoomFrame(
     ) {
         if (side.value > 0f) {
             MapPicture(
-                url = map.image.url,
+                url = image.url,
                 contentDescription = null,
                 modifier =
                     Modifier.size(side).graphicsLayer {

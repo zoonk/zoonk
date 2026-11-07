@@ -30,10 +30,12 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
-import com.zoonk.android.feature.mindmaps.MindMapCardActions
-import com.zoonk.android.feature.mindmaps.MindMapCardContent
+import com.zoonk.android.feature.mindmaps.MindMapPlace
+import com.zoonk.android.feature.mindmaps.MindMapRow
+import com.zoonk.android.feature.mindmaps.MindMapRowActions
 import com.zoonk.android.feature.mindmaps.MindMapShown
 import com.zoonk.android.feature.mindmaps.chapterMindMap
+import com.zoonk.android.feature.mindmaps.facts
 import com.zoonk.android.feature.tutor.AskTutor
 import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.feature.tutor.TutorScope
@@ -181,10 +183,7 @@ class GoalContentScreenshots {
             val context = LocalContext.current
             val pictures =
                 remember { PrivatePictures(AppContainer.preview(context).images, AuthenticatedSession("ana", "token-a", "local-a")) }
-            val map = chapterMindMap("ready")
-            val navigator = rememberAppNavigator()
-            val card =
-                MindMapSlot(map) { MindMapCardContent(map, MindMapShown.Ready, null, null, MindMapCardActions({}, {}, {}, {}), navigator) }
+            val map = chapterMindMap("ready").facts
             CompositionLocalProvider(LocalPrivatePictures provides pictures) {
                 ChapterPage(
                     goalChapter(),
@@ -192,8 +191,18 @@ class GoalContentScreenshots {
                     ChapterActions({}, {}, {}, {}),
                     menu,
                     ask,
-                    card,
-                )
+                ) { modifier ->
+                    MindMapRow(
+                        map,
+                        MindMapPlace.Chapter,
+                        MindMapShown.Ready,
+                        null,
+                        null,
+                        plus = false,
+                        MindMapRowActions({}, {}, {}),
+                        modifier,
+                    )
+                }
             }
         }
 

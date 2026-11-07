@@ -35,16 +35,17 @@ class MindMapRulesTest {
     }
 
     @Test
-    fun theServersReadyWinsOverWhatThisScreenSaw() {
+    fun theServersReadyAndPlusLockWinOverWhatThisScreenSaw() {
         val stuck = MindMapLocal(stuck = true)
 
         assertEquals(MindMapShown.Ready, shownMindMap(MindMapShown.Ready, stuck))
-        assertEquals(MindMapShown.Unreachable, shownMindMap(MindMapShown.Generating, stuck))
+        assertEquals(MindMapShown.PlusRequired, shownMindMap(MindMapShown.PlusRequired, MindMapLocal(shown = MindMapShown.Drawing)))
+        assertEquals(MindMapShown.Unreachable, shownMindMap(MindMapShown.Drawing, stuck))
     }
 
     @Test
     fun aMapThisScreenSawFinishStaysDrawingUntilTheServersReadSaysSo() {
-        assertEquals(MindMapShown.Generating, shownMindMap(MindMapShown.Available, MindMapLocal(shown = MindMapShown.Ready)))
+        assertEquals(MindMapShown.Drawing, shownMindMap(MindMapShown.Available, MindMapLocal(shown = MindMapShown.Ready)))
     }
 
     @Test

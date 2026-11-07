@@ -30,16 +30,23 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import coil3.size.Size
 import com.zoonk.android.R
+import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalSnackbarHostState
-import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.PrivatePictures
+import com.zoonk.api.models.AllowanceItem
+import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.MindMapImage
 import com.zoonk.api.models.MindMapOutline
 import java.util.UUID
@@ -227,33 +234,73 @@ internal fun rememberSavePicture(
 
 private const val PICTURE_TYPE = "image/webp"
 
-/** A map that can't be made now: why, with Create a free account or See Plus where they help. */
+/**
+ * A map that can't be made now: why, worded as lessons when what ran out was the lessons it would
+ * write first, with Create a free account or See Plus where they help.
+ */
 @Composable
 internal fun MindMapLimit(
     limit: Limit,
-    navigator: AppNavigator,
+    lessonsRanOut: Boolean,
+    navigate: (AppRoute) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LimitNotice(
         limit = limit,
-        subject = LimitSubject.MindMaps,
-        onCreateAccount = { navigator.open(AppRoute.Login) },
-        onSeePlus = { navigator.open(AppRoute.Subscription) },
+        subject = if (lessonsRanOut) LimitSubject.Lessons else LimitSubject.MindMaps,
+        onCreateAccount = { navigate(AppRoute.Login) },
+        onSeePlus = { navigate(AppRoute.Subscription) },
         modifier = modifier,
     )
 }
 
-/** Follows a map while it's drawn and the screen is started; [local] restarts it once this screen's answer changes. */
+/** Follows a map while it's on its way and the screen is started, again whenever what it shows changes. */
 @Composable
-internal fun FollowWhileDrawn(
+internal fun FollowWhileOnItsWay(
     maps: MindMapViewModel,
     chapterId: UUID,
     shown: MindMapShown,
-    local: MindMapLocal?,
 ) {
-    if (shown != MindMapShown.Generating) return
+    if (!shown.onItsWay) return
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    LaunchedEffect(lifecycle, chapterId, local) {
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { maps.follow(chapterId) }
+    LaunchedEffect(lifecycle, chapterId, shown) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { maps.follow(chapterId, shown) }
     }
+}
+
+/**
+ * What a screen's mind maps need from the app: the store, the session it shows (for its pictures
+ * and the polls), the plan's cap on new maps (read only where a map could still be made) and whether
+ * the learner is on Plus, whose rows say a chapter's lessons get written first without counting.
+ */
+internal class MindMapsHost(
+    val store: MindMapStore,
+    val session: AuthenticatedSession,
+    val pictures: PrivatePictures,
+    val cap: @Composable () -> Limit?,
+    val plus: @Composable () -> Boolean,
+    private val currentSession: () -> AuthenticatedSession?,
+) {
+    @Composable
+    fun maps(goalId: UUID): MindMapViewModel =
+        viewModel(key = "mindmaps-$goalId-${session.localId}") { MindMapViewModel(store, session, goalId, currentSession) }
+}
+
+@Composable
+internal fun mindMapsHost(app: AppContainer): MindMapsHost? {
+    val session = app.sessions.current ?: return null
+    return MindMapsHost(
+        store = app.mindMaps,
+        session = session,
+        pictures = PrivatePictures(app.images, session),
+        cap = {
+            val allowance by app.subscriptions.allowance.collectShown()
+            allowance.value?.reachedCap(AllowanceItem.Kind.MIND_MAP)
+        },
+        plus = {
+            val summary by app.learnerSummary.summary.collectShown()
+            summary.value?.tier == LearnerSummary.Tier.PLUS
+        },
+        currentSession = { app.sessions.current },
+    )
 }

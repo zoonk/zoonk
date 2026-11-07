@@ -5,23 +5,16 @@
         <item quantity="one">%1$s map</item>
         <item quantity="other">%1$s maps</item>
     </plurals>
-    <!-- The group of mind maps when the goal's chapters have no subjects. -->
-    <string name="mindmaps_chapters_finished">Chapters you finished</string>
+    <!-- Under the Mind maps page's title. -->
+    <string name="mindmaps_intro">A chapter\'s main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan.</string>
     <plurals name="mindmaps_chapter_count">
         <item quantity="one">%d chapter</item>
         <item quantity="other">%d chapters</item>
     </plurals>
-    <!-- A mind map tile's caption over the chapter's title. -->
+    <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">Chapter %1$s</string>
     <string name="mindmaps_empty_title">No mind maps yet</string>
-    <string name="mindmaps_empty_description">Finish a chapter to make its mind map: its main ideas in one picture.</string>
-    <!-- %1$s is the chapter the learner is in, %2$d the lessons left in it. -->
-    <plurals name="mindmaps_first_after">
-        <item quantity="one">Your first one comes after %1$s: %2$d lesson left.</item>
-        <item quantity="other">Your first one comes after %1$s: %2$d lessons left.</item>
-    </plurals>
-    <!-- Opens the chapter whose map comes next. -->
-    <string name="mindmaps_continue">Continue</string>
+    <string name="mindmaps_empty_description">Your plan\'s chapters show up here as you get to them.</string>
     <string name="mindmaps_keep_studying">Keep studying</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">Mind map of %1$s</string>
@@ -29,27 +22,42 @@
     <string name="mindmaps_alt">Mind map: %1$s. %2$s</string>
     <!-- The same, for a title that already ends a sentence. -->
     <string name="mindmaps_alt_sentence">Mind map: %1$s %2$s</string>
-    <!-- A tile for a map whose picture had mistakes, shown in words instead. -->
+    <!-- A map whose picture had mistakes, in its row on the Mind maps page; also the viewer's button that shows the map in words. -->
     <string name="mindmaps_as_text">As text</string>
-    <string name="mindmaps_drawing">Drawing…</string>
+    <!-- The viewer's button that shows the map's picture again after it was shown as text. -->
+    <string name="mindmaps_as_picture">As picture</string>
+    <!-- The title of a chapter's mind map row on the chapter's page. -->
+    <string name="mindmaps_row_title">Mind map</string>
+    <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
+    <string name="mindmaps_row_description">Its main ideas in one picture</string>
+    <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. -->
+    <string name="mindmaps_lessons_first_free">Its lessons get written first and count toward your free lessons.</string>
+    <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
+    <string name="mindmaps_lessons_first_plus">Its lessons get written first, so it takes a few minutes.</string>
+    <string name="mindmaps_writing_lessons">Writing the lessons, then the mind map…</string>
+    <string name="mindmaps_writing_lessons_wait">This takes a few minutes. You can leave; it\'ll be here.</string>
+    <string name="mindmaps_drawing">Drawing the mind map…</string>
+    <string name="mindmaps_drawing_wait">About half a minute. You can leave; it\'ll be here.</string>
+    <!-- A finished chapter's mind map that's ready to open, where the chapter ends. -->
+    <string name="mindmaps_ready">Mind map ready</string>
+    <!-- Where a lesson or a test ends, over the row of the chapter it finished and its mind map. -->
+    <string name="mindmaps_chapter_finished">Chapter finished</string>
     <!-- Makes a chapter's mind map. -->
     <string name="mindmaps_create">Create</string>
+    <!-- Opens a chapter's mind map. -->
+    <string name="mindmaps_open">Open</string>
     <string name="mindmaps_try_again">Try again</string>
-    <!-- What screen readers say for a tile's Create, naming its chapter. -->
+    <!-- Opens the Plus plans, on a mind map whose chapter is Plus-only. -->
+    <string name="mindmaps_see_plus">See Plus</string>
+    <!-- What screen readers say for a row's Create, naming its chapter. -->
     <string name="mindmaps_create_spoken">Create the mind map of %1$s</string>
-    <!-- What screen readers say for a tile's Try again, naming its chapter. -->
+    <!-- What screen readers say for a row's Open, naming its chapter. -->
+    <string name="mindmaps_open_spoken">Open the mind map of %1$s</string>
+    <!-- What screen readers say for a row's Try again, naming its chapter. -->
     <string name="mindmaps_try_again_spoken">Try the mind map of %1$s again</string>
-    <string name="mindmaps_failed_short">It couldn\'t be made this time.</string>
-    <string name="mindmaps_unreachable_short">We couldn\'t reach the server.</string>
-    <string name="mindmaps_card_title">Mind map</string>
-    <string name="mindmaps_card_description">The chapter\'s main ideas in one picture, to review at a glance.</string>
-    <string name="mindmaps_card_create">Create the mind map</string>
-    <string name="mindmaps_card_generating_title">Drawing the mind map…</string>
-    <string name="mindmaps_card_generating">It takes about half a minute. You can leave this page; it\'ll be here.</string>
-    <string name="mindmaps_card_failed">The mind map couldn\'t be made this time.</string>
-    <string name="mindmaps_card_unreachable">We couldn\'t reach the server. Check your connection.</string>
+    <string name="mindmaps_failed">It couldn\'t be made this time.</string>
+    <string name="mindmaps_unreachable">We couldn\'t reach the server. Check your connection.</string>
     <string name="mindmaps_as_text_note">Its picture had mistakes, so here\'s the mind map as text.</string>
-    <string name="mindmaps_full_screen">Full screen</string>
     <!-- Saves the mind map's picture. -->
     <string name="mindmaps_download">Download</string>
     <string name="mindmaps_saved">Mind map saved</string>

@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -43,12 +41,11 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
-import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.feedback.rememberReportProblem
 import com.zoonk.android.feature.language.LanguageUnitScreen
-import com.zoonk.android.feature.mindmaps.ChapterMindMapCard
+import com.zoonk.android.feature.mindmaps.ChapterMindMapRow
 import com.zoonk.android.feature.tutor.AskTutor
 import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.feature.tutor.TutorScope
@@ -82,7 +79,6 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.ChapterLesson
-import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.GoalChapter
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -133,21 +129,12 @@ fun ChapterScreen(
                     navigator = navigator,
                     menu = { ReportProblemMenu(report, inPage = true) },
                     ask = { AskTutor(TutorScope.Chapter(route.chapterId), app, navigator, appearance = it) },
-                    mindMap = {
-                        val map by app.mindMaps.chapter[key].collectShown()
-                        map.value?.let { MindMapSlot(it) { ChapterMindMapCard(it, key, app, navigator) } }
-                    },
+                    mindMap = { ChapterMindMapRow(key, app, navigator::open, it) },
                 )
             }
         }
     }
 }
-
-/** The chapter's mind map, and its card where the page shows it. */
-internal class MindMapSlot(
-    val map: ChapterMindMap,
-    val card: @Composable () -> Unit,
-)
 
 @Composable
 internal fun ChapterContent(
@@ -156,7 +143,7 @@ internal fun ChapterContent(
     navigator: AppNavigator,
     menu: @Composable () -> Unit = {},
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
-    mindMap: @Composable () -> MindMapSlot? = { null },
+    mindMap: @Composable (Modifier) -> Unit = {},
 ) {
     val resource = store.chapter[key]
     val state by resource.collectShown()
@@ -181,7 +168,7 @@ internal fun ChapterContent(
                 practice = practiceState,
                 menu = menu,
                 ask = ask,
-                mindMap = mindMap(),
+                mindMap = mindMap,
                 actions =
                     ChapterActions(
                         back = back,
@@ -249,9 +236,8 @@ internal fun ChapterPage(
     actions: ChapterActions,
     menu: @Composable () -> Unit = {},
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
-    mindMap: MindMapSlot? = null,
+    mindMap: @Composable (Modifier) -> Unit = {},
 ) {
-    val reference = mindMap?.takeIf { it.map.status != ChapterMindMap.Status.UNAVAILABLE }
     val lessons = remember(chapter.lessons) { chapter.lessons.map { it.listed() } }
 
     DetailPage(
@@ -262,9 +248,11 @@ internal fun ChapterPage(
         aside = {
             ChapterProgress(lessons)
             ChapterPractice(chapter, practice, actions)
-            ChapterReference(chapter, reference)
+            ChapterReference(chapter)
         },
     ) { asideBeside ->
+        item(key = "mind-map", contentType = "mind-map") { mindMap(Modifier.padding(top = SECTION_GAP)) }
+
         if (lessons.isNotEmpty()) {
             item(key = "lessons", contentType = "lessons") {
                 LessonList(lessons, upNext = true, onOpen = actions.openLesson, modifier = Modifier.padding(top = SECTION_GAP))
@@ -276,7 +264,7 @@ internal fun ChapterPage(
                 key = "practice",
                 contentType = "practice",
             ) { ChapterPractice(chapter, practice, actions, Modifier.padding(top = SECTION_GAP)) }
-            item(key = "reference", contentType = "reference") { ChapterReference(chapter, reference, Modifier.padding(top = SECTION_GAP)) }
+            item(key = "reference", contentType = "reference") { ChapterReference(chapter, Modifier.padding(top = SECTION_GAP)) }
         }
     }
 }
@@ -418,11 +406,9 @@ private fun practiceMessage(outcome: PracticeOutcome?): String? =
 @Composable
 private fun ChapterReference(
     chapter: GoalChapter,
-    mindMap: MindMapSlot?,
     modifier: Modifier = Modifier,
 ) {
-    val hasSummary = chapter.skills.isNotEmpty() || chapter.summaries.isNotEmpty()
-    if (mindMap == null && !hasSummary) return
+    if (chapter.skills.isEmpty() && chapter.summaries.isEmpty()) return
 
     var expanded by rememberSaveable { mutableStateOf(false) }
 
@@ -431,9 +417,6 @@ private fun ChapterReference(
             stringResource(R.string.goalcontent_for_reference),
             Modifier.padding(horizontal = PAGE_PADDING).padding(bottom = 12.dp),
         )
-        mindMap?.card?.invoke()
-        if (!hasSummary) return@Column
-        if (mindMap != null) Spacer(Modifier.height(12.dp))
         DisclosureRow(
             stringResource(R.string.goalcontent_chapter_summary),
             expanded = expanded,

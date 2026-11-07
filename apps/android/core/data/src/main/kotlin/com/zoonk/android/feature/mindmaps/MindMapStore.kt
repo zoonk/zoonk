@@ -23,6 +23,10 @@ import com.zoonk.api.models.GoalMindMaps
 import com.zoonk.api.models.MindMapGeneration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Request
 import java.io.IOException
@@ -103,13 +107,21 @@ class LiveMindMapApi(
 sealed interface MindMapCreated {
     data object Ready : MindMapCreated
 
-    data object Generating : MindMapCreated
+    /** [shown] is writing the chapter's lessons first, or drawing. */
+    data class OnItsWay(
+        val shown: MindMapShown,
+    ) : MindMapCreated
 
-    /** Maps are for chapters the learner finished. */
+    /** The chapter has no map: a language's unit, or nothing in its outline to draw from. */
     data object Unavailable : MindMapCreated
 
+    /** The chapter's lessons, and so its map, are Plus-only for this learner. */
+    data object PlusRequired : MindMapCreated
+
+    /** [lessonsRanOut]: what ran out was the lessons the map would write first, not the maps. */
     data class Refused(
         val limit: Limit,
+        val lessonsRanOut: Boolean,
     ) : MindMapCreated
 
     data object Failed : MindMapCreated
@@ -127,31 +139,51 @@ class MindMapStore(
         cache.keyed(Audience.SignedIn, DOMAINS) { session, key -> session?.let { api.chapter(it, key) } }
 
     /**
-     * Null when the session changed meanwhile. A map being drawn shows as drawing in the reads kept
-     * of it, so a screen opened again follows it; one already drawn is read again.
+     * Null when the session changed meanwhile. A map on its way shows so in the reads kept of it, so
+     * a screen opened again follows it; one already drawn, or locked for Plus, is read again.
      */
     suspend fun create(key: ChapterKey): MindMapCreated? =
         when (val result = cache.mutate(invalidating = setOf(DataDomain.Allowance)) { api.create(it, key) }) {
             is MutationResult.Done -> {
-                if (result.value.status == MindMapGeneration.Status.READY) {
-                    list[key.goalId].invalidate()
-                    chapter[key].invalidate()
+                val shown = result.value.status.shown
+                if (shown == MindMapShown.Ready) {
+                    readAgain(key)
                     MindMapCreated.Ready
                 } else {
-                    drawing(key)
-                    MindMapCreated.Generating
+                    onItsWay(key, shown)
+                    MindMapCreated.OnItsWay(shown)
                 }
             }
 
             is MutationResult.Failed -> {
-                Limit.of(result)?.let(MindMapCreated::Refused)
-                    ?: if (result.status == UNPROCESSABLE) MindMapCreated.Unavailable else MindMapCreated.Failed
+                refused(result, key)
             }
 
             MutationResult.Obsolete -> {
                 null
             }
         }
+
+    private fun refused(
+        result: MutationResult.Failed,
+        key: ChapterKey,
+    ): MindMapCreated {
+        if (result.code == PLUS_REQUIRED) {
+            readAgain(key)
+            return MindMapCreated.PlusRequired
+        }
+        val limit = Limit.of(result)
+        return when {
+            limit != null -> MindMapCreated.Refused(limit, lessonsRanOut = result.details.ranOut() in LESSON_RESOURCES)
+            result.status == UNPROCESSABLE -> MindMapCreated.Unavailable
+            else -> MindMapCreated.Failed
+        }
+    }
+
+    private fun readAgain(key: ChapterKey) {
+        list[key.goalId].invalidate()
+        chapter[key].invalidate()
+    }
 
     /** Null when it couldn't be read; the poll counts those. */
     suspend fun status(
@@ -186,12 +218,17 @@ class MindMapStore(
         return listOfNotNull(listed?.status?.shown, read?.status?.shown).all { it == status }
     }
 
-    private fun drawing(key: ChapterKey) {
-        list[key.goalId].update { maps -> maps.copy(chapters = maps.chapters.map { it.drawingIf(key.chapterId) }) }
-        chapter[key].update { it.copy(status = ChapterMindMap.Status.GENERATING) }
+    private fun onItsWay(
+        key: ChapterKey,
+        shown: MindMapShown,
+    ) {
+        val writing = shown == MindMapShown.WritingLessons
+        val listed = if (writing) GoalMindMap.Status.WRITING_LESSONS else GoalMindMap.Status.DRAWING
+        list[key.goalId].update { maps ->
+            maps.copy(chapters = maps.chapters.map { if (it.chapterId == key.chapterId) it.copy(status = listed) else it })
+        }
+        chapter[key].update { it.copy(status = if (writing) ChapterMindMap.Status.WRITING_LESSONS else ChapterMindMap.Status.DRAWING) }
     }
-
-    private fun GoalMindMap.drawingIf(id: UUID) = if (chapterId == id) copy(status = GoalMindMap.Status.GENERATING) else this
 
     suspend fun picture(
         session: AuthenticatedSession,
@@ -208,5 +245,11 @@ class MindMapStore(
     private companion object {
         val DOMAINS = setOf(DataDomain.Goals, DataDomain.UserProgress)
         const val UNPROCESSABLE = 422
+        const val PLUS_REQUIRED = "PLUS_REQUIRED"
+        val LESSON_RESOURCES = setOf("lessonStart", "generatedLessons")
     }
 }
+
+/** A refusal's `details.limit.resource`: what ran out. */
+private fun JsonElement?.ranOut(): String? =
+    (((this as? JsonObject)?.get("limit") as? JsonObject)?.get("resource") as? JsonPrimitive)?.contentOrNull

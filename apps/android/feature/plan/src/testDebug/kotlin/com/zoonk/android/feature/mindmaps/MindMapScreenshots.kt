@@ -17,20 +17,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
+import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AuthenticatedSession
-import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
+import com.zoonk.android.ui.components.SectionLabel
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -46,7 +50,7 @@ import java.io.File
 import java.util.UUID
 
 /**
- * Review screenshots of the mind maps page, a chapter's mind map card and the viewer, written only
+ * Review screenshots of the Mind maps page, a map's row in every state where it shows, and the viewer, written only
  * on demand: `./gradlew :feature:plan:testDebugUnitTest --tests '*MindMapScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  * Pictures don't load on the JVM, so they show as their muted surface.
  */
@@ -161,53 +165,72 @@ class MindMapScreenshots {
         const val BOOK = "w852dp-h883dp-xhdpi"
         val SESSION = AuthenticatedSession("ana", "token-a", "local-a")
         val FREE_CAP = Limit.Reached(LimitTier.Free, LimitPeriod.Day)
-        val NO_ACTIONS = MindMapsActions({}, {}, {}, {}, {}, {})
-        val CARD_ACTIONS = MindMapCardActions({}, {}, {}, {})
+        val NO_ACTIONS = MindMapsActions({}, {}, {}, {}, {})
+        val ROW_ACTIONS = MindMapRowActions({}, {}, {})
 
         @Composable
-        fun Grid(cap: Limit? = null) {
-            val stuck = mapOf(UUID.fromString(mapChapter(11)) to MindMapLocal(stuck = true))
-            MindMapsPage(goalMindMaps(), stuck, cap, NO_ACTIONS, rememberAppNavigator())
+        fun Library(cap: Limit? = null) {
+            val stuck = mapOf(UUID.fromString(mapChapter(11)) to MindMapLocal(shown = MindMapShown.Drawing, stuck = true))
+            MindMapsPage(goalMindMaps(), stuck, cap, plus = false, NO_ACTIONS)
         }
 
         @Composable
-        fun Cards() {
-            val navigator = rememberAppNavigator()
-            Column(Modifier.padding(vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(32.dp)) {
-                MindMapCardContent(chapterMindMap("available"), MindMapShown.Available, null, null, CARD_ACTIONS, navigator)
-                MindMapCardContent(chapterMindMap("generating"), MindMapShown.Generating, null, null, CARD_ACTIONS, navigator)
-                MindMapCardContent(chapterMindMap("failed"), MindMapShown.Unreachable, null, FREE_CAP, CARD_ACTIONS, navigator)
-                MindMapCardContent(chapterMindMap("ready"), MindMapShown.Ready, null, null, CARD_ACTIONS, navigator)
+        fun Row(
+            status: String,
+            place: MindMapPlace,
+            shown: MindMapShown = chapterMindMap(status).facts.status,
+            image: Boolean = status == "ready",
+            lessonsToWrite: Int = 0,
+            local: MindMapLocal? = null,
+            cap: Limit? = null,
+            plus: Boolean = false,
+        ) {
+            val map = chapterMindMap(status, image, lessonsToWrite).facts
+            // Where a chapter ends, the row sits in the result's column, its words lined up with the column's.
+            val finish = place == MindMapPlace.Finish
+            MindMapRow(map, place, shown, local, cap, plus, ROW_ACTIONS, if (finish) Modifier.bleed(LIST_ITEM_INSET) else Modifier)
+        }
+
+        @Composable
+        fun Rows(place: MindMapPlace) {
+            val inset = if (place == MindMapPlace.Finish) LIST_ITEM_INSET else 0.dp
+            Column(Modifier.padding(horizontal = inset, vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (place == MindMapPlace.Finish) SectionLabel(stringResource(R.string.mindmaps_chapter_finished))
+                Row("available", place)
+                Row("available", place, lessonsToWrite = 4)
+                Row("available", place, lessonsToWrite = 4, plus = true)
+                Row("writingLessons", place, lessonsToWrite = 4)
+                Row("drawing", place)
+                Row("ready", place)
+                Row("ready", place, image = false)
+                Row("failed", place)
+                Row("failed", place, shown = MindMapShown.Unreachable)
+                Row("plusRequired", place)
+                Row("available", place, cap = FREE_CAP)
+                Row(
+                    "available",
+                    place,
+                    shown = MindMapShown.Refused,
+                    lessonsToWrite = 4,
+                    local = MindMapLocal(MindMapShown.Refused, Limit.Reached(LimitTier.Free, LimitPeriod.Month), lessonsRanOut = true),
+                )
             }
         }
 
         val SCREENS: List<Pair<String, @Composable () -> Unit>> =
             listOf(
-                "mind-maps" to { Grid() },
-                "mind-maps-capped" to { Grid(FREE_CAP) },
-                "mind-maps-empty" to {
-                    MindMapsPage(
-                        goalMindMaps(emptyList(), next = """{"chapterId":"${mapChapter(3)}","lessonsLeft":2,"title":"Waves and sound"}"""),
-                        emptyMap(),
-                        null,
-                        NO_ACTIONS,
-                        rememberAppNavigator(),
-                    )
-                },
-                "mind-map-cards" to { Cards() },
-                "mind-map-text" to {
-                    MindMapCardContent(
-                        chapterMindMap("ready", image = false),
-                        MindMapShown.Ready,
-                        null,
-                        null,
-                        CARD_ACTIONS,
-                        rememberAppNavigator(),
-                    )
-                },
+                "mind-maps" to { Library() },
+                "mind-maps-capped" to { Library(FREE_CAP) },
+                "mind-maps-empty" to { MindMapsPage(goalMindMaps(emptyList()), emptyMap(), null, plus = false, NO_ACTIONS) },
+                "mind-map-rows-chapter" to { Rows(MindMapPlace.Chapter) },
+                "mind-map-rows-finish" to { Rows(MindMapPlace.Finish) },
                 "mind-map-viewer" to {
                     val map = chapterMindMap("ready")
-                    MindMapViewer(ViewedMap(map.title, map.image!!, map.outline), onClose = {}, onSave = {})
+                    MindMapViewer(ViewedMap(map.title, map.image, map.outline!!), onClose = {}, onSave = {})
+                },
+                "mind-map-viewer-text" to {
+                    val map = chapterMindMap("ready", image = false)
+                    MindMapViewer(ViewedMap(map.title, null, map.outline!!), onClose = {}, onSave = null)
                 },
             )
     }

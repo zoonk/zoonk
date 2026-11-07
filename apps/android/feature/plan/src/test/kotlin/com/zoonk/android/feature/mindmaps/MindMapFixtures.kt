@@ -31,8 +31,9 @@ internal fun mapJson(
     image: Boolean = status == "ready",
     subject: String? = "natural-sciences",
     id: Int = position,
+    lessonsToWrite: Int = 0,
 ) = """
-    {"chapterId":"${mapChapter(id)}","position":$position,"status":"$status","title":"$title",
+    {"chapterId":"${mapChapter(id)}","position":$position,"status":"$status","title":"$title","lessonsToWrite":$lessonsToWrite,
      "image":${if (image) """{"height":2048,"width":2048,"url":"$PICTURE/map-$position.webp","thumbnailUrl":"$PICTURE/map-$position-thumb.webp"}""" else "null"},
      "outline":${if (status == "ready") OUTLINE else "null"},
      "subject":${subject?.let {
@@ -46,25 +47,28 @@ internal fun goalMindMaps(
             mapJson(1, "Motion and forces", "ready"),
             mapJson(2, "Energy", "ready", image = false),
             mapJson(3, "Waves and sound", "available"),
-            mapJson(4, "Electricity", "generating"),
+            mapJson(4, "Electricity", "drawing"),
+            mapJson(5, "Light", "writingLessons", lessonsToWrite = 3),
+            mapJson(6, "Optics", "available", lessonsToWrite = 2),
+            mapJson(7, "Modern physics", "plusRequired"),
             mapJson(1, "Functions", "failed", subject = "mathematics", id = 11),
         ),
-    next: String? = null,
 ): GoalMindMaps =
     ApiJson.decodeFromString(
-        """{"chapters":[${chapters.joinToString(",")}],"goal":{"id":"$GOAL","title":"Pass ENEM"},"nextChapter":${next ?: "null"}}""",
+        """{"chapters":[${chapters.joinToString(",")}],"goal":{"id":"$GOAL","title":"Pass ENEM"}}""",
     )
 
 internal fun chapterMindMap(
     status: String,
     image: Boolean = status == "ready",
-): ChapterMindMap = ApiJson.decodeFromString(mapJson(3, "Waves and sound", status, image, subject = null))
+    lessonsToWrite: Int = 0,
+): ChapterMindMap = ApiJson.decodeFromString(mapJson(3, "Waves and sound", status, image, subject = null, lessonsToWrite = lessonsToWrite))
 
 internal class FakeMindMapApi : MindMapApi {
     var lists = 0
     var chapters = 0
     var created = mutableListOf<ChapterKey>()
-    var create: () -> MindMapGeneration = { generation("generating") }
+    var create: () -> MindMapGeneration = { generation("drawing") }
 
     /** Read in order; once empty, every read fails as a dropped connection. */
     var statuses = ArrayDeque<ChapterMindMapStatus.Status>()
