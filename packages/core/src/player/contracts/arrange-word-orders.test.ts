@@ -1,3 +1,4 @@
+import { segmentLearnerWords, segmentWords } from "@zoonk/utils/string";
 import { describe, expect, it } from "vitest";
 import { keepOtherArrangeOrders } from "./arrange-word-orders";
 
@@ -63,25 +64,39 @@ describe(keepOtherArrangeOrders, () => {
     ).toStrictEqual([]);
   });
 
-  it("splits a listening translation into the phrase tiles its screen shows", () => {
-    const text = "私は毎朝コーヒーを飲みます";
+  it("builds a listening translation from the phrase tiles its screen shows", () => {
+    const [kept] = keepOtherArrangeOrders({
+      kind: "listening",
+      orders: [
+        "毎朝私はコーヒーを飲みます",
+        "毎朝 私は コーヒーを 飲みます",
+        "私はコーヒーを毎朝飲む",
+      ],
+      text: "私は毎朝コーヒーを飲みます",
+    });
 
-    expect(
-      keepOtherArrangeOrders({
-        kind: "listening",
-        orders: ["毎朝 私は コーヒーを 飲みます", "毎朝私はコーヒーを飲みます"],
-        text,
-      }),
-    ).toStrictEqual(["毎朝 私は コーヒーを 飲みます"]);
+    expect(kept).toBe("毎朝 私は コーヒーを 飲みます");
+    expect(segmentLearnerWords(kept!)).toStrictEqual(["毎朝", "私は", "コーヒーを", "飲みます"]);
   });
 
-  it("splits a reading sentence into the word tiles its screen shows", () => {
-    expect(
-      keepOtherArrangeOrders({
-        kind: "reading",
-        orders: ["毎朝私はコーヒーを飲みます"],
-        text: "私は毎朝コーヒーを飲みます",
-      }),
-    ).toStrictEqual(["毎朝私はコーヒーを飲みます"]);
+  it("builds a reading sentence from the word tiles its screen shows", () => {
+    const kept = keepOtherArrangeOrders({
+      kind: "reading",
+      orders: ["毎朝私はコーヒーを飲みます"],
+      text: "私は毎朝コーヒーを飲みます",
+    });
+
+    expect(kept).toStrictEqual(["毎朝 私 は コーヒー を 飲 み ます"]);
+
+    expect(segmentWords(kept[0]!)).toStrictEqual([
+      "毎朝",
+      "私",
+      "は",
+      "コーヒー",
+      "を",
+      "飲",
+      "み",
+      "ます",
+    ]);
   });
 });

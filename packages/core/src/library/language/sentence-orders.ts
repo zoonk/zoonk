@@ -1,13 +1,8 @@
-import { normalizePunctuation } from "@zoonk/utils/string";
 import { keepOtherArrangeOrders } from "../../player/contracts/arrange-word-orders";
 
 export type SentenceOrders = { otherOrders: string[]; otherTranslationOrders: string[] };
 
 type WrittenSentence = SentenceOrders & { sentence: string; translation: string };
-
-function cleanOrders(orders: readonly string[]): string[] {
-  return orders.map((order) => normalizePunctuation(order).trim());
-}
 
 /**
  * Keeps the orders a learner can build from the sentence's tiles: reading builds the sentence,
@@ -21,17 +16,15 @@ export function keepSentenceOrders({
   sameLanguage: boolean;
   sentence: WrittenSentence;
 }): SentenceOrders {
-  const translationOrders = sameLanguage ? sentence.otherOrders : sentence.otherTranslationOrders;
-
   return {
     otherOrders: keepOtherArrangeOrders({
       kind: "reading",
-      orders: cleanOrders(sentence.otherOrders),
+      orders: sentence.otherOrders,
       text: sentence.sentence,
     }),
     otherTranslationOrders: keepOtherArrangeOrders({
       kind: "listening",
-      orders: cleanOrders(translationOrders),
+      orders: sameLanguage ? sentence.otherOrders : sentence.otherTranslationOrders,
       text: sentence.translation,
     }),
   };
