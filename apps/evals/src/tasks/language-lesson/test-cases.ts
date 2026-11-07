@@ -287,7 +287,7 @@ export const TEST_CASES: TestCase<unknown, LanguageLessonInput>[] = [
     },
   },
   {
-    expectations: `US English speaker learning German, A2, making weekend plans with a friend. Sentences that open with a time phrase ("Am Samstag gehe ich ins Kino") list the order with the subject first ("Ich gehe am Samstag ins Kino"), and every other order keeps the conjugated verb in second place: "Am Samstag ich gehe ins Kino" is never listed. English translations move only what English lets move (a time phrase to the front or the end); an English order that puts an adverb between the verb and its object ("I see on Saturday my friend") is a serious error.`,
+    expectations: `US English speaker learning German, A2, making weekend plans with a friend. Sentences that open with a time phrase ("Am Samstag gehe ich ins Kino") list the order with the subject first ("Ich gehe am Samstag ins Kino"), and every other order keeps the conjugated verb in second place: "Am Samstag ich gehe ins Kino" is never listed. A time phrase moved after "ins Kino" ("Ich gehe ins Kino am Samstag") is marked German, so leaving it out is right. English translations move only what English lets move (a time phrase to the front or the end); an English order that puts an adverb between the verb and its object ("I see on Saturday my friend") is a serious error.`,
     id: "en-de-a2-weekend-plans",
     userInput: {
       knownWords: ["das Kino", "der Freund", "Samstag"],
