@@ -1,3 +1,4 @@
+import { renderToString } from "katex";
 import { parseInlineMarkupRanges } from "./inline-markup";
 import { splitLinesAndCells } from "./markdown-table";
 import { type MathSpan, findMathSpans, hideMath } from "./math-spans";
@@ -57,18 +58,6 @@ const MATH_COMMANDS = new Set([
   "to",
 ]);
 
-/**
- * Arguments these commands need right after them, in braces, for code to wrap the formula whole:
- * `\sqrt 4` and `\frac{1} {2}` are left to a writer.
- */
-const COMMAND_ARGUMENTS: Readonly<Record<string, number>> = {
-  dfrac: 2,
-  frac: 2,
-  mathrm: 1,
-  sqrt: 1,
-  text: 1,
-};
-
 const BACKSLASH_WORD = /\\(?<name>[A-Za-z]+)/gu;
 
 /** A drive (`C:\`) or a file name with its extension (`\log.txt`), outside a formula's braces. */
@@ -88,17 +77,18 @@ const INNER_BRACE_GROUP = /\{[^{}]*\}/gu;
 const BRACE_STEP: Readonly<Record<string, number>> = { "{": 1, "}": -1 };
 const WHITESPACE = /\s/u;
 const CHUNK_MASK = /x+/gu;
+const NON_SPACE = /\S+/gu;
 
-/** Math names a variable with a letter or two; a longer run outside commands is a word (`10^3-fold`). */
-const WORD = /\p{L}{3,}/u;
+/** Math subtracts a letter or two (`x^2-xy`); a hyphen before a longer run attaches a word (`10^3-fold`). */
+const ATTACHED_WORD = /-\p{L}{3,}/u;
 
 const PUNCTUATION_BEFORE = /^["'“‘«¿¡*_~]/u;
 const PUNCTUATION_AFTER = /[.,;:!?%"'”’»*_]$/u;
 
-/** In KaTeX, `%` starts a comment, `~` is a space, and `&` and `#` are errors outside environments. */
-const TEX_SPECIAL = /[%~&#]/u;
+/** KaTeX renders these without an error but not as written: `%` starts a comment and `~` is a space. */
+const TEX_SPECIAL = /[%~]/u;
 
-type Command = { arguments: number; inBraces: boolean; name: string };
+type Command = { inBraces: boolean; name: string };
 
 type BareLatex = {
   end: number;
@@ -150,37 +140,10 @@ function trimEnd(text: string): string {
   return PUNCTUATION_AFTER.test(text) || isUnpairedClose(text) ? trimEnd(text.slice(0, -1)) : text;
 }
 
-function findClosingBrace({
-  depth,
-  index,
-  text,
-}: {
-  depth: number;
-  index: number;
-  text: string;
-}): number | null {
-  if (index >= text.length) {
-    return null;
-  }
-
-  const next = depth + (BRACE_STEP[text[index] ?? ""] ?? 0);
-  return next === 0 ? index : findClosingBrace({ depth: next, index: index + 1, text });
-}
-
-function countBraceGroups(text: string, from: number): number {
-  const close = text[from] === "{" ? findClosingBrace({ depth: 0, index: from, text }) : null;
-  return close === null ? 0 : 1 + countBraceGroups(text, close + 1);
-}
-
 function findCommands(text: string): Command[] {
   return [...text.matchAll(BACKSLASH_WORD)].map((match) => {
     const before = text.slice(0, match.index);
-
-    return {
-      arguments: countBraceGroups(text, match.index + match[0].length),
-      inBraces: count(before, "{") > count(before, "}"),
-      name: match.groups?.name ?? "",
-    };
+    return { inBraces: count(before, "{") > count(before, "}"), name: match.groups?.name ?? "" };
   });
 }
 
@@ -190,19 +153,30 @@ function collapseBraces(text: string): string {
   return collapsed === text ? text : collapseBraces(collapsed);
 }
 
-/** A run of text without spaces, except inside braces at any depth, so `\frac{a + b}{2}` stays one piece. */
-function findChunks(text: string): { chunk: string; index: number }[] {
-  const { mask } = text
-    .split("")
-    .reduce(
-      (state, character) => ({
-        depth: Math.max(0, state.depth + (BRACE_STEP[character] ?? 0)),
-        mask: `${state.mask}${state.depth === 0 && WHITESPACE.test(character) ? " " : "x"}`,
-      }),
-      { depth: 0, mask: "" },
-    );
+/** Spaces inside braces at any depth don't split, so `\frac{a + b}{2}` stays one piece. */
+function maskSpaces(text: string): { mask: string; nests: boolean } {
+  const { depth, mask, nests } = text.split("").reduce(
+    (state, character) => {
+      const next = state.depth + (BRACE_STEP[character] ?? 0);
+      const space = state.depth === 0 && WHITESPACE.test(character);
 
-  return [...mask.matchAll(CHUNK_MASK)].map((match) => ({
+      return {
+        depth: next,
+        mask: `${state.mask}${space ? " " : "x"}`,
+        nests: state.nests && next >= 0,
+      };
+    },
+    { depth: 0, mask: "", nests: true },
+  );
+
+  return { mask, nests: nests && depth === 0 };
+}
+
+/** Braces that don't nest can't group a formula, so that text splits at every space. */
+function findChunks(text: string): { chunk: string; index: number }[] {
+  const { mask, nests } = maskSpaces(text);
+
+  return [...(nests ? mask : text).matchAll(nests ? CHUNK_MASK : NON_SPACE)].map((match) => ({
     chunk: text.slice(match.index, match.index + match[0].length),
     index: match.index,
   }));
@@ -218,25 +192,22 @@ function isLatex({ commands, text }: { commands: Command[]; text: string }): boo
   return !isPath && (known.length > 0 || BRACED_SCRIPT.test(text) || HAS_CARET_POWER.test(text));
 }
 
-function isRepairable({
-  commands,
-  latex,
-  written,
-}: {
-  commands: Command[];
-  latex: string;
-  written: string;
-}): boolean {
+/** The player's KaTeX settings, so code wraps only what the player draws without an error. */
+function rendersInKatex(latex: string): boolean {
+  try {
+    renderToString(latex, { output: "mathml", strict: "ignore", throwOnError: true, trust: false });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function isRepairable({ latex, written }: { latex: string; written: string }): boolean {
   return (
     !TEX_SPECIAL.test(latex) &&
     !COMMA_AFTER_POWER.test(written) &&
-    count(written, "{") === count(written, "}") &&
-    !WORD.test(collapseBraces(written).replaceAll(BACKSLASH_WORD, "")) &&
-    commands.every(
-      (command) =>
-        MATH_COMMANDS.has(command.name) &&
-        command.arguments >= (COMMAND_ARGUMENTS[command.name] ?? 0),
-    )
+    !ATTACHED_WORD.test(collapseBraces(written).replaceAll(BACKSLASH_WORD, "")) &&
+    rendersInKatex(latex)
   );
 }
 
@@ -258,7 +229,7 @@ function toBareLatex({ chunk, index }: { chunk: string; index: number }): BareLa
   return {
     end: start + written.length,
     latex,
-    repairable: isRepairable({ commands, latex, written }),
+    repairable: isRepairable({ latex, written }),
     start,
     written,
   };
