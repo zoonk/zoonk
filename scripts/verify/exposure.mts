@@ -17,18 +17,6 @@ async function read(baseUrl: string, path: string, storageState?: StorageState) 
   }
 }
 
-export async function readLearner(
-  baseUrl: string,
-  storageState: StorageState,
-): Promise<Learner | null> {
-  const body: unknown = JSON.parse(await read(baseUrl, "/api/auth/get-session", storageState));
-  const user = body && typeof body === "object" && "user" in body ? body.user : null;
-
-  return user && typeof user === "object" && "email" in user && "id" in user && "name" in user
-    ? { email: String(user.email), id: String(user.id), name: String(user.name) }
-    : null;
-}
-
 const HTML_ESCAPES: Record<string, string> = {
   '"': "&quot;",
   "&": "&amp;",
