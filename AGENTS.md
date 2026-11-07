@@ -79,7 +79,7 @@ CI is the full gate. Every push to a PR runs the PR pipelines in [.github/workfl
 
 A task ends with a pull request the user can review, following [zoonk-pull-request](.agents/skills/zoonk-pull-request/SKILL.md). The agent that owns the task does this; a subagent hands its work back to its lead instead.
 
-The PR shows what the change did: numbers before and after for a performance change, screenshots before and after for anything a learner sees, and a video of each side for a flow, transition or wait ([show the change](.agents/skills/zoonk-commit/SKILL.md#show-the-change)). Capture the before side before you edit.
+The PR shows what the change did: numbers before and after for a performance change, screenshots before and after for anything a learner sees, a video of each side for a flow, transition or wait, and a link to its Vercel preview for a blog post ([show the change](.agents/skills/zoonk-commit/SKILL.md#show-the-change)). Capture the before side before you edit.
 
 1. Pass the [PR verification gate](#pr-verification-gate)'s local checks on the final tree.
 2. Open the PR ready for review and watch it while CI and the reviewers run.
