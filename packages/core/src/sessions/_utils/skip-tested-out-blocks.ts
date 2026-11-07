@@ -3,7 +3,7 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { oweStartedDaySettlements } from "./owe-started-day-settlements";
 
-export async function loadItemLessonIds(
+async function loadItemLessonIds(
   planItemIds: readonly string[],
   tx: TransactionClient = prisma,
 ): Promise<string[]> {
