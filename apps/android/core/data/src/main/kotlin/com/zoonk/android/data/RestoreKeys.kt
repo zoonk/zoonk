@@ -71,7 +71,7 @@ class DeviceRestoreKeys(
 }
 
 /** The API verifies restore keys for this relying party, whichever build made them. */
-private const val RELYING_PARTY = "zoonk.com"
+private const val RELYING_PARTY = "www.zoonk.com"
 
 /** [challenge] and [userId] are unpadded base64url; the user is random, so the key names nobody. */
 internal fun restoreKeyCreation(
