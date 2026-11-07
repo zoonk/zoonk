@@ -76,6 +76,40 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.segments, [.read, .read, .wrong, .read, .right])
   }
 
+  func testSegmentsShowWhatARefusedFinishAlreadyHasAheadOfTheMissingScreen() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+
+    state.resync(answers: [runAnswer("second", isCorrect: true)])
+
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.segments, [.read, .read, .current, .read, .right, .read])
+    XCTAssertEqual(state.progress, 5 / 6)
+
+    try answerCheck(&state, optionId: "right")
+    XCTAssertEqual(state.segments, [.read, .read, .right, .read, .right, .read])
+    XCTAssertEqual(state.progress, 1)
+    state.continueLesson()
+    XCTAssertEqual(state.phase, .completed, "it ends where the bar does")
+  }
+
+  func testSegmentsShowAnAnswerAheadOfWhereAReopenedLessonOpens() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+
+    state.startRun(runId: "run", answers: [runAnswer("second", isCorrect: false)])
+
+    XCTAssertEqual(state.currentStep?.id, "hook")
+    XCTAssertEqual(state.segments, [.current, .read, .ahead, .read, .wrong, .ahead, .ahead])
+    XCTAssertEqual(state.progress, 3 / 7)
+  }
+
   func testWorkedExampleRevealsOnePartPerContinue() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: [try step(workedExample)])
 
@@ -624,6 +658,7 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.currentStep?.id, "check")
     state.goBack()
     state.knowThis()
+    XCTAssertEqual(state.segments, [.current, .ahead], "the saved miss is still to answer")
     try answerCheck(&state, optionId: "right")
     state.continueLesson()
 

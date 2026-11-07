@@ -221,18 +221,20 @@ struct LessonPlayerState: Equatable, Sendable {
       return 1
     }
 
-    let total = queue.count + (endsWithMap ? 1 : 0)
-    let done = phase == .completed ? total : position + (phase == .feedback ? 1 : 0)
-    return Double(done) / Double(total)
+    let done = segments.filter { $0 != .ahead && $0 != .current }.count
+    return Double(done) / Double(segments.count)
   }
 
-  /// Main's `getSegments`: a screen's first copy shows its first verdict, a later copy its own.
+  /// Main's `getSegments`: each screen shows what the run has, wherever the learner is: a first
+  /// copy its first verdict, a later copy its own. The position only marks the screen in view.
   var segments: [TaskSegment] {
     let screens: [TaskSegment] = queue.indices.map { index in
-      let isAnsweredInView = index == position && phase == .feedback
+      if index == position, phase == .playing || phase == .checking {
+        return .current
+      }
 
-      guard index < position || isAnsweredInView || phase == .completed else {
-        return index == position ? .current : .ahead
+      if index > position, phase != .completed, isToDo(index) {
+        return .ahead
       }
 
       let id = queue[index]
@@ -246,6 +248,28 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     return endsWithMap ? screens + [mapSegment] : screens
+  }
+
+  /// A screen ahead the learner still has to go through: any in "I know this", which asks each
+  /// again, one the run still needs, or one past the furthest answer it has. After a refused finish
+  /// the learner already went through them all.
+  private func isToDo(_ index: Int) -> Bool {
+    guard quickCheck == nil, !isStillNeeded(index) else {
+      return true
+    }
+
+    let isPastEveryAnswer = !queue.indices[index...].contains { later in
+      queue.firstIndex(of: queue[later]) == later && results[queue[later]] != nil
+    }
+
+    return recovery == nil && isPastEveryAnswer
+  }
+
+  /// An answerable screen without a result, or a question that came back.
+  private func isStillNeeded(_ index: Int) -> Bool {
+    let id = queue[index]
+    return (steps[id]?.isAnswerable == true && results[id] == nil)
+      || queue.firstIndex(of: id) != index
   }
 
   private var mapSegment: TaskSegment {
@@ -844,12 +868,7 @@ struct LessonPlayerState: Equatable, Sendable {
       return position + 1
     }
 
-    return queue.indices.first { index in
-      let id = queue[index]
-      return index > position
-        && ((steps[id]?.isAnswerable == true && results[id] == nil)
-          || queue.firstIndex(of: id) != index)
-    }
+    return queue.indices.first { $0 > position && isStillNeeded($0) }
   }
 
   /// A missed quick check returns to where the learner was, without the checks they just got
