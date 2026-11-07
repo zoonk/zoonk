@@ -5,6 +5,7 @@ import { type LessonPlayerAction } from "./lesson-player-state";
 import { type LessonPlayerAdapters } from "./lesson-player-types";
 import {
   type HeldAnswer,
+  type HeldLesson,
   type ScreenQueue,
   type StartedRun,
   toRunAnswer,
@@ -14,11 +15,11 @@ import {
 export function useLessonRun({
   adapters,
   dispatch,
-  lessonId,
+  lesson,
 }: {
   adapters: LessonPlayerAdapters;
   dispatch: Dispatch<LessonPlayerAction>;
-  lessonId: string;
+  lesson: HeldLesson;
 }) {
   const runRef = useRef<Promise<StartedRun | null> | null>(null);
   const pendingRef = useRef(new Set<Promise<unknown>>());
@@ -36,7 +37,7 @@ export function useLessonRun({
       if (outcome.reason === "started") {
         dispatch({
           answers: outcome.answers,
-          held: [...heldRef.current.values()].map((held) => toRunAnswer(held.check)),
+          held: [...heldRef.current.values()].map(({ check }) => toRunAnswer({ check, lesson })),
           hyperdrive: outcome.hyperdrive,
           optionalStepIds: outcome.optionalStepIds,
           replay: outcome.replay,
@@ -55,7 +56,7 @@ export function useLessonRun({
 
     runRef.current = run;
     return run;
-  }, [adapters, dispatch]);
+  }, [adapters, dispatch, lesson]);
 
   const keepPending = useCallback(<T>(request: Promise<T>): Promise<T> => {
     pendingRef.current.add(request);
@@ -90,7 +91,7 @@ export function useLessonRun({
     getQueue,
     heldRef,
     keepPending,
-    lessonId,
+    lesson,
   });
 
   const flushChecks = useCallback(async (): Promise<boolean> => {

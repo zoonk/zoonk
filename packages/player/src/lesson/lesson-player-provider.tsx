@@ -141,7 +141,7 @@ export function LessonPlayerProvider({
   const { actions, reopen } = useLessonPlayerActions({
     adapters,
     dispatch,
-    language: lesson.language,
+    lesson,
     state,
     track,
     writeExampleLines: exampleLines.write,

@@ -1,8 +1,13 @@
 import { isAnswerableStep } from "@zoonk/core/lesson-player/run";
 import { type LessonPlayerState } from "../lesson-player-state";
-import { type LessonRunAnswers } from "../lesson-player-types";
+import { type LessonRunAnswers, type PlayableLibraryStep } from "../lesson-player-types";
 import { finishScreens } from "./lesson-end";
+import { enterPosition } from "./lesson-flow";
+import { fromRunAnswer } from "./lesson-results";
 import { isRetryStep } from "./lesson-steps";
+import { pickKeys } from "./records";
+
+type ShownAnswer = { answer: LessonRunAnswers[number]; step: PlayableLibraryStep };
 
 export function getRunVerdicts(answers: LessonRunAnswers): Record<string, boolean> {
   return Object.fromEntries(
@@ -66,6 +71,55 @@ function getResumePosition({
   return readingBefore === -1 ? 0 : open - readingBefore;
 }
 
+function getShownAnswers(state: LessonPlayerState, answers: LessonRunAnswers): ShownAnswer[] {
+  const last = new Map(answers.map((answer) => [answer.stepId, answer]));
+
+  return [...last.values()].flatMap((answer) => {
+    const step = state.steps[answer.stepId];
+    return step ? [{ answer, step }] : [];
+  });
+}
+
+function getAnswerEntry({ answer }: ShownAnswer) {
+  return answer.answer ? [[answer.stepId, answer.answer] as const] : [];
+}
+
+function getChallengeEntry({ answer }: ShownAnswer) {
+  return answer.answer?.kind === "challenge"
+    ? [[answer.stepId, answer.answer.choiceIds.length + 1] as const]
+    : [];
+}
+
+/** Each screen shows its last answer; a challenge opens on its ending. */
+function restoreAnswers(state: LessonPlayerState, answers: LessonRunAnswers): LessonPlayerState {
+  const shown = getShownAnswers(state, answers);
+
+  return {
+    ...state,
+    answers: Object.fromEntries(shown.flatMap((item) => getAnswerEntry(item))),
+    results: Object.fromEntries(shown.map((item) => [item.answer.stepId, fromRunAnswer(item)])),
+    revealed: {
+      ...state.revealed,
+      ...Object.fromEntries(shown.flatMap((item) => getChallengeEntry(item))),
+    },
+  };
+}
+
+/** Only screens already showing a result take the fresher one, so a question started over stays so. */
+export function refreshAnswers(
+  state: LessonPlayerState,
+  answers: LessonRunAnswers,
+): LessonPlayerState {
+  const restored = restoreAnswers(state, answers);
+  const shown = Object.keys(state.results);
+
+  return {
+    ...state,
+    answers: { ...state.answers, ...pickKeys(restored.answers, shown) },
+    results: { ...state.results, ...pickKeys(restored.results, shown) },
+  };
+}
+
 /** The queue may already hold retries; the answers decide them again. */
 export function requeueRetries(
   state: LessonPlayerState,
@@ -91,7 +145,10 @@ export function resumeLesson(
     return state;
   }
 
-  const resumed = { ...requeueRetries(state, known), firstVerdicts: getRunVerdicts(known) };
+  const resumed = {
+    ...requeueRetries(restoreAnswers(state, known), known),
+    firstVerdicts: getRunVerdicts(known),
+  };
 
   const position = getResumePosition({
     answered: new Set(known.map((answer) => answer.stepId)),
@@ -104,5 +161,5 @@ export function resumeLesson(
     return finishScreens({ ...resumed, position: resumed.queue.length - 1 }, "ready");
   }
 
-  return { ...resumed, position };
+  return enterPosition(resumed, position);
 }

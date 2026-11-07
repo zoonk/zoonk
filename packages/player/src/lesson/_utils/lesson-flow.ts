@@ -7,44 +7,65 @@ import {
   getExplanationsAfter,
   getQuickCheckQueue,
   isQuestionStep,
-  isReadStep,
   isRetryStep,
 } from "./lesson-steps";
+import { omitKeys } from "./records";
 
-function omitKey<TValue>(record: Record<string, TValue>, key: string): Record<string, TValue> {
-  return Object.fromEntries(Object.entries(record).filter(([entry]) => entry !== key));
-}
-
-function startOverIfChecked(state: LessonPlayerState, id: string): LessonPlayerState {
-  if (!(id in state.results)) {
-    return state;
-  }
+function startOver(state: LessonPlayerState, ids: readonly string[]): LessonPlayerState {
+  const rounds = ids.map((id) => [id, (state.rounds[id] ?? 0) + 1] as const);
 
   return {
     ...state,
-    answers: omitKey(state.answers, id),
-    results: omitKey(state.results, id),
-    rounds: { ...state.rounds, [id]: (state.rounds[id] ?? 0) + 1 },
+    answers: omitKeys(state.answers, ids),
+    results: omitKeys(state.results, ids),
+    rounds: { ...state.rounds, ...Object.fromEntries(rounds) },
   };
 }
 
-function awaitsSelfCorrection(state: LessonPlayerState, id: string): boolean {
-  return state.selfCorrected.includes(id) && !(id in state.results);
+function isLaterCopy(state: LessonPlayerState, position: number): boolean {
+  return state.queue.indexOf(state.queue[position] ?? "") < position;
+}
+
+function startsOver(state: LessonPlayerState, position: number): boolean {
+  const id = state.queue[position] ?? "";
+  return id in state.results && (state.quickCheck !== null || isLaterCopy(state, position));
+}
+
+function awaitsMissingAnswer(state: LessonPlayerState, id: string): boolean {
+  return id in state.missing && !(id in state.firstVerdicts) && !(id in state.results);
+}
+
+function getEntryNotice(state: LessonPlayerState, id: string): LessonPlayerState["notice"] {
+  if (id in state.results) {
+    return null;
+  }
+
+  if (state.selfCorrected.includes(id)) {
+    return "selfCorrect";
+  }
+
+  return awaitsMissingAnswer(state, id) ? (state.missing[id] ?? null) : null;
+}
+
+function showPosition(state: LessonPlayerState, position: number): LessonPlayerState {
+  const id = state.queue[position] ?? "";
+  const reviewing = id in state.results;
+
+  return {
+    ...state,
+    checkFailed: false,
+    checkIssue: null,
+    notice: getEntryNotice(state, id),
+    phase: reviewing ? "feedback" : "playing",
+    position,
+    reviewing,
+    stepStartedAt: Date.now(),
+  };
 }
 
 export function enterPosition(state: LessonPlayerState, position: number): LessonPlayerState {
   const id = state.queue[position] ?? "";
-
-  return {
-    ...startOverIfChecked(state, id),
-    checkFailed: false,
-    checkIssue: null,
-    notice: awaitsSelfCorrection(state, id) ? "selfCorrect" : state.notice,
-    phase: "playing",
-    position,
-    reviewing: false,
-    stepStartedAt: Date.now(),
-  };
+  return showPosition(startsOver(state, position) ? startOver(state, [id]) : state, position);
 }
 
 function leaveQuickCheck(state: LessonPlayerState): LessonPlayerState {
@@ -62,16 +83,31 @@ function leaveQuickCheck(state: LessonPlayerState): LessonPlayerState {
     (id, index) => index <= quickCheck.returnPosition || (!passed.has(id) && !missed.includes(id)),
   );
 
-  return enterPosition(
-    {
-      ...state,
-      notice: null,
-      queue: [...rest, ...missed],
-      quickCheck: null,
-      retried: [...new Set([...state.retried, ...missed])],
-    },
-    quickCheck.returnPosition,
+  const left = {
+    ...state,
+    queue: [...rest, ...missed],
+    quickCheck: null,
+    retried: [...new Set([...state.retried, ...missed])],
+  };
+
+  return enterPosition(startOver(left, missed), quickCheck.returnPosition);
+}
+
+function isStillNeeded(state: LessonPlayerState, position: number): boolean {
+  return awaitsMissingAnswer(state, state.queue[position] ?? "") || isLaterCopy(state, position);
+}
+
+/** Once a finished lesson comes back incomplete, Continue goes only to what the run still needs. */
+function getNextPosition(state: LessonPlayerState): number {
+  if (Object.keys(state.missing).length === 0) {
+    return state.position + 1;
+  }
+
+  const next = state.queue.findIndex(
+    (_, index) => index > state.position && isStillNeeded(state, index),
   );
+
+  return next === -1 ? state.queue.length : next;
 }
 
 export function advance(state: LessonPlayerState): LessonPlayerState {
@@ -84,13 +120,13 @@ export function advance(state: LessonPlayerState): LessonPlayerState {
   );
 
   const available = queue.length === state.queue.length ? state : { ...state, queue };
-  const next = state.position + 1;
+  const next = getNextPosition(available);
 
   if (next >= queue.length) {
     return finishScreens(available);
   }
 
-  return enterPosition({ ...available, notice: null }, next);
+  return enterPosition(available, next);
 }
 
 export function leaveOutAhead(
@@ -117,7 +153,7 @@ export function leaveOutAhead(
 
   return state.position >= next.queue.length
     ? finishScreens(next, completionStatus)
-    : enterPosition({ ...next, notice: null }, state.position);
+    : enterPosition(next, state.position);
 }
 
 export function skipSteps(state: LessonPlayerState, stepIds: readonly string[]): LessonPlayerState {
@@ -175,24 +211,12 @@ export function continueChallenge(state: LessonPlayerState): LessonPlayerState {
 
 export function goBack(state: LessonPlayerState): LessonPlayerState {
   const position = state.phase === "map" ? state.position : state.position - 1;
-  const previousId = state.queue[position];
 
-  if (!canGoBack(state) || !previousId) {
+  if (!canGoBack(state) || !state.queue[position]) {
     return state;
   }
 
-  const reviewing = previousId in state.results;
-
-  return {
-    ...state,
-    checkFailed: false,
-    checkIssue: null,
-    notice: null,
-    phase: reviewing ? "feedback" : "playing",
-    position,
-    reviewing,
-    stepStartedAt: Date.now(),
-  };
+  return showPosition(state, position);
 }
 
 /**
@@ -204,28 +228,19 @@ function isEarlierCopy(state: LessonPlayerState, position: number): boolean {
   return !(id in state.results) && state.queue.includes(id, position + 1);
 }
 
-/** A run resumed on the map has no results this sitting, so its last question would show unanswered. */
-function canLeaveMap(state: LessonPlayerState): boolean {
-  const lastId = state.queue[state.position] ?? "";
-  const last = state.steps[lastId];
-
-  return (
-    state.run.status !== "refused" &&
-    last !== undefined &&
-    (lastId in state.results || isReadStep(last))
-  );
-}
-
 export function canGoBack(state: LessonPlayerState): boolean {
+  if (state.run.status === "refused") {
+    return false;
+  }
+
   if (state.phase === "map") {
-    return canLeaveMap(state);
+    return true;
   }
 
   return (
     state.phase === "playing" &&
     state.position > 0 &&
     !state.quickCheck &&
-    state.run.status !== "refused" &&
     !isEarlierCopy(state, state.position - 1)
   );
 }
@@ -299,7 +314,7 @@ export function resolveCheck(
       ? { ...state.firstVerdicts, [stepId]: result.isCorrect }
       : state.firstVerdicts,
     misses: getMisses({ counts, isCorrect: result.isCorrect, state, step }),
-    notice: state.notice === "selfCorrect" ? null : state.notice,
+    notice: state.notice === "writingSkipped" ? state.notice : null,
     phase: "feedback",
     queue: willRetry ? [...state.queue, stepId] : state.queue,
     quickCheck:
@@ -345,7 +360,6 @@ export function startQuickCheck(state: LessonPlayerState): LessonPlayerState {
   return enterPosition(
     {
       ...state,
-      notice: null,
       queue,
       quickCheck: { missed: false, returnPosition: state.position, returnQueue: state.queue },
     },

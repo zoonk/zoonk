@@ -31,6 +31,8 @@ type LessonPlayerRun =
 
 type QuickCheck = { missed: boolean; returnPosition: number; returnQueue: string[] };
 
+type MissingReason = "answerNotSaved" | "pictureReady";
+
 export type LessonPlayerState = {
   answers: Record<string, LessonPlayerAnswer>;
   checkFailed: boolean;
@@ -42,9 +44,13 @@ export type LessonPlayerState = {
   firstVerdicts: Record<string, boolean>;
   hasMap: boolean;
   helped: string[];
+  /** Set by what the learner does on this page, never by restoring, so a late run start can't undo it. */
+  learnerActed: boolean;
   lessonId: string;
   misses: { skillId: string | null; stepId: string }[];
-  notice: "answerNotSaved" | "pictureReady" | "selfCorrect" | "writingSkipped" | null;
+  /** The screens a finished lesson came back to because the run still needs them. */
+  missing: Record<string, MissingReason>;
+  notice: MissingReason | "selfCorrect" | "writingSkipped" | null;
   phase: LessonPlayerPhase;
   position: number;
   queue: string[];
@@ -125,8 +131,10 @@ export function createInitialState(
     firstVerdicts: {},
     hasMap: lesson.hasMap,
     helped: [],
+    learnerActed: false,
     lessonId: lesson.id,
     misses: [],
+    missing: {},
     notice: null,
     phase: queue.length === 0 ? "completed" : "playing",
     position: 0,

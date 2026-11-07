@@ -101,10 +101,17 @@ describe("coming back to a lesson", () => {
     expect(adapters.completeLesson).toHaveBeenCalledOnce();
   });
 
-  it("opens at the first screen still to answer, after its reading, and counts what was answered", async () => {
+  it("opens at the first screen still to answer, after its reading, and shows what was answered", async () => {
     const lesson = createLesson();
     const [first] = checkIds(lesson);
-    const resume = [runAnswer({ stepId: first ?? "" })];
+
+    const resume = [
+      runAnswer({
+        answer: { kind: "check", optionId: "likely" },
+        answerText: RIGHT_OPTION,
+        stepId: first ?? "",
+      }),
+    ];
 
     const adapters = buildAdapters(lesson, {
       startLesson: () => Promise.resolve(startedRun({ answers: resume })),
@@ -113,7 +120,14 @@ describe("coming back to a lesson", () => {
     renderLessonPlayer({ adapters, lesson, resume });
 
     await expect.element(page.getByText("Reading it")).toBeVisible();
-    await expect.element(page.getByRole("button", { name: "Previous screen" })).toBeVisible();
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeChecked();
+    await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    await expect.element(page.getByText("Reading it")).toBeVisible();
+    expect(adapters.checkStep).not.toHaveBeenCalled();
 
     await page.getByRole("button", { name: /^Next/u }).click();
     await answerRight();
@@ -208,14 +222,12 @@ describe("coming back to a lesson", () => {
       )
       .toBeVisible();
 
-    await expect.element(page.getByText("Reading it")).toBeVisible();
+    await expect.element(page.getByText(QUESTION)).toBeVisible();
 
     await expect
       .element(page.getByText("That didn't go through. Your answers are kept."))
       .not.toBeInTheDocument();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
-    await expect.element(page.getByText(QUESTION)).toBeVisible();
     await answerRight();
     await page.getByRole("button", { name: /^Continue/u }).click();
 

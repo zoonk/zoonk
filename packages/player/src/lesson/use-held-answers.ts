@@ -1,6 +1,8 @@
 "use client";
 
+import { gradeStepAnswer } from "@zoonk/core/lesson-player/grade";
 import { type Dispatch, type RefObject, useCallback, useEffect } from "react";
+import { fromLocalGrade } from "./_utils/lesson-results";
 import {
   type UnsentAnswer,
   dropUnsentAnswer,
@@ -8,7 +10,11 @@ import {
   readUnsentAnswers,
 } from "./_utils/unsent-answers";
 import { type LessonPlayerAction } from "./lesson-player-state";
-import { type LessonPlayerAdapters, type LessonRunAnswers } from "./lesson-player-types";
+import {
+  type LessonPlayerAdapters,
+  type LessonPlayerLesson,
+  type LessonRunAnswers,
+} from "./lesson-player-types";
 
 export type StartedRun = { learnerId: string; runId: string };
 
@@ -20,8 +26,34 @@ export type HeldAnswer = { check: HeldCheck; fromDevice: boolean; run: StartedRu
 /** `sending`: the screen's held answers going out, oldest first, which every trigger joins. */
 export type ScreenQueue = { last: Promise<unknown>; sending: Promise<boolean> | null };
 
-export function toRunAnswer({ answeredAt, isCorrect, stepId }: HeldCheck) {
-  return { answeredAt, isCorrect, stepId };
+export type HeldLesson = Pick<LessonPlayerLesson, "id" | "language" | "steps">;
+
+export function toRunAnswer({
+  check,
+  lesson,
+}: {
+  check: HeldCheck;
+  lesson: HeldLesson;
+}): LessonRunAnswers[number] {
+  const { answer, answeredAt, isCorrect, stepId } = check;
+  const step = lesson.steps.find((item) => item.id === stepId);
+  const graded = step ? gradeStepAnswer({ answer, language: lesson.language, step }) : null;
+
+  return {
+    answer: graded ? answer : null,
+    answeredAt,
+    isCorrect,
+    result: fromLocalGrade(
+      graded ?? {
+        answerText: null,
+        correctAnswer: null,
+        expected: null,
+        feedback: null,
+        isCorrect,
+      },
+    ),
+    stepId,
+  };
 }
 
 function byAnsweredAt(first: HeldAnswer, second: HeldAnswer): number {
@@ -47,7 +79,7 @@ export function useHeldAnswers({
   getQueue,
   heldRef,
   keepPending,
-  lessonId,
+  lesson,
 }: {
   adapters: LessonPlayerAdapters;
   dispatch: Dispatch<LessonPlayerAction>;
@@ -55,8 +87,10 @@ export function useHeldAnswers({
   getQueue: (stepId: string) => ScreenQueue;
   heldRef: RefObject<Map<string, HeldAnswer>>;
   keepPending: <T>(request: Promise<T>) => Promise<T>;
-  lessonId: string;
+  lesson: HeldLesson;
 }) {
+  const lessonId = lesson.id;
+
   const keepInRun = useCallback(
     async (check: HeldCheck): Promise<StartedRun | null> => {
       const run = await ensureRun().catch(() => null);
@@ -180,9 +214,9 @@ export function useHeldAnswers({
         void resendHeld().then(() => ensureRun());
       }
 
-      return kept.map((answer) => toRunAnswer(answer));
+      return kept.map((check) => toRunAnswer({ check, lesson }));
     },
-    [ensureRun, holdKept, resendHeld],
+    [ensureRun, holdKept, lesson, resendHeld],
   );
 
   /** Before the run ends, so the server never turns away an answer another tab still holds. */

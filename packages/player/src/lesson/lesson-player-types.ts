@@ -41,10 +41,7 @@ export type LessonRunRefusal =
   | { reason: "unauthorized" };
 
 /** Answers must be ordered oldest first, including earlier unfinished sittings. */
-export type LessonRunAnswers = Pick<
-  LibraryLessonRun["answers"][number],
-  "answeredAt" | "isCorrect" | "stepId"
->[];
+export type LessonRunAnswers = LibraryLessonRun["answers"];
 
 export type LessonRunHyperdrive = LibraryLessonRun["hyperdrive"];
 
