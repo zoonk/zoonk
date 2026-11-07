@@ -171,13 +171,13 @@ function checkRelease({
   context: ProductContext;
   release: ProductReleaseClaim;
 }): CheckedProductRelease | null {
-  const { pages, productKeys } = context;
+  const { pages, productKeys, siblingKeys } = context;
   const page = pages[release.document - 1];
 
   if (
     !page ||
     !isQuoted({ claim: release, pages }) ||
-    !namesAnyProduct({ keys: productKeys, own: [], text: release.name }) ||
+    !namesAnyProduct({ keys: productKeys, own: siblingKeys, text: release.name }) ||
     !(
       isNamed({ name: release.name, passage: release.passage }) ||
       isVersionRow({ context, page, release })

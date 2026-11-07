@@ -23,9 +23,12 @@ export function toNameKey(name: string): string {
 
 type NameSpan = { end: number; key: string; start: number };
 
+/** Punctuation ends a word ("Comet Phone:2.0"), except a dot inside a number ("2.0", "12.1.2410"). */
+const NAME_WORD = /[\p{L}\p{M}\p{N}]+(?:\.\p{N}+)*/gu;
+
 /** Word runs whose key is no longer than `maxLength`: a word added to a run never shortens its key. */
 function listNameSpans({ maxLength, text }: { maxLength: number; text: string }): NameSpan[] {
-  const words = text.split(/\s+/u).filter(Boolean);
+  const words = text.match(NAME_WORD) ?? [];
   const spans: NameSpan[] = [];
 
   for (const [start] of words.entries()) {
@@ -44,8 +47,9 @@ function listNameSpans({ maxLength, text }: { maxLength: number; text: string })
 }
 
 /**
- * The text names a product by one of `keys` in whole words, outside the words that name `own`
- * ("Orbit Server" never names a sibling called "Orbit").
+ * The text names a product by one of `keys` in whole words, unless those words lie inside a name of
+ * `own`: the longest name at a place wins ("Orbit Server" never names a sibling called "Orbit", and
+ * "Orbit Notes Studio" names it, not a product called "Orbit Notes").
  */
 export function namesAnyProduct({
   keys,
@@ -65,7 +69,7 @@ export function namesAnyProduct({
     (span) =>
       span.key !== "" &&
       wanted.has(span.key) &&
-      !owned.some((ownSpan) => ownSpan.start < span.end && span.start < ownSpan.end),
+      !owned.some((ownSpan) => ownSpan.start <= span.start && span.end <= ownSpan.end),
   );
 }
 

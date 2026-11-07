@@ -86,6 +86,13 @@ describe(namesAnyProduct, () => {
     ).toStrictEqual([false, true, true, false]);
   });
 
+  it("reads punctuation as a word boundary, keeping a dotted version whole", () => {
+    expect([
+      namesAnyProduct({ keys: ["cometphone"], own: [], text: "Comet Phone:2.0 | 2024-05-04" }),
+      namesAnyProduct({ keys: ["orbit2"], own: [], text: "Orbit 2.0" }),
+    ]).toStrictEqual([true, false]);
+  });
+
   it("finds a name of any length", () => {
     const keys = [toNameKey("Microsoft Dynamics 365 Finance and Operations")];
 

@@ -408,6 +408,59 @@ describe("a release that belongs to another product", () => {
   });
 });
 
+type SiblingRow = { name: string; passage: string; sibling: string; text: string };
+
+function readSibling({ name, passage, sibling, text }: SiblingRow) {
+  return checkProductReading({
+    pages: [releasesPage(text)],
+    productName: "Orbit Notes",
+    reading: reading({
+      brand: null,
+      product: null,
+      releases: [{ ...tableRelease(name, "2.0", passage), releasedOn: "2024-05-04" }],
+    }),
+    siblingKeys: [sibling],
+  }).releases.map((kept) => kept.name);
+}
+
+describe("a sibling whose name holds this product's or is joined by punctuation", () => {
+  it("never credits a longer sibling's release to this product, on either branch", () => {
+    const text = "Orbit Notes Studio 2.0 | 2024-05-04";
+
+    expect([
+      readSibling({
+        name: "Orbit Notes 2.0",
+        passage: "2.0 | 2024-05-04",
+        sibling: "orbitnotesstudio",
+        text,
+      }),
+      readSibling({
+        name: "Orbit Notes Studio 2.0",
+        passage: text,
+        sibling: "orbitnotesstudio",
+        text,
+      }),
+      readSibling({
+        name: "Orbit Notes 2.0",
+        passage: "2.0 | 2024-05-04",
+        sibling: "cometphone",
+        text: "Comet Phone:2.0 | 2024-05-04",
+      }),
+    ]).toStrictEqual([[], [], []]);
+  });
+
+  it("keeps this product's own release beside a shorter sibling's name", () => {
+    expect(
+      readSibling({
+        name: "Orbit Notes 2.0",
+        passage: "Orbit Notes 2.0 | 2024-05-04",
+        sibling: "orbit",
+        text: "Orbit Notes 2.0 | 2024-05-04",
+      }),
+    ).toStrictEqual(["Orbit Notes 2.0"]);
+  });
+});
+
 describe("a release dated by its month", () => {
   const page = `Orbit Notes 5 shipped in October 2025 with offline sync.
 Orbit Notes 4 shipped in May 2024.
