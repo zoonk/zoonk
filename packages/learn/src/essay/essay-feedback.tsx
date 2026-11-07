@@ -3,7 +3,7 @@
 import { type EssayDraft } from "@zoonk/core/exams/essays/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, CircleIcon, SkipForwardIcon } from "lucide-react";
+import { ArrowLeftIcon, CheckIcon, CircleIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { Meter, MeterFill } from "../_components/meter";
@@ -300,7 +300,9 @@ export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite?
         onRewrite ? (
           <TaskMainButton onClick={onRewrite}>{t("Rewrite")}</TaskMainButton>
         ) : (
-          <TaskMainLink href={hrefs.exit}>{t("Back to Today")}</TaskMainLink>
+          <TaskMainLink href={hrefs.exit} icon={<ArrowLeftIcon aria-hidden="true" />}>
+            {t("Back to Today")}
+          </TaskMainLink>
         )
       }
       finalOptions={

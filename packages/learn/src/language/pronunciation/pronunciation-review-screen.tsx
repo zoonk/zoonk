@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { cn } from "@zoonk/ui/lib/utils";
-import { EllipsisIcon, RotateCcwIcon, SkipForwardIcon } from "lucide-react";
+import { CheckIcon, EllipsisIcon, RotateCcwIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { FeedbackVerdict } from "../../_components/feedback-panel";
 import { MomentReadouts } from "../../_components/moment-readouts";
@@ -153,7 +153,7 @@ export function PronunciationReviewScreen({
           exitToApp
           footer={
             <TaskActions>
-              <TaskMainLink href={exitHref} toApp>
+              <TaskMainLink href={exitHref} icon={<CheckIcon aria-hidden="true" />} toApp>
                 {t("Done")}
               </TaskMainLink>
             </TaskActions>

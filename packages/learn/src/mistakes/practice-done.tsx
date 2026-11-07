@@ -1,6 +1,7 @@
 "use client";
 
 import { type Reached } from "@zoonk/core/sessions/reached";
+import { ArrowLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { StepCard, StepDetail, StepHeader } from "../_components/step-card";
@@ -19,7 +20,9 @@ function BackBar({ backHref }: { backHref: string }) {
   return (
     <TaskActionBar>
       <TaskActions>
-        <TaskMainLink href={backHref}>{t("Back")}</TaskMainLink>
+        <TaskMainLink href={backHref} icon={<ArrowLeftIcon aria-hidden="true" />}>
+          {t("Back")}
+        </TaskMainLink>
       </TaskActions>
     </TaskActionBar>
   );

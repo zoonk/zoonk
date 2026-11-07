@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { BusyContent, Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useEnterKey, useEscapeClick } from "@zoonk/ui/hooks/keyboard";
@@ -294,13 +294,15 @@ export function TaskMainButton({
   );
 }
 
+/** It moves on, with the trailing forward arrow, unless it's given another `icon`. */
 export function TaskMainLink({
   children,
   className,
   href,
   steadyMs = 0,
   toApp = false,
-}: {
+  ...iconProps
+}: Pick<React.ComponentProps<typeof Button>, "icon" | "iconPosition"> & {
   children: React.ReactNode;
   className?: string;
   href: string;
@@ -334,8 +336,10 @@ export function TaskMainLink({
       onClick={onClick}
       ref={ref}
     >
-      {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <BusyContent {...(iconProps.icon ? iconProps : FORWARD_ICON)}>
+        {children}
+        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      </BusyContent>
     </LearnLink>
   );
 }

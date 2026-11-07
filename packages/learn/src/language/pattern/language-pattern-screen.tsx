@@ -51,7 +51,7 @@ function DoneAction({ exitHref }: { exitHref: string }) {
 
   return (
     <TaskActions>
-      <TaskMainLink href={exitHref} toApp>
+      <TaskMainLink href={exitHref} icon={<CheckIcon aria-hidden="true" />} toApp>
         {t("Done")}
       </TaskMainLink>
     </TaskActions>
