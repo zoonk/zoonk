@@ -22,6 +22,7 @@ import { changeGoalPlan } from "../change-goal-plan";
 import {
   type FocusTestReceipt,
   findFocusTestReceipt,
+  toFocusChangeId,
   toFocusTestContentIds,
 } from "./_utils/focus-test-receipt";
 import { loadFocusTestShape } from "./_utils/load-focus-test";
@@ -246,21 +247,30 @@ async function submitOwnedFocusTest({
   });
 
   const focusAreas = chooseFocusAreas(results);
-  // A focus the plan already has, such as one an earlier try of this send set, needs no change.
+  const changeId = toFocusChangeId({ goalId, requestId: input.requestId, userId });
+
+  const made = await prisma.planChange.findFirst({
+    select: { id: true },
+    where: { id: changeId, plan: { goalId } },
+  });
+
+  // A focus the plan already has needs no change.
   const refocuses = focusAreas.length > 0 && !isDeepStrictEqual(focusAreas, shape.focusAreas);
 
-  const change = refocuses
-    ? await changeGoalPlan({
-        goalId,
-        input: { operations: [{ areas: focusAreas, kind: "focusAreas" }], timeZone },
-        saveFocusAnyway: true,
-        trackAnalytics: false,
-      })
-    : null;
+  const change =
+    made || !refocuses
+      ? null
+      : await changeGoalPlan({
+          changeId,
+          goalId,
+          input: { operations: [{ areas: focusAreas, kind: "focusAreas" }], timeZone },
+          saveFocusAnyway: true,
+          trackAnalytics: false,
+        });
 
   const said = {
     areas: results.map(({ answers, label, name }) => ({ answers, label, name })),
-    changeId: change?.status === "applied" ? (change.change?.id ?? null) : null,
+    changeId: made?.id ?? (change?.status === "applied" ? (change.change?.id ?? null) : null),
     focusAreas,
   };
 
