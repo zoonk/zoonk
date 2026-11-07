@@ -102,7 +102,7 @@ async function setupDatabases({ isolated, source }: { isolated: boolean; source:
     ...databases.map((database) => migrateDatabase({ database, worktree })),
   ]);
 
-  const seeded = databases.filter((database) => database.seed);
+  const seeded = databases.filter((database) => database.seed || database.mode === "dev");
 
   if (seeded.length > 0) {
     log(`Seeding ${seeded.map((database) => databaseName(database)).join(", ")}…`);

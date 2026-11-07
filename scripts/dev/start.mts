@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { realpathSync } from "node:fs";
 import { homedir } from "node:os";
-import { migrateDevelopmentDatabase } from "../worktree/databases.mts";
+import { updateDevelopmentDatabase } from "../worktree/databases.mts";
 import {
   getMailboxCaptureUrl,
   getPortlessEnvironment,
@@ -129,7 +129,7 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
   });
 }
 
-await migrateDevelopmentDatabase(realpathSync(currentDirectory));
+await updateDevelopmentDatabase(realpathSync(currentDirectory));
 
 const result =
   !productionMode && (directMode || process.env.PORTLESS === "0")
