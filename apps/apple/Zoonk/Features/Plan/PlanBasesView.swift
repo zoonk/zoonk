@@ -43,7 +43,7 @@ struct PlanBasesView: View {
     let open = bases.items.filter { !$0.studied }
     let changed = open.filter { choices[$0.skillId] != $0.choice }
 
-    Form {
+    ZoonkList {
       Section {
         Picker(
           selection: Binding(
@@ -90,7 +90,7 @@ struct PlanBasesView: View {
         case .building, .failed:
           if let adviceLine {
             Text(adviceLine)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
 
           Button {
@@ -101,13 +101,15 @@ struct PlanBasesView: View {
         case .shown:
           if let adviceLine {
             Text(adviceLine)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } footer: {
-        Text(
-          "Already know some? Show it in a test and they leave your plan on their own.",
-          tableName: "Plan", comment: "Says known prerequisites can be tested out")
+        SectionFooter {
+          Text(
+            "Already know some? Show it in a test and they leave your plan on their own.",
+            tableName: "Plan", comment: "Says known prerequisites can be tested out")
+        }
       }
 
       Section {
@@ -139,9 +141,11 @@ struct PlanBasesView: View {
           }
         }
       } footer: {
-        Text(
-          "Prerequisites you've studied stay studied.", tableName: "Plan",
-          comment: "Says studied prerequisites keep counting")
+        SectionFooter {
+          Text(
+            "Prerequisites you've studied stay studied.", tableName: "Plan",
+            comment: "Says studied prerequisites keep counting")
+        }
       }
 
       if !changed.isEmpty {
@@ -173,8 +177,8 @@ struct PlanBasesView: View {
 
             if let footnote = footnote(previewed) {
               Text(footnote)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+                .typeStyle(.note)
+                .foregroundStyle(.mutedForeground)
             }
           }
 

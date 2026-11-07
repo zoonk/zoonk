@@ -82,7 +82,7 @@ struct ActivityGuessScaleView: View {
             comment: "Before the learner guesses on a scale")
         }
       }
-      .font(.title3.weight(.semibold).monospacedDigit())
+      .typeStyle(.readout)
 
       if let actual {
         revealed(actual: actual)
@@ -97,9 +97,9 @@ struct ActivityGuessScaleView: View {
             "Your guess", tableName: "Activities",
             comment: "VoiceOver: the slider the learner guesses with")
         } minimumValueLabel: {
-          Text(format(scale.min)).font(.caption.monospacedDigit())
+          Text(format(scale.min)).typeStyle(.data)
         } maximumValueLabel: {
-          Text(format(scale.max)).font(.caption.monospacedDigit())
+          Text(format(scale.max)).typeStyle(.data)
         }
         .accessibilityValue(
           guess.map { Text(verbatim: format($0)) }
@@ -122,16 +122,16 @@ struct ActivityGuessScaleView: View {
         Spacer()
         Text(format(scale.max))
       }
-      .font(.caption.monospacedDigit())
-      .foregroundStyle(.secondary)
+      .typeStyle(.data)
+      .foregroundStyle(.mutedForeground)
       .accessibilityHidden(true)
 
       Text(
         "Real value: \(format(actual))", tableName: "Activities",
         comment: "The real value revealed after a guess"
       )
-      .font(.headline.monospacedDigit())
-      .foregroundStyle(Color.success)
+      .typeStyle(.body.weight(.semibold).monospaced())
+      .foregroundStyle(Color.successText)
     }
   }
 
@@ -151,7 +151,7 @@ private struct GuessScaleBar: View {
       let y = size.height / 2
       let track = Path(
         roundedRect: CGRect(x: 0, y: y - 3, width: size.width, height: 6), cornerRadius: 3)
-      context.fill(track, with: .color(Color(.systemFill)))
+      context.fill(track, with: .color(Color.surface3))
 
       let actualX = size.width * actualShare
 

@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.theme.ZoonkRadius
 
 /**
  * A picture or recording still being made, in the space the made one takes so nothing moves when
@@ -40,7 +41,7 @@ fun MediaPending(
     Column(
         modifier =
             modifier
-                .clip(RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(ZoonkRadius.xl))
                 .drawBehind { drawRect(color, alpha = alpha) }
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),

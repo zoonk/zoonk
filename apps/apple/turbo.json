@@ -1,0 +1,4 @@
+{
+  "extends": ["//"],
+  "tasks": { "typecheck": { "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/scripts/theme/**"] } }
+}

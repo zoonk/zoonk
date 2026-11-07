@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.theme.ZoonkRadius
 
 @Composable
 fun MistakeAnswer(
@@ -24,7 +25,7 @@ fun MistakeAnswer(
 ) {
     val result = if (right) AnswerResult.Right else AnswerResult.Wrong
     val tone = answerTone(picked = !right, result = result)
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
 
     Row(
         modifier

@@ -1,52 +1,33 @@
 package com.zoonk.android.feature.stats
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.LoadState
@@ -55,13 +36,17 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltDot
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.StatTone
+import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.color
-import com.zoonk.android.ui.components.rankBar
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -73,6 +58,7 @@ import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.CurrentUserActivityResponseActivity
 import com.zoonk.api.models.CurrentUserProgressResponse
 import com.zoonk.api.models.CurrentUserProgressResponseLevel
@@ -189,7 +175,7 @@ private fun OverviewContent(
             { modifier ->
                 val lessons = progress.activity.totalLessonCompletions
                 StatTile(
-                    label = stringResource(R.string.stats_study_days),
+                    label = stringResource(R.string.stats_days_studied),
                     value = whole(progress.activity.learningDays, locale),
                     detail =
                         pluralStringResource(
@@ -243,17 +229,15 @@ private fun OverviewContent(
                 Beside(context.stats.patterns) { patterns ->
                     val summary = patterns?.let { patternsSummary(it) }
                     val names = listOfNotNull(summary?.let { bestDayName(it.days) }, summary?.let { bestTimeName(it.times) })
-                    OutlinedCard(onClick = { context.open(StatsPage.Patterns) }) {
-                        ListItem(
-                            headlineContent = { Text(stringResource(R.string.stats_patterns)) },
-                            supportingContent = {
-                                PatternValue(
-                                    names.factsLine().ifEmpty { stringResource(R.string.stats_not_yet) },
-                                )
-                            },
-                            trailingContent = { Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null) },
-                        )
-                    }
+                    ListRow(
+                        headline = { Text(stringResource(R.string.stats_patterns)) },
+                        modifier = Modifier.bleed(LIST_ITEM_INSET),
+                        onClick = { context.open(StatsPage.Patterns) },
+                        trailing = {
+                            PatternValue(names.factsLine().ifEmpty { stringResource(R.string.stats_not_yet) })
+                        },
+                        chevron = true,
+                    )
                 }
             }
         }
@@ -304,10 +288,14 @@ private fun PatternsOverview(
             TextButton(onClick = { context.open(StatsPage.Patterns) }) { Text(stringResource(R.string.stats_see_all)) }
         }
 
-        OutlinedCard {
+        Column(Modifier.bleed(LIST_ITEM_INSET)) {
             PatternRow(stringResource(R.string.stats_best_day), summary?.let { bestDayName(it.days) }, summary?.days?.bestScore(locale))
+            ListDivider()
             PatternRow(stringResource(R.string.stats_best_time), summary?.let { bestTimeName(it.times) }, summary?.times?.bestScore(locale))
-            spread?.let { PatternRow(stringResource(R.string.stats_week_spread), it, null) }
+            spread?.let {
+                ListDivider()
+                PatternRow(stringResource(R.string.stats_week_spread), it, null)
+            }
         }
 
         if (patterns != null && summary != null) PatternsNote(summary, patterns.minimumAnswers)
@@ -320,17 +308,13 @@ private fun PatternRow(
     value: String?,
     score: String?,
 ) {
-    ListItem(
-        headlineContent = { Text(label) },
-        trailingContent = {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    ListRow(
+        headline = { Text(label) },
+        trailing = {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 PatternValue(value ?: stringResource(R.string.stats_not_yet))
                 score?.let {
-                    Text(
-                        it,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
-                    )
+                    Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
                 }
             }
         },
@@ -454,64 +438,17 @@ private fun BeltProgression(
                     )
                 }
 
-                LevelStripes(level, belt)
+                BeltDrawing(
+                    belt,
+                    level.level.toInt(),
+                    share = if (level.isMaxLevel) null else level.progressInLevel.toFloat() / level.bpPerLevel.coerceAtLeast(1),
+                    modifier = Modifier.bleedStart(16.dp),
+                )
                 NextBelt(level, nextBelt)
             }
         }
 
         BeltRack(belt)
-    }
-}
-
-/** Drawn for the eye only: the words above it name the belt and level. */
-@Composable
-private fun LevelStripes(
-    level: CurrentUserProgressResponseLevel,
-    belt: Belt,
-) {
-    val locale = currentLocale()
-    val reached = level.level.toInt()
-    val share = level.progressInLevel.toFloat() / level.bpPerLevel.coerceAtLeast(1)
-    val brain = MaterialTheme.zoonk.brain
-    val stripe = MaterialTheme.zoonk.beltWhite
-
-    Column(Modifier.fillMaxWidth().clearAndSetSemantics {}, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .background(belt.rankBar, RoundedCornerShape(6.dp))
-                .padding(horizontal = 8.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            for (index in 0 until LEVELS_PER_BELT.toInt()) {
-                Canvas(Modifier.weight(1f).height(28.dp)) {
-                    val radius = CornerRadius(2.dp.toPx())
-                    if (index < reached) {
-                        drawRoundRect(stripe, cornerRadius = radius)
-                    } else {
-                        val ring = if (index == reached) NEXT_RANK_RING_ALPHA else RANK_RING_ALPHA
-                        drawRoundRect(stripe.copy(alpha = ring), cornerRadius = radius, style = Stroke(1.dp.toPx()))
-                    }
-                    if (index == reached && !level.isMaxLevel) {
-                        val height = size.height * share
-                        drawRoundRect(brain, Offset(0f, size.height - height), Size(size.width, height), radius)
-                    }
-                }
-            }
-        }
-
-        Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            for (index in 0 until LEVELS_PER_BELT.toInt()) {
-                Text(
-                    whole(index + 1L, locale),
-                    modifier = Modifier.weight(1f),
-                    color = if (index + 1 == reached) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.labelSmall.withTabularFigures(),
-                    fontWeight = if (index + 1 == reached) FontWeight.SemiBold else null,
-                )
-            }
-        }
     }
 }
 
@@ -529,10 +466,12 @@ private fun NextBelt(
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        val heading = stringResource(R.string.stats_next_belt)
         Text(
-            stringResource(R.string.stats_next_belt),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelLarge,
+            heading.uppercase(locale),
+            Modifier.semantics { contentDescription = heading },
+            color = MaterialTheme.zoonk.faint,
+            style = MaterialTheme.zoonkType.label,
         )
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             BeltDot(nextBelt)
@@ -546,38 +485,6 @@ private fun NextBelt(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodySmall,
         )
-    }
-}
-
-/** Every belt in order: earned ones full, the current one ringed, those ahead faint (main's tied and folded belts). */
-@Composable
-private fun BeltRack(current: Belt) {
-    val ring = MaterialTheme.colorScheme.onSurface
-    val earned = stringResource(R.string.stats_belt_earned)
-    val now = stringResource(R.string.stats_belt_current)
-
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Belt.entries.forEach { entry ->
-            val name = stringResource(entry.label)
-            Box(
-                modifier =
-                    Modifier
-                        .clip(CircleShape)
-                        .then(if (entry == current) Modifier.border(1.5.dp, ring, CircleShape) else Modifier)
-                        .padding(4.dp)
-                        .alpha(if (entry > current) AHEAD_ALPHA else 1f)
-                        .clearAndSetSemantics {
-                            contentDescription = name
-                            when {
-                                entry == current -> stateDescription = now
-                                entry < current -> stateDescription = earned
-                                else -> Unit
-                            }
-                        },
-            ) {
-                BeltDot(entry)
-            }
-        }
     }
 }
 
@@ -685,7 +592,7 @@ internal fun ActivityPage(context: StatsContext) {
                 listOf(
                     { modifier ->
                         StatTile(
-                            label = stringResource(R.string.stats_study_days),
+                            label = stringResource(R.string.stats_days_studied),
                             value = whole(activity.learningDays, locale),
                             detail = stringResource(R.string.stats_any_day_studied),
                             tone = StatTone.Success,
@@ -1082,8 +989,5 @@ private const val LEVELS_PER_BELT = 10L
 private const val BRAIN_POWER_PER_LESSON = 10L
 private const val SCORE_WINDOW_DAYS = 90
 private const val PANEL_TINT = 0.1f
-private const val RANK_RING_ALPHA = 0.15f
-private const val NEXT_RANK_RING_ALPHA = 0.35f
-private const val AHEAD_ALPHA = 0.38f
 private const val UNCOUNTED_BAR_ALPHA = 0.2f
 private const val OTHER_BAR_ALPHA = 0.45f

@@ -15,6 +15,8 @@ private struct TimelineCanvas: View {
   let fields: TimelineFields
   let context: ActivityCanvasContext
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   @ActivityState("placements") private var placements: [TimelineScale.Placement] = []
   @ActivityState("isRevealed") private var isRevealed = false
 
@@ -78,7 +80,7 @@ private struct TimelineCanvas: View {
               "Show the real dates", tableName: "Activities",
               comment: "Reveals the real years on a timeline")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
       }
 
@@ -101,7 +103,7 @@ private struct TimelineCanvas: View {
     return VStack(alignment: .leading, spacing: 6) {
       HStack(alignment: .firstTextBaseline) {
         LessonRichText(event.label)
-          .fontWeight(.medium)
+          .typeWeight(.medium)
         Spacer(minLength: 8)
         if let symbol = mark.symbol {
           Image(systemName: symbol)
@@ -121,8 +123,8 @@ private struct TimelineCanvas: View {
             Text(verbatim: formatYear(event.year))
           }
         }
-        .font(.subheadline.monospacedDigit())
-        .foregroundStyle(.secondary)
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
       } else {
         Slider(
           value: Binding(
@@ -134,19 +136,19 @@ private struct TimelineCanvas: View {
         ) {
           Text(verbatim: LessonRichText.spoken(event.label))
         } minimumValueLabel: {
-          Text(formatYear(fields.start)).font(.caption2.monospacedDigit())
+          Text(formatYear(fields.start)).typeStyle(.small.monospaced())
         } maximumValueLabel: {
-          Text(formatYear(fields.end)).font(.caption2.monospacedDigit())
+          Text(formatYear(fields.end)).typeStyle(.small.monospaced())
         }
         .accessibilityValue(Text(verbatim: formatYear(guess)))
 
         Text(formatYear(guess))
-          .font(.subheadline.weight(.semibold).monospacedDigit())
+          .typeStyle(.body.weight(.semibold).monospaced())
           .accessibilityHidden(true)
       }
     }
     .padding(12)
-    .background(background(mark), in: .rect(cornerRadius: 12))
+    .background(background(mark), in: .rect(cornerRadius: Radius.option))
     .accessibilityElement(children: showsTruth ? .combine : .contain)
   }
 
@@ -154,7 +156,7 @@ private struct TimelineCanvas: View {
     switch mark {
     case .right: Color.success.opacity(0.1)
     case .wrong: Color.destructive.opacity(0.1)
-    default: Color(.secondarySystemBackground)
+    default: Color.card
     }
   }
 
@@ -218,25 +220,26 @@ private struct TimelineCanvas: View {
       ForEach(Array(datedPairs.enumerated()), id: \.offset) { index, pair in
         HStack(alignment: .firstTextBaseline, spacing: 8) {
           Circle()
-            .fill(index.isMultiple(of: 2) ? Color.orange : Color.purple)
+            .fill(index.isMultiple(of: 2) ? Color.vizHighlight : Color.vizSecondary)
             .frame(width: 8, height: 8)
             .accessibilityHidden(true)
 
           gap(from: pair.earlier, to: pair.later)
             .accessibilityLabel(spokenGap(pair))
         }
-        .font(.subheadline)
+        .typeStyle(.body)
       }
     }
   }
 
   private func gap(from earlier: (String, Int), to later: (String, Int)) -> Text {
     let years = TimelineScale.yearsBetween(earlier.1, later.1)
-    let from = LessonRichText.typeset(earlier.0).quoted(spoken: false)
-    let to = LessonRichText.typeset(later.0).quoted(spoken: false)
+    let from = LessonRichText.typeset(earlier.0).quoted(
+      spoken: false, legibility: legibilityWeight)
+    let to = LessonRichText.typeset(later.0).quoted(spoken: false, legibility: legibilityWeight)
 
     return Text(
-      "\(Text(gapText(years)).fontWeight(.semibold)) from \(from) (\(formatYear(earlier.1))) to \(to) (\(formatYear(later.1)))",
+      "\(Text(gapText(years)).typeWeight(.semibold, legibility: legibilityWeight)) from \(from) (\(formatYear(earlier.1))) to \(to) (\(formatYear(later.1)))",
       tableName: "Activities", comment: "The time between two dates of a timeline")
   }
 
@@ -312,13 +315,14 @@ private struct TimelineAxis: View {
           $0.move(to: CGPoint(x: inset, y: axisY))
           $0.addLine(to: CGPoint(x: inset + width, y: axisY))
         },
-        with: .color(Color(.separator)), lineWidth: 2)
+        with: .color(Color.border), lineWidth: 2)
 
       // Both ends always show; a tick between them shows only where its year fits beside the
       // others, so a narrow axis (a phone, a pane of the open iPhone Duo) never overlaps them.
       let ticks = TimelineScale.ticks(start: fields.start, end: fields.end).map { tick in
         let label = context.resolve(
-          Text(formatYear(tick)).font(.caption2.monospacedDigit()).foregroundStyle(.secondary))
+          Text(formatYear(tick)).font(TypeStyle.small.monospaced().font(in: context.environment))
+            .foregroundStyle(.mutedForeground))
         let anchor: UnitPoint =
           x(tick) < size.width * 0.15
           ? .topLeading : x(tick) > size.width * 0.85 ? .topTrailing : .top
@@ -340,7 +344,7 @@ private struct TimelineAxis: View {
       for (index, mark) in sorted.enumerated() {
         let y = axisY + rowHeight * Double(index + 1)
         let color: Color =
-          mark.kind == .anchor ? .secondary : mark.kind == .guess ? .primary : .success
+          mark.kind == .anchor ? .mutedForeground : mark.kind == .guess ? .primary : .success
 
         if let guess = mark.guess, guess != mark.year {
           context.stroke(
@@ -366,8 +370,12 @@ private struct TimelineAxis: View {
           x(mark.year) < size.width / 3
           ? .leading : x(mark.year) > size.width * 2 / 3 ? .trailing : .center
         context.draw(
-          Text(LessonRichText.typeset(mark.label).text).font(.caption).foregroundStyle(
-            color == .secondary ? .secondary : .primary),
+          Text(
+            LessonRichText.typeset(mark.label).text,
+            legibility: context.environment.legibilityWeight
+          )
+          .font(TypeStyle.meta.font(in: context.environment)).foregroundStyle(
+            color == .mutedForeground ? .mutedForeground : .primary),
           at: CGPoint(x: x(mark.year), y: y), anchor: anchor)
       }
     }

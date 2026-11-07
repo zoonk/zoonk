@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// Steps map to phases the way `packages/learn/src/generation/generation-kinds.ts` maps them.
+/// Steps map to phases the way `packages/learn/src/generation/generation-kinds.ts` maps them, with
+/// each phase's usual duration and the lines main's `use-generation-copy.ts` shows while it runs.
 struct GenerationWait: Equatable, Sendable {
   enum Kind: Sendable {
     case understanding
@@ -16,6 +17,17 @@ struct GenerationWait: Equatable, Sendable {
     case done
   }
 
+  /// Main's `NumberedLines`: "Writing screen 3…", with a check after every second one.
+  struct NumberedLines: Equatable, Sendable {
+    enum Line: Equatable, Sendable {
+      case lessonScreen
+      case explanationScreen
+    }
+
+    let count: Int
+    let line: Line
+  }
+
   struct Phase: Equatable, Identifiable, Sendable {
     let id: String
     let label: LocalizedStringResource
@@ -23,14 +35,25 @@ struct GenerationWait: Equatable, Sendable {
     let isOptional: Bool
     /// Runs at the same time as the phase before it, so each finishes on its own steps.
     var runsAlongside = false
+    /// Its usual duration on real runs, which weighs it in the bar.
+    let seconds: Double
+    /// What it's doing, one line every few seconds while it runs.
+    var lines: [LocalizedStringResource] = []
+    var numbered: NumberedLines?
     var state = PhaseState.waiting
     var isReported = false
     var skillName: String?
+    /// The server's times, so a phase's clock reads the same after a reconnection replays its steps.
+    var startedAt: Date?
+    var endedAt: Date?
   }
 
   let kind: Kind
   private(set) var phases: [Phase]
   private(set) var isDone = false
+  /// This device's clock minus the server's: a replayed event arrives long after its time, so the
+  /// smallest gap is the closest to the clocks' difference.
+  private(set) var clockOffset: TimeInterval?
 
   init(kind: Kind) {
     self.kind = kind
@@ -47,19 +70,53 @@ struct GenerationWait: Equatable, Sendable {
     return wait
   }
 
+  /// Every phase done, for a wait whose result is already there.
+  var finished: GenerationWait {
+    var wait = self
+
+    if !wait.isDone {
+      wait.finish(at: nil)
+    }
+
+    return wait
+  }
+
   var visiblePhases: [Phase] {
     phases.filter { !$0.isOptional || $0.isReported }
   }
 
-  mutating func apply(_ event: GenerationEvent) {
+  /// Main's `getPhaseProgress`: the share of the usual time the finished phases take, and where it
+  /// gets once the running ones finish, which the bar drifts toward.
+  var progress: (share: Double, target: Double, runningSeconds: Double?) {
+    let shown = visiblePhases
+    let total = shown.reduce(0) { $0 + $1.seconds }
+
+    guard !isDone, total > 0 else {
+      return (1, 1, nil)
+    }
+
+    let done = shown.filter { $0.state == .done }.reduce(0) { $0 + $1.seconds }
+    let running = shown.filter { $0.state == .working }.map(\.seconds)
+
+    return (done / total, (done + running.reduce(0, +)) / total, running.max())
+  }
+
+  mutating func apply(_ event: GenerationEvent, receivedAt: Date = .now) {
     guard let place = Self.place(of: event.step, kind: kind) else {
       return
+    }
+
+    let at = event.at
+
+    if let at {
+      let gap = receivedAt.timeIntervalSince(at)
+      clockOffset = min(clockOffset ?? gap, gap)
     }
 
     switch place {
     case .done:
       if event.status == "completed" || event.status == "started" {
-        isDone = true
+        finish(at: at)
       }
     case .phase(let id):
       guard let index = phases.firstIndex(where: { $0.id == id }) else {
@@ -69,25 +126,72 @@ struct GenerationWait: Equatable, Sendable {
       let stage = stage(of: index)
 
       // Earlier stages are done once a later one reports, and a stage's phases run together.
-      for earlier in phases.indices where earlier < stage.lowerBound {
-        phases[earlier].state = .done
+      for earlier in phases.indices
+      where earlier < stage.lowerBound && phases[earlier].state != .done {
+        end(earlier, at: at)
       }
 
-      for alongside in stage where phases[alongside].state == .waiting {
-        phases[alongside].state = .working
-      }
+      start(stage, at: at)
 
       phases[index].isReported = true
-      phases[index].state = event.status == "completed" ? .done : .working
       phases[index].skillName = event.skillName ?? phases[index].skillName
+
+      if event.status == "completed" {
+        // A step that finishes after the wait moved on still ends its phase then.
+        phases[index].endedAt = [phases[index].endedAt, at].compactMap(\.self).max()
+        end(index, at: at)
+        startNextStage(after: stage, at: at)
+      } else {
+        phases[index].state = .working
+      }
 
       // Today builds the first day once the plan is saved, while the outlines go on.
       if event.status == "completed",
         (kind == .curriculum && event.step == "createPlan")
           || (kind == .explanation && event.step == "writeExplanation")
       {
-        isDone = true
+        finish(at: at)
       }
+    }
+  }
+
+  /// A stage starts when the one before it finished, so the clocks run on from each other.
+  private mutating func start(_ stage: Range<Int>, at: Date?) {
+    let previous = stage.lowerBound > 0 ? self.stage(of: stage.lowerBound - 1) : nil
+    let startedAt = previous.flatMap { phases[$0].compactMap(\.endedAt).max() } ?? at
+
+    for index in stage where phases[index].state != .done {
+      phases[index].state = .working
+      phases[index].startedAt = phases[index].startedAt ?? startedAt
+    }
+  }
+
+  /// As main's wait does, the next stage runs once every phase of this one finished.
+  private mutating func startNextStage(after stage: Range<Int>, at: Date?) {
+    guard stage.upperBound < phases.endIndex,
+      phases[stage].allSatisfy({ $0.state == .done })
+    else {
+      return
+    }
+
+    start(self.stage(of: stage.upperBound), at: at)
+  }
+
+  private mutating func end(_ index: Int, at: Date?) {
+    phases[index].state = .done
+    phases[index].startedAt = phases[index].startedAt ?? at
+    phases[index].endedAt = phases[index].endedAt ?? at
+  }
+
+  private mutating func finish(at: Date?) {
+    isDone = true
+
+    for index in phases.indices {
+      if phases[index].state == .working {
+        phases[index].endedAt = phases[index].endedAt ?? at
+      }
+
+      phases[index].state = .done
     }
   }
 
@@ -141,13 +245,32 @@ struct GenerationWait: Equatable, Sendable {
           label: LocalizedStringResource(
             "Reading your goal", table: "Onboarding",
             comment: "A step of the wait while a typed goal is read"),
-          isOptional: false),
+          isOptional: false, seconds: 8,
+          lines: [
+            LocalizedStringResource(
+              "Reading what you wrote…", table: "Onboarding",
+              comment: "What the wait is doing while a typed goal is read"),
+            LocalizedStringResource(
+              "Working out what you want to reach…", table: "Onboarding",
+              comment: "What the wait is doing while a typed goal is read"),
+            LocalizedStringResource(
+              "Checking if it's an exam, a language or a subject…", table: "Onboarding",
+              comment: "What the wait is doing while a typed goal is read"),
+          ]),
         Phase(
           id: "dates",
           label: LocalizedStringResource(
             "Checking the exam dates", table: "Onboarding",
             comment: "A step of the wait while a typed goal is read, when it's an exam"),
-          isOptional: true),
+          isOptional: true, seconds: 12,
+          lines: [
+            LocalizedStringResource(
+              "Looking up the exam calendar…", table: "Onboarding",
+              comment: "What the wait is doing while it checks an exam's dates"),
+            LocalizedStringResource(
+              "Finding the dates for your year…", table: "Onboarding",
+              comment: "What the wait is doing while it checks an exam's dates"),
+          ]),
       ]
     case .curriculum:
       [
@@ -156,25 +279,63 @@ struct GenerationWait: Equatable, Sendable {
           label: LocalizedStringResource(
             "Reading your goal", table: "Onboarding",
             comment: "A step of the wait while a plan is built"),
-          isOptional: false),
+          isOptional: false, seconds: 8,
+          lines: [
+            LocalizedStringResource(
+              "Reading your answers…", table: "Onboarding",
+              comment: "What the wait is doing while a plan is built"),
+            LocalizedStringResource(
+              "Deciding how deep to go…", table: "Onboarding",
+              comment: "What the wait is doing while a plan is built"),
+          ]),
         Phase(
           id: "notice",
           label: LocalizedStringResource(
             "Reading your material", table: "Onboarding",
             comment: "A step of the wait while a plan is built from the learner's own material"),
-          isOptional: true),
+          isOptional: true, seconds: 15,
+          lines: [
+            LocalizedStringResource(
+              "Finding the topics it covers…", table: "Onboarding",
+              comment: "What the wait is doing while it reads the learner's own material"),
+            LocalizedStringResource(
+              "Putting them in the order it teaches…", table: "Onboarding",
+              comment: "What the wait is doing while it reads the learner's own material"),
+          ]),
         Phase(
           id: "skills",
           label: LocalizedStringResource(
             "Mapping the skills it takes", table: "Onboarding",
             comment: "A step of the wait while a plan is built"),
-          isOptional: false),
+          isOptional: false, seconds: 60,
+          lines: [
+            LocalizedStringResource(
+              "Listing what your goal asks for…", table: "Onboarding",
+              comment: "What the wait is doing while a plan is built"),
+            LocalizedStringResource(
+              "Putting the skills in order…", table: "Onboarding",
+              comment: "What the wait is doing while a plan is built"),
+            LocalizedStringResource(
+              "Checking nothing important is missing…", table: "Onboarding",
+              comment: "What the wait is doing while a plan is built"),
+          ]),
         Phase(
           id: "plan",
           label: LocalizedStringResource(
             "Fitting the plan into your days", table: "Onboarding",
             comment: "A step of the wait while a plan is built"),
-          isOptional: false),
+          isOptional: false, seconds: 15,
+          lines: [
+            LocalizedStringResource(
+              "Finding lessons in the Library…", table: "Onboarding",
+              comment: "What the wait is doing while a plan is built"),
+            LocalizedStringResource(
+              "Spreading the skills over your days…", table: "Onboarding",
+              comment: "What the wait is doing while a plan is built"),
+            LocalizedStringResource(
+              "Saving your plan…", table: "Onboarding",
+              comment: "What the wait is doing while a plan is built"),
+          ]),
       ]
     case .explanation:
       [
@@ -183,19 +344,30 @@ struct GenerationWait: Equatable, Sendable {
           label: LocalizedStringResource(
             "Reading your question", table: "Onboarding",
             comment: "A step of the wait while a quick explanation is written"),
-          isOptional: false),
+          isOptional: false, seconds: 2,
+          lines: [
+            LocalizedStringResource(
+              "Reading your question…", table: "Onboarding",
+              comment: "What the wait is doing while a quick explanation is written")
+          ]),
         Phase(
           id: "find",
           label: LocalizedStringResource(
             "Checking if someone asked it before", table: "Onboarding",
             comment: "A step of the wait while a quick explanation is written"),
-          isOptional: false),
+          isOptional: false, seconds: 2,
+          lines: [
+            LocalizedStringResource(
+              "Looking for a matching explanation…", table: "Onboarding",
+              comment: "What the wait is doing while a quick explanation is written")
+          ]),
         Phase(
           id: "write",
           label: LocalizedStringResource(
             "Writing about 5 short screens", table: "Onboarding",
             comment: "A step of the wait while a quick explanation is written"),
-          isOptional: false),
+          isOptional: false, seconds: 12,
+          numbered: NumberedLines(count: 5, line: .explanationScreen)),
       ]
     case .levelTestBank:
       [
@@ -204,7 +376,25 @@ struct GenerationWait: Equatable, Sendable {
           label: LocalizedStringResource(
             "Writing the level test questions", table: "Onboarding",
             comment: "The step of the wait while a language's level test questions are written"),
-          isOptional: false)
+          isOptional: false, seconds: 60,
+          lines: [
+            LocalizedStringResource(
+              "Choosing texts from beginner to advanced…", table: "Onboarding",
+              comment: "What the wait is doing while a language's level test questions are written"
+            ),
+            LocalizedStringResource(
+              "Writing the reading questions…", table: "Onboarding",
+              comment: "What the wait is doing while a language's level test questions are written"
+            ),
+            LocalizedStringResource(
+              "Writing the listening questions…", table: "Onboarding",
+              comment: "What the wait is doing while a language's level test questions are written"
+            ),
+            LocalizedStringResource(
+              "Checking each question has one right answer…", table: "Onboarding",
+              comment: "What the wait is doing while a language's level test questions are written"
+            ),
+          ])
       ]
     case .lesson:
       [
@@ -213,13 +403,23 @@ struct GenerationWait: Equatable, Sendable {
           label: LocalizedStringResource(
             "Planning the lesson", table: "Player",
             comment: "A step of the wait while a lesson is written"),
-          isOptional: false),
+          isOptional: false, seconds: 40,
+          lines: [
+            LocalizedStringResource(
+              "Choosing what to cover…", table: "Player",
+              comment: "What the wait is doing while a lesson is planned"),
+            LocalizedStringResource(
+              "Picking the best way to explain it…", table: "Player",
+              comment:
+                "What the wait is doing while a lesson is planned. \"It\" is the lesson's topic."),
+          ]),
         Phase(
           id: "write",
           label: LocalizedStringResource(
             "Writing the lesson", table: "Player",
             comment: "A step of the wait while a lesson is written"),
-          isOptional: false),
+          isOptional: false, seconds: 50,
+          numbered: NumberedLines(count: 6, line: .lessonScreen)),
         Phase(
           id: "mark",
           label: LocalizedStringResource(
@@ -227,7 +427,17 @@ struct GenerationWait: Equatable, Sendable {
             comment:
               "A step of the wait while a lesson is written, like \"Planning the lesson\" and \"Writing the lesson\" before it. \"Ideas\" are the lesson map's ideas, as in \"Idea 2 of 4\"."
           ),
-          isOptional: false),
+          isOptional: false, seconds: 10,
+          lines: [
+            LocalizedStringResource(
+              "Underlining what matters most…", table: "Player",
+              comment: "What the wait is doing while a lesson's key ideas are highlighted"),
+            LocalizedStringResource(
+              "Matching each screen to its idea…", table: "Player",
+              comment:
+                "What the wait is doing while a lesson's key ideas are highlighted. \"Idea\" is one of the lesson map's ideas, as in \"Idea 2 of 4\"."
+            ),
+          ]),
         Phase(
           id: "draw",
           label: LocalizedStringResource(
@@ -235,8 +445,74 @@ struct GenerationWait: Equatable, Sendable {
             comment:
               "A step of the wait while a lesson is written, like \"Planning the lesson\" and \"Writing the lesson\" before it"
           ),
-          isOptional: false, runsAlongside: true),
+          isOptional: false, runsAlongside: true, seconds: 45,
+          lines: [
+            LocalizedStringResource(
+              "Drawing what each screen describes…", table: "Player",
+              comment: "What the wait is doing while a lesson's pictures are drawn"),
+            LocalizedStringResource(
+              "Drawing an icon for each idea…", table: "Player",
+              comment:
+                "What the wait is doing while a lesson's pictures are drawn. \"Idea\" is one of the lesson map's ideas, as in \"Idea 2 of 4\"."
+            ),
+          ]),
       ]
+    }
+  }
+}
+
+extension GenerationWait.Phase {
+  /// Main's `getDetailLine`: the lines in order, then the numbered ones, then the lines again.
+  func detailLine(tick: Int) -> LocalizedStringResource? {
+    var sequence = lines
+    var loop = lines
+
+    if let numbered {
+      let review = numbered.review
+
+      for number in 1...max(numbered.count, 1) {
+        sequence.append(numbered.text(number))
+
+        if number.isMultiple(of: 2), number < numbered.count {
+          sequence.append(review)
+        }
+      }
+
+      loop.append(review)
+    }
+
+    if tick < sequence.count {
+      return sequence[tick]
+    }
+
+    return loop.isEmpty ? nil : loop[(tick - sequence.count) % loop.count]
+  }
+}
+
+extension GenerationWait.NumberedLines {
+  fileprivate func text(_ number: Int) -> LocalizedStringResource {
+    switch line {
+    case .lessonScreen:
+      LocalizedStringResource(
+        "Writing screen \(number)…", table: "Player",
+        comment: "What the wait is doing while a lesson is written: the screen it's on")
+    case .explanationScreen:
+      LocalizedStringResource(
+        "Writing screen \(number)…", table: "Onboarding",
+        comment: "What the wait is doing while a quick explanation is written: the screen it's on")
+    }
+  }
+
+  fileprivate var review: LocalizedStringResource {
+    switch line {
+    case .lessonScreen:
+      LocalizedStringResource(
+        "Checking the answers…", table: "Player",
+        comment: "What the wait is doing between screens while a lesson is written")
+    case .explanationScreen:
+      LocalizedStringResource(
+        "Checking the facts…", table: "Onboarding",
+        comment: "What the wait is doing between screens while a quick explanation is written")
     }
   }
 }
@@ -289,45 +565,20 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
     let runID = followedID ?? generationID
     let deckID = self.deckID
 
-    List {
+    ZoonkList {
       StepHeader(title: Text(title), description: Text(shownDescription))
 
       leading()
 
       Section {
-        ForEach(shown.visiblePhases) { phase in
-          LabeledContent {
-            switch phase.state {
-            case .waiting:
-              EmptyView()
-            case .working:
-              if failure == nil {
-                ProgressView()
-              }
-            case .done:
-              Image(systemName: "checkmark")
-                .fontWeight(.semibold)
-                .foregroundStyle(.success)
-                .accessibilityLabel(
-                  Text("Done", tableName: "Onboarding", comment: "A finished step of a wait"))
-            }
-          } label: {
-            Text(phase.label)
-              .foregroundStyle(phase.state == .waiting ? .secondary : .primary)
-
-            if phase.state == .working, failure == nil, let skillName = phase.skillName {
-              Text(skillName)
-                .lineLimit(1)
-            }
-          }
-        }
+        GenerationTimeline(
+          wait: shown, failure: failure, isActing: isRestarting,
+          act: failure.flatMap { failure -> (() -> Void)? in
+            failure == .connection || restart != nil ? { retry(failure) } : nil
+          })
       }
-
-      if let failure {
-        GenerationFailureSection(
-          failure: failure, isActing: isRestarting,
-          act: failure == .connection || restart != nil ? { retry(failure) } : nil)
-      }
+      .listRowBackground(Color.clear)
+      .listRowSeparator(.hidden)
 
       trailing()
 
@@ -554,27 +805,51 @@ struct GenerationFailureSection: View {
 
   var body: some View {
     Section {
-      Label {
-        VStack(alignment: .leading, spacing: 4) {
-          title
-            .font(.headline)
-          Text(description)
-        }
-      } icon: {
-        Image(
-          systemName: failure == .connection ? "wifi.exclamationmark" : "exclamationmark.triangle"
-        )
-        .foregroundStyle(.secondary)
-      }
-      .announcesAlert(description)
-
-      if let act {
-        Button(action: act) {
-          action
-        }
-        .disabled(isActing)
-      }
+      GenerationFailureNotice(failure: failure, isActing: isActing, act: act)
     }
+    .listRowBackground(Color.clear)
+  }
+}
+
+/// Main's `GenerationFailureNotice`: what went wrong and its way out, in place of the wait's bar.
+struct GenerationFailureNotice: View {
+  let failure: GenerationFailure
+  var isActing = false
+  let act: (() -> Void)?
+
+  var body: some View {
+    HStack(alignment: .top, spacing: 12) {
+      Image(
+        systemName: failure == .connection ? "wifi.exclamationmark" : "exclamationmark.circle"
+      )
+      .foregroundStyle(.mutedForeground)
+      .accessibilityHidden(true)
+
+      VStack(alignment: .leading, spacing: 2) {
+        title
+          .typeStyle(.rowTitle)
+          .foregroundStyle(Color(.foreground))
+
+        Text(description)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+
+        if let act {
+          Button(action: act) {
+            action
+          }
+          .buttonStyle(.mainAction)
+          .controlSize(.small)
+          .disabled(isActing)
+          .padding(.top, 8)
+        }
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    .padding(.horizontal, 14)
+    .padding(.vertical, 12)
+    .panel()
+    .announcesAlert(description)
   }
 
   private var title: Text {
@@ -612,6 +887,313 @@ struct GenerationFailureSection: View {
       Text("Reconnect", tableName: "Onboarding", comment: "Follows a run again after lost updates")
     case .generation, .notStarted:
       Text("Try again", tableName: "Onboarding", comment: "Starts a failed run again")
+    }
+  }
+}
+
+/// Main's `GenerationWait`: a bar split in the phases' usual times with how far it got, then each
+/// phase with its clock and, while it runs, a line of what it's doing. A failure takes the bar's
+/// place, and stops the clocks and lines.
+struct GenerationTimeline<Header: View>: View {
+  let wait: GenerationWait
+  var failure: GenerationFailure?
+  var isActing = false
+  var act: (() -> Void)?
+  @ViewBuilder var header: Header
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 24) {
+      VStack(alignment: .leading, spacing: 12) {
+        header
+
+        if let failure {
+          GenerationFailureNotice(failure: failure, isActing: isActing, act: act)
+        } else {
+          GenerationWaitBar(wait: wait)
+        }
+      }
+
+      VStack(alignment: .leading, spacing: 10) {
+        ForEach(wait.visiblePhases) { phase in
+          GenerationPhaseRow(
+            phase: phase, status: status(of: phase),
+            isFollowing: failure == nil && !wait.isDone, clockOffset: wait.clockOffset)
+        }
+      }
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  /// A failed run stops at the phase it was in; one that never started has nothing running.
+  private func status(of phase: GenerationWait.Phase) -> GenerationPhaseRow.Status {
+    switch (phase.state, failure) {
+    case (.done, _): .done
+    case (.waiting, _), (.working, .notStarted?): .waiting
+    case (.working, .generation?): .failed
+    case (.working, _): .working
+    }
+  }
+}
+
+extension GenerationTimeline where Header == EmptyView {
+  init(
+    wait: GenerationWait, failure: GenerationFailure? = nil, isActing: Bool = false,
+    act: (() -> Void)? = nil
+  ) {
+    self.init(wait: wait, failure: failure, isActing: isActing, act: act) { EmptyView() }
+  }
+}
+
+/// Main's `useAnimatedProgress`: between reports the bar drifts toward the end of the running
+/// phases, never full before the work is, and never back unless the run started over.
+private struct GenerationWaitBar: View {
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+  let wait: GenerationWait
+
+  @State private var drift = Drift(base: 0, movedAt: .now, share: 0, target: 0)
+
+  /// Estimates are never the finish line: only the end of the work fills the bar.
+  private static let cap = 0.97
+  private static let defaultSeconds = 30.0
+
+  private struct Drift: Equatable {
+    var base: Double
+    var movedAt: Date
+    var share: Double
+    var target: Double
+  }
+
+  var body: some View {
+    let progress = wait.progress
+
+    TimelineView(.animation(minimumInterval: 1, paused: wait.isDone)) { context in
+      let shown = shown(at: context.date, runningSeconds: progress.runningSeconds)
+
+      HStack(spacing: 12) {
+        FilledParts(share: shown, weights: wait.visiblePhases.map(\.seconds))
+          .animation(reduceMotion ? nil : .easeOut(duration: 0.7), value: shown)
+
+        Text(shown, format: .percent.precision(.fractionLength(0)))
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
+          .frame(minWidth: 32, alignment: .trailing)
+      }
+      .accessibilityElement(children: .ignore)
+      .accessibilityLabel(Text(Self.name(wait.kind)))
+      .accessibilityValue(Text(shown, format: .percent.precision(.fractionLength(0))))
+    }
+    .onChange(of: [progress.share, progress.target], initial: true) { _, new in
+      let now = Date.now
+      let shown = shown(at: now, runningSeconds: progress.runningSeconds)
+
+      drift = Drift(
+        base: new[0] < drift.share ? new[0] : max(shown, new[0]), movedAt: now, share: new[0],
+        target: new[1])
+    }
+  }
+
+  private func shown(at date: Date, runningSeconds: Double?) -> Double {
+    guard !wait.isDone else {
+      return 1
+    }
+
+    let ceiling = min(drift.target, Self.cap)
+
+    guard drift.base < ceiling else {
+      return max(drift.base, drift.share)
+    }
+
+    let constant = (runningSeconds ?? Self.defaultSeconds) / 2
+    let elapsed = max(0, date.timeIntervalSince(drift.movedAt).rounded(.down))
+    let drifted = drift.base + (ceiling - drift.base) * (1 - exp(-elapsed / constant))
+    return max(drifted, drift.share)
+  }
+
+  private static func name(_ kind: GenerationWait.Kind) -> LocalizedStringResource {
+    switch kind {
+    case .understanding:
+      LocalizedStringResource(
+        "Reading your goal", table: "Onboarding", comment: "VoiceOver: the bar of a wait")
+    case .curriculum:
+      LocalizedStringResource(
+        "Building your plan", table: "Onboarding", comment: "VoiceOver: the bar of a wait")
+    case .explanation:
+      LocalizedStringResource(
+        "Writing your explanation", table: "Onboarding", comment: "VoiceOver: the bar of a wait")
+    case .levelTestBank:
+      LocalizedStringResource(
+        "Preparing your level test", table: "Onboarding", comment: "VoiceOver: the bar of a wait")
+    case .lesson:
+      LocalizedStringResource(
+        "Writing your lesson", table: "Player", comment: "VoiceOver: the bar of a lesson's wait")
+    }
+  }
+}
+
+/// Each phase's part of the bar, as wide as its usual time, filled as far as the wait got.
+private struct FilledParts: View, Animatable {
+  var share: Double
+  let weights: [Double]
+
+  var animatableData: Double {
+    get { share }
+    set { share = newValue }
+  }
+
+  var body: some View {
+    MeterParts(parts: parts, height: 4, gap: 3)
+  }
+
+  private var parts: [MeterParts.Part] {
+    var reached = share * weights.reduce(0, +)
+
+    return weights.map { weight in
+      let fill = weight > 0 ? min(1, max(0, reached / weight)) : 0
+      reached -= weight
+      return MeterParts.Part(weight: weight, fill: .share(fill))
+    }
+  }
+}
+
+private struct GenerationPhaseRow: View {
+  enum Status {
+    case waiting
+    case working
+    case done
+    case failed
+  }
+
+  let phase: GenerationWait.Phase
+  let status: Status
+  let isFollowing: Bool
+  let clockOffset: TimeInterval?
+
+  /// Main's 1rem mark column and 20pt line.
+  @ScaledMetric(relativeTo: .subheadline) private var markWidth = 16.0
+  @ScaledMetric(relativeTo: .subheadline) private var lineHeight = 20.0
+  @ScaledMetric(relativeTo: .subheadline) private var dot = 8.0
+
+  var body: some View {
+    HStack(alignment: .top, spacing: 12) {
+      mark
+        .frame(width: markWidth, height: lineHeight)
+
+      VStack(alignment: .leading, spacing: 2) {
+        Text(phase.label)
+          .typeStyle(isEmphasized ? TypeStyle.body.weight(.medium) : .body)
+          .foregroundStyle(isEmphasized ? Color(.foreground) : .mutedForeground)
+          .frame(minHeight: lineHeight)
+
+        if status == .working, isFollowing {
+          GenerationPhaseDetail(phase: phase)
+        }
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+
+      time
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
+        .frame(minHeight: lineHeight)
+        .accessibilityHidden(true)
+    }
+    .accessibilityElement(children: .combine)
+    .accessibilityValue(statusText)
+  }
+
+  private var isEmphasized: Bool {
+    status == .working || status == .failed
+  }
+
+  @ViewBuilder
+  private var mark: some View {
+    switch status {
+    case .waiting:
+      Circle()
+        .strokeBorder(.faint, lineWidth: 1)
+        .frame(width: dot, height: dot)
+    case .working:
+      Circle()
+        .fill(Color(.foreground))
+        .frame(width: dot, height: dot)
+    case .done:
+      Image(systemName: "checkmark")
+        .typeStyle(.body)
+        .foregroundStyle(.faint)
+    case .failed:
+      Image(systemName: "exclamationmark.circle")
+        .typeStyle(.body)
+        .foregroundStyle(.destructiveText)
+    }
+  }
+
+  @ViewBuilder
+  private var time: some View {
+    if let startedAt = phase.startedAt {
+      if status == .done, let endedAt = phase.endedAt {
+        Text(Self.clock(endedAt.timeIntervalSince(startedAt)))
+      } else if status == .working, isFollowing, let clockOffset {
+        TimelineView(.periodic(from: .now, by: 1)) { context in
+          Text(Self.clock(context.date.timeIntervalSince(startedAt) - clockOffset))
+        }
+      }
+    }
+  }
+
+  /// Main's `formatClock`: whole seconds rounded up, as "0:18" or "1:02:05".
+  private static func clock(_ seconds: TimeInterval) -> String {
+    let duration = Duration.seconds(max(0, seconds.rounded(.up)))
+    return duration.formatted(
+      .time(pattern: seconds >= 3600 ? .hourMinuteSecond : .minuteSecond))
+  }
+
+  private var statusText: Text {
+    switch status {
+    case .waiting:
+      Text(
+        "Not started yet", tableName: "Onboarding",
+        comment: "VoiceOver: a step of a wait that hasn't started")
+    case .working:
+      Text(
+        "In progress", tableName: "Onboarding",
+        comment: "VoiceOver: the step of a wait that's running")
+    case .done:
+      Text("Done", tableName: "Onboarding", comment: "A finished step of a wait")
+    case .failed:
+      Text(
+        "Stopped here", tableName: "Onboarding",
+        comment: "VoiceOver: the step of a wait where a failed run stopped")
+    }
+  }
+}
+
+/// A line of what the phase is doing, a new one every few seconds, or the newest skill it wrote.
+private struct GenerationPhaseDetail: View {
+  let phase: GenerationWait.Phase
+
+  @State private var tick = 0
+
+  var body: some View {
+    Group {
+      if let skillName = phase.skillName {
+        Text(skillName)
+          .lineLimit(1)
+      } else if let line = phase.detailLine(tick: tick) {
+        Text(line)
+      }
+    }
+    .typeStyle(.meta)
+    .foregroundStyle(.mutedForeground)
+    .task {
+      while !Task.isCancelled {
+        do {
+          try await Task.sleep(for: .milliseconds(Int.random(in: 2200...3600)))
+        } catch {
+          return
+        }
+
+        tick += 1
+      }
     }
   }
 }

@@ -14,11 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 /**
- * Main's quiet chip beside a title, never a colored badge. Not tappable: a chip people tap is
- * Material's `AssistChip` or `FilterChip`.
+ * Main's quiet chip beside a title (22dp, `rounded-md`, an `input` line, no fill), never a colored
+ * badge. Not tappable: a chip people tap is Material's `AssistChip` or `FilterChip`.
  */
 @Composable
 fun LabelChip(
@@ -26,7 +27,7 @@ fun LabelChip(
     modifier: Modifier = Modifier,
     @DrawableRes icon: Int? = null,
 ) {
-    val style = MaterialTheme.typography.labelMedium
+    val style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
     val color = MaterialTheme.colorScheme.onSurfaceVariant
 
     Row(

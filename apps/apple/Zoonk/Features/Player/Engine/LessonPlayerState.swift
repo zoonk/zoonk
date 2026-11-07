@@ -225,6 +225,36 @@ struct LessonPlayerState: Equatable, Sendable {
     return Double(done) / Double(total)
   }
 
+  /// Main's `getSegments`: a screen's first copy shows its first verdict, a later copy its own.
+  var segments: [TaskSegment] {
+    let screens: [TaskSegment] = queue.indices.map { index in
+      let isAnsweredInView = index == position && phase == .feedback
+
+      guard index < position || isAnsweredInView || phase == .completed else {
+        return index == position ? .current : .ahead
+      }
+
+      let id = queue[index]
+      let verdict = queue.firstIndex(of: id) == index ? firstVerdicts[id] : results[id]?.isCorrect
+
+      return switch verdict {
+      case true?: .right
+      case false?: .wrong
+      case nil: .read
+      }
+    }
+
+    return endsWithMap ? screens + [mapSegment] : screens
+  }
+
+  private var mapSegment: TaskSegment {
+    switch phase {
+    case .map: .current
+    case .completed: .read
+    default: .ahead
+    }
+  }
+
   var correctCount: Int { firstVerdicts.values.filter { $0 }.count }
   var answeredCount: Int { firstVerdicts.count }
 

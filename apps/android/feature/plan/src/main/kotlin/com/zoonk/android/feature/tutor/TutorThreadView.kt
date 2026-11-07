@@ -20,16 +20,14 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -50,7 +48,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -68,10 +66,16 @@ import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.AlertDialog
+import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.richtext.MarkdownText
+import com.zoonk.android.ui.theme.GeistMono
+import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.StudyMission
 import com.zoonk.api.models.StudyMissionMoment
 import kotlinx.coroutines.launch
@@ -189,7 +193,7 @@ private fun Turns(
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         firstDay?.let { day -> item(key = "first-day", contentType = "day") { DayLabel(day, today) } }
-        page?.let { item(key = "greeting", contentType = "greeting") { TutorGreeting(identity, it.greeting, it.greetingAction) } }
+        page?.let { item(key = "greeting", contentType = "greeting") { TutorGreeting(it.greeting, it.greetingAction) } }
         pending()
         if (thread.hasMore) {
             item(key = "earlier", contentType = "earlier") { EarlierQuestions(state, vm::loadEarlier) }
@@ -203,7 +207,7 @@ private fun Turns(
                 routes = routes,
                 others = thread.turns.count { it.isInProgress && it.id != turn.id },
                 day = newDay(days[index], days.getOrNull(index - 1))?.let { { DayLabel(it, today) } },
-                showsAbout = page == null,
+                inPanel = page == null,
             )
         }
         // The server's turn takes this one's place, laid out the same, so nothing moves when it arrives.
@@ -213,9 +217,9 @@ private fun Turns(
                 TurnLayout(
                     sending.question,
                     sending.about.takeIf { page == null },
-                    identity,
+                    identity.takeIf { page == null },
                     day?.let { { DayLabel(it, today) } },
-                ) { Thinking() }
+                ) { Thinking(answerWords(inPanel = page == null)) }
             }
         }
         state.missionMoment?.facts()?.takeIf { it.shows }?.let { facts ->
@@ -260,19 +264,15 @@ private fun DayLabel(
     )
 }
 
-/** The buddy's hello, which opens its conversations: as an answer would sit, beside its face. */
+/** The buddy's hello, which opens its page: its words across the page, as its answers there. */
 @Composable
 fun TutorGreeting(
-    identity: TutorIdentity,
     text: String,
     action: (@Composable () -> Unit)? = null,
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        Box(Modifier.size(AVATAR_SIZE)) { TutorAvatar(identity, AVATAR_SIZE) }
-        Column(Modifier.weight(1f).padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(text, style = MaterialTheme.typography.bodyLarge)
-            action?.invoke()
-        }
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(text, style = MaterialTheme.zoonkType.message)
+        action?.invoke()
     }
 }
 
@@ -290,7 +290,7 @@ private fun EarlierQuestions(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        FilledTonalButton(onClick = onLoad, enabled = !state.loadingEarlier) {
+        OutlinedButton(onClick = onLoad, enabled = !state.loadingEarlier) {
             if (state.loadingEarlier) {
                 CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), strokeWidth = 2.dp)
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -309,16 +309,16 @@ private fun TurnView(
     routes: TutorRoutes,
     others: Int,
     day: (@Composable () -> Unit)? = null,
-    showsAbout: Boolean = true,
+    inPanel: Boolean = true,
 ) {
-    TurnLayout(turn.question, turn.about.takeIf { showsAbout }, identity, day) {
+    TurnLayout(turn.question, turn.about.takeIf { inPanel }, identity.takeIf { inPanel }, day) {
         // A finished or failed answer is read out once; while it streams nothing is, word by word.
         val finished = turn.status == TutorTurn.Status.Completed || turn.status == TutorTurn.Status.Failed
         Column(
             Modifier.semantics { if (finished) liveRegion = LiveRegionMode.Polite },
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Answer(turn, vm, state, routes, others)
+            Answer(turn, vm, state, routes, others, answerWords(inPanel))
         }
         if (turn.answer != null || turn.status != TutorTurn.Status.Running) {
             val change = turn.planChange
@@ -342,12 +342,12 @@ private fun TurnView(
     }
 }
 
-/** The learner's question, then the buddy's [answer] beside its face. */
+/** The learner's question, then the buddy's [answer]: beside its face in a panel, across the page on the buddy's page. */
 @Composable
 private fun TurnLayout(
     question: String,
     about: TutorTurn.About?,
-    identity: TutorIdentity,
+    identity: TutorIdentity?,
     day: (@Composable () -> Unit)?,
     answer: @Composable ColumnScope.() -> Unit,
 ) {
@@ -367,16 +367,20 @@ private fun TurnLayout(
             }
             Surface(
                 modifier = Modifier.widthIn(max = BUBBLE_MAX_WIDTH),
-                shape = MaterialTheme.shapes.large,
+                shape = BUBBLE_SHAPE,
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
             ) {
-                Text(question, Modifier.padding(horizontal = 14.dp, vertical = 10.dp), style = MaterialTheme.typography.bodyLarge)
+                Text(question, Modifier.padding(horizontal = 12.dp, vertical = 8.dp), style = MaterialTheme.zoonkType.message)
             }
         }
 
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Box(Modifier.size(AVATAR_SIZE)) { TutorAvatar(identity, AVATAR_SIZE) }
-            Column(Modifier.weight(1f).padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(12.dp), content = answer)
+        if (identity == null) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp), content = answer)
+        } else {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Box(Modifier.size(AVATAR_SIZE)) { TutorAvatar(identity, AVATAR_SIZE) }
+                Column(Modifier.weight(1f).padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(12.dp), content = answer)
+            }
         }
     }
 }
@@ -388,6 +392,7 @@ private fun Answer(
     state: TutorConversationState,
     routes: TutorRoutes,
     others: Int,
+    words: TextStyle,
 ) {
     val streaming = state.answeringId == turn.id
     val busy = state.answeringId != null || state.asking
@@ -397,13 +402,13 @@ private fun Answer(
 
     when {
         turn.status == TutorTurn.Status.Pending && !streaming -> {
-            FilledTonalButton(onClick = { vm.retryAnswer(turn.id) }, enabled = !busy && others == 0) {
+            OutlinedButton(onClick = { vm.retryAnswer(turn.id) }, enabled = !busy && others == 0) {
                 Text(stringResource(R.string.tutor_get_answer))
             }
         }
 
         turn.status == TutorTurn.Status.Failed -> {
-            turn.answer?.let { AnswerText(it, linksChecked, routes.open, { id -> vm.openBlock(turn.id, id) }, vm.noticeFor(turn)) }
+            turn.answer?.let { AnswerText(it, linksChecked, routes.open, { id -> vm.openBlock(turn.id, id) }, vm.noticeFor(turn), words) }
             if (failure?.helpLimit != null) {
                 Text(
                     stringResource(R.string.tutor_not_answered),
@@ -421,7 +426,7 @@ private fun Answer(
         }
 
         answer != null -> {
-            AnswerText(answer, linksChecked, routes.open, { id -> vm.openBlock(turn.id, id) }, vm.noticeFor(turn))
+            AnswerText(answer, linksChecked, routes.open, { id -> vm.openBlock(turn.id, id) }, vm.noticeFor(turn), words)
             if (turn.status == TutorTurn.Status.Running && !streaming) CheckAgain(enabled = !busy && others == 0) { vm.checkAgain(turn.id) }
         }
 
@@ -429,19 +434,23 @@ private fun Answer(
             Text(
                 stringResource(R.string.tutor_no_answer),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyLarge,
+                style = words,
             )
         }
 
         else -> {
-            Thinking()
+            Thinking(words)
             if (turn.status == TutorTurn.Status.Running && !streaming) CheckAgain(enabled = !busy && others == 0) { vm.checkAgain(turn.id) }
         }
     }
 }
 
+/** Main's buddy page draws its answers at 15px; a panel's stay in the body size. */
 @Composable
-private fun Thinking() {
+private fun answerWords(inPanel: Boolean): TextStyle = if (inPanel) MaterialTheme.typography.bodyMedium else MaterialTheme.zoonkType.message
+
+@Composable
+private fun Thinking(words: TextStyle) {
     Row(
         Modifier.semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -451,7 +460,7 @@ private fun Thinking() {
         Text(
             stringResource(R.string.tutor_thinking),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyLarge,
+            style = words,
         )
     }
 }
@@ -470,6 +479,7 @@ fun AnswerText(
     onOpenRoute: (AppRoute) -> Unit,
     onOpenBlock: ((UUID) -> Unit)? = null,
     blockNotice: BlockNotice? = null,
+    style: TextStyle = MaterialTheme.zoonkType.message,
 ) {
     var asked by remember { mutableStateOf<String?>(null) }
     val open: (String) -> Unit = { url ->
@@ -491,7 +501,7 @@ fun AnswerText(
     MarkdownText(
         markdown = answer,
         onOpenLink = open.takeIf { linksChecked },
-        style = MaterialTheme.typography.bodyLarge,
+        style = style,
     )
 
     blockNotice?.let {
@@ -522,7 +532,7 @@ private fun ExternalLink(
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(stringResource(R.string.tutor_link_description))
                 Surface(shape = MaterialTheme.shapes.small, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
-                    Text(url, Modifier.padding(12.dp), fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall)
+                    Text(url, Modifier.padding(12.dp), fontFamily = GeistMono, style = MaterialTheme.typography.bodySmall)
                 }
             }
         },
@@ -543,7 +553,7 @@ private fun CheckAgain(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    FilledTonalButton(onClick = onClick, enabled = enabled) {
+    OutlinedButton(onClick = onClick, enabled = enabled) {
         Icon(painterResource(R.drawable.ic_refresh), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
         Text(stringResource(R.string.tutor_check_again), Modifier.padding(start = ButtonDefaults.IconSpacing))
     }
@@ -560,17 +570,17 @@ internal fun FailureAction(
 ) {
     when {
         failure == TutorFailure.SignedOut -> {
-            FilledTonalButton(onClick = routes.signIn, modifier = modifier) { Text(stringResource(R.string.tutor_sign_in)) }
+            OutlinedButton(onClick = routes.signIn, modifier = modifier) { Text(stringResource(R.string.tutor_sign_in)) }
         }
 
         failure == TutorFailure.PlusRequired -> {
-            FilledTonalButton(onClick = routes.seePlus, modifier = modifier) { Text(stringResource(R.string.tutor_view_plans)) }
+            OutlinedButton(onClick = routes.seePlus, modifier = modifier) { Text(stringResource(R.string.tutor_view_plans)) }
         }
 
         failure?.helpLimit != null || failure == TutorFailure.Gone -> {}
 
         else -> {
-            FilledTonalButton(onClick = onRetry, modifier = modifier, enabled = enabled) {
+            OutlinedButton(onClick = onRetry, modifier = modifier, enabled = enabled) {
                 Icon(painterResource(R.drawable.ic_refresh), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
                 Text(stringResource(R.string.tutor_try_again), Modifier.padding(start = ButtonDefaults.IconSpacing))
             }
@@ -600,7 +610,7 @@ private fun EmptyThread(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 suggestions.forEach { suggestion ->
-                    FilledTonalButton(onClick = { onSelect(suggestion) }, enabled = canAsk) { Text(suggestion.label) }
+                    OutlinedButton(onClick = { onSelect(suggestion) }, enabled = canAsk) { Text(suggestion.label) }
                 }
             }
         }
@@ -654,6 +664,10 @@ private fun ConversationLoading(modifier: Modifier = Modifier) {
 
 private const val SENDING = "sending"
 private val AVATAR_SIZE = 32.dp
+
+/** Main's `LearnerBubble`: its corner nearest the learner's side tucked in. */
+private val BUBBLE_SHAPE =
+    RoundedCornerShape(topStart = ZoonkRadius.option, topEnd = ZoonkRadius.option, bottomEnd = 4.dp, bottomStart = ZoonkRadius.option)
 private val EMPTY_AVATAR_SIZE = 48.dp
 private val BUBBLE_MAX_WIDTH = 480.dp
 private val LOADING_HEIGHT = 96.dp

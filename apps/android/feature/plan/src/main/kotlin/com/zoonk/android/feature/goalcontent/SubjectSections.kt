@@ -14,13 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,8 +53,10 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkStatus
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -102,7 +102,7 @@ internal fun SubjectCoverage(
             )
             CoverageBar(studied = preparation)
             Column {
-                Text(stringResource(R.string.goalcontent_mastery), style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.goalcontent_mastery), style = MaterialTheme.typography.labelSmall)
                 val mastery = subject.mastery
                 Text(
                     text =
@@ -116,7 +116,7 @@ internal fun SubjectCoverage(
                             )
                         },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = factsStyle(),
+                    style = MaterialTheme.typography.bodySmall.withTabularFigures(),
                 )
             }
         }
@@ -189,7 +189,7 @@ internal fun NotPlannedNotice(
 
                 when (subject.notPlannedReason) {
                     SyllabusSubject.NotPlannedReason.SKIPPED -> {
-                        FilledTonalButton(onClick = { actions.restore(subject.areas) }, enabled = !writes.restoring) {
+                        OutlinedButton(onClick = { actions.restore(subject.areas) }, enabled = !writes.restoring) {
                             Text(stringResource(R.string.goalcontent_bring_back))
                         }
                         if (writes.restoreFailed) SaveFailed()
@@ -389,6 +389,7 @@ internal fun LazyListScope.subjectChapters(
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     },
+                    chevron = false,
                 )
             }
         }
@@ -859,6 +860,7 @@ internal fun LazyListScope.subjectMatrix(matrix: List<String>) {
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     },
+                    chevron = false,
                 )
             }
         }

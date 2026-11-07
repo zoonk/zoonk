@@ -96,13 +96,13 @@ private struct DayMomentContent: View {
 
             VStack(alignment: .leading, spacing: 2) {
               Text("Level up!", tableName: "Session", comment: "A new belt level")
-                .font(.headline)
+                .typeStyle(.body.weight(.semibold))
               Text(
                 "\(beltName(level.color) ?? level.color), level \(level.level)",
                 tableName: "Session", comment: "The belt and level reached"
               )
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
             }
           }
 
@@ -128,17 +128,16 @@ private struct DayMomentContent: View {
                     "Energy at \(energy)%", tableName: "Session", comment: "A new tenth of Energy")
                 }
               }
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
 
               energyLine(energy)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .typeStyle(.note)
+                .foregroundStyle(.mutedForeground)
             }
           }
 
           // Where Energy is now: the moment doesn't know where it came from.
-          ProgressView(value: Double(min(energy, 100)), total: 100)
-            .tint(.energy)
+          Meter(value: Double(min(energy, 100)), total: 100, fill: .energy)
         }
         .accessibilityElement(children: .combine)
       }
@@ -164,15 +163,15 @@ private struct DayMomentContent: View {
 
           VStack(alignment: .leading, spacing: payoff ? 8 : 2) {
             missionsTitle(moment, justDone: justDone.count)
-              .font(payoff ? .title3.bold() : .headline)
+              .typeStyle(payoff ? .section : .body.weight(.semibold))
               .foregroundStyle(Color.primary)
 
             if payoff {
               bonus(moment.fullMeal.bonus)
             } else {
               missionsStatus(moment)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+                .typeStyle(.note)
+                .foregroundStyle(.mutedForeground)
             }
           }
           .accessibilityElement(children: .combine)
@@ -218,12 +217,12 @@ private struct DayMomentContent: View {
   private func bonus(_ points: Int) -> some View {
     HStack(alignment: .firstTextBaseline, spacing: 6) {
       EarnedNumber(value: points, delay: 2 * .beat)
-        .font(.largeTitle.weight(.semibold))
-        .foregroundStyle(.brain)
+        .typeStyle(.heroTitle)
+        .foregroundStyle(.brainText)
 
       Text("Brain Power", tableName: "Session", comment: "Under the missions' bonus")
-        .font(.subheadline.weight(.medium))
-        .foregroundStyle(.secondary)
+        .typeStyle(.note.weight(.medium))
+        .foregroundStyle(.mutedForeground)
     }
     .settles(delay: 2 * .beat, from: 0.9)
     .background(alignment: .leading) {
@@ -298,7 +297,7 @@ private struct EnergyMark: View {
 
   var body: some View {
     Image(systemName: "bolt.fill")
-      .font(.title3)
+      .typeStyle(.section.weight(.regular))
       .foregroundStyle(.energy)
       .symbolEffect(.bounce, value: pops)
       .frame(width: size, height: size)

@@ -56,7 +56,7 @@ private struct ExamContent: View {
         } label: {
           Text("Try again", tableName: "Exam", comment: "Button to retry loading")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .lonePage()
     case .loaded(let view):
@@ -77,17 +77,17 @@ private struct ExamList: View {
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
         moment
         ExamProgressSection(exam: exam)
       }
     } secondary: {
-      List {
+      ZoonkList {
         ExamMocksSection(exam: exam, options: options)
         about
       }
     } single: {
-      List {
+      ZoonkList {
         moment
         ExamMocksSection(exam: exam, options: options)
         ExamProgressSection(exam: exam)
@@ -98,6 +98,7 @@ private struct ExamList: View {
       callStart.cancel()
     }
     .navigationTitle(exam.examName)
+    .barTitleAfterHero(exam.examName)
     .toolbar {
       ToolbarItem(placement: .topBarTrailing) {
         Menu {
@@ -135,7 +136,8 @@ private struct ExamList: View {
     }
   }
 
-  /// Main's order: the map with the mocks, then speaking, then its aside (the format and scoring).
+  /// Main's order: the map with the mocks, then speaking, then its aside (the format, scoring and
+  /// the date note).
   @ViewBuilder
   private var about: some View {
     if exam.format.isEmpty, let map = exam.map, !map.subjects.isEmpty {
@@ -149,6 +151,7 @@ private struct ExamList: View {
     }
 
     ExamScoringSection(exam: exam)
+    ExamDateNote(exam: exam)
   }
 }
 
@@ -163,16 +166,17 @@ private struct ExamHero: View {
 
   var body: some View {
     Section {
-      VStack(alignment: .leading, spacing: 6) {
-        eyebrow
-          .font(.caption.monospaced())
-          .foregroundStyle(.secondary)
+      VStack(alignment: .leading, spacing: 0) {
+        PageHeader(Text(exam.examName), eyebrow: eyebrow)
+
+        // Main's `DetailFacts`: mono data under the title, which a header's supporting line isn't.
         if !facts.isEmpty {
           Text(facts.joinedFacts())
-            .font(.subheadline.monospacedDigit())
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
         }
       }
-      .accessibilityElement(children: .combine)
+      .listRowSeparator(.hidden)
 
       if let options, options.offersMock {
         Button {
@@ -203,10 +207,6 @@ private struct ExamHero: View {
         .buttonStyle(.mainAction)
         .controlSize(.large)
         .listRowSeparator(.hidden)
-      }
-    } footer: {
-      if let note = dateNote {
-        Text(note)
       }
     }
 
@@ -240,7 +240,7 @@ private struct ExamHero: View {
           } label: {
             Text("Use this date", tableName: "Exam", comment: "Moves the plan to the notice's day")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .disabled(usingDate)
         }
       }
@@ -260,7 +260,7 @@ private struct ExamHero: View {
             comment:
               "An exam with no sitting in the learner's month; the argument is a month like 'May'"
           )
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
           Group {
             if noSitting.closest.count == 1 {
               Text(
@@ -272,7 +272,7 @@ private struct ExamHero: View {
                 tableName: "Exam", comment: "The closest sittings to pick from")
             }
           }
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         ForEach(noSitting.closest, id: \.self) { closest in
@@ -344,12 +344,40 @@ private struct ExamHero: View {
     return facts
   }
 
-  private var dateNote: String? {
+  private func useDate(_ date: String) async {
+    usingDate = true
+    dateFailed = false
+    defer { usingDate = false }
+
+    switch await plan.change(goalId: exam.goalId, edits: [.targetDate(date)]) {
+    case .done(.applied), .done(.undone), .done(.unchanged), .obsolete: break
+    case .done(.invalid), .failed: dateFailed = true
+    }
+  }
+}
+
+/// Main's date note at the end of the exam's aside: where the dates come from while they aren't
+/// official.
+private struct ExamDateNote: View {
+  let exam: ExamView
+
+  var body: some View {
+    if let note {
+      Section {
+      } footer: {
+        SectionFooter {
+          Text(note)
+        }
+      }
+    }
+  }
+
+  private var note: String? {
     guard !exam.days.isEmpty else { return nil }
     let notice = exam.examDocument == .notice
 
     if exam.namedMonth {
-      guard exam.noticeDay == nil else { return nil }
+      guard exam.noticeDay == nil, exam.noSitting == nil else { return nil }
       return notice
         ? String(
           localized: "The month you told us. We'll tell you the day once the notice sets it.",
@@ -368,17 +396,6 @@ private struct ExamHero: View {
       : String(
         localized: "Estimated from past editions. We'll tell you when the official dates are out.",
         table: "Exam", comment: "Estimated days, before the calendar")
-  }
-
-  private func useDate(_ date: String) async {
-    usingDate = true
-    dateFailed = false
-    defer { usingDate = false }
-
-    switch await plan.change(goalId: exam.goalId, edits: [.targetDate(date)]) {
-    case .done(.applied), .done(.undone), .done(.unchanged), .obsolete: break
-    case .done(.invalid), .failed: dateFailed = true
-    }
   }
 }
 
@@ -463,11 +480,14 @@ private struct ExamResultSection: View {
       }
       .disabled(form.saving || (parsedScore == nil && form.passed == .unknown))
     } header: {
-      Text("How did it go?", tableName: "Exam", comment: "Asks for the official result")
+      SectionTitle(
+        Text("How did it go?", tableName: "Exam", comment: "Asks for the official result"))
     } footer: {
-      Text(
-        "Add your official result when it comes out. You can change it later.", tableName: "Exam",
-        comment: "Under the official result form")
+      SectionFooter {
+        Text(
+          "Add your official result when it comes out. You can change it later.", tableName: "Exam",
+          comment: "Under the official result form")
+      }
     }
   }
 
@@ -545,10 +565,16 @@ private struct ExamMocksSection: View {
           Button {
             router.open(.mock(blockId: mock.id))
           } label: {
-            IconLabeledContent {
+            ListRow(
+              mockTitle(MockLabels.title(number: mock.number), isNext: isNext),
+              description: Text(
+                "\(mock.answered) of \(mock.questions) answered", tableName: "Exam",
+                comment: "A running mock's progress")
+            ) {
+              StatusMark(status: isNext ? .next : .todo)
+            } trailing: {
               if let deadline = mock.deadline, deadline > .now {
                 Text(timerInterval: Date.now...deadline, countsDown: true)
-                  .monospacedDigit()
               } else if mock.deadline == nil {
                 Text(
                   "All parts handed in", tableName: "Exam",
@@ -556,36 +582,32 @@ private struct ExamMocksSection: View {
               } else {
                 Text("Time's up", tableName: "Exam", comment: "A running mock's time ran out")
               }
-            } title: {
-              mockTitle(MockLabels.title(number: mock.number), isNext: isNext)
-              Text(
-                "\(mock.answered) of \(mock.questions) answered", tableName: "Exam",
-                comment: "A running mock's progress")
-            } icon: {
-              StatusMark(status: isNext ? .next : .todo)
             }
             .disclosureChevron()
           }
+          .currentRow(isNext)
         }
 
         if let next = exam.nextMock {
           Button {
             router.open(.challenge(planItemId: next.planItemId, sessionId: nil))
           } label: {
-            IconLabeledContent {
+            ListRow(
+              mockTitle(
+                MockLabels.daySize(fullLength: next.fullLength, day: nil),
+                isNext: exam.runningMocks.isEmpty),
+              description: Text(
+                "\(next.questions) questions", tableName: "Exam", comment: "Next mock size")
+            ) {
+              StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
+            } trailing: {
               if let date = next.date.flatMap(studyDate) {
                 Text(date.formatted(.studyDay.weekday(.abbreviated).month(.abbreviated).day()))
               }
-            } title: {
-              mockTitle(
-                MockLabels.daySize(fullLength: next.fullLength, day: nil),
-                isNext: exam.runningMocks.isEmpty)
-              Text("\(next.questions) questions", tableName: "Exam", comment: "Next mock size")
-            } icon: {
-              StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
             }
             .disclosureChevron()
           }
+          .currentRow(exam.runningMocks.isEmpty)
         }
 
         ForEach(exam.mocks) { mock in
@@ -598,12 +620,11 @@ private struct ExamMocksSection: View {
           PlusNotice(
             description: Text(
               "Mock exams come with Plus: whenever you want, every week in your plan, and your progress over time.",
-              tableName: "Exam", comment: "What mocks with Plus unlock"),
-            isInset: true)
+              tableName: "Exam", comment: "What mocks with Plus unlock"))
         }
       } header: {
-        SectionHeaderRow(
-          title: Text("Mock exams", tableName: "Exam", comment: "The exam's mocks")
+        SectionTitle(
+          Text("Mock exams", tableName: "Exam", comment: "The exam's mocks")
         ) {
           if !exam.mocks.isEmpty {
             Text("\(exam.mocks.count) taken", tableName: "Exam", comment: "Mocks taken")
@@ -616,9 +637,8 @@ private struct ExamMocksSection: View {
 }
 
 /// The blue mark says which mock is next; VoiceOver hears it in the title.
-private func mockTitle(_ title: String, isNext: Bool) -> some View {
+private func mockTitle(_ title: String, isNext: Bool) -> Text {
   Text(title)
-    .foregroundStyle(.primary)
     .accessibilityLabel(
       isNext
         ? Text(
@@ -629,26 +649,22 @@ private func mockTitle(_ title: String, isNext: Bool) -> some View {
 private struct ExamProgressSection: View {
   let exam: ExamView
 
+  @ScaledMetric(relativeTo: .body) private var minimumWidth = 150.0
+
   var body: some View {
     if let progress = exam.progress, let latest = latestMock(progress) {
       Section {
-        IconLabeledContent {
-          Text((Double(latest.percent) / 100).formatted(.percent)).monospacedDigit()
-        } title: {
-          Text("Latest mock", tableName: "Exam", comment: "The latest mock's score")
-          Text(latestDetail(progress, latest: latest))
-        } icon: {
-          Image(systemName: "timer")
-        }
+        StatTileGrid(columns: [2, 1], minimumWidth: minimumWidth) {
+          StatTile(
+            label: Text("Latest mock", tableName: "Exam", comment: "The latest mock's score"),
+            quantity: (Double(latest.percent) / 100).formatted(.percent), systemImage: "timer",
+            detail: Text(latestDetail(progress, latest: latest)))
 
-        if let best = bestArea(progress) {
-          IconLabeledContent {
-            Text((Double(best.percent) / 100).formatted(.percent)).monospacedDigit()
-          } title: {
-            Text("Best area", tableName: "Exam", comment: "The subject that went best")
-            Text(best.name)
-          } icon: {
-            Image(systemName: "trophy").foregroundStyle(.success)
+          if let best = bestArea(progress) {
+            StatTile(
+              label: Text("Best area", tableName: "Exam", comment: "The subject that went best"),
+              quantity: (Double(best.percent) / 100).formatted(.percent), systemImage: "trophy",
+              tone: .success, detail: Text(best.name))
           }
         }
 
@@ -670,7 +686,7 @@ private struct ExamProgressSection: View {
           .chartYScale(domain: min(0, progress.mocks.map(\.percent).min() ?? 0)...100)
           .chartYAxis {
             AxisMarks(values: [0, 50, 100]) { value in
-              AxisGridLine()
+              AxisGridLine().foregroundStyle(.vizGrid)
               AxisValueLabel {
                 if let percent = value.as(Int.self) {
                   Text((Double(percent) / 100).formatted(.percent))
@@ -690,39 +706,21 @@ private struct ExamProgressSection: View {
         ForEach(progress.subjects) { subject in
           let share = Double(subject.percents.last ?? 0) / 100
 
-          VStack(alignment: .leading, spacing: 6) {
-            LabeledContent {
-              HStack(spacing: 12) {
-                Text(share.formatted(.percent))
-                if trends {
-                  Text(subject.change.map { $0 > 0 ? "+\($0)" : "\($0)" } ?? "–")
-                    .foregroundStyle(subject.change == nil ? .secondary : .primary)
-                    .accessibilityLabel(
-                      subject.change.map {
-                        Text("Since the first mock: \($0)", tableName: "Exam", comment: "A change")
-                      } ?? Text(""))
-                }
-              }
-              .monospacedDigit()
-            } label: {
-              Text(subject.name)
-            }
-
-            ProgressView(value: min(max(share, 0), 1))
-              .tint(.success)
-              .accessibilityHidden(true)
-          }
+          ExamAreaRow(
+            name: subject.name, share: share, change: subject.change, showsChange: trends)
         }
       } header: {
-        SectionHeaderRow(
-          title: Text("How your mocks went", tableName: "Exam", comment: "Mock progress section")
+        SectionTitle(
+          Text("How your mocks went", tableName: "Exam", comment: "Mock progress section")
         ) {
           if exam.mocksRequirePlus {
             PlusMark()
           }
         }
       } footer: {
-        Text(progressLine(progress))
+        SectionFooter {
+          Text(progressLine(progress))
+        }
       }
     }
   }
@@ -812,16 +810,19 @@ private struct ExamFormatSection: View {
           }
 
           parts(day)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
       }
     } header: {
       switch exam.format.count {
-      case 1: Text("The exam day", tableName: "Exam", comment: "A one-day exam's format")
-      case 2: Text("The two days", tableName: "Exam", comment: "A two-day exam's format")
+      case 1:
+        SectionTitle(Text("The exam day", tableName: "Exam", comment: "A one-day exam's format"))
+      case 2:
+        SectionTitle(Text("The two days", tableName: "Exam", comment: "A two-day exam's format"))
       default:
-        Text("The \(exam.format.count) days", tableName: "Exam", comment: "An exam's days")
+        SectionTitle(
+          Text("The \(exam.format.count) days", tableName: "Exam", comment: "An exam's days"))
       }
     }
   }
@@ -833,7 +834,7 @@ private struct ExamFormatSection: View {
     HStack(alignment: .firstTextBaseline) {
       if exam.format.count > 1, date != nil {
         Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       if let date {
@@ -900,10 +901,12 @@ private struct ExamMapSection: View {
         }
       }
     } header: {
-      Text("What's on the exam", tableName: "Exam", comment: "The exam's subjects")
+      SectionTitle(Text("What's on the exam", tableName: "Exam", comment: "The exam's subjects"))
     } footer: {
-      if map.hasFrequency {
-        Text("From past exams", tableName: "Exam", comment: "Where topic counts come from")
+      SectionFooter {
+        if map.hasFrequency {
+          Text("From past exams", tableName: "Exam", comment: "Where topic counts come from")
+        }
       }
     }
   }
@@ -953,7 +956,7 @@ private struct SpeakingMockSection: View {
               Text("TOEFL speaking mock", tableName: "Exam", comment: "A speaking mock's name")
             }
           }
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
           Group {
             switch mock {
             case .ielts:
@@ -966,7 +969,7 @@ private struct SpeakingMockSection: View {
                 tableName: "Exam", comment: "What the TOEFL speaking mock is")
             }
           }
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       } icon: {
         KindDot(kind: .conversation)
@@ -980,7 +983,7 @@ private struct SpeakingMockSection: View {
               "It's the same for everyone right now. Try again later.", tableName: "Exam",
               comment: "Why calls are paused"
             )
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
         } icon: {
           Image(systemName: "phone.down")
@@ -1040,8 +1043,8 @@ private struct ExamScoringSection: View {
         if let rule {
           Label {
             VStack(alignment: .leading, spacing: 4) {
-              Text(rule.title).font(.headline)
-              Text(rule.rule).foregroundStyle(.secondary)
+              Text(rule.title).typeStyle(.body.weight(.semibold))
+              Text(rule.rule).foregroundStyle(.mutedForeground)
               if let calibration = exam.calibration,
                 calibration.sure.answered + calibration.unsure.answered > 0
               {
@@ -1074,18 +1077,18 @@ private struct ExamScoringSection: View {
                   Text("Scored on its own scale", tableName: "Exam", comment: "Notice scale")
                 }
               }
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
               Text(
                 "From \(MockLabels.number(scale.min)) to \(MockLabels.number(scale.max)).",
                 tableName: "Exam", comment: "The scale's range"
               )
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
               if let pass = scale.passScore {
                 Text(
                   "To pass: \(MockLabels.number(pass)) or more.", tableName: "Exam",
                   comment: "The pass score"
                 )
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
               }
             }
           } icon: {
@@ -1096,9 +1099,10 @@ private struct ExamScoringSection: View {
         if let passMarks = exam.passMarks {
           Label {
             VStack(alignment: .leading, spacing: 4) {
-              Text("To pass", tableName: "Exam", comment: "What it takes to pass").font(.headline)
+              Text("To pass", tableName: "Exam", comment: "What it takes to pass").typeStyle(
+                .body.weight(.semibold))
               ForEach(passMarks.texts, id: \.self) { text in
-                Text(text).foregroundStyle(.secondary)
+                Text(text).foregroundStyle(.mutedForeground)
               }
             }
           } icon: {
@@ -1106,7 +1110,7 @@ private struct ExamScoringSection: View {
           }
         }
       } header: {
-        Text("How the score works", tableName: "Exam", comment: "The exam's scoring")
+        SectionTitle(Text("How the score works", tableName: "Exam", comment: "The exam's scoring"))
       }
     }
   }
@@ -1149,5 +1153,45 @@ private struct ExamScoringSection: View {
     case nil:
       return nil
     }
+  }
+}
+
+/// Main's `SubjectRow`: an area's name, a short meter and its share on one line, and how it moved
+/// since the first mock once there's more than one. They stack at accessibility sizes.
+private struct ExamAreaRow: View {
+  let name: String
+  let share: Double
+  let change: Int?
+  let showsChange: Bool
+
+  @ScaledMetric(relativeTo: .caption) private var meterWidth = 80.0
+
+  var body: some View {
+    AccessibilityStack(spacing: 12, stackedSpacing: 6) {
+      Text(name)
+        .typeStyle(.rowTitle)
+        .foregroundStyle(Color(.foreground))
+        .frame(maxWidth: .infinity, alignment: .leading)
+
+      HStack(spacing: 12) {
+        Meter(value: min(max(share, 0), 1), fill: .success)
+          .frame(width: meterWidth)
+          .accessibilityHidden(true)
+
+        Text(share.formatted(.percent))
+          .foregroundStyle(Color(.foreground))
+
+        if showsChange {
+          Text(change.map { $0 > 0 ? "+\($0)" : "\($0)" } ?? "–")
+            .foregroundStyle(change == nil ? .mutedForeground : Color(.foreground))
+            .accessibilityLabel(
+              change.map {
+                Text("Since the first mock: \($0)", tableName: "Exam", comment: "A change")
+              } ?? Text(""))
+        }
+      }
+      .typeStyle(.data)
+    }
+    .accessibilityElement(children: .combine)
   }
 }

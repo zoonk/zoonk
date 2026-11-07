@@ -16,12 +16,9 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material3.Button
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,7 +40,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PendingLabel
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.api.models.PlanTool
 import java.util.UUID
@@ -101,7 +101,7 @@ private fun ToolRow(
         @Composable { stacked: Boolean ->
             val described = Modifier.semantics { contentDescription = action }
             if (tool.choice == null) {
-                FilledTonalButton(onClick = onChoose, modifier = described) { Text(stringResource(R.string.plan_choose)) }
+                OutlinedButton(onClick = onChoose, modifier = described) { Text(stringResource(R.string.plan_choose)) }
             } else if (stacked) {
                 TextButton(onClick = onChoose, modifier = described, shape = MaterialTheme.shapes.small, contentPadding = FLUSH_START) {
                     Text(stringResource(R.string.plan_tool_change))

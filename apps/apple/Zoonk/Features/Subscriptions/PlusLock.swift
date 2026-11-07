@@ -20,13 +20,14 @@ struct PlusMark: View {
   }
 }
 
-/// At most one on a screen, inline where the locked things are, never a pop-up.
+/// At most one on a screen, inline where the locked things are, never a pop-up. Main's
+/// `PlusNotice`: a panel with the sparkle on its title's line, in a list too.
 ///
 /// - `title` replaces "Available with Plus" where something the free plan had ends (a free exam
 ///   plan's first week).
 /// - `showsSeePlus: false` drops the button where the screen's main action already is
 ///   `SeePlusButton`.
-/// - `isInset` drops the panel inside a `List` row or a card that already has one.
+/// - `isInset` drops the panel inside a card that already has one (a tutor's offer).
 /// - `seePlus` replaces opening Plus where the screen must close first (a full-screen moment).
 /// - `action` is the free way, after "See Plus" (the free plan's one goal: their Plan).
 struct PlusNotice<Action: View>: View {
@@ -48,19 +49,25 @@ struct PlusNotice<Action: View>: View {
   }
 
   private var content: some View {
-    Label {
-      VStack(alignment: .leading, spacing: 4) {
+    MarkedRow {
+      Image(systemName: "sparkles")
+        .typeStyle(.rowTitle)
+        .foregroundStyle(.mutedForeground)
+        .accessibilityHidden(true)
+    } content: {
+      VStack(alignment: .leading, spacing: 2) {
         (title
           ?? Text(
             "Available with Plus",
             tableName: "Subscriptions",
             comment: "Title of the notice on a feature the learner's plan doesn't include"))
-          .font(.headline)
+          .typeStyle(.rowTitle)
+          .foregroundStyle(Color(.foreground))
 
         if let description {
           description
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
 
         if showsSeePlus {
@@ -68,14 +75,13 @@ struct PlusNotice<Action: View>: View {
             SeePlusButton(action: seePlus)
             action
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .controlSize(.small)
           .padding(.top, 8)
         }
       }
-    } icon: {
-      Image(systemName: "sparkles")
-        .foregroundStyle(.secondary)
+    } end: {
+      EmptyView()
     }
   }
 }
@@ -135,7 +141,7 @@ struct SeePlusButton: View {
 }
 
 #Preview {
-  List {
+  ZoonkList {
     Section {
       LabeledContent {
         PlusMark()
@@ -146,8 +152,11 @@ struct SeePlusButton: View {
       PlusNotice(description: Text(verbatim: "Mock exams, timed like the real one"), isInset: true)
     }
 
-    PlusNotice(description: Text(verbatim: "Your whole exam plan, every day to the exam"))
-      .listRowInsets(EdgeInsets())
+    Section {
+      PlusNotice(description: Text(verbatim: "Your whole exam plan, every day to the exam"))
+    }
+    .listRowBackground(Color.clear)
+    .listRowInsets(.vertical, 0)
   }
   .environment(AppRouter())
 }

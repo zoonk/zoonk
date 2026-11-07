@@ -7,19 +7,21 @@ enum AppTab: Hashable, CaseIterable {
   case search
   case mistakes
   case completedLessons
+  case certificates
   case exam
   case speaking
   case mindMaps
   case statistics
 
   static let study: [AppTab] = [
-    .mistakes, .completedLessons, .exam, .speaking, .mindMaps, .statistics,
+    .mistakes, .completedLessons, .certificates, .exam, .speaking, .mindMaps, .statistics,
   ]
 
   var studyRoute: AppRoute? {
     switch self {
     case .mistakes: .mistakes
     case .completedLessons: .completedLessons
+    case .certificates: .certificates
     case .exam: .exam
     case .speaking: .speaking
     case .mindMaps: .mindMaps
@@ -51,6 +53,10 @@ enum AppTab: Hashable, CaseIterable {
       LocalizedStringResource(
         "Completed lessons", table: "Navigation",
         comment: "Study place listing the lessons the learner finished, to do them again")
+    case .certificates:
+      LocalizedStringResource(
+        "Certificates", table: "Navigation",
+        comment: "Study place listing the learner's certificates")
     case .exam:
       LocalizedStringResource(
         "Exam", table: "Navigation", comment: "Study place for the learner's exam and mock exams")
@@ -75,6 +81,7 @@ enum AppTab: Hashable, CaseIterable {
     case .search: "magnifyingglass"
     case .mistakes: "square.and.pencil"
     case .completedLessons: "clock.arrow.circlepath"
+    case .certificates: "rosette"
     case .exam: "graduationcap"
     case .speaking: "mic"
     case .mindMaps: "point.3.connected.trianglepath.dotted"

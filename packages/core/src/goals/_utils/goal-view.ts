@@ -7,6 +7,7 @@ import { countLessonProgress } from "../../plans/_utils/work-progress";
 import { getWeekdayMinutes, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import { type GoalView } from "../goal-contract";
+import { getGoalLanguageFlag } from "./goal-language-flag";
 import {
   type PlanPhaseFacts,
   getCurrentPhaseFromFacts,
@@ -126,6 +127,7 @@ function toGoalView({
     isActive: goal.id === activeGoalId,
     kind: goal.kind,
     language: goal.language,
+    languageFlag: getGoalLanguageFlag(goal),
     plan: plan ? toPlanSummary({ plan, progress }) : null,
     primaryCourseId: goal.primaryCourseId,
     prompt: goal.prompt,

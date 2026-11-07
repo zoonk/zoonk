@@ -58,6 +58,7 @@ import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
+import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -368,6 +369,7 @@ fun MissionListRow(
         }
 
         trailing?.invoke()
+        if (onOpen != null && trailing == null) ListRowChevron()
     }
 }
 
@@ -411,14 +413,15 @@ fun BrainPowerReward(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            val brain = MaterialTheme.zoonk.brain
+            // brainText, since the page's color on brain is under AA in light.
+            val fill = MaterialTheme.zoonk.brainText
             Row(
                 modifier =
                     if (earned) {
                         Modifier
                             .clip(
                                 MaterialTheme.shapes.extraSmall,
-                            ).background(brain)
+                            ).background(fill)
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     } else {
                         Modifier

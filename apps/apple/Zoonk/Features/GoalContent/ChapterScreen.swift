@@ -35,7 +35,7 @@ struct ChapterScreen: View {
             } label: {
               Text("Try again", tableName: "Plan", comment: "Retries loading the plan")
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
           }
           .lonePage()
         case .idle, .loading:
@@ -115,17 +115,17 @@ private struct ChapterContent: View {
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
         header
         lessonsSection
       }
     } secondary: {
-      List {
+      ZoonkList {
         practiceSection
         referenceSection
       }
     } single: {
-      List {
+      ZoonkList {
         header
         lessonsSection
         practiceSection
@@ -145,17 +145,18 @@ private struct ChapterContent: View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
         eyebrow
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.eyebrow)
+          .foregroundStyle(.faint)
 
         Text(chapter.chapter.title)
-          .font(.title2.weight(.semibold))
+          .typeStyle(.pageTitle)
+          .accessibilityAddTraits(.isHeader)
           .heroTitle()
 
         if !lessons.isEmpty {
           facts(done: done)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
         }
 
         if let next = lessons.first(where: { $0.state == .next }) {
@@ -190,10 +191,11 @@ private struct ChapterContent: View {
           } label: {
             LessonRow(lesson: lesson, number: index + 1)
           }
+          .currentRow(lesson.state == .next)
         }
       } header: {
-        SectionHeaderRow(
-          title: Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons")
+        SectionTitle(
+          Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons")
         ) {
           Text(
             "\(done) of \(lessons.count)", tableName: "Plan",
@@ -230,8 +232,8 @@ private struct ChapterContent: View {
                 "Take the test and skip the chapter", tableName: "Plan",
                 comment: "What the chapter's test-out does"
               )
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .disclosureChevron()
@@ -257,12 +259,13 @@ private struct ChapterContent: View {
 
           if let practiceNote {
             Text(practiceNote)
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } header: {
-        Text("Practice", tableName: "Plan", comment: "Section of a chapter's practice")
+        SectionTitle(
+          Text("Practice", tableName: "Plan", comment: "Section of a chapter's practice"))
       }
     }
   }
@@ -343,22 +346,22 @@ struct LessonRow: View {
   let number: Int
 
   var body: some View {
-    PlanPathRow {
-      Label {
-        HStack {
-          Text(verbatim: "\(number). \(lesson.title)")
-            .foregroundStyle(.primary)
-
-          if lesson.plusRequired {
-            PlusMark()
-          }
+    ListRow(
+      Text(lesson.title)
+        .foregroundStyle(lesson.state == .done ? .mutedForeground : Color(.foreground)),
+      number: number
+    ) {
+      StatusMark(status: status)
+    } trailing: {
+      HStack(spacing: 8) {
+        if lesson.plusRequired {
+          PlusMark()
         }
-      } icon: {
-        StatusMark(status: status)
+
+        if lesson.minutes > 0 {
+          Text(planDurationText(minutes: Double(lesson.minutes)))
+        }
       }
-    } value: {
-      Text(planDurationText(minutes: Double(lesson.minutes)))
-        .monospacedDigit()
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(state)
@@ -424,9 +427,10 @@ private struct ChapterReferenceSection: View {
         }
       }
     } header: {
-      Text(
-        "For reference", tableName: "Plan",
-        comment: "Section of a chapter with its mind map and summaries, to look back at")
+      SectionTitle(
+        Text(
+          "For reference", tableName: "Plan",
+          comment: "Section of a chapter with its mind map and summaries, to look back at"))
     }
   }
 
@@ -454,16 +458,21 @@ extension GoalChapter.Skill.State {
 struct LessonSummaries: View {
   let summaries: [GoalChapter.Summary]
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
     ForEach(summaries) { summary in
       VStack(alignment: .leading, spacing: 4) {
         Text(summary.title)
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
 
         ForEach(summary.ideas, id: \.self) { idea in
-          Text((try? AttributedString(markdown: idea)) ?? AttributedString(idea))
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+          Text(
+            (try? AttributedString(markdown: idea)) ?? AttributedString(idea),
+            legibility: legibilityWeight
+          )
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
         }
       }
     }

@@ -11,7 +11,16 @@ struct CertificateLinkedInSheet: View {
 
   var body: some View {
     NavigationStack {
-      List {
+      ZoonkList {
+        Section {
+          Text(
+            "LinkedIn opens its form to add a license or certification. Copy each field into it.",
+            tableName: "Certificates", comment: "How adding a certificate to LinkedIn works"
+          )
+          .foregroundStyle(.mutedForeground)
+          .listRowSeparator(.hidden)
+        }
+
         Section {
           field(
             Text(
@@ -41,12 +50,6 @@ struct CertificateLinkedInSheet: View {
               "Credential URL", tableName: "Certificates",
               comment: "LinkedIn's field for the certificate's link"),
             value: certificate.url.absoluteString, isCode: true)
-        } header: {
-          Text(
-            "LinkedIn opens its form to add a license or certification. Copy each field into it.",
-            tableName: "Certificates", comment: "How adding a certificate to LinkedIn works"
-          )
-          .textCase(nil)
         }
 
         Section {
@@ -64,8 +67,7 @@ struct CertificateLinkedInSheet: View {
           }
           .buttonStyle(.mainAction)
           .controlSize(.large)
-          .listRowInsets(EdgeInsets())
-          .listRowBackground(Color.clear)
+          .listRowSeparator(.hidden)
         }
       }
       .navigationTitle(
@@ -97,8 +99,8 @@ struct CertificateLinkedInSheet: View {
     HStack {
       VStack(alignment: .leading, spacing: 2) {
         label
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
 
         Text(value)
           .monospaced(isCode)
@@ -129,7 +131,8 @@ struct CertificateLinkedInSheet: View {
             }
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
+        .controlSize(.small)
         .accessibilityValue(label)
       }
     }

@@ -148,8 +148,8 @@ private struct RhythmStatus: View {
           comment: "How many times the rhythm repeats")
       }
     }
-    .font(.subheadline.monospacedDigit())
-    .foregroundStyle(.secondary)
+    .typeStyle(.data)
+    .foregroundStyle(.mutedForeground)
     .accessibilityElement(children: .combine)
   }
 }
@@ -180,12 +180,12 @@ private struct RhythmGrid: View {
             VStack(spacing: 4) {
               dot(result?.status)
 
-              RoundedRectangle(cornerRadius: 6, style: .continuous)
-                .fill(isHit ? Color.orange : Color(.systemBackground))
+              RoundedRectangle(cornerRadius: Radius.sm, style: .continuous)
+                .fill(isHit ? Color.vizHighlight : Color(.background))
                 .frame(height: cellHeight)
                 .overlay {
                   if position == RhythmPosition(round: round, step: step) {
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    RoundedRectangle(cornerRadius: Radius.sm, style: .continuous)
                       .strokeBorder(.primary, lineWidth: 2)
                   }
                 }
@@ -201,8 +201,8 @@ private struct RhythmGrid: View {
           }
 
           Text(beat + 1, format: .number)
-            .font(.caption.monospacedDigit())
-            .foregroundStyle(.secondary)
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
       }
@@ -211,8 +211,8 @@ private struct RhythmGrid: View {
         HStack(spacing: 16) { legend }
         VStack(alignment: .leading, spacing: 4) { legend }
       }
-      .font(.caption)
-      .foregroundStyle(.secondary)
+      .typeStyle(.meta)
+      .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(
@@ -242,7 +242,7 @@ private struct RhythmGrid: View {
         "Rhythm hits", tableName: "ActivitiesMusic",
         comment: "Legend: the colored cells are the taps")
     } icon: {
-      RoundedRectangle(cornerRadius: 3).fill(.orange).frame(width: 10, height: 10)
+      RoundedRectangle(cornerRadius: 3).fill(.vizHighlight).frame(width: 10, height: 10)
     }
 
     Label {
@@ -285,7 +285,7 @@ private struct RhythmControls: View {
         }
       }
       .buttonStyle(.borderless)
-      .font(.subheadline)
+      .typeStyle(.body)
     }
   }
 
@@ -298,7 +298,7 @@ private struct RhythmControls: View {
         Image(systemName: "headphones")
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.large)
 
     Button(action: onStart) {
@@ -349,7 +349,7 @@ private struct RhythmFeedback: View {
         Text(line)
       }
     }
-    .font(.subheadline)
+    .typeStyle(.body)
     .accessibilityElement(children: .combine)
   }
 
@@ -397,12 +397,12 @@ private struct RhythmCalibrationView: View {
             "Set up your sound", tableName: "ActivitiesMusic",
             comment: "Title of the rhythm sound check"
           )
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
           .accessibilityAddTraits(.isHeader)
 
           Text(status(phase))
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
 
         RhythmTapPad(isActive: calibration.isRunning, isCountingIn: phase == .countIn) { time in

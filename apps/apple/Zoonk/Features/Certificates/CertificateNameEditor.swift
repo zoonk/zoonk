@@ -30,7 +30,8 @@ struct CertificateNameEditor: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       label
-        .font(.subheadline.weight(.semibold))
+        .typeStyle(.rowTitle)
+        .foregroundStyle(Color(.foreground))
 
       HStack(spacing: 8) {
         TextField(
@@ -42,7 +43,7 @@ struct CertificateNameEditor: View {
           label
         }
         .textContentType(.name)
-        .textFieldStyle(.roundedBorder)
+        .fieldBorder(isFocused: isFocused, isInvalid: isTooLong)
         .submitLabel(.done)
         .focused($isFocused)
         .onSubmit(save)
@@ -64,13 +65,13 @@ struct CertificateNameEditor: View {
             "Use 150 characters or fewer.", tableName: "Account",
             comment: "Shown under the profile name field when the typed name is too long"
           )
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         } else {
           hint
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
-      .font(.footnote)
+      .typeStyle(.note)
 
       AccountFailureMessage(failure: session.failure)
     }

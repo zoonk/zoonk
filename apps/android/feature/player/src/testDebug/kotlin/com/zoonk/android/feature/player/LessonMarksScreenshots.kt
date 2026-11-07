@@ -55,6 +55,7 @@ import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.feature.tutor.TutorSuggestion
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.LessonIcon
@@ -216,7 +217,7 @@ class LessonMarksScreenshots {
             )
         var index by mutableIntStateOf(0)
         val simpler = TutorSuggestion("Explique de um jeito mais simples", "simpler")
-        val tutor = LessonTutor(TutorIdentity("Sam", look = null), listOf(simpler)) { _, _, _, _, _, _ -> }
+        val tutor = LessonTutor(TutorIdentity("Sam", BuddyLook()), listOf(simpler)) { _, _, _, _, _, _ -> }
         val exits =
             object : LessonPlayerExits {
                 override fun close() = Unit

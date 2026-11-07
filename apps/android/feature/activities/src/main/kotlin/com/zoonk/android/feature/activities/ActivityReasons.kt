@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.ZoonkRadius
 
 /** Main's `ActivityReasons`: what the learner missed, one card each. */
 @Composable
@@ -28,7 +29,7 @@ fun ActivityReason(
     why: String?,
     content: @Composable () -> Unit,
 ) {
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     Column(
         Modifier
             .fillMaxWidth()

@@ -36,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -50,6 +49,8 @@ import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.GeistMono
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf16Fields
 import kotlinx.coroutines.launch
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf16Value as CodeRunnerContent
@@ -153,7 +154,7 @@ private fun CodePanel(
     onRun: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(16.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.xl)
     val editable = fields.editableLines.map(Long::toInt).toSet()
     val lines = program.split("\n")
     val highlightedLines = highlightCode(program, language)
@@ -174,7 +175,7 @@ private fun CodePanel(
                 fields.fileName ?: language.defaultFileName,
                 Modifier.weight(1f),
                 color = colors.onSurfaceVariant,
-                style = MaterialTheme.typography.labelMedium.copy(fontFamily = FontFamily.Monospace),
+                style = MaterialTheme.typography.labelMedium.copy(fontFamily = GeistMono),
             )
             if (marksYourLines) {
                 val style = MaterialTheme.typography.labelMedium
@@ -231,7 +232,7 @@ private fun CodeRunnerOutput(
     isStale: Boolean,
 ) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(
             Modifier
@@ -279,7 +280,7 @@ private fun CodeRunnerOutput(
                     .semantics { liveRegion = LiveRegionMode.Polite },
                 color = colors.onSurfaceVariant,
                 softWrap = false,
-                style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+                style = MaterialTheme.typography.bodySmall.copy(fontFamily = GeistMono),
             )
         }
         if (mistake != null && !isStale) NotQuite(mistake)
@@ -309,7 +310,7 @@ private fun OutputText(
         modifier.fadingHorizontalScroll(rememberScrollState()),
         color = color,
         softWrap = false,
-        style = MaterialTheme.typography.titleMedium.copy(fontFamily = FontFamily.Monospace, fontWeight = FontWeight.SemiBold),
+        style = MaterialTheme.typography.titleMedium.copy(fontFamily = GeistMono, fontWeight = FontWeight.SemiBold),
     )
 }
 
@@ -377,7 +378,7 @@ private fun StopNotice(
                 return
             }
         }
-    val style = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace)
+    val style = MaterialTheme.typography.bodyMedium.copy(fontFamily = GeistMono)
     Row(
         Modifier.semantics(mergeDescendants = true) {
             liveRegion = LiveRegionMode.Polite

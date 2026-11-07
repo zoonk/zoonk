@@ -3,12 +3,10 @@ package com.zoonk.android.feature.mock.chooser
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
@@ -136,7 +134,7 @@ internal fun MockChooser(
         return
     }
 
-    ChooserFrame(navigator, title = loaded?.let { chooserTitle(placement) }, listState = listState) {
+    ChooserFrame(navigator, title = loaded?.let { chooserTitle(placement) }) {
         when {
             loaded == null && state is LoadState.Failed -> LoadFailedMessage(onRetry = { scope.launch { options.refresh() } })
             loaded == null -> PageLoading()
@@ -206,14 +204,11 @@ private fun Leave(
 private fun ChooserFrame(
     navigator: AppNavigator,
     title: String? = null,
-    listState: LazyListState? = null,
     content: @Composable () -> Unit,
 ) {
-    val headlineScrolledAway by remember(listState) { derivedStateOf { (listState?.firstVisibleItemIndex ?: 0) > 0 } }
-
     PageScaffold(
         onBack = { navigator.back() },
-        title = { title?.takeIf { headlineScrolledAway }?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
+        title = { title?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) { content() }
     }

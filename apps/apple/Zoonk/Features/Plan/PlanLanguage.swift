@@ -44,7 +44,7 @@ struct LanguageLevelSheet: View {
   let standing: LanguageStanding
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         LabeledContent {
           Text(standing.levelText)
@@ -101,8 +101,8 @@ struct PlanAlphabetRow: View {
                 comment: "The alphabet lesson can be practiced anytime")
             }
           }
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
         }
       } icon: {
         Image(systemName: "character.book.closed")

@@ -26,6 +26,8 @@
   "buddy_page_fully_grown": "56fd252f516edafe6446cf8704079bded2eb987f3e8167f0df4ee531d96da4e6",
   "buddy_page_glasses_description": "50842dc8670d4e481a562bc727ea4f8e8f6d32d22c92af32eb1cb9b4ce56272d",
   "buddy_page_goal_greeting": "9d9992bbbe4575e002052f3c2a996a26c946ff76537bd601eab77678d03c7c6a",
+  "buddy_page_goal_label": "eb875645e31391b6e3405b746d7945e98d0d361bb62e19e732824e0c30d0fb26",
+  "buddy_page_goal_placeholder": "782e3def5ee378111ae28f798db33a2c9d47f399af408ec522ef4aa897020f47",
   "buddy_page_greeting": "3f1276c47eae5fc3fadbb34211b44461f3c82ea004306677c51835317254dd51",
   "buddy_page_grows_adult": "5187ac829b48793299a68074d9331e7b9ec2fcc49bde0785a2ead394f46968c8",
   "buddy_page_grows_young": "1395bd436e7751b6f5f6cfa8b9c69b891e30cf0676957c00367958d67e07b1d2",
@@ -68,6 +70,8 @@
     <string name="buddy_page_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="buddy_page_greeting">안녕하세요! 저는 AI 공부 짝꿍 %1$s(이)라고 해요. 공부하는 내용에 대해 뭐든 물어보거나, 계획에서 바꾸고 싶은 점을 알려 주세요.</string>
+    <string name="buddy_page_goal_placeholder">배우고 싶은 것</string>
+    <string name="buddy_page_goal_label">내 목표</string>
     <string name="buddy_page_goal_greeting">안녕하세요! 저는 AI 공부 짝꿍 %1$s(이)라고 해요. 무엇을 언제까지 배우고 싶으세요? 그때까지 매일 공부할 계획을 세워 드릴게요.</string>
     <string name="buddy_page_placeholder">궁금한 점이나 바꾸고 싶은 점을 알려 주세요</string>
     <string name="buddy_page_suggest_plan_today">오늘 학습 계획은 어떻게 되나요?</string>

@@ -11,8 +11,8 @@ extension ActivityRenderer {
           "This map can't be shown. Continue to the next screen.", tableName: "Activities",
           comment: "A map activity whose map isn't available"
         )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -70,13 +70,13 @@ private struct MapExplorerCanvas: View {
             } icon: {
               RoundedRectangle(cornerRadius: 2)
                 .fill(item.tone.fill)
-                .strokeBorder(.separator)
+                .strokeBorder(.border)
                 .frame(width: 12, height: 12)
             }
           }
         }
-        .font(.caption)
-        .foregroundStyle(.secondary)
+        .typeStyle(.meta)
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
       }
 
@@ -93,9 +93,9 @@ private struct MapExplorerCanvas: View {
               "\(selected + 1). \(place.label)", tableName: "Activities",
               comment: "A map place's number, then its name"
             )
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
             LessonRichText(place.reveals)
-              .font(.subheadline)
+              .typeStyle(.body)
           }
           .accessibilityElement(children: .combine)
         } else {
@@ -106,13 +106,13 @@ private struct MapExplorerCanvas: View {
           } icon: {
             Image(systemName: "hand.tap")
           }
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(12)
-      .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+      .panel(cornerRadius: Radius.option)
     }
   }
 
@@ -159,7 +159,7 @@ private struct MapExplorerCanvas: View {
     }
     .frame(width: width, height: height)
     .background(map.sphere == nil ? ActivityBaseMap.Tone.water : .clear)
-    .clipShape(.rect(cornerRadius: 12))
+    .clipShape(.rect(cornerRadius: Radius.option))
   }
 
   private var textAlternative: Text {
@@ -186,7 +186,7 @@ private struct MapExplorerCanvas: View {
       announcePolitely(LessonRichText.spoken(place.reveals))
     } label: {
       Text(number, format: .number)
-        .font(.subheadline.weight(.semibold).monospacedDigit())
+        .typeStyle(.body.weight(.semibold).monospaced())
         .foregroundStyle(isSelected ? Color(.systemBackground) : ActivityBaseMap.Tone.pin)
         .frame(width: 32, height: 32)
         .background(
@@ -235,7 +235,7 @@ private struct MapShapes: View {
         let shape = path(region.path)
         context.fill(shape, with: .color(region.tone.fill))
         context.stroke(
-          shape, with: .color(Color(.separator)),
+          shape, with: .color(Color.border),
           style: StrokeStyle(lineWidth: 0.75, lineJoin: .round))
       }
 
@@ -250,13 +250,15 @@ private struct MapShapes: View {
           Path(
             CGRect(x: inset.x, y: inset.y, width: inset.width, height: inset.height).applying(
               transform)),
-          with: .color(Color(.separator)), lineWidth: 1)
+          with: .color(Color.border), lineWidth: 1)
       }
 
       for label in map.labels {
         let point = CGPoint(x: label.x, y: label.y).applying(transform)
         let text = MapWords.label(key: label.key, text: label.text)
-          .font(label.kind == .street ? .caption2.weight(.medium) : .caption.weight(.semibold))
+          .font(
+            (label.kind == .street ? TypeStyle.small.weight(.medium) : .meta.weight(.semibold))
+              .font(in: context.environment))
         var labelContext = context
         labelContext.translateBy(x: point.x, y: point.y)
         labelContext.rotate(by: .degrees(label.angle))
@@ -272,7 +274,7 @@ private struct MapShapes: View {
 
         labelContext.draw(
           text.foregroundStyle(
-            label.kind == .street ? Color.secondary : Color.primary.opacity(0.75)),
+            label.kind == .street ? Color.mutedForeground : Color.primary.opacity(0.75)),
           at: .zero)
       }
 
@@ -300,11 +302,11 @@ extension ActivityBaseMap.Tone {
 
   var fill: Color {
     switch self {
-    case .context: Color(.secondarySystemBackground)
+    case .context: Color.card
     case .focus: Color(.systemBackground)
-    case .groupA: .teal.opacity(0.22)
-    case .groupB: .orange.opacity(0.22)
-    case .groupC: .purple.opacity(0.14)
+    case .groupA: .vizAccent.opacity(0.22)
+    case .groupB: .vizHighlight.opacity(0.22)
+    case .groupC: .vizSecondary.opacity(0.14)
     }
   }
 }

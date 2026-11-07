@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.PlainTooltip
@@ -55,7 +54,7 @@ fun AskTutor(
 
     when (appearance) {
         AskTutorAppearance.Button -> {
-            FilledTonalButton(onClick = { open = true }, modifier = modifier.semantics { contentDescription = label }) {
+            OutlinedButton(onClick = { open = true }, modifier = modifier.semantics { contentDescription = label }) {
                 Box(Modifier.size(BUTTON_AVATAR_SIZE)) { TutorAvatar(identity, BUTTON_AVATAR_SIZE) }
                 Text(stringResource(R.string.tutor_ask, identity.name), Modifier.padding(start = 8.dp))
             }

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +47,8 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.NotFoundMessage
@@ -259,7 +260,7 @@ internal fun ContinueButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Button(onClick = onClick, modifier = modifier) {
+    Button(onClick = onClick, modifier = modifier, size = ButtonSize.Large) {
         Text(stringResource(if (started) R.string.goalcontent_continue else R.string.goalcontent_start))
     }
 }

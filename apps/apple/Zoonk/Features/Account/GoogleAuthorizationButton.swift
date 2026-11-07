@@ -31,7 +31,7 @@ struct GoogleAuthorizationButton: View {
           tableName: "Account",
           comment: "Visible label on the Google sign-in button"
         )
-        .font(.body.weight(.medium))
+        .typeStyle(.body.weight(.medium))
         .fixedSize(horizontal: false, vertical: true)
       }
       .padding(.horizontal, 16)

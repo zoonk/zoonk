@@ -102,7 +102,7 @@ struct ActivityStepView: View {
     switch content.check {
     case .choice(let question, let options, _, _):
       LessonRichText(question)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
       LessonOptionList(
         options: options.map { LessonOption(id: $0.id, text: $0.text, isCorrect: $0.isCorrect) },
         selectedId: answer?.optionId,
@@ -111,7 +111,7 @@ struct ActivityStepView: View {
       ) { context.select(.activity(.choice(optionId: $0))) }
     case .numeric(let question, let expected, let tolerance, let unit, _, _, _):
       LessonRichText(question)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
       NumericAnswerField(
         value: answer?.number, expected: expected, tolerance: tolerance, unit: unit,
         isLocked: context.isLocked
@@ -141,8 +141,8 @@ struct ActivityDataNote: View {
           comment: "Where a model's numbers come from")
       }
     }
-    .font(.caption)
-    .foregroundStyle(.secondary)
+    .typeStyle(.meta)
+    .foregroundStyle(.mutedForeground)
   }
 
   private func name(_ source: ActivityData.Source) -> AttributedString {
@@ -163,6 +163,7 @@ struct ActivityDataNote: View {
 /// reads.
 private struct NumericAnswerField: View {
   @ActivityState("typedNumber") private var typed: String? = nil
+  @FocusState private var isFocused: Bool
 
   let value: Double?
   let expected: Double
@@ -176,23 +177,23 @@ private struct NumericAnswerField: View {
 
     HStack {
       if let unit, unitLeads {
-        Text(unit).foregroundStyle(.secondary).accessibilityHidden(true)
+        Text(unit).foregroundStyle(.mutedForeground).accessibilityHidden(true)
       }
 
       TextField(text: Binding(get: { typed ?? shown }, set: type)) {
         Text("Your answer", tableName: "Player", comment: "Placeholder of a number answer")
       }
       .keyboardType(.decimalPad)
+      .focused($isFocused)
       .disabled(isLocked)
-      .font(.title3.monospacedDigit())
       .accessibilityHint(Text(verbatim: unit ?? ""))
 
       if let unit, !unitLeads {
-        Text(unit).foregroundStyle(.secondary).accessibilityHidden(true)
+        Text(unit).foregroundStyle(.mutedForeground).accessibilityHidden(true)
       }
     }
-    .padding()
-    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
+    .typeStyle(.reading.monospacedDigit())
+    .fieldBorder(isFocused: isFocused, minHeight: 44)
     .onChange(of: value) {
       // An answer set elsewhere (going back to the screen) shows as itself.
       if let typed, parseLocalizedNumber(typed, locale: .courseLanguage) != value {

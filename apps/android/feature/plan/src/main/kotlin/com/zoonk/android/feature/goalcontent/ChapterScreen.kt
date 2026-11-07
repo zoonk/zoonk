@@ -27,8 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -48,6 +46,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.feedback.rememberReportProblem
 import com.zoonk.android.feature.language.LanguageUnitScreen
 import com.zoonk.android.feature.mindmaps.ChapterMindMapCard
 import com.zoonk.android.feature.tutor.AskTutor
@@ -118,20 +117,21 @@ fun ChapterScreen(
 
             else -> {
                 val key = ChapterKey(goal.id, chapterId)
+                val report =
+                    rememberReportProblem(
+                        app,
+                        FeedbackTarget(
+                            screen = "chapter",
+                            contentKind = FeedbackSubmissionContext.ContentKind.CHAPTER,
+                            contentId = chapterId,
+                        ),
+                    )
+
                 ChapterContent(
                     key = key,
                     store = app.goalContent,
                     navigator = navigator,
-                    menu = {
-                        ReportProblemMenu(
-                            app,
-                            FeedbackTarget(
-                                screen = "chapter",
-                                contentKind = FeedbackSubmissionContext.ContentKind.CHAPTER,
-                                contentId = chapterId,
-                            ),
-                        )
-                    },
+                    menu = { ReportProblemMenu(report, inPage = true) },
                     ask = { AskTutor(TutorScope.Chapter(route.chapterId), app, navigator, appearance = it) },
                     mindMap = {
                         val map by app.mindMaps.chapter[key].collectShown()
@@ -257,9 +257,8 @@ internal fun ChapterPage(
     DetailPage(
         title = chapter.chapter.title,
         onBack = actions.back,
-        hero = { ChapterHero(chapter, actions, it) },
+        hero = { ChapterHero(chapter, actions, menu) },
         ask = ask,
-        menu = menu,
         aside = {
             ChapterProgress(lessons)
             ChapterPractice(chapter, practice, actions)
@@ -296,7 +295,7 @@ private fun ChapterLesson.listed() =
 private fun ChapterHero(
     chapter: GoalChapter,
     actions: ChapterActions,
-    onTitlePlaced: (LayoutCoordinates) -> Unit,
+    menu: @Composable () -> Unit,
 ) {
     val locale = currentLocale()
     val lessons = chapter.lessons
@@ -319,7 +318,7 @@ private fun ChapterHero(
     val action: (@Composable (Modifier) -> Unit)? =
         next?.let { { modifier -> ContinueButton(started = done > 0, onClick = { actions.openLesson(it.lessonId) }, modifier) } }
 
-    DetailHero(action) {
+    DetailHero(action, menu) {
         Eyebrow(
             text =
                 if (subject == null) {
@@ -330,9 +329,8 @@ private fun ChapterHero(
         )
         Text(
             text = chapter.chapter.title,
-            modifier =
-                Modifier.onGloballyPositioned(onTitlePlaced).pageTitle(),
-            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.pageTitle(),
+            style = MaterialTheme.typography.headlineMedium,
         )
         if (facts != null) Text(text = facts, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle())
     }

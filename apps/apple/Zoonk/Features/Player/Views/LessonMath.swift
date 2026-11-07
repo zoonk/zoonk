@@ -345,7 +345,7 @@ enum LessonMath {
       } else {
         // SwiftUI's own keys, which `Text` reads (UIKit has same-named ones it ignores).
         run[AttributeScopes.SwiftUIAttributes.FontAttribute.self] =
-          italic ? .caption.italic() : .caption
+          (italic ? TypeStyle.meta.italic() : .meta).attributeFont
         run[AttributeScopes.SwiftUIAttributes.BaselineOffsetAttribute.self] = style.baselineOffset
       }
 

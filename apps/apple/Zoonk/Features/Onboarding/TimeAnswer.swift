@@ -33,12 +33,12 @@ struct TimeAnswer: View {
     VStack(alignment: .leading, spacing: 8) {
       if let noteWords {
         Text(noteWords)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       if let lineWords {
         Text(lineWords)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       if failed {
@@ -47,7 +47,7 @@ struct TimeAnswer: View {
         } label: {
           Text("Try again", tableName: "Onboarding", comment: "Asks again what a time covers")
         }
-        .font(.subheadline.weight(.semibold))
+        .typeStyle(.body.weight(.semibold))
       } else if let offer {
         Button {
           onUseOffer(offer.minutes)
@@ -55,10 +55,10 @@ struct TimeAnswer: View {
           Self.offerLabel(offer)
             .multilineTextAlignment(.leading)
         }
-        .font(.subheadline.weight(.semibold))
+        .typeStyle(.body.weight(.semibold))
       }
     }
-    .font(.subheadline)
+    .typeStyle(.body)
     .buttonStyle(.borderless)
     .opacity(updating ? 0.5 : 1)
     .announcesStatus(line.isBusy || updating ? nil : announcement)
@@ -115,7 +115,7 @@ struct TimeAnswer: View {
     planDurationText(minutes: Double(minutes))
   }
 
-  private static func percent(_ share: Double) -> String {
+  nonisolated private static func percent(_ share: Double) -> String {
     share.formatted(.percent.precision(.fractionLength(0)))
   }
 
@@ -377,7 +377,9 @@ struct TimeAnswer: View {
     }
   }
 
-  private static func shareWords(_ share: Double, exam: Bool, month: Bool, date: String) -> String {
+  nonisolated static func shareWords(_ share: Double, exam: Bool, month: Bool, date: String)
+    -> String
+  {
     let percent = Self.percent(share)
 
     return switch (exam, month) {

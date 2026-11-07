@@ -70,6 +70,7 @@ import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.TagBesideOrUnder
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.MockExam
@@ -333,7 +334,7 @@ private fun ReviewAnswer(
 ) {
     val result = if (right) AnswerResult.Right else AnswerResult.Wrong
     val tone = answerTone(picked = !right, result = result)
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     val statement = entry.format == MockExamReviewInner.Format.TRUE_FALSE && (answer == "true" || answer == "false")
     val isTrue = answer == "true"
 

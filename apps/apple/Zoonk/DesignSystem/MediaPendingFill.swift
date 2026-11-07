@@ -8,7 +8,7 @@ struct MediaPendingFill: View {
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   var body: some View {
-    let shape = Rectangle().fill(.fill.tertiary)
+    let shape = Rectangle().fill(.muted)
 
     if pulses, !reduceMotion {
       shape.phaseAnimator([false, true]) { content, isDim in

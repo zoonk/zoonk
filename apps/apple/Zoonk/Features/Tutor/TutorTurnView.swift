@@ -4,7 +4,7 @@ struct TutorTurnView: View {
   let turn: TutorTurn
   let conversation: TutorConversation
   let buddyName: String
-  let showsAbout: Bool
+  let isPage: Bool
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
@@ -63,17 +63,23 @@ struct TutorTurnView: View {
 
   private var question: some View {
     VStack(alignment: .trailing, spacing: 4) {
-      if showsAbout {
+      if !isPage {
         turn.about.label
-          .font(.caption)
-          .foregroundStyle(.secondary)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
       }
 
+      // Main's `LearnerBubble`: `muted`, its corner nearest the learner's side tucked in.
       Text(turn.question)
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
+        .typeStyle(.button.weight(.regular))
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
         .background(
-          Color(.secondarySystemBackground), in: .rect(cornerRadius: 18, style: .continuous)
+          .muted,
+          in: UnevenRoundedRectangle(
+            cornerRadii: .init(
+              topLeading: Radius.option, bottomLeading: Radius.option, bottomTrailing: 4,
+              topTrailing: Radius.option), style: .continuous)
         )
         .textSelection(.enabled)
     }
@@ -100,27 +106,28 @@ struct TutorTurnView: View {
           "Get answer", tableName: "Tutor",
           comment: "Asks the buddy for an answer that wasn't written yet")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .disabled(conversation.answeringID != nil)
     case .failed:
       VStack(alignment: .leading, spacing: 12) {
         if let text = turn.answer {
           TutorAnswerText(text: text, linksEnabled: false, buddyName: buddyName)
+            .typeStyle(words)
         }
 
         if let failure, failure.isLimit {
           Text(failureLine)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         } else {
           if failure != nil {
             FailureLine(message: failureLine)
-              .font(.subheadline)
+              .typeStyle(.body)
           } else {
             // An answer that failed before this visit is part of the thread, not news to announce.
             Text(failureLine)
-              .font(.subheadline)
-              .foregroundStyle(.destructive)
+              .typeStyle(.body)
+              .foregroundStyle(.destructiveText)
           }
 
           TutorRemedyButton(failure: failure ?? .failed) {
@@ -134,7 +141,9 @@ struct TutorTurnView: View {
         VStack(alignment: .leading, spacing: 12) {
           TutorAnswerText(
             text: text, linksEnabled: turn.linksVerified && turn.status == .completed,
-            buddyName: buddyName)
+            buddyName: buddyName
+          )
+          .typeStyle(words)
 
           if turn.status == .running && !isStreamingHere {
             checkAgain
@@ -142,11 +151,13 @@ struct TutorTurnView: View {
         }
       } else if turn.status == .completed {
         Text(Self.noAnswer)
-          .foregroundStyle(.secondary)
+          .typeStyle(words)
+          .foregroundStyle(.mutedForeground)
       } else {
         VStack(alignment: .leading, spacing: 12) {
           Text("Thinking…", tableName: "Tutor", comment: "The buddy is writing its answer")
-            .foregroundStyle(.secondary)
+            .typeStyle(words)
+            .foregroundStyle(.mutedForeground)
             .accessibilityAddTraits(.updatesFrequently)
 
           if turn.status == .running && !isStreamingHere {
@@ -155,6 +166,10 @@ struct TutorTurnView: View {
         }
       }
     }
+  }
+
+  private var words: TypeStyle {
+    isPage ? .message : .body
   }
 
   private var checkAgain: some View {
@@ -169,7 +184,7 @@ struct TutorTurnView: View {
         Image(systemName: "arrow.clockwise")
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .disabled(conversation.answeringID != nil)
   }
 
@@ -201,6 +216,7 @@ struct TutorTurnView: View {
 /// links.
 struct TutorAnswerText: View {
   @Environment(AppRouter.self) private var router
+  @Environment(\.legibilityWeight) private var legibilityWeight
   @ScaledMetric private var listIndent = 20.0
   @State private var blockOpen: Task<Void, Never>?
   @State private var blockOpenFailed = false
@@ -228,13 +244,13 @@ struct TutorAnswerText: View {
 
       if blockOpenFailed {
         FailureLine(message: .blockOpenFailed)
-          .font(.subheadline)
+          .typeStyle(.body)
       }
 
       if isBlockClosed {
         Text(.blockClosed)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .onDisappear { blockOpen?.cancel() }
@@ -248,19 +264,19 @@ struct TutorAnswerText: View {
   private func blockView(_ block: TutorAnswerBlock) -> some View {
     switch block.kind {
     case .paragraph:
-      Text(block.text)
+      Text(block.text, legibility: legibilityWeight)
     case .heading:
-      Text(block.text)
-        .font(.headline)
+      Text(block.text, legibility: legibilityWeight)
+        .typeStyle(.body.weight(.semibold))
         .accessibilityAddTraits(.isHeader)
     case .code:
-      Text(block.text)
-        .font(.callout.monospaced())
+      Text(block.text, legibility: legibilityWeight)
+        .typeStyle(.reading.monospaced())
     case .listItem(let marker):
       HStack(alignment: .firstTextBaseline, spacing: 8) {
         Text(verbatim: marker)
           .monospacedDigit()
-        Text(block.text)
+        Text(block.text, legibility: legibilityWeight)
       }
       .padding(.leading, CGFloat(block.depth) * listIndent)
     }

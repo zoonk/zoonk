@@ -187,7 +187,8 @@ struct MistakePracticeScreen: View {
       PracticeMainButton(
         title: LocalizedStringResource(
           "I've read it. Show the answers", table: "Practice",
-          comment: "Shows a misread drill's answers once the question was read.")
+          comment: "Shows a misread drill's answers once the question was read."),
+        systemImage: "eye"
       ) {
         if focuses.has(.reveal) { focuses.move(to: .answer) }
         state.reveal()
@@ -295,7 +296,7 @@ struct MistakePracticeScreen: View {
       } label: {
         Text("Back", tableName: "Practice", comment: "Leaves an empty practice.")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
     .lonePage()
   }

@@ -14,21 +14,15 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,10 +46,17 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.AlertDialog
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.Memory
@@ -90,13 +91,13 @@ fun MemoryScreen(
                     Modifier
                         .widthIn(max = 640.dp)
                         .fillMaxWidth()
-                        .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
+                        .padding(vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(28.dp),
             ) {
-                Text(
-                    text = stringResource(R.string.memory_description),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
+                PageHeader(
+                    stringResource(R.string.settings_memory),
+                    stringResource(R.string.memory_description),
+                    Modifier.padding(horizontal = LIST_ITEM_INSET),
                 )
 
                 when (val state = memory) {
@@ -105,7 +106,10 @@ fun MemoryScreen(
                     }
 
                     is LoadState.Failed -> {
-                        LoadFailedMessage(onRetry = { scope.launch { app.memory.memory.refresh() } })
+                        LoadFailedMessage(
+                            onRetry = { scope.launch { app.memory.memory.refresh() } },
+                            Modifier.padding(horizontal = LIST_ITEM_INSET),
+                        )
                     }
 
                     LoadState.Idle, LoadState.Loading, LoadState.Empty -> {
@@ -133,23 +137,21 @@ private fun Loaded(
                 category to memory.facts.filter { it.category == category }
             }.filter { it.second.isNotEmpty() }
 
-    OutlinedCard(Modifier.fillMaxWidth()) {
-        ListItem(
-            headlineContent = { Text(stringResource(R.string.memory_use)) },
-            supportingContent = {
-                Text(stringResource(if (memory.enabled) R.string.memory_use_on else R.string.memory_use_off))
-            },
-            trailingContent = { Switch(checked = memory.enabled, onCheckedChange = null) },
-            modifier = Modifier.toggleable(value = memory.enabled, role = Role.Switch, onValueChange = screen::setEnabled),
-        )
-    }
+    ListRow(
+        headline = { Text(stringResource(R.string.memory_use)) },
+        supporting = { Text(stringResource(if (memory.enabled) R.string.memory_use_on else R.string.memory_use_off)) },
+        trailing = { Switch(checked = memory.enabled, onCheckedChange = null) },
+        modifier = Modifier.toggleable(value = memory.enabled, role = Role.Switch, onValueChange = screen::setEnabled),
+    )
 
-    screen.lastChange?.let { change -> MemoryUpdated(listOf(change), screen.lastUndo, onUndo = screen::undo) }
+    screen.lastChange?.let { change ->
+        Box(Modifier.padding(horizontal = LIST_ITEM_INSET)) { MemoryUpdated(listOf(change), screen.lastUndo, onUndo = screen::undo) }
+    }
 
     if (screen.saveFailed) {
         Text(
             text = stringResource(R.string.memory_save_failed),
-            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            modifier = Modifier.padding(horizontal = LIST_ITEM_INSET).semantics { liveRegion = LiveRegionMode.Polite },
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyMedium,
         )
@@ -158,50 +160,45 @@ private fun Loaded(
     if (groups.isEmpty()) {
         Text(
             text = stringResource(if (memory.enabled) R.string.memory_empty_on else R.string.memory_empty_off),
+            modifier = Modifier.padding(horizontal = LIST_ITEM_INSET),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
     } else {
         groups.forEach { (category, facts) ->
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                SectionHeader(categoryName(category))
-                OutlinedCard(Modifier.fillMaxWidth()) {
-                    facts.forEachIndexed { index, fact ->
-                        if (index > 0) HorizontalDivider()
-                        FactRow(fact, onEdit = { screen.updateFact(fact.id, it) }, onDelete = { screen.deleteFact(fact.id) })
-                    }
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                SectionHeader(categoryName(category), Modifier.padding(horizontal = LIST_ITEM_INSET))
+                facts.forEachIndexed { index, fact ->
+                    if (index > 0) ListDivider()
+                    FactRow(fact, onEdit = { screen.updateFact(fact.id, it) }, onDelete = { screen.deleteFact(fact.id) })
                 }
             }
         }
     }
 
-    OutlinedCard(Modifier.fillMaxWidth()) {
-        ListItem(
-            headlineContent = { Text(stringResource(R.string.memory_download)) },
-            supportingContent = { Text(stringResource(R.string.memory_download_description)) },
-        )
-        OutlinedButton(
-            onClick = { export.launch(EXPORT_FILE_NAME) },
-            enabled = !screen.isExporting,
-            modifier =
-                Modifier
-                    .align(Alignment.End)
-                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-        ) {
-            if (screen.isExporting) {
-                CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
-            } else {
-                Icon(painterResource(R.drawable.ic_download), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+    ListRow(
+        headline = { Text(stringResource(R.string.memory_download)) },
+        supporting = { Text(stringResource(R.string.memory_download_description)) },
+        trailing = {
+            OutlinedButton(
+                onClick = { export.launch(EXPORT_FILE_NAME) },
+                enabled = !screen.isExporting,
+                size = ButtonSize.Small,
+            ) {
+                if (screen.isExporting) {
+                    CircularProgressIndicator(Modifier.size(ICON), color = LocalContentColor.current, strokeWidth = 2.dp)
+                } else {
+                    Icon(painterResource(R.drawable.ic_download), contentDescription = null, modifier = Modifier.size(ICON))
+                }
+                Spacer(Modifier.size(6.dp))
+                Text(stringResource(if (screen.isExporting) R.string.settings_download_preparing else R.string.settings_download))
             }
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text(stringResource(if (screen.isExporting) R.string.settings_download_preparing else R.string.settings_download))
-        }
-    }
+        },
+    )
     if (screen.exportFailed) {
         Text(
             text = stringResource(R.string.settings_download_failed),
-            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            modifier = Modifier.padding(horizontal = LIST_ITEM_INSET).semantics { liveRegion = LiveRegionMode.Polite },
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyMedium,
         )
@@ -209,6 +206,7 @@ private fun Loaded(
 
     Text(
         text = stringResource(R.string.memory_sensitive_note),
+        modifier = Modifier.padding(horizontal = LIST_ITEM_INSET),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodySmall,
     )
@@ -223,15 +221,18 @@ private fun FactRow(
     var isMenuOpen by rememberSaveable { mutableStateOf(false) }
     var isEditing by rememberSaveable { mutableStateOf(false) }
 
-    ListItem(
-        headlineContent = { Text(fact.statement) },
-        supportingContent = { Text(stringResource(R.string.memory_fact_source, sourceName(fact), factDate(fact))) },
-        trailingContent = {
+    ListRow(
+        headline = { Text(fact.statement) },
+        supporting = { Text(stringResource(R.string.memory_fact_source, sourceName(fact), factDate(fact))) },
+        trailing = {
             Box {
+                // Main's quiet "⋯" (a ghost icon button), not the outlined one beside a page's title.
                 IconButton(onClick = { isMenuOpen = true }) {
                     Icon(
-                        painterResource(R.drawable.ic_more_vert),
+                        painterResource(R.drawable.ic_more_horiz),
                         contentDescription = stringResource(R.string.memory_fact_options, fact.statement),
+                        modifier = Modifier.size(ICON),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 DropdownMenu(expanded = isMenuOpen, onDismissRequest = { isMenuOpen = false }) {
@@ -291,7 +292,7 @@ private fun EditFactDialog(
                 OutlinedTextField(
                     value = statement,
                     onValueChange = { statement = it.take(MAX_STATEMENT_LENGTH) },
-                    label = { Text(stringResource(R.string.memory_edit_label)) },
+                    label = stringResource(R.string.memory_edit_label),
                 )
             }
         },
@@ -342,6 +343,8 @@ private fun factDate(fact: MemoryFact): String =
                 .ofEpochMilli(fact.createdAt.toEpochMilliseconds())
                 .atZone(ZoneId.systemDefault()),
         )
+
+private val ICON = 16.dp
 
 /** Core's `MAX_MEMORY_STATEMENT_LENGTH`. */
 private const val MAX_STATEMENT_LENGTH = 160

@@ -12,13 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -41,13 +39,17 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.CatalogLesson
 import com.zoonk.api.models.CatalogLessonFirstScreen
 import kotlinx.coroutines.launch
@@ -106,13 +108,13 @@ private fun lessonBlocks(
                         Spacer(Modifier.size(8.dp))
                         Text(
                             outlineLesson.title,
-                            modifier = layout.headline.semantics { heading() },
-                            style = MaterialTheme.typography.headlineSmall,
+                            modifier = Modifier.pageTitle(),
+                            style = MaterialTheme.typography.displaySmall,
                         )
 
                         page?.description?.let {
                             Spacer(Modifier.size(12.dp))
-                            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+                            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.lead)
                         }
 
                         Spacer(Modifier.size(32.dp))

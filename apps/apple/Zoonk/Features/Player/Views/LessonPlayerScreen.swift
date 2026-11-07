@@ -62,7 +62,6 @@ private struct LessonPlayerContent: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.scenePhase) private var scenePhase
   @Environment(\.activityRenderers) private var activityRenderers
-  @Environment(\.lessonTutor) private var tutor
   @Environment(\.lessonAudio) private var audio
   @Environment(SessionStore.self) private var session
   @Environment(LearnerSummaryStore.self) private var learnerSummary: LearnerSummaryStore?
@@ -79,27 +78,27 @@ private struct LessonPlayerContent: View {
     NavigationStack {
       VerticalToolbarReader { hasVerticalBar in
         content
+          // Main's task header: the title in the bar, the lesson's segments under it.
           .safeAreaBar(edge: .top) {
-            // A vertical bar (iPhone Duo) has no room for the progress bar, so it tops the screen.
-            if hasVerticalBar, let progress {
-              progressBar(progress)
-                .scenePadding(.horizontal)
-                .keepsBeforeHinge()
+            if let segments {
+              TaskSegments(
+                segments: segments,
+                label: Text(
+                  "Lesson progress", tableName: "Player", comment: "Progress bar of the lesson"),
+                value: Text(
+                  store.state?.progress ?? 0, format: .percent.precision(.fractionLength(0)))
+              )
+              // The lesson's column; on iPhone Duo, the page before the hinge.
+              .lonePage(readableWidth: 680)
+              .scenePadding(.horizontal)
+              .padding(.bottom, 4)
             }
           }
           .navigationTitle(title)
           .navigationBarTitleDisplayMode(.inline)
-          // The bar shows the progress, or nothing; the title only names it.
-          .toolbar(removing: hasVerticalBar || progress == nil ? .title : nil)
+          // A vertical bar (iPhone Duo) has no room for a title.
+          .toolbar(removing: hasVerticalBar ? .title : nil)
           .taskClose { closeButton }
-          .toolbar {
-            if !hasVerticalBar, let progress {
-              ToolbarItem(placement: .principal) {
-                progressBar(progress)
-                  .frame(minWidth: 120, idealWidth: 240)
-              }
-            }
-          }
           .taskOptions(
             isShown: store.screen == .playing && store.state != nil,
             label: Text("Screen options", tableName: "Player", comment: "The lesson's menu")
@@ -108,23 +107,17 @@ private struct LessonPlayerContent: View {
               screenMenuItems(state)
             }
           }
-          .taskAction(
-            isShown: tutor.panel != nil && store.screen == .playing
-              && store.state?.phase != .completed
-          ) {
-            askButton
-          }
       }
     }
     // Beside the lesson on a spread (the stage shows it); a sheet where the lesson is one column.
     .sheet(isPresented: isShowingAskSheet) {
       LessonAskPanel(store: store, isBeside: false)
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
     .sheet(isPresented: $isShowingMap) {
       if let lesson = store.lesson, let summary = lesson.summary {
         LessonMapSheet(title: lesson.title, summary: summary)
-          .accessibilitySizeStyles()
+          .zoonkStyles()
       }
     }
     // A lesson opened while the saved session is still being checked waits for it, so it reads once.
@@ -180,7 +173,7 @@ private struct LessonPlayerContent: View {
         case .waiting(let holding):
           LessonWaitingView(
             outline: warmUp.outline, writing: writing, progress: store.writingProgress,
-            warmUpID: warmUp.deckID, holding: holding
+            alternative: store.alternative, warmUpID: warmUp.deckID, holding: holding
           ) {
             Task { await store.writeLesson() }
           }
@@ -219,7 +212,10 @@ private struct LessonPlayerContent: View {
       }
       .lonePage()
     case .waiting(let outline, let writing):
-      LessonWaitingView(outline: outline, writing: writing, progress: store.writingProgress) {
+      LessonWaitingView(
+        outline: outline, writing: writing, progress: store.writingProgress,
+        alternative: store.alternative
+      ) {
         Task { await store.writeLesson() }
       }
       .lonePage()
@@ -292,24 +288,6 @@ private struct LessonPlayerContent: View {
     }
   }
 
-  private var askButton: some View {
-    Button {
-      // Beside the lesson, Ask also closes the panel, as an inspector's button does; elsewhere it
-      // opens it, including one left open beside the lesson before iPhone Duo closed.
-      if store.isAsking, store.isSpread {
-        store.isAsking = false
-      } else {
-        store.ask()
-      }
-    } label: {
-      Label {
-        Text("Ask", tableName: "Player", comment: "Opens the panel to ask about the lesson")
-      } icon: {
-        Image(systemName: "bubble.left.and.text.bubble.right")
-      }
-    }
-  }
-
   /// Ask's sheet, shown only when Ask was opened where the lesson is one column, so a size change
   /// alone (closing iPhone Duo with Ask beside the lesson) never covers the lesson. SwiftUI turns a
   /// presented inspector into a sheet on such a change, and presented while iPhone Duo is folded
@@ -374,12 +352,14 @@ private struct LessonPlayerContent: View {
   private var title: Text {
     if let lesson = store.lesson {
       Text(lesson.title)
+    } else if case .waiting(let outline, _) = store.screen {
+      Text(outline.title)
     } else {
       Text("Lesson", tableName: "Player", comment: "Names a lesson's screen until its title loads")
     }
   }
 
-  private var progress: Double? {
+  private var segments: [TaskSegment]? {
     guard let state = store.state, store.screen == .playing, state.phase != .completed else {
       return nil
     }
@@ -388,14 +368,7 @@ private struct LessonPlayerContent: View {
       return nil
     }
 
-    return state.progress
-  }
-
-  private func progressBar(_ value: Double) -> some View {
-    ProgressView(value: value)
-      .tint(.success)
-      .accessibilityLabel(
-        Text("Lesson progress", tableName: "Player", comment: "Progress bar of the lesson"))
+    return state.segments
   }
 
   /// Words on the screen stay protected until their check saves; every other answer is already kept.

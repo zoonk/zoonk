@@ -11,7 +11,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.IntState
@@ -48,6 +47,7 @@ import com.zoonk.android.feature.tutor.TutorOffer
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.feature.tutor.TutorSuggestion
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.api.models.LessonTutorSuggestion
 import kotlinx.coroutines.delay
 

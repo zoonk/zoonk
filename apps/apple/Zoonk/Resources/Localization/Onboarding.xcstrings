@@ -5588,6 +5588,124 @@
         }
       }
     },
+    "Checking each question has one right answer…" : {
+      "comment" : "What the wait is doing while a language's level test questions are written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir prüfen, ob jede Frage genau eine richtige Antwort hat…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobando que cada pregunta tenga una sola respuesta correcta…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérification que chaque question a une seule bonne réponse…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo controllando che ogni domanda abbia una sola risposta corretta…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "各問題の正解が1つだけか確認しています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문제마다 정답이 하나인지 확인하고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprawdzamy, czy każde pytanie ma dokładnie jedną poprawną odpowiedź…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conferindo se cada pergunta tem só uma resposta certa…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her sorunun tek bir doğru cevabı olduğunu kontrol ediyoruz…"
+          }
+        }
+      }
+    },
+    "Checking if it's an exam, a language or a subject…" : {
+      "comment" : "What the wait is doing while a typed goal is read",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir prüfen, ob es um eine Prüfung, eine Sprache oder ein Fach geht…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobando si es un examen, un idioma o una materia…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On vérifie s’il s’agit d’un examen, d’une langue ou d’une matière…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo verificando se si tratta di un esame, una lingua o una materia…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試験・語学・科目のどれに当たるか確かめています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시험인지, 언어인지, 과목인지 확인하고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprawdzamy, czy chodzi o egzamin, język czy przedmiot…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conferindo se é uma prova, um idioma ou uma matéria…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sınav mı, dil mi yoksa konu mu olduğunu kontrol ediyoruz…"
+          }
+        }
+      }
+    },
     "Checking if someone asked it before" : {
       "comment" : "A step of the wait while a quick explanation is written",
       "localizations" : {
@@ -5647,6 +5765,65 @@
         }
       }
     },
+    "Checking nothing important is missing…" : {
+      "comment" : "What the wait is doing while a plan is built",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir prüfen, ob etwas Wichtiges fehlt…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobando que no falte nada importante…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérification que rien d’important ne manque…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo controllando che non manchi nulla di importante…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大事なことが抜けていないか確かめています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "중요한 내용이 빠지지 않았는지 확인하고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprawdzamy, czy niczego ważnego nie brakuje…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conferindo se não falta nada importante…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önemli bir şeyin eksik kalmadığını kontrol ediyoruz…"
+          }
+        }
+      }
+    },
     "Checking the exam dates" : {
       "comment" : "A step of the wait while a typed goal is read, when it's an exam",
       "localizations" : {
@@ -5702,6 +5879,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sınav tarihlerini kontrol ediyoruz"
+          }
+        }
+      }
+    },
+    "Checking the facts…" : {
+      "comment" : "What the wait is doing between screens while a quick explanation is written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir prüfen die Fakten…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verificando la información…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérification des faits…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo verificando i fatti…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "事実関係を確認しています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내용이 사실과 맞는지 확인하고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprawdzamy fakty…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conferindo os fatos…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bilgilerin doğruluğunu kontrol ediyoruz…"
           }
         }
       }
@@ -6164,6 +6400,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ders arkadaşını seç"
+          }
+        }
+      }
+    },
+    "Choosing texts from beginner to advanced…" : {
+      "comment" : "What the wait is doing while a language's level test questions are written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir wählen Texte für Anfänger und Fortgeschrittene aus…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eligiendo textos de nivel inicial a avanzado…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choix de textes du niveau débutant au niveau avancé…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo scegliendo testi dal livello principiante a quello avanzato…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "初級から上級までの文章を選んでいます…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "초급부터 고급까지 수준별 지문을 고르고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybieramy teksty od poziomu początkującego do zaawansowanego…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolhendo textos do nível iniciante ao avançado…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlangıçtan ileri seviyeye kadar metinler seçiyoruz…"
           }
         }
       }
@@ -7927,6 +8222,65 @@
         }
       }
     },
+    "Deciding how deep to go…" : {
+      "comment" : "What the wait is doing while a plan is built",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir entscheiden, wie tief wir ins Thema einsteigen…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decidiendo cuánto profundizar…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choix du niveau d’approfondissement…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo decidendo quanto approfondire…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どこまで詳しく学ぶかを決めています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "얼마나 깊이 배울지 정하고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ustalamy, jak głęboko wejść w temat…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decidindo até onde aprofundar…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ne kadar ayrıntıya gireceğimize karar veriyoruz…"
+          }
+        }
+      }
+    },
     "Different time on weekends" : {
       "comment" : "Switch giving Saturday and Sunday their own study time",
       "localizations" : {
@@ -9221,6 +9575,183 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Açıkla"
+          }
+        }
+      }
+    },
+    "Finding lessons in the Library…" : {
+      "comment" : "What the wait is doing while a plan is built",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir suchen Lektionen in der Bibliothek…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscando lecciones en la Biblioteca…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche de leçons dans la Bibliothèque…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo cercando lezioni nella Biblioteca…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ライブラリでレッスンを探しています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "라이브러리에서 레슨을 찾고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szukamy lekcji w Bibliotece…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscando aulas na Biblioteca…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kütüphane’de ders arıyoruz…"
+          }
+        }
+      }
+    },
+    "Finding the dates for your year…" : {
+      "comment" : "What the wait is doing while it checks an exam's dates",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir suchen die Termine für dein Jahr…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscando las fechas para el año de tu examen…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche des dates pour ton année…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo cercando le date per l’anno che ti interessa…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "受験する年の日程を調べています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시험을 볼 해의 일정을 찾고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szukamy terminów na wybrany rok…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscando as datas para o seu ano…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sınava gireceğin yılın tarihlerini buluyoruz…"
+          }
+        }
+      }
+    },
+    "Finding the topics it covers…" : {
+      "comment" : "What the wait is doing while it reads the learner's own material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir finden heraus, welche Themen es behandelt…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Identificando los temas que abarca…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche des sujets abordés…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo individuando gli argomenti che tratta…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "資料で扱っているトピックを調べています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자료에서 다루는 주제를 찾고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprawdzamy, jakie tematy obejmują…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encontrando os tópicos que ele aborda…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İçerdiği konuları belirliyoruz…"
           }
         }
       }
@@ -12177,6 +12708,183 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dinleme"
+          }
+        }
+      }
+    },
+    "Listing what your goal asks for…" : {
+      "comment" : "What the wait is doing while a plan is built",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir listen auf, was du für dein Ziel brauchst…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enumerando lo que requiere tu objetivo…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Liste des exigences de ton objectif…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo elencando ciò che serve per il tuo obiettivo…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標の達成に必要なことを書き出しています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "목표 달성에 필요한 내용을 정리하고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spisujemy, co trzeba umieć, by osiągnąć twój cel…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listando o que seu objetivo exige…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hedefin için gerekenleri listeliyoruz…"
+          }
+        }
+      }
+    },
+    "Looking for a matching explanation…" : {
+      "comment" : "What the wait is doing while a quick explanation is written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir suchen nach einer passenden Erklärung…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscando una explicación para tu pregunta…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche d’une explication correspondante…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo cercando una spiegazione adatta…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "質問に合う解説を探しています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "질문에 맞는 설명을 찾고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szukamy pasującego wyjaśnienia…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscando uma explicação para essa pergunta…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uygun bir açıklama arıyoruz…"
+          }
+        }
+      }
+    },
+    "Looking up the exam calendar…" : {
+      "comment" : "What the wait is doing while it checks an exam's dates",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir sehen im Prüfungskalender nach…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consultando el calendario del examen…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche du calendrier de l’examen…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo consultando il calendario dell’esame…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試験の日程を調べています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시험 일정을 찾아보고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szukamy harmonogramu egzaminu…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consultando o calendário da prova…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sınav takvimine bakıyoruz…"
           }
         }
       }
@@ -15373,6 +16081,124 @@
         }
       }
     },
+    "Putting the skills in order…" : {
+      "comment" : "What the wait is doing while a plan is built",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir bringen die Fähigkeiten in eine Reihenfolge…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordenando las habilidades…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mise en ordre des compétences…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo mettendo in ordine le abilità…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スキルを学ぶ順に並べています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스킬을 배울 순서를 정하고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Układamy umiejętności w kolejności…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Organizando as habilidades em ordem…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Becerileri sıraya koyuyoruz…"
+          }
+        }
+      }
+    },
+    "Putting them in the order it teaches…" : {
+      "comment" : "What the wait is doing while it reads the learner's own material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir ordnen die Themen so, wie sie im Material vorkommen…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordenándolos como se enseñan en el material…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Classement des sujets dans l’ordre des documents…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Li stiamo ordinando come nel materiale…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "資料で扱う順に並べています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자료에 나온 순서대로 정리하고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Układamy tematy w takiej samej kolejności jak w materiałach…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Organizando os tópicos na ordem em que são ensinados…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konuları materyaldeki sıraya koyuyoruz…"
+          }
+        }
+      }
+    },
     "Question %lld" : {
       "comment" : "Which placement question this is",
       "localizations" : {
@@ -15786,6 +16612,124 @@
         }
       }
     },
+    "Reading what you wrote…" : {
+      "comment" : "What the wait is doing while a typed goal is read",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir lesen, was du geschrieben hast…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leyendo lo que escribiste…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecture de ce que tu as écrit…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo leggendo quello che hai scritto…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書いてくれた内容を読んでいます…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "작성한 내용을 읽고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czytamy twój tekst…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lendo o que você escreveu…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yazdıklarını okuyoruz…"
+          }
+        }
+      }
+    },
+    "Reading your answers…" : {
+      "comment" : "What the wait is doing while a plan is built",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir lesen deine Antworten…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leyendo tus respuestas…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecture de tes réponses…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo leggendo le tue risposte…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回答を読んでいます…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "답변을 읽고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czytamy twoje odpowiedzi…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lendo suas respostas…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cevaplarını okuyoruz…"
+          }
+        }
+      }
+    },
     "Reading your goal" : {
       "comment" : "A step of the wait while a plan is built\nA step of the wait while a typed goal is read",
       "localizations" : {
@@ -16018,6 +16962,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sorunu okuyoruz"
+          }
+        }
+      }
+    },
+    "Reading your question…" : {
+      "comment" : "What the wait is doing while a quick explanation is written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir lesen deine Frage…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leyendo tu pregunta…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecture de ta question…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo leggendo la tua domanda…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "質問を読んでいます…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "질문을 읽고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czytamy twoje pytanie…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lendo sua pergunta…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorunu okuyoruz…"
           }
         }
       }
@@ -16372,6 +17375,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hedefini kaydediyoruz…"
+          }
+        }
+      }
+    },
+    "Saving your plan…" : {
+      "comment" : "What the wait is doing while a plan is built",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir speichern deinen Plan…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardando tu plan…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrement de ton plan…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo salvando il tuo piano…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画を保存しています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획을 저장하고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisujemy twój plan…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvando seu plano…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planını kaydediyoruz…"
           }
         }
       }
@@ -17562,6 +18624,65 @@
         }
       }
     },
+    "Spreading the skills over your days…" : {
+      "comment" : "What the wait is doing while a plan is built",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir verteilen die Fähigkeiten auf deine Tage…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distribuyendo las habilidades por día…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répartition des compétences sur tes journées…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo distribuendo le abilità nei tuoi giorni di studio…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スキルの学習を日ごとに振り分けています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "날짜별로 배울 스킬을 정하고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozkładamy naukę umiejętności na kolejne dni…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distribuindo as habilidades pelos seus dias…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Becerileri çalışma günlerine dağıtıyoruz…"
+          }
+        }
+      }
+    },
     "Start" : {
       "comment" : "Opens Today with the plan's first day\nStarts placement's questions\nStarts the level test",
       "localizations" : {
@@ -18467,6 +19588,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mesajı durdur"
+          }
+        }
+      }
+    },
+    "Stopped here" : {
+      "comment" : "VoiceOver: the step of a wait where a failed run stopped",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier abgebrochen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se detuvo aquí"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrêt à cette étape"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interrotto qui"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここで停止しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 단계에서 멈췄어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zatrzymano tutaj"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parou aqui"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Burada durdu"
           }
         }
       }
@@ -25745,6 +26925,65 @@
         }
       }
     },
+    "Working out what you want to reach…" : {
+      "comment" : "What the wait is doing while a typed goal is read",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir finden heraus, was du erreichen möchtest…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entendiendo qué quieres lograr…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Identification de ce que tu veux atteindre…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerchiamo di capire cosa vuoi raggiungere…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "何を目指しているのか整理しています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "어떤 목표를 이루고 싶은지 파악하고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ustalamy, co chcesz osiągnąć…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entendendo o que você quer alcançar…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neyi hedeflediğini anlamaya çalışıyoruz…"
+          }
+        }
+      }
+    },
     "Working out when you'd finish…" : {
       "comment" : "While the plan works out when a goal without a date finishes",
       "localizations" : {
@@ -25981,6 +27220,65 @@
         }
       }
     },
+    "Writing screen %lld…" : {
+      "comment" : "What the wait is doing while a quick explanation is written: the screen it's on",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen Seite %lld…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando la pantalla %lld…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation de l’écran %lld…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo preparando la schermata %lld…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lldページ目を作成しています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld번째 화면을 만들고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy ekran %lld…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criando a tela %lld…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld. ekranı hazırlıyoruz…"
+          }
+        }
+      }
+    },
     "Writing the level test questions" : {
       "comment" : "The step of the wait while a language's level test questions are written",
       "localizations" : {
@@ -26036,6 +27334,183 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seviye tespit testi sorularını hazırlıyoruz"
+          }
+        }
+      }
+    },
+    "Writing the listening questions…" : {
+      "comment" : "What the wait is doing while a language's level test questions are written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen die Fragen zum Hörverstehen…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando las preguntas de escucha…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation des questions d’écoute…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo preparando le domande di ascolto…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リスニングの問題を作成しています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "듣기 문제를 만들고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy pytania do nagrania…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criando as perguntas de escuta…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dinleme sorularını hazırlıyoruz…"
+          }
+        }
+      }
+    },
+    "Writing the reading questions…" : {
+      "comment" : "What the wait is doing while a language's level test questions are written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen die Fragen zum Leseverstehen…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando las preguntas de lectura…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation des questions de compréhension écrite…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo preparando le domande di lettura…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リーディングの問題を作成しています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "읽기 문제를 만들고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy pytania do tekstu…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criando as perguntas de leitura…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okuma sorularını hazırlıyoruz…"
+          }
+        }
+      }
+    },
+    "Writing your explanation" : {
+      "comment" : "VoiceOver: the bar of a wait",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen deine Erklärung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando tu explicación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation de ton explication"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo preparando la tua spiegazione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解説を作成しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설명을 만들고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy wyjaśnienie dla ciebie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criando sua explicação"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açıklamanı hazırlıyoruz"
           }
         }
       }
@@ -28584,7 +30059,7 @@
       }
     },
     "Your plan and lessons will use it." : {
-      "comment" : "Under the way to add material",
+      "comment" : "Over the ways to add material to a goal, in their menu",
       "localizations" : {
         "de" : {
           "stringUnit" : {

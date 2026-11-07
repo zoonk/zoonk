@@ -9,6 +9,8 @@ struct BuddyGoalStart: View {
   let name: String
   @Binding var goal: String
 
+  @FocusState private var isFocused: Bool
+
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 16) {
@@ -16,7 +18,9 @@ struct BuddyGoalStart: View {
         Text(
           "Hi! I'm \(name), your AI study buddy. What do you want to learn, and by when? I'll turn it into a plan for every day until then.",
           tableName: "Buddy",
-          comment: "The buddy's hello before the learner has a goal; the argument is its name")
+          comment: "The buddy's hello before the learner has a goal; the argument is its name"
+        )
+        .typeStyle(.message)
 
         if case .loaded = store.earlierQuestions.state {
           Button {
@@ -31,6 +35,7 @@ struct BuddyGoalStart: View {
             }
           }
           .buttonStyle(.borderless)
+          .foregroundStyle(.mutedForeground)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -40,17 +45,21 @@ struct BuddyGoalStart: View {
     .scrollDismissesKeyboard(.interactively)
     .safeAreaBar(edge: .bottom) {
       VStack(alignment: .leading, spacing: 10) {
-        ScrollView(.horizontal) {
-          HStack(spacing: 8) {
-            ForEach(examples, id: \.self) { example in
-              Button(example) {
-                goal = example
-              }
-              .buttonStyle(.suggestionChip)
+        // Rows sit far enough apart that each mini button keeps its whole 44pt touch height.
+        FlowLayout(spacing: 6, rowSpacing: 20) {
+          ForEach(examples, id: \.self) { example in
+            Button {
+              goal = example
+            } label: {
+              Text(example)
+                .typeStyle(.meta.weight(.medium))
+                .foregroundStyle(.mutedForeground)
+                .lineLimit(1)
             }
+            .buttonStyle(.outline)
+            .controlSize(.mini)
           }
         }
-        .scrollIndicators(.hidden)
         .accessibilityElement(children: .contain)
         .accessibilityLabel(
           Text("Examples", tableName: "Buddy", comment: "Example goals filled in with one tap"))
@@ -65,6 +74,7 @@ struct BuddyGoalStart: View {
             onSubmit: start
           )
           .lineLimit(1...4)
+          .focused($isFocused)
           .submitLabel(.go)
           .padding(isStacked ? .horizontal : .leading, 16)
           .padding(.vertical, 12)
@@ -77,7 +87,7 @@ struct BuddyGoalStart: View {
           .disabled(trimmedGoal.isEmpty)
           .padding(6)
         }
-        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 24, style: .continuous))
+        .inputPanel(isFocused: isFocused)
       }
       .scenePadding(.horizontal)
       .padding(.vertical, 8)

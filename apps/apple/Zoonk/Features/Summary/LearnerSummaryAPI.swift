@@ -80,6 +80,7 @@ struct LearnerLevel: Equatable, Sendable {
 }
 
 struct LearnerPlaces: Equatable, Sendable {
+  let certificates: Bool
   let completedLessons: Bool
   let exam: Bool
   let mindMaps: Bool
@@ -177,6 +178,7 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
     },
     nextChangeAt: dateFromEpochMilliseconds(summary.nextChangeAt),
     places: LearnerPlaces(
+      certificates: summary.places.certificates,
       completedLessons: summary.places.completedLessons,
       exam: summary.places.exam,
       mindMaps: summary.places.mindMaps,

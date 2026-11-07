@@ -62,7 +62,7 @@ struct StepLoading: View {
   var body: some View {
     ProgressView()
       .frame(maxWidth: .infinity, maxHeight: .infinity)
-      .background(Color(.systemGroupedBackground))
+      .background(Color(.systemBackground))
   }
 }
 
@@ -210,9 +210,8 @@ private struct GoalSteps: View {
             "Step \(progress.step) of \(progress.total)", tableName: "Onboarding",
             comment: "Where the learner is among the goal's questions"
           )
-          .font(.subheadline)
+          .typeStyle(.data)
           .foregroundStyle(.secondary)
-          .monospacedDigit()
         }
       }
 

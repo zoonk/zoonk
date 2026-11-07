@@ -14,26 +14,19 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.boundsInWindow
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -58,8 +51,8 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 /**
- * A catalog page's frame (main's `CatalogPageBar` and its states): its title in the top app bar,
- * pull to refresh, the loading wheel only while nothing is cached, and main's not-found page. The
+ * A catalog page's frame (main's `CatalogPageBar` and its states): its title in the top app bar once
+ * the page's own headline (`pageTitle()`) scrolls under it, pull to refresh, the loading wheel only while nothing is cached, and main's not-found page. The
  * page's [blocks] read in one column; across an unfolded book foldable's fold the trailing ones
  * read on the page after it, each page about a phone wide.
  */
@@ -78,19 +71,12 @@ internal fun <T : Any> CatalogPage(
     val isRefreshing by resource.isRefreshing.collectAsStateWithLifecycle()
     val reading = rememberSaveable(saver = CatalogReading.Saver) { CatalogReading() }
     val disclosures = rememberSaveable(saver = Disclosures.Saver) { Disclosures() }
-    var headlineList by remember { mutableStateOf<LazyListState?>(null) }
-    var listTop by remember { mutableFloatStateOf(0f) }
-    var headlineBottom by remember { mutableFloatStateOf(Float.POSITIVE_INFINITY) }
-    val headlineScrolledAway by remember {
-        derivedStateOf { (headlineList?.firstVisibleItemIndex ?: 0) > 0 || headlineBottom < listTop }
-    }
     val refresh: () -> Unit = { (listOf(resource) + alsoShown).forEach { scope.launch { it.refresh() } } }
     val sizeClass = windowAdaptiveInfo().windowSizeClass
-    val headline = Modifier.onGloballyPositioned { headlineBottom = it.boundsInWindow().bottom }
 
     PageScaffold(
         onBack = { navigator.back() },
-        title = { if (headlineScrolledAway) title?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
+        title = { title?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
         actions = {
             SearchAction()
             if (report != null && state is LoadState.Loaded) ReportProblemMenu(app, report)
@@ -107,7 +93,7 @@ internal fun <T : Any> CatalogPage(
                 panesTouch = true,
                 supportingPane = {
                     if (state is LoadState.Loaded) {
-                        val layout = CatalogPageLayout(beside = false, headline = Modifier, disclosures, twoPages = true)
+                        val layout = CatalogPageLayout(beside = false, disclosures, twoPages = true)
                         val shown = blocks(state.value, layout).filter { it.trailing }
                         val listState = remember { reading.listState(shown) }
                         BlockList(shown, listState, reading, PANE_MARGIN, Modifier.fillMaxSize())
@@ -134,10 +120,9 @@ internal fun <T : Any> CatalogPage(
                     is LoadState.Loaded -> {
                         val beside = !twoPages && sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
                         val wide = !twoPages && sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-                        val all = blocks(state.value, CatalogPageLayout(beside, headline, disclosures, twoPages))
+                        val all = blocks(state.value, CatalogPageLayout(beside, disclosures, twoPages))
                         val shown = if (twoPages) all.filterNot { it.trailing } else all
                         val listState = remember(twoPages) { reading.listState(shown) }
-                        SideEffect { headlineList = listState }
 
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
                             BlockList(
@@ -145,10 +130,7 @@ internal fun <T : Any> CatalogPage(
                                 state = listState,
                                 reading = reading,
                                 margin = if (wide) 24.dp else PANE_MARGIN,
-                                modifier =
-                                    Modifier.widthIn(max = PAGE_WIDTH).fillMaxSize().onGloballyPositioned {
-                                        listTop = it.boundsInWindow().top
-                                    },
+                                modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxSize(),
                             )
                         }
                     }
@@ -165,8 +147,6 @@ internal fun <T : Any> CatalogPage(
  */
 internal data class CatalogPageLayout(
     val beside: Boolean,
-    /** Goes on the page's headline, so the top app bar takes the title once the headline scrolls under it. */
-    val headline: Modifier,
     val disclosures: Disclosures,
     val twoPages: Boolean,
 )

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -47,7 +46,7 @@ fun LoadMoreFooter(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyMedium,
                     )
-                    FilledTonalButton(onClick = onRetry) {
+                    OutlinedButton(onClick = onRetry) {
                         Icon(painterResource(R.drawable.ic_refresh), contentDescription = null, Modifier.size(18.dp))
                         Spacer(Modifier.size(8.dp))
                         Text(stringResource(R.string.load_failed_try_again))

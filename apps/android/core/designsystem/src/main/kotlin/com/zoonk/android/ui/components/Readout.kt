@@ -10,11 +10,14 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import com.zoonk.android.ui.theme.withTabularFigures
 
 /**
  * A quantity the eye lands on (main's `BigQuantity`): its numbers in [style], semibold with
- * tabular figures, and its words ("min left", "/ 5 hr") smaller in `onSurfaceVariant`.
+ * tabular figures, a percent sign included, and its words ("min left", "/ 5 hr") medium in
+ * `onSurfaceVariant`, at 0.45 of the number's size and never under the small button's 13sp.
  */
 @Composable
 fun Readout(
@@ -22,7 +25,13 @@ fun Readout(
     modifier: Modifier = Modifier,
     style: TextStyle = MaterialTheme.typography.headlineSmall,
 ) {
-    val unit = SpanStyle(fontSize = MaterialTheme.typography.labelLarge.fontSize, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    val words = MaterialTheme.typography.labelMedium
+    val unit =
+        SpanStyle(
+            fontSize = maxOf(style.fontSize.value * UNIT_SHARE, words.fontSize.value).sp,
+            letterSpacing = UNIT_TRACKING.em,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     Text(text = readout(text, unit), modifier = modifier, style = style.withTabularFigures().copy(fontWeight = FontWeight.SemiBold))
 }
 
@@ -40,7 +49,7 @@ internal fun readout(
                 index = end
             } else {
                 val next = (index until text.length).firstOrNull { numberEnd(text, it) > it } ?: text.length
-                withStyle(unit.copy(fontWeight = FontWeight.Normal)) { append(text, index, next) }
+                withStyle(unit.copy(fontWeight = FontWeight.Medium)) { append(text, index, next) }
                 index = next
             }
         }
@@ -57,7 +66,17 @@ private fun numberEnd(
     ) {
         end++
     }
-    return end
+    return when {
+        text.getOrNull(end) == '%' -> end + 1
+        text.getOrNull(end) in PERCENT_SPACES && text.getOrNull(end + 1) == '%' -> end + 2
+        else -> end
+    }
 }
 
 private val SEPARATORS = setOf(',', '.', ' ', ' ', '\'', '٬', '٫')
+
+/** The spaces some languages put before "%" ("70 %"), as main's `splitQuantity` reads them. */
+private val PERCENT_SPACES = setOf('\u00A0', '\u202F')
+
+private const val UNIT_SHARE = 0.45f
+private const val UNIT_TRACKING = -0.01f

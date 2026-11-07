@@ -80,11 +80,11 @@ struct ExamOptionToggles: View {
           })
       ) {
         Text(option.shortName ?? option.name)
-          .foregroundStyle(canPick ? .primary : .tertiary)
+          .foregroundStyle(canPick ? Color(.foreground) : .faint)
 
         if let shortName = option.shortName, shortName != option.name {
           Text(option.name)
-            .foregroundStyle(canPick ? .secondary : .tertiary)
+            .foregroundStyle(canPick ? .mutedForeground : .faint)
         }
       }
       .disabled(!canPick)

@@ -29,7 +29,8 @@ struct AdjustPlanSections: View {
           }
         }
       } header: {
-        Text("Prerequisites", tableName: "Plan", comment: "Section of the plan's prerequisites")
+        SectionTitle(
+          Text("Prerequisites", tableName: "Plan", comment: "Section of the plan's prerequisites"))
       }
     }
 
@@ -58,15 +59,17 @@ struct AdjustPlanSections: View {
           comment: "Opens the buddy's conversation to change the plan in words")
       }
     } footer: {
-      if goal.kind == .learn && plan.areas.count > 1 {
-        Text(
-          "In your own words, like “skip a module” or “less on weekends”. You'll see the change before it applies.",
-          tableName: "Plan",
-          comment: "Explains changing a plan with modules by talking to the buddy")
-      } else {
-        Text(
-          "In your own words, like “less on weekends”. You'll see the change before it applies.",
-          tableName: "Plan", comment: "Explains changing the plan by talking to the buddy")
+      SectionFooter {
+        if goal.kind == .learn && plan.areas.count > 1 {
+          Text(
+            "In your own words, like “skip a module” or “less on weekends”. You'll see the change before it applies.",
+            tableName: "Plan",
+            comment: "Explains changing a plan with modules by talking to the buddy")
+        } else {
+          Text(
+            "In your own words, like “less on weekends”. You'll see the change before it applies.",
+            tableName: "Plan", comment: "Explains changing the plan by talking to the buddy")
+        }
       }
     }
   }
@@ -110,12 +113,15 @@ private struct PlanExamChoiceSection: View {
         Text(choice.group)
       }
     } header: {
-      Text(
-        "\(choice.group): which one will you take?", tableName: "Plan",
-        comment:
-          "Asks which option of an exam's choice, like its foreign language, the learner takes")
+      SectionTitle(
+        Text(
+          "\(choice.group): which one will you take?", tableName: "Plan",
+          comment:
+            "Asks which option of an exam's choice, like its foreign language, the learner takes"))
     } footer: {
-      leftOut
+      SectionFooter {
+        leftOut
+      }
     }
   }
 
@@ -125,6 +131,12 @@ private struct PlanExamChoiceSection: View {
       options: choice.options.map(\.name), take: choice.take, names: picked)
 
     return Section {
+      // Main's quiet line over the options, not a second header line.
+      Text.examPickLimit(choice.take)
+        .typeStyle(.body)
+        .foregroundStyle(.mutedForeground)
+        .listRowSeparator(.hidden)
+
       ExamOptionToggles(
         options: choice.options, take: choice.take,
         picked: Binding(get: { picked }, set: { draft = $0 }))
@@ -140,17 +152,16 @@ private struct PlanExamChoiceSection: View {
       }
       .disabled(!picks.canSave(over: choice.subjects))
     } header: {
-      VStack(alignment: .leading, spacing: 2) {
+      SectionTitle(
         Text(
           "\(choice.group): which ones will you take?", tableName: "Plan",
           comment:
             "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several"
-        )
-        Text.examPickLimit(choice.take)
-          .fontWeight(.regular)
-      }
+        ))
     } footer: {
-      leftOut
+      SectionFooter {
+        leftOut
+      }
     }
     .tint(.success)
     .onChange(of: choice.subjects) { draft = nil }
@@ -191,8 +202,8 @@ private struct PlanFocusSection: View {
             Text(
               "Your answers choose for you", tableName: "Plan", comment: "What the focus test does"
             )
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
           }
         }
 
@@ -217,11 +228,14 @@ private struct PlanFocusSection: View {
         }
         .disabled(selection.isEmpty || selection == focused)
       } header: {
-        Text("Where to focus", tableName: "Plan", comment: "Section of the subjects to focus on")
+        SectionTitle(
+          Text("Where to focus", tableName: "Plan", comment: "Section of the subjects to focus on"))
       } footer: {
-        Text(
-          "The subjects you pick come first and get more depth.", tableName: "Plan",
-          comment: "What focusing on subjects does")
+        SectionFooter {
+          Text(
+            "The subjects you pick come first and get more depth.", tableName: "Plan",
+            comment: "What focusing on subjects does")
+        }
       }
     }
   }
@@ -274,8 +288,10 @@ private struct PlanActivitiesSection: View {
         }
       }
     } header: {
-      Text(
-        "What you practice", tableName: "Plan", comment: "Section of a language plan's activities")
+      SectionTitle(
+        Text(
+          "What you practice", tableName: "Plan", comment: "Section of a language plan's activities"
+        ))
     }
     .tint(.success)
   }
@@ -320,7 +336,9 @@ private struct PlanWrittenPracticeSection: View {
           comment: "Setting: when the exam's written parts are practiced")
       }
     } footer: {
-      Text(footer)
+      SectionFooter {
+        Text(footer)
+      }
     }
   }
 
@@ -384,10 +402,13 @@ private struct PlanSteeringSection: View {
         active: steering.practiceBias == "moreExplanation", on: .practiceBias("moreExplanation"),
         off: .practiceBias("balanced"))
     } header: {
-      Text("How is it going?", tableName: "Plan", comment: "Section of the lessons' steering")
+      SectionTitle(
+        Text("How is it going?", tableName: "Plan", comment: "Section of the lessons' steering"))
     } footer: {
-      if steering.difficultyBias != "standard" {
-        Text(difficultySentence(steering.difficultyBias))
+      SectionFooter {
+        if steering.difficultyBias != "standard" {
+          Text(difficultySentence(steering.difficultyBias))
+        }
       }
     }
     .tint(.success)
@@ -476,23 +497,25 @@ private struct PlanToolsSection: View {
             ))
       }
     } header: {
-      Text("You'll use", tableName: "Plan", comment: "Section of the plan's tools")
+      SectionTitle(Text("You'll use", tableName: "Plan", comment: "Section of the plan's tools"))
     } footer: {
-      VStack(alignment: .leading, spacing: 4) {
-        Text(
-          "No tools? You can do it all with examples.", tableName: "Plan",
-          comment: "Says every tool is optional")
-
-        if !later.isEmpty {
+      SectionFooter {
+        VStack(alignment: .leading, spacing: 4) {
           Text(
-            "More later: \(later.map(\.name).formatted(.list(type: .and)))", tableName: "Plan",
-            comment: "Tools only later phases use")
+            "No tools? You can do it all with examples.", tableName: "Plan",
+            comment: "Says every tool is optional")
+
+          if !later.isEmpty {
+            Text(
+              "More later: \(later.map(\.name).formatted(.list(type: .and)))", tableName: "Plan",
+              comment: "Tools only later phases use")
+          }
         }
       }
     }
     .sheet(item: $choosing) { tool in
       PlanToolChoiceSheet(editor: editor, goal: goal, tool: tool)
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
   }
 
@@ -542,7 +565,7 @@ private struct PlanToolChoiceSheet: View {
 
   var body: some View {
     NavigationStack {
-      Form {
+      ZoonkList {
         if isWriting {
           WritingWait(
             title: Text(
@@ -638,8 +661,8 @@ private struct PlanToolChoiceSheet: View {
     VStack(alignment: .leading, spacing: 2) {
       title
       detail
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
     }
   }
 

@@ -6,6 +6,7 @@ import com.zoonk.android.feature.questions.AnsweredMark
 import com.zoonk.android.feature.questions.Drill
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionFormat
+import com.zoonk.android.ui.components.TaskSegment
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -78,7 +79,10 @@ class QuestionRunTest {
                 .answered(Answer.DontKnow, AnswerFeedback(isCorrect = false, blank = true))
                 .next(questions)
 
-        assertEquals(listOf(Segment.Right, Segment.Read, Segment.Read, Segment.Current, Segment.Ahead), segments(questions, run))
+        assertEquals(
+            listOf(TaskSegment.Right, TaskSegment.Read, TaskSegment.Read, TaskSegment.Current, TaskSegment.Ahead),
+            segments(questions, run),
+        )
     }
 
     @Test
