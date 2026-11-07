@@ -835,6 +835,47 @@ describe(lessonPlayerReducer, () => {
     expect(done).toMatchObject({ completion: { status: "saving" }, phase: "completed" });
   });
 
+  it('asks every question of "I know this" while a finished lesson comes back to a screen it still needs', () => {
+    const steps = [
+      explanationStep("e1"),
+      checkStep("q1"),
+      explanationStep("e2"),
+      checkStep("q2"),
+      summaryStep("sum"),
+    ];
+
+    const finished = play(steps, [
+      { type: "continue" },
+      ...answerCheck("q1", true),
+      { type: "continue" },
+      { type: "continue" },
+      ...answerCheck("q2", false),
+      { type: "continue" },
+      { type: "continue" },
+      ...answerCheck("q2", true),
+      { type: "continue" },
+    ]);
+
+    expect(finished.phase).toBe("completed");
+
+    const recovered = lessonPlayerReducer(finished, {
+      answers: [runAnswer("q2", false)],
+      type: "runResynced",
+    });
+
+    expect(getCurrentStep(recovered)?.id).toBe("q1");
+
+    const quickCheck = playOn(recovered, [
+      { direction: "prev", type: "navigate" },
+      { type: "knowThis" },
+      ...answerCheck("q1", true),
+      { type: "continue" },
+    ]);
+
+    expect([getCurrentStep(quickCheck)?.id, quickCheck.phase]).toStrictEqual(["q2", "playing"]);
+    expect(quickCheck.quickCheck).not.toBeNull();
+  });
+
   it("lands on the first question when no answer reached the server", () => {
     const steps = [explanationStep("e1"), checkStep("q1"), explanationStep("e2"), checkStep("q2")];
 

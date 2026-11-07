@@ -97,9 +97,12 @@ function isStillNeeded(state: LessonPlayerState, position: number): boolean {
   return awaitsMissingAnswer(state, state.queue[position] ?? "") || isLaterCopy(state, position);
 }
 
-/** Once a finished lesson comes back incomplete, Continue goes only to what the run still needs. */
+/**
+ * Once a finished lesson comes back incomplete, Continue goes only to what the run still needs,
+ * except through "I know this", whose every check counts.
+ */
 function getNextPosition(state: LessonPlayerState): number {
-  if (Object.keys(state.missing).length === 0) {
+  if (state.quickCheck || Object.keys(state.missing).length === 0) {
     return state.position + 1;
   }
 
