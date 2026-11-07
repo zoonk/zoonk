@@ -1193,25 +1193,28 @@ describe(lessonPlayerReducer, () => {
     expect(getLessonScreen(corrected).segments[0]).toBe("wrong");
   });
 
-  it("shows the screen in view answered when a late run has it, but asks a retry in view anew", () => {
+  it("leaves the screen in view as it is when a late run has it, since a canvas may hold unreported work", () => {
     const atQ2 = play(
       [checkStep("q1"), explanationStep("e1"), checkStep("q2"), summaryStep("sum")],
       [...answerCheck("q1", true), { type: "continue" }, { type: "continue" }],
     );
 
-    const answered = lessonPlayerReducer(
+    const kept = lessonPlayerReducer(
       atQ2,
       runStarted({ answers: [runAnswer("q2", true)], held: [] }),
     );
 
-    expect([getCurrentStep(answered)?.id, answered.phase, answered.reviewing]).toStrictEqual([
+    expect([getCurrentStep(kept)?.id, kept.phase, kept.rounds.q2]).toStrictEqual([
       "q2",
-      "feedback",
-      true,
+      "playing",
+      atQ2.rounds.q2,
     ]);
 
-    expect(answered.answers.q2).toStrictEqual({ kind: "check", optionId: "right" });
-    expect(answered.rounds.q2).not.toBe(atQ2.rounds.q2);
+    expect([kept.answers.q2, kept.results.q2, kept.firstVerdicts.q2]).toStrictEqual([
+      undefined,
+      undefined,
+      true,
+    ]);
 
     const miss = runAnswer("q1", false);
 

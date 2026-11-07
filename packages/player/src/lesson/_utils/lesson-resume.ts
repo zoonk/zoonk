@@ -163,18 +163,22 @@ function getLessonQueue(state: LessonPlayerState): { position: number; queue: st
 }
 
 /**
- * Screens the learner worked on keep that work and every other screen takes the run's answer, result
- * and retry, with the learner left where they are. First verdicts are the run's wherever it has one,
- * since those are what it counts.
+ * Screens the learner worked on, and the one in view (a canvas can hold work it hasn't reported),
+ * keep what they show; every other screen takes the run's answer, result and retry, with the learner
+ * left where they are. First verdicts are the run's wherever it has one, since those are what it
+ * counts.
  */
 export function mergeUntouched(
   state: LessonPlayerState,
   answers: LessonRunAnswers,
 ): LessonPlayerState {
   const known = answers.filter((answer) => answer.stepId in state.steps);
+  const inView = isAtEnd(state) ? null : state.queue[state.position];
 
   const untouched = Object.values(state.steps)
-    .filter((step) => isAnswerableStep(step) && !state.actedOn.includes(step.id))
+    .filter(
+      (step) => isAnswerableStep(step) && !state.actedOn.includes(step.id) && step.id !== inView,
+    )
     .map((step) => step.id);
 
   const saved = known.filter((answer) => untouched.includes(answer.stepId));
@@ -195,7 +199,7 @@ export function mergeUntouched(
   const owed = missedOnce.filter((id) => kept.indexOf(id) === kept.lastIndexOf(id));
   const queue = [...kept, ...owed];
 
-  const merged = {
+  return {
     ...state,
     answers: { ...omitKeys(state.answers, untouched), ...restored.answers },
     firstVerdicts: { ...pickKeys(state.firstVerdicts, state.actedOn), ...getRunVerdicts(known) },
@@ -211,13 +215,6 @@ export function mergeUntouched(
     ],
     revealed: restored.revealed,
   };
-
-  const inView = state.queue[state.position] ?? "";
-  const changesView = inView in merged.results !== inView in state.results;
-
-  return !isAtEnd(state) && untouched.includes(inView) && changesView
-    ? enterPosition(merged, state.position)
-    : merged;
 }
 
 export function resumeLesson(
