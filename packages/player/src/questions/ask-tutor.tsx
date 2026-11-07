@@ -62,6 +62,15 @@ const TASK_ASK_CLASS = cn(
   "lg:group-data-aside/task:fixed lg:group-data-aside/task:right-5 lg:group-data-aside/task:bottom-[max(1rem,env(safe-area-inset-bottom))] lg:group-data-aside/task:w-[calc(var(--task-aside)-2.5rem-1px)] lg:group-data-aside/task:justify-start",
 );
 
+const BAR_ASK_CLASS = cn(
+  "min-w-11 shrink",
+  "@max-3xs/page-bar:w-11 @max-3xs/page-bar:px-0",
+  "max-sm:group-data-title-away/page-bar:w-11 max-sm:group-data-title-away/page-bar:px-0",
+);
+
+const BAR_ASK_LABEL_CLASS =
+  "truncate @max-3xs/page-bar:hidden max-sm:group-data-title-away/page-bar:hidden";
+
 function AskTutorRow({
   identity,
   kind,
@@ -128,7 +137,7 @@ function AskTutorButton({
     <Button
       {...PRELOAD_ON_INTENT}
       aria-label={label}
-      className="pl-1.5"
+      className={cn("pl-1.5", size === "bar" && BAR_ASK_CLASS)}
       onClick={() => open({ kind })}
       size={size}
       type="button"
@@ -137,7 +146,7 @@ function AskTutorButton({
       <span aria-hidden="true" className="flex size-6 items-center justify-center *:size-6!">
         {identity.avatar}
       </span>
-      {name}
+      <span className={BAR_ASK_LABEL_CLASS}>{name}</span>
     </Button>
   );
 }

@@ -1625,6 +1625,52 @@ describe("phase challenges a learner reaches together, a day before the date", (
   });
 });
 
+describe("phase challenges whose lessons the learner finished ahead", () => {
+  const input = planInput({
+    goal: { dailyMinutes: 12, kind: "learn", targetDate: null },
+    graph: {
+      phases: ["One", "Two", "Three"].map((name) => ({ milestone: null, name })),
+      skills: ["a", "b", "c"].map((skillId, phase) => skill(skillId, { lessons: 3, phase })),
+    },
+    lessons: ["a", "b", "c"].flatMap((skillId) => lessonsFor(skillId, 3)),
+  });
+
+  it("each get a study day of their own, in phase order, when a change re-plans", () => {
+    const first = buildPlan(input);
+    const ahead = new Set(["a", "b"]);
+
+    const items = store(
+      first,
+      new Set(
+        first.items.flatMap((item) => (item.skillId && ahead.has(item.skillId) ? [item.key] : [])),
+      ),
+    ).map((item) => (item.status === "done" ? { ...item, completedAt: TODAY } : item));
+
+    const changed = buildPlan({
+      ...input,
+      finishedOn: new Map(
+        items.flatMap((item) => (item.status === "done" ? [[item.id, TODAY]] : [])),
+      ),
+      goal: { ...input.goal, dailyMinutes: 14 },
+      items,
+    });
+
+    expect(
+      changed.items.filter((item) => item.kind === "boss").map((item) => [item.key, dateOf(item)]),
+    ).toStrictEqual([
+      ["boss:0", "2026-09-29"],
+      ["boss:1", "2026-09-30"],
+      ["boss:2", "2026-10-03"],
+    ]);
+
+    expect(changed.phases.map((phase) => phase.challengeLeftOut ?? false)).toStrictEqual([
+      false,
+      false,
+      false,
+    ]);
+  });
+});
+
 describe("a plan's first day", () => {
   it("has study time even when the learner rests on that weekday, and rests from the next week on", () => {
     const restsOnMonday = [12, 0, 12, 12, 12, 12, 12];
