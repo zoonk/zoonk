@@ -107,7 +107,7 @@ function SubjectRow({
     <ListRowLink href={href}>
       <span className={ROW_GRID_CLASS}>
         <span className="flex min-w-0 flex-col gap-0.5">
-          <ListRowTitle className={cn(notPlanned && "text-muted-foreground")}>
+          <ListRowTitle className={cn("wrap-anywhere", notPlanned && "text-muted-foreground")}>
             {subject.name}
           </ListRowTitle>
 
