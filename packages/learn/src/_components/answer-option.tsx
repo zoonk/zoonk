@@ -119,25 +119,43 @@ export function AnswerOption({
         <Kbd className="[&_svg]:size-3">{marker}</Kbd>
       </LineMarker>
 
+      <TagBesideOrUnder layout={layout} tag={shownTag}>
+        <SpokenMath>{children}</SpokenMath>
+      </TagBesideOrUnder>
+    </button>
+  );
+}
+
+/**
+ * The tag moves under the answer rather than leave it less than half the row or narrower than its
+ * longest word.
+ */
+export function TagBesideOrUnder({
+  children,
+  layout = "row",
+  tag,
+}: {
+  children: React.ReactNode;
+  layout?: "row" | "stacked";
+  tag: React.ReactNode;
+}) {
+  return (
+    <span
+      className={cn(
+        "flex w-full grow basis-1/2 flex-wrap items-start justify-between gap-x-3 gap-y-1",
+        layout === "stacked" && "contents",
+      )}
+    >
       <span
         className={cn(
-          "flex w-full grow basis-1/2 flex-wrap items-start justify-between gap-x-3 gap-y-1",
-          layout === "stacked" && "contents",
+          "flex flex-col",
+          layout === "stacked" ? "min-w-0 flex-1" : "w-full max-w-max grow basis-1/2",
         )}
       >
-        <span
-          className={cn(
-            "flex flex-col",
-            layout === "stacked" ? "min-w-0 flex-1" : "w-full max-w-max grow basis-1/2",
-          )}
-        >
-          <SpokenMath>{children}</SpokenMath>
-        </span>
-
-        {shownTag && (
-          <LineMarker className="h-auto min-h-lh min-w-0 flex-initial">{shownTag}</LineMarker>
-        )}
+        {children}
       </span>
-    </button>
+
+      {tag && <LineMarker className="h-auto min-h-lh min-w-0 flex-initial">{tag}</LineMarker>}
+    </span>
   );
 }
