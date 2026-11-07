@@ -109,8 +109,11 @@ export async function readReleasesPage({
     hints: { brand: page.brand, name: page.name, release },
     known: true,
     language: page.language,
+    products: {
+      own: { id: page.productId },
+      siblings: { NOT: { id: page.productId }, organizationId: page.organizationId },
+    },
     serviceTier,
-    siblings: { NOT: { id: page.productId }, organizationId: page.organizationId },
     sources: [{ ...page, id: page.sourceId, isReleasesPage: true }],
   });
 

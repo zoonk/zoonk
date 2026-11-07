@@ -85,19 +85,19 @@ export async function readProductSources({
   sourceIds,
   ...input
 }: ReadInput & {
-  /** The brand's domain, whose other saved products' lines never give this one a release. */
+  /** The brand's domain, whose saved products tell this product's names from its siblings'. */
   brandDomain: string;
   releasesPageIds: readonly string[];
   sourceIds: readonly string[];
 }): Promise<ProductSourcesReading> {
   const sources = await loadReadSources({ releasesPageIds, sourceIds });
 
+  const named = whereProductNamed(toNameKey(input.hints.name));
+  const organization = { domain: brandDomain };
+
   return readSourceVersions({
     ...input,
-    siblings: {
-      NOT: whereProductNamed(toNameKey(input.hints.name)),
-      organization: { domain: brandDomain },
-    },
+    products: { own: { ...named, organization }, siblings: { NOT: named, organization } },
     sources,
   });
 }
@@ -108,15 +108,15 @@ export async function readSourceVersions({
   hints,
   known = false,
   language,
+  products,
   serviceTier,
-  siblings,
   sources,
 }: ReadInput & {
-  /** The brand's other saved products, whose lines never give this one a release. */
-  siblings: ProductWhereInput;
+  /** The product as saved, if it is, and the brand's other saved products. */
+  products: { own: ProductWhereInput; siblings: ProductWhereInput };
   sources: readonly ReadSource[];
 }): Promise<ProductSourcesReading> {
-  const [{ data, provenance }, siblingKeys] = await Promise.all([
+  const [{ data, provenance }, productKeys, siblingKeys] = await Promise.all([
     readProductPages({
       analytics,
       hints,
@@ -124,11 +124,13 @@ export async function readSourceVersions({
       pages: sources.map(({ text, title, url }) => ({ text, title, url })),
       serviceTier,
     }),
-    listProductKeys(siblings),
+    listProductKeys(products.own),
+    listProductKeys(products.siblings),
   ]);
 
   const checked = checkProductReading({
     pages: sources.map(({ isReleasesPage, text }) => ({ isReleasesPage, language, text })),
+    productKeys,
     productName: hints.name,
     reading: data,
     siblingKeys,

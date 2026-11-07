@@ -7,7 +7,7 @@ import {
   findPassageLines,
   isPassageExactlyInDocument,
 } from "../exams/passage-check";
-import { namesAnyProduct } from "./product-keys";
+import { namesAnyProduct, toNameKey } from "./product-keys";
 import { hasVersionToken, isDateStated, isMonthStated, isVersionStated } from "./release-claims";
 
 /** A page's language names its months ("21 de outubro de 2025"). */
@@ -122,7 +122,8 @@ function isClaimStated({
 
 type ProductContext = {
   pages: readonly ReadProductPage[];
-  productNames: readonly string[];
+  /** Name keys of this product: its names and aliases, as the pages read them or as stored. */
+  productKeys: readonly string[];
   /** Name keys of the brand's other saved products, their names and aliases. */
   siblingKeys: readonly string[];
 };
@@ -141,21 +142,21 @@ function isVersionRow({
   page: ReadProductPage;
   release: ProductReleaseClaim;
 }): boolean {
-  const { productNames, siblingKeys } = context;
+  const { productKeys, siblingKeys } = context;
   const lines = findPassageLines({ passage: release.passage, text: page.text });
 
   return (
     page.isReleasesPage === true &&
     isVersionStated(release) &&
-    findNamesInDocument({ names: productNames, text: release.name }).size > 0 &&
     lines.length > 0 &&
-    !lines.some((line) => namesAnyProduct({ keys: siblingKeys, own: productNames, text: line }))
+    !lines.some((line) => namesAnyProduct({ keys: siblingKeys, own: productKeys, text: line }))
   );
 }
 
 /**
- * A release keeps its version only when its name and passage state it, so a year in its date never
- * passes for one. Its passage names it, or it is a version row of the product's releases page.
+ * A release belongs to this product: its name names the product by its name or an alias, and its
+ * passage states that name, or it is a version row of the product's releases page. Its version
+ * counts only when its name and passage state it, so a year in its date never passes for one.
  */
 function checkRelease({
   context,
@@ -164,12 +165,13 @@ function checkRelease({
   context: ProductContext;
   release: ProductReleaseClaim;
 }): CheckedProductRelease | null {
-  const { pages } = context;
+  const { pages, productKeys } = context;
   const page = pages[release.document - 1];
 
   if (
     !page ||
     !isQuoted({ claim: release, pages }) ||
+    !namesAnyProduct({ keys: productKeys, own: [], text: release.name }) ||
     !(
       isNamed({ name: release.name, passage: release.passage }) ||
       isVersionRow({ context, page, release })
@@ -220,12 +222,15 @@ function checkProduct({
 export function checkProductReading({
   pages,
   productName,
+  productKeys = [],
   reading,
   siblingKeys = [],
 }: {
   pages: readonly ReadProductPage[];
   /** A known product's stored name, which its releases name when the reading has no product. */
   productName: string;
+  /** Name keys of the product as saved, its name and aliases, when it's saved already. */
+  productKeys?: readonly string[];
   reading: ProductReading;
   /** Name keys of the brand's other saved products, their names and aliases. */
   siblingKeys?: readonly string[];
@@ -233,7 +238,12 @@ export function checkProductReading({
   const { brand } = reading;
   const product = checkProduct({ pages, product: reading.product });
   const productNames = product ? [product.name, ...product.aliases] : [productName];
-  const context = { pages, productNames, siblingKeys };
+
+  const context = {
+    pages,
+    productKeys: [...productNames.map((name) => toNameKey(name)), ...productKeys],
+    siblingKeys,
+  };
 
   const releases = reading.releases.flatMap((release) => checkRelease({ context, release }) ?? []);
 

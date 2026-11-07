@@ -366,6 +366,48 @@ describe("a release row that names only its version", () => {
   });
 });
 
+describe("a release that belongs to another product", () => {
+  const page = "Comet Phone 1.37 released on 2026-09-15.\nOrbit 4.2 shipped with offline sync.";
+
+  function readKnown({
+    productKeys = ["orbitserver"],
+    releases,
+  }: {
+    productKeys?: string[];
+    releases: ProductReleaseClaim[];
+  }) {
+    return checkProductReading({
+      pages: [releasesPage(page)],
+      productKeys,
+      productName: "Orbit Server",
+      reading: reading({ brand: null, product: null, releases }),
+    }).releases.map((kept) => kept.name);
+  }
+
+  it("drops a release whose name names another product, on either branch", () => {
+    expect(
+      readKnown({
+        releases: [
+          {
+            ...tableRelease("Comet Phone 1.37", "1.37", "Comet Phone 1.37 released on 2026-09-15."),
+            releasedOn: "2026-09-15",
+          },
+          tableRelease("Comet Phone 1.37", "1.37", "1.37 released on 2026-09-15."),
+        ],
+      }),
+    ).toStrictEqual([]);
+  });
+
+  it("keeps a release named by one of the product's stored aliases", () => {
+    const releases = [tableRelease("Orbit 4.2", "4.2", "Orbit 4.2 shipped with offline sync.")];
+
+    expect([
+      readKnown({ productKeys: ["orbitserver", "orbit"], releases }),
+      readKnown({ releases }),
+    ]).toStrictEqual([["Orbit 4.2"], []]);
+  });
+});
+
 describe("a release dated by its month", () => {
   const page = `Orbit Notes 5 shipped in October 2025 with offline sync.
 Orbit Notes 4 shipped in May 2024.
