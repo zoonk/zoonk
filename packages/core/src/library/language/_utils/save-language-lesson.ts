@@ -62,6 +62,8 @@ function toLessonSentences({
             distractors: sentence.distractors,
             explanation: sentence.explanation,
             lessonId,
+            otherSentenceOrders: sentence.otherOrders,
+            otherTranslationOrders: sentence.otherTranslationOrders,
             position,
             sentenceId,
             translation: sentence.translation,
@@ -98,6 +100,7 @@ export async function saveLanguageLesson(input: SaveLanguageLessonInput): Promis
       const claimed = await tx.lesson.updateMany({
         data: {
           contentStatus: "completed",
+          sentenceOrdersOwedAt: null,
           summary: { ideas: content.summary.map((text) => ({ text })) },
         },
         where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },

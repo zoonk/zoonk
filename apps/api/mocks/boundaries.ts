@@ -46,6 +46,7 @@ export const boundaries = {
     generateAlphabetLesson: vi.fn(),
   },
   "@zoonk/ai/tasks/language/conversation-scenario": { generateConversationScenario: vi.fn() },
+  "@zoonk/ai/tasks/language/language-sentence-orders": { generateLanguageSentenceOrders: vi.fn() },
   "@zoonk/ai/tasks/language/level-test-bank": { generateLevelTestBank: vi.fn() },
   "@zoonk/ai/tasks/lesson-marks": { tagLesson: vi.fn() },
   "@zoonk/ai/tasks/lesson-spec": { generateLessonSpec: vi.fn() },

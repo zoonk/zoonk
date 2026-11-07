@@ -27,6 +27,7 @@ import { getStartMock } from "../_test-utils/start-mock";
 import { followUpsWorkflow } from "../follow-ups/follow-ups-workflow";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
 import { pictureChecksWorkflow } from "../images/picture-checks-workflow";
+import { sentenceOrdersWorkflow } from "../language/sentence-orders-workflow";
 import { courseReleaseWorkflow } from "../products/course-release-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
@@ -239,6 +240,31 @@ describe(dailySweepsWorkflow, () => {
     expect(started).toContain(owed.id);
     expect(started).not.toContain(checked.id);
     expect(result.pictureChecks).toBe(started.length);
+  });
+
+  it("starts writing the word orders lessons written before them still owe", async () => {
+    const [owed, written, failing] = await Promise.all([
+      // The sweep takes the longest-owed first, so other tests' owed lessons can't push this one out
+      // of its batch.
+      libraryLessonFixture({ sentenceOrdersOwedAt: new Date(Date.now() - 30 * DAY_MS) }),
+      libraryLessonFixture({ sentenceOrdersOwedAt: null }),
+      libraryLessonFixture({
+        sentenceOrdersAttempts: 8,
+        sentenceOrdersOwedAt: new Date(Date.now() - 30 * DAY_MS),
+      }),
+    ]);
+
+    const result = await dailySweepsWorkflow(scheduledRun());
+    assert(result.status === "swept");
+
+    const started = getStartMock()
+      .mock.calls.filter(([workflow]) => workflow === sentenceOrdersWorkflow)
+      .flatMap(([, args]) => (args as [{ lessonIds: string[] }])[0].lessonIds);
+
+    expect(started).toContain(owed.id);
+    expect(started).not.toContain(written.id);
+    expect(started).not.toContain(failing.id);
+    expect(result.sentenceOrders).toBe(started.length);
   });
 
   it("starts the rewrite of what a changed source left flagged", async () => {

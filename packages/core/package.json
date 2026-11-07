@@ -363,6 +363,7 @@
     "./library/language/voice-word": "./src/library/language/voice-word.ts",
     "./library/language/write-alphabet-lesson": "./src/library/language/alphabet/write-alphabet-lesson.ts",
     "./library/language/write-lesson-content": "./src/library/language/write-language-lesson-content.ts",
+    "./library/language/write-owed-sentence-orders": "./src/library/language/write-owed-sentence-orders.ts",
     "./library/lessons/map": "./src/library/lessons/lesson-map.ts",
     "./library/lessons/public": "./src/library/lessons/get-public-library-lesson.ts",
     "./library/lessons/regenerate": "./src/library/lessons/regenerate-lessons.ts",

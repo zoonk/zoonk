@@ -5,6 +5,7 @@ import { deleteInactiveGuests } from "@zoonk/core/guests/delete-inactive";
 import { type FreshnessTarget } from "@zoonk/core/library/exams/check-freshness";
 import { listDueFreshnessTargets } from "@zoonk/core/library/exams/freshness-checks";
 import { recalibrateItemDifficulties } from "@zoonk/core/library/items/recalibrate";
+import { listOwedSentenceOrders } from "@zoonk/core/library/language/write-owed-sentence-orders";
 import { deleteRetiredSteps } from "@zoonk/core/library/lessons/versions";
 import { listOwedPictureChecks } from "@zoonk/core/library/media/check-image";
 import { listLessonsForLaterReview } from "@zoonk/core/library/quality/later-reviews";
@@ -49,6 +50,12 @@ export async function listOwedPictureChecksStep(): Promise<string[]> {
   "use step";
 
   return listOwedPictureChecks();
+}
+
+export async function listOwedSentenceOrdersStep(): Promise<string[]> {
+  "use step";
+
+  return listOwedSentenceOrders();
 }
 
 export async function recalibrateItemDifficultiesStep(): Promise<number> {
