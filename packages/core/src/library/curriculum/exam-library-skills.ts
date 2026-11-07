@@ -60,11 +60,9 @@ async function listCourseSkills({
     ), taught AS (
       SELECT chapter.skill_id, chapter.course_id, lesson.lesson_id
       FROM chapter_teaching AS chapter
-      JOIN lesson_chapters AS lesson ON lesson.chapter_id = chapter.chapter_id
-      WHERE chapter.course_id = ANY(${[...courseIds]}::uuid[])
-      UNION ALL
-      SELECT skill_id, course_id, NULL::uuid AS lesson_id
-      FROM chapter_teaching WHERE skill_id = ANY(${[...skillIds]}::uuid[])
+      LEFT JOIN lesson_chapters AS lesson ON lesson.chapter_id = chapter.chapter_id
+      WHERE (chapter.course_id = ANY(${[...courseIds]}::uuid[]) AND lesson.lesson_id IS NOT NULL)
+        OR chapter.skill_id = ANY(${[...skillIds]}::uuid[])
       UNION ALL
       SELECT link.skill_id, placement.course_id, lesson.id
       FROM lesson_skills AS link
