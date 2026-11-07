@@ -14,6 +14,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
+import com.zoonk.android.feature.player.runAnswerJson
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -66,7 +67,7 @@ class ActivityKitFlowTest {
         tap("Take 25% off")
 
         // The server has the missed check, so the run it resumes is rebuilt from it.
-        harness.api.runAnswers = """[{"answeredAt":"2026-10-28T10:01:00Z","isCorrect":false,"stepId":"$ACTIVITY"}]"""
+        harness.api.runAnswers = "[${runAnswerJson(ACTIVITY, isCorrect = false)}]"
         harness.viewModel = harness.openAgain()
         restoration.emulateSavedInstanceStateRestore()
 
@@ -86,7 +87,7 @@ class ActivityKitFlowTest {
         tap("$45")
         harness.tap("Check")
 
-        harness.api.runAnswers = """[{"answeredAt":"2026-10-28T10:01:00Z","isCorrect":false,"stepId":"$ACTIVITY"}]"""
+        harness.api.runAnswers = "[${runAnswerJson(ACTIVITY, isCorrect = false)}]"
         harness.viewModel = harness.openAgain()
         restoration.emulateSavedInstanceStateRestore()
 

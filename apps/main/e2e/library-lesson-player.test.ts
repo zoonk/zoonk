@@ -269,6 +269,67 @@ test.describe("Library lesson player", () => {
       .toBe(1);
   });
 
+  test("shows a question answered before a reload as answered on the way back, and counts it once", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const { lesson, steps } = await playableLessonFixture({
+      steps: [
+        "explanation",
+        "check",
+        {
+          content: { text: "Denser means more likely.", title: "Reading it" },
+          kind: "explanation",
+        },
+        "check",
+      ],
+    });
+
+    const answered = steps[1]?.id ?? "";
+
+    const attempts = () =>
+      prisma.attempt.count({ where: { stepId: answered, userId: noProgressUser.id } });
+
+    const rightOption = page.getByRole("radio", {
+      name: "Where the electron is most likely to be found",
+    });
+
+    await page.goto(`/learn/${lesson.id}`);
+    await readExplanation(page);
+    await rightOption.click();
+    await primary(page, /^Check/u).click();
+    await expectVerdict(page, "Correct!");
+    await expect.poll(attempts).toBe(1);
+
+    await page.reload();
+    await expect(page.getByText("Reading it")).toBeVisible();
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+    await expect(rightOption).toBeChecked();
+    await expectVerdict(page, "Correct!");
+    await primary(page, /^Continue/u).click();
+
+    await expect(page.getByText("Reading it")).toBeVisible();
+    await primary(page, /^Next/u).click();
+    await rightOption.click();
+    await primary(page, /^Check/u).click();
+    await expectVerdict(page, "Correct!");
+    await primary(page, /^Continue/u).click();
+
+    await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+
+    await expect
+      .poll(() =>
+        prisma.learningEvent.findFirst({
+          select: { correctAnswers: true },
+          where: { endedAt: { not: null }, userId: noProgressUser.id },
+        }),
+      )
+      .toStrictEqual({ correctAnswers: 2 });
+
+    expect(await attempts()).toBe(1);
+  });
+
   test("keeps a signed-in learner when the session check fails, and opens the lesson on a retry", async ({
     userWithoutProgress: page,
   }) => {

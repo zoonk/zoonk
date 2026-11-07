@@ -537,7 +537,7 @@ private fun Segments(
     state: LessonPlayerState,
 ) {
     val label = stringResource(R.string.player_progress)
-    val done = if (state.phase == LessonPhase.Completed) segments.size else state.position
+    val done = segments.count { it != TaskSegment.Ahead && it != TaskSegment.Current }
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
     BoxWithConstraints(Modifier.fillMaxWidth().onPageSpan { span = it }) {

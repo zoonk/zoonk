@@ -574,7 +574,7 @@ internal fun TypedAnswerView(
 /**
  * Main's spoken screen: said into L8's recorder; when the learner can't talk today, built from the
  * heard sentence if the step has its listening exercise, else typed, as when the microphone is
- * blocked. All are graded by the server.
+ * blocked. All are graded by the server. An answered screen shows its answer the way it was given.
  */
 @Composable
 internal fun SpokenAnswerView(
@@ -590,13 +590,13 @@ internal fun SpokenAnswerView(
     val spoken = content.content
     val locked = state.phase != LessonPhase.Playing
     var micBlocked by rememberSaveable(step.id) { mutableStateOf(false) }
-    val types = actions.cantTalk || micBlocked
+    val types = if (locked) answer is LessonAnswer.Spoken else actions.cantTalk || micBlocked
     val switchTo = { cantTalk: Boolean ->
         actions.select(null)
         micBlocked = false
         actions.setCantTalk(cantTalk)
     }
-    val listening = content.listeningInstead(actions.cantTalk)
+    val listening = content.listeningInstead(if (locked) answer is LessonAnswer.Listening else actions.cantTalk)
 
     if (listening != null) {
         LanguageStepView(listening, answer, state.results[step.id], locked, language, actions, part)

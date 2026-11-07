@@ -3,7 +3,7 @@
 import { MAX_ANSWER_DURATION_MS } from "@zoonk/core/learner/contract";
 import { type LessonStepAnswer } from "@zoonk/core/lesson-player/contract";
 import { settleWithin } from "@zoonk/utils/timeout";
-import { type Dispatch, useCallback } from "react";
+import { type Dispatch, useCallback, useRef } from "react";
 import { fromServerCheck, fromSpokenGrade } from "./_utils/lesson-results";
 import { type UnsentAnswer } from "./_utils/unsent-answers";
 import { type LessonPlayerAction, type LessonPlayerState } from "./lesson-player-state";
@@ -12,6 +12,8 @@ import { type LessonPlayerAdapters, type PlayableLibraryStep } from "./lesson-pl
 export type CheckContext = { answer: LessonStepAnswer; step: PlayableLibraryStep };
 
 type RecordContext = CheckContext & { attemptId: string; isCorrect: boolean };
+
+type PendingAttempt = { attemptId: string; text: string };
 
 export const CHECK_BOUNDS = {
   slowMs: 15_000,
@@ -44,6 +46,8 @@ export function useStepGrading({
   resendHeld: () => Promise<boolean>;
   state: LessonPlayerState;
 }) {
+  const pendingRef = useRef(new Map<string, PendingAttempt>());
+
   const recordInBackground = useCallback(
     ({ answer, attemptId, isCorrect, step }: RecordContext) => {
       hold({
@@ -64,8 +68,12 @@ export function useStepGrading({
       const durationMs = getAnswerDurationMs(state.stepStartedAt);
       dispatch({ stepId: step.id, type: "checkStarted" });
       const usedHelp = state.helped.includes(step.id);
+      const answerText = "text" in answer ? answer.text : "";
+      const pending = pendingRef.current.get(step.id);
 
-      const attemptId = crypto.randomUUID();
+      // Asked again after its reply was lost, the server replays the saved verdict for the same id.
+      const attemptId = pending?.text === answerText ? pending.attemptId : crypto.randomUUID();
+      pendingRef.current.set(step.id, { attemptId, text: answerText });
 
       const outcome = await boundedGrade(CHECK_BOUNDS.timeoutMs.typed, () =>
         keepGrade({
@@ -86,7 +94,7 @@ export function useStepGrading({
       );
 
       if (outcome?.status === "checked") {
-        const answerText = "text" in answer ? answer.text : "";
+        pendingRef.current.delete(step.id);
 
         dispatch({
           counts: outcome.result.checked,
