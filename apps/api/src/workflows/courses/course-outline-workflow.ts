@@ -168,6 +168,15 @@ async function writeClaimedBands({
     ]);
 
     throw error;
+  } finally {
+    await replanWaitingGoals({
+      context,
+      goalIds: [],
+      skillIds: bands.flatMap((plan) => [
+        ...plan.skills.map((skill) => skill.id),
+        ...plan.extensions.map(({ skill }) => skill.id),
+      ]),
+    });
   }
 }
 

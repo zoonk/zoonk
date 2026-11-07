@@ -4,10 +4,12 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { replanWaitingGoal } from "../library/curriculum/replan-waiting-goals";
 import { afterPlanInputWrite, withPlanRetry } from "../plans/plan-conflict";
-import { loadDayStandInCourseIds } from "../sessions/_utils/outlining-stand-ins";
+import {
+  hasOutliningCourses,
+  loadDayStandInCourseIds,
+} from "../sessions/_utils/outlining-stand-ins";
 import { followSavedDay } from "../sessions/_utils/refresh-study-day-selection";
 import { findSavedDaySession } from "../sessions/_utils/saved-day-session";
-import { listDayStandIns } from "./outline-window";
 
 /**
  * The learner asked for their plan's lessons, so their day reads as getting them while the
@@ -53,12 +55,12 @@ export async function followWrittenLessons({
   const now = new Date();
 
   if (askedAt !== null) {
-    const standIns = await listDayStandIns({
-      goalId,
+    const courseIds = await loadDayStandInCourseIds({
+      goal,
       localDate: getDateInTimeZone({ date: now, timeZone }),
     });
 
-    if (standIns.length === 0) {
+    if (!(await hasOutliningCourses({ courseIds, now }))) {
       await clearLessonsAsk({ askedAt, goalId });
     }
   }
@@ -102,7 +104,11 @@ export async function endLessonsAsk({
   const localDate = getDateInTimeZone({ date: new Date(), timeZone });
   const dayCourseIds = await loadDayStandInCourseIds({ goal, localDate });
 
-  if (dayCourseIds.some((courseId) => startedCourseIds.includes(courseId))) {
+  if (
+    await hasOutliningCourses({
+      courseIds: dayCourseIds.filter((courseId) => startedCourseIds.includes(courseId)),
+    })
+  ) {
     return;
   }
 

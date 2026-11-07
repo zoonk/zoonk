@@ -45,6 +45,30 @@ export async function loadDayStandInCourseIds({
   ];
 }
 
+export async function hasOutliningCourses({
+  client = prisma,
+  courseIds,
+  now = new Date(),
+}: {
+  client?: TransactionClient;
+  courseIds: readonly string[];
+  now?: Date;
+}): Promise<boolean> {
+  if (courseIds.length === 0) {
+    return false;
+  }
+
+  const outlining = await client.course.count({
+    where: {
+      id: { in: [...courseIds] },
+      outlineStatus: { in: OUTLINING },
+      updatedAt: { gt: getOutlineStaleBefore(now) },
+    },
+  });
+
+  return outlining > 0;
+}
+
 /**
  * Whether the day's stand-ins are getting lessons (`awaiting`) or wait for someone to ask (`idle`);
  * null without stand-ins. They're getting lessons while an outline is writing a course they need or
@@ -61,15 +85,9 @@ export async function getDayOutlines(input: DayOutlinesInput): Promise<DayOutlin
   const staleBefore = getOutlineStaleBefore(now);
 
   const [outlining, asked] = await Promise.all([
-    client.course.count({
-      where: {
-        id: { in: courseIds },
-        outlineStatus: { in: OUTLINING },
-        updatedAt: { gt: staleBefore },
-      },
-    }),
+    hasOutliningCourses({ client, courseIds, now }),
     client.plan.count({ where: { goalId: goal.id, lessonsAskedAt: { gt: staleBefore } } }),
   ]);
 
-  return outlining + asked > 0 ? "awaiting" : "idle";
+  return outlining || asked > 0 ? "awaiting" : "idle";
 }

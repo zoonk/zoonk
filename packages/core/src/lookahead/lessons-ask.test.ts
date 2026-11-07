@@ -18,6 +18,7 @@ import {
 } from "../library/identity/_test-utils/identity-mocks";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { askForLessons, endLessonsAsk, followWrittenLessons } from "./lessons-ask";
+import { listDayStandIns } from "./outline-window";
 
 describe(endLessonsAsk, () => {
   beforeEach(() => {
@@ -55,9 +56,11 @@ describe(endLessonsAsk, () => {
   it.each([false, true])(
     "a second outline under the same ask still owes its lessons (first outline followed: %s)",
     async (followed) => {
-      const [first, second, user] = await Promise.all([
+      const [first, second, firstCourse, secondCourse, user] = await Promise.all([
         skillFixture(),
         skillFixture(),
+        courseFixture({ outlineStatus: "running" }),
+        courseFixture({ outlineStatus: "running" }),
         userFixture(),
       ]);
 
@@ -78,8 +81,9 @@ describe(endLessonsAsk, () => {
         goalId: goal.id,
         graph: {
           phases: [{ milestone: null, name: "Phase" }],
-          skills: [first, second].map((skill) => ({
+          skills: [first, second].map((skill, index) => ({
             area: "Physics",
+            courseIds: [index === 0 ? firstCourse.id : secondCourse.id],
             lessons: 2,
             name: skill.name,
             phase: 0,
@@ -92,7 +96,13 @@ describe(endLessonsAsk, () => {
       const askedAt = await askForLessons({ goalId: goal.id });
 
       // The first course's outline lands: `replanAndFollow` in replan-waiting-goals.ts.
-      await outlineSkill(first);
+      await outlineSkill(first, { course: firstCourse });
+
+      await prisma.course.update({
+        data: { outlineStatus: "completed" },
+        where: { id: firstCourse.id },
+      });
+
       const served = await replanWaitingGoal(goal.id);
 
       if (followed) {
@@ -112,7 +122,13 @@ describe(endLessonsAsk, () => {
 
       // The second course's outline lands a minute later, inside the ask's window.
       vi.setSystemTime(new Date(WAITING_START.getTime() + 60_000));
-      const secondLessons = await outlineSkill(second);
+      const secondLessons = await outlineSkill(second, { course: secondCourse });
+
+      await prisma.course.update({
+        data: { outlineStatus: "completed" },
+        where: { id: secondCourse.id },
+      });
+
       await replanWaitingGoal(goal.id);
 
       const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
@@ -131,6 +147,39 @@ describe(endLessonsAsk, () => {
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
       ).resolves.toMatchObject({ lessonsAskedAt: null });
+    },
+  );
+
+  it.each(["completed", "failed"] as const)(
+    "ends the ask when today's unwritten lessons belong to a %s outline",
+    async (outlineStatus) => {
+      const [skill, course] = await Promise.all([skillFixture(), courseFixture({ outlineStatus })]);
+      const { goal, plan } = await waitingGoal(skill);
+
+      await prisma.goal.update({ data: { primaryCourseId: course.id }, where: { id: goal.id } });
+
+      const askedAt = await askForLessons({ goalId: goal.id });
+
+      await endLessonsAsk({
+        askedAt: askedAt ?? 0,
+        goalId: goal.id,
+        startedCourseIds: [course.id],
+      });
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
+      ).resolves.toMatchObject({ lessonsAskedAt: null });
+
+      const nextAsk = await askForLessons({ goalId: goal.id });
+      await followWrittenLessons({ askedAt: nextAsk, goalId: goal.id });
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
+      ).resolves.toMatchObject({ lessonsAskedAt: null });
+
+      await expect(
+        listDayStandIns({ goalId: goal.id, localDate: new Date("2020-09-28T00:00:00Z") }),
+      ).resolves.not.toHaveLength(0);
     },
   );
 
