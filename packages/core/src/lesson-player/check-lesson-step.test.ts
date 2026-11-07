@@ -20,6 +20,7 @@ import { GUEST_DAILY_SPEND_BUDGET_MICROS, getUsageRule } from "../entitlements/l
 import { applyLevelEvidence } from "../language/levels/skill-level-rules";
 import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
+import { typedGrade } from "./_test-utils/typed-grade";
 import { type LessonStepCheckOutcome, checkLessonStep } from "./check-lesson-step";
 import { type LessonStepAnswer } from "./contract";
 import type * as SkillLevelRules from "../language/levels/skill-level-rules";
@@ -100,32 +101,6 @@ async function whileLearnerLocked<T>({
   release.resolve(null);
   await holding;
   return result;
-}
-
-function typedGrade({
-  feedback,
-  isCorrect,
-  score,
-}: {
-  feedback: string;
-  isCorrect: boolean;
-  score: number;
-}): Awaited<ReturnType<typeof gradeTypedAnswer>> {
-  return {
-    data: {
-      corrections: [],
-      feedback,
-      isCorrect,
-      keyPoints: [{ met: isCorrect, text: "The cloud shows where it's likely to be found" }],
-      method: "model",
-      score,
-      spelling: null,
-    },
-    provenance: null,
-    systemPrompt: "",
-    usage: null,
-    userPrompt: "",
-  };
 }
 
 describe(checkLessonStep, () => {

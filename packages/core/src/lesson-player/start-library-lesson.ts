@@ -26,6 +26,8 @@ import {
   loadProgressAnswers,
   loadProgressRuns,
 } from "./_utils/lesson-runs";
+import { loadPlayableSteps } from "./_utils/load-playable-steps";
+import { restoreRunAnswers } from "./_utils/restore-run-answers";
 import { getLatePictureStepIds } from "./_utils/screen-pictures";
 import { type LibraryLessonRun, type LibraryLessonStartInput } from "./contract";
 
@@ -96,19 +98,28 @@ async function loadRunProgress({
 
   const version = await findOpenedVersion({ lessonId, since, userId });
 
-  const [answers, lesson] = await Promise.all([
+  const [attempts, lesson] = await Promise.all([
     loadProgressAnswers({ lessonId, since, userId, version }),
     findPlayableLessonRow({ lessonId, userId, version }),
   ]);
 
-  return lesson
-    ? {
-        answers,
-        optionalStepIds: [
-          ...getLatePictureStepIds({ rows: lesson.steps, runStartedAt: run.startedAt }),
-        ],
-      }
-    : null;
+  if (!lesson) {
+    return null;
+  }
+
+  const answeredIds = new Set(attempts.map((attempt) => attempt.stepId));
+
+  const steps = await loadPlayableSteps({
+    lesson,
+    rows: lesson.steps.filter((row) => answeredIds.has(row.id)),
+  });
+
+  return {
+    answers: await restoreRunAnswers({ attempts, lesson: { ...lesson, steps }, userId }),
+    optionalStepIds: [
+      ...getLatePictureStepIds({ rows: lesson.steps, runStartedAt: run.startedAt }),
+    ],
+  };
 }
 
 async function readRun({
