@@ -1,7 +1,7 @@
 import { isAnswerableStep } from "@zoonk/core/lesson-player/run";
 import { type LessonPlayerState } from "../lesson-player-state";
 import { type LessonRunAnswers, type PlayableLibraryStep } from "../lesson-player-types";
-import { finishScreens } from "./lesson-end";
+import { finishScreens, isAtEnd } from "./lesson-end";
 import { enterPosition } from "./lesson-flow";
 import { fromRunAnswer } from "./lesson-results";
 import { isRetryStep } from "./lesson-steps";
@@ -38,13 +38,15 @@ export function getRunVerdicts(answers: LessonRunAnswers): Record<string, boolea
 
 function getMissedOnce({
   answers,
-  state,
+  queue,
+  steps,
 }: {
   answers: LessonRunAnswers;
-  state: LessonPlayerState;
+  queue: string[];
+  steps: LessonPlayerState["steps"];
 }): string[] {
-  return state.queue.filter((stepId) => {
-    const step = state.steps[stepId];
+  return queue.filter((stepId) => {
+    const step = steps[stepId];
     const tries = answers.filter((answer) => answer.stepId === stepId);
 
     return step && isRetryStep(step) && tries.length === 1 && tries[0]?.isCorrect === false;
@@ -143,7 +145,7 @@ export function requeueRetries(
   answers: LessonRunAnswers,
 ): LessonPlayerState {
   const queue = state.queue.filter((stepId, index) => state.queue.indexOf(stepId) === index);
-  const missedOnce = getMissedOnce({ answers, state: { ...state, queue } });
+  const missedOnce = getMissedOnce({ answers, queue, steps: state.steps });
 
   return {
     ...state,
@@ -152,51 +154,70 @@ export function requeueRetries(
   };
 }
 
-/** Takes the run's word on every answerable screen except the one in view and those the learner worked on. */
+function getLessonQueue(state: LessonPlayerState): { position: number; queue: string[] } {
+  const { quickCheck } = state;
+
+  return quickCheck
+    ? { position: quickCheck.returnPosition, queue: quickCheck.returnQueue }
+    : { position: state.position, queue: state.queue };
+}
+
+/**
+ * Screens the learner worked on keep that work and every other screen takes the run's answer, result
+ * and retry, with the learner left where they are. First verdicts are the run's wherever it has one,
+ * since those are what it counts.
+ */
 export function mergeUntouched(
   state: LessonPlayerState,
   answers: LessonRunAnswers,
 ): LessonPlayerState {
-  if (state.quickCheck) {
-    return state;
-  }
+  const known = answers.filter((answer) => answer.stepId in state.steps);
 
-  const inView = state.queue[state.position];
-
-  const open = Object.values(state.steps)
-    .filter(
-      (step) => isAnswerableStep(step) && step.id !== inView && !state.actedOn.includes(step.id),
-    )
+  const untouched = Object.values(state.steps)
+    .filter((step) => isAnswerableStep(step) && !state.actedOn.includes(step.id))
     .map((step) => step.id);
 
-  const saved = answers.filter((answer) => open.includes(answer.stepId));
+  const saved = known.filter((answer) => untouched.includes(answer.stepId));
   const restored = restoreAnswers(state, saved);
+  const lesson = getLessonQueue(state);
 
-  const queue = state.queue.filter(
+  const kept = lesson.queue.filter(
     (id, index) =>
-      index <= state.position || !open.includes(id) || state.queue.indexOf(id) === index,
+      index <= lesson.position || !untouched.includes(id) || lesson.queue.indexOf(id) === index,
   );
 
   const missedOnce = getMissedOnce({
     answers: saved,
-    state: { ...state, queue: [...new Set(queue)] },
+    queue: [...new Set(kept)],
+    steps: state.steps,
   });
 
-  return {
+  const owed = missedOnce.filter((id) => kept.indexOf(id) === kept.lastIndexOf(id));
+  const queue = [...kept, ...owed];
+
+  const merged = {
     ...state,
-    answers: { ...omitKeys(state.answers, open), ...restored.answers },
-    firstVerdicts: { ...omitKeys(state.firstVerdicts, open), ...getRunVerdicts(saved) },
-    queue: [...queue, ...missedOnce],
-    results: { ...omitKeys(state.results, open), ...restored.results },
+    answers: { ...omitKeys(state.answers, untouched), ...restored.answers },
+    firstVerdicts: { ...pickKeys(state.firstVerdicts, state.actedOn), ...getRunVerdicts(known) },
+    queue: state.quickCheck ? state.queue : queue,
+    quickCheck: state.quickCheck && { ...state.quickCheck, returnQueue: queue },
+    results: { ...omitKeys(state.results, untouched), ...restored.results },
     retried: [
       ...new Set([
-        ...state.retried.filter((id) => !open.includes(id)),
+        ...state.retried.filter((id) => !untouched.includes(id)),
         ...getRetried(saved),
         ...missedOnce,
       ]),
     ],
     revealed: restored.revealed,
   };
+
+  const inView = state.queue[state.position] ?? "";
+  const changesView = inView in merged.results !== inView in state.results;
+
+  return !isAtEnd(state) && untouched.includes(inView) && changesView
+    ? enterPosition(merged, state.position)
+    : merged;
 }
 
 export function resumeLesson(

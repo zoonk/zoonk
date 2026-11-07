@@ -729,10 +729,12 @@ describe(lessonPlayerReducer, () => {
       },
     ]);
 
-    expect([answeredHere.phase, answeredHere.firstVerdicts]).toStrictEqual([
+    expect([answeredHere.phase, answeredHere.results.q1?.isCorrect]).toStrictEqual([
       "feedback",
-      { q1: false },
+      false,
     ]);
+
+    expect(answeredHere.firstVerdicts).toStrictEqual({ q1: true });
   });
 
   it("goes back to an answer the server never got instead of saving again and again", () => {
@@ -1154,6 +1156,91 @@ describe(lessonPlayerReducer, () => {
       "feedback",
       true,
     ]);
+  });
+
+  it('brings in the run\'s answers while the learner is in "I already know this"', () => {
+    const saved = {
+      ...runAnswer("typed", true),
+      answer: { kind: "typedAnswer", text: "Saved text" } as const,
+    };
+
+    const recovered = play(
+      [explanationStep("e"), checkStep("q"), typedAnswerStep("typed")],
+      [
+        { type: "knowThis" },
+        runStarted({ answers: [saved], held: [] }),
+        ...answerCheck("q", false),
+        { type: "continue" },
+        { type: "continue" },
+      ],
+    );
+
+    expect([getCurrentStep(recovered)?.id, recovered.phase]).toStrictEqual(["typed", "feedback"]);
+    expect(recovered.answers.typed).toStrictEqual(saved.answer);
+  });
+
+  it("counts the run's first verdict on a screen where the learner keeps a draft", () => {
+    const corrected = play(
+      [checkStep("q1"), explanationStep("e"), checkStep("q2")],
+      [
+        { answer: { kind: "check", optionId: "right" }, stepId: "q1", type: "selectAnswer" },
+        runStarted({ answers: [runAnswer("q1", false)], held: [] }),
+        ...answerCheck("q1", true),
+      ],
+    );
+
+    expect(corrected.firstVerdicts.q1).toBe(false);
+    expect(getLessonScreen(corrected).segments[0]).toBe("wrong");
+  });
+
+  it("shows the screen in view answered when a late run has it, but asks a retry in view anew", () => {
+    const atQ2 = play(
+      [checkStep("q1"), explanationStep("e1"), checkStep("q2"), summaryStep("sum")],
+      [...answerCheck("q1", true), { type: "continue" }, { type: "continue" }],
+    );
+
+    const answered = lessonPlayerReducer(
+      atQ2,
+      runStarted({ answers: [runAnswer("q2", true)], held: [] }),
+    );
+
+    expect([getCurrentStep(answered)?.id, answered.phase, answered.reviewing]).toStrictEqual([
+      "q2",
+      "feedback",
+      true,
+    ]);
+
+    expect(answered.answers.q2).toStrictEqual({ kind: "check", optionId: "right" });
+    expect(answered.rounds.q2).not.toBe(atQ2.rounds.q2);
+
+    const miss = runAnswer("q1", false);
+
+    const atRetry = play(
+      [explanationStep("e1"), checkStep("q1"), explanationStep("e2"), checkStep("q2")],
+      [
+        { answers: [miss], type: "unsentPlaced" },
+        { type: "continue" },
+        ...answerCheck("q2", true),
+        { type: "continue" },
+      ],
+    );
+
+    expect([atRetry.queue, atRetry.position, atRetry.phase]).toStrictEqual([
+      ["e1", "q1", "e2", "q2", "q1"],
+      4,
+      "playing",
+    ]);
+
+    const retry = lessonPlayerReducer(atRetry, runStarted({ answers: [miss], held: [] }));
+
+    expect(retry).toMatchObject({
+      phase: "playing",
+      position: 4,
+      queue: atRetry.queue,
+      retried: ["q1"],
+    });
+
+    expect([retry.answers.q1, retry.results.q1]).toStrictEqual([undefined, undefined]);
   });
 
   it("drops a stale miss and its retry when the run has the right retry, keeping the learner's draft", () => {
