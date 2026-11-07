@@ -1,6 +1,13 @@
 import { segmentLearnerWords, segmentWords } from "@zoonk/utils/string";
+import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { keepOtherArrangeOrders } from "./arrange-word-orders";
+import {
+  buildAcceptedArrangeWordSequences,
+  matchesAcceptedArrangeWords,
+  normalizeArrangeWord,
+  segmentArrangeWords,
+} from "./arrange-words-answers";
 
 const ITALIAN = "Quando pioveva l'autobus è arrivato";
 
@@ -22,7 +29,7 @@ describe(keepOtherArrangeOrders, () => {
         orders: ["l'autobus è arrivato, quando pioveva"],
         text: ITALIAN,
       }),
-    ).toStrictEqual(["l'autobus è arrivato, quando pioveva"]);
+    ).toStrictEqual(["l'autobus è arrivato Quando pioveva"]);
   });
 
   it("drops the text's own order and repeated orders", () => {
@@ -98,5 +105,58 @@ describe(keepOtherArrangeOrders, () => {
       "み",
       "ます",
     ]);
+  });
+
+  it("stores Japanese orders using the bank's tiles before grading them", () => {
+    const text = "私は毎朝コーヒーを飲みます";
+
+    const orders = keepOtherArrangeOrders({
+      kind: "listening",
+      orders: ["毎朝 私は コーヒー（を） 飲みます"],
+      text,
+    });
+
+    const otherOrders = orders.map((order) => segmentLearnerWords(order));
+    const accepted = buildAcceptedArrangeWordSequences({ kind: "listening", otherOrders, text });
+
+    expect(otherOrders).toStrictEqual([["毎朝", "私は", "コーヒーを", "飲みます"]]);
+
+    expect(matchesAcceptedArrangeWords(accepted, ["毎朝", "私は", "コーヒーを", "飲みます"])).toBe(
+      true,
+    );
+
+    expect(
+      matchesAcceptedArrangeWords(accepted, ["毎朝", "私は", "コーヒー", "を", "飲みます"]),
+    ).toBe(false);
+  });
+
+  it("keeps the bank's tile multiset when candidate punctuation changes segmentation", () => {
+    fc.assert(
+      fc.property(
+        fc.constantFrom("reading" as const, "listening" as const),
+        fc.constantFrom("コーヒー（を）", "コーヒー(を)", "コーヒーを"),
+        (kind, coffee) => {
+          const text = "私は毎朝コーヒーを飲みます";
+
+          const bank = segmentArrangeWords({ kind, text })
+            .map((word) => normalizeArrangeWord(word))
+            .toSorted();
+
+          const orders = keepOtherArrangeOrders({
+            kind,
+            orders: [`毎朝 私は ${coffee} 飲みます`],
+            text,
+          });
+
+          expect(orders).toHaveLength(1);
+
+          expect(
+            segmentArrangeWords({ kind, text: orders[0]! })
+              .map((word) => normalizeArrangeWord(word))
+              .toSorted(),
+          ).toStrictEqual(bank);
+        },
+      ),
+    );
   });
 });

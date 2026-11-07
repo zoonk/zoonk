@@ -231,9 +231,9 @@ describe(writeLanguageLessonContent, () => {
     expect(
       saved.sentences.map((row) => [row.otherSentenceOrders, row.otherTranslationOrders]),
     ).toStrictEqual([
-      [[], ["O aluguel é quanto?"]],
+      [[], ["o aluguel? é Quanto"]],
       [[], []],
-      [[], ["Estão incluídas as contas"]],
+      [[], ["estão incluídas As contas"]],
     ]);
 
     expect(saved.steps.every((step) => step.skillId === skill.id)).toBe(true);

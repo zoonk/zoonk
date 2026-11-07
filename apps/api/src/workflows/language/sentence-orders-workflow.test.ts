@@ -84,8 +84,8 @@ describe(sentenceOrdersWorkflow, () => {
 
     expect(stored).toMatchObject({
       lesson: { sentenceOrdersOwedAt: null },
-      otherSentenceOrders: ["The rent is how much?"],
-      otherTranslationOrders: ["O aluguel é quanto?"],
+      otherSentenceOrders: ["the rent? is How much"],
+      otherTranslationOrders: ["o aluguel? é Quanto"],
     });
 
     expect(stored.lesson.updatedAt.getTime()).toBeGreaterThan(owed.owedAt.getTime());

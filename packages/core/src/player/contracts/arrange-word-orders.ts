@@ -98,13 +98,11 @@ export function keepOtherArrangeOrders({
     }
 
     seen.add(key);
-    const words = pieces.filter((piece) => piece.key);
 
     return [
       spelled
-        .map((group, index) =>
-          group.length === 1 ? words[index]?.text : group.map((tile) => tile.text).join(" "),
-        )
+        .flat()
+        .map((tile) => tile.text)
         .join(" "),
     ];
   });

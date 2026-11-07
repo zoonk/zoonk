@@ -149,8 +149,8 @@ describe(cleanLanguageLesson, () => {
     });
 
     expect(cleaned.sentences[0]).toMatchObject({
-      otherOrders: ["The rent is how much?"],
-      otherTranslationOrders: ["O aluguel é quanto?"],
+      otherOrders: ["the rent? is How much"],
+      otherTranslationOrders: ["o aluguel? é Quanto"],
     });
   });
 
@@ -175,8 +175,8 @@ describe(cleanLanguageLesson, () => {
     });
 
     expect(cleaned.sentences[0]).toMatchObject({
-      otherOrders: ["To grow plants need water"],
-      otherTranslationOrders: ["To grow plants need water"],
+      otherOrders: ["to grow Plants need water"],
+      otherTranslationOrders: ["to grow Plants need water"],
     });
   });
 
