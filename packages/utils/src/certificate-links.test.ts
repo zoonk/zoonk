@@ -6,13 +6,12 @@ import {
 } from "./certificate-links";
 
 const COURSE = {
+  cefrRange: null,
   code: "K7QF2M9XHD4P",
   completedOn: "2026-03-09",
   courseLevel: null,
   language: "pt",
-  level: null,
   recipientName: "Ana Souza",
-  targetLanguage: null,
   title: "Física quântica do zero",
 };
 
@@ -66,16 +65,15 @@ describe(getCertificateLinks, () => {
     );
   });
 
-  it("names a language certificate by its language and level in the learner's language", () => {
+  it("names a language course's level with the CEFR levels it covers", () => {
     const { linkedInUrl } = getCertificateLinks({
       ...COURSE,
-      language: "en",
-      level: "B1",
-      targetLanguage: "es",
-      title: null,
+      cefrRange: "B1–B2",
+      courseLevel: "intermediate",
+      title: "Italiano",
     });
 
-    expect(new URL(linkedInUrl).searchParams.get("name")).toBe("Spanish B1");
+    expect(new URL(linkedInUrl).searchParams.get("name")).toBe("Italiano · Intermediário (B1–B2)");
   });
 
   it("builds every link on the origin it's given", () => {

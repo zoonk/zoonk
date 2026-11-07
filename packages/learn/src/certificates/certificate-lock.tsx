@@ -16,10 +16,7 @@ export function LockedCertificateSheet({
   facts,
 }: {
   className?: string;
-  facts: Pick<
-    CertificateFacts,
-    "completedOn" | "courseLevel" | "kind" | "level" | "targetLanguage" | "title"
-  >;
+  facts: Pick<CertificateFacts, "cefrRange" | "completedOn" | "courseLevel" | "title">;
 }) {
   const t = useExtracted();
   const certificateName = useCertificateName();

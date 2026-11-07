@@ -1,6 +1,5 @@
 import { getTotalDuration } from "@/lib/public/total-duration";
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
-import { parseCefrScore } from "@zoonk/utils/cefr";
 import { formatDuration } from "@zoonk/utils/duration";
 import { getFormattingLocale } from "@zoonk/utils/locale";
 import { getNumberFormatter } from "@zoonk/utils/localized-number";
@@ -79,12 +78,4 @@ export function getShownStudyCounts(facts: StudyCounts): StudyCounts {
 
 export function getShownTopics(topics: readonly string[]): string[] {
   return topics.slice(0, MAX_TOPICS);
-}
-
-const HALF_STEPS_PER_BAND = 2;
-
-/** The ladder's cells to fill, two per band from A1: a level fills through its whole band. */
-export function getLadderFill(level: CertificateFacts["level"]) {
-  const score = parseCefrScore(level);
-  return score === null ? 0 : (score + 1) * HALF_STEPS_PER_BAND;
 }

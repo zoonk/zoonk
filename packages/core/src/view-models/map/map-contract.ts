@@ -110,7 +110,18 @@ export const fieldMapViewSchema = z
               "The certificates of this plan's levels and of the plan itself the learner holds, in level order with the plan's last; a level they certified in another goal too",
           }),
         unclaimed: z
-          .array(z.object({ courseLevel: z.enum(CourseLevel).nullable() }))
+          .array(
+            z.object({
+              cefrRange: z
+                .string()
+                .nullable()
+                .meta({
+                  description:
+                    "A language course's level: the CEFR levels it covers, such as \"B1–B2\", shown with the level's name. Null otherwise",
+                }),
+              courseLevel: z.enum(CourseLevel).nullable(),
+            }),
+          )
           .meta({
             description:
               "Finished levels, or the finished plan (`courseLevel` null), without a certificate yet: offer them with POST /v1/goals/{goalId}/certificates",
@@ -119,7 +130,7 @@ export const fieldMapViewSchema = z
       .nullable()
       .meta({
         description:
-          "A learn or exam goal's certificates: one per level of a Library course it finishes whole, and one for the plan when it finishes with lessons no certified level covers. Null until one is finished or held, and for language and explain goals",
+          "A learn, exam or language goal's certificates: one per level of a Library course it finishes whole with at least half its lessons studied, and one for the plan when it finishes so with lessons no certified level covers. Null until one is finished or held, and for explain goals",
         id: "PlanCertificates",
       }),
     counts: skillStateCountsSchema,

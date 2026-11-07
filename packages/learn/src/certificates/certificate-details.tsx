@@ -12,9 +12,7 @@ import {
 } from "@zoonk/utils/certificate-links";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState } from "react";
-import { useLevelName } from "../course/use-level-name";
-import { useSkillName } from "../language/_utils/use-skill-name";
-import { useCertificateDate, useStudyTime } from "./certificate-labels";
+import { useCertificateDate, useCertificateLevel, useStudyTime } from "./certificate-labels";
 import { CertificateNameDialog } from "./certificate-name";
 import { type CertificateOwner } from "./certificate-page";
 
@@ -48,18 +46,11 @@ function useFactRows({ facts, locked }: { facts: CertificateFacts; locked: boole
   const format = useFormatter();
   const date = useCertificateDate();
   const studyTime = useStudyTime();
-  const levelName = useLevelName();
-  const skillName = useSkillName();
-
-  const skills = facts.skillLevels.map(({ label, skill }) => ({
-    label: skillName(skill),
-    mono: true,
-    value: label,
-  }));
+  const certificateLevel = useCertificateLevel();
+  const level = certificateLevel(facts);
 
   const rows = [
-    facts.courseLevel && { label: t("Level"), mono: false, value: levelName(facts.courseLevel) },
-    ...(facts.kind === "course" ? [] : skills),
+    level && { label: t("Level"), mono: false, value: level },
     { label: t("Completed"), mono: true, value: date.short(facts.completedOn) },
     facts.lessonsStudied
       ? { label: t("Lessons studied"), mono: true, value: format.number(facts.lessonsStudied) }

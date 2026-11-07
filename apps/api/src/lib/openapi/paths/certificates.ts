@@ -37,7 +37,7 @@ export const certificatePaths = {
   "/goals/{goalId}/certificates": {
     post: {
       description:
-        "Writes the goal's finished level and plan certificates the learner doesn't hold yet, and returns all of them. A learn or exam goal on a Library course earns one per course level its plan holds whole (every chapter the level had when the plan began), once every lesson of it is studied or tested out, at least one studied, and the challenges of its phases are won; an exam's mocks don't count. The plan earns one of its own once it's all finished with studied lessons no certified level covers: a plan without levels, a partial level, other courses' lessons. Use it while the goal map lists `certificates.unclaimed`. Show the award moment of each returned certificate whose `shownAt` is null, then read the map again.",
+        "Writes the goal's finished level and plan certificates the learner doesn't hold yet, and returns all of them. A learn, exam or language goal on a Library course earns one per course level its plan holds whole (every chapter the level had when the plan began), once every lesson of it is studied or tested out, at least half of them studied, and the challenges of its phases are won (a free learner's Plus-only calls excepted); an exam's mocks don't count. The plan earns one of its own once it's all finished so, with studied lessons no certified level covers: a plan without levels, a partial level, other courses' lessons. Use it while the goal map lists `certificates.unclaimed`. Show the award moment of each returned certificate whose `shownAt` is null, then read the map again.",
       operationId: "claimCourseCertificate",
       requestParams: { path: goalPathParamsSchema },
       responses: {
@@ -51,7 +51,7 @@ export const certificatePaths = {
         "409": {
           ...conflictResponse,
           description:
-            "`COURSE_NOT_FINISHED`: no level or plan of the goal is finished, or the goal is one that earns no course certificate (language and explain goals)",
+            "`COURSE_NOT_FINISHED`: no level or plan of the goal is finished, or the goal is one that earns no course certificate (explain goals)",
         },
       },
       security: AUTHENTICATED_SECURITY,
@@ -62,7 +62,7 @@ export const certificatePaths = {
   "/me/certificates": {
     get: {
       description:
-        "The learner's certificates, latest finished first: finished course levels and plans, and finished language levels, locked ones included. Reading them never marks one shown.",
+        "The learner's certificates, latest finished first: finished course levels and plans, locked ones included. Reading them never marks one shown.",
       operationId: "listCertificates",
       responses: {
         "200": {

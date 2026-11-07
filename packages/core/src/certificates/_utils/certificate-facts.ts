@@ -1,4 +1,5 @@
 import { type Certificate, type Course, type User } from "@zoonk/db";
+import { CEFR_BANDS } from "../../language/levels/skill-level-rules";
 import {
   type CertificateFacts,
   type OwnedCertificateFacts,
@@ -17,15 +18,18 @@ export type CertificateRow = Certificate & {
   user: Pick<User, "isAnonymous" | "name">;
 };
 
-const NO_DETAILS = {
-  canDo: [],
-  category: null,
-  lessonsStudied: null,
-  lessonsTestedOut: null,
-  minutes: null,
-  skillLevels: [],
-  topics: [],
-} satisfies Partial<CertificateFacts>;
+/**
+ * A language goal's course levels follow the CEFR. An overview, if a language course ever has
+ * one, covers no range of its own.
+ */
+export function getCertificateCefrRange({
+  courseLevel,
+  targetLanguage,
+}: Pick<Certificate, "courseLevel" | "targetLanguage">): string | null {
+  return targetLanguage && courseLevel && courseLevel !== "overview"
+    ? CEFR_BANDS[courseLevel]
+    : null;
+}
 
 /** A guest has no profile to name. */
 function getRecipientName(user: CertificateRow["user"]): string | null {
@@ -36,18 +40,15 @@ export function toCertificateFacts(row: CertificateRow): CertificateFacts {
   const isPublicCourse = row.course?.isPublished && row.course.visibility === "public";
 
   return {
-    ...NO_DETAILS,
     ...courseCertificateDetailsSchema.parse(row.details),
+    cefrRange: getCertificateCefrRange(row),
     code: row.code,
     completedOn: row.completedOn.toISOString().slice(0, LOGICAL_DATE_LENGTH),
     courseId: isPublicCourse ? row.courseId : null,
     courseLevel: row.courseLevel,
-    kind: row.kind,
     language: row.language,
-    level: null,
     recipientName: getRecipientName(row.user),
-    targetLanguage: row.targetLanguage,
-    title: row.title,
+    title: row.title ?? "",
   };
 }
 

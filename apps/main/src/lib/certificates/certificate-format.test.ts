@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import {
   formatCertificateDate,
   formatStudyTime,
-  getLadderFill,
   getShownStudyCounts,
   getShownTopics,
   getStudyTimeStat,
@@ -44,14 +43,6 @@ describe(getStudyTimeStat, () => {
       unit: "m",
       value: "~45",
     });
-  });
-});
-
-describe(getLadderFill, () => {
-  it("fills a level through its whole band", () => {
-    expect(getLadderFill("A1")).toBe(2);
-    expect(getLadderFill("B1")).toBe(6);
-    expect(getLadderFill("C1")).toBe(10);
   });
 });
 

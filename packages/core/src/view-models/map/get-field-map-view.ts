@@ -1,7 +1,9 @@
 import "server-only";
+import { type Goal } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { cacheTag } from "next/cache";
 import { getCertificatesCacheTag } from "../../cache/tags";
+import { getCertificateCefrRange } from "../../certificates/_utils/certificate-facts";
 import {
   type UnitGoal,
   loadCertificateUnits,
@@ -28,7 +30,7 @@ async function readPlanCertificates({
   goal,
   plan,
 }: {
-  goal: UnitGoal;
+  goal: UnitGoal & Pick<Goal, "targetLanguage">;
   plan: SavedPlan | null;
 }): Promise<FieldMapView["certificates"]> {
   cacheTag(getCertificatesCacheTag(goal.userId));
@@ -55,7 +57,15 @@ async function readPlanCertificates({
     return null;
   }
 
-  return { earned, unclaimed: due.map((unit) => ({ courseLevel: unit.courseLevel })) };
+  const targetLanguage = goal.kind === "language" ? goal.targetLanguage : null;
+
+  return {
+    earned,
+    unclaimed: due.map(({ courseLevel }) => ({
+      cefrRange: getCertificateCefrRange({ courseLevel, targetLanguage }),
+      courseLevel,
+    })),
+  };
 }
 
 /** Requires an owned goal (active by default); completed plans may offer next study, refresh goals lead with fading skills. */

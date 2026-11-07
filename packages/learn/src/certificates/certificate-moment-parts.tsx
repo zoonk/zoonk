@@ -47,7 +47,7 @@ function TopSheet({
   );
 }
 
-/** The route's end square and the certified band sit near the sheet's lower right on every kind. */
+/** The route's end square sits near the sheet's lower right. */
 export function MomentSheets({
   behind,
   getLinks,

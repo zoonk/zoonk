@@ -1,37 +1,28 @@
 import "server-only";
 import { getCategoryNames } from "@/lib/categories/category";
-import { type CertificateFacts, type CertifiedLevel } from "@zoonk/core/certificates/contract";
-import { getCertificateDisplayUrl, getCertificateLinks } from "@zoonk/utils/certificate-links";
+import { type CertificateFacts } from "@zoonk/core/certificates/contract";
+import {
+  getCertificateDisplayUrl,
+  getCertificateLevelName,
+  getCertificateLinks,
+} from "@zoonk/utils/certificate-links";
 import { getCourseLevelNames } from "@zoonk/utils/course-level-names";
-import { getLanguageName } from "@zoonk/utils/languages";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { getBaseUrl } from "@zoonk/utils/origin";
 import { getExtracted } from "next-intl/server";
-import { formatCertificateDate, getLadderFill, getShownTopics } from "./certificate-format";
+import { formatCertificateDate, getShownTopics } from "./certificate-format";
 import { CERTIFICATE_COLORS, SUBJECT_COLORS } from "./certificate-palette";
 import {
   type CertificateStat,
   type KindInput,
   type Readout,
-  getSkillReadouts,
-  getSkillStats,
   getStudyFacts,
   getStudyStats,
 } from "./certificate-study-view";
 import { type TextRun } from "./shaped-text";
 
-const NEXT_BAND: Record<CertifiedLevel, string> = {
-  A1: "A2",
-  A2: "B1",
-  B1: "B2",
-  B2: "C1",
-  C1: "C2",
-};
-
 /** A course's route has a station per topic, labelled with its level on a level's certificate. */
-export type CertificateGraph =
-  | { kind: "ladder"; filled: number; reached: string | null }
-  | { kind: "route"; label: string | null; stations: number };
+export type CertificateGraph = { label: string | null; stations: number };
 
 type CommonView = {
   date: string;
@@ -43,11 +34,8 @@ type CommonView = {
   verifyLabel: string;
 };
 
-type KindView = {
-  covered:
-    | { kind: "readouts"; readouts: Readout[] }
-    | { kind: "topics"; label: string; topics: string[]; total: number }
-    | null;
+type CourseView = {
+  covered: { label: string; topics: string[]; total: number } | null;
   facts: Readout[];
   finePrint: string;
   graph: CertificateGraph;
@@ -56,24 +44,7 @@ type KindView = {
   subject: { label: string; text: string; tint: string } | null;
 };
 
-export type CertificateView = CommonView & KindView;
-
-function getTargetLanguageName(facts: CertificateFacts): string {
-  return facts.targetLanguage
-    ? getLanguageName({ targetLanguage: facts.targetLanguage, userLanguage: facts.language })
-    : "";
-}
-
-function getTitleRuns(facts: CertificateFacts): TextRun[] {
-  if (facts.kind === "course") {
-    return [{ color: CERTIFICATE_COLORS.ink, text: facts.title ?? "" }];
-  }
-
-  return [
-    { color: CERTIFICATE_COLORS.ink, text: `${getTargetLanguageName(facts)} ` },
-    { color: CERTIFICATE_COLORS.successText, text: facts.level ?? "" },
-  ];
-}
+export type CertificateView = CommonView & CourseView;
 
 async function getCommonView({ facts, locale }: KindInput): Promise<CommonView> {
   const t = await getExtracted({ locale });
@@ -96,7 +67,7 @@ async function getCommonView({ facts, locale }: KindInput): Promise<CommonView> 
       ? { isPlaceholder: false, text: facts.recipientName }
       : { isPlaceholder: true, text: placeholder },
     qrUrl: links.url,
-    title: getTitleRuns(facts),
+    title: [{ color: CERTIFICATE_COLORS.ink, text: facts.title }],
     verifyLabel: t({
       description:
         "Above a certificate's link and QR code, which open the page that proves it's real.",
@@ -105,43 +76,17 @@ async function getCommonView({ facts, locale }: KindInput): Promise<CommonView> 
   };
 }
 
-async function getLanguageLevelView(input: KindInput): Promise<KindView> {
-  const { facts, locale } = input;
-
-  const [t, readouts, studyFacts, studyStats] = await Promise.all([
-    getExtracted({ locale }),
-    getSkillReadouts(input),
-    getStudyFacts(input),
-    getStudyStats(input),
-  ]);
-
-  return {
-    covered: readouts.length > 0 ? { kind: "readouts", readouts } : null,
-    facts: studyFacts,
-    finePrint: t({
-      description:
-        "The fine print on a language level certificate. {level} is the next level's start, such as B2 on a B1 certificate.",
-      message:
-        "Awarded when every skill this learner practiced on Zoonk reached {level}, measured from their answers. This is not an official exam result.",
-      values: { level: facts.level ? NEXT_BAND[facts.level] : "" },
-    }),
-    graph: { filled: getLadderFill(facts.level), kind: "ladder", reached: facts.level },
-    meta: t({
-      description:
-        "How a language level certificate was earned. The level follows the CEFR scale, without claiming official recognition.",
-      message: "Level completed · aligned with the CEFR",
-    }),
-    stats: studyStats.length > 0 ? studyStats : getSkillStats(readouts),
-    subject: null,
-  };
-}
-
-/** "Beginner level · 12 chapters" on a level's certificate, "12 chapters" on a plan's. */
+/**
+ * "Beginner level · 12 chapters" on a level's certificate, "Intermediate level · B1–B2 · 12
+ * chapters" on a language course's, "12 chapters" on a plan's.
+ */
 async function getCourseMeta({
+  cefrRange,
   level,
   locale,
   topics,
 }: {
+  cefrRange: string | null;
   level: string | null;
   locale: string;
   topics: number;
@@ -164,21 +109,49 @@ async function getCourseMeta({
       values: { count: topics },
     });
 
-  return [levelLine, chapterCount].filter(Boolean).join(" · ");
+  return [levelLine, cefrRange, chapterCount].filter(Boolean).join(" · ");
 }
 
-async function getCourseView(input: KindInput): Promise<KindView> {
-  const { facts, locale } = input;
+async function getFinePrint({ facts, locale }: KindInput): Promise<string> {
+  const t = await getExtracted({ locale });
 
-  const level = facts.courseLevel && getCourseLevelNames(facts.language)[facts.courseLevel];
+  if (facts.cefrRange) {
+    return t({
+      description:
+        "The fine print on a language course level's certificate, such as Italian · Intermediate (B1–B2), under the facts that show how many lessons were studied and passed by test. The CEFR is the Common European Framework of Reference for Languages: keep the acronym “CEFR”, as the certificate's page does. Keep it short: it has one line on the certificate.",
+      message:
+        "At least half its lessons studied on Zoonk. Levels follow the CEFR; not an official exam result.",
+    });
+  }
+
+  return facts.courseLevel
+    ? t({
+        description:
+          "The fine print on a course level's certificate, under the facts that show how many lessons were studied and passed by test. Keep it short: it has one line on the certificate.",
+        message:
+          "Awarded for finishing this level on Zoonk, with at least half its lessons studied.",
+      })
+    : t({
+        description:
+          "The fine print on a certificate for a learner's whole study plan in a course, which may cover only part of the course: the topics it lists. Keep it short: it has one line on the certificate.",
+        message:
+          "Awarded for finishing a study plan on Zoonk, with at least half its lessons studied.",
+      });
+}
+
+async function getCourseView(input: KindInput): Promise<CourseView> {
+  const { facts, locale } = input;
+  const { cefrRange, courseLevel, language } = facts;
+  const level = courseLevel && getCourseLevelNames(language)[courseLevel];
   const topics = facts.topics.length;
 
-  const [t, categoryNames, studyFacts, stats, meta] = await Promise.all([
+  const [t, categoryNames, studyFacts, stats, meta, finePrint] = await Promise.all([
     getExtracted({ locale }),
     getCategoryNames(locale),
     getStudyFacts(input),
     getStudyStats(input),
-    getCourseMeta({ level, locale, topics }),
+    getCourseMeta({ cefrRange, level, locale, topics }),
+    getFinePrint(input),
   ]);
 
   const shown = getShownTopics(facts.topics);
@@ -189,22 +162,13 @@ async function getCourseView(input: KindInput): Promise<KindView> {
   });
 
   return {
-    covered:
-      shown.length > 0
-        ? { kind: "topics", label, topics: shown, total: facts.topics.length }
-        : null,
+    covered: shown.length > 0 ? { label, topics: shown, total: facts.topics.length } : null,
     facts: studyFacts,
-    finePrint: level
-      ? t({
-          description: "The fine print on a course level's certificate.",
-          message: "Awarded for finishing every lesson and challenge of this level on Zoonk.",
-        })
-      : t({
-          description:
-            "The fine print on a certificate for a learner's whole study plan in a course, which may cover only part of the course: the topics it lists.",
-          message: "Awarded for finishing every lesson and challenge of a study plan on Zoonk.",
-        }),
-    graph: { kind: "route", label: level, stations: topics },
+    finePrint,
+    graph: {
+      label: courseLevel && getCertificateLevelName({ cefrRange, courseLevel, language }),
+      stations: topics,
+    },
     meta,
     stats,
     subject: facts.category
@@ -217,10 +181,7 @@ async function getCourseView(input: KindInput): Promise<KindView> {
 export async function getCertificateView(facts: CertificateFacts): Promise<CertificateView> {
   const input = { facts, locale: getSupportedLocaleFromLanguage(facts.language) };
 
-  const [common, kindView] = await Promise.all([
-    getCommonView(input),
-    facts.kind === "course" ? getCourseView(input) : getLanguageLevelView(input),
-  ]);
+  const [common, course] = await Promise.all([getCommonView(input), getCourseView(input)]);
 
-  return { ...common, ...kindView };
+  return { ...common, ...course };
 }

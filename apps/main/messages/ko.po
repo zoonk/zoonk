@@ -252,7 +252,6 @@ msgstr "시험"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/lib/certificates/certificate-study-view.ts
 msgctxt "ONqlu6"
 msgid "Speaking"
 msgstr "말하기"
@@ -3483,21 +3482,6 @@ msgctxt "oDI_Rp"
 msgid "and {count} more"
 msgstr "외 {count}개"
 
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "1TOMnj"
-msgid "Listening"
-msgstr "듣기"
-
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "MOK_yK"
-msgid "Reading"
-msgstr "읽기"
-
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "GoReDj"
-msgid "Writing"
-msgstr "쓰기"
-
 #. A certificate's fact: the day the learner finished the course or level.
 #: src/lib/certificates/certificate-study-view.ts
 msgctxt "95stPq"
@@ -3558,41 +3542,35 @@ msgctxt "5FXh-Z"
 msgid "Verify this certificate"
 msgstr "인증서 진위 확인"
 
-#. The fine print on a language level certificate. {level} is the next level's start, such as B2 on a B1 certificate.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "yA8QN_"
-msgid "Awarded when every skill this learner practiced on Zoonk reached {level}, measured from their answers. This is not an official exam result."
-msgstr "Zoonk에서 연습한 모든 언어 능력이 답변을 바탕으로 한 평가에서 {level}에 도달했을 때 발급해요. 공식 시험 결과가 아니에요."
-
-#. How a language level certificate was earned. The level follows the CEFR scale, without claiming official recognition.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "PrhNZj"
-msgid "Level completed · aligned with the CEFR"
-msgstr "레벨 완료 · CEFR 기준"
-
 #. A course level certificate's level, such as “Beginner level”.
 #: src/lib/certificates/certificate-view.ts
 msgctxt "XmHKKJ"
 msgid "{level} level"
 msgstr "{level} 레벨"
 
+#. The fine print on a language course level's certificate, such as Italian · Intermediate (B1–B2), under the facts that show how many lessons were studied and passed by test. The CEFR is the Common European Framework of Reference for Languages: keep the acronym “CEFR”, as the certificate's page does. Keep it short: it has one line on the certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "UclPL-"
+msgid "At least half its lessons studied on Zoonk. Levels follow the CEFR; not an official exam result."
+msgstr "레슨의 절반 이상을 Zoonk에서 학습했어요. 레벨은 CEFR 기준이며 공식 시험 결과는 아니에요."
+
+#. The fine print on a course level's certificate, under the facts that show how many lessons were studied and passed by test. Keep it short: it has one line on the certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "h7-WzZ"
+msgid "Awarded for finishing this level on Zoonk, with at least half its lessons studied."
+msgstr "Zoonk에서 레슨 절반 이상을 학습하고 이 레벨을 완료해 받은 인증서예요."
+
+#. The fine print on a certificate for a learner's whole study plan in a course, which may cover only part of the course: the topics it lists. Keep it short: it has one line on the certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "EtdCOf"
+msgid "Awarded for finishing a study plan on Zoonk, with at least half its lessons studied."
+msgstr "Zoonk에서 레슨 절반 이상을 학습하고 학습 계획을 완료해 받은 인증서예요."
+
 #. Above the topics a finished course covered, on its certificate.
 #: src/lib/certificates/certificate-view.ts
 msgctxt "fAGVcM"
 msgid "Topics covered"
 msgstr "학습한 주제"
-
-#. The fine print on a course level's certificate.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "anftNZ"
-msgid "Awarded for finishing every lesson and challenge of this level on Zoonk."
-msgstr "Zoonk에서 이 레벨의 모든 레슨과 챌린지를 마쳐 받은 인증서예요."
-
-#. The fine print on a certificate for a learner's whole study plan in a course, which may cover only part of the course: the topics it lists.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "Sadn8K"
-msgid "Awarded for finishing every lesson and challenge of a study plan on Zoonk."
-msgstr "Zoonk에서 학습 계획의 모든 레슨과 챌린지를 마쳐 받은 인증서예요."
 
 #: src/lib/public/public-labels.ts
 msgctxt "3Rx6Qo"

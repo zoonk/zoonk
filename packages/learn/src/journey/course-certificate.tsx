@@ -17,7 +17,7 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
-import { useLevelName } from "../course/use-level-name";
+import { useCertificateLevel } from "../certificates/certificate-labels";
 import { SlotContent } from "../plan/plan-suggestion-context";
 
 /**
@@ -116,15 +116,16 @@ export function CertificateAction({
 /** "Beginner complete" when the claim would certify one level, else "Course complete". */
 function useCompleteTitle(unclaimed: PlanCertificates["unclaimed"]): string {
   const t = useExtracted();
-  const levelName = useLevelName();
+  const certificateLevel = useCertificateLevel();
   const [only] = unclaimed;
+  const level = unclaimed.length === 1 && only ? certificateLevel(only) : null;
 
-  if (unclaimed.length === 1 && only?.courseLevel) {
+  if (level) {
     return t({
       description:
         "A Plan suggestion's title once every lesson and challenge of a course level is done, such as “Beginner complete”, before the plan's end",
       message: "{level} complete",
-      values: { level: levelName(only.courseLevel) },
+      values: { level },
     });
   }
 

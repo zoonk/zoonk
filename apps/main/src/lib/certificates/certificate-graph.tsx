@@ -1,4 +1,3 @@
-import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { CERTIFICATE_COLORS } from "./certificate-palette";
 import { type CertificateView, type CertificateGraph as Graph } from "./certificate-view";
 
@@ -7,8 +6,6 @@ const ROUTE = {
   denseStationScale: 0.6,
   denseStations: 60,
 };
-
-const LADDER_WEIGHTS = { label: 400, reached: 600 };
 
 type RouteSpec = {
   height: number;
@@ -22,17 +19,6 @@ type RouteSpec = {
   stroke: number;
   width: number;
 };
-
-type LadderSpec = {
-  bandGap: number;
-  cellGap: number;
-  cellHeight: number;
-  labelGap: number;
-  labelSize: number;
-  radius: number;
-};
-
-type RouteGraph = Extract<Graph, { kind: "route" }>;
 
 /** Stations sit a step apart between the start ring and the end square. */
 function getRouteGeometry({ spec, stations }: { spec: RouteSpec; stations: number }) {
@@ -87,7 +73,7 @@ function CertificateRoute({
   showLabels,
   spec,
 }: {
-  graph: RouteGraph;
+  graph: Graph;
   showLabels: boolean;
   spec: RouteSpec;
 }) {
@@ -181,92 +167,18 @@ function Dot({
   );
 }
 
-/** C2 has no "+" step. */
-function getBandCells(band: string): number {
-  return band === "C2" ? 1 : 2;
-}
-
-/** A1 to C2 in half steps, filled to the certified level. */
-function CertificateLadder({
-  graph,
-  scale,
-  spec,
-}: {
-  graph: Extract<Graph, { kind: "ladder" }>;
-  scale: number;
-  spec: LadderSpec;
-}) {
-  return (
-    <div style={{ display: "flex", flexGrow: 1, gap: spec.bandGap * scale, minWidth: 0 }}>
-      {CEFR_LEVELS.map((band, bandIndex) => {
-        const cells = getBandCells(band);
-        const reached = band === graph.reached;
-
-        return (
-          <div
-            key={band}
-            style={{
-              display: "flex",
-              flexBasis: 0,
-              flexDirection: "column",
-              flexGrow: cells,
-              gap: spec.labelGap * scale,
-              minWidth: 0,
-            }}
-          >
-            <div style={{ display: "flex", gap: spec.cellGap * scale }}>
-              {Array.from({ length: cells }, (_value, cell) => (
-                <div
-                  key={cell}
-                  style={{
-                    background:
-                      bandIndex * 2 + cell < graph.filled
-                        ? CERTIFICATE_COLORS.success
-                        : CERTIFICATE_COLORS.track,
-                    borderRadius: spec.radius * scale,
-                    flexGrow: 1,
-                    height: spec.cellHeight * scale,
-                  }}
-                />
-              ))}
-            </div>
-
-            <span
-              style={{
-                color: reached ? CERTIFICATE_COLORS.ink : CERTIFICATE_COLORS.faint,
-                fontFamily: "Geist Mono",
-                fontSize: spec.labelSize * scale,
-                fontWeight: reached ? LADDER_WEIGHTS.reached : LADDER_WEIGHTS.label,
-                letterSpacing: 0,
-              }}
-            >
-              {band}
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-/** A course's route through its topics, or a language's CEFR ladder. */
+/** A course's route through its topics. */
 export function CertificateGraph({
-  ladder,
   route,
   scale,
   showLabels,
   view,
 }: {
-  ladder: LadderSpec;
   route: RouteSpec;
   scale: number;
   showLabels: boolean;
   view: CertificateView;
 }) {
-  if (view.graph.kind === "ladder") {
-    return <CertificateLadder graph={view.graph} scale={scale} spec={ladder} />;
-  }
-
   return (
     <CertificateRoute graph={view.graph} showLabels={showLabels} spec={scaleRoute(route, scale)} />
   );

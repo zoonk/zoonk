@@ -3,7 +3,6 @@ import { getExtracted } from "next-intl/server";
 import { formatCount } from "./certificate-format";
 import {
   type SheetCovered,
-  type SheetGraphKind,
   getCoveredFallbacks,
   getLinkOverflow,
   getPostOverflow,
@@ -142,24 +141,6 @@ function shrinkUntil({
   });
 }
 
-function toSheetCovered(view: CertificateView): SheetCovered {
-  if (!view.covered) {
-    return null;
-  }
-
-  return view.covered.kind === "topics"
-    ? { kind: "topics", topics: view.covered.topics }
-    : { kind: "readouts" };
-}
-
-function getSheetGraphKind(view: CertificateView): SheetGraphKind {
-  if (view.graph.kind === "ladder") {
-    return "ladder";
-  }
-
-  return view.graph.label ? "labelledRoute" : "route";
-}
-
 export type FittedSheet = {
   covered: SheetCovered;
   moreTopics: string | null;
@@ -177,10 +158,7 @@ async function getMoreTopics({
   locale: string;
   view: CertificateView;
 }): Promise<string | null> {
-  const hidden =
-    covered?.kind === "topics" && view.covered?.kind === "topics"
-      ? view.covered.total - covered.topics.length
-      : 0;
+  const hidden = covered && view.covered ? view.covered.total - covered.topics.length : 0;
 
   if (hidden <= 0) {
     return null;
@@ -217,13 +195,13 @@ export async function fitSheet({
     getSheetOverflow({
       covered: parts.covered,
       finePrint: view.finePrint,
-      graph: getSheetGraphKind(view),
+      labelledGraph: view.graph.label !== null,
       nameHeight: parts.name.blockHeight / shaping.scale,
       titleHeight: parts.title.blockHeight / shaping.scale,
     });
 
   const covered =
-    getCoveredFallbacks(toSheetCovered(view)).find(
+    getCoveredFallbacks(view.covered).find(
       (option) => overflow({ covered: option, name: nameShaped, title: titleShaped }) <= 0,
     ) ?? null;
 
@@ -280,11 +258,8 @@ export async function fitLink({
   const fittedName = await shrinkUntil({
     ...name,
     fits: (shaped) =>
-      getLinkOverflow({
-        graph: view.graph.kind === "ladder" ? "ladder" : "route",
-        nameHeight: shaped.blockHeight,
-        titleHeight: titleShaped.blockHeight,
-      }) <= 0,
+      getLinkOverflow({ nameHeight: shaped.blockHeight, titleHeight: titleShaped.blockHeight }) <=
+      0,
     scale: 1,
     shaped: nameShaped,
   });
@@ -310,7 +285,6 @@ export async function fitPost({
 
   const overflow = (parts: FittedShare) =>
     getPostOverflow({
-      graph: view.graph.kind === "ladder" ? "ladder" : "route",
       hasStats: view.stats.length > 0,
       nameHeight: parts.name.blockHeight,
       titleHeight: parts.title.blockHeight,

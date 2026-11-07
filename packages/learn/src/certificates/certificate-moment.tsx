@@ -85,10 +85,10 @@ function OwnerPart({
 }
 
 /**
- * The moment a course level, a plan or a language level is certified: shown first, full screen,
- * before any milestone's ceremony and the task's own result. The name is the profile's, so fixing
- * it here fixes every certificate. A locked one plays the same moment with the Plus notice; See
- * Plus leaves without closing it, so it plays again after the next task.
+ * The moment a course level or a plan is certified: shown first, full screen, before any
+ * milestone's ceremony and the task's own result. The name is the profile's, so fixing it here
+ * fixes every certificate. A locked one plays the same moment with the Plus notice; See Plus leaves
+ * without closing it, so it plays again after the next task.
  */
 export function CertificateMoment({
   beforeCeremony = false,

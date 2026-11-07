@@ -13,13 +13,6 @@ function useOneCertificateCopy() {
   return (facts: OwnedCertificateFacts) => {
     const certificate = certificateName(facts);
 
-    if (facts.kind === "languageLevel") {
-      return {
-        line: t("Your {certificate} certificate is ready.", { certificate }),
-        title: t("{level} complete!", { level: facts.level ?? "" }),
-      };
-    }
-
     return {
       line: t("Your certificate for {course} is ready.", { course: certificate }),
       title: facts.courseLevel

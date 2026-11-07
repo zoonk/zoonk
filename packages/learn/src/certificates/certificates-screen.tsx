@@ -41,12 +41,12 @@ import { CertificateSheet } from "./certificate-sheet";
 /** `links` is null exactly when the certificate is locked. */
 export type ListedCertificate = { facts: OwnedCertificateFacts; links: CertificateLinks | null };
 
-/** A goal that can still earn a certificate: a course by finishing its plan, a language by levels. */
+/** A goal that can still earn a certificate by finishing its levels or its plan. */
 export type CertificateUpNext = {
   goal: { kind: string; targetLanguage: string | null; title: string };
   id: string;
-  /** The plan's share of lessons done, 0 to 1; null for a language. */
-  progress: number | null;
+  /** The plan's share of lessons done, 0 to 1. */
+  progress: number;
 };
 
 const LIST_ID = "certificates-list";
@@ -153,19 +153,15 @@ function UpNextRow({ item }: { item: CertificateUpNext }) {
       <ListRowContent>
         <ListRowTitle>{item.goal.title}</ListRowTitle>
         <ListRowDescription>
-          {item.progress === null
-            ? t("Comes when every skill you practice reaches the next level")
-            : t("Your certificate comes when you finish the plan")}
+          {t("Your certificate comes when you finish the plan")}
         </ListRowDescription>
       </ListRowContent>
-      {item.progress !== null && (
-        <ListRowTrailing>
-          <Meter as="span" className="w-16 sm:w-30">
-            <MeterFill as="span" className="bg-success" share={item.progress} />
-          </Meter>
-          <span className="text-foreground">{formatShare(item.progress)}</span>
-        </ListRowTrailing>
-      )}
+      <ListRowTrailing>
+        <Meter as="span" className="w-16 sm:w-30">
+          <MeterFill as="span" className="bg-success" share={item.progress} />
+        </Meter>
+        <span className="text-foreground">{formatShare(item.progress)}</span>
+      </ListRowTrailing>
     </ListRow>
   );
 }

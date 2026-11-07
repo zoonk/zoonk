@@ -205,8 +205,8 @@ describe("course certificates", () => {
       certificates: [
         {
           category: "science",
+          cefrRange: null,
           courseLevel: "beginner",
-          kind: "course",
           lessonsStudied: 2,
           lessonsTestedOut: 0,
           minutes: 60,
@@ -655,6 +655,19 @@ describe("language course certificates", () => {
         title: "Italiano",
       },
     ]);
+
+    await expect(listCurrentUserCertificates()).resolves.toMatchObject({
+      certificates: [{ cefrRange: "B1–B2", courseLevel: "intermediate", title: "Italiano" }],
+    });
+  });
+
+  it("offers a language level finished outside the award points with its CEFR range", async () => {
+    await languageGoal([{ status: "done" }, { status: "done" }, WON_CHALLENGE]);
+
+    await expect(readMapCertificates()).resolves.toStrictEqual({
+      earned: [],
+      unclaimed: [{ cefrRange: "B1–B2", courseLevel: "intermediate" }],
+    });
   });
 
   it("awards no level placed past most of it and studied less than half", async () => {
@@ -720,7 +733,10 @@ describe(claimCourseCertificate, () => {
 
     await expect(readMapCertificates()).resolves.toStrictEqual({
       earned: [],
-      unclaimed: [{ courseLevel: "beginner" }, { courseLevel: "intermediate" }],
+      unclaimed: [
+        { cefrRange: null, courseLevel: "beginner" },
+        { cefrRange: null, courseLevel: "intermediate" },
+      ],
     });
 
     const claimed = await claimCourseCertificate(fixture.goal.id);
@@ -799,7 +815,7 @@ describe(claimCourseCertificate, () => {
 
     await expect(readMapCertificates()).resolves.toStrictEqual({
       earned: [],
-      unclaimed: [{ courseLevel: null }],
+      unclaimed: [{ cefrRange: null, courseLevel: null }],
     });
 
     await expect(claimCourseCertificate(fixture.goal.id)).resolves.toMatchObject({
@@ -846,21 +862,17 @@ describe("a certificate as anyone sees it", () => {
     );
 
     expect(Object.keys(facts ?? {}).toSorted()).toStrictEqual([
-      "canDo",
       "category",
+      "cefrRange",
       "code",
       "completedOn",
       "courseId",
       "courseLevel",
-      "kind",
       "language",
       "lessonsStudied",
       "lessonsTestedOut",
-      "level",
       "minutes",
       "recipientName",
-      "skillLevels",
-      "targetLanguage",
       "title",
       "topics",
     ]);

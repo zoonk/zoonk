@@ -42,20 +42,10 @@ function estimateLines({
   return Math.max(1, Math.ceil((ems * fontSize) / width));
 }
 
-export type SheetCovered =
-  | { kind: "readouts" }
-  | { kind: "topics"; topics: readonly string[] }
-  | null;
+export type SheetCovered = { topics: readonly string[] } | null;
 
-export type SheetGraphKind = "ladder" | "labelledRoute" | "route";
-
-function getGraphHeight(graph: SheetGraphKind): number {
-  if (graph === "ladder") {
-    return SHEET.ladder.cellHeight + SHEET.ladder.labelGap + lineBox(SHEET.ladder.labelSize);
-  }
-
-  const labels = graph === "labelledRoute" ? SHEET.route.labelHeight + SHEET.route.labelGap : 0;
-
+function getGraphHeight(labelled: boolean): number {
+  const labels = labelled ? SHEET.route.labelHeight + SHEET.route.labelGap : 0;
   return labels + SHEET.route.height;
 }
 
@@ -76,10 +66,6 @@ function getCoveredHeight(covered: SheetCovered): number {
 
   if (!covered) {
     return 0;
-  }
-
-  if (covered.kind === "readouts") {
-    return SHEET.covered.above + label + SHEET.covered.labelGap + SHEET.covered.readoutSize;
   }
 
   const rows = getTopicRowLines(covered.topics);
@@ -111,13 +97,13 @@ function getFooterHeight(finePrint: string): number {
 export function getSheetOverflow({
   covered,
   finePrint,
-  graph,
+  labelledGraph,
   nameHeight,
   titleHeight,
 }: {
   covered: SheetCovered;
   finePrint: string;
-  graph: SheetGraphKind;
+  labelledGraph: boolean;
   nameHeight: number;
   titleHeight: number;
 }): number {
@@ -128,7 +114,7 @@ export function getSheetOverflow({
     SHEET.title.above + titleHeight,
     SHEET.meta.above + SHEET.meta.chipHeight,
     getCoveredHeight(covered),
-    SHEET.graph.above + getGraphHeight(graph),
+    SHEET.graph.above + getGraphHeight(labelledGraph),
     SHEET.footer.above + SHEET.footer.rule + SHEET.footer.ruleGap + getFooterHeight(finePrint),
   ].reduce((sum, part) => sum + part, 0);
 
@@ -137,15 +123,11 @@ export function getSheetOverflow({
 
 /** The covered block's fallbacks, in the order the design gives way: all six, the first two, none. */
 export function getCoveredFallbacks(covered: SheetCovered): SheetCovered[] {
-  if (covered?.kind !== "topics") {
-    return [covered, null];
+  if (!covered) {
+    return [null];
   }
 
-  return [
-    covered,
-    { kind: "topics", topics: covered.topics.slice(0, SHEET.topics.shownAfterOverflow) },
-    null,
-  ];
+  return [covered, { topics: covered.topics.slice(0, SHEET.topics.shownAfterOverflow) }, null];
 }
 
 const { link, post } = SHARE;
@@ -154,24 +136,17 @@ const LINK_CONTENT_HEIGHT = link.height - link.inset * 2 - link.padding.top - li
 
 /** How far the link picture's parts run past its sheet, in px; zero or less fits. */
 export function getLinkOverflow({
-  graph,
   nameHeight,
   titleHeight,
 }: {
-  graph: "ladder" | "route";
   nameHeight: number;
   titleHeight: number;
 }): number {
-  const graphHeight =
-    graph === "ladder"
-      ? link.ladder.cellHeight + link.ladder.labelGap + lineBox(link.ladder.labelSize)
-      : link.route.height;
-
   const height = [
     Math.max(link.brand.logo, lineBox(link.brand.size), lineBox(link.kind.size)),
     nameHeight,
     link.title.above + titleHeight,
-    link.graph.above + graphHeight,
+    link.graph.above + link.route.height,
     link.bottom.above + lineBox(link.bottom.size),
   ].reduce((sum, part) => sum + part, 0);
 
@@ -180,22 +155,14 @@ export function getLinkOverflow({
 
 const POST_CONTENT_HEIGHT = post.height - post.inset * 2 - post.padding.top - post.padding.bottom;
 
-function getPostGraphHeight(graph: "ladder" | "route"): number {
-  if (graph === "ladder") {
-    return post.ladder.cellHeight + post.ladder.labelGap + lineBox(post.ladder.labelSize);
-  }
-
-  return post.route.labelHeight + post.route.labelGap + post.route.height;
-}
+const POST_GRAPH_HEIGHT = post.route.labelHeight + post.route.labelGap + post.route.height;
 
 /** How far the post's parts run past its sheet, in px; zero or less fits. */
 export function getPostOverflow({
-  graph,
   hasStats,
   nameHeight,
   titleHeight,
 }: {
-  graph: "ladder" | "route";
   hasStats: boolean;
   nameHeight: number;
   titleHeight: number;
@@ -211,7 +178,7 @@ export function getPostOverflow({
     lineBox(post.kind.size),
     post.name.above + nameHeight,
     post.title.above + titleHeight,
-    post.graph.above + getPostGraphHeight(graph),
+    post.graph.above + POST_GRAPH_HEIGHT,
     hasStats ? stats : 0,
     bottom,
   ].reduce((sum, part) => sum + part, 0);

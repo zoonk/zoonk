@@ -20,7 +20,7 @@ import { useCertificateDate, useCertificateName } from "./certificate-labels";
 
 type LinkedInCertificate = Pick<
   CertificateFacts,
-  "code" | "completedOn" | "courseLevel" | "kind" | "level" | "targetLanguage" | "title"
+  "cefrRange" | "code" | "completedOn" | "courseLevel" | "title"
 >;
 
 function FieldRow({

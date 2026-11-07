@@ -9,57 +9,6 @@ import { type CertificateView } from "./certificate-view";
 
 type Scale = (value: number) => number;
 
-function SheetReadouts({
-  covered,
-  px,
-  view,
-}: {
-  covered: FittedSheet["covered"];
-  px: Scale;
-  view: CertificateView;
-}) {
-  if (covered?.kind !== "readouts" || view.covered?.kind !== "readouts") {
-    return null;
-  }
-
-  return (
-    <div
-      style={{
-        display: "flex",
-        gap: px(SHEET.covered.readoutGap),
-        marginTop: px(SHEET.covered.above),
-      }}
-    >
-      {view.covered.readouts.map((readout) => (
-        <div
-          key={readout.label}
-          style={{ display: "flex", flexDirection: "column", gap: px(SHEET.covered.labelGap) }}
-        >
-          <span
-            style={{
-              color: CERTIFICATE_COLORS.muted,
-              fontSize: px(SHEET.covered.labelSize),
-              fontWeight: 500,
-            }}
-          >
-            {readout.label}
-          </span>
-          <span
-            style={{
-              fontSize: px(SHEET.covered.readoutSize),
-              fontWeight: FONT_WEIGHTS.readout,
-              letterSpacing: "-0.04em",
-              lineHeight: 1,
-            }}
-          >
-            {readout.value}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function SheetTopics({
   covered,
   moreTopics,
@@ -71,7 +20,7 @@ function SheetTopics({
   px: Scale;
   view: CertificateView;
 }) {
-  if (covered?.kind !== "topics" || view.covered?.kind !== "topics") {
+  if (!covered || !view.covered) {
     return null;
   }
 
@@ -304,17 +253,10 @@ export function CertificateSheet({
       <ShapedImage above={px(SHEET.name.above)} text={fitted.name} />
       <ShapedImage above={px(SHEET.title.above)} text={fitted.title} />
       <SheetMeta px={px} view={view} />
-      <SheetReadouts covered={fitted.covered} px={px} view={view} />
       <SheetTopics covered={fitted.covered} moreTopics={fitted.moreTopics} px={px} view={view} />
 
       <div style={{ display: "flex", marginTop: "auto", paddingTop: px(SHEET.graph.above) }}>
-        <CertificateGraph
-          ladder={SHEET.ladder}
-          route={SHEET.route}
-          scale={scale}
-          showLabels
-          view={view}
-        />
+        <CertificateGraph route={SHEET.route} scale={scale} showLabels view={view} />
       </div>
 
       <SheetFooter px={px} view={view} />

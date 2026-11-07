@@ -252,7 +252,6 @@ msgstr "Prüfung"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/lib/certificates/certificate-study-view.ts
 msgctxt "ONqlu6"
 msgid "Speaking"
 msgstr "Sprechen"
@@ -3483,21 +3482,6 @@ msgctxt "oDI_Rp"
 msgid "and {count} more"
 msgstr "und {count} weitere"
 
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "1TOMnj"
-msgid "Listening"
-msgstr "Hören"
-
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "MOK_yK"
-msgid "Reading"
-msgstr "Lesen"
-
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "GoReDj"
-msgid "Writing"
-msgstr "Schreiben"
-
 #. A certificate's fact: the day the learner finished the course or level.
 #: src/lib/certificates/certificate-study-view.ts
 msgctxt "95stPq"
@@ -3558,41 +3542,35 @@ msgctxt "5FXh-Z"
 msgid "Verify this certificate"
 msgstr "Zertifikat prüfen"
 
-#. The fine print on a language level certificate. {level} is the next level's start, such as B2 on a B1 certificate.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "yA8QN_"
-msgid "Awarded when every skill this learner practiced on Zoonk reached {level}, measured from their answers. This is not an official exam result."
-msgstr "Verliehen für das Erreichen von {level} in allen auf Zoonk geübten Fähigkeiten, ermittelt anhand der Antworten. Dies ist kein offizielles Prüfungsergebnis."
-
-#. How a language level certificate was earned. The level follows the CEFR scale, without claiming official recognition.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "PrhNZj"
-msgid "Level completed · aligned with the CEFR"
-msgstr "Level abgeschlossen · am CEFR ausgerichtet"
-
 #. A course level certificate's level, such as “Beginner level”.
 #: src/lib/certificates/certificate-view.ts
 msgctxt "XmHKKJ"
 msgid "{level} level"
 msgstr "Level {level}"
 
+#. The fine print on a language course level's certificate, such as Italian · Intermediate (B1–B2), under the facts that show how many lessons were studied and passed by test. The CEFR is the Common European Framework of Reference for Languages: keep the acronym “CEFR”, as the certificate's page does. Keep it short: it has one line on the certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "UclPL-"
+msgid "At least half its lessons studied on Zoonk. Levels follow the CEFR; not an official exam result."
+msgstr "Mindestens die Hälfte der Lektionen auf Zoonk bearbeitet. Level nach CEFR; kein offizielles Prüfungsergebnis."
+
+#. The fine print on a course level's certificate, under the facts that show how many lessons were studied and passed by test. Keep it short: it has one line on the certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "h7-WzZ"
+msgid "Awarded for finishing this level on Zoonk, with at least half its lessons studied."
+msgstr "Verliehen für den Abschluss dieses Levels auf Zoonk; mindestens die Hälfte der Lektionen bearbeitet."
+
+#. The fine print on a certificate for a learner's whole study plan in a course, which may cover only part of the course: the topics it lists. Keep it short: it has one line on the certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "EtdCOf"
+msgid "Awarded for finishing a study plan on Zoonk, with at least half its lessons studied."
+msgstr "Verliehen für den Abschluss eines Plans auf Zoonk; mindestens die Hälfte der Lektionen bearbeitet."
+
 #. Above the topics a finished course covered, on its certificate.
 #: src/lib/certificates/certificate-view.ts
 msgctxt "fAGVcM"
 msgid "Topics covered"
 msgstr "Behandelte Themen"
-
-#. The fine print on a course level's certificate.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "anftNZ"
-msgid "Awarded for finishing every lesson and challenge of this level on Zoonk."
-msgstr "Verliehen für den Abschluss aller Lektionen und Herausforderungen dieses Levels auf Zoonk."
-
-#. The fine print on a certificate for a learner's whole study plan in a course, which may cover only part of the course: the topics it lists.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "Sadn8K"
-msgid "Awarded for finishing every lesson and challenge of a study plan on Zoonk."
-msgstr "Verliehen für den Abschluss aller Lektionen und Herausforderungen eines Plans auf Zoonk."
 
 #: src/lib/public/public-labels.ts
 msgctxt "3Rx6Qo"
