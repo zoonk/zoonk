@@ -14,7 +14,7 @@ import {
   lessonSkillFixture,
   libraryLessonsFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
-import { skillsFixture } from "@zoonk/testing/fixtures/skills";
+import { skillFixture, skillsFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
@@ -80,20 +80,27 @@ function graphSkill(
 }
 
 describe("Library skills", () => {
-  it("offers chapter and lesson skills before any exam places them", async () => {
-    const [course, blueprint, [chapterSkill, lessonSkill]] = await Promise.all([
+  it("offers chapter skills without an exam graph, sized by distinct lessons across their chapters", async () => {
+    const [course, blueprint, skill] = await Promise.all([
       courseFixture({ language: "pt" }),
       examBlueprintFixture({ language: "pt" }),
-      skillsFixture([`Chapter ${randomUUID()}`, `Lesson ${randomUUID()}`], { language: "pt" }),
+      skillFixture({ language: "pt" }),
     ]);
 
     const chapter = await libraryChapterFixture({ homeCourseId: course.id, language: "pt" });
+    const sharedChapter = await libraryChapterFixture({ language: "pt" });
     const lessons = await libraryLessonsFixture(2, { homeChapterId: chapter.id, language: "pt" });
+    await libraryLessonsFixture(1, { homeChapterId: sharedChapter.id, language: "pt" });
 
     await Promise.all([
-      chapterSkillFixture({ chapterId: chapter.id, skillId: chapterSkill!.id }),
-      ...lessons.map((lesson) =>
-        lessonSkillFixture({ lessonId: lesson.id, skillId: lessonSkill!.id }),
+      courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
+      courseChapterFixture({ chapterId: sharedChapter.id, courseId: course.id, position: 1 }),
+      chapterSkillFixture({ chapterId: chapter.id, skillId: skill.id }),
+      chapterSkillFixture({ chapterId: sharedChapter.id, skillId: skill.id }),
+      ...lessons.flatMap((lesson, position) =>
+        [chapter, sharedChapter].map((placed) =>
+          chapterLessonFixture({ chapterId: placed.id, lessonId: lesson.id, position }),
+        ),
       ),
     ]);
 
@@ -103,14 +110,85 @@ describe("Library skills", () => {
       language: "pt",
     });
 
-    expect(listed.map((skill) => skill.id).toSorted()).toStrictEqual(
-      [chapterSkill!.id, lessonSkill!.id].toSorted(),
+    expect(listed).toMatchObject([{ course: course.id, id: skill.id, lessons: 3 }]);
+  });
+
+  it("does not offer a chapter skill when its chapter has no lessons", async () => {
+    const [course, blueprint, skill] = await Promise.all([
+      courseFixture({ language: "pt" }),
+      examBlueprintFixture({ language: "pt" }),
+      skillFixture({ language: "pt" }),
+    ]);
+
+    const chapter = await libraryChapterFixture({ homeCourseId: course.id, language: "pt" });
+    await chapterSkillFixture({ chapterId: chapter.id, skillId: skill.id });
+
+    const library = await findExamLibrary({
+      courseIdsByKey: { subject: course.id },
+      examBlueprintId: blueprint.id,
+      language: "pt",
+    });
+
+    expect(library.skills).toStrictEqual([]);
+  });
+
+  it("does not offer lesson-only skills in the course pool", async () => {
+    const [course, blueprint, skill] = await Promise.all([
+      courseFixture({ language: "pt" }),
+      examBlueprintFixture({ language: "pt" }),
+      skillFixture({ language: "pt" }),
+    ]);
+
+    const chapter = await libraryChapterFixture({ homeCourseId: course.id, language: "pt" });
+    const lessons = await libraryLessonsFixture(2, { homeChapterId: chapter.id, language: "pt" });
+
+    await Promise.all(
+      lessons.map((lesson) => lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id })),
     );
 
-    expect(listed.find((skill) => skill.id === lessonSkill!.id)).toMatchObject({
-      course: course.id,
-      lessons: 2,
+    const library = await findExamLibrary({
+      courseIdsByKey: { subject: course.id },
+      examBlueprintId: blueprint.id,
+      language: "pt",
     });
+
+    expect(library.skills).toStrictEqual([]);
+  });
+
+  it("sorts graph placements before chapter skills and keeps their stored size", async () => {
+    const [course, blueprint, otherBlueprint, taught, placed] = await Promise.all([
+      courseFixture({ language: "pt" }),
+      examBlueprintFixture({ language: "pt" }),
+      examBlueprintFixture({ language: "pt" }),
+      skillFixture({ id: `00000000-${randomUUID().slice(9)}`, language: "pt" }),
+      skillFixture({ id: `ffffffff-${randomUUID().slice(9)}`, language: "pt" }),
+    ]);
+
+    const chapter = await libraryChapterFixture({ homeCourseId: course.id, language: "pt" });
+    const lessons = await libraryLessonsFixture(2, { homeChapterId: chapter.id, language: "pt" });
+
+    await Promise.all([
+      chapterSkillFixture({ chapterId: chapter.id, skillId: taught.id }),
+      chapterSkillFixture({ chapterId: chapter.id, skillId: placed.id }),
+      ...lessons.map((lesson) => lessonSkillFixture({ lessonId: lesson.id, skillId: placed.id })),
+      examGraphFixture({
+        blueprint: otherBlueprint,
+        graph: toPlanGraph([{ course, lessons: 1, skill: placed }]),
+      }),
+    ]);
+
+    const library = await findExamLibrary({
+      courseIdsByKey: { subject: course.id },
+      examBlueprintId: blueprint.id,
+      language: "pt",
+    });
+
+    expect(library.skills.map(({ id }) => id)).toStrictEqual([placed.id, taught.id]);
+
+    expect(library.skills).toMatchObject([
+      { id: placed.id, lessons: 1 },
+      { id: taught.id, lessons: 2 },
+    ]);
   });
 
   it("lists the public skills other exams' graphs place in the courses, with their size and links", async () => {
@@ -240,6 +318,47 @@ describe(findExamLibrary, () => {
       [arithmetic!.id]: mathematics.id,
       [equations!.id]: mathematics.id,
       [speeds!.id]: "physics",
+    });
+  });
+
+  it("keeps a lesson-only prerequisite with the course that teaches it", async () => {
+    const [physics, mathematics, blueprint, otherBlueprint, foundation, applied] =
+      await Promise.all([
+        courseFixture({ language: "pt" }),
+        courseFixture({ language: "pt" }),
+        examBlueprintFixture({ language: "pt" }),
+        examBlueprintFixture({ language: "pt" }),
+        skillFixture({ language: "pt" }),
+        skillFixture({ language: "pt" }),
+      ]);
+
+    const chapter = await libraryChapterFixture({ homeCourseId: mathematics.id, language: "pt" });
+    const lessons = await libraryLessonsFixture(2, { homeChapterId: chapter.id, language: "pt" });
+
+    await Promise.all([
+      ...lessons.map((lesson) =>
+        lessonSkillFixture({ lessonId: lesson.id, skillId: foundation.id }),
+      ),
+      prisma.skillPrerequisite.create({
+        data: { prerequisiteId: foundation.id, skillId: applied.id },
+      }),
+      examGraphFixture({
+        blueprint: otherBlueprint,
+        graph: toPlanGraph([{ course: physics, skill: applied }]),
+      }),
+    ]);
+
+    const library = await findExamLibrary({
+      courseIdsByKey: { physics: physics.id },
+      examBlueprintId: blueprint.id,
+      language: "pt",
+    });
+
+    expect(library.courses).toStrictEqual([{ key: mathematics.id, title: mathematics.title }]);
+
+    expect(library.skills.find(({ id }) => id === foundation.id)).toMatchObject({
+      course: mathematics.id,
+      lessons: 2,
     });
   });
 });
