@@ -1,5 +1,4 @@
 import "server-only";
-import { createHash } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
@@ -13,28 +12,6 @@ export type FocusTestReceipt = z.infer<typeof scoredSchema> & {
   /** The plan change that set the focus; null when it changed nothing. */
   changeId: string | null;
 };
-
-/** A hash's leading hex digits as a version 8 UUID with the RFC variant. */
-const HASH_AS_UUID = /^(?<low>.{8})(?<mid>.{4}).(?<high>.{3}).(?<seq>.{3})(?<node>.{12}).*$/u;
-
-/**
- * The plan change a send makes is named after the send, so a retry after a send that failed past
- * its focus change finds that change and keeps its undo.
- */
-export function toFocusChangeId({
-  goalId,
-  requestId,
-  userId,
-}: {
-  goalId: string;
-  requestId: string;
-  userId: string;
-}): string {
-  return createHash("sha256")
-    .update(`focusTest:${userId}:${goalId}:${requestId}`)
-    .digest("hex")
-    .replace(HASH_AS_UUID, "$<low>-$<mid>-8$<high>-8$<seq>-$<node>");
-}
 
 export function toFocusTestContentIds({
   areas,

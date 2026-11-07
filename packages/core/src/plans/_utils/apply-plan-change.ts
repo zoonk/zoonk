@@ -55,7 +55,6 @@ export function isPlanReady(context: Pick<PlanContext, "state">): boolean {
 }
 
 type ChangeRequest = {
-  changeId?: string;
   context: PlanContext;
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
   followToday?: boolean;
@@ -67,7 +66,6 @@ type ChangeRequest = {
 
 async function commitEdit({
   change: { bringsBackSetAside, computed, effect },
-  changeId,
   context,
   extraWrites,
   followToday = false,
@@ -78,9 +76,8 @@ async function commitEdit({
 }: ChangeRequest & { change: ComputedChange }): Promise<AppliedChange> {
   let replaced: string[] = [];
 
-  const committedId = await commitPlan({
+  const changeId = await commitPlan({
     change: {
-      id: changeId,
       kind: "edited",
       payload: toPlanChangePayload({ effect, operations: [...operations], source }),
       provenance,
@@ -113,10 +110,10 @@ async function commitEdit({
   });
 
   if (followToday) {
-    await followPlanToday({ changeId: committedId, context });
+    await followPlanToday({ changeId, context });
   }
 
-  return { changeId: committedId ?? "", replaced, status: "applied" };
+  return { changeId: changeId ?? "", replaced, status: "applied" };
 }
 
 async function savePlanState({

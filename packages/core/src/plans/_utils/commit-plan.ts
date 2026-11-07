@@ -70,7 +70,6 @@ export async function commitPlan({
     const created = change
       ? await tx.planChange.create({
           data: {
-            id: change.id,
             kind: change.kind,
             payload: { ...change.payload, versionAfter: context.plan.version + 1 },
             planId: context.plan.id,

@@ -57,13 +57,11 @@ async function undoSetBack({
 }
 
 export async function changeGoalPlan({
-  changeId,
   goalId,
   input,
   saveFocusAnyway = false,
   trackAnalytics = true,
 }: {
-  changeId?: string;
   goalId: string;
   input: PlanChangeInput;
   saveFocusAnyway?: boolean;
@@ -95,7 +93,6 @@ export async function changeGoalPlan({
     }
 
     const request = {
-      changeId,
       context: owned.context,
       followToday: !input.operations.every((operation) => isChallengeMove(operation)),
       operations: input.operations,

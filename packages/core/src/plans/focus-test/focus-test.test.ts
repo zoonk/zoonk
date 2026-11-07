@@ -472,10 +472,9 @@ describe(submitFocusTest, () => {
     vi.mocked(settleAnsweredActivity).mockRejectedValueOnce(new Error("Connection lost"));
 
     await expect(send({ answers, goalId: goal.id, requestId })).rejects.toThrow("Connection lost");
-    const made = await prisma.planChange.findFirstOrThrow({ where: { planId: plan.id } });
 
     await expect(send({ answers, goalId: goal.id, requestId })).resolves.toMatchObject({
-      outcome: { changeId: made.id, focusAreas: ["Math"] },
+      outcome: { focusAreas: ["Math"] },
       status: "ready",
     });
 
@@ -487,12 +486,8 @@ describe(submitFocusTest, () => {
       seconds: 64,
     });
 
-    await expect(
-      decidePlanChange({ changeId: made.id, goalId: goal.id, input: { status: "undone" } }),
-    ).resolves.toMatchObject({ status: "updated" });
-
     const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
-    expect(stored.settings).toMatchObject({ focusAreas: [] });
+    expect(stored.settings).toMatchObject({ focusAreas: ["Math"] });
   });
 
   it("records every answer even when the learner answered one of its questions elsewhere meanwhile", async () => {

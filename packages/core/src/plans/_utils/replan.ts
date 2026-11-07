@@ -72,8 +72,6 @@ export type ComputedChange = {
 };
 
 export type PlanChangeRecord = {
-  /** Named by the caller when a retry must find the change it made, such as a focus test's send. */
-  id?: string;
   kind: PlanChangeKind;
   payload: StoredPlanChangePayload;
   provenance?: { generatedAt: Date; model: string; promptVersion: string; runId: string } | null;
