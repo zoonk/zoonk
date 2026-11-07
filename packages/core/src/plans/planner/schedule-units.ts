@@ -2,7 +2,7 @@ import { once } from "@zoonk/utils/once";
 import { findDayIndex, findDayIndexFrom } from "./day-index";
 import { type StudyPortion, getUnitStudy } from "./interval-study-minutes";
 import { findLargestCount, makeRoomForOutcomes } from "./outcome-room";
-import { addDays } from "./plan-calendar";
+import { addDays, fromIsoDate } from "./plan-calendar";
 import { PLAN_EPSILON } from "./plan-precision";
 import { type QueueUnit } from "./plan-units";
 import { type PlacedBoss, keepDayOverrun, placeBoss, withKeptLessons } from "./whole-boss";
@@ -296,9 +296,6 @@ export function scheduleUnits({
         return [];
       }
 
-      const endDay = Math.max(dayIndex, findDayIndex({ cumulative, needed: start + unit.minutes }));
-      const teachingEnd = unit.kind === "boss" ? day.date : (days[endDay]?.date ?? day.date);
-
       const { studyMinutes, studyPortions } = getUnitStudy({
         cumulative,
         days,
@@ -308,6 +305,8 @@ export function scheduleUnits({
         unit,
       });
 
+      const lastStudyDate = studyPortions.at(-1)?.date;
+      const teachingEnd = lastStudyDate ? fromIsoDate(lastStudyDate) : day.date;
       const phase = day.shape.phase ?? unit.phase;
 
       const scheduledUnit: ScheduledUnit = beside

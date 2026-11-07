@@ -128,6 +128,7 @@ export function resolveIdentity({
 function fundMockOn({
   at,
   days,
+  keepsOpening,
   minutes,
   past,
   shapes,
@@ -135,6 +136,7 @@ function fundMockOn({
 }: {
   at: number;
   days: readonly PlanDay[];
+  keepsOpening: boolean;
   minutes: number;
   past: number;
   shapes: readonly DayShape[];
@@ -155,8 +157,9 @@ function fundMockOn({
 
   const spendable = window.reduce((total, item) => total + getSpendable(item.shape), 0);
   const needed = Math.max(0, minutes - getSpendable(own) - past);
+  const takesOpening = keepsOpening && needed > PLAN_EPSILON && needed >= spendable - PLAN_EPSILON;
 
-  return needed > spendable + PLAN_EPSILON ? null : { needed, spendable, window };
+  return needed > spendable + PLAN_EPSILON || takesOpening ? null : { needed, spendable, window };
 }
 
 function fundWindow({
@@ -200,6 +203,7 @@ export function fundMocks({
   days,
   from,
   funding,
+  keepsOpening = false,
   moves,
   promised = new Map(),
   resolution = null,
@@ -209,6 +213,7 @@ export function fundMocks({
   days: readonly PlanDay[];
   from?: string;
   funding: readonly MockFunding[];
+  keepsOpening?: boolean;
   moves: readonly MovedEvent[];
   promised?: LessonDays;
   resolution?: MockResolution | null;
@@ -292,6 +297,7 @@ export function fundMocks({
     const funded = fundMockOn({
       at: index,
       days,
+      keepsOpening: keepsOpening && windowStart === firstFunding,
       minutes: mock.minutes,
       past: sumContributions(past),
       shapes,
