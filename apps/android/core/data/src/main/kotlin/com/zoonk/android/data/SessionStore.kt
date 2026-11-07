@@ -428,7 +428,7 @@ class SessionStore(
                 try {
                     restoreKeys.create(request, isCloudBackupEnabled = true)
                 } catch (e: E2eeUnavailableException) {
-                    // Without a screen lock there's no end-to-end encrypted backup; a phone-to-phone transfer still moves the key.
+                    // Without a Google account or a screen lock there's no encrypted cloud backup; a phone-to-phone transfer still moves the key.
                     restoreKeys.create(request, isCloudBackupEnabled = false)
                 } ?: return
             api.registerRestoreKey(session, registration)
