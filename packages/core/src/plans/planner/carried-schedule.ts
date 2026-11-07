@@ -1,3 +1,4 @@
+import { getOneDayStudy } from "./interval-study-minutes";
 import { type QueueUnit, getBossKey } from "./plan-units";
 import { type PlanDay, type ScheduledUnit, scheduleUnits } from "./schedule-units";
 import { markKeptLessons } from "./whole-boss";
@@ -27,6 +28,19 @@ function placeOn<TUnit extends QueueUnit>({ day, unit }: { day: PlanDay; unit: T
   };
 }
 
+function moveOnto({
+  day,
+  unit: { teachingEnd: _end, ...unit },
+}: {
+  day: PlanDay;
+  unit: ScheduledUnit;
+}): ScheduledUnit {
+  return {
+    ...placeOn({ day, unit }),
+    ...getOneDayStudy({ date: day.date, lessonMinutes: unit.minutes, share: day.shape.share }),
+  };
+}
+
 function scheduleCarriedUnits({
   days,
   today,
@@ -46,7 +60,7 @@ function scheduleCarriedUnits({
   }
 
   const placed = schedule.units.map((unit) =>
-    today.has(unit.key) && unit.date > first.date ? placeOn({ day: first, unit }) : unit,
+    today.has(unit.key) && unit.date > first.date ? moveOnto({ day: first, unit }) : unit,
   );
 
   const kept = schedule.dropped.map(({ fittedMinutes: _fitted, ...unit }) =>

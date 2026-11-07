@@ -77,18 +77,20 @@ function reduceAtSlowerPace() {
     throw new Error("The change doesn't apply.");
   }
 
-  const after = buildPlan({
+  const built = buildPlan({
     ...input,
     carryOver: { lessonIds: [], todayExceptAreas: ["Ética"] },
     items: shown,
     paceFactor: 1.5,
     settings: applied.state.settings,
-  }).items;
+  });
 
+  const after = built.items;
   const plan = { goal: input.goal, graph, settings: applied.state.settings };
 
   return {
     after,
+    built,
     context: {
       after: { ...plan, items: after, phases: [] },
       before: { ...plan, items: shown, phases: [] },
@@ -111,5 +113,20 @@ describe("a change of focus when today's time no longer holds today's lessons", 
     expect(kept.length).toBeGreaterThan(1);
     expect(stayed).toStrictEqual(kept);
     expect(checkSteeringKeepsToday(context)).toStrictEqual([]);
+  });
+
+  it("gives each lesson it keeps on today all its time on today", () => {
+    const { after, built } = reduceAtSlowerPace();
+    const today = toIsoDate(TODAY);
+
+    const elsewhere = after
+      .filter((item) => item.scheduledFor?.getTime() === TODAY.getTime())
+      .flatMap((item) =>
+        [...(built.lessonDayMinutes.get(item.key)?.keys() ?? [])].flatMap((day) =>
+          day === today ? [] : [`${item.key} on ${day}`],
+        ),
+      );
+
+    expect(elsewhere).toStrictEqual([]);
   });
 });
