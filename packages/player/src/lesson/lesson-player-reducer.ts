@@ -9,7 +9,7 @@ import {
   skipSteps,
   startQuickCheck,
 } from "./_utils/lesson-flow";
-import { getRunVerdicts, resumeLesson } from "./_utils/lesson-resume";
+import { getRunVerdicts, requeueRetries, resumeLesson } from "./_utils/lesson-resume";
 import { isReadStep } from "./_utils/lesson-steps";
 import { restorePicturedSteps } from "./_utils/restore-pictured-steps";
 import { restoreWriting, skipWriting } from "./_utils/writing-skip";
@@ -115,6 +115,10 @@ function setCompletionStatus(
   return state.completion ? { ...state, completion: { ...state.completion, status } } : state;
 }
 
+function isSameList(a: string[], b: string[]): boolean {
+  return a.length === b.length && a.every((id, index) => b[index] === id);
+}
+
 function isSameProgress(a: Record<string, boolean>, b: Record<string, boolean>): boolean {
   const entries = Object.entries(a);
 
@@ -154,6 +158,7 @@ function resumeFrom(state: LessonPlayerState, answers: LessonRunAnswers): Lesson
     run: state.run,
     skippedWritingStepIds,
     unavailableStepIds: state.unavailableStepIds,
+    unsavedAnswers: state.unsavedAnswers,
   };
 
   return writingRestore ? skipWriting(resumed, { opening: true }) : resumed;
@@ -173,14 +178,49 @@ function startRun(state: LessonPlayerState, action: ActionOf<"runStarted">): Les
   };
 
   const started = skipSteps({ ...state, run }, action.optionalStepIds ?? []);
-  const isUntouched = Object.keys(state.results).length === 0 && !state.quickCheck;
-  const answers = action.answers.filter((answer) => answer.stepId in state.steps);
 
-  if (!isUntouched || isSameProgress(state.firstVerdicts, getRunVerdicts(answers))) {
+  const answers = [...action.answers, ...action.held].filter(
+    (answer) => answer.stepId in state.steps,
+  );
+
+  if (!isUntouched(state)) {
     return started;
   }
 
-  return resumeFrom(started, answers);
+  if (!isSameProgress(state.firstVerdicts, getRunVerdicts(answers))) {
+    return resumeFrom(started, answers);
+  }
+
+  return placeRetries(started, answers);
+}
+
+function isUntouched(state: LessonPlayerState): boolean {
+  return Object.keys(state.results).length === 0 && !state.quickCheck;
+}
+
+/**
+ * Answers that only change how often a screen was tried (a miss counted twice because its reply was
+ * lost) change which checks come back at the end, not the screen the learner is on.
+ */
+function placeRetries(state: LessonPlayerState, answers: LessonRunAnswers): LessonPlayerState {
+  const requeued = requeueRetries(state, answers);
+
+  if (isSameList(requeued.queue, state.queue)) {
+    return state;
+  }
+
+  const keepsScreen =
+    !isAtEnd(state) && requeued.queue[state.position] === state.queue[state.position];
+
+  return keepsScreen ? requeued : resumeFrom(state, answers);
+}
+
+function placeUnsent(
+  state: LessonPlayerState,
+  action: ActionOf<"unsentPlaced">,
+): LessonPlayerState {
+  const placed = isUntouched(state) ? resumeFrom(state, action.answers) : state;
+  return { ...placed, unsavedAnswers: true };
 }
 
 function resyncRun(state: LessonPlayerState, action: ActionOf<"runResynced">): LessonPlayerState {
@@ -228,10 +268,60 @@ function recordVerdict(state: LessonPlayerState, action: ActionOf<"checkResolved
   return isAtEnd(state) ? state : resolveCheck(state, action);
 }
 
+const SERVER_ACTION_TYPES = [
+  "allSaved",
+  "completionFailed",
+  "completionRetried",
+  "completionSaved",
+  "runRefused",
+  "runResynced",
+  "runStarted",
+  "runStarting",
+  "saveFailed",
+  "unsentPlaced",
+] as const;
+
+type ServerAction = ActionOf<(typeof SERVER_ACTION_TYPES)[number]>;
+
+function isServerAction(action: LessonPlayerAction): action is ServerAction {
+  return SERVER_ACTION_TYPES.some((type) => type === action.type);
+}
+
+function reduceServerAction(state: LessonPlayerState, action: ServerAction): LessonPlayerState {
+  switch (action.type) {
+    case "runStarting":
+      return { ...state, run: { status: "starting" } };
+    case "runStarted":
+      return startRun(state, action);
+    case "runResynced":
+      return resyncRun(state, action);
+    case "runRefused":
+      return { ...state, run: { refusal: action.refusal, status: "refused" } };
+    case "unsentPlaced":
+      return placeUnsent(state, action);
+    case "saveFailed":
+      return state.unsavedAnswers ? state : { ...state, unsavedAnswers: true };
+    case "allSaved":
+      return state.unsavedAnswers ? { ...state, unsavedAnswers: false } : state;
+    case "completionSaved":
+      return completionSaved(state, action);
+    case "completionFailed":
+      return setCompletionStatus(state, "failed");
+    case "completionRetried":
+      return setCompletionStatus(state, "saving");
+    default:
+      return action satisfies never;
+  }
+}
+
 export function lessonPlayerReducer(
   state: LessonPlayerState,
   action: LessonPlayerAction,
 ): LessonPlayerState {
+  if (isServerAction(action)) {
+    return reduceServerAction(state, action);
+  }
+
   switch (action.type) {
     case "selectAnswer":
       return selectAnswer(state, action);
@@ -257,20 +347,6 @@ export function lessonPlayerReducer(
       return failCheck(state, action);
     case "checkConfirmed":
       return confirmCheck(state, action);
-    case "runStarting":
-      return { ...state, run: { status: "starting" } };
-    case "runStarted":
-      return startRun(state, action);
-    case "runResynced":
-      return resyncRun(state, action);
-    case "runRefused":
-      return { ...state, run: { refusal: action.refusal, status: "refused" } };
-    case "completionSaved":
-      return completionSaved(state, action);
-    case "completionFailed":
-      return setCompletionStatus(state, "failed");
-    case "completionRetried":
-      return setCompletionStatus(state, "saving");
     default:
       return action satisfies never;
   }

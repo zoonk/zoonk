@@ -18,6 +18,17 @@ function createDeviceStorage(name: "localStorage" | "sessionStorage") {
         return null;
       }
     },
+    keys(prefix: string): string[] {
+      try {
+        const storage = globalThis[name];
+
+        return Array.from({ length: storage.length }, (_, index) => storage.key(index)).filter(
+          (key): key is string => key?.startsWith(prefix) === true,
+        );
+      } catch {
+        return [];
+      }
+    },
     remove(key: string): boolean {
       try {
         globalThis[name].removeItem(key);

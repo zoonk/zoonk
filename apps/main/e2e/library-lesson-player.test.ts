@@ -221,6 +221,54 @@ test.describe("Library lesson player", () => {
     }
   });
 
+  test("keeps a miss whose save didn't get through across a reload and saves it to the notebook", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const { lesson, steps } = await playableLessonFixture({
+      steps: [
+        "explanation",
+        "check",
+        {
+          content: { text: "Denser means more likely.", title: "Reading it" },
+          kind: "explanation",
+        },
+        "check",
+      ],
+    });
+
+    const missed = steps[1]?.id ?? "";
+    const notSaved = page.getByRole("button", { name: "Not saved yet" });
+
+    await page.goto(`/learn/${lesson.id}`);
+    await readExplanation(page);
+
+    await page.route("**/api/steps/*/checks", (route) => route.abort("internetdisconnected"));
+    await page.getByRole("radio", { name: "The electron's exact path" }).click();
+    await primary(page, /^Check/u).click();
+    await expectVerdict(page, "Not quite");
+    await expect(notSaved).toBeVisible();
+
+    await page.unroute("**/api/steps/*/checks");
+    await page.reload();
+
+    await expect(page.getByText("Reading it")).toBeVisible();
+    await expect(notSaved).toBeHidden();
+
+    await expect
+      .poll(() =>
+        prisma.attempt.findMany({
+          select: { isCorrect: true },
+          where: { stepId: missed, userId: noProgressUser.id },
+        }),
+      )
+      .toStrictEqual([{ isCorrect: false }]);
+
+    await expect
+      .poll(() => prisma.mistake.count({ where: { stepId: missed, userId: noProgressUser.id } }))
+      .toBe(1);
+  });
+
   test("keeps a signed-in learner when the session check fails, and opens the lesson on a retry", async ({
     userWithoutProgress: page,
   }) => {

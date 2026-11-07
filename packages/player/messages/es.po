@@ -3474,6 +3474,16 @@ msgid "Close lesson"
 msgstr "Cerrar la lección"
 
 #: src/lesson/lesson-player-header.tsx
+msgctxt "0WZ-rc"
+msgid "Not saved yet"
+msgstr "Aún sin guardar"
+
+#: src/lesson/lesson-player-header.tsx
+msgctxt "4fcWWV"
+msgid "Some answers aren't saved yet. We'll keep trying while this lesson is open."
+msgstr "Algunas respuestas aún no están guardadas. Seguiremos intentando guardarlas mientras esta lección esté abierta."
+
+#: src/lesson/lesson-player-header.tsx
 msgctxt "dYp90P"
 msgid "Lesson progress"
 msgstr "Progreso de la lección"

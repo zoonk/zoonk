@@ -50,6 +50,8 @@ export type LessonStartOutcome =
   | {
       answers: LessonRunAnswers;
       hyperdrive: LessonRunHyperdrive;
+      /** Whose run it is: answers not saved yet are kept on the device under this learner. */
+      learnerId: string;
       optionalStepIds?: string[];
       reason: "started";
       /** The learner already finished this lesson, so its end offers no next lesson. */
@@ -58,7 +60,7 @@ export type LessonStartOutcome =
       startedAt: string;
     };
 
-/** Retry `failed` outcomes; `refused` outcomes must not be retried. */
+/** Retry `failed` outcomes, an ended session included; `refused` outcomes must not be retried. */
 export type LessonCheckOutcome =
   | { result: LessonStepCheckResult; status: "checked" }
   | { status: "failed" }

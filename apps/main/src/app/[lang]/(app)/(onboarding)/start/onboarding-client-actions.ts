@@ -43,11 +43,11 @@ async function createAsGuest(
 ): Promise<CreateGoalsOutcome> {
   const guest = await ensureGuestSession();
 
-  if (guest === "ready") {
+  if (guest.status === "ready") {
     return create();
   }
 
-  return guest === "blocked"
+  return guest.status === "blocked"
     ? { reason: "browserBlocked", status: "limitReached" }
     : { status: "failed" };
 }

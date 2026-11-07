@@ -61,9 +61,12 @@ export function runAnswer({
   };
 }
 
+export const LEARNER_ID = "learner";
+
 export function startedRun({
   answers = [],
   hyperdrive = { knownStepIds: [], streak: 0 },
+  learnerId = LEARNER_ID,
   optionalStepIds,
   replay = false,
   runId = crypto.randomUUID(),
@@ -72,6 +75,7 @@ export function startedRun({
   return {
     answers,
     hyperdrive,
+    learnerId,
     optionalStepIds,
     reason: "started" as const,
     replay,
@@ -89,7 +93,7 @@ export function buildAdapters(
   return {
     checkStep: vi.fn(local.checkStep),
     completeLesson: vi.fn(local.completeLesson),
-    startLesson: vi.fn(local.startLesson),
+    startLesson: vi.fn(() => Promise.resolve(startedRun())),
     ...overrides,
   };
 }
@@ -123,29 +127,29 @@ export function acceptedAnswerCheck(
   });
 }
 
-export function renderLessonPlayer({
+type LessonPlayerTestProps = Partial<Omit<LessonPlayerProviderProps, "children" | "lesson">> & {
+  children?: ReactNode;
+  lesson: PlayableLibraryLesson;
+  mathMarkup?: ComponentProps<typeof MathMarkupProvider>["markup"];
+  voice?: VoiceText;
+};
+
+export function lessonPlayerElement({
   adapters,
   children = <LessonPlayerShell />,
   lesson,
   mathMarkup = {},
   voice = speechClips().voice,
   ...props
-}: Partial<Omit<LessonPlayerProviderProps, "children" | "lesson">> & {
-  children?: ReactNode;
-  lesson: PlayableLibraryLesson;
-  mathMarkup?: ComponentProps<typeof MathMarkupProvider>["markup"];
-  voice?: VoiceText;
-}) {
-  const onExit = vi.fn();
-
-  const view = render(
+}: LessonPlayerTestProps) {
+  return (
     <MathMarkupProvider markup={mathMarkup}>
       <SpeechPlayerProvider voice={voice}>
         <LessonPlayerProvider
           adapters={adapters ?? buildAdapters(lesson)}
           lesson={lesson}
           linkComponent={TestLink}
-          onExit={onExit}
+          onExit={vi.fn()}
           routes={{
             exit: "/",
             exitTo: null,
@@ -153,15 +157,18 @@ export function renderLessonPlayer({
             signUp: "/login",
             upgrade: "/subscription",
           }}
-          viewer={{ hasSession: true }}
+          viewer={{ learnerId: LEARNER_ID }}
           {...props}
         >
           {children}
         </LessonPlayerProvider>
       </SpeechPlayerProvider>
-    </MathMarkupProvider>,
-    { reactStrictMode: true },
+    </MathMarkupProvider>
   );
+}
 
+export function renderLessonPlayer(props: LessonPlayerTestProps) {
+  const onExit = vi.fn();
+  const view = render(lessonPlayerElement({ onExit, ...props }), { reactStrictMode: true });
   return { ...view, onExit };
 }

@@ -120,13 +120,13 @@ function useExplanationWait(isWritten: boolean) {
 /** An old prefetched copy that still shows the wait follows the run, which reads the page again once ready. */
 export function ExplainClient({
   explanation,
-  hasSession,
+  learnerId,
   soundsEnabled,
   tutor,
   tutorSuggestions,
 }: {
   explanation: ExplanationView;
-  hasSession: boolean;
+  learnerId: string | null;
   soundsEnabled: boolean;
   tutor: TutorViewer;
   tutorSuggestions: readonly LessonTutorSuggestion[];
@@ -188,7 +188,7 @@ export function ExplainClient({
     <LazyLessonPlayer
       endingSlots={endingSlots}
       firstAnswer={null}
-      hasSession={hasSession}
+      learnerId={learnerId}
       lesson={lesson}
       outline
       routing={routing}

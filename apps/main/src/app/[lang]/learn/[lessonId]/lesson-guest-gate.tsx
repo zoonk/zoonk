@@ -23,11 +23,11 @@ function gateReducer(_phase: GatePhase, action: GateAction): GatePhase {
     return "opening";
   }
 
-  if (action.guest === "blocked") {
+  if (action.guest.status === "blocked") {
     return "blocked";
   }
 
-  return action.guest === "ready" ? "refreshing" : "failed";
+  return action.guest.status === "ready" ? "refreshing" : "failed";
 }
 
 function useOpenAsGuest() {
@@ -39,7 +39,7 @@ function useOpenAsGuest() {
     const guest = await ensureGuestSession();
     dispatch({ guest, type: "opened" });
 
-    if (guest === "ready") {
+    if (guest.status === "ready") {
       startTransition(() => router.refresh());
     }
   });

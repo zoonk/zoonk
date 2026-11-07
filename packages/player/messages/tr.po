@@ -3474,6 +3474,16 @@ msgid "Close lesson"
 msgstr "Dersi kapat"
 
 #: src/lesson/lesson-player-header.tsx
+msgctxt "0WZ-rc"
+msgid "Not saved yet"
+msgstr "Henüz kaydedilmedi"
+
+#: src/lesson/lesson-player-header.tsx
+msgctxt "4fcWWV"
+msgid "Some answers aren't saved yet. We'll keep trying while this lesson is open."
+msgstr "Bazı cevaplar henüz kaydedilmedi. Bu ders açık kaldığı sürece kaydetmeyi denemeye devam edeceğiz."
+
+#: src/lesson/lesson-player-header.tsx
 msgctxt "dYp90P"
 msgid "Lesson progress"
 msgstr "Ders ilerlemesi"

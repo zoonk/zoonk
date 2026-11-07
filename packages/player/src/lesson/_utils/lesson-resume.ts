@@ -66,6 +66,21 @@ function getResumePosition({
   return readingBefore === -1 ? 0 : open - readingBefore;
 }
 
+/** The queue may already hold retries; the answers decide them again. */
+export function requeueRetries(
+  state: LessonPlayerState,
+  answers: LessonRunAnswers,
+): LessonPlayerState {
+  const queue = state.queue.filter((stepId, index) => state.queue.indexOf(stepId) === index);
+  const missedOnce = getMissedOnce({ answers, state: { ...state, queue } });
+
+  return {
+    ...state,
+    queue: [...queue, ...missedOnce],
+    retried: [...getRetried(answers), ...missedOnce],
+  };
+}
+
 export function resumeLesson(
   state: LessonPlayerState,
   answers: LessonRunAnswers,
@@ -76,26 +91,17 @@ export function resumeLesson(
     return state;
   }
 
-  const missedOnce = getMissedOnce({ answers: known, state });
-  const queue = [...state.queue, ...missedOnce];
-  const answered = new Set(known.map((answer) => answer.stepId));
+  const resumed = { ...requeueRetries(state, known), firstVerdicts: getRunVerdicts(known) };
 
   const position = getResumePosition({
-    answered,
+    answered: new Set(known.map((answer) => answer.stepId)),
     lessonLength: state.queue.length,
-    queue,
+    queue: resumed.queue,
     steps: state.steps,
   });
 
-  const resumed = {
-    ...state,
-    firstVerdicts: getRunVerdicts(known),
-    queue,
-    retried: [...getRetried(known), ...missedOnce],
-  };
-
-  if (position >= queue.length) {
-    return finishScreens({ ...resumed, position: queue.length - 1 }, "ready");
+  if (position >= resumed.queue.length) {
+    return finishScreens({ ...resumed, position: resumed.queue.length - 1 }, "ready");
   }
 
   return { ...resumed, position };

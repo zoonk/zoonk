@@ -47,11 +47,11 @@ export function useCourseStart({
       const { data } = await safeAsync(async () => {
         const guest = await ensureGuestSession();
 
-        if (guest === "blocked") {
+        if (guest.status === "blocked") {
           return { reason: "browserBlocked", status: "limitReached" } as const;
         }
 
-        return guest === "ready"
+        return guest.status === "ready"
           ? startCourseAction({
               chapterId,
               courseId,

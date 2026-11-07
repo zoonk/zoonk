@@ -16,7 +16,13 @@ function readPeriod(value: unknown): "day" | "month" | "total" {
   return period === "month" || period === "total" ? period : "day";
 }
 
-function toStartOutcome(body: unknown): LessonStartOutcome {
+function toStartOutcome({
+  body,
+  learnerId,
+}: {
+  body: unknown;
+  learnerId: string;
+}): LessonStartOutcome {
   const status = getString(body, "status");
 
   if (status === "started" && isJsonObject(body)) {
@@ -26,6 +32,7 @@ function toStartOutcome(body: unknown): LessonStartOutcome {
       ? {
           answers: run.data.answers,
           hyperdrive: run.data.hyperdrive,
+          learnerId,
           optionalStepIds: run.data.optionalStepIds,
           reason: "started",
           replay: run.data.replay,
@@ -59,8 +66,10 @@ export async function startLibraryLesson({
   runId?: string;
   studySessionId: string | null;
 }): Promise<LessonStartOutcome> {
+  const guest = await ensureGuestSession();
+
   // A session check or guest sign-in that failed is worth retrying; it never means "signed out".
-  if ((await ensureGuestSession()) !== "ready") {
+  if (guest.status !== "ready") {
     return { reason: "failed" };
   }
 
@@ -81,5 +90,8 @@ export async function startLibraryLesson({
     return { reason: "failed" };
   }
 
-  return toStartOutcome(await response.json().catch(() => null));
+  return toStartOutcome({
+    body: await response.json().catch(() => null),
+    learnerId: guest.learnerId,
+  });
 }

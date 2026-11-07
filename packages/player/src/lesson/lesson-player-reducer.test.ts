@@ -23,6 +23,26 @@ import { type LessonPlayerAnswer, type PlayableLibraryStep } from "./lesson-play
 
 const STARTED_AT = "2026-10-05T10:00:00.000Z";
 const ANSWERED_AT = "2026-10-05T10:01:00.000Z";
+const HYPERDRIVE = { knownStepIds: [], streak: 0 };
+
+function runAnswer(stepId: string, isCorrect: boolean, answeredAt = ANSWERED_AT) {
+  return { answeredAt, isCorrect, stepId };
+}
+
+function runStarted({
+  answers,
+  held,
+}: Pick<Extract<LessonPlayerAction, { type: "runStarted" }>, "answers" | "held">) {
+  return {
+    answers,
+    held,
+    hyperdrive: HYPERDRIVE,
+    replay: false,
+    runId: "run",
+    startedAt: STARTED_AT,
+    type: "runStarted",
+  } as const;
+}
 
 function play(steps: PlayableLibraryStep[], actions: LessonPlayerAction[]): LessonPlayerState {
   return actions.reduce(
@@ -273,6 +293,7 @@ describe(lessonPlayerReducer, () => {
       { opening: true, type: "skipWriting" },
       {
         answers: [{ answeredAt: ANSWERED_AT, isCorrect: true, stepId: "quiz" }],
+        held: [],
         hyperdrive: { knownStepIds: [], streak: 0 },
         replay: false,
         runId: "run",
@@ -620,6 +641,7 @@ describe(lessonPlayerReducer, () => {
     const resumed = play(steps, [
       {
         answers: [{ answeredAt: ANSWERED_AT, isCorrect: false, stepId: "q1" }],
+        held: [],
         hyperdrive: { knownStepIds: [], streak: 0 },
         replay: false,
         runId: "run",
@@ -647,6 +669,7 @@ describe(lessonPlayerReducer, () => {
     const done = play(steps, [
       {
         answers,
+        held: [],
         hyperdrive,
         replay: false,
         runId: "run",
@@ -667,6 +690,7 @@ describe(lessonPlayerReducer, () => {
       ...answerCheck("q1", false),
       {
         answers,
+        held: [],
         hyperdrive,
         replay: false,
         runId: "run",
@@ -712,6 +736,121 @@ describe(lessonPlayerReducer, () => {
     });
 
     expect([complete.phase, complete.completion?.status]).toStrictEqual(["completed", "failed"]);
+  });
+
+  it("places a learner who comes back after the answers this device still holds", () => {
+    const steps = [
+      explanationStep("e1"),
+      checkStep("q1"),
+      explanationStep("e2"),
+      checkStep("q2"),
+      explanationStep("e3"),
+      checkStep("q3"),
+    ];
+
+    const placed = play(steps, [
+      { answers: [runAnswer("q1", true), runAnswer("q2", false)], type: "unsentPlaced" },
+    ]);
+
+    expect(placed).toMatchObject({
+      firstVerdicts: { q1: true, q2: false },
+      queue: ["e1", "q1", "e2", "q2", "e3", "q3", "q2"],
+      unsavedAnswers: true,
+    });
+
+    expect(getCurrentStep(placed)?.id).toBe("e3");
+
+    const answeredHere = play(steps, [
+      { type: "continue" },
+      ...answerCheck("q1", true),
+      { answers: [runAnswer("q2", false)], type: "unsentPlaced" },
+    ]);
+
+    expect([getCurrentStep(answeredHere)?.id, answeredHere.unsavedAnswers]).toStrictEqual([
+      "q1",
+      true,
+    ]);
+  });
+
+  it("keeps the learner in place when the run counts the answers still held on the device", () => {
+    const steps = [explanationStep("e1"), checkStep("q1"), explanationStep("e2"), checkStep("q2")];
+    const held = [runAnswer("q1", false)];
+    const placed = play(steps, [{ answers: held, type: "unsentPlaced" }]);
+
+    const started = lessonPlayerReducer(placed, runStarted({ answers: [], held }));
+
+    expect(started).toMatchObject({
+      position: placed.position,
+      queue: placed.queue,
+      rounds: placed.rounds,
+      run: { carriedStepIds: [], runId: "run", status: "started" },
+    });
+  });
+
+  it("brings back a miss counted twice because its saved reply was lost, without moving the learner", () => {
+    const steps = [
+      explanationStep("e1"),
+      checkStep("q1"),
+      explanationStep("e2"),
+      checkStep("q2"),
+      summaryStep("sum"),
+    ];
+
+    const miss = runAnswer("q1", false);
+    const placed = play(steps, [{ answers: [miss, miss], type: "unsentPlaced" }]);
+    const reading = lessonPlayerReducer(placed, { type: "continue" });
+
+    expect([reading.queue, getCurrentStep(reading)?.id]).toStrictEqual([
+      ["e1", "q1", "e2", "q2", "sum"],
+      "q2",
+    ]);
+
+    const started = lessonPlayerReducer(reading, runStarted({ answers: [miss], held: [] }));
+
+    expect(started).toMatchObject({
+      position: reading.position,
+      queue: ["e1", "q1", "e2", "q2", "sum", "q1"],
+      retried: ["q1"],
+      rounds: reading.rounds,
+    });
+
+    const lastLeft = play(
+      [explanationStep("e1"), checkStep("q1"), summaryStep("sum")],
+      [{ answers: [miss, miss], type: "unsentPlaced" }],
+    );
+
+    expect(lastLeft.phase).toBe("completed");
+
+    const retry = lessonPlayerReducer(lastLeft, runStarted({ answers: [miss], held: [] }));
+
+    expect([retry.phase, retry.queue, getCurrentStep(retry)?.id]).toStrictEqual([
+      "playing",
+      ["e1", "q1", "sum", "q1"],
+      "sum",
+    ]);
+  });
+
+  it("carries over only the answers the server has from an earlier sitting", () => {
+    const earlier = "2026-10-04T10:00:00.000Z";
+
+    const started = play(
+      [checkStep("q1"), checkStep("q2")],
+      [
+        { answers: [runAnswer("q2", true, earlier)], type: "unsentPlaced" },
+        runStarted({
+          answers: [runAnswer("q1", true, earlier)],
+          held: [runAnswer("q2", true, earlier)],
+        }),
+      ],
+    );
+
+    expect(started.run).toMatchObject({ carriedStepIds: ["q1"] });
+  });
+
+  it("says answers aren't saved yet from a save that didn't get through until all are saved", () => {
+    const failed = play([checkStep("q1")], [{ type: "saveFailed" }]);
+    expect(failed.unsavedAnswers).toBe(true);
+    expect(lessonPlayerReducer(failed, { type: "allSaved" }).unsavedAnswers).toBe(false);
   });
 
   it("keeps answers still while a screen is being graded or after the end", () => {
@@ -774,6 +913,7 @@ describe(lessonPlayerReducer, () => {
         { type: "runStarting" },
         {
           answers: [],
+          held: [],
           hyperdrive,
           replay: false,
           runId: "run-1",

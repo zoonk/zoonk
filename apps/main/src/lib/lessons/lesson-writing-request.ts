@@ -53,7 +53,9 @@ function readAnswer({
 }
 
 export async function askToWriteLesson(lessonId: string): Promise<LessonWritingAnswer> {
-  if ((await ensureGuestSession()) !== "ready") {
+  const guest = await ensureGuestSession();
+
+  if (guest.status !== "ready") {
     return { status: "failed" };
   }
 

@@ -245,7 +245,10 @@ describe("lesson visuals", () => {
 
     renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
 
-    await expect.element(page.getByRole("status")).toHaveTextContent("Drawing the picture…");
+    await expect
+      .element(page.getByRole("status").filter({ hasText: "Drawing the picture…" }))
+      .toBeVisible();
+
     await expect.element(page.getByText(request.alt)).toBeVisible();
 
     const firstOption = page.getByRole("radio").first();

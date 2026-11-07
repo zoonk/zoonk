@@ -12,7 +12,7 @@ import {
 import { type PlayerLinkComponent } from "../player-context";
 import { rightAnswer } from "./preview-answers";
 import { type PreviewState } from "./preview-catalog";
-import { localAdapters } from "./preview-lesson";
+import { PREVIEW_LEARNER_ID, localAdapters } from "./preview-lesson";
 
 function PreviewLink({
   "aria-keyshortcuts": keyShortcuts,
@@ -114,7 +114,7 @@ export function PlayerPreview({
         linkComponent={PreviewLink}
         onExit={noop}
         routes={ROUTES}
-        viewer={{ hasSession: true }}
+        viewer={{ learnerId: PREVIEW_LEARNER_ID }}
       >
         <CheckPreviewAnswer enabled={state === "checked" && first.kind !== "hook"} />
         <LessonPlayerShell />
