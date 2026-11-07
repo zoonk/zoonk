@@ -70,6 +70,14 @@ const CARET_POWER =
 
 const HAS_CARET_POWER = new RegExp(CARET_POWER.source, "u");
 
+/**
+ * A number under a symbol or element (`x_1`, `CH_3`, `H_2O`); a longer word before `_` is an
+ * identifier (`user_1`).
+ */
+const BARE_SUBSCRIPT = /(?<![\p{L}\p{N}_\\])(?<base>\p{L}{1,2})_(?<below>\p{N}+)/gu;
+
+const HAS_BARE_SUBSCRIPT = new RegExp(BARE_SUBSCRIPT.source, "u");
+
 /** `10^3,5` is a decimal power in some languages and two numbers in others; a writer decides. */
 const COMMA_AFTER_POWER = /\^[-−]?\p{N}+,\p{N}/u;
 
@@ -190,7 +198,13 @@ function isLatex({ commands, text }: { commands: Command[]; text: string }): boo
     FILE_PATH.test(collapseBraces(text)) ||
     commands.some((command) => !command.inBraces && !MATH_COMMANDS.has(command.name));
 
-  return !isPath && (known.length > 0 || BRACED_SCRIPT.test(text) || HAS_CARET_POWER.test(text));
+  return (
+    !isPath &&
+    (known.length > 0 ||
+      BRACED_SCRIPT.test(text) ||
+      HAS_CARET_POWER.test(text) ||
+      HAS_BARE_SUBSCRIPT.test(text))
+  );
 }
 
 /** The player's KaTeX settings, so code wraps only what the player draws without an error. */
@@ -228,10 +242,9 @@ function toBareLatex({ chunk, index }: { chunk: string; index: number }): BareLa
     return null;
   }
 
-  const latex = written.replaceAll(
-    CARET_POWER,
-    (_power, power: string) => `^{${power.replace("−", "-")}}`,
-  );
+  const latex = written
+    .replaceAll(CARET_POWER, (_power, power: string) => `^{${power.replace("−", "-")}}`)
+    .replaceAll(BARE_SUBSCRIPT, (_subscript, base: string, below: string) => `${base}_{${below}}`);
 
   return {
     end: start + written.length,

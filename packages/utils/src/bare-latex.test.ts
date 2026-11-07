@@ -31,6 +31,7 @@ describe(findBareLatex, () => {
       String.raw`It costs R$ 80, \$5 or $10, keeps user_id and the file C:\Users\ana\notes.txt.`,
       String.raw`Open C:\text\notes.txt to read it.`,
       String.raw`Open C:\log.txt or logs\ln.csv to read them.`,
+      "Set user_1 and max_2 in the config.",
       "Smile ^_^ and rate it 9/10 * 2.",
     ];
 
@@ -67,7 +68,11 @@ describe(wrapBareLatex, () => {
     expect(wrapBareLatex("It factors as x^2-xy.")).toBe("It factors as $x^{2}-xy$.");
     expect(wrapBareLatex("Find log_{10}(1000).")).toBe("Find $log_{10}(1000)$.");
     expect(wrapBareLatex("The pressure is 10^3kPa.")).toBe("The pressure is $10^{3}kPa$.");
-    expect(wrapBareLatex("Simplify x^2–y_1.")).toBe("Simplify $x^{2}–y_1$.");
+    expect(wrapBareLatex("Simplify x^2–y_1.")).toBe("Simplify $x^{2}–y_{1}$.");
+
+    expect(wrapBareLatex("Methane is CH_4, and ethoxide is CH_3—CH_2—O^{-}.")).toBe(
+      "Methane is $CH_{4}$, and ethoxide is $CH_{3}$—$CH_{2}$—$O^{-}$.",
+    );
 
     expect(wrapBareLatex("Think of 10^3—it means one thousand. Recall—x^2 grows.")).toBe(
       "Think of $10^{3}$—it means one thousand. Recall—$x^{2}$ grows.",
