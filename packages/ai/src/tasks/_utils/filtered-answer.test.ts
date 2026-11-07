@@ -2,7 +2,7 @@ import { APICallError, Output, generateText } from "ai";
 import { MockLanguageModelV4 } from "ai/test";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import { failUnfinishedAnswer } from "./filtered-answer";
+import { failFilteredAnswer, failUnfinishedAnswer } from "./filtered-answer";
 
 function answer({
   finishReason,
@@ -13,7 +13,7 @@ function answer({
 }) {
   const model = new MockLanguageModelV4({
     doGenerate: {
-      content: [{ text, type: "text" }],
+      content: text ? [{ text, type: "text" }] : [],
       finishReason: { raw: finishReason, unified: finishReason },
       usage: {
         inputTokens: { cacheRead: 0, cacheWrite: 0, noCache: 10, total: 10 },
@@ -50,6 +50,13 @@ describe(failUnfinishedAnswer, () => {
     await expect(failed).rejects.not.toHaveProperty("cause");
   });
 
+  it("fails an answer the provider failed as an ordinary error, even when its output passes", async () => {
+    const failed = answer({ finishReason: "error", text: '{"releases": []}' });
+
+    await expect(failed).rejects.toMatchObject({ name: "Error" });
+    await expect(failed).rejects.not.toHaveProperty("cause");
+  });
+
   it("leaves any other failure as it is", async () => {
     const outage = new APICallError({
       message: "Gateway timeout",
@@ -65,4 +72,17 @@ describe(failUnfinishedAnswer, () => {
       answer({ finishReason: "stop", text: '{"releases": ["1.0"]}' }),
     ).resolves.toMatchObject({ output: { releases: ["1.0"] } });
   });
+});
+
+describe(failFilteredAnswer, () => {
+  it.each(["content-filter", "length"] as const)(
+    "fails an empty answer that ended for %s as the failure no retry fixes",
+    async (finishReason) => {
+      const result = await answer({ finishReason, text: "" });
+
+      expect(() => failFilteredAnswer(result)).toThrow(
+        expect.objectContaining({ finishReason, name: "AI_NoObjectGeneratedError" }),
+      );
+    },
+  );
 });

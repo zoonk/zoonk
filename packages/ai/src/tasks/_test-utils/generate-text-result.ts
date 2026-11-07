@@ -17,7 +17,11 @@ export function createGenerateTextResult(output: unknown, modelId = "openai/gpt-
   };
 
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Tasks only read these fields; a full AI SDK result would bury what the test is about.
-  return { finalStep, output, steps: [finalStep], usage } as unknown as Awaited<
-    ReturnType<typeof generateText>
-  >;
+  return {
+    finalStep,
+    finishReason: "stop",
+    output,
+    steps: [finalStep],
+    usage,
+  } as unknown as Awaited<ReturnType<typeof generateText>>;
 }

@@ -89,12 +89,12 @@ describe(readProductPages, () => {
     ).rejects.toMatchObject({ finishReason: "content-filter", name: "AI_NoObjectGeneratedError" });
   });
 
-  it("leaves an empty answer for any other reason as missing output, which a retry can fix", async () => {
+  it("fails an empty answer the provider failed as an ordinary error, which a retry can fix", async () => {
     await answerEmptyOnce("error");
 
     await expect(
       readProductPages({ hints: HINTS, known: true, pages: [PAGE] }),
-    ).rejects.toMatchObject({ name: "AI_NoOutputGeneratedError" });
+    ).rejects.toMatchObject({ name: "Error" });
   });
 
   it("fails a reading the provider cut off as an ordinary error, which a retry can fix", async () => {

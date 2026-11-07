@@ -42,7 +42,7 @@ function answer(output: unknown) {
     usage,
   };
 
-  return { finalStep: step, output, steps: [step], usage };
+  return { finalStep: step, finishReason: "stop", output, steps: [step], usage };
 }
 
 const PARAMS = {
@@ -106,12 +106,10 @@ describe(compareReleaseLessons, () => {
     });
   });
 
-  it("leaves an empty answer for any other reason as missing output, which a retry can fix", async () => {
+  it("fails an empty answer the provider failed as an ordinary error, which a retry can fix", async () => {
     await answerEmptyOnce("error");
 
-    await expect(compareReleaseLessons(PARAMS)).rejects.toMatchObject({
-      name: "AI_NoOutputGeneratedError",
-    });
+    await expect(compareReleaseLessons(PARAMS)).rejects.toMatchObject({ name: "Error" });
   });
 
   it("fails a comparison the provider cut off as an ordinary error, which a retry can fix", async () => {
