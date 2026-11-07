@@ -33,6 +33,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.feature.reminders.StudyReminderStore
@@ -97,9 +98,16 @@ class ReminderOfferViewModel(
         step = OfferStep.Blocked
     }
 
+    private var askedBy: AuthenticatedSession? = null
+
+    /** "Remind me" was tapped: what follows writes for this learner only. */
+    fun asked() {
+        askedBy = reminders.learner
+    }
+
     fun turnOnPush() {
         step = OfferStep.Asking
-        save(OfferStep.PushOn) { reminders.turnOnPush(time) }
+        save(OfferStep.PushOn) { reminders.turnOnPush(time, askedBy) }
     }
 
     fun email() = save(OfferStep.EmailOn) { reminders.update(time = time, emailOn = true) }
@@ -170,7 +178,13 @@ fun ReminderOfferCard(
                     )
                     Failure(viewModel.failed)
                     OfferActions {
-                        Button(onClick = ask, busy = viewModel.saving) { Text(stringResource(R.string.reminders_remind_me)) }
+                        Button(
+                            onClick = {
+                                viewModel.asked()
+                                ask()
+                            },
+                            busy = viewModel.saving,
+                        ) { Text(stringResource(R.string.reminders_remind_me)) }
                         TextButton(onClick = viewModel::decline, enabled = !viewModel.saving) {
                             Text(stringResource(R.string.reminders_no_thanks))
                         }

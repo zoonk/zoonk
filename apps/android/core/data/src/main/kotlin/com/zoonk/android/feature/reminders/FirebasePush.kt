@@ -44,7 +44,6 @@ class FirebasePush(
                 .getInstance()
                 .id
                 .await()
-                .also { withContext(Dispatchers.IO) { save(it) } }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -52,12 +51,8 @@ class FirebasePush(
         }
     }
 
-    /** Keeps [token] as this installation's; the one it replaced, when it changed. */
-    fun save(token: String): String? {
-        val previous = this.token
-        if (previous == token) return null
-        saved.edit(commit = true) { putString(TOKEN, token) }
-        return previous
+    override suspend fun save(token: String) {
+        withContext(Dispatchers.IO) { saved.edit(commit = true) { putString(TOKEN, token) } }
     }
 
     /**

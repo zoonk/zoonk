@@ -68,9 +68,11 @@ class ReminderOfferViewModelTest {
                 override val label = "Pixel 9"
 
                 override suspend fun register(): String? = null
+
+                override suspend fun save(token: String) = Unit
             }
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-        return ReminderOfferViewModel(StudyReminderStore(api, cache, push) { "en" }, "19:00")
+        return ReminderOfferViewModel(StudyReminderStore(api, cache, push, session) { "en" }, "19:00")
     }
 
     @Test

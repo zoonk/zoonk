@@ -31,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.AppSnackbars
+import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.collectShown
@@ -83,10 +84,17 @@ class RemindersViewModel(
         save({ email = null }) { reminders.update(emailOn = on) }
     }
 
+    private var askedBy: AuthenticatedSession? = null
+
+    /** The learner tapped to turn push on or use this phone: what follows writes for them only. */
+    fun asked() {
+        askedBy = reminders.learner
+    }
+
     fun turnOnPush() {
         blocked = false
         push = true
-        save({ push = null }) { reminders.turnOnPush() }
+        save({ push = null }) { reminders.turnOnPush(learner = askedBy) }
     }
 
     fun turnOffPush() {
@@ -97,7 +105,7 @@ class RemindersViewModel(
     fun useThisPhone() {
         blocked = false
         movingPhone = true
-        save({ movingPhone = false }) { reminders.useThisPhone() }
+        save({ movingPhone = false }) { reminders.useThisPhone(askedBy) }
     }
 
     fun blocked() {
@@ -269,13 +277,23 @@ private fun PushRows(
         title = stringResource(R.string.reminders_push),
         description = phone?.label,
         checked = on,
-        onCheckedChange = { if (it) turnOn() else viewModel.turnOffPush() },
+        onCheckedChange = {
+            if (it) {
+                viewModel.asked()
+                turnOn()
+            } else {
+                viewModel.turnOffPush()
+            }
+        },
     )
 
     if (phone != null && !thisPhone) {
         ListRow(
             headline = { Text(stringResource(R.string.reminders_use_this_phone)) },
-            onClick = move,
+            onClick = {
+                viewModel.asked()
+                move()
+            },
             busy = viewModel.movingPhone,
             chevron = false,
         )

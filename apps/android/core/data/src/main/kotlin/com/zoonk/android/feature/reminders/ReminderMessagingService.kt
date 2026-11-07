@@ -17,8 +17,7 @@ import java.util.UUID
 class ReminderMessagingService : FirebaseMessagingService() {
     override fun onRegistered(installationId: String) {
         val app = (application as ContainerApplication).container
-        val previous = app.push.save(installationId) ?: return
-        app.scope.launch { app.reminders.follow(previous, installationId) }
+        app.scope.launch { app.reminders.follow(installationId) }
     }
 }
 

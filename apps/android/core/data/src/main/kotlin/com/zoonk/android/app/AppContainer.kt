@@ -202,7 +202,7 @@ class AppContainer private constructor(
     val learningProfile = LearningProfileStore(LiveLearningProfileApi(api), cache)
     val push = FirebasePush(context)
     val reminders =
-        StudyReminderStore(LiveStudyReminderApi(api), cache, push) {
+        StudyReminderStore(LiveStudyReminderApi(api), cache, push, sessions) {
             context.resources.configuration
                 .shownLocale()
                 .language
@@ -291,7 +291,7 @@ class AppContainer private constructor(
             cache = cache,
             timeZone = timeZone,
         )
-    val goalSwitch = GoalSwitch(learningProfile::setActiveGoal)
+    val goalSwitch = GoalSwitch(ready = sessions::restore, makeActive = learningProfile::setActiveGoal)
 
     /** Makes [goalId] the active goal, and the summary and Today follow it. Null while another switch saves. */
     suspend fun switchGoal(goalId: UUID): Boolean? = goalSwitch.select(goalId, listOf(learnerSummary.summary, today.today), today::shows)
@@ -353,7 +353,10 @@ class AppContainer private constructor(
     val listeningPlays = ListeningPlays(drafts, scope)
 
     init {
-        scope.launch { sessions.restore() }
+        scope.launch {
+            sessions.restore()
+            reminders.reconcile()
+        }
         scope.launch { sessions.keepRestoreKeys() }
     }
 
