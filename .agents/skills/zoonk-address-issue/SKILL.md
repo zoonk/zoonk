@@ -58,6 +58,8 @@ gh issue list --repo zoonk/zoonk --state all --search "<words>" --json number,ti
   --jq '.[] | "#\(.number) \(.state) \([.projectItems[].status.name] | join(",")): \(.title)"'
 ```
 
+Related issues are often filed minutes apart, and search can take a few minutes to include a new one, so also read the newest open issues, listed the way [zoonk-github-issues](../zoonk-github-issues/SKILL.md#check-again-right-before-filing) lists them.
+
 An issue is related when it shares this one's cause, or when its fix would change the same code and behavior, so separate PRs would conflict or redo each other's work: for example, two ways a day that waits on lessons drifts from the plan. Address those here, in the same task and PR. An issue that's only in the same area, such as the same screen or feature, and needs a fix of its own stays separate: link it if it isn't linked yet ([zoonk-github-issues](../zoonk-github-issues/SKILL.md#link-related-issues)).
 
 It's a duplicate when an open issue describes the same problem, even in other words or from another screen. Keep the one with the discussion or a linked PR, otherwise the older one, and close the other as its duplicate. GitHub records the relationship and shows it on both:
@@ -90,10 +92,10 @@ gh api graphql -f query='
 
 If the PR covers only part of the issue, comment on the issue with its link instead, so merging it leaves the issue open. Then hand back with the PR, and say if it looks abandoned (no recent commits, failing checks nobody fixed).
 
-The board shows who else is working: an issue is In Progress while an agent works on it and In Review once its PR is open. When this issue is In Progress, or a related one is In Progress, In Review or addressed by an open PR, and that isn't your own earlier work on this task, someone else is likely on it. Don't start work on it or open a PR that overlaps:
+The board shows who else is working: an issue is In Progress while an agent works on it and In Review once its PR is open. It can lag, since an agent that started a moment ago, or whose `gh` can't set the status yet, hasn't marked its issue. So whatever the board says, look through the agents running on this machine with your harness's tools for one on this issue or a related one, by its number, title or branch. In T3 Code, search and read its threads with its thread tools; in Claude Code, list the other sessions with its agent tools. Your own earlier work on this task doesn't count. Don't start work or open a PR that overlaps another agent's:
 
-- **An agent on this machine has it:** look through the agents running here with your harness's tools for the one on that issue, by its number, title or branch. In T3 Code, search and read its threads with its thread tools; in Claude Code, list the other sessions with its agent tools. When it's a related issue, message that agent and ask it to address this one too, since they're related: name both issues, what connects them and what you've found. Don't start your own work on it; hand back saying which agent has it.
-- **No agent here has it**, or your harness can't see other agents: tell the user that the related issue is already In Progress or In Review, that someone else is likely on it, and that the two should be handled together. Then hand back.
+- **An agent on this machine has one of them:** when it's a related issue, message that agent and ask it to address this one too, since they're related: name both issues, what connects them and what you've found. Don't start your own work on it; hand back saying which agent has it. If its issue was still Todo when you found it, that agent is starting at the same moment as you and may ask you the same thing: the agent on the lowest-numbered issue keeps them all, and only the other one messages and hands back.
+- **No agent here has them, but this issue is In Progress, or a related one is In Progress, In Review or addressed by an open PR:** someone elsewhere is likely on it, or an agent your harness can't see. Tell the user that the related issue is already In Progress or In Review, that someone else is likely on it, and that the two should be handled together. Then hand back.
 
 When another agent asks you to take a related issue, check it the way you check one you found: if it's related, add it to your work and mark it In Progress; if it isn't, say why in your handoff.
 
