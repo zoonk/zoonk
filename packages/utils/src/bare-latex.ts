@@ -1,9 +1,13 @@
 import { parseInlineMarkupRanges } from "./inline-markup";
 import { splitLinesAndCells } from "./markdown-table";
 import { type MathSpan, findMathSpans, hideMath } from "./math-spans";
+import { type TextLayout } from "./text-flaws";
 
 /** A caret between two characters, or a braced script, is math a writer left outside `$…$`. */
 const RAW_SCRIPT = /\S\^\S|[\^_]\{/u;
+
+/** A power written with spaces around its caret (`x ^ 2`, `10^ -5`); `^_^` is a smile. */
+const SPACED_CARET = /[^\s_^]\s+\^\s*[^\s_^]|[^\s_^]\^\s+[^\s_^]/gu;
 
 /**
  * Code repairs only a number raised to a number (`10^{-5}`, `10^3`, `10^−1`), the only kind lessons
@@ -21,6 +25,9 @@ const PUNCTUATION_AFTER = /[.,;:!?%"'”’»*_]/u;
 const BRACKETS: Readonly<Record<string, string>> = { "(": ")", "[": "]" };
 
 type BareLatex = { end: number; latex: string | null; start: number; written: string };
+
+/** `view` is the text as the player reads it; positions match `text`. */
+type Segment = { text: string; view: string };
 
 function hideMathAndCode(cell: string): string {
   const withoutMath = hideMath(cell);
@@ -70,12 +77,17 @@ function trimRange({ end, start, text }: { end: number; start: number; text: str
   return { end, start };
 }
 
+/** Trimming can take a script's last mark (`10^?`, `p^*`), so the untrimmed piece is the evidence. */
 function toBareLatex(match: RegExpExecArray): BareLatex | null {
   const { end, start } = trimRange({ end: match[0].length, start: 0, text: match[0] });
   const written = match[0].slice(start, end);
 
-  return RAW_SCRIPT.test(written)
-    ? { end: match.index + end, latex: toLatex(written), start: match.index + start, written }
+  if (RAW_SCRIPT.test(written)) {
+    return { end: match.index + end, latex: toLatex(written), start: match.index + start, written };
+  }
+
+  return RAW_SCRIPT.test(match[0])
+    ? { end: match.index + match[0].length, latex: null, start: match.index, written: match[0] }
     : null;
 }
 
@@ -104,9 +116,19 @@ function isInEmphasis({ hidden, pieces }: { hidden: string; pieces: BareLatex[] 
   );
 }
 
-/** A `$` the cell already has, such as a price's, can pair with a new one; then the cell stays. */
-function wrapCell(cell: string): string {
-  const hidden = hideMathAndCode(cell);
+function insertMath(text: string, pieces: BareLatex[]): string {
+  return pieces
+    .toReversed()
+    .reduce(
+      (wrapped, piece) =>
+        `${wrapped.slice(0, piece.start)}$${piece.latex}$${wrapped.slice(piece.end)}`,
+      text,
+    );
+}
+
+/** A `$` the text already has, such as a price's, can pair with a new one; then the text stays. */
+function wrapSegment({ text, view }: Segment): string {
+  const hidden = hideMathAndCode(view);
   const pieces = findBareLatexIn(hidden);
 
   if (
@@ -114,38 +136,55 @@ function wrapCell(cell: string): string {
     pieces.some((piece) => piece.latex === null) ||
     isInEmphasis({ hidden, pieces })
   ) {
-    return cell;
+    return text;
   }
 
-  const wrapped = pieces
-    .toReversed()
-    .reduce(
-      (text, piece) => `${text.slice(0, piece.start)}$${piece.latex}$${text.slice(piece.end)}`,
-      cell,
-    );
-
   const expected = [
-    ...findMathSpans(cell),
+    ...findMathSpans(view),
     ...pieces.map((piece) => ({ content: piece.latex ?? "", start: piece.start })),
   ];
 
-  return hasSameMath(findMathSpans(wrapped), expected) ? wrapped : cell;
+  return hasSameMath(findMathSpans(insertMath(view, pieces)), expected)
+    ? insertMath(text, pieces)
+    : text;
 }
 
-function describe({ latex, written }: BareLatex): string {
+/**
+ * The player reads block text line by line and each table cell on its own, and an inline field as
+ * one line whatever its line breaks.
+ */
+function toSegments({ layout, text }: { layout: TextLayout; text: string }): Segment[][] {
+  if (layout === "inline") {
+    return [[{ text, view: text.replaceAll("\n", " ") }]];
+  }
+
+  return splitLinesAndCells(text).map((cells) => cells.map((cell) => ({ text: cell, view: cell })));
+}
+
+function describe({ latex, written }: Pick<BareLatex, "latex" | "written">): string {
   const example = latex === null ? "" : `, as $${latex}$`;
   return String.raw`Shows math as raw text: "${written}". Write it between dollar signs${example}, outside bold or italics, and any other dollar sign in that line as \$.`;
 }
 
-/** After `wrapBareLatex`, what's left is beyond a plain power, in bold or italics, or beside another `$`. */
-export function findBareLatex(text: string): string[] {
-  return splitLinesAndCells(text)
-    .flat()
-    .flatMap((cell) => findBareLatexIn(hideMathAndCode(cell)).map((piece) => describe(piece)));
+function findInView(view: string): string[] {
+  const hidden = hideMathAndCode(view);
+  const spaced = [...hidden.matchAll(SPACED_CARET)].map((match) => match[0]);
+
+  return [
+    ...findBareLatexIn(hidden).map((piece) => describe(piece)),
+    ...spaced.map((written) => describe({ latex: null, written })),
+  ];
 }
 
-export function wrapBareLatex(text: string): string {
-  return splitLinesAndCells(text)
-    .map((cells) => cells.map((cell) => wrapCell(cell)).join("|"))
+/** After `wrapBareLatex`, what's left is beyond a plain power, in bold or italics, or beside another `$`. */
+export function findBareLatex({ layout, text }: { layout: TextLayout; text: string }): string[] {
+  return toSegments({ layout, text })
+    .flat()
+    .flatMap((segment) => findInView(segment.view));
+}
+
+export function wrapBareLatex({ layout, text }: { layout: TextLayout; text: string }): string {
+  return toSegments({ layout, text })
+    .map((segments) => segments.map((segment) => wrapSegment(segment)).join("|"))
     .join("\n");
 }

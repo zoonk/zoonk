@@ -2,6 +2,14 @@ import { assert, constantFrom, property, string } from "fast-check";
 import { describe, expect, it } from "vitest";
 import { findBareLatex, wrapBareLatex } from "./bare-latex";
 
+function find(text: string): string[] {
+  return findBareLatex({ layout: "blocks", text });
+}
+
+function wrap(text: string): string {
+  return wrapBareLatex({ layout: "blocks", text });
+}
+
 function problem(written: string, latex?: string): string {
   const example = latex ? `, as $${latex}$` : "";
   return String.raw`Shows math as raw text: "${written}". Write it between dollar signs${example}, outside bold or italics, and any other dollar sign in that line as \$.`;
@@ -9,18 +17,20 @@ function problem(written: string, latex?: string): string {
 
 describe(findBareLatex, () => {
   it("finds powers and braced scripts a writer left outside math", () => {
-    expect(findBareLatex("A sensor log stores a tiny gap as 7.02 × 10^{-5} m.")).toStrictEqual([
+    expect(find("A sensor log stores a tiny gap as 7.02 × 10^{-5} m.")).toStrictEqual([
       problem("10^{-5}", "10^{-5}"),
     ]);
 
-    expect(findBareLatex("Calcule (6 × 10^3) ÷ (2 × 10^-1).")).toStrictEqual([
+    expect(find("Calcule (6 × 10^3) ÷ (2 × 10^-1).")).toStrictEqual([
       problem("10^3", "10^{3}"),
       problem("10^-1", "10^{-1}"),
     ]);
 
-    expect(
-      findBareLatex(String.raw`Then x^2 grows, Fe^3+ forms and \log_{10}(x) rises.`),
-    ).toStrictEqual([problem("x^2"), problem("Fe^3+"), problem(String.raw`\log_{10}(x)`)]);
+    expect(find(String.raw`Then x^2 grows, Fe^3+ forms and \log_{10}(x) rises.`)).toStrictEqual([
+      problem("x^2"),
+      problem("Fe^3+"),
+      problem(String.raw`\log_{10}(x)`),
+    ]);
   });
 
   it("leaves math, code and text that only looks like it", () => {
@@ -32,7 +42,7 @@ describe(findBareLatex, () => {
       "Smile ^_^ and rate it 9/10 * 2.",
     ];
 
-    expect(texts.flatMap((text) => findBareLatex(text))).toStrictEqual([]);
+    expect(texts.flatMap((text) => find(text))).toStrictEqual([]);
   });
 
   it("doesn't look for backslash commands or bare subscripts, which are as often paths, escapes or identifiers", () => {
@@ -42,38 +52,38 @@ describe(findBareLatex, () => {
       "Set StandardCharsets.UTF_8, rename db_1, and note that methane is CH_4.",
     ];
 
-    expect(texts.flatMap((text) => findBareLatex(text))).toStrictEqual([]);
-    expect(texts.map((text) => wrapBareLatex(text))).toStrictEqual(texts);
+    expect(texts.flatMap((text) => find(text))).toStrictEqual([]);
+    expect(texts.map((text) => wrap(text))).toStrictEqual(texts);
   });
 });
 
 describe(wrapBareLatex, () => {
   it("wraps a number raised to a number in math, leaving the words around it as text", () => {
-    expect(wrapBareLatex("A sensor log stores a tiny gap as 7.02 × 10^{-5} m.")).toBe(
+    expect(wrap("A sensor log stores a tiny gap as 7.02 × 10^{-5} m.")).toBe(
       "A sensor log stores a tiny gap as 7.02 × $10^{-5}$ m.",
     );
 
-    expect(wrapBareLatex("Calcule (6 × 10^3) ÷ (2 × 10^-1).")).toBe(
+    expect(wrap("Calcule (6 × 10^3) ÷ (2 × 10^-1).")).toBe(
       "Calcule (6 × $10^{3}$) ÷ (2 × $10^{-1}$).",
     );
 
-    expect(wrapBareLatex("So $0.000406$ m = 4.06 × 10^{-4} m, and it's 10^{3}, R$ 80 or $5.")).toBe(
+    expect(wrap("So $0.000406$ m = 4.06 × 10^{-4} m, and it's 10^{3}, R$ 80 or $5.")).toBe(
       "So $0.000406$ m = 4.06 × $10^{-4}$ m, and it's $10^{3}$, R$ 80 or $5.",
     );
 
-    expect(wrapBareLatex("Think of 10^3—it means one thousand.")).toBe(
+    expect(wrap("Think of 10^3—it means one thousand.")).toBe(
       "Think of $10^{3}$—it means one thousand.",
     );
 
-    expect(wrapBareLatex("A thousand (10^3) cells, or [10^{-2}].")).toBe(
+    expect(wrap("A thousand (10^3) cells, or [10^{-2}].")).toBe(
       "A thousand ($10^{3}$) cells, or [$10^{-2}$].",
     );
   });
 
   it("keeps a power's whole exponent in the math and the signs around it out of it", () => {
-    expect(wrapBareLatex("A gap is 7.02 × 10^−5 m.")).toBe("A gap is 7.02 × $10^{-5}$ m.");
-    expect(wrapBareLatex("The increase is 10^2%.")).toBe("The increase is $10^{2}$%.");
-    expect(wrapBareLatex("About ~10^3 cells.")).toBe("About ~$10^{3}$ cells.");
+    expect(wrap("A gap is 7.02 × 10^−5 m.")).toBe("A gap is 7.02 × $10^{-5}$ m.");
+    expect(wrap("The increase is 10^2%.")).toBe("The increase is $10^{2}$%.");
+    expect(wrap("About ~10^3 cells.")).toBe("About ~$10^{3}$ cells.");
   });
 
   it("wraps powers in table cells and on every line", () => {
@@ -86,7 +96,7 @@ describe(wrapBareLatex, () => {
       "2^10 is 1024.",
     ].join("\n");
 
-    expect(wrapBareLatex(text)).toBe(
+    expect(wrap(text)).toBe(
       [
         "Read the powers:",
         "",
@@ -112,17 +122,33 @@ describe(wrapBareLatex, () => {
       "The decay law is e^-(x+1), and x^-ab shrinks.",
       "The square is x'^2, the limit e^∞, the value 10^(−5).",
       String.raw`The volume is \frac{4\pi r^3}{3}.`,
+      "Complete 10^? = 1000, where the equilibrium price is p^*.",
+      "A square has area x ^ 2, or x^ 2, and 10 ^ -5 is small.",
     ];
 
-    expect(texts.map((text) => wrapBareLatex(text))).toStrictEqual(texts);
-    expect(texts.filter((text) => findBareLatex(text).length === 0)).toStrictEqual([]);
+    expect(texts.map((text) => wrap(text))).toStrictEqual(texts);
+    expect(texts.filter((text) => find(text).length === 0)).toStrictEqual([]);
+  });
+
+  it("reads an inline field as one line, as the player shows it", () => {
+    const priced = "A $5 kit\nwith 10^3 cells.";
+    const bold = "Use **the 10^3\nrule**.";
+
+    expect(wrapBareLatex({ layout: "inline", text: priced })).toBe(priced);
+    expect(wrapBareLatex({ layout: "inline", text: bold })).toBe(bold);
+
+    expect(findBareLatex({ layout: "inline", text: priced })).toStrictEqual([
+      problem("10^3", "10^{3}"),
+    ]);
+
+    expect(wrap(priced)).toBe("A $5 kit\nwith $10^{3}$ cells.");
   });
 
   it("keeps a table cell's escaped pipe inside its code", () => {
     const table = ["| Code | Meaning |", "|---|---|", String.raw`| \`a\|2^3\` | XOR |`].join("\n");
 
-    expect(wrapBareLatex(table)).toBe(table);
-    expect(findBareLatex(table)).toStrictEqual([]);
+    expect(wrap(table)).toBe(table);
+    expect(find(table)).toStrictEqual([]);
   });
 
   it("leaves no raw power in any line it changes, and changes nothing the second time", () => {
@@ -158,10 +184,10 @@ describe(wrapBareLatex, () => {
 
     assert(
       property(string({ maxLength: 12, unit: pieces }), (line) => {
-        const wrapped = wrapBareLatex(line);
+        const wrapped = wrap(line);
 
-        expect(wrapped === line || findBareLatex(wrapped).length === 0).toBe(true);
-        expect(wrapBareLatex(wrapped)).toBe(wrapped);
+        expect(wrapped === line || find(wrapped).length === 0).toBe(true);
+        expect(wrap(wrapped)).toBe(wrapped);
       }),
     );
   });

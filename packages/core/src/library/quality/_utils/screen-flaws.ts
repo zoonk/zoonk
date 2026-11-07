@@ -58,7 +58,7 @@ export function findTextFlaws({
       code: "markdown" as const,
       problem,
     })),
-    ...(layout ? findBareLatex(text) : []).map((problem) => ({
+    ...(layout ? findBareLatex({ layout, text }) : []).map((problem) => ({
       code: "rawMath" as const,
       problem,
     })),

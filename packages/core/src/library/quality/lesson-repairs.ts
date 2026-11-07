@@ -12,7 +12,10 @@ const MIN_OPTIONS = 2;
 
 /** Every text gets the same repairs, so a quote still matches the sentence it cites. */
 function repairText({ layout, text }: { layout: TextLayout; text: string }): string {
-  return wrapBareLatex(repairNegativeMoney({ text: repairMarkdown({ layout, text }) }));
+  return wrapBareLatex({
+    layout,
+    text: repairNegativeMoney({ text: repairMarkdown({ layout, text }) }),
+  });
 }
 
 export function repairScreenText(screen: WrittenScreen): WrittenScreen {
@@ -20,7 +23,7 @@ export function repairScreenText(screen: WrittenScreen): WrittenScreen {
     return {
       ...screen,
       content: mapActivityProse(screen.content, (text) =>
-        wrapBareLatex(repairNegativeMoney({ text })),
+        wrapBareLatex({ layout: "blocks", text: repairNegativeMoney({ text }) }),
       ),
     };
   }
