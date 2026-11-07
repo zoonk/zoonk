@@ -667,6 +667,10 @@ struct LessonPlayerState: Equatable, Sendable {
     recovered.resetForResume()
     recovered.resume(from: known)
 
+    for id in lessonOrder where recovered.answers[id] != answers[id] {
+      recovered.rounds[id, default: 0] += 1
+    }
+
     let missing = recovered.queue.filter {
       steps[$0]?.isAnswerable == true && !answered.contains($0)
     }
@@ -981,9 +985,7 @@ struct LessonPlayerState: Equatable, Sendable {
     queue = lessonOrder.filter { !leftOut.contains($0) }
     position = 0
     phase = queue.isEmpty ? .completed : .playing
-    for id in lessonOrder where !isGuess(id) {
-      clearAnswer(id)
-    }
+    answers = answers.filter { isGuess($0.key) }
     results = results.filter { isGuess($0.key) }
     firstVerdicts = [:]
     firstVerdictAttemptIds = [:]

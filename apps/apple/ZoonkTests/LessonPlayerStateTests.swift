@@ -606,6 +606,26 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.currentAnswer, .hookGuess(optionId: "wrong"))
   }
 
+  func testARefusedFinishStartsOverOnlyTheScreensItIsMissing() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+    let rounds = state.rounds
+
+    state.resync(answers: [runAnswer("check", isCorrect: true)])
+
+    XCTAssertEqual(state.currentStep?.id, "second")
+    XCTAssertEqual(state.rounds["check"], rounds["check"], "its saved answer keeps its work")
+    XCTAssertEqual(state.rounds["explanation"], rounds["explanation"])
+    XCTAssertNotEqual(state.rounds["second"], rounds["second"], "the missing screen starts over")
+  }
+
   private func answerCheck(
     _ state: inout LessonPlayerState, optionId: String, attemptId: String? = nil
   ) throws {
