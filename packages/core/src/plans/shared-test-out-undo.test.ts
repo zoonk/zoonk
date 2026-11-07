@@ -76,6 +76,7 @@ async function setup(status: "active" | "paused" = "active") {
     known,
     memory,
     otherAfter,
+    otherGoalId: other.goal.id,
     otherShown,
     readOther: () => readPlan(other.plan.id),
     readSource: () => readPlan(source.plan.id),
@@ -130,6 +131,19 @@ describe("undoing a test-out shared across goals", () => {
       await expect(fixture.memory()).resolves.toMatchObject(NEW_SKILL_MEMORY);
     },
   );
+
+  it("clears the assumption when the only other goal keeping it was archived", async () => {
+    const fixture = await setup();
+    await prisma.goal.update({ data: { status: "archived" }, where: { id: fixture.otherGoalId } });
+
+    await expect(fixture.undoSource()).resolves.toMatchObject({
+      change: { status: "undone" },
+      status: "updated",
+    });
+
+    // An archived goal is hidden, so its notice's undo can't be reached.
+    await expect(fixture.memory()).resolves.toMatchObject(NEW_SKILL_MEMORY);
+  });
 
   it("clears the last assumption when both goals undo concurrently", async () => {
     const fixture = await setup();
