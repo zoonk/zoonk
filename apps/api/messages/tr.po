@@ -284,10 +284,11 @@ msgctxt "ox2un2"
 msgid "You've done {done, plural, one {# minute} other {# minutes}} today. {left, plural, one {# minute} other {# minutes}} to go."
 msgstr "Bugün {done, plural, other {# dakika}} çalıştın. {left, plural, other {# dakika}} kaldı."
 
+#. A study reminder's body under a title naming one goal. “it” is that goal, not the whole day: other goals may still be left, so never say the day or today's study is done.
 #: src/lib/reminders/reminder-copy.ts
-msgctxt "uSDY9P"
-msgid "{left, plural, one {# more minute} other {# more minutes}} finishes today's plan."
-msgstr "Bugünkü planını tamamlamak için {left, plural, other {# dakika daha}} çalışman yeterli."
+msgctxt "fD5xFe"
+msgid "{left, plural, one {# more minute} other {# more minutes}} to finish it today."
+msgstr "Bugün bitirmek için {left, plural, other {# dakika daha gerekiyor}}."
 
 #: src/lib/reminders/reminder-copy.ts
 msgctxt "doiP8l"

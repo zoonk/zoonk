@@ -47,8 +47,12 @@ export async function loadReminderWords(locale: string) {
             { done, left },
           ),
         (left: number) =>
-          t("{left, plural, one {# more minute} other {# more minutes}} finishes today's plan.", {
-            left,
+          t({
+            description:
+              "A study reminder's body under a title naming one goal. “it” is that goal, not the whole day: other goals may still be left, so never say the day or today's study is done.",
+            message:
+              "{left, plural, one {# more minute} other {# more minutes}} to finish it today.",
+            values: { left },
           }),
       ],
       severalGoals: [

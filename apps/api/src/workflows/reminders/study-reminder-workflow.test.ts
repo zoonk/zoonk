@@ -9,13 +9,18 @@ import { RetryableError } from "workflow";
 import { sendStudyReminderPushStep } from "./steps/study-reminder-steps";
 import { studyReminderWorkflow } from "./study-reminder-workflow";
 
+type Values = Record<string, number | string>;
+type Extracted = string | { message: string; values?: Values };
+
 // The extractor turns `t("…")` into catalog lookups only in a Next build; tests format the English.
 vi.mock("next-intl/server", async () => {
   const { createTranslator } = await import("next-intl");
 
   return {
-    getExtracted: async () => (message: string, values?: Record<string, number | string>) =>
-      createTranslator({ locale: "en", messages: { message } })("message", values),
+    getExtracted: async () => (input: Extracted, values?: Values) => {
+      const { message, values: inline } = typeof input === "string" ? { message: input } : input;
+      return createTranslator({ locale: "en", messages: { message } })("message", inline ?? values);
+    },
   };
 });
 
