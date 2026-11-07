@@ -233,6 +233,9 @@ class LessonPlayerViewModel(
     private var abandonSent = false
     private val encodedAnswers = HashMap<String, Pair<LessonAnswer, String?>>()
 
+    /** By screen: a server-graded answer sent with no verdict back yet, so Check sends it again under the same attempt. */
+    private val unverdicted = HashMap<String, Pair<LessonAnswer, UUID>>()
+
     /**
      * Starts the lesson's run when it opens, as main does after its player mounts (never on a
      * prefetch); reopening it for the same learner keeps where they are.
@@ -247,6 +250,7 @@ class LessonPlayerViewModel(
         this.lesson = lesson
         owner = session
         unsaved.clear()
+        unverdicted.clear()
         screenLocks.clear()
         resending = null
         hasUnsent = false
@@ -416,12 +420,13 @@ class LessonPlayerViewModel(
         }
 
         val runId = (state.run as? LessonRun.Started)?.runId ?: return
+        val attemptId = unverdicted[step.id]?.takeIf { it.first == answer }?.second ?: UUID.randomUUID()
         val input =
             LessonStepCheckInput(
                 answer = answer.toApi() ?: return,
                 durationMs = state.answerDurationMs(),
                 runId = UUID.fromString(runId),
-                attemptId = UUID.randomUUID(),
+                attemptId = attemptId,
                 timeZone = timeZone(),
                 usedHelp = step.id in state.helped,
             )
@@ -429,6 +434,7 @@ class LessonPlayerViewModel(
         val pending = PendingCheck(step.id, input, local?.isCorrect, Instant.fromEpochMilliseconds(now()))
 
         if (local == null) {
+            unverdicted[step.id] = answer to attemptId
             gradeOnServer(step, pending, answer.writtenText)
             return
         }
@@ -639,6 +645,7 @@ class LessonPlayerViewModel(
             when (val outcome = withTimeoutOrNull(timeout) { if (saveScreen(step.id)) send(pending) else CheckOutcome.Failed }) {
                 is CheckOutcome.Checked -> {
                     val result = outcome.result.toStepResult(answerText)
+                    unverdicted.remove(step.id)
                     countActivity(step)
                     dispatch(LessonAction.CheckResolved(step.id, result, counts = outcome.result.checked))
                     resendAnswers()

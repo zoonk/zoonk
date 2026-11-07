@@ -29,6 +29,7 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.audio.VoiceRecording
+import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.language.reading
@@ -332,6 +333,26 @@ class LessonPlayerFlowTest {
                 .toString(),
             state.results["quiz"]?.attemptId,
         )
+    }
+
+    /** A typed answer whose reply was lost goes again as the same attempt, so the server replays its verdict. */
+    @Test
+    fun aTypedAnswerCheckedAgainKeepsItsAttemptUntilItChanges() {
+        play(listOf(typedAnswerStep("write"), summaryStep("end"))) { checkFailures = 2 }
+        val field = rule.onNode(hasSetTextAction())
+        field.performTextInput("Because the droplets are small")
+
+        repeat(2) { tries ->
+            tap("Check")
+            rule.waitUntil { api.checks.size == tries + 1 && viewModel.state.value?.phase == LessonPhase.Playing }
+        }
+        field.performTextInput(" and light")
+        tap("Check")
+        rule.waitUntil { viewModel.state.value?.phase == LessonPhase.Feedback }
+
+        val attempts = api.checks.map { it.second.attemptId }
+        assertEquals(listOf(attempts.first(), attempts.first()), attempts.take(2))
+        assertTrue(attempts.last() != attempts.first())
     }
 
     @Test
