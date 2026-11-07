@@ -147,7 +147,7 @@ function PageBarStart({
   const label = fromApp ? undefined : back.label;
 
   return (
-    <div className="col-start-1 row-start-1 flex min-w-11 items-center gap-3 lg:gap-1.5">
+    <div className="@container/page-bar-start col-start-1 row-start-1 flex min-w-11 items-center gap-3 lg:gap-1.5">
       {root ? (
         <LearnBackLink className="lg:hidden" href={back.href} toApp />
       ) : (
@@ -164,10 +164,12 @@ function PageBarStart({
         </span>
       )}
 
+      {/* Beside the back button only with about 3.5rem to spare, so it shows words, not a couple
+          of letters. */}
       {title && titleAway && (
         <span
           aria-hidden="true"
-          className="motion-safe:animate-in motion-safe:fade-in duration-base line-clamp-2 min-w-0 text-sm leading-tight font-semibold text-pretty lg:hidden @max-3xs/page-bar:hidden"
+          className="motion-safe:animate-in motion-safe:fade-in duration-base line-clamp-2 min-w-0 text-sm leading-tight font-semibold text-pretty lg:hidden @max-[7rem]/page-bar-start:hidden"
         >
           {title}
         </span>
