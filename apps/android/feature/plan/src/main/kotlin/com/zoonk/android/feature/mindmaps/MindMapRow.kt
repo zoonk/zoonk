@@ -224,7 +224,10 @@ private fun MapFacts.rowTitle(
         else -> stringResource(R.string.mindmaps_row_title)
     }
 
-/** What the row says about its map; the chapter's page spells out the wait under a title that names it. */
+/**
+ * What the row says about its map; the chapter's page spells out the wait under a title that names
+ * it. The Mind maps page says once, in its intro, what writing a chapter's lessons first means.
+ */
 @Composable
 private fun MapFacts.statusLine(
     place: MindMapPlace,
@@ -239,6 +242,7 @@ private fun MapFacts.statusLine(
         MindMapShown.Available, MindMapShown.Refused -> {
             when {
                 lessonsToWrite == 0L -> described
+                library -> stringResource(R.string.mindmaps_lessons_not_written)
                 plus -> stringResource(R.string.mindmaps_lessons_first_plus)
                 else -> stringResource(R.string.mindmaps_lessons_first_free)
             }

@@ -22,9 +22,12 @@
   "mindmaps_fit": "25bb327d7426d900d38a8f3e341ea10e2843f67ceab5143fe12313a9419eaf7b",
   "mindmaps_in_short": "f0d66cba29693fc07d5eaa4b72204893e7db8d2905cdbdf1e417ef90a15f3ad7",
   "mindmaps_intro": "e5fe9e9b7a01ca86ceb5385e2af1e2329eed3e55a40dbbe1cbf2df800af7cca7",
+  "mindmaps_intro_lessons_first_free": "04b77faa2b35e7720e8af82d3bf9cec4d3bae8d7c606264b35aa52c9242436fc",
+  "mindmaps_intro_lessons_first_plus": "193b4d13bd948736ad2cdc6de6ecbcc5b8b32874486788045094722e084f60a5",
   "mindmaps_keep_studying": "fbef05effc8eda9e1183c733635447826cef97c8230d082ca501299363761216",
   "mindmaps_lessons_first_free": "22b43a3e45857f6fe666eda780cbd8cf6eb237e8af69239e8fa53546062413e5",
   "mindmaps_lessons_first_plus": "04f089105c71febc2510518a950c340c3c3a67af454e29b983ba2fea04bb9ce9",
+  "mindmaps_lessons_not_written": "a789d9a25defd2fa24ef5a8123608736d6b30de875f55d4e6154b82aeda05261",
   "mindmaps_open": "555ced5cad1d11804e1e1467a060f26651ead5fe1373051926930a67147bce2e",
   "mindmaps_open_spoken": "651992bf79a2f10d689b081edcee9e79397bd6e80334012453d28d545f7cdd41",
   "mindmaps_ready": "a7e429accf13707bbd1ccf8d39642f19650d4afce0f34a1d93de0aac443fa844",
@@ -50,6 +53,10 @@
     </plurals>
     <!-- Under the Mind maps page's title. -->
     <string name="mindmaps_intro">章の主なポイントを1枚の図にまとめます。章を終えると作成され、学習計画にあるほかの章の分も作成できます。</string>
+    <!-- The same intro while some chapters' lessons aren't written yet, for a free learner or a guest. -->
+    <string name="mindmaps_intro_lessons_first_free">章の主なポイントを1枚の図にまとめたマップです。学習を終えた章には自動で作成され、学習計画にあるほかの章でも作成できます。レッスンがまだ作成されていない章では、先にレッスンが作成され、その分が無料レッスンの利用数に含まれます。</string>
+    <!-- The same intro while some chapters' lessons aren't written yet, for a Plus learner. -->
+    <string name="mindmaps_intro_lessons_first_plus">章の主なポイントを1枚の図にまとめたマップです。学習を終えた章には自動で作成され、学習計画にあるほかの章でも作成できます。レッスンがまだ作成されていない章では、先にレッスンが作成されるため、数分かかります。</string>
     <plurals name="mindmaps_chapter_count">
         <item quantity="other">%d章</item>
     </plurals>
@@ -76,6 +83,8 @@
     <string name="mindmaps_lessons_first_free">先にこの章のレッスンを作成します。その分は無料レッスンの利用数に含まれます。</string>
     <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
     <string name="mindmaps_lessons_first_plus">先にこの章のレッスンを作成するため、数分かかります。</string>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
+    <string name="mindmaps_lessons_not_written">レッスンはまだ作成されていません</string>
     <string name="mindmaps_writing_lessons">レッスンを作成しています。その後、マインドマップを作成します…</string>
     <string name="mindmaps_writing_lessons_wait">数分かかります。画面を離れても、完成したらここで見られます。</string>
     <string name="mindmaps_drawing">マインドマップを作成しています…</string>

@@ -22,9 +22,12 @@
   "mindmaps_fit": "c9f362993334ea37da5246d5c3bdf0f5db13ed6036f24e52f0de7a46bf97f2a2",
   "mindmaps_in_short": "ef5356431fe00fecf84f69a7ce1a424825423aa08d56fa22c758c67e15ea7fea",
   "mindmaps_intro": "bda62807733243f79df14c3aa54099abb9d4b40afbefd7959131a7ebe051ef00",
+  "mindmaps_intro_lessons_first_free": "f089dd474d244b7171f302d9ce538885044f88b14a47e719b5141e27541a89b9",
+  "mindmaps_intro_lessons_first_plus": "664aa58b9db0da318dae08c8ca91d477890481e5039e92034b277725e8096044",
   "mindmaps_keep_studying": "5b5679c4e43a5579eba4cac0cee35e76b1275bbf9b45b9edff5b80d59251f6c1",
   "mindmaps_lessons_first_free": "158ee4451c0b78817e4cc1b2e62367cabec407113d2cdd74465484a8c4ffb9a2",
   "mindmaps_lessons_first_plus": "335db6c8884499429a35a6f40ad1328dfe3e26ea6935f61973c0cec4f44f5c62",
+  "mindmaps_lessons_not_written": "b5f40df892236a6e676147473559b6966d78d112266868ac679f2ff57cf25917",
   "mindmaps_open": "ee01b9ee97095621ec9bcfde5b38788023eed481c2f7670dcb7579c0aaa0a313",
   "mindmaps_open_spoken": "db714919066545a026aed731aafa99a7b4ad439c4a8f15cc0ea6a0c0c0082db2",
   "mindmaps_ready": "c1468b226423ee4a633779b0a25650600b6fb66e01012eeeadad86bb720fdb3e",
@@ -52,6 +55,10 @@
     </plurals>
     <!-- Under the Mind maps page's title. -->
     <string name="mindmaps_intro">Le idee principali di un capitolo in un’immagine. Ogni capitolo che completi ha la sua mappa; puoi crearne una per qualsiasi altro capitolo del tuo piano.</string>
+    <!-- The same intro while some chapters' lessons aren't written yet, for a free learner or a guest. -->
+    <string name="mindmaps_intro_lessons_first_free">Le idee principali di un capitolo in un’unica immagine. Ogni capitolo che completi ha la sua mappa; puoi crearne una per qualsiasi altro capitolo del tuo piano. Per creare una mappa per uno di questi capitoli, prepariamo prima le lezioni, che vengono scalate dalle lezioni gratuite disponibili.</string>
+    <!-- The same intro while some chapters' lessons aren't written yet, for a Plus learner. -->
+    <string name="mindmaps_intro_lessons_first_plus">Le idee principali di un capitolo in un’unica immagine. Ogni capitolo che completi ha la sua mappa; puoi crearne una per qualsiasi altro capitolo del tuo piano. Per creare una mappa per uno di questi capitoli, prepariamo prima le lezioni, quindi ci vogliono alcuni minuti.</string>
     <plurals name="mindmaps_chapter_count">
         <item quantity="one">%d capitolo</item>
         <item quantity="many">%d capitoli</item>
@@ -80,6 +87,8 @@
     <string name="mindmaps_lessons_first_free">Prima prepariamo le lezioni del capitolo, che vengono scalate dal totale delle tue lezioni gratuite.</string>
     <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
     <string name="mindmaps_lessons_first_plus">Prima prepariamo le lezioni del capitolo, quindi ci vuole qualche minuto.</string>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
+    <string name="mindmaps_lessons_not_written">Lezioni non ancora preparate</string>
     <string name="mindmaps_writing_lessons">Prepariamo le lezioni, poi la mappa mentale…</string>
     <string name="mindmaps_writing_lessons_wait">Ci vuole qualche minuto. Puoi uscire: la troverai qui.</string>
     <string name="mindmaps_drawing">Stiamo disegnando la mappa mentale…</string>

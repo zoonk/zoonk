@@ -22,9 +22,12 @@
   "mindmaps_fit": "3f91b91c817f76ae407b94fc49afcc196ad499e9cf544af3a271f1ef5e0fc18b",
   "mindmaps_in_short": "e2d3882f2bac2ce645ffcb2c96f779d79ca2d2f6c8fbf1e207187dd96c007c18",
   "mindmaps_intro": "b0dfee4db13333787ba2660a541695801d8cc1391ac0ab22eef002545f12f86e",
+  "mindmaps_intro_lessons_first_free": "6955de5df65fa490656ea5ba917e36999eaea11f4466285a436bb582430abc21",
+  "mindmaps_intro_lessons_first_plus": "ad48c6c0636bb666a70e9de1e7d27c571e287857f9ef4e75a6749109677f0d58",
   "mindmaps_keep_studying": "267911c89379b5fd5553b5a56f276e34497960d06bdf1cec89284ab48f84f28f",
   "mindmaps_lessons_first_free": "70c79acacc9b75940b5d60bcb2024aa58414140b7d76c9d9ee63d9cc7b7bebc4",
   "mindmaps_lessons_first_plus": "c06799a2de6539a0782edbacde5c5a70c45d2789b7fd13dced3620f3088010d7",
+  "mindmaps_lessons_not_written": "4fed65bca3ebbbd8eb4cfa918d36aff3869d965ea19a93eb2d086dd5f9c07ef9",
   "mindmaps_open": "78acb676fb8be25ace92286db2413560884d5623485b995197a482e67a4c79d4",
   "mindmaps_open_spoken": "a020af4aef6cf91b8adb9db9b7501f2e849ea56f9e6a4c865799dafecf8dd3bb",
   "mindmaps_ready": "f66e6e7bed92ff6ce91621b5e7a6507bbe43e857b76dec41f90226f50b9f241e",
@@ -52,6 +55,10 @@
     </plurals>
     <!-- Under the Mind maps page's title. -->
     <string name="mindmaps_intro">Les idées principales d’un chapitre en une image. Chaque chapitre terminé a sa carte mentale ; tu peux en créer une pour tout autre chapitre de ton plan.</string>
+    <!-- The same intro while some chapters' lessons aren't written yet, for a free learner or a guest. -->
+    <string name="mindmaps_intro_lessons_first_free">Les idées principales d’un chapitre en une image. Chaque chapitre que tu termines a sa carte mentale ; tu peux en créer une pour n’importe quel autre chapitre de ton plan. Dans ce cas, ses leçons sont d’abord préparées et décomptées de tes leçons gratuites.</string>
+    <!-- The same intro while some chapters' lessons aren't written yet, for a Plus learner. -->
+    <string name="mindmaps_intro_lessons_first_plus">Les idées principales d’un chapitre en une image. Chaque chapitre que tu termines a sa carte mentale ; tu peux en créer une pour n’importe quel autre chapitre de ton plan. Dans ce cas, ses leçons sont d’abord préparées, ce qui prend quelques minutes.</string>
     <plurals name="mindmaps_chapter_count">
         <item quantity="one">%d chapitre</item>
         <item quantity="many">%d chapitres</item>
@@ -80,6 +87,8 @@
     <string name="mindmaps_lessons_first_free">Ses leçons sont d’abord préparées et comptent dans ton quota de leçons gratuites.</string>
     <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
     <string name="mindmaps_lessons_first_plus">Ses leçons sont d’abord préparées, ce qui prend quelques minutes.</string>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
+    <string name="mindmaps_lessons_not_written">Leçons pas encore préparées</string>
     <string name="mindmaps_writing_lessons">Préparation des leçons, puis de la carte mentale…</string>
     <string name="mindmaps_writing_lessons_wait">Cela prend quelques minutes. Tu peux quitter cet écran ; la carte t’attendra ici.</string>
     <string name="mindmaps_drawing">Création de la carte mentale…</string>

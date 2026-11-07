@@ -22,9 +22,12 @@
   "mindmaps_fit": "20f43e8039030a5a9c08cddfae7c42d8f29f3604e59e741316566d2adcd65ed8",
   "mindmaps_in_short": "8d9c4f61193c1c25bf8f82bac35003901cddf5d942343612d24f510d85755f32",
   "mindmaps_intro": "228c5992d29e713cf8158da2b556e3bd12f49712354219122d25373ec3657e35",
+  "mindmaps_intro_lessons_first_free": "cbdd1186ef244db6d76d86d026b713e9e90a29f7ad33884bafdc6c0aced477fc",
+  "mindmaps_intro_lessons_first_plus": "94ba32718150552c689b2bf49c3c5eac60b54e2ace5dbcb49415e2ff993a0747",
   "mindmaps_keep_studying": "d91203e9d030c242b72144dbbd6200ca0b3f7d137fa61f0978b96fa6b2468db7",
   "mindmaps_lessons_first_free": "53d94e2df084d5634c99c7ccb30b95b8ae6f1fb985985ebed396a37eaa41ce44",
   "mindmaps_lessons_first_plus": "196cc99642ffd13a2efdcdeb56b389eaab150a4f3b3b2cc460de185c7e440d8f",
+  "mindmaps_lessons_not_written": "36053d57c601112d6906f2067358c501a21415cfc3d5b22af4d80d8c40134b13",
   "mindmaps_open": "dc3e3e32e0a81665a1d45b00eb8c085eccc00d855b47ddd25773e9a330a2bff2",
   "mindmaps_open_spoken": "d9178a8e393177ff2281765c5c38fd2bb7193eb38bdd3eaea30a122a7a915e0d",
   "mindmaps_ready": "88fb4e4bd0bba729e35b82c768aa9116163f3d283a4ea03908a382e149e01572",
@@ -52,6 +55,10 @@
     </plurals>
     <!-- Under the Mind maps page's title. -->
     <string name="mindmaps_intro">As principais ideias de um capítulo em uma imagem. Todo capítulo que você conclui ganha um mapa mental; você pode criar um para qualquer outro capítulo do seu plano.</string>
+    <!-- The same intro while some chapters' lessons aren't written yet, for a free learner or a guest. -->
+    <string name="mindmaps_intro_lessons_first_free">As principais ideias de um capítulo em uma imagem. Você ganha um mapa para cada capítulo que conclui e pode criar um para qualquer outro capítulo do seu plano. Ao criar um mapa de um desses capítulos, as aulas dele são criadas primeiro e contam para o seu limite de aulas grátis.</string>
+    <!-- The same intro while some chapters' lessons aren't written yet, for a Plus learner. -->
+    <string name="mindmaps_intro_lessons_first_plus">As principais ideias de um capítulo em uma imagem. Você ganha um mapa para cada capítulo que conclui e pode criar um para qualquer outro capítulo do seu plano. Ao criar um mapa de um desses capítulos, as aulas dele são criadas primeiro, então o mapa leva alguns minutos para ficar pronto.</string>
     <plurals name="mindmaps_chapter_count">
         <item quantity="one">%d capítulo</item>
         <item quantity="many">%d capítulos</item>
@@ -80,6 +87,8 @@
     <string name="mindmaps_lessons_first_free">As aulas do capítulo são criadas primeiro e contam para o seu limite de aulas grátis.</string>
     <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
     <string name="mindmaps_lessons_first_plus">As aulas do capítulo são criadas primeiro, então leva alguns minutos.</string>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
+    <string name="mindmaps_lessons_not_written">Aulas ainda não criadas</string>
     <string name="mindmaps_writing_lessons">Criando as aulas e depois o mapa mental…</string>
     <string name="mindmaps_writing_lessons_wait">Isso leva alguns minutos. Você pode sair; o mapa vai estar aqui.</string>
     <string name="mindmaps_drawing">Desenhando o mapa mental…</string>

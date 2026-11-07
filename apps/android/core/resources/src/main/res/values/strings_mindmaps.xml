@@ -7,6 +7,10 @@
     </plurals>
     <!-- Under the Mind maps page's title. -->
     <string name="mindmaps_intro">A chapter\'s main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan.</string>
+    <!-- The same intro while some chapters' lessons aren't written yet, for a free learner or a guest. -->
+    <string name="mindmaps_intro_lessons_first_free">A chapter\'s main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan. Making a map for one of these writes its lessons first, which counts toward your free lessons.</string>
+    <!-- The same intro while some chapters' lessons aren't written yet, for a Plus learner. -->
+    <string name="mindmaps_intro_lessons_first_plus">A chapter\'s main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan. Making a map for one of these writes its lessons first, so it takes a few minutes.</string>
     <plurals name="mindmaps_chapter_count">
         <item quantity="one">%d chapter</item>
         <item quantity="other">%d chapters</item>
@@ -34,6 +38,8 @@
     <string name="mindmaps_lessons_first_free">Its lessons get written first and count toward your free lessons.</string>
     <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
     <string name="mindmaps_lessons_first_plus">Its lessons get written first, so it takes a few minutes.</string>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
+    <string name="mindmaps_lessons_not_written">Lessons not written yet</string>
     <string name="mindmaps_writing_lessons">Writing the lessons, then the mind map…</string>
     <string name="mindmaps_writing_lessons_wait">This takes a few minutes. You can leave; it\'ll be here.</string>
     <string name="mindmaps_drawing">Drawing the mind map…</string>

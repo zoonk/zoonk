@@ -22,9 +22,12 @@
   "mindmaps_fit": "65265aa963046da1dd81f6e13717b0c9f7aca1cfca730591600d94a3b1c848b0",
   "mindmaps_in_short": "1c3594134a5b9a5195a20630a9172feb3e0320955c80bc8cee0d2f313955f3e7",
   "mindmaps_intro": "64cec77a7e383260cca496dca5332aa37e33adac222870d501daa36a2e8cc151",
+  "mindmaps_intro_lessons_first_free": "640e4284c43716fa20c4fbac4cb261aaabcca618946cac83ad7c5b87a9bbdd10",
+  "mindmaps_intro_lessons_first_plus": "fc8188934d28ce05c103cf9382e26f6eb024c2424d82983d941834373427e9bc",
   "mindmaps_keep_studying": "549730140204158ec1d51c1ab3dc52b1ebf993d8fde03ecda3c7d60b6fa91e2b",
   "mindmaps_lessons_first_free": "6b98ef4271114199054bc20f907911e626520bbea0ff30d3bdbee5742e7627ef",
   "mindmaps_lessons_first_plus": "e0db4cf3f7e81c833849b334f213483a26a46fdb313c8f66854b67086b5b8cf0",
+  "mindmaps_lessons_not_written": "c21284742998cf0d2a12d9cadee55707ee338e28980f13518dd068e52b7a1657",
   "mindmaps_open": "cf5266b1c41d0923533810ebf78d8597f2edda572505a331c6cddbf48059a04d",
   "mindmaps_open_spoken": "59f526e5967f3220d6c7b5c2711b435593d13d5349342534f0911617f550a6de",
   "mindmaps_ready": "50fa70d417dc36699f601354ccb12564bd79e4fc9885ccc43634cb9024ebf540",
@@ -51,6 +54,10 @@
     </plurals>
     <!-- Under the Mind maps page's title. -->
     <string name="mindmaps_intro">Die wichtigsten Inhalte eines Kapitels in einem Bild. Zu jedem abgeschlossenen Kapitel gibt es eine Mindmap. Du kannst auch für jedes andere Kapitel in deinem Plan eine erstellen.</string>
+    <!-- The same intro while some chapters' lessons aren't written yet, for a free learner or a guest. -->
+    <string name="mindmaps_intro_lessons_first_free">Die wichtigsten Gedanken eines Kapitels in einem Bild. Für jedes abgeschlossene Kapitel bekommst du eine Mindmap; für jedes andere Kapitel in deinem Plan kannst du eine erstellen. Fehlen die Lektionen noch, erstellen wir sie zuerst. Sie werden auf deine kostenlosen Lektionen angerechnet.</string>
+    <!-- The same intro while some chapters' lessons aren't written yet, for a Plus learner. -->
+    <string name="mindmaps_intro_lessons_first_plus">Die wichtigsten Gedanken eines Kapitels in einem Bild. Für jedes abgeschlossene Kapitel bekommst du eine Mindmap; für jedes andere Kapitel in deinem Plan kannst du eine erstellen. Fehlen die Lektionen noch, erstellen wir sie zuerst. Deshalb dauert es ein paar Minuten.</string>
     <plurals name="mindmaps_chapter_count">
         <item quantity="one">%d Kapitel</item>
         <item quantity="other">%d Kapitel</item>
@@ -78,6 +85,8 @@
     <string name="mindmaps_lessons_first_free">Wir erstellen zuerst die Lektionen des Kapitels. Sie werden auf deine kostenlosen Lektionen angerechnet.</string>
     <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
     <string name="mindmaps_lessons_first_plus">Wir erstellen zuerst die Lektionen des Kapitels. Deshalb dauert es ein paar Minuten.</string>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
+    <string name="mindmaps_lessons_not_written">Lektionen noch nicht erstellt</string>
     <string name="mindmaps_writing_lessons">Wir erstellen erst die Lektionen, dann die Mindmap…</string>
     <string name="mindmaps_writing_lessons_wait">Das dauert ein paar Minuten. Du kannst die Seite verlassen; du findest die Mindmap später hier.</string>
     <string name="mindmaps_drawing">Wir zeichnen die Mindmap…</string>

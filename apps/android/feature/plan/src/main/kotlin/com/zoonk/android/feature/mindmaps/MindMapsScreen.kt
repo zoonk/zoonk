@@ -164,7 +164,7 @@ internal fun MindMapsPage(
         Box(Modifier.fillMaxSize().padding(padding)) {
             BeforeFold { beforeFold ->
                 LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, detailPagePadding()) {
-                    item(key = "hero", contentType = "hero") { MindMapsHero(mindMaps, drawn, cap, actions.navigate) }
+                    item(key = "hero", contentType = "hero") { MindMapsHero(mindMaps, drawn, cap, plus, actions.navigate) }
 
                     if (groups.isEmpty()) {
                         item(key = "empty", contentType = "empty") { MindMapsEmpty(actions, Modifier.padding(top = 24.dp)) }
@@ -223,12 +223,16 @@ internal fun List<MindMapGroup>.listIndexOf(subject: String?): Int? {
     return null
 }
 
-/** The goal over the title, how many maps are drawn, what maps are, and the plan's cap once. */
+/**
+ * The goal over the title, how many maps are drawn, what maps are (and, while a row has lessons to
+ * write, what making its map does, for the learner's [plus] or free plan), and the plan's cap once.
+ */
 @Composable
 private fun MindMapsHero(
     mindMaps: GoalMindMaps,
     drawn: Int,
     cap: Limit?,
+    plus: Boolean,
     navigate: (AppRoute) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -243,7 +247,7 @@ private fun MindMapsHero(
             )
         }
         Text(
-            stringResource(R.string.mindmaps_intro),
+            stringResource(mindMaps.intro(plus)),
             Modifier.padding(top = 8.dp),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
@@ -251,6 +255,14 @@ private fun MindMapsHero(
         if (cap != null) MindMapLimit(cap, lessonsRanOut = false, navigate, Modifier.padding(top = 12.dp))
     }
 }
+
+/** The intro, saying once what writing a chapter's lessons first means while a row reads "Lessons not written yet". */
+private fun GoalMindMaps.intro(plus: Boolean): Int =
+    when {
+        chapters.none { it.status == GoalMindMap.Status.AVAILABLE && it.lessonsToWrite > 0 } -> R.string.mindmaps_intro
+        plus -> R.string.mindmaps_intro_lessons_first_plus
+        else -> R.string.mindmaps_intro_lessons_first_free
+    }
 
 @Composable
 private fun MindMapsEmpty(

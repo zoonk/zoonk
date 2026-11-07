@@ -22,9 +22,12 @@
   "mindmaps_fit": "9bafcd2ee6f025fc1bc83c1def2764565640c2141003976cd91abff8206150b4",
   "mindmaps_in_short": "77b7d51daf54a6ee521a51bf712796780911ef3cbbdc0fa3a0a918b53059eef5",
   "mindmaps_intro": "32b91c4b3a1512f74d969f6770f8b56bc629b0d09493a5e70586742c6f9aff4f",
+  "mindmaps_intro_lessons_first_free": "284adc8697c86c0b043d960d4ae9f199caa4689e42dc85c1b5fe5823736ec6b0",
+  "mindmaps_intro_lessons_first_plus": "f43cc4fe11c7250109f5a7857c5ae08f03fe7eb50ceee6ed3948c2fc79636306",
   "mindmaps_keep_studying": "712c8abc59dd244cad48a712f02314b0730c6c0cdded693ea87f9141c2c511b6",
   "mindmaps_lessons_first_free": "e7820a7f3b1a5db9cf1d314396e12cb45a0067cfed49eebb2c6189b64f7efe48",
   "mindmaps_lessons_first_plus": "e322b6ada2b4fc686c395089ff4a9217d1ab853fdae718266bad6c391df45762",
+  "mindmaps_lessons_not_written": "5e03457b9c211a98fdcee7124ee9604a7d78a580f859b3207ade850dd21e39a8",
   "mindmaps_open": "191b24b9df422c995784261eacffb115cb0a6941927f74ca22d492d2e371ade9",
   "mindmaps_open_spoken": "dc8998886a7dd6eec7f573ef3bb7c5f40f45bf9a6ba496189323387e326b350b",
   "mindmaps_ready": "c97de6c670e9be309cc8c186fb923990a23bd4fdf0ed10f3f77dac3cb627d6e6",
@@ -53,6 +56,10 @@
     </plurals>
     <!-- Under the Mind maps page's title. -->
     <string name="mindmaps_intro">Najważniejsze zagadnienia rozdziału na jednym obrazku. Mapa powstaje dla każdego ukończonego rozdziału. Możesz też utworzyć ją dla dowolnego innego rozdziału w swoim planie.</string>
+    <!-- The same intro while some chapters' lessons aren't written yet, for a free learner or a guest. -->
+    <string name="mindmaps_intro_lessons_first_free">Główne zagadnienia rozdziału na jednym obrazku. Po ukończeniu każdego rozdziału dostajesz jego mapę; możesz też utworzyć mapę dowolnego innego rozdziału ze swojego planu. Jeśli wybrany rozdział nie ma jeszcze gotowych lekcji, najpierw je przygotowujemy, co wlicza się do limitu bezpłatnych lekcji.</string>
+    <!-- The same intro while some chapters' lessons aren't written yet, for a Plus learner. -->
+    <string name="mindmaps_intro_lessons_first_plus">Główne zagadnienia rozdziału na jednym obrazku. Po ukończeniu każdego rozdziału dostajesz jego mapę; możesz też utworzyć mapę dowolnego innego rozdziału ze swojego planu. Jeśli wybrany rozdział nie ma jeszcze gotowych lekcji, najpierw je przygotowujemy, więc utworzenie mapy zajmuje kilka minut.</string>
     <plurals name="mindmaps_chapter_count">
         <item quantity="one">%d rozdział</item>
         <item quantity="few">%d rozdziały</item>
@@ -82,6 +89,8 @@
     <string name="mindmaps_lessons_first_free">Najpierw przygotujemy lekcje z tego rozdziału, które wliczą się do limitu bezpłatnych lekcji.</string>
     <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
     <string name="mindmaps_lessons_first_plus">Najpierw przygotujemy lekcje z tego rozdziału, więc zajmie to kilka minut.</string>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
+    <string name="mindmaps_lessons_not_written">Lekcje nie są jeszcze gotowe</string>
     <string name="mindmaps_writing_lessons">Przygotowujemy lekcje, a potem mapę myśli…</string>
     <string name="mindmaps_writing_lessons_wait">To zajmie kilka minut. Możesz wyjść, a mapa będzie tu czekać.</string>
     <string name="mindmaps_drawing">Rysujemy mapę myśli…</string>

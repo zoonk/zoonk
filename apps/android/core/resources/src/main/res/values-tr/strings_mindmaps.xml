@@ -22,9 +22,12 @@
   "mindmaps_fit": "13ce7ea637bbd0381a39ca82b622679f58a53abfb0c3e68542dd559d79e512ca",
   "mindmaps_in_short": "510935e0b38e3a3470604c09f491aaa500aa08dad6b824f8660861ff1b97a43a",
   "mindmaps_intro": "e7920dbc2b277e248046f8e10024cd848fec2f289bbde38f5b3e052db4d05bd6",
+  "mindmaps_intro_lessons_first_free": "f51b9413b05b02cb6dc05c4745e8866671e5f80d8b9e9fe17778ee80b1a26b69",
+  "mindmaps_intro_lessons_first_plus": "0de045f1198f98b70dd65c00f3fb0514b54bbdc4982aa83df974fbfefafb160a",
   "mindmaps_keep_studying": "603b9bd298bee4325ae51f245b74e9d497c695d0e0f4b5f5657cfb3c32c66d0e",
   "mindmaps_lessons_first_free": "f557d773f892b14ad8b4a88d67c8474676ad4b34e33aeb56e4c8077548f74606",
   "mindmaps_lessons_first_plus": "b40833340c764cbc3b6884d0169d2f53ac34eac300fabb1ff632f9bc7d5ae16f",
+  "mindmaps_lessons_not_written": "e69dfafd41246f08db86d27b926e425d1b07cf6e96d0f1601e1a172bb0cb47da",
   "mindmaps_open": "05b2a0f112825e7ec7a811acb736d631928d5267cf66260c1679a741ed978d1c",
   "mindmaps_open_spoken": "2472b797493afc3cf1b597cf027e762285ca43667a94a3f4d7e1205f6ab27802",
   "mindmaps_ready": "0516c9487d72f6a40140ff66a33990435286e2ab0b8a5d77c4678075d236231d",
@@ -51,6 +54,10 @@
     </plurals>
     <!-- Under the Mind maps page's title. -->
     <string name="mindmaps_intro">Bir ünitenin ana kavramları tek bir görselde. Bitirdiğin her ünite için bir zihin haritası hazırlanır; planındaki diğer üniteler için de oluşturabilirsin.</string>
+    <!-- The same intro while some chapters' lessons aren't written yet, for a free learner or a guest. -->
+    <string name="mindmaps_intro_lessons_first_free">Bir ünitenin temel kavramları tek bir görselde. Tamamladığın her ünite için bir harita hazırlanır; planındaki diğer üniteler için de harita oluşturabilirsin. Bu ünitelerden biri için harita istediğinde önce dersleri hazırlanır; bu dersler ücretsiz ders hakkından düşülür.</string>
+    <!-- The same intro while some chapters' lessons aren't written yet, for a Plus learner. -->
+    <string name="mindmaps_intro_lessons_first_plus">Bir ünitenin temel kavramları tek bir görselde. Tamamladığın her ünite için bir harita hazırlanır; planındaki diğer üniteler için de harita oluşturabilirsin. Bu ünitelerden biri için harita istediğinde önce dersleri hazırlanır, bu yüzden haritanın hazırlanması birkaç dakika sürer.</string>
     <plurals name="mindmaps_chapter_count">
         <item quantity="one">%d ünite</item>
         <item quantity="other">%d ünite</item>
@@ -78,6 +85,8 @@
     <string name="mindmaps_lessons_first_free">Önce ünitenin dersleri hazırlanır; bu dersler ücretsiz ders hakkından düşer.</string>
     <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
     <string name="mindmaps_lessons_first_plus">Önce ünitenin dersleri hazırlanacağı için birkaç dakika sürer.</string>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
+    <string name="mindmaps_lessons_not_written">Dersler henüz hazırlanmadı</string>
     <string name="mindmaps_writing_lessons">Önce dersleri, sonra zihin haritasını hazırlıyoruz…</string>
     <string name="mindmaps_writing_lessons_wait">Birkaç dakika sürer. Ekrandan ayrılabilirsin; döndüğünde burada olacak.</string>
     <string name="mindmaps_drawing">Zihin haritasını çiziyoruz…</string>
