@@ -62,7 +62,7 @@ vi.mock("@zoonk/core/lookahead/lessons-ask", async (importOriginal) => {
 });
 
 describe(writeOutlineBandStep, () => {
-  it("keeps a band streaming when a plan write lands during its early chapter's day follow", async () => {
+  it("keeps writing the band when its early chapter cannot follow a busy day", async () => {
     const graph = recordedOutput<SkillGraph>("skill-graph");
     const testId = crypto.randomUUID();
     const recorded = recordedOutput<CourseOutline>("course-outline");
