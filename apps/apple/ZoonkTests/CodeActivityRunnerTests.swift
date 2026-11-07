@@ -21,7 +21,7 @@ struct CodeActivityRunnerTests {
   }
 
   @Test func endlessLoopsStopAndTheNextRunWorks() async {
-    let runner = CodeProgramRunner(language: .javascript)
+    let runner = CodeProgramRunner(language: .javascript, timeLimit: 1)
 
     #expect(await runner.run("while (true) {}").stop == .timeout)
 
