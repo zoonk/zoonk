@@ -1348,7 +1348,7 @@ describe(courseOutlineWorkflow, () => {
     });
   });
 
-  it("lets the learner request unwritten lessons after the outline finishes", async () => {
+  it("stops waiting on today's lessons once the ask's outline is done, even when it left some unwritten", async () => {
     const [{ bandSkills, goal }, course] = await Promise.all([
       waitingGoal(),
       courseFixture({ outlineStatus: "pending", title: "Immunology" }),
