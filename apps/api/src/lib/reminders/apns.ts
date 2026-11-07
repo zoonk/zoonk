@@ -139,7 +139,12 @@ export async function sendApnsReminder({
   const { data, error } = await safeAsync(() =>
     postToApns({
       body: JSON.stringify({
-        aps: { alert: text, "interruption-level": "active", sound: "default" },
+        aps: {
+          alert: text,
+          category: "study_reminder",
+          "interruption-level": "active",
+          sound: "default",
+        },
         goalId,
         type: "study_reminder",
       }),
