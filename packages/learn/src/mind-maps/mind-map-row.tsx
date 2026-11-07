@@ -30,7 +30,7 @@ import { type MindMapShown, useMindMapRequest } from "./use-mind-map-request";
  * Where the row sits changes only its words: the chapter page names it "Mind map", the moment a
  * chapter ends and the Mind maps page name the chapter.
  */
-export type MindMapRowPlace = "chapter" | "finish" | "library";
+type MindMapRowPlace = "chapter" | "finish" | "library";
 
 const SLOT_CLASS = "flex size-12 shrink-0 items-center justify-center rounded-lg";
 

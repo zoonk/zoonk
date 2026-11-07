@@ -16,7 +16,6 @@ import { LearnPageBar } from "../shell/learn-bar";
 import { type MindMapActions } from "./mind-map-actions";
 import { MindMapRow } from "./mind-map-row";
 
-export type { MindMapLimit } from "../_components/help-limit-notice";
 export type { MindMapActions, MindMapRequestOutcome } from "./mind-map-actions";
 
 type MapGroup = { key: string; maps: GoalMindMapView[]; name: string | null };

@@ -10,7 +10,6 @@ import {
   DialogPortal,
   DialogTitle,
 } from "@zoonk/ui/components/dialog";
-import { cn } from "@zoonk/ui/lib/utils";
 import { DownloadIcon, MinusIcon, PlusIcon, ScanIcon, TextIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
@@ -22,15 +21,13 @@ import { usePanZoom } from "./use-pan-zoom";
 
 const PERCENT = 100;
 
-export function MindMapDownloadLink({
+function MindMapDownloadLink({
   className,
   image,
-  label,
   title,
 }: {
-  className?: string;
+  className: string;
   image: MindMapImage;
-  label?: string;
   title: string;
 }) {
   const t = useExtracted();
@@ -42,7 +39,7 @@ export function MindMapDownloadLink({
       href={toMindMapDownloadHref(image.url)}
     >
       <DownloadIcon aria-hidden="true" />
-      {label ?? <span className="sr-only">{t("Download")}</span>}
+      <span className="sr-only">{t("Download")}</span>
     </a>
   );
 }
@@ -214,7 +211,7 @@ export function MindMapViewer({
             </DialogTitle>
 
             {image && outline && <AsTextToggle onChange={setAsText} pressed={asText} />}
-            {image && <MindMapDownloadLink className={cn(barButton)} image={image} title={title} />}
+            {image && <MindMapDownloadLink className={barButton} image={image} title={title} />}
           </header>
 
           <DialogDescription className="sr-only">

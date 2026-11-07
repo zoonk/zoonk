@@ -8,10 +8,9 @@ import {
   CollapsibleTrigger,
 } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon, PlusIcon } from "lucide-react";
+import { ChevronDownIcon, NetworkIcon, PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { KindIcon } from "../_components/kind-tile";
 import {
   LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
@@ -120,7 +119,7 @@ function MindMapsLink({ href }: { href: string }) {
       className={cn(buttonVariants({ size: "sm", variant: "ghost" }), "-my-1 -mr-2.5")}
       href={href}
     >
-      <KindIcon kind="mindMap" />
+      <NetworkIcon aria-hidden="true" data-icon="inline-start" />
       {t("Mind maps")}
     </LearnLink>
   );

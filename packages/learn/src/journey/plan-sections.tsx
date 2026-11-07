@@ -8,10 +8,15 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon, GraduationCapIcon, HistoryIcon, LibraryIcon } from "lucide-react";
+import {
+  ChevronRightIcon,
+  GraduationCapIcon,
+  HistoryIcon,
+  LibraryIcon,
+  NetworkIcon,
+} from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DrawerCloseButton } from "../_components/details-drawer";
-import { KindIcon } from "../_components/kind-tile";
 import {
   ListGroup,
   ListRowContent,
@@ -116,7 +121,7 @@ function MindMapsPathRow({ href }: { href: string | null }) {
   }
 
   return (
-    <PathLinkRow className="lg:hidden" href={href} icon={<KindIcon kind="mindMap" />}>
+    <PathLinkRow className="lg:hidden" href={href} icon={<NetworkIcon className="size-4" />}>
       {t("Mind maps")}
     </PathLinkRow>
   );
