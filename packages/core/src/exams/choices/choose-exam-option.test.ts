@@ -11,11 +11,10 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { endLessonsAsk } from "../../lookahead/lessons-ask";
 import { keepPaceOwn } from "../../plans/_test-utils/keep-pace-own";
 import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
-import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
-import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
+import { loadDayLessonIds } from "../../sessions/_test-utils/todays-lessons";
 import { openStudyDay } from "../../sessions/open-study-day";
 import { startStudyBlock } from "../../sessions/start-study-block";
 import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
@@ -84,21 +83,6 @@ async function openToday(goalId: string) {
   }
 
   return opened.session;
-}
-
-/** Includes a lesson the plan splits between today and later days. */
-async function loadTodaysLessonIds(goalId: string): Promise<Set<string>> {
-  const items = await prisma.planItem.findMany({
-    where: { lessonId: { not: null }, plan: { goalId } },
-  });
-
-  const todays = items.filter(
-    (item) =>
-      (item.scheduledFor !== null && toIsoDate(item.scheduledFor) <= TODAY) ||
-      readSelectedItemFacts(item.facts)?.days?.some(([date, , raw]) => date === TODAY && raw > 0),
-  );
-
-  return new Set(todays.flatMap((item) => item.lessonId ?? []));
 }
 
 async function writeStandInLessons(
@@ -434,7 +418,7 @@ describe(chooseExamOption, () => {
       });
 
       const day = await openToday(goal.id);
-      const todays = await loadTodaysLessonIds(goal.id);
+      const todays = await loadDayLessonIds({ goalId: goal.id, today: TODAY });
       const lessonIds = day.blocks.flatMap((block) => block.lessonId ?? []);
 
       expect(lessonIds.some((id) => written.includes(id))).toBe(true);

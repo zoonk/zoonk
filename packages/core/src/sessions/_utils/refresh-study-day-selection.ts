@@ -1,72 +1,42 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { listDayStandIns } from "../../lookahead/outline-window";
 import { withPlanRetry } from "../../plans/plan-conflict";
 import { appendLandedLessons } from "./append-landed-lessons";
 import { AWAITING_OUTLINES_VERSION } from "./day-plan-version";
-import { getDayOutlines } from "./outlining-stand-ins";
-import { selectDayPlan } from "./selected-day-plan";
+import { type SelectedDayPlan, selectDayPlan } from "./selected-day-plan";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
-/** Continue reuses current inputs; a changed selection can only append to the shown queue. */
-async function refreshStudyDaySelection({
+async function takesSelection({
+  selection,
   session,
-  timeZone,
 }: {
+  selection: SelectedDayPlan;
   session: StudySessionRow;
-  timeZone: string;
-}): Promise<StudySessionRow> {
-  return withPlanRetry(async () => {
-    const current = await prisma.studySession.findUniqueOrThrow({
-      include: STUDY_SESSION_INCLUDE,
-      where: { id: session.id },
-    });
+}): Promise<boolean> {
+  if (selection.computed || selection.inputKeyUpdate) {
+    return true;
+  }
 
-    if (!current.goal) {
-      return current;
-    }
+  if (session.planVersion !== AWAITING_OUTLINES_VERSION) {
+    return session.planVersion !== selection.context.plan.version;
+  }
 
-    const selection = await selectDayPlan({
-      goal: current.goal,
-      now: new Date(),
-      timeZone,
-      useFreshSaved: true,
-    });
-
-    if (!selection) {
-      return current;
-    }
-
-    const samePlan = !selection.computed && !selection.inputKeyUpdate;
-
-    if (samePlan && current.planVersion === selection.context.plan.version) {
-      return current;
-    }
-
-    // A waiting day takes the plan's day once the lessons it waited for are written into the plan.
-    // While it still holds unwritten ones, it waits, or fills from the plan's next lessons once
-    // nobody is writing them.
-    if (
-      samePlan &&
-      current.planVersion === AWAITING_OUTLINES_VERSION &&
-      (await getDayOutlines({
-        goal: current.goal,
-        graph: selection.state.graph,
-        localDate: current.localDate,
-      })) !== null
-    ) {
-      return current;
-    }
-
-    return appendLandedLessons({
-      goal: selection.context.goal,
-      selection,
-      session: current,
-      timeZone,
-    });
+  // A waiting day takes the plan's day once the lessons it waited for are written into the plan.
+  // While it still holds unwritten ones, it waits, or fills from the plan's next lessons once
+  // nobody is writing them.
+  const standIns = await listDayStandIns({
+    goalId: selection.context.goal.id,
+    localDate: session.localDate,
   });
+
+  return standIns.length === 0;
 }
 
-/** What Open and Continue do to a saved day: take the plan's current selection, then the lessons that landed since. */
+/**
+ * What Open and Continue do to a saved day: take the plan's current selection when it changed,
+ * otherwise the lessons that landed since. Either only appends to the shown queue.
+ */
 export async function followSavedDay({
   goal,
   session,
@@ -76,6 +46,25 @@ export async function followSavedDay({
   session: StudySessionRow;
   timeZone: string;
 }): Promise<StudySessionRow> {
-  const selected = await refreshStudyDaySelection({ session, timeZone });
-  return appendLandedLessons({ goal, session: selected, timeZone });
+  return withPlanRetry(async () => {
+    const current = await prisma.studySession.findUniqueOrThrow({
+      include: STUDY_SESSION_INCLUDE,
+      where: { id: session.id },
+    });
+
+    const selection = current.goal
+      ? await selectDayPlan({ goal: current.goal, now: new Date(), timeZone, useFreshSaved: true })
+      : null;
+
+    if (selection && (await takesSelection({ selection, session: current }))) {
+      return appendLandedLessons({
+        goal: selection.context.goal,
+        selection,
+        session: current,
+        timeZone,
+      });
+    }
+
+    return appendLandedLessons({ goal, session: current, timeZone });
+  });
 }
