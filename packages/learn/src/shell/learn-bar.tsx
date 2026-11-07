@@ -167,7 +167,7 @@ function PageBarStart({
       {title && titleAway && (
         <span
           aria-hidden="true"
-          className="motion-safe:animate-in motion-safe:fade-in duration-base line-clamp-2 min-w-0 text-sm leading-tight font-semibold text-pretty lg:hidden"
+          className="motion-safe:animate-in motion-safe:fade-in duration-base line-clamp-2 min-w-0 text-sm leading-tight font-semibold text-pretty lg:hidden @max-3xs/page-bar:hidden"
         >
           {title}
         </span>
@@ -197,9 +197,10 @@ export function LearnPageBar({
     <PageBarSurface className={cn(root && !children && "lg:hidden")} ref={ref}>
       {/* As tall as an action's button even without one, so every page's bar, and its skeleton,
           share one height. */}
-      {/* `data-title-away` lets an action give way to the page's name on a phone (a visitor's
-          Pricing, `group-data-title-away/page-bar`). Actions get only the room the back button
-          leaves, and the `page-bar` container lets one shorten to fit (Ask's face alone). */}
+      {/* Actions get only the room the back button leaves. `data-title-away`
+          (`group-data-title-away/page-bar`) lets one give way to the page's name on a phone, and
+          the `page-bar` container lets one shorten in a narrow row, as Ask (its face alone) and
+          a visitor's Pricing (hidden) do. */}
       <div
         className={cn(
           PAGE_COLUMN_CLASS,
