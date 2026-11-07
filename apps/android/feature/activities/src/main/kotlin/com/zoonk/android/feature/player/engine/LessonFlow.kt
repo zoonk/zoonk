@@ -34,7 +34,7 @@ fun LessonPlayerState.enterPosition(
 /** Why a screen the recovery sent the learner back to is still to answer; its retry comes back like any other. */
 private fun LessonPlayerState.recoveryNotice(index: Int): LessonNotice? {
     val id = queue.getOrNull(index) ?: return null
-    return recovery[id]?.takeIf { id !in results && queue.indexOf(id) == index }
+    return recovery[id]?.takeIf { id !in results && id !in firstVerdicts && queue.indexOf(id) == index }
 }
 
 internal fun LessonPlayerState.complete(status: CompletionStatus = CompletionStatus.Saving): LessonPlayerState =
@@ -51,7 +51,7 @@ fun LessonPlayerState.finish(
 
 private fun LessonPlayerState.leaveQuickCheck(now: Long): LessonPlayerState {
     val quick = quickCheck ?: return this
-    val answered = queue.filter(results::containsKey)
+    val answered = queue.take(position + 1).filter(results::containsKey)
     val passed = answered.filter { results[it]?.isCorrect == true }.toSet()
     val missed = answered.filterNot(passed::contains)
     val rest =
@@ -64,12 +64,14 @@ private fun LessonPlayerState.leaveQuickCheck(now: Long): LessonPlayerState {
         .enterPosition(quick.returnPosition, now)
 }
 
-/** After a recovery, Continue goes to the next screen still to answer again or a retry, then to the end. */
+/** After a recovery, Continue goes to the next screen still to answer or a retry, then to the end. */
 private fun LessonPlayerState.nextPosition(): Int {
     val next = position + 1
-    if (recovery.isEmpty()) return next
-    return (next until queue.size).firstOrNull { index -> recoveryNotice(index) != null || queue.indexOf(queue[index]) < index }
-        ?: queue.size
+    if (recovery.isEmpty() || quickCheck != null) return next
+    return (next until queue.size).firstOrNull { index ->
+        val id = queue[index]
+        (steps[id]?.isAnswerable == true && id !in results) || queue.indexOf(id) < index
+    } ?: queue.size
 }
 
 fun LessonPlayerState.advance(now: Long): LessonPlayerState {

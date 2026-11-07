@@ -738,6 +738,41 @@ class LessonPlayerReducerTest {
     }
 
     @Test
+    fun iAlreadyKnowThisDuringARecoveryAsksEveryCheckAndBringsItsMissesBack() {
+        val steps = listOf(explanationStep("e1"), checkStep("q1"), explanationStep("e2"), checkStep("q2"))
+        val finished =
+            play(
+                steps,
+                LessonAction.Continue,
+                *answerCheck("q1", true),
+                LessonAction.Continue,
+                LessonAction.Continue,
+                *answerCheck("q2", true),
+                LessonAction.Continue,
+            )
+        val quick =
+            finished
+                .then(LessonAction.RunResynced(null, listOf(saved("q2", false))))
+                .then(LessonAction.GoBack)
+                .then(LessonAction.KnowThis)
+        assertEquals("q1", quick.currentId)
+
+        val second = answerCheck("q1", true).fold(quick, LessonPlayerState::then).then(LessonAction.Continue)
+        assertEquals("q2" to LessonPhase.Playing, second.currentId to second.phase)
+
+        val missedSecond = answerCheck("q2", false).fold(second, LessonPlayerState::then).then(LessonAction.Continue)
+        val secondAgain = missedSecond.then(LessonAction.Continue)
+        assertEquals("q2" to LessonPhase.Playing, secondAgain.currentId to secondAgain.phase)
+
+        val missedFirst = answerCheck("q1", false).fold(quick, LessonPlayerState::then).then(LessonAction.Continue)
+        val retry = missedFirst.then(LessonAction.Continue)
+        assertEquals("q2", retry.currentId)
+        val firstAgain = answerCheck("q2", true).fold(retry, LessonPlayerState::then).then(LessonAction.Continue)
+        assertEquals("q1" to LessonPhase.Playing, firstAgain.currentId to firstAgain.phase)
+        assertNull(firstAgain.notice)
+    }
+
+    @Test
     fun heldAnswersPlaceTheLearnerWithoutBeingCarriedFromAnEarlierSitting() {
         val held =
             saved(
