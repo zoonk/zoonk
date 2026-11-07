@@ -58,15 +58,32 @@ async function startRewrites(flagIds: readonly string[]): Promise<void> {
   await Promise.all(batches.map((batch) => start(flaggedContentWorkflow, [{ flagIds: batch }])));
 }
 
+/** Null when the model can't outline the chapter, so the course moves without it. */
 async function writeWhatsNewChapter({
   courseId,
   provenance,
   releaseId,
   whatsNew,
   workflowRunId,
-}: ReleaseRun & Parameters<typeof saveWhatsNewSkillsStep>[0]): Promise<WhatsNewChapter> {
+}: ReleaseRun & Parameters<typeof saveWhatsNewSkillsStep>[0]): Promise<WhatsNewChapter | null> {
   const skills = await saveWhatsNewSkillsStep({ courseId, provenance, releaseId, whatsNew });
-  const outline = await outlineWhatsNewChapterStep({ courseId, skills, whatsNew, workflowRunId });
+
+  const outline = await outlineWhatsNewChapterStep({
+    courseId,
+    skills,
+    whatsNew,
+    workflowRunId,
+  }).catch((error: unknown) => {
+    if (isUnusableOutput(error)) {
+      return null;
+    }
+
+    throw error;
+  });
+
+  if (!outline) {
+    return null;
+  }
 
   const { lessonIds } = await deliverCourseContent(
     saveWhatsNewChapterStep({
@@ -84,8 +101,8 @@ async function writeWhatsNewChapter({
 }
 
 /**
- * Before the course moves, so a failure here leaves it behind and the next run does it again; that
- * run offers the chapter an earlier one saved instead of writing another.
+ * Before the course moves, so a failure a later run can fix leaves it behind and the next run does
+ * it again; that run offers the chapter an earlier one saved instead of writing another.
  */
 async function addWhatsNew({
   comparison,
@@ -101,9 +118,15 @@ async function addWhatsNew({
 
   const releaseId = state.toReleaseId;
 
-  const { lessonIds, skills } =
+  const chapter =
     (await findWhatsNewChapterStep({ courseId, releaseId })) ??
     (await writeWhatsNewChapter({ courseId, provenance, releaseId, whatsNew, workflowRunId }));
+
+  if (!chapter) {
+    return;
+  }
+
+  const { lessonIds, skills } = chapter;
 
   const offer = {
     courseId,
