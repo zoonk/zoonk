@@ -2057,6 +2057,771 @@
           "language": "pt"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Both laws are represented, and accumulation is covered by its own skill despite the incorrect salary-related mappings. However, vacancy rules in articles 84–86 and the right of petition in articles 239–240 have no identifiable teaching skill. Repeating the entire statutory range in topic metadata does not establish coverage of these missing pillars. Two missing pillars trigger the maximum score of 7.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The progression from statutory concepts through appointment, possession, exercise, liability and disciplinary proceedings is generally sensible. Phase titles describe stages, and the course title is canonical. However, the disciplinary judgment skill lacks a direct prerequisite on the existing skill covering disciplinary competence and prescription, although those rules inform valid decisions. This central prerequisite omission triggers the maximum score of 8.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Most skills have manageable lesson counts, and the total hours alone are not grounds for a penalty. The allocation is nevertheless padded in multiple places: 25 lessons address salary losses and deductions incorrectly attributed to the accumulation provisions, and another 12 address a standalone probationary-stage topic outside the specified statutory slice. These are multiple topic-level sizing problems, warranting the maximum score of 7.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "At least four skills are unsupported by the supplied scope: the two salary-loss/deduction skills attributed to articles 171–175, the standalone probationary-stage skill, and general exam time management. The latter is not a separately scored ability in this blueprint. Four unsupported skills trigger the maximum score of 6. The principles skill is a defensible prerequisite for the reused improbidade skill and is not counted as filler.",
+          "score": 6,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The map uses Brazilian Portuguese, action-first names, appropriate exam weights within the required range, and the correct state-versus-federal reuse distinction. Nevertheless, the incorrect statutory mappings and additional out-of-scope teaching constitute a pattern of mismatches with the supplied notice. That pattern limits this category to 7.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The skills emphasize applying legal rules, distinguishing hypotheses, judging liability and evaluating alternatives rather than rote reproduction. These are appropriate abilities for an objective legal examination. No AI-tool skill is required for this exam goal, and there is no concrete weakness under this category.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 11568,
+          "outputTokens": 2377,
+          "reasoningTokens": 1485
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The map correctly creates São Paulo-specific skills without reusing Lei 8.112 skills and reuses the library's improbidade skill. However, it materially misidentifies articles 171–175 of Lei 10.261/1968: these concern remunerated accumulation, not salary losses, deductions and repayments. Two skills allocate 25 lessons to that incorrect mapping. The map also omits explicit teaching of vacancy rules and the right of petition, despite their inclusion in the prescribed articles, and adds a standalone probationary-stage skill outside the specified statutory scope.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The disciplinary judgment skill includes the decision and its effects but does not list the existing competence-and-prescription skill as a prerequisite. This leaves relevant decision-making rules outside its dependency chain. The standalone time-management skill also adds general test-taking advice that the supplied blueprint does not score separately.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Map each statutory skill to its actual article range, distinguishing overview content from detailed application to prevent repeated lessons. Reallocate the incorrectly scoped lessons to omitted statutory provisions and worked five-alternative questions within the substantive skills.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Another exam's Direito Administrativo skills are offered as LIBRARY_SKILLS, including skills on the federal civil-servant statute (Lei 8.112/1990). This notice asks São Paulo's statute (Lei 10.261/68) instead: a state's statute is never the same skill as the federal one, so the graph writes new skills that name the São Paulo statute and reuses none of the Lei 8.112 skills for it\n      - Lei 8.429/1992 (improbidade administrativa) is national law, the same in both exams: the graph reuses the library's improbidade skill instead of writing another\n      - Every topic of the subject is taught by some skill\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "noReuse": [
+            "camara-lei-8112-provimento",
+            "camara-lei-8112-direitos-deveres"
+          ],
+          "reuse": [
+            "camara-improbidade-administrativa"
+          ]
+        },
+        "id": "pt-tjsp-state-statute-not-federal-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Concurso do Tribunal de Justiça de São Paulo, Escrevente Técnico Judiciário (Vunesp)",
+            "notes": [
+              "Format: questões objetivas de múltipla escolha com cinco alternativas."
+            ],
+            "subjects": [
+              {
+                "group": "BLOCO II: Conhecimentos em Direito",
+                "name": "Conhecimentos em Direito",
+                "questions": 30,
+                "topics": [
+                  "5. DIREITO ADMINISTRATIVO",
+                  "5.1. Estatuto dos Funcionários Públicos Civis do Estado de São Paulo (Lei n.º 10.261/68) - artigos 1º a 86; 171 a 175; 239 a 323 e",
+                  "5.2. Lei Federal n.º 8.429/92 (Lei de Improbidade Administrativa)"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Concurso do Tribunal de Justiça de São Paulo, Escrevente Técnico Judiciário",
+          "goalKind": "exam",
+          "language": "pt",
+          "library": [
+            {
+              "courseTitle": "Direito Administrativo",
+              "skills": [
+                {
+                  "description": "Distinguir Estado, governo e administração pública, seus elementos, poderes e formas de organização.",
+                  "id": "camara-estado-governo-administracao",
+                  "lessons": 18,
+                  "level": "beginner",
+                  "name": "Distinguir Estado, governo e administração pública",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Aplicar princípios constitucionais e doutrinários da administração pública a situações administrativas.",
+                  "id": "camara-principios-administracao-publica",
+                  "lessons": 20,
+                  "level": "beginner",
+                  "name": "Aplicar princípios da administração pública",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Distinguir administração direta e indireta e as formas de distribuição de competências e serviços.",
+                  "id": "camara-organizacao-administrativa",
+                  "lessons": 26,
+                  "level": "beginner",
+                  "name": "Distinguir formas de organização administrativa",
+                  "prerequisiteIds": [
+                    "camara-estado-governo-administracao"
+                  ]
+                },
+                {
+                  "description": "Identificar requisitos, atributos e espécies de atos administrativos e julgar hipóteses de sua extinção, invalidação ou revogação.",
+                  "id": "camara-atos-administrativos",
+                  "lessons": 28,
+                  "level": "intermediate",
+                  "name": "Analisar atos administrativos e sua extinção",
+                  "prerequisiteIds": [
+                    "camara-principios-administracao-publica"
+                  ]
+                },
+                {
+                  "description": "Distinguir tipos de parecer administrativo e hipóteses de responsabilidade de seu emissor.",
+                  "id": "camara-responsabilidade-parecerista",
+                  "lessons": 12,
+                  "level": "intermediate",
+                  "name": "Julgar a responsabilidade do parecerista",
+                  "prerequisiteIds": [
+                    "camara-atos-administrativos"
+                  ]
+                },
+                {
+                  "description": "Distinguir os poderes administrativos e identificar seu exercício regular, excesso ou desvio de poder.",
+                  "id": "camara-poderes-administrativos",
+                  "lessons": 24,
+                  "level": "intermediate",
+                  "name": "Distinguir poderes administrativos e seus abusos",
+                  "prerequisiteIds": [
+                    "camara-principios-administracao-publica"
+                  ]
+                },
+                {
+                  "description": "Distinguir espécies de agentes, cargos, empregos e funções e aplicar as regras administrativas sobre requisição e vínculo público.",
+                  "id": "camara-agentes-vinculos-requisicao",
+                  "lessons": 20,
+                  "level": "beginner",
+                  "name": "Distinguir vínculos e requisição de agentes",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Aplicar as regras da Lei 8.112/1990 sobre provimento, vacância, movimentação e desenvolvimento funcional.",
+                  "id": "camara-lei-8112-provimento",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Aplicar regras de provimento e movimentação",
+                  "prerequisiteIds": [
+                    "camara-agentes-vinculos-requisicao"
+                  ]
+                },
+                {
+                  "description": "Aplicar as disposições da Lei 8.112/1990 sobre direitos, vantagens, licenças, deveres e proibições dos servidores federais.",
+                  "id": "camara-lei-8112-direitos-deveres",
+                  "lessons": 26,
+                  "level": "intermediate",
+                  "name": "Aplicar direitos e deveres dos servidores federais",
+                  "prerequisiteIds": [
+                    "camara-agentes-vinculos-requisicao"
+                  ]
+                },
+                {
+                  "description": "Reconhecer fontes e princípios do direito disciplinar e distinguir ilícitos, responsabilidades e sanções administrativas.",
+                  "id": "camara-ilicito-disciplinar",
+                  "lessons": 20,
+                  "level": "intermediate",
+                  "name": "Analisar ilícitos e sanções disciplinares",
+                  "prerequisiteIds": [
+                    "camara-lei-8112-direitos-deveres"
+                  ]
+                },
+                {
+                  "description": "Distinguir procedimentos disciplinares e aplicar suas etapas, garantias, prazos e possíveis resultados.",
+                  "id": "camara-procedimentos-disciplinares",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Aplicar regras dos procedimentos disciplinares",
+                  "prerequisiteIds": [
+                    "camara-ilicito-disciplinar"
+                  ]
+                },
+                {
+                  "description": "Aplicar os princípios e as regras de tramitação, decisão, recursos e revisão da Lei 9.784/1999.",
+                  "id": "camara-processo-administrativo-federal",
+                  "lessons": 22,
+                  "level": "intermediate",
+                  "name": "Aplicar a Lei do Processo Administrativo Federal",
+                  "prerequisiteIds": [
+                    "camara-atos-administrativos"
+                  ]
+                },
+                {
+                  "description": "Julgar a responsabilidade estatal por ação ou omissão, seus requisitos e causas de exclusão ou atenuação.",
+                  "id": "camara-responsabilidade-civil-estado",
+                  "lessons": 26,
+                  "level": "intermediate",
+                  "name": "Analisar a responsabilidade civil do Estado",
+                  "prerequisiteIds": [
+                    "camara-estado-governo-administracao"
+                  ]
+                },
+                {
+                  "description": "Aplicar a Lei 8.429/1992 a atos de improbidade, seus requisitos, sanções e procedimentos.",
+                  "id": "camara-improbidade-administrativa",
+                  "lessons": 24,
+                  "level": "intermediate",
+                  "name": "Julgar atos de improbidade administrativa",
+                  "prerequisiteIds": [
+                    "camara-principios-administracao-publica"
+                  ]
+                },
+                {
+                  "description": "Aplicar os princípios, finalidades, modalidades e hipóteses de contratação direta da Lei 14.133/2021.",
+                  "id": "camara-licitacoes-lei-14133",
+                  "lessons": 27,
+                  "level": "intermediate",
+                  "name": "Aplicar regras de licitações e contratação direta",
+                  "prerequisiteIds": [
+                    "camara-principios-administracao-publica"
+                  ]
+                },
+                {
+                  "description": "Distinguir as funções e os elementos do estudo técnico preliminar e do termo de referência no planejamento da contratação.",
+                  "id": "camara-planejamento-contratacao-etp-tr",
+                  "lessons": 21,
+                  "level": "intermediate",
+                  "name": "Analisar estudo técnico e termo de referência",
+                  "prerequisiteIds": [
+                    "camara-licitacoes-lei-14133"
+                  ]
+                },
+                {
+                  "description": "Aplicar a Lei 12.527/2011 a pedidos de informação, transparência e restrições legais de acesso.",
+                  "id": "camara-lei-acesso-informacao",
+                  "lessons": 20,
+                  "level": "intermediate",
+                  "name": "Aplicar a Lei de Acesso à Informação",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Aplicar os princípios, bases legais, direitos e regras de tratamento de dados pessoais da Lei 13.709/2018.",
+                  "id": "camara-lei-protecao-dados-pessoais",
+                  "lessons": 23,
+                  "level": "intermediate",
+                  "name": "Aplicar a Lei Geral de Proteção de Dados",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Aplicar as regras sobre características, formalização, gestão e fiscalização de contratos administrativos e atribuições do fiscal.",
+                  "id": "camara-contratos-gestao-fiscalizacao",
+                  "lessons": 27,
+                  "level": "intermediate",
+                  "name": "Analisar contratos e fiscalização contratual",
+                  "prerequisiteIds": [
+                    "camara-licitacoes-lei-14133"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Every required pillar is represented: individual and collective rights, constitutional guarantees, social rights, nationality, general public-administration rules, civil servants, and Article 92. The relevant library skills are reused. Exam weights are within 1–5, and no supplied frequency distribution contradicts their relative priorities.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The listed library prerequisites are preserved, the sequence is followable, the course title is canonical, and phase titles name stages rather than topics. However, the first milestone includes constitutional guarantees before the skill that teaches them, which is delayed until Phase 3.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The reused 24–30-lesson skills provide substantial topic units, while six lessons are a reasonable allocation for the much narrower Article 92 requirement. The 149 three-minute lessons account for 7.45 hours, leaving another 7.45 hours for practice and review within the stated estimate. There is no clear evidence of a required broad topic being squeezed into an unusably small unit.",
+          "score": 9,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Three skills contain unsupported material: the social-rights skill also teaches political rights and parties, the administration skill includes military personnel, and the time-management skill teaches strategy not scored separately by the supplied blueprint. No notice-specific filtering is stated. These three instances trigger the maximum score of 7. Constitutional foundations are legitimate prerequisites, not filler.",
+          "score": 7,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The map is in Brazilian Portuguese, uses action-first reusable names, and largely targets the requested constitutional-law exam content. However, retaining multiple out-of-notice topics and adding unscored exam strategy creates a pattern of scope mismatches, triggering the maximum score of 7.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The skills emphasize applying constitutional rules, distinguishing guarantees, and assessing their applicability to cases. These are appropriate judgment-oriented abilities for an objective law examination. An AI-tool skill is not required for this exam goal, and the map does not impose excessive rote procedures.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "8 of 9 parts passed. Conhecimentos em Direito opens on \"Interpretar os princípios fundamentais da Constituição\", which teaches none of the notice's topics; its notice topics come first.",
+          "score": 9,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5436,
+          "outputTokens": 1236,
+          "reasoningTokens": 459
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The map includes untested content without limiting the reused library skills to this notice: political rights and parties fall outside Title II, Chapters I–III, and military personnel fall outside the specified administration sections. It also adds a standalone time-management skill, although the supplied blueprint does not score exam strategy. Library reuse is otherwise correct, and the new Article 92 skill does not duplicate library content.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Phase 1 promises the ability to interpret constitutional rights and guarantees, but the dedicated guarantees skill appears only in Phase 3. That milestone overstates what the learner has reached at that point.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the notice-specific selection within reused skills explicit, especially the lessons covering social rights, nationality, general administration rules, and civil servants. Preserve the library references rather than creating replacement skills.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Another exam's Direito Constitucional skills are offered as LIBRARY_SKILLS, and this notice's constitutional topic (fundamental rights and guarantees, social rights, nationality, the public administration's general rules and civil servants, and article 92 on the Judiciary's bodies) asks the same abilities: the graph reuses those library skills for them instead of writing new ones under other names\n      - It writes new skills only for what the library lacks, such as the Judiciary's bodies of article 92, and none of them teaches what a library skill teaches\n      - Every topic of the subject is taught by some skill\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "reuse": [
+            "camara-direitos-individuais-coletivos",
+            "camara-garantias-constitucionais",
+            "camara-direitos-sociais-politicos",
+            "camara-administracao-publica-constituicao"
+          ]
+        },
+        "id": "pt-tjsp-reuses-another-exams-constitutional-skills-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Concurso do Tribunal de Justiça de São Paulo, Escrevente Técnico Judiciário (Vunesp)",
+            "notes": [
+              "Format: questões objetivas de múltipla escolha com cinco alternativas."
+            ],
+            "subjects": [
+              {
+                "group": "BLOCO II: Conhecimentos em Direito",
+                "name": "Conhecimentos em Direito",
+                "questions": 30,
+                "topics": [
+                  "4. DIREITO CONSTITUCIONAL: Constituição Federal – Título II - Capítulos I, II e III; e Título III - Capítulo VII com Seções I e II; e também o artigo 92"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Concurso do Tribunal de Justiça de São Paulo, Escrevente Técnico Judiciário",
+          "goalKind": "exam",
+          "language": "pt",
+          "library": [
+            {
+              "courseTitle": "Direito Constitucional",
+              "skills": [
+                {
+                  "description": "Identificar a estrutura e as características da Constituição de 1988 e aplicar seus princípios fundamentais.",
+                  "id": "camara-constituicao-principios-fundamentais",
+                  "lessons": 24,
+                  "level": "beginner",
+                  "name": "Interpretar os princípios fundamentais da Constituição",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Aplicar direitos e deveres individuais e coletivos a situações previstas na Constituição.",
+                  "id": "camara-direitos-individuais-coletivos",
+                  "lessons": 30,
+                  "level": "beginner",
+                  "name": "Aplicar direitos individuais e coletivos",
+                  "prerequisiteIds": [
+                    "camara-constituicao-principios-fundamentais"
+                  ]
+                },
+                {
+                  "description": "Distinguir os entes federativos, sua autonomia e suas competências constitucionais.",
+                  "id": "camara-organizacao-federativa",
+                  "lessons": 28,
+                  "level": "beginner",
+                  "name": "Distinguir os entes e competências federativas",
+                  "prerequisiteIds": [
+                    "camara-constituicao-principios-fundamentais"
+                  ]
+                },
+                {
+                  "description": "Aplicar as disposições constitucionais gerais sobre administração pública e servidores civis e militares.",
+                  "id": "camara-administracao-publica-constituicao",
+                  "lessons": 28,
+                  "level": "intermediate",
+                  "name": "Aplicar disposições constitucionais sobre servidores",
+                  "prerequisiteIds": [
+                    "camara-constituicao-principios-fundamentais"
+                  ]
+                },
+                {
+                  "description": "Distinguir garantias constitucionais e avaliar seu cabimento em casos apresentados.",
+                  "id": "camara-garantias-constitucionais",
+                  "lessons": 26,
+                  "level": "intermediate",
+                  "name": "Distinguir garantias constitucionais fundamentais",
+                  "prerequisiteIds": [
+                    "camara-direitos-individuais-coletivos"
+                  ]
+                },
+                {
+                  "description": "Aplicar as disposições constitucionais sobre direitos sociais, nacionalidade, direitos políticos e partidos.",
+                  "id": "camara-direitos-sociais-politicos",
+                  "lessons": 30,
+                  "level": "intermediate",
+                  "name": "Aplicar direitos sociais e políticos",
+                  "prerequisiteIds": [
+                    "camara-constituicao-principios-fundamentais"
+                  ]
+                },
+                {
+                  "description": "Reconhecer hipóteses, procedimentos e limites constitucionais da intervenção federal.",
+                  "id": "camara-intervencao-federal",
+                  "lessons": 20,
+                  "level": "intermediate",
+                  "name": "Aplicar as regras de intervenção federal",
+                  "prerequisiteIds": [
+                    "camara-organizacao-federativa"
+                  ]
+                },
+                {
+                  "description": "Distinguir competências, atribuições, reuniões e comissões do Congresso Nacional e de suas Casas.",
+                  "id": "camara-congresso-casas-competencias",
+                  "lessons": 30,
+                  "level": "intermediate",
+                  "name": "Distinguir competências do Congresso e suas Casas",
+                  "prerequisiteIds": [
+                    "camara-constituicao-principios-fundamentais"
+                  ]
+                },
+                {
+                  "description": "Aplicar as regras constitucionais sobre imunidades, incompatibilidades e perda de mandato parlamentar.",
+                  "id": "camara-regime-constitucional-parlamentares",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Aplicar o regime constitucional dos parlamentares",
+                  "prerequisiteIds": [
+                    "camara-congresso-casas-competencias"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All 16 notice topics are explicitly covered. The graph reuses all 12 library skills and adds reported speech; it correctly recognizes that verb voices are already taught by the library. Weights are within 1–5, and the supplied blueprint contains no frequency distribution that these weights contradict.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The library prerequisite chains are preserved, and phase titles describe distinct, gender-neutral stages. However, reported-speech conversion lists only verbs and inflections as a prerequisite, omitting punctuation and clause structure needed to transform quoted speech into indirect constructions. This triggers the cap of 8 for a clear prerequisite error. The final integrated-item milestone is also insufficiently supported by its phase's skills.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The reused grammar and reading skills retain substantial lesson allocations, and ten lessons for reported speech provide a reasonable extension rather than an oversized new chapter. No broad notice topic is demonstrably compressed below usable depth. The 322 three-minute lessons occupy 16.1 hours, leaving another 16.1 hours within the estimate for practice and review, a plausible study-time allowance.",
+          "score": 10,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The Portuguese graph avoids duplicate teaching, including unnecessary new coherence, agreement, or verb-voice skills. Response-versus-blank judgment is grounded in the explicit negative-marking rule. However, 'Distribuir o tempo entre os itens' is an unsupported study-strategy skill rather than notice content or a scored ability, triggering the cap of 8 for one unsupported skill.",
+          "score": 8,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The map is in Brazilian Portuguese, uses reusable verb-first skill names, and fits the supplied intermediate library foundation. Its subject content closely matches the exam. The separate time-management skill is one clear scope mismatch with the notice-based goal and the requirement to add only necessary extensions, so the score is capped at 8.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The skills emphasize interpretation, inference, grammatical judgment, and evaluation of changes in meaning rather than unsupported rote memorization. Manual language analysis is appropriate for this exam, and no AI-tool skill is required for an exam goal.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6975,
+          "outputTokens": 1184,
+          "reasoningTokens": 399
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The time-management skill adds content outside the Portuguese notice and is not a separately scored ability. Unlike response-versus-blank decisions, it is not directly grounded in the supplied penalty rule. The reported-speech skill also omits direct prerequisites for punctuation and clause structure, which its transformations require.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The final milestone promises the ability to solve integrated items, but that phase contains only official correspondence and two strategy skills; their descriptions do not establish integrated Portuguese-item practice.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Embed mixed-item practice within the existing subject skills rather than adding a recap skill, and align the final milestone with those demonstrated capabilities. Preserve the successful reuse of all library skills, including the existing coverage of verb voices.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The same legislature's nível médio exam (Técnico Legislativo) already has Língua Portuguesa skills, offered as LIBRARY_SKILLS. This nível superior notice asks the same base (reading, text types, coherence and cohesion, spelling and accents, punctuation and crase, agreement, government, official correspondence): the graph reuses those library skills as its base\n      - It writes new skills only for what the superior notice asks beyond them, such as reported speech (discurso direto e indireto) and the verb's voices if no library skill teaches them, each building on the library skill it extends; no new skill re-teaches a library skill, such as a second coherence or agreement skill\n      - Every topic of the subject is taught by some skill\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "reuse": [
+            "alce-tecnico-coerencia-coesao",
+            "alce-tecnico-ortografia-acentuacao",
+            "alce-tecnico-concordancia-nominal-verbal",
+            "alce-tecnico-regencia-crase",
+            "alce-tecnico-correspondencia-oficial"
+          ]
+        },
+        "id": "pt-alce-superior-builds-on-medio-portuguese-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Concurso da Assembleia Legislativa do Ceará, Analista Legislativo, Administração (Cebraspe)",
+            "notes": [
+              "Format: itens de certo ou errado; cada item errado desconta um item certo."
+            ],
+            "subjects": [
+              {
+                "group": "Conhecimentos gerais (P1)",
+                "name": "Língua Portuguesa",
+                "questions": null,
+                "topics": [
+                  "1 Compreensão de texto",
+                  "2 Gêneros e tipos textuais",
+                  "3 Domínio dos mecanismos de coerência e coesão textuais",
+                  "4 Domínio da ortografia oficial",
+                  "5 Emprego da acentuação gráfica",
+                  "6 Emprego dos sinais de pontuação",
+                  "7 Crase",
+                  "8 Classe de palavras",
+                  "9 Sintaxe",
+                  "10 Discurso direto e indireto",
+                  "11 Emprego de tempos e modos verbais",
+                  "12 Vozes do verbo",
+                  "13 Flexão nominal e verbal",
+                  "14 Concordância nominal e verbal",
+                  "15 Regência nominal e verbal",
+                  "16 Correspondência oficial"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Concurso da Assembleia Legislativa do Ceará, Analista Legislativo",
+          "goalKind": "exam",
+          "language": "pt",
+          "library": [
+            {
+              "courseTitle": "Língua Portuguesa",
+              "skills": [
+                {
+                  "description": "Identificar informações explícitas, inferências e sentidos de palavras no contexto de textos.",
+                  "id": "alce-tecnico-compreender-textos",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Interpretar textos e inferir sentidos",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Identificar teses, argumentos, pressupostos e relações entre razões e conclusões em textos.",
+                  "id": "alce-tecnico-analisar-argumentacao",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Analisar a argumentação em textos",
+                  "prerequisiteIds": [
+                    "alce-tecnico-compreender-textos"
+                  ]
+                },
+                {
+                  "description": "Examinar a progressão das ideias e os efeitos de referentes, conectivos e substituições na unidade do texto.",
+                  "id": "alce-tecnico-coerencia-coesao",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Analisar coerência e coesão textuais",
+                  "prerequisiteIds": [
+                    "alce-tecnico-compreender-textos"
+                  ]
+                },
+                {
+                  "description": "Distinguir tipos e gêneros textuais por suas características, finalidades e organização.",
+                  "id": "alce-tecnico-tipos-generos-textuais",
+                  "lessons": 20,
+                  "level": "intermediate",
+                  "name": "Reconhecer tipos e gêneros textuais",
+                  "prerequisiteIds": [
+                    "alce-tecnico-compreender-textos"
+                  ]
+                },
+                {
+                  "description": "Julgar a grafia e a acentuação de palavras segundo as regras ortográficas vigentes.",
+                  "id": "alce-tecnico-ortografia-acentuacao",
+                  "lessons": 20,
+                  "level": "intermediate",
+                  "name": "Aplicar regras de ortografia e acentuação",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Analisar classes de palavras e funções sintáticas dos termos da oração para julgar construções e reescritas.",
+                  "id": "alce-tecnico-classes-termos-oracao",
+                  "lessons": 35,
+                  "level": "intermediate",
+                  "name": "Analisar classes e termos da oração",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Distinguir orações coordenadas e subordinadas e interpretar suas relações sintáticas e semânticas.",
+                  "id": "alce-tecnico-coordenacao-subordinacao",
+                  "lessons": 30,
+                  "level": "intermediate",
+                  "name": "Analisar coordenação e subordinação",
+                  "prerequisiteIds": [
+                    "alce-tecnico-classes-termos-oracao"
+                  ]
+                },
+                {
+                  "description": "Julgar o emprego de tempos, modos e vozes verbais e as flexões nominais e verbais em contexto.",
+                  "id": "alce-tecnico-verbos-flexoes",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Analisar verbos e flexões em contexto",
+                  "prerequisiteIds": [
+                    "alce-tecnico-classes-termos-oracao"
+                  ]
+                },
+                {
+                  "description": "Aplicar as regras de concordância nominal e verbal a frases e reescritas.",
+                  "id": "alce-tecnico-concordancia-nominal-verbal",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Aplicar concordância nominal e verbal",
+                  "prerequisiteIds": [
+                    "alce-tecnico-classes-termos-oracao"
+                  ]
+                },
+                {
+                  "description": "Julgar a regência de nomes e verbos e a ocorrência de crase em construções e reescritas.",
+                  "id": "alce-tecnico-regencia-crase",
+                  "lessons": 30,
+                  "level": "intermediate",
+                  "name": "Aplicar regência nominal, verbal e crase",
+                  "prerequisiteIds": [
+                    "alce-tecnico-classes-termos-oracao"
+                  ]
+                },
+                {
+                  "description": "Julgar o emprego e a alteração de sinais de pontuação conforme a sintaxe e os efeitos de sentido.",
+                  "id": "alce-tecnico-pontuacao-sintaxe",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Analisar pontuação e efeitos de sentido",
+                  "prerequisiteIds": [
+                    "alce-tecnico-coordenacao-subordinacao"
+                  ]
+                },
+                {
+                  "description": "Reconhecer características, padrões de linguagem e formas de tratamento da correspondência oficial.",
+                  "id": "alce-tecnico-correspondencia-oficial",
+                  "lessons": 15,
+                  "level": "intermediate",
+                  "name": "Analisar padrões de correspondência oficial",
+                  "prerequisiteIds": []
+                }
+              ]
+            }
+          ]
+        }
+      }
     }
   ],
   "taskId": "skill-graph"

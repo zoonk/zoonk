@@ -5,6 +5,11 @@ import { CGU_BLUEPRINT } from "./cgu-blueprint";
 import { ENEM_SCIENCE_BLUEPRINT } from "./enem-science-blueprint";
 import { type SkillGraphCase, type SkillGraphExpected } from "./library-cases";
 import { PIRACEMA_BLUEPRINT } from "./piracema-blueprint";
+import {
+  ALCE_TECNICO_PORTUGUESE,
+  CAMARA_ADMINISTRATIVE,
+  CAMARA_CONSTITUTIONAL,
+} from "./shared-skill-libraries";
 import { TJSP_LAW_BLUEPRINT } from "./tjsp-blueprint";
 
 const SHARED_EXPECTATIONS = `
@@ -14,6 +19,16 @@ const SHARED_EXPECTATIONS = `
   - Exam weights are 1 to 5 for exam goals and null otherwise
   - Don't evaluate JSON formatting
 `;
+
+function withTopics(outline: ExamOutline, keep: (topic: string) => boolean): ExamOutline {
+  return {
+    ...outline,
+    subjects: outline.subjects.map((subject) => ({
+      ...subject,
+      topics: subject.topics.filter(keep),
+    })),
+  };
+}
 
 const ENEM_BLUEPRINT: ExamOutline = {
   name: "ENEM (Exame Nacional do Ensino Médio), two Sundays",
@@ -530,6 +545,111 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
       goal: "Concurso do Tribunal de Justiça de São Paulo, Escrevente Técnico Judiciário",
       goalKind: "exam",
       language: "pt",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Another exam's Direito Constitucional skills are offered as LIBRARY_SKILLS, and this notice's constitutional topic (fundamental rights and guarantees, social rights, nationality, the public administration's general rules and civil servants, and article 92 on the Judiciary's bodies) asks the same abilities: the graph reuses those library skills for them instead of writing new ones under other names
+      - It writes new skills only for what the library lacks, such as the Judiciary's bodies of article 92, and none of them teaches what a library skill teaches
+      - Every topic of the subject is taught by some skill
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: {
+      reuse: [
+        "camara-direitos-individuais-coletivos",
+        "camara-garantias-constitucionais",
+        "camara-direitos-sociais-politicos",
+        "camara-administracao-publica-constituicao",
+      ],
+    },
+    id: "pt-tjsp-reuses-another-exams-constitutional-skills",
+    userInput: {
+      examBlueprint: withTopics(TJSP_LAW_BLUEPRINT, (topic) => topic.startsWith("4.")),
+      goal: "Concurso do Tribunal de Justiça de São Paulo, Escrevente Técnico Judiciário",
+      goalKind: "exam",
+      language: "pt",
+      library: [CAMARA_CONSTITUTIONAL],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Another exam's Direito Administrativo skills are offered as LIBRARY_SKILLS, including skills on the federal civil-servant statute (Lei 8.112/1990). This notice asks São Paulo's statute (Lei 10.261/68) instead: a state's statute is never the same skill as the federal one, so the graph writes new skills that name the São Paulo statute and reuses none of the Lei 8.112 skills for it
+      - Lei 8.429/1992 (improbidade administrativa) is national law, the same in both exams: the graph reuses the library's improbidade skill instead of writing another
+      - Every topic of the subject is taught by some skill
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: {
+      noReuse: ["camara-lei-8112-provimento", "camara-lei-8112-direitos-deveres"],
+      reuse: ["camara-improbidade-administrativa"],
+    },
+    id: "pt-tjsp-state-statute-not-federal",
+    userInput: {
+      examBlueprint: withTopics(TJSP_LAW_BLUEPRINT, (topic) => topic.startsWith("5.")),
+      goal: "Concurso do Tribunal de Justiça de São Paulo, Escrevente Técnico Judiciário",
+      goalKind: "exam",
+      language: "pt",
+      library: [CAMARA_ADMINISTRATIVE],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - The same legislature's nível médio exam (Técnico Legislativo) already has Língua Portuguesa skills, offered as LIBRARY_SKILLS. This nível superior notice asks the same base (reading, text types, coherence and cohesion, spelling and accents, punctuation and crase, agreement, government, official correspondence): the graph reuses those library skills as its base
+      - It writes new skills only for what the superior notice asks beyond them, such as reported speech (discurso direto e indireto) and the verb's voices if no library skill teaches them, each building on the library skill it extends; no new skill re-teaches a library skill, such as a second coherence or agreement skill
+      - Every topic of the subject is taught by some skill
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: {
+      reuse: [
+        "alce-tecnico-coerencia-coesao",
+        "alce-tecnico-ortografia-acentuacao",
+        "alce-tecnico-concordancia-nominal-verbal",
+        "alce-tecnico-regencia-crase",
+        "alce-tecnico-correspondencia-oficial",
+      ],
+    },
+    id: "pt-alce-superior-builds-on-medio-portuguese",
+    userInput: {
+      examBlueprint: {
+        name: "Concurso da Assembleia Legislativa do Ceará, Analista Legislativo, Administração (Cebraspe)",
+        notes: ["Format: itens de certo ou errado; cada item errado desconta um item certo."],
+        subjects: [
+          {
+            group: "Conhecimentos gerais (P1)",
+            name: "Língua Portuguesa",
+            questions: null,
+            topics: [
+              "1 Compreensão de texto",
+              "2 Gêneros e tipos textuais",
+              "3 Domínio dos mecanismos de coerência e coesão textuais",
+              "4 Domínio da ortografia oficial",
+              "5 Emprego da acentuação gráfica",
+              "6 Emprego dos sinais de pontuação",
+              "7 Crase",
+              "8 Classe de palavras",
+              "9 Sintaxe",
+              "10 Discurso direto e indireto",
+              "11 Emprego de tempos e modos verbais",
+              "12 Vozes do verbo",
+              "13 Flexão nominal e verbal",
+              "14 Concordância nominal e verbal",
+              "15 Regência nominal e verbal",
+              "16 Correspondência oficial",
+            ],
+            weight: null,
+          },
+        ],
+        topicFrequency: [],
+      },
+      goal: "Concurso da Assembleia Legislativa do Ceará, Analista Legislativo",
+      goalKind: "exam",
+      language: "pt",
+      library: [ALCE_TECNICO_PORTUGUESE],
     },
   },
   {
