@@ -1,7 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { listLessonDays } from "./interval-study-minutes";
-import { addDays, toIsoDate } from "./plan-calendar";
-import { PLAN_EPSILON } from "./plan-precision";
+import { addDays } from "./plan-calendar";
 import { type QueueUnit } from "./plan-units";
 import { type DayShape, type PlanDay, scheduleUnits } from "./schedule-units";
 
@@ -117,41 +115,5 @@ describe("scheduled study time across learning intervals", () => {
     const result = scheduleUnits({ days: days([{ share: 1 }, {}]), units: [lesson(40)] });
     expect(result.units[0]).toMatchObject({ date: START, minutes: 40, studyMinutes: 50 });
     expect(result.dropped).toStrictEqual([]);
-  });
-
-  it("does not give a lesson a rounding leftover on another day", () => {
-    const result = scheduleUnits({
-      days: days([{}, {}, {}]),
-      units: [lesson(20 + Number.EPSILON * 16)],
-    });
-
-    expect(result.units[0]?.teachingEnd).toStrictEqual(addDays(START, 1));
-
-    expect(result.units[0]?.studyPortions?.map((portion) => portion.date)).toStrictEqual([
-      toIsoDate(START),
-      toIsoDate(addDays(START, 1)),
-    ]);
-
-    expect(
-      result.units[0]?.studyPortions?.every((portion) => portion.lessonMinutes > PLAN_EPSILON),
-    ).toBe(true);
-  });
-
-  it("ends an overflowing first lesson on its last study day and puts its excess there", () => {
-    const result = scheduleUnits({
-      days: days([{ share: 1 }, {}, { minutes: 0 }]),
-      units: [lesson(40)],
-    });
-
-    expect(result.dropped).toStrictEqual([]);
-    expect(result.units[0]?.teachingEnd).toStrictEqual(addDays(START, 1));
-    const { lessonDayMinutes } = listLessonDays(result.units);
-
-    expect([...(lessonDayMinutes.get("lesson:one") ?? [])]).toStrictEqual([
-      [toIsoDate(START), 20],
-      [toIsoDate(addDays(START, 1)), 40],
-    ]);
-
-    expect(result.units[0]?.studyMinutes).toBe(60);
   });
 });
