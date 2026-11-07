@@ -21,7 +21,11 @@ type MindMapRun = Parameters<typeof checkMindMapStep>[0];
 const LESSON_POLL = "10s";
 const MAX_LESSON_POLLS = 240;
 
-/** Each lesson is written by its own run, joined when one already writes it; the map waits for all. */
+/**
+ * Each lesson is written by its own run, joined when one already writes it. The map draws only once
+ * every lesson is written or set aside, so a lesson that ended unwritten fails the map, and the
+ * learner's "Try again" writes it again.
+ */
 async function writeLessons({
   analytics,
   chapterId,
@@ -33,22 +37,27 @@ async function writeLessons({
   lessons: NonNullable<ChapterMindMapInput["lessons"]>;
   runId: string;
 }): Promise<void> {
-  const lessonRunIds = await Promise.all(
-    lessons.ids.map((lessonId) =>
-      startOnce(
+  const lessonRuns = await Promise.all(
+    lessons.ids.map(async (lessonId) => ({
+      lessonId,
+      runId: await startOnce(
         lessonContentWorkflow,
         [{ analytics, forExam: lessons.forExam, lessonId, wait: "learner" }],
         getLessonContentHookToken(lessonId),
       ),
-    ),
+    })),
   );
 
-  await repeatUntil({
-    done: (writing) => writing === 0,
-    run: () => holdMindMapStep({ chapterId, lessonRunIds, runId }),
+  const progress = await repeatUntil({
+    done: (current) => current.writing === 0,
+    run: () => holdMindMapStep({ chapterId, lessons: lessonRuns, runId }),
     times: MAX_LESSON_POLLS,
     wait: () => sleep(LESSON_POLL),
   });
+
+  if (progress.writing > 0 || progress.unsettled > 0) {
+    throw new Error(`Chapter ${chapterId}'s lessons weren't all written, so its map wasn't drawn.`);
+  }
 }
 
 async function checkShownMindMap(run: MindMapRun): Promise<ChapterMindMapResult> {
