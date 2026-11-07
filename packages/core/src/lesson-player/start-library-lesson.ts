@@ -24,7 +24,7 @@ import {
   getRunStudySessionId,
   hasFinishedLessonBefore,
   loadProgressAnswers,
-  loadProgressRuns,
+  loadProgressSince,
 } from "./_utils/lesson-runs";
 import { loadPlayableSteps } from "./_utils/load-playable-steps";
 import { restoreRunAnswers } from "./_utils/restore-run-answers";
@@ -93,9 +93,7 @@ async function loadRunProgress({
   run: { startedAt: Date };
   userId: string;
 }) {
-  const sittings = await loadProgressRuns({ lessonId, until: run.startedAt, userId });
-  const since = sittings[0]?.startedAt ?? run.startedAt;
-
+  const since = await loadProgressSince({ lessonId, until: run.startedAt, userId });
   const version = await findOpenedVersion({ lessonId, since, userId });
 
   const [attempts, lesson] = await Promise.all([

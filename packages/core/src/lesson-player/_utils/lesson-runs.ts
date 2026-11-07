@@ -149,6 +149,14 @@ export async function loadProgressRuns({
   });
 }
 
+/** Where the lesson's progress starts: its oldest unfinished sitting this week, else until. */
+export async function loadProgressSince(
+  input: Parameters<typeof loadProgressRuns>[0],
+): Promise<Date> {
+  const [first] = await loadProgressRuns(input);
+  return first?.startedAt ?? input.until;
+}
+
 export type ProgressAttempt = Pick<Attempt, "answer" | "answeredAt" | "isCorrect" | "score"> & {
   stepId: string;
 };
