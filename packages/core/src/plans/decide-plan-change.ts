@@ -1,7 +1,7 @@
 import "server-only";
 import { type PlanChange, prisma } from "@zoonk/db";
 import { trackPlanEdited } from "../analytics/track-plan-edited";
-import { oweGoalLessons } from "../follow-ups/owe-goal-lessons";
+import { oweGoalLessons, owePlanChangeLessons } from "../follow-ups/owe-goal-lessons";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { commitPlan } from "./_utils/commit-plan";
 import { computeChange } from "./_utils/compute-change";
@@ -77,7 +77,7 @@ async function acceptProposal({ change, context }: Decision) {
         tx,
       });
 
-      await oweGoalLessons({ db: tx, goalId: context.goal.id, userId: context.goal.userId });
+      await owePlanChangeLessons({ db: tx, goalId: context.goal.id, userId: context.goal.userId });
     },
     phaseDates: {
       ...getChangePlanning(payload.operations),
@@ -210,6 +210,12 @@ export async function decidePlanChange({
 
     if (refusal) {
       return refusal;
+    }
+
+    // An applied change or an undo can bring in topics whose lessons nobody started writing.
+    if (input.status === "applied" || input.status === "undone") {
+      const { goal } = owned.context;
+      await oweGoalLessons({ goalId: goal.id, userId: goal.userId });
     }
 
     const payload = parsePlanChangePayload(change.payload);

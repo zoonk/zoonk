@@ -1,6 +1,6 @@
 import "server-only";
 import { type PlanChange, type TransactionClient, prisma } from "@zoonk/db";
-import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
+import { owePlanChangeLessons } from "../../follow-ups/owe-goal-lessons";
 import { forgetAssumedSkills, loadPlanItemSkillIds } from "../../learner/_utils/known-skills";
 import { lockDaySession, restoreDaySession } from "../../sessions/_utils/day-session-snapshot";
 import { settleSessionDay } from "../../sessions/_utils/settle-session-day";
@@ -107,19 +107,14 @@ export async function undoChange({
     await restorePlan({ context: writeContext, items, snapshot, tx });
     await forgetAssumedSkills({ skillIds, tx, userId: context.goal.userId });
     await tx.planChange.update({ data: await toUndone({ change, tx }), where: { id: change.id } });
+    await owePlanChangeLessons({ db: tx, goalId: context.goal.id, userId: context.goal.userId });
 
-    const day =
-      session && snapshot.todaySession
-        ? {
-            sessionId: session.id,
-            settle: await restoreDaySession({ session, snapshot: snapshot.todaySession, tx }),
-          }
-        : null;
-
-    // After the restore: a fresh ask would save the restored day as waiting for its lessons.
-    await oweGoalLessons({ db: tx, goalId: context.goal.id, userId: context.goal.userId });
-
-    return day;
+    return session && snapshot.todaySession
+      ? {
+          sessionId: session.id,
+          settle: await restoreDaySession({ session, snapshot: snapshot.todaySession, tx }),
+        }
+      : null;
   });
 
   if (parsePlanChangePayload(change.payload).replannedSince) {

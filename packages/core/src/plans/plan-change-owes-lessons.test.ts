@@ -66,11 +66,11 @@ function dieAfterCommit() {
 
 async function expectOwedLessons({ goalId, userId }: { goalId: string; userId: string }) {
   await expect(listOwed(userId)).resolves.toStrictEqual([
-    { input: { goalId, lessonsAskedAt: NOW.getTime() }, key: goalId, kind: "prepareGoalLessons" },
+    { input: { goalId, lessonsAskedAt: null }, key: goalId, kind: "prepareGoalLessons" },
   ]);
 
   await expect(prisma.plan.findUniqueOrThrow({ where: { goalId } })).resolves.toMatchObject({
-    lessonsAskedAt: NOW,
+    lessonsAskedAt: null,
   });
 }
 

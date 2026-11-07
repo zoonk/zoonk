@@ -2,7 +2,7 @@ import "server-only";
 import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../cache/tags";
-import { oweGoalLessons } from "../follow-ups/owe-goal-lessons";
+import { oweGoalLessons, owePlanChangeLessons } from "../follow-ups/owe-goal-lessons";
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getOwnLevel } from "../learner/placement/placement-contract";
@@ -65,7 +65,7 @@ async function addFoundations(context: PlanContext): Promise<PlanChangeView | nu
   const result = await applyChangeNow({
     context,
     extraWrites: (tx) =>
-      oweGoalLessons({ db: tx, goalId: context.goal.id, userId: context.goal.userId }),
+      owePlanChangeLessons({ db: tx, goalId: context.goal.id, userId: context.goal.userId }),
     followToday: true,
     operations,
     reason: OWN_LEVEL_NOTE,
@@ -109,9 +109,12 @@ export async function changeOwnLevel({
     ]);
 
     await refreshGoalPlan({
-      extraWrites: (tx) => oweGoalLessons({ db: tx, goalId, userId: current.context.goal.userId }),
+      extraWrites: (tx) =>
+        owePlanChangeLessons({ db: tx, goalId, userId: current.context.goal.userId }),
       goalId,
     });
+
+    await oweGoalLessons({ goalId, userId: current.context.goal.userId });
 
     return { ownLevel: { change, direction, level: input.level, testOuts }, status: "ready" };
   });
