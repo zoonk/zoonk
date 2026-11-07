@@ -36,34 +36,6 @@ export async function oweGoalLessons({
   });
 }
 
-/**
- * For a plan change that today's session follows after it commits: owes the preparation in the
- * change's transaction without asking, because a fresh ask would save today as waiting while it
- * follows. Call `oweGoalLessons` once today has followed; it asks and owes the work again under it.
- *
- * The work carries the plan's pending ask, which its run then ends, or else the change's moment:
- * either way the run waits for the learner's other preparation, as an ask's does, and ending an ask
- * nobody wrote clears nothing.
- */
-export async function owePlanChangeLessons({
-  db,
-  goalId,
-  userId,
-}: {
-  db: TransactionClient;
-  goalId: string;
-  userId: string;
-}): Promise<void> {
-  const plan = await db.plan.findUnique({ select: { lessonsAskedAt: true }, where: { goalId } });
-  const lessonsAskedAt = (plan?.lessonsAskedAt ?? new Date()).getTime();
-
-  await oweFollowUps({
-    db,
-    followUps: [{ input: { goalId, lessonsAskedAt }, kind: "prepareGoalLessons" }],
-    userId,
-  });
-}
-
 /** For a write that moved where the plan starts, such as a placement; pass its transaction when it has one. */
 export async function owePlanStartLessons({
   db,

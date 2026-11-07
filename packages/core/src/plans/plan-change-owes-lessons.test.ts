@@ -5,7 +5,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { listOwed } from "../_test-utils/follow-ups";
 import { mockSession } from "../_test-utils/mock-session";
-import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import * as replan from "./_utils/replan";
@@ -65,25 +64,13 @@ function dieAfterCommit() {
   });
 }
 
-async function expectOwedLessons({
-  askedAt = null,
-  goalId,
-  userId,
-}: {
-  askedAt?: Date | null;
-  goalId: string;
-  userId: string;
-}) {
+async function expectOwedLessons({ goalId, userId }: { goalId: string; userId: string }) {
   await expect(listOwed(userId)).resolves.toStrictEqual([
-    {
-      input: { goalId, lessonsAskedAt: (askedAt ?? NOW).getTime() },
-      key: goalId,
-      kind: "prepareGoalLessons",
-    },
+    { input: { goalId, lessonsAskedAt: NOW.getTime() }, key: goalId, kind: "prepareGoalLessons" },
   ]);
 
   await expect(prisma.plan.findUniqueOrThrow({ where: { goalId } })).resolves.toMatchObject({
-    lessonsAskedAt: askedAt,
+    lessonsAskedAt: NOW,
   });
 }
 
@@ -117,36 +104,6 @@ describe("a plan change owes its lessons in the transaction that saves it", () =
     ).resolves.toMatchObject({ status: "applied" });
 
     await expectOwedLessons({ goalId: goal.id, userId: user.id });
-  });
-
-  it("leaves a pending ask to the preparation that ends it when the request dies after the commit", async () => {
-    const { changeId, goal, plan, user } = await proposeShorterDays();
-    const askedAt = new Date(NOW.getTime() - 60_000);
-
-    await forgetOwedLessons({ planId: plan.id, userId: user.id });
-    await prisma.plan.update({ data: { lessonsAskedAt: askedAt }, where: { id: plan.id } });
-
-    await oweFollowUps({
-      followUps: [
-        {
-          input: { goalId: goal.id, lessonsAskedAt: askedAt.getTime() },
-          kind: "prepareGoalLessons",
-        },
-      ],
-      userId: user.id,
-    });
-
-    dieAfterCommit();
-
-    await expect(
-      decidePlanChange({
-        changeId,
-        goalId: goal.id,
-        input: { status: "applied", timeZone: "UTC" },
-      }),
-    ).rejects.toThrow("request died after the commit");
-
-    await expectOwedLessons({ askedAt, goalId: goal.id, userId: user.id });
   });
 
   it("undoing a change still owes them when the request dies after the commit", async () => {

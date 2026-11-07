@@ -10,6 +10,7 @@ import { decidePlanChange } from "../plans/decide-plan-change";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { seedPersonaCopy } from "../seed/seed";
 import { getTodayStudySession } from "./_test-utils/open-today";
+import { AWAITING_OUTLINES_VERSION } from "./_utils/day-plan-version";
 import { startStudyBlock } from "./start-study-block";
 
 const NOW = new Date("2026-10-18T04:12:18Z");
@@ -116,8 +117,8 @@ describe("an unstarted day after a plan change", () => {
       where: { id: before.id },
     });
 
-    const savedPlan = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
-    expect.soft(after).toStrictEqual({ ...before, planVersion: savedPlan.version });
+    // The change asks for the lessons today's stand-ins still need, so the day waits for them.
+    expect.soft(after).toStrictEqual({ ...before, planVersion: AWAITING_OUTLINES_VERSION });
     expect.soft(changed).toMatchObject({ change: { todaySession: null }, status: "updated" });
 
     const context = await loadPlanContext({ goal, now: NOW, timeZone });
@@ -224,8 +225,7 @@ describe("a started day after a plan change", () => {
       where: { id: before.id },
     });
 
-    const savedPlan = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
-    expect.soft(after).toStrictEqual({ ...started, planVersion: savedPlan.version });
+    expect.soft(after).toStrictEqual({ ...started, planVersion: AWAITING_OUTLINES_VERSION });
     expect.soft(changed).toMatchObject({ change: { todaySession: null }, status: "updated" });
   });
 });
