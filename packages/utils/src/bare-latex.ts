@@ -4,7 +4,7 @@ import { type MathSpan, findMathSpans, hideMath } from "./math-spans";
 
 /**
  * Outside braces, a backslash before any other word is a file path or an escape a writer meant as
- * text (`C:\text\notes.txt`); inside a known command's braces it's part of the formula.
+ * text (`C:\text\notes.txt`); inside braces it may be a command KaTeX lacks, so a writer fixes it.
  */
 const MATH_COMMANDS = new Set([
   "alpha",
@@ -61,6 +61,9 @@ const MATH_COMMANDS = new Set([
 const BRACED_COMMANDS = new Set(["dfrac", "frac", "mathrm", "sqrt", "text"]);
 
 const BACKSLASH_WORD = /\\(?<name>[A-Za-z]+)(?=(?<next>.?))/gu;
+
+/** A drive (`C:\`) or a file name with its extension (`\log.txt`). */
+const FILE_PATH = /^[A-Za-z]:\\|\\[A-Za-z]+\.[A-Za-z]/u;
 const BRACED_SCRIPT = /[\^_]\{/u;
 
 /** KaTeX raises only the next character, so `10^12` and `10^-1` need their power braced. */
@@ -147,7 +150,10 @@ function findCommands(text: string): Command[] {
 
 function isLatex({ commands, text }: { commands: Command[]; text: string }): boolean {
   const known = commands.filter((command) => MATH_COMMANDS.has(command.name));
-  const isPath = commands.some((command) => !command.inBraces && !MATH_COMMANDS.has(command.name));
+
+  const isPath =
+    FILE_PATH.test(text) ||
+    commands.some((command) => !command.inBraces && !MATH_COMMANDS.has(command.name));
 
   return !isPath && (known.length > 0 || BRACED_SCRIPT.test(text) || HAS_CARET_POWER.test(text));
 }
@@ -164,7 +170,10 @@ function isRepairable({
   return (
     !TEX_SPECIAL.test(latex) &&
     !COMMA_AFTER_POWER.test(written) &&
-    commands.every((command) => command.braced || !BRACED_COMMANDS.has(command.name))
+    commands.every(
+      (command) =>
+        MATH_COMMANDS.has(command.name) && (command.braced || !BRACED_COMMANDS.has(command.name)),
+    )
   );
 }
 

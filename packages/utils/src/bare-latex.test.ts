@@ -30,6 +30,7 @@ describe(findBareLatex, () => {
       "In Python, `2**10` and `x ^ y` aren't powers, and neither is `10^{3}`.",
       String.raw`It costs R$ 80, \$5 or $10, keeps user_id and the file C:\Users\ana\notes.txt.`,
       String.raw`Open C:\text\notes.txt to read it.`,
+      String.raw`Open C:\log.txt or logs\ln.csv to read them.`,
       "Smile ^_^ and rate it 9/10 * 2.",
     ];
 
@@ -96,10 +97,11 @@ describe(wrapBareLatex, () => {
       String.raw`The root is \sqrt 4 = 2.`,
       "O valor é 10^3,5.",
       "The point is (2^3,3^2).",
+      String.raw`The ratio is \frac{\sen(x)}{2}.`,
     ];
 
     expect(texts.map((text) => wrapBareLatex(text))).toStrictEqual(texts);
-    expect(texts.map((text) => findBareLatex(text).length)).toStrictEqual([1, 1, 1, 1, 1, 1]);
+    expect(texts.map((text) => findBareLatex(text).length)).toStrictEqual([1, 1, 1, 1, 1, 1, 1]);
 
     expect(findBareLatex(String.raw`The root is \sqrt 4 = 2.`)).toStrictEqual([
       String.raw`Shows math as raw text: "\sqrt". Write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \$.`,
