@@ -498,7 +498,7 @@ describe("today's session the learner was shown", () => {
     expect(stale.status === "ready" && stale.today.session.emptyDay).toBe("lessonsToPrepare");
   });
 
-  it("fills the rest of the day once the outline it waited for ends without its lessons", async () => {
+  it("keeps the plan's day and asks for the rest once the outline it waited for ends without its lessons", async () => {
     const { course, goal } = await setupDayWithStandIn({ laterLessons: 16 });
     const before = await readToday(goal.id);
 
@@ -506,17 +506,25 @@ describe("today's session the learner was shown", () => {
 
     await prisma.course.update({ data: { outlineStatus: "completed" }, where: { id: course.id } });
     const after = await readToday(goal.id);
+    const allocated = await loadDayLessonIds({ goalId: goal.id, today: "2026-09-30" });
 
-    expect(after.lessonsComing).toBe(false);
+    const neverWaited = await setupDayWithStandIn({ laterLessons: 16, outlineStatus: "completed" });
+    const twin = await readToday(neverWaited.goal.id);
 
-    expect(after.blocks.slice(0, before.blocks.length).map((block) => block.id)).toStrictEqual(
+    expect(after.blocks.map((block) => block.id)).toStrictEqual(
       before.blocks.map((block) => block.id),
     );
 
-    expect(after.blocks.length).toBeGreaterThan(before.blocks.length);
+    expect(learnLessonIds(after).filter((id) => !allocated.has(id))).toStrictEqual([]);
+
+    expect(after).toMatchObject({
+      lessonsComing: false,
+      lessonsToPrepare: true,
+      minutes: { planned: twin.minutes.planned },
+    });
   });
 
-  it("fills the rest of a day a plan change followed once the outline it waited for ends without its lessons", async () => {
+  it("keeps a day a plan change followed within its new allocation once the outline it waited for ends without its lessons", async () => {
     const { course, goal } = await setupDayWithStandIn({ dailyMinutes: 30, laterLessons: 32 });
     const opened = await readToday(goal.id);
 
@@ -537,8 +545,16 @@ describe("today's session the learner was shown", () => {
     });
 
     const after = await readToday(goal.id);
+    const allocated = await loadDayLessonIds({ goalId: goal.id, today: "2026-09-30" });
 
-    expect(after.minutes.planned).toBeGreaterThan(before.plannedMinutes);
+    expect(before.plannedMinutes).toBeGreaterThan(opened.minutes.planned);
+    expect(learnLessonIds(after).filter((id) => !allocated.has(id))).toStrictEqual([]);
+
+    expect(after).toMatchObject({
+      lessonsComing: false,
+      lessonsToPrepare: true,
+      minutes: { planned: before.plannedMinutes },
+    });
   });
 
   it("takes the lessons written for a waiting day within its allocation when Open replans the day", async () => {
@@ -564,7 +580,7 @@ describe("today's session the learner was shown", () => {
   });
 
   it.each(["the ask ends", "Open replans the day"])(
-    "fills a waiting day from the plan's next lessons once nobody can write the ones it still holds, when %s",
+    "adds the lessons written for one stand-in while another nobody can write keeps its time, when %s",
     async (end) => {
       const { course, goal, library } = await setupDayWithUnwritableStandIn();
       const askedAt = await askForLessons({ goalId: goal.id });
@@ -572,7 +588,7 @@ describe("today's session the learner was shown", () => {
 
       expect(before.lessonsComing).toBe(true);
 
-      await landWaitingLessons({ courseId: course.id, library, replan: false });
+      const landed = await landWaitingLessons({ courseId: course.id, library, replan: false });
 
       if (end === "the ask ends") {
         await endLessonsAsk({ askedAt: askedAt ?? 0, goalId: goal.id, startedCourseIds: [] });
@@ -582,8 +598,12 @@ describe("today's session the learner was shown", () => {
       }
 
       const after = await readToday(goal.id);
+      const allocated = await loadDayLessonIds({ goalId: goal.id, today: "2026-09-30" });
+      const landedToday = landed.filter((id) => allocated.has(id));
 
-      expect(after.minutes.planned).toBe(goal.dailyMinutes);
+      expect(landedToday.length).toBeGreaterThan(0);
+      expect(learnLessonIds(after)).toStrictEqual(expect.arrayContaining(landedToday));
+      expect(learnLessonIds(after).filter((id) => !allocated.has(id))).toStrictEqual([]);
     },
   );
 

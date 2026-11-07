@@ -10,7 +10,6 @@ import { z } from "zod";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getBlockItemIds, readBlockPayload } from "../block-payload";
 import { ONE_PER_DAY } from "./day-block-content";
-import { loadDayPlanVersion } from "./day-plan-version";
 import { lockSessionQueue } from "./session-queue-lock";
 import { type StudySessionRow } from "./study-session-access";
 
@@ -259,7 +258,7 @@ export async function restoreDaySession({
 
   // Restored goal and plan values are visible only through the transaction until commit.
   const goal = await tx.goal.findUniqueOrThrow({ where: { id: session.goalId ?? "" } });
-  const planVersion = await loadDayPlanVersion({ client: tx, goal, localDate: session.localDate });
+  const plan = await tx.plan.findUnique({ select: { version: true }, where: { goalId: goal.id } });
   const blocks = await tx.studySessionBlock.findMany({ where: { sessionId: session.id } });
 
   const status = getRestoredStatus({
@@ -271,7 +270,7 @@ export async function restoreDaySession({
 
   await tx.studySession.update({
     data: {
-      planVersion,
+      planVersion: plan?.version ?? null,
       plannedMinutes: snapshot.plannedMinutes + sumMinutes(since) - sumMinutes(dropped),
       status,
     },

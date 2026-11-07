@@ -27,7 +27,7 @@ export async function openPlannedDay(
       return { status: "stale" };
     }
 
-    const session = await followSavedDay({ goal, session: refilled, timeZone });
+    const session = await followSavedDay({ session: refilled, timeZone });
     return { created: false, session, status: "opened" };
   }
 

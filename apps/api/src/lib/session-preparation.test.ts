@@ -24,7 +24,7 @@ import {
   mockSession,
 } from "../../../../packages/core/src/_test-utils/mock-session";
 import { finishCourseOutline } from "../../../../packages/core/src/library/curriculum/course-outline-state";
-import { isDayAwaitingOutlines } from "../../../../packages/core/src/sessions/_utils/outlining-stand-ins";
+import { getDayOutlines } from "../../../../packages/core/src/sessions/_utils/outlining-stand-ins";
 import { getTodayView } from "../../../../packages/core/src/view-models/today/get-today-view";
 import { mockHookConflict } from "../../mocks/workflow";
 import { getStartMock } from "../workflows/_test-utils/start-mock";
@@ -309,10 +309,12 @@ async function readCourse({ course }: PlacedGuest) {
 }
 
 async function isDayComing({ goal }: PlacedGuest): Promise<boolean> {
-  return isDayAwaitingOutlines({
+  const outlines = await getDayOutlines({
     goal,
     localDate: getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE }),
   });
+
+  return outlines === "awaiting";
 }
 
 type GoalOwner = { goal: { id: string }; user: { id: string } };
