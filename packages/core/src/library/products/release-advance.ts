@@ -237,7 +237,7 @@ async function dropOldPlans({
     SELECT lesson.id FROM library_lessons AS lesson
     JOIN library_chapters AS chapter ON chapter.id = lesson.home_chapter_id
     WHERE chapter.home_course_id = ${courseId}::uuid
-    ORDER BY lesson.id FOR UPDATE OF lesson
+    ORDER BY lesson.id FOR NO KEY UPDATE OF lesson
   `;
 
   await tx.lesson.updateMany({

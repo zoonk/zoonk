@@ -4,17 +4,25 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import {
   brandFixture,
   productFixture,
   productReleaseFixture,
 } from "@zoonk/testing/fixtures/products";
-import { sourceChangeNoticeFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  sourceChangeNoticeFixture,
+  sourceFixture,
+  unnoticedSourceChangeFixture,
+} from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { holdLessonLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { claimLibraryGeneration } from "../claims/generation-claim";
 import { completeLessonContent } from "../generation/lesson-generation-state";
+import { saveLessonContent } from "../lessons/_utils/save-lesson-content";
+import * as notices from "../sources/content-review-flags";
+import { recordSourceChangeNotice } from "../sources/source-change-notices";
 import { listCoursesBehind, loadCourseRelease } from "./course-release";
 import {
   type ReleaseComparisonResult,
@@ -392,6 +400,111 @@ describe(advanceCourseRelease, () => {
     await advancing;
 
     await expect(writer).resolves.toBe("claimed");
+  });
+
+  it("finishes beside a writer and a source notice that flags one of the course's lessons", async () => {
+    const { course, first, second } = await mainCourse();
+    const chapter = await libraryChapterFixture({ homeCourseId: course.id });
+    const writerRunId = randomUUID();
+
+    const lessons = await Promise.all(
+      [0, 1].map(() => libraryLessonFixture({ homeChapterId: chapter.id })),
+    );
+
+    // The move locks lessons in id order: it holds `flagged` while it waits on `writing`.
+    const [flagged, writing] = lessons.toSorted((a, b) => a.id.localeCompare(b.id));
+
+    if (!flagged || !writing) {
+      throw new Error("Expected two lessons");
+    }
+
+    await prisma.lesson.update({
+      data: { contentRunId: writerRunId, contentStatus: "running" },
+      where: { id: writing.id },
+    });
+
+    const source = await sourceFixture();
+    await libraryStepFixture({ lessonId: flagged.id, sourceId: source.id });
+    const owed = await unnoticedSourceChangeFixture({ sourceId: source.id });
+
+    const provenance = {
+      generatedAt: NOW,
+      model: "google/gemini-3.8-flash",
+      promptVersion: "v1",
+      runId: randomUUID(),
+    };
+
+    // The notice holds the source until its flags are written.
+    const noticeHeld = Promise.withResolvers<number>();
+    const flagLessons = Promise.withResolvers<null>();
+    const createNotice = notices.createSourceChangeNotice;
+
+    vi.spyOn(notices, "createSourceChangeNotice").mockImplementationOnce(async (input) => {
+      const [backend] = await input.tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+      noticeHeld.resolve(backend?.pid ?? 0);
+      await flagLessons.promise;
+      return createNotice(input);
+    });
+
+    const notice = recordSourceChangeNotice({
+      ...owed,
+      contentHash: source.contentHash,
+      fields: ["text"],
+      language: "en",
+      message: "The source changed.",
+      provenance,
+      sourceId: source.id,
+    });
+
+    notice.catch((error: unknown) => noticeHeld.reject(error));
+    const noticePid = await noticeHeld.promise;
+
+    const writes: Promise<unknown>[] = [notice];
+
+    try {
+      const written = saveLessonContent({
+        language: "en",
+        lessonId: writing.id,
+        screens: [
+          {
+            content: { text: "Version 2 renames the export menu." },
+            kind: "explanation",
+            mathItem: null,
+            provenance: {
+              ...provenance,
+              sources: [{ contentHash: source.contentHash, sourceId: source.id }],
+            },
+            skillId: null,
+          },
+        ],
+        summary: { ideas: [], shape: "hub" },
+        workflowRunId: writerRunId,
+      });
+
+      written.catch(() => null);
+      writes.push(written);
+      await waitForBlockedStatement(noticePid, /FROM sources[\s\S]*FOR SHARE/u);
+
+      const advancing = advanceCourseRelease({
+        comparison: null,
+        courseId: course.id,
+        fromReleaseId: first.id,
+        toReleaseId: second.id,
+      });
+
+      advancing.catch(() => null);
+      writes.push(advancing);
+      await waitForBlockedStatement(
+        noticePid,
+        /FROM library_lessons[\s\S]*FOR (?:NO KEY )?UPDATE/u,
+      );
+    } finally {
+      flagLessons.resolve(null);
+    }
+
+    const outcomes = await Promise.allSettled(writes);
+
+    expect(outcomes.filter((outcome) => outcome.status === "rejected")).toStrictEqual([]);
   });
 
   it("keeps the plan of a chapter challenge, the new release's What's new one included", async () => {
