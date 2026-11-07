@@ -8,14 +8,14 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { NOTHING_REACHED } from "../../sessions/reached";
-import { recordAnsweredActivity } from "../../stats/record-answered-activity";
+import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
 import { decidePlanChange } from "../decide-plan-change";
 import { getFocusTest } from "./get-focus-test";
 import { requestFocusTestQuestions } from "./request-focus-test-questions";
 import { submitFocusTest } from "./submit-focus-test";
 
 // The real database can't drop the connection between a send's plan change and its activity.
-vi.mock("../../stats/record-answered-activity", { spy: true });
+vi.mock("../../stats/_utils/settle-answered-activity", { spy: true });
 
 const RIGHT = { selectedIndex: 0 };
 const WRONG = { selectedIndex: 1 };
@@ -469,7 +469,7 @@ describe(submitFocusTest, () => {
     const answers = await readAnswers(goal.id);
     const requestId = randomUUID();
 
-    vi.mocked(recordAnsweredActivity).mockRejectedValueOnce(new Error("Connection lost"));
+    vi.mocked(settleAnsweredActivity).mockRejectedValueOnce(new Error("Connection lost"));
 
     await expect(send({ answers, goalId: goal.id, requestId })).rejects.toThrow("Connection lost");
 
@@ -488,5 +488,19 @@ describe(submitFocusTest, () => {
 
     const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     expect(stored.settings).toMatchObject({ focusAreas: ["Math"] });
+  });
+
+  it("records every answer even when the learner answered one of its questions elsewhere meanwhile", async () => {
+    const { goal, plan, user } = await setup();
+    const answers = await readAnswers(goal.id);
+    const [first] = answers;
+
+    await attemptFixture({ itemId: first?.itemId ?? null, userId: user.id });
+    await send({ answers, goalId: goal.id });
+
+    await expect(countRecorded({ planId: plan.id, userId: user.id })).resolves.toMatchObject({
+      attempts: 9,
+      events: 1,
+    });
   });
 });

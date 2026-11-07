@@ -8,11 +8,12 @@ import {
   signInWithPassword,
 } from "../../../auth/src/guests/_test-utils/guest-auth";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
+import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { lessonRunFixture } from "../lesson-player/_test-utils/lesson-run-fixture";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
+import { type AnsweredActivity, settleAnsweredActivity } from "./_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "./completion-energy";
 import { upsertDailyProgress } from "./daily-progress";
-import { recordAnsweredActivity } from "./record-answered-activity";
 
 /** BotID requires Vercel; guest authentication, transactions and PostgreSQL locks stay real. */
 vi.mock("../../../auth/node_modules/botid/server", () => ({
@@ -114,6 +115,18 @@ async function linkBeforeSettlement({
   await expect(prisma.dailyProgress.count({ where: { userId: account.userId } })).resolves.toBe(0);
   await expect(prisma.dailyProgress.count({ where: { userId: guest.guestId } })).resolves.toBe(0);
   await expect(prisma.userProgress.count({ where: { userId: guest.guestId } })).resolves.toBe(0);
+}
+
+function recordAnsweredActivity(activity: AnsweredActivity) {
+  return writeLearnerChange({ userId: activity.userId }, async (tx) => {
+    const lock = await getCompletionEnergyContext({
+      timeZone: activity.timeZone,
+      transaction: tx,
+      userId: activity.userId,
+    });
+
+    return settleAnsweredActivity(tx, { ...activity, lock });
+  });
 }
 
 describe("guest completion during account linking", () => {

@@ -10,11 +10,14 @@ import {
 } from "../../learner/_utils/choice-items";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { withTestSubmissionClaim } from "../../learner/_utils/test-submission-claim";
+import { writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { type ItemAnswerInput } from "../../learner/contract";
-import { recordLearnerAnswer } from "../../learner/record-learner-answer";
+import { persistLearnerAnswer, publishLearnerAnswer } from "../../learner/record-learner-answer";
 import { celebrateProgress } from "../../milestones/celebrate-progress";
+import { type ProgressChange } from "../../sessions/_utils/session-progress";
 import { type ProgressCelebration } from "../../sessions/progress-celebration";
-import { recordAnsweredActivity } from "../../stats/record-answered-activity";
+import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
+import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { changeGoalPlan } from "../change-goal-plan";
 import {
   type FocusTestReceipt,
@@ -87,51 +90,72 @@ async function gradeAnswers({
 }
 
 /**
- * Answers of one skill record one after another, so they never race on the same row. The test asks
- * only questions the learner never answered, so one they have was recorded by an earlier try of
- * this send that failed before its receipt.
+ * The answers, the time and Energy they count and the receipt commit together, so a send that fails
+ * leaves nothing for its retry to count again.
  */
-async function recordAnswers({
+async function countFocusTest({
+  goalId,
   graded,
+  requestId,
+  said,
   timeZone,
   userId,
 }: {
+  goalId: string;
   graded: readonly GradedAnswer[];
+  requestId: string;
+  said: FocusTestReceipt;
   timeZone: string;
   userId: string;
-}): Promise<void> {
+}): Promise<{ brainPower: ProgressChange; energy: ProgressChange }> {
   const answeredAt = new Date();
 
-  const recorded = await prisma.attempt.findMany({
-    select: { itemId: true },
-    where: { itemId: { in: graded.map((entry) => entry.item.id) }, userId },
-  });
+  const { events, progress } = await writeLearnerChange(
+    { planInputs: true, userId },
+    async (tx) => {
+      const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
+      const persisted = [];
 
-  const unrecorded = graded.filter(
-    (entry) => !recorded.some((attempt) => attempt.itemId === entry.item.id),
+      const persist = ({ answer, isCorrect, item }: GradedAnswer) =>
+        persistLearnerAnswer({
+          input: {
+            answer: answer.answer,
+            answeredAt,
+            graded: { durationMs: answer.durationMs, isCorrect },
+            itemId: item.id,
+            language: item.language,
+            purpose: "diagnostic",
+            skillId: item.skillId,
+            timeZone,
+            userId,
+          },
+          transaction: tx,
+        });
+
+      for (const entry of graded) {
+        // oxlint-disable-next-line no-await-in-loop -- Queries sharing a transaction must finish before the next one starts.
+        persisted.push(await persist(entry));
+      }
+
+      const settled = await settleAnsweredActivity(tx, {
+        answers: graded.map(({ answer, isCorrect }) => ({
+          durationMs: answer.durationMs,
+          isCorrect,
+        })),
+        contentIds: toFocusTestContentIds({ ...said, requestId }),
+        goalId,
+        lessonKind: "focusTest",
+        lock,
+        timeZone,
+        userId,
+      });
+
+      return { events: persisted.flatMap((entry) => entry.events), progress: settled };
+    },
   );
 
-  const record = ({ answer, isCorrect, item }: GradedAnswer) =>
-    recordLearnerAnswer({
-      answer: answer.answer,
-      answeredAt,
-      graded: { durationMs: answer.durationMs, isCorrect },
-      itemId: item.id,
-      language: item.language,
-      purpose: "diagnostic",
-      skillId: item.skillId,
-      timeZone,
-      userId,
-    });
-
-  await Promise.all(
-    [...Map.groupBy(unrecorded, (entry) => entry.item.skillId).values()].map((answers) =>
-      answers.reduce<Promise<unknown>>(
-        (previous, entry) => previous.then(() => record(entry)),
-        Promise.resolve(),
-      ),
-    ),
-  );
+  publishLearnerAnswer({ events, userId });
+  return progress;
 }
 
 function toReadyResult({
@@ -211,7 +235,6 @@ async function submitOwnedFocusTest({
   }
 
   const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
-  await recordAnswers({ graded, timeZone, userId });
 
   const results = scoreFocusTest({
     answers: graded.map((entry) => ({
@@ -223,6 +246,7 @@ async function submitOwnedFocusTest({
   });
 
   const focusAreas = chooseFocusAreas(results);
+  // A focus the plan already has, such as one an earlier try of this send set, needs no change.
   const refocuses = focusAreas.length > 0 && !isDeepStrictEqual(focusAreas, shape.focusAreas);
 
   const change = refocuses
@@ -240,14 +264,11 @@ async function submitOwnedFocusTest({
     focusAreas,
   };
 
-  const progress = await recordAnsweredActivity({
-    answers: graded.map((entry) => ({
-      durationMs: entry.answer.durationMs,
-      isCorrect: entry.isCorrect,
-    })),
-    contentIds: toFocusTestContentIds({ ...said, requestId: input.requestId }),
+  const progress = await countFocusTest({
     goalId,
-    lessonKind: "focusTest",
+    graded,
+    requestId: input.requestId,
+    said,
     timeZone,
     userId,
   });
