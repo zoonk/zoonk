@@ -1,6 +1,32 @@
 import "server-only";
 import { type ExamLibrary, type LibrarySkill } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
 import { type CourseLevel, prisma } from "@zoonk/db";
+import { findSurvivingSkill } from "../skills/_utils/find-surviving-skill";
+
+async function listExamSkillIds({
+  examBlueprintId,
+  language,
+}: {
+  examBlueprintId: string;
+  language: string;
+}) {
+  const skills = await prisma.skill.findMany({
+    where: {
+      items: { some: { examBlueprintId, language, retiredAt: null } },
+      language,
+      targetLanguage: null,
+      visibility: "public",
+    },
+  });
+
+  const survivors = await Promise.all(
+    skills.map((skill) =>
+      skill.mergedIntoId ? findSurvivingSkill(skill.mergedIntoId) : Promise.resolve({ skill }),
+    ),
+  );
+
+  return [...new Set(survivors.flatMap((result) => (result ? [result.skill.id] : [])))];
+}
 
 async function listCourseSkills({
   courseIds = [],
@@ -103,11 +129,13 @@ async function loadExamLibrarySkills({
   examBlueprintId: string;
   language: string;
 }): Promise<(Omit<LibrarySkill, "course"> & { courseId: string })[]> {
-  if (courseIds.length === 0) {
+  const skillIds = await listExamSkillIds({ examBlueprintId, language });
+
+  if (courseIds.length === 0 && skillIds.length === 0) {
     return [];
   }
 
-  const inCourses = await listCourseSkills({ courseIds, examBlueprintId, language });
+  const inCourses = await listCourseSkills({ courseIds, examBlueprintId, language, skillIds });
   const placedIds = new Set(inCourses.map((entry) => entry.skillId));
   const links = await listPrerequisiteLinks([...placedIds]);
 

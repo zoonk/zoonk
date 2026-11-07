@@ -40,6 +40,50 @@ describe("an exam's reusable Library skill pool", () => {
     });
 
     expect(library.skills.map(({ id }) => id)).toContain(skill.id);
+    expect(library.skills.find(({ id }) => id === skill.id)?.course).toBe(regimento.id);
+    expect(library.courses).toStrictEqual([{ key: regimento.id, title: regimento.title }]);
+  });
+
+  it("resolves its question bank's merged skills and excludes retired, private and other-language skills", async () => {
+    const [course, blueprint, otherBlueprint, survivor, hidden, foreign, targeted, retired, other] =
+      await Promise.all([
+        courseFixture({ language: "pt" }),
+        examBlueprintFixture({ language: "pt" }),
+        examBlueprintFixture({ language: "pt" }),
+        skillFixture({ language: "pt" }),
+        skillFixture({ language: "pt", visibility: "private" }),
+        skillFixture({ language: "en" }),
+        skillFixture({ language: "pt", targetLanguage: "en" }),
+        skillFixture({ language: "pt" }),
+        skillFixture({ language: "pt" }),
+      ]);
+
+    const merged = await skillFixture({ language: "pt", mergedIntoId: survivor.id });
+    const chapter = await libraryChapterFixture({ homeCourseId: course.id, language: "pt" });
+
+    await Promise.all([
+      ...[survivor, hidden, foreign, targeted, retired, other].map((skill) =>
+        chapterSkillFixture({ chapterId: chapter.id, skillId: skill.id }),
+      ),
+      ...[merged, hidden, foreign, targeted].map((skill) =>
+        itemFixture({ examBlueprintId: blueprint.id, language: "pt", skillId: skill.id }),
+      ),
+      itemFixture({
+        examBlueprintId: blueprint.id,
+        language: "pt",
+        retiredAt: new Date(),
+        skillId: retired.id,
+      }),
+      itemFixture({ examBlueprintId: otherBlueprint.id, language: "pt", skillId: other.id }),
+    ]);
+
+    const library = await findExamLibrary({
+      courseIdsByKey: {},
+      examBlueprintId: blueprint.id,
+      language: "pt",
+    });
+
+    expect(library.skills).toMatchObject([{ course: course.id, id: survivor.id }]);
   });
 
   it("does not count a set-aside lesson in a chapter skill's size", async () => {
