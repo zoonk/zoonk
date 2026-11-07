@@ -11,10 +11,6 @@ enum AnswerOptionResult: Equatable {
 /// Main's `AnswerOption`: its number key, its words and, once checked, the word its result shows.
 /// The first nine answer to their number key on a hardware keyboard, as on the web.
 struct AnswerOption: View {
-  @Environment(\.stacksContent) private var isStacked
-  @Environment(\.legibilityWeight) private var legibilityWeight
-  @Environment(\.locale) private var locale
-
   var marker: Int?
   var isPicked = false
   var result: AnswerOptionResult?
@@ -57,41 +53,9 @@ struct AnswerOption: View {
   }
 
   private var answerContent: some View {
-    AnswerOptionLayout(isStacked: isStacked, hasTag: hasTag, hasMarker: marker != nil) {
-      VStack(alignment: .leading, spacing: 2) {
-        Text(text, legibility: legibilityWeight)
-
-        if let detail {
-          Text(verbatim: detail)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-        }
-      }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .multilineTextAlignment(.leading)
-
-      VStack(alignment: .leading, spacing: 0) {
-        tagContent
-      }
-      .layoutPriority(1)
-
-      if hasTag || marker != nil {
-        ForEach(readingUnits(in: text.text), id: \.self) { unit in
-          Text(unit, legibility: legibilityWeight)
-            .hidden()
-            .accessibilityHidden(true)
-        }
-
-        if let detail {
-          ForEach(readingUnits(in: AttributedString(detail)), id: \.self) { unit in
-            Text(unit)
-              .typeStyle(.note)
-              .hidden()
-              .accessibilityHidden(true)
-          }
-        }
-      }
-    }
+    TagBesideOrUnder(
+      text: text, detail: detail, tag: hasTag ? AnyView(tagContent) : nil,
+      hasMarker: marker != nil)
   }
 
   @ViewBuilder
@@ -103,34 +67,6 @@ struct AnswerOption: View {
         .typeStyle(.tag)
         .foregroundStyle(tagColor(result))
     }
-  }
-
-  private func readingUnits(in text: AttributedString) -> [AttributedString] {
-    let plain = String(text.characters)
-    let tokenizer = CFStringTokenizerCreate(
-      nil, plain as CFString, CFRange(location: 0, length: plain.utf16.count),
-      CFOptionFlags(kCFStringTokenizerUnitLineBreak),
-      CFLocaleCreate(nil, CFLocaleIdentifier(rawValue: locale.identifier as CFString)))
-    var units = Set<AttributedString>()
-
-    while CFStringTokenizerAdvanceToNextToken(tokenizer).rawValue != 0 {
-      let range = CFStringTokenizerGetCurrentTokenRange(tokenizer)
-      let lower = String.Index(utf16Offset: range.location, in: plain)
-      let upper = String.Index(utf16Offset: range.location + range.length, in: plain)
-      let unit = plain[lower..<upper].drop(while: \.isWhitespace)
-      var end = unit.endIndex
-      while end > unit.startIndex, unit[unit.index(before: end)].isWhitespace {
-        end = unit.index(before: end)
-      }
-      if unit.startIndex < end {
-        let start = text.characters.index(
-          text.startIndex, offsetBy: plain.distance(from: plain.startIndex, to: unit.startIndex))
-        let finish = text.characters.index(
-          start, offsetBy: plain.distance(from: unit.startIndex, to: end))
-        units.insert(AttributedString(text[start..<finish]))
-      }
-    }
-    return units.sorted { String($0.characters) < String($1.characters) }
   }
 
   private var hasTag: Bool { tag != nil || result != nil }
@@ -166,6 +102,87 @@ struct AnswerOption: View {
     case .right: .successText
     case .wrong: .destructiveText
     }
+  }
+}
+
+/// An answer's words and its tag. The tag moves under the words rather than leave them less than
+/// half the row or narrower than their widest line-break unit.
+struct TagBesideOrUnder: View {
+  @Environment(\.stacksContent) private var isStacked
+  @Environment(\.legibilityWeight) private var legibilityWeight
+  @Environment(\.locale) private var locale
+
+  let text: RichInline
+  var detail: String?
+  var tag: AnyView?
+  var hasMarker = false
+
+  var body: some View {
+    AnswerOptionLayout(isStacked: isStacked, hasTag: tag != nil, hasMarker: hasMarker) {
+      VStack(alignment: .leading, spacing: 2) {
+        Text(text, legibility: legibilityWeight)
+
+        if let detail {
+          Text(verbatim: detail)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .multilineTextAlignment(.leading)
+
+      VStack(alignment: .leading, spacing: 0) {
+        if let tag {
+          tag
+        }
+      }
+      .layoutPriority(1)
+
+      if tag != nil || hasMarker {
+        ForEach(readingUnits(in: text.text), id: \.self) { unit in
+          Text(unit, legibility: legibilityWeight)
+            .hidden()
+            .accessibilityHidden(true)
+        }
+
+        if let detail {
+          ForEach(readingUnits(in: AttributedString(detail)), id: \.self) { unit in
+            Text(unit)
+              .typeStyle(.note)
+              .hidden()
+              .accessibilityHidden(true)
+          }
+        }
+      }
+    }
+  }
+
+  private func readingUnits(in text: AttributedString) -> [AttributedString] {
+    let plain = String(text.characters)
+    let tokenizer = CFStringTokenizerCreate(
+      nil, plain as CFString, CFRange(location: 0, length: plain.utf16.count),
+      CFOptionFlags(kCFStringTokenizerUnitLineBreak),
+      CFLocaleCreate(nil, CFLocaleIdentifier(rawValue: locale.identifier as CFString)))
+    var units = Set<AttributedString>()
+
+    while CFStringTokenizerAdvanceToNextToken(tokenizer).rawValue != 0 {
+      let range = CFStringTokenizerGetCurrentTokenRange(tokenizer)
+      let lower = String.Index(utf16Offset: range.location, in: plain)
+      let upper = String.Index(utf16Offset: range.location + range.length, in: plain)
+      let unit = plain[lower..<upper].drop(while: \.isWhitespace)
+      var end = unit.endIndex
+      while end > unit.startIndex, unit[unit.index(before: end)].isWhitespace {
+        end = unit.index(before: end)
+      }
+      if unit.startIndex < end {
+        let start = text.characters.index(
+          text.startIndex, offsetBy: plain.distance(from: plain.startIndex, to: unit.startIndex))
+        let finish = text.characters.index(
+          start, offsetBy: plain.distance(from: unit.startIndex, to: end))
+        units.insert(AttributedString(text[start..<finish]))
+      }
+    }
+    return units.sorted { String($0.characters) < String($1.characters) }
   }
 }
 

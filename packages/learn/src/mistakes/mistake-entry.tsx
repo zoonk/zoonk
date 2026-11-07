@@ -2,7 +2,6 @@
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import {
   CircleDashedIcon,
@@ -14,7 +13,8 @@ import {
   TriangleAlertIcon,
 } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
-import { ANSWER_TONE } from "../_components/answer-tone";
+import { TagBesideOrUnder } from "../_components/answer-option";
+import { ANSWER_TAG_CLASS, ANSWER_TAG_TONE, ANSWER_TONE } from "../_components/answer-tone";
 import { LearnLink } from "../learn-link";
 import { ItemLine, ItemStem, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
@@ -74,24 +74,26 @@ export function MistakeAnswer({
   return (
     <p
       className={cn(
-        "rounded-option flex w-full items-start gap-3 px-3.5 py-3 text-[0.9375rem] leading-6 font-medium",
+        "rounded-option w-full px-3.5 py-3 text-[0.9375rem] leading-6 font-medium wrap-break-word",
         right ? ANSWER_TONE.right : ANSWER_TONE.wrong,
       )}
       data-slot="mistake-answer"
     >
-      <span className="min-w-0 flex-1">
-        <span className="sr-only">{right ? t("Right answer:") : t("You answered:")} </span>
-        {children}
-      </span>
-      <LineMarker
-        aria-hidden="true"
-        className={cn(
-          "text-[0.71875rem] font-[550]",
-          right ? "text-success-text" : "text-destructive-text",
-        )}
+      <TagBesideOrUnder
+        tag={
+          <span
+            aria-hidden="true"
+            className={cn(ANSWER_TAG_CLASS, ANSWER_TAG_TONE[right ? "right" : "wrong"])}
+          >
+            {right ? t("Correct") : t("Your answer")}
+          </span>
+        }
       >
-        {right ? t("Correct") : t("Your answer")}
-      </LineMarker>
+        <span>
+          <span className="sr-only">{right ? t("Right answer:") : t("You answered:")} </span>
+          {children}
+        </span>
+      </TagBesideOrUnder>
     </p>
   );
 }
