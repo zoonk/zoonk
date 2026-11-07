@@ -228,7 +228,10 @@ export async function forgetAssumedSkills({
   const answeredIds = new Set(answered.map((attempt) => attempt.skillId));
 
   const retainedPlans = await tx.plan.findMany({
-    where: { goal: { userId }, items: { some: { status: "testedOut" } } },
+    where: {
+      goal: { status: { not: "archived" }, userId },
+      items: { some: { status: "testedOut" } },
+    },
   });
 
   const retained = await Promise.all(

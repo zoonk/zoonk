@@ -21,7 +21,10 @@ export async function announceSharedTestOuts({
 
   const plans = await prisma.plan.findMany({
     include: { goal: true, items: { select: { id: true }, where: testedOut } },
-    where: { goal: { id: { not: goalId }, userId }, items: { some: testedOut } },
+    where: {
+      goal: { id: { not: goalId }, status: { not: "archived" }, userId },
+      items: { some: testedOut },
+    },
   });
 
   if (plans.length === 0) {

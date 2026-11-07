@@ -161,6 +161,30 @@ describe("test-outs across goals", () => {
     ).resolves.toBe(1);
   });
 
+  it("leaves an archived goal's lessons and saved day unchanged", async () => {
+    const fixture = await setup();
+    await prisma.goal.update({ data: { status: "archived" }, where: { id: fixture.other.goalId } });
+
+    const before = await prisma.planItem.findMany({
+      orderBy: { id: "asc" },
+      where: { planId: fixture.other.id },
+    });
+
+    await fixture.testOut();
+
+    await expect(
+      prisma.planItem.findMany({ orderBy: { id: "asc" }, where: { planId: fixture.other.id } }),
+    ).resolves.toStrictEqual(before);
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: fixture.pending.id } }),
+    ).resolves.toStrictEqual(fixture.pending);
+
+    await expect(
+      prisma.planChange.count({ where: { kind: "testedOut", planId: fixture.other.id } }),
+    ).resolves.toBe(0);
+  });
+
   it("rolls back the shared item and leaves the saved day intact when its test-out transaction fails", async () => {
     const fixture = await setup();
 

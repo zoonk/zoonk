@@ -105,7 +105,11 @@ export async function testOutKnownPlanItems(
 
   const otherPlans =
     input.knownSkillIds.size > 0
-      ? await tx.plan.findMany({ where: { goal: { id: { not: goalId }, userId: goal.userId } } })
+      ? await tx.plan.findMany({
+          where: {
+            goal: { id: { not: goalId }, status: { not: "archived" }, userId: goal.userId },
+          },
+        })
       : [];
 
   const others = await Promise.all(

@@ -153,6 +153,12 @@ async function expectCarryover(fixture: Awaited<ReturnType<typeof setup>>) {
 describe("shared lessons in saved days", () => {
   it("skips other goals' pending teaching on completion, preserving active work and replays", async () => {
     const fixture = await setup();
+    const archived = await goalFixture({ status: "archived", userId: fixture.user.id });
+
+    const archivedPlan = await planFixture({
+      goalId: archived.id,
+      items: [{ lessonId: fixture.lesson.id }],
+    });
 
     const started = await startLibraryLesson({
       input: { studySessionId: fixture.source.id, timeZone: "UTC" },
@@ -172,6 +178,12 @@ describe("shared lessons in saved days", () => {
     const outcomes = await Promise.all([complete(), complete()]);
     expect(outcomes).toMatchObject([{ status: "completed" }, { status: "completed" }]);
     await expectCarryover(fixture);
+
+    await expect(
+      prisma.planItem.findFirstOrThrow({
+        where: { lessonId: fixture.lesson.id, planId: archivedPlan.id },
+      }),
+    ).resolves.toMatchObject({ completedAt: NOW, status: "done" });
 
     const owed = await prisma.followUp.count({
       where: { kind: "settleSessionDay", userId: fixture.user.id },

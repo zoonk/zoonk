@@ -165,4 +165,45 @@ describe("shared test-out notices", () => {
       prisma.planChange.count({ where: { kind: "testedOut", planId: source.plan.id } }),
     ).resolves.toBe(1);
   });
+
+  it("does not announce a shared test-out after its goal was archived", async () => {
+    freezeClock();
+    vi.setSystemTime(NOW);
+    const user = await userFixture();
+    const library = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 2 }] });
+
+    const [source, other] = await Promise.all([
+      unplannedGoalFixture({ settings: { startDate: "2020-09-28" }, userId: user.id }),
+      unplannedGoalFixture({ settings: { startDate: "2020-09-28" }, userId: user.id }),
+    ]);
+
+    await createGoalPlan({ goalId: source.goal.id, graph: library.graph });
+    await createGoalPlan({ goalId: other.goal.id, graph: library.graph });
+    const { items } = await loadGoalPlan(source.goal.id);
+
+    const input = {
+      followToday: false,
+      goalId: source.goal.id,
+      items,
+      knownSkillIds: new Set([library.skills[0]?.id ?? ""]),
+      testedOutAt: NOW,
+      timeZone: "UTC",
+    };
+
+    await writeLearnerChange({ planInputs: true, userId: user.id }, (tx) =>
+      testOutKnownPlanItems(tx, input),
+    );
+
+    await prisma.goal.update({ data: { status: "archived" }, where: { id: other.goal.id } });
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: other.plan.id } });
+    await markPlanItemsTestedOut({ ...input, items: [] });
+
+    await expect(
+      prisma.planChange.count({ where: { kind: "testedOut", planId: other.plan.id } }),
+    ).resolves.toBe(0);
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { id: other.plan.id } }),
+    ).resolves.toStrictEqual(before);
+  });
 });
