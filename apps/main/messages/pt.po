@@ -355,6 +355,7 @@ msgid "Couldn't open your next step. Try again."
 msgstr "Não foi possível abrir seu próximo passo. Tente de novo."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(app)/(learn)/today/reminder-goal-notice.tsx
 #: src/components/catalog/course-progress.tsx
 msgctxt "JIzivc"
 msgid "We couldn't switch goals. Try again."
@@ -990,6 +991,16 @@ msgstr "Continuar explicação"
 msgctxt "B1ehqx"
 msgid "Each day's lessons, reviews and practice for your goal."
 msgstr "As aulas, revisões e práticas de cada dia para seu objetivo."
+
+#: src/app/[lang]/(app)/(learn)/today/reminder-goal-notice.tsx
+msgctxt "GdIZ3t"
+msgid "Your study reminder was for {goal}."
+msgstr "Seu lembrete de estudo era para {goal}."
+
+#: src/app/[lang]/(app)/(learn)/today/reminder-goal-notice.tsx
+msgctxt "h6bnZW"
+msgid "Switch to this goal"
+msgstr "Mudar para este objetivo"
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "vr-vFm"

@@ -114,12 +114,9 @@ async function countOpenMistakes(goalId: string): Promise<MistakeAvailability> {
   return result.status === "ready" ? result.availability : { ready: 0, tomorrow: 0 };
 }
 
-/**
- * Only reads: a day not opened yet is shown as it will open, and opening it is the learner's own
- * tap. A reminder's link names its goal, which shows without becoming the active one.
- */
-export async function loadTodayScreen(goalId?: string): Promise<TodayScreenResult> {
-  const result = await getTodayView({ goalId });
+/** Only reads: a day not opened yet is shown as it will open, and opening it is the learner's own tap. */
+export async function loadTodayScreen(): Promise<TodayScreenResult> {
+  const result = await getTodayView({});
 
   if (result.status !== "ready") {
     return result;

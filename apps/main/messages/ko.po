@@ -355,6 +355,7 @@ msgid "Couldn't open your next step. Try again."
 msgstr "다음 단계를 열지 못했어요. 다시 시도해 보세요."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(app)/(learn)/today/reminder-goal-notice.tsx
 #: src/components/catalog/course-progress.tsx
 msgctxt "JIzivc"
 msgid "We couldn't switch goals. Try again."
@@ -990,6 +991,16 @@ msgstr "설명 이어서 보기"
 msgctxt "B1ehqx"
 msgid "Each day's lessons, reviews and practice for your goal."
 msgstr "목표에 맞춘 매일의 레슨과 복습, 연습을 확인해요."
+
+#: src/app/[lang]/(app)/(learn)/today/reminder-goal-notice.tsx
+msgctxt "GdIZ3t"
+msgid "Your study reminder was for {goal}."
+msgstr "학습 알림은 {goal} 목표에 대한 알림이었어요."
+
+#: src/app/[lang]/(app)/(learn)/today/reminder-goal-notice.tsx
+msgctxt "h6bnZW"
+msgid "Switch to this goal"
+msgstr "이 목표로 전환하기"
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "vr-vFm"

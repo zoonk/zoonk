@@ -17,6 +17,28 @@ function signUnsubscribeToken(userId: string): string {
   return `${userId}.${signature}`;
 }
 
+function readActiveGoalId(userId: string) {
+  return prisma.userLearningProfile
+    .findUniqueOrThrow({ select: { activeGoalId: true }, where: { userId } })
+    .then((profile) => profile.activeGoalId);
+}
+
+/** Another study day's goal moves to the learner, as a second active goal that isn't the active one. */
+async function addOtherGoal(userId: string) {
+  const other = await createStudyDay();
+
+  await Promise.all([
+    prisma.goal.update({ data: { userId }, where: { id: other.goal.id } }),
+    prisma.studySession.update({ data: { userId }, where: { id: other.session.id } }),
+    prisma.userLearningProfile.update({
+      data: { activeGoalId: null },
+      where: { userId: other.user.id },
+    }),
+  ]);
+
+  return other.goal;
+}
+
 function readReminder(userId: string) {
   return prisma.studyReminder.findUnique({
     select: { emailOn: true, offeredAt: true, time: true },
@@ -96,5 +118,52 @@ test.describe("Study reminders", () => {
     await expect(readReminder(user.id)).resolves.toMatchObject({ emailOn: false });
 
     await context.close();
+  });
+
+  test("a reminder's link offers its goal on Today and switches only on the learner's click", async ({
+    browser,
+  }) => {
+    const day = await createStudyDay();
+    const other = await addOtherGoal(day.user.id);
+    const sessions = await prisma.studySession.count({ where: { userId: day.user.id } });
+    const page = await openAs(browser, day.user);
+    await page.goto(`/today?goal=${other.id}`);
+
+    const switchGoal = page.getByRole("button", { name: "Switch to this goal" });
+    await expectHydrated(switchGoal);
+    await expect(page.getByText(`Your study reminder was for ${other.title}.`)).toBeVisible();
+    await expect(readActiveGoalId(day.user.id)).resolves.toBe(day.goal.id);
+
+    await expect(prisma.studySession.count({ where: { userId: day.user.id } })).resolves.toBe(
+      sessions,
+    );
+
+    await switchGoal.click();
+    await expect(page).toHaveURL(/\/today$/u);
+    await expect.poll(() => readActiveGoalId(day.user.id)).toBe(other.id);
+    await expect(switchGoal).toBeHidden();
+
+    await page.context().close();
+  });
+
+  test("a link to another learner's, an archived or the active goal offers nothing", async ({
+    browser,
+  }) => {
+    const [day, stranger] = await Promise.all([createStudyDay(), createStudyDay()]);
+    const archived = await addOtherGoal(day.user.id);
+    await prisma.goal.update({ data: { status: "archived" }, where: { id: archived.id } });
+    const page = await openAs(browser, day.user);
+
+    for (const goalId of [stranger.goal.id, archived.id, day.goal.id, "not-a-goal"]) {
+      // oxlint-disable-next-line no-await-in-loop -- One page, one link at a time.
+      await page.goto(`/today?goal=${goalId}`);
+      // oxlint-disable-next-line no-await-in-loop -- Waits for the page each link opened.
+      await expectHydrated(page.getByRole("button", { name: /^(?:Start|Continue)/u }));
+      // oxlint-disable-next-line no-await-in-loop -- Checks the page each link opened.
+      await expect(page.getByRole("button", { name: "Switch to this goal" })).toHaveCount(0);
+    }
+
+    await expect(readActiveGoalId(day.user.id)).resolves.toBe(day.goal.id);
+    await page.context().close();
   });
 });

@@ -66,6 +66,7 @@ function TodaySessionWithEarlierWork() {
 
 export function TodayScreen({
   actions,
+  banner = null,
   brainPower = null,
   buddy,
   completedLessons = false,
@@ -81,6 +82,8 @@ export function TodayScreen({
   today,
 }: {
   actions: TodayActions;
+  /** Above the day, for what the host needs to say first, such as a reminder's other goal. */
+  banner?: React.ReactNode;
   brainPower?: number | null;
   buddy: LearnBuddy | null;
   completedLessons?: boolean;
@@ -139,6 +142,7 @@ export function TodayScreen({
         asideRef={aside}
       >
         <Page data-slot="today">
+          {banner}
           <section aria-label={t("Today's session")} className={TODAY_MAIN_CLASS}>
             <TodayContinueProvider>
               <TodayHeading className="[grid-area:head]" />

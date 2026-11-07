@@ -21,6 +21,7 @@ import { getExtracted } from "next-intl/server";
 import { cookies } from "next/headers";
 import { Suspense } from "react";
 import { LearnNotFound } from "../_components/learn-not-found";
+import { type ReminderGoal } from "./reminder-goal-notice";
 import { SuggestedGoalClient, TodayClient } from "./today-client";
 import { TodayGoalPaused } from "./today-goal-paused";
 import { getLocalDay } from "./today-local-day";
@@ -142,9 +143,26 @@ async function TodaySessionEnded() {
   );
 }
 
+/**
+ * A reminder's link names the goal with learning left; Today stays on the active goal and offers
+ * that one only while it's another of the learner's active goals. Switching is their click.
+ */
+async function findReminderGoal(goalParam: unknown): Promise<ReminderGoal | null> {
+  const goalId = uuidSchema().safeParse(goalParam).data;
+
+  if (!goalId) {
+    return null;
+  }
+
+  const list = await listCurrentUserGoals();
+  const goal = list?.goals.find((candidate) => candidate.id === goalId);
+
+  return goal?.status === "active" && !goal.isActive ? { id: goal.id, title: goal.title } : null;
+}
+
 async function TodayContent({ searchParams }: Pick<PageProps<"/[lang]/today">, "searchParams">) {
   const { goal } = await searchParams;
-  const result = await loadTodayScreen(uuidSchema().safeParse(goal).data);
+  const [result, reminderGoal] = await Promise.all([loadTodayScreen(), findReminderGoal(goal)]);
 
   if (result.status === "noGoal") {
     return result.suggestedGoal ? (
@@ -184,6 +202,7 @@ async function TodayContent({ searchParams }: Pick<PageProps<"/[lang]/today">, "
       data={result.data}
       key={result.day}
       readAt={result.readAt}
+      reminderGoal={reminderGoal}
       userId={result.userId}
     />
   );
