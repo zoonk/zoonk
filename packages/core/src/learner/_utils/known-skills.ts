@@ -1,18 +1,13 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { awardCourseCertificates } from "../../certificates/_utils/award-course-certificate";
 import { announceTestedOutItems } from "../../plans/announce-tested-out-items";
 import { afterPlanInputWrite } from "../../plans/plan-conflict";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
-import {
-  loadItemLessonIds,
-  skipSettledLessonBlocks,
-  skipTestedOutBlocks,
-} from "../../sessions/_utils/skip-tested-out-blocks";
+import { skipTestedOutBlocks } from "../../sessions/_utils/skip-tested-out-blocks";
 import { INFERRED_KNOWN_ANSWER } from "../answer-rating";
 import { NEW_SKILL_MEMORY, reviewSkillMemory } from "../fsrs-scheduler";
-import { type GoalPlan, type GoalPlanItem, loadGoalPlan } from "./goal-skill-graph";
+import { type GoalPlanItem, loadGoalPlan } from "./goal-skill-graph";
+import { type LeftOutSkill, findTestOut, testOutKnownPlanItems } from "./test-out-known-plan-items";
 import { unchanged, writeLearnerChange } from "./write-learner-change";
 
 /** Existing learned memory outranks inferred knowledge. A supplied transaction must already have marked the learner changed. */
@@ -64,132 +59,6 @@ export async function markSkillsKnown({
   );
 }
 
-type LeftOutSkill = Pick<GoalPlan["skills"][number], "id" | "phase">;
-
-type TestOutInput = {
-  items: readonly GoalPlanItem[];
-  knownSkillIds: ReadonlySet<string>;
-  placedSkills?: readonly LeftOutSkill[];
-};
-
-function findTestOut({ items, knownSkillIds, placedSkills = [] }: TestOutInput) {
-  const planned = new Set(items.flatMap((item) => item.skillIds));
-
-  return {
-    ids: items
-      .filter(
-        (item) =>
-          item.status === "todo" &&
-          item.skillIds.length > 0 &&
-          item.skillIds.every((skillId) => knownSkillIds.has(skillId)),
-      )
-      .map((item) => item.id),
-    leftOut: placedSkills.filter((skill) => knownSkillIds.has(skill.id) && !planned.has(skill.id)),
-  };
-}
-
-async function insertTestedOutStandIns(
-  tx: TransactionClient,
-  {
-    goalId,
-    skills,
-    testedOutAt,
-    timeZone,
-  }: { goalId: string; skills: readonly LeftOutSkill[]; testedOutAt: Date; timeZone: string },
-): Promise<string[]> {
-  const plan = await tx.plan.findUnique({ select: { id: true }, where: { goalId } });
-
-  if (!plan) {
-    return [];
-  }
-
-  const skillIds = skills.map((skill) => skill.id);
-
-  const last = await tx.planItem.findFirst({
-    orderBy: { position: "desc" },
-    select: { position: true },
-    where: { planId: plan.id },
-  });
-
-  const planned = await tx.planItem.findMany({
-    select: { skillId: true },
-    where: { planId: plan.id, skillId: { in: skillIds } },
-  });
-
-  const names = await tx.skill.findMany({
-    select: { id: true, name: true },
-    where: { id: { in: skillIds } },
-  });
-
-  const plannedIds = new Set(planned.map((item) => item.skillId));
-  const missing = skills.filter((skill) => !plannedIds.has(skill.id));
-
-  if (missing.length === 0) {
-    return [];
-  }
-
-  await tx.$executeRaw`UPDATE plans SET version = version + 1 WHERE id = ${plan.id}::uuid`;
-  const after = (last?.position ?? -1) + 1;
-  const nameOf = new Map(names.map((skill) => [skill.id, skill.name]));
-
-  const created = await tx.planItem.createManyAndReturn({
-    data: missing.map((skill, index) => ({
-      completedAt: testedOutAt,
-      kind: "lesson" as const,
-      phase: skill.phase,
-      planId: plan.id,
-      position: after + index,
-      scheduledFor: getDateInTimeZone({ date: testedOutAt, timeZone }),
-      skillId: skill.id,
-      status: "testedOut" as const,
-      titleSnapshot: nameOf.get(skill.id) ?? "",
-    })),
-    select: { id: true },
-  });
-
-  return created.map((item) => item.id);
-}
-
-/** Caller must hold the marked learner's plans; returns only changed items and inserted stand-ins, in plan order. */
-export async function testOutKnownPlanItems(
-  tx: TransactionClient,
-  {
-    goalId,
-    testedOutAt,
-    timeZone,
-    ...input
-  }: TestOutInput & { goalId: string; testedOutAt: Date; timeZone: string },
-): Promise<{ itemIds: string[]; standInIds: string[] }> {
-  const { ids, leftOut } = findTestOut(input);
-
-  const updated =
-    ids.length > 0
-      ? await tx.planItem.updateManyAndReturn({
-          data: { completedAt: testedOutAt, status: "testedOut" },
-          select: { id: true, kind: true, phase: true, planId: true },
-          where: { id: { in: ids }, status: "todo" },
-        })
-      : [];
-
-  const standInIds =
-    leftOut.length > 0
-      ? await insertTestedOutStandIns(tx, { goalId, skills: leftOut, testedOutAt, timeZone })
-      : [];
-
-  await awardCourseCertificates(tx, { finished: updated });
-
-  const changed = new Set(updated.map((item) => item.id));
-
-  const [goal, lessonIds] = await Promise.all([
-    tx.goal.findUniqueOrThrow({ where: { id: goalId } }),
-    loadItemLessonIds([...changed], tx),
-  ]);
-
-  await skipSettledLessonBlocks(tx, { goalId, lessonIds, userId: goal.userId });
-
-  return { itemIds: ids.filter((id) => changed.has(id)), standInIds };
-}
-
 /** Returns changed ids, the announcement's undoable plan change, lesson count, and resulting version; only todo items change. */
 export async function markPlanItemsTestedOut({
   announceAlso = [],
@@ -235,53 +104,51 @@ export async function markPlanItemsTestedOut({
   }
 
   const { pastBasicsAdded: addedBasics, standInIds } =
-    ids.length > 0 || leftOut.length > 0 || pastBasicsAreas.length > 0
-      ? await writeLearnerChange(
-          { goalIds: [goalId], planInputs: true, userId: goal.userId },
-          async (tx) => {
-            const changed = await testOutKnownPlanItems(tx, {
-              goalId,
-              items,
-              knownSkillIds,
-              placedSkills,
-              testedOutAt,
-              timeZone,
-            });
+    knownSkillIds.size > 0 || leftOut.length > 0 || pastBasicsAreas.length > 0
+      ? await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
+          const changed = await testOutKnownPlanItems(tx, {
+            goalId,
+            items,
+            knownSkillIds,
+            placedSkills,
+            testedOutAt,
+            timeZone,
+          });
 
-            const plan =
-              !extraWrites &&
-              (followToday || ids.length > 0 || leftOut.length > 0) &&
-              pastBasicsAreas.length > 0
-                ? await tx.plan.findUnique({ where: { goalId } })
-                : null;
+          const plan =
+            !extraWrites &&
+            (followToday || ids.length > 0 || leftOut.length > 0) &&
+            pastBasicsAreas.length > 0
+              ? await tx.plan.findUnique({ where: { goalId } })
+              : null;
 
-            const settings = parsePlanSettings(plan?.settings);
+          const settings = parsePlanSettings(plan?.settings);
 
-            const pastBasicsAdded = plan
-              ? pastBasicsAreas.filter((area) => !settings.pastBasicsAreas.includes(area))
-              : [];
+          const pastBasicsAdded = plan
+            ? pastBasicsAreas.filter((area) => !settings.pastBasicsAreas.includes(area))
+            : [];
 
-            if (plan && pastBasicsAdded.length > 0) {
-              await tx.plan.update({
-                data: {
-                  settings: {
-                    ...settings,
-                    pastBasicsAreas: [...settings.pastBasicsAreas, ...pastBasicsAdded],
-                  },
+          if (plan && pastBasicsAdded.length > 0) {
+            await tx.plan.update({
+              data: {
+                settings: {
+                  ...settings,
+                  pastBasicsAreas: [...settings.pastBasicsAreas, ...pastBasicsAdded],
                 },
-                where: { id: plan.id },
-              });
-            }
+              },
+              where: { id: plan.id },
+            });
+          }
 
-            const result = { pastBasicsAdded, standInIds: changed.standInIds };
+          const result = { pastBasicsAdded, standInIds: changed.standInIds };
 
-            return changed.itemIds.length === 0 &&
-              changed.standInIds.length === 0 &&
-              pastBasicsAdded.length === 0
-              ? unchanged(result)
-              : result;
-          },
-        )
+          return changed.itemIds.length === 0 &&
+            !changed.sharedItemsChanged &&
+            changed.standInIds.length === 0 &&
+            pastBasicsAdded.length === 0
+            ? unchanged(result)
+            : result;
+        })
       : { pastBasicsAdded: [], standInIds: [] };
 
   const planItemIds = [...ids, ...standInIds];
