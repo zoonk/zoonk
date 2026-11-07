@@ -9,7 +9,7 @@ import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { stripWrappingQuotes } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
-import { Fragment, useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { usePlayerInteractionState } from "../player-context";
 import { MAX_NUMBER_KEY_SHORTCUT, getNumberKeyShortcut } from "../player-shortcuts";
@@ -30,6 +30,7 @@ import {
   getKeyboardItems,
   isItemMatched,
 } from "./_utils/match-columns";
+import { MatchBoard } from "./match-board";
 import { QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
 
@@ -57,7 +58,7 @@ function MatchItem({
       aria-keyshortcuts={shortcut ?? undefined}
       aria-pressed={state === "selected"}
       className={cn(
-        "rounded-option focus-visible:outline-ring flex min-h-11 items-start gap-3 px-3 py-3.25 text-left text-[0.9375rem] leading-6 font-medium wrap-break-word transition-colors outline-none select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid sm:px-3.5",
+        "rounded-option focus-visible:outline-ring flex min-h-11 items-start gap-3 px-3 py-3.25 text-left leading-6 font-medium wrap-break-word transition-colors outline-none select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid sm:px-3.5",
         getItemClassName(state),
       )}
       aria-disabled={isLocked || undefined}
@@ -71,70 +72,6 @@ function MatchItem({
 
       <span className="min-w-0">{displayLabel}</span>
     </button>
-  );
-}
-
-function MatchGrid({
-  activeKeyboardSide,
-  correctMatches,
-  flashingMatch,
-  leftItems,
-  onTap,
-  rightItems,
-  selected,
-}: {
-  activeKeyboardSide: MatchSide;
-  correctMatches: MatchAttempt[];
-  flashingMatch: MatchAttempt | null;
-  leftItems: MatchItemData[];
-  onTap: (item: MatchItemData) => void;
-  rightItems: MatchItemData[];
-  selected: MatchSelection | null;
-}) {
-  return (
-    <div className="grid grid-cols-2 gap-2.5">
-      {leftItems.map((left, index) => {
-        const right = rightItems[index];
-
-        if (!right) {
-          return null;
-        }
-
-        const leftState = getItemVisualState({
-          correctMatches,
-          flashingMatch,
-          item: left,
-          selected,
-        });
-
-        const rightState = getItemVisualState({
-          correctMatches,
-          flashingMatch,
-          item: right,
-          selected,
-        });
-
-        return (
-          <Fragment key={left.id}>
-            <MatchItem
-              isShortcutActive={activeKeyboardSide === "left"}
-              label={left.label}
-              marker={index + 1}
-              onTap={() => onTap(left)}
-              state={leftState}
-            />
-
-            <MatchItem
-              isShortcutActive={activeKeyboardSide === "right"}
-              label={right.label}
-              marker={index + 1}
-              onTap={() => onTap(right)}
-              state={rightState}
-            />
-          </Fragment>
-        );
-      })}
-    </div>
   );
 }
 
@@ -244,18 +181,34 @@ export function MatchColumnsStep({
 
   const question = content.question ?? t("Match the pairs.");
 
+  const solvedRows = leftItems.map((item, index) => ({
+    left: item,
+    right: board.rightItems[index] ?? null,
+  }));
+
+  function renderItem(side: MatchSide, item: MatchItemData, index: number) {
+    return (
+      <MatchItem
+        isShortcutActive={activeKeyboardSide === side}
+        label={item.label}
+        marker={index + 1}
+        onTap={() => handleTap(item)}
+        state={getItemVisualState({ correctMatches: board.matches, flashingMatch, item, selected })}
+      />
+    );
+  }
+
   return (
     <InteractiveStepLayout>
       <QuestionText>{question}</QuestionText>
 
-      <MatchGrid
-        activeKeyboardSide={activeKeyboardSide}
-        correctMatches={board.matches}
-        flashingMatch={flashingMatch}
-        leftItems={leftItems}
-        onTap={handleTap}
-        rightItems={board.rightItems}
-        selected={selected}
+      <MatchBoard
+        alignRows
+        className="text-[0.9375rem]"
+        left={leftItems}
+        renderItem={renderItem}
+        right={board.rightItems}
+        solvedRows={isSolved ? solvedRows : undefined}
       />
 
       <div aria-live="polite" className="sr-only" role="status">

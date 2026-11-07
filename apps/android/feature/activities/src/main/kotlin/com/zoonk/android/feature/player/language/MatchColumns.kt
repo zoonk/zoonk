@@ -5,11 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -38,6 +34,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.activities.sorting.MatchBoard
+import com.zoonk.android.feature.activities.sorting.MatchSide
+import com.zoonk.android.feature.activities.sorting.SolvedMatchBoard
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.steps.QuestionScene
 import com.zoonk.android.ui.components.AnswerResult
@@ -60,7 +59,7 @@ internal data class MatchAttempt(
 /**
  * Main's `MatchColumnsStep`: tap a word on each side to pair them. A right pair stays matched; a wrong
  * one flashes and counts as a mistake. The answer goes once every pair is matched, and the board then
- * shows each pair on its own row, so the learner sees what goes together.
+ * shows each word with its partner, so the learner sees what goes together.
  */
 @Composable
 internal fun MatchColumnsView(
@@ -131,29 +130,29 @@ internal fun MatchColumnsView(
     QuestionScene {
         question()
 
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            lefts.indices.forEach { row ->
-                val right = rights.getOrNull(row) ?: return@forEach
-                Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    listOf(MatchItem(true, row) to lefts[row], MatchItem(false, row) to right).forEach { (item, label) ->
-                        val isMatched = matched.any { (l, r) -> if (item.left) l == row else r == row }
-                        val isFlashing = flashing?.let { if (item.left) it.left == row else it.right == row } == true
-                        MatchCell(
-                            label = stripWrappingQuotes(label),
-                            picked = selected == (item.left to item.index),
-                            result =
-                                when {
-                                    isMatched -> AnswerResult.Right
-                                    isFlashing -> AnswerResult.Wrong
-                                    else -> null
-                                },
-                            enabled = !locked && !isMatched && !isFlashing,
-                            onTap = { tap(item) },
-                            modifier = Modifier.weight(1f).fillMaxHeight(),
-                        )
-                    }
-                }
-            }
+        val rows = List(minOf(lefts.size, rights.size)) { it }
+        val cell: @Composable (MatchSide, Int, Modifier) -> Unit = { side, row, modifier ->
+            val item = MatchItem(side == MatchSide.Left, row)
+            val isMatched = matched.any { (l, r) -> if (item.left) l == row else r == row }
+            val isFlashing = flashing?.let { if (item.left) it.left == row else it.right == row } == true
+            MatchCell(
+                label = stripWrappingQuotes(if (item.left) lefts[row] else rights[row]),
+                picked = selected == (item.left to item.index),
+                result =
+                    when {
+                        isMatched -> AnswerResult.Right
+                        isFlashing -> AnswerResult.Wrong
+                        else -> null
+                    },
+                enabled = !locked && !isMatched && !isFlashing,
+                onTap = { tap(item) },
+                modifier = modifier,
+            )
+        }
+        if (allMatched) {
+            SolvedMatchBoard(rows.map { it to it }, card = cell)
+        } else {
+            MatchBoard(rows, rows, alignRows = true, card = cell)
         }
 
         // What TalkBack hears that the eye gets from color: a wrong pair, then every pair matched.
