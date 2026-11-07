@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { type LibrarySkill, applyLibraryReuse, formatLibrarySkills } from "./library-skills";
-import { type RawSkillGraph } from "./normalize-skill-graph";
+import {
+  type ExamLibrary,
+  type LibrarySkill,
+  addLibraryCourses,
+  applyLibraryReuse,
+  formatLibrarySkills,
+} from "./library-skills";
+import { type RawSkillGraph, normalizeSkillGraph } from "./normalize-skill-graph";
 
 type RawSkill = RawSkillGraph["skills"][number];
 
@@ -84,6 +90,59 @@ describe(applyLibraryReuse, () => {
     const skills = [rawSkill({ reuse: "L9" }), rawSkill({ key: "s1-new", reuse: null })];
 
     expect(applyLibraryReuse({ library, skills })).toStrictEqual(skills);
+  });
+});
+
+describe(addLibraryCourses, () => {
+  it("keeps a reused skill's foundation from another discipline in that discipline's course", () => {
+    const exam: ExamLibrary = {
+      courses: [{ key: "math-id", title: "Matemática" }],
+      skills: [
+        {
+          course: "math-id",
+          description: "Isolar a incógnita",
+          id: "equations-id",
+          lessons: 4,
+          level: "beginner",
+          name: "Resolver equações lineares",
+          prerequisiteIds: [],
+        },
+        {
+          course: "physics",
+          description: "Relacionar distância e tempo",
+          id: "speeds-id",
+          lessons: 5,
+          level: "intermediate",
+          name: "Calcular velocidades em movimentos uniformes",
+          prerequisiteIds: ["equations-id"],
+        },
+      ],
+    };
+
+    const frame = addLibraryCourses({
+      frame: {
+        courses: [{ key: "physics", levels: ["intermediate"], title: "Física" }],
+        phases: [{ milestone: "Base", title: "Base" }],
+      },
+      library: exam,
+    });
+
+    const graph = normalizeSkillGraph({
+      ...frame,
+      skills: applyLibraryReuse({
+        library: exam.skills,
+        skills: [rawSkill({ course: "physics", reuse: "L2" })],
+      }),
+    });
+
+    expect(graph.courses.map((course) => [course.key, course.title])).toStrictEqual([
+      ["physics", "Física"],
+      ["math-id", "Matemática"],
+    ]);
+
+    expect(graph.skills.find((skill) => skill.libraryId === "equations-id")?.course).toBe(
+      "math-id",
+    );
   });
 });
 

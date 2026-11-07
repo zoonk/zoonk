@@ -1,8 +1,8 @@
 import { normalizeString } from "@zoonk/utils/string";
-import { type CourseLevel } from "./course-levels";
+import { COURSE_LEVELS, type CourseLevel } from "./course-levels";
 import { type RawSkillGraph } from "./normalize-skill-graph";
 
-/** A skill other exams already use, in one of the frame's courses (`course` is its key). */
+/** A skill other exams already use (`course` is its course's key). */
 export type LibrarySkill = {
   course: string;
   description: string;
@@ -13,7 +13,32 @@ export type LibrarySkill = {
   prerequisiteIds: string[];
 };
 
+/**
+ * The skills other exams use in the frame's courses and what they build on, with `courses`, the
+ * courses outside the frame that hold those foundations.
+ */
+export type ExamLibrary = { courses: { key: string; title: string }[]; skills: LibrarySkill[] };
+
 type RawSkill = RawSkillGraph["skills"][number];
+
+/** A foundation from another discipline keeps its own course, so the frame gains that course. */
+export function addLibraryCourses<TFrame extends Pick<RawSkillGraph, "courses">>({
+  frame,
+  library,
+}: {
+  frame: TFrame;
+  library: ExamLibrary;
+}): TFrame {
+  const added = library.courses.map((course) => {
+    const levels = new Set(
+      library.skills.filter((skill) => skill.course === course.key).map((skill) => skill.level),
+    );
+
+    return { ...course, levels: COURSE_LEVELS.filter((level) => levels.has(level)) };
+  });
+
+  return { ...frame, courses: [...frame.courses, ...added] };
+}
 
 const toRef = (index: number) => `L${index + 1}`;
 

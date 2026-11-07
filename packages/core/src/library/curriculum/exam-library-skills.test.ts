@@ -166,7 +166,7 @@ describe(findExamLibrary, () => {
       scope,
     });
 
-    expect(library.map((skill) => [skill.id, skill.course])).toStrictEqual([
+    expect(library.skills.map((skill) => [skill.id, skill.course])).toStrictEqual([
       [placed!.id, "physics"],
     ]);
 
@@ -176,6 +176,62 @@ describe(findExamLibrary, () => {
 
     expect(generateSearchTerms).not.toHaveBeenCalled();
     expect(decideLibraryIdentity).not.toHaveBeenCalled();
+  });
+
+  it("brings what a skill builds on from another discipline, however deep, with that course", async () => {
+    const [organization, blueprint, otherBlueprint, mathematics] = await Promise.all([
+      aiOrganizationFixture(),
+      examBlueprintFixture({ language: "pt" }),
+      examBlueprintFixture({ language: "pt" }),
+      courseFixture({ language: "pt", title: `Matemática ${randomUUID()}` }),
+    ]);
+
+    const physicsTitle = `Física ${randomUUID()}`;
+
+    const [physics, [arithmetic, equations, speeds]] = await Promise.all([
+      courseFixture({
+        language: "pt",
+        normalizedTitle: normalizeString(physicsTitle),
+        organizationId: organization.id,
+        title: physicsTitle,
+      }),
+      skillsFixture(
+        ["Arithmetic", "Equations", "Speeds"].map((name) => `${name} ${randomUUID()}`),
+        { language: "pt" },
+      ),
+    ]);
+
+    await prisma.skillPrerequisite.createMany({
+      data: [
+        { prerequisiteId: arithmetic!.id, skillId: equations!.id },
+        { prerequisiteId: equations!.id, skillId: speeds!.id },
+      ],
+    });
+
+    await examGraphFixture({
+      blueprint: otherBlueprint,
+      graph: toPlanGraph([
+        { course: mathematics, skill: arithmetic! },
+        { course: mathematics, skill: equations! },
+        { course: physics, skill: speeds! },
+      ]),
+    });
+
+    const library = await findExamLibrary({
+      courses: [{ key: "physics", title: physicsTitle }],
+      examBlueprintId: blueprint.id,
+      scope,
+    });
+
+    expect(library.courses).toStrictEqual([{ key: mathematics.id, title: mathematics.title }]);
+
+    expect(
+      Object.fromEntries(library.skills.map((skill) => [skill.id, skill.course])),
+    ).toStrictEqual({
+      [arithmetic!.id]: mathematics.id,
+      [equations!.id]: mathematics.id,
+      [speeds!.id]: "physics",
+    });
   });
 });
 

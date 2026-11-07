@@ -23,9 +23,11 @@ function isSameCourse(first: string, second: string): boolean {
 export function toLibraryLookup(
   library: readonly LibraryCourse[],
 ): SkillGraphParams["findLibrarySkills"] {
-  return async ({ courses }) =>
-    library.flatMap(({ courseTitle, skills }) => {
+  return async ({ courses }) => ({
+    courses: [],
+    skills: library.flatMap(({ courseTitle, skills }) => {
       const course = courses.find((item) => isSameCourse(item.title, courseTitle));
       return course ? skills.map((skill) => ({ ...skill, course: course.key })) : [];
-    });
+    }),
+  });
 }

@@ -12,7 +12,7 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import { getVerbForm } from "../_utils/verb-form";
 import { COURSE_LEVELS } from "./_utils/course-levels";
 import { findRedraftProblems, normalizeDraft, redraftFlawedSections } from "./_utils/graph-drafts";
-import { type LibrarySkill, formatLibrarySkills } from "./_utils/library-skills";
+import { type ExamLibrary, addLibraryCourses, formatLibrarySkills } from "./_utils/library-skills";
 import { EmptySkillGraphError } from "./_utils/normalize-skill-graph";
 import {
   type GraphFrameSection,
@@ -86,7 +86,7 @@ const librarySectionSchema = z.object({
 
 type GraphFrame = z.infer<typeof frameSchema>;
 
-export { type LibrarySkill } from "./_utils/library-skills";
+export { type ExamLibrary, type LibrarySkill } from "./_utils/library-skills";
 
 export type SkillGraphParams = {
   language: string;
@@ -121,7 +121,7 @@ export type SkillGraphParams = {
    */
   findLibrarySkills?: (frame: {
     courses: readonly { key: string; title: string }[];
-  }) => Promise<LibrarySkill[]>;
+  }) => Promise<ExamLibrary>;
 };
 
 type GraphPart =
@@ -322,10 +322,11 @@ async function generateSectionedGraph(params: SkillGraphParams) {
 
   const courses = frame.output.courses.map(({ key, title }) => ({ key, title }));
   const library = await params.findLibrarySkills?.({ courses });
-  const listed = library ? formatLibrarySkills(library) : null;
+  const framed = library ? addLibraryCourses({ frame: frame.output, library }) : frame.output;
+  const listed = library ? formatLibrarySkills(library.skills) : null;
 
   const toPart = (sections: readonly GraphFrameSection[]): SkillsPart => ({
-    frame: frame.output,
+    frame: framed,
     library: listed,
     sections,
   });
@@ -335,8 +336,8 @@ async function generateSectionedGraph(params: SkillGraphParams) {
   );
 
   const { rewrites, ...draft } = await redraftFlawedSections({
-    frame: frame.output,
-    library: library ?? [],
+    frame: framed,
+    library: library?.skills ?? [],
     params: shared,
     rewrite: (index) => writeSkillsPart({ params: shared, part: toPart(calls[index] ?? []) }),
     written,
