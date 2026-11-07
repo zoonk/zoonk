@@ -181,6 +181,7 @@ export async function gradeSpokenAnswer({
     refuse: (client: TransactionClient) =>
       findClosingAnswer({
         client,
+        isCorrect: match.isCorrect,
         lessonId: step.lessonId,
         stepId: step.id,
         until: receivedAt,

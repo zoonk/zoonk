@@ -154,6 +154,7 @@ async function recordCheck({
       const closingAnswer = await findClosingAnswer({
         attemptId,
         client: transaction,
+        isCorrect: verdict.isCorrect,
         lessonId: row.lessonId,
         stepId: row.id,
         until: run.startedAt,
