@@ -11,15 +11,11 @@ export function TodayExtraTime({
   className,
   label,
   minutes,
-  size = "sm",
-  variant = "outline",
 }: {
   action: () => Promise<boolean>;
   className?: string;
   label?: string;
   minutes: number;
-  size?: "lg" | "sm";
-  variant?: "default" | "outline";
 }) {
   const t = useExtracted();
   const { failed, isPending, run } = useSessionAction({ action });
@@ -31,8 +27,8 @@ export function TodayExtraTime({
         className={className}
         icon={<PlayIcon aria-hidden="true" />}
         onClick={run}
-        size={size}
-        variant={variant}
+        size="sm"
+        variant="outline"
       >
         {label ?? t("Study {minutes} more minutes", { minutes: String(minutes) })}
       </Button>
