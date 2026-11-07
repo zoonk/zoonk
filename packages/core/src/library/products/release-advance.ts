@@ -232,6 +232,14 @@ async function dropOldPlans({
 
   const old = { NOT: kept, homeChapter: { homeCourseId: courseId } };
 
+  // A writer then claims a lesson before the move, and loses its claim here, or after it, and plans again.
+  await tx.$queryRaw`
+    SELECT lesson.id FROM library_lessons AS lesson
+    JOIN library_chapters AS chapter ON chapter.id = lesson.home_chapter_id
+    WHERE chapter.home_course_id = ${courseId}::uuid
+    ORDER BY lesson.id FOR UPDATE OF lesson
+  `;
+
   await tx.lesson.updateMany({
     data: { contentStatus: "pending" },
     where: { ...old, contentStatus: "running" },

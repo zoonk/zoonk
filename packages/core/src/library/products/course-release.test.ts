@@ -12,6 +12,7 @@ import {
 import { sourceChangeNoticeFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { holdLessonLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { claimLibraryGeneration } from "../claims/generation-claim";
 import { completeLessonContent } from "../generation/lesson-generation-state";
 import { listCoursesBehind, loadCourseRelease } from "./course-release";
@@ -329,6 +330,68 @@ describe(advanceCourseRelease, () => {
     await expect(
       prisma.lesson.findUniqueOrThrow({ where: { id: writing.id } }),
     ).resolves.toMatchObject({ specStatus: "pending" });
+  });
+
+  it("makes a writer that claims a lesson while the move waits plan it again", async () => {
+    const { course, first, page, second } = await mainCourse();
+    const chapter = await libraryChapterFixture({ homeCourseId: course.id });
+    const writerRunId = randomUUID();
+
+    const lessons = await Promise.all(
+      [0, 1].map(() =>
+        libraryLessonFixture({ homeChapterId: chapter.id, specStatus: "completed" }),
+      ),
+    );
+
+    // The move locks the course's lessons in id order, so it holds the first while it waits on the second.
+    const [target, busy] = lessons.toSorted((a, b) => a.id.localeCompare(b.id));
+
+    if (!target || !busy) {
+      throw new Error("Expected two lessons");
+    }
+
+    await prisma.lesson.update({ data: { contentStatus: "running" }, where: { id: busy.id } });
+
+    const holder = holdLessonLock(busy.id);
+    const holderPid = await holder.pid;
+
+    const advancing = advanceCourseRelease({
+      comparison: comparison(page),
+      courseId: course.id,
+      fromReleaseId: first.id,
+      toReleaseId: second.id,
+    });
+
+    const claimLesson = async () => {
+      await claimLibraryGeneration({
+        id: target.id,
+        target: "lessonContent",
+        workflowRunId: writerRunId,
+      });
+
+      return claimLibraryGeneration({
+        id: target.id,
+        target: "lessonSpec",
+        workflowRunId: writerRunId,
+      });
+    };
+
+    let writer: ReturnType<typeof claimLesson> | undefined;
+
+    try {
+      await waitForBlockedStatement(holderPid, /library_lessons/u);
+      writer = claimLesson();
+      const blockedWriter = waitForBlockedStatement(holderPid, /content_run_id/u);
+      blockedWriter.catch(() => null);
+      await Promise.race([writer, blockedWriter]);
+    } finally {
+      holder.release();
+      await holder.done;
+    }
+
+    await advancing;
+
+    await expect(writer).resolves.toBe("claimed");
   });
 
   it("keeps the plan of a chapter challenge, the new release's What's new one included", async () => {
