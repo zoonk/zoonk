@@ -2,12 +2,7 @@ name: Apple App
 
 on:
   push:
-    branches: [main]
-    paths: [apps/apple/**, .github/workflows/apple.yml, .github/workflows/native-changes.yml]
-  pull_request:
-    branches: [main]
-    paths: [apps/apple/**, .github/workflows/apple.yml, .github/workflows/native-changes.yml]
-    types: [opened, synchronize, reopened]
+    branches: [ci/apple-tests-lab]
 
 permissions:
   contents: read
@@ -16,136 +11,78 @@ env:
   DEVELOPER_DIR: /Applications/Xcode_27.2.app/Contents/Developer
 
 jobs:
-  changes:
-    uses: ./.github/workflows/native-changes.yml
-    # Finding the last passing run reads this workflow's runs.
-    permissions:
-      contents: read
-      actions: read
-    with:
-      app: apple
-
-  format:
-    needs: changes
-    if: needs.changes.outputs.changed == 'true'
+  lab:
+    name: lab ${{ matrix.variant }} ${{ matrix.replica }}
     runs-on: xcode-27
-    concurrency:
-      group: ${{ github.workflow }}-format-${{ github.event.pull_request.number || github.run_id }}
-      cancel-in-progress: false
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v7
-
-      - name: Check Swift formatting
-        run: make -C apps/apple format-check
-
-  build:
-    needs: changes
-    if: needs.changes.outputs.changed == 'true'
-    runs-on: xcode-27
-    timeout-minutes: 30
-    concurrency:
-      group: ${{ github.workflow }}-build-${{ github.event.pull_request.number || github.run_id }}
-      # A newer push waits for the running build instead of cancelling it, so a busy PR's build still
-      # finishes.
-      cancel-in-progress: false
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v7
-
-      - name: Identify Xcode toolchain
-        id: xcode
-        run: |
-          set -o pipefail
-          xcodebuild -version | shasum -a 256 | awk '{ print "version=" $1 }' >> "$GITHUB_OUTPUT"
-
-      # Only main saves these caches. A pull request's own entries serve only its later runs, and in
-      # the repository's shared cache storage they evict main's, which every pull request restores.
-      - name: Restore Swift packages
-        id: swiftpm
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: ${{ runner.temp }}/apple-source-packages
-          # Frozen resolution needs a cache containing this lockfile's revisions.
-          key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-${{ hashFiles('apps/apple/**/Package.resolved') }}
-
-      - name: Restore Xcode compilations
-        id: compilations
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: apps/apple/DerivedData/Make/CompilationCache.noindex
-          # Any app edit recompiles the whole app module, so the key follows the packages, the API
-          # client and the project; Xcode or build flag changes start from an empty cache.
-          key: ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-${{ hashFiles('apps/apple/**/Package.resolved', 'apps/apple/**/*.xcproj', 'apps/apple/ZoonkAPI/**') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-
-
-      - name: Build iPhone and iPad app
-        env:
-          # CI only checks that the app compiles, so it skips debug info.
-          XCODEBUILD_ARGUMENTS: >-
-            -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
-            -onlyUsePackageVersionsFromResolvedFile
-            -skipPackageUpdates
-            COMPILATION_CACHE_ENABLE_CACHING=YES
-            COMPILER_INDEX_STORE_ENABLE=NO
-            GCC_GENERATE_DEBUGGING_SYMBOLS=NO
-        run: make -C apps/apple build
-
-      - name: Save Swift packages
-        if: github.ref == 'refs/heads/main' && steps.swiftpm.outputs.cache-hit != 'true'
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: ${{ runner.temp }}/apple-source-packages
-          key: ${{ steps.swiftpm.outputs.cache-primary-key }}
-
-      - name: Save Xcode compilations
-        if: github.ref == 'refs/heads/main' && steps.compilations.outputs.cache-hit != 'true'
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: apps/apple/DerivedData/Make/CompilationCache.noindex
-          key: ${{ steps.compilations.outputs.cache-primary-key }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version-file: package.json
-
-      - name: Check String Catalogs
-        run: make -C apps/apple strings-check
-
-  test:
-    needs: changes
-    if: github.event_name == 'push' && needs.changes.outputs.changed == 'true'
-    runs-on: xcode-27
-    timeout-minutes: 35
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [baseline, lean]
+        replica: [1, 2]
     steps:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - name: Cache Swift packages
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      - name: Runner hardware
+        run: |
+          sysctl -n machdep.cpu.brand_string hw.ncpu hw.memsize
+          xcrun simctl list devices booted
+
+      - name: Restore Swift packages
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ runner.temp }}/apple-source-packages
           key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-${{ hashFiles('apps/apple/**/Package.resolved') }}
 
-      - name: Run unit tests
-        env:
-          XCODEBUILD_ARGUMENTS: >-
-            -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
-            -onlyUsePackageVersionsFromResolvedFile
-            -skipPackageUpdates
-            -resultBundlePath ${{ runner.temp }}/apple-unit-tests.xcresult
-        # The newest runtime the image installs, which can trail Xcode's SDK while a new image rolls out
-        # (xcodebuild's default OS is the SDK's).
+      - name: Boot simulator
         run: |
           udid=$(xcrun simctl list devices available --json | jq -r '[.devices | to_entries | sort_by(.key) | .[].value[] | select(.name == "iPhone 17")] | last | .udid')
-          make -C apps/apple test TEST_DESTINATION="platform=iOS Simulator,id=$udid"
+          echo "UDID=$udid" >> "$GITHUB_ENV"
+          xcrun simctl boot "$udid"
+          xcrun simctl bootstatus "$udid"
 
-      - name: Report unit test results
-        if: always()
-        shell: bash
+      - name: Build for testing
+        working-directory: apps/apple
         run: |
-          echo '```json' >> "$GITHUB_STEP_SUMMARY"
-          xcrun xcresulttool get test-results summary --path "$RUNNER_TEMP/apple-unit-tests.xcresult" | tee -a "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          extra=""
+          if [ "${{ matrix.variant }}" = lean ]; then
+            extra="COMPILER_INDEX_STORE_ENABLE=NO GCC_GENERATE_DEBUGGING_SYMBOLS=NO"
+          fi
+          xcodebuild -quiet -skipPackagePluginValidation -packageAuthorizationProvider netrc \
+            -derivedDataPath DerivedData/Make \
+            -clonedSourcePackagesDirPath "$RUNNER_TEMP/apple-source-packages" \
+            -onlyUsePackageVersionsFromResolvedFile -skipPackageUpdates \
+            -project Zoonk.xcodeproj -scheme Zoonk -destination "platform=iOS Simulator,id=$UDID" \
+            CODE_SIGNING_ALLOWED=NO $extra -only-testing:ZoonkTests build-for-testing
+
+      - name: Run tests
+        working-directory: apps/apple
+        run: |
+          parallel="-parallel-testing-enabled NO"
+          if [ "${{ matrix.variant }}" = lean ]; then
+            parallel="-parallel-testing-enabled YES -parallel-testing-worker-count 2"
+          fi
+          xcodebuild -quiet -skipPackagePluginValidation -packageAuthorizationProvider netrc \
+            -derivedDataPath DerivedData/Make \
+            -clonedSourcePackagesDirPath "$RUNNER_TEMP/apple-source-packages" \
+            -onlyUsePackageVersionsFromResolvedFile -skipPackageUpdates \
+            -project Zoonk.xcodeproj -scheme Zoonk -destination "platform=iOS Simulator,id=$UDID" \
+            -resultBundlePath "$RUNNER_TEMP/unit.xcresult" \
+            CODE_SIGNING_ALLOWED=NO $parallel -only-testing:ZoonkTests test-without-building
+
+      - name: Summarize
+        if: always()
+        run: |
+          xcrun xcresulttool get test-results tests --path "$RUNNER_TEMP/unit.xcresult" > "$RUNNER_TEMP/tests.json"
+          jq -r '[.. | objects | select(.nodeType=="Test Case") | {id:.nodeIdentifier, d:.durationInSeconds}] | "sum=\(map(.d)|add) count=\(length)", (sort_by(-.d) | .[0:25][] | "\(.d)  \(.id)")' "$RUNNER_TEMP/tests.json"
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: unit-${{ matrix.variant }}-${{ matrix.replica }}
+          path: |
+            ${{ runner.temp }}/tests.json
+            ${{ runner.temp }}/unit.xcresult
+          retention-days: 3
