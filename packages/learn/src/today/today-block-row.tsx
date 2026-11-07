@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { TargetIcon } from "lucide-react";
+import { Loader2Icon, TargetIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
 import { PlusMark } from "../_components/plus-lock";
@@ -49,7 +49,7 @@ export function getRowClass({
   isNext: boolean;
 }): string {
   return cn(
-    "relative isolate flex items-center gap-3 border-b transition-opacity last:border-b-0 has-aria-busy:opacity-60 has-[+[aria-current=step]]:border-b-0",
+    "group/row relative isolate flex items-center gap-3 border-b last:border-b-0 has-[+[aria-current=step]]:border-b-0",
     "has-[[data-slot=today-row-open]:hover]:before:bg-muted/70 before:pointer-events-none before:absolute before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem] before:transition-colors",
     finished ? "py-[9px]" : "py-2.75",
     isNext
@@ -57,6 +57,26 @@ export function getRowClass({
       : "before:-inset-x-2.5",
     fold.hidden && fold.phone && "max-sm:hidden",
     fold.hidden && fold.wide && "hidden",
+  );
+}
+
+/**
+ * While the row's own open runs, its time turns into the spinner in place. The row is its own
+ * group: the next row also holds "Take the test", a busy button of its own.
+ */
+function RowTime({ minutes }: { minutes: number }) {
+  const formatDuration = useFormatDuration();
+
+  return (
+    <span className="relative">
+      <span className="group-has-[[data-slot=today-row-open][aria-busy=true]]/row:invisible">
+        {formatDuration(minutes)}
+      </span>
+      <Loader2Icon
+        aria-hidden="true"
+        className="absolute inset-y-0 right-0 my-auto hidden size-3.5 animate-spin group-has-[[data-slot=today-row-open][aria-busy=true]]/row:block"
+      />
+    </span>
   );
 }
 
@@ -191,7 +211,6 @@ export function BlockRow({
   isNext: boolean;
   opens?: boolean;
 }) {
-  const formatDuration = useFormatDuration();
   const finished = isFinished(block);
   const countsTowardMission = useCountsTowardMission()(block);
   const wait = block.waitReason;
@@ -231,7 +250,7 @@ export function BlockRow({
               data-slot="mission-row-mark"
             />
           )}
-          {formatDuration(block.estimatedMinutes)}
+          <RowTime minutes={block.estimatedMinutes} />
         </span>
       )}
     </li>
@@ -249,7 +268,6 @@ export function PlanLessonRow({
   onOpen: (() => void) | null;
   title: string;
 }) {
-  const formatDuration = useFormatDuration();
   const isNext = onOpen !== null;
 
   const name = (
@@ -281,7 +299,7 @@ export function PlanLessonRow({
       )}
 
       <span className="text-muted-foreground flex h-5 shrink-0 items-center font-mono text-xs tabular-nums">
-        {formatDuration(minutes)}
+        <RowTime minutes={minutes} />
       </span>
     </li>
   );

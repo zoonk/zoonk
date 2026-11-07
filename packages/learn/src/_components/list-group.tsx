@@ -101,14 +101,22 @@ export function ListRowButton({
   return (
     <button
       aria-disabled={disabled || undefined}
-      className={cn(LIST_ROW_INTERACTIVE_CLASS, "aria-disabled:pointer-events-none", className)}
+      className={cn(
+        LIST_ROW_INTERACTIVE_CLASS,
+        "group/busy aria-disabled:not-aria-busy:pointer-events-none",
+        className,
+      )}
       data-slot="list-row"
       onClick={disabled ? undefined : onClick}
       type="button"
       {...props}
     >
       {children}
-      {chevron && <ListRowChevron />}
+      {chevron && (
+        <BusyIcon className="text-muted-foreground self-center">
+          <ListRowChevron />
+        </BusyIcon>
+      )}
     </button>
   );
 }
