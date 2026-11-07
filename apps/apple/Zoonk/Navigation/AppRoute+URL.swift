@@ -84,6 +84,7 @@ enum AppLink: Equatable {
     case (2, "plan-link", let planId, _): return .route(.planLink(planId: planId))
     case (1, "settings", _, _): return .sheet(.account())
     case (2, "settings", "memory", _): return .sheet(.account(.memory))
+    case (2, "settings", "reminders", _): return .sheet(.account(.reminders))
     case (2, "settings", "appearance", _): return .sheet(.account(.preferences))
     case (1, "profile", _, _): return .sheet(.account(.profile))
     case (1, "subscription", _, _): return .sheet(.subscription)

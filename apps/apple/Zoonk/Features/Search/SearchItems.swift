@@ -304,6 +304,10 @@ private func settingsGroup(isGuest: Bool) -> SearchGroup {
       String(localized: "Preferences", table: "Search", comment: "Search row for Preferences"),
       "slider.horizontal.3", page: .preferences),
     setting(
+      "reminders",
+      String(localized: "Reminders", table: "Search", comment: "Search row for study reminders"),
+      "bell", page: .reminders),
+    setting(
       "memory",
       String(localized: "Memory", table: "Search", comment: "Search row for what Zoonk remembers"),
       "brain", page: .memory),
