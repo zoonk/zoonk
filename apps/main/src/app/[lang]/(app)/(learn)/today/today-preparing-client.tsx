@@ -10,7 +10,15 @@ import { TodayPreparing } from "@zoonk/learn/today/preparing";
  * "Try again" starts the run only on the learner's tap. Its own module, so the wait's code loads only
  * for a goal being prepared.
  */
-export function TodayPreparingClient({ goalId, goalTitle }: { goalId: string; goalTitle: string }) {
+export function TodayPreparingClient({
+  banner,
+  goalId,
+  goalTitle,
+}: {
+  banner: React.ReactNode;
+  goalId: string;
+  goalTitle: string;
+}) {
   const router = useRouter();
 
   const run = useWorkflowRun({
@@ -21,5 +29,12 @@ export function TodayPreparingClient({ goalId, goalTitle }: { goalId: string; go
     restart: () => retryGenerationAction(goalId),
   });
 
-  return <TodayPreparing goalTitle={goalTitle} onRefresh={() => router.refresh()} run={run} />;
+  return (
+    <TodayPreparing
+      banner={banner}
+      goalTitle={goalTitle}
+      onRefresh={() => router.refresh()}
+      run={run}
+    />
+  );
 }

@@ -10,11 +10,18 @@ export async function isOnboardingLeft(goalId: string): Promise<boolean> {
   return result.status === "ready" && result.onboarding.steps.some((step) => step !== "plan");
 }
 
-export async function TodayOnboardingLeft({ goal }: { goal: { id: string; title: string } }) {
+export async function TodayOnboardingLeft({
+  banner,
+  goal,
+}: {
+  banner: React.ReactNode;
+  goal: { id: string; title: string };
+}) {
   const t = await getExtracted();
 
   return (
     <TodayAtRest
+      banner={banner}
       actions={
         <Link className={buttonVariants({ size: "lg" })} href={`/start/${goal.id}`}>
           {t("Continue setting up")}

@@ -30,7 +30,6 @@ import { type TodayHostNotices, TodayScreen } from "@zoonk/learn/today";
 import { TodayChangeNotice } from "@zoonk/learn/today/change-notice";
 import { SuggestedGoalOffer } from "@zoonk/learn/today/suggested-goal";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { type ReminderGoal, ReminderGoalNotice } from "./reminder-goal-notice";
 import { type TodayScreenData } from "./today-view";
 import { useDecidePlanChange } from "./use-decide-plan-change";
 
@@ -113,14 +112,14 @@ function toTapSteps(data: TodayScreenData): TapStep[] {
 
 /** The page keys it by goal and day, so a new day (midnight, a goal switch) draws fresh. */
 export function TodayClient({
+  banner,
   data,
   readAt,
-  reminderGoal,
   userId,
 }: {
+  banner: React.ReactNode;
   data: TodayScreenData;
   readAt: number;
-  reminderGoal: ReminderGoal | null;
   userId: string;
 }) {
   const router = useRouter();
@@ -176,7 +175,7 @@ export function TodayClient({
 
   return (
     <TodayScreen
-      banner={reminderGoal && <ReminderGoalNotice goal={reminderGoal} />}
+      banner={banner}
       level={data.language?.level ?? null}
       readAt={readAt}
       actions={{

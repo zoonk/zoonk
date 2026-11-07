@@ -166,4 +166,52 @@ test.describe("Study reminders", () => {
     await expect(readActiveGoalId(day.user.id)).resolves.toBe(day.goal.id);
     await page.context().close();
   });
+
+  test("Today can't start the previous goal while a reminder's switch is on its way", async ({
+    browser,
+  }) => {
+    const day = await createStudyDay();
+    const other = await addOtherGoal(day.user.id);
+
+    const block = await prisma.studySessionBlock.findFirstOrThrow({
+      orderBy: { position: "asc" },
+      where: { sessionId: day.session.id },
+    });
+
+    const page = await openAs(browser, day.user);
+    await page.goto(`/today?goal=${other.id}`);
+
+    const switchGoal = page.getByRole("button", { name: "Switch to this goal" });
+    const start = page.getByRole("button", { name: /^(?:Start|Continue)/u });
+    await expectHydrated(switchGoal);
+
+    const held = Promise.withResolvers<null>();
+    const sent = Promise.withResolvers<null>();
+
+    await page.route("**/*", async (route) => {
+      const request = route.request();
+
+      if (request.headers()["next-action"] && request.postData()?.includes(other.id)) {
+        sent.resolve(null);
+        await held.promise;
+      }
+
+      await route.continue();
+    });
+
+    await switchGoal.click();
+    await sent.promise;
+    await start.click({ force: true });
+    await page.keyboard.press("Enter");
+    held.resolve(null);
+
+    await expect(page).toHaveURL(/\/today$/u);
+    await expect.poll(() => readActiveGoalId(day.user.id)).toBe(other.id);
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+    ).resolves.toMatchObject({ startedAt: null });
+
+    await page.context().close();
+  });
 });

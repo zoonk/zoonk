@@ -21,7 +21,7 @@ import { getExtracted } from "next-intl/server";
 import { cookies } from "next/headers";
 import { Suspense } from "react";
 import { LearnNotFound } from "../_components/learn-not-found";
-import { type ReminderGoal } from "./reminder-goal-notice";
+import { type ReminderGoal, ReminderGoalNotice } from "./reminder-goal-notice";
 import { SuggestedGoalClient, TodayClient } from "./today-client";
 import { TodayGoalPaused } from "./today-goal-paused";
 import { getLocalDay } from "./today-local-day";
@@ -163,6 +163,7 @@ async function findReminderGoal(goalParam: unknown): Promise<ReminderGoal | null
 async function TodayContent({ searchParams }: Pick<PageProps<"/[lang]/today">, "searchParams">) {
   const { goal } = await searchParams;
   const [result, reminderGoal] = await Promise.all([loadTodayScreen(), findReminderGoal(goal)]);
+  const banner = reminderGoal && <ReminderGoalNotice goal={reminderGoal} />;
 
   if (result.status === "noGoal") {
     return result.suggestedGoal ? (
@@ -182,11 +183,11 @@ async function TodayContent({ searchParams }: Pick<PageProps<"/[lang]/today">, "
   }
 
   if (result.status === "goalNotActive") {
-    return <TodayGoalPaused />;
+    return <TodayGoalPaused banner={banner} />;
   }
 
   if (result.status === "preparing") {
-    return <TodayPreparingState goal={result.goal} />;
+    return <TodayPreparingState banner={banner} goal={result.goal} />;
   }
 
   if (result.status !== "ready") {
@@ -201,20 +202,26 @@ async function TodayContent({ searchParams }: Pick<PageProps<"/[lang]/today">, "
     <TodayClient
       data={result.data}
       key={result.day}
+      banner={banner}
       readAt={result.readAt}
-      reminderGoal={reminderGoal}
       userId={result.userId}
     />
   );
 }
 
-async function TodayPreparingState({ goal }: { goal: { id: string; title: string } }) {
+async function TodayPreparingState({
+  banner,
+  goal,
+}: {
+  banner: React.ReactNode;
+  goal: { id: string; title: string };
+}) {
   // A goal left halfway through its questions has no plan coming until they're answered.
   if (await isOnboardingLeft(goal.id)) {
-    return <TodayOnboardingLeft goal={goal} />;
+    return <TodayOnboardingLeft banner={banner} goal={goal} />;
   }
 
-  return <TodayPreparingClient goalId={goal.id} goalTitle={goal.title} />;
+  return <TodayPreparingClient banner={banner} goalId={goal.id} goalTitle={goal.title} />;
 }
 
 export default function TodayPage({ searchParams }: PageProps<"/[lang]/today">) {

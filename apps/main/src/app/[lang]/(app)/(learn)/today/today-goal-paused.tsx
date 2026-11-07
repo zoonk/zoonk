@@ -19,7 +19,7 @@ async function loadResumePreview(goal: { id: string; status: string } | undefine
   return result.status === "ready" ? result.preview : false;
 }
 
-export async function TodayGoalPaused() {
+export async function TodayGoalPaused({ banner }: { banner: React.ReactNode }) {
   const t = await getExtracted();
   const locale = await getAppLocale();
   const list = await listCurrentUserGoals();
@@ -32,6 +32,7 @@ export async function TodayGoalPaused() {
   if (goal?.status === "completed") {
     return (
       <TodayAtRest
+        banner={banner}
         actions={
           <Link className={buttonVariants({ size: "lg" })} href="/start">
             {t("Start a new goal")}
@@ -49,6 +50,7 @@ export async function TodayGoalPaused() {
 
   return (
     <TodayAtRest
+      banner={banner}
       actions={
         <>
           {goal && <ResumeGoalButton goalId={goal.id} goalTitle={goal.title} key={goal.id} />}

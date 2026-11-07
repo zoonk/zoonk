@@ -29,6 +29,7 @@ export function TodayPageHeader({
 /** Pausing a goal never swaps the page for another. */
 export function TodayAtRest({
   actions,
+  banner = null,
   clause,
   date,
   detail,
@@ -38,6 +39,7 @@ export function TodayAtRest({
   title,
 }: {
   actions: React.ReactNode;
+  banner?: React.ReactNode;
   clause: string;
   date: string | null;
   detail?: React.ReactNode;
@@ -48,6 +50,7 @@ export function TodayAtRest({
 }) {
   return (
     <Page className="gap-5" data-slot="today-goal-at-rest">
+      {banner}
       <TodayPageHeader date={date} state={state} title={title} />
 
       <div className="flex flex-col gap-4">

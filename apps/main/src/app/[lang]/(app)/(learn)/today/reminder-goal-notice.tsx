@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { useGoalSwitchTransition } from "@zoonk/learn/goal-switcher";
 import {
   NoticeCard,
   NoticeCardActions,
@@ -11,7 +12,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
 import { ArrowRightLeftIcon, BellIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { switchGoal } from "../_components/switch-goal";
 
 export type ReminderGoal = { id: string; title: string };
@@ -20,7 +21,7 @@ export function ReminderGoalNotice({ goal }: { goal: ReminderGoal }) {
   const t = useExtracted();
   const router = useRouter();
   const [failed, setFailed] = useState(false);
-  const [isSwitching, startSwitching] = useTransition();
+  const [isSwitching, startSwitching] = useGoalSwitchTransition();
 
   const switchToGoal = () =>
     startSwitching(async () => {
