@@ -11,7 +11,7 @@ Everything you return is checked in code: each claim quotes a passage copied wor
   - `document` and `passage`: a page and a passage from its text that names the brand, such as a copyright line. Document titles aren't part of the text.
   - `steward`: true when the pages show the maker only stewards the product: a foundation or a community that runs a programming language, a standard or an open-source project without selling or promoting it as its own. False for a company, or a nonprofit that markets the product the way a company would.
 - `product`: the product the pages are about, or null when none of them is about the product in `PRODUCT`.
-  - `name`: the product's name exactly as the maker writes it, without a release or model.
+  - `name`: the product's name exactly as the maker writes it, without a release or model. When the pages also call the product by the name in `PRODUCT`, use that name, and put the maker's longer forms, such as a product line's or an edition's name, in `aliases`.
   - `description`: one or two neutral sentences in English on what it is and what people do with it, without claims of quality.
   - `aliases`: other names the pages use for the same product (a short form, an older name), not its releases. Empty when there are none.
   - `document` and `passage`: a page and a passage from it that names the product.
