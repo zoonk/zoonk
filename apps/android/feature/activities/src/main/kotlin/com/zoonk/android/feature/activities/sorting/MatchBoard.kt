@@ -14,11 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 
-/**
- * A match board while it's played: each side's cards in a list, the lists side by side while the board has room for
- * the learner's text size, else the right list under the left. With [alignRows], side by side, a card shares its row
- * and height with the card across from it.
- */
+/** With [alignRows], side by side, a card shares its row and height with the card across from it. */
 @Composable
 internal fun <T : Any> MatchBoard(
     left: List<T>,
@@ -50,7 +46,6 @@ internal fun <T : Any> MatchBoard(
     }
 }
 
-/** A solved match board: each left card with its partner, beside it or above it as [MatchBoard] decides, and a card with no partner alone. */
 @Composable
 internal fun <T : Any> SolvedMatchBoard(
     pairs: List<Pair<T?, T?>>,
@@ -74,8 +69,8 @@ internal fun <T : Any> SolvedMatchBoard(
 }
 
 /**
- * Side by side only while a matched card keeps a ten-letter word whole beside its check mark, as main's 18rem board
- * does: 288dp at default text, growing with the learner's text size.
+ * Side by side only while a matched card keeps a ten-letter word whole beside its check mark: 288dp at default text,
+ * growing with the learner's text size.
  */
 @Composable
 private fun BoardWidth(
