@@ -33,6 +33,13 @@ struct MindMapsScreen: View {
         ZoonkList {
           header(maps, goal: goal)
 
+          // Locked rows don't each offer Plus: this says it once.
+          if maps.chapters.contains(where: { $0.status == .plusRequired }) {
+            Section {
+              FreeWeekOverNotice()
+            }
+          }
+
           ForEach(groups(maps.chapters), id: \.key) { group in
             Section {
               ForEach(group.maps) { map in

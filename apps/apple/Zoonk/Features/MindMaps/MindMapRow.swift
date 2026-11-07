@@ -32,6 +32,13 @@ struct MindMapRow: View {
         Button(action: open) {
           row.disclosureChevron()
         }
+      } else if place == .library, shown == .plusRequired {
+        // The page's notice has the one See Plus; the row leads to the same place.
+        Button {
+          router.present(.subscription)
+        } label: {
+          row
+        }
       } else {
         row
       }
@@ -107,7 +114,7 @@ struct MindMapRow: View {
           .typeStyle(.rowTitle)
           .foregroundStyle(Color(.foreground))
 
-        if shown == .plusRequired {
+        if shown == .plusRequired, place != .library {
           PlusMark()
         }
       }
@@ -162,7 +169,11 @@ struct MindMapRow: View {
           String(
             localized: "As text", table: "MindMaps",
             comment: "A map on the mind maps page whose picture failed, so it opens as its outline")
-        case .create, .ready, .plusRequired: nil
+        case .plusRequired:
+          String(
+            localized: "Plus", table: "Subscriptions",
+            comment: "Mark on a feature that comes with Zoonk Plus")
+        case .create, .ready: nil
         default: waitLine ?? stateLine(ready: nil)
         }
 
@@ -268,11 +279,11 @@ struct MindMapRow: View {
       }
       .buttonStyle(.outline)
       .controlSize(.small)
-    case .plusRequired:
+    case .plusRequired where place != .library:
       SeePlusButton()
         .buttonStyle(.outline)
         .controlSize(.small)
-    case .ready, .writingLessons, .drawing:
+    case .ready, .plusRequired, .writingLessons, .drawing:
       EmptyView()
     }
   }
