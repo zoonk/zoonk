@@ -146,7 +146,7 @@ internal fun LazyListScope.todaySession(
     item(key = "status", contentType = "status") { TodayDayStatus(model, actions, Modifier.pageItem().padding(top = 12.dp)) }
 
     if (model.upNext.isNotEmpty()) {
-        upNext(model.upNext, busy = viewModel.pending == TodayTap.KeepLearning, actions)
+        upNext(model.upNext, viewModel.pending, failed = viewModel.failed == TodayTap.UpNext, actions)
     }
 
     item(key = "more", contentType = "more") { TodayMore(model, viewModel, actions, buddyName, Modifier.pageItem().padding(top = 16.dp)) }
@@ -360,7 +360,8 @@ private fun ComingLessonsLine(
 
 private fun LazyListScope.upNext(
     lessons: List<StudyExtraTimeLessonsInner>,
-    busy: Boolean,
+    pending: TodayTap?,
+    failed: Boolean,
     actions: TodayActionHandlers,
 ) {
     item(key = "up-next-title", contentType = "title") {
@@ -371,10 +372,12 @@ private fun LazyListScope.upNext(
         val first = index == 0
         QueueRow(
             isNext = first,
-            busy = first && busy,
-            onClick = if (first) actions.keepLearning else null,
+            busy = first && pending == TodayTap.UpNext,
+            enabled = pending == null || pending == TodayTap.UpNext,
+            onClick = if (first) actions.upNext else null,
             modifier = Modifier.pageRow(),
             leading = { KindMark(LearnKind.Lesson) },
+            supporting = if (first && failed) ({ StepOpenFailed() }) else null,
             meta = { Minutes(lesson.minutes) },
         ) {
             Text(text = lesson.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -611,6 +614,7 @@ private fun QueueRow(
     leading: @Composable () -> Unit,
     isNext: Boolean = false,
     busy: Boolean = false,
+    enabled: Boolean = true,
     divider: Boolean = true,
     stateDescription: String? = null,
     supporting: (@Composable () -> Unit)? = null,
@@ -621,6 +625,7 @@ private fun QueueRow(
         ListRow(
             headline = headline,
             onClick = onClick,
+            enabled = enabled,
             busy = busy,
             highlighted = isNext,
             stateDescription = stateDescription,

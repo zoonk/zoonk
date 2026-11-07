@@ -37,8 +37,11 @@ sealed interface TodayTap {
         val position: Long,
     ) : TodayTap
 
-    /** "Keep learning", "Practice for N minutes" and the up-next list's first row: one request. */
+    /** "Keep learning" and "Practice for N minutes". */
     data object KeepLearning : TodayTap
+
+    /** The up-next list's first row: Keep learning's request, waited on in the row. */
+    data object UpNext : TodayTap
 
     /** "Get today's lessons" on a day nobody is writing yet. */
     data object Prepare : TodayTap
@@ -78,10 +81,12 @@ class TodayViewModel(
         if (blockId == null) opener.open(read.day, step, false, read.today.goal.id) else opener.openMission(blockId)
     }
 
-    fun keepLearning(read: TodayRead.Day) =
-        run(read, TodayTap.KeepLearning) {
-            opener.addExtraTime(read.day, read.today.goal.id)
-        }
+    fun keepLearning(
+        read: TodayRead.Day,
+        fromUpNext: Boolean = false,
+    ) = run(read, if (fromUpNext) TodayTap.UpNext else TodayTap.KeepLearning) {
+        opener.addExtraTime(read.day, read.today.goal.id)
+    }
 
     fun prepareLessons(read: TodayRead.Day) =
         run(read, TodayTap.Prepare) {

@@ -4,10 +4,17 @@ import android.graphics.Bitmap
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasAnySibling
+import androidx.compose.ui.test.hasProgressBarRangeInfo
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -38,6 +45,7 @@ import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.StudySessionSummary
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -76,6 +84,8 @@ class TodayFlowTest {
     private val lesson = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d31"
     private val lessonBlock = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d41"
     private val reviewBlock = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d42"
+    private val opening = OpeningApi()
+    private val spinning = hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate)
 
     private fun show(
         vararg sessionFields: Pair<String, Any?>,
@@ -127,7 +137,7 @@ class TodayFlowTest {
         val store = TodayStore(todayApi, cache, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate), timeZone = { "UTC" })
         val viewModel =
             TodayViewModel(
-                StudyOpener(OpeningApi(), { _, _ -> error("Not used") }, cache, timeZone = { "UTC" }),
+                StudyOpener(opening, { _, _ -> error("Not used") }, cache, timeZone = { "UTC" }),
                 store,
                 PlanStore(plans, cache),
             )
@@ -263,6 +273,48 @@ class TodayFlowTest {
         rule.onNodeWithText("Taking longer than usual").assertExists()
     }
 
+    @Test
+    fun theUpNextRowSpinsAloneWhileKeepLearningWaits() {
+        show("state" to "done", "extraTime" to upNext())
+
+        rule.onNodeWithText("Membranes").performClick()
+        rule.waitForIdle()
+
+        rule.onAllNodes(spinning, useUnmergedTree = true).assertCountEquals(1)
+        rule.onAllNodes(spinning and hasAnySibling(hasText("Keep learning")), useUnmergedTree = true).assertCountEquals(0)
+        rule.onNodeWithText("Keep learning").assertIsNotEnabled()
+    }
+
+    @Test
+    fun keepLearningSpinsAloneWhileTheUpNextRowWaits() {
+        show("state" to "done", "extraTime" to upNext())
+
+        rule.onNodeWithText("Keep learning").performClick()
+        rule.waitForIdle()
+
+        rule.onAllNodes(spinning, useUnmergedTree = true).assertCountEquals(1)
+        rule.onAllNodes(spinning and hasAnySibling(hasText("Keep learning")), useUnmergedTree = true).assertCountEquals(1)
+        rule.onNodeWithText("Membranes").assertIsNotEnabled()
+    }
+
+    private fun upNext() =
+        buildJsonObject {
+            put("available", true)
+            put(
+                "lessons",
+                JsonArray(
+                    listOf(
+                        buildJsonObject {
+                            put("minutes", 5)
+                            put("title", "Membranes")
+                        },
+                    ),
+                ),
+            )
+            put("minutes", 5)
+            put("reason", JsonNull)
+        }
+
     private fun practiceOnly() =
         JsonArray(
             listOf(
@@ -293,6 +345,9 @@ class TodayFlowTest {
     }
 
     private class OpeningApi : StudyApi {
+        /** Holds the block "Keep learning" adds, so its wait stays on screen. */
+        val extraBlockGate = CompletableDeferred<Unit>()
+
         override suspend fun openDay(
             session: AuthenticatedSession,
             goalId: UUID,
@@ -320,7 +375,10 @@ class TodayFlowTest {
         override suspend fun addExtraBlock(
             session: AuthenticatedSession,
             sessionId: UUID,
-        ): StudyBlock = error("Not used")
+        ): StudyBlock {
+            extraBlockGate.await()
+            error("Not used")
+        }
 
         override suspend fun catchUp(
             session: AuthenticatedSession,
