@@ -28,6 +28,11 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     goal: "tenho um iPhone 13 e quero aprender a tirar fotos melhores com ele",
     language: "pt",
   }),
+  testCase("pt-learn-version-kept-in-long-goal", {
+    expected: { goals: [{ kind: "learn", title: /12\.1\.2410/u }], route: "goals" },
+    goal: "Uso o Protheus 12.1.2410 no trabalho e quero dominar o módulo de compras",
+    language: "pt",
+  }),
   testCase("en-learn-no-version-invented", {
     expected: { goals: [{ kind: "learn", title: /^(?!.*\d).*docker/iu }], route: "goals" },
     goal: "I want to use Docker Desktop better at work",
