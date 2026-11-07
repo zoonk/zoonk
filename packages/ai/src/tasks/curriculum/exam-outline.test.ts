@@ -122,6 +122,15 @@ const OAB: ExamOutline = {
 };
 
 describe(placeInExam, () => {
+  it.each(["- ", "  - ", "\t-\t", "* ", "+ ", "• ", " \t"])(
+    "reads a topic line prefixed with %j",
+    (prefix) => {
+      expect(
+        placeInExam({ area: "", outline, topics: [`${prefix}S2.1 Regimes políticos`] }),
+      ).toStrictEqual({ area: "Ciência Política", topics: ["Regimes políticos"] });
+    },
+  );
+
   it.each([" ", "\t", "\n", "\u00A0"])(
     "reads a leading topic id separated from its text by %j",
     (separator) => {
@@ -142,12 +151,22 @@ describe(placeInExam, () => {
     },
   );
 
-  it.each(["S0.1 text", "S1.0 text", "S1.99 text", "S99.1 text", "S1.1extra", "S1.1.1 text"])(
-    "rejects an invalid or out-of-range leading topic id: %s",
-    (topic) => {
-      expect(placeInExam({ area: "", outline, topics: [topic] }).topics).toStrictEqual([]);
-    },
-  );
+  it.each([
+    "S0.1 text",
+    "S1.0 text",
+    "S1.99 text",
+    "S99.1 text",
+    "S1.1extra",
+    "S1.1.1 text",
+    "- S0.1 text",
+    "- S1.99 text",
+    "- S1.1extra",
+    "- S1.1.1 text",
+    "-S1.1 text",
+    "prefix S1.1 text",
+  ])("rejects an invalid or out-of-range leading topic id: %s", (topic) => {
+    expect(placeInExam({ area: "", outline, topics: [topic] }).topics).toStrictEqual([]);
+  });
 
   it("places an area named as learners call a subject in that subject", () => {
     expect(placeInExam({ area: "Ética Profissional", outline: OAB, topics: [] })).toStrictEqual({

@@ -1,7 +1,7 @@
 import { type TestCase } from "@/lib/types";
 import { type SkillGraphCase, type SkillGraphExpected } from "./library-cases";
 
-export const DISCIPLINE_ALIAS_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
+const BUDGET_ALIAS_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
   "Orçamento Público",
   "Administração Financeira e Orçamentária",
   "AFO",
@@ -18,6 +18,11 @@ export const DISCIPLINE_ALIAS_CASES: TestCase<SkillGraphExpected, SkillGraphCase
       ["Direito Financeiro"],
       ["Contabilidade Pública"],
     ],
+    coursesByArea: {
+      "Contabilidade Pública": ["Contabilidade Pública"],
+      "Direito Financeiro": ["Direito Financeiro"],
+      [name]: ["Administração Financeira e Orçamentária"],
+    },
     noCourses: ["Orçamento Público", "AFO"],
   },
   id: `pt-alce-budget-catalog-${index + 1}`,
@@ -62,3 +67,54 @@ export const DISCIPLINE_ALIAS_CASES: TestCase<SkillGraphExpected, SkillGraphCase
     language: "pt",
   },
 }));
+
+const COMPUTING_ALIAS_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
+  "Noções de Informática",
+  "Informática",
+].map((name, index) => ({
+  expectations: `
+    - Write in Brazilian Portuguese.
+    - Noções de Informática and Informática name the same discipline in public-service notices. Its shared course is titled exactly Informática under either notice heading, with no second course under the alias.
+    - The notice tests everyday computing knowledge, not computer science or programming. All computing skills belong to Informática.
+    - Arquivologia is a separate discipline: archival classification and appraisal stay in its own course, even though computing also covers files and folders.
+    - Areas retain the notice's exact subject names.
+  `,
+  expected: {
+    courses: [["Informática"], ["Arquivologia"]],
+    coursesByArea: { Arquivologia: ["Arquivologia"], [name]: ["Informática"] },
+    noCourses: ["Noções de Informática", "Ciência da Computação"],
+  },
+  id: `pt-computing-alias-${index + 1}`,
+  userInput: {
+    examBlueprint: {
+      name: "Disciplinas de concurso público",
+      notes: [],
+      subjects: [
+        {
+          group: null,
+          name,
+          questions: 10,
+          topics: [
+            "Organização e gerenciamento de arquivos e pastas no Windows",
+            "Edição de textos, planilhas e apresentações no Microsoft Office",
+            "Navegação na internet e uso de correio eletrônico",
+          ],
+          weight: null,
+        },
+        {
+          group: null,
+          name: "Arquivologia",
+          questions: 5,
+          topics: ["Classificação e avaliação de documentos de arquivo"],
+          weight: null,
+        },
+      ],
+      topicFrequency: [],
+    },
+    goal: "Preparação para concurso público",
+    goalKind: "exam",
+    language: "pt",
+  },
+}));
+
+export const DISCIPLINE_ALIAS_CASES = [...BUDGET_ALIAS_CASES, ...COMPUTING_ALIAS_CASES];

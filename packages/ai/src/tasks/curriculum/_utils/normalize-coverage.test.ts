@@ -159,50 +159,53 @@ const outline = {
 };
 
 describe("an exam's notice", () => {
-  it.each(["S1.1", "S1.1 1 Crimes de falsidade documental"])(
-    "keeps the model's missing skill when its source is %s",
-    (syllabusLine) => {
-      const topic = "1 Crimes de falsidade documental";
+  it.each([
+    "S1.1",
+    "S1.1 1 Crimes de falsidade documental",
+    "- S1.1 1 Crimes de falsidade documental",
+    "  - S1.1 1 Crimes de falsidade documental",
+    "\tS1.1 1 Crimes de falsidade documental",
+  ])("keeps the model's missing skill when its source is %s", (syllabusLine) => {
+    const topic = "1 Crimes de falsidade documental";
 
-      const result = normalizeCoverage({
-        exam: true,
-        graphSkills: [{ key: "documents", name: "Reconhecer documentos públicos" }],
-        missing: [
-          missing({
-            area: "Direito Penal",
-            description: "Reconhecer os crimes de falsidade documental.",
-            examWeight: 4,
-            name: "Identificar crimes de falsidade documental",
-            prerequisites: ["documents"],
-            syllabusLine,
-            topics: ["S1.1"],
-          }),
-        ],
-        outline: {
-          name: "Concurso PC-SP, Escrivão",
-          notes: [],
-          subjects: [
-            { group: null, name: "Direito Penal", questions: 10, topics: [topic], weight: null },
-          ],
-          topicFrequency: [],
-        },
-        references: [],
-      });
-
-      expect(result).toStrictEqual([
-        {
+    const result = normalizeCoverage({
+      exam: true,
+      graphSkills: [{ key: "documents", name: "Reconhecer documentos públicos" }],
+      missing: [
+        missing({
           area: "Direito Penal",
           description: "Reconhecer os crimes de falsidade documental.",
           examWeight: 4,
           name: "Identificar crimes de falsidade documental",
           prerequisites: ["documents"],
-          reference: "Concurso PC-SP, Escrivão",
-          syllabusLine: topic,
-          topics: [topic],
-        },
-      ]);
-    },
-  );
+          syllabusLine,
+          topics: ["S1.1"],
+        }),
+      ],
+      outline: {
+        name: "Concurso PC-SP, Escrivão",
+        notes: [],
+        subjects: [
+          { group: null, name: "Direito Penal", questions: 10, topics: [topic], weight: null },
+        ],
+        topicFrequency: [],
+      },
+      references: [],
+    });
+
+    expect(result).toStrictEqual([
+      {
+        area: "Direito Penal",
+        description: "Reconhecer os crimes de falsidade documental.",
+        examWeight: 4,
+        name: "Identificar crimes de falsidade documental",
+        prerequisites: ["documents"],
+        reference: "Concurso PC-SP, Escrivão",
+        syllabusLine: topic,
+        topics: [topic],
+      },
+    ]);
+  });
 
   it("keeps a gap quoting a notice topic by its id, in the notice's subject and words", () => {
     const result = normalizeCoverage({

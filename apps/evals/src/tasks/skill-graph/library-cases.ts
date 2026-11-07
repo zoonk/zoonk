@@ -16,6 +16,7 @@ export type SkillGraphCase = Omit<SkillGraphParams, "findLibrarySkills"> & {
  * courses it must have, each as the catalog titles accepted for one discipline.
  */
 export type SkillGraphExpected = {
+  coursesByArea?: Record<string, string[]>;
   courses?: string[][];
   noCourses?: string[];
   noReuse?: string[];
