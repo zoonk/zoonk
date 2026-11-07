@@ -207,7 +207,7 @@ struct AccountDeletionView: View {
       }
     } else {
       Section {
-        BusyButton(isBusy: session.isWorking, role: .destructive, isRow: true) {
+        BusyButton(isBusy: isPerformingDeletion, role: .destructive, isRow: true) {
           pendingDeletion = .direct
           isConfirmingDeletion = true
         } label: {
@@ -217,6 +217,7 @@ struct AccountDeletionView: View {
             comment: "Starts permanent account deletion")
         }
         .foregroundStyle(.destructiveText)
+        .disabled(session.isWorking && !isPerformingDeletion)
       }
     }
   }
@@ -256,7 +257,7 @@ struct AccountDeletionView: View {
         )
         .disabled(session.isWorking)
 
-        BusyButton(isBusy: session.isWorking, role: .destructive, isRow: true) {
+        BusyButton(isBusy: isPerformingDeletion, role: .destructive, isRow: true) {
           pendingDeletion = .email
           isConfirmingDeletion = true
         } label: {
@@ -266,9 +267,9 @@ struct AccountDeletionView: View {
             comment: "Verifies the email code and permanently deletes the account")
         }
         .foregroundStyle(.destructiveText)
-        .disabled(normalizedCode.count != 6 && !session.isWorking)
+        .disabled((normalizedCode.count != 6 || session.isWorking) && !isPerformingDeletion)
 
-        BusyButton(isBusy: session.isWorking, isRow: true) {
+        BusyButton(isBusy: session.isWorking && !isPerformingDeletion, isRow: true) {
           Task {
             await sendEmailCode()
           }
@@ -278,6 +279,7 @@ struct AccountDeletionView: View {
             tableName: "Account",
             comment: "Sends a replacement account deletion verification code")
         }
+        .disabled(isPerformingDeletion)
       } else {
         BusyButton(isBusy: session.isWorking, isRow: true) {
           Task {
