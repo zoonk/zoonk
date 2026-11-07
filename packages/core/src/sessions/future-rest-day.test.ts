@@ -102,7 +102,7 @@ describe("an unstarted day after a plan change", () => {
     vi.useRealTimers();
   });
 
-  it("keeps today's blocks and says no session change for a future rest day", async () => {
+  it("rebuilds an unstarted day to hold lesson-writing time after a future rest day is added", async () => {
     const { before, goal, plan, timeZone } = await openPlannedSunday();
 
     const { changed, proposal } = await applyFutureRestDay({
@@ -117,8 +117,21 @@ describe("an unstarted day after a plan change", () => {
     });
 
     const savedPlan = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
-    expect.soft(after).toStrictEqual({ ...before, planVersion: savedPlan.version });
-    expect.soft(changed).toMatchObject({ change: { todaySession: null }, status: "updated" });
+
+    expect(after).toStrictEqual({
+      ...before,
+      blocks: after.blocks,
+      planVersion: savedPlan.version,
+      plannedMinutes: 25,
+    });
+
+    expect(after.blocks).toMatchObject([
+      { estimatedMinutes: 5, kind: "learn", lessonId: before.blocks[0]?.lessonId },
+      { estimatedMinutes: 5, kind: "practice" },
+      { estimatedMinutes: 15, kind: "checkpoint", payload: before.blocks[2]?.payload },
+    ]);
+
+    expect(changed).toMatchObject({ change: { todaySession: "changed" }, status: "updated" });
 
     const context = await loadPlanContext({ goal, now: NOW, timeZone });
 
@@ -128,9 +141,6 @@ describe("an unstarted day after a plan change", () => {
 
     const savedChange = await prisma.planChange.findUniqueOrThrow({ where: { id: proposal.id } });
 
-    // The change asks for its lessons after following today; ending that ask lets this follow see
-    // the same day, rather than one holding time for lessons being written.
-    await prisma.plan.update({ data: { lessonsAskedAt: null }, where: { id: plan.id } });
     await followPlanToday({ changeId: proposal.id, context });
 
     await expect(
@@ -206,7 +216,7 @@ describe("a started day after a plan change", () => {
     vi.useRealTimers();
   });
 
-  it("keeps the rest of the day for a future rest day, without lessons from later days", async () => {
+  it("keeps started work and rebuilds the rest to hold lesson-writing time without later lessons", async () => {
     const { before, goal, plan, timeZone } = await openPlannedDay();
     const first = before.blocks[0];
 
@@ -228,7 +238,20 @@ describe("a started day after a plan change", () => {
     });
 
     const savedPlan = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
-    expect.soft(after).toStrictEqual({ ...started, planVersion: savedPlan.version });
-    expect.soft(changed).toMatchObject({ change: { todaySession: null }, status: "updated" });
+
+    expect(after).toStrictEqual({
+      ...started,
+      blocks: after.blocks,
+      planVersion: savedPlan.version,
+      plannedMinutes: 9,
+    });
+
+    expect(after.blocks).toMatchObject([
+      started.blocks[0],
+      { estimatedMinutes: 5, kind: "learn", lessonId: started.blocks[1]?.lessonId },
+      { estimatedMinutes: 3, kind: "practice" },
+    ]);
+
+    expect(changed).toMatchObject({ change: { todaySession: "changed" }, status: "updated" });
   });
 });
