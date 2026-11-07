@@ -997,7 +997,7 @@ describe(lessonPlayerReducer, () => {
     const miss = runAnswer("q1", false);
     const page = play(steps, [{ answers: [miss], type: "unsentPlaced" }]);
 
-    expect([page.learnerActed, page.queue]).toStrictEqual([false, ["e1", "q1", "e2", "q2", "q1"]]);
+    expect([page.actedOn, page.queue]).toStrictEqual([[], ["e1", "q1", "e2", "q2", "q1"]]);
 
     const retried = lessonPlayerReducer(
       page,
@@ -1033,6 +1033,72 @@ describe(lessonPlayerReducer, () => {
       "q2",
       draft,
       undefined,
+    ]);
+  });
+
+  it("brings in the run's answers for screens the learner hasn't touched, keeping their draft", () => {
+    const steps = [checkStep("q1"), explanationStep("e1"), checkStep("q2")];
+    const draft = { kind: "check", optionId: "right" } as const;
+    const drafted = play(steps, [{ answer: draft, stepId: "q1", type: "selectAnswer" }]);
+
+    const started = lessonPlayerReducer(
+      drafted,
+      runStarted({ answers: [runAnswer("q2", true)], held: [] }),
+    );
+
+    expect([getCurrentStep(started)?.id, started.answers.q1, started.results.q1]).toStrictEqual([
+      "q1",
+      draft,
+      undefined,
+    ]);
+
+    expect([started.results.q2?.isCorrect, started.firstVerdicts]).toStrictEqual([
+      true,
+      { q2: true },
+    ]);
+
+    const atQ2 = playOn(started, [
+      { counts: true, result: stepResult(true), stepId: "q1", type: "checkResolved" },
+      { type: "continue" },
+      { type: "continue" },
+    ]);
+
+    expect([getCurrentStep(atQ2)?.id, atQ2.phase, atQ2.reviewing]).toStrictEqual([
+      "q2",
+      "feedback",
+      true,
+    ]);
+  });
+
+  it("drops a stale miss and its retry when the run has the right retry, keeping the learner's draft", () => {
+    const steps = [
+      explanationStep("e1"),
+      checkStep("q1"),
+      explanationStep("e2"),
+      checkStep("q2"),
+      summaryStep("sum"),
+    ];
+
+    const miss = runAnswer("q1", false);
+    const draft = { kind: "check", optionId: "right" } as const;
+
+    const drafted = play(steps, [
+      { answers: [miss], type: "unsentPlaced" },
+      { type: "continue" },
+      { answer: draft, stepId: "q2", type: "selectAnswer" },
+    ]);
+
+    const started = lessonPlayerReducer(
+      drafted,
+      runStarted({ answers: [miss, runAnswer("q1", true, LATER)], held: [] }),
+    );
+
+    expect([getCurrentStep(started)?.id, started.answers.q2]).toStrictEqual(["q2", draft]);
+
+    expect([started.results.q1?.isCorrect, started.queue, started.retried]).toStrictEqual([
+      true,
+      ["e1", "q1", "e2", "q2", "sum"],
+      ["q1"],
     ]);
   });
 

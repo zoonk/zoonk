@@ -10,6 +10,7 @@ import { enterPosition, skipSteps } from "./lesson-flow";
 import {
   addHeldAnswers,
   getRunVerdicts,
+  mergeUntouched,
   refreshAnswers,
   requeueRetries,
   resumeLesson,
@@ -66,8 +67,8 @@ function resumeFrom(state: LessonPlayerState, answers: LessonRunAnswers): Lesson
 
   const resumed = {
     ...resumedLesson,
+    actedOn: state.actedOn,
     answers: { ...pickKeys(state.answers, guessIds), ...resumedLesson.answers },
-    learnerActed: state.learnerActed,
     results: { ...pickKeys(state.results, guessIds), ...resumedLesson.results },
     rounds: Object.fromEntries(
       Object.keys(state.steps).map((id) => [id, (state.rounds[id] ?? 0) + 1]),
@@ -103,8 +104,8 @@ export function startRun(
     (answer) => answer.stepId in state.steps,
   );
 
-  if (state.learnerActed) {
-    return started;
+  if (state.actedOn.length > 0) {
+    return mergeUntouched(started, answers);
   }
 
   if (!isSameProgress(state.firstVerdicts, getRunVerdicts(answers))) {
@@ -135,7 +136,9 @@ export function placeUnsent(
   state: LessonPlayerState,
   action: Extract<LessonPlayerAction, { type: "unsentPlaced" }>,
 ): LessonPlayerState {
-  return state.learnerActed ? state : resumeFrom(state, action.answers);
+  return state.actedOn.length > 0
+    ? mergeUntouched(state, action.answers)
+    : resumeFrom(state, action.answers);
 }
 
 function getMissing({

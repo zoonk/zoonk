@@ -34,6 +34,11 @@ type QuickCheck = { missed: boolean; returnPosition: number; returnQueue: string
 type MissingReason = "answerNotSaved" | "pictureReady";
 
 export type LessonPlayerState = {
+  /**
+   * The screens the learner worked on in this page, never set by restoring: a late run start leaves
+   * them, and where the learner is, as they were.
+   */
+  actedOn: string[];
   answers: Record<string, LessonPlayerAnswer>;
   checkFailed: boolean;
   checkIssue: CheckIssue | null;
@@ -44,8 +49,6 @@ export type LessonPlayerState = {
   firstVerdicts: Record<string, boolean>;
   hasMap: boolean;
   helped: string[];
-  /** Set by what the learner does on this page, never by restoring, so a late run start can't undo it. */
-  learnerActed: boolean;
   lessonId: string;
   misses: { skillId: string | null; stepId: string }[];
   /** The screens a finished lesson came back to because the run still needs them. */
@@ -124,6 +127,7 @@ export function createInitialState(
   const queue = lesson.steps.map((step) => step.id);
 
   return {
+    actedOn: [],
     answers: {},
     checkFailed: false,
     checkIssue: null,
@@ -131,7 +135,6 @@ export function createInitialState(
     firstVerdicts: {},
     hasMap: lesson.hasMap,
     helped: [],
-    learnerActed: false,
     lessonId: lesson.id,
     misses: [],
     missing: {},

@@ -178,6 +178,24 @@ function isLearnerWork(action: LessonPlayerAction): boolean {
   return LEARNER_WORK.has(action.type) && !(action.type === "skipWriting" && action.opening);
 }
 
+function markActedOn({
+  action,
+  next,
+  state,
+}: {
+  action: LessonPlayerAction;
+  next: LessonPlayerState;
+  state: LessonPlayerState;
+}): LessonPlayerState {
+  const stepId = ("stepId" in action ? action.stepId : undefined) ?? getCurrentStep(state)?.id;
+
+  if (!stepId || next.actedOn.includes(stepId)) {
+    return next;
+  }
+
+  return { ...next, actedOn: [...next.actedOn, stepId] };
+}
+
 function reduceLearnerAction(
   state: LessonPlayerState,
   action: Exclude<LessonPlayerAction, ServerAction>,
@@ -221,5 +239,5 @@ export function lessonPlayerReducer(
   }
 
   const next = reduceLearnerAction(state, action);
-  return next === state || !isLearnerWork(action) ? next : { ...next, learnerActed: true };
+  return next === state || !isLearnerWork(action) ? next : markActedOn({ action, next, state });
 }

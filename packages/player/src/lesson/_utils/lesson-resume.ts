@@ -5,7 +5,7 @@ import { finishScreens } from "./lesson-end";
 import { enterPosition } from "./lesson-flow";
 import { fromRunAnswer } from "./lesson-results";
 import { isRetryStep } from "./lesson-steps";
-import { pickKeys } from "./records";
+import { omitKeys, pickKeys } from "./records";
 
 type ShownAnswer = { answer: LessonRunAnswers[number]; step: PlayableLibraryStep };
 
@@ -149,6 +149,53 @@ export function requeueRetries(
     ...state,
     queue: [...queue, ...missedOnce],
     retried: [...getRetried(answers), ...missedOnce],
+  };
+}
+
+/** Takes the run's word on every answerable screen except the one in view and those the learner worked on. */
+export function mergeUntouched(
+  state: LessonPlayerState,
+  answers: LessonRunAnswers,
+): LessonPlayerState {
+  if (state.quickCheck) {
+    return state;
+  }
+
+  const inView = state.queue[state.position];
+
+  const open = Object.values(state.steps)
+    .filter(
+      (step) => isAnswerableStep(step) && step.id !== inView && !state.actedOn.includes(step.id),
+    )
+    .map((step) => step.id);
+
+  const saved = answers.filter((answer) => open.includes(answer.stepId));
+  const restored = restoreAnswers(state, saved);
+
+  const queue = state.queue.filter(
+    (id, index) =>
+      index <= state.position || !open.includes(id) || state.queue.indexOf(id) === index,
+  );
+
+  const missedOnce = getMissedOnce({
+    answers: saved,
+    state: { ...state, queue: [...new Set(queue)] },
+  });
+
+  return {
+    ...state,
+    answers: { ...omitKeys(state.answers, open), ...restored.answers },
+    firstVerdicts: { ...omitKeys(state.firstVerdicts, open), ...getRunVerdicts(saved) },
+    queue: [...queue, ...missedOnce],
+    results: { ...omitKeys(state.results, open), ...restored.results },
+    retried: [
+      ...new Set([
+        ...state.retried.filter((id) => !open.includes(id)),
+        ...getRetried(saved),
+        ...missedOnce,
+      ]),
+    ],
+    revealed: restored.revealed,
   };
 }
 
