@@ -1,9 +1,12 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { ABOVE_BOTTOM_TABS_CLASS } from "../shell/learn-navigation";
 
-/** On a phone, focus scrolls what it reaches clear of the tab bar, the docked action and its fade. */
+/**
+ * On a phone, focus scrolls what it reaches clear of the tab bar and of the docked action, with a
+ * status line of up to two lines and its fade.
+ */
 const CLEAR_OF_DOCK_CLASS =
-  "max-sm:[&_*]:scroll-mb-[calc(4rem+1px+env(safe-area-inset-bottom)+4.25rem+1.5rem)]";
+  "max-sm:[&_*]:scroll-mb-[calc(4rem+1px+env(safe-area-inset-bottom)+4.25rem+3rem+1.5rem)]";
 
 export const TODAY_MAIN_CLASS = cn(
   "grid grid-cols-1 [grid-template-areas:'head'_'session'_'action'_'more'] sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-x-6 sm:[grid-template-areas:'head_action'_'session_session'_'more_more']",
