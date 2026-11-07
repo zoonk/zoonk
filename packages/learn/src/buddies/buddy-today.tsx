@@ -168,7 +168,7 @@ export function BuddyToday({
       <button
         aria-haspopup="dialog"
         className={cn(
-          "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area relative flex h-7 shrink-0 items-center gap-2.5 rounded-md px-2 font-mono text-xs tabular-nums transition-colors outline-none focus-visible:ring-[3px]",
+          "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area relative flex min-h-7 flex-wrap items-center gap-x-2.5 gap-y-1 rounded-md px-2 py-1 font-mono text-xs tabular-nums transition-colors outline-none focus-visible:ring-[3px]",
           className,
         )}
         data-slot="buddy-today"
