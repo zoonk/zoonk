@@ -9,7 +9,7 @@ CREATE TABLE "restore_keys" (
 );
 
 -- CreateIndex
-CREATE INDEX "restore_keys_session_id_idx" ON "restore_keys"("session_id");
+CREATE UNIQUE INDEX "restore_keys_session_id_key" ON "restore_keys"("session_id");
 
 -- AddForeignKey
 ALTER TABLE "restore_keys" ADD CONSTRAINT "restore_keys_session_id_fkey" FOREIGN KEY ("session_id") REFERENCES "sessions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
