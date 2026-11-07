@@ -5,12 +5,10 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useFormStatus } from "react-dom";
 
 export function SubmitButton({
-  children,
   className,
   full,
-  icon,
   ...props
-}: { icon?: React.ReactNode; full?: boolean } & React.ComponentProps<typeof Button>) {
+}: { full?: boolean } & React.ComponentProps<typeof Button>) {
   const status = useFormStatus();
 
   return (
@@ -20,9 +18,6 @@ export function SubmitButton({
       focusableWhenDisabled
       type="submit"
       {...props}
-    >
-      {icon}
-      {children}
-    </Button>
+    />
   );
 }

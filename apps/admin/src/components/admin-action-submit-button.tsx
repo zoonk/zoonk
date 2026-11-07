@@ -15,8 +15,7 @@ export function AdminActionSubmitButton({
   const status = useFormStatus();
 
   return (
-    <Button busy={status.pending} size={size} type="submit" variant="outline">
-      {icon}
+    <Button busy={status.pending} icon={icon} size={size} type="submit" variant="outline">
       {children}
     </Button>
   );

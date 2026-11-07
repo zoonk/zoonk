@@ -1,12 +1,11 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { SLOW_WAIT_MS } from "@zoonk/ui/lib/wait";
 import { type VariantProps, cva } from "class-variance-authority";
 import { Loader2Icon } from "lucide-react";
 import { Skeleton } from "./skeleton";
 
 const buttonVariants = cva(
-  "group/button focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 hit-area press relative inline-flex shrink-0 items-center justify-center rounded-lg border bg-clip-padding text-sm font-medium whitespace-nowrap outline-none select-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 aria-invalid:ring-[3px] disabled:**:data-[slot=shortcut-kbd]:invisible aria-disabled:**:data-[slot=shortcut-kbd]:invisible [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 hit-area press relative inline-flex shrink-0 items-center justify-center rounded-lg border bg-clip-padding text-sm font-medium whitespace-nowrap outline-none select-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-busy:cursor-progress aria-disabled:not-aria-busy:pointer-events-none aria-disabled:not-aria-busy:opacity-50 aria-invalid:ring-[3px] disabled:**:data-[slot=shortcut-kbd]:invisible aria-disabled:not-aria-busy:**:data-[slot=shortcut-kbd]:invisible [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     defaultVariants: { size: "default", variant: "default" },
     variants: {
@@ -28,7 +27,7 @@ const buttonVariants = cva(
       },
       variant: {
         default:
-          "bg-primary text-primary-foreground hover:bg-primary/80 disabled:bg-muted disabled:text-muted-foreground aria-disabled:bg-muted aria-disabled:text-muted-foreground border-transparent disabled:opacity-100 aria-disabled:opacity-100",
+          "bg-primary text-primary-foreground hover:bg-primary/80 disabled:bg-muted disabled:text-muted-foreground aria-disabled:not-aria-busy:bg-muted aria-disabled:not-aria-busy:text-muted-foreground border-transparent disabled:opacity-100 aria-disabled:not-aria-busy:opacity-100",
         destructive:
           "bg-destructive/10 text-destructive-text hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 dark:hover:bg-destructive/30 border-transparent",
         ghost:
@@ -48,40 +47,71 @@ const buttonVariants = cva(
   },
 );
 
-const BUSY_DELAY = { animationDelay: `${SLOW_WAIT_MS}ms` };
+const BUSY_HIDDEN = "group-aria-busy/busy:opacity-0 group-has-data-busy/busy:opacity-0";
+
+function BusySpinner({ className }: { className?: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-has-data-busy/busy:opacity-100 group-aria-busy/busy:opacity-100"
+      data-slot="busy-spinner"
+    >
+      <Loader2Icon
+        className={cn(
+          "group-has-data-busy/busy:animate-spin group-aria-busy/busy:animate-spin",
+          className,
+        )}
+      />
+    </span>
+  );
+}
+
+/** An icon that gives way to the spinner, in its own box, while the `group/busy` around it is busy. */
+function BusyIcon({ children, className, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span className={cn("relative inline-flex", className)} {...props}>
+      <span className={cn("inline-flex", BUSY_HIDDEN)}>{children}</span>
+      <BusySpinner className="size-full" />
+    </span>
+  );
+}
 
 /**
  * For a control that carries `group/busy relative` and is busy while it's `aria-busy` or holds a
- * `data-busy` mark (a link that learns it's pending inside, as main's `LearningLink` does): once busy
- * for `SLOW_WAIT_MS`, its content turns invisible, keeping its place and still read, under a spinner.
- * CSS keeps the time, so it works before the page hydrates.
+ * `data-busy` mark (a link that learns it's pending inside, as main's `LearningLink` does). CSS
+ * draws it, so it works before the page hydrates. The spinner takes the leading `icon`'s place;
+ * without one, the content turns invisible under a centered spinner, keeping its place and still read.
  */
-function BusyContent({ children }: { children: React.ReactNode }) {
+function BusyContent({ children, icon }: { children: React.ReactNode; icon?: React.ReactNode }) {
+  if (icon) {
+    return (
+      <>
+        <BusyIcon data-icon="inline-start">{icon}</BusyIcon>
+        {children}
+      </>
+    );
+  }
+
   return (
     <>
       <span
-        className="group-aria-busy/busy:animate-busy-conceal group-has-data-busy/busy:animate-busy-conceal [display:inherit] min-w-0 grow [flex-direction:inherit] [flex-wrap:inherit] [place-content:inherit] [place-items:inherit] gap-[inherit]"
+        className={cn(
+          "[display:inherit] min-w-0 grow [flex-direction:inherit] [flex-wrap:inherit] [place-content:inherit] [place-items:inherit] gap-[inherit]",
+          BUSY_HIDDEN,
+        )}
         data-slot="busy-content"
-        style={BUSY_DELAY}
       >
         {children}
       </span>
 
-      <span
-        aria-hidden="true"
-        className="group-aria-busy/busy:animate-busy-reveal group-has-data-busy/busy:animate-busy-reveal pointer-events-none absolute inset-0 flex items-center justify-center opacity-0"
-        data-slot="busy-spinner"
-        style={BUSY_DELAY}
-      >
-        <Loader2Icon className="group-has-data-busy/busy:animate-spin group-aria-busy/busy:animate-spin" />
-      </span>
+      <BusySpinner />
     </>
   );
 }
 
 /**
- * `busy` while its action runs: from the press it ignores presses and keeps focus, and after
- * `SLOW_WAIT_MS` a spinner covers its content without changing its size.
+ * `busy` while its own action runs: from the press it ignores presses and keeps focus and its look,
+ * and a spinner takes its `icon`'s place, or covers its content when it has none.
  */
 function Button({
   busy,
@@ -89,10 +119,12 @@ function Button({
   className,
   disabled,
   focusableWhenDisabled,
+  icon,
   variant = "default",
   size = "default",
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants> & { busy?: boolean }) {
+}: ButtonPrimitive.Props &
+  VariantProps<typeof buttonVariants> & { busy?: boolean; icon?: React.ReactNode }) {
   const canBeBusy = busy !== undefined;
 
   return (
@@ -104,7 +136,7 @@ function Button({
       focusableWhenDisabled={busy || focusableWhenDisabled}
       {...props}
     >
-      {canBeBusy ? <BusyContent>{children}</BusyContent> : children}
+      {canBeBusy || icon ? <BusyContent icon={icon}>{children}</BusyContent> : children}
     </ButtonPrimitive>
   );
 }
@@ -134,4 +166,4 @@ function ButtonSkeleton({ children, className, size, variant }: ButtonSkeletonPr
   );
 }
 
-export { BusyContent, Button, ButtonSkeleton, buttonVariants };
+export { BusyContent, BusyIcon, Button, ButtonSkeleton, buttonVariants };
