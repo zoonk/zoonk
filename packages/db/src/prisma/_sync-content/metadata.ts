@@ -2,6 +2,9 @@ import { type Client, type QueryResultRow } from "pg";
 
 /** In the order the copy inserts them. */
 export const CONTENT_TABLES = [
+  "organizations",
+  "products",
+  "product_releases",
   "course_families",
   "courses",
   "course_categories",
@@ -27,6 +30,9 @@ export const CONTENT_TABLES = [
 ] as const;
 
 export type ContentTable = (typeof CONTENT_TABLES)[number];
+
+export const CATALOG_ORGANIZATIONS =
+  "SELECT id FROM organizations WHERE slug = 'ai' OR kind = 'brand'";
 
 /** Private rows belong to one learner's goal: they never leave the source or get replaced here. */
 export const PUBLIC_ROWS = "visibility = 'public' AND owner_id IS NULL";

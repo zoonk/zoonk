@@ -21,6 +21,7 @@ import {
 import { type CandidateExam, toGoalCandidateExams } from "../exams/candidate-exams";
 import { getSubjectQuestions } from "../exams/subject-questions";
 import { listTopicLevels } from "../exams/topic-frequency";
+import { GOAL_PRODUCT_SELECT, type GoalProduct, toGoalProduct } from "../products/goal-product";
 import { loadGoalMaterial } from "../sources/goal-material";
 import {
   type MaterialSource,
@@ -28,15 +29,13 @@ import {
   toMaterialPages,
 } from "../sources/material-pages";
 import { type StartedCourse } from "./course-start-graph";
+import { listGoalReferences } from "./goal-references";
 import { getLessonBudget } from "./lesson-budget";
 import { toExamIdentity, toSharedContext } from "./shared-graph-prompt";
 
 type GraphPrompt = Omit<SkillGraphParams, "analytics" | "model" | "reasoning" | "useFallback">;
 
 type Details = Record<string, unknown>;
-
-const MAX_REFERENCE_CHARACTERS = 30_000;
-const MAX_REFERENCES = 3;
 
 const PURPOSES = ["overview", "deep", "work", "careerChange", "refresh"] as const;
 
@@ -78,6 +77,9 @@ export type GoalCurriculumInputs = {
   isGuest: boolean;
   knownSubjects: string[];
   ownMaterialTest: boolean;
+  /** Research decided whether the goal is about a product, linked or not; the graph waits for it. */
+  productChecked: boolean;
+  product: GoalProduct | null;
   startedCourse: StartedCourse | null;
 };
 
@@ -227,21 +229,6 @@ export function getReferenceSyllabusNeed(
     : "notNeeded";
 }
 
-async function loadReferences(goalId: string) {
-  const sources = await prisma.learnerSource.findMany({
-    orderBy: { createdAt: "asc" },
-    select: { source: { select: { extractedText: true, title: true } } },
-    take: MAX_REFERENCES,
-    where: { goalId, source: { extractedText: { not: null } } },
-  });
-
-  return sources.flatMap(({ source }) =>
-    source.extractedText
-      ? [{ text: source.extractedText.slice(0, MAX_REFERENCE_CHARACTERS), title: source.title }]
-      : [],
-  );
-}
-
 function toStartedCourse({
   course,
   details,
@@ -266,6 +253,7 @@ export async function loadGoalCurriculumInputs(
       examBlueprint: true,
       plan: { select: { graph: true } },
       primaryCourse: { select: { id: true, title: true, userId: true, visibility: true } },
+      ...GOAL_PRODUCT_SELECT,
       user: { select: { isAnonymous: true } },
     },
     where: { id: goalId },
@@ -278,7 +266,7 @@ export async function loadGoalCurriculumInputs(
   const details = isJsonObject(goal.details) ? goal.details : {};
 
   const [references, material] = await Promise.all([
-    loadReferences(goalId),
+    listGoalReferences({ goalId, productId: goal.productId }),
     loadGoalMaterial(goalId),
   ]);
 
@@ -290,6 +278,7 @@ export async function loadGoalCurriculumInputs(
       : null;
 
   const exams = toGoalCandidateExams({ blueprint: goal.examBlueprint, kind: goal.kind });
+  const product = toGoalProduct(goal);
 
   return {
     awaitingAnswers: isAwaitingAnswers(goal, details),
@@ -314,6 +303,11 @@ export async function loadGoalCurriculumInputs(
       language: goal.language,
       lessonBudget: toLessonBudget({ goal, hasMaterial: material.length > 0 }),
       ownLevel: getOwnLevel({ goal }) ?? undefined,
+      product: product && {
+        brand: product.brand,
+        courseTitle: product.courseTitle,
+        name: product.name,
+      },
       purpose: readChoice({ allowed: PURPOSES, value: details.purpose }),
       targetLanguage: goal.targetLanguage ?? undefined,
     },
@@ -322,6 +316,8 @@ export async function loadGoalCurriculumInputs(
     isGuest: goal.user.isAnonymous,
     knownSubjects: getKnownSubjects(goal),
     ownMaterialTest: isOwnMaterialTest(goal.examBlueprint),
+    product,
+    productChecked: goal.productCheckedAt !== null,
     references,
     sharedContext: toSharedContext(details),
     startedCourse: toStartedCourse({ course: goal.primaryCourse, details }),

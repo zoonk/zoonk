@@ -76,6 +76,7 @@
     "oxlint": "1.92.0",
     "oxlint-tsgolint": "7.0.2005",
     "portless": "0.16.0",
+    "sharp": "catalog:",
     "tsrs": "0.23.0-ts7.1.0-beta",
     "turbo": "2.11.10",
     "typescript": "catalog:",

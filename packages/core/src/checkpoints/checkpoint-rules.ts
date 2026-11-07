@@ -64,7 +64,7 @@ export function selectCheckpointItems({
     .map((candidate) => candidate.id);
 }
 
-type BossPlanItem = {
+export type BossPlanItem = {
   id: string | null;
   key?: string;
   chapterId: string | null;
@@ -162,9 +162,12 @@ function pickBossSkillIds({
 }
 
 /** Challenges before the goal's date must ignore teaching scheduled after it when sizing each skill's core. */
-export function getBossSkillIds({ boss, ...plan }: BossPlan & { boss: BossItem }): string[] {
-  const { graphSkills, targetDate } = plan;
-  const items = plan.items.toSorted((a, b) => a.position - b.position);
+function createCoreFor<Item extends BossPlanItem>({
+  graphSkills,
+  items: planItems,
+  targetDate,
+}: Pick<BossPlan, "graphSkills" | "targetDate"> & { items: readonly Item[] }) {
+  const items = planItems.toSorted((a, b) => a.position - b.position);
   const byDate = (date: Date | null) => targetDate !== null && date !== null && date <= targetDate;
   const core = listCoreLessonItems({ graphSkills, items });
 
@@ -173,7 +176,18 @@ export function getBossSkillIds({ boss, ...plan }: BossPlan & { boss: BossItem }
     items: items.filter((item) => !item.scheduledFor || byDate(item.scheduledFor)),
   });
 
-  const coreFor = (checkpoint: BossItem) => (byDate(checkpoint.scheduledFor) ? coreByDate : core);
+  return (checkpoint: BossItem) => (byDate(checkpoint.scheduledFor) ? coreByDate : core);
+}
+
+export function getBossCoreLessons<Item extends BossPlanItem>({
+  boss,
+  ...plan
+}: Pick<BossPlan, "graphSkills" | "targetDate"> & { boss: BossItem; items: readonly Item[] }) {
+  return createCoreFor(plan)(boss);
+}
+
+export function getBossSkillIds({ boss, ...plan }: BossPlan & { boss: BossItem }): string[] {
+  const coreFor = createCoreFor(plan);
 
   const asked = plan.items
     .filter((item) => item.kind === "boss" && item.position < boss.position)

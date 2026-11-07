@@ -107,6 +107,7 @@ export async function planOutlineBandStep({
     material: context.material,
     nextPosition: context.nextPosition,
     otherChapterTitles: context.chapterTitles,
+    product: context.product,
     skills: band.skills.filter((skill) => untaught.includes(skill.id)),
     taughtElsewhere: band.skills
       .filter((skill) => !untaught.includes(skill.id))

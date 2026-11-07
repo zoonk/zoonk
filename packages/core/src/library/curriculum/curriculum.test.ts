@@ -14,6 +14,7 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { brandFixture, productFixture } from "@zoonk/testing/fixtures/products";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   examBlueprintFixture,
@@ -898,7 +899,22 @@ describe("course outline state", () => {
 
     await expect(
       getCourseBandContext({ courseId: course.id, level: "intermediate" }),
-    ).resolves.toMatchObject({ material: null, nextPosition: 0 });
+    ).resolves.toMatchObject({ material: null, nextPosition: 0, product: null });
+  });
+
+  it("outlines a product course for its product, and a product with no releases for none", async () => {
+    const brand = await brandFixture({ name: "Acme" });
+    const product = await productFixture({ name: "Gizmo", organizationId: brand.id });
+
+    const course = await courseFixture({
+      organizationId: brand.id,
+      productId: product.id,
+      title: "Gizmo",
+    });
+
+    await expect(
+      getCourseBandContext({ courseId: course.id, level: "beginner" }),
+    ).resolves.toMatchObject({ product: { brand: "Acme", name: "Gizmo", release: null } });
   });
 
   it("gives a private course built from the learner's notes those notes, whole", async () => {

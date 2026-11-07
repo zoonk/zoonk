@@ -21,15 +21,17 @@ const graph: PlanGraph = {
   })),
 };
 
-const lessons = graph.skills.flatMap((skill) =>
-  Array.from({ length: skill.lessons }, (_, index) => ({
-    chapterId: `chapter-${skill.skillId}`,
-    lessonId: `${skill.skillId}-${index}`,
-    minutes: 4,
-    skillIds: [skill.skillId],
-    title: `${skill.name} ${index}`,
-  })),
-);
+function listLessons(minutesOf: (lessonId: string) => number = () => 4) {
+  return graph.skills.flatMap((skill) =>
+    Array.from({ length: skill.lessons }, (_, index) => ({
+      chapterId: `chapter-${skill.skillId}`,
+      lessonId: `${skill.skillId}-${index}`,
+      minutes: minutesOf(`${skill.skillId}-${index}`),
+      skillIds: [skill.skillId],
+      title: `${skill.name} ${index}`,
+    })),
+  );
+}
 
 function listTodayLessons(items: readonly PlannedItem[]): string[] {
   return items.flatMap((item) =>
@@ -41,7 +43,7 @@ function listTodayLessons(items: readonly PlannedItem[]): string[] {
   );
 }
 
-function reduceAtSlowerPace() {
+function reduceAtSlowerPace(lessons = listLessons()) {
   const targetDate = addDays(TODAY, 40);
   const settings = parsePlanSettings({ startDate: toIsoDate(TODAY) });
   const operations: PlanOperation[] = [{ areas: ["Ética"], kind: "reduceAreas" }];
@@ -77,18 +79,20 @@ function reduceAtSlowerPace() {
     throw new Error("The change doesn't apply.");
   }
 
-  const after = buildPlan({
+  const built = buildPlan({
     ...input,
     carryOver: { lessonIds: [], todayExceptAreas: ["Ética"] },
     items: shown,
     paceFactor: 1.5,
     settings: applied.state.settings,
-  }).items;
+  });
 
+  const after = built.items;
   const plan = { goal: input.goal, graph, settings: applied.state.settings };
 
   return {
     after,
+    built,
     context: {
       after: { ...plan, items: after, phases: [] },
       before: { ...plan, items: shown, phases: [] },
@@ -111,5 +115,30 @@ describe("a change of focus when today's time no longer holds today's lessons", 
     expect(kept.length).toBeGreaterThan(1);
     expect(stayed).toStrictEqual(kept);
     expect(checkSteeringKeepsToday(context)).toStrictEqual([]);
+  });
+
+  it("gives each lesson it keeps on today all its time on today", () => {
+    const { after, built } = reduceAtSlowerPace();
+    const today = toIsoDate(TODAY);
+
+    const elsewhere = after
+      .filter((item) => item.scheduledFor?.getTime() === TODAY.getTime())
+      .flatMap((item) =>
+        [...(built.lessonDayMinutes.get(item.key)?.keys() ?? [])].flatMap((day) =>
+          day === today ? [] : [`${item.key} on ${day}`],
+        ),
+      );
+
+    expect(elsewhere).toStrictEqual([]);
+  });
+
+  it("leaves tomorrow's time to tomorrow's lessons", () => {
+    const { built } = reduceAtSlowerPace(
+      listLessons((lessonId) => (lessonId === "Civil-2" ? 7 : 4)),
+    );
+
+    expect([...(built.lessonDayMinutes.get("lesson:Civil-2")?.keys() ?? [])]).toStrictEqual([
+      toIsoDate(addDays(TODAY, 1)),
+    ]);
   });
 });

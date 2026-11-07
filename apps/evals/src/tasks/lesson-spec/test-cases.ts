@@ -1219,4 +1219,62 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
       skills: ["Classificar despesas domésticas"],
     },
   },
+  {
+    expectations: `
+      - MUST be in US English
+      - A product lesson: the hook is a task someone wants done in their Next.js app and can't yet (going to another page without a full reload, a menu that links the app's pages), never an everyday moment outside the app
+      - Explanations, examples and checks happen in the app: the Link component and the file names, paths and code the docs use
+      - The last screen has the learner do it now in their own project (add a link, click it) and asks what they should see when it worked, with wrong options that are what a skipped or mixed-up step would show
+      - No release is named: every release the course could move to has the Link component
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-product-nextjs-link",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: outlined({ after: ["Layouts"], before: ["Create your first page"] }),
+      chapterTitle: "Build your first pages",
+      courseTitle: "Next.js",
+      language: "en",
+      lessonCanDo: "Link the pages of a Next.js app",
+      lessonDescription: "Move between your app's pages with the Link component.",
+      lessonTitle: "Link between pages",
+      level: "beginner",
+      product: {
+        brand: "Vercel",
+        name: "Next.js",
+        release: { name: "Next.js 16", releasedOn: "2025-10-21" },
+      },
+      skills: ["Link between pages with the Link component"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in US English
+      - A product lesson: the hook is a shot someone wants to take with their phone and misses, never an everyday moment unrelated to the phone
+      - Camera Control is a feature only some models have: the plan says which ones (iPhone 16 and later), and says it where the feature is introduced
+      - The last screen has the learner do it now on their phone (open the camera with Camera Control, adjust a setting with it) and asks what they should see on the screen
+      - Steps use the names the phone itself shows
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-product-iphone-camera-control",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterTitle: "Take better photos",
+      courseTitle: "iPhone",
+      language: "en",
+      lessonCanDo: "Shoot and adjust photos with Camera Control",
+      lessonDescription:
+        "Open the camera, take photos and change zoom or exposure with Camera Control.",
+      lessonTitle: "Camera Control",
+      level: "beginner",
+      product: {
+        brand: "Apple",
+        name: "iPhone",
+        release: { name: "iPhone 17", releasedOn: "2025-09-19" },
+      },
+      skills: ["Use Camera Control to shoot and adjust photos"],
+    },
+  },
 ];

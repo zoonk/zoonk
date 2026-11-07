@@ -6,7 +6,7 @@ import { planChangeInvalid } from "@/lib/plan-errors";
 import { readBody, readPathParams } from "@/lib/request-input";
 import { startSetupLessonWriting } from "@/lib/setup-lesson-writing";
 import { choosePlanTools } from "@zoonk/core/plans/choose-tools";
-import { planToolChoiceInputSchema } from "@zoonk/core/plans/contract";
+import { planToolChoiceInputSchema } from "@zoonk/core/plans/tool-choice-contract";
 import { type NextRequest, NextResponse } from "next/server";
 
 async function createToolChoice(

@@ -2,283 +2,1228 @@
   "modelId": "typesafe-ai/jev",
   "results": [
     {
-      "classification": { "expected": "exam", "predicted": "exam" },
+      "classification": {
+        "expected": "exam",
+        "predicted": "exam"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["exam"] },
+        "expected": {
+          "topics": [
+            "exam"
+          ]
+        },
         "id": "enem-1",
         "language": "pt",
-        "userInput": { "goal": "quero passar no ENEM desse ano pra enfermagem" }
+        "userInput": {
+          "goal": "quero passar no ENEM desse ano pra enfermagem"
+        }
       }
     },
     {
-      "classification": { "expected": "exam", "predicted": "exam" },
+      "classification": {
+        "expected": "exam",
+        "predicted": "exam"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["exam"] },
+        "expected": {
+          "topics": [
+            "exam"
+          ]
+        },
         "id": "tcdf-1",
         "language": "pt",
-        "userInput": { "goal": "Concurso TCDF 2026 analista administrativo" }
+        "userInput": {
+          "goal": "Concurso TCDF 2026 analista administrativo"
+        }
       }
     },
     {
-      "classification": { "expected": "exam", "predicted": "exam" },
+      "classification": {
+        "expected": "exam",
+        "predicted": "exam"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["exam"] },
+        "expected": {
+          "topics": [
+            "exam"
+          ]
+        },
         "id": "sat-1",
         "language": "en",
-        "userInput": { "goal": "Get a 1450 on the SAT in March" }
+        "userInput": {
+          "goal": "Get a 1450 on the SAT in March"
+        }
       }
     },
     {
-      "classification": { "expected": "exam", "predicted": "exam" },
+      "classification": {
+        "expected": "exam",
+        "predicted": "exam"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["exam"] },
+        "expected": {
+          "topics": [
+            "exam"
+          ]
+        },
         "id": "abitur-1",
         "language": "de",
-        "userInput": { "goal": "Abitur 2027 in Bayern bestehen, Mathe und Deutsch" }
+        "userInput": {
+          "goal": "Abitur 2027 in Bayern bestehen, Mathe und Deutsch"
+        }
       }
     },
     {
-      "classification": { "expected": "exam", "predicted": "exam" },
+      "classification": {
+        "expected": "exam",
+        "predicted": "exam"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["exam"] },
+        "expected": {
+          "topics": [
+            "exam"
+          ]
+        },
         "id": "bac-1",
         "language": "fr",
-        "userInput": { "goal": "réussir le bac de philo en juin" }
+        "userInput": {
+          "goal": "réussir le bac de philo en juin"
+        }
       }
     },
     {
-      "classification": { "expected": "exam", "predicted": "exam" },
+      "classification": {
+        "expected": "exam",
+        "predicted": "exam"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["exam"] },
+        "expected": {
+          "topics": [
+            "exam"
+          ]
+        },
         "id": "ielts-1",
         "language": "en",
-        "userInput": { "goal": "IELTS 7.0 for my visa" }
+        "userInput": {
+          "goal": "IELTS 7.0 for my visa"
+        }
       }
     },
     {
-      "classification": { "expected": "exam", "predicted": "exam" },
+      "classification": {
+        "expected": "exam",
+        "predicted": "exam"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["exam"] },
+        "expected": {
+          "topics": [
+            "exam"
+          ]
+        },
         "id": "math-for-enem-1",
         "language": "pt",
-        "userInput": { "goal": "matemática para o ENEM" }
+        "userInput": {
+          "goal": "matemática para o ENEM"
+        }
       }
     },
     {
-      "classification": { "expected": "regulation", "predicted": "regulation" },
+      "classification": {
+        "expected": "regulation",
+        "predicted": "regulation"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["regulation"] },
+        "expected": {
+          "topics": [
+            "regulation"
+          ]
+        },
         "id": "income-tax-1",
         "language": "pt",
-        "userInput": { "goal": "declarar meu imposto de renda 2027 sozinho" }
+        "userInput": {
+          "goal": "declarar meu imposto de renda 2027 sozinho"
+        }
       }
     },
     {
-      "classification": { "expected": "regulation", "predicted": "regulation" },
+      "classification": {
+        "expected": "regulation",
+        "predicted": "regulation"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["regulation"] },
+        "expected": {
+          "topics": [
+            "regulation"
+          ]
+        },
         "id": "gdpr-1",
         "language": "en",
-        "userInput": { "goal": "GDPR compliance for my startup's app" }
+        "userInput": {
+          "goal": "GDPR compliance for my startup's app"
+        }
       }
     },
     {
-      "classification": { "expected": "regulation", "predicted": "regulation" },
+      "classification": {
+        "expected": "regulation",
+        "predicted": "regulation"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["regulation"] },
+        "expected": {
+          "topics": [
+            "regulation"
+          ]
+        },
         "id": "visa-1",
         "language": "en",
-        "userInput": { "goal": "how to get a Portuguese digital nomad visa" }
+        "userInput": {
+          "goal": "how to get a Portuguese digital nomad visa"
+        }
       }
     },
     {
-      "classification": { "expected": "regulation", "predicted": "regulation" },
+      "classification": {
+        "expected": "regulation",
+        "predicted": "regulation"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["regulation"] },
+        "expected": {
+          "topics": [
+            "regulation"
+          ]
+        },
         "id": "labor-law-1",
         "language": "pt",
-        "userInput": { "goal": "direitos trabalhistas na CLT atual para o meu primeiro emprego" }
+        "userInput": {
+          "goal": "direitos trabalhistas na CLT atual para o meu primeiro emprego"
+        }
       }
     },
     {
-      "classification": { "expected": "software", "predicted": "software" },
+      "classification": {
+        "expected": "product",
+        "predicted": "product"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["software"] },
+        "expected": {
+          "topics": [
+            "product"
+          ]
+        },
         "id": "nextjs-1",
         "language": "en",
-        "userInput": { "goal": "what's new in the latest Next.js version and how to migrate" }
+        "userInput": {
+          "goal": "what's new in the latest Next.js version and how to migrate"
+        }
       }
     },
     {
-      "classification": { "expected": "software", "predicted": "software" },
+      "classification": {
+        "expected": "product",
+        "predicted": "product"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["software"] },
+        "expected": {
+          "topics": [
+            "product"
+          ]
+        },
         "id": "ios-sdk-1",
         "language": "en",
-        "userInput": { "goal": "build apps with this year's iOS SDK and SwiftUI features" }
+        "userInput": {
+          "goal": "build apps with this year's iOS SDK and SwiftUI features"
+        }
       }
     },
     {
-      "classification": { "expected": "software", "predicted": "software" },
+      "classification": {
+        "expected": "product",
+        "predicted": "product"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["software"] },
+        "expected": {
+          "topics": [
+            "product"
+          ]
+        },
         "id": "aws-services-1",
         "language": "de",
-        "userInput": { "goal": "Neue AWS-Dienste für Serverless 2026" }
+        "userInput": {
+          "goal": "Neue AWS-Dienste für Serverless 2026"
+        }
       }
     },
     {
-      "classification": { "expected": "none", "predicted": "none" },
+      "classification": {
+        "expected": "product",
+        "predicted": "product"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["none"] },
+        "expected": {
+          "topics": [
+            "product"
+          ]
+        },
+        "id": "learn-nextjs-1",
+        "language": "en",
+        "userInput": {
+          "goal": "Learn Next.js"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "product",
+        "predicted": "product"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "product"
+          ]
+        },
+        "id": "iphone-camera-1",
+        "language": "en",
+        "userInput": {
+          "goal": "Use my iPhone 13 camera better"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "product",
+        "predicted": "product"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "product"
+          ]
+        },
+        "id": "jira-to-linear-1",
+        "language": "en",
+        "userInput": {
+          "goal": "Move my team from Jira to Linear"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "product",
+        "predicted": "product"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "product"
+          ]
+        },
+        "id": "excel-dashboards-1",
+        "language": "en",
+        "userInput": {
+          "goal": "Excel dashboards"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "product",
+        "predicted": "product"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "product"
+          ]
+        },
+        "id": "nubank-app-1",
+        "language": "pt",
+        "userInput": {
+          "goal": "aprender a usar o app do Nubank para investir"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
+        "id": "marathon-shoes-1",
+        "language": "en",
+        "userInput": {
+          "goal": "Run a marathon in Nike shoes"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
+        "id": "jira-vs-linear-1",
+        "language": "en",
+        "userInput": {
+          "goal": "Jira vs Linear for a startup"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
+        "id": "javascript-1",
+        "language": "en",
+        "userInput": {
+          "goal": "Learn JavaScript"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
+        "id": "photography-1",
+        "language": "en",
+        "userInput": {
+          "goal": "Photography basics"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
+        "id": "rust-language-1",
+        "language": "en",
+        "userInput": {
+          "goal": "learn Rust to write fast command-line tools"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
+        "id": "kubernetes-1",
+        "language": "en",
+        "userInput": {
+          "goal": "deploy my services on Kubernetes"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
+        "id": "postgresql-1",
+        "language": "pt",
+        "userInput": {
+          "goal": "aprender PostgreSQL para o backend da minha loja"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
+        "id": "html-css-1",
+        "language": "en",
+        "userInput": {
+          "goal": "master HTML and CSS for responsive pages"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "product",
+        "predicted": "product"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "product"
+          ]
+        },
+        "id": "github-actions-1",
+        "language": "en",
+        "userInput": {
+          "goal": "automate my repo's tests and deploys with GitHub Actions"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "product",
+        "predicted": "product"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "product"
+          ]
+        },
+        "id": "firefox-privacy-1",
+        "language": "en",
+        "userInput": {
+          "goal": "set up Firefox to protect my privacy"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
         "id": "calculus-1",
         "language": "en",
-        "userInput": { "goal": "calculus from scratch" }
+        "userInput": {
+          "goal": "calculus from scratch"
+        }
       }
     },
     {
-      "classification": { "expected": "none", "predicted": "none" },
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["none"] },
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
         "id": "history-1",
         "language": "pt",
-        "userInput": { "goal": "história do Brasil colonial" }
+        "userInput": {
+          "goal": "história do Brasil colonial"
+        }
       }
     },
     {
-      "classification": { "expected": "none", "predicted": "none" },
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["none"] },
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
         "id": "spanish-1",
         "language": "pt",
-        "userInput": { "goal": "aprender espanhol para viajar" }
+        "userInput": {
+          "goal": "aprender espanhol para viajar"
+        }
       }
     },
     {
-      "classification": { "expected": "none", "predicted": "none" },
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["none"] },
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
         "id": "python-1",
         "language": "en",
-        "userInput": { "goal": "learn Python programming" }
+        "userInput": {
+          "goal": "learn Python programming"
+        }
       }
     },
     {
-      "classification": { "expected": "none", "predicted": "none" },
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["none"] },
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
         "id": "photosynthesis-1",
         "language": "en",
-        "userInput": { "goal": "how does photosynthesis work" }
+        "userInput": {
+          "goal": "how does photosynthesis work"
+        }
       }
     },
     {
-      "classification": { "expected": "none", "predicted": "none" },
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "topics": ["none"] },
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
         "id": "accounting-1",
         "language": "en",
-        "userInput": { "goal": "accounting basics" }
+        "userInput": {
+          "goal": "accounting basics"
+        }
       }
     }
   ],

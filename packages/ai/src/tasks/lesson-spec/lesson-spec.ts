@@ -11,6 +11,7 @@ import { formatLocalContext } from "../_utils/language-context";
 import { formatLessonDocuments } from "../_utils/lesson-documents";
 import { type LessonExam, formatLessonExams } from "../_utils/lesson-exams";
 import { readsNoviceRules } from "../_utils/novice-rules";
+import { type PromptProduct, formatProduct } from "../_utils/product";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { getVerbForm } from "../_utils/verb-form";
@@ -81,6 +82,8 @@ export type LessonSpecParams = {
   material?: string;
   sources?: string;
   exams?: LessonExam[];
+  /** The branded product a product course's lesson teaches people to use. */
+  product?: PromptProduct | null;
   /** Built for one learner's own goal and never shared, so its pictures aren't reused. */
   isPrivate?: boolean;
   setup?: boolean;
@@ -112,6 +115,7 @@ function buildSystemPrompt(params: LessonSpecParams): string {
       material: Boolean(params.material),
       novice,
       private: Boolean(params.isPrivate || params.material),
+      product: Boolean(params.product),
       setup: Boolean(params.setup),
       shortAnswers: Boolean(params.shortAnswers),
       sources: Boolean(params.sources),
@@ -134,7 +138,7 @@ function buildUserPrompt(params: LessonSpecParams): string {
 ${formatLocalContext(params.language)}
     ${formatCast({ language: params.language, seed: `${params.courseTitle}:${params.lessonTitle}` })}
     LEVEL: ${params.level}
-    COURSE_TITLE: ${params.courseTitle}
+    COURSE_TITLE: ${params.courseTitle}${params.product ? `\n    ${formatProduct(params.product)}` : ""}
     CHAPTER_TITLE: ${params.chapterTitle}
     LESSON_TITLE: ${params.lessonTitle}
     LESSON_DESCRIPTION: ${params.lessonDescription}

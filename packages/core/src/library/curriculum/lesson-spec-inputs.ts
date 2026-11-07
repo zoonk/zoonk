@@ -6,6 +6,7 @@ import { listPlannerTemplates } from "../activities/writer-templates";
 import { loadChapterLessons } from "../lessons/_utils/chapter-lessons";
 import { loadLessonExams, loadLessonShortAnswers } from "../lessons/_utils/lesson-exams";
 import { loadLessonDocuments } from "../lessons/_utils/lesson-sources";
+import { COURSE_PRODUCT_SELECT, toPromptProduct } from "../products/course-product";
 import {
   getSiblingsChapterId,
   isQuickLessonIdentityKey,
@@ -24,7 +25,9 @@ export type LessonSpecInputs = {
 export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpecInputs | null> {
   const lesson = await prisma.lesson.findUnique({
     include: {
-      homeChapter: { include: { homeCourse: { select: { id: true, title: true } } } },
+      homeChapter: {
+        include: { homeCourse: { select: { ...COURSE_PRODUCT_SELECT, id: true, title: true } } },
+      },
       skills: {
         include: { skill: { select: { identityKey: true, name: true } } },
         orderBy: { createdAt: "asc" },
@@ -76,6 +79,7 @@ export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpec
       lessonTitle: lesson.title,
       level: lesson.level,
       material: material.length > 0 ? formatMaterialPages(material) : undefined,
+      product: chapter?.homeCourse ? toPromptProduct(chapter.homeCourse) : null,
       quick: isQuickLessonIdentityKey(lesson.identityKey),
       setup: lesson.skills.some(({ skill }) => isSetupSkillIdentityKey(skill.identityKey)),
       shortAnswers,

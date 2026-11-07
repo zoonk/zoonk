@@ -93,6 +93,7 @@ export async function loadDayPlan({
   const dayMinutes = getGoalDayMinutes({ date: localDate, goal, planSettings: plan?.settings });
   const items: SessionPlanItem[] = plan?.items ?? [];
   const graph = parsePlanGraph(plan?.graph);
+  const phases = parsePlanPhases(plan?.phases);
   const skipped = getSkippedSkillIds({ graph, settings: plan?.settings });
   const skills = goalPlan.skills.filter((skill) => !skipped.has(skill.id));
 
@@ -110,7 +111,7 @@ export async function loadDayPlan({
   return {
     dayMinutes,
     examPrep: getExamPrepAccess(tier),
-    finalStretchStart: getFinalStretchStart(parsePlanPhases(plan?.phases)),
+    finalStretchStart: getFinalStretchStart(phases),
     goalPlan,
     graph,
     idleSkillIds,
@@ -121,6 +122,7 @@ export async function loadDayPlan({
     limit,
     listeningSkillIds,
     outlines,
+    phases,
     /** Where the days away count from when the learner hasn't studied since (see `getFreshStart`). */
     planStart: getPlanStart({ goal, settings: plan?.settings, timeZone }),
     prerequisites,

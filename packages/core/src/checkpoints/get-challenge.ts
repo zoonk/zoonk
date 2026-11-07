@@ -11,7 +11,6 @@ import { readBlockPayload } from "../sessions/block-payload";
 import { getStoredBlockWait } from "../sessions/block-wait";
 import { type CheckpointKind } from "../sessions/brain-power";
 import { type StudySessionTimeZoneInput } from "../sessions/contract";
-import { type BossTiming, getBossTimings } from "./_utils/boss-reached";
 import { countBlockRecordings } from "./_utils/boss-recordings";
 import { getAvailableChallengeStatus } from "./_utils/challenge-availability";
 import { loadChallengeCall } from "./_utils/challenge-call";
@@ -19,6 +18,7 @@ import { getNextStudyDay, readDailyLimitReachedToday } from "./_utils/challenge-
 import { canMoveToMonday, loadChallengeMoveRules, loadMoveEffect } from "./_utils/challenge-move";
 import { readBossOffer } from "./_utils/challenge-offer";
 import { needsPlus } from "./_utils/challenge-plus";
+import { readChallengeTiming } from "./_utils/challenge-readiness";
 import { loadChallengeSize } from "./_utils/challenge-size";
 import { getChallengeStatus } from "./_utils/challenge-status";
 import { loadChallengeTopics } from "./_utils/challenge-topics";
@@ -49,16 +49,6 @@ function getKind(challenge: OwnedChallenge): CheckpointKind {
   }
 
   return isFinalBoss({ boss: challenge.item, items: challenge.items }) ? "finalBoss" : "boss";
-}
-
-function getTiming(challenge: OwnedChallenge): BossTiming {
-  const { item, items, today } = challenge;
-
-  if (item.kind === "boss") {
-    return getBossTimings({ items, today }).get(item.id) ?? "date";
-  }
-
-  return item.scheduledFor !== null && item.scheduledFor <= today ? "nextSession" : "date";
 }
 
 async function canMove({
@@ -184,10 +174,9 @@ function getSavedWaitReason({
 
 async function loadChallengeDay(challenge: OwnedChallenge) {
   const { goal, item, today, userId } = challenge;
-  const timing = getTiming(challenge);
-  const due = timing === "nextSession" && item.status === "todo";
 
-  const [plusRequired, block, savedDay] = await Promise.all([
+  const [timing, plusRequired, block, savedDay] = await Promise.all([
+    readChallengeTiming(challenge),
     needsPlus(challenge),
     findChallengeBlock({ challenge }),
     prisma.studySession.findUnique({
@@ -199,6 +188,7 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
     }),
   ]);
 
+  const due = timing === "nextSession" && item.status === "todo";
   const todayBlock = getTodayBlock({ block, today });
 
   const offered = isOfferedBeforeOpen({

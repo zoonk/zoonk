@@ -25,6 +25,7 @@ export type BandPlan = {
   material: string | null;
   nextPosition: number;
   otherChapterTitles: string[];
+  product: CourseOutlineParams["product"];
   skills: GoalSkillRef[];
   extensions: ExtensionPlan[];
   taughtElsewhere: string[];
@@ -135,6 +136,7 @@ export function toOutlineParams({
     material: plan.material ?? undefined,
     model: getScopeModel(scope),
     otherLevelChapters: plan.otherChapterTitles,
+    product: plan.product,
     // A course from the learner's material is sized to what fits before their test.
     requiredSkills: plan.skills.map(({ area, description, key, lessons, name }) => ({
       area: forExam ? area : null,

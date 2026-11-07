@@ -6,8 +6,10 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration, streamTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { draftAgainWhenFlawed } from "../_utils/draft-again";
+import { failFilteredAnswer, failUnfinishedAnswer } from "../_utils/filtered-answer";
 import { formatLocalContext } from "../_utils/language-context";
 import { type LessonExam, formatLessonExams } from "../_utils/lesson-exams";
+import { type PromptProduct, formatProduct } from "../_utils/product";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { getVerbForm } from "../_utils/verb-form";
@@ -59,6 +61,9 @@ export type CourseOutlineParams = {
   exams?: LessonExam[];
   /** A private course's class material, which the outline teaches exactly instead of the band. */
   material?: string;
+  product?: PromptProduct | null;
+  /** The title of the one chapter a product's new release adds, teaching `requiredSkills`. */
+  whatsNew?: string;
   model?: string;
   serviceTier?: ServiceTier;
   useFallback?: boolean;
@@ -119,6 +124,8 @@ function toPromptVariants(params: CourseOutlineParams) {
     exams,
     extend: Boolean(params.extendSkills?.length),
     material: Boolean(params.material),
+    product: Boolean(params.product),
+    whatsNew: Boolean(params.whatsNew),
     withoutTools,
   };
 }
@@ -134,7 +141,9 @@ function formatBandInputs(params: CourseOutlineParams): string {
     `LANGUAGE: ${getPromptLanguageName({ language: params.language })}`,
     `VERB_FORM: ${getVerbForm(params.language)}`,
     `COURSE_TITLE: ${params.courseTitle}`,
+    params.product && formatProduct(params.product),
     `LEVEL: ${params.level}`,
+    variants.whatsNew && `WHATS_NEW: ${params.whatsNew}`,
     `REQUIRED_SKILLS: ${formatRequiredSkills(params.requiredSkills ?? [])}`,
     (variants.extend || variants.examSkills) &&
       `EXTEND_SKILLS: ${formatExtendSkills(params.extendSkills ?? [])}`,
@@ -195,18 +204,22 @@ async function draftOutline({
   const { provenance, result } = await runTaskGeneration({
     analytics,
     generate: () =>
-      generateText({
-        instructions: systemPrompt,
-        model,
-        output: Output.object({ schema }),
-        prompt: userPrompt,
-        providerOptions,
-        reasoning,
-      }),
+      failUnfinishedAnswer(
+        generateText({
+          instructions: systemPrompt,
+          model,
+          output: Output.object({ schema }),
+          prompt: userPrompt,
+          providerOptions,
+          reasoning,
+        }),
+      ),
     libraryInput: true,
     systemPrompt,
     task: "course-outline",
   });
+
+  failFilteredAnswer(result);
 
   const data: CourseOutline = normalizeCourseOutline({
     level: params.level,

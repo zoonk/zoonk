@@ -4,6 +4,8 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { addDays } from "../../plans/planner/plan-calendar";
+import { checksProductPage } from "../products/product-pages";
+import { findNewestReleaseSearch, isReleasesPageUnread } from "../products/product-releases";
 import { getNextExamCheck, getNextSourceCheck } from "../sources/freshness-schedule";
 import { type OwedSourceChange, getOwedSourceChange } from "../sources/unnoticed-changes";
 import { refreshWebSource } from "../sources/web-sources";
@@ -11,6 +13,7 @@ import {
   countActiveExamGoals,
   countActiveSourceGoals,
   countNextEditionGoals,
+  hasActiveProductGoals,
 } from "./exam-learners";
 import { readBlueprintContent } from "./save-exam-blueprint";
 
@@ -28,6 +31,8 @@ export type FreshnessCheck =
       blueprintUpdate: { examBlueprintId: string } | null;
       nextCheckAt: string;
       nextNotice: { examBlueprintId: string } | null;
+      /** Products whose releases page's text isn't the one their releases were read from. */
+      releasesUpdate: { productIds: string[] } | null;
       sourceChange: SourceChange | null;
       status: "scheduled";
     };
@@ -117,6 +122,7 @@ async function searchNextNotice({
     blueprintUpdate: null,
     nextCheckAt: nextCheckAt.toISOString(),
     nextNotice: { examBlueprintId },
+    releasesUpdate: null,
     sourceChange: null,
     status: "scheduled",
   };
@@ -178,6 +184,7 @@ async function checkExam({
     blueprintUpdate: isBehind ? { examBlueprintId: blueprint.id } : null,
     nextCheckAt: nextCheckAt.toISOString(),
     nextNotice: null,
+    releasesUpdate: null,
     sourceChange: null,
     status: "scheduled",
   };
@@ -190,9 +197,18 @@ async function checkSource({
   now: Date;
   sourceId: string;
 }): Promise<FreshnessCheck> {
-  const [source, learners] = await Promise.all([
+  const [source, learners, products] = await Promise.all([
     prisma.source.findUnique({ omit: { extractedText: true }, where: { id: sourceId } }),
     countActiveSourceGoals(sourceId),
+    prisma.product.findMany({
+      select: {
+        id: true,
+        releasesHash: true,
+        releasesSourceId: true,
+        unreadableReleasesHash: true,
+      },
+      where: checksProductPage(sourceId),
+    }),
   ]);
 
   if (!source) {
@@ -219,18 +235,35 @@ async function checkSource({
 
   await prisma.source.update({ data: { nextCheckAt }, where: { id: source.id } });
 
+  // A releases page is read for its releases, never turned into a notice for learners. A product
+  // whose checked page this is, its releases page or its docs, is read again too while its newest
+  // release's own page is due, such as after an outage; either only while the product itself has
+  // active learners, since one shared page passes the check for all its products.
+  const contentHash = refresh?.source.contentHash ?? source.contentHash;
+  const releasesOf = products.filter((product) => product.releasesSourceId === source.id);
+
+  const due = await Promise.all(
+    products.map(
+      async (product) =>
+        ((releasesOf.includes(product) && isReleasesPageUnread({ contentHash, product })) ||
+          (await findNewestReleaseSearch(product.id)) !== null) &&
+        (await hasActiveProductGoals(product.id)),
+    ),
+  );
+
+  const unread = products.filter((_, index) => due[index]);
+
   const owed = getOwedSourceChange(refresh?.source ?? source);
 
   return {
     blueprintUpdate: null,
     nextCheckAt: nextCheckAt.toISOString(),
     nextNotice: null,
-    sourceChange: owed && {
-      ...owed,
-      language: source.language,
-      sourceId: source.id,
-      title: source.title,
-    },
+    releasesUpdate: unread.length > 0 ? { productIds: unread.map((product) => product.id) } : null,
+    sourceChange:
+      releasesOf.length === 0 && owed
+        ? { ...owed, language: source.language, sourceId: source.id, title: source.title }
+        : null,
     status: "scheduled",
   };
 }

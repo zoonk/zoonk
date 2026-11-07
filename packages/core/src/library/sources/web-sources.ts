@@ -3,8 +3,9 @@ import { type Source, prisma } from "@zoonk/db";
 import { buildSourceIdentityKey } from "@zoonk/utils/identity-key";
 import { getSourceIdentitySearch } from "../identity/kinds/source-identity";
 import { resolveLibraryIdentity } from "../identity/resolve-library-identity";
+import { toRegistrableDomain } from "../products/product-keys";
 import { READABLE_SOURCE_FILTER } from "./_utils/readable-sources";
-import { fetchDocument } from "./fetch-document";
+import { PermanentDocumentError, fetchDocument } from "./fetch-document";
 import { getSourceValidUntil } from "./freshness-schedule";
 import { hashDocument, parseDocument } from "./parse-document";
 import { getKnownReusePolicy } from "./reuse-policy";
@@ -20,6 +21,8 @@ export type StoreWebSourceInput = {
   publisher: string | null;
   title: string;
   topic: SourceTopic;
+  /** Checks the address the fetch ended at, after redirects; a page it rejects is never stored. */
+  acceptUrl?: (url: string) => boolean;
 };
 
 export async function fetchAndParse(url: string) {
@@ -87,6 +90,13 @@ function saveChangedContent({
 
 export async function storeWebSource(input: StoreWebSourceInput): Promise<WebSource> {
   const fetched = await fetchAndParse(input.url);
+
+  if (input.acceptUrl && !input.acceptUrl(fetched.url)) {
+    throw new PermanentDocumentError(
+      `${input.url} redirected to ${fetched.url}, which isn't accepted`,
+    );
+  }
+
   const identityKey = buildSourceIdentityKey({ contentHash: null, url: fetched.url });
   const where = { languageIdentity: { identityKey, language: input.language } };
   const now = new Date();
@@ -179,6 +189,12 @@ export async function refreshWebSource(sourceId: string): Promise<SourceRefresh 
 
   const fetched = await fetchAndParse(source.url);
   const now = new Date();
+  const topic = getTopic(source);
+
+  // A product page was official where research found it; another site's page never replaces it.
+  if (topic === "product" && toRegistrableDomain(fetched.url) !== toRegistrableDomain(source.url)) {
+    throw new PermanentDocumentError(`${source.url} now redirects to ${fetched.url}`);
+  }
 
   if (fetched.contentHash === source.contentHash) {
     const updated = await prisma.source.update({
@@ -189,8 +205,6 @@ export async function refreshWebSource(sourceId: string): Promise<SourceRefresh 
 
     return { source: updated, status: "unchanged" };
   }
-
-  const topic = getTopic(source);
 
   const content = toSourceContent({
     fetched,

@@ -15,7 +15,7 @@ const KEYED_TABLES = [
 type KeyedTable = (typeof KEYED_TABLES)[number];
 
 const NATURAL_KEYS: Record<KeyedTable, readonly string[]> = {
-  courses: ["slug"],
+  courses: ["organization_id", "slug"],
   library_chapters: ["language", "identity_key"],
   library_lessons: ["language", "identity_key"],
   media_assets: ["reuse_key"],
@@ -51,12 +51,10 @@ type LeftOut = Partial<Record<ContentTable, ReadonlySet<string>>>;
 
 async function readKeys({
   destination,
-  params = [],
   query,
   table,
 }: {
   destination: Client;
-  params?: unknown[];
   query: string;
   table: KeyedTable;
 }): Promise<ReadonlySet<string>> {
@@ -64,7 +62,6 @@ async function readKeys({
 
   const data = await readRows({
     client: destination,
-    params,
     query: `SELECT ${columns.join(", ")} FROM ${table} WHERE ${query}`,
   });
 
@@ -80,20 +77,9 @@ function readStayingKeys({ destination, table }: { destination: Client; table: K
 }
 
 /** Run it after `markRemovedContent`. */
-export async function readKeptKeys({
-  destination,
-  organizationId,
-}: {
-  destination: Client;
-  organizationId: string;
-}): Promise<KeptKeys> {
+export async function readKeptKeys({ destination }: { destination: Client }): Promise<KeptKeys> {
   // One connection runs one query at a time.
-  const courses = await readKeys({
-    destination,
-    params: [organizationId],
-    query: `${SEEDED_ROWS} AND organization_id = $1`,
-    table: "courses",
-  });
+  const courses = await readKeys({ destination, query: SEEDED_ROWS, table: "courses" });
 
   const chapters = await readStayingKeys({ destination, table: "library_chapters" });
   const lessons = await readStayingKeys({ destination, table: "library_lessons" });
