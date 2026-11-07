@@ -5,8 +5,11 @@ import {
   KUBERNETES_HOME,
   KUBERNETES_RELEASES,
   LINEAR_HOME,
+  MODERNINHA_PLUS_2,
   NEXTJS_BLOG,
   NEXTJS_HOME,
+  PAGBANK_HOME,
+  PAGBANK_MACHINES,
   VERCEL_HOME,
 } from "./page-fixtures";
 import { type ReadProductPagesExpected, type ReadProductPagesInput } from "./task";
@@ -63,6 +66,26 @@ export const TEST_CASES: TestCase<ReadProductPagesExpected, ReadProductPagesInpu
       hints: { brand: "Apple", name: "iPhone", release: "iPhone 13" },
       language: "en",
       pages: [APPLE_HOME, IPHONE_MODELS],
+    },
+  },
+  {
+    expected: {
+      absent: ["Minizinha Chip 3", "Minizinha NFC 2"],
+      brand: "PagBank",
+      learnerRelease: "Moderninha Plus 2",
+      product: "Moderninha",
+      releases: [
+        { name: "Moderninha Plus 2", releasedOn: null },
+        { name: "Moderninha Pro 2", releasedOn: null },
+        { name: "Moderninha Smart 2", releasedOn: null },
+      ],
+    },
+    id: "moderninha-learner-model",
+    language: "pt",
+    userInput: {
+      hints: { brand: "PagBank", name: "Moderninha", release: "Moderninha Plus 2" },
+      language: "pt",
+      pages: [MODERNINHA_PLUS_2, PAGBANK_MACHINES, PAGBANK_HOME],
     },
   },
   {
