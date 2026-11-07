@@ -6,7 +6,7 @@ import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
 import { PlusMark } from "../_components/plus-lock";
 import { TestOutStartLink } from "../_components/test-out-start-link";
-import { TITLE_ROW_CLASS } from "../_components/title-row";
+import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
 import { type MissionView } from "../missions/mission-links";
@@ -100,6 +100,8 @@ function RowName({ block, isNext }: { block: DayStep; isNext: boolean }) {
   );
 }
 
+const ROW_LINE_CLASS = cn(TRUNCATED_TITLE_CLASS, "text-muted-foreground text-xs leading-4");
+
 function RowLines({
   block,
   isNext,
@@ -122,7 +124,7 @@ function RowLines({
 
   return (
     <>
-      {line && <span className="text-muted-foreground truncate text-xs leading-4">{line}</span>}
+      {line && <span className={ROW_LINE_CLASS}>{line}</span>}
 
       {reviewDetail && (
         <span className="text-muted-foreground text-xs leading-4">{reviewDetail}</span>
@@ -276,7 +278,7 @@ export function PlanLessonRow({
   const isNext = onOpen !== null;
 
   const name = (
-    <span className="stacked:whitespace-normal min-w-0 flex-1 truncate text-sm leading-5 font-medium">
+    <span className={cn(TRUNCATED_TITLE_CLASS, "min-w-0 flex-1 text-sm leading-5 font-medium")}>
       {title}
     </span>
   );

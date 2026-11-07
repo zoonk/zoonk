@@ -13,7 +13,7 @@ import { LIST_GROUP_CLASS } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PlusMark } from "../_components/plus-lock";
 import { StatusMark } from "../_components/status-mark";
-import { MarkedText } from "../_components/title-row";
+import { MarkedText, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
@@ -73,7 +73,7 @@ function NextChapterRow({
         <ChapterMark chapter={chapter} isNext />
       </span>
       <span className={PATH_ROW_BODY_CLASS}>
-        <span className="stacked:whitespace-normal truncate font-medium">{chapter.title}</span>
+        <span className={cn(TRUNCATED_TITLE_CLASS, "font-medium")}>{chapter.title}</span>
         <span className="text-muted-foreground font-mono text-xs tabular-nums">
           <span aria-hidden="true">
             {t("{done, number} / {total, number}", {
@@ -145,7 +145,7 @@ function AfterExamRow({ phase }: { phase: PlanPhaseView }) {
       </span>
       <span className={PATH_ROW_BODY_CLASS}>
         <span className="flex flex-col">
-          <span className="stacked:whitespace-normal truncate font-medium">{phaseName(phase)}</span>
+          <span className={cn(TRUNCATED_TITLE_CLASS, "font-medium")}>{phaseName(phase)}</span>
           {phase.mocks.count > 0 && (
             <MarkedText
               className="text-muted-foreground text-xs"

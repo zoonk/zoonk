@@ -5,7 +5,7 @@ import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { MeterPart, MeterParts } from "../_components/meter";
 import { StatusMark } from "../_components/status-mark";
-import { TITLE_ROW_CLASS } from "../_components/title-row";
+import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { getPhaseWeight, getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
@@ -67,7 +67,7 @@ function RoadmapCompact({
       {position && (
         <span className={cn(TITLE_ROW_CLASS, "w-full items-baseline text-xs")}>
           <span className="flex items-baseline">
-            <span className="stacked:whitespace-normal min-w-0 truncate font-medium">
+            <span className={cn(TRUNCATED_TITLE_CLASS, "min-w-0 font-medium")}>
               {position.name}
             </span>
             {position.day && (
