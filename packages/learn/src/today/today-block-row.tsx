@@ -279,7 +279,10 @@ export function PlanLessonRow({
   return (
     <li
       aria-current={isNext ? "step" : undefined}
-      className={getRowClass({ finished: false, fold: NO_FOLD, isNext })}
+      className={cn(
+        getRowClass({ finished: false, fold: NO_FOLD, isNext }),
+        disabled && !busy && "opacity-50",
+      )}
     >
       <span className="flex h-5 w-3 shrink-0 items-center justify-center">
         <KindMark kind="lesson" />

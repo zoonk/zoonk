@@ -111,9 +111,12 @@ describe("only the control that sent a request spins", () => {
 
     const row = page.getByRole("button", { name: "Ratios" });
     const keepLearning = page.getByRole("button", { name: /^Keep learning/u });
+    const rowOpacity = () => Number(getComputedStyle(row.element().closest("li")!).opacity);
+    const resting = rowOpacity();
 
     await row.click();
     await expect.element(row).toHaveAttribute("aria-busy", "true");
+    expect(rowOpacity()).toBe(resting);
     await expect.element(keepLearning).not.toHaveAttribute("aria-busy");
     await expect.element(keepLearning).toHaveAttribute("aria-disabled", "true");
 
@@ -124,6 +127,7 @@ describe("only the control that sent a request spins", () => {
     await expect.element(keepLearning).toHaveAttribute("aria-busy", "true");
     await expect.element(row).not.toHaveAttribute("aria-busy");
     await expect.element(row).toHaveAttribute("aria-disabled", "true");
+    await expect.poll(rowOpacity).toBeLessThan(resting);
 
     opens[1]!.resolve(false);
     await expect.element(keepLearning).not.toHaveAttribute("aria-busy");
