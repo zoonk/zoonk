@@ -223,7 +223,7 @@ export function placeCarriedWork({
   // (`keepPhaseEnds`; a study cycle or a learned order don't). A focus day gives the rest of today
   // to focus lessons, where letting time go could stack challenges tomorrow past what a day keeps
   // and leave one out (#2227).
-  const { room, roomed, schedule } = scheduleCarriedWork({
+  const { moved, room, roomed, schedule } = scheduleCarriedWork({
     carried,
     days,
     letGo: keepsEnds && !input.carryOver?.todayExceptAreas,
@@ -233,9 +233,12 @@ export function placeCarriedWork({
   });
 
   const reserved = shiftReserved({
-    days: reserveCarriedTime({
-      days: roomed,
-      minutes: carried.reduce((total, unit) => total + unit.minutes, 0),
+    days: shiftReserved({
+      days: reserveCarriedTime({
+        days: roomed,
+        minutes: carried.reduce((total, unit) => total + unit.minutes, 0),
+      }),
+      minutes: moved,
     }),
     minutes: new Map([...room].map(([time, minutes]) => [time, -minutes])),
   });
