@@ -6,7 +6,13 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Fragment } from "react";
 import { CoverageBar, CoverageLegend } from "../_components/coverage-bar";
-import { LIST_GROUP_CLASS, ListRowLink, ListRowTrailing } from "../_components/list-group";
+import {
+  LIST_GROUP_CLASS,
+  ListRowDescription,
+  ListRowLink,
+  ListRowTitle,
+  ListRowTrailing,
+} from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { useFormatProgressShare } from "../_utils/percent";
 import { type SubjectGroup, groupSubjects } from "./group-subjects";
@@ -101,17 +107,11 @@ function SubjectRow({
     <ListRowLink href={href}>
       <span className={ROW_GRID_CLASS}>
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span
-            className={cn(
-              "min-w-0 text-sm leading-snug font-medium text-pretty @lg/subjects:truncate",
-              notPlanned && "text-muted-foreground",
-            )}
-            title={subject.name}
-          >
+          <ListRowTitle className={cn(notPlanned && "text-muted-foreground")}>
             {subject.name}
-          </span>
+          </ListRowTitle>
 
-          {alsoIn && <span className="text-muted-foreground text-xs text-pretty">{alsoIn}</span>}
+          {alsoIn && <ListRowDescription className="text-pretty">{alsoIn}</ListRowDescription>}
         </span>
 
         <span className="text-muted-foreground hidden text-right font-mono text-xs whitespace-nowrap tabular-nums @2xl/subjects:block">
