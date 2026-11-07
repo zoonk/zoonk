@@ -16,6 +16,7 @@ vi.mock("./language-lesson-respelling-pt.prompt.md", () => ({
 
 vi.mock("./language-lesson-respelling-es.prompt.md", () => ({ default: "- Spanish readers.\n" }));
 vi.mock("./language-lesson-respelling-en.prompt.md", () => ({ default: "- English readers.\n" }));
+vi.mock("./sentence-orders.prompt.md", () => ({ default: "" }));
 
 vi.mock("ai", async (importOriginal) => {
   const actual = await importOriginal<typeof Ai>();

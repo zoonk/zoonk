@@ -137,7 +137,13 @@ describe(writeLanguageLessonContent, () => {
       language: "pt",
     });
 
-    await lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id });
+    await Promise.all([
+      lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
+      prisma.lesson.update({
+        data: { sentenceOrdersOwedAt: new Date() },
+        where: { id: lesson.id },
+      }),
+    ]);
 
     const writerRunId = crypto.randomUUID();
     mockDraft(uniqueDraft(key), writerRunId);
@@ -173,7 +179,7 @@ describe(writeLanguageLessonContent, () => {
       where: { id: lesson.id },
     });
 
-    expect(saved.contentStatus).toBe("completed");
+    expect(saved).toMatchObject({ contentStatus: "completed", sentenceOrdersOwedAt: null });
 
     expect(saved.summary).toStrictEqual({
       ideas: [
@@ -220,6 +226,14 @@ describe(writeLanguageLessonContent, () => {
       [`How much is the rent? ${key}`, "Quanto é o aluguel?"],
       [`Is there a deposit? ${key}`, "Tem caução?"],
       [`Utilities are included ${key}`, "As contas estão incluídas"],
+    ]);
+
+    expect(
+      saved.sentences.map((row) => [row.otherSentenceOrders, row.otherTranslationOrders]),
+    ).toStrictEqual([
+      [[], ["O aluguel é quanto?"]],
+      [[], []],
+      [[], ["Estão incluídas as contas"]],
     ]);
 
     expect(saved.steps.every((step) => step.skillId === skill.id)).toBe(true);
