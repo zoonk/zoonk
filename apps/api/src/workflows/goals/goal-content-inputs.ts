@@ -8,8 +8,13 @@ import { goalProgressStep } from "./steps/goal-progress-step";
 
 const RESEARCH_POLL = "3s";
 
+const LEARN_RESEARCH_POLLS = 40;
+
 /** Research reads a new exam's notice in a minute or two, and a learn goal's references within one. */
-const MAX_RESEARCH_POLLS: Partial<Record<GoalKind, number>> = { exam: 100, learn: 40 };
+const MAX_RESEARCH_POLLS: Partial<Record<GoalKind, number>> = {
+  exam: 100,
+  learn: LEARN_RESEARCH_POLLS,
+};
 
 /** Purpose, role and level change the skill graph, so the curriculum waits for the learner's answers. */
 const ANSWERS_POLL = "3s";
@@ -97,6 +102,31 @@ async function waitForReading({
   return researched;
 }
 
+/**
+ * Research records whether the goal is about a product right after deciding it, so the graph can
+ * title the product's course; a run that ends without recording it ends the wait too.
+ */
+async function waitForProductDecision({
+  inputs,
+  researchId,
+}: {
+  inputs: GoalCurriculumInputs;
+  researchId: string;
+}): Promise<GoalCurriculumInputs | null> {
+  const { loaded } = await repeatUntil({
+    done: (latest) => latest.decided,
+    run: async () => {
+      const active = await isRunActiveStep(researchId);
+      const latest = await loadGoalCurriculumStep(inputs.goal.id);
+      return { decided: !active || !latest || latest.productChecked, loaded: latest };
+    },
+    times: LEARN_RESEARCH_POLLS,
+    wait: () => sleep(RESEARCH_POLL),
+  });
+
+  return loaded;
+}
+
 export async function waitForGraphInputs({
   initial,
   researchId,
@@ -106,11 +136,19 @@ export async function waitForGraphInputs({
 }): Promise<GoalCurriculumInputs | null> {
   const inputs = initial.awaitingAnswers ? await waitForAnswers(initial.goal.id) : initial;
 
-  if (!inputs || !researchId || inputs.hasPlanGraph || !inputs.hasMaterial) {
+  if (!inputs || !researchId || inputs.hasPlanGraph) {
     return inputs;
   }
 
-  return waitForReading({ inputs, researchId });
+  if (inputs.hasMaterial) {
+    return waitForReading({ inputs, researchId });
+  }
+
+  if (inputs.goal.kind === "learn" && !inputs.productChecked) {
+    return waitForProductDecision({ inputs, researchId });
+  }
+
+  return inputs;
 }
 
 export async function loadGoalReferences({

@@ -78,6 +78,14 @@ model Goal {
   primaryCourse         Course?                @relation(fields: [primaryCourseId], references: [id], onDelete: SetNull)
   warmUpId              String?                @map("warm_up_id") @db.Uuid
   warmUp                WarmUp?                @relation(fields: [warmUpId], references: [id], onDelete: SetNull)
+  /// Written only by research, never from `details`, so a brand can rely on it.
+  productId             String?                @map("product_id") @db.Uuid
+  product               Product?               @relation(fields: [productId], references: [id], onDelete: SetNull)
+  /// Only an older release the learner named, studied in its pinned course; null follows the main course.
+  productReleaseId      String?                @map("product_release_id") @db.Uuid
+  productRelease        ProductRelease?        @relation(fields: [productReleaseId], references: [id], onDelete: SetNull)
+  /// When research decided whether the goal is about a product, linked or not; the skill graph waits for it.
+  productCheckedAt      DateTime?              @map("product_checked_at")
   /// The goal this one took over, once: a finished learn goal continued at its course's next level,
   /// or a language goal moved to its exam. Learners can't write it, unlike `details`.
   replacesGoalId        String?                @unique @map("replaces_goal_id") @db.Uuid
@@ -110,6 +118,8 @@ model Goal {
   @@index([examBlueprintId])
   @@index([primaryCourseId])
   @@index([warmUpId])
+  @@index([productId])
+  @@index([productReleaseId])
   @@map("goals")
 }
 

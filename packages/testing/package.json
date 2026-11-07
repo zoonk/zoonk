@@ -35,6 +35,7 @@
     "./fixtures/plan-bases": "./src/fixtures/plan-bases.ts",
     "./fixtures/playable-lessons": "./src/fixtures/playable-lessons.ts",
     "./fixtures/playable-step-contents": "./src/fixtures/playable-step-contents.ts",
+    "./fixtures/products": "./src/fixtures/products.ts",
     "./fixtures/progress": "./src/fixtures/progress.ts",
     "./fixtures/pronunciation-reviews": "./src/fixtures/pronunciation-reviews.ts",
     "./fixtures/recordings": "./src/fixtures/recordings.ts",

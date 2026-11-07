@@ -88,17 +88,62 @@ export function findNamesInDocument({
   );
 }
 
+function isLongEnough(normalizedPassage: string): boolean {
+  return normalizedPassage.length >= MIN_PASSAGE_LENGTH;
+}
+
+/**
+ * Word for word after normalizing, for claims a near match could fake (a date, a release's name):
+ * the word-share fallback of `isPassageInDocument` would pass a passage with one word swapped.
+ */
+export function isPassageExactlyInDocument({
+  passage,
+  text,
+}: {
+  passage: string;
+  text: string;
+}): boolean {
+  const normalizedPassage = normalizeText(passage);
+
+  return (
+    isLongEnough(normalizedPassage) && checkedDocument(text).normalized.includes(normalizedPassage)
+  );
+}
+
+/**
+ * The page's own whole lines around each place it holds the passage, so a quote cropped from a line
+ * or with a line break where the page has a space is judged by the line it came from.
+ */
+export function findPassageLines({ passage, text }: { passage: string; text: string }): string[] {
+  const target = normalizeText(passage);
+  const lines = text.split("\n");
+
+  const holds = (start: number, end: number) =>
+    normalizeText(lines.slice(start, end + 1).join("\n")).includes(target);
+
+  return lines.flatMap((line, start) => {
+    const limit = normalizeText(line).length + target.length;
+
+    for (let end = start; end < lines.length; end += 1) {
+      if (holds(start, end)) {
+        return end > start && holds(start + 1, end) ? [] : [lines.slice(start, end + 1).join("\n")];
+      }
+
+      if (normalizeText(lines.slice(start, end + 1).join("\n")).length > limit) {
+        return [];
+      }
+    }
+
+    return [];
+  });
+}
+
 export function isPassageInDocument({ passage, text }: { passage: string; text: string }): boolean {
   const normalizedPassage = normalizeText(passage);
 
-  if (normalizedPassage.length < MIN_PASSAGE_LENGTH) {
-    return false;
-  }
-
-  const document = checkedDocument(text);
-
   return (
-    document.normalized.includes(normalizedPassage) ||
-    sharesWordsAndNumbers({ document, passage: normalizedPassage })
+    isPassageExactlyInDocument({ passage, text }) ||
+    (isLongEnough(normalizedPassage) &&
+      sharesWordsAndNumbers({ document: checkedDocument(text), passage: normalizedPassage }))
   );
 }

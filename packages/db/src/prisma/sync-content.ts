@@ -8,10 +8,11 @@ import {
   markRemovedContent,
 } from "./_sync-content/destination";
 import { readKeptKeys, withoutKeptKeys } from "./_sync-content/kept-keys";
+import { matchLocalCourses } from "./_sync-content/local-courses";
 import { assertCompatibleSchemas, getOrganizationId } from "./_sync-content/metadata";
 import { restoreLearnerReferences, snapshotLearnerReferences } from "./_sync-content/preserve";
-import { getColumnValues } from "./_sync-content/rows";
 import { readSourceCatalog } from "./_sync-content/source";
+import { upsertOrganizations } from "./_sync-content/upserts";
 
 async function rollback(client: Client): Promise<void> {
   await client.query("ROLLBACK");
@@ -40,25 +41,31 @@ async function synchronizeConnectedClients({
     const sourceCatalog = await readSourceCatalog({ organizationId: sourceOrganizationId, source });
 
     if (sourceCatalog.courses.rows.length === 0) {
-      throw new Error("The source AI organization has no catalog courses");
+      throw new Error("The source has no catalog courses");
     }
 
-    await markRemovedContent({
-      courseSlugs: getColumnValues(sourceCatalog.courses, "slug"),
+    const localCatalog = await matchLocalCourses({
+      catalog: await upsertOrganizations({
+        catalog: sourceCatalog,
+        destination,
+        organizationId: destinationOrganizationId,
+        sourceOrganizationId,
+      }),
       destination,
-      organizationId: destinationOrganizationId,
     });
 
+    await markRemovedContent({ courses: localCatalog.courses, destination });
+
     const catalog = withoutKeptKeys({
-      catalog: sourceCatalog,
-      keys: await readKeptKeys({ destination, organizationId: destinationOrganizationId }),
+      catalog: localCatalog,
+      keys: await readKeptKeys({ destination }),
     });
 
     await assertNoUnkeptReferences(destination);
 
     const references = await snapshotLearnerReferences(destination);
 
-    await clearDestinationContent({ destination, organizationId: destinationOrganizationId });
+    await clearDestinationContent({ destination });
 
     await copyCatalog({ catalog, destination, organizationId: destinationOrganizationId });
 

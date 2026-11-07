@@ -1,11 +1,18 @@
 import { randomUUID } from "node:crypto";
 import { recordSourceChangeNotice } from "@zoonk/core/library/sources/notices";
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { evaluationRunFixture } from "@zoonk/testing/fixtures/evaluation-runs";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
+import {
+  brandFixture,
+  productFixture,
+  productReleaseFixture,
+} from "@zoonk/testing/fixtures/products";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   examBlueprintFixture,
@@ -20,6 +27,7 @@ import { getStartMock } from "../_test-utils/start-mock";
 import { followUpsWorkflow } from "../follow-ups/follow-ups-workflow";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
 import { pictureChecksWorkflow } from "../images/picture-checks-workflow";
+import { courseReleaseWorkflow } from "../products/course-release-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import { dailySweepsWorkflow } from "./daily-sweeps-workflow";
@@ -183,6 +191,34 @@ describe(dailySweepsWorkflow, () => {
     );
 
     expect(result.followUpsStarted).toBeGreaterThanOrEqual(1);
+  });
+
+  it("starts the update of a followed course its product's announced release, now out, left behind", async () => {
+    const brand = await brandFixture();
+    const product = await productFixture({ organizationId: brand.id });
+
+    const [taught] = await Promise.all([
+      productReleaseFixture({
+        productId: product.id,
+        releasedAt: new Date(Date.now() - 400 * DAY_MS),
+      }),
+      productReleaseFixture({ productId: product.id, releasedAt: new Date(Date.now() - DAY_MS) }),
+    ]);
+
+    const course = await courseFixture({
+      organizationId: brand.id,
+      productId: product.id,
+      productReleaseId: taught.id,
+    });
+
+    const user = await userFixture();
+    await goalFixture({ primaryCourseId: course.id, userId: user.id });
+
+    await dailySweepsWorkflow(scheduledRun());
+
+    expect(start).toHaveBeenCalledWith(courseReleaseWorkflow, [{ courseId: course.id }], {
+      experimental_hook: { token: `course-release:${course.id}` },
+    });
   });
 
   it("starts the check of pictures still owing one, such as a picture whose storing step failed before starting it", async () => {

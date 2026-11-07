@@ -18,7 +18,7 @@ export const changingFactsTask: Task<
   ChangingFactsExpected
 > = {
   description:
-    "Detect goals that depend on facts that change over time: exams, regulations or software versions",
+    "Detect goals that depend on facts that change over time: exams, regulations or a branded product",
   evaluate: createChoiceEvaluation({
     classifier: changingFactsClassifier,
     toOutput: (topic) => ({ topic }),

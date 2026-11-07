@@ -1,0 +1,323 @@
+import { chooseServiceTier } from "@zoonk/ai/provider-options";
+import { type ProductHints, type SourceResearchPlan } from "@zoonk/ai/tasks/research/source-plan";
+import { toNameKey } from "@zoonk/core/library/products/keys";
+import { type GoalProductLink } from "@zoonk/core/library/products/link-goal";
+import { claimRunToken, waitForRunToken } from "../_shared/run-token";
+import { readProductReleases, readUnreadReleasesPage } from "../products/product-releases";
+import { readReleasePage } from "./release-page";
+import { type ResearchResult } from "./research-result";
+import { type ResearchContext } from "./research-sources";
+import { linkGoalToSourcesStep } from "./steps/link-goal-step";
+import { planSourceResearchStep } from "./steps/plan-research-step";
+import {
+  type KnownProduct,
+  copyBrandLogoStep,
+  copyProductImageStep,
+  findCourseProductStep,
+  findProductPagesStep,
+  findProductStep,
+  inspectProductSitesStep,
+  linkGoalProductStep,
+  markProductCheckedStep,
+  readProductPagesStep,
+  refreshProductReleasesStep,
+  saveProductResearchStep,
+  storeProductPageStep,
+} from "./steps/product-steps";
+
+type ProductContext = ResearchContext<SourceResearchPlan>;
+
+const READY: ResearchResult = { examBlueprintId: null, sourceIds: [], status: "ready" };
+const NOT_FOUND: ResearchResult = { reason: "noOfficialSource", status: "needsUpload" };
+const learnerTier = chooseServiceTier({ wait: "learner" });
+
+type Research = Pick<ProductContext, "analytics" | "plan"> & { hints: ProductHints };
+
+/** Joins a run already holding `token`; true when this run holds it and should do the work. */
+async function claimOrWait(token: string): Promise<boolean> {
+  const { conflict } = await claimRunToken(token);
+
+  if (!conflict) {
+    return true;
+  }
+
+  await waitForRunToken(token);
+  return false;
+}
+
+function findKnown({ hints, plan }: Research): Promise<KnownProduct | null> {
+  return findProductStep({ ...hints, officialDomains: plan.officialDomains });
+}
+
+type StoredPage = NonNullable<Awaited<ReturnType<typeof storeProductPageStep>>>;
+
+/**
+ * Stored pages in reading order; a page that isn't official or can never be downloaded is left out.
+ * One that keeps failing fails the run: a product saved without its releases page looks fresh.
+ */
+async function storePages({
+  language,
+  sites,
+  urls,
+}: {
+  language: string;
+  sites: Parameters<typeof storeProductPageStep>[0]["sites"];
+  urls: (string | null)[];
+}): Promise<(StoredPage | null)[]> {
+  const unique = [...new Set(urls.filter((url) => url !== null))];
+
+  const stored = await Promise.all(
+    unique.map((url) => storeProductPageStep({ language, sites, url })),
+  );
+
+  return urls.map((url) => (url ? (stored[unique.indexOf(url)] ?? null) : null));
+}
+
+async function copyMedia({
+  iconUrl,
+  imageUrl,
+  organizationId,
+  productId,
+}: {
+  iconUrl: string | null;
+  imageUrl: string | null;
+  organizationId: string;
+  productId: string;
+}): Promise<void> {
+  // A missing logo or picture never costs the learner their product.
+  await Promise.allSettled([
+    iconUrl ? copyBrandLogoStep({ iconUrl, organizationId }) : null,
+    imageUrl ? copyProductImageStep({ imageUrl, productId }) : null,
+  ]);
+}
+
+/** Search, tie the sites by their fetched domains, read the official pages, then save. */
+async function researchNewProduct(research: Research): Promise<GoalProductLink | null> {
+  const { analytics, hints, plan } = research;
+
+  const pages = await findProductPagesStep({
+    analytics,
+    hints,
+    officialDomains: plan.officialDomains,
+  });
+
+  if (!pages.productUrl) {
+    return null;
+  }
+
+  const [inspected] = await Promise.allSettled([
+    inspectProductSitesStep({
+      brandUrl: pages.brandUrl,
+      productName: hints.name,
+      productUrl: pages.productUrl,
+    }),
+  ]);
+
+  const sites = inspected.status === "fulfilled" ? inspected.value : null;
+
+  if (!sites) {
+    return null;
+  }
+
+  const [brandPage, productPage, docs, releases, release] = await storePages({
+    language: plan.language,
+    sites,
+    urls: [sites.brand.url, sites.product.url, pages.docsUrl, pages.releasesUrl, pages.releaseUrl],
+  });
+
+  if (!brandPage || !productPage) {
+    return null;
+  }
+
+  const pageIds = [brandPage, productPage, docs, releases, release].flatMap(
+    (page) => page?.sourceId ?? [],
+  );
+
+  const reading = await readProductPagesStep({
+    analytics,
+    brandDomain: sites.brand.domain,
+    hints,
+    language: plan.language,
+    releasesPageIds: [releases, release].flatMap((page) => page?.sourceId ?? []),
+    sourceIds: [...new Set(pageIds)],
+  });
+
+  if (!reading.brand || !reading.product) {
+    return null;
+  }
+
+  const saved = await saveProductResearchStep({
+    learnerRelease: reading.learnerRelease,
+    research: {
+      brand: {
+        description: reading.brand.description,
+        domain: sites.brand.domain,
+        name: reading.brand.name,
+        website: sites.brand.url,
+      },
+      product: {
+        aliases: reading.product.aliases,
+        description: reading.product.description,
+        docsSourceId: docs?.sourceId ?? null,
+        name: reading.product.name,
+        website: sites.product.url,
+        websiteSourceId: productPage.sourceId,
+      },
+      provenance: reading.provenance,
+      releases: reading.releases,
+      releasesHash: releases ? (reading.hashes[releases.sourceId] ?? null) : null,
+      releasesSourceId: releases?.sourceId ?? null,
+    },
+  });
+
+  await copyMedia({
+    iconUrl: sites.brand.iconUrl,
+    imageUrl: sites.product.imageUrl,
+    organizationId: saved.organizationId,
+    productId: saved.link.productId,
+  });
+
+  return saved.link;
+}
+
+/**
+ * Fetches the releases page again and reads it only when its hash differs from the one the saved
+ * releases came from, which also catches a refresh that saved the new hash and then failed before
+ * reading. A page that no longer answers keeps the releases already saved.
+ */
+async function refreshReleases({
+  known,
+  research,
+}: {
+  known: KnownProduct;
+  research: Research;
+}): Promise<KnownProduct> {
+  const sourceId = known.product.releasesSourceId;
+
+  if (sourceId) {
+    await Promise.allSettled([refreshProductReleasesStep(sourceId)]);
+
+    await readUnreadReleasesPage({
+      analytics: research.analytics,
+      productId: known.product.id,
+      release: research.hints.release,
+      serviceTier: learnerTier,
+    });
+  }
+
+  return (await findKnown(research)) ?? known;
+}
+
+/** The product is known but not the release the learner named: search for that release alone. */
+async function researchNamedRelease({
+  known,
+  release,
+  research,
+}: {
+  known: KnownProduct;
+  release: string;
+  research: Research;
+}): Promise<GoalProductLink> {
+  if (!(await claimOrWait(`product:${known.product.id}:${toNameKey(release)}`))) {
+    const joined = await findKnown(research);
+    return joined?.link ?? known.link;
+  }
+
+  const link = await readReleasePage({
+    analytics: research.analytics,
+    known,
+    language: research.plan.language,
+    release,
+    serviceTier: learnerTier,
+  });
+
+  return link ?? known.link;
+}
+
+async function researchKnownProduct({
+  known,
+  research,
+}: {
+  known: KnownProduct;
+  research: Research;
+}): Promise<GoalProductLink> {
+  const current = known.isFresh ? known : await refreshReleases({ known, research });
+  const { release } = research.hints;
+
+  return release && !current.hasNamedRelease
+    ? researchNamedRelease({ known: current, release, research })
+    : current.link;
+}
+
+/** One run researches a product; others with the same hints wait for it and look it up again. */
+async function findOrResearchProduct(research: Research): Promise<GoalProductLink | null> {
+  const known = await findKnown(research);
+
+  if (known) {
+    return researchKnownProduct({ known, research });
+  }
+
+  const { hints } = research;
+  const token = `product:${toNameKey(hints.brand)}:${toNameKey(hints.name)}`;
+
+  if (!(await claimOrWait(token))) {
+    const joined = await findKnown(research);
+
+    if (joined) {
+      return researchKnownProduct({ known: joined, research });
+    }
+  }
+
+  return researchNewProduct(research);
+}
+
+/**
+ * A branded product's brand, product and releases come only from official pages research fetched,
+ * shared by every learner of the product; known products cost no search, fetch or model call. Every
+ * path records `productCheckedAt`, which the skill graph waits for.
+ */
+export async function researchProduct({
+  analytics,
+  goal,
+  uploads,
+}: Omit<ProductContext, "plan">): Promise<ResearchResult> {
+  const fromCourse = await findCourseProductStep(goal.id);
+
+  if (fromCourse) {
+    await linkGoalProductStep({ goalId: goal.id, link: fromCourse });
+    return READY;
+  }
+
+  // The learner's own material is what they study, as an upload after "not found" asked for.
+  if (uploads.length > 0) {
+    await linkGoalToSourcesStep({ goalId: goal.id, sourceIds: uploads });
+    await markProductCheckedStep(goal.id);
+    return { examBlueprintId: null, sourceIds: uploads, status: "ready" };
+  }
+
+  const plan = await planSourceResearchStep({ analytics, goal, topic: "product" });
+
+  const link = plan.product
+    ? await findOrResearchProduct({ analytics, hints: plan.product, plan })
+    : null;
+
+  if (!link) {
+    await markProductCheckedStep(goal.id);
+    return NOT_FOUND;
+  }
+
+  await linkGoalProductStep({ goalId: goal.id, link });
+
+  // Dating the product's releases never decides the learner's research: a reading that keeps
+  // failing is left for the freshness check, which reads the product again while it's due.
+  await Promise.allSettled([
+    readProductReleases({
+      analytics,
+      productId: link.productId,
+      release: plan.product?.release ?? null,
+      serviceTier: learnerTier,
+    }),
+  ]);
+
+  return READY;
+}

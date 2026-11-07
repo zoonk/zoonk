@@ -31,6 +31,7 @@ export async function buildGoalSkillGraph(input: {
               ...input,
               courses,
               goal: input.inputs.goal,
+              product: input.inputs.product,
               provenance: frameProvenance,
             });
 

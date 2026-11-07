@@ -1,9 +1,9 @@
 import "server-only";
-import { type Course, type CourseFormat, type TransactionClient, prisma } from "@zoonk/db";
+import { type Course, type CourseFormat, prisma } from "@zoonk/db";
 import { lockCourseHome } from "@zoonk/db/course-home";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { normalizeString, pickAvailableSlug } from "@zoonk/utils/string";
-import { getCourseSlugForTitle } from "../../courses/course-slug";
+import { normalizeString } from "@zoonk/utils/string";
+import { getAvailableCourseSlug } from "../_utils/available-course-slug";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
 import { findCourseByTitle, getCourseIdentitySearch } from "../identity/kinds/course-identity";
 import { resolveLibraryIdentity } from "../identity/resolve-library-identity";
@@ -56,23 +56,6 @@ async function getCourseHome(ownerId: string | null) {
   return { homeId: organization.id, organizationId: organization.id };
 }
 
-async function getAvailableSlug(
-  tx: TransactionClient,
-  { homeId, scope, title }: { homeId: string; scope: CourseScope; title: string },
-): Promise<string> {
-  const base = getCourseSlugForTitle({ language: scope.language, title }) || "course";
-
-  const taken = await tx.course.findMany({
-    select: { slug: true },
-    where: {
-      ...(scope.ownerId ? { userId: homeId } : { organizationId: homeId }),
-      slug: { startsWith: base },
-    },
-  });
-
-  return pickAvailableSlug({ base, taken: taken.map((course) => course.slug) });
-}
-
 async function createCourse({
   format,
   provenance,
@@ -104,7 +87,11 @@ async function createCourse({
         normalizedTitle: normalizeString(title),
         organizationId,
         outlineStatus: "pending",
-        slug: await getAvailableSlug(tx, { homeId, scope, title }),
+        slug: await getAvailableCourseSlug(tx, {
+          home: scope.ownerId ? { userId: homeId } : { organizationId: homeId },
+          language: scope.language,
+          title,
+        }),
         targetLanguage: scope.targetLanguage,
         title,
         userId: scope.ownerId,

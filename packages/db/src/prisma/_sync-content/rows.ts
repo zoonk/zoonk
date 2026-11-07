@@ -152,16 +152,27 @@ export function getUpsertClause({
   columns,
   conflict,
   keep,
+  keepWhenNull = [],
   returning,
+  table,
 }: {
   columns: string[];
   conflict: string[];
   keep: string[];
+  keepWhenNull?: string[];
   returning: string[];
+  table: string;
 }): string {
   const assignments = columns
     .filter((column) => !conflict.includes(column) && !keep.includes(column))
-    .map((column) => `${escapeIdentifier(column)} = EXCLUDED.${escapeIdentifier(column)}`);
+    .map((column) => {
+      const name = escapeIdentifier(column);
+      const incoming = `EXCLUDED.${name}`;
+
+      return keepWhenNull.includes(column)
+        ? `${name} = COALESCE(${incoming}, ${escapeIdentifier(table)}.${name})`
+        : `${name} = ${incoming}`;
+    });
 
   const target = conflict.map((column) => escapeIdentifier(column)).join(", ");
   const returned = returning.map((column) => escapeIdentifier(column)).join(", ");

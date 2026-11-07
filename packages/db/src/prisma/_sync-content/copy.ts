@@ -11,7 +11,13 @@ import {
   runInOrder,
 } from "./rows";
 import { type SourceCatalog } from "./source";
-import { type IdMap, upsertCourses, upsertVocabulary } from "./upserts";
+import {
+  type IdMap,
+  PRODUCT_SOURCE_COLUMNS,
+  upsertCourses,
+  upsertProducts,
+  upsertVocabulary,
+} from "./upserts";
 
 type Transform = (data: TableRows) => TableRows;
 type TableCopy = readonly [ContentTable, TableRows];
@@ -81,6 +87,8 @@ async function getExistingReferences({
     ids: [
       ...getColumnValues(catalog.items, "source_id"),
       ...getColumnValues(catalog.library_steps, "source_id"),
+      ...PRODUCT_SOURCE_COLUMNS.flatMap((column) => getColumnValues(catalog.products, column)),
+      ...getColumnValues(catalog.product_releases, "source_id"),
     ],
     table: "sources",
   });
@@ -121,25 +129,19 @@ function getCurriculumTables({
   courseIds: IdMap;
   existing: ExistingIds;
 }): TableCopy[] {
-  const mediaIds = new Set(getRowIds(catalog.media_assets));
   const chapterIds = new Set(getRowIds(catalog.library_chapters));
   const byCourse = remap({ column: "course_id", ids: courseIds });
-  const byImage = keepKnown({ column: "image_asset_id", known: mediaIds });
 
   const items = applyTransforms(catalog.items, [
     keepKnown({ column: "source_id", known: existing.sourceIds }),
     keepKnown({ column: "exam_blueprint_id", known: existing.blueprintIds }),
   ]);
 
-  const chapters = applyTransforms(catalog.library_chapters, [
-    remap({ column: "home_course_id", ids: courseIds }),
-    byImage,
-  ]);
+  const chapters = remap({ column: "home_course_id", ids: courseIds })(catalog.library_chapters);
 
   const lessons = applyTransforms(catalog.library_lessons, [
     keepKnown({ column: "home_chapter_id", known: chapterIds }),
     remap({ column: "go_further_course_id", ids: courseIds }),
-    byImage,
   ]);
 
   return [
@@ -199,7 +201,29 @@ export async function copyCatalog({
   organizationId: string;
 }): Promise<void> {
   const existing = await getExistingReferences({ catalog, destination });
-  const courseIds = await upsertCourses({ catalog, destination, organizationId });
+
+  const { productIds, releaseIds } = await upsertProducts({
+    destination,
+    products: applyTransforms(
+      catalog.products,
+      PRODUCT_SOURCE_COLUMNS.map((column) => keepKnown({ column, known: existing.sourceIds })),
+    ),
+    releases: keepKnown({ column: "source_id", known: existing.sourceIds })(
+      catalog.product_releases,
+    ),
+  });
+
+  const courseIds = await upsertCourses({
+    catalog: {
+      ...catalog,
+      courses: applyTransforms(catalog.courses, [
+        remap({ column: "product_id", ids: productIds }),
+        remap({ column: "product_release_id", ids: releaseIds }),
+        remap({ column: "uncomparable_release_id", ids: releaseIds }),
+      ]),
+    },
+    destination,
+  });
 
   logInfo(`Copied ${catalog.courses.rows.length} courses`);
 

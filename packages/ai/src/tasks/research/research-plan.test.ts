@@ -1,6 +1,6 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { noPromptTrainingMiddleware } from "../../data-protection";
+import { readGatewayOptions } from "../_test-utils/gateway-options";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { generateExamResearchPlan } from "./research-plan";
 import { generateSourceResearchPlan } from "./source-research-plan";
@@ -15,9 +15,6 @@ vi.mock("ai", async (importOriginal) => {
   return { ...actual, generateText: vi.fn() };
 });
 
-type TextTransform = NonNullable<typeof noPromptTrainingMiddleware.transformParams>;
-type TextParams = Parameters<TextTransform>[0]["params"];
-
 const PLAN = {
   board: null,
   classTest: false,
@@ -30,17 +27,6 @@ const PLAN = {
   role: null,
   searchTerms: [],
 };
-
-/** What the gateway receives during the call: the filter is set while the task's model runs. */
-async function readGatewayOptions(): Promise<unknown> {
-  const params = await noPromptTrainingMiddleware.transformParams?.({
-    model: { modelId: "google/gemini-3.8-flash" } as Parameters<TextTransform>[0]["model"],
-    params: { prompt: [] } as TextParams,
-    type: "generate",
-  });
-
-  return params?.providerOptions?.gateway;
-}
 
 describe("research plans", () => {
   let gatewayOptions: unknown;
@@ -62,10 +48,32 @@ describe("research plans", () => {
     const examOptions = gatewayOptions;
 
     await generateSourceResearchPlan({ analytics, goal, topic: "syllabus" });
+    const syllabusOptions = gatewayOptions;
 
-    expect([examOptions, gatewayOptions]).toStrictEqual([
+    await generateSourceResearchPlan({ analytics, goal, topic: "product" });
+
+    expect([examOptions, syllabusOptions, gatewayOptions]).toStrictEqual([
+      { disallowPromptTraining: true },
       { disallowPromptTraining: true },
       { disallowPromptTraining: true },
     ]);
+  });
+
+  it("return product hints for a product goal only", async () => {
+    const hints = { brand: "Lumen Works", name: "Orbit Notes", release: "Orbit Notes 5" };
+
+    vi.mocked(generateText).mockResolvedValue(
+      createGenerateTextResult({ ...PLAN, product: hints }),
+    );
+
+    const product = await generateSourceResearchPlan({
+      goal: "my Orbit Notes 5",
+      topic: "product",
+    });
+
+    vi.mocked(generateText).mockResolvedValue(createGenerateTextResult(PLAN));
+    const syllabus = await generateSourceResearchPlan({ goal: "calculus", topic: "syllabus" });
+
+    expect([product.data.product, syllabus.data.product]).toStrictEqual([hints, null]);
   });
 });

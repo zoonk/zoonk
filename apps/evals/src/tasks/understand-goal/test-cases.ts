@@ -18,6 +18,31 @@ function testCase(
 }
 
 export const TEST_CASES: UnderstandGoalCase[] = [
+  testCase("en-learn-named-version-kept", {
+    expected: { goals: [{ kind: "learn", title: /4\.20/u }], route: "goals" },
+    goal: "I'm on Docker Desktop 4.20 at work and want to use it better",
+    language: "en",
+  }),
+  testCase("pt-learn-named-model-kept", {
+    expected: { goals: [{ kind: "learn", title: /iphone 13/iu }], route: "goals" },
+    goal: "tenho um iPhone 13 e quero aprender a tirar fotos melhores com ele",
+    language: "pt",
+  }),
+  testCase("pt-learn-version-kept-in-long-goal", {
+    expected: { goals: [{ kind: "learn", title: /12\.1\.2410/u }], route: "goals" },
+    goal: "Uso o Protheus 12.1.2410 no trabalho e quero dominar o módulo de compras",
+    language: "pt",
+  }),
+  testCase("en-learn-no-version-invented", {
+    expected: { goals: [{ kind: "learn", title: /^(?!.*\d).*docker/iu }], route: "goals" },
+    goal: "I want to use Docker Desktop better at work",
+    language: "en",
+  }),
+  testCase("en-learn-no-model-invented", {
+    expected: { goals: [{ kind: "learn", title: /^(?!.*\d).*iphone/iu }], route: "goals" },
+    goal: "help me take better photos with my iPhone",
+    language: "en",
+  }),
   testCase("en-learn-quantum", {
     expected: { goals: [{ hasTargetDate: false, kind: "learn" }], route: "goals" },
     goal: "i want to understand quantum physics",

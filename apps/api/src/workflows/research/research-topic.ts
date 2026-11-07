@@ -4,6 +4,7 @@ import { sleep } from "workflow";
 import { repeatUntil } from "../_shared/repeat-until";
 import { detectChangingFactsStep } from "./steps/detect-changing-facts-step";
 import { type ResearchGoal, loadResearchGoalStep } from "./steps/load-research-goal-step";
+import { markProductCheckedStep } from "./steps/product-steps";
 
 const PURPOSE_POLL = "3s";
 const MAX_PURPOSE_POLLS = 60;
@@ -25,6 +26,11 @@ async function waitForPurpose(goal: ResearchGoal): Promise<ReferenceSyllabusNeed
 
 export async function detectResearchTopic(goal: ResearchGoal): Promise<ResearchTopic | "none"> {
   const topic = await detectChangingFactsStep({ goal });
+
+  // The skill graph waits for this, so a goal that isn't about a product doesn't wait on research.
+  if (topic !== "product") {
+    await markProductCheckedStep(goal.id);
+  }
 
   if (topic !== "none" || goal.kind !== "learn" || goal.uploadIds.length > 0) {
     return topic;

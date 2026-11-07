@@ -27,6 +27,9 @@ vi.mock("./lesson-spec.prompt.md", () => ({
     "{{#novice}}",
     "Show it to a newcomer.",
     "{{/novice}}",
+    "{{#product}}",
+    "Plan it in the product.",
+    "{{/product}}",
     "Check the plan.",
   ].join("\n"),
 }));
@@ -339,5 +342,40 @@ describe(generateLessonSpec, () => {
     expect(written.systemPrompt).toBe(
       "Plan the lesson.\nAsk it in their own words.\nCheck the plan.",
     );
+  });
+
+  it("plans a product course's lesson in the product, for the release it's written for", async () => {
+    vi.mocked(generateText).mockResolvedValue(
+      createGenerateTextResult({
+        lessons: [oneSkillLesson({ kinds: ["hook", "explanation"], title: "Pairing" })],
+      }),
+    );
+
+    const params = {
+      activityTemplates: [],
+      chapterTitle: "Get started",
+      courseTitle: "Gizmo",
+      language: "en",
+      lessonDescription: "Pair the remote.",
+      lessonTitle: "Pairing",
+      level: "beginner",
+    } satisfies Parameters<typeof generateLessonSpec>[0];
+
+    const [product, general] = await Promise.all([
+      generateLessonSpec({
+        ...params,
+        product: { brand: "Acme", name: "Gizmo", release: { name: "Gizmo 2", releasedOn: null } },
+      }),
+      generateLessonSpec(params),
+    ]);
+
+    expect(product.systemPrompt).toContain("Plan it in the product.");
+
+    expect(product.userPrompt).toContain(
+      "COURSE_TITLE: Gizmo\n    PRODUCT: Gizmo by Acme, written for Gizmo 2\n",
+    );
+
+    expect(general.systemPrompt).not.toContain("Plan it in the product.");
+    expect(general.userPrompt).not.toContain("PRODUCT");
   });
 });

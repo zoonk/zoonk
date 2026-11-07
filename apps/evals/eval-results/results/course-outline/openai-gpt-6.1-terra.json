@@ -64,7 +64,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "A few descriptions are less accessible than the requested plain-language overview: 'relative phase' and particles as 'excitations of fields' appear without everyday explanations.",
           "kind": "minorErrors",
@@ -195,7 +199,11 @@
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Overview: 3 to 6 chapters of big ideas in plain words, no formulas or equations\n      - Big ideas, judged by category rather than by any one example: scarcity and choices; markets and prices; the financial system (money, banks and credit); core ideas of macroeconomics such as output, growth, inflation, unemployment and public finances; trade with other countries; and how people actually decide. Brazilian examples are welcome\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "pt-economia-overview-1",
-        "userInput": { "courseTitle": "Economia", "language": "pt", "level": "overview" }
+        "userInput": {
+          "courseTitle": "Economia",
+          "language": "pt",
+          "level": "overview"
+        }
       }
     },
     {
@@ -279,9 +287,15 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Beginner band of statistics, judged by category rather than by any one example: describing data (types of variables, tables and charts, center, spread and position), probability and distributions at a beginner level, sampling and bias, relationships between variables (correlation is not causation), and a first look at inference (estimation and hypothesis testing)\n      - Level fit: inference stays at a beginner's first look; several separate test procedures (t tests for different designs, ANOVA, chi-square) go past the band and are a level-fit error\n      - Practical work with spreadsheets and real data should appear, and a field AI is changing should include checking analyses and charts made with AI tools\n      - Formulas may appear where the idea needs them, explained in everyday words\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "tool": "planilha|excel|sheets|calc" },
+        "expected": {
+          "tool": "planilha|excel|sheets|calc"
+        },
         "id": "pt-estatistica-beginner-1",
-        "userInput": { "courseTitle": "Estatística", "language": "pt", "level": "beginner" }
+        "userInput": {
+          "courseTitle": "Estatística",
+          "language": "pt",
+          "level": "beginner"
+        }
       }
     },
     {
@@ -347,7 +361,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Research ethics is taught after recruitment, interviewing, and contextual observation. Consent and data-handling safeguards should precede lessons that teach learners to collect participant information, especially in a beginner course that may be followed sequentially.",
           "kind": "minorErrors",
@@ -361,9 +379,15 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Beginner band of UX design for career changers: research, problem framing, information architecture, interaction, visual design, prototyping, testing and the work with a product team\n      - No two lessons of a chapter teach the same distinction: \"a need is not a product goal\", \"a goal is not a solution\" and \"a solution is not a result\" belong in one lesson; \"a symptom is not a problem\" and \"a symptom is not its cause\" too. Each lesson has its own move: a new idea, a procedure, a harder case or applying earlier ideas together\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "tool": "figma|figjam|penpot" },
+        "expected": {
+          "tool": "figma|figjam|penpot"
+        },
         "id": "pt-ux-beginner-distinct-lessons-1",
-        "userInput": { "courseTitle": "Design de UX", "language": "pt", "level": "beginner" }
+        "userInput": {
+          "courseTitle": "Design de UX",
+          "language": "pt",
+          "level": "beginner"
+        }
       }
     },
     {
@@ -447,7 +471,9 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Spain Spanish (not Latin American Spanish), for example \"ordenador\" and \"fichero\" or \"archivo\" in their European use\n      - Beginner band of Python programming: running Python and the tools to write it, variables and types, strings, conditionals, loops, functions, lists, dictionaries and other collections, reading and writing files, errors and exceptions, modules and packages, virtual environments, basic testing, and a small real program\n      - Programming is a field AI is changing: lessons must include working with AI assistants (describing a task, reading and reviewing generated code, finding the bug in AI code) and favor concepts and debugging over memorizing syntax\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "tool": "python" },
+        "expected": {
+          "tool": "python"
+        },
         "id": "es-python-beginner-1",
         "userInput": {
           "courseTitle": "Programación en Python",
@@ -524,7 +550,11 @@
           "kind": "majorErrors",
           "score": 7
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Extend the useful emphasis on assessing quantum-computing claims to other topics: ask learners to distinguish an orbital from a planetary orbit, evaluate an instant-communication claim, or connect a familiar device to its quantum mechanism. These would make more outcomes concrete without adding topics or length.",
           "kind": "potentialImprovements",
@@ -534,7 +564,11 @@
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - Overview for a curious adult: 3 to 6 chapters, plain words, no formulas, equations or notation\n      - Big ideas, judged by category rather than by any one example: the quantum foundations (quantization, wave-particle duality, uncertainty, superposition and measurement), what quantum physics says about atoms and matter, entanglement, and at least one modern application of quantum effects (a technology people use, or quantum computing)\n      - Lessons are short stories about one idea each, not a textbook sequence\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "en-quantum-physics-overview-1",
-        "userInput": { "courseTitle": "Quantum physics", "language": "en", "level": "overview" }
+        "userInput": {
+          "courseTitle": "Quantum physics",
+          "language": "en",
+          "level": "overview"
+        }
       }
     },
     {
@@ -600,7 +634,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Two lesson-level clarity issues remain. 'Collisions with sticking' should use the canonical title 'Perfectly inelastic collisions.' In 'Gravitational potential energy,' the can-do line concerns interpreting a bound orbit's energy, while the description and skill concern calculating potential energy; interpreting whether an orbit is bound also requires considering total energy.",
           "kind": "minorErrors",
@@ -717,7 +755,11 @@
           "kind": "majorErrors",
           "score": 8
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Use a small set of recurring workplace datasets across the existing lessons: a 売上表 with 円 amounts for formulas and charts, 経費精算 for rounding and conditional checks, and 勤怠表 for dates and filtering. For AI-formula verification, explicitly include testing blank cells, unmatched lookup values, and values exactly at a condition's threshold.",
           "kind": "potentialImprovements",
@@ -726,9 +768,15 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in natural Japanese: descriptions use です・ます without stiff keigo and never address the learner as あなた\n      - Beginner band of Excel for office work in Japan: entering and formatting data, formulas and cell references, SUM, AVERAGE, IF and XLOOKUP or VLOOKUP, sorting and filtering, tables, charts, pivot tables, printing and sharing a workbook, with Japanese office examples (売上表, 経費精算, 勤怠表, amounts in 円)\n      - Objectives, can-do lines and skills end in the plain potential form (計算できる, 作れる, ～できる), never as an order (～しよう, ～してください) or a bare noun\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "tool": "excel" },
+        "expected": {
+          "tool": "excel"
+        },
         "id": "ja-excel-beginner-1",
-        "userInput": { "courseTitle": "Excel", "language": "ja", "level": "beginner" }
+        "userInput": {
+          "courseTitle": "Excel",
+          "language": "ja",
+          "level": "beginner"
+        }
       }
     },
     {
@@ -812,9 +860,15 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in natural Korean in 해요체, never 합니다체 or 반말\n      - Beginner band of statistics: types of data, tables and charts, center and spread, probability, the normal distribution, sampling and bias, correlation, and a first look at estimation and hypothesis tests, with Korean examples (amounts in 원, 통계청 data, 수능 scores)\n      - Objectives, can-do lines and skills end in ~ㄹ 수 있어요 (계산할 수 있어요, 읽을 수 있어요), never as an order (~하세요, ~해 보세요) or a bare noun\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "tool": "엑셀|excel|스프레드시트|sheets|계산기" },
+        "expected": {
+          "tool": "엑셀|excel|스프레드시트|sheets|계산기"
+        },
         "id": "ko-statistics-beginner-1",
-        "userInput": { "courseTitle": "통계학", "language": "ko", "level": "beginner" }
+        "userInput": {
+          "courseTitle": "통계학",
+          "language": "ko",
+          "level": "beginner"
+        }
       }
     },
     {
@@ -880,7 +934,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The outline contains no concrete TL amounts, despite the explicit expectation to use them. Budgeting, emergency-fund targets, installment comparisons, and real returns remain abstract rather than being anchored in simple Turkish-lira examples.",
           "kind": "minorErrors",
@@ -894,9 +952,224 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in natural Turkish, addressing the learner as \"sen\"\n      - Beginner band of personal finance in Turkey: a monthly budget, saving, an emergency fund, inflation and real returns, credit cards, installments (taksit) and loan interest, deposit accounts, BES, funds and the basics of investing, taxes on a salary, with amounts in TL\n      - Objectives, can-do lines and skills end in the -mak/-mek infinitive with the verb last (\"bütçe hazırlamak\"), never as an order (\"hazırlayın\", \"hazırla\") or a bare noun\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "tool": "excel|tablo|sheets|hesap" },
+        "expected": {
+          "tool": "excel|tablo|sheets|hesap"
+        },
         "id": "tr-personal-finance-beginner-1",
-        "userInput": { "courseTitle": "Kişisel finans", "language": "tr", "level": "beginner" }
+        "userInput": {
+          "courseTitle": "Kişisel finans",
+          "language": "tr",
+          "level": "beginner"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Covers every named product-course pillar: creating an app, building pages and layouts, navigation, fetching and displaying data, processing forms, and deployment. It also includes useful accessibility, security, configuration, debugging, and AI-review work. No required skill keys were supplied, so empty chapter skillKeys do not establish missing required skills. No coverage cap is triggered.",
+          "score": 9,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The overall sequence is cumulative, and the first two lessons produce a running app with an edited page. However, dynamic routing uses await before its explicit introduction, and the authorization lesson lacks an earlier identity-and-permissions foundation. These are localized prerequisite gaps rather than an unusable overall sequence.",
+          "score": 8,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Chapters consistently contain four to six lessons, with searchable titles, scoped descriptions, observable verb-first can-do lines, and action-based skills. Most lessons reasonably fit their stated two-to-five-minute range. The initial runtime-installation, project-creation, and server-startup lesson is the main oversized task for a true beginner; there is not a pattern of umbrella lessons warranting a broader cap.",
+          "score": 8.5,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "There are no overview, history, recap, or motivational filler chapters. Chapters are named for practical outcomes, and the supporting lessons serve distinct app-building tasks. The AI lessons distinguish task specification, code review, behavioral verification, and safety checks rather than merely repeating one another.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The output uses US English and largely supports beginners through explicit React foundations and concrete tasks. It follows App Router conventions, including awaited route params, without unnecessary release naming. However, the styling sequence assumes basic CSS knowledge before introducing responsive implementation, leaving a localized mismatch with the from-zero requirement.",
+          "score": 8,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Explicit lessons teach specifying AI tasks, reviewing generated changes, testing fixes, and checking security and API currency. Judgment and verification also appear throughout caching, accessibility, component boundaries, validation, and deployment. Routine syntax memorization does not dominate, and no AI-related cap is triggered.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6941,
+          "outputTokens": 1289,
+          "reasoningTokens": 475
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The prerequisite progression has gaps for beginners: “Dynamic routes and params” requires await before async/await is introduced in data fetching, and “Server Function security” promises an actionable authorization check without first establishing user identity or permissions. These weaken the outline's ability to be studied independently in order.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The first lesson combines installing Node.js, scaffolding an App Router project, and starting the development server in five minutes. That is an optimistic scope for a learner starting from zero. The styling chapter also moves directly into applying CSS and responsive layouts without explicitly establishing basic CSS rules and selectors.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Separate runtime preparation from the first app-building lesson while preserving the immediate working-page outcome. Explicitly introduce the small JavaScript and CSS prerequisites where first needed. Form handling would also benefit from a focused pending-submission lesson, and AI review exercises could be integrated into earlier app-building tasks rather than appearing only after deployment.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - A product course: chapters are tasks done with Next.js (start an app, build pages and layouts, link them, fetch and show data, handle forms, deploy), named for what the learner gets done, never a tour of features or a concept tree (\"Rendering strategies\", \"The Next.js architecture\")\n      - The first lessons of the first chapter end with the learner's own app running and showing a page they made\n      - Written for Next.js 16 with its current conventions (the App Router), naming a release only where a feature depends on it and then saying which releases have it; most titles and descriptions name no release\n      - No \"What is Next.js\", course overview or history chapter\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "tool": "next|node|editor|terminal"
+        },
+        "id": "en-product-nextjs-beginner-1",
+        "userInput": {
+          "courseTitle": "Next.js",
+          "language": "en",
+          "level": "beginner",
+          "product": {
+            "brand": "Vercel",
+            "name": "Next.js",
+            "release": {
+              "name": "Next.js 16",
+              "releasedOn": "2025-10-21"
+            }
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Covers all named pillars: issues, projects, cycles, team workflows, and triage. Both required Jira skills are correctly tagged on the same focused migration chapter, which explicitly teaches importing projects and assignees, mapping statuses, and validating results. No required skill is uncovered.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The sequence builds from workspace access and creating an issue to collaboration, workflows, prioritization, projects, cycles, and filtered views. Migration comes after learners understand its destination concepts. Lessons within chapters introduce prerequisites before dependent actions.",
+          "score": 10,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Chapters contain four or five lessons, each estimated at two to four minutes with one to three closely related action skills. Titles are searchable, descriptions identify scope, and can-do lines begin with concrete action verbs. The migration remains a single tutorial-sized chapter.",
+          "score": 10,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "There are no orientation, recap, motivational, or other filler chapters. Lessons produce practical outcomes in Linear. The early board lesson teaches moving work between statuses, while the later visualization lesson teaches choosing a display format; these are distinct learning actions.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The text consistently uses Brazilian Portuguese and introduces Linear from zero. Learners create a real issue in the second lesson. The outline is suitable for a shared beginner course, contains no product-version references, and does not assume prior Jira knowledge outside the migration tutorial.",
+          "score": 10,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Criteria of completion, prioritization, triage decisions, risk communication, and import validation provide useful judgment and checking skills. However, AI increasingly assists issue drafting and triage, and there is no lesson on specifying or reviewing that assistance. The no-work-with-AI cap of 8 applies; rote memorization does not dominate.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5829,
+          "outputTokens": 1022,
+          "reasoningTokens": 357
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The course teaches task framing, prioritization, triage, and validation, but includes no practice using and checking AI assistance for this work. A short exercise reviewing AI-generated issue descriptions or triage suggestions would address this gap.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Clarify that Linear automatically carries unfinished issues into the next cycle, then teach when to reconsider that allocation. Make the import validation exercise more concrete by checking sample issues against Jira and correcting an incorrect status or assignee mapping.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - A product with no releases: no title, description or objective names a version\n      - The two required skills are the size of a tutorial (moving a team's work over from Jira): they sit together in one chapter, not spread over several\n      - Chapters are tasks done in Linear (issues, projects, cycles, the team's workflow, triage), and the first lessons end with real work in it\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "tool": "linear"
+        },
+        "id": "pt-product-linear-jira-import-1",
+        "userInput": {
+          "courseTitle": "Linear",
+          "language": "pt",
+          "level": "beginner",
+          "product": {
+            "brand": "Linear",
+            "name": "Linear",
+            "release": null
+          },
+          "requiredSkills": [
+            {
+              "description": "Trazer as issues, os projetos e os responsáveis do Jira para o Linear.",
+              "key": "jira-import",
+              "name": "Importar issues do Jira"
+            },
+            {
+              "description": "Ligar cada status do Jira a um status do fluxo do time no Linear.",
+              "key": "jira-statuses",
+              "name": "Mapear status do Jira para o Linear"
+            }
+          ]
+        }
       }
     }
   ],

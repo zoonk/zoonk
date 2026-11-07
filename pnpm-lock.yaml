@@ -551,6 +551,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
+      '@types/pg':
+        specifier: 8.23.1
+        version: 8.23.1
       '@types/react':
         specifier: 'catalog:'
         version: 19.3.0
@@ -578,6 +581,9 @@ importers:
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
+      pg:
+        specifier: 8.23.1
+        version: 8.23.1
       raw-loader:
         specifier: 'catalog:'
         version: 4.0.2(webpack@5.112.2(@swc/core@1.15.3(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6)))
@@ -1122,6 +1128,9 @@ importers:
       opencc-js:
         specifier: 1.4.2
         version: 1.4.2
+      parse5:
+        specifier: 8.1.0
+        version: 8.1.0
       posthog-js:
         specifier: 'catalog:'
         version: 1.444.0(@types/react@19.3.0)(react@19.3.1)
@@ -1149,6 +1158,9 @@ importers:
       stripe:
         specifier: 23.1.0
         version: 23.1.0(@types/node@26.6.6)
+      tldts:
+        specifier: 7.4.19
+        version: 7.4.19
       ts-fsrs:
         specifier: 6.0.0
         version: 6.0.0
@@ -1168,6 +1180,9 @@ importers:
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
+      fast-check:
+        specifier: 'catalog:'
+        version: 4.10.2
       tsx:
         specifier: 'catalog:'
         version: 4.23.15
@@ -6574,8 +6589,8 @@ packages:
     resolution: {integrity: sha512-aN97NXWF6AWBTahfVOIrB/NShkzi5H7F9r1s9mD3cDj4Ko5f2qhhVoYMibXF7GlLveb/D2ioWay8lxI97Ven3g==}
     engines: {node: '>=0.12'}
 
-  entities@8.1.0:
-    resolution: {integrity: sha512-kxL7msIffSuh9aaFAMD7rxAIuTRMAHMeBtgHW2yUdWw732ZNh4MehkF2gdjvtdmikkaIP9bFDDJOPlsvm7avrA==}
+  entities@9.0.0:
+    resolution: {integrity: sha512-oJFNDJg3kTPwAD1cNn2+WmUq4wFoo09npc3Ydf1D7ED4smRiWrsKnaLxykrTWgyGEcusc87P5dxlAleol9kpkg==}
     engines: {node: '>=20.19.0'}
 
   env-paths@3.0.0:
@@ -8079,8 +8094,8 @@ packages:
   parse5@7.3.0:
     resolution: {integrity: sha512-IInvU7fabl34qmi9gY8XOVxhYyMyuH2xUNpb2q8/Y+7552KlejkRvqvD19nMoUW/uQGGbqNpA6Tufu5FL5BZgw==}
 
-  parse5@8.0.1:
-    resolution: {integrity: sha512-z1e/HMG90obSGeidlli3hj7cbocou0/wa5HacvI3ASx34PecNjNQeaHNo5WIZpWofN9kgkqV1q5YvXe3F0FoPw==}
+  parse5@8.1.0:
+    resolution: {integrity: sha512-sq3qBFpee5jeocbFbO48VHlGr8sT7mbXS0vxlKN6sottBtJzrOG3998sr0llSZcQAGgfpdmEYAIZE0P9z0dE8w==}
 
   path-data-parser@0.1.0:
     resolution: {integrity: sha512-NOnmBpt5Y2RWbuv0LMzsayp3lVylAHLPUTut412ZA3l+C4uw4ZVkQbjShYCQ8TCpUMdPapr4YjUqLYD6v68j+w==}
@@ -13826,7 +13841,7 @@ snapshots:
 
   entities@6.0.1: {}
 
-  entities@8.1.0: {}
+  entities@9.0.0: {}
 
   env-paths@3.0.0: {}
 
@@ -14605,7 +14620,7 @@ snapshots:
       html-encoding-sniffer: 7.0.0(@noble/hashes@2.4.0)
       is-potential-custom-element-name: 1.0.1
       lru-cache: 11.5.3
-      parse5: 8.0.1
+      parse5: 8.1.0
       saxes: 6.0.0
       tough-cookie: 6.0.2
       undici: 8.12.3
@@ -15806,9 +15821,9 @@ snapshots:
     dependencies:
       entities: 6.0.1
 
-  parse5@8.0.1:
+  parse5@8.1.0:
     dependencies:
-      entities: 8.1.0
+      entities: 9.0.0
 
   path-data-parser@0.1.0: {}
 

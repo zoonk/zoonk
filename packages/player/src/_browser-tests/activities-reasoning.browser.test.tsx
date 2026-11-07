@@ -13,6 +13,7 @@ import {
   sortCard,
   sortedCard,
 } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import { activityStep } from "../preview/preview-steps";
@@ -33,6 +34,78 @@ async function matchCards(left: string, right: string) {
 }
 
 describe("reasoning activities", () => {
+  it("categorize: a long sorted card keeps the groups under the learner's thumb", async () => {
+    await atViewport({ height: 844, width: 390 }, async () => {
+      const fixture = activityContentFixtures.categorize;
+
+      const text =
+        "Melting ice in a bowl on a warm kitchen counter changes the shape of the water without making a new substance";
+
+      openActivity({
+        content: {
+          ...fixture,
+          fields: {
+            ...fixture.fields,
+            groups: fixture.fields.groups.toReversed(),
+            items: fixture.fields.items.map((item) =>
+              item.id === "i2" ? { ...item, text } : item,
+            ),
+          },
+        },
+        template: "categorize",
+      });
+
+      const group = page.getByRole("button", { name: "Same substance" });
+      await expect.element(group).toBeVisible();
+
+      const height = group.element().getBoundingClientRect().height;
+      const nextGroup = page.getByRole("button", { name: "New substance" });
+      const nextTop = nextGroup.element().getBoundingClientRect().top;
+
+      await sortCard({ group: "Same substance", item: text });
+
+      expect(group.element().getBoundingClientRect().height).toBe(height);
+      expect(nextGroup.element().getBoundingClientRect().top).toBe(nextTop);
+    });
+  });
+
+  it("categorize: a card name that fits stays readable beside the count", async () => {
+    await atViewport({ height: 844, width: 390 }, async () => {
+      const fixture = activityContentFixtures.categorize;
+      const text = "Warming a metal spoon in hot tea";
+
+      openActivity({
+        content: {
+          ...fixture,
+          fields: {
+            ...fixture.fields,
+            items: fixture.fields.items.map((item) =>
+              item.id === "i3"
+                ? { ...item, groupId: "physical", text, why: "It is still metal." }
+                : item,
+            ),
+          },
+        },
+        template: "categorize",
+      });
+
+      await sortCard({ group: "Same substance", item: "Melting ice" });
+      await sortCard({ group: "Same substance", item: text });
+
+      const group = page.getByRole("button", { name: "Same substance" });
+      await expect.element(group.getByText("+1", { exact: true })).toBeVisible();
+
+      const preview = group.element().querySelector('[data-slot="categorize-preview"]');
+      const chip = preview?.firstElementChild;
+
+      if (!chip) {
+        throw new Error("The sorted group must show its latest card.");
+      }
+
+      expect(chip.scrollWidth).toBeLessThanOrEqual(chip.clientWidth);
+    });
+  });
+
   it("categorize: every item in its group is right", async () => {
     openActivity({ template: "categorize" });
     await expect.element(page.getByText("0 of 3 sorted", { exact: true })).toBeVisible();

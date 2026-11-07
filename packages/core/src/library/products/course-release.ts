@@ -1,0 +1,184 @@
+import "server-only";
+import { prisma } from "@zoonk/db";
+import { MS_PER_DAY } from "@zoonk/utils/date";
+import { refreshWebSource } from "../sources/web-sources";
+import { type DatedRelease, isNewer, isReleased, pickCurrentRelease } from "./current-release";
+
+/**
+ * The release a course teaching `fromId` moves to next: the oldest one out after it, so each
+ * release's notes are compared in turn, or null when the course already teaches the current one.
+ */
+function pickNextRelease<TRelease extends DatedRelease>({
+  fromId,
+  now,
+  releases,
+}: {
+  fromId: string | null;
+  now: Date;
+  releases: readonly TRelease[];
+}): TRelease | null {
+  const current = pickCurrentRelease({ now, releases });
+  const from = releases.find((release) => release.id === fromId);
+
+  if (!current || current.id === fromId) {
+    return null;
+  }
+
+  if (!from?.releasedAt) {
+    return current;
+  }
+
+  if (isNewer(from, current)) {
+    return null;
+  }
+
+  return releases
+    .filter((release) => isReleased({ now, release }) && isNewer(release, from))
+    .reduce((oldest, release) => (isNewer(oldest, release) ? release : oldest), current);
+}
+
+/** Active goals whose plan studies the course: as their own course, or a graph skill mapped to it. */
+export function courseFollowersFilter(courseId: string) {
+  return {
+    OR: [
+      { primaryCourseId: courseId },
+      { plan: { graph: { array_contains: [{ courseIds: [courseId] }], path: ["skills"] } } },
+    ],
+    status: "active" as const,
+  };
+}
+
+async function hasFollower(courseId: string): Promise<boolean> {
+  const goal = await prisma.goal.findFirst({
+    select: { id: true },
+    where: courseFollowersFilter(courseId),
+  });
+
+  return goal !== null;
+}
+
+function loadMainCourses(where: { id?: string | { in: string[] }; productId?: string }) {
+  return prisma.course.findMany({
+    select: {
+      id: true,
+      isPinned: true,
+      product: {
+        select: {
+          docsSourceId: true,
+          releases: {
+            select: { id: true, releasedAt: true, releasedMonthOnly: true, sourceId: true },
+          },
+          releasesSourceId: true,
+        },
+      },
+      productReleaseId: true,
+    },
+    where: { isPinned: false, productId: { not: null }, userId: null, ...where },
+  });
+}
+
+type MainCourse = Awaited<ReturnType<typeof loadMainCourses>>[number];
+
+function findNextRelease({ course, now }: { course: MainCourse; now: Date }) {
+  return course.product
+    ? pickNextRelease({ fromId: course.productReleaseId, now, releases: course.product.releases })
+    : null;
+}
+
+/**
+ * Internal workflow bridge for the release check, the daily sweep and a new goal's courses: the
+ * main courses, of one product or among `courseIds`, that don't teach their product's current
+ * release yet and that a learner follows.
+ */
+export async function listCoursesBehind({
+  courseIds,
+  now = new Date(),
+  productId,
+}: { courseIds?: string[]; now?: Date; productId?: string } = {}): Promise<string[]> {
+  const courses = await loadMainCourses({
+    ...(courseIds ? { id: { in: courseIds } } : {}),
+    ...(productId ? { productId } : {}),
+  });
+
+  const behind = courses.filter((course) => findNextRelease({ course, now }));
+
+  const followed = await Promise.all(
+    behind.map(async (course) => ((await hasFollower(course.id)) ? [course.id] : [])),
+  );
+
+  return followed.flat();
+}
+
+/**
+ * A flagged lesson's rewrite starts right away and takes minutes, so a flag open for days marks a
+ * rewrite that failed; the next release doesn't wait on it.
+ */
+const REWRITE_DAYS = 2;
+
+async function hasOpenFlags({ courseId, now }: { courseId: string; now: Date }): Promise<boolean> {
+  const flag = await prisma.contentReviewFlag.findFirst({
+    select: { id: true },
+    where: {
+      createdAt: { gt: new Date(now.getTime() - REWRITE_DAYS * MS_PER_DAY) },
+      lesson: { homeChapter: { homeCourseId: courseId } },
+      status: "open",
+    },
+  });
+
+  return flag !== null;
+}
+
+export type CourseReleaseState =
+  | { status: "current" | "notMain" | "unfollowed" | "rewriting" }
+  | {
+      fromReleaseId: string | null;
+      pageSourceIds: string[];
+      status: "behind";
+      toReleaseId: string;
+    };
+
+/**
+ * Internal workflow bridge. A main course moves one release at a time, and only once the lessons
+ * its last move flagged are rewritten, so a rewrite for one release never resolves the next one's flag.
+ */
+export async function loadCourseRelease({
+  courseId,
+  now = new Date(),
+}: {
+  courseId: string;
+  now?: Date;
+}): Promise<CourseReleaseState> {
+  const [course] = await loadMainCourses({ id: courseId });
+  const next = course ? findNextRelease({ course, now }) : null;
+
+  if (!course?.product) {
+    return { status: "notMain" };
+  }
+
+  if (!next) {
+    return { status: "current" };
+  }
+
+  if (!(await hasFollower(course.id))) {
+    return { status: "unfollowed" };
+  }
+
+  if (await hasOpenFlags({ courseId: course.id, now })) {
+    return { status: "rewriting" };
+  }
+
+  const pageId = next.sourceId ?? course.product.releasesSourceId;
+  const docsId = course.product.docsSourceId;
+
+  return {
+    fromReleaseId: course.productReleaseId,
+    pageSourceIds: [...new Set([pageId, docsId].filter((id) => id !== null))],
+    status: "behind",
+    toReleaseId: next.id,
+  };
+}
+
+/** The stored text stays good when a page doesn't answer, so a failed fetch doesn't stop the update. */
+export async function refreshReleasePages(sourceIds: readonly string[]): Promise<void> {
+  await Promise.allSettled(sourceIds.map((sourceId) => refreshWebSource(sourceId)));
+}

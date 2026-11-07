@@ -1,14 +1,12 @@
-import {
-  findOrCreateGoalCourse,
-  writeGoalCourseSearchTerms,
-} from "@zoonk/core/library/curriculum/find-or-create-course";
+import { writeGoalCourseSearchTerms } from "@zoonk/core/library/curriculum/find-or-create-course";
 import {
   getGoalCourseFormat,
   setGoalPrimaryCourse,
 } from "@zoonk/core/library/curriculum/goal-primary-course";
+import { findGoalCourse } from "@zoonk/core/library/products/goal-courses";
 import { type GoalKind } from "@zoonk/db";
 
-type CourseInput = Parameters<typeof findOrCreateGoalCourse>[0];
+type CourseInput = Parameters<typeof findGoalCourse>[0];
 
 export async function writeGoalCourseSearchTermsStep(
   input: Pick<CourseInput, "analytics" | "scope" | "title">,
@@ -24,7 +22,7 @@ export async function findGoalCourseStep({
   "use step";
 
   const format = getGoalCourseFormat({ kind, ownerId: input.scope.ownerId });
-  const { course } = await findOrCreateGoalCourse({ ...input, format });
+  const { course } = await findGoalCourse({ ...input, format });
   return course.id;
 }
 

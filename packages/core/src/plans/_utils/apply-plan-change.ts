@@ -17,7 +17,11 @@ import { followPlanToday } from "./follow-plan-today";
 import { markPlanWrite } from "./mark-plan-write";
 import { findUnfundedMove, hasMissingWeeklyMove } from "./missing-weekly-move";
 import { applyChangeOperations } from "./part-areas";
-import { type PlanChangeSource, toPlanChangePayload } from "./plan-change-payload";
+import {
+  type PlanChangePayload,
+  type PlanChangeSource,
+  toPlanChangePayload,
+} from "./plan-change-payload";
 import { type PlanContext, getStateTargetDate } from "./plan-context";
 import { writePlanMetadata } from "./plan-metadata-write";
 import { getPlanPreviewBasis } from "./plan-preview-basis";
@@ -264,12 +268,15 @@ export async function proposeChange({
   extraWrites,
   notice = null,
   operations,
+  payload,
   provenance = null,
   reason,
   source,
-}: ChangeRequest & { approval?: "always" | "whenLarge"; notice?: NoticeChange | null }): Promise<
-  AppliedChange | UnchangedPlan | { status: "saved" }
-> {
+}: ChangeRequest & {
+  approval?: "always" | "whenLarge";
+  notice?: NoticeChange | null;
+  payload?: Pick<PlanChangePayload, "releaseId">;
+}): Promise<AppliedChange | UnchangedPlan | { status: "saved" }> {
   const result = await applyChangeOperations({ context, noticeGraph: notice?.graph, operations });
 
   if ("error" in result) {
@@ -302,6 +309,7 @@ export async function proposeChange({
         data: {
           kind: "edited",
           payload: toPlanChangePayload({
+            ...payload,
             effect: change.effect,
             noticeEdition: notice?.edition ?? null,
             noticeGraph: notice?.graph ?? null,

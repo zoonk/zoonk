@@ -3,48 +3,60 @@
   "results": [
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
           "country": "BR",
-          "domains": ["gov.br/receitafederal", "receita"],
+          "domains": [
+            "gov.br/receitafederal",
+            "receita"
+          ],
           "language": "pt",
-          "nameIncludes": ["imposto de renda", "irpf"]
+          "nameIncludes": [
+            "imposto de renda",
+            "irpf"
+          ]
         },
         "id": "irpf-2027-1",
         "language": "pt",
-        "userInput": { "goal": "declarar meu imposto de renda 2027 sozinho", "topic": "regulation" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": {
-          "country": "ZZ",
-          "domains": ["nextjs.org"],
-          "language": "en",
-          "nameIncludes": ["next.js", "nextjs"]
-        },
-        "id": "nextjs-1",
-        "language": "en",
         "userInput": {
-          "goal": "what's new in the latest Next.js version and how to migrate",
-          "topic": "software"
+          "goal": "declarar meu imposto de renda 2027 sozinho",
+          "topic": "regulation"
         }
       }
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -58,9 +70,14 @@
             "edx.org"
           ],
           "language": "en",
-          "nameIncludes": ["quantum"],
+          "nameIncludes": [
+            "quantum"
+          ],
           "noQueries": false,
-          "otherCountries": ["GB", "ZZ"]
+          "otherCountries": [
+            "GB",
+            "ZZ"
+          ]
         },
         "id": "syllabus-quantum-mechanics-1",
         "language": "en",
@@ -73,18 +90,39 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
           "country": "US",
-          "domains": ["aacnnursing.org", "ncsbn.org", "nln.org", ".edu"],
+          "domains": [
+            "aacnnursing.org",
+            "ncsbn.org",
+            "nln.org",
+            ".edu"
+          ],
           "language": "en",
-          "nameIncludes": ["nursing"],
+          "nameIncludes": [
+            "nursing"
+          ],
           "noQueries": false,
-          "otherCountries": ["ZZ"]
+          "otherCountries": [
+            "ZZ"
+          ]
         },
         "id": "syllabus-career-nursing-1",
         "language": "en",
@@ -97,16 +135,31 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
           "country": "ZZ",
           "domains": [],
           "language": "en",
-          "nameIncludes": ["minecraft", "redstone"],
+          "nameIncludes": [
+            "minecraft",
+            "redstone"
+          ],
           "noQueries": true
         },
         "id": "syllabus-none-minecraft-1",
@@ -120,16 +173,37 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
           "country": "BR",
-          "domains": ["usp.br", "unicamp.br", "ufrj.br", "ufmg.br", "unesp.br", "gov.br"],
+          "domains": [
+            "usp.br",
+            "unicamp.br",
+            "ufrj.br",
+            "ufmg.br",
+            "unesp.br",
+            "gov.br"
+          ],
           "language": "pt",
-          "nameIncludes": ["calculo"],
+          "nameIncludes": [
+            "calculo"
+          ],
           "noQueries": false
         },
         "id": "syllabus-calculo-1",
@@ -143,9 +217,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -160,7 +246,9 @@
             "gov.br"
           ],
           "language": "pt",
-          "nameIncludes": ["dados"],
+          "nameIncludes": [
+            "dados"
+          ],
           "noQueries": false
         },
         "id": "syllabus-career-dados-1",
@@ -174,16 +262,30 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
           "country": "BR",
           "domains": [],
           "language": "pt",
-          "nameIncludes": ["free fire"],
+          "nameIncludes": [
+            "free fire"
+          ],
           "noQueries": true
         },
         "id": "syllabus-none-free-fire-1",
@@ -192,6 +294,252 @@
           "details": "{\"purpose\":\"deep\"}",
           "goal": "quero ficar muito bom no Free Fire e subir de patente",
           "topic": "syllabus"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "ZZ",
+          "domains": [
+            "nextjs.org",
+            "vercel.com"
+          ],
+          "language": "en",
+          "nameIncludes": [
+            "next.js",
+            "nextjs"
+          ],
+          "product": {
+            "brand": [
+              "vercel"
+            ],
+            "name": [
+              "next.js",
+              "nextjs"
+            ],
+            "release": null
+          }
+        },
+        "id": "nextjs-1",
+        "language": "en",
+        "userInput": {
+          "goal": "what's new in the latest Next.js version and how to migrate",
+          "topic": "product"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "ZZ",
+          "domains": [
+            "apple.com"
+          ],
+          "language": "en",
+          "nameIncludes": [
+            "iphone"
+          ],
+          "otherCountries": [
+            "US"
+          ],
+          "product": {
+            "brand": [
+              "apple"
+            ],
+            "name": [
+              "iphone"
+            ],
+            "release": [
+              "iphone 13"
+            ]
+          }
+        },
+        "id": "iphone-13-1",
+        "language": "en",
+        "userInput": {
+          "goal": "Use my iPhone 13 camera better",
+          "topic": "product"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "ZZ",
+          "domains": [
+            "linear.app"
+          ],
+          "language": "en",
+          "nameIncludes": [
+            "linear"
+          ],
+          "product": {
+            "brand": [
+              "linear"
+            ],
+            "name": [
+              "linear"
+            ],
+            "release": null
+          }
+        },
+        "id": "jira-to-linear-1",
+        "language": "en",
+        "userInput": {
+          "goal": "Move my team from Jira to Linear",
+          "topic": "product"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "ZZ",
+          "domains": [
+            "hubspot.com"
+          ],
+          "language": "en",
+          "nameIncludes": [
+            "hubspot"
+          ],
+          "otherCountries": [
+            "US"
+          ],
+          "product": {
+            "brand": [
+              "hubspot"
+            ],
+            "name": [
+              "hubspot"
+            ],
+            "release": null
+          }
+        },
+        "id": "employer-kept-out-1",
+        "language": "en",
+        "userInput": {
+          "goal": "Learn HubSpot for my new sales job at Brightwave Dental in Leeds",
+          "topic": "product"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "BR",
+          "domains": [
+            "totvs.com"
+          ],
+          "language": "pt",
+          "nameIncludes": [
+            "protheus"
+          ],
+          "otherCountries": [
+            "ZZ"
+          ],
+          "product": {
+            "brand": [
+              "totvs"
+            ],
+            "name": [
+              "protheus"
+            ],
+            "release": [
+              "protheus 12.1.2410"
+            ]
+          }
+        },
+        "id": "protheus-release-only-in-learner-words-1",
+        "language": "pt",
+        "userInput": {
+          "goal": "Dominar o módulo de compras do Protheus\nUso o Protheus 12.1.2410 no trabalho e quero dominar o módulo de compras",
+          "topic": "product"
         }
       }
     }

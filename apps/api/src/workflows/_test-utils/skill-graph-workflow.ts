@@ -32,6 +32,7 @@ export async function skillGraphTestWorkflow(
   const courseIdsByKey = await findGoalCourses({
     courses: built.graph.courses,
     goal: inputs.goal,
+    product: inputs.product,
     provenance: built.provenance,
     resolved: built.courseIdsByKey,
     scope,

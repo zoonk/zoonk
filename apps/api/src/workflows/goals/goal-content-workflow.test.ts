@@ -43,6 +43,11 @@ import { courseBandsFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import {
+  brandFixture,
+  productFixture,
+  productReleaseFixture,
+} from "@zoonk/testing/fixtures/products";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   examBlueprintFixture,
@@ -63,6 +68,7 @@ import { courseDetailsWorkflow } from "../courses/course-details-workflow";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { levelTestBankWorkflow } from "../language/level-test-bank-workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
+import { courseReleaseWorkflow } from "../products/course-release-workflow";
 import { goalContentWorkflow } from "./goal-content-workflow";
 import * as goalPlacement from "./goal-placement-items";
 import { placementItemsWorkflow } from "./placement-items-workflow";
@@ -1839,6 +1845,139 @@ describe(goalContentWorkflow, () => {
     ]);
   });
 
+  it("waits for research to decide a learn goal's product, then titles its course for it and makes the product's course", async () => {
+    const { goal } = await newGoal();
+    const brand = await brandFixture({ name: "Acme" });
+    const name = `Gizmo ${crypto.randomUUID().slice(0, 8)}`;
+    const product = await productFixture({ name, organizationId: brand.id });
+    const built = isolatedGraph();
+
+    vi.mocked(generateWholeSkillGraph).mockResolvedValue(
+      graphResult({
+        ...built,
+        courses: built.courses.map((course, index) =>
+          index === 0 ? { ...course, title: name } : course,
+        ),
+      }),
+    );
+
+    vi.mocked(getRun).mockReturnValue({
+      exists: Promise.resolve(true),
+      status: Promise.resolve("running"),
+    } as never);
+
+    vi.mocked(sleep).mockImplementationOnce(async () => {
+      expect(generateWholeSkillGraph).not.toHaveBeenCalled();
+
+      await prisma.goal.update({
+        data: { productCheckedAt: new Date(), productId: product.id },
+        where: { id: goal.id },
+      });
+    });
+
+    await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
+
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].product).toStrictEqual({
+      brand: "Acme",
+      courseTitle: name,
+      name,
+    });
+
+    const { primaryCourse } = await prisma.goal.findUniqueOrThrow({
+      include: { primaryCourse: true },
+      where: { id: goal.id },
+    });
+
+    expect(primaryCourse).toMatchObject({
+      isPinned: false,
+      organizationId: brand.id,
+      productId: product.id,
+      title: name,
+    });
+  });
+
+  it("starts the release update of the product's main course a new goal lands on while it's behind", async () => {
+    const brand = await brandFixture();
+    const name = `Gizmo ${crypto.randomUUID().slice(0, 8)}`;
+    const product = await productFixture({ name, organizationId: brand.id });
+
+    const [older] = await Promise.all([
+      productReleaseFixture({ productId: product.id, releasedAt: new Date("2025-01-10") }),
+      productReleaseFixture({
+        name: `${name} 2`,
+        productId: product.id,
+        releasedAt: new Date("2026-01-10"),
+      }),
+    ]);
+
+    const main = await courseFixture({
+      organizationId: brand.id,
+      productId: product.id,
+      productReleaseId: older.id,
+      title: name,
+    });
+
+    const { goal } = await newGoal({ productCheckedAt: new Date(), productId: product.id });
+    const built = isolatedGraph();
+    const last = built.courses.length - 1;
+
+    // Not the goal's first course, so the goal follows it only once its plan maps skills to it.
+    vi.mocked(generateWholeSkillGraph).mockResolvedValue(
+      graphResult({
+        ...built,
+        courses: built.courses.map((course, index) =>
+          index === last ? { ...course, title: name } : course,
+        ),
+      }),
+    );
+
+    await goalContentWorkflow({ goalId: goal.id });
+
+    const started = getStartMock()
+      .mock.calls.filter(([workflow]) => workflow === courseReleaseWorkflow)
+      .map(([, args]) => args);
+
+    expect(started).toStrictEqual([[{ courseId: main.id }]]);
+  });
+
+  it("starts the release update of a published main course a learner starts while it's behind", async () => {
+    const brand = await brandFixture();
+    const product = await productFixture({ organizationId: brand.id });
+
+    const [older] = await Promise.all([
+      productReleaseFixture({ productId: product.id, releasedAt: new Date("2025-01-10") }),
+      productReleaseFixture({ productId: product.id, releasedAt: new Date("2026-01-10") }),
+    ]);
+
+    const main = await courseFixture({
+      isPublished: true,
+      organizationId: brand.id,
+      productId: product.id,
+      productReleaseId: older.id,
+      visibility: "public",
+    });
+
+    await courseBandsFixture({
+      courseId: main.id,
+      levels: ["overview", "beginner", "intermediate", "advanced"],
+    });
+
+    const { goal } = await newGoal({
+      details: { courseStart: { chapterId: null }, level: "none" },
+      primaryCourseId: main.id,
+    });
+
+    await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
+      status: "prepared",
+    });
+
+    const started = getStartMock()
+      .mock.calls.filter(([workflow]) => workflow === courseReleaseWorkflow)
+      .map(([, args]) => args);
+
+    expect(started).toStrictEqual([[{ courseId: main.id }]]);
+  });
+
   it("builds an exam's graph at once when onboarding already found its current blueprint, whatever instructions read it", async () => {
     const blueprint = await examBlueprintFixture({
       examDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
@@ -2922,8 +3061,12 @@ describe(goalContentWorkflow, () => {
     expect(calls.every((params) => params.skills.length >= 2)).toBe(true);
   });
 
-  it("writes a learn goal's graph while research runs, and only its coverage check waits for research", async () => {
-    const { goal, user } = await newGoal({ details: { level: "none", purpose: "deep" } });
+  it("writes a learn goal's graph once research decides it's no product, and only its coverage check waits for research's end", async () => {
+    const { goal, user } = await newGoal({
+      details: { level: "none", purpose: "deep" },
+      productCheckedAt: new Date(),
+    });
+
     const events: string[] = [];
     const { promise: graphWritten, resolve: markGraphWritten } = Promise.withResolvers<boolean>();
 

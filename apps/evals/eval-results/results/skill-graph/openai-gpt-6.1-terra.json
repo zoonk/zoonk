@@ -2822,6 +2822,198 @@
           ]
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "The graph covers capture controls, composition, lighting, stability, people, motion, low light, supported special modes, video, editing, and file handling. No named required pillar is missing. All phone skills belong to the correctly titled iPhone 13 course.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Most technical dependencies are sensible, including exposure before exposure locking and steadiness before Night mode. However, Portrait mode is an invented prerequisite for Cinematic mode, and library organization is an invented prerequisite for safe sharing. These multiple prerequisite errors trigger the cap of 7. “Finishing and sharing” also names the activities taught in that phase, triggering the separate, less restrictive phase-title cap.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 17.5-hour total is plausible for practical, fairly deep camera learning, including short lessons, practice, and reviews. Most skills are appropriately sized at three to eight lessons. However, the final file-management skill combines choosing camera formats, managing storage, and establishing a backup rather than specifying one coherent action. This is one clearly mis-sized unit, capping the score at 8.",
+          "score": 8,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills are practical and relevant to using the camera and handling its output. There are no orientation, motivation, history, or recap skills. Basic exposure versus exposure locking, natural portraits versus Portrait mode, and capture versus editing teach meaningfully different abilities rather than duplicating lessons.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The language is US English, the course title is exactly iPhone 13, names are action-led, and exam weights are correctly null. The listed capabilities are supported by the iPhone 13; ordinary close-up shooting is not falsely presented as macro capability. The clear mismatch is time to value: actionable photo-quality improvement comes after 11 introductory lessons rather than within the first few, triggering the cap of 8.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The plan emphasizes enduring judgment: choosing light and framing, assessing Portrait-mode edges, managing motion blur, selecting recording settings, avoiding unnatural edits, and controlling sharing privacy. It is not dominated by rote procedures. This personal learning goal does not require a separate AI-tool skill.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 7037,
+          "outputTokens": 1204,
+          "reasoningTokens": 350
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The opening does not explicitly deliver a better photo within the first few lessons. It allocates 11 lessons to taking a photo, reviewing it, and choosing a camera before teaching focus/exposure, composition, lighting, or steadiness. For someone already at a basic level, this delays the required early improvement.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some prerequisite edges impose unnecessary gates: Portrait mode is not required to learn Cinematic mode, and organizing a library is not required to share a photo safely. The phase title “Finishing and sharing” names activities taught underneath it rather than clearly naming a progression stage. “Manage and protect camera files” also bundles capture-format choices with library backup, which are distinct planning units.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make the opening a short capture–review–improve sequence using tap-to-focus, exposure adjustment, and steadiness. Distinguish optical camera selection from digital zoom explicitly, and make reviewing sharpness, clipped highlights, and distracting backgrounds concrete criteria in the review skill.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - The course that teaches using the phone is titled exactly \"iPhone 13\", the release the learner owns, never \"iPhone\" or a photography title, and every skill done on the phone sits in it\n      - Skills cover only what an iPhone 13 can do: no skills for camera features later models added, such as the Camera Control button, Action mode, the 48 MP main camera or macro photography\n      - Skills are tasks done on the phone, and the first phase gets a better photo within the first few lessons\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-product-iphone-13-camera-pinned-1",
+        "userInput": {
+          "goal": "Use my iPhone 13 camera better",
+          "goalKind": "learn",
+          "language": "en",
+          "ownLevel": "basic",
+          "product": {
+            "brand": "Apple",
+            "courseTitle": "iPhone 13",
+            "name": "iPhone"
+          },
+          "purpose": "deep"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Every named pillar is present: creating and running an app, App Router pages and layouts, navigation, data fetching, forms, and deployment. Supporting JavaScript, React, and web foundations are included, along with substantial rendering, caching, security, testing, and operational coverage. No required coverage pillar is missing.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The path opens with a working application, introduces supporting subjects near their uses, and has coherent stage-oriented phases. However, error boundaries and recovery precede their Client Component and interactivity foundations; credential management follows database integration and authentication; and requiring Client Component boundaries for Server Actions invents a dependency. These several prerequisite and sequencing issues trigger the cap of 7. The combined JavaScript course title also violates the canonical-course requirement.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 117-hour estimate is plausible for sustained study of a framework with prerequisite refreshers and advanced application work. Skills generally occupy bounded, chapter-sized units of 8–24 short lessons, with time beyond lesson playback available for practice and review. The graph is neither a tiny overview presented as deep learning nor an unusably fragmented catalog. The scope issues involving legacy routing are assessed separately rather than treating total length itself as a defect.",
+          "score": 9,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Most skills teach concrete capabilities, and introductory implementation versus later measurement or architectural judgment is generally a useful progression rather than duplication. However, \"Maintain Pages Router applications\" and \"Migrate to the App Router\" require 44 lessons devoted to legacy applications that this learner has not asked to maintain. Making both mandatory is unsupported by the specified current-App-Router path. Two unsupported skills trigger the cap of 7.",
+          "score": 7,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The result uses US English, correctly titles the main course \"Next.js,\" starts with a visible application, and supports a basic-level learner pursuing deep practical understanding. However, numerous skill names embed Next.js or React instead of satisfying the explicit requirement for generically reusable action names. This clear naming mismatch limits the score to 8.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The map includes substantial judgment and verification: choosing rendering strategies, measuring performance, diagnosing errors, testing workflows, designing cache boundaries, checking authorization, and verifying upgrades. It does not center syntax memorization or rote implementation. An explicit AI-tool skill is not mandatory for this learn goal, so its absence does not trigger the work-or-career cap.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 11347,
+          "outputTokens": 1864,
+          "reasoningTokens": 961
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The supporting course is titled \"JavaScript and TypeScript\" rather than the explicitly required canonical title \"JavaScript\". The prerequisite graph also needs repair: route error boundaries and recovery are taught before Client Components and React interactivity, while Server Actions incorrectly require Client Component boundaries even though forms can invoke actions from Server Components. Finally, two mandatory legacy-router skills add substantial work outside the requested current App Router path.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Several skill names are framework-specific rather than generically reusable, including \"Navigate a Next.js project,\" \"Style Next.js pages,\" and \"Deploy a Next.js application.\" Environment-variable and secret management also appears after database integration and authentication, rather than near the first use of credentials.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep the immediate app-building opening, but explicitly place the running-page checkpoint within the first few lessons. Rename the JavaScript course, place TypeScript in its own canonical course if retained, move credential handling to database integration, and make legacy-router maintenance and migration optional extensions.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - The course that teaches the framework is titled exactly \"Next.js\"; JavaScript, React or web basics the learner lacks stay in supporting courses with their own canonical titles (\"JavaScript\", \"React\"), holding only what the Next.js skills build on, never folded into the Next.js course or renamed after it\n      - Next.js skills are tasks done with it (create an app, add pages and layouts, link between them, fetch data, handle forms, deploy), in the order a new user needs them, using the framework's current conventions (the App Router)\n      - The first phase reaches a page running in the learner's own app within the first few lessons\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-product-nextjs-1",
+        "userInput": {
+          "goal": "Learn Next.js",
+          "goalKind": "learn",
+          "language": "en",
+          "ownLevel": "basic",
+          "product": {
+            "brand": "Vercel",
+            "courseTitle": "Next.js",
+            "name": "Next.js"
+          },
+          "purpose": "deep"
+        }
+      }
     }
   ],
   "taskId": "skill-graph"
