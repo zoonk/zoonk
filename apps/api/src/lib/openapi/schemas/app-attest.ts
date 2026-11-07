@@ -16,7 +16,7 @@ export const appAttestChallengeResponseSchema = z
       .min(1)
       .meta({
         description:
-          "Single-use and valid for five minutes. An attestation's client data hash is the SHA-256 of its UTF-8 bytes; an assertion signs it inside the request's client data (see the `x-app-attest-assertion` header), and a Play Integrity token's request hash covers it the same way (see the `x-play-integrity-token` header).",
+          "Single-use and valid for five minutes. An attestation's client data hash is the SHA-256 of its UTF-8 bytes; an assertion signs it inside the request's client data (see the `x-app-attest-assertion` header), and a Play Integrity token's request hash covers it the same way (see the `x-play-integrity-token` header). A restore key's WebAuthn request uses it as its `challenge`, unchanged.",
       }),
   })
   .meta({ id: "AppAttestChallenge" });

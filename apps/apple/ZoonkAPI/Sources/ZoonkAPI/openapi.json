@@ -362,7 +362,7 @@
     },
     "/app-attest/challenges": {
       "post": {
-        "description": "A one-time challenge for the apps' bot proof. The iOS app asks for one before attesting its App Attest key and before each request that needs bot proof (`POST /v1/guests`, `POST /v1/email-sign-in-codes`, `POST /v1/sessions/email-code`), where it sends the assertion in the `X-App-Attest-*` headers instead of BotID's browser proof; the Android app asks for one before each of those requests and sends a Play Integrity token in the `X-Play-Integrity-*` headers.",
+        "description": "A one-time challenge for the apps' bot proof. The iOS app asks for one before attesting its App Attest key and before each request that needs bot proof (`POST /v1/guests`, `POST /v1/email-sign-in-codes`, `POST /v1/sessions/email-code`), where it sends the assertion in the `X-App-Attest-*` headers instead of BotID's browser proof; the Android app asks for one before each of those requests and sends a Play Integrity token in the `X-Play-Integrity-*` headers. The Android app also asks for one before creating or redeeming a restore key (`POST /v1/sessions/current/restore-keys`, `POST /v1/sessions/restore-key`), as its WebAuthn challenge.",
         "operationId": "createAppAttestChallenge",
         "security": [],
         "summary": "Get an app proof challenge",
@@ -11962,6 +11962,91 @@
         }
       }
     },
+    "/sessions/current/restore-keys": {
+      "post": {
+        "description": "Registers the restore key the Android app made with Credential Manager's Restore Credentials after this session signed in, so the learner's next phone signs in with `POST /v1/sessions/restore-key`. Make the key's WebAuthn request over a fresh challenge from `POST /v1/app-attest/challenges`, with the RP ID `www.zoonk.com`. Use ES256 or RS256, attestation `none` and a discoverable credential; user verification isn't required. The key signs in only while this session lasts: signing out, deleting the account or a guest creating an account ends it on every phone. Registering the same key again for this session is a no-op.",
+        "operationId": "createRestoreKey",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Register a restore key",
+        "tags": [
+          "Sessions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestoreKeyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Restore key registered, or already registered for this session"
+          },
+          "400": {
+            "description": "Request validation failed, the challenge wasn't issued here or was already used or expired, or the registration is malformed, doesn't verify (origin, RP ID, algorithm) or names a key another session registered. Error codes include: RESTORE_KEY_CHALLENGE_INVALID, RESTORE_KEY_RESPONSE_MALFORMED, RESTORE_KEY_REGISTRATION_INVALID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request rate limit exceeded. Error code: RATE_LIMIT_EXCEEDED.",
+            "headers": {
+              "Retry-After": {
+                "required": true,
+                "description": "Seconds until another attempt can be made",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991,
+                  "description": "Seconds until another attempt can be made"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sessions/email-code": {
       "post": {
         "description": "Signs in with the code from `POST /v1/email-sign-in-codes`, creating the account the first time. Requests must pass Vercel BotID, which runs in a browser, or carry the iOS app's App Attest assertion in the `X-App-Attest-*` headers or the Android app's Play Integrity token in the `X-Play-Integrity-*` headers (see `POST /v1/app-attest/challenges`); without any of them they get 403 BOT_DETECTED.",
@@ -12149,6 +12234,101 @@
           },
           "401": {
             "description": "Google authorization is invalid or expired. Error code: GOOGLE_AUTHORIZATION_INVALID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Account disabled. Error code: ACCOUNT_DISABLED.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request rate limit exceeded. Error code: RATE_LIMIT_EXCEEDED.",
+            "headers": {
+              "Retry-After": {
+                "required": true,
+                "description": "Seconds until another attempt can be made",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991,
+                  "description": "Seconds until another attempt can be made"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/restore-key": {
+      "post": {
+        "description": "Signs a new phone in with the restore key Google moved to it from the learner's previous phone, creating a new session for that learner, guests included. The previous phone keeps its own session, and this key signs in only while that session lasts, so register a new key for the new session with `POST /v1/sessions/current/restore-keys`. Make the key's WebAuthn request over a fresh challenge from `POST /v1/app-attest/challenges`, with the RP ID `www.zoonk.com`. No bot proof is needed: the key's signature is the proof.",
+        "operationId": "createRestoreKeySession",
+        "security": [],
+        "summary": "Sign in with a restore key",
+        "tags": [
+          "Sessions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestoreKeySessionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Zoonk bearer session created for the key's learner",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestoreKeySessionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation failed, the challenge wasn't issued here or was already used or expired, or the JSON isn't a credential response. Keep the key and try again with a new challenge. Error codes include: RESTORE_KEY_CHALLENGE_INVALID, RESTORE_KEY_RESPONSE_MALFORMED.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "This restore key can't sign in: it's unknown, its signature, origin or RP ID is wrong, or the session that registered it ended. Delete the key. Error code: RESTORE_KEY_INVALID.",
             "content": {
               "application/json": {
                 "schema": {
@@ -26146,6 +26326,21 @@
         ],
         "additionalProperties": false
       },
+      "RestoreKeyRequest": {
+        "type": "object",
+        "properties": {
+          "registrationResponseJson": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16384,
+            "description": "The `registrationResponseJson` of Credential Manager's `CreateRestoreCredentialResponse`, unchanged"
+          }
+        },
+        "required": [
+          "registrationResponseJson"
+        ],
+        "additionalProperties": false
+      },
       "EmailCodeSessionRequest": {
         "type": "object",
         "properties": {
@@ -26175,6 +26370,21 @@
         },
         "required": [
           "idToken"
+        ],
+        "additionalProperties": false
+      },
+      "RestoreKeySessionRequest": {
+        "type": "object",
+        "properties": {
+          "authenticationResponseJson": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16384,
+            "description": "`RestoreCredential.authenticationResponseJson`, unchanged"
+          }
+        },
+        "required": [
+          "authenticationResponseJson"
         ],
         "additionalProperties": false
       },
@@ -29813,7 +30023,7 @@
           "challenge": {
             "type": "string",
             "minLength": 1,
-            "description": "Single-use and valid for five minutes. An attestation's client data hash is the SHA-256 of its UTF-8 bytes; an assertion signs it inside the request's client data (see the `x-app-attest-assertion` header), and a Play Integrity token's request hash covers it the same way (see the `x-play-integrity-token` header)."
+            "description": "Single-use and valid for five minutes. An attestation's client data hash is the SHA-256 of its UTF-8 bytes; an assertion signs it inside the request's client data (see the `x-app-attest-assertion` header), and a Play Integrity token's request hash covers it the same way (see the `x-play-integrity-token` header). A restore key's WebAuthn request uses it as its `challenge`, unchanged."
           }
         },
         "required": [
@@ -74229,6 +74439,24 @@
           }
         },
         "required": [
+          "token"
+        ],
+        "additionalProperties": false
+      },
+      "RestoreKeySessionResponse": {
+        "type": "object",
+        "properties": {
+          "isGuest": {
+            "type": "boolean",
+            "description": "Whether the restored learner is a guest"
+          },
+          "token": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "isGuest",
           "token"
         ],
         "additionalProperties": false
