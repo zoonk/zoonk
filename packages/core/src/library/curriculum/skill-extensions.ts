@@ -4,6 +4,7 @@ import { getOutlineWindow } from "../../lookahead/outline-window";
 import { toPlanCourseScope } from "../../lookahead/plan-outline-needs";
 import { goalUsesTools } from "../../plans/_utils/plan-tools";
 import { loadGoalPlannerLessons } from "../../plans/_utils/planner-lessons";
+import { joinOptionSkills } from "../../plans/planner/option-skills";
 import { type PlanGraphSkill, parsePlanGraph } from "../../plans/planner/plan-state";
 import { getStandInLessons } from "../../plans/planner/plan-units";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
@@ -326,7 +327,7 @@ export async function listSkillExtensions({
               })),
           ),
         goal,
-        planGraphSkills: graph.skills,
+        planGraphSkills: joinOptionSkills(graph).skills,
         withToolChapters,
       }),
     ),

@@ -10,6 +10,7 @@ import {
 import { toSharedGoalName } from "../library/curriculum/shared-graph-prompt";
 import { toGoalCandidateExams } from "../library/exams/candidate-exams";
 import { goalUsesTools } from "../plans/_utils/plan-tools";
+import { joinOptionSkills } from "../plans/planner/option-skills";
 import { isStandIn } from "../plans/planner/plan-item-rules";
 import { type ExistingPlanItem } from "../plans/planner/plan-items";
 import { parsePlanGraph } from "../plans/planner/plan-state";
@@ -163,7 +164,7 @@ async function toOutlineNeeds(standIns: StandIns): Promise<CourseOutlineNeed[]> 
 
   const courseIds = [...new Set(standIns.skillIds.flatMap((id) => courseOf.get(id) ?? []))];
 
-  const graphSkills = parsePlanGraph(standIns.graph).skills;
+  const graphSkills = joinOptionSkills(parsePlanGraph(standIns.graph)).skills;
   const areas = new Map(graphSkills.map((skill) => [skill.skillId, skill.area] as const));
 
   const [skills, courses, withToolChapters] = await Promise.all([
