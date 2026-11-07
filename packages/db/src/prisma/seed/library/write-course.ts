@@ -96,9 +96,7 @@ async function writeSteps(context: CourseContext, lesson: SeedLesson, lessonId: 
     }),
   );
 
-  await prisma.step.deleteMany({
-    where: { id: { notIn: ids }, lessonId, runId: SEED_PROVENANCE.runId },
-  });
+  await prisma.step.deleteMany({ where: { id: { notIn: ids }, lessonId } });
 }
 
 async function writeLessonVocabulary(context: CourseContext, lesson: SeedLesson, lessonId: string) {
@@ -144,11 +142,7 @@ async function isWrittenByApp(
     select: {
       contentStatus: true,
       specStatus: true,
-      steps: {
-        select: { id: true },
-        take: 1,
-        where: { retiredAt: null, runId: { not: SEED_PROVENANCE.runId } },
-      },
+      steps: { select: { id: true }, take: 1, where: { runId: { not: SEED_PROVENANCE.runId } } },
     },
     where: { id },
   });
