@@ -51,3 +51,15 @@ mrow[notation~="horizontalstrike"] {
     transparent 0
   );
 }
+
+/* Forced colors drop background images, which would take the strokes with them. */
+@media (forced-colors: active) {
+  mrow:is(
+    [notation~="updiagonalstrike"],
+    [notation~="downdiagonalstrike"],
+    [notation~="horizontalstrike"]
+  ) {
+    forced-color-adjust: none;
+    color: CanvasText;
+  }
+}

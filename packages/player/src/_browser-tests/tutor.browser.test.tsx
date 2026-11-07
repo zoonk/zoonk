@@ -5,6 +5,7 @@ import { type Locator, page, userEvent } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
 import { expectCount, expectMathVisible, focusOn, press } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
+import { onDevice } from "../_test-utils/device-media";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import {
   TUTOR_ANSWER,
@@ -486,8 +487,14 @@ describe("tutor answers", () => {
         return style.borderTopWidth !== "0px" || style.backgroundImage !== "none";
       });
 
-    expect(drawn("box")).toStrictEqual([true]);
-    expect(drawn("updiagonalstrike")).toStrictEqual([true, true]);
+    const shown = () => ({ box: drawn("box"), strokes: drawn("updiagonalstrike") });
+    const expected = { box: [true], strokes: [true, true] };
+
+    expect(shown()).toStrictEqual(expected);
+
+    await expect(onDevice({ forcedColors: "active" }, async () => shown())).resolves.toStrictEqual(
+      expected,
+    );
   });
 
   it("gives Tab to a formula wider than the answer, and not to one that fits", async () => {
