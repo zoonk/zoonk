@@ -6,7 +6,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +26,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PendingLabel
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.api.models.StripeSubscriptionCancellation
 import com.zoonk.api.models.StripeSubscriptionCancellation.State
 import com.zoonk.api.models.StripeSubscriptionCancellationReceipt

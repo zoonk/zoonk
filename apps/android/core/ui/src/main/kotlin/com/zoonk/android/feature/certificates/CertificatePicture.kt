@@ -31,6 +31,8 @@ import com.zoonk.android.data.PrivateImages
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.OwnedCertificate
 import kotlinx.datetime.toJavaLocalDate
 
@@ -44,7 +46,7 @@ fun CertificatePicture(
     images: PrivateImages,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    corner: Dp = 6.dp,
+    corner: Dp = ZoonkRadius.md,
 ) {
     val context = LocalContext.current
     val sheet = modifier.sheet(Color.White, MaterialTheme.colorScheme.outlineVariant, corner)
@@ -71,7 +73,7 @@ fun CertificatePicture(
 fun LockedCertificate(
     name: CertificateName,
     modifier: Modifier = Modifier,
-    corner: Dp = 6.dp,
+    corner: Dp = ZoonkRadius.md,
     compact: Boolean = false,
 ) {
     val locked = stringResource(R.string.certificates_locked)
@@ -99,7 +101,7 @@ fun LockedCertificate(
             Text(
                 formatDate(name.completedOn.toJavaLocalDate(), currentLocale(), DateStyle.LongYear),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.zoonkType.data,
             )
         }
     }

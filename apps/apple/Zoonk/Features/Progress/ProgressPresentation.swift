@@ -1,11 +1,16 @@
 import Foundation
 import SwiftUI
 
-/// Mirrors main's `formatDuration`.
-func progressLearningTime(_ totalSeconds: Int, locale: Locale = .autoupdatingCurrent) -> String {
+/// Mirrors main's `formatDuration`, which writes durations in the app's language rather than the
+/// device's region, so "3 hr 38 min" reads the same on every platform (a British region would say
+/// "3 hrs"). A no-break space keeps each number with its unit.
+func progressLearningTime(_ totalSeconds: Int, locale: Locale = .courseLanguage) -> String {
+  let isJapanese = locale.language.languageCode == .japanese
+
   func unit(_ value: Int, _ unit: UnitDuration) -> String {
     Measurement(value: Double(value), unit: unit)
       .formatted(.measurement(width: .abbreviated, usage: .asProvided).locale(locale))
+      .replacingOccurrences(of: " ", with: isJapanese ? "" : "\u{00A0}")
   }
 
   let seconds = max(totalSeconds, 0)
@@ -27,7 +32,7 @@ func progressLearningTime(_ totalSeconds: Int, locale: Locale = .autoupdatingCur
   let hours = unit(totalMinutes / 60, .hours)
   let minutes = totalMinutes % 60
   // Foundation spaces Japanese units ("1時間 30分"), but Japanese writes them together ("1時間30分").
-  let separator = locale.language.languageCode == .japanese ? "" : " "
+  let separator = isJapanese ? "" : " "
   return minutes == 0 ? hours : "\(hours)\(separator)\(unit(minutes, .minutes))"
 }
 
@@ -110,29 +115,28 @@ extension ProgressBelt {
     }
   }
 
-  /// Artwork, at full strength in every mode.
   var color: Color {
     switch self {
     case .white:
-      .white
+      Color(.beltWhite)
     case .yellow:
-      .yellow
+      Color(.beltYellow)
     case .orange:
-      .orange
+      Color(.beltOrange)
     case .green:
-      .green
+      Color(.beltGreen)
     case .blue:
-      .blue
+      Color(.beltBlue)
     case .purple:
-      .purple
+      Color(.beltPurple)
     case .brown:
-      .brown
+      Color(.beltBrown)
     case .red:
-      .red
+      Color(.beltRed)
     case .gray:
-      .gray
+      Color(.beltGray)
     case .black:
-      .black
+      Color(.beltBlack)
     }
   }
 }
@@ -224,24 +228,7 @@ extension ProgressWeekday {
   }
 }
 
+/// `BigQuantity`'s split for a larger readout that sets its own role (onboarding's time a day).
 func bigQuantity(_ text: String) -> Text {
-  var attributed = AttributedString()
-  var remainder = Substring(text)
-  let number = /[~≈+\-−]?\d[\d.,:]*(?:[\u{00A0}\u{202F}]?%)?/
-
-  while let match = remainder.firstMatch(of: number) {
-    var unit = AttributedString(remainder[remainder.startIndex..<match.range.lowerBound])
-    unit.font = .subheadline.weight(.medium)
-    unit.foregroundColor = .secondary
-    attributed += unit
-    attributed += AttributedString(remainder[match.range])
-    remainder = remainder[match.range.upperBound...]
-  }
-
-  var tail = AttributedString(remainder)
-  tail.font = .subheadline.weight(.medium)
-  tail.foregroundColor = .secondary
-  attributed += tail
-
-  return Text(attributed)
+  BigQuantity.text(text, unitFont: TypeStyle.button.attributeFont)
 }

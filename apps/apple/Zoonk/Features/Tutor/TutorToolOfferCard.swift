@@ -48,8 +48,8 @@ struct TutorToolOfferCard: View {
       VStack(alignment: .leading, spacing: 12) {
         if let description = content.description {
           description
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
 
         if content.locked {
@@ -62,14 +62,14 @@ struct TutorToolOfferCard: View {
             } label: {
               label
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
           case .practiceCall(let label):
             Button {
               isCallOpen = true
             } label: {
               label
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
           }
         }
       }
@@ -89,7 +89,7 @@ struct TutorToolOfferCard: View {
         let conversation: LanguageUnit.Conversation = try? PracticeJSON.recode(call.call)
       {
         NavigationStack {
-          List {
+          ZoonkList {
             PracticeCallSection(
               conversation: conversation, chapterId: call.chapterId, goalId: call.goalId,
               minutes: $callMinutes, start: callStart
@@ -110,7 +110,7 @@ struct TutorToolOfferCard: View {
         }
         .presentationDetents([.medium, .large])
         .onDisappear { callStart.cancel() }
-        .accessibilitySizeStyles()
+        .zoonkStyles()
       }
     }
   }

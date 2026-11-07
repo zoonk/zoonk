@@ -452,11 +452,11 @@ struct PracticeAPI: Sendable {
     }
   }
 
-  func submitFocusTest(token: String, goalId: String, answers: [PracticeChoiceAnswer]) async throws
-    -> Components.Schemas.FocusTestResult
-  {
+  func submitFocusTest(
+    token: String, goalId: String, answers: [PracticeChoiceAnswer], requestId: String
+  ) async throws -> Components.Schemas.FocusTestResult {
     let body = Components.Schemas.FocusTestInput(
-      answers: try answers.map { try $0.input }, timeZone: timeZone)
+      answers: try answers.map { try $0.input }, requestId: requestId, timeZone: timeZone)
 
     return try await perform(token) { client in
       switch try await client.submitFocusTest(path: .init(goalId: goalId), body: .json(body)) {

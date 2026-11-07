@@ -56,6 +56,7 @@ import com.zoonk.android.feature.activities.activityDropTarget
 import com.zoonk.android.feature.activities.assignmentPairs
 import com.zoonk.android.feature.activities.rememberActivityDragDrop
 import com.zoonk.android.feature.activities.seededShuffle
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf11Value as LabeledDiagramContent
@@ -247,7 +248,7 @@ private fun SlotButton(
 ) {
     val colors = MaterialTheme.colorScheme
     val accent = MaterialTheme.zoonk.vizAccent
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     val isOver = dragDrop.overId == slot.key
     val label =
         if (name == null) {
@@ -317,7 +318,7 @@ private fun CheckedSlot(
 ) {
     val colors = MaterialTheme.colorScheme
     val right = name == slot.label
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     val description =
         if (right) {
             stringResource(R.string.activities_sorting_spot_named, slot.number, slot.label)

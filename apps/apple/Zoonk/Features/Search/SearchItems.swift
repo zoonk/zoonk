@@ -161,6 +161,15 @@ private func places(_ summary: LearnerSummary) -> SearchGroup {
     items.append(place(.completedLessons, route: .completedLessons))
   }
 
+  items.append(
+    SearchItem(
+      id: "certificates",
+      title: String(
+        localized: "Certificates", table: "Search",
+        comment: "Search row for the learner's certificates"),
+      systemImage: "rosette",
+      action: .present(.account(.certificates))))
+
   if places.exam {
     items.append(place(.exam, route: .exam))
   }
@@ -181,13 +190,6 @@ private func places(_ summary: LearnerSummary) -> SearchGroup {
       systemImage: "book.closed",
       action: .open(.logbook)),
     place(.statistics, route: .statistics),
-    SearchItem(
-      id: "certificates",
-      title: String(
-        localized: "Certificates", table: "Search",
-        comment: "Search row for the learner's certificates"),
-      systemImage: "rosette",
-      action: .present(.account(.certificates))),
     SearchItem(
       id: "courses",
       title: String(

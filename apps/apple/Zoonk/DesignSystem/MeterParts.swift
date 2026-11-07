@@ -1,12 +1,14 @@
 import SwiftUI
 
-/// A single share is a `ProgressView` instead.
+/// A single share is a `Meter` instead. 4pt tall with 3pt gaps is main's wait bar.
 struct MeterParts: View {
   struct Part {
     enum Fill {
       case track
       case current
       case color(Color)
+      /// The track, filled in `success` from its start this far (0 to 1).
+      case share(Double)
     }
 
     var weight = 1.0
@@ -14,8 +16,9 @@ struct MeterParts: View {
   }
 
   let parts: [Part]
+  var height = 6.0
+  var gap = 2.0
 
-  private let gap = 2.0
   private let minimumWidth = 4.0
   private let ringWidth = 1.5
 
@@ -24,7 +27,7 @@ struct MeterParts: View {
       let totalWeight = parts.reduce(0) { $0 + max($1.weight, 0) }
       let fixedWidth = Double(parts.count) * minimumWidth + Double(max(parts.count - 1, 0)) * gap
       let sharedWidth = max(size.width - fixedWidth, 0)
-      let radius = size.height / 2
+      let radius = min(3, height / 2)
       var x = 0.0
 
       for part in parts {
@@ -35,7 +38,7 @@ struct MeterParts: View {
         switch part.fill {
         case .track:
           context.fill(
-            Path(roundedRect: rect, cornerRadius: radius), with: .color(Color(.systemFill)))
+            Path(roundedRect: rect, cornerRadius: radius), with: .color(.surface3))
         case .current:
           let inset = rect.insetBy(dx: ringWidth / 2, dy: ringWidth / 2)
           context.stroke(
@@ -43,12 +46,23 @@ struct MeterParts: View {
             lineWidth: ringWidth)
         case .color(let color):
           context.fill(Path(roundedRect: rect, cornerRadius: radius), with: .color(color))
+        case .share(let filled):
+          let track = Path(roundedRect: rect, cornerRadius: radius)
+          var part = context
+          part.fill(track, with: .color(.surface3))
+          part.clip(to: track)
+          part.fill(
+            Path(
+              CGRect(
+                origin: rect.origin,
+                size: CGSize(width: rect.width * min(max(filled, 0), 1), height: rect.height))),
+            with: .color(.success))
         }
 
         x = rect.maxX + gap
       }
     }
-    .frame(height: 6)
+    .frame(height: height)
     .accessibilityHidden(true)
   }
 }

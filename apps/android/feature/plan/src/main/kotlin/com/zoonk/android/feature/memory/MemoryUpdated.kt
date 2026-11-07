@@ -8,7 +8,6 @@ import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -29,6 +28,7 @@ import androidx.compose.ui.unit.em
 import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.tutor.CONFLICT
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.api.models.MemoryChangeReference
 import java.util.UUID
 

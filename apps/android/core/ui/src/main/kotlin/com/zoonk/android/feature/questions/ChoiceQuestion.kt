@@ -71,7 +71,7 @@ fun ChoiceQuestion(
                     onClick = { pick(index) },
                     enabled = !locked,
                     role = if (multi) Role.Checkbox else Role.RadioButton,
-                ) { ItemLine(option, style = MaterialTheme.typography.bodyLarge) }
+                ) { ItemLine(option) }
             }
         }
     }

@@ -20,7 +20,7 @@ struct BuddyEditor: View {
 
   var body: some View {
     NavigationStack {
-      Form {
+      ZoonkList {
         BuddyPickerSections(kind: $choice.kind, name: $name, glasses: choice.glasses)
 
         Section {
@@ -28,7 +28,7 @@ struct BuddyEditor: View {
             glassesRow(glasses)
           }
         } header: {
-          Text("Glasses", tableName: "Buddy", comment: "Opens the buddy's glasses")
+          SectionTitle(Text("Glasses", tableName: "Buddy", comment: "Opens the buddy's glasses"))
         }
       }
       .navigationTitle(
@@ -65,12 +65,12 @@ struct BuddyEditor: View {
       HStack {
         VStack(alignment: .leading) {
           glasses.name
-            .foregroundStyle(isEarned ? .primary : .secondary)
+            .foregroundStyle(isEarned ? Color(.foreground) : .mutedForeground)
 
           if !isEarned {
             glasses.howToEarn
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
           }
         }
 
@@ -82,7 +82,7 @@ struct BuddyEditor: View {
             .accessibilityHidden(true)
         } else if !isEarned {
           Image(systemName: "lock")
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .accessibilityHidden(true)
         }
       }
@@ -109,8 +109,8 @@ struct BuddyPickerSections: View {
             VStack(alignment: .leading) {
               Text(buddyName(kind: kind, name: nil))
               kind.tagline
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .typeStyle(.note)
+                .foregroundStyle(.mutedForeground)
             }
           } icon: {
             BuddyFace(kind: kind, glasses: glasses)
@@ -136,7 +136,7 @@ struct BuddyPickerSections: View {
         }
       }
     } header: {
-      Text("Name", tableName: "Buddy", comment: "The buddy's custom name")
+      SectionTitle(Text("Name", tableName: "Buddy", comment: "The buddy's custom name"))
     }
   }
 }
@@ -151,7 +151,7 @@ struct BuddyGlassesPicker: View {
 
   var body: some View {
     NavigationStack {
-      List {
+      ZoonkList {
         if store.saveFailed {
           FailureLine(
             message: LocalizedStringResource(
@@ -171,12 +171,12 @@ struct BuddyGlassesPicker: View {
           } label: {
             HStack(spacing: 12) {
               BuddyFace(kind: status.buddy.kind, glasses: option.glasses.worn)
-                .font(.title)
+                .typeStyle(.pageTitle.weight(.regular))
                 .opacity(option.earned ? 1 : 0.4)
 
               VStack(alignment: .leading, spacing: 4) {
                 option.glasses.name
-                  .font(.headline)
+                  .typeStyle(.body.weight(.semibold))
 
                 if !option.earned {
                   lockedDetail(option)
@@ -204,13 +204,13 @@ struct BuddyGlassesPicker: View {
         ToolbarItem(placement: .principal) {
           VStack {
             Text("Glasses", tableName: "Buddy", comment: "Title of the buddy's glasses")
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
             Text(
               "Pick a pair you've earned to wear it.", tableName: "Buddy",
               comment: "What the glasses list does"
             )
-            .font(.caption)
-            .foregroundStyle(.secondary)
+            .typeStyle(.meta)
+            .foregroundStyle(.mutedForeground)
           }
         }
 
@@ -247,12 +247,11 @@ struct BuddyGlassesPicker: View {
           option.glasses.howToEarn
         }
       }
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
 
       if counted, option.target > 0 {
-        ProgressView(value: Double(option.current), total: Double(option.target))
-          .tint(.secondary)
+        Meter(value: Double(option.current), total: Double(option.target), fill: .mutedForeground)
           .accessibilityHidden(true)
       }
     }

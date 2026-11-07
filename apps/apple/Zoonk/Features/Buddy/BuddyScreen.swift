@@ -52,7 +52,7 @@ struct BuddyScreen: View {
       } label: {
         Text("Try again", tableName: "Buddy", comment: "Reads the buddy's day again")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
     .lonePage()
     .navigationTitle(Text(summary.buddyDisplayName))
@@ -146,7 +146,7 @@ private struct BuddyContent: View {
       }
       .presentationDetents([.medium, .large])
       .closesOnNavigation()
-      .accessibilitySizeStyles()
+      .zoonkStyles()
     }
     .sheet(isPresented: $isEditing) {
       BuddyEditor(
@@ -156,11 +156,11 @@ private struct BuddyContent: View {
         },
         save: { choice in Task { await store.save(choice) } }
       )
-      .accessibilitySizeStyles()
+      .zoonkStyles()
     }
     .sheet(isPresented: $isWearing) {
       BuddyGlassesPicker(status: status)
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
     .onChange(of: goalId.map { tutor.conversation(.plan(goalId: $0)).isAsking } ?? false) {
       _, isAsking in
@@ -239,7 +239,9 @@ private struct BuddyContent: View {
       Text(
         "Hi! I'm \(name), your AI study buddy. Ask me anything about what you're studying, or tell me what you'd like to change in your plan.",
         tableName: "Buddy",
-        comment: "The buddy's hello at the top of its conversation; the argument is its name")
+        comment: "The buddy's hello at the top of its conversation; the argument is its name"
+      )
+      .typeStyle(.message)
 
       if store.saveFailed {
         FailureLine(
@@ -247,7 +249,7 @@ private struct BuddyContent: View {
             "We couldn't save your buddy. Try again.", table: "Buddy",
             comment: "Saving the buddy failed")
         )
-        .font(.footnote)
+        .typeStyle(.note)
       }
 
       if !status.buddy.picked {
@@ -262,7 +264,7 @@ private struct BuddyContent: View {
             Image(systemName: "face.smiling")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
     }
     .accessibilityElement(children: .contain)
@@ -376,8 +378,8 @@ private struct BuddyContent: View {
       DisclosureChevron()
     }
     .labelStyle(.titleAndIcon)
-    .font(.subheadline.monospacedDigit())
-    .foregroundStyle(.secondary)
+    .typeStyle(.data)
+    .foregroundStyle(.mutedForeground)
     .contentShape(.rect)
   }
 

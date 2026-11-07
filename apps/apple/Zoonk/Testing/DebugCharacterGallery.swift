@@ -3,9 +3,12 @@
 
   /// `ZOONK_DEBUG_CHARACTERS=ceremony` opens a milestone's ceremony instead, `=moments` a
   /// result's missions, and `=certificates` the award moment of the certificates the local API
-  /// serves for the codes in `ZOONK_DEBUG_CERTIFICATES`, oldest first and comma-separated.
+  /// serves for the codes in `ZOONK_DEBUG_CERTIFICATES`, oldest first and comma-separated; also a
+  /// launch argument (`-ZOONK_DEBUG_CHARACTERS moments`).
   struct DebugCharacterGallery: ViewModifier {
-    private let mode = ProcessInfo.processInfo.environment["ZOONK_DEBUG_CHARACTERS"]
+    private let mode =
+      ProcessInfo.processInfo.environment["ZOONK_DEBUG_CHARACTERS"]
+      ?? UserDefaults.standard.string(forKey: "ZOONK_DEBUG_CHARACTERS")
 
     func body(content: Content) -> some View {
       if let mode {
@@ -21,7 +24,7 @@
               Gallery()
             }
           }
-          .accessibilitySizeStyles()
+          .zoonkStyles()
         }
       } else {
         content
@@ -78,7 +81,7 @@
                 VStack {
                   BuddyCharacter(look: BuddyLook(kind: kind, belt: .red), expression: expression)
                     .frame(height: 72)
-                  Text(verbatim: "\(expression)").font(.caption2)
+                  Text(verbatim: "\(expression)").typeStyle(.small)
                 }
               }
             }

@@ -10,12 +10,10 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,7 +33,9 @@ import com.zoonk.android.ui.characters.BuddyGlassesPicker
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.BuddyPicker
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.TextButton
 
 /**
  * Main's buddy editor, in Preferences and on the buddy tab: its kind and name, and its glasses

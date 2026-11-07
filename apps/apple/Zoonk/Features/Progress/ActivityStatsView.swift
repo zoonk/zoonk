@@ -25,7 +25,7 @@ private struct ActivityTiles: View {
     StatTileGrid(columns: [3, 2, 1], minimumWidth: minimumWidth) {
       StatTile(
         label: Text(
-          "Study days", tableName: "Progress", comment: "Tile: how many days the learner studied"),
+          "Days studied", tableName: "Progress", comment: "Tile: how many days the learner studied"),
         value: Text(summary.learningDays, format: .number),
         systemImage: "calendar.badge.checkmark", tone: .success,
         detail: Text(
@@ -46,7 +46,7 @@ private struct ActivityTiles: View {
       StatTile(
         label: Text(
           "Time", tableName: "Progress", comment: "Tile: how long the learner has studied in total"),
-        value: bigQuantity(progressLearningTime(summary.totalLearningSeconds)),
+        quantity: progressLearningTime(summary.totalLearningSeconds),
         systemImage: "clock",
         detail: Text(
           "Studying in total", tableName: "Progress", comment: "Under the learning time: all of it")
@@ -76,7 +76,7 @@ struct ActivityCalendar: View {
       high: Text(
         "More", tableName: "Progress", comment: "High end of the study days calendar's key"),
       shades: [
-        Color(.systemFill), Color.success.opacity(0.25), Color.success.opacity(0.45),
+        Color.surface3, Color.success.opacity(0.25), Color.success.opacity(0.45),
         Color.success.opacity(0.7), Color.success,
       ],
       days: days.map { day in

@@ -45,8 +45,7 @@ private struct EnergyTiles: View {
         label: Text(
           "At 100%", tableName: "Progress",
           comment: "Tile: how many days the learner's Energy was full"),
-        value: energy.insights.map { bigQuantity(dayCount($0.fullEnergyDays)) }
-          ?? Text(verbatim: "–"),
+        quantity: energy.insights.map { dayCount($0.fullEnergyDays) } ?? "–",
         systemImage: "battery.100percent", tone: .energy,
         detail: Text(
           "Days with full Energy", tableName: "Progress",
@@ -82,7 +81,7 @@ private struct EnergyCalendar: View {
       low: Text("Low", tableName: "Progress", comment: "Low end of the Energy calendar's key"),
       high: Text("High", tableName: "Progress", comment: "High end of the Energy calendar's key"),
       shades: [
-        Color(.systemFill), Color.energy.opacity(0.15), Color.energy.opacity(0.3),
+        Color.surface3, Color.energy.opacity(0.15), Color.energy.opacity(0.3),
         Color.energy.opacity(0.45), Color.energy.opacity(0.6), Color.energy.opacity(0.8),
       ],
       days: energy.days.map { day in

@@ -38,8 +38,8 @@ struct CitationNote: View {
 
   private var source: some View {
     Text(citation.text)
-      .font(.caption.weight(.medium))
-      .foregroundStyle(.secondary)
+      .typeStyle(.meta.weight(.medium))
+      .foregroundStyle(.mutedForeground)
   }
 
   @ViewBuilder private var chip: some View {
@@ -80,17 +80,17 @@ struct SourcesChip: View {
       // Measured without a width, the automatic style drops the title, so `CitationNote`'s
       // `ViewThatFits` would squeeze the chip beside the citation instead of below it.
       .labelStyle(.titleAndIcon)
-      .font(.footnote)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.small)
     .buttonSizing(dynamicTypeSize.isAccessibilitySize ? .flexible : .automatic)
     .popover(isPresented: $showsSource) {
       SourceDetails(title: title, publisher: publisher, url: url, checkedAt: checkedAt)
         // By default a popover becomes a full-screen cover in landscape, with no way to close it.
         .presentationCompactAdaptation(.popover)
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
   }
 }
@@ -106,11 +106,11 @@ private struct SourceDetails: View {
       VStack(alignment: .leading, spacing: 12) {
         VStack(alignment: .leading, spacing: 4) {
           Text(title)
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
 
           checked
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
 
         if let url = url.flatMap(URL.init(string:)) {
@@ -123,7 +123,7 @@ private struct SourceDetails: View {
               Image(systemName: "arrow.up.right.square")
             }
           }
-          .font(.subheadline.weight(.medium))
+          .typeStyle(.body.weight(.medium))
         }
       }
       .padding()

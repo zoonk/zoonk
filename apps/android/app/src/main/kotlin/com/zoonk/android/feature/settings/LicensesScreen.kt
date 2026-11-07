@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.settings
 
 import android.content.Context
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,15 +8,13 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -38,8 +34,12 @@ import com.mikepenz.aboutlibraries.entity.Library
 import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.ui.components.ListDivider
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.PageTitleRow
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.PageScaffold
 import kotlinx.coroutines.Dispatchers
@@ -58,17 +58,22 @@ fun LicensesScreen(navigator: AppNavigator) {
             PageLoading(Modifier.padding(padding))
         } else {
             LazyColumn(Modifier.fillMaxSize(), contentPadding = padding, horizontalAlignment = Alignment.CenterHorizontally) {
-                items(list, key = { it.uniqueId }) { library ->
-                    ListItem(
-                        headlineContent = { Text(library.name) },
-                        supportingContent = {
-                            Text(listOfNotNull(library.artifactVersion, library.licenses.joinToString { it.name }).factsLine())
-                        },
-                        modifier =
-                            Modifier
-                                .widthIn(max = 640.dp)
-                                .clickable(role = Role.Button) { openId = library.uniqueId },
-                    )
+                item(contentType = "title") {
+                    PageTitleRow(stringResource(R.string.settings_licenses), Modifier.widthIn(max = 640.dp).padding(16.dp))
+                }
+                itemsIndexed(list, key = { _, library -> library.uniqueId }) { index, library ->
+                    Column(Modifier.widthIn(max = 640.dp)) {
+                        if (index > 0) ListDivider()
+                        ListRow(
+                            headline = { Text(library.name) },
+                            supporting = {
+                                Text(
+                                    listOfNotNull(library.artifactVersion, library.licenses.joinToString { it.name }).factsLine(),
+                                )
+                            },
+                            onClick = { openId = library.uniqueId },
+                        )
+                    }
                 }
             }
             list.firstOrNull { it.uniqueId == openId }?.let { LicenseSheet(it, onDismiss = { openId = null }) }

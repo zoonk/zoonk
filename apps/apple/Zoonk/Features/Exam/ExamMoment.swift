@@ -37,7 +37,7 @@ struct ExamMomentSection<Action: View>: View {
       Section {
         Label {
           VStack(alignment: .leading, spacing: 4) {
-            Text(copy.title).font(.headline)
+            Text(copy.title).typeStyle(.body.weight(.semibold))
             if moment.stage != .afterExam, let day = moment.day, let date = studyDate(day.date) {
               Text(
                 verbatim: [
@@ -45,10 +45,10 @@ struct ExamMomentSection<Action: View>: View {
                   day.startTime.flatMap(examTimeOfDay),
                 ].compactMap(\.self).joinedFacts()
               )
-              .font(.subheadline.monospacedDigit())
+              .typeStyle(.data)
             }
             Text(copy.body)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         } icon: {
           Image(systemName: icon)
@@ -61,7 +61,7 @@ struct ExamMomentSection<Action: View>: View {
           } label: {
             Text("For exam day", tableName: "Exam", comment: "Title of the exam day's checklist")
           }
-          .font(.subheadline)
+          .typeStyle(.body)
           .announcesStatus(tally)
         }
 
@@ -79,7 +79,7 @@ struct ExamMomentSection<Action: View>: View {
               Text(checklistLabel(item))
             } icon: {
               Image(systemName: isDone ? "checkmark.circle.fill" : "circle")
-                .foregroundStyle(isDone ? AnyShapeStyle(.success) : AnyShapeStyle(.secondary))
+                .foregroundStyle(isDone ? AnyShapeStyle(.success) : AnyShapeStyle(.mutedForeground))
             }
           }
           .tint(.primary)
@@ -88,10 +88,12 @@ struct ExamMomentSection<Action: View>: View {
 
         action
       } footer: {
-        if !moment.checklist.isEmpty, !moment.tools.isEmpty {
-          Text(
-            "What you may use: \(moment.tools.formatted(.list(type: .and)))", tableName: "Exam",
-            comment: "The tools the exam allows")
+        SectionFooter {
+          if !moment.checklist.isEmpty, !moment.tools.isEmpty {
+            Text(
+              "What you may use: \(moment.tools.formatted(.list(type: .and)))", tableName: "Exam",
+              comment: "The tools the exam allows")
+          }
         }
       }
     }

@@ -47,6 +47,7 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.answerTone
+import com.zoonk.android.ui.theme.ZoonkRadius
 import java.util.Locale
 
 /**
@@ -67,7 +68,7 @@ internal fun WordChip(
     clickLabel: String? = null,
 ) {
     val tone = answerTone(picked = false, result = result)
-    val shape = RoundedCornerShape(8.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.md)
     val slot =
         if (hidden) {
             Modifier

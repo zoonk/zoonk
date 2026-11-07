@@ -58,8 +58,13 @@ final class PaneSpaceTests: XCTestCase {
   }
 
   func testOffAHingeLargeTextIsOneColumn() {
-    XCTAssertNil(PaneSpace(width: 1000).pages(primaryShare: 0.55, stacked: true))
-    XCTAssertNotNil(PaneSpace(width: 1000).pages(primaryShare: 0.55, stacked: false))
+    XCTAssertNil(PaneSpace(width: 1194).pages(primaryShare: 0.55, stacked: true))
+    XCTAssertNotNil(PaneSpace(width: 1194).pages(primaryShare: 0.55, stacked: false))
+  }
+
+  func testOffAHingeATabletInPortraitIsOneColumn() {
+    XCTAssertNil(PaneSpace(width: 1032).pages(primaryShare: 0.55, stacked: false))
+    XCTAssertNotNil(PaneSpace(width: 1056).pages(primaryShare: 0.55, stacked: false))
   }
 
   func testASpreadIsOneColumnAtLargeTextEvenAtAHinge() {

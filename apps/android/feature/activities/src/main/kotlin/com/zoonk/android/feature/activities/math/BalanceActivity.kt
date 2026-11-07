@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -345,7 +344,7 @@ private fun BalanceControls(
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             splitGroups?.let { groups ->
-                FilledTonalButton(onClick = { onMove(BalanceMove.Split(groups)) }, enabled = enabled) {
+                OutlinedButton(onClick = { onMove(BalanceMove.Split(groups)) }, enabled = enabled) {
                     Text(stringResource(R.string.activities_math_balance_split, format(groups)))
                 }
             }

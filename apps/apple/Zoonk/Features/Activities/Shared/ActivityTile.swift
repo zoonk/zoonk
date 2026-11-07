@@ -24,34 +24,19 @@ enum ActivityTileMark: Hashable, Sendable {
   }
 }
 
-extension Color {
-  /// In more contrast a pick gets a fill as well as its thicker line, so it never rests on line
-  /// weight alone, as on main.
-  static func pick(_ contrast: ColorSchemeContrast) -> Color {
-    Color(contrast == .increased ? .systemFill : .quaternarySystemFill)
-  }
-}
-
 struct ActivityTileStyle: ButtonStyle {
-  @Environment(\.colorSchemeContrast) private var contrast
-
   let mark: ActivityTileMark
   var isCompact = false
 
   func makeBody(configuration: Configuration) -> some View {
     content(configuration)
-      .font(.subheadline.weight(mark == .selected || mark == .wrong ? .semibold : .regular))
+      .typeStyle(.body.weight(mark == .selected || mark == .wrong ? .semibold : .regular))
       .foregroundStyle(foreground)
       .padding(.horizontal, isCompact ? 4 : 12)
       .padding(.vertical, isCompact ? 6 : 10)
       .frame(minHeight: 44)
-      .background(background, in: .rect(cornerRadius: 12))
-      .overlay {
-        RoundedRectangle(cornerRadius: 12)
-          .strokeBorder(stroke, lineWidth: mark == .plain || mark == .dimmed ? 1 : 2)
-      }
-      .opacity(configuration.isPressed ? 0.75 : mark == .dimmed ? 0.6 : 1)
-      .contentShape(.rect(cornerRadius: 12))
+      .answerSurface(tone, isPressed: configuration.isPressed)
+      .opacity(mark == .dimmed ? 0.6 : 1)
   }
 
   @ViewBuilder
@@ -62,7 +47,7 @@ struct ActivityTileStyle: ButtonStyle {
         .overlay(alignment: .topTrailing) {
           if let symbol = mark.symbol {
             Image(systemName: symbol)
-              .font(.caption2.weight(.bold))
+              .typeStyle(.small.bold())
               .accessibilityHidden(true)
           }
         }
@@ -83,27 +68,18 @@ struct ActivityTileStyle: ButtonStyle {
 
   private var foreground: Color {
     switch mark {
-    case .right: .success
-    case .wrong: .destructive
-    default: .primary
+    case .right: .successText
+    case .wrong: .destructiveText
+    default: Color(.foreground)
     }
   }
 
-  private var background: Color {
+  private var tone: AnswerTone {
     switch mark {
-    case .selected: .pick(contrast)
-    case .right: Color.success.opacity(0.15)
-    case .wrong: Color.destructive.opacity(0.15)
-    default: Color(.systemBackground)
-    }
-  }
-
-  private var stroke: Color {
-    switch mark {
-    case .selected: .primary
-    case .right: .success
-    case .wrong: .destructive
-    default: Color(.separator)
+    case .selected: .picked
+    case .right: .right
+    case .wrong: .wrong
+    case .plain, .dimmed: .idle
     }
   }
 }
@@ -124,13 +100,13 @@ struct ActivityReasonList: View {
           LessonRichText(reason.text)
           if let why = reason.why {
             LessonRichText(why)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
-        .font(.subheadline)
+        .typeStyle(.note)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+        .panel(cornerRadius: Radius.option)
         .accessibilityElement(children: .combine)
       }
     }
@@ -146,9 +122,8 @@ struct ActivityCaption: View {
 
   var body: some View {
     text
-      .font(.footnote)
-      .foregroundStyle(.secondary)
-      .monospacedDigit()
+      .typeStyle(.data)
+      .foregroundStyle(.mutedForeground)
   }
 }
 

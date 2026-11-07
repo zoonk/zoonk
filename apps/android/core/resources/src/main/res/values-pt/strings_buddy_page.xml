@@ -26,6 +26,8 @@
   "buddy_page_fully_grown": "1e6cbf3c4f381f55c21852ea2ee41aff538204177bdaef44e7db803f97cf1a54",
   "buddy_page_glasses_description": "0653559fd9743f838f504731f7914c95838798c2727cde21675bb0b12b47851f",
   "buddy_page_goal_greeting": "0e1d30436da6fd5b7dedc3eaa06a3b180f41125ca1ef0756ae8d558cada029fa",
+  "buddy_page_goal_label": "b970ee5a3e00e9e29d013269984812fff5adfe222e17fed9713802de1a180b6d",
+  "buddy_page_goal_placeholder": "18cd55359389c65033e317063617ad5232823ffa468cb3c50e4c1b09597c5318",
   "buddy_page_greeting": "52831b8b9da1ea01db955b260f015a169fca20564eaaaa4c4b6646da0c9a7519",
   "buddy_page_grows_adult": "940001fada9f216101c3c7f6250f7cff395ad3d66eff13f3555c0766c6966981",
   "buddy_page_grows_young": "ac443c1756dba60e28c0f897be0680da8826b87c358ee7c8106474c634bad3d9",
@@ -68,6 +70,8 @@
     <string name="buddy_page_save_failed">Não foi possível salvar. Tente de novo.</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="buddy_page_greeting">Oi! Sou %1$s, seu parceiro de estudos com IA. Pergunte o que quiser sobre o que você está estudando ou me conte o que gostaria de mudar no seu plano.</string>
+    <string name="buddy_page_goal_placeholder">O que você quer aprender</string>
+    <string name="buddy_page_goal_label">Seu objetivo</string>
     <string name="buddy_page_goal_greeting">Oi! Sou %1$s, seu parceiro de estudos com IA. O que você quer aprender e até quando? Vou criar um plano para você estudar todos os dias até lá.</string>
     <string name="buddy_page_placeholder">Faça uma pergunta ou peça uma mudança</string>
     <string name="buddy_page_suggest_plan_today">O que tem no meu plano para hoje?</string>

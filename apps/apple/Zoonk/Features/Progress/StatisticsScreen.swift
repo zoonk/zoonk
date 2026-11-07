@@ -17,11 +17,7 @@ struct StatisticsScreen: View {
       StatsOverview()
     }
     .navigationTitle(Text(AppTab.statistics.title))
-    .navigationSubtitle(
-      Text(
-        "All goals", tableName: "Progress",
-        comment: "Under Statistics: its numbers cover every goal")
-    )
+    .barTitleAfterHero(String(localized: AppTab.statistics.title))
     .navigationDestination(for: StatsSection.self) { section in
       pushed(section)
     }
@@ -85,6 +81,12 @@ private struct StatsOverview: View {
       activity.summary.learningDays > 0 || progress.level.value != nil
     {
       StatsPage {
+        PageHeader(
+          Text(AppTab.statistics.title),
+          eyebrow: Text(
+            "All goals", tableName: "Progress",
+            comment: "Under Statistics: its numbers cover every goal"))
+
         OverviewTiles(
           activity: activity.summary, energy: progress.energy.value, level: progress.level.value,
           score: progress.score.value?.performance)
@@ -161,7 +163,8 @@ private struct OverviewTiles: View {
       TileLink(section: .activity) {
         StatTile(
           label: Text(
-            "Study days", tableName: "Progress", comment: "Tile: how many days the learner studied"),
+            "Days studied", tableName: "Progress",
+            comment: "Tile: how many days the learner studied"),
           value: Text(activity.learningDays, format: .number),
           systemImage: "chart.bar.fill", tone: .success,
           detail: Text(
@@ -254,8 +257,8 @@ private struct ScoreTrend: View {
           "Your score shows after your first answers.", tableName: "Progress",
           comment: "In place of the Score trend before the learner has answers"
         )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -266,8 +269,8 @@ extension ScoreTrend {
   fileprivate var number: some View {
     if let score {
       Text(metricPercent(score.performance.score))
-        .font(.subheadline.monospacedDigit())
-        .foregroundStyle(.secondary)
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
     }
   }
 }
@@ -305,9 +308,7 @@ private struct PatternsOverview: View {
         }
       }
       .padding(.horizontal)
-      .background(
-        Color(.secondarySystemGroupedBackground),
-        in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+      .panel(cornerRadius: 16)
 
       if let patterns {
         PatternsNote(patterns: patterns)
@@ -322,7 +323,7 @@ private struct PatternsOverview: View {
         Image(systemName: "chevron.forward")
           .imageScale(.small)
       }
-      .font(.subheadline)
+      .typeStyle(.body)
     }
     .buttonStyle(.borderless)
   }
@@ -345,7 +346,7 @@ private struct PatternsOverview: View {
     } label: {
       label
     }
-    .font(.subheadline)
+    .typeStyle(.body)
     .padding(.vertical, 12)
   }
 }
@@ -367,31 +368,29 @@ private struct PatternsLinkRow: View {
       HStack(spacing: 12) {
         AccessibilityStack(spacing: 12, stackedSpacing: 4) {
           Text(StatsSection.patterns.title)
-            .foregroundStyle(.primary)
+            .typeStyle(.rowTitle)
+            .foregroundStyle(Color(.foreground))
             .frame(maxWidth: .infinity, alignment: .leading)
 
           Text(value)
-            .foregroundStyle(.secondary)
+            .typeStyle(.body)
+            .foregroundStyle(.mutedForeground)
             .multilineTextAlignment(isStacked ? .leading : .trailing)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
 
         Image(systemName: "chevron.forward")
-          .font(.footnote.weight(.semibold))
-          .foregroundStyle(.tertiary)
+          .typeStyle(.note.weight(.semibold))
+          .foregroundStyle(.faint)
           .accessibilityHidden(true)
       }
-      .padding(.horizontal)
-      .padding(.vertical, 12)
+      // Main's flat row on the page, not a box.
+      .padding(.vertical, 11)
       .frame(maxWidth: .infinity, minHeight: 44)
-      .background(
-        Color(.secondarySystemGroupedBackground),
-        in: RoundedRectangle(cornerRadius: 16, style: .continuous)
-      )
-      .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+      .contentShape(.rect)
       .modifier(
         StatsSelection(
-          section: .patterns, shape: RoundedRectangle(cornerRadius: 16, style: .continuous)))
+          section: .patterns, shape: RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)))
     }
     .buttonStyle(.plain)
   }

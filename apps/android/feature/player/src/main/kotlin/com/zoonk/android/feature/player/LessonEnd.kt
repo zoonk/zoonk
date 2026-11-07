@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,7 +40,6 @@ import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
-import com.zoonk.android.feature.player.engine.Segment
 import com.zoonk.android.feature.player.engine.lessonMap
 import com.zoonk.android.feature.player.engine.screen
 import com.zoonk.android.feature.player.model.PlayableLesson
@@ -52,6 +49,7 @@ import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
@@ -60,7 +58,10 @@ import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.components.taskOption
@@ -168,7 +169,7 @@ private fun ColumnScope.PlusActions(exits: LessonPlayerExits) {
     Button(onClick = {
         exits.open(AppRoute.Subscription)
     }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_see_plus)) }
-    FilledTonalButton(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
+    OutlinedButton(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
 }
 
 @Composable
@@ -212,7 +213,7 @@ private fun Limited(
                 stringResource(R.string.player_plus_limit_title),
                 stringResource(R.string.player_plus_limit_description),
             ) {
-                FilledTonalButton(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
+                OutlinedButton(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
             }
         }
     }
@@ -325,7 +326,7 @@ fun LessonCompletionView(
 @Composable
 private fun LessonEndMap(map: StepContent.Map) {
     HorizontalDivider()
-    Text(stringResource(R.string.player_lesson_map), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+    SectionHeader(stringResource(R.string.player_lesson_map))
     LessonMapView(map)
 }
 
@@ -337,8 +338,8 @@ internal fun LessonReadouts(
 ) {
     val result = state.completion?.result ?: return
     val segments = state.screen().segments
-    val correct = segments.count { it == Segment.Right }
-    val answered = correct + segments.count { it == Segment.Wrong }
+    val correct = segments.count { it == TaskSegment.Right }
+    val answered = correct + segments.count { it == TaskSegment.Wrong }
     val block = result.studyBlock
     val brainPower = block?.ownBrainPower ?: result.brainPower
     val locale = currentLocale()
@@ -429,7 +430,7 @@ fun CompletionActions(
 
     if (status == CompletionStatus.Saved && ending.guest) {
         TaskActions { width ->
-            FilledTonalButton(onClick = { exits.replace(AppRoute.Login) }, modifier = Modifier.taskOption()) {
+            OutlinedButton(onClick = { exits.replace(AppRoute.Login) }, modifier = Modifier.taskOption()) {
                 Text(stringResource(R.string.player_create_account_to_save))
             }
             Button(onClick = { main?.invoke() }, enabled = main != null, modifier = width) { Text(stringResource(label)) }
@@ -439,7 +440,7 @@ fun CompletionActions(
 
     TaskActions { width ->
         if (status == CompletionStatus.Saved && ending.nextLessonId != null) {
-            FilledTonalButton(onClick = exits::close, modifier = width) { Text(stringResource(back)) }
+            OutlinedButton(onClick = exits::close, modifier = width) { Text(stringResource(back)) }
         }
         Button(onClick = { main?.invoke() }, enabled = main != null, modifier = width) { Text(stringResource(label)) }
     }

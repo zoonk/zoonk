@@ -4,8 +4,8 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceIssue
-import com.zoonk.android.feature.player.engine.Segment
 import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.api.models.PronunciationAnswerGrade
 import com.zoonk.api.models.PronunciationRoundResult
 import kotlinx.coroutines.test.runTest
@@ -45,7 +45,7 @@ class PronunciationRoundTest {
             val round = round(word(1, "a"), grades = listOf(GradeOutcome.Graded(grade(isCorrect = true))))
 
             round.record(round.attempt, RECORDING)
-            assertEquals(mapOf(0 to Segment.Right), round.outcomes)
+            assertEquals(mapOf(0 to TaskSegment.Right), round.outcomes)
 
             round.next()
             assertEquals(RoundStep.Result(RESULT), round.step)
@@ -63,14 +63,14 @@ class PronunciationRoundTest {
                 )
 
             round.record(round.attempt, RECORDING)
-            assertEquals(mapOf(0 to Segment.Wrong), round.outcomes)
+            assertEquals(mapOf(0 to TaskSegment.Wrong), round.outcomes)
 
             round.tryAgain()
             assertEquals(RoundStep.Word(0), round.step)
-            assertEquals(emptyMap<Int, Segment>(), round.outcomes)
+            assertEquals(emptyMap<Int, TaskSegment>(), round.outcomes)
 
             round.record(round.attempt, RECORDING)
-            assertEquals(mapOf(0 to Segment.Right), round.outcomes)
+            assertEquals(mapOf(0 to TaskSegment.Right), round.outcomes)
         }
 
     @Test
@@ -82,7 +82,7 @@ class PronunciationRoundTest {
             round.next()
 
             assertEquals(RoundStep.Result(null), round.step)
-            assertEquals(mapOf(0 to Segment.Read, 1 to Segment.Read), round.outcomes)
+            assertEquals(mapOf(0 to TaskSegment.Read, 1 to TaskSegment.Read), round.outcomes)
             assertTrue(finished.isEmpty())
         }
 
@@ -112,7 +112,7 @@ class PronunciationRoundTest {
 
             round.record(round.attempt, RECORDING)
             assertEquals(RoundStep.Word(0, issue = VoiceIssue.Failed), round.step)
-            assertEquals(emptyMap<Int, Segment>(), round.outcomes)
+            assertEquals(emptyMap<Int, TaskSegment>(), round.outcomes)
             assertFalse(round.pending)
         }
 
@@ -154,7 +154,7 @@ class PronunciationRoundTest {
             round.record(0, RECORDING)
             round.record(0, RECORDING)
 
-            assertEquals(mapOf(0 to Segment.Wrong), round.outcomes)
+            assertEquals(mapOf(0 to TaskSegment.Wrong), round.outcomes)
             assertEquals(1, answered.size)
         }
 
@@ -175,7 +175,7 @@ class PronunciationRoundTest {
             assertEquals(1, answered.size)
 
             round.record(round.attempt, RECORDING)
-            assertEquals(mapOf(0 to Segment.Right), round.outcomes)
+            assertEquals(mapOf(0 to TaskSegment.Right), round.outcomes)
         }
 
     @Test

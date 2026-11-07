@@ -9,8 +9,8 @@ struct WritingWait: View {
       VStack(alignment: .leading, spacing: 2) {
         title
         hint
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
     } icon: {
       ProgressView()

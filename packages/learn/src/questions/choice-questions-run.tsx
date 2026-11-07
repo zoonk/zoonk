@@ -182,6 +182,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   };
 
   const current = Math.min(index + 1, total);
+  const locked = pending || Boolean(error);
 
   return (
     <TaskFrame
@@ -194,6 +195,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
             <QuestionsFooter
               canFinish={!question && Boolean(upcoming?.ended)}
               isLast={index + 1 >= total}
+              locked={locked}
               onDontKnow={() => answer({ dontKnow: true })}
               onFinish={finishNow}
               onNext={() => selected && answer(selected)}
@@ -236,7 +238,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
           </div>
 
           <ChoiceQuestion
-            disabled={pending || Boolean(error)}
+            disabled={locked}
             onSelect={setSelected}
             question={question}
             selected={selected}
@@ -251,6 +253,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
 function QuestionsFooter({
   canFinish,
   isLast,
+  locked,
   onDontKnow,
   onFinish,
   onNext,
@@ -260,6 +263,8 @@ function QuestionsFooter({
 }: {
   canFinish: boolean;
   isLast: boolean;
+  /** A failed send keeps its answers as they are: only its Try again sends them. */
+  locked: boolean;
   onDontKnow: () => void;
   onFinish: () => void;
   onNext: () => void;
@@ -272,7 +277,9 @@ function QuestionsFooter({
   if (!question) {
     return canFinish ? (
       <TaskActions>
-        <TaskMainButton onClick={onFinish}>{t("Finish with these answers")}</TaskMainButton>
+        <TaskMainButton busy={pending} disabled={locked} onClick={onFinish}>
+          {t("Finish with these answers")}
+        </TaskMainButton>
       </TaskActions>
     ) : null;
   }
@@ -281,7 +288,7 @@ function QuestionsFooter({
     <TaskActions>
       <Button
         className="shrink-0"
-        disabled={pending}
+        disabled={locked}
         focusableWhenDisabled
         onClick={onDontKnow}
         size="xl"
@@ -289,7 +296,7 @@ function QuestionsFooter({
       >
         {t("I don't know yet")}
       </Button>
-      <TaskMainButton busy={pending} disabled={!selected} onClick={onNext}>
+      <TaskMainButton busy={pending} disabled={locked || !selected} onClick={onNext}>
         {isLast ? t("Finish") : t("Next")}
       </TaskMainButton>
     </TaskActions>

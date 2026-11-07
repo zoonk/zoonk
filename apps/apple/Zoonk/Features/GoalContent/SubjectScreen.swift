@@ -13,8 +13,8 @@ struct SubjectScreen: View {
       let subject = syllabus.value?.subjects.first { $0.key == subjectKey }
 
       Group {
-        if let subject {
-          SubjectContent(goal: goal, subject: subject)
+        if let view = syllabus.value, let subject {
+          SubjectContent(goal: goal, syllabus: view, subject: subject)
         } else {
           switch syllabus.state {
           case .idle, .loading:
@@ -34,7 +34,7 @@ struct SubjectScreen: View {
               } label: {
                 Text("Try again", tableName: "Plan", comment: "Retries loading the plan")
               }
-              .buttonStyle(.bordered)
+              .buttonStyle(.outline)
             }
             .lonePage()
           default:
@@ -90,27 +90,32 @@ struct SubjectScreen: View {
 
 private struct SubjectContent: View {
   @Environment(AppRouter.self) private var router
+  // Above the panes, so a fold or a resize that rebuilds them keeps what the learner opened.
+  @State private var showsAllChapters = false
+  @State private var showsDoneChapters = false
+  @State private var openTopics: Set<SyllabusSubject.Topic.ID> = []
 
   let goal: LearnerGoal
+  let syllabus: GoalSyllabus
   let subject: SyllabusSubject
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
         header
         chaptersSection
       }
     } secondary: {
-      List {
+      ZoonkList {
         numbers
         topics
       }
     } single: {
-      List {
+      ZoonkList {
         header
         numbers
-        topics
         chaptersSection
+        topics
       }
     }
   }
@@ -140,28 +145,37 @@ private struct SubjectContent: View {
     ].compactMap(\.self)
   }
 
+  private var eyebrow: [String] {
+    [
+      isExam
+        ? String(localized: "Subject", table: "Plan", comment: "Eyebrow of an exam subject's page")
+        : String(localized: "Module", table: "Plan", comment: "Eyebrow of a plan module's page"),
+      subject.questions.flatMap { questions in
+        questions > 0
+          ? String(
+            localized: "\(questions) questions", table: "Plan",
+            comment: "Eyebrow: how many of the exam's questions a subject has")
+          : nil
+      },
+    ].compactMap(\.self)
+  }
+
   private var header: some View {
     Section {
       VStack(alignment: .leading, spacing: 8) {
-        Group {
-          if isExam {
-            Text("Subject", tableName: "Plan", comment: "Eyebrow of an exam subject's page")
-          } else {
-            Text("Module", tableName: "Plan", comment: "Eyebrow of a plan module's page")
-          }
-        }
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        Text(verbatim: eyebrow.joinedFacts())
+          .typeStyle(.eyebrow)
+          .foregroundStyle(.faint)
 
         Text(subject.name)
-          .font(.title2.weight(.semibold))
+          .typeStyle(.pageTitle)
+          .accessibilityAddTraits(.isHeader)
           .heroTitle()
 
         if !facts.isEmpty {
           Text(verbatim: facts.joinedFacts())
-            .font(.subheadline)
-            .monospacedDigit()
-            .foregroundStyle(.secondary)
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
         }
 
         if let reason = subject.notPlannedReason, !reason.isEmpty {
@@ -194,41 +208,26 @@ private struct SubjectContent: View {
     }
   }
 
+  /// Main's `SubjectCoverage`: the preparation an exam measures, or else the lessons studied.
+  @ViewBuilder
   private var numbers: some View {
-    Section {
-      if isExam, let preparation = subject.preparation {
+    if let preparation = subject.preparation {
+      Section {
+        SubjectPreparation(share: preparation, mastery: subject.mastery)
+      }
+    } else if subject.notPlannedReason == nil {
+      Section {
         meter(
           label: Text(
-            "Preparation", tableName: "Plan", comment: "Label of a subject's preparation"),
-          share: preparation)
-      }
+            "Lessons studied", tableName: "Plan", comment: "Label of a subject's lessons studied"),
+          share: subject.lessonShare)
 
-      meter(
-        label: Text(
-          "Lessons studied", tableName: "Plan", comment: "Label of a subject's lessons studied"),
-        share: subject.lessonShare)
-
-      if subject.lessonsKnown > 0 {
-        LabeledContent {
-          Text(subject.lessonsKnown, format: .number).monospacedDigit()
-        } label: {
-          Text("Known", tableName: "Plan", comment: "Lessons the learner already knew")
-        }
-      }
-
-      if isExam, subject.preparation != nil {
-        LabeledContent {
-          if let mastery = subject.mastery {
-            Text(
-              "\(mastery.correct) of \(mastery.answered) right", tableName: "Plan",
-              comment: "A subject's first answers to unseen questions that were right")
-          } else {
-            Text(
-              "Shows after a few practice questions", tableName: "Plan",
-              comment: "Mastery isn't counted yet")
+        if subject.lessonsKnown > 0 {
+          LabeledContent {
+            Text(subject.lessonsKnown, format: .number).monospacedDigit()
+          } label: {
+            Text("Known", tableName: "Plan", comment: "Lessons the learner already knew")
           }
-        } label: {
-          Text("Mastery", tableName: "Plan", comment: "Label of a subject's mastery")
         }
       }
     }
@@ -237,26 +236,50 @@ private struct SubjectContent: View {
   @ViewBuilder
   private var topics: some View {
     if !subject.topics.isEmpty {
-      SubjectTopicsSection(goal: goal, subject: subject)
+      SubjectTopicsSection(goal: goal, syllabus: syllabus, subject: subject, open: $openTopics)
     }
   }
 
+  /// Main's `SubjectChapters`: the chapters done under one line, then the next few.
   @ViewBuilder
   private var chaptersSection: some View {
     let chapters = subject.chapters
-    let done = chapters.filter { $0.state == .done || $0.known }.count
+    let done = chapters.filter { $0.state == .done }
+    let ahead = chapters.filter { $0.state != .done }
+    let shown = showsAllChapters ? ahead : Array(ahead.prefix(5))
+    let hidden = ahead.count - shown.count
 
     if !chapters.isEmpty {
       Section {
-        ForEach(chapters) { chapter in
+        if !done.isEmpty {
+          SubjectDoneChapters(goal: goal, chapters: done, isExpanded: $showsDoneChapters)
+        }
+
+        ForEach(shown) { chapter in
           SubjectChapterRow(goal: goal, chapter: chapter)
         }
+
+        if hidden > 0 {
+          Button {
+            showsAllChapters = true
+          } label: {
+            ListRow(
+              Text(
+                "\(hidden) more chapters", tableName: "Plan",
+                comment: "Shows the phase's chapters left out around the next one"
+              )
+              .foregroundStyle(.mutedForeground)
+            ) {
+              Image(systemName: "plus")
+            }
+          }
+        }
       } header: {
-        SectionHeaderRow(
-          title: Text("Chapters", tableName: "Plan", comment: "Section of a subject's chapters")
+        SectionTitle(
+          Text("Chapters", tableName: "Plan", comment: "Section of a subject's chapters")
         ) {
           Text(
-            "\(done) of \(chapters.count)", tableName: "Plan",
+            "\(done.count { !$0.known }) of \(chapters.count)", tableName: "Plan",
             comment: "Chapters done of the subject's chapters"
           )
           .monospacedDigit()
@@ -274,8 +297,7 @@ private struct SubjectContent: View {
         label
       }
 
-      ProgressView(value: share)
-        .tint(.success)
+      Meter(value: share, fill: .success)
         .accessibilityHidden(true)
     }
     .accessibilityElement(children: .combine)
@@ -300,34 +322,26 @@ private struct SubjectChapterRow: View {
       }
     } else {
       content
-        .foregroundStyle(.secondary)
     }
   }
 
   /// Main's syllabus chapter row: numbered, what's left of the one in progress, and when the plan
   /// studies it next.
   private var content: some View {
-    PlanPathRow {
-      Label {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(verbatim: "\(chapter.position). \(chapter.title)")
-            .foregroundStyle(chapter.state == .done ? .secondary : .primary)
-
-          if let line {
-            line
-              .font(.caption)
-              .foregroundStyle(.secondary)
-          }
-        }
-      } icon: {
-        StatusMark(status: status)
-      }
-    } value: {
+    ListRow(
+      Text(chapter.title)
+        .foregroundStyle(
+          chapter.state == .done || chapter.chapterId == nil
+            ? .mutedForeground : Color(.foreground)),
+      number: chapter.position, description: line
+    ) {
+      StatusMark(status: status)
+    } trailing: {
       if chapter.state != .done, let nextDate = chapter.nextDate {
         Text(PlanDate.text(nextDate, today: isoDay(.now)))
-          .monospacedDigit()
       }
     }
+    .currentRow(chapter.state == .current)
   }
 
   private var line: Text? {
@@ -365,9 +379,94 @@ private struct SubjectChapterRow: View {
   }
 }
 
+/// Main's `SubjectPreparation`: the share in big type over its bar, and the mastery under them.
+private struct SubjectPreparation: View {
+  let share: Double
+  let mastery: SyllabusSubject.Mastery?
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Text("Preparation", tableName: "Plan", comment: "Label of a subject's preparation")
+        .typeStyle(.sectionTitle)
+
+      BigQuantity(share.formatted(.percent.precision(.fractionLength(0))))
+
+      Meter(value: share, fill: .success)
+
+      VStack(alignment: .leading, spacing: 2) {
+        Text("Mastery", tableName: "Plan", comment: "Label of a subject's mastery")
+          .typeWeight(.medium)
+
+        Group {
+          if let mastery {
+            Text(
+              "\(mastery.correct) of \(mastery.answered) right", tableName: "Plan",
+              comment: "A subject's first answers to unseen questions that were right")
+          } else {
+            Text(
+              "Shows after a few practice questions", tableName: "Plan",
+              comment: "Mastery isn't counted yet")
+          }
+        }
+        .foregroundStyle(.mutedForeground)
+      }
+      .typeStyle(.meta)
+    }
+    .padding(.vertical, 4)
+    .accessibilityElement(children: .combine)
+  }
+}
+
+/// Main's `DoneChapters`: the chapters done fold under one line that counts them.
+private struct SubjectDoneChapters: View {
+  let goal: LearnerGoal
+  let chapters: [SyllabusSubject.Chapter]
+  @Binding var isExpanded: Bool
+
+  var body: some View {
+    DisclosureGroup(isExpanded: $isExpanded) {
+      ForEach(chapters) { chapter in
+        SubjectChapterRow(goal: goal, chapter: chapter)
+      }
+    } label: {
+      ListRow(line.foregroundStyle(.mutedForeground)) {
+        StatusMark(status: chapters.allSatisfy(\.known) ? .skipped : .done)
+      }
+    }
+  }
+
+  private var line: Text {
+    let known = chapters.count { $0.known }
+    let done = chapters.count - known
+    let doneText = Text(
+      "\(done) chapters done", tableName: "Plan",
+      comment: "A subject's chapters done, on the line they fold under")
+
+    if known == 0 {
+      return doneText
+    }
+
+    if done == 0 {
+      return Text(
+        "\(known) chapters skipped because you already know them", tableName: "Plan",
+        comment: "A subject's chapters the learner tested out of, on the line they fold under")
+    }
+
+    let skipped = Text(
+      "\(known) skipped because you already know them", tableName: "Plan",
+      comment: "After the chapters done: how many the learner tested out of")
+
+    return Text(
+      "\(doneText), \(skipped)", tableName: "Plan",
+      comment: "The chapters done, then the ones skipped, on the line they fold under")
+  }
+}
+
 private struct SubjectTopicsSection: View {
   let goal: LearnerGoal
+  let syllabus: GoalSyllabus
   let subject: SyllabusSubject
+  @Binding var open: Set<SyllabusSubject.Topic.ID>
 
   var body: some View {
     let headings = subject.topics.reduce(into: [String?]()) { headings, topic in
@@ -379,39 +478,65 @@ private struct SubjectTopicsSection: View {
     ForEach(Array(headings.enumerated()), id: \.offset) { index, heading in
       Section {
         ForEach(subject.topics.filter { $0.heading == heading }) { topic in
-          SubjectTopicRow(goal: goal, topic: topic)
+          SubjectTopicRow(
+            goal: goal, topic: topic,
+            isExpanded: Binding {
+              open.contains(topic.id)
+            } set: { isOpen in
+              if isOpen { open.insert(topic.id) } else { open.remove(topic.id) }
+            })
         }
       } header: {
         if index == 0 {
-          HStack(alignment: .firstTextBaseline) {
-            Text("Topics", tableName: "Plan", comment: "Section of a subject's topics")
-
+          SectionTitle(title) {
             if let studied = subject.topicsStudied {
-              Spacer()
               Text(
                 "\(studied) of \(subject.topics.count) topics", tableName: "Plan",
                 comment: "Topics studied of the subject's topics"
               )
               .monospacedDigit()
+            } else {
+              Text(
+                "\(subject.topics.count) topics", tableName: "Plan",
+                comment: "How many topics a subject has"
+              )
+              .monospacedDigit()
             }
           }
         } else if let heading {
-          Text(heading)
+          SectionTitle(Text(heading))
         }
       }
     }
+  }
+
+  private var title: Text {
+    if syllabus.fromMaterial {
+      return Text(
+        "Topics in your material", tableName: "Plan",
+        comment: "Section of a subject's topics, from the learner's own material")
+    }
+
+    return syllabus.examDocument == .notice
+      ? Text(
+        "Topics in the notice", tableName: "Plan",
+        comment: "Section of a subject's topics, from the exam's official notice")
+      : Text(
+        "Topics in the official guide", tableName: "Plan",
+        comment: "Section of a subject's topics, from the exam's official guide")
   }
 }
 
 private struct SubjectTopicRow: View {
   let goal: LearnerGoal
   let topic: SyllabusSubject.Topic
+  @Binding var isExpanded: Bool
 
   var body: some View {
     if topic.chapters.isEmpty {
       label
     } else {
-      DisclosureGroup {
+      DisclosureGroup(isExpanded: $isExpanded) {
         ForEach(topic.chapters) { chapter in
           if let chapterId = chapter.chapterId {
             NavigationLink(
@@ -423,7 +548,7 @@ private struct SubjectTopicRow: View {
             }
           } else {
             Text(chapter.title)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } label: {
@@ -437,7 +562,7 @@ private struct SubjectTopicRow: View {
       VStack(alignment: .leading, spacing: 2) {
         HStack {
           Text(topic.name)
-            .foregroundStyle(topic.notPlannedReason == nil ? .primary : .secondary)
+            .foregroundStyle(topic.notPlannedReason == nil ? Color(.foreground) : .mutedForeground)
 
           if topic.frequency == "high" {
             Text("Appears a lot", tableName: "Plan", comment: "A topic past exams ask often")
@@ -447,8 +572,8 @@ private struct SubjectTopicRow: View {
 
         if topic.notPlannedReason != nil {
           Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
-            .font(.caption)
-            .foregroundStyle(.secondary)
+            .typeStyle(.meta)
+            .foregroundStyle(.mutedForeground)
         }
       }
     } icon: {
@@ -499,8 +624,8 @@ private struct SubjectNotPlannedNotice: View {
       } icon: {
         Image(systemName: "minus.circle")
       }
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
 
       if reason == "skipped" {
         Button {
@@ -509,7 +634,7 @@ private struct SubjectNotPlannedNotice: View {
           Text(
             "Bring it back", tableName: "Plan", comment: "Puts a skipped subject back in the plan")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .disabled(isRestoring)
       } else if reason == "time" {
         Button {
@@ -518,7 +643,7 @@ private struct SubjectNotPlannedNotice: View {
           Text(
             "Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
 
       if failed {
@@ -527,7 +652,7 @@ private struct SubjectNotPlannedNotice: View {
             "That didn't work. Try again in a moment.", table: "Plan",
             comment: "Says the subject didn't come back into the plan")
         )
-        .font(.subheadline)
+        .typeStyle(.body)
       }
     }
   }

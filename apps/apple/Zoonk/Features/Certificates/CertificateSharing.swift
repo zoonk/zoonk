@@ -109,12 +109,18 @@ extension CertificateFacts {
   }
 }
 
-/// "41 hours", or "45 minutes" under an hour.
+/// Main's `roundStudyMinutes`: the plan's estimate, so whole hours past the first one.
+func roundStudyMinutes(_ minutes: Int) -> Int {
+  minutes < 60 ? minutes : Int((Double(minutes) / 60).rounded()) * 60
+}
+
+/// "41 hours", or "45 minutes" under an hour, in a post's words.
 func studyTime(_ minutes: Int) -> String {
+  let rounded = roundStudyMinutes(minutes)
   let measurement =
-    minutes < 60
-    ? Measurement(value: Double(minutes), unit: UnitDuration.minutes)
-    : Measurement(value: (Double(minutes) / 60).rounded(), unit: UnitDuration.hours)
+    rounded < 60
+    ? Measurement(value: Double(rounded), unit: UnitDuration.minutes)
+    : Measurement(value: Double(rounded / 60), unit: UnitDuration.hours)
 
   return measurement.formatted(.measurement(width: .wide, usage: .asProvided))
 }

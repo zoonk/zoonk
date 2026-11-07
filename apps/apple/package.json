@@ -5,6 +5,7 @@
   "scripts": {
     "i18n:lint": "eloqnt lint --strict",
     "i18n": "node scripts/add-missing-strings.mts && reuse-translations && eloqnt translate",
+    "palette": "node scripts/generate-palette.mts",
     "typecheck": "tsrs --noEmit"
   },
   "devDependencies": {

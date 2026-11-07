@@ -2,7 +2,6 @@ package com.zoonk.android.ui.scaffold
 
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -13,6 +12,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Rule
 import org.junit.Test

@@ -96,18 +96,18 @@ struct ShellGate<Content: View>: View {
   /// what's typed in it as they come and go.
   private var goalBox: some View {
     PaneBeside(atHingeOnly: true, paneEdge: .trailing, primaryShare: 0.55) {
-      List {
+      ZoonkList {
         GoalStartEntry(part: .examples, goal: $goal)
       }
     } content: { _ in
-      List {
+      ZoonkList {
         Section {
           Text(
             "Tell us what you want to learn, and we'll plan every day until you get there.",
             tableName: "Navigation",
             comment: "Explains what starting a goal does, on a page that needs one"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
         .listRowBackground(Color.clear)
 
@@ -161,7 +161,7 @@ struct SignInGate: View {
             "Start something new", tableName: "Navigation",
             comment: "Opens the start of a new goal, for someone whose session ended")
         }
-        .buttonStyle(.glass)
+        .buttonStyle(.outline)
       } else {
         Button {
           router.showRoot(of: .today)
@@ -170,7 +170,7 @@ struct SignInGate: View {
             "Start free", tableName: "Navigation",
             comment: "Opens Today, where someone without an account starts a goal")
         }
-        .buttonStyle(.glass)
+        .buttonStyle(.outline)
       }
     }
   }
@@ -184,7 +184,7 @@ extension View {
       ScrollView {
         VStack(alignment: .leading, spacing: 24) {
           Text(description)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
 
           self
         }

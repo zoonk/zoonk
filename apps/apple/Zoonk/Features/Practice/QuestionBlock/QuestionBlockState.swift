@@ -84,7 +84,7 @@ struct QuestionBlockState: Equatable {
     phase = .finished(completion)
   }
 
-  var segments: [PracticeSegment] {
+  var segments: [TaskSegment] {
     questions.enumerated().map { position, question in
       guard let mark = answers[question.itemId] ?? question.answered else {
         return position == index ? .current : .ahead

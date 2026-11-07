@@ -31,6 +31,8 @@ struct AccessibilityStack<Content: View>: View {
 struct MarkedRow<Mark: View, Content: View, End: View>: View {
   @Environment(\.stacksContent) private var isStacked
 
+  /// Side by side; a mark without text, such as a ring, centers instead.
+  var alignment = VerticalAlignment.firstTextBaseline
   var stackedSpacing: CGFloat?
   @ViewBuilder let mark: Mark
   @ViewBuilder let content: Content
@@ -48,7 +50,7 @@ struct MarkedRow<Mark: View, Content: View, End: View>: View {
         content
       }
     } else {
-      HStack(alignment: .firstTextBaseline, spacing: 12) {
+      HStack(alignment: alignment, spacing: 12) {
         mark
 
         content
@@ -79,28 +81,15 @@ struct ButtonRow<Content: View>: View {
   }
 }
 
-/// A section header's title with a value at its end, the value under it when they'd stack.
-struct SectionHeaderRow<Trailing: View>: View {
-  var alignment: VerticalAlignment = .center
-  let title: Text
-  @ViewBuilder let trailing: Trailing
-
-  var body: some View {
-    AccessibilityStack(alignment: alignment) {
-      title
-        .frame(maxWidth: .infinity, alignment: .leading)
-
-      trailing
-    }
-  }
-}
-
 extension View {
-  /// The button shape and label style for accessibility sizes. Neither reaches into a
-  /// presentation, so the app's root and the root of each presented screen apply them.
-  func accessibilitySizeStyles() -> some View {
+  /// The styles that don't reach into a presentation, so the app's root and the root of each
+  /// presented screen apply them: the button shape and label style for accessibility sizes,
+  /// `GroupBox` as a panel, and the type role of text without one.
+  func zoonkStyles() -> some View {
     modifier(AccessibilityButtonShape())
       .labelStyle(StackingLabelStyle())
+      .groupBoxStyle(.panel)
+      .typeStyle(.body)
   }
 }
 

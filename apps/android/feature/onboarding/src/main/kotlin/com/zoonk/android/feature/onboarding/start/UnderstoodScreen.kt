@@ -11,16 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -58,7 +54,11 @@ import com.zoonk.android.feature.onboarding.setup.TargetDatePicker
 import com.zoonk.android.feature.onboarding.setup.goalZone
 import com.zoonk.android.feature.onboarding.setup.targetDateBounds
 import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.MAX_GOAL_LENGTH
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.TimePickerDialog
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.FACT_SEPARATOR
@@ -210,7 +210,7 @@ private fun RewriteWords(
             value = value,
             onValueChange = { value = it.take(MAX_GOAL_LENGTH) },
             modifier = Modifier.fillMaxWidth().focusRequester(focus),
-            label = { Text(stringResource(R.string.onboarding_what_you_wrote)) },
+            label = stringResource(R.string.onboarding_what_you_wrote),
             supportingText = { Text(stringResource(R.string.onboarding_rewrite_hint)) },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
             keyboardActions = KeyboardActions(onGo = { submit() }),
@@ -278,7 +278,7 @@ private fun FactRow(
             } else {
                 RowNote(row)
                 row.suggestedDate?.takeIf { it in offered }?.let { date ->
-                    FilledTonalButton(onClick = { save(date.toString()) }, enabled = !saving, modifier = Modifier.padding(top = 6.dp)) {
+                    OutlinedButton(onClick = { save(date.toString()) }, enabled = !saving, modifier = Modifier.padding(top = 6.dp)) {
                         Text(stringResource(R.string.onboarding_use_this_date))
                     }
                 }
@@ -286,7 +286,7 @@ private fun FactRow(
                 if (choiceDates.isNotEmpty()) {
                     FlowRow(modifier = Modifier.padding(top = 6.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         choiceDates.forEach { date ->
-                            FilledTonalButton(onClick = { save(date.toString()) }, enabled = !saving) {
+                            OutlinedButton(onClick = { save(date.toString()) }, enabled = !saving) {
                                 Text(formatDate(date, currentLocale(), DateStyle.Short))
                             }
                         }
@@ -370,7 +370,7 @@ private fun TextEditor(
             value = value,
             onValueChange = { value = it },
             modifier = Modifier.fillMaxWidth().focusRequester(focus),
-            label = { Text(label) },
+            label = label,
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = { submit() }),

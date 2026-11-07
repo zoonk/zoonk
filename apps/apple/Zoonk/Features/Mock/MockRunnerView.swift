@@ -61,7 +61,7 @@ struct MockRunnerView: View {
         })
     ) {
       answerSheet(isBeside: false).presentationDetents([.medium, .large])
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
     .onChange(of: fitsTwoPages) { _, fits in
       if fits { answerSheetInSheet = false }
@@ -95,7 +95,7 @@ struct MockRunnerView: View {
     if showsAnswerSheet, fitsTwoPages {
       PaneSplit(primaryShare: 0.5) {
         QuestionColumn(readableWidth: 720, spacing: 16) {
-          EmptyView()
+          progress
         } content: {
           questionParts(question)
         } actions: {
@@ -114,7 +114,7 @@ struct MockRunnerView: View {
 
   private func spread(_ question: MockQuestion) -> some View {
     QuestionSpread(readableWidth: 720, spacing: 16) {
-      EmptyView()
+      progress
     } stimulus: {
       MockQuestionMeta(run: run, view: view, question: question)
       MockQuestionCard(run: run, view: view, question: question, part: .stimulus)
@@ -132,6 +132,25 @@ struct MockRunnerView: View {
     MockQuestionCard(run: run, view: view, question: question, part: .stimulus)
     MockQuestionCard(run: run, view: view, question: question, part: .response)
     MovesNote(moves: run.moves)
+  }
+
+  /// Main's `TaskHeaderProgress` under the bar: the share of this section answered.
+  private var progress: some View {
+    let counts = MockSectionCounts(run: run)
+
+    return Meter(
+      value: Double(counts.answered + counts.essays - counts.blankEssays),
+      total: Double(max(counts.total, 1)), height: 4
+    )
+    .accessibilityLabel(
+      Text(
+        "Questions answered in this section", tableName: "Mock",
+        comment: "VoiceOver label of the bar under a mock's clock")
+    )
+    .frame(maxWidth: 720)
+    .scenePadding(.horizontal)
+    .padding(.bottom, 4)
+    .frame(maxWidth: .infinity)
   }
 
   private var actionBar: some View {
@@ -205,8 +224,8 @@ private struct MockQuestionMeta: View {
           .monospacedDigit()
       }
     }
-    .font(.caption.monospaced())
-    .foregroundStyle(.secondary)
+    .typeStyle(.data)
+    .foregroundStyle(.mutedForeground)
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(accessibilityPlace)
   }
@@ -319,28 +338,30 @@ private struct MockEssayBox: View {
   let view: MockView
   let question: MockQuestion
   let isLocked: Bool
+  @FocusState private var isFocused: Bool
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text((view.essayRubric ?? .custom).writingName)
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
         .accessibilityHidden(true)
 
       let words = WordCount.count(text.wrappedValue)
 
       TextEditor(text: text)
+        .typeStyle(.writing)
         .frame(minHeight: 280)
         .scrollContentBackground(.hidden)
-        .padding(8)
-        .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+        .focused($isFocused)
+        .fieldBorder(isFocused: isFocused)
         .disabled(isLocked)
         .accessibilityLabel(Text((view.essayRubric ?? .custom).writingName))
         .accessibilityHint(EssayWords.hint(words))
 
       if words > 0 {
         EssayWords.text(words)
-          .font(.caption.monospaced())
-          .foregroundStyle(.secondary)
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -376,7 +397,7 @@ private struct FlagButton: View {
     .labelStyle(
       typeSize.isAccessibilitySize ? AnyLabelStyle(.iconOnly) : AnyLabelStyle(.titleAndIcon)
     )
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.large)
     .tint(flagged ? .warning : nil)
     .disabled(run.timeUp || run.pending)
@@ -405,8 +426,8 @@ private struct MovesNote: View {
         Text("Answer each question to move on.", tableName: "Mock", comment: "Answers required")
       }
     }
-    .font(.footnote)
-    .foregroundStyle(.secondary)
+    .typeStyle(.note)
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -429,8 +450,8 @@ private struct ItemClock: ViewModifier {
             HStack {
               Spacer()
               Text(timerInterval: Date.now...max(deadline, .now), countsDown: true)
-                .font(.caption.monospacedDigit())
-                .foregroundStyle(.secondary)
+                .typeStyle(.data)
+                .foregroundStyle(.mutedForeground)
                 .accessibilityLabel(
                   Text(
                     "Time left for this question", tableName: "Mock",
@@ -534,10 +555,10 @@ private struct MockAnswerSheet: View {
   }
 
   private var sheet: some View {
-    List {
+    ZoonkList {
       if isBeside {
         Text("Answer sheet", tableName: "Mock", comment: "The answer sheet")
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
           .accessibilityAddTraits(.isHeader)
           .listRowBackground(Color.clear)
       }
@@ -547,11 +568,13 @@ private struct MockAnswerSheet: View {
           row(question, at: index)
         }
       } header: {
-        Text("Questions", tableName: "Mock", comment: "The answer sheet's questions")
+        SectionTitle(Text("Questions", tableName: "Mock", comment: "The answer sheet's questions"))
       } footer: {
-        Text(
-          "No feedback until the end, like on exam day.", tableName: "Mock",
-          comment: "Under the answer sheet")
+        SectionFooter {
+          Text(
+            "No feedback until the end, like on exam day.", tableName: "Mock",
+            comment: "Under the answer sheet")
+        }
       }
 
       if view.sections.count > 1 {
@@ -571,10 +594,10 @@ private struct MockAnswerSheet: View {
                     localized: "Section \(section.index + 1)", table: "Mock",
                     comment: "A section without a name"))
             }
-            .fontWeight(section.status == .current ? .semibold : .regular)
+            .typeWeight(section.status == .current ? .semibold : .regular)
           }
         } header: {
-          Text("Sections", tableName: "Mock", comment: "The mock's sections")
+          SectionTitle(Text("Sections", tableName: "Mock", comment: "The mock's sections"))
         }
       }
     }
@@ -583,7 +606,7 @@ private struct MockAnswerSheet: View {
         Text("Hand in", tableName: "Mock", comment: "Hands in from the answer sheet")
           .frame(maxWidth: .infinity)
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .controlSize(.large)
       .disabled(run.pending || !run.moves.canAdvance && run.position == run.questions.count - 1)
       .scenePadding(.horizontal)
@@ -608,7 +631,7 @@ private struct MockAnswerSheet: View {
             Text("Question \(question.number)", tableName: "Mock", comment: "A question by number")
           }
         }
-        .fontWeight(isCurrent ? .semibold : .regular)
+        .typeWeight(isCurrent ? .semibold : .regular)
         .foregroundStyle(.primary)
 
         Spacer()
@@ -620,7 +643,7 @@ private struct MockAnswerSheet: View {
         }
 
         Image(systemName: answered ? "circle.fill" : "circle")
-          .foregroundStyle(answered ? .primary : .tertiary)
+          .foregroundStyle(answered ? Color(.foreground) : .faint)
           .accessibilityLabel(
             answered
               ? Text("Answered", tableName: "Mock", comment: "An answered question")
@@ -628,6 +651,6 @@ private struct MockAnswerSheet: View {
       }
     }
     .disabled(!run.moves.canOpen(index) || run.timeUp)
-    .listRowBackground(isCurrent ? Color(.tertiarySystemFill) : nil)
+    .currentRow(isCurrent)
   }
 }

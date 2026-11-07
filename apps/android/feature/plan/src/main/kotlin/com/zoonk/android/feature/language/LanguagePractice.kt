@@ -1,11 +1,9 @@
 package com.zoonk.android.feature.language
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
@@ -78,9 +77,9 @@ fun AlphabetRow(
     val time = formatMinutes(alphabet.minutes.toInt(), currentLocale())
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        ListItem(
-            headlineContent = { Text(alphabet.title) },
-            supportingContent = {
+        ListRow(
+            headline = { Text(alphabet.title) },
+            supporting = {
                 Text(
                     stringResource(
                         if (alphabet.pending) R.string.language_alphabet_first_next_session else R.string.language_alphabet_anytime,
@@ -88,9 +87,8 @@ fun AlphabetRow(
                     ),
                 )
             },
-            leadingContent = { Icon(painterResource(R.drawable.ic_translate), contentDescription = null) },
-            modifier = Modifier.clickable { open(AppRoute.Lesson(alphabet.lessonId.toString())) },
-            colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surface),
+            leading = { Icon(painterResource(R.drawable.ic_translate), contentDescription = null, modifier = Modifier.size(16.dp)) },
+            onClick = { open(AppRoute.Lesson(alphabet.lessonId.toString())) },
         )
         if (alphabet.pending) {
             OutlinedButton(onClick = { model.skip(goalId) }, enabled = !model.skipping) {

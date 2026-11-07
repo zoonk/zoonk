@@ -18,7 +18,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,8 +47,10 @@ import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyStageName
 import com.zoonk.android.ui.components.Belt
+import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatPercent
@@ -267,12 +268,7 @@ private fun PaneRow(
         Text(text, Modifier.weight(1f), style = MaterialTheme.typography.titleSmall)
         trailing()
         if (onClick != null) {
-            Icon(
-                painterResource(R.drawable.ic_chevron_right),
-                contentDescription = null,
-                Modifier.size(18.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            ListRowChevron()
         }
     }
 }

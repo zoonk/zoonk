@@ -192,19 +192,19 @@ struct DistributionExplorerCanvas: View {
           "\(fields.valueLabel) from \(ActivityNumberFormat.format(handles.from)) to \(ActivityNumberFormat.format(handles.to))",
           tableName: "ActivitiesCharts", comment: "The range between a distribution's two handles"
         )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
 
         Spacer()
 
-        ChartsReadout(text: percentText(between), style: .mint)
+        ChartsReadout(text: percentText(between), style: .vizAccent)
           .accessibilityHidden(true)
       }
 
       Chart {
         ForEach(curve.filter { $0.x >= handles.from && $0.x <= handles.to }, id: \.x) { point in
           AreaMark(x: .value(verbatim: "x", point.x), y: .value(verbatim: "density", point.y))
-            .foregroundStyle(Color.mint.opacity(0.25))
+            .foregroundStyle(Color.vizAccent.opacity(0.25))
         }
 
         ForEach(curve, id: \.x) { point in
@@ -214,14 +214,14 @@ struct DistributionExplorerCanvas: View {
 
         if case .normal(let mean, _) = fields.distribution {
           RuleMark(x: .value(verbatim: "mean", mean))
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
         }
 
         if isChecked {
           ForEach([fields.target.from, fields.target.to], id: \.self) { edge in
             RuleMark(x: .value(verbatim: "target", edge))
-              .foregroundStyle(.orange)
+              .foregroundStyle(.vizHighlight)
               .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 3]))
           }
 
@@ -232,19 +232,19 @@ struct DistributionExplorerCanvas: View {
                 verbatim:
                   "\(ActivityNumberFormat.format(fields.target.from)) – \(ActivityNumberFormat.format(fields.target.to)): \(percentText(DistributionModel.percent(fields.distribution, fields.target)))"
               )
-              .font(.caption.weight(.semibold).monospacedDigit())
-              .foregroundStyle(.orange)
+              .typeStyle(.meta.weight(.semibold).monospaced())
+              .foregroundStyle(.vizHighlight)
             }
         }
 
-        RuleMark(x: .value(verbatim: "lower", handles.from)).foregroundStyle(.mint)
-        RuleMark(x: .value(verbatim: "upper", handles.to)).foregroundStyle(.mint)
+        RuleMark(x: .value(verbatim: "lower", handles.from)).foregroundStyle(.vizAccent)
+        RuleMark(x: .value(verbatim: "upper", handles.to)).foregroundStyle(.vizAccent)
       }
       .chartXScale(domain: domain)
       .chartYAxis(.hidden)
       .chartXAxis {
         AxisMarks(values: ticks) { value in
-          AxisGridLine()
+          AxisGridLine().foregroundStyle(.vizGrid)
           // Below the handles that sit on the baseline.
           AxisValueLabel(verticalSpacing: 16) {
             if let x = value.as(Double.self) {
@@ -301,8 +301,8 @@ struct DistributionExplorerCanvas: View {
 
   private func tail(_ share: Double) -> some View {
     Text(verbatim: percentText(share))
-      .font(.caption2.monospacedDigit())
-      .foregroundStyle(.secondary)
+      .typeStyle(.small.monospaced())
+      .foregroundStyle(.mutedForeground)
       .chartsLabelHalo()
       .accessibilityHidden(true)
   }
@@ -318,7 +318,7 @@ struct DistributionExplorerCanvas: View {
     let value = handles[keyPath: key]
     let x = (proxy.position(forX: value) ?? 0) + plot.minX
 
-    return ChartsHandle(tint: .mint, isEnabled: !isChecked)
+    return ChartsHandle(tint: .vizAccent, isEnabled: !isChecked)
       .chartsAdjustable(
         label: label,
         value: String(

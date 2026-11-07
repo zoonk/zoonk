@@ -10,6 +10,14 @@ import androidx.compose.ui.graphics.Color
 /** Only meanings no Material role carries; add one only with its token in `globals.css`. */
 @Immutable
 data class ZoonkColors(
+    /** Quieter than `onSurfaceVariant`: an eyebrow, a stat's label, a list's numbers. */
+    val faint: Color,
+    /** Main's `ground`: a quiet band a shade lighter than `muted`, such as a placeholder or a course map's levels. */
+    val ground: Color,
+    /** Main's `secondary` button's fill ([com.zoonk.android.ui.components.SecondaryButton]); its words are ink. */
+    val secondary: Color,
+    /** A mistake's mark, such as an invalid field's line; words about it take Material's `error`. */
+    val destructive: Color,
     /** Brain Power and nothing else. */
     val brain: Color,
     val brainText: Color,
@@ -44,6 +52,10 @@ data class ZoonkColors(
 
 internal fun ZoonkPalette.zoonkColors() =
     ZoonkColors(
+        faint = faint,
+        ground = ground,
+        secondary = secondary,
+        destructive = destructive,
         brain = brain,
         brainText = brainText,
         warning = warning,

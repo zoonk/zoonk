@@ -5,36 +5,36 @@ struct PlanSoFar: View {
   let facts: [PlanFact]
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         ForEach(facts) { fact in
           VStack(alignment: .leading, spacing: 2) {
             Text(fact.label)
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
 
             Text(fact.value)
               .monospacedDigit()
 
             if let note = fact.note {
               Text(note)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .typeStyle(.meta)
+                .foregroundStyle(.mutedForeground)
             }
 
             if let daysLeft = fact.daysLeft {
               Text(daysLeft)
-                .font(.caption)
-                .monospacedDigit()
-                .foregroundStyle(.secondary)
+                .typeStyle(.data)
+                .foregroundStyle(.mutedForeground)
             }
           }
           .accessibilityElement(children: .combine)
         }
       } header: {
-        Text(
-          "Your plan so far", tableName: "Onboarding",
-          comment: "Heading over what the learner's answers have set for their plan")
+        SectionTitle(
+          Text(
+            "Your plan so far", tableName: "Onboarding",
+            comment: "Heading over what the learner's answers have set for their plan"))
       }
     }
   }

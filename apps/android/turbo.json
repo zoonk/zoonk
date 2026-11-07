@@ -15,6 +15,7 @@
         "$TURBO_ROOT$/packages/core/src/library/activities/**",
         "$TURBO_ROOT$/packages/testing/src/fixtures/activity-contents*/**"
       ]
-    }
+    },
+    "typecheck": { "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/scripts/theme/**"] }
   }
 }

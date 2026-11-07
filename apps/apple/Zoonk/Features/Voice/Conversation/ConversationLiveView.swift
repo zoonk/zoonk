@@ -36,7 +36,7 @@ struct ConversationLiveView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .scenePadding()
       }
-      .background(Color(.secondarySystemBackground))
+      .background(Color(.systemBackground))
     } single: {
       callColumn(besideAside: false)
     }
@@ -192,16 +192,21 @@ private struct CallTranscript: View {
         let text = turn.text.trimmingCharacters(in: .whitespacesAndNewlines)
 
         if turn.speaker == .learner {
-          Text(text)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(
-              Color(.secondarySystemFill), in: .rect(cornerRadius: 16, style: .continuous)
-            )
-            .frame(maxWidth: .infinity, alignment: .trailing)
-            .accessibilityLabel(
-              Text(
-                "You: \(text)", tableName: "Voice", comment: "VoiceOver: the learner's words"))
+          // Main's `LearnerBubble`: its tail corner points at the learner's side.
+          ShareRow(share: 0.8, edge: .trailing) {
+            Text(text)
+              .padding(.horizontal, 12)
+              .padding(.vertical, 8)
+              .background(
+                Color.muted,
+                in: UnevenRoundedRectangle(
+                  topLeadingRadius: Radius.option, bottomLeadingRadius: Radius.option,
+                  bottomTrailingRadius: 4, topTrailingRadius: Radius.option, style: .continuous)
+              )
+              .accessibilityLabel(
+                Text(
+                  "You: \(text)", tableName: "Voice", comment: "VoiceOver: the learner's words"))
+          }
         } else {
           Text(text)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -235,7 +240,8 @@ private struct CallReply: View {
           localized: "Or type your reply", table: "Voice", comment: "Placeholder for a typed reply"),
         text: $reply
       )
-      .textFieldStyle(.roundedBorder)
+      .textFieldStyle(.plain)
+      .fieldBorder(isFocused: isFocused)
       .focused($isFocused)
       // The learner chose to type: the field takes the place of "Type instead", focus included.
       .onAppear {
@@ -259,11 +265,12 @@ private struct CallReply: View {
         Label {
           Text("Send", tableName: "Voice", comment: "Sends a typed reply")
         } icon: {
-          Image(systemName: "arrow.up")
+          Image(systemName: "paperplane")
         }
         .labelStyle(.iconOnly)
       }
-      .buttonStyle(.mainAction)
+      .buttonStyle(.mainAction.icon)
+      .controlSize(.large)
       .disabled(reply.trimmingCharacters(in: .whitespaces).isEmpty)
     }
   }
@@ -289,7 +296,7 @@ private struct CallControls: View {
         .labelStyle(.iconOnly)
     }
     .lineLimit(1)
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.large)
   }
 
@@ -353,15 +360,15 @@ private struct CallHeader: View {
       VStack(spacing: 4) {
         HStack(spacing: 6) {
           Circle()
-            .fill(call.phase == .live ? AnyShapeStyle(.success) : AnyShapeStyle(.tertiary))
+            .fill(call.phase == .live ? AnyShapeStyle(.success) : AnyShapeStyle(.faint))
             .frame(width: 8, height: 8)
 
           time
-            .font(.subheadline.monospacedDigit())
+            .typeStyle(.body.monospaced())
         }
         .opacity(call.liveSince == nil ? 0 : 1)
 
-        ProgressView(value: progress, total: talk)
+        Meter(value: progress, total: talk)
           .frame(width: 96)
       }
       .accessibilityElement(children: .ignore)
@@ -390,12 +397,12 @@ private struct CallEndedStatus: View {
       Label {
         VStack(alignment: .leading, spacing: 2) {
           Text(verbatim: title)
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
 
           if let detail {
             Text(verbatim: detail)
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } icon: {
@@ -489,7 +496,7 @@ private struct CallPhrases: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       Text("Phrases you can use", tableName: "Voice", comment: "Help's phrases during a call")
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
 
       ForEach(conversation.hints, id: \.self) { hint in
         Text(hint)
@@ -508,11 +515,11 @@ private struct CallGoals: View {
     VStack(alignment: .leading, spacing: 8) {
       HStack {
         Text("Goals of the call", tableName: "Voice", comment: "The call's goals while talking")
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
         Spacer()
         Text("\(met.count)/\(conversation.objectives.count)")
-          .font(.subheadline.monospacedDigit())
-          .foregroundStyle(.secondary)
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
       }
       .accessibilityElement(children: .ignore)
       .accessibilityAddTraits(.isHeader)
@@ -532,7 +539,7 @@ private struct CallGoals: View {
             .typesettingLanguage(.init(identifier: conversation.targetLanguage))
         } icon: {
           Image(systemName: isMet ? "checkmark.circle.fill" : "circle")
-            .foregroundStyle(isMet ? AnyShapeStyle(.success) : AnyShapeStyle(.tertiary))
+            .foregroundStyle(isMet ? AnyShapeStyle(.success) : AnyShapeStyle(.faint))
         }
         .accessibilityValue(
           isMet ? Text("Done", tableName: "Voice", comment: "VoiceOver: a goal is met") : Text(""))

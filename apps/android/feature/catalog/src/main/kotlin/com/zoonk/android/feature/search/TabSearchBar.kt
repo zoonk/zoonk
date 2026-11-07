@@ -1,8 +1,9 @@
 package com.zoonk.android.feature.search
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,8 +20,6 @@ import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
@@ -41,9 +40,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
@@ -73,6 +74,9 @@ import com.zoonk.android.feature.today.nextStep
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -81,7 +85,8 @@ import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.ExamMockSummary
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
@@ -398,7 +403,6 @@ internal fun searchedMocks(
         .orEmpty()
 
 /** [highlighted] is what Enter opens, shown on its tint as main's palette highlights it. */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchResults(
     groups: List<SearchGroup>,
@@ -407,41 +411,42 @@ private fun SearchResults(
     modifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
-    val container = SearchBarDefaults.colors().containerColor
     val tint = MaterialTheme.colorScheme.surfaceContainerHighest
+    val label = MaterialTheme.zoonkType.label
 
     LazyColumn(modifier.fillMaxSize()) {
         groups.forEach { group ->
             item(key = "group-${group.id}", contentType = "header") {
                 Text(
-                    group.label,
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 4.dp).semantics { heading() },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.titleSmall,
+                    group.label.uppercase(locale),
+                    modifier =
+                        Modifier
+                            .padding(start = LIST_ITEM_INSET, end = LIST_ITEM_INSET, top = 14.dp, bottom = 6.dp)
+                            .semantics {
+                                heading()
+                                contentDescription = group.label
+                            },
+                    color = MaterialTheme.zoonk.faint,
+                    style = label,
                 )
             }
 
-            itemsIndexed(group.items, key = { _, item -> "${group.id}/${item.id}" }, contentType = { _, _ -> "item" }) { _, item ->
-                ListItem(
-                    headlineContent = { Text(item.label, maxLines = 2, overflow = TextOverflow.Ellipsis) },
-                    supportingContent =
-                        item.detail?.let { detail ->
-                            { Text(detail.replaceFirstChar { it.titlecase(locale) }, maxLines = 1, overflow = TextOverflow.Ellipsis) }
-                        },
-                    leadingContent = { Icon(painterResource(item.icon), contentDescription = null) },
-                    trailingContent =
-                        item.count?.let { count ->
-                            {
-                                Text(
-                                    formatNumber(count.toDouble(), locale),
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    style = MaterialTheme.typography.labelLarge.withTabularFigures(),
-                                )
-                            }
-                        },
-                    colors = ListItemDefaults.colors(containerColor = if (item == highlighted) tint else container),
-                    modifier = Modifier.clickable { onOpen(item) },
-                )
+            itemsIndexed(group.items, key = { _, item -> "${group.id}/${item.id}" }, contentType = { _, _ -> "item" }) { index, item ->
+                Column {
+                    ListDivider()
+                    ListRow(
+                        headline = { Text(item.label, maxLines = 2, overflow = TextOverflow.Ellipsis) },
+                        modifier = Modifier.background(if (item == highlighted) tint else Color.Transparent),
+                        onClick = { onOpen(item) },
+                        leading = { Icon(painterResource(item.icon), contentDescription = null) },
+                        supporting =
+                            item.detail?.let { detail ->
+                                { Text(detail.replaceFirstChar { it.titlecase(locale) }, maxLines = 1, overflow = TextOverflow.Ellipsis) }
+                            },
+                        meta = item.count?.let { count -> { Text(formatNumber(count.toDouble(), locale)) } },
+                        chevron = false,
+                    )
+                }
             }
         }
     }

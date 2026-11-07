@@ -22,6 +22,8 @@ private struct CategorizeCanvas: View {
   let context: ActivityCanvasContext
   private let items: [CategorizeFields.Item]
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   @ActivityState private var sorting: CategorizeSorting
   @FocusState private var focus: Focus?
   @AccessibilityFocusState private var voiceOverFocus: Focus?
@@ -60,7 +62,7 @@ private struct CategorizeCanvas: View {
           "All sorted. Choose a card to move it.", tableName: "Activities",
           comment: "Every card of a sorting activity has a group; choosing a card moves it"
         )
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
         .focusable()
         .focused($focus, equals: .status)
         .accessibilityFocused($voiceOverFocus, equals: .status)
@@ -113,8 +115,8 @@ private struct CategorizeCanvas: View {
   private func dealtCard(_ card: CategorizeFields.Item) -> some View {
     HStack(spacing: 12) {
       Image(systemName: "line.3.horizontal")
-        .font(.body)
-        .foregroundStyle(.secondary)
+        .typeStyle(.body)
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
 
       ZStack(alignment: .leading) {
@@ -125,14 +127,14 @@ private struct CategorizeCanvas: View {
             .accessibilityHidden(item.id != card.id)
         }
       }
-      .font(.title3.weight(.medium))
+      .typeStyle(.section.weight(.medium))
     }
     .multilineTextAlignment(.leading)
     .padding()
-    .background(Color(.systemBackground), in: .rect(cornerRadius: 16))
+    .background(Color(.background), in: .rect(cornerRadius: Radius.xl))
     .overlay {
-      RoundedRectangle(cornerRadius: 16)
-        .strokeBorder(.separator)
+      RoundedRectangle(cornerRadius: Radius.xl)
+        .strokeBorder(.border)
     }
     .draggable(ActivityDragItem(id: card.id))
   }
@@ -142,8 +144,8 @@ private struct CategorizeCanvas: View {
       "Which group does it belong in?", tableName: "Activities",
       comment: "Under the card to sort, above the groups it can go in"
     )
-    .font(.footnote)
-    .foregroundStyle(.secondary)
+    .typeStyle(.note)
+    .foregroundStyle(.mutedForeground)
   }
 
   /// Always laid out, so it appearing after the first card moves nothing.
@@ -162,7 +164,7 @@ private struct CategorizeCanvas: View {
       .contentShape(.rect)
     }
     .buttonStyle(.borderless)
-    .font(.subheadline)
+    .typeStyle(.body)
     .opacity(canUndo ? 1 : 0)
     .disabled(!canUndo)
     .accessibilityHidden(!canUndo)
@@ -180,8 +182,8 @@ private struct CategorizeCanvas: View {
       VStack(alignment: .leading, spacing: 4) {
         LessonRichText(group.label)
         LessonRichText(group.rule)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
         preview(group)
       }
     }
@@ -232,14 +234,14 @@ private struct CategorizeCanvas: View {
                 comment: "On a group: how many more cards are in it besides the one shown"
               )
               .monospacedDigit()
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
               .previewChip()
               .fixedSize()
             }
           }
         }
       }
-      .font(.footnote)
+      .typeStyle(.note)
       .padding(.top, 4)
       .accessibilityHidden(true)
   }
@@ -252,11 +254,11 @@ private struct CategorizeCanvas: View {
     return VStack(alignment: .leading, spacing: 12) {
       VStack(alignment: .leading, spacing: 4) {
         LessonRichText(group.label)
-          .font(.body.weight(.medium))
+          .typeStyle(.body.weight(.medium))
           .accessibilityAddTraits(.isHeader)
         LessonRichText(group.rule)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
 
       if inGroup.isEmpty {
@@ -264,8 +266,8 @@ private struct CategorizeCanvas: View {
           "No cards here", tableName: "Activities",
           comment: "A group of a sorting activity that no card was sorted into"
         )
-        .font(.footnote)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       } else {
         VStack(spacing: 0) {
           ForEach(inGroup) { item in
@@ -276,17 +278,17 @@ private struct CategorizeCanvas: View {
             row(item)
           }
         }
-        .background(Color(.systemBackground))
-        .clipShape(.rect(cornerRadius: 12))
+        .background(Color(.background))
+        .clipShape(.rect(cornerRadius: Radius.option))
         .overlay {
-          RoundedRectangle(cornerRadius: 12)
-            .strokeBorder(.separator)
+          RoundedRectangle(cornerRadius: Radius.option)
+            .strokeBorder(.border)
         }
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
-    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
+    .panel()
   }
 
   private func movableRow(_ item: CategorizeFields.Item, from group: CategorizeFields.Group)
@@ -298,7 +300,7 @@ private struct CategorizeCanvas: View {
           Button {
             move(item, to: other)
           } label: {
-            Text(LessonRichText.typeset(other.label))
+            Text(LessonRichText.typeset(other.label), legibility: legibilityWeight)
           }
         }
       } header: {
@@ -309,7 +311,7 @@ private struct CategorizeCanvas: View {
     } label: {
       row(item) {
         Image(systemName: "chevron.up.chevron.down")
-          .font(.footnote)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
           .accessibilityHidden(true)
       }
@@ -344,7 +346,7 @@ private struct CategorizeCanvas: View {
         .frame(maxWidth: .infinity, alignment: .leading)
       trailing()
     }
-    .font(.subheadline)
+    .typeStyle(.body)
     .multilineTextAlignment(.leading)
     .padding(.horizontal, 12)
     .padding(.vertical, 10)
@@ -429,8 +431,7 @@ private struct CategorizeCanvas: View {
         "\(items.count - misplaced.count) of \(items.count) in the right group",
         tableName: "Activities", comment: "After checking a sorting activity"
       )
-      .font(.subheadline.weight(.semibold))
-      .monospacedDigit()
+      .typeStyle(.body.weight(.semibold).monospaced())
 
       ActivityReasonList(
         reasons: misplaced.map { item in
@@ -451,10 +452,10 @@ extension View {
   fileprivate func previewChip() -> some View {
     padding(.horizontal, 8)
       .padding(.vertical, 3)
-      .background(Color(.systemBackground), in: .rect(cornerRadius: 6))
+      .background(Color(.background), in: .rect(cornerRadius: Radius.sm))
       .overlay {
-        RoundedRectangle(cornerRadius: 6)
-          .strokeBorder(.separator)
+        RoundedRectangle(cornerRadius: Radius.sm)
+          .strokeBorder(.border)
       }
   }
 }

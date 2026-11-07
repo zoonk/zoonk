@@ -129,7 +129,7 @@ private struct CauseEffectCanvas: View {
                 comment: "How to link causes and effects")
             }
           }
-          .font(.subheadline.weight(.medium))
+          .typeStyle(.body.weight(.medium))
 
           Spacer(minLength: 8)
 
@@ -150,8 +150,8 @@ private struct CauseEffectCanvas: View {
 
       if !isLocked, let notice {
         LessonRichText(notice)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
 
       linkList
@@ -168,8 +168,8 @@ private struct CauseEffectCanvas: View {
       VStack(alignment: .leading, spacing: 2) {
         if let year = node.year {
           Text(year, format: .number.grouping(.never))
-            .font(.caption.monospacedDigit())
-            .foregroundStyle(.secondary)
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
         }
         LessonRichText(node.label)
       }
@@ -178,7 +178,7 @@ private struct CauseEffectCanvas: View {
     .disabled(isLocked)
     .overlay {
       if isCandidate || targetedId == node.id {
-        RoundedRectangle(cornerRadius: 12)
+        RoundedRectangle(cornerRadius: Radius.option)
           .strokeBorder(
             .primary.opacity(targetedId == node.id ? 1 : 0.4),
             style: StrokeStyle(lineWidth: 2, dash: targetedId == node.id ? [] : [5, 4]))
@@ -320,14 +320,14 @@ private struct CauseEffectCanvas: View {
         case .correct: Image(systemName: "checkmark").foregroundStyle(Color.success)
         case .incorrect: Image(systemName: "xmark").foregroundStyle(Color.destructive)
         case .missed: Image(systemName: "circle.dashed").foregroundStyle(Color.success)
-        case .made: Image(systemName: "arrow.right").foregroundStyle(.secondary)
+        case .made: Image(systemName: "arrow.right").foregroundStyle(.mutedForeground)
         }
       }
       .accessibilityHidden(true)
 
       VStack(alignment: .leading, spacing: 2) {
         LessonRichText("\(fields.label(link.from)) → \(fields.label(link.to))")
-          .fontWeight(.medium)
+          .typeWeight(.medium)
           .accessibilityLabel(
             Text(
               "\(LessonRichText.spoken(fields.label(link.from))) led to \(LessonRichText.spoken(fields.label(link.to)))",
@@ -339,20 +339,20 @@ private struct CauseEffectCanvas: View {
             "Not a link in this story", tableName: "Activities",
             comment: "After the check: a wrong cause-effect link"
           )
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         case .missed:
           Text(
             "Missed link", tableName: "Activities",
             comment: "After the check: a cause-effect link the learner missed"
           )
-          .foregroundStyle(Color.success)
+          .foregroundStyle(Color.successText)
         default:
           EmptyView()
         }
 
         if showsWhy, let why {
           LessonRichText(why)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -371,15 +371,15 @@ private struct CauseEffectCanvas: View {
           .labelStyle(.iconOnly)
         }
         .buttonStyle(.borderless)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
-    .font(.subheadline)
+    .typeStyle(.note)
     .padding(12)
-    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+    .panel(cornerRadius: Radius.option)
     .overlay {
       if state == .missed {
-        RoundedRectangle(cornerRadius: 12)
+        RoundedRectangle(cornerRadius: Radius.option)
           .strokeBorder(Color.success, style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
       }
     }

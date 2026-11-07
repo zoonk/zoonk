@@ -10,6 +10,12 @@ struct ProfileEditorView: View {
   @State private var isChangingUsername = false
   @State private var usernameCheck: UsernameCheck?
   @State private var isSaved = false
+  @FocusState private var focusedField: Field?
+
+  private enum Field {
+    case name
+    case username
+  }
 
   let account: CurrentAccount
   let isRequiredSetup: Bool
@@ -31,7 +37,7 @@ struct ProfileEditorView: View {
   }
 
   var body: some View {
-    Form {
+    ZoonkList {
       if isRequiredSetup {
         StepHeader(
           title: setupTitle,
@@ -40,60 +46,75 @@ struct ProfileEditorView: View {
             comment: "Explains that the setup's name and username can change later"))
       }
 
-      Section {
-        TextField(
-          text: $name,
-          prompt: Text(
-            "Your name",
-            tableName: "Account",
-            comment: "Placeholder for the profile name field")
-        ) {
-          Text("Name", tableName: "Account", comment: "Profile name field label")
-        }
-        .textContentType(.name)
-      } header: {
-        Text("Name", tableName: "Account", comment: "Profile name field label")
-      } footer: {
-        if isNameTooLong {
-          Text(
-            "Use 150 characters or fewer.", tableName: "Account",
-            comment: "Shown under the profile name field when the typed name is too long"
-          )
-          .foregroundStyle(.destructive)
-        } else if !isRequiredSetup {
-          Text(
-            "How Zoonk and your buddy call you, and the name on your certificates.",
-            tableName: "Account", comment: "What the profile name is for")
+      if !isRequiredSetup {
+        Section {
+          PageHeader(
+            Text("Profile", tableName: "Account", comment: "Profile editor navigation title"),
+            supporting: Text(
+              "Your name, username and account.", tableName: "Account",
+              comment: "Under the Profile page's title: what the page changes"))
         }
       }
 
-      if showsUsernameField {
-        Section {
-          HStack(spacing: 2) {
-            Text(verbatim: "@")
-              .foregroundStyle(.secondary)
-              .accessibilityHidden(true)
-
-            TextField(
-              text: normalizedUsernameBinding,
-              prompt: Text(
-                "username",
-                tableName: "Account",
-                comment: "Placeholder for the username field")
-            ) {
-              Text("Username", tableName: "Account", comment: "Profile username field label")
-            }
-            .textInputAutocapitalization(.never)
-            .autocorrectionDisabled()
-            .textContentType(.username)
+      Section {
+        FormField(
+          title: Text("Name", tableName: "Account", comment: "Profile name field label"),
+          isFocused: focusedField == .name, isInvalid: isNameTooLong
+        ) {
+          TextField(
+            text: $name,
+            prompt: Text(
+              "Your name",
+              tableName: "Account",
+              comment: "Placeholder for the profile name field")
+          ) {
+            Text("Name", tableName: "Account", comment: "Profile name field label")
           }
-        } header: {
-          Text("Username", tableName: "Account", comment: "Profile username field label")
-        } footer: {
-          usernameHint
+          .textContentType(.name)
+          .focused($focusedField, equals: .name)
+        } hint: {
+          if isNameTooLong {
+            Text(
+              "Use 150 characters or fewer.", tableName: "Account",
+              comment: "Shown under the profile name field when the typed name is too long"
+            )
+            .foregroundStyle(.destructiveText)
+          } else if !isRequiredSetup {
+            Text(
+              "How Zoonk and your buddy call you, and the name on your certificates.",
+              tableName: "Account", comment: "What the profile name is for")
+          }
         }
-      } else {
-        Section {
+
+        if showsUsernameField {
+          FormField(
+            title: Text("Username", tableName: "Account", comment: "Profile username field label"),
+            isFocused: focusedField == .username,
+            isInvalid: usernameStatus == .taken || usernameStatus == .invalid
+          ) {
+            HStack(spacing: 2) {
+              Text(verbatim: "@")
+                .foregroundStyle(.mutedForeground)
+                .accessibilityHidden(true)
+
+              TextField(
+                text: normalizedUsernameBinding,
+                prompt: Text(
+                  "username",
+                  tableName: "Account",
+                  comment: "Placeholder for the username field")
+              ) {
+                Text("Username", tableName: "Account", comment: "Profile username field label")
+              }
+              .textInputAutocapitalization(.never)
+              .autocorrectionDisabled()
+              .textContentType(.username)
+              .focused($focusedField, equals: .username)
+            }
+          } hint: {
+            usernameHint
+          }
+        } else {
           HStack {
             if username.isEmpty {
               ProgressView()
@@ -117,18 +138,20 @@ struct ProfileEditorView: View {
       }
 
       if !isRequiredSetup {
-        Section(
-          String(
-            localized: "Account email",
-            table: "Account",
-            comment: "Section title above the read-only account email")
-        ) {
-          LabeledContent {
+        Section {
+          ListRow(Text("Email", tableName: "Account", comment: "Read-only profile email label")) {
+            EmptyView()
+          } trailing: {
             Text(account.user.email)
-              .foregroundStyle(.secondary)
-          } label: {
-            Text("Email", tableName: "Account", comment: "Read-only profile email label")
+              .typeStyle(.meta)
           }
+        } header: {
+          SectionTitle(
+            Text(
+              String(
+                localized: "Account email",
+                table: "Account",
+                comment: "Section title above the read-only account email")))
         }
       }
 
@@ -143,8 +166,8 @@ struct ProfileEditorView: View {
           } icon: {
             Image(systemName: "checkmark.circle")
           }
-          .font(.footnote)
-          .foregroundStyle(.success)
+          .typeStyle(.note)
+          .foregroundStyle(.successText)
         }
       }
 
@@ -166,21 +189,29 @@ struct ProfileEditorView: View {
             await settings.exportAccountData()
           }
         } header: {
-          Text("Your data", tableName: "Account", comment: "Profile section with the data download")
+          SectionTitle(
+            Text(
+              "Your data", tableName: "Account", comment: "Profile section with the data download"))
         }
 
         Section {
           Button(role: .destructive, action: deleteAccount) {
             Text(
               "Delete my account", tableName: "Account",
-              comment: "Opens permanent account deletion")
+              comment: "Opens permanent account deletion"
+            )
+            .typeStyle(.rowTitle)
           }
+          .foregroundStyle(.destructiveText)
         } header: {
-          Text("Delete account", tableName: "Account", comment: "Profile section about deletion")
+          SectionTitle(
+            Text("Delete account", tableName: "Account", comment: "Profile section about deletion"))
         } footer: {
-          Text(
-            "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store.",
-            tableName: "Account", comment: "What deleting the account does")
+          SectionFooter {
+            Text(
+              "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store.",
+              tableName: "Account", comment: "What deleting the account does")
+          }
         }
       }
     }
@@ -192,6 +223,11 @@ struct ProfileEditorView: View {
     )
     .toolbarTitleDisplayMode(.inline)
     .toolbar(removing: isRequiredSetup ? .title : nil)
+    .barTitleAfterHero(
+      isRequiredSetup
+        ? ""
+        : String(localized: "Profile", table: "Account", comment: "Profile editor navigation title")
+    )
     .task {
       guard isRequiredSetup, username.isEmpty else {
         return
@@ -267,18 +303,18 @@ struct ProfileEditorView: View {
         "\(normalizedUsername) is available", tableName: "Account",
         comment: "The typed username is free; the argument is the username"
       )
-      .foregroundStyle(.success)
+      .foregroundStyle(.successText)
     case .taken:
       Text(
         "\(normalizedUsername) is already taken", tableName: "Account",
         comment: "Another account has the typed username; the argument is the username"
       )
-      .foregroundStyle(.destructive)
+      .foregroundStyle(.destructiveText)
     case .idle:
       usernameRules
     case .invalid:
       usernameRules
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
     }
   }
 

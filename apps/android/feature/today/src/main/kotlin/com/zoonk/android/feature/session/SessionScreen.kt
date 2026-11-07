@@ -3,6 +3,7 @@ package com.zoonk.android.feature.session
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -68,16 +68,17 @@ import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.MeterPart
-import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.TaskSegment
+import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -88,6 +89,7 @@ import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudySession
@@ -544,32 +546,26 @@ private fun SessionSegments(
     counted: Boolean = false,
 ) {
     val steps = day.steps.filter { it.status != StudyBlock.Status.SKIPPED }
-    val done = MaterialTheme.colorScheme.tertiary
-    val parts =
-        steps.map {
-            val fill =
-                when {
-                    it.status == StudyBlock.Status.COMPLETED -> MeterPart.Fill.Solid(done)
-                    it.position == step.position -> MeterPart.Fill.Place()
-                    else -> MeterPart.Fill.Track
-                }
-            MeterPart(fill, weight = it.estimatedMinutes.coerceAtLeast(1).toFloat())
-        }
+    if (steps.isEmpty()) return
 
-    if (parts.isEmpty()) return
+    val segments =
+        steps.map {
+            when {
+                it.status == StudyBlock.Status.COMPLETED -> TaskSegment.Done
+                it.position == step.position -> TaskSegment.Current
+                else -> TaskSegment.Ahead
+            }
+        }
+    val weights = steps.map { it.estimatedMinutes.toFloat() }
     val progress = stepsDone(steps.count(DayStep::isFinished), steps.size)
 
     if (counted) {
         Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(
-                progress,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-            )
-            MeterParts(parts)
+            Text(progress, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
+            TaskSegments(segments, weights = weights)
         }
     } else {
-        MeterParts(parts, modifier, contentDescription = progress)
+        TaskSegments(segments, modifier, weights = weights, contentDescription = progress)
     }
 }
 
@@ -583,7 +579,7 @@ private fun StepFacts(step: DayStep) {
     Text(
         facts.factsLine(),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+        style = MaterialTheme.zoonkType.data,
     )
 }
 

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,6 +54,8 @@ import com.zoonk.android.feature.session.rememberWaitState
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.DockedActionBar
@@ -191,7 +192,8 @@ fun TodayDay(
 
                     if (!beside) {
                         item(key = "aside", contentType = "aside") {
-                            TodayAside(model, aside, beside = false, modifier = Modifier.pageItem().padding(top = 32.dp))
+                            // Main pulls the notice up under the day's action; the docked action leaves the queue right above it.
+                            TodayAside(model, aside, beside = false, modifier = Modifier.pageItem().padding(top = 24.dp))
                         }
                     }
                 }
@@ -395,7 +397,10 @@ internal fun TodayPlaceholder(padding: PaddingValues) {
 }
 
 /** Each item reads as one centered column of main's page width, whatever the window. */
-internal fun Modifier.pageItem(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(horizontal = 16.dp)
+internal fun Modifier.pageItem(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(horizontal = LIST_ITEM_INSET)
+
+/** A `ListRow` on the page: as wide as [pageItem]'s column with its margin, which the row insets itself. */
+internal fun Modifier.pageRow(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWidth()
 
 private const val SWITCHING_ALPHA = 0.6f
 

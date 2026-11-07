@@ -53,17 +53,17 @@ private struct ChapterLandingList: View {
   var body: some View {
     // As on main's wide page: the lessons under the chapter, what it teaches beside them.
     PaneSplit {
-      List {
+      ZoonkList {
         header
         lessons
       }
     } secondary: {
-      List {
+      ZoonkList {
         strip
         learnAndStart
       }
     } single: {
-      List {
+      ZoonkList {
         header
         strip
         lessons
@@ -104,19 +104,19 @@ private struct ChapterLandingList: View {
         } icon: {
           SubjectGlyph(subject: course?.course.subject)
         }
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
 
         Text(chapter.title)
-          .font(.largeTitle.bold())
+          .typeStyle(.heroTitle)
           .fixedSize(horizontal: false, vertical: true)
           .accessibilityAddTraits(.isHeader)
           .heroTitle()
 
         if let description = catalogText(detail.chapter?.description ?? chapter.description) {
           Text(description)
-            .font(.title3)
-            .foregroundStyle(.secondary)
+            .typeStyle(.lead)
+            .foregroundStyle(.mutedForeground)
         }
 
         PlanLine(startsHere: startsHere)
@@ -153,8 +153,9 @@ private struct ChapterLandingList: View {
       Section {
         ForEach(objectives, id: \.self) { CheckLine(text: $0) }
       } header: {
-        Text(
-          "What you'll learn", tableName: "Courses", comment: "Header of what a chapter teaches")
+        SectionTitle(
+          Text(
+            "What you'll learn", tableName: "Courses", comment: "Header of what a chapter teaches"))
       }
     }
 
@@ -171,7 +172,7 @@ private struct ChapterLandingList: View {
               comment: "A course page's last call")
           }
         }
-        .font(.title2.weight(.semibold))
+        .typeStyle(.section)
         .accessibilityAddTraits(.isHeader)
 
         Group {
@@ -185,7 +186,7 @@ private struct ChapterLandingList: View {
               tableName: "Courses", comment: "Under a course page's last call")
           }
         }
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
         ChapterStart(
           chapter: chapter, hasLesson: hasLesson, startsHere: startsHere, tryLessonID: nil
@@ -215,8 +216,12 @@ private struct ChapterStart: View {
   }
 }
 
+/// Main's `ChapterStrip`: the course's parts on one bar with this chapter's station, then this
+/// chapter and the next ones on the course's line.
 private struct ChapterStrip: View {
   private static let next = 3
+
+  @Environment(\.colorSchemeContrast) private var contrast
 
   let areas: [String: String]?
   let course: Course
@@ -230,68 +235,92 @@ private struct ChapterStrip: View {
     let counted = areas != nil ? group?.chapters ?? outline : outline
     let number = (counted.firstIndex { $0.id == here.id } ?? index) + 1
 
+    let colors = SubjectColors(course.subject)
+    let line = contrast == .increased ? colors.mark : colors.mark.opacity(0.35)
+    let stretch = [here] + outline.dropFirst(index + 1).prefix(Self.next)
+
     Section {
-      VStack(alignment: .leading, spacing: 8) {
-        MeterParts(
+      Text(
+        "Where this chapter sits in the course", tableName: "Courses",
+        comment: "Header of where a chapter sits in its course"
+      )
+      .typeStyle(.section)
+      .foregroundStyle(Color(.foreground))
+      .accessibilityAddTraits(.isHeader)
+      .listRowSeparator(.hidden)
+
+      VStack(alignment: .leading, spacing: 10) {
+        CourseMapBar(
           parts: groups.map { item in
-            MeterParts.Part(
-              weight: Double(item.chapters.count),
-              fill: item.id == group?.id ? .color(.primary) : .track)
-          }
-        )
+            CourseMapBar.Part(
+              id: item.id, count: item.chapters.count,
+              here: item.chapters.firstIndex { $0.id == here.id })
+          }, line: line)
 
         Text(
           "Chapter \(number.formatted()) of \(counted.count.formatted())\u{00A0}· \(group?.label ?? "")",
           tableName: "Courses", comment: "Where a chapter sits in its course, and its level"
         )
-        .font(.footnote.monospacedDigit())
-        .foregroundStyle(.secondary)
+        .typeStyle(.meta)
+        .foregroundStyle(.mutedForeground)
       }
       .padding(.vertical, 4)
+      .accessibilityElement(children: .combine)
+      .listRowSeparator(.hidden)
 
-      LabeledContent {
-        Text("This chapter", tableName: "Courses", comment: "Marks the open chapter in its course")
-      } label: {
-        Text(here.title)
-          .fontWeight(.semibold)
-      }
+      ForEach(Array(stretch.enumerated()), id: \.element.id) { offset, chapter in
+        let stop = ChapterRouteStop(
+          label: offset == 0
+            ? Text(
+              "This chapter", tableName: "Courses", comment: "Marks the open chapter in its course")
+            : offset == 1
+              ? Text(
+                "After this chapter", tableName: "Courses",
+                comment: "Over the chapter that comes after the open one")
+              : nil,
+          title: Text(chapter.title), isHere: offset == 0, isLast: offset == stretch.count - 1,
+          line: line, stop: colors.mark)
 
-      ForEach(outline.dropFirst(index + 1).prefix(Self.next)) { chapter in
-        NavigationLink(value: CourseDestination.chapter(ChapterReference((course, chapter)))) {
-          Text(chapter.title)
+        Group {
+          if offset == 0 {
+            stop
+          } else {
+            NavigationLink(value: CourseDestination.chapter(ChapterReference((course, chapter)))) {
+              stop
+            }
+          }
         }
+        .listRowInsets(.vertical, 0)
+        .listRowSeparator(.hidden)
       }
-    } header: {
-      Text(
-        "Where this chapter sits in the course", tableName: "Courses",
-        comment: "Header of where a chapter sits in its course")
     }
   }
 
-  private struct Group {
+  private struct StripGroup {
     let chapters: [CourseChapter]
     let id: String
     let label: String
   }
 
-  private var stripGroups: [Group] {
+  private var stripGroups: [StripGroup] {
     guard let areas else {
       return courseLevelBands(outline).map {
-        Group(
+        StripGroup(
           chapters: $0.chapters, id: $0.level.rawValue,
           label: String(localized: $0.level.localizedTitle))
       }
     }
 
-    var groups: [Group] = []
+    var groups: [StripGroup] = []
 
     for chapter in outline {
       let area = areas[chapter.id] ?? ""
 
       if let at = groups.firstIndex(where: { $0.id == area }) {
-        groups[at] = Group(chapters: groups[at].chapters + [chapter], id: area, label: area)
+        groups[at] = StripGroup(
+          chapters: groups[at].chapters + [chapter], id: area, label: area)
       } else {
-        groups.append(Group(chapters: [chapter], id: area, label: area))
+        groups.append(StripGroup(chapters: [chapter], id: area, label: area))
       }
     }
 
@@ -320,8 +349,8 @@ private struct ChapterLessonsSection: View {
           } label: {
             HStack(alignment: .firstTextBaseline, spacing: 12) {
               Text(offset + 1, format: .number)
-                .font(.footnote.monospacedDigit())
-                .foregroundStyle(.tertiary)
+                .typeStyle(.data)
+                .foregroundStyle(.faint)
               Text(lesson.displayTitle())
                 .foregroundStyle(.primary)
             }
@@ -329,9 +358,8 @@ private struct ChapterLessonsSection: View {
         }
       }
     } header: {
-      CatalogSectionHeader {
-        Text("Lessons", tableName: "Courses", comment: "Header of a chapter's lessons")
-      } detail: {
+      SectionTitle(Text("Lessons", tableName: "Courses", comment: "Header of a chapter's lessons"))
+      {
         Text(facts)
       }
     }
@@ -349,5 +377,149 @@ private struct ChapterLessonsSection: View {
     }
 
     return [position, lessonsText, minutes].compactMap(\.self).joinedFacts()
+  }
+}
+
+/// Main's `CourseMap`: one bar per part of the course, as wide as its chapters, with the course's
+/// line through them and this chapter's station on it.
+private struct CourseMapBar: View {
+  struct Part: Identifiable {
+    let id: String
+    let count: Int
+    /// This chapter's place in the part, when it's in it.
+    let here: Int?
+  }
+
+  let parts: [Part]
+  let line: Color
+
+  // Main's map keeps its size while the words around it grow.
+  private let height: CGFloat = 28
+  private let stationSize: CGFloat = 14
+
+  private static let spacing: CGFloat = 4
+
+  var body: some View {
+    let total = max(parts.reduce(0) { $0 + $1.count }, 1)
+
+    GeometryReader { proxy in
+      let room = proxy.size.width - Self.spacing * CGFloat(max(parts.count - 1, 0))
+
+      HStack(spacing: Self.spacing) {
+        ForEach(parts) { part in
+          let width = room * CGFloat(part.count) / CGFloat(total)
+
+          ZStack(alignment: .leading) {
+            Rectangle()
+              .fill(line)
+              .frame(height: 4)
+
+            if let here = part.here {
+              RouteStation(isHere: true, color: line, fill: Color(.ground))
+                .frame(width: stationSize, height: stationSize)
+                .offset(
+                  x: 4 + (width - 8) * (CGFloat(here) + 0.5) / CGFloat(part.count) - stationSize / 2
+                )
+            }
+          }
+          .frame(width: width, height: height)
+          .background(Color(.ground), in: .rect(cornerRadius: Radius.sm, style: .continuous))
+        }
+      }
+    }
+    .frame(height: height)
+    .accessibilityHidden(true)
+  }
+}
+
+/// A station on the course's line: this chapter as an ink ring, a stop as a ring in the subject's
+/// color.
+private struct RouteStation: View {
+  let isHere: Bool
+  let color: Color
+  /// What it sits on, so the line doesn't show through it: the page, or the map's bar.
+  var fill = Color(.systemBackground)
+
+  var body: some View {
+    Circle()
+      .strokeBorder(isHere ? Color(.foreground) : color, lineWidth: isHere ? 3 : 2.5)
+      .background(Circle().fill(fill))
+  }
+}
+
+private struct StationAnchorKey: PreferenceKey {
+  static let defaultValue: Anchor<CGPoint>? = nil
+
+  static func reduce(value: inout Anchor<CGPoint>?, nextValue: () -> Anchor<CGPoint>?) {
+    value = value ?? nextValue()
+  }
+}
+
+/// Main's route stop on the chapter strip: its station on the first line of its words, and the
+/// line running from it to the next stop, fading out after the last.
+private struct ChapterRouteStop: View {
+  let label: Text?
+  let title: Text
+  let isHere: Bool
+  let isLast: Bool
+  let line: Color
+  let stop: Color
+
+  // Main's stations keep their size; the line stays on the words' first line as they grow.
+  private let pageSize: CGFloat = 16
+  private let stopSize: CGFloat = 14
+
+  var body: some View {
+    HStack(alignment: .firstTextBaseline, spacing: 12) {
+      RouteStation(isHere: isHere, color: stop)
+        .frame(width: isHere ? pageSize : stopSize, height: isHere ? pageSize : stopSize)
+        .frame(width: pageSize)
+        // On the middle of the first line rather than its baseline.
+        .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + 4 }
+        .anchorPreference(key: StationAnchorKey.self, value: .center) { $0 }
+
+      VStack(alignment: .leading, spacing: 2) {
+        if let label {
+          label
+            .typeStyle(.meta)
+            .foregroundStyle(.mutedForeground)
+        }
+
+        title
+          .typeStyle(isHere ? .rowTitle.weight(.semibold) : .rowTitle)
+          .foregroundStyle(Color(.foreground))
+      }
+    }
+    .padding(.vertical, 10)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .backgroundPreferenceValue(StationAnchorKey.self) { anchor in
+      GeometryReader { proxy in
+        if let anchor {
+          let center = proxy[anchor]
+          // Past the row's edges, over the hairline's room a hidden separator keeps between rows.
+          let overlap: CGFloat = 2
+          let top = isHere ? center.y : -overlap
+
+          VStack(spacing: 0) {
+            Rectangle()
+              .fill(line)
+              .frame(height: max(center.y - top, 0))
+
+            Rectangle()
+              .fill(
+                isLast
+                  ? AnyShapeStyle(
+                    LinearGradient(
+                      colors: [line, line.opacity(0)], startPoint: .top, endPoint: .bottom))
+                  : AnyShapeStyle(line)
+              )
+              .frame(height: max(proxy.size.height - center.y + (isLast ? 0 : overlap), 0))
+          }
+          .frame(width: 4)
+          .offset(x: center.x - 2, y: top)
+        }
+      }
+      .accessibilityHidden(true)
+    }
   }
 }

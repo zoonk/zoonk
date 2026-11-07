@@ -28,7 +28,7 @@ struct TutorPanel: View {
             }
           }
       }
-      .accessibilitySizeStyles()
+      .zoonkStyles()
       .presentationDetents([.medium, .large])
       .presentationBackgroundInteraction(.enabled(upThrough: .medium))
       .closesOnNavigation()
@@ -46,23 +46,23 @@ struct TutorPanel: View {
       VStack(alignment: .leading, spacing: 8) {
         if isPane {
           title
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
             .accessibilityAddTraits(.isHeader)
         }
 
         scope.panelDescription
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
 
         if let quote {
           Text(quoteLine(quote))
-            .font(.footnote)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
             .lineLimit(3)
             .padding(.leading, 10)
             .overlay(alignment: .leading) {
               Rectangle()
-                .fill(.separator)
+                .fill(.border)
                 .frame(width: 2)
             }
         }
@@ -87,15 +87,12 @@ struct TutorPanel: View {
   }
 }
 
-/// A toolbar shows its face alone at the bar's own text size, so it never wraps and keeps the
-/// bar's shape.
 struct TutorAskToolbarItem: ToolbarContent {
   let scope: TutorScope
 
   var body: some ToolbarContent {
     ToolbarItem(placement: .primaryAction) {
       TutorAskButton(scope: scope)
-        .buttonBorderShape(.automatic)
     }
   }
 }
@@ -133,7 +130,7 @@ struct TutorAskButton: View {
         button
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .accessibilityLabel(Text(scope.askLabel(name)))
     .sheet(isPresented: $isPresented) {
       TutorPanel(scope: scope, quote: quote)

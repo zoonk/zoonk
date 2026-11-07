@@ -8,14 +8,14 @@ struct LoginView: View {
       VStack(spacing: 24) {
         VStack(spacing: 8) {
           Image(systemName: "person.crop.circle.badge.checkmark")
-            .font(.largeTitle)
+            .typeStyle(.heroTitle.weight(.regular))
             .imageScale(.large)
             .symbolRenderingMode(.hierarchical)
             .foregroundStyle(.tint)
             .accessibilityHidden(true)
 
           Text(title)
-            .font(.title2.bold())
+            .typeStyle(.section)
             .multilineTextAlignment(.center)
             .accessibilityAddTraits(.isHeader)
             .heroTitle()
@@ -25,7 +25,7 @@ struct LoginView: View {
             tableName: "Account",
             comment: "Explains the benefit of signing in"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           .multilineTextAlignment(.center)
         }
 
@@ -63,14 +63,14 @@ struct LoginView: View {
               .fixedSize(horizontal: false, vertical: true)
               .multilineTextAlignment(.center)
             }
-            .font(.body.weight(.medium))
+            .typeStyle(.body.weight(.medium))
             .padding(.horizontal, 16)
             .authenticationButtonFrame()
             .foregroundStyle(.tint)
             .background(.background)
             .overlay {
               RoundedRectangle(cornerRadius: authenticationButtonCornerRadius)
-                .strokeBorder(.secondary, lineWidth: 1)
+                .strokeBorder(.mutedForeground, lineWidth: 1)
             }
             .clipShape(RoundedRectangle(cornerRadius: authenticationButtonCornerRadius))
             .contentShape(RoundedRectangle(cornerRadius: authenticationButtonCornerRadius))
@@ -93,8 +93,8 @@ struct LoginView: View {
           comment:
             "Legal agreement below the sign-in methods; the arguments are the links to the terms of service and the privacy policy"
         )
-        .font(.footnote)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
         .multilineTextAlignment(.center)
       }
       .frame(maxWidth: 480)
@@ -141,7 +141,7 @@ struct AccountFailureMessage: View {
   var body: some View {
     if let failure {
       FailureLine(message: message(for: failure), systemImage: "exclamationmark.circle")
-        .font(.footnote)
+        .typeStyle(.note)
         .multilineTextAlignment(.center)
         .accessibilityElement(children: .combine)
     }

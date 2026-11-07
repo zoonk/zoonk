@@ -11,11 +11,11 @@
         content.fullScreenCover(isPresented: .constant(true)) {
           ScrollView {
             Text(verbatim: failure)
-              .font(.footnote.monospaced())
+              .typeStyle(.data)
               .padding()
               .accessibilityIdentifier("ui-test-fixture-failure")
           }
-          .accessibilitySizeStyles()
+          .zoonkStyles()
         }
       } else {
         content

@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -16,20 +19,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Button
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PrimaryTabRow
-import androidx.compose.material3.Tab
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +41,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -67,8 +71,10 @@ import com.zoonk.android.feature.questions.savedAnswerText
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.DoneMark
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
@@ -76,6 +82,8 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MistakeAnswer
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.PageTitleRow
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -88,7 +96,8 @@ import com.zoonk.android.ui.scaffold.mainActionWidth
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.spreadFold
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.GoalMistakePatternPattern
 import com.zoonk.api.models.Mistake
 import com.zoonk.api.models.MistakeCause
@@ -108,16 +117,15 @@ fun MistakesNotebookScreen(
     val summary by app.learnerSummary.summary.collectShown()
     val read = summary.value
     val goal = read?.let { it.goals.firstOrNull { goal -> goal.id == it.activeGoalId } }
-    var titleAway by remember { mutableStateOf(false) }
 
     PageScaffold(
         onBack = { navigator.back() },
-        title = { if (titleAway) Text(stringResource(R.string.mistakes_notebook_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        title = { Text(stringResource(R.string.mistakes_notebook_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
             when {
                 goal != null -> {
-                    Notebook(goal.id, goal.title, app.mistakesNotebook, navigator, read.nextChangeAt, onHeroAway = { titleAway = it })
+                    Notebook(goal.id, goal.title, app.mistakesNotebook, navigator, read.nextChangeAt)
                 }
 
                 summary is LoadState.Failed -> {
@@ -150,7 +158,6 @@ internal fun Notebook(
     store: MistakesNotebookStore,
     navigator: AppNavigator,
     nextChangeAt: Long? = null,
-    onHeroAway: (Boolean) -> Unit = {},
 ) {
     var fixed by rememberSaveable { mutableStateOf(false) }
     // Each list keeps what's open in it and where it's scrolled, under the tabs or on its own page of a book.
@@ -163,9 +170,6 @@ internal fun Notebook(
         val beforeFold = pageFold(maxWidth, span)?.start
         val wide = beforeFold == null && maxWidth >= INBOX_WIDTH
         val first = if (fold == null && fixed) fixedOnes else toFix
-        val heroAway by remember(first) { derivedStateOf { first.scroll.firstVisibleItemIndex > 0 } }
-
-        LaunchedEffect(heroAway) { onHeroAway(heroAway) }
 
         // The first list keeps its place either way, so what's open in it stays as the book opens or closes.
         Row(Modifier.fillMaxSize()) {
@@ -403,6 +407,7 @@ private fun WideNotebook(
                             highlighted = groupKey == selectedKey,
                             leading = group.fixedMark(),
                             meta = { Text(group.size.toString()) },
+                            chevron = false,
                         )
                     }
                 }
@@ -501,12 +506,10 @@ private fun NotebookHero(
             .toInt()
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(page.goalTitle, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
-        Text(
-            stringResource(R.string.mistakes_notebook_title),
-            Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleLarge,
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Eyebrow(page.goalTitle)
+            PageTitleRow(stringResource(R.string.mistakes_notebook_title))
+        }
         Facts(
             listOfNotNull(
                 pluralStringResource(R.plurals.mistakes_ready, ready, ready).takeIf { ready > 0 || tomorrow == 0 },
@@ -529,25 +532,42 @@ private fun NotebookHero(
     }
 }
 
+/** Main's small "To fix / Fixed" toggle: Material's segmented buttons, the current one on `muted` in ink. */
 @Composable
 private fun NotebookTabs(
     page: NotebookPage,
     onTab: (Boolean) -> Unit,
 ) {
     val counts = page.head.counts
+    val colors =
+        SegmentedButtonDefaults.colors(
+            activeContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            activeContentColor = MaterialTheme.colorScheme.onSurface,
+            activeBorderColor = Color.Transparent,
+            inactiveContainerColor = Color.Transparent,
+            inactiveContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            inactiveBorderColor = Color.Transparent,
+        )
 
-    PrimaryTabRow(selectedTabIndex = if (page.fixed) 1 else 0) {
+    SingleChoiceSegmentedButtonRow(space = 4.dp) {
         listOf(false to counts.open, true to counts.fixed).forEach { (fixed, count) ->
-            Tab(
+            SegmentedButton(
                 selected = page.fixed == fixed,
                 onClick = { onTab(fixed) },
-                text = {
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Text(stringResource(if (fixed) R.string.mistakes_tab_fixed else R.string.mistakes_tab_open))
-                        Text(count.toString(), style = MaterialTheme.typography.labelMedium.withTabularFigures())
-                    }
-                },
-            )
+                shape = RoundedCornerShape(ZoonkRadius.md),
+                colors = colors,
+                icon = {},
+                contentPadding = PaddingValues(horizontal = 10.dp),
+                modifier = Modifier.heightIn(min = TOGGLE_HEIGHT),
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        stringResource(if (fixed) R.string.mistakes_tab_fixed else R.string.mistakes_tab_open),
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                    Text(count.toString(), style = MaterialTheme.zoonkType.data)
+                }
+            }
         }
     }
 }
@@ -568,7 +588,7 @@ private fun NotebookListTitle(page: NotebookPage) {
         Text(
             (if (page.fixed) counts.fixed else counts.open).toString(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+            style = MaterialTheme.zoonkType.data,
         )
     }
 }
@@ -634,7 +654,7 @@ private fun MistakeEntry(
             Text(
                 formatDate(date, currentLocale(), DateStyle.Day),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                style = MaterialTheme.zoonkType.data,
             )
         }
         snapshot.set?.let { ItemSetText(it.recode(), continued = continued) }
@@ -731,6 +751,7 @@ private fun List<Mistake>.skillName(): String = first().skill?.name ?: stringRes
 private fun List<Mistake>.groupKey(): String = first().skill?.id?.toString() ?: "none"
 
 private val ITEM_GAP = 24.dp
+private val TOGGLE_HEIGHT = 32.dp
 private val INBOX_WIDTH = 840.dp
 private val SKILLS_WIDTH = 400.dp
 private val ENTRIES_WIDTH = 720.dp

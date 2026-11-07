@@ -35,25 +35,38 @@ struct TodayDayView: View {
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
+        header(actionInHeader: false)
         // It asks for a decision, so it leads the day where the day has room beside it.
         notice
-        day
+        day(showsAction: true)
       }
     } secondary: {
-      List {
+      ZoonkList {
         aside
         TodayPracticeSection(view: view, language: language)
       }
     } single: {
-      List {
-        day
+      // Main's tablet column heads the day with its action.
+      let actionInHeader = horizontalSizeClass == .regular
+
+      ZoonkList {
+        header(actionInHeader: actionInHeader)
+        day(showsAction: !actionInHeader)
         notice
-        aside
-        TodayPracticeSection(view: view, language: language)
+
+        // Main's tablet column: missions beside the week, preparation beside practice.
+        if actionInHeader {
+          BlockGridSection {
+            aside
+            TodayPracticeSection(view: view, language: language)
+          }
+        } else {
+          aside
+          TodayPracticeSection(view: view, language: language)
+        }
       }
     }
-    .listStyle(.insetGrouped)
     .announcesStatus(TodayDayStatus(view: view, writingStalled: writingStalled)?.announcement)
     .onAppear(perform: startVisit)
     .onChange(of: isCovered) {
@@ -72,9 +85,9 @@ struct TodayDayView: View {
     .modifier(LanguageTodayLoading(goal: view.goal))
     .sheet(item: $adjusting) { section in
       TodayAdjustPlanSheet(goalID: view.goal.id, section: section)
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
-    .navigationSubtitle(dayLine)
+    .barTitleAfterHero(String(localized: "Today", table: "Today", comment: "Today tab's title"))
     .task(id: view.session.localDate) {
       await refreshAtDayEnd()
     }
@@ -89,14 +102,66 @@ struct TodayDayView: View {
     }
   }
 
+  private func header(actionInHeader: Bool) -> some View {
+    let lead = TodayDayLead(view: view)
+
+    return Section {
+      VStack(alignment: .leading, spacing: 6) {
+        PageHeader(
+          Text("Today", tableName: "Today", comment: "Today tab's title"), eyebrow: dayLine
+        ) {
+          HStack(alignment: .lastTextBaseline, spacing: 16) {
+            if let dayTime {
+              BigQuantity(dayTime)
+            }
+
+            if actionInHeader, TodaySessionAction.offers(view) {
+              sessionAction(isInHeader: true)
+            }
+          }
+        }
+
+        if view.dayLeadJoinsHeader, !lead.isEmpty {
+          lead
+        }
+      }
+    }
+    .listSectionSpacing(.compact)
+  }
+
+  /// Main's `DayTime`: the time still ahead while the day goes on, and once it's done, or the daily
+  /// limit ended it, the time actually studied rather than the plan's estimate for what was done.
+  private var dayTime: String? {
+    let session = view.session
+
+    if session.state == .waiting {
+      return nil
+    }
+
+    if session.state == .done || session.dailyLimit?.reached == true {
+      let studied = session.week.days.first(where: \.isToday)?.minutes ?? 0
+
+      return studied > 0
+        ? String(
+          localized: "\(studyDuration(minutes: studied)) studied", table: "Today",
+          comment:
+            "The time studied today, once the day's session is done; the argument is a duration like '23 min'"
+        )
+        : nil
+    }
+
+    return session.minutesLeft > 0
+      ? String(
+        localized: "\(studyDuration(minutes: session.minutesLeft)) left", table: "Today",
+        comment: "The time still to go in today's session")
+      : nil
+  }
+
   @ViewBuilder
-  private var day: some View {
+  private func day(showsAction: Bool) -> some View {
     TodaySessionSection(
       view: view, busy: busy, failed: failed, writingStalled: writingStalled,
-      disclosures: $disclosures, open: open
-    ) {
-      perform(.prepare) { await store.prepareLessons(in: view) }
-    }
+      disclosures: $disclosures, open: open, showsAction: showsAction, prepare: prepareLessons)
 
     if !view.upNextLessons.isEmpty {
       TodayUpNextSection(
@@ -112,6 +177,16 @@ struct TodayDayView: View {
       catchUp: {
         perform(.catchUp) { await store.catchUp(in: view) }
       })
+  }
+
+  private func sessionAction(isInHeader: Bool) -> some View {
+    TodaySessionAction(
+      view: view, busy: busy, failed: failed, open: open, prepare: prepareLessons,
+      isInHeader: isInHeader)
+  }
+
+  private func prepareLessons() {
+    perform(.prepare) { await store.prepareLessons(in: view) }
   }
 
   @ViewBuilder
@@ -151,7 +226,7 @@ struct TodayDayView: View {
           MemoryInsightCard(insight: insight)
         }
         .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets())
+        .listRowInsets(.vertical, 0)
       }
     case .practice:
       TodayLanguagePracticeSection(view: view, language: language)
@@ -175,7 +250,7 @@ struct TodayDayView: View {
       }
     case .examAccess:
       Section {
-        FreeWeekOverNotice(isInset: true)
+        FreeWeekOverNotice()
       }
     case .examChoice:
       TodayExamChoiceSection(

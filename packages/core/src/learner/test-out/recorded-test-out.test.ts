@@ -239,7 +239,7 @@ describe("a chapter test-out sent and read back", () => {
     const requestId = randomUUID();
     const first = await send({ requestId });
 
-    await prisma.testOutClaim.create({
+    await prisma.testSubmissionClaim.create({
       data: { key: `${user.id}:${goal.id}:${chapterId}:${requestId}`, userId: user.id },
     });
 

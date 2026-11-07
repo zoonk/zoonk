@@ -33,13 +33,13 @@ struct StatusMark: View {
     case .skipped:
       Image(systemName: "forward.fill")
         .imageScale(.small)
-        .font(.footnote)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
     case .todo:
       Image(systemName: "circle.fill")
         .imageScale(.small)
-        .font(.caption2)
-        .foregroundStyle(.quaternary)
+        .typeStyle(.small)
+        .foregroundStyle(Color(.foreground).opacity(0.2))
     }
   }
 }

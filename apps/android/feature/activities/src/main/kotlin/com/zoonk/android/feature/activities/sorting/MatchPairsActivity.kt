@@ -57,6 +57,7 @@ import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf27Value as MatchPairsContent
 
@@ -203,7 +204,7 @@ private fun MatchCardButton(
     onPick: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     val shake = remember { Animatable(0f) }
     val label =
         when (state) {
@@ -285,7 +286,7 @@ private fun CardIcon(
 
 @Composable
 private fun MissNote(explanation: String?) {
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     Row(
         Modifier
             .fillMaxWidth()

@@ -53,7 +53,7 @@ struct LineCrossingCanvas: View {
 
     ChartsCanvas {
       LessonRichText(fields.change)
-        .font(.subheadline)
+        .typeStyle(.body)
 
       chart(after: after, changes: changeText(yChange: yChange, xChange: xChange))
 
@@ -62,26 +62,26 @@ struct LineCrossingCanvas: View {
           changeRow(fields.yLabel, change: yChange, isVertical: true)
           changeRow(fields.xLabel, change: xChange, isVertical: false)
         }
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
         .accessibilityHidden(true)
       } else {
         Text(
           "Drag a line by its handle.", tableName: "ActivitiesCharts",
           comment: "How to move a line on a two-line chart"
         )
-        .font(.footnote)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       }
 
       if showsAnswer, let shifted = fields.lines.first(where: { $0.id == fields.shift.line }) {
         VStack(alignment: .leading, spacing: 4) {
           Text(verbatim: movedText(shifted, offset: realOffset))
-            .font(.subheadline.weight(.semibold))
-            .foregroundStyle(.orange)
+            .typeStyle(.body.weight(.semibold))
+            .foregroundStyle(.vizHighlight)
 
           if case .interaction = context.check, let feedback = wrongMoveFeedback {
             LessonRichText(feedback)
-              .font(.subheadline)
+              .typeStyle(.body)
           }
         }
       }
@@ -96,7 +96,7 @@ struct LineCrossingCanvas: View {
       if isMoved {
         ForEach(fields.lines) { field in
           segmentMarks(line(field, [:]), domain: domain, series: "before-\(field.id)")
-            .foregroundStyle(Color.secondary.opacity(0.5))
+            .foregroundStyle(Color.mutedForeground.opacity(0.5))
             .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
         }
       }
@@ -105,7 +105,7 @@ struct LineCrossingCanvas: View {
         segmentMarks(
           line(shifted, [shifted.id: realOffset]), domain: domain, series: "answer"
         )
-        .foregroundStyle(.orange)
+        .foregroundStyle(.vizHighlight)
         .lineStyle(StrokeStyle(lineWidth: 2, dash: [6, 4]))
       }
 
@@ -113,15 +113,15 @@ struct LineCrossingCanvas: View {
         let segment = LineCrossingModel.segment(line(field, offsets), domain: domain)
 
         segmentMarks(line(field, offsets), domain: domain, series: field.id)
-          .foregroundStyle(index == 0 ? Color.mint : Color.purple)
+          .foregroundStyle(index == 0 ? Color.vizAccent : Color.vizSecondary)
           .lineStyle(StrokeStyle(lineWidth: 2.5))
 
         PointMark(x: .value(verbatim: "x", segment.to.x), y: .value(verbatim: "y", segment.to.y))
           .opacity(0)
           .annotation(position: .topLeading, spacing: 2) {
             Text(verbatim: field.label)
-              .font(.caption.weight(.semibold))
-              .foregroundStyle(index == 0 ? Color.mint : Color.purple)
+              .typeStyle(.meta.weight(.semibold))
+              .foregroundStyle(index == 0 ? Color.vizAccent : Color.vizSecondary)
               .chartsLabelHalo()
           }
       }
@@ -134,21 +134,27 @@ struct LineCrossingCanvas: View {
         x: .value(verbatim: "x", after.x), yStart: .value(verbatim: "y", 0),
         yEnd: .value(verbatim: "y", after.y)
       )
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
       .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 3]))
       RuleMark(
         xStart: .value(verbatim: "x", 0), xEnd: .value(verbatim: "x", after.x),
         y: .value(verbatim: "y", after.y)
       )
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
       .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 3]))
     }
     .chartXScale(domain: 0...domain.x)
     .chartYScale(domain: 0...domain.y)
     .chartXAxisLabel(fields.xLabel, alignment: .trailing)
     .chartYAxisLabel(fields.yLabel, position: .top, alignment: .leading)
-    .chartXAxis { AxisMarks(values: .automatic(desiredCount: 4)) { _ in AxisGridLine() } }
-    .chartYAxis { AxisMarks(values: .automatic(desiredCount: 4)) { _ in AxisGridLine() } }
+    .chartXAxis {
+      AxisMarks(values: .automatic(desiredCount: 4)) { _ in AxisGridLine().foregroundStyle(.vizGrid)
+      }
+    }
+    .chartYAxis {
+      AxisMarks(values: .automatic(desiredCount: 4)) { _ in AxisGridLine().foregroundStyle(.vizGrid)
+      }
+    }
     .chartsMarksHidden()
     .chartOverlay { proxy in
       GeometryReader { geometry in
@@ -193,7 +199,7 @@ struct LineCrossingCanvas: View {
     let range = LineCrossingModel.range(fields.shift.amount)
     let offset = offsets[field.id] ?? 0
 
-    return ChartsHandle(tint: index == 0 ? .mint : .purple, isEnabled: !isChecked)
+    return ChartsHandle(tint: index == 0 ? .vizAccent : .vizSecondary, isEnabled: !isChecked)
       .chartsAdjustable(
         label: Text(
           "Move the line \(field.label)", tableName: "ActivitiesCharts",

@@ -11,14 +11,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -54,7 +52,9 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import kotlinx.coroutines.launch
 
@@ -159,11 +159,11 @@ fun TutorPanel(
             TurnSignals(turns, page)
             val empty = thread.value?.let(state::isEmpty) == true
             if (empty && state.offersSuggestions(turns.orEmpty())) {
-                SuggestionChips(
+                Suggestions(
                     suggestions,
                     enabled = state.canAsk(turns.orEmpty()),
                     onSend = vm::send,
-                    Modifier.padding(horizontal = 12.dp),
+                    Modifier.padding(horizontal = 16.dp),
                 )
             }
         }
@@ -180,7 +180,7 @@ fun TutorPanel(
 }
 
 @Composable
-private fun SuggestionChips(
+private fun Suggestions(
     suggestions: List<TutorSuggestion>,
     enabled: Boolean,
     onSend: (TutorSuggestion) -> Unit,
@@ -188,7 +188,7 @@ private fun SuggestionChips(
 ) {
     FlowRow(modifier, horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         suggestions.forEach { suggestion ->
-            SuggestionChip(onClick = { onSend(suggestion) }, label = { Text(suggestion.label) }, enabled = enabled)
+            OutlinedButton(onClick = { onSend(suggestion) }, enabled = enabled) { Text(suggestion.label) }
         }
     }
 }

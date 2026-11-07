@@ -32,7 +32,6 @@ import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -54,6 +53,7 @@ import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.SnackbarHost
 import com.zoonk.android.ui.components.TASK_MARGIN
+import com.zoonk.android.ui.components.TextButton
 
 /** What leaving a task asks first when it would leave unsent work behind, in the screen's own words. */
 data class TaskExitConfirmation(

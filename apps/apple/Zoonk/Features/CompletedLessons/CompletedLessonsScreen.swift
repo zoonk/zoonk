@@ -9,7 +9,7 @@ struct CompletedLessonsScreen: View {
       if let goal = learner.summary.value?.shownGoal {
         let lessons = store.lessons(goalId: goal.id)
 
-        content(lessons, goalId: goal.id)
+        content(lessons, goal: goal)
           .id(goal.id)
           .loads(lessons)
       } else {
@@ -17,24 +17,37 @@ struct CompletedLessonsScreen: View {
           .lonePage()
       }
     }
-    .navigationTitle(
-      Text(
-        "Completed lessons", tableName: "CompletedLessons",
+    .navigationTitle(title)
+    .barTitleAfterHero(
+      String(
+        localized: "Completed lessons", table: "CompletedLessons",
         comment: "Title of the page listing the lessons the learner finished"))
   }
 
+  private var title: Text {
+    Text(
+      "Completed lessons", tableName: "CompletedLessons",
+      comment: "Title of the page listing the lessons the learner finished")
+  }
+
   @ViewBuilder
-  private func content(_ lessons: Resource<CompletedLessonsPage>, goalId: String) -> some View {
+  private func content(_ lessons: Resource<CompletedLessonsPage>, goal: LearnerGoal) -> some View {
+    let goalId = goal.id
+
     switch lessons.state {
     case .loaded(let page):
-      List {
+      ZoonkList {
+        Section {
+          PageHeader(title, eyebrow: Text(goal.title))
+        }
+
         ForEach(days(page.lessons)) { day in
           Section {
             ForEach(day.lessons) { lesson in
               CompletedLessonRow(lesson: lesson)
             }
           } header: {
-            Text(day.title)
+            SectionTitle(Text(day.title))
           }
         }
 
@@ -121,8 +134,8 @@ private struct CompletedLessonRow: View {
 
         if let chapterTitle = lesson.chapterTitle {
           Text(chapterTitle)
-            .font(.footnote)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)

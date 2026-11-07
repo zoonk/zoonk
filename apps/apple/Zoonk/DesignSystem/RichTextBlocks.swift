@@ -23,14 +23,14 @@ struct RichInline {
 
   /// For quoting it inside another `Text`, which drops a quoted Text's own label: draw it, then
   /// give the whole line a label that quotes it spoken.
-  func quoted(spoken: Bool) -> Text {
-    spoken ? Text(verbatim: said) : Text(text)
+  func quoted(spoken: Bool, legibility: LegibilityWeight?) -> Text {
+    spoken ? Text(verbatim: said) : Text(text, legibility: legibility)
   }
 }
 
 extension Text {
-  init(_ inline: RichInline) {
-    let text = Text(inline.text)
+  init(_ inline: RichInline, legibility: LegibilityWeight?) {
+    let text = Text(inline.text, legibility: legibility)
     self = inline.spoken.map { text.accessibilityLabel($0) } ?? text
   }
 }
@@ -43,6 +43,8 @@ struct RichTextBlocks: View {
   let mark: String?
   let marks: RichTextMarks?
   let inline: (String) -> RichInline
+
+  @Environment(\.legibilityWeight) private var legibilityWeight
 
   init(
     _ text: String, mark: String? = nil, marks: RichTextMarks? = nil,
@@ -86,7 +88,6 @@ struct RichTextBlocks: View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
           Text(ordered ? "\(index + 1)." : "•")
             .monospacedDigit()
-            .foregroundStyle(.secondary)
             .accessibilityHidden(true)
 
           line(
@@ -102,7 +103,7 @@ struct RichTextBlocks: View {
   ) -> some View {
     let drawn = highlighting(inline, mark)
 
-    return Text(drawn)
+    return Text(drawn, legibility: legibilityWeight)
       .handMarks(
         InlineMarks(
           drawn.text, underline: underline?.text, highlightsTerms: marks?.highlightsTerms == true)
@@ -129,6 +130,7 @@ private struct RichTable: View {
   let rows: [[String]]
   let inline: (String) -> RichInline
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
   @ScaledMetric(relativeTo: .subheadline) private var minimumColumnWidth = 88
   @State private var visibleWidth: CGFloat?
 
@@ -155,8 +157,8 @@ private struct RichTable: View {
     Grid(alignment: .leading, horizontalSpacing: columnSpacing, verticalSpacing: 8) {
       GridRow {
         ForEach(Array(header.enumerated()), id: \.offset) { index, cell in
-          Text(inline(cell))
-            .font(.subheadline.weight(.semibold))
+          Text(inline(cell), legibility: legibilityWeight)
+            .typeStyle(.body.weight(.semibold))
             .fixedSize(horizontal: false, vertical: true)
             .gridColumnAlignment(alignments[index].horizontal)
         }
@@ -167,8 +169,8 @@ private struct RichTable: View {
       ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
         GridRow {
           ForEach(Array(row.enumerated()), id: \.offset) { index, cell in
-            Text(inline(cell))
-              .font(alignments[index] == .leading ? .subheadline : .subheadline.monospacedDigit())
+            Text(inline(cell), legibility: legibilityWeight)
+              .typeStyle(alignments[index] == .leading ? .body : .body.monospacedDigit())
               .fixedSize(horizontal: false, vertical: true)
           }
         }

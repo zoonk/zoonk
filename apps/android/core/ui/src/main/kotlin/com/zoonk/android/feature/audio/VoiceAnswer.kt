@@ -17,9 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -50,9 +48,11 @@ import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitActions
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.limitMessage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -326,7 +326,7 @@ fun MicrophoneOff(
             Text(stringResource(R.string.audio_microphone_off_title), style = MaterialTheme.typography.titleSmall)
         }
         Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-        FilledTonalButton(
+        OutlinedButton(
             onClick = {
                 context.startActivity(
                     Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null)),

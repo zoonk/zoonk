@@ -30,7 +30,7 @@ struct TutorComposerBar: View {
                 comment: "Sending a question to the buddy failed")
               : failure.message
           )
-          .font(.footnote)
+          .typeStyle(.note)
         }
 
         composer
@@ -58,8 +58,9 @@ struct TutorComposerBar: View {
         send()
         return .handled
       }
-      .padding(.leading, 16)
-      .padding(.vertical, 12)
+      .typeStyle(.reading)
+      .padding(.vertical, 4)
+      .frame(minHeight: 30)
 
       Button(action: send) {
         Label {
@@ -70,30 +71,30 @@ struct TutorComposerBar: View {
         }
         .labelStyle(.iconOnly)
       }
-      .buttonStyle(.mainAction)
-      .buttonBorderShape(.circle)
+      .buttonStyle(.mainAction.icon)
+      .controlSize(.small)
       .keyboardShortcut(.return, modifiers: .command)
       .disabled(!conversation.canSendDraft)
-      .padding(6)
     }
-    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 24, style: .continuous))
+    .padding(.leading, 14)
+    .padding([.vertical, .trailing], 9)
+    .inputPanel(isFocused: isFocused)
   }
 
   private var suggestionChips: some View {
-    ScrollView(.horizontal) {
-      HStack(spacing: 8) {
-        ForEach(suggestions) { suggestion in
-          Button {
-            Task { await conversation.send(suggestion) }
-          } label: {
-            Text(suggestion.label)
-          }
-          .buttonStyle(.suggestionChip)
-          .disabled(!conversation.canAsk)
+    FlowLayout(spacing: 8) {
+      ForEach(suggestions) { suggestion in
+        Button {
+          Task { await conversation.send(suggestion) }
+        } label: {
+          Text(suggestion.label)
+            .multilineTextAlignment(.leading)
         }
+        .buttonStyle(.outline)
+        .controlSize(.regular)
+        .disabled(!conversation.canAsk)
       }
     }
-    .scrollIndicators(.hidden)
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
       Text("Suggestions", tableName: "Tutor", comment: "Questions to the buddy sent with one tap"))
@@ -105,8 +106,8 @@ struct TutorComposerBar: View {
         "Create a free account to start the conversation.", tableName: "Tutor",
         comment: "Guests and visitors can't talk to the buddy"
       )
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
 
       TutorRemedyButton(failure: .signUpRequired, retry: {})
     }
@@ -135,8 +136,8 @@ struct TutorLimitNotice: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
       Text(failure.message)
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
         .announcesAlert(failure.message)
 
       TutorRemedyButton(failure: failure, retry: {})
@@ -159,17 +160,17 @@ struct TutorRemedyButton: View {
       } label: {
         Text("Create a free account", tableName: "Tutor", comment: "Opens sign-up from the buddy")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     case .seePlus:
       SeePlusButton()
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
     case .signIn:
       Button {
         places.open(.account)
       } label: {
         Text("Sign in", tableName: "Tutor", comment: "Opens sign-in after the session expired")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     case .tryAgain:
       Button(action: retry) {
         Label {
@@ -178,7 +179,7 @@ struct TutorRemedyButton: View {
           Image(systemName: "arrow.clockwise")
         }
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     case .none:
       EmptyView()
     }

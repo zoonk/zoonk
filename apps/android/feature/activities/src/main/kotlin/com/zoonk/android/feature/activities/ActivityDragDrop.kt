@@ -40,6 +40,7 @@ import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import com.zoonk.android.ui.theme.ZoonkRadius
 
 /**
  * Main's `ActivityDragDrop`: pieces dragged onto targets. Dragging is one path of three: each
@@ -185,7 +186,7 @@ fun Modifier.activityDraggable(
     state: ActivityDragDropState,
     id: String,
     enabled: Boolean = true,
-    shape: Shape = RoundedCornerShape(12.dp),
+    shape: Shape = RoundedCornerShape(ZoonkRadius.option),
     actions: List<Pair<String, String>> = emptyList(),
 ): Modifier {
     if (!enabled) return this

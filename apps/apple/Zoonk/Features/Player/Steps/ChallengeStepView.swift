@@ -8,7 +8,9 @@ struct ChallengeStepView: View {
   let store: LessonPlayerStore
   let part: LessonStepPart
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
   @Environment(\.stacksContent) private var stacksContent
+
   @ScaledMetric(relativeTo: .subheadline) private var avatarSize = 36.0
 
   var body: some View {
@@ -43,47 +45,42 @@ struct ChallengeStepView: View {
 
   private var intro: some View {
     VStack(alignment: .leading, spacing: 16) {
-      Label {
-        content.variant == .whatIf
+      LessonEyebrow(
+        title: content.variant == .whatIf
           ? Text(
             "What if\u{00A0}· \(named(content.setting))", tableName: "Player",
             comment: "Above a what-if scenario's title")
           : Text(
             "Challenge\u{00A0}· \(named(content.setting))", tableName: "Player",
-            comment: "Above a challenge's title")
-      } icon: {
-        Image(systemName: "target")
-      }
-      .font(.subheadline.weight(.medium))
-      .foregroundStyle(.secondary)
+            comment: "Above a challenge's title"),
+        systemImage: "target")
 
       LessonQuestionText(text: named(content.title))
 
-      GroupBox {
-        VStack(alignment: .leading, spacing: 8) {
-          panelLabel(
-            Text("Your mission", tableName: "Player", comment: "Above a challenge's mission")
-          )
-          .accessibilityAddTraits(.isHeader)
-          LessonRichText(named(content.mission))
-            .font(.title3)
+      VStack(alignment: .leading, spacing: 8) {
+        panelLabel(
+          Text("Your mission", tableName: "Player", comment: "Above a challenge's mission")
+        )
+        .accessibilityAddTraits(.isHeader)
+        LessonRichText(named(content.mission))
+          .typeStyle(.section.weight(.regular))
 
-          if let deadline = content.deadline {
-            Label(named(deadline), systemImage: "clock")
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
-          }
+        if let deadline = content.deadline {
+          Label(named(deadline), systemImage: "clock")
+            .foregroundStyle(.mutedForeground)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
       }
+      .padding(16)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .panel()
 
       ForEach(Array(content.panels.enumerated()), id: \.offset) { _, panel in
         self.panel(panel)
       }
 
       Text("Your team", tableName: "Player", comment: "Above the people in a challenge")
-        .font(.caption.weight(.medium))
-        .foregroundStyle(.secondary)
+        .typeStyle(.meta.weight(.medium))
+        .foregroundStyle(.mutedForeground)
 
       ForEach(Array(content.team.enumerated()), id: \.offset) { _, slot in
         let name = name(for: slot.id)
@@ -93,12 +90,12 @@ struct ChallengeStepView: View {
 
           VStack(alignment: .leading) {
             Text(name)
-              .font(.subheadline.weight(.semibold))
+              .typeStyle(.body.weight(.semibold))
 
             if !slot.ai {
               Text(named(slot.role))
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+                .typeStyle(.note)
+                .foregroundStyle(.mutedForeground)
             }
           }
         }
@@ -118,8 +115,8 @@ struct ChallengeStepView: View {
             comment: "Under a challenge's team")
         }
       }
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -198,25 +195,26 @@ struct ChallengeStepView: View {
   @ViewBuilder
   private func meters(_ decisions: [ChallengeWalk.Decision]) -> some View {
     if !content.meters.isEmpty {
-      GroupBox {
-        VStack(alignment: .leading, spacing: 12) {
-          ForEach(ChallengeWalk.meters(content, decisions: decisions), id: \.meter.id) { meter in
-            Gauge(value: Double(meter.value), in: 0...100) {
-              AccessibilityStack(alignment: .firstTextBaseline, spacing: 12, stackedSpacing: 2) {
-                Text(named(meter.meter.label))
-                  .frame(maxWidth: .infinity, alignment: .leading)
+      VStack(alignment: .leading, spacing: 12) {
+        ForEach(ChallengeWalk.meters(content, decisions: decisions), id: \.meter.id) { meter in
+          VStack(alignment: .leading, spacing: 6) {
+            AccessibilityStack(alignment: .firstTextBaseline, spacing: 12, stackedSpacing: 2) {
+              Text(named(meter.meter.label))
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                if !decisions.isEmpty {
-                  move(meter.change, of: meter.meter)
-                }
+              if !decisions.isEmpty {
+                move(meter.change, of: meter.meter)
               }
-              .font(.subheadline)
             }
-            .gaugeStyle(.linearCapacity)
-            .tint(.secondary)
+            .typeStyle(.body)
+
+            Meter(value: Double(meter.value), total: 100, fill: .mutedForeground)
           }
+          .accessibilityElement(children: .combine)
         }
       }
+      .padding(16)
+      .well()
     }
   }
 
@@ -224,7 +222,7 @@ struct ChallengeStepView: View {
   private func move(_ change: Int, of meter: ChallengeContent.Meter) -> some View {
     if change == 0 {
       Text(Self.moveWords(change))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     } else {
       let isUp = change > 0
       let isBig = abs(change) >= 25
@@ -236,8 +234,8 @@ struct ChallengeStepView: View {
           systemName: isBig
             ? (isUp ? "chevron.up.2" : "chevron.down.2") : (isUp ? "arrow.up" : "arrow.down"))
       }
-      .fontWeight(.medium)
-      .foregroundStyle(isUp == (meter.goodWhen == .high) ? Color.success : .warning)
+      .typeWeight(.medium)
+      .foregroundStyle(isUp == (meter.goodWhen == .high) ? Color.successText : .warningText)
     }
   }
 
@@ -285,8 +283,7 @@ struct ChallengeStepView: View {
       HStack(spacing: 12) {
         VStack { Divider() }
         Label(named(jump.label), systemImage: "calendar.badge.clock")
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           .multilineTextAlignment(.center)
           .layoutPriority(1)
         VStack { Divider() }
@@ -301,50 +298,48 @@ struct ChallengeStepView: View {
   private func panel(_ panel: ChallengeContent.Panel) -> some View {
     let columns = stacksContent || panel.metrics.count < 2 ? 1 : 2
 
-    return GroupBox {
-      VStack(alignment: .leading, spacing: 12) {
-        if let title = panel.title {
-          panelLabel(Text(named(title)))
-        }
+    return VStack(alignment: .leading, spacing: 12) {
+      if let title = panel.title {
+        panelLabel(Text(named(title)))
+      }
 
-        LazyVGrid(
-          columns: Array(
-            repeating: GridItem(.flexible(), spacing: 16, alignment: .topLeading), count: columns),
-          alignment: .leading, spacing: 16
-        ) {
-          ForEach(Array(panel.metrics.enumerated()), id: \.offset) { _, metric in
-            VStack(alignment: .leading, spacing: 2) {
-              Text(named(metric.label))
-                .font(.caption)
-                .foregroundStyle(.secondary)
-              Text(metric.value)
-                .font(.title2.weight(.semibold))
-                .monospacedDigit()
-              if let note = metric.note {
-                Text(named(note))
-                  .font(.caption)
-                  .foregroundStyle(.secondary)
-              }
+      LazyVGrid(
+        columns: Array(
+          repeating: GridItem(.flexible(), spacing: 16, alignment: .topLeading), count: columns),
+        alignment: .leading, spacing: 16
+      ) {
+        ForEach(Array(panel.metrics.enumerated()), id: \.offset) { _, metric in
+          VStack(alignment: .leading, spacing: 2) {
+            Text(named(metric.label))
+              .typeStyle(.meta)
+              .foregroundStyle(.mutedForeground)
+            Text(metric.value)
+              .typeStyle(.readout)
+            if let note = metric.note {
+              Text(named(note))
+                .typeStyle(.meta)
+                .foregroundStyle(.mutedForeground)
             }
-            .accessibilityElement(children: .combine)
           }
-        }
-
-        if let note = panel.note {
-          LessonRichText(named(note))
-            .font(.caption)
-            .foregroundStyle(.secondary)
+          .accessibilityElement(children: .combine)
         }
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
+
+      if let note = panel.note {
+        LessonRichText(named(note))
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
+      }
     }
+    .padding(16)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .panel()
   }
 
   private func panelLabel(_ text: Text) -> some View {
     text
-      .font(.caption.weight(.medium))
-      .textCase(.uppercase)
-      .foregroundStyle(.secondary)
+      .typeStyle(.label)
+      .foregroundStyle(.faint)
   }
 
   private func message(_ message: ChallengeContent.Message) -> some View {
@@ -356,7 +351,9 @@ struct ChallengeStepView: View {
 
       VStack(alignment: .leading, spacing: 2) {
         speaker(name, role: slot.flatMap { $0.ai ? nil : named($0.role) })
+          .typeStyle(.body)
         LessonRichText(named(message.text))
+          .typeStyle(.reading)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -373,41 +370,39 @@ struct ChallengeStepView: View {
         Text(name.prefix(1).uppercased())
       }
     }
-    .font(.subheadline.weight(.semibold))
-    .foregroundStyle(isAI ? Color(.systemBackground) : .primary)
+    .typeStyle(.body.weight(.semibold))
+    .foregroundStyle(isAI ? Color(.primaryForeground) : Color(.foreground))
     .frame(width: avatarSize, height: avatarSize)
-    .background(isAI ? Color.primary : Color(.tertiarySystemFill), in: .circle)
+    .background(isAI ? Color(.primary) : Color.muted, in: .circle)
     .accessibilityHidden(true)
   }
 
   private func speaker(_ name: String, role: String?) -> Text {
-    var line = AttributedString(name)
-    line.font = .subheadline.weight(.semibold)
+    let name = Text(name).typeWeight(.semibold, legibility: legibilityWeight)
 
     if let role {
-      var rest = AttributedString("\u{00A0}· \(role)")
-      rest.foregroundColor = .secondary
-      line += rest
+      return Text("\(name)\(Text(verbatim: "\u{00A0}· \(role)").foregroundStyle(.mutedForeground))")
     }
 
-    return Text(line)
-      .font(.subheadline)
+    return name
   }
 
   private func pick(_ text: String) -> some View {
     let pick = LessonRichText.typeset(named(text))
 
-    return Text(pick)
-      .foregroundStyle(Color(.systemBackground))
-      .padding(.horizontal, 16)
-      .padding(.vertical, 10)
-      .background(.primary, in: .rect(cornerRadius: 16, style: .continuous))
-      .padding(.leading, 40)
-      .frame(maxWidth: .infinity, alignment: .trailing)
-      .accessibilityLabel(
-        Text(
-          "You: \(pick.quoted(spoken: true))", tableName: "Player",
-          comment: "VoiceOver: the learner's pick in a challenge's conversation"))
+    return ShareRow(share: 0.85, edge: .trailing) {
+      Text(pick, legibility: legibilityWeight)
+        .typeStyle(.reading)
+        .foregroundStyle(Color(.primaryForeground))
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(Color(.primary), in: .rect(cornerRadius: Radius.xl, style: .continuous))
+        .frame(maxWidth: .infinity, alignment: .trailing)
+        .accessibilityLabel(
+          Text(
+            "You: \(pick.quoted(spoken: true, legibility: legibilityWeight))", tableName: "Player",
+            comment: "VoiceOver: the learner's pick in a challenge's conversation"))
+    }
   }
 
   /// VoiceOver skips these, as on main: the meters above say the last move.
@@ -423,29 +418,29 @@ struct ChallengeStepView: View {
         ForEach(Array(moved.enumerated()), id: \.offset) { _, effect in
           HStack(alignment: .firstTextBaseline, spacing: 6) {
             Text(named(effect.meter.label))
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
             move(effect.change, of: effect.meter)
           }
         }
       }
-      .font(.caption)
+      .typeStyle(.meta)
       .accessibilityHidden(true)
     }
   }
 
   private func outcome(_ ending: ChallengeContent.Ending) -> some View {
-    GroupBox {
-      VStack(alignment: .leading, spacing: 8) {
-        panelLabel(
-          Text(
-            "What happened", tableName: "Player",
-            comment: "Above how a challenge's path ended, before the learner checks it")
-        )
-        .accessibilityAddTraits(.isHeader)
-        LessonRichText(named(ending.outcome))
-      }
-      .frame(maxWidth: .infinity, alignment: .leading)
+    VStack(alignment: .leading, spacing: 8) {
+      panelLabel(
+        Text(
+          "What happened", tableName: "Player",
+          comment: "Above how a challenge's path ended, before the learner checks it")
+      )
+      .accessibilityAddTraits(.isHeader)
+      LessonRichText(named(ending.outcome))
     }
+    .padding(16)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .well()
   }
 
   private func debrief(
@@ -465,66 +460,83 @@ struct ChallengeStepView: View {
           )
           : Text("Challenge complete", tableName: "Player", comment: "Title after a challenge ends")
       }
-      .font(.title2.weight(.semibold))
+      .typeStyle(.pageTitle)
       .accessibilityAddTraits(.isHeader)
 
       LessonRichText(named(ending.outcome))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
-      if !good.isEmpty {
-        notesSection(
-          Text("Nicely done", tableName: "Player", comment: "Above what went well in a challenge"),
-          notes: good,
-          tint: .success)
-      }
+      if !good.isEmpty || !improve.isEmpty {
+        VStack(alignment: .leading, spacing: 16) {
+          if !good.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+              Text(
+                "Nicely done", tableName: "Player", comment: "Above what went well in a challenge"
+              )
+              .typeStyle(.label)
+              .foregroundStyle(.successText)
+              .accessibilityAddTraits(.isHeader)
+              ForEach(Array(good.enumerated()), id: \.offset) { _, note in
+                Label {
+                  LessonRichText(named(note.text))
+                } icon: {
+                  Image(systemName: "checkmark")
+                    .foregroundStyle(.successText)
+                }
+              }
+            }
+          }
 
-      if !improve.isEmpty {
-        notesSection(
-          Text(
-            "To improve", tableName: "Player", comment: "Above what to improve after a challenge"),
-          notes: improve, tint: .warning)
+          if !good.isEmpty, !improve.isEmpty {
+            Divider()
+          }
+
+          if !improve.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+              Text(
+                "To improve", tableName: "Player",
+                comment: "Above what to improve after a challenge"
+              )
+              .typeStyle(.label)
+              .foregroundStyle(.warningText)
+              .accessibilityAddTraits(.isHeader)
+              ForEach(Array(improve.enumerated()), id: \.offset) { _, note in
+                VStack(alignment: .leading, spacing: 8) {
+                  LessonRichText(named(note.text))
+                  if let example = note.example {
+                    LessonRichText(named(example))
+                      .padding(.horizontal, 12)
+                      .padding(.vertical, 8)
+                      .background(
+                        Color.warning.opacity(0.1),
+                        in: .rect(cornerRadius: Radius.xl, style: .continuous))
+                  }
+                }
+              }
+            }
+          }
+        }
+        .typeStyle(.reading)
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .overlay(
+          RoundedRectangle(cornerRadius: Radius.xl, style: .continuous).strokeBorder(.border))
       }
 
       if !content.skills.isEmpty {
         Text(
           "Skills practiced", tableName: "Player", comment: "Above the skills a challenge trains"
         )
-        .font(.caption.weight(.medium))
-        .foregroundStyle(.secondary)
+        .typeStyle(.note.weight(.medium))
+        .foregroundStyle(.mutedForeground)
         FlowLayout(spacing: 8) {
           ForEach(content.skills) { skill in
             Text(skill.name)
-              .font(.footnote)
-              .padding(.horizontal, 10)
-              .padding(.vertical, 4)
-              .background(Color(.secondarySystemBackground), in: .capsule)
+              .chip(wraps: true)
           }
         }
       }
     }
-  }
-
-  private func notesSection(_ title: Text, notes: [ChallengeContent.Choice.Note], tint: Color)
-    -> some View
-  {
-    VStack(alignment: .leading, spacing: 8) {
-      title
-        .font(.headline)
-        .foregroundStyle(tint)
-      ForEach(Array(notes.enumerated()), id: \.offset) { _, note in
-        VStack(alignment: .leading, spacing: 2) {
-          LessonRichText(named(note.text))
-          if let example = note.example {
-            LessonRichText(named(example))
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
-          }
-        }
-      }
-    }
-    .padding()
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .background(tint.opacity(0.15), in: .rect(cornerRadius: 20))
   }
 
   private func name(for slotId: String) -> String {
