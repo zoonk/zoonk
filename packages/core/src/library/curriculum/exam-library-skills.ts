@@ -7,30 +7,66 @@ import { type CurriculumScope } from "./curriculum-scope";
 type FrameCourse = { key: string; title: string };
 type ExamScope = Pick<CurriculumScope, "language" | "ownerId" | "targetLanguage">;
 
-/**
- * A skill's size where another exam's graph places it in one of these courses, or anywhere for
- * these skills; the largest when several graphs do.
- */
-async function listPlacedSkills({
+async function listCourseSkills({
   courseIds = [],
   examBlueprintId,
+  language,
   skillIds = [],
 }: {
   courseIds?: readonly string[];
   examBlueprintId: string;
+  language: string;
   skillIds?: readonly string[];
 }) {
   return prisma.$queryRaw<{ courseId: string; lessons: number; skillId: string }[]>`
-    SELECT placed.course_id AS "courseId", entry->>'skillId' AS "skillId",
-      MAX(COALESCE((entry->>'lessons')::int, 1)) AS lessons
-    FROM exam_skill_graphs AS graph
-    CROSS JOIN LATERAL jsonb_array_elements(graph.graph->'skills') AS entry
-    CROSS JOIN LATERAL jsonb_array_elements_text(entry->'courseIds') AS placed(course_id)
-    WHERE graph.exam_blueprint_id <> ${examBlueprintId}::uuid
-      AND (placed.course_id = ANY(${[...courseIds]}::text[])
-        OR entry->>'skillId' = ANY(${[...skillIds]}::text[]))
-    GROUP BY placed.course_id, entry->>'skillId'
-    ORDER BY MIN(graph.created_at), placed.course_id, entry->>'skillId'
+    WITH chapter_courses AS (
+      SELECT id AS chapter_id, home_course_id AS course_id FROM library_chapters
+      WHERE home_course_id IS NOT NULL
+      UNION
+      SELECT chapter_id, course_id FROM course_chapters
+    ), lesson_chapters AS (
+      SELECT id AS lesson_id, home_chapter_id AS chapter_id FROM library_lessons
+      WHERE home_chapter_id IS NOT NULL
+      UNION
+      SELECT lesson_id, chapter_id FROM chapter_lessons
+    ), taught AS (
+      SELECT link.skill_id, placement.course_id, NULL::uuid AS lesson_id
+      FROM chapter_skills AS link
+      JOIN library_chapters AS chapter ON chapter.id = link.chapter_id
+      JOIN chapter_courses AS placement ON placement.chapter_id = chapter.id
+      WHERE chapter.visibility = 'public' AND chapter.language = ${language}
+        AND chapter.target_language IS NULL
+      UNION ALL
+      SELECT link.skill_id, placement.course_id, lesson.id
+      FROM lesson_skills AS link
+      JOIN library_lessons AS lesson ON lesson.id = link.lesson_id
+      JOIN lesson_chapters ON lesson_chapters.lesson_id = lesson.id
+      JOIN library_chapters AS chapter ON chapter.id = lesson_chapters.chapter_id
+      JOIN chapter_courses AS placement ON placement.chapter_id = chapter.id
+      WHERE lesson.visibility = 'public' AND lesson.language = ${language}
+        AND lesson.target_language IS NULL
+        AND chapter.visibility = 'public' AND chapter.language = ${language}
+        AND chapter.target_language IS NULL
+    ), memberships AS (
+      SELECT skill_id::text, course_id::text, GREATEST(COUNT(DISTINCT lesson_id), 1)::int AS lessons
+      FROM taught GROUP BY skill_id, course_id
+      UNION ALL
+      SELECT entry->>'skillId', placed.course_id, COALESCE((entry->>'lessons')::int, 1)
+      FROM exam_skill_graphs AS graph
+      CROSS JOIN LATERAL jsonb_array_elements(graph.graph->'skills') AS entry
+      CROSS JOIN LATERAL jsonb_array_elements_text(entry->'courseIds') AS placed(course_id)
+      WHERE graph.exam_blueprint_id <> ${examBlueprintId}::uuid
+    )
+    SELECT membership.course_id AS "courseId", membership.skill_id AS "skillId",
+      MAX(membership.lessons) AS lessons
+    FROM memberships AS membership
+    JOIN courses AS course ON course.id::text = membership.course_id
+    WHERE course.visibility = 'public' AND course.language = ${language}
+      AND course.target_language IS NULL
+      AND (membership.course_id = ANY(${[...courseIds]}::text[])
+        OR membership.skill_id = ANY(${[...skillIds]}::text[]))
+    GROUP BY membership.course_id, membership.skill_id
+    ORDER BY membership.course_id, membership.skill_id
   `;
 }
 
@@ -51,11 +87,7 @@ async function listPrerequisiteLinks(skillIds: readonly string[]) {
 
 const FALLBACK_LEVEL: CourseLevel = "intermediate";
 
-/**
- * The public skills other exams' graphs place in these courses, and what they build on in the
- * course a graph places it, even another discipline's: only what a current graph uses, so an exam
- * builds on how other exams cut a subject, not on content no exam plans from anymore.
- */
+/** Library teaching and exam placements share one pool, including prerequisites across courses. */
 export async function loadExamLibrarySkills({
   courseIds,
   examBlueprintId,
@@ -69,7 +101,7 @@ export async function loadExamLibrarySkills({
     return [];
   }
 
-  const inCourses = await listPlacedSkills({ courseIds, examBlueprintId });
+  const inCourses = await listCourseSkills({ courseIds, examBlueprintId, language });
   const placedIds = new Set(inCourses.map((entry) => entry.skillId));
   const links = await listPrerequisiteLinks([...placedIds]);
 
@@ -80,7 +112,7 @@ export async function loadExamLibrarySkills({
   const placed = [
     ...inCourses,
     ...(foundations.length > 0
-      ? await listPlacedSkills({ examBlueprintId, skillIds: foundations })
+      ? await listCourseSkills({ examBlueprintId, language, skillIds: foundations })
       : []),
   ];
 

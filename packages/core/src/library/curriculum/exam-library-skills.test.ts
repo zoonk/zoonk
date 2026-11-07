@@ -5,6 +5,7 @@ import { type Course, type ExamBlueprint, type Skill, prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import {
+  chapterSkillFixture,
   courseChapterFixture,
   libraryChapterFixture,
 } from "@zoonk/testing/fixtures/library-chapters";
@@ -81,6 +82,39 @@ function graphSkill(
 }
 
 describe(loadExamLibrarySkills, () => {
+  it("offers chapter and lesson skills before any exam places them", async () => {
+    const [course, blueprint, [chapterSkill, lessonSkill]] = await Promise.all([
+      courseFixture({ language: "pt" }),
+      examBlueprintFixture({ language: "pt" }),
+      skillsFixture([`Chapter ${randomUUID()}`, `Lesson ${randomUUID()}`], { language: "pt" }),
+    ]);
+
+    const chapter = await libraryChapterFixture({ homeCourseId: course.id, language: "pt" });
+    const lessons = await libraryLessonsFixture(2, { homeChapterId: chapter.id, language: "pt" });
+
+    await Promise.all([
+      chapterSkillFixture({ chapterId: chapter.id, skillId: chapterSkill!.id }),
+      ...lessons.map((lesson) =>
+        lessonSkillFixture({ lessonId: lesson.id, skillId: lessonSkill!.id }),
+      ),
+    ]);
+
+    const listed = await loadExamLibrarySkills({
+      courseIds: [course.id],
+      examBlueprintId: blueprint.id,
+      language: "pt",
+    });
+
+    expect(listed.map((skill) => skill.id).toSorted()).toStrictEqual(
+      [chapterSkill!.id, lessonSkill!.id].toSorted(),
+    );
+
+    expect(listed.find((skill) => skill.id === lessonSkill!.id)).toMatchObject({
+      courseId: course.id,
+      lessons: 2,
+    });
+  });
+
   it("lists the public skills other exams' graphs place in the courses, with their size and links", async () => {
     const [course, otherCourse, blueprint, otherBlueprint] = await Promise.all([
       courseFixture({ language: "pt" }),
