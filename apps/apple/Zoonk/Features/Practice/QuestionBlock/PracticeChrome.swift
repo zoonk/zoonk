@@ -205,6 +205,7 @@ extension View {
 
 struct PracticeMainButton: View {
   let title: LocalizedStringResource
+  var systemImage: String?
   var isBusy = false
   var isDisabled = false
   let action: () -> Void
@@ -215,6 +216,10 @@ struct PracticeMainButton: View {
         if isBusy {
           ProgressView()
             .controlSize(.small)
+        }
+        if let systemImage {
+          Image(systemName: systemImage)
+            .accessibilityHidden(true)
         }
         Text(title)
       }
