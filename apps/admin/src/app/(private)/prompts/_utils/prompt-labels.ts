@@ -12,7 +12,7 @@ export const promptOutcomeLabels: Record<PromptOutcome, string> = {
   failed: "Failed",
   goalCreated: "Goal created",
   inProgress: "In progress",
-  noGoal: "No goal",
+  noGoal: "Not confirmed",
   unclear: "Too vague",
   unsafe: "Declined",
 };

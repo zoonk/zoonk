@@ -4,14 +4,13 @@ import { Input } from "@zoonk/ui/components/input";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { SEARCH_QUERY_THROTTLE_MS } from "@zoonk/utils/search";
 import { Search } from "lucide-react";
-import { throttle, useQueryState } from "nuqs";
+import { parseAsString, throttle, useQueryStates } from "nuqs";
 
 export function AdminSearch({ placeholder }: { placeholder: string }) {
-  const [search, setSearch] = useQueryState("search", {
-    defaultValue: "",
-    limitUrlUpdates: throttle(SEARCH_QUERY_THROTTLE_MS),
-    shallow: false,
-  });
+  const [query, setQuery] = useQueryStates(
+    { page: parseAsString, search: parseAsString.withDefault("") },
+    { limitUrlUpdates: throttle(SEARCH_QUERY_THROTTLE_MS), shallow: false },
+  );
 
   return (
     <div className="relative w-full sm:max-w-md">
@@ -21,10 +20,10 @@ export function AdminSearch({ placeholder }: { placeholder: string }) {
       />
       <Input
         className="pl-9"
-        onChange={(event) => setSearch(event.target.value)}
+        onChange={(event) => setQuery({ page: null, search: event.target.value })}
         placeholder={placeholder}
         type="search"
-        value={search}
+        value={query.search}
       />
     </div>
   );

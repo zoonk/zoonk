@@ -12,10 +12,10 @@ import { PromptRow } from "./prompt-row";
 
 const columns: AdminTableColumn[] = [
   { label: "Prompt" },
+  { label: "Outcome" },
+  { label: "Read as" },
   { label: "Learner" },
   { label: "Language" },
-  { label: "Read as" },
-  { label: "Outcome" },
   { label: "Date" },
 ];
 

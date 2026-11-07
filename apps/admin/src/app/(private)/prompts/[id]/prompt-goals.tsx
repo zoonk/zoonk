@@ -17,10 +17,13 @@ export function PromptGoals({ prompt }: { prompt: AdminPrompt }) {
       {prompt.goals.map((goal) => (
         <AdminTableRow key={goal.id}>
           <TableCell className="min-w-56">
-            <AdminTableRowLink className="font-medium" href={`/users/${prompt.user.id}`} prefetch>
-              {goal.title}
-            </AdminTableRowLink>
+            <span className="font-medium">{goal.title}</span>
             <span className="text-muted-foreground block text-xs">{goal.kind}</span>
+            {goal.primaryCourse ? (
+              <AdminTableRowLink className="text-xs" href={`/courses/${goal.primaryCourse.id}`}>
+                {goal.primaryCourse.title}
+              </AdminTableRowLink>
+            ) : null}
           </TableCell>
           <TableCell>
             <Badge className="capitalize" variant="outline">

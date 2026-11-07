@@ -22,25 +22,7 @@ import {
 import { PromptGoals } from "./prompt-goals";
 import { PromptReading } from "./prompt-reading";
 
-export async function generateMetadata({ params }: PageProps<"/prompts/[id]">): Promise<Metadata> {
-  const { id } = await params;
-
-  if (!isUuid(id)) {
-    notFound();
-  }
-
-  const prompt = await getPrompt(id);
-
-  if (!prompt) {
-    notFound();
-  }
-
-  return { title: getPromptTitle(prompt) };
-}
-
-function getPromptTitle(prompt: AdminPrompt): string {
-  return `Prompt from ${getPromptLearnerLabel(prompt.user)}`;
-}
+export const metadata: Metadata = { title: "Prompt" };
 
 const PROMPT_PARENTS = [{ href: "/prompts", label: "Prompts" }];
 
@@ -66,11 +48,8 @@ function PromptDetails({ prompt }: { prompt: AdminPrompt }) {
         </Link>
         {email && <span className="text-muted-foreground block">{email}</span>}
       </DetailField>
-      <DetailField label="Language">{prompt.language}</DetailField>
       <DetailField label="Time zone">{prompt.timeZone}</DetailField>
-      <DetailField label="Status">{prompt.status}</DetailField>
       <DetailField label="Run">{prompt.runId ?? "—"}</DetailField>
-      <DetailField label="Typed">{formatDateTime(prompt.createdAt)}</DetailField>
       <DetailField label="Updated">{formatDateTime(prompt.updatedAt)}</DetailField>
     </DetailFields>
   );
@@ -82,6 +61,12 @@ async function PromptDetailContent({ params }: Pick<PageProps<"/prompts/[id]">, 
   if (!isUuid(id)) {
     notFound();
   }
+
+  return <PromptDetail id={id} />;
+}
+
+async function PromptDetail({ id }: { id: string }) {
+  "use cache: private";
 
   const prompt = await getPrompt(id);
 
@@ -101,7 +86,7 @@ async function PromptDetailContent({ params }: Pick<PageProps<"/prompts/[id]">, 
           `Typed ${formatDateTime(prompt.createdAt)}`,
         ]}
         parents={PROMPT_PARENTS}
-        title={getPromptTitle(prompt)}
+        title={`Prompt from ${getPromptLearnerLabel(prompt.user)}`}
       />
 
       <AdminDetailBody>
@@ -142,7 +127,7 @@ function PromptDetailSkeleton() {
         </AdminSectionSkeleton>
         <AdminSectionSkeleton description rows={2} />
         <AdminSectionSkeleton rows={1} />
-        <AdminSectionSkeleton rows={7} />
+        <AdminSectionSkeleton rows={4} />
       </AdminDetailBody>
     </>
   );

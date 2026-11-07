@@ -66,11 +66,13 @@ function ReadingBody({ prompt }: { prompt: AdminPrompt }) {
   return <AdminSectionEmpty>{readingNotes[prompt.outcome]}</AdminSectionEmpty>;
 }
 
+const OLDER_FORMAT_NOTE = "This reading is in an older format. Open the stored reading below.";
+
 const readingNotes: Record<PromptOutcome, string> = {
   failed: "The words couldn't be read.",
-  goalCreated: "No reading is stored.",
+  goalCreated: OLDER_FORMAT_NOTE,
   inProgress: "Still reading the words.",
-  noGoal: "No reading is stored.",
+  noGoal: OLDER_FORMAT_NOTE,
   unclear: "Too vague to plan. The learner was asked to say more.",
   unsafe: "Declined as unsafe.",
 };
