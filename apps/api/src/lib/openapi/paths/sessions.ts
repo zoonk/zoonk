@@ -3,7 +3,7 @@ import { RESTORE_KEY_RP_ID } from "@zoonk/auth/restore-key-contract";
 import { z } from "zod";
 import { accessErrorCodes } from "../../access-error-codes";
 import { sessionErrorCodes } from "../../session-error-codes";
-import { appProofHeaderParamsSchema } from "../schemas/app-attest";
+import { appProofHeaderParamsSchema, playIntegrityHeaderParamsSchema } from "../schemas/app-attest";
 import {
   badRequestResponse,
   forbiddenResponse,
@@ -139,19 +139,24 @@ export const sessionPaths = {
   },
   "/sessions/current/restore-keys": {
     post: {
-      description: `Registers the restore key the Android app made with Credential Manager's Restore Credentials after this session signed in, so the learner's next phone signs in with \`POST /v1/sessions/restore-key\`. ${RESTORE_KEY_CHALLENGE} Use ES256 or RS256, attestation \`none\` and a discoverable credential; user verification isn't required. The key signs in only while this session lasts: signing out, deleting the account or a guest creating an account ends it on every phone. Registering the same key again for this session is a no-op.`,
+      description: `Registers the restore key the Android app made with Credential Manager's Restore Credentials after this session signed in, so the learner's next phone signs in with \`POST /v1/sessions/restore-key\`. ${RESTORE_KEY_CHALLENGE} Use ES256 or RS256, attestation \`none\` and a discoverable credential; user verification isn't required. In production, the request also carries a Play Integrity token in the \`X-Play-Integrity-*\` headers, made over a second challenge from \`POST /v1/app-attest/challenges\` with the operation \`restore-key\` and the registration's \`id\`. The key signs in only while this session lasts: signing out, deleting the account or a guest creating an account ends it on every phone. A session keeps one key: registering another replaces it, and registering the same key again is a no-op.`,
       operationId: "createRestoreKey",
       requestBody: {
         content: { "application/json": { schema: restoreKeyRequestBodySchema } },
         required: true,
       },
+      requestParams: { header: playIntegrityHeaderParamsSchema },
       responses: {
         "204": { description: "Restore key registered, or already registered for this session" },
         "400": {
           ...badRequestResponse,
-          description: `Request validation failed, the challenge wasn't issued here or was already used or expired, or the registration is malformed, doesn't verify (origin, RP ID, algorithm) or names a key another session registered. Error codes include: ${sessionErrorCodes.restoreKeyChallengeInvalid}, ${sessionErrorCodes.restoreKeyResponseMalformed}, ${sessionErrorCodes.restoreKeyRegistrationInvalid}.`,
+          description: `Request validation failed, the challenge wasn't issued here or was already used or expired, the registration is malformed, doesn't verify (origin, RP ID, algorithm) or names a key another session registered, or the session is an admin's impersonation of a learner. Error codes include: ${sessionErrorCodes.restoreKeyChallengeInvalid}, ${sessionErrorCodes.restoreKeyResponseMalformed}, ${sessionErrorCodes.restoreKeyRegistrationInvalid}.`,
         },
         "401": unauthorizedResponse,
+        "403": {
+          ...forbiddenResponse,
+          description: `In production, the request had no valid Play Integrity proof for this key. Error code: ${accessErrorCodes.botDetected}.`,
+        },
         "429": authRateLimitResponse,
       },
       security: AUTHENTICATED_SECURITY,
@@ -200,7 +205,7 @@ export const sessionPaths = {
   },
   "/sessions/restore-key": {
     post: {
-      description: `Signs a new phone in with the restore key Google moved to it from the learner's previous phone, creating a new session for that learner, guests included. The previous phone keeps its own session, and this key signs in only while that session lasts, so register a new key for the new session with \`POST /v1/sessions/current/restore-keys\`. ${RESTORE_KEY_CHALLENGE} No bot proof is needed: the key's signature is the proof.`,
+      description: `Signs a new phone in with the restore key Google moved to it from the learner's previous phone, creating a new session for that learner, guests included. The previous phone keeps its own session, and this key signs in only while that session lasts, so register a new key for the new session with \`POST /v1/sessions/current/restore-keys\`. ${RESTORE_KEY_CHALLENGE} No bot proof is needed: the key's signature is the proof. A 5xx means keys can't be checked right now, so keep the key and try again later.`,
       operationId: "createRestoreKeySession",
       requestBody: {
         content: { "application/json": { schema: restoreKeySessionRequestBodySchema } },
