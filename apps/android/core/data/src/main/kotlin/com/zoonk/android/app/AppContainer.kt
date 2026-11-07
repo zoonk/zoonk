@@ -162,9 +162,14 @@ class AppContainer private constructor(
     val api = ApiClients("${BuildConfig.API_BASE_URL}/v1/".toHttpUrl(), apiHttpClient { buildTypeSetup() })
     val images = PrivateImages(api.baseUrl, imageLoader(context, api.http))
     val drafts = DraftStore(File(context.filesDir, "drafts"), scope)
+    private val integrity =
+        BuildConfig.PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER
+            .toLongOrNull()
+            ?.takeIf { previewAccess == null }
+            ?.let { PlayIntegrity(context, it, scope) }
     val sessions: SessionStore =
         SessionStore(
-            api = LiveSessionApi(api),
+            api = LiveSessionApi(api, integrity),
             appleClientId = BuildConfig.APPLE_CLIENT_ID,
             appleReflectorUrl = api.baseUrl.resolve("/auth/apple/android").toString(),
             credentials = credentials,
@@ -204,11 +209,6 @@ class AppContainer private constructor(
     val mindMaps = MindMapStore(LiveMindMapApi(api, images), cache)
 
     // Account and Plus (L1).
-    private val integrity =
-        BuildConfig.PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER
-            .toLongOrNull()
-            ?.takeIf { previewAccess == null }
-            ?.let { PlayIntegrity(context, it, scope) }
     val account = AccountStore(LiveAccountApi(api, integrity), sessions, cache)
     val memory = MemoryStore(LiveMemoryApi(api), cache)
     val feedback = FeedbackSender(LiveFeedbackApi(api), sessions)
