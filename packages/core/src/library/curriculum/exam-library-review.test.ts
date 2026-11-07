@@ -71,3 +71,52 @@ describe("review repros", () => {
     expect(library.skills).toMatchObject([{ id: skill.id, lessons: 1 }]);
   });
 });
+
+describe("foundation sizing", () => {
+  it("sizes a chapter-taught foundation from another discipline by its lessons, as the course pool does", async () => {
+    const [physics, mathematics, blueprint, applied, foundation] = await Promise.all([
+      courseFixture({ language: "pt" }),
+      courseFixture({ language: "pt" }),
+      examBlueprintFixture({ language: "pt" }),
+      skillFixture({ language: "pt" }),
+      skillFixture({ language: "pt" }),
+    ]);
+
+    const [physicsChapter, mathChapter] = await Promise.all([
+      libraryChapterFixture({ homeCourseId: physics.id, language: "pt" }),
+      libraryChapterFixture({ homeCourseId: mathematics.id, language: "pt" }),
+    ]);
+
+    const [physicsLessons, mathLessons] = await Promise.all([
+      libraryLessonsFixture(2, { homeChapterId: physicsChapter.id, language: "pt" }),
+      libraryLessonsFixture(3, { homeChapterId: mathChapter.id, language: "pt" }),
+    ]);
+
+    await Promise.all([
+      chapterSkillFixture({ chapterId: physicsChapter.id, skillId: applied.id }),
+      chapterSkillFixture({ chapterId: mathChapter.id, skillId: foundation.id }),
+      ...physicsLessons.map((lesson, position) =>
+        chapterLessonFixture({ chapterId: physicsChapter.id, lessonId: lesson.id, position }),
+      ),
+      ...mathLessons.map((lesson, position) =>
+        chapterLessonFixture({ chapterId: mathChapter.id, lessonId: lesson.id, position }),
+      ),
+      prisma.skillPrerequisite.create({
+        data: { prerequisiteId: foundation.id, skillId: applied.id },
+      }),
+    ]);
+
+    const library = await findExamLibrary({
+      courseIdsByKey: { physics: physics.id },
+      examBlueprintId: blueprint.id,
+      language: "pt",
+    });
+
+    expect(library.skills.find(({ id }) => id === applied.id)).toMatchObject({ lessons: 2 });
+
+    expect(library.skills.find(({ id }) => id === foundation.id)).toMatchObject({
+      course: mathematics.id,
+      lessons: 3,
+    });
+  });
+});
