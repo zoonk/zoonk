@@ -67,7 +67,6 @@ async function applyChoices({
 
   const result = await applyChangeNow({
     context,
-    extraWrites: (tx) => oweGoalLessons({ db: tx, goalId: goal.id, userId: goal.userId }),
     followToday: true,
     operations: changed.map((choice) => ({ kind: "setExamChoice" as const, ...choice })),
     reason: EXAM_CHOICE_NOTE,
@@ -78,8 +77,15 @@ async function applyChoices({
     return result;
   }
 
-  const change = result.status === "saved" ? null : await loadPlanChangeView(result.changeId);
-  return { change, status: "applied" };
+  if (result.status === "saved") {
+    return { change: null, status: "applied" };
+  }
+
+  // Owed after today follows the choice, not in its transaction: a day saved while the ask is fresh
+  // waits on those lessons, then fills its whole time from later days once they're written.
+  await oweGoalLessons({ goalId: goal.id, userId: goal.userId });
+
+  return { change: await loadPlanChangeView(result.changeId), status: "applied" };
 }
 
 export async function chooseExamOption({
