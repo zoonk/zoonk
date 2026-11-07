@@ -85,4 +85,17 @@ describe(namesAnyProduct, () => {
       ),
     ).toStrictEqual([false, true, true, false]);
   });
+
+  it("finds a name of any length", () => {
+    const keys = [toNameKey("Microsoft Dynamics 365 Finance and Operations")];
+
+    expect([
+      namesAnyProduct({
+        keys,
+        own: [],
+        text: "Microsoft Dynamics 365 Finance and Operations 10.0.45",
+      }),
+      namesAnyProduct({ keys, own: [], text: "Microsoft Dynamics 365 Finance 10.0.45" }),
+    ]).toStrictEqual([true, false]);
+  });
 });

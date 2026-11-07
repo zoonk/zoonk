@@ -21,21 +21,26 @@ export function toNameKey(name: string): string {
   );
 }
 
-/** Enough words for a product's name, such as "Microsoft Dynamics 365 Business Central". */
-const MAX_NAME_WORDS = 5;
-
 type NameSpan = { end: number; key: string; start: number };
 
-function listNameSpans(text: string): NameSpan[] {
+/** Word runs whose key is no longer than `maxLength`: a word added to a run never shortens its key. */
+function listNameSpans({ maxLength, text }: { maxLength: number; text: string }): NameSpan[] {
   const words = text.split(/\s+/u).filter(Boolean);
+  const spans: NameSpan[] = [];
 
-  return words.flatMap((_, start) =>
-    Array.from({ length: Math.min(MAX_NAME_WORDS, words.length - start) }, (__, size) => ({
-      end: start + size + 1,
-      key: toNameKey(words.slice(start, start + size + 1).join(" ")),
-      start,
-    })),
-  );
+  for (const [start] of words.entries()) {
+    for (let end = start + 1; end <= words.length; end += 1) {
+      const key = toNameKey(words.slice(start, end).join(" "));
+
+      if (key.length > maxLength) {
+        break;
+      }
+
+      spans.push({ end, key, start });
+    }
+  }
+
+  return spans;
 }
 
 /**
@@ -51,8 +56,9 @@ export function namesAnyProduct({
   own: readonly string[];
   text: string;
 }): boolean {
-  const spans = listNameSpans(text);
   const [wanted, ownKeys] = [new Set(keys), new Set(own.map((name) => toNameKey(name)))];
+  const maxLength = Math.max(0, ...[...wanted, ...ownKeys].map((key) => key.length));
+  const spans = listNameSpans({ maxLength, text });
   const owned = spans.filter((span) => ownKeys.has(span.key));
 
   return spans.some(
