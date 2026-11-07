@@ -48,7 +48,15 @@ async function saveLevel({ context, level }: { context: PlanContext; level: OwnL
       return unchanged(goal);
     }
 
-    return tx.goal.update({ data: { details: { ...details, level } }, where: { id: goal.id } });
+    const saved = await tx.goal.update({
+      data: { details: { ...details, level } },
+      where: { id: goal.id },
+    });
+
+    // The level decides what's written ahead, such as where lessons likely start.
+    await oweGoalLessons({ db: tx, goalId: goal.id, userId: goal.userId });
+
+    return saved;
   });
 
   revalidateCacheTags([getGoalsCacheTag(context.goal.userId)]);
