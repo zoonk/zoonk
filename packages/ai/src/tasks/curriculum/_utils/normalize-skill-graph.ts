@@ -84,7 +84,7 @@ function clamp({ max, min, value }: { max: number; min: number; value: number })
   return Math.min(max, Math.max(min, Math.round(value)));
 }
 
-function toKey(value: string): string {
+export function toKey(value: string): string {
   return value.trim().toLowerCase();
 }
 

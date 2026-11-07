@@ -6,6 +6,7 @@ import { draftAgainWhenFlawed } from "../_utils/draft-again";
 import { EmptySkillGraphError } from "./_utils/empty-skill-graph-error";
 import { findRedraftProblems, redraftFlawedSections } from "./_utils/graph-drafts";
 import { addLibraryCourses, formatLibrarySkills } from "./_utils/library-skills";
+import { toKey } from "./_utils/normalize-skill-graph";
 import {
   type GraphFrameSection,
   shouldWriteInSections,
@@ -52,15 +53,24 @@ function generateCheckedWholeGraph({ params, tasks }: Generation) {
 async function generateSectionedGraph({ params, tasks }: Generation) {
   const frame = await tasks.frame(params);
 
-  const calls = toSectionCalls(frame.output.sections);
+  const output = {
+    ...frame.output,
+    courses: frame.output.courses.map((course) => ({ ...course, key: toKey(course.key) })),
+    sections: frame.output.sections.map((section) => ({
+      ...section,
+      course: toKey(section.course),
+    })),
+  };
+
+  const calls = toSectionCalls(output.sections);
 
   if (calls.length === 0) {
     return generateCheckedWholeGraph({ params, tasks });
   }
 
-  const courses = frame.output.courses.map(({ key, title }) => ({ key, title }));
+  const courses = output.courses.map(({ key, title }) => ({ key, title }));
   const library = await params.findLibrarySkills?.({ courses, provenance: frame.provenance });
-  const framed = library ? addLibraryCourses({ frame: frame.output, library }) : frame.output;
+  const framed = library ? addLibraryCourses({ frame: output, library }) : output;
   const listed = library ? formatLibrarySkills(library.skills) : null;
 
   const toPart = (sections: readonly GraphFrameSection[]): SkillsPart => ({
