@@ -81,8 +81,8 @@ struct NumberLineCanvas: View {
             comment: "A number line's label with its unit, like Temperature in °C")
         } ?? fields.label
       )
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
 
       chart
 
@@ -94,7 +94,7 @@ struct NumberLineCanvas: View {
   private var chart: some View {
     Chart {
       RuleMark(y: .value(verbatim: "line", 0))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
       ForEach(Array(jumps.enumerated()), id: \.offset) { index, jump in
         ForEach(arc(from: jump.from, to: jump.to), id: \.x) { point in
@@ -102,7 +102,7 @@ struct NumberLineCanvas: View {
             x: .value(verbatim: "x", point.x), y: .value(verbatim: "y", point.y),
             series: .value(verbatim: "jump", index)
           )
-          .foregroundStyle(isChecked ? Color.orange : Color.mint)
+          .foregroundStyle(isChecked ? Color.vizHighlight : Color.vizAccent)
           .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
           .interpolationMethod(.catmullRom)
         }
@@ -114,15 +114,15 @@ struct NumberLineCanvas: View {
         .opacity(0)
         .annotation(position: .top, spacing: 2) {
           Text(verbatim: jump.label)
-            .font(.caption.weight(.semibold).monospacedDigit())
-            .foregroundStyle(isChecked ? Color.orange : Color.mint)
+            .typeStyle(.meta.weight(.semibold).monospaced())
+            .foregroundStyle(isChecked ? Color.vizHighlight : Color.vizAccent)
         }
       }
 
       PointMark(x: .value(verbatim: "start", fields.start), y: .value(verbatim: "y", 0))
         .symbol(.circle)
         .symbolSize(90)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
       if isChecked {
         PointMark(x: .value(verbatim: "landing", fields.landing), y: .value(verbatim: "y", 0))
@@ -138,13 +138,14 @@ struct NumberLineCanvas: View {
       AxisMarks(values: fields.ticks.map(\.value)) { value in
         AxisTick(
           length: value.as(Double.self) == 0 ? 12 : 6,
-          stroke: StrokeStyle(lineWidth: value.as(Double.self) == 0 ? 2 : 1.5))
+          stroke: StrokeStyle(lineWidth: value.as(Double.self) == 0 ? 2 : 1.5)
+        ).foregroundStyle(.vizGrid)
         if let tick = value.as(Double.self),
           fields.ticks.contains(where: { $0.value == tick && $0.isLabelled })
         {
           AxisValueLabel(verticalSpacing: 16) {
             Text(verbatim: ActivityNumberFormat.format(tick))
-              .fontWeight(tick == 0 ? .semibold : .regular)
+              .typeWeight(tick == 0 ? .semibold : .regular)
           }
         }
       }
@@ -166,7 +167,7 @@ struct NumberLineCanvas: View {
             )
             .accessibilityHidden(true)
 
-          ChartsHandle(tint: .mint, isEnabled: !isChecked)
+          ChartsHandle(tint: .vizAccent, isEnabled: !isChecked)
             .chartsAdjustable(
               label: Text(
                 "Your answer on the number line", tableName: "ActivitiesCharts",

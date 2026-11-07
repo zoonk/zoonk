@@ -91,6 +91,7 @@ import com.zoonk.android.feature.activities.orderIds
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import kotlin.math.ceil
@@ -498,7 +499,7 @@ private fun AnchorCard(
     formatYear: (Long) -> String,
     modifier: Modifier,
 ) {
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     Column(
         modifier
             .heightIn(min = 48.dp)
@@ -532,7 +533,7 @@ private fun EventCard(
 ) {
     val colors = MaterialTheme.colorScheme
     val accent = MaterialTheme.zoonk.vizAccent
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     val haptics = LocalHapticFeedback.current
     var card by remember { mutableStateOf<LayoutCoordinates?>(null) }
     var liftedFrom by remember { mutableStateOf<Long?>(null) }
@@ -659,7 +660,7 @@ private fun TimelineTray(
     onDragEnd: (drops: Boolean) -> Unit,
 ) {
     val accent = MaterialTheme.zoonk.vizAccent
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     var coordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
     var held by remember { mutableStateOf(false) }
     val density = LocalDensity.current.density

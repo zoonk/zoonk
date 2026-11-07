@@ -75,6 +75,8 @@ struct PatternTableAnswer: Codable, Hashable, Sendable {
 }
 
 struct PatternTableCanvas: View {
+  @Environment(\.legibilityWeight) private var legibility
+
   let context: ActivityCanvasContext
   let fields: PatternTableFields
 
@@ -114,9 +116,9 @@ struct PatternTableCanvas: View {
         ForEach(Array(fields.rows.enumerated()), id: \.offset) { index, row in
           GridRow(alignment: .firstTextBaseline) {
             VStack(alignment: .leading, spacing: 0) {
-              Text(verbatim: row.label).font(.subheadline.weight(.medium))
+              Text(verbatim: row.label).typeStyle(.note.weight(.medium))
               if let meaning = row.labelMeaning {
-                Text(verbatim: meaning).font(.caption).foregroundStyle(.secondary)
+                Text(verbatim: meaning).typeStyle(.meta).foregroundStyle(.mutedForeground)
               }
             }
 
@@ -140,7 +142,7 @@ struct PatternTableCanvas: View {
           "Which ending does \(row.label) take?", tableName: "ActivitiesCharts",
           comment: "Above a pattern table's endings, like Which ending does nosotros take?"
         )
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
 
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 88), spacing: 8)], spacing: 8) {
           ForEach(fields.choices, id: \.self) { choice in
@@ -166,9 +168,9 @@ struct PatternTableCanvas: View {
 
   private func header(_ word: String, meaning: String?) -> some View {
     VStack(alignment: .leading, spacing: 0) {
-      Text(verbatim: word).font(.headline)
+      Text(verbatim: word).typeStyle(.body.weight(.semibold))
       if let meaning {
-        Text(verbatim: meaning).font(.caption).foregroundStyle(.secondary)
+        Text(verbatim: meaning).typeStyle(.meta).foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -179,9 +181,9 @@ struct PatternTableCanvas: View {
       ? (stem, String(word.dropFirst(stem.count))) : (word, "")
 
     return Text(
-      "\(Text(verbatim: parts.0))\(Text(verbatim: parts.1).foregroundStyle(.mint).bold())"
+      "\(Text(verbatim: parts.0))\(Text(verbatim: parts.1).foregroundStyle(.vizAccent).typeWeight(.bold, legibility: legibility))"
     )
-    .font(.body)
+    .typeStyle(.body)
   }
 
   private func openBlank(_ index: Int, row: PatternTableFields.Row) -> some View {
@@ -195,12 +197,13 @@ struct PatternTableCanvas: View {
       HStack(spacing: 1) {
         Text(verbatim: stem)
         if let chosen {
-          Text(verbatim: chosen).foregroundStyle(.mint).bold()
+          Text(verbatim: chosen).foregroundStyle(.vizAccent).typeWeight(
+            .bold, legibility: legibility)
         } else {
           RoundedRectangle(cornerRadius: 2)
-            .fill(isActive ? Color.mint.opacity(0.25) : .clear)
+            .fill(isActive ? Color.vizAccent.opacity(0.25) : .clear)
             .overlay(alignment: .bottom) {
-              Rectangle().fill(isActive ? Color.mint : Color.secondary).frame(height: 2)
+              Rectangle().fill(isActive ? Color.vizAccent : Color.mutedForeground).frame(height: 2)
             }
             .frame(width: 36, height: 20)
         }
@@ -208,8 +211,8 @@ struct PatternTableCanvas: View {
       .frame(minHeight: 44)
       .padding(.horizontal, 8)
       .overlay {
-        RoundedRectangle(cornerRadius: 10, style: .continuous)
-          .strokeBorder(isActive ? Color.mint : .clear, lineWidth: 2)
+        RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
+          .strokeBorder(isActive ? Color.vizAccent : .clear, lineWidth: 2)
       }
       .contentShape(.rect)
     }
@@ -230,19 +233,19 @@ struct PatternTableCanvas: View {
 
     return VStack(alignment: .leading, spacing: 2) {
       Text(verbatim: stem + (chosen ?? "…"))
-        .foregroundStyle(isRight ? Color.success : .destructive)
+        .foregroundStyle(isRight ? Color.successText : .destructiveText)
         .strikethrough(!isRight && chosen != nil)
 
       if !isRight, let expected {
         Text(verbatim: stem + expected)
-          .foregroundStyle(.success)
+          .foregroundStyle(.successText)
           .accessibilityLabel(
             Text(
               "Correct answer: \(stem + expected)", tableName: "ActivitiesCharts",
               comment: "The right form after a miss, for VoiceOver"))
       }
     }
-    .fontWeight(.medium)
+    .typeWeight(.medium)
   }
 
   private func choose(_ ending: String) {

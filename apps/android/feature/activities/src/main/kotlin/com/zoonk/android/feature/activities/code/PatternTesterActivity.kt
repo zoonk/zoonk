@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -45,7 +46,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -63,6 +63,8 @@ import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.GeistMono
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf19Value as PatternTesterContent
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf19Fields.PlayableLibraryStepAnyOfContentOneOf19FieldsOneOf1Value as FormulaFieldsValue
@@ -163,7 +165,7 @@ private fun PatternTesterActivity(props: ActivityProps) {
                     ),
                 )
                 val colors = MaterialTheme.colorScheme
-                val shape = RoundedCornerShape(12.dp)
+                val shape = RoundedCornerShape(ZoonkRadius.option)
                 Text(
                     if (regex != null) "/${regex.solution}/" else "=${formula?.solution.orEmpty()}",
                     Modifier
@@ -188,8 +190,8 @@ private fun PatternField(
     focus: FocusRequester,
 ) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(12.dp)
-    val style = MaterialTheme.typography.titleLarge.copy(fontFamily = FontFamily.Monospace, color = colors.onSurface)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
+    val style = MaterialTheme.typography.titleLarge.copy(fontFamily = GeistMono, color = colors.onSurface)
     var focused by remember { mutableStateOf(false) }
     val label = stringResource(if (isRegex) R.string.activities_code_your_pattern else R.string.activities_code_your_formula)
     val delimiter = @Composable { Text("/", Modifier.clearAndSetSemantics {}, color = colors.onSurfaceVariant, style = style) }
@@ -312,9 +314,11 @@ private fun SampleRow(
     shouldMatch: Boolean,
 ) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     val failing = result?.passes == false
-    val tone = if (shouldMatch) colors.tertiary else colors.error
+    val destructive = MaterialTheme.zoonk.destructive
+    val words = if (shouldMatch) colors.onTertiaryContainer else colors.error
+    val tint = if (shouldMatch) colors.tertiary else destructive
     val status =
         result?.let {
             stringResource(
@@ -333,7 +337,8 @@ private fun SampleRow(
                 append(sample)
             } else {
                 append(sample.substring(0, match.start))
-                withStyle(SpanStyle(color = tone, background = tone.copy(alpha = SOFT_ALPHA))) {
+                // A failing row is tinted already, so its match takes only the words' color.
+                withStyle(SpanStyle(color = words, background = if (failing) Color.Unspecified else tint.copy(alpha = SOFT_ALPHA))) {
                     append(sample.substring(match.start, match.end))
                 }
                 append(sample.substring(match.end))
@@ -345,7 +350,7 @@ private fun SampleRow(
             .fillMaxWidth()
             .heightIn(min = 48.dp)
             .clip(shape)
-            .background(if (failing) colors.error.copy(alpha = SOFT_ALPHA) else colors.surface)
+            .background(if (failing) destructive.copy(alpha = SOFT_ALPHA) else colors.surface)
             .border(1.dp, if (failing) colors.error.copy(alpha = FAILING_EDGE_ALPHA) else colors.outlineVariant, shape)
             .semantics(mergeDescendants = true) { status?.let { stateDescription = it } }
             .padding(horizontal = 12.dp, vertical = 8.dp),
@@ -380,7 +385,7 @@ private fun FormulaExamples(
 ) {
     val colors = MaterialTheme.colorScheme
     val locale = currentLocale()
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     val names =
         fields.examples
             .firstOrNull()
@@ -409,7 +414,7 @@ private fun FormulaExamples(
         Row(Modifier.background(colors.surfaceContainer)) {
             val header = MaterialTheme.typography.labelMedium
             val muted = colors.onSurfaceVariant
-            names.forEach { Text(it, cell.weight(1f), color = muted, style = header.copy(fontFamily = FontFamily.Monospace)) }
+            names.forEach { Text(it, cell.weight(1f), color = muted, style = header.copy(fontFamily = GeistMono)) }
             listOf(R.string.activities_code_should_give, R.string.activities_code_your_result).forEach {
                 Text(stringResource(it), cell.weight(1f), color = muted, textAlign = TextAlign.End, style = header)
             }
@@ -419,7 +424,7 @@ private fun FormulaExamples(
             HorizontalDivider(color = colors.outlineVariant)
             Row(
                 Modifier
-                    .background(if (result?.passes == false) colors.error.copy(alpha = SOFT_ALPHA) else colors.surface)
+                    .background(if (result?.passes == false) MaterialTheme.zoonk.destructive.copy(alpha = SOFT_ALPHA) else colors.surface)
                     .semantics(mergeDescendants = true) {},
                 verticalAlignment = Alignment.CenterVertically,
             ) {

@@ -38,7 +38,7 @@ private struct BarTitleAfterHero: ViewModifier {
         // with it.
         ToolbarItem(placement: .principal) {
           Text(title)
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
             .lineLimit(1)
             .opacity(isHeroShown ? 0 : 1)
             .accessibilityHidden(isHeroShown)

@@ -1,15 +1,20 @@
 import SwiftUI
 
+/// Main's `AnswerOptionResult`. A guess counts as neither right nor wrong.
 enum AnswerOptionResult: Equatable {
+  case guess
   case right
   case wrong
 }
 
+/// Main's `AnswerOption`: its number key, its words and, once checked, the word its result shows.
 /// The first nine answer to their number key on a hardware keyboard, as on the web.
 struct AnswerOption<Label: View>: View {
   var marker: Int?
   var isPicked = false
   var result: AnswerOptionResult?
+  /// The learner's pick was a guess, so it's "Your guess", never "Your answer".
+  var isGuessed = false
   var isLocked = false
   var tag: AnyView?
   let action: () -> Void
@@ -19,10 +24,7 @@ struct AnswerOption<Label: View>: View {
     Button(action: action) {
       HStack(alignment: .firstTextBaseline, spacing: 12) {
         if let marker {
-          Text(marker, format: .number)
-            .font(.footnote.monospacedDigit())
-            .foregroundStyle(.secondary)
-            .accessibilityHidden(true)
+          KeyMarker(number: marker)
         }
 
         AccessibilityStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -32,12 +34,10 @@ struct AnswerOption<Label: View>: View {
 
           if let tag {
             tag
-          }
-
-          if let result {
+          } else if let result {
             Text(resultLabel(result))
-              .font(.caption.weight(.semibold))
-              .foregroundStyle(result == .right ? Color.success : Color.destructive)
+              .typeStyle(.tag)
+              .foregroundStyle(tagColor(result))
           }
         }
       }
@@ -48,17 +48,55 @@ struct AnswerOption<Label: View>: View {
     .accessibilityAddTraits(isPicked ? .isSelected : [])
   }
 
+  /// A right pick says whose it is, so it isn't called correct twice under its verdict.
   private func resultLabel(_ result: AnswerOptionResult) -> LocalizedStringResource {
+    let yourGuess = LocalizedStringResource(
+      "Your guess", table: "Practice",
+      comment: "Mark beside the learner's pick when it counts as neither right nor wrong.")
+    let yourAnswer = LocalizedStringResource(
+      "Your answer", table: "Practice",
+      comment: "Mark beside the learner's wrong pick once a question is graded.")
+
     switch result {
+    case .guess:
+      return yourGuess
     case .right:
-      LocalizedStringResource(
+      if isPicked {
+        return isGuessed ? yourGuess : yourAnswer
+      }
+
+      return LocalizedStringResource(
         "Correct", table: "Practice",
         comment: "Mark beside the right option once a question is graded.")
     case .wrong:
-      LocalizedStringResource(
-        "Your answer", table: "Practice",
-        comment: "Mark beside the learner's wrong pick once a question is graded.")
+      return yourAnswer
     }
+  }
+
+  private func tagColor(_ result: AnswerOptionResult) -> Color {
+    switch result {
+    case .guess: .mutedForeground
+    case .right: .successText
+    case .wrong: .destructiveText
+    }
+  }
+}
+
+/// Main's `Kbd`: the key that picks an option.
+private struct KeyMarker: View {
+  let number: Int
+
+  var body: some View {
+    let shape = RoundedRectangle(cornerRadius: Radius.sm, style: .continuous)
+
+    Text(number, format: .number)
+      .typeStyle(.small.monospaced().weight(.medium))
+      .foregroundStyle(.mutedForeground)
+      .padding(.horizontal, 4)
+      .frame(minWidth: 20, minHeight: 20)
+      .background(Color(.foreground).opacity(0.04), in: shape)
+      .overlay(shape.strokeBorder(Color(.foreground).opacity(0.12)))
+      .accessibilityHidden(true)
   }
 }
 
@@ -68,32 +106,21 @@ struct AnswerOptionStyle: ButtonStyle {
   var result: AnswerOptionResult?
 
   func makeBody(configuration: Configuration) -> some View {
-    let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
-
     configuration.label
-      .font(.body.weight(.medium))
-      .foregroundStyle(.primary)
+      .typeStyle(.button)
+      .foregroundStyle(Color(.foreground))
       .padding(.horizontal, 14)
-      .padding(.vertical, 12)
+      .padding(.vertical, 13)
       .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
-      .background(fill.opacity(configuration.isPressed ? 0.8 : 1), in: shape)
-      .overlay(shape.strokeBorder(stroke, lineWidth: isPicked || result != nil ? 2 : 1))
-      .contentShape(shape)
+      .answerSurface(tone, isPressed: configuration.isPressed)
   }
 
-  private var fill: Color {
+  private var tone: AnswerTone {
     switch result {
-    case .right: Color.success.opacity(0.1)
-    case .wrong: Color.destructive.opacity(0.1)
-    case nil: isPicked ? Color(.secondarySystemFill) : Color(.secondarySystemGroupedBackground)
-    }
-  }
-
-  private var stroke: Color {
-    switch result {
-    case .right: .success
-    case .wrong: .destructive
-    case nil: isPicked ? .primary : Color(.separator)
+    case .guess: .guess
+    case .right: .right
+    case .wrong: .wrong
+    case nil: isPicked ? .picked : .idle
     }
   }
 }

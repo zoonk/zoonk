@@ -20,6 +20,7 @@ import com.zoonk.android.feature.player.workedExampleStep
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.api.models.ScreenPicture
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -89,7 +90,7 @@ class LessonPlayerReducerTest {
         assertEquals(emptyMap<String, Boolean>(), shown.firstVerdicts)
         assertEquals(emptyList<Miss>(), shown.misses)
         assertEquals(emptyList<String>(), shown.skippedWritingStepIds)
-        assertEquals(Segment.Read, shown.screen().segments.first())
+        assertEquals(TaskSegment.Read, shown.screen().segments.first())
         assertEquals("e1", shown.then(LessonAction.Continue).currentId)
     }
 

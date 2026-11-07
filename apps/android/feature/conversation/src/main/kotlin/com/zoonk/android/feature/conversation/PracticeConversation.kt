@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.conversation
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -13,8 +12,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +24,6 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -49,11 +45,12 @@ import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.KindDotLeading
+import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.android.ui.format.currentLocale
@@ -171,13 +168,12 @@ fun PracticeConversation(
 ) {
     val with = call.character?.let { stringResource(R.string.conversation_practice_with, it.name, it.role) }
 
-    ListItem(
-        headlineContent = { Text(stringResource(R.string.conversation_practice)) },
-        supportingContent =
-            (if (call.paused) stringResource(R.string.conversation_paused_title) else with)?.let { text -> { Text(text) } },
-        leadingContent = { KindDotLeading(LearnKind.Conversation) },
-        modifier = modifier.clickable(role = Role.Button) { state.sheetOpen = true },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+    ListRow(
+        headline = { Text(stringResource(R.string.conversation_practice)) },
+        modifier = modifier,
+        onClick = { state.sheetOpen = true },
+        leading = { KindDot(LearnKind.Conversation) },
+        supporting = (if (call.paused) stringResource(R.string.conversation_paused_title) else with)?.let { text -> { Text(text) } },
     )
 
     PracticeCallSheet(call, chapterId, goalId, start, open, state)

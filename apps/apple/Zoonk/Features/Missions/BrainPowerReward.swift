@@ -19,19 +19,20 @@ struct BrainPowerReward: View {
           Image(systemName: earned ? "checkmark" : "brain")
         }
         .labelStyle(.titleAndIcon)
-        .font(.subheadline.weight(.semibold).monospacedDigit())
-        .foregroundStyle(earned ? Color(.systemBackground) : .brain)
+        .typeStyle(.body.weight(.semibold).monospaced())
+        .foregroundStyle(earned ? Color(.background) : .brainText)
         .padding(.horizontal, earned ? 6 : 0)
         .padding(.vertical, earned ? 2 : 0)
         .background {
+          // `brainText`, since the page's color on `brain` is under AA in light.
           if earned {
-            Capsule().fill(.brain)
+            Capsule().fill(.brainText)
           }
         }
 
         Text("Brain Power", tableName: "Today", comment: "Under the missions' bonus")
-          .font(.caption2)
-          .foregroundStyle(.secondary)
+          .typeStyle(.small)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .buttonStyle(.plain)
@@ -47,19 +48,19 @@ struct BrainPowerReward: View {
     .popover(isPresented: $explains) {
       VStack(alignment: .leading, spacing: 8) {
         Text("Brain Power", tableName: "Today", comment: "Title of what Brain Power is")
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
 
         Text(
           "What you've learned, in points: it raises your belt and grows your buddy. Answers, lessons and challenges add to it, and finishing today's missions adds +\(points).",
           tableName: "Today", comment: "What Brain Power is; the number is the missions' bonus"
         )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       }
       .padding()
       .frame(idealWidth: 280)
       .presentationCompactAdaptation(.popover)
-      .accessibilitySizeStyles()
+      .zoonkStyles()
     }
   }
 }

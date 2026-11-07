@@ -74,6 +74,7 @@ import com.zoonk.android.ui.components.niceTicks
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.format.pluralQuantity
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.ApiJson
@@ -639,7 +640,7 @@ private fun ExpectedSpread(
     val style = MaterialTheme.typography.bodyMedium.withTabularFigures()
 
     Surface(
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(ZoonkRadius.option),
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {

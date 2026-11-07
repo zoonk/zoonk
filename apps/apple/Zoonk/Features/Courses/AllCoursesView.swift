@@ -10,15 +10,13 @@ struct AllCoursesView: View {
   @Binding var category: CourseCategory?
 
   var body: some View {
-    List {
-      // In the page, not the bar's subtitle: that has one line, which cuts this sentence on iPhone.
+    ZoonkList {
       Section {
-        Text(
-          "Start from a course, or tell Zoonk what you're getting ready for.",
-          tableName: "Courses", comment: "The line under the catalog's title"
-        )
-        .foregroundStyle(.secondary)
-        .listRowBackground(Color.clear)
+        PageHeader(
+          Text(catalogTitle(category)),
+          supporting: Text(
+            "Start from a course, or tell Zoonk what you're getting ready for.",
+            tableName: "Courses", comment: "The line under the catalog's title"))
       }
       .listSectionMargins(.trailing, leadingPageMargin)
       .listSectionSpacing(.compact)
@@ -32,7 +30,7 @@ struct AllCoursesView: View {
             categories: populatedCategories(counts: counts, open: category),
             selection: $category)
         }
-        .listRowInsets(EdgeInsets())
+        .listRowInsets(.vertical, 0)
         .listRowBackground(Color.clear)
         .listSectionMargins(.trailing, leadingPageMargin)
       }
@@ -119,7 +117,7 @@ private struct CourseCatalogEmptyView: View {
             Image(systemName: "plus")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
     }
     .lonePage()

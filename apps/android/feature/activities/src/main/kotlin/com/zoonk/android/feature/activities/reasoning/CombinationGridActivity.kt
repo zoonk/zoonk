@@ -74,6 +74,7 @@ import com.zoonk.android.feature.activities.gridCells
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.ActivityCheck
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf14Value as CombinationGridContent
@@ -629,7 +630,7 @@ private const val MAX_SIDE_SHARE = 0.3f
 private val MIN_SQUARE: Dp = 48.dp
 private val ROOMY_HEIGHT: Dp = 72.dp
 private val GAP = 8.dp
-private val CORNER = 12.dp
+private val CORNER = ZoonkRadius.option
 private val RING = 4.dp
 private val DASH = 4.dp
 private const val RING_ALPHA = 0.25f

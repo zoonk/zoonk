@@ -133,7 +133,7 @@ private struct TutorConversationView<Header: View>: View {
           "Something went wrong. Try again.", tableName: "Tutor",
           comment: "The buddy's conversation couldn't be read"
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         Button {
           Task { await conversation.thread.refresh() }
         } label: {
@@ -143,7 +143,7 @@ private struct TutorConversationView<Header: View>: View {
             Image(systemName: "arrow.clockwise")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
     case .loaded, .empty:
       let turns = conversation.turns + [conversation.asking].compactMap(\.self)
@@ -161,7 +161,7 @@ private struct TutorConversationView<Header: View>: View {
           }
 
           TutorTurnView(
-            turn: turn, conversation: conversation, buddyName: buddyName, showsAbout: !isPage)
+            turn: turn, conversation: conversation, buddyName: buddyName, isPage: isPage)
         }
         .id(turn.id)
       }
@@ -178,7 +178,7 @@ private struct TutorConversationView<Header: View>: View {
               "Couldn't load earlier messages. Try again.", table: "Tutor",
               comment: "Earlier messages of the conversation couldn't be read")
           )
-          .font(.footnote)
+          .typeStyle(.note)
         }
 
         Button {
@@ -192,7 +192,7 @@ private struct TutorConversationView<Header: View>: View {
               comment: "Shows the conversation's earlier messages")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .disabled(conversation.isLoadingEarlier)
       }
       .frame(maxWidth: .infinity)
@@ -220,9 +220,8 @@ private struct TutorDayLabel: View {
 
   var body: some View {
     tutorDayLabel(date)
-      .font(.caption.weight(.medium))
-      .foregroundStyle(.secondary)
-      .textCase(.uppercase)
+      .typeStyle(.label)
+      .foregroundStyle(.mutedForeground)
       .frame(maxWidth: .infinity)
       .accessibilityAddTraits(.isHeader)
   }

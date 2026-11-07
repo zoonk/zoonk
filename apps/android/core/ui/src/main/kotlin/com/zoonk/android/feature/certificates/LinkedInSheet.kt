@@ -8,11 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,11 +31,17 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
+import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.api.models.OwnedCertificate
 import kotlinx.coroutines.delay
 import kotlinx.datetime.toJavaLocalDate
@@ -83,7 +85,7 @@ fun LinkedInSheet(
 
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(Modifier.verticalScroll(rememberScrollState()).navigationBarsPadding().padding(bottom = 16.dp)) {
-            Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     stringResource(R.string.certificates_linkedin_title),
                     Modifier.semantics { heading() },
@@ -96,38 +98,51 @@ fun LinkedInSheet(
                 )
             }
 
+            // Main's list group: the issue date between the organization and the credential, as LinkedIn's form asks.
             Column(Modifier.padding(vertical = 8.dp)) {
-                fields.take(2).forEach { (label, value) -> Field(label, value, copied == label) { copy(label, value) } }
+                fields.take(2).forEach { (label, value) ->
+                    Field(label, value, copied == label) { copy(label, value) }
+                    ListDivider()
+                }
                 Field(stringResource(R.string.certificates_linkedin_issue_date), issued, copied = false, onCopy = null)
-                fields.drop(2).forEach { (label, value) -> Field(label, value, copied == label) { copy(label, value) } }
+                fields.drop(2).forEach { (label, value) ->
+                    ListDivider()
+                    Field(label, value, copied == label, mono = true) { copy(label, value) }
+                }
             }
 
             Button(
                 onClick = { openWebPage(context, certificate.linkedInUrl.toString()) },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = LIST_ITEM_INSET),
+                size = ButtonSize.Large,
             ) {
-                Icon(painterResource(R.drawable.ic_north_east), contentDescription = null)
-                Text(stringResource(R.string.certificates_linkedin_open), Modifier.padding(start = 8.dp))
+                Text(stringResource(R.string.certificates_linkedin_open))
+                Icon(painterResource(R.drawable.ic_north_east), contentDescription = null, Modifier.padding(start = 8.dp).size(18.dp))
             }
         }
     }
 }
 
-/** LinkedIn's field name over its value, as the form names it. */
+/** Main's `FieldRow`: LinkedIn's field name over its value, as the form names it, with Copy at its end; ids in mono. */
 @Composable
 private fun Field(
     label: String,
     value: String,
     copied: Boolean,
+    mono: Boolean = false,
     onCopy: (() -> Unit)?,
 ) {
     val copyLabel = stringResource(R.string.certificates_copy_field, label)
     val copiedLabel = stringResource(R.string.certificates_copied)
 
-    ListItem(
-        headlineContent = { Text(value) },
-        overlineContent = { Text(label) },
-        trailingContent =
+    ListRow(
+        headline = {
+            Column {
+                Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+                Text(value, fontFamily = if (mono) GeistMono else null)
+            }
+        },
+        trailing =
             onCopy?.let {
                 {
                     OutlinedButton(
@@ -137,20 +152,20 @@ private fun Field(
                                 contentDescription = copyLabel
                                 if (copied) stateDescription = copiedLabel
                             },
+                        size = ButtonSize.Small,
                     ) {
                         Icon(
                             painterResource(if (copied) R.drawable.ic_check else R.drawable.ic_content_copy),
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp),
+                            modifier = Modifier.size(16.dp),
                         )
                         Text(
                             if (copied) copiedLabel else stringResource(R.string.certificates_copy),
-                            Modifier.padding(start = 8.dp).clearAndSetSemantics {},
+                            Modifier.padding(start = 6.dp).clearAndSetSemantics {},
                         )
                     }
                 }
             },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
     )
 }
 

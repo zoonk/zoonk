@@ -130,7 +130,7 @@ export const planPaths = {
     },
     post: {
       description:
-        "Grades the focus test, records every answer as diagnostic evidence, and gives the plan's focus to the areas that need it most: the weakest of the ones worth most, each decided by at least three answers. The focus is a plan change that can be undone; every other topic stays in the plan.",
+        "Grades the focus test, records every answer as diagnostic evidence, and gives the plan's focus to the areas that need it most: the weakest of the ones worth most, each decided by at least three answers. The focus is a plan change that can be undone; every other topic stays in the plan. The same `requestId` sent again, even while the first send is still running, returns what that send recorded, with its plan change, and counts nothing again.",
       operationId: "submitFocusTest",
       requestBody: {
         content: { "application/json": { schema: focusTestInputSchema } },

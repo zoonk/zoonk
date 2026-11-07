@@ -37,7 +37,7 @@ private struct FeedbackSheetPresenter: ViewModifier {
 
   private func form(_ store: FeedbackFormStore) -> some View {
     FeedbackForm(store: store, isReport: isReport)
-      .accessibilitySizeStyles()
+      .zoonkStyles()
   }
 }
 
@@ -159,7 +159,7 @@ private struct FeedbackForm: View {
   }
 
   private var form: some View {
-    Form {
+    ZoonkList {
       if !isReport {
         Section {
           Text(
@@ -167,70 +167,65 @@ private struct FeedbackForm: View {
             tableName: "Feedback",
             comment: "Introduction shown above the feedback fields."
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           .listRowBackground(Color.clear)
         }
       }
 
       if store.asksForEmail {
         Section {
-          TextField(
-            text: $store.email,
-            prompt: Text(
-              "you@example.com",
+          FormField(
+            title: Text(
+              "Email address",
               tableName: "Feedback",
-              comment: "Example email address in the feedback form.")
+              comment: "Email field label in the feedback form."),
+            isFocused: focusedField == .email
           ) {
-            Text(
-              "Email address",
-              tableName: "Feedback",
-              comment: "Email field label in the feedback form.")
+            emailField
           }
-          .focused($focusedField, equals: .email)
-          .textInputAutocapitalization(.never)
-          .keyboardType(.emailAddress)
-          .autocorrectionDisabled()
-          .textContentType(.emailAddress)
-          .submitLabel(.next)
-          .onSubmit {
-            focusedField = .message
-          }
-          .accessibilityLabel(
-            Text(
-              "Email address",
-              tableName: "Feedback",
-              comment: "Email field label in the feedback form."))
         } footer: {
-          Text(
-            "We'll use this email to contact you.",
-            tableName: "Feedback",
-            comment: "Explains why the feedback form asks for an email address.")
+          SectionFooter {
+            Text(
+              "We'll use this email to contact you.",
+              tableName: "Feedback",
+              comment: "Explains why the feedback form asks for an email address.")
+          }
         }
       }
 
       Section {
-        MultilineTextField(
-          text: $store.message,
-          prompt: Text(
-            "How can we help you?",
-            tableName: "Feedback",
-            comment: "Placeholder in the feedback message field."),
-          label: Text(
+        FormField(
+          title: Text(
             "Message",
             tableName: "Feedback",
-            comment: "Message field label in the feedback form.")
-        )
-        .focused($focusedField, equals: .message)
-        .lineLimit(5...10)
-      } footer: {
-        if store.attachesScreen {
-          Label {
-            Text(
-              "This screen is attached",
+            comment: "Message field label in the feedback form."),
+          isFocused: focusedField == .message
+        ) {
+          MultilineTextField(
+            text: $store.message,
+            prompt: Text(
+              "How can we help you?",
               tableName: "Feedback",
-              comment: "Says the message is sent with the page it was written on")
-          } icon: {
-            Image(systemName: "paperclip")
+              comment: "Placeholder in the feedback message field."),
+            label: Text(
+              "Message",
+              tableName: "Feedback",
+              comment: "Message field label in the feedback form.")
+          )
+          .focused($focusedField, equals: .message)
+          .lineLimit(5...10)
+        }
+      } footer: {
+        SectionFooter {
+          if store.attachesScreen {
+            Label {
+              Text(
+                "This screen is attached",
+                tableName: "Feedback",
+                comment: "Says the message is sent with the page it was written on")
+            } icon: {
+              Image(systemName: "paperclip")
+            }
           }
         }
       }
@@ -251,6 +246,35 @@ private struct FeedbackForm: View {
     .onChange(of: store.message) { _, _ in
       store.clearFailure()
     }
+  }
+
+  private var emailField: some View {
+    TextField(
+      text: $store.email,
+      prompt: Text(
+        "you@example.com",
+        tableName: "Feedback",
+        comment: "Example email address in the feedback form.")
+    ) {
+      Text(
+        "Email address",
+        tableName: "Feedback",
+        comment: "Email field label in the feedback form.")
+    }
+    .focused($focusedField, equals: .email)
+    .textInputAutocapitalization(.never)
+    .keyboardType(.emailAddress)
+    .autocorrectionDisabled()
+    .textContentType(.emailAddress)
+    .submitLabel(.next)
+    .onSubmit {
+      focusedField = .message
+    }
+    .accessibilityLabel(
+      Text(
+        "Email address",
+        tableName: "Feedback",
+        comment: "Email field label in the feedback form."))
   }
 
   private var confirmation: some View {

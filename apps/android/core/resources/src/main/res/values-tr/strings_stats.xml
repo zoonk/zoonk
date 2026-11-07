@@ -29,6 +29,7 @@
   "stats_day_no_study": "0596fe1b85242d6ce178969bb48ef1b7da265d470ba86c4cb79a072de9301b14",
   "stats_days": "06f338ba8c1ba2d2243dea1f6f17323267172cc4ed67dc9d3d320dbff318a01a",
   "stats_days_even": "f03e1f3c2a116e8658eb81f4aa4e75a0a6416702835390335c6046bdc36619e7",
+  "stats_days_studied": "5d8d9adac39aba821eca2b80461f7850af1e2a30cc3873f5d8c6ad8d4fed9444",
   "stats_empty_title": "9f563f136b917ac8a4445115e9f43796134c2a25cfd534fe579e9352f4ebd1b2",
   "stats_energy": "c6e3bd516586d1d1d4aa0dab6b3cb4eb798e3bd7b636d33dd59dcd3807c08ca5",
   "stats_energy_average": "c89a926d7629464c44184be70a5ae6f9591459d0d3f712796bf86ea600a2f8dd",
@@ -83,7 +84,6 @@
   "stats_score_week": "30dac9a378a43fd4e9ce5c6620df54e7b1c7bf0131350c4d44454ca3997dfff2",
   "stats_see_all": "1c017d611f25825aa359c1b085afccac0c4e003278ded9d56180b41221081cd7",
   "stats_since_start": "524ae20d7152287cff8fcde748e9ebedca98bbde7b99b946955b40c34aa17860",
-  "stats_study_days": "60372d5da0d3892efd35dc26683a09a0d555d73e046a2a5dc29221fbff6cdfa3",
   "stats_studying_total": "3e59e80e52b48f8d7af5c0c2c9dfcc2f0e6703506e36a54478cf69ca0d0e0335",
   "stats_throughout_day": "90d862652a6b5d9c7bfe7bee59a294116f373c57aee387572bde3ae876e8f0ed",
   "stats_throughout_week": "fa1a074bd895c4c627c8695d6992bd007f658d7371564a68e57cce8d818f31cf",
@@ -111,7 +111,7 @@
     <string name="stats_not_yet">Henüz değil</string>
     <string name="stats_part_failed">Bu kısmı yükleyemedik.</string>
     <string name="stats_energy_average">Ortalama %1$s</string>
-    <string name="stats_study_days">Çalıştığın günler</string>
+    <string name="stats_days_studied">Çalışılan gün sayısı</string>
     <plurals name="stats_lessons_time">
         <item quantity="one">%1$s ders · %2$s</item>
         <item quantity="other">%1$s ders · %2$s</item>

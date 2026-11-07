@@ -26,9 +26,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.LocaleList
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 
 /** Main's `StatTone`: what a tile's symbol is colored by. */
 enum class StatTone { Neutral, Success, Energy, Brain }
@@ -45,7 +48,7 @@ val StatTone.color: Color
         }
 
 /**
- * Main's `StatTile`: a label with its symbol, a number and a line about it, read by TalkBack as one.
+ * Main's `StatTile`: an uppercase label with its symbol, a number and a line about it, read by TalkBack as one.
  * [spokenValue] is what TalkBack says for a value written for the eye, such as "45 of 60" for "45/60".
  * A [detail] given as an `AnnotatedString` keeps its own colors, as main colors a fact in it.
  */
@@ -64,17 +67,16 @@ fun StatTile(
     val content = @Composable {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+                val labelStyle = MaterialTheme.zoonkType.label
                 CompositionLocalProvider(LocalContentColor provides tone.color) {
-                    icon?.invoke(
-                        Modifier.size(
-                            with(LocalDensity.current) {
-                                MaterialTheme.typography.labelLarge.fontSize
-                                    .toDp()
-                            },
-                        ),
-                    )
+                    icon?.invoke(Modifier.size(with(LocalDensity.current) { labelStyle.lineHeight.toDp() }))
                 }
-                Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
+                Text(
+                    label.toUpperCase(LocaleList.current),
+                    Modifier.clearAndSetSemantics { text = AnnotatedString(label) },
+                    color = MaterialTheme.zoonk.faint,
+                    style = labelStyle,
+                )
             }
             val style =
                 MaterialTheme.typography.headlineSmall.copy(

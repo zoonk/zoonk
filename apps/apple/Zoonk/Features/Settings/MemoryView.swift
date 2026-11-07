@@ -6,37 +6,35 @@ struct MemoryView: View {
   @State private var statement = ""
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
-        Text(
-          "What Zoonk remembers to give you examples and plans that fit your life.",
-          tableName: "Settings", comment: "What the Memory page is for"
-        )
-        .foregroundStyle(.secondary)
-        .listRowBackground(Color.clear)
+        PageHeader(
+          Text("Memory", tableName: "Settings", comment: "Title of the Memory page"),
+          supporting: Text(
+            "What Zoonk remembers to give you examples and plans that fit your life.",
+            tableName: "Settings", comment: "What the Memory page is for"))
       }
 
       if let memory = settings.memory.value {
         Section {
-          Toggle(isOn: enabledBinding(memory.enabled)) {
-            Text("Use memory", tableName: "Settings", comment: "Switch that turns memory on or off")
-
-            if memory.enabled {
-              Text(
+          SettingToggle(
+            isOn: enabledBinding(memory.enabled),
+            title: Text(
+              "Use memory", tableName: "Settings", comment: "Switch that turns memory on or off"),
+            description: memory.enabled
+              ? Text(
                 "Personal examples, plans that fit your week and calls that remember your news",
                 tableName: "Settings", comment: "What memory does while it's on")
-            } else {
-              Text(
+              : Text(
                 "Memory is off. Nothing new is learned, and these facts aren't used.",
-                tableName: "Settings", comment: "What happens while memory is off")
-            }
-          }
-          .tint(.success)
+                tableName: "Settings", comment: "What happens while memory is off"))
         } footer: {
-          if let deleted = settings.deletedFact {
-            MemoryUpdatedNotice(fact: deleted, status: settings.undoStatus) {
-              Task {
-                await settings.undoDeletion()
+          SectionFooter {
+            if let deleted = settings.deletedFact {
+              MemoryUpdatedNotice(fact: deleted, status: settings.undoStatus) {
+                Task {
+                  await settings.undoDeletion()
+                }
               }
             }
           }
@@ -58,7 +56,7 @@ struct MemoryView: View {
                 tableName: "Settings", comment: "Memory page without facts while memory is off")
             }
           }
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         ForEach(MemoryFact.Category.allCases, id: \.self) { category in
@@ -74,7 +72,7 @@ struct MemoryView: View {
                 }
               }
             } header: {
-              category.name
+              SectionTitle(category.name)
             }
           }
         }
@@ -92,13 +90,19 @@ struct MemoryView: View {
             await settings.exportMemory()
           }
         } footer: {
-          Text(
-            "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to.",
-            tableName: "Settings", comment: "Note about sensitive details at the Memory page's end")
+          SectionFooter {
+            Text(
+              "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to.",
+              tableName: "Settings",
+              comment: "Note about sensitive details at the Memory page's end")
+          }
         }
       }
     }
     .navigationTitle(Text("Memory", tableName: "Settings", comment: "Title of the Memory page"))
+    .barTitleAfterHero(
+      String(localized: "Memory", table: "Settings", comment: "Title of the Memory page")
+    )
     .overlay {
       SettingsLoadingState(state: settings.memory.state) {
         Task {
@@ -179,17 +183,12 @@ private struct MemoryFactRow: View {
 
   var body: some View {
     HStack(alignment: .firstTextBaseline) {
-      VStack(alignment: .leading, spacing: 2) {
-        Text(fact.statement)
-
-        Text(
+      ListRow(
+        Text(fact.statement),
+        description: Text(
           "\(fact.source.name)\u{00A0}· \(fact.createdAt.formatted(.dateTime.month(.abbreviated).day()))",
           tableName: "Settings",
-          comment: "Where a remembered fact came from and its day, as in “From a chat · Oct 11”"
-        )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
-      }
+          comment: "Where a remembered fact came from and its day, as in “From a chat · Oct 11”"))
 
       Spacer(minLength: 0)
 
@@ -211,7 +210,7 @@ private struct MemoryFactRow: View {
         }
       } label: {
         Image(systemName: "ellipsis")
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           .frame(minWidth: 44, minHeight: 44)
           .contentShape(.rect)
       }
@@ -233,6 +232,8 @@ private struct MemoryFactRow: View {
 }
 
 private struct MemoryUpdatedNotice: View {
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   let fact: MemoryFact
   let status: MemoryUndo?
   let undo: () -> Void
@@ -240,7 +241,7 @@ private struct MemoryUpdatedNotice: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       Text(
-        "\(Text("Memory updated:", tableName: "Settings", comment: "Starts the line saying a fact was deleted").fontWeight(.medium).foregroundStyle(.primary)) \(Text(fact.statement).strikethrough())",
+        "\(Text("Memory updated:", tableName: "Settings", comment: "Starts the line saying a fact was deleted").typeWeight(.medium, legibility: legibilityWeight).foregroundStyle(Color(.foreground))) \(Text(fact.statement).strikethrough())",
         tableName: "Settings", comment: "A deleted fact, struck through after “Memory updated:”")
 
       switch status {
@@ -249,8 +250,8 @@ private struct MemoryUpdatedNotice: View {
           Text("Undo", tableName: "Settings", comment: "Brings a deleted fact back")
             .underline()
         }
-        .buttonStyle(.borderless)
-        .foregroundStyle(.primary)
+        .buttonStyle(.ghost)
+        .foregroundStyle(Color(.foreground))
         .disabled(status == .undoing)
 
         if status == .failed {
@@ -268,7 +269,7 @@ private struct MemoryUpdatedNotice: View {
             comment: "Says a deleted fact couldn't come back"))
       }
     }
-    .font(.footnote)
+    .typeStyle(.note)
     .padding(.top, 4)
     .accessibilityElement(children: .combine)
     .announcesStatus(status == .undone ? undone : nil)

@@ -13,6 +13,7 @@ import {
   getUserSubscriptionCacheTag,
 } from "../../cache/tags";
 import { followsCourse } from "../../goals/_utils/follows-course";
+import { getGoalLanguageFlag } from "../../goals/_utils/goal-language-flag";
 import {
   type PlanPhaseFacts,
   getCurrentPhaseFromFacts,
@@ -77,6 +78,7 @@ function toSummaryGoals({
         isActive: goal.id === activeGoalId,
         isSettingUp: isGoalSetupLeft(goal),
         kind: goal.kind,
+        languageFlag: getGoalLanguageFlag(goal),
         status: goal.status,
         targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
         targetLanguage: goal.targetLanguage,

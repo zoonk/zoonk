@@ -8,9 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 
-/** The inset Material's `ListItem` gives its content; a header or line above rows takes it to share their edge. */
+/** The page margin a row insets its content by; a header or line above rows takes it to share their edge. */
 val LIST_ITEM_INSET = 16.dp
 
 @Composable
@@ -23,7 +23,7 @@ fun SectionHeader(
         Text(
             text = title,
             modifier = modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.zoonkType.sectionTitle,
         )
         return
     }
@@ -32,7 +32,7 @@ fun SectionHeader(
         Text(
             detail,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+            style = MaterialTheme.zoonkType.data,
         )
     }
 }
@@ -44,7 +44,7 @@ fun SectionHeader(
     modifier: Modifier = Modifier,
     trailing: @Composable () -> Unit,
 ) {
-    HeadingRow(title, MaterialTheme.typography.titleMedium, modifier, Alignment.CenterVertically, trailing)
+    HeadingRow(title, MaterialTheme.zoonkType.sectionTitle, modifier, Alignment.CenterVertically, trailing = trailing)
 }
 
 /** Main's `PageSectionLabel`: a quiet label naming a group inside a section, still a heading for TalkBack. */
@@ -57,6 +57,6 @@ fun SectionLabel(
         text = text,
         modifier = modifier.semantics { heading() },
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.titleSmall,
+        style = MaterialTheme.typography.labelMedium,
     )
 }

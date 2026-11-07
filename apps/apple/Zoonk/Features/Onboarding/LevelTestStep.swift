@@ -100,15 +100,17 @@ struct LevelTestStep: View {
         )
         .frame(maxWidth: .infinity)
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .controlSize(.large)
       .disabled(isSaving)
-      .listRowInsets(EdgeInsets())
+      .listRowInsets(.vertical, 0)
       .listRowBackground(Color.clear)
     } footer: {
-      Text(
-        "Your plan starts from the level you gave, and your first sessions fine-tune it.",
-        tableName: "Onboarding", comment: "What skipping the level test does")
+      SectionFooter {
+        Text(
+          "Your plan starts from the level you gave, and your first sessions fine-tune it.",
+          tableName: "Onboarding", comment: "What skipping the level test does")
+      }
     }
   }
 
@@ -350,7 +352,7 @@ private struct LevelTestIntro: View {
   @Environment(\.openURL) private var openURL
 
   var body: some View {
-    Form {
+    ZoonkList {
       StepHeader(
         title: Text(
           "Let's see your level in \(Locale.current.languageName(targetLanguage))",
@@ -509,8 +511,8 @@ private struct ListeningMessage: View {
         Image(systemName: "headphones")
           .accessibilityHidden(true)
       }
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -523,8 +525,8 @@ private struct ListeningMessage: View {
         "The voice message is on its way…", tableName: "Onboarding",
         comment: "While a level test listening question's recording is still being made")
     }
-    .font(.subheadline)
-    .foregroundStyle(.secondary)
+    .typeStyle(.note)
+    .foregroundStyle(.mutedForeground)
     .multilineTextAlignment(.center)
     .frame(maxWidth: .infinity)
     .accessibilityElement(children: .combine)
@@ -538,8 +540,8 @@ private struct ListeningMessage: View {
         HelpLimitNotice(limit: limit)
       } else {
         Text(audioDidntPlay)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
 
       if canRetry {
@@ -552,7 +554,7 @@ private struct ListeningMessage: View {
             Image(systemName: "arrow.counterclockwise")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .controlSize(.small)
       }
     }
@@ -593,21 +595,20 @@ private struct LevelTestSpeaking: View {
 
   var body: some View {
     PracticeTaskLayout {
-      ProgressView(value: progress)
-        .tint(.success)
+      Meter(value: progress, fill: .success)
         .accessibilityHidden(true)
 
       Text(
         "Say it out loud", tableName: "Onboarding", comment: "Title of the level test's sentence"
       )
-      .font(.title2.bold())
+      .typeStyle(.section)
       .accessibilityAddTraits(.isHeader)
 
       VStack(alignment: .leading, spacing: 4) {
         Text(sentence.sentence)
-          .font(.title3.weight(.semibold))
+          .typeStyle(.section)
         Text(sentence.translation)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     } response: {
       VoiceAnswerRecorder(
@@ -634,7 +635,7 @@ private struct LevelTestDone: View {
   let onContinue: () -> Void
 
   var body: some View {
-    Form {
+    ZoonkList {
       StepHeader(
         title: Text(
           "Your level today", tableName: "Onboarding", comment: "Title after the level test"),
@@ -651,7 +652,7 @@ private struct LevelTestDone: View {
             } label: {
               VStack(alignment: .leading, spacing: 6) {
                 skillName(level.skill)
-                ProgressView(value: level.score, total: 5)
+                Meter(value: level.score, total: 5)
                   .accessibilityHidden(true)
               }
             }

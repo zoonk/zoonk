@@ -29,6 +29,7 @@
   "stats_day_no_study": "8879ff2935139da249c2c855ac520f32238cb3bc889c1cdb3af2d8a0c7882e2b",
   "stats_days": "2c1a38cb6049fdaf4c8acc7fd062eaaef9f4a223692916fe7b09f2078ef77c0a",
   "stats_days_even": "9a2c285e8cf246e12a265a8cbf6d7684ab78278dad4fe2ea86de4284aa764ff6",
+  "stats_days_studied": "5bdaa15d4da4be5f8d090629f881c1e21479ec30fd2bb24cefed57fbfe2c2bc3",
   "stats_empty_title": "ccb12917a4fb7de69f54e914cc68aedbcdbb1f357f08a1cb56681b92c22e5e32",
   "stats_energy": "d22491c2910a2442d1fd85e975d2d897c4adf2ca914187f2858b3cfb5002250c",
   "stats_energy_average": "1ba77e297bf36191c41cfb29dc2ddf422af2fa72a462c74c9f84ed0b28705617",
@@ -83,7 +84,6 @@
   "stats_score_week": "e80317ca01d8e7c0eeba40577e4834e6340574d4535eb109c5a668d581a1617f",
   "stats_see_all": "70f786b24237fad635d7fd0b93d78ac5c8157cad4a4b1f096cd08224ae529f4d",
   "stats_since_start": "8f7e0e0d2512f1426d094921ace85749aaad51d2e90a7d895ab42bd0b6d43daa",
-  "stats_study_days": "8ae16048aa96473ef073bd570ae113fed22ebb2b8bfc3f2c1f4de066a0f7c4b4",
   "stats_studying_total": "2003dd07731861937f2bef50c3fa18d48f6e7bf2dfc8387a45aa3f3eb4a82e81",
   "stats_throughout_day": "c6298c26e77d4d6e10fa32b9303dfc6e1b5359eeda3d92ae8d7681a07a97d8b1",
   "stats_throughout_week": "f16e4910941caefbad13b2ccfb831e566506c7f6460ec065852150140b08f579",
@@ -111,7 +111,7 @@
     <string name="stats_not_yet">아직</string>
     <string name="stats_part_failed">이 부분을 불러오지 못했어요.</string>
     <string name="stats_energy_average">평균 %1$s</string>
-    <string name="stats_study_days">학습 일수</string>
+    <string name="stats_days_studied">학습 일수</string>
     <plurals name="stats_lessons_time">
         <item quantity="other">레슨 %1$s개 · %2$s</item>
     </plurals>

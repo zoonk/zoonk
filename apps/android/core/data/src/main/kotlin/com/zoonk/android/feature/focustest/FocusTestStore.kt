@@ -10,7 +10,7 @@ import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.recode
-import com.zoonk.android.feature.practice.GradedAnswer
+import com.zoonk.android.feature.practice.AnswersDraft
 import com.zoonk.android.feature.practice.input
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.TrueFalseWords
@@ -18,7 +18,6 @@ import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.FocusTestGeneration
 import com.zoonk.api.models.FocusTestInput
 import com.zoonk.api.models.FocusTestResult
-import kotlinx.serialization.builtins.ListSerializer
 import java.util.UUID
 
 /** A goal's focus test: [total] questions, [questionsPerArea] on each of its [areas]; some may not be written yet. */
@@ -84,18 +83,19 @@ class FocusTestStore(
     suspend fun writeQuestions(goalId: UUID): MutationResult<FocusTestGeneration> =
         cache.mutate(invalidating = setOf(DataDomain.Allowance)) { session -> api.writeQuestions(session, goalId) }
 
+    /** The same [draft] sent again gets what it recorded the first time. */
     suspend fun submit(
         goalId: UUID,
-        answers: List<GradedAnswer>,
+        draft: AnswersDraft,
     ): MutationResult<FocusTestResult> =
         cache.mutate(invalidating = SUBMITTED) { session ->
-            api.submit(session, goalId, FocusTestInput(answers.map { it.input() }, timeZone()))
+            api.submit(session, goalId, FocusTestInput(draft.answers.map { it.input() }, UUID.fromString(draft.requestId), timeZone()))
         }
 
     fun answersDraft(
         session: AuthenticatedSession,
         goalId: UUID,
-    ): DraftHandle<List<GradedAnswer>> = drafts.open(session, "focus-test:$goalId", ListSerializer(GradedAnswer.serializer()))
+    ): DraftHandle<AnswersDraft> = drafts.open(session, "focus-test:$goalId", AnswersDraft.serializer())
 
     private companion object {
         val READ_DOMAINS = setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress)

@@ -13,10 +13,8 @@ struct StepBackButton: View {
         Image(systemName: "chevron.left")
       }
       .labelStyle(.iconOnly)
-      .frame(minHeight: 32)
     }
-    .buttonStyle(.bordered)
-    .buttonBorderShape(.circle)
+    .buttonStyle(.outline.icon)
     .controlSize(.large)
     .keyboardShortcut(.leftArrow, modifiers: [])
   }

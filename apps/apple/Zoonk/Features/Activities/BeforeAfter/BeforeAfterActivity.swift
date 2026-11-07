@@ -96,7 +96,7 @@ private struct BeforeAfterCanvas: View {
       } icon: {
         Image(systemName: "arrow.down")
       }
-      .font(.subheadline)
+      .typeStyle(.body)
 
       if showsAfter {
         stateCard(fields.after, other: fields.before, isAfter: true)
@@ -117,7 +117,7 @@ private struct BeforeAfterCanvas: View {
           )
           .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .controlSize(.large)
       }
     }
@@ -130,8 +130,8 @@ private struct BeforeAfterCanvas: View {
   {
     VStack(alignment: .leading, spacing: 12) {
       Text(state.label)
-        .font(.subheadline.weight(.semibold))
-        .foregroundStyle(.secondary)
+        .typeStyle(.note.weight(.semibold))
+        .foregroundStyle(.mutedForeground)
         .accessibilityAddTraits(.isHeader)
 
       ForEach(state.facts) { fact in
@@ -139,14 +139,14 @@ private struct BeforeAfterCanvas: View {
       }
 
       LessonRichText(state.description)
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
     .background(
-      isAfter ? Color.mint.opacity(0.15) : Color(.secondarySystemBackground),
-      in: .rect(cornerRadius: 16)
+      isAfter ? Color.vizAccent.opacity(0.15) : Color.card,
+      in: .rect(cornerRadius: Radius.xl)
     )
     .accessibilityElement(children: .contain)
   }
@@ -167,19 +167,18 @@ private struct BeforeAfterCanvas: View {
         Text(fact.label)
         Spacer(minLength: 8)
         Text(ActivityNumberFormat.format(fact.value, unit: fact.unit))
-          .fontWeight(.semibold)
+          .typeWeight(.semibold)
           .monospacedDigit()
       }
-      .font(.subheadline)
+      .typeStyle(.note)
 
-      ProgressView(value: share)
-        .tint(isAfter ? Color.mint : Color.secondary)
+      Meter(value: share, fill: isAfter ? Color.vizAccent : Color.mutedForeground)
         .accessibilityHidden(true)
 
       if let change {
         changeText(change)
-          .font(.caption.weight(.semibold).monospacedDigit())
-          .foregroundStyle(fact.id == highlightId ? Color.success : .primary)
+          .typeStyle(.meta.weight(.semibold).monospaced())
+          .foregroundStyle(fact.id == highlightId ? Color.successText : .primary)
       }
     }
     .accessibilityElement(children: .combine)

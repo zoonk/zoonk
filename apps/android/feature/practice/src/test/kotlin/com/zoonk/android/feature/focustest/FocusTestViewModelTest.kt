@@ -48,6 +48,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -65,6 +66,9 @@ class FocusTestViewModelTest {
     private val signedIn = AuthenticatedSession(ANA, "token", "local")
     private val goalId = UUID.fromString("00000000-0000-4000-8000-0000000000a1")
     private val ids = List(4) { "00000000-0000-4000-8000-00000000000$it" }
+
+    /** The questions the test asks; ones the server recorded answers to give way to others. */
+    private var asked = ids
     private var written = 1
     private var writes = 0
     private var write: () -> FocusTestGeneration = { FocusTestGeneration("gen-1", FocusTestGeneration.Status.GENERATING) }
@@ -74,6 +78,7 @@ class FocusTestViewModelTest {
     private var readFails = false
     private var clock = 0L
     private val sent = mutableListOf<FocusTestInput>()
+    private var submit: () -> FocusTestResult = ::result
     private val plansApi = FakePlanApi()
 
     @Before
@@ -85,7 +90,7 @@ class FocusTestViewModelTest {
     /** Two subjects of two questions; [written] of them exist. */
     private fun focusTest(): FocusTest {
         val questions =
-            ids.take(written).mapIndexed { index, id ->
+            asked.take(written).mapIndexed { index, id ->
                 """{"itemId":"$id","skillId":"$id","format":"multipleChoice","question":"Q$index","options":["a","b"],
                 "select":1,"context":null,"image":null,"visual":null,"area":"${if (index < 2) "Math" else "History"}"}"""
             }
@@ -130,7 +135,10 @@ class FocusTestViewModelTest {
                     session: AuthenticatedSession,
                     goalId: UUID,
                     input: FocusTestInput,
-                ) = result().also { sent += input }
+                ): FocusTestResult {
+                    sent += input
+                    return submit()
+                }
             }
         return Triple(FocusTestStore(api, cache, drafts) { "UTC" }, PlanStore(plansApi, cache), drafts)
     }
@@ -306,6 +314,84 @@ class FocusTestViewModelTest {
                     ?.filter { it.chosen }
                     ?.map { it.label },
             )
+        }
+
+    @Test
+    fun aFailedSendKeepsTheAnswersAndTryAgainSendsTheSameTest() =
+        runTest(dispatcher) {
+            written = 4
+            val viewModel = viewModel()
+            started(viewModel)
+            submit = { throw ApiException(ApiError.Network) }
+
+            viewModel.ui.value.questions
+                .forEach { viewModel.answer(it, Answer.Choice(0)) }
+            advanceUntilIdle()
+            assertTrue(viewModel.ui.value.sendFailed)
+
+            submit = ::result
+            viewModel.send()
+            advanceUntilIdle()
+
+            assertEquals(2, sent.size)
+            assertEquals(sent[0].requestId, sent[1].requestId)
+            assertEquals(
+                listOf("History"),
+                viewModel.ui.value.outcome
+                    ?.areas
+                    ?.filter { it.chosen }
+                    ?.map { it.label },
+            )
+        }
+
+    @Test
+    fun answersSentWhenTheAppEndedAreSentAgainAsTheSameTest() =
+        runTest(dispatcher) {
+            written = 4
+            val parts = parts()
+            val saved = SavedStateHandle()
+            val before = viewModel(saved, parts)
+            started(before)
+            submit = { throw ApiException(ApiError.Network) }
+            before.ui.value.questions
+                .forEach { before.answer(it, Answer.Choice(0)) }
+            advanceUntilIdle()
+
+            submit = ::result
+            val after = viewModel(SavedStateHandle(saved.keys().associateWith { saved.get<Any>(it) }), parts)
+            read(after)
+            after.ui.value.questions
+                .drop(after.ui.value.answers.size)
+                .forEach { after.answer(it, Answer.Choice(0)) }
+            advanceUntilIdle()
+
+            assertEquals(2, sent.size)
+            assertEquals(sent[0].requestId, sent[1].requestId)
+        }
+
+    @Test
+    fun aTestTheServerRecordedBeforeTheAppEndedIsFollowedByANewOne() =
+        runTest(dispatcher) {
+            written = 4
+            val parts = parts()
+            val saved = SavedStateHandle()
+            val before = viewModel(saved, parts)
+            started(before)
+            submit = { throw ApiException(ApiError.Network) }
+            before.ui.value.questions
+                .forEach { before.answer(it, Answer.Choice(0)) }
+            advanceUntilIdle()
+
+            submit = ::result
+            asked = List(4) { "00000000-0000-4000-8000-00000000001$it" }
+            val after = viewModel(SavedStateHandle(saved.keys().associateWith { saved.get<Any>(it) }), parts)
+            read(after)
+            after.ui.value.questions
+                .forEach { after.answer(it, Answer.Choice(0)) }
+            advanceUntilIdle()
+
+            assertEquals(asked, sent[1].answers.map { it.itemId.toString() })
+            assertNotEquals(sent[0].requestId, sent[1].requestId)
         }
 
     @Test

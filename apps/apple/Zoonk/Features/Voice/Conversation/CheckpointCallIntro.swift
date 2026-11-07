@@ -93,7 +93,7 @@ struct CheckpointCallIntro: View {
             "The call didn't start. Try again in a moment.", table: "Voice",
             comment: "Starting a checkpoint call failed")
         )
-        .font(.subheadline)
+        .typeStyle(.body)
       }
 
       Button {
@@ -199,8 +199,8 @@ private struct StudyTimeUsedUp: View {
 
   var body: some View {
     Text(Self.line)
-      .font(.footnote)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
       .frame(maxWidth: .infinity, alignment: .leading)
 
     Button {

@@ -28,6 +28,7 @@ class LearnerAccessTest {
         isActive = true,
         isSettingUp = false,
         kind = kind,
+        languageFlag = null,
         status = status,
         targetDate = null,
         targetLanguage = null,

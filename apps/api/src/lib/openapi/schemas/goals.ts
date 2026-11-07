@@ -19,6 +19,13 @@ export const goalSchema = z
       .meta({ description: "The goal the tabs show: the main goal, whose session comes first" }),
     kind: z.enum(GoalKind),
     language: z.string(),
+    languageFlag: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          "A language goal's flag, as a language course's: a country's two-letter code, or a region's (`es-ct`, `gb-wls`, `arab`), as flag-icons names them; null for other goals",
+      }),
     plan: z
       .object({
         currentPhase: z.int().nullable(),

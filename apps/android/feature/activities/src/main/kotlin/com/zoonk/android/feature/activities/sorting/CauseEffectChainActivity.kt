@@ -69,6 +69,7 @@ import com.zoonk.android.feature.activities.linksAnswer
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf24FieldsNodesInner
@@ -236,7 +237,7 @@ private fun NodeCard(
     onCancel: () -> Boolean,
     modifier: Modifier,
 ) {
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     val highlight = MaterialTheme.zoonk.vizHighlight
     val colors = MaterialTheme.colorScheme
     val locale = currentLocale()
@@ -298,7 +299,7 @@ private fun LinkList(
 
     Column(Modifier.semantics { contentDescription = label }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         results.forEach { (link, state) ->
-            val shape = RoundedCornerShape(12.dp)
+            val shape = RoundedCornerShape(ZoonkRadius.option)
             Row(
                 Modifier
                     .fillMaxWidth()

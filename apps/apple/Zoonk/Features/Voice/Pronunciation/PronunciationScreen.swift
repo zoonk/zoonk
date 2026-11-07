@@ -74,7 +74,7 @@ struct PronunciationScreen: View {
         } label: {
           Text("Try again", tableName: "Voice", comment: "Button to retry loading")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .lonePage()
     case .loaded(let value):
@@ -208,11 +208,11 @@ private struct PronunciationRoundView: View {
         HelpLimitNotice(limit: limit)
       } else if notice == .failed, round?.isPending != true, !recorder.isRecording {
         FailureLine(message: statusLine(notice))
-          .font(.subheadline)
+          .typeStyle(.note)
       } else {
         Text(statusLine(notice))
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -293,7 +293,7 @@ private struct PronunciationRoundView: View {
               Image(systemName: "arrow.counterclockwise")
             }
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .controlSize(.large)
         }
 
@@ -344,7 +344,7 @@ private struct PronunciationRoundView: View {
           "We couldn't save your answers.", table: "Voice",
           comment: "Finishing the round failed")
       )
-      .font(.subheadline)
+      .typeStyle(.body)
 
       Spacer()
 
@@ -353,7 +353,7 @@ private struct PronunciationRoundView: View {
       } label: {
         Text("Try again", tableName: "Voice", comment: "Retries saving the round")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
   }
 }
@@ -367,8 +367,8 @@ private struct RoundMeter: View {
         "Word \(round.index + 1) of \(round.words.count)", tableName: "Voice",
         comment: "Where the learner is in the round"
       )
-      .font(.caption.monospacedDigit())
-      .foregroundStyle(.secondary)
+      .typeStyle(.data)
+      .foregroundStyle(.mutedForeground)
 
       MeterParts(
         parts: round.words.indices.map { position in
@@ -378,7 +378,7 @@ private struct RoundMeter: View {
           case .wrong:
             .init(fill: .color(.destructive))
           case .skipped:
-            .init(fill: .color(Color(.tertiaryLabel)))
+            .init(fill: .color(Color.faint))
           case nil:
             .init(fill: position == round.index ? .current : .track)
           }
@@ -398,16 +398,16 @@ private struct GradeNote: View {
         } icon: {
           Image(systemName: "checkmark.circle.fill")
         }
-        .font(.headline)
-        .foregroundStyle(.success)
+        .typeStyle(.body.weight(.semibold))
+        .foregroundStyle(.successText)
       } else {
         Text(grade.verdict)
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
       }
 
       Text(grade.comesBack)
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
   }
@@ -459,16 +459,15 @@ private struct PronunciationResultView: View {
       .lonePage()
     } else {
       PaneSplit {
-        List {
+        ZoonkList {
           summary
           dayMoment
         }
       } secondary: {
         Color.clear
           .safeAreaBar(edge: .bottom) { doneButton }
-          .background(Color(.systemGroupedBackground))
       } single: {
-        List {
+        ZoonkList {
           summary
           dayMoment
         }
@@ -489,13 +488,13 @@ private struct PronunciationResultView: View {
             Text("Practice done", tableName: "Voice", comment: "A finished round")
           }
         }
-        .font(.title2.weight(.semibold))
+        .typeStyle(.section)
 
         Text(
           "An accent never blocks you. Words that still sound different come back tomorrow.",
           tableName: "Voice", comment: "What a pronunciation round's grade means"
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
       .listRowBackground(Color.clear)
       .listRowSeparator(.hidden)
@@ -516,7 +515,7 @@ private struct PronunciationResultView: View {
         IconLabeledContent {
           Text(result.brainPower, format: .number.sign(strategy: .always(includingZero: false)))
             .monospacedDigit()
-            .foregroundStyle(.brain)
+            .foregroundStyle(.brainText)
         } title: {
           Text("Brain Power", tableName: "Voice", comment: "Points earned label")
         } icon: {

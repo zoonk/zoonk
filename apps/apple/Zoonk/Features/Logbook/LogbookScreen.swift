@@ -115,7 +115,7 @@ struct LogbookScreen: View {
             } label: {
               Text("Try again", tableName: "Session", comment: "Retries loading")
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
           }
           .lonePage()
         default:
@@ -152,6 +152,7 @@ private struct LogbookSteps: View {
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @Environment(AppRouter.self) private var router
   @State private var current = LogbookStep.week
+  @ScaledMetric(relativeTo: .body) private var tileWidth = 150.0
   @AccessibilityFocusState private var focusedStep: LogbookStep?
 
   let recap: WeeklyRecap
@@ -161,18 +162,15 @@ private struct LogbookSteps: View {
     let steps = recap.steps
 
     PaneSplit {
-      List {
+      ZoonkList {
         page(.week)
       }
     } secondary: {
-      List {
+      ZoonkList {
         ForEach(steps.filter { $0 != .week }, id: \.self) { step in
           page(step)
         }
       }
-      // A quiet week leaves it empty, and an empty list draws the plain background.
-      .scrollContentBackground(.hidden)
-      .background(Color(.systemGroupedBackground))
       .safeAreaBar(edge: .bottom) {
         letsGo
           .controlSize(.large)
@@ -182,7 +180,7 @@ private struct LogbookSteps: View {
     } single: {
       TabView(selection: $current) {
         ForEach(steps, id: \.self) { step in
-          List {
+          ZoonkList {
             page(step)
           }
           .tag(step)
@@ -190,7 +188,7 @@ private struct LogbookSteps: View {
       }
       .tabViewStyle(.page(indexDisplayMode: steps.count > 1 ? .always : .never))
       .indexViewStyle(.page(backgroundDisplayMode: .always))
-      .background(Color(.systemGroupedBackground))
+      .background(Color(.systemBackground))
       .safeAreaBar(edge: .bottom) {
         action(steps)
           .controlSize(.large)
@@ -287,7 +285,7 @@ private struct LogbookSteps: View {
             Text("Trap hunter badges", tableName: "Session", comment: "Badges earned this week")
           } icon: {
             Image(systemName: "rosette")
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       }
@@ -330,22 +328,18 @@ private struct LogbookSteps: View {
 
     if !recap.isQuiet {
       Section {
-        IconLabeledContent {
-          Text(studyDuration(minutes: recap.week.minutes))
-            .monospacedDigit()
-        } title: {
-          Text("Time", tableName: "Session", comment: "The week's study time")
-        } icon: {
-          Image(systemName: "clock")
+        StatTileGrid(columns: [2, 1], minimumWidth: tileWidth) {
+          StatTile(
+            label: Text("Time", tableName: "Session", comment: "The week's study time"),
+            quantity: studyDuration(minutes: recap.week.minutes),
+            systemImage: "clock")
+          StatTile(
+            label: Text("Questions", tableName: "Session", comment: "The week's questions"),
+            value: Text(recap.week.questions, format: .number),
+            systemImage: "checklist")
         }
-
-        IconLabeledContent {
-          Text(recap.week.questions, format: .number)
-        } title: {
-          Text("Questions", tableName: "Session", comment: "The week's questions")
-        } icon: {
-          Image(systemName: "checklist")
-        }
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
       }
     }
   }
@@ -356,18 +350,19 @@ private struct LogbookSteps: View {
     VStack(alignment: .leading, spacing: 6) {
       if let eyebrow {
         eyebrow
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.eyebrow)
+          .foregroundStyle(.faint)
       }
 
       title
-        .font(.largeTitle.bold())
+        .typeStyle(.pageTitle)
         .accessibilityAddTraits(.isHeader)
         .accessibilityFocused($focusedStep, equals: step)
 
       if let detail {
         detail
-          .foregroundStyle(.secondary)
+          .typeStyle(.reading)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .listRowBackground(Color.clear)
@@ -442,17 +437,13 @@ private struct LogbookSteps: View {
     if recap.comparison.minutes > 0 {
       return Text(
         "\(studyDuration(minutes: recap.comparison.minutes)) more than the week before!",
-        tableName: "Session", comment: "More time than last week"
-      )
-      .foregroundStyle(.success)
+        tableName: "Session", comment: "More time than last week")
     }
 
     if recap.comparison.questions > 0 {
       return Text(
         "\(recap.comparison.questions) more questions than the week before!",
-        tableName: "Session", comment: "More questions than last week"
-      )
-      .foregroundStyle(.success)
+        tableName: "Session", comment: "More questions than last week")
     }
 
     return nil
@@ -468,7 +459,7 @@ private struct TurnaroundChart: View {
 
     Chart {
       RuleMark(y: .value(rightAnswers, 0.0))
-        .foregroundStyle(Color(.separator))
+        .foregroundStyle(Color.border)
 
       ForEach(days, id: \.offset) { index, point in
         if let accuracy = point.accuracy {
@@ -524,6 +515,8 @@ private struct TurnaroundChart: View {
 private struct WeekRings: View {
   let recap: WeeklyRecap
 
+  @ScaledMetric(relativeTo: .title3) private var ringSize = 36.0
+
   var body: some View {
     let start = studyDate(recap.weekStart)
 
@@ -533,14 +526,17 @@ private struct WeekRings: View {
         let key = date?.formatted(.iso8601.year().month().day()) ?? ""
         let studied = recap.week.daysStudied.contains(key)
 
-        VStack(spacing: 4) {
-          Image(systemName: studied ? "checkmark.circle.fill" : "circle")
-            .font(.title3)
-            .foregroundStyle(studied ? AnyShapeStyle(.success) : AnyShapeStyle(.quaternary))
+        VStack(spacing: 6) {
+          GoalRing(share: studied ? 1 : 0, size: ringSize) {
+            if studied {
+              Image(systemName: "checkmark")
+                .foregroundStyle(.success)
+            }
+          }
 
           Text(date?.formatted(.studyDay.weekday(.narrow)) ?? "")
-            .font(.caption2)
-            .foregroundStyle(.secondary)
+            .typeStyle(.small.monospaced())
+            .foregroundStyle(studied ? Color(.foreground) : .faint)
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .ignore)

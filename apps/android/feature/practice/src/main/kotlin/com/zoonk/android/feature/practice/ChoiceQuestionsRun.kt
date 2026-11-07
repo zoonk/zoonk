@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
@@ -32,6 +31,8 @@ import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.TaskSegment
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.ItemAnswerInput
@@ -204,11 +205,11 @@ internal fun ChoiceQuestionsRun(
 private fun answeredSegments(
     answered: Int,
     total: Int,
-): List<Segment> =
+): List<TaskSegment> =
     List(total) {
         when {
-            it < answered -> Segment.Read
-            it == answered -> Segment.Current
-            else -> Segment.Ahead
+            it < answered -> TaskSegment.Read
+            it == answered -> TaskSegment.Current
+            else -> TaskSegment.Ahead
         }
     }

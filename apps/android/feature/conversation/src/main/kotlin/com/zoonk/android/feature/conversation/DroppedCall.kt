@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,11 +19,13 @@ import com.zoonk.android.feature.audio.MicrophoneOff
 import com.zoonk.android.feature.livecall.LiveCallFailure
 import com.zoonk.android.feature.livecall.LiveCallPhase
 import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitActions
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.limitMessage
 
 internal enum class DroppedReason { CallInProgress, CallsPaused, Ended, Limit, Microphone, PlusRequired }
@@ -165,22 +165,22 @@ private fun DroppedActions(
 
         DroppedRetry.CallAgain -> {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilledTonalButton(onClick = actions.onEnd) { Text(end) }
+                OutlinedButton(onClick = actions.onEnd) { Text(end) }
                 Button(onClick = actions.onRetry, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.conversation_call_again)) }
             }
         }
 
         DroppedRetry.Takeover -> {
             CrowdedActions { fill ->
-                FilledTonalButton(onClick = actions.onEnd, modifier = fill) { Text(end) }
+                OutlinedButton(onClick = actions.onEnd, modifier = fill) { Text(end) }
                 Button(onClick = actions.onTakeover, modifier = fill) { Text(stringResource(R.string.conversation_take_over)) }
             }
         }
 
         DroppedRetry.Microphone -> {
             CrowdedActions { fill ->
-                FilledTonalButton(onClick = actions.onEnd, modifier = fill) { Text(end) }
-                FilledTonalButton(onClick = actions.onRetry, modifier = fill) { Text(stringResource(R.string.conversation_try_again)) }
+                OutlinedButton(onClick = actions.onEnd, modifier = fill) { Text(end) }
+                OutlinedButton(onClick = actions.onRetry, modifier = fill) { Text(stringResource(R.string.conversation_try_again)) }
                 Button(onClick = actions.onTypeInstead, modifier = fill) { Text(stringResource(R.string.conversation_type_instead)) }
             }
         }

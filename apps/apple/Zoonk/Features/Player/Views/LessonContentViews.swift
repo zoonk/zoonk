@@ -5,13 +5,15 @@ struct LessonRichText: View {
   let text: String
   let literalNumbers: Bool
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   init(_ text: String, literalNumbers: Bool = false) {
     self.text = text
     self.literalNumbers = literalNumbers
   }
 
   var body: some View {
-    Text(Self.typeset(text, literalNumbers: literalNumbers))
+    Text(Self.typeset(text, literalNumbers: literalNumbers), legibility: legibilityWeight)
   }
 
   static func typeset(_ text: String, literalNumbers: Bool = false) -> RichInline {
@@ -74,6 +76,22 @@ struct LessonTextBlocks: View {
   }
 }
 
+/// Main's `LessonEyebrow`: what kind of screen this is, as a chip over its question.
+struct LessonEyebrow: View {
+  let title: Text
+  let systemImage: String
+
+  var body: some View {
+    HStack(alignment: .firstTextBaseline, spacing: 6) {
+      Image(systemName: systemImage)
+        .imageScale(.small)
+        .accessibilityHidden(true)
+      title
+    }
+    .chip(wraps: true)
+  }
+}
+
 /// A question as a VoiceOver heading, with any table of data above it as a check's context.
 struct LessonQuestionText: View {
   let text: String
@@ -83,12 +101,12 @@ struct LessonQuestionText: View {
 
     if let data = parts.data {
       LessonTextBlocks(data)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
 
     if !parts.question.isEmpty {
       LessonRichText(parts.question)
-        .font(.title2.weight(.semibold))
+        .typeStyle(.question)
         .dimsOnceChecked()
         .fixedSize(horizontal: false, vertical: true)
         .accessibilityAddTraits(.isHeader)
@@ -150,7 +168,7 @@ private struct DimsOnceChecked: ViewModifier {
   @Environment(\.isLessonStepChecked) private var isChecked
 
   func body(content: Content) -> some View {
-    content.foregroundStyle(isChecked ? HierarchicalShapeStyle.secondary : .primary)
+    content.foregroundStyle(isChecked ? Color.mutedForeground : .primary)
   }
 }
 
@@ -205,11 +223,12 @@ struct LessonPictureView: View {
       } icon: {
         Image(systemName: "photo")
       }
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .padding()
-      .background(.fill.tertiary, in: .rect(cornerRadius: 16))
+      .padding(.horizontal, 16)
+      .padding(.vertical, 12)
+      .well()
     }
   }
 
@@ -273,8 +292,8 @@ struct LessonPicturePlaceholder: View {
       description
       ScrollView { description }
     }
-    .font(.subheadline)
-    .foregroundStyle(.secondary)
+    .typeStyle(.note)
+    .foregroundStyle(.mutedForeground)
     .multilineTextAlignment(.center)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background { MediaPendingFill(pulses: isDrawing) }
@@ -284,7 +303,7 @@ struct LessonPicturePlaceholder: View {
   private var description: some View {
     VStack(spacing: 8) {
       Image(systemName: "photo")
-        .font(.title2)
+        .typeStyle(.section.weight(.regular))
         .accessibilityHidden(true)
 
       if saysItIsDrawing {
@@ -307,7 +326,7 @@ extension View {
     aspectRatio: CGFloat, maxHeight: CGFloat = .infinity, alignment: Alignment = .center
   ) -> some View {
     PictureFrameLayout(aspectRatio: aspectRatio, maxHeight: maxHeight) { self }
-      .clipShape(.rect(cornerRadius: 16))
+      .clipShape(.rect(cornerRadius: Radius.xl, style: .continuous))
       .frame(maxWidth: .infinity, alignment: alignment)
   }
 }
@@ -386,7 +405,7 @@ private struct LessonChartView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       Text(chart.title)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
 
       Chart(points) { point in
         if chart.chart == .bar {
@@ -412,8 +431,8 @@ private struct LessonChartView: View {
 
       if let source = chart.source {
         Text(source)
-          .font(.caption)
-          .foregroundStyle(.secondary)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -423,8 +442,8 @@ extension View {
   func lessonValueAxis() -> some View {
     chartYAxis {
       AxisMarks { value in
-        AxisGridLine()
-        AxisTick()
+        AxisGridLine().foregroundStyle(.vizGrid)
+        AxisTick().foregroundStyle(.vizGrid)
         AxisValueLabel {
           if let y = value.as(Double.self) {
             Text(verbatim: ActivityNumberFormat.format(y, compact: true))
@@ -441,21 +460,21 @@ private struct LessonTimelineView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text(timeline.title)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
 
       ForEach(Array(timeline.events.enumerated()), id: \.offset) { _, event in
         HStack(alignment: .firstTextBaseline, spacing: 12) {
           Text(event.date)
-            .font(.subheadline.monospacedDigit().weight(.semibold))
-            .foregroundStyle(.success)
+            .typeStyle(.body.weight(.semibold).monospaced())
+            .foregroundStyle(.successText)
 
           VStack(alignment: .leading, spacing: 2) {
             Text(event.label)
-              .font(.subheadline.weight(.medium))
+              .typeStyle(.body.weight(.medium))
             if let detail = event.detail {
               Text(detail)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .typeStyle(.note)
+                .foregroundStyle(.mutedForeground)
             }
           }
         }
@@ -474,8 +493,8 @@ struct LessonCitationView: View {
       let source = CitationLabel.material(title: title, page: page, unit: unit)
 
       Label(source, systemImage: "doc.text")
-        .font(.footnote)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
         .accessibilityLabel(
           Text(
             "From your material: \(source)", tableName: "Player",
@@ -490,8 +509,8 @@ struct LessonCitationView: View {
       } icon: {
         Image(systemName: "doc.questionmark")
       }
-      .font(.footnote)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
     }
   }
 }

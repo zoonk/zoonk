@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +23,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -271,7 +271,7 @@ internal fun MoveDateSwitch(
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        FilledTonalButton(onClick = ::move, modifier = Modifier.focusRequester(focus.moveDate)) {
+        OutlinedButton(onClick = ::move, modifier = Modifier.focusRequester(focus.moveDate)) {
             PendingLabel(
                 pending = pending,
                 text =
@@ -304,7 +304,7 @@ private fun ErrorLine(text: String) {
 
 @Composable
 internal fun ChooseFocusAction(onChoose: () -> Unit) {
-    FilledTonalButton(onClick = onChoose) { Text(stringResource(R.string.plan_choose_focus)) }
+    OutlinedButton(onClick = onChoose) { Text(stringResource(R.string.plan_choose_focus)) }
 }
 
 /** Where focus goes once the date moves or a time is used, since the control the learner tapped gives way. */

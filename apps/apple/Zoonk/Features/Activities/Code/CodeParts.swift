@@ -17,18 +17,18 @@ struct CodeLine<Content: View>: View {
       Text(
         verbatim: String(repeating: " ", count: max(0, digits - String(number).count)) + "\(number)"
       )
-      .foregroundStyle(.tertiary)
+      .foregroundStyle(.faint)
 
       content
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    .font(.subheadline.monospaced())
+    .typeStyle(.body.monospaced())
     .padding(.horizontal, 6)
     .padding(.vertical, 3)
-    .background(background, in: .rect(cornerRadius: 6))
+    .background(background, in: .rect(cornerRadius: Radius.sm))
     .overlay(alignment: .leading) {
       if tone == .current {
-        Rectangle().fill(.orange).frame(width: 3)
+        Rectangle().fill(.vizHighlight).frame(width: 3)
       }
     }
   }
@@ -36,7 +36,7 @@ struct CodeLine<Content: View>: View {
   private var background: Color {
     switch tone {
     case .plain: .clear
-    case .current: .orange.opacity(0.15)
+    case .current: .vizHighlight.opacity(0.15)
     case .error: Color.destructive.opacity(0.12)
     }
   }
@@ -78,7 +78,7 @@ struct CodeRunBar: View {
             "\(runtimeName) didn't load. Check your connection and try again.",
             table: "ActivitiesCode", comment: "A code runtime (Python) failed to download")
         )
-        .font(.subheadline)
+        .typeStyle(.body)
 
         Button(action: retry) {
           Label {
@@ -87,7 +87,7 @@ struct CodeRunBar: View {
             Image(systemName: "arrow.counterclockwise")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       } else {
         HStack(spacing: 8) {
           if let reset {
@@ -101,12 +101,12 @@ struct CodeRunBar: View {
               }
               .labelStyle(.iconOnly)
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
             .disabled(isRunning)
           }
 
           if hasRun {
-            runButton.buttonStyle(.bordered)
+            runButton.buttonStyle(.outline)
           } else {
             runButton.buttonStyle(.mainAction)
           }

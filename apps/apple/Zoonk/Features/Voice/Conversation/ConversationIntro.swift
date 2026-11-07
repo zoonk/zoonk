@@ -64,16 +64,16 @@ struct ConversationIntro<Footer: View>: View {
 
   var body: some View {
     PaneSplit {
-      List {
+      ZoonkList {
         about
       }
     } secondary: {
-      List {
+      ZoonkList {
         task
       }
       .safeAreaBar(edge: .bottom) { startBar }
     } single: {
-      List {
+      ZoonkList {
         about
         task
       }
@@ -90,19 +90,19 @@ struct ConversationIntro<Footer: View>: View {
     Section {
       VStack(alignment: .leading, spacing: 8) {
         eyebrow
-          .font(.caption.monospaced())
-          .foregroundStyle(.tertiary)
+          .typeStyle(.data)
+          .foregroundStyle(.faint)
 
         Text(intro.speakingTask?.task.name ?? intro.title)
-          .font(.title2.weight(.semibold))
+          .typeStyle(.section)
 
         Text(intro.speakingTask?.card.summary ?? intro.situation)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
         if !intro.callsCharacter {
           Text(howTheCallRuns)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
       }
       .listRowBackground(Color.clear)
@@ -113,7 +113,9 @@ struct ConversationIntro<Footer: View>: View {
       Section {
         CharacterRow(intro: intro, isTalking: false)
       } footer: {
-        StandInNote(name: intro.character.name, role: examTask.task.role)
+        SectionFooter {
+          StandInNote(name: intro.character.name, role: examTask.task.role)
+        }
       }
     } else {
       Section {
@@ -166,16 +168,20 @@ struct ConversationIntro<Footer: View>: View {
         ExamTaskCard(card: examTask.card)
           .typesettingLanguage(.init(identifier: examTask.language))
       } header: {
-        Text(
-          "Task \(examTask.number) of \(examTask.taskCount)", tableName: "Voice",
-          comment: "Which task of the exam's speaking paper this is")
+        SectionTitle(
+          Text(
+            "Task \(examTask.number) of \(examTask.taskCount)", tableName: "Voice",
+            comment: "Which task of the exam's speaking paper this is"))
       } footer: {
-        MicNote(
-          text: Text(
-            "Speak your answers: typed ones aren't rated on how you sound. The microphone is used only during the call.",
-            tableName: "Voice",
-            comment: "Before an exam task's call: why to speak rather than type, and the microphone"
-          ))
+        SectionFooter {
+          MicNote(
+            text: Text(
+              "Speak your answers: typed ones aren't rated on how you sound. The microphone is used only during the call.",
+              tableName: "Voice",
+              comment:
+                "Before an exam task's call: why to speak rather than type, and the microphone"
+            ))
+        }
       }
     } else {
       Section {
@@ -184,18 +190,22 @@ struct ConversationIntro<Footer: View>: View {
             Text(objective.label)
               .typesettingLanguage(.init(identifier: intro.targetLanguage))
             Text(objective.description)
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } header: {
-        Text(
-          "What to get across", tableName: "Voice", comment: "The call's goals, before it starts")
+        SectionTitle(
+          Text(
+            "What to get across", tableName: "Voice", comment: "The call's goals, before it starts")
+        )
       } footer: {
-        MicNote(
-          text: Text(
-            "Turn your sound on. The microphone is on only during the call.", tableName: "Voice",
-            comment: "Before a call: what it needs from the learner's device"))
+        SectionFooter {
+          MicNote(
+            text: Text(
+              "Turn your sound on. The microphone is on only during the call.", tableName: "Voice",
+              comment: "Before a call: what it needs from the learner's device"))
+        }
       }
     }
   }
@@ -280,11 +290,11 @@ struct CallMicrophoneOff: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       Self.title
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
 
       Self.text(name: name)
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .accessibilityElement(children: .combine)
@@ -313,7 +323,7 @@ struct CallMicrophoneOff: View {
       Text("Open Settings", tableName: "Voice", comment: "Button that opens the app's settings")
         .frame(maxWidth: .infinity)
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.large)
   }
 }
@@ -344,7 +354,8 @@ private struct HowTheCallWorks: View {
           tableName: "Voice", comment: "How a call works: step 3")
       }
     } header: {
-      Text("How the call works", tableName: "Voice", comment: "Before a call: what will happen")
+      SectionTitle(
+        Text("How the call works", tableName: "Voice", comment: "Before a call: what will happen"))
     }
   }
 
@@ -410,17 +421,17 @@ struct CharacterRow: View {
 
     HStack(spacing: 12) {
       Text(character.name.prefix(1).uppercased())
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.note.weight(.medium))
         .frame(width: markSize, height: markSize)
-        .background(Color(.secondarySystemFill), in: .circle)
+        .background(Color.muted, in: .circle)
         .overlay {
-          Circle().strokeBorder(isTalking ? Color.secondary : .clear, lineWidth: 1.5)
+          Circle().strokeBorder(isTalking ? Color.mutedForeground : .clear, lineWidth: 1.5)
         }
         .accessibilityHidden(true)
 
       VStack(alignment: .leading, spacing: 2) {
         Text(character.name)
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
 
         Group {
           if let role = intro.speakingTask?.task.role {
@@ -435,8 +446,8 @@ struct CharacterRow: View {
             Text("\(character.role)\u{00A0}· \(character.place)")
           }
         }
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       }
     }
     .accessibilityElement(children: .combine)
@@ -453,26 +464,26 @@ private struct ExamTaskCard: View {
 
     if let text = card.text {
       VStack(alignment: .leading, spacing: 4) {
-        Text(text.title).font(.headline)
+        Text(text.title).typeStyle(.body.weight(.semibold))
         Text(text.body)
       }
     }
 
     if let table = card.table {
       VStack(alignment: .leading, spacing: 8) {
-        Text(table.title).font(.headline)
+        Text(table.title).typeStyle(.body.weight(.semibold))
 
         Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 4) {
           GridRow {
             ForEach(table.columns, id: \.self) { column in
-              Text(column).font(.subheadline.weight(.semibold))
+              Text(column).typeStyle(.body.weight(.semibold))
             }
           }
 
           ForEach(Array(table.rows.enumerated()), id: \.offset) { _, row in
             GridRow {
               ForEach(Array(row.enumerated()), id: \.offset) { _, cell in
-                Text(cell).font(.subheadline)
+                Text(cell).typeStyle(.body)
               }
             }
           }
@@ -493,10 +504,10 @@ private struct ExamTaskCard: View {
       AsyncImage(url: URL(string: photo.url)) { image in
         image.resizable().scaledToFit()
       } placeholder: {
-        Color(.secondarySystemFill)
+        Color.muted
           .aspectRatio(4 / 3, contentMode: .fit)
       }
-      .clipShape(.rect(cornerRadius: 8, style: .continuous))
+      .clipShape(.rect(cornerRadius: Radius.md, style: .continuous))
       .accessibilityLabel(photo.alt)
     }
   }

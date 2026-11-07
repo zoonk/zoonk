@@ -60,22 +60,23 @@ struct LockedCertificateCard: View {
   var body: some View {
     VStack(spacing: 8) {
       Image(systemName: "lock.fill")
-        .font(size == .page ? .title : .body)
-        .foregroundStyle(.secondary)
+        .typeStyle(size == .page ? .section : .body)
+        .foregroundStyle(.mutedForeground)
 
       if size == .page {
         Text(facts.name)
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
+          .foregroundStyle(Color(.foreground))
           .multilineTextAlignment(.center)
 
         Text(facts.completedOnDay)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .padding()
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(.fill.tertiary)
+    .background(.muted)
     .certificateFrame(size)
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(
@@ -99,18 +100,14 @@ private struct CertificateFrame: ViewModifier {
   let size: CertificatePicture.Size
 
   func body(content: Content) -> some View {
-    let corner = size == .thumbnail ? 4.0 : 6.0
+    let corner = size == .thumbnail ? Radius.sm : Radius.md
 
     content
       .aspectRatio(CertificateFacts.aspectRatio, contentMode: .fit)
       .clipShape(.rect(cornerRadius: corner, style: .continuous))
       .overlay {
         RoundedRectangle(cornerRadius: corner, style: .continuous)
-          .strokeBorder(colorScheme == .dark ? Color.white.opacity(0.1) : Color(.separator))
+          .strokeBorder(colorScheme == .dark ? Color.white.opacity(0.1) : Color.border)
       }
-      .shadow(
-        color: size == .page && colorScheme == .light ? .black.opacity(0.08) : .clear,
-        radius: 16, y: 6
-      )
   }
 }

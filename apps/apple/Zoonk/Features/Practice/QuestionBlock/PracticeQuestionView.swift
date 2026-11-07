@@ -164,8 +164,8 @@ struct QuestionTitle: View {
 
   var body: some View {
     ItemText(text)
-      .font(.title3.weight(.semibold))
-      .foregroundStyle(isMuted ? .secondary : .primary)
+      .typeStyle(.section)
+      .foregroundStyle(isMuted ? .mutedForeground : .primary)
       .accessibilityAddTraits(.isHeader)
   }
 }
@@ -180,8 +180,8 @@ struct QuestionNote<Content: View>: View {
     } icon: {
       Image(systemName: systemImage)
     }
-    .font(.footnote.weight(.medium))
-    .foregroundStyle(.secondary)
+    .typeStyle(.note.weight(.medium))
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -192,18 +192,15 @@ struct PracticeCallout<Content: View>: View {
   var body: some View {
     HStack(alignment: .firstTextBaseline, spacing: 10) {
       Image(systemName: systemImage)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
       VStack(alignment: .leading, spacing: 4) {
         content()
       }
       .frame(maxWidth: .infinity, alignment: .leading)
     }
-    .font(.subheadline)
-    .padding(12)
-    .background(
-      Color(.secondarySystemGroupedBackground),
-      in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+    .typeStyle(.note)
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -247,19 +244,11 @@ enum PracticeVerdict: Equatable {
     }
   }
 
-  var tint: Color {
+  var tone: FeedbackTone {
     switch self {
-    case .right: .success
-    case .wrong: .destructive
-    case .blank, .notSure: .secondary
-    }
-  }
-
-  var systemImage: String {
-    switch self {
-    case .right: "checkmark.circle.fill"
-    case .wrong: "xmark.circle.fill"
-    case .blank, .notSure: "minus.circle.fill"
+    case .right: .right
+    case .wrong: .wrong
+    case .blank, .notSure: .neutral
     }
   }
 }
@@ -275,17 +264,7 @@ struct PracticeFeedbackPanel<Notes: View>: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
-      HStack(alignment: .firstTextBaseline) {
-        Label {
-          Text(verdict.label)
-        } icon: {
-          Image(systemName: verdict.systemImage)
-        }
-        .font(.headline)
-        .foregroundStyle(verdict.tint)
-
-        Spacer()
-
+      FeedbackVerdict(Text(verdict.label), tone: verdict.tone) {
         if streak >= 3 {
           Label {
             Text(
@@ -294,8 +273,7 @@ struct PracticeFeedbackPanel<Notes: View>: View {
           } icon: {
             Image(systemName: "chevron.up.2")
           }
-          .font(.footnote.monospacedDigit())
-          .foregroundStyle(.secondary)
+          .typeStyle(.data)
         }
       }
 
@@ -317,13 +295,8 @@ struct PracticeFeedbackPanel<Notes: View>: View {
 
       notes()
     }
-    .font(.callout)
-    .padding(16)
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .background(
-      Color(.secondarySystemGroupedBackground),
-      in: RoundedRectangle(cornerRadius: 16, style: .continuous)
-    )
+    .typeStyle(.body)
+    .feedbackPanel()
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
       Text(
@@ -346,13 +319,14 @@ extension PracticeFeedbackPanel where Notes == EmptyView {
 struct WorkedStepsView: View {
   let steps: [String]
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
-        Text(ItemTextBlock.inline(step))
-          .font(.callout.monospaced())
-          .fontWeight(index == steps.count - 1 ? .semibold : .regular)
-          .foregroundStyle(index == steps.count - 1 ? .primary : .secondary)
+        Text(ItemTextBlock.inline(step), legibility: legibilityWeight)
+          .typeStyle(.reading.monospaced().weight(index == steps.count - 1 ? .semibold : .regular))
+          .foregroundStyle(index == steps.count - 1 ? Color(.foreground) : .mutedForeground)
       }
     }
     .accessibilityElement(children: .combine)

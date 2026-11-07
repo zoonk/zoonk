@@ -59,6 +59,23 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.firstVerdicts, ["check": false])
   }
 
+  func testSegmentsKeepTheFirstVerdictAndShowTheRetrysOwn() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    XCTAssertEqual(state.segments, [.current, .ahead, .ahead, .ahead])
+
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "wrong")
+    XCTAssertEqual(state.segments, [.read, .read, .wrong, .ahead, .ahead])
+
+    state.continueLesson()
+    state.continueLesson()
+    XCTAssertEqual(state.segments, [.read, .read, .wrong, .read, .current])
+
+    try answerCheck(&state, optionId: "right")
+    XCTAssertEqual(state.segments, [.read, .read, .wrong, .read, .right])
+  }
+
   func testWorkedExampleRevealsOnePartPerContinue() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: [try step(workedExample)])
 
@@ -1273,10 +1290,13 @@ final class LessonMapTests: XCTestCase {
     XCTAssertEqual(state.phase, .map)
     XCTAssertNil(state.completion, "nothing is saved yet")
     XCTAssertEqual(state.progress, 3 / 4, "the map is the last of four screens")
+    XCTAssertEqual(
+      state.segments, [.read, .wrong, .right, .current], "the map has its own segment")
 
     state.continueLesson()
     XCTAssertEqual(state.phase, .completed)
     XCTAssertEqual(state.completion?.status, .saving)
+    XCTAssertEqual(state.segments.last, .read)
   }
 
   func testPreviousFromTheMapShowsTheLastScreenWithItsResult() throws {

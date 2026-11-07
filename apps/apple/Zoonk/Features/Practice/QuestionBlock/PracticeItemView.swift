@@ -74,6 +74,8 @@ struct ChoiceItemView: View {
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
     let correct = result?.correctAnswer?.picks ?? []
     let shownPicks = result?.answer.picks ?? picks
@@ -92,7 +94,7 @@ struct ChoiceItemView: View {
             result: optionResult(index, correct: correct, picked: shownPicks),
             isLocked: isLocked,
             action: { pick(index) },
-            label: { Text(ItemTextBlock.inline(option)) }
+            label: { Text(ItemTextBlock.inline(option), legibility: legibilityWeight) }
           )
           .practiceFocus(index == 0 ? .answer : nil)
         }
@@ -146,8 +148,8 @@ struct PickRule: View {
           comment: "Rule above a multiple-choice question asking for an exact number of options.")
       }
     }
-    .font(.subheadline.weight(.medium))
-    .foregroundStyle(.secondary)
+    .typeStyle(.note.weight(.medium))
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -211,17 +213,11 @@ struct TrueFalseStatementCard: View {
 
   var body: some View {
     ItemText(statement)
-      .font(.title3.weight(.semibold))
-      .foregroundStyle(result == nil ? .primary : .secondary)
+      .typeStyle(.section)
+      .foregroundStyle(result == nil ? Color(.foreground) : .mutedForeground)
       .padding(20)
       .frame(maxWidth: .infinity, minHeight: 120, alignment: .topLeading)
-      .background(
-        Color(.secondarySystemGroupedBackground),
-        in: RoundedRectangle(cornerRadius: 16, style: .continuous)
-      )
-      .overlay(
-        RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Color(.separator))
-      )
+      .panel()
       .offset(x: offset)
       .rotationEffect(.degrees(reduceMotion ? 0 : Double(offset) * 0.06))
       .gesture(swipe, isEnabled: !isLocked && !statement.contains("|"))
@@ -291,6 +287,8 @@ struct MatchPairsItemView: View {
   @Binding var draft: PracticeAnswer?
   @State private var selected: Int?
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
     let current = matches
 
@@ -302,7 +300,7 @@ struct MatchPairsItemView: View {
             isLocked: isLocked,
             tag: current[index] == nil ? nil : AnyView(PairBadge(number: index + 1)),
             action: { pickLeft(index, current: current) },
-            label: { Text(ItemTextBlock.inline(entry)) }
+            label: { Text(ItemTextBlock.inline(entry), legibility: legibilityWeight) }
           )
           .practiceFocus(index == 0 ? .answer : nil)
         }
@@ -319,7 +317,7 @@ struct MatchPairsItemView: View {
             isLocked: isLocked || (selected == nil && owner == nil),
             tag: owner.map { AnyView(PairBadge(number: $0 + 1)) },
             action: { pickRight(index, current: current) },
-            label: { Text(ItemTextBlock.inline(entry)) }
+            label: { Text(ItemTextBlock.inline(entry), legibility: legibilityWeight) }
           )
           .accessibilityValue(matchedValue(owner))
         }
@@ -388,8 +386,8 @@ private struct PairBadge: View {
 
   var body: some View {
     Text(number, format: .number)
-      .font(.caption.monospacedDigit().weight(.semibold))
-      .foregroundStyle(Color(.systemBackground))
+      .typeStyle(.meta.weight(.semibold).monospaced())
+      .foregroundStyle(Color(.background))
       .frame(minWidth: 24, minHeight: 24)
       .background(Color.primary, in: Circle())
       .accessibilityHidden(true)
@@ -402,6 +400,8 @@ struct OrderItemView: View {
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
     let placed: [Int] = if case .order(let given) = result?.answer { given } else { order }
 
@@ -410,33 +410,47 @@ struct OrderItemView: View {
         "Tap the steps in order.", tableName: "Practice",
         comment: "Instruction above an ordering question."
       )
-      .font(.subheadline.weight(.medium))
-      .foregroundStyle(.secondary)
+      .typeStyle(.note.weight(.medium))
+      .foregroundStyle(.mutedForeground)
 
       ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
         let place = placed.firstIndex(of: index)
+        let result = stepResult(index, placed: placed)
 
         AnswerOption(
           marker: index + 1,
           isPicked: place != nil,
-          result: stepResult(index, placed: placed),
+          result: result,
           isLocked: isLocked,
           tag: place.map { AnyView(PairBadge(number: $0 + 1)) },
           action: { tap(index) },
-          label: { Text(ItemTextBlock.inline(step)) }
+          label: { Text(ItemTextBlock.inline(step), legibility: legibilityWeight) }
         )
-        .accessibilityValue(placeValue(place))
+        .accessibilityValue(placeValue(place, result: result))
         .practiceFocus(index == 0 ? .answer : nil)
       }
     }
   }
 
-  private func placeValue(_ place: Int?) -> Text {
+  /// The badge that shows a checked step's place is hidden from VoiceOver, so its value carries the
+  /// place and, as main's and Android's do, whether it's the right one.
+  private func placeValue(_ place: Int?, result: AnswerOptionResult?) -> Text {
     guard let place else { return Text(verbatim: "") }
 
-    return Text(
-      "Place \(place + 1)", tableName: "Practice",
-      comment: "VoiceOver value of a step placed in an ordering question.")
+    switch result {
+    case .right:
+      return Text(
+        "Place \(place + 1), right place", tableName: "Practice",
+        comment: "VoiceOver value of a checked ordering step the learner put in its right place.")
+    case .wrong:
+      return Text(
+        "Place \(place + 1), wrong place", tableName: "Practice",
+        comment: "VoiceOver value of a checked ordering step the learner put in a wrong place.")
+    case .guess, nil:
+      return Text(
+        "Place \(place + 1)", tableName: "Practice",
+        comment: "VoiceOver value of a step placed in an ordering question.")
+    }
   }
 
   private func stepResult(_ index: Int, placed: [Int]) -> AnswerOptionResult? {
@@ -478,7 +492,7 @@ struct NumericItemView: View {
     VStack(alignment: .leading, spacing: 8) {
       HStack(spacing: 8) {
         if let unit, unit.position == .prefix {
-          Text(unit.symbol).foregroundStyle(.secondary)
+          Text(unit.symbol).foregroundStyle(.mutedForeground)
         }
 
         TextField(
@@ -486,7 +500,7 @@ struct NumericItemView: View {
             localized: "Your answer", table: "Practice", comment: "Placeholder of an answer field."),
           text: Binding(get: { typedText ?? NumericEntryParser.text(for: draft) }, set: type)
         )
-        .font(.title3.monospacedDigit())
+        .typeStyle(.lessonText.monospacedDigit())
         .keyboardType(entry?.kind == .fraction ? .numbersAndPunctuation : .decimalPad)
         .submitLabel(.done)
         .focused($isFocused)
@@ -494,24 +508,22 @@ struct NumericItemView: View {
         .onSubmit(submit)
 
         if let unit, unit.position == .suffix {
-          Text(unit.symbol).foregroundStyle(.secondary)
+          Text(unit.symbol).foregroundStyle(.mutedForeground)
         }
 
         if let mark {
-          Image(systemName: mark == .right ? "checkmark" : "xmark")
-            .foregroundStyle(mark == .right ? Color.success : Color.destructive)
-            .accessibilityHidden(true)
+          FieldMark(mark: mark)
         }
       }
-      .modifier(AnswerFieldStyle(mark: mark))
+      .modifier(AnswerFieldStyle(mark: mark, isFocused: isFocused))
 
       if isInvalid {
         FailureLine(message: invalidHint)
-          .font(.subheadline)
+          .typeStyle(.body)
       } else if let rule {
         Text(rule)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .onAppear { isFocused = !isLocked }
@@ -592,7 +604,7 @@ struct TypedItemView: View {
           localized: "Your answer", table: "Practice", comment: "Placeholder of an answer field."),
         text: Binding(get: { shown }, set: type)
       )
-      .font(.title3)
+      .typeStyle(.lessonText)
       .textInputAutocapitalization(.never)
       .autocorrectionDisabled()
       .submitLabel(.done)
@@ -603,12 +615,10 @@ struct TypedItemView: View {
       }
 
       if let mark {
-        Image(systemName: mark == .right ? "checkmark" : "xmark")
-          .foregroundStyle(mark == .right ? Color.success : Color.destructive)
-          .accessibilityHidden(true)
+        FieldMark(mark: mark)
       }
     }
-    .modifier(AnswerFieldStyle(mark: mark))
+    .modifier(AnswerFieldStyle(mark: mark, isFocused: isFocused))
     .onAppear { isFocused = !isLocked }
   }
 
@@ -625,20 +635,26 @@ struct TypedItemView: View {
   }
 }
 
+/// Main's answer field: an input 56pt tall whose line says the verdict once checked.
 private struct AnswerFieldStyle: ViewModifier {
   let mark: AnswerOptionResult?
+  let isFocused: Bool
 
   func body(content: Content) -> some View {
-    let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
-
     content
-      .padding(.horizontal, 14)
-      .frame(minHeight: 56)
-      .background(Color(.secondarySystemGroupedBackground), in: shape)
-      .overlay(
-        shape.strokeBorder(
-          mark == .right ? Color.success : mark == .wrong ? Color.destructive : Color(.separator),
-          lineWidth: mark == nil ? 1 : 2))
+      .fieldBorder(
+        isFocused: isFocused, isRight: mark.map { $0 == .right }, minHeight: 56)
+  }
+}
+
+/// The verdict a checked field shows at its end, beside the words that say it.
+private struct FieldMark: View {
+  let mark: AnswerOptionResult
+
+  var body: some View {
+    Image(systemName: mark == .right ? "checkmark" : "xmark")
+      .foregroundStyle(mark == .right ? Color.successText : Color.destructiveText)
+      .accessibilityHidden(true)
   }
 }
 

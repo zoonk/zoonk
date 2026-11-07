@@ -114,7 +114,7 @@ private struct UnderstoodCard: View {
   }
 
   var body: some View {
-    List {
+    ZoonkList {
       StepHeader(
         title: Text(
           "Here's what I understood", tableName: "Onboarding",
@@ -171,7 +171,7 @@ private struct UnderstoodCard: View {
                 comment:
                   "Under the goals the free plan can't follow yet, which wait in the learner's goal list; Plus is the subscription's name, not \"more\""
               ),
-            showsSeePlus: error?.limit?.isPlusLimit != true, isInset: true)
+            showsSeePlus: error?.limit?.isPlusLimit != true)
         }
       }
 
@@ -307,13 +307,18 @@ private struct RewritableWords: View {
           .buttonStyle(.borderless)
         }
       } header: {
-        Text(
-          "What you wrote", tableName: "Onboarding", comment: "Header over the learner's typed goal"
-        )
+        SectionTitle(
+          Text(
+            "What you wrote", tableName: "Onboarding",
+            comment: "Header over the learner's typed goal"
+          ))
       } footer: {
-        Text(
-          "We'll read it again. To fix one detail, use its pencil below.", tableName: "Onboarding",
-          comment: "Under the typed words while they're being changed")
+        SectionFooter {
+          Text(
+            "We'll read it again. To fix one detail, use its pencil below.",
+            tableName: "Onboarding",
+            comment: "Under the typed words while they're being changed")
+        }
       }
     } else {
       TypedGoalSection(goal: words)
@@ -382,7 +387,7 @@ private struct UnderstoodRowView: View {
           }
         }
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .controlSize(.small)
       .disabled(isSaving)
 
@@ -392,7 +397,7 @@ private struct UnderstoodRowView: View {
             "That didn't save. Try again.", table: "Onboarding",
             comment: "A change couldn't be saved")
         )
-        .font(.footnote)
+        .typeStyle(.note)
       }
     }
   }
@@ -412,22 +417,22 @@ private struct UnderstoodRowView: View {
       HStack(alignment: .firstTextBaseline) {
         VStack(alignment: .leading, spacing: 4) {
           Text(row.label)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
 
           HStack(alignment: .firstTextBaseline) {
             Text(row.value)
             if let badge = row.badge {
               Text(badge)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .typeStyle(.meta)
+                .foregroundStyle(.mutedForeground)
             }
           }
 
           if let note = row.note {
             Text(note)
-              .font(.footnote)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
           }
 
           if let source = row.source {
@@ -440,9 +445,9 @@ private struct UnderstoodRowView: View {
                 Image(systemName: "arrow.up.right")
               }
               .labelStyle(TrailingIconLabelStyle())
-              .font(.footnote)
+              .typeStyle(.note)
             }
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -461,7 +466,7 @@ private struct UnderstoodRowView: View {
             .labelStyle(.iconOnly)
           }
           .buttonStyle(.borderless)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
       .accessibilityElement(children: .combine)
@@ -505,8 +510,8 @@ private struct RowEditor: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       Text(row.label)
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
 
       switch field.editor {
       case .text:
@@ -532,7 +537,7 @@ private struct RowEditor: View {
             "That didn't save. Try again.", table: "Onboarding",
             comment: "A change couldn't be saved")
         )
-        .font(.footnote)
+        .typeStyle(.note)
       }
 
       ButtonRow {
@@ -621,14 +626,14 @@ private struct OutcomeHeader: View {
     Section {
       VStack(alignment: .leading, spacing: 8) {
         Image(systemName: systemImage)
-          .font(.title2)
-          .foregroundStyle(.secondary)
+          .typeStyle(.section.weight(.regular))
+          .foregroundStyle(.mutedForeground)
           .accessibilityHidden(true)
         title
-          .font(.title2.bold())
+          .typeStyle(.section)
           .accessibilityAddTraits(.isHeader)
         description
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
       .listRowBackground(Color.clear)
     }
@@ -643,7 +648,7 @@ private struct ExplainOutcome: View {
   let onStart: () -> Void
 
   var body: some View {
-    List {
+    ZoonkList {
       OutcomeHeader(
         systemImage: "lightbulb",
         title: Text(question),
@@ -687,7 +692,7 @@ private struct InstrumentOutcome: View {
   @State private var joinFailed = false
 
   var body: some View {
-    List {
+    ZoonkList {
       OutcomeHeader(
         systemImage: "guitars",
         title: Text(
@@ -713,7 +718,7 @@ private struct InstrumentOutcome: View {
         switch waitlist {
         case .joined:
           Text(Self.note(.joined))
-            .foregroundStyle(.success)
+            .foregroundStyle(.successText)
         case .signInRequired:
           Text(Self.note(.signInRequired))
           CreateAccountButton()
@@ -785,7 +790,7 @@ private struct DeclinedOutcome: View {
   let onRetry: () -> Void
 
   var body: some View {
-    List {
+    ZoonkList {
       OutcomeHeader(
         systemImage: "hand.raised",
         title: Text(
@@ -811,7 +816,7 @@ private struct UnclearOutcome: View {
   let onRetry: () -> Void
 
   var body: some View {
-    List {
+    ZoonkList {
       OutcomeHeader(
         systemImage: "questionmark.bubble",
         title: Text(

@@ -7,7 +7,7 @@ struct PlanStandingSheet: View {
   let syllabus: GoalSyllabus?
 
   var body: some View {
-    List {
+    ZoonkList {
       if context.goal.kind == .exam,
         let preparation = store.standing(goalId: context.goal.id).value?.preparation
       {
@@ -19,9 +19,11 @@ struct PlanStandingSheet: View {
             Text("Preparation", tableName: "Plan", comment: "Label of the exam preparation number")
           }
         } footer: {
-          Text(
-            "How ready you are for the exam, from what you studied and how you answered.",
-            tableName: "Plan", comment: "Explains the exam preparation number")
+          SectionFooter {
+            Text(
+              "How ready you are for the exam, from what you studied and how you answered.",
+              tableName: "Plan", comment: "Explains the exam preparation number")
+          }
         }
 
         Section {
@@ -34,14 +36,15 @@ struct PlanStandingSheet: View {
                 Text(area.title)
               }
 
-              ProgressView(value: area.preparation)
-                .tint(.success)
+              Meter(value: area.preparation, fill: .success)
                 .accessibilityHidden(true)
             }
             .accessibilityElement(children: .combine)
           }
         } header: {
-          Text("By topic", tableName: "Plan", comment: "Section of the preparation of each topic")
+          SectionTitle(
+            Text("By topic", tableName: "Plan", comment: "Section of the preparation of each topic")
+          )
         }
       } else if let lessons = syllabus?.lessons {
         Section {
@@ -99,7 +102,7 @@ struct PlanPaceSheet: View {
       context.isPaused && ![.finished, .pastDate, .challengesLeft].contains(status.kind)
     let fix = resting ? nil : planPaceFix(plan, isExam: context.goal.kind == .exam)
 
-    List {
+    ZoonkList {
       Section {
         VStack(alignment: .leading, spacing: 6) {
           Text(
@@ -107,19 +110,19 @@ struct PlanPaceSheet: View {
               ? String(localized: "Paused", table: "Plan", comment: "Pace of a paused goal")
               : planStatusText(status)
           )
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
 
           if resting {
             Text(
               "Nothing is planned until you resume it.", tableName: "Plan",
               comment: "Explains a paused goal"
             )
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
 
           if let fix {
             Text(fix.text)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
 
           if fix?.adjust == true {
@@ -128,7 +131,7 @@ struct PlanPaceSheet: View {
                 "Adjust plan", tableName: "Plan",
                 comment: "Opens the plan's settings to change them")
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
             .padding(.top, 4)
           }
         }
@@ -138,9 +141,8 @@ struct PlanPaceSheet: View {
       Section {
         PlanWeekRings(plan: plan)
       } header: {
-        SectionHeaderRow(
-          alignment: .firstTextBaseline,
-          title: Text("This week", tableName: "Plan", comment: "Section of the plan's week")
+        SectionTitle(
+          Text("This week", tableName: "Plan", comment: "Section of the plan's week")
         ) {
           if plan.weekTime.targetMinutes > 0 {
             Text(
@@ -179,9 +181,9 @@ private struct PlanWeekRings: View {
       ForEach(plan.week.days) { day in
         VStack(spacing: 6) {
           Text(PlanDate.weekday(day.date))
-            .font(.caption2.weight(.medium))
+            .typeStyle(.small.weight(.medium))
             .textCase(.uppercase)
-            .foregroundStyle(day.state == .today ? .primary : .secondary)
+            .foregroundStyle(day.state == .today ? Color(.foreground) : .mutedForeground)
 
           ring(day)
             .frame(width: ringSize, height: ringSize)
@@ -214,9 +216,9 @@ private struct PlanWeekRings: View {
 
   private func track(_ day: PlanWeekDay) -> Color {
     switch day.state {
-    case .today: Color(.secondaryLabel)
-    case .rest: Color(.quaternarySystemFill)
-    default: Color(.systemFill)
+    case .today: Color.mutedForeground
+    case .rest: Color.muted
+    default: Color.surface3
     }
   }
 

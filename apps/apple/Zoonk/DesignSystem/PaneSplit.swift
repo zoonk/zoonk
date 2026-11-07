@@ -121,6 +121,11 @@ struct PaneSpace: Equatable {
   /// where it would, a hinge sets the pages anyway, and elsewhere stacked content gets one column.
   static let minimumPane: CGFloat = 360
 
+  /// Without a hinge, a page and what supports it go side by side only past the widest iPad in
+  /// portrait (1032pt). Narrower, such as any iPad in portrait or a window that size, the page is
+  /// one centered column with the phone's structure, as main's tablet portrait.
+  static let minimumPagesWidth: CGFloat = 1040
+
   struct Panes: Equatable {
     var primary: CGFloat
     var gap: CGFloat
@@ -167,7 +172,8 @@ struct PaneSpace: Equatable {
   /// each page's width, about a phone's, and the text reflows inside it as on a phone. Elsewhere
   /// content that stacks gets one column, where a pane would be too narrow for it.
   func pages(primaryShare: CGFloat, stacked: Bool, atHingeOnly: Bool = false) -> Panes? {
-    hinge == nil && (stacked || atHingeOnly) ? nil : panes(primaryShare: primaryShare)
+    hinge == nil && (stacked || atHingeOnly || width < Self.minimumPagesWidth)
+      ? nil : panes(primaryShare: primaryShare)
   }
 
   /// What a column alone leaves out to keep to the page before the hinge: the hinge and the page

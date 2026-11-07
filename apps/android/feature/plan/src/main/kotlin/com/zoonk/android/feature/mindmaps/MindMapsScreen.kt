@@ -26,13 +26,11 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,7 +51,6 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
@@ -77,6 +74,7 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.SectionHeader
@@ -87,6 +85,9 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageFold
+import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMaps
 import kotlinx.coroutines.launch
@@ -195,13 +196,12 @@ internal fun MindMapsPage(
     val title = stringResource(R.string.navigation_mind_maps)
     val groups = groupBySubject(mindMaps.chapters)
     val gridState = rememberLazyGridState(initialFirstVisibleItemIndex = groups.gridIndexOf(subject) ?: 0)
-    val titleAway by remember { derivedStateOf { gridState.firstVisibleItemIndex > 0 } }
     val drawn = mindMaps.chapters.count { it.status == GoalMindMap.Status.READY }
     val capped = cap != null && drawn < mindMaps.chapters.size
 
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
-    PageScaffold(onBack = actions.back, title = { if (titleAway) Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) }) { padding ->
+    PageScaffold(onBack = actions.back, title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) }) { padding ->
         BoxWithConstraints(Modifier.fillMaxSize().onPageSpan { span = it }) {
             val direction = LocalLayoutDirection.current
             val start = padding.calculateStartPadding(direction) + MARGIN
@@ -351,14 +351,15 @@ private fun MindMapsHero(
         Eyebrow(mindMaps.goal.title)
         Text(
             stringResource(R.string.navigation_mind_maps),
-            Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleLarge,
+            Modifier.pageTitle(),
+            style = MaterialTheme.typography.headlineMedium,
         )
         if (mindMaps.chapters.isNotEmpty()) {
             Text(
                 pluralStringResource(R.plurals.mindmaps_count, drawn, formatNumber(drawn.toDouble(), currentLocale())),
+                Modifier.padding(top = 4.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium.copy(fontFeatureSettings = "tnum"),
+                style = MaterialTheme.zoonkType.data,
             )
         }
         if (cap != null) MindMapLimit(cap, navigator, Modifier.padding(top = 16.dp))
@@ -395,7 +396,7 @@ internal fun MindMapsEmpty(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        FilledTonalButton(
+        OutlinedButton(
             onClick = { if (next != null) actions.openChapter(next.chapterId) else actions.keepStudying() },
             modifier = Modifier.padding(top = 8.dp),
         ) {
@@ -532,12 +533,10 @@ private fun RequestTile(
                 }
             } else {
                 val spoken = stringResource(if (failure) R.string.mindmaps_try_again_spoken else R.string.mindmaps_create_spoken, map.title)
-                FilledTonalButton(
+                OutlinedButton(
                     onClick = { if (failure) actions.retry(map.chapterId) else actions.create(map.chapterId) },
                     modifier = Modifier.semantics { contentDescription = spoken },
                     enabled = local?.pending != true && !blocked,
-                    // Material's pill, which a label wrapped by large text would round into a circle that cuts off its corners.
-                    shape = RoundedCornerShape(ButtonDefaults.MinHeight / 2),
                 ) {
                     PendingLabel(
                         local?.pending == true,
@@ -572,7 +571,7 @@ private fun Modifier.squareOrTaller(): Modifier =
         layout(placeable.width, placeable.height) { placeable.place(0, 0) }
     }
 
-private val TILE_CORNER = 12.dp
+private val TILE_CORNER = ZoonkRadius.option
 private val TILE_SHAPE = RoundedCornerShape(TILE_CORNER)
 private val TILE_MIN = 208.dp
 private val MARGIN = 16.dp

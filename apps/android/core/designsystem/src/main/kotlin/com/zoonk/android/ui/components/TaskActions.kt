@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,12 +28,14 @@ import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 fun TaskActionBar(content: @Composable ColumnScope.() -> Unit) {
     val wide = isWideLayout()
     Box(Modifier.fillMaxWidth(), contentAlignment = if (spreadShows()) Alignment.TopStart else Alignment.Center) {
-        Column(
-            if (wide) Modifier.fillMaxWidth() else Modifier.taskBarColumn(),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalAlignment = if (wide) Alignment.End else Alignment.Start,
-            content = content,
-        )
+        CompositionLocalProvider(LocalButtonSize provides ButtonSize.Large) {
+            Column(
+                if (wide) Modifier.fillMaxWidth() else Modifier.taskBarColumn(),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = if (wide) Alignment.End else Alignment.Start,
+                content = content,
+            )
+        }
     }
 }
 

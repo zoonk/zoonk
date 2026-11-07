@@ -53,7 +53,7 @@ struct SessionSummaryView: View {
           } label: {
             Text("Try again", tableName: "Session", comment: "Retries loading the summary")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
         .lonePage()
       } else {
@@ -98,7 +98,6 @@ struct SessionSummaryView: View {
           }
           .tabViewStyle(.page(indexDisplayMode: .always))
           .indexViewStyle(.page(backgroundDisplayMode: .always))
-          .background(Color(.systemGroupedBackground))
           .pageBar {
             // Only the page slides: the buttons change at once, as they do after a swipe.
             actionBar(summary, at: step)
@@ -123,7 +122,7 @@ struct SessionSummaryView: View {
   private func page(
     _ shown: SummaryStep, visit: String, @ViewBuilder content: () -> some View
   ) -> some View {
-    List {
+    ZoonkList {
       content()
     }
     .contentMargins(.top, 0, for: .scrollContent)
@@ -141,7 +140,7 @@ struct SessionSummaryView: View {
     Section {
       VStack(alignment: .leading, spacing: 4) {
         title(summary)
-          .font(.largeTitle.bold())
+          .typeStyle(.heroTitle)
           .accessibilityAddTraits(.isHeader)
           .accessibilityFocused($focusedStep, equals: .done)
 
@@ -151,7 +150,7 @@ struct SessionSummaryView: View {
             comment: "Time studied in a session stopped for today"
           )
           .monospacedDigit()
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
       .listRowBackground(Color.clear)
@@ -163,7 +162,7 @@ struct SessionSummaryView: View {
         showsBrainPower: showsBrainPower)
     }
     .listRowBackground(Color.clear)
-    .listRowInsets(EdgeInsets())
+    .listRowInsets(.vertical, 0)
 
     let risen = summary.risenSkills
 
@@ -172,7 +171,7 @@ struct SessionSummaryView: View {
         ForEach(risen, id: \.skillId) { skill in
           LabeledContent {
             Text(
-              "\(skill.from.label) → \(skill.to.label.foregroundStyle(.primary))",
+              "\(skill.from.label) → \(skill.to.label.foregroundStyle(Color(.foreground)))",
               tableName: "Session",
               comment: "A skill's state before and after the session, such as Learning → Solid")
           } label: {
@@ -180,7 +179,8 @@ struct SessionSummaryView: View {
           }
         }
       } header: {
-        Text("Skills that rose", tableName: "Session", comment: "Skills that moved up")
+        SectionTitle(
+          Text("Skills that rose", tableName: "Session", comment: "Skills that moved up"))
       }
     }
 
@@ -192,7 +192,7 @@ struct SessionSummaryView: View {
           KindMark(kind: .lesson)
         }
       } header: {
-        Text("Tomorrow", tableName: "Session", comment: "Tomorrow's lesson")
+        SectionTitle(Text("Tomorrow", tableName: "Session", comment: "Tomorrow's lesson"))
       }
     }
   }
@@ -209,7 +209,7 @@ struct SessionSummaryView: View {
       Section {
         rewardsHead(summary, isStep: false)
       } header: {
-        Text("Earned today", tableName: "Session", comment: "What the session earned")
+        SectionTitle(Text("Earned today", tableName: "Session", comment: "What the session earned"))
       }
     }
 
@@ -221,21 +221,16 @@ struct SessionSummaryView: View {
       SummaryBuddy(look: learner.summary.value?.buddy ?? BuddyLook())
 
       if summary.brainPower > 0 || !isStep {
-        HStack(alignment: .firstTextBaseline, spacing: 6) {
+        MomentReadout(tint: .brainText) {
           EarnedNumber(value: summary.brainPower)
-            .font(.largeTitle.weight(.semibold))
-            .foregroundStyle(.brain)
-
+        } words: {
           Text("Brain Power", tableName: "Session", comment: "Brain Power earned")
-            .font(.subheadline.weight(.medium))
-            .foregroundStyle(.secondary)
         }
-        .accessibilityElement(children: .combine)
         .accessibilityAddTraits(isStep ? .isHeader : [])
         .accessibilityFocused($focusedStep, equals: .rewards)
       } else if isStep {
         Text("Rewards", tableName: "Session", comment: "Title of what the session earned")
-          .font(.largeTitle.bold())
+          .typeStyle(.heroTitle)
           .accessibilityAddTraits(.isHeader)
           .accessibilityFocused($focusedStep, equals: .rewards)
       }
@@ -371,7 +366,7 @@ struct SessionSummaryView: View {
         Text("See mistakes", tableName: "Session", comment: "Opens the mistakes notebook"),
         sharesLine: sharesLine)
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .disabled(isBusy)
   }
 
@@ -383,7 +378,7 @@ struct SessionSummaryView: View {
         Text("Keep going", tableName: "Session", comment: "Goes on with a stopped session"),
         sharesLine: sharesLine)
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .disabled(isBusy)
   }
 
@@ -419,13 +414,13 @@ struct SessionSummaryView: View {
       }
       .frame(maxWidth: .infinity)
     }
-    .buttonStyle(.borderless)
+    .buttonStyle(.ghost)
     .disabled(isBusy)
   }
 
   private func failure(_ message: LocalizedStringResource) -> some View {
     FailureLine(message: message)
-      .font(.footnote)
+      .typeStyle(.note)
   }
 
   private func title(_ summary: SessionSummary) -> Text {
@@ -510,7 +505,7 @@ private struct SummaryTiles: View {
           detail: goal.before.map { before in
             let change = Text(verbatim: "\(before) → \(goal.value)")
             // A number that went down says so quietly, never in the color of progress.
-            return goal.dropped ? change : change.foregroundStyle(.success)
+            return goal.dropped ? change : change.foregroundStyle(.successText)
           })
       }
 
@@ -539,7 +534,7 @@ private struct SummaryTiles: View {
 
   private var rightDetail: Text? {
     let accuracy = summary.accuracy.map {
-      Text($0, format: .percent.precision(.fractionLength(0))).foregroundStyle(.success)
+      Text($0, format: .percent.precision(.fractionLength(0))).foregroundStyle(.successText)
     }
     let net = summary.netScore.map {
       Text("net \($0)", tableName: "Session", comment: "Right minus wrong answers")
@@ -654,7 +649,7 @@ private struct RewardRows: View {
             if let missionsBonus {
               Text(missionsBonus, format: .number.sign(strategy: .always()))
                 .monospacedDigit()
-                .foregroundStyle(.brain)
+                .foregroundStyle(.brainText)
             }
           } title: {
             Text("Today's missions", tableName: "Session", comment: "The missions' header")
@@ -674,7 +669,7 @@ private struct RewardRows: View {
                 comment: "How many belt levels the session added"
               )
               .monospacedDigit()
-              .foregroundStyle(.success)
+              .foregroundStyle(.successText)
             } title: {
               Text(
                 "\(beltName(stripes.after.color) ?? stripes.after.color), level \(stripes.after.level)",

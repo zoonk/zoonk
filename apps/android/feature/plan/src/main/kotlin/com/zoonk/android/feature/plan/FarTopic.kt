@@ -4,13 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,12 +44,14 @@ import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineChapter
@@ -378,14 +380,15 @@ private fun FarTopicRequest(
     }
 
     if (action != null) {
-        Button(
-            onClick = if (failed) topics::retry else topics::request,
-            enabled = !open.asking && (limit == null || limit is Limit.SlowDown),
-            modifier = Modifier.fillMaxWidth(),
-            colors = if (failed) ButtonDefaults.filledTonalButtonColors() else ButtonDefaults.buttonColors(),
-        ) {
+        val enabled = !open.asking && (limit == null || limit is Limit.SlowDown)
+        val label: @Composable RowScope.() -> Unit = {
             AskingMark(open.asking)
             Text(stringResource(action))
+        }
+        if (failed) {
+            OutlinedButton(onClick = topics::retry, enabled = enabled, modifier = Modifier.fillMaxWidth(), content = label)
+        } else {
+            Button(onClick = topics::request, enabled = enabled, modifier = Modifier.fillMaxWidth(), content = label)
         }
     }
 

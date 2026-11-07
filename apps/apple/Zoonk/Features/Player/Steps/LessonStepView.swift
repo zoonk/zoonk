@@ -125,16 +125,13 @@ private struct HookStepView: View {
   @ViewBuilder
   private var screen: some View {
     if content.asksGuess, let question = content.question {
-      Label {
-        Text(
+      LessonEyebrow(
+        title: Text(
           "Just a guess, it doesn't count", tableName: "Player",
           comment:
             "Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored."
-        )
-      } icon: {
-        Image(systemName: "sparkles")
-      }
-      .chip()
+        ),
+        systemImage: "sparkles")
       StepMedia(step: step, visual: content.visual, asks: true, opens: true)
       LessonQuestionText(text: question)
     } else {
@@ -144,11 +141,9 @@ private struct HookStepView: View {
       }
 
       LessonTextBlocks(content.text ?? "")
-        .font(.body)
+        .typeStyle(.lessonText)
 
       if showsOpeningMap, let openingMap {
-        // On one page the map takes the room the scene leaves at its bottom.
-        Spacer(minLength: 8)
         LessonOpeningMap(summary: openingMap)
       }
     }
@@ -191,8 +186,10 @@ private struct ExplanationStepView: View {
         StepMedia(step: step, visual: content.visual, hero: true)
       }
 
-      LessonScreenText(title: content.title, text: content.text, marks: step.marks)
-        .font(.body)
+      LessonScreenText(
+        title: content.title, titleIsHeading: true, text: content.text, marks: step.marks
+      )
+      .typeStyle(.lessonText)
     case .turn:
       if isPaneSplit {
         StepMedia(step: step, visual: content.visual, hero: true)
@@ -216,6 +213,7 @@ private struct ExplanationStepView: View {
 /// learner's page, right above the button that shows the next one.
 private struct WorkedExampleStepView: View {
   @Environment(\.isPaneSplit) private var isPaneSplit
+  @Environment(\.legibilityWeight) private var legibilityWeight
 
   let step: LessonStep
   let content: WorkedExampleContent
@@ -239,12 +237,9 @@ private struct WorkedExampleStepView: View {
 
   @ViewBuilder
   private var problem: some View {
-    Label {
-      Text("Worked example", tableName: "Player", comment: "Label above a worked example")
-    } icon: {
-      Image(systemName: "list.number")
-    }
-    .chip()
+    LessonEyebrow(
+      title: Text("Worked example", tableName: "Player", comment: "Label above a worked example"),
+      systemImage: "list.number")
 
     LessonScreenText(title: content.title, text: content.problem, marks: step.marks)
     StepMedia(step: step, visual: content.visual)
@@ -256,12 +251,12 @@ private struct WorkedExampleStepView: View {
       ForEach(Array(content.steps.prefix(shown).enumerated()), id: \.offset) { index, solved in
         HStack(alignment: .firstTextBaseline, spacing: 12) {
           Text(index + 1, format: .number)
-            .font(.subheadline.monospacedDigit().weight(.semibold))
-            .foregroundStyle(.secondary)
+            .typeStyle(.note.weight(.semibold).monospaced())
+            .foregroundStyle(.mutedForeground)
           VStack(alignment: .leading, spacing: 4) {
             LessonTextBlocks(solved.text)
             if let math = solved.math {
-              Text(LessonMath.typeset(math))
+              Text(LessonMath.typeset(math), legibility: legibilityWeight)
             }
           }
         }
@@ -272,7 +267,7 @@ private struct WorkedExampleStepView: View {
 
     if shown >= content.steps.count {
       LessonTextBlocks(content.result)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
     }
   }
 
@@ -301,7 +296,7 @@ private struct CheckStepView: View {
 
       if let context = content.context {
         LessonTextBlocks(context)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       if let visual = content.visual {
@@ -336,18 +331,15 @@ private struct TypedAnswerStepView: View {
     case .screen:
       if let context = content.context {
         LessonTextBlocks(context)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       if content.isOwnWords {
-        Label {
-          Text(
+        LessonEyebrow(
+          title: Text(
             "In your own words", tableName: "Player",
-            comment: "Above a question answered in a few sentences")
-        } icon: {
-          Image(systemName: "pencil.line")
-        }
-        .chip()
+            comment: "Above a question answered in a few sentences"),
+          systemImage: "pencil.line")
       }
 
       LessonQuestionText(text: content.question)
@@ -394,13 +386,13 @@ struct LessonAnswerField: View {
       isFocused.wrappedValue = false
       check?()
     }
-    .lineLimit(isNumber ? 1...1 : 3...8)
+    .lineLimit(isNumber ? 1...1 : 4...8)
     .keyboardType(isNumber ? .numbersAndPunctuation : .default)
     .submitLabel(.done)
     .focused(isFocused)
     .disabled(isLocked)
-    .padding()
-    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
+    .typeStyle(isNumber ? .reading.monospacedDigit() : .reading)
+    .fieldBorder(isFocused: isFocused.wrappedValue, minHeight: isNumber ? 48 : 40)
   }
 }
 
@@ -467,19 +459,19 @@ private struct SpokenAnswerStepView: View {
   private var screen: some View {
     if mode == .speak {
       Text("Tap and say it out loud", tableName: "Player", comment: "Above a sentence to say")
-        .font(.caption.monospaced())
-        .foregroundStyle(.secondary)
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
     }
 
     LessonQuestionText(text: content.prompt)
     VStack(alignment: .leading, spacing: 4) {
       Text(content.targetText)
-        .font(.title3.weight(.medium))
+        .typeStyle(.section.weight(.medium))
       if let romanization = content.romanization {
-        Text(romanization).foregroundStyle(.secondary)
+        Text(romanization).foregroundStyle(.mutedForeground)
       }
       if let translation = content.translation {
-        Text(translation).foregroundStyle(.secondary)
+        Text(translation).foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -501,7 +493,7 @@ private struct SpokenAnswerStepView: View {
       if store.isMicBlocked, !context.isLocked {
         VStack(alignment: .leading, spacing: 4) {
           Text(Self.micBlockedLine)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
 
           if let settings = URL(string: UIApplication.openSettingsURLString) {
             Link(destination: settings) {
@@ -511,7 +503,7 @@ private struct SpokenAnswerStepView: View {
             }
           }
         }
-        .font(.subheadline)
+        .typeStyle(.body)
       }
 
       LessonAnswerField(
@@ -572,7 +564,7 @@ private struct SummaryStepView: View {
 
   var body: some View {
     Text("Summary", tableName: "Player", comment: "Title of a lesson's summary screen")
-      .font(.title2.weight(.semibold))
+      .typeStyle(.pageTitle)
       .accessibilityAddTraits(.isHeader)
 
     VStack(alignment: .leading, spacing: 12) {
@@ -581,7 +573,7 @@ private struct SummaryStepView: View {
           LessonRichText(idea.text)
         } icon: {
           Image(systemName: "lightbulb")
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
     }

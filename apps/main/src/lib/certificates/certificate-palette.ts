@@ -16,7 +16,7 @@ export const CERTIFICATE_COLORS = {
   paper: "#ffffff",
   shadow: "rgba(0, 0, 0, 0.14)",
   success: "#4b95e5",
-  successText: "#2d74ca",
+  successText: "#0b5bae",
   track: "#ebebe8",
 } as const;
 

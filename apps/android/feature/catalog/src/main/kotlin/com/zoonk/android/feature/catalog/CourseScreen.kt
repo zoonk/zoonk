@@ -38,10 +38,13 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.Subject
 import com.zoonk.android.ui.components.SubjectLabel
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.CourseResource
 import com.zoonk.api.models.FeedbackSubmissionContext
 import kotlinx.coroutines.launch
@@ -102,7 +105,6 @@ private fun courseBlocks(
                         promise = promise,
                         pace = pace,
                         onTryLesson = tryLesson?.takeUnless { beside }?.let { { scope.launch { showBlock("try") } } },
-                        headlineModifier = layout.headline,
                         modifier = modifier,
                     )
                 }
@@ -169,7 +171,6 @@ private fun CourseHero(
     pace: Long?,
     onTryLesson: (() -> Unit)?,
     modifier: Modifier = Modifier,
-    headlineModifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
     val language = locale.language
@@ -227,17 +228,17 @@ private fun CourseHero(
                             exam.estimated -> pluralStringResource(R.plurals.catalog_exam_around, days, dates, days)
                             else -> pluralStringResource(R.plurals.catalog_exam_on, days, dates, days)
                         }
-                    Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
+                    Eyebrow(text)
                 }
             }
             Spacer(Modifier.size(12.dp))
         }
 
-        Text(course.title, modifier = headlineModifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+        Text(course.title, modifier = Modifier.pageTitle(), style = MaterialTheme.typography.displaySmall)
 
         if (!promise.isNullOrBlank()) {
             Spacer(Modifier.size(16.dp))
-            Text(promise, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+            Text(promise, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.lead)
         }
 
         Spacer(Modifier.size(16.dp))
@@ -310,7 +311,7 @@ private fun CourseClosing(
         Text(
             stringResource(if (follows) R.string.catalog_closing_follows else R.string.catalog_closing_start),
             modifier = Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleLarge,
         )
 
         if (!follows) {

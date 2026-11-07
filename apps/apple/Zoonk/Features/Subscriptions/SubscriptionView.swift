@@ -365,15 +365,15 @@ private struct SubscriptionMarketingContent: View {
           tableName: "Account",
           comment: "Headline on the Zoonk Plus subscription screen"
         )
-        .font(.largeTitle.bold())
+        .typeStyle(.heroTitle)
 
         Text(
           "Every goal\u{00A0}· every lesson",
           tableName: "Account",
           comment: "What Zoonk Plus includes, in one line"
         )
-        .font(.title3)
-        .foregroundStyle(.secondary)
+        .typeStyle(.section.weight(.regular))
+        .foregroundStyle(.mutedForeground)
       }
 
       PlusBenefits()
@@ -391,14 +391,14 @@ private struct SubscriptionMarketingContent: View {
             "We couldn't load what the free plan includes.", tableName: "Account",
             comment: "The free plan's limits failed to load on the Plus screen"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
           Button {
             Task { await freePlan.refresh() }
           } label: {
             Text("Try again", tableName: "Account", comment: "Loads the free plan's limits again")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
       case .idle, .loading:
         EmptyView()
@@ -443,7 +443,7 @@ struct PlusBenefits: View {
       title
     } icon: {
       Image(systemName: "checkmark")
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
     }
   }
@@ -480,12 +480,12 @@ struct PlusStatusView: View {
   }
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         VStack(alignment: .leading, spacing: 6) {
           HStack(spacing: 8) {
             Text("Plus", tableName: "Account", comment: "Zoonk Plus, the plan's name")
-              .font(.title.bold())
+              .typeStyle(.pageTitle)
 
             Group {
               isEnding
@@ -503,18 +503,25 @@ struct PlusStatusView: View {
 
           if let dateLine {
             dateLine
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
         .listRowBackground(Color.clear)
       }
 
       Section {
-        PlusBenefits()
-      } header: {
-        Text(
-          "Every goal\u{00A0}· every lesson", tableName: "Account",
-          comment: "What Zoonk Plus includes, in one line")
+        VStack(alignment: .leading, spacing: 16) {
+          Text(
+            "Every goal\u{00A0}· every lesson", tableName: "Account",
+            comment: "What Zoonk Plus includes, in one line"
+          )
+          .typeStyle(.section)
+          .foregroundStyle(Color(.foreground))
+          .accessibilityAddTraits(.isHeader)
+
+          PlusBenefits()
+        }
+        .listRowSeparator(.hidden)
       }
 
       if isWebsite {
@@ -612,41 +619,57 @@ struct PlusStatusView: View {
     }
   }
 
-  /// Main's `ManagedSubscription`: the stores' own controls change a store purchase.
+  /// Main's `ManagedSubscription`: where the purchase is changed, then the store's own control and
+  /// support.
   private var managedSection: some View {
-    Section {
-      if StoreSubscriptionProvider(rawValue: subscription.provider) == .apple {
-        Button {
-          isAppStoreManagementPresented = true
-        } label: {
-          Text(
-            "Manage in App Store", tableName: "Account",
-            comment:
-              "Button that opens Apple's subscription settings for Plus bought in the App Store")
-        }
-      }
+    let provider = StoreSubscriptionProvider(rawValue: subscription.provider)
 
-      Link(destination: AccountLinks.support) {
-        Text("Contact support", tableName: "Account", comment: "Opens Zoonk's support")
+    return Section {
+      VStack(alignment: .leading, spacing: 16) {
+        Group {
+          switch provider {
+          case .apple:
+            Text(
+              "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings.",
+              tableName: "Account", comment: "Where Plus bought in the App Store is changed")
+          case .google:
+            Text(
+              "Use Google Play on an Android device to change or cancel this subscription.",
+              tableName: "Account",
+              comment:
+                "Explains how to manage a Google-owned subscription without linking to external purchasing"
+            )
+          case nil:
+            Text(
+              "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.",
+              tableName: "Account", comment: "Where a subscription Zoonk manages is changed")
+          }
+        }
+        .typeStyle(.body)
+        .foregroundStyle(.mutedForeground)
+
+        ButtonRow(spacing: 8) {
+          if provider == .apple {
+            Button {
+              isAppStoreManagementPresented = true
+            } label: {
+              Text(
+                "Manage in App Store", tableName: "Account",
+                comment:
+                  "Button that opens Apple's subscription settings for Plus bought in the App Store"
+              )
+            }
+            .buttonStyle(.mainAction)
+          }
+
+          Link(destination: AccountLinks.support) {
+            Text("Contact support", tableName: "Account", comment: "Opens Zoonk's support")
+          }
+          .buttonStyle(.outline)
+        }
+        .controlSize(.small)
       }
-    } footer: {
-      switch StoreSubscriptionProvider(rawValue: subscription.provider) {
-      case .apple:
-        Text(
-          "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings.",
-          tableName: "Account", comment: "Where Plus bought in the App Store is changed")
-      case .google:
-        Text(
-          "Use Google Play on an Android device to change or cancel this subscription.",
-          tableName: "Account",
-          comment:
-            "Explains how to manage a Google-owned subscription without linking to external purchasing"
-        )
-      case nil:
-        Text(
-          "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.",
-          tableName: "Account", comment: "Where a subscription Zoonk manages is changed")
-      }
+      .listRowSeparator(.hidden)
     }
   }
 }
@@ -656,15 +679,15 @@ private struct UnpaidPlusView: View {
   let web: WebPlus
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         VStack(alignment: .leading, spacing: 6) {
           Text("Plus", tableName: "Account", comment: "Zoonk Plus, the plan's name")
-            .font(.title.bold())
+            .typeStyle(.pageTitle)
 
           if let dateLine = web.dateLine {
             dateLine
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
         .listRowBackground(Color.clear)
@@ -692,7 +715,7 @@ private struct WebPlusSection: View {
     Section {
       if beside, let dateLine = web.dateLine {
         dateLine
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       if web.state == .ending {
@@ -758,12 +781,15 @@ private struct WebPlusSection: View {
       }
     } header: {
       if beside {
-        Text(
-          "Website subscription", tableName: "Account",
-          comment: "Plus bought on the website, shown beside a store purchase")
+        SectionTitle(
+          Text(
+            "Website subscription", tableName: "Account",
+            comment: "Plus bought on the website, shown beside a store purchase"))
       }
     } footer: {
-      footer
+      SectionFooter {
+        footer
+      }
     }
   }
 
@@ -869,7 +895,7 @@ private struct FreePlanCard: View {
               )
               .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
             .controlSize(.large)
 
             note(
@@ -913,8 +939,8 @@ private struct FreePlanCard: View {
                 comment: "Free plan: lessons a month"),
             ].joinedFacts()
           )
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
         }
 
         item(
@@ -953,8 +979,8 @@ private struct FreePlanCard: View {
 
   private func note(_ text: Text) -> some View {
     text
-      .font(.footnote)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
   }
 
   private func item(_ title: Text) -> some View {
@@ -962,7 +988,7 @@ private struct FreePlanCard: View {
       title
     } icon: {
       Image(systemName: "checkmark")
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
     }
   }
@@ -977,15 +1003,15 @@ private struct PlusQuestions: View {
     VStack(alignment: .leading, spacing: 12) {
       VStack(alignment: .leading, spacing: 4) {
         Text("Common questions", tableName: "Account", comment: "Title of the pricing questions")
-          .font(.title3.bold())
+          .typeStyle(.section)
 
         Text(
           "Still unsure? \(AttributedString.supportEmail)", tableName: "Account",
           comment:
             "Under the pricing questions' title; the argument is the email address to write to"
         )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       }
 
       DisclosureGroup {
@@ -1109,7 +1135,7 @@ private struct PlusQuestions: View {
 
   private func answer(_ text: Text) -> some View {
     text
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
       .frame(maxWidth: .infinity, alignment: .leading)
   }
 
@@ -1119,10 +1145,10 @@ private struct PlusQuestions: View {
     } icon: {
       Image(systemName: "circle.fill")
         .imageScale(.small)
-        .font(.caption2)
+        .typeStyle(.small)
         .accessibilityHidden(true)
     }
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
   }
 }
 

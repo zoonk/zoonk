@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct PronunciationWordView: View {
+  @Environment(\.self) private var environment
+
   let word: PronunciationRound.Word
   let language: String
   /// So leaving the round stops the word's sound.
@@ -10,21 +12,21 @@ struct PronunciationWordView: View {
     VStack(alignment: .leading, spacing: 12) {
       VStack(alignment: .leading, spacing: 4) {
         Text(word.word)
-          .font(.largeTitle.bold())
+          .typeStyle(.heroTitle)
           .typesettingLanguage(.init(identifier: language))
 
         if let romanization = word.romanization {
           Text(romanization)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         if let respelling = word.respelling {
           Text(
-            "Say it like \(Text(respelling).monospaced().fontWeight(.medium).foregroundStyle(.primary))",
+            "Say it like \(Text(respelling).font(TypeStyle.note.monospaced().weight(.medium).font(in: environment)).foregroundStyle(.primary))",
             tableName: "Voice", comment: "Introduces how to spell the word's sound"
           )
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
         }
       }
 
@@ -32,8 +34,8 @@ struct PronunciationWordView: View {
 
       if let tip = word.tip {
         Text(tip)
-          .font(.footnote)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .accessibilityElement(children: .contain)
@@ -84,7 +86,7 @@ private struct ListenButtons: View {
               "The sound didn't play. Try again.", table: "Voice",
               comment: "Playing a word's sound failed")
           )
-          .font(.footnote)
+          .typeStyle(.note)
         }
       }
     }
@@ -123,7 +125,7 @@ private struct ListenButtons: View {
     } label: {
       label()
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.small)
   }
 

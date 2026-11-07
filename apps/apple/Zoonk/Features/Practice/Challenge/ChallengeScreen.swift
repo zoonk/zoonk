@@ -10,6 +10,7 @@ struct ChallengeScreen: View {
   @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceHooks) private var hooks
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @State private var currentPlanItemId: String?
   @State private var load: PracticeLoad<Components.Schemas.Challenge> = .loading
   @State private var isStarting = false
@@ -89,13 +90,16 @@ struct ChallengeScreen: View {
           .frame(width: 112, height: 112)
       }
 
-      VStack(alignment: .leading, spacing: 8) {
+      VStack(alignment: .leading, spacing: 6) {
         if let eyebrow = eyebrow(challenge) {
           Text(eyebrow)
-            .font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
+            .typeStyle(.eyebrow)
+            .foregroundStyle(.faint)
         }
 
-        titleText(challenge).font(.largeTitle.bold())
+        titleText(challenge)
+          .typeStyle(.pageTitle)
+          .accessibilityAddTraits(.isHeader)
 
         if won {
           if let result = challenge.result {
@@ -110,21 +114,23 @@ struct ChallengeScreen: View {
                   comment: "How a won challenge went, as in “8 of 10 right”.")
               }
             }
-            .font(.subheadline.monospacedDigit())
-            .foregroundStyle(.secondary)
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
           }
         } else {
-          Text(description(challenge)).foregroundStyle(.secondary)
-
-          if !facts(challenge).isEmpty {
-            Text(facts(challenge).joinedFacts())
-              .font(.subheadline.monospacedDigit())
-              .foregroundStyle(.secondary)
-          }
+          Text(description(challenge))
+            .typeStyle(.reading)
+            .foregroundStyle(.mutedForeground)
         }
       }
 
-      if challenge.locked || challenge.status == .plusRequired {
+      if !won, let meta = meta(challenge) {
+        Text(meta)
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
+      }
+
+      if isLocked(challenge), !isNoticeInBar {
         plusNotice(challenge)
       }
 
@@ -143,48 +149,31 @@ struct ChallengeScreen: View {
         }
       }
 
-      if !challenge.topics.isEmpty {
-        VStack(alignment: .leading, spacing: 6) {
-          Text(
-            challenge.kind == .weekly
-              ? LocalizedStringResource(
-                "This week's topics", table: "Practice",
-                comment: "Heading over a weekly challenge's topics.")
-              : challenge.status == .done
+      if !challenge.topics.isEmpty, !challenge.mock {
+        VStack(alignment: .leading, spacing: 8) {
+          SectionTitle(
+            Text(
+              challenge.kind == .weekly
                 ? LocalizedStringResource(
-                  "What he asked", table: "Practice",
-                  comment: "Heading over a finished phase challenge's topics.")
-                : LocalizedStringResource(
-                  "What he'll ask", table: "Practice",
-                  comment: "Heading over a phase challenge's topics.")
+                  "This week's topics", table: "Practice",
+                  comment: "Heading over a weekly challenge's topics.")
+                : challenge.status == .done
+                  ? LocalizedStringResource(
+                    "What he asked", table: "Practice",
+                    comment: "Heading over a finished phase challenge's topics.")
+                  : LocalizedStringResource(
+                    "What he'll ask", table: "Practice",
+                    comment: "Heading over a phase challenge's topics.")
+            )
           )
-          .font(.headline)
+          .accessibilityAddTraits(.isHeader)
 
-          ForEach(Array(challenge.topics.enumerated()), id: \.offset) { _, topic in
-            HStack(alignment: .firstTextBaseline) {
-              Text(topic.name)
-              if let subject = topic.subject {
-                Spacer()
-                Text(subject).font(.footnote).foregroundStyle(.secondary)
-              }
-            }
-          }
+          ChallengeTopicRows(topics: challenge.topics.map { (name: $0.name, area: $0.subject) })
         }
       }
 
       if let rule = duelRule(challenge) {
-        Text(rule).font(.footnote).foregroundStyle(.secondary)
-      }
-
-      if challenge.reward.brainPower > 0, !won {
-        Label {
-          Text(
-            "+\(challenge.reward.brainPower) Brain Power", tableName: "Practice",
-            comment: "A challenge's Brain Power reward.")
-        } icon: {
-          Image(systemName: "brain.head.profile")
-        }
-        .foregroundStyle(.brain)
+        Text(rule).typeStyle(.note).foregroundStyle(.mutedForeground)
       }
 
       if challenge.dailyLimitReached {
@@ -201,28 +190,28 @@ struct ChallengeScreen: View {
               "Getting your challenge ready", tableName: "Practice",
               comment: "While a challenge's questions are written."
             )
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
             Text(
               "We're writing its questions. It starts here when they're ready.",
               tableName: "Practice",
               comment: "A challenge waits for its questions."
             )
-            .font(.subheadline).foregroundStyle(.secondary)
+            .typeStyle(.note).foregroundStyle(.mutedForeground)
           }
         }
       }
 
       if isStartSlow, isStarting, !isWriting {
         Text(Self.slowStartLine)
-          .font(.subheadline).foregroundStyle(.secondary)
+          .typeStyle(.note).foregroundStyle(.mutedForeground)
       }
 
       if let startProblem {
-        FailureLine(message: startProblem).font(.subheadline)
+        FailureLine(message: startProblem).typeStyle(.body)
       }
 
       if let moveProblem {
-        FailureLine(message: moveProblem).font(.subheadline)
+        FailureLine(message: moveProblem).typeStyle(.body)
       }
 
       if let moved, let date = challenge.date {
@@ -230,8 +219,8 @@ struct ChallengeScreen: View {
           VStack(alignment: .leading, spacing: 4) {
             Text(movedTo(date))
             Text(movedDetail(moved.effect))
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
           }
           Spacer()
           Button {
@@ -239,7 +228,7 @@ struct ChallengeScreen: View {
           } label: {
             Text("Undo", tableName: "Practice", comment: "Undoes moving a weekly challenge.")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .disabled(isMoving)
         }
       }
@@ -269,7 +258,11 @@ struct ChallengeScreen: View {
 
   @ViewBuilder
   private func actions(_ challenge: Components.Schemas.Challenge) -> some View {
-    if challenge.locked || challenge.status == .plusRequired {
+    if isLocked(challenge) {
+      if isNoticeInBar {
+        plusNotice(challenge)
+      }
+
       PracticeMainButton(
         title: LocalizedStringResource(
           "See Plus", table: "Practice",
@@ -329,13 +322,23 @@ struct ChallengeScreen: View {
         "Opens after this phase's lessons", tableName: "Practice",
         comment: "A phase challenge waiting for earlier lessons."
       )
-      .font(.subheadline).foregroundStyle(.secondary)
+      .typeStyle(.note).foregroundStyle(.mutedForeground)
     }
+  }
+
+  private func isLocked(_ challenge: Components.Schemas.Challenge) -> Bool {
+    challenge.locked || challenge.status == .plusRequired
+  }
+
+  /// As main's footer, what Plus opens sits right above the way to it; at accessibility sizes the
+  /// pinned bar would cover the screen with it, so it reads with the rest instead.
+  private var isNoticeInBar: Bool {
+    !dynamicTypeSize.isAccessibilitySize
   }
 
   /// Before its day a challenge has nothing to do yet: no pinned bar.
   private func hasActions(_ challenge: Components.Schemas.Challenge) -> Bool {
-    challenge.locked || challenge.status == .plusRequired
+    isLocked(challenge)
       || challenge.canMove
       || challenge.waitReason != nil
       || [.ready, .started].contains(challenge.status)
@@ -512,6 +515,31 @@ struct ChallengeScreen: View {
       comment: "What a phase challenge asks.")
   }
 
+  /// Main's `TaskMeta`: the facts in mono, then the Brain Power a win brings in its color.
+  private func meta(_ challenge: Components.Schemas.Challenge) -> AttributedString? {
+    let facts = facts(challenge)
+    let reward =
+      challenge.reward.brainPower > 0 && !challenge.mock
+      ? String(
+        localized: "+\(challenge.reward.brainPower) Brain Power", table: "Practice",
+        comment: "A challenge's Brain Power reward.")
+      : nil
+
+    guard !facts.isEmpty || reward != nil else {
+      return nil
+    }
+
+    var line = AttributedString(facts.joinedFacts())
+
+    if let reward {
+      var earned = AttributedString(reward)
+      earned.foregroundColor = .brainText
+      line += facts.isEmpty ? earned : AttributedString("\u{00A0}· ") + earned
+    }
+
+    return line
+  }
+
   private func facts(_ challenge: Components.Schemas.Challenge) -> [String] {
     var facts: [String] = []
 
@@ -529,7 +557,10 @@ struct ChallengeScreen: View {
           comment: "A phase challenge's pass mark."))
     }
 
-    if let minutes = challenge.estimatedMinutes ?? challenge.minutes {
+    // Main says how long only a mock or a call takes; a duel's length is its questions.
+    if challenge.mock || challenge.call != nil,
+      let minutes = challenge.estimatedMinutes ?? challenge.minutes
+    {
       facts.append(studyDuration(minutes: minutes))
     }
 
@@ -547,15 +578,15 @@ struct ChallengeScreen: View {
         description: Text(
           "Mock exams come with Plus: whenever you want, and every week in your plan.",
           tableName: "Practice", comment: "A mock exam challenge is Plus-only."),
-        showsSeePlus: false, isInset: true)
+        showsSeePlus: false)
     } else if challenge.call != nil {
       PlusNotice(
         description: Text(
           "Challenge calls come with Plus. Your plan keeps going without them.",
           tableName: "Practice", comment: "A challenge call is Plus-only."),
-        showsSeePlus: false, isInset: true)
+        showsSeePlus: false)
     } else {
-      FreeWeekOverNotice(showsSeePlus: false, isInset: true)
+      FreeWeekOverNotice(showsSeePlus: false)
     }
   }
 
@@ -820,4 +851,73 @@ struct ChallengeScreen: View {
   private static let notDone = LocalizedStringResource(
     "That didn't go through. Try again in a moment.", table: "Practice",
     comment: "A challenge's start or move failed.")
+}
+
+/// Main's `ChallengeTopics`: a row per area with its topics and how many, or a topic on its own
+/// where it has no area.
+private struct ChallengeTopicRows: View {
+  struct Row: Identifiable {
+    let title: String
+    let topics: [String]
+    let isArea: Bool
+
+    var id: String { "\(isArea):\(title)" }
+  }
+
+  let rows: [Row]
+
+  init(topics: [(name: String, area: String?)]) {
+    var areas: [String] = []
+    var grouped: [String: [String]] = [:]
+    var rows: [Row] = []
+
+    for topic in topics {
+      guard let area = topic.area else {
+        if !rows.contains(where: { !$0.isArea && $0.title == topic.name }) {
+          rows.append(Row(title: topic.name, topics: [topic.name], isArea: false))
+        }
+
+        continue
+      }
+
+      if grouped[area] == nil {
+        areas.append(area)
+      }
+
+      if grouped[area, default: []].contains(topic.name) == false {
+        grouped[area, default: []].append(topic.name)
+      }
+    }
+
+    self.rows = areas.map { Row(title: $0, topics: grouped[$0] ?? [], isArea: true) } + rows
+  }
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 0) {
+      ForEach(rows) { row in
+        if row.id != rows.first?.id {
+          Rectangle()
+            .fill(.border)
+            .frame(height: 1)
+        }
+
+        ListRow(
+          Text(row.title),
+          description: row.isArea
+            ? Text(row.topics.formatted(.list(type: .and, width: .narrow))) : nil
+        ) {
+          EmptyView()
+        } trailing: {
+          if row.isArea {
+            Text(
+              "\(row.topics.count) topics", tableName: "Practice",
+              comment: "How many topics of an area a challenge asks about, at the end of its row")
+          }
+        }
+        .lineLimit(2)
+        .padding(.vertical, 11)
+        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+      }
+    }
+  }
 }

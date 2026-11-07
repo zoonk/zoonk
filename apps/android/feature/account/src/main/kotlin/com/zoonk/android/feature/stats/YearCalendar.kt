@@ -9,8 +9,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -21,18 +20,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.theme.zoonkType
 import java.time.LocalDate
 import java.time.format.TextStyle
 
@@ -81,48 +84,46 @@ internal fun YearCalendar(
             Legend(low, high, (0..shades.size).map(::fill))
         }
 
-        LazyRow(
-            state = list,
-            modifier = Modifier.semantics { contentDescription = summary },
-            horizontalArrangement = Arrangement.spacedBy(GAP),
-        ) {
-            itemsIndexed(weeks, key = { _, week -> week.first().date.toEpochDay() }) { weekIndex, week ->
-                Column(verticalArrangement = Arrangement.spacedBy(GAP)) {
-                    // Every week keeps the line, so a month's first week doesn't sit lower than the rest.
-                    Text(
-                        week
-                            .firstOrNull { it.date.dayOfMonth == 1 }
-                            ?.date
-                            ?.month
-                            ?.getDisplayName(
-                                TextStyle.SHORT_STANDALONE,
-                                locale,
-                            ).orEmpty(),
-                        modifier = Modifier.width(CELL).wrapContentWidth(Alignment.Start, unbounded = true).clearAndSetSemantics {},
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelSmall,
-                        maxLines = 1,
-                        softWrap = false,
-                    )
+        Column(verticalArrangement = Arrangement.spacedBy(GAP)) {
+            MonthLabels(
+                months =
+                    remember(weeks, locale) {
+                        weeks.mapIndexedNotNull { index, week ->
+                            week.firstOrNull { it.date.dayOfMonth == 1 }?.let {
+                                index to
+                                    it.date.month.getDisplayName(TextStyle.SHORT_STANDALONE, locale)
+                            }
+                        }
+                    },
+                list = list,
+            )
 
-                    week.forEachIndexed { dayIndex, day ->
-                        val index = weekIndex * DAYS_PER_WEEK + dayIndex
-                        val shape = RoundedCornerShape(CELL_CORNER)
-                        Box(
-                            Modifier
-                                .size(CELL)
-                                .background(fill(day.band), shape)
-                                .then(
-                                    if (index ==
-                                        selected
-                                    ) {
-                                        Modifier.border(SELECTED_RING, MaterialTheme.colorScheme.onSurface, shape)
-                                    } else {
-                                        Modifier
-                                    },
-                                ).selectable(selected = index == selected) { selected = index }
-                                .semantics { contentDescription = day.label },
-                        )
+            LazyRow(
+                state = list,
+                modifier = Modifier.semantics { contentDescription = summary },
+                horizontalArrangement = Arrangement.spacedBy(GAP),
+            ) {
+                itemsIndexed(weeks, key = { _, week -> week.first().date.toEpochDay() }) { weekIndex, week ->
+                    Column(verticalArrangement = Arrangement.spacedBy(GAP)) {
+                        week.forEachIndexed { dayIndex, day ->
+                            val index = weekIndex * DAYS_PER_WEEK + dayIndex
+                            val shape = RoundedCornerShape(CELL_CORNER)
+                            Box(
+                                Modifier
+                                    .size(CELL)
+                                    .background(fill(day.band), shape)
+                                    .then(
+                                        if (index ==
+                                            selected
+                                        ) {
+                                            Modifier.border(SELECTED_RING, MaterialTheme.colorScheme.onSurface, shape)
+                                        } else {
+                                            Modifier
+                                        },
+                                    ).selectable(selected = index == selected) { selected = index }
+                                    .semantics { contentDescription = day.label },
+                            )
+                        }
                     }
                 }
             }
@@ -132,8 +133,50 @@ internal fun YearCalendar(
             days[selected].label,
             modifier = Modifier.clearAndSetSemantics {},
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.zoonkType.data,
         )
+    }
+}
+
+/**
+ * Each month's name over the week it starts, placed from the weeks in view and kept inside the
+ * calendar's edges, so a week half scrolled out or the newest one never cuts its month's name.
+ */
+@Composable
+private fun MonthLabels(
+    months: List<Pair<Int, String>>,
+    list: LazyListState,
+) {
+    Layout(
+        content = {
+            months.forEach { (_, name) ->
+                Text(
+                    name,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelSmall,
+                    maxLines = 1,
+                    softWrap = false,
+                )
+            }
+        },
+        modifier = Modifier.fillMaxWidth().clearAndSetSemantics {},
+    ) { measurables, constraints ->
+        val labels = measurables.map { it.measure(Constraints()) }
+        val width = constraints.maxWidth
+        val gap = LABEL_GAP.roundToPx()
+
+        layout(width, labels.maxOfOrNull { it.height } ?: 0) {
+            val shown = list.layoutInfo.visibleItemsInfo.associateBy { it.index }
+            var taken = Int.MIN_VALUE
+            months.forEachIndexed { index, (week, _) ->
+                val item = shown[week] ?: return@forEachIndexed
+                val label = labels[index]
+                val x = item.offset.coerceIn(0, (width - label.width).coerceAtLeast(0))
+                if (x < taken + gap) return@forEachIndexed
+                label.placeRelative(x, 0)
+                taken = x + label.width
+            }
+        }
     }
 }
 
@@ -178,6 +221,7 @@ private val CELL = 12.dp
 private val GAP = 2.dp
 private val CELL_CORNER = 2.dp
 private val SELECTED_RING = 1.5.dp
+private val LABEL_GAP = 4.dp
 private const val ENERGY_STEP = 25.0
 private const val FULL_ENERGY = 100.0
 private const val DAYS_PER_WEEK = 7
