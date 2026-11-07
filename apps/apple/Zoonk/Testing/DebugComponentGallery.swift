@@ -55,6 +55,7 @@
           GallerySection(id: "marks", title: "Marks, kinds and belts") { Marks() }
           GallerySection(id: "options", title: "Answer options") { Options() }
           GallerySection(id: "fields", title: "Fields") { Fields() }
+          GallerySection(id: "mindMaps", title: "Mind map rows") { MindMapRows() }
         }
         .navigationTitle(Text(verbatim: "Design system"))
         .barTitleAfterHero("Design system")
@@ -461,6 +462,45 @@
         GenerationTimeline(wait: DebugLessonWait.sample(reported: 3).finished)
       }
       .padding(.vertical, 8)
+    }
+  }
+
+  /// Each state of a chapter's map row, where it shows. A drawn map's thumbnail needs a real one.
+  private struct MindMapRows: View {
+    var body: some View {
+      Group {
+        ForEach(Array(Self.chapterStates.enumerated()), id: \.offset) { _, map in
+          MindMapRow(goalId: "debug", map: map, place: .chapter)
+        }
+
+        MindMapRow(goalId: "debug", map: Self.map(.drawing, id: "finish"), place: .finish)
+        MindMapRow(goalId: "debug", map: Self.map(.ready, id: "finish-text"), place: .finish)
+        MindMapRow(
+          goalId: "debug", map: Self.map(.available, id: "library", lessons: 3), place: .library)
+        MindMapRow(
+          goalId: "debug", map: Self.map(.plusRequired, id: "library-plus"), place: .library)
+
+        HelpLimitNotice(
+          limit: .limitReached(period: .month, tier: .free),
+          message: MindMapLimit(limit: .limitReached(period: .month, tier: .free), isLessons: true)
+            .message
+        )
+        .controlSize(.small)
+      }
+    }
+
+    private static let chapterStates = [
+      map(.available, id: "available"), map(.available, id: "lessons", lessons: 3),
+      map(.writingLessons, id: "writing", lessons: 3), map(.drawing, id: "drawing"),
+      map(.ready, id: "text"), map(.failed, id: "failed"), map(.plusRequired, id: "plus"),
+    ]
+
+    private static func map(
+      _ status: ChapterMindMap.Status, id: String, lessons: Int = 0
+    ) -> ChapterMindMap {
+      ChapterMindMap(
+        chapterId: "debug-\(id)", image: nil, lessonsToWrite: lessons, outline: nil, position: 3,
+        status: status, subject: nil, title: "Porcentagem e descontos")
     }
   }
 

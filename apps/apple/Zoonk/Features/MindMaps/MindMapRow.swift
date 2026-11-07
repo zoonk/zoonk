@@ -312,6 +312,8 @@ struct MindMapSlot<Mark: View>: View {
       }
     }
     .frame(width: 48, height: 48)
+    // The square keeps its size, so what's drawn in it does too.
+    .dynamicTypeSize(...DynamicTypeSize.xxLarge)
     .accessibilityHidden(true)
   }
 }
