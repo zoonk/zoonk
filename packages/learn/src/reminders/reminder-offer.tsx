@@ -6,7 +6,7 @@ import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { safeAsync } from "@zoonk/utils/error";
 import { BellIcon, UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useEffect, useId, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useId, useRef, useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
 import { useTimeZoneName } from "../_utils/locale";
 import { useFormatTimeOfDay } from "../_utils/time-format";
@@ -14,44 +14,94 @@ import { type StudyMomentView } from "../session/session-types";
 import { ReminderTimeSelect } from "./reminder-time";
 
 export type ReminderOfferActions = {
-  /** Resolves to the learner's reminder settings only for the call that marked the offer shown. */
-  claim: () => Promise<StudyReminderView | null>;
+  /** True only for the call that marked the offer shown. */
+  claim: () => Promise<boolean>;
+  load: () => Promise<StudyReminderView | null>;
   remindByEmail: (time: string) => Promise<boolean>;
   signUpHref: string;
 };
 
-/** Once per learner: a second claim, after a remount or on another device, hides the card. */
-function useClaimedReminder(claim: ReminderOfferActions["claim"]) {
+/** The offer counts as shown once half the card is on screen; a learner who never scrolls to it keeps it. */
+const SEEN_SHARE = 0.5;
+
+function useLoadedReminder(load: ReminderOfferActions["load"]) {
   const [reminder, setReminder] = useState<StudyReminderView | null>(null);
-  const claimed = useRef(false);
 
   useEffect(() => {
+    void safeAsync(load).then(({ data }) => setReminder(data));
+  }, [load]);
+
+  return reminder;
+}
+
+/** Once per learner: a refused claim (already shown, here or on another device) hides the card. */
+function useClaimOnce({
+  claim,
+  onRefused,
+}: {
+  claim: () => Promise<boolean>;
+  onRefused: () => void;
+}) {
+  const claimed = useRef(false);
+
+  return useCallback(() => {
     if (claimed.current) {
       return;
     }
 
     claimed.current = true;
-    void safeAsync(claim).then(({ data }) => setReminder(data));
-  }, [claim]);
 
-  return reminder;
+    void safeAsync(claim).then(({ data }) => {
+      if (data === false) {
+        onRefused();
+      }
+    });
+  }, [claim, onRefused]);
+}
+
+function useSeenRef(onSeen: () => void) {
+  return useCallback(
+    (node: HTMLElement | null) => {
+      if (!node) {
+        return;
+      }
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.intersectionRatio >= SEEN_SHARE)) {
+            observer.disconnect();
+            onSeen();
+          }
+        },
+        { threshold: SEEN_SHARE },
+      );
+
+      observer.observe(node);
+      return () => observer.disconnect();
+    },
+    [onSeen],
+  );
 }
 
 function OfferFrame({
   children,
   description,
+  onSeen,
 }: {
   children?: React.ReactNode;
   description: React.ReactNode;
+  onSeen: () => void;
 }) {
   const t = useExtracted();
   const titleId = useId();
+  const seenRef = useSeenRef(onSeen);
 
   return (
     <section
       aria-labelledby={titleId}
       className="border-border flex items-start gap-3 border-y py-2.75"
       data-slot="reminder-offer"
+      ref={seenRef}
     >
       <BellIcon aria-hidden="true" className="text-muted-foreground mt-0.5 size-4 shrink-0" />
 
@@ -76,10 +126,12 @@ function OfferFrame({
 
 function GuestOffer({
   onClose,
+  onSeen,
   signUpHref,
   time,
 }: {
   onClose: () => void;
+  onSeen: () => void;
   signUpHref: string;
   time: string;
 }) {
@@ -91,6 +143,7 @@ function GuestOffer({
       description={t("At {time} on your study days, when you still have learning left.", {
         time: formatTime(time),
       })}
+      onSeen={onSeen}
     >
       <div className="flex flex-wrap gap-2">
         <PendingLink
@@ -111,12 +164,14 @@ function GuestOffer({
 function EmailOffer({
   address,
   onClose,
+  onSeen,
   remindByEmail,
   suggestedTime,
   timeZone,
 }: {
   address: string;
   onClose: () => void;
+  onSeen: () => void;
   remindByEmail: ReminderOfferActions["remindByEmail"];
   suggestedTime: string;
   timeZone: string;
@@ -136,7 +191,7 @@ function EmailOffer({
     });
 
   if (result === "saved") {
-    return <OfferFrame description={t("Email reminders are on.")} />;
+    return <OfferFrame description={t("Email reminders are on.")} onSeen={onSeen} />;
   }
 
   return (
@@ -145,6 +200,7 @@ function EmailOffer({
         "We'll email {address} at {time} on your study days, when you still have learning left.",
         { address, time: formatTime(time) },
       )}
+      onSeen={onSeen}
     >
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <label className="sr-only" htmlFor={selectId}>
@@ -174,26 +230,27 @@ function EmailOffer({
   );
 }
 
-function ClaimedOffer({ actions, time }: { actions: ReminderOfferActions; time: string }) {
-  const reminder = useClaimedReminder(actions.claim);
+function LoadedOffer({ actions, time }: { actions: ReminderOfferActions; time: string }) {
+  const reminder = useLoadedReminder(actions.load);
   const [closed, setClosed] = useState(false);
+  const close = useCallback(() => setClosed(true), []);
+  const claim = useClaimOnce({ claim: actions.claim, onRefused: close });
 
   if (!reminder || closed) {
     return null;
   }
 
-  const close = () => setClosed(true);
-
   return reminder.email.address ? (
     <EmailOffer
       address={reminder.email.address}
       onClose={close}
+      onSeen={claim}
       remindByEmail={actions.remindByEmail}
       suggestedTime={time}
       timeZone={reminder.timeZone}
     />
   ) : (
-    <GuestOffer onClose={close} signUpHref={actions.signUpHref} time={time} />
+    <GuestOffer onClose={close} onSeen={claim} signUpHref={actions.signUpHref} time={time} />
   );
 }
 
@@ -204,5 +261,5 @@ export function ReminderOffer({
   actions?: ReminderOfferActions;
   offer: StudyMomentView["reminderOffer"];
 }) {
-  return actions && offer ? <ClaimedOffer actions={actions} time={offer.time} /> : null;
+  return actions && offer ? <LoadedOffer actions={actions} time={offer.time} /> : null;
 }
