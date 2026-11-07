@@ -8,7 +8,11 @@ import {
   type StudyFinishOutcome,
   type StudyQuestionAnswer,
 } from "../session-types";
-import { createQuestionBlockState, questionBlockReducer } from "./question-block-state";
+import {
+  type SentAnswer,
+  createQuestionBlockState,
+  questionBlockReducer,
+} from "./question-block-state";
 
 const FAILED = { status: "failed" } as const;
 
@@ -61,23 +65,15 @@ export function useQuestionBlock({
     }
   }, [state.phase.kind]);
 
-  /** `minDurationMs` is a timed drill's whole time box when it ran out, however the clock ticked. */
-  const submit = async (
-    answer: StudyQuestionAnswer,
-    { minDurationMs = 0, sender = "check" }: { minDurationMs?: number; sender?: AnswerSender } = {},
-  ) => {
+  const send = async ({ answer, durationMs, sender }: SentAnswer) => {
     if (!question || (state.phase.kind !== "answering" && state.phase.kind !== "answerFailed")) {
       return;
     }
 
-    dispatch({ answer, minDurationMs, sender, type: "check" });
+    dispatch({ answer, durationMs, sender, type: "check" });
 
     const outcome = await actions
-      .answer({
-        answer,
-        durationMs: Math.max(minDurationMs, Math.round(performance.now() - shownAt.current)),
-        itemId: question.itemId,
-      })
+      .answer({ answer, durationMs, itemId: question.itemId })
       .catch(() => FAILED);
 
     if (outcome.status === "answered") {
@@ -98,6 +94,17 @@ export function useQuestionBlock({
     dispatch({ type: "answerFailed" });
   };
 
+  /** `minDurationMs` is a timed drill's whole time box when it ran out, however the clock ticked. */
+  const submit = (
+    answer: StudyQuestionAnswer,
+    { minDurationMs = 0, sender = "check" }: { minDurationMs?: number; sender?: AnswerSender } = {},
+  ) =>
+    send({
+      answer,
+      durationMs: Math.max(minDurationMs, Math.round(performance.now() - shownAt.current)),
+      sender,
+    });
+
   return {
     next: () => {
       shownAt.current = performance.now();
@@ -107,7 +114,7 @@ export function useQuestionBlock({
     refresh: actions.refresh,
     retry: () => {
       if (state.phase.kind === "answerFailed") {
-        void submit(state.phase.answer, state.phase);
+        void send(state.phase);
       }
     },
     retryFinish: () => dispatch({ type: "finish" }),

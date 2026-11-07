@@ -45,14 +45,15 @@ export type PracticeStep = {
 
 type Graded = NonNullable<MistakePracticeFeedback>;
 type PracticeVerdict = "read" | "right" | "wrong";
+export type SentPracticeAnswer = { answer: ChoiceAnswer; durationMs: number; sender: AnswerSender };
 
 type PracticePhase =
   | { kind: "idea" }
   | { kind: "reading" }
   | { kind: "answering"; selected: ChoiceAnswer | null }
-  | { answer: ChoiceAnswer; kind: "checking"; sender: AnswerSender }
-  | { answer: ChoiceAnswer; kind: "answerFailed"; sender: AnswerSender }
-  | { answer: ChoiceAnswer; feedback: Graded; kind: "feedback"; sender: AnswerSender }
+  | ({ kind: "checking" } & SentPracticeAnswer)
+  | ({ kind: "answerFailed" } & SentPracticeAnswer)
+  | ({ feedback: Graded; kind: "feedback" } & SentPracticeAnswer)
   | { kind: "ending" }
   | { kind: "ended"; summary: MistakePracticeSummary | null };
 
@@ -74,7 +75,7 @@ type PracticeAction =
   | { type: "start" }
   | { type: "reveal" }
   | { answer: ChoiceAnswer | null; type: "select" }
-  | { answer: ChoiceAnswer; sender: AnswerSender; type: "check" }
+  | ({ type: "check" } & SentPracticeAnswer)
   | { feedback: Graded; mistakeId: string; type: "answered" }
   | { type: "answerFailed" }
   | { type: "retry" }
@@ -182,7 +183,12 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
     case "check":
       return {
         ...state,
-        phase: { answer: action.answer, kind: "checking", sender: action.sender },
+        phase: {
+          answer: action.answer,
+          durationMs: action.durationMs,
+          kind: "checking",
+          sender: action.sender,
+        },
       };
     case "answered":
       return answered(state, action);

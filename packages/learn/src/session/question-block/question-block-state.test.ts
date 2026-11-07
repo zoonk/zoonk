@@ -119,7 +119,7 @@ describe(questionBlockReducer, () => {
   it("shows the grade after an answer and carries Hyperdrive", () => {
     const checking = reduce(start, {
       answer: { selectedIndex: 0 },
-      minDurationMs: 0,
+      durationMs: 4000,
       sender: "check",
       type: "check",
     });
@@ -148,12 +148,12 @@ describe(questionBlockReducer, () => {
   });
 
   it.each([
-    { minDurationMs: 0, sender: "notSure" },
-    { minDurationMs: 45_000, sender: "timer" },
+    { durationMs: 30_000, sender: "notSure" },
+    { durationMs: 45_000, sender: "timer" },
   ] as const)(
-    "keeps the question open when an answer couldn't be saved, to send again as $sender sent it",
-    ({ minDurationMs, sender }) => {
-      const sent = { answer: { dontKnow: true }, minDurationMs, sender } as const;
+    "keeps the question open when an answer couldn't be saved, to send again as $sender sent it after $durationMs ms",
+    ({ durationMs, sender }) => {
+      const sent = { answer: { dontKnow: true }, durationMs, sender } as const;
       const checking = reduce(start, { ...sent, type: "check" });
       const failed = reduce(checking, { type: "answerFailed" });
 

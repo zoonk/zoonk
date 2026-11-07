@@ -65,9 +65,10 @@ final class MistakePracticeStateTests: XCTestCase {
   func testFailedAnswerKeepsItForRetryAndTheLastStepEnds() {
     var state = MistakePracticeState(entries: [makeEntry("m", questions: ["a"])])
 
-    state.check(.choice(1), by: .check)
+    let sent = SentAnswer(answer: .choice(1), sender: .check, durationMs: 30_000)
+    state.check(sent)
     state.answerFailed()
-    XCTAssertEqual(state.phase, .answerFailed(answer: .choice(1), sender: .check))
+    XCTAssertEqual(state.phase, .answerFailed(sent))
     XCTAssertTrue(state.acceptsAnswer)
 
     answer(&state, .choice(1), grade: makeGrade(isCorrect: true))
@@ -91,7 +92,7 @@ final class MistakePracticeStateTests: XCTestCase {
     by sender: AnswerSender = .check,
     grade: MistakePracticeGrade
   ) {
-    state.check(answer, by: sender)
+    state.check(SentAnswer(answer: answer, sender: sender, durationMs: 4000))
     state.answered(grade, mistakeId: state.step?.entry.mistakeId ?? "")
   }
 }

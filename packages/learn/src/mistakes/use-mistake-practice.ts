@@ -8,6 +8,7 @@ import {
   type MistakePracticeFeedback,
   type MistakePracticeSummary,
   type PracticeEntry,
+  type SentPracticeAnswer,
   createPracticeState,
   practiceReducer,
 } from "./mistake-practice-state";
@@ -57,13 +58,10 @@ export function useMistakePractice({
     }
   }, [state.phase.kind]);
 
-  const send = async ({ answer, sender }: { answer: ChoiceAnswer; sender: AnswerSender }) => {
+  const send = async ({ answer, durationMs }: SentPracticeAnswer) => {
     if (!step) {
       return;
     }
-
-    const limitMs = (step.entry.drill.timeLimitSeconds ?? 0) * MS_PER_SECOND;
-    const durationMs = Date.now() - shownAt.current;
 
     if (attempt.current?.index !== state.index) {
       attempt.current = { id: crypto.randomUUID(), index: state.index };
@@ -73,7 +71,7 @@ export function useMistakePractice({
       .answer({
         answer,
         attemptId: attempt.current.id,
-        durationMs: sender === "timer" ? Math.max(durationMs, limitMs) : durationMs,
+        durationMs,
         itemId: step.question.itemId,
         mistakeId: step.entry.mistakeId,
         runAnswerIds: state.answerIds,
@@ -89,8 +87,17 @@ export function useMistakePractice({
   };
 
   const check = (answer: ChoiceAnswer, sender: AnswerSender) => {
-    dispatch({ answer, sender, type: "check" });
-    void send({ answer, sender });
+    const limitMs = (step?.entry.drill.timeLimitSeconds ?? 0) * MS_PER_SECOND;
+    const elapsedMs = Date.now() - shownAt.current;
+
+    const sent = {
+      answer,
+      durationMs: sender === "timer" ? Math.max(elapsedMs, limitMs) : elapsedMs,
+      sender,
+    };
+
+    dispatch({ ...sent, type: "check" });
+    void send(sent);
   };
 
   return {

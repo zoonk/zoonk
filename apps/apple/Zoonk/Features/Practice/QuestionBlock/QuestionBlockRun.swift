@@ -93,17 +93,28 @@ final class QuestionBlockRun {
   func submit(_ answer: PracticeAnswer, by sender: AnswerSender = .check, minDurationMs: Int = 0)
     async
   {
+    await send(
+      SentAnswer(
+        answer: answer, sender: sender,
+        durationMs: max(minDurationMs, Int(now().timeIntervalSince(shownAt) * 1000))))
+  }
+
+  func retryAnswer() async {
+    guard case .answerFailed(let sent) = state.phase else { return }
+    await send(sent)
+  }
+
+  private func send(_ sent: SentAnswer) async {
     guard let question, state.phase.acceptsAnswer else { return }
 
-    state.check(SentAnswer(answer: answer, sender: sender, minDurationMs: minDurationMs))
-    let durationMs = max(minDurationMs, Int(now().timeIntervalSince(shownAt) * 1000))
+    state.check(sent)
 
     do {
       switch try await client.answer(
-        itemId: question.itemId, answer: answer, durationMs: durationMs)
+        itemId: question.itemId, answer: sent.answer, durationMs: sent.durationMs)
       {
       case .answered(let feedback):
-        state.answered(answer, feedback: feedback, itemId: question.itemId)
+        state.answered(sent.answer, feedback: feedback, itemId: question.itemId)
       case .alreadyAnswered:
         state.alreadyAnswered()
       case .blockNotActive:
@@ -114,11 +125,6 @@ final class QuestionBlockRun {
     } catch {
       state.answerFailed()
     }
-  }
-
-  func retryAnswer() async {
-    guard case .answerFailed(let sent) = state.phase else { return }
-    await submit(sent.answer, by: sent.sender, minDurationMs: sent.minDurationMs)
   }
 
   func next() async {

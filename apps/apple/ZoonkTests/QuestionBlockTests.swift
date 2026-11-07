@@ -27,7 +27,7 @@ final class QuestionBlockStateTests: XCTestCase {
   func testAnsweringTheLastQuestionMovesToFinishing() {
     var state = QuestionBlockState(questions: [makeQuestion("a")])
 
-    state.check(SentAnswer(answer: .choice(1), sender: .check, minDurationMs: 0))
+    state.check(SentAnswer(answer: .choice(1), sender: .check, durationMs: 4000))
     state.answered(.choice(1), feedback: makeFeedback(isCorrect: true, level: 2), itemId: "a")
     XCTAssertEqual(state.hyperdrive, 2)
     XCTAssertEqual(state.segments, [.right])
@@ -111,22 +111,42 @@ final class QuestionBlockRunTests: XCTestCase {
     XCTAssertEqual(run.state.phase.checking, .notSure)
   }
 
+  func testTryAgainSendsTheTimeTheAnswerTookWhenFirstSent() async {
+    var seconds: TimeInterval = 0
+    let client = FakeQuestionBlockClient(answers: [
+      .failure(APIError.network), .failure(QuestionBlockWriteObsolete()),
+    ])
+    let run = QuestionBlockRun(
+      detail: makeDetail(["a"]), client: client, now: { Date(timeIntervalSince1970: seconds) })
+
+    seconds = 30
+    await run.submit(.choice(0))
+    seconds = 90
+    await run.retryAnswer()
+
+    let durations = await client.durations
+    XCTAssertEqual(durations, [30_000, 30_000])
+  }
+
   func testTryAgainAfterAFailedTimeUpKeepsTheWholeTimeBox() async {
+    var seconds: TimeInterval = 0
     var question = makeQuestion("a")
-    question.drill = PracticeDrill(kind: .timed, lesson: nil, timeLimitSeconds: 30)
+    question.drill = PracticeDrill(kind: .timed, lesson: nil, timeLimitSeconds: 45)
     question.mistakeId = "m"
     let client = FakeQuestionBlockClient(answers: [
       .failure(APIError.network), .failure(QuestionBlockWriteObsolete()),
     ])
     let run = QuestionBlockRun(
       detail: makeDetail(questions: [question]), client: client,
-      now: { Date(timeIntervalSince1970: 0) })
+      now: { Date(timeIntervalSince1970: seconds) })
 
+    seconds = 45
     await run.timeUp()
+    seconds = 90
     await run.retryAnswer()
 
     let durations = await client.durations
-    XCTAssertEqual(durations, [30_000, 30_000])
+    XCTAssertEqual(durations, [45_000, 45_000])
     XCTAssertEqual(run.state.phase.checking, .timer)
   }
 
@@ -154,12 +174,13 @@ final class QuestionBlockRunTests: XCTestCase {
 
   func testAnAnswerForALearnerWhoIsGoneShowsNothing() async {
     let client = FakeQuestionBlockClient(answers: [.failure(QuestionBlockWriteObsolete())])
-    let run = QuestionBlockRun(detail: makeDetail(["a"]), client: client)
+    let run = QuestionBlockRun(
+      detail: makeDetail(["a"]), client: client, now: { Date(timeIntervalSince1970: 0) })
 
     await run.submit(.choice(0))
 
     XCTAssertEqual(
-      run.state.phase, .checking(SentAnswer(answer: .choice(0), sender: .check, minDurationMs: 0)),
+      run.state.phase, .checking(SentAnswer(answer: .choice(0), sender: .check, durationMs: 0)),
       "no grade, no failure, no retry for someone else")
   }
 

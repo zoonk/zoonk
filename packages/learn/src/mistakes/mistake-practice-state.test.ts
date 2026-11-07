@@ -107,10 +107,10 @@ describe(practiceReducer, () => {
 
     const played = [
       { type: "start" },
-      { answer, sender: "check", type: "check" },
+      { answer, durationMs: 4000, sender: "check", type: "check" },
       { feedback: graded("a1", true), mistakeId: "gap", type: "answered" },
       { type: "next" },
-      { answer, sender: "check", type: "check" },
+      { answer, durationMs: 4000, sender: "check", type: "check" },
       { feedback: graded("a2", true), mistakeId: "gap", type: "answered" },
       { type: "next" },
     ] as const;
@@ -137,6 +137,7 @@ describe(practiceReducer, () => {
 
     const checked = practiceReducer(initial, {
       answer: { selectedIndex: 0 },
+      durationMs: 4000,
       sender: "check",
       type: "check",
     });
@@ -149,6 +150,7 @@ describe(practiceReducer, () => {
 
     const unknown = practiceReducer(practiceReducer(state, { type: "next" }), {
       answer: { dontKnow: true },
+      durationMs: 4000,
       sender: "notSure",
       type: "check",
     });
@@ -167,6 +169,7 @@ describe(practiceReducer, () => {
 
     const checked = practiceReducer(initial, {
       answer: { selectedIndex: 0 },
+      durationMs: 4000,
       sender: "check",
       type: "check",
     });
@@ -179,6 +182,7 @@ describe(practiceReducer, () => {
 
     const checkedUnknown = practiceReducer(practiceReducer(fixed, { type: "next" }), {
       answer: { dontKnow: true },
+      durationMs: 4000,
       sender: "notSure",
       type: "check",
     });
@@ -197,14 +201,14 @@ describe(practiceReducer, () => {
     const answer = { selectedIndex: 0 };
 
     const played = [
-      { answer, sender: "check", type: "check" },
+      { answer, durationMs: 4000, sender: "check", type: "check" },
       {
         feedback: { ...graded("a1"), reached: { energy: 60, level: null } },
         mistakeId: "first",
         type: "answered",
       },
       { type: "next" },
-      { answer, sender: "check", type: "check" },
+      { answer, durationMs: 4000, sender: "check", type: "check" },
       {
         feedback: {
           ...graded("a2"),
@@ -233,6 +237,7 @@ describe(practiceReducer, () => {
 
       const checking = reduce(createPracticeState(practice), {
         answer: { dontKnow: true },
+        durationMs: 45_000,
         sender,
         type: "check",
       });
@@ -241,6 +246,7 @@ describe(practiceReducer, () => {
 
       expect(failed.phase).toStrictEqual({
         answer: { dontKnow: true },
+        durationMs: 45_000,
         kind: "answerFailed",
         sender,
       });
@@ -256,10 +262,10 @@ describe(getPracticeSegments, () => {
     const answer = { selectedIndex: 0 };
 
     const played = [
-      { answer, sender: "check", type: "check" },
+      { answer, durationMs: 4000, sender: "check", type: "check" },
       { feedback: graded("a1"), mistakeId: "retry", type: "answered" },
       { type: "next" },
-      { answer: { selectedIndex: 1 }, sender: "check", type: "check" },
+      { answer: { selectedIndex: 1 }, durationMs: 4000, sender: "check", type: "check" },
       { feedback: { ...graded("a2"), isCorrect: false }, mistakeId: "retry", type: "answered" },
       { type: "next" },
     ] as const;
@@ -293,6 +299,7 @@ describe(getPracticeSegments, () => {
 
     const checking = practiceReducer(initial, {
       answer: { dontKnow: true },
+      durationMs: 4000,
       sender,
       type: "check",
     });

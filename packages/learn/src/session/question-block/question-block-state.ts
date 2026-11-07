@@ -6,7 +6,7 @@ import {
   type StudyQuestionAnswer,
 } from "../session-types";
 
-type SentAnswer = { answer: StudyQuestionAnswer; minDurationMs: number; sender: AnswerSender };
+export type SentAnswer = { answer: StudyQuestionAnswer; durationMs: number; sender: AnswerSender };
 
 export type QuestionBlockPhase =
   | { kind: "answering" }
@@ -73,8 +73,8 @@ export function questionBlockReducer(
           ...state,
           phase: {
             answer: action.answer,
+            durationMs: action.durationMs,
             kind: "checking",
-            minDurationMs: action.minDurationMs,
             sender: action.sender,
           },
         };

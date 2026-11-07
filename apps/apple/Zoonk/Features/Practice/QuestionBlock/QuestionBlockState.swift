@@ -3,7 +3,7 @@ import Foundation
 struct SentAnswer: Equatable {
   let answer: PracticeAnswer
   let sender: AnswerSender
-  let minDurationMs: Int
+  let durationMs: Int
 }
 
 enum QuestionBlockPhase: Equatable {

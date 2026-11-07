@@ -160,7 +160,7 @@ struct MistakePracticeScreen: View {
   }
 
   private var checking: AnswerSender? {
-    if case .checking(_, let sender) = state.phase { sender } else { nil }
+    if case .checking(let sent) = state.phase { sent.sender } else { nil }
   }
 
   private func asked(_ step: MistakePracticeStep) -> PracticeQuestionView {
@@ -211,8 +211,8 @@ struct MistakePracticeScreen: View {
         ask(step, answered: true, missed: !grade.isCorrect)
       }
     case .answering, .checking, .answerFailed:
-      if case .answerFailed(let answer, let sender) = state.phase {
-        PracticeSaveError { Task { await check(answer, by: sender) } }
+      if case .answerFailed(let sent) = state.phase {
+        PracticeSaveError { Task { await send(sent) } }
       }
 
       PracticeActionRow {
@@ -327,14 +327,21 @@ struct MistakePracticeScreen: View {
     }
   }
 
+  private func check(_ answer: PracticeAnswer, by sender: AnswerSender) async {
+    let limitMs = (state.step?.entry.drill.timeLimitSeconds ?? 0) * 1000
+    let durationMs = Int(Date.now.timeIntervalSince(shownAt) * 1000)
+    await send(
+      SentAnswer(
+        answer: answer, sender: sender,
+        durationMs: sender == .timer ? max(durationMs, limitMs) : durationMs))
+  }
+
   /// Each answer comes with the run's earlier answers, so saving it counts the run so far. Its
   /// attempt id is kept for the question, so sending it again after a failure is recorded once.
-  private func check(_ answer: PracticeAnswer, by sender: AnswerSender) async {
+  private func send(_ sent: SentAnswer) async {
     guard let step = state.step, state.acceptsAnswer else { return }
 
-    let limitMs = (step.entry.drill.timeLimitSeconds ?? 0) * 1000
-    let durationMs = Int(Date.now.timeIntervalSince(shownAt) * 1000)
-    state.check(answer, by: sender)
+    state.check(sent)
 
     if attempt?.index != state.index {
       attempt = (UUID().uuidString.lowercased(), state.index)
@@ -350,7 +357,7 @@ struct MistakePracticeScreen: View {
         try await practice.api.answerMistake(
           token: identity.bearerToken, mistakeId: step.entry.mistakeId,
           itemId: step.question.itemId,
-          answer: answer, durationMs: sender == .timer ? max(durationMs, limitMs) : durationMs,
+          answer: sent.answer, durationMs: sent.durationMs,
           attemptId: attemptId, runAnswerIds: runAnswerIds, goalId: goalId)
       })
     {

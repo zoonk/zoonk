@@ -19,9 +19,9 @@ struct MistakePracticeStep: Equatable {
 }
 
 enum MistakePracticePhase: Equatable {
-  case answerFailed(answer: PracticeAnswer, sender: AnswerSender)
+  case answerFailed(SentAnswer)
   case answering
-  case checking(answer: PracticeAnswer, sender: AnswerSender)
+  case checking(SentAnswer)
   case ended(Components.Schemas.MistakePracticeCompletion?)
   case ending
   case feedback(answer: PracticeAnswer, grade: MistakePracticeGrade, sender: AnswerSender)
@@ -81,17 +81,18 @@ struct MistakePracticeState: Equatable {
     phase = .answering
   }
 
-  mutating func check(_ answer: PracticeAnswer, by sender: AnswerSender) {
-    phase = .checking(answer: answer, sender: sender)
+  mutating func check(_ sent: SentAnswer) {
+    phase = .checking(sent)
   }
 
   mutating func answerFailed() {
-    guard case .checking(let answer, let sender) = phase else { return }
-    phase = .answerFailed(answer: answer, sender: sender)
+    guard case .checking(let sent) = phase else { return }
+    phase = .answerFailed(sent)
   }
 
   mutating func answered(_ grade: MistakePracticeGrade, mistakeId: String) {
-    guard case .checking(let answer, let sender) = phase else { return }
+    guard case .checking(let sent) = phase else { return }
+    let (answer, sender) = (sent.answer, sent.sender)
 
     answerIds.append(grade.answerId)
 
