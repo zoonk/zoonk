@@ -205,6 +205,8 @@ function reduceLearnerAction(
       return selectAnswer(state, action);
     case "continue":
       return continueFrom(state);
+    case "engaged":
+      return state.engaged ? state : { ...state, engaged: true };
     case "skipWriting":
       return skipWriting(state, action);
     case "writingRestored":
@@ -244,9 +246,10 @@ export function lessonPlayerReducer(
     return next;
   }
 
-  if (action.type === "continue" || action.type === "navigate") {
-    return next.moved ? next : { ...next, moved: true };
+  if (!isLearnerWork(action) && action.type !== "continue" && action.type !== "navigate") {
+    return next;
   }
 
-  return isLearnerWork(action) ? markActedOn({ action, next, state }) : next;
+  const engaged = next.engaged ? next : { ...next, engaged: true };
+  return isLearnerWork(action) ? markActedOn({ action, next: engaged, state }) : engaged;
 }

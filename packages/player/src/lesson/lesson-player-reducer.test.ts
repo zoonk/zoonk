@@ -1193,6 +1193,20 @@ describe(lessonPlayerReducer, () => {
     expect(getLessonScreen(corrected).segments[0]).toBe("wrong");
   });
 
+  it("leaves a learner who pressed anything in the player where they are when a late run lands", () => {
+    const steps = [explanationStep("e1"), checkStep("q1"), explanationStep("e2"), checkStep("q2")];
+    const answers = [runAnswer("q1", true)];
+    const untouched = lessonPlayerReducer(play(steps, []), runStarted({ answers, held: [] }));
+    const engaged = play(steps, [{ type: "engaged" }, runStarted({ answers, held: [] })]);
+
+    expect(getCurrentStep(untouched)?.id).toBe("e2");
+
+    expect([getCurrentStep(engaged)?.id, engaged.results.q1?.isCorrect]).toStrictEqual([
+      "e1",
+      true,
+    ]);
+  });
+
   it("keeps the learner on the screen they moved to when a late run has it, before any answer", () => {
     const steps = [explanationStep("e1"), checkStep("q1"), explanationStep("e2"), checkStep("q2")];
     const atQ1 = play(steps, [{ type: "continue" }]);

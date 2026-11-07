@@ -134,7 +134,7 @@ function useDotPaper(): boolean {
 
 function LessonPlayerFrame() {
   const t = useExtracted();
-  const { state } = useLessonPlayer();
+  const { actions, state } = useLessonPlayer();
   const dotPaper = useDotPaper();
   const mainRef = useRef<HTMLElement>(null);
   const asideRoot = getTaskAsideRootProps();
@@ -154,6 +154,8 @@ function LessonPlayerFrame() {
       data-aside={asideRoot["data-aside"]}
       data-phase={state.phase}
       data-slot="lesson-player"
+      onKeyDownCapture={actions.engage}
+      onPointerDownCapture={actions.engage}
     >
       <LessonHeader />
       <LessonSounds />

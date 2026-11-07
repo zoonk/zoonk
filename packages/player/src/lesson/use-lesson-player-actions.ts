@@ -207,6 +207,7 @@ export function useLessonPlayerActions({
 
         dispatch({ stepId, type: "skipWriting" });
       },
+      engage: () => dispatch({ type: "engaged" }),
       explainFirst: () => dispatch({ type: "explainFirst" }),
       goBack: () => {
         writeExampleLines();

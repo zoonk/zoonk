@@ -138,6 +138,38 @@ describe("coming back to a lesson", () => {
     expect(adapters.checkStep).toHaveBeenCalledOnce();
   });
 
+  it("leaves a learner who pressed in the lesson where they are when a slow start lands", async () => {
+    const lesson = createLesson();
+    const [first] = checkIds(lesson);
+    const start = Promise.withResolvers<Awaited<ReturnType<LessonPlayerAdapters["startLesson"]>>>();
+    const startLesson = vi.fn<LessonPlayerAdapters["startLesson"]>(() => start.promise);
+    const adapters = buildAdapters(lesson, { startLesson });
+
+    renderLessonPlayer({ adapters, lesson, resume: [] });
+
+    await expect.element(page.getByRole("button", { name: /^Next/u })).toBeVisible();
+    await page.getByRole("main", { name: "Lesson content" }).click();
+
+    start.resolve(
+      startedRun({
+        answers: [
+          runAnswer({
+            answer: { kind: "check", optionId: "likely" },
+            answerText: RIGHT_OPTION,
+            stepId: first ?? "",
+          }),
+        ],
+      }),
+    );
+
+    await expect.poll(() => startLesson.mock.calls.length).toBeGreaterThan(0);
+    await expect.element(page.getByText("Reading it")).not.toBeInTheDocument();
+
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeChecked();
+    await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+  });
+
   it("shows a reopened matching screen with the pairs the learner matched", async () => {
     const matching = languageStep("matchColumns");
 
