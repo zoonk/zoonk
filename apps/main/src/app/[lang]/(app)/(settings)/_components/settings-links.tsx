@@ -5,6 +5,7 @@ import { logout } from "@/lib/logout";
 import { getMenu } from "@/lib/menu";
 import {
   ListGroup,
+  ListRowBody,
   ListRowButton,
   ListRowContent,
   ListRowLink,
@@ -72,14 +73,16 @@ function SettingsGroup({ items }: { items: SettingsPage[] }) {
     <ListGroup>
       {items.map((item) => (
         <ListRowLink href={item.url} key={item.url}>
-          <ListRowContent>
-            <ListRowTitle>{item.label}</ListRowTitle>
-          </ListRowContent>
-          {item.trail !== null && item.trail !== undefined && (
-            <ListRowTrailing className={typeof item.trail === "number" ? undefined : "font-sans"}>
-              {item.trail}
-            </ListRowTrailing>
-          )}
+          <ListRowBody>
+            <ListRowContent>
+              <ListRowTitle>{item.label}</ListRowTitle>
+            </ListRowContent>
+            {item.trail !== null && item.trail !== undefined && (
+              <ListRowTrailing className={typeof item.trail === "number" ? undefined : "font-sans"}>
+                {item.trail}
+              </ListRowTrailing>
+            )}
+          </ListRowBody>
         </ListRowLink>
       ))}
     </ListGroup>

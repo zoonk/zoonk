@@ -11,6 +11,7 @@ import { DetailContent, DetailLayout } from "../_components/detail-page";
 import {
   LIST_GROUP_CLASS,
   ListRow,
+  ListRowBody,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -150,22 +151,24 @@ function UpNextRow({ item }: { item: CertificateUpNext }) {
       <ListRowLeading>
         <GoalMark goal={item.goal} />
       </ListRowLeading>
-      <ListRowContent>
-        <ListRowTitle>{item.goal.title}</ListRowTitle>
-        <ListRowDescription>
-          {item.progress === null
-            ? t("Comes when every skill you practice reaches the next level")
-            : t("Your certificate comes when you finish the plan")}
-        </ListRowDescription>
-      </ListRowContent>
-      {item.progress !== null && (
-        <ListRowTrailing>
-          <Meter as="span" className="w-16 sm:w-30">
-            <MeterFill as="span" className="bg-success" share={item.progress} />
-          </Meter>
-          <span className="text-foreground">{formatShare(item.progress)}</span>
-        </ListRowTrailing>
-      )}
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowTitle>{item.goal.title}</ListRowTitle>
+          <ListRowDescription>
+            {item.progress === null
+              ? t("Comes when every skill you practice reaches the next level")
+              : t("Your certificate comes when you finish the plan")}
+          </ListRowDescription>
+        </ListRowContent>
+        {item.progress !== null && (
+          <ListRowTrailing>
+            <Meter as="span" className="w-16 sm:w-30">
+              <MeterFill as="span" className="bg-success" share={item.progress} />
+            </Meter>
+            <span className="text-foreground">{formatShare(item.progress)}</span>
+          </ListRowTrailing>
+        )}
+      </ListRowBody>
     </ListRow>
   );
 }
