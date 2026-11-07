@@ -180,6 +180,19 @@ class LessonPlayerFlowTest {
         assertEquals(LessonAnswer.Typed("The saved answer") to true, state.answers[write] to state.results[write]?.isCorrect)
     }
 
+    /** A spoken screen answered by typing shows what was typed on review, even on a day the learner can talk. */
+    @Test
+    fun aSpokenAnswerTypedInAnEarlierSittingShowsWhatWasTyped() {
+        val say = "00000000-0000-4000-8000-000000000121"
+        play(listOf(spokenStep(say), explanationStep("idea"), checkStep("next"))) {
+            runAnswers = "[${runAnswerJson(say, isCorrect = true, answer = """{"kind":"spokenAnswer","text":"tengo hambre"}""")}]"
+        }
+
+        rule.onNodeWithContentDescription("Previous screen").performClick()
+
+        rule.onNodeWithText("tengo hambre").assertExists()
+    }
+
     /** Android closing the app in the background keeps a pick the learner hasn't checked, ready to check. */
     @Test
     fun aPickComesBackAfterAndroidClosesTheAppInTheBackground() {
