@@ -3,7 +3,7 @@ import {
   type ProductReleaseClaim,
 } from "@zoonk/ai/tasks/research/read-product-pages";
 import { findNamesInDocument, isPassageExactlyInDocument } from "../exams/passage-check";
-import { hasVersionToken, isDateStated, isVersionStated } from "./release-claims";
+import { hasVersionToken, isDateStated, isMonthStated, isVersionStated } from "./release-claims";
 
 /** A page's language names its months ("21 de outubro de 2025"). */
 export type ReadProductPage = { language: string; text: string };
@@ -12,6 +12,8 @@ type CheckedProductRelease = {
   name: string;
   version: string | null;
   releasedAt: Date | null;
+  /** The pages state only its month: `releasedAt` is that month's first day. */
+  releasedMonthOnly: boolean;
   supportEndsAt: Date | null;
   document: number;
   passage: string;
@@ -24,9 +26,11 @@ export type CheckedProductReading = {
   learnerRelease: string | null;
 };
 
-const ISO_DATE = /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})$/u;
+/** "2025-10-21", or "2025-10" for a date the pages give only by month. */
+const ISO_DATE = /^(?<year>\d{4})-(?<month>\d{2})(?:-(?<day>\d{2}))?$/u;
 
-function parseIsoDate(value: string | null): Date | null {
+/** The date a claim gives, with its day only when it gives one; null for an invalid date. */
+function parseIsoDate(value: string | null): { date: Date; hasDay: boolean } | null {
   const groups = value?.match(ISO_DATE)?.groups;
 
   if (!groups) {
@@ -34,23 +38,45 @@ function parseIsoDate(value: string | null): Date | null {
   }
 
   const date = new Date(
-    Date.UTC(Number(groups.year), Number(groups.month) - 1, Number(groups.day)),
+    Date.UTC(Number(groups.year), Number(groups.month) - 1, Number(groups.day ?? 1)),
   );
 
-  return date.toISOString().startsWith(value ?? "") ? date : null;
+  return date.toISOString().startsWith(value ?? "")
+    ? { date, hasDay: groups.day !== undefined }
+    : null;
 }
 
-function toStatedDate({
-  language,
-  passage,
-  value,
-}: {
-  language: string;
-  passage: string;
-  value: string | null;
-}): Date | null {
-  const date = parseIsoDate(value);
-  return date && isDateStated({ date, language, passage }) ? date : null;
+type StatedDate = { language: string; passage: string; value: string | null };
+
+function toStatedDate({ language, passage, value }: StatedDate): Date | null {
+  const parsed = parseIsoDate(value);
+
+  return parsed?.hasDay && isDateStated({ date: parsed.date, language, passage })
+    ? parsed.date
+    : null;
+}
+
+/** The whole date when the passage states it, else its month when the passage states that. */
+function toReleaseDate(stated: StatedDate): {
+  releasedAt: Date | null;
+  releasedMonthOnly: boolean;
+} {
+  const day = toStatedDate(stated);
+  const parsed = parseIsoDate(stated.value);
+
+  if (day || !parsed) {
+    return { releasedAt: day, releasedMonthOnly: false };
+  }
+
+  const month = new Date(Date.UTC(parsed.date.getUTCFullYear(), parsed.date.getUTCMonth(), 1));
+
+  const isStated = isMonthStated({
+    date: month,
+    language: stated.language,
+    passage: stated.passage,
+  });
+
+  return { releasedAt: isStated ? month : null, releasedMonthOnly: isStated };
 }
 
 function isQuoted({
@@ -120,7 +146,7 @@ function checkRelease({
     document: release.document,
     name: release.name,
     passage: release.passage,
-    releasedAt: toStatedDate({ ...dated, value: release.releasedOn }),
+    ...toReleaseDate({ ...dated, value: release.releasedOn }),
     supportEndsAt: toStatedDate({ ...dated, value: release.supportEndsOn }),
     version:
       version && [release.name, release.passage].every((text) => hasVersionToken({ text, version }))

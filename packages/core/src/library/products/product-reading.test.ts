@@ -63,6 +63,7 @@ describe(checkProductReading, () => {
         name: "Orbit Notes 5",
         passage: "Orbit Notes 5 shipped on October 21st, 2025",
         releasedAt: new Date(Date.UTC(2025, 9, 21)),
+        releasedMonthOnly: false,
         supportEndsAt: null,
         version: "5",
       },
@@ -100,7 +101,7 @@ describe(checkProductReading, () => {
     expect(checked.releases).toStrictEqual([]);
   });
 
-  it("keeps a release with an unknown date when its passage doesn't state the claimed one", () => {
+  it("keeps only the month when its passage states the month but not the claimed day", () => {
     const checked = checkProductReading({
       pages,
       productName: "Orbit Notes",
@@ -115,7 +116,10 @@ describe(checkProductReading, () => {
       }),
     });
 
-    expect(checked.releases[0]?.releasedAt).toBeNull();
+    expect(checked.releases[0]).toMatchObject({
+      releasedAt: new Date(Date.UTC(2024, 4, 1)),
+      releasedMonthOnly: true,
+    });
   });
 
   it("keeps a release's version only when its name and passage state it", () => {
@@ -317,5 +321,48 @@ Orbit 4.95.0 shipped with faster sync.`;
     });
 
     expect(checked.releases).toStrictEqual([]);
+  });
+});
+
+describe("a release dated by its month", () => {
+  const page = `Orbit Notes 5 shipped in October 2025 with offline sync.
+Orbit Notes 4 shipped in May 2024.
+Orbit Notes 3 shipped in 2023.`;
+
+  it("keeps a month and year at month precision, never a day the passage doesn't state", () => {
+    const checked = checkProductReading({
+      pages: [{ language: "en", text: page }],
+      productName: "Orbit Notes",
+      reading: reading({
+        brand: null,
+        product: null,
+        releases: [
+          release({
+            passage: "Orbit Notes 5 shipped in October 2025 with offline sync.",
+            releasedOn: "2025-10",
+          }),
+          release({
+            name: "Orbit Notes 4",
+            passage: "Orbit Notes 4 shipped in May 2024.",
+            releasedOn: "2024-05-04",
+            version: "4",
+          }),
+          release({
+            name: "Orbit Notes 3",
+            passage: "Orbit Notes 3 shipped in 2023.",
+            releasedOn: "2023-01",
+            version: "3",
+          }),
+        ],
+      }),
+    });
+
+    expect(
+      checked.releases.map((item) => [item.name, item.releasedAt, item.releasedMonthOnly]),
+    ).toStrictEqual([
+      ["Orbit Notes 5", new Date(Date.UTC(2025, 9, 1)), true],
+      ["Orbit Notes 4", new Date(Date.UTC(2024, 4, 1)), true],
+      ["Orbit Notes 3", null, false],
+    ]);
   });
 });

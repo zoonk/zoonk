@@ -125,6 +125,27 @@ describe(findOrCreateProductCourse, () => {
     expect([first.created, second.created].filter(Boolean)).toHaveLength(1);
   });
 
+  it("teaches the newest release whose month has ended when the pages date releases by month", async () => {
+    const brand = await brandFixture();
+    const product = await productFixture({ organizationId: brand.id });
+
+    const release = (releasedAt: string, releasedMonthOnly: boolean) =>
+      productReleaseFixture({
+        productId: product.id,
+        releasedAt: new Date(releasedAt),
+        releasedMonthOnly,
+      });
+
+    const [ended] = await Promise.all([
+      release("2026-10-01", true),
+      release("2026-11-01", true),
+      release("2025-10-21", false),
+    ]);
+
+    const made = await findOrCreateProductCourse(request({ productId: product.id }));
+    expect(made.course.productReleaseId).toBe(ended.id);
+  });
+
   it("gives a product with no release out yet a main course that teaches none", async () => {
     const brand = await brandFixture();
     const product = await productFixture({ organizationId: brand.id });

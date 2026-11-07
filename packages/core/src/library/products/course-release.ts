@@ -2,9 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { refreshWebSource } from "../sources/web-sources";
-import { isNewer, isReleased, pickCurrentRelease } from "./current-release";
-
-type DatedRelease = { id: string; releasedAt: Date | null };
+import { type DatedRelease, isNewer, isReleased, pickCurrentRelease } from "./current-release";
 
 /**
  * The release a course teaching `fromId` moves to next: the oldest one out after it, so each
@@ -67,7 +65,9 @@ function loadMainCourses(where: { id?: string | { in: string[] }; productId?: st
       product: {
         select: {
           docsSourceId: true,
-          releases: { select: { id: true, releasedAt: true, sourceId: true } },
+          releases: {
+            select: { id: true, releasedAt: true, releasedMonthOnly: true, sourceId: true },
+          },
           releasesSourceId: true,
         },
       },

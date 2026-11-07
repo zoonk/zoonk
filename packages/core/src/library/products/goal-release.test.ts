@@ -2,11 +2,19 @@ import { describe, expect, it } from "vitest";
 import { linkSavedProduct, toGoalProductLink } from "./goal-release";
 
 const NOW = new Date("2026-11-06T00:00:00Z");
-const OLD = { id: "old", releasedAt: new Date("2024-03-01T00:00:00Z") };
-const CURRENT = { id: "current", releasedAt: new Date("2026-10-01T00:00:00Z") };
-const ANNOUNCED = { id: "announced", releasedAt: new Date("2027-01-01T00:00:00Z") };
+type Release = { id: string; releasedAt: Date | null; releasedMonthOnly: boolean };
 
-type Release = { id: string; releasedAt: Date | null };
+function dated(id: string, releasedAt: string | null, releasedMonthOnly = false): Release {
+  return {
+    id,
+    releasedAt: releasedAt ? new Date(`${releasedAt}T00:00:00Z`) : null,
+    releasedMonthOnly,
+  };
+}
+
+const OLD = dated("old", "2024-03-01");
+const CURRENT = dated("current", "2026-10-01");
+const ANNOUNCED = dated("announced", "2027-01-01");
 
 function pinned(named: Release | null, current: Release | null = CURRENT) {
   return toGoalProductLink({ current, named, now: NOW, productId: "p" }).productReleaseId;
@@ -18,8 +26,15 @@ describe(toGoalProductLink, () => {
   });
 
   it("pins a named release with no stated date, as a model page giving only years", () => {
-    expect(pinned({ id: "undated", releasedAt: null })).toBe("undated");
-    expect(pinned({ id: "undated", releasedAt: null }, null)).toBe("undated");
+    expect(pinned(dated("undated", null))).toBe("undated");
+    expect(pinned(dated("undated", null), null)).toBe("undated");
+  });
+
+  it("pins a release dated by its month only once that month has ended", () => {
+    expect([
+      pinned(dated("november", "2026-11-01", true)),
+      pinned(dated("september", "2026-09-01", true)),
+    ]).toStrictEqual([null, "september"]);
   });
 
   it("follows the main course for the current release, an announced one or none named", () => {

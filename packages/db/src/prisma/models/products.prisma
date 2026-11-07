@@ -48,8 +48,9 @@ model Product {
 }
 
 /// Stored at the level the official pages tell apart (Next.js 16, iPhone 17 Pro), never each patch.
-/// The current release is the newest whose `releasedAt` has passed; a later date is announced, and a
-/// release with no known date never becomes current.
+/// The current release is the newest already out: on its `releasedAt`, or once the month ends for a
+/// date the pages state only by month (`releasedMonthOnly`, `releasedAt` on its first day). A later
+/// date is announced, and a release with no known date never becomes current.
 model ProductRelease {
   id             String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
   productId      String    @map("product_id") @db.Uuid
@@ -58,7 +59,8 @@ model ProductRelease {
   name           String
   normalizedName String    @map("normalized_name")
   version        String?
-  releasedAt     DateTime? @map("released_at") @db.Date
+  releasedAt        DateTime? @map("released_at") @db.Date
+  releasedMonthOnly Boolean   @default(false) @map("released_month_only")
   supportEndsAt  DateTime? @map("support_ends_at") @db.Date
   sourceId       String?   @map("source_id") @db.Uuid
   source         Source?   @relation(fields: [sourceId], references: [id], onDelete: SetNull)

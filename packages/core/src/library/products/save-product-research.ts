@@ -14,6 +14,13 @@ import {
   toProvenanceData,
 } from "../_utils/library-rows";
 import { toNameKey } from "./product-keys";
+import {
+  type ReleaseRow,
+  type ResearchedRelease,
+  type StoredRelease,
+  toReleaseRows,
+  toStatedFields,
+} from "./release-rows";
 
 const BRAND_LOCK_NAMESPACE = 51_884;
 
@@ -26,14 +33,6 @@ type ResearchedProduct = {
   name: string;
   website: string;
   websiteSourceId: string | null;
-};
-
-type ResearchedRelease = {
-  name: string;
-  releasedAt: Date | null;
-  sourceId: string | null;
-  supportEndsAt: Date | null;
-  version: string | null;
 };
 
 type ReleasesReading = {
@@ -164,29 +163,6 @@ async function saveProduct({
   });
 }
 
-type ReleaseRow = ResearchedRelease & { normalizedName: string };
-
-function toReleaseRows(releases: readonly ResearchedRelease[]): ReleaseRow[] {
-  const rows = releases.flatMap((release) => {
-    const normalizedName = toNameKey(release.name);
-    return normalizedName ? [{ ...release, normalizedName }] : [];
-  });
-
-  return [...new Map(rows.map((row) => [row.normalizedName, row])).values()];
-}
-
-/** A later reading fills in or corrects what it states; what it leaves out stays as saved. */
-function toStatedFields(release: ReleaseRow) {
-  return Object.fromEntries(
-    Object.entries({
-      releasedAt: release.releasedAt,
-      sourceId: release.sourceId,
-      supportEndsAt: release.supportEndsAt,
-      version: release.version,
-    }).filter(([, value]) => value !== null),
-  );
-}
-
 function assignSlugs({
   releases,
   taken,
@@ -209,17 +185,21 @@ async function updateStatedReleases({
   releases,
   tx,
 }: {
-  known: ReadonlySet<string>;
+  known: ReadonlyMap<string, StoredRelease>;
   productId: string;
   releases: readonly ReleaseRow[];
   tx: TransactionClient;
 }): Promise<void> {
-  for (const release of releases.filter((row) => known.has(row.normalizedName))) {
-    // oxlint-disable-next-line no-await-in-loop -- An interactive transaction uses one Postgres connection.
-    await tx.productRelease.updateMany({
-      data: toStatedFields(release),
-      where: { normalizedName: release.normalizedName, productId },
-    });
+  for (const release of releases) {
+    const stored = known.get(release.normalizedName);
+
+    if (stored) {
+      // oxlint-disable-next-line no-await-in-loop -- An interactive transaction uses one Postgres connection.
+      await tx.productRelease.updateMany({
+        data: toStatedFields({ release, stored }),
+        where: { normalizedName: release.normalizedName, productId },
+      });
+    }
   }
 }
 
@@ -235,11 +215,11 @@ async function saveReleases({
   const releases = toReleaseRows(reading.releases);
 
   const existing = await tx.productRelease.findMany({
-    select: { normalizedName: true, slug: true },
+    select: { normalizedName: true, releasedAt: true, releasedMonthOnly: true, slug: true },
     where: { productId },
   });
 
-  const known = new Set(existing.map((release) => release.normalizedName));
+  const known = new Map(existing.map((release) => [release.normalizedName, release]));
 
   const fresh = assignSlugs({
     releases: releases.filter((release) => !known.has(release.normalizedName)),
@@ -255,6 +235,7 @@ async function saveReleases({
       normalizedName: release.normalizedName,
       productId,
       releasedAt: release.releasedAt,
+      releasedMonthOnly: release.releasedMonthOnly,
       slug: release.slug,
       sourceId: release.sourceId,
       supportEndsAt: release.supportEndsAt,

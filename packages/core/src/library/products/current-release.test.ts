@@ -3,8 +3,12 @@ import { pickCurrentRelease } from "./current-release";
 
 const NOW = new Date("2026-11-06T12:00:00.000Z");
 
-function release(id: string, releasedAt: string | null) {
-  return { id, releasedAt: releasedAt ? new Date(`${releasedAt}T00:00:00.000Z`) : null };
+function release(id: string, releasedAt: string | null, releasedMonthOnly = false) {
+  return {
+    id,
+    releasedAt: releasedAt ? new Date(`${releasedAt}T00:00:00.000Z`) : null,
+    releasedMonthOnly,
+  };
 }
 
 describe(pickCurrentRelease, () => {
@@ -31,6 +35,21 @@ describe(pickCurrentRelease, () => {
   it("has no current release when none has come out", () => {
     expect(pickCurrentRelease({ now: NOW, releases: [release("a", "2027-01-01")] })).toBeNull();
     expect(pickCurrentRelease({ now: NOW, releases: [] })).toBeNull();
+  });
+
+  it("counts a release dated by its month as out once that month ends", () => {
+    const releases = [release("a", "2026-10-21"), release("b", "2026-11-01", true)];
+
+    expect(pickCurrentRelease({ now: NOW, releases })?.id).toBe("a");
+
+    expect(pickCurrentRelease({ now: new Date("2026-12-01T00:00:00.000Z"), releases })?.id).toBe(
+      "b",
+    );
+  });
+
+  it("orders a release dated by its month after the days of that month", () => {
+    const releases = [release("a", "2026-09-21"), release("b", "2026-09-01", true)];
+    expect(pickCurrentRelease({ now: NOW, releases })?.id).toBe("b");
   });
 
   it("settles releases out the same day the same way every time", () => {

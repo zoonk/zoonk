@@ -10,6 +10,8 @@ const DATE_WORDS = ["er", "nd", "of", "rd", "st", "th"];
 const NAMED_JOINER = /^(?:[.,]?[ \t\u00A0\u202F]*|[/-])$/u;
 /** "2025-10-21", "21/10/2025" and "21.10.2025"; a space alone joins no numeric date. */
 const NUMERIC_JOINER = /^[./-]$/u;
+/** "2024-10" and "10/2024", never "2024.10", which is how versions are written. */
+const NUMERIC_MONTH_JOINER = /^[/-]$/u;
 const VERSION_SEPARATOR = /[\p{L}\p{N}][._-][\p{L}\p{N}]/u;
 const RELEASE_WORDS = "release|version|versão|versión";
 const RELEASE_WORD = new RegExp(String.raw`(?:^|[^\p{L}\p{N}])(?:${RELEASE_WORDS})$`, "iu");
@@ -93,12 +95,13 @@ function readPassage({ language, passage }: { language: string; passage: string 
 /** Only a date's own words, and its joiners, sit between two of its parts. */
 function isJoined({
   from,
-  numeric,
+  numericJoiner,
   passage,
   to,
 }: {
   from: number;
-  numeric: boolean;
+  /** For a month written as a number; null for a named month. */
+  numericJoiner: RegExp | null;
   passage: Passage;
   to: number;
 }): boolean {
@@ -112,11 +115,11 @@ function isJoined({
 
   return (
     between.every((token) => words.has(token.text)) &&
-    (numeric && between.length === 0 ? NUMERIC_JOINER : NAMED_JOINER).test(joiner)
+    (numericJoiner && between.length === 0 ? numericJoiner : NAMED_JOINER).test(joiner)
   );
 }
 
-type DateParts = { day: number; month: number; year: number };
+type DateParts = { day: number | null; month: number; year: number };
 type DateIndexes = { day: number; month: number; year: number };
 
 /**
@@ -128,7 +131,7 @@ function isReadable({
   indexes,
   numeric,
 }: {
-  date: DateParts;
+  date: { day: number; month: number };
   indexes: DateIndexes;
   numeric: boolean;
 }): boolean {
@@ -141,7 +144,10 @@ function listIndexes(passage: Passage, isPart: (token: string) => boolean): numb
   return passage.tokens.flatMap((token, index) => (isPart(token.text) ? [index] : []));
 }
 
-/** The date's year, month and day form one expression: next to each other, in a form dates take. */
+/**
+ * The date's year, month and day (when it has one) form one expression: next to each other, in a
+ * form dates take.
+ */
 function hasDateExpression({ date, passage }: { date: DateParts; passage: Passage }): boolean {
   const { names, tokens } = passage;
 
@@ -149,7 +155,6 @@ function hasDateExpression({ date, passage }: { date: DateParts; passage: Passag
     isMonthName({ month: date.month, names, token: tokens[index]?.text ?? "" });
 
   const years = listIndexes(passage, (token) => token === String(date.year));
-  const days = listIndexes(passage, (token) => isShortNumber({ token, value: date.day }));
 
   const months = listIndexes(
     passage,
@@ -158,21 +163,40 @@ function hasDateExpression({ date, passage }: { date: DateParts; passage: Passag
       isShortNumber({ token, value: date.month }),
   );
 
+  const { day } = date;
+
+  const days =
+    day === null ? [null] : listIndexes(passage, (token) => isShortNumber({ token, value: day }));
+
   return years.some((year) =>
     months.some((month) =>
-      days.some((day) => {
-        const indexes = { day, month, year };
-        const sorted = [day, month, year].toSorted((first, second) => first - second);
+      days.some((dayIndex) => {
         const numeric = !isNamed(month);
+        const numericJoiner = numeric && dayIndex === null ? NUMERIC_MONTH_JOINER : NUMERIC_JOINER;
+
+        const parts = (dayIndex === null ? [month, year] : [dayIndex, month, year]).toSorted(
+          (first, second) => first - second,
+        );
 
         return (
-          new Set(sorted).size === sorted.length &&
-          sorted
+          new Set(parts).size === parts.length &&
+          parts
             .slice(1)
             .every((to, position) =>
-              isJoined({ from: sorted[position] ?? -1, numeric, passage, to }),
+              isJoined({
+                from: parts[position] ?? -1,
+                numericJoiner: numeric ? numericJoiner : null,
+                passage,
+                to,
+              }),
             ) &&
-          isReadable({ date, indexes, numeric })
+          (day === null ||
+            dayIndex === null ||
+            isReadable({
+              date: { day, month: date.month },
+              indexes: { day: dayIndex, month, year },
+              numeric,
+            }))
         );
       }),
     ),
@@ -195,6 +219,25 @@ export function isDateStated({
 }): boolean {
   return hasDateExpression({
     date: { day: date.getUTCDate(), month: date.getUTCMonth() + 1, year: date.getUTCFullYear() },
+    passage: readPassage({ language, passage }),
+  });
+}
+
+/**
+ * The passage states the date's month and year together ("Outubro/2024", "October 2024",
+ * "2024-10"): never a year alone, nor a version written like a date ("2024.10").
+ */
+export function isMonthStated({
+  date,
+  language,
+  passage,
+}: {
+  date: Date;
+  language: string;
+  passage: string;
+}): boolean {
+  return hasDateExpression({
+    date: { day: null, month: date.getUTCMonth() + 1, year: date.getUTCFullYear() },
     passage: readPassage({ language, passage }),
   });
 }

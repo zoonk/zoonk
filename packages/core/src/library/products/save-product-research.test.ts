@@ -53,6 +53,7 @@ async function research(attrs?: Partial<ProductResearch>): Promise<ProductResear
       {
         name: `Widget.js ${key} 15`,
         releasedAt: new Date("2025-10-21"),
+        releasedMonthOnly: false,
         sourceId: releasesPage.id,
         supportEndsAt: null,
         version: "15",
@@ -60,6 +61,7 @@ async function research(attrs?: Partial<ProductResearch>): Promise<ProductResear
       {
         name: `Widget.js ${key} 16`,
         releasedAt: null,
+        releasedMonthOnly: false,
         sourceId: releasesPage.id,
         supportEndsAt: null,
         version: "16",
@@ -115,6 +117,7 @@ describe(saveProductResearch, () => {
         {
           name: `${first.product.name} 16`,
           releasedAt: new Date("2026-10-21"),
+          releasedMonthOnly: false,
           sourceId: null,
           supportEndsAt: null,
           version: null,
@@ -122,6 +125,7 @@ describe(saveProductResearch, () => {
         {
           name: `${first.product.name} 17`,
           releasedAt: new Date("2026-12-15"),
+          releasedMonthOnly: false,
           sourceId: later.id,
           supportEndsAt: null,
           version: "17",
@@ -258,6 +262,7 @@ describe(saveProductResearch, () => {
       releases: [1, 2].map((number) => ({
         name: `${wave} ${number}`,
         releasedAt: null,
+        releasedMonthOnly: false,
         sourceId: null,
         supportEndsAt: null,
         version: null,
@@ -290,6 +295,7 @@ describe(saveProductReleases, () => {
     const nextRelease = {
       name: `${input.product.name} 17`,
       releasedAt: new Date("2026-11-05"),
+      releasedMonthOnly: false,
       sourceId: releasesSourceId,
       supportEndsAt: null,
       version: "17",
@@ -312,5 +318,39 @@ describe(saveProductReleases, () => {
     expect(first.releases).toHaveLength(3);
     expect([...first.newReleaseIds, ...second.newReleaseIds]).toStrictEqual([added?.id]);
     expect(second.product.releasesHash).toBe("hash-17");
+  });
+
+  it("keeps a release's month precision, takes a later reading's day, and never trades a day for its month", async () => {
+    const input = await research();
+    const saved = await saveProductResearch(input);
+    const [first] = input.releases;
+
+    const save = (releasedAt: string, releasedMonthOnly: boolean) =>
+      saveProductReleases({
+        productId: saved.product.id,
+        reading: {
+          provenance,
+          releases: [{ ...first!, releasedAt: new Date(releasedAt), releasedMonthOnly }],
+          releasesHash: null,
+          releasesSourceId: null,
+        },
+      });
+
+    const stored = async () => {
+      const { releases } = await save("2025-11-01", true);
+      return releases.find((release) => release.name === first?.name);
+    };
+
+    await expect(stored()).resolves.toMatchObject({
+      releasedAt: new Date("2025-11-01"),
+      releasedMonthOnly: true,
+    });
+
+    await save("2025-11-14", false);
+
+    await expect(stored()).resolves.toMatchObject({
+      releasedAt: new Date("2025-11-14"),
+      releasedMonthOnly: false,
+    });
   });
 });

@@ -8,7 +8,9 @@ import { pickCurrentRelease } from "./current-release";
 
 function loadProduct(productId: string) {
   return prisma.product.findUniqueOrThrow({
-    include: { releases: { select: { id: true, name: true, releasedAt: true } } },
+    include: {
+      releases: { select: { id: true, name: true, releasedAt: true, releasedMonthOnly: true } },
+    },
     where: { id: productId },
   });
 }

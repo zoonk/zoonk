@@ -56,6 +56,7 @@ CREATE TABLE "product_releases" (
     "normalized_name" TEXT NOT NULL,
     "version" TEXT,
     "released_at" DATE,
+    "released_month_only" BOOLEAN NOT NULL DEFAULT false,
     "support_ends_at" DATE,
     "source_id" UUID,
     "model" TEXT NOT NULL,

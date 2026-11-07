@@ -1,13 +1,11 @@
-import { pickCurrentRelease } from "./current-release";
+import { type DatedRelease, isReleased, pickCurrentRelease } from "./current-release";
 import { type GoalProductLink } from "./link-goal-product";
 import { toNameKey } from "./product-keys";
-
-type DatedRelease = { id: string; releasedAt: Date | null };
 
 /**
  * Decision 8: a learner who names a stored release other than the current one studies it in its
  * pinned course. An undated one counts as older, since a model page often gives only years; one
- * dated in the future is announced, so the goal follows the main course.
+ * not out yet (a later date, or a month not over) is announced, so the goal follows the main course.
  */
 export function toGoalProductLink({
   current,
@@ -23,7 +21,7 @@ export function toGoalProductLink({
   const isPinned =
     named !== null &&
     named.id !== current?.id &&
-    (named.releasedAt === null || named.releasedAt <= now);
+    (named.releasedAt === null || isReleased({ now, release: named }));
 
   return { productId, productReleaseId: isPinned ? named.id : null };
 }

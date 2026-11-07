@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isDateStated, isVersionStated } from "./release-claims";
+import { isDateStated, isMonthStated, isVersionStated } from "./release-claims";
 
 const DAYS = 731;
 const MS_PER_DAY = 86_400_000;
@@ -112,6 +112,38 @@ describe(isDateStated, () => {
     const date = new Date(Date.UTC(2025, 9, 21));
     const passage = "version 21 is new. It took many months of careful work before October 2025.";
     expect(isDateStated({ date, language: "en", passage })).toBe(false);
+  });
+});
+
+describe(isMonthStated, () => {
+  const october = new Date(Date.UTC(2024, 9, 1));
+
+  it("finds a month and year stated together", () => {
+    const missed = [
+      ["pt", "Orbit 5 - Expedição em Outubro/2024"],
+      ["pt", "lançado em outubro de 2024"],
+      ["en", "Orbit Notes 4 shipped in October 2024."],
+      ["en", "Oct 2024"],
+      ["en", "2024-10"],
+      ["en", "10/2024"],
+      ["ja", "2024年10月"],
+    ].filter(
+      ([language = "", passage = ""]) => !isMonthStated({ date: october, language, passage }),
+    );
+
+    expect(missed).toStrictEqual([]);
+  });
+
+  it("refuses a year alone, another month, a version, or a month and year apart", () => {
+    const confirmed = [
+      "Orbit Notes 4 shipped in 2024.",
+      "September 2024",
+      "Orbit Notes 10 2024",
+      "Orbit 2024.10",
+      "October was busy. In 2024 we shipped it.",
+    ].filter((passage) => isMonthStated({ date: october, language: "en", passage }));
+
+    expect(confirmed).toStrictEqual([]);
   });
 });
 

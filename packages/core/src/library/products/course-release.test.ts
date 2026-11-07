@@ -232,6 +232,36 @@ describe(loadCourseRelease, () => {
     ]);
   });
 
+  it("moves to a release dated by its month only once that month ends", async () => {
+    const brand = await brandFixture();
+    const product = await productFixture({ organizationId: brand.id });
+
+    const [current, november] = await Promise.all([
+      productReleaseFixture({ productId: product.id, releasedAt: new Date("2026-05-01") }),
+      productReleaseFixture({
+        productId: product.id,
+        releasedAt: new Date("2026-11-01"),
+        releasedMonthOnly: true,
+      }),
+    ]);
+
+    const course = await courseFixture({
+      organizationId: brand.id,
+      productId: product.id,
+      productReleaseId: current.id,
+    });
+
+    await follow(course.id);
+
+    await expect(loadCourseRelease({ courseId: course.id, now: NOW })).resolves.toStrictEqual({
+      status: "current",
+    });
+
+    await expect(
+      loadCourseRelease({ courseId: course.id, now: new Date("2026-12-01T00:00:00Z") }),
+    ).resolves.toMatchObject({ status: "behind", toReleaseId: november.id });
+  });
+
   it("leaves pinned and unfollowed courses alone", async () => {
     const [pinned, unfollowed] = await Promise.all([mainCourse({ pinned: true }), mainCourse()]);
     await follow(pinned.course.id);

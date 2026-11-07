@@ -1,11 +1,12 @@
 import { type CourseOutlineParams } from "@zoonk/ai/tasks/curriculum/course-outline";
 import { type CourseGetPayload } from "@zoonk/db";
+import { formatReleaseDate } from "./current-release";
 
 type PromptProduct = NonNullable<CourseOutlineParams["product"]>;
 
 export const COURSE_PRODUCT_SELECT = {
   product: { select: { name: true, organization: { select: { name: true } } } },
-  productRelease: { select: { name: true, releasedAt: true } },
+  productRelease: { select: { name: true, releasedAt: true, releasedMonthOnly: true } },
 } as const;
 
 type CourseProduct = CourseGetPayload<{ select: typeof COURSE_PRODUCT_SELECT }>;
@@ -23,7 +24,7 @@ export function toPromptProduct(course: CourseProduct): PromptProduct | null {
     name: product.name,
     release: productRelease && {
       name: productRelease.name,
-      releasedOn: productRelease.releasedAt?.toISOString().slice(0, 10) ?? null,
+      releasedOn: formatReleaseDate(productRelease),
     },
   };
 }
