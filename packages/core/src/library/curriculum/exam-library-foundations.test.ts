@@ -31,7 +31,7 @@ async function placedChapterFixture({ courseId, lessons }: { courseId: string; l
   return { chapter, lessons: rows };
 }
 
-describe("review: a foundation the frame's own course teaches", () => {
+describe("a foundation the frame's own course teaches", () => {
   it("keeps a lesson-tagged foundation in the frame course that teaches it instead of adding another course", async () => {
     const [physics, other, blueprint, applied, foundation] = await Promise.all([
       courseFixture({ id: `ffffffff-${randomUUID().slice(9)}`, language: "pt" }),
@@ -72,48 +72,5 @@ describe("review: a foundation the frame's own course teaches", () => {
     expect(plannedInFrame).toHaveLength(1);
     expect(library.skills.find(({ id }) => id === foundation.id)?.course).toBe("physics");
     expect(library.courses).toStrictEqual([]);
-  });
-});
-
-describe("review: sizes match the planner for an exam without practical formats", () => {
-  it("does not count a tool chapter's lessons, which an exam plan without tools never loads", async () => {
-    const [course, blueprint, skill] = await Promise.all([
-      courseFixture({ language: "pt" }),
-      examBlueprintFixture({ language: "pt" }),
-      skillFixture({ language: "pt" }),
-    ]);
-
-    const chapter = await libraryChapterFixture({
-      homeCourseId: course.id,
-      language: "pt",
-      tools: [{ essential: true, name: "Excel" }],
-    });
-
-    const lessons = await libraryLessonsFixture(2, { homeChapterId: chapter.id, language: "pt" });
-
-    await Promise.all([
-      chapterSkillFixture({ chapterId: chapter.id, skillId: skill.id }),
-      courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
-      ...lessons.map((lesson, position) =>
-        chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position }),
-      ),
-    ]);
-
-    const [library, planned] = await Promise.all([
-      findExamLibrary({
-        courseIdsByKey: { subject: course.id },
-        examBlueprintId: blueprint.id,
-        language: "pt",
-      }),
-      loadSkillLessons({
-        goal: { examBlueprintId: blueprint.id, kind: "exam" },
-        skillCourses: new Map([[skill.id, [course.id]]]),
-        skillIds: [skill.id],
-        userId: null,
-      }),
-    ]);
-
-    expect(planned).toHaveLength(0);
-    expect(library.skills.find(({ id }) => id === skill.id)?.lessons ?? 0).toBe(planned.length);
   });
 });

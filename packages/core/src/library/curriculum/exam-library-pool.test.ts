@@ -265,7 +265,7 @@ describe("question-bank skills the frame's own course teaches", () => {
   });
 });
 
-describe("sizes match what the planner loads for an exam goal", () => {
+describe("sizes count the lessons chapters teach an exam goal", () => {
   it("does not count a chapter's challenge lesson, which an exam plan never teaches", async () => {
     const [course, blueprint, skill] = await Promise.all([
       courseFixture({ language: "pt" }),
