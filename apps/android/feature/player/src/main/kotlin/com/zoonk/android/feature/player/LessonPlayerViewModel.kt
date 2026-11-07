@@ -590,8 +590,8 @@ class LessonPlayerViewModel(
         talkDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantTalk) }
         listenDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantListen) }
 
-        // After the server's answers rebuild the run, what the learner did and hadn't checked comes back, under the round
-        // it was saved in, when Android closed the app in the background.
+        // After the server's answers rebuild the run, what the learner did and hadn't checked comes back on the screens the
+        // run has no answer for, under the round it was saved in, when Android closed the app in the background.
         val rounds = saved.get<Map<String, Int>>(ROUNDS).orEmpty()
         val revealed = saved.get<Map<String, Int>>(REVEALED).orEmpty()
         val answers =
@@ -599,7 +599,12 @@ class LessonPlayerViewModel(
                 ApiJson.decodeFromString(LessonAnswer.serializer(), json)
             }
         val resumed = state.withFirstAnswer(started)
-        return resumed.copy(answers = resumed.answers + answers, revealed = resumed.revealed + revealed, rounds = resumed.rounds + rounds)
+        val unanswered = { id: String -> id !in resumed.results }
+        return resumed.copy(
+            answers = resumed.answers + answers.filterKeys(unanswered),
+            revealed = resumed.revealed + revealed.filterKeys(unanswered),
+            rounds = resumed.rounds + rounds,
+        )
     }
 
     /** Main's and Apple's: the lesson is read again every few seconds until its pictures come or their wait ends. */

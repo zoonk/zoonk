@@ -19,6 +19,7 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.pressKey
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -156,6 +157,27 @@ class LessonPlayerFlowTest {
         restoration.emulateSavedInstanceStateRestore()
 
         rule.onNode(hasSetTextAction()).assert(hasText("Because the droplets are small"))
+    }
+
+    /** An answer the server saved though its reply was lost comes back with its verdict, not an edit the learner never checked. */
+    @Test
+    fun aSavedAnswerComesBackOverAnUncheckedEditAfterAndroidClosesTheApp() {
+        val write = "00000000-0000-4000-8000-000000000111"
+        play(listOf(typedAnswerStep(write), explanationStep("idea"), checkStep("next"))) { checkFailures = 1 }
+        val field = rule.onNode(hasSetTextAction())
+        field.performTextInput("The saved answer")
+        tap("Check")
+        rule.waitUntil { api.checks.size == 1 && viewModel.state.value?.phase == LessonPhase.Playing }
+        field.performTextReplacement("An unchecked edit")
+        rule.waitForIdle()
+
+        api.runAnswers =
+            "[${runAnswerJson(write, isCorrect = true, answer = """{"kind":"typedAnswer","text":"The saved answer"}""")}]"
+        val reopened = openAgain()
+        rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run is LessonRun.Started }
+
+        val state = checkNotNull(reopened.state.value)
+        assertEquals(LessonAnswer.Typed("The saved answer") to true, state.answers[write] to state.results[write]?.isCorrect)
     }
 
     /** Android closing the app in the background keeps a pick the learner hasn't checked, ready to check. */
