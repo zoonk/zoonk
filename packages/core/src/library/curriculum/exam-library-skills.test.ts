@@ -349,6 +349,9 @@ describe(findExamLibrary, () => {
     const lessons = await libraryLessonsFixture(2, { homeChapterId: chapter.id, language: "pt" });
 
     await Promise.all([
+      ...lessons.map((lesson, position) =>
+        chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position }),
+      ),
       ...lessons.map((lesson) =>
         lessonSkillFixture({ lessonId: lesson.id, skillId: foundation.id }),
       ),
