@@ -48,7 +48,7 @@ function skill(area: string, course: string) {
   };
 }
 
-describe("skill graph step split: review repros", () => {
+describe("skill graph retries and course resolution", () => {
   beforeEach(() => {
     vi.resetAllMocks();
 
@@ -59,7 +59,7 @@ describe("skill graph step split: review repros", () => {
     vi.mocked(decideLibraryIdentity).mockResolvedValue({ match: null, verdicts: [] });
   });
 
-  it("retries a shared graph whose default-model call came back empty, as the old step did", async () => {
+  it("retries a shared graph whose default-model call came back empty", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ kind: "learn", userId: user.id });
     const written = skill("Arithmetic", "math");
