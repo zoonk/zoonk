@@ -26,13 +26,12 @@ export async function appendLandedLessons({
     return session;
   }
 
-  const planVersion = await loadDayPlanVersion({
-    goal,
-    localDate: session.localDate,
-    plan: selection && { graph: selection.state.graph, version: selection.context.plan.version },
-  });
+  // With a selection the day keeps following it, whether or not lessons are still pending.
+  const dayVersion = selection
+    ? null
+    : await loadDayPlanVersion({ goal, localDate: session.localDate });
 
-  if (!selection && planVersion === AWAITING_OUTLINES_VERSION) {
+  if (dayVersion === AWAITING_OUTLINES_VERSION) {
     return session;
   }
 
@@ -51,11 +50,6 @@ export async function appendLandedLessons({
   const prepared = selection
     ? await prepareSelectedPlanSave({ selection, shown: persistsPlan })
     : null;
-
-  const savedVersion =
-    planVersion === null || planVersion === AWAITING_OUTLINES_VERSION
-      ? planVersion
-      : planVersion + Number(prepared?.kind === "computed");
 
   await withSessionAppendLock({
     plan: selection && { id: selection.context.plan.id, write: persistsPlan },
@@ -78,9 +72,10 @@ export async function appendLandedLessons({
         return;
       }
 
-      if (selection && prepared) {
-        await saveSelectedPlan({ context: selection.context, prepared, tx: transaction });
-      }
+      const savedVersion =
+        selection && prepared
+          ? await saveSelectedPlan({ context: selection.context, prepared, tx: transaction })
+          : dayVersion;
 
       const items = selection?.computed
         ? await transaction.planItem.findMany({ where: { planId: selection.context.plan.id } })

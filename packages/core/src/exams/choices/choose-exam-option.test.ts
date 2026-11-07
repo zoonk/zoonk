@@ -321,64 +321,82 @@ describe(chooseExamOption, () => {
     });
   });
 
-  it("keeps a started day to its own lessons once the lessons it waited on are written", async () => {
-    await keepPaceOwn();
+  it.each([
+    { case: "a pick on a started day", picks: [SPANISH], started: true },
+    {
+      case: "a second pick while the first one's are pending",
+      picks: [ENGLISH, SPANISH],
+      started: false,
+    },
+  ])(
+    "keeps the day to its own lessons once the lessons it waits on are written: $case",
+    async ({ picks, started }) => {
+      await keepPaceOwn();
 
-    const [user, blueprint, course] = await Promise.all([
-      userFixture(),
-      choiceBlueprintFixture(),
-      courseFixture({ outlineStatus: "completed" }),
-    ]);
+      const [user, blueprint, course] = await Promise.all([
+        userFixture(),
+        choiceBlueprintFixture(),
+        courseFixture({ outlineStatus: "completed" }),
+      ]);
 
-    const library = await planLibraryFixture({
-      skills: [
-        { area: LANGUAGES, lessons: 2 },
-        { area: MATH, lessons: 0, size: 4 },
-        { area: ENGLISH, lessons: 2 },
-        { area: SPANISH, lessons: 2 },
-        { area: MATH, lessons: 12 },
-      ],
-    });
+      const library = await planLibraryFixture({
+        skills: [
+          { area: LANGUAGES, lessons: 2 },
+          { area: MATH, lessons: 0, size: 4 },
+          { area: ENGLISH, lessons: 2 },
+          { area: SPANISH, lessons: 2 },
+          { area: MATH, lessons: 12 },
+        ],
+      });
 
-    const { goal } = await unplannedGoalFixture({
-      dailyMinutes: 30,
-      examBlueprintId: blueprint.id,
-      kind: "exam",
-      primaryCourseId: course.id,
-      settings: { startDate: TODAY },
-      userId: user.id,
-    });
+      const { goal } = await unplannedGoalFixture({
+        dailyMinutes: 30,
+        examBlueprintId: blueprint.id,
+        kind: "exam",
+        primaryCourseId: course.id,
+        settings: { startDate: TODAY },
+        userId: user.id,
+      });
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
-    mockSession(user.id);
+      await createGoalPlan({ goalId: goal.id, graph: library.graph });
+      mockSession(user.id);
 
-    const opened = await openToday(goal.id);
-    const [first] = opened.blocks;
+      const opened = await openToday(goal.id);
+      const [first] = opened.blocks;
 
-    await startStudyBlock({
-      blockId: first?.id ?? "",
-      input: { timeZone: TIME_ZONE },
-      sessionId: opened.id,
-    });
+      if (started) {
+        await startStudyBlock({
+          blockId: first?.id ?? "",
+          input: { timeZone: TIME_ZONE },
+          sessionId: opened.id,
+        });
+      }
 
-    await chooseExamOption({ goalId: goal.id, input: spanish });
-    const written = await writeStandInLessons(library);
+      for (const subject of picks) {
+        // oxlint-disable-next-line no-await-in-loop -- The second pick comes while the first one's lessons are pending.
+        await chooseExamOption({ goalId: goal.id, input: { ...spanish, subjects: [subject] } });
+      }
 
-    const { lessonsAskedAt } = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+      const written = await writeStandInLessons(library);
 
-    await endLessonsAsk({
-      askedAt: lessonsAskedAt?.getTime() ?? 0,
-      goalId: goal.id,
-      startedCourseIds: [],
-    });
+      const { lessonsAskedAt } = await prisma.plan.findUniqueOrThrow({
+        where: { goalId: goal.id },
+      });
 
-    const day = await openToday(goal.id);
-    const todays = await loadTodaysLessonIds(goal.id);
-    const lessonIds = day.blocks.flatMap((block) => block.lessonId ?? []);
+      await endLessonsAsk({
+        askedAt: lessonsAskedAt?.getTime() ?? 0,
+        goalId: goal.id,
+        startedCourseIds: [],
+      });
 
-    expect(lessonIds.some((id) => written.includes(id))).toBe(true);
-    expect(lessonIds.filter((id) => !todays.has(id))).toStrictEqual([]);
-  });
+      const day = await openToday(goal.id);
+      const todays = await loadTodaysLessonIds(goal.id);
+      const lessonIds = day.blocks.flatMap((block) => block.lessonId ?? []);
+
+      expect(lessonIds.some((id) => written.includes(id))).toBe(true);
+      expect(lessonIds.filter((id) => !todays.has(id))).toStrictEqual([]);
+    },
+  );
 
   it("changes one choice of an exam with several and keeps the others", async () => {
     const user = await userFixture();
