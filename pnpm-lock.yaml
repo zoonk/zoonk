@@ -1422,9 +1422,6 @@ importers:
       d3-geo:
         specifier: 3.1.2
         version: 3.1.2
-      katex:
-        specifier: 0.19.1
-        version: 0.19.1
       lucide-react:
         specifier: 'catalog:'
         version: 1.70.0(@types/react@19.3.0)(react@19.3.1)
@@ -1443,6 +1440,9 @@ importers:
       recharts:
         specifier: 'catalog:'
         version: 3.10.1(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react-is@19.3.1)(react@19.3.1)(redux@5.0.1)
+      rehype-katex:
+        specifier: 7.0.1
+        version: 7.0.1
       smplr:
         specifier: 1.2.0
         version: 1.2.0

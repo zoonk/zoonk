@@ -46,9 +46,9 @@
     "abcjs": "6.7.2",
     "ai": "catalog:",
     "d3-geo": "3.1.2",
-    "katex": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "rehype-katex": "7.0.1",
     "smplr": "1.2.0",
     "streamdown": "2.7.1",
     "web-haptics": "0.0.6"

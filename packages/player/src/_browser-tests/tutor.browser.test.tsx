@@ -3,7 +3,7 @@ import { MemoryUpdated } from "@zoonk/learn/memory-updated";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
-import { expectCount, focusOn, press } from "../_test-utils/activity-player";
+import { expectCount, expectMathVisible, focusOn, press } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import {
@@ -442,6 +442,26 @@ describe("tutor answers", () => {
     await Promise.all([import("@streamdown/math"), import("@streamdown/mermaid")]);
     await expectCount(sheet.getByRole("math"), 2);
     await expect.element(sheet.getByRole("document", { name: "How an orbit forms" })).toBeVisible();
+  });
+
+  it("draws an answer's math without downloading a stylesheet for it", async () => {
+    const { api, lesson } = lessonWithTutor();
+
+    api.next("answer", () =>
+      Promise.resolve(tutorAnswerResponse("The speed is:\n\n$$\nv = \\sqrt{\\frac{GM}{r}}\n$$")),
+    );
+
+    playLesson({ lesson });
+    const sheet = await openTutor();
+    await ask(sheet, "How fast is an orbit?");
+
+    await expectMathVisible(sheet.getByRole("math"));
+
+    const stylesheets = performance
+      .getEntriesByType("resource")
+      .filter((entry) => /katex.*\.css/u.test(entry.name));
+
+    expect(stylesheets).toHaveLength(0);
   });
 
   it("is done once it's saved, and what memory learned follows", async () => {

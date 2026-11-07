@@ -161,7 +161,8 @@ function BlockOpenFailed() {
 // fade would fade with them, so their outer card is the one frame. A table keeps its words whole
 // and scrolls instead of breaking them letter by letter.
 const TUTOR_MARKDOWN_CLASS = cn(
-  "min-w-0 wrap-anywhere [&_.katex-display]:overflow-x-auto [&_.katex-display]:overflow-y-hidden [&_.katex-display]:py-1 [&_a]:underline [&_a]:underline-offset-4",
+  "min-w-0 wrap-anywhere [&_a]:underline [&_a]:underline-offset-4",
+  "**:has-[>math[display=block]]:scroll-fade-x **:has-[>math[display=block]]:block **:has-[>math[display=block]]:overflow-x-auto **:has-[>math[display=block]]:overflow-y-hidden **:has-[>math[display=block]]:py-1",
   "**:data-[streamdown=code-block]:bg-background **:data-[streamdown=code-block-body]:scroll-fade-x **:data-[streamdown=code-block-body]:border-0 **:data-[streamdown=code-block-body]:bg-transparent",
   "**:data-[streamdown=table-wrapper]:bg-background [&_[data-streamdown=table-wrapper]>div:has(>table)]:scroll-fade-x **:data-[streamdown=table-wrapper]:wrap-normal [&_[data-streamdown=table-wrapper]>div:has(>table)]:border-0 [&_[data-streamdown=table-wrapper]>div:has(>table)]:bg-transparent",
 );

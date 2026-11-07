@@ -1,6 +1,5 @@
 "use client";
 
-import "katex/dist/katex.min.css";
 import { type ComponentProps } from "react";
 import { type TutorMarkdown } from "./tutor-markdown";
 import { tutorMarkdownRenderer } from "./tutor-markdown-preload";
