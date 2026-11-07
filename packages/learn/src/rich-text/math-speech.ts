@@ -1,4 +1,4 @@
-import { normalizeLatexCommands } from "./latex-source";
+import { normalizeLatexCommands } from "@zoonk/utils/math-spans";
 import {
   ACCENTS,
   type Accent,

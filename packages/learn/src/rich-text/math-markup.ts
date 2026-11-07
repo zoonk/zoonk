@@ -1,5 +1,5 @@
+import { normalizeLatexCommands } from "@zoonk/utils/math-spans";
 import { renderToString } from "katex";
-import { normalizeLatexCommands } from "./latex-source";
 import { collectFormulas } from "./math-formulas";
 import { type MathMarkup, type MathMarkupRenderer, mathMarkupKey } from "./math-key";
 
