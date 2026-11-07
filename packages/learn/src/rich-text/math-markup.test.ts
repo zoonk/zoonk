@@ -77,3 +77,14 @@ describe(collectMathMarkup, () => {
     ).toStrictEqual({});
   });
 });
+
+describe(renderMathMarkup, () => {
+  it("hands a box or a strike over as a row the stylesheet draws, since Chromium draws no menclose", () => {
+    const boxed = renderMathMarkup({ displayMode: false, text: String.raw`\boxed{x = 5}` });
+    const cancelled = renderMathMarkup({ displayMode: false, text: String.raw`\cancel{2}` });
+
+    expect(boxed).toContain('<mrow notation="box">');
+    expect(cancelled).toContain('<mrow notation="updiagonalstrike">');
+    expect(`${boxed}${cancelled}`).not.toContain("menclose");
+  });
+});

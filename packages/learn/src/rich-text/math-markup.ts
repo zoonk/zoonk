@@ -1,5 +1,6 @@
 import { renderToString } from "katex";
 import { normalizeLatexCommands } from "./latex-source";
+import { enclosuresAsRows } from "./math-enclosures";
 import { collectFormulas } from "./math-formulas";
 import { type MathMarkup, type MathMarkupRenderer, mathMarkupKey } from "./math-key";
 
@@ -8,12 +9,14 @@ import { type MathMarkup, type MathMarkupRenderer, mathMarkupKey } from "./math-
  * to review.
  */
 export const renderMathMarkup: MathMarkupRenderer = ({ displayMode, text }) =>
-  renderToString(normalizeLatexCommands(text), {
-    displayMode,
-    output: "mathml",
-    throwOnError: false,
-    trust: false,
-  });
+  enclosuresAsRows(
+    renderToString(normalizeLatexCommands(text), {
+      displayMode,
+      output: "mathml",
+      throwOnError: false,
+      trust: false,
+    }),
+  );
 
 export function collectMathMarkup(content: unknown): MathMarkup {
   return Object.fromEntries(

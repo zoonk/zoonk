@@ -1,0 +1,76 @@
+/* KaTeX's enclosures, renamed from <menclose> by `@zoonk/learn/rich-text/math-enclosures`. */
+mrow[notation~="box"] {
+  border: 0.06em solid;
+  padding: 0.1em 0.2em;
+}
+
+mrow[notation~="actuarial"] {
+  border-top: 0.06em solid;
+  border-right: 0.06em solid;
+  padding-right: 0.1em;
+}
+
+mrow[notation~="updiagonalstrike"] {
+  background-image: linear-gradient(
+    to bottom right,
+    transparent calc(50% - 0.04em),
+    currentColor 0 calc(50% + 0.04em),
+    transparent 0
+  );
+}
+
+mrow[notation~="downdiagonalstrike"] {
+  background-image: linear-gradient(
+    to top right,
+    transparent calc(50% - 0.04em),
+    currentColor 0 calc(50% + 0.04em),
+    transparent 0
+  );
+}
+
+mrow[notation~="updiagonalstrike"][notation~="downdiagonalstrike"] {
+  background-image:
+    linear-gradient(
+      to bottom right,
+      transparent calc(50% - 0.04em),
+      currentColor 0 calc(50% + 0.04em),
+      transparent 0
+    ),
+    linear-gradient(
+      to top right,
+      transparent calc(50% - 0.04em),
+      currentColor 0 calc(50% + 0.04em),
+      transparent 0
+    );
+}
+
+mrow[notation~="horizontalstrike"] {
+  background-image: linear-gradient(
+    transparent calc(50% - 0.04em),
+    currentColor 0 calc(50% + 0.04em),
+    transparent 0
+  );
+}
+
+/* Forced colors drop background images, which would take the strokes with them. */
+@media (forced-colors: active) {
+  mrow:is(
+    [notation~="updiagonalstrike"],
+    [notation~="downdiagonalstrike"],
+    [notation~="horizontalstrike"]
+  ) {
+    forced-color-adjust: none;
+    color: CanvasText;
+  }
+
+  /* `forced-color-adjust` passes down, so a `\color` inside would keep its own color on the forced canvas. */
+  mrow:is(
+      [notation~="updiagonalstrike"],
+      [notation~="downdiagonalstrike"],
+      [notation~="horizontalstrike"]
+    )
+    * {
+    color: CanvasText;
+    background-color: transparent;
+  }
+}

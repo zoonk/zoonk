@@ -1,8 +1,9 @@
 "use client";
 
+import { rehypeEnclosuresAsRows } from "@zoonk/learn/rich-text/math-enclosures";
 import { createOnDemand } from "@zoonk/ui/lib/on-demand";
 import { useMemo } from "react";
-import { type PluginConfig } from "streamdown";
+import { type MathPlugin, type PluginConfig } from "streamdown";
 
 /** Math in an answer: Streamdown's math plugin reads `$$…$$` only, so single dollars stay text. */
 function needsMath(text: string): boolean {
@@ -15,7 +16,20 @@ function needsMermaid(text: string): boolean {
   return MERMAID_FENCE.test(text);
 }
 
-const mathPlugin = createOnDemand(() => import("@streamdown/math").then(({ math }) => math));
+// KaTeX's default HTML needs its stylesheet; MathML, which lessons draw too, needs none.
+const mathPlugin = createOnDemand(() =>
+  Promise.all([import("@streamdown/math"), import("rehype-katex")]).then(
+    ([{ math }, { default: rehypeKatex }]): MathPlugin => ({
+      ...math,
+      rehypePlugin: {
+        plugins: [
+          [rehypeKatex, { errorColor: "var(--color-muted-foreground)", output: "mathml" }],
+          rehypeEnclosuresAsRows,
+        ],
+      },
+    }),
+  ),
+);
 
 const mermaidPlugin = createOnDemand(() =>
   import("@streamdown/mermaid").then(({ mermaid }) => mermaid),

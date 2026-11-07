@@ -3,6 +3,7 @@ import { commands } from "vitest/browser";
 export type DeviceMedia = {
   colorScheme?: "dark" | "light";
   contrast?: "more" | "no-preference";
+  forcedColors?: "active" | "none";
   reducedMotion?: "no-preference" | "reduce";
 };
 
@@ -16,6 +17,7 @@ declare module "vitest/browser" {
 const DEVICE_DEFAULTS: Required<DeviceMedia> = {
   colorScheme: "light",
   contrast: "no-preference",
+  forcedColors: "none",
   reducedMotion: "no-preference",
 };
 

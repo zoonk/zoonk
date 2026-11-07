@@ -75,7 +75,7 @@ minimumReleaseAge: 0
 overrides:
   # This repo never installs codex.
   "ai-sdk-provider-codex-cli>@openai/codex": "-"
-  # Keep lesson and question math on the same KaTeX version as the stylesheet.
+  # Lesson math and buddy answers share one KaTeX, so they draw formulas alike.
   katex: "catalog:"
   # Audit remediation (Neon CLI 9 pins 2.0.4): 2.1.3 covers the serveStatic double-decoding and WebSocket handshake advisories in 2.0.x.
   "@hono/node-server@>=1.19.10 <2.1.3": ^2.1.3
