@@ -217,8 +217,8 @@ function FocusTestRun({
 }) {
   const t = useExtracted();
   const requestId = useMemo(() => crypto.randomUUID(), []);
-  const [sent, setSent] = useState<FocusTestAnswers | null>(null);
-  const [outcome, setOutcome] = useState<FocusTestOutcome | null | undefined>();
+  const [unsent, setUnsent] = useState<ChoiceQuestionAnswer[] | null>(null);
+  const [outcome, setOutcome] = useState<FocusTestOutcome | null>(null);
   const [isPending, startTransition] = useTransition();
   const questions = useArrivingQuestions(test.questions);
   const total = countTestQuestions(test);
@@ -237,10 +237,12 @@ function FocusTestRun({
         }
       : null;
 
-  const submit = (input: FocusTestAnswers) => {
-    setSent(input);
-    startTransition(async () => setOutcome(await onSubmit(input).catch(() => null)));
-  };
+  const submit = (answers: ChoiceQuestionAnswer[]) =>
+    startTransition(async () => {
+      const graded = await onSubmit({ answers, requestId }).catch(() => null);
+      setUnsent(graded ? null : answers);
+      setOutcome(graded);
+    });
 
   if (outcome) {
     return (
@@ -255,19 +257,12 @@ function FocusTestRun({
     );
   }
 
-  if (outcome === null && sent && !isPending) {
-    return (
-      <TaskFrame exitHref={closeHref}>
-        <AnswersSaveError onRetry={() => submit(sent)} />
-      </TaskFrame>
-    );
-  }
-
   return (
     <ChoiceQuestionsRun
+      error={unsent && !isPending && <AnswersSaveError onRetry={() => submit(unsent)} />}
       header={{ closeHref, screen: "focus-test", title: t("Focus test") }}
       hint={(question) => question.area}
-      onFinish={(answers) => submit({ answers, requestId })}
+      onFinish={submit}
       pending={isPending}
       questions={questions}
       trueFalseLabels={test.trueFalseLabels}
