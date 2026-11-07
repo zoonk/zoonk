@@ -1,4 +1,5 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
 import { type Goal, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag, getUserProgressCacheTag } from "../../cache/tags";
@@ -85,7 +86,11 @@ async function gradeAnswers({
   return graded.every((entry) => entry !== null) ? graded : null;
 }
 
-/** Answers of one skill record one after another, so they never race on the same row. */
+/**
+ * Answers of one skill record one after another, so they never race on the same row. The test asks
+ * only questions the learner never answered, so one they have was recorded by an earlier try of
+ * this send that failed before its receipt.
+ */
 async function recordAnswers({
   graded,
   timeZone,
@@ -96,6 +101,15 @@ async function recordAnswers({
   userId: string;
 }): Promise<void> {
   const answeredAt = new Date();
+
+  const recorded = await prisma.attempt.findMany({
+    select: { itemId: true },
+    where: { itemId: { in: graded.map((entry) => entry.item.id) }, userId },
+  });
+
+  const unrecorded = graded.filter(
+    (entry) => !recorded.some((attempt) => attempt.itemId === entry.item.id),
+  );
 
   const record = ({ answer, isCorrect, item }: GradedAnswer) =>
     recordLearnerAnswer({
@@ -111,7 +125,7 @@ async function recordAnswers({
     });
 
   await Promise.all(
-    [...Map.groupBy(graded, (entry) => entry.item.skillId).values()].map((answers) =>
+    [...Map.groupBy(unrecorded, (entry) => entry.item.skillId).values()].map((answers) =>
       answers.reduce<Promise<unknown>>(
         (previous, entry) => previous.then(() => record(entry)),
         Promise.resolve(),
@@ -209,16 +223,16 @@ async function submitOwnedFocusTest({
   });
 
   const focusAreas = chooseFocusAreas(results);
+  const refocuses = focusAreas.length > 0 && !isDeepStrictEqual(focusAreas, shape.focusAreas);
 
-  const change =
-    focusAreas.length > 0
-      ? await changeGoalPlan({
-          goalId,
-          input: { operations: [{ areas: focusAreas, kind: "focusAreas" }], timeZone },
-          saveFocusAnyway: true,
-          trackAnalytics: false,
-        })
-      : null;
+  const change = refocuses
+    ? await changeGoalPlan({
+        goalId,
+        input: { operations: [{ areas: focusAreas, kind: "focusAreas" }], timeZone },
+        saveFocusAnyway: true,
+        trackAnalytics: false,
+      })
+    : null;
 
   const said = {
     areas: results.map(({ answers, label, name }) => ({ answers, label, name })),
@@ -261,7 +275,7 @@ export async function submitFocusTest({
   const { userId } = owned;
 
   return withTestSubmissionClaim({
-    key: `focusTest:${userId}:${goalId}:${input.requestId}`,
+    key: `${userId}:${goalId}:focusTest:${input.requestId}`,
     replay: () => replaySavedReceipt({ goalId, requestId: input.requestId, userId }),
     submit: () => submitOwnedFocusTest({ goal: owned.goal, input, userId }),
     userId,

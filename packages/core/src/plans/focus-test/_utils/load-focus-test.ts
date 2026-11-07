@@ -31,6 +31,7 @@ type FocusTestQuestion = QuestionView & { area: string };
 
 export type FocusTestShape = {
   areas: FocusTestArea[];
+  focusAreas: string[];
   questionsPerArea: number;
   quickFormat: PlacementQuickFormat;
   structure: ExamStructure | null;
@@ -58,11 +59,12 @@ export async function loadFocusTestShape(
   }
 
   const graph = parsePlanGraph(plan.graph);
+  const settings = parsePlanSettings(plan.settings);
 
   const areas = pickFocusTestAreas(
     getFocusTestAreas({
       graph: { ...graph, skills: graph.skills.filter((skill) => !listening.has(skill.skillId)) },
-      settings: parsePlanSettings(plan.settings),
+      settings,
       structure,
     }),
   );
@@ -73,6 +75,7 @@ export async function loadFocusTestShape(
 
   return {
     areas,
+    focusAreas: settings.focusAreas,
     questionsPerArea: getQuestionsPerArea(areas.length),
     quickFormat: getPlacementQuickFormat(structure),
     structure,

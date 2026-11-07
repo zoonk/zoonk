@@ -5,13 +5,17 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { NOTHING_REACHED } from "../../sessions/reached";
+import { recordAnsweredActivity } from "../../stats/record-answered-activity";
 import { decidePlanChange } from "../decide-plan-change";
 import { getFocusTest } from "./get-focus-test";
 import { requestFocusTestQuestions } from "./request-focus-test-questions";
 import { submitFocusTest } from "./submit-focus-test";
+
+// The real database can't drop the connection between a send's plan change and its activity.
+vi.mock("../../stats/record-answered-activity", { spy: true });
 
 const RIGHT = { selectedIndex: 0 };
 const WRONG = { selectedIndex: 1 };
@@ -103,27 +107,27 @@ async function readQuestions(goalId: string) {
   return result.status === "ready" ? result.focusTest.questions : [];
 }
 
-/** Law answered right and Math wrong, so Math gets the focus. */
-async function sendAnswers({
+/** Law answered right and Math wrong, so Math gets the focus. Read once: a send answers them. */
+async function readAnswers(goalId: string) {
+  const questions = await readQuestions(goalId);
+
+  return questions.map((question) => ({
+    answer: question.area === "Law" ? RIGHT : WRONG,
+    durationMs: 8000,
+    itemId: question.itemId,
+  }));
+}
+
+function send({
+  answers,
   goalId,
   requestId = randomUUID(),
 }: {
+  answers: Awaited<ReturnType<typeof readAnswers>>;
   goalId: string;
   requestId?: string;
 }) {
-  const questions = await readQuestions(goalId);
-
-  return submitFocusTest({
-    goalId,
-    input: {
-      answers: questions.map((question) => ({
-        answer: question.area === "Law" ? RIGHT : WRONG,
-        durationMs: 8000,
-        itemId: question.itemId,
-      })),
-      requestId,
-    },
-  });
+  return submitFocusTest({ goalId, input: { answers, requestId } });
 }
 
 async function countRecorded({ planId, userId }: { planId: string; userId: string }) {
@@ -325,7 +329,7 @@ describe(requestFocusTestQuestions, () => {
 describe(submitFocusTest, () => {
   it("focuses the plan on the area the answers show needs it, and records every answer", async () => {
     const { goal, plan, user } = await setup();
-    const result = await sendAnswers({ goalId: goal.id });
+    const result = await send({ answers: await readAnswers(goal.id), goalId: goal.id });
 
     expect(result).toMatchObject({
       outcome: {
@@ -365,7 +369,7 @@ describe(submitFocusTest, () => {
       data: { currentEnergy: 79.8, lastActiveAt: new Date(), userId: user.id },
     });
 
-    const result = await sendAnswers({ goalId: goal.id });
+    const result = await send({ answers: await readAnswers(goal.id), goalId: goal.id });
 
     expect(result).toMatchObject({
       outcome: { ceremony: null, reached: { energy: 80, level: null } },
@@ -391,9 +395,10 @@ describe(submitFocusTest, () => {
 
   it("counts answers sent again once and gives the retry the first send's result", async () => {
     const { goal, plan, user } = await setup();
+    const answers = await readAnswers(goal.id);
     const requestId = randomUUID();
 
-    const first = await sendAnswers({ goalId: goal.id, requestId });
+    const first = await send({ answers, goalId: goal.id, requestId });
     const counted = await countRecorded({ planId: plan.id, userId: user.id });
 
     expect(counted).toStrictEqual({
@@ -404,7 +409,7 @@ describe(submitFocusTest, () => {
       seconds: 64,
     });
 
-    await expect(sendAnswers({ goalId: goal.id, requestId })).resolves.toStrictEqual({
+    await expect(send({ answers, goalId: goal.id, requestId })).resolves.toStrictEqual({
       outcome: { ...(first.status === "ready" && first.outcome), reached: NOTHING_REACHED },
       status: "ready",
     });
@@ -416,11 +421,12 @@ describe(submitFocusTest, () => {
 
   it("counts two sends of the same answers at once once", async () => {
     const { goal, plan, user } = await setup();
+    const answers = await readAnswers(goal.id);
     const requestId = randomUUID();
 
     const [first, second] = await Promise.all([
-      sendAnswers({ goalId: goal.id, requestId }),
-      sendAnswers({ goalId: goal.id, requestId }),
+      send({ answers, goalId: goal.id, requestId }),
+      send({ answers, goalId: goal.id, requestId }),
     ]);
 
     const firstChange = first.status === "ready" ? first.outcome.changeId : null;
@@ -443,10 +449,11 @@ describe(submitFocusTest, () => {
 
   it("undoes, from a retry's result, the focus the first send set", async () => {
     const { goal, plan } = await setup();
+    const answers = await readAnswers(goal.id);
     const requestId = randomUUID();
 
-    await sendAnswers({ goalId: goal.id, requestId });
-    const retried = await sendAnswers({ goalId: goal.id, requestId });
+    await send({ answers, goalId: goal.id, requestId });
+    const retried = await send({ answers, goalId: goal.id, requestId });
     const changeId = retried.status === "ready" ? retried.outcome.changeId : null;
 
     await expect(
@@ -455,5 +462,31 @@ describe(submitFocusTest, () => {
 
     const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     expect(stored.settings).toMatchObject({ focusAreas: [] });
+  });
+
+  it("counts a send once when its retry follows one that failed after setting the focus", async () => {
+    const { goal, plan, user } = await setup();
+    const answers = await readAnswers(goal.id);
+    const requestId = randomUUID();
+
+    vi.mocked(recordAnsweredActivity).mockRejectedValueOnce(new Error("Connection lost"));
+
+    await expect(send({ answers, goalId: goal.id, requestId })).rejects.toThrow("Connection lost");
+
+    await expect(send({ answers, goalId: goal.id, requestId })).resolves.toMatchObject({
+      outcome: { focusAreas: ["Math"] },
+      status: "ready",
+    });
+
+    await expect(countRecorded({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
+      attempts: 8,
+      changes: 1,
+      correctAnswers: 4,
+      events: 1,
+      seconds: 64,
+    });
+
+    const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(stored.settings).toMatchObject({ focusAreas: ["Math"] });
   });
 });

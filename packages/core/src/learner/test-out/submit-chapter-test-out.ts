@@ -321,7 +321,7 @@ export async function submitChapterTestOut({
   const { userId } = owned;
 
   return withTestSubmissionClaim({
-    key: `testOut:${userId}:${goalId}:${chapterId}:${input.requestId}`,
+    key: `${userId}:${goalId}:${chapterId}:${input.requestId}`,
     replay: () => replaySavedReceipt({ chapterId, goalId, requestId: input.requestId, userId }),
     submit: () => submitOwnedTestOut({ chapterId, goal: owned.goal, input, userId }),
     userId,

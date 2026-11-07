@@ -110,21 +110,12 @@ model Mistake {
   @@map("mistakes")
 }
 
-/// Unused.
-model TestOutClaim {
-  key       String   @id
-  userId    String   @map("user_id") @db.Uuid
-  createdAt DateTime @default(now()) @map("created_at")
-
-  @@index([userId])
-  @@map("test_out_claims")
-  @@ignore
-}
-
 /// Taken before a test's answers (a chapter test-out, a focus test) are recorded and dropped once
 /// they are, so the same answers sent twice at once are recorded once: the second waits for the
-/// first's receipt. One older than any submission takes was left by a crash and can be taken
-/// again. `key` is the test's kind, the learner, the goal, what it tests and the request id.
+/// first's receipt. One older than any submission takes was left by a crash and can be taken again.
+/// `key` is the learner, goal, what the test covers (a test-out's chapter, or `focusTest`) and request
+/// id. The table keeps test-out's name, so a send to the release before and its retry to the next
+/// one share their claim.
 model TestSubmissionClaim {
   key       String   @id
   userId    String   @map("user_id") @db.Uuid
@@ -132,5 +123,5 @@ model TestSubmissionClaim {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@index([userId])
-  @@map("test_submission_claims")
+  @@map("test_out_claims")
 }
