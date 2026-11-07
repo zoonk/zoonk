@@ -3,7 +3,7 @@ import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { type Product, prisma } from "@zoonk/db";
 import { listCoursesBehind } from "./course-release";
-import { type ProductSourcesReading, readProductSources } from "./read-product-sources";
+import { type ProductSourcesReading, readSourceVersions } from "./read-product-sources";
 import { saveProductReleases } from "./save-product-research";
 
 export type ReleasesReading = Pick<ProductSourcesReading, "provenance" | "releases"> & {
@@ -12,6 +12,7 @@ export type ReleasesReading = Pick<ProductSourcesReading, "provenance" | "releas
   sourceId: string;
 };
 
+/** The page's text with its hash, so every retry reads and records the same version. */
 export type UnreadReleasesPage = {
   brand: string;
   contentHash: string;
@@ -19,6 +20,9 @@ export type UnreadReleasesPage = {
   name: string;
   productId: string;
   sourceId: string;
+  text: string;
+  title: string;
+  url: string;
 };
 
 /** A page is read once its releases were saved from its hash or a reading of it failed for good. */
@@ -46,7 +50,14 @@ export async function findUnreadReleasesPage(
       organization: { select: { name: true } },
       releasesHash: true,
       releasesSource: {
-        select: { contentHash: true, extractedText: true, id: true, language: true },
+        select: {
+          contentHash: true,
+          extractedText: true,
+          id: true,
+          language: true,
+          title: true,
+          url: true,
+        },
       },
       unreadableReleasesHash: true,
     },
@@ -58,6 +69,7 @@ export async function findUnreadReleasesPage(
   if (
     !product ||
     !source?.extractedText ||
+    !source.url ||
     !isReleasesPageUnread({ contentHash: source.contentHash, product })
   ) {
     return null;
@@ -70,6 +82,9 @@ export async function findUnreadReleasesPage(
     name: product.name,
     productId,
     sourceId: source.id,
+    text: source.extractedText,
+    title: source.title,
+    url: source.url,
   };
 }
 
@@ -86,17 +101,17 @@ export async function readReleasesPage({
   release: string | null;
   serviceTier?: ServiceTier;
 }): Promise<ReleasesReading> {
-  const reading = await readProductSources({
+  const reading = await readSourceVersions({
     analytics,
     hints: { brand: page.brand, name: page.name, release },
     known: true,
     language: page.language,
     serviceTier,
-    sourceIds: [page.sourceId],
+    sources: [{ ...page, id: page.sourceId }],
   });
 
   return {
-    contentHash: reading.hashes[page.sourceId] ?? page.contentHash,
+    contentHash: page.contentHash,
     productId: page.productId,
     provenance: reading.provenance,
     releases: reading.releases,

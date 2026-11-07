@@ -8,6 +8,7 @@ import {
   markRemovedContent,
 } from "./_sync-content/destination";
 import { readKeptKeys, withoutKeptKeys } from "./_sync-content/kept-keys";
+import { matchLocalCourses } from "./_sync-content/local-courses";
 import { assertCompatibleSchemas, getOrganizationId } from "./_sync-content/metadata";
 import { restoreLearnerReferences, snapshotLearnerReferences } from "./_sync-content/preserve";
 import { readSourceCatalog } from "./_sync-content/source";
@@ -43,11 +44,14 @@ async function synchronizeConnectedClients({
       throw new Error("The source has no catalog courses");
     }
 
-    const localCatalog = await upsertOrganizations({
-      catalog: sourceCatalog,
+    const localCatalog = await matchLocalCourses({
+      catalog: await upsertOrganizations({
+        catalog: sourceCatalog,
+        destination,
+        organizationId: destinationOrganizationId,
+        sourceOrganizationId,
+      }),
       destination,
-      organizationId: destinationOrganizationId,
-      sourceOrganizationId,
     });
 
     await markRemovedContent({ courses: localCatalog.courses, destination });
