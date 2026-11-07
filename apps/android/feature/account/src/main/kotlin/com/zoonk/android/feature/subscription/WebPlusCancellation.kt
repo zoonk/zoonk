@@ -24,6 +24,7 @@ import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.AlertDialog
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.api.models.StripeSubscriptionCancellation
@@ -107,6 +108,7 @@ internal fun KeepWebPlusButton(cancellation: WebPlusCancellationViewModel) {
         OutlinedButton(
             busy = cancellation.isKeeping,
             onClick = cancellation::keep,
+            leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
         ) { Text(stringResource(R.string.subscription_keep_plus)) }
         if (cancellation.keepFailed) Failure(stringResource(R.string.subscription_keep_failed))
     }

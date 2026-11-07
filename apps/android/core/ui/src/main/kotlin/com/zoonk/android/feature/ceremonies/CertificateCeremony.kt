@@ -74,6 +74,7 @@ import com.zoonk.android.feature.certificates.pictureUrl
 import com.zoonk.android.feature.certificates.rememberCertificateActions
 import com.zoonk.android.feature.certificates.words
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SnackbarHost
@@ -324,14 +325,14 @@ private fun Words(
                         onClick = { actions.share(top, fileName, caption) },
                         modifier = Modifier.weight(1f),
                         enabled = actions.busy == null,
-                        icon = { Icon(painterResource(R.drawable.ic_share), contentDescription = null) },
+                        leadingIcon = { ButtonIcon(R.drawable.ic_share) },
                     ) {
                         Text(stringResource(R.string.certificates_share))
                     }
                     OutlinedButton(
                         onClick = onAddToLinkedIn,
                         modifier = Modifier.weight(1f),
-                        icon = { Icon(painterResource(R.drawable.ic_north_east), contentDescription = null) },
+                        leadingIcon = { ButtonIcon(R.drawable.ic_north_east) },
                     ) {
                         Text(stringResource(R.string.certificates_add_to_linkedin))
                     }

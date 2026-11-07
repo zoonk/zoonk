@@ -14,6 +14,7 @@ import com.zoonk.android.feature.plan.planChangeSentence
 import com.zoonk.android.feature.plan.topicsMoved
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -95,6 +96,7 @@ private fun ChangeNotice(
                         onClick = { viewModel.decidePlanChange(state.read, answer.change, PlanChangeDecisionInput.Status.UNDONE) },
                         busy = saving,
                         secondary = true,
+                        leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
                     )
                 }
             }

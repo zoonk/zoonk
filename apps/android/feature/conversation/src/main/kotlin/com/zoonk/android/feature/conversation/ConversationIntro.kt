@@ -30,6 +30,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.audio.MicrophoneOff
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -213,9 +214,5 @@ internal fun StartCallButton(
     modifier: Modifier = Modifier,
     label: String = stringResource(R.string.conversation_start),
 ) {
-    Button(busy = starting, onClick = onClick, modifier = modifier, icon = {
-        Icon(painterResource(R.drawable.ic_call), contentDescription = null)
-    }) {
-        Text(label)
-    }
+    Button(busy = starting, onClick = onClick, modifier = modifier, leadingIcon = { ButtonIcon(R.drawable.ic_call) }) { Text(label) }
 }

@@ -96,6 +96,7 @@ import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
@@ -594,7 +595,12 @@ private fun WordActions(
                         Text(stringResource(R.string.pronunciation_try_again))
                     }
                 }
-                Button(busy = round.pending, onClick = model::next, modifier = width) {
+                Button(
+                    busy = round.pending,
+                    onClick = model::next,
+                    modifier = width,
+                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+                ) {
                     Text(
                         stringResource(
                             if (round.index + 1 ==
@@ -612,7 +618,14 @@ private fun WordActions(
 
         model.microphoneOff -> {
             TaskActions { width ->
-                Button(busy = round.pending, onClick = model::next, modifier = width) { Text(stringResource(R.string.pronunciation_skip)) }
+                Button(
+                    busy = round.pending,
+                    onClick = model::next,
+                    modifier = width,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+                ) {
+                    Text(stringResource(R.string.pronunciation_skip))
+                }
             }
         }
 

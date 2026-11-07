@@ -22,6 +22,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -127,6 +128,7 @@ fun ExamChoicePicks(
             busy = saving,
             onClick = { onSave(draft) },
             enabled = enabled && choice.canSave(draft),
+            leadingIcon = { ButtonIcon(R.drawable.ic_check) },
         ) { Text(stringResource(R.string.plan_save)) }
     }
 }

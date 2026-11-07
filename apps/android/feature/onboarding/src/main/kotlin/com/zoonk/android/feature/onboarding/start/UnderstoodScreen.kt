@@ -55,6 +55,7 @@ import com.zoonk.android.feature.onboarding.setup.goalZone
 import com.zoonk.android.feature.onboarding.setup.targetDateBounds
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.MAX_GOAL_LENGTH
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -150,7 +151,13 @@ internal fun ColumnScope.UnderstoodScreen(
         GoalLimitWall(plusLimit, onSeePlus, onOpenPlan)
     } else {
         GoalFooter(error, onCreateAccount, onOpenPlan, onSeePlus) {
-            Button(busy = isCreating, onClick = onConfirm, modifier = Modifier.fillMaxWidth(), enabled = !rewriting) {
+            Button(
+                busy = isCreating,
+                onClick = onConfirm,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !rewriting,
+                leadingIcon = { ButtonIcon(R.drawable.ic_check) },
+            ) {
                 Text(stringResource(R.string.onboarding_looks_right))
             }
             TextButton(onClick = { rewriting = true }, enabled = !isCreating && !rewriting, modifier = Modifier.fillMaxWidth()) {
@@ -376,7 +383,9 @@ private fun TextEditor(
             keyboardActions = KeyboardActions(onDone = { submit() }),
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(busy = saving, onClick = { submit() }) { Text(stringResource(R.string.onboarding_save)) }
+            Button(busy = saving, onClick = { submit() }, leadingIcon = { ButtonIcon(R.drawable.ic_check) }) {
+                Text(stringResource(R.string.onboarding_save))
+            }
             TextButton(onClick = onCancel, enabled = !saving) { Text(stringResource(R.string.onboarding_cancel)) }
         }
     }

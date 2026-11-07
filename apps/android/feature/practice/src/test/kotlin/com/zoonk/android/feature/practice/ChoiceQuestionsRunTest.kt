@@ -6,12 +6,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.hasAnySibling
-import androidx.compose.ui.test.hasProgressBarRangeInfo
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -62,14 +58,6 @@ class ChoiceQuestionsRunTest {
         rule.waitForIdle()
     }
 
-    private fun spinners() = rule.onAllNodes(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true)
-
-    private fun spinnersIn(button: String) =
-        rule.onAllNodes(
-            hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate) and hasAnySibling(hasText(button)),
-            useUnmergedTree = true,
-        )
-
     @Test
     fun onlyFinishSpinsWhileTheAnswersItSentGoOutAndNotSureKeepsFocus() {
         show()
@@ -84,8 +72,7 @@ class ChoiceQuestionsRunTest {
             .assertIsFocused()
             .assertIsNotEnabled()
             .performClick()
-        spinners().assertCountEquals(1)
-        spinnersIn("Finish").assertCountEquals(1)
+        rule.assertOnlySpinnerBeside("Finish")
         assertEquals(1, presses)
     }
 
@@ -103,8 +90,7 @@ class ChoiceQuestionsRunTest {
             .assertIsFocused()
             .assertIsNotEnabled()
             .performClick()
-        spinners().assertCountEquals(1)
-        spinnersIn("I don't know yet").assertCountEquals(1)
+        rule.assertOnlySpinnerBeside("I don't know yet")
         assertEquals(1, presses)
     }
 

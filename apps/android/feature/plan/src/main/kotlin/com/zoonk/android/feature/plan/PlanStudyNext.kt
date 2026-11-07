@@ -10,6 +10,7 @@ import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.feature.catalog.courseLevelName
 import com.zoonk.android.feature.subscription.ButtonPlusMark
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.Suggestion
@@ -48,13 +49,14 @@ internal fun StudyNextSuggestion(
                         onClick = host.onCertificate,
                         busy = host.claimingCertificate,
                         secondary = next.nextLevel != null,
+                        leadingIcon = { ButtonIcon(R.drawable.ic_workspace_premium) },
                     ) {
                         Text(it.actionLabel())
                         if (it.unclaimed.isEmpty() && it.earned.any { earned -> earned.locked }) ButtonPlusMark()
                     }
                 }
                 next.nextLevel?.let { level ->
-                    SuggestionAction(onClick = host.onContinue, busy = starting) {
+                    SuggestionAction(onClick = host.onContinue, busy = starting, leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) }) {
                         Text(stringResource(R.string.plan_continue_at, courseLevelName(level.level.value)))
                     }
                 }
@@ -105,7 +107,11 @@ internal fun CourseCompleteSuggestion(slot: Slot) {
             ?: stringResource(R.string.plan_course_complete)
     val claim =
         @Composable {
-            SuggestionAction(onClick = host.onCertificate, busy = host.claimingCertificate) {
+            SuggestionAction(
+                onClick = host.onCertificate,
+                busy = host.claimingCertificate,
+                leadingIcon = { ButtonIcon(R.drawable.ic_workspace_premium) },
+            ) {
                 Text(stringResource(R.string.certificates_get))
             }
         }

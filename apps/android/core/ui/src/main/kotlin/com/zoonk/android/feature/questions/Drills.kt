@@ -40,6 +40,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.formatClock
@@ -298,7 +299,7 @@ fun NotSureButton(
         modifier = modifier,
         enabled = enabled,
         focusableWhenDisabled = focusableWhenDisabled,
-        icon = if (dontKnowYet) null else ({ Icon(painterResource(R.drawable.ic_help), contentDescription = null) }),
+        leadingIcon = { ButtonIcon(R.drawable.ic_help) },
     ) {
         Text(stringResource(if (dontKnowYet) R.string.questions_dont_know_yet else R.string.questions_drill_not_sure))
     }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -53,6 +54,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
@@ -306,24 +308,15 @@ internal fun StartActions(
                     }
                 }
             }
-            val label = @Composable {
+            val label: @Composable RowScope.() -> Unit = {
                 Text(stringResource(if (follows) R.string.catalog_continue_plan else R.string.catalog_build_plan))
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Icon(
-                    painterResource(R.drawable.ic_arrow_forward),
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                )
             }
+            val arrow: @Composable () -> Unit = { ButtonIcon(R.drawable.ic_arrow_forward) }
 
             if (secondary) {
-                OutlinedButton(
-                    onClick = start,
-                    busy = saving,
-                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-                ) { label() }
+                OutlinedButton(onClick = start, busy = saving, trailingIcon = arrow, content = label)
             } else {
-                Button(busy = saving, onClick = start, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) { label() }
+                Button(busy = saving, onClick = start, trailingIcon = arrow, content = label)
             }
 
             if (onTryLesson != null) {

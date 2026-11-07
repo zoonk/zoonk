@@ -49,6 +49,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DestructiveButton
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -153,6 +154,7 @@ private fun Profile(
                 enabled = form.canSave && form.isChanged,
                 busy = form.isSaving,
                 modifier = Modifier.align(Alignment.End),
+                leadingIcon = { ButtonIcon(R.drawable.ic_check) },
                 size = ButtonSize.Small,
             ) {
                 Text(stringResource(R.string.settings_save))
@@ -165,7 +167,12 @@ private fun Profile(
             headline = { Text(stringResource(R.string.settings_download_data)) },
             supporting = { Text(stringResource(R.string.settings_download_data_description)) },
             trailing = {
-                OutlinedButton(onClick = { export.launch(EXPORT_FILE_NAME) }, busy = profile.isExporting, size = ButtonSize.Small) {
+                OutlinedButton(
+                    onClick = { export.launch(EXPORT_FILE_NAME) },
+                    busy = profile.isExporting,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_download) },
+                    size = ButtonSize.Small,
+                ) {
                     Text(stringResource(R.string.settings_download))
                 }
             },

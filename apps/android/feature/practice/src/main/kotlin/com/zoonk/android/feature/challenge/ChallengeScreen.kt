@@ -63,6 +63,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.characters.TricksterArt
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -272,7 +273,9 @@ internal fun ChallengeMoved(
             TaskActionBar {
                 MoveFailed(ui)
                 TaskActions { width ->
-                    OutlinedButton(busy = ui.moving, onClick = viewModel::undoMove) { Text(stringResource(R.string.challenge_undo)) }
+                    OutlinedButton(busy = ui.moving, onClick = viewModel::undoMove, leadingIcon = { ButtonIcon(R.drawable.ic_undo) }) {
+                        Text(stringResource(R.string.challenge_undo))
+                    }
                     Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = width) {
                         Text(stringResource(R.string.challenge_back_to_today))
                     }
@@ -750,6 +753,7 @@ private fun ChallengeFooter(
                                 onClick = vm::moveToMonday,
                                 modifier = width,
                                 enabled = !ui.starting,
+                                leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
                             ) { Text(stringResource(R.string.challenge_move)) }
                         } else {
                             Button(
@@ -770,6 +774,7 @@ private fun ChallengeFooter(
                             busy = ui.starting,
                             onClick = vm::start,
                             modifier = width,
+                            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                         ) { Text(stringResource(R.string.challenge_continue)) }
                     }
                 }
@@ -818,7 +823,13 @@ private fun ChallengeFooter(
         MoveFailed(ui)
         if (movable) {
             TaskActions { width ->
-                OutlinedButton(busy = ui.moving, onClick = vm::moveToMonday, modifier = width, enabled = !ui.starting) {
+                OutlinedButton(
+                    busy = ui.moving,
+                    onClick = vm::moveToMonday,
+                    modifier = width,
+                    enabled = !ui.starting,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
+                ) {
                     Text(stringResource(R.string.challenge_move))
                 }
             }
@@ -856,9 +867,16 @@ private fun StartActions(
                 busy = ui.moving,
                 onClick = vm::moveToMonday,
                 enabled = !ui.starting,
+                leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
             ) { Text(stringResource(R.string.challenge_move)) }
         }
-        Button(busy = ui.starting, onClick = vm::start, modifier = width, enabled = !ui.moving) {
+        Button(
+            busy = ui.starting,
+            onClick = vm::start,
+            modifier = width,
+            enabled = !ui.moving,
+            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+        ) {
             Text(stringResource(if (challenge.mock) R.string.challenge_mock_start else R.string.challenge_start))
         }
     }

@@ -37,6 +37,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.Limit
@@ -251,6 +252,7 @@ private fun MindMapRequest(
                 onClick = if (failure) actions.retry else actions.create,
                 enabled = !capped,
                 busy = local?.pending == true,
+                leadingIcon = { ButtonIcon(if (failure) R.drawable.ic_refresh else R.drawable.ic_add) },
             ) {
                 Text(stringResource(if (failure) R.string.mindmaps_try_again else R.string.mindmaps_card_create))
             }

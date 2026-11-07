@@ -5,12 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.hasAnySibling
-import androidx.compose.ui.test.hasProgressBarRangeInfo
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -75,14 +71,6 @@ class AnswerActionsTest {
         }
     }
 
-    private fun spinners() = rule.onAllNodes(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true)
-
-    private fun spinnersIn(button: String) =
-        rule.onAllNodes(
-            hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate) and hasAnySibling(hasText(button)),
-            useUnmergedTree = true,
-        )
-
     private fun checking(sender: AnswerSender) {
         run = run.checking(sender)
         rule.waitForIdle()
@@ -100,8 +88,7 @@ class AnswerActionsTest {
             .assertIsFocused()
             .assertIsNotEnabled()
             .performClick()
-        spinners().assertCountEquals(1)
-        spinnersIn("Check").assertCountEquals(1)
+        rule.assertOnlySpinnerBeside("Check")
         assertEquals(emptyList<AnswerSender>(), sent)
     }
 
@@ -113,8 +100,7 @@ class AnswerActionsTest {
         checking(AnswerSender.Timer)
 
         rule.onNodeWithText("I don't know yet").assertIsFocused().assertIsNotEnabled()
-        spinners().assertCountEquals(1)
-        spinnersIn("Check").assertCountEquals(1)
+        rule.assertOnlySpinnerBeside("Check")
     }
 
     @Test
@@ -129,8 +115,7 @@ class AnswerActionsTest {
             .assertIsFocused()
             .assertIsNotEnabled()
             .performClick()
-        spinners().assertCountEquals(1)
-        spinnersIn("Check").assertCountEquals(1)
+        rule.assertOnlySpinnerBeside("Check")
         assertEquals(emptyList<AnswerSender>(), sent)
     }
 

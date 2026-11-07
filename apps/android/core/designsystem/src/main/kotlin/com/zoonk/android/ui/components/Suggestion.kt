@@ -225,7 +225,8 @@ fun SuggestionAction(
     enabled: Boolean = true,
     busy: Boolean = false,
     secondary: Boolean = false,
-) = SuggestionAction(onClick, enabled = enabled, busy = busy, secondary = secondary) { Text(text) }
+    leadingIcon: (@Composable () -> Unit)? = null,
+) = SuggestionAction(onClick, enabled = enabled, busy = busy, secondary = secondary, leadingIcon = leadingIcon) { Text(text) }
 
 @Composable
 fun SuggestionAction(
@@ -234,15 +235,30 @@ fun SuggestionAction(
     enabled: Boolean = true,
     busy: Boolean = false,
     secondary: Boolean = false,
+    leadingIcon: (@Composable () -> Unit)? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
     val presentation = LocalPresentation.current
     val width = if (presentation == Presentation.Sheet) Modifier.fillMaxWidth() else Modifier
 
     if (secondary || presentation == Presentation.Line) {
-        OutlinedButton(onClick = onClick, modifier = modifier.then(width), enabled = enabled, busy = busy, content = content)
+        OutlinedButton(
+            onClick = onClick,
+            modifier = modifier.then(width),
+            enabled = enabled,
+            busy = busy,
+            leadingIcon = leadingIcon,
+            content = content,
+        )
     } else {
-        Button(onClick = onClick, modifier = modifier.then(width), enabled = enabled, busy = busy, content = content)
+        Button(
+            onClick = onClick,
+            modifier = modifier.then(width),
+            enabled = enabled,
+            busy = busy,
+            leadingIcon = leadingIcon,
+            content = content,
+        )
     }
 }
 

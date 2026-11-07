@@ -69,6 +69,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.fadingHorizontalScroll
@@ -437,17 +438,14 @@ internal fun SandboxRunBar(
                 }
             }
             val content: @Composable RowScope.() -> Unit = {
-                Icon(painterResource(R.drawable.ic_play_arrow), contentDescription = null, Modifier.size(18.dp))
-                Text(
-                    stringResource(if (hasRun) R.string.activities_code_run_again else R.string.activities_code_run),
-                    Modifier.padding(start = 8.dp),
-                )
+                Text(stringResource(if (hasRun) R.string.activities_code_run_again else R.string.activities_code_run))
             }
+            val icon: @Composable () -> Unit = { ButtonIcon(R.drawable.ic_play_arrow) }
             val runModifier = Modifier.weight(1f).heightIn(min = 48.dp)
             if (hasRun) {
-                OutlinedButton(busy = isRunning, onClick = onRun, modifier = runModifier, content = content)
+                OutlinedButton(busy = isRunning, onClick = onRun, modifier = runModifier, leadingIcon = icon, content = content)
             } else {
-                Button(busy = isRunning, onClick = onRun, modifier = runModifier, content = content)
+                Button(busy = isRunning, onClick = onRun, modifier = runModifier, leadingIcon = icon, content = content)
             }
         }
         if (runtime.status == SandboxRuntimeStatus.Loading) {

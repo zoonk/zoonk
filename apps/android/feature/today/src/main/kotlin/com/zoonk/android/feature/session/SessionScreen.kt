@@ -66,6 +66,7 @@ import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationFailureNotice
@@ -408,6 +409,7 @@ internal fun NextStop(
                                         onClick = it,
                                         modifier = if (instead != null) Modifier.taskOption() else Modifier,
                                         enabled = !busy,
+                                        leadingIcon = { ButtonIcon(R.drawable.ic_stop_circle) },
                                     ) { Text(stringResource(R.string.session_next_stop)) }
                                 }
                                 startsFor?.let { goal ->
@@ -417,6 +419,7 @@ internal fun NextStop(
                                         onClick = { viewModel.start(day, step, goal) },
                                         modifier = main.focusRequester(startFocus),
                                         enabled = !busy,
+                                        leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                                     ) {
                                         Text(stringResource(R.string.session_next_start))
                                     }
@@ -427,6 +430,7 @@ internal fun NextStop(
                                         onClick = { goalId?.let { viewModel.start(day, other, it) } },
                                         modifier = main,
                                         enabled = !busy,
+                                        leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                                     ) {
                                         Text(
                                             stringResource(

@@ -5,7 +5,6 @@ package com.zoonk.android.gallery
 
 import android.os.SystemClock
 import android.text.format.DateFormat
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -72,6 +71,7 @@ import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltDot
 import com.zoonk.android.ui.components.BeltLevel
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DestructiveButton
 import com.zoonk.android.ui.components.DoneMark
@@ -409,20 +409,26 @@ private fun MaterialComponents() {
 private fun BusyButtons() {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = {}, busy = true, icon = { GalleryIcon(R.drawable.ic_play_arrow) }) { Text("Start session") }
-            OutlinedButton(onClick = {}, busy = true, icon = { GalleryIcon(R.drawable.ic_event_upcoming) }) { Text("Move to Monday") }
-            SecondaryButton(onClick = {}, busy = true, icon = { GalleryIcon(R.drawable.ic_help) }) { Text("I don't know yet") }
-            TextButton(onClick = {}, busy = true, icon = { GalleryIcon(R.drawable.ic_undo) }) { Text("Undo") }
-            DestructiveButton(onClick = {}, busy = true, icon = { GalleryIcon(R.drawable.ic_delete) }) { Text("Delete") }
-            OutlinedButton(onClick = {}, busy = true, icon = { GalleryIcon(R.drawable.ic_download) }, size = ButtonSize.Small) {
-                Text("Export")
+            Button(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) }) { Text("Start session") }
+            Button(onClick = {}, busy = true, trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) }) { Text("Continue") }
+            OutlinedButton(
+                onClick = {},
+                busy = true,
+                leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
+            ) { Text("Move to Monday") }
+            SecondaryButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_help) }) { Text("I don't know yet") }
+            TextButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_undo) }) { Text("Undo") }
+            DestructiveButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_delete) }) { Text("Delete") }
+            OutlinedButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_download) }, size = ButtonSize.Small) {
+                Text("Download")
             }
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            Button(onClick = {}, busy = true) { Text("Check") }
-            OutlinedButton(onClick = {}, enabled = false, focusableWhenDisabled = true, icon = { GalleryIcon(R.drawable.ic_help) }) {
-                Text("I'm not sure")
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_help) }) { Text("I'm not sure") }
+            Button(onClick = {}, enabled = false, focusableWhenDisabled = true, leadingIcon = { ButtonIcon(R.drawable.ic_check) }) {
+                Text("Check")
             }
+            OutlinedButton(onClick = {}, busy = true) { Text("Show more") }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             OutlinedIconButton(
@@ -435,11 +441,6 @@ private fun BusyButtons() {
         ListRow(headline = { Text("Next lesson") }, onClick = {}, busy = true, meta = { Text("5 min") }, chevron = false)
     }
 }
-
-@Composable
-private fun GalleryIcon(
-    @DrawableRes id: Int,
-) = Icon(painterResource(id), contentDescription = null)
 
 @Composable
 private fun Navigation() {

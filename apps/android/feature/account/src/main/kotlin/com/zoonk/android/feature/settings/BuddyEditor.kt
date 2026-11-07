@@ -34,6 +34,7 @@ import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.BuddyPicker
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.TextButton
 
@@ -103,7 +104,9 @@ fun BuddyEditor(
                     Spacer(Modifier.weight(1f))
                 }
                 TextButton(onClick = onClose) { Text(stringResource(R.string.settings_cancel)) }
-                Button(busy = isSaving, onClick = { onSave(kind, glasses, typed) }) { Text(stringResource(R.string.settings_save)) }
+                Button(busy = isSaving, onClick = { onSave(kind, glasses, typed) }, leadingIcon = { ButtonIcon(R.drawable.ic_check) }) {
+                    Text(stringResource(R.string.settings_save))
+                }
             }
         }
     }

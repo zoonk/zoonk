@@ -35,6 +35,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LabelChip
@@ -166,6 +167,7 @@ internal fun ColumnScope.BasesChoices(
                 onClick = { edits.change(PlanPart.Bases, operations) { edits.answerSheet(draft.opening, it) } },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = operations.isNotEmpty() && check is Check.Ready,
+                leadingIcon = { ButtonIcon(R.drawable.ic_check) },
             ) { Text(stringResource(R.string.plan_save_choices)) }
             if (edits.sheetFailed(PlanPart.Bases, draft.opening)) SaveFailedText()
         },
@@ -322,6 +324,7 @@ private fun BasesAdvice(
                 onClick = onAsk,
                 modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 busy = advice is Advice.Pending,
+                leadingIcon = { ButtonIcon(if (retry) R.drawable.ic_refresh else R.drawable.ic_lightbulb) },
             ) {
                 Text(stringResource(if (retry) R.string.load_failed_try_again else R.string.plan_get_recommendation))
             }

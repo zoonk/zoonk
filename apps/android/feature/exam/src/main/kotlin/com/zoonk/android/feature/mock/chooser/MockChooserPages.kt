@@ -59,6 +59,7 @@ import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
@@ -114,7 +115,13 @@ internal fun PracticeChooser(
     }
     val action: @Composable (Modifier) -> Unit = { modifier ->
         if (open) {
-            Button(busy = busy, onClick = { start() }, modifier = modifier.focus(replacementFocus), enabled = option != null) {
+            Button(
+                busy = busy,
+                onClick = { start() },
+                modifier = modifier.focus(replacementFocus),
+                enabled = option != null,
+                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+            ) {
                 Text(if (shown is ChooserStatus.Short) startWith(shown.outcome) else stringResource(R.string.mock_chooser_start))
             }
         } else {
@@ -215,7 +222,13 @@ internal fun PlacementChooser(
     }
     val action: @Composable (Modifier) -> Unit = { modifier ->
         if (open) {
-            Button(busy = busy, onClick = { start() }, modifier = modifier.focus(replacementFocus), enabled = option != null) {
+            Button(
+                busy = busy,
+                onClick = { start() },
+                modifier = modifier.focus(replacementFocus),
+                enabled = option != null,
+                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+            ) {
                 Text(stringResource(R.string.mock_chooser_placement_start))
             }
         } else {

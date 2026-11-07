@@ -32,6 +32,7 @@ import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TextButton
@@ -55,7 +56,14 @@ internal fun UndoAction(
         )
     }
     TaskActions { width ->
-        TextButton(busy = state == UndoState.Pending, onClick = onUndo, modifier = width) { Text(stringResource(R.string.practice_undo)) }
+        TextButton(
+            busy = state == UndoState.Pending,
+            onClick = onUndo,
+            modifier = width,
+            leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
+        ) {
+            Text(stringResource(R.string.practice_undo))
+        }
     }
 }
 
@@ -164,6 +172,7 @@ internal fun ChoiceQuestionsRun(
                             modifier = width,
                             enabled = next != null,
                             focusableWhenDisabled = pending,
+                            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                         ) {
                             Text(
                                 stringResource(

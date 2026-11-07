@@ -89,6 +89,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
@@ -249,10 +250,22 @@ internal fun EssayWrite(
                 if (finishFailed && !finishing) SaveErrorText(viewModel::finish)
                 TaskActions { width ->
                     if (rewriting) {
-                        OutlinedButton(busy = finishing, onClick = viewModel::finish) { Text(stringResource(R.string.essay_skip_rewrite)) }
+                        OutlinedButton(
+                            busy = finishing,
+                            onClick = viewModel::finish,
+                            leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+                        ) {
+                            Text(stringResource(R.string.essay_skip_rewrite))
+                        }
                     }
                     val pending = ui.send == EssaySend.Pending
-                    Button(busy = pending, onClick = viewModel::send, modifier = width, enabled = ui.canSend && !finishing) {
+                    Button(
+                        busy = pending,
+                        onClick = viewModel::send,
+                        modifier = width,
+                        enabled = ui.canSend && !finishing,
+                        leadingIcon = { ButtonIcon(R.drawable.ic_send) },
+                    ) {
                         Text(stringResource(if (rewriting) R.string.essay_grade_rewrite else R.string.essay_send))
                     }
                 }
@@ -584,7 +597,7 @@ internal fun EssayGradeSteps(
                         Text(stringResource(R.string.essay_back_to_today))
                     }
                 } else {
-                    OutlinedButton(busy = finishing, onClick = viewModel::finish) {
+                    OutlinedButton(busy = finishing, onClick = viewModel::finish, leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) }) {
                         Text(stringResource(R.string.essay_skip_rewrite))
                     }
                     Button(

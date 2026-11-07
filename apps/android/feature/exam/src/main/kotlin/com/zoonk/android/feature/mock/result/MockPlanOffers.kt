@@ -35,6 +35,7 @@ import com.zoonk.android.data.SessionSource
 import com.zoonk.android.feature.mock.runner.MockRunStore
 import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DiffKind
 import com.zoonk.android.ui.components.DiffLine
 import com.zoonk.android.ui.components.DiffLines
@@ -202,7 +203,9 @@ internal fun PlanChange(
         OfferLines(adapt)
         if (open.isNotEmpty()) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(busy = offers.applying, onClick = onApply) { Text(stringResource(R.string.mock_result_apply)) }
+                OutlinedButton(busy = offers.applying, onClick = onApply, leadingIcon = { ButtonIcon(R.drawable.ic_check) }) {
+                    Text(stringResource(R.string.mock_result_apply))
+                }
                 TextButton(onClick = onKeep, enabled = !offers.applying) { Text(stringResource(R.string.mock_result_keep_plan)) }
             }
         }

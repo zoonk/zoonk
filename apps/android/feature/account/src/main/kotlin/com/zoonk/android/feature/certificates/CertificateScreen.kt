@@ -50,6 +50,7 @@ import com.zoonk.android.feature.catalog.courseLevelName
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -269,7 +270,7 @@ private fun OwnerActions(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = actions.busy == null,
                     busy = actions.busy == CertificateAction.Share,
-                    icon = { Icon(painterResource(R.drawable.ic_share), contentDescription = null) },
+                    leadingIcon = { ButtonIcon(R.drawable.ic_share) },
                     size = ButtonSize.Large,
                 ) {
                     ActionText(stringResource(R.string.certificates_share))
@@ -279,7 +280,7 @@ private fun OwnerActions(
                         onClick = { actions.print(certificate, fileName) },
                         enabled = actions.busy == null,
                         busy = actions.busy == CertificateAction.Print,
-                        icon = { Icon(painterResource(R.drawable.ic_print), contentDescription = null) },
+                        leadingIcon = { ButtonIcon(R.drawable.ic_print) },
                         size = ButtonSize.Large,
                     ) {
                         ActionText(stringResource(R.string.certificates_print))
@@ -288,7 +289,7 @@ private fun OwnerActions(
                         onClick = { actions.download(certificate, fileName) },
                         enabled = actions.busy == null,
                         busy = actions.busy == CertificateAction.Download,
-                        icon = { Icon(painterResource(R.drawable.ic_download), contentDescription = null) },
+                        leadingIcon = { ButtonIcon(R.drawable.ic_download) },
                         size = ButtonSize.Large,
                     ) {
                         ActionText(stringResource(R.string.certificates_download))
@@ -297,7 +298,7 @@ private fun OwnerActions(
                 OutlinedButton(
                     onClick = onAddToLinkedIn,
                     modifier = Modifier.fillMaxWidth(),
-                    icon = { Icon(painterResource(R.drawable.ic_north_east), contentDescription = null) },
+                    leadingIcon = { ButtonIcon(R.drawable.ic_north_east) },
                     size = ButtonSize.Large,
                 ) {
                     ActionText(stringResource(R.string.certificates_add_to_linkedin))

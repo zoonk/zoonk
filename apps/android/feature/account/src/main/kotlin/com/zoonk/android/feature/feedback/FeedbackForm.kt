@@ -47,6 +47,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.ModalBottomSheet
@@ -119,6 +120,7 @@ fun FeedbackForm(
             onClick = { form.send(accountEmail) },
             modifier = Modifier.align(Alignment.End),
             enabled = form.canSend(accountEmail),
+            leadingIcon = { ButtonIcon(R.drawable.ic_send) },
             size = ButtonSize.Small,
         ) { Text(stringResource(R.string.feedback_send)) }
     }

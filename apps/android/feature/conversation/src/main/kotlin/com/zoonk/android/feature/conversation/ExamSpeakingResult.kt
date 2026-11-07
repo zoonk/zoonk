@@ -32,6 +32,7 @@ import com.zoonk.android.R
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.recode
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
@@ -80,7 +81,7 @@ private fun TryCallAgain(
         WritingWait(writing, hint)
         return
     }
-    TextButton(busy = again.starting, onClick = again.onStart) { Text(label) }
+    TextButton(busy = again.starting, onClick = again.onStart, leadingIcon = { ButtonIcon(R.drawable.ic_refresh) }) { Text(label) }
     if (again.failed) {
         Text(
             stringResource(R.string.conversation_start_failed),

@@ -38,6 +38,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.account.AccountStore
 import com.zoonk.android.feature.account.isNameChangeTooLong
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
 import kotlinx.coroutines.launch
@@ -170,7 +171,12 @@ fun CertificateNameField(
             if (current != null) {
                 TextButton(onClick = model::stop, enabled = !model.isSaving) { Text(stringResource(R.string.certificates_cancel)) }
             }
-            Button(busy = model.isSaving, onClick = save, enabled = name.isNotBlank() && !isTooLong) {
+            Button(
+                busy = model.isSaving,
+                onClick = save,
+                enabled = name.isNotBlank() && !isTooLong,
+                leadingIcon = { ButtonIcon(R.drawable.ic_check) },
+            ) {
                 Text(stringResource(R.string.certificates_save))
             }
         }

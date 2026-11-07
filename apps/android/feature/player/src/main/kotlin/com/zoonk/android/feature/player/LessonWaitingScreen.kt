@@ -43,6 +43,7 @@ import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
@@ -106,6 +107,7 @@ fun LessonWaitingScreen(
                             onClick = viewModel::start,
                             modifier = Modifier.fillMaxWidth(),
                             enabled = current == LessonWriting.NotStarted,
+                            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                         ) { Text(stringResource(R.string.player_start_this_lesson)) }
                     }
                 }

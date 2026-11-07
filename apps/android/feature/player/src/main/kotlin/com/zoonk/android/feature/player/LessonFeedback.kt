@@ -33,6 +33,7 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.steps.count
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackTone
@@ -171,7 +172,7 @@ internal fun ExplainAnswer(
             OutlinedButton(
                 busy = loading,
                 onClick = onExplain,
-                icon = { Icon(painterResource(R.drawable.ic_lightbulb), contentDescription = null) },
+                leadingIcon = { ButtonIcon(R.drawable.ic_lightbulb) },
             ) {
                 Text(stringResource(R.string.player_explain_answer))
             }

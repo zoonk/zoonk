@@ -67,6 +67,7 @@ import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
@@ -251,7 +252,13 @@ fun CodeEntry(
     }
 
     if (needsNewCode) {
-        WorkingButton(stringResource(R.string.account_send_new_code), isWorking = work == SignInWork.Resend, onClick = signIn::resendCode)
+        WorkingButton(
+            stringResource(R.string.account_send_new_code),
+            isWorking = work == SignInWork.Resend,
+            onClick = signIn::resendCode,
+            leadingIcon = { ButtonIcon(R.drawable.ic_send) },
+            trailingIcon = null,
+        )
     } else {
         WorkingButton(stringResource(R.string.account_continue), isWorking = work == SignInWork.CheckCode, onClick = signIn::checkCode)
     }
@@ -269,6 +276,7 @@ fun CodeEntry(
                 busy = work == SignInWork.Resend,
                 onClick = signIn::resendCode,
                 enabled = work == null,
+                leadingIcon = { ButtonIcon(R.drawable.ic_send) },
             ) { Text(stringResource(R.string.account_send_again)) }
         }
         TextButton(onClick = signIn::changeEmail, enabled = work != SignInWork.CheckCode) {
@@ -352,7 +360,7 @@ private fun ProviderButton(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         enabled = enabled,
-        icon = {
+        leadingIcon = {
             Icon(
                 painterResource(icon),
                 contentDescription = null,
@@ -370,8 +378,17 @@ private fun WorkingButton(
     isWorking: Boolean,
     onClick: () -> Unit,
     enabled: Boolean = true,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = { ButtonIcon(R.drawable.ic_arrow_forward) },
 ) {
-    Button(busy = isWorking, onClick = onClick, modifier = Modifier.fillMaxWidth(), enabled = enabled) { Text(text) }
+    Button(
+        busy = isWorking,
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        enabled = enabled,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
+    ) { Text(text) }
 }
 
 @Composable

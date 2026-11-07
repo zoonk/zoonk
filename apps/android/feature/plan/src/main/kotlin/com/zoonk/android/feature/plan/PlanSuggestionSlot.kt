@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -502,6 +503,7 @@ internal class SlotAnswer(
             },
             busy = tracked?.undoing == true,
             secondary = true,
+            leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
         )
     }
 

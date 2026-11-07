@@ -25,6 +25,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.height
 import androidx.compose.ui.unit.size
@@ -80,7 +81,10 @@ class BusyTest {
         compose.waitForIdle()
     }
 
-    /** From the press, a button's spinner takes its icon's place beside its words, or covers the words of one without an icon, and neither changes size. */
+    /**
+     * From the press, a button's spinner takes its icon's place beside its words, before them or after
+     * them, or covers the words of one without an icon, and none changes size.
+     */
     @Test
     @Config(qualifiers = "w500dp-h900dp-xhdpi", fontScale = 2f)
     fun busyButtonKeepsItsSizeAndItsWords() {
@@ -88,18 +92,18 @@ class BusyTest {
         compose.setContent {
             ZoonkTheme {
                 Column {
-                    Button(
-                        onClick = {
-                        },
-                        Modifier.testTag(
-                            "icon",
-                        ),
-                        busy = busy,
-                        icon = { Icon(painterResource(R.drawable.ic_play_arrow), contentDescription = null) },
-                    ) {
+                    Button(onClick = {}, Modifier.testTag("leading"), busy = busy, leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) }) {
                         Text("Start session")
                     }
-                    OutlinedButton(onClick = {}, Modifier.testTag("words"), busy = busy) { Text("Check") }
+                    Button(
+                        onClick = {},
+                        Modifier.testTag("trailing"),
+                        busy = busy,
+                        trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+                    ) {
+                        Text("Continue")
+                    }
+                    OutlinedButton(onClick = {}, Modifier.testTag("words"), busy = busy) { Text("Show more") }
                 }
             }
         }
@@ -109,11 +113,10 @@ class BusyTest {
         compose.waitForIdle()
 
         assertEquals(atRest, buttonSizes())
-        spinners().assertCountEquals(2)
-        val spinner = spinnerIn("Start session").getUnclippedBoundsInRoot()
-        val words = compose.onNodeWithText("Start session", useUnmergedTree = true).getUnclippedBoundsInRoot()
-        assertTrue(spinner.right <= words.left)
-        spinnerIn("Check").assertExists()
+        spinners().assertCountEquals(3)
+        assertTrue(spinnerIn("Start session").right <= wordsOf("Start session").left)
+        assertTrue(spinnerIn("Continue").left >= wordsOf("Continue").right)
+        assertTrue(wordsOf("Show more").contains(spinnerIn("Show more")))
 
         busy = false
         compose.waitForIdle()
@@ -121,15 +124,18 @@ class BusyTest {
 
     private fun heights() = WIDTHS.associateWith { compose.onNodeWithTag("row-$it").getUnclippedBoundsInRoot().height }
 
-    private fun buttonSizes() = listOf("icon", "words").map { compose.onNodeWithTag(it).getUnclippedBoundsInRoot().size }
+    private fun buttonSizes() = listOf("leading", "trailing", "words").map { compose.onNodeWithTag(it).getUnclippedBoundsInRoot().size }
+
+    private fun wordsOf(button: String) = compose.onNodeWithText(button, useUnmergedTree = true).getUnclippedBoundsInRoot()
 
     private fun spinners() = compose.onAllNodes(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true)
 
     private fun spinnerIn(button: String) =
-        compose.onNode(
-            hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate) and hasAnySibling(hasText(button)),
-            useUnmergedTree = true,
-        )
+        compose
+            .onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate) and hasAnySibling(hasText(button)), useUnmergedTree = true)
+            .getUnclippedBoundsInRoot()
+
+    private fun DpRect.contains(other: DpRect) = left <= other.left && top <= other.top && right >= other.right && bottom >= other.bottom
 
     private companion object {
         val WIDTHS = 350..366

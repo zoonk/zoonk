@@ -53,6 +53,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
@@ -305,7 +306,16 @@ internal fun MockMainButton(
     enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-) = Button(busy = busy, onClick = onClick, modifier = modifier.heightIn(min = 48.dp), enabled = enabled) { Text(text) }
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
+) = Button(
+    busy = busy,
+    onClick = onClick,
+    modifier = modifier.heightIn(min = 48.dp),
+    enabled = enabled,
+    leadingIcon = leadingIcon,
+    trailingIcon = trailingIcon,
+) { Text(text) }
 
 /** "Mock exam · Mathematics". */
 @Composable
@@ -356,6 +366,7 @@ private fun MockTimeUp(
                     enabled = !run.pending,
                     onClick = viewModel::submitSection,
                     modifier = main,
+                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                 )
             }
         },
@@ -388,6 +399,7 @@ private fun MockHandedIn(
                     enabled = !run.pending,
                     onClick = viewModel::finish,
                     modifier = main,
+                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                 )
             }
         },
@@ -421,6 +433,7 @@ private fun MockBreak(
                     enabled = !run.pending,
                     onClick = viewModel::endBreak,
                     modifier = main,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                 )
             }
         },

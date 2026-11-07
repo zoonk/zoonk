@@ -41,6 +41,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.plan.formatPlanDate
 import com.zoonk.android.feature.plan.noticeDayText
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -191,7 +192,11 @@ internal fun NoticeDatesCard(
                         noticeDayText(noticeDay.date.toJavaLocalDate(), noticeDay.estimated, exam.examDocument),
                         style = MaterialTheme.typography.titleSmall,
                     )
-                    OutlinedButton(onClick = { viewModel.useDate(noticeDay.date.toJavaLocalDate()) }, busy = pending) {
+                    OutlinedButton(
+                        onClick = { viewModel.useDate(noticeDay.date.toJavaLocalDate()) },
+                        busy = pending,
+                        leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
+                    ) {
                         Text(stringResource(R.string.exam_use_this_date))
                     }
                 } else if (noSitting != null) {
@@ -305,6 +310,7 @@ internal fun ExamResultSection(
 
         Button(
             busy = status == SaveStatus.Pending,
+            leadingIcon = { ButtonIcon(R.drawable.ic_check) },
             onClick = {
                 viewModel.report(
                     ExamResultReport(

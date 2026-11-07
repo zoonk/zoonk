@@ -62,6 +62,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.KindDot
@@ -226,10 +227,22 @@ private fun ColumnScope.PlacementIntro(
     mock?.let { MockOfferRow(it, onMock) }
     OnboardingActions {
         FinishFailed(failed)
-        Button(busy = starting, onClick = onStart, modifier = Modifier.fillMaxWidth(), enabled = !pending) {
+        Button(
+            busy = starting,
+            onClick = onStart,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !pending,
+            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+        ) {
             Text(stringResource(R.string.onboarding_placement_start))
         }
-        TextButton(busy = pending, onClick = onScratch, modifier = Modifier.fillMaxWidth(), enabled = !starting) {
+        TextButton(
+            busy = pending,
+            onClick = onScratch,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !starting,
+            leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+        ) {
             Text(stringResource(R.string.onboarding_placement_skip_basics))
         }
     }
@@ -312,7 +325,12 @@ private fun ColumnScope.PlacementWaiting(
     if (!hold.holding && (patient || run.status == GenerationRun.Status.Failed)) {
         OnboardingActions {
             FinishFailed(failed)
-            TextButton(busy = pending, onClick = onSkip, modifier = Modifier.fillMaxWidth()) {
+            TextButton(
+                busy = pending,
+                onClick = onSkip,
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+            ) {
                 Text(stringResource(R.string.onboarding_placement_skip_for_now))
             }
             Text(
@@ -573,7 +591,12 @@ private fun ColumnScope.PlacementOutcome(
     OnboardingHeading(title, description)
     OnboardingActions {
         FinishFailed(failed)
-        Button(busy = pending, onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
+        Button(
+            busy = pending,
+            onClick = onContinue,
+            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+        ) {
             Text(stringResource(R.string.onboarding_placement_see_plan))
         }
     }
@@ -595,7 +618,12 @@ private fun ColumnScope.PlacementMockRunning(
         Button(onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_placement_continue_mock))
         }
-        TextButton(busy = pending, onClick = onStop, modifier = Modifier.fillMaxWidth()) {
+        TextButton(
+            busy = pending,
+            onClick = onStop,
+            modifier = Modifier.fillMaxWidth(),
+            leadingIcon = { ButtonIcon(R.drawable.ic_stop_circle) },
+        ) {
             Text(stringResource(R.string.onboarding_placement_stop_mock))
         }
     }

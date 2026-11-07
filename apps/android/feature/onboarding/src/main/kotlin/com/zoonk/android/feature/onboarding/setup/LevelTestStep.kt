@@ -68,6 +68,7 @@ import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LevelBar
 import com.zoonk.android.ui.components.MediaPending
@@ -193,10 +194,22 @@ private fun ColumnScope.LevelTestIntro(
     }
     OnboardingActions {
         FinishFailed(failed)
-        Button(busy = starting, onClick = onStart, modifier = Modifier.fillMaxWidth(), enabled = !pending) {
+        Button(
+            busy = starting,
+            onClick = onStart,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !pending,
+            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+        ) {
             Text(stringResource(R.string.onboarding_placement_start))
         }
-        TextButton(busy = pending, onClick = onSkip, modifier = Modifier.fillMaxWidth(), enabled = !starting) {
+        TextButton(
+            busy = pending,
+            onClick = onSkip,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !starting,
+            leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+        ) {
             Text(stringResource(R.string.onboarding_language_test_skip))
         }
         InterfaceOffer(language)
@@ -238,7 +251,12 @@ private fun ColumnScope.LevelTestWaiting(
     }
     OnboardingActions {
         FinishFailed(failed)
-        TextButton(busy = pending, onClick = onSkip, modifier = Modifier.fillMaxWidth()) {
+        TextButton(
+            busy = pending,
+            onClick = onSkip,
+            modifier = Modifier.fillMaxWidth(),
+            leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+        ) {
             Text(stringResource(R.string.onboarding_language_test_skip))
         }
         Text(
@@ -456,7 +474,12 @@ private fun ColumnScope.LevelTestDone(
     if (levels.isNotEmpty()) LevelRows(levels)
     OnboardingActions {
         FinishFailed(failed)
-        Button(busy = pending, onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
+        Button(
+            busy = pending,
+            onClick = onContinue,
+            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+        ) {
             Text(stringResource(R.string.onboarding_language_test_build_plan))
         }
     }

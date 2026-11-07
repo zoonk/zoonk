@@ -35,6 +35,7 @@ import com.zoonk.android.feature.onboarding.goalErrorMessage
 import com.zoonk.android.feature.onboarding.goalLimitMessage
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.scaffold.pageTitle
@@ -225,6 +226,7 @@ internal fun ColumnScope.ExplainGoal(
             busy = isStarting,
             onClick = onStart,
             modifier = Modifier.fillMaxWidth(),
+            leadingIcon = { ButtonIcon(R.drawable.ic_lightbulb) },
         ) { Text(stringResource(R.string.onboarding_explain_it)) }
     }
 }
@@ -321,12 +323,14 @@ internal fun ColumnScope.InstrumentGoal(
             busy = isStarting,
             onClick = onStartMusicianship,
             modifier = Modifier.fillMaxWidth(),
+            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
         ) { Text(stringResource(R.string.onboarding_start_musicianship)) }
         TextButton(
             busy = isJoining,
             onClick = onJoinWaitlist,
             modifier = Modifier.fillMaxWidth(),
             enabled = waitlist != WaitlistOutcome.Joined,
+            leadingIcon = { ButtonIcon(R.drawable.ic_notifications) },
         ) { Text(stringResource(R.string.onboarding_join_waitlist)) }
     }
 }

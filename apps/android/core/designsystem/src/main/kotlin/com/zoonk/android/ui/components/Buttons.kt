@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -31,7 +34,7 @@ import com.zoonk.android.ui.theme.zoonk
  * Every size keeps Material's 48dp touch target.
  *
  * Every one is `busy` while its own work runs, and a disabled one may stay `focusableWhenDisabled`, as main's do (Busy.kt).
- * An `icon` (an `Icon`, sized by its slot) leads the words, and a busy button's spinner takes its place.
+ * A `leadingIcon`, or a `trailingIcon` for the forward arrow, is a [ButtonIcon], and a busy button's spinner takes its place.
  */
 
 /** Main's sizes: [Large] (`lg`, 44dp) for a screen's action, [Small] (`sm`, 30dp) beside text, [Medium] elsewhere. */
@@ -40,6 +43,12 @@ enum class ButtonSize { Small, Medium, Large }
 /** The size of the buttons inside, unless they pick one: an action bar makes its buttons [ButtonSize.Large]. */
 val LocalButtonSize = staticCompositionLocalOf { ButtonSize.Medium }
 
+/** A Material Symbol for a button's `leadingIcon` or `trailingIcon`, sized by its slot. */
+@Composable
+fun ButtonIcon(
+    @DrawableRes id: Int,
+) = Icon(painterResource(id), contentDescription = null)
+
 @Composable
 fun Button(
     onClick: () -> Unit,
@@ -47,13 +56,14 @@ fun Button(
     enabled: Boolean = true,
     busy: Boolean = false,
     focusableWhenDisabled: Boolean = false,
-    icon: (@Composable () -> Unit)? = null,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
     size: ButtonSize = LocalButtonSize.current,
     shape: Shape = size.shape(),
     colors: ButtonColors = mainButtonColors(),
     elevation: ButtonElevation? = null,
     border: BorderStroke? = null,
-    contentPadding: PaddingValues = size.contentPadding(icon != null),
+    contentPadding: PaddingValues = size.contentPadding(leadingIcon != null, trailingIcon != null),
     interactionSource: MutableInteractionSource? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
@@ -68,7 +78,7 @@ fun Button(
         border = border,
         contentPadding = NO_PADDING,
         interactionSource = interactionSource,
-        content = { Labeled(size) { ButtonContent(busy, icon, size.iconSize(), contentPadding, content) } },
+        content = { Labeled(size) { ButtonContent(busy, leadingIcon, trailingIcon, size.iconSize(), contentPadding, content) } },
     )
 }
 
@@ -80,9 +90,10 @@ fun SecondaryButton(
     enabled: Boolean = true,
     busy: Boolean = false,
     focusableWhenDisabled: Boolean = false,
-    icon: (@Composable () -> Unit)? = null,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
     size: ButtonSize = LocalButtonSize.current,
-    contentPadding: PaddingValues = size.contentPadding(icon != null),
+    contentPadding: PaddingValues = size.contentPadding(leadingIcon != null, trailingIcon != null),
     content: @Composable RowScope.() -> Unit,
 ) {
     val fill = MaterialTheme.zoonk.secondary
@@ -93,7 +104,8 @@ fun SecondaryButton(
         enabled = enabled,
         busy = busy,
         focusableWhenDisabled = focusableWhenDisabled,
-        icon = icon,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
         size = size,
         colors =
             ButtonDefaults.buttonColors(
@@ -118,9 +130,10 @@ fun DestructiveButton(
     enabled: Boolean = true,
     busy: Boolean = false,
     focusableWhenDisabled: Boolean = false,
-    icon: (@Composable () -> Unit)? = null,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
     size: ButtonSize = LocalButtonSize.current,
-    contentPadding: PaddingValues = size.contentPadding(icon != null),
+    contentPadding: PaddingValues = size.contentPadding(leadingIcon != null, trailingIcon != null),
     content: @Composable RowScope.() -> Unit,
 ) {
     val words = MaterialTheme.colorScheme.error
@@ -131,7 +144,8 @@ fun DestructiveButton(
         enabled = enabled,
         busy = busy,
         focusableWhenDisabled = focusableWhenDisabled,
-        icon = icon,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
         size = size,
         colors =
             ButtonDefaults.buttonColors(
@@ -157,13 +171,14 @@ fun OutlinedButton(
     enabled: Boolean = true,
     busy: Boolean = false,
     focusableWhenDisabled: Boolean = false,
-    icon: (@Composable () -> Unit)? = null,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
     size: ButtonSize = LocalButtonSize.current,
     shape: Shape = size.shape(),
     colors: ButtonColors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
     elevation: ButtonElevation? = null,
     border: BorderStroke? = outlinedBorder(enabled || busy, ButtonDefaults.outlinedButtonBorder(enabled || busy)),
-    contentPadding: PaddingValues = size.contentPadding(icon != null),
+    contentPadding: PaddingValues = size.contentPadding(leadingIcon != null, trailingIcon != null),
     interactionSource: MutableInteractionSource? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
@@ -178,7 +193,7 @@ fun OutlinedButton(
         border = border,
         contentPadding = NO_PADDING,
         interactionSource = interactionSource,
-        content = { Labeled(size) { ButtonContent(busy, icon, size.iconSize(), contentPadding, content) } },
+        content = { Labeled(size) { ButtonContent(busy, leadingIcon, trailingIcon, size.iconSize(), contentPadding, content) } },
     )
 }
 
@@ -190,13 +205,14 @@ fun TextButton(
     enabled: Boolean = true,
     busy: Boolean = false,
     focusableWhenDisabled: Boolean = false,
-    icon: (@Composable () -> Unit)? = null,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
     size: ButtonSize = LocalButtonSize.current,
     shape: Shape = size.shape(),
     colors: ButtonColors = ButtonDefaults.textButtonColors(),
     elevation: ButtonElevation? = null,
     border: BorderStroke? = null,
-    contentPadding: PaddingValues = size.contentPadding(icon != null),
+    contentPadding: PaddingValues = size.contentPadding(leadingIcon != null, trailingIcon != null),
     interactionSource: MutableInteractionSource? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
@@ -211,7 +227,7 @@ fun TextButton(
         border = border,
         contentPadding = NO_PADDING,
         interactionSource = interactionSource,
-        content = { Labeled(size) { ButtonContent(busy, icon, size.iconSize(), contentPadding, content) } },
+        content = { Labeled(size) { ButtonContent(busy, leadingIcon, trailingIcon, size.iconSize(), contentPadding, content) } },
     )
 }
 
@@ -268,12 +284,19 @@ private fun mainButtonColors(): ButtonColors =
 
 private fun ButtonSize.shape(): Shape = RoundedCornerShape(if (this == ButtonSize.Small) ZoonkRadius.md else ZoonkRadius.lg)
 
-/** A leading icon brings the start in a little, as main's `has-data-[icon=inline-start]` does. */
-private fun ButtonSize.contentPadding(icon: Boolean): PaddingValues =
-    when (this) {
-        ButtonSize.Small -> PaddingValues(start = if (icon) 8.dp else 10.dp, top = 4.dp, end = 10.dp, bottom = 4.dp)
-        ButtonSize.Medium, ButtonSize.Large -> PaddingValues(start = if (icon) 12.dp else 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
-    }
+/** An icon brings its side in a little, as main's `has-data-[icon=inline-start]` and `inline-end` do. */
+private fun ButtonSize.contentPadding(
+    leadingIcon: Boolean,
+    trailingIcon: Boolean,
+): PaddingValues {
+    val (side, iconSide, vertical) = if (this == ButtonSize.Small) Triple(10.dp, 8.dp, 4.dp) else Triple(16.dp, 12.dp, 8.dp)
+    return PaddingValues(
+        start = if (leadingIcon) iconSide else side,
+        top = vertical,
+        end = if (trailingIcon) iconSide else side,
+        bottom = vertical,
+    )
+}
 
 private fun ButtonSize.iconSize(): Dp = if (this == ButtonSize.Small) 16.dp else ButtonDefaults.IconSize
 

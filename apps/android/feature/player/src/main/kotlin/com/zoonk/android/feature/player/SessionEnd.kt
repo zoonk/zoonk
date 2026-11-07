@@ -15,6 +15,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.taskOption
@@ -100,11 +101,18 @@ fun SessionEndActions(
                 onClick = onStop,
                 modifier = Modifier.taskOption(),
                 enabled = !move.busy,
+                leadingIcon = { ButtonIcon(R.drawable.ic_stop_circle) },
             ) {
                 Text(stringResource(R.string.player_stop_for_today))
             }
         }
-        Button(busy = move.pending == SessionStep.Continue, onClick = onContinue, modifier = width, enabled = !move.busy) {
+        Button(
+            busy = move.pending == SessionStep.Continue,
+            onClick = onContinue,
+            modifier = width,
+            enabled = !move.busy,
+            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+        ) {
             Text(stringResource(if (completed) R.string.player_see_todays_summary else R.string.player_action_continue))
         }
     }

@@ -68,6 +68,7 @@ import com.zoonk.android.feature.goalcontent.WithPlanGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -536,6 +537,7 @@ private fun RequestTile(
                     modifier = Modifier.semantics { contentDescription = spoken },
                     enabled = !blocked,
                     busy = local?.pending == true,
+                    leadingIcon = { ButtonIcon(if (failure) R.drawable.ic_refresh else R.drawable.ic_add) },
                 ) { Text(stringResource(if (failure) R.string.mindmaps_try_again else R.string.mindmaps_create)) }
             }
         }

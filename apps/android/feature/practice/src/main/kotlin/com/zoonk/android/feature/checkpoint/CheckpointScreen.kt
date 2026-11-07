@@ -91,6 +91,7 @@ import com.zoonk.android.ui.characters.TricksterActorState
 import com.zoonk.android.ui.characters.TricksterArt
 import com.zoonk.android.ui.characters.rememberTricksterActorState
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.FeedbackPanel
@@ -441,7 +442,12 @@ private fun DuelActions(
     TaskActions { width ->
         when {
             question == null || state.feedback != null -> {
-                Button(busy = state.pending, onClick = viewModel::next, modifier = width) {
+                Button(
+                    busy = state.pending,
+                    onClick = viewModel::next,
+                    modifier = width,
+                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+                ) {
                     Text(stringResource(if (score.done) R.string.checkpoint_see_result else R.string.checkpoint_next))
                 }
             }
@@ -452,6 +458,7 @@ private fun DuelActions(
                     onClick = { state.selected?.let(viewModel::confirm) },
                     modifier = width,
                     enabled = state.selected != null,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_check) },
                 ) { Text(stringResource(R.string.checkpoint_confirm)) }
             }
         }

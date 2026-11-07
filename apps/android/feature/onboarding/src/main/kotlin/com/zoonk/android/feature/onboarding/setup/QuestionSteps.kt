@@ -55,6 +55,7 @@ import com.zoonk.android.feature.plan.toggled
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyPicker
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DatePickerDialog
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationFailureNotice
@@ -108,7 +109,13 @@ internal fun ColumnScope.StepForm(
     content()
     OnboardingActions {
         PlanStartNotice()
-        Button(busy = pending, onClick = onContinue, modifier = Modifier.fillMaxWidth(), enabled = canContinue) {
+        Button(
+            busy = pending,
+            onClick = onContinue,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = canContinue,
+            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+        ) {
             Text(continueLabel ?: stringResource(R.string.onboarding_continue))
         }
         if (onSkip != null) {

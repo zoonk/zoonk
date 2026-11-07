@@ -52,6 +52,7 @@ import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkStatus
@@ -347,7 +348,9 @@ private fun StartButton(
     working: Boolean,
     onClick: () -> Unit,
 ) {
-    Button(busy = working, onClick = onClick, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.onboarding_reveal_start)) }
+    Button(busy = working, onClick = onClick, modifier = Modifier.fillMaxWidth(), leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) }) {
+        Text(stringResource(R.string.onboarding_reveal_start))
+    }
 }
 
 @Composable

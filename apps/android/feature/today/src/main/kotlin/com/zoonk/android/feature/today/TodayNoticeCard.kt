@@ -28,6 +28,7 @@ import com.zoonk.android.feature.plan.planChangeSentence
 import com.zoonk.android.feature.research.SourceChangeNotice
 import com.zoonk.android.feature.research.UploadRequestNotice
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -176,6 +177,7 @@ private fun ExamChoiceNotice(
                         { viewModel.undoExamChoice(made) },
                         busy = saving,
                         secondary = true,
+                        leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
                     )
                 }
             } else {

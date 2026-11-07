@@ -80,6 +80,7 @@ import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
@@ -468,7 +469,13 @@ internal fun AnswerActions(
                 modifier = width.focusMoveTarget(main),
                 enabled = done || reading || (run.canAnswer && draft != null),
                 focusableWhenDisabled = sender != null,
-                icon = if (reading) ({ Icon(painterResource(R.drawable.ic_visibility), contentDescription = null) }) else null,
+                leadingIcon =
+                    when {
+                        done -> null
+                        reading -> ({ ButtonIcon(R.drawable.ic_visibility) })
+                        else -> ({ ButtonIcon(R.drawable.ic_check) })
+                    },
+                trailingIcon = if (done) ({ ButtonIcon(R.drawable.ic_arrow_forward) }) else null,
             ) {
                 Text(
                     stringResource(

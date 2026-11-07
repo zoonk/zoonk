@@ -43,6 +43,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
@@ -386,10 +387,18 @@ private fun FarTopicRequest(
                 enabled = enabled,
                 busy = open.asking,
                 modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { ButtonIcon(R.drawable.ic_refresh) },
                 content = label,
             )
         } else {
-            Button(onClick = topics::request, enabled = enabled, busy = open.asking, modifier = Modifier.fillMaxWidth(), content = label)
+            Button(
+                onClick = topics::request,
+                enabled = enabled,
+                busy = open.asking,
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { ButtonIcon(R.drawable.ic_playlist_add) },
+                content = label,
+            )
         }
     }
 

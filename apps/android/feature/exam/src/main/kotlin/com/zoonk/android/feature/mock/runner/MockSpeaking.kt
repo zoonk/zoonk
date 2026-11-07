@@ -28,6 +28,7 @@ import com.zoonk.android.feature.conversation.taskMinutes
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.AlertDialog
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
@@ -68,6 +69,7 @@ internal fun MockSpeaking(
                             enabled = !run.pending,
                             onClick = viewModel::startSpeaking,
                             modifier = main,
+                            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                         )
                     } else {
                         MockMainButton(
@@ -76,6 +78,7 @@ internal fun MockSpeaking(
                             enabled = !run.pending,
                             onClick = { confirming = true },
                             modifier = main,
+                            leadingIcon = { ButtonIcon(R.drawable.ic_send) },
                         )
                     }
                 }

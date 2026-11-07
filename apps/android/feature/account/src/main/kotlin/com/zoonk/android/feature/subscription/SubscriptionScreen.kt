@@ -64,6 +64,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
@@ -543,6 +544,7 @@ private fun PlusPlanCard(
                         onClick = { offer?.let { onSubscribe?.invoke(it) } },
                         modifier = Modifier.fillMaxWidth(),
                         enabled = offer != null && onSubscribe != null,
+                        trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                     ) { Text(stringResource(R.string.subscription_subscribe)) }
                 }
             }

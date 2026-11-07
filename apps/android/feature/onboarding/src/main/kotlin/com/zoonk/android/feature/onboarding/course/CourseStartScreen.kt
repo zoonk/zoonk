@@ -56,6 +56,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TextButton
@@ -221,6 +222,7 @@ private fun CourseStartForm(
                 Button(
                     busy = vm.isStarting,
                     onClick = start,
+                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                     modifier =
                         Modifier.fillMaxWidth().semantics {
                             liveRegion = LiveRegionMode.Polite

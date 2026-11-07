@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.theme.zoonk
@@ -142,6 +143,7 @@ internal fun ColumnScope.ChooseFocusBody(
                 onClick = ::save,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = chosen.isNotEmpty() && chosen.toSet() != current.toSet() && !unchanged,
+                leadingIcon = { ButtonIcon(R.drawable.ic_check) },
             ) { Text(stringResource(R.string.plan_focus_on_these)) }
             if (save != null && edits.sheetFailed(PlanPart.Focus, save)) SaveFailedText()
         },

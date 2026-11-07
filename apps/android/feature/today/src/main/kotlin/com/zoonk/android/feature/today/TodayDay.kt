@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.today
 
 import androidx.activity.compose.LocalActivity
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,6 +53,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -273,24 +275,32 @@ internal fun TodayAction(
 
         when {
             model.pastDate != null -> {
-                ActionButton(stringResource(R.string.today_see_plan), busy = false, buttonModifier) { actions.navigate(AppRoute.Plan()) }
+                ActionButton(stringResource(R.string.today_see_plan), busy = false, buttonModifier, icon = R.drawable.ic_arrow_forward) {
+                    actions.navigate(AppRoute.Plan())
+                }
             }
 
             model.state == StudySession.State.PREPARE -> {
-                ActionButton(stringResource(R.string.today_get_lessons), busy, buttonModifier, actions.prepare)
+                ActionButton(
+                    stringResource(R.string.today_get_lessons),
+                    busy,
+                    buttonModifier,
+                    icon = R.drawable.ic_playlist_add,
+                    onClick = actions.prepare,
+                )
             }
 
             model.keepLearning -> {
-                ActionButton(stringResource(R.string.today_keep_learning), busy, buttonModifier, actions.keepLearning)
+                ActionButton(stringResource(R.string.today_keep_learning), busy, buttonModifier, onClick = actions.keepLearning)
             }
 
             model.state == StudySession.State.UNDERWAY -> {
                 val label = if (model.day.started) R.string.today_continue_session else R.string.today_start_session
-                ActionButton(stringResource(label), busy, buttonModifier, actions.next)
+                ActionButton(stringResource(label), busy, buttonModifier, onClick = actions.next)
             }
 
             model.state == StudySession.State.DONE -> {
-                ActionButton(stringResource(R.string.today_see_summary), busy = false, buttonModifier) {
+                ActionButton(stringResource(R.string.today_see_summary), busy = false, buttonModifier, icon = R.drawable.ic_arrow_forward) {
                     actions.navigate(AppRoute.Session(goalId = (model.day.goalId ?: model.today.goal.id).toString()))
                 }
             }
@@ -302,7 +312,7 @@ internal fun TodayAction(
                             .toDouble(),
                         currentLocale(),
                     )
-                ActionButton(stringResource(R.string.today_practice_minutes, minutes), busy, buttonModifier, actions.keepLearning)
+                ActionButton(stringResource(R.string.today_practice_minutes, minutes), busy, buttonModifier, onClick = actions.keepLearning)
             }
         }
 
@@ -366,9 +376,17 @@ private fun ActionButton(
     label: String,
     busy: Boolean,
     modifier: Modifier,
+    @DrawableRes icon: Int = R.drawable.ic_play_arrow,
     onClick: () -> Unit,
 ) {
-    Button(busy = busy, onClick = onClick, modifier = modifier.widthIn(min = 160.dp)) { Text(label) }
+    val forward = icon == R.drawable.ic_arrow_forward
+    Button(
+        busy = busy,
+        onClick = onClick,
+        modifier = modifier.widthIn(min = 160.dp),
+        leadingIcon = if (forward) null else ({ ButtonIcon(icon) }),
+        trailingIcon = if (forward) ({ ButtonIcon(R.drawable.ic_arrow_forward) }) else null,
+    ) { Text(label) }
 }
 
 /** Nothing cached yet: the page's title, and a quiet sign it's on its way. */

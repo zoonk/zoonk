@@ -21,6 +21,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -315,6 +316,7 @@ internal fun FitLessonsSuggestion(slot: Slot) {
                     stringResource(R.string.plan_apply),
                     onClick = { slot.apply(SlotItem.FitLessons, offer.operations.map { it.op }) },
                     busy = slot.edits.isPending(PlanPart.Suggestion),
+                    leadingIcon = { ButtonIcon(R.drawable.ic_check) },
                 )
             }
             SuggestionAction(stringResource(R.string.plan_not_now), onClick = { slot.dismiss(SlotItem.FitLessons) }, secondary = true)

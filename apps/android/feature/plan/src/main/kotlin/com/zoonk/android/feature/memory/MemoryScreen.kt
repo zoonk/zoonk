@@ -45,6 +45,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.AlertDialog
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -182,7 +183,7 @@ private fun Loaded(
             OutlinedButton(
                 onClick = { export.launch(EXPORT_FILE_NAME) },
                 busy = screen.isExporting,
-                icon = { Icon(painterResource(R.drawable.ic_download), contentDescription = null) },
+                leadingIcon = { ButtonIcon(R.drawable.ic_download) },
                 size = ButtonSize.Small,
             ) {
                 Text(stringResource(R.string.settings_download))

@@ -46,6 +46,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -185,7 +186,12 @@ private fun StartForm(
     Column(Modifier.widthIn(max = FORM_WIDTH), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(stringResource(R.string.planlink_minutes_label), fontWeight = FontWeight.Medium)
         DailyTimePicker(times, vm.minutes, stringResource(R.string.onboarding_schedule_time_label), vm::pick)
-        Button(busy = vm.isStarting, onClick = onStart, modifier = Modifier.fillMaxWidth()) {
+        Button(
+            busy = vm.isStarting,
+            onClick = onStart,
+            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+        ) {
             Text(stringResource(R.string.planlink_start))
         }
         vm.failure?.let {

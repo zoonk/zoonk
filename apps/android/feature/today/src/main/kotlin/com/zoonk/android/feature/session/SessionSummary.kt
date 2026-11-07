@@ -50,6 +50,7 @@ import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltDot
 import com.zoonk.android.ui.components.BeltTicks
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.MomentReadouts
@@ -586,6 +587,7 @@ private fun SummaryBar(
                 busy = busy == SessionAction.KeepGoing,
                 onClick = actions.keepGoing,
                 enabled = busy == null,
+                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
             ) { Text(stringResource(R.string.session_summary_keep_going)) }
         }
     }
@@ -605,8 +607,8 @@ private fun SummaryBar(
                 busy = busy == SessionAction.ExtraTime,
                 onClick = actions.extraTime,
                 modifier = Modifier.taskOption(),
-                enabled =
-                    busy == null,
+                enabled = busy == null,
+                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
             ) {
                 Text(
                     if (extra.lessons.isNotEmpty()) {

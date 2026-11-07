@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
@@ -84,7 +85,12 @@ private fun MoreTime(
     val minutes = formatNumber(extraTime.minutes.toDouble(), currentLocale())
     val label = if (model.today.studiedToday) R.string.today_study_more_minutes else R.string.today_study_minutes
 
-    OutlinedButton(busy = viewModel.pending == TodayTap.KeepLearning, onClick = actions.keepLearning, enabled = viewModel.pending == null) {
+    OutlinedButton(
+        busy = viewModel.pending == TodayTap.KeepLearning,
+        onClick = actions.keepLearning,
+        enabled = viewModel.pending == null,
+        leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+    ) {
         Text(stringResource(label, minutes))
     }
     if (viewModel.failed == TodayTap.KeepLearning) Failure(stringResource(R.string.today_save_failed))
@@ -119,7 +125,11 @@ private fun CatchUpLater(
                 pluralStringResource(R.plurals.today_catch_up_tomorrow, lessons, lessons)
             },
         )
-        OutlinedButton(busy = viewModel.isCatchingUp, onClick = { viewModel.catchUp(model.read) }) {
+        OutlinedButton(
+            busy = viewModel.isCatchingUp,
+            onClick = { viewModel.catchUp(model.read) },
+            leadingIcon = { ButtonIcon(R.drawable.ic_playlist_add) },
+        ) {
             Text(stringResource(R.string.today_catch_up_today, formatMinutes(later.minutes.toInt(), currentLocale())))
         }
     }

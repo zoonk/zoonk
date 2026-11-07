@@ -30,6 +30,7 @@ import com.zoonk.android.feature.plan.planChangeKeepOfficialDateLabel
 import com.zoonk.android.feature.plan.planChangeOfficialDateLine
 import com.zoonk.android.feature.plan.planChangeSentence
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.api.models.PlanChange
@@ -158,7 +159,7 @@ private fun Decisions(
         }
 
         change.status == PlanChange.Status.APPLIED && change.canUndo -> {
-            OutlinedButton(busy = deciding, onClick = { onDecide(Decision.UNDONE) }) {
+            OutlinedButton(busy = deciding, onClick = { onDecide(Decision.UNDONE) }, leadingIcon = { ButtonIcon(R.drawable.ic_undo) }) {
                 Text(stringResource(R.string.tutor_plan_change_undo))
             }
         }

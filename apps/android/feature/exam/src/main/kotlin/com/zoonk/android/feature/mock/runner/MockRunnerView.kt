@@ -62,6 +62,7 @@ import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.feature.mock.rememberNow
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
@@ -395,6 +396,8 @@ private fun RunnerActions(
                 enabled = !run.pending && run.moves.canAdvance,
                 onClick = { if (last) onHandIn() else viewModel.go(run.position + 1) },
                 modifier = width,
+                leadingIcon = if (last) ({ ButtonIcon(R.drawable.ic_send) }) else null,
+                trailingIcon = if (last) null else ({ ButtonIcon(R.drawable.ic_arrow_forward) }),
             )
         }
     }

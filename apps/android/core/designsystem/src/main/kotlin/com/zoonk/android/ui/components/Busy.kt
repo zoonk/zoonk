@@ -80,25 +80,44 @@ internal fun Modifier.busy(busy: Boolean): Modifier = semantics { if (busy) disa
 internal fun ButtonColors.disabledWhen(waiting: Boolean): ButtonColors =
     if (waiting) copy(containerColor = disabledContainerColor, contentColor = disabledContentColor) else this
 
-/** A button's [icon] and words with [padding] around them; while [busy], a spinner takes the icon's place, or covers the words without one. */
+/**
+ * A button's words with [padding] around them and its icon before ([leadingIcon]) or after
+ * ([trailingIcon]) them; while [busy], a spinner takes the icon's place, or covers the words without one.
+ */
 @Composable
 internal fun ButtonContent(
     busy: Boolean,
-    icon: (@Composable () -> Unit)?,
+    leadingIcon: (@Composable () -> Unit)?,
+    trailingIcon: (@Composable () -> Unit)?,
     iconSize: Dp,
     padding: PaddingValues,
     content: @Composable RowScope.() -> Unit,
 ) {
-    if (icon == null) {
+    if (leadingIcon == null && trailingIcon == null) {
         BusyContent(busy) { Row(Modifier.padding(padding), verticalAlignment = Alignment.CenterVertically, content = content) }
         return
     }
 
     Row(Modifier.padding(padding), verticalAlignment = Alignment.CenterVertically) {
-        Box(Modifier.size(iconSize), propagateMinConstraints = true) { if (busy) Spinner(Modifier) else icon() }
-        Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+        leadingIcon?.let {
+            IconSlot(busy, iconSize, it)
+            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+        }
         content()
+        trailingIcon?.let {
+            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+            IconSlot(busy, iconSize, it)
+        }
     }
+}
+
+@Composable
+private fun IconSlot(
+    busy: Boolean,
+    size: Dp,
+    icon: @Composable () -> Unit,
+) {
+    Box(Modifier.size(size), propagateMinConstraints = true) { if (busy) Spinner(Modifier) else icon() }
 }
 
 @Composable

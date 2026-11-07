@@ -56,6 +56,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
@@ -318,7 +319,12 @@ private fun StartActions(
 
         else -> {
             TaskActions { width ->
-                Button(busy = ui.starting, onClick = onStart, modifier = width.focusRequester(replacementFocus)) {
+                Button(
+                    busy = ui.starting,
+                    onClick = onStart,
+                    modifier = width.focusRequester(replacementFocus),
+                    leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+                ) {
                     Text(stringResource(R.string.testout_start))
                 }
             }
@@ -407,10 +413,17 @@ internal fun TestOutResult(
             title = stringResource(if (outcome.passed) R.string.testout_passed else R.string.testout_not_passed),
             action = stringResource(R.string.testout_continue),
             saving = false,
+            actionTrailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             onClose = onClose,
             detail = detail,
             actions = {
-                TaskActions { width -> Button(onClick = onClose, modifier = width) { Text(stringResource(R.string.testout_continue)) } }
+                TaskActions { width ->
+                    Button(
+                        onClick = onClose,
+                        modifier = width,
+                        trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+                    ) { Text(stringResource(R.string.testout_continue)) }
+                }
                 if (canUndo) UndoAction(ui.undo, viewModel::undo)
             },
         ) {

@@ -23,6 +23,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -270,7 +271,12 @@ internal fun MoveDateSwitch(
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        OutlinedButton(onClick = ::move, modifier = Modifier.focusRequester(focus.moveDate), busy = pending) {
+        OutlinedButton(
+            onClick = ::move,
+            modifier = Modifier.focusRequester(focus.moveDate),
+            busy = pending,
+            leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
+        ) {
             Text(
                 date?.let { stringResource(R.string.plan_move_date_to, formatDate(it, currentLocale(), DateStyle.Long, page.today)) }
                     ?: stringResource(R.string.plan_move_date),

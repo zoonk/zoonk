@@ -63,6 +63,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
@@ -222,6 +223,7 @@ internal fun FocusTestIntro(
                             busy = ui.starting,
                             onClick = { start() },
                             modifier = replacementFocus?.let { width.focusRequester(it) } ?: width,
+                            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                         ) { Text(stringResource(R.string.focustest_start)) }
                     }
                 }

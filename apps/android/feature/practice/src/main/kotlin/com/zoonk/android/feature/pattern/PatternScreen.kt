@@ -70,6 +70,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DiffKind
 import com.zoonk.android.ui.components.DiffLine
 import com.zoonk.android.ui.components.DiffLines
@@ -271,11 +272,21 @@ private fun PatternQuestion(
                 }
                 if (checked != null) {
                     val last = index + 1 == pattern.drill.size
-                    Button(busy = drill.saving, onClick = viewModel::next, modifier = width) {
+                    Button(
+                        busy = drill.saving,
+                        onClick = viewModel::next,
+                        modifier = width,
+                        trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+                    ) {
                         Text(stringResource(if (last) R.string.pattern_see_how_you_did else R.string.practice_continue))
                     }
                 } else {
-                    Button(onClick = viewModel::check, enabled = drill.picked != null, modifier = width) {
+                    Button(
+                        onClick = viewModel::check,
+                        enabled = drill.picked != null,
+                        modifier = width,
+                        leadingIcon = { ButtonIcon(R.drawable.ic_check) },
+                    ) {
                         Text(stringResource(R.string.practice_check))
                     }
                 }
@@ -440,6 +451,7 @@ private fun PatternResult(
             title = stringResource(R.string.practice_done_title),
             action = stringResource(R.string.pattern_done),
             saving = false,
+            actionLeadingIcon = { ButtonIcon(R.drawable.ic_check) },
             onClose = onClose,
             headerTitle = title,
             detail = stringResource(if (result.correct == result.total) R.string.pattern_got_it else R.string.pattern_keep_going),
