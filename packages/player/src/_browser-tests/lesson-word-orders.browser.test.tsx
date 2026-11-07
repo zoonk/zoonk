@@ -1,50 +1,110 @@
-import { describe, expect, it, vi } from "vitest";
+import { serializeExerciseSteps } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
-import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
-import { arrangeWordsStep } from "../lesson/_test-utils/lesson-steps";
+import { expectCount } from "../_test-utils/activity-player";
+import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { type PlayableLanguageStep } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 
-describe("word-bank order grading", () => {
+const SENTENCE = "Quando pioveva l'autobus è arrivato";
+const TRANSLATION = "Quando chovia, o ônibus chegou.";
+const EXPLANATION = "Em italiano, o sujeito pode vir depois do verbo para dar ênfase.";
+
+const RAINING = {
+  audioUrl: null,
+  distractors: ["piove", "treno"],
+  explanation: EXPLANATION,
+  id: crypto.randomUUID(),
+  otherSentenceOrders: ["Quando pioveva è arrivato l'autobus"],
+  otherTranslationOrders: ["O ônibus chegou quando chovia."],
+  romanization: null,
+  sentence: SENTENCE,
+  translation: TRANSLATION,
+  translationDistractors: ["trem"],
+};
+
+function sentenceStep(kind: "listening" | "reading"): PlayableLanguageStep {
+  const id = crypto.randomUUID();
+
+  const [exercise] = serializeExerciseSteps({
+    languages: { language: "pt", targetLanguage: "it" },
+    resources: {
+      distractorWords: [],
+      lessonSentences: [RAINING],
+      lessonWords: [],
+      sentenceWords: [],
+    },
+    steps: [{ content: {}, id, kind, position: 0, sentence: RAINING, word: null }],
+  });
+
+  if (!exercise) {
+    throw new Error(`The ${kind} exercise didn't serialize`);
+  }
+
+  return { exercise, id, kind, position: 0, skillId: null, wordHints: null };
+}
+
+function openLesson(kind: "listening" | "reading") {
+  renderLessonPlayer({
+    lesson: buildLesson([sentenceStep(kind)], { language: "pt", targetLanguage: "it" }),
+  });
+}
+
+async function placeWords(words: string[]) {
+  const bank = page.getByRole("group", { name: "Word bank" });
+
+  for (const word of words) {
+    // oxlint-disable-next-line no-await-in-loop -- The words go in one at a time, in order.
+    await bank.getByRole("button", { exact: true, name: word }).click();
+  }
+}
+
+const feedback = page.getByRole("region", { name: "Answer feedback" });
+const check = page.getByRole("button", { name: /^Check/u });
+
+describe("word orders", () => {
   it.each([
     {
-      correctAnswer: "How much is the rent?",
       kind: "reading" as const,
-      words: ["the", "rent?", "is", "How", "much"],
+      lessonVersion: SENTENCE,
+      words: ["Quando", "pioveva", "è", "arrivato", "l'autobus"],
     },
     {
-      correctAnswer: "Quanto é o aluguel?",
       kind: "listening" as const,
-      words: ["o", "aluguel?", "é", "Quanto"],
+      lessonVersion: TRANSLATION,
+      words: ["o", "ônibus", "chegou.", "Quando", "chovia,"],
     },
   ])(
-    "checks a listed $kind order once the canonical number of tiles is placed",
-    async ({ kind, words, correctAnswer }) => {
-      const lesson = buildLesson([arrangeWordsStep(kind)], {
-        language: "pt",
-        targetLanguage: "en",
-      });
+    "accepts a $kind built in another right order, marking every word right and showing the lesson's",
+    async ({ kind, lessonVersion, words }) => {
+      openLesson(kind);
 
-      const adapters = buildAdapters(lesson);
-      renderLessonPlayer({ adapters, lesson });
-      const bank = page.getByRole("group", { name: "Word bank" });
-      const check = page.getByRole("button", { name: /^Check/u });
-
-      for (const word of words.slice(0, -1)) {
-        // oxlint-disable-next-line no-await-in-loop -- The learner places the tiles one at a time.
-        await bank.getByRole("button", { exact: true, name: word }).click();
-      }
-
+      await placeWords(words.slice(0, -1));
       await expect.element(check).toBeDisabled();
-      await bank.getByRole("button", { exact: true, name: words.at(-1) }).click();
-      await expect.element(check).toBeEnabled();
+      await placeWords(words.slice(-1));
       await check.click();
-      await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
-      await expect.poll(() => vi.mocked(adapters.checkStep).mock.calls.length).toBe(1);
 
-      await expect(vi.mocked(adapters.checkStep).mock.results[0]?.value).resolves.toMatchObject({
-        result: { correctAnswer, isCorrect: true },
-        status: "checked",
-      });
+      await expect.element(feedback.getByText("Correct!")).toBeVisible();
+
+      await expectCount(
+        page
+          .getByRole("group", { name: "Your answer" })
+          .getByRole("button", { name: /\. Correct\.$/u }),
+        words.length,
+      );
+
+      await expect.element(feedback.getByText(`Also correct: ${lessonVersion}`)).toBeVisible();
+      await expect.element(feedback.getByText(EXPLANATION)).toBeVisible();
     },
   );
+
+  it("shows no other version for the lesson's own order", async () => {
+    openLesson("reading");
+
+    await placeWords(["Quando", "pioveva", "l'autobus", "è", "arrivato"]);
+    await check.click();
+
+    await expect.element(feedback.getByText("Correct!")).toBeVisible();
+    await expect.element(feedback.getByText("Also correct:")).not.toBeInTheDocument();
+  });
 });
