@@ -23,7 +23,12 @@ import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content
 import { type LessonStreamStep } from "./lesson-progress-step";
 
 export type LessonWriteOutcome =
-  | { check: LessonCheckPlan | null; imageScope: ImageScope; status: "published" }
+  | {
+      check: LessonCheckPlan | null;
+      imageScope: ImageScope;
+      owesSentenceOrders: boolean;
+      status: "published";
+    }
   | { redraft: boolean; status: "heldBack" }
   | { status: "notWritten" };
 
@@ -88,7 +93,7 @@ async function write({
     });
 
     return result.status === "published"
-      ? { check: null, imageScope: null, status: "published" }
+      ? { check: null, imageScope: null, owesSentenceOrders: true, status: "published" }
       : toOutcome(result.status);
   }
 
@@ -102,7 +107,7 @@ async function write({
     });
 
     return challenge.status === "published"
-      ? { check: null, imageScope: null, status: "published" }
+      ? { check: null, imageScope: null, owesSentenceOrders: false, status: "published" }
       : toOutcome(challenge.status);
   }
 
@@ -136,7 +141,12 @@ export async function writeLessonContentStep(input: WriteInput): Promise<LessonW
   // The runtime runs a step's body again when its result was lost after the body ended, so a lesson
   // this run already saved isn't written again.
   if (await isLessonSavedByRun(input)) {
-    return { check: null, imageScope: getPublishedImageScope(lesson), status: "published" };
+    return {
+      check: null,
+      imageScope: getPublishedImageScope(lesson),
+      owesSentenceOrders: Boolean(lesson.targetLanguage),
+      status: "published",
+    };
   }
 
   await using stream = createStepStream<LessonStreamStep>();
@@ -177,7 +187,7 @@ export async function checkLessonContentStep({
   "use step";
 
   if (await isLessonSavedByRun(input)) {
-    return { check: null, imageScope, status: "published" };
+    return { check: null, imageScope, owesSentenceOrders: false, status: "published" };
   }
 
   const checked = await checkLessonContent({ ...input, draft });
@@ -190,7 +200,7 @@ export async function checkLessonContentStep({
   await stream.status({ entityId: input.lessonId, status: "completed", step: "writeLesson" });
 
   if (checked.status === "published") {
-    return { check: checked.check, imageScope, status: "published" };
+    return { check: checked.check, imageScope, owesSentenceOrders: false, status: "published" };
   }
 
   return checked.status === "heldBack"

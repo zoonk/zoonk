@@ -9,7 +9,11 @@ import { type ContentAnalytics } from "../_shared/content-analytics";
 import { deliverCourseContent } from "../_shared/course-content-notification";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
-import { claimRunToken } from "../_shared/run-token";
+import { claimRunToken, startOnce } from "../_shared/run-token";
+import {
+  getSentenceOrdersToken,
+  sentenceOrdersWorkflow,
+} from "../language/sentence-orders-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import { type LessonContentResult, getLessonContentHookToken } from "./lesson-content-result";
 import { markAndDraw } from "./mark-and-draw";
@@ -266,6 +270,14 @@ export async function lessonContentWorkflow(
 
   const completed = await completeLessonContentStep({ lessonId, workflowRunId });
   const ready = await finish({ lessonId, status: completed ? "ready" : "missing" });
+
+  if (outcome.owesSentenceOrders) {
+    await startOnce(
+      sentenceOrdersWorkflow,
+      [{ analytics: input.analytics, lessonIds: [lessonId], wait: "soon" }],
+      getSentenceOrdersToken(lessonId),
+    );
+  }
 
   if (outcome.check && (outcome.check.review || outcome.check.cite)) {
     const check = { analytics: input.analytics, forExam: input.forExam, lessonId };
