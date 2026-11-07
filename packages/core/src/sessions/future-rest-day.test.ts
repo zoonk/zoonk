@@ -128,6 +128,9 @@ describe("an unstarted day after a plan change", () => {
 
     const savedChange = await prisma.planChange.findUniqueOrThrow({ where: { id: proposal.id } });
 
+    // The change asks for its lessons after following today; ending that ask lets this follow see
+    // the same day, rather than one holding time for lessons being written.
+    await prisma.plan.update({ data: { lessonsAskedAt: null }, where: { id: plan.id } });
     await followPlanToday({ changeId: proposal.id, context });
 
     await expect(

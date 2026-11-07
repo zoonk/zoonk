@@ -73,7 +73,3 @@ export async function getDayOutlines(input: DayOutlinesInput): Promise<DayOutlin
 
   return outlining + asked > 0 ? "awaiting" : "idle";
 }
-
-export async function isDayAwaitingOutlines(input: DayOutlinesInput): Promise<boolean> {
-  return (await getDayOutlines(input)) === "awaiting";
-}

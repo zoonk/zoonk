@@ -3,7 +3,6 @@ import { prisma } from "@zoonk/db";
 import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-learner-changed";
 import { PlanConflictError } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
-import { loadDayPlanVersion } from "./day-plan-version";
 import { type PlannedStudyDay } from "./plan-study-day";
 import { prepareSelectedPlanSave, saveSelectedPlan } from "./save-selected-plan";
 import { type SelectedDayPlan } from "./selected-day-plan";
@@ -62,10 +61,9 @@ export async function persistStudyDay({
 
       await saveSelectedPlan({ context: selection.context, prepared, tx });
 
-      const planVersion = await loadDayPlanVersion({
-        client: tx,
-        goal: day.goal,
-        localDate: day.localDate,
+      const { version: planVersion } = await tx.plan.findUniqueOrThrow({
+        select: { version: true },
+        where: { id: selection.context.plan.id },
       });
 
       const rows = await tx.planItem.findMany({ where: { planId: selection.context.plan.id } });

@@ -53,7 +53,7 @@ async function openSavedSession({
     return { status: "retryable" };
   }
 
-  const current = await followSavedDay({ goal: session.goal, session: refilled, timeZone });
+  const current = await followSavedDay({ session: refilled, timeZone });
 
   const view = await readLessonScreens(
     await loadOpenedDayView({ session: current, timeZone, userId }),

@@ -16,7 +16,7 @@ import { getPracticeShare } from "../practice-share";
 import { type PlannedLesson, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { loadDayCapsules } from "./day-capsules";
 import { listDayCheckpoints, loadDayBosses } from "./day-checkpoints";
-import { pickDayLessons } from "./day-lessons";
+import { getUnwrittenMinutesOn, pickDayLessons } from "./day-lessons";
 import { loadDayPlan } from "./day-plan";
 import { findPlannedReview } from "./day-review";
 import { getExamPrepAccess } from "./exam-access";
@@ -316,6 +316,9 @@ export async function loadSessionBuildInput(
     reviewPlanItemId: reviewDay?.id ?? null,
     reviewPlanItemKey: reviewDay?.key ?? null,
     topics: getPlanTopics(plan.graph),
+    writingMinutes: awaitingOutlines
+      ? getUnwrittenMinutesOn({ items: plan.items, today: localDate })
+      : 0,
   };
 
   return keepsBlocks ? input : withWeakestReview({ input, review });

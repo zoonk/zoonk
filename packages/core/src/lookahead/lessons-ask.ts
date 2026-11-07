@@ -41,9 +41,8 @@ async function followShownDay({
     userId: goal.userId,
   });
 
-  if (session?.goal) {
-    const { goal: sessionGoal } = session;
-    await afterPlanInputWrite(() => followSavedDay({ goal: sessionGoal, session, timeZone }));
+  if (session) {
+    await afterPlanInputWrite(() => followSavedDay({ session, timeZone }));
   }
 }
 
@@ -87,7 +86,6 @@ export async function endLessonsAsk({
     where: { goalId, lessonsAskedAt: new Date(askedAt) },
   });
 
-  // While the ask is fresh the day reads as awaiting outlines, and Continue's append waits for them.
   if (dayCourseIds.length > 0) {
     await followShownDay({ goal, timeZone });
   }
