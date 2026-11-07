@@ -31,6 +31,7 @@ Maintainers act on a bug they can run in a minute. Prove the bug is theirs, repr
 
 - Fill in the project's issue template (`.github/ISSUE_TEMPLATE`). Tick a checkbox only for what you did.
 - Lead with what users see, then the mechanism with code pointers, then the steps with their exact output, the expected behavior and possible fixes. Link related issues. Say how often it happened in the real app without naming it.
+- Right before posting, look again: another agent may have hit the same bug and filed it while you built the reproduction. Search finds a new issue only after a few minutes, so also list the newest ones (`gh issue list --repo <owner/repo> --state open --limit 30`). If one covers it, add your evidence there instead.
 - Add the disclosure from zoonk-post-on-behalf, post with `gh issue create --repo <owner/repo> --title "…" --body-file <file>`, then open the issue to check it rendered.
 
 ## 4. Close the loop
