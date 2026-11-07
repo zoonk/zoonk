@@ -3,86 +3,34 @@ import { parseInlineMarkupRanges } from "./inline-markup";
 import { splitLinesAndCells } from "./markdown-table";
 import { type MathSpan, findMathSpans, hideMath, normalizeLatexCommands } from "./math-spans";
 
+const BACKSLASH_WORD = /\\[A-Za-z]+/gu;
+const HAS_COMMAND = /\\[A-Za-z]+/u;
+
 /**
- * Outside braces, a backslash before any other word is a file path or an escape a writer meant as
- * text (`C:\text\notes.txt`); inside braces it may be a command KaTeX lacks, so a writer fixes it.
+ * A file path, not math: a drive (`C:\`), a path from the root, home or here (`/tmp/x_1`), or a
+ * file name's extension at the end (`\log.txt`, `docs/ch_1.md`).
  */
-const MATH_COMMANDS = new Set([
-  "alpha",
-  "approx",
-  "beta",
-  "cdot",
-  "cdots",
-  "circ",
-  "cos",
-  "Delta",
-  "delta",
-  "dfrac",
-  "div",
-  "epsilon",
-  "exp",
-  "frac",
-  "gamma",
-  "ge",
-  "geq",
-  "infty",
-  "int",
-  "lambda",
-  "ldots",
-  "le",
-  "leq",
-  "lim",
-  "ln",
-  "log",
-  "mathrm",
-  "mu",
-  "ne",
-  "neq",
-  "Omega",
-  "omega",
-  "partial",
-  "phi",
-  "pi",
-  "pm",
-  "rho",
-  "rightarrow",
-  "Sigma",
-  "sigma",
-  "sin",
-  "sqrt",
-  "sum",
-  "tan",
-  "text",
-  "theta",
-  "times",
-  "to",
-]);
-
-const BACKSLASH_WORD = /\\(?<name>[A-Za-z]+)/gu;
-
-/** A drive (`C:\`) or a file name with its extension (`\log.txt`), outside a formula's braces. */
-const FILE_PATH = /^[A-Za-z]:\\|\\[A-Za-z]+\.[A-Za-z]/u;
+const FILE_PATH = /^[A-Za-z]:\\|^(?:~|\.{1,2})?\/|\.[A-Za-z]{2,4}$/u;
 const BRACED_SCRIPT = /[\^_]\{/u;
 
-/** KaTeX raises only the next character, so `10^12` and `10^-1` need their power braced. */
+/** KaTeX raises only the next character, so `10^12`, `10^-1` and `Na^+` need their power braced. */
 const CARET_POWER =
-  /(?<=[\p{L}\p{N})\]}])\^(?<power>[-−]?\p{N}+(?:\.\p{N}+)?|\p{L}(?![\p{L}\p{N}]))/gu;
+  /(?<=[\p{L}\p{N})\]}*])\^(?<power>[-−+]?\p{N}+(?:\.\p{N}+)?|[-−+](?![\p{L}\p{N}])|\p{L}(?![\p{L}\p{N}]))/gu;
 
 const HAS_CARET_POWER = new RegExp(CARET_POWER.source, "u");
 
 /**
- * A number under a symbol or element (`x_1`, `CH_3`, `H_2O`); a longer word before `_` is an
- * identifier (`user_1`).
+ * A subscript under a symbol, elements or a group (`x_1`, `a_n`, `CaCl_2`, `Mg(OH)_2`); a lowercase
+ * word before `_` is an identifier (`db_1`, `user_id`).
  */
-const BARE_SUBSCRIPT = /(?<![\p{L}\p{N}_\\])(?<base>\p{L}{1,2})_(?<below>\p{N}+)/gu;
-
-const HAS_BARE_SUBSCRIPT = new RegExp(BARE_SUBSCRIPT.source, "u");
+const BARE_SUBSCRIPT =
+  /(?:(?<![\p{L}\p{N}_\\])(?:\p{Lu}\p{Ll}?)+|(?<![\p{L}\p{N}_\\])\p{L}|\))_(?:\p{N}+|\p{L}(?![\p{L}\p{N}]))/u;
 
 /** Inside a formula, every numeric subscript is braced, so `\log_10` and `C_12H_22O_11` keep their digits. */
 const NUMERIC_SUBSCRIPT = /_(?<below>\p{N}+)/gu;
 
 /** `10^3,5` is a decimal power in some languages and two numbers in others; a writer decides. */
-const COMMA_AFTER_POWER = /\^[-−]?\p{N}+,\p{N}/u;
+const COMMA_AFTER_POWER = /\^[-−+]?\p{N}+,\p{N}/u;
 
 const INNER_BRACE_GROUP = /\{[^{}]*\}/gu;
 const BRACE_STEP: Readonly<Record<string, number>> = { "{": 1, "}": -1 };
@@ -96,11 +44,13 @@ const ATTACHED_WORD = /[-‐‑–]\p{L}{3,}/u;
 
 const PUNCTUATION_BEFORE = /^["'“‘«¿¡*_~]/u;
 const PUNCTUATION_AFTER = /[.,;:!?%"'”’»*_]$/u;
+const POSSESSIVE = /['’]s$/u;
 
-/** KaTeX renders these without an error but not as written: `%` starts a comment and `~` is a space. */
-const TEX_SPECIAL = /[%~]/u;
-
-type Command = { inBraces: boolean; name: string };
+/**
+ * KaTeX draws these without an error but not as written: `%` starts a comment, `~` is a space, and
+ * `*` (bold, or a typed times sign) is an asterisk operator.
+ */
+const TEX_SPECIAL = /[%~*]/u;
 
 type BareLatex = {
   end: number;
@@ -149,14 +99,11 @@ function trimStart(text: string): string {
 }
 
 function trimEnd(text: string): string {
-  return PUNCTUATION_AFTER.test(text) || isUnpairedClose(text) ? trimEnd(text.slice(0, -1)) : text;
-}
+  if (POSSESSIVE.test(text)) {
+    return trimEnd(text.replace(POSSESSIVE, ""));
+  }
 
-function findCommands(text: string): Command[] {
-  return [...text.matchAll(BACKSLASH_WORD)].map((match) => {
-    const before = text.slice(0, match.index);
-    return { inBraces: count(before, "{") > count(before, "}"), name: match.groups?.name ?? "" };
-  });
+  return PUNCTUATION_AFTER.test(text) || isUnpairedClose(text) ? trimEnd(text.slice(0, -1)) : text;
 }
 
 /** `∅` stands for each group, at any depth, so nothing inside braces reads as a path or a word. */
@@ -194,19 +141,13 @@ function findChunks(text: string): { chunk: string; index: number }[] {
   }));
 }
 
-function isLatex({ commands, text }: { commands: Command[]; text: string }): boolean {
-  const known = commands.filter((command) => MATH_COMMANDS.has(command.name));
-
-  const isPath =
-    FILE_PATH.test(collapseBraces(text)) ||
-    commands.some((command) => !command.inBraces && !MATH_COMMANDS.has(command.name));
-
+function isLatex(text: string): boolean {
   return (
-    !isPath &&
-    (known.length > 0 ||
+    !FILE_PATH.test(collapseBraces(text)) &&
+    (HAS_COMMAND.test(text) ||
       BRACED_SCRIPT.test(text) ||
       HAS_CARET_POWER.test(text) ||
-      HAS_BARE_SUBSCRIPT.test(text))
+      BARE_SUBSCRIPT.test(text))
   );
 }
 
@@ -239,9 +180,8 @@ function toBareLatex({ chunk, index }: { chunk: string; index: number }): BareLa
   const opened = trimStart(chunk);
   const written = trimEnd(opened);
   const start = index + chunk.length - opened.length;
-  const commands = findCommands(written);
 
-  if (!isLatex({ commands, text: written })) {
+  if (!isLatex(written)) {
     return null;
   }
 

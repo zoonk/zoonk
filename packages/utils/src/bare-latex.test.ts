@@ -31,7 +31,8 @@ describe(findBareLatex, () => {
       String.raw`It costs R$ 80, \$5 or $10, keeps user_id and the file C:\Users\ana\notes.txt.`,
       String.raw`Open C:\text\notes.txt to read it.`,
       String.raw`Open C:\log.txt or logs\ln.csv to read them.`,
-      "Set user_1 and max_2 in the config.",
+      "Set user_1 and max_2 in the config, then rename db_1 to db_2.",
+      "Abra /tmp/ch_1.txt e docs/x_1.md para ler os arquivos.",
       "Smile ^_^ and rate it 9/10 * 2.",
     ];
 
@@ -77,6 +78,18 @@ describe(wrapBareLatex, () => {
     expect(wrapBareLatex(String.raw`Sucrose is C_12H_22O_11, and \log_10(100) = 2.`)).toBe(
       String.raw`Sucrose is $C_{12}H_{22}O_{11}$, and $\log_{10}(100)$ = 2.`,
     );
+
+    expect(wrapBareLatex("Salts: CaCl_2, HCO_3 and Mg(OH)_2. Ions: Na^+, Cl^- at 10^+3 Pa.")).toBe(
+      "Salts: $CaCl_{2}$, $HCO_{3}$ and $Mg(OH)_{2}$. Ions: $Na^{+}$, $Cl^{-}$ at $10^{+3}$ Pa.",
+    );
+
+    expect(
+      wrapBareLatex(String.raw`So a_n = 2n + 1, \Delta x_i is small, and \mathbb{R} is real.`),
+    ).toBe(String.raw`So $a_n$ = 2n + 1, $\Delta$ $x_i$ is small, and $\mathbb{R}$ is real.`);
+
+    expect(
+      wrapBareLatex(String.raw`Use \left(x^2+1\right) and x_1's value with H_2O's mass.`),
+    ).toBe(String.raw`Use $\left(x^{2}+1\right)$ and $x_{1}$'s value with $H_{2}O$'s mass.`);
 
     expect(wrapBareLatex("Think of 10^3—it means one thousand. Recall—x^2 grows.")).toBe(
       "Think of $10^{3}$—it means one thousand. Recall—$x^{2}$ grows.",
@@ -130,6 +143,7 @@ describe(wrapBareLatex, () => {
       String.raw`The set {10^3 is saved in C:\log.txt.`,
       String.raw`The ratio is \frac{\\sen(x)}{2}.`,
       "A 10^3‑fold increase.",
+      "The area is **r**^2.",
     ];
 
     expect(texts.map((text) => wrapBareLatex(text))).toStrictEqual(texts);
