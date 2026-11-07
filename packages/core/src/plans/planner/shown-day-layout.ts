@@ -1,6 +1,7 @@
 import { readSelectedItemFacts } from "../_utils/selected-item-contract";
 import { type BuildPlanInput } from "./build-plan";
 import { type scheduleCarriedAndRest } from "./carried-and-rest";
+import { markAfterCarried } from "./carried-schedule";
 import { getOneDayStudy, toDayMinutes } from "./interval-study-minutes";
 import { toIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem, getItemKey } from "./plan-items";
@@ -272,7 +273,11 @@ export function layOutShownDay({
       : [],
   );
 
-  const after = layOut({ days: shown.days, kept, units: shown.units });
+  const after = layOut({
+    days: shown.days,
+    kept,
+    units: markAfterCarried({ schedule: { units: held }, units: shown.units }),
+  });
 
   return {
     ...after,

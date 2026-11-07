@@ -1916,7 +1916,7 @@ describe("work an earlier day left", () => {
       taught: 5,
     },
   ])(
-    "teaches a challenge's own lessons left on its shown day, then the challenge ($name)",
+    "teaches a challenge's own lessons left on its shown day, then the challenge, whether the learner opened them or not ($name)",
     ({ daily, last, taught }) => {
       const input = planInput({
         goal: { dailyMinutes: daily, kind: "learn", targetDate: null },
@@ -1942,26 +1942,33 @@ describe("work an earlier day left", () => {
       const first = buildPlan(input);
       const items = store(first, new Set(lessonsOn(first, monday)));
 
-      const comeBack = (released: Set<number>) =>
+      const comeBack = (released: Set<number>, openedKeys?: string[]) =>
         buildPlan({
           ...input,
           carryOver: { lessonIds: [] },
           items,
+          openedKeys,
           phaseEnds: getShownPhaseEnds({ items, phases: first.phases, released }),
           setAsideLeftWork: true,
           today: wednesday,
         });
 
+      const firstLeft = (plan: ReturnType<typeof buildPlan>) =>
+        plan.items
+          .filter((item) => item.status === "todo" && item.phase === 0)
+          .map((item) => [item.key.split(":")[0], dateOf(item)]);
+
       const kept = comeBack(new Set());
-      const firstLeft = kept.items.filter((item) => item.status === "todo" && item.phase === 0);
+
+      const shown = [
+        ...lessonsOn(first, tuesday).map(() => ["lesson", "2026-09-30"]),
+        ["boss", "2026-10-01"],
+      ];
 
       expect(first.phases[0]?.endDate).toBe("2026-09-30");
       expect(lessonsOn(first, tuesday).length).toBeGreaterThan(0);
-
-      expect(firstLeft.map((item) => [item.key.split(":")[0], dateOf(item)])).toStrictEqual([
-        ...lessonsOn(first, tuesday).map(() => ["lesson", "2026-09-30"]),
-        ["boss", "2026-10-01"],
-      ]);
+      expect(firstLeft(kept)).toStrictEqual(shown);
+      expect(firstLeft(comeBack(new Set(), lessonsOn(first, tuesday)))).toStrictEqual(shown);
 
       expect(kept.items.map((item) => [item.key, dateOf(item)])).toStrictEqual(
         comeBack(new Set([0])).items.map((item) => [item.key, dateOf(item)]),
