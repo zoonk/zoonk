@@ -1,7 +1,7 @@
 import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { type ServiceTier } from "@zoonk/ai/provider-options";
-import { prisma } from "@zoonk/db";
+import { type Product, prisma } from "@zoonk/db";
 import { listCoursesBehind } from "./course-release";
 import { type ProductSourcesReading, readProductSources } from "./read-product-sources";
 import { saveProductReleases } from "./save-product-research";
@@ -12,7 +12,34 @@ export type ReleasesReading = Pick<ProductSourcesReading, "provenance" | "releas
   sourceId: string;
 };
 
-async function findUnreadReleasesPage(productId: string) {
+export type UnreadReleasesPage = {
+  brand: string;
+  contentHash: string;
+  language: string;
+  name: string;
+  productId: string;
+  sourceId: string;
+};
+
+/** A page is read once its releases were saved from its hash or a reading of it failed for good. */
+export function isReleasesPageUnread({
+  contentHash,
+  product,
+}: {
+  contentHash: string;
+  product: Pick<Product, "releasesHash" | "unreadableReleasesHash">;
+}): boolean {
+  return contentHash !== product.releasesHash && contentHash !== product.unreadableReleasesHash;
+}
+
+/**
+ * Internal workflow bridge for research's refresh of a stale product and the freshness check: a
+ * known product's releases page when its text is unread, whether this run or an earlier one saved
+ * it. Null when it's read already.
+ */
+export async function findUnreadReleasesPage(
+  productId: string,
+): Promise<UnreadReleasesPage | null> {
   const product = await prisma.product.findUnique({
     select: {
       name: true,
@@ -21,60 +48,71 @@ async function findUnreadReleasesPage(productId: string) {
       releasesSource: {
         select: { contentHash: true, extractedText: true, id: true, language: true },
       },
+      unreadableReleasesHash: true,
     },
     where: { id: productId },
   });
 
   const source = product?.releasesSource;
 
-  if (!product || !source?.extractedText || source.contentHash === product.releasesHash) {
+  if (
+    !product ||
+    !source?.extractedText ||
+    !isReleasesPageUnread({ contentHash: source.contentHash, product })
+  ) {
     return null;
   }
 
-  return { brand: product.organization.name, name: product.name, source };
+  return {
+    brand: product.organization.name,
+    contentHash: source.contentHash,
+    language: source.language,
+    name: product.name,
+    productId,
+    sourceId: source.id,
+  };
 }
 
-/**
- * Internal workflow bridge for research's refresh of a stale product and the freshness check: reads
- * a known product's releases page when its text differs from the one its releases were read from,
- * whether this run or an earlier one saved it. Null when it's read already.
- */
-export async function readProductReleases({
+/** Internal workflow bridge: one model call over the page `findUnreadReleasesPage` found. */
+export async function readReleasesPage({
   analytics,
-  productId,
+  page,
   release,
   serviceTier,
 }: {
   analytics?: AiGenerationContext;
-  productId: string;
+  page: UnreadReleasesPage;
   /** A release the learner named, so the reading looks for it even past the newest ones. */
   release: string | null;
   serviceTier?: ServiceTier;
-}): Promise<ReleasesReading | null> {
-  const unread = await findUnreadReleasesPage(productId);
-
-  if (!unread) {
-    return null;
-  }
-
-  const { brand, name, source } = unread;
-
+}): Promise<ReleasesReading> {
   const reading = await readProductSources({
     analytics,
-    hints: { brand, name, release },
+    hints: { brand: page.brand, name: page.name, release },
     known: true,
-    language: source.language,
+    language: page.language,
     serviceTier,
-    sourceIds: [source.id],
+    sourceIds: [page.sourceId],
   });
 
   return {
-    contentHash: reading.hashes[source.id] ?? source.contentHash,
-    productId,
+    contentHash: reading.hashes[page.sourceId] ?? page.contentHash,
+    productId: page.productId,
     provenance: reading.provenance,
     releases: reading.releases,
-    sourceId: source.id,
+    sourceId: page.sourceId,
   };
+}
+
+/** Internal workflow bridge: a reading of the page failed after its retries in a way no retry fixes. */
+export async function recordUnreadableReleasesPage({
+  contentHash,
+  productId,
+}: Pick<UnreadReleasesPage, "contentHash" | "productId">): Promise<void> {
+  await prisma.product.updateMany({
+    data: { unreadableReleasesHash: contentHash },
+    where: { id: productId },
+  });
 }
 
 /**

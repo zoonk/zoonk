@@ -1,38 +1,41 @@
 /// Made only from official pages research fetched. `normalizedName` and `aliases` are lookup keys:
 /// lowercase letters and digits only, so "Next.js" and "next js" meet.
 model Product {
-  id               String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  organizationId   String           @map("organization_id") @db.Uuid
-  organization     Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  slug             String
-  name             String
-  normalizedName   String           @map("normalized_name")
-  aliases          String[]         @default([])
-  website          String
+  id                     String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId         String           @map("organization_id") @db.Uuid
+  organization           Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  slug                   String
+  name                   String
+  normalizedName         String           @map("normalized_name")
+  aliases                String[]         @default([])
+  website                String
   /// One page can serve several products (a brand's one docs hub), so each product points at the
   /// pages its research read.
-  websiteSourceId  String?          @map("website_source_id") @db.Uuid
-  websiteSource    Source?          @relation("ProductWebsiteSource", fields: [websiteSourceId], references: [id], onDelete: SetNull)
-  docsSourceId     String?          @map("docs_source_id") @db.Uuid
-  docsSource       Source?          @relation("ProductDocsSource", fields: [docsSourceId], references: [id], onDelete: SetNull)
+  websiteSourceId        String?          @map("website_source_id") @db.Uuid
+  websiteSource          Source?          @relation("ProductWebsiteSource", fields: [websiteSourceId], references: [id], onDelete: SetNull)
+  docsSourceId           String?          @map("docs_source_id") @db.Uuid
+  docsSource             Source?          @relation("ProductDocsSource", fields: [docsSourceId], references: [id], onDelete: SetNull)
   /// English, one or two neutral sentences.
-  description      String
-  imageUrl         String?          @map("image_url")
+  description            String
+  imageUrl               String?          @map("image_url")
   /// The official page that lists its releases; the daily sweep reads it again while learners use the product.
-  releasesSourceId String?          @map("releases_source_id") @db.Uuid
-  releasesSource   Source?          @relation("ProductReleasesSource", fields: [releasesSourceId], references: [id], onDelete: SetNull)
+  releasesSourceId       String?          @map("releases_source_id") @db.Uuid
+  releasesSource         Source?          @relation("ProductReleasesSource", fields: [releasesSourceId], references: [id], onDelete: SetNull)
   /// The releases page's hash the saved releases were read from, so a page whose hash differs is
   /// read again even when an earlier check already saved that hash and then failed.
-  releasesHash     String?          @map("releases_hash")
-  model            String
-  promptVersion    String           @map("prompt_version")
-  runId            String           @map("run_id")
-  generatedAt      DateTime         @default(now()) @map("generated_at")
-  createdAt        DateTime         @default(now()) @map("created_at")
-  updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at")
-  releases         ProductRelease[]
-  courses          Course[]
-  goals            Goal[]
+  releasesHash           String?          @map("releases_hash")
+  /// The releases page's hash a reading failed on after its retries (the model refused the page or
+  /// its output kept failing its checks), so checks skip that page until its hash changes.
+  unreadableReleasesHash String?          @map("unreadable_releases_hash")
+  model                  String
+  promptVersion          String           @map("prompt_version")
+  runId                  String           @map("run_id")
+  generatedAt            DateTime         @default(now()) @map("generated_at")
+  createdAt              DateTime         @default(now()) @map("created_at")
+  updatedAt              DateTime         @default(now()) @updatedAt @map("updated_at")
+  releases               ProductRelease[]
+  courses                Course[]
+  goals                  Goal[]
 
   @@unique([organizationId, normalizedName], name: "organizationName")
   @@unique([organizationId, slug], name: "organizationSlug")

@@ -34,6 +34,7 @@ CREATE TABLE "products" (
     "image_url" TEXT,
     "releases_source_id" UUID,
     "releases_hash" TEXT,
+    "unreadable_releases_hash" TEXT,
     "model" TEXT NOT NULL,
     "prompt_version" TEXT NOT NULL,
     "run_id" TEXT NOT NULL,
