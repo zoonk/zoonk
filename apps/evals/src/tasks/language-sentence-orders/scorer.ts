@@ -1,5 +1,6 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
+import { reordersWords } from "@/lib/words";
 import { type LanguageSentenceOrders } from "@zoonk/ai/tasks/language/language-sentence-orders";
 import {
   type SentenceOrders,
@@ -72,7 +73,9 @@ function checkSide({
 
   const keptKeys = toKeys(written);
   const invalidKeys = toKeys(expected.invalid);
-  const unbuildable = written.filter((order) => !keep(order));
+  const text = side === "otherOrders" ? sentence.sentence : sentence.translation;
+
+  const unbuildable = written.filter((order) => !keep(order) && !reordersWords({ order, text }));
   const wrong = written.filter((order) => invalidKeys.has(toOrderKey(keep(order) ?? "")));
   const missed = expected.valid.filter((order) => !keptKeys.has(toOrderKey(keep(order) ?? "")));
 

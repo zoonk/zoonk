@@ -1,5 +1,6 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
+import { reordersWords } from "@/lib/words";
 import { type LanguageLessonContent } from "@zoonk/ai/tasks/language/language-lesson";
 import { definitionNamesWord } from "@zoonk/ai/tasks/language/language-lesson-rules";
 import { keepSentenceOrders } from "@zoonk/core/library/language/sentence-orders";
@@ -48,10 +49,14 @@ function checkOrders({
 
     const dropped = [
       ...sentence.otherOrders.filter(
-        (order) => !keeps({ otherOrders: [order], otherTranslationOrders: [] }),
+        (order) =>
+          !keeps({ otherOrders: [order], otherTranslationOrders: [] }) &&
+          !reordersWords({ order, text: sentence.sentence }),
       ),
       ...(sameLanguage ? [] : sentence.otherTranslationOrders).filter(
-        (order) => !keeps({ otherOrders: [], otherTranslationOrders: [order] }),
+        (order) =>
+          !keeps({ otherOrders: [], otherTranslationOrders: [order] }) &&
+          !reordersWords({ order, text: sentence.translation }),
       ),
     ];
 
