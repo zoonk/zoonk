@@ -4,6 +4,7 @@ import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
+import { UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 
@@ -61,7 +62,11 @@ function LimitNoticeBody({
       <p className={TEXT_CLASS}>{message}</p>
 
       {needsAccount(limit) ? (
-        <PendingLink className={action} href={routes.signUp}>
+        <PendingLink
+          className={action}
+          href={routes.signUp}
+          icon={<UserPlusIcon aria-hidden="true" />}
+        >
           {t("Create a free account")}
         </PendingLink>
       ) : (

@@ -14,7 +14,6 @@
   "focustest_questions": "7167f10e099f7d48bdd6d624c1db83ee2a81b6922dfdf003dcf630a93f6163c0",
   "focustest_see_plan": "15b4c31f68c3c8e7ba58408dbde625136eefbe638b2828d8735ff07a9a607ea6",
   "focustest_start": "0a2d2097609f7ce4f007ddb701e73806a70b2164ddcae6252df2397a442b173e",
-  "focustest_starting": "29a4521889388929c930303c634b61e16576a509d62e7a49fff94543a19a6c73",
   "focustest_subjects": "e71134ce0a289e485480596ac390cf8ff902cb9fe6eb65a1615ebb33ed5309e3",
   "focustest_title": "ee5b69aacf00887fbd98e1b7a9e0bfc79e98429ee63bbd7e70cf6a8da77fe798",
   "focustest_undone": "9e1925239dc7b54d7415ceb5e12457b13e7f18cb606280d6f7de5041ed11baf9",
@@ -45,7 +44,6 @@
     <!-- How long the test takes. %1$s is a duration, such as "5 min". -->
     <string name="focustest_about">Environ %1$s</string>
     <string name="focustest_start">Commencer le test</string>
-    <string name="focustest_starting">Démarrage…</string>
     <string name="focustest_writing">Préparation de tes questions</string>
     <string name="focustest_writing_questions">Préparation de questions sur chaque sujet</string>
     <string name="focustest_writing_line">Choix des questions pour chaque matière…</string>

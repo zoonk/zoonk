@@ -176,16 +176,14 @@ struct MockRunnerView: View {
   }
 
   private var nextButton: some View {
-    Button {
+    BusyButton(isBusy: run.busy == .submit, icon: isLastQuestion ? .send : .forward) {
       if isLastQuestion {
         confirmsHandIn = true
       } else {
         run.go(to: run.position + 1)
       }
     } label: {
-      if run.busy == .submit {
-        Text("Handing in…", tableName: "Mock", comment: "A section is being handed in")
-      } else if !isLastQuestion {
+      if !isLastQuestion {
         Text("Next", tableName: "Mock", comment: "The next question")
       } else if view.isLastSectionCurrent {
         Text("Hand in the mock exam", tableName: "Mock", comment: "Hands in the last section")
@@ -195,7 +193,7 @@ struct MockRunnerView: View {
     }
     .buttonStyle(.mainAction)
     .controlSize(.large)
-    .disabled(run.pending || !run.moves.canAdvance)
+    .disabled(run.busy != .submit && (run.pending || !run.moves.canAdvance))
     .keyboardShortcut(isLastQuestion ? nil : .defaultAction)
   }
 
@@ -602,13 +600,16 @@ private struct MockAnswerSheet: View {
       }
     }
     .safeAreaBar(edge: .bottom) {
-      Button(action: onHandIn) {
+      BusyButton(isBusy: run.busy == .submit, icon: .send, action: onHandIn) {
         Text("Hand in", tableName: "Mock", comment: "Hands in from the answer sheet")
-          .frame(maxWidth: .infinity)
       }
       .buttonStyle(.outline)
       .controlSize(.large)
-      .disabled(run.pending || !run.moves.canAdvance && run.position == run.questions.count - 1)
+      .buttonSizing(.flexible)
+      .disabled(
+        run.busy != .submit
+          && (run.pending || !run.moves.canAdvance && run.position == run.questions.count - 1)
+      )
       .scenePadding(.horizontal)
       .padding(.vertical, 10)
     }

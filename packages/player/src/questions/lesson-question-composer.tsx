@@ -9,7 +9,6 @@ import {
   InputGroupButton,
   InputGroupTextarea,
 } from "@zoonk/ui/components/input-group";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, RotateCcwIcon } from "lucide-react";
@@ -41,17 +40,7 @@ function ComposerError({
   return <RequestErrorMessage error={requestError} />;
 }
 
-function SubmitIcon({
-  isCreating,
-  isResolvingPreviousQuestion,
-}: {
-  isCreating: boolean;
-  isResolvingPreviousQuestion: boolean;
-}) {
-  if (isCreating) {
-    return <Spinner aria-hidden="true" />;
-  }
-
+function SubmitIcon({ isResolvingPreviousQuestion }: { isResolvingPreviousQuestion: boolean }) {
   if (isResolvingPreviousQuestion) {
     return <RotateCcwIcon aria-hidden="true" />;
   }
@@ -258,18 +247,15 @@ export function QuestionComposer({
         <InputGroupAddon align="inline-end" className={SEND_ADDON_CLASS[variant]}>
           <InputGroupButton
             aria-label={submitLabel}
+            busy={state.creating !== null}
             className="size-7.5 rounded-lg"
             disabled={!canSend || createNavigationError}
             focusableWhenDisabled
+            icon={<SubmitIcon isResolvingPreviousQuestion={isResolvingPreviousQuestion} />}
             onClick={() => void controller.send()}
             size="icon-sm"
             variant="default"
-          >
-            <SubmitIcon
-              isCreating={state.creating !== null}
-              isResolvingPreviousQuestion={isResolvingPreviousQuestion}
-            />
-          </InputGroupButton>
+          />
         </InputGroupAddon>
       </InputGroup>
 

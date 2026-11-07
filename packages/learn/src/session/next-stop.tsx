@@ -2,6 +2,7 @@
 
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { Button } from "@zoonk/ui/components/button";
+import { CircleStopIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useLayoutEffect, useRef, useState } from "react";
 import { EnterButton } from "../_components/enter-button";
@@ -72,7 +73,7 @@ function StartButton({
   const ref = useTapFocus(focus);
 
   return (
-    <EnterButton aria-busy={busy || undefined} disabled={busy} onClick={onClick} ref={ref}>
+    <EnterButton busy={busy} icon={<PlayIcon aria-hidden="true" />} onClick={onClick} ref={ref}>
       {step.status === "active" ? t("Continue") : t("Start")}
     </EnterButton>
   );
@@ -206,8 +207,8 @@ function NextStopActionBar({
       >
         {canStop && (
           <Button
-            disabled={stop.isPending}
-            focusableWhenDisabled
+            busy={stop.isPending}
+            icon={<CircleStopIcon aria-hidden="true" />}
             onClick={stop.run}
             size="xl"
             variant="outline"

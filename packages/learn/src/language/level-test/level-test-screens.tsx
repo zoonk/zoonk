@@ -6,7 +6,7 @@ import {
 } from "@zoonk/core/language/level-test/contract";
 import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
-import { CircleCheckIcon } from "lucide-react";
+import { CircleCheckIcon, PlayIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../../_components/save-error";
 import { useAppLocale } from "../../_utils/locale";
@@ -21,7 +21,6 @@ import {
   OnboardingTitle,
 } from "../../onboarding/onboarding-frame";
 import { StepIcon } from "../../onboarding/steps/step-parts";
-import { PendingLabel } from "../../plan/plan-coverage";
 import { LevelBars } from "./level-test-parts";
 
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
@@ -99,14 +98,17 @@ export function TestIntro({
 
       <OnboardingFooter>
         <OnboardingPrimaryButton
-          aria-busy={starting || undefined}
-          disabled={pending || starting}
+          busy={starting}
+          disabled={pending}
+          icon={<PlayIcon aria-hidden="true" />}
           onClick={onStart}
         >
-          <PendingLabel pending={starting}>{t("Start")}</PendingLabel>
+          {t("Start")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton
-          disabled={pending || starting}
+          busy={pending}
+          disabled={starting}
+          icon={<SkipForwardIcon aria-hidden="true" />}
           onClick={onScratch}
           variant="ghost"
         >

@@ -26,7 +26,6 @@
   "essay_full_marks": "04128e2e2b83c9d1ba724df1f413aeeea05682f5574925974d85bdcc085e2a91",
   "essay_grade_rewrite": "773b47020564d2ba74e835ceae66c7e35eeae07e644b000aef5c12cbc7dff65f",
   "essay_grading": "0abb68dcccf8677e748c0d4266279778efb6240a6ca9f4c8dd6630391bcf1738",
-  "essay_grading_button": "ed9392a3bc2b9baab157cbcc2fb620d98c1f66059043dbb5e575c1ccc508889d",
   "essay_grading_slow": "b478851f8745f5db0aec40f72a6a0f359027c19abeb930b1c26c736cee932864",
   "essay_keep_writing": "933e8f0af89672ef7f196f84580cecb5d4dbb34a99055caf2bf3b0798d766e7f",
   "essay_last_grade": "a7a916570dc81acf60a6f8136196555a1e9b0647e4ce3639a73e971fe61a5f30",
@@ -116,7 +115,6 @@
     <string name="essay_grading">Sprawdzamy twoje wypracowanie według każdego kryterium. Może to potrwać do 30 sekund.</string>
     <string name="essay_grading_slow">Nadal oceniamy. Trwa to dłużej niż zwykle.</string>
     <string name="essay_skip_rewrite">Pomiń poprawianie</string>
-    <string name="essay_grading_button">Oceniamy…</string>
     <string name="essay_grade_rewrite">Oceń poprawioną wersję</string>
     <string name="essay_send">Wyślij do oceny</string>
     <string name="essay_leave_title">Przerwać lekcję?</string>

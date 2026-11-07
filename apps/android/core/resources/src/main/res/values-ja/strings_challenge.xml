@@ -43,7 +43,6 @@
   "challenge_start": "bdceea01fb6456455c41b71f3d72bfa359ec560a8fd5cefef0c3530a46df351c",
   "challenge_start_failed": "3064475a10a7dfabf1b51863183b26311dfbbec7d49e059187d1c997d4d23d7b",
   "challenge_start_slow": "5b8adfe14cfc528f62c4559492035d7ab1cc5c76f368c0fa680e3e5d5e0e9e31",
-  "challenge_starting": "f992d3f5a49d3a779966934005d268d1e0f9d059e53c4582469f14b8a74daef3",
   "challenge_today": "4abe016dbeeaf87148c2180f381757a4030a41e423c48237baeed22404a61e8c",
   "challenge_tomorrow": "e4c36340daaadaf2041410c26805b2af7a7d811aedc9321cd28570e4b3fed75f",
   "challenge_topic_count": "7c02dffbffacb90cb18e7597c047dd93aab7ac9610ea2542b8fa2a8298541b11",
@@ -137,7 +136,6 @@
     </plurals>
     <string name="challenge_call_plus">チャレンジの会話はPlusで利用できます。会話がなくても学習計画は進みます。</string>
     <string name="challenge_start">始める</string>
-    <string name="challenge_starting">開始しています…</string>
     <string name="challenge_start_failed">うまくいきませんでした。少し待ってからもう一度試してください。</string>
     <string name="challenge_start_slow">まだ開始の準備をしています。いつもより時間がかかっています。</string>
     <string name="challenge_continue">続ける</string>

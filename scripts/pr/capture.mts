@@ -17,7 +17,7 @@ const repository = resolve(import.meta.dirname, "../..");
 const USAGE = `Usage: pnpm pr:capture <before|after> <path...> [options]
        pnpm pr:capture <before|after> --steps <file> [options]
 
-Captures Main the same way on each side of a change and writes tmp/pr-media/media.md, the PR's
+Captures an app the same way on each side of a change and writes tmp/pr-media/media.md, the PR's
 before-and-after section. zoonk-commit's "Show the change" says when and how.
 
   --email <address>   sign in as this learner, with the newest code in the dev mailbox
@@ -26,7 +26,8 @@ before-and-after section. zoonk-commit's "Show the change" says when and how.
   --video             also record each screen while it runs
   --viewports <list>  phone,laptop by default (${VIEWPORT_NAMES.join(", ")})
   --schemes <list>    light by default (light, dark)
-  --url <url>         Main's URL, this checkout's by default
+  --app <name>        the app to capture: main by default, or another such as api or admin
+  --url <url>         the app's URL, this checkout's by default
   --out <dir>         tmp/pr-media by default`;
 
 function readArguments() {
@@ -34,6 +35,7 @@ function readArguments() {
     return parseArgs({
       allowPositionals: true,
       options: {
+        app: { default: "main", type: "string" },
         email: { type: "string" },
         help: { default: false, short: "h", type: "boolean" },
         out: { default: join(repository, "tmp/pr-media"), type: "string" },
@@ -74,12 +76,13 @@ async function capture({ positionals, values }: ReturnType<typeof readArguments>
   const out = resolve(values.out);
 
   const baseUrl =
-    values.url ?? getServiceUrl({ currentDirectory: repository, serviceName: "main" });
+    values.url ?? getServiceUrl({ currentDirectory: repository, serviceName: values.app });
 
   const steps = values.steps ? await readSteps(values.steps) : visitPaths(paths);
 
-  const storageState = values.email
+  const signedIn = values.email
     ? await signIn({
+        app: values.app,
         baseUrl,
         email: values.email,
         mailboxUrl: getMailboxCaptureUrl(
@@ -97,7 +100,7 @@ async function capture({ positionals, values }: ReturnType<typeof readArguments>
     schemes: pick(values.schemes, SCHEMES, "scheme"),
     side,
     steps,
-    storageState,
+    storageState: signedIn?.storageState,
     video: values.video,
     viewports: pick(values.viewports, VIEWPORT_NAMES, "viewport"),
   }).finally(async () => browser.close());

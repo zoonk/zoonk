@@ -37,7 +37,8 @@ extension ButtonStyle where Self == ZoonkButtonStyle {
 }
 
 private struct ZoonkButton: View {
-  @Environment(\.isEnabled) private var isEnabled
+  @Environment(\.isEnabled) private var isEnabledHere
+  @Environment(\.isBusy) private var isBusy
   @Environment(\.controlSize) private var controlSize
   @Environment(\.buttonSizing) private var sizing
   @Environment(\.colorScheme) private var colorScheme
@@ -66,11 +67,17 @@ private struct ZoonkButton: View {
         }
       }
       .opacity(isEnabled || variant == .main ? 1 : 0.5)
-      .opacity(configuration.isPressed && reduceMotion ? 0.8 : 1)
-      .scaleEffect(configuration.isPressed && !reduceMotion ? 0.97 : 1)
-      .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
+      .opacity(isPressed && reduceMotion ? 0.8 : 1)
+      .scaleEffect(isPressed && !reduceMotion ? 0.97 : 1)
+      .animation(.easeOut(duration: 0.15), value: isPressed)
       .contentShape(MinimumHitArea())
   }
+
+  /// A busy button keeps its look even where its container is disabled, such as a form that locks
+  /// while its answer saves: only its spinner says it's working.
+  private var isEnabled: Bool { isEnabledHere || isBusy }
+
+  private var isPressed: Bool { configuration.isPressed && !isBusy }
 
   private var isSmall: Bool { controlSize <= .small }
 
@@ -107,17 +114,17 @@ private struct ZoonkButton: View {
 
   private var fill: Color {
     if isDestructive {
-      return variant == .ghost && !configuration.isPressed
+      return variant == .ghost && !isPressed
         ? .clear : Color.destructive.opacity(colorScheme == .dark ? 0.2 : 0.1)
     }
 
     switch variant {
     case .main:
-      return isEnabled ? Color(.primary).opacity(configuration.isPressed ? 0.8 : 1) : .muted
+      return isEnabled ? Color(.primary).opacity(isPressed ? 0.8 : 1) : .muted
     case .secondary:
-      return Color(.secondary).opacity(configuration.isPressed ? 0.8 : 1)
+      return Color(.secondary).opacity(isPressed ? 0.8 : 1)
     case .outline, .ghost:
-      return configuration.isPressed ? .muted : .clear
+      return isPressed ? .muted : .clear
     }
   }
 }

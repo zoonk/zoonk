@@ -1,13 +1,15 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { HelpCircleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TaskActions } from "../_components/task-layout";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
+import { type AnswerSender } from "../mistakes/drill/drill-types";
 import { usePreloadMath } from "../rich-text/use-preload-math";
 import { TaskFrame, type TaskFrameAside, TaskMainButton } from "../shell/task-frame";
 import { getResumableAnswers, readAnswerDraft, writeAnswerDraft } from "./_utils/answer-draft";
@@ -132,6 +134,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<ChoiceQuestionAnswer[]>([]);
   const [selected, setSelected] = useState<ChoiceAnswer | null>(null);
+  const [sender, setSender] = useState<AnswerSender | null>(null);
   const shownAt = useRef(0);
   const questionRef = useRef<HTMLDivElement>(null);
   const question = questions[index];
@@ -155,7 +158,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
 
   useFocusNewQuestion({ container: questionRef, itemId });
 
-  const answer = (choice: ChoiceAnswer) => {
+  const answer = (choice: ChoiceAnswer, by: AnswerSender) => {
     if (!question) {
       return;
     }
@@ -172,6 +175,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
       return;
     }
 
+    setSender(by);
     draft.finish(next);
     onFinish(next);
   };
@@ -196,12 +200,13 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
               canFinish={!question && Boolean(upcoming?.ended)}
               isLast={index + 1 >= total}
               locked={locked}
-              onDontKnow={() => answer({ dontKnow: true })}
+              onDontKnow={() => answer({ dontKnow: true }, "notSure")}
               onFinish={finishNow}
-              onNext={() => selected && answer(selected)}
+              onNext={() => selected && answer(selected, "check")}
               pending={pending}
               question={question !== undefined}
               selected={selected !== null}
+              sender={sender}
             />
           </>
         )
@@ -260,6 +265,7 @@ function QuestionsFooter({
   pending,
   question,
   selected,
+  sender,
 }: {
   canFinish: boolean;
   isLast: boolean;
@@ -271,13 +277,14 @@ function QuestionsFooter({
   pending: boolean;
   question: boolean;
   selected: boolean;
+  sender: AnswerSender | null;
 }) {
   const t = useExtracted();
 
   if (!question) {
     return canFinish ? (
       <TaskActions>
-        <TaskMainButton busy={pending} disabled={locked} onClick={onFinish}>
+        <TaskMainButton busy={pending} disabled={locked} onClick={onFinish} {...FORWARD_ICON}>
           {t("Finish with these answers")}
         </TaskMainButton>
       </TaskActions>
@@ -287,16 +294,23 @@ function QuestionsFooter({
   return (
     <TaskActions>
       <Button
+        busy={pending && sender === "notSure"}
         className="shrink-0"
         disabled={locked}
         focusableWhenDisabled
+        icon={<HelpCircleIcon aria-hidden="true" />}
         onClick={onDontKnow}
         size="xl"
         variant="outline"
       >
         {t("I don't know yet")}
       </Button>
-      <TaskMainButton busy={pending} disabled={locked || !selected} onClick={onNext}>
+      <TaskMainButton
+        busy={pending && sender === "check"}
+        disabled={locked || !selected}
+        onClick={onNext}
+        {...FORWARD_ICON}
+      >
         {isLast ? t("Finish") : t("Next")}
       </TaskMainButton>
     </TaskActions>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { LoaderCircle, Play, RotateCcw } from "lucide-react";
+import { Play, RotateCcw } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type SandboxRuntimeStatus } from "./use-sandbox-runtime";
 
@@ -57,20 +57,14 @@ export function SandboxRunBar({
         )}
 
         <Button
+          busy={isRunning}
           className="flex-1"
-          disabled={isRunning}
-          focusableWhenDisabled
+          icon={<Play aria-hidden="true" />}
           onClick={onRun}
           size="lg"
           variant={hasRun ? "outline" : "default"}
         >
-          {isRunning ? (
-            <LoaderCircle aria-hidden="true" className="motion-safe:animate-spin" />
-          ) : (
-            <Play aria-hidden="true" />
-          )}
-          {isRunning && t("Running")}
-          {!isRunning && (hasRun ? t("Run again") : t("Run"))}
+          {hasRun ? t("Run again") : t("Run")}
         </Button>
       </div>
 

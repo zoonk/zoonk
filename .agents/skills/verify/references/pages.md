@@ -10,7 +10,7 @@
 | Speed work on `pnpm start` | `pnpm verify:pages --email <persona>@zoonk.test --throttle --nav /today /plan` |
 | A page anyone can open     | Leave out `--email`                                                            |
 
-It measures this checkout's Main at its Portless URL, whether `pnpm start` or `pnpm dev` serves it (`--url` points it elsewhere), and signs in with the newest code the dev mailbox received for `--email`.
+It measures this checkout's Main at its Portless URL, whether `pnpm start` or `pnpm dev` serves it, and signs in with the newest code the dev mailbox received for `--email`. `--app api` or `--app admin` measures that app the same way and signs in at its own auth routes, such as `pnpm verify:pages --app api --email <address> /auth/en/setup`; `--url` points it at the app served elsewhere.
 
 - `--throttle` is a mid-range phone on slow 4G (4× CPU, 150 ms, 1.6 Mbps), as Lighthouse's mobile run. Use it on production builds; it's what "instant on slower devices" means. A throttled phone hydrates seconds after its first paint, so a bug that needs a fast hydration (a script and React racing for the same element) shows only without it: run `--nav` once unthrottled too.
 - `--nav` loads the first path, then taps the visible link to each next path in order, as a learner moves between them (on the phone and the laptop). `navigations/paints.png` shows every paint after each tap: what the learner saw, not only when the URL changed.
@@ -30,7 +30,7 @@ Hard loads and taps must paint meaningful static shell UI immediately, with skel
 
 ### On GitHub
 
-When the report says the machine was busy, measure on a runner of its own: `gh workflow run measure-pages.yml --ref <pushed branch> -f paths="/today /plan" -f email=<persona>@zoonk.test`. It seeds the learners, builds and measures `main` (`-f base=<ref>` picks another, `-f base=` skips it), then builds and measures the branch with `main`'s run as its `--baseline`, so before and after share one machine; the whole run takes three to five minutes. `-f flags=` replaces the default `--viewports phone,laptop --schemes light`, such as `-f flags="--throttle --nav"` for speed work. `gh run watch <run id>` waits for it; the run's summary has both reports, and `gh run download <run id>` saves them with their screenshots. The run fails only when it couldn't measure the branch: its CPU is slower than a laptop's, so read its timings against `main`'s rather than against the lines alone, and a failing check is a finding in the report.
+When the report says the machine was busy, measure on a runner of its own: `gh workflow run measure-pages.yml --ref <pushed branch> -f paths="/today /plan" -f email=<persona>@zoonk.test` (`-f app=api` or `-f app=admin` measures that app instead of Main). It seeds the learners, builds and measures `main` (`-f base=<ref>` picks another, `-f base=` skips it), then builds and measures the branch with `main`'s run as its `--baseline`, so before and after share one machine; the whole run takes three to five minutes. `-f flags=` replaces the default `--viewports phone,laptop --schemes light`, such as `-f flags="--throttle --nav"` for speed work. `gh run watch <run id>` waits for it; the run's summary has both reports, and `gh run download <run id>` saves them with their screenshots. The run fails only when it couldn't measure the branch: its CPU is slower than a laptop's, so read its timings against `main`'s rather than against the lines alone, and a failing check is a finding in the report.
 
 ## What it judges
 

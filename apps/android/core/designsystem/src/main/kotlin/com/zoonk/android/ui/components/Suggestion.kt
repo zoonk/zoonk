@@ -223,25 +223,42 @@ fun SuggestionAction(
     text: String,
     onClick: () -> Unit,
     enabled: Boolean = true,
+    busy: Boolean = false,
     secondary: Boolean = false,
-) = SuggestionAction(onClick, enabled = enabled, secondary = secondary) { Text(text) }
+    leadingIcon: (@Composable () -> Unit)? = null,
+) = SuggestionAction(onClick, enabled = enabled, busy = busy, secondary = secondary, leadingIcon = leadingIcon) { Text(text) }
 
-/** [content] is the button's label, say with a spinner while its work runs. */
 @Composable
 fun SuggestionAction(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    busy: Boolean = false,
     secondary: Boolean = false,
+    leadingIcon: (@Composable () -> Unit)? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
     val presentation = LocalPresentation.current
     val width = if (presentation == Presentation.Sheet) Modifier.fillMaxWidth() else Modifier
 
     if (secondary || presentation == Presentation.Line) {
-        OutlinedButton(onClick = onClick, modifier = modifier.then(width), enabled = enabled, content = content)
+        OutlinedButton(
+            onClick = onClick,
+            modifier = modifier.then(width),
+            enabled = enabled,
+            busy = busy,
+            leadingIcon = leadingIcon,
+            content = content,
+        )
     } else {
-        Button(onClick = onClick, modifier = modifier.then(width), enabled = enabled, content = content)
+        Button(
+            onClick = onClick,
+            modifier = modifier.then(width),
+            enabled = enabled,
+            busy = busy,
+            leadingIcon = leadingIcon,
+            content = content,
+        )
     }
 }
 

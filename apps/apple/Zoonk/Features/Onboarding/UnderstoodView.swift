@@ -184,22 +184,21 @@ private struct UnderstoodCard: View {
 
         if error?.needsAccount != true {
           StepButtons(
-            canContinue: !isCreating && !rewriting,
+            canContinue: !rewriting,
             canSkip: !isCreating && !rewriting,
-            continueLabel: isCreating
-              ? Text(
-                "Saving your goal…", tableName: "Onboarding",
-                comment: "While the confirmed goals are created")
-              : Text(
-                "Looks right", tableName: "Onboarding",
-                comment: "Confirms what was understood and creates the goals"),
+            continueLabel: Text(
+              "Looks right", tableName: "Onboarding",
+              comment: "Confirms what was understood and creates the goals"),
+            continueIcon: .check,
             skipLabel: Text(
               "Fix something", tableName: "Onboarding",
               comment: "Opens the typed words to change and read again"),
+            skipIcon: nil,
             onContinue: onConfirm
           ) {
             rewriting = true
           }
+          .environment(\.isSavingAnswer, isCreating)
         }
       }
     }
@@ -541,15 +540,11 @@ private struct RowEditor: View {
       }
 
       ButtonRow {
-        Button(action: save) {
-          if isSaving {
-            Text("Saving…", tableName: "Onboarding", comment: "While a fix is saved")
-          } else {
-            Text("Save", tableName: "Onboarding", comment: "Saves a fix to an understood fact")
-          }
+        BusyButton(isBusy: isSaving, icon: .check, action: save) {
+          Text("Save", tableName: "Onboarding", comment: "Saves a fix to an understood fact")
         }
         .buttonStyle(.mainAction)
-        .disabled(isSaving || (field.editor == .text && trimmed.isEmpty))
+        .disabled(field.editor == .text && trimmed.isEmpty)
 
         Button(role: .cancel, action: onCancel) {
           Text("Cancel", tableName: "Onboarding", comment: "Stops fixing an understood fact")
@@ -664,15 +659,13 @@ private struct ExplainOutcome: View {
 
       if error?.needsAccount != true {
         StepButtons(
-          canContinue: !isStarting,
-          continueLabel: isStarting
-            ? Text(
-              "Opening your explanation…", tableName: "Onboarding",
-              comment: "While a quick explanation is created")
-            : Text(
-              "Explain it", tableName: "Onboarding",
-              comment: "Starts a quick explanation of the learner's question"),
-          onContinue: onStart)
+          continueLabel: Text(
+            "Explain it", tableName: "Onboarding",
+            comment: "Starts a quick explanation of the learner's question"),
+          continueIcon: .explain,
+          onContinue: onStart
+        )
+        .environment(\.isSavingAnswer, isStarting)
       }
     }
   }
@@ -738,21 +731,19 @@ private struct InstrumentOutcome: View {
 
       if error?.needsAccount != true {
         StepButtons(
-          canContinue: !isStarting,
-          canSkip: !isJoining && waitlist != .joined,
-          continueLabel: isStarting
-            ? Text(
-              "Saving your goal…", tableName: "Onboarding",
-              comment: "While the confirmed goals are created")
-            : Text(
-              "Start musicianship", tableName: "Onboarding", comment: "Starts a musicianship goal"),
+          canSkip: waitlist != .joined,
+          continueLabel: Text(
+            "Start musicianship", tableName: "Onboarding", comment: "Starts a musicianship goal"),
+          continueIcon: .play,
           skipLabel: Text(
             "Join the waitlist", tableName: "Onboarding",
             comment: "Joins the waitlist for lessons that teach playing an instrument"),
+          skipIcon: .notify,
           onContinue: onStartMusicianship
         ) {
           Task { await join() }
         }
+        .environment(\.isSavingAnswer, isStarting || isJoining)
       }
     }
     .announcesStatus(waitlist.map(Self.note))
@@ -806,6 +797,7 @@ private struct DeclinedOutcome: View {
         continueLabel: Text(
           "Try another goal", tableName: "Onboarding",
           comment: "Goes back to write a different goal"),
+        continueIcon: nil,
         onContinue: onRetry)
     }
   }
@@ -831,6 +823,7 @@ private struct UnclearOutcome: View {
         continueLabel: Text(
           "Write my goal again", tableName: "Onboarding",
           comment: "Goes back to write the goal with more detail"),
+        continueIcon: nil,
         onContinue: onRetry)
     }
   }

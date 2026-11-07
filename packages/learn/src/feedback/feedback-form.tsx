@@ -10,11 +10,10 @@ import {
 } from "@zoonk/ui/components/field";
 import { Input } from "@zoonk/ui/components/input";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { parseFormField } from "@zoonk/utils/form";
-import { PaperclipIcon } from "lucide-react";
+import { PaperclipIcon, SendIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useActionState, useEffect, useId, useState } from "react";
 import { type ContentFeedbackContextValue, useContentFeedback } from "./feedback-context";
@@ -112,8 +111,14 @@ function SendButton({ disabled, pending }: { disabled: boolean; pending: boolean
   const t = useExtracted("feedback");
 
   return (
-    <Button disabled={disabled || pending} focusableWhenDisabled size="sm" type="submit">
-      {pending && <Spinner aria-hidden="true" />}
+    <Button
+      busy={pending}
+      disabled={disabled}
+      focusableWhenDisabled
+      icon={<SendIcon aria-hidden="true" />}
+      size="sm"
+      type="submit"
+    >
       {t("Send message")}
     </Button>
   );
@@ -206,7 +211,9 @@ export function FeedbackForm({
         </div>
       ) : (
         <div className="flex justify-end">
-          <SubmitButton disabled={viewerEmail === undefined}>{t("Send message")}</SubmitButton>
+          <SubmitButton disabled={viewerEmail === undefined} icon={<SendIcon aria-hidden="true" />}>
+            {t("Send message")}
+          </SubmitButton>
         </div>
       )}
     </form>

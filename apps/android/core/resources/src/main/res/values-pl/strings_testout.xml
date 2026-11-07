@@ -15,7 +15,6 @@
   "testout_rule": "b4221f680137c4b7321f5affa16f57c7736690c0e76c6a91eb96ba9ca0baca7a",
   "testout_see_plus": "cdaa2fd28efc6c65cf508f22bbdf79c4a66803526cac7f8480150ecc26d49387",
   "testout_start": "f8c1dd370fe68feeeda98111ed85f4e32f0201c55259e3d9b4d51137fe2f4dbb",
-  "testout_starting": "dc11c5f4e1c0b73e585d13398fad04dccab1311b1ad9bd6e8c612f4d0312067a",
   "testout_this_chapter": "d18af84b42e75a3cfd79ef2cb6ef31a30590223132c749b6086cb92374a98b34",
   "testout_title": "ed8a452bf5c7dbdfcc26eb2d343d9c097043e57c999921d4d9d85f92a8e60d83",
   "testout_writing": "d78fc65d4c0fd26a87d65f1f22bddb41e96d9d45f874ccb0ee6ed0e2f5161e9f",
@@ -33,7 +32,6 @@
     <string name="testout_intro_title">Już to znasz?</string>
     <string name="testout_intro_detail">Kilka pytań z tego rozdziału. Jeśli dobrze ci pójdzie, plan pominie to, co już wiesz.</string>
     <string name="testout_start">Rozpocznij test</string>
-    <string name="testout_starting">Rozpoczynamy…</string>
     <string name="testout_see_plus">Poznaj Plus</string>
     <string name="testout_writing">Przygotowujemy dla ciebie pytania</string>
     <string name="testout_writing_questions">Przygotowujemy pytania do tego rozdziału</string>

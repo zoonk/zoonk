@@ -1,7 +1,8 @@
 "use client";
 
 import { type CheckpointQuestion } from "@zoonk/core/checkpoints/contract";
-import { BrainIcon } from "lucide-react";
+import { FORWARD_ICON } from "@zoonk/ui/components/button";
+import { BrainIcon, CheckIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { StepRow, StepRows } from "../_components/step-card";
 import { TaskHeaderSegments, TaskHeaderTitle, type TaskSegment } from "../_components/task-header";
@@ -157,20 +158,17 @@ function DuelAction() {
   const { duel } = useCheckpointScreen();
   const { question, score } = useDuelNumbers();
   const { feedback, pending, selected } = duel.state;
-
-  if (!question || feedback) {
-    const isLast = score.done;
-
-    return (
-      <TaskMainButton busy={pending} onClick={() => void duel.next()}>
-        {isLast ? t("See how it went") : t("Next")}
-      </TaskMainButton>
-    );
-  }
+  const answered = !question || feedback !== null;
+  const nextLabel = score.done ? t("See how it went") : t("Next");
 
   return (
-    <TaskMainButton busy={pending} disabled={!selected} onClick={() => void duel.confirm()}>
-      {t("Confirm")}
+    <TaskMainButton
+      busy={pending}
+      disabled={!answered && !selected}
+      onClick={() => void (answered ? duel.next() : duel.confirm())}
+      {...(answered ? FORWARD_ICON : { icon: <CheckIcon aria-hidden="true" /> })}
+    >
+      {answered ? nextLabel : t("Confirm")}
     </TaskMainButton>
   );
 }

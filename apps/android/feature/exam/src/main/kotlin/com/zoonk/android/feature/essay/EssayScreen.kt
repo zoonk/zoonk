@@ -75,7 +75,6 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
 import com.zoonk.android.feature.player.leaveTaskFor
-import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.RunColumn
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
@@ -90,6 +89,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
@@ -251,24 +251,23 @@ internal fun EssayWrite(
                 TaskActions { width ->
                     if (rewriting) {
                         OutlinedButton(
+                            busy = finishing,
                             onClick = viewModel::finish,
-                            enabled = !finishing,
-                        ) { Text(stringResource(R.string.essay_skip_rewrite)) }
+                            leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+                        ) {
+                            Text(stringResource(R.string.essay_skip_rewrite))
+                        }
                     }
                     val pending = ui.send == EssaySend.Pending
-                    BusyButton(
-                        stringResource(
-                            when {
-                                pending -> R.string.essay_grading_button
-                                rewriting -> R.string.essay_grade_rewrite
-                                else -> R.string.essay_send
-                            },
-                        ),
+                    Button(
                         busy = pending,
-                        enabled = ui.canSend && !finishing,
-                        modifier = width,
                         onClick = viewModel::send,
-                    )
+                        modifier = width,
+                        enabled = ui.canSend && !finishing,
+                        leadingIcon = { ButtonIcon(R.drawable.ic_send) },
+                    ) {
+                        Text(stringResource(if (rewriting) R.string.essay_grade_rewrite else R.string.essay_send))
+                    }
                 }
             }
         },
@@ -598,7 +597,7 @@ internal fun EssayGradeSteps(
                         Text(stringResource(R.string.essay_back_to_today))
                     }
                 } else {
-                    OutlinedButton(onClick = viewModel::finish, enabled = !finishing) {
+                    OutlinedButton(busy = finishing, onClick = viewModel::finish, leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) }) {
                         Text(stringResource(R.string.essay_skip_rewrite))
                     }
                     Button(

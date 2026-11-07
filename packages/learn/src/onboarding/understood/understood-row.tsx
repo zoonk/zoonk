@@ -5,7 +5,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { safeAsync } from "@zoonk/utils/error";
-import { ArrowUpRightIcon, PencilIcon } from "lucide-react";
+import { ArrowUpRightIcon, CheckIcon, PencilIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { ChangeSaveError } from "../../_components/save-error";
@@ -106,8 +106,8 @@ function RowEditor({
       />
       {failed && <ChangeSaveError />}
       <div className="flex gap-2">
-        <Button disabled={isSaving} focusableWhenDisabled size="sm" type="submit">
-          {isSaving ? t("Saving…") : t("Save")}
+        <Button busy={isSaving} icon={<CheckIcon aria-hidden="true" />} size="sm" type="submit">
+          {t("Save")}
         </Button>
         <Button
           disabled={isSaving}
@@ -144,7 +144,7 @@ function SuggestedDate({
   return (
     <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
       <UseDateButton
-        disabled={isSaving}
+        busy={isSaving}
         onUse={() =>
           startSaving(async () => {
             setFailed(false);

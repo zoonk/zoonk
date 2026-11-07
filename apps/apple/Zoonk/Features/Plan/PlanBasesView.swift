@@ -9,6 +9,8 @@ struct PlanBasesView: View {
   @State private var previewAttempt = 0
   @State private var recommended: BaseChoice?
   @State private var advice: Advice = .none
+  /// Kept apart from `advice`, so a retry leaves the last answer and its Try again in place.
+  @State private var isAsking = false
 
   let editor: PlanEditor
   let goal: LearnerGoal
@@ -23,7 +25,6 @@ struct PlanBasesView: View {
   }
 
   private enum Advice: Equatable {
-    case asking
     case building
     case failed
     case none
@@ -78,22 +79,20 @@ struct PlanBasesView: View {
 
         switch advice {
         case .none:
-          Button {
+          BusyButton(isBusy: isAsking, icon: .explain) {
             Task { await advise() }
           } label: {
             Text(
               "Recommend a choice", tableName: "Plan",
               comment: "Asks which choice the app recommends")
           }
-        case .asking:
-          ProgressView()
         case .building, .failed:
           if let adviceLine {
             Text(adviceLine)
               .foregroundStyle(.mutedForeground)
           }
 
-          Button {
+          BusyButton(isBusy: isAsking, icon: .retry) {
             Task { await advise() }
           } label: {
             Text("Try again", tableName: "Plan", comment: "Asks again after it failed")
@@ -182,12 +181,12 @@ struct PlanBasesView: View {
             }
           }
 
-          Button {
+          BusyButton(isBusy: editor.isSaving, isRow: true) {
             Task { await save(changed) }
           } label: {
             Text("Save choices", tableName: "Plan", comment: "Saves the prerequisites' choices")
           }
-          .disabled(!preview.canSave || editor.isSaving)
+          .disabled(!preview.canSave && !editor.isSaving)
         }
       }
     }
@@ -248,7 +247,7 @@ struct PlanBasesView: View {
       String(
         localized: "We recommend the essentials, so the topics that build on them make sense.",
         table: "Plan", comment: "The app's recommendation for prerequisites")
-    case .asking, .none, .shown:
+    case .none, .shown:
       nil
     }
   }
@@ -271,7 +270,9 @@ struct PlanBasesView: View {
   }
 
   private func advise() async {
-    advice = .asking
+    isAsking = true
+    defer { isAsking = false }
+
     let goalId = goal.id
     let result = await store.write { api, token in
       try await api.basesAdvice(token: token, goalId: goalId)

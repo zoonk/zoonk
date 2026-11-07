@@ -6,9 +6,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasAnySibling
+import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -79,6 +84,8 @@ class GoalSetupFlowTest {
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private var screen by mutableIntStateOf(0)
 
+    private val spinning = hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate)
+
     private fun pickTime(
         from: String,
         to: String,
@@ -129,6 +136,21 @@ class GoalSetupFlowTest {
         rule.waitForIdle()
 
         assertEquals(listOf(GOAL_ID, EXAM_GOAL_ID), api.answers.map { it.first })
+    }
+
+    @Test
+    fun skippingSpinsOnlySkipWhileContinueWaits() {
+        api.setup = { setupView(listOf("targetDate", "plan"), kind = "exam") }
+        api.answerGate = CompletableDeferred()
+        show()
+
+        rule.onNodeWithText("No date, study everything").performScrollTo().performClick()
+        rule.waitForIdle()
+
+        rule.onAllNodes(spinning, useUnmergedTree = true).assertCountEquals(1)
+        rule.onNode(spinning and hasAnySibling(hasText("No date, study everything")), useUnmergedTree = true).assertExists()
+        rule.onNodeWithText("Continue").assertIsNotEnabled()
+        api.answerGate?.complete(Unit)
     }
 
     @Test

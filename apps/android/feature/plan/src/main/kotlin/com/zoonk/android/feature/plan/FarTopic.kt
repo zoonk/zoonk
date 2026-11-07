@@ -11,11 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,6 +43,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
@@ -380,15 +379,26 @@ private fun FarTopicRequest(
     }
 
     if (action != null) {
-        val enabled = !open.asking && (limit == null || limit is Limit.SlowDown)
-        val label: @Composable RowScope.() -> Unit = {
-            AskingMark(open.asking)
-            Text(stringResource(action))
-        }
+        val enabled = limit == null || limit is Limit.SlowDown
+        val label: @Composable RowScope.() -> Unit = { Text(stringResource(action)) }
         if (failed) {
-            OutlinedButton(onClick = topics::retry, enabled = enabled, modifier = Modifier.fillMaxWidth(), content = label)
+            OutlinedButton(
+                onClick = topics::retry,
+                enabled = enabled,
+                busy = open.asking,
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { ButtonIcon(R.drawable.ic_refresh) },
+                content = label,
+            )
         } else {
-            Button(onClick = topics::request, enabled = enabled, modifier = Modifier.fillMaxWidth(), content = label)
+            Button(
+                onClick = topics::request,
+                enabled = enabled,
+                busy = open.asking,
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { ButtonIcon(R.drawable.ic_playlist_add) },
+                content = label,
+            )
         }
     }
 
@@ -415,16 +425,6 @@ private fun FarTopicText(
     modifier: Modifier = Modifier,
 ) {
     Text(text, modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-}
-
-@Composable
-private fun AskingMark(asking: Boolean) {
-    if (!asking) return
-    CircularProgressIndicator(
-        Modifier.padding(end = ButtonDefaults.IconSpacing).size(ButtonDefaults.IconSize),
-        color = LocalContentColor.current,
-        strokeWidth = 2.dp,
-    )
 }
 
 /** Follows the writing while the sheet shows it and the app is started. */

@@ -15,7 +15,6 @@
   "testout_rule": "e222da2a1da5f1be656525709b3f8cc0b0c2799bc3deb686eed686532fb66ded",
   "testout_see_plus": "3140010c5931d53996e5a8ed7f5d2bc49cdfbab1d13b4895221639bec1edba9d",
   "testout_start": "606ad6dcc30a02dbb61cdd7ae77246f573a745d05337936f7c912f500a8ef976",
-  "testout_starting": "534aca4c189ba0e14f33464865c02963de66329cb9fdd3722c626f2aeb915bfb",
   "testout_this_chapter": "4994ba88545f9969761dab04674fc2ce3096806c12e6503944b2caec2d6302ba",
   "testout_title": "4177c6eb1c8adc75792c6ec39e3790d1a21de1a947b6f266cc8c592f4e50a60a",
   "testout_writing": "17e1d9c3c89cbaa887313d91f71d89a6dda951f171f50486b225c233033aac9e",
@@ -33,7 +32,6 @@
     <string name="testout_intro_title">Bunu zaten biliyor musun?</string>
     <string name="testout_intro_detail">Bu üniteyle ilgili birkaç soru. İyi bir sonuç alırsan planın zaten bildiklerini atlar.</string>
     <string name="testout_start">Testi başlat</string>
-    <string name="testout_starting">Başlıyoruz…</string>
     <string name="testout_see_plus">Plus’ı incele</string>
     <string name="testout_writing">Sorularını hazırlıyoruz</string>
     <string name="testout_writing_questions">Bu üniteyle ilgili sorular hazırlıyoruz</string>

@@ -3,10 +3,9 @@
 import { ACCESS_ERROR_CODES } from "@zoonk/auth/access-contract";
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { useAppLocale } from "@zoonk/learn/locale";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
-import { Loader2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { PLUS_CTA_CLASS } from "./plus-cta";
@@ -105,15 +104,13 @@ export function SubscribeButton({ billingSwitch }: { billingSwitch: string }) {
   return (
     <>
       <Button
-        aria-busy={isLoading}
+        busy={isLoading}
         className={PLUS_CTA_CLASS}
-        disabled={isLoading}
-        focusableWhenDisabled
         onClick={subscribe}
         size="lg"
         type="button"
+        {...FORWARD_ICON}
       >
-        {isLoading && <Loader2Icon aria-hidden="true" className="animate-spin" />}
         {t("Subscribe")}
       </Button>
 

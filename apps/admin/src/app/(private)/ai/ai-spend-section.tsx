@@ -44,7 +44,7 @@ async function SpendSummary({ days }: { days: number }) {
         value={formatUsd(summary.costUsd)}
       />
       <Stats
-        help="AI Gateway's own list-price estimate; a gap means our price list needs refreshing."
+        help="AI Gateway's own list-price estimate, its search fees included; a gap means our price list needs refreshing."
         title="Gateway estimate"
         value={formatUsd(summary.gatewayCostUsd)}
       />
@@ -136,8 +136,8 @@ async function SpendByModel({ days }: { days: number }) {
 }
 
 /**
- * Priced from each call's tokens and our dated price list: with our own provider keys the gateway
- * bills nothing.
+ * Each call's cost is what our own provider key paid, from our dated price list, plus what the
+ * gateway debited, such as its search fees.
  */
 export async function AiSpendSection({ days }: { days: number }) {
   return (

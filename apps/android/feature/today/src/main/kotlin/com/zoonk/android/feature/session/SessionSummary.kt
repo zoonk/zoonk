@@ -50,6 +50,7 @@ import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltDot
 import com.zoonk.android.ui.components.BeltTicks
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.MomentReadouts
@@ -583,8 +584,10 @@ private fun SummaryBar(
         }
         if (facts.stopped) {
             OutlinedButton(
+                busy = busy == SessionAction.KeepGoing,
                 onClick = actions.keepGoing,
                 enabled = busy == null,
+                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
             ) { Text(stringResource(R.string.session_summary_keep_going)) }
         }
     }
@@ -600,7 +603,13 @@ private fun SummaryBar(
             }
         }
         extraTime?.let { extra ->
-            TextButton(onClick = actions.extraTime, modifier = Modifier.taskOption(), enabled = busy == null) {
+            TextButton(
+                busy = busy == SessionAction.ExtraTime,
+                onClick = actions.extraTime,
+                modifier = Modifier.taskOption(),
+                enabled = busy == null,
+                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+            ) {
                 Text(
                     if (extra.lessons.isNotEmpty()) {
                         stringResource(R.string.today_keep_learning)

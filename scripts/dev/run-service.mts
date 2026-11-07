@@ -18,13 +18,17 @@ if (!serviceName) {
 const currentDirectory = process.cwd();
 const lanMode = process.argv.includes("--lan") || process.env.PORTLESS_LAN === "1";
 
-/** `pnpm dev` and `pnpm start` pass their own process; a service started on its own is launched by this script. */
-const launcherPid = process.env.ZOONK_DEV_LAUNCHER_PID ?? String(process.pid);
+/**
+ * The service stops with the `pnpm dev` or `pnpm start` that launched its stack, and with this
+ * script: Turbo kills it when it force-stops the task, but not the service in its own process group.
+ */
+const stackLauncherPid = process.env.ZOONK_DEV_LAUNCHER_PID;
+const launcherPids = stackLauncherPid ? [Number(stackLauncherPid), process.pid] : [process.pid];
 
 const environment = {
   ...process.env,
   ...getPortlessEnvironment({ homeDirectory: homedir(), lanMode }),
-  ...getStopWithLauncherEnvironment({ environment: process.env, launcherPid }),
+  ...getStopWithLauncherEnvironment({ environment: process.env, launcherPids }),
 };
 
 const pnpmCommand = getPnpmCommand(environment);

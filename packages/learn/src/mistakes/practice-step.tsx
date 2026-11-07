@@ -1,7 +1,6 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useMemo } from "react";
 import {
@@ -27,7 +26,7 @@ import { DrillAnswerNotes } from "./drill/drill-answer-notes";
 import { NotSureButton, useFocusAnswersOnReveal } from "./drill/drill-controls";
 import { DrillCountdown } from "./drill/drill-countdown";
 import { DrillIntro } from "./drill/drill-intro";
-import { type LessonHref, isIdeaFirst, isReadFirst } from "./drill/drill-types";
+import { type LessonHref, isIdeaFirst, isReadFirst, pressesCheck } from "./drill/drill-types";
 import {
   type MistakePracticeFeedback,
   type PracticeStep as Step,
@@ -90,7 +89,7 @@ function getMainAction(run: Run): React.ComponentProps<typeof QuestionMainButton
 
   return {
     action: "check",
-    busy: phase.kind === "checking",
+    busy: phase.kind === "checking" && pressesCheck(phase.sender),
     disabled: !answer,
     onPress: () => (answer ? run.check(answer) : undefined),
   };
@@ -100,24 +99,19 @@ export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
   const t = useExtracted();
   const { phase } = run.state;
   const answering = phase.kind !== "reading" && phase.kind !== "feedback";
-  const checking = phase.kind === "checking";
+  const sender = phase.kind === "checking" ? phase.sender : null;
+  const checking = sender !== null;
 
   return (
     <>
-      {answering &&
-        (step.entry.drill.kind === "noGuessing" ? (
-          <NotSureButton disabled={checking} onClick={run.notSure} />
-        ) : (
-          <Button
-            disabled={checking}
-            focusableWhenDisabled
-            onClick={run.notSure}
-            size="lg"
-            variant="outline"
-          >
-            {t("I don't know yet")}
-          </Button>
-        ))}
+      {answering && (
+        <NotSureButton
+          busy={sender === "notSure"}
+          disabled={checking}
+          label={step.entry.drill.kind === "noGuessing" ? undefined : t("I don't know yet")}
+          onClick={run.notSure}
+        />
+      )}
 
       <QuestionMainButton {...getMainAction(run)} />
     </>
@@ -284,12 +278,12 @@ export function PracticeStepView({
       {graded && (
         <PracticeFeedback
           feedback={graded.feedback}
-          notSure={!graded.timedOut && "dontKnow" in graded.answer}
+          notSure={graded.sender !== "timer" && "dontKnow" in graded.answer}
           notes={
             <DrillAnswerNotes
               drill={drill}
               notSure={"dontKnow" in graded.answer}
-              timedOut={graded.timedOut}
+              timedOut={graded.sender === "timer"}
               trap={graded.feedback.trap}
             />
           }

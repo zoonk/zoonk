@@ -2,10 +2,10 @@
 
 import { type EssayDraft, type EssayView } from "@zoonk/core/exams/essays/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { countWords } from "@zoonk/utils/string";
 import { settleWithin } from "@zoonk/utils/timeout";
+import { SendIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { AnswersSaveError } from "../_components/save-error";
@@ -154,9 +154,9 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
       <TaskActions>
         {drafts.length > 0 && (
           <Button
+            busy={finishing.pending}
             className="shrink-0"
-            disabled={finishing.pending}
-            focusableWhenDisabled
+            icon={<SkipForwardIcon aria-hidden="true" />}
             onClick={() => void finishing.finish()}
             size="xl"
             variant="outline"
@@ -165,15 +165,15 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
           </Button>
         )}
         <Button
+          busy={pending}
           className={TASK_MAIN_ACTION_CLASS}
           disabled={!writer.canSend || finishing.pending}
           focusableWhenDisabled
+          icon={<SendIcon aria-hidden="true" />}
           onClick={() => void writer.send()}
           size="xl"
         >
-          {pending && <Spinner aria-hidden="true" />}
-          {pending && t("Grading…")}
-          {!pending && (drafts.length > 0 ? t("Grade the rewrite") : t("Send for grading"))}
+          {drafts.length > 0 ? t("Grade the rewrite") : t("Send for grading")}
         </Button>
       </TaskActions>
     </>

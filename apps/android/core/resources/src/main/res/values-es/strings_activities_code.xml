@@ -38,7 +38,6 @@
   "activities_code_run": "502a6541d831f54a0b1642d8f323c0a4bf8f4d71c2b06750daae660ad063e16c",
   "activities_code_run_again": "bffe7b22f864dc69558f15cd98c13149a617034b30c130a1a4b9b55bf3c12c43",
   "activities_code_run_to_see": "39aa537ade0af9439133d199714ce025f627c65d5d92149c17e2831c00ed0083",
-  "activities_code_running": "21ffa9acd6f1553efd4d6d74372c0c055d677bb6bc7f7b3bc4ff787e8ee9e494",
   "activities_code_runtime_failed": "bdf6a4b5d01fd8b4642b52007c85fe70027ec4e9cef96e9ee78c584991ee4b3c",
   "activities_code_runtime_loading": "68fefdaeb16ca8599e27bef1318e2d89b8e22b7d7516df29733a058c508271c8",
   "activities_code_sample_doesnt_match": "4f6856692097aeac0192f670ab766b8bafe241c99610479b2592c0295f6e7df2",
@@ -104,7 +103,6 @@
     <string name="activities_code_runtime_failed">%1$s no se cargó. Revisa tu conexión e inténtalo de nuevo.</string>
     <string name="activities_code_run">Ejecutar</string>
     <string name="activities_code_run_again">Volver a ejecutar</string>
-    <string name="activities_code_running">Ejecutando</string>
     <string name="activities_code_start_over">Volver a empezar con el código original</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">Código</string>

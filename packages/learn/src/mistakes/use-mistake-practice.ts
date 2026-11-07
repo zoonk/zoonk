@@ -2,11 +2,13 @@
 
 import { useEffect, useEffectEvent, useReducer, useRef } from "react";
 import { type ChoiceAnswer } from "../questions/choice-question";
+import { type AnswerSender } from "./drill/drill-types";
 import {
   type MistakePracticeAnswer,
   type MistakePracticeFeedback,
   type MistakePracticeSummary,
   type PracticeEntry,
+  type SentPracticeAnswer,
   createPracticeState,
   practiceReducer,
 } from "./mistake-practice-state";
@@ -56,15 +58,10 @@ export function useMistakePractice({
     }
   }, [state.phase.kind]);
 
-  const check = async ({ answer, timedOut }: { answer: ChoiceAnswer; timedOut: boolean }) => {
+  const send = async ({ answer, durationMs }: SentPracticeAnswer) => {
     if (!step) {
       return;
     }
-
-    const limitMs = (step.entry.drill.timeLimitSeconds ?? 0) * MS_PER_SECOND;
-    const durationMs = Date.now() - shownAt.current;
-
-    dispatch({ answer, timedOut, type: "check" });
 
     if (attempt.current?.index !== state.index) {
       attempt.current = { id: crypto.randomUUID(), index: state.index };
@@ -74,7 +71,7 @@ export function useMistakePractice({
       .answer({
         answer,
         attemptId: attempt.current.id,
-        durationMs: timedOut ? Math.max(durationMs, limitMs) : durationMs,
+        durationMs,
         itemId: step.question.itemId,
         mistakeId: step.entry.mistakeId,
         runAnswerIds: state.answerIds,
@@ -89,14 +86,34 @@ export function useMistakePractice({
     dispatch({ feedback, mistakeId: step.entry.mistakeId, type: "answered" });
   };
 
+  const check = (answer: ChoiceAnswer, sender: AnswerSender) => {
+    const limitMs = (step?.entry.drill.timeLimitSeconds ?? 0) * MS_PER_SECOND;
+    const elapsedMs = Date.now() - shownAt.current;
+
+    const sent = {
+      answer,
+      durationMs: sender === "timer" ? Math.max(elapsedMs, limitMs) : elapsedMs,
+      sender,
+    };
+
+    dispatch({ ...sent, type: "check" });
+    void send(sent);
+  };
+
   return {
-    check: (answer: ChoiceAnswer) => void check({ answer, timedOut: false }),
+    check: (answer: ChoiceAnswer) => check(answer, "check"),
     end: () => dispatch({ type: "end" }),
     next: () => {
       shownAt.current = Date.now();
       dispatch({ type: "next" });
     },
-    notSure: () => void check({ answer: NOT_SURE, timedOut: false }),
+    notSure: () => check(NOT_SURE, "notSure"),
+    retry: () => {
+      if (state.phase.kind === "answerFailed") {
+        dispatch({ type: "retry" });
+        void send(state.phase);
+      }
+    },
     // Reading the question counts toward the answer's time, so the reveal keeps the clock going.
     reveal: () => dispatch({ type: "reveal" }),
     select: (answer: ChoiceAnswer | null) => dispatch({ answer, type: "select" }),
@@ -107,6 +124,6 @@ export function useMistakePractice({
     state,
     step,
     steps,
-    timeUp: () => void check({ answer: NOT_SURE, timedOut: true }),
+    timeUp: () => check(NOT_SURE, "timer"),
   };
 }

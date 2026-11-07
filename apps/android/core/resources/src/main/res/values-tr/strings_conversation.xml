@@ -140,7 +140,6 @@
   "conversation_start": "926334a0aa9588dbd99ee6a28a1368c3df7b5e3012ac422ef0d58c223131e5a3",
   "conversation_start_failed": "c0742fecb9dbe7f0b52a7066c323fe97f512fba9b6c87ab836cd1c0f5be6b5af",
   "conversation_start_preparing": "4d418029c9ee93a9f09817f59860696b370350f278d757cc7125d15ba359605c",
-  "conversation_starting": "420e00e7185ab9f015279a1c03acc54abe4f70b99a8b428d163e6b45bd2c2bd1",
   "conversation_still_closing": "d4341a1996f2055df26d9b1e51f6100f224ccb5f59915b6d80264eacf6e51c2c",
   "conversation_still_to_get_across": "e7515811d2c6469f5b708f58d63611e052b1e5dcdf284e2f500152781aafd3b1",
   "conversation_study_time_used_up": "bd66ce26350f4d5578864f2c95a98407c88f4fe1136dea536096b8370f84c149",
@@ -209,7 +208,6 @@
     <!-- Starts a phone call with the character, whose name follows. -->
     <string name="conversation_call">%1$s ile sohbet et</string>
     <string name="conversation_start">Sohbeti başlat</string>
-    <string name="conversation_starting">Başlatıyoruz…</string>
     <string name="conversation_start_failed">Sohbet başlamadı. Biraz sonra tekrar dene.</string>
     <string name="conversation_challenge_plus">Meydan okuma sohbetleri Plus’a dahil. Planın bu sohbetler olmadan da devam ediyor.</string>
     <!-- The microphone permission was denied; the character's name. -->

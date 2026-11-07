@@ -1,6 +1,7 @@
 "use client";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { ArrowLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LearnLink } from "../learn-link";
 import { TaskMainLink } from "../shell/task-frame";
@@ -19,7 +20,9 @@ export function StudyTimeUsedUpActions({ href, main }: { href: string; main?: Re
   if (!main) {
     return (
       <TaskActions>
-        <TaskMainLink href={href}>{t("Back to Today")}</TaskMainLink>
+        <TaskMainLink href={href} icon={<ArrowLeftIcon aria-hidden="true" />}>
+          {t("Back to Today")}
+        </TaskMainLink>
       </TaskActions>
     );
   }

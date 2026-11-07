@@ -217,6 +217,7 @@ struct PlanTimeSection: View {
         }
       }
       .tint(.success)
+      .disabled(isPreviewing)
     }
   }
 

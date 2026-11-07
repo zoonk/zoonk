@@ -23,7 +23,7 @@ export async function startLiveCallApi({ port, repository }: { port: number; rep
         ...getTestEnvironment("e2e"),
         ...getStopWithLauncherEnvironment({
           environment: process.env,
-          launcherPid: String(process.pid),
+          launcherPids: [process.pid],
         }),
       },
       stdio: ["ignore", "pipe", "pipe"],

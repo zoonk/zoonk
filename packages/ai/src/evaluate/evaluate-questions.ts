@@ -156,6 +156,7 @@ async function logEvaluation({
 
   const provenance = {
     costUsd: computeCallCostUsd({
+      charge: gateway.charge,
       model: run.model,
       serviceTier: gateway.serviceTier,
       usage: run.usage,

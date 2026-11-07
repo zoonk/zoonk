@@ -1,20 +1,15 @@
 package com.zoonk.android.feature.practice
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,11 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -48,7 +41,6 @@ import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
-import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
@@ -239,6 +231,8 @@ fun RunFinished(
     onClose: () -> Unit,
     detail: String? = null,
     headerTitle: String? = null,
+    actionLeadingIcon: (@Composable () -> Unit)? = null,
+    actionTrailingIcon: (@Composable () -> Unit)? = null,
     actions: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
@@ -251,7 +245,15 @@ fun RunFinished(
                     if (actions != null) {
                         actions()
                     } else {
-                        TaskActions { width -> BusyButton(action, busy = saving, enabled = true, modifier = width, onClick = onClose) }
+                        TaskActions { width ->
+                            Button(
+                                busy = saving,
+                                onClick = onClose,
+                                modifier = width,
+                                leadingIcon = actionLeadingIcon,
+                                trailingIcon = actionTrailingIcon,
+                            ) { Text(action) }
+                        }
                     }
                 }
             },
@@ -285,29 +287,6 @@ fun ListeningSet(set: ItemSet) {
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-    }
-}
-
-/** A pending action keeps focus while unavailable, including when its caller disables it during the write. */
-@Composable
-fun BusyButton(
-    label: String,
-    busy: Boolean,
-    enabled: Boolean,
-    modifier: Modifier = Modifier,
-    @DrawableRes icon: Int? = null,
-    onClick: () -> Unit,
-) {
-    Button(
-        onClick = { if (!busy) onClick() },
-        enabled = enabled || busy,
-        modifier = modifier.semantics { if (busy) disabled() },
-    ) {
-        if (icon != null && !busy) {
-            Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-        }
-        PendingLabel(busy, label)
     }
 }
 

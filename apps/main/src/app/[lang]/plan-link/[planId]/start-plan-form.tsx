@@ -2,7 +2,7 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { DailyTimeField } from "@zoonk/learn/daily-time-picker";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
@@ -46,11 +46,11 @@ export function StartPlanForm({
       <DailyTimeField defaultMinutes={DEFAULT_MINUTES} name="dailyMinutes" />
       <Button
         aria-keyshortcuts="Enter"
+        busy={isPending}
         className="mt-1"
-        disabled={isPending}
-        focusableWhenDisabled
         size="lg"
         type="submit"
+        {...FORWARD_ICON}
       >
         {t("Start from this plan")}
         <ShortcutKbd tone="inverse">⏎</ShortcutKbd>

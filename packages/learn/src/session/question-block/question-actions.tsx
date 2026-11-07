@@ -1,8 +1,8 @@
 "use client";
 
-import { Spinner } from "@zoonk/ui/components/spinner";
+import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { ignoreHeldEnter, useEnterKey } from "@zoonk/ui/hooks/keyboard";
-import { EyeIcon } from "lucide-react";
+import { CheckIcon, EyeIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
 import { EnterButton } from "../../_components/enter-button";
@@ -10,6 +10,12 @@ import { useFocusOnRemovedControl } from "../../_components/suggestion-focus";
 import { TaskActions } from "../../_components/task-layout";
 
 const QUESTION_MAIN_ID = "question-main-action";
+
+const ICONS = {
+  check: { icon: <CheckIcon aria-hidden="true" /> },
+  continue: FORWARD_ICON,
+  reveal: { icon: <EyeIcon aria-hidden="true" /> },
+} as const;
 
 /**
  * One button turns from "Show the answers" into Check and then Continue, so keyboard focus stays on
@@ -47,14 +53,14 @@ export function QuestionMainButton({
 
   return (
     <EnterButton
-      disabled={!ready}
+      busy={busy}
+      disabled={disabled}
+      {...ICONS[action]}
       id={QUESTION_MAIN_ID}
       onClick={onPress}
       onKeyDown={ignoreHeldEnter}
       ref={ref}
     >
-      {busy && <Spinner aria-hidden="true" />}
-      {action === "reveal" && <EyeIcon aria-hidden="true" />}
       {labels[action]}
     </EnterButton>
   );

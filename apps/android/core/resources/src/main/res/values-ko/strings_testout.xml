@@ -15,7 +15,6 @@
   "testout_rule": "bea63b53ed080024fa5dd43c3b5a48b3657a4f535204a39d6aa1283b72360f05",
   "testout_see_plus": "7c54761d1aa6e7c89ecd07f67d7c41a6518045140454dc6fe9e1c0cf3b49023e",
   "testout_start": "b4e04bebaa3174b1e10c18763bed95c8699a2bb126449a2b87566e6bc58978cc",
-  "testout_starting": "5aa402897965903cb37a5edf34143c77c3201f4be2709330b7cd1defd40ee8ec",
   "testout_this_chapter": "897cb52b2a79249f07061e0dcd609a982d9df664897413c544c4eb642f9467f5",
   "testout_title": "a2273270649d63d5f66a59b486143aeb9c956b6cfaa1b3721a1a6447d047394e",
   "testout_writing": "97d81b3d9c0f962562ae7e183e93c2c2d4d3dabacb3d46b13909fbaa7066db54",
@@ -33,7 +32,6 @@
     <string name="testout_intro_title">이미 아는 내용인가요?</string>
     <string name="testout_intro_detail">이 챕터에 관한 문제 몇 개가 나와요. 잘 풀면 이미 아는 내용은 계획에서 건너뛰어요.</string>
     <string name="testout_start">테스트 시작하기</string>
-    <string name="testout_starting">시작하고 있어요…</string>
     <string name="testout_see_plus">Plus 알아보기</string>
     <string name="testout_writing">문제를 만들고 있어요</string>
     <string name="testout_writing_questions">이 챕터의 문제를 만들고 있어요</string>

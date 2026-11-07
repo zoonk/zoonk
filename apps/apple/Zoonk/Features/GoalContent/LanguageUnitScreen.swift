@@ -563,16 +563,11 @@ struct PracticeCallSection: View {
               "Your call opens as soon as it's ready.", tableName: "Plan",
               comment: "A practice call opens by itself once it's written"))
         } else {
-          Button {
+          BusyButton(isBusy: start.isStarting, isRow: true) {
             startCall(minutes: picked)
           } label: {
-            if start.isStarting {
-              Text("Starting…", tableName: "Plan", comment: "The practice call is starting")
-            } else {
-              Text("Start the call", tableName: "Plan", comment: "Starts the practice call")
-            }
+            Text("Start the call", tableName: "Plan", comment: "Starts the practice call")
           }
-          .disabled(start.isStarting)
         }
 
         if case .limit(let limit) = outcome {

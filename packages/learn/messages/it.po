@@ -557,16 +557,14 @@ msgstr "Lo sai già?"
 #: src/_components/test-out-start-link.tsx
 #: src/conversation/tutor-tool-offer.tsx
 #: src/session/test-out-offer.tsx
-msgctxt "osZ9ZA"
-msgid "Opening the test…"
-msgstr "Stiamo aprendo il test…"
-
-#: src/_components/test-out-start-link.tsx
-#: src/conversation/tutor-tool-offer.tsx
-#: src/session/test-out-offer.tsx
 msgctxt "May4OJ"
 msgid "Take the test"
 msgstr "Fai il test"
+
+#: src/_components/test-out-start-link.tsx
+msgctxt "osZ9ZA"
+msgid "Opening the test…"
+msgstr "Stiamo aprendo il test…"
 
 #: src/_components/test-out-start-link.tsx
 msgctxt "2xFPbE"
@@ -2091,16 +2089,6 @@ msgid "Still starting. This is taking longer than usual."
 msgstr "Stiamo ancora avviando la sfida. Ci stiamo mettendo più tempo del solito."
 
 #: src/challenge/challenge-footer.tsx
-#: src/language/conversation/call-intro-footer.tsx
-#: src/language/exam-speaking/speaking-task-row.tsx
-#: src/language/progress/speaking-mock-card.tsx
-#: src/plan/focus-test/focus-test-screen.tsx
-#: src/questions/test-out-preparing.tsx
-msgctxt "RFCwI6"
-msgid "Starting…"
-msgstr "Stiamo avviando…"
-
-#: src/challenge/challenge-footer.tsx
 #: src/mock/mock-chooser.tsx
 msgctxt "-HglUD"
 msgid "Start the mock exam"
@@ -3271,12 +3259,6 @@ msgstr "Vedi il voto"
 msgctxt "othn-n"
 msgid "Rewrite what needs work"
 msgstr "Riscrivi le parti da migliorare"
-
-#: src/essay/essay-screen.tsx
-#: src/mock/mock-screen.tsx
-msgctxt "yWVqHs"
-msgid "Grading…"
-msgstr "Stiamo valutando…"
 
 #: src/essay/essay-screen.tsx
 msgctxt "Wleedk"
@@ -6998,16 +6980,6 @@ msgid "Download my memory"
 msgstr "Scarica la mia memoria"
 
 #: src/memory/memory-screen.tsx
-msgctxt "ySF1Q_"
-msgid "Preparing your memory…"
-msgstr "Stiamo preparando la tua memoria…"
-
-#: src/memory/memory-screen.tsx
-msgctxt "Ob8gKI"
-msgid "Preparing…"
-msgstr "Stiamo preparando…"
-
-#: src/memory/memory-screen.tsx
 msgctxt "owirfw"
 msgid "We couldn't prepare the download. Try again."
 msgstr "Non siamo riusciti a preparare il file da scaricare. Riprova."
@@ -8057,12 +8029,6 @@ msgid "One subject"
 msgstr "Una materia"
 
 #: src/mock/mock-chooser.tsx
-#: src/session/summary/summary-steps.tsx
-msgctxt "Hlc1zt"
-msgid "Getting it ready…"
-msgstr "Stiamo preparando tutto…"
-
-#: src/mock/mock-chooser.tsx
 msgctxt "a5f0pz"
 msgid "Start with {count, plural, one {# question} other {# questions}}"
 msgstr "Inizia con {count, plural, one {# domanda} other {# domande}}"
@@ -8890,12 +8856,6 @@ msgctxt "z1R1nT"
 msgid "Hand in this section"
 msgstr "Consegna questa sezione"
 
-#: src/mock/mock-runner-view.tsx
-#: src/mock/mock-screen.tsx
-msgctxt "0QKYRq"
-msgid "Handing in…"
-msgstr "Stiamo consegnando…"
-
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
 msgid "Mock exam handed in"
@@ -9221,11 +9181,6 @@ msgid "A short explanation written for you, about 5 minutes."
 msgstr "Una breve spiegazione preparata per te, da leggere in circa 5 minuti."
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "rnVK11"
-msgid "Opening your explanation…"
-msgstr "Stiamo aprendo la tua spiegazione…"
-
-#: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "n-6wcY"
 msgid "Explain it"
 msgstr "Spiegarlo"
@@ -9287,12 +9242,6 @@ msgstr "Per insegnarti a suonare o cantare, dobbiamo poterti ascoltare e stiamo 
 msgctxt "irzzdg"
 msgid "Musicianship for {instrument}: hear chords, read short melodies and keep the beat. No microphone needed."
 msgstr "Formazione musicale per {instrument}: riconosci gli accordi, leggi brevi melodie e tieni il tempo. Non serve un microfono."
-
-#: src/onboarding/entry/goal-outcomes.tsx
-#: src/onboarding/understood/understood-screen.tsx
-msgctxt "LlWqkT"
-msgid "Saving your goal…"
-msgstr "Stiamo salvando il tuo obiettivo…"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "2zqqBZ"
@@ -10509,13 +10458,6 @@ msgstr "Stima basata sulle date abituali. Ti avviseremo quando usciranno quelle 
 msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "Fonte: {source}"
-
-#: src/onboarding/understood/understood-row.tsx
-#: src/plan/plan-date.tsx
-#: src/plan/plan-focus.tsx
-msgctxt "WUV28A"
-msgid "Saving…"
-msgstr "Stiamo salvando…"
 
 #: src/onboarding/understood/understood-row.tsx
 msgctxt "C9D4Tz"
@@ -13068,6 +13010,11 @@ msgstr "+{bonus}"
 msgctxt "DhH9Oq"
 msgid "{count, plural, one {+# level} other {+# levels}}"
 msgstr "{count, plural, one {+# livello} other {+# livelli}}"
+
+#: src/session/summary/summary-steps.tsx
+msgctxt "Hlc1zt"
+msgid "Getting it ready…"
+msgstr "Stiamo preparando tutto…"
 
 #: src/session/summary/summary-steps.tsx
 msgctxt "vrNWq4"

@@ -1,6 +1,7 @@
 "use client";
 
 import { type MockView } from "@zoonk/core/exams/mocks/contract";
+import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { TimerOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -41,8 +42,9 @@ function MockGrading() {
               busy={runner.busy === "finish"}
               disabled={runner.pending}
               onClick={() => void runner.finish()}
+              {...FORWARD_ICON}
             >
-              {runner.busy === "finish" ? t("Grading…") : t("See how it went")}
+              {t("See how it went")}
             </TaskMainButton>
           </TaskActions>
         </>
@@ -72,8 +74,9 @@ function MockTimeUp() {
               busy={handingIn}
               disabled={runner.pending}
               onClick={() => void runner.submitSection()}
+              {...FORWARD_ICON}
             >
-              {handingIn ? t("Handing in…") : action}
+              {action}
             </TaskMainButton>
           </TaskActions>
         </>

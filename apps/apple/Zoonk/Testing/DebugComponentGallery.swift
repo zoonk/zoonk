@@ -46,6 +46,7 @@
           GallerySection(id: "colors", title: "Color roles") { ColorRoleSwatches() }
           GallerySection(id: "text", title: "Neutral text") { NeutralText() }
           GallerySection(id: "buttons", title: "Buttons") { Buttons() }
+          GallerySection(id: "busy", title: "Busy") { BusySamples() }
           GallerySection(id: "chips", title: "Chips and subjects") { Chips() }
           ListSample()
           GallerySection(id: "panels", title: "Panels and tiles") { Panels() }
@@ -182,6 +183,113 @@
           .tint(.success)
       }
       .padding(.vertical, 8)
+    }
+  }
+
+  /// Each one busy as its request runs: the spinner in its icon's place (or over the label of one
+  /// without an icon), and beside it a button waiting on that request, disabled.
+  private struct BusySamples: View {
+    var body: some View {
+      VStack(alignment: .leading, spacing: 12) {
+        BusyButton(isBusy: true, icon: .play) {
+        } label: {
+          Text(verbatim: "Continue session")
+        }
+        .buttonStyle(.mainAction)
+        .controlSize(.large)
+        .buttonSizing(.flexible)
+
+        ButtonRow {
+          BusyButton(isBusy: true, icon: .forward) {
+          } label: {
+            Text(verbatim: "Next")
+          }
+          .buttonStyle(.mainAction)
+
+          BusyButton(isBusy: false, icon: .notSure) {
+          } label: {
+            Text(verbatim: "I'm not sure")
+          }
+          .buttonStyle(.outline)
+          .disabled(true)
+        }
+        .controlSize(.large)
+
+        BusyButton(isBusy: true, icon: .notSure) {
+        } label: {
+          Text(verbatim: "I don't know yet")
+        }
+        .buttonStyle(.secondary)
+        .controlSize(.large)
+        .buttonSizing(.flexible)
+
+        ButtonRow {
+          BusyButton(isBusy: true, icon: .undo) {
+          } label: {
+            Text(verbatim: "Undo")
+          }
+          .buttonStyle(.outline)
+          BusyButton(isBusy: true, icon: .dismiss) {
+          } label: {
+            Text(verbatim: "Not now")
+          }
+          .buttonStyle(.ghost)
+          BusyButton(isBusy: true, role: .destructive, icon: .stop) {
+          } label: {
+            Text(verbatim: "Stop")
+          }
+          .buttonStyle(.outline)
+        }
+        .controlSize(.small)
+
+        ButtonRow(spacing: 8) {
+          BusyButton(isBusy: true) {
+          } label: {
+            Text(verbatim: "Load earlier messages")
+          }
+          .buttonStyle(.outline)
+
+          BusyButton(isBusy: true) {
+          } label: {
+            Label(String("Send"), systemImage: "arrow.up")
+          }
+          .labelStyle(.iconOnly).buttonStyle(.mainAction.icon)
+        }
+      }
+      .padding(.vertical, 8)
+
+      Button {
+      } label: {
+        ListRow(Text(verbatim: "Porcentagem e descontos")) {
+          KindMark(kind: .lesson)
+        } trailing: {
+          Text(verbatim: "5 min").coveredBySpinner(true, alignment: .trailing)
+        }
+      }
+
+      Button {
+      } label: {
+        ListRow(Text(verbatim: "Frações equivalentes")) {
+          KindMark(kind: .lesson)
+        } trailing: {
+          Text(verbatim: "8 min")
+        }
+      }
+      .disabled(true)
+
+      Button {
+      } label: {
+        Label {
+          Text(verbatim: "Study 10 more minutes")
+        } icon: {
+          Image(systemName: ActionIcon.play.rawValue).coveredBySpinner(true)
+        }
+      }
+
+      BusyButton(isBusy: true, isRow: true) {
+      } label: {
+        Text(verbatim: "Show more")
+      }
     }
   }
 

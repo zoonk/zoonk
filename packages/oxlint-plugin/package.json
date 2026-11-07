@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@oxlint/plugins": "1.90.0",
-    "@tailwindcss/node": "4.3.4"
+    "@oxlint/plugins": "1.92.0",
+    "@tailwindcss/node": "4.3.5"
   }
 }

@@ -5,7 +5,7 @@ import {
   type PronunciationReviewsView,
   type PronunciationRoundResult,
 } from "@zoonk/core/language/pronunciation/contract";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { cn } from "@zoonk/ui/lib/utils";
-import { EllipsisIcon, RotateCcwIcon, SkipForwardIcon } from "lucide-react";
+import { CheckIcon, EllipsisIcon, RotateCcwIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { FeedbackVerdict } from "../../_components/feedback-panel";
 import { MomentReadouts } from "../../_components/moment-readouts";
@@ -153,7 +153,7 @@ export function PronunciationReviewScreen({
           exitToApp
           footer={
             <TaskActions>
-              <TaskMainLink href={exitHref} toApp>
+              <TaskMainLink href={exitHref} icon={<CheckIcon aria-hidden="true" />} toApp>
                 {t("Done")}
               </TaskMainLink>
             </TaskActions>
@@ -249,7 +249,7 @@ function WordActions({
             {t("Try again")}
           </Button>
         )}
-        <TaskMainButton busy={round.isPending} onClick={round.next}>
+        <TaskMainButton busy={round.isPending} onClick={round.next} {...FORWARD_ICON}>
           {isLast ? t("See how it went") : t("Continue")}
         </TaskMainButton>
       </TaskActions>
@@ -259,7 +259,11 @@ function WordActions({
   if (!available) {
     return (
       <TaskActions>
-        <TaskMainButton busy={round.isPending} onClick={round.next}>
+        <TaskMainButton
+          busy={round.isPending}
+          icon={<SkipForwardIcon aria-hidden="true" />}
+          onClick={round.next}
+        >
           {t("Skip this word")}
         </TaskMainButton>
       </TaskActions>

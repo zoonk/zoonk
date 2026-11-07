@@ -154,9 +154,7 @@ function PracticeBody({
 
       {phase.kind !== "idea" && (
         <TaskActionBar>
-          {phase.kind === "answerFailed" && (
-            <AnswersSaveError onRetry={() => run.check(phase.answer)} />
-          )}
+          {phase.kind === "answerFailed" && <AnswersSaveError onRetry={run.retry} />}
           <QuestionActionsRow ask={askButton}>
             <PracticeStepActions run={run} step={run.step} />
           </QuestionActionsRow>

@@ -4,7 +4,7 @@ import { NOTHING_REACHED, type Reached } from "@zoonk/core/sessions/reached";
 import { type TaskSegment } from "../_components/task-header";
 import { mergeReached } from "../_utils/merge-reached";
 import { type ChoiceAnswer, type ChoiceFeedback } from "../questions/choice-question";
-import { isIdeaFirst, isReadFirst } from "./drill/drill-types";
+import { type AnswerSender, isIdeaFirst, isReadFirst } from "./drill/drill-types";
 
 export type PracticeEntry = Extract<MistakePracticeResult, { status: "ready" }>["practice"][number];
 
@@ -45,14 +45,15 @@ export type PracticeStep = {
 
 type Graded = NonNullable<MistakePracticeFeedback>;
 type PracticeVerdict = "read" | "right" | "wrong";
+export type SentPracticeAnswer = { answer: ChoiceAnswer; durationMs: number; sender: AnswerSender };
 
 type PracticePhase =
   | { kind: "idea" }
   | { kind: "reading" }
   | { kind: "answering"; selected: ChoiceAnswer | null }
-  | { answer: ChoiceAnswer; kind: "checking"; timedOut: boolean }
-  | { answer: ChoiceAnswer; kind: "answerFailed"; timedOut: boolean }
-  | { answer: ChoiceAnswer; feedback: Graded; kind: "feedback"; timedOut: boolean }
+  | ({ kind: "checking" } & SentPracticeAnswer)
+  | ({ kind: "answerFailed" } & SentPracticeAnswer)
+  | ({ feedback: Graded; kind: "feedback" } & SentPracticeAnswer)
   | { kind: "ending" }
   | { kind: "ended"; summary: MistakePracticeSummary | null };
 
@@ -74,9 +75,10 @@ type PracticeAction =
   | { type: "start" }
   | { type: "reveal" }
   | { answer: ChoiceAnswer | null; type: "select" }
-  | { answer: ChoiceAnswer; timedOut: boolean; type: "check" }
+  | ({ type: "check" } & SentPracticeAnswer)
   | { feedback: Graded; mistakeId: string; type: "answered" }
   | { type: "answerFailed" }
+  | { type: "retry" }
   | { type: "next" }
   | { type: "end" }
   | { summary: MistakePracticeSummary | null; type: "ended" };
@@ -137,13 +139,13 @@ function getFixedIds(state: PracticeState, action: Extract<PracticeAction, { typ
 function getPracticeVerdict({
   answer,
   isCorrect,
-  timedOut,
+  sender,
 }: {
   answer: ChoiceAnswer;
   isCorrect: boolean;
-  timedOut: boolean;
+  sender: AnswerSender;
 }): PracticeVerdict {
-  if (!timedOut && "dontKnow" in answer) {
+  if (sender !== "timer" && "dontKnow" in answer) {
     return "read";
   }
 
@@ -181,13 +183,22 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
     case "check":
       return {
         ...state,
-        phase: { answer: action.answer, kind: "checking", timedOut: action.timedOut },
+        phase: {
+          answer: action.answer,
+          durationMs: action.durationMs,
+          kind: "checking",
+          sender: action.sender,
+        },
       };
     case "answered":
       return answered(state, action);
     case "answerFailed":
       return state.phase.kind === "checking"
         ? { ...state, phase: { ...state.phase, kind: "answerFailed" } }
+        : state;
+    case "retry":
+      return state.phase.kind === "answerFailed"
+        ? { ...state, phase: { ...state.phase, kind: "checking" } }
         : state;
     case "next":
       return {

@@ -72,20 +72,18 @@ struct CourseStartScreen: View {
 
       if error?.needsAccount != true, error?.limit?.isPlusLimit != true {
         StepButtons(
-          canContinue: (chapterId != nil || level != nil) && !isStarting,
-          continueLabel: isStarting
-            ? Text(
-              "Starting your plan…", tableName: "Onboarding",
-              comment: "While a course starts as a goal")
-            : Text(
-              "Build my plan", tableName: "Onboarding",
-              comment: "Starts a course as the learner's goal"),
+          canContinue: chapterId != nil || level != nil,
+          continueLabel: Text(
+            "Build my plan", tableName: "Onboarding",
+            comment: "Starts a course as the learner's goal"),
           note: session.authenticatedSession == nil
             ? Text(
               "Start free, no account needed.", tableName: "Onboarding",
               comment: "Under a course's Build my plan for a visitor")
             : nil,
-          onContinue: start)
+          onContinue: start
+        )
+        .environment(\.isSavingAnswer, isStarting)
       }
     }
     .loads(course, refreshable: false)

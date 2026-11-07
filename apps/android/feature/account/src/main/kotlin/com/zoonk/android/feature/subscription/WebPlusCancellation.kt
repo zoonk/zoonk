@@ -24,8 +24,8 @@ import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.AlertDialog
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.api.models.StripeSubscriptionCancellation
 import com.zoonk.api.models.StripeSubscriptionCancellation.State
@@ -105,9 +105,11 @@ internal fun KeepWebPlusButton(cancellation: WebPlusCancellationViewModel) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-        OutlinedButton(onClick = cancellation::keep, enabled = !cancellation.isKeeping) {
-            PendingLabel(cancellation.isKeeping, stringResource(R.string.subscription_keep_plus))
-        }
+        OutlinedButton(
+            busy = cancellation.isKeeping,
+            onClick = cancellation::keep,
+            leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
+        ) { Text(stringResource(R.string.subscription_keep_plus)) }
         if (cancellation.keepFailed) Failure(stringResource(R.string.subscription_keep_failed))
     }
 }
@@ -135,9 +137,7 @@ internal fun WebPlusCancellationDialog(cancellation: WebPlusCancellationViewMode
             }
         },
         confirmButton = {
-            TextButton(onClick = cancellation::cancel, enabled = !cancellation.isSending) {
-                PendingLabel(cancellation.isSending, stringResource(R.string.subscription_cancel))
-            }
+            TextButton(busy = cancellation.isSending, onClick = cancellation::cancel) { Text(stringResource(R.string.subscription_cancel)) }
         },
         dismissButton = {
             TextButton(onClick = cancellation::close, enabled = !cancellation.isSending) {

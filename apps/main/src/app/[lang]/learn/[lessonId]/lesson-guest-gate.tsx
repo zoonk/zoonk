@@ -8,6 +8,7 @@ import { TaskActionBar, TaskActions } from "@zoonk/learn/task-layout";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
+import { LogInIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useReducer, useTransition } from "react";
 import { LessonRouteFrame } from "./lesson-route-frame";
@@ -79,6 +80,7 @@ export function LessonGuestGate({
                   buttonVariants({ size: "xl", variant: blocked ? "default" : "outline" }),
                   blocked && "flex-1",
                 )}
+                icon={<LogInIcon aria-hidden="true" />}
               >
                 {t("Log in")}
               </CurrentPageLoginLink>

@@ -21,8 +21,8 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
-import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
 import com.zoonk.android.ui.components.SuggestionDescription
@@ -281,10 +281,8 @@ private fun FindAction(
     SuggestionAction(
         onClick = onFind,
         modifier = if (pending) Modifier.semantics { stateDescription = finding } else Modifier,
-        enabled = !pending,
-    ) {
-        PendingLabel(pending, stringResource(if (retry) R.string.plan_try_again else R.string.plan_find))
-    }
+        busy = pending,
+    ) { Text(stringResource(if (retry) R.string.plan_try_again else R.string.plan_find)) }
 }
 
 /** Main's `FitLessonsSuggestion`: the lessons the learner's own time fits that the plan doesn't hold. */
@@ -317,7 +315,8 @@ internal fun FitLessonsSuggestion(slot: Slot) {
                 SuggestionAction(
                     stringResource(R.string.plan_apply),
                     onClick = { slot.apply(SlotItem.FitLessons, offer.operations.map { it.op }) },
-                    enabled = !slot.edits.isPending(PlanPart.Suggestion),
+                    busy = slot.edits.isPending(PlanPart.Suggestion),
+                    leadingIcon = { ButtonIcon(R.drawable.ic_check) },
                 )
             }
             SuggestionAction(stringResource(R.string.plan_not_now), onClick = { slot.dismiss(SlotItem.FitLessons) }, secondary = true)

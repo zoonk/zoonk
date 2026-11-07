@@ -87,7 +87,7 @@ A reviewer looks at every picture, and a long page of them hides the one that ma
 
 ### Screenshots and videos
 
-`pnpm pr:capture` captures Main the same way on both sides and writes the PR's before-and-after section. Run it on `pnpm start`: `pnpm dev` adds its own overlay and loading states learners never see.
+`pnpm pr:capture` captures Main (`--app api` or `--app admin` another app) the same way on both sides and writes the PR's before-and-after section. Run it on `pnpm start`: `pnpm dev` adds its own overlay and loading states learners never see.
 
 ```sh
 pnpm pr:capture before /today /plan --email <learner>@zoonk.test   # before you edit

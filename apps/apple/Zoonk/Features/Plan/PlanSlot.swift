@@ -848,7 +848,7 @@ private struct CertificateClaimButton: View {
       localized: "That didn't save. Try again.", table: "Plan",
       comment: "The plan's certificate couldn't be written; Get your certificate tries again")
 
-    Button {
+    BusyButton(isBusy: claiming != nil, icon: .certificate) {
       claiming = Task {
         let claim = await context.claimCertificate()
 
@@ -866,16 +866,11 @@ private struct CertificateClaimButton: View {
         }
       }
     } label: {
-      Label {
-        Text(
-          "Get your certificate", tableName: "Plan",
-          comment: "Writes the certificate of the plan's finished course or level and shows it")
-      } icon: {
-        Image(systemName: "rosette")
-      }
+      Text(
+        "Get your certificate", tableName: "Plan",
+        comment: "Writes the certificate of the plan's finished course or level and shows it")
     }
     .buttonStyle(.mainAction)
-    .disabled(claiming != nil)
     .onDisappear {
       claiming?.cancel()
       claiming = nil
@@ -970,7 +965,7 @@ private struct PlanFinishedSlot: View {
         .foregroundStyle(.mutedForeground)
 
         if let level = value.nextLevel {
-          Button {
+          BusyButton(isBusy: isStarting, icon: .play) {
             Task { await continueAtNextLevel() }
           } label: {
             Text(
@@ -978,7 +973,6 @@ private struct PlanFinishedSlot: View {
               comment: "Starts the next level of the plan's course")
           }
           .buttonStyle(.outline)
-          .disabled(isStarting)
         }
 
         ForEach(value.related) { course in

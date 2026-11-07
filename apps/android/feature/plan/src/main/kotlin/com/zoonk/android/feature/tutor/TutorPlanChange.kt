@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -31,6 +30,7 @@ import com.zoonk.android.feature.plan.planChangeKeepOfficialDateLabel
 import com.zoonk.android.feature.plan.planChangeOfficialDateLine
 import com.zoonk.android.feature.plan.planChangeSentence
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.api.models.PlanChange
@@ -159,7 +159,7 @@ private fun Decisions(
         }
 
         change.status == PlanChange.Status.APPLIED && change.canUndo -> {
-            OutlinedButton(onClick = { onDecide(Decision.UNDONE) }, enabled = !deciding) {
+            OutlinedButton(busy = deciding, onClick = { onDecide(Decision.UNDONE) }, leadingIcon = { ButtonIcon(R.drawable.ic_undo) }) {
                 Text(stringResource(R.string.tutor_plan_change_undo))
             }
         }

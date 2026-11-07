@@ -13,7 +13,6 @@
     <string name="settings_download_data">Download my data</string>
     <string name="settings_download_data_description">Everything Zoonk keeps about you, as one file</string>
     <string name="settings_download">Download</string>
-    <string name="settings_download_preparing">Preparing…</string>
     <string name="settings_download_failed">We couldn\'t prepare the download. Try again.</string>
     <string name="settings_delete_account">Delete account</string>
     <string name="settings_delete_my_account">Delete my account</string>

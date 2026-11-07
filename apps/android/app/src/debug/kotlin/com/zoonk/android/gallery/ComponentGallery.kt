@@ -71,6 +71,7 @@ import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltDot
 import com.zoonk.android.ui.components.BeltLevel
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DestructiveButton
 import com.zoonk.android.ui.components.DoneMark
@@ -80,6 +81,7 @@ import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
+import com.zoonk.android.ui.components.FilledIconButton
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExample
 import com.zoonk.android.ui.components.GoalExamples
@@ -160,6 +162,7 @@ internal val gallerySections =
         GallerySection("Buttons") { Buttons() },
         GallerySection("Fields") { Fields() },
         GallerySection("Material components") { MaterialComponents() },
+        GallerySection("Busy buttons") { BusyButtons() },
         GallerySection("Navigation") { Navigation() },
         GallerySection("Label chips") { Chips() },
         GallerySection("Meters") { Meters() },
@@ -399,6 +402,43 @@ private fun MaterialComponents() {
             AssistChip(onClick = {}, label = { Text("Explain") })
         }
         CircularProgressIndicator(progress = { 0.6f }, color = MaterialTheme.colorScheme.tertiary)
+    }
+}
+
+@Composable
+private fun BusyButtons() {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) }) { Text("Start session") }
+            Button(onClick = {}, busy = true, trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) }) { Text("Continue") }
+            OutlinedButton(
+                onClick = {},
+                busy = true,
+                leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
+            ) { Text("Move to Monday") }
+            SecondaryButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_help) }) { Text("I don't know yet") }
+            TextButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_undo) }) { Text("Undo") }
+            DestructiveButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_delete) }) { Text("Delete") }
+            OutlinedButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_download) }, size = ButtonSize.Small) {
+                Text("Download")
+            }
+        }
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_help) }) { Text("I'm not sure") }
+            Button(onClick = {}, enabled = false, focusableWhenDisabled = true, leadingIcon = { ButtonIcon(R.drawable.ic_check) }) {
+                Text("Check")
+            }
+            OutlinedButton(onClick = {}, busy = true) { Text("Show more") }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            OutlinedIconButton(
+                onClick = {},
+                busy = true,
+            ) { Icon(painterResource(R.drawable.ic_contact_support), contentDescription = "Ask") }
+            FilledIconButton(onClick = {}, busy = true) { Icon(painterResource(R.drawable.ic_arrow_upward), contentDescription = "Send") }
+        }
+        ListRow(headline = { Text("Practice this chapter") }, onClick = {}, busy = true)
+        ListRow(headline = { Text("Next lesson") }, onClick = {}, busy = true, meta = { Text("5 min") }, chevron = false)
     }
 }
 

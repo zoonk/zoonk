@@ -140,7 +140,6 @@
   "conversation_start": "e98ef097c061f9b3bc5478700010c86bda798763c0592587d8e7235c49b89f3e",
   "conversation_start_failed": "097173bbcb4443036d0f03a5d99f2b86efb6fcab56a44162b33dd9059b240677",
   "conversation_start_preparing": "8c34b819d3486590feeef3eb821d9b8050f313e474d909b4f55872bcb2495ac2",
-  "conversation_starting": "49757eb68b04a85f4a7f9044ac9420c412649b429cc45291c1619d90e65e1477",
   "conversation_still_closing": "aae06e3c768780e11be8d9c27518e1d59325b9ae58a1bad697bd13cc26432019",
   "conversation_still_to_get_across": "4d34b97991deafc3612d40188aed7051e979736ff34d91e33e821e4cf3ab3320",
   "conversation_study_time_used_up": "cb255da9085ff3a1c99e4e9b5a3cb54080819b1f0429f2b368955a280c1375b7",
@@ -209,7 +208,6 @@
     <!-- Starts a phone call with the character, whose name follows. -->
     <string name="conversation_call">Chiama %1$s</string>
     <string name="conversation_start">Inizia la conversazione</string>
-    <string name="conversation_starting">Stiamo avviando…</string>
     <string name="conversation_start_failed">La conversazione non è partita. Riprova tra poco.</string>
     <string name="conversation_challenge_plus">Le conversazioni delle sfide sono incluse in Plus. Il tuo piano va avanti anche senza.</string>
     <!-- The microphone permission was denied; the character's name. -->

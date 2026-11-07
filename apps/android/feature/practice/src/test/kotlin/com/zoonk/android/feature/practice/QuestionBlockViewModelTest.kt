@@ -275,16 +275,20 @@ class QuestionBlockViewModelTest {
                         "timeLimitSeconds" to JsonPrimitive(45),
                     ),
                 )
-            val viewModel = viewModel(drill = timed) { 3_000L }
+            var clock = 0L
+            val viewModel = viewModel(drill = timed) { clock }
             val read = started(viewModel)
             answer = { throw ApiException(ApiError.Network) }
 
+            clock = 3_000L
             viewModel.timeUp(read.questions.first(), 45)
             advanceUntilIdle()
             assertEquals(RunPhase.AnswerFailed, viewModel.state.value?.phase)
 
             answer = { feedback(isCorrect = false) }
+            clock = 90_000L
             viewModel.retry()
+            assertEquals(RunPhase.Checking(AnswerSender.Timer), viewModel.state.value?.phase)
             advanceUntilIdle()
 
             assertTrue(viewModel.state.value?.phase is RunPhase.Checked)
@@ -297,6 +301,21 @@ class QuestionBlockViewModelTest {
                     sent.last().answer,
                 ),
             )
+        }
+
+    @Test
+    fun aBlankAnswerIsChecksRequestWhenCheckSendsIt() =
+        runTest(dispatcher) {
+            val viewModel = viewModel()
+            val read = started(viewModel)
+
+            viewModel.submit(read.questions[0], Answer.DontKnow)
+            assertEquals(RunPhase.Checking(AnswerSender.Check), viewModel.state.value?.phase)
+            advanceUntilIdle()
+            viewModel.next(read.questions)
+
+            viewModel.submit(read.questions[1], Answer.DontKnow, AnswerSender.NotSure)
+            assertEquals(RunPhase.Checking(AnswerSender.NotSure), viewModel.state.value?.phase)
         }
 
     @Test

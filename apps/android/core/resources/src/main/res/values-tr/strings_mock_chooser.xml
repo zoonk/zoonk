@@ -6,7 +6,6 @@
   "mock_chooser_failed": "37ea8e8a19d6b844737bfae1699597b50cdc083f696a495e6efa59ab34b1b860",
   "mock_chooser_full_day_number_without": "134bbf9d254449ab8ed4dec0d4573495c6705f1c42849edca16d352873d0240b",
   "mock_chooser_full_day_without": "0162d917df0a7b080068218a94548e0d6450778adc7b48875cd13f90b7831d45",
-  "mock_chooser_getting_ready": "fc8814f648495b5e82f677fe3ee3abbd7f618470c00a16ae20a3ee1a2c62f136",
   "mock_chooser_last_mock": "b00b3257758801749577f292c949b1f32a9a032cc19715b3dd2b5110606aae59",
   "mock_chooser_left_out_choice": "9374327e5d1699d74e531adfec6aa756dba69b01fdb8f924b9ff6bf8f8f0b718",
   "mock_chooser_left_out_listening": "5d588b15f1c3e44cb10651f494df1b1395b4ed27d103167730e031a3d01d6a84",
@@ -79,7 +78,6 @@
     <string name="mock_chooser_rule">Sınav gününde olduğu gibi, sonucunu yalnızca en sonda görürsün.</string>
     <string name="mock_chooser_pick_free">Sınavın ne kadarını şimdi çözeceğini seç.</string>
     <string name="mock_chooser_start">Başla</string>
-    <string name="mock_chooser_getting_ready">Hazırlıyoruz…</string>
     <plurals name="mock_chooser_start_with">
         <item quantity="one">%d soruyla başla</item>
         <item quantity="other">%d soruyla başla</item>

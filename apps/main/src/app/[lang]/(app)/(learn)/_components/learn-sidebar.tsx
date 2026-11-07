@@ -45,9 +45,9 @@ async function VisitorAccount() {
         <CurrentPageLoginLink
           className={cn(
             buttonVariants({ size: "bar", variant: "outline" }),
-            "sidebar-collapsed:my-1 sidebar-collapsed:size-8 sidebar-collapsed:p-0 w-full",
+            "sidebar-collapsed:my-1 sidebar-collapsed:size-8 sidebar-collapsed:p-0! w-full",
           )}
-          icon={<LogInIcon aria-hidden="true" className="sidebar-collapsed:block hidden" />}
+          icon={<LogInIcon aria-hidden="true" />}
         >
           <span className="sidebar-collapsed:sr-only">{t("Log in")}</span>
         </CurrentPageLoginLink>

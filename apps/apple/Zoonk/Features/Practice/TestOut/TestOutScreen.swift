@@ -145,23 +145,22 @@ struct TestOutScreen: View {
       }
     } actions: {
       if let changeId = result.changeId, undo != .done {
-        Button {
+        BusyButton(isBusy: undo == .pending, icon: .undo) {
           Task { await undoSkip(changeId) }
         } label: {
           Text(
             "Undo", tableName: "Practice",
-            comment: "Puts a passed test-out's skipped lessons back in the plan."
-          )
-          .frame(maxWidth: .infinity)
+            comment: "Puts a passed test-out's skipped lessons back in the plan.")
         }
         .buttonStyle(.outline)
         .controlSize(.large)
-        .disabled(undo == .pending)
+        .buttonSizing(.flexible)
       }
 
       PracticeMainButton(
         title: LocalizedStringResource(
-          "Continue", table: "Practice", comment: "Moves on after a grade.")
+          "Continue", table: "Practice", comment: "Moves on after a grade."),
+        icon: .forward
       ) {
         dismiss()
       }

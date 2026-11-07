@@ -26,7 +26,6 @@
   "essay_full_marks": "2516c19cc89fa455ada912c213f50f054c1eecb3579cb77a9f360758b3050cda",
   "essay_grade_rewrite": "4b82cf6c6b8a0f0618c2c11befdc078cd2f35949146b490748dc551c0db4f010",
   "essay_grading": "50bbb16635bed3e3791645a171c409ff3bbbe641e4df4b9604223dfd87574750",
-  "essay_grading_button": "0cf3825f2a6da78dc69e3eb6934218537b15eb5ba529bb5416f8dff2d747d915",
   "essay_grading_slow": "e79e3b65c00b4c1acd4f77aaf87633d3990cc44e99be83bb3edd6a03d1d790e2",
   "essay_keep_writing": "704e09e91241109ee067e894663320b80885d8ec6c17d2b4a5b7a1331ede49a9",
   "essay_last_grade": "341ded9c2074965018a5e92ab216e433460b780d7fcea25e2fb57c9f01c1c504",
@@ -113,7 +112,6 @@
     <string name="essay_grading">평가 기준별로 에세이를 살펴보고 있어요. 최대 30초가 걸릴 수 있어요.</string>
     <string name="essay_grading_slow">아직 채점하고 있어요. 평소보다 시간이 더 걸리고 있어요.</string>
     <string name="essay_skip_rewrite">고쳐 쓰기 건너뛰기</string>
-    <string name="essay_grading_button">채점 중…</string>
     <string name="essay_grade_rewrite">수정한 글 채점하기</string>
     <string name="essay_send">채점 요청하기</string>
     <string name="essay_leave_title">잠시 나갈까요?</string>

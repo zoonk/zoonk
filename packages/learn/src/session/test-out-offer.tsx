@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { FastForwardIcon } from "lucide-react";
+import { FastForwardIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   type TestOutStart,
@@ -44,14 +44,14 @@ export function TestOutOffer({
       </div>
 
       <Button
+        busy={opening}
         className="shrink-0"
-        disabled={opening}
-        focusableWhenDisabled
+        icon={<PlayIcon aria-hidden="true" />}
         onClick={start}
         size="sm"
         variant="outline"
       >
-        {opening ? t("Opening the test…") : t("Take the test")}
+        {t("Take the test")}
       </Button>
     </div>
   );

@@ -20,6 +20,24 @@ function createStep(gateway?: ProviderMetadata[string], stepUsage = usage) {
   };
 }
 
+function paidByGateway(canonicalSlug: string) {
+  return createStep({
+    gatewayCost: "0.02",
+    routing: {
+      modelAttempts: [
+        {
+          canonicalSlug,
+          providerAttempts: [
+            { credentialType: "byok", success: false },
+            { credentialType: "system", success: true },
+          ],
+          success: true,
+        },
+      ],
+    },
+  });
+}
+
 function buildWithSteps(steps: ReturnType<typeof createStep>[]) {
   return buildTaskProvenance({
     generatedAt: "2026-09-26T12:00:00.000Z",
@@ -118,6 +136,30 @@ describe(buildTaskProvenance, () => {
 
     // Luna: 10 input tokens at $0.10 and 5 output tokens at $0.50 per million.
     expect(provenance.costUsd).toBeCloseTo(3.5e-6, 10);
+  });
+
+  it("adds what the gateway debited, such as its search fees, to what our own key paid", () => {
+    const provenance = buildWithSteps([
+      createStep({
+        gatewayCost: "0.015",
+        routing: {
+          modelAttempts: [
+            {
+              canonicalSlug: "openai/gpt-6-luna",
+              providerAttempts: [{ credentialType: "byok", success: true }],
+              success: true,
+            },
+          ],
+        },
+      }),
+    ]);
+
+    expect(provenance.costUsd).toBeCloseTo(3.5e-6 + 0.015, 10);
+  });
+
+  it("costs what the gateway debited when its own credentials paid for the tokens too", () => {
+    expect(buildWithSteps([paidByGateway("openai/gpt-6-luna")]).costUsd).toBe(0.02);
+    expect(buildWithSteps([paidByGateway("unpriced/model")]).costUsd).toBe(0.02);
   });
 
   it("prices the call at the tier that served it", () => {

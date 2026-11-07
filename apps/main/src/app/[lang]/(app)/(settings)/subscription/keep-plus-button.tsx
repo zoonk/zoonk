@@ -3,7 +3,7 @@
 import { useRouter } from "@/i18n/navigation";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { Button } from "@zoonk/ui/components/button";
-import { Loader2Icon } from "lucide-react";
+import { Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { type KeepPlusResult, keepPlusAction } from "./keep-plus-action";
@@ -32,15 +32,13 @@ export function KeepPlusButton() {
       </p>
 
       <Button
-        aria-busy={pending}
+        busy={pending}
         className="w-max"
-        disabled={pending}
-        focusableWhenDisabled
+        icon={<Undo2Icon aria-hidden="true" />}
         onClick={keep}
         size="sm"
         variant="outline"
       >
-        {pending && <Loader2Icon aria-hidden="true" className="animate-spin" />}
         {t("Keep Plus")}
       </Button>
 

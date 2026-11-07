@@ -1,3 +1,4 @@
+import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { Input, InputError } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -67,7 +68,7 @@ export function SetupError({
 
 export function SetupSubmit({ children, ...props }: React.ComponentProps<"button">) {
   return (
-    <SubmitButton className="h-11 font-[560]" full {...props}>
+    <SubmitButton className="h-11 font-[560]" full {...FORWARD_ICON} {...props}>
       {children}
     </SubmitButton>
   );

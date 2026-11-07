@@ -2,7 +2,7 @@
 
 import { type StudyNextView } from "@zoonk/core/view-models/map/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { LibraryIcon } from "lucide-react";
+import { LibraryIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import {
@@ -54,7 +54,7 @@ function ContinueAtNextLevel({
 
   return (
     <>
-      <SuggestionAction disabled={isPending} onClick={start}>
+      <SuggestionAction busy={isPending} icon={<PlayIcon aria-hidden="true" />} onClick={start}>
         {t("Continue at {level}", { level: levelName(next.level) })}
       </SuggestionAction>
       {failed && <SuggestionSaveError />}

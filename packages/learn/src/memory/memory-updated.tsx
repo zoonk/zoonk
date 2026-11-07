@@ -100,7 +100,7 @@ export function MemoryUpdated({
           <>
             <ChangeText change={first} extra={changes.length - 1} />
             <span aria-hidden="true">{" · "}</span>
-            <Button disabled={isPending} focusableWhenDisabled onClick={undo} variant="link">
+            <Button busy={isPending} onClick={undo} variant="link">
               {t("Undo")}
             </Button>
             {status === "failed" && (

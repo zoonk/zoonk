@@ -623,7 +623,7 @@
   transition-duration: var(--transition-duration-quick);
   transition-timing-function: var(--ease-out);
 
-  &:active {
+  &:active:not([aria-busy="true"]) {
     scale: var(--press-scale);
   }
 }

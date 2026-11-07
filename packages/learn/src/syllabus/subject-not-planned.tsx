@@ -4,7 +4,7 @@ import { type WrittenPractice } from "@zoonk/core/plans/written-practice-contrac
 import { type SyllabusSubject } from "@zoonk/core/view-models/syllabus/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
-import { CircleMinusIcon } from "lucide-react";
+import { CircleMinusIcon, ListPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { NoticeCard } from "../_components/notice-card";
@@ -32,8 +32,8 @@ function RestoreButton({
   return (
     <div className="flex flex-col items-start gap-1.5">
       <Button
-        disabled={isPending}
-        focusableWhenDisabled
+        busy={isPending}
+        icon={<ListPlusIcon aria-hidden="true" />}
         onClick={() =>
           startTransition(async () => {
             const { data: restored } = await safeAsync(() => restore(areas));

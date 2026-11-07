@@ -22,7 +22,6 @@
     <!-- Starts a phone call with the character, whose name follows. -->
     <string name="conversation_call">Call %1$s</string>
     <string name="conversation_start">Start the call</string>
-    <string name="conversation_starting">Starting…</string>
     <string name="conversation_start_failed">The call didn\'t start. Try again in a moment.</string>
     <string name="conversation_challenge_plus">Challenge calls come with Plus. Your plan keeps going without them.</string>
     <!-- The microphone permission was denied; the character's name. -->

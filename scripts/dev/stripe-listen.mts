@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { homedir } from "node:os";
+import { AUTH_BASE_PATH } from "../../apps/api/src/lib/auth-base-path.ts";
 import { getPortlessEnvironment, getServiceUrl } from "./config.mts";
 import { applyCommandExit, getPnpmCommand, runForegroundCommand } from "./process.mts";
 
@@ -34,7 +35,7 @@ const result = await runForegroundCommand({
     "--events",
     "checkout.session.completed,customer.subscription.created,customer.subscription.updated,customer.subscription.deleted",
     "--forward-to",
-    `${apiUrl}/v1/auth/stripe/webhook`,
+    `${apiUrl}${AUTH_BASE_PATH}/stripe/webhook`,
   ],
   command: "stripe",
   currentDirectory,

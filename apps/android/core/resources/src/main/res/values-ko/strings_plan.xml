@@ -299,7 +299,6 @@
   "plan_full_reviews_done": "ab591e2d4210eff6798489cc79f3edae454208207fb2b086d0d821c42603da57",
   "plan_gain_this_week": "9e41fae3f22e56dc1bb7c4a39deb5b6daa3f4ff5a06c3d78727a3810ea0cbccd",
   "plan_get_recommendation": "001170cd154b0f570dffb49a1d6dff979bcd51371627dbfeff81e285c485af85",
-  "plan_getting_recommendation": "8697da12b2a11735ceeab401e4778fea0bea0dc7e673562c4d3d3ca382abe2d0",
   "plan_go_to_today": "e57c1665706b339788018cd54e6e00fc73a3ab471b55650173ddefde8c0d1b8b",
   "plan_goal_date": "621fdd06f7c1f96171ffe6de59bb85c23031f620fe24eff9ef8df1a5b6cabda0",
   "plan_goal_limit_reached": "089e05c1b28bfde98e334705c079ea7b0cd0de2081ed6eaac4d4eb6797e58e30",
@@ -437,7 +436,6 @@
   "plan_save": "7909f950b5d1fbf8b94cb3f8743393a2d71edfdeadf2f53847828fe6068ef6bc",
   "plan_save_choices": "ce210373bb96dc8edbfece91878f99bb42dc9a2bca7b0391fcf8de46015b1176",
   "plan_save_failed": "5b262125c979a7c35ff379768bf0991e6bf64dea213d20b42fe975feeaa91f08",
-  "plan_saving": "5b62689ed4c7670d8ecc08eece74a98d1f90b19253ff79693385da5a385ac08f",
   "plan_score_band": "891c2e4b650e74bb0cb0d734b78a5bc239d97ddd03b821216d633b9751637411",
   "plan_score_band_range": "8686820e64c53d31f3331bad4fa6efad4b5133416be303b4bdda8c61ab42aec3",
   "plan_score_percent": "f375d3e5e4f46e2f168b5380677899195df22b84a0c40d878981d3242c7cca56",
@@ -1235,7 +1233,6 @@
     <string name="plan_different_choices">선택이 서로 다름</string>
     <string name="plan_base_studied">공부했어요</string>
     <string name="plan_get_recommendation">추천받기</string>
-    <string name="plan_getting_recommendation">추천을 준비하고 있어요…</string>
     <string name="plan_recommendation_failed">추천을 받지 못했어요.</string>
     <string name="plan_still_building">아직 계획을 만들고 있어요. 잠시 후에 다시 시도해 보세요.</string>
     <string name="plan_recommend_deep">모든 내용을 배울 시간이 충분해서 사전 지식을 하나씩 깊이 있게 배우는 걸 추천해요.</string>
@@ -1431,7 +1428,6 @@
     <string name="plan_focus_cant_move">바뀐 내용이 없어요. %1$s의 레슨은 사전 지식을 익히는 대로 시작하도록 이미 배치되어 있고, 지금 학습 시간으로는 더 넣을 수 없어요. 하루 학습 시간을 늘리면 더 넣을 수 있어요.</string>
     <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
     <string name="plan_focus_on_these">선택한 과목에 집중하기</string>
-    <string name="plan_saving">저장하고 있어요…</string>
     <string name="plan_couldnt_check_changes">변경 사항을 확인하지 못했어요.</string>
     <string name="plan_then_covers_everything">이렇게 조정한 계획은 모든 내용을 깊이 있게 다뤄요.</string>
     <string name="plan_apply">적용</string>

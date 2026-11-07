@@ -52,7 +52,7 @@ data class RowSource(
 data class GoalFacts(
     val isLanguage: Boolean,
     val targetLanguage: String?,
-    val details: Map<String, JsonElement>?,
+    val details: Map<String, JsonElement?>?,
     val title: String,
     val language: String,
 )
@@ -440,7 +440,7 @@ private fun isGuide(draft: GoalDraftOutput) = draft.kind == GoalDraftOutput.Kind
 internal fun minutesSaid(goal: UnderstoodGoal?): Boolean =
     (goal?.draft?.details?.get("answered") as? JsonArray)?.any { (it as? JsonPrimitive)?.contentOrNull == "schedule" } == true
 
-internal fun Map<String, JsonElement>?.text(key: String): String? =
+internal fun Map<String, JsonElement?>?.text(key: String): String? =
     (this?.get(key) as? JsonPrimitive)
         ?.takeIf {
             it.isString

@@ -1,14 +1,15 @@
 "use client";
 
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { BusyContent, Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
+import { ListPlusIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
 import { OpeningWaitLine } from "../_components/opening-wait-line";
 import { ChangeSaveError } from "../_components/save-error";
+import { usePendingSender } from "../_utils/use-pending-sender";
 import { useSlowWait } from "../_utils/use-slow-wait";
 import { type WaitState } from "../_utils/wait-state";
 import { useLearnRoutes } from "../learn-context";
@@ -25,8 +26,11 @@ const ACTION_CLASS = "w-full text-[0.9375rem] sm:w-auto";
 
 type SessionAction = ReturnType<typeof useSessionAction> & { wait: WaitState };
 
+/** The up-next list's first row sends it too; only the control that sent it spins. */
+type KeepLearningAction = SessionAction & { openFromRow: () => void; rowSent: boolean };
+
 type TodayContinue = ReturnType<typeof useContinueSession> & {
-  keep: SessionAction;
+  keep: KeepLearningAction;
   wait: WaitState;
 };
 
@@ -44,9 +48,17 @@ export function TodayContinueProvider({ children }: { children: React.ReactNode 
   const wait = useSlowWait(session.isPending);
   const keep = useSessionAction({ action: actions.addExtraTime, enterKey: keepLearning });
   const keepWait = useSlowWait(keep.isPending);
+  const [keepSender, setKeepSender] = usePendingSender<"row">(keep.isPending);
+
+  const openFromRow = () => {
+    setKeepSender("row");
+    keep.run();
+  };
+
+  const keepAction = { ...keep, openFromRow, rowSent: keepSender === "row", wait: keepWait };
 
   return (
-    <TodayContinueContext value={{ ...session, keep: { ...keep, wait: keepWait }, wait }}>
+    <TodayContinueContext value={{ ...session, keep: keepAction, wait }}>
       {children}
     </TodayContinueContext>
   );
@@ -62,7 +74,7 @@ function useTodayContinue(): TodayContinue {
   return value;
 }
 
-export function useKeepLearning(): SessionAction {
+export function useKeepLearning(): KeepLearningAction {
   return useTodayContinue().keep;
 }
 
@@ -103,8 +115,10 @@ function ContinueLink({ href }: { href: string }) {
       href={href}
       ref={ref}
     >
-      {started ? t("Continue session") : t("Start session")}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <BusyContent icon={<PlayIcon aria-hidden="true" />}>
+        {started ? t("Continue session") : t("Start session")}
+        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      </BusyContent>
     </LearnLink>
   );
 }
@@ -113,7 +127,7 @@ function ContinueButton() {
   const t = useExtracted();
   const { actions } = useTodayScreen();
   const { started } = useSessionState();
-  const { isPending, run, wait } = useTodayContinue();
+  const { isPending, run } = useTodayContinue();
 
   if (actions.continueHref) {
     return <ContinueLink href={actions.continueHref} />;
@@ -124,13 +138,12 @@ function ContinueButton() {
       <Button
         aria-describedby={NEXT_TITLE_ID}
         aria-keyshortcuts="Enter"
+        busy={isPending}
         className={ACTION_CLASS}
-        disabled={isPending}
-        focusableWhenDisabled
+        icon={<PlayIcon aria-hidden="true" />}
         onClick={run}
         size="lg"
       >
-        {wait !== "none" && <Spinner aria-hidden="true" />}
         {started ? t("Continue session") : t("Start session")}
         <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
       </Button>
@@ -153,8 +166,10 @@ function SummaryLink() {
       prefetch={false}
       ref={ref}
     >
-      {t("See today's summary")}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <BusyContent {...FORWARD_ICON}>
+        {t("See today's summary")}
+        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      </BusyContent>
     </LearnLink>
   );
 }
@@ -188,13 +203,12 @@ function PrepareLessons() {
   return (
     <>
       <Button
+        busy={isPending}
         className={ACTION_CLASS}
-        disabled={isPending}
-        focusableWhenDisabled
+        icon={<ListPlusIcon aria-hidden="true" />}
         onClick={run}
         size="lg"
       >
-        {isPending && <Spinner aria-hidden="true" />}
         {t({
           description: "Button that has Zoonk write today's lessons.",
           message: "Get today's lessons",
@@ -208,19 +222,20 @@ function PrepareLessons() {
 
 function KeepLearning() {
   const t = useExtracted();
-  const { failed, isPending, run, wait } = useKeepLearning();
+  const { failed, isPending, rowSent, run, wait } = useKeepLearning();
 
   return (
     <>
       <Button
         aria-keyshortcuts="Enter"
+        busy={isPending && !rowSent}
         className={ACTION_CLASS}
-        disabled={isPending}
+        disabled={rowSent}
         focusableWhenDisabled
+        icon={<PlayIcon aria-hidden="true" />}
         onClick={run}
         size="lg"
       >
-        {wait !== "none" && <Spinner aria-hidden="true" />}
         {t("Keep learning")}
         <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
       </Button>
@@ -253,8 +268,10 @@ function SeePlanLink() {
       href={routes.journey}
       ref={ref}
     >
-      {t("See your plan")}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <BusyContent {...FORWARD_ICON}>
+        {t("See your plan")}
+        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      </BusyContent>
     </LearnLink>
   );
 }

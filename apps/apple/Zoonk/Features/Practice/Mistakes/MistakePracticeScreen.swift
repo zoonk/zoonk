@@ -104,7 +104,7 @@ struct MistakePracticeScreen: View {
 
       if let seconds = drill.timeLimitSeconds, state.phase == .answering {
         DrillCountdownView(seconds: seconds, start: shownAt) {
-          Task { await check(.dontKnow, timedOut: true) }
+          Task { await check(.dontKnow, by: .timer) }
         }
         .id("clock-\(state.index)")
       }
@@ -123,12 +123,13 @@ struct MistakePracticeScreen: View {
       if let graded {
         PracticeFeedbackPanel(
           verdict: PracticeVerdict(
-            isCorrect: graded.grade.isCorrect, notSure: graded.answer.isDontKnow && !graded.timedOut
+            isCorrect: graded.grade.isCorrect,
+            notSure: graded.answer.isDontKnow && graded.sender != .timer
           ),
           explanation: graded.grade.explanation
         ) {
           DrillAnswerNotes(
-            drill: drill, notSure: graded.answer.isDontKnow, timedOut: graded.timedOut,
+            drill: drill, notSure: graded.answer.isDontKnow, timedOut: graded.sender == .timer,
             trap: graded.grade.trap)
         }
       }
@@ -141,20 +142,25 @@ struct MistakePracticeScreen: View {
     }
 
     let verdict = PracticeVerdict(
-      isCorrect: graded.grade.isCorrect, notSure: graded.answer.isDontKnow && !graded.timedOut)
+      isCorrect: graded.grade.isCorrect,
+      notSure: graded.answer.isDontKnow && graded.sender != .timer)
 
     return [
-      graded.timedOut ? DrillAnswerNotes.timesUp : nil, String(localized: verdict.label),
+      graded.sender == .timer ? DrillAnswerNotes.timesUp : nil, String(localized: verdict.label),
       graded.grade.explanation,
     ].compactMap(\.self).joinedSentences()
   }
 
-  private var graded: (answer: PracticeAnswer, grade: MistakePracticeGrade, timedOut: Bool)? {
-    if case .feedback(let answer, let grade, let timedOut) = state.phase {
-      (answer, grade, timedOut)
+  private var graded: (answer: PracticeAnswer, grade: MistakePracticeGrade, sender: AnswerSender)? {
+    if case .feedback(let answer, let grade, let sender) = state.phase {
+      (answer, grade, sender)
     } else {
       nil
     }
+  }
+
+  private var checking: AnswerSender? {
+    if case .checking(let sent) = state.phase { sent.sender } else { nil }
   }
 
   private func asked(_ step: MistakePracticeStep) -> PracticeQuestionView {
@@ -178,7 +184,8 @@ struct MistakePracticeScreen: View {
       PracticeMainButton(
         title: LocalizedStringResource(
           "Start the questions", table: "Practice",
-          comment: "Starts a content-gap drill's questions after its idea.")
+          comment: "Starts a content-gap drill's questions after its idea."),
+        icon: .play
       ) {
         shownAt = .now
         state.start()
@@ -188,7 +195,7 @@ struct MistakePracticeScreen: View {
         title: LocalizedStringResource(
           "I've read it. Show the answers", table: "Practice",
           comment: "Shows a misread drill's answers once the question was read."),
-        systemImage: "eye"
+        icon: .reveal
       ) {
         if focuses.has(.reveal) { focuses.move(to: .answer) }
         state.reveal()
@@ -198,7 +205,8 @@ struct MistakePracticeScreen: View {
       PracticeActionRow {
         PracticeMainButton(
           title: LocalizedStringResource(
-            "Continue", table: "Practice", comment: "Moves on after a grade.")
+            "Continue", table: "Practice", comment: "Moves on after a grade."),
+          icon: .forward
         ) {
           next()
         }
@@ -206,8 +214,8 @@ struct MistakePracticeScreen: View {
         ask(step, answered: true, missed: !grade.isCorrect)
       }
     case .answering, .checking, .answerFailed:
-      if case .answerFailed(let answer, let timedOut) = state.phase {
-        PracticeSaveError { Task { await check(answer, timedOut: timedOut) } }
+      if case .answerFailed(let sent) = state.phase {
+        PracticeSaveError { Task { await send(sent) } }
       }
 
       PracticeActionRow {
@@ -219,24 +227,23 @@ struct MistakePracticeScreen: View {
             : LocalizedStringResource(
               "I don't know yet", table: "Practice", comment: "Answers a question as not known yet."
             ),
-          // As on main, only "I'm not sure" carries the question mark; "I don't know yet" is words.
-          systemImage: step.entry.drill.kind == .noGuessing ? "questionmark.circle" : nil,
+          icon: .notSure, isBusy: checking == .notSure,
           isDisabled: !state.acceptsAnswer
         ) {
           press(.notSure)
-          Task { await check(.dontKnow, timedOut: false) }
+          Task { await check(.dontKnow, by: .notSure) }
         }
         .practiceFocus(.notSure)
 
         PracticeMainButton(
           title: LocalizedStringResource(
             "Check", table: "Practice", comment: "Sends the answer to be graded."),
-          isBusy: { if case .checking = state.phase { true } else { false } }(),
+          icon: .check, isBusy: checking?.pressesCheck == true,
           isDisabled: !state.acceptsAnswer || draft?.complete == nil
         ) {
           if let answer = draft?.complete {
             press(.check)
-            Task { await check(answer, timedOut: false) }
+            Task { await check(answer, by: .check) }
           }
         }
         .practiceFocus(.check)
@@ -273,7 +280,7 @@ struct MistakePracticeScreen: View {
           "End practice. What you answered counts.", table: "Practice",
           comment: "VoiceOver label: ends mistake practice early.")
       ) { Task { await end() } }
-      .disabled({ if case .checking = state.phase { true } else { false } }())
+      .disabled(checking != nil)
     }
   }
 
@@ -321,14 +328,21 @@ struct MistakePracticeScreen: View {
     }
   }
 
+  private func check(_ answer: PracticeAnswer, by sender: AnswerSender) async {
+    let limitMs = (state.step?.entry.drill.timeLimitSeconds ?? 0) * 1000
+    let durationMs = Int(Date.now.timeIntervalSince(shownAt) * 1000)
+    await send(
+      SentAnswer(
+        answer: answer, sender: sender,
+        durationMs: sender == .timer ? max(durationMs, limitMs) : durationMs))
+  }
+
   /// Each answer comes with the run's earlier answers, so saving it counts the run so far. Its
   /// attempt id is kept for the question, so sending it again after a failure is recorded once.
-  private func check(_ answer: PracticeAnswer, timedOut: Bool) async {
+  private func send(_ sent: SentAnswer) async {
     guard let step = state.step, state.acceptsAnswer else { return }
 
-    let limitMs = (step.entry.drill.timeLimitSeconds ?? 0) * 1000
-    let durationMs = Int(Date.now.timeIntervalSince(shownAt) * 1000)
-    state.check(answer, timedOut: timedOut)
+    state.check(sent)
 
     if attempt?.index != state.index {
       attempt = (UUID().uuidString.lowercased(), state.index)
@@ -344,7 +358,7 @@ struct MistakePracticeScreen: View {
         try await practice.api.answerMistake(
           token: identity.bearerToken, mistakeId: step.entry.mistakeId,
           itemId: step.question.itemId,
-          answer: answer, durationMs: timedOut ? max(durationMs, limitMs) : durationMs,
+          answer: sent.answer, durationMs: sent.durationMs,
           attemptId: attemptId, runAnswerIds: runAnswerIds, goalId: goalId)
       })
     {
@@ -445,7 +459,8 @@ private struct PracticeDoneView: View {
     } actions: {
       PracticeMainButton(
         title: LocalizedStringResource(
-          "Back", table: "Practice", comment: "Leaves a finished run."), action: close)
+          "Back", table: "Practice", comment: "Leaves a finished run."), icon: .back,
+        action: close)
     }
   }
 

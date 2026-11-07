@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.today
 
 import androidx.activity.compose.LocalActivity
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,10 +10,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +33,6 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.LoadState
@@ -55,6 +53,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -130,6 +129,7 @@ fun TodayDay(
                 openMission = { step -> if (idle()) viewModel.openMission(read, step) },
                 next = { model.day.nextStep?.let { if (idle()) viewModel.open(read, it, next = true) } },
                 keepLearning = { if (idle()) viewModel.keepLearning(read) },
+                upNext = { if (idle()) viewModel.keepLearning(read, fromUpNext = true) },
                 prepare = { if (idle()) viewModel.prepareLessons(read) },
                 navigate = navigator::open,
             )
@@ -231,6 +231,7 @@ internal class TodayActionHandlers(
     val openMission: (com.zoonk.android.feature.session.DayStep) -> Unit,
     val next: () -> Unit,
     val keepLearning: () -> Unit,
+    val upNext: () -> Unit,
     val prepare: () -> Unit,
     val navigate: (AppRoute) -> Unit,
 )
@@ -273,27 +274,37 @@ internal fun TodayAction(
     Column(modifier, horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         val buttonModifier = if (docked) Modifier.fillMaxWidth() else Modifier
         val busy = status.tap != null && viewModel.pending == status.tap
+        val waiting = viewModel.pending != null && !busy
 
         when {
             model.pastDate != null -> {
-                ActionButton(stringResource(R.string.today_see_plan), busy = false, buttonModifier) { actions.navigate(AppRoute.Plan()) }
+                ActionButton(stringResource(R.string.today_see_plan), busy = false, buttonModifier, icon = R.drawable.ic_arrow_forward) {
+                    actions.navigate(AppRoute.Plan())
+                }
             }
 
             model.state == StudySession.State.PREPARE -> {
-                ActionButton(stringResource(R.string.today_get_lessons), busy, buttonModifier, actions.prepare)
+                ActionButton(
+                    stringResource(R.string.today_get_lessons),
+                    busy,
+                    buttonModifier,
+                    waiting = waiting,
+                    icon = R.drawable.ic_playlist_add,
+                    onClick = actions.prepare,
+                )
             }
 
             model.keepLearning -> {
-                ActionButton(stringResource(R.string.today_keep_learning), busy, buttonModifier, actions.keepLearning)
+                ActionButton(stringResource(R.string.today_keep_learning), busy, buttonModifier, waiting, onClick = actions.keepLearning)
             }
 
             model.state == StudySession.State.UNDERWAY -> {
                 val label = if (model.day.started) R.string.today_continue_session else R.string.today_start_session
-                ActionButton(stringResource(label), busy, buttonModifier, actions.next)
+                ActionButton(stringResource(label), busy, buttonModifier, waiting, onClick = actions.next)
             }
 
             model.state == StudySession.State.DONE -> {
-                ActionButton(stringResource(R.string.today_see_summary), busy = false, buttonModifier) {
+                ActionButton(stringResource(R.string.today_see_summary), busy = false, buttonModifier, icon = R.drawable.ic_arrow_forward) {
                     actions.navigate(AppRoute.Session(goalId = (model.day.goalId ?: model.today.goal.id).toString()))
                 }
             }
@@ -305,7 +316,13 @@ internal fun TodayAction(
                             .toDouble(),
                         currentLocale(),
                     )
-                ActionButton(stringResource(R.string.today_practice_minutes, minutes), busy, buttonModifier, actions.keepLearning)
+                ActionButton(
+                    stringResource(R.string.today_practice_minutes, minutes),
+                    busy,
+                    buttonModifier,
+                    waiting,
+                    onClick = actions.keepLearning,
+                )
             }
         }
 
@@ -369,22 +386,20 @@ private fun ActionButton(
     label: String,
     busy: Boolean,
     modifier: Modifier,
+    waiting: Boolean = false,
+    @DrawableRes icon: Int = R.drawable.ic_play_arrow,
     onClick: () -> Unit,
 ) {
+    val forward = icon == R.drawable.ic_arrow_forward
     Button(
-        onClick = { if (!busy) onClick() },
+        busy = busy,
+        onClick = onClick,
         modifier = modifier.widthIn(min = 160.dp),
-        contentPadding = ButtonDefaults.ContentPadding,
-    ) {
-        if (busy) {
-            CircularProgressIndicator(
-                modifier = Modifier.padding(end = ButtonDefaults.IconSpacing).size(ButtonDefaults.IconSize),
-                color = MaterialTheme.colorScheme.onPrimary,
-                strokeWidth = 2.dp,
-            )
-        }
-        Text(label)
-    }
+        enabled = !waiting,
+        focusableWhenDisabled = waiting,
+        leadingIcon = if (forward) null else ({ ButtonIcon(icon) }),
+        trailingIcon = if (forward) ({ ButtonIcon(R.drawable.ic_arrow_forward) }) else null,
+    ) { Text(label) }
 }
 
 /** Nothing cached yet: the page's title, and a quiet sign it's on its way. */

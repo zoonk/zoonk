@@ -4,17 +4,18 @@ import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { Checkbox } from "@zoonk/ui/components/checkbox";
 import { cn } from "@zoonk/ui/lib/utils";
+import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { PLAN_OPTION_CLASS } from "./plan-option-styles";
 
 type ExamChoicePicksProps = {
   choice: ExamChoiceView;
-  disabled: boolean;
   onSave: (subjects: string[]) => void;
+  pending: boolean;
 };
 
-function Picks({ choice, disabled, onSave }: ExamChoicePicksProps) {
+function Picks({ choice, onSave, pending }: ExamChoicePicksProps) {
   const t = useExtracted();
   const [draft, setDraft] = useState<string[]>(choice.subjects);
   const isFull = draft.length >= choice.take;
@@ -32,7 +33,7 @@ function Picks({ choice, disabled, onSave }: ExamChoicePicksProps) {
       <div className="flex flex-wrap gap-2">
         {choice.options.map((option) => {
           const isPicked = draft.includes(option.name);
-          const isDisabled = disabled || (!isPicked && isFull);
+          const isDisabled = pending || (!isPicked && isFull);
 
           return (
             <label
@@ -57,9 +58,11 @@ function Picks({ choice, disabled, onSave }: ExamChoicePicksProps) {
       </div>
 
       <Button
+        busy={pending}
         className="self-start"
-        disabled={disabled || draft.length === 0 || isSaved}
+        disabled={draft.length === 0 || isSaved}
         focusableWhenDisabled
+        icon={<CheckIcon aria-hidden="true" />}
         onClick={() =>
           onSave(
             choice.options.flatMap((option) => (draft.includes(option.name) ? [option.name] : [])),

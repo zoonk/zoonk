@@ -4,6 +4,7 @@ import { setGoalStatusAction } from "@/app/[lang]/(app)/(learn)/_components/goal
 import { type GoalStatusOutcome } from "@zoonk/learn/journey";
 import { ChangeSaveError } from "@zoonk/learn/save-error";
 import { Button } from "@zoonk/ui/components/button";
+import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 
@@ -44,8 +45,10 @@ export function ResumeGoalButton({ goalId, goalTitle }: { goalId: string; goalTi
   return (
     <div className="flex min-w-0 flex-col items-stretch gap-2 sm:items-start">
       <Button
-        disabled={isPending || outcome === "saved"}
+        busy={isPending}
+        disabled={outcome === "saved"}
         focusableWhenDisabled
+        icon={<PlayIcon aria-hidden="true" />}
         onClick={resume}
         size="lg"
       >

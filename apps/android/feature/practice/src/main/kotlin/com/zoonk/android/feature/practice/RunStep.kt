@@ -7,14 +7,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +40,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
@@ -75,6 +80,7 @@ import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
@@ -108,6 +114,7 @@ interface RunControls {
     fun submit(
         question: Question,
         answer: Answer,
+        sender: AnswerSender = AnswerSender.Check,
         minDurationMs: Long = 0,
     )
 
@@ -427,6 +434,7 @@ internal fun AnswerActions(
     }
 
     val reading = !done && run.stage == DrillStage.Reading
+    val sender = (phase as? RunPhase.Checking)?.sender
     key(run.index) {
         val main = remember { FocusRequester() }
         val moveFocus = rememberMoveFocus()
@@ -440,32 +448,44 @@ internal fun AnswerActions(
                 NotSureButton(
                     onClick = {
                         notSureSent = true
-                        controls.submit(question, Answer.DontKnow)
+                        controls.submit(question, Answer.DontKnow, AnswerSender.NotSure)
                     },
                     enabled = run.canAnswer,
-                    busy = notSureSent && phase == RunPhase.Checking,
+                    busy = sender == AnswerSender.NotSure,
+                    focusableWhenDisabled = sender != null,
                     dontKnowYet = offer == NotSure.DontKnowYet,
                 )
             }
             // One button through Show the answers, Check and Continue, so focus stays on it as it changes.
-            BusyButton(
-                stringResource(
+            Button(
+                busy = sender == AnswerSender.Check || sender == AnswerSender.Timer,
+                onClick = {
                     when {
-                        done -> R.string.practice_continue
-                        reading -> R.string.questions_drill_show_answers
-                        else -> R.string.practice_check
-                    },
-                ),
-                busy = phase == RunPhase.Checking,
-                enabled = done || reading || (run.canAnswer && draft != null),
+                        done -> controls.next(questions)
+                        reading -> controls.reveal()
+                        else -> draft?.let { controls.submit(question, it) }
+                    }
+                },
                 modifier = width.focusMoveTarget(main),
-                icon = R.drawable.ic_visibility.takeIf { reading },
+                enabled = done || reading || (run.canAnswer && draft != null),
+                focusableWhenDisabled = sender != null,
+                leadingIcon =
+                    when {
+                        done -> null
+                        reading -> ({ ButtonIcon(R.drawable.ic_visibility) })
+                        else -> ({ ButtonIcon(R.drawable.ic_check) })
+                    },
+                trailingIcon = if (done) ({ ButtonIcon(R.drawable.ic_arrow_forward) }) else null,
             ) {
-                when {
-                    done -> controls.next(questions)
-                    reading -> controls.reveal()
-                    else -> draft?.let { controls.submit(question, it) }
-                }
+                Text(
+                    stringResource(
+                        when {
+                            done -> R.string.practice_continue
+                            reading -> R.string.questions_drill_show_answers
+                            else -> R.string.practice_check
+                        },
+                    ),
+                )
             }
             if (!reading && !answeredElsewhere) ask()
         }

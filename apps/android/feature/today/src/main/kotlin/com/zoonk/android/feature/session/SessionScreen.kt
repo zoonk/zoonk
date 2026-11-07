@@ -3,8 +3,6 @@ package com.zoonk.android.feature.session
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -69,6 +66,7 @@ import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationFailureNotice
@@ -88,7 +86,6 @@ import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.spreadFold
-import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.StudyBlock
@@ -408,26 +405,32 @@ internal fun NextStop(
                                 onStop?.let {
                                     // Main stacks the actions on a narrow layout once an alternative joins them.
                                     OutlinedButton(
+                                        busy = viewModel.busy == SessionAction.Stop,
                                         onClick = it,
                                         modifier = if (instead != null) Modifier.taskOption() else Modifier,
                                         enabled = !busy,
+                                        leadingIcon = { ButtonIcon(R.drawable.ic_stop_circle) },
                                     ) { Text(stringResource(R.string.session_next_stop)) }
                                 }
                                 startsFor?.let { goal ->
                                     LaunchedEffect(written) { if (written && !screenFocused) startFocus.requestFocus() }
                                     Button(
+                                        busy = viewModel.busy == SessionAction.Start,
                                         onClick = { viewModel.start(day, step, goal) },
-                                        main.focusRequester(startFocus),
+                                        modifier = main.focusRequester(startFocus),
                                         enabled = !busy,
+                                        leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                                     ) {
                                         Text(stringResource(R.string.session_next_start))
                                     }
                                 }
                                 instead?.let { other ->
                                     Button(
+                                        busy = viewModel.busy == SessionAction.Start,
                                         onClick = { goalId?.let { viewModel.start(day, other, it) } },
                                         modifier = main,
                                         enabled = !busy,
+                                        leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                                     ) {
                                         Text(
                                             stringResource(

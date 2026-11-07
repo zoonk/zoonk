@@ -9,7 +9,7 @@ import {
 import { getAppLocale } from "@/i18n/locale";
 import { Link, getPathname } from "@/i18n/navigation";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { type PriceInfo } from "@zoonk/utils/currency";
@@ -61,7 +61,7 @@ export async function PlusLoginLink({
 
   if (!hasChoice) {
     return (
-      <PendingLink className={className} href={getHref()}>
+      <PendingLink className={className} href={getHref()} {...FORWARD_ICON}>
         {t("Get Plus")}
       </PendingLink>
     );
@@ -69,7 +69,7 @@ export async function PlusLoginLink({
 
   return PERIODS.map((period) => (
     <Variant as="span" className="contents" key={period} name={billingSwitch} value={period}>
-      <PendingLink className={className} href={getHref(period)}>
+      <PendingLink className={className} href={getHref(period)} {...FORWARD_ICON}>
         {t("Get Plus")}
       </PendingLink>
     </Variant>

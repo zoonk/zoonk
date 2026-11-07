@@ -96,35 +96,21 @@ struct CheckpointCallIntro: View {
         .typeStyle(.body)
       }
 
-      Button {
+      BusyButton(isBusy: isStarting, icon: .call) {
         starting = Task { await start(writesFirst: writesFirst) }
       } label: {
-        if isStarting {
-          Label {
-            Text("Starting…", tableName: "Voice", comment: "A call is starting")
-          } icon: {
-            ProgressView()
-          }
-          .frame(maxWidth: .infinity)
-        } else if writesFirst {
+        if writesFirst {
           Text(
             "Get the call ready", tableName: "Voice",
-            comment: "Writes a checkpoint's call, then opens it"
-          )
-          .frame(maxWidth: .infinity)
+            comment: "Writes a checkpoint's call, then opens it")
         } else {
-          Label {
-            CallButtonTitle(callee: callee)
-          } icon: {
-            Image(systemName: "phone.fill")
-          }
-          .frame(maxWidth: .infinity)
+          CallButtonTitle(callee: callee)
         }
       }
       .buttonStyle(.mainAction)
       .controlSize(.large)
+      .buttonSizing(.flexible)
       .keyboardShortcut(.defaultAction)
-      .disabled(isStarting)
     }
   }
 

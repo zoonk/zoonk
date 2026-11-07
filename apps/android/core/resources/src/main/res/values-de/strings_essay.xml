@@ -26,7 +26,6 @@
   "essay_full_marks": "3000b615c165a033a9dc849fdf93747efbfe479a3f26566672369d5ee479fafb",
   "essay_grade_rewrite": "9f7f969016db55a4e980e7049085b569c43d4080efb0b502cf4e3990903de5d7",
   "essay_grading": "9622b2812d3cd2148e1018ac4bdf8632c8008c29f496f318767efee3714d6812",
-  "essay_grading_button": "da2d953cf2de2ae5140702cca6f3cfb1821cb9015e61635df2e36839577856d0",
   "essay_grading_slow": "74b44e881dfdba5ebd04042a83d7ef2d9a73c773f14158d4bbf98a30799fd8c4",
   "essay_keep_writing": "288583ef1a26e57f36c601f61909d393200f3592d2131625d7f725857b873641",
   "essay_last_grade": "68d38d599da57a04355ee12575b3c2d7c86498a3bb6dd146b9f6edb542f35c5b",
@@ -114,7 +113,6 @@
     <string name="essay_grading">Wir prüfen deinen Text anhand jedes Kriteriums. Das kann bis zu 30 Sekunden dauern.</string>
     <string name="essay_grading_slow">Wir bewerten noch. Das dauert länger als sonst.</string>
     <string name="essay_skip_rewrite">Überarbeitung überspringen</string>
-    <string name="essay_grading_button">Wir werten aus…</string>
     <string name="essay_grade_rewrite">Überarbeitung bewerten lassen</string>
     <string name="essay_send">Zur Bewertung abschicken</string>
     <string name="essay_leave_title">Fürs Erste aufhören?</string>

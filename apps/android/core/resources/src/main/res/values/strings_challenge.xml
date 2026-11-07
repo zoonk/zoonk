@@ -78,7 +78,6 @@
     <string name="challenge_call_plus">Challenge calls come with Plus. Your plan keeps going without them.</string>
 
     <string name="challenge_start">Start</string>
-    <string name="challenge_starting">Starting…</string>
     <string name="challenge_start_failed">That didn\'t go through. Try again in a moment.</string>
     <string name="challenge_start_slow">Still starting. This is taking longer than usual.</string>
     <string name="challenge_continue">Continue</string>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { Spinner } from "@zoonk/ui/components/spinner";
+import { CalendarCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ChangeSaveError } from "../_components/save-error";
@@ -177,21 +177,6 @@ export function MoveDateFailure({
   return null;
 }
 
-export function PendingLabel({
-  children,
-  pending,
-}: {
-  children: React.ReactNode;
-  pending: boolean;
-}) {
-  return (
-    <>
-      {pending && <Spinner aria-hidden="true" data-icon="inline-start" role="presentation" />}
-      {children}
-    </>
-  );
-}
-
 export function MoveDateSwitch({
   id,
   onMoving,
@@ -206,18 +191,15 @@ export function MoveDateSwitch({
   return (
     <>
       <Button
-        aria-busy={move.pending || undefined}
+        busy={move.pending}
         className="self-start"
-        disabled={move.pending}
-        focusableWhenDisabled
+        icon={<CalendarCheckIcon aria-hidden="true" />}
         id={id}
         onClick={() => void move.move()}
         size="sm"
         variant="outline"
       >
-        <PendingLabel pending={move.pending}>
-          <MoveDateLabel move={move} />
-        </PendingLabel>
+        <MoveDateLabel move={move} />
       </Button>
       <MoveDateFailure live={false} move={move} />
     </>

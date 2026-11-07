@@ -41,8 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.api.models.PlanTool
@@ -327,16 +327,16 @@ internal fun ColumnScope.ToolChoiceForm(
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 TextButton(onClick = onDone, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.plan_cancel)) }
                 Button(
+                    busy = pending,
                     onClick = {
                         if (chosen == null) return@Button
                         val answer = ToolAnswer(listOf(tool.name), chosen, system.takeIf { chosen == PlanTool.Choice.SETUP })
                         edits.chooseTools(answer) { edits.answerSheet(draft.opening, it) }
                     },
                     modifier = Modifier.weight(1f),
-                    enabled = chosen != null && !needsSystem && !pending,
-                ) {
-                    PendingLabel(pending, stringResource(R.string.plan_save))
-                }
+                    enabled = chosen != null && !needsSystem,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_check) },
+                ) { Text(stringResource(R.string.plan_save)) }
             }
             if (edits.sheetFailed(PlanPart.Tools, draft.opening)) SaveFailedText()
         },

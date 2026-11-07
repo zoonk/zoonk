@@ -113,15 +113,18 @@ class MistakePracticeViewModelTest {
     @Test
     fun anAnswerSentAgainKeepsItsAttempt() =
         runTest(dispatcher) {
+            var clock = 0L
             val api = FakeMistakesApi(twoMistakes)
             api.answer = { throw ApiException(ApiError.Network) }
-            val viewModel = viewModel(api)
+            val viewModel = viewModel(api) { clock }
             started(viewModel)
 
+            clock = 30_000L
             viewModel.answer(Answer.Choice(1))
             advanceUntilIdle()
             assertEquals(RunPhase.AnswerFailed, viewModel.now.run.phase)
             api.answer = { practiceFeedback() }
+            clock = 90_000L
             viewModel.retry()
             advanceUntilIdle()
 
@@ -132,8 +135,8 @@ class MistakePracticeViewModelTest {
                     .distinct()
                     .size,
             )
-            assertEquals(2, api.answers.size)
             assertEquals(api.answers[0].answer, api.answers[1].answer)
+            assertEquals(listOf(30_000L, 30_000L), api.answers.map { it.durationMs })
             assertEquals(true, viewModel.now.run.phase is RunPhase.Checked)
         }
 

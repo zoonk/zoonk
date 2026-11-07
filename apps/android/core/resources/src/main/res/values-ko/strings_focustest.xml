@@ -14,7 +14,6 @@
   "focustest_questions": "7e1762c9e44652a6dcca7f70e8e69e2329327046427df945c3bb2029ce05be33",
   "focustest_see_plan": "3efaae3db58592c1dff1fb07aa2282583546fc52e35817cbc8fef42bd3fb161a",
   "focustest_start": "0308074ec88cd75391ee099fe3ebffb26aab0a219c9e6aeaef32d6b8e439dc7e",
-  "focustest_starting": "5aa1a042c8271886a0da7810db0b0718cbef1ef3ab9ae0e95e8b0a6a5bd1a9bd",
   "focustest_subjects": "d228693a9b8b8ad2b2cc7af7820b7c2f9fbd93339aea543a2f08d47eaa2ca04e",
   "focustest_title": "d03784d9d4895f1ec12f7d101d08737ee23e551473ae55c6c2f6bc937d3ff68a",
   "focustest_undone": "b8591cbeb7069c86b08030e8959dea52ffd4a806f161f60b1ee2d365c6ba18d8",
@@ -41,7 +40,6 @@
     <!-- How long the test takes. %1$s is a duration, such as "5 min". -->
     <string name="focustest_about">약 %1$s</string>
     <string name="focustest_start">테스트 시작하기</string>
-    <string name="focustest_starting">시작하고 있어요…</string>
     <string name="focustest_writing">문제를 만들고 있어요</string>
     <string name="focustest_writing_questions">과목별 문제를 만들고 있어요</string>
     <string name="focustest_writing_line">과목마다 무엇을 물어볼지 고르고 있어요…</string>

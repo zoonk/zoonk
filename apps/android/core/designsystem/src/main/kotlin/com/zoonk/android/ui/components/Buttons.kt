@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -18,8 +20,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.semantics.disabled
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
@@ -30,6 +32,9 @@ import com.zoonk.android.ui.theme.zoonk
  * with words alone, and a destructive one in pink-red words on its tint. All take main's `rounded-lg` (`rounded-md` when small) instead of Material's pill, and no
  * shadow. Material's own buttons are reported by the `MaterialButton` lint check outside this file.
  * Every size keeps Material's 48dp touch target.
+ *
+ * Every one is `busy` while its own work runs, and a disabled one may stay `focusableWhenDisabled`, as main's do (Busy.kt).
+ * A `leadingIcon`, or a `trailingIcon` for the forward arrow, is a [ButtonIcon], and a busy button's spinner takes its place.
  */
 
 /** Main's sizes: [Large] (`lg`, 44dp) for a screen's action, [Small] (`sm`, 30dp) beside text, [Medium] elsewhere. */
@@ -38,31 +43,44 @@ enum class ButtonSize { Small, Medium, Large }
 /** The size of the buttons inside, unless they pick one: an action bar makes its buttons [ButtonSize.Large]. */
 val LocalButtonSize = staticCompositionLocalOf { ButtonSize.Medium }
 
+/** A Material Symbol for a button's `leadingIcon` or `trailingIcon`, sized by its slot. */
+@Composable
+fun ButtonIcon(
+    @DrawableRes id: Int,
+) = Icon(painterResource(id), contentDescription = null)
+
 @Composable
 fun Button(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    busy: Boolean = false,
+    focusableWhenDisabled: Boolean = false,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
     size: ButtonSize = LocalButtonSize.current,
     shape: Shape = size.shape(),
     colors: ButtonColors = mainButtonColors(),
     elevation: ButtonElevation? = null,
     border: BorderStroke? = null,
-    contentPadding: PaddingValues = size.contentPadding(),
+    contentPadding: PaddingValues = size.contentPadding(leadingIcon != null, trailingIcon != null),
     interactionSource: MutableInteractionSource? = null,
     content: @Composable RowScope.() -> Unit,
-) = androidx.compose.material3.Button(
-    onClick = onClick,
-    modifier = modifier.sized(size),
-    enabled = enabled,
-    shape = shape,
-    colors = colors,
-    elevation = elevation,
-    border = border,
-    contentPadding = contentPadding,
-    interactionSource = interactionSource,
-    content = { Labeled(size) { content() } },
-)
+) {
+    val held = held(busy, enabled, focusableWhenDisabled)
+    androidx.compose.material3.Button(
+        onClick = { if (!held) onClick() },
+        modifier = modifier.sized(size).busy(held),
+        enabled = enabled || held,
+        shape = shape,
+        colors = colors.disabledWhen(held && !busy),
+        elevation = elevation,
+        border = border,
+        contentPadding = NO_PADDING,
+        interactionSource = interactionSource,
+        content = { Labeled(size) { ButtonContent(busy, leadingIcon, trailingIcon, size.iconSize(), contentPadding, content) } },
+    )
+}
 
 /** Main's `secondary` button: ink words on a quiet fill, as main draws the lesson's "I don't know yet" in place of Check. */
 @Composable
@@ -70,8 +88,12 @@ fun SecondaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    busy: Boolean = false,
+    focusableWhenDisabled: Boolean = false,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
     size: ButtonSize = LocalButtonSize.current,
-    contentPadding: PaddingValues = size.contentPadding(),
+    contentPadding: PaddingValues = size.contentPadding(leadingIcon != null, trailingIcon != null),
     content: @Composable RowScope.() -> Unit,
 ) {
     val fill = MaterialTheme.zoonk.secondary
@@ -80,6 +102,10 @@ fun SecondaryButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
+        busy = busy,
+        focusableWhenDisabled = focusableWhenDisabled,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
         size = size,
         colors =
             ButtonDefaults.buttonColors(
@@ -102,8 +128,12 @@ fun DestructiveButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    busy: Boolean = false,
+    focusableWhenDisabled: Boolean = false,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
     size: ButtonSize = LocalButtonSize.current,
-    contentPadding: PaddingValues = size.contentPadding(),
+    contentPadding: PaddingValues = size.contentPadding(leadingIcon != null, trailingIcon != null),
     content: @Composable RowScope.() -> Unit,
 ) {
     val words = MaterialTheme.colorScheme.error
@@ -112,6 +142,10 @@ fun DestructiveButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
+        busy = busy,
+        focusableWhenDisabled = focusableWhenDisabled,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
         size = size,
         colors =
             ButtonDefaults.buttonColors(
@@ -129,8 +163,6 @@ fun DestructiveButton(
  * Material draws outlined buttons' borders in `outlineVariant`, our hairline `border`, which nearly
  * vanishes in dark theme, and their labels in a muted grey. Main's outline buttons use `--input`,
  * our `outline`, with ink labels, so these take both.
- *
- * While [busy] it looks disabled and ignores presses, but keeps focus, so a learner who pressed it keeps their place.
  */
 @Composable
 fun OutlinedButton(
@@ -138,26 +170,32 @@ fun OutlinedButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     busy: Boolean = false,
+    focusableWhenDisabled: Boolean = false,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
     size: ButtonSize = LocalButtonSize.current,
     shape: Shape = size.shape(),
     colors: ButtonColors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
     elevation: ButtonElevation? = null,
-    border: BorderStroke? = outlinedBorder(enabled && !busy, ButtonDefaults.outlinedButtonBorder(enabled && !busy)),
-    contentPadding: PaddingValues = size.contentPadding(),
+    border: BorderStroke? = outlinedBorder(enabled || busy, ButtonDefaults.outlinedButtonBorder(enabled || busy)),
+    contentPadding: PaddingValues = size.contentPadding(leadingIcon != null, trailingIcon != null),
     interactionSource: MutableInteractionSource? = null,
     content: @Composable RowScope.() -> Unit,
-) = androidx.compose.material3.OutlinedButton(
-    onClick = { if (!busy) onClick() },
-    modifier = modifier.sized(size).semantics { if (busy) disabled() },
-    enabled = enabled || busy,
-    shape = shape,
-    colors = if (busy) colors.copy(containerColor = colors.disabledContainerColor, contentColor = colors.disabledContentColor) else colors,
-    elevation = elevation,
-    border = border,
-    contentPadding = contentPadding,
-    interactionSource = interactionSource,
-    content = { Labeled(size) { content() } },
-)
+) {
+    val held = held(busy, enabled, focusableWhenDisabled)
+    androidx.compose.material3.OutlinedButton(
+        onClick = { if (!held) onClick() },
+        modifier = modifier.sized(size).busy(held),
+        enabled = enabled || held,
+        shape = shape,
+        colors = colors.disabledWhen(held && !busy),
+        elevation = elevation,
+        border = border,
+        contentPadding = NO_PADDING,
+        interactionSource = interactionSource,
+        content = { Labeled(size) { ButtonContent(busy, leadingIcon, trailingIcon, size.iconSize(), contentPadding, content) } },
+    )
+}
 
 /** Main's `ghost` button: ink words, no line. */
 @Composable
@@ -165,26 +203,33 @@ fun TextButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    busy: Boolean = false,
+    focusableWhenDisabled: Boolean = false,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
     size: ButtonSize = LocalButtonSize.current,
     shape: Shape = size.shape(),
     colors: ButtonColors = ButtonDefaults.textButtonColors(),
     elevation: ButtonElevation? = null,
     border: BorderStroke? = null,
-    contentPadding: PaddingValues = size.contentPadding(),
+    contentPadding: PaddingValues = size.contentPadding(leadingIcon != null, trailingIcon != null),
     interactionSource: MutableInteractionSource? = null,
     content: @Composable RowScope.() -> Unit,
-) = androidx.compose.material3.TextButton(
-    onClick = onClick,
-    modifier = modifier.sized(size),
-    enabled = enabled,
-    shape = shape,
-    colors = colors,
-    elevation = elevation,
-    border = border,
-    contentPadding = contentPadding,
-    interactionSource = interactionSource,
-    content = { Labeled(size) { content() } },
-)
+) {
+    val held = held(busy, enabled, focusableWhenDisabled)
+    androidx.compose.material3.TextButton(
+        onClick = { if (!held) onClick() },
+        modifier = modifier.sized(size).busy(held),
+        enabled = enabled || held,
+        shape = shape,
+        colors = colors.disabledWhen(held && !busy),
+        elevation = elevation,
+        border = border,
+        contentPadding = NO_PADDING,
+        interactionSource = interactionSource,
+        content = { Labeled(size) { ButtonContent(busy, leadingIcon, trailingIcon, size.iconSize(), contentPadding, content) } },
+    )
+}
 
 /** Main's `size="icon"` outline button: `rounded-lg`, never a circle, as tall as a [ButtonSize.Large] action beside it. */
 @Composable
@@ -192,21 +237,41 @@ fun OutlinedIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    busy: Boolean = false,
     size: ButtonSize = LocalButtonSize.current,
     shape: Shape = RoundedCornerShape(ZoonkRadius.lg),
     colors: IconButtonColors = IconButtonDefaults.outlinedIconButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
-    border: BorderStroke? = outlinedBorder(enabled, IconButtonDefaults.outlinedIconButtonBorder(enabled)),
+    border: BorderStroke? = outlinedBorder(enabled || busy, IconButtonDefaults.outlinedIconButtonBorder(enabled || busy)),
     interactionSource: MutableInteractionSource? = null,
     content: @Composable () -> Unit,
 ) = androidx.compose.material3.OutlinedIconButton(
-    onClick = onClick,
-    modifier = if (size == ButtonSize.Large) modifier.size(44.dp) else modifier,
-    enabled = enabled,
+    onClick = { if (!busy) onClick() },
+    modifier = (if (size == ButtonSize.Large) modifier.size(44.dp) else modifier).busy(busy),
+    enabled = enabled || busy,
     shape = shape,
     colors = colors,
     border = border,
     interactionSource = interactionSource,
-    content = content,
+    content = { BusyContent(busy, content) },
+)
+
+/** Material's filled icon button, which can be [busy] as the others are: a composer's send. */
+@Composable
+fun FilledIconButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    busy: Boolean = false,
+    shape: Shape = IconButtonDefaults.filledShape,
+    colors: IconButtonColors = IconButtonDefaults.filledIconButtonColors(),
+    content: @Composable () -> Unit,
+) = androidx.compose.material3.FilledIconButton(
+    onClick = { if (!busy) onClick() },
+    modifier = modifier.busy(busy),
+    enabled = enabled || busy,
+    shape = shape,
+    colors = colors,
+    content = { BusyContent(busy, content) },
 )
 
 /** Main's disabled main action: `muted` with its words in `muted-foreground`, not Material's translucent ink. */
@@ -219,11 +284,21 @@ private fun mainButtonColors(): ButtonColors =
 
 private fun ButtonSize.shape(): Shape = RoundedCornerShape(if (this == ButtonSize.Small) ZoonkRadius.md else ZoonkRadius.lg)
 
-private fun ButtonSize.contentPadding(): PaddingValues =
-    when (this) {
-        ButtonSize.Small -> PaddingValues(horizontal = 10.dp, vertical = 4.dp)
-        ButtonSize.Medium, ButtonSize.Large -> PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-    }
+/** An icon brings its side in a little, as main's `has-data-[icon=inline-start]` and `inline-end` do. */
+private fun ButtonSize.contentPadding(
+    leadingIcon: Boolean,
+    trailingIcon: Boolean,
+): PaddingValues {
+    val (side, iconSide, vertical) = if (this == ButtonSize.Small) Triple(10.dp, 8.dp, 4.dp) else Triple(16.dp, 12.dp, 8.dp)
+    return PaddingValues(
+        start = if (leadingIcon) iconSide else side,
+        top = vertical,
+        end = if (trailingIcon) iconSide else side,
+        bottom = vertical,
+    )
+}
+
+private fun ButtonSize.iconSize(): Dp = if (this == ButtonSize.Small) 16.dp else ButtonDefaults.IconSize
 
 // A minimum height overrides Material's 40dp; it grows with the words at larger font sizes.
 private fun Modifier.sized(size: ButtonSize): Modifier =
@@ -253,3 +328,5 @@ private fun outlinedBorder(
 }
 
 private const val DISABLED_ALPHA = 0.5f
+
+private val NO_PADDING = PaddingValues()

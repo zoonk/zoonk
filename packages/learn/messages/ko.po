@@ -557,16 +557,14 @@ msgstr "이미 아는 내용인가요?"
 #: src/_components/test-out-start-link.tsx
 #: src/conversation/tutor-tool-offer.tsx
 #: src/session/test-out-offer.tsx
-msgctxt "osZ9ZA"
-msgid "Opening the test…"
-msgstr "테스트를 열고 있어요…"
-
-#: src/_components/test-out-start-link.tsx
-#: src/conversation/tutor-tool-offer.tsx
-#: src/session/test-out-offer.tsx
 msgctxt "May4OJ"
 msgid "Take the test"
 msgstr "테스트 보기"
+
+#: src/_components/test-out-start-link.tsx
+msgctxt "osZ9ZA"
+msgid "Opening the test…"
+msgstr "테스트를 열고 있어요…"
 
 #: src/_components/test-out-start-link.tsx
 msgctxt "2xFPbE"
@@ -2091,16 +2089,6 @@ msgid "Still starting. This is taking longer than usual."
 msgstr "아직 시작을 준비하고 있어요. 평소보다 오래 걸리고 있어요."
 
 #: src/challenge/challenge-footer.tsx
-#: src/language/conversation/call-intro-footer.tsx
-#: src/language/exam-speaking/speaking-task-row.tsx
-#: src/language/progress/speaking-mock-card.tsx
-#: src/plan/focus-test/focus-test-screen.tsx
-#: src/questions/test-out-preparing.tsx
-msgctxt "RFCwI6"
-msgid "Starting…"
-msgstr "시작 중…"
-
-#: src/challenge/challenge-footer.tsx
 #: src/mock/mock-chooser.tsx
 msgctxt "-HglUD"
 msgid "Start the mock exam"
@@ -3271,12 +3259,6 @@ msgstr "점수 보기"
 msgctxt "othn-n"
 msgid "Rewrite what needs work"
 msgstr "수정할 부분 다시 쓰기"
-
-#: src/essay/essay-screen.tsx
-#: src/mock/mock-screen.tsx
-msgctxt "yWVqHs"
-msgid "Grading…"
-msgstr "채점 중…"
 
 #: src/essay/essay-screen.tsx
 msgctxt "Wleedk"
@@ -6998,16 +6980,6 @@ msgid "Download my memory"
 msgstr "내 메모리 다운로드"
 
 #: src/memory/memory-screen.tsx
-msgctxt "ySF1Q_"
-msgid "Preparing your memory…"
-msgstr "메모리를 준비하고 있어요…"
-
-#: src/memory/memory-screen.tsx
-msgctxt "Ob8gKI"
-msgid "Preparing…"
-msgstr "준비 중…"
-
-#: src/memory/memory-screen.tsx
 msgctxt "owirfw"
 msgid "We couldn't prepare the download. Try again."
 msgstr "다운로드할 파일을 준비하지 못했어요. 다시 시도해 보세요."
@@ -8057,12 +8029,6 @@ msgid "One subject"
 msgstr "한 과목"
 
 #: src/mock/mock-chooser.tsx
-#: src/session/summary/summary-steps.tsx
-msgctxt "Hlc1zt"
-msgid "Getting it ready…"
-msgstr "준비하고 있어요…"
-
-#: src/mock/mock-chooser.tsx
 msgctxt "a5f0pz"
 msgid "Start with {count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, other {#문제로 시작하기}}"
@@ -8890,12 +8856,6 @@ msgctxt "z1R1nT"
 msgid "Hand in this section"
 msgstr "이 파트 제출하기"
 
-#: src/mock/mock-runner-view.tsx
-#: src/mock/mock-screen.tsx
-msgctxt "0QKYRq"
-msgid "Handing in…"
-msgstr "제출하고 있어요…"
-
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
 msgid "Mock exam handed in"
@@ -9221,11 +9181,6 @@ msgid "A short explanation written for you, about 5 minutes."
 msgstr "약 5분이면 읽을 수 있는 짧은 맞춤 설명이에요."
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "rnVK11"
-msgid "Opening your explanation…"
-msgstr "설명을 열고 있어요…"
-
-#: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "n-6wcY"
 msgid "Explain it"
 msgstr "설명 보기"
@@ -9287,12 +9242,6 @@ msgstr "연주나 노래를 가르치려면 그 소리를 들을 수 있어야 �
 msgctxt "irzzdg"
 msgid "Musicianship for {instrument}: hear chords, read short melodies and keep the beat. No microphone needed."
 msgstr "{instrument} 음악 기초로 화음 듣기, 짧은 멜로디의 악보 읽기, 박자 맞추기를 배워요. 마이크는 필요 없어요."
-
-#: src/onboarding/entry/goal-outcomes.tsx
-#: src/onboarding/understood/understood-screen.tsx
-msgctxt "LlWqkT"
-msgid "Saving your goal…"
-msgstr "목표를 저장하고 있어요…"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "2zqqBZ"
@@ -10509,13 +10458,6 @@ msgstr "예년 일정을 바탕으로 예상했어요. 공식 일정이 나오�
 msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "출처: {source}"
-
-#: src/onboarding/understood/understood-row.tsx
-#: src/plan/plan-date.tsx
-#: src/plan/plan-focus.tsx
-msgctxt "WUV28A"
-msgid "Saving…"
-msgstr "저장하고 있어요…"
 
 #: src/onboarding/understood/understood-row.tsx
 msgctxt "C9D4Tz"
@@ -13068,6 +13010,11 @@ msgstr "+{bonus}"
 msgctxt "DhH9Oq"
 msgid "{count, plural, one {+# level} other {+# levels}}"
 msgstr "{count, plural, other {+#레벨}}"
+
+#: src/session/summary/summary-steps.tsx
+msgctxt "Hlc1zt"
+msgid "Getting it ready…"
+msgstr "준비하고 있어요…"
 
 #: src/session/summary/summary-steps.tsx
 msgctxt "vrNWq4"

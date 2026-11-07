@@ -12,10 +12,10 @@ import {
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
+import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
@@ -152,22 +152,23 @@ export function ChooserStartButton({
   onClick: () => void;
 }) {
   const mounted = useIsMounted();
-  const isDisabled = disabled || busy || !mounted;
-  const ref = useEnterClick<HTMLButtonElement>({ enabled: !isDisabled });
+  const isDisabled = disabled || !mounted;
+  const ref = useEnterClick<HTMLButtonElement>({ enabled: !isDisabled && !busy });
 
   return (
     <Button
       aria-keyshortcuts="Enter"
+      busy={busy}
       className={cn(DETAIL_PRIMARY_CLASS, "font-[560]")}
       disabled={isDisabled}
       focusableWhenDisabled
+      icon={<PlayIcon aria-hidden="true" />}
       onClick={onClick}
       ref={ref}
       size="lg"
     >
-      {busy && <Spinner aria-hidden="true" />}
       {children}
-      {!busy && <ShortcutKbd tone="inverse">⏎</ShortcutKbd>}
+      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
     </Button>
   );
 }

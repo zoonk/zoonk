@@ -4,6 +4,7 @@ import {
   type OnboardingDraftEdit,
   type UnderstoodGoalView,
 } from "@zoonk/core/view-models/onboarding/contract";
+import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { PlusNotice } from "../../_components/plus-lock";
@@ -230,8 +231,13 @@ export function UnderstoodScreen({
         </OnboardingFooter>
       ) : (
         <GoalFooter error={error} signUpHref={signUpHref}>
-          <OnboardingPrimaryButton disabled={isCreating || rewriting} onClick={onConfirm}>
-            {isCreating ? t("Saving your goal…") : t("Looks right")}
+          <OnboardingPrimaryButton
+            busy={isCreating}
+            disabled={rewriting}
+            icon={<CheckIcon aria-hidden="true" />}
+            onClick={onConfirm}
+          >
+            {t("Looks right")}
           </OnboardingPrimaryButton>
           <OnboardingSecondaryButton
             disabled={isCreating || rewriting}

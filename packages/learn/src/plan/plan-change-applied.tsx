@@ -3,7 +3,7 @@
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { DrawerContent } from "@zoonk/ui/components/drawer";
-import { type LucideIcon } from "lucide-react";
+import { type LucideIcon, Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../_components/save-error";
 import { PhaseEndMoves } from "./phase-end-moves";
@@ -68,7 +68,12 @@ export function PlanChangeApplied({
       <div className="flex flex-col gap-2 border-t px-6 pt-4 pb-6">
         <Button onClick={onDone}>{t("Done")}</Button>
         {change.canUndo && (
-          <Button disabled={isPending} focusableWhenDisabled onClick={undo} variant="outline">
+          <Button
+            busy={isPending}
+            icon={<Undo2Icon aria-hidden="true" />}
+            onClick={undo}
+            variant="outline"
+          >
             {t("Undo")}
           </Button>
         )}

@@ -94,15 +94,13 @@ struct LevelTestStep: View {
     }
 
     Section {
-      Button(action: finish) {
+      BusyButton(isBusy: isSaving, icon: .skip, action: finish) {
         Text(
-          "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test"
-        )
-        .frame(maxWidth: .infinity)
+          "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test")
       }
       .buttonStyle(.outline)
       .controlSize(.large)
-      .disabled(isSaving)
+      .buttonSizing(.flexible)
       .listRowInsets(.vertical, 0)
       .listRowBackground(Color.clear)
     } footer: {
@@ -384,8 +382,8 @@ private struct LevelTestIntro: View {
       }
 
       StepButtons(
-        canContinue: !isSaving && !isStarting, canSkip: !isSaving && !isStarting,
         continueLabel: Text("Start", tableName: "Onboarding", comment: "Starts the level test"),
+        continueIcon: .play,
         skipLabel: Text(
           "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test"),
         onContinue: onStart, onSkip: onSkip)
@@ -404,7 +402,7 @@ private struct LevelTestIntro: View {
       }
     }
     .onboardingColumn()
-    .environment(\.isSavingAnswer, isStarting)
+    .environment(\.isSavingAnswer, isStarting || isSaving)
   }
 
   private var offersOwnLanguage: Bool {
@@ -670,11 +668,12 @@ private struct LevelTestDone: View {
       }
 
       StepButtons(
-        canContinue: !isSaving,
         continueLabel: Text(
           "Build my plan", tableName: "Onboarding", comment: "Ends the level test to build the plan"
         ),
-        onContinue: onContinue)
+        onContinue: onContinue
+      )
+      .environment(\.isSavingAnswer, isSaving)
     }
     .onboardingColumn()
   }

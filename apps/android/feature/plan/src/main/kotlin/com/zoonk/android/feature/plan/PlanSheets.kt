@@ -22,6 +22,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.TextButton
 import kotlinx.datetime.toJavaLocalDate
@@ -101,7 +102,12 @@ internal fun ColumnScope.PlanChangeApplied(
         actions = {
             Button(onClick = onDone, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.plan_sheet_done)) }
             if (latest.change.canUndo) {
-                TextButton(onClick = onUndo, modifier = Modifier.fillMaxWidth(), enabled = !latest.undoing) {
+                TextButton(
+                    busy = latest.undoing,
+                    onClick = onUndo,
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
+                ) {
                     Text(stringResource(R.string.plan_undo))
                 }
             }

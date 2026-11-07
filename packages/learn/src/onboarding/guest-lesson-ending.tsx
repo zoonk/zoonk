@@ -4,7 +4,7 @@ import { type LessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fi
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
-import { BookOpenIcon, CalendarClockIcon } from "lucide-react";
+import { BookOpenIcon, CalendarClockIcon, UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { MeterPart, MeterParts } from "../_components/meter";
@@ -91,6 +91,7 @@ export function GuestLessonNext({
         <PendingLink
           className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-full")}
           href={signUpHref}
+          icon={<UserPlusIcon aria-hidden="true" />}
         >
           {t("Create an account to save")}
         </PendingLink>

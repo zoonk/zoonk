@@ -1,6 +1,6 @@
-import { Spinner } from "@zoonk/ui/components/spinner";
+import { BusyContent } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type ComponentProps, type ReactNode } from "react";
+import { type ComponentProps } from "react";
 
 const PENDING_LINK_ATTRIBUTE = "data-pending-link";
 
@@ -31,7 +31,7 @@ function markPendingLinks(attribute: string) {
     { capture: true },
   );
 
-  // Going back restores the page as it was left, spinner included.
+  // Going back restores the page as it was left, busy included.
   globalThis.addEventListener("pageshow", () => {
     for (const link of document.querySelectorAll(`a[${attribute}][aria-busy]`)) {
       link.removeAttribute("aria-busy");
@@ -44,25 +44,30 @@ export const PENDING_LINK_SCRIPT = `(${markPendingLinks.toString()})(${JSON.stri
 /**
  * For a link that loads another document in this tab, such as sign-in on another site: the browser
  * keeps this page as it was until that one answers. With `PENDING_LINK_SCRIPT` in the page, the link
- * shows at once that it's on its way, and a leading `icon` gives way to the spinner.
+ * is busy from the tap, even before the page hydrates. It still takes another tap, which retries a
+ * navigation the browser stopped (Esc, its stop button), since no `pageshow` clears the mark then.
  */
 export function PendingLink({
   children,
   className,
   icon,
+  iconPosition,
   ...props
-}: ComponentProps<"a"> & { icon?: ReactNode }) {
+}: ComponentProps<"a"> & Pick<ComponentProps<typeof BusyContent>, "icon" | "iconPosition">) {
   return (
     <a
       {...props}
       {...{ [PENDING_LINK_ATTRIBUTE]: "" }}
-      className={cn("group/pending", className)}
+      className={cn(
+        "group/busy relative aria-busy:cursor-progress [&_svg:not([class*='size-'])]:size-4",
+        className,
+      )}
       // The script marks a link tapped before the page hydrates.
       suppressHydrationWarning
     >
-      <Spinner aria-hidden="true" className="hidden group-aria-busy/pending:inline-block" />
-      {icon && <span className="contents group-aria-busy/pending:hidden">{icon}</span>}
-      {children}
+      <BusyContent icon={icon} iconPosition={iconPosition}>
+        {children}
+      </BusyContent>
     </a>
   );
 }

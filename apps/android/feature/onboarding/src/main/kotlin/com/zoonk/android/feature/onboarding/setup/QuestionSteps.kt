@@ -7,18 +7,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
@@ -60,6 +55,7 @@ import com.zoonk.android.feature.plan.toggled
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyPicker
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DatePickerDialog
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationFailureNotice
@@ -96,6 +92,10 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.TimeZone
 
+/** Which of a step's buttons sent the answer being saved: only it spins, and the other waits. */
+private enum class StepSender { Continue, Skip }
+
+/** [content] gets the form's Continue, for a field whose keyboard action sends the answer as Continue does. */
 @Composable
 internal fun ColumnScope.StepForm(
     title: String,
@@ -107,21 +107,40 @@ internal fun ColumnScope.StepForm(
     continueLabel: String? = null,
     onSkip: (() -> Unit)? = null,
     skipLabel: String? = null,
-    content: @Composable ColumnScope.() -> Unit = {},
+    content: @Composable ColumnScope.(continueStep: () -> Unit) -> Unit = {},
 ) {
+    var sender by rememberSaveable { mutableStateOf<StepSender?>(null) }
+    // A save something else starts (a pick, "Use this date") has no sender, and a press that saves nothing keeps none.
+    LaunchedEffect(sender, pending) { if (!pending) sender = null }
+    val send = { by: StepSender, action: () -> Unit ->
+        sender = by
+        action()
+    }
+    val continueStep = { send(StepSender.Continue, onContinue) }
+
     StepHeading(title, description, subject)
-    content()
+    content(continueStep)
     OnboardingActions {
         PlanStartNotice()
-        Button(onClick = onContinue, enabled = canContinue && !pending, modifier = Modifier.fillMaxWidth()) {
-            if (pending) {
-                CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            }
+        Button(
+            busy = pending && sender == StepSender.Continue,
+            onClick = continueStep,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = canContinue && !pending,
+            focusableWhenDisabled = pending,
+            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+        ) {
             Text(continueLabel ?: stringResource(R.string.onboarding_continue))
         }
         if (onSkip != null) {
-            TextButton(onClick = onSkip, enabled = !pending, modifier = Modifier.fillMaxWidth()) {
+            TextButton(
+                busy = pending && sender == StepSender.Skip,
+                onClick = { send(StepSender.Skip, onSkip) },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !pending,
+                focusableWhenDisabled = pending,
+                leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+            ) {
                 Text(skipLabel ?: stringResource(R.string.onboarding_skip))
             }
         }
@@ -438,13 +457,13 @@ internal fun ColumnScope.TextStep(
         pending = pending,
         onContinue = { answer(value.trim()) },
         onSkip = { answer(null) },
-    ) {
+    ) { continueStep ->
         AnswerField(
             stringResource(label),
             placeholder?.let { stringResource(it) },
             value,
             onValueChange = { value = it },
-            onDone = { if (value.isNotBlank() && !pending) answer(value.trim()) },
+            onDone = { if (value.isNotBlank() && !pending) continueStep() },
         )
     }
 }

@@ -4,11 +4,14 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import {
+  BellIcon,
   GuitarIcon,
   HandHeartIcon,
   LightbulbIcon,
   MessageCircleQuestionIcon,
   MusicIcon,
+  PlayIcon,
+  UserPlusIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../../_components/save-error";
@@ -35,7 +38,11 @@ export function SignUpLink({ href }: { href: string }) {
   const t = useExtracted();
 
   return (
-    <PendingLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={href}>
+    <PendingLink
+      className={cn(buttonVariants({ size: "lg" }), "w-full")}
+      href={href}
+      icon={<UserPlusIcon aria-hidden="true" />}
+    >
       {t("Create a free account")}
     </PendingLink>
   );
@@ -140,8 +147,12 @@ export function ExplainGoal({
       </OnboardingHeading>
 
       <GoalFooter error={error} signUpHref={signUpHref}>
-        <OnboardingPrimaryButton disabled={isStarting} onClick={onStart}>
-          {isStarting ? t("Opening your explanation…") : t("Explain it")}
+        <OnboardingPrimaryButton
+          busy={isStarting}
+          icon={<LightbulbIcon aria-hidden="true" />}
+          onClick={onStart}
+        >
+          {t("Explain it")}
         </OnboardingPrimaryButton>
       </GoalFooter>
     </OnboardingColumn>
@@ -299,11 +310,17 @@ export function InstrumentGoal({
       <WaitlistNote outcome={waitlist} signUpHref={signUpHref} />
 
       <GoalFooter error={error} signUpHref={signUpHref}>
-        <OnboardingPrimaryButton disabled={isStarting} onClick={onStartMusicianship}>
-          {isStarting ? t("Saving your goal…") : t("Start musicianship")}
+        <OnboardingPrimaryButton
+          busy={isStarting}
+          icon={<PlayIcon aria-hidden="true" />}
+          onClick={onStartMusicianship}
+        >
+          {t("Start musicianship")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton
-          disabled={isJoining || waitlist === "joined"}
+          busy={isJoining}
+          disabled={waitlist === "joined"}
+          icon={<BellIcon aria-hidden="true" />}
           onClick={onJoinWaitlist}
         >
           {t("Join the waitlist")}

@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -90,7 +89,6 @@ import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.ceremonies.MomentCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.feature.ceremonies.momentBuddy
-import com.zoonk.android.feature.player.LessonColumn
 import com.zoonk.android.feature.questions.ItemLine
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.ReachedFacts
@@ -98,6 +96,7 @@ import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
@@ -596,8 +595,12 @@ private fun WordActions(
                         Text(stringResource(R.string.pronunciation_try_again))
                     }
                 }
-                Button(onClick = model::next, modifier = width, enabled = !round.pending) {
-                    if (round.pending) CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
+                Button(
+                    busy = round.pending,
+                    onClick = model::next,
+                    modifier = width,
+                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+                ) {
                     Text(
                         stringResource(
                             if (round.index + 1 ==
@@ -615,8 +618,12 @@ private fun WordActions(
 
         model.microphoneOff -> {
             TaskActions { width ->
-                Button(onClick = model::next, modifier = width, enabled = !round.pending) {
-                    if (round.pending) CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
+                Button(
+                    busy = round.pending,
+                    onClick = model::next,
+                    modifier = width,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+                ) {
                     Text(stringResource(R.string.pronunciation_skip))
                 }
             }

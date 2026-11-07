@@ -21,7 +21,6 @@
   "settings_download_data": "10be06da8d6127e0ca030d4fe6a90e028a11fc1c88d33306c0e94e51f2cbe4fa",
   "settings_download_data_description": "e7ea486b1767a01b72b42ad35d939a5fcda9ecaebd9e6c10a59019da652e9191",
   "settings_download_failed": "5e8f08e3b629dc1a974de40c05c133868502df5576d5f27b5383465e013fb6b5",
-  "settings_download_preparing": "1b9ec734eb211e6e96b8411ce9d04cea64112d080bb29c0ffe8063faf15a6881",
   "settings_licenses": "26e7d1b874199d72c39e01b1920ca4b8305cb1726f6218ea56b4dcc8af51a2d2",
   "settings_licenses_read": "6852513043299ab1383d110723ad29a3aea239518787ff1ce29410b88438368b",
   "settings_licenses_website": "48d264ccd51cbd63002e0256c424227561c535170fbbda90a7148a07fdf082cf",
@@ -69,7 +68,6 @@
     <string name="settings_download_data">Pobierz moje dane</string>
     <string name="settings_download_data_description">Wszystko, co Zoonk przechowuje o tobie, w jednym pliku</string>
     <string name="settings_download">Pobierz</string>
-    <string name="settings_download_preparing">Przygotowujemy…</string>
     <string name="settings_download_failed">Nie udało się przygotować pliku do pobrania. Spróbuj ponownie.</string>
     <string name="settings_delete_account">Usuń konto</string>
     <string name="settings_delete_my_account">Usuń moje konto</string>

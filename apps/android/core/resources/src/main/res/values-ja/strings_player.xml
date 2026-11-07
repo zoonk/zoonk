@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "player_action_check": "ba0e5c2575b288b97d4eb4a18d2734d8271f146a4490de8144091bb75ba2db0b",
-  "player_action_checking": "590cbb1e27e0685272126c4d69c8dc37a3148ac46c4cd200af241ee76cf05904",
   "player_action_confirm": "899ff4c6be69c2a377bb8c72d0fc6e0e81186741a8af97eaa650f883d2827c75",
   "player_action_continue": "fb73f37fdda5ea8eac556a79e554161910b6b2566ee5cf21d7a3a97396208528",
   "player_action_next": "762468f2155e9f6a76d2a5cdad149ed9688ce79b35226d921fe7e49d933680f5",
@@ -72,7 +71,6 @@
   "player_explain_answer_failed": "9259bbbd8dd7cb34b54822d90200604b8b3ac4f41ae239870a7fac0a71dc1a27",
   "player_explain_answer_title": "0fa2266d246239b02d0a9bed0b62e2c9b7b93063f06ada8d4afe28db17dea646",
   "player_explain_first": "cc912bbf4a3d3f444fdf2477a743bdf45bc277d981dc0c9fd4f69f09f90c0d9f",
-  "player_explaining_answer": "29cff769e3b0e15ea507fdca5c79caae457ed11c1017a8b96d56811bdba36ce4",
   "player_finish": "6125fb5faa5b30cf9bbab8563006825d7a16f261c6dc22abdf7b9105c9e2eadd",
   "player_free_limit_day_description": "76c8af95295ad087ad400f69242fd90fd345e0043c2ab77b9b662ad2e8285aff",
   "player_free_limit_day_title": "631638b4252caaa2628dad5093d61fad40098ff435bc13b9274a65fc320065ec",
@@ -165,7 +163,6 @@
   "player_start_failed_description": "9891f2351cce755298251a76effbea81349aea98b1a4312140ceb6753ab3908f",
   "player_start_failed_title": "89ce378768070c4170dd9e26f0764e74502e48fef689c48f566872bffd0d62ed",
   "player_start_this_lesson": "67a6672a5b07c3ee73fd46fcfd693d84218dedef0067cac5a9af3f3a416ace62",
-  "player_starting": "506d75c7240669f8b9adfb8607614500c9d1be4640bfc0bf4529db8efc7f47f6",
   "player_still_checking": "148cccc6548151d5599617bbca4c6281fec412b78fc18b350e81a02ec731b4c1",
   "player_stop_failed": "63865b30383fc1d7e6ba798dde382a8e91b31875bf4a5615d98e2029da2a6da1",
   "player_stop_for_today": "472db717c3a08fd47b72a37c56badedffcba72e84ed5e09cd34798d3e1f5ed32",
@@ -220,7 +217,6 @@
     <string name="player_leave_description">まだ答え合わせをしていないため、回答は保存されません。</string>
     <string name="player_keep_writing">書き続ける</string>
     <string name="player_action_check">答え合わせ</string>
-    <string name="player_action_checking">答え合わせをしています</string>
     <string name="player_action_confirm">確定する</string>
     <string name="player_action_continue">続ける</string>
     <string name="player_action_next">次へ</string>
@@ -249,7 +245,6 @@
     <string name="player_spelled">つづり：</string>
     <string name="player_correct_answer_label">答え：</string>
     <string name="player_explain_answer">自分の答えの解説を見る</string>
-    <string name="player_explaining_answer">答えを解説しています</string>
     <string name="player_explain_answer_failed">今は解説できません。少し待ってからもう一度試してください。</string>
     <string name="player_explain_answer_title">この答えが正解ではない理由</string>
     <!-- Heading of the panel that recaps the lesson, not a button. -->
@@ -304,7 +299,6 @@
     <string name="player_not_written_title">このレッスンはまだ作成されていません</string>
     <string name="player_not_written_description">始めると、Zoonkがレッスンを作成します。数分ほどかかります。</string>
     <string name="player_start_this_lesson">このレッスンを始める</string>
-    <string name="player_starting">開始しています…</string>
     <string name="player_writing_lesson">レッスンを作成しています</string>
     <string name="player_phase_plan">レッスンの構成を考えています</string>
     <string name="player_phase_plan_line_1">扱う内容を選んでいます…</string>

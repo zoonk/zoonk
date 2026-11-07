@@ -1,6 +1,9 @@
 import { z } from "zod";
+import { type GatewayCharge } from "../pricing/call-cost";
 
 type GatewayGenerationMetadata = {
+  /** Unset when the gateway didn't report what it debited. */
+  charge?: GatewayCharge;
   /** List price, reported even when our own key paid. */
   costUsd?: number;
   /** `byok` when our provider key paid for the call, `system` when the gateway's credits did. */
@@ -39,10 +42,26 @@ function findServedAttempt(modelAttempts: readonly unknown[] = []) {
     .findLast((attempt) => attempt !== undefined);
 }
 
+function readCredential(served: ReturnType<typeof findServedAttempt>): string | undefined {
+  return served?.providerAttempts?.findLast((attempt) => attempt.success)?.credentialType;
+}
+
+function readCharge({
+  credential,
+  debit,
+}: {
+  credential: string | undefined;
+  debit: unknown;
+}): GatewayCharge | undefined {
+  const usd = usdSchema.safeParse(debit).data;
+  return usd === undefined ? undefined : { coversUsage: credential === "system", usd };
+}
+
 /**
- * `cost` is zero when our own provider key paid, so `marketCost`, the list price either way, is
- * preferred. `@ai-sdk/gateway` types this metadata as open JSON, so each field is parsed on its
- * own and a reshaped one never fails a generation that was already paid for.
+ * `gatewayCost` is what the gateway debited from our credits, which leaves out what our own
+ * provider key paid, so `marketCost`, the list price either way, is the estimate. `@ai-sdk/gateway`
+ * types this metadata as open JSON, so each field is parsed on its own and a reshaped one never
+ * fails a generation that was already paid for.
  */
 export function readGatewayMetadata(
   providerMetadata: Readonly<Record<string, unknown>> | undefined,
@@ -50,11 +69,13 @@ export function readGatewayMetadata(
   const gateway = jsonObjectSchema.safeParse(providerMetadata?.gateway).data;
   const routing = jsonObjectSchema.safeParse(gateway?.routing).data;
   const served = findServedAttempt(modelAttemptsSchema.safeParse(routing?.modelAttempts).data);
+  const credential = readCredential(served);
 
   return {
+    charge: readCharge({ credential, debit: gateway?.gatewayCost }),
     costUsd:
       usdSchema.safeParse(gateway?.marketCost).data ?? usdSchema.safeParse(gateway?.cost).data,
-    credential: served?.providerAttempts?.findLast((attempt) => attempt.success)?.credentialType,
+    credential,
     servedModel: served?.canonicalSlug,
     servedProvider: z.string().safeParse(routing?.finalProvider).data,
     serviceTier: servedTierSchema.safeParse(gateway?.serviceTier).data,

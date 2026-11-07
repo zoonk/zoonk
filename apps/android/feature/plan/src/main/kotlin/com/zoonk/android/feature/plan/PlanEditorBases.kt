@@ -35,12 +35,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
-import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -143,8 +143,7 @@ internal fun ColumnScope.BasesChoices(
                     followed = changed.isEmpty() && shared != null && shared == recommended,
                     isExam = page.isExam,
                     onAsk = {
-                        if (advice == Advice.Pending) return@BasesAdvice
-                        advice = Advice.Pending
+                        advice = Advice.Pending(retrying = advice as? Advice.Failure)
                         scope.launch { advice = adviceOf(edits.adviseOnBases()) }
                     },
                 )
@@ -164,12 +163,12 @@ internal fun ColumnScope.BasesChoices(
         actions = {
             if (operations.isNotEmpty()) PreviewOutcome(page, check, onRetry = { attempt++ })
             Button(
+                busy = pending,
                 onClick = { edits.change(PlanPart.Bases, operations) { edits.answerSheet(draft.opening, it) } },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !pending && operations.isNotEmpty() && check is Check.Ready,
-            ) {
-                PendingLabel(pending, stringResource(R.string.plan_save_choices))
-            }
+                enabled = operations.isNotEmpty() && check is Check.Ready,
+                leadingIcon = { ButtonIcon(R.drawable.ic_check) },
+            ) { Text(stringResource(R.string.plan_save_choices)) }
             if (edits.sheetFailed(PlanPart.Bases, draft.opening)) SaveFailedText()
         },
     )
@@ -295,21 +294,21 @@ private fun BasesAdvice(
     isExam: Boolean,
     onAsk: () -> Unit,
 ) {
-    val asking = advice == Advice.Pending
+    val failure = (advice as? Advice.Pending)?.retrying ?: advice as? Advice.Failure
+    val retry = failure != null
     val answer = remember { FocusRequester() }
 
     LaunchedEffect(advice) { if (advice is Advice.Answered) answer.requestFocus() }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        when (advice) {
-            is Advice.Answered -> {
-                val text = adviceText(advice, isExam)
-                Note(
-                    text = if (followed) joinSentences(text, stringResource(R.string.plan_recommendation_followed)) else text,
-                    modifier = Modifier.focusRequester(answer).focusable(),
-                )
-            }
-
+        if (advice is Advice.Answered) {
+            val text = adviceText(advice, isExam)
+            Note(
+                text = if (followed) joinSentences(text, stringResource(R.string.plan_recommendation_followed)) else text,
+                modifier = Modifier.focusRequester(answer).focusable(),
+            )
+        }
+        when (failure) {
             Advice.Building -> {
                 Note(stringResource(R.string.plan_still_building), live = true)
             }
@@ -318,20 +317,16 @@ private fun BasesAdvice(
                 Note(stringResource(R.string.plan_recommendation_failed), live = true)
             }
 
-            Advice.Idle, Advice.Pending -> {}
+            null -> {}
         }
         if (advice !is Advice.Answered) {
-            OutlinedButton(onClick = onAsk, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
-                PendingLabel(
-                    asking,
-                    stringResource(
-                        when (advice) {
-                            Advice.Pending -> R.string.plan_getting_recommendation
-                            Advice.Building, Advice.Failed -> R.string.load_failed_try_again
-                            else -> R.string.plan_get_recommendation
-                        },
-                    ),
-                )
+            OutlinedButton(
+                onClick = onAsk,
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                busy = advice is Advice.Pending,
+                leadingIcon = { ButtonIcon(if (retry) R.drawable.ic_refresh else R.drawable.ic_lightbulb) },
+            ) {
+                Text(stringResource(if (retry) R.string.load_failed_try_again else R.string.plan_get_recommendation))
             }
         }
     }
@@ -389,11 +384,17 @@ private fun Note(
 private sealed interface Advice {
     data object Idle : Advice
 
-    data object Pending : Advice
+    /** A failure that Try again answers. */
+    sealed interface Failure : Advice
 
-    data object Building : Advice
+    /** A retry keeps the [retrying] failure, so Try again and its line stay put until it settles. */
+    data class Pending(
+        val retrying: Failure?,
+    ) : Advice
 
-    data object Failed : Advice
+    data object Building : Failure
+
+    data object Failed : Failure
 
     data class Answered(
         val recommended: PlanBase.Choice,

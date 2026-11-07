@@ -439,13 +439,13 @@ private struct PasteMaterialRow: View {
       .focused($isFocused)
 
       ButtonRow {
-        Button(action: add) {
+        BusyButton(isBusy: isAdding, icon: .create, action: add) {
           isLink
             ? Text("Add link", tableName: "Onboarding", comment: "Adds the pasted link")
             : Text("Add text", tableName: "Onboarding", comment: "Adds the pasted text")
         }
         .buttonStyle(.mainAction)
-        .disabled(trimmed.isEmpty || isAdding)
+        .disabled(trimmed.isEmpty)
 
         Button(role: .cancel, action: onCancel) {
           Text("Cancel", tableName: "Onboarding", comment: "Closes the box for pasted material")
@@ -555,7 +555,7 @@ struct MaterialQuestionsView: View {
         .padding(.vertical, 10)
         .padding(.leading, 10)
 
-        Button(action: ask) {
+        BusyButton(isBusy: isAsking, action: ask) {
           Label {
             Text("Ask", tableName: "Onboarding", comment: "Sends a question about the material")
           } icon: {
@@ -566,7 +566,7 @@ struct MaterialQuestionsView: View {
         .buttonStyle(.mainAction)
         .buttonBorderShape(.circle)
         .controlSize(.large)
-        .disabled(trimmed.isEmpty || isAsking)
+        .disabled(trimmed.isEmpty)
       }
       .padding(6)
       .inputPanel(isFocused: isFocused)

@@ -4,9 +4,6 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -44,7 +41,6 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.player.LessonTitle
-import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.ChoiceQuestionsRun
 import com.zoonk.android.feature.practice.RunFinished
 import com.zoonk.android.feature.practice.RunIntro
@@ -60,6 +56,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
@@ -322,13 +319,14 @@ private fun StartActions(
 
         else -> {
             TaskActions { width ->
-                BusyButton(
-                    stringResource(if (ui.starting) R.string.testout_starting else R.string.testout_start),
+                Button(
                     busy = ui.starting,
-                    enabled = true,
-                    modifier = width.focusRequester(replacementFocus),
                     onClick = onStart,
-                )
+                    modifier = width.focusRequester(replacementFocus),
+                    leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+                ) {
+                    Text(stringResource(R.string.testout_start))
+                }
             }
         }
     }
@@ -415,10 +413,17 @@ internal fun TestOutResult(
             title = stringResource(if (outcome.passed) R.string.testout_passed else R.string.testout_not_passed),
             action = stringResource(R.string.testout_continue),
             saving = false,
+            actionTrailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             onClose = onClose,
             detail = detail,
             actions = {
-                TaskActions { width -> Button(onClick = onClose, modifier = width) { Text(stringResource(R.string.testout_continue)) } }
+                TaskActions { width ->
+                    Button(
+                        onClick = onClose,
+                        modifier = width,
+                        trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+                    ) { Text(stringResource(R.string.testout_continue)) }
+                }
                 if (canUndo) UndoAction(ui.undo, viewModel::undo)
             },
         ) {

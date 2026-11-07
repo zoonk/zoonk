@@ -1,7 +1,9 @@
 "use client";
 
+import { FORWARD_ICON } from "@zoonk/ui/components/button";
+import { SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { PendingLabel } from "../../plan/plan-coverage";
+import { usePendingSender } from "../../_utils/use-pending-sender";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -39,6 +41,12 @@ export function StepForm({
   title: string;
 }) {
   const t = useExtracted();
+  const [sender, setSender] = usePendingSender<"continue" | "skip">(pending);
+
+  const send = (by: "continue" | "skip", action: () => void) => {
+    setSender(by);
+    action();
+  };
 
   return (
     <OnboardingColumn rail={rail}>
@@ -48,7 +56,7 @@ export function StepForm({
           event.preventDefault();
 
           if (canContinue && !pending) {
-            onContinue();
+            send("continue", onContinue);
           }
         }}
       >
@@ -62,15 +70,22 @@ export function StepForm({
 
         <OnboardingFooter>
           <OnboardingPrimaryButton
-            aria-busy={pending || undefined}
+            busy={sender === "continue"}
             disabled={!canContinue || pending}
             type="submit"
+            {...FORWARD_ICON}
           >
-            <PendingLabel pending={pending}>{continueLabel ?? t("Continue")}</PendingLabel>
+            {continueLabel ?? t("Continue")}
           </OnboardingPrimaryButton>
 
           {onSkip && (
-            <OnboardingSecondaryButton disabled={pending} onClick={onSkip} type="button">
+            <OnboardingSecondaryButton
+              busy={sender === "skip"}
+              disabled={pending}
+              icon={<SkipForwardIcon aria-hidden="true" />}
+              onClick={() => send("skip", onSkip)}
+              type="button"
+            >
               {skipLabel ?? t("Skip")}
             </OnboardingSecondaryButton>
           )}

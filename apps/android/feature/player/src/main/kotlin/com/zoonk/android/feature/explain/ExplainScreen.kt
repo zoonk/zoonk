@@ -59,6 +59,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -408,6 +409,7 @@ private fun SlowWait(
         )
         if (!joined) {
             OutlinedButton(
+                busy = retrying,
                 onClick = {
                     retrying = true
                     scope.launch {
@@ -415,7 +417,7 @@ private fun SlowWait(
                         retrying = false
                     }
                 },
-                enabled = !retrying,
+                leadingIcon = { ButtonIcon(R.drawable.ic_refresh) },
             ) { Text(stringResource(R.string.explain_try_again)) }
         }
     }

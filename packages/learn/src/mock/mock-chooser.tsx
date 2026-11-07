@@ -139,13 +139,11 @@ function PracticeChooser({
               disabled={!option}
               onClick={() => option && onStart({ option, purpose: "practice" })}
             >
-              {busy && t("Getting it ready…")}
-              {!busy &&
-                short &&
-                t("Start with {count, plural, one {# question} other {# questions}}", {
-                  count: short.questions,
-                })}
-              {!busy && !short && t("Start")}
+              {short
+                ? t("Start with {count, plural, one {# question} other {# questions}}", {
+                    count: short.questions,
+                  })
+                : t("Start")}
             </ChooserStartButton>
           ) : (
             <ChooserPlusLink href={hrefs.plus} />
@@ -216,7 +214,7 @@ function PlacementChooser({
               busy={busy}
               onClick={() => onStart({ length, purpose: "placement" })}
             >
-              {busy ? t("Getting it ready…") : t("Start the mock exam")}
+              {t("Start the mock exam")}
             </ChooserStartButton>
           ) : (
             <ChooserPlusLink href={hrefs.plus} />

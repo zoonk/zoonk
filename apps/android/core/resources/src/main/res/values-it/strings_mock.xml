@@ -20,7 +20,6 @@
   "mock_flagged_count": "d37894aee603a8ecea55358b494fd51410cdc1cd53158b980d574a632b6536e1",
   "mock_full_day": "db0c1e0e54d13f5dd562a92f762dda47f9d28520225cf941632d5b0addcce217",
   "mock_full_day_number": "ee80f95d68170df66d40437b8fffa3032d2a75a57a3cdc556d7ccd35eaf86538",
-  "mock_grading": "2fab8b0e0d5171735c23c06fe100fd68c2ef59c91274b478745ef617b1c7d1ec",
   "mock_half_day": "5725cc1cdc415f9335d406febf34aa7d4ef56e5049a354946c442ae02a0db876",
   "mock_half_day_number": "3ef872a7fcc194366a90ceb095ab8a9c5c9e7786f827748ac4f41a359edc3908",
   "mock_hand_in": "6bd471ecb3d67783ee05949464a142699d1dba328c2fb45eccf184eec88dc61d",
@@ -31,7 +30,6 @@
   "mock_hand_in_section_title": "906c501dbfaf0e9c578e902b1d4719eaeb86a6b2a54efae185d87b6cc2f27c83",
   "mock_handed_in": "23f6fe50d1b30888a6021cb47fc894d76467d579b29e26428b385b63d8f3fb8b",
   "mock_handed_in_title": "de4e2454a308475f9124ba3cc64f5509546e942a11ade63ab7362111b053aef9",
-  "mock_handing_in": "9f8c826181ecbf332bfa4a5d455c50178fbead79e6779ade0773c9cc95ff1e1f",
   "mock_keep_answering": "fecf244be65e8201226d13c822664b338db296075de6fbb71bfd0f8a428142e6",
   "mock_keep_going": "1a54ea8e7e825c08ca9ee609ff3db478827ffc1f8917f61adfa9f60f24136ab8",
   "mock_label": "d021966b94c47de1ba4f720484d7c1c503f1c4ba90d20297d458f4aa0ac4f334",
@@ -154,7 +152,6 @@
     <string name="mock_next">Avanti</string>
     <string name="mock_hand_in_mock">Consegna la simulazione</string>
     <string name="mock_hand_in_section">Consegna questa sezione</string>
-    <string name="mock_handing_in">Stiamo consegnando…</string>
     <string name="mock_moves_review_any">Revisione: puoi tornare a qualsiasi domanda.</string>
     <string name="mock_moves_review_none">Revisione: non puoi più cambiare le risposte.</string>
     <plurals name="mock_moves_review_changes">
@@ -244,7 +241,6 @@
     <string name="mock_step_slow">Stiamo ancora completando la consegna. Ci vuole più tempo del solito.</string>
     <string name="mock_handed_in_title">Simulazione consegnata</string>
     <string name="mock_see_how">Scopri com’è andata</string>
-    <string name="mock_grading">Stiamo valutando…</string>
     <string name="mock_continue_section">Continua</string>
     <string name="mock_time_up">Tempo scaduto</string>
     <string name="mock_answers_saved">Le risposte date finora sono state salvate.</string>

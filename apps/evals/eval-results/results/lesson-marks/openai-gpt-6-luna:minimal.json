@@ -530,13 +530,21 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The example marked on screen 1 restates the OAB's human-rights protection role rather than presenting a concrete incident or situation. The words “Por exemplo” do not make this general description a concrete case; it would be better left unmarked.",
           "kind": "minorErrors",
           "score": 7
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n      - In Brazilian Portuguese, a law lesson for the OAB exam\n      - About lines name each purpose's topic without listing what the statute says it includes\n      - Icons are generic legal or civic objects tied to each screen's case, never the OAB's logo or a flag\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
@@ -660,7 +668,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Some underlines emphasize supporting details rather than the screen's main teaching point: “o tempo cai pela metade” highlights the introductory case instead of regra de três simples, while “A divisão das impressoras fica invertida” highlights only one component of the compound calculation. The ruler is weakly connected to simple proportion, and the hourglass represents time without distinguishing direct and inverse relationships.",
           "kind": "minorErrors",
@@ -810,7 +822,11 @@
           "kind": "minorErrors",
           "score": 8
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n      - In Spanish (Mexico), for beginners in economics\n      - \"No todos suben\" about line doesn't say not every price has to rise; \"Más pesos\" doesn't say more pesos don't guarantee buying more\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
@@ -1124,9 +1140,21 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n      - In US English, for beginners\n      - \"Getting back\" about line doesn't say the rise back is a bigger percent\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
@@ -1398,9 +1426,21 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n      - In US English, a beginner programming lesson\n      - \"Reach 5\" about line doesn't say range(1, 6) stops before 6\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
@@ -1411,7 +1451,10 @@
               "label": "Start and stop",
               "text": "In `range(start, stop)`, counting starts at the start and leaves out the stop, even when counting down."
             },
-            { "label": "Reach 5", "text": "`range(1, 6)` reaches 5 because it stops before 6." },
+            {
+              "label": "Reach 5",
+              "text": "`range(1, 6)` reaches 5 because it stops before 6."
+            },
             {
               "label": "Number of values",
               "text": "When counting up by ones, the number of values is stop minus start."
@@ -1491,16 +1534,31 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n      - In US English, for beginners in biology\n      - About lines don't say which chambers receive or pump blood\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
         "id": "en-heart-chambers-1",
         "userInput": {
           "ideas": [
-            { "label": "Atria", "text": "The two upper chambers, the atria, receive blood." },
+            {
+              "label": "Atria",
+              "text": "The two upper chambers, the atria, receive blood."
+            },
             {
               "label": "Ventricles",
               "text": "The two lower chambers, the ventricles, pump blood out: the right to the lungs and the left to the whole body."
@@ -2058,14 +2116,21 @@
           "kind": "minorErrors",
           "score": 8
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n      - In Japanese, for beginners in physics\n      - Every explanation has its own visual, so no screen gets an icon; every idea has one\n      - \"支点からの距離\" about line doesn't say moving the effort farther from the fulcrum takes less force\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
         "id": "ja-teko-1",
         "userInput": {
           "ideas": [
-            { "label": "支点", "text": "支点は、てこが回る中心です。" },
+            {
+              "label": "支点",
+              "text": "支点は、てこが回る中心です。"
+            },
             {
               "label": "力点と作用点",
               "text": "力点はてこを動かす力を加える場所で、作用点はてこが相手に力を加える場所です。"
@@ -2152,6 +2217,326 @@
               "hasVisual": true,
               "kind": "question",
               "text": "庭の重い石を棒で少し浮かせます。棒の右側を下げる空間は十分あります。\n最も小さな力で浮かせる配置と、そのときの動きは？",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All four lines are natural Portuguese questions within 60 characters and leave their conclusions unanswered. In particular, the measurement line does not reveal a whole electron at one point, and the ground-state line does not reveal that no lower energy is available. Neither answer-disclosure cap is triggered.",
+          "score": 10,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "The assignments match the concepts taught or tested. Crucially, the explanation immediately after the guess has no idea assignment rather than being incorrectly classified as ground state. Explanations progress through the map in order, and the final question combining classical predictions with quantum stability appropriately uses the later idea.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The retained underlines identify substantive main points rather than isolated terms or side details. The first screen’s example applies the general radiation rule to the concrete physical case of an electron orbiting a nucleus; it does not frame the preceding general rule. No marking cap is triggered.",
+          "score": 10,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "The supplied icons have English names and descriptions, represent distinct drawable objects, and do not repeat an idea icon on its screen. The particle detector fits the laboratory measurement text. However, eligible screen 8 lacks an icon despite naming a suitable concrete subject such as hydrogen’s atom or nucleus. The staircase is a reasonable energy-level symbol, but emphasizing its lowest step would connect it more clearly to the ground state. No explicit misleading-icon or duplication cap is triggered.",
+          "score": 8,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "13 of 14 parts passed. Screen 3: idea goes back in the map's order",
+          "score": 9.357142857142858,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3467,
+          "outputTokens": 1205,
+          "reasoningTokens": 673
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Screen 8 is an explanation without a visual, but has no icon. Its text names hydrogen and the nucleus, providing a concrete subject distinct from its idea’s staircase icon, so the exception allowing no icon does not apply.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the ground-state icon more immediately recognizable by emphasizing the staircase’s lowest step rather than showing several undifferentiated steps.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, an overview of quantum physics for beginners\n      - The explanation right after the guess says the hydrogen's map stays the same, before the lesson names the cloud or the ground state, so it isn't about \"Estado fundamental\"\n      - The \"Estado fundamental\" about line doesn't say hydrogen has no lower energy to reach; \"Elétron inteiro num ponto\" doesn't say a measurement finds the whole electron at one point\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-eletron-nucleo-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Previsão das regras antigas",
+              "text": "Pelas regras que valem para bolas e carros, um elétron girando ao redor do núcleo soltaria luz e perderia energia."
+            },
+            {
+              "label": "Nuvem de probabilidades",
+              "text": "A nuvem de probabilidades mostra as chances de achar o elétron em cada lugar, maiores onde o desenho é mais forte."
+            },
+            {
+              "label": "Elétron inteiro num ponto",
+              "text": "Quando um aparelho mede onde o elétron está, ele marca um único ponto com o elétron inteiro, e não pedacinhos espalhados."
+            },
+            {
+              "label": "Estado fundamental",
+              "text": "No estado fundamental, a situação de menor energia, o hidrogênio não tem energia menor para alcançar, por isso não continua perdendo energia até cair no núcleo."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Por que o elétron não cai no núcleo?",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Pelas regras que valem para bolas e carros, uma partícula elétrica que faz curvas solta luz e perde energia. Então um elétron girando ao redor do núcleo deveria perder energia assim e ir se aproximando dele.",
+              "title": "A previsão das regras antigas"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "Um átomo de hidrogênio está sozinho, sem receber energia de fora, com a menor energia possível. O que acontece com o elétron com o passar do tempo?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Nesse hidrogênio, o mapa de onde o elétron pode ser achado fica igual o tempo todo. Ele não vai soltando luz e perdendo energia, como previa a ideia de uma bolinha girando.",
+              "title": "Um átomo que não muda"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Esse mapa mostra as chances de achar o elétron em cada lugar. Onde o desenho é mais forte, é maior a chance de achá-lo num pequeno espaço ali. Ele se chama **nuvem de probabilidades**.",
+              "title": "Um mapa de chances"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Muitos átomos de hidrogênio, todos preparados do mesmo jeito, são medidos um por um.\nQual dos dois quadradinhos do desenho, de mesmo tamanho, deve registrar o elétron mais vezes?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Quando um aparelho de laboratório mede onde o elétron está, ele marca um único ponto, com o elétron inteiro ali. Por isso, a nuvem não é uma névoa de pedacinhos de elétron: ela só mostra onde é mais provável achá-lo.",
+              "title": "Não são pedaços de elétron"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "No hidrogênio, a situação de menor energia já é uma nuvem espalhada ao redor do núcleo, e não um elétron dentro dele. Essa situação de menor energia se chama **estado fundamental**.",
+              "title": "A menor energia permitida"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Soltar luz leva energia embora. Mas, no estado fundamental, não existe nenhuma situação permitida com energia menor. Por isso, o hidrogênio não pode continuar perdendo energia até cair no núcleo.",
+              "title": "Não há como descer mais"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Um relatório diz: _O hidrogênio estava no estado fundamental e emitiu luz, ficando com energia ainda menor. A luz levou energia, e o elétron seguiu preso ao núcleo._\nQual trecho mostra o erro do relatório?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Rosana revisa as legendas de uma exposição no Museu do Amanhã, no Rio. Uma delas diz: _O elétron gira como um planeta e perde energia sem parar, mas nunca cai._\nQual legenda deve ficar no lugar dessa?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "The lines are in Portuguese and within 60 characters. The energy, calculation, and media lines avoid revealing the specified answers. However, the first line paraphrases the wavelength definition by identifying the distance between light’s crests, triggering the cap of 5.",
+          "score": 5,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "Most assignments fit, including the unit explanations under the calculation idea and the unassigned multi-idea worked example. However, the 4 eV question explicitly combines calculation with the vacuum condition and must take the later idea rather than ideaIndex 2. This triggers the wrong-assignment cap of 6.",
+          "score": 6,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "All three examples correctly isolate concrete numerical cases rather than general rules. Most underlines identify useful main-point phrases. However, the electron-volt underline is generic rather than informative, and the air-equivalence underline selects a subsidiary point from the broader applicability explanation. The side-detail cap of 7 applies.",
+          "score": 7,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Icon names and descriptions are in English, icons appear only on eligible screens, and the idea icons depict distinct things. The detector and filter icons are well grounded. However, the light bulb is an unsupported generic filler on a screen that names no light source; that screen should have no icon when no suitable concrete thing is present. This is a meaningful grounding failure, although it does not trigger the specified cap for misleading or repeated icons.",
+          "score": 7,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "15 of 16 parts passed. Screen 10: idea goes back in the map's order",
+          "score": 9.4375,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3772,
+          "outputTokens": 994,
+          "reasoningTokens": 343
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The first about line reveals the definition: paired with “Comprimento de onda,” “distância entre as cristas da luz” supplies the idea’s answer before the lesson. The question about a 4 eV photon traveling in vacuum is assigned to ideaIndex 2, although it combines the calculation rule with its applicability in vacuum and should take the later idea, ideaIndex 3.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The electron-volt underline highlights the generic phrase “usamos uma unidade para valores assim,” not the screen’s substantive teaching point. The applicability screen highlights only the near-equivalence in air rather than the rule’s scope. The light-bulb icon on “Um pacote de cada vez” is not grounded in that screen, which describes photons but no bulb or lamp.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make the second about line more specific by asking about the relationship between photon energy and wavelength, without stating its direction. For example: “Como energia e comprimento de onda se relacionam?”",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, an overview of quantum physics for beginners\n      - The \"Fóton e sua energia\" about line doesn't say more energy means a shorter wavelength; \"Regra do 1.240\" doesn't give the division; \"Vácuo e ar\" doesn't say where the rule holds\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-comprimento-de-onda-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Comprimento de onda",
+              "text": "O comprimento de onda é a distância de uma crista da onda de luz até a próxima."
+            },
+            {
+              "label": "Fóton e sua energia",
+              "text": "Quanto mais energia cada fóton carrega, no mesmo ambiente, menor é o comprimento de onda."
+            },
+            {
+              "label": "Regra do 1.240",
+              "text": "Dividir 1.240 pela energia do fóton em elétron-volts dá o comprimento de onda aproximado em nanômetros."
+            },
+            {
+              "label": "Vácuo e ar",
+              "text": "A regra do 1.240 vale no vácuo e quase igual no ar, mas não dá direto o valor dentro da água ou do vidro."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Comprimento de onda a partir da energia do fóton",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "A luz se comporta como uma onda. Ela não é uma bolinha subindo e descendo: é a luz variando enquanto avança. A distância de uma crista até a próxima se chama **comprimento de onda**.",
+              "title": "A distância entre cristas"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "Uma lâmpada passa a soltar luz com mais energia em cada pequeno pacote, no mesmo ambiente. O que acontece com o comprimento de onda?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Quando cada pacote de luz carrega mais energia, as cristas ficam mais próximas, desde que o ambiente seja o mesmo. Então mais energia por pacote quer dizer um comprimento de onda menor.",
+              "title": "Mais energia, cristas mais juntas"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "A luz chega em pequenos pacotes de energia. Cada pacote se chama **fóton**. Para achar o comprimento de onda, o que importa é a energia de um único fóton, não a energia somada de toda a luz.",
+              "title": "Um pacote de cada vez"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Outra lâmpada passa a soltar fótons com menos energia, e o ambiente continua o mesmo.\nO comprimento de onda dessa luz fica como?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "A energia de um fóton é pequena demais para as unidades do dia a dia. Por isso usamos uma unidade para valores assim, o **elétron-volt**. Um detector pode indicar 2 elétron-volts por fóton.",
+              "title": "Energia em elétron-volts"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "As cristas da luz ficam muito perto umas das outras. Para medir isso, usamos um bilionésimo de metro. Essa unidade se chama **nanômetro**. Um filtro pode deixar passar só a luz de 500 nanômetros, por exemplo.",
+              "title": "Uma unidade para distâncias minúsculas"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Pegue a energia do fóton em elétron-volts e divida 1.240 por ela. O resultado é o comprimento de onda em nanômetros, aproximado. Para um fóton de 2 elétron-volts, você divide 1.240 por 2.",
+              "title": "A regra do 1.240"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Um espaço sem matéria nenhuma, nem ar, se chama **vácuo**. A regra do 1.240 dá o comprimento de onda no vácuo. No ar, o resultado fica quase igual. Na água ou no vidro, ela não dá direto a distância entre as cristas.",
+              "title": "Onde a regra vale"
+            },
+            {
+              "hasVisual": true,
+              "kind": "workedExample",
+              "text": "Um fóton de 2 elétron-volts viaja no vácuo. Qual é o comprimento de onda?",
+              "title": "Um fóton de 2 elétron-volts"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Um fóton de 4 elétron-volts viaja no vácuo.\nQual é o comprimento de onda aproximado dele?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Num laboratório de óptica de uma universidade em Natal, um filtro no ar só deixa passar luz entre 390 e 410 nanômetros. A fonte solta fótons de 3,1 elétron-volts.\nEssa luz passa pelo filtro?",
               "title": null
             }
           ]

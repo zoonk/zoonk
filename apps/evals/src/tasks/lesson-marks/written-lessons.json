@@ -684,6 +684,188 @@
       }
     ]
   },
+  "pt-comprimento-de-onda": {
+    "ideas": [
+      {
+        "label": "Comprimento de onda",
+        "text": "O comprimento de onda é a distância de uma crista da onda de luz até a próxima."
+      },
+      {
+        "label": "Fóton e sua energia",
+        "text": "Quanto mais energia cada fóton carrega, no mesmo ambiente, menor é o comprimento de onda."
+      },
+      {
+        "label": "Regra do 1.240",
+        "text": "Dividir 1.240 pela energia do fóton em elétron-volts dá o comprimento de onda aproximado em nanômetros."
+      },
+      {
+        "label": "Vácuo e ar",
+        "text": "A regra do 1.240 vale no vácuo e quase igual no ar, mas não dá direto o valor dentro da água ou do vidro."
+      }
+    ],
+    "language": "pt",
+    "lessonTitle": "Comprimento de onda a partir da energia do fóton",
+    "level": "overview",
+    "screens": [
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "A luz se comporta como uma onda. Ela não é uma bolinha subindo e descendo: é a luz variando enquanto avança. A distância de uma crista até a próxima se chama **comprimento de onda**.",
+        "title": "A distância entre cristas"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "Uma lâmpada passa a soltar luz com mais energia em cada pequeno pacote, no mesmo ambiente. O que acontece com o comprimento de onda?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Quando cada pacote de luz carrega mais energia, as cristas ficam mais próximas, desde que o ambiente seja o mesmo. Então mais energia por pacote quer dizer um comprimento de onda menor.",
+        "title": "Mais energia, cristas mais juntas"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "A luz chega em pequenos pacotes de energia. Cada pacote se chama **fóton**. Para achar o comprimento de onda, o que importa é a energia de um único fóton, não a energia somada de toda a luz.",
+        "title": "Um pacote de cada vez"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Outra lâmpada passa a soltar fótons com menos energia, e o ambiente continua o mesmo.\nO comprimento de onda dessa luz fica como?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "A energia de um fóton é pequena demais para as unidades do dia a dia. Por isso usamos uma unidade para valores assim, o **elétron-volt**. Um detector pode indicar 2 elétron-volts por fóton.",
+        "title": "Energia em elétron-volts"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "As cristas da luz ficam muito perto umas das outras. Para medir isso, usamos um bilionésimo de metro. Essa unidade se chama **nanômetro**. Um filtro pode deixar passar só a luz de 500 nanômetros, por exemplo.",
+        "title": "Uma unidade para distâncias minúsculas"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Pegue a energia do fóton em elétron-volts e divida 1.240 por ela. O resultado é o comprimento de onda em nanômetros, aproximado. Para um fóton de 2 elétron-volts, você divide 1.240 por 2.",
+        "title": "A regra do 1.240"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Um espaço sem matéria nenhuma, nem ar, se chama **vácuo**. A regra do 1.240 dá o comprimento de onda no vácuo. No ar, o resultado fica quase igual. Na água ou no vidro, ela não dá direto a distância entre as cristas.",
+        "title": "Onde a regra vale"
+      },
+      {
+        "hasVisual": true,
+        "kind": "workedExample",
+        "text": "Um fóton de 2 elétron-volts viaja no vácuo. Qual é o comprimento de onda?",
+        "title": "Um fóton de 2 elétron-volts"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Um fóton de 4 elétron-volts viaja no vácuo.\nQual é o comprimento de onda aproximado dele?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Num laboratório de óptica de uma universidade em Natal, um filtro no ar só deixa passar luz entre 390 e 410 nanômetros. A fonte solta fótons de 3,1 elétron-volts.\nEssa luz passa pelo filtro?",
+        "title": null
+      }
+    ]
+  },
+  "pt-eletron-nucleo": {
+    "ideas": [
+      {
+        "label": "Previsão das regras antigas",
+        "text": "Pelas regras que valem para bolas e carros, um elétron girando ao redor do núcleo soltaria luz e perderia energia."
+      },
+      {
+        "label": "Nuvem de probabilidades",
+        "text": "A nuvem de probabilidades mostra as chances de achar o elétron em cada lugar, maiores onde o desenho é mais forte."
+      },
+      {
+        "label": "Elétron inteiro num ponto",
+        "text": "Quando um aparelho mede onde o elétron está, ele marca um único ponto com o elétron inteiro, e não pedacinhos espalhados."
+      },
+      {
+        "label": "Estado fundamental",
+        "text": "No estado fundamental, a situação de menor energia, o hidrogênio não tem energia menor para alcançar, por isso não continua perdendo energia até cair no núcleo."
+      }
+    ],
+    "language": "pt",
+    "lessonTitle": "Por que o elétron não cai no núcleo?",
+    "level": "overview",
+    "screens": [
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Pelas regras que valem para bolas e carros, uma partícula elétrica que faz curvas solta luz e perde energia. Então um elétron girando ao redor do núcleo deveria perder energia assim e ir se aproximando dele.",
+        "title": "A previsão das regras antigas"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "Um átomo de hidrogênio está sozinho, sem receber energia de fora, com a menor energia possível. O que acontece com o elétron com o passar do tempo?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Nesse hidrogênio, o mapa de onde o elétron pode ser achado fica igual o tempo todo. Ele não vai soltando luz e perdendo energia, como previa a ideia de uma bolinha girando.",
+        "title": "Um átomo que não muda"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Esse mapa mostra as chances de achar o elétron em cada lugar. Onde o desenho é mais forte, é maior a chance de achá-lo num pequeno espaço ali. Ele se chama **nuvem de probabilidades**.",
+        "title": "Um mapa de chances"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Muitos átomos de hidrogênio, todos preparados do mesmo jeito, são medidos um por um.\nQual dos dois quadradinhos do desenho, de mesmo tamanho, deve registrar o elétron mais vezes?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Quando um aparelho de laboratório mede onde o elétron está, ele marca um único ponto, com o elétron inteiro ali. Por isso, a nuvem não é uma névoa de pedacinhos de elétron: ela só mostra onde é mais provável achá-lo.",
+        "title": "Não são pedaços de elétron"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "No hidrogênio, a situação de menor energia já é uma nuvem espalhada ao redor do núcleo, e não um elétron dentro dele. Essa situação de menor energia se chama **estado fundamental**.",
+        "title": "A menor energia permitida"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Soltar luz leva energia embora. Mas, no estado fundamental, não existe nenhuma situação permitida com energia menor. Por isso, o hidrogênio não pode continuar perdendo energia até cair no núcleo.",
+        "title": "Não há como descer mais"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Um relatório diz: _O hidrogênio estava no estado fundamental e emitiu luz, ficando com energia ainda menor. A luz levou energia, e o elétron seguiu preso ao núcleo._\nQual trecho mostra o erro do relatório?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Rosana revisa as legendas de uma exposição no Museu do Amanhã, no Rio. Uma delas diz: _O elétron gira como um planeta e perde energia sem parar, mas nunca cai._\nQual legenda deve ficar no lugar dessa?",
+        "title": null
+      }
+    ]
+  },
   "pt-eletrons-valencia": {
     "ideas": [
       {

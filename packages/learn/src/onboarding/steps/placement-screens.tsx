@@ -2,6 +2,7 @@
 
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { CircleStopIcon, PlayIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindDot } from "../../_components/kind-tile";
 import {
@@ -17,7 +18,6 @@ import { PlusMark } from "../../_components/plus-lock";
 import { SuccessEyebrow } from "../../_components/success-eyebrow";
 import { useFormatDuration } from "../../_utils/time-format";
 import { LearnLink } from "../../learn-link";
-import { PendingLabel } from "../../plan/plan-coverage";
 import { type PlacementMockOutcome } from "../onboarding-actions";
 import {
   OnboardingColumn,
@@ -115,14 +115,17 @@ export function PlacementIntro({
 
       <OnboardingFooter>
         <OnboardingPrimaryButton
-          aria-busy={starting || undefined}
-          disabled={pending || starting}
+          busy={starting}
+          disabled={pending}
+          icon={<PlayIcon aria-hidden="true" />}
           onClick={onStart}
         >
-          <PendingLabel pending={starting}>{t("Start")}</PendingLabel>
+          {t("Start")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton
-          disabled={pending || starting}
+          busy={pending}
+          disabled={starting}
+          icon={<SkipForwardIcon aria-hidden="true" />}
           onClick={onScratch}
           variant="ghost"
         >
@@ -263,7 +266,12 @@ export function PlacementMockRunning({
         <LearnLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={href}>
           {t("Continue the mock exam")}
         </LearnLink>
-        <OnboardingSecondaryButton disabled={pending} onClick={onStop} variant="ghost">
+        <OnboardingSecondaryButton
+          busy={pending}
+          icon={<CircleStopIcon aria-hidden="true" />}
+          onClick={onStop}
+          variant="ghost"
+        >
           {t("Stop and see my plan")}
         </OnboardingSecondaryButton>
       </OnboardingFooter>

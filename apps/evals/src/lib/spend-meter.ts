@@ -1,6 +1,7 @@
+import { describeStep } from "@zoonk/ai/task-provenance";
 import { registerTelemetry } from "ai";
 import { type ModelConfig } from "./models";
-import { type ModelCall, toTokenUsage } from "./types";
+import { type ModelCall, toModelCall } from "./types";
 
 const calls: ModelCall[] = [];
 
@@ -16,8 +17,10 @@ export function meterModelCalls(): void {
         usage: { inputTokens: usage?.inputTokens ?? 0, outputTokens: usage?.outputTokens ?? 0 },
       });
     },
-    onLanguageModelCallEnd: ({ modelId, usage }) => {
-      calls.push({ modelId, usage: toTokenUsage(usage) });
+    /** `modelId` is the response's, which through the gateway is the provider's own id. */
+    onLanguageModelCallEnd: ({ modelId, provider, providerMetadata, usage }) => {
+      const step = { model: { modelId, provider }, providerMetadata, response: { modelId }, usage };
+      calls.push(toModelCall(describeStep(step)));
     },
   });
 }

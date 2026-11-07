@@ -173,7 +173,7 @@ struct SubscriptionView: View {
   }
 
   private var restorePurchasesButton: some View {
-    Button {
+    BusyButton(isBusy: subscriptions.isRestoring, icon: .retry) {
       Task {
         await subscriptions.restorePurchases(
           owner: { session.subscriptionOwner },
@@ -184,21 +184,11 @@ struct SubscriptionView: View {
           })
       }
     } label: {
-      HStack(spacing: 8) {
-        if subscriptions.isRestoring {
-          ProgressView()
-            .controlSize(.small)
-        } else {
-          Image(systemName: "arrow.clockwise")
-        }
-
-        Text(
-          "Restore Purchases",
-          tableName: "Account",
-          comment: "Restores App Store purchases and synchronizes them with the Zoonk account")
-      }
+      Text(
+        "Restore Purchases",
+        tableName: "Account",
+        comment: "Restores App Store purchases and synchronizes them with the Zoonk account")
     }
-    .disabled(subscriptions.isRestoring)
   }
 
   private var alertTitle: Text {
@@ -719,31 +709,24 @@ private struct WebPlusSection: View {
       }
 
       if web.state == .ending {
-        Button {
+        BusyButton(isBusy: change != nil, isRow: true) {
           run { await settings.keepWebPlus() }
         } label: {
-          WorkingLabel(
-            title: Text(
-              "Keep Plus", tableName: "Account",
-              comment:
-                "Turns the stopped renewal of Plus bought on the web back on, so it renews as before"
-            ),
-            isWorking: change != nil)
+          Text(
+            "Keep Plus", tableName: "Account",
+            comment:
+              "Turns the stopped renewal of Plus bought on the web back on, so it renews as before")
         }
-        .disabled(change != nil)
       } else {
-        Button {
+        BusyButton(isBusy: change != nil, isRow: true) {
           failed = false
           isConfirmingCancel = true
         } label: {
-          WorkingLabel(
-            title: Text(
-              "Cancel Plus", tableName: "Account",
-              comment:
-                "Cancels Plus bought on the web: the button, and the confirmation in its dialog"),
-            isWorking: change != nil)
+          Text(
+            "Cancel Plus", tableName: "Account",
+            comment:
+              "Cancels Plus bought on the web: the button, and the confirmation in its dialog")
         }
-        .disabled(change != nil)
         .confirmationDialog(
           Text(
             "Cancel Plus?", tableName: "Account", comment: "Title of the dialog that cancels Plus"),
@@ -853,23 +836,6 @@ extension WebPlus {
 
 private func day(_ date: Date) -> String {
   date.formatted(date: .abbreviated, time: .omitted)
-}
-
-private struct WorkingLabel: View {
-  let title: Text
-  let isWorking: Bool
-
-  var body: some View {
-    HStack {
-      title
-
-      Spacer()
-
-      if isWorking {
-        ProgressView()
-      }
-    }
-  }
 }
 
 /// Main's Free card: what the free plan includes, against Plus above it.

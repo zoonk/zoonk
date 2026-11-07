@@ -9,6 +9,7 @@ import com.zoonk.android.data.recode
 import com.zoonk.android.feature.player.SessionMove
 import com.zoonk.android.feature.player.SessionMover
 import com.zoonk.android.feature.player.SessionSteps
+import com.zoonk.android.feature.practice.AnswerSender
 import com.zoonk.android.feature.practice.QuestionRun
 import com.zoonk.android.feature.practice.RunControls
 import com.zoonk.android.feature.practice.RunPhase
@@ -67,7 +68,8 @@ class QuestionBlockViewModel(
     private data class Submission(
         val question: Question,
         val answer: Answer,
-        val minDurationMs: Long,
+        val sender: AnswerSender,
+        val durationMs: Long,
     )
 
     override val canRetry: Boolean get() = sent != null
@@ -92,16 +94,25 @@ class QuestionBlockViewModel(
     override fun submit(
         question: Question,
         answer: Answer,
+        sender: AnswerSender,
         minDurationMs: Long,
     ) {
+        send(Submission(question, answer, sender, max(minDurationMs, now() - shownAt)))
+    }
+
+    override fun retry() {
+        sent?.let(::send)
+    }
+
+    private fun send(submission: Submission) {
         val current = run.value ?: return
         if (!current.canAnswer) return
-        run.value = current.checking()
-        sent = Submission(question, answer, minDurationMs)
+        run.value = current.checking(submission.sender)
+        sent = submission
 
         viewModelScope.launch {
-            val duration = max(minDurationMs, now() - shownAt)
-            when (val result = store.answer(key, question.itemId, answer, duration)) {
+            val answer = submission.answer
+            when (val result = store.answer(key, submission.question.itemId, answer, submission.durationMs)) {
                 is MutationResult.Done -> {
                     sent = null
                     run.update { it?.answered(answer, result.value.recode<StudyAnswerFeedback, AnswerFeedback>()) }
@@ -120,16 +131,12 @@ class QuestionBlockViewModel(
         }
     }
 
-    override fun retry() {
-        sent?.let { submit(it.question, it.answer, it.minDurationMs) }
-    }
-
     override fun timeUp(
         question: Question,
         seconds: Int,
     ) {
         run.update { it?.timeUp() }
-        submit(question, Answer.DontKnow, minDurationMs = seconds.seconds.inWholeMilliseconds)
+        submit(question, Answer.DontKnow, AnswerSender.Timer, seconds.seconds.inWholeMilliseconds)
     }
 
     override fun next(questions: List<Question>) {

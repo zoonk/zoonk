@@ -102,7 +102,7 @@ describe("the lesson's bottom bar at 200% text on a 320 px phone", () => {
     expect(cutOffLabels()).toStrictEqual([]);
   });
 
-  it("wraps a long label's words while it checks the answer", async () => {
+  it("keeps Check whole while it checks the answer", async () => {
     await atLargeTextOnSmallPhone();
     const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
     const pending = Promise.withResolvers<Awaited<ReturnType<LessonPlayerAdapters["checkStep"]>>>();
@@ -116,8 +116,9 @@ describe("the lesson's bottom bar at 200% text on a 320 px phone", () => {
     });
 
     await page.getByRole("textbox").fill("It shows where the electron is likely to be");
-    await userEvent.click(page.getByRole("button", { name: /^Check/u }));
-    await expect.element(page.getByRole("button", { name: "Checking your answer" })).toBeVisible();
+    const check = page.getByRole("button", { name: /^Check/u });
+    await userEvent.click(check);
+    await expect.element(check).toHaveAttribute("aria-busy", "true");
 
     expect(cutOffLabels()).toStrictEqual([]);
 

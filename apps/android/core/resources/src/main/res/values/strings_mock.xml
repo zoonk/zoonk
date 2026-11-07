@@ -44,7 +44,6 @@
     <string name="mock_next">Next</string>
     <string name="mock_hand_in_mock">Hand in the mock exam</string>
     <string name="mock_hand_in_section">Hand in this section</string>
-    <string name="mock_handing_in">Handing in…</string>
     <string name="mock_moves_review_any">Review: you can go back to any question.</string>
     <string name="mock_moves_review_none">Review: no more answers can change.</string>
     <plurals name="mock_moves_review_changes">
@@ -124,7 +123,6 @@
     <string name="mock_step_slow">Still handing it in. This is taking longer than usual.</string>
     <string name="mock_handed_in_title">Mock exam handed in</string>
     <string name="mock_see_how">See how it went</string>
-    <string name="mock_grading">Grading…</string>
     <string name="mock_continue_section">Continue</string>
     <string name="mock_time_up">Time\'s up</string>
     <string name="mock_answers_saved">Your answers so far are saved.</string>

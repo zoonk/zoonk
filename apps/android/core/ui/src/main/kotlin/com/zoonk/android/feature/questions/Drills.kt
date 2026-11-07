@@ -24,7 +24,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -41,6 +40,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.formatClock
@@ -290,16 +290,17 @@ fun NotSureButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     busy: Boolean = false,
+    focusableWhenDisabled: Boolean = false,
     dontKnowYet: Boolean = false,
 ) {
-    OutlinedButton(onClick = onClick, modifier = modifier, enabled = enabled, busy = busy) {
-        if (!dontKnowYet) {
-            Icon(
-                painterResource(R.drawable.ic_help),
-                contentDescription = null,
-                modifier = Modifier.padding(end = 8.dp).size(18.dp),
-            )
-        }
+    OutlinedButton(
+        busy = busy,
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        focusableWhenDisabled = focusableWhenDisabled,
+        leadingIcon = { ButtonIcon(R.drawable.ic_help) },
+    ) {
         Text(stringResource(if (dontKnowYet) R.string.questions_dont_know_yet else R.string.questions_drill_not_sure))
     }
 }

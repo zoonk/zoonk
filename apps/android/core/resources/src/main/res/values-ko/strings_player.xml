@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "player_action_check": "b52f9a4b8eace82908135b14c2d25ae3878c60a6f5bc9ae3b6e471d9699653ef",
-  "player_action_checking": "ac5d575121c35ec83cd5edc5f954ae1b87716e035496ae2a6b8fcf27e674f17a",
   "player_action_confirm": "a64e1c1ce0ab78d904acc0ba2a3d53c39778b11553d2b9e308921defc5dbb314",
   "player_action_continue": "9b35fd102ff57bbb259335f1404fbfd3ccae6fab991d4d66a057ec7dfd7ce58d",
   "player_action_next": "2d7cf572f91a31f127489c593fd79a55cfc899637b402095bf49886eda68d0b2",
@@ -72,7 +71,6 @@
   "player_explain_answer_failed": "516d5835d5a0946b92ebe538af40175dc2e9255987ab6cfba3744a57ce20a933",
   "player_explain_answer_title": "ddc809722a496e6200c40b71624c7e282834c840f18e3b954068d9462eae7c8b",
   "player_explain_first": "49c5fb6810ea4f51f90a2af048e1e1eb4ab982500da7e52de7b7cc50ce214af9",
-  "player_explaining_answer": "f84390a44ae9a695920b0ec620e0709176957cf1840a75d9d80b449c6092c339",
   "player_finish": "0eb84a3e0c90061adce518b1af04d9115421c29fda41697d6f1a8d621a77b873",
   "player_free_limit_day_description": "7141a7aa9404b73e9d6d10410ea694369b893f871c2860398eda3ebe57678090",
   "player_free_limit_day_title": "240e46c403039fd13469e003c6841ee2579fddc52edcb9cc4239f4f21f081bd8",
@@ -165,7 +163,6 @@
   "player_start_failed_description": "98a0ab8b12865fbf888d8f0f2249acfda69859b49431dee1edf26784dc1631a9",
   "player_start_failed_title": "76b959c5abe6409ebec1037e310665845449fc12b3bc49825149b9abbbe7aed4",
   "player_start_this_lesson": "2737d9c93b6777255b92d403f7ab9b5405a23cd8ee50423c7f20de5a744aae93",
-  "player_starting": "88296eab778ea57efbab47cb108c1c21c1ff01a7a713fbc5d4bb751bf0220d9d",
   "player_still_checking": "a493d73d2deee78c064616eb39a5301b98894b3e7f19df53f07b5e9489302fd3",
   "player_stop_failed": "fc9bf7e47ed560aa2afff849c5285273f14a4fe44ee8fdc0c20d93b958bb80d4",
   "player_stop_for_today": "5e227468d92083cb5eca3702d04b9b82eca0d14320f87514471bd353406d1818",
@@ -220,7 +217,6 @@
     <string name="player_leave_description">아직 답안을 확인하지 않아서 저장되지 않아요.</string>
     <string name="player_keep_writing">계속 쓰기</string>
     <string name="player_action_check">정답 확인</string>
-    <string name="player_action_checking">답을 확인하고 있어요</string>
     <string name="player_action_confirm">확인</string>
     <string name="player_action_continue">계속하기</string>
     <string name="player_action_next">다음</string>
@@ -249,7 +245,6 @@
     <string name="player_spelled">철자:</string>
     <string name="player_correct_answer_label">정답:</string>
     <string name="player_explain_answer">내 답 설명하기</string>
-    <string name="player_explaining_answer">답을 설명하고 있어요</string>
     <string name="player_explain_answer_failed">지금은 설명할 수 없어요. 잠시 후 다시 시도해 보세요.</string>
     <string name="player_explain_answer_title">이 답이 맞지 않는 이유</string>
     <!-- Heading of the panel that recaps the lesson, not a button. -->
@@ -304,7 +299,6 @@
     <string name="player_not_written_title">아직 만들지 않은 레슨이에요</string>
     <string name="player_not_written_description">시작하면 Zoonk가 레슨을 만들어요. 몇 분 정도 걸려요.</string>
     <string name="player_start_this_lesson">이 레슨 시작하기</string>
-    <string name="player_starting">시작하고 있어요…</string>
     <string name="player_writing_lesson">레슨을 만들고 있어요</string>
     <string name="player_phase_plan">레슨을 계획하고 있어요</string>
     <string name="player_phase_plan_line_1">다룰 내용을 고르고 있어요…</string>

@@ -236,6 +236,9 @@ class FakeOnboardingApi : OnboardingApi {
     val answers = mutableListOf<Pair<String, OnboardingAnswerInput>>()
     var reply: (String, OnboardingAnswerInput) -> Onboarding = { goalId, _ -> setup(goalId) }
 
+    /** Holds every answer until it completes. */
+    var answerGate: CompletableDeferred<Unit>? = null
+
     override suspend fun onboarding(
         session: AuthenticatedSession,
         goalId: String,
@@ -247,6 +250,7 @@ class FakeOnboardingApi : OnboardingApi {
         input: OnboardingAnswerInput,
     ): Onboarding {
         answers += goalId to input
+        answerGate?.await()
         refusal?.let { throw it }
         return reply(goalId, input)
     }

@@ -259,7 +259,7 @@ export function QuestionBlock({
       {showsQuestionActions({ phase, stage: blockDrill.stage }) && (
         <TaskActionBar>
           <QuestionBlockStatus
-            onRetryAnswer={() => draft.answer && void run.submit(draft.answer)}
+            onRetryAnswer={run.retry}
             onRetryFinish={run.retryFinish}
             phase={phase}
           />

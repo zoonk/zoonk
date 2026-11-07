@@ -144,6 +144,71 @@ describe(normalizeLessonMarks, () => {
     ]);
   });
 
+  describe("the strip never counts back", () => {
+    const guess: MarksScreen = { ...question, kind: "guess" };
+
+    const fourIdeas = ["Regras antigas", "Nuvem", "Elétron inteiro", "Estado fundamental"].map(
+      (label) => ({ label, text: `${label} é uma ideia da aula.` }),
+    );
+
+    function tagIdeas({ ideaNumbers, screens }: { ideaNumbers: number[]; screens: MarksScreen[] }) {
+      const marks = normalizeLessonMarks({
+        ideas: fourIdeas,
+        output: {
+          ideas: [],
+          screens: ideaNumbers.map((idea, index) => ({
+            example: null,
+            icon: null,
+            idea,
+            screen: index + 1,
+            underline: null,
+          })),
+        },
+        screens,
+      });
+
+      return marks.screens.map((screen) => screen.ideaIndex);
+    }
+
+    it("drops the idea of a screen that jumps ahead of ideas later screens teach", () => {
+      const ideaIndexes = tagIdeas({
+        ideaNumbers: [1, 4, 4, 2, 2, 3, 4, 4],
+        screens: [
+          explanation,
+          guess,
+          explanation,
+          explanation,
+          question,
+          explanation,
+          explanation,
+          explanation,
+        ],
+      });
+
+      expect(ideaIndexes).toStrictEqual([0, 3, null, 1, 1, 2, 3, 3]);
+    });
+
+    it("keeps the run that reaches every idea when a worked example goes back to an earlier one", () => {
+      const ideaIndexes = tagIdeas({
+        ideaNumbers: [1, 2, 2, 2, 3, 3, 3, 4, 3, 4],
+        screens: [
+          explanation,
+          guess,
+          explanation,
+          explanation,
+          explanation,
+          explanation,
+          explanation,
+          explanation,
+          workedExample,
+          question,
+        ],
+      });
+
+      expect(ideaIndexes).toStrictEqual([0, 1, 1, 1, 2, 2, 2, 3, null, 3]);
+    });
+  });
+
   it("repairs what code can: a bold wrap around the underline, stray marks and an em dash in an about line", () => {
     const marks = normalizeLessonMarks({
       ideas: [ideas[0] ?? { label: null, text: "" }],

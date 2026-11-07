@@ -3,11 +3,10 @@
 import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import { CircleHelpIcon, GraduationCapIcon, XIcon } from "lucide-react";
+import { CircleHelpIcon, GraduationCapIcon, RotateCwIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef, useState, useTransition } from "react";
 import {
@@ -142,14 +141,13 @@ function SlowWait({ onRetry }: { onRetry: () => Promise<boolean> }) {
 
       {!joined && (
         <Button
-          disabled={isRetrying}
-          focusableWhenDisabled
+          busy={isRetrying}
+          icon={<RotateCwIcon aria-hidden="true" />}
           onClick={retry}
           size="sm"
           variant="outline"
         >
           {t("Try again")}
-          {isRetrying && <Spinner aria-hidden="true" />}
         </Button>
       )}
     </div>

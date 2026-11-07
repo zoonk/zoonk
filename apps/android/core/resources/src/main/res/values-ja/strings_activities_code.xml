@@ -38,7 +38,6 @@
   "activities_code_run": "d1bb5bdfab924332ba88a701522639f300a1c1fd6cf8118dd00ce88b98c23aee",
   "activities_code_run_again": "c46b173a3d7ef981aaaa6b1ca8cf9144eeeced75e4ae4ac54a08165f54c3c7f5",
   "activities_code_run_to_see": "f7e73f80c094d7f4fafcbab8829f56b6cc115c73beba0dd7204335429e23d06a",
-  "activities_code_running": "83b4dea2795d27a8bf2d8343ef5143a9a16f21a6d852ef9ab8f6e91c032ea839",
   "activities_code_runtime_failed": "9840681ca11f8adf7279051bb8a8ef29c3ff9393e0829b96a9032035f51515a8",
   "activities_code_runtime_loading": "9c36f5fb24f5ba8b0d87c339af44c3885396c82a94ed77d7ba57c0316706e11d",
   "activities_code_sample_doesnt_match": "96d4520275861adbc5143849e406d533774f13b44a42c6dad7721173dde808c7",
@@ -104,7 +103,6 @@
     <string name="activities_code_runtime_failed">%1$sを読み込めませんでした。通信状況を確認して、もう一度お試しください。</string>
     <string name="activities_code_run">実行する</string>
     <string name="activities_code_run_again">もう一度実行する</string>
-    <string name="activities_code_running">実行中</string>
     <string name="activities_code_start_over">元のコードからやり直す</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">コード</string>

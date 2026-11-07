@@ -11,7 +11,7 @@ import {
 import { useTimeAnswerTexts } from "../_components/time-answer";
 import { getLongerTime } from "../_utils/time-answer";
 import { usePlanScreen } from "./plan-context";
-import { type FindStatus, PendingLabel, useCoveredText, usePlanCoverage } from "./plan-coverage";
+import { type FindStatus, useCoveredText, usePlanCoverage } from "./plan-coverage";
 import { useFullCourse } from "./plan-full-course";
 import {
   CheckingChange,
@@ -171,14 +171,8 @@ function CoverageBody({
       )}
 
       {findsTime && (
-        <SuggestionAction
-          aria-busy={pending || undefined}
-          disabled={pending}
-          focusableWhenDisabled
-          key="find"
-          onClick={() => ask(retry ? intent : "time")}
-        >
-          <PendingLabel pending={pending}>{retry ? texts.tryAgain : texts.find}</PendingLabel>
+        <SuggestionAction busy={pending} key="find" onClick={() => ask(retry ? intent : "time")}>
+          {retry ? texts.tryAgain : texts.find}
         </SuggestionAction>
       )}
 

@@ -12,7 +12,6 @@ import {
   AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import { Loader2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { type CancelPlusResult, cancelPlusAction } from "./cancel-plus-action";
@@ -62,10 +61,7 @@ export function CancelPlusButton({ endsNow = false }: { endsNow?: boolean }) {
         )}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={pending}>{t("Go back")}</AlertDialogCancel>
-          <Button aria-busy={pending} disabled={pending} focusableWhenDisabled onClick={cancel}>
-            {pending && (
-              <Loader2Icon aria-hidden="true" className="animate-spin motion-reduce:animate-none" />
-            )}
+          <Button busy={pending} onClick={cancel}>
             {t("Cancel Plus")}
           </Button>
         </AlertDialogFooter>

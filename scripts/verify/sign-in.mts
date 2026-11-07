@@ -1,9 +1,11 @@
 import { setTimeout as delay } from "node:timers/promises";
 import { type APIRequestContext, request } from "@playwright/test";
+import { AUTH_BASE_PATH } from "../../apps/api/src/lib/auth-base-path.ts";
+import { type Learner } from "./exposure.mts";
 
 type StorageState = Awaited<ReturnType<APIRequestContext["storageState"]>>;
 
-const AUTH = "/api/auth";
+const BETTER_AUTH_DEFAULT_BASE_PATH = "/api/auth";
 const CODE_TIMEOUT_MS = 15_000;
 const CODE_POLL_MS = 500;
 
@@ -44,23 +46,31 @@ async function readCode({
   throw new Error(`No sign-in code for ${email} reached ${mailboxUrl}.`);
 }
 
-async function post(context: APIRequestContext, path: string, data: Record<string, string>) {
-  const response = await context.post(`${AUTH}${path}`, { data });
+function authPath(app: string) {
+  return app === "api" ? AUTH_BASE_PATH : BETTER_AUTH_DEFAULT_BASE_PATH;
+}
+
+async function post(context: APIRequestContext, url: string, data: Record<string, string>) {
+  const response = await context.post(url, { data });
 
   if (!response.ok()) {
-    throw new Error(`${path} failed: ${response.status()} ${await response.text()}`);
+    throw new Error(`${url} failed: ${response.status()} ${await response.text()}`);
   }
+
+  return response;
 }
 
 export async function signIn({
+  app,
   baseUrl,
   email,
   mailboxUrl,
 }: {
+  app: string;
   baseUrl: string;
   email: string;
   mailboxUrl: string;
-}): Promise<StorageState> {
+}): Promise<{ learner: Learner; storageState: StorageState }> {
   // Better Auth keeps and mails addresses in lowercase.
   const address = email.trim().toLowerCase();
 
@@ -70,12 +80,23 @@ export async function signIn({
   });
 
   try {
+    const auth = authPath(app);
     const since = Date.now();
-    await post(context, "/email-otp/send-verification-otp", { email: address, type: "sign-in" });
-    const otp = await readCode({ email: address, mailboxUrl, since });
-    await post(context, "/sign-in/email-otp", { email: address, otp });
 
-    return await context.storageState();
+    await post(context, `${auth}/email-otp/send-verification-otp`, {
+      email: address,
+      type: "sign-in",
+    });
+
+    const otp = await readCode({ email: address, mailboxUrl, since });
+    const response = await post(context, `${auth}/sign-in/email-otp`, { email: address, otp });
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Better Auth's own response shape.
+    const { user } = (await response.json()) as { user: Learner };
+
+    return {
+      learner: { email: user.email, id: user.id, name: user.name },
+      storageState: await context.storageState(),
+    };
   } finally {
     await context.dispose();
   }

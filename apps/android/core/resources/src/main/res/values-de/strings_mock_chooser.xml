@@ -6,7 +6,6 @@
   "mock_chooser_failed": "719118296c47d9101fae2d25c01e206f5097bfc026e1b26435175a337eb08bea",
   "mock_chooser_full_day_number_without": "7e1c2488c596e4a047170bbcc893cde55d0939480cd50357dad33edcd3717d7a",
   "mock_chooser_full_day_without": "90b9e7299785fdb3288a45e7beb717f839180b4b09da2223e35d392367c25cad",
-  "mock_chooser_getting_ready": "8b92fb7886869f84790affd35fc147f627baf17fb5ba2eab96a50fc934f34f26",
   "mock_chooser_last_mock": "3f26ce94a6c4ffeb49f73d7d347217959bbee5e47914c1e508337f2e79b276bc",
   "mock_chooser_left_out_choice": "352fe7cdea8ad7e940881c75bd95b34979ffe20d00ae3f8f41263974c57c742b",
   "mock_chooser_left_out_listening": "89c84fa59e80578237d371a6801a27dc1813952370077bc0316e4b0fab44b15e",
@@ -79,7 +78,6 @@
     <string name="mock_chooser_rule">Dein Ergebnis siehst du erst am Ende, wie am Prüfungstag.</string>
     <string name="mock_chooser_pick_free">Wähle, wie viel der Prüfung du jetzt machen möchtest.</string>
     <string name="mock_chooser_start">Starten</string>
-    <string name="mock_chooser_getting_ready">Wir bereiten alles vor…</string>
     <plurals name="mock_chooser_start_with">
         <item quantity="one">Mit %d Frage starten</item>
         <item quantity="other">Mit %d Fragen starten</item>

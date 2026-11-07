@@ -31,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -50,15 +49,16 @@ import com.zoonk.android.feature.session.BlockMark
 import com.zoonk.android.feature.session.DayMission
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.MissionOpens
-import com.zoonk.android.feature.session.OPENING_ROW_ALPHA
 import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.ui.characters.Buddy
 import com.zoonk.android.ui.characters.BuddyCrop
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.Trickster
+import com.zoonk.android.ui.components.BusyContent
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.ListRowChevron
+import com.zoonk.android.ui.components.busyClickable
 import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -330,6 +330,7 @@ fun MissionListRow(
     trailing: (@Composable () -> Unit)? = null,
 ) {
     val doneLabel = stringResource(R.string.today_step_done)
+    val chevron = onOpen != null && trailing == null
 
     Row(
         modifier =
@@ -337,18 +338,17 @@ fun MissionListRow(
                 .fillMaxWidth()
                 .then(
                     if (onOpen != null) {
-                        Modifier.clickable(enabled = !busy, role = Role.Button, onClickLabel = openLabel, onClick = onOpen)
+                        Modifier.busyClickable(busy, onClickLabel = openLabel, onClick = onOpen)
                     } else {
                         Modifier
                     },
-                ).alpha(if (busy) OPENING_ROW_ALPHA else 1f)
-                .semantics { if (done) stateDescription = doneLabel }
+                ).semantics { if (done) stateDescription = doneLabel }
                 .heightIn(min = 48.dp)
                 .padding(vertical = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(Modifier.width(20.dp), contentAlignment = Alignment.Center) { mark() }
+        Box(Modifier.width(20.dp), contentAlignment = Alignment.Center) { BusyContent(busy && !chevron, mark) }
 
         Column(Modifier.weight(1f)) {
             Text(
@@ -369,7 +369,7 @@ fun MissionListRow(
         }
 
         trailing?.invoke()
-        if (onOpen != null && trailing == null) ListRowChevron()
+        if (chevron) BusyContent(busy) { ListRowChevron() }
     }
 }
 
