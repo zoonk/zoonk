@@ -191,6 +191,26 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(state.queue.last, "one", "the run has the first miss once, so it comes back")
   }
 
+  /// The retry waits behind the miss to be sent, but not to be kept.
+  func testAMissAndItsRetryAreBothKeptOnTheDeviceWhileSavesFail() async throws {
+    let defaults = try temporaryDefaults()
+    let kept = HeldLessonAnswers(
+      learnerId: "lesson-loading-test-user", lessonId: "lesson", defaults: defaults)
+    let transport = HeldAnswersTransport(runAnswers: "[]")
+    let store = try checksPlayer(steps: ["one"], defaults: defaults, transport: transport)
+    await store.load()
+    await transport.failChecks(on: ["one"])
+
+    store.select(.check(optionId: "wrong"))
+    await store.check()
+    store.continueLesson()
+    store.select(.check(optionId: "right"))
+    await store.check()
+
+    XCTAssertEqual(kept.read().map(\.isCorrect), [false, true])
+    XCTAssertEqual(kept.read(), store.held)
+  }
+
   func testAnAnswerThatFailedToSaveIsKeptUntilFinishingSendsIt() async throws {
     let defaults = try temporaryDefaults()
     let kept = HeldLessonAnswers(

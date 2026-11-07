@@ -59,7 +59,8 @@ final class LessonPlayerStore {
   private(set) var fit: LessonFit?
   var isGuest = false
   var endsAsGuest: Bool { isGuest && fromCatalog }
-  /// From a send that failed, or a lesson opened with answers still held, until every one is saved.
+  /// From a send that failed until every held answer is saved, so a lesson that opens with answers
+  /// held and sends them at once never shows it.
   var hasUnsavedAnswers: Bool { sendFailed && !held.isEmpty }
   /// "I can't talk now" lasts the rest of the learner's day on this device.
   var cantTalkToday: Bool {
@@ -260,7 +261,6 @@ final class LessonPlayerStore {
       HeldLessonAnswers(learnerId: $0.user.id, lessonId: lesson.id, defaults: defaults)
     }
     held = heldOnDevice?.read() ?? []
-    sendFailed = !held.isEmpty
     sendHeldAnswers()
     await heldAnswersSent()
 
