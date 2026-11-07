@@ -6,10 +6,11 @@ import { readReleasePage } from "../research/release-page";
 import { findProductByIdStep } from "../research/steps/product-steps";
 import { courseReleaseWorkflow } from "./course-release-workflow";
 import {
-  claimNewestReleaseSearchStep,
+  findNewestReleaseSearchStep,
   findUnreadReleasesPageStep,
   listCoursesBehindStep,
   readReleasesPageStep,
+  recordReleasePageSearchedStep,
   recordUnreadableReleasesPageStep,
   saveProductReleasesStep,
 } from "./steps/product-releases-steps";
@@ -45,20 +46,35 @@ async function readUnreadPage({ analytics, productId, release, serviceTier }: Re
   }
 }
 
-/** When no release is current (none dated, or none out yet), reads the newest listed one's page. */
+/**
+ * When no release is current (none dated, or none out yet), reads the newest listed one's page.
+ * The lookup is recorded once it finishes; one that keeps failing in an outage throws and stays due.
+ */
 async function readNewestReleasePage({
   analytics,
   productId,
   serviceTier,
 }: Omit<ReleasesRun, "release">) {
-  const search = await claimNewestReleaseSearchStep(productId);
+  const search = await findNewestReleaseSearchStep(productId);
   const known = search ? await findProductByIdStep(productId) : null;
 
   if (!search || !known) {
     return;
   }
 
-  const link = await readReleasePage({ analytics, known, ...search, serviceTier });
+  const { language, release, releaseId } = search;
+
+  const link = await readReleasePage({ analytics, known, language, release, serviceTier }).catch(
+    (error: unknown) => {
+      if (!isUnusableOutput(error)) {
+        throw error;
+      }
+
+      return null;
+    },
+  );
+
+  await recordReleasePageSearchedStep(releaseId);
 
   if (link) {
     await startCourseReleases(await listCoursesBehindStep({ productId }));

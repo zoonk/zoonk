@@ -195,11 +195,32 @@ async function savedProduct(site: Site, attrs: Parameters<typeof productFixture>
   });
 }
 
-/** Research finds the product's pages, then the newest release's own page. */
-function findReleasePage({ releasePage, site }: { releasePage: string; site: Site }) {
+function readReleases(productId: string) {
+  return readProductReleases({
+    analytics: { contentScope: "shared" },
+    productId,
+    release: null,
+    serviceTier: undefined,
+  });
+}
+
+/**
+ * Research finds the product's pages, then the newest release's own page, after one failed search
+ * when `outage` is set.
+ */
+function findReleasePage({
+  outage,
+  releasePage,
+  site,
+}: {
+  outage: boolean;
+  releasePage: string;
+  site: Site;
+}) {
   findPages(site);
 
-  vi.mocked(findProductPages)
+  const search = vi
+    .mocked(findProductPages)
     .mockResolvedValueOnce({
       ...TASK_RESULT,
       data: {
@@ -210,18 +231,23 @@ function findReleasePage({ releasePage, site }: { releasePage: string; site: Sit
         releasesUrl: `https://${site.product}/releases`,
         searchCalls: 2,
       },
-    })
-    .mockResolvedValueOnce({
-      ...TASK_RESULT,
-      data: {
-        brandUrl: null,
-        docsUrl: null,
-        productUrl: null,
-        releaseUrl: releasePage,
-        releasesUrl: null,
-        searchCalls: 1,
-      },
     });
+
+  if (outage) {
+    search.mockRejectedValueOnce(new Error("Search is down"));
+  }
+
+  search.mockResolvedValueOnce({
+    ...TASK_RESULT,
+    data: {
+      brandUrl: null,
+      docsUrl: null,
+      productUrl: null,
+      releaseUrl: releasePage,
+      releasesUrl: null,
+      searchCalls: 1,
+    },
+  });
 }
 
 describe("product research", () => {
@@ -395,12 +421,19 @@ describe("product research", () => {
     }));
 
     /** The releases page lists both versions undated; the newest one's page says what it says. */
-    async function research(releaseNote: { passage: string; releasedOn: string | null }) {
+    async function research({
+      outage = false,
+      ...releaseNote
+    }: {
+      outage?: boolean;
+      passage: string;
+      releasedOn: string | null;
+    }) {
       const site = newSite();
       const goal = await productGoal();
       const releasePage = `https://${site.product}/news/orbit-notes-5-2`;
       planProduct({ site });
-      findReleasePage({ releasePage, site });
+      findReleasePage({ outage, releasePage, site });
 
       servePages({
         others: { [releasePage]: `<p>${releaseNote.passage}</p>` },
@@ -420,20 +453,23 @@ describe("product research", () => {
           },
         });
 
-      await researchWorkflow({ goalId: goal.id });
+      const [run] = await Promise.allSettled([researchWorkflow({ goalId: goal.id })]);
 
-      return prisma.product.findFirstOrThrow({
+      const product = await prisma.product.findFirstOrThrow({
         include: { releases: { orderBy: { name: "asc" } } },
         where: { organization: { domain: site.brand } },
       });
+
+      return { product, status: run.status };
     }
 
     it("looks up the newest release's own page and ends with a current release", async () => {
-      const product = await research({
+      const { product, status } = await research({
         passage: "Orbit Notes 5.2 shipped on November 2, 2025.",
         releasedOn: "2025-11-02",
       });
 
+      expect(status).toBe("fulfilled");
       expect(vi.mocked(findProductPages).mock.calls[1]?.[0].hints.release).toBe("Orbit Notes 5.2");
 
       expect(product.releases.map((release) => [release.name, release.releasedAt])).toStrictEqual([
@@ -443,20 +479,39 @@ describe("product research", () => {
     });
 
     it("looks a newest release's page up once, even when it has no date either", async () => {
-      const product = await research({
+      const { product, status } = await research({
         passage: "Orbit Notes 5.2 brings shared notebooks.",
         releasedOn: null,
       });
 
-      await readProductReleases({
-        analytics: { contentScope: "shared" },
-        productId: product.id,
-        release: null,
-        serviceTier: undefined,
-      });
+      await readReleases(product.id);
 
+      expect(status).toBe("fulfilled");
       expect(vi.mocked(findProductPages)).toHaveBeenCalledTimes(2);
       expect(product.releases.map((release) => release.releasedAt)).toStrictEqual([null, null]);
+    });
+
+    it("looks a newest release's page up again after a search that failed", async () => {
+      const { product, status } = await research({
+        outage: true,
+        passage: "Orbit Notes 5.2 shipped on November 2, 2025.",
+        releasedOn: "2025-11-02",
+      });
+
+      await readReleases(product.id);
+
+      const releases = await prisma.productRelease.findMany({
+        orderBy: { name: "asc" },
+        where: { productId: product.id },
+      });
+
+      expect(status).toBe("rejected");
+      expect(vi.mocked(findProductPages)).toHaveBeenCalledTimes(3);
+
+      expect(releases.map((release) => release.releasedAt)).toStrictEqual([
+        null,
+        new Date("2025-11-02T00:00:00.000Z"),
+      ]);
     });
   });
 

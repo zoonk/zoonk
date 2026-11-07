@@ -159,13 +159,12 @@ export async function saveReadReleases({
 
 /**
  * Internal workflow bridge for the releases reading. When the product's releases have no current
- * one (none dated, or none out yet), claims a search for its newest listed release's own page,
- * which often dates it, and returns that release's name and the pages' language. Each newest
- * release is searched for once, so a page that dates nothing isn't paid for again.
+ * one (none dated, or none out yet), its newest listed release whose own page, which often dates
+ * it, was never looked up (`recordReleasePageSearched`), with the pages' language.
  */
-export async function claimNewestReleaseSearch(
+export async function findNewestReleaseSearch(
   productId: string,
-): Promise<{ language: string; release: string } | null> {
+): Promise<{ language: string; release: string; releaseId: string } | null> {
   const product = await prisma.product.findUnique({
     select: {
       releases: {
@@ -189,14 +188,18 @@ export async function claimNewestReleaseSearch(
   const newest = isCurrent ? null : pickNewestByVersion(releases);
   const language = product?.releasesSource?.language ?? product?.websiteSource?.language;
 
-  if (!newest || newest.pageSearchedAt || !language) {
-    return null;
-  }
+  return newest && !newest.pageSearchedAt && language
+    ? { language, release: newest.name, releaseId: newest.id }
+    : null;
+}
 
-  const { count } = await prisma.productRelease.updateMany({
+/**
+ * Internal workflow bridge: a lookup of the release's page finished, with a reading or a failure no
+ * retry fixes, so a page that dates nothing isn't paid for again.
+ */
+export async function recordReleasePageSearched(releaseId: string): Promise<void> {
+  await prisma.productRelease.updateMany({
     data: { pageSearchedAt: new Date() },
-    where: { id: newest.id, pageSearchedAt: null },
+    where: { id: releaseId },
   });
-
-  return count === 1 ? { language, release: newest.name } : null;
 }
