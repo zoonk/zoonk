@@ -458,6 +458,7 @@ msgstr "Stiamo impiegando più tempo del solito. Si aprirà automaticamente, non
 
 #: src/_components/plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "lOdoIb"
 msgid "Plus"
 msgstr "Plus"

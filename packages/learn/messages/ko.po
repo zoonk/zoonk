@@ -458,6 +458,7 @@ msgstr "평소보다 오래 걸리고 있어요. 자동으로 열리니 다시 �
 
 #: src/_components/plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "lOdoIb"
 msgid "Plus"
 msgstr "Plus"

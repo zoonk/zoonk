@@ -15,6 +15,7 @@ import {
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
+  ListRowLink,
   ListRowTitle,
 } from "../_components/list-group";
 import { StatusRegion } from "../_components/status-region";
@@ -73,9 +74,14 @@ function MapSlot({ shown, view }: { shown: MindMapShown; view: ChapterMindMapVie
   );
 }
 
-/** A list says what writing the lessons costs once, above its rows (`MindMapsScreen`). */
+/** A list says once, above its rows, what writing the lessons costs and what Plus opens (`MindMapsScreen`). */
 function useAvailableLine({ place, plus, shown, view }: RowCopyInput): string | null {
   const t = useExtracted();
+
+  if (shown === "plusRequired" && place === "library") {
+    return t("Plus");
+  }
+
   const writesLessons = view.lessonsToWrite > 0 && shown !== "plusRequired";
 
   if (writesLessons && place === "library") {
@@ -154,7 +160,7 @@ function RowText({ input, titleId }: { input: RowCopyInput; titleId: string }) {
     <ListRowContent aria-live="polite">
       <ListRowTitle className="wrap-break-word" id={titleId}>
         {place === "chapter" ? t("Mind map") : view.title}
-        {shown === "plusRequired" && (
+        {shown === "plusRequired" && place !== "library" && (
           <span className="sr-only">{` (${t("Available with Plus")})`}</span>
         )}
       </ListRowTitle>
@@ -252,22 +258,31 @@ export function MindMapRow({
     return null;
   }
 
+  const lockedInList = place === "library" && shown === "plusRequired";
+
+  const body = (
+    <>
+      <ListRowLeading className="py-2">
+        <MapSlot shown={shown} view={view} />
+      </ListRowLeading>
+      <RowText input={input} titleId={titleId} />
+    </>
+  );
+
   return (
     <div className="flex flex-col gap-1" data-slot="mind-map-row">
-      {ready ? (
+      {ready && (
         <button className={LIST_ROW_INTERACTIVE_CLASS} onClick={() => setOpen(true)} type="button">
-          <ListRowLeading className="py-2">
-            <MapSlot shown={shown} view={view} />
-          </ListRowLeading>
-          <RowText input={input} titleId={titleId} />
+          {body}
           <span className={cn(ACTION_CLASS, "self-center")}>{t("Open")}</span>
         </button>
-      ) : (
+      )}
+
+      {lockedInList && <ListRowLink href={routes.upgrade}>{body}</ListRowLink>}
+
+      {!ready && !lockedInList && (
         <div className={LIST_ROW_CLASS}>
-          <ListRowLeading className="py-2">
-            <MapSlot shown={shown} view={view} />
-          </ListRowLeading>
-          <RowText input={input} titleId={titleId} />
+          {body}
           <span className="flex shrink-0 items-center empty:hidden">
             <RowAction
               isPending={isPending}

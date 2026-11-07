@@ -4,6 +4,7 @@ import { type GoalMindMapView, type GoalMindMapsView } from "@zoonk/core/mind-ma
 import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted } from "next-intl";
 import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
+import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
 import {
   PageEyebrow,
@@ -77,6 +78,8 @@ export function MindMapsScreen({
   const groups = groupBySubject(mindMaps.chapters);
   const ready = mindMaps.chapters.filter((chapter) => chapter.status === "ready").length;
 
+  const locked = mindMaps.chapters.some((chapter) => chapter.status === "plusRequired");
+
   const writesLessons = mindMaps.chapters.some(
     (chapter) => chapter.status === "available" && chapter.lessonsToWrite > 0,
   );
@@ -117,6 +120,8 @@ export function MindMapsScreen({
                     "Making a map for one of these writes its lessons first, which counts toward your free lessons.",
                 }))}
         </p>
+
+        {locked && <FreeWeekOverNotice className="max-w-prose" />}
       </DetailAside>
 
       <DetailContent>

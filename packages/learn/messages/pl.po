@@ -458,6 +458,7 @@ msgstr "To trwa dłużej niż zwykle. Kolejny krok otworzy się sam, nie musisz 
 
 #: src/_components/plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "lOdoIb"
 msgid "Plus"
 msgstr "Plus"
