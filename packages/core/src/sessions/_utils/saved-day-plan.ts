@@ -57,14 +57,14 @@ export function savedSelection({
   };
 }
 
-/** Start's missed-days settle re-dates these, which changes their date-based keys: a past event, or today's mock the learner didn't move there. */
+/** Start's missed-days settle re-dates these, which changes their date-based keys: a past event, or today's mock that neither the learner moved there nor the plan funded. */
 function isRedatedBySettle({
   item,
-  movedOnto,
+  kept,
   today,
 }: {
   item: SessionPlanItem;
-  movedOnto: ReadonlySet<string>;
+  kept: ReadonlySet<string>;
   today: Date;
 }): boolean {
   if (item.status !== "todo" || !item.scheduledFor) {
@@ -79,7 +79,7 @@ function isRedatedBySettle({
     item.scheduledFor < today ||
     (item.kind === "mock" &&
       item.scheduledFor.getTime() === today.getTime() &&
-      !movedOnto.has(toIsoDate(today)))
+      !kept.has(toIsoDate(today)))
   );
 }
 
@@ -94,10 +94,15 @@ function selectSavedDay({
   summary: SelectedSummary | null;
 }): SelectedDayPlan {
   const selection = savedSelection({ context, summary });
-  const movedOnto = new Set(context.state.settings.movedEvents.map((move) => move.to));
+  const { mockFunding, movedEvents } = context.state.settings;
+
+  const kept = new Set([
+    ...movedEvents.map((move) => move.to),
+    ...mockFunding.map(({ date }) => date),
+  ]);
 
   const items = selection.items.filter(
-    (item) => !isRedatedBySettle({ item, movedOnto, today: context.today }),
+    (item) => !isRedatedBySettle({ item, kept, today: context.today }),
   );
 
   return { ...selection, items, left, source: toSource({ ...selection, items }) };
