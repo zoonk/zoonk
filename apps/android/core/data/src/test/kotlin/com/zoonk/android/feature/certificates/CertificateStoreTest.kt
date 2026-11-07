@@ -57,7 +57,7 @@ class CertificateStoreTest {
             certificateUpNext(
                 listOf(
                     goal("Python", kind = "learn", lessons = 3 to 12),
-                    goal("Spanish", kind = "language"),
+                    goal("Spanish", kind = "language", lessons = 2 to 8),
                     goal("SAT", kind = "exam", lessons = 0 to 0),
                     goal("Guitar", kind = "learn", status = "paused", lessons = 1 to 4),
                     goal("Rust", kind = "learn", status = "completed", lessons = 4 to 4),
@@ -65,7 +65,7 @@ class CertificateStoreTest {
                 ),
             )
 
-        assertEquals(listOf("Python" to 0.25, "Spanish" to null), upNext.map { it.goal.title to it.progress })
+        assertEquals(listOf("Python" to 0.25, "Spanish" to 0.25), upNext.map { it.goal.title to it.progress })
     }
 
     private fun TestScope.store(api: CertificatesApi): CertificateStore {
@@ -121,21 +121,17 @@ private fun owned(code: String): OwnedCertificate {
     val page = "https://www.zoonk.com/c/$code"
     val picture = "https://www.zoonk.com/en/c/$code/image"
     return OwnedCertificate(
-        canDo = emptyList(),
         category = null,
+        cefrRange = null,
         code = code,
         completedOn = LocalDate(2026, 11, 3),
         courseId = null,
         courseLevel = null,
-        kind = OwnedCertificate.Kind.COURSE,
         language = "en",
         lessonsStudied = 12,
         lessonsTestedOut = 0,
-        level = null,
         minutes = 240,
         recipientName = "Ana Souza",
-        skillLevels = emptyList(),
-        targetLanguage = null,
         title = "Python",
         topics = emptyList(),
         locked = false,

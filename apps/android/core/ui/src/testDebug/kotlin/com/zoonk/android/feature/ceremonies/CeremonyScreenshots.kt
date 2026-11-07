@@ -13,7 +13,6 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.feature.certificates.CertificateKind
 import com.zoonk.android.feature.certificates.CertificateName
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.CelebrationScope
@@ -133,11 +132,9 @@ class CeremonyScreenshots {
         locked: Boolean,
     ) = CertificateName(
         code = "K7QF2M9XHD4P${courseLevel.orEmpty()}",
-        kind = CertificateKind.Course,
         title = "Python for data analysis",
         courseLevel = courseLevel,
-        targetLanguage = null,
-        level = null,
+        cefrRange = null,
         completedOn = LocalDate(2026, 11, 3),
         locked = locked,
     )

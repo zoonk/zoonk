@@ -184,7 +184,7 @@ private fun CertificateRow(
 
 /**
  * Main's empty page: how certificates are earned, Continue learning, and under "Up next" each active
- * goal that earns one and how: a course's share of lessons done, or what a language level asks.
+ * goal that earns one and its share of lessons done.
  */
 @Composable
 private fun Empty(
@@ -230,17 +230,14 @@ private fun UpNextRow(item: CertificateUpNext) {
         headline = { Text(item.goal.title) },
         leading = { GoalMark(item.goal.title, item.goal.languageFlag) },
         supporting = {
-            Text(stringResource(if (progress == null) R.string.certificates_up_next_language else R.string.certificates_up_next_course))
+            Text(stringResource(R.string.certificates_up_next_course))
         },
-        meta =
-            progress?.let { share ->
-                {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Meter(share.toFloat(), Modifier.width(64.dp))
-                        Text(formatPercent(share, currentLocale()), color = MaterialTheme.colorScheme.onSurface)
-                    }
-                }
-            },
+        meta = {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Meter(progress.toFloat(), Modifier.width(64.dp))
+                Text(formatPercent(progress, currentLocale()), color = MaterialTheme.colorScheme.onSurface)
+            }
+        },
     )
 }
 

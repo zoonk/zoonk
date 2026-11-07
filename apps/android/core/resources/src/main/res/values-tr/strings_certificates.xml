@@ -5,14 +5,11 @@
   "certificates_add_to_linkedin": "342793bee65095257e8833c9ddd6ab535d69ea920220719c75c1b09c555df436",
   "certificates_alt_course": "c9751761814e61bc0639603345a99ae25e2e47ba7d37961a69838a6057b13a1b",
   "certificates_alt_dated": "45a1a67431c6c990db389d5671df223e82881bbfce4ded2bb5eb1525e6b90f10",
-  "certificates_alt_level": "1fe9c40ffa8bd75f792e43141f26d9c41c6bb2da93be62f89557abf1dd09a249",
-  "certificates_can_do": "e134b252b5f3cce5d7fe78b2dc9c758095bb5c195f683bc3fea9f99883d5315d",
   "certificates_cancel": "729e5128ae5f2b540e00636a546c2d3094eca538018dabfab65d7a1917f82829",
   "certificates_caption_course": "d88931ee18447f33063dcfdd69e79387635dac1463715fd6fd41974e571fd070",
   "certificates_caption_course_hours": "377fe7933c3298f587ee450c6f135458ec2015a27b05e86b30bdcafb3864e578",
   "certificates_caption_course_minutes": "33eeb371e075f3ca24a5e56c0e45b2b0880f39e19231e4260b7947a09c355eab",
   "certificates_caption_course_tested_out": "38dbe1a7273dfbfef9bdd396b12a30232fb159121ec9a65a9ea21c6dfc1b4b09",
-  "certificates_caption_level": "0c86d55e7af6d68a3742c3464e8f69b8db81379e9b77c92d8bf8a4067ed4883b",
   "certificates_certificate": "f3f6f206110190eabe20dfdb1dc4f3e365909d5b2931625b3ff73a90cf556637",
   "certificates_change": "aad274e3c6d839c5b27b7c7e847c00775e5e4eb8c687ac89046106d7ed34e0e4",
   "certificates_change_name": "71009da3e87b8d4c8aa6ba61d3a587baa118ee95cd5003e103355298d1ab4bb8",
@@ -42,12 +39,10 @@
   "certificates_get": "d08cb9679a701fbe4fdaf80a72ee9d77334278d8007c0e705705be9b0b9e78f3",
   "certificates_issued_on": "4366a6379e28caa5f0ddfe4b9ecf247d851e75ca0e07df94c796859c7e239f79",
   "certificates_kind_completion": "5be0df23bc47dd0260c4163330e737dad7fa34a079671517fb8538573548fe01",
-  "certificates_language_level": "942070bd341fcc34f5cf7e3d7133194d944054a0e70eba1f2aa380b4ae35c408",
-  "certificates_language_ready": "f1444af26c07163b7c9f7ca80d324f541d4239ef28905f69e156a6330248502f",
   "certificates_lead": "867842555baa2036685439ce2fa5fcb0e839201e5439e66e77b1aeb20fbc7001",
   "certificates_lessons": "c1ff000e889b6cf45614b278202ef229ed8c42ae3550c3459a01eb1e6e30be8d",
   "certificates_level_complete": "a13652607fbf5370bbe837c527761a65554c4be84de994cda021428105e00968",
-  "certificates_level_on_zoonk": "41d443b1e5ddbe94fb9d0040dcb012e52b6c81280bbbcda3eeec309f7300c08b",
+  "certificates_level_range": "a04102b55ff5e78372ad12d9c837d2a688971ff857042e38d1aef7b853ee654d",
   "certificates_link_copied": "cc71403a8d392f2545666a320985451f6d5e17889cb32d2c3ed62a26644b5560",
   "certificates_link_note": "a3e3ff89c0fe7f6cc907b3e3e5cefd41faf7dc9190252bd2d4a0b206937c881a",
   "certificates_linkedin_credential_id": "8b217abcbdad52c10bbc64f8d30ee9c48b6d399ea1ac3a7bd25704745aca6eea",
@@ -60,10 +55,10 @@
   "certificates_linkedin_title": "90ff492fe1f4436662fb757886c3bcc207704d995f6778f6f6c1f990aa6e74cf",
   "certificates_locked": "7aa387d05c7b6f82060198e816a0d3f2ed4699d18dd6eb81a9c37794bfbfc96c",
   "certificates_meaning_cefr": "97da19af2abb13ea8d48a9a095a5506a9b3c0f7aacebebab07e93f73975d7fcf",
-  "certificates_meaning_language": "9f399ffd11a0a1de0dede407e129f5378ef4d9129af1060ad4cdb84d944d2d4b",
-  "certificates_meaning_level": "60c2c95fc1807d2555fa4a64229c423fe953d65218fa9a100fbbd6649d1cfd18",
+  "certificates_meaning_language": "a54a45d7b2f79f7fecb84e8f27535f912440568311cd7607c818b349d991474f",
+  "certificates_meaning_level": "5977692506f7011d193c2357ee8b4c16c747cf333500eb705da1cd3dc6c418e9",
   "certificates_meaning_name": "dd0f7f433b2ad526abdcffc4b0efcd2e780819171673a668ca642067a89f2284",
-  "certificates_meaning_plan": "502a230c2e95bfe21a0b8ed6370464f3f1b2060629b3fdba61ed4990e035e5ab",
+  "certificates_meaning_plan": "2e60c81310e12b8ab448130d78a8baa4379f7ce6c1fffe00c31b03e0b1fd19cb",
   "certificates_meaning_record": "52880fda7dd2e888dd478d677b589aeddec6119fc7086b07471f25cd04c9d9c6",
   "certificates_meaning_title": "861b6a9d08f8f7cf60c260c325856db0ed1953a924a09ee5186349837f444cd0",
   "certificates_name_hint": "d7272a290e722a949310e140a36c9bc8432a4949641d7162e35df94723f7739f",
@@ -89,7 +84,6 @@
   "certificates_topics_covered": "0090afe0bb5329a502e5847116df80cbda15ab483a4fcd977b5d905a5908de0a",
   "certificates_up_next": "41ac7c68c0b715bc2e2c4f2c06bde1a1d78af8fedbf29de5a60af5549faa6f23",
   "certificates_up_next_course": "69a83fbfbe47c65bb6b81a6261e3aedacb81dc4a788695c8f626ecf9601aaaf3",
-  "certificates_up_next_language": "a61fe9215a0c99fa53332c83f3d75dbac1a5fd902836379513fcafba26c1d273",
   "certificates_verified": "ebc12e6b7894dae692f213859e6bec215903b9c3dc12637a0cb7e2e5d928befa",
   "certificates_view": "cd42dc9fe7ca27340f613bb5f781207d9cfefdf03285c57bf78c243de7045754",
   "certificates_view_several": "2901bd1a4f679e496f6bd1b62f0da5dceea48f35171e95ea68af69fbf4d377e9"
@@ -104,11 +98,11 @@
         <item quantity="other">%1$d sertifika</item>
     </plurals>
     <string name="certificates_lead">Tamamladığın her seviye ve plan için bir sertifika.</string>
-    <!-- What a certificate certifies: a finished course or a finished language level. Printed on the certificate itself. -->
+    <!-- What a certificate certifies: a finished course level or plan. Printed on the certificate itself. -->
     <string name="certificates_kind_completion">Tamamlama sertifikası</string>
-    <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
-    <string name="certificates_language_level">%1$s %2$s</string>
     <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->
+    <!-- A language course level and its CEFR range, such as Intermediate (B1–B2). -->
+    <string name="certificates_level_range">%1$s (%2$s)</string>
     <string name="certificates_course_level">%1$s · %2$s</string>
     <string name="certificates_empty_title">Henüz sertifikan yok</string>
     <string name="certificates_empty_description">Bir seviyeyi veya planı tamamladığında sertifikaların burada görünür.</string>
@@ -120,8 +114,6 @@
     <string name="certificates_get">Sertifikanı al</string>
     <string name="certificates_up_next">Sıradaki</string>
     <string name="certificates_up_next_course">Planı tamamladığında sertifikanı alırsın</string>
-    <!-- Under a language goal: its certificate comes once every skill the learner practices (reading, listening, speaking, writing) reaches the next CEFR level. -->
-    <string name="certificates_up_next_language">Çalıştığın her beceride bir sonraki seviyeye ulaştığında alırsın</string>
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">Kurs tamamlandı!</string>
     <string name="certificates_level_complete">%1$s tamamlandı!</string>
@@ -132,9 +124,7 @@
     </plurals>
     <!-- %1$s is the course's title. -->
     <string name="certificates_course_ready">%1$s için sertifikan hazır.</string>
-    <!-- %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
-    <string name="certificates_language_ready">%1$s %2$s sertifikan hazır.</string>
-    <!-- %1$s lists the certificates' names, such as "Spanish A2 and B1" or "Python and Spanish B1". -->
+    <!-- %1$s lists the certificates' names, such as "Italian · Intermediate (B1–B2) and Python". -->
     <string name="certificates_several_ready">%1$s sertifikaların hazır.</string>
     <!-- %1$s is the learner's name, as printed on their certificate. -->
     <string name="certificates_on_your_certificate">Sertifikandaki ad: %1$s</string>
@@ -178,12 +168,8 @@
     <string name="certificates_not_found">Bu sertifikayı bulamadık</string>
     <!-- A certificate page's headline, which TalkBack also reads for its picture. %1$s is the learner's name and %2$s the certificate's name, such as "Python · Beginner". -->
     <string name="certificates_alt_course">%1$s, %2$s kursunu tamamladı</string>
-    <!-- A certificate page's headline, which TalkBack also reads for its picture. %1$s is the learner's name, %2$s the CEFR level, such as "B1", and %3$s the language, such as "Spanish". -->
-    <string name="certificates_alt_level">%1$s, %2$s seviyesini %3$s dilinde tamamladı</string>
     <!-- A certificate page's headline before the learner gave a name. %1$s is the certificate's name, such as "Python · Beginner". -->
     <string name="certificates_course_on_zoonk">%1$s, Zoonk’ta tamamlandı</string>
-    <!-- A certificate page's headline before the learner gave a name. %1$s is the CEFR level, such as "B1", and %2$s the language, such as "Spanish". -->
-    <string name="certificates_level_on_zoonk">%1$s seviyesi, %2$s dilinde Zoonk’ta tamamlandı</string>
     <!-- Above a certificate's headline on its page, beside a check mark. -->
     <string name="certificates_verified">Doğrulanmış sertifika · Zoonk tarafından verildi</string>
     <!-- Under a certificate's headline on its page. %1$s is the day it was issued, such as "October 28, 2026". -->
@@ -206,16 +192,14 @@
     <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
     <string name="certificates_about_duration">yaklaşık %1$s</string>
     <string name="certificates_meaning_title">Bu sertifikanın anlamı</string>
-    <string name="certificates_meaning_language">Zoonk, her beceriyi (okuma, dinleme, konuşma, yazma) öğrencinin derslerde ve alıştırmalarda verdiği cevaplara göre ölçer. Bu cevaplarla seviyesi yükselen tüm beceriler bir sonraki seviyeye ulaştığında seviye tamamlanır; bu sertifika da bu becerilerin her biri %1$s seviyesine ulaştığında verildi.</string>
-    <string name="certificates_meaning_level">Zoonk bu sertifikayı, bir kurs seviyesindeki her dersi çalışarak veya testini geçerek tüm üniteleri tamamlayan ve o seviyedeki tüm meydan okumaları kazanan öğrencilere verir.</string>
-    <string name="certificates_meaning_plan">Zoonk bu sertifikayı, öğrenci bir kursun planındaki tüm dersleri çalışarak veya testlerini geçerek tamamladığında ve plandaki tüm meydan okumaları kazandığında verir.</string>
+    <string name="certificates_meaning_language">Zoonk bu sertifikayı, bir dil kursunun bir seviyesindeki derslerin en az yarısını Zoonk’ta çalışarak, kalanlarını da testle geçerek tüm dersleri tamamlayanlara verir.</string>
+    <string name="certificates_meaning_level">Zoonk bu sertifikayı, bir kursun bir seviyesindeki derslerin en az yarısını Zoonk’ta çalışarak, kalanlarını da testle geçerek tüm dersleri tamamlayan ve o seviyedeki tüm meydan okumaları kazananlara verir.</string>
+    <string name="certificates_meaning_plan">Zoonk bu sertifikayı, bir kursun planındaki derslerin en az yarısını Zoonk’ta çalışarak, kalanlarını da testle geçerek tüm dersleri tamamlayan ve o plandaki tüm meydan okumaları kazananlara verir.</string>
     <string name="certificates_meaning_record">Zoonk’ta kursun tamamlandığını gösterir; akademik kredi yerine geçmez.</string>
     <string name="certificates_meaning_cefr">Seviyeler, CEFR (Common European Framework of Reference for Languages) ile uyumludur. Bu, resmî bir sınav sonucu değildir.</string>
     <string name="certificates_meaning_name">Sertifikada öğrencinin Zoonk hesabında belirttiği ad yer alır; Zoonk kimlik kontrolü yapmaz.</string>
     <!-- Heading over the chapters a course certificate covers -->
     <string name="certificates_topics_covered">İşlenen konular</string>
-    <!-- Heading over what a language certificate's learner can do -->
-    <string name="certificates_can_do">Yapabildikleri</string>
     <!-- TalkBack reads the certificate's picture: what it certifies, then the day it was earned, such as "Ana Souza completed Python, November 3, 2026". -->
     <string name="certificates_alt_dated">%1$s, %2$s</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title and %2$s the lessons they studied, such as "148 lessons". -->
@@ -237,8 +221,6 @@
         <item quantity="one">%1$s ders</item>
         <item quantity="other">%1$s ders</item>
     </plurals>
-    <!-- Text the learner can post with their certificate. %1$s is the CEFR level, such as "B1", and %2$s the language, such as "Spanish". -->
-    <string name="certificates_caption_level">Zoonk’ta %1$s seviyesini %2$s dilinde az önce tamamladım.</string>
     <string name="certificates_linkedin_title">LinkedIn profiline ekle</string>
     <string name="certificates_linkedin_description">LinkedIn, lisans veya sertifika ekleme formunu açar. Her alandaki bilgiyi forma kopyala.</string>
     <!-- The fields of LinkedIn's "Add license or certification" form, named as LinkedIn names them. -->

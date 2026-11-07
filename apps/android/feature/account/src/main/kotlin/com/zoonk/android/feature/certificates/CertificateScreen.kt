@@ -46,7 +46,6 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
-import com.zoonk.android.feature.catalog.courseLevelName
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
@@ -71,7 +70,6 @@ import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
-import com.zoonk.api.models.CertificateSkillLevel
 import com.zoonk.api.models.OwnedCertificate
 import kotlinx.coroutines.launch
 import kotlinx.datetime.toJavaLocalDate
@@ -400,46 +398,41 @@ private fun certificateFacts(certificate: OwnedCertificate): List<CertificateFac
     val locale = currentLocale()
 
     fun number(value: Long) = formatNumber(value.toDouble(), locale)
-    val skills =
-        if (certificate.naming.kind == CertificateKind.LanguageLevel) {
-            certificate.skillLevels.map { CertificateFact(skillName(it.skill), it.label, mono = true) }
-        } else {
-            emptyList()
-        }
-
     return listOfNotNull(
         certificate.courseLevel?.let {
-            CertificateFact(stringResource(R.string.certificates_detail_level), courseLevelName(it.value), mono = false)
-        },
-    ) + skills +
-        listOfNotNull(
             CertificateFact(
-                stringResource(R.string.certificates_detail_completed),
-                formatDate(certificate.completedOn.toJavaLocalDate(), locale, DateStyle.Short),
+                stringResource(R.string.certificates_detail_level),
+                certificateLevelName(it.value, certificate.cefrRange),
+                mono = false,
+            )
+        },
+        CertificateFact(
+            stringResource(R.string.certificates_detail_completed),
+            formatDate(certificate.completedOn.toJavaLocalDate(), locale, DateStyle.Short),
+            mono = true,
+        ),
+        certificate.lessonsStudied?.takeIf { it > 0 }?.let {
+            CertificateFact(stringResource(R.string.certificates_detail_lessons_studied), number(it), mono = true)
+        },
+        certificate.lessonsTestedOut?.takeIf { it > 0 }?.let {
+            CertificateFact(stringResource(R.string.certificates_detail_passed_by_test), number(it), mono = true)
+        },
+        certificate.minutes?.takeIf { it > 0 }?.let {
+            CertificateFact(
+                stringResource(R.string.certificates_detail_study_time),
+                stringResource(
+                    R.string.certificates_about_duration,
+                    formatDuration(roundStudyMinutes(it) * SECONDS_PER_MINUTE, locale),
+                ),
                 mono = true,
-            ),
-            certificate.lessonsStudied?.takeIf { it > 0 }?.let {
-                CertificateFact(stringResource(R.string.certificates_detail_lessons_studied), number(it), mono = true)
-            },
-            certificate.lessonsTestedOut?.takeIf { it > 0 }?.let {
-                CertificateFact(stringResource(R.string.certificates_detail_passed_by_test), number(it), mono = true)
-            },
-            certificate.minutes?.takeIf { it > 0 }?.let {
-                CertificateFact(
-                    stringResource(R.string.certificates_detail_study_time),
-                    stringResource(
-                        R.string.certificates_about_duration,
-                        formatDuration(roundStudyMinutes(it) * SECONDS_PER_MINUTE, locale),
-                    ),
-                    mono = true,
-                )
-            },
-            if (certificate.locked) {
-                null
-            } else {
-                CertificateFact(stringResource(R.string.certificates_detail_id), formatCertificateCode(certificate.code), mono = true)
-            },
-        )
+            )
+        },
+        if (certificate.locked) {
+            null
+        } else {
+            CertificateFact(stringResource(R.string.certificates_detail_id), formatCertificateCode(certificate.code), mono = true)
+        },
+    )
 }
 
 /** Main's `CertificateMeaning`: how Zoonk decides to issue this kind of certificate, and what it isn't. */
@@ -450,9 +443,9 @@ private fun CertificateMeaning(
 ) {
     val nameNote = stringResource(R.string.certificates_meaning_name)
     val paragraphs =
-        if (certificate.kind == OwnedCertificate.Kind.LANGUAGE_LEVEL) {
+        if (certificate.cefrRange != null) {
             listOf(
-                stringResource(R.string.certificates_meaning_language, certificate.level?.let(::bandAbove).orEmpty()),
+                stringResource(R.string.certificates_meaning_language),
                 "${stringResource(R.string.certificates_meaning_cefr)} $nameNote",
             )
         } else {
@@ -486,41 +479,27 @@ private fun CertificateMeaning(
     }
 }
 
-/** Main's `BAND_ABOVE`: a level is finished when every counted skill reaches the band above it. */
-private fun bandAbove(level: OwnedCertificate.Level): String =
-    when (level) {
-        OwnedCertificate.Level.A1 -> "A2"
-        OwnedCertificate.Level.A2 -> "B1"
-        OwnedCertificate.Level.B1 -> "B2"
-        OwnedCertificate.Level.B2 -> "C1"
-        OwnedCertificate.Level.C1 -> "C2"
-    }
-
-/** Main's `CertificateCovered`: a course's topics, counted, or what a language level's learner can do. */
 @Composable
 private fun CertificateCovered(
     certificate: OwnedCertificate,
     modifier: Modifier = Modifier,
 ) {
-    val course = certificate.kind == OwnedCertificate.Kind.COURSE
-    val items = if (course) certificate.topics else certificate.canDo
+    val items = certificate.topics
     if (items.isEmpty()) return
 
     Column(modifier) {
         Row(Modifier.semantics(mergeDescendants = true) { heading() }, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(
-                stringResource(if (course) R.string.certificates_topics_covered else R.string.certificates_can_do),
+                stringResource(R.string.certificates_topics_covered),
                 Modifier.alignByBaseline(),
                 style = MaterialTheme.typography.titleMedium.copy(fontSize = 15.sp, fontWeight = FontWeight.SemiBold, lineHeight = 21.sp),
             )
-            if (course) {
-                Text(
-                    formatNumber(items.size.toDouble(), currentLocale()),
-                    Modifier.alignByBaseline(),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.zoonkType.data,
-                )
-            }
+            Text(
+                formatNumber(items.size.toDouble(), currentLocale()),
+                Modifier.alignByBaseline(),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.zoonkType.data,
+            )
         }
         Column(Modifier.padding(top = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items.forEach { item ->
@@ -537,17 +516,6 @@ private fun CertificateCovered(
 /** Main's `roundStudyMinutes`: the plan's estimate, so whole hours past the first one. */
 internal fun roundStudyMinutes(minutes: Long): Long =
     if (minutes < MINUTES_PER_HOUR) minutes else Math.round(minutes / MINUTES_PER_HOUR.toDouble()) * MINUTES_PER_HOUR
-
-@Composable
-private fun skillName(skill: CertificateSkillLevel.Skill): String =
-    stringResource(
-        when (skill) {
-            CertificateSkillLevel.Skill.READING -> R.string.language_skill_reading
-            CertificateSkillLevel.Skill.LISTENING -> R.string.language_skill_listening
-            CertificateSkillLevel.Skill.SPEAKING -> R.string.language_skill_speaking
-            CertificateSkillLevel.Skill.WRITING -> R.string.language_skill_writing
-        },
-    )
 
 /**
  * Main's `DetailRow`: a fact's label and its value at the row's end, with the [action] that changes
