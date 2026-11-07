@@ -10,6 +10,7 @@ import { LIST_GROUP_CLASS, ListRowLink, ListRowTrailing } from "../_components/l
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { useFormatProgressShare } from "../_utils/percent";
 import { type SubjectGroup, groupSubjects } from "./group-subjects";
+import { SharedExamChip, type SharedExams, SharedExamsNote } from "./shared-exams";
 import { CourseWeightsNote, QuestionsSourceNote, useGroupName } from "./syllabus-notes";
 import { type SyllabusSectionSubject, type SyllabusSectionView } from "./syllabus-section-view";
 import { getSubjectShare, useSubjectProgress } from "./use-subject-progress";
@@ -80,7 +81,15 @@ function BarsMeaning({ syllabus }: { syllabus: SyllabusSectionView }) {
 
 const SHARE_CLASS = "w-10 justify-end";
 
-function SubjectRow({ href, subject }: { href: string; subject: SyllabusSectionSubject }) {
+function SubjectRow({
+  href,
+  shared,
+  subject,
+}: {
+  href: string;
+  shared: SharedExams;
+  subject: SyllabusSectionSubject;
+}) {
   const t = useExtracted();
   const formatShare = useFormatProgressShare();
   const progress = useSubjectProgress()(subject);
@@ -90,14 +99,18 @@ function SubjectRow({ href, subject }: { href: string; subject: SyllabusSectionS
   return (
     <ListRowLink href={href}>
       <span className={ROW_GRID_CLASS}>
-        <span
-          className={cn(
-            "text-sm leading-snug font-medium text-pretty @lg/subjects:truncate",
-            notPlanned && "text-muted-foreground",
-          )}
-          title={subject.name}
-        >
-          {subject.name}
+        <span className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 @lg/subjects:flex-nowrap">
+          <span
+            className={cn(
+              "min-w-0 text-sm leading-snug font-medium text-pretty @lg/subjects:truncate",
+              notPlanned && "text-muted-foreground",
+            )}
+            title={subject.name}
+          >
+            {subject.name}
+          </span>
+
+          <SharedExamChip areas={subject.areas} shared={shared} />
         </span>
 
         <span className="text-muted-foreground hidden text-right font-mono text-xs whitespace-nowrap tabular-nums @2xl/subjects:block">
@@ -155,10 +168,12 @@ function GroupHeading({
 
 export function SyllabusSection({
   children,
+  shared,
   subjectHref,
   syllabus,
 }: {
   children?: React.ReactNode;
+  shared: SharedExams;
   subjectHref: (key: string) => string;
   syllabus: SyllabusSectionView;
 }) {
@@ -177,6 +192,7 @@ export function SyllabusSection({
         <BarsMeaning syllabus={syllabus} />
       </PageSectionHeader>
 
+      <SharedExamsNote shared={shared} />
       {children}
 
       <div className={LIST_GROUP_CLASS}>
@@ -192,7 +208,7 @@ export function SyllabusSection({
             <ul aria-labelledby={group.extra || group.name ? getGroupId(index) : SECTION_TITLE_ID}>
               {group.subjects.map((subject) => (
                 <li key={subject.key}>
-                  <SubjectRow href={subjectHref(subject.key)} subject={subject} />
+                  <SubjectRow href={subjectHref(subject.key)} shared={shared} subject={subject} />
                 </li>
               ))}
             </ul>

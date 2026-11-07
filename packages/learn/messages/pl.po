@@ -13319,6 +13319,35 @@ msgctxt "5ZjoJT"
 msgid "Appears a lot"
 msgstr "Często na egzaminie"
 
+#. On one exam's plan. {exams} names the learner's other exams that test some of the same topics.
+#: src/syllabus/shared-exams.tsx
+msgctxt "FdA2rE"
+msgid "{count, plural, one {Topics shared with {exams} count for both exams, so you study them once.} other {Topics shared with {exams} count for every exam that has them, so you study them once.}}"
+msgstr "{count, plural, one {Drugi egzamin: {exams}. Wspólnych tematów uczysz się tylko raz na oba egzaminy.} other {Inne egzaminy: {exams}. Wspólnych tematów uczysz się tylko raz na wszystkie egzaminy, które je obejmują.}}"
+
+#. On one exam's plan, when the learner has several other exams that test some of the same topics.
+#: src/syllabus/shared-exams.tsx
+msgctxt "r3nJf6"
+msgid "{count, plural, one {Topics shared with your # other exam count for both exams, so you study them once.} other {Topics shared with your # other exams count for every exam that has them, so you study them once.}}"
+msgstr "{count, plural, one {Tematów wspólnych z twoim # innym egzaminem uczysz się tylko raz na oba egzaminy.} other {Tematów wspólnych z twoimi # innymi egzaminami uczysz się tylko raz na wszystkie egzaminy, które je obejmują.}}"
+
+#: src/syllabus/shared-exams.tsx
+msgctxt "A9RghR"
+msgid "Practice stays in each exam's style."
+msgstr "Ćwiczenia są dopasowane do formy danego egzaminu."
+
+#. Marks a subject on one exam's plan that the learner's other exams named in {exams} also test.
+#: src/syllabus/shared-exams.tsx
+msgctxt "xnjHg5"
+msgid "Also in {exams}"
+msgstr "Także na egzaminach: {exams}"
+
+#. Marks a subject on one exam's plan that the learner's other exams also test.
+#: src/syllabus/shared-exams.tsx
+msgctxt "I4mdto"
+msgid "{count, plural, one {Also in # exam} other {Also in # exams}}"
+msgstr "{count, plural, one {Także na # egzaminie} other {Także na # egzaminach}}"
+
 #: src/syllabus/subject-aside.tsx
 msgctxt "kc79d3"
 msgid "Topics"
