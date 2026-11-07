@@ -10,9 +10,10 @@ final class MindMapsStoreTests: XCTestCase {
     let list = store.list(goalId: "goal")
     await list.load()
 
-    await store.follow(goalId: "goal", chapterId: "chapter", from: .drawing)
+    let failure = await store.follow(goalId: "goal", chapterId: "chapter", from: .drawing)
 
     let calls = await api.calls
+    XCTAssertNil(failure)
     XCTAssertEqual(calls.status, 2)
     XCTAssertEqual(calls.create, 0)
     XCTAssertEqual(calls.list, 2)
@@ -24,11 +25,27 @@ final class MindMapsStoreTests: XCTestCase {
     ])
     let store = makeStore(api: api)
 
-    await store.follow(goalId: "goal", chapterId: "chapter", from: .drawing)
+    let failure = await store.follow(goalId: "goal", chapterId: "chapter", from: .drawing)
 
     let calls = await api.calls
+    XCTAssertNil(failure)
     XCTAssertEqual(calls.status, 4)
     XCTAssertEqual(calls.list, 1)
+  }
+
+  func testThreeReadsInARowThatDontReachTheServerSaySo() async {
+    let api = MindMapsAPIStub(statuses: [
+      .success(.writingLessons), .failure(.network), .failure(.unavailable), .failure(.network),
+      .success(.ready),
+    ])
+    let store = makeStore(api: api)
+
+    let failure = await store.follow(goalId: "goal", chapterId: "chapter", from: .writingLessons)
+
+    let calls = await api.calls
+    XCTAssertEqual(failure, .unreachable)
+    XCTAssertEqual(calls.status, 4)
+    XCTAssertEqual(calls.list, 0)
   }
 
   func testRowSaysTheDrawingStartedOnceTheLessonsAreWritten() async {
@@ -37,7 +54,7 @@ final class MindMapsStoreTests: XCTestCase {
     ])
     let store = makeStore(api: api)
 
-    await store.follow(goalId: "goal", chapterId: "chapter", from: .writingLessons)
+    _ = await store.follow(goalId: "goal", chapterId: "chapter", from: .writingLessons)
 
     let calls = await api.calls
     XCTAssertEqual(calls.status, 4)

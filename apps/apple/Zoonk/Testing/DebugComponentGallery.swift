@@ -479,6 +479,7 @@
           goalId: "debug", map: Self.map(.available, id: "library", lessons: 3), place: .library)
         MindMapRow(
           goalId: "debug", map: Self.map(.plusRequired, id: "library-plus"), place: .library)
+        MindMapRow(goalId: "debug", map: Self.map(.ready, id: "library-text"), place: .library)
 
         HelpLimitNotice(
           limit: .limitReached(period: .month, tier: .free),

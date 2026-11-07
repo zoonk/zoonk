@@ -120,17 +120,50 @@ struct MindMapsScreen: View {
         .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
 
-        Text(
-          "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan.",
-          tableName: "MindMaps", comment: "What the mind maps page is, under its title"
-        )
-        .typeStyle(.body)
-        .foregroundStyle(.mutedForeground)
-        .padding(.top, 6)
+        Text(verbatim: intro(maps))
+          .typeStyle(.body)
+          .foregroundStyle(.mutedForeground)
+          .padding(.top, 6)
       }
       .padding(.bottom, 8)
       .listRowSeparator(.hidden)
     }
+  }
+
+  /// Rows don't repeat what making a map of a chapter whose lessons aren't written means: the intro
+  /// says it once, when a row can.
+  private func intro(_ maps: GoalMindMaps) -> String {
+    let intro = String(
+      localized:
+        "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan.",
+      table: "MindMaps", comment: "What the mind maps page is, under its title")
+
+    let writesLessons = maps.chapters.contains {
+      ($0.status == .available || $0.status == .failed) && $0.lessonsToWrite > 0
+    }
+
+    guard writesLessons else {
+      return intro
+    }
+
+    let lessons =
+      learner.summary.value?.tier == .plus
+      ? String(
+        localized:
+          "Making a map for one of these writes its lessons first, so it takes a few minutes.",
+        table: "MindMaps",
+        comment:
+          "Under the mind maps page's title, for a Plus learner with chapters whose lessons aren't written yet"
+      )
+      : String(
+        localized:
+          "Making a map for one of these writes its lessons first, which counts toward your free lessons.",
+        table: "MindMaps",
+        comment:
+          "Under the mind maps page's title, for a free learner with chapters whose lessons aren't written yet"
+      )
+
+    return [intro, lessons].joinedSentences()
   }
 
   /// In order of each subject's first chapter; a goal without subjects is one group.

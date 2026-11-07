@@ -174,23 +174,29 @@ final class MindMapsStore {
     }
   }
 
-  /// Only reads, never asks for the map again. The server fails a run that stops reporting, so it
-  /// ends; leaving the screen or signing out ends it sooner. `status` is the one the row shows: once
-  /// the lessons are written and the drawing starts, the row reads it again to say so.
-  func follow(goalId: String, chapterId: String, from status: ChapterMindMap.Status) async {
+  /// Only reads, never asks for the map again, and never gives up on a run on its own: writing the
+  /// lessons can take minutes, and the server fails a run that stops reporting. Leaving the screen
+  /// or signing out ends it sooner, and three reads in a row that don't reach the server end it as
+  /// `unreachable`. `status` is the one the row shows: once the lessons are written and the drawing
+  /// starts, the row reads it again to say so.
+  func follow(
+    goalId: String, chapterId: String, from status: ChapterMindMap.Status
+  ) async -> MindMapRequestFailure? {
     guard !following.contains(chapterId), let session = cache.session.authenticatedSession else {
-      return
+      return nil
     }
 
     following.insert(chapterId)
     defer { following.remove(chapterId) }
 
     var shown = status
+    var missed = 0
 
     while cache.session.authenticatedSession == session {
       do {
         let read = try await api.status(
           token: session.bearerToken, goalId: goalId, chapterId: chapterId)
+        missed = 0
 
         guard read.isOnItsWay else {
           break
@@ -201,7 +207,11 @@ final class MindMapsStore {
           await refresh(goalId: goalId, chapterId: chapterId)
         }
       } catch APIError.network, APIError.unavailable {
-        // Read again on the next beat.
+        missed += 1
+
+        if missed == 3 {
+          return Task.isCancelled ? nil : .unreachable
+        }
       } catch {
         // Cancelled, or an answer reading again won't change: the reads say where it stands.
         break
@@ -210,15 +220,16 @@ final class MindMapsStore {
       do {
         try await Task.sleep(for: shown == .writingLessons ? writingPoll : drawingPoll)
       } catch {
-        return
+        return nil
       }
     }
 
     guard !Task.isCancelled, cache.session.authenticatedSession == session else {
-      return
+      return nil
     }
 
     await refresh(goalId: goalId, chapterId: chapterId)
+    return nil
   }
 
   private func refresh(goalId: String, chapterId: String) async {

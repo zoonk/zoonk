@@ -42,10 +42,11 @@ struct MindMapRow: View {
       }
     }
     .announcesStatus(waitLine)
-    // Read only: a map on its way when the row showed, or once a tap started it, is followed.
-    .task(id: map.status.isOnItsWay) {
-      if map.status.isOnItsWay {
-        await store.follow(goalId: goalId, chapterId: map.chapterId, from: map.status)
+    // Read only: a map on its way when the row showed, or once a tap started it, is followed
+    // until its status changes or the connection drops.
+    .task(id: map.status.isOnItsWay && failure == nil) {
+      if map.status.isOnItsWay, failure == nil {
+        failure = await store.follow(goalId: goalId, chapterId: map.chapterId, from: map.status)
       }
     }
   }
@@ -66,16 +67,13 @@ struct MindMapRow: View {
     }
 
     switch map.status {
-    case .writingLessons: return .writingLessons
-    case .drawing: return .drawing
     case .ready: return .ready
     case .plusRequired: return .plusRequired
-    case .available, .failed, .unavailable:
-      if failure == .unreachable {
-        return .unreachable
-      }
-
-      return map.status == .failed ? .failed : .create
+    case _ where failure == .unreachable: return .unreachable
+    case .writingLessons: return .writingLessons
+    case .drawing: return .drawing
+    case .failed: return .failed
+    case .available, .unavailable: return .create
     }
   }
 
@@ -153,9 +151,18 @@ struct MindMapRow: View {
             comment: "A finished chapter's map, drawn and ready to open"))
       ].compactMap(\.self)
     case .library:
+      // The page says once what writing a chapter's lessons first means.
       let words: String? =
         switch shown {
-        case .create where map.lessonsToWrite == 0, .ready, .plusRequired: nil
+        case .create where map.lessonsToWrite > 0:
+          String(
+            localized: "Lessons not written yet", table: "MindMaps",
+            comment: "A chapter on the mind maps page whose lessons a map would write first")
+        case .ready where map.image == nil:
+          String(
+            localized: "As text", table: "MindMaps",
+            comment: "A map on the mind maps page whose picture failed, so it opens as its outline")
+        case .create, .ready, .plusRequired: nil
         default: waitLine ?? stateLine(ready: nil)
         }
 

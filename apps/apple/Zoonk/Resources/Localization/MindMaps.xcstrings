@@ -525,7 +525,7 @@
       }
     },
     "As text" : {
-      "comment" : "Shows the map's outline in words",
+      "comment" : "Shows the map's outline in words; on the mind maps page, a map whose picture failed, so it opens as its outline",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1287,6 +1287,183 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Görselde hatalar olduğu için zihin haritasını metin olarak gösteriyoruz."
+          }
+        }
+      }
+    },
+    "Lessons not written yet" : {
+      "comment" : "A chapter on the mind maps page whose lessons a map would write first",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektionen noch nicht erstellt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecciones aún sin preparar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçons pas encore préparées"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lezioni ancora da preparare"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスン未作成"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 만들지 않은 레슨"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lekcje nie są jeszcze gotowe"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aulas ainda não criadas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dersler henüz hazırlanmadı"
+          }
+        }
+      }
+    },
+    "Making a map for one of these writes its lessons first, so it takes a few minutes." : {
+      "comment" : "Under the mind maps page's title, for a Plus learner with chapters whose lessons aren't written yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für eine Mindmap zu einem dieser Kapitel erstellen wir zuerst die Lektionen. Das dauert ein paar Minuten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crear un mapa de uno de estos capítulos toma unos minutos porque primero se preparan sus lecciones."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour créer une carte mentale d’un de ces chapitres, il faut d’abord préparer ses leçons, ce qui prend quelques minutes."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per creare una mappa di uno di questi capitoli, prima ne prepariamo le lezioni, quindi ci vogliono alcuni minuti."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これらの章のマップを作成すると、先にレッスンが作成されるため、数分かかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 중 한 챕터의 마인드맵을 만들려면 레슨을 먼저 만들어야 해서 몇 분 정도 걸려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aby stworzyć mapę jednego z tych rozdziałów, najpierw przygotowujemy jego lekcje, więc zajmuje to kilka minut."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criar um mapa de um destes capítulos leva alguns minutos, porque a gente cria as aulas primeiro."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ünitelerden birinin haritasını oluşturmak için önce derslerini hazırlıyoruz, bu yüzden işlem birkaç dakika sürüyor."
+          }
+        }
+      }
+    },
+    "Making a map for one of these writes its lessons first, which counts toward your free lessons." : {
+      "comment" : "Under the mind maps page's title, for a free learner with chapters whose lessons aren't written yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für eine Mindmap zu einem dieser Kapitel erstellen wir zuerst die Lektionen. Diese werden auf deine kostenlosen Lektionen angerechnet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para crear un mapa de uno de estos capítulos, primero se preparan sus lecciones, que se descuentan de tus lecciones gratis."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour créer une carte mentale d’un de ces chapitres, il faut d’abord préparer ses leçons, qui comptent dans ton quota de leçons gratuites."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per creare una mappa di uno di questi capitoli, prima ne prepariamo le lezioni, che contano per il tuo limite di lezioni gratuite."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これらの章のマップを作成すると、先にレッスンが作成され、その分が無料レッスンの利用数に含まれます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 중 한 챕터의 마인드맵을 만들면 레슨을 먼저 만들고, 이 레슨은 무료 레슨 수에 포함돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aby stworzyć mapę jednego z tych rozdziałów, najpierw przygotowujemy jego lekcje, które wliczają się do limitu bezpłatnych lekcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para criar um mapa de um destes capítulos, a gente cria as aulas primeiro, e elas contam para o seu limite de aulas grátis."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ünitelerden birinin haritasını oluşturmak için önce derslerini hazırlıyoruz ve bu dersler ücretsiz ders hakkından düşülüyor."
           }
         }
       }
