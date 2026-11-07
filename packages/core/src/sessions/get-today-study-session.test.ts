@@ -323,6 +323,51 @@ describe(getTodayStudySession, () => {
     expect(result.session.week.days.find((day) => day.isToday)?.goalMinutes).toBe(180);
   });
 
+  it("meets a day only once every active goal that asked for time finished its session", async () => {
+    const user = await userFixture();
+
+    const [short, long, paused] = await Promise.all([
+      sessionGoalFixture({ goal: { createdAt: daysAgo(7), dailyMinutes: 15 }, userId: user.id }),
+      sessionGoalFixture({ goal: { createdAt: daysAgo(7), dailyMinutes: 120 }, userId: user.id }),
+      sessionGoalFixture({ goal: { createdAt: daysAgo(7), status: "paused" }, userId: user.id }),
+    ]);
+
+    const finish = ({ days, goal }: { days: number; goal: typeof short.goal }) =>
+      studySessionFixture({
+        endedAt: daysAgo(days),
+        goalId: goal.id,
+        localDate: daysAgo(days),
+        plannedMinutes: goal.dailyMinutes,
+        status: "completed",
+        userId: user.id,
+      });
+
+    await Promise.all([
+      finish({ days: 2, goal: short.goal }),
+      finish({ days: 1, goal: short.goal }),
+      finish({ days: 1, goal: long.goal }),
+      finish({ days: 0, goal: paused.goal }),
+      dailyProgressFixtureMany([
+        { date: daysAgo(2), timeSpentSeconds: 15 * 60, userId: user.id },
+        { date: daysAgo(1), timeSpentSeconds: 90 * 60, userId: user.id },
+        { date: daysAgo(0), timeSpentSeconds: 45 * 60, userId: user.id },
+      ]),
+    ]);
+
+    mockSession(user.id);
+    const result = await getTodayStudySession({ goalId: long.goal.id });
+
+    if (result.status !== "ready") {
+      throw new Error(`Expected a session, got ${result.status}`);
+    }
+
+    expect(result.session.week.days.slice(0, 3)).toMatchObject([
+      { goalMinutes: 135, hitGoal: false, minutes: 15, studied: true },
+      { goalMinutes: 135, hitGoal: true, minutes: 90, studied: true },
+      { goalMinutes: 135, hitGoal: false, isToday: true, minutes: 45, studied: true },
+    ]);
+  });
+
   it("fits the learner's daily limit", async () => {
     const user = await userFixture();
     const { goal } = await sessionGoalFixture({ userId: user.id });
