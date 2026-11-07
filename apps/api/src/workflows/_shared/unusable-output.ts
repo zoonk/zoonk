@@ -1,12 +1,17 @@
+const UNUSABLE = new Set(["AI_NoObjectGeneratedError", "UnusableOutputError"]);
+
+/** A model answered with output its schema accepts but code can't use, such as nothing to keep. */
+export class UnusableOutputError extends Error {
+  override name = "UnusableOutputError";
+}
+
 /**
  * A model call answered every retry without output its schema accepts, such as when the model
- * refuses its input: a failure no retry fixes, which the caller records so later runs skip it. A
- * step that used up its retries fails with the runtime's error, whose `cause` is the step's own
- * error without its class, so the AI SDK's error is told by its name.
+ * refuses its input, or without output code can use (`UnusableOutputError`): a failure no retry
+ * fixes, which the caller records or skips so later runs don't pay for it again. A step that used
+ * up its retries fails with the runtime's error, whose `cause` is the step's own error without its
+ * class, so the error is told by its name.
  */
 export function isUnusableOutput(error: unknown): boolean {
-  return (
-    error instanceof Error &&
-    (error.name === "AI_NoObjectGeneratedError" || isUnusableOutput(error.cause))
-  );
+  return error instanceof Error && (UNUSABLE.has(error.name) || isUnusableOutput(error.cause));
 }

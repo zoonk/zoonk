@@ -117,40 +117,54 @@ describe("course release durability", () => {
     });
   });
 
-  it("moves the course without a What's new chapter the model can't outline after its retries, so the next run doesn't pay for it", async () => {
-    const { course, second } = await followedCourseBehind();
+  it.each<[string, () => void]>([
+    ["refuses", () => vi.mocked(generateCourseOutline).mockRejectedValue(REFUSAL)],
+    [
+      "outlines no chapter",
+      () =>
+        vi.mocked(generateCourseOutline).mockResolvedValue(taskResult({ chapters: [] }) as never),
+    ],
+  ])(
+    "moves the course without a What's new chapter when the model %s after its retries, so the next run doesn't pay for it",
+    async (_, outline) => {
+      const { course, second } = await followedCourseBehind();
 
-    vi.mocked(compareReleaseLessons).mockResolvedValue(
-      taskResult({
-        changed: [],
-        whatsNew: {
-          level: "beginner",
-          offer: "Learn the new export panel.",
-          skills: [{ description: "Export from the new panel.", name: "Export from the panel" }],
-          title: "What's new in Test Product 2",
-        },
-      }) as never,
-    );
+      vi.mocked(compareReleaseLessons).mockResolvedValue(
+        taskResult({
+          changed: [],
+          whatsNew: {
+            level: "beginner",
+            offer: "Learn the new export panel.",
+            skills: [{ description: "Export from the new panel.", name: "Export from the panel" }],
+            title: "What's new in Test Product 2",
+          },
+        }) as never,
+      );
 
-    vi.mocked(generateCourseOutline).mockRejectedValue(REFUSAL);
+      outline();
 
-    const run = await start(courseReleaseWorkflow, [{ courseId: course.id }]);
-    await expect(run.returnValue).resolves.toStrictEqual({ releasesApplied: 1, status: "current" });
+      const run = await start(courseReleaseWorkflow, [{ courseId: course.id }]);
 
-    const next = await start(courseReleaseWorkflow, [{ courseId: course.id }]);
+      await expect(run.returnValue).resolves.toStrictEqual({
+        releasesApplied: 1,
+        status: "current",
+      });
 
-    await expect(next.returnValue).resolves.toStrictEqual({
-      releasesApplied: 0,
-      status: "current",
-    });
+      const next = await start(courseReleaseWorkflow, [{ courseId: course.id }]);
 
-    expect(compareReleaseLessons).toHaveBeenCalledOnce();
-    expect(generateCourseOutline).toHaveBeenCalledTimes(ATTEMPTS);
+      await expect(next.returnValue).resolves.toStrictEqual({
+        releasesApplied: 0,
+        status: "current",
+      });
 
-    await expect(prisma.courseChapter.count({ where: { courseId: course.id } })).resolves.toBe(0);
+      expect(compareReleaseLessons).toHaveBeenCalledOnce();
+      expect(generateCourseOutline).toHaveBeenCalledTimes(ATTEMPTS);
 
-    await expect(
-      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
-    ).resolves.toMatchObject({ productReleaseId: second?.id });
-  });
+      await expect(prisma.courseChapter.count({ where: { courseId: course.id } })).resolves.toBe(0);
+
+      await expect(
+        prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+      ).resolves.toMatchObject({ productReleaseId: second?.id });
+    },
+  );
 });
