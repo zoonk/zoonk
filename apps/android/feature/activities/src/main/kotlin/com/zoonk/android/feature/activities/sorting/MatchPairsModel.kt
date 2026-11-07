@@ -51,6 +51,13 @@ internal fun explainMismatch(
     return (trap?.why ?: right.why ?: left.why) to trap
 }
 
+/** Main's `solvedRows`: each left card beside its partner, in the left column's order, then each right trap on a row of its own. */
+internal fun solvedRows(
+    left: List<MatchCard>,
+    right: List<MatchCard>,
+): List<Pair<MatchCard?, MatchCard?>> =
+    left.map { card -> card to right.firstOrNull { isMatch(card, it) } } + right.filter { it.isTrap }.map { null to it }
+
 internal data class MatchProgress(
     val firstTries: Map<String, String> = emptyMap(),
     val matched: List<String> = emptyList(),

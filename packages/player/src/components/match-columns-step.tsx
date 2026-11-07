@@ -23,6 +23,7 @@ import {
   buildLeftMatchItems,
   buildMatchAttempt,
   buildRightMatchItems,
+  buildSolvedMatchBoard,
   getActiveKeyboardSide,
   getItemClassName,
   getItemVisualState,
@@ -139,6 +140,7 @@ function MatchGrid({
 
 export function MatchColumnsStep({
   onSelectAnswer,
+  selectedAnswer,
   step,
 }: {
   onSelectAnswer: (answer: SelectedAnswer | null) => void;
@@ -163,6 +165,12 @@ export function MatchColumnsStep({
   const [mistakes, setMistakes] = useState(0);
   const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const allMatched = correctMatches.length === content.pairs.length;
+  const isSolved = allMatched || selectedAnswer?.kind === "matchColumns";
+
+  const board = isSolved
+    ? buildSolvedMatchBoard(content.pairs)
+    : { matches: correctMatches, rightItems };
+
   const activeKeyboardSide = getActiveKeyboardSide(selected);
   const keyboardItems = getKeyboardItems({ activeKeyboardSide, leftItems, rightItems });
 
@@ -224,7 +232,7 @@ export function MatchColumnsStep({
 
   useNumberKeys({
     count: Math.min(keyboardItems.length, MAX_NUMBER_KEY_SHORTCUT),
-    enabled: !allMatched && flashingMatch === null && interactionState !== "paused",
+    enabled: !isSolved && flashingMatch === null && interactionState !== "paused",
     onPick: (index) => {
       const item = keyboardItems[index];
 
@@ -242,11 +250,11 @@ export function MatchColumnsStep({
 
       <MatchGrid
         activeKeyboardSide={activeKeyboardSide}
-        correctMatches={correctMatches}
+        correctMatches={board.matches}
         flashingMatch={flashingMatch}
         leftItems={leftItems}
         onTap={handleTap}
-        rightItems={rightItems}
+        rightItems={board.rightItems}
         selected={selected}
       />
 

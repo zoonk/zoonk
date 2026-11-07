@@ -8,8 +8,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -171,18 +175,42 @@ private fun MatchPairsActivity(props: ActivityProps) {
             )
 
             val cardsLabel = stringResource(R.string.activities_sorting_cards_to_match)
-            Row(Modifier.semantics { contentDescription = cardsLabel }, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                listOf(MatchSide.Left to left, MatchSide.Right to right).forEach { (side, cards) ->
-                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        cards.forEach { card ->
-                            val state = stateOf(card, side)
-                            MatchCardButton(
-                                card = card,
-                                state = state,
-                                enabled = !props.isChecked && !props.isLocked && state != CardState.Matched && state != CardState.NoMatch,
-                                missKey = miss,
-                                onPick = { pick(side, card) },
-                            )
+
+            @Composable
+            fun BoardCard(
+                side: MatchSide,
+                card: MatchCard,
+                modifier: Modifier = Modifier,
+            ) {
+                val state = stateOf(card, side)
+                MatchCardButton(
+                    card = card,
+                    state = state,
+                    enabled = !props.isChecked && !props.isLocked && state != CardState.Matched && state != CardState.NoMatch,
+                    missKey = miss,
+                    onPick = { pick(side, card) },
+                    modifier = modifier,
+                )
+            }
+
+            if (isComplete) {
+                Column(Modifier.semantics { contentDescription = cardsLabel }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    solvedRows(left, right).forEach { (leftCard, rightCard) ->
+                        Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            listOf(MatchSide.Left to leftCard, MatchSide.Right to rightCard).forEach { (side, card) ->
+                                when (card) {
+                                    null -> Spacer(Modifier.weight(1f))
+                                    else -> BoardCard(side, card, Modifier.weight(1f).fillMaxHeight())
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                Row(Modifier.semantics { contentDescription = cardsLabel }, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    listOf(MatchSide.Left to left, MatchSide.Right to right).forEach { (side, cards) ->
+                        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            cards.forEach { card -> BoardCard(side, card) }
                         }
                     }
                 }
@@ -202,6 +230,7 @@ private fun MatchCardButton(
     enabled: Boolean,
     missKey: Miss?,
     onPick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
     val shape = RoundedCornerShape(ZoonkRadius.option)
@@ -239,7 +268,7 @@ private fun MatchCardButton(
     }
 
     Row(
-        Modifier
+        modifier
             .fillMaxWidth()
             .heightIn(min = 48.dp)
             .graphicsLayer { translationX = shake.value * density }

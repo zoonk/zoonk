@@ -45,6 +45,16 @@ class MatchPairsModelTest {
     }
 
     @Test
+    fun solvedRowsPutEachPairSideBySideInTheLeftOrderAndEveryTrapAlone() {
+        val rows = solvedRows(columns.first, columns.second).map { (left, right) -> left?.id to right?.id }
+
+        assertEquals(
+            listOf("left-trap-0" to null, "c" to "c", "a" to "a", "b" to "b", null to "right-trap-0"),
+            rows,
+        )
+    }
+
+    @Test
     fun namesTheTrapWithItsOwnReasonOnEitherSide() {
         val (left, right) = columns
         assertEquals(

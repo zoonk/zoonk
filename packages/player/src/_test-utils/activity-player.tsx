@@ -113,6 +113,20 @@ export async function expectCount(locator: Locator, count: number) {
   await expect.poll(() => locator.elements()).toHaveLength(count);
 }
 
+export async function expectSideBySide(left: Locator, right: Locator) {
+  await expect
+    .poll(() => {
+      const leftCard = left.element();
+      const rightCard = right.element();
+
+      return {
+        follows: leftCard.nextElementSibling === rightCard,
+        rowGap: rightCard.getBoundingClientRect().top - leftCard.getBoundingClientRect().top,
+      };
+    })
+    .toStrictEqual({ follows: true, rowGap: 0 });
+}
+
 // Vitest's visibility matcher excludes MathML elements, so math needs a rendered-box check.
 export async function expectMathVisible(math: Locator) {
   await expect.poll(() => hasVisibleBox(math.query())).toBe(true);

@@ -855,8 +855,10 @@ private struct MatchColumnsView: View {
       rightItems: exercise.matchColumnsRightItems, matched: matched)
   }
 
+  private var isSolved: Bool { !pairs.isEmpty && matched.count == pairs.count }
+
   private var allMatchedLine: String? {
-    guard matched.count == pairs.count, !pairs.isEmpty, context.result == nil else {
+    guard isSolved, context.result == nil else {
       return nil
     }
 
@@ -868,38 +870,38 @@ private struct MatchColumnsView: View {
   var body: some View {
     let board = board
 
-    HStack(alignment: .top, spacing: 12) {
-      VStack(spacing: 10) {
-        ForEach(pairs.indices, id: \.self) { index in
-          let isMatched = board.matchedLeft.contains(index)
+    Grid(horizontalSpacing: 12, verticalSpacing: 10) {
+      ForEach(pairs.indices, id: \.self) { index in
+        let isLeftMatched = board.matchedLeft.contains(index)
+        let isRightMatched = board.matchedRight.contains(index)
+
+        GridRow {
           Button {
             pickedLeft = index
           } label: {
             Text(pairs[index].left)
+              .frame(maxHeight: .infinity, alignment: .topLeading)
           }
           .buttonStyle(
-            LessonOptionStyle(mark: isMatched ? .right : pickedLeft == index ? .selected : .plain)
+            LessonOptionStyle(
+              mark: isLeftMatched ? .right : pickedLeft == index ? .selected : .plain)
           )
-          .disabled(isMatched || context.isLocked)
-        }
-      }
+          .disabled(isLeftMatched || context.isLocked)
 
-      VStack(spacing: 10) {
-        ForEach(exercise.matchColumnsRightItems.indices, id: \.self) { index in
-          let item = exercise.matchColumnsRightItems[index]
-          let isMatched = board.matchedRight.contains(index)
           Button {
             pick(right: index)
           } label: {
-            Text(item)
+            Text(isSolved ? pairs[index].right : exercise.matchColumnsRightItems[index])
+              .frame(maxHeight: .infinity, alignment: .topLeading)
           }
           .buttonStyle(
-            LessonOptionStyle(mark: isMatched ? .right : lastMiss == index ? .wrong : .plain)
+            LessonOptionStyle(mark: isRightMatched ? .right : lastMiss == index ? .wrong : .plain)
           )
-          .disabled(isMatched || context.isLocked || pickedLeft == nil)
+          .disabled(isRightMatched || context.isLocked || pickedLeft == nil)
         }
       }
     }
+    .fixedSize(horizontal: false, vertical: true)
     .announcesStatus(allMatchedLine)
 
     if let allMatchedLine {
