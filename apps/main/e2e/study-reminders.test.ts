@@ -1,11 +1,9 @@
-import { createHmac, randomUUID } from "node:crypto";
+import { createHmac } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { expectHydrated } from "@zoonk/e2e/hydration";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { expect, test } from "./fixtures";
-import { asPersona } from "./learn-personas";
 import { createStudyDay, openAs } from "./study-day";
 
 /** Core signs links with this key wherever no secret is set, these servers included. */
@@ -98,48 +96,5 @@ test.describe("Study reminders", () => {
     await expect(readReminder(user.id)).resolves.toMatchObject({ emailOn: false });
 
     await context.close();
-  });
-
-  test("Today on a reminder's goal opens that goal's pages without making it active", async ({
-    browser,
-  }) => {
-    await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
-      const [shown, active] = await Promise.all([
-        prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } }),
-        goalFixture({
-          timezone: user.timeZone,
-          title: `Active goal ${randomUUID()}`,
-          userId: user.id,
-        }),
-      ]);
-
-      await prisma.userLearningProfile.update({
-        data: { activeGoalId: active.id },
-        where: { userId: user.id },
-      });
-
-      // Today shows Practice anytime only below 72rem.
-      await page.setViewportSize({ height: 844, width: 390 });
-      await page.goto(`/today?goal=${shown.id}`);
-
-      await page
-        .getByRole("region", { name: "Practice anytime" })
-        .getByRole("link", { name: /Completed lessons/u })
-        .click();
-
-      await expect(page).toHaveURL(new RegExp(`/completed-lessons\\?goal=${shown.id}$`, "u"));
-      await expect(page.getByText(shown.title, { exact: true }).first()).toBeVisible();
-
-      // Its progress card, with the plan link, shows from `sm` up.
-      await page.setViewportSize({ height: 720, width: 1280 });
-      await page.goto(`/today?goal=${shown.id}`);
-      await page.getByRole("link", { name: /See your plan/u }).click();
-      await expect(page).toHaveURL(new RegExp(`/plan\\?goal=${shown.id}$`, "u"));
-      await expect(page.getByText(shown.title, { exact: true }).first()).toBeVisible();
-
-      await expect(
-        prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: user.id } }),
-      ).resolves.toMatchObject({ activeGoalId: active.id });
-    });
   });
 });

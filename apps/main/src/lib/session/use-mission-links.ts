@@ -1,7 +1,6 @@
 "use client";
 
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
-import { withGoal } from "@/lib/learn/goal-param";
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
 import { type MissionLinks } from "@zoonk/learn/buddy";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
@@ -55,18 +54,15 @@ export function useOpenMissionBlock({
 export function useMissionLinks(
   goalId: string,
   {
-    carryGoal = false,
     learner,
     openStep,
     refresh,
   }: {
-    carryGoal?: boolean;
     learner?: string;
     openStep?: (ref: DayBlockRef) => Promise<boolean>;
     refresh?: () => void;
   } = {},
 ): MissionLinks {
-  const shownGoal = carryGoal ? goalId : undefined;
   const openMissionBlock = useOpenMissionBlock({ learner, refresh });
   const reread = useReread(refresh);
 
@@ -76,8 +72,8 @@ export function useMissionLinks(
         areaPractice: (areaId) => `/content/chapters/${areaId}`,
         buddy: "/buddy",
         call: (chapterId) => `/content/units/${chapterId}`,
-        mistakesPractice: withGoal("/mistakes/practice", shownGoal),
-        mockChooser: withGoal("/mock/new", shownGoal),
+        mistakesPractice: "/mistakes/practice",
+        mockChooser: "/mock/new",
         pattern: (patternId) => `/pattern/${patternId}`,
         pronunciation: `/pronunciation?goal=${goalId}`,
       },
@@ -97,6 +93,6 @@ export function useMissionLinks(
       },
       openStep,
     }),
-    [goalId, openMissionBlock, openStep, reread, shownGoal],
+    [goalId, openMissionBlock, openStep, reread],
   );
 }

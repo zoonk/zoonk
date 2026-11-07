@@ -1,7 +1,6 @@
 import { MockChooserClient } from "@/app/[lang]/mock/mock-chooser-client";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { redirect } from "@/i18n/navigation";
-import { readGoalParam, withGoal } from "@/lib/learn/goal-param";
 import { getMockOptions } from "@zoonk/core/exams/mocks/options";
 import { LearnPageBar } from "@zoonk/learn/bar";
 import { type Metadata } from "next";
@@ -17,13 +16,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const CHOOSER_BAR = <LearnPageBar back={{ href: "/exam" }} root />;
 
-type Props = PageProps<"/[lang]/mock/new">;
-
-async function MockChooserContent({ searchParams }: Pick<Props, "searchParams">) {
-  const goalId = readGoalParam(await searchParams);
-
+async function MockChooserContent() {
   // The root param, not `params`: a prefetch warms its caches with `params` still pending.
-  const [locale, result] = await Promise.all([lang(), getMockOptions({ goalId })]);
+  const [locale, result] = await Promise.all([lang(), getMockOptions()]);
 
   if (result.status === "unauthorized") {
     const t = await getExtracted();
@@ -39,7 +34,7 @@ async function MockChooserContent({ searchParams }: Pick<Props, "searchParams">)
   }
 
   if (result.status !== "ready") {
-    redirect({ href: withGoal("/today", goalId), locale });
+    redirect({ href: "/today", locale });
     return null;
   }
 
@@ -51,7 +46,7 @@ async function MockChooserContent({ searchParams }: Pick<Props, "searchParams">)
   }
 
   if (view.options.length === 0) {
-    redirect({ href: withGoal("/exam", goalId), locale });
+    redirect({ href: "/exam", locale });
   }
 
   return (
@@ -68,10 +63,10 @@ async function MockChooserSkeleton() {
   return <DetailSkeleton bar={CHOOSER_BAR} rows={6} title={t("Take a mock exam")} />;
 }
 
-export default function MockChooserPage({ searchParams }: Props) {
+export default function MockChooserPage() {
   return (
     <Suspense fallback={<MockChooserSkeleton />}>
-      <MockChooserContent searchParams={searchParams} />
+      <MockChooserContent />
     </Suspense>
   );
 }

@@ -5,7 +5,6 @@ import { AuthGatePage } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
-import { readGoalParam } from "@/lib/learn/goal-param";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
@@ -15,6 +14,7 @@ import { TodayPageHeader } from "@zoonk/learn/today/at-rest";
 import { TodayShell } from "@zoonk/learn/today/shell";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { PlayIcon } from "lucide-react";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -143,7 +143,8 @@ async function TodaySessionEnded() {
 }
 
 async function TodayContent({ searchParams }: Pick<PageProps<"/[lang]/today">, "searchParams">) {
-  const result = await loadTodayScreen(readGoalParam(await searchParams));
+  const { goal } = await searchParams;
+  const result = await loadTodayScreen(uuidSchema().safeParse(goal).data);
 
   if (result.status === "noGoal") {
     return result.suggestedGoal ? (

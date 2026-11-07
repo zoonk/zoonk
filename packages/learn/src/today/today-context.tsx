@@ -61,7 +61,6 @@ export type TodayActions = {
   /** Asks for the day's lessons nobody is outlining yet; resolves once the next read says they're coming. */
   prepareLessons: () => Promise<boolean>;
   mistakesHref: string;
-  planHref: string;
   refresh: () => unknown;
   startTestOut: (chapterId: string) => Promise<TestOutStart>;
   examHref: string;

@@ -1,7 +1,6 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { ListSectionSkeleton } from "@/components/learn/detail-skeleton";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
-import { readGoalParam, withGoal } from "@/lib/learn/goal-param";
 import { getReadAt } from "@/lib/learn/read-at";
 import { COMPLETED_LESSON_PAGE_SIZE } from "@zoonk/core/completed-lessons/contract";
 import { listCurrentUserCompletedLessons } from "@zoonk/core/completed-lessons/list-current-user";
@@ -43,9 +42,7 @@ async function CompletedLessonsBar() {
 }
 
 async function CompletedLessonsBody({ searchParams }: Pick<Props, "searchParams">) {
-  const query = await searchParams;
-  const goalParam = readGoalParam(query);
-  const [goal, readAt] = await Promise.all([getCurrentGoal(goalParam), getReadAt()]);
+  const [goal, query, readAt] = await Promise.all([getCurrentGoal(), searchParams, getReadAt()]);
 
   if (!goal) {
     const t = await getExtracted();
@@ -83,9 +80,7 @@ async function CompletedLessonsBody({ searchParams }: Pick<Props, "searchParams"
       goalTitle={goal.title}
       lessons={result.lessons}
       moreHref={
-        canShowMore
-          ? withGoal(`/completed-lessons?shown=${shown + COMPLETED_LESSON_PAGE_SIZE}`, goalParam)
-          : null
+        canShowMore ? `/completed-lessons?shown=${shown + COMPLETED_LESSON_PAGE_SIZE}` : null
       }
       today={getIsoDay({ now: new Date(readAt), timeZone: goal.timezone ?? "UTC" })}
     />

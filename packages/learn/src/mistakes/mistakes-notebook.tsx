@@ -33,7 +33,6 @@ import {
 } from "../_components/list-group";
 import { INBOX_PAGE_CLASS, PageEyebrow } from "../_components/page";
 import { DoneMark } from "../_components/status-mark";
-import { withSearchParams } from "../_utils/search-params";
 import { PatternRow } from "../language/today/language-today-section";
 import { LearnLink } from "../learn-link";
 import { LearnPageBar } from "../shell/learn-bar";
@@ -62,10 +61,13 @@ function buildNotebookHref({
   offset?: number;
   status: "fixed" | "open";
 }) {
-  return withSearchParams(notebook, {
-    offset: offset ? String(offset) : undefined,
-    status: status === "fixed" ? status : undefined,
-  });
+  const params = new URLSearchParams([
+    ...(status === "fixed" ? [["status", "fixed"]] : []),
+    ...(offset ? [["offset", String(offset)]] : []),
+  ]);
+
+  const query = params.toString();
+  return query ? `${notebook}?${query}` : notebook;
 }
 
 function groupBySkill(mistakes: readonly MistakeEntry[]) {

@@ -1,6 +1,5 @@
 import { getPathname } from "@/i18n/navigation";
 import { skipAlphabetAction } from "@/lib/language/skip-alphabet-action";
-import { readGoalParam } from "@/lib/learn/goal-param";
 import { hasCompletedLessons } from "@/lib/learn/has-completed-lessons";
 import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getReadAt } from "@/lib/learn/read-at";
@@ -70,14 +69,8 @@ async function loadResumePreview({ goalId, paused }: { goalId: string; paused: b
   return result.status === "ready" ? result.preview : false;
 }
 
-function findShownGoal({
-  goalId,
-  list,
-}: {
-  goalId?: string;
-  list: Awaited<ReturnType<typeof listCurrentUserGoals>>;
-}) {
-  return list?.goals.find((candidate) => candidate.id === (goalId ?? list.activeGoalId)) ?? null;
+function findActiveGoal(list: Awaited<ReturnType<typeof listCurrentUserGoals>>) {
+  return list?.goals.find((candidate) => candidate.id === list.activeGoalId) ?? null;
 }
 
 /** Kept with the page's prefetch, so the tab opens on the right screen; goal and profile writes expire it. */
@@ -112,38 +105,36 @@ async function JourneyWithoutPlan({ goalId, goalTitle }: { goalId: string; goalT
   return <JourneyBuildingClient goalId={goalId} goalTitle={goalTitle} />;
 }
 
-async function JourneyContent({ searchParams }: Pick<PageProps<"/[lang]/plan">, "searchParams">) {
-  const goalId = readGoalParam(await searchParams);
-
+async function JourneyContent() {
   // The locale comes from the root param: a prefetch warms its caches with `params` still pending.
   const [readAt, result, progress, language, units, syllabus, hasMindMaps, buddy, locale, goals] =
     await Promise.all([
       getReadAt(),
-      getPlanTabView({ goalId }),
-      getProgressView({ goalId }),
-      getLanguageProgressView({ goalId }),
-      getLanguageUnitsView({ goalId }),
-      getSyllabusView({ goalId }),
-      hasGoalMindMaps({ goalId }),
+      getPlanTabView(),
+      getProgressView(),
+      getLanguageProgressView(),
+      getLanguageUnitsView(),
+      getSyllabusView(),
+      hasGoalMindMaps(),
       getLearnerBuddy(),
       lang(),
       listCurrentUserGoals(),
     ]);
 
-  const shownGoal = findShownGoal({ goalId, list: goals });
+  const activeGoal = findActiveGoal(goals);
 
   // A quick explanation has no plan, so the Plan offers to start a goal.
   if (
     result.status === "noGoal" ||
     result.status === "unauthorized" ||
-    shownGoal?.kind === "explain"
+    activeGoal?.kind === "explain"
   ) {
     return <PlanNoGoal />;
   }
 
   if (result.status !== "ready" || !result.view.plan.ready) {
-    return shownGoal ? (
-      <JourneyWithoutPlan goalId={shownGoal.id} goalTitle={shownGoal.title} />
+    return activeGoal ? (
+      <JourneyWithoutPlan goalId={activeGoal.id} goalTitle={activeGoal.title} />
     ) : (
       <PlanNoGoal />
     );
@@ -151,7 +142,7 @@ async function JourneyContent({ searchParams }: Pick<PageProps<"/[lang]/plan">, 
 
   const { goal, plan } = result.view;
 
-  const goalStatus = getGoalStatus(shownGoal);
+  const goalStatus = getGoalStatus(activeGoal);
 
   const [end, resume, completedLessons] = await Promise.all([
     loadGoalMapEnd({ goal, over: plan.end !== null }),
@@ -218,10 +209,10 @@ async function JourneyContent({ searchParams }: Pick<PageProps<"/[lang]/plan">, 
   );
 }
 
-export default function JourneyPage({ searchParams }: PageProps<"/[lang]/plan">) {
+export default function JourneyPage() {
   return (
     <Suspense fallback={<PlanSkeleton />}>
-      <JourneyContent searchParams={searchParams} />
+      <JourneyContent />
     </Suspense>
   );
 }
