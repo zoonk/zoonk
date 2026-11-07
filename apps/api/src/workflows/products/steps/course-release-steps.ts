@@ -13,10 +13,12 @@ import {
   refreshReleasePages,
 } from "@zoonk/core/library/products/course-release";
 import {
+  type ReleaseComparisonInput,
   type ReleaseComparisonResult,
   type WhatsNew,
   advanceCourseRelease,
   loadReleaseComparison,
+  recordUncomparableRelease,
   saveWhatsNewSkills,
 } from "@zoonk/core/library/products/release-advance";
 import {
@@ -45,22 +47,26 @@ export async function refreshReleasePagesStep(sourceIds: string[]): Promise<void
   await refreshReleasePages(sourceIds);
 }
 
-export async function compareReleaseStep({
+export async function loadReleaseComparisonStep({
   courseId,
   state,
-  workflowRunId,
 }: {
   courseId: string;
   state: Behind;
-  workflowRunId: string;
-}): Promise<ReleaseComparisonResult | null> {
+}): Promise<Awaited<ReturnType<typeof loadReleaseComparison>>> {
   "use step";
+  return loadReleaseComparison({ courseId, ...state });
+}
 
-  const input = await loadReleaseComparison({ courseId, ...state });
-
-  if (!input) {
-    return null;
-  }
+/** One model call over the notes `loadReleaseComparisonStep` found. */
+export async function compareReleaseStep({
+  input,
+  workflowRunId,
+}: {
+  input: ReleaseComparisonInput;
+  workflowRunId: string;
+}): Promise<ReleaseComparisonResult> {
+  "use step";
 
   const { data, provenance } = await compareReleaseLessons({
     analytics: toAnalytics(workflowRunId),
@@ -82,6 +88,13 @@ export async function compareReleaseStep({
     release: input.to,
     whatsNew: data.whatsNew,
   };
+}
+
+export async function recordUncomparableReleaseStep(
+  input: Parameters<typeof recordUncomparableRelease>[0],
+): Promise<void> {
+  "use step";
+  await recordUncomparableRelease(input);
 }
 
 /** Returns the flags of the lessons to rewrite, or null when the course moved meanwhile. */

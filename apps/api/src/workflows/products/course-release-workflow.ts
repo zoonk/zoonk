@@ -3,14 +3,17 @@ import { getWorkflowMetadata, sleep } from "workflow";
 import { start } from "workflow/api";
 import { deliverCourseContent } from "../_shared/course-content-notification";
 import { repeatUntil } from "../_shared/repeat-until";
+import { isUnusableOutput } from "../_shared/unusable-output";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
   advanceCourseReleaseStep,
   compareReleaseStep,
   findWhatsNewChapterStep,
   loadCourseReleaseStep,
+  loadReleaseComparisonStep,
   offerWhatsNewStep,
   outlineWhatsNewChapterStep,
+  recordUncomparableReleaseStep,
   refreshReleasePagesStep,
   saveWhatsNewChapterStep,
   saveWhatsNewSkillsStep,
@@ -29,7 +32,12 @@ type Behind = Extract<CourseReleaseState, { status: "behind" }>;
 
 type ReleaseRun = { courseId: string; workflowRunId: string };
 
-type CourseReleaseResult = { releasesApplied: number; status: CourseReleaseState["status"] };
+type Comparison = Awaited<ReturnType<typeof compareReleaseStep>>;
+
+type CourseReleaseResult = {
+  releasesApplied: number;
+  status: CourseReleaseState["status"] | "uncomparable";
+};
 
 /** The last release's rewrites finish before the next comparison reads the course's lessons. */
 function waitForRewrites(courseId: string): Promise<CourseReleaseState> {
@@ -84,10 +92,7 @@ async function addWhatsNew({
   courseId,
   state,
   workflowRunId,
-}: ReleaseRun & {
-  comparison: NonNullable<Awaited<ReturnType<typeof compareReleaseStep>>>;
-  state: Behind;
-}): Promise<void> {
+}: ReleaseRun & { comparison: Comparison; state: Behind }): Promise<void> {
   const { provenance, whatsNew } = comparison;
 
   if (!whatsNew) {
@@ -117,10 +122,49 @@ async function addWhatsNew({
   } while (after);
 }
 
-async function applyRelease({ state, ...run }: ReleaseRun & { state: Behind }): Promise<boolean> {
+/**
+ * Null when the release has no notes page. A comparison that fails for good, such as when the
+ * model refuses the notes, is recorded and the course keeps its release until those notes change.
+ */
+async function compareRelease({
+  state,
+  ...run
+}: ReleaseRun & { state: Behind }): Promise<Comparison | null | "uncomparable"> {
+  const notes = await loadReleaseComparisonStep({ courseId: run.courseId, state });
+
+  if (notes.status !== "ready") {
+    return notes.status === "missing" ? null : "uncomparable";
+  }
+
+  return compareReleaseStep({ input: notes.input, workflowRunId: run.workflowRunId }).catch(
+    async (error: unknown) => {
+      if (!isUnusableOutput(error)) {
+        throw error;
+      }
+
+      await recordUncomparableReleaseStep({
+        contentHash: notes.input.page.contentHash,
+        courseId: run.courseId,
+        releaseId: state.toReleaseId,
+      });
+
+      return "uncomparable" as const;
+    },
+  );
+}
+
+/** `moved` when the course moved meanwhile. */
+async function applyRelease({
+  state,
+  ...run
+}: ReleaseRun & { state: Behind }): Promise<"advanced" | "moved" | "uncomparable"> {
   await refreshReleasePagesStep(state.pageSourceIds);
 
-  const comparison = await compareReleaseStep({ ...run, state });
+  const comparison = await compareRelease({ ...run, state });
+
+  if (comparison === "uncomparable") {
+    return comparison;
+  }
 
   if (comparison) {
     await addWhatsNew({ ...run, comparison, state });
@@ -129,11 +173,11 @@ async function applyRelease({ state, ...run }: ReleaseRun & { state: Behind }): 
   const flagIds = await advanceCourseReleaseStep({ comparison, courseId: run.courseId, state });
 
   if (!flagIds) {
-    return false;
+    return "moved";
   }
 
   await startRewrites(flagIds);
-  return true;
+  return "advanced";
 }
 
 /**
@@ -161,8 +205,13 @@ export async function courseReleaseWorkflow({
         return { releasesApplied: applied, status: state.status };
       }
 
-      const advanced = await applyRelease({ courseId, state, workflowRunId });
-      return { releasesApplied: applied + (advanced ? 1 : 0), status: "behind" };
+      const outcome = await applyRelease({ courseId, state, workflowRunId });
+
+      if (outcome === "uncomparable") {
+        return { releasesApplied: applied, status: outcome };
+      }
+
+      return { releasesApplied: applied + (outcome === "advanced" ? 1 : 0), status: "behind" };
     },
     times: MAX_RELEASES,
   });

@@ -28,11 +28,22 @@ import {
   type ReleaseComparisonResult,
   advanceCourseRelease,
   loadReleaseComparison,
+  recordUncomparableRelease,
   saveWhatsNewSkills,
 } from "./release-advance";
 import { saveWhatsNewChapter } from "./release-offers";
 
 const NOW = new Date("2026-11-06T12:00:00Z");
+
+async function loadComparisonInput(input: Parameters<typeof loadReleaseComparison>[0]) {
+  const loaded = await loadReleaseComparison(input);
+
+  if (loaded.status !== "ready") {
+    throw new Error(`The comparison is ${loaded.status}.`);
+  }
+
+  return loaded.input;
+}
 
 async function productWithReleases() {
   const brand = await brandFixture();
@@ -320,7 +331,7 @@ describe(advanceCourseRelease, () => {
       specStatus: "completed",
     });
 
-    const compared = await loadReleaseComparison(state);
+    const compared = await loadComparisonInput(state);
 
     await expect(
       completeLessonContent({ lessonId: writing.id, workflowRunId: writerRunId }),
@@ -328,7 +339,7 @@ describe(advanceCourseRelease, () => {
 
     const advance = await advanceCourseRelease({
       ...state,
-      comparison: comparison(page, { keptLessonIds: compared?.lessons.map(({ id }) => id) }),
+      comparison: comparison(page, { keptLessonIds: compared.lessons.map(({ id }) => id) }),
     });
 
     const flags = await prisma.contentReviewFlag.findMany({ where: { id: { in: advance ?? [] } } });
@@ -629,12 +640,36 @@ describe(loadReleaseComparison, () => {
       productReleaseFixture({ name: "Test Product 20", productId: product.id }),
     ]);
 
-    const input = await loadReleaseComparison({
+    const input = await loadComparisonInput({
       courseId: course.id,
       fromReleaseId: first.id,
       toReleaseId: second.id,
     });
 
-    expect(input?.page.text).toContain(`${second.name} moves export to a panel.`);
+    expect(input.page.text).toContain(`${second.name} moves export to a panel.`);
+  });
+
+  it("skips a release whose comparison failed for good on the same notes, and only that one", async () => {
+    const { course, first, page, product, second } = await mainCourse();
+    const third = await productReleaseFixture({ name: "Test Product 3", productId: product.id });
+    const toSecond = { courseId: course.id, fromReleaseId: first.id, toReleaseId: second.id };
+
+    await recordUncomparableRelease({
+      contentHash: page.contentHash,
+      courseId: course.id,
+      releaseId: second.id,
+    });
+
+    await expect(loadReleaseComparison(toSecond)).resolves.toStrictEqual({
+      status: "uncomparable",
+    });
+
+    await expect(
+      loadReleaseComparison({ ...toSecond, toReleaseId: third.id }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await prisma.source.update({ data: { contentHash: randomUUID() }, where: { id: page.id } });
+
+    await expect(loadReleaseComparison(toSecond)).resolves.toMatchObject({ status: "ready" });
   });
 });

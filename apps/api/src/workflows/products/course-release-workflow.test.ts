@@ -18,6 +18,7 @@ import {
 } from "@zoonk/testing/fixtures/products";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { NoObjectGeneratedError } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
@@ -62,7 +63,7 @@ async function productCourse({ pinned = false }: { pinned?: boolean } = {}) {
     productReleaseId: releases[0]?.id ?? null,
   });
 
-  return { course, releases };
+  return { course, page, releases };
 }
 
 async function follow(courseId: string) {
@@ -102,6 +103,13 @@ function exportOutline() {
     ],
   });
 }
+
+const REFUSAL = new NoObjectGeneratedError({
+  finishReason: "content-filter",
+  response: {} as never,
+  text: "",
+  usage: {} as never,
+});
 
 function compareWith(...comparisons: ReleaseComparison[]) {
   comparisons.reduce(
@@ -281,5 +289,58 @@ describe(courseReleaseWorkflow, () => {
     });
 
     expect(compareReleaseLessons).not.toHaveBeenCalled();
+  });
+
+  it("records a comparison that fails for good, keeps the course's release, and doesn't pay for it again on the same notes", async () => {
+    const { course, page, releases } = await productCourse();
+    await follow(course.id);
+    vi.mocked(compareReleaseLessons).mockRejectedValue(REFUSAL);
+
+    const uncomparable = { releasesApplied: 0, status: "uncomparable" };
+    const run = () => courseReleaseWorkflow({ courseId: course.id });
+
+    await expect(run()).resolves.toStrictEqual(uncomparable);
+    await expect(run()).resolves.toStrictEqual(uncomparable);
+
+    expect(compareReleaseLessons).toHaveBeenCalledOnce();
+
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+    ).resolves.toMatchObject({
+      productReleaseId: releases[0]?.id,
+      uncomparableNotesHash: page.contentHash,
+      uncomparableReleaseId: releases[1]?.id,
+    });
+  });
+
+  it("compares again once the release notes change", async () => {
+    const { course, page } = await productCourse();
+    await follow(course.id);
+    vi.mocked(compareReleaseLessons).mockRejectedValueOnce(REFUSAL);
+    await courseReleaseWorkflow({ courseId: course.id });
+
+    await prisma.source.update({
+      data: { contentHash: randomUUID(), extractedText: "Version 2 moves export to a menu." },
+      where: { id: page.id },
+    });
+
+    compareWith(UNCHANGED, UNCHANGED);
+
+    await expect(courseReleaseWorkflow({ courseId: course.id })).resolves.toStrictEqual({
+      releasesApplied: 2,
+      status: "current",
+    });
+  });
+
+  it("records nothing when a comparison fails for a reason a later try can fix", async () => {
+    const { course } = await productCourse();
+    await follow(course.id);
+    vi.mocked(compareReleaseLessons).mockRejectedValue(new Error("Gateway timeout"));
+
+    await expect(courseReleaseWorkflow({ courseId: course.id })).rejects.toThrow("Gateway timeout");
+
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+    ).resolves.toMatchObject({ uncomparableNotesHash: null, uncomparableReleaseId: null });
   });
 });

@@ -78,7 +78,21 @@ function loadCourseLessons(courseId: string) {
   });
 }
 
-/** Internal workflow bridge: what the release comparison reads, or null when the release has no page. */
+/** The notes as found, with their page's hash, so every retry compares and records that version. */
+export type ReleaseComparisonInput = {
+  from: string | null;
+  language: string;
+  lessons: { canDo: string | null; id: string; ideas: string[]; title: string }[];
+  page: { contentHash: string; sourceId: string; text: string };
+  product: string;
+  to: string;
+};
+
+/**
+ * Internal workflow bridge: what the release comparison reads. `missing` when the release has no
+ * notes page, so the course moves without a comparison; `uncomparable` when comparing the course
+ * with these notes already failed for good.
+ */
 export async function loadReleaseComparison({
   courseId,
   fromReleaseId,
@@ -87,9 +101,14 @@ export async function loadReleaseComparison({
   courseId: string;
   fromReleaseId: string | null;
   toReleaseId: string;
-}) {
+}): Promise<
+  { status: "missing" | "uncomparable" } | { input: ReleaseComparisonInput; status: "ready" }
+> {
   const [course, to, from, lessons] = await Promise.all([
-    prisma.course.findUniqueOrThrow({ select: { language: true }, where: { id: courseId } }),
+    prisma.course.findUniqueOrThrow({
+      select: { language: true, uncomparableNotesHash: true, uncomparableReleaseId: true },
+      where: { id: courseId },
+    }),
     loadReleaseNotes(toReleaseId),
     fromReleaseId
       ? prisma.productRelease.findUnique({ select: { name: true }, where: { id: fromReleaseId } })
@@ -98,22 +117,53 @@ export async function loadReleaseComparison({
   ]);
 
   if (!to.page) {
-    return null;
+    return { status: "missing" };
+  }
+
+  if (
+    course.uncomparableReleaseId === toReleaseId &&
+    course.uncomparableNotesHash === to.page.contentHash
+  ) {
+    return { status: "uncomparable" };
   }
 
   return {
-    from: from?.name ?? null,
-    language: course.language,
-    lessons: lessons.map((lesson) => ({
-      canDo: lesson.canDo,
-      id: lesson.id,
-      ideas: readLessonMap(lesson.summary)?.ideas.map((idea) => idea.text) ?? [lesson.description],
-      title: lesson.title,
-    })),
-    page: to.page,
-    product: to.product,
-    to: to.name,
+    input: {
+      from: from?.name ?? null,
+      language: course.language,
+      lessons: lessons.map((lesson) => ({
+        canDo: lesson.canDo,
+        id: lesson.id,
+        ideas: readLessonMap(lesson.summary)?.ideas.map((idea) => idea.text) ?? [
+          lesson.description,
+        ],
+        title: lesson.title,
+      })),
+      page: to.page,
+      product: to.product,
+      to: to.name,
+    },
+    status: "ready",
   };
+}
+
+/**
+ * Internal workflow bridge: comparing the course with the release's notes failed after its retries
+ * in a way no retry fixes, so it isn't compared on those notes again.
+ */
+export async function recordUncomparableRelease({
+  contentHash,
+  courseId,
+  releaseId,
+}: {
+  contentHash: string;
+  courseId: string;
+  releaseId: string;
+}): Promise<void> {
+  await prisma.course.updateMany({
+    data: { uncomparableNotesHash: contentHash, uncomparableReleaseId: releaseId },
+    where: { id: courseId },
+  });
 }
 
 export type WhatsNew = {

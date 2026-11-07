@@ -1,5 +1,6 @@
 import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { claimRunToken, startOnce, waitForRunToken } from "../_shared/run-token";
+import { isUnusableOutput } from "../_shared/unusable-output";
 import { type ResearchAnalytics } from "../research/_utils/research-analytics";
 import { courseReleaseWorkflow } from "./course-release-workflow";
 import {
@@ -42,7 +43,7 @@ export async function readProductReleases({
 
   const reading = await readReleasesPageStep({ analytics, page, release, serviceTier }).catch(
     async (error: unknown) => {
-      if (!isUnusableReading(error)) {
+      if (!isUnusableOutput(error)) {
         throw error;
       }
 
@@ -57,18 +58,6 @@ export async function readProductReleases({
 
   const courseIds = await saveProductReleasesStep(reading);
   await startCourseReleases(courseIds);
-}
-
-/**
- * The model answered every retry without a reading the schema accepts, such as when it refuses the
- * page. A step that used up its retries fails with the runtime's error, whose `cause` is the step's
- * own error without its class, so the AI SDK's error is told by its name.
- */
-function isUnusableReading(error: unknown): boolean {
-  return (
-    error instanceof Error &&
-    (error.name === "AI_NoObjectGeneratedError" || isUnusableReading(error.cause))
-  );
 }
 
 /** One release update per course at a time: a course already updating keeps its run. */
