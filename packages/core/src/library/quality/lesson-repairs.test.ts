@@ -18,6 +18,60 @@ function check(options: { isCorrect: boolean; text: string }[]): WrittenScreen {
 const spec = temperatureSpec();
 
 describe(repairWrittenLesson, () => {
+  it("puts LaTeX a writer left outside math into math, in screens, options and the quote that cites it", () => {
+    const result = "So 0.000406 m = 4.06 × 10^{-4} m.";
+
+    const worked: WrittenScreen = {
+      image: null,
+      kind: "workedExample",
+      problem: "Write 0.000406 m in scientific notation.",
+      result,
+      steps: [
+        { math: String.raw`0.000406 \to 4.06`, text: "Move the decimal point 4 places right." },
+      ],
+      title: "Writing a tiny number",
+      visual: null,
+    };
+
+    const quoted: WrittenScreen = {
+      basis: { quote: result, screen: 0 },
+      context: "A sensor log stores a tiny gap as 7.02 × 10^{-5} m.",
+      image: null,
+      kind: "check",
+      options: ["0.0000702 m", "7.02 × 10^5 m"].map((text, index) => ({
+        isCorrect: index === 0,
+        picture: null,
+        reason: "Move the point 5 places left.",
+        text,
+      })),
+      question: "Which decimal measurement does that notation represent?",
+      visual: null,
+    };
+
+    const repaired = repairWrittenLesson({
+      language: "en",
+      lesson: { screens: [worked, quoted], summary: hubMap(["Small numbers get 10^{-n}."]) },
+      spec,
+    });
+
+    const [example, question] = repaired.screens;
+
+    const wrapped = "So 0.000406 m = 4.06 × $10^{-4}$ m.";
+
+    expect(example?.kind === "workedExample" && example).toMatchObject({
+      result: wrapped,
+      steps: [{ math: String.raw`0.000406 \to 4.06` }],
+    });
+
+    expect(question?.kind === "check" && question).toMatchObject({
+      basis: { quote: wrapped },
+      context: "A sensor log stores a tiny gap as 7.02 × $10^{-5}$ m.",
+      options: [{ text: "0.0000702 m" }, { text: "7.02 × $10^{5}$ m" }],
+    });
+
+    expect(repaired.summary.ideas[0]?.text).toBe("Small numbers get $10^{-n}$.");
+  });
+
   it("moves a minus written after the money mark in text, tables, activities and the quote that cites it, keeping the amount", () => {
     const sentence = "The balance ends at $ -12,34 after the refund.";
 

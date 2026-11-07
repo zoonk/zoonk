@@ -1,4 +1,5 @@
 import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { findBareLatex } from "@zoonk/utils/bare-latex";
 import {
   type TextLayout,
   findPlaceholderText,
@@ -53,10 +54,9 @@ export function findTextFlaws({
   text: string;
 }): ScreenFlaw[] {
   return [
-    ...(layout ? findUnrenderedMarkdown({ layout, text }) : []).map((problem) => ({
-      code: "markdown" as const,
-      problem,
-    })),
+    ...(layout ? [...findUnrenderedMarkdown({ layout, text }), ...findBareLatex(text)] : []).map(
+      (problem) => ({ code: "markdown" as const, problem }),
+    ),
     ...findPlaceholderText(text).map((problem) => ({ code: "placeholder" as const, problem })),
   ];
 }

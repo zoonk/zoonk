@@ -1,14 +1,21 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { findSharedPicture } from "@zoonk/ai/tasks/lesson-spec/visuals";
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { wrapBareLatex } from "@zoonk/utils/bare-latex";
 import { repairNegativeMoney } from "@zoonk/utils/negative-money";
+import { type TextLayout } from "@zoonk/utils/text-flaws";
 import { repairMarkdown } from "@zoonk/utils/text-repairs";
 import { dropEquivalentOptions } from "../_utils/option-checks";
 import { mapActivityProse, mapScreenTexts } from "./_utils/screen-texts";
 
 const MIN_OPTIONS = 2;
 
-function repairScreenText(screen: WrittenScreen): WrittenScreen {
+/** Every text gets the same repairs, so a quote still matches the sentence it cites. */
+function repairText({ layout, text }: { layout: TextLayout; text: string }): string {
+  return wrapBareLatex(repairNegativeMoney({ text: repairMarkdown({ layout, text }) }));
+}
+
+export function repairScreenText(screen: WrittenScreen): WrittenScreen {
   if (screen.kind === "activity") {
     return {
       ...screen,
@@ -17,7 +24,7 @@ function repairScreenText(screen: WrittenScreen): WrittenScreen {
   }
 
   return mapScreenTexts(screen, ({ layout, text }) =>
-    layout ? repairNegativeMoney({ text: repairMarkdown({ layout, text }) }) : text,
+    layout ? repairText({ layout, text }) : text,
   );
 }
 
@@ -32,9 +39,7 @@ function repairBasisQuote(screen: WrittenScreen): WrittenScreen {
         ...screen,
         basis: {
           ...screen.basis,
-          quote: repairNegativeMoney({
-            text: repairMarkdown({ layout: "inline", text: screen.basis.quote }),
-          }),
+          quote: repairText({ layout: "inline", text: screen.basis.quote }),
         },
       }
     : screen;
@@ -114,7 +119,7 @@ export function repairWrittenLesson({
       ...lesson.summary,
       ideas: lesson.summary.ideas.map((idea) => ({
         ...idea,
-        text: repairNegativeMoney({ text: repairMarkdown({ layout: "inline", text: idea.text }) }),
+        text: repairText({ layout: "inline", text: idea.text }),
       })),
     },
   };
