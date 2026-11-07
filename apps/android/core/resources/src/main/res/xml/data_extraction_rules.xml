@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Only drafts follow the learner to another device: the session stays on the device that signed in, and the rest describes this device. -->
 <data-extraction-rules>
     <cloud-backup>
-        <exclude
-            domain="root"
-            path="." />
+        <include
+            domain="file"
+            path="drafts/" />
     </cloud-backup>
     <device-transfer>
-        <exclude
-            domain="root"
-            path="." />
+        <include
+            domain="file"
+            path="drafts/" />
     </device-transfer>
 </data-extraction-rules>
