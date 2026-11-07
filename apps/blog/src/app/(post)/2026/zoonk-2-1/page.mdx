@@ -1,47 +1,170 @@
+import { COVER_SIZES, Cover, CoverFrame } from "@/components/cover";
+import { Cta, CtaLink, CtaNote, CtaText, CtaTitle } from "@/components/cta";
 import { PostMeta } from "@/components/post-meta";
+import { Screen, Screens } from "@/components/screens";
+import { ThemeImage } from "@/components/theme-image";
 
 export const metadata = {
   description:
-    "Zoonk 2.1 makes lessons easier to follow, turns practice calls into something closer to a real phone call, and adds certificates for what you finish.",
-  title: "Zoonk 2.1: clearer lessons, better calls and certificates",
+    "Zoonk 2.1 brings lessons that are easier to follow, practice calls that work like a real phone call, and a certificate for every level you finish.",
+  title: "Zoonk 2.1: lessons that click, calls that feel real",
 };
 
-# Zoonk 2.1: clearer lessons, better calls and certificates
+# Zoonk 2.1: lessons that click, calls that feel real
 
 <PostMeta date="November 7, 2026" authorId="will" />
 
-We launched [Zoonk 2.0](/2026/zoonk-2) on Monday, and since then most of our work has gone into what got in people's way. Zoonk 2.1 is out today.
+<Cover
+  alt="Three Zoonk screens on a phone: a lesson about how an LED glows with its main point underlined, a practice call with a landlord in progress, and a certificate for finishing a quantum physics level."
+  darkSrc="/blog/2026/zoonk-2-1/cover-dark.webp"
+  src="/blog/2026/zoonk-2-1/cover.webp"
+/>
 
-## Lessons that are easier to follow
+On Monday we launched [Zoonk 2.0](/2026/zoonk-2), which turns your goal into a plan for every day. Zoonk 2.1 is about the time you spend on that plan. Lessons are easier to follow, practice calls feel like talking to a real person, and you get a certificate when you finish a level.
 
-A beginner who tried an early version of our new lessons told us the explanations felt like Yoda wrote them. That was fair. Lessons now explain each idea in plain sentences, in the order you'd say them out loud, and they show a picture only when it helps you see something.
+## Lessons that are easy to follow
 
-The lesson screen looks like a teacher's board now, with the main point underlined, new terms highlighted and the example in its own frame. A strip at the top tells you which idea you're on, and each lesson starts and ends with a map of its ideas. If a screen doesn't click, tap "I didn't get this" and Zu explains it more simply.
+When you're learning something new, it's hard to tell which part matters. You finish a paragraph and you're not sure what you were supposed to remember.
 
-New beginner plans also start with the subject itself. A biology plan opens with cells, and the chemistry and math it needs come right before you use them.
+So the lesson screen now works like a teacher at a board. The main point gets underlined, and new terms are highlighted the way you'd mark them in your notebook. The example sits in its own frame, like the power light on your charger in a lesson about LEDs, so the idea and the case that shows it don't blur together. Lessons are written the way you'd explain something out loud, and they show a picture only when it helps you see the idea.
 
-## Calls that feel like calls
+You also always know where you are. Each lesson opens with a map of its ideas, a strip at the top tells you which one you're on, and the map comes back at the end with everything you covered.
 
-Practice calls now start when you're ready. An intro explains how the call works, and you tap to call the character. The transcript follows along, you can see whose turn it is, and the character starts talking in about a second and a half. When time's up, they say goodbye at a natural pause. If your connection drops, tap "Call again" and the call picks up where it stopped.
+When a screen still doesn't click, tap "I didn't get this" and your buddy explains it again in simpler words.
 
-Characters who know you also remember what you've told them. If you mentioned your move to Toronto, a neighbor might ask how it's going. Strangers never act as if they know you, and you can see or delete what Zoonk remembers in your settings.
+<Screens>
+  <Screen
+    alt="A lesson screen in LEDs and lasers. A strip at the top reads Idea 3 of 5, LEDs and OLED screens. Below a drawing of an LED, a dashed Example frame says that a power light keeps glowing because electricity keeps pushing electrons back up, with that part underlined, and the text below highlights the term LED."
+    darkSrc="/blog/2026/zoonk-2-1/lesson-board-dark.webp"
+    src="/blog/2026/zoonk-2-1/lesson-board.webp"
+  >
+    The main point, underlined
+  </Screen>
+  <Screen
+    alt="The opening of the lesson LEDs and lasers: a short story asks why a charger's red light spreads across the room while a laser pointer sends a thin beam, then a map shows the lesson's five numbered ideas, each with an icon."
+    darkSrc="/blog/2026/zoonk-2-1/lesson-map-dark.webp"
+    src="/blog/2026/zoonk-2-1/lesson-map.webp"
+  >
+    A map of the ideas ahead
+  </Screen>
+  <Screen
+    alt="The buddy's answer over a lesson screen about stimulated emission. The learner asked to explain it more simply, and the buddy says to think of an electron as holding a little packet of energy that a passing photon can prompt it to let go."
+    darkSrc="/blog/2026/zoonk-2-1/lesson-didnt-get-dark.webp"
+    src="/blog/2026/zoonk-2-1/lesson-didnt-get.webp"
+  >
+    A simpler version, on tap
+  </Screen>
+</Screens>
 
-## Certificates for what you finish
+## Practice calls that feel like calling someone
 
-With Plus, you get a certificate for each course level you finish and each language level you reach, from A1 to C1. You can share it, add it to LinkedIn or send someone its public page, where anyone can check that it's real.
+Speaking is the part most people put off. It's hard to practice without someone to talk to, and the real conversation always happens at a bad moment: at immigration, at the doctor, in a job interview.
 
-On the free plan, you still earn certificates and see them locked. Subscribing later unlocks the ones you've already earned, and they stay yours if Plus ends.
+Practice calls in Zoonk now work like a phone call. Say you're calling a landlord about an apartment on Queen Street. Before the call, you see how it works and what you need to get across, and you call when you're ready. What you both say shows up as you talk, so you can read along, and a bar tells you whose turn it is. The landlord answers in about a second and a half, and when you're done, says goodbye like a person would. Then you see which goals you met and the phrases you said well.
 
-## Smaller things
+If your connection drops in the middle, tap "Call again" and you pick up where you stopped. The character knows you got cut off, and your feedback covers the whole call.
 
-- While we build your plan, you can answer quick questions about your subject.
-- Tap a finished lesson on Today to do it again, or find it on the new Completed lessons page.
-- If you're studying for two exams that cover the same subjects, they share those lessons, so you only study them once.
-- Answers you give while offline wait on your device and are sent when you're back online.
-- The sign-in page appears right away, and course and lesson pages load faster outside the US.
+Characters who know you also remember what you've told them. Mention that you're moving to Toronto, and the next time you talk to your neighbor, they might ask how the move is going. You can see everything Zoonk remembers in your settings and delete any of it.
 
-The [release notes](https://github.com/zoonk/zoonk/releases/tag/v2.1) list everything else, including a long list of fixes.
+These screens are from a sample plan for a Portuguese speaker learning English, so the call's title and descriptions are in Portuguese.
+
+<Screens>
+  <Screen
+    alt="The intro of a practice call to Linda, a landlord on Queen Street, with how the call works in three steps, the three things to get across, and a Call Linda button."
+    darkSrc="/blog/2026/zoonk-2-1/call-intro-dark.webp"
+    src="/blog/2026/zoonk-2-1/call-intro.webp"
+  >
+    Call when you're ready
+  </Screen>
+  <Screen
+    alt="A practice call with Linda in progress. The first goal, Is it available?, is ticked, the conversation shows the learner asking to see the apartment on Saturday morning, and a bar reads Linda is talking."
+    darkSrc="/blog/2026/zoonk-2-1/call-live-dark.webp"
+    darkVideoSrc="/blog/2026/zoonk-2-1/call-live-dark.mp4"
+    src="/blog/2026/zoonk-2-1/call-live.webp"
+    videoSrc="/blog/2026/zoonk-2-1/call-live.mp4"
+  >
+    Read along as you talk
+  </Screen>
+  <Screen
+    alt="The result after the call: all three goals met, and the phrases the learner said well, like Is it still available? and And how much is the deposit?"
+    darkSrc="/blog/2026/zoonk-2-1/call-feedback-dark.webp"
+    src="/blog/2026/zoonk-2-1/call-feedback.webp"
+  >
+    See what went well
+  </Screen>
+</Screens>
+
+## A certificate for every level you finish
+
+Finishing a level takes weeks of work, and your manager, your school or a recruiter should be able to see it.
+
+With Plus, you now get a certificate for each course level you finish and for each language level you reach, from A1 to C1. It has your name, what you studied and when you finished. Share it as a picture, add it to your LinkedIn profile, or send its link. Anyone who opens the link can check that it's real.
+
+<CoverFrame>
+  <ThemeImage
+    alt="A Zoonk certificate of completion for Lucas Pereira in Quantum physics from scratch, Overview level: six topics covered, 17 lessons studied, about 3 hours of study, completed November 7, 2026, with a link and a QR code to verify it."
+    className="object-cover"
+    darkSrc="/blog/2026/zoonk-2-1/certificate-dark.webp"
+    fill
+    sizes={COVER_SIZES}
+    src="/blog/2026/zoonk-2-1/certificate.webp"
+  />
+</CoverFrame>
+
+If you're on the free plan, you still earn your certificates as you go. They show up locked, and when you get Plus, the ones you've earned unlock with the date you finished them. They stay yours even if you cancel later.
+
+<Screens>
+  <Screen
+    alt="The moment a level ends: the certificate, Overview complete!, the name on the certificate with Change, and buttons to Share and Add to LinkedIn."
+    darkSrc="/blog/2026/zoonk-2-1/certificate-earned-dark.webp"
+    src="/blog/2026/zoonk-2-1/certificate-earned.webp"
+  >
+    The moment you finish a level
+  </Screen>
+  <Screen
+    alt="The certificate's public page: Verified certificate, issued by Zoonk. Lucas Pereira completed Quantum physics from scratch, Overview, with the certificate picture and its details."
+    darkSrc="/blog/2026/zoonk-2-1/certificate-page-dark.webp"
+    src="/blog/2026/zoonk-2-1/certificate-page.webp"
+  >
+    A page anyone can check
+  </Screen>
+</Screens>
+
+## Also new
+
+While Zoonk builds your plan or writes your first lesson, you can answer quick questions about your subject, like what happens in the two-slit experiment when you watch which slit each particle goes through. Getting them wrong is part of the point, since it helps you remember later.
+
+Every lesson you've finished is now on the Completed lessons page, so you can go back and do it again. If you're studying for two exams that cover the same subjects, they share those lessons, so you study each topic once and it counts for both. And if your connection drops in the middle of a lesson, your answers wait on your device and are sent when you're back online.
+
+<Screens>
+  <Screen
+    alt="The Building your plan screen with a Guess while you wait card: in a two-slit experiment, what happens to the stripe pattern when detectors track which slit particles pass through? Three answers to pick from."
+    darkSrc="/blog/2026/zoonk-2-1/warm-up-dark.webp"
+    src="/blog/2026/zoonk-2-1/warm-up.webp"
+  >
+    Guess while you wait
+  </Screen>
+  <Screen
+    alt="The Completed lessons page for the goal Understand quantum physics, with lessons grouped under Today, Yesterday and earlier dates, such as LEDs and lasers and An almost empty atom."
+    darkSrc="/blog/2026/zoonk-2-1/completed-lessons-dark.webp"
+    src="/blog/2026/zoonk-2-1/completed-lessons.webp"
+  >
+    Go back to any lesson
+  </Screen>
+</Screens>
+
+The [release notes](https://github.com/zoonk/zoonk/releases/tag/v2.1) have everything else that changed.
 
 ---
 
-If something still feels off, or Zoonk doesn't handle your goal well yet, write to us at [hello@zoonk.com](mailto:hello@zoonk.com).
+If something feels off, or Zoonk doesn't handle your goal well yet, write to us at [hello@zoonk.com](mailto:hello@zoonk.com).
+
+<Cta>
+  <CtaTitle>What's your goal?</CtaTitle>
+  <CtaText>
+    Tell us in your own words and answer a few quick questions. You'll see your whole plan before
+    you pay.
+  </CtaText>
+  <CtaLink href="https://www.zoonk.com/start">Start free</CtaLink>
+  <CtaNote>No account needed.</CtaNote>
+</Cta>
