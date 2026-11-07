@@ -45,11 +45,11 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     steps:
       # Secrets deploy this code, so only an open PR from this repository can be previewed.
-      - name: Read the pull request
+      - name: Read the pull request and the apps it changes
         run: |
-          IFS=$'\t' read -r state repo sha ref < <(
+          IFS=$'\t' read -r state repo base sha ref < <(
             gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" \
-              --jq '[.state, .head.repo.full_name, .head.sha, .head.ref] | @tsv'
+              --jq '[.state, .head.repo.full_name, .base.sha, .head.sha, .head.ref] | @tsv'
           )
 
           if [ "$state" != "open" ] || [ "$repo" != "$GITHUB_REPOSITORY" ]; then
@@ -59,11 +59,10 @@ jobs:
 
           echo "DEPLOY_SHA=$sha" >> "$GITHUB_ENV"
           echo "DEPLOY_REF=$ref" >> "$GITHUB_ENV"
-      # The blog is static and reads no database, so a PR that changes only the blog gets no
-      # database branch or other apps.
-      - name: Choose the apps the PR changes
-        run: |
-          files=$(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/files" --jq '.[].filename')
+
+          # The blog is static and reads no database, so a PR that changes only the blog gets no
+          # database branch or other apps.
+          files=$(gh api "repos/$GITHUB_REPOSITORY/compare/$base...$sha" --jq '.files[].filename')
 
           if grep -q '^apps/blog/' <<< "$files"; then
             echo "PREVIEW_BLOG=true" >> "$GITHUB_ENV"
