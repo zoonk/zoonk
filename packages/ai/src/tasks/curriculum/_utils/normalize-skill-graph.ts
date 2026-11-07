@@ -87,16 +87,21 @@ function toKey(value: string): string {
   return value.trim().toLowerCase();
 }
 
-/** A dropped duplicate's key becomes an alias, so edges that pointed at it still resolve. */
+/**
+ * A reused skill is a duplicate only of the same Library row, never of a skill whose name has the
+ * same words ("Converter frações em decimais" is not "Converter decimais em frações"). A dropped
+ * duplicate's key becomes an alias, so edges that pointed at it still resolve.
+ */
 function dedupeSkills(skills: readonly RawSkillGraphSkill[]) {
   const survivors = new Map<string, RawSkillGraphSkill>();
   const aliases = new Map<string, string>();
-  const keysByName = new Map<string, string>();
+  const keysByIdentity = new Map<string, string>();
 
   for (const skill of skills) {
     const key = toKey(skill.key || skill.name);
     const name = toSkillNameKey(skill.name) || normalizeString(skill.name);
-    const survivorKey = survivors.has(key) ? key : keysByName.get(name);
+    const identity = skill.libraryId ? `library:${skill.libraryId}` : name;
+    const survivorKey = survivors.has(key) ? key : keysByIdentity.get(identity);
     const survivor = survivorKey ? survivors.get(survivorKey) : undefined;
 
     if (name && survivorKey && survivor) {
@@ -104,14 +109,13 @@ function dedupeSkills(skills: readonly RawSkillGraphSkill[]) {
 
       survivors.set(survivorKey, {
         ...survivor,
-        libraryId: survivor.libraryId ?? skill.libraryId,
         outcome: survivor.outcome || skill.outcome,
         prerequisites: [...survivor.prerequisites, ...skill.prerequisites],
         topics: [...new Set([...survivor.topics, ...skill.topics])],
       });
     } else if (name) {
       aliases.set(key, key);
-      keysByName.set(name, key);
+      keysByIdentity.set(identity, key);
       survivors.set(key, { ...skill, key, name: toPlainLine(skill.name) });
     }
   }
