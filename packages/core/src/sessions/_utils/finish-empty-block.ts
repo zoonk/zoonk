@@ -92,6 +92,7 @@ export async function finishEmptyBlock({
       netScore: null,
       nextBlockId: getNextBlockId(blocks),
       reached: { energy: null, level: null },
+      reminderOffer: null,
       sessionBar: getSessionBar(blocks),
       sessionCompleted: settled.sessionCompleted,
       testOutOffer: null,

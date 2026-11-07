@@ -10,6 +10,7 @@ export const httpStatus = {
   notFound: 404,
   ok: 200,
   paymentRequired: 402,
+  seeOther: 303,
   tooManyRequests: 429,
   unauthorized: 401,
   unprocessableEntity: 422,

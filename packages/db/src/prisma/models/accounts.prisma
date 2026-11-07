@@ -69,6 +69,7 @@ model User {
   onboardingDrafts      OnboardingDraft[]
   goalUnderstandings    GoalUnderstanding[]
   followUps             FollowUp[]
+  studyReminder         StudyReminder?
 
   @@unique([email])
   @@unique([username])

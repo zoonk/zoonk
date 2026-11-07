@@ -114,6 +114,12 @@ export const suggestedGoalPathParamsSchema = z
   .object({ suggestionId: uuidSchema().meta({ description: "Suggested goal ID" }) })
   .meta({ id: "SuggestedGoalPathParams" });
 
+export const studyReminderPhonePathParamsSchema = z
+  .object({
+    token: z.string().min(1).meta({ description: "The selected phone's push token, URL-encoded" }),
+  })
+  .meta({ id: "StudyReminderPhonePathParams" });
+
 export const studySessionPathParamsSchema = z
   .object({ sessionId: uuidSchema().meta({ description: "Study session ID" }) })
   .meta({ id: "StudySessionPathParams" });

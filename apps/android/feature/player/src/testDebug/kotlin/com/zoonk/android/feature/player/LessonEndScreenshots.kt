@@ -199,7 +199,7 @@ private val IN_SESSION =
          "checkpoint":null,"comesBackOn":null,"completedMissions":["somethingNew"],"correct":2,"fullMeal":{"bonus":20,"paid":true},
          "milestones":[],"missions":[{"done":1,"kind":"somethingNew","status":"done","total":1},{"done":0,"kind":"review","status":"todo","total":1}],
          "netScore":null,"nextBlockId":null,"reached":{"energy":80,"level":{"color":"yellow","level":3}},
-         "sessionBar":{"completed":1,"total":3},"sessionCompleted":false,"testOutOffer":null,"topHyperdrive":0,"total":3}
+         "reminderOffer":null,"sessionBar":{"completed":1,"total":3},"sessionCompleted":false,"testOutOffer":null,"topHyperdrive":0,"total":3}
         """.trimIndent(),
     )
 

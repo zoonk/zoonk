@@ -81,6 +81,7 @@ export type {
   StepVariant,
   StudySession,
   StudySessionBlock,
+  StudyReminder,
   Subscription,
   SuggestedGoal,
   TutorSharedAnswer,

@@ -39,7 +39,7 @@ const studyDaysSchema = z
       "Weekdays the learner studies, Sunday (0) to Saturday (6); every day when left out",
   });
 
-const studyTimeSchema = z
+export const studyTimeSchema = z
   .string()
   .regex(STUDY_TIME_PATTERN)
   .meta({ description: 'Preferred local study time, such as "20:00"' });

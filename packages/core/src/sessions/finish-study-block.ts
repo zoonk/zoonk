@@ -2,6 +2,7 @@ import "server-only";
 import { type StudySessionBlock, prisma } from "@zoonk/db";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { findReminderOffer } from "../reminders/_utils/reminder-offer";
 import { completeBlockMoment } from "./_utils/block-completion";
 import { finishEmptyBlock } from "./_utils/finish-empty-block";
 import {
@@ -201,6 +202,7 @@ async function finishQuestionBlock(
       comesBackOn: null,
       correct: settlement.correct,
       netScore,
+      reminderOffer: null,
       testOutOffer: null,
       topHyperdrive: settlement.topHyperdrive,
       total: settlement.total,
@@ -245,7 +247,7 @@ export async function finishLessonBlock({
 
   const { goalId } = owned.session;
 
-  const [comesBackOn, testOutOffer] = await Promise.all([
+  const [comesBackOn, testOutOffer, reminderOffer] = await Promise.all([
     getLessonComesBack({
       lessonId,
       targetDate: owned.session.goal?.targetDate ?? null,
@@ -253,6 +255,10 @@ export async function finishLessonBlock({
       userId: owned.userId,
     }),
     lessonId && goalId ? findTestOutOffer({ goalId, lessonId, userId: owned.userId }) : null,
+    findReminderOffer({
+      goalStudyTime: owned.session.goal?.studyTime ?? null,
+      userId: owned.userId,
+    }),
   ]);
 
   const completion = await completeBlockMoment({
@@ -267,6 +273,7 @@ export async function finishLessonBlock({
       comesBackOn,
       correct: finish.correctAnswers,
       netScore: null,
+      reminderOffer,
       testOutOffer,
       topHyperdrive: 0,
       total: finish.correctAnswers + finish.incorrectAnswers,

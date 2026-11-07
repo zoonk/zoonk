@@ -14,6 +14,7 @@
   "netScore": null,
   "nextBlockId": null,
   "reached": { "energy": null, "level": null },
+  "reminderOffer": null,
   "sessionBar": { "completed": 1, "total": 3 },
   "sessionCompleted": false,
   "testOutOffer": null,

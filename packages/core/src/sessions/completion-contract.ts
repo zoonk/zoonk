@@ -7,6 +7,7 @@ import {
   unshownCertificatesSchema,
 } from "../certificates/certificate-contract";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
+import { type ReminderOffer, reminderOfferSchema } from "../reminders/study-reminder-contract";
 import { type QuestionAnswer } from "./contract";
 import { type Mission } from "./missions";
 import { FIRST_STEP_KINDS, MISSION_KINDS } from "./missions/catalog";
@@ -53,6 +54,7 @@ export type StudyBlockCompletion = {
   nextBlockId: string | null;
   /** Only the settling request reports newly reached levels; retries report none. */
   reached: Reached;
+  reminderOffer: ReminderOffer;
   sessionBar: { completed: number; total: number };
   sessionCompleted: boolean;
   /** Null unless the lesson completes a qualifying streak and the chapter has lessons left to skip. */
@@ -257,6 +259,7 @@ export const studyBlockCompletionSchema = z
       description:
         "What the block took the learner to, for its moment to celebrate; nothing on a retry, which celebrates none of it again",
     }),
+    reminderOffer: reminderOfferSchema,
     sessionBar: z.object({ completed: countSchema, total: countSchema }),
     sessionCompleted: z.boolean(),
     testOutOffer: z

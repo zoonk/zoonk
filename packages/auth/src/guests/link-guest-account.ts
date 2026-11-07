@@ -10,6 +10,7 @@ import {
   mergeLearningProfile,
   mergeUserProgress,
 } from "./_utils/merge-progress";
+import { mergeStudyReminder } from "./_utils/merge-study-reminder";
 import { movePrivateCourses } from "./_utils/move-private-courses";
 import { moveTutorThreads } from "./_utils/move-tutor-threads";
 
@@ -128,6 +129,7 @@ async function moveGuestData({
       await mergeUserProgress(context);
       await mergeDailyProgress(context);
       await mergeLearningProfile(context);
+      await mergeStudyReminder(context);
 
       // Removed here, not in Better Auth's post-link cleanup, so no course is created for the guest in between.
       await transaction.user.delete({ where: { id: guestUserId } });

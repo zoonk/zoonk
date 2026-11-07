@@ -22283,6 +22283,459 @@
         }
       }
     },
+    "/me/study-reminder": {
+      "get": {
+        "description": "One reminder a day, by email and by push to one phone, each on or off. Reading never saves anything.",
+        "operationId": "getCurrentUserStudyReminder",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get current user's study reminder",
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "Every reminder setting as saved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudyReminderResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Send only the fields the learner changed, with the app's language. A language alone changes nothing until reminders are saved once.",
+        "operationId": "updateCurrentUserStudyReminder",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Update current user's study reminder",
+        "tags": [
+          "Account"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudyReminderUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Every reminder setting as saved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudyReminderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A guest turned email on (ACCOUNT_REQUIRED), or push was turned on with no phone selected (PHONE_REQUIRED).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/study-reminder/offer": {
+      "post": {
+        "description": "Send when the offer after a plan lesson shows (`reminderOffer` in the block's completion). It's asked once per learner, so show it only when `claimed` is true.",
+        "operationId": "claimCurrentUserStudyReminderOffer",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Claim the study reminder offer",
+        "tags": [
+          "Account"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudyReminderOfferClaim"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Whether this call marked the offer shown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudyReminderOfferResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/study-reminder/phone": {
+      "put": {
+        "description": "Makes this phone the one push goes to (Use this phone), or refreshes its token when it changes. Push stays as it was; turn it on with PATCH. Another account that had this device token loses it.",
+        "operationId": "selectCurrentUserStudyReminderPhone",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Select the phone for study reminders",
+        "tags": [
+          "Account"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudyReminderPhone"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Every reminder setting as saved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudyReminderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/study-reminder/phone/{token}": {
+      "delete": {
+        "description": "Removes the phone and turns push off, only while `token` is still the selected one, so a phone selected since stays.",
+        "operationId": "removeCurrentUserStudyReminderPhone",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Remove the phone from study reminders",
+        "tags": [
+          "Account"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The selected phone's push token, URL-encoded"
+            },
+            "required": true,
+            "description": "The selected phone's push token, URL-encoded"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Every reminder setting as saved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudyReminderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/unsubscribe/study-reminders": {
+      "get": {
+        "description": "The reminder email's List-Unsubscribe link opened in a browser. Changes nothing: it redirects to Main's page, whose button turns email reminders off.",
+        "operationId": "openStudyReminderUnsubscribe",
+        "security": [],
+        "summary": "Open the study reminder unsubscribe page",
+        "tags": [
+          "Account"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "token",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The token from the reminder email"
+            },
+            "required": true,
+            "description": "The token from the reminder email"
+          }
+        ],
+        "responses": {
+          "303": {
+            "description": "Main's unsubscribe page"
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "RFC 8058 one-click unsubscribe from the mailbox: turns the token's account's email reminders off, and only that. Repeating it succeeds.",
+        "operationId": "unsubscribeStudyReminderEmail",
+        "security": [],
+        "summary": "Unsubscribe from study reminder email",
+        "tags": [
+          "Account"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "token",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The token from the reminder email"
+            },
+            "required": true,
+            "description": "The token from the reminder email"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/StudyReminderOneClickUnsubscribe"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Email reminders are off",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudyReminderUnsubscribeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The token isn't valid (INVALID_UNSUBSCRIBE_TOKEN), or it's missing.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/goals/{goalId}/study-sessions": {
       "post": {
         "description": "Opens the goal and local day the learner saw, saving the selected plan and one real session atomically. Existing days retain their authoritative blocks and IDs. A logical target resolves only to that same work; changed or removed work is never substituted. A startable target then opens as `POST /v1/study-block-openings` opens it (`opening`): follow `opening` and ask for nothing else. The day itself starts no AI work; a target that starts prepares the session's next lessons, as any block start does.",
@@ -28905,6 +29358,133 @@
           "type"
         ],
         "description": "The body Vercel Blob's client `uploadPresigned()` sends to its `handleUploadUrl`"
+      },
+      "StudyReminderUpdate": {
+        "type": "object",
+        "properties": {
+          "emailOn": {
+            "description": "Turning it on needs an account: guests get 422 ACCOUNT_REQUIRED",
+            "type": "boolean"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "es",
+              "pt",
+              "fr",
+              "de",
+              "it",
+              "ja",
+              "ko",
+              "tr",
+              "pl"
+            ],
+            "description": "The app language reminders are written in: send the app's current one"
+          },
+          "pushOn": {
+            "description": "Turning it on needs a selected phone (PUT /me/study-reminder/phone first): 422 PHONE_REQUIRED otherwise",
+            "type": "boolean"
+          },
+          "time": {
+            "type": "string",
+            "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$",
+            "description": "Local time the reminder goes out, such as \"19:00\", in the learner's zone"
+          }
+        },
+        "required": [
+          "locale"
+        ],
+        "additionalProperties": false
+      },
+      "StudyReminderOfferClaim": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "es",
+              "pt",
+              "fr",
+              "de",
+              "it",
+              "ja",
+              "ko",
+              "tr",
+              "pl"
+            ],
+            "description": "The app language reminders are written in: send the app's current one"
+          }
+        },
+        "required": [
+          "locale"
+        ],
+        "additionalProperties": false
+      },
+      "StudyReminderPhone": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "The phone's name, shown in Settings on every device"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "es",
+              "pt",
+              "fr",
+              "de",
+              "it",
+              "ja",
+              "ko",
+              "tr",
+              "pl"
+            ],
+            "description": "The app language reminders are written in: send the app's current one"
+          },
+          "platform": {
+            "$ref": "#/components/schemas/PushPlatform"
+          },
+          "token": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "description": "The APNs device token (hex) on iOS, the FCM registration token on Android"
+          }
+        },
+        "required": [
+          "label",
+          "locale",
+          "platform",
+          "token"
+        ],
+        "additionalProperties": false
+      },
+      "PushPlatform": {
+        "type": "string",
+        "enum": [
+          "ios",
+          "android"
+        ]
+      },
+      "StudyReminderOneClickUnsubscribe": {
+        "type": "object",
+        "properties": {
+          "List-Unsubscribe": {
+            "type": "string",
+            "enum": [
+              "One-Click"
+            ]
+          }
+        },
+        "required": [
+          "List-Unsubscribe"
+        ]
       },
       "StudyBlockOpeningInput": {
         "type": "object",
@@ -71779,6 +72359,9 @@
             "additionalProperties": false,
             "description": "What the block took the learner to, for its moment to celebrate; nothing on a retry, which celebrates none of it again"
           },
+          "reminderOffer": {
+            "$ref": "#/components/schemas/StudyReminderOffer"
+          },
           "sessionBar": {
             "type": "object",
             "properties": {
@@ -71862,6 +72445,7 @@
           "netScore",
           "nextBlockId",
           "reached",
+          "reminderOffer",
           "sessionBar",
           "sessionCompleted",
           "testOutOffer",
@@ -71989,6 +72573,22 @@
             "additionalProperties": false
           }
         ]
+      },
+      "StudyReminderOffer": {
+        "nullable": true,
+        "description": "After a plan lesson, while no reminder channel is on and the offer was never shown: offer study reminders at `time` (the saved time, the goal's study time or 19:00). Claim it with POST /me/study-reminder/offer when it's shown. Null otherwise",
+        "type": "object",
+        "properties": {
+          "time": {
+            "type": "string",
+            "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$",
+            "description": "Local time the reminder goes out, such as \"19:00\", in the learner's zone"
+          }
+        },
+        "required": [
+          "time"
+        ],
+        "additionalProperties": false
       },
       "LessonFit": {
         "type": "object",
@@ -88405,6 +89005,128 @@
         "required": [
           "presignedUrlPayload",
           "type"
+        ],
+        "additionalProperties": false
+      },
+      "StudyReminderResponse": {
+        "type": "object",
+        "properties": {
+          "reminder": {
+            "$ref": "#/components/schemas/StudyReminder"
+          }
+        },
+        "required": [
+          "reminder"
+        ],
+        "additionalProperties": false
+      },
+      "StudyReminder": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "object",
+            "properties": {
+              "address": {
+                "nullable": true,
+                "description": "Where email reminders go; null for a guest, who needs an account to turn them on",
+                "type": "string"
+              },
+              "on": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "address",
+              "on"
+            ],
+            "additionalProperties": false
+          },
+          "push": {
+            "type": "object",
+            "properties": {
+              "on": {
+                "type": "boolean"
+              },
+              "phone": {
+                "nullable": true,
+                "description": "The one phone push goes to, or null when none is selected",
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "description": "The phone's name, such as \"Ana's iPhone\""
+                  },
+                  "platform": {
+                    "$ref": "#/components/schemas/PushPlatform"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Compare with this installation's token to tell if it's this one"
+                  }
+                },
+                "required": [
+                  "label",
+                  "platform",
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "on",
+              "phone"
+            ],
+            "additionalProperties": false
+          },
+          "quiet": {
+            "type": "boolean",
+            "description": "A channel is on, but reminders are paused: 7 days passed without study since the last study day or the last time a channel was turned on. Studying turns them back on"
+          },
+          "time": {
+            "type": "string",
+            "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$",
+            "description": "Local time the reminder goes out, such as \"19:00\", in the learner's zone"
+          },
+          "timeZone": {
+            "type": "string",
+            "description": "The IANA zone reminders follow: the active goal's. Show it next to the time, named the platform's localized way"
+          }
+        },
+        "required": [
+          "email",
+          "push",
+          "quiet",
+          "time",
+          "timeZone"
+        ],
+        "additionalProperties": false,
+        "description": "Every reminder setting, with defaults before the learner saves any: off, at the active goal's study time or 19:00"
+      },
+      "StudyReminderOfferResult": {
+        "type": "object",
+        "properties": {
+          "claimed": {
+            "type": "boolean",
+            "description": "True only for the call that marked the offer shown. False when it was already shown, here or on another device: don't show it"
+          }
+        },
+        "required": [
+          "claimed"
+        ],
+        "additionalProperties": false
+      },
+      "StudyReminderUnsubscribeResponse": {
+        "type": "object",
+        "properties": {
+          "emailOn": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          }
+        },
+        "required": [
+          "emailOn"
         ],
         "additionalProperties": false
       },

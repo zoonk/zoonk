@@ -625,6 +625,7 @@ private let sessionLessonCompletion = #"""
      "missions": [{"kind": "somethingNew", "status": "done", "done": 1, "total": 1}],
      "netScore": null, "nextBlockId": null,
      "reached": {"energy": null, "level": {"color": "yellow", "level": 3}},
-     "sessionBar": {"completed": 1, "total": 3}, "sessionCompleted": false, "testOutOffer": null,
+     "reminderOffer": null, "sessionBar": {"completed": 1, "total": 3}, "sessionCompleted": false,
+     "testOutOffer": null,
      "topHyperdrive": 0, "total": 1}}
   """#

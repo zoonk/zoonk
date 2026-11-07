@@ -59,6 +59,10 @@ export function getLearningProfileCacheTag(userId: string): string {
   return `learning-profile:${userId}`;
 }
 
+export function getStudyReminderCacheTag(userId: string): string {
+  return `study-reminder:${userId}`;
+}
+
 export function getAllowanceCacheTag(userId: string): string {
   return `allowance:${userId}`;
 }
