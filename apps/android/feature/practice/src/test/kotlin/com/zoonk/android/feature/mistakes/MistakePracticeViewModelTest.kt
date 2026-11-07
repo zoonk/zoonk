@@ -141,6 +141,28 @@ class MistakePracticeViewModelTest {
         }
 
     @Test
+    fun checkAgainAfterAFailedSaveSendsTheTimeAnUnchangedAnswerFirstTook() =
+        runTest(dispatcher) {
+            var clock = 0L
+            val api = FakeMistakesApi(twoMistakes)
+            api.answer = { throw ApiException(ApiError.Network) }
+            val viewModel = viewModel(api) { clock }
+            started(viewModel)
+
+            clock = 30_000L
+            viewModel.answer(Answer.Choice(1))
+            advanceUntilIdle()
+            clock = 90_000L
+            viewModel.answer(Answer.Choice(1))
+            advanceUntilIdle()
+            clock = 100_000L
+            viewModel.answer(Answer.Choice(0))
+            advanceUntilIdle()
+
+            assertEquals(listOf(30_000L, 30_000L, 100_000L), api.answers.map { it.durationMs })
+        }
+
+    @Test
     fun anHonestDontKnowIsNeitherRightNorWrongButTheClockRunningOutIsAMiss() =
         runTest(dispatcher) {
             val api =

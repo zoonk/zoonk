@@ -334,7 +334,8 @@ struct MistakePracticeScreen: View {
     await send(
       SentAnswer(
         answer: answer, sender: sender,
-        durationMs: sender == .timer ? max(durationMs, limitMs) : durationMs))
+        measuredMs: sender == .timer ? max(durationMs, limitMs) : durationMs,
+        failed: state.phase.failed))
   }
 
   /// Each answer comes with the run's earlier answers, so saving it counts the run so far. Its

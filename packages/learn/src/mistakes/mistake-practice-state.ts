@@ -4,7 +4,12 @@ import { NOTHING_REACHED, type Reached } from "@zoonk/core/sessions/reached";
 import { type TaskSegment } from "../_components/task-header";
 import { mergeReached } from "../_utils/merge-reached";
 import { type ChoiceAnswer, type ChoiceFeedback } from "../questions/choice-question";
-import { type AnswerSender, isIdeaFirst, isReadFirst } from "./drill/drill-types";
+import {
+  type AnswerSender,
+  isIdeaFirst,
+  isReadFirst,
+  isUnchangedAnswer,
+} from "./drill/drill-types";
 
 export type PracticeEntry = Extract<MistakePracticeResult, { status: "ready" }>["practice"][number];
 
@@ -179,7 +184,10 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
     case "reveal":
       return { ...state, phase: { kind: "answering", selected: null } };
     case "select":
-      return { ...state, phase: { kind: "answering", selected: action.answer } };
+      return state.phase.kind === "answerFailed" &&
+        isUnchangedAnswer(action.answer, state.phase.answer)
+        ? state
+        : { ...state, phase: { kind: "answering", selected: action.answer } };
     case "check":
       return {
         ...state,

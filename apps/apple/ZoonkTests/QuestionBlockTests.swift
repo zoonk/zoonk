@@ -128,6 +128,26 @@ final class QuestionBlockRunTests: XCTestCase {
     XCTAssertEqual(durations, [30_000, 30_000])
   }
 
+  func testCheckAgainAfterAFailedSaveSendsTheTimeAnUnchangedAnswerFirstTook() async {
+    var seconds: TimeInterval = 0
+    let client = FakeQuestionBlockClient(answers: [
+      .failure(APIError.network), .failure(APIError.network),
+      .failure(QuestionBlockWriteObsolete()),
+    ])
+    let run = QuestionBlockRun(
+      detail: makeDetail(["a"]), client: client, now: { Date(timeIntervalSince1970: seconds) })
+
+    seconds = 30
+    await run.submit(.choice(0))
+    seconds = 90
+    await run.submit(.choice(0))
+    seconds = 100
+    await run.submit(.choice(1))
+
+    let durations = await client.durations
+    XCTAssertEqual(durations, [30_000, 30_000, 100_000])
+  }
+
   func testTryAgainAfterAFailedTimeUpKeepsTheWholeTimeBox() async {
     var seconds: TimeInterval = 0
     var question = makeQuestion("a")
