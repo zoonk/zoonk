@@ -4,8 +4,11 @@ import { type CefrLevel } from "@zoonk/utils/cefr";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
+import {
+  combineTaskProvenance,
+  sumLanguageModelUsage,
+} from "../../provenance/combine-task-provenance";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { combineTaskProvenance, sumLanguageModelUsage } from "../../provenance/task-provenance";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getLanguagePromptContext } from "../_utils/prompt-language";
 import systemPrompt from "./level-test-bank.prompt.md";

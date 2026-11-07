@@ -2,9 +2,10 @@ import { type GenerateImageResult } from "ai";
 import { getModelFamily } from "../_utils/model-family";
 import { type PromptTrainingInput, runUnderPromptTrainingRule } from "../data-protection";
 import { computeCallCostUsd } from "../pricing/call-cost";
+import { sumKnown } from "./combine-task-provenance";
 import { readGatewayMetadata } from "./gateway-metadata";
 import { type TaskGenerationInput, type TaskRunDetails, startTaskRun } from "./run-task-generation";
-import { type TaskProvenance, sumKnown } from "./task-provenance";
+import { type TaskProvenance } from "./task-provenance";
 
 type ImageGeneration = Pick<GenerateImageResult, "calls" | "images" | "usage">;
 

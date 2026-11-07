@@ -1,11 +1,9 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
-import { generateSkillGraph, isEmptySkillGraphError } from "@zoonk/ai/tasks/curriculum/skill-graph";
+import { type generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { classifyGoalSpecificity } from "@zoonk/ai/tasks/identity/goal-specificity";
 import { applyGraphCoverage } from "@zoonk/core/library/curriculum/add-coverage-skills";
 import { getStartedCourseScope } from "@zoonk/core/library/curriculum/course-start-graph";
-import { findExamLibrary } from "@zoonk/core/library/curriculum/exam-library-skills";
 import {
   type GoalCurriculumInputs,
   loadGoalCurriculumInputs,
@@ -17,15 +15,12 @@ import {
   linkGoalSkillPrerequisites,
   saveGoalSkills,
 } from "@zoonk/core/library/curriculum/save-goal-skills";
-import { type CurriculumScope, getScopeModel } from "@zoonk/core/library/curriculum/scope";
+import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import {
-  isSharedExamGraph,
   toLanguageGoal,
   toScopedGraphPrompt,
 } from "@zoonk/core/library/curriculum/shared-graph-prompt";
-import { safeAsync } from "@zoonk/utils/error";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
-import { type GoalStreamStep } from "./goal-progress-step";
 
 type GraphProvenance = Awaited<ReturnType<typeof generateSkillGraph>>["provenance"];
 
@@ -98,97 +93,6 @@ export async function decideGoalScopeStep({
   }
 
   return { ...shared, exams: inputs.exams, generalGoal };
-}
-
-type FindLibrarySkills = NonNullable<Parameters<typeof generateSkillGraph>[0]["findLibrarySkills"]>;
-
-/** A shared exam's graph reads the skills other exams use in its courses once its frame names them. */
-function toExamLibrary({
-  inputs,
-  scope,
-}: {
-  inputs: GoalCurriculumInputs;
-  scope: CurriculumScope;
-}): FindLibrarySkills | undefined {
-  const examBlueprintId = inputs.goal.examBlueprintId;
-
-  if (
-    !examBlueprintId ||
-    !inputs.graphPrompt.examBlueprint ||
-    !isSharedExamGraph({ inputs, scope })
-  ) {
-    return undefined;
-  }
-
-  return ({ courses }) => findExamLibrary({ courses, examBlueprintId, scope });
-}
-
-async function generateGraph({
-  analytics,
-  findLibrarySkills,
-  onSkillNamed,
-  prompt,
-  scope,
-}: {
-  analytics: ReturnType<typeof toContentAnalytics>;
-  findLibrarySkills?: FindLibrarySkills;
-  onSkillNamed: (name: string) => Promise<void>;
-  prompt: GoalCurriculumInputs["graphPrompt"];
-  scope: CurriculumScope;
-}) {
-  const model = getScopeModel(scope);
-
-  const params = {
-    ...prompt,
-    analytics,
-    findLibrarySkills,
-    onSkillNamed,
-    serviceTier: chooseServiceTier({ wait: "learner" }),
-  };
-
-  if (!model) {
-    return generateSkillGraph(params);
-  }
-
-  const cheaper = await safeAsync(() => generateSkillGraph({ ...params, model }));
-
-  if (cheaper.data) {
-    return cheaper.data;
-  }
-
-  if (isEmptySkillGraphError(cheaper.error)) {
-    return generateSkillGraph(params);
-  }
-
-  throw cheaper.error;
-}
-
-export async function buildSkillGraphStep({
-  analytics,
-  inputs,
-  scope,
-  workflowRunId,
-}: RunScope & { inputs: GoalCurriculumInputs; scope: CurriculumScope }): Promise<{
-  graph: GoalSkillGraph;
-  provenance: GraphProvenance;
-}> {
-  "use step";
-
-  await using stream = createStepStream<GoalStreamStep>();
-  const report = { entityId: inputs.goal.id, step: "buildSkillGraph" } as const;
-  await stream.status({ ...report, status: "started" });
-
-  const { data, provenance } = await generateGraph({
-    analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
-    findLibrarySkills: toExamLibrary({ inputs, scope }),
-    onSkillNamed: (skillName) => stream.status({ ...report, skillName, status: "started" }),
-    prompt: toScopedGraphPrompt({ inputs, scope }),
-    scope,
-  });
-
-  await stream.status({ ...report, status: "completed" });
-
-  return { graph: data, provenance };
 }
 
 export async function checkGraphCoverageStep({

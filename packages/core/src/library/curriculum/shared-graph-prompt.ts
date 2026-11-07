@@ -1,4 +1,4 @@
-import { type SkillGraphParams } from "@zoonk/ai/tasks/curriculum/skill-graph";
+import { type SkillGraphParams } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
 import { WORK_FIELDS } from "@zoonk/ai/tasks/items/work-fields";
 import { type GoalKind } from "@zoonk/db";
 import { getString } from "@zoonk/utils/json";

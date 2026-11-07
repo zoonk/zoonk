@@ -1,4 +1,7 @@
-import { type LibrarySkill, type SkillGraphParams } from "@zoonk/ai/tasks/curriculum/skill-graph";
+import {
+  type LibrarySkill,
+  type SkillGraphParams,
+} from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
 import { normalizeString } from "@zoonk/utils/string";
 
 /** Skills other exams use in a course, named by its title: the frame picks its own course keys. */

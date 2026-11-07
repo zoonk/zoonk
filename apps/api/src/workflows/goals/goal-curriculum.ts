@@ -16,9 +16,9 @@ import { isBuiltBeforeResearch, loadGoalReferences } from "./goal-content-inputs
 import { startOutlines } from "./goal-outlines";
 import { prepareGraphPlacement } from "./goal-placement-items";
 import { type GoalRunContext, type SavedSlice } from "./goal-run-context";
+import { buildGoalSkillGraph } from "./goal-skill-graph";
 import { setUpPlan } from "./plan-setup";
 import {
-  buildSkillGraphStep,
   checkGraphCoverageStep,
   linkSkillPrerequisitesStep,
   saveExamSkillGraphStep,
@@ -56,7 +56,7 @@ async function buildGraph({
   scope: CurriculumScope;
 }) {
   const [built, references] = await Promise.all([
-    buildSkillGraphStep({ ...context, inputs, scope }),
+    buildGoalSkillGraph({ ...context, inputs, scope }),
     loadGoalReferences({ inputs, researchId }),
   ]);
 

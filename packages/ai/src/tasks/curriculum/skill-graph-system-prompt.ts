@@ -1,5 +1,5 @@
 import { selectPromptVariants } from "../_utils/prompt-variants";
-import { type SkillGraphParams } from "./skill-graph";
+import { type SkillGraphParams } from "./skill-graph-calls";
 import template from "./skill-graph.prompt.md";
 
 type SubjectStartParams = Pick<

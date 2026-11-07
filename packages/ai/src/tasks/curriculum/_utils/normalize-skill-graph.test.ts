@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-  EmptySkillGraphError,
-  type RawSkillGraph,
-  normalizeSkillGraph,
-} from "./normalize-skill-graph";
+import { EmptySkillGraphError } from "./empty-skill-graph-error";
+import { type RawSkillGraph, normalizeSkillGraph } from "./normalize-skill-graph";
 
 type RawSkillGraphSkill = RawSkillGraph["skills"][number];
 
@@ -429,9 +426,7 @@ describe(normalizeSkillGraph, () => {
   });
 
   it("rejects a graph without courses, phases or skills", () => {
-    expect(() => normalizeSkillGraph(rawGraph([rawSkill({ key: "a" })], { phases: [] }))).toThrow(
-      EmptySkillGraphError,
-    );
+    expect(() => normalizeSkillGraph(rawGraph([rawSkill({ key: "a" })], { phases: [] }))).toThrow();
 
     expect(() => normalizeSkillGraph(rawGraph([]))).toThrow(EmptySkillGraphError);
   });

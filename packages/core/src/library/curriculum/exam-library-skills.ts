@@ -1,5 +1,5 @@
 import "server-only";
-import { type ExamLibrary, type LibrarySkill } from "@zoonk/ai/tasks/curriculum/skill-graph";
+import { type ExamLibrary, type LibrarySkill } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { findCourseByTitle } from "../identity/kinds/course-identity";
 import { type CurriculumScope } from "./curriculum-scope";

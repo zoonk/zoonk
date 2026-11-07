@@ -6,7 +6,10 @@ import {
   streamCourseOutline,
 } from "@zoonk/ai/tasks/curriculum/course-outline";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
-import { generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
+import {
+  generateSkillGraphFrame,
+  generateWholeSkillGraph,
+} from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
 import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
 import { classifyGoalSpecificity } from "@zoonk/ai/tasks/identity/goal-specificity";
 import { generateSearchTerms } from "@zoonk/ai/tasks/identity/search-terms";
@@ -67,7 +70,7 @@ import * as lookaheadSteps from "./steps/goal-lookahead-steps";
 import * as planSteps from "./steps/goal-plan-steps";
 import * as noticeSteps from "./steps/notice-steps";
 
-type SkillGraph = Awaited<ReturnType<typeof generateSkillGraph>>["data"];
+type SkillGraph = Awaited<ReturnType<typeof generateWholeSkillGraph>>["data"];
 type CourseOutline = Awaited<ReturnType<typeof generateCourseOutline>>["data"];
 type Specificity = Awaited<ReturnType<typeof classifyGoalSpecificity>>["data"];
 
@@ -430,7 +433,9 @@ describe(goalContentWorkflow, () => {
       taskResult(recordedSpecificity, "openai/gpt-6-luna"),
     );
 
-    vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(graph));
+    const { data: frame, ...frameResult } = taskResult({ courses: [], phases: [], sections: [] });
+    vi.mocked(generateSkillGraphFrame).mockResolvedValue({ ...frameResult, output: frame });
+    vi.mocked(generateWholeSkillGraph).mockResolvedValue(graphResult(graph));
     vi.mocked(generateCourseOutline).mockResolvedValue(taskResult(recordedOutline));
 
     vi.mocked(streamCourseOutline).mockImplementation(
@@ -718,7 +723,7 @@ describe(goalContentWorkflow, () => {
       }),
     );
 
-    expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBe("priority");
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].serviceTier).toBe("priority");
     const placementCalls = vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params);
     const placementSkills = placementCalls.reduce((total, call) => total + call.skills.length, 0);
 
@@ -790,7 +795,7 @@ describe(goalContentWorkflow, () => {
 
   it("reports a curriculum it couldn't build as a failed generation for the learner who asked", async () => {
     const { goal } = await newGoal();
-    vi.mocked(generateSkillGraph).mockRejectedValue(new Error("Provider unavailable"));
+    vi.mocked(generateWholeSkillGraph).mockRejectedValue(new Error("Provider unavailable"));
 
     await expect(goalContentWorkflow({ goalId: goal.id, platform: "ios" })).rejects.toThrow(
       "Provider unavailable",
@@ -888,7 +893,7 @@ describe(goalContentWorkflow, () => {
 
   it("clears a failed build when the learner starts the goal again", async () => {
     const { goal } = await newGoal();
-    vi.mocked(generateSkillGraph).mockRejectedValueOnce(new Error("Provider unavailable"));
+    vi.mocked(generateWholeSkillGraph).mockRejectedValueOnce(new Error("Provider unavailable"));
 
     await expect(goalContentWorkflow({ goalId: goal.id })).rejects.toThrow();
 
@@ -914,7 +919,7 @@ describe(goalContentWorkflow, () => {
 
     await goalContentWorkflow({ goalId: goal.id, platform: "web" });
 
-    const [params] = vi.mocked(generateSkillGraph).mock.calls[0] ?? [];
+    const [params] = vi.mocked(generateWholeSkillGraph).mock.calls[0] ?? [];
 
     expect(params?.goal).toBe(recordedSpecificity.generalGoal ?? goal.title);
     expect(JSON.stringify(params)).not.toMatch(/Joana|Pelotas|Santa Rita|Professora/u);
@@ -971,7 +976,7 @@ describe(goalContentWorkflow, () => {
       status: "missing",
     });
 
-    expect(generateSkillGraph).not.toHaveBeenCalled();
+    expect(generateWholeSkillGraph).not.toHaveBeenCalled();
     expect(getStreamedEvents().at(-1)).toMatchObject({ reason: "notFound", status: "error" });
   });
 
@@ -1016,7 +1021,7 @@ describe(goalContentWorkflow, () => {
     const [phase] = graph.phases;
     const [course] = graph.courses;
 
-    vi.mocked(generateSkillGraph).mockResolvedValue(
+    vi.mocked(generateWholeSkillGraph).mockResolvedValue(
       graphResult({
         ...graph,
         courses: course ? [course, { ...course, key: "later", title: `${course.title} 2` }] : [],
@@ -1117,7 +1122,7 @@ describe(goalContentWorkflow, () => {
     const { goal } = await newGoal({ details: { level: "basic", purpose: "overview" } });
     const [phase] = graph.phases;
 
-    vi.mocked(generateSkillGraph).mockResolvedValue(
+    vi.mocked(generateWholeSkillGraph).mockResolvedValue(
       graphResult({
         ...graph,
         phases: phase ? [phase, { ...phase, title: `${phase.title} 2` }] : [],
@@ -1316,7 +1321,7 @@ describe(goalContentWorkflow, () => {
     const [phase] = graph.phases;
     await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
 
-    vi.mocked(generateSkillGraph).mockResolvedValue(
+    vi.mocked(generateWholeSkillGraph).mockResolvedValue(
       graphResult({
         ...graph,
         phases: phase ? [phase, { ...phase, title: `${phase.title} 2` }] : [],
@@ -1385,7 +1390,7 @@ describe(goalContentWorkflow, () => {
         rebuild ? [] : bands.map((band) => band.lesson.id),
       );
 
-      expect(generateSkillGraph).not.toHaveBeenCalled();
+      expect(generateWholeSkillGraph).not.toHaveBeenCalled();
 
       const createdPlatforms = vi
         .mocked(trackServerEvent)
@@ -1409,7 +1414,7 @@ describe(goalContentWorkflow, () => {
       visibility: "public",
     });
 
-    vi.mocked(generateSkillGraph).mockResolvedValue(
+    vi.mocked(generateWholeSkillGraph).mockResolvedValue(
       graphResult({
         ...graph,
         courses: [
@@ -1498,7 +1503,7 @@ describe(goalContentWorkflow, () => {
       status: "prepared",
     });
 
-    expect(generateSkillGraph).not.toHaveBeenCalled();
+    expect(generateWholeSkillGraph).not.toHaveBeenCalled();
 
     expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
       expect.objectContaining({
@@ -1595,7 +1600,7 @@ describe(goalContentWorkflow, () => {
       status: "built",
     });
 
-    expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBe("priority");
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].serviceTier).toBe("priority");
 
     expect(start).toHaveBeenCalledWith(
       levelTestBankWorkflow,
@@ -1702,7 +1707,7 @@ describe(goalContentWorkflow, () => {
     });
 
     await goalContentWorkflow({ goalId: first.goal.id });
-    vi.mocked(generateSkillGraph).mockClear();
+    vi.mocked(generateWholeSkillGraph).mockClear();
 
     const later = await newGoal({
       ...answers,
@@ -1717,14 +1722,14 @@ describe(goalContentWorkflow, () => {
       prisma.plan.findUniqueOrThrow({ where: { goalId: later.goal.id } }),
     ]);
 
-    expect(generateSkillGraph).not.toHaveBeenCalled();
+    expect(generateWholeSkillGraph).not.toHaveBeenCalled();
     expect(planSkillIdsOf(laterPlan)).toStrictEqual(planSkillIdsOf(firstPlan));
   });
 
   it("plans two learners who answered the same at once from one graph", async () => {
     const answers = italianAnswers();
 
-    vi.mocked(generateSkillGraph)
+    vi.mocked(generateWholeSkillGraph)
       .mockResolvedValueOnce(graphResult(isolatedGraph()))
       .mockResolvedValueOnce(graphResult(isolatedGraph()));
 
@@ -1740,7 +1745,7 @@ describe(goalContentWorkflow, () => {
 
     const [first, second] = plans.map((plan) => planSkillIdsOf(plan));
 
-    expect(generateSkillGraph).toHaveBeenCalledTimes(2);
+    expect(generateWholeSkillGraph).toHaveBeenCalledTimes(2);
     expect(first?.length).toBeGreaterThan(0);
     expect(second).toStrictEqual(first);
     expect(new Set(goals.map((goal) => goal.primaryCourseId)).size).toBe(1);
@@ -1758,7 +1763,9 @@ describe(goalContentWorkflow, () => {
 
     await goalContentWorkflow({ goalId: goal.id });
 
-    expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].model).toBe("google/gemini-3.8-flash");
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].model).toBe(
+      "google/gemini-3.8-flash",
+    );
 
     await expect(
       prisma.goal.findUniqueOrThrow({ include: { primaryCourse: true }, where: { id: goal.id } }),
@@ -1790,7 +1797,7 @@ describe(goalContentWorkflow, () => {
     } as never);
 
     vi.mocked(sleep).mockImplementationOnce(async () => {
-      expect(generateSkillGraph).not.toHaveBeenCalled();
+      expect(generateWholeSkillGraph).not.toHaveBeenCalled();
 
       await prisma.goal.update({ data: { examBlueprintId: blueprint.id }, where: { id: goal.id } });
 
@@ -1802,13 +1809,13 @@ describe(goalContentWorkflow, () => {
 
     await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
 
-    expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0]).toMatchObject({
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0]).toMatchObject({
       context: expect.stringContaining("Slide 2: Vaccines"),
       examBlueprint: expect.objectContaining({ name: "Immunology board exam" }),
       goalKind: "exam",
     });
 
-    expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBe("priority");
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].serviceTier).toBe("priority");
 
     expect(checkCoverage).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
@@ -1848,7 +1855,7 @@ describe(goalContentWorkflow, () => {
 
     await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
 
-    expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0]).toMatchObject({
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0]).toMatchObject({
       examBlueprint: expect.objectContaining({ name: "Immunology board exam" }),
       serviceTier: "priority",
     });
@@ -1866,7 +1873,7 @@ describe(goalContentWorkflow, () => {
 
     const written = graphResult(graph);
 
-    vi.mocked(generateSkillGraph).mockResolvedValue({
+    vi.mocked(generateWholeSkillGraph).mockResolvedValue({
       ...written,
       provenance: { ...written.provenance, promptVersion: "older-instructions" },
     });
@@ -1874,7 +1881,7 @@ describe(goalContentWorkflow, () => {
     const earlier = await newGoal({ examBlueprintId: blueprint.id, kind: "exam" });
     await goalContentWorkflow({ goalId: earlier.goal.id });
 
-    expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0]).toMatchObject({
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0]).toMatchObject({
       context: undefined,
       goal: "Immunology board exam",
       ownLevel: undefined,
@@ -1896,7 +1903,7 @@ describe(goalContentWorkflow, () => {
       }),
     ]);
 
-    vi.mocked(generateSkillGraph).mockClear();
+    vi.mocked(generateWholeSkillGraph).mockClear();
     vi.mocked(generatePlacementItems).mockClear();
     vi.mocked(generateSearchTerms).mockClear();
 
@@ -1904,7 +1911,7 @@ describe(goalContentWorkflow, () => {
       status: "built",
     });
 
-    expect(generateSkillGraph).not.toHaveBeenCalled();
+    expect(generateWholeSkillGraph).not.toHaveBeenCalled();
     expect(generateSearchTerms).not.toHaveBeenCalled();
     expect(generatePlacementItems).not.toHaveBeenCalled();
 
@@ -1927,7 +1934,7 @@ describe(goalContentWorkflow, () => {
       prisma.plan.findUniqueOrThrow({ where: { goalId: otherLevel.goal.id } }),
     ]);
 
-    expect(generateSkillGraph).not.toHaveBeenCalled();
+    expect(generateWholeSkillGraph).not.toHaveBeenCalled();
     expect(planSkillIdsOf(otherLevelPlan)).toStrictEqual(planSkillIdsOf(earlierPlan));
     expect(otherLevelGoal.primaryCourseId).toBe(earlierGoal.primaryCourseId);
   });
@@ -1941,7 +1948,7 @@ describe(goalContentWorkflow, () => {
     const order: string[] = [];
     const outlinesBefore: number[] = [];
 
-    vi.mocked(generateSkillGraph).mockImplementation(async () => {
+    vi.mocked(generateWholeSkillGraph).mockImplementation(async () => {
       order.push("graph");
       return graphResult(graph);
     });
@@ -1960,7 +1967,7 @@ describe(goalContentWorkflow, () => {
 
     expect(order).toStrictEqual(["graph", "research ended"]);
 
-    const [params] = vi.mocked(generateSkillGraph).mock.calls[0] ?? [];
+    const [params] = vi.mocked(generateWholeSkillGraph).mock.calls[0] ?? [];
 
     expect(params).toMatchObject({
       context: undefined,
@@ -2047,7 +2054,7 @@ describe(goalContentWorkflow, () => {
     const missed = `Describe how antibodies are built ${suffix}`;
     const twin = `Explain how antibodies are built ${suffix}`;
 
-    vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(weighted));
+    vi.mocked(generateWholeSkillGraph).mockResolvedValue(graphResult(weighted));
 
     vi.mocked(checkCoverage).mockResolvedValue(
       taskResult(
@@ -2114,7 +2121,7 @@ describe(goalContentWorkflow, () => {
 
     await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
 
-    expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].examBlueprint).toBeUndefined();
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].examBlueprint).toBeUndefined();
 
     expect(checkCoverage).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
@@ -2237,7 +2244,7 @@ describe(goalContentWorkflow, () => {
 
     const missed = `Describe how antibodies are built ${crypto.randomUUID().slice(0, 8)}`;
 
-    vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(graph));
+    vi.mocked(generateWholeSkillGraph).mockResolvedValue(graphResult(graph));
 
     vi.mocked(checkCoverage).mockResolvedValue(
       taskResult(
@@ -2386,7 +2393,7 @@ describe(goalContentWorkflow, () => {
     const waits: (Date | null)[] = [];
     const landedWait = new Date(Date.now() + 60_000);
 
-    vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(graph));
+    vi.mocked(generateWholeSkillGraph).mockResolvedValue(graphResult(graph));
 
     vi.mocked(checkCoverage).mockImplementation(async () => {
       const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
@@ -2612,7 +2619,7 @@ describe(goalContentWorkflow, () => {
       structure: examStructure(["Antibody structure", "Vaccines"]),
     });
 
-    vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(graph));
+    vi.mocked(generateWholeSkillGraph).mockResolvedValue(graphResult(graph));
     await goalContentWorkflow({ goalId: goal.id });
 
     const missed = `Describe how antibodies are built ${crypto.randomUUID().slice(0, 8)}`;
@@ -2700,7 +2707,7 @@ describe(goalContentWorkflow, () => {
       structure: examStructure(["Vaccines"]),
     });
 
-    vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(graph));
+    vi.mocked(generateWholeSkillGraph).mockResolvedValue(graphResult(graph));
 
     vi.mocked(checkCoverage).mockResolvedValue(
       taskResult({ examWeights: [], missing: [], placements: [] }, "google/gemini-3.8-flash"),
@@ -2740,7 +2747,7 @@ describe(goalContentWorkflow, () => {
     const { goal } = await newGoal({ examBlueprintId: blueprint.id, kind: "exam" });
     const order: string[] = [];
 
-    vi.mocked(generateSkillGraph).mockImplementation(async () => {
+    vi.mocked(generateWholeSkillGraph).mockImplementation(async () => {
       order.push("graph");
       return graphResult(withTopic({ graph, topic: "Vaccines" }));
     });
@@ -2762,9 +2769,9 @@ describe(goalContentWorkflow, () => {
 
     expect(order).toStrictEqual(["graph", "research ended"]);
 
-    expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].examBlueprint?.subjects).toMatchObject([
-      { name: "Immunology", topics: ["Vaccines"], weight: 1 },
-    ]);
+    expect(
+      vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].examBlueprint?.subjects,
+    ).toMatchObject([{ name: "Immunology", topics: ["Vaccines"], weight: 1 }]);
 
     expect(getStreamedEvents().some((event) => event.step === "readExamNotice")).toBe(false);
 
@@ -2788,7 +2795,7 @@ describe(goalContentWorkflow, () => {
 
     vi.mocked(sleep).mockImplementationOnce(async () => {
       expect(classifyGoalSpecificity).toHaveBeenCalledOnce();
-      expect(generateSkillGraph).not.toHaveBeenCalled();
+      expect(generateWholeSkillGraph).not.toHaveBeenCalled();
 
       await prisma.goal.update({
         data: {
@@ -2811,7 +2818,7 @@ describe(goalContentWorkflow, () => {
     expect(vi.mocked(sleep)).toHaveBeenCalledWith("3s");
     expect(classifyGoalSpecificity).toHaveBeenCalledOnce();
 
-    expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0]).toMatchObject({
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0]).toMatchObject({
       ownLevel: "basic",
       purpose: "deep",
     });
@@ -2853,7 +2860,7 @@ describe(goalContentWorkflow, () => {
       status: "ready",
     });
 
-    expect(generateSkillGraph).not.toHaveBeenCalled();
+    expect(generateWholeSkillGraph).not.toHaveBeenCalled();
     expect(generateWarmUpCards).not.toHaveBeenCalled();
 
     await expect(
@@ -2925,7 +2932,7 @@ describe(goalContentWorkflow, () => {
       title: "Immunology course syllabus",
     });
 
-    vi.mocked(generateSkillGraph).mockImplementation(async () => {
+    vi.mocked(generateWholeSkillGraph).mockImplementation(async () => {
       events.push("graph");
       markGraphWritten(true);
       return graphResult(graph);
@@ -2991,7 +2998,7 @@ describe(goalContentWorkflow, () => {
 
     await prisma.goal.update({ data: { examBlueprintId: blueprint.id }, where: { id: goal.id } });
 
-    vi.mocked(generateSkillGraph).mockClear();
+    vi.mocked(generateWholeSkillGraph).mockClear();
     vi.mocked(generateWarmUpCards).mockClear();
     vi.mocked(generateItems).mockClear();
     vi.mocked(generatePlacementItems).mockClear();
@@ -3003,7 +3010,7 @@ describe(goalContentWorkflow, () => {
       status: "built",
     });
 
-    expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0]).toMatchObject({
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0]).toMatchObject({
       examBlueprint: expect.objectContaining({ name: "Immunology board exam" }),
     });
 
@@ -3151,6 +3158,6 @@ describe(goalContentWorkflow, () => {
       status: "ready",
     });
 
-    expect(generateSkillGraph).not.toHaveBeenCalled();
+    expect(generateWholeSkillGraph).not.toHaveBeenCalled();
   });
 });

@@ -2,6 +2,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { toPlainLine } from "@zoonk/utils/text-repairs";
 import { type ExamOutline, canBuildOn, isWrittenTestSubject, placeInExam } from "../exam-outline";
 import { COURSE_LEVELS, type CourseLevel } from "./course-levels";
+import { EmptySkillGraphError } from "./empty-skill-graph-error";
 import { toExamWeight } from "./exam-weight";
 import { fitLessonBudget } from "./lesson-budget";
 import { orderSkillGraph } from "./order-skill-graph";
@@ -277,13 +278,6 @@ function dropChoicePrerequisites({
       canBuildOn({ area: skill.area, outline, prerequisiteArea: areas.get(key) ?? "" }),
     ),
   }));
-}
-
-export class EmptySkillGraphError extends Error {
-  constructor() {
-    super("A skill graph needs at least one course, one phase and one skill.");
-    this.name = "EmptySkillGraphError";
-  }
 }
 
 export function normalizeSkillGraph(

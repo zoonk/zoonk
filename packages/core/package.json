@@ -297,6 +297,8 @@
     "./library/curriculum/save-goal-skills": "./src/library/curriculum/save-goal-skills.ts",
     "./library/curriculum/save-lesson-specs": "./src/library/curriculum/save-lesson-specs.ts",
     "./library/curriculum/save-outline-chapter": "./src/library/curriculum/save-outline-chapter.ts",
+    "./library/curriculum/generate-goal-skill-graph": "./src/library/curriculum/generate-goal-skill-graph.ts",
+    "./library/curriculum/write-skill-graph": "./src/library/curriculum/write-skill-graph.ts",
     "./library/curriculum/scope": "./src/library/curriculum/curriculum-scope.ts",
     "./library/curriculum/shared-graph-prompt": "./src/library/curriculum/shared-graph-prompt.ts",
     "./library/curriculum/skill-extensions": "./src/library/curriculum/skill-extensions.ts",
