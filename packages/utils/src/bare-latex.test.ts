@@ -40,6 +40,8 @@ describe(findBareLatex, () => {
       "In Python, `2**10` and `x ^ y` aren't powers, and neither is `10^{3}`.",
       String.raw`It costs R$ 80, \$5 or $10, keeps user_id and the file C:\Users\ana\notes.txt.`,
       "Smile ^_^ and rate it 9/10 * 2.",
+      'In regular expressions, ^ matches the start of a line; the caret (^) and "^" stay text.',
+      "Na expressão regular, ^ marca o início da linha.",
     ];
 
     expect(texts.flatMap((text) => find(text))).toStrictEqual([]);
@@ -142,6 +144,14 @@ describe(wrapBareLatex, () => {
     ]);
 
     expect(wrap(priced)).toBe("A $5 kit\nwith $10^{3}$ cells.");
+
+    const realPrice = "A $5 kit (R$ \n25) has 10^3 cells.";
+
+    expect(wrapBareLatex({ layout: "inline", text: realPrice })).toBe(realPrice);
+
+    expect(wrapBareLatex({ layout: "inline", text: "The gap is\n  10^{-5} m." })).toBe(
+      "The gap is $10^{-5}$ m.",
+    );
   });
 
   it("keeps a table cell's escaped pipe inside its code", () => {

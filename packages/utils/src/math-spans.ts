@@ -131,6 +131,11 @@ function hideCellMath(cell: string): string {
   );
 }
 
+/** The player shows an inline field as one line, whatever its line breaks. */
+export function toOneLine(text: string): string {
+  return text.replaceAll(/\s*\n\s*/gu, " ");
+}
+
 /** Spaces of the same length keep positions pointing into the text. */
 export function hideMath(text: string): string {
   return splitLinesAndCells(text)

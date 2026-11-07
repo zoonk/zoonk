@@ -1,6 +1,7 @@
+import { toOneLine } from "@zoonk/utils/math-spans";
 import { type Formula } from "./math-key";
 import { type RichInlineSegment } from "./rich-inline-segments";
-import { parseRichBlocks, parseRichInline, toOneLine } from "./rich-text-parser";
+import { parseRichBlocks, parseRichInline } from "./rich-text-parser";
 
 function toFormulas(segments: readonly RichInlineSegment[]): Formula[] {
   return segments.flatMap((segment) =>

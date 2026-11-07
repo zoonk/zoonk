@@ -28,10 +28,6 @@ function parseMarkup(text: string): RichInlineSegment[] {
   );
 }
 
-export function toOneLine(text: string): string {
-  return text.replaceAll(/\s*\n\s*/gu, " ");
-}
-
 /**
  * Math first, so emphasis markers never touch LaTeX, then inline code, so its punctuation stays
  * literal.

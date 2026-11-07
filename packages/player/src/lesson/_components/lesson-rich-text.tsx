@@ -1,7 +1,8 @@
 import { useAppLocale } from "@zoonk/learn/locale";
 import { type RichInlineSegment, RichInlineSegments } from "@zoonk/learn/rich-text/inline";
-import { markRichInline, parseRichInline, toOneLine } from "@zoonk/learn/rich-text/parser";
+import { markRichInline, parseRichInline } from "@zoonk/learn/rich-text/parser";
 import { typesetNumbers } from "@zoonk/learn/rich-text/typography";
+import { toOneLine } from "@zoonk/utils/math-spans";
 
 function typeset({
   locale,
