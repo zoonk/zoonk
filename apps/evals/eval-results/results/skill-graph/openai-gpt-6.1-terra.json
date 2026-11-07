@@ -3152,6 +3152,160 @@
           "language": "pt"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All supplied topic headings have corresponding skills, and all three disciplines are represented. However, the listed skill weights total 78 for budgeting, 13 for financial law, and 21 for public accounting, excluding the unsupported strategy skill. This does not preserve the blueprint's 12:4:4 allocation and especially underrepresents financial law. The exam-weight mismatch triggers the cap of 8.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Most explicit dependencies are sensible: the three planning instruments precede their integration, expenditure execution precedes outstanding obligations, and patrimonial elements precede patrimonial variations. Phase titles appropriately describe stages. However, phase 1's milestone claims integration of planning instruments before the dedicated integration skill in phase 2. The budget course also fails the explicitly required canonical Library title.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Most topics are divided into usable skills with separate allocations for concepts and applications. However, 'Interpretar fluxos de caixa e patrimônio líquido' combines interpretation of the cash-flow statement and the statement of changes in equity. These have different structures and interpretive tasks and should be independently plannable rather than bundled into one eight-lesson skill. This is one clearly mis-sized skill, limiting the score to 8.",
+          "score": 8,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The 'Estratégia de prova' area and its four-lesson time-management skill are not in the supplied blueprint, and no separately scored strategy ability is identified. The explicit cap for an area the notice does not have is 6. Most remaining skills are substantive syllabus content or relevant foundations.",
+          "score": 6,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The result uses Brazilian Portuguese and largely targets the supplied examination subjects through classification, interpretation, and application skills. Nevertheless, it fails the exact shared-course naming requirement and includes an untested time-management objective. It remains an exam-preparation graph rather than serving a different goal, but these are concrete fit weaknesses.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The graph emphasizes interpreting legal rules, distinguishing classifications, relating planning instruments, and analyzing financial statements rather than rote memorization. An exam graph does not need an AI-tool skill, and its manual classification and analysis tasks are appropriate. More explicit error-detection and justification outcomes would strengthen the existing analytical emphasis.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "13 of 16 parts passed. No course titled \"Administração Financeira e Orçamentária\". Unexpected course titled \"Orçamento Público\". Skills in \"Orçamento Público\" must be taught in \"Administração Financeira e Orçamentária\".",
+          "score": 8.3125,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 7950,
+          "outputTokens": 1591,
+          "reasoningTokens": 736
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The budget course is titled 'Orçamento Público' instead of the explicitly required 'Administração Financeira e Orçamentária'. The result also introduces an untested 'Estratégia de prova' area and time-management skill. Budgeting, financial law, and public accounting otherwise remain separate, and the original subject names are preserved for their areas.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The skill weights do not preserve the blueprint's 60%/20%/20% subject allocation. Phase 1 promises the ability to relate the planning instruments, but the skill that teaches that relationship is in phase 2. The combined cash-flow and changes-in-equity skill bundles two distinct financial statements into one planning unit.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the distinction between financial-law application and operational budgeting more explicit in descriptions of shared statutory material. Add concrete case-based success criteria, such as identifying an unlawful credit opening or explaining a discrepancy between budgetary and patrimonial results.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n    - Write in Brazilian Portuguese.\n    - The public-budget discipline in the AL-CE notices is known as Orçamento Público, Administração Financeira e Orçamentária and AFO. Its shared course is titled exactly Administração Financeira e Orçamentária, whichever name this notice uses. Never add a second budget course under an alias.\n    - Direito Financeiro and Contabilidade Pública are different disciplines: each keeps its own course and skills. Their relationship to budgeting does not make them aliases of AFO.\n    - Every notice topic is taught in its own discipline's course. Areas retain the notice's exact subject names.\n  ",
+        "expected": {
+          "courses": [
+            [
+              "Administração Financeira e Orçamentária"
+            ],
+            [
+              "Direito Financeiro"
+            ],
+            [
+              "Contabilidade Pública"
+            ]
+          ],
+          "coursesByArea": {
+            "Contabilidade Pública": [
+              "Contabilidade Pública"
+            ],
+            "Direito Financeiro": [
+              "Direito Financeiro"
+            ],
+            "Orçamento Público": [
+              "Administração Financeira e Orçamentária"
+            ]
+          },
+          "noCourses": [
+            "Orçamento Público",
+            "AFO"
+          ]
+        },
+        "id": "pt-alce-budget-catalog-1-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Disciplinas de concurso público",
+            "notes": [],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Orçamento Público",
+                "questions": 12,
+                "topics": [
+                  "Relacionar PPA, LDO e LOA",
+                  "Analisar ciclo orçamentário e créditos adicionais",
+                  "Classificar receitas e despesas orçamentárias",
+                  "Analisar execução da receita e da despesa"
+                ],
+                "weight": null
+              },
+              {
+                "group": null,
+                "name": "Direito Financeiro",
+                "questions": 4,
+                "topics": [
+                  "Competência legislativa em direito financeiro e normas gerais da Lei 4.320/1964"
+                ],
+                "weight": null
+              },
+              {
+                "group": null,
+                "name": "Contabilidade Pública",
+                "questions": 4,
+                "topics": [
+                  "Variações patrimoniais e demonstrações contábeis aplicadas ao setor público"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Preparação para concurso público",
+          "goalKind": "exam",
+          "language": "pt"
+        }
+      }
     }
   ],
   "taskId": "skill-graph"
