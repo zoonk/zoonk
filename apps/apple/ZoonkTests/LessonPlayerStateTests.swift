@@ -635,6 +635,71 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.completion?.testedOut, true)
   }
 
+  func testIKnowThisDuringARefusedFinishBringsBackOnlyTheChecksItMissed() throws {
+    var finished = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    finished.continueLesson()
+    finished.continueLesson()
+    try answerCheck(&finished, optionId: "right")
+    finished.continueLesson()
+    finished.continueLesson()
+    try answerCheck(&finished, optionId: "right")
+    finished.continueLesson()
+    finished.continueLesson()
+
+    var quick = finished
+    quick.resync(answers: [runAnswer("second", isCorrect: false)])
+    quick.goBack()
+    quick.knowThis()
+
+    var missedSecond = quick
+    try answerCheck(&missedSecond, optionId: "right")
+    missedSecond.continueLesson()
+    try answerCheck(&missedSecond, optionId: "wrong")
+    missedSecond.continueLesson()
+    missedSecond.continueLesson()
+
+    XCTAssertEqual(missedSecond.currentStep?.id, "second", "a check the quick check missed")
+    XCTAssertEqual(missedSecond.phase, .playing)
+
+    var missedFirst = quick
+    try answerCheck(&missedFirst, optionId: "wrong")
+    missedFirst.continueLesson()
+    missedFirst.continueLesson()
+
+    XCTAssertEqual(missedFirst.currentStep?.id, "second", "the saved miss's retry, never asked")
+    try answerCheck(&missedFirst, optionId: "right")
+    missedFirst.continueLesson()
+    XCTAssertEqual(missedFirst.currentStep?.id, "check")
+    XCTAssertEqual(missedFirst.phase, .playing)
+    XCTAssertNil(missedFirst.notice)
+  }
+
+  func testASelfCorrectionLeftDuringARefusedFinishComesBackWithItsNotice() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson",
+      steps: [try step(explanation), try step(fillBlank), try step(check(id: "check"))])
+    state.continueLesson()
+    let blank = try XCTUnwrap(state.currentStep)
+    let right = LessonAnswer.fillBlank(userAnswers: ["suis"])
+    state.resolve(
+      blank.id, result: LessonStepResult(try XCTUnwrap(LessonGrading.grade(right, step: blank))))
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+
+    state.resync(answers: [runAnswer("check", isCorrect: true)])
+    let built = LessonAnswer.fillBlank(userAnswers: ["es"])
+    state.select(built, for: blank.id)
+    state.resolve(
+      blank.id, result: LessonStepResult(try XCTUnwrap(LessonGrading.grade(built, step: blank))))
+    state.goBack()
+    state.continueLesson()
+
+    XCTAssertEqual(state.currentStep?.id, blank.id)
+    XCTAssertEqual(state.notice, .selfCorrect)
+    XCTAssertEqual(state.currentAnswer, built)
+  }
+
   func testARefusedFinishStartsOverOnlyTheScreensItIsMissing() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
     state.continueLesson()

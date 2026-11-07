@@ -831,15 +831,17 @@ struct LessonPlayerState: Equatable, Sendable {
   }
 
   /// After a finish the server refused, Continue skips the screens it already has: it goes to the
-  /// next one it's missing or to a question that came back.
+  /// next one still to answer or to a question that came back.
   private var nextPosition: Int? {
-    guard let recovery, quickCheck == nil else {
+    guard recovery != nil, quickCheck == nil else {
       return position + 1
     }
 
     return queue.indices.first { index in
-      index > position
-        && (recovery[queue[index]] != nil || queue.firstIndex(of: queue[index]) != index)
+      let id = queue[index]
+      return index > position
+        && ((steps[id]?.isAnswerable == true && results[id] == nil)
+          || queue.firstIndex(of: id) != index)
     }
   }
 
@@ -851,7 +853,7 @@ struct LessonPlayerState: Equatable, Sendable {
       return
     }
 
-    let answered = queue.filter { results[$0] != nil }
+    let answered = queue.prefix(position + 1).filter { results[$0] != nil }
     let passed = Set(answered.filter { results[$0]?.isCorrect == true })
     let missed = answered.filter { !passed.contains($0) }
     let rest = check.returnQueue.enumerated().filter { index, id in
