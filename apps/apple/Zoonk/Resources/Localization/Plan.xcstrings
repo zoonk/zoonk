@@ -12588,6 +12588,244 @@
         }
       }
     },
+    "Also in %@" : {
+      "comment" : "Marks a subject on one exam's plan that the learner's other exams, named here, also test",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auch bei %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "También en %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aussi au programme de %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anche in %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@でも出題"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@에도 포함"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Także na egzaminach: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Também em %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ile de ortak"
+          }
+        }
+      }
+    },
+    "Also in %lld exams" : {
+      "comment" : "Marks a subject on one exam's plan that the learner's other exams also test",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Also in %lld exam"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Also in %lld exams"
+                }
+              }
+            }
+          }
+        },
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Auch in %lld Prüfung"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Auch in %lld Prüfungen"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "También en %lld examen"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "También en %lld exámenes"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Aussi au programme de %lld examen"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Aussi au programme de %lld examens"
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Anche in %lld altro esame"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Anche in %lld altri esami"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "ほかの%lld試験でも出題"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "다른 시험 %lld개에도 포함"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Także na %lld egzaminie"
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Także na %lld egzaminach"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Także na %lld egzaminach"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Także na %lld egzaminach"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Também em %lld prova"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Também em %lld provas"
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld sınavla da ortak"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Answer them and we'll plan every day until you reach your goal." : {
       "comment" : "Why the Plan waits for the goal's setup questions",
       "localizations" : {
@@ -25027,6 +25265,65 @@
         }
       }
     },
+    "Practice stays in each exam's style." : {
+      "comment" : "On one exam's plan, after saying which topics it shares with other exams",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du übst weiter im Stil der jeweiligen Prüfung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La práctica mantiene el estilo de cada examen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’entraînement respecte le format de chaque examen."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gli esercizi seguono lo stile di ogni esame."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "練習はそれぞれの試験の形式で行います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연습은 각 시험의 형식에 맞춰 진행돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ćwiczenia są dopasowane do formy danego egzaminu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A prática segue o estilo de cada prova."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alıştırmalar her sınavın tarzına göre hazırlanır."
+          }
+        }
+      }
+    },
     "Practice this chapter" : {
       "comment" : "Adds practice on the chapter",
       "localizations" : {
@@ -29633,6 +29930,309 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Materyalindeki konular"
+          }
+        }
+      }
+    },
+    "Topics shared with %@ count for both exams, so you study them once." : {
+      "comment" : "On one exam's plan. The name is the learner's other exam that tests some of the same topics",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Themen, die auch bei %@ geprüft werden, zählen für beide Prüfungen. Du lernst sie also nur einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los temas en común con %@ cuentan para ambos exámenes, así que solo los estudias una vez."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les sujets aussi au programme de %@ comptent pour les deux examens : tu ne les étudies qu’une fois."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gli argomenti in comune con %@ valgono per entrambi gli esami, così li studi una sola volta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@と共通するトピックは、一度学べばそれぞれの試験の学習状況に反映されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@에서도 다루는 주제는 한 번만 공부해도 해당 주제가 포함된 모든 시험에 반영돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drugi egzamin: %@. Wspólnych tematów uczysz się tylko raz na oba egzaminy."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os tópicos em comum com %@ contam para as duas provas, então você estuda cada um só uma vez."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ile ortak konulara bir kez çalışman her iki sınav için de geçerli olur."
+          }
+        }
+      }
+    },
+    "Topics shared with %@ count for every exam that has them, so you study them once." : {
+      "comment" : "On one exam's plan. The names are the learner's other exams that test some of the same topics",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Themen, die auch bei %@ geprüft werden, zählen für alle Prüfungen, in denen sie vorkommen. Du lernst sie also nur einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los temas en común con %@ cuentan para todos los exámenes que los incluyen, así que solo los estudias una vez."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les sujets aussi au programme de %@ comptent pour chaque examen concerné : tu ne les étudies qu’une fois."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gli argomenti in comune con %@ valgono per tutti gli esami che li prevedono, così li studi una sola volta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@と共通するトピックは、一度学べばそれぞれの試験の学習状況に反映されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@에서도 다루는 주제는 한 번만 공부해도 해당 주제가 포함된 모든 시험에 반영돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inne egzaminy: %@. Wspólnych tematów uczysz się tylko raz na wszystkie egzaminy, które je obejmują."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os tópicos em comum com %@ contam para todas as provas em que caem, então você estuda cada um só uma vez."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ile ortak konulara bir kez çalışman, bu konuların yer aldığı tüm sınavlar için geçerli olur."
+          }
+        }
+      }
+    },
+    "Topics shared with your %lld other exams count for every exam that has them, so you study them once." : {
+      "comment" : "On one exam's plan, when the learner has several other exams that test some of the same topics",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Topics shared with your %lld other exam count for both exams, so you study them once."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Topics shared with your %lld other exams count for every exam that has them, so you study them once."
+                }
+              }
+            }
+          }
+        },
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Themen, die auch in deiner %lld anderen Prüfung vorkommen, zählen für beide Prüfungen. Du lernst sie also nur einmal."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Themen, die auch in deinen %lld anderen Prüfungen vorkommen, zählen für alle Prüfungen, in denen sie geprüft werden. Du lernst sie also nur einmal."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Los temas en común con tu %lld examen adicional cuentan para ambos exámenes, así que solo los estudias una vez."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Los temas en común con tus %lld exámenes adicionales cuentan para todos los exámenes que los incluyen, así que solo los estudias una vez."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Les sujets aussi au programme de %lld autre examen comptent pour les deux examens : tu ne les étudies qu’une fois."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Les sujets aussi au programme de %lld autres examens comptent pour chaque examen concerné : tu ne les étudies qu’une fois."
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Gli argomenti in comune con %lld altro esame valgono per entrambi gli esami, così li studi una sola volta."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Gli argomenti in comune con %lld altri esami valgono per tutti gli esami che li prevedono, così li studi una sola volta."
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "ほかの%lld試験と共通するトピックは、一度学べばそれぞれの試験の学習状況に反映されます。"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "다른 시험 %lld개와 겹치는 주제는 한 번만 공부해도 해당 주제가 포함된 모든 시험에 반영돼요."
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tematów wspólnych z twoim %lld innym egzaminem uczysz się tylko raz na oba egzaminy."
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tematów wspólnych z twoimi %lld innymi egzaminami uczysz się tylko raz na wszystkie egzaminy, które je obejmują."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tematów wspólnych z twoimi %lld innymi egzaminami uczysz się tylko raz na wszystkie egzaminy, które je obejmują."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tematów wspólnych z twoimi %lld innymi egzaminami uczysz się tylko raz na wszystkie egzaminy, które je obejmują."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Os tópicos em comum com %lld outra prova sua contam para as duas provas, então você estuda cada um só uma vez."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Os tópicos em comum com %lld outras provas suas contam para todas as provas em que caem, então você estuda cada um só uma vez."
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Diğer %lld sınavınla ortak konulara bir kez çalışman her iki sınav için de geçerli olur."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Diğer %lld sınavınla ortak konulara bir kez çalışman, bu konuların yer aldığı tüm sınavlar için geçerli olur."
+                }
+              }
+            }
           }
         }
       }

@@ -122,6 +122,8 @@ private struct SubjectContent: View {
 
   private var isExam: Bool { goal.kind == .exam }
 
+  private var sharedExams: [GoalSyllabus.SharedExam] { syllabus.sharedExams(of: subject) }
+
   /// Main's subject facts: its topics and chapters, and how much is done while it's taught in
   /// lessons.
   private var facts: [String] {
@@ -172,10 +174,16 @@ private struct SubjectContent: View {
           .accessibilityAddTraits(.isHeader)
           .heroTitle()
 
-        if !facts.isEmpty {
-          Text(verbatim: facts.joinedFacts())
-            .typeStyle(.data)
-            .foregroundStyle(.mutedForeground)
+        if !facts.isEmpty || !sharedExams.isEmpty {
+          VStack(alignment: .leading, spacing: 4) {
+            if !facts.isEmpty {
+              Text(verbatim: facts.joinedFacts())
+                .typeStyle(.data)
+                .foregroundStyle(.mutedForeground)
+            }
+
+            AlsoInExams(exams: sharedExams)
+          }
         }
 
         if let reason = subject.notPlannedReason, !reason.isEmpty {
