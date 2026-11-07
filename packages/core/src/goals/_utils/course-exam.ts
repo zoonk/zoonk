@@ -49,20 +49,6 @@ async function findQuestionBankExam(course: Pick<Course, "format" | "id" | "lang
 
 /** Linked by its curriculum or question bank, never by its title. */
 export async function loadCourseExam(courseId: string) {
-  const stored = await prisma.examSkillGraph.findMany({
-    include: { examBlueprint: true },
-    take: 2,
-    where: { examBlueprint: { ownerId: null, visibility: "public" }, primaryCourseId: courseId },
-  });
-
-  const [primary] = stored;
-
-  if (stored.length > 0) {
-    return stored.length === 1 && primary
-      ? { blueprint: primary.examBlueprint, graph: parsePlanGraph(primary.graph) }
-      : null;
-  }
-
   const course = await prisma.course.findFirst({
     omit: { landingPage: true },
     where: { id: courseId, visibility: "public" },
@@ -72,19 +58,25 @@ export async function loadCourseExam(courseId: string) {
     return null;
   }
 
-  const named = await prisma.examSkillGraph.findMany({
+  const linked = await prisma.examSkillGraph.findMany({
     include: { examBlueprint: true },
     take: 2,
     where: {
-      examBlueprint: { language: course.language, ownerId: null, visibility: "public" },
-      graph: { array_contains: [{ courseIds: [courseId] }], path: ["skills"] },
+      OR: [
+        { primaryCourseId: courseId },
+        {
+          examBlueprint: { language: course.language },
+          graph: { array_contains: [{ courseIds: [courseId] }], path: ["skills"] },
+        },
+      ],
+      examBlueprint: { ownerId: null, visibility: "public" },
     },
   });
 
-  const [graph] = named;
+  const [graph] = linked;
 
-  if (named.length > 0) {
-    return named.length === 1 && graph
+  if (linked.length > 0) {
+    return linked.length === 1 && graph
       ? { blueprint: graph.examBlueprint, graph: parsePlanGraph(graph.graph) }
       : null;
   }
