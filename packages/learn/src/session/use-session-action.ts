@@ -43,5 +43,5 @@ export function useSessionAction({
 
   useEnterKey(run, { enabled: enterKey && !switching });
 
-  return { failed, isPending: isPending || switching, run };
+  return { failed, isPending, run };
 }
