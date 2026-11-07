@@ -18,9 +18,9 @@ import { getNextStudyDay, readDailyLimitReachedToday } from "./_utils/challenge-
 import { canMoveToMonday, loadChallengeMoveRules, loadMoveEffect } from "./_utils/challenge-move";
 import { readBossOffer } from "./_utils/challenge-offer";
 import { needsPlus } from "./_utils/challenge-plus";
+import { readChallengeTiming } from "./_utils/challenge-readiness";
 import { loadChallengeSize } from "./_utils/challenge-size";
 import { getChallengeStatus } from "./_utils/challenge-status";
-import { readChallengeTiming } from "./_utils/challenge-teaching";
 import { loadChallengeTopics } from "./_utils/challenge-topics";
 import { getAskablePassMark } from "./_utils/checkpoint-outcome";
 import { loadResultReinforcement } from "./_utils/checkpoint-reinforcement";

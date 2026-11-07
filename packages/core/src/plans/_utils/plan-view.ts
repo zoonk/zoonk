@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { readChallengeTeaching } from "../../checkpoints/_utils/challenge-teaching";
+import { readChallengeReadiness } from "../../checkpoints/_utils/challenge-readiness";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { getAllowance } from "../../entitlements/get-allowance";
 import { loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
@@ -190,7 +190,7 @@ export async function buildPlanView({
     todayBlocks,
     partAreas,
     taughtSkillIds,
-    teaching,
+    readiness,
   ] = await Promise.all([
     loadPlanChangeViews({
       context: savedContext,
@@ -216,7 +216,7 @@ export async function buildPlanView({
     readTodayLearnBlocks(goal.userId, goal.id),
     loadGraphPartAreas({ examBlueprintId: goal.examBlueprintId, graph: state.graph }),
     readTaughtStandInSkills(goal.userId, goal.id),
-    readChallengeTeaching({ goal, items, state, today: context.today }),
+    readChallengeReadiness({ goal, items, state, today: context.today }),
   ]);
 
   const skillAreas = getSkillAreas({
@@ -284,10 +284,10 @@ export async function buildPlanView({
       estimateMinutes:
         summary?.selected.totalMinutes ?? (context.plan.estimateHours ?? 0) * MINUTES_PER_HOUR,
       phaseChallengesRequired,
+      readiness,
       shortPlan,
       skillAreas,
       taughtSkillIds,
-      teaching,
       todayBlocks,
     }),
     planId: context.plan.id,

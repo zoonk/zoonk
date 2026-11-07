@@ -984,6 +984,7 @@ describe("language conversations", () => {
       itemSkillIds: new Map(),
       items: planItems,
       listeningSkillIds: new Set(),
+      movedEvents: [],
       phases: [],
       skills: [],
       today: new Date(),

@@ -40,12 +40,14 @@ function plan({
   graphSkills,
   items,
   listeningSkillIds = new Set(),
+  movedOnto = [],
   phaseEnds = [],
 }: {
   exam?: boolean;
   graphSkills: { lessons?: number; phase: number; skillId: string }[];
   items: ReturnType<typeof item>[];
   listeningSkillIds?: ReadonlySet<string>;
+  movedOnto?: number[];
   phaseEnds?: number[];
 }): ChallengePlan<Item> {
   return {
@@ -54,6 +56,7 @@ function plan({
     itemSkillIds: new Map(items.map((entry) => [entry.id, entry.skillId ? [entry.skillId] : []])),
     items: items.map((entry, position) => ({ ...entry, position })),
     listeningSkillIds,
+    movedEvents: movedOnto.map((onto) => ({ to: day(onto).toISOString().slice(0, 10) })),
     phases: phaseEnds.map((end) => ({ endDate: day(end).toISOString().slice(0, 10) })),
     skills: graphSkills.map((skill) => ({ id: skill.skillId })),
   };
@@ -158,6 +161,28 @@ describe("a due phase challenge", () => {
       });
 
       expect(offered(exam, 3)).toStrictEqual(offers);
+    },
+  );
+
+  it.each([
+    { offers: [], on: 3 },
+    { offers: ["boss-0"], on: 5 },
+  ])(
+    "stays off a day the learner moved a mock onto unless it was dated there (on day $on)",
+    ({ on, offers }) => {
+      const exam = plan({
+        exam: true,
+        graphSkills,
+        items: [
+          item({ id: "a", on: 0, phase: 0, skillId: "a", status: "done" }),
+          item({ id: "boss-0", kind: "boss", on, phase: 0 }),
+          item({ id: "mock", kind: "mock", on: 5, phase: 0 }),
+        ],
+        movedOnto: [5],
+        phaseEnds: [30],
+      });
+
+      expect(offered(exam, 5)).toStrictEqual(offers);
     },
   );
 

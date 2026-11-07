@@ -14,7 +14,7 @@ import {
   type PlacementQuickFormat,
   getPlacementQuickFormat,
 } from "../learner/placement/placement-quick-format";
-import { parsePlanGraph, parsePlanPhases } from "../plans/planner/plan-state";
+import { parsePlanGraph, parsePlanPhases, parsePlanSettings } from "../plans/planner/plan-state";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { loadExamPrepAccess } from "../sessions/_utils/plus-only-lessons";
 import { getSkippedSkillIds } from "../sessions/_utils/review-skills";
@@ -94,6 +94,7 @@ async function loadChallengeContext({ goal, items }: { goal: Goal; items: PlanIt
     itemSkillIds: new Map(goalPlan.items.map((item) => [item.id, item.skillIds])),
     items,
     listeningSkillIds,
+    movedEvents: parsePlanSettings(plan?.settings).movedEvents,
     phases: parsePlanPhases(plan?.phases),
     quickFormat: getPlacementQuickFormat(structure),
     skills: goalPlan.skills.filter((skill) => !skipped.has(skill.id)),

@@ -89,6 +89,7 @@ describe("a challenge before a skill's core is in", () => {
         where: { planId: plan.id },
       }),
       listeningSkillIds: new Set(),
+      movedEvents: [],
       phases: [],
       skills: saved.skills,
       today: new Date("2020-09-28T00:00:00Z"),

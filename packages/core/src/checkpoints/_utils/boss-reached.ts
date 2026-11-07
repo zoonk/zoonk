@@ -1,6 +1,10 @@
 import { type Goal, type PlanItem } from "@zoonk/db";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
-import { type PlanGraphSkill, type PlanPhase } from "../../plans/planner/plan-state";
+import {
+  type MovedEvent,
+  type PlanGraphSkill,
+  type PlanPhase,
+} from "../../plans/planner/plan-state";
 import { getBossQuestionSkills } from "../checkpoint-minutes";
 import { type BossPlanItem, getBossCoreLessons, getBossSkillIds } from "../checkpoint-rules";
 
@@ -8,16 +12,17 @@ type BossItem = Pick<PlanItem, "kind" | "phase" | "position" | "scheduledFor" | 
 
 type ChallengeItem = BossPlanItem & BossItem;
 
-export type ChallengeTeaching = {
+export type ChallengeReadiness = {
   graphSkills: readonly Pick<PlanGraphSkill, "lessons" | "phase" | "plannedLessons" | "skillId">[];
   itemSkillIds: ReadonlyMap<string, readonly string[]>;
   listeningSkillIds: ReadonlySet<string>;
+  movedEvents: readonly Pick<MovedEvent, "to">[];
   /** In plan order, without the areas the learner left out. */
   skills: readonly { id: string }[];
 };
 
 /** What R40 reads to tell whether a due challenge's own teaching is still to do; items in plan order. */
-export type ChallengePlan<Item extends ChallengeItem = ChallengeItem> = ChallengeTeaching & {
+export type ChallengePlan<Item extends ChallengeItem = ChallengeItem> = ChallengeReadiness & {
   goal: Pick<Goal, "kind" | "targetDate">;
   items: readonly Item[];
   phases: readonly Pick<PlanPhase, "endDate">[];
@@ -76,6 +81,29 @@ function isWaitingForTeaching({
   );
 }
 
+/** R45: a mock the learner moved onto a day holds it, so a challenge goes there only when it was already dated there. */
+function isOffMovedMockDay({
+  boss,
+  plan,
+  today,
+}: {
+  boss: BossItem;
+  plan: ChallengePlan;
+  today: Date;
+}): boolean {
+  const day = toIsoDate(today);
+
+  return (
+    plan.goal.kind === "exam" &&
+    boss.scheduledFor?.getTime() !== today.getTime() &&
+    plan.movedEvents.some((move) => move.to === day)
+  );
+}
+
+function isWaiting(input: { boss: BossItem; plan: ChallengePlan; today: Date }): boolean {
+  return isOffMovedMockDay(input) || isWaitingForTeaching(input);
+}
+
 export function isBossReached({
   boss,
   plan,
@@ -85,10 +113,10 @@ export function isBossReached({
   plan: ChallengePlan;
   today: Date;
 }): boolean {
-  return isBossDue({ boss, today }) && !isWaitingForTeaching({ boss, plan, today });
+  return isBossDue({ boss, today }) && !isWaiting({ boss, plan, today });
 }
 
-/** Due challenges in phase order, up to the first one still waiting for its own lessons. */
+/** Due challenges in phase order, up to the first one still waiting. */
 export function findSessionBosses<Item extends ChallengeItem>({
   plan,
   today,
@@ -109,7 +137,7 @@ export function findSessionBosses<Item extends ChallengeItem>({
       .toSorted((a, b) => a.phase - b.phase),
   ];
 
-  const waiting = due.findIndex((boss) => isWaitingForTeaching({ boss, plan, today }));
+  const waiting = due.findIndex((boss) => isWaiting({ boss, plan, today }));
   return waiting === -1 ? due : due.slice(0, waiting);
 }
 
