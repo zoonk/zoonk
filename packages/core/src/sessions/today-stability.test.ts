@@ -563,20 +563,29 @@ describe("today's session the learner was shown", () => {
     expect(learnLessonIds(after).filter((id) => !allocated.has(id))).toStrictEqual([]);
   });
 
-  it("fills a waiting day from the plan's next lessons once nobody can write the ones it still holds", async () => {
-    const { course, goal, library } = await setupDayWithUnwritableStandIn();
-    const askedAt = await askForLessons({ goalId: goal.id });
-    const before = await readToday(goal.id);
+  it.each(["the ask ends", "Open replans the day"])(
+    "fills a waiting day from the plan's next lessons once nobody can write the ones it still holds, when %s",
+    async (end) => {
+      const { course, goal, library } = await setupDayWithUnwritableStandIn();
+      const askedAt = await askForLessons({ goalId: goal.id });
+      const before = await readToday(goal.id);
 
-    expect(before.lessonsComing).toBe(true);
+      expect(before.lessonsComing).toBe(true);
 
-    await landWaitingLessons({ courseId: course.id, library, replan: false });
-    await endLessonsAsk({ askedAt: askedAt ?? 0, goalId: goal.id, startedCourseIds: [] });
+      await landWaitingLessons({ courseId: course.id, library, replan: false });
 
-    const after = await readToday(goal.id);
+      if (end === "the ask ends") {
+        await endLessonsAsk({ askedAt: askedAt ?? 0, goalId: goal.id, startedCourseIds: [] });
+      } else {
+        const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+        await prisma.$transaction((tx) => markPlanSourcesChanged(tx, { planIds: [plan.id] }));
+      }
 
-    expect(after.minutes.planned).toBe(goal.dailyMinutes);
-  });
+      const after = await readToday(goal.id);
+
+      expect(after.minutes.planned).toBe(goal.dailyMinutes);
+    },
+  );
 
   it("plans what the shown day can't hold on later days, not as work the day left", async () => {
     const { course, goal, library } = await setupDayWithStandIn();
