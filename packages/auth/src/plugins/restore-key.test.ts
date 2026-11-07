@@ -481,4 +481,23 @@ describe(restoreKeyPlugin, () => {
 
     await expect(redeem({ key })).resolves.toMatchObject({ status: 200 });
   });
+
+  it("answers 500, never 401, in production while only the debug app is configured", async () => {
+    const [registering, other] = await Promise.all([signUp(), signUp()]);
+    const key = await registeredKey({ session: registering });
+
+    vi.stubEnv("VERCEL_ENV", "production");
+    vi.stubEnv("ANDROID_RELEASE_CERT_FINGERPRINTS", "");
+
+    const answers = await Promise.all([
+      redeem({ key }),
+      register({ key: makeRestoreKey(), token: other.token }),
+    ]);
+
+    expect(answers.map((answer) => answer.status)).toStrictEqual([500, 500]);
+
+    vi.stubEnv("ANDROID_RELEASE_CERT_FINGERPRINTS", releaseApp.fingerprint);
+
+    await expect(redeem({ key })).resolves.toMatchObject({ status: 200 });
+  });
 });

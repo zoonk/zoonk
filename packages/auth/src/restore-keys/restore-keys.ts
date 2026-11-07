@@ -6,6 +6,7 @@ import { getEnvironment } from "@zoonk/utils/environment";
 import { safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
 import { APP_ATTEST_OPERATIONS } from "../app-attest/app-attest-contract";
+import { GOOGLE_PLAY_PACKAGE_NAME } from "../google/service-account";
 import { hasPlayIntegrityProof } from "../play-integrity/play-integrity";
 import { PLAY_INTEGRITY_HEADERS } from "../play-integrity/play-integrity-contract";
 import { consumeAppChallenge } from "../request-guards/app-challenge";
@@ -120,19 +121,25 @@ function toApkKeyHashOrigin(fingerprint: string): string {
 }
 
 /**
- * Throws instead of refusing: with no app to match, every key would look invalid, and the app
- * deletes a key it's told is invalid.
+ * Throws instead of refusing: without the app that made a key, it would look invalid, and the app
+ * deletes a key it's told is invalid. Production's keys come from the release app, so production
+ * needs its fingerprints; elsewhere either app's will do.
  */
 function getAndroidAppOrigins(): string[] {
-  const origins = getAndroidApps()
-    .flatMap((app) => app.fingerprints)
-    .map((fingerprint) => toApkKeyHashOrigin(fingerprint));
+  const apps = getAndroidApps();
 
-  if (origins.length === 0) {
+  const requiredApps =
+    getEnvironment() === "production"
+      ? apps.filter((app) => app.packageName === GOOGLE_PLAY_PACKAGE_NAME)
+      : apps;
+
+  if (requiredApps.every((app) => app.fingerprints.length === 0)) {
     throw new Error("Set ANDROID_RELEASE_CERT_FINGERPRINTS to accept restore keys");
   }
 
-  return origins;
+  return apps
+    .flatMap((app) => app.fingerprints)
+    .map((fingerprint) => toApkKeyHashOrigin(fingerprint));
 }
 
 /**
