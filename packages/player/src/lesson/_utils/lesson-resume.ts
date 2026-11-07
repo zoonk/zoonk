@@ -163,7 +163,7 @@ function getLessonQueue(state: LessonPlayerState): { position: number; queue: st
 }
 
 /**
- * Screens the learner worked on, and the one in view (a canvas can hold work it hasn't reported),
+ * Screens the learner worked on, and the one in play (a canvas can hold work it hasn't reported),
  * keep what they show; every other screen takes the run's answer, result and retry, with the learner
  * left where they are. First verdicts are the run's wherever it has one, since those are what it
  * counts.
@@ -173,11 +173,12 @@ export function mergeUntouched(
   answers: LessonRunAnswers,
 ): LessonPlayerState {
   const known = answers.filter((answer) => answer.stepId in state.steps);
-  const inView = isAtEnd(state) ? null : state.queue[state.position];
+  const inView = isAtEnd(state) ? null : (state.queue[state.position] ?? null);
+  const inPlay = inView !== null && !(inView in state.results) ? inView : null;
 
   const untouched = Object.values(state.steps)
     .filter(
-      (step) => isAnswerableStep(step) && !state.actedOn.includes(step.id) && step.id !== inView,
+      (step) => isAnswerableStep(step) && !state.actedOn.includes(step.id) && step.id !== inPlay,
     )
     .map((step) => step.id);
 
@@ -199,7 +200,7 @@ export function mergeUntouched(
   const owed = missedOnce.filter((id) => kept.indexOf(id) === kept.lastIndexOf(id));
   const queue = [...kept, ...owed];
 
-  return {
+  const merged = {
     ...state,
     answers: { ...omitKeys(state.answers, untouched), ...restored.answers },
     firstVerdicts: { ...pickKeys(state.firstVerdicts, state.actedOn), ...getRunVerdicts(known) },
@@ -215,6 +216,9 @@ export function mergeUntouched(
     ],
     revealed: restored.revealed,
   };
+
+  const losesResult = inView !== null && inView !== inPlay && !(inView in merged.results);
+  return losesResult ? enterPosition(merged, state.position) : merged;
 }
 
 export function resumeLesson(

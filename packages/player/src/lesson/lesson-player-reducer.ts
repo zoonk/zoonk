@@ -239,5 +239,14 @@ export function lessonPlayerReducer(
   }
 
   const next = reduceLearnerAction(state, action);
-  return next === state || !isLearnerWork(action) ? next : markActedOn({ action, next, state });
+
+  if (next === state) {
+    return next;
+  }
+
+  if (action.type === "continue" || action.type === "navigate") {
+    return next.moved ? next : { ...next, moved: true };
+  }
+
+  return isLearnerWork(action) ? markActedOn({ action, next, state }) : next;
 }

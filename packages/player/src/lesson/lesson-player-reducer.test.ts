@@ -1193,6 +1193,24 @@ describe(lessonPlayerReducer, () => {
     expect(getLessonScreen(corrected).segments[0]).toBe("wrong");
   });
 
+  it("keeps the learner on the screen they moved to when a late run has it, before any answer", () => {
+    const steps = [explanationStep("e1"), checkStep("q1"), explanationStep("e2"), checkStep("q2")];
+    const atQ1 = play(steps, [{ type: "continue" }]);
+
+    const kept = lessonPlayerReducer(
+      atQ1,
+      runStarted({ answers: [runAnswer("q1", true)], held: [] }),
+    );
+
+    expect([getCurrentStep(kept)?.id, kept.phase, kept.rounds.q1]).toStrictEqual([
+      "q1",
+      "playing",
+      atQ1.rounds.q1,
+    ]);
+
+    expect(kept.firstVerdicts.q1).toBe(true);
+  });
+
   it("leaves the screen in view as it is when a late run has it, since a canvas may hold unreported work", () => {
     const atQ2 = play(
       [checkStep("q1"), explanationStep("e1"), checkStep("q2"), summaryStep("sum")],

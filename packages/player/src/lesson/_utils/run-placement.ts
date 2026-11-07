@@ -69,6 +69,7 @@ function resumeFrom(state: LessonPlayerState, answers: LessonRunAnswers): Lesson
     ...resumedLesson,
     actedOn: state.actedOn,
     answers: { ...pickKeys(state.answers, guessIds), ...resumedLesson.answers },
+    moved: state.moved,
     results: { ...pickKeys(state.results, guessIds), ...resumedLesson.results },
     rounds: state.rounds,
     run: state.run,
@@ -112,6 +113,10 @@ export function restartChanged(
   return { ...after, rounds: { ...after.rounds, ...Object.fromEntries(rounds) } };
 }
 
+function hasActed(state: LessonPlayerState): boolean {
+  return state.moved || state.actedOn.length > 0;
+}
+
 export function startRun(
   state: LessonPlayerState,
   action: Extract<LessonPlayerAction, { type: "runStarted" }>,
@@ -134,7 +139,7 @@ export function startRun(
     (answer) => answer.stepId in state.steps,
   );
 
-  if (state.actedOn.length > 0) {
+  if (hasActed(state)) {
     return mergeUntouched(started, answers);
   }
 
@@ -166,7 +171,7 @@ export function placeUnsent(
   state: LessonPlayerState,
   action: Extract<LessonPlayerAction, { type: "unsentPlaced" }>,
 ): LessonPlayerState {
-  return state.actedOn.length > 0
+  return hasActed(state)
     ? mergeUntouched(state, action.answers)
     : resumeFrom(state, action.answers);
 }

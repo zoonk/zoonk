@@ -53,6 +53,8 @@ export type LessonPlayerState = {
   misses: { skillId: string | null; stepId: string }[];
   /** The screens a finished lesson came back to because the run still needs them. */
   missing: Record<string, MissingReason>;
+  /** The learner moved between screens on this page, so a late run start leaves them where they are. */
+  moved: boolean;
   notice: MissingReason | "selfCorrect" | "writingSkipped" | null;
   phase: LessonPlayerPhase;
   position: number;
@@ -139,6 +141,7 @@ export function createInitialState(
     lessonId: lesson.id,
     misses: [],
     missing: {},
+    moved: false,
     notice: null,
     phase: queue.length === 0 ? "completed" : "playing",
     position: 0,
