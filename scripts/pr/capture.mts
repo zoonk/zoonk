@@ -8,6 +8,7 @@ import { assertBrowserLaunchAllowed } from "../../packages/testing/src/browser-p
 import { getMailboxCaptureUrl, getServiceUrl } from "../dev/config.mts";
 import { signIn } from "../verify/sign-in.mts";
 import { SCHEMES, VIEWPORT_NAMES, pick } from "../verify/viewports.mts";
+import { compareSides, describeChange } from "./compare.mts";
 import { SIDES, readCapture, renderMedia } from "./media.mts";
 import { type Steps, captureSide, visitPaths } from "./record.mts";
 
@@ -105,14 +106,23 @@ async function capture({ positionals, values }: ReturnType<typeof readArguments>
     SIDES.map(async (name) => readCapture(join(out, name))),
   );
 
-  const media = renderMedia({ root: relative(repository, out), sides: { after, before } });
+  const sides = { after, before };
+  const changes = await compareSides(out, sides);
+  const unchanged = new Set(changes.filter(({ change }) => !change.box).map(({ row }) => row));
+  const media = renderMedia({ root: relative(repository, out), sides, unchanged });
   await writeFile(join(out, "media.md"), `${media.markdown}\n`);
 
   console.log(
     [
       `${side}: ${items.length} files from ${baseUrl} in ${relative(repository, join(out, side))}`,
+      ...(changes.length > 0
+        ? [
+            "What changed in each pair, in CSS pixels:",
+            ...changes.map((change) => `  ${describeChange(change)}`),
+          ]
+        : []),
       `Before-and-after section: ${relative(repository, join(out, "media.md"))}${before && after ? "" : " (one side so far)"}`,
-      "Put it in the PR body, and pass every file it links to gh pr create or gh pr edit, run from the repository root:",
+      "Rewrite each panel's summary to say what changed there. Put the section in the PR body, and pass every file it links to gh pr create or gh pr edit, run from the repository root:",
       media.attachments.map((file) => `--attach ${file}`).join(" "),
     ].join("\n"),
   );

@@ -68,14 +68,22 @@ For multiline bodies, use a structured tool argument or write the exact text to 
 
 A reviewer sees what the change did without running it, from evidence of both sides measured the same way. Capture the before side first, before you edit; a reviewer can't check a before you describe from memory.
 
-| The change                                                                                                    | The PR shows                                                                    |
-| ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| Makes something faster, lighter or cheaper                                                                    | Each number before → after, with the difference and how it was measured         |
-| Changes what a learner sees: layout, copy, color, a state, a new screen                                       | Screenshots before and after of each screen it changes, on a phone and a laptop |
-| Changes something that moves or takes several steps: a flow, a transition, a wait, a loading state, a gesture | Those screenshots, and a video of each side doing the same steps                |
+| The change                                                                                                    | The PR shows                                                                              |
+| ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Makes something faster, lighter or cheaper                                                                    | Each number before → after, with the difference and how it was measured                   |
+| Changes what a learner sees: layout, copy, color, a state, a new screen                                       | Screenshots before and after of the screens that show the change, on a phone and a laptop |
+| Changes something that moves or takes several steps: a flow, a transition, a wait, a loading state, a gesture | Those screenshots, and a video of each side doing the same steps                          |
 
 - **Numbers:** each metric with before → after and the difference (`LCP, phone, throttled: 2.4 s → 1.1 s (−54%)`), what was measured (page or command, build, screen, throttling) and how many runs. Measure both sides back to back on the same machine and settings; on a busy machine, compare the numbers noise barely moves (main-thread work, counts, bytes). For pages, `verify:pages --baseline` prints the table ([measuring pages](../verify/references/pages.md)). Report a number that didn't move or got worse too. "Faster" without numbers isn't evidence.
-- **A new screen** has only an after side and **a removed one** only a before; say so under the table.
+- **A new screen** has only an after side and **a removed one** only a before; say so in its panel.
+
+### Keep it short and clear
+
+A reviewer looks at every picture, and a long page of them hides the one that matters.
+
+- **Show the few screens that make the change clear,** usually one to three: the screen the change is about, plus another size, scheme or state only where the change looks different there. A change that reaches many screens, such as a redesign, shows a representative few, and the verification section says what else you checked.
+- **Each screen gets a collapsed panel,** and its summary says what changed there, so a reviewer can scan the summaries without opening any: `<summary>Today: the time readout sits at the title's end</summary>`. Put the screen that shows the change best first; its panel starts open. `media.md` is laid out this way; lay out hand-made media (the native apps, a sheet of several screens) the same way.
+- **Compare each pair before you attach it.** `pr:capture` prints how much of each shot changed and where, in CSS pixels, and leaves out pairs where nothing changed. When you can't spot the difference at a glance, a reviewer can't either: say in the summary where to look, and when it's a small part of the screen, lead with a shot of just that part (`shot(name, { clip })`, from the box it printed). Drop a pair whose change doesn't show.
 
 ### Screenshots and videos
 
@@ -86,7 +94,7 @@ pnpm pr:capture before /today /plan --email <learner>@zoonk.test   # before you 
 pnpm pr:capture after /today /plan --email <learner>@zoonk.test    # after the change
 ```
 
-Each run shoots every path on a phone and a laptop in light mode (`--viewports`; `--schemes light,dark` when colors change), replaces `tmp/pr-media/<side>/` and rewrites `tmp/pr-media/media.md`: a table pairing each screenshot with its other side, then each side's video. For a screen behind taps, or a video (`--video`), write the steps once and pass them to both runs, such as `pnpm pr:capture after --steps tmp/pr-media/steps.mts --video --viewports phone`:
+Each run shoots every path on a phone and a laptop in light mode (`--viewports`; `--schemes light,dark` when colors change), replaces `tmp/pr-media/<side>/` and rewrites `tmp/pr-media/media.md`: a collapsed panel per screen pairing each screenshot with its other side, then a panel per video. For a screen behind taps, or a video (`--video`), write the steps once and pass them to both runs, such as `pnpm pr:capture after --steps tmp/pr-media/steps.mts --video --viewports phone`:
 
 ```ts
 // tmp/pr-media/steps.mts
@@ -103,7 +111,7 @@ export default async function steps({ page, shot }) {
 - If you already changed the code, capture the before side on the base the way [measuring pages](../verify/references/pages.md) measures a `--baseline`.
 - Look at every shot and video before you attach it: a path that fails stops the run, but a step that lands on the wrong screen still makes a picture of it.
 - Attached files are public, like the repository: show seeded and `dev:persona` learners only, never a real learner's data or a secret.
-- For the Apple or Android app, take the same shots and recordings in the simulator or emulator (`agent-device screenshot` and `record`, or `xcrun simctl io <device> screenshot` and `recordVideo`, `adb exec-out screencap -p` and `adb shell screenrecord`), and link them in the body the same way.
+- For the Apple or Android app, take the same shots and recordings in the simulator or emulator (`agent-device screenshot` and `record`, or `xcrun simctl io <device> screenshot` and `recordVideo`, `adb exec-out screencap -p` and `adb shell screenrecord`), and put them in the same panels.
 
 [zoonk-pull-request](../zoonk-pull-request/SKILL.md) uploads them when it opens the PR.
 
