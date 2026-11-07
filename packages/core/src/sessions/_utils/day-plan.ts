@@ -42,7 +42,7 @@ async function loadLastStudyDate({ today, userId }: { today: Date; userId: strin
   return day?.date ?? null;
 }
 
-function getPlanStart({
+export function getPlanStart({
   goal,
   settings,
   timeZone,

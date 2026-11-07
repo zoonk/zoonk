@@ -32,6 +32,7 @@ async function dueLearner() {
   const fid = `fid-${randomUUID()}`;
 
   const goal = await goalFixture({
+    createdAt: new Date("2026-10-01T12:00:00Z"),
     dailyMinutes: 25,
     timezone: "UTC",
     title: "Italian",

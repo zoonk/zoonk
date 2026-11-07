@@ -7,7 +7,9 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { mockAccountSession } from "../_test-utils/mock-session";
+import { followGoalTimeZone } from "../learner/follow-goal-time-zone";
 import { turnOffStudyReminderEmail } from "./email-unsubscribe";
 import {
   claimStudyReminder,
@@ -18,6 +20,7 @@ import {
 const TODAY = new Date("2026-10-07T00:00:00Z");
 const AT_SEVEN_TEN = new Date("2026-10-07T19:10:00Z");
 const MINUTE_MS = 60_000;
+const GOAL_CREATED_AT = new Date("2026-10-01T12:00:00Z");
 
 /** Today's claim for a 19:00 reminder in UTC. */
 const CLAIM = { endsAt: new Date("2026-10-07T20:00:00Z"), localDate: TODAY };
@@ -29,7 +32,14 @@ async function learnerWithReminder({
   timezone = "UTC",
 }: { dailyMinutes?: number; pushToken?: string; time?: string; timezone?: string } = {}) {
   const user = await userFixture();
-  const goal = await goalFixture({ dailyMinutes, timezone, title: "Italian", userId: user.id });
+
+  const goal = await goalFixture({
+    createdAt: GOAL_CREATED_AT,
+    dailyMinutes,
+    timezone,
+    title: "Italian",
+    userId: user.id,
+  });
 
   await Promise.all([
     planFixture({ goalId: goal.id }),
@@ -232,5 +242,57 @@ describe("reading a study reminder's delivery", () => {
         userId: user.id,
       }),
     ).resolves.toBeNull();
+  });
+});
+
+describe("before a plan's first day", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("doesn't remind after moving west across the date line puts the learner on the day before", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-10-08T05:10:00Z"));
+
+    const user = await userFixture();
+    mockAccountSession({ user });
+
+    const goal = await goalFixture({
+      createdAt: new Date("2026-10-08T05:00:00Z"),
+      timezone: "Pacific/Kiritimati",
+      userId: user.id,
+    });
+
+    await Promise.all([
+      planFixture({ goalId: goal.id, settings: { startDate: "2026-10-08" } }),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+      prisma.studyReminder.create({
+        data: {
+          emailOn: true,
+          enabledAt: new Date("2026-10-06T12:00:00Z"),
+          locale: "en",
+          time: "19:00",
+          userId: user.id,
+        },
+      }),
+    ]);
+
+    await expect(
+      followGoalTimeZone({ goalId: goal.id, timeZone: "Pacific/Honolulu" }),
+    ).resolves.toMatchObject({ moved: true, status: "ready" });
+
+    const delivery = await readStudyReminderDelivery({
+      channel: "email",
+      claim: {
+        endsAt: new Date("2026-10-08T06:00:00Z"),
+        localDate: new Date("2026-10-07T00:00:00Z"),
+      },
+      now: new Date(),
+      userId: user.id,
+    });
+
+    const claim = await claimStudyReminder({ now: new Date(), userId: user.id });
+
+    expect({ claim, delivery }).toStrictEqual({ claim: { status: "skipped" }, delivery: null });
   });
 });

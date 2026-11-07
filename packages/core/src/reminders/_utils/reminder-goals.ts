@@ -6,6 +6,7 @@ import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { loadDailyTimeLimitStatus } from "../../sessions/_utils/daily-time-limit";
 import { getGoalDayMinutes } from "../../sessions/_utils/day-minutes";
+import { getPlanStart } from "../../sessions/_utils/day-plan";
 import { getSessionMinutesDone } from "../../sessions/daily-goal";
 
 export type GoalWithWork = {
@@ -51,10 +52,15 @@ export async function findGoalsWithWork({
     findActiveGoalId(userId),
   ]);
 
-  const days = goals.map((goal) => ({
-    goal,
-    localDate: getDateInTimeZone({ date: now, timeZone: getAnswerTimeZone({ goal }) }),
-  }));
+  const days = goals.map((goal) => {
+    const timeZone = getAnswerTimeZone({ goal });
+
+    return {
+      goal,
+      localDate: getDateInTimeZone({ date: now, timeZone }),
+      planStart: getPlanStart({ goal, settings: goal.plan?.settings, timeZone }),
+    };
+  });
 
   if (days.length === 0) {
     return [];
@@ -68,7 +74,7 @@ export async function findGoalsWithWork({
     loadLimitReachedDates({ dates: days.map((day) => day.localDate), userId }),
   ]);
 
-  const open = days.flatMap(({ goal, localDate }) => {
+  const open = days.flatMap(({ goal, localDate, planStart }) => {
     const dayMinutes = getGoalDayMinutes({
       date: localDate,
       goal,
@@ -80,6 +86,7 @@ export async function findGoalsWithWork({
     const ended = session?.status === "completed" || Boolean(session?.stoppedAt);
 
     if (
+      localDate < planStart ||
       dayMinutes <= 0 ||
       ended ||
       minutesDone >= dayMinutes ||
