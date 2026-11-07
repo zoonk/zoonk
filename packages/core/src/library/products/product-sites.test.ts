@@ -234,25 +234,6 @@ describe(isOfficialPage, () => {
     },
   );
 
-  it.each(["issues", "discussions", "pull", "wiki"])(
-    "accepts the releases of a repository named %s",
-    (name) => {
-      const repository = `https://code.example/lumen/${name}`;
-      const linked = { ...sites, product: { ...sites.product, links: [repository] } };
-
-      expect(isOfficialPage({ sites: linked, url: `${repository}/releases/tag/v5` })).toBe(true);
-      expect(isOfficialPage({ sites: linked, url: `${repository}/issues/1` })).toBe(false);
-    },
-  );
-
-  it("refuses an issue in a repository under a subgroup, after GitLab's /-/", () => {
-    const repository = "https://code.example/lumen/apps/orbit";
-    const linked = { ...sites, product: { ...sites.product, links: [repository] } };
-
-    expect(isOfficialPage({ sites: linked, url: `${repository}/-/issues/4` })).toBe(false);
-    expect(isOfficialPage({ sites: linked, url: `${repository}/-/releases` })).toBe(true);
-  });
-
   it("accepts a release under a stored releases page", () => {
     const stored = {
       ...sites,

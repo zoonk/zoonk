@@ -16,17 +16,8 @@ const WWW = /^www\./u;
 /** What a code host's maker publishes, on GitHub's and GitLab's paths alike. */
 const RELEASES_PATH = /^(?:\/-)?\/(?:releases|tags)(?:\/|$)/u;
 const RELEASES_PAGE = /\/(?:releases|tags)$/u;
-const COLLABORATION = String.raw`(?:issues|discussions|pulls?|merge_requests|wikis?)(?:\/|$)`;
-
-/**
- * Where anyone may write on a code host, even when the product page links straight to it: the route
- * right after a repository (`/<owner>/<repo>/issues`) or after GitLab's `/-/`. A repository named
- * "issues" is still its maker's.
- */
-const COLLABORATION_ROUTE = new RegExp(
-  String.raw`^\/[^/]+\/[^/]+\/${COLLABORATION}|\/-\/${COLLABORATION}`,
-  "u",
-);
+/** Where anyone may write on a code host, even when the product page links straight to it. */
+const COLLABORATION_PATH = /\/(?:issues|discussions|pulls?|merge_requests|wikis?)(?:\/|$)/u;
 
 function toPath(url: string): string {
   return new URL(url).pathname.replace(TRAILING_SLASHES, "");
@@ -138,7 +129,7 @@ function isPublishedAt({ link, url }: { link: string; url: string }): boolean {
   return (
     rest !== null &&
     toPath(link) !== "" &&
-    !COLLABORATION_ROUTE.test(toPath(url)) &&
+    !COLLABORATION_PATH.test(toPath(url)) &&
     (rest === "" || RELEASES_PATH.test(rest) || RELEASES_PAGE.test(toPath(link)))
   );
 }
