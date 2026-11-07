@@ -34,6 +34,12 @@ export async function compareShots(
   const [first, second] = await Promise.all([readPixels(before), readPixels(after)]);
   const width = Math.max(first.width, second.width);
   const height = Math.max(first.height, second.height);
+
+  const covered =
+    first.width * first.height +
+    second.width * second.height -
+    Math.min(first.width, second.width) * Math.min(first.height, second.height);
+
   let changed = 0;
   let left = width;
   let top = height;
@@ -58,7 +64,7 @@ export async function compareShots(
         ? { height: bottom - top + 1, width: right - left + 1, x: left, y: top }
         : undefined,
     height,
-    share: changed / (width * height),
+    share: changed / covered,
     width,
   };
 }

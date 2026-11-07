@@ -61,14 +61,14 @@ describe("comparing a before shot with its after shot", () => {
     });
   });
 
-  it("counts only what one shot covers and the other doesn't when their shapes differ", async () => {
+  it("measures shots of different shapes against the area either one covers", async () => {
     const long = SIZE * 2;
     const change = await compareShots(await png({ height: long }), await png({ width: long }));
 
     assert.deepEqual(change, {
       box: { height: long, width: long, x: 0, y: 0 },
       height: long,
-      share: 0.5,
+      share: 2 / 3,
       width: long,
     });
   });
