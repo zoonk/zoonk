@@ -64,6 +64,8 @@ async function addFoundations(context: PlanContext): Promise<PlanChangeView | nu
 
   const result = await applyChangeNow({
     context,
+    extraWrites: (tx) =>
+      oweGoalLessons({ db: tx, goalId: context.goal.id, userId: context.goal.userId }),
     followToday: true,
     operations,
     reason: OWN_LEVEL_NOTE,
@@ -106,8 +108,10 @@ export async function changeOwnLevel({
         : [],
     ]);
 
-    await refreshGoalPlan({ goalId });
-    await oweGoalLessons({ goalId, userId: current.context.goal.userId });
+    await refreshGoalPlan({
+      extraWrites: (tx) => oweGoalLessons({ db: tx, goalId, userId: current.context.goal.userId }),
+      goalId,
+    });
 
     return { ownLevel: { change, direction, level: input.level, testOuts }, status: "ready" };
   });
