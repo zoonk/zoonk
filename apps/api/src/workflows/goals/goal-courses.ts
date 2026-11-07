@@ -2,7 +2,11 @@ import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { type GoalProduct } from "@zoonk/core/library/products/goal-product";
 import { type GoalKind } from "@zoonk/db";
 import { type ContentAnalytics, toContentAnalytics } from "../_shared/content-analytics";
-import { findGoalCourseStep, writeGoalCourseSearchTermsStep } from "./steps/goal-course-steps";
+import {
+  findGoalCourseStep,
+  findGoalProductCourseStep,
+  writeGoalCourseSearchTermsStep,
+} from "./steps/goal-course-steps";
 
 export async function findGoalCourses({
   analytics,
@@ -35,6 +39,18 @@ export async function findGoalCourses({
       }
 
       const input = { analytics: context, scope, title };
+
+      const productCourseId = await findGoalProductCourseStep({
+        product,
+        provenance,
+        scope,
+        title,
+      });
+
+      if (productCourseId) {
+        return [key, productCourseId] as const;
+      }
+
       const searchTerms = await writeGoalCourseSearchTermsStep(input);
 
       const id = await findGoalCourseStep({

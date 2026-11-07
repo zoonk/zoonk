@@ -3,7 +3,7 @@ import {
   getGoalCourseFormat,
   setGoalPrimaryCourse,
 } from "@zoonk/core/library/curriculum/goal-primary-course";
-import { findGoalCourse } from "@zoonk/core/library/products/goal-courses";
+import { findGoalCourse, findGoalProductCourse } from "@zoonk/core/library/products/goal-courses";
 import { type GoalKind } from "@zoonk/db";
 
 type CourseInput = Parameters<typeof findGoalCourse>[0];
@@ -13,6 +13,14 @@ export async function writeGoalCourseSearchTermsStep(
 ) {
   "use step";
   return writeGoalCourseSearchTerms(input);
+}
+
+export async function findGoalProductCourseStep(
+  input: Parameters<typeof findGoalProductCourse>[0],
+) {
+  "use step";
+  const result = await findGoalProductCourse(input);
+  return result?.course.id ?? null;
 }
 
 export async function findGoalCourseStep({
