@@ -395,20 +395,12 @@ private struct CertificateDetails<Name: View, Link: View, Footer: View>: View {
     Section {
       name
 
-      if let level = facts.courseLevel {
+      if let level = facts.levelName {
         CertificateDetailRow(
           label: Text("Level", tableName: "Certificates", comment: "A course certificate's level")
         ) {
-          Text(level.localizedTitle)
+          Text(verbatim: level)
             .typeWeight(.medium)
-        }
-      }
-
-      if facts.kind == .languageLevel {
-        ForEach(facts.skillLevels ?? [], id: \.skill) { level in
-          CertificateDetailRow(label: Text(languageSkillName(level.skill)), isData: true) {
-            Text(verbatim: level.label)
-          }
         }
       }
 
@@ -498,11 +490,9 @@ private struct CertificateDetailRow<Value: View>: View {
 }
 
 /// Main's `CertificateMeaning`: how Zoonk decided to issue this kind of certificate, and what it
-/// isn't.
+/// isn't. A language level's claims no challenge: a free learner finishes one without its Plus
+/// calls.
 private struct CertificateMeaning: View {
-  /// Main's `BAND_ABOVE`: a level is finished when every counted skill reaches the band above it.
-  private static let bandAbove = ["A1": "A2", "A2": "B1", "B1": "B2", "B2": "C1", "C1": "C2"]
-
   /// Main's `leading-relaxed` paragraphs at 15pt.
   private static let paragraphStyle = TypeStyle(
     size: 15, relativeTo: .subheadline, weight: .regular, lineHeight: 1.625)
@@ -518,16 +508,14 @@ private struct CertificateMeaning: View {
       table: "Certificates",
       comment: "Ends a certificate's explanation: the name on it is the one the learner gave")
 
-    if facts.kind == .languageLevel {
-      let band = facts.level.flatMap { Self.bandAbove[$0] } ?? ""
-
+    if facts.cefrRange != nil {
       return [
         String(
           localized:
-            "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached \(band).",
+            "Zoonk issues this certificate when a learner finishes every lesson of a language course's level, studying at least half of them on Zoonk and passing any others by test.",
           table: "Certificates",
-          comment:
-            "How a language level certificate is earned; the argument is a CEFR band, such as B2"),
+          comment: "How a certificate for a language course's level is earned"
+        ),
         String(
           localized:
             "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result.",
@@ -541,11 +529,11 @@ private struct CertificateMeaning: View {
       facts.courseLevel == nil
       ? String(
         localized:
-          "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it.",
+          "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, studying at least half of them on Zoonk and passing any others by test, and wins every challenge in it.",
         table: "Certificates", comment: "How a certificate for a course's whole plan is earned")
       : String(
         localized:
-          "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it.",
+          "Zoonk issues this certificate when a learner finishes every lesson of a course's level, studying at least half of them on Zoonk and passing any others by test, and wins every challenge in it.",
         table: "Certificates", comment: "How a certificate for a course's level is earned")
 
     return [
@@ -582,37 +570,29 @@ private struct CertificateMeaning: View {
   }
 }
 
-/// Main's `CertificateCovered`: a course's chapters, or what a language level's learner can do.
+/// Main's `CertificateCovered`: the course's chapters it covers.
 private struct CertificateCovered: View {
   let facts: CertificateFacts
 
   var body: some View {
-    let lines = facts.kind == .course ? facts.topics : facts.canDo
-
-    if !lines.isEmpty {
+    if !facts.topics.isEmpty {
       Section {
-        ForEach(lines, id: \.self) { line in
+        ForEach(facts.topics, id: \.self) { topic in
           MarkedRow {
             StatusMark(status: .done)
           } content: {
-            Text(line)
+            Text(topic)
           } end: {
             EmptyView()
           }
         }
       } header: {
         SectionTitle(
-          facts.kind == .course
-            ? Text(
-              "Topics covered", tableName: "Certificates",
-              comment: "Heading over the chapters a course certificate covers")
-            : Text(
-              "Can do", tableName: "Certificates",
-              comment: "Heading over what a language certificate's learner can do")
+          Text(
+            "Topics covered", tableName: "Certificates",
+            comment: "Heading over the chapters a course certificate covers")
         ) {
-          if facts.kind == .course {
-            Text(lines.count, format: .number)
-          }
+          Text(facts.topics.count, format: .number)
         }
       }
     }

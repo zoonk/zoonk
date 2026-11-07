@@ -3,28 +3,19 @@ import Foundation
 /// What a completion result says about a certificate it earned: enough to word its moment while
 /// its pictures load.
 struct CertificateFacts: Decodable, Hashable, Identifiable, Sendable {
-  enum Kind: String, Decodable, Sendable {
-    case course
-    case languageLevel
-  }
-
   let code: String
-  let kind: Kind
   /// The live profile name; nil until the learner gives one.
   let recipientName: String?
   /// The learner's calendar day it was earned, `YYYY-MM-DD`.
   let completedOn: String
-  let title: String?
-  /// The course level it certifies; nil for a plan certified whole and for language levels.
+  /// The course's title, as written.
+  let title: String
+  /// The course level it certifies; nil for a plan certified whole.
   let courseLevel: CourseLevel?
-  let targetLanguage: String?
-  let level: String?
-  /// A course's chapters, in plan order.
+  /// A language course level's CEFR levels, such as "B1–B2"; nil otherwise.
+  let cefrRange: String?
+  /// The course's chapters, in plan order.
   let topics: [String]
-  /// A language level's: what the learner can do.
-  let canDo: [String]
-  /// A language level's: each skill the learner's answers raised, at its level when earned.
-  var skillLevels: [SkillLevel]?
   let lessonsStudied: Int?
   let lessonsTestedOut: Int?
   /// About how long the studied lessons take; nil when unknown.
@@ -33,14 +24,6 @@ struct CertificateFacts: Decodable, Hashable, Identifiable, Sendable {
   let locked: Bool
 
   var id: String { code }
-}
-
-extension CertificateFacts {
-  struct SkillLevel: Decodable, Hashable, Sendable {
-    /// Such as "B1" or "B2+".
-    let label: String
-    let skill: String
-  }
 }
 
 /// One of the learner's certificates. The public read refuses a locked one, so screens read the
@@ -115,41 +98,54 @@ struct CertificateUpNext: Equatable, Identifiable, Sendable {
   let title: String
   /// A language goal's flag, as the API names it (`us`, `es-ct`); nil for other goals.
   var languageFlag: String?
-  /// The plan's share of lessons done, 0 to 1; nil for a language, which earns one by levels.
-  let progress: Double?
+  /// The plan's share of lessons done, 0 to 1.
+  let progress: Double
+}
+
+extension CourseLevel {
+  /// Main's `useCertificateLevel`: the level's name, with the CEFR levels a language course's level
+  /// covers, such as "Intermediate (B1–B2)".
+  func certifiedTitle(cefrRange: String?) -> String {
+    let name = String(localized: localizedTitle)
+
+    guard let cefrRange else {
+      return name
+    }
+
+    return String(
+      localized: "\(name) (\(cefrRange))", table: "Certificates",
+      comment:
+        "A language course's level with the CEFR levels it covers, such as Intermediate (B1–B2)")
+  }
 }
 
 extension CertificateFacts {
   /// The certificate pictures are A4 landscape.
   static let aspectRatio: CGFloat = 297 / 210
 
-  /// Main's list name: a course's title with the level it certifies, such as "Python · Beginner",
-  /// or the language and level, such as "Spanish B1".
-  var name: String {
-    if let title, let courseLevel {
-      return String(
-        localized: "\(title) · \(String(localized: courseLevel.localizedTitle))",
-        table: "Certificates",
-        comment:
-          "A course level certificate's name: the course, then its level, such as Python · Beginner"
-      )
-    }
+  /// The level it certifies, such as "Beginner" or "Intermediate (B1–B2)"; nil for a plan's.
+  var levelName: String? {
+    courseLevel?.certifiedTitle(cefrRange: cefrRange)
+  }
 
-    if let title {
+  /// Main's `useCertificateName`: the course's title with the level it certifies, such as
+  /// "Python · Beginner" or "Italian · Intermediate (B1–B2)", or the title alone for a plan's.
+  var name: String {
+    guard let levelName else {
       return title
     }
 
     return String(
-      localized: "\(languageTitle) \(level ?? "")", table: "Certificates",
+      localized: "\(title) · \(levelName)", table: "Certificates",
       comment:
-        "A language certificate's name: the language, then its CEFR level, such as Spanish B1"
+        "A course level certificate's name: the course, then its level, such as Python · Beginner"
     )
   }
 
   var kindName: String {
     String(
       localized: "Certificate of completion", table: "Certificates",
-      comment: "The kind of certificate earned by finishing a course or a language level")
+      comment: "The kind of certificate earned by finishing a course's level or a plan")
   }
 
   /// "Certificate of completion · Nov 3, 2026".
@@ -180,33 +176,19 @@ extension CertificateFacts {
 
   /// Main's `useCertificateSentence`: the page's heading.
   var sentence: String {
-    switch (kind, recipientName) {
-    case (.course, let name?):
-      String(
-        localized: "\(name) completed \(self.name)", table: "Certificates",
+    if let recipientName {
+      return String(
+        localized: "\(recipientName) completed \(name)", table: "Certificates",
         comment:
           "A course certificate read aloud: the learner's name, then the course or its level, such as Python · Beginner"
       )
-    case (.course, nil):
-      String(
-        localized: "\(self.name), completed on Zoonk", table: "Certificates",
-        comment:
-          "A course certificate's heading before the learner gives a name: the course or its level, such as Python · Beginner"
-      )
-    case (.languageLevel, let name?):
-      String(
-        localized: "\(name) completed level \(level ?? "") in \(languageName)",
-        table: "Certificates",
-        comment:
-          "A language level certificate read aloud: the learner's name, the level, the language")
-    case (.languageLevel, nil):
-      String(
-        localized: "Level \(level ?? "") in \(languageName), completed on Zoonk",
-        table: "Certificates",
-        comment:
-          "A language level certificate's heading before the learner gives a name: the level, then the language"
-      )
     }
+
+    return String(
+      localized: "\(name), completed on Zoonk", table: "Certificates",
+      comment:
+        "A course certificate's heading before the learner gives a name: the course or its level, such as Python · Beginner"
+    )
   }
 
   /// "October 28, 2026".
@@ -217,14 +199,6 @@ extension CertificateFacts {
   /// What the page's heading says with its date, for VoiceOver on the picture.
   var spokenTitle: String {
     [sentence, completedOnLong].joined(separator: ", ")
-  }
-
-  var languageName: String {
-    targetLanguage.map { Locale.current.languageName($0) } ?? ""
-  }
-
-  var languageTitle: String {
-    targetLanguage.map { Locale.current.languageTitle($0) } ?? ""
   }
 
   /// The day it was earned is a calendar day, so it's formatted in UTC.

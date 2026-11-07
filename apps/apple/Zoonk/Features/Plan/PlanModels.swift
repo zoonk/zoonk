@@ -430,6 +430,8 @@ struct PlanEnd: Decodable, Equatable, Sendable {
     struct Unclaimed: Decodable, Equatable, Sendable {
       /// Nil for the plan's own certificate.
       let courseLevel: CourseLevel?
+      /// A language course level's CEFR levels, such as "B1–B2"; nil otherwise.
+      let cefrRange: String?
     }
 
     /// Level order, the plan's last, with a level certified in another goal.

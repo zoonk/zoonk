@@ -71,10 +71,9 @@ final class CertificatesStoreTests: XCTestCase {
     _ code: String, completedOn: String = "2026-11-03", locked: Bool = false
   ) -> CertificateFacts {
     CertificateFacts(
-      code: code, kind: .course, recipientName: "Ana Souza", completedOn: completedOn,
-      title: "Quantum physics from scratch", courseLevel: nil, targetLanguage: nil, level: nil,
-      topics: [], canDo: [], lessonsStudied: 148, lessonsTestedOut: 0, minutes: 2460,
-      locked: locked)
+      code: code, recipientName: "Ana Souza", completedOn: completedOn,
+      title: "Quantum physics from scratch", courseLevel: nil, cefrRange: nil, topics: [],
+      lessonsStudied: 148, lessonsTestedOut: 0, minutes: 2460, locked: locked)
   }
 }
 
@@ -104,10 +103,10 @@ private func certificateJSON(
     """#
 
   return #"""
-    {"code": "\#(code)", "kind": "course", "recipientName": \#(recipient),
+    {"code": "\#(code)", "recipientName": \#(recipient),
      "completedOn": "2026-11-03", "title": "\#(title)", "courseLevel": "beginner",
-     "targetLanguage": null, "level": null, "topics": ["Variables"], "canDo": [],
-     "lessonsStudied": 148, "lessonsTestedOut": 0, "minutes": 2460, "locked": \#(locked),
+     "cefrRange": null, "topics": ["Variables"], "lessonsStudied": 148,
+     "lessonsTestedOut": 0, "minutes": 2460, "locked": \#(locked),
      "shownAt": null, \#(links)}
     """#
 }

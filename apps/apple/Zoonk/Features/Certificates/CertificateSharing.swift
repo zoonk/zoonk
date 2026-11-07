@@ -70,42 +70,33 @@ extension Certificate {
 extension CertificateFacts {
   /// Main's suggested text for a post.
   var suggestedText: String {
-    switch kind {
-    case .course:
-      let lessons = lessonsStudied ?? 0
+    let lessons = lessonsStudied ?? 0
 
-      if lessons == 0 {
-        return String(
-          localized: "I just finished \(name) on Zoonk.",
-          table: "Certificates",
-          comment:
-            "Suggested text for sharing a course certificate whose lessons were all passed by test: the course or its level, such as Python · Beginner"
-        )
-      }
-
-      if let minutes, minutes > 0 {
-        return String(
-          localized:
-            "I just finished \(name) on Zoonk: \(lessons) lessons and about \(studyTime(minutes)) of study.",
-          table: "Certificates",
-          comment:
-            "Suggested text for sharing a course certificate: the course or its level (Python · Beginner), the lessons studied, then about how long they took, such as \"41 hours\""
-        )
-      }
-
+    if lessons == 0 {
       return String(
-        localized: "I just finished \(name) on Zoonk: \(lessons) lessons.",
+        localized: "I just finished \(name) on Zoonk.",
         table: "Certificates",
         comment:
-          "Suggested text for sharing a course certificate: the course or its level (Python · Beginner), then the lessons studied"
+          "Suggested text for sharing a course certificate whose lessons were all passed by test: the course or its level, such as Python · Beginner"
       )
-    case .languageLevel:
+    }
+
+    if let minutes, minutes > 0 {
       return String(
-        localized: "I just completed level \(level ?? "") in \(languageName) on Zoonk.",
+        localized:
+          "I just finished \(name) on Zoonk: \(lessons) lessons and about \(studyTime(minutes)) of study.",
         table: "Certificates",
         comment:
-          "Suggested text for sharing a language level certificate: the level, then the language")
+          "Suggested text for sharing a course certificate: the course or its level (Python · Beginner), the lessons studied, then about how long they took, such as \"41 hours\""
+      )
     }
+
+    return String(
+      localized: "I just finished \(name) on Zoonk: \(lessons) lessons.",
+      table: "Certificates",
+      comment:
+        "Suggested text for sharing a course certificate: the course or its level (Python · Beginner), then the lessons studied"
+    )
   }
 }
 

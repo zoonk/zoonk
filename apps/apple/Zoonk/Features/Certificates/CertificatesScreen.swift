@@ -228,30 +228,23 @@ private struct UpNextRow: View {
   @ScaledMetric(relativeTo: .caption) private var meterWidth = 64.0
 
   var body: some View {
-    ListRow(Text(goal.title), description: description) {
+    ListRow(
+      Text(goal.title),
+      description: Text(
+        "Your certificate comes when you finish the plan", tableName: "Certificates",
+        comment: "Under a goal on the empty certificates page: when it earns one")
+    ) {
       GoalMark(title: goal.title, flag: goal.languageFlag.flatMap(flagEmoji))
     } trailing: {
-      if let progress = goal.progress {
-        HStack(spacing: 8) {
-          Meter(value: progress)
-            .frame(width: meterWidth)
-            .accessibilityHidden(true)
+      HStack(spacing: 8) {
+        Meter(value: goal.progress)
+          .frame(width: meterWidth)
+          .accessibilityHidden(true)
 
-          Text(wholePercent(progress * 100))
-            .foregroundStyle(Color(.foreground))
-        }
+        Text(wholePercent(goal.progress * 100))
+          .foregroundStyle(Color(.foreground))
       }
     }
     .accessibilityElement(children: .combine)
-  }
-
-  private var description: Text {
-    goal.progress == nil
-      ? Text(
-        "Comes when every skill you practice reaches the next level", tableName: "Certificates",
-        comment: "Under a language goal on the empty certificates page: when it earns one")
-      : Text(
-        "Your certificate comes when you finish the plan", tableName: "Certificates",
-        comment: "Under a course goal on the empty certificates page: when it earns one")
   }
 }

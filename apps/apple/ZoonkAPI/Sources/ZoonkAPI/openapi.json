@@ -1204,7 +1204,7 @@
     },
     "/goals/{goalId}/certificates": {
       "post": {
-        "description": "Writes the goal's finished level and plan certificates the learner doesn't hold yet, and returns all of them. A learn or exam goal on a Library course earns one per course level its plan holds whole (every chapter the level had when the plan began), once every lesson of it is studied or tested out, at least one studied, and the challenges of its phases are won; an exam's mocks don't count. The plan earns one of its own once it's all finished with studied lessons no certified level covers: a plan without levels, a partial level, other courses' lessons. Use it while the goal map lists `certificates.unclaimed`. Show the award moment of each returned certificate whose `shownAt` is null, then read the map again.",
+        "description": "Writes the goal's finished level and plan certificates the learner doesn't hold yet, and returns all of them. A learn, exam or language goal on a Library course earns one per course level its plan holds whole (every chapter the level had when the plan began), once every lesson of it is studied or tested out, at least half of them studied, and the challenges of its phases are won (a free learner's Plus-only calls excepted); an exam's mocks don't count. The plan earns one of its own once it's all finished so, with studied lessons no certified level covers: a plan without levels, a partial level, other courses' lessons. Use it while the goal map lists `certificates.unclaimed`. Show the award moment of each returned certificate whose `shownAt` is null, then read the map again.",
         "operationId": "claimCourseCertificate",
         "security": [
           {
@@ -1274,7 +1274,7 @@
             }
           },
           "409": {
-            "description": "`COURSE_NOT_FINISHED`: no level or plan of the goal is finished, or the goal is one that earns no course certificate (language and explain goals)",
+            "description": "`COURSE_NOT_FINISHED`: no level or plan of the goal is finished, or the goal is one that earns no course certificate (explain goals)",
             "content": {
               "application/json": {
                 "schema": {
@@ -1298,7 +1298,7 @@
     },
     "/me/certificates": {
       "get": {
-        "description": "The learner's certificates, latest finished first: finished course levels and plans, and finished language levels, locked ones included. Reading them never marks one shown.",
+        "description": "The learner's certificates, latest finished first: finished course levels and plans, locked ones included. Reading them never marks one shown.",
         "operationId": "listCertificates",
         "security": [
           {
@@ -31834,16 +31834,9 @@
       "Certificate": {
         "type": "object",
         "properties": {
-          "canDo": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Language level: what the learner can do, in the certificate's words"
-          },
           "category": {
             "nullable": true,
-            "description": "Course: the course's first category, for its subject mark",
+            "description": "The course's first category, for its subject mark",
             "type": "string",
             "enum": [
               "arts",
@@ -31864,6 +31857,11 @@
               "tech"
             ]
           },
+          "cefrRange": {
+            "nullable": true,
+            "description": "A language course's level: the CEFR levels it covers, such as \"B1–B2\", shown with the level's name (\"Intermediate (B1–B2)\"). Null otherwise",
+            "type": "string"
+          },
           "code": {
             "type": "string",
             "description": "The public verification code, 12 characters; show it in groups of four (\"K7QF-2M9X-HD4P\")"
@@ -31876,14 +31874,14 @@
           },
           "courseId": {
             "nullable": true,
-            "description": "Course: the course while it's public, for a link to its page",
+            "description": "The course while it's public, for a link to its page",
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "courseLevel": {
             "nullable": true,
-            "description": "Course: the level it certifies, named with the title (\"Python · Beginner\"). Null for a plan certified whole, and for language levels",
+            "description": "The level it certifies, named with the title (\"Python · Beginner\"). Null for a plan certified whole",
             "type": "string",
             "enum": [
               "overview",
@@ -31892,46 +31890,27 @@
               "advanced"
             ]
           },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "course",
-              "languageLevel"
-            ]
-          },
           "language": {
             "type": "string",
             "description": "The locale the certificate's own words are in"
           },
           "lessonsStudied": {
             "nullable": true,
-            "description": "Course and language level",
+            "description": "Lessons studied on Zoonk",
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
           },
           "lessonsTestedOut": {
             "nullable": true,
-            "description": "Course: lessons passed by test",
+            "description": "Lessons passed by test",
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
           },
-          "level": {
-            "nullable": true,
-            "description": "Language level: the level finished",
-            "type": "string",
-            "enum": [
-              "A1",
-              "A2",
-              "B1",
-              "B2",
-              "C1"
-            ]
-          },
           "minutes": {
             "nullable": true,
-            "description": "Course and language level: about how long the studied lessons take, from the plan's estimates; null when unknown",
+            "description": "About how long the studied lessons take, from the plan's estimates; null when unknown",
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
@@ -31941,29 +31920,16 @@
             "description": "The learner's profile name, read live, so fixing it fixes every certificate; null when empty: ask for a name before they share, print or download",
             "type": "string"
           },
-          "skillLevels": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CertificateSkillLevel"
-            },
-            "description": "Language level: each skill the learner's answers raised, at its level when earned"
-          },
-          "targetLanguage": {
-            "nullable": true,
-            "description": "Language kinds: the language",
-            "type": "string"
-          },
           "title": {
-            "nullable": true,
-            "description": "Course: its title, as written. Null for language kinds, named from the language",
-            "type": "string"
+            "type": "string",
+            "description": "The course's title, as written"
           },
           "topics": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Course: the chapters it covers in plan order, the level's for a level and every one for a plan"
+            "description": "The chapters it covers in plan order, the level's for a level and every one for a plan"
           },
           "imageUrls": {
             "$ref": "#/components/schemas/CertificateImageUrls"
@@ -31980,21 +31946,17 @@
           }
         },
         "required": [
-          "canDo",
           "category",
+          "cefrRange",
           "code",
           "completedOn",
           "courseId",
           "courseLevel",
-          "kind",
           "language",
           "lessonsStudied",
           "lessonsTestedOut",
-          "level",
           "minutes",
           "recipientName",
-          "skillLevels",
-          "targetLanguage",
           "title",
           "topics",
           "imageUrls",
@@ -32003,29 +31965,6 @@
         ],
         "additionalProperties": false,
         "description": "A certificate as anyone with its link sees it, with its page and pictures"
-      },
-      "CertificateSkillLevel": {
-        "type": "object",
-        "properties": {
-          "label": {
-            "type": "string",
-            "description": "The skill's level, such as \"B1\" or \"B2+\""
-          },
-          "skill": {
-            "type": "string",
-            "enum": [
-              "reading",
-              "listening",
-              "speaking",
-              "writing"
-            ]
-          }
-        },
-        "required": [
-          "label",
-          "skill"
-        ],
-        "additionalProperties": false
       },
       "CertificateImageUrls": {
         "type": "object",
@@ -32079,16 +32018,9 @@
       "OwnedCertificate": {
         "type": "object",
         "properties": {
-          "canDo": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Language level: what the learner can do, in the certificate's words"
-          },
           "category": {
             "nullable": true,
-            "description": "Course: the course's first category, for its subject mark",
+            "description": "The course's first category, for its subject mark",
             "type": "string",
             "enum": [
               "arts",
@@ -32109,6 +32041,11 @@
               "tech"
             ]
           },
+          "cefrRange": {
+            "nullable": true,
+            "description": "A language course's level: the CEFR levels it covers, such as \"B1–B2\", shown with the level's name (\"Intermediate (B1–B2)\"). Null otherwise",
+            "type": "string"
+          },
           "code": {
             "type": "string",
             "description": "The public verification code, 12 characters; show it in groups of four (\"K7QF-2M9X-HD4P\")"
@@ -32121,14 +32058,14 @@
           },
           "courseId": {
             "nullable": true,
-            "description": "Course: the course while it's public, for a link to its page",
+            "description": "The course while it's public, for a link to its page",
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "courseLevel": {
             "nullable": true,
-            "description": "Course: the level it certifies, named with the title (\"Python · Beginner\"). Null for a plan certified whole, and for language levels",
+            "description": "The level it certifies, named with the title (\"Python · Beginner\"). Null for a plan certified whole",
             "type": "string",
             "enum": [
               "overview",
@@ -32137,46 +32074,27 @@
               "advanced"
             ]
           },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "course",
-              "languageLevel"
-            ]
-          },
           "language": {
             "type": "string",
             "description": "The locale the certificate's own words are in"
           },
           "lessonsStudied": {
             "nullable": true,
-            "description": "Course and language level",
+            "description": "Lessons studied on Zoonk",
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
           },
           "lessonsTestedOut": {
             "nullable": true,
-            "description": "Course: lessons passed by test",
+            "description": "Lessons passed by test",
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
           },
-          "level": {
-            "nullable": true,
-            "description": "Language level: the level finished",
-            "type": "string",
-            "enum": [
-              "A1",
-              "A2",
-              "B1",
-              "B2",
-              "C1"
-            ]
-          },
           "minutes": {
             "nullable": true,
-            "description": "Course and language level: about how long the studied lessons take, from the plan's estimates; null when unknown",
+            "description": "About how long the studied lessons take, from the plan's estimates; null when unknown",
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
@@ -32186,29 +32104,16 @@
             "description": "The learner's profile name, read live, so fixing it fixes every certificate; null when empty: ask for a name before they share, print or download",
             "type": "string"
           },
-          "skillLevels": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CertificateSkillLevel"
-            },
-            "description": "Language level: each skill the learner's answers raised, at its level when earned"
-          },
-          "targetLanguage": {
-            "nullable": true,
-            "description": "Language kinds: the language",
-            "type": "string"
-          },
           "title": {
-            "nullable": true,
-            "description": "Course: its title, as written. Null for language kinds, named from the language",
-            "type": "string"
+            "type": "string",
+            "description": "The course's title, as written"
           },
           "topics": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Course: the chapters it covers in plan order, the level's for a level and every one for a plan"
+            "description": "The chapters it covers in plan order, the level's for a level and every one for a plan"
           },
           "locked": {
             "type": "boolean",
@@ -32243,21 +32148,17 @@
           }
         },
         "required": [
-          "canDo",
           "category",
+          "cefrRange",
           "code",
           "completedOn",
           "courseId",
           "courseLevel",
-          "kind",
           "language",
           "lessonsStudied",
           "lessonsTestedOut",
-          "level",
           "minutes",
           "recipientName",
-          "skillLevels",
-          "targetLanguage",
           "title",
           "topics",
           "locked",
@@ -39311,16 +39212,9 @@
       "OwnedCertificateFacts": {
         "type": "object",
         "properties": {
-          "canDo": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Language level: what the learner can do, in the certificate's words"
-          },
           "category": {
             "nullable": true,
-            "description": "Course: the course's first category, for its subject mark",
+            "description": "The course's first category, for its subject mark",
             "type": "string",
             "enum": [
               "arts",
@@ -39341,6 +39235,11 @@
               "tech"
             ]
           },
+          "cefrRange": {
+            "nullable": true,
+            "description": "A language course's level: the CEFR levels it covers, such as \"B1–B2\", shown with the level's name (\"Intermediate (B1–B2)\"). Null otherwise",
+            "type": "string"
+          },
           "code": {
             "type": "string",
             "description": "The public verification code, 12 characters; show it in groups of four (\"K7QF-2M9X-HD4P\")"
@@ -39353,14 +39252,14 @@
           },
           "courseId": {
             "nullable": true,
-            "description": "Course: the course while it's public, for a link to its page",
+            "description": "The course while it's public, for a link to its page",
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "courseLevel": {
             "nullable": true,
-            "description": "Course: the level it certifies, named with the title (\"Python · Beginner\"). Null for a plan certified whole, and for language levels",
+            "description": "The level it certifies, named with the title (\"Python · Beginner\"). Null for a plan certified whole",
             "type": "string",
             "enum": [
               "overview",
@@ -39369,46 +39268,27 @@
               "advanced"
             ]
           },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "course",
-              "languageLevel"
-            ]
-          },
           "language": {
             "type": "string",
             "description": "The locale the certificate's own words are in"
           },
           "lessonsStudied": {
             "nullable": true,
-            "description": "Course and language level",
+            "description": "Lessons studied on Zoonk",
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
           },
           "lessonsTestedOut": {
             "nullable": true,
-            "description": "Course: lessons passed by test",
+            "description": "Lessons passed by test",
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
           },
-          "level": {
-            "nullable": true,
-            "description": "Language level: the level finished",
-            "type": "string",
-            "enum": [
-              "A1",
-              "A2",
-              "B1",
-              "B2",
-              "C1"
-            ]
-          },
           "minutes": {
             "nullable": true,
-            "description": "Course and language level: about how long the studied lessons take, from the plan's estimates; null when unknown",
+            "description": "About how long the studied lessons take, from the plan's estimates; null when unknown",
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
@@ -39418,29 +39298,16 @@
             "description": "The learner's profile name, read live, so fixing it fixes every certificate; null when empty: ask for a name before they share, print or download",
             "type": "string"
           },
-          "skillLevels": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CertificateSkillLevel"
-            },
-            "description": "Language level: each skill the learner's answers raised, at its level when earned"
-          },
-          "targetLanguage": {
-            "nullable": true,
-            "description": "Language kinds: the language",
-            "type": "string"
-          },
           "title": {
-            "nullable": true,
-            "description": "Course: its title, as written. Null for language kinds, named from the language",
-            "type": "string"
+            "type": "string",
+            "description": "The course's title, as written"
           },
           "topics": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Course: the chapters it covers in plan order, the level's for a level and every one for a plan"
+            "description": "The chapters it covers in plan order, the level's for a level and every one for a plan"
           },
           "locked": {
             "type": "boolean",
@@ -39455,21 +39322,17 @@
           }
         },
         "required": [
-          "canDo",
           "category",
+          "cefrRange",
           "code",
           "completedOn",
           "courseId",
           "courseLevel",
-          "kind",
           "language",
           "lessonsStudied",
           "lessonsTestedOut",
-          "level",
           "minutes",
           "recipientName",
-          "skillLevels",
-          "targetLanguage",
           "title",
           "topics",
           "locked",
@@ -77624,7 +77487,7 @@
       },
       "PlanCertificates": {
         "nullable": true,
-        "description": "A learn or exam goal's certificates: one per level of a Library course it finishes whole, and one for the plan when it finishes with lessons no certified level covers. Null until one is finished or held, and for language and explain goals",
+        "description": "A learn, exam or language goal's certificates: one per level of a Library course it finishes whole with at least half its lessons studied, and one for the plan when it finishes so with lessons no certified level covers. Null until one is finished or held, and for explain goals",
         "type": "object",
         "properties": {
           "earned": {
@@ -77664,6 +77527,11 @@
             "items": {
               "type": "object",
               "properties": {
+                "cefrRange": {
+                  "nullable": true,
+                  "description": "A language course's level: the CEFR levels it covers, such as \"B1–B2\", shown with the level's name. Null otherwise",
+                  "type": "string"
+                },
                 "courseLevel": {
                   "nullable": true,
                   "type": "string",
@@ -77676,6 +77544,7 @@
                 }
               },
               "required": [
+                "cefrRange",
                 "courseLevel"
               ],
               "additionalProperties": false

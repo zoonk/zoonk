@@ -67,27 +67,17 @@ struct CertificatesAPI: CertificatesAPIClient {
   }
 }
 
-/// Main's rule: active course and exam goals whose plan has lessons, and active language goals.
+/// Main's rule: active course, exam and language goals whose plan has lessons.
 private func makeCertificateUpNext(_ goals: [Components.Schemas.Goal]) -> [CertificateUpNext] {
   goals.compactMap { goal in
-    guard goal.status == .active else {
+    guard goal.status == .active, [.exam, .language, .learn].contains(goal.kind),
+      let plan = goal.plan, plan.lessonsTotal > 0
+    else {
       return nil
     }
 
-    switch goal.kind {
-    case .language:
-      return CertificateUpNext(
-        id: goal.id, title: goal.title, languageFlag: goal.languageFlag, progress: nil)
-    case .learn, .exam:
-      guard let plan = goal.plan, plan.lessonsTotal > 0 else {
-        return nil
-      }
-
-      return CertificateUpNext(
-        id: goal.id, title: goal.title,
-        progress: Double(plan.lessonsDone) / Double(plan.lessonsTotal))
-    case .explain:
-      return nil
-    }
+    return CertificateUpNext(
+      id: goal.id, title: goal.title, languageFlag: goal.languageFlag,
+      progress: Double(plan.lessonsDone) / Double(plan.lessonsTotal))
   }
 }
