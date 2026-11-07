@@ -1,8 +1,8 @@
 {{!
-OpenAPI Generator 7.26.0's kotlin-client/anyof_class.mustache with the encode branches matching
+OpenAPI Generator 7.27.0's kotlin-client/anyof_class.mustache with the encode branches matching
 api/build.gradle.kts's type mappings: an integer branch encodes a kotlin.Long, and a `type: number`
 branch without a format (kotlin.Double) gets an encode branch at all. Nothing else differs.
-https://github.com/OpenAPITools/openapi-generator/issues/25452
+https://github.com/OpenAPITools/openapi-generator/issues/25587
 }}{{^multiplatform}}
 {{#gson}}
 {{#generateOneOfAnyOfWrappers}}
@@ -166,7 +166,12 @@ import java.io.IOException
             {{/isNumber}}
             {{/isPrimitiveType}}
             {{^isPrimitiveType}}
+            {{#isNumber}}
+            is {{classname}}.{{#fnToValueClassName}}{{{dataType}}}{{/fnToValueClassName}} -> jsonEncoder.encodeJsonElement(JsonPrimitive(value.value))
+            {{/isNumber}}
+            {{^isNumber}}
             is {{classname}}.{{#fnToValueClassName}}{{{dataType}}}{{/fnToValueClassName}} -> jsonEncoder.encodeSerializableValue({{{dataType}}}.serializer(), value.value)
+            {{/isNumber}}
             {{/isPrimitiveType}}
             {{/isArray}}
             {{/vendorExtensions.x-duplicated-data-type}}
@@ -218,6 +223,16 @@ import java.io.IOException
         {{/isString}}
         {{/isPrimitiveType}}
         {{^isPrimitiveType}}
+        {{#isNumber}}
+        if (jsonElement is JsonPrimitive && !jsonElement.isString) {
+            try {
+                return {{classname}}.{{#fnToValueClassName}}{{{dataType}}}{{/fnToValueClassName}}(jsonElement.content.toBigDecimal())
+            } catch (e: Exception) {
+                errorMessages.add("Failed to deserialize as {{{dataType}}}: ${e.message}")
+            }
+        }
+        {{/isNumber}}
+        {{^isNumber}}
         if (jsonElement !is JsonPrimitive) {
             try {
                 val instance = jsonDecoder.json.decodeFromJsonElement<{{{dataType}}}>(jsonElement)
@@ -226,6 +241,7 @@ import java.io.IOException
                 errorMessages.add("Failed to deserialize as {{{dataType}}}: ${e.message}")
             }
         }
+        {{/isNumber}}
         {{/isPrimitiveType}}
         {{/isArray}}
         {{/vendorExtensions.x-duplicated-data-type}}

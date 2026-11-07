@@ -38,7 +38,7 @@ kotlinxDatetime = "0.8.0"
 leakcanary = "2.14"
 okhttp = "5.5.1"
 # Maven Central's copy of the plugin stops at 7.14.0; the Plugin Portal has the current release.
-openapiGenerator = "7.26.0"
+openapiGenerator = "7.27.0"
 retrofit = "3.0.0"
 tink = "1.24.0"
 
