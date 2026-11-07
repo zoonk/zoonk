@@ -148,9 +148,6 @@ model Lesson {
   heldBackDrafts    Json                   @default("[]") @map("held_back_drafts")
   /// Set when the last allowed draft was held back: nothing writes it again and plans move on.
   setAsideAt        DateTime?              @map("set_aside_at")
-  /// Temporary: a language lesson written before its sentences had other word orders. The sweep
-  /// writes them and clears it; a new write of the lesson clears it too.
-  sentenceOrdersOwedAt DateTime?           @map("sentence_orders_owed_at")
   /// Runs that started writing the orders, claimed before each one pays for its model call.
   sentenceOrdersAttempts Int               @default(0) @map("sentence_orders_attempts") @db.SmallInt
   /// Public on SEO pages.
@@ -183,7 +180,6 @@ model Lesson {
   @@index([language, level, normalizedTitle])
   @@index([ownerId])
   @@index([goFurtherCourseId])
-  @@index([sentenceOrdersOwedAt])
   @@map("library_lessons")
 }
 

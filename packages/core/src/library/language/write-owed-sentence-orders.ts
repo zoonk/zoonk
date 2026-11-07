@@ -16,11 +16,6 @@ const ORDERS_TIER = chooseServiceTier({ wait: "later" });
 const MAX_ATTEMPTS = 8;
 const OWED_LESSONS_PER_SWEEP = 100;
 
-const owesOrders = {
-  sentenceOrdersAttempts: { lt: MAX_ATTEMPTS },
-  sentenceOrdersOwedAt: { not: null },
-};
-
 export type OwedSentenceOrdersStatus = "changed" | "skipped" | "written";
 
 class SentencesChangedError extends Error {
@@ -52,7 +47,10 @@ async function claimAttempt(lessonId: string): Promise<boolean> {
     UPDATE library_lessons
     SET sentence_orders_attempts = sentence_orders_attempts + 1
     WHERE id = ${lessonId}::uuid
-      AND sentence_orders_owed_at IS NOT NULL
+      AND EXISTS (
+        SELECT 1 FROM lesson_sentences
+        WHERE lesson_id = library_lessons.id AND orders_owed_at IS NOT NULL
+      )
       AND sentence_orders_attempts < ${MAX_ATTEMPTS}
   `;
 
@@ -84,9 +82,11 @@ async function writeOrders({
 }): Promise<boolean> {
   const { error } = await safeAsync(() =>
     prisma.$transaction(async (tx) => {
-      const cleared = await tx.lesson.updateMany({
-        data: { sentenceOrdersOwedAt: null },
-        where: { id: lessonId, sentenceOrdersOwedAt: { not: null } },
+      await tx.lesson.updateMany({ data: { updatedAt: new Date() }, where: { id: lessonId } });
+
+      const cleared = await tx.lessonSentence.updateMany({
+        data: { ordersOwedAt: null },
+        where: { lessonId, ordersOwedAt: { not: null } },
       });
 
       if (
@@ -193,12 +193,15 @@ export async function writeOwedSentenceOrders({
 
 /** Internal bridge for the daily sweep. */
 export async function listOwedSentenceOrders(): Promise<string[]> {
-  const lessons = await prisma.lesson.findMany({
-    orderBy: { sentenceOrdersOwedAt: "asc" },
-    select: { id: true },
+  const lessons = await prisma.lessonSentence.groupBy({
+    by: ["lessonId"],
+    orderBy: { _min: { ordersOwedAt: "asc" } },
     take: OWED_LESSONS_PER_SWEEP,
-    where: owesOrders,
+    where: {
+      lesson: { sentenceOrdersAttempts: { lt: MAX_ATTEMPTS } },
+      ordersOwedAt: { not: null },
+    },
   });
 
-  return lessons.map((lesson) => lesson.id);
+  return lessons.map((lesson) => lesson.lessonId);
 }

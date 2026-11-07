@@ -137,13 +137,7 @@ describe(writeLanguageLessonContent, () => {
       language: "pt",
     });
 
-    await Promise.all([
-      lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
-      prisma.lesson.update({
-        data: { sentenceOrdersOwedAt: new Date() },
-        where: { id: lesson.id },
-      }),
-    ]);
+    await lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id });
 
     const writerRunId = crypto.randomUUID();
     mockDraft(uniqueDraft(key), writerRunId);
@@ -179,7 +173,9 @@ describe(writeLanguageLessonContent, () => {
       where: { id: lesson.id },
     });
 
-    expect(saved).toMatchObject({ contentStatus: "completed", sentenceOrdersOwedAt: null });
+    expect(saved).toMatchObject({ contentStatus: "completed" });
+    expect(saved.sentences).toHaveLength(3);
+    expect(saved.sentences.every((row) => row.ordersOwedAt === null)).toBe(true);
 
     expect(saved.summary).toStrictEqual({
       ideas: [

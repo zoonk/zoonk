@@ -8,6 +8,7 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
+import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import {
   brandFixture,
   productFixture,
@@ -244,13 +245,23 @@ describe(dailySweepsWorkflow, () => {
 
   it("starts writing the word orders lessons written before them still owe", async () => {
     const [owed, written, failing] = await Promise.all([
-      // The sweep takes the longest-owed first, so other tests' owed lessons can't push this one out
-      // of its batch.
-      libraryLessonFixture({ sentenceOrdersOwedAt: new Date(Date.now() - 30 * DAY_MS) }),
-      libraryLessonFixture({ sentenceOrdersOwedAt: null }),
-      libraryLessonFixture({
-        sentenceOrdersAttempts: 8,
-        sentenceOrdersOwedAt: new Date(Date.now() - 30 * DAY_MS),
+      languageLessonFixture(),
+      languageLessonFixture(),
+      languageLessonFixture(),
+    ]);
+
+    await Promise.all([
+      prisma.lessonSentence.updateMany({
+        data: { ordersOwedAt: new Date(Date.now() - 30 * DAY_MS) },
+        where: { lessonId: owed.lesson.id },
+      }),
+      prisma.lessonSentence.updateMany({
+        data: { ordersOwedAt: null },
+        where: { lessonId: written.lesson.id },
+      }),
+      prisma.lesson.update({
+        data: { sentenceOrdersAttempts: 8 },
+        where: { id: failing.lesson.id },
       }),
     ]);
 
@@ -261,10 +272,30 @@ describe(dailySweepsWorkflow, () => {
       .mock.calls.filter(([workflow]) => workflow === sentenceOrdersWorkflow)
       .flatMap(([, args]) => (args as [{ lessonIds: string[] }])[0].lessonIds);
 
-    expect(started).toContain(owed.id);
-    expect(started).not.toContain(written.id);
-    expect(started).not.toContain(failing.id);
+    expect(started).toContain(owed.lesson.id);
+    expect(started).not.toContain(written.lesson.id);
+    expect(started).not.toContain(failing.lesson.id);
     expect(result.sentenceOrders).toBe(started.length);
+  });
+
+  it("starts one repair for a lesson an old writer finishes after migration", async () => {
+    const [first, second] = await Promise.all([languageLessonFixture(), languageLessonFixture()]);
+
+    await prisma.lessonSentence.update({
+      data: { lessonId: first.lesson.id, position: 1 },
+      where: {
+        lessonId_sentenceId: { lessonId: second.lesson.id, sentenceId: second.sentence.id },
+      },
+    });
+
+    await dailySweepsWorkflow(scheduledRun());
+
+    const started = getStartMock()
+      .mock.calls.filter(([workflow]) => workflow === sentenceOrdersWorkflow)
+      .flatMap(([, args]) => (args as [{ lessonIds: string[] }])[0].lessonIds);
+
+    expect(started.filter((id) => id === first.lesson.id)).toStrictEqual([first.lesson.id]);
+    expect(started).not.toContain(second.lesson.id);
   });
 
   it("starts the rewrite of what a changed source left flagged", async () => {

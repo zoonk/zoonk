@@ -104,6 +104,8 @@ model LessonSentence {
   translation            String
   otherSentenceOrders    String[] @default([]) @map("other_sentence_orders")
   otherTranslationOrders String[] @default([]) @map("other_translation_orders")
+  /// The default also marks sentences saved by a writer deployed before order generation.
+  ordersOwedAt           DateTime? @default(now()) @map("orders_owed_at")
   explanation            String
   distractors            String[] @default([])
   translationDistractors String[] @default([]) @map("translation_distractors")
@@ -115,5 +117,6 @@ model LessonSentence {
 
   @@id([lessonId, sentenceId])
   @@index([sentenceId])
+  @@index([ordersOwedAt, lessonId])
   @@map("lesson_sentences")
 }

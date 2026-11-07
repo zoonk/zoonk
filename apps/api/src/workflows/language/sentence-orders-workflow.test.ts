@@ -41,8 +41,13 @@ async function owedLessonFixture({ attempts = 0 }: { attempts?: number } = {}) {
   const owedAt = new Date(Date.now() - DAY_MS);
 
   await prisma.lesson.update({
-    data: { sentenceOrdersAttempts: attempts, sentenceOrdersOwedAt: owedAt, updatedAt: owedAt },
+    data: { sentenceOrdersAttempts: attempts, updatedAt: owedAt },
     where: { id: lesson.id },
+  });
+
+  await prisma.lessonSentence.updateMany({
+    data: { ordersOwedAt: owedAt },
+    where: { lessonId: lesson.id },
   });
 
   return { lessonId: lesson.id, owedAt, sentenceId: sentence.id };
@@ -51,9 +56,8 @@ async function owedLessonFixture({ attempts = 0 }: { attempts?: number } = {}) {
 function readOrders({ lessonId, sentenceId }: { lessonId: string; sentenceId: string }) {
   return prisma.lessonSentence.findUniqueOrThrow({
     select: {
-      lesson: {
-        select: { sentenceOrdersAttempts: true, sentenceOrdersOwedAt: true, updatedAt: true },
-      },
+      lesson: { select: { sentenceOrdersAttempts: true, updatedAt: true } },
+      ordersOwedAt: true,
       otherSentenceOrders: true,
       otherTranslationOrders: true,
     },
@@ -72,23 +76,29 @@ describe(sentenceOrdersWorkflow, () => {
       written: 1,
     });
 
-    expect(generateLanguageSentenceOrders).toHaveBeenCalledWith(
+    const stored = await readOrders(owed);
+
+    expect(stored).toMatchObject({
+      ordersOwedAt: null,
+      otherSentenceOrders: ["the rent? is How much"],
+      otherTranslationOrders: ["o aluguel? é Quanto"],
+    });
+
+    expect(stored.lesson.updatedAt.getTime()).toBeGreaterThan(owed.owedAt.getTime());
+
+    await expect(sentenceOrdersWorkflow({ lessonIds: [owed.lessonId] })).resolves.toStrictEqual({
+      changed: 0,
+      skipped: 1,
+      written: 0,
+    });
+
+    expect(generateLanguageSentenceOrders).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         learnerLanguage: "pt",
         sentences: [{ sentence: "How much is the rent?", translation: "Quanto é o aluguel?" }],
         targetLanguage: "en",
       }),
     );
-
-    const stored = await readOrders(owed);
-
-    expect(stored).toMatchObject({
-      lesson: { sentenceOrdersOwedAt: null },
-      otherSentenceOrders: ["the rent? is How much"],
-      otherTranslationOrders: ["o aluguel? é Quanto"],
-    });
-
-    expect(stored.lesson.updatedAt.getTime()).toBeGreaterThan(owed.owedAt.getTime());
   });
 
   it("leaves a lesson whose sentences changed during the call owing orders for its new sentences", async () => {
@@ -110,7 +120,8 @@ describe(sentenceOrdersWorkflow, () => {
     });
 
     await expect(readOrders(owed)).resolves.toMatchObject({
-      lesson: { sentenceOrdersOwedAt: owed.owedAt },
+      lesson: { updatedAt: owed.owedAt },
+      ordersOwedAt: owed.owedAt,
       otherSentenceOrders: [],
       otherTranslationOrders: [],
     });
@@ -132,11 +143,8 @@ describe(sentenceOrdersWorkflow, () => {
       });
 
       await expect(readOrders(owed)).resolves.toMatchObject({
-        lesson: {
-          sentenceOrdersAttempts: 1,
-          sentenceOrdersOwedAt: owed.owedAt,
-          updatedAt: owed.owedAt,
-        },
+        lesson: { sentenceOrdersAttempts: 1, updatedAt: owed.owedAt },
+        ordersOwedAt: owed.owedAt,
         otherSentenceOrders: [],
         otherTranslationOrders: [],
       });
@@ -161,7 +169,8 @@ describe(sentenceOrdersWorkflow, () => {
     expect(generateLanguageSentenceOrders).toHaveBeenCalledTimes(2);
 
     await expect(readOrders(owed)).resolves.toMatchObject({
-      lesson: { sentenceOrdersAttempts: MAX_ATTEMPTS, sentenceOrdersOwedAt: owed.owedAt },
+      lesson: { sentenceOrdersAttempts: MAX_ATTEMPTS },
+      ordersOwedAt: owed.owedAt,
     });
   });
 
