@@ -1,46 +1,76 @@
 import { parseInlineMarkupRanges } from "./inline-markup";
-import { CELL_PIPE, findMarkdownTableLines } from "./markdown-table";
+import { splitLinesAndCells } from "./markdown-table";
 import { type MathSpan, findMathSpans, hideMath } from "./math-spans";
 
-/** A backslash before any other word is a file path or an escape a writer meant as text. */
+/**
+ * Outside braces, a backslash before any other word is a file path or an escape a writer meant as
+ * text (`C:\text\notes.txt`); inside a known command's braces it's part of the formula.
+ */
 const MATH_COMMANDS = new Set([
   "alpha",
   "approx",
   "beta",
   "cdot",
+  "cdots",
+  "circ",
+  "cos",
   "Delta",
   "delta",
   "dfrac",
   "div",
+  "epsilon",
+  "exp",
   "frac",
+  "gamma",
+  "ge",
   "geq",
   "infty",
+  "int",
   "lambda",
+  "ldots",
+  "le",
   "leq",
+  "lim",
+  "ln",
+  "log",
+  "mathrm",
+  "mu",
+  "ne",
   "neq",
+  "Omega",
+  "omega",
+  "partial",
+  "phi",
   "pi",
   "pm",
+  "rho",
+  "rightarrow",
+  "Sigma",
+  "sigma",
+  "sin",
   "sqrt",
   "sum",
+  "tan",
   "text",
   "theta",
   "times",
+  "to",
 ]);
 
 /** KaTeX reads these commands' arguments only in braces, so `\sqrt 4` can't be wrapped as written. */
-const BRACED_COMMANDS = new Set(["dfrac", "frac", "sqrt", "text"]);
+const BRACED_COMMANDS = new Set(["dfrac", "frac", "mathrm", "sqrt", "text"]);
 
 const BACKSLASH_WORD = /\\(?<name>[A-Za-z]+)(?=(?<next>.?))/gu;
 const BRACED_SCRIPT = /[\^_]\{/u;
 
-/**
- * KaTeX raises only the next character, so `10^12`, `10^-1` and `10^3,5` need their power braced,
- * with a decimal comma braced too so it doesn't read as a list.
- */
+/** KaTeX raises only the next character, so `10^12` and `10^-1` need their power braced. */
 const CARET_POWER =
-  /(?<=[\p{L}\p{N})\]}])\^(?<power>[-−]?\p{N}+(?:[.,]\p{N}+)?|\p{L}(?![\p{L}\p{N}]))/gu;
+  /(?<=[\p{L}\p{N})\]}])\^(?<power>[-−]?\p{N}+(?:\.\p{N}+)?|\p{L}(?![\p{L}\p{N}]))/gu;
 
 const HAS_CARET_POWER = new RegExp(CARET_POWER.source, "u");
+
+/** `10^3,5` is a decimal power in some languages and two numbers in others; a writer decides. */
+const COMMA_AFTER_POWER = /\^[-−]?\p{N}+,\p{N}/u;
 
 /** A run of text without spaces, except inside braces, so `\frac{a + b}{2}` stays one piece. */
 const CHUNK = /(?:\{(?:[^{}]|\{[^{}]*\})*\}|[^\s{}])+/gu;
@@ -51,6 +81,8 @@ const PUNCTUATION_AFTER = /[.,;:!?%"'”’»*_]$/u;
 /** In KaTeX, `%` starts a comment, `~` is a space, and `&` and `#` are errors outside environments. */
 const TEX_SPECIAL = /[%~&#]/u;
 
+type Command = { braced: boolean; inBraces: boolean; name: string };
+
 type BareLatex = {
   end: number;
   latex: string;
@@ -59,8 +91,12 @@ type BareLatex = {
   written: string;
 };
 
-function hideMathAndCode(line: string): string {
-  const withoutMath = hideMath(line);
+function count(text: string, character: string): number {
+  return text.split(character).length - 1;
+}
+
+function hideMathAndCode(cell: string): string {
+  const withoutMath = hideMath(cell);
 
   return parseInlineMarkupRanges(withoutMath)
     .filter((range) => range.kind === "code")
@@ -69,10 +105,6 @@ function hideMathAndCode(line: string): string {
         `${text.slice(0, start)}${" ".repeat(end - start)}${text.slice(end)}`,
       withoutMath,
     );
-}
-
-function count(text: string, character: string): number {
-  return text.split(character).length - 1;
 }
 
 function isUnpairedClose(text: string): boolean {
@@ -101,21 +133,39 @@ function trimEnd(text: string): string {
   return PUNCTUATION_AFTER.test(text) || isUnpairedClose(text) ? trimEnd(text.slice(0, -1)) : text;
 }
 
-function findCommands(text: string): { braced: boolean; name: string }[] {
-  return [...text.matchAll(BACKSLASH_WORD)].map((match) => ({
-    braced: match.groups?.next === "{",
-    name: match.groups?.name ?? "",
-  }));
+function findCommands(text: string): Command[] {
+  return [...text.matchAll(BACKSLASH_WORD)].map((match) => {
+    const before = text.slice(0, match.index);
+
+    return {
+      braced: match.groups?.next === "{",
+      inBraces: count(before, "{") > count(before, "}"),
+      name: match.groups?.name ?? "",
+    };
+  });
 }
 
-function isLatex({ commands, text }: { commands: { name: string }[]; text: string }): boolean {
-  const known = commands.every((command) => MATH_COMMANDS.has(command.name));
+function isLatex({ commands, text }: { commands: Command[]; text: string }): boolean {
+  const known = commands.filter((command) => MATH_COMMANDS.has(command.name));
+  const isPath = commands.some((command) => !command.inBraces && !MATH_COMMANDS.has(command.name));
 
-  return known && (commands.length > 0 || BRACED_SCRIPT.test(text) || HAS_CARET_POWER.test(text));
+  return !isPath && (known.length > 0 || BRACED_SCRIPT.test(text) || HAS_CARET_POWER.test(text));
 }
 
-function toPower(power: string): string {
-  return `^{${power.replace("−", "-").replace(",", "{,}")}}`;
+function isRepairable({
+  commands,
+  latex,
+  written,
+}: {
+  commands: Command[];
+  latex: string;
+  written: string;
+}): boolean {
+  return (
+    !TEX_SPECIAL.test(latex) &&
+    !COMMA_AFTER_POWER.test(written) &&
+    commands.every((command) => command.braced || !BRACED_COMMANDS.has(command.name))
+  );
 }
 
 function toBareLatex({ chunk, index }: { chunk: string; index: number }): BareLatex | null {
@@ -128,13 +178,18 @@ function toBareLatex({ chunk, index }: { chunk: string; index: number }): BareLa
     return null;
   }
 
-  const latex = written.replaceAll(CARET_POWER, (_power, power: string) => toPower(power));
+  const latex = written.replaceAll(
+    CARET_POWER,
+    (_power, power: string) => `^{${power.replace("−", "-")}}`,
+  );
 
-  const repairable =
-    !TEX_SPECIAL.test(latex) &&
-    commands.every((command) => command.braced || !BRACED_COMMANDS.has(command.name));
-
-  return { end: start + written.length, latex, repairable, start, written };
+  return {
+    end: start + written.length,
+    latex,
+    repairable: isRepairable({ commands, latex, written }),
+    start,
+    written,
+  };
 }
 
 function findBareLatexIn(hidden: string): BareLatex[] {
@@ -164,9 +219,9 @@ function isInEmphasis({ hidden, pieces }: { hidden: string; pieces: BareLatex[] 
   );
 }
 
-/** A `$` the line already has, such as a price's, can pair with a new one; then the line stays. */
-function wrapLine(line: string): string {
-  const hidden = hideMathAndCode(line);
+/** A `$` the cell already has, such as a price's, can pair with a new one; then the cell stays. */
+function wrapCell(cell: string): string {
+  const hidden = hideMathAndCode(cell);
   const pieces = findBareLatexIn(hidden);
 
   if (
@@ -174,30 +229,22 @@ function wrapLine(line: string): string {
     pieces.some((piece) => !piece.repairable) ||
     isInEmphasis({ hidden, pieces })
   ) {
-    return line;
+    return cell;
   }
 
   const wrapped = pieces
     .toReversed()
     .reduce(
       (text, piece) => `${text.slice(0, piece.start)}$${piece.latex}$${text.slice(piece.end)}`,
-      line,
+      cell,
     );
 
   const expected = [
-    ...findMathSpans(line),
+    ...findMathSpans(cell),
     ...pieces.map((piece) => ({ content: piece.latex, start: piece.start })),
   ];
 
-  return hasSameMath(findMathSpans(wrapped), expected) ? wrapped : line;
-}
-
-/** The player reads each line, and each table cell, on its own. */
-function splitLines(text: string): string[][] {
-  const lines = text.split("\n");
-  const tableLines = findMarkdownTableLines(lines);
-
-  return lines.map((line, index) => (tableLines.has(index) ? line.split(CELL_PIPE) : [line]));
+  return hasSameMath(findMathSpans(wrapped), expected) ? wrapped : cell;
 }
 
 function describe({ latex, repairable, written }: BareLatex): string {
@@ -205,15 +252,15 @@ function describe({ latex, repairable, written }: BareLatex): string {
   return String.raw`Shows math as raw text: "${written}". Write it between dollar signs${example}, outside bold or italics, and any other dollar sign in that line as \$.`;
 }
 
-/** After `wrapBareLatex`, what's left is in bold or italics, beside another dollar sign, or needs braces. */
+/** After `wrapBareLatex`, what's left is in bold or italics, beside another dollar sign, or unclear. */
 export function findBareLatex(text: string): string[] {
-  return splitLines(text)
+  return splitLinesAndCells(text)
     .flat()
-    .flatMap((line) => findBareLatexIn(hideMathAndCode(line)).map((piece) => describe(piece)));
+    .flatMap((cell) => findBareLatexIn(hideMathAndCode(cell)).map((piece) => describe(piece)));
 }
 
 export function wrapBareLatex(text: string): string {
-  return splitLines(text)
-    .map((cells) => cells.map((cell) => wrapLine(cell)).join("|"))
+  return splitLinesAndCells(text)
+    .map((cells) => cells.map((cell) => wrapCell(cell)).join("|"))
     .join("\n");
 }

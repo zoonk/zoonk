@@ -608,10 +608,15 @@ describe(checkWrittenLesson, () => {
     expect(codesOf(withScreen(4, wrapped))).toStrictEqual([]);
   });
 
-  it("reads no math as money", () => {
+  it("reads no math as money, and every price in a table's cells", () => {
     const priced = explanation("The deposit is $5.00.\nIt grows by $10^{3}$ in a decade.");
 
+    const table = explanation(
+      ["| Price | Formula |", "|---|---|", "| $5 | $x$ |", "| $10.00 | $y$ |"].join("\n"),
+    );
+
     expect(codesOf(withScreen(4, priced))).toStrictEqual([]);
+    expect(codesOf(withScreen(4, table))).toStrictEqual([[4, "moneyFormat"]]);
   });
 
   it("rejects a guess's reveal that points at an option by its place", () => {

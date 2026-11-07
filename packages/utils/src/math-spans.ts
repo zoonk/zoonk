@@ -1,3 +1,5 @@
+import { splitLinesAndCells } from "./markdown-table";
+
 export type MathSpan = { content: string; display: boolean; end: number; start: number };
 
 const WHITESPACE = /\s/u;
@@ -121,16 +123,17 @@ export function findMathSpans(line: string): MathSpan[] {
   return [first, ...rest];
 }
 
-/** Each line on its own, as the player reads it; spaces of the same length keep positions. */
+function hideCellMath(cell: string): string {
+  return findMathSpans(cell).reduce(
+    (hidden, { end, start }) =>
+      `${hidden.slice(0, start)}${" ".repeat(end - start)}${hidden.slice(end)}`,
+    cell,
+  );
+}
+
+/** Spaces of the same length keep positions pointing into the text. */
 export function hideMath(text: string): string {
-  return text
-    .split("\n")
-    .map((line) =>
-      findMathSpans(line).reduce(
-        (hidden, { end, start }) =>
-          `${hidden.slice(0, start)}${" ".repeat(end - start)}${hidden.slice(end)}`,
-        line,
-      ),
-    )
+  return splitLinesAndCells(text)
+    .map((cells) => cells.map((cell) => hideCellMath(cell)).join("|"))
     .join("\n");
 }

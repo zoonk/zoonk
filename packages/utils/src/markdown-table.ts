@@ -5,7 +5,7 @@ export type MarkdownTable = { align: MarkdownTableAlign[]; header: string[]; row
 
 const DELIMITER_CELL = /^:?-+:?$/u;
 const EDGE_PIPES = /^\||(?<!\\)\|$/gu;
-export const CELL_PIPE = /(?<!\\)\|/u;
+const CELL_PIPE = /(?<!\\)\|/u;
 const ESCAPED_PIPE = String.raw`\|`;
 
 function isRow(line: string | undefined): line is string {
@@ -125,6 +125,14 @@ export function findMarkdownTableLines(lines: readonly string[]): ReadonlySet<nu
       return read ? Array.from({ length: read.end - index }, (__, offset) => index + offset) : [];
     }),
   );
+}
+
+/** The player reads each line, and each table cell, on its own; joining with `|` and `\n` restores the text. */
+export function splitLinesAndCells(text: string): string[][] {
+  const lines = text.split("\n");
+  const tableLines = findMarkdownTableLines(lines);
+
+  return lines.map((line, index) => (tableLines.has(index) ? line.split(CELL_PIPE) : [line]));
 }
 
 export function removeMarkdownTables(text: string): string {

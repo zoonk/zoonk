@@ -51,13 +51,16 @@ describe(wrapBareLatex, () => {
       wrapBareLatex(String.raw`So $0.000406$ m = 4.06 \times 10^{-4} m, or \frac{a + b}{2}.`),
     ).toBe(String.raw`So $0.000406$ m = 4.06 $\times$ $10^{-4}$ m, or $\frac{a + b}{2}$.`);
 
+    expect(wrapBareLatex(String.raw`The ratio is \frac{\sin(x)}{2}.`)).toBe(
+      String.raw`The ratio is $\frac{\sin(x)}{2}$.`,
+    );
+
     expect(wrapBareLatex("It's 10^{3}, then R$ 80 and $5 later.")).toBe(
       "It's $10^{3}$, then R$ 80 and $5 later.",
     );
   });
 
   it("keeps a power's whole exponent in the math and the signs around it out of it", () => {
-    expect(wrapBareLatex("O valor é 10^3,5.")).toBe("O valor é $10^{3{,}5}$.");
     expect(wrapBareLatex("A gap is 7.02 × 10^−5 m.")).toBe("A gap is 7.02 × $10^{-5}$ m.");
     expect(wrapBareLatex("The increase is 10^2%.")).toBe("The increase is $10^{2}$%.");
     expect(wrapBareLatex("About ~10^3 cells.")).toBe("About ~$10^{3}$ cells.");
@@ -91,10 +94,12 @@ describe(wrapBareLatex, () => {
       "Learn **the 10^{3} rule** first.",
       "_e^x_ grows.",
       String.raw`The root is \sqrt 4 = 2.`,
+      "O valor é 10^3,5.",
+      "The point is (2^3,3^2).",
     ];
 
     expect(texts.map((text) => wrapBareLatex(text))).toStrictEqual(texts);
-    expect(texts.map((text) => findBareLatex(text).length)).toStrictEqual([1, 1, 1, 1]);
+    expect(texts.map((text) => findBareLatex(text).length)).toStrictEqual([1, 1, 1, 1, 1, 1]);
 
     expect(findBareLatex(String.raw`The root is \sqrt 4 = 2.`)).toStrictEqual([
       String.raw`Shows math as raw text: "\sqrt". Write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \$.`,
