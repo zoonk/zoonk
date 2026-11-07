@@ -123,6 +123,37 @@ async function redeem({
   return post({ body: { authenticationResponseJson }, path: "/restore-key/session" });
 }
 
+type AssertionJson = { rawId: string; response: Record<string, string> };
+
+async function redeemTampered({
+  key,
+  tamper,
+}: {
+  key: RestoreKeyAuthenticator;
+  tamper: (assertion: AssertionJson) => AssertionJson;
+}) {
+  const assertion = JSON.parse(
+    makeAssertionJson({ challenge: await issueAppChallenge(), key, origin: releaseApp.origin }),
+  ) as AssertionJson;
+
+  return post({
+    body: { authenticationResponseJson: JSON.stringify(tamper(assertion)) },
+    path: "/restore-key/session",
+  });
+}
+
+function withResponse(assertion: AssertionJson, fields: Record<string, string>) {
+  return { ...assertion, response: { ...assertion.response, ...fields } };
+}
+
+function asRegistration(clientDataJSON = "") {
+  const clientData = JSON.parse(Buffer.from(clientDataJSON, "base64url").toString("utf8"));
+
+  return Buffer.from(JSON.stringify({ ...clientData, type: "webauthn.create" })).toString(
+    "base64url",
+  );
+}
+
 async function readSessionUser(token: string) {
   const session = await prisma.session.findUnique({ select: { userId: true }, where: { token } });
   return session?.userId;
@@ -144,6 +175,11 @@ async function registeredKey({
 }
 
 const keyInvalid = { body: expect.objectContaining({ code: "RESTORE_KEY_INVALID" }), status: 401 };
+
+const responseMalformed = {
+  body: expect.objectContaining({ code: "RESTORE_KEY_RESPONSE_MALFORMED" }),
+  status: 400,
+};
 
 const challengeInvalid = {
   body: expect.objectContaining({ code: "RESTORE_KEY_CHALLENGE_INVALID" }),
@@ -263,10 +299,36 @@ describe(restoreKeyPlugin, () => {
     await expect(redeem({ key })).resolves.toMatchObject({ status: 200 });
   });
 
-  it("answers 400 for a body that isn't a credential response", async () => {
-    await expect(
+  it("answers 400 for a malformed assertion and keeps the key working", async () => {
+    const key = await registeredKey({ session: await signUp() });
+
+    const refusals = await Promise.all([
       post({ body: { authenticationResponseJson: "{" }, path: "/restore-key/session" }),
-    ).resolves.toMatchObject({ body: { code: "RESTORE_KEY_RESPONSE_MALFORMED" }, status: 400 });
+      redeemTampered({
+        key,
+        tamper: (assertion) => withResponse(assertion, { authenticatorData: "AA" }),
+      }),
+      redeemTampered({
+        key,
+        tamper: (assertion) => ({ ...assertion, rawId: makeRestoreKey().id }),
+      }),
+      redeemTampered({
+        key,
+        tamper: (assertion) =>
+          withResponse(assertion, {
+            clientDataJSON: asRegistration(assertion.response.clientDataJSON),
+          }),
+      }),
+    ]);
+
+    expect(refusals).toStrictEqual([
+      responseMalformed,
+      responseMalformed,
+      responseMalformed,
+      responseMalformed,
+    ]);
+
+    await expect(redeem({ key })).resolves.toMatchObject({ status: 200 });
   });
 
   it("answers 401 when the signature, origin, RP ID or key is wrong", async () => {

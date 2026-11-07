@@ -1,5 +1,5 @@
 import { verifyAuthenticationResponse, verifyRegistrationResponse } from "@simplewebauthn/server";
-import { COSEALG } from "@simplewebauthn/server/helpers";
+import { COSEALG, parseAuthenticatorData } from "@simplewebauthn/server/helpers";
 import { prisma } from "@zoonk/db";
 import { getAndroidApps } from "@zoonk/utils/android-apps";
 import { safeAsync } from "@zoonk/utils/error";
@@ -20,21 +20,45 @@ const credentialFields = {
   type: z.literal("public-key"),
 };
 
-const registrationResponseSchema = z.object({
-  ...credentialFields,
-  response: z.object({ attestationObject: base64urlSchema, clientDataJSON: base64urlSchema }),
-});
+function isAuthenticatorData(authenticatorData: string): boolean {
+  try {
+    const { flags } = parseAuthenticatorData(
+      new Uint8Array(Buffer.from(authenticatorData, "base64url")),
+    );
 
-const authenticationResponseSchema = z.object({
-  ...credentialFields,
-  response: z.object({
-    authenticatorData: base64urlSchema,
-    clientDataJSON: base64urlSchema,
-    signature: base64urlSchema,
-  }),
-});
+    return flags.be || !flags.bs;
+  } catch {
+    return false;
+  }
+}
 
-const clientDataSchema = z.object({ challenge: z.string().min(1) });
+const registrationResponseSchema = z
+  .object({
+    ...credentialFields,
+    response: z.object({ attestationObject: base64urlSchema, clientDataJSON: base64urlSchema }),
+  })
+  .refine((credential) => credential.id === credential.rawId);
+
+/**
+ * Everything the verifier would refuse as malformed is checked here, so a malformed assertion
+ * answers 400 and only a key that can't sign in answers 401, which makes the app delete it.
+ */
+const authenticationResponseSchema = z
+  .object({
+    ...credentialFields,
+    response: z.object({
+      authenticatorData: base64urlSchema.refine((data) => isAuthenticatorData(data)),
+      clientDataJSON: base64urlSchema,
+      signature: base64urlSchema,
+    }),
+  })
+  .refine((credential) => credential.id === credential.rawId);
+
+const clientDataSchema = z.object({
+  challenge: z.string().min(1),
+  origin: z.string(),
+  type: z.string(),
+});
 
 function parseJson(text: string): unknown {
   try {
@@ -44,20 +68,34 @@ function parseJson(text: string): unknown {
   }
 }
 
-function readChallenge(clientDataJSON: string): string | null {
+function readChallenge({
+  clientDataJSON,
+  type,
+}: {
+  clientDataJSON: string;
+  type: string;
+}): string | null {
   const clientData = clientDataSchema.safeParse(
     parseJson(Buffer.from(clientDataJSON, "base64url").toString("utf8")),
   );
 
-  return clientData.success ? clientData.data.challenge : null;
+  return clientData.success && clientData.data.type === type ? clientData.data.challenge : null;
 }
 
-function readCredentialResponse<T extends { response: { clientDataJSON: string } }>(
-  schema: z.ZodType<T>,
-  json: string,
-) {
+function readCredentialResponse<T extends { response: { clientDataJSON: string } }>({
+  json,
+  schema,
+  type,
+}: {
+  json: string;
+  schema: z.ZodType<T>;
+  type: "webauthn.create" | "webauthn.get";
+}) {
   const parsed = schema.safeParse(parseJson(json));
-  const challenge = parsed.success ? readChallenge(parsed.data.response.clientDataJSON) : null;
+
+  const challenge = parsed.success
+    ? readChallenge({ clientDataJSON: parsed.data.response.clientDataJSON, type })
+    : null;
 
   return parsed.success && challenge ? { challenge, response: parsed.data } : null;
 }
@@ -109,7 +147,11 @@ export async function registerRestoreKey({
   registrationResponseJson: string;
   sessionId: string;
 }): Promise<RestoreKeyRefusal | null> {
-  const registration = readCredentialResponse(registrationResponseSchema, registrationResponseJson);
+  const registration = readCredentialResponse({
+    json: registrationResponseJson,
+    schema: registrationResponseSchema,
+    type: "webauthn.create",
+  });
 
   if (!registration) {
     return "responseMalformed";
@@ -166,10 +208,11 @@ export async function redeemRestoreKey(
 ): Promise<
   { refusal: RestoreKeyRefusal } | { refusal: null; user: { id: string; isAnonymous: boolean } }
 > {
-  const assertion = readCredentialResponse(
-    authenticationResponseSchema,
-    authenticationResponseJson,
-  );
+  const assertion = readCredentialResponse({
+    json: authenticationResponseJson,
+    schema: authenticationResponseSchema,
+    type: "webauthn.get",
+  });
 
   if (!assertion) {
     return { refusal: "responseMalformed" };
