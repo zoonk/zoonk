@@ -1,4 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
+import { generateSearchTerms } from "@zoonk/ai/tasks/identity/search-terms";
 import { type Course, type ExamBlueprint, type Skill, prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
@@ -11,13 +13,15 @@ import {
   lessonSkillFixture,
   libraryLessonsFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { skillsFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { normalizeString } from "@zoonk/utils/string";
 import { describe, expect, it } from "vitest";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { type PlanGraph } from "../../plans/planner/plan-state";
-import { loadExamLibrarySkills } from "./exam-library-skills";
+import { findExamLibrary, loadExamLibrarySkills } from "./exam-library-skills";
 import {
   type GoalSkillGraph,
   linkGoalSkillPrerequisites,
@@ -125,6 +129,53 @@ describe(loadExamLibrarySkills, () => {
       level: "intermediate",
       prerequisiteIds: [base!.id],
     });
+  });
+});
+
+describe(findExamLibrary, () => {
+  it("finds the frame's courses by their catalog titles without writing one or asking a model", async () => {
+    const [organization, blueprint, otherBlueprint] = await Promise.all([
+      aiOrganizationFixture(),
+      examBlueprintFixture({ language: "pt" }),
+      examBlueprintFixture({ language: "pt" }),
+    ]);
+
+    const [physicsTitle, newTitle] = [`Física ${randomUUID()}`, `Astronomia ${randomUUID()}`];
+
+    const [physics, [placed]] = await Promise.all([
+      courseFixture({
+        language: "pt",
+        normalizedTitle: normalizeString(physicsTitle),
+        organizationId: organization.id,
+        title: physicsTitle,
+      }),
+      skillsFixture([`Placed ${randomUUID()}`], { language: "pt" }),
+    ]);
+
+    await examGraphFixture({
+      blueprint: otherBlueprint,
+      graph: toPlanGraph([{ course: physics, skill: placed! }]),
+    });
+
+    const library = await findExamLibrary({
+      courses: [
+        { key: "physics", title: physicsTitle },
+        { key: "astronomy", title: newTitle },
+      ],
+      examBlueprintId: blueprint.id,
+      scope,
+    });
+
+    expect(library.map((skill) => [skill.id, skill.course])).toStrictEqual([
+      [placed!.id, "physics"],
+    ]);
+
+    await expect(
+      prisma.course.count({ where: { normalizedTitle: normalizeString(newTitle) } }),
+    ).resolves.toBe(0);
+
+    expect(generateSearchTerms).not.toHaveBeenCalled();
+    expect(decideLibraryIdentity).not.toHaveBeenCalled();
   });
 });
 

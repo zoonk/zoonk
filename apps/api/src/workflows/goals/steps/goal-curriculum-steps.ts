@@ -24,7 +24,6 @@ import {
   toScopedGraphPrompt,
 } from "@zoonk/core/library/curriculum/shared-graph-prompt";
 import { safeAsync } from "@zoonk/utils/error";
-import { normalizeString } from "@zoonk/utils/string";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { type GoalStreamStep } from "./goal-progress-step";
 
@@ -103,60 +102,25 @@ export async function decideGoalScopeStep({
 
 type FindLibrarySkills = NonNullable<Parameters<typeof generateSkillGraph>[0]["findLibrarySkills"]>;
 
-/**
- * A shared exam's graph reads the skills other exams use in its courses, found once its frame names
- * them; `courseIdsByTitle` keeps those courses, so its skills are placed where they were found.
- */
+/** A shared exam's graph reads the skills other exams use in its courses once its frame names them. */
 function toExamLibrary({
-  analytics,
   inputs,
   scope,
 }: {
-  analytics: ReturnType<typeof toContentAnalytics>;
   inputs: GoalCurriculumInputs;
   scope: CurriculumScope;
-}): { courseIdsByTitle: Record<string, string>; find?: FindLibrarySkills } {
+}): FindLibrarySkills | undefined {
   const examBlueprintId = inputs.goal.examBlueprintId;
-  const courseIdsByTitle: Record<string, string> = {};
 
   if (
     !examBlueprintId ||
     !inputs.graphPrompt.examBlueprint ||
     !isSharedExamGraph({ inputs, scope })
   ) {
-    return { courseIdsByTitle };
+    return undefined;
   }
 
-  return {
-    courseIdsByTitle,
-    find: async ({ courses, provenance }) => {
-      const library = await findExamLibrary({
-        analytics,
-        courses,
-        examBlueprintId,
-        provenance,
-        scope,
-      });
-
-      Object.assign(courseIdsByTitle, library.courseIdsByTitle);
-      return library.skills;
-    },
-  };
-}
-
-function toFrameCourseIds({
-  courseIdsByTitle,
-  graph,
-}: {
-  courseIdsByTitle: Readonly<Record<string, string>>;
-  graph: GoalSkillGraph;
-}): Record<string, string> {
-  return Object.fromEntries(
-    graph.courses.flatMap((course) => {
-      const courseId = courseIdsByTitle[normalizeString(course.title)];
-      return courseId ? [[course.key, courseId]] : [];
-    }),
-  );
+  return ({ courses }) => findExamLibrary({ courses, examBlueprintId, scope });
 }
 
 async function generateGraph({
@@ -205,8 +169,6 @@ export async function buildSkillGraphStep({
   scope,
   workflowRunId,
 }: RunScope & { inputs: GoalCurriculumInputs; scope: CurriculumScope }): Promise<{
-  /** The courses a shared exam's frame was found in, by the graph's course keys. */
-  frameCourseIds: Record<string, string>;
   graph: GoalSkillGraph;
   provenance: GraphProvenance;
 }> {
@@ -216,12 +178,9 @@ export async function buildSkillGraphStep({
   const report = { entityId: inputs.goal.id, step: "buildSkillGraph" } as const;
   await stream.status({ ...report, status: "started" });
 
-  const context = toContentAnalytics({ analytics, scope, workflowRunId });
-  const library = toExamLibrary({ analytics: context, inputs, scope });
-
   const { data, provenance } = await generateGraph({
-    analytics: context,
-    findLibrarySkills: library.find,
+    analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+    findLibrarySkills: toExamLibrary({ inputs, scope }),
     onSkillNamed: (skillName) => stream.status({ ...report, skillName, status: "started" }),
     prompt: toScopedGraphPrompt({ inputs, scope }),
     scope,
@@ -229,11 +188,7 @@ export async function buildSkillGraphStep({
 
   await stream.status({ ...report, status: "completed" });
 
-  return {
-    frameCourseIds: toFrameCourseIds({ courseIdsByTitle: library.courseIdsByTitle, graph: data }),
-    graph: data,
-    provenance,
-  };
+  return { graph: data, provenance };
 }
 
 export async function checkGraphCoverageStep({

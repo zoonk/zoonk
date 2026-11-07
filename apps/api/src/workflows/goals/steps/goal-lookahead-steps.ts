@@ -36,7 +36,6 @@ type CourseProvenance = Parameters<typeof findOrCreateGoalCourse>[0]["provenance
 export async function findGoalCoursesStep({
   analytics,
   courses,
-  found = {},
   goal,
   provenance,
   scope,
@@ -44,8 +43,6 @@ export async function findGoalCoursesStep({
 }: {
   analytics?: ContentAnalytics;
   courses: { key: string; title: string }[];
-  /** Courses already found by key, such as a shared exam's frame: found again, they could differ. */
-  found?: Readonly<Record<string, string>>;
   goal: { id: string; kind: GoalKind };
   provenance: CourseProvenance;
   scope: CurriculumScope;
@@ -56,14 +53,8 @@ export async function findGoalCoursesStep({
   const format = getGoalCourseFormat({ kind: goal.kind, ownerId: scope.ownerId });
   const context = toContentAnalytics({ analytics, scope, workflowRunId });
 
-  const courseIds = await Promise.all(
+  const found = await Promise.all(
     courses.map(async (need) => {
-      const known = found[need.key];
-
-      if (known) {
-        return [need.key, known] as const;
-      }
-
       const { course } = await findOrCreateGoalCourse({
         analytics: context,
         format,
@@ -76,13 +67,13 @@ export async function findGoalCoursesStep({
     }),
   );
 
-  const [first] = courseIds;
+  const [first] = found;
 
   if (first) {
     await setGoalPrimaryCourse({ courseId: first[1], goalId: goal.id });
   }
 
-  return Object.fromEntries(courseIds);
+  return Object.fromEntries(found);
 }
 
 const OPENING_LESSONS = 4;

@@ -71,9 +71,7 @@ async function buildGraph({
   return { ...built, graph };
 }
 
-type BuiltGraph = Omit<Awaited<ReturnType<typeof buildGraph>>, "frameCourseIds"> & {
-  frameCourseIds?: Record<string, string>;
-};
+type BuiltGraph = Awaited<ReturnType<typeof buildGraph>>;
 
 export type BuiltCurriculum = BuiltGraph & {
   courseIdsByKey: Record<string, string>;
@@ -209,7 +207,6 @@ function saveBuiltGraph({
     : findGoalCoursesStep({
         ...context,
         courses: orderGoalCourses(graph),
-        found: built.frameCourseIds,
         goal,
         provenance,
         scope,

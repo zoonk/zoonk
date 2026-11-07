@@ -1,13 +1,11 @@
 import "server-only";
 import { type LibrarySkill } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { type CourseLevel, prisma } from "@zoonk/db";
-import { normalizeString } from "@zoonk/utils/string";
-import { type CurriculumAnalytics, type CurriculumScope } from "./curriculum-scope";
-import { findOrCreateGoalCourse } from "./find-or-create-goal-course";
+import { findCourseByTitle } from "../identity/kinds/course-identity";
+import { type CurriculumScope } from "./curriculum-scope";
 
 type FrameCourse = { key: string; title: string };
-type ExamScope = Pick<CurriculumScope, "generalGoal" | "language" | "ownerId" | "targetLanguage">;
-type Provenance = Parameters<typeof findOrCreateGoalCourse>[0]["provenance"];
+type ExamScope = Pick<CurriculumScope, "language" | "ownerId" | "targetLanguage">;
 
 /** A skill's size where another exam's graph places it; the largest when several do. */
 async function listPlacedSkills({
@@ -94,38 +92,32 @@ export async function loadExamLibrarySkills({
 }
 
 /**
- * Internal workflow bridge: finds the frame's courses before its skills are written, so a shared
- * exam's sections see what other exams already teach in them. Keyed by normalized title, since a
- * second draft of the frame may key the same course differently.
+ * Internal workflow bridge: what other exams teach in the frame's courses, read before its skills
+ * are written. It runs inside the graph's step, so it only reads: it finds a course by its catalog
+ * title, as saving the graph does first, and a course no exam has yet holds nothing to reuse.
  */
 export async function findExamLibrary({
-  analytics,
   courses,
   examBlueprintId,
-  provenance,
   scope,
 }: {
-  analytics?: CurriculumAnalytics;
   courses: readonly FrameCourse[];
   examBlueprintId: string;
-  provenance: Provenance;
   scope: ExamScope;
-}): Promise<{ courseIdsByTitle: Record<string, string>; skills: LibrarySkill[] }> {
+}): Promise<LibrarySkill[]> {
   const found = await Promise.all(
     courses.map(async (course) => {
-      const { course: row } = await findOrCreateGoalCourse({
-        analytics,
-        format: "core",
-        provenance,
-        scope,
-        title: course.title,
-      });
-
-      return { ...course, courseId: row.id };
+      const row = await findCourseByTitle({ ...scope, title: course.title });
+      return row ? [{ courseId: row.id, key: course.key }] : [];
     }),
   );
 
-  const keyByCourseId = new Map(found.toReversed().map((course) => [course.courseId, course.key]));
+  const keyByCourseId = new Map(
+    found
+      .flat()
+      .toReversed()
+      .map((course) => [course.courseId, course.key]),
+  );
 
   const skills = await loadExamLibrarySkills({
     courseIds: [...keyByCourseId.keys()],
@@ -133,13 +125,8 @@ export async function findExamLibrary({
     language: scope.language,
   });
 
-  return {
-    courseIdsByTitle: Object.fromEntries(
-      found.map((course) => [normalizeString(course.title), course.courseId]),
-    ),
-    skills: skills.map(({ courseId, ...skill }) => ({
-      ...skill,
-      course: keyByCourseId.get(courseId) ?? "",
-    })),
-  };
+  return skills.map(({ courseId, ...skill }) => ({
+    ...skill,
+    course: keyByCourseId.get(courseId) ?? "",
+  }));
 }

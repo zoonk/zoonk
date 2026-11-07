@@ -5,11 +5,7 @@ import { z } from "zod";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import {
-  type TaskProvenance,
-  combineTaskProvenance,
-  sumLanguageModelUsage,
-} from "../../provenance/task-provenance";
+import { combineTaskProvenance, sumLanguageModelUsage } from "../../provenance/task-provenance";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { draftAgainWhenFlawed } from "../_utils/draft-again";
 import { getPromptLanguageName } from "../_utils/prompt-language";
@@ -125,7 +121,6 @@ export type SkillGraphParams = {
    */
   findLibrarySkills?: (frame: {
     courses: readonly { key: string; title: string }[];
-    provenance: TaskProvenance;
   }) => Promise<LibrarySkill[]>;
 };
 
@@ -326,7 +321,7 @@ async function generateSectionedGraph(params: SkillGraphParams) {
   }
 
   const courses = frame.output.courses.map(({ key, title }) => ({ key, title }));
-  const library = await params.findLibrarySkills?.({ courses, provenance: frame.provenance });
+  const library = await params.findLibrarySkills?.({ courses });
   const listed = library ? formatLibrarySkills(library) : null;
 
   const toPart = (sections: readonly GraphFrameSection[]): SkillsPart => ({
