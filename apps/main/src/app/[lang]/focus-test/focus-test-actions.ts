@@ -4,11 +4,12 @@ import { focusTestInputSchema } from "@zoonk/core/plans/focus-test/contract";
 import { submitFocusTest } from "@zoonk/core/plans/focus-test/submit";
 import { type FocusTestOutcome } from "@zoonk/learn/focus-test";
 
+/** The same test sent again (`requestId`) gets what it recorded. */
 export async function submitFocusTestAction(
   goalId: string,
-  answers: unknown,
+  sent: unknown,
 ): Promise<FocusTestOutcome | null> {
-  const input = focusTestInputSchema.safeParse({ answers });
+  const input = focusTestInputSchema.safeParse(sent);
 
   if (!input.success) {
     return null;
