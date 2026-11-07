@@ -48,13 +48,24 @@ describe(repairWrittenLesson, () => {
       visual: null,
     };
 
+    const activity: WrittenScreen = {
+      content: JSON.stringify({ fields: { max: 10, min: 0 }, prompt: "Move the dot to 10^{1}." }),
+      kind: "activity",
+      template: "numberLine",
+    };
+
     const repaired = repairWrittenLesson({
       language: "en",
-      lesson: { screens: [worked, quoted], summary: hubMap(["Small numbers get 10^{-n}."]) },
+      lesson: {
+        screens: [worked, quoted, activity],
+        summary: hubMap(["Small numbers get 10^{-n}."]),
+      },
       spec,
     });
 
-    const [example, question] = repaired.screens;
+    const [example, question, play] = repaired.screens;
+
+    expect(play?.kind === "activity" && play.content).toContain("Move the dot to $10^{1}$.");
 
     const wrapped = "So 0.000406 m = 4.06 × $10^{-4}$ m.";
 

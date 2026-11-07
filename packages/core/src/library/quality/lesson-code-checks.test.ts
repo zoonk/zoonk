@@ -608,6 +608,12 @@ describe(checkWrittenLesson, () => {
     expect(codesOf(withScreen(4, wrapped))).toStrictEqual([]);
   });
 
+  it("reads no math as money", () => {
+    const priced = explanation("The deposit is $5.00.\nIt grows by $10^{3}$ in a decade.");
+
+    expect(codesOf(withScreen(4, priced))).toStrictEqual([]);
+  });
+
   it("rejects a guess's reveal that points at an option by its place", () => {
     const hook = temperatureGuess();
 

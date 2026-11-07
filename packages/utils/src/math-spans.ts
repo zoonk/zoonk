@@ -104,3 +104,33 @@ export function findMath(text: string): MathSpan | null {
     )[0] ?? null
   );
 }
+
+export function findMathSpans(line: string): MathSpan[] {
+  const first = findMath(line);
+
+  if (!first) {
+    return [];
+  }
+
+  const rest = findMathSpans(line.slice(first.end)).map((span) => ({
+    ...span,
+    end: span.end + first.end,
+    start: span.start + first.end,
+  }));
+
+  return [first, ...rest];
+}
+
+/** Each line on its own, as the player reads it; spaces of the same length keep positions. */
+export function hideMath(text: string): string {
+  return text
+    .split("\n")
+    .map((line) =>
+      findMathSpans(line).reduce(
+        (hidden, { end, start }) =>
+          `${hidden.slice(0, start)}${" ".repeat(end - start)}${hidden.slice(end)}`,
+        line,
+      ),
+    )
+    .join("\n");
+}

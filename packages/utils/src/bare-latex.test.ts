@@ -29,6 +29,7 @@ describe(findBareLatex, () => {
       String.raw`$$v = \sqrt{\frac{GM}{r}}$$`,
       "In Python, `2**10` and `x ^ y` aren't powers, and neither is `10^{3}`.",
       String.raw`It costs R$ 80, \$5 or $10, keeps user_id and the file C:\Users\ana\notes.txt.`,
+      String.raw`Open C:\text\notes.txt to read it.`,
       "Smile ^_^ and rate it 9/10 * 2.",
     ];
 
@@ -53,6 +54,13 @@ describe(wrapBareLatex, () => {
     expect(wrapBareLatex("It's 10^{3}, then R$ 80 and $5 later.")).toBe(
       "It's $10^{3}$, then R$ 80 and $5 later.",
     );
+  });
+
+  it("keeps a power's whole exponent in the math and the signs around it out of it", () => {
+    expect(wrapBareLatex("O valor é 10^3,5.")).toBe("O valor é $10^{3{,}5}$.");
+    expect(wrapBareLatex("A gap is 7.02 × 10^−5 m.")).toBe("A gap is 7.02 × $10^{-5}$ m.");
+    expect(wrapBareLatex("The increase is 10^2%.")).toBe("The increase is $10^{2}$%.");
+    expect(wrapBareLatex("About ~10^3 cells.")).toBe("About ~$10^{3}$ cells.");
   });
 
   it("wraps LaTeX in table cells and on every line", () => {
@@ -82,10 +90,22 @@ describe(wrapBareLatex, () => {
       "It costs $5 and the gap is 10^{-5} m.",
       "Learn **the 10^{3} rule** first.",
       "_e^x_ grows.",
+      String.raw`The root is \sqrt 4 = 2.`,
     ];
 
     expect(texts.map((text) => wrapBareLatex(text))).toStrictEqual(texts);
-    expect(texts.map((text) => findBareLatex(text).length)).toStrictEqual([1, 1, 1]);
+    expect(texts.map((text) => findBareLatex(text).length)).toStrictEqual([1, 1, 1, 1]);
+
+    expect(findBareLatex(String.raw`The root is \sqrt 4 = 2.`)).toStrictEqual([
+      String.raw`Shows math as raw text: "\sqrt". Write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \$.`,
+    ]);
+  });
+
+  it("keeps a table cell's escaped pipe inside its code", () => {
+    const table = ["| Code | Meaning |", "|---|---|", String.raw`| \`a\|2^3\` | XOR |`].join("\n");
+
+    expect(wrapBareLatex(table)).toBe(table);
+    expect(findBareLatex(table)).toStrictEqual([]);
   });
 
   it("leaves no LaTeX outside math in any line it changes, and changes nothing the second time", () => {
@@ -100,6 +120,13 @@ describe(wrapBareLatex, () => {
       "`",
       "$x^2$",
       "R$ 80",
+      String.raw`\sqrt`,
+      String.raw`\notes`,
+      "10^−5",
+      "%",
+      "~",
+      ",",
+      "|",
       "**",
       "_",
       "(",

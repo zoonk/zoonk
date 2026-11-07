@@ -19,7 +19,9 @@ export function repairScreenText(screen: WrittenScreen): WrittenScreen {
   if (screen.kind === "activity") {
     return {
       ...screen,
-      content: mapActivityProse(screen.content, (text) => repairNegativeMoney({ text })),
+      content: mapActivityProse(screen.content, (text) =>
+        wrapBareLatex(repairNegativeMoney({ text })),
+      ),
     };
   }
 

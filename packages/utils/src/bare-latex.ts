@@ -1,9 +1,9 @@
 import { parseInlineMarkupRanges } from "./inline-markup";
-import { findMarkdownTableLines } from "./markdown-table";
-import { type MathSpan, findMath } from "./math-spans";
+import { CELL_PIPE, findMarkdownTableLines } from "./markdown-table";
+import { type MathSpan, findMathSpans, hideMath } from "./math-spans";
 
 /** A backslash before any other word is a file path or an escape a writer meant as text. */
-const MATH_COMMANDS = [
+const MATH_COMMANDS = new Set([
   "alpha",
   "approx",
   "beta",
@@ -25,52 +25,50 @@ const MATH_COMMANDS = [
   "text",
   "theta",
   "times",
-];
+]);
 
-const MATH_COMMAND = new RegExp(String.raw`\\(?:${MATH_COMMANDS.join("|")})(?![A-Za-z])`, "u");
+/** KaTeX reads these commands' arguments only in braces, so `\sqrt 4` can't be wrapped as written. */
+const BRACED_COMMANDS = new Set(["dfrac", "frac", "sqrt", "text"]);
+
+const BACKSLASH_WORD = /\\(?<name>[A-Za-z]+)(?=(?<next>.?))/gu;
 const BRACED_SCRIPT = /[\^_]\{/u;
 
-/** KaTeX raises only the next character, so `10^12` and `10^-1` need their power braced. */
+/**
+ * KaTeX raises only the next character, so `10^12`, `10^-1` and `10^3,5` need their power braced,
+ * with a decimal comma braced too so it doesn't read as a list.
+ */
 const CARET_POWER =
-  /(?<=[\p{L}\p{N})\]}])\^(?<power>-?\p{N}+(?:\.\p{N}+)?|\p{L}(?![\p{L}\p{N}]))/gu;
+  /(?<=[\p{L}\p{N})\]}])\^(?<power>[-−]?\p{N}+(?:[.,]\p{N}+)?|\p{L}(?![\p{L}\p{N}]))/gu;
 
 const HAS_CARET_POWER = new RegExp(CARET_POWER.source, "u");
 
 /** A run of text without spaces, except inside braces, so `\frac{a + b}{2}` stays one piece. */
 const CHUNK = /(?:\{(?:[^{}]|\{[^{}]*\})*\}|[^\s{}])+/gu;
 
-const PUNCTUATION_BEFORE = /^["'“‘«¿¡*_]/u;
-const PUNCTUATION_AFTER = /[.,;:!?"'”’»*_]$/u;
+const PUNCTUATION_BEFORE = /^["'“‘«¿¡*_~]/u;
+const PUNCTUATION_AFTER = /[.,;:!?%"'”’»*_]$/u;
 
-type BareLatex = { end: number; latex: string; start: number; written: string };
+/** In KaTeX, `%` starts a comment, `~` is a space, and `&` and `#` are errors outside environments. */
+const TEX_SPECIAL = /[%~&#]/u;
 
-function findMathSpans(line: string): MathSpan[] {
-  const first = findMath(line);
+type BareLatex = {
+  end: number;
+  latex: string;
+  repairable: boolean;
+  start: number;
+  written: string;
+};
 
-  if (!first) {
-    return [];
-  }
-
-  const rest = findMathSpans(line.slice(first.end)).map((span) => ({
-    ...span,
-    end: span.end + first.end,
-    start: span.start + first.end,
-  }));
-
-  return [first, ...rest];
-}
-
-function blank(text: string, { end, start }: { end: number; start: number }): string {
-  return `${text.slice(0, start)}${" ".repeat(end - start)}${text.slice(end)}`;
-}
-
-/** Spaces of the same length keep positions pointing into the line. */
 function hideMathAndCode(line: string): string {
-  const withoutMath = findMathSpans(line).reduce((text, span) => blank(text, span), line);
+  const withoutMath = hideMath(line);
 
   return parseInlineMarkupRanges(withoutMath)
     .filter((range) => range.kind === "code")
-    .reduce((text, range) => blank(text, range), withoutMath);
+    .reduce(
+      (text, { end, start }) =>
+        `${text.slice(0, start)}${" ".repeat(end - start)}${text.slice(end)}`,
+      withoutMath,
+    );
 }
 
 function count(text: string, character: string): number {
@@ -103,25 +101,40 @@ function trimEnd(text: string): string {
   return PUNCTUATION_AFTER.test(text) || isUnpairedClose(text) ? trimEnd(text.slice(0, -1)) : text;
 }
 
-function isLatex(text: string): boolean {
-  return BRACED_SCRIPT.test(text) || MATH_COMMAND.test(text) || HAS_CARET_POWER.test(text);
+function findCommands(text: string): { braced: boolean; name: string }[] {
+  return [...text.matchAll(BACKSLASH_WORD)].map((match) => ({
+    braced: match.groups?.next === "{",
+    name: match.groups?.name ?? "",
+  }));
+}
+
+function isLatex({ commands, text }: { commands: { name: string }[]; text: string }): boolean {
+  const known = commands.every((command) => MATH_COMMANDS.has(command.name));
+
+  return known && (commands.length > 0 || BRACED_SCRIPT.test(text) || HAS_CARET_POWER.test(text));
+}
+
+function toPower(power: string): string {
+  return `^{${power.replace("−", "-").replace(",", "{,}")}}`;
 }
 
 function toBareLatex({ chunk, index }: { chunk: string; index: number }): BareLatex | null {
   const opened = trimStart(chunk);
   const written = trimEnd(opened);
   const start = index + chunk.length - opened.length;
+  const commands = findCommands(written);
 
-  if (!isLatex(written)) {
+  if (!isLatex({ commands, text: written })) {
     return null;
   }
 
-  return {
-    end: start + written.length,
-    latex: written.replaceAll(CARET_POWER, (_power, power: string) => `^{${power}}`),
-    start,
-    written,
-  };
+  const latex = written.replaceAll(CARET_POWER, (_power, power: string) => toPower(power));
+
+  const repairable =
+    !TEX_SPECIAL.test(latex) &&
+    commands.every((command) => command.braced || !BRACED_COMMANDS.has(command.name));
+
+  return { end: start + written.length, latex, repairable, start, written };
 }
 
 function findBareLatexIn(hidden: string): BareLatex[] {
@@ -156,7 +169,11 @@ function wrapLine(line: string): string {
   const hidden = hideMathAndCode(line);
   const pieces = findBareLatexIn(hidden);
 
-  if (pieces.length === 0 || isInEmphasis({ hidden, pieces })) {
+  if (
+    pieces.length === 0 ||
+    pieces.some((piece) => !piece.repairable) ||
+    isInEmphasis({ hidden, pieces })
+  ) {
     return line;
   }
 
@@ -180,19 +197,19 @@ function splitLines(text: string): string[][] {
   const lines = text.split("\n");
   const tableLines = findMarkdownTableLines(lines);
 
-  return lines.map((line, index) => (tableLines.has(index) ? line.split("|") : [line]));
+  return lines.map((line, index) => (tableLines.has(index) ? line.split(CELL_PIPE) : [line]));
 }
 
-/** After `wrapBareLatex`, what's left sits in bold or italics or beside another dollar sign. */
+function describe({ latex, repairable, written }: BareLatex): string {
+  const example = repairable ? `, as $${latex}$` : "";
+  return String.raw`Shows math as raw text: "${written}". Write it between dollar signs${example}, outside bold or italics, and any other dollar sign in that line as \$.`;
+}
+
+/** After `wrapBareLatex`, what's left is in bold or italics, beside another dollar sign, or needs braces. */
 export function findBareLatex(text: string): string[] {
   return splitLines(text)
     .flat()
-    .flatMap((line) =>
-      findBareLatexIn(hideMathAndCode(line)).map(
-        ({ latex, written }) =>
-          String.raw`Shows math as raw text: "${written}". Write it between dollar signs, as $${latex}$, outside bold or italics, and any other dollar sign in that line as \$.`,
-      ),
-    );
+    .flatMap((line) => findBareLatexIn(hideMathAndCode(line)).map((piece) => describe(piece)));
 }
 
 export function wrapBareLatex(text: string): string {

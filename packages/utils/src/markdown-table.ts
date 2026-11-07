@@ -5,7 +5,7 @@ export type MarkdownTable = { align: MarkdownTableAlign[]; header: string[]; row
 
 const DELIMITER_CELL = /^:?-+:?$/u;
 const EDGE_PIPES = /^\||(?<!\\)\|$/gu;
-const CELL_PIPE = /(?<!\\)\|/u;
+export const CELL_PIPE = /(?<!\\)\|/u;
 const ESCAPED_PIPE = String.raw`\|`;
 
 function isRow(line: string | undefined): line is string {
