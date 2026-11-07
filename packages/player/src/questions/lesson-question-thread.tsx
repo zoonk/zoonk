@@ -12,10 +12,9 @@ import {
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
 import { MessageScrollerContent, MessageScrollerItem } from "@zoonk/ui/components/message-scroller";
-import { OnDemandWaitContext } from "@zoonk/ui/lib/on-demand";
 import { MessageSquareTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import { QuestionErrorAction, RequestErrorMessage } from "./lesson-question-errors";
 import { useLessonQuestionNavigation } from "./lesson-question-navigation";
@@ -31,6 +30,7 @@ import { EarlierTurns, QuestionTurn, SENDING_TURN_ID, SendingTurn } from "./less
 import { TutorSuggestions, useOffersSuggestions } from "./tutor-suggestions";
 import { type LessonQuestionController } from "./use-lesson-questions";
 import { useTutorSuggestions } from "./use-tutor-suggestions";
+import { WaitForFirstShow } from "./wait-for-first-show";
 
 function ThreadLoadError({
   error,
@@ -135,22 +135,6 @@ function GuestThread() {
       </EmptyContent>
     </Empty>
   );
-}
-
-function WaitForFirstShow({
-  children,
-  questions,
-}: {
-  children: React.ReactNode;
-  questions: LessonQuestionController["state"]["questions"];
-}) {
-  const [firstQuestions, setFirstQuestions] = useState<typeof questions | null>(questions);
-
-  if (firstQuestions && firstQuestions !== questions) {
-    setFirstQuestions(null);
-  }
-
-  return <OnDemandWaitContext value={firstQuestions === questions}>{children}</OnDemandWaitContext>;
 }
 
 function ThreadTurns({ identity }: { identity: TutorIdentity }) {

@@ -5,6 +5,8 @@ import { type TutorCards } from "@zoonk/learn/tutor-cards";
 import { TUTOR_COMPOSER_FRAME_CLASS } from "@zoonk/learn/tutor-composer";
 import { type TutorIdentity, TutorMessage } from "@zoonk/learn/tutor-identity";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { OpenPageHere } from "@zoonk/ui/components/open-page-here";
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -34,6 +36,7 @@ import { TutorSuggestions, useOffersSuggestions } from "./tutor-suggestions";
 import { type LessonQuestionThreadPage } from "./use-lesson-question-sessions";
 import { type LessonQuestionHost } from "./use-lesson-questions";
 import { useTurnSignals } from "./use-turn-signals";
+import { WaitForFirstShow } from "./wait-for-first-show";
 
 type TutorConversationProps = TutorCards & {
   composerLabel: string;
@@ -90,7 +93,10 @@ function SignUpPrompt() {
   );
 }
 
-/** Follows a turn added at the end; a saved question taking its sent turn's place stays put. */
+/**
+ * Follows a turn added at the end; a saved question taking its sent turn's place stays put. A
+ * server-rendered page already opened at its latest turn, so hydrating it doesn't scroll.
+ */
 function useFollowLatest({
   count,
   latestId,
@@ -101,8 +107,12 @@ function useFollowLatest({
   ready: boolean;
 }) {
   const reducedMotion = useReducedMotion();
+  const mounted = useIsMounted();
   const turns = useRef(new Map<string, HTMLElement>());
-  const shown = useRef<{ count: number; id: string | null } | null>(null);
+
+  const shown = useRef<{ count: number; id: string | null } | null>(
+    mounted ? null : { count, id: latestId },
+  );
 
   useEffect(() => {
     if (!ready) {
@@ -173,6 +183,7 @@ function ConversationTurns({
             question={question}
             toolOffer={question.toolOffer && renderToolOffer(question.toolOffer)}
           />
+          {question.id === latestId && <OpenPageHere />}
         </div>
       ))}
 
@@ -244,11 +255,13 @@ function ConversationBody({
         {state.error === "load" && <LoadError />}
 
         {ready && (
-          <ConversationTurns
-            identity={identity}
-            renderPlanChange={renderPlanChange}
-            renderToolOffer={renderToolOffer}
-          />
+          <WaitForFirstShow questions={state.questions}>
+            <ConversationTurns
+              identity={identity}
+              renderPlanChange={renderPlanChange}
+              renderToolOffer={renderToolOffer}
+            />
+          </WaitForFirstShow>
         )}
 
         <ConversationMissionMoment buddyName={identity.name} moment={missionMoment} />
