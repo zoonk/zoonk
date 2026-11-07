@@ -331,7 +331,13 @@ class FocusTestViewModelTest {
 
             assertEquals(2, sent.size)
             assertEquals(sent[0].requestId, sent[1].requestId)
-            assertEquals(listOf("History"), viewModel.ui.value.outcome?.areas?.filter { it.chosen }?.map { it.label })
+            assertEquals(
+                listOf("History"),
+                viewModel.ui.value.outcome
+                    ?.areas
+                    ?.filter { it.chosen }
+                    ?.map { it.label },
+            )
         }
 
     @Test
