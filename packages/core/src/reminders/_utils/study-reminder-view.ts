@@ -17,7 +17,7 @@ export async function findDefaultReminderTime(userId: string): Promise<string> {
   return goal?.studyTime ?? DEFAULT_REMINDER_TIME;
 }
 
-async function findLastStudyDate(userId: string): Promise<Date | null> {
+export async function findLastStudyDate(userId: string): Promise<Date | null> {
   const day = await prisma.dailyProgress.findFirst({
     orderBy: { date: "desc" },
     select: { date: true },

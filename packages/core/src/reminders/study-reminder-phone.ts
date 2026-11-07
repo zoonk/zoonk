@@ -1,15 +1,13 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getStudyReminderCacheTag } from "../cache/tags";
 import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSession } from "../users/get-session";
 import { findDefaultReminderTime, findStudyReminderView } from "./_utils/study-reminder-view";
+import { NO_PHONE, clearStudyReminderPhone } from "./clear-study-reminder-phone";
 import { type StudyReminderPhoneInput, type StudyReminderView } from "./study-reminder-contract";
 
 type PhoneResult = { reminder: StudyReminderView; status: "ready" } | { status: "unauthorized" };
-
-const NO_PHONE = { pushLabel: null, pushOn: false, pushPlatform: null, pushToken: null };
 
 /**
  * Makes this phone the one push goes to, or refreshes its token. A device token belongs to one
@@ -64,16 +62,7 @@ export async function removeStudyReminderPhone(token: string): Promise<PhoneResu
     return { status: "unauthorized" };
   }
 
-  const userId = session.user.id;
-
-  const removed = await prisma.studyReminder.updateMany({
-    data: NO_PHONE,
-    where: { pushToken: token, userId },
-  });
-
-  if (removed.count > 0) {
-    revalidateCacheTags([getStudyReminderCacheTag(userId)]);
-  }
+  await clearStudyReminderPhone({ token, userId: session.user.id });
 
   return {
     reminder: await findStudyReminderView({ now: new Date(), user: session.user }),

@@ -3,9 +3,15 @@
   "git": { "deploymentEnabled": false },
   "buildCommand": "cd ../.. && pnpm turbo run build --filter=api",
   "ignoreCommand": "exit 1",
-  "schedules": { "daily-sweeps": { "schedule": "0 6 * * *", "function": "cron/daily-sweeps" } },
+  "schedules": {
+    "daily-sweeps": { "schedule": "0 6 * * *", "function": "cron/daily-sweeps" },
+    "study-reminders": { "schedule": "*/15 * * * *", "function": "cron/study-reminders" }
+  },
   "functions": {
     "src/app/cron/daily-sweeps/route.ts": {
+      "experimentalTriggers": [{ "type": "schedule/v1beta" }]
+    },
+    "src/app/cron/study-reminders/route.ts": {
       "experimentalTriggers": [{ "type": "schedule/v1beta" }]
     },
     "src/app/v1/generations/*/events/route.ts": { "supportsCancellation": true }

@@ -34,6 +34,7 @@
     "@zoonk/auth": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",
+    "@zoonk/mailer": "workspace:*",
     "@zoonk/player": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",

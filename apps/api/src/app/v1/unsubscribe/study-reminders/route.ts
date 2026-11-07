@@ -12,7 +12,7 @@ const PRIVATE_HEADERS = { "Cache-Control": "no-store", "Referrer-Policy": "no-re
 function openUnsubscribePage(request: NextRequest) {
   const { token } = readQueryParams(request, studyReminderUnsubscribeQuerySchema);
 
-  return NextResponse.redirect(getUnsubscribePageUrl(token), {
+  return NextResponse.redirect(getUnsubscribePageUrl({ token }), {
     headers: PRIVATE_HEADERS,
     status: httpStatus.seeOther,
   });

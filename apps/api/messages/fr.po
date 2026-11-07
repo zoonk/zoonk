@@ -244,6 +244,121 @@ msgctxt "m-X1D0"
 msgid "Back to Zoonk"
 msgstr "Retour à Zoonk"
 
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "yDrTAE"
+msgid "{minutes, plural, one {# minute} other {# minutes}} of exam prep on your plan today."
+msgstr "Ton plan prévoit {minutes, plural, one {# minute} other {# minutes}} de préparation à l’examen aujourd’hui."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "Kc3Giq"
+msgid "Today's exam prep: {minutes, plural, one {# minute} other {# minutes}}."
+msgstr "Préparation à l’examen aujourd’hui : {minutes, plural, one {# minute} other {# minutes}}."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "QGJAH7"
+msgid "{minutes, plural, one {# minute} other {# minutes}} today moves your exam prep forward."
+msgstr "{minutes, plural, one {# minute} other {# minutes}} aujourd’hui pour avancer dans ta préparation à l’examen."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "dN9j0T"
+msgid "{minutes, plural, one {# minute} other {# minutes}} on your plan today."
+msgstr "Ton plan prévoit {minutes, plural, one {# minute} other {# minutes}} aujourd’hui."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "CHd8Js"
+msgid "Today's plan has {minutes, plural, one {# minute} other {# minutes}} for it."
+msgstr "Ton plan du jour prévoit {minutes, plural, one {# minute} other {# minutes}} pour cet objectif."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "hHrR1d"
+msgid "{minutes, plural, one {# minute} other {# minutes}} today keeps your plan on track."
+msgstr "{minutes, plural, one {# minute} other {# minutes}} aujourd’hui pour suivre ton plan."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "jfc4ic"
+msgid "{left, plural, one {# minute} other {# minutes}} left today. You've already done {done, plural, one {# minute} other {# minutes}}."
+msgstr "Il te reste {left, plural, one {# minute} other {# minutes}} aujourd’hui. Tu as déjà étudié {done, plural, one {# minute} other {# minutes}}."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "ox2un2"
+msgid "You've done {done, plural, one {# minute} other {# minutes}} today. {left, plural, one {# minute} other {# minutes}} to go."
+msgstr "Tu as étudié {done, plural, one {# minute} other {# minutes}} aujourd’hui. Encore {left, plural, one {# minute} other {# minutes}}."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "uSDY9P"
+msgid "{left, plural, one {# more minute} other {# more minutes}} finishes today's plan."
+msgstr "{left, plural, one {Encore # minute} other {Encore # minutes}} pour terminer ton plan du jour."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "doiP8l"
+msgid "{minutes, plural, one {# minute} other {# minutes}} today, then {others, plural, one {# more goal} other {# more goals}}."
+msgstr "{minutes, plural, one {# minute} other {# minutes}} aujourd’hui, puis {others, plural, one {# autre objectif} other {# autres objectifs}}."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "dBVV88"
+msgid "Start with {minutes, plural, one {# minute} other {# minutes}}. {others, plural, one {# other goal is} other {# other goals are}} on today's plan too."
+msgstr "Commence par {minutes, plural, one {# minute} other {# minutes}}. Ton plan prévoit aussi {others, plural, one {# autre objectif} other {# autres objectifs}} aujourd’hui."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "EUWgvZ"
+msgid "{minutes, plural, one {# minute} other {# minutes}} for this one, and {others, plural, one {# more goal} other {# more goals}} after it."
+msgstr "{minutes, plural, one {# minute} other {# minutes}} pour cet objectif, puis {others, plural, one {# autre objectif} other {# autres objectifs}}."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "4u16G2"
+msgid "Open today's plan"
+msgstr "Ouvrir le plan d’aujourd’hui"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "wdqkFx"
+msgid "Change reminder settings"
+msgstr "Modifier les paramètres des rappels"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "YvVUvF"
+msgid "Turn off email reminders"
+msgstr "Désactiver les rappels par e-mail"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "TMLja4"
+msgid "You get this because you turned on study reminders in Zoonk."
+msgstr "Tu reçois ce message parce que tu as activé les rappels d’étude dans Zoonk."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "7gq6C7"
+msgid "Next up: {goal}"
+msgstr "À suivre : {goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "A3jTYj"
+msgid "Today's study: {goal}"
+msgstr "À étudier aujourd’hui : {goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "s-800F"
+msgid "Time to study: {goal}"
+msgstr "C’est l’heure d’étudier : {goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "R9vV3q"
+msgid "Ready when you are: {goal}"
+msgstr "Quand tu veux : {goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "I0h01A"
+msgid "Still on today: {goal}"
+msgstr "Toujours dans ton plan du jour : {goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "FdTl5c"
+msgid "Your study time: {goal}"
+msgstr "Ton temps d’étude : {goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "CdHWeN"
+msgid "On your plan today: {goal}"
+msgstr "Dans ton plan du jour : {goal}"
+
 #: src/lib/tutor-confirmation.ts
 msgctxt "Sd1Qq1"
 msgid "Below is a short test on {chapter}: passing it skips the lessons you already know."

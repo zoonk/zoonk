@@ -244,6 +244,121 @@ msgctxt "m-X1D0"
 msgid "Back to Zoonk"
 msgstr "Zoonk’a dön"
 
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "yDrTAE"
+msgid "{minutes, plural, one {# minute} other {# minutes}} of exam prep on your plan today."
+msgstr "Bugünkü planında {minutes, plural, other {# dakika}} sınav hazırlığı var."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "Kc3Giq"
+msgid "Today's exam prep: {minutes, plural, one {# minute} other {# minutes}}."
+msgstr "Bugünkü sınav hazırlığın: {minutes, plural, other {# dakika}}."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "QGJAH7"
+msgid "{minutes, plural, one {# minute} other {# minutes}} today moves your exam prep forward."
+msgstr "Bugün {minutes, plural, other {# dakika}} çalışarak sınav hazırlığında ilerleyebilirsin."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "dN9j0T"
+msgid "{minutes, plural, one {# minute} other {# minutes}} on your plan today."
+msgstr "Bugünkü planında {minutes, plural, other {# dakika}} çalışma var."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "CHd8Js"
+msgid "Today's plan has {minutes, plural, one {# minute} other {# minutes}} for it."
+msgstr "Bugünkü planında bu hedef için {minutes, plural, other {# dakika}} var."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "hHrR1d"
+msgid "{minutes, plural, one {# minute} other {# minutes}} today keeps your plan on track."
+msgstr "Bugün {minutes, plural, other {# dakika}} çalışırsan planına göre ilerlersin."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "jfc4ic"
+msgid "{left, plural, one {# minute} other {# minutes}} left today. You've already done {done, plural, one {# minute} other {# minutes}}."
+msgstr "Bugünkü planında {left, plural, other {# dakika}} kaldı. Şimdiden {done, plural, other {# dakika}} çalıştın."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "ox2un2"
+msgid "You've done {done, plural, one {# minute} other {# minutes}} today. {left, plural, one {# minute} other {# minutes}} to go."
+msgstr "Bugün {done, plural, other {# dakika}} çalıştın. {left, plural, other {# dakika}} kaldı."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "uSDY9P"
+msgid "{left, plural, one {# more minute} other {# more minutes}} finishes today's plan."
+msgstr "Bugünkü planını tamamlamak için {left, plural, other {# dakika daha}} çalışman yeterli."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "doiP8l"
+msgid "{minutes, plural, one {# minute} other {# minutes}} today, then {others, plural, one {# more goal} other {# more goals}}."
+msgstr "Bugün {minutes, plural, other {# dakika}}, ardından {others, plural, other {# hedef daha}}."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "dBVV88"
+msgid "Start with {minutes, plural, one {# minute} other {# minutes}}. {others, plural, one {# other goal is} other {# other goals are}} on today's plan too."
+msgstr "Önce {minutes, plural, other {# dakika}} çalış. Bugünkü planında {others, plural, other {# hedef daha}} var."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "EUWgvZ"
+msgid "{minutes, plural, one {# minute} other {# minutes}} for this one, and {others, plural, one {# more goal} other {# more goals}} after it."
+msgstr "Bu hedef için {minutes, plural, other {# dakika}}, ardından {others, plural, other {# hedef daha}}."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "4u16G2"
+msgid "Open today's plan"
+msgstr "Bugünkü planını aç"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "wdqkFx"
+msgid "Change reminder settings"
+msgstr "Hatırlatma ayarlarını değiştir"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "YvVUvF"
+msgid "Turn off email reminders"
+msgstr "E-posta hatırlatmalarını kapat"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "TMLja4"
+msgid "You get this because you turned on study reminders in Zoonk."
+msgstr "Zoonk’ta çalışma hatırlatmalarını açtığın için bu e-postayı alıyorsun."
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "7gq6C7"
+msgid "Next up: {goal}"
+msgstr "Sırada: {goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "A3jTYj"
+msgid "Today's study: {goal}"
+msgstr "Bugünkü çalışman: {goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "s-800F"
+msgid "Time to study: {goal}"
+msgstr "Çalışma zamanı: {goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "R9vV3q"
+msgid "Ready when you are: {goal}"
+msgstr "Sen hazır olduğunda biz de hazırız: {goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "I0h01A"
+msgid "Still on today: {goal}"
+msgstr "Bugünkü planında hâlâ var: {goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "FdTl5c"
+msgid "Your study time: {goal}"
+msgstr "Çalışma saatin: {goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "CdHWeN"
+msgid "On your plan today: {goal}"
+msgstr "Bugünkü planında: {goal}"
+
 #: src/lib/tutor-confirmation.ts
 msgctxt "Sd1Qq1"
 msgid "Below is a short test on {chapter}: passing it skips the lessons you already know."

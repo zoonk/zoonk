@@ -244,6 +244,121 @@ msgctxt "m-X1D0"
 msgid "Back to Zoonk"
 msgstr "Zoonkに戻る"
 
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "yDrTAE"
+msgid "{minutes, plural, one {# minute} other {# minutes}} of exam prep on your plan today."
+msgstr "今日の学習計画には、{minutes, plural, other {#分}}の試験対策が入っています。"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "Kc3Giq"
+msgid "Today's exam prep: {minutes, plural, one {# minute} other {# minutes}}."
+msgstr "今日の試験対策は{minutes, plural, other {#分}}です。"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "QGJAH7"
+msgid "{minutes, plural, one {# minute} other {# minutes}} today moves your exam prep forward."
+msgstr "今日の{minutes, plural, other {#分}}で、試験対策が一歩進みます。"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "dN9j0T"
+msgid "{minutes, plural, one {# minute} other {# minutes}} on your plan today."
+msgstr "今日の学習計画は{minutes, plural, other {#分}}です。"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "CHd8Js"
+msgid "Today's plan has {minutes, plural, one {# minute} other {# minutes}} for it."
+msgstr "今日はこの目標に{minutes, plural, other {#分}}取り組む予定です。"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "hHrR1d"
+msgid "{minutes, plural, one {# minute} other {# minutes}} today keeps your plan on track."
+msgstr "今日{minutes, plural, other {#分}}取り組めば、学習計画どおりに進められます。"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "jfc4ic"
+msgid "{left, plural, one {# minute} other {# minutes}} left today. You've already done {done, plural, one {# minute} other {# minutes}}."
+msgstr "今日はあと{left, plural, other {#分}}です。すでに{done, plural, other {#分}}学習しました。"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "ox2un2"
+msgid "You've done {done, plural, one {# minute} other {# minutes}} today. {left, plural, one {# minute} other {# minutes}} to go."
+msgstr "今日は{done, plural, other {#分}}学習しました。あと{left, plural, other {#分}}です。"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "uSDY9P"
+msgid "{left, plural, one {# more minute} other {# more minutes}} finishes today's plan."
+msgstr "あと{left, plural, other {#分}}で、今日の学習計画が完了します。"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "doiP8l"
+msgid "{minutes, plural, one {# minute} other {# minutes}} today, then {others, plural, one {# more goal} other {# more goals}}."
+msgstr "今日はまず{minutes, plural, other {#分}}取り組み、その後は{others, plural, other {ほかの#個の目標}}に進みます。"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "dBVV88"
+msgid "Start with {minutes, plural, one {# minute} other {# minutes}}. {others, plural, one {# other goal is} other {# other goals are}} on today's plan too."
+msgstr "まずは{minutes, plural, other {#分}}から始めましょう。今日の学習計画には、ほかにも{others, plural, other {#個の目標}}があります。"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "EUWgvZ"
+msgid "{minutes, plural, one {# minute} other {# minutes}} for this one, and {others, plural, one {# more goal} other {# more goals}} after it."
+msgstr "この目標に{minutes, plural, other {#分}}取り組み、その後は{others, plural, other {ほかの#個の目標}}に進みます。"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "4u16G2"
+msgid "Open today's plan"
+msgstr "今日の学習計画を開く"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "wdqkFx"
+msgid "Change reminder settings"
+msgstr "リマインダーの設定を変更する"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "YvVUvF"
+msgid "Turn off email reminders"
+msgstr "メールのリマインダーをオフにする"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "TMLja4"
+msgid "You get this because you turned on study reminders in Zoonk."
+msgstr "Zoonkで学習リマインダーをオンにしているため、このメールをお送りしています。"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "7gq6C7"
+msgid "Next up: {goal}"
+msgstr "次の学習：{goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "A3jTYj"
+msgid "Today's study: {goal}"
+msgstr "今日の学習：{goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "s-800F"
+msgid "Time to study: {goal}"
+msgstr "学習の時間です：{goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "R9vV3q"
+msgid "Ready when you are: {goal}"
+msgstr "いつでも始められます：{goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "I0h01A"
+msgid "Still on today: {goal}"
+msgstr "今日の予定に残っています：{goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "FdTl5c"
+msgid "Your study time: {goal}"
+msgstr "学習の時間：{goal}"
+
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "CdHWeN"
+msgid "On your plan today: {goal}"
+msgstr "今日の学習計画：{goal}"
+
 #: src/lib/tutor-confirmation.ts
 msgctxt "Sd1Qq1"
 msgid "Below is a short test on {chapter}: passing it skips the lessons you already know."

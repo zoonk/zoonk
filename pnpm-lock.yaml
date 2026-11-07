@@ -505,6 +505,9 @@ importers:
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@zoonk/mailer':
+        specifier: workspace:*
+        version: link:../../packages/mailer
       '@zoonk/player':
         specifier: workspace:*
         version: link:../../packages/player
