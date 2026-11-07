@@ -11,8 +11,8 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
-import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
+import { useTodayScreen } from "./today-context";
 
 const CARD_CLASS =
   "relative isolate max-sm:hidden before:pointer-events-none before:absolute before:-inset-x-2.5 before:-inset-y-2 before:-z-10 before:rounded-[0.625rem] before:transition-colors has-[a:hover]:before:bg-muted/70 has-[a:focus-visible]:before:ring-[3px] has-[a:focus-visible]:before:ring-ring/50";
@@ -39,7 +39,7 @@ export function ProgressCard({
   value: React.ReactNode;
 }) {
   const t = useExtracted();
-  const routes = useLearnRoutes();
+  const { actions } = useTodayScreen();
   const id = useId();
   const detailId = `${id}-detail`;
   const summaryId = `${id}-summary`;
@@ -78,7 +78,7 @@ export function ProgressCard({
         </span>
       )}
 
-      <LearnLink aria-labelledby={labelledBy} className={LINK_CLASS} href={routes.journey}>
+      <LearnLink aria-labelledby={labelledBy} className={LINK_CLASS} href={actions.planHref}>
         <span id={linkId}>{t("See your plan")}</span>
         <ChevronRightIcon aria-hidden="true" className="size-3.5" />
       </LearnLink>

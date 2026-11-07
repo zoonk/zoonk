@@ -12,7 +12,6 @@ import { ChangeSaveError } from "../_components/save-error";
 import { usePendingSender } from "../_utils/use-pending-sender";
 import { useSlowWait } from "../_utils/use-slow-wait";
 import { type WaitState } from "../_utils/wait-state";
-import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { useSessionAction } from "../session/use-session-action";
 import { useGoalSwitchPending } from "../shell/goal-switcher";
@@ -266,14 +265,14 @@ function KeepLearning() {
 
 function SeePlanLink() {
   const t = useExtracted();
-  const routes = useLearnRoutes();
+  const { actions } = useTodayScreen();
   const switching = useGoalSwitchPending();
   const ref = useEnterClick<HTMLAnchorElement>({ enabled: !switching });
 
   return (
     <LearnLink
       className={cn(buttonVariants({ size: "lg" }), ACTION_CLASS)}
-      href={routes.journey}
+      href={actions.planHref}
       ref={ref}
     >
       <BusyContent {...FORWARD_ICON}>

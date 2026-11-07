@@ -4,6 +4,7 @@ import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
+import { readGoalParam } from "@/lib/learn/goal-param";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { mistakePracticeInputSchema } from "@zoonk/core/mistakes/contract";
 import { getMistakePractice } from "@zoonk/core/mistakes/practice";
@@ -34,11 +35,12 @@ function readSkillId(query: Awaited<Props["searchParams"]>): string | undefined 
 }
 
 async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
-  const [language, session, goal, query, tutor] = await Promise.all([
+  const query = await searchParams;
+
+  const [language, session, goal, tutor] = await Promise.all([
     lang(),
     getSession(),
-    getCurrentGoal(),
-    searchParams,
+    getCurrentGoal(readGoalParam(query)),
     getTutorViewer(),
   ]);
 

@@ -8,6 +8,7 @@ import { UploadRequestClient } from "@/components/learn/upload-request-client";
 import { useRouter } from "@/i18n/navigation";
 import { useAnswerSuggestedGoal } from "@/lib/goals/use-answer-suggested-goal";
 import { useFollowTimeZone } from "@/lib/goals/use-follow-time-zone";
+import { withGoal } from "@/lib/learn/goal-param";
 import { toStudyDayDate } from "@/lib/learn/tab-missions";
 import { useReportTabMissions } from "@/lib/learn/tab-missions-provider";
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
@@ -144,7 +145,16 @@ export function TodayClient({
     [steps, taps],
   );
 
-  const missionLinks = useMissionLinks(today.goal.id, { learner: userId, openStep, refresh });
+  // A reminder's goal stays the one the page's links open; nothing makes it the active goal.
+  const shownGoal = data.namesGoal ? today.goal.id : undefined;
+
+  const missionLinks = useMissionLinks(today.goal.id, {
+    carryGoal: data.namesGoal,
+    learner: userId,
+    openStep,
+    refresh,
+  });
+
   const [answeredUpload, setAnsweredUpload] = useState<GoalUploadRequest | null>(null);
   const [uploadDismissed, setUploadDismissed] = useState(false);
   const answerSuggestedGoal = useAnswerSuggestedGoal({ hasGoal: true });
@@ -177,7 +187,7 @@ export function TodayClient({
       readAt={readAt}
       actions={{
         addExtraTime: taps.addExtraTime,
-        adjustTimeHref: "/plan?focus=time",
+        adjustTimeHref: withGoal("/plan?focus=time", shownGoal),
         answerInsight: answerMemoryInsightAction,
         answerSuggestedGoal,
         buddyHref: "/buddy",
@@ -191,8 +201,8 @@ export function TodayClient({
           const outcome = await chooseExamOptionAction(today.goal.id, input);
           return outcome?.change ?? null;
         },
-        chooseFocusHref: "/plan?focus=choose",
-        completedLessonsHref: "/completed-lessons",
+        chooseFocusHref: withGoal("/plan?focus=choose", shownGoal),
+        completedLessonsHref: withGoal("/completed-lessons", shownGoal),
         continueHref: call ? `/checkpoint/${call.blockId}?session=${call.sessionId}` : null,
         continueSession: () => {
           const next = stepAt(today.session.nextPosition);
@@ -200,20 +210,21 @@ export function TodayClient({
         },
         dailyLimitHref: "/settings/appearance",
         decidePlanChange,
-        examHref: "/exam",
+        examHref: withGoal("/exam", shownGoal),
         lessonAgainHref: (lessonId) => getLessonAgainHref({ lessonId, origin: "/today" }),
         missionLinks,
-        mistakesHref: "/mistakes",
+        mistakesHref: withGoal("/mistakes", shownGoal),
         openBlock: (block: DayStep) => {
           const step = stepAt(block.position);
           return step ? taps.open(step) : Promise.resolve(false);
         },
+        planHref: withGoal("/plan", shownGoal),
         plusHref: "/subscription",
         prepareLessons: taps.prepareLessons,
         refresh: refreshOnPlanChange,
         startTestOut: (chapterId) =>
           startTestOut({ chapterId, fromSession: true, goalId: today.goal.id }),
-        studyEverythingHref: "/plan?focus=everything",
+        studyEverythingHref: withGoal("/plan?focus=everything", shownGoal),
         summaryHref: sessionHref,
       }}
       brainPower={data.brainPower}
@@ -221,7 +232,14 @@ export function TodayClient({
       completedLessons={data.completedLessons}
       missions={{ fullMeal: today.session.fullMeal, missions: today.session.missions }}
       mistakes={data.mistakes}
-      mockEntry={data.mocks && <MockEntryRow hrefs={MOCK_ENTRY_HREFS} view={data.mocks} />}
+      mockEntry={
+        data.mocks && (
+          <MockEntryRow
+            hrefs={{ ...MOCK_ENTRY_HREFS, choose: withGoal(MOCK_ENTRY_HREFS.choose, shownGoal) }}
+            view={data.mocks}
+          />
+        )
+      }
       namesGoal={data.namesGoal}
       notices={toHostNotices({
         answeredUpload,
@@ -234,7 +252,10 @@ export function TodayClient({
       planEnd={data.planEnd}
       speakingEntry={
         data.language?.speaking && (
-          <SpeakingPracticeRow entry={data.language.speaking} href="/speaking" />
+          <SpeakingPracticeRow
+            entry={data.language.speaking}
+            href={withGoal("/speaking", shownGoal)}
+          />
         )
       }
       syllabus={data.syllabus}

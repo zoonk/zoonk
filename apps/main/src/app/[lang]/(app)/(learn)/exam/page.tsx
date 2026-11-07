@@ -5,6 +5,7 @@ import {
   SectionLabelSkeleton,
 } from "@/components/learn/detail-skeleton";
 import { JourneyPageBar } from "@/components/learn/journey-page-bar";
+import { readGoalParam } from "@/lib/learn/goal-param";
 import { getMockOptions } from "@zoonk/core/exams/mocks/options";
 import { getExamView } from "@zoonk/core/exams/view/get";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
@@ -22,8 +23,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Your exam") };
 }
 
-async function ExamContent() {
-  const [result, mocks] = await Promise.all([getExamView({}), getMockOptions()]);
+type Props = PageProps<"/[lang]/exam">;
+
+async function ExamContent({ searchParams }: Pick<Props, "searchParams">) {
+  const goalId = readGoalParam(await searchParams);
+  const [result, mocks] = await Promise.all([getExamView({ goalId }), getMockOptions({ goalId })]);
 
   if (result.status === "noGoal" || result.status === "unauthorized") {
     const t = await getExtracted();
@@ -114,10 +118,10 @@ function ExamSkeleton() {
   );
 }
 
-export default function ExamPage() {
+export default function ExamPage({ searchParams }: Props) {
   return (
     <Suspense fallback={<ExamSkeleton />}>
-      <ExamContent />
+      <ExamContent searchParams={searchParams} />
     </Suspense>
   );
 }

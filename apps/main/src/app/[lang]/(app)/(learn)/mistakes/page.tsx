@@ -1,6 +1,7 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
+import { readGoalParam, withGoal } from "@/lib/learn/goal-param";
 import { getTodayPattern } from "@zoonk/core/language/patterns/today";
 import { mistakeListInputSchema } from "@zoonk/core/mistakes/contract";
 import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
@@ -46,7 +47,9 @@ async function NotebookBar() {
 }
 
 async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
-  const [goal, query] = await Promise.all([getCurrentGoal(), searchParams]);
+  const query = await searchParams;
+  const goalParam = readGoalParam(query);
+  const goal = await getCurrentGoal(goalParam);
 
   if (!goal) {
     const t = await getExtracted();
@@ -86,9 +89,9 @@ async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
       hrefs={{
         back: "/today",
         lesson: "/learn",
-        notebook: "/mistakes",
+        notebook: withGoal("/mistakes", goalParam),
         pattern: "/pattern",
-        practice: "/mistakes/practice",
+        practice: withGoal("/mistakes/practice", goalParam),
       }}
       notebook={result}
       pattern={language.status === "ready" ? language.pattern : null}

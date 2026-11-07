@@ -15,6 +15,7 @@ import {
 import { useExtracted, useFormatter } from "next-intl";
 import { TagBesideOrUnder } from "../_components/answer-option";
 import { ANSWER_TAG_CLASS, ANSWER_TAG_TONE, ANSWER_TONE } from "../_components/answer-tone";
+import { withSearchParams } from "../_utils/search-params";
 import { LearnLink } from "../learn-link";
 import { ItemLine, ItemStem, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
@@ -111,7 +112,7 @@ export function getMistakeEntryLinks({
 
   return {
     lesson: mistake.lesson ? `${hrefs.lesson}/${mistake.lesson.id}` : null,
-    practiceSkill: skillId ? `${hrefs.practice}?${new URLSearchParams({ skill: skillId })}` : null,
+    practiceSkill: skillId ? withSearchParams(hrefs.practice, { skill: skillId }) : null,
   };
 }
 

@@ -1,5 +1,6 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { redirect } from "@/i18n/navigation";
+import { readGoalParam, withGoal } from "@/lib/learn/goal-param";
 import { getSpeakingPaper } from "@zoonk/core/language/exam-speaking/paper";
 import { LearnPageBar } from "@zoonk/learn/bar";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -21,8 +22,11 @@ async function SpeakingBar() {
   return <LearnPageBar back={{ href: "/today" }} root title={t("Speaking practice")} />;
 }
 
-async function SpeakingContent() {
-  const [language, result] = await Promise.all([lang(), getSpeakingPaper({})]);
+type Props = PageProps<"/[lang]/speaking">;
+
+async function SpeakingContent({ searchParams }: Pick<Props, "searchParams">) {
+  const goalId = readGoalParam(await searchParams);
+  const [language, result] = await Promise.all([lang(), getSpeakingPaper({ goalId })]);
 
   if (result.status === "noGoal" || result.status === "unauthorized") {
     const t = await getExtracted();
@@ -40,7 +44,7 @@ async function SpeakingContent() {
   }
 
   if (result.status === "notLanguage") {
-    redirect({ href: "/exam", locale: language });
+    redirect({ href: withGoal("/exam", goalId), locale: language });
   }
 
   if (result.status !== "ready" || !result.paper) {
@@ -67,10 +71,10 @@ function SpeakingSkeleton() {
   );
 }
 
-export default function SpeakingPage() {
+export default function SpeakingPage({ searchParams }: Props) {
   return (
     <Suspense fallback={<SpeakingSkeleton />}>
-      <SpeakingContent />
+      <SpeakingContent searchParams={searchParams} />
     </Suspense>
   );
 }
