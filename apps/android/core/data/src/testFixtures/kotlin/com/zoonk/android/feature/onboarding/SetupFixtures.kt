@@ -109,7 +109,7 @@ fun planOf(
         {"access":{"freeUntil":null,"freeWeekOver":false,"mocksRequirePlus":false},"areas":[],"changes":[],
          "estimate":{"remainingHours":40,"totalHours":40${endDate?.let { ""","endDate":"$it"""" } ?: ""}},
          "examChoices":$examChoices,"examDocument":"notice","fundedMocks":[],"goalId":"$GOAL_ID","phases":[${phases.joinToString(",")}],
-         "planId":"$PLAN_ID","ready":$ready${notice?.let {
+         "planId":"$PLAN_ID","ready":$ready,"sharedExams":[]${notice?.let {
             ""","notice":"$it""""
         } ?: ""}${feasibility?.let { ""","feasibility":$it""" } ?: ""}
          ${numbers?.let { ""","numbers":$it""" } ?: ""},

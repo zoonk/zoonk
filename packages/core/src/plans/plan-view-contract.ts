@@ -173,6 +173,7 @@ export type PlanView = {
     partOf: string | null;
     pastBasics: boolean;
     reduced: boolean;
+    sharedWith: string[];
     skillCount: number;
     skipped: boolean;
   }[];
@@ -208,6 +209,7 @@ export type PlanView = {
   phases: PlanPhaseView[];
   planId: string;
   ready: boolean;
+  sharedExams: { goalId: string; name: string }[];
   shortPlan: { days: number; mockDate: string | null } | null;
   schedule: {
     dailyMinutes: number;

@@ -189,6 +189,17 @@ export const planResponseSchema = z
         }),
       weekdayMinutes: z.array(z.int()).meta({ description: "Sunday first; 0 for rest days" }),
     }),
+    sharedExams: z
+      .array(
+        z.object({
+          goalId: uuidSchema(),
+          name: z.string().meta({ description: "The exam's name, or the goal's title" }),
+        }),
+      )
+      .meta({
+        description:
+          "For an exam goal: the learner's other active or paused exam goals whose plans hold some of the same skills, in the order they were started. A lesson on a shared skill counts in each, so a topic is studied once for all of them; practice and mocks stay in each exam's style. Each area's `sharedWith` names which. Empty for other goals, and when nothing is shared",
+      }),
     shortPlan: shortPlanSchema,
     status: planStatusSchema.nullable(),
     steering: z.object({

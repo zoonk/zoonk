@@ -36,6 +36,7 @@ import { getPlanSummaryBasis, readFreshPlanSummary } from "./plan-summary";
 import { buildPlanTimingView } from "./plan-timing-view";
 import { loadPlanTools, toPlanToolViews } from "./plan-tools";
 import { readSavedBases, readSavedFeasibility } from "./saved-plan-advice";
+import { type SharedExams, loadSharedExams } from "./shared-exams";
 import { getShortPlanShape, toShortPlanView } from "./short-plan-view";
 import { getWrittenPracticeView } from "./written-practice-view";
 
@@ -47,10 +48,12 @@ function buildAreas({
   graph,
   partAreas,
   settings,
+  shared,
 }: {
   graph: PlanGraph;
   partAreas: ReadonlyMap<string, string>;
   settings: PlanSettings;
+  shared: SharedExams;
 }): PlanView["areas"] {
   const names = graph.skills.map((skill) => getSkillArea({ graph, skill }));
 
@@ -61,6 +64,7 @@ function buildAreas({
     partOf: partAreas.get(name) ?? null,
     pastBasics: settings.pastBasicsAreas.includes(name),
     reduced: settings.reducedAreas.includes(name),
+    sharedWith: shared.areas.get(name) ?? [],
     skillCount: names.filter((area) => area === name).length,
     skipped: settings.skippedAreas.includes(name),
   }));
@@ -129,6 +133,21 @@ function readPlanStatus({
   });
 }
 
+function getSteering({
+  items,
+  settings,
+}: {
+  items: PlanReadContext["items"];
+  settings: PlanSettings;
+}): PlanView["steering"] {
+  return {
+    difficultyBias: settings.difficultyBias,
+    lessonsStudied: items.filter((item) => item.kind === "lesson" && item.status === "done").length,
+    practiceBias: settings.practiceBias,
+    skippedActivities: settings.skippedActivities,
+  };
+}
+
 type PlanViewInput = { context: PlanContext; now: Date };
 
 export async function buildPlanView({
@@ -177,6 +196,7 @@ export async function buildPlanView({
     todayBlocks,
     partAreas,
     taughtSkillIds,
+    shared,
   ] = await Promise.all([
     loadPlanChangeViews({
       context: savedContext,
@@ -202,6 +222,7 @@ export async function buildPlanView({
     readTodayLearnBlocks(goal.userId, goal.id),
     loadGraphPartAreas({ examBlueprintId: goal.examBlueprintId, graph: state.graph }),
     readTaughtStandInSkills(goal.userId, goal.id),
+    loadSharedExams({ goal, graph: state.graph }),
   ]);
 
   const skillAreas = getSkillAreas({
@@ -233,7 +254,7 @@ export async function buildPlanView({
 
   return {
     access,
-    areas: buildAreas({ ...state, partAreas }),
+    areas: buildAreas({ ...state, partAreas, shared }),
     bases: readSavedBases({ context, settings: state.settings, summary }),
     changes: changes.map((change) => foldChangeAreas({ change, partAreas })),
     course,
@@ -277,15 +298,10 @@ export async function buildPlanView({
     planId: context.plan.id,
     ready: savedContext.phases.length > 0,
     schedule: buildScheduleView({ calendar, context, dateKind, fullCourse, noticeDates }),
+    sharedExams: shared.exams,
     shortPlan: toShortPlanView({ items, shape: shortPlan }),
     status,
-    steering: {
-      difficultyBias: state.settings.difficultyBias,
-      lessonsStudied: items.filter((item) => item.kind === "lesson" && item.status === "done")
-        .length,
-      practiceBias: state.settings.practiceBias,
-      skippedActivities: state.settings.skippedActivities,
-    },
+    steering: getSteering({ items, settings: state.settings }),
     tools: toPlanToolViews({ settings: state.settings, tools }),
     ...buildPlanTimingView({ access, calendar, context, skillAreas, studiedDates }),
     weekTime: studyWeek.time,
