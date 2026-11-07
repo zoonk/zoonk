@@ -91,6 +91,47 @@ export async function createGoogleSession({
   return getSessionToken(response);
 }
 
+export async function createRestoreKey({
+  headers,
+  registrationResponseJson,
+  requestURL,
+}: {
+  headers: Headers;
+  registrationResponseJson: string;
+  requestURL: string;
+}) {
+  await callNativeAuthHandler({
+    body: { registrationResponseJson },
+    handler: auth.handler,
+    headers,
+    path: "/restore-key/register",
+    requestURL,
+  });
+}
+
+export async function createRestoreKeySession({
+  authenticationResponseJson,
+  headers,
+  requestURL,
+}: {
+  authenticationResponseJson: string;
+  headers: Headers;
+  requestURL: string;
+}) {
+  const response = await callNativeAuthHandler({
+    body: { authenticationResponseJson },
+    handler: auth.handler,
+    headers,
+    path: "/restore-key/session",
+    requestURL,
+  });
+
+  return {
+    ...getSessionToken(response),
+    isGuest: isJsonObject(response) && response.isGuest === true,
+  };
+}
+
 /**
  * Throws when the session can't be read or deleted: Better Auth's sign-out swallows persistence
  * failures, and native clients clear the Keychain only after this succeeds.
