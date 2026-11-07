@@ -8,7 +8,13 @@ import {
   isPassageExactlyInDocument,
 } from "../exams/passage-check";
 import { namesAnyProduct, toNameKey } from "./product-keys";
-import { hasVersionToken, isDateStated, isMonthStated, isVersionStated } from "./release-claims";
+import {
+  hasVersionToken,
+  isDateStated,
+  isMonthStated,
+  isVersionStated,
+  withoutVersions,
+} from "./release-claims";
 
 /** A page's language names its months ("21 de outubro de 2025"). */
 export type ReadProductPage = {
@@ -180,8 +186,8 @@ function checkRelease({
     return null;
   }
 
-  const dated = { language: page.language, passage: release.passage };
   const { version } = release;
+  const dated = { language: page.language, passage: withoutVersions(release) };
 
   return {
     document: release.document,

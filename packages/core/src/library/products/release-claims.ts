@@ -13,6 +13,7 @@ const NUMERIC_JOINER = /^[./-]$/u;
 /** "2024-10" and "10/2024", never "2024.10", which is how versions are written. */
 const NUMERIC_MONTH_JOINER = /^[/-]$/u;
 const VERSION_SEPARATOR = /[\p{L}\p{N}][._-][\p{L}\p{N}]/u;
+const NUMBERED_VERSION = /\p{N}+(?:[._-]\p{N}+)+/gu;
 type Token = { end: number; start: number; text: string };
 
 function toTokens(text: string): Token[] {
@@ -226,12 +227,36 @@ export function isMonthStated({
   });
 }
 
-/** The text states the version on its own ("v1.37", "1.37"), not inside "1.370" or "21.37". */
-export function hasVersionToken({ text, version }: { text: string; version: string }): boolean {
+/** The version on its own ("v1.37", "1.37"), not inside "1.370" or "21.37". */
+function toVersionPattern({ flags, version }: { flags: string; version: string }): RegExp {
   const escaped = version.replaceAll(/[.*+?^${}()|[\]\\]/gu, String.raw`\$&`);
 
-  return new RegExp(`(?<![\\p{L}\\p{N}.])v?${escaped}(?![\\p{L}\\p{N}]|\\.\\p{N})`, "iu").test(
-    text,
+  return new RegExp(`(?<![\\p{L}\\p{N}.])v?${escaped}(?![\\p{L}\\p{N}]|\\.\\p{N})`, flags);
+}
+
+export function hasVersionToken({ text, version }: { text: string; version: string }): boolean {
+  return toVersionPattern({ flags: "iu", version }).test(text);
+}
+
+/**
+ * The passage without the release's own numbered versions, the claimed one and any in its name: a
+ * version written like a date ("Orbit Notes 2024.05.04") never states the release's date. A bare
+ * number stays, since it may be the date's day ("Orbit 5" shipped on "5 Feb 2018").
+ */
+export function withoutVersions({
+  name,
+  passage,
+  version,
+}: {
+  name: string;
+  passage: string;
+  version: string | null;
+}): string {
+  const versions = [version ?? "", name].flatMap((text) => text.match(NUMBERED_VERSION) ?? []);
+
+  return versions.reduce(
+    (text, item) => text.replaceAll(toVersionPattern({ flags: "giu", version: item }), " "),
+    passage,
   );
 }
 

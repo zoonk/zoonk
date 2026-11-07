@@ -450,3 +450,53 @@ Orbit Notes 3 shipped in 2023.`;
     ]);
   });
 });
+
+describe("a release whose version is a date", () => {
+  const page = `Orbit Notes 2024.05.04 is now available.
+Orbit Notes 2024.06.01, released June 1, 2024.
+Orbit Notes 2024.07 is out.`;
+
+  function readDates(releases: ProductReleaseClaim[]) {
+    return checkProductReading({
+      pages: [{ language: "en", text: page }],
+      productName: "Orbit Notes",
+      reading: reading({ brand: null, product: null, releases }),
+    }).releases.map((item) => [item.name, item.version, item.releasedAt, item.releasedMonthOnly]);
+  }
+
+  it("never reads its own version as its date, only a date its passage states besides", () => {
+    expect(
+      readDates([
+        release({
+          name: "Orbit Notes 2024.05.04",
+          passage: "Orbit Notes 2024.05.04 is now available.",
+          releasedOn: "2024-05-04",
+          version: "2024.05.04",
+        }),
+        release({
+          name: "Orbit Notes 2024.05.04",
+          passage: "Orbit Notes 2024.05.04 is now available.",
+          releasedOn: "2024-05-04",
+          version: null,
+        }),
+        release({
+          name: "Orbit Notes 2024.06.01",
+          passage: "Orbit Notes 2024.06.01, released June 1, 2024.",
+          releasedOn: "2024-06-01",
+          version: "2024.06.01",
+        }),
+        release({
+          name: "Orbit Notes 2024.07",
+          passage: "Orbit Notes 2024.07 is out.",
+          releasedOn: "2024-07",
+          version: "2024.07",
+        }),
+      ]),
+    ).toStrictEqual([
+      ["Orbit Notes 2024.05.04", "2024.05.04", null, false],
+      ["Orbit Notes 2024.05.04", null, null, false],
+      ["Orbit Notes 2024.06.01", "2024.06.01", new Date(Date.UTC(2024, 5, 1)), false],
+      ["Orbit Notes 2024.07", "2024.07", null, false],
+    ]);
+  });
+});
