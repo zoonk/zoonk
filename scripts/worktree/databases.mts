@@ -81,16 +81,18 @@ async function updateLibrary({ url, worktree }: { url: URL; worktree: string }):
     return;
   }
 
+  const database = `ALTER DATABASE "${databaseName({ url })}"`;
+
+  // A write that fails partway leaves no hash, so the next start writes again.
+  await query({ source: url, sql: `${database} RESET ${LIBRARY_SETTING}` });
+
   await runDatabaseScript({
     env: urlEnvironment({ url }),
     script: "src/prisma/seed-library.ts",
     worktree,
   });
 
-  await query({
-    source: url,
-    sql: `ALTER DATABASE "${databaseName({ url })}" SET ${LIBRARY_SETTING} = ${sqlLiteral(source)}`,
-  });
+  await query({ source: url, sql: `${database} SET ${LIBRARY_SETTING} = ${sqlLiteral(source)}` });
 }
 
 /**
