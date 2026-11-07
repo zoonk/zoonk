@@ -223,13 +223,12 @@ struct ChallengeScreen: View {
               .foregroundStyle(.mutedForeground)
           }
           Spacer()
-          Button {
+          BusyButton(isBusy: isMoving, icon: .undo) {
             run { await undoMove(moved.changeId) }
           } label: {
             Text("Undo", tableName: "Practice", comment: "Undoes moving a weekly challenge.")
           }
           .buttonStyle(.outline)
-          .disabled(isMoving)
         }
       }
     } actions: {
@@ -298,7 +297,7 @@ struct ChallengeScreen: View {
               title: LocalizedStringResource(
                 "Move to Monday", table: "Practice",
                 comment: "Moves the weekly challenge to next Monday."),
-              icon: .setDate, isDisabled: isMoving || isStarting
+              icon: .setDate, isBusy: isMoving, isDisabled: isStarting
             ) { run { await move() } }
           }
 
@@ -308,7 +307,7 @@ struct ChallengeScreen: View {
                 "Start the mock exam", table: "Practice", comment: "Starts a mock exam challenge.")
               : LocalizedStringResource("Start", table: "Practice", comment: "Starts a challenge."),
             icon: .play, isBusy: isStarting || isWriting,
-            isDisabled: challenge.dailyLimitReached
+            isDisabled: challenge.dailyLimitReached || isMoving
           ) { run { await start(afterWriting: false) } }
         }
       }
@@ -317,7 +316,7 @@ struct ChallengeScreen: View {
         title: LocalizedStringResource(
           "Move to Monday", table: "Practice", comment: "Moves the weekly challenge to next Monday."
         ),
-        icon: .setDate, isDisabled: isMoving
+        icon: .setDate, isBusy: isMoving
       ) { run { await move() } }
     } else if challenge.waitReason != nil {
       Text(
