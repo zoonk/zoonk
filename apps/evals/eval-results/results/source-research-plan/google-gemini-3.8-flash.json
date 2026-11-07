@@ -491,6 +491,57 @@
           "topic": "product"
         }
       }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "BR",
+          "domains": [
+            "totvs.com"
+          ],
+          "language": "pt",
+          "nameIncludes": [
+            "protheus"
+          ],
+          "otherCountries": [
+            "ZZ"
+          ],
+          "product": {
+            "brand": [
+              "totvs"
+            ],
+            "name": [
+              "protheus"
+            ],
+            "release": [
+              "protheus 12.1.2410"
+            ]
+          }
+        },
+        "id": "protheus-release-only-in-learner-words-1",
+        "language": "pt",
+        "userInput": {
+          "goal": "Dominar o módulo de compras do Protheus\nUso o Protheus 12.1.2410 no trabalho e quero dominar o módulo de compras",
+          "topic": "product"
+        }
+      }
     }
   ],
   "taskId": "source-research-plan"

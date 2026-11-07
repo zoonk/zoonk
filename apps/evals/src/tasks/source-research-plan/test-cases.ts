@@ -72,6 +72,22 @@ export const TEST_CASES: TestCase<ResearchPlanExpected, SourceResearchPlanParams
   },
   {
     expected: {
+      country: "BR",
+      domains: ["totvs.com"],
+      language: "pt",
+      nameIncludes: ["protheus"],
+      otherCountries: ["ZZ"],
+      product: { brand: ["totvs"], name: ["protheus"], release: ["protheus 12.1.2410"] },
+    },
+    id: "protheus-release-only-in-learner-words",
+    language: "pt",
+    userInput: {
+      goal: "Dominar o módulo de compras do Protheus\nUso o Protheus 12.1.2410 no trabalho e quero dominar o módulo de compras",
+      topic: "product",
+    },
+  },
+  {
+    expected: {
       country: "US",
       domains: ["mit.edu", "stanford.edu", "harvard.edu", "berkeley.edu", "caltech.edu", "edx.org"],
       language: "en",
