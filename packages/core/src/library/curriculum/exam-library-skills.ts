@@ -46,11 +46,6 @@ async function listCourseSkills({
       WHERE home_course_id IS NOT NULL
       UNION
       SELECT chapter_id, course_id FROM course_chapters
-    ), lesson_chapters AS (
-      SELECT id AS lesson_id, home_chapter_id AS chapter_id FROM library_lessons
-      WHERE home_chapter_id IS NOT NULL
-      UNION
-      SELECT lesson_id, chapter_id FROM chapter_lessons
     ), chapter_teaching AS (
       SELECT link.skill_id, placement.course_id, chapter.id AS chapter_id
       FROM chapter_skills AS link
@@ -72,8 +67,8 @@ async function listCourseSkills({
       SELECT link.skill_id, placement.course_id, lesson.id
       FROM lesson_skills AS link
       JOIN library_lessons AS lesson ON lesson.id = link.lesson_id
-      JOIN lesson_chapters ON lesson_chapters.lesson_id = lesson.id
-      JOIN library_chapters AS chapter ON chapter.id = lesson_chapters.chapter_id
+      JOIN chapter_lessons ON chapter_lessons.lesson_id = lesson.id
+      JOIN library_chapters AS chapter ON chapter.id = chapter_lessons.chapter_id
       JOIN chapter_courses AS placement ON placement.chapter_id = chapter.id
       WHERE lesson.visibility = 'public' AND lesson.set_aside_at IS NULL
         AND lesson.language = ${language}
