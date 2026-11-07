@@ -270,31 +270,41 @@ describe("saved plan reads", () => {
     });
   });
 
-  it.each([1, 7])("lists earlier unfinished saved work after %s missed days", async (days) => {
-    const { goal } = await setup();
-    vi.setSystemTime(new Date(NOW.getTime() + days * 86_400_000));
+  it.each([1, 7])(
+    "lists earlier unfinished saved work after %s missed days, without today's lessons",
+    async (days) => {
+      const { goal } = await setup();
+      vi.setSystemTime(new Date(NOW.getTime() + days * 86_400_000));
 
-    const plan = await prisma.plan.findUniqueOrThrow({
-      include: { items: { orderBy: { position: "asc" } } },
-      where: { goalId: goal.id },
-    });
+      const plan = await prisma.plan.findUniqueOrThrow({
+        include: { items: { orderBy: { position: "asc" } } },
+        where: { goalId: goal.id },
+      });
 
-    const earlier = plan.items.filter(
-      (item) =>
-        item.status === "todo" &&
-        item.scheduledFor &&
-        item.scheduledFor < new Date(new Date().toISOString().slice(0, 10)) &&
-        (item.kind === "lesson" || item.kind === "chapter"),
-    );
+      const earlier = plan.items.filter(
+        (item) =>
+          item.status === "todo" &&
+          item.scheduledFor &&
+          item.scheduledFor < new Date(new Date().toISOString().slice(0, 10)) &&
+          (item.kind === "lesson" || item.kind === "chapter"),
+      );
 
-    expect(earlier.length).toBeGreaterThan(0);
-    const today = await getTodayView({ goalId: goal.id });
+      const today = await getTodayView({ goalId: goal.id });
 
-    expect(today).toMatchObject({
-      status: "ready",
-      today: { earlierWork: earlier.map((item) => ({ id: item.id, title: item.titleSnapshot })) },
-    });
-  });
+      if (today.status !== "ready") {
+        throw new Error("Expected Today");
+      }
+
+      const inSession = new Set(today.today.session.blocks.map((block) => block.planItemId));
+      const later = earlier.filter((item) => !inSession.has(item.id));
+
+      expect(earlier.length).toBeGreaterThan(0);
+
+      expect(today.today.earlierWork).toStrictEqual(
+        later.map((item) => ({ id: item.id, title: item.titleSnapshot })),
+      );
+    },
+  );
 
   it.each(["plan", "today", "device today", "progress", "proposal", "resume"])(
     "%s builds zero plans even after inputs and the day change",

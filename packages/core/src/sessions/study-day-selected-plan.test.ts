@@ -186,7 +186,7 @@ describe("a selected plan reaches the day exactly once", () => {
     expect(future?.scheduledFor?.getTime()).toBeGreaterThan(new Date("2026-09-30").getTime());
   });
 
-  it("keeps the shown overdue day on a forced stale rebuild after a lesson lands", async () => {
+  it("opens the shown overdue day on a forced stale rebuild after a lesson lands", async () => {
     vi.setSystemTime(new Date("2026-09-29T12:00:00Z"));
     const fixture = await setup("2026-09-29");
     vi.setSystemTime(SESSION_NOW);
@@ -216,7 +216,11 @@ describe("a selected plan reaches the day exactly once", () => {
     }
 
     expect(builds.mock.calls.some(([request]) => request.mode === "forced")).toBe(true);
-    expect(opened.session.blocks.some((block) => block.kind === "learn")).toBe(true);
+
+    expect(opened.session.blocks.map((block) => toDayBlockRef(block))).toStrictEqual(
+      preview.day.blocks.map((block) => toDayBlockRef(block)),
+    );
+
     const after = await getSessionPageView(input);
 
     if (after.status !== "ready") {

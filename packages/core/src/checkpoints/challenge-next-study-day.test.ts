@@ -62,9 +62,13 @@ async function findPhaseChallenge({ phase, planId }: { phase: number; planId: st
 async function openTheNextDay({ date, goalId }: { date: Date; goalId: string }) {
   vi.setSystemTime(noonOn(date));
 
-  await expect(getTodayStudySession({ goalId, timeZone: "UTC" })).resolves.toMatchObject({
-    status: "ready",
-  });
+  const session = await getTodayStudySession({ goalId, timeZone: "UTC" });
+
+  if (session.status !== "ready") {
+    throw new Error(`Expected the next day's session, got ${session.status}`);
+  }
+
+  return session.session;
 }
 
 describe("a learn plan's phase challenge past today's study time names the day its next run puts it on", () => {
@@ -76,7 +80,7 @@ describe("a learn plan's phase challenge past today's study time names the day i
     vi.useRealTimers();
   });
 
-  it("past a weekly checkpoint day its 15 minutes leave no lesson time on", async () => {
+  it("takes the next study day even when a weekly checkpoint fills it: the weekly challenge waits", async () => {
     vi.setSystemTime(new Date("2020-10-05T12:00:00Z"));
 
     const friday = new Date("2020-10-09T12:00:00Z");
@@ -140,10 +144,22 @@ describe("a learn plan's phase challenge past today's study time names the day i
     const held = await challengeOf(boss.id);
     expect(held).toMatchObject({ dailyLimitReached: true, status: "ready", today: "2020-10-10" });
 
-    await openTheNextDay({ date: sunday, goalId: goal.id });
+    const next = await openTheNextDay({ date: sunday, goalId: goal.id });
     const replanned = await findPhaseChallenge({ phase: 0, planId: plan.id });
 
-    expect(toIsoDate(replanned.scheduledFor)).not.toBe(toIsoDate(sunday));
-    expect(held.nextStudyDate).toBe(toIsoDate(replanned.scheduledFor));
+    const challengesOnSunday = await prisma.planItem.findMany({
+      select: { id: true },
+      where: {
+        kind: { in: ["boss", "checkpoint", "mock"] },
+        planId: plan.id,
+        scheduledFor: sunday,
+        status: "todo",
+      },
+    });
+
+    expect(next.blocks.map((block) => block.planItemId)).toStrictEqual([boss.id]);
+    expect(challengesOnSunday.map((item) => item.id)).toStrictEqual([boss.id]);
+    expect(toIsoDate(replanned.scheduledFor)).toBe(toIsoDate(sunday));
+    expect(held.nextStudyDate).toBe(toIsoDate(sunday));
   });
 });

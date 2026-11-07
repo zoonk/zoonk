@@ -34,7 +34,6 @@
   "today_done_count": "456f78ab972b2bafbdc565a50260af263893a16973a63eef53db0adf98a6f299",
   "today_done_day_off": "9b5c406e533641cf0a499b9ab635899fcd4295796f839676df38652a8a980a72",
   "today_earlier_work": "d7b3d91200adab2c771bce44cb9b55044cfaf6fda8b8faeeb5e2337d2e41989c",
-  "today_earlier_work_detail": "a748d51b35f12f30f9a2cf74459deaabd93fbc421679c1acc6408f3c7c36ad82",
   "today_exam_choice_choose": "cd4d55901ba5d38ad2547b8701f91a0b26d5d56ba680dcb4aa152b20e02e3a87",
   "today_exam_choice_question": "67c8fd60a6d490d7efb59e658a797f2ba9a288d5a6af157bb6bac9f472c29160",
   "today_exam_choice_question_several": "bc9bd23349e23b2c68091ef47959175d14a1124f39b0c155ab644694a45219dd",
@@ -387,7 +386,6 @@
     <string name="today_take_the_test">테스트 보기</string>
     <!-- Lessons from earlier days the learner hasn't finished; %1$s is how many, as a number. -->
     <string name="today_earlier_work">이전에 못 마친 레슨 · %1$s</string>
-    <string name="today_earlier_work_detail">이 레슨부터 시작하세요. 학습을 시작하면 오늘 학습 시간에 맞게 계획이 조정돼요.</string>
     <string name="today_practice_anytime">언제든 연습하기</string>
     <string name="today_mistakes_notebook">오답 노트</string>
     <string name="today_mistakes_redo">틀린 문제 다시 풀기</string>

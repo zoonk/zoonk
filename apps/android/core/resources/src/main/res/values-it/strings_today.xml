@@ -34,7 +34,6 @@
   "today_done_count": "1bf1849463815f9451c66bb366f8bc479a1b6ad4d4bdb015c1e04c0e1ba5a600",
   "today_done_day_off": "90ae2f9851f94b96fe8cab6ccdc8553a7453941691b1e20b31b82897e8494114",
   "today_earlier_work": "5cfd40ffc2988055c8e8365456818380afcdb6cc416f2e422818bccd11028aaf",
-  "today_earlier_work_detail": "c0f5db7491ccae8037a3f3f3ad78d2aaf279f4406931ee14f0f03932a1ad40a3",
   "today_exam_choice_choose": "0c536fce19fccccc749614c7e93b0127896988b241b0365e1dfce8eb2ca13b11",
   "today_exam_choice_question": "33ef6fd97cefc9d47f898f7b33ef0b2df3ea21df140f224532d14f6617a94135",
   "today_exam_choice_question_several": "7964ae8e7f569cd7e9acd8e986cb6f48b680683e995beb92c81a078d2789e6b0",
@@ -415,7 +414,6 @@
     <string name="today_take_the_test">Fai il test</string>
     <!-- Lessons from earlier days the learner hasn't finished; %1$s is how many, as a number. -->
     <string name="today_earlier_work">Lezioni precedenti da completare · %1$s</string>
-    <string name="today_earlier_work_detail">Inizia da queste. Quando inizi la sessione, il piano si adatta al tempo disponibile oggi.</string>
     <string name="today_practice_anytime">Esercitati quando vuoi</string>
     <string name="today_mistakes_notebook">Quaderno degli errori</string>
     <string name="today_mistakes_redo">Rifai le domande che hai sbagliato</string>
