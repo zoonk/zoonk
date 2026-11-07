@@ -575,7 +575,8 @@ struct LessonPlayerState: Equatable, Sendable {
 
     if result.isCorrect != verdict.isCorrect {
       result.isCorrect = verdict.isCorrect
-      result.correctAnswer = verdict.isCorrect ? nil : verdict.correctAnswer ?? result.correctAnswer
+      result.correctAnswer =
+        verdict.isCorrect ? verdict.correctAnswer : verdict.correctAnswer ?? result.correctAnswer
       result.feedback = verdict.feedback ?? result.feedback
     }
 
