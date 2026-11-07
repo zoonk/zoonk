@@ -166,6 +166,14 @@ describe(repairWrittenLesson, () => {
     expect(
       quoteAfterRepair({ quote: sentence, text: `A kit costs $5. ${sentence}`, title: sentence }),
     ).toBe(sentence);
+
+    expect(
+      quoteAfterRepair({
+        quote: "Each kit holds 10^3 cells, enough for one slide.",
+        text: "Each kit holds 10^3 cells — enough for one slide.",
+        title: "A kit",
+      }),
+    ).toBe("Each kit holds $10^{3}$ cells, enough for one slide.");
   });
 
   it("moves a minus written after the money mark in text, tables, activities and the quote that cites it, keeping the amount", () => {
