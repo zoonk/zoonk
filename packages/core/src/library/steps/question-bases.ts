@@ -23,6 +23,17 @@ function toStoredText(text: string): string {
   return typeof stored === "string" ? stored : text.trim();
 }
 
+/** The written fields `getReadingTexts` reads once the screen is converted. */
+export function getQuotableTexts(screen: WrittenScreen | undefined): string[] {
+  if (screen?.kind === "hookText" || screen?.kind === "explanation") {
+    return [screen.text];
+  }
+
+  return screen?.kind === "workedExample"
+    ? [screen.problem, ...screen.steps.map((step) => step.text), screen.result]
+    : [];
+}
+
 function getReadingTexts(screen: ConvertedScreen | undefined): string[] | null {
   if (!screen?.ok) {
     return null;

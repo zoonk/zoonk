@@ -6,7 +6,8 @@ import { repairNegativeMoney } from "@zoonk/utils/negative-money";
 import { type TextLayout } from "@zoonk/utils/text-flaws";
 import { repairMarkdown } from "@zoonk/utils/text-repairs";
 import { dropEquivalentOptions } from "../_utils/option-checks";
-import { getScreenTexts, mapActivityProse, mapScreenTexts } from "./_utils/screen-texts";
+import { getQuotableTexts } from "../steps/question-bases";
+import { mapActivityProse, mapScreenTexts } from "./_utils/screen-texts";
 
 const MIN_OPTIONS = 2;
 
@@ -56,11 +57,10 @@ function repairBasisQuote({
 
   const quote = repairProse({ layout: "inline", text: screen.basis.quote });
   const wrapped = wrapBareLatex({ layout: "inline", text: quote });
-  const cited = screens[screen.basis.screen - 1];
 
-  const isWrapped = cited
-    ? getScreenTexts(cited).some(({ text }) => text.includes(wrapped))
-    : false;
+  const isWrapped = getQuotableTexts(screens[screen.basis.screen - 1]).some((text) =>
+    text.includes(wrapped.trim()),
+  );
 
   return { ...screen, basis: { ...screen.basis, quote: isWrapped ? wrapped : quote } };
 }

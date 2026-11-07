@@ -17,6 +17,41 @@ function check(options: { isCorrect: boolean; text: string }[]): WrittenScreen {
 
 const spec = temperatureSpec();
 
+function quoteAfterRepair({ quote, text, title }: { quote: string; text: string; title: string }) {
+  const explanation: WrittenScreen = {
+    exampleLineIdea: null,
+    explore: null,
+    image: null,
+    kind: "explanation",
+    text,
+    title,
+    visual: null,
+  };
+
+  const question: WrittenScreen = {
+    basis: { quote, screen: 1 },
+    context: null,
+    image: null,
+    kind: "check",
+    options: ["A thousand", "A hundred"].map((option, index) => ({
+      isCorrect: index === 0,
+      picture: null,
+      reason: "Count the zeros.",
+      text: option,
+    })),
+    question: "How many cells?",
+    visual: null,
+  };
+
+  const [, repaired] = repairWrittenLesson({
+    language: "en",
+    lesson: { screens: [explanation, question], summary: hubMap(["One idea."]) },
+    spec,
+  }).screens;
+
+  return repaired?.kind === "check" ? repaired.basis?.quote : null;
+}
+
 describe(repairWrittenLesson, () => {
   it("puts LaTeX a writer left outside math into math, in screens, options and the quote that cites it", () => {
     const result = "So 0.000406 m = 4.06 × 10^{-4} m.";
@@ -119,6 +154,18 @@ describe(repairWrittenLesson, () => {
 
     expect(kit?.kind === "explanation" && kit.text).toBe(`A kit costs $5. ${sentence}`);
     expect(question?.kind === "check" && question.basis?.quote).toBe(sentence);
+  });
+
+  it("matches a quote as its basis is checked: trimmed, against the cited screen's body", () => {
+    const sentence = "Each kit holds 10^3 cells.";
+
+    expect(quoteAfterRepair({ quote: ` ${sentence} `, text: sentence, title: "A kit" })).toBe(
+      " Each kit holds $10^{3}$ cells. ",
+    );
+
+    expect(
+      quoteAfterRepair({ quote: sentence, text: `A kit costs $5. ${sentence}`, title: sentence }),
+    ).toBe(sentence);
   });
 
   it("moves a minus written after the money mark in text, tables, activities and the quote that cites it, keeping the amount", () => {
