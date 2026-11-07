@@ -180,6 +180,7 @@ describe("colored text on any tint", () => {
 /** Fills past that rule, and neutral words on a tint, each as a screen draws it. */
 const FILLS: { fill: string; modes?: Mode[]; share: number; text: string; where: string }[] = [
   { fill: "brain-text", share: 1, text: "background", where: "the earned missions reward" },
+  { fill: "secondary", share: 1, text: "foreground", where: "a secondary button's label" },
   {
     fill: "destructive",
     modes: ["dark", "darkMoreContrast"],
