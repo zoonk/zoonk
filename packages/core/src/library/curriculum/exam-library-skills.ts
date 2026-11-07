@@ -1,11 +1,6 @@
 import "server-only";
 import { type ExamLibrary, type LibrarySkill } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
 import { type CourseLevel, prisma } from "@zoonk/db";
-import { findCourseByTitle } from "../identity/kinds/course-identity";
-import { type CurriculumScope } from "./curriculum-scope";
-
-type FrameCourse = { key: string; title: string };
-type ExamScope = Pick<CurriculumScope, "language" | "ownerId" | "targetLanguage">;
 
 async function listCourseSkills({
   courseIds = [],
@@ -88,7 +83,7 @@ async function listPrerequisiteLinks(skillIds: readonly string[]) {
 const FALLBACK_LEVEL: CourseLevel = "intermediate";
 
 /** Library teaching and exam placements share one pool, including prerequisites across courses. */
-export async function loadExamLibrarySkills({
+async function loadExamLibrarySkills({
   courseIds,
   examBlueprintId,
   language,
@@ -154,38 +149,26 @@ export async function loadExamLibrarySkills({
   });
 }
 
-/**
- * Internal workflow bridge: what other exams teach in the frame's courses, read before its skills
- * are written. It runs inside the graph's step, so it only reads: it finds a course by its catalog
- * title, as saving the graph does first, and a course no exam has yet holds nothing to reuse.
- */
+/** Internal workflow bridge: reads the same resolved courses that saving uses. */
 export async function findExamLibrary({
-  courses,
+  courseIdsByKey,
   examBlueprintId,
-  scope,
+  language,
 }: {
-  courses: readonly FrameCourse[];
+  courseIdsByKey: Readonly<Record<string, string>>;
   examBlueprintId: string;
-  scope: ExamScope;
+  language: string;
 }): Promise<ExamLibrary> {
-  const found = await Promise.all(
-    courses.map(async (course) => {
-      const row = await findCourseByTitle({ ...scope, title: course.title });
-      return row ? [{ courseId: row.id, key: course.key }] : [];
-    }),
-  );
-
   const keyByCourseId = new Map(
-    found
-      .flat()
+    Object.entries(courseIdsByKey)
       .toReversed()
-      .map((course) => [course.courseId, course.key]),
+      .map(([key, id]) => [id, key]),
   );
 
   const skills = await loadExamLibrarySkills({
     courseIds: [...keyByCourseId.keys()],
     examBlueprintId,
-    language: scope.language,
+    language,
   });
 
   const outside = await prisma.course.findMany({
@@ -198,6 +181,7 @@ export async function findExamLibrary({
   const keys = new Map([...keyByCourseId, ...outside.map(({ id }) => [id, id] as const)]);
 
   return {
+    courseIdsByKey: { ...courseIdsByKey, ...Object.fromEntries(outside.map(({ id }) => [id, id])) },
     courses: outside.map(({ id, title }) => ({ key: id, title })),
     skills: skills.flatMap(({ courseId, ...skill }) => {
       const course = keys.get(courseId);

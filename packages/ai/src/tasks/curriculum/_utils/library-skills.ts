@@ -2,7 +2,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { COURSE_LEVELS, type CourseLevel } from "./course-levels";
 import { type RawSkillGraph } from "./normalize-skill-graph";
 
-/** A skill other exams already use (`course` is its course's key). */
+/** A skill taught in the Library (`course` is its course's key). */
 export type LibrarySkill = {
   course: string;
   description: string;
@@ -14,10 +14,14 @@ export type LibrarySkill = {
 };
 
 /**
- * The skills other exams use in the frame's courses and what they build on, with `courses`, the
+ * The Library's skills in the frame's courses and what they build on, with `courses`, the
  * courses outside the frame that hold those foundations.
  */
-export type ExamLibrary = { courses: { key: string; title: string }[]; skills: LibrarySkill[] };
+export type ExamLibrary = {
+  courseIdsByKey: Record<string, string>;
+  courses: { key: string; title: string }[];
+  skills: LibrarySkill[];
+};
 
 type RawSkill = RawSkillGraph["skills"][number];
 

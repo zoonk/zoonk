@@ -1,8 +1,13 @@
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
+import { findGoalCourses } from "../goals/goal-courses";
 import { buildGoalSkillGraph } from "../goals/goal-skill-graph";
 import { loadGoalCurriculumStep } from "../goals/steps/goal-curriculum-steps";
 
-export async function skillGraphTestWorkflow(goalId: string, privateGraph = false) {
+export async function skillGraphTestWorkflow(
+  goalId: string,
+  privateGraph = false,
+  saveCourses = false,
+) {
   "use workflow";
 
   const inputs = await loadGoalCurriculumStep(goalId);
@@ -13,10 +18,25 @@ export async function skillGraphTestWorkflow(goalId: string, privateGraph = fals
 
   const scope: CurriculumScope = {
     generalGoal: inputs.goal.title,
-    language: "en",
+    language: inputs.goal.language,
     ownerId: privateGraph ? inputs.goal.userId : null,
     targetLanguage: null,
   };
 
-  return buildGoalSkillGraph({ inputs, scope, workflowRunId: "graph-test" });
+  const built = await buildGoalSkillGraph({ inputs, scope, workflowRunId: "graph-test" });
+
+  if (!saveCourses) {
+    return built;
+  }
+
+  const courseIdsByKey = await findGoalCourses({
+    courses: built.graph.courses,
+    goal: inputs.goal,
+    provenance: built.provenance,
+    resolved: built.courseIdsByKey,
+    scope,
+    workflowRunId: "graph-test",
+  });
+
+  return { ...built, courseIdsByKey };
 }

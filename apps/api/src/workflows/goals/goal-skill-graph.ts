@@ -2,6 +2,7 @@ import { generateGoalSkillGraph } from "@zoonk/core/library/curriculum/generate-
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { type ContentAnalytics } from "../_shared/content-analytics";
+import { findGoalCourses } from "./goal-courses";
 import { goalProgressStep } from "./steps/goal-progress-step";
 import {
   findGraphLibraryStep,
@@ -20,12 +21,25 @@ export async function buildGoalSkillGraph(input: {
   const { examBlueprintId, model, params } = await prepareSkillGraphStep(input);
   const goalId = input.inputs.goal.id;
 
-  const { data, provenance } = await generateGoalSkillGraph({
+  const { courseIdsByKey, data, provenance } = await generateGoalSkillGraph({
     model,
     params: {
       ...params,
       findLibrarySkills: examBlueprintId
-        ? ({ courses }) => findGraphLibraryStep({ courses, examBlueprintId, scope: input.scope })
+        ? async ({ courses, provenance: frameProvenance }) => {
+            const resolved = await findGoalCourses({
+              ...input,
+              courses,
+              goal: input.inputs.goal,
+              provenance: frameProvenance,
+            });
+
+            return findGraphLibraryStep({
+              courseIdsByKey: resolved,
+              examBlueprintId,
+              language: input.scope.language,
+            });
+          }
         : undefined,
     },
     tasks: {
@@ -37,5 +51,5 @@ export async function buildGoalSkillGraph(input: {
   });
 
   await goalProgressStep({ entityId: goalId, status: "completed", step: "buildSkillGraph" });
-  return { graph: data, provenance };
+  return { courseIdsByKey, graph: data, provenance };
 }

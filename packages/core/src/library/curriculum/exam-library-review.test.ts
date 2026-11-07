@@ -14,7 +14,7 @@ import {
   normalizeSkillGraph,
 } from "../../../../ai/src/tasks/curriculum/_utils/normalize-skill-graph";
 import { applyGraphCoverage } from "./add-coverage-skills";
-import { loadExamLibrarySkills } from "./exam-library-skills";
+import { findExamLibrary } from "./exam-library-skills";
 
 const provenance = { generatedAt: new Date(), model: "test", promptVersion: "test", runId: "test" };
 
@@ -173,8 +173,8 @@ describe("shared exam Library review reproductions", () => {
       { courseId: physics.id, skillId: applied.id },
     ]);
 
-    const listed = await loadExamLibrarySkills({
-      courseIds: [physics.id],
+    const { skills: listed } = await findExamLibrary({
+      courseIdsByKey: { [physics.id]: physics.id },
       examBlueprintId: newExam.id,
       language: "pt",
     });
@@ -184,7 +184,7 @@ describe("shared exam Library review reproductions", () => {
     );
 
     const graph = toGraph(
-      listed.map(({ courseId: _courseId, ...skill }) => ({ ...skill, course: "subject" })),
+      listed.map(({ course: _course, ...skill }) => ({ ...skill, course: "subject" })),
     );
 
     expect(graph.skills.map((skill) => skill.libraryId)).toContain(foundation.id);
@@ -203,15 +203,15 @@ describe("shared exam Library review reproductions", () => {
 
     await saveExamGraph([{ courseId: course.id, skillId: reverse.id }]);
 
-    const listed = await loadExamLibrarySkills({
-      courseIds: [course.id],
+    const { skills: listed } = await findExamLibrary({
+      courseIdsByKey: { [course.id]: course.id },
       examBlueprintId: newExam.id,
       language: "pt",
     });
 
     expect(listed).toHaveLength(1);
 
-    const library = listed.map(({ courseId: _courseId, ...skill }) => ({
+    const library = listed.map(({ course: _course, ...skill }) => ({
       ...skill,
       course: "subject",
     }));

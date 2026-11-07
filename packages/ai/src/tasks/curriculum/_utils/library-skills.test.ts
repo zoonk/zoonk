@@ -96,6 +96,7 @@ describe(applyLibraryReuse, () => {
 describe(addLibraryCourses, () => {
   it("keeps a reused skill's foundation from another discipline in that discipline's course", () => {
     const exam: ExamLibrary = {
+      courseIdsByKey: {},
       courses: [{ key: "math-id", title: "Matemática" }],
       skills: [
         {

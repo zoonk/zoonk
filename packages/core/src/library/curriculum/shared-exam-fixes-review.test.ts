@@ -19,7 +19,7 @@ import {
 } from "../../../../ai/src/tasks/curriculum/_utils/normalize-skill-graph";
 import { mockDecision, mockSearchTerms, uniqueWord } from "../identity/_test-utils/identity-mocks";
 import { applyGraphCoverage } from "./add-coverage-skills";
-import { findExamLibrary, loadExamLibrarySkills } from "./exam-library-skills";
+import { findExamLibrary } from "./exam-library-skills";
 import { findOrCreateGoalCourse } from "./find-or-create-goal-course";
 
 const scope = { language: "pt", ownerId: null, targetLanguage: null };
@@ -198,8 +198,8 @@ describe("shared exam fixes adversarial review", () => {
       })),
     );
 
-    const listed = await loadExamLibrarySkills({
-      courseIds: [course.id],
+    const { skills: listed } = await findExamLibrary({
+      courseIdsByKey: { [course.id]: course.id },
       examBlueprintId: exam.id,
       language: "pt",
     });
@@ -233,8 +233,8 @@ describe("shared exam fixes adversarial review", () => {
       })),
     );
 
-    const listed = await loadExamLibrarySkills({
-      courseIds: [course.id],
+    const { skills: listed } = await findExamLibrary({
+      courseIdsByKey: { [course.id]: course.id },
       examBlueprintId: exam.id,
       language: "pt",
     });
@@ -262,15 +262,17 @@ describe("shared exam fixes adversarial review", () => {
 
     await saveExamGraph([{ courseId: course.id, skillId: skill.id }]);
 
-    const library = await findExamLibrary({
-      courses: [
-        {
-          key: "portuguese",
-          title: `  ${normalizeString(title).toUpperCase().replaceAll(" ", "  ")}  `,
-        },
-      ],
-      examBlueprintId: exam.id,
+    const saved = await findOrCreateGoalCourse({
+      format: "core",
+      provenance,
       scope,
+      title: `  ${normalizeString(title).toUpperCase().replaceAll(" ", "  ")}  `,
+    });
+
+    const library = await findExamLibrary({
+      courseIdsByKey: { portuguese: saved.course.id },
+      examBlueprintId: exam.id,
+      language: scope.language,
     });
 
     expect(library.skills.map((entry) => entry.id)).toStrictEqual([skill.id]);
@@ -307,9 +309,9 @@ describe("shared exam fixes adversarial review", () => {
     await saveExamGraph([{ courseId: physics.id, skillId: applied.id }]);
 
     const library = await findExamLibrary({
-      courses: [{ key: "physics", title }],
+      courseIdsByKey: { physics: physics.id },
       examBlueprintId: exam.id,
-      scope,
+      language: scope.language,
     });
 
     expect(library.skills.find((skill) => skill.id === applied.id)?.prerequisiteIds).toContain(
@@ -340,15 +342,16 @@ describe("shared exam fixes adversarial review", () => {
     await saveExamGraph([{ courseId: course.id, skillId: skill.id }]);
     const title = `Português ${word}`;
 
-    const library = await findExamLibrary({
-      courses: [{ key: "portuguese", title }],
-      examBlueprintId: exam.id,
-      scope,
-    });
-
     mockSearchTerms([word]);
     mockDecision(course.id);
     const saved = await findOrCreateGoalCourse({ format: "core", provenance, scope, title });
+
+    const library = await findExamLibrary({
+      courseIdsByKey: { portuguese: saved.course.id },
+      examBlueprintId: exam.id,
+      language: scope.language,
+    });
+
     expect(saved).toMatchObject({ course: { id: course.id }, created: false });
     expect(library.skills.map((entry) => entry.id)).toContain(skill.id);
   });

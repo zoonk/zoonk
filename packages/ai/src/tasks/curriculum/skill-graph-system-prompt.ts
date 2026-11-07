@@ -23,15 +23,15 @@ export function startsWithSubject({
 
 /** Every call of one exam's graph reads the same text, so they share a cached prefix. */
 export function buildSkillGraphSystemPrompt({
-  findLibrarySkills,
   goalKind,
   hasMaterial = false,
   lessonBudget,
+  librarySkills = false,
   ownLevel,
   purpose,
 }: Pick<
   SkillGraphParams,
-  "findLibrarySkills" | "goalKind" | "hasMaterial" | "lessonBudget" | "ownLevel" | "purpose"
+  "goalKind" | "hasMaterial" | "lessonBudget" | "librarySkills" | "ownLevel" | "purpose"
 >): string {
   return selectPromptVariants({
     template,
@@ -40,7 +40,7 @@ export function buildSkillGraphSystemPrompt({
       exam: goalKind === "exam",
       language: goalKind === "language",
       learn: goalKind === "learn",
-      librarySkills: goalKind === "exam" && Boolean(findLibrarySkills),
+      librarySkills: goalKind === "exam" && librarySkills,
       material: hasMaterial,
       subjectStart: startsWithSubject({ goalKind, hasMaterial, ownLevel, purpose }),
     },

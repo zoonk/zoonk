@@ -27,6 +27,7 @@ export function toLibraryLookup(
   library: readonly LibraryCourse[],
 ): SkillGraphParams["findLibrarySkills"] {
   return async ({ courses }) => ({
+    courseIdsByKey: {},
     courses: [],
     skills: library.flatMap(({ courseTitle, skills }) => {
       const course = courses.find((item) => isSameCourse(item.title, courseTitle));

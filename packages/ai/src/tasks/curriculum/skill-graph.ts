@@ -15,7 +15,7 @@ export function generateSkillGraph(params: SkillGraphParams) {
       : params.analytics;
 
   return runSkillGraphGeneration({
-    params: { ...params, analytics },
+    params: { ...params, analytics, librarySkills: Boolean(params.findLibrarySkills) },
     tasks: {
       frame: generateSkillGraphFrame,
       section: generateSkillGraphSection,

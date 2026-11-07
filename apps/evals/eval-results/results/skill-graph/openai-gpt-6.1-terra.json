@@ -2367,42 +2367,42 @@
       "categoryScores": [
         {
           "categoryId": "coverage",
-          "reasoning": "Every required pillar is represented: individual and collective rights, constitutional guarantees, social rights, nationality, general public-administration rules, civil servants, and Article 92. The relevant library skills are reused. Exam weights are within 1–5, and no supplied frequency distribution contradicts their relative priorities.",
+          "reasoning": "Every required pillar is represented: individual and collective rights, constitutional guarantees, social rights, nationality, general public-administration rules, civil servants, and Article 92. The applicable library skills are reused, and the only new skill covers the missing Judiciary topic. Weights are within 1–5; the supplied blueprint provides no frequency distribution that contradicts them.",
           "score": 10,
           "label": "Coverage",
           "weight": 25
         },
         {
           "categoryId": "orderAndPrerequisites",
-          "reasoning": "The listed library prerequisites are preserved, the sequence is followable, the course title is canonical, and phase titles name stages rather than topics. However, the first milestone includes constitutional guarantees before the skill that teaches them, which is delayed until Phase 3.",
-          "score": 8,
+          "reasoning": "The graph preserves the library's prerequisite relationships, places individual rights before constitutional guarantees, and introduces constitutional foundations before the skills that require them. Article 92 identification has no clear unmet dependency. Phase titles describe distinct stages rather than topics, milestones describe attainable capabilities, and the course is a canonical subject.",
+          "score": 10,
           "label": "Order & prerequisites",
           "weight": 20
         },
         {
           "categoryId": "granularity",
-          "reasoning": "The reused 24–30-lesson skills provide substantial topic units, while six lessons are a reasonable allocation for the much narrower Article 92 requirement. The 149 three-minute lessons account for 7.45 hours, leaving another 7.45 hours for practice and review within the stated estimate. There is no clear evidence of a required broad topic being squeezed into an unusably small unit.",
+          "reasoning": "The skills are bounded constitutional abilities rather than an entire course bundled into one skill. The broad library topics receive 24–30 lessons, while Article 92 receives eight. The 146 three-minute lessons account for 7.3 hours, leaving another 7.3 hours for practice and review within the stated total. There is no clear topic-depth or study-time failure; the unsupported content is addressed separately under scope and fit.",
           "score": 9,
           "label": "Size matched to demand",
           "weight": 15
         },
         {
           "categoryId": "noFiller",
-          "reasoning": "Three skills contain unsupported material: the social-rights skill also teaches political rights and parties, the administration skill includes military personnel, and the time-management skill teaches strategy not scored separately by the supplied blueprint. No notice-specific filtering is stated. These three instances trigger the maximum score of 7. Constitutional foundations are legitimate prerequisites, not filler.",
+          "reasoning": "Two skills explicitly include unsupported content: political rights and parties, and military servants. Neither extension is required to understand the listed constitutional topics. This triggers the cap of 7 for two or three unsupported skills. The constitutional foundation is a legitimate prerequisite, and the new Article 92 skill does not duplicate the library.",
           "score": 7,
           "label": "No filler or overlap",
           "weight": 15
         },
         {
           "categoryId": "goalFit",
-          "reasoning": "The map is in Brazilian Portuguese, uses action-first reusable names, and largely targets the requested constitutional-law exam content. However, retaining multiple out-of-notice topics and adding unscored exam strategy creates a pattern of scope mismatches, triggering the maximum score of 7.",
+          "reasoning": "The map is in Brazilian Portuguese, uses reusable action-led names, and otherwise targets the supplied constitutional exam syllabus. However, retaining out-of-notice content in two separate skills creates a pattern of exam-scope mismatches, triggering the cap of 7. Required library reuse could have been preserved with an explicit restriction on the material assigned for this goal.",
           "score": 7,
           "label": "Goal & level fit",
           "weight": 15
         },
         {
           "categoryId": "aiEraSkills",
-          "reasoning": "The skills emphasize applying constitutional rules, distinguishing guarantees, and assessing their applicability to cases. These are appropriate judgment-oriented abilities for an objective law examination. An AI-tool skill is not required for this exam goal, and the map does not impose excessive rote procedures.",
+          "reasoning": "The graph emphasizes applying constitutional provisions, distinguishing guarantees, and evaluating their applicability to cases. Identification of Judiciary bodies is appropriate because the exam explicitly tests Article 92. This exam goal does not require an AI-tool skill, and no inappropriate rote-work emphasis is evident.",
           "score": 10,
           "label": "Skills for a world with AI",
           "weight": 10
@@ -2420,26 +2420,26 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 5436,
-          "outputTokens": 1236,
-          "reasoningTokens": 459
+          "inputTokens": 5288,
+          "outputTokens": 1189,
+          "reasoningTokens": 441
         }
       },
       "steps": [
         {
-          "conclusion": "The map includes untested content without limiting the reused library skills to this notice: political rights and parties fall outside Title II, Chapters I–III, and military personnel fall outside the specified administration sections. It also adds a standalone time-management skill, although the supplied blueprint does not score exam strategy. Library reuse is otherwise correct, and the new Article 92 skill does not duplicate library content.",
+          "conclusion": "Two reused skills retain content outside the notice: the social-rights skill explicitly teaches political rights and parties (Title II, Chapters IV–V), and the administration skill includes military servants (Title III, Chapter VII, Section III). The notice restricts these areas to Chapters I–III and Sections I–II respectively. Preserve the required library reuse, but explicitly limit the assigned content to the notice's scope.",
           "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "Phase 1 promises the ability to interpret constitutional rights and guarantees, but the dedicated guarantees skill appears only in Phase 3. That milestone overstates what the learner has reached at that point.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Make the notice-specific selection within reused skills explicit, especially the lessons covering social rights, nationality, general administration rules, and civil servants. Preserve the library references rather than creating replacement skills.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 10
         }
       ],
       "testCase": {

@@ -14,15 +14,13 @@ import {
   lessonSkillFixture,
   libraryLessonsFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
-import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { skillsFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { normalizeString } from "@zoonk/utils/string";
 import { describe, expect, it } from "vitest";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { type PlanGraph } from "../../plans/planner/plan-state";
-import { findExamLibrary, loadExamLibrarySkills } from "./exam-library-skills";
+import { findExamLibrary } from "./exam-library-skills";
 import {
   type GoalSkillGraph,
   linkGoalSkillPrerequisites,
@@ -81,7 +79,7 @@ function graphSkill(
   };
 }
 
-describe(loadExamLibrarySkills, () => {
+describe("Library skills", () => {
   it("offers chapter and lesson skills before any exam places them", async () => {
     const [course, blueprint, [chapterSkill, lessonSkill]] = await Promise.all([
       courseFixture({ language: "pt" }),
@@ -99,8 +97,8 @@ describe(loadExamLibrarySkills, () => {
       ),
     ]);
 
-    const listed = await loadExamLibrarySkills({
-      courseIds: [course.id],
+    const { skills: listed } = await findExamLibrary({
+      courseIdsByKey: { [course.id]: course.id },
       examBlueprintId: blueprint.id,
       language: "pt",
     });
@@ -110,7 +108,7 @@ describe(loadExamLibrarySkills, () => {
     );
 
     expect(listed.find((skill) => skill.id === lessonSkill!.id)).toMatchObject({
-      courseId: course.id,
+      course: course.id,
       lessons: 2,
     });
   });
@@ -147,8 +145,8 @@ describe(loadExamLibrarySkills, () => {
       examGraphFixture({ blueprint, graph: toPlanGraph([{ course, skill: own! }]) }),
     ]);
 
-    const listed = await loadExamLibrarySkills({
-      courseIds: [course.id],
+    const { skills: listed } = await findExamLibrary({
+      courseIdsByKey: { [course.id]: course.id },
       examBlueprintId: blueprint.id,
       language: "pt",
     });
@@ -158,7 +156,7 @@ describe(loadExamLibrarySkills, () => {
     );
 
     expect(listed.find((skill) => skill.id === placed!.id)).toMatchObject({
-      courseId: course.id,
+      course: course.id,
       lessons: 6,
       level: "intermediate",
       prerequisiteIds: [base!.id],
@@ -167,22 +165,14 @@ describe(loadExamLibrarySkills, () => {
 });
 
 describe(findExamLibrary, () => {
-  it("finds the frame's courses by their catalog titles without writing one or asking a model", async () => {
-    const [organization, blueprint, otherBlueprint] = await Promise.all([
-      aiOrganizationFixture(),
+  it("reads resolved frame courses without writing one or asking a model", async () => {
+    const [blueprint, otherBlueprint] = await Promise.all([
       examBlueprintFixture({ language: "pt" }),
       examBlueprintFixture({ language: "pt" }),
     ]);
 
-    const [physicsTitle, newTitle] = [`Física ${randomUUID()}`, `Astronomia ${randomUUID()}`];
-
     const [physics, [placed]] = await Promise.all([
-      courseFixture({
-        language: "pt",
-        normalizedTitle: normalizeString(physicsTitle),
-        organizationId: organization.id,
-        title: physicsTitle,
-      }),
+      courseFixture({ language: "pt", title: `Física ${randomUUID()}` }),
       skillsFixture([`Placed ${randomUUID()}`], { language: "pt" }),
     ]);
 
@@ -192,43 +182,28 @@ describe(findExamLibrary, () => {
     });
 
     const library = await findExamLibrary({
-      courses: [
-        { key: "physics", title: physicsTitle },
-        { key: "astronomy", title: newTitle },
-      ],
+      courseIdsByKey: { physics: physics.id },
       examBlueprintId: blueprint.id,
-      scope,
+      language: scope.language,
     });
 
     expect(library.skills.map((skill) => [skill.id, skill.course])).toStrictEqual([
       [placed!.id, "physics"],
     ]);
 
-    await expect(
-      prisma.course.count({ where: { normalizedTitle: normalizeString(newTitle) } }),
-    ).resolves.toBe(0);
-
     expect(generateSearchTerms).not.toHaveBeenCalled();
     expect(decideLibraryIdentity).not.toHaveBeenCalled();
   });
 
   it("brings what a skill builds on from another discipline, however deep, with that course", async () => {
-    const [organization, blueprint, otherBlueprint, mathematics] = await Promise.all([
-      aiOrganizationFixture(),
+    const [blueprint, otherBlueprint, mathematics] = await Promise.all([
       examBlueprintFixture({ language: "pt" }),
       examBlueprintFixture({ language: "pt" }),
       courseFixture({ language: "pt", title: `Matemática ${randomUUID()}` }),
     ]);
 
-    const physicsTitle = `Física ${randomUUID()}`;
-
     const [physics, [arithmetic, equations, speeds]] = await Promise.all([
-      courseFixture({
-        language: "pt",
-        normalizedTitle: normalizeString(physicsTitle),
-        organizationId: organization.id,
-        title: physicsTitle,
-      }),
+      courseFixture({ language: "pt", title: `Física ${randomUUID()}` }),
       skillsFixture(
         ["Arithmetic", "Equations", "Speeds"].map((name) => `${name} ${randomUUID()}`),
         { language: "pt" },
@@ -252,9 +227,9 @@ describe(findExamLibrary, () => {
     });
 
     const library = await findExamLibrary({
-      courses: [{ key: "physics", title: physicsTitle }],
+      courseIdsByKey: { physics: physics.id },
       examBlueprintId: blueprint.id,
-      scope,
+      language: scope.language,
     });
 
     expect(library.courses).toStrictEqual([{ key: mathematics.id, title: mathematics.title }]);

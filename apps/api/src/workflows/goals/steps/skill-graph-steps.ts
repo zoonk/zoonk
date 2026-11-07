@@ -37,31 +37,34 @@ export async function prepareSkillGraphStep({
   await using stream = createStepStream<GoalStreamStep>();
   await stream.status({ entityId: inputs.goal.id, status: "started", step: "buildSkillGraph" });
 
+  const examBlueprintId =
+    inputs.graphPrompt.examBlueprint && isSharedExamGraph({ inputs, scope })
+      ? inputs.goal.examBlueprintId
+      : null;
+
   return {
-    examBlueprintId:
-      inputs.graphPrompt.examBlueprint && isSharedExamGraph({ inputs, scope })
-        ? inputs.goal.examBlueprintId
-        : null,
+    examBlueprintId,
     model: getScopeModel(scope),
     params: {
       ...toScopedGraphPrompt({ inputs, scope }),
       analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+      librarySkills: Boolean(examBlueprintId),
       serviceTier: chooseServiceTier({ wait: "learner" }),
     } satisfies GraphCallParams,
   };
 }
 
 export async function findGraphLibraryStep({
-  courses,
+  courseIdsByKey,
   examBlueprintId,
-  scope,
+  language,
 }: {
-  courses: readonly { key: string; title: string }[];
+  courseIdsByKey: Record<string, string>;
   examBlueprintId: string;
-  scope: CurriculumScope;
+  language: string;
 }) {
   "use step";
-  return findExamLibrary({ courses, examBlueprintId, scope });
+  return findExamLibrary({ courseIdsByKey, examBlueprintId, language });
 }
 
 async function streamGraphCall<T>({

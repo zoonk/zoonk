@@ -1,12 +1,20 @@
+import { randomUUID } from "node:crypto";
 import { EmptySkillGraphError } from "@zoonk/ai/tasks/curriculum/empty-skill-graph-error";
 import {
   generateSkillGraphFrame,
   generateSkillGraphSection,
   generateWholeSkillGraph,
 } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
+import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
+import { generateSearchTerms } from "@zoonk/ai/tasks/identity/search-terms";
+import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { normalizeString } from "@zoonk/utils/string";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getStepMetadata } from "workflow";
 import { start } from "workflow/api";
@@ -19,6 +27,9 @@ vi.mock("@zoonk/ai/tasks/curriculum/skill-graph-calls", async (importOriginal) =
   generateSkillGraphSection: vi.fn(),
   generateWholeSkillGraph: vi.fn(),
 }));
+
+vi.mock("@zoonk/ai/tasks/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
+vi.mock("@zoonk/ai/tasks/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
 
 const SUBJECTS = ["Arithmetic", "Geometry", "Probability", "Statistics"];
 
@@ -75,6 +86,81 @@ function sectionResult(section: (typeof FRAME.sections)[number]) {
 describe("durable skill graph generation", () => {
   beforeEach(() => {
     vi.resetAllMocks();
+
+    vi.mocked(generateSearchTerms).mockImplementation(async ({ subjects }) =>
+      taskResult({ subjects: subjects.map(() => ({ terms: [] })) }),
+    );
+
+    vi.mocked(decideLibraryIdentity).mockResolvedValue({ match: null, verdicts: [] });
+  });
+
+  it("offers a synonymous course's skills and saves the same resolution with isolated model retries", async () => {
+    const [goal, organization, skill] = await Promise.all([
+      examGoal(),
+      aiOrganizationFixture(),
+      skillFixture(),
+    ]);
+
+    const word = `zq${randomUUID().replaceAll("-", "")}`;
+    const title = `Língua Portuguesa ${word}`;
+
+    const course = await courseFixture({
+      normalizedTitle: normalizeString(title),
+      organizationId: organization.id,
+      title,
+    });
+
+    const otherExam = await examBlueprintFixture();
+
+    await prisma.examSkillGraph.create({
+      data: {
+        examBlueprintId: otherExam.id,
+        generatedAt: new Date(),
+        graph: { phases: [], skills: [{ courseIds: [course.id], lessons: 4, skillId: skill.id }] },
+        model: "test",
+        promptVersion: "test",
+        runId: randomUUID(),
+      },
+    });
+
+    const { data, ...frame } = taskResult({
+      ...FRAME,
+      courses: [{ ...FRAME.courses[0]!, title: `Português ${word}` }],
+    });
+
+    vi.mocked(generateSkillGraphFrame).mockResolvedValue({ ...frame, output: data });
+    const searchSteps: string[] = [];
+    const decisionSteps: string[] = [];
+
+    vi.mocked(generateSearchTerms).mockImplementation(async () => {
+      searchSteps.push(getStepMetadata().stepId);
+      return taskResult({ subjects: [{ terms: [word] }] });
+    });
+
+    vi.mocked(decideLibraryIdentity).mockImplementation(async () => {
+      decisionSteps.push(getStepMetadata().stepId);
+
+      if (decisionSteps.length === 1) {
+        throw new Error("Identity provider unavailable");
+      }
+
+      return { match: { id: course.id, model: "test", probability: 0.99 }, verdicts: [] };
+    });
+
+    vi.mocked(generateSkillGraphSection).mockImplementation(async ({ params, part }) => {
+      expect(params).toMatchObject({ librarySkills: true });
+      expect(part.library).toContain(skill.name);
+      return sectionResult(part.sections[0]!);
+    });
+
+    const run = await start(skillGraphTestWorkflow, [goal.id, false, true]);
+    await expect(run.returnValue).resolves.toMatchObject({ courseIdsByKey: { math: course.id } });
+    expect(searchSteps).toHaveLength(1);
+    expect(decisionSteps).toHaveLength(2);
+    expect(new Set(decisionSteps).size).toBe(1);
+    expect(searchSteps[0]).not.toBe(decisionSteps[0]);
+    expect(generateSkillGraphFrame).toHaveBeenCalledOnce();
+    expect(generateSkillGraphSection).toHaveBeenCalledTimes(4);
   });
 
   it("makes each model call in a step of its own, so a failed section retries alone", async () => {

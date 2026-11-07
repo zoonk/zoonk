@@ -4,6 +4,7 @@ import { z } from "zod";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
+import { type TaskProvenance } from "../../provenance/task-provenance";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { getVerbForm } from "../_utils/verb-form";
@@ -97,6 +98,7 @@ export type SkillGraphParams = {
   hasMaterial?: boolean;
   /** For a test from the learner's own material days away: the most lessons its days hold. */
   lessonBudget?: number | null;
+  librarySkills?: boolean;
   model?: string;
   serviceTier?: ServiceTier;
   useFallback?: boolean;
@@ -113,6 +115,7 @@ export type SkillGraphParams = {
    */
   findLibrarySkills?: (frame: {
     courses: readonly { key: string; title: string }[];
+    provenance: TaskProvenance;
   }) => Promise<ExamLibrary>;
 };
 

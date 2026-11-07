@@ -13,11 +13,13 @@ import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-c
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { isBuiltBeforeResearch, loadGoalReferences } from "./goal-content-inputs";
+import { findGoalCourses } from "./goal-courses";
 import { startOutlines } from "./goal-outlines";
 import { prepareGraphPlacement } from "./goal-placement-items";
 import { type GoalRunContext, type SavedSlice } from "./goal-run-context";
 import { buildGoalSkillGraph } from "./goal-skill-graph";
 import { setUpPlan } from "./plan-setup";
+import { setGoalPrimaryCourseStep } from "./steps/goal-course-steps";
 import {
   checkGraphCoverageStep,
   linkSkillPrerequisitesStep,
@@ -25,7 +27,6 @@ import {
   saveGoalSkillsStep,
 } from "./steps/goal-curriculum-steps";
 import {
-  findGoalCoursesStep,
   listPlanSkillIdsWithinStep,
   readGoalLookaheadStep,
   readPlanFirstSkillStep,
@@ -95,14 +96,22 @@ type SavedCurriculum = Pick<BuiltCurriculum, "courseIdsByKey" | "idsByKey">;
 async function saveCurriculum({
   courseIds,
   graph,
+  goalId,
   slices,
 }: {
   courseIds: Promise<Record<string, string>>;
   graph: BuiltGraph["graph"];
+  goalId: string;
   slices: SavedSlice[];
 }): Promise<SavedCurriculum> {
   const [saved, courseIdsByKey] = await Promise.all([Promise.all(slices), courseIds]);
   const idsByKey = Object.fromEntries(saved.flatMap((slice) => Object.entries(slice)));
+  const [first] = orderGoalCourses(graph);
+  const primaryCourseId = first ? courseIdsByKey[first.key] : undefined;
+
+  if (primaryCourseId) {
+    await setGoalPrimaryCourseStep({ courseId: primaryCourseId, goalId });
+  }
 
   await linkSkillPrerequisitesStep({ idsByKey, skills: graph.skills });
 
@@ -204,15 +213,16 @@ function saveBuiltGraph({
 
   const courseIds = startedCourse
     ? Promise.resolve(toStartedCourseIds({ course: startedCourse, graph }))
-    : findGoalCoursesStep({
+    : findGoalCourses({
         ...context,
         courses: orderGoalCourses(graph),
         goal,
         provenance,
+        resolved: built.courseIdsByKey,
         scope,
       });
 
-  return { saved: saveCurriculum({ courseIds, graph, slices }), skillIds };
+  return { saved: saveCurriculum({ courseIds, goalId: goal.id, graph, slices }), skillIds };
 }
 
 type PreparedCurriculum = SavingCurriculum & { built: BuiltGraph; reused: boolean };

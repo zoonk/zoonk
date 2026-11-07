@@ -1,9 +1,3 @@
-import { findOrCreateGoalCourse } from "@zoonk/core/library/curriculum/find-or-create-course";
-import {
-  getGoalCourseFormat,
-  setGoalPrimaryCourse,
-} from "@zoonk/core/library/curriculum/goal-primary-course";
-import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import {
   type CourseExtensionRequest,
   listSkillExtensions,
@@ -24,57 +18,11 @@ import {
   pickSpeculativeLessons,
   readPlanOpeningToken,
 } from "@zoonk/core/lookahead/speculative-lessons";
-import { type GoalKind, prisma } from "@zoonk/db";
-import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
+import { prisma } from "@zoonk/db";
 import { catchPlanConflict } from "../../_shared/plan-conflict-outcome";
 import { type PlanStepOutcome } from "../../_shared/plan-conflict-retry";
 
 type OwnLevel = Parameters<typeof pickSpeculativeLessons>[0]["ownLevel"];
-
-type CourseProvenance = Parameters<typeof findOrCreateGoalCourse>[0]["provenance"];
-
-export async function findGoalCoursesStep({
-  analytics,
-  courses,
-  goal,
-  provenance,
-  scope,
-  workflowRunId,
-}: {
-  analytics?: ContentAnalytics;
-  courses: { key: string; title: string }[];
-  goal: { id: string; kind: GoalKind };
-  provenance: CourseProvenance;
-  scope: CurriculumScope;
-  workflowRunId: string;
-}): Promise<Record<string, string>> {
-  "use step";
-
-  const format = getGoalCourseFormat({ kind: goal.kind, ownerId: scope.ownerId });
-  const context = toContentAnalytics({ analytics, scope, workflowRunId });
-
-  const found = await Promise.all(
-    courses.map(async (need) => {
-      const { course } = await findOrCreateGoalCourse({
-        analytics: context,
-        format,
-        provenance,
-        scope,
-        title: need.title,
-      });
-
-      return [need.key, course.id] as const;
-    }),
-  );
-
-  const [first] = found;
-
-  if (first) {
-    await setGoalPrimaryCourse({ courseId: first[1], goalId: goal.id });
-  }
-
-  return Object.fromEntries(found);
-}
 
 const OPENING_LESSONS = 4;
 

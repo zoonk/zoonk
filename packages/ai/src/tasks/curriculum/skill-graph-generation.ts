@@ -40,7 +40,7 @@ function generateCheckedWholeGraph({ params, tasks }: Generation) {
         throw new EmptySkillGraphError();
       }
 
-      return whole;
+      return { ...whole, courseIdsByKey: {} };
     },
   });
 }
@@ -59,7 +59,7 @@ async function generateSectionedGraph({ params, tasks }: Generation) {
   }
 
   const courses = frame.output.courses.map(({ key, title }) => ({ key, title }));
-  const library = await params.findLibrarySkills?.({ courses });
+  const library = await params.findLibrarySkills?.({ courses, provenance: frame.provenance });
   const framed = library ? addLibraryCourses({ frame: frame.output, library }) : frame.output;
   const listed = library ? formatLibrarySkills(library.skills) : null;
 
@@ -85,6 +85,7 @@ async function generateSectionedGraph({ params, tasks }: Generation) {
 
   return {
     ...draft,
+    courseIdsByKey: library?.courseIdsByKey ?? {},
     provenance: combineTaskProvenance(parts.map((part) => part.provenance)),
     systemPrompt: frame.systemPrompt,
     usage: sumLanguageModelUsage(parts.map((part) => part.usage)),
