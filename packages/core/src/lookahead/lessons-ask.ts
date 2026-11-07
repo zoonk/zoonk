@@ -27,13 +27,29 @@ export async function askForLessons({
   return count > 0 ? now.getTime() : null;
 }
 
-async function followShownDay({
-  goal,
-  timeZone,
+/** Trusted preparation only: the goal must come from an authorized POST or its workflow. */
+export async function followWrittenLessons({
+  askedAt,
+  goalId,
 }: {
-  goal: { id: string; userId: string };
-  timeZone: string;
+  askedAt: number | null;
+  goalId: string;
 }): Promise<void> {
+  const goal = await prisma.goal.findUnique({ where: { id: goalId } });
+
+  if (!goal) {
+    return;
+  }
+
+  if (askedAt !== null) {
+    await prisma.plan.updateMany({
+      data: { lessonsAskedAt: null },
+      where: { goalId, lessonsAskedAt: new Date(askedAt) },
+    });
+  }
+
+  const timeZone = getAnswerTimeZone({ goal });
+
   const session = await findSavedDaySession({
     goalId: goal.id,
     now: new Date(),
@@ -42,14 +58,14 @@ async function followShownDay({
   });
 
   if (session) {
-    await afterPlanInputWrite(() => followSavedDay({ session, timeZone }));
+    await followSavedDay({ session, timeZone });
   }
 }
 
 /**
- * A preparation that started an outline for a course the day needs keeps its ask until it goes
- * stale; otherwise it brings in the day's lessons written since the plan was saved and ends the
- * ask, unless a newer request has replaced it.
+ * A preparation that started an outline for a course the day needs leaves its ask for that
+ * outline to end; otherwise it brings in the day's written lessons and ends the ask, unless a
+ * newer request has replaced it.
  */
 export async function endLessonsAsk({
   askedAt,
@@ -81,12 +97,5 @@ export async function endLessonsAsk({
     await afterPlanInputWrite(() => withPlanRetry(() => replanWaitingGoal(goalId)));
   }
 
-  await prisma.plan.updateMany({
-    data: { lessonsAskedAt: null },
-    where: { goalId, lessonsAskedAt: new Date(askedAt) },
-  });
-
-  if (dayCourseIds.length > 0) {
-    await followShownDay({ goal, timeZone });
-  }
+  await afterPlanInputWrite(() => followWrittenLessons({ askedAt, goalId }));
 }

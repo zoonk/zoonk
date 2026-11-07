@@ -340,13 +340,12 @@ export async function listWaitingGoalsStep(input: {
   return listGoalsWaitingOnSkills(input);
 }
 
-export async function replanWaitingGoalStep(goalId: string): Promise<PlanStepOutcome<null>> {
+export async function replanWaitingGoalStep(
+  goalId: string,
+): Promise<PlanStepOutcome<number | null>> {
   "use step";
 
-  return catchPlanConflict(async () => {
-    await replanWaitingGoal(goalId);
-    return null;
-  });
+  return catchPlanConflict(() => replanWaitingGoal(goalId));
 }
 
 export async function logReplanFailureStep(failure: {

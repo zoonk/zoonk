@@ -39,8 +39,14 @@ export async function listGoalsWaitingOnSkills({
 /**
  * Background refreshes yield during setup; the learner's next answer re-plans. Lessons a learner's
  * ask waited on start being written as they come in. Throws if another plan write wins afterward.
+ * Returns the ask this re-plan served, so a later workflow step can end it without ending a newer one.
  */
-export async function replanWaitingGoal(goalId: string): Promise<void> {
+export async function replanWaitingGoal(goalId: string): Promise<number | null> {
+  const plan = await prisma.plan.findUnique({
+    select: { lessonsAskedAt: true },
+    where: { goalId },
+  });
+
   await refreshGoalPlan({
     extraWrites: (tx) => oweAskedLessons({ db: tx, goalId }),
     goalId,
@@ -49,6 +55,8 @@ export async function replanWaitingGoal(goalId: string): Promise<void> {
     settleMissedDays: false,
     whenSetup: "skip",
   });
+
+  return plan?.lessonsAskedAt?.getTime() ?? null;
 }
 
 export async function replanGoalsWaitingOnSkills(
