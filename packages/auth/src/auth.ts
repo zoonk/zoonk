@@ -16,6 +16,7 @@ export const auth = betterAuth({
   rateLimit: {
     customRules: {
       "/email-otp/send-verification-otp": SHARED_IP_SIGN_IN_RATE_LIMIT,
+      "/restore-key/session": SHARED_IP_SIGN_IN_RATE_LIMIT,
       "/sign-in/anonymous": SHARED_IP_SIGN_IN_RATE_LIMIT,
       "/sign-in/email-otp": SHARED_IP_SIGN_IN_RATE_LIMIT,
     },

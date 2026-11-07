@@ -77,21 +77,36 @@ model User {
 }
 
 model Session {
-  id                   String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  expiresAt            DateTime @map("expires_at")
+  id                   String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  expiresAt            DateTime     @map("expires_at")
   token                String
-  createdAt            DateTime @default(now()) @map("created_at")
-  updatedAt            DateTime @updatedAt @map("updated_at")
-  ipAddress            String?  @map("ip_address")
-  userAgent            String?  @map("user_agent")
-  userId               String   @map("user_id") @db.Uuid
-  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  impersonatedBy       String?  @map("impersonated_by") @db.Uuid
-  activeOrganizationId String?  @map("active_organization_id") @db.Uuid
+  createdAt            DateTime     @default(now()) @map("created_at")
+  updatedAt            DateTime     @updatedAt @map("updated_at")
+  ipAddress            String?      @map("ip_address")
+  userAgent            String?      @map("user_agent")
+  userId               String       @map("user_id") @db.Uuid
+  user                 User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impersonatedBy       String?      @map("impersonated_by") @db.Uuid
+  activeOrganizationId String?      @map("active_organization_id") @db.Uuid
+  restoreKeys          RestoreKey[]
 
   @@unique([token])
   @@index([userId])
   @@map("sessions")
+}
+
+/// An Android restore key, which Google moves to the learner's next phone. It signs that phone in
+/// only while the session that registered it lasts, so signing out ends every copy.
+model RestoreKey {
+  /// The WebAuthn credential ID, base64url.
+  id        String   @id
+  publicKey Bytes    @map("public_key")
+  sessionId String   @map("session_id") @db.Uuid
+  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([sessionId])
+  @@map("restore_keys")
 }
 
 model Account {
