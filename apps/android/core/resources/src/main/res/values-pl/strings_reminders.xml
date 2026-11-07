@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "reminders_cancel": "5ff37cc610377ae44ad985835cfafeaa50447d6fd5e76ab7e0c04c46838623ad",
+  "reminders_channel_description": "4bc72a52a2d5af8d9a46699d3e5f894f1703ae1e1730274b88a5bdc757042191",
+  "reminders_channel_name": "525fe6bbae6157ea13b6972d0e7d4799a7318ac09c8397fed09bc3accd3e1294",
+  "reminders_description": "b20575371c5f7a5c79be4ab6c61a6ed813add7bf75e1d665f4f5c83969e45c16",
+  "reminders_email": "f2aafa369d9b991eb67bba5549ab61d6f9c28c8c6c09e27d94e5324a96192a42",
+  "reminders_email_instead": "a798bf53aecb3b1bc16849bce9c1cba33790cdae3a7cfc5088438dcf67f4c017",
+  "reminders_email_needs_account": "6602e296dfbf5b9bdf8d6f20e0f56198c242b2cefbb38f8aca516208a5edf160",
+  "reminders_email_on": "9156186bac41ea130d60481a4c7f2675963172691e284b88f1c2c09548b2b6cf",
+  "reminders_no_thanks": "b85707d3be70b73c83299179c9ef5d8834f605ccf6f50a4fc2810ae4409417df",
+  "reminders_not_now": "100efbd4e1539b697be72571e70fe137e25bc1d562d25cbc16fa0ec788a29d9a",
+  "reminders_notifications_off": "8691f92095216eb04abdda5edd6a325690cd47e0827616f6dfa7b5fd780f3d6b",
+  "reminders_offer_body": "1411f2918aa53b72e463c1419a92dc6b955e1c7329a9f13055fe671c023b329e",
+  "reminders_offer_title": "0aae2f44e3138f330e37bf8e4cc3727ad6070c3cb4bec2ac4058e287072756bd",
+  "reminders_on": "74cbd757cfe377bf21c6f27d5d7913d4cc9ee80824a117ddea9dae069003bc04",
+  "reminders_open_settings": "3dac6b857b232a112a2bfff3233672cad2f6abe83cbeb87a86f0df4e7b7ea83a",
+  "reminders_permission_body": "4a3ecca6f132330c822871c8d105943c0c94ffa00e3a2f15b2f73ee4ff4e19b7",
+  "reminders_permission_continue": "9299f550f07ae04583677232d547bf6bc86dc7d667535c2e0d2ed745fee86c64",
+  "reminders_permission_title": "8980ced1c7cb8c2bcde6dc6bd2a729cc69c2f2f9f8d02d3c2b58698f37cdfda8",
+  "reminders_push": "78f640b7b6e912e532c0d35fcc2235590e4b223f6e4e4ad865c2f8d58c97d0da",
+  "reminders_quiet": "0f9e18e64d5048214b1139eee245f330f25b35abc87a691121bfca5f0eab01cb",
+  "reminders_remind_me": "bc35e045c2740891893842d2a6deecfc57f7c7182927a80a13e352300aad089d",
+  "reminders_row": "749f117a1e7e96d300aae00cbb08d0440a768a2093bf53c5455286c4b353cb81",
+  "reminders_save": "2e30fdbc10a6eafe700670f2c2e1b1044e6914c3300fa41b9eadd59608edb2c9",
+  "reminders_save_failed": "cd92582f68c98f6434180facfa4dccbae3fd4c2fa572caf27ecd028dcee089ea",
+  "reminders_study_days": "ba8dbfa74e3bf0e37fb82da12ec3c74c8facb83120ffe35c898682a5503a557e",
+  "reminders_time": "5dd298c57b30c55883682ec21ed7fccbf388abcd05ee4a643589b554d3234180",
+  "reminders_time_in_zone": "b4a54a2006e034d26d3c36b7b65eabbca455852c9a35a58a6e7932cd84b9b07b",
+  "reminders_time_title": "84e62574c00ade6634e7954e35c10297bf9b70231b50d3be539d13fbc8073e9a",
+  "reminders_title": "00af421286a917841382e44c031aec8d0e68800cc181574ba2d903e77f1578e9",
+  "reminders_turn_on_failed": "58be935e98fd405b1377afaa09dcb770df05accd18953887518aacf4ea48233c",
+  "reminders_use_this_phone": "0202bfc80cc9731f21087241920325ec1fffc1e3be55ff09611934d80328f9fb"
+}
+-->
+<resources>
+    <!-- The name of the app's notification channel in Android's settings. -->
+    <string name="reminders_channel_name">Przypomnienia o nauce</string>
+    <string name="reminders_channel_description">Jedno przypomnienie w dni nauki, jeśli zostało ci jeszcze coś do nauki.</string>
+    <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
+    <string name="reminders_offer_title">Przypomnieć ci o nauce?</string>
+    <!-- %1$s is a time of day, such as "7:00 PM". -->
+    <string name="reminders_offer_body">O %1$s w dni nauki, jeśli zostało ci jeszcze coś do nauki.</string>
+    <string name="reminders_remind_me">Przypomnij mi</string>
+    <!-- Declines the offer. Keep it neutral and ungendered, like "Not now" (Portuguese: "Agora não"). -->
+    <string name="reminders_no_thanks">Nie, dziękuję</string>
+    <!-- After the learner said yes to reminders on the phone. -->
+    <string name="reminders_on">Przypomnienia są włączone.</string>
+    <!-- After the learner chose email reminders instead. -->
+    <string name="reminders_email_on">Przypomnienia e-mail są włączone.</string>
+    <string name="reminders_turn_on_failed">Nie udało się włączyć przypomnień. Spróbuj ponownie.</string>
+    <!-- Android blocks Zoonk's notifications, so the phone can't show reminders. -->
+    <string name="reminders_notifications_off">Powiadomienia Zoonka są wyłączone.</string>
+    <!-- Opens Android's notification settings for Zoonk. -->
+    <string name="reminders_open_settings">Otwórz ustawienia</string>
+    <!-- Turns on email reminders when the phone's notifications are off. -->
+    <string name="reminders_email_instead">Przypominaj mi e-mailem</string>
+    <!-- Before Android asks to allow notifications again, after the learner said no once. -->
+    <string name="reminders_permission_title">Zezwolić na powiadomienia?</string>
+    <string name="reminders_permission_body">Zoonk wysyła jedno przypomnienie w dni nauki, tylko jeśli zostało ci jeszcze coś do nauki.</string>
+    <string name="reminders_permission_continue">Kontynuuj</string>
+    <string name="reminders_not_now">Nie teraz</string>
+    <!-- The row that shows the reminder's time and opens a clock to change it, and that clock's title. -->
+    <string name="reminders_time_title">Godzina przypomnienia</string>
+    <string name="reminders_save">Zapisz</string>
+    <string name="reminders_cancel">Anuluj</string>
+    <!-- The row in Preferences that opens the reminders page. -->
+    <string name="reminders_row">Przypomnienia o nauce</string>
+    <!-- The reminders page in Settings. -->
+    <string name="reminders_title">Przypomnienia</string>
+    <string name="reminders_description">Jedno przypomnienie dziennie, tylko jeśli zostało ci jeszcze coś do nauki.</string>
+    <string name="reminders_time">Czas</string>
+    <!-- %1$s is a time of day and %2$s its time zone, such as "7:00 PM, Brasilia Time". -->
+    <string name="reminders_time_in_zone">%1$s, %2$s</string>
+    <string name="reminders_email">E-mail</string>
+    <!-- Guests have no email address yet. -->
+    <string name="reminders_email_needs_account">Utwórz konto, aby dostawać przypomnienia e-mail</string>
+    <string name="reminders_push">Powiadomienia</string>
+    <!-- Push reminders go to another of the learner's phones; this one can take over. -->
+    <string name="reminders_use_this_phone">Użyj tego telefonu</string>
+    <!-- Under the settings; "your plans" opens the plan, which sets the study days. -->
+    <string name="reminders_study_days">W dni nauki ustalone w twoich planach</string>
+    <string name="reminders_quiet">Wstrzymane na czas twojej przerwy. Wrócą, gdy znów zaczniesz się uczyć.</string>
+    <string name="reminders_save_failed">Nie udało się zapisać. Spróbuj ponownie.</string>
+</resources>

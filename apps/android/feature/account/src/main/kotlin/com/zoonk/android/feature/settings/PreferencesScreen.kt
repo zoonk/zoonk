@@ -53,6 +53,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.Buddy
 import com.zoonk.android.ui.characters.BuddyGlasses
 import com.zoonk.android.ui.characters.BuddyKind
@@ -183,7 +184,7 @@ fun PreferencesScreen(
                     is LoadState.Loaded -> {
                         val look = summary.value?.buddy?.look() ?: BuddyLook()
                         BuddySection(state.value, look, preferences)
-                        LessonsSection(state.value, preferences)
+                        LessonsSection(state.value, preferences, onReminders = { navigator.open(AppRoute.Reminders) })
                         UsageDataSection(state.value, summary.value?.analytics?.usageDataSharing, preferences)
                     }
 
@@ -245,6 +246,7 @@ private fun BuddySection(
 internal fun LessonsSection(
     profile: LearningProfile,
     preferences: PreferencesViewModel,
+    onReminders: () -> Unit,
 ) {
     var isChoosingLimit by rememberSaveable { mutableStateOf(false) }
     val locale = currentLocale()
@@ -307,6 +309,12 @@ internal fun LessonsSection(
                     LaunchedEffect(Unit) { current.bringIntoView() }
                 }
             }
+            ListDivider()
+            ListRow(
+                headline = { Text(stringResource(R.string.reminders_row)) },
+                supporting = { Text(stringResource(R.string.reminders_description)) },
+                onClick = onReminders,
+            )
         }
     }
 }
@@ -332,15 +340,15 @@ internal fun UsageDataSection(
 }
 
 @Composable
-private fun SwitchRow(
+internal fun SwitchRow(
     title: String,
-    description: String,
+    description: String?,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     ListRow(
         headline = { Text(title) },
-        supporting = { Text(description) },
+        supporting = description?.let { { Text(it) } },
         trailing = { Switch(checked = checked, onCheckedChange = null) },
         modifier = Modifier.toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange),
     )

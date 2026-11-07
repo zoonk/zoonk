@@ -4,6 +4,10 @@ plugins {
     alias(libs.plugins.sentry.android)
 }
 
+// Firebase's config for study reminder pushes, from the project's console with com.zoonk and com.zoonk.debug
+// registered. Builds without it start no Firebase, and turning push on fails as offline would.
+if (file("google-services.json").exists()) apply(plugin = "com.google.gms.google-services")
+
 android {
     // The resources module took `com.zoonk.android`, so its `R` keeps that name.
     namespace = "com.zoonk.android.app"

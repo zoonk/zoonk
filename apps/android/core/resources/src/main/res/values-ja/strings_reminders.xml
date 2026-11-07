@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "reminders_cancel": "baa1b31bb43491b70b8889c1958ed44eeb85ec5307990053d579541ea6384671",
+  "reminders_channel_description": "81773a9142d5f3321a026a2650dc43776e0688086af65bcaefe3e65dc38a8e23",
+  "reminders_channel_name": "e46ed0df0027fd525257accba999c4c5109766ce53fee037750eb0ab4d978f98",
+  "reminders_description": "36490650779c2af25ffd161bfd2d3799bb0fa906c675d29345a8942f281008a0",
+  "reminders_email": "b17d2c1c0e484f6a6e49fc5f8acf4360fa5ea44d6e6639cf8cb96de637172259",
+  "reminders_email_instead": "bec618de27f1b0950d03e9f9b95cea9e564301f882ef095d7609297277db322b",
+  "reminders_email_needs_account": "302aa96fb48872f869b69852c51bb9dd7351c87930da6daf740ddb6973880278",
+  "reminders_email_on": "008257deeebeb05aa577a02d950c481377537e39b1d02f51f8161a32eee9e7a6",
+  "reminders_no_thanks": "3c59308a3c449b8c86431e83bae3dcf3456765757437d240b5e5810d5742dce9",
+  "reminders_not_now": "d6ecd4e7e052510d338ba5600a11e550212d473b29c83d6a8e52e804e1b44cae",
+  "reminders_notifications_off": "32be369b080205c739ae60b588ec55e9ecba9bb98adb4adae80bbaf7ef512306",
+  "reminders_offer_body": "7dafc55fafc6f57497f037aeb29732cab6c75f04a27d3a08a2a64542a111e1b6",
+  "reminders_offer_title": "8d73a0342e31b9967e246b7179db040e28d213950ad597046ec05bb0665762d8",
+  "reminders_on": "09862db82023f545de6338d8dcb1a80395dcb14ac1dd4f7e961bdf4699368205",
+  "reminders_open_settings": "b97f6e9116c5fb6643758a77b28c7bac92fa827f8f49cc94fcdba806b4ae54ff",
+  "reminders_permission_body": "a5f7e276be0b7c0eeea1eebd30af1cee987ec214c22ac1bc67d0b3b88061420b",
+  "reminders_permission_continue": "1c5eb6b2e3c27e5a8f91498ee017a3cb9e315ece5c40a9791acb63315581ea57",
+  "reminders_permission_title": "1c609b0a378d07efd8d051faec8a461c22df491dc77a310ed1fe30b26fa583bb",
+  "reminders_push": "a41cccf10d187d99b908079e23f73003b13bade2022c4f052cd521f45032bd4e",
+  "reminders_quiet": "74576f27d543a72bb0517034196397f3235f67ed8a2cc8cbe8aea31e1f1b3c33",
+  "reminders_remind_me": "05bbc7ee5a286441487021b86bbe0286d16fdbc99ee1b3f5a69db667e811d2fb",
+  "reminders_row": "bbaf009934700c5fe729761c1d2cb8b4cc246fd04a9cc7648a3df4072754b4d0",
+  "reminders_save": "e0a13da9901e3a49448e845c5af3b4ca32af416a94a2b20061db8c43b766bea6",
+  "reminders_save_failed": "e65da486c754f486eff1adbf083ecc9d330d3cd53c0a70e74689fa4219f2eb06",
+  "reminders_study_days": "57958d3ab22574771bec5add5d8bbac8001decc57069c3aec93279cead2daa1a",
+  "reminders_time": "fe24ca69ea942da966cae4ab3c08c35efc6f1400106edaf1cf3c1334c9b6e570",
+  "reminders_time_in_zone": "700b1de9cf3063882916ddf787bf77800087c21a50feba2611f456a7c2b78ae4",
+  "reminders_time_title": "aa7e5d9affdad20afb9382089bc8370ff2738387449aad942de6f93cbee341b7",
+  "reminders_title": "6d2b71367c4edccd8afc6c45f1c702f28e7a27eaa75d2112b7831cdf907c6f21",
+  "reminders_turn_on_failed": "077ffe9d03e91409dc240776df55c388f9000c44b3d53c24c0d287e603da16fa",
+  "reminders_use_this_phone": "9e556d7dd8fb8c25e0ae27fe4f83250a21f81c997d547b89895911b4c27c4121"
+}
+-->
+<resources>
+    <!-- The name of the app's notification channel in Android's settings. -->
+    <string name="reminders_channel_name">学習リマインダー</string>
+    <string name="reminders_channel_description">学習日に、その日の学習が残っているときだけ1回お知らせします。</string>
+    <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
+    <string name="reminders_offer_title">学習リマインダーを受け取りますか？</string>
+    <!-- %1$s is a time of day, such as "7:00 PM". -->
+    <string name="reminders_offer_body">学習日の%1$sに、その日の学習が残っているときだけお知らせします。</string>
+    <string name="reminders_remind_me">リマインダーを設定する</string>
+    <!-- Declines the offer. Keep it neutral and ungendered, like "Not now" (Portuguese: "Agora não"). -->
+    <string name="reminders_no_thanks">今はしない</string>
+    <!-- After the learner said yes to reminders on the phone. -->
+    <string name="reminders_on">リマインダーをオンにしました。</string>
+    <!-- After the learner chose email reminders instead. -->
+    <string name="reminders_email_on">メールのリマインダーをオンにしました。</string>
+    <string name="reminders_turn_on_failed">リマインダーをオンにできませんでした。もう一度お試しください。</string>
+    <!-- Android blocks Zoonk's notifications, so the phone can't show reminders. -->
+    <string name="reminders_notifications_off">Zoonkの通知がオフになっています。</string>
+    <!-- Opens Android's notification settings for Zoonk. -->
+    <string name="reminders_open_settings">設定を開く</string>
+    <!-- Turns on email reminders when the phone's notifications are off. -->
+    <string name="reminders_email_instead">代わりにメールで受け取る</string>
+    <!-- Before Android asks to allow notifications again, after the learner said no once. -->
+    <string name="reminders_permission_title">通知を許可しますか？</string>
+    <string name="reminders_permission_body">Zoonkは学習日に、その日の学習が残っているときだけ1回お知らせします。</string>
+    <string name="reminders_permission_continue">続ける</string>
+    <string name="reminders_not_now">今はしない</string>
+    <!-- The row that shows the reminder's time and opens a clock to change it, and that clock's title. -->
+    <string name="reminders_time_title">リマインダーの時刻</string>
+    <string name="reminders_save">保存する</string>
+    <string name="reminders_cancel">キャンセル</string>
+    <!-- The row in Preferences that opens the reminders page. -->
+    <string name="reminders_row">学習リマインダー</string>
+    <!-- The reminders page in Settings. -->
+    <string name="reminders_title">リマインダー</string>
+    <string name="reminders_description">その日の学習が残っているときだけ、1日1回お知らせします。</string>
+    <string name="reminders_time">時間</string>
+    <!-- %1$s is a time of day and %2$s its time zone, such as "7:00 PM, Brasilia Time". -->
+    <string name="reminders_time_in_zone">%1$s（%2$s）</string>
+    <string name="reminders_email">メールアドレス</string>
+    <!-- Guests have no email address yet. -->
+    <string name="reminders_email_needs_account">アカウントを作成してメールでリマインダーを受け取る</string>
+    <string name="reminders_push">通知</string>
+    <!-- Push reminders go to another of the learner's phones; this one can take over. -->
+    <string name="reminders_use_this_phone">このスマートフォンで受け取る</string>
+    <!-- Under the settings; "your plans" opens the plan, which sets the study days. -->
+    <string name="reminders_study_days">学習計画で設定した学習日に</string>
+    <string name="reminders_quiet">学習をお休みしている間は一時停止しています。学習すると再開します。</string>
+    <string name="reminders_save_failed">保存できませんでした。もう一度お試しください。</string>
+</resources>

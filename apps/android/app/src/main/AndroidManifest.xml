@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <!-- Study reminders; asked after the learner taps Remind me. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name="com.zoonk.android.app.ZoonkApplication"
@@ -23,6 +25,16 @@
         <meta-data
             android:name="io.sentry.auto-init"
             android:value="false" />
+        <!-- Study reminders: FCM registers nothing until the learner turns push on, and addresses this installation by its Firebase ID. -->
+        <meta-data
+            android:name="firebase_messaging_auto_init_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="firebase_messaging_installation_id_enabled"
+            android:value="true" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_zoonk" />
 
         <activity
             android:name="com.zoonk.android.MainActivity"
@@ -59,6 +71,14 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/shared_files" />
         </provider>
+
+        <service
+            android:name="com.zoonk.android.feature.reminders.ReminderMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <service
             android:name="com.zoonk.android.feature.livecall.LiveCallService"

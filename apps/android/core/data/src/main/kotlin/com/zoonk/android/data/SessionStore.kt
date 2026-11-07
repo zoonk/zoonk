@@ -111,6 +111,7 @@ class SessionStore(
     private val drafts: DraftStore,
     private val onChange: (previous: AuthenticatedSession?, next: AuthenticatedSession?) -> Unit,
     private val clearCredentialState: suspend () -> Unit,
+    private val leaving: suspend (AuthenticatedSession) -> Unit = {},
     private val restoreKeys: RestoreKeys = RestoreKeys.None,
     private val appleClientId: String = "",
     private val appleReflectorUrl: String = "",
@@ -273,10 +274,14 @@ class SessionStore(
             }
         }
 
-    /** Keeps the session when the server can't end it, unless the server refused its token. */
+    /**
+     * Keeps the session when the server can't end it, unless the server refused its token. [leaving]
+     * goes first, while the token still works.
+     */
     suspend fun signOut(): SignOutResult {
         val session = current ?: return SignOutResult.SignedOut
         try {
+            leaving(session)
             api.revoke(session.bearerToken)
         } catch (e: CancellationException) {
             throw e

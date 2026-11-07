@@ -87,6 +87,9 @@ sealed interface AppRoute : NavKey {
     data object Memory : AppRoute
 
     @Serializable
+    data object Reminders : AppRoute
+
+    @Serializable
     data object Profile : AppRoute
 
     @Serializable
@@ -360,7 +363,7 @@ val AppRoute.presentation: Presentation
             AppRoute.EarlierQuestions, AppRoute.Certificates, is AppRoute.Certificate,
             -> Presentation.Push
 
-            AppRoute.Settings, AppRoute.Preferences, AppRoute.Memory, AppRoute.Profile,
+            AppRoute.Settings, AppRoute.Preferences, AppRoute.Memory, AppRoute.Reminders, AppRoute.Profile,
             AppRoute.Subscription, AppRoute.Help, AppRoute.Licenses,
             -> Presentation.Section(AppSection.Settings)
 
@@ -394,7 +397,7 @@ val AppRoute.requirement: Requirement
             AppRoute.Mistakes, AppRoute.CompletedLessons, is AppRoute.Speaking, is AppRoute.TestOut, is AppRoute.FocusTest,
             -> Requirement.Goal
 
-            is AppRoute.Buddy, AppRoute.EarlierQuestions, AppRoute.Memory, AppRoute.Profile, AppRoute.Statistics,
+            is AppRoute.Buddy, AppRoute.EarlierQuestions, AppRoute.Memory, AppRoute.Reminders, AppRoute.Profile, AppRoute.Statistics,
             AppRoute.StatsLevel, AppRoute.StatsEnergy, AppRoute.StatsActivity, AppRoute.StatsScore,
             AppRoute.StatsPatterns, is AppRoute.GoalSetup, is AppRoute.PlacementMock,
             is AppRoute.Session, is AppRoute.QuestionBlock, AppRoute.Logbook,

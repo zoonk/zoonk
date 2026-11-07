@@ -31,6 +31,7 @@ import com.zoonk.android.data.clearCredentialState
 import com.zoonk.android.data.imageLoader
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.shownLanguage
+import com.zoonk.android.data.shownLocale
 import com.zoonk.android.feature.account.AccountStore
 import com.zoonk.android.feature.account.LiveAccountApi
 import com.zoonk.android.feature.account.PlayIntegrity
@@ -105,6 +106,9 @@ import com.zoonk.android.feature.pronunciation.LivePronunciationApi
 import com.zoonk.android.feature.pronunciation.PronunciationStore
 import com.zoonk.android.feature.questions.ListeningPlays
 import com.zoonk.android.feature.recap.RecapStore
+import com.zoonk.android.feature.reminders.FirebasePush
+import com.zoonk.android.feature.reminders.LiveStudyReminderApi
+import com.zoonk.android.feature.reminders.StudyReminderStore
 import com.zoonk.android.feature.session.LiveStudyApi
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.StudySessionStore
@@ -141,6 +145,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.File
+import java.util.UUID
 import kotlin.time.TimeSource
 
 class AppContainer private constructor(
@@ -181,6 +186,7 @@ class AppContainer private constructor(
                     voiceFiles.forget(it)
                 }
             },
+            leaving = { reminders.leave(it) },
             clearCredentialState = { clearCredentialState(context) },
             restoreKeys = if (previewAccess == null) DeviceRestoreKeys(context) else RestoreKeys.None,
         )
@@ -194,6 +200,13 @@ class AppContainer private constructor(
             scope = scope,
         )
     val learningProfile = LearningProfileStore(LiveLearningProfileApi(api), cache)
+    val push = FirebasePush(context)
+    val reminders =
+        StudyReminderStore(LiveStudyReminderApi(api), cache, push) {
+            context.resources.configuration
+                .shownLocale()
+                .language
+        }
     val analytics =
         Analytics(
             sdk = analyticsSdk,
@@ -279,6 +292,10 @@ class AppContainer private constructor(
             timeZone = timeZone,
         )
     val goalSwitch = GoalSwitch(learningProfile::setActiveGoal)
+
+    /** Makes [goalId] the active goal, and the summary and Today follow it. Null while another switch saves. */
+    suspend fun switchGoal(goalId: UUID): Boolean? = goalSwitch.select(goalId, listOf(learnerSummary.summary, today.today), today::shows)
+
     val milestoneViews = MilestoneViews(api, cache)
     val certificates = CertificateStore(LiveCertificatesApi(api), cache)
     val certificateFiles = CertificateFiles(File(context.cacheDir, "certificates"), api.http)

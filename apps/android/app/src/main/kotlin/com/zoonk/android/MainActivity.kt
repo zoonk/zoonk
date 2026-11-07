@@ -15,6 +15,8 @@ import androidx.compose.runtime.setValue
 import com.zoonk.android.app.ZoonkApp
 import com.zoonk.android.app.ZoonkApplication
 import com.zoonk.android.data.shownLocale
+import com.zoonk.android.data.value
+import com.zoonk.android.feature.reminders.reminderGoalId
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -41,6 +43,7 @@ class MainActivity : ComponentActivity() {
         val fromHistory = intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0
         if (!fromHistory && (savedInstanceState == null || !createdInThisProcess)) {
             pendingLink = intent.appLink()
+            openReminder(intent)
         }
         createdInThisProcess = true
 
@@ -58,6 +61,26 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         handleAppleLink(intent)
         intent.appLink()?.let { pendingLink = it }
+        openReminder(intent)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        (application as ZoonkApplication).container.push.opened()
+    }
+
+    /**
+     * A tapped reminder opens Today on the goal it named, the learner's tap making it the active goal;
+     * a switch that fails leaves Today on the active goal.
+     */
+    private fun openReminder(intent: Intent) {
+        val goalId = intent.reminderGoalId() ?: return
+        val app = (application as ZoonkApplication).container
+        pendingLink = AppRoute.Today
+        val active =
+            app.learnerSummary.summary.state.value.value
+                ?.activeGoalId
+        if (active != goalId) app.scope.launch { app.switchGoal(goalId) }
     }
 
     private fun handleAppleLink(intent: Intent) {

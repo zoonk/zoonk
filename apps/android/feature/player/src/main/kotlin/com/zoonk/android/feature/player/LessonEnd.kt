@@ -77,6 +77,7 @@ import com.zoonk.api.models.LearnerSummaryBuddy
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.Milestone
+import com.zoonk.api.models.StudyReminderOffer
 import kotlinx.coroutines.delay
 import java.time.ZoneId
 import kotlin.math.roundToLong
@@ -262,6 +263,7 @@ fun LessonCompletionView(
     state: LessonPlayerState,
     ending: LessonEnding,
     buddy: LearnerSummaryBuddy? = null,
+    reminderOffer: (@Composable (StudyReminderOffer) -> Unit)? = null,
 ) {
     val completion = state.completion ?: return
     val title = stringResource(if (completion.testedOut) R.string.player_already_knew else R.string.player_lesson_complete)
@@ -306,6 +308,7 @@ fun LessonCompletionView(
             if (completion.status == CompletionStatus.Saved && result != null) {
                 val moment = buddy.momentBuddy()
                 DayMoment(result, moment.look, moment.name)
+                result.studyBlock?.reminderOffer?.let { reminderOffer?.invoke(it) }
             }
         },
         // On a spread the lesson's map sits under what was done; one column keeps it behind ⋮.
