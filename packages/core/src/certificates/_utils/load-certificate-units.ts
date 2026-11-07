@@ -158,26 +158,23 @@ async function findChaptersTaughtInPlan(
     (item) => LEARN_KINDS.has(item.kind) && isWorkFinished(item.status),
   );
 
-  const [chapters, finishedSkills] = await Promise.all([
-    db.chapter.findMany({
-      select: {
-        id: true,
-        lessons: {
-          select: {
-            lesson: {
-              select: { skills: { select: { skillId: true }, where: { skill: visible } } },
-            },
-          },
-          where: { lesson: { ...visible, setAsideAt: null } },
+  const chapters = await db.chapter.findMany({
+    select: {
+      id: true,
+      lessons: {
+        select: {
+          lesson: { select: { skills: { select: { skillId: true }, where: { skill: visible } } } },
         },
+        where: { lesson: { ...visible, setAsideAt: null } },
       },
-      where: { id: { in: missing } },
-    }),
-    db.lessonSkill.findMany({
-      select: { skillId: true },
-      where: { lessonId: { in: finished.flatMap((item) => item.lessonId ?? []) } },
-    }),
-  ]);
+    },
+    where: { id: { in: missing } },
+  });
+
+  const finishedSkills = await db.lessonSkill.findMany({
+    select: { skillId: true },
+    where: { lessonId: { in: finished.flatMap((item) => item.lessonId ?? []) } },
+  });
 
   const taught = new Set([
     ...finishedSkills.map((row) => row.skillId),
@@ -251,6 +248,8 @@ async function nameUnits(
 /**
  * The plan's level and plan certificates, finished or not, with the ones the learner holds and the
  * finished ones they're owed. Writes keep the fresh Plus check; GET reads pass `readSubscription`.
+ * Writes read inside the learner's transaction, whose one connection runs one query at a time, so
+ * the reads go in turn.
  */
 export async function loadCertificateUnits(
   {
@@ -260,13 +259,16 @@ export async function loadCertificateUnits(
   }: UnitInput & Pick<Parameters<typeof arePhaseChallengesRequired>[0], "readSubscription">,
   db: TransactionClient = prisma,
 ) {
-  const [course, homeChapters, standInLevels, held, phaseChallengesRequired] = await Promise.all([
-    loadPrimaryCourse(db, goal),
-    loadHomeChapters(db, plan),
-    loadStandInLevels(db, { goal, plan }),
-    loadHeldCertificates(db, goal),
-    arePhaseChallengesRequired({ goalKind: goal.kind, readSubscription, userId: goal.userId }),
-  ]);
+  const course = await loadPrimaryCourse(db, goal);
+  const homeChapters = await loadHomeChapters(db, plan);
+  const standInLevels = await loadStandInLevels(db, { goal, plan });
+  const held = await loadHeldCertificates(db, goal);
+
+  const phaseChallengesRequired = await arePhaseChallengesRequired({
+    goalKind: goal.kind,
+    readSubscription,
+    userId: goal.userId,
+  });
 
   const levels = new Map(course?.courseChapters.map((entry) => [entry.chapterId, entry.level]));
 

@@ -122,16 +122,15 @@ export async function writeFinishedUnits(
     return { ...loaded, written: 0 };
   }
 
-  const [chapters, category] = await Promise.all([
-    loadChapters(tx, due),
-    goal.primaryCourseId
-      ? tx.courseCategory.findFirst({
-          orderBy: { createdAt: "asc" },
-          select: { category: true },
-          where: { courseId: goal.primaryCourseId },
-        })
-      : null,
-  ]);
+  const chapters = await loadChapters(tx, due);
+
+  const category = goal.primaryCourseId
+    ? await tx.courseCategory.findFirst({
+        orderBy: { createdAt: "asc" },
+        select: { category: true },
+        where: { courseId: goal.primaryCourseId },
+      })
+    : null;
 
   const timeZone = getAnswerTimeZone({ goal });
 
@@ -160,14 +159,20 @@ export async function writeFinishedUnits(
   return { ...loaded, written: rows.length };
 }
 
-export function loadCertificatePlan(
+/** Prisma loads a row's relations at once, so the goal is its own read in the transaction. */
+export async function loadCertificatePlan(
   tx: TransactionClient,
   where: { goalId: string } | { id: string },
 ) {
-  return tx.plan.findUnique({
-    select: { ...UNIT_PLAN_SELECT, goal: { select: GOAL_SELECT } },
-    where,
-  });
+  const plan = await tx.plan.findUnique({ select: { ...UNIT_PLAN_SELECT, goalId: true }, where });
+
+  if (!plan) {
+    return null;
+  }
+
+  const goal = await tx.goal.findUniqueOrThrow({ select: GOAL_SELECT, where: { id: plan.goalId } });
+
+  return { ...plan, goal };
 }
 
 /**
