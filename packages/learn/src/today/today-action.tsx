@@ -9,6 +9,7 @@ import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
 import { OpeningWaitLine } from "../_components/opening-wait-line";
 import { ChangeSaveError } from "../_components/save-error";
+import { usePendingSender } from "../_utils/use-pending-sender";
 import { useSlowWait } from "../_utils/use-slow-wait";
 import { type WaitState } from "../_utils/wait-state";
 import { useLearnRoutes } from "../learn-context";
@@ -25,8 +26,11 @@ const ACTION_CLASS = "w-full text-[0.9375rem] sm:w-auto";
 
 type SessionAction = ReturnType<typeof useSessionAction> & { wait: WaitState };
 
+/** The up-next list's first row sends it too; only the control that sent it spins. */
+type KeepLearningAction = SessionAction & { openFromRow: () => void; rowSent: boolean };
+
 type TodayContinue = ReturnType<typeof useContinueSession> & {
-  keep: SessionAction;
+  keep: KeepLearningAction;
   wait: WaitState;
 };
 
@@ -44,9 +48,17 @@ export function TodayContinueProvider({ children }: { children: React.ReactNode 
   const wait = useSlowWait(session.isPending);
   const keep = useSessionAction({ action: actions.addExtraTime, enterKey: keepLearning });
   const keepWait = useSlowWait(keep.isPending);
+  const [keepSender, setKeepSender] = usePendingSender<"row">(keep.isPending);
+
+  const openFromRow = () => {
+    setKeepSender("row");
+    keep.run();
+  };
+
+  const keepAction = { ...keep, openFromRow, rowSent: keepSender === "row", wait: keepWait };
 
   return (
-    <TodayContinueContext value={{ ...session, keep: { ...keep, wait: keepWait }, wait }}>
+    <TodayContinueContext value={{ ...session, keep: keepAction, wait }}>
       {children}
     </TodayContinueContext>
   );
@@ -62,7 +74,7 @@ function useTodayContinue(): TodayContinue {
   return value;
 }
 
-export function useKeepLearning(): SessionAction {
+export function useKeepLearning(): KeepLearningAction {
   return useTodayContinue().keep;
 }
 
@@ -210,14 +222,16 @@ function PrepareLessons() {
 
 function KeepLearning() {
   const t = useExtracted();
-  const { failed, isPending, run, wait } = useKeepLearning();
+  const { failed, isPending, rowSent, run, wait } = useKeepLearning();
 
   return (
     <>
       <Button
         aria-keyshortcuts="Enter"
-        busy={isPending}
+        busy={isPending && !rowSent}
         className={ACTION_CLASS}
+        disabled={rowSent}
+        focusableWhenDisabled
         icon={<PlayIcon aria-hidden="true" />}
         onClick={run}
         size="lg"

@@ -5,6 +5,9 @@ import { page } from "vitest/browser";
 import { RoleStep } from "../../../learn/src/onboarding/steps/role-step";
 import { BasesAdvice, useBasesAdvice } from "../../../learn/src/plan/plan-bases-advice";
 import { PlanScreenContext } from "../../../learn/src/plan/plan-context";
+import { TodayAction, TodayContinueProvider } from "../../../learn/src/today/today-action";
+import { TodayScreenProvider } from "../../../learn/src/today/today-context";
+import { TodayUpNext } from "../../../learn/src/today/today-up-next";
 import { render } from "../_test-utils/render";
 
 function RoleStepSaving({ save }: { save: () => Promise<unknown> }) {
@@ -75,5 +78,54 @@ describe("only the control that sent a request spins", () => {
 
     retried.resolve(null);
     await expect.element(retry).not.toHaveAttribute("aria-busy");
+  });
+
+  it("spins only the up-next row or Keep learning, whichever was pressed", async () => {
+    const opens = [Promise.withResolvers<boolean>(), Promise.withResolvers<boolean>()];
+
+    const addExtraTime = vi
+      .fn()
+      .mockReturnValueOnce(opens[0]!.promise)
+      .mockReturnValueOnce(opens[1]!.promise);
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the up-next list and its action read only these.
+    const today = {
+      actions: { addExtraTime, continueHref: null, continueSession: vi.fn() },
+      today: {
+        progress: null,
+        session: {
+          extraTime: { available: true, lessons: [{ minutes: 5, title: "Ratios" }], minutes: 5 },
+          state: "done",
+        },
+      },
+    } as unknown as ComponentProps<typeof TodayScreenProvider>["value"];
+
+    render(
+      <TodayScreenProvider value={today}>
+        <TodayContinueProvider>
+          <TodayAction />
+          <TodayUpNext />
+        </TodayContinueProvider>
+      </TodayScreenProvider>,
+    );
+
+    const row = page.getByRole("button", { name: "Ratios" });
+    const keepLearning = page.getByRole("button", { name: /^Keep learning/u });
+
+    await row.click();
+    await expect.element(row).toHaveAttribute("aria-busy", "true");
+    await expect.element(keepLearning).not.toHaveAttribute("aria-busy");
+    await expect.element(keepLearning).toHaveAttribute("aria-disabled", "true");
+
+    opens[0]!.resolve(false);
+    await expect.element(row).not.toHaveAttribute("aria-busy");
+
+    await keepLearning.click();
+    await expect.element(keepLearning).toHaveAttribute("aria-busy", "true");
+    await expect.element(row).not.toHaveAttribute("aria-busy");
+    await expect.element(row).toHaveAttribute("aria-disabled", "true");
+
+    opens[1]!.resolve(false);
+    await expect.element(keepLearning).not.toHaveAttribute("aria-busy");
   });
 });

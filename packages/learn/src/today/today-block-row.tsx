@@ -259,11 +259,13 @@ export function BlockRow({
 
 export function PlanLessonRow({
   busy,
+  disabled = busy,
   minutes,
   onOpen,
   title,
 }: {
   busy: boolean;
+  disabled?: boolean;
   minutes: number;
   onOpen: (() => void) | null;
   title: string;
@@ -286,10 +288,10 @@ export function PlanLessonRow({
       {onOpen ? (
         <button
           aria-busy={busy || undefined}
-          aria-disabled={busy || undefined}
+          aria-disabled={disabled || undefined}
           className={cn(ROW_OPEN_CLASS, "flex-1 after:inset-x-0")}
           data-slot="today-row-open"
-          onClick={busy ? undefined : onOpen}
+          onClick={disabled ? undefined : onOpen}
           type="button"
         >
           {name}
