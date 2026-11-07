@@ -112,7 +112,7 @@
   "player_notice_picture_ready": "b39390e81b40f532fc388b654a7a5c404b9ab57202cf216f2657fc4bb530b276",
   "player_notice_self_correct": "9c1aa63606682080135b519f4898ab60878336e95a680fba69f18cec2dc530f7",
   "player_notice_writing_skipped": "d6a467e2842228db9326baeb24c6d5608b31eff359ef668518bb681a4541417f",
-  "player_offer_no_thanks": "5d4aac79724ab26824bbb9b6666cf704f217bb1d6f1173c0445a13a48ee3bab5",
+  "player_offer_no_thanks": "3699164534c0f13ab2823dfdbc9c6ac661f776312502d1662b1503f396b41f9b",
   "player_offer_taking_time": "cb86d072ad7330935ccf24817f62ca81a0c8d981b2f6f2fe40d573d515114397",
   "player_offer_tricky": "70e94f5832c4f0026325afb45a41a41ccec0f440767ad1f97b55358679f9a4fd",
   "player_open_failed": "870de9fa9acdfdb2ec1add47ef0c5569891dc87ba421b32fc49ada6d365e6c1b",
@@ -251,7 +251,7 @@
     <string name="player_from_the_lesson">Da aula</string>
     <string name="player_offer_tricky">Essa é difícil. %1$s pode explicar de outra forma.</string>
     <string name="player_offer_taking_time">Precisa de mais tempo? %1$s pode explicar de outra forma.</string>
-    <string name="player_offer_no_thanks">Não, obrigado</string>
+    <string name="player_offer_no_thanks">Agora não</string>
     <!-- Beside a teaching screen, after the buddy's suggestions: opens the buddy to ask in the learner's own words. -->
     <string name="player_ask_something_else">Perguntar outra coisa</string>
     <string name="player_unchecked_compare">Cada pergunta é conferida algumas vezes por dia. Compare sua resposta com esta:</string>
