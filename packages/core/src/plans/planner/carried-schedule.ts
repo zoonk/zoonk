@@ -52,15 +52,15 @@ function sumMinutesByDay(entries: readonly DayMinutes[]): Map<number, number> {
   );
 }
 
-function sumLaidTime(units: readonly ScheduledUnit[]): Map<number, number> {
+function sumMovedTime({ day, units }: { day: PlanDay; units: readonly ScheduledUnit[] }) {
   return sumMinutesByDay(
-    units.flatMap(
-      (unit) =>
-        unit.studyPortions?.map((portion) => ({
-          date: fromIsoDate(portion.date),
-          minutes: portion.lessonMinutes,
-        })) ?? [unit],
-    ),
+    units.flatMap((unit) => [
+      { date: day.date, minutes: unit.minutes },
+      ...(unit.studyPortions ?? []).map((portion) => ({
+        date: fromIsoDate(portion.date),
+        minutes: -portion.lessonMinutes,
+      })),
+    ]),
   );
 }
 
@@ -72,18 +72,20 @@ function scheduleCarriedUnits({
   days: readonly PlanDay[];
   today: ReadonlySet<string>;
   units: readonly QueueUnit[];
-}): ReturnType<typeof scheduleUnits> {
+}): { moved: Map<number, number>; schedule: ReturnType<typeof scheduleUnits> } {
   const schedule = scheduleUnits({ days, units });
   const [first] = days;
   const lastDate = schedule.units.at(-1)?.date.getTime();
   const day = days.find((planDay) => planDay.date.getTime() === lastDate) ?? first;
 
   if (!day || !first) {
-    return schedule;
+    return { moved: new Map(), schedule };
   }
 
+  const isMoved = (unit: ScheduledUnit) => today.has(unit.key) && unit.date > first.date;
+
   const placed = schedule.units.map((unit) =>
-    today.has(unit.key) && unit.date > first.date ? moveOnto({ day: first, unit }) : unit,
+    isMoved(unit) ? moveOnto({ day: first, unit }) : unit,
   );
 
   const kept = schedule.dropped.map(({ fittedMinutes: _fitted, ...unit }) =>
@@ -94,9 +96,12 @@ function scheduleCarriedUnits({
   const all = [...placed, ...kept];
 
   return {
-    ...schedule,
-    dropped: [],
-    units: [...all.filter((unit) => isToday(unit)), ...all.filter((unit) => !isToday(unit))],
+    moved: sumMovedTime({ day: first, units: schedule.units.filter((unit) => isMoved(unit)) }),
+    schedule: {
+      ...schedule,
+      dropped: [],
+      units: [...all.filter((unit) => isToday(unit)), ...all.filter((unit) => !isToday(unit))],
+    },
   };
 }
 
@@ -169,7 +174,7 @@ function listHeldRooms({
   today: ReadonlySet<string>;
 }): ChallengeRoom[] {
   return rooms.reduce<ChallengeRoom[]>((held, room) => {
-    const schedule = scheduleCarriedUnits({
+    const { schedule } = scheduleCarriedUnits({
       days: shiftReserved({ days, minutes: sumMinutesByDay(held) }),
       today,
       units: carried,
@@ -212,8 +217,8 @@ export function scheduleCarriedWork({
 
   const rooms = letGo ? listHeldRooms({ carried, days, rest, rooms: all, today }) : all;
 
-  const roomed = shiftReserved({ days, minutes: sumMinutesByDay(rooms) });
-  const schedule = scheduleCarriedUnits({ days: roomed, today, units: carried });
+  const room = sumMinutesByDay(rooms);
+  const roomed = shiftReserved({ days, minutes: room });
 
-  return { days: shiftReserved({ days, minutes: sumLaidTime(schedule.units) }), schedule };
+  return { room, roomed, ...scheduleCarriedUnits({ days: roomed, today, units: carried }) };
 }

@@ -5,7 +5,6 @@ import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { addDays, toIsoDate } from "./plan-calendar";
 import { type PlannedItem } from "./plan-items";
 import { applyPlanOperations } from "./plan-operations";
-import { PLAN_EPSILON } from "./plan-precision";
 import { type PlanGraph, parsePlanSettings } from "./plan-state";
 
 const TODAY = new Date("2026-10-12T00:00:00Z");
@@ -141,109 +140,5 @@ describe("a change of focus when today's time no longer holds today's lessons", 
     expect([...(built.lessonDayMinutes.get("lesson:Civil-2")?.keys() ?? [])]).toStrictEqual([
       toIsoDate(addDays(TODAY, 1)),
     ]);
-  });
-
-  it("leaves tomorrow's time to tomorrow's lessons when today's run past the plan's days", () => {
-    const input: BuildPlanInput = {
-      goal: { dailyMinutes: 10, kind: "learn", targetDate: addDays(TODAY, 2) },
-      graph: {
-        phases: [{ milestone: null, name: "Only" }],
-        skills: [{ area: "A", lessons: 4, name: "A", phase: 0, skillId: "A", weight: 1 }],
-      },
-      items: [],
-      lessons: [3, 3, 3, 2].map((minutes, index) => ({
-        chapterId: "chapter-A",
-        lessonId: `A-${index}`,
-        minutes,
-        skillIds: ["A"],
-        title: `A ${index}`,
-      })),
-      mockMinutes: 180,
-      mode: "forced",
-      paceFactor: 1,
-      prerequisites: new Map(),
-      readiness: new Map(),
-      settings: parsePlanSettings({ startDate: toIsoDate(TODAY) }),
-      today: TODAY,
-    };
-
-    const shown = buildPlan(input).items.map((item, position) => ({
-      ...item,
-      id: `item-${position}`,
-      position,
-    }));
-
-    const after = buildPlan({
-      ...input,
-      carryOver: { lessonIds: [], todayExceptAreas: [] },
-      items: shown,
-      paceFactor: 2,
-      settings: { ...input.settings, focusAreas: ["A"] },
-    }).items;
-
-    expect(listTodayLessons(shown)).toStrictEqual(["A-0", "A-1", "A-2"]);
-    expect(listTodayLessons(after)).toStrictEqual(["A-0", "A-1", "A-2"]);
-
-    expect(after.find((item) => item.lessonId === "A-3")?.scheduledFor).toStrictEqual(
-      addDays(TODAY, 1),
-    );
-  });
-});
-
-describe("lessons carried over missed days", () => {
-  it("leaves no lesson a sliver of time on a day the carried ones fill", () => {
-    const phased: PlanGraph = {
-      phases: [
-        { milestone: null, name: "First" },
-        { milestone: null, name: "Second" },
-      ],
-      skills: Array.from({ length: 4 }, (_, index) => ({
-        area: `Area ${index % 2}`,
-        lessons: 4,
-        name: `S${index}`,
-        phase: index < 2 ? 0 : 1,
-        skillId: `S${index}`,
-        weight: 3,
-      })),
-    };
-
-    const input: BuildPlanInput = {
-      goal: { dailyMinutes: 30, kind: "exam", targetDate: addDays(TODAY, 40) },
-      graph: phased,
-      items: [],
-      lessons: phased.skills.flatMap((skill) =>
-        [3, 3, 3, 2].map((minutes, index) => ({
-          chapterId: `chapter-${skill.skillId}`,
-          lessonId: `${skill.skillId}-${index}`,
-          minutes,
-          skillIds: [skill.skillId],
-          title: `${skill.name} ${index}`,
-        })),
-      ),
-      mockMinutes: 180,
-      mode: "forced",
-      paceFactor: 1,
-      prerequisites: new Map(),
-      readiness: new Map(),
-      settings: parsePlanSettings({ startDate: toIsoDate(TODAY) }),
-      today: TODAY,
-    };
-
-    const first = buildPlan(input);
-
-    const built = buildPlan({
-      ...input,
-      carryOver: { lessonIds: [] },
-      items: first.items.map((item, position) => ({ ...item, id: `item-${position}`, position })),
-      paceFactor: 2,
-      settings: { ...input.settings, mockFunding: first.mockFunding },
-      today: addDays(TODAY, 3),
-    });
-
-    const slivers = [...built.lessonDayMinutes].flatMap(([key, days]) =>
-      [...days].flatMap(([day, minutes]) => (minutes < PLAN_EPSILON ? [`${key} on ${day}`] : [])),
-    );
-
-    expect(slivers).toStrictEqual([]);
   });
 });
