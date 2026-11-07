@@ -1,5 +1,4 @@
 import { toIsoDate } from "./plan-calendar";
-import { PLAN_EPSILON } from "./plan-precision";
 import { type QueueUnit } from "./plan-units";
 import { type PlanDay } from "./schedule-units";
 
@@ -59,7 +58,7 @@ export function listIntervalPortions({
     const dayEnd = cumulative[index] ?? dayStart;
     const lessonMinutes = Math.max(0, Math.min(end, dayEnd) - Math.max(start, dayStart));
 
-    return lessonMinutes > PLAN_EPSILON
+    return lessonMinutes > 0
       ? [
           {
             index,
@@ -115,15 +114,8 @@ export function getUnitStudy({
   const uncovered = toDayMinutes({ lessonMinutes: overflow, share: overflowShare });
 
   const studyPortions =
-    overflow > PLAN_EPSILON
-      ? [
-          ...covered,
-          {
-            date: covered.at(-1)?.date ?? toIsoDate(dueDate),
-            lessonMinutes: overflow,
-            minutes: uncovered,
-          },
-        ]
+    uncovered > 0
+      ? [...covered, { date: toIsoDate(dueDate), lessonMinutes: overflow, minutes: uncovered }]
       : covered;
 
   return {

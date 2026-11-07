@@ -19,7 +19,6 @@ import { type PlanSettings } from "./plan-state";
 import { type QueueUnit } from "./plan-units";
 import { findPromisedLesson, listPromisedLessonMinutes } from "./promised-minutes";
 import { type FixedEvent, listPlanDays } from "./schedule-units";
-import { isShortExam } from "./short-exam-plan";
 
 export type RunDayInput = Pick<
   BuildPlanInput,
@@ -157,12 +156,6 @@ export function listFundedPlanDays({
     days: planDays,
     from: toIsoDate(start),
     funding: input.settings.mockFunding,
-    keepsOpening:
-      input.items.length === 0 &&
-      !(
-        input.goal.targetDate &&
-        isShortExam({ planStart: getPlanStart(input), targetDate: input.goal.targetDate })
-      ),
     moves: input.settings.movedEvents,
     promised: listPromisedLessonMinutes({
       days: planDays.filter((day) => day.date >= start),
