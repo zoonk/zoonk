@@ -274,7 +274,7 @@ describe(normalizeSkillGraph, () => {
     ]);
   });
 
-  it("keeps only courses with skills and lists every level band their skills use", () => {
+  it("keeps frame courses for coverage repair and lists every level band their skills use", () => {
     const graph = normalizeSkillGraph(
       rawGraph([
         rawSkill({ key: "a", level: "intermediate" }),
@@ -284,6 +284,7 @@ describe(normalizeSkillGraph, () => {
 
     expect(graph.courses).toStrictEqual([
       { key: "math", levels: ["beginner", "intermediate"], title: "Mathematics" },
+      { key: "physics", levels: ["beginner"], title: "Classical mechanics" },
     ]);
 
     expect(graph.skills.map((skill) => skill.course)).toStrictEqual(["math", "math"]);

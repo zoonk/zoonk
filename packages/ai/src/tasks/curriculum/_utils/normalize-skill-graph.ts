@@ -153,16 +153,12 @@ export function normalizeCourses({
 }): SkillGraphCourse[] {
   const unique = [...new Map(courses.map((course) => [toKey(course.key), course])).entries()];
 
-  return unique.flatMap(([key, course]) => {
+  return unique.map(([key, course]) => {
     const courseSkills = skills.filter((skill) => skill.course === key);
-
-    if (courseSkills.length === 0) {
-      return [];
-    }
 
     const levels = sortLevels([...course.levels, ...courseSkills.map((skill) => skill.level)]);
 
-    return [{ key, levels, title: toPlainLine(course.title) }];
+    return { key, levels, title: toPlainLine(course.title) };
   });
 }
 
