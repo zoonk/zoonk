@@ -73,7 +73,10 @@ function buildTranscriptionProvenance({
 
   return {
     ...details,
-    costUsd: usage.audioSeconds === undefined ? undefined : computeCallCostUsd({ model, usage }),
+    costUsd:
+      usage.audioSeconds === undefined
+        ? undefined
+        : computeCallCostUsd({ charge: gateway.charge, model, usage }),
     credential: gateway.credential,
     gatewayCostUsd: gateway.costUsd,
     model,

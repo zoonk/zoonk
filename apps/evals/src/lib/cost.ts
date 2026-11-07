@@ -1,4 +1,4 @@
-import { priceCall } from "@zoonk/ai/pricing/call-cost";
+import { type GatewayCharge, addGatewayCharge, priceCall } from "@zoonk/ai/pricing/call-cost";
 import { type GatewayPrices } from "@zoonk/ai/pricing/gateway-prices";
 import { sum } from "./math";
 import { type ModelConfig } from "./models";
@@ -23,10 +23,12 @@ export function estimateCostPer1000Runs({
 
 /** Throws for unknown model prices so missing pricing cannot make a model look free. */
 export function getCallCost({
+  gatewayCharge,
   modelId,
   prices,
   usage,
 }: {
+  gatewayCharge?: GatewayCharge;
   modelId: string;
   prices: GatewayPrices;
   usage: TokenUsage;
@@ -37,7 +39,7 @@ export function getCallCost({
     throw new Error(`No gateway price for ${modelId}. Run pnpm --filter @zoonk/ai prices:refresh.`);
   }
 
-  return priceCall({ pricing, usage });
+  return addGatewayCharge({ charge: gatewayCharge, usageUsd: priceCall({ pricing, usage }) });
 }
 
 export function getCallsCost({
@@ -47,9 +49,7 @@ export function getCallsCost({
   calls: ModelCall[];
   prices: GatewayPrices;
 }): number {
-  return sum(
-    calls.map((call) => getCallCost({ modelId: call.modelId, prices, usage: call.usage })),
-  );
+  return sum(calls.map((call) => getCallCost({ ...call, prices })));
 }
 
 /**

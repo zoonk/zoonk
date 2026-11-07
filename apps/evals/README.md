@@ -8,7 +8,7 @@ An internal evaluation system for testing and monitoring AI-generated content qu
 - **Model Comparison**: Compare quality, cost and latency (p50 and p95) across supported models, with English and Portuguese scored apart and a pass or fail for tasks with a latency budget
 - **Evaluation Models**: Classifiers can also run through `experimental_decide`, so Jev and language models used as evaluation models land on the same leaderboard as the task's own prompt
 - **Automatic Scoring**: Task-specific deterministic scoring when outputs have exact pass/fail rules, with AI-powered judge scoring as the fallback for open-ended tasks. Classifiers also report per-label accuracy and a confusion matrix
-- **Gateway Prices**: Costs use the AI Gateway's price list, including cached input and reasoning tokens, and judge calls are priced too
+- **Gateway Prices**: Costs use the AI Gateway's price list, including cached input and reasoning tokens, plus what the gateway charges on top, such as its search fees. Judge calls are priced too
 
 ## Running the App
 

@@ -1,4 +1,5 @@
 import { type BilledCall } from "@zoonk/ai/billed-calls";
+import { type GatewayCharge } from "@zoonk/ai/pricing/call-cost";
 import { type Reasoning } from "@zoonk/ai/provider-options";
 import z from "zod";
 import { type RequiredLanguage } from "./case-languages";
@@ -108,10 +109,11 @@ type TaskResult<T = unknown> = {
 
 export type ClassificationOutcome = { expected: string; predicted: string | null };
 
-export type ModelCall = { modelId: string; usage: TokenUsage };
+export type ModelCall = { gatewayCharge?: GatewayCharge; modelId: string; usage: TokenUsage };
 
-export function toModelCall({ model, usage }: BilledCall): ModelCall {
+export function toModelCall({ gatewayCharge, model, usage }: Omit<BilledCall, "extra">): ModelCall {
   return {
+    gatewayCharge,
     modelId: model,
     usage: {
       cacheReadTokens: usage.cacheReadTokens,

@@ -30,7 +30,7 @@ function buildImageTaskProvenance({
 
   return {
     ...details,
-    costUsd: computeCallCostUsd({ model, usage }),
+    costUsd: computeCallCostUsd({ charge: gateway.charge, model, usage }),
     credential: gateway.credential,
     gatewayCostUsd: sumKnown(
       generation.calls.map((call) => readGatewayMetadata(call.providerMetadata).costUsd),
