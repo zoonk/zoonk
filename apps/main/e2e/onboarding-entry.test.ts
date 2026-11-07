@@ -166,16 +166,15 @@ test.describe("Coming back", () => {
     await page.getByRole("button", { name: "Try again" }).click();
     await expect(page.getByText("Juggle five balls", { exact: true })).toBeVisible();
 
-    const runId = `e2e-understanding-${randomUUID()}`;
-
     await prisma.onboardingDraft.update({
-      data: { runId, status: "understanding", understanding: DbNull },
+      data: { status: "understanding", understanding: DbNull },
       where: { id: draft.id },
     });
 
     const release = Promise.withResolvers<null>();
 
-    await page.route(`**/v1/generations/${runId}/events**`, async (route) => {
+    // The first send's real run can still save its id on the draft at any moment, so the reload follows that run.
+    await page.route(`**/v1/generations/${draft.runId}/events**`, async (route) => {
       await release.promise;
 
       await prisma.onboardingDraft.update({
