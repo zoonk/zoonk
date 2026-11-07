@@ -5,7 +5,11 @@ import { awardCourseCertificates } from "../../certificates/_utils/award-course-
 import { announceTestedOutItems } from "../../plans/announce-tested-out-items";
 import { afterPlanInputWrite } from "../../plans/plan-conflict";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
-import { skipTestedOutBlocks } from "../../sessions/_utils/skip-tested-out-blocks";
+import {
+  loadItemLessonIds,
+  skipSettledLessonBlocks,
+  skipTestedOutBlocks,
+} from "../../sessions/_utils/skip-tested-out-blocks";
 import { INFERRED_KNOWN_ANSWER } from "../answer-rating";
 import { NEW_SKILL_MEMORY, reviewSkillMemory } from "../fsrs-scheduler";
 import { type GoalPlan, type GoalPlanItem, loadGoalPlan } from "./goal-skill-graph";
@@ -175,6 +179,14 @@ export async function testOutKnownPlanItems(
   await awardCourseCertificates(tx, { finished: updated });
 
   const changed = new Set(updated.map((item) => item.id));
+
+  const [goal, lessonIds] = await Promise.all([
+    tx.goal.findUniqueOrThrow({ where: { id: goalId } }),
+    loadItemLessonIds([...changed], tx),
+  ]);
+
+  await skipSettledLessonBlocks(tx, { goalId, lessonIds, userId: goal.userId });
+
   return { itemIds: ids.filter((id) => changed.has(id)), standInIds };
 }
 
@@ -222,7 +234,7 @@ export async function markPlanItemsTestedOut({
     return { ...empty, pastBasicsAdded: [] };
   }
 
-  const testedOut =
+  const { pastBasicsAdded: addedBasics, standInIds } =
     ids.length > 0 || leftOut.length > 0 || pastBasicsAreas.length > 0
       ? await writeLearnerChange(
           { goalIds: [goalId], planInputs: true, userId: goal.userId },
@@ -272,12 +284,11 @@ export async function markPlanItemsTestedOut({
         )
       : { pastBasicsAdded: [], standInIds: [] };
 
-  const { pastBasicsAdded, standInIds } = testedOut;
   const planItemIds = [...ids, ...standInIds];
   const announced = [...new Set([...announceAlso, ...planItemIds])];
 
   if (announced.length === 0) {
-    return { ...empty, pastBasicsAdded };
+    return { ...empty, pastBasicsAdded: addedBasics };
   }
 
   const announce = () =>
@@ -286,7 +297,7 @@ export async function markPlanItemsTestedOut({
       followToday,
       goalId,
       now: now ?? testedOutAt,
-      pastBasicsAdded,
+      pastBasicsAdded: addedBasics,
       pastBasicsAreas: extraWrites ? pastBasicsAreas : [],
       planItemIds: announced,
       timeZone,
@@ -301,7 +312,7 @@ export async function markPlanItemsTestedOut({
   return {
     changeId: announcement?.changeId ?? null,
     lessonsSkipped: announcement?.lessonsSkipped ?? planItemIds.length,
-    pastBasicsAdded,
+    pastBasicsAdded: addedBasics,
     planItemIds,
     planVersion: announcement?.planVersion ?? null,
   };
