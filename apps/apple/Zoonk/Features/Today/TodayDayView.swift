@@ -31,6 +31,7 @@ struct TodayDayView: View {
     case mission(Int)
     case planChange
     case prepare
+    case upNextLesson
   }
 
   var body: some View {
@@ -164,8 +165,8 @@ struct TodayDayView: View {
       disclosures: $disclosures, open: open, showsAction: showsAction, prepare: prepareLessons)
 
     if !view.upNextLessons.isEmpty {
-      TodayUpNextSection(view: view, busy: busy, failed: failed == .keepLearning) {
-        run(.keepLearning) { await store.addExtraTime(in: view) }
+      TodayUpNextSection(view: view, busy: busy, failed: failed) { tap in
+        run(tap) { await store.addExtraTime(in: view) }
       }
     }
 
