@@ -2,11 +2,20 @@ import { listCoursesBehind } from "@zoonk/core/library/products/course-release";
 import {
   type ReleasesReading,
   type UnreadReleasesPage,
+  claimNewestReleaseSearch,
   findUnreadReleasesPage,
   readReleasesPage,
   recordUnreadableReleasesPage,
   saveReadReleases,
 } from "@zoonk/core/library/products/product-releases";
+
+/** The newest listed release whose own page to search for, claimed once; null when none is due. */
+export async function claimNewestReleaseSearchStep(
+  productId: string,
+): Promise<{ language: string; release: string } | null> {
+  "use step";
+  return claimNewestReleaseSearch(productId);
+}
 
 /** Null when the page's releases are read already. */
 export async function findUnreadReleasesPageStep(
@@ -35,10 +44,13 @@ export async function saveProductReleasesStep(reading: ReleasesReading): Promise
 }
 
 /**
- * Followed main courses, all of them or those among `courseIds`, whose product has a newer release
- * than they teach, such as an announced one now out.
+ * Followed main courses, all of them or those among `courseIds` or of `productId`, whose product
+ * has a newer release than they teach, such as an announced one now out.
  */
-export async function listCoursesBehindStep(courseIds?: string[]): Promise<string[]> {
+export async function listCoursesBehindStep(filter: {
+  courseIds?: string[];
+  productId?: string;
+}): Promise<string[]> {
   "use step";
-  return listCoursesBehind({ courseIds });
+  return listCoursesBehind(filter);
 }

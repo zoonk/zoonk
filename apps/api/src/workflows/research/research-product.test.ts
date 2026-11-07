@@ -19,6 +19,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
 import { getRun } from "workflow/api";
 import { mockHookConflict } from "../../../mocks/workflow";
+import { readProductReleases } from "../products/product-releases";
 import { researchWorkflow } from "./research-workflow";
 
 const PROVENANCE = {
@@ -194,6 +195,35 @@ async function savedProduct(site: Site, attrs: Parameters<typeof productFixture>
   });
 }
 
+/** Research finds the product's pages, then the newest release's own page. */
+function findReleasePage({ releasePage, site }: { releasePage: string; site: Site }) {
+  findPages(site);
+
+  vi.mocked(findProductPages)
+    .mockResolvedValueOnce({
+      ...TASK_RESULT,
+      data: {
+        brandUrl: `https://${site.brand}/`,
+        docsUrl: `https://${site.product}/docs`,
+        productUrl: `https://${site.product}/`,
+        releaseUrl: null,
+        releasesUrl: `https://${site.product}/releases`,
+        searchCalls: 2,
+      },
+    })
+    .mockResolvedValueOnce({
+      ...TASK_RESULT,
+      data: {
+        brandUrl: null,
+        docsUrl: null,
+        productUrl: null,
+        releaseUrl: releasePage,
+        releasesUrl: null,
+        searchCalls: 1,
+      },
+    });
+}
+
 describe("product research", () => {
   beforeEach(() => {
     vi.mocked(detectChangingFacts).mockResolvedValue("product");
@@ -350,6 +380,84 @@ describe("product research", () => {
     expect(product.releases.map((release) => [release.name, release.releasedAt])).toStrictEqual([
       ["Orbit Notes 5.1", new Date("2025-11-02T00:00:00.000Z")],
     ]);
+  });
+
+  describe("a product whose releases page dates none", () => {
+    const UNDATED = [
+      { name: "Orbit Notes 5.1", version: "5.1" },
+      { name: "Orbit Notes 5.2", version: "5.2" },
+    ].map((release) => ({
+      ...release,
+      document: 4,
+      passage: release.name,
+      releasedOn: null,
+      supportEndsOn: null,
+    }));
+
+    /** The releases page lists both versions undated; the newest one's page says what it says. */
+    async function research(releaseNote: { passage: string; releasedOn: string | null }) {
+      const site = newSite();
+      const goal = await productGoal();
+      const releasePage = `https://${site.product}/news/orbit-notes-5-2`;
+      planProduct({ site });
+      findReleasePage({ releasePage, site });
+
+      servePages({
+        others: { [releasePage]: `<p>${releaseNote.passage}</p>` },
+        releases: "<p>Orbit Notes 5.1</p><p>Orbit Notes 5.2</p>",
+        site,
+      });
+
+      vi.mocked(readProductPages)
+        .mockResolvedValueOnce({ ...TASK_RESULT, data: { ...READING, releases: UNDATED } })
+        .mockResolvedValueOnce({
+          ...TASK_RESULT,
+          data: {
+            brand: null,
+            learnerRelease: "Orbit Notes 5.2",
+            product: null,
+            releases: [{ ...UNDATED[1]!, document: 1, ...releaseNote }],
+          },
+        });
+
+      await researchWorkflow({ goalId: goal.id });
+
+      return prisma.product.findFirstOrThrow({
+        include: { releases: { orderBy: { name: "asc" } } },
+        where: { organization: { domain: site.brand } },
+      });
+    }
+
+    it("looks up the newest release's own page and ends with a current release", async () => {
+      const product = await research({
+        passage: "Orbit Notes 5.2 shipped on November 2, 2025.",
+        releasedOn: "2025-11-02",
+      });
+
+      expect(vi.mocked(findProductPages).mock.calls[1]?.[0].hints.release).toBe("Orbit Notes 5.2");
+
+      expect(product.releases.map((release) => [release.name, release.releasedAt])).toStrictEqual([
+        ["Orbit Notes 5.1", null],
+        ["Orbit Notes 5.2", new Date("2025-11-02T00:00:00.000Z")],
+      ]);
+    });
+
+    it("looks a newest release's page up once, even when it has no date either", async () => {
+      const product = await research({
+        passage: "Orbit Notes 5.2 brings shared notebooks.",
+        releasedOn: null,
+      });
+
+      await readProductReleases({
+        analytics: { contentScope: "shared" },
+        productId: product.id,
+        release: null,
+        serviceTier: undefined,
+      });
+
+      expect(vi.mocked(findProductPages)).toHaveBeenCalledTimes(2);
+      expect(product.releases.map((release) => release.releasedAt)).toStrictEqual([null, null]);
+    });
   });
 
   it("pins a named older model when the models page gives only years", async () => {

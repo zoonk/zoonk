@@ -1,8 +1,12 @@
-import { chooseServiceTier } from "@zoonk/ai/provider-options";
+import { type ServiceTier, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { findProductPages } from "@zoonk/ai/tasks/research/find-product-pages";
 import { type ProductHints } from "@zoonk/ai/tasks/research/source-plan";
 import { scheduleFreshnessChecks } from "@zoonk/core/library/exams/freshness-checks";
-import { type ProductHints as LookupHints, findProduct } from "@zoonk/core/library/products/find";
+import {
+  type ProductHints as LookupHints,
+  findProduct,
+  findProductById,
+} from "@zoonk/core/library/products/find";
 import {
   findCourseProductLink,
   findProductCheckedSourceId,
@@ -27,8 +31,8 @@ import { safeAsync } from "@zoonk/utils/error";
 import { FatalError } from "workflow";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
-/** The goal's courses wait on research, so its calls run at the learner's tier. */
-const serviceTier = chooseServiceTier({ wait: "learner" });
+/** The goal's courses wait on research, so its calls run at the learner's tier by default. */
+const learnerTier = chooseServiceTier({ wait: "learner" });
 
 /** A page that can never be downloaded fails at once instead of retrying. */
 async function failPermanently<T>(work: () => Promise<T>): Promise<T> {
@@ -88,12 +92,15 @@ export type KnownProduct = {
   sites: ProductSites;
 };
 
-/** Null when no product of the named brand matches, or the brand predates research. */
-export async function findProductStep(hints: LookupHints): Promise<KnownProduct | null> {
-  "use step";
+type FoundProduct = NonNullable<Awaited<ReturnType<typeof findProduct>>>;
 
-  const now = new Date();
-  const found = await findProduct({ hints, now });
+async function toKnownProduct({
+  found,
+  now,
+}: {
+  found: FoundProduct | null;
+  now: Date;
+}): Promise<KnownProduct | null> {
   const organization = found?.product.organization;
 
   const sites =
@@ -137,16 +144,33 @@ export async function findProductStep(hints: LookupHints): Promise<KnownProduct 
   };
 }
 
+/** Null when no product of the named brand matches, or the brand predates research. */
+export async function findProductStep(hints: LookupHints): Promise<KnownProduct | null> {
+  "use step";
+
+  const now = new Date();
+  return toKnownProduct({ found: await findProduct({ hints, now }), now });
+}
+
+export async function findProductByIdStep(productId: string): Promise<KnownProduct | null> {
+  "use step";
+
+  const now = new Date();
+  return toKnownProduct({ found: await findProductById({ now, productId }), now });
+}
+
 export async function findProductPagesStep({
   analytics,
   hints,
   knownWebsite,
   officialDomains,
+  serviceTier = learnerTier,
 }: {
   analytics: ResearchAnalytics;
   hints: ProductHints;
   knownWebsite?: string;
   officialDomains: string[];
+  serviceTier?: ServiceTier;
 }) {
   "use step";
 
@@ -215,9 +239,10 @@ export async function storeProductPageStep({
   return { sourceId: source.id, url: source.url ?? url };
 }
 
-export async function readProductPagesStep(
-  input: Omit<Parameters<typeof readProductSources>[0], "serviceTier">,
-) {
+export async function readProductPagesStep({
+  serviceTier = learnerTier,
+  ...input
+}: Parameters<typeof readProductSources>[0]) {
   "use step";
   return readProductSources({ ...input, serviceTier });
 }

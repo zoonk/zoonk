@@ -52,3 +52,43 @@ export function pickCurrentRelease<TRelease extends DatedRelease>({
       null,
     );
 }
+
+const NUMERIC_VERSION = /^v?\d+(?:\.\d+)*$/u;
+
+function toVersionParts(version: string | null): number[] | null {
+  return version && NUMERIC_VERSION.test(version)
+    ? version.replace(/^v/u, "").split(".").map(Number)
+    : null;
+}
+
+function compareParts(first: readonly number[], second: readonly number[]): number {
+  const length = Math.max(first.length, second.length);
+
+  const index = Array.from({ length }, (_, part) => part).find(
+    (part) => (first[part] ?? 0) !== (second[part] ?? 0),
+  );
+
+  return index === undefined ? 0 : (first[index] ?? 0) - (second[index] ?? 0);
+}
+
+/**
+ * The release with the highest version, each part compared as a number ("12.1.2510" after
+ * "12.1.33"). None when a version doesn't compare as numbers or two tie, since the order is unknown.
+ */
+export function pickNewestByVersion<TRelease extends { version: string | null }>(
+  releases: readonly TRelease[],
+): TRelease | null {
+  const parsed = releases.map((release) => ({ parts: toVersionParts(release.version), release }));
+
+  if (parsed.length === 0 || parsed.some(({ parts }) => parts === null)) {
+    return null;
+  }
+
+  const [newest, next] = parsed.toSorted((first, second) =>
+    compareParts(second.parts ?? [], first.parts ?? []),
+  );
+
+  return newest && (!next || compareParts(newest.parts ?? [], next.parts ?? []) > 0)
+    ? newest.release
+    : null;
+}

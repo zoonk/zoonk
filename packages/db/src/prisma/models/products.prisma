@@ -52,26 +52,29 @@ model Product {
 /// date the pages state only by month (`releasedMonthOnly`, `releasedAt` on its first day). A later
 /// date is announced, and a release with no known date never becomes current.
 model ProductRelease {
-  id             String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  productId      String    @map("product_id") @db.Uuid
-  product        Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
-  slug           String
-  name           String
-  normalizedName String    @map("normalized_name")
-  version        String?
+  id                String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  productId         String    @map("product_id") @db.Uuid
+  product           Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  slug              String
+  name              String
+  normalizedName    String    @map("normalized_name")
+  version           String?
   releasedAt        DateTime? @map("released_at") @db.Date
   releasedMonthOnly Boolean   @default(false) @map("released_month_only")
-  supportEndsAt  DateTime? @map("support_ends_at") @db.Date
-  sourceId       String?   @map("source_id") @db.Uuid
-  source         Source?   @relation(fields: [sourceId], references: [id], onDelete: SetNull)
-  model          String
-  promptVersion  String    @map("prompt_version")
-  runId          String    @map("run_id")
-  generatedAt    DateTime  @default(now()) @map("generated_at")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at")
-  courses        Course[]
-  goals          Goal[]
+  /// When its own page was searched for because, as the newest listed release, it left the product
+  /// with no current one; each newest release is searched for once (`claimNewestReleaseSearch`).
+  pageSearchedAt    DateTime? @map("page_searched_at")
+  supportEndsAt     DateTime? @map("support_ends_at") @db.Date
+  sourceId          String?   @map("source_id") @db.Uuid
+  source            Source?   @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  model             String
+  promptVersion     String    @map("prompt_version")
+  runId             String    @map("run_id")
+  generatedAt       DateTime  @default(now()) @map("generated_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at")
+  courses           Course[]
+  goals             Goal[]
 
   @@unique([productId, normalizedName], name: "productName")
   @@unique([productId, slug], name: "productSlug")

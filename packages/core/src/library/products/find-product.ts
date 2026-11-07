@@ -13,15 +13,14 @@ export type ProductHints = {
   release: string | null;
 };
 
+const PRODUCT_INCLUDE = {
+  organization: true,
+  releases: true,
+  releasesSource: { select: { contentHash: true, fetchedAt: true } },
+} as const;
+
 function loadCandidates(nameKey: string) {
-  return prisma.product.findMany({
-    include: {
-      organization: true,
-      releases: true,
-      releasesSource: { select: { contentHash: true, fetchedAt: true } },
-    },
-    where: whereProductNamed(nameKey),
-  });
+  return prisma.product.findMany({ include: PRODUCT_INCLUDE, where: whereProductNamed(nameKey) });
 }
 
 type Candidate = Awaited<ReturnType<typeof loadCandidates>>[number];
@@ -118,4 +117,27 @@ export async function findProduct({
     namedRelease: hints.release ? findNamedRelease({ hint: hints.release, product }) : null,
     product,
   };
+}
+
+/** Internal workflow bridge for the releases reading, which knows the product by its id. */
+export async function findProductById({
+  now = new Date(),
+  productId,
+}: {
+  now?: Date;
+  productId: string;
+}): Promise<FoundProduct | null> {
+  const product = await prisma.product.findUnique({
+    include: PRODUCT_INCLUDE,
+    where: { id: productId },
+  });
+
+  return product
+    ? {
+        currentRelease: pickCurrentRelease({ now, releases: product.releases }),
+        isFresh: isFreshProduct({ now, product }),
+        namedRelease: null,
+        product,
+      }
+    : null;
 }

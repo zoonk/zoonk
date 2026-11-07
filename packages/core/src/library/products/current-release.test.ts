@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { pickCurrentRelease } from "./current-release";
+import { pickCurrentRelease, pickNewestByVersion } from "./current-release";
 
 const NOW = new Date("2026-11-06T12:00:00.000Z");
 
@@ -57,5 +57,26 @@ describe(pickCurrentRelease, () => {
 
     expect(pickCurrentRelease({ now: NOW, releases })?.id).toBe("018f-b");
     expect(pickCurrentRelease({ now: NOW, releases: releases.toReversed() })?.id).toBe("018f-b");
+  });
+});
+
+function versions(...values: (string | null)[]) {
+  return values.map((version, index) => ({ id: String(index), version }));
+}
+
+describe(pickNewestByVersion, () => {
+  it("picks the highest version, comparing each part as a number", () => {
+    expect(
+      pickNewestByVersion(versions("12.1.2310", "12.1.2510", "12.1.33", "v12.1.2410"))?.version,
+    ).toBe("12.1.2510");
+  });
+
+  it("picks none when a version doesn't compare as numbers or two tie", () => {
+    expect([
+      pickNewestByVersion(versions("16.4", null)),
+      pickNewestByVersion(versions("16.4", "16.4-beta")),
+      pickNewestByVersion(versions("16.4", "16.4.0")),
+      pickNewestByVersion([]),
+    ]).toStrictEqual([null, null, null, null]);
   });
 });

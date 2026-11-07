@@ -3,6 +3,7 @@ import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { type Product, prisma } from "@zoonk/db";
 import { listCoursesBehind } from "./course-release";
+import { pickCurrentRelease, pickNewestByVersion } from "./current-release";
 import { type ProductSourcesReading, readSourceVersions } from "./read-product-sources";
 import { saveProductReleases } from "./save-product-research";
 
@@ -154,4 +155,48 @@ export async function saveReadReleases({
   });
 
   return listCoursesBehind({ productId });
+}
+
+/**
+ * Internal workflow bridge for the releases reading. When the product's releases have no current
+ * one (none dated, or none out yet), claims a search for its newest listed release's own page,
+ * which often dates it, and returns that release's name and the pages' language. Each newest
+ * release is searched for once, so a page that dates nothing isn't paid for again.
+ */
+export async function claimNewestReleaseSearch(
+  productId: string,
+): Promise<{ language: string; release: string } | null> {
+  const product = await prisma.product.findUnique({
+    select: {
+      releases: {
+        select: {
+          id: true,
+          name: true,
+          pageSearchedAt: true,
+          releasedAt: true,
+          releasedMonthOnly: true,
+          version: true,
+        },
+      },
+      releasesSource: { select: { language: true } },
+      websiteSource: { select: { language: true } },
+    },
+    where: { id: productId },
+  });
+
+  const releases = product?.releases ?? [];
+  const isCurrent = pickCurrentRelease({ now: new Date(), releases }) !== null;
+  const newest = isCurrent ? null : pickNewestByVersion(releases);
+  const language = product?.releasesSource?.language ?? product?.websiteSource?.language;
+
+  if (!newest || newest.pageSearchedAt || !language) {
+    return null;
+  }
+
+  const { count } = await prisma.productRelease.updateMany({
+    data: { pageSearchedAt: new Date() },
+    where: { id: newest.id, pageSearchedAt: null },
+  });
+
+  return count === 1 ? { language, release: newest.name } : null;
 }

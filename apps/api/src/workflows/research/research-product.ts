@@ -4,6 +4,7 @@ import { toNameKey } from "@zoonk/core/library/products/keys";
 import { type GoalProductLink } from "@zoonk/core/library/products/link-goal";
 import { claimRunToken, waitForRunToken } from "../_shared/run-token";
 import { readProductReleases } from "../products/product-releases";
+import { readReleasePage } from "./release-page";
 import { type ResearchResult } from "./research-result";
 import { type ResearchContext } from "./research-sources";
 import { linkGoalToSourcesStep } from "./steps/link-goal-step";
@@ -28,6 +29,7 @@ type ProductContext = ResearchContext<SourceResearchPlan>;
 
 const READY: ResearchResult = { examBlueprintId: null, sourceIds: [], status: "ready" };
 const NOT_FOUND: ResearchResult = { reason: "noOfficialSource", status: "needsUpload" };
+const learnerTier = chooseServiceTier({ wait: "learner" });
 
 type Research = Pick<ProductContext, "analytics" | "plan"> & { hints: ProductHints };
 
@@ -175,7 +177,15 @@ async function researchNewProduct(research: Research): Promise<GoalProductLink |
     productId: saved.link.productId,
   });
 
-  return saved.link;
+  await readProductReleases({
+    analytics,
+    productId: saved.link.productId,
+    release: hints.release,
+    serviceTier: learnerTier,
+  });
+
+  const found = await findKnown(research);
+  return found?.link ?? saved.link;
 }
 
 /**
@@ -199,7 +209,7 @@ async function refreshReleases({
       analytics: research.analytics,
       productId: known.product.id,
       release: research.hints.release,
-      serviceTier: chooseServiceTier({ wait: "learner" }),
+      serviceTier: learnerTier,
     });
   }
 
@@ -209,63 +219,27 @@ async function refreshReleases({
 /** The product is known but not the release the learner named: search for that release alone. */
 async function researchNamedRelease({
   known,
+  release,
   research,
 }: {
   known: KnownProduct;
+  release: string;
   research: Research;
 }): Promise<GoalProductLink> {
-  const { analytics, hints, plan } = research;
-  const releaseKey = toNameKey(hints.release ?? "");
-
-  if (!(await claimOrWait(`product:${known.product.id}:${releaseKey}`))) {
+  if (!(await claimOrWait(`product:${known.product.id}:${toNameKey(release)}`))) {
     const joined = await findKnown(research);
     return joined?.link ?? known.link;
   }
 
-  const pages = await findProductPagesStep({
-    analytics,
-    hints,
-    knownWebsite: known.product.website,
-    officialDomains: plan.officialDomains,
+  const link = await readReleasePage({
+    analytics: research.analytics,
+    known,
+    language: research.plan.language,
+    release,
+    serviceTier: learnerTier,
   });
 
-  const [releasePage] = await storePages({
-    language: plan.language,
-    sites: known.sites,
-    urls: [pages.releaseUrl],
-  });
-
-  if (!releasePage) {
-    return known.link;
-  }
-
-  const reading = await readProductPagesStep({
-    analytics,
-    brandDomain: known.brand.domain,
-    hints: { ...hints, brand: known.brand.name, name: known.product.name },
-    known: true,
-    language: plan.language,
-    releasesPageIds: [releasePage.sourceId],
-    sourceIds: [releasePage.sourceId],
-  });
-
-  if (!reading.learnerRelease) {
-    return known.link;
-  }
-
-  const saved = await saveProductResearchStep({
-    learnerRelease: reading.learnerRelease,
-    research: {
-      brand: known.brand,
-      product: known.product,
-      provenance: reading.provenance,
-      releases: reading.releases,
-      releasesHash: null,
-      releasesSourceId: null,
-    },
-  });
-
-  return saved.link;
+  return link ?? known.link;
 }
 
 async function researchKnownProduct({
@@ -276,9 +250,10 @@ async function researchKnownProduct({
   research: Research;
 }): Promise<GoalProductLink> {
   const current = known.isFresh ? known : await refreshReleases({ known, research });
+  const { release } = research.hints;
 
-  return research.hints.release && !current.hasNamedRelease
-    ? researchNamedRelease({ known: current, research })
+  return release && !current.hasNamedRelease
+    ? researchNamedRelease({ known: current, release, research })
     : current.link;
 }
 
