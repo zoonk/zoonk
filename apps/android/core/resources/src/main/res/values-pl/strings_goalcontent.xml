@@ -3,6 +3,8 @@
 {
   "goalcontent_adjust_plan": "c7ef27a85a867a7656cee2052ec496e3e535125e33b1ab09cb307810b15b937c",
   "goalcontent_also": "31ddfe6b5b28dc1ee0ec51c52a7981608c92f40474d98b947377e8cd4aacc76e",
+  "goalcontent_also_in_exam_count": "9dbeb871cf82fbefb89916da19bd8ea7c0104c10cc441a2c901462e94594d155",
+  "goalcontent_also_in_exams": "06a7196e96cd2c422024c7d45b187129ce2f2f3fa40772d183951c27fe13285a",
   "goalcontent_also_in_plan": "6b9fbc6d6a09382b62a2e01bf4bb8d5bb0e1bac0eea61a5de4febda9998d52dd",
   "goalcontent_appears_a_lot": "878a004f7b98e067ba8f6ceec65ad0e1c57a730cb69433a0e97b649299bf295f",
   "goalcontent_beyond_guide": "311a3e5d5be9d693cce47e1aad5dec05318770797d40ad2905e2b145f7ff2839",
@@ -63,6 +65,9 @@
   "goalcontent_save_failed": "194e5f52f60f698a2fb1d1e25e1b8e132cc842adac3b48af8b0c44ddb8fde73b",
   "goalcontent_see_all": "ca8eefefce494fc1df1943a659e56d4faac532d686db681e6ab823c0b0d232fd",
   "goalcontent_share_of_exam": "335c7493dec17ac97922251983cedd865c0ef9c276ebc42d1bf4d0cb869651ff",
+  "goalcontent_shared_exams_counted": "d59d02a74effadb50d831e0f816b41a83db7e4531d1d7342d4772c79fd0ec7c7",
+  "goalcontent_shared_exams_named": "fb6f6c24d029ed005416a2ffb4307d5feec70e29468eec2549a92027fb1d8f86",
+  "goalcontent_shared_exams_practice": "f27a148e0ab3a6db029b3deb92dc65e980faa082e25ebb194b68be956457dc7c",
   "goalcontent_skill_count": "77aa033dccdfae0d8bc007508f038a84d9a41165545a3aee1524ea8f87c385dc",
   "goalcontent_skill_learning": "66a3bfe401f8a535809b9bfc7631d10d87a8aff11926ad1e29d7b1c36d2ce780",
   "goalcontent_skill_mastered": "fc4e5376165e392d28357f961c1386f58981b9aafbac1f0f2b8dd90a1a2b75f1",
@@ -194,6 +199,30 @@
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">%1$s (%2$s): większą wagę mają %3$s, więc twój plan przeznacza na nie więcej czasu. Źródło wag: %4$s.</string>
     <string name="goalcontent_course_weights_even">%1$s (%2$s): każda część egzaminu ma taką samą wagę. Źródło wag: %3$s.</string>
+    <!-- On one exam's plan. %1$s names the learner's other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_named">
+        <item quantity="one">Drugi egzamin: %1$s. Wspólnych tematów uczysz się tylko raz na oba egzaminy.</item>
+        <item quantity="few">Inne egzaminy: %1$s. Wspólnych tematów uczysz się tylko raz na wszystkie egzaminy, które je obejmują.</item>
+        <item quantity="many">Inne egzaminy: %1$s. Wspólnych tematów uczysz się tylko raz na wszystkie egzaminy, które je obejmują.</item>
+        <item quantity="other">Inne egzaminy: %1$s. Wspólnych tematów uczysz się tylko raz na wszystkie egzaminy, które je obejmują.</item>
+    </plurals>
+    <!-- On one exam's plan, when the learner has several other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_counted">
+        <item quantity="one">Tematów wspólnych z twoim %d innym egzaminem uczysz się tylko raz na oba egzaminy.</item>
+        <item quantity="few">Tematów wspólnych z twoimi %d innymi egzaminami uczysz się tylko raz na wszystkie egzaminy, które je obejmują.</item>
+        <item quantity="many">Tematów wspólnych z twoimi %d innymi egzaminami uczysz się tylko raz na wszystkie egzaminy, które je obejmują.</item>
+        <item quantity="other">Tematów wspólnych z twoimi %d innymi egzaminami uczysz się tylko raz na wszystkie egzaminy, które je obejmują.</item>
+    </plurals>
+    <string name="goalcontent_shared_exams_practice">Ćwiczenia są dopasowane do formy danego egzaminu.</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams named in %1$s also test. -->
+    <string name="goalcontent_also_in_exams">Także na egzaminach: %1$s</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams also test. -->
+    <plurals name="goalcontent_also_in_exam_count">
+        <item quantity="one">Także na %d egzaminie</item>
+        <item quantity="few">Także na %d egzaminach</item>
+        <item quantity="many">Także na %d egzaminach</item>
+        <item quantity="other">Także na %d egzaminach</item>
+    </plurals>
     <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
     <string name="goalcontent_subject">Przedmiot</string>
     <!-- Eyebrow of a subject's page for a module of the learner's plan. -->

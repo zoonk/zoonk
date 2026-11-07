@@ -3,6 +3,8 @@
 {
   "goalcontent_adjust_plan": "27cfee04b142e9d0aa205e7cb196b6f0f0e1e7da755c24f25ec9695fbcc78fb0",
   "goalcontent_also": "2276df5ea06bb4e11bae62e520ca9f850fcca20dbc0a4c84fa2205fa93aa0757",
+  "goalcontent_also_in_exam_count": "6b751e06462dc906d0d35ecd5ed9e2b972bc3959b0d7c05ceae73174a251df31",
+  "goalcontent_also_in_exams": "986a74d19b1565a522320a4d310562617095d31bc107a1c44b4efc5f405251fc",
   "goalcontent_also_in_plan": "5748c7f097de887df8715ec06886462cd98d52c99819aa255798b130147793b1",
   "goalcontent_appears_a_lot": "e3855987b967cbb6a5d57f96d0c717733a628909d1f2853def0ed2e91a502bb7",
   "goalcontent_beyond_guide": "2e1f9a4aede258f4be4b63933bf321925cd0f487cf37409e9f1ed6f334c2c708",
@@ -63,6 +65,9 @@
   "goalcontent_save_failed": "c23d4d6897a94d9998dcb7a686cd8e43ce56bf52649a36746db4fd0eaa27fe70",
   "goalcontent_see_all": "f66977bb279e0b54bdf3bcd2d7cf1422ea916f05be7c50e0f3b1cbc3c9000fc1",
   "goalcontent_share_of_exam": "4f126885aacf09cf9e33b1bde49b5a8ef6a6bb8e56307332c7ff0b325e4f2c6c",
+  "goalcontent_shared_exams_counted": "8990210bc034eae35fde4592acf070299efc4246476ff1e01f614e4db6016b59",
+  "goalcontent_shared_exams_named": "721a59465e170459b12d4e3c689719c2be0c77f9ac1d01b262a42fc7639b1828",
+  "goalcontent_shared_exams_practice": "4f11e967805f5141f1a09123698feb10f184898d4e4c8980571a3624cae8917e",
   "goalcontent_skill_count": "3751d21f25f97ec434f2316db71ee657d072c3d72ec4b60cdf2e2a53d236fb20",
   "goalcontent_skill_learning": "41b8011141c93167c8a4b97204076e45eb4f5a9d9e1e5f7e1f0f0372f9c339ba",
   "goalcontent_skill_mastered": "8e1eec9d6ea93ae4f6f629cb3eb49e1efdf20d2f35a7a76e3b86c7110ff7a088",
@@ -184,6 +189,27 @@
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">%1$s em %2$s vale %3$s mais, então seu plano dedica mais tempo a essa parte. Pesos de %4$s.</string>
     <string name="goalcontent_course_weights_even">%1$s em %2$s dá o mesmo peso a todas as partes da prova. Pesos de %3$s.</string>
+    <!-- On one exam's plan. %1$s names the learner's other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_named">
+        <item quantity="one">Os tópicos em comum com %1$s contam para as duas provas, então você estuda cada um só uma vez.</item>
+        <item quantity="many">Os tópicos em comum com %1$s contam para todas as provas em que caem, então você estuda cada um só uma vez.</item>
+        <item quantity="other">Os tópicos em comum com %1$s contam para todas as provas em que caem, então você estuda cada um só uma vez.</item>
+    </plurals>
+    <!-- On one exam's plan, when the learner has several other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_counted">
+        <item quantity="one">Os tópicos em comum com %d outra prova sua contam para as duas provas, então você estuda cada um só uma vez.</item>
+        <item quantity="many">Os tópicos em comum com %d outras provas suas contam para todas as provas em que caem, então você estuda cada um só uma vez.</item>
+        <item quantity="other">Os tópicos em comum com %d outras provas suas contam para todas as provas em que caem, então você estuda cada um só uma vez.</item>
+    </plurals>
+    <string name="goalcontent_shared_exams_practice">A prática segue o estilo de cada prova.</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams named in %1$s also test. -->
+    <string name="goalcontent_also_in_exams">Também em %1$s</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams also test. -->
+    <plurals name="goalcontent_also_in_exam_count">
+        <item quantity="one">Também em %d prova</item>
+        <item quantity="many">Também em %d provas</item>
+        <item quantity="other">Também em %d provas</item>
+    </plurals>
     <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
     <string name="goalcontent_subject">Matéria</string>
     <!-- Eyebrow of a subject's page for a module of the learner's plan. -->

@@ -74,6 +74,24 @@
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">%1$s at %2$s counts %3$s more, so your plan gives them more of your time. Weights from %4$s.</string>
     <string name="goalcontent_course_weights_even">%1$s at %2$s counts every part of the exam the same. Weights from %3$s.</string>
+    <!-- On one exam's plan. %1$s names the learner's other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_named">
+        <item quantity="one">Topics shared with %1$s count for both exams, so you study them once.</item>
+        <item quantity="other">Topics shared with %1$s count for every exam that has them, so you study them once.</item>
+    </plurals>
+    <!-- On one exam's plan, when the learner has several other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_counted">
+        <item quantity="one">Topics shared with your %d other exam count for both exams, so you study them once.</item>
+        <item quantity="other">Topics shared with your %d other exams count for every exam that has them, so you study them once.</item>
+    </plurals>
+    <string name="goalcontent_shared_exams_practice">Practice stays in each exam\'s style.</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams named in %1$s also test. -->
+    <string name="goalcontent_also_in_exams">Also in %1$s</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams also test. -->
+    <plurals name="goalcontent_also_in_exam_count">
+        <item quantity="one">Also in %d exam</item>
+        <item quantity="other">Also in %d exams</item>
+    </plurals>
 
     <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
     <string name="goalcontent_subject">Subject</string>

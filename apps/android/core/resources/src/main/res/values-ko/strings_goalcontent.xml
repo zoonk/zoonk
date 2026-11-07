@@ -3,6 +3,8 @@
 {
   "goalcontent_adjust_plan": "ad0b1bb190075f7d1cda4d199e8349a486315d6a97bfa207a71657f5e7423d4e",
   "goalcontent_also": "7b01d560e70d5f5df13c9aa948abc9dce9166d1b80fe27e77345ab81083f574e",
+  "goalcontent_also_in_exam_count": "b61d23f5380bef9380f52cec3694faeafa4e8bd5ed7d2c20c8a1e21457a87a8a",
+  "goalcontent_also_in_exams": "5413d76ed0c4e3fb9e8ac68b3c35d59b7d4706c033a649ab29be66270edfd508",
   "goalcontent_also_in_plan": "739ae6ae87bdf96ed4111772ff702191e0169667149fb7ee0d61756132a6a41c",
   "goalcontent_appears_a_lot": "861b0f67e4b7a203e088462941b93973191ac9a82aa1597a87a4e527f247ec9e",
   "goalcontent_beyond_guide": "93b3c08ab7bb9ab49200c0147257543da2b501332e5f724e55c447731428323f",
@@ -63,6 +65,9 @@
   "goalcontent_save_failed": "2bca953906ef41a23d8401bfd1ffee41f701d25e4ed95e86335673f2160be123",
   "goalcontent_see_all": "f82fb34c5e09975b70ebe76b83d1e75b21ce710f27929123abc688a5967ecfab",
   "goalcontent_share_of_exam": "266091dda0e1670e6b007271b99234fd8e1c905c9f20d42eda6204143c4e6b11",
+  "goalcontent_shared_exams_counted": "5acfdd534cddc6b2e7c4708ae1c86478815c149bdc71bb4ce900208b974f8c05",
+  "goalcontent_shared_exams_named": "aeab981258d0d3c831816b19c85590a131c7199d119862cf520c1b8f80586015",
+  "goalcontent_shared_exams_practice": "c09e62f6e6a06c18084ba3803dc3ef72740d870f0d9ffb3cafbdf885aa6ae6e0",
   "goalcontent_skill_count": "e231f43baefd7d5312ed285bff822b5e0ff371ca85fa5964ab44103fb002ea3d",
   "goalcontent_skill_learning": "09dc0e5f5585aa432453fa547a5bfe9aebae36e3476e846d454d54f09d70bce0",
   "goalcontent_skill_mastered": "0dc3eaaecfa0a53d8d33bb3dea34894034638125a493e5773f70fcca241f45f0",
@@ -164,6 +169,21 @@
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">%1$s 과정은 %2$s에서 %3$s에 더 높은 가중치를 두기 때문에 계획에서도 해당 영역에 시간을 더 배정해요. 가중치는 %4$s의 자료를 기준으로 해요.</string>
     <string name="goalcontent_course_weights_even">%1$s 과정은 %2$s에서 모든 시험 영역에 같은 가중치를 적용해요. 가중치는 %3$s의 자료를 기준으로 해요.</string>
+    <!-- On one exam's plan. %1$s names the learner's other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_named">
+        <item quantity="other">%1$s에서도 다루는 주제는 한 번만 공부해도 해당 주제가 포함된 모든 시험에 반영돼요.</item>
+    </plurals>
+    <!-- On one exam's plan, when the learner has several other exams that test some of the same topics. -->
+    <plurals name="goalcontent_shared_exams_counted">
+        <item quantity="other">다른 시험 %d개와 겹치는 주제는 한 번만 공부해도 해당 주제가 포함된 모든 시험에 반영돼요.</item>
+    </plurals>
+    <string name="goalcontent_shared_exams_practice">연습은 각 시험의 형식에 맞춰 진행돼요.</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams named in %1$s also test. -->
+    <string name="goalcontent_also_in_exams">%1$s에도 포함</string>
+    <!-- Marks a subject on one exam's plan that the learner's other exams also test. -->
+    <plurals name="goalcontent_also_in_exam_count">
+        <item quantity="other">다른 시험 %d개에도 포함</item>
+    </plurals>
     <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
     <string name="goalcontent_subject">과목</string>
     <!-- Eyebrow of a subject's page for a module of the learner's plan. -->

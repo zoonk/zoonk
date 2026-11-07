@@ -70,6 +70,7 @@ fun PlanSyllabusSection(
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
+                SharedExamsNote(syllabus.sharedExams, Modifier.padding(top = 8.dp))
                 Box(Modifier.padding(horizontal = PAGE_PADDING)) { note() }
             } else {
                 SectionHeader(stringResource(R.string.goalcontent_modules), Modifier.padding(horizontal = PAGE_PADDING)) {
@@ -86,7 +87,13 @@ fun PlanSyllabusSection(
                 if (name != null) SectionLabel(name, Modifier.padding(start = PAGE_PADDING, end = PAGE_PADDING, top = 16.dp, bottom = 4.dp))
                 group.subjects.forEachIndexed { index, subject ->
                     if (index > 0) HorizontalDivider()
-                    SubjectRow(subject, layout, barWidth, onClick = { onOpenSubject(subject.key) })
+                    SubjectRow(
+                        subject = subject,
+                        alsoIn = alsoInLine(syllabus.sharedExams, subject.sharedWith),
+                        layout = layout,
+                        barWidth = barWidth,
+                        onClick = { onOpenSubject(subject.key) },
+                    )
                 }
             }
 
@@ -101,6 +108,7 @@ private enum class RowLayout { Stacked, BarBeside, WithQuestions }
 @Composable
 private fun SubjectRow(
     subject: SyllabusSubject,
+    alsoIn: String?,
     layout: RowLayout,
     barWidth: Dp,
     onClick: () -> Unit,
@@ -111,14 +119,19 @@ private fun SubjectRow(
     val locale = currentLocale()
     val questions = subject.questions?.takeIf { it > 0 }?.toInt()
 
+    // Beside a bar the name keeps to one line, but the exams it's also in always show whole.
     val name: @Composable (Modifier) -> Unit = { nameModifier ->
-        Text(
-            text = subject.name,
-            modifier = nameModifier,
-            color = if (notPlanned) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-            maxLines = if (layout == RowLayout.Stacked) Int.MAX_VALUE else 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        Column(nameModifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(
+                text = subject.name,
+                color = if (notPlanned) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+                maxLines = if (layout == RowLayout.Stacked) Int.MAX_VALUE else 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            if (alsoIn != null) {
+                Text(alsoIn, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+            }
+        }
     }
     val progress: @Composable (Modifier) -> Unit = { progressModifier ->
         if (bar != null) {
