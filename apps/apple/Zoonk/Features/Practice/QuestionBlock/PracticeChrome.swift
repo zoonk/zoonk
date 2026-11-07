@@ -203,27 +203,24 @@ extension View {
   }
 }
 
+/// A task's main action. Every label it shows carries its icon, so the bar keeps one shape from
+/// screen to screen. While busy it ignores `isDisabled`: the button that sent the request keeps its
+/// look and its focus.
 struct PracticeMainButton: View {
   let title: LocalizedStringResource
-  var systemImage: String?
+  let icon: ActionIcon
   var isBusy = false
   var isDisabled = false
   let action: () -> Void
 
   var body: some View {
-    BusyButton(isBusy: isBusy, action: action) {
-      HStack(spacing: 8) {
-        if let systemImage {
-          Image(systemName: systemImage)
-            .accessibilityHidden(true)
-        }
-        Text(title)
-      }
-      .frame(maxWidth: .infinity)
+    BusyButton(isBusy: isBusy, icon: icon, action: action) {
+      Text(title)
     }
     .buttonStyle(.mainAction)
     .controlSize(.large)
-    .disabled(isDisabled)
+    .buttonSizing(.flexible)
+    .disabled(isDisabled && !isBusy)
     .keyboardShortcut(.defaultAction)
   }
 }
@@ -302,32 +299,22 @@ struct PracticeSecondaryButton: View {
   @Environment(\.practiceActionsSideBySide) private var sideBySide
 
   let title: LocalizedStringResource
-  var systemImage: String?
+  let icon: ActionIcon
   var isBusy = false
   var isDisabled = false
   let action: () -> Void
 
   var body: some View {
-    BusyButton(isBusy: isBusy, action: action) {
-      Group {
-        if let systemImage {
-          Label {
-            Text(title)
-          } icon: {
-            Image(systemName: systemImage)
-          }
-        } else {
-          Text(title)
-        }
-      }
-      .frame(maxWidth: sideBySide ? nil : .infinity)
+    BusyButton(isBusy: isBusy, icon: icon, action: action) {
+      Text(title)
     }
     // Beside the main action it keeps its own width, so its label stays on one line; the row
     // stacks instead when that doesn't fit.
     .fixedSize(horizontal: sideBySide, vertical: false)
     .buttonStyle(.outline)
     .controlSize(.large)
-    .disabled(isDisabled)
+    .buttonSizing(sideBySide ? .fitted : .flexible)
+    .disabled(isDisabled && !isBusy)
   }
 }
 

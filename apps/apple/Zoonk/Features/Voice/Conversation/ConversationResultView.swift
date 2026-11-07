@@ -61,7 +61,7 @@ struct ConversationResultView: View {
         if isWritingAgain {
           writingAgain
         } else if let input = againInput {
-          BusyButton(isBusy: isStartingAgain) {
+          BusyButton(isBusy: isStartingAgain, icon: .retry) {
             again = Task { await startAgain(input) }
           } label: {
             if conversation.kind == .speakingMock {

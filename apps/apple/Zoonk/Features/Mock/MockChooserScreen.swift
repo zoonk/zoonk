@@ -340,12 +340,13 @@ private struct MockChooser: View {
   private var startAction: some View {
     Group {
       if isOpen {
-        BusyButton(isBusy: busy) {
+        BusyButton(isBusy: busy, icon: .play) {
           Task { await start() }
         } label: {
-          startLabel.frame(maxWidth: .infinity)
+          startLabel
         }
         .buttonStyle(.mainAction)
+        .buttonSizing(.flexible)
         .disabled(!placement && pickedOption == nil)
         .keyboardShortcut(.defaultAction)
       } else {

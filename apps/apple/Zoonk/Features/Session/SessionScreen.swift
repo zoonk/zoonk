@@ -330,14 +330,14 @@ private struct NextStopView: View {
             .accessibilityFocused($isStartFocused)
         }
 
-        BusyButton(isBusy: isStopping) {
+        BusyButton(isBusy: isStopping, icon: .stop) {
           stop()
         } label: {
           Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
-            .frame(maxWidth: .infinity)
         }
         .buttonStyle(.outline)
         .controlSize(.large)
+        .buttonSizing(.flexible)
         .disabled(isOpening)
 
         if failed {
@@ -463,14 +463,14 @@ private struct NextStopView: View {
   }
 
   private func mainButton(_ title: Text, block: StudyBlock) -> some View {
-    BusyButton(isBusy: isOpening) {
+    BusyButton(isBusy: isOpening, icon: .play) {
       open(block)
     } label: {
       title
-        .frame(maxWidth: .infinity)
     }
     .buttonStyle(.mainAction)
     .controlSize(.large)
+    .buttonSizing(.flexible)
     .disabled(isStopping)
   }
 

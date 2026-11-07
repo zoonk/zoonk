@@ -278,16 +278,14 @@ private struct RevealNoticeDay: View {
         Section {
           planNoticeDayText(noticeDay, document: plan.examDocument)
 
-          Button {
+          BusyButton(isBusy: isSaving, isRow: true) {
             use(noticeDay.date)
           } label: {
             Text("Use this date", tableName: "Plan", comment: "Takes the notice's day as the date")
-              .spinnerAtEndWhenSlow(isSaving)
           }
 
           failure
         }
-        .disabled(isSaving)
       } else if let noSitting = schedule.noSitting, let month = studyDate(noSitting.month) {
         Section {
           Text(
@@ -560,13 +558,11 @@ private struct PlanReveal: View {
 
     Section {
       VStack(spacing: 12) {
-        BusyButton(isBusy: openingToday != nil, action: openToday) {
-          Text(
-            "Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day"
-          )
-          .frame(maxWidth: .infinity)
+        BusyButton(isBusy: openingToday != nil, icon: .play, action: openToday) {
+          Text("Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day")
         }
         .buttonStyle(.mainAction)
+        .buttonSizing(.flexible)
         .keyboardShortcut(.defaultAction)
 
         Button {

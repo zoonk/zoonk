@@ -1,75 +1,121 @@
 import SwiftUI
 
-extension Duration {
-  /// Main's `SLOW_MS`: a wait this long is slow, so it starts to show.
-  static let slowWait = Duration.milliseconds(1_500)
-}
-
-/// A button whose action is running: from the tap it ignores taps and looks disabled, and once the wait
-/// is slow a spinner covers its label. The label keeps its place, so the button never changes size, a
-/// quick action never blinks, and VoiceOver still reads it. A list row keeps its content instead: it's a
-/// plain `Button`, disabled while busy, whose mark or end shows the spinner.
-struct BusyButton<Label: View>: View {
+/// A button whose action is running. From the tap a spinner takes its icon's place, or a list row's
+/// end, or covers its label when it has neither; the label stays, so the button never changes size
+/// and VoiceOver still reads it. It keeps its look and its focus, and ignores taps until the work
+/// ends, so it isn't `disabled`: that would gray it and take it out of keyboard focus. A row whose
+/// mark or time shows the spinner places it itself with `coveredBySpinner`.
+struct BusyButton<Title: View>: View {
   let isBusy: Bool
   var role: ButtonRole?
+  var icon: ActionIcon?
+  /// A list row's button, whose words keep the whole row.
+  var isRow = false
   let action: () -> Void
-  @ViewBuilder let label: Label
+  @ViewBuilder let label: Title
 
   var body: some View {
-    Button(role: role, action: action) {
-      label.coveredBySpinnerWhenSlow(isBusy)
+    Button(role: role) {
+      if !isBusy {
+        action()
+      }
+    } label: {
+      if let icon, icon.trails {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+          label
+          image(icon)
+        }
+      } else if let icon {
+        Label {
+          label
+        } icon: {
+          image(icon)
+        }
+      } else if isRow {
+        label.spinnerAtEnd(isBusy)
+      } else {
+        label.coveredBySpinner(isBusy)
+      }
     }
-    .disabled(isBusy)
+    .environment(\.isBusy, isBusy)
+    .accessibilityBusy(isBusy)
   }
+
+  private func image(_ icon: ActionIcon) -> some View {
+    Image(systemName: icon.rawValue)
+      .accessibilityHidden(true)
+      .coveredBySpinner(isBusy)
+  }
+}
+
+/// What a button's press does, as one symbol per idea, the same idea main and Android show. Each
+/// leads its label except `forward`, which trails it, and a busy button's spinner takes its place.
+enum ActionIcon: String {
+  case addLessons = "text.badge.plus"
+  case back = "arrow.backward"
+  case call = "phone.fill"
+  case certificate = "rosette"
+  /// Commits what the learner entered or picked: check, confirm, save, apply.
+  case check = "checkmark"
+  case create = "plus"
+  case dismiss = "xmark"
+  case download = "square.and.arrow.down"
+  case explain = "lightbulb"
+  /// Next, continue, see the result: it moves on.
+  case forward = "arrow.forward"
+  case notSure = "questionmark.circle"
+  case notify = "bell"
+  /// Starts or resumes something: a session, a lesson, a test, a mock, a task.
+  case play = "play.fill"
+  case print = "printer"
+  case retry = "arrow.clockwise"
+  case reveal = "eye"
+  case send = "paperplane"
+  case setDate = "calendar.badge.checkmark"
+  case skip = "forward.end"
+  case stop = "stop.circle"
+  case undo = "arrow.uturn.backward"
+
+  var trails: Bool { self == .forward }
+}
+
+extension EnvironmentValues {
+  /// A `BusyButton`'s action is running: a press does nothing, and its style shows neither the press
+  /// nor a disabled look.
+  @Entry var isBusy = false
 }
 
 extension View {
-  /// Once `isBusy` has lasted `Duration.slowWait`, a small spinner covers this view, which keeps its place
-  /// and stays readable to VoiceOver. It goes the moment the work ends.
-  func coveredBySpinnerWhenSlow(_ isBusy: Bool, alignment: Alignment = .center) -> some View {
-    SlowWait(isBusy: isBusy) { isSlow in
-      self.opacity(isSlow ? 0 : 1)
-        .overlay(alignment: alignment) {
-          if isSlow {
-            BusySpinner()
-          }
-        }
-        // Accessibility leaves out what has no opacity, which would leave a busy button nameless.
-        .accessibilityRepresentation { self }
-    }
+  /// A busy button isn't disabled, so this is how VoiceOver says a press does nothing for now.
+  func accessibilityBusy(_ isBusy: Bool) -> some View {
+    accessibilityValue(
+      Text(
+        "In progress", tableName: "DesignSystem",
+        comment: "VoiceOver's word for a button whose action is running and ignores presses"),
+      isEnabled: isBusy)
   }
 
-  /// For a row with nothing at its end: once `isBusy` has lasted `Duration.slowWait`, a small spinner shows
-  /// at the row's trailing edge, over the row's own space, so the row keeps its size.
-  func spinnerAtEndWhenSlow(_ isBusy: Bool) -> some View {
-    SlowWait(isBusy: isBusy) { isSlow in
-      self.frame(maxWidth: .infinity, alignment: .leading)
-        .overlay(alignment: .trailing) {
-          if isSlow {
-            BusySpinner()
-          }
+  /// While `isBusy`, a small spinner covers this view, which keeps its place and stays readable to
+  /// VoiceOver.
+  func coveredBySpinner(_ isBusy: Bool, alignment: Alignment = .center) -> some View {
+    opacity(isBusy ? 0 : 1)
+      // Accessibility leaves out what has no opacity, which would leave a busy button nameless.
+      .accessibilityRepresentation { self }
+      .overlay(alignment: alignment) {
+        if isBusy {
+          BusySpinner()
         }
-    }
+      }
   }
-}
 
-/// Whether the wait `isBusy` started has lasted `Duration.slowWait`; false again the moment it ends.
-private struct SlowWait<Content: View>: View {
-  let isBusy: Bool
-  @ViewBuilder let content: (_ isSlow: Bool) -> Content
-
-  @State private var hasLasted = false
-
-  var body: some View {
-    content(isBusy && hasLasted)
-      .task(id: isBusy) {
-        hasLasted = false
-
-        guard isBusy, (try? await Task.sleep(for: .slowWait)) != nil else {
-          return
+  /// For a row with nothing at its end: while `isBusy`, a small spinner shows at the row's trailing
+  /// edge, over the row's own space, so the row keeps its size.
+  func spinnerAtEnd(_ isBusy: Bool) -> some View {
+    frame(maxWidth: .infinity, alignment: .leading)
+      .overlay(alignment: .trailing) {
+        if isBusy {
+          BusySpinner()
         }
-
-        hasLasted = true
       }
   }
 }

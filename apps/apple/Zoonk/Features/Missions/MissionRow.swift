@@ -229,11 +229,12 @@ struct MissionRow: View {
         ? Text("Done", tableName: "Today", comment: "A mission that's done") : Text(""))
 
     if let open, opensSomewhere {
+      // Its caller ignores a second tap while it opens, so it keeps its look.
       Button(action: open) {
         row
       }
       .tint(.primary)
-      .disabled(isBusy)
+      .accessibilityBusy(isBusy)
     } else {
       row
     }
@@ -277,7 +278,7 @@ struct MissionRow: View {
 
     if opensSomewhere {
       DisclosureChevron()
-        .coveredBySpinnerWhenSlow(isBusy, alignment: .trailing)
+        .coveredBySpinner(isBusy, alignment: .trailing)
     }
   }
 

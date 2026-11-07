@@ -386,6 +386,7 @@ private struct LevelTestIntro: View {
       StepButtons(
         canContinue: !isSaving, canSkip: !isStarting,
         continueLabel: Text("Start", tableName: "Onboarding", comment: "Starts the level test"),
+        continueIcon: .play,
         skipLabel: Text(
           "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test"),
         isSkipping: isSaving, onContinue: onStart, onSkip: onSkip)

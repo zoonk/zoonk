@@ -164,9 +164,7 @@ struct TodayDayView: View {
       disclosures: $disclosures, open: open, showsAction: showsAction, prepare: prepareLessons)
 
     if !view.upNextLessons.isEmpty {
-      TodayUpNextSection(
-        view: view, isBusy: busy == .keepLearning, failed: failed == .keepLearning
-      ) {
+      TodayUpNextSection(view: view, busy: busy, failed: failed == .keepLearning) {
         run(.keepLearning) { await store.addExtraTime(in: view) }
       }
     }

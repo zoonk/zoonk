@@ -140,15 +140,14 @@ struct PlanLinkScreen: View {
       }
 
       Section {
-        BusyButton(isBusy: isStarting, action: start) {
+        BusyButton(isBusy: isStarting, icon: .forward, action: start) {
           Text(
             "Start from this plan", tableName: "PlanLink",
-            comment: "Starts the learner's own plan from a shared one"
-          )
-          .frame(maxWidth: .infinity)
+            comment: "Starts the learner's own plan from a shared one")
         }
         .buttonStyle(.mainAction)
         .controlSize(.large)
+        .buttonSizing(.flexible)
         .listRowInsets(.vertical, 0)
         .listRowBackground(Color.clear)
       }

@@ -30,7 +30,6 @@ struct PreviewedPlanChange<Control: View>: View {
     control(isPreviewing) {
       Task { await ask() }
     }
-    .disabled(isPreviewing)
     .task {
       if asksOnAppear && !hasAsked {
         hasAsked = true

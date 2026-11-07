@@ -184,7 +184,8 @@ struct MistakePracticeScreen: View {
       PracticeMainButton(
         title: LocalizedStringResource(
           "Start the questions", table: "Practice",
-          comment: "Starts a content-gap drill's questions after its idea.")
+          comment: "Starts a content-gap drill's questions after its idea."),
+        icon: .play
       ) {
         shownAt = .now
         state.start()
@@ -194,7 +195,7 @@ struct MistakePracticeScreen: View {
         title: LocalizedStringResource(
           "I've read it. Show the answers", table: "Practice",
           comment: "Shows a misread drill's answers once the question was read."),
-        systemImage: "eye"
+        icon: .reveal
       ) {
         if focuses.has(.reveal) { focuses.move(to: .answer) }
         state.reveal()
@@ -204,7 +205,8 @@ struct MistakePracticeScreen: View {
       PracticeActionRow {
         PracticeMainButton(
           title: LocalizedStringResource(
-            "Continue", table: "Practice", comment: "Moves on after a grade.")
+            "Continue", table: "Practice", comment: "Moves on after a grade."),
+          icon: .forward
         ) {
           next()
         }
@@ -225,9 +227,7 @@ struct MistakePracticeScreen: View {
             : LocalizedStringResource(
               "I don't know yet", table: "Practice", comment: "Answers a question as not known yet."
             ),
-          // As on main, only "I'm not sure" carries the question mark; "I don't know yet" is words.
-          systemImage: step.entry.drill.kind == .noGuessing ? "questionmark.circle" : nil,
-          isBusy: checking == .notSure,
+          icon: .notSure, isBusy: checking == .notSure,
           isDisabled: !state.acceptsAnswer
         ) {
           press(.notSure)
@@ -238,7 +238,7 @@ struct MistakePracticeScreen: View {
         PracticeMainButton(
           title: LocalizedStringResource(
             "Check", table: "Practice", comment: "Sends the answer to be graded."),
-          isBusy: checking?.pressesCheck == true,
+          icon: .check, isBusy: checking?.pressesCheck == true,
           isDisabled: !state.acceptsAnswer || draft?.complete == nil
         ) {
           if let answer = draft?.complete {
@@ -459,7 +459,8 @@ private struct PracticeDoneView: View {
     } actions: {
       PracticeMainButton(
         title: LocalizedStringResource(
-          "Back", table: "Practice", comment: "Leaves a finished run."), action: close)
+          "Back", table: "Practice", comment: "Leaves a finished run."), icon: .back,
+        action: close)
     }
   }
 

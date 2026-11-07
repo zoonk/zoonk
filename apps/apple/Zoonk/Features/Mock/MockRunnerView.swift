@@ -176,7 +176,7 @@ struct MockRunnerView: View {
   }
 
   private var nextButton: some View {
-    BusyButton(isBusy: run.busy == .submit) {
+    BusyButton(isBusy: run.busy == .submit, icon: isLastQuestion ? .send : .forward) {
       if isLastQuestion {
         confirmsHandIn = true
       } else {
@@ -193,7 +193,7 @@ struct MockRunnerView: View {
     }
     .buttonStyle(.mainAction)
     .controlSize(.large)
-    .disabled(run.pending || !run.moves.canAdvance)
+    .disabled(run.busy != .submit && (run.pending || !run.moves.canAdvance))
     .keyboardShortcut(isLastQuestion ? nil : .defaultAction)
   }
 
@@ -600,13 +600,16 @@ private struct MockAnswerSheet: View {
       }
     }
     .safeAreaBar(edge: .bottom) {
-      BusyButton(isBusy: run.busy == .submit, action: onHandIn) {
+      BusyButton(isBusy: run.busy == .submit, icon: .send, action: onHandIn) {
         Text("Hand in", tableName: "Mock", comment: "Hands in from the answer sheet")
-          .frame(maxWidth: .infinity)
       }
       .buttonStyle(.outline)
       .controlSize(.large)
-      .disabled(run.pending || !run.moves.canAdvance && run.position == run.questions.count - 1)
+      .buttonSizing(.flexible)
+      .disabled(
+        run.busy != .submit
+          && (run.pending || !run.moves.canAdvance && run.position == run.questions.count - 1)
+      )
       .scenePadding(.horizontal)
       .padding(.vertical, 10)
     }

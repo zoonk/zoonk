@@ -91,7 +91,8 @@ struct PatternScreen: View {
             title: LocalizedStringResource(
               "Practice this\u{00A0}· \(Duration.seconds(180).formatted(.units(allowed: [.minutes], width: .abbreviated)))",
               table: "Practice",
-              comment: "Starts a mistake pattern's drill, with how long it takes.")
+              comment: "Starts a mistake pattern's drill, with how long it takes."),
+            icon: .play
           ) {
             step = .question(0)
           }
@@ -166,7 +167,7 @@ struct PatternScreen: View {
               comment: "Ends a pattern drill to see its result.")
             : LocalizedStringResource(
               "Continue", table: "Practice", comment: "Moves on after a grade."),
-          isBusy: isSaving
+          icon: .forward, isBusy: isSaving
         ) {
           if isLast {
             Task { await save(pattern) }
@@ -180,7 +181,7 @@ struct PatternScreen: View {
         PracticeMainButton(
           title: LocalizedStringResource(
             "Check", table: "Practice", comment: "Sends the answer to be graded."),
-          isDisabled: draft == nil
+          icon: .check, isDisabled: draft == nil
         ) {
           guard case .choice(let picked) = draft else { return }
           checked = picked
@@ -236,7 +237,8 @@ struct PatternScreen: View {
   private var doneButton: some View {
     PracticeMainButton(
       title: LocalizedStringResource(
-        "Done", table: "Practice", comment: "Leaves a finished screen.")
+        "Done", table: "Practice", comment: "Leaves a finished screen."),
+      icon: .check
     ) {
       dismiss()
     }

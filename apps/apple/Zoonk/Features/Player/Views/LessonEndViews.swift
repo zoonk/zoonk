@@ -813,7 +813,7 @@ struct LessonGuestGateView: View {
       Text(outline.description)
     } actions: {
       if let start = guestStart.start {
-        BusyButton(isBusy: isStarting) {
+        BusyButton(isBusy: isStarting, icon: .play) {
           isStarting = true
           startFailed = false
           starting = Task {

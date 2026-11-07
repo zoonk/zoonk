@@ -225,16 +225,12 @@ private struct LessonExplainAnswerView: View {
       }
     } else {
       VStack(alignment: .leading, spacing: 8) {
-        BusyButton(isBusy: state == .loading) {
+        BusyButton(isBusy: state == .loading, icon: .explain) {
           Task { await store.explainAnswer() }
         } label: {
-          Label {
-            Text(
-              "Explain my answer", tableName: "Player",
-              comment: "Asks why a typed answer is wrong")
-          } icon: {
-            Image(systemName: "lightbulb")
-          }
+          Text(
+            "Explain my answer", tableName: "Player",
+            comment: "Asks why a typed answer is wrong")
         }
         .buttonStyle(.outline)
 

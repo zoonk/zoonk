@@ -131,13 +131,13 @@ private struct FeedbackForm: View {
           }
 
           ToolbarItem(placement: .confirmationAction) {
-            BusyButton(isBusy: store.state == .submitting, action: submit) {
+            BusyButton(isBusy: store.state == .submitting, icon: .send, action: submit) {
               Text(
                 "Send",
                 tableName: "Feedback",
                 comment: "Submits the feedback form.")
             }
-            .disabled(!store.canSubmit)
+            .disabled(!store.canSubmit && store.state != .submitting)
           }
         }
       }

@@ -185,9 +185,11 @@ struct PlacementStep: View {
         canSkip: !isSaving,
         continueLabel: Text(
           "Continue the mock exam", tableName: "Mock", comment: "A running placement mock"),
+        continueIcon: .play,
         skipLabel: Text(
           "Stop and see my plan", tableName: "Onboarding",
           comment: "Stops a placement mock; its answers set the starting point"),
+        skipIcon: .stop,
         onContinue: { router.open(.mock(blockId: mockID)) },
         onSkip: { stopMock(mockID) })
     }
@@ -238,6 +240,7 @@ struct PlacementStep: View {
       StepButtons(
         continueLabel: Text(
           "Start", tableName: "Onboarding", comment: "Starts placement's questions"),
+        continueIcon: .play,
         skipLabel: Text(
           "Skip and start from the basics", tableName: "Onboarding",
           comment: "Skips placement; the plan starts at the beginning"),
@@ -591,7 +594,7 @@ struct PlacementQuestionScreen<Media: View>: View {
       PracticeMainButton(
         title: LocalizedStringResource(
           "Confirm", table: "Onboarding", comment: "Sends a placement answer"),
-        isBusy: isSaving, isDisabled: draft?.complete == nil || isSaving
+        icon: .check, isBusy: isSaving, isDisabled: draft?.complete == nil
       ) {
         if let answer = draft?.complete {
           onAnswer(answer)
@@ -599,7 +602,7 @@ struct PlacementQuestionScreen<Media: View>: View {
       }
 
       PracticeSecondaryButton(
-        title: dontKnowLabel, systemImage: "questionmark.circle", isDisabled: isSaving
+        title: dontKnowLabel, icon: .notSure, isDisabled: isSaving
       ) {
         onAnswer(.dontKnow)
       }

@@ -628,7 +628,7 @@ private struct SubjectNotPlannedNotice: View {
       .foregroundStyle(.mutedForeground)
 
       if reason == "skipped" {
-        BusyButton(isBusy: isRestoring) {
+        BusyButton(isBusy: isRestoring, icon: .addLessons) {
           Task { await restore() }
         } label: {
           Text(

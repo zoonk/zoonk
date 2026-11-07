@@ -203,7 +203,7 @@ private struct EssayContent: View {
       }
 
       if writer.isWriting {
-        BusyButton(isBusy: writer.status == .grading) {
+        BusyButton(isBusy: writer.status == .grading, icon: .send) {
           Task { await writer.send() }
         } label: {
           if essay.drafts.isEmpty {
@@ -214,7 +214,7 @@ private struct EssayContent: View {
         }
         .buttonStyle(.mainAction)
         .controlSize(.large)
-        .disabled(!canSend)
+        .disabled(!canSend && writer.status != .grading)
       } else {
         Button {
           writer.writing = true

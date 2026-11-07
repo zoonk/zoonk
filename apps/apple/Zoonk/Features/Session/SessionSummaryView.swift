@@ -367,11 +367,12 @@ struct SessionSummaryView: View {
         sharesLine: sharesLine)
     }
     .buttonStyle(.outline)
+    .buttonSizing(sharesLine ? .flexible : .automatic)
     .disabled(isBusy)
   }
 
   private func keepGoingButton(_ next: StudyBlock, sharesLine: Bool) -> some View {
-    BusyButton(isBusy: isBusy) {
+    BusyButton(isBusy: isBusy, icon: .play) {
       keepGoing(next)
     } label: {
       choiceLabel(
@@ -379,37 +380,35 @@ struct SessionSummaryView: View {
         sharesLine: sharesLine)
     }
     .buttonStyle(.outline)
+    .buttonSizing(sharesLine ? .flexible : .automatic)
   }
 
-  /// Main's `SHARED_ROW_ACTION_CLASS`: the two split a shared line evenly, and neither cuts its label
-  /// short.
+  /// Main's `SHARED_ROW_ACTION_CLASS`: the two split a shared line evenly (as flexible buttons), and
+  /// neither cuts its label short.
   @ViewBuilder
   private func choiceLabel(_ label: Text, sharesLine: Bool) -> some View {
     if sharesLine {
       label
         .fixedSize()
-        .frame(maxWidth: .infinity)
     } else {
       label
     }
   }
 
   private func extraTimeButton(_ extraTime: StudyDay.ExtraTime) -> some View {
-    BusyButton(isBusy: isBusy) {
+    BusyButton(isBusy: isBusy, icon: .play) {
       keepLearning()
     } label: {
-      Group {
-        if extraTime.lessons.isEmpty {
-          Text(
-            "Study \(extraTime.minutes) more minutes", tableName: "Session",
-            comment: "Adds practice once the day is done")
-        } else {
-          Text("Keep learning", tableName: "Session", comment: "Adds the next lessons")
-        }
+      if extraTime.lessons.isEmpty {
+        Text(
+          "Study \(extraTime.minutes) more minutes", tableName: "Session",
+          comment: "Adds practice once the day is done")
+      } else {
+        Text("Keep learning", tableName: "Session", comment: "Adds the next lessons")
       }
-      .frame(maxWidth: .infinity)
     }
     .buttonStyle(.ghost)
+    .buttonSizing(.flexible)
   }
 
   private func failure(_ message: LocalizedStringResource) -> some View {

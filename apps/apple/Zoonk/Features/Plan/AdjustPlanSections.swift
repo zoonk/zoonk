@@ -599,7 +599,7 @@ private struct PlanToolChoiceSheet: View {
         }
 
         ToolbarItem(placement: .confirmationAction) {
-          BusyButton(isBusy: editor.isSaving, role: .confirm) {
+          BusyButton(isBusy: editor.isSaving, role: .confirm, icon: .check) {
             saving = Task {
               if await save() {
                 dismiss()

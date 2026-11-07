@@ -104,7 +104,7 @@ struct GradedAtEndRun: View {
             title: LocalizedStringResource(
               "I don't know yet", table: "Practice", comment: "Answers a question as not known yet."
             ),
-            isBusy: isPending && sentBy == .notSure,
+            icon: .notSure, isBusy: isPending && sentBy == .notSure,
             isDisabled: locked
           ) { answer(.dontKnow, by: .notSure, total: total) }
 
@@ -114,7 +114,7 @@ struct GradedAtEndRun: View {
                 "Finish", table: "Practice", comment: "Sends a test's answers to be graded.")
               : LocalizedStringResource(
                 "Next", table: "Practice", comment: "Moves to a test's next question."),
-            isBusy: isPending && sentBy == .check,
+            icon: .forward, isBusy: isPending && sentBy == .check,
             isDisabled: draft?.complete == nil || locked
           ) {
             if let picked = draft?.complete { answer(picked, by: .check, total: total) }
@@ -128,7 +128,7 @@ struct GradedAtEndRun: View {
         PracticeMainButton(
           title: LocalizedStringResource(
             "Finish", table: "Practice", comment: "Sends a test's answers to be graded."),
-          isBusy: isPending
+          icon: .forward, isBusy: isPending
         ) { onFinish(answers) }
       } else if upcomingEnded, !failed {
         if let upcomingLimit {
@@ -140,7 +140,7 @@ struct GradedAtEndRun: View {
           title: LocalizedStringResource(
             "Finish with these answers", table: "Practice",
             comment: "Finishes a test whose writing stopped short."),
-          isBusy: isPending
+          icon: .forward, isBusy: isPending
         ) { onFinish(answers) }
       }
     }
@@ -310,7 +310,8 @@ struct PracticeQuestionsPreparingView: View {
         PracticeMainButton(
           title: LocalizedStringResource(
             "See Plus", table: "Practice",
-            comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\".")
+            comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\"."),
+          icon: .forward
         ) {
           hooks.navigate(.subscription)
         }
@@ -327,7 +328,7 @@ struct PracticeQuestionsPreparingView: View {
             title: LocalizedStringResource(
               "Start the test", table: "Practice",
               comment: "Asks for a test's questions and starts it."),
-            isBusy: isStarting, action: start
+            icon: .play, isBusy: isStarting, action: start
           )
           .accessibilityFocused($focus, equals: .start)
         }

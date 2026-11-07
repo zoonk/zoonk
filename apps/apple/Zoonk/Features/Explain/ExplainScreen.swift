@@ -136,8 +136,10 @@ private struct ExplanationView: View {
           StepButtons(
             continueLabel: Text(
               "Done", tableName: "Explain", comment: "Leaves a quick explanation"),
+            continueIcon: .check,
             skipLabel: Text(
               "Read it again", tableName: "Explain", comment: "Plays a quick explanation again"),
+            skipIcon: nil,
             onContinue: done
           ) {
             router.open(.lesson(lessonId: lesson.id))
@@ -145,7 +147,8 @@ private struct ExplanationView: View {
         } else {
           StepButtons(
             continueLabel: Text(
-              "See explanation", tableName: "Explain", comment: "Plays a written quick explanation")
+              "See explanation", tableName: "Explain", comment: "Plays a written quick explanation"),
+            continueIcon: .play
           ) {
             hasPlayed = true
             router.open(.lesson(lessonId: lesson.id))

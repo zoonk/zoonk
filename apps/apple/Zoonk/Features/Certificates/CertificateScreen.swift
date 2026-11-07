@@ -162,13 +162,9 @@ private struct CertificateDetail: View {
 
         // Not a `ButtonRow`, whose buttons take their own width side by side: these share it.
         AccessibilityStack(spacing: 8) {
-          BusyButton(isBusy: printing != nil, action: printCertificate) {
-            Label {
-              Text("Print", tableName: "Certificates", comment: "Prints a certificate")
-            } icon: {
-              Image(systemName: "printer")
-            }
-            .background { PrintAnchorView(anchor: printAnchor) }
+          BusyButton(isBusy: printing != nil, icon: .print, action: printCertificate) {
+            Text("Print", tableName: "Certificates", comment: "Prints a certificate")
+              .background { PrintAnchorView(anchor: printAnchor) }
           }
           .disabled(!picturesAreCurrent)
 

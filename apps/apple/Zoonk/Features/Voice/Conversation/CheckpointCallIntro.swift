@@ -96,26 +96,20 @@ struct CheckpointCallIntro: View {
         .typeStyle(.body)
       }
 
-      BusyButton(isBusy: isStarting) {
+      BusyButton(isBusy: isStarting, icon: .call) {
         starting = Task { await start(writesFirst: writesFirst) }
       } label: {
         if writesFirst {
           Text(
             "Get the call ready", tableName: "Voice",
-            comment: "Writes a checkpoint's call, then opens it"
-          )
-          .frame(maxWidth: .infinity)
+            comment: "Writes a checkpoint's call, then opens it")
         } else {
-          Label {
-            CallButtonTitle(callee: callee)
-          } icon: {
-            Image(systemName: "phone.fill")
-          }
-          .frame(maxWidth: .infinity)
+          CallButtonTitle(callee: callee)
         }
       }
       .buttonStyle(.mainAction)
       .controlSize(.large)
+      .buttonSizing(.flexible)
       .keyboardShortcut(.defaultAction)
     }
   }

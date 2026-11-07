@@ -3,9 +3,11 @@ import SwiftUI
 /// Being done for the day, or resting, never hides what comes next.
 struct TodayUpNextSection: View {
   let view: TodayView
-  let isBusy: Bool
+  let busy: TodayDayView.Tap?
   let failed: Bool
   let keepLearning: () -> Void
+
+  private var isBusy: Bool { busy == .keepLearning }
 
   var body: some View {
     Section {
@@ -19,13 +21,14 @@ struct TodayUpNextSection: View {
           Text(studyDuration(minutes: lesson.minutes))
             .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
-            .coveredBySpinnerWhenSlow(index == 0 && isBusy, alignment: .trailing)
+            .coveredBySpinner(index == 0 && isBusy, alignment: .trailing)
         }
 
         if index == 0 {
           Button(action: keepLearning) { row }
             .tint(.primary)
-            .disabled(isBusy)
+            .disabled(busy != nil && !isBusy)
+            .accessibilityBusy(isBusy)
             .currentRow()
         } else {
           row
@@ -38,6 +41,7 @@ struct TodayUpNextSection: View {
 
     Section {
       TodayMainAction(kind: .keepLearning, isBusy: isBusy, failed: failed, action: keepLearning)
+        .disabled(busy != nil && !isBusy)
     }
     .listRowBackground(Color.clear)
     .listRowInsets(.vertical, 0)
@@ -64,7 +68,9 @@ struct TodayMoreSection: View {
         Section {
           TodayMainAction(
             kind: .practice(minutes: view.session.extraTime.minutes),
-            isBusy: busy == .keepLearning, failed: failed == .keepLearning, action: addTime)
+            isBusy: busy == .keepLearning, failed: failed == .keepLearning, action: addTime
+          )
+          .disabled(busy != nil && busy != .keepLearning)
         }
         .listRowBackground(Color.clear)
         .listRowInsets(.vertical, 0)
@@ -107,11 +113,12 @@ struct TodayMoreSection: View {
                   }
                 }
               } icon: {
-                Image(systemName: "plus.circle")
-                  .coveredBySpinnerWhenSlow(busy == .keepLearning)
+                Image(systemName: ActionIcon.play.rawValue)
+                  .coveredBySpinner(busy == .keepLearning)
               }
             }
-            .disabled(busy != nil)
+            .disabled(busy != nil && busy != .keepLearning)
+            .accessibilityBusy(busy == .keepLearning)
           }
 
           if let later = view.session.catchUp?.later, later.offered,
@@ -130,11 +137,12 @@ struct TodayMoreSection: View {
                   }
                 }
               } icon: {
-                Image(systemName: "arrow.uturn.forward")
-                  .coveredBySpinnerWhenSlow(busy == .catchUp)
+                Image(systemName: ActionIcon.addLessons.rawValue)
+                  .coveredBySpinner(busy == .catchUp)
               }
             }
-            .disabled(busy != nil)
+            .disabled(busy != nil && busy != .catchUp)
+            .accessibilityBusy(busy == .catchUp)
           }
         }
       }
@@ -241,7 +249,7 @@ struct TodayPlanChangeSection: View {
                   "Next suggestion", tableName: "Today", comment: "Shows the next plan suggestion")
               }
             } else if decision == .applied, change.canUndo {
-              BusyButton(isBusy: isSaving) {
+              BusyButton(isBusy: isSaving, icon: .undo) {
                 answer(.undone)
               } label: {
                 Text(
@@ -522,7 +530,7 @@ struct TodayMissionsSection: View {
           ) {
             go(mission)
           }
-          .disabled(busy != nil)
+          .disabled(busy != nil && busy != tap)
         }
       }
     } header: {

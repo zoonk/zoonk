@@ -266,7 +266,8 @@ struct ChallengeScreen: View {
       PracticeMainButton(
         title: LocalizedStringResource(
           "See Plus", table: "Practice",
-          comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\".")
+          comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\"."),
+        icon: .forward
       ) {
         hooks.navigate(.subscription)
       }
@@ -275,7 +276,8 @@ struct ChallengeScreen: View {
     {
       PracticeMainButton(
         title: LocalizedStringResource(
-          "See how it went", table: "Practice", comment: "Opens a finished checkpoint's result.")
+          "See how it went", table: "Practice", comment: "Opens a finished checkpoint's result."),
+        icon: .forward
       ) {
         dismiss()
         hooks.navigate(
@@ -296,7 +298,7 @@ struct ChallengeScreen: View {
               title: LocalizedStringResource(
                 "Move to Monday", table: "Practice",
                 comment: "Moves the weekly challenge to next Monday."),
-              isDisabled: isMoving || isStarting
+              icon: .setDate, isDisabled: isMoving || isStarting
             ) { run { await move() } }
           }
 
@@ -305,7 +307,7 @@ struct ChallengeScreen: View {
               ? LocalizedStringResource(
                 "Start the mock exam", table: "Practice", comment: "Starts a mock exam challenge.")
               : LocalizedStringResource("Start", table: "Practice", comment: "Starts a challenge."),
-            isBusy: isStarting || isWriting,
+            icon: .play, isBusy: isStarting || isWriting,
             isDisabled: challenge.dailyLimitReached
           ) { run { await start(afterWriting: false) } }
         }
@@ -315,7 +317,7 @@ struct ChallengeScreen: View {
         title: LocalizedStringResource(
           "Move to Monday", table: "Practice", comment: "Moves the weekly challenge to next Monday."
         ),
-        isDisabled: isMoving
+        icon: .setDate, isDisabled: isMoving
       ) { run { await move() } }
     } else if challenge.waitReason != nil {
       Text(

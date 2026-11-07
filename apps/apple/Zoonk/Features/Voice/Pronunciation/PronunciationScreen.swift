@@ -297,20 +297,18 @@ private struct PronunciationRoundView: View {
           .controlSize(.large)
         }
 
-        BusyButton(isBusy: round.isPending) {
+        BusyButton(isBusy: round.isPending, icon: .forward) {
           Task { await round.next() }
         } label: {
-          Group {
-            if round.isLast {
-              Text("See how it went", tableName: "Voice", comment: "Ends the round")
-            } else {
-              Text("Continue", tableName: "Voice", comment: "Goes on to the next word")
-            }
+          if round.isLast {
+            Text("See how it went", tableName: "Voice", comment: "Ends the round")
+          } else {
+            Text("Continue", tableName: "Voice", comment: "Goes on to the next word")
           }
-          .frame(maxWidth: .infinity)
         }
         .buttonStyle(.mainAction)
         .controlSize(.large)
+        .buttonSizing(.flexible)
         .keyboardShortcut(.defaultAction)
       }
     case .ready:

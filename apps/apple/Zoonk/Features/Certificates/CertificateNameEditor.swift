@@ -48,11 +48,11 @@ struct CertificateNameEditor: View {
         .focused($isFocused)
         .onSubmit(save)
 
-        BusyButton(isBusy: session.isWorking, action: save) {
+        BusyButton(isBusy: session.isWorking, icon: .check, action: save) {
           Text("Save", tableName: "Certificates", comment: "Saves the name on the certificates")
         }
         .buttonStyle(.mainAction)
-        .disabled(!canSave)
+        .disabled(!canSave && !session.isWorking)
       }
 
       Group {

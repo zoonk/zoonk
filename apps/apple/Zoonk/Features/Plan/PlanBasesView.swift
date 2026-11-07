@@ -182,13 +182,12 @@ struct PlanBasesView: View {
             }
           }
 
-          Button {
+          BusyButton(isBusy: editor.isSaving, isRow: true) {
             Task { await save(changed) }
           } label: {
             Text("Save choices", tableName: "Plan", comment: "Saves the prerequisites' choices")
-              .spinnerAtEndWhenSlow(editor.isSaving)
           }
-          .disabled(!preview.canSave || editor.isSaving)
+          .disabled(!preview.canSave && !editor.isSaving)
         }
       }
     }

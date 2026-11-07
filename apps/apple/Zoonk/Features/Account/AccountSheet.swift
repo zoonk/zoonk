@@ -274,7 +274,7 @@ struct AccountSheet: View {
           tableName: "Account",
           comment: "Explains that a temporary account load failure did not remove the session")
       } actions: {
-        BusyButton(isBusy: session.isWorking) {
+        BusyButton(isBusy: session.isWorking, icon: .retry) {
           Task {
             await session.retryRestore()
           }
@@ -430,17 +430,15 @@ private struct SettingsHubView: View {
                 comment: "Settings row where a guest creates the account that keeps their plan"))
           }
         } else {
-          Button(role: .destructive) {
+          BusyButton(isBusy: session.isWorking, role: .destructive, isRow: true) {
             Task {
               await session.signOut()
             }
           } label: {
             Text("Log out", tableName: "Account", comment: "Account log-out action")
               .typeStyle(.rowTitle)
-              .spinnerAtEndWhenSlow(session.isWorking)
           }
           .foregroundStyle(.destructiveText)
-          .disabled(session.isWorking)
         }
       }
 

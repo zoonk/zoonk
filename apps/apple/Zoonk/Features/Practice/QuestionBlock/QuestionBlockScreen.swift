@@ -321,17 +321,17 @@ struct QuestionBlockView: View {
       Text(Self.alreadyAnswered)
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
-      PracticeMainButton(title: continueTitle) { onRefresh() }
+      PracticeMainButton(title: continueTitle, icon: .forward) { onRefresh() }
         .practiceFocus(.next)
     case .finishReady:
-      PracticeMainButton(title: finishTitle) { Task { await run.finish() } }
+      PracticeMainButton(title: finishTitle, icon: .forward) { Task { await run.finish() } }
     case .finishFailed:
       PracticeSaveError { Task { await run.finish() } }
     case .finishing, .finished:
       EmptyView()
     case .feedback(_, let feedback):
       PracticeActionRow {
-        PracticeMainButton(title: continueTitle) { Task { await run.next() } }
+        PracticeMainButton(title: continueTitle, icon: .forward) { Task { await run.next() } }
           .practiceFocus(.next)
         ask(answered: true, missed: !feedback.isCorrect)
       }
@@ -344,14 +344,15 @@ struct QuestionBlockView: View {
         PracticeMainButton(
           title: LocalizedStringResource(
             "Start the questions", table: "Practice",
-            comment: "Starts a content-gap drill's questions after its idea.")
+            comment: "Starts a content-gap drill's questions after its idea."),
+          icon: .play
         ) { run.startDrill() }
       } else if run.drillStage == .reading {
         PracticeMainButton(
           title: LocalizedStringResource(
             "I've read it. Show the answers", table: "Practice",
             comment: "Shows a misread drill's answers once the question was read."),
-          systemImage: "eye"
+          icon: .reveal
         ) {
           if focuses.has(.reveal) { focuses.move(to: .answer) }
           run.revealAnswers()
@@ -374,7 +375,7 @@ struct QuestionBlockView: View {
           title: LocalizedStringResource(
             "I'm not sure", table: "Practice",
             comment: "Honest way out of a guess in a no-guessing drill."),
-          systemImage: "questionmark.circle", isBusy: phase.checking == .notSure,
+          icon: .notSure, isBusy: phase.checking == .notSure,
           isDisabled: !accepts, action: notSure
         )
         .practiceFocus(.notSure)
@@ -382,7 +383,7 @@ struct QuestionBlockView: View {
         PracticeSecondaryButton(
           title: LocalizedStringResource(
             "I don't know yet", table: "Practice", comment: "Answers a question as not known yet."),
-          systemImage: "questionmark.circle", isBusy: phase.checking == .notSure,
+          icon: .notSure, isBusy: phase.checking == .notSure,
           isDisabled: !accepts, action: notSure
         )
         .practiceFocus(.notSure)
@@ -391,7 +392,7 @@ struct QuestionBlockView: View {
       PracticeMainButton(
         title: LocalizedStringResource(
           "Check", table: "Practice", comment: "Sends the answer to be graded."),
-        isBusy: phase.checking?.pressesCheck == true,
+        icon: .check, isBusy: phase.checking?.pressesCheck == true,
         isDisabled: !accepts || run.draft?.complete == nil
       ) {
         if let answer = run.draft?.complete {
@@ -558,7 +559,7 @@ private struct PauseSuggestionView: View {
           tableName: "Practice", comment: "Suggests a break after accuracy dropped.")
       }
 
-      BusyButton(isBusy: isStopping, action: stop) {
+      BusyButton(isBusy: isStopping, icon: .stop, action: stop) {
         Text(
           "Stop for today", tableName: "Practice",
           comment: "Stops today's session from the pause suggestion.")
@@ -592,7 +593,8 @@ private struct BlockFinishedView: View {
     } actions: {
       PracticeMainButton(
         title: LocalizedStringResource(
-          "Continue", table: "Practice", comment: "Moves on after a grade."), action: close)
+          "Continue", table: "Practice", comment: "Moves on after a grade."), icon: .forward,
+        action: close)
     }
   }
 

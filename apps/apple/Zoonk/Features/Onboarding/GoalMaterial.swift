@@ -439,7 +439,7 @@ private struct PasteMaterialRow: View {
       .focused($isFocused)
 
       ButtonRow {
-        BusyButton(isBusy: isAdding, action: add) {
+        BusyButton(isBusy: isAdding, icon: .create, action: add) {
           isLink
             ? Text("Add link", tableName: "Onboarding", comment: "Adds the pasted link")
             : Text("Add text", tableName: "Onboarding", comment: "Adds the pasted text")

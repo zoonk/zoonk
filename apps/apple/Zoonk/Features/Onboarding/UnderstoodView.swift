@@ -189,9 +189,11 @@ private struct UnderstoodCard: View {
             continueLabel: Text(
               "Looks right", tableName: "Onboarding",
               comment: "Confirms what was understood and creates the goals"),
+            continueIcon: .check,
             skipLabel: Text(
               "Fix something", tableName: "Onboarding",
               comment: "Opens the typed words to change and read again"),
+            skipIcon: nil,
             onContinue: onConfirm
           ) {
             rewriting = true
@@ -538,7 +540,7 @@ private struct RowEditor: View {
       }
 
       ButtonRow {
-        BusyButton(isBusy: isSaving, action: save) {
+        BusyButton(isBusy: isSaving, icon: .check, action: save) {
           Text("Save", tableName: "Onboarding", comment: "Saves a fix to an understood fact")
         }
         .buttonStyle(.mainAction)
@@ -660,6 +662,7 @@ private struct ExplainOutcome: View {
           continueLabel: Text(
             "Explain it", tableName: "Onboarding",
             comment: "Starts a quick explanation of the learner's question"),
+          continueIcon: .explain,
           onContinue: onStart
         )
         .environment(\.isSavingAnswer, isStarting)
@@ -731,9 +734,11 @@ private struct InstrumentOutcome: View {
           canSkip: waitlist != .joined,
           continueLabel: Text(
             "Start musicianship", tableName: "Onboarding", comment: "Starts a musicianship goal"),
+          continueIcon: .play,
           skipLabel: Text(
             "Join the waitlist", tableName: "Onboarding",
             comment: "Joins the waitlist for lessons that teach playing an instrument"),
+          skipIcon: .notify,
           isSkipping: isJoining, onContinue: onStartMusicianship
         ) {
           Task { await join() }
@@ -792,6 +797,7 @@ private struct DeclinedOutcome: View {
         continueLabel: Text(
           "Try another goal", tableName: "Onboarding",
           comment: "Goes back to write a different goal"),
+        continueIcon: nil,
         onContinue: onRetry)
     }
   }
@@ -817,6 +823,7 @@ private struct UnclearOutcome: View {
         continueLabel: Text(
           "Write my goal again", tableName: "Onboarding",
           comment: "Goes back to write the goal with more detail"),
+        continueIcon: nil,
         onContinue: onRetry)
     }
   }

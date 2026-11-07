@@ -109,11 +109,15 @@ struct StepHeader: View {
   }
 }
 
+/// A step's Continue, with an optional Skip under it. A label passed in takes its own icon, or none
+/// where no idea fits it; the defaults are Continue's forward arrow and Skip's.
 struct StepButtons: View {
   var canContinue = true
   var canSkip = true
   var continueLabel: Text?
+  var continueIcon: ActionIcon? = .forward
   var skipLabel: Text?
+  var skipIcon: ActionIcon? = .skip
   var note: Text?
   var isSkipping = false
   let onContinue: () -> Void
@@ -124,25 +128,24 @@ struct StepButtons: View {
   var body: some View {
     Section {
       VStack(spacing: 12) {
-        BusyButton(isBusy: isSaving, action: onContinue) {
-          (continueLabel
-            ?? Text("Continue", tableName: "Onboarding", comment: "Saves an onboarding answer"))
-            .frame(maxWidth: .infinity)
+        BusyButton(isBusy: isSaving, icon: continueIcon, action: onContinue) {
+          continueLabel
+            ?? Text("Continue", tableName: "Onboarding", comment: "Saves an onboarding answer")
         }
         .buttonStyle(.mainAction)
-        .disabled(!canContinue)
+        .disabled((!canContinue || isSkipping) && !isSaving)
 
         if let onSkip {
-          BusyButton(isBusy: isSkipping, action: onSkip) {
-            (skipLabel
+          BusyButton(isBusy: isSkipping, icon: skipIcon, action: onSkip) {
+            skipLabel
               ?? Text(
-                "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question"))
-              .frame(maxWidth: .infinity)
+                "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question")
           }
           .buttonStyle(.outline)
-          .disabled(!canSkip)
+          .disabled((!canSkip || isSaving) && !isSkipping)
         }
       }
+      .buttonSizing(.flexible)
       .controlSize(.large)
       .keepsOffFold()
       .listRowInsets(.vertical, 0)
@@ -572,7 +575,8 @@ private struct DateQuestion: View {
       StepButtons(
         canContinue: date != nil,
         skipLabel: Text(
-          "No date, study everything", tableName: "Onboarding", comment: "Skips the goal's date")
+          "No date, study everything", tableName: "Onboarding", comment: "Skips the goal's date"),
+        skipIcon: nil
       ) {
         if let date {
           onAnswer(["question": "targetDate", "targetDate": isoDay(date)])
@@ -668,7 +672,8 @@ private struct DateQuestion: View {
 
     StepButtons(
       skipLabel: Text(
-        "Another date", tableName: "Onboarding", comment: "Picks another date than the exam's")
+        "Another date", tableName: "Onboarding", comment: "Picks another date than the exam's"),
+      skipIcon: nil
     ) {
       onAnswer(["question": "targetDate", "targetDate": first])
     } onSkip: {
@@ -1052,7 +1057,8 @@ private struct SubjectsLevelQuestion: View {
         : nil,
       skipLabel: Text(
         "I'm starting from scratch", tableName: "Onboarding",
-        comment: "Says the learner knows none of the exam yet")
+        comment: "Says the learner knows none of the exam yet"),
+      skipIcon: nil
     ) {
       onAnswer([
         "knownSubjects": subjects.map(\.name).filter(known.contains), "level": NSNull(),

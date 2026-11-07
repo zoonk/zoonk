@@ -261,7 +261,7 @@ struct ProfileEditorView: View {
     .toolbar {
       if !isRequiredSetup {
         ToolbarItem(placement: .confirmationAction) {
-          BusyButton(isBusy: session.isWorking, action: save) {
+          BusyButton(isBusy: session.isWorking, icon: .check, action: save) {
             Text("Save", tableName: "Account", comment: "Button that saves profile changes")
           }
           .disabled(!isValid)

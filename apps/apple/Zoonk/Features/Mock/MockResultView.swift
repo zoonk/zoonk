@@ -1012,7 +1012,7 @@ private struct MockPlanSection: View {
         }
 
         ButtonRow {
-          BusyButton(isBusy: answers.applying) {
+          BusyButton(isBusy: answers.applying, icon: .check) {
             Task { await apply() }
           } label: {
             Text("Apply", tableName: "Mock", comment: "Applies the mock's plan change")

@@ -76,12 +76,13 @@ struct MilestoneCeremony: View {
           title: LocalizedStringResource(
             "Not now", table: "Session",
             comment: "Closes a glasses ceremony without wearing them"),
-          action: onClose)
+          icon: .dismiss, action: onClose)
 
         PracticeMainButton(
           title: LocalizedStringResource(
             "Wear them", table: "Session",
-            comment: "Puts the glasses just earned on the buddy; \"them\" is the glasses")
+            comment: "Puts the glasses just earned on the buddy; \"them\" is the glasses"),
+          icon: .check
         ) {
           // The buddy wears them at once; the save finishes after the ceremony closes.
           Task {
@@ -94,7 +95,7 @@ struct MilestoneCeremony: View {
         PracticeMainButton(
           title: LocalizedStringResource(
             "Continue", table: "Session", comment: "Closes a milestone's ceremony"),
-          action: onClose)
+          icon: .forward, action: onClose)
       }
     }
   }

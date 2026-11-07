@@ -207,19 +207,16 @@ struct AccountDeletionView: View {
       }
     } else {
       Section {
-        Button(role: .destructive) {
+        BusyButton(isBusy: session.isWorking, role: .destructive, isRow: true) {
           pendingDeletion = .direct
           isConfirmingDeletion = true
         } label: {
           Text(
             "Delete account",
             tableName: "Account",
-            comment: "Starts permanent account deletion"
-          )
-          .spinnerAtEndWhenSlow(session.isWorking)
+            comment: "Starts permanent account deletion")
         }
         .foregroundStyle(.destructiveText)
-        .disabled(session.isWorking)
       }
     }
   }
@@ -259,21 +256,19 @@ struct AccountDeletionView: View {
         )
         .disabled(session.isWorking)
 
-        Button(role: .destructive) {
+        BusyButton(isBusy: session.isWorking, role: .destructive, isRow: true) {
           pendingDeletion = .email
           isConfirmingDeletion = true
         } label: {
           Text(
             "Verify and delete",
             tableName: "Account",
-            comment: "Verifies the email code and permanently deletes the account"
-          )
-          .spinnerAtEndWhenSlow(session.isWorking)
+            comment: "Verifies the email code and permanently deletes the account")
         }
         .foregroundStyle(.destructiveText)
-        .disabled(normalizedCode.count != 6 || session.isWorking)
+        .disabled(normalizedCode.count != 6 && !session.isWorking)
 
-        Button {
+        BusyButton(isBusy: session.isWorking, isRow: true) {
           Task {
             await sendEmailCode()
           }
@@ -281,13 +276,10 @@ struct AccountDeletionView: View {
           Text(
             "Send a new code",
             tableName: "Account",
-            comment: "Sends a replacement account deletion verification code"
-          )
-          .spinnerAtEndWhenSlow(session.isWorking)
+            comment: "Sends a replacement account deletion verification code")
         }
-        .disabled(session.isWorking)
       } else {
-        Button {
+        BusyButton(isBusy: session.isWorking, isRow: true) {
           Task {
             await sendEmailCode()
           }
@@ -295,11 +287,8 @@ struct AccountDeletionView: View {
           Text(
             "Send verification code",
             tableName: "Account",
-            comment: "Sends an email code for account deletion reauthorization"
-          )
-          .spinnerAtEndWhenSlow(session.isWorking)
+            comment: "Sends an email code for account deletion reauthorization")
         }
-        .disabled(session.isWorking)
       }
     } header: {
       SectionTitle(

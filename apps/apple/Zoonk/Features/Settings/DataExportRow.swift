@@ -18,7 +18,7 @@ struct DataExportRow: View {
         ListRow(title, description: description)
           .frame(maxWidth: .infinity, alignment: .leading)
 
-        BusyButton(isBusy: isPreparing) {
+        BusyButton(isBusy: isPreparing, icon: .download) {
           Task {
             await download()
           }
