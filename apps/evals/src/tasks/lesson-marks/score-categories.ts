@@ -8,7 +8,7 @@ export const LESSON_MARKS_SCORE_CATEGORIES = defineScoreCategories([
     weight: 30,
   },
   {
-    expectations: `Audit each screen's idea: the map idea the screen teaches or asks about; a question mixing two ideas takes the later one. An explanation or worked example teaching several ideas at once, such as an overview of the whole process or a recap, has none, unless one idea is about all of them. Score at most 6 for any screen placed under the wrong idea, an overview placed under one idea included.`,
+    expectations: `Audit each screen's idea: the map idea the screen teaches or asks about; a question mixing two ideas takes the later one. An explanation or worked example teaching several ideas at once, such as an overview of the whole process or a recap, has none, unless one idea is about all of them. Explanations and worked examples follow the map's order, since the learner sees "Idea 2 of 4" above each: code already dropped and counted any of their ideas that went back in that order, so a missing idea there is never a flaw on its own. Score at most 6 for any screen placed under the wrong idea, an overview placed under one idea included.`,
     id: "ideas",
     label: "Each screen under its idea",
     weight: 20,

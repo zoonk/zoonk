@@ -35,6 +35,24 @@ function iconProblem({
   return toIconNeed(asked) ? repeated : "no usable icon";
 }
 
+function ideaProblem({
+  asked,
+  ideaCount,
+  kept,
+}: {
+  asked: number | null | undefined;
+  ideaCount: number;
+  kept: number | null | undefined;
+}): string | null {
+  if (typeof asked !== "number" || kept !== null) {
+    return null;
+  }
+
+  return asked >= 1 && asked <= ideaCount
+    ? "idea goes back in the map's order"
+    : "idea number out of range";
+}
+
 function screenProblems({
   input,
   marks,
@@ -54,14 +72,18 @@ function screenProblems({
         ? iconProblem({ asked: asked.icon, kept: kept?.icon, repeated: "repeats its idea's icon" })
         : null;
 
+    const idea = ideaProblem({
+      asked: asked?.idea,
+      ideaCount: input.ideas.length,
+      kept: kept?.ideaIndex,
+    });
+
     return [
       asked ? null : `${label}: left out`,
       asked?.underline && !kept?.underline ? `${label}: underline isn't an exact quote` : null,
       asked?.example && !kept?.example ? `${label}: example isn't whole exact sentences` : null,
       icon ? `${label}: ${icon}` : null,
-      typeof asked?.idea === "number" && kept?.ideaIndex === null
-        ? `${label}: idea number out of range`
-        : null,
+      idea ? `${label}: ${idea}` : null,
     ].filter((problem) => problem !== null);
   });
 }
