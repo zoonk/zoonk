@@ -281,7 +281,7 @@ export function PlanLessonRow({
       aria-current={isNext ? "step" : undefined}
       className={cn(
         getRowClass({ finished: false, fold: NO_FOLD, isNext }),
-        disabled && !busy && "opacity-50",
+        isNext && disabled && !busy && "opacity-50",
       )}
     >
       <span className="flex h-5 w-3 shrink-0 items-center justify-center">

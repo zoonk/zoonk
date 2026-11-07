@@ -94,7 +94,14 @@ describe("only the control that sent a request spins", () => {
       today: {
         progress: null,
         session: {
-          extraTime: { available: true, lessons: [{ minutes: 5, title: "Ratios" }], minutes: 5 },
+          extraTime: {
+            available: true,
+            lessons: [
+              { minutes: 5, title: "Ratios" },
+              { minutes: 5, title: "Proportions" },
+            ],
+            minutes: 5,
+          },
           state: "done",
         },
       },
@@ -113,6 +120,9 @@ describe("only the control that sent a request spins", () => {
     const keepLearning = page.getByRole("button", { name: /^Keep learning/u });
     const rowOpacity = () => Number(getComputedStyle(row.element().closest("li")!).opacity);
     const resting = rowOpacity();
+    const later = page.getByText("Proportions");
+    const laterOpacity = () => Number(getComputedStyle(later.element().closest("li")!).opacity);
+    const laterResting = laterOpacity();
 
     await row.click();
     await expect.element(row).toHaveAttribute("aria-busy", "true");
@@ -128,6 +138,7 @@ describe("only the control that sent a request spins", () => {
     await expect.element(row).not.toHaveAttribute("aria-busy");
     await expect.element(row).toHaveAttribute("aria-disabled", "true");
     await expect.poll(rowOpacity).toBeLessThan(resting);
+    expect(laterOpacity()).toBe(laterResting);
 
     opens[1]!.resolve(false);
     await expect.element(keepLearning).not.toHaveAttribute("aria-busy");
