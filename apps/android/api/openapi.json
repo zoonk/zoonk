@@ -41892,7 +41892,8 @@
                 "type": "boolean"
               },
               "mindMaps": {
-                "type": "boolean"
+                "type": "boolean",
+                "description": "The active goal has a Mind maps page (`GET /goals/{goalId}/mind-maps`): a learn or exam goal, from its first day; never a language's or a quick explanation"
               },
               "readyMistakes": {
                 "type": "integer",

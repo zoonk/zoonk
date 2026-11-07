@@ -1,3 +1,4 @@
+import { type GoalKind } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
@@ -122,3 +123,8 @@ export const goalMindMapsSchema = z
 
 export type GoalMindMapsView = z.infer<typeof goalMindMapsSchema>;
 export type GoalMindMapView = GoalMindMapsView["chapters"][number];
+
+/** A goal whose plan is made of chapters has a Mind maps page from its first day. */
+export function hasMindMapsPage(kind: GoalKind): boolean {
+  return kind === "learn" || kind === "exam";
+}

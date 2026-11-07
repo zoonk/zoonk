@@ -5,6 +5,7 @@ import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getReadAt } from "@/lib/learn/read-at";
 import { getGoalsCacheTag, getLearningProfileCacheTag } from "@zoonk/core/cache-tags";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
+import { hasMindMapsPage } from "@zoonk/core/mind-maps/contract";
 import { getGoalResumePreview } from "@zoonk/core/plans/resume-preview";
 import { getSession } from "@zoonk/core/users/session";
 import { getLanguageProgressView } from "@zoonk/core/view-models/language/progress";
@@ -177,7 +178,7 @@ async function JourneyContent() {
       goal={{ kind: goal.kind, title: goal.title }}
       goalId={goal.id}
       goalStatus={goalStatus}
-      hasMindMaps={goal.kind !== "language"}
+      hasMindMaps={hasMindMapsPage(goal.kind)}
       language={language.status === "ready" ? language.progress : null}
       next={
         end?.next

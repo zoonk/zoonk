@@ -1,11 +1,6 @@
 import "server-only";
 import { prisma, sql } from "@zoonk/db";
 import { completedLessonRuns } from "../../../completed-lessons/_utils/completed-lesson-runs";
-import {
-  type MindMapChapterState,
-  isListedMindMapChapter,
-  mindMapChapterRows,
-} from "../../../mind-maps/_utils/listed-mind-map-chapters";
 
 const RECENT_STUDY_DAYS = 4;
 
@@ -19,26 +14,14 @@ export type LearnerFacts = {
   currentEnergy: number | null;
   hasCertificates: boolean;
   lastActiveAt: Date | null;
-  mindMapGoalIds: string[];
   recentStudyDays: StudyDay[];
   /** The learner's speaking score, by language. */
   speakingScores: Record<string, number>;
   totalBrainPower: bigint | null;
 };
 
-type MindMapChapterFacts = Pick<
-  MindMapChapterState,
-  "canHaveMap" | "hasWrittenLessons" | "mapStatus" | "mapStructure"
-> & { goalId: string; mapUpdatedAt: number | null };
-
-type LearnerFactsRow = Omit<LearnerFacts, "mindMapGoalIds"> & {
-  mindMapChapters: MindMapChapterFacts[];
-};
-
 export async function loadLearnerFacts(userId: string): Promise<LearnerFacts> {
-  const mindMapGoals = sql`g.user_id = ${userId}::uuid AND g.status <> 'archived'`;
-
-  const rows = await prisma.$queryRaw<LearnerFactsRow[]>`
+  const rows = await prisma.$queryRaw<LearnerFacts[]>`
     SELECT
       up.current_energy AS "currentEnergy",
       up.total_brain_power AS "totalBrainPower",
@@ -72,25 +55,7 @@ export async function loadLearnerFacts(userId: string): Promise<LearnerFacts> {
           ORDER BY date DESC
           LIMIT ${RECENT_STUDY_DAYS}
         ) d
-      ) AS "recentStudyDays",
-      (
-        SELECT coalesce(
-          json_agg(json_build_object(
-            'canHaveMap', m."canHaveMap",
-            'goalId', m."goalId",
-            'hasWrittenLessons', m."hasWrittenLessons",
-            'mapStatus', m."mapStatus",
-            -- Milliseconds: a zoneless timestamp in JSON would read as local time.
-            'mapUpdatedAt', extract(epoch FROM m."mapUpdatedAt") * 1000,
-            -- Only a map without written lessons to draw it again from is listed by its outline.
-            'mapStructure', CASE WHEN m."hasWrittenLessons" THEN NULL ELSE m."mapStructure" END
-          )),
-          '[]'::json
-        )
-        FROM (${mindMapChapterRows(mindMapGoals)}) m
-        -- Only these can be listed (getMindMapStatus): the rest stay out of the JSON.
-        WHERE m."canHaveMap" AND (m."hasWrittenLessons" OR m."mapStatus" IS NOT NULL)
-      ) AS "mindMapChapters"
+      ) AS "recentStudyDays"
     FROM (SELECT ${userId}::uuid AS id) u
     LEFT JOIN user_progress up ON up.user_id = u.id`;
 
@@ -100,22 +65,5 @@ export async function loadLearnerFacts(userId: string): Promise<LearnerFacts> {
     throw new Error("The learner's facts read returned no row");
   }
 
-  const { mindMapChapters, ...facts } = row;
-  const now = new Date();
-
-  const listed = mindMapChapters.filter((chapter) =>
-    isListedMindMapChapter({
-      chapter: {
-        ...chapter,
-        mapImageHeight: null,
-        mapImageUrl: null,
-        mapImageWidth: null,
-        mapThumbnailUrl: null,
-        mapUpdatedAt: chapter.mapUpdatedAt ? new Date(chapter.mapUpdatedAt) : null,
-      },
-      now,
-    }),
-  );
-
-  return { ...facts, mindMapGoalIds: [...new Set(listed.map((chapter) => chapter.goalId))] };
+  return row;
 }

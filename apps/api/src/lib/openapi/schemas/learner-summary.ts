@@ -138,7 +138,12 @@ const learnerSummarySchema = z
               "The active goal has a completed lesson to list (`GET /me/completed-lessons`)",
           }),
         exam: z.boolean(),
-        mindMaps: z.boolean(),
+        mindMaps: z
+          .boolean()
+          .meta({
+            description:
+              "The active goal has a Mind maps page (`GET /goals/{goalId}/mind-maps`): a learn or exam goal, from its first day; never a language's or a quick explanation",
+          }),
         readyMistakes: z
           .int()
           .min(0)
