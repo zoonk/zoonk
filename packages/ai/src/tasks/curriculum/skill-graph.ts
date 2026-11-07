@@ -5,13 +5,18 @@ import { z } from "zod";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { combineTaskProvenance, sumLanguageModelUsage } from "../../provenance/task-provenance";
+import {
+  type TaskProvenance,
+  combineTaskProvenance,
+  sumLanguageModelUsage,
+} from "../../provenance/task-provenance";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { draftAgainWhenFlawed } from "../_utils/draft-again";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { getVerbForm } from "../_utils/verb-form";
 import { COURSE_LEVELS } from "./_utils/course-levels";
 import { findRedraftProblems, normalizeDraft, redraftFlawedSections } from "./_utils/graph-drafts";
+import { type LibrarySkill, formatLibrarySkills } from "./_utils/library-skills";
 import { EmptySkillGraphError } from "./_utils/normalize-skill-graph";
 import {
   type GraphFrameSection,
@@ -79,7 +84,13 @@ const frameSchema = z.object({
 
 const sectionSchema = z.object({ skills: z.array(skillSchema) });
 
+const librarySectionSchema = z.object({
+  skills: z.array(skillSchema.extend({ reuse: z.string().nullable() })),
+});
+
 type GraphFrame = z.infer<typeof frameSchema>;
+
+export { type LibrarySkill } from "./_utils/library-skills";
 
 export type SkillGraphParams = {
   language: string;
@@ -108,11 +119,24 @@ export type SkillGraphParams = {
    * A callback that fails is ignored.
    */
   onSkillNamed?: OnSkillNamed;
+  /**
+   * For an exam graph other exams share: the skills they already use in the frame's courses, read
+   * once the frame names them, so the sections reuse those skills instead of cutting them anew.
+   */
+  findLibrarySkills?: (frame: {
+    courses: readonly { key: string; title: string }[];
+    provenance: TaskProvenance;
+  }) => Promise<LibrarySkill[]>;
 };
 
 type GraphPart =
   | { kind: "frame" }
-  | { frame: GraphFrame; kind: "skills"; sections: readonly GraphFrameSection[] }
+  | {
+      frame: GraphFrame;
+      kind: "skills";
+      library: string | null;
+      sections: readonly GraphFrameSection[];
+    }
   | { kind: "whole" };
 
 function formatFrameSection(section: GraphFrameSection): string {
@@ -122,9 +146,11 @@ function formatFrameSection(section: GraphFrameSection): string {
 
 function formatSkillsPart({
   frame,
+  library,
   sections,
 }: {
   frame: GraphFrame;
+  library: string | null;
   sections: readonly GraphFrameSection[];
 }): string {
   const courses = frame.courses.map(
@@ -140,8 +166,11 @@ function formatSkillsPart({
     `COURSES:\n${courses.join("\n")}`,
     `PHASES:\n${phases.join("\n")}`,
     `SECTIONS:\n${frame.sections.map((section) => formatFrameSection(section)).join("\n")}`,
+    library,
     `WRITE:\n${sections.map((section) => formatFrameSection(section)).join("\n")}`,
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 /** Goes after everything every call of the graph shares, so the shared beginning is cached. */
@@ -262,21 +291,17 @@ function generateCheckedWholeGraph(params: SkillGraphParams) {
   });
 }
 
-/** One more try right away for a section: the learner waits on the whole graph. */
-async function writeSkills({
-  frame,
-  params,
-  sections,
-}: {
-  frame: GraphFrame;
-  params: SkillGraphParams;
-  sections: readonly GraphFrameSection[];
-}) {
-  const part: GraphPart = { frame, kind: "skills", sections };
+type SkillsPart = Omit<Extract<GraphPart, { kind: "skills" }>, "kind">;
 
-  return writePart({ params, part, partSchema: sectionSchema }).catch(() =>
-    writePart({ params, part, partSchema: sectionSchema }),
-  );
+function writeSkillsPart({ params, part }: { params: SkillGraphParams; part: SkillsPart }) {
+  return part.library === null
+    ? writePart({ params, part: { ...part, kind: "skills" }, partSchema: sectionSchema })
+    : writePart({ params, part: { ...part, kind: "skills" }, partSchema: librarySectionSchema });
+}
+
+/** One more try right away for a section: the learner waits on the whole graph. */
+function writeSkills({ params, part }: { params: SkillGraphParams; part: SkillsPart }) {
+  return writeSkillsPart({ params, part }).catch(() => writeSkillsPart({ params, part }));
 }
 
 /**
@@ -300,19 +325,25 @@ async function generateSectionedGraph(params: SkillGraphParams) {
     return generateCheckedWholeGraph(params);
   }
 
+  const courses = frame.output.courses.map(({ key, title }) => ({ key, title }));
+  const library = await params.findLibrarySkills?.({ courses, provenance: frame.provenance });
+  const listed = library ? formatLibrarySkills(library) : null;
+
+  const toPart = (sections: readonly GraphFrameSection[]): SkillsPart => ({
+    frame: frame.output,
+    library: listed,
+    sections,
+  });
+
   const written = await Promise.all(
-    calls.map((sections) => writeSkills({ frame: frame.output, params: shared, sections })),
+    calls.map((sections) => writeSkills({ params: shared, part: toPart(sections) })),
   );
 
   const { rewrites, ...draft } = await redraftFlawedSections({
     frame: frame.output,
+    library: library ?? [],
     params: shared,
-    rewrite: (index) =>
-      writePart({
-        params: shared,
-        part: { frame: frame.output, kind: "skills", sections: calls[index] ?? [] },
-        partSchema: sectionSchema,
-      }),
+    rewrite: (index) => writeSkillsPart({ params: shared, part: toPart(calls[index] ?? []) }),
     written,
   });
 
@@ -332,7 +363,8 @@ async function generateSectionedGraph(params: SkillGraphParams) {
  * once more; a big exam's only in its flawed sections, unless the flaw is in its phases.
  */
 export function generateSkillGraph(params: SkillGraphParams) {
-  if (!shouldWriteInSections(params)) {
+  // A shared exam's courses are found before its skills are written, so it always has a frame.
+  if (!shouldWriteInSections(params) && !params.findLibrarySkills) {
     return generateCheckedWholeGraph(params);
   }
 

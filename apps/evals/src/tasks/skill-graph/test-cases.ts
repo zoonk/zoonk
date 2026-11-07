@@ -1,9 +1,9 @@
 import { type TestCase } from "@/lib/types";
 import { type ExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
-import { type SkillGraphParams } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { CAMARA_BLUEPRINT } from "./camara-blueprint";
 import { CGU_BLUEPRINT } from "./cgu-blueprint";
 import { ENEM_SCIENCE_BLUEPRINT } from "./enem-science-blueprint";
+import { type SkillGraphCase, type SkillGraphExpected } from "./library-cases";
 import { PIRACEMA_BLUEPRINT } from "./piracema-blueprint";
 
 const SHARED_EXPECTATIONS = `
@@ -322,7 +322,7 @@ const CACD_LANGUAGES_BLUEPRINT: ExamOutline = {
   topicFrequency: [],
 };
 
-export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
+export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese

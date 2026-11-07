@@ -280,6 +280,7 @@
     "./library/curriculum/course-start-graph": "./src/library/curriculum/course-start-graph.ts",
     "./library/curriculum/early-outline-chapter": "./src/library/curriculum/early-outline-chapter.ts",
     "./library/curriculum/exam-graph-repair": "./src/library/curriculum/exam-graph-repair.ts",
+    "./library/curriculum/exam-library-skills": "./src/library/curriculum/exam-library-skills.ts",
     "./library/curriculum/exam-skill-graph-reset": "./src/library/curriculum/exam-skill-graph-reset.ts",
     "./library/curriculum/find-or-create-course": "./src/library/curriculum/find-or-create-goal-course.ts",
     "./library/curriculum/goal-course-bands": "./src/library/curriculum/goal-course-bands.ts",

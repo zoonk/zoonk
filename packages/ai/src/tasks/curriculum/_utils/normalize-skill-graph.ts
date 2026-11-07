@@ -15,10 +15,14 @@ type RawSkillGraphSkill = {
   examWeight: number | null;
   key: string;
   level: CourseLevel;
+  /** A Library skill the graph reuses (see `applyLibraryReuse`). */
+  libraryId?: string;
   name: string;
   outcome: boolean;
   phase: number;
   prerequisites: string[];
+  /** The `LIBRARY_SKILLS` id the model chose, before code applies it. */
+  reuse?: string | null;
   topics: string[];
 };
 
@@ -50,6 +54,8 @@ type SkillGraphSkill = {
    * and job search): a plan short on time keeps it whole and trims depth elsewhere.
    */
   outcome?: boolean;
+  /** The Library skill this is: it keeps its own name, size, course and prerequisite links. */
+  libraryId?: string;
 };
 
 type SkillGraphCourse = { key: string; title: string; levels: CourseLevel[] };
@@ -98,6 +104,7 @@ function dedupeSkills(skills: readonly RawSkillGraphSkill[]) {
 
       survivors.set(survivorKey, {
         ...survivor,
+        libraryId: survivor.libraryId ?? skill.libraryId,
         outcome: survivor.outcome || skill.outcome,
         prerequisites: [...survivor.prerequisites, ...skill.prerequisites],
         topics: [...new Set([...survivor.topics, ...skill.topics])],
@@ -236,6 +243,7 @@ function toGraphSkill({
     examWeight: toExamWeight(skill.examWeight),
     key: skill.key,
     level: skill.level,
+    ...(skill.libraryId && { libraryId: skill.libraryId }),
     name: skill.name,
     outcome: skill.outcome || isWrittenTestSkill({ area: placed.area, outline }),
     phase: clamp({ max: phaseCount, min: 1, value: skill.phase }),
