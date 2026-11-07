@@ -457,7 +457,10 @@ private struct CertificateDetails<Name: View, Link: View, Footer: View>: View {
             comment: "About how long a certificate's lessons took to study"),
           isData: true
         ) {
-          Text(studyTime(minutes))
+          Text(
+            "about \(studyDuration(minutes: roundStudyMinutes(minutes)))",
+            tableName: "Certificates",
+            comment: "An approximate study time, such as \"about 41 hr\"")
         }
       }
 
