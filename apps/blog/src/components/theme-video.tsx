@@ -1,24 +1,33 @@
 "use client";
 
-import { cn } from "@zoonk/ui/lib/utils";
 import { PlayIcon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { ThemeImage } from "./theme-image";
 
-function visibleClip(light: HTMLVideoElement | null, dark: HTMLVideoElement | null) {
-  return matchMedia("(prefers-color-scheme: dark)").matches ? dark : light;
+function useMediaQuery(query: string, serverValue: boolean) {
+  return useSyncExternalStore(
+    (onChange) => {
+      const list = matchMedia(query);
+      list.addEventListener("change", onChange);
+      return () => list.removeEventListener("change", onChange);
+    },
+    () => matchMedia(query).matches,
+    () => serverValue,
+  );
 }
 
-async function play(clip: HTMLVideoElement | null) {
+async function play(video: HTMLVideoElement) {
   try {
-    await clip?.play();
+    await video.play();
   } catch {
     // The browser may refuse to start it, such as in Low Power Mode; the reader can still tap it.
   }
 }
 
 /**
- * A muted, looping clip in light and dark, like `ThemeImage`. Only the visible one plays, it
- * doesn't start on its own for readers who prefer reduced motion, and tapping it pauses or plays it.
+ * A muted, looping clip in light and dark, over its screenshot like `ThemeImage`. Only the clip
+ * for the current theme loads, it doesn't start on its own for readers who prefer reduced motion,
+ * and tapping it pauses or plays it.
  */
 export function ThemeVideo({
   darkPoster,
@@ -33,49 +42,70 @@ export function ThemeVideo({
   poster: string;
   src: string;
 }) {
-  const lightRef = useRef<HTMLVideoElement>(null);
-  const darkRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const dark = useMediaQuery("(prefers-color-scheme: dark)", false);
+  const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)", true);
+  const [pausedByReader, setPausedByReader] = useState<boolean>();
   const [playing, setPlaying] = useState(false);
+  const clip = dark ? darkSrc : src;
+  const shouldPlay = !(pausedByReader ?? reducedMotion);
 
   useEffect(() => {
-    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      void play(visibleClip(lightRef.current, darkRef.current));
+    const video = videoRef.current;
+
+    if (!video) {
+      return;
     }
-  }, []);
+
+    if (video.getAttribute("src") !== clip) {
+      video.src = clip;
+    }
+
+    if (shouldPlay) {
+      void play(video);
+    } else {
+      video.pause();
+    }
+  }, [clip, shouldPlay]);
 
   function toggle() {
-    const clip = visibleClip(lightRef.current, darkRef.current);
+    const video = videoRef.current;
+
+    if (!video) {
+      return;
+    }
+
+    setPausedByReader(playing);
 
     if (playing) {
-      clip?.pause();
+      video.pause();
     } else {
-      void play(clip);
+      void play(video);
     }
   }
 
-  const clips = [
-    { className: "dark:hidden", poster, ref: lightRef, src },
-    { className: "hidden dark:block", poster: darkPoster, ref: darkRef, src: darkSrc },
-  ];
-
   return (
     <>
-      {clips.map((clip) => (
-        <video
-          aria-label={label}
-          className={cn("absolute inset-0 size-full object-cover", clip.className)}
-          key={clip.src}
-          loop
-          muted
-          onPause={() => setPlaying(false)}
-          onPlay={() => setPlaying(true)}
-          playsInline
-          poster={clip.poster}
-          preload="none"
-          ref={clip.ref}
-          src={clip.src}
-        />
-      ))}
+      <ThemeImage
+        alt=""
+        className="object-cover"
+        darkSrc={darkPoster}
+        fill
+        sizes="19rem"
+        src={poster}
+      />
+
+      <video
+        aria-label={label}
+        className="absolute inset-0 size-full object-cover"
+        loop
+        muted
+        onPause={() => setPlaying(false)}
+        onPlay={() => setPlaying(true)}
+        playsInline
+        preload="none"
+        ref={videoRef}
+      />
 
       <button
         aria-label={playing ? "Pause the clip" : "Play the clip"}
