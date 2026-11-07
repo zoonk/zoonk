@@ -47,7 +47,7 @@ Every read the app shows goes through one pattern in `data/`, so screens are ins
 
 ## Sessions
 
-- `SessionStore` is the only writer of the session and the only place credentials are stored. Don't store them anywhere else.
+- `SessionStore` is the only writer of the session and the only place credentials are stored: the device's encrypted session file, which no backup copies, and the restore key in Credential Manager, which Google moves to the learner's next phone so its first launch trades it for a session of its own. Don't store them anywhere else, and clear both whenever a session ends.
 - Sign-in flows call `sessions.signIn(asGuest) { current -> … }` with the API call that returns the token, sending `current`'s bearer so a guest's progress moves to the account.
 
 ## Generated API client

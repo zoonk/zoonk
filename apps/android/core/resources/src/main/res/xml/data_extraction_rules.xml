@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Only drafts follow the learner to another device: the session stays on the device that signed in, and the rest describes this device. -->
+<!-- Only drafts follow the learner to another device as files. The session follows through its restore key in Credential Manager, never as a file, so the new phone gets a session of its own; the rest describes this device. -->
 <data-extraction-rules>
     <cloud-backup>
         <include

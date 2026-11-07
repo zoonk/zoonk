@@ -10,6 +10,7 @@ import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.BuildConfig
 import com.zoonk.android.data.ContentWritingWait
+import com.zoonk.android.data.DeviceRestoreKeys
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.EncryptedSessionCredentials
 import com.zoonk.android.data.LearnerSummaryStore
@@ -19,6 +20,7 @@ import com.zoonk.android.data.LiveLearningProfileApi
 import com.zoonk.android.data.LiveSessionApi
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.PrivateImages
+import com.zoonk.android.data.RestoreKeys
 import com.zoonk.android.data.SessionCredentials
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SessionStore
@@ -175,6 +177,7 @@ class AppContainer private constructor(
                 }
             },
             clearCredentialState = { clearCredentialState(context) },
+            restoreKeys = if (previewAccess == null) DeviceRestoreKeys(context) else RestoreKeys.None,
         )
     val cache = AppCache(sessions, scope, timeSource)
 
@@ -334,6 +337,7 @@ class AppContainer private constructor(
 
     init {
         scope.launch { sessions.restore() }
+        scope.launch { sessions.keepRestoreKeys() }
     }
 
     companion object {
@@ -386,4 +390,8 @@ private object NoStoredSession : SessionCredentials {
     override suspend fun pendingApple(): com.zoonk.android.data.PendingAppleSignIn? = null
 
     override suspend fun writePendingApple(pending: com.zoonk.android.data.PendingAppleSignIn?) = Unit
+
+    override suspend fun restoreChecked() = true
+
+    override suspend fun markRestoreChecked() = Unit
 }
