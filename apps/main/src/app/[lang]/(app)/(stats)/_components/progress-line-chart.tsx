@@ -20,11 +20,7 @@ const PROGRESS_CHART_STYLE = {
   width: "100%",
 } satisfies CSSProperties;
 
-const PROGRESS_CHART_TICK_PROPS = {
-  fill: "var(--muted-foreground)",
-  fontFamily: "var(--font-mono)",
-  fontSize: 11,
-} as const;
+const PROGRESS_CHART_TICK_PROPS = { fill: "var(--muted-foreground)", fontSize: 11 } as const;
 
 const X_AXIS_PADDING = { left: 16, right: 24 };
 
