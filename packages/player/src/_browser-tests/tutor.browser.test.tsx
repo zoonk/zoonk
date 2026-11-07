@@ -97,6 +97,12 @@ function freezeClock() {
   });
 }
 
+/** Vitest advances a fake clock while a click waits, which can run a poll first; a key press doesn't. */
+async function checkAgain(sheet: Locator) {
+  await focusOn(sheet.getByRole("button", { name: "Check again" }));
+  await press("Enter");
+}
+
 function connectionLost() {
   return new TypeError("Failed to fetch");
 }
@@ -677,7 +683,7 @@ describe("answers still being written", () => {
     await composer(sheet).fill("My follow-up question.");
     await expect.element(sendButton(sheet)).toBeDisabled();
 
-    await sheet.getByRole("button", { name: "Check again" }).click();
+    await checkAgain(sheet);
     await expect.element(sheet.getByText(TUTOR_ANSWER)).toBeVisible();
     await expect.element(sendButton(sheet)).toBeEnabled();
     expect(api.questions).toHaveLength(1);
@@ -699,19 +705,18 @@ describe("answers still being written", () => {
 
     playLesson({ lesson });
     const sheet = await openTutor();
-    const checkAgain = sheet.getByRole("button", { name: "Check again" });
     await composer(sheet).fill("My follow-up question.");
 
-    await checkAgain.click();
+    await checkAgain(sheet);
     await expect.poll(() => api.requests.answer).toBe(1);
-    await expect.element(checkAgain).toBeEnabled();
+    await expect.element(sheet.getByRole("button", { name: "Check again" })).toBeEnabled();
     await expect.element(sheet.getByText("Thinking…")).toBeVisible();
     await expect.element(sheet.getByRole("button", { name: "Try again" })).not.toBeInTheDocument();
     await expect.element(sendButton(sheet)).toBeDisabled();
     expect(api.questions[0]?.status).toBe("running");
 
     api.complete(running.id);
-    await checkAgain.click();
+    await checkAgain(sheet);
     await expect.element(sheet.getByText(TUTOR_ANSWER)).toBeVisible();
     await expect.element(sendButton(sheet)).toBeEnabled();
   });
@@ -730,7 +735,7 @@ describe("answers still being written", () => {
 
     const sheet = await openTutor();
     const releaseCheck = api.hold("question");
-    await sheet.getByRole("button", { name: "Check again" }).click();
+    await checkAgain(sheet);
     await expect.poll(() => api.requests.question).toBe(1);
 
     api.complete(running.id);
@@ -830,7 +835,7 @@ describe("answers still being written", () => {
     playLesson({ lesson });
 
     const sheet = await openTutor();
-    await sheet.getByRole("button", { name: "Check again" }).click();
+    await checkAgain(sheet);
     await expect.element(sheet.getByText("Subscribe to ask questions")).toBeVisible();
     await expect.element(sheet.getByRole("link", { name: "View plans" })).toBeVisible();
     expect(api.requests.answer).toBe(0);
@@ -861,7 +866,7 @@ describe("answers still being written", () => {
     const retry = sheet.getByRole("button", { name: "Try again" });
 
     await expect.element(retry).toBeDisabled();
-    await sheet.getByRole("button", { name: "Check again" }).click();
+    await checkAgain(sheet);
     await expectCount(sheet.getByText(TUTOR_ANSWER), 1);
     await expect.element(retry).toBeEnabled();
 
