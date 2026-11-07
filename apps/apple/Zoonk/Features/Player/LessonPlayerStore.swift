@@ -59,6 +59,8 @@ final class LessonPlayerStore {
   private(set) var fit: LessonFit?
   var isGuest = false
   var endsAsGuest: Bool { isGuest && fromCatalog }
+  /// From a send that failed, or a lesson opened with answers still held, until every one is saved.
+  var hasUnsavedAnswers: Bool { sendFailed && !held.isEmpty }
   /// "I can't talk now" lasts the rest of the learner's day on this device.
   var cantTalkToday: Bool {
     didSet { choices.setChosenToday(.cantTalk, cantTalkToday) }
@@ -94,12 +96,18 @@ final class LessonPlayerStore {
   private let lessonResource: Resource<LessonLoad>
   private var session: SessionStore { cache.session }
   private let choices: LessonTodayChoices
+  private let defaults: UserDefaults
   private let blockFinished: @MainActor (_ sessionID: String, BlockMoment) -> Void
   private var identity: AuthenticatedSession?
   private(set) var openedAt = Date.now
   /// The lesson's example lines are written once, after the learner's first action.
   private var exampleLinesWriting: Task<Void, Never>?
-  /// The device-graded answers being sent now, by screen, so finishing waits for them.
+  /// Device-graded answers the server hasn't taken yet, oldest first: the lesson can't finish
+  /// without them.
+  private(set) var held: [HeldAnswer] = []
+  private var heldOnDevice: HeldLessonAnswers?
+  private var sendFailed = false
+  /// Each screen's held answers being sent now, so finishing waits for them.
   private var saving: [String: Task<Void, Never>] = [:]
   private var reportedAbandonment = false
   @ObservationIgnored let promptAudio = LessonPromptAudio()
@@ -111,6 +119,7 @@ final class LessonPlayerStore {
     preferences: Resource<LearningPreferences>,
     lessonResource: Resource<LessonLoad>,
     choices: LessonTodayChoices = .standard,
+    defaults: UserDefaults = .standard,
     blockFinished: @escaping @MainActor (_ sessionID: String, BlockMoment) -> Void = { _, _ in }
   ) {
     self.lessonId = lessonId
@@ -121,6 +130,7 @@ final class LessonPlayerStore {
     self.preferences = preferences
     self.lessonResource = lessonResource
     self.choices = choices
+    self.defaults = defaults
     self.blockFinished = blockFinished
     cantTalkToday = choices.isChosenToday(.cantTalk)
   }
@@ -180,6 +190,13 @@ final class LessonPlayerStore {
   /// An unwritten lesson waits for the learner's tap, since writing it runs AI.
   func load(refresh: Bool = false) async {
     let identity = session.authenticatedSession
+
+    // Another session's answers are never sent with this one's.
+    if identity != self.identity {
+      held = []
+      heldOnDevice = nil
+    }
+
     self.identity = identity
     screen = .loading
 
@@ -237,6 +254,16 @@ final class LessonPlayerStore {
       lesson.steps.contains { $0.kind == .challenge }
       ? api.getChallengeTeam(lessonId: lesson.id, token: token) : []
 
+    // Answers held from an earlier visit go first, so the run they place the learner by has them;
+    // the run starts whatever happened to them.
+    heldOnDevice = session.account.map {
+      HeldLessonAnswers(learnerId: $0.user.id, lessonId: lesson.id, defaults: defaults)
+    }
+    held = heldOnDevice?.read() ?? []
+    sendFailed = !held.isEmpty
+    sendHeldAnswers()
+    await heldAnswersSent()
+
     let started = await write { token in
       try await api.startLesson(id: lesson.id, studySessionId: studySessionId, token: token)
     }
@@ -258,8 +285,8 @@ final class LessonPlayerStore {
     switch run {
     case .success(let run):
       state.startRun(
-        runId: run.runId, answers: run.answers, startedAt: run.startedAt,
-        hyperdrive: run.hyperdrive, optionalStepIds: run.optionalStepIds)
+        runId: run.runId, answers: run.answers, held: held.map(\.runAnswer),
+        startedAt: run.startedAt, hyperdrive: run.hyperdrive, optionalStepIds: run.optionalStepIds)
     case .failure(let refusal):
       state.refuseRun(refusal)
     }
@@ -478,6 +505,7 @@ final class LessonPlayerStore {
 
   func continueLesson() {
     writeExampleLinesOnce()
+    sendHeldAnswers()
     state?.continueLesson()
     finishIfCompleted()
   }
@@ -545,22 +573,19 @@ final class LessonPlayerStore {
         UsageAnalytics.track(.activityUsed(lessonID: state.lessonId, template: content.template))
       }
 
-      let unsaved =
-        answer.isRecorded
-        ? LessonPlayerState.UnsavedAnswer(
-          answer: answer, attemptId: attemptId, durationMs: durationMs,
-          usedHelp: state.helped.contains(step.id))
-        : nil
-
-      // The answer counts as unsaved before anything moves on, so finishing waits for it.
-      self.state?.resolve(
-        step.id, result: LessonStepResult(grade, attemptId: attemptId), counts: answer.isRecorded,
-        saving: unsaved)
-
-      if let unsaved {
-        send(step.id, unsaved)
+      // Held before anything moves on, so finishing waits for it: match columns finishes a lesson
+      // on its own check.
+      if answer.isRecorded, let runId = state.runId {
+        hold(
+          HeldAnswer(
+            stepId: step.id, answer: answer, attemptId: attemptId, runId: runId,
+            durationMs: durationMs, usedHelp: state.helped.contains(step.id),
+            isCorrect: grade.isCorrect, answeredAt: .now))
       }
 
+      self.state?.resolve(
+        step.id, result: LessonStepResult(grade, attemptId: attemptId), counts: answer.isRecorded)
+      sendHeldAnswers()
       finishIfCompleted()
       return
     }
@@ -584,6 +609,7 @@ final class LessonPlayerStore {
     case .done(.checked(var result)):
       result.answerText = answer.text
       self.state?.resolve(step.id, result: result)
+      sendHeldAnswers()
     case .done(.failed), .done(.refused), .failed:
       self.state?.failChecking()
     case .obsolete:
@@ -605,38 +631,64 @@ final class LessonPlayerStore {
     state?.resolve(stepId, result: result)
   }
 
-  private func send(_ stepId: String, _ unsaved: LessonPlayerState.UnsavedAnswer) {
-    guard saving[stepId] == nil else {
-      return
-    }
+  /// Each screen sends its held answers oldest first, so a miss lands before its retry, and stops at
+  /// its first failure. Screens send at once, a screen already sending goes on to what was held
+  /// since, and each save sends the screens that stopped again.
+  func sendHeldAnswers() {
+    for stepId in Set(held.map(\.stepId)) where saving[stepId] == nil {
+      saving[stepId] = Task {
+        while let next = held.first(where: { $0.stepId == stepId }), await record(next) {
+          sendHeldAnswers()
+        }
 
-    saving[stepId] = Task {
-      await record(stepId, unsaved)
-      saving[stepId] = nil
+        saving[stepId] = nil
+      }
     }
   }
 
-  /// A failed send stays unsaved and goes again with the same attempt id.
-  private func record(_ stepId: String, _ unsaved: LessonPlayerState.UnsavedAnswer) async {
-    guard let runId = state?.runId else {
-      return
+  private func heldAnswersSent() async {
+    while let sending = saving.values.first {
+      await sending.value
     }
+  }
 
+  private func hold(_ answer: HeldAnswer) {
+    held.append(answer)
+    heldOnDevice?.keep(answer)
+  }
+
+  /// Kept when the send fails, a 401 included; let go once the server has it or refuses it for good
+  /// (the run ended, the answer doesn't fit the screen).
+  private func record(_ answer: HeldAnswer) async -> Bool {
     let api = api
     let recorded = await write { token in
       try await api.checkStep(
-        stepId: stepId, answer: unsaved.answer, attemptId: unsaved.attemptId,
-        durationMs: unsaved.durationMs, runId: runId, usedHelp: unsaved.usedHelp, token: token)
+        stepId: answer.stepId, answer: answer.answer, attemptId: answer.attemptId,
+        durationMs: answer.durationMs, runId: answer.runId, usedHelp: answer.usedHelp,
+        token: token)
     }
 
     switch recorded {
-    case .done(.checked(let result)):
-      state?.confirm(stepId, attemptId: unsaved.attemptId, verdict: result)
+    case .done(.checked(let verdict)):
+      release(answer)
+      state?.confirm(
+        answer.stepId, attemptId: answer.attemptId, answer: answer.answer, verdict: verdict)
+      return true
     case .done(.refused):
-      state?.answerSaved(stepId, attemptId: unsaved.attemptId)
+      release(answer)
+      return true
     case .done(.failed), .failed, .obsolete:
-      // Stays unsaved: finishing sends it again under the same attempt id.
-      break
+      sendFailed = true
+      return false
+    }
+  }
+
+  private func release(_ answer: HeldAnswer) {
+    held.removeAll { $0.attemptId == answer.attemptId }
+    heldOnDevice?.drop(answer)
+
+    if held.isEmpty {
+      sendFailed = false
     }
   }
 
@@ -679,19 +731,12 @@ final class LessonPlayerStore {
       return
     }
 
-    // Every answer reaches the server before the run is finished: the ones on their way, then any
-    // that failed, sent again under their attempt ids.
-    for task in saving.values {
-      await task.value
-    }
-
-    for (stepId, unsaved) in state?.unsavedAnswers ?? [:] {
-      await record(stepId, unsaved)
-    }
-
+    // Every answer reaches the server before the run is finished.
+    sendHeldAnswers()
+    await heldAnswersSent()
     guard isCurrent(identity) else { return }
 
-    guard state?.unsavedAnswers.isEmpty == true else {
+    guard held.isEmpty else {
       state?.completionFailed()
       return
     }

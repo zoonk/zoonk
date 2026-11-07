@@ -222,6 +222,19 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.firstVerdicts, ["check": false])
   }
 
+  func testAnswersTheDeviceStillHoldsPlaceTheLearnerWithTheRunsOwn() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+
+    state.startRun(
+      runId: "run",
+      answers: [LessonRunAnswer(stepId: "check", isCorrect: true, answeredAt: .now)],
+      held: [LessonRunAnswer(stepId: "second", isCorrect: false, answeredAt: .now)])
+
+    XCTAssertEqual(state.firstVerdicts, ["check": true, "second": false])
+    XCTAssertEqual(state.queue.last, "second", "a held miss comes back at the end")
+    XCTAssertEqual(state.currentStep?.id, "summary")
+  }
+
   func testRunWithEveryScreenAnsweredIsReadyToFinish() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
 
@@ -344,10 +357,10 @@ final class LessonPlayerStateTests: XCTestCase {
       isCorrect: false, answerText: nil, correctAnswer: nil, feedback: nil)
     saved.savedMistake = true
 
-    state.confirm("check", attemptId: "first", verdict: saved)
+    state.confirm("check", attemptId: "first", answer: .check(optionId: "wrong"), verdict: saved)
     XCTAssertEqual(state.currentResult?.savedMistake, false)
 
-    state.confirm("check", attemptId: "second", verdict: saved)
+    state.confirm("check", attemptId: "second", answer: .check(optionId: "wrong"), verdict: saved)
     XCTAssertEqual(state.currentResult?.savedMistake, true)
   }
 
@@ -902,7 +915,6 @@ final class LessonPlayerHelpTests: XCTestCase {
     XCTAssertEqual(state.currentResult?.feedback, "A capybara, a heron, a fish and a plant.")
     XCTAssertEqual(state.firstVerdicts, [:])
     XCTAssertEqual(state.misses, [])
-    XCTAssertEqual(state.unsavedAnswers, [:], "a guess is never sent")
 
     state.continueLesson()
     XCTAssertEqual(state.currentStep?.id, "check")
@@ -1128,33 +1140,6 @@ final class LessonAskPlacementTests: XCTestCase {
 }
 
 final class LessonPlayerSavingTests: XCTestCase {
-  func testAMatchColumnsAnswerThatEndsTheLessonStaysUnsavedUntilTheServerTakesIt() throws {
-    let match = #"""
-      {"id": "match", "position": 0, "skillId": null, "kind": "matchColumns", "wordHints": null,
-       "exercise": {"id": "match", "position": 0, "kind": "matchColumns",
-         "content": {"pairs": [{"left": "a", "right": "b"}]}, "sentence": null, "word": null,
-         "wordBankOptions": [], "sentenceWordOptions": [], "readingPromptWords": [],
-         "fillBlankOptions": [],
-         "translationOptions": [], "vocabularyOptions": [], "matchColumnsRightItems": ["b"]}}
-      """#
-    var state = LessonPlayerState(lessonId: "lesson", steps: [try step(match)])
-    let answer = LessonAnswer.matchColumns(userPairs: [.init(left: "a", right: "b")], mistakes: 0)
-    let grade = try XCTUnwrap(LessonGrading.grade(answer, step: try XCTUnwrap(state.currentStep)))
-    let unsaved = LessonPlayerState.UnsavedAnswer(
-      answer: answer, attemptId: "first", durationMs: 1, usedHelp: false)
-
-    state.resolve("match", result: LessonStepResult(grade, attemptId: "first"), saving: unsaved)
-
-    XCTAssertEqual(state.completion?.status, .saving, "match columns finishes on its own check")
-    XCTAssertEqual(state.unsavedAnswers["match"], unsaved, "so finishing has to wait for it")
-
-    state.answerSaved("match", attemptId: "older")
-    XCTAssertNotNil(state.unsavedAnswers["match"], "a reply about another attempt changes nothing")
-
-    state.confirm("match", attemptId: "first", verdict: LessonStepResult(grade))
-    XCTAssertTrue(state.unsavedAnswers.isEmpty)
-  }
-
   func testTheServersVerdictOnADeviceGradedAnswerIsTheOneThatCounts() throws {
     var state = LessonPlayerState(
       lessonId: "lesson", steps: [try step(reading), try step(summary)])
@@ -1167,7 +1152,9 @@ final class LessonPlayerSavingTests: XCTestCase {
     var server = LessonStepResult(
       isCorrect: false, answerText: nil, correctAnswer: "Je suis Marie.", feedback: nil)
     server.nextReviewAt = .distantFuture
-    state.confirm(step.id, attemptId: "first", verdict: server)
+    state.confirm(
+      step.id, attemptId: "first", answer: .reading(arrangedWords: ["Je", "suis", "Marie"]),
+      verdict: server)
 
     XCTAssertEqual(state.results[step.id]?.isCorrect, false)
     XCTAssertEqual(state.results[step.id]?.correctAnswer, "Je suis Marie.")
@@ -1181,13 +1168,11 @@ final class LessonPlayerSavingTests: XCTestCase {
     let answer = LessonAnswer.fillBlank(userAnswers: ["est"])
     state.select(answer, for: step.id)
     let grade = try XCTUnwrap(LessonGrading.grade(answer, step: step))
-    state.resolve(
-      step.id, result: LessonStepResult(grade, attemptId: "first"),
-      saving: .init(answer: answer, attemptId: "first", durationMs: 1, usedHelp: false))
+    state.resolve(step.id, result: LessonStepResult(grade, attemptId: "first"))
     XCTAssertEqual(state.notice, .selfCorrect)
 
     state.confirm(
-      step.id, attemptId: "first",
+      step.id, attemptId: "first", answer: answer,
       verdict: LessonStepResult(isCorrect: true, answerText: nil, correctAnswer: nil, feedback: nil)
     )
 

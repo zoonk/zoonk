@@ -60,15 +60,6 @@ struct LessonPlayerState: Equatable, Sendable {
     let skippedWritingStepIds: [String]
   }
 
-  /// A device-graded answer the server hasn't accepted yet: the lesson can't finish without it,
-  /// and a resend keeps its attempt id so the server records it once.
-  struct UnsavedAnswer: Hashable, Sendable {
-    let answer: LessonAnswer
-    let attemptId: String
-    let durationMs: Int
-    let usedHelp: Bool
-  }
-
   let lessonId: String
   private(set) var steps: [String: LessonStep]
   let lessonOrder: [String]
@@ -111,7 +102,6 @@ struct LessonPlayerState: Equatable, Sendable {
   private(set) var reviewing = false
   private(set) var completion: Completion?
   private(set) var stepStartedAt: Date
-  private(set) var unsavedAnswers: [String: UnsavedAnswer] = [:]
 
   init(
     lessonId: String, steps lessonSteps: [LessonStep], hasMap: Bool = false, now: Date = .now
@@ -499,18 +489,12 @@ struct LessonPlayerState: Equatable, Sendable {
   /// guess (`counts: false`) only shows its reveal. A verdict only lands on the screen being
   /// answered: one that comes back after the learner left its screen changes nothing.
   mutating func resolve(
-    _ stepId: String, result: LessonStepResult, counts: Bool = true, saving: UnsavedAnswer? = nil,
-    now: Date = .now
+    _ stepId: String, result: LessonStepResult, counts: Bool = true, now: Date = .now
   ) {
     guard phase == .playing || phase == .checking, currentStep?.id == stepId,
       let step = steps[stepId]
     else {
       return
-    }
-
-    // Kept before anything moves on: match columns finishes a lesson on its own check.
-    if let saving {
-      unsavedAnswers[stepId] = saving
     }
 
     let isFirst = counts && firstVerdicts[stepId] == nil
@@ -563,17 +547,16 @@ struct LessonPlayerState: Equatable, Sendable {
   /// The server recorded a device-graded answer: its verdict, when its idea comes back, and whether
   /// it went to the mistakes notebook. Where the device's verdict differs, the lesson's count and
   /// the screen's result take the server's; a screen already queued to come back still does.
-  mutating func confirm(_ stepId: String, attemptId: String, verdict: LessonStepResult) {
-    let sent = unsavedAnswers[stepId]
-    answerSaved(stepId, attemptId: attemptId)
-
+  mutating func confirm(
+    _ stepId: String, attemptId: String, answer: LessonAnswer, verdict: LessonStepResult
+  ) {
     if firstVerdictAttemptIds[stepId] == attemptId {
       firstVerdicts[stepId] = verdict.isCorrect
     }
 
     // A first try sent back to self-correct was right after all, and its answer is still on screen.
     if verdict.isCorrect, notice == .selfCorrect, phase == .playing, currentStep?.id == stepId,
-      sent?.attemptId == attemptId, answers[stepId] == sent?.answer
+      answers[stepId] == answer
     {
       var result = verdict
       result.attemptId = attemptId
@@ -599,14 +582,6 @@ struct LessonPlayerState: Equatable, Sendable {
     results[stepId] = result
   }
 
-  /// The server accepted (or refused for good) an answer: it no longer holds the lesson back. A
-  /// reply about an earlier attempt leaves a newer one waiting.
-  mutating func answerSaved(_ stepId: String, attemptId: String) {
-    if unsavedAnswers[stepId]?.attemptId == attemptId {
-      unsavedAnswers[stepId] = nil
-    }
-  }
-
   /// A question about a numbered picture that never came is left out, since nobody can tell which
   /// number is which (main's `getLostNumberedScreens`).
   mutating func leaveOutLostPictures(openedAt: Date, now: Date = .now) {
@@ -625,11 +600,13 @@ struct LessonPlayerState: Equatable, Sendable {
   }
 
   /// The run started. When it already holds answers the screen doesn't show (the learner came
-  /// back to an open run), the lesson continues from them. Once the learner answered anything
-  /// here, their screen leads.
+  /// back to an open run), the lesson continues from them and from the answers the device still
+  /// holds (`held`), which the server doesn't have yet. Once the learner answered anything here,
+  /// their screen leads.
   mutating func startRun(
     runId: String,
     answers runAnswers: [LessonRunAnswer],
+    held: [LessonRunAnswer] = [],
     startedAt: Date = .distantPast,
     hyperdrive: LessonHyperdriveStart = .none,
     optionalStepIds: [String] = []
@@ -641,13 +618,11 @@ struct LessonPlayerState: Equatable, Sendable {
     carriedStepIds = Set(runAnswers.filter { $0.answeredAt < startedAt }.map(\.stepId))
     skipSteps(optionalStepIds)
 
-    let known = runAnswers.filter { steps[$0.stepId] != nil }
-
-    guard isUntouched, Self.verdicts(known) != firstVerdicts else {
+    guard isUntouched else {
       return
     }
 
-    resume(from: known)
+    resume(from: (runAnswers + held).filter { steps[$0.stepId] != nil })
   }
 
   mutating func refuseRun(_ refusal: LessonRunRefusal) {
