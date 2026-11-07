@@ -36,6 +36,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.reminders.StudyReminderStore
+import com.zoonk.android.feature.reminders.nearestQuarterHour
 import com.zoonk.android.feature.reminders.openNotificationSettings
 import com.zoonk.android.feature.reminders.rememberCanShowReminders
 import com.zoonk.android.feature.reminders.rememberReminderPermission
@@ -77,7 +78,7 @@ class RemindersViewModel(
     var blocked by mutableStateOf(false)
         private set
 
-    fun setTime(time: LocalTime) = save({}) { reminders.update(time = time.toString()) }
+    fun setTime(time: LocalTime) = save({}) { reminders.update(time = time.nearestQuarterHour().toString()) }
 
     fun setEmail(on: Boolean) {
         email = on

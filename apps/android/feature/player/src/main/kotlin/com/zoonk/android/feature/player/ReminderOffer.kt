@@ -37,6 +37,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.feature.reminders.StudyReminderStore
+import com.zoonk.android.feature.reminders.nearestQuarterHour
 import com.zoonk.android.feature.reminders.openNotificationSettings
 import com.zoonk.android.feature.reminders.rememberCanShowReminders
 import com.zoonk.android.feature.reminders.rememberReminderPermission
@@ -58,7 +59,7 @@ class ReminderOfferViewModel(
     private val reminders: StudyReminderStore,
     time: String,
 ) : ViewModel() {
-    var time by mutableStateOf(time)
+    var time by mutableStateOf(LocalTime.parse(time).nearestQuarterHour().toString())
         private set
 
     var step by mutableStateOf(OfferStep.Claiming)
@@ -86,7 +87,7 @@ class ReminderOfferViewModel(
     }
 
     fun pick(time: LocalTime) {
-        this.time = time.toString()
+        this.time = time.nearestQuarterHour().toString()
     }
 
     fun decline() {
