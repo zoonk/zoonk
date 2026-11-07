@@ -42,8 +42,8 @@
     "iphone": "node apps/apple/scripts/run-simulator.mts iphone",
     "iphone:hold": "node apps/apple/scripts/with-simulator.mts --hold",
     "knip": "knip",
-    "lint": "OXLINT_TSGOLINT_PATH=node_modules/.bin/tsrs-lint oxlint --deny-warnings",
-    "lint:fix": "OXLINT_TSGOLINT_PATH=node_modules/.bin/tsrs-lint oxlint --fix --deny-warnings",
+    "lint": "oxlint --deny-warnings",
+    "lint:fix": "oxlint --fix --deny-warnings",
     "openapi:check": "pnpm --filter api openapi:check",
     "openapi:generate": "pnpm --filter api openapi:generate",
     "palette": "pnpm --filter android --filter apple palette",
@@ -69,15 +69,15 @@
     "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
-    "knip": "6.44.1",
-    "neon": "8.16.0",
-    "oxc-parser": "0.156.0",
-    "oxfmt": "0.75.0",
-    "oxlint": "1.90.0",
+    "knip": "6.44.2",
+    "neon": "9.2.0",
+    "oxc-parser": "0.157.0",
+    "oxfmt": "0.77.0",
+    "oxlint": "1.92.0",
     "oxlint-tsgolint": "7.0.2005",
-    "portless": "0.15.12",
+    "portless": "0.16.0",
     "sharp": "catalog:",
-    "tsrs": "0.21.0-ts7.1.0-beta",
+    "tsrs": "0.23.0-ts7.1.0-beta",
     "turbo": "2.11.10",
     "typescript": "catalog:",
     "vitest": "catalog:",
@@ -86,5 +86,5 @@
   "engines": {
     "node": "^26"
   },
-  "packageManager": "pnpm@12.16.1"
+  "packageManager": "pnpm@12.18.0"
 }

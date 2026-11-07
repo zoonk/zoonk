@@ -52,7 +52,7 @@ internal object ExamSittings {
     /** The day the learner's words or date point to: their month's sitting, or the next open one. */
     fun meantDay(
         days: List<OnboardingExamDate>,
-        details: Map<String, JsonElement>?,
+        details: Map<String, JsonElement?>?,
         from: LocalDate,
         goalDate: LocalDate?,
     ): OnboardingExamDate? {
@@ -64,7 +64,7 @@ internal object ExamSittings {
 
     /** The start of the month the learner named for the exam, while it's still ahead. */
     fun namedMonthStart(
-        details: Map<String, JsonElement>?,
+        details: Map<String, JsonElement?>?,
         from: LocalDate,
     ): LocalDate? {
         val month = examMonth(details) ?: return null
@@ -74,7 +74,7 @@ internal object ExamSittings {
 
     /** The learner's named month when the notice puts the exam in another one: theirs stays until they pick. */
     fun keptMonthStart(
-        details: Map<String, JsonElement>?,
+        details: Map<String, JsonElement?>?,
         noticeDay: LocalDate?,
         today: LocalDate,
     ): LocalDate? {
@@ -83,9 +83,9 @@ internal object ExamSittings {
         return named.takeIf { it.year != noticeDay.year || it.month != noticeDay.month }
     }
 
-    fun examMonth(details: Map<String, JsonElement>?): Int? = details?.integer("examMonth")?.takeIf { it in 1..12 }
+    fun examMonth(details: Map<String, JsonElement?>?): Int? = details?.integer("examMonth")?.takeIf { it in 1..12 }
 
-    fun examYear(details: Map<String, JsonElement>?): Int? = details?.integer("examYear")
+    fun examYear(details: Map<String, JsonElement?>?): Int? = details?.integer("examYear")
 
     private fun ahead(
         days: List<OnboardingExamDate>,
@@ -97,7 +97,7 @@ internal object ExamSittings {
 
 internal val OnboardingExamDate.day: LocalDate get() = date.toJavaLocalDate()
 
-private fun Map<String, JsonElement>.integer(key: String): Int? =
+private fun Map<String, JsonElement?>.integer(key: String): Int? =
     (get(key) as? JsonPrimitive)
         ?.takeUnless { it.isString }
         ?.doubleOrNull

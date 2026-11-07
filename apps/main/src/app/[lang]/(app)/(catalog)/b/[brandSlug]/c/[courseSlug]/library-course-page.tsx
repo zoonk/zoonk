@@ -57,7 +57,7 @@ async function EditionNotice({ courseId, locale }: { courseId: string; locale: S
 
   return (
     <Link
-      className="bg-card ring-border hover:bg-muted focus-visible:ring-ring/50 mb-6 flex max-w-[560px] gap-3 rounded-xl px-4 py-3 text-sm leading-snug ring-1 transition-colors outline-none focus-visible:ring-[3px]"
+      className="bg-card ring-border hover:bg-muted focus-visible:ring-ring/50 mb-6 flex min-h-11 max-w-[560px] gap-3 rounded-xl px-4 py-3 text-sm leading-snug ring-1 transition-colors outline-none focus-visible:ring-[3px]"
       href={getCourseHref(edition)}
       prefetch
     >

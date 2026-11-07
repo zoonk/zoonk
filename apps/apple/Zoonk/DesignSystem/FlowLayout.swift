@@ -30,7 +30,7 @@ struct FlowLayout: Layout {
 
       for item in row.items {
         subviews[item.index].place(
-          at: CGPoint(x: x, y: y + row.line - item.line), proposal: ProposedViewSize(item.size))
+          at: CGPoint(x: x, y: y + row.line - item.line), proposal: item.proposal)
         x += item.size.width + spacing
       }
 
@@ -40,6 +40,9 @@ struct FlowLayout: Layout {
 
   private struct Item {
     let index: Int
+    /// What the item was measured with, and so is placed with: proposing exactly its measured size
+    /// can cut off its last text, as rounding inside it leaves that text a fraction short.
+    let proposal: ProposedViewSize
     let size: CGSize
     /// Where the alignment guide crosses the item, from its top.
     let line: CGFloat
@@ -56,12 +59,13 @@ struct FlowLayout: Layout {
   private func item(_ index: Int, of subviews: Subviews, width: CGFloat) -> Item {
     let subview = subviews[index]
     let ideal = subview.sizeThatFits(.unspecified)
-    let size =
-      ideal.width > width
-      ? subview.sizeThatFits(ProposedViewSize(width: width, height: nil)) : ideal
+    let proposal =
+      ideal.width > width ? ProposedViewSize(width: width, height: nil) : .unspecified
+    let size = proposal == .unspecified ? ideal : subview.sizeThatFits(proposal)
 
     return Item(
-      index: index, size: size, line: subview.dimensions(in: ProposedViewSize(size))[alignment])
+      index: index, proposal: proposal, size: size,
+      line: subview.dimensions(in: proposal)[alignment])
   }
 
   private func arrange(_ subviews: Subviews, width: CGFloat) -> [Row] {

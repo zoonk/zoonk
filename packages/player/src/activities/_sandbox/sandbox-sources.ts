@@ -1,7 +1,7 @@
 import { CONSOLE_VALUE_SOURCE } from "@zoonk/core/library/activities/console-values";
 
 const PYODIDE_INDEX_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.7/full/";
-const SQL_JS_BASE_URL = "https://cdn.jsdelivr.net/npm/sql.js@1.14.2/dist/";
+const SQL_JS_BASE_URL = "https://cdn.jsdelivr.net/npm/sql.js@1.15.2/dist/";
 
 const LOCKED_GLOBALS = [
   "BroadcastChannel",

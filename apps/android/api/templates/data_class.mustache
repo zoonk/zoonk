@@ -1,10 +1,10 @@
 {{!
-OpenAPI Generator 7.26.0's kotlin-client/data_class.mustache, giving a model's inner number enum
-(an inline `anyOf` of number literals, like `plays: 1 | 2`) the value serializer the top-level
-enum_class.mustache gives every non-string enum. Without it, kotlinx.serialization reads and
-writes the enum's @SerialName ("1.0"), so the server's `1` doesn't decode and requests send a
-string. Nothing else differs.
-https://github.com/OpenAPITools/openapi-generator/issues/25459
+OpenAPI Generator 7.27.0's kotlin-client/data_class.mustache, giving a model's inner number enum
+(an inline `anyOf` of number literals, like `plays: 1 | 2`, which api/build.gradle.kts maps to
+kotlin.Double) the value serializer it gives an inline integer enum: the generator skips every
+`type: number` enum, so kotlinx.serialization reads and writes its @SerialName ("1.0"), the
+server's `1` doesn't decode and requests send a string. Nothing else differs.
+https://github.com/OpenAPITools/openapi-generator/issues/25588
 }}
 {{^multiplatform}}
 {{#gson}}
@@ -50,14 +50,14 @@ import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 {{/enumUnknownDefaultCase}}
-{{^enumUnknownDefaultCase}}
 {{#hasEnums}}
+{{^enumUnknownDefaultCase}}
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-{{/hasEnums}}
 {{/enumUnknownDefaultCase}}
+{{/hasEnums}}
 {{#discriminator}}
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.JsonClassDiscriminator
@@ -85,10 +85,12 @@ import {{packageName}}.infrastructure.ITransformForStorage
 {{/generateRoomModels}}
 
 /**
- * {{{description}}}
+{{#description}}
+ * {{{.}}}
  *
+{{/description}}
 {{#allVars}}
- * @param {{{name}}} {{{description}}}
+ * @param {{{name}}}{{#description}} {{{.}}}{{/description}}
 {{/allVars}}
  */
 {{#parcelizeModels}}
@@ -125,7 +127,7 @@ import {{packageName}}.infrastructure.ITransformForStorage
 {{#required}}{{>data_class_req_var}}{{/required}}{{^required}}{{>data_class_opt_var}}{{/required}}{{^-last}},{{/-last}}
 
 {{/allVars}}
-){{/discriminator}}{{#parent}}{{^serializableModel}}{{^parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#kotlinx_serialization}}(){{/kotlinx_serialization}}{{#multiplatform}}(){{/multiplatform}}{{#isArray}}(){{/isArray}}{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#parent}}{{#serializableModel}}{{^parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#isArray}}(){{/isArray}}, Serializable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#parent}}{{^serializableModel}}{{#parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#isArray}}(){{/isArray}}, Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#parent}}{{#serializableModel}}{{#parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#isArray}}(){{/isArray}}, Serializable, Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{^parent}}{{#serializableModel}}{{^parcelizeModels}} : Serializable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{^parent}}{{^serializableModel}}{{#parcelizeModels}} : Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{^parent}}{{#serializableModel}}{{#parcelizeModels}} : Serializable, Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#generateRoomModels}}{{#parent}}, {{/parent}}{{^discriminator}}{{^parent}}:{{/parent}} ITransformForStorage<{{classname}}RoomModel>{{/discriminator}}{{/generateRoomModels}}{{#vendorExtensions.x-has-data-class-body}} {
+){{/discriminator}}{{#parent}}{{^serializableModel}}{{^parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#kotlinx_serialization}}(){{/kotlinx_serialization}}{{#multiplatform}}(){{/multiplatform}}{{#isArray}}(){{/isArray}}{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#parent}}{{#serializableModel}}{{^parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#isArray}}(){{/isArray}}, Serializable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#parent}}{{^serializableModel}}{{#parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#isArray}}(){{/isArray}}, Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#parent}}{{#serializableModel}}{{#parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#isArray}}(){{/isArray}}, Serializable, Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{^parent}}{{#serializableModel}}{{^parcelizeModels}} : Serializable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{^parent}}{{^serializableModel}}{{#parcelizeModels}} : Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{^parent}}{{#serializableModel}}{{#parcelizeModels}} : Serializable, Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#vendorExtensions.x-kotlin-microprofile-union-interfaces}}{{#parent}}, {{/parent}}{{^parent}}{{#serializableModel}}, {{/serializableModel}}{{^serializableModel}}{{#parcelizeModels}}, {{/parcelizeModels}}{{^parcelizeModels}} : {{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{{.}}}{{/vendorExtensions.x-kotlin-microprofile-union-interfaces}}{{#generateRoomModels}}{{#parent}}, {{/parent}}{{^discriminator}}{{^parent}}:{{/parent}} ITransformForStorage<{{classname}}RoomModel>{{/discriminator}}{{/generateRoomModels}}{{#vendorExtensions.x-has-data-class-body}} {
 {{/vendorExtensions.x-has-data-class-body}}
 {{#generateRoomModels}}
     companion object { }
@@ -148,13 +150,15 @@ import {{packageName}}.infrastructure.ITransformForStorage
 {{#vars}}
 {{#isEnum}}
     /**
-     * {{{description}}}
+{{#description}}
+     * {{{.}}}
      *
+{{/description}}
      * Values: {{#allowableValues}}{{#enumVars}}{{&name}}{{^-last}},{{/-last}}{{/enumVars}}{{/allowableValues}}
      */
     {{^multiplatform}}
     {{#kotlinx_serialization}}
-    {{#serializableModel}}@KSerializable{{/serializableModel}}{{^serializableModel}}@Serializable{{#enumUnknownDefaultCase}}(with = {{{nameInPascalCase}}}Serializer::class){{/enumUnknownDefaultCase}}{{^enumUnknownDefaultCase}}{{^isContainer}}{{^isString}}(with = {{{nameInPascalCase}}}Serializer::class){{/isString}}{{/isContainer}}{{/enumUnknownDefaultCase}}{{/serializableModel}}
+    {{#serializableModel}}@KSerializable{{/serializableModel}}{{^serializableModel}}@Serializable{{#enumUnknownDefaultCase}}(with = {{{nameInPascalCase}}}Serializer::class){{/enumUnknownDefaultCase}}{{/serializableModel}}{{^enumUnknownDefaultCase}}{{^isString}}{{#isPrimitiveType}}{{^isContainer}}(with = {{{nameInPascalCase}}}Serializer::class){{/isContainer}}{{/isPrimitiveType}}{{/isString}}{{/enumUnknownDefaultCase}}
     {{/kotlinx_serialization}}
     {{#moshi}}
     @JsonClass(generateAdapter = false)
@@ -211,7 +215,11 @@ import {{packageName}}.infrastructure.ITransformForStorage
         }
     }
     {{/enumUnknownDefaultCase}}
-    {{^enumUnknownDefaultCase}}{{^isContainer}}{{^isString}}
+    {{^multiplatform}}
+    {{^enumUnknownDefaultCase}}
+    {{^isString}}
+    {{#isPrimitiveType}}
+    {{^isContainer}}
 
     internal object {{nameInPascalCase}}Serializer : KSerializer<{{nameInPascalCase}}> {
         override val descriptor = {{dataType}}.serializer().descriptor
@@ -226,7 +234,11 @@ import {{packageName}}.infrastructure.ITransformForStorage
             encoder.encodeSerializableValue({{dataType}}.serializer(), value.value)
         }
     }
-    {{/isString}}{{/isContainer}}{{/enumUnknownDefaultCase}}
+    {{/isContainer}}
+    {{/isPrimitiveType}}
+    {{/isString}}
+    {{/enumUnknownDefaultCase}}
+    {{/multiplatform}}
     {{/kotlinx_serialization}}
 {{/isEnum}}
 {{/vars}}
