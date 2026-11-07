@@ -29,6 +29,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.goalcontent.WithPlanGoal
+import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -36,6 +37,7 @@ import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
@@ -43,6 +45,8 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.limitMessage
+import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -225,7 +229,8 @@ internal fun List<MindMapGroup>.listIndexOf(subject: String?): Int? {
 
 /**
  * The goal over the title, how many maps are drawn, what maps are (and, while a row has lessons to
- * write, what making its map does, for the learner's [plus] or free plan), and the plan's cap once.
+ * write, what making its map does, for the learner's [plus] or free plan), then once each: why rows
+ * are locked for Plus, and the plan's cap.
  */
 @Composable
 private fun MindMapsHero(
@@ -252,7 +257,32 @@ private fun MindMapsHero(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-        if (cap != null) MindMapLimit(cap, lessonsRanOut = false, navigate, Modifier.padding(top = 12.dp))
+        val locked = mindMaps.chapters.any { it.status == GoalMindMap.Status.PLUS_REQUIRED }
+        if (locked) {
+            PlusNotice(
+                onSeePlus = { navigate(AppRoute.Subscription) },
+                modifier = Modifier.padding(top = 12.dp),
+                title = stringResource(R.string.subscription_free_week_over_title),
+                description = stringResource(R.string.subscription_free_week_over_description),
+            )
+        }
+        when {
+            cap == null -> {}
+
+            // The Plus notice above already has the page's one See Plus.
+            locked && !cap.needsAccount -> {
+                Text(
+                    limitMessage(cap, LimitSubject.MindMaps),
+                    Modifier.padding(top = 12.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+
+            else -> {
+                MindMapLimit(cap, lessonsRanOut = false, navigate, Modifier.padding(top = 12.dp))
+            }
+        }
     }
 }
 

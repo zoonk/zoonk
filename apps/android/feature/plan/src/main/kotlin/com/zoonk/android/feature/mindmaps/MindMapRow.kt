@@ -187,18 +187,27 @@ internal fun MindMapRow(
     val supporting = if (place == MindMapPlace.Library) factsLine(chapterNumber(map.position), status) else status
     val refused = local?.limit?.takeIf { shown == MindMapShown.Refused && !local.pending }
     val notice = refused ?: cap?.takeIf { place != MindMapPlace.Library }
-    val opensFromRow = place == MindMapPlace.Library && shown == MindMapShown.Ready
+    val library = place == MindMapPlace.Library
     val open = { actions.navigate(AppRoute.MindMap(map.chapterId.toString())) }
+    val seePlus = { actions.navigate(AppRoute.Subscription) }
+    // The Mind maps page opens a ready map, or Plus for a locked one, from the whole row.
+    val rowClick =
+        when {
+            !library -> null
+            shown == MindMapShown.Ready -> open
+            shown == MindMapShown.PlusRequired -> seePlus
+            else -> null
+        }
 
     Column(modifier) {
         ListRow(
             headline = { Text(title) },
             modifier = if (place == MindMapPlace.Library) Modifier else Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-            onClick = if (opensFromRow) open else null,
+            onClick = rowClick,
             leading = { MapMark(map.image?.thumbnailUrl?.takeIf { shown == MindMapShown.Ready }, shown) },
             supporting = supporting?.let { { Text(it) } },
-            meta = if (shown == MindMapShown.PlusRequired) ({ PlusMark() }) else null,
-            trailing = rowAction(map, place, shown, local, cap, open, actions),
+            meta = if (shown == MindMapShown.PlusRequired && !library) ({ PlusMark() }) else null,
+            trailing = rowAction(map, place, shown, local, cap, open, seePlus, actions),
         )
 
         if (notice != null) {
@@ -273,7 +282,7 @@ private fun MapFacts.statusLine(
         }
 
         MindMapShown.PlusRequired -> {
-            described
+            if (library) stringResource(R.string.subscription_plus) else described
         }
 
         MindMapShown.Unavailable -> {
@@ -288,8 +297,8 @@ private fun chapterNumber(position: Long) =
 
 /**
  * The row's button: Create, Try again, Open or See Plus; none while the map is on its way, while a
- * cap or a refusal stops it, or where the whole row opens it. A refusal that only asks to wait keeps
- * Create.
+ * cap or a refusal stops it, or where the whole row opens it (a ready or locked map on the Mind maps
+ * page, whose one Plus notice sits above its rows). A refusal that only asks to wait keeps Create.
  */
 private fun rowAction(
     map: MapFacts,
@@ -298,6 +307,7 @@ private fun rowAction(
     local: MindMapLocal?,
     cap: Limit?,
     open: () -> Unit,
+    seePlus: () -> Unit,
     actions: MindMapRowActions,
 ): (@Composable () -> Unit)? {
     val slowedDown = shown == MindMapShown.Refused && local?.limit is Limit.SlowDown
@@ -308,8 +318,8 @@ private fun rowAction(
             { RowButton(R.string.mindmaps_open, R.string.mindmaps_open_spoken, map, place, onClick = open) }
         }
 
-        shown == MindMapShown.PlusRequired -> {
-            { RowButton(R.string.mindmaps_see_plus, null, map, place, onClick = { actions.navigate(AppRoute.Subscription) }) }
+        shown == MindMapShown.PlusRequired && place != MindMapPlace.Library -> {
+            { RowButton(R.string.mindmaps_see_plus, null, map, place, onClick = seePlus) }
         }
 
         shown == MindMapShown.Failed || shown == MindMapShown.Unreachable -> {

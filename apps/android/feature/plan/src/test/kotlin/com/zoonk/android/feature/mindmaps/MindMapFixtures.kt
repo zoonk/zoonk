@@ -51,6 +51,7 @@ internal fun goalMindMaps(
             mapJson(5, "Light", "writingLessons", lessonsToWrite = 3),
             mapJson(6, "Optics", "available", lessonsToWrite = 2),
             mapJson(7, "Modern physics", "plusRequired"),
+            mapJson(8, "Nuclear physics", "plusRequired", lessonsToWrite = 2),
             mapJson(1, "Functions", "failed", subject = "mathematics", id = 11),
         ),
 ): GoalMindMaps =
