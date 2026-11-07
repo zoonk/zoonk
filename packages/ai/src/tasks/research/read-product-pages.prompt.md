@@ -21,7 +21,7 @@ Everything you return is checked in code: each claim quotes a passage copied wor
   - `version`: the version number alone, or null for a model.
   - `releasedOn`: the date it came out (or will, when it's announced for a later date), as YYYY-MM-DD, only when the passage states that whole date: day, month and year. Null otherwise.
   - `supportEndsOn`: the date its updates or support end, as YYYY-MM-DD, only when the passage states that whole date. Null otherwise.
-  - `document` and `passage`: one passage that states the release's name or version together with the dates you give. A date the passage doesn't state is dropped, so when the name and a date are far apart, give the date as null.
+  - `document` and `passage`: one passage that states the release's name or version together with the dates you give. A date the passage doesn't state is dropped, so when the name and a date are far apart, give the date as null. When the page lists the release by its version alone, quote the line that lists it (a heading, a table row or a list item). A version in a sentence counts only right beside the product's name, so leave out a release the pages mention only in a sentence without it.
 {{#release}}
 - `learnerRelease`: the `name` of the release in `releases` that is the one `PRODUCT` names, written exactly as in `releases`. Include that release even when it's older than the 10 newest. Null when the pages don't list it.
 {{/release}}

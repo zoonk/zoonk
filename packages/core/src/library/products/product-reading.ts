@@ -87,7 +87,8 @@ function isClaimStated({
 /**
  * A release keeps its version only when its name and passage state it, so a year in its date never
  * passes for one. A row naming no product counts by its version alone when the release's name names
- * the product, so another product's row can't pass.
+ * the product and the version opens its line or sits beside the product's name (`isVersionStated`),
+ * so another product's row can't pass.
  */
 function checkRelease({
   pages,
@@ -101,7 +102,7 @@ function checkRelease({
   const page = pages[release.document - 1];
 
   const isVersionOfProduct =
-    isVersionStated(release) &&
+    isVersionStated({ ...release, productNames }) &&
     findNamesInDocument({ names: productNames, text: release.name }).size > 0;
 
   if (

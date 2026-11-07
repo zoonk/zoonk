@@ -249,6 +249,60 @@ describe("a releases table that lists versions without the product's name", () =
     expect(checked.releases.map((item) => item.name)).toStrictEqual(["Orbit Server 1.37"]);
   });
 
+  it("drops a version that follows another product's name in its passage", () => {
+    const passage = "Comet Phone 1.37 released on 2026-09-15.";
+
+    const checked = checkProductReading({
+      pages: [{ language: "en", text: `Lumen news\n${passage}\nOrbit Server 1.36 is next.` }],
+      productName: "Orbit Server",
+      reading: reading({
+        brand: null,
+        product: null,
+        releases: [
+          { ...tableRelease("Orbit Server 1.37", "1.37", passage), releasedOn: "2026-09-15" },
+        ],
+      }),
+    });
+
+    expect(checked.releases).toStrictEqual([]);
+  });
+
+  it("keeps a version that opens its line or follows the product's own name", () => {
+    const notes = `Orbit Server changelog
+## 4.98.0  November 3, 2026
+- Release 4.97.0
+- Release 4.96.0
+Orbit 4.95.0 shipped with faster sync.`;
+
+    const checked = checkProductReading({
+      pages: [{ language: "en", text: notes }],
+      productName: "Orbit Server",
+      reading: reading({
+        brand: null,
+        product: {
+          ...PRODUCT,
+          aliases: ["Orbit"],
+          name: "Orbit Server",
+          passage: "Orbit Server changelog",
+        },
+        releases: [
+          {
+            ...tableRelease("Orbit Server 4.98.0", "4.98.0", "## 4.98.0  November 3, 2026"),
+            releasedOn: "2026-11-03",
+          },
+          tableRelease("Orbit Server 4.96.0", "4.96.0", "- Release 4.97.0\n- Release 4.96.0"),
+          tableRelease("Orbit Server 4.95.0", "4.95.0", "Orbit 4.95.0 shipped with faster sync."),
+        ],
+      }),
+    });
+
+    expect(checked.releases.map((item) => [item.name, item.releasedAt])).toStrictEqual([
+      ["Orbit Server 4.98.0", new Date(Date.UTC(2026, 10, 3))],
+      ["Orbit Server 4.96.0", null],
+      ["Orbit Server 4.95.0", null],
+    ]);
+  });
+
   it("drops a version row whose release names another product", () => {
     const checked = checkProductReading({
       pages: [{ language: "en", text: table }],

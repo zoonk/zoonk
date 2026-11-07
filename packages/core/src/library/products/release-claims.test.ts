@@ -86,42 +86,62 @@ describe(isDateStated, () => {
   });
 });
 
+const PRODUCT_NAMES = ["Orbit Server", "Orbit"];
+
+/** Whether `passage` states `release`'s version, the last word of its name. */
+function stated(passage: string, release = "Orbit Server 1.37"): boolean {
+  const version = release.split(" ").at(-1) ?? null;
+  return isVersionStated({ name: release, passage, productNames: PRODUCT_NAMES, version });
+}
+
 describe(isVersionStated, () => {
-  const name = "Orbit Server 1.37";
-
   it("accepts a version with a separator as a whole token", () => {
-    expect(isVersionStated({ name, passage: "1.37 | 1.37.2 | 2027-10-28", version: "1.37" })).toBe(
-      true,
-    );
-
-    expect(isVersionStated({ name, passage: "Latest: v1.37 (stable)", version: "1.37" })).toBe(
-      true,
-    );
-
-    expect(
-      isVersionStated({ name: "Orbit Server 2025.1", passage: "2025.1 LTS", version: "2025.1" }),
-    ).toBe(true);
+    expect(stated("1.37 | 1.37.2 | 2027-10-28")).toBe(true);
+    expect(stated("v1.37 (stable)")).toBe(true);
+    expect(stated("2025.1 LTS", "Orbit Server 2025.1")).toBe(true);
   });
 
   it("refuses a version that's only part of another token", () => {
-    expect(isVersionStated({ name, passage: "1.37.2 | 2027-10-28", version: "1.37" })).toBe(false);
-    expect(isVersionStated({ name, passage: "11.37 | 2027-10-28", version: "1.37" })).toBe(false);
-    expect(isVersionStated({ name, passage: "release1.37 is out", version: "1.37" })).toBe(false);
+    expect(stated("1.37.2 | 2027-10-28")).toBe(false);
+    expect(stated("11.37 | 2027-10-28")).toBe(false);
+    expect(stated("release1.37 is out")).toBe(false);
   });
 
   it("needs the release name for a bare integer or a single character", () => {
-    const short = { name: "Orbit Notes 5", passage: "5 | 2025-10-21 | supported" };
-
-    expect(isVersionStated({ ...short, version: "5" })).toBe(false);
-
-    expect(
-      isVersionStated({ name: "Orbit Notes 16", passage: "16 | 2026-01-02", version: "16" }),
-    ).toBe(false);
+    expect(stated("5 | 2025-10-21 | supported", "Orbit Notes 5")).toBe(false);
+    expect(stated("16 | 2026-01-02", "Orbit Notes 16")).toBe(false);
   });
 
   it("refuses a version the release's own name doesn't carry", () => {
     expect(
-      isVersionStated({ name: "Orbit Server 1.38", passage: "1.37 | 2027-10-28", version: "1.37" }),
+      isVersionStated({
+        name: "Orbit Server 1.38",
+        passage: "1.37 | 2027-10-28",
+        productNames: PRODUCT_NAMES,
+        version: "1.37",
+      }),
     ).toBe(false);
+  });
+
+  it("accepts a version that opens its line after list marks and a release word", () => {
+    expect(stated("## 1.37  November 3, 2026")).toBe(true);
+    expect(stated("- Release 1.36\n- Release 1.37")).toBe(true);
+    expect(stated("Version: v1.37")).toBe(true);
+    expect(stated("Versão 1.37 - outubro de 2026")).toBe(true);
+  });
+
+  it("accepts a version right beside the product's name or an alias", () => {
+    expect(stated("Orbit Server | 1.37 | 2027-10-28")).toBe(true);
+    expect(stated("Orbit 1.37 shipped with faster sync.")).toBe(true);
+    expect(stated("See the schedule for the upcoming 1.37 Orbit Server release!")).toBe(true);
+  });
+
+  it("refuses a version that follows any other name", () => {
+    expect(stated("Comet Phone 1.37 released on 2026-09-15.")).toBe(false);
+    expect(stated("Comet Phone release 1.37")).toBe(false);
+    expect(stated("Latest: v1.37 (stable)")).toBe(false);
+    expect(stated("Neworbit 1.37")).toBe(false);
+    expect(stated("the upcoming 1.37 Orbiter release")).toBe(false);
+    expect(stated("Comet Phone 1.37 | Orbit Server 1.36")).toBe(false);
   });
 });
