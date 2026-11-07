@@ -58,12 +58,8 @@ export async function updateDevelopmentDatabase(worktree: string): Promise<void>
   }
 
   const env = { ...process.env, DATABASE_URL: url, DATABASE_URL_UNPOOLED: url };
-  const output = await prisma({ args: ["migrate", "deploy"], env, worktree });
-
-  // Prisma's words when it applied nothing; any other output only costs a Library write.
-  if (!output.includes("No pending migrations to apply")) {
-    await seedLibrary({ env, worktree });
-  }
+  await prisma({ args: ["migrate", "deploy"], env, worktree });
+  await seedLibrary({ env, worktree });
 }
 
 export function databaseName(database: CheckoutDatabase): string {

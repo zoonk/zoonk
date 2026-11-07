@@ -1,8 +1,14 @@
+import { logError } from "@zoonk/utils/logger";
 import { prisma } from "../index";
 import { writeSeedLibrary } from "./seed/index";
 
-try {
-  await writeSeedLibrary(prisma);
-} finally {
-  await prisma.$disconnect();
-}
+writeSeedLibrary(prisma)
+  .then(async () => {
+    await prisma.$disconnect();
+    process.exit(0);
+  })
+  .catch(async (error: unknown) => {
+    logError(error);
+    await prisma.$disconnect();
+    process.exit(1);
+  });
