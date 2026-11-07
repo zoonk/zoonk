@@ -14,14 +14,16 @@ export async function studyReminderWorkflow({ userId }: { userId: string }) {
 
   const claim = await claimStudyReminderStep(userId);
 
-  if (claim !== "claimed") {
-    return { claim };
+  if (claim.status !== "claimed") {
+    return { claim: claim.status };
   }
 
+  const delivery = { claim: { endsAt: claim.endsAt, localDate: claim.localDate }, userId };
+
   const [email, push] = await Promise.allSettled([
-    sendStudyReminderEmailStep(userId),
-    sendStudyReminderPushStep(userId),
+    sendStudyReminderEmailStep(delivery),
+    sendStudyReminderPushStep(delivery),
   ]);
 
-  return { claim, email: readSettled(email), push: readSettled(push) };
+  return { claim: claim.status, email: readSettled(email), push: readSettled(push) };
 }

@@ -19,6 +19,9 @@ const TODAY = new Date("2026-10-07T00:00:00Z");
 const AT_SEVEN_TEN = new Date("2026-10-07T19:10:00Z");
 const MINUTE_MS = 60_000;
 
+/** Today's claim for a 19:00 reminder in UTC. */
+const CLAIM = { endsAt: new Date("2026-10-07T20:00:00Z"), localDate: TODAY };
+
 async function learnerWithReminder({
   dailyMinutes = 30,
   pushToken,
@@ -55,12 +58,12 @@ describe("claiming a study reminder", () => {
   it("claims a due learner's day once and marks it processed", async () => {
     const { user } = await learnerWithReminder();
 
-    await expect(claimStudyReminder({ now: AT_SEVEN_TEN, userId: user.id })).resolves.toBe(
-      "claimed",
+    await expect(claimStudyReminder({ now: AT_SEVEN_TEN, userId: user.id })).resolves.toStrictEqual(
+      { ...CLAIM, status: "claimed" },
     );
 
-    await expect(claimStudyReminder({ now: AT_SEVEN_TEN, userId: user.id })).resolves.toBe(
-      "notDue",
+    await expect(claimStudyReminder({ now: AT_SEVEN_TEN, userId: user.id })).resolves.toMatchObject(
+      { status: "notDue" },
     );
 
     await expect(
@@ -74,7 +77,7 @@ describe("claiming a study reminder", () => {
 
     const results = await Promise.all([claim(), claim()]);
 
-    expect(results.toSorted()).toStrictEqual(["claimed", "notDue"]);
+    expect(results.map((result) => result.status).toSorted()).toStrictEqual(["claimed", "notDue"]);
   });
 
   it("waits outside the hour after the reminder's time", async () => {
@@ -83,8 +86,13 @@ describe("claiming a study reminder", () => {
     const early = new Date("2026-10-07T18:59:00Z");
     const late = new Date("2026-10-07T20:00:00Z");
 
-    await expect(claimStudyReminder({ now: early, userId: user.id })).resolves.toBe("notDue");
-    await expect(claimStudyReminder({ now: late, userId: user.id })).resolves.toBe("notDue");
+    await expect(claimStudyReminder({ now: early, userId: user.id })).resolves.toMatchObject({
+      status: "notDue",
+    });
+
+    await expect(claimStudyReminder({ now: late, userId: user.id })).resolves.toMatchObject({
+      status: "notDue",
+    });
   });
 
   it("skips the day once the goal's session stopped for today", async () => {
@@ -97,8 +105,8 @@ describe("claiming a study reminder", () => {
       userId: user.id,
     });
 
-    await expect(claimStudyReminder({ now: AT_SEVEN_TEN, userId: user.id })).resolves.toBe(
-      "skipped",
+    await expect(claimStudyReminder({ now: AT_SEVEN_TEN, userId: user.id })).resolves.toMatchObject(
+      { status: "skipped" },
     );
 
     await expect(
@@ -121,8 +129,8 @@ describe("claiming a study reminder", () => {
       startedAt: new Date(AT_SEVEN_TEN.getTime() - 10 * MINUTE_MS),
     });
 
-    await expect(claimStudyReminder({ now: AT_SEVEN_TEN, userId: user.id })).resolves.toBe(
-      "deferred",
+    await expect(claimStudyReminder({ now: AT_SEVEN_TEN, userId: user.id })).resolves.toMatchObject(
+      { status: "deferred" },
     );
 
     await expect(
@@ -173,6 +181,7 @@ describe("reading a study reminder's delivery", () => {
 
     const delivery = await readStudyReminderDelivery({
       channel: "email",
+      claim: CLAIM,
       now: AT_SEVEN_TEN,
       userId: user.id,
     });
@@ -195,7 +204,12 @@ describe("reading a study reminder's delivery", () => {
     const { goal, user } = await learnerWithReminder({ dailyMinutes: 10, pushToken: token });
 
     await expect(
-      readStudyReminderDelivery({ channel: "push", now: AT_SEVEN_TEN, userId: user.id }),
+      readStudyReminderDelivery({
+        channel: "push",
+        claim: CLAIM,
+        now: AT_SEVEN_TEN,
+        userId: user.id,
+      }),
     ).resolves.toMatchObject({ channel: "push", platform: "android", token });
 
     const session = await studySessionFixture({
@@ -211,7 +225,12 @@ describe("reading a study reminder's delivery", () => {
     });
 
     await expect(
-      readStudyReminderDelivery({ channel: "push", now: AT_SEVEN_TEN, userId: user.id }),
+      readStudyReminderDelivery({
+        channel: "push",
+        claim: CLAIM,
+        now: AT_SEVEN_TEN,
+        userId: user.id,
+      }),
     ).resolves.toBeNull();
   });
 });

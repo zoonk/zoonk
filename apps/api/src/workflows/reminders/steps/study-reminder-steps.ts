@@ -4,7 +4,11 @@ import { type PushOutcome } from "@/lib/reminders/push-outcome";
 import { loadReminderWords, writeReminderText } from "@/lib/reminders/reminder-copy";
 import { type EmailOutcome, sendReminderEmail } from "@/lib/reminders/reminder-email";
 import { clearStudyReminderPhone } from "@zoonk/core/reminders/clear-phone";
-import { claimStudyReminder, readStudyReminderDelivery } from "@zoonk/core/reminders/send";
+import {
+  type ReminderClaim,
+  claimStudyReminder,
+  readStudyReminderDelivery,
+} from "@zoonk/core/reminders/send";
 import { RetryableError } from "workflow";
 
 export async function claimStudyReminderStep(userId: string) {
@@ -13,12 +17,20 @@ export async function claimStudyReminderStep(userId: string) {
   return claimStudyReminder({ now: new Date(), userId });
 }
 
-export async function sendStudyReminderEmailStep(
-  userId: string,
-): Promise<EmailOutcome | "notNeeded"> {
+type DeliveryInput = { claim: ReminderClaim; userId: string };
+
+export async function sendStudyReminderEmailStep({
+  claim,
+  userId,
+}: DeliveryInput): Promise<EmailOutcome | "notNeeded"> {
   "use step";
 
-  const delivery = await readStudyReminderDelivery({ channel: "email", now: new Date(), userId });
+  const delivery = await readStudyReminderDelivery({
+    channel: "email",
+    claim,
+    now: new Date(),
+    userId,
+  });
 
   if (delivery?.channel !== "email") {
     return "notNeeded";
@@ -36,12 +48,18 @@ export async function sendStudyReminderEmailStep(
   });
 }
 
-export async function sendStudyReminderPushStep(
-  userId: string,
-): Promise<Exclude<PushOutcome["status"], "retry"> | "notNeeded"> {
+export async function sendStudyReminderPushStep({
+  claim,
+  userId,
+}: DeliveryInput): Promise<Exclude<PushOutcome["status"], "retry"> | "notNeeded"> {
   "use step";
 
-  const delivery = await readStudyReminderDelivery({ channel: "push", now: new Date(), userId });
+  const delivery = await readStudyReminderDelivery({
+    channel: "push",
+    claim,
+    now: new Date(),
+    userId,
+  });
 
   if (delivery?.channel !== "push") {
     return "notNeeded";
@@ -60,7 +78,7 @@ export async function sendStudyReminderPushStep(
     await clearStudyReminderPhone({ token: delivery.token, userId });
   }
 
-  // The push service said it didn't deliver and asked us to wait; the retry checks the window again.
+  // The push service said it didn't deliver and asked us to wait; past the claimed window the retry sends nothing.
   if (outcome.status === "retry") {
     throw new RetryableError("Push service asked to retry the study reminder", {
       retryAfter: new Date(Date.now() + outcome.retryAfterMs),

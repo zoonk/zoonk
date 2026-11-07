@@ -1,9 +1,10 @@
 import { generateKeyPairSync, randomUUID } from "node:crypto";
+import { claimStudyReminder } from "@zoonk/core/reminders/send";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, it, vi } from "vitest";
 import { RetryableError } from "workflow";
 import { sendStudyReminderPushStep } from "./steps/study-reminder-steps";
 import { studyReminderWorkflow } from "./study-reminder-workflow";
@@ -56,6 +57,13 @@ async function dueLearner() {
   ]);
 
   return { fid, goal, user };
+}
+
+/** A delivery step's input, as the workflow persists it from today's claim. */
+async function claimToday(userId: string) {
+  const claim = await claimStudyReminder({ now: new Date(), userId });
+  assert(claim.status === "claimed");
+  return { claim: { endsAt: claim.endsAt, localDate: claim.localDate }, userId };
 }
 
 function urlOf(input: RequestInfo | URL): string {
@@ -166,9 +174,40 @@ describe(studyReminderWorkflow, () => {
 
     fakeProviders(() => new Response(null, { headers: { "Retry-After": "30" }, status: 503 }));
 
-    const failure = await sendStudyReminderPushStep(user.id).catch((error: unknown) => error);
+    const failure = await sendStudyReminderPushStep(await claimToday(user.id)).catch(
+      (error: unknown) => error,
+    );
 
     expect(failure).toBeInstanceOf(RetryableError);
     expect(failure).toMatchObject({ retryAfter: new Date(AT_SEVEN_TEN.getTime() + 30_000) });
+  });
+
+  it("sends nothing from yesterday's pending retry once today's reminder went out", async () => {
+    const { user } = await dueLearner();
+    const accepted: string[] = [];
+    const fcm = { available: false };
+
+    fakeProviders(() => {
+      if (!fcm.available) {
+        return new Response(null, { headers: { "Retry-After": "30" }, status: 503 });
+      }
+
+      accepted.push(new Date().toISOString());
+      return Response.json({ name: "projects/zoonk-test/messages/1" });
+    });
+
+    const pending = await claimToday(user.id);
+    await expect(sendStudyReminderPushStep(pending)).rejects.toBeInstanceOf(RetryableError);
+
+    vi.setSystemTime(new Date("2026-10-08T19:10:00Z"));
+    fcm.available = true;
+
+    await expect(studyReminderWorkflow({ userId: user.id })).resolves.toMatchObject({
+      claim: "claimed",
+      push: "sent",
+    });
+
+    await expect(sendStudyReminderPushStep(pending)).resolves.toBe("notNeeded");
+    expect(accepted).toHaveLength(1);
   });
 });

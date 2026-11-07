@@ -16,6 +16,13 @@ type Destination =
   | { address: string; channel: "email"; unsubscribeToken: string }
   | { channel: "push"; platform: PushPlatform; token: string };
 
+/** What the claim decided, carried by each delivery so a late retry can't send on another day. */
+export type ReminderClaim = { endsAt: Date; localDate: Date };
+
+type ClaimOutcome =
+  | ({ status: "claimed" } & ReminderClaim)
+  | { status: "deferred" | "notDue" | "skipped" };
+
 export type StudyReminderDelivery = Destination & {
   expiresAt: Date;
   locale: string;
@@ -89,29 +96,32 @@ export async function claimStudyReminder({
 }: {
   now: Date;
   userId: string;
-}): Promise<"claimed" | "deferred" | "notDue" | "skipped"> {
-  return writeLearnerChange({ userId }, async (tx) => {
+}): Promise<ClaimOutcome> {
+  return writeLearnerChange<ClaimOutcome>({ userId }, async (tx) => {
     const reminder = await tx.studyReminder.findUnique({ where: { userId } });
 
     if (!reminder || !(reminder.emailOn || reminder.pushOn)) {
-      return unchanged("notDue" as const);
+      return unchanged({ status: "notDue" as const });
     }
 
     const timeZone = await getLearnerTimeZone({ userId });
     const window = getReminderWindow({ now, time: reminder.time, timeZone });
 
     if (!window.open || (reminder.processedOn && reminder.processedOn >= window.localDate)) {
-      return unchanged("notDue" as const);
+      return unchanged({ status: "notDue" as const });
     }
 
     const outcome = await decideClaim({ enabledAt: reminder.enabledAt, now, timeZone, userId });
 
     if (outcome === "deferred") {
-      return unchanged(outcome);
+      return unchanged({ status: outcome });
     }
 
     await tx.studyReminder.update({ data: { processedOn: window.localDate }, where: { userId } });
-    return outcome;
+
+    return outcome === "claimed"
+      ? { endsAt: window.endsAt, localDate: window.localDate, status: outcome }
+      : { status: outcome };
   });
 }
 
@@ -121,7 +131,7 @@ async function findDestination({
 }: {
   channel: ReminderChannel;
   userId: string;
-}): Promise<{ destination: Destination; locale: string; time: string } | null> {
+}): Promise<{ destination: Destination; locale: string } | null> {
   const reminder = await prisma.studyReminder.findUnique({
     include: { user: { select: { email: true, isAnonymous: true } } },
     where: { userId },
@@ -131,7 +141,7 @@ async function findDestination({
     return null;
   }
 
-  const { locale, time } = reminder;
+  const { locale } = reminder;
 
   if (channel === "email") {
     return reminder.emailOn && !reminder.user.isAnonymous
@@ -142,7 +152,6 @@ async function findDestination({
             unsubscribeToken: signStudyReminderUnsubscribeToken(userId),
           },
           locale,
-          time,
         }
       : null;
   }
@@ -151,24 +160,31 @@ async function findDestination({
     ? {
         destination: { channel, platform: reminder.pushPlatform, token: reminder.pushToken },
         locale,
-        time,
       }
     : null;
 }
 
-/** Each channel checks again before sending: still on, same destination, work left, inside the window. */
+/**
+ * Each channel checks again before sending: still on, same destination, work left. Past the
+ * claimed window's end, which is never later than that day's midnight, it sends nothing.
+ */
 export async function readStudyReminderDelivery({
   channel,
+  claim,
   now,
   userId,
 }: {
   channel: ReminderChannel;
+  claim: ReminderClaim;
   now: Date;
   userId: string;
 }): Promise<StudyReminderDelivery | null> {
-  const [found, timeZone, goals] = await Promise.all([
+  if (now >= claim.endsAt) {
+    return null;
+  }
+
+  const [found, goals] = await Promise.all([
     findDestination({ channel, userId }),
-    getLearnerTimeZone({ userId }),
     findGoalsWithWork({ now, userId }),
   ]);
 
@@ -178,16 +194,10 @@ export async function readStudyReminderDelivery({
     return null;
   }
 
-  const window = getReminderWindow({ now, time: found.time, timeZone });
-
-  if (!window.open) {
-    return null;
-  }
-
   return {
     ...found.destination,
-    expiresAt: window.endsAt,
+    expiresAt: claim.endsAt,
     locale: found.locale,
-    message: pickReminderMessage({ goals: [first, ...rest], localDate: window.localDate }),
+    message: pickReminderMessage({ goals: [first, ...rest], localDate: claim.localDate }),
   };
 }
