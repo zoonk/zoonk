@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
@@ -95,7 +97,15 @@ private fun BusyBox(
     Box(contentAlignment = Alignment.Center) {
         Box(Modifier.padding(padding).drawWithContent { if (!slow) drawContent() }) { content() }
         if (slow) {
-            CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
+            CircularProgressIndicator(
+                Modifier
+                    .matchParentSize()
+                    .wrapContentSize(unbounded = true)
+                    .size(ButtonDefaults.IconSize)
+                    .semantics { hideFromAccessibility() },
+                color = LocalContentColor.current,
+                strokeWidth = 2.dp,
+            )
         }
     }
 }
