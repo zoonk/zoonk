@@ -1,9 +1,7 @@
 "use client";
 
 import { type PlanView } from "@zoonk/core/plans/view-contract";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
-import { CHIP_CLASS } from "../_components/chip";
 import { PageSectionFooter } from "../_components/page";
 
 export type SharedExams = Pick<PlanView, "areas" | "sharedExams">;
@@ -55,7 +53,7 @@ export function SharedExamsNote({ shared }: { shared: SharedExams }) {
   );
 }
 
-export function SharedExamChip({ areas, shared }: { areas: string[]; shared: SharedExams }) {
+export function SharedExamsLine({ areas, shared }: { areas: string[]; shared: SharedExams }) {
   const t = useExtracted();
   const examNames = useExamNames();
 
@@ -71,22 +69,23 @@ export function SharedExamChip({ areas, shared }: { areas: string[]; shared: Sha
   }
 
   return (
-    <span className={cn(CHIP_CLASS, "max-w-full min-w-0")} data-slot="shared-exam-chip">
-      <span className="truncate">
-        {exams
-          ? t({
-              description:
-                "Marks a subject on one exam's plan that the learner's other exams named in {exams} also test.",
-              message: "Also in {exams}",
-              values: { exams },
-            })
-          : t({
-              description:
-                "Marks a subject on one exam's plan that the learner's other exams also test.",
-              message: "{count, plural, one {Also in # exam} other {Also in # exams}}",
-              values: { count: alsoIn.length },
-            })}
-      </span>
+    <span
+      className="text-muted-foreground text-xs @lg/subjects:truncate"
+      data-slot="shared-exams-line"
+    >
+      {exams
+        ? t({
+            description:
+              "Marks a subject on one exam's plan that the learner's other exams named in {exams} also test.",
+            message: "Also in {exams}",
+            values: { exams },
+          })
+        : t({
+            description:
+              "Marks a subject on one exam's plan that the learner's other exams also test.",
+            message: "{count, plural, one {Also in # exam} other {Also in # exams}}",
+            values: { count: alsoIn.length },
+          })}
     </span>
   );
 }

@@ -10,7 +10,7 @@ import { LIST_GROUP_CLASS, ListRowLink, ListRowTrailing } from "../_components/l
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { useFormatProgressShare } from "../_utils/percent";
 import { type SubjectGroup, groupSubjects } from "./group-subjects";
-import { SharedExamChip, type SharedExams, SharedExamsNote } from "./shared-exams";
+import { type SharedExams, SharedExamsLine, SharedExamsNote } from "./shared-exams";
 import { CourseWeightsNote, QuestionsSourceNote, useGroupName } from "./syllabus-notes";
 import { type SyllabusSectionSubject, type SyllabusSectionView } from "./syllabus-section-view";
 import { getSubjectShare, useSubjectProgress } from "./use-subject-progress";
@@ -99,7 +99,7 @@ function SubjectRow({
   return (
     <ListRowLink href={href}>
       <span className={ROW_GRID_CLASS}>
-        <span className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 @lg/subjects:flex-nowrap">
+        <span className="flex min-w-0 flex-col gap-0.5">
           <span
             className={cn(
               "min-w-0 text-sm leading-snug font-medium text-pretty @lg/subjects:truncate",
@@ -110,7 +110,7 @@ function SubjectRow({
             {subject.name}
           </span>
 
-          <SharedExamChip areas={subject.areas} shared={shared} />
+          <SharedExamsLine areas={subject.areas} shared={shared} />
         </span>
 
         <span className="text-muted-foreground hidden text-right font-mono text-xs whitespace-nowrap tabular-nums @2xl/subjects:block">
