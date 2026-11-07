@@ -4,6 +4,7 @@ import { findProductPages } from "@zoonk/ai/tasks/research/find-product-pages";
 import { type ProductReading, readProductPages } from "@zoonk/ai/tasks/research/read-product-pages";
 import { generateSourceResearchPlan } from "@zoonk/ai/tasks/research/source-plan";
 import { uploadImage } from "@zoonk/core/images/upload";
+import { checkFreshness } from "@zoonk/core/library/exams/check-freshness";
 import { findOrCreateProductCourse } from "@zoonk/core/library/products/course";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -544,6 +545,55 @@ describe("product research", () => {
         new Date("2025-11-02T00:00:00.000Z"),
       ]);
     });
+  });
+
+  it("reads a docs-only product's releases again on its docs page's check while the newest's lookup is due", async () => {
+    const site = newSite();
+    const goal = await productGoal();
+    planProduct({ site });
+
+    vi.mocked(findProductPages)
+      .mockResolvedValueOnce({
+        ...TASK_RESULT,
+        data: {
+          brandUrl: `https://${site.brand}/`,
+          docsUrl: `https://${site.product}/docs`,
+          productUrl: `https://${site.product}/`,
+          releaseUrl: null,
+          releasesUrl: null,
+          searchCalls: 2,
+        },
+      })
+      .mockRejectedValueOnce(new Error("Search is down"));
+
+    servePages({
+      others: { [`https://${site.product}/docs`]: "<p>Orbit Notes 5.1</p><p>Orbit Notes 5.2</p>" },
+      site,
+    });
+
+    readPages({
+      ...READING,
+      releases: ["5.1", "5.2"].map((version) => ({
+        document: 3,
+        name: `Orbit Notes ${version}`,
+        passage: `Orbit Notes ${version}`,
+        releasedOn: null,
+        supportEndsOn: null,
+        version,
+      })),
+    });
+
+    await expect(researchWorkflow({ goalId: goal.id })).resolves.toMatchObject({ status: "ready" });
+
+    const product = await prisma.product.findFirstOrThrow({
+      where: { organization: { domain: site.brand } },
+    });
+
+    expect(product).toMatchObject({ docsSourceId: expect.any(String), releasesSourceId: null });
+
+    await expect(
+      checkFreshness({ target: { kind: "source", sourceId: product.docsSourceId ?? "" } }),
+    ).resolves.toMatchObject({ releasesUpdate: { productIds: [product.id] }, status: "scheduled" });
   });
 
   it("pins a named older model when the models page gives only years", async () => {

@@ -34,3 +34,13 @@ export function readsProductPage(sourceId: string): ProductWhereInput {
     ],
   };
 }
+
+/**
+ * The products whose freshness check reads this page: their releases page, or their docs when they
+ * have none, as `findProductCheckedSourceId` schedules it.
+ */
+export function checksProductPage(sourceId: string): ProductWhereInput {
+  return {
+    OR: [{ releasesSourceId: sourceId }, { docsSourceId: sourceId, releasesSourceId: null }],
+  };
+}

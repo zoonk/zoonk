@@ -4,6 +4,7 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { addDays } from "../../plans/planner/plan-calendar";
+import { checksProductPage } from "../products/product-pages";
 import { findNewestReleaseSearch, isReleasesPageUnread } from "../products/product-releases";
 import { getNextExamCheck, getNextSourceCheck } from "../sources/freshness-schedule";
 import { type OwedSourceChange, getOwedSourceChange } from "../sources/unnoticed-changes";
@@ -195,15 +196,18 @@ async function checkSource({
   now: Date;
   sourceId: string;
 }): Promise<FreshnessCheck> {
-  const [source, learners] = await Promise.all([
-    prisma.source.findUnique({
-      include: {
-        releasesOf: { select: { id: true, releasesHash: true, unreadableReleasesHash: true } },
-      },
-      omit: { extractedText: true },
-      where: { id: sourceId },
-    }),
+  const [source, learners, products] = await Promise.all([
+    prisma.source.findUnique({ omit: { extractedText: true }, where: { id: sourceId } }),
     countActiveSourceGoals(sourceId),
+    prisma.product.findMany({
+      select: {
+        id: true,
+        releasesHash: true,
+        releasesSourceId: true,
+        unreadableReleasesHash: true,
+      },
+      where: checksProductPage(sourceId),
+    }),
   ]);
 
   if (!source) {
@@ -230,19 +234,21 @@ async function checkSource({
 
   await prisma.source.update({ data: { nextCheckAt }, where: { id: source.id } });
 
-  // A releases page is read for its releases, never turned into a notice for learners. Its product
-  // is read again too while its newest release's own page is due, such as after an outage.
+  // A releases page is read for its releases, never turned into a notice for learners. A product
+  // whose checked page this is, its releases page or its docs, is read again too while its newest
+  // release's own page is due, such as after an outage.
   const contentHash = refresh?.source.contentHash ?? source.contentHash;
+  const releasesOf = products.filter((product) => product.releasesSourceId === source.id);
 
   const due = await Promise.all(
-    source.releasesOf.map(
+    products.map(
       async (product) =>
-        isReleasesPageUnread({ contentHash, product }) ||
+        (releasesOf.includes(product) && isReleasesPageUnread({ contentHash, product })) ||
         (await findNewestReleaseSearch(product.id)) !== null,
     ),
   );
 
-  const unread = source.releasesOf.filter((_, index) => due[index]);
+  const unread = products.filter((_, index) => due[index]);
 
   const owed = getOwedSourceChange(refresh?.source ?? source);
 
@@ -252,7 +258,7 @@ async function checkSource({
     nextNotice: null,
     releasesUpdate: unread.length > 0 ? { productIds: unread.map((product) => product.id) } : null,
     sourceChange:
-      source.releasesOf.length === 0 && owed
+      releasesOf.length === 0 && owed
         ? { ...owed, language: source.language, sourceId: source.id, title: source.title }
         : null,
     status: "scheduled",
