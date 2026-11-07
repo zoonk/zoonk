@@ -1,4 +1,5 @@
 import { findDayIndex, isLessonRoom } from "./day-index";
+import { findLargestCount } from "./outcome-room";
 import { canHoldPhaseChallenge } from "./phase-challenge-days";
 import { listWonPhases } from "./phase-time";
 import { fromIsoDate, toIsoDate } from "./plan-calendar";
@@ -95,6 +96,30 @@ function pullPhaseDepth({
   return count === -1 ? candidates : candidates.slice(0, count);
 }
 
+/**
+ * How many of `fitting` stay before the earlier challenges: all but the fewest depth lessons at its
+ * end that let those challenges end by `start`.
+ */
+function countKeptBefore({
+  cumulative,
+  earlier,
+  fitting,
+  start,
+}: {
+  cumulative: readonly number[];
+  earlier: readonly QueueUnit[];
+  fitting: readonly QueueUnit[];
+  start: number;
+}): number {
+  const depthFrom = fitting.findLastIndex((unit) => unit.kind !== "lesson" || !unit.depth) + 1;
+
+  const fits = (count: number) =>
+    getUsedAfterUnits({ cumulative, units: [...fitting.slice(0, count), ...earlier] }) <=
+    start + PLAN_EPSILON;
+
+  return findLargestCount({ high: fitting.length, low: depthFrom, works: fits }) ?? fitting.length;
+}
+
 function keepPhaseEnd({
   boss,
   cumulative,
@@ -127,8 +152,9 @@ function keepPhaseEnd({
 
   const held = { ...boss, heldOn: endDay, startsAt: start };
 
-  // Only challenges run past the shown day here. Earlier phases' stay before this one, which
-  // gives way to them when they reach its day (`placeBoss`).
+  // Only challenges run past the shown day here. Earlier phases' stay before this one, and the
+  // depth lessons before them may go after it to keep its day (R40 lets depth come later). When
+  // that isn't enough, it gives way to them (`placeBoss`).
   if (late !== -1) {
     const passing = before.slice(late);
 
@@ -137,8 +163,17 @@ function keepPhaseEnd({
       .toSorted((first, second) => first.phase - second.phase);
 
     const others = passing.filter((unit) => unit.phase >= boss.phase);
+    const fitting = before.slice(0, late);
+    const kept = countKeptBefore({ cumulative, earlier, fitting, start });
 
-    return [...before.slice(0, late), ...earlier, held, ...others, ...after];
+    return [
+      ...fitting.slice(0, kept),
+      ...earlier,
+      held,
+      ...fitting.slice(kept),
+      ...others,
+      ...after,
+    ];
   }
 
   const pulled = pullPhaseDepth({

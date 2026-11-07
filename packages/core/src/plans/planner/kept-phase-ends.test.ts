@@ -243,6 +243,37 @@ describe(keepPhaseEnds, () => {
       });
     });
 
+    it("keeps that end by moving the phases' depth lessons after it", () => {
+      const start = fromIsoDate("2026-10-04");
+
+      const restsFirst = [0, 10, 10, 10, 0, 10].map((minutes, offset) => ({
+        date: addDays(start, offset),
+        shape: { events: [], minutes, open: true, phase: null, share: 1 },
+      }));
+
+      const units = [
+        { ...unit({ key: "lesson:depth", kind: "lesson", minutes: 5, phase: 0 }), depth: true },
+        unit({ key: "boss:0", kind: "boss", minutes: 15, phase: 0 }),
+        unit({ key: "boss:1", kind: "boss", minutes: 15, phase: 1 }),
+      ];
+
+      const shown = new Map([
+        [0, addDays(start, 1)],
+        [1, addDays(start, 2)],
+      ]);
+
+      const scheduled = scheduleUnits({
+        days: restsFirst,
+        units: keepPhaseEnds({ days: restsFirst, ends: shown, units }),
+      });
+
+      expect(scheduled.units.map((entry) => [entry.key, toIsoDate(entry.date)])).toStrictEqual([
+        ["boss:0", "2026-10-05"],
+        ["boss:1", "2026-10-06"],
+        ["lesson:depth", "2026-10-07"],
+      ]);
+    });
+
     it("moves that end to just after them when they reach its day", () => {
       expect(schedule(4)).toStrictEqual({
         bosses: [
