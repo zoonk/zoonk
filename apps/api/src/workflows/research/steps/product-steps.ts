@@ -124,10 +124,10 @@ async function toKnownProduct({
     hasNamedRelease: found.namedRelease !== null,
     isFresh: found.isFresh,
     link: toGoalProductLink({
-      current: found.currentRelease,
       named: found.namedRelease,
       now,
       productId: product.id,
+      releases: product.releases,
     }),
     product: {
       aliases: product.aliases,

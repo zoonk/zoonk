@@ -2,13 +2,25 @@ import { describe, expect, it } from "vitest";
 import { linkSavedProduct, toGoalProductLink } from "./goal-release";
 
 const NOW = new Date("2026-11-06T00:00:00Z");
-type Release = { id: string; releasedAt: Date | null; releasedMonthOnly: boolean };
 
-function dated(id: string, releasedAt: string | null, releasedMonthOnly = false): Release {
+type Release = {
+  id: string;
+  releasedAt: Date | null;
+  releasedMonthOnly: boolean;
+  version: string | null;
+};
+
+function dated(
+  id: string,
+  releasedAt: string | null,
+  releasedMonthOnly = false,
+  version: string | null = null,
+): Release {
   return {
     id,
     releasedAt: releasedAt ? new Date(`${releasedAt}T00:00:00Z`) : null,
     releasedMonthOnly,
+    version,
   };
 }
 
@@ -16,8 +28,8 @@ const OLD = dated("old", "2024-03-01");
 const CURRENT = dated("current", "2026-10-01");
 const ANNOUNCED = dated("announced", "2027-01-01");
 
-function pinned(named: Release | null, current: Release | null = CURRENT) {
-  return toGoalProductLink({ current, named, now: NOW, productId: "p" }).productReleaseId;
+function pinned(named: Release | null, releases: Release[] = [CURRENT]) {
+  return toGoalProductLink({ named, now: NOW, productId: "p", releases }).productReleaseId;
 }
 
 describe(toGoalProductLink, () => {
@@ -27,7 +39,19 @@ describe(toGoalProductLink, () => {
 
   it("pins a named release with no stated date, as a model page giving only years", () => {
     expect(pinned(dated("undated", null))).toBe("undated");
-    expect(pinned(dated("undated", null), null)).toBe("undated");
+  });
+
+  it("with none current, follows the main course for the newest release by version, and pins any other", () => {
+    const older = dated("older", null, false, "12.1.2310");
+    const newest = dated("newest", null, false, "12.1.2410");
+    const unversioned = dated("unversioned", null);
+
+    expect([
+      pinned(newest, [older, newest]),
+      pinned(older, [older, newest]),
+      pinned(older, [older, newest, unversioned]),
+      pinned(older, [older, { ...CURRENT, version: "12.1.2510" }]),
+    ]).toStrictEqual([null, "older", "older", "older"]);
   });
 
   it("pins a release dated by its month only once that month has ended", () => {

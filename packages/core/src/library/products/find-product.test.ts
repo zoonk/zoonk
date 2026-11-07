@@ -85,10 +85,10 @@ describe(findProduct, () => {
     expect(found).toBeNull();
   });
 
-  it("finds the release the learner names by its name or its version, and the current one", async () => {
+  it("finds the release the learner names by its name or its version", async () => {
     const { brand, product } = await storedProduct({ name: uniqueName("Widget") });
 
-    const [older, current] = await Promise.all([
+    const [older] = await Promise.all([
       productReleaseFixture({
         name: `${product.name} 15`,
         normalizedName: toNameKey(`${product.name} 15`),
@@ -126,7 +126,6 @@ describe(findProduct, () => {
 
     expect(unnamed?.namedRelease).toBeNull();
     expect(unknown?.namedRelease).toBeNull();
-    expect(unnamed?.currentRelease?.id).toBe(current.id);
   });
 
   it("never takes a version for another whose numbers break in other places", async () => {

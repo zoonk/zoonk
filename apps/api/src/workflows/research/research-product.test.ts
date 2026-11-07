@@ -422,9 +422,11 @@ describe("product research", () => {
 
     /** The releases page lists both versions undated; the newest one's page says what it says. */
     async function research({
+      named = null,
       outage = false,
       ...releaseNote
     }: {
+      named?: string | null;
       outage?: boolean;
       passage: string;
       releasedOn: string | null;
@@ -432,7 +434,7 @@ describe("product research", () => {
       const site = newSite();
       const goal = await productGoal();
       const releasePage = `https://${site.product}/news/orbit-notes-5-2`;
-      planProduct({ site });
+      planProduct({ release: named, site });
       findReleasePage({ outage, releasePage, site });
 
       servePages({
@@ -442,7 +444,10 @@ describe("product research", () => {
       });
 
       vi.mocked(readProductPages)
-        .mockResolvedValueOnce({ ...TASK_RESULT, data: { ...READING, releases: UNDATED } })
+        .mockResolvedValueOnce({
+          ...TASK_RESULT,
+          data: { ...READING, learnerRelease: named, releases: UNDATED },
+        })
         .mockResolvedValueOnce({
           ...TASK_RESULT,
           data: {
@@ -490,6 +495,21 @@ describe("product research", () => {
       expect(status).toBe("fulfilled");
       expect(vi.mocked(findProductPages)).toHaveBeenCalledTimes(2);
       expect(product.releases.map((release) => release.releasedAt)).toStrictEqual([null, null]);
+    });
+
+    it("puts a learner who names the newest release on the main course, which it becomes once dated", async () => {
+      const { linked, product } = await research({
+        named: "Orbit Notes 5.2",
+        passage: "Orbit Notes 5.2 shipped on November 2, 2025.",
+        releasedOn: "2025-11-02",
+      });
+
+      expect(linked).toMatchObject({ productId: product.id, productReleaseId: null });
+
+      expect(product.releases.map((release) => [release.name, release.releasedAt])).toStrictEqual([
+        ["Orbit Notes 5.1", null],
+        ["Orbit Notes 5.2", new Date("2025-11-02T00:00:00.000Z")],
+      ]);
     });
 
     it("links the goal when the newest release's search fails, and looks the page up again later", async () => {

@@ -1,7 +1,6 @@
 import "server-only";
 import { type ProductRelease, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { pickCurrentRelease } from "./current-release";
 import { toNameKey, toRegistrableDomain, toVersionKey, whereProductNamed } from "./product-keys";
 
 const FRESH_RELEASES_DAYS = 7;
@@ -26,7 +25,6 @@ function loadCandidates(nameKey: string) {
 type Candidate = Awaited<ReturnType<typeof loadCandidates>>[number];
 
 type FoundProduct = {
-  currentRelease: ProductRelease | null;
   /** A releases page fetched within the last week whose saved releases were read from it. */
   isFresh: boolean;
   /** Null when the hints name no release or it isn't stored yet. */
@@ -112,7 +110,6 @@ export async function findProduct({
   }
 
   return {
-    currentRelease: pickCurrentRelease({ now, releases: product.releases }),
     isFresh: isFreshProduct({ now, product }),
     namedRelease: hints.release ? findNamedRelease({ hint: hints.release, product }) : null,
     product,
@@ -133,11 +130,6 @@ export async function findProductById({
   });
 
   return product
-    ? {
-        currentRelease: pickCurrentRelease({ now, releases: product.releases }),
-        isFresh: isFreshProduct({ now, product }),
-        namedRelease: null,
-        product,
-      }
+    ? { isFresh: isFreshProduct({ now, product }), namedRelease: null, product }
     : null;
 }
