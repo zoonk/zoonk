@@ -14,6 +14,7 @@ import { TodayPageHeader } from "@zoonk/learn/today/at-rest";
 import { TodayShell } from "@zoonk/learn/today/shell";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { PlayIcon } from "lucide-react";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -141,8 +142,9 @@ async function TodaySessionEnded() {
   );
 }
 
-async function TodayContent() {
-  const result = await loadTodayScreen();
+async function TodayContent({ searchParams }: Pick<PageProps<"/[lang]/today">, "searchParams">) {
+  const { goal } = await searchParams;
+  const result = await loadTodayScreen(uuidSchema().safeParse(goal).data);
 
   if (result.status === "noGoal") {
     return result.suggestedGoal ? (
@@ -196,10 +198,10 @@ async function TodayPreparingState({ goal }: { goal: { id: string; title: string
   return <TodayPreparingClient goalId={goal.id} goalTitle={goal.title} />;
 }
 
-export default function TodayPage() {
+export default function TodayPage({ searchParams }: PageProps<"/[lang]/today">) {
   return (
     <Suspense fallback={<TodayShell />}>
-      <TodayContent />
+      <TodayContent searchParams={searchParams} />
     </Suspense>
   );
 }
