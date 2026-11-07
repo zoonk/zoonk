@@ -606,6 +606,35 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.currentAnswer, .hookGuess(optionId: "wrong"))
   }
 
+  func testIKnowThisDuringARefusedFinishAsksEveryCheckNotYetRight() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "wrong")
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    XCTAssertEqual(state.phase, .completed)
+
+    state.resync(answers: [runAnswer("second", isCorrect: false)])
+    XCTAssertEqual(state.currentStep?.id, "check")
+    state.goBack()
+    state.knowThis()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+
+    XCTAssertEqual(state.currentStep?.id, "second", "the saved miss is asked again")
+    XCTAssertNil(state.currentResult)
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    XCTAssertEqual(state.phase, .completed)
+    XCTAssertEqual(state.completion?.testedOut, true)
+  }
+
   func testARefusedFinishStartsOverOnlyTheScreensItIsMissing() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
     state.continueLesson()
