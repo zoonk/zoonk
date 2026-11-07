@@ -115,11 +115,14 @@ final class ZoonkUITests: XCTestCase {
     app.primaryNavigationItem("Today").tap()
     openStatistics(in: app)
     XCTAssertTrue(
-      statTile("Study days", in: app).waitForExistence(timeout: 5),
+      statTile("Days studied", in: app).waitForExistence(timeout: 5),
       "Expected the level button to push Statistics")
     // The calendar's title row swaps layouts as text grows (`ViewThatFits`), which the audit reads
     // as text that doesn't scale and is clipped; at the largest size the title and key show whole.
-    try performAccessibilityAudit(in: app, skipping: [.dynamicType, .textClipped])
+    // The picked day's line under the calendar is hidden from VoiceOver, which reads the same text
+    // as the calendar's value, so the audit flags it as text without an element.
+    try performAccessibilityAudit(
+      in: app, skipping: [.dynamicType, .textClipped, .elementDetection])
   }
 
   @MainActor

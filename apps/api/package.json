@@ -49,7 +49,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@scalar/nextjs-api-reference": "0.12.15",
+    "@scalar/nextjs-api-reference": "0.12.16",
     "@tailwindcss/turbopack": "catalog:",
     "@types/node": "catalog:",
     "@types/pg": "8.23.1",
