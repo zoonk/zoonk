@@ -132,7 +132,7 @@ jobs:
       - name: Run unit tests
         env:
           # Match the runtime installed on xcode-27; revisit alongside DEVELOPER_DIR.
-          TEST_DESTINATION: platform=iOS Simulator,name=iPhone 17,OS=27.0
+          TEST_DESTINATION: platform=iOS Simulator,name=iPhone 17,OS=27.2
           XCODEBUILD_ARGUMENTS: >-
             -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
             -onlyUsePackageVersionsFromResolvedFile
