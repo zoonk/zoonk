@@ -1,47 +1,44 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
-import { loadSkillSurvivorMap } from "../../learner/_utils/update-learner-skill";
 import { type OtherExamGoal, readOtherExamGoals } from "../../learner/facts/other-exam-goals";
-import { readSavedPlan } from "../../learner/facts/saved-plan";
+import { type SavedPlan, readSavedPlan } from "../../learner/facts/saved-plan";
 import { getSkillArea } from "../planner/graph-areas";
-import { type PlanGraph, type PlanGraphSkill, parsePlanGraph } from "../planner/plan-state";
+import { parsePlanGraph } from "../planner/plan-state";
 import { type SharedExam } from "../shared-exams-contract";
 
 export type SharedExams = { areas: ReadonlyMap<string, string[]>; exams: SharedExam[] };
 
 const NONE: SharedExams = { areas: new Map(), exams: [] };
 
-/**
- * Completion credits a lesson in every plan that holds it, and the planner takes a skill's lessons
- * only from the courses its graph names (from any course when it names none). So two plans teach a
- * skill with the same lessons only when they name the same courses for it.
- */
 function findSharedExams({
-  graph,
   others,
-  survivorOf,
+  plan,
 }: {
-  graph: PlanGraph;
   others: readonly OtherExamGoal[];
-  survivorOf: (skillId: string) => string;
+  plan: SavedPlan;
 }): SharedExams {
-  const lessonSource = ({
-    courseIds = [],
-    skillId,
-  }: Pick<PlanGraphSkill, "courseIds" | "skillId">) =>
-    [survivorOf(skillId), ...courseIds.toSorted()].join(" ");
+  const graph = parsePlanGraph(plan.graph);
 
-  const held = others.map((other) => ({
-    ...other,
-    sources: new Set(other.skills.map(lessonSource)),
-  }));
+  const skillAreas = new Map(
+    graph.skills.map((skill) => [skill.skillId, getSkillArea({ graph, skill })]),
+  );
 
-  const byArea = Map.groupBy(graph.skills, (skill) => getSkillArea({ graph, skill }));
+  const held = others.map((other) => ({ ...other, lessons: new Set(other.lessonIds) }));
+
+  const lessons = plan.items.flatMap((item) => {
+    const area = item.skillId ? skillAreas.get(item.skillId) : undefined;
+
+    return item.kind === "lesson" && item.lessonId && area !== undefined
+      ? [{ area, lessonId: item.lessonId }]
+      : [];
+  });
+
+  const byArea = Map.groupBy(lessons, (lesson) => lesson.area);
 
   const areas = new Map(
-    [...byArea].flatMap(([area, skills]) => {
+    [...byArea].flatMap(([area, items]) => {
       const goalIds = held
-        .filter((other) => skills.some((skill) => other.sources.has(lessonSource(skill))))
+        .filter((other) => items.some((item) => other.lessons.has(item.lessonId)))
         .map((other) => other.goalId);
 
       return goalIds.length > 0 ? [[area, goalIds] as const] : [];
@@ -75,16 +72,5 @@ export async function readSharedExams(
     return NONE;
   }
 
-  const graph = parsePlanGraph(plan.graph);
-
-  const survivors = await loadSkillSurvivorMap([
-    ...graph.skills.map((skill) => skill.skillId),
-    ...others.flatMap((other) => other.skills.map((skill) => skill.skillId)),
-  ]);
-
-  return findSharedExams({
-    graph,
-    others,
-    survivorOf: (skillId) => survivors.get(skillId) ?? skillId,
-  });
+  return findSharedExams({ others, plan });
 }

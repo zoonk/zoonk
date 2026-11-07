@@ -1,5 +1,6 @@
 import { type Goal } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -15,7 +16,10 @@ async function goalWithSkills({
   areas,
   userId,
   ...attrs
-}: GoalAttrs & { areas: Record<string, { id: string }[]>; userId: string }) {
+}: GoalAttrs & {
+  areas: Record<string, { id: string; lessonId: string | null }[]>;
+  userId: string;
+}) {
   const goal = await goalFixture({ kind: "exam", ...attrs, userId });
 
   await planFixture({
@@ -33,9 +37,18 @@ async function goalWithSkills({
         })),
       ),
     },
+    items: Object.values(areas)
+      .flat()
+      .map((skill) => ({ lessonId: skill.lessonId, skillId: skill.id })),
   });
 
   return goal;
+}
+
+async function taughtSkill() {
+  const [skill, lesson] = await Promise.all([skillFixture(), libraryLessonFixture()]);
+  await lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id });
+  return { ...skill, lessonId: lesson.id };
 }
 
 async function readSharing(goalId: string) {
@@ -54,16 +67,16 @@ async function readSharing(goalId: string) {
 }
 
 describe("the subjects a plan shares with the learner's other exams", () => {
-  it("names each exam whose plan holds some of a subject's skills, on those subjects only", async () => {
+  it("names each exam whose plan holds some of a subject's lessons, on those subjects only", async () => {
     const [user, cguNotice, portuguese, grammar, constitution, computing, other] =
       await Promise.all([
         userFixture(),
         examBlueprintFixture({ name: "CGU" }),
-        skillFixture(),
-        skillFixture(),
-        skillFixture(),
-        skillFixture(),
-        skillFixture(),
+        taughtSkill(),
+        taughtSkill(),
+        taughtSkill(),
+        taughtSkill(),
+        taughtSkill(),
       ]);
 
     const camara = await goalWithSkills({
@@ -102,23 +115,18 @@ describe("the subjects a plan shares with the learner's other exams", () => {
     });
   });
 
-  it("counts a paused exam and a skill merged into one the plan holds, never a finished or archived one", async () => {
+  it("counts a paused exam, never a finished or archived one", async () => {
     const user = await userFixture();
-    const survivor = await skillFixture();
-
-    const [merged, done] = await Promise.all([
-      skillFixture({ mergedIntoId: survivor.id }),
-      skillFixture(),
-    ]);
+    const [reading, done] = await Promise.all([taughtSkill(), taughtSkill()]);
 
     const camara = await goalWithSkills({
-      areas: { Portuguese: [survivor], Statistics: [done] },
+      areas: { Portuguese: [reading], Statistics: [done] },
       userId: user.id,
     });
 
     const [paused] = await Promise.all([
       goalWithSkills({
-        areas: { Portuguese: [merged] },
+        areas: { Portuguese: [reading] },
         status: "paused",
         title: "CGU",
         userId: user.id,
@@ -137,7 +145,7 @@ describe("the subjects a plan shares with the learner's other exams", () => {
 
   it("never counts a language goal, on its plan or an exam's", async () => {
     const user = await userFixture();
-    const skill = await skillFixture();
+    const skill = await taughtSkill();
     const areas = { Reading: [skill] };
 
     const [exam, language] = await Promise.all([
@@ -153,9 +161,9 @@ describe("the subjects a plan shares with the learner's other exams", () => {
     await expect(readSharing(language.id)).resolves.toStrictEqual(nothing);
   });
 
-  it("shows nothing when the other exams share no skill", async () => {
+  it("shows nothing when the other exams share no lesson", async () => {
     const user = await userFixture();
-    const [law, math] = await Promise.all([skillFixture(), skillFixture()]);
+    const [law, math] = await Promise.all([taughtSkill(), taughtSkill()]);
 
     const [exam] = await Promise.all([
       goalWithSkills({ areas: { Law: [law] }, userId: user.id }),
@@ -165,5 +173,60 @@ describe("the subjects a plan shares with the learner's other exams", () => {
     mockSession(user.id);
 
     await expect(readSharing(exam.id)).resolves.toStrictEqual({ exams: [], subjects: { Law: [] } });
+  });
+
+  it.each([true, false])(
+    "shares nothing when a plan has only unwritten lesson items (own: %s)",
+    async (own) => {
+      const user = await userFixture();
+      const skill = await taughtSkill();
+
+      const [exam] = await Promise.all([
+        goalWithSkills({
+          areas: { Reading: [{ ...skill, lessonId: own ? null : skill.lessonId }] },
+          userId: user.id,
+        }),
+        goalWithSkills({
+          areas: { Reading: [{ ...skill, lessonId: own ? skill.lessonId : null }] },
+          userId: user.id,
+        }),
+      ]);
+
+      mockSession(user.id);
+
+      await expect(readSharing(exam.id)).resolves.toStrictEqual({
+        exams: [],
+        subjects: { Reading: [] },
+      });
+    },
+  );
+
+  it("shares nothing before either plan has saved lesson items", async () => {
+    const user = await userFixture();
+    const skill = await skillFixture();
+
+    const [exam, other] = await Promise.all([
+      goalFixture({ kind: "exam", userId: user.id }),
+      goalFixture({ kind: "exam", userId: user.id }),
+    ]);
+
+    await Promise.all(
+      [exam, other].map((goal) =>
+        planFixture({
+          goalId: goal.id,
+          graph: {
+            phases: [{ name: "Reading" }],
+            skills: [{ lessons: 1, name: skill.name, phase: 0, skillId: skill.id }],
+          },
+        }),
+      ),
+    );
+
+    mockSession(user.id);
+
+    await expect(readSharing(exam.id)).resolves.toStrictEqual({
+      exams: [],
+      subjects: { Reading: [] },
+    });
   });
 });

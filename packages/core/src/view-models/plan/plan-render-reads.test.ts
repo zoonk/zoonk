@@ -1,14 +1,21 @@
 import { prisma } from "@zoonk/db";
-import { planChangeFixture, planItemFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
+import {
+  goalFixture,
+  planChangeFixture,
+  planFixture,
+  planItemFixture,
+  plannedSkills,
+} from "@zoonk/testing/fixtures/goals";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
-import { countDatabaseRows } from "@zoonk/testing/statement-counter";
+import { countDatabaseRows, countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { type readCatchUpItems } from "../../learner/facts/catch-up-items";
+import { type readOtherExamGoals } from "../../learner/facts/other-exam-goals";
 import { type readOwnedGoal } from "../../learner/facts/owned-goal";
 import { type readSavedPlan } from "../../learner/facts/saved-plan";
 import { type readActiveSubscription } from "../../learner/facts/subscription";
@@ -56,6 +63,15 @@ vi.mock("../../learner/facts/saved-plan", async (importOriginal) => {
   return { ...actual, readSavedPlan: keepRequestReads(actual.readSavedPlan) };
 });
 
+vi.mock("../../learner/facts/other-exam-goals", async (importOriginal) => {
+  const [actual, { keepRequestReads }] = await Promise.all([
+    importOriginal<{ readOtherExamGoals: typeof readOtherExamGoals }>(),
+    import("../../_test-utils/keep-request-reads"),
+  ]);
+
+  return { ...actual, readOtherExamGoals: keepRequestReads(actual.readOtherExamGoals) };
+});
+
 vi.mock("../../learner/facts/taught-stand-in-skills", async (importOriginal) => {
   const [actual, { keepRequestReads }] = await Promise.all([
     importOriginal<{ readTaughtStandInSkills: typeof readTaughtStandInSkills }>(),
@@ -75,6 +91,61 @@ vi.mock("../../learner/facts/today-learn-blocks", async (importOriginal) => {
 });
 
 describe("the Plan's render reads", () => {
+  it("reads other exams' saved lessons once across subjects and concurrent syllabus readers without writing", async () => {
+    const { goal, items, lessons, plan, skills, user } = await signedInCourseGoal();
+    const other = await goalFixture({ kind: "exam", userId: user.id });
+
+    await Promise.all([
+      prisma.goal.update({ data: { kind: "exam" }, where: { id: goal.id } }),
+      prisma.plan.update({
+        data: {
+          graph: {
+            phases: [{ name: "Physics" }],
+            skills: skills.map((skill) => ({
+              area: skill.name,
+              lessons: 1,
+              name: skill.name,
+              phase: 0,
+              skillId: skill.id,
+            })),
+          },
+        },
+        where: { id: plan.id },
+      }),
+      ...items.map((item, index) =>
+        prisma.planItem.update({ data: { skillId: skills[index]!.id }, where: { id: item.id } }),
+      ),
+      planFixture({
+        goalId: other.id,
+        items: lessons.map((lesson, index) => ({
+          lessonId: lesson.id,
+          skillId: skills[index]!.id,
+        })),
+      }),
+    ]);
+
+    const reads = await countDatabaseStatements(() =>
+      countDatabaseRows(
+        () =>
+          Promise.all([getSyllabusView({ goalId: goal.id }), getSyllabusView({ goalId: goal.id })]),
+        '"public"."plan_items"."lesson_id" IS NOT NULL',
+      ),
+    );
+
+    expect(reads.writes).toBe(0);
+    expect(reads.result.rows).toBe(lessons.length);
+
+    for (const result of reads.result.result) {
+      expect(result).toMatchObject({
+        status: "ready",
+        syllabus: {
+          sharedExams: [{ goalId: other.id }],
+          subjects: skills.map((skill) => ({ name: skill.name, sharedWith: [other.id] })),
+        },
+      });
+    }
+  });
+
   it("reads the goal once for the plan", async () => {
     const { goal } = await signedInCourseGoal();
 

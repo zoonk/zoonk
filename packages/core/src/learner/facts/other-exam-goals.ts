@@ -3,22 +3,24 @@ import { prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getGoalsCacheTag, getLearnerModelCacheTag } from "../../cache/tags";
 import { getExamName } from "../../exams/exam-name";
-import { type PlanGraphSkill, parsePlanGraph } from "../../plans/planner/plan-state";
 
-export type OtherExamGoal = {
-  goalId: string;
-  name: string;
-  skills: Pick<PlanGraphSkill, "courseIds" | "skillId">[];
-};
+export type OtherExamGoal = { goalId: string; name: string; lessonIds: string[] };
 
-/** GET-only, after ownership authorization. Skill ids are as saved: callers resolve merges. */
+/** GET-only, after ownership authorization. */
 export async function readOtherExamGoals(userId: string, goalId: string): Promise<OtherExamGoal[]> {
   "use cache: private";
 
   cacheTag(getGoalsCacheTag(userId), getLearnerModelCacheTag(userId));
 
   const goals = await prisma.goal.findMany({
-    include: { examBlueprint: { select: { name: true } }, plan: { select: { graph: true } } },
+    include: {
+      examBlueprint: { select: { name: true } },
+      plan: {
+        select: {
+          items: { select: { lessonId: true }, where: { kind: "lesson", lessonId: { not: null } } },
+        },
+      },
+    },
     orderBy: { createdAt: "asc" },
     where: { id: { not: goalId }, kind: "exam", status: { in: ["active", "paused"] }, userId },
   });
@@ -28,11 +30,8 @@ export async function readOtherExamGoals(userId: string, goalId: string): Promis
       ? [
           {
             goalId: goal.id,
+            lessonIds: goal.plan.items.flatMap((item) => item.lessonId ?? []),
             name: getExamName({ blueprint: goal.examBlueprint, goal }),
-            skills: parsePlanGraph(goal.plan.graph).skills.map(({ courseIds, skillId }) => ({
-              courseIds,
-              skillId,
-            })),
           },
         ]
       : [],
