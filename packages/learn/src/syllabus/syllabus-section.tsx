@@ -61,7 +61,7 @@ function useSectionCount(syllabus: SyllabusSectionView): string {
 
 const ROW_GRID_CLASS = cn(
   "flex min-h-11 min-w-0 flex-1 flex-col justify-center gap-2 py-3",
-  "@lg/subjects:grid @lg/subjects:grid-cols-[minmax(0,1fr)_minmax(7rem,14rem)] @lg/subjects:items-center @lg/subjects:gap-x-3.5 @lg/subjects:py-0",
+  "@lg/subjects:grid @lg/subjects:grid-cols-[minmax(0,1fr)_minmax(7rem,14rem)] @lg/subjects:items-center @lg/subjects:gap-x-3.5 @lg/subjects:py-2",
   "@2xl/subjects:grid-cols-[minmax(0,1fr)_6.5rem_minmax(8rem,14rem)]",
 );
 
