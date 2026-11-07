@@ -1,6 +1,6 @@
 import { keepCarriedAfterBases, listBegunSkillIds } from "./carried-bases";
 import { keepCarriedBeforeChallenges } from "./carried-challenges";
-import { markAfterCarried, scheduleCarriedWork, shiftReserved } from "./carried-schedule";
+import { markAfterCarried, scheduleCarriedWork } from "./carried-schedule";
 import { findChapterInProgress } from "./chapter-in-progress";
 import { takeFocusedToday } from "./focused-today";
 import { getSkillArea } from "./graph-areas";
@@ -223,24 +223,13 @@ export function placeCarriedWork({
   // (`keepPhaseEnds`; a study cycle or a learned order don't). A focus day gives the rest of today
   // to focus lessons, where letting time go could stack challenges tomorrow past what a day keeps
   // and leave one out (#2227).
-  const { moved, room, roomed, schedule } = scheduleCarriedWork({
+  const { days: reserved, schedule } = scheduleCarriedWork({
     carried,
     days,
     letGo: keepsEnds && !input.carryOver?.todayExceptAreas,
     phaseEnds,
     rest,
     today,
-  });
-
-  const reserved = shiftReserved({
-    days: shiftReserved({
-      days: reserveCarriedTime({
-        days: roomed,
-        minutes: carried.reduce((total, unit) => total + unit.minutes, 0),
-      }),
-      minutes: moved,
-    }),
-    minutes: new Map([...room].map(([time, minutes]) => [time, -minutes])),
   });
 
   const steered = input.carryOver?.todayExceptAreas

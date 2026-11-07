@@ -141,4 +141,50 @@ describe("a change of focus when today's time no longer holds today's lessons", 
       toIsoDate(addDays(TODAY, 1)),
     ]);
   });
+
+  it("leaves tomorrow's time to tomorrow's lessons when today's run past the plan's days", () => {
+    const input: BuildPlanInput = {
+      goal: { dailyMinutes: 10, kind: "learn", targetDate: addDays(TODAY, 2) },
+      graph: {
+        phases: [{ milestone: null, name: "Only" }],
+        skills: [{ area: "A", lessons: 4, name: "A", phase: 0, skillId: "A", weight: 1 }],
+      },
+      items: [],
+      lessons: [3, 3, 3, 2].map((minutes, index) => ({
+        chapterId: "chapter-A",
+        lessonId: `A-${index}`,
+        minutes,
+        skillIds: ["A"],
+        title: `A ${index}`,
+      })),
+      mockMinutes: 180,
+      mode: "forced",
+      paceFactor: 1,
+      prerequisites: new Map(),
+      readiness: new Map(),
+      settings: parsePlanSettings({ startDate: toIsoDate(TODAY) }),
+      today: TODAY,
+    };
+
+    const shown = buildPlan(input).items.map((item, position) => ({
+      ...item,
+      id: `item-${position}`,
+      position,
+    }));
+
+    const after = buildPlan({
+      ...input,
+      carryOver: { lessonIds: [], todayExceptAreas: [] },
+      items: shown,
+      paceFactor: 2,
+      settings: { ...input.settings, focusAreas: ["A"] },
+    }).items;
+
+    expect(listTodayLessons(shown)).toStrictEqual(["A-0", "A-1", "A-2"]);
+    expect(listTodayLessons(after)).toStrictEqual(["A-0", "A-1", "A-2"]);
+
+    expect(after.find((item) => item.lessonId === "A-3")?.scheduledFor).toStrictEqual(
+      addDays(TODAY, 1),
+    );
+  });
 });
