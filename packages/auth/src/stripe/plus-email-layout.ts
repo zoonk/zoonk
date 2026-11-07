@@ -2,7 +2,7 @@ import { sendEmail } from "@zoonk/mailer";
 import { formatPrice } from "@zoonk/utils/currency";
 import { escapeHtml } from "@zoonk/utils/escape-html";
 import { getFormattingLocale } from "@zoonk/utils/locale";
-import { PRIVACY_URL, TERMS_URL } from "@zoonk/utils/url";
+import { getMainPageUrl } from "@zoonk/utils/url";
 import { type getTranslation } from "../translations/get-translations";
 
 export type Money = { amount: number; currency: string };
@@ -79,14 +79,14 @@ export function planName(t: Translation, interval: BillingInterval): string {
   return interval === "year" ? t.plusPlanYearly : t.plusPlanMonthly;
 }
 
-export function legalLinks(t: Translation): string {
+export function legalLinks({ locale, t }: { locale: string; t: Translation }): string {
   return paragraph(
     html(
       t.plusEmailLegal,
       {},
       {
-        privacyLink: link(PRIVACY_URL, t.plusEmailPrivacy),
-        termsLink: link(TERMS_URL, t.plusEmailTerms),
+        privacyLink: link(getMainPageUrl({ locale, path: "/privacy" }), t.plusEmailPrivacy),
+        termsLink: link(getMainPageUrl({ locale, path: "/terms" }), t.plusEmailTerms),
       },
     ),
   );

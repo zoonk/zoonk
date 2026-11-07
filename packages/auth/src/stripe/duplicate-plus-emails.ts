@@ -59,7 +59,7 @@ export async function sendWebPlusEndedEmail({
     ]),
     paragraph(refundSentence),
     paragraph(html(t.plusEmailQuestions)),
-    legalLinks(t),
+    legalLinks({ locale, t }),
   ]);
 
   await send({ body, subject: t.plusAlreadyActiveSubject, to: email });
@@ -87,7 +87,7 @@ export async function sendPlusTwiceEmail({
     paragraph(html(t.plusTwiceIntro)),
     paragraph(cancelNewer),
     paragraph(html(t.plusEmailQuestions)),
-    legalLinks(t),
+    legalLinks({ locale, t }),
   ]);
 
   await send({ body, subject: t.plusTwiceSubject, to: email });
