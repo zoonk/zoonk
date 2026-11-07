@@ -17,13 +17,19 @@ export const LANGUAGE_LESSON_SCORE_CATEGORIES = defineScoreCategories([
     expectations: `Words and sentences serve the lesson's exact situation and can-do, at the CEFR level given: at A1 and A2 short everyday sentences, more at B1 and B2. Nothing from the known words list is taught again. Words are the ones a learner in that situation needs first, not a padded list of variants.`,
     id: "situationAndLevel",
     label: "Situation and level",
-    weight: 20,
+    weight: 15,
   },
   {
     expectations: `Wrong options are plausible for a learner yet clearly wrong where they're used, and never appear in the answer next to them. The tip names one real pattern the sentences use, and its examples and practice all test that pattern. Each practice blank has exactly one right answer. Writing answers are all correct and cover common right variants. Speaking prompts set up a real moment in the learner's language.`,
     id: "practiceDesign",
     label: "Practice design",
-    weight: 20,
+    weight: 15,
+  },
+  {
+    expectations: `Each sentence's other orders (and its translation's) use exactly its words, and every one is an order a native teacher would mark fully correct with the same meaning: the same doer and object, the same scope of a negation or "only", the same register, still a question when it was one. One that sounds odd, poetic or marked, or changes the meaning, is a serious error: score at most 5, since the app would mark a learner's wrong sentence right. Missing common, natural orders (a time phrase moved to the other end, a subordinate clause before or after the main one where both are everyday speech) lowers the score less. An empty list is right when the order is fixed.`,
+    id: "otherOrders",
+    label: "Other word orders",
+    weight: 10,
   },
   {
     expectations: `Text in the learner's language is natural, concise and correct in its variant. Target-language fields (words, sentences, templates, answers) contain no learner-language words; learner-language fields may quote target-language words in quotes or backticks when they talk about them, which is intended. Target sentences and their translations, which become word tiles, have no decorative final periods or exclamation marks, while questions keep their question marks; other fields use normal punctuation. Summary lines each state one thing the learner can now say.`,

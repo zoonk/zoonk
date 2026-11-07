@@ -5,10 +5,11 @@ import {
   generateLanguageLesson,
 } from "@zoonk/ai/tasks/language/language-lesson";
 import { LANGUAGE_LESSON_SCORE_CATEGORIES } from "./score-categories";
-import { scoreLanguageLesson } from "./scorer";
+import { checkLanguageLessonOutput, scoreLanguageLesson } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 
 export const languageLessonTask: Task<LanguageLessonParams, LanguageLessonContent> = {
+  codeChecks: checkLanguageLessonOutput,
   description:
     "Write a language lesson for one language pair: words with respellings and tips for the learner's language, sentences, a pattern tip with practice, writing and summary",
   generate: generateLanguageLesson,
