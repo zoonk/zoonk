@@ -3014,6 +3014,144 @@
           "purpose": "deep"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Every named syllabus pillar is represented: Windows files and folders, Word, Excel, PowerPoint, internet navigation, email, and archival classification and appraisal. However, the aggregate exam weights allocate 64 to computing and 17 to archival science, substantially underweighting Arquivologia relative to the blueprint's 2:1 question ratio. The weighting-error cap of 8 applies.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The sequence provides relevant foundations before dependent applications: file concepts precede operations, spreadsheet structure precedes formulas and functions, and documentary values precede appraisal and retention. Prerequisites are explicit, phase titles describe stages rather than syllabus topics, and milestones identify attainable capabilities. No clear ordering or prerequisite failure is present.",
+          "score": 9,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The syllabus is divided into manageable skills, generally with four to eight lessons. Broad Office and archival topics receive multiple complementary skills rather than being compressed into single survey lessons. No clear topic-level undersizing or pervasive padding is evident; the total hours alone do not establish a granularity problem.",
+          "score": 9,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The added exam-strategy area and its time-management skill are not listed or separately scored in the supplied blueprint. This triggers the explicit cap of 6 for an area the notice does not have. The remaining graph generally stays within the requested disciplines and appropriately keeps archival classification separate from computing file management.",
+          "score": 6,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The graph uses Brazilian Portuguese, correctly names the shared computing course 'Informática', retains 'Noções de Informática' as its notice area, and treats computing as everyday software knowledge rather than programming. Arquivologia remains separate. However, adding an untested strategy course and a new area is a clear exam-scope mismatch, triggering the cap of 8.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Skills emphasize interpreting effects, distinguishing alternatives, analyzing information, and applying criteria rather than memorizing long procedures. Manual spreadsheet and software knowledge is appropriate to this exam. AI-tool instruction is not required for this goal, and no rote-dominance cap is triggered.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 14 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6519,
+          "outputTokens": 1255,
+          "reasoningTokens": 504
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The graph adds an unsupported 'Estratégias de prova' course and 'Estratégia de prova' area, including a scored time-management skill even though the blueprint does not score exam strategy. Its subject weights also depart from the blueprint: computing skills total 64 and archival skills total 17, rather than preserving the notice's 10:5 ratio.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Make worked exam cases more explicit in skill descriptions, especially predicting the effects of Office commands and applying archival classification and retention decisions. This would clarify how the allocated lessons develop question-solving ability.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n    - Write in Brazilian Portuguese.\n    - Noções de Informática and Informática name the same discipline in public-service notices. Its shared course is titled exactly Informática under either notice heading, with no second course under the alias.\n    - The notice tests everyday computing knowledge, not computer science or programming. All computing skills belong to Informática.\n    - Arquivologia is a separate discipline: archival classification and appraisal stay in its own course, even though computing also covers files and folders.\n    - Areas retain the notice's exact subject names.\n  ",
+        "expected": {
+          "courses": [
+            [
+              "Informática"
+            ],
+            [
+              "Arquivologia"
+            ]
+          ],
+          "coursesByArea": {
+            "Arquivologia": [
+              "Arquivologia"
+            ],
+            "Noções de Informática": [
+              "Informática"
+            ]
+          },
+          "noCourses": [
+            "Noções de Informática",
+            "Ciência da Computação"
+          ]
+        },
+        "id": "pt-computing-alias-1-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Disciplinas de concurso público",
+            "notes": [],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Noções de Informática",
+                "questions": 10,
+                "topics": [
+                  "Organização e gerenciamento de arquivos e pastas no Windows",
+                  "Edição de textos, planilhas e apresentações no Microsoft Office",
+                  "Navegação na internet e uso de correio eletrônico"
+                ],
+                "weight": null
+              },
+              {
+                "group": null,
+                "name": "Arquivologia",
+                "questions": 5,
+                "topics": [
+                  "Classificação e avaliação de documentos de arquivo"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Preparação para concurso público",
+          "goalKind": "exam",
+          "language": "pt"
+        }
+      }
     }
   ],
   "taskId": "skill-graph"
