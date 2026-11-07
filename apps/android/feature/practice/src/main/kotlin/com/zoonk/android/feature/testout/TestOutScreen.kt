@@ -40,6 +40,7 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
+import com.zoonk.android.feature.mindmaps.FinishedChapterMoment
 import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.feature.practice.ChoiceQuestionsRun
 import com.zoonk.android.feature.practice.RunFinished
@@ -140,7 +141,7 @@ fun TestOutScreen(
     val outcome = ui.outcome
     val sent = ui.sent
     when {
-        outcome != null -> TestOutResult(outcome, ui, viewModel, app, close) { navigator.open(AppRoute.Subscription) }
+        outcome != null -> TestOutResult(outcome, ui, viewModel, app, close, navigator::open)
         sent != null && !ui.sending -> RecordedTestOut(viewModel, sent, close)
         else -> TestOutBody(viewModel, ui, page, app, navigator, showChapter)
     }
@@ -396,8 +397,9 @@ internal fun TestOutResult(
     viewModel: TestOutViewModel,
     app: AppContainer,
     onClose: () -> Unit,
-    onSeePlus: () -> Unit = {},
+    navigate: (AppRoute) -> Unit = {},
 ) {
+    val onSeePlus = { navigate(AppRoute.Subscription) }
     val undone = ui.undo == UndoState.Done
     val detail =
         when {
@@ -431,6 +433,7 @@ internal fun TestOutResult(
             outcome.reached?.takeIf { ui.celebrate }?.let { reached ->
                 DayMoment(missions = null, reached = reached, ceremony = outcome.ceremony?.kind, buddy = buddy.look, buddyName = buddy.name)
             }
+            outcome.finishedChapter?.let { FinishedChapterMoment(it, app, navigate) }
         }
     }
 }

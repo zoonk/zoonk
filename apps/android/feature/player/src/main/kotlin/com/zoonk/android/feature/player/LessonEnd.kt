@@ -256,12 +256,16 @@ internal fun LibraryLessonCompletion.awardedCertificates(): List<CertificateName
         it.naming
     }
 
-/** What the lesson's end says (main's `LessonCompletionMoment`): its title, then the score and the day's moment once saved. */
+/**
+ * What the lesson's end says (main's `LessonCompletionMoment`): its title, then the score and the
+ * day's moment once saved, and the chapter it finished with its mind map.
+ */
 @Composable
 fun LessonCompletionView(
     state: LessonPlayerState,
     ending: LessonEnding,
     buddy: LearnerSummaryBuddy? = null,
+    finishedChapter: FinishedChapterSlot? = null,
 ) {
     val completion = state.completion ?: return
     val title = stringResource(if (completion.testedOut) R.string.player_already_knew else R.string.player_lesson_complete)
@@ -306,6 +310,7 @@ fun LessonCompletionView(
             if (completion.status == CompletionStatus.Saved && result != null) {
                 val moment = buddy.momentBuddy()
                 DayMoment(result, moment.look, moment.name)
+                result.finishedChapter?.let { finishedChapter?.invoke(it) }
             }
         },
         // On a spread the lesson's map sits under what was done; one column keeps it behind ⋮.

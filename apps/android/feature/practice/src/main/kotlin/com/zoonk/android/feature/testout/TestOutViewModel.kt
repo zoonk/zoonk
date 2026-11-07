@@ -26,6 +26,7 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.ChapterTestOutRecord
 import com.zoonk.api.models.ChapterTestOutResult
 import com.zoonk.api.models.CreateChapterTestOutGeneration200Response
+import com.zoonk.api.models.FinishedChapter
 import com.zoonk.api.models.Milestone
 import com.zoonk.api.models.SubmitChapterTestOut200Response
 import com.zoonk.api.models.TestOutGeneration
@@ -49,6 +50,8 @@ data class TestOutOutcome(
     val ceremony: Milestone? = null,
     val reached: ReachedFacts? = null,
     val certificates: List<CertificateName> = emptyList(),
+    /** The chapter this test-out finished, for its mind map; a result opened again names none. */
+    val finishedChapter: FinishedChapter? = null,
 )
 
 @Immutable
@@ -314,6 +317,7 @@ private fun ChapterTestOutResult.outcome() =
         ceremony = ceremony,
         reached = ReachedFacts(reached.level, reached.energy),
         certificates = certificates.map { it.naming },
+        finishedChapter = finishedChapter,
     )
 
 private fun ChapterTestOutRecord.outcome() =
