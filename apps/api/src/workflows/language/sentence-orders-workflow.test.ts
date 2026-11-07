@@ -116,6 +116,33 @@ describe(sentenceOrdersWorkflow, () => {
     });
   });
 
+  it.each([0, 2])(
+    "keeps repair debt when the model returns %i results for one sentence",
+    async (count) => {
+      const owed = await owedLessonFixture();
+
+      vi.mocked(generateLanguageSentenceOrders).mockResolvedValue(
+        writtenOrders(Array.from({ length: count }, () => RENT_ORDERS.data.sentences[0]!)),
+      );
+
+      await expect(sentenceOrdersWorkflow({ lessonIds: [owed.lessonId] })).resolves.toStrictEqual({
+        changed: 0,
+        skipped: 0,
+        written: 0,
+      });
+
+      await expect(readOrders(owed)).resolves.toMatchObject({
+        lesson: {
+          sentenceOrdersAttempts: 1,
+          sentenceOrdersOwedAt: owed.owedAt,
+          updatedAt: owed.owedAt,
+        },
+        otherSentenceOrders: [],
+        otherTranslationOrders: [],
+      });
+    },
+  );
+
   it("counts every try that reached the model and stops paying once the tries run out", async () => {
     const owed = await owedLessonFixture({ attempts: MAX_ATTEMPTS - 2 });
     vi.mocked(generateLanguageSentenceOrders).mockRejectedValue(new Error("Gateway unavailable"));

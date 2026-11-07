@@ -180,6 +180,19 @@ describe(cleanLanguageLesson, () => {
     });
   });
 
+  it.each(["otherOrders", "otherTranslationOrders"] as const)(
+    "keeps a new lesson when a sentence has no %s list",
+    (field) => {
+      const draft = languageLessonDraft();
+      Reflect.deleteProperty(draft.sentences[0]!, field);
+
+      const cleaned = cleanLanguageLesson({ content: draft, knownWords: [], sameLanguage: false });
+
+      expect(cleaned.sentences).toHaveLength(draft.sentences.length);
+      expect(cleaned.sentences[0]?.[field]).toStrictEqual([]);
+    },
+  );
+
   it("keeps a word whose translation looks like it in another language", () => {
     const draft = languageLessonDraft();
     const [rent, ...rest] = draft.words;

@@ -148,12 +148,15 @@ async function writeOwedOrders({
     targetLanguage: lesson.targetLanguage,
   });
 
+  if (data.sentences.length !== lesson.sentences.length) {
+    throw new Error("Sentence orders must include one result per requested sentence, in order.");
+  }
+
   const orders = lesson.sentences.map((item, index) =>
     keepSentenceOrders({
       sameLanguage,
       sentence: {
-        otherOrders: data.sentences[index]?.otherOrders ?? [],
-        otherTranslationOrders: data.sentences[index]?.otherTranslationOrders ?? [],
+        ...data.sentences[index],
         sentence: item.sentence.sentence,
         translation: item.translation,
       },

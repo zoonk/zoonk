@@ -2,7 +2,7 @@ import { keepOtherArrangeOrders } from "../../player/contracts/arrange-word-orde
 
 export type SentenceOrders = { otherOrders: string[]; otherTranslationOrders: string[] };
 
-type WrittenSentence = SentenceOrders & { sentence: string; translation: string };
+type WrittenSentence = Partial<SentenceOrders> & { sentence: string; translation: string };
 
 /**
  * Keeps the orders a learner can build from the sentence's tiles: reading builds the sentence,
@@ -19,12 +19,12 @@ export function keepSentenceOrders({
   return {
     otherOrders: keepOtherArrangeOrders({
       kind: "reading",
-      orders: sentence.otherOrders,
+      orders: sentence.otherOrders ?? [],
       text: sentence.sentence,
     }),
     otherTranslationOrders: keepOtherArrangeOrders({
       kind: "listening",
-      orders: sameLanguage ? sentence.otherOrders : sentence.otherTranslationOrders,
+      orders: (sameLanguage ? sentence.otherOrders : sentence.otherTranslationOrders) ?? [],
       text: sentence.translation,
     }),
   };
