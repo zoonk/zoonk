@@ -474,7 +474,7 @@ struct LessonActionBar: View {
     if primary.isProminent {
       button.buttonStyle(.mainAction)
     } else {
-      button.buttonStyle(.outline)
+      button.buttonStyle(.secondary)
     }
   }
 

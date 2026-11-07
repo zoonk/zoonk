@@ -114,6 +114,7 @@ import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.ProgressMark
 import com.zoonk.android.ui.components.Readout
+import com.zoonk.android.ui.components.SecondaryButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.Suggestion
@@ -326,6 +327,7 @@ private fun Buttons() {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(onClick = {}, size = size) { Text("Continue") }
                 OutlinedButton(onClick = {}, size = size) { Text("Adjust plan") }
+                SecondaryButton(onClick = {}, size = size) { Text("I don't know yet") }
                 TextButton(onClick = {}, size = size) { Text("Skip") }
                 DestructiveButton(onClick = {}, size = size) { Text("Delete") }
             }
@@ -333,6 +335,7 @@ private fun Buttons() {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = {}, enabled = false) { Text("Continue") }
             OutlinedButton(onClick = {}, enabled = false) { Text("Adjust plan") }
+            SecondaryButton(onClick = {}, enabled = false) { Text("I don't know yet") }
             TextButton(onClick = {}, enabled = false) { Text("Skip") }
             DestructiveButton(onClick = {}, enabled = false) { Text("Delete") }
         }

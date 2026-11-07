@@ -12,6 +12,7 @@ export const PALETTE_TOKENS = [
   "ground",
   "primary",
   "primary-foreground",
+  "secondary",
   "muted",
   "muted-foreground",
   "faint",

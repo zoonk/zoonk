@@ -129,9 +129,9 @@ import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.ModalBottomSheet
-import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.SecondaryButton
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
@@ -854,7 +854,7 @@ private fun ActionBar(
             Text(stringResource(primary.label.text()))
         }
         if (primary.label == PrimaryLabel.DontKnowYet) {
-            OutlinedButton(
+            SecondaryButton(
                 onClick = actions::runPrimary,
                 enabled = primary.enabled,
                 modifier = width.focusRequester(primaryFocus),

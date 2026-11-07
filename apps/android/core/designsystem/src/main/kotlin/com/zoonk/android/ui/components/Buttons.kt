@@ -22,11 +22,12 @@ import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.zoonk
 
 /*
  * Main's buttons, one look per role: the main action filled with ink, a secondary one see-through with
- * an `input` line and ink words, a quiet one with words alone, and a destructive one in pink-red words
- * on its tint. All take main's `rounded-lg` (`rounded-md` when small) instead of Material's pill, and no
+ * an `input` line and ink words, main's `secondary` variant with ink words on a quiet fill, a quiet one
+ * with words alone, and a destructive one in pink-red words on its tint. All take main's `rounded-lg` (`rounded-md` when small) instead of Material's pill, and no
  * shadow. Material's own buttons are reported by the `MaterialButton` lint check outside this file.
  * Every size keeps Material's 48dp touch target.
  */
@@ -62,6 +63,35 @@ fun Button(
     interactionSource = interactionSource,
     content = { Labeled(size) { content() } },
 )
+
+/** Main's `secondary` button: ink words on a quiet fill, as main draws the lesson's "I don't know yet" in place of Check. */
+@Composable
+fun SecondaryButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    size: ButtonSize = LocalButtonSize.current,
+    contentPadding: PaddingValues = size.contentPadding(),
+    content: @Composable RowScope.() -> Unit,
+) {
+    val fill = MaterialTheme.zoonk.secondary
+    val words = MaterialTheme.colorScheme.onSurface
+    Button(
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        size = size,
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = fill,
+                contentColor = words,
+                disabledContainerColor = fill.copy(alpha = fill.alpha * DISABLED_ALPHA),
+                disabledContentColor = words.copy(alpha = DISABLED_ALPHA),
+            ),
+        contentPadding = contentPadding,
+        content = content,
+    )
+}
 
 /**
  * Main's `destructive` button: pink-red words on their tint, for an action that removes something.

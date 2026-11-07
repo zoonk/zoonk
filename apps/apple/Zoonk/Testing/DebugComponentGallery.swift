@@ -151,6 +151,13 @@
         .buttonStyle(.mainAction)
         .controlSize(.large)
 
+        Button {
+        } label: {
+          Text(verbatim: "I don't know yet").frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.secondary)
+        .controlSize(.large)
+
         ButtonRow {
           Button(String("Adjust plan")) {}.buttonStyle(.outline)
           Button(String("Not now")) {}.buttonStyle(.ghost)
