@@ -8,12 +8,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -43,7 +39,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -193,27 +188,11 @@ private fun MatchPairsActivity(props: ActivityProps) {
                 )
             }
 
+            val board = Modifier.semantics { contentDescription = cardsLabel }
             if (isComplete) {
-                Column(Modifier.semantics { contentDescription = cardsLabel }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    solvedRows(left, right).forEach { (leftCard, rightCard) ->
-                        Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            listOf(MatchSide.Left to leftCard, MatchSide.Right to rightCard).forEach { (side, card) ->
-                                when (card) {
-                                    null -> Spacer(Modifier.weight(1f))
-                                    else -> BoardCard(side, card, Modifier.weight(1f).fillMaxHeight())
-                                }
-                            }
-                        }
-                    }
-                }
+                SolvedMatchBoard(solvedRows(left, right), board) { side, card, modifier -> BoardCard(side, card, modifier) }
             } else {
-                Row(Modifier.semantics { contentDescription = cardsLabel }, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    listOf(MatchSide.Left to left, MatchSide.Right to right).forEach { (side, cards) ->
-                        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            cards.forEach { card -> BoardCard(side, card) }
-                        }
-                    }
-                }
+                MatchBoard(left, right, alignRows = false, board) { side, card, modifier -> BoardCard(side, card, modifier) }
             }
 
             miss?.let { MissNote(it.explanation) }
@@ -287,7 +266,6 @@ private fun MatchCardButton(
             style =
                 MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Medium,
-                    hyphens = Hyphens.Auto,
                     lineBreak = LineBreak.Paragraph,
                     color =
                         when (state) {
