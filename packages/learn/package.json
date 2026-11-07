@@ -169,6 +169,7 @@
     "./rich-text/display-math": "./src/rich-text/display-math.tsx",
     "./rich-text/inline": "./src/rich-text/rich-inline-segments.tsx",
     "./rich-text/math": "./src/rich-text/math-markup.ts",
+    "./rich-text/math-enclosures": "./src/rich-text/math-enclosures.ts",
     "./rich-text/math-provider": "./src/rich-text/math-markup-context.tsx",
     "./rich-text/preload-math": "./src/rich-text/use-preload-math.ts",
     "./rich-text/parser": "./src/rich-text/rich-text-parser.ts",

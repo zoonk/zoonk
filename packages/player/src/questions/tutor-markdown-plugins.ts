@@ -1,5 +1,6 @@
 "use client";
 
+import { rehypeEnclosuresAsRows } from "@zoonk/learn/rich-text/math-enclosures";
 import { createOnDemand } from "@zoonk/ui/lib/on-demand";
 import { useMemo } from "react";
 import { type MathPlugin, type PluginConfig } from "streamdown";
@@ -20,10 +21,12 @@ const mathPlugin = createOnDemand(() =>
   Promise.all([import("@streamdown/math"), import("rehype-katex")]).then(
     ([{ math }, { default: rehypeKatex }]): MathPlugin => ({
       ...math,
-      rehypePlugin: [
-        rehypeKatex,
-        { errorColor: "var(--color-muted-foreground)", output: "mathml" },
-      ],
+      rehypePlugin: {
+        plugins: [
+          [rehypeKatex, { errorColor: "var(--color-muted-foreground)", output: "mathml" }],
+          rehypeEnclosuresAsRows,
+        ],
+      },
     }),
   ),
 );

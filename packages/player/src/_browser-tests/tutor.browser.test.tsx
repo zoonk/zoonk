@@ -464,6 +464,32 @@ describe("tutor answers", () => {
     expect(stylesheets).toHaveLength(0);
   });
 
+  it("draws a boxed result's box and a cancelled factor's stroke", async () => {
+    const { api, lesson } = lessonWithTutor();
+
+    api.next("answer", () =>
+      Promise.resolve(
+        tutorAnswerResponse(
+          String.raw`So $$\frac{\cancel{2}x}{\cancel{2}} = x$$, and $$\boxed{x = 5}$$.`,
+        ),
+      ),
+    );
+
+    playLesson({ lesson });
+    const sheet = await openTutor();
+    await ask(sheet, "Can you simplify it?");
+    await expectCount(sheet.getByRole("math"), 2);
+
+    const drawn = (notation: string) =>
+      [...sheet.element().querySelectorAll(`[notation~='${notation}']`)].map((element) => {
+        const style = getComputedStyle(element);
+        return style.borderTopWidth !== "0px" || style.backgroundImage !== "none";
+      });
+
+    expect(drawn("box")).toStrictEqual([true]);
+    expect(drawn("updiagonalstrike")).toStrictEqual([true, true]);
+  });
+
   it("gives Tab to a formula wider than the answer, and not to one that fits", async () => {
     await atViewport(PHONE, async () => {
       const { api, lesson } = lessonWithTutor();
