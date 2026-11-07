@@ -94,15 +94,13 @@ struct LevelTestStep: View {
     }
 
     Section {
-      Button(action: finish) {
+      BusyButton(isBusy: isSaving, icon: .skip, action: finish) {
         Text(
-          "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test"
-        )
-        .frame(maxWidth: .infinity)
+          "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test")
       }
       .buttonStyle(.outline)
       .controlSize(.large)
-      .disabled(isSaving)
+      .buttonSizing(.flexible)
       .listRowInsets(.vertical, 0)
       .listRowBackground(Color.clear)
     } footer: {
@@ -384,12 +382,11 @@ private struct LevelTestIntro: View {
       }
 
       StepButtons(
-        canContinue: !isSaving, canSkip: !isStarting,
         continueLabel: Text("Start", tableName: "Onboarding", comment: "Starts the level test"),
         continueIcon: .play,
         skipLabel: Text(
           "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test"),
-        isSkipping: isSaving, onContinue: onStart, onSkip: onSkip)
+        onContinue: onStart, onSkip: onSkip)
 
       if offersOwnLanguage, let settings = URL(string: UIApplication.openSettingsURLString) {
         Section {
@@ -405,7 +402,7 @@ private struct LevelTestIntro: View {
       }
     }
     .onboardingColumn()
-    .environment(\.isSavingAnswer, isStarting)
+    .environment(\.isSavingAnswer, isStarting || isSaving)
   }
 
   private var offersOwnLanguage: Bool {

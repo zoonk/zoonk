@@ -739,11 +739,11 @@ private struct InstrumentOutcome: View {
             "Join the waitlist", tableName: "Onboarding",
             comment: "Joins the waitlist for lessons that teach playing an instrument"),
           skipIcon: .notify,
-          isSkipping: isJoining, onContinue: onStartMusicianship
+          onContinue: onStartMusicianship
         ) {
           Task { await join() }
         }
-        .environment(\.isSavingAnswer, isStarting)
+        .environment(\.isSavingAnswer, isStarting || isJoining)
       }
     }
     .announcesStatus(waitlist.map(Self.note))

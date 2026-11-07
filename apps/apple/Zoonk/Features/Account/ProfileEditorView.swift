@@ -38,185 +38,194 @@ struct ProfileEditorView: View {
 
   var body: some View {
     ZoonkList {
-      if isRequiredSetup {
-        StepHeader(
-          title: setupTitle,
-          description: Text(
-            "You can change it later in your profile.", tableName: "Account",
-            comment: "Explains that the setup's name and username can change later"))
-      }
+      // Its sections lock while it saves, not the list, so the button that saves keeps its focus.
+      Group {
+        if isRequiredSetup {
+          StepHeader(
+            title: setupTitle,
+            description: Text(
+              "You can change it later in your profile.", tableName: "Account",
+              comment: "Explains that the setup's name and username can change later"))
+        }
 
-      if !isRequiredSetup {
+        if !isRequiredSetup {
+          Section {
+            PageHeader(
+              Text("Profile", tableName: "Account", comment: "Profile editor navigation title"),
+              supporting: Text(
+                "Your name, username and account.", tableName: "Account",
+                comment: "Under the Profile page's title: what the page changes"))
+          }
+        }
+
         Section {
-          PageHeader(
-            Text("Profile", tableName: "Account", comment: "Profile editor navigation title"),
-            supporting: Text(
-              "Your name, username and account.", tableName: "Account",
-              comment: "Under the Profile page's title: what the page changes"))
-        }
-      }
-
-      Section {
-        FormField(
-          title: Text("Name", tableName: "Account", comment: "Profile name field label"),
-          isFocused: focusedField == .name, isInvalid: isNameTooLong
-        ) {
-          TextField(
-            text: $name,
-            prompt: Text(
-              "Your name",
-              tableName: "Account",
-              comment: "Placeholder for the profile name field")
-          ) {
-            Text("Name", tableName: "Account", comment: "Profile name field label")
-          }
-          .textContentType(.name)
-          .focused($focusedField, equals: .name)
-        } hint: {
-          if isNameTooLong {
-            Text(
-              "Use 150 characters or fewer.", tableName: "Account",
-              comment: "Shown under the profile name field when the typed name is too long"
-            )
-            .foregroundStyle(.destructiveText)
-          } else if !isRequiredSetup {
-            Text(
-              "How Zoonk and your buddy call you, and the name on your certificates.",
-              tableName: "Account", comment: "What the profile name is for")
-          }
-        }
-
-        if showsUsernameField {
           FormField(
-            title: Text("Username", tableName: "Account", comment: "Profile username field label"),
-            isFocused: focusedField == .username,
-            isInvalid: usernameStatus == .taken || usernameStatus == .invalid
+            title: Text("Name", tableName: "Account", comment: "Profile name field label"),
+            isFocused: focusedField == .name, isInvalid: isNameTooLong
           ) {
-            HStack(spacing: 2) {
-              Text(verbatim: "@")
-                .foregroundStyle(.mutedForeground)
-                .accessibilityHidden(true)
-
-              TextField(
-                text: normalizedUsernameBinding,
-                prompt: Text(
-                  "username",
-                  tableName: "Account",
-                  comment: "Placeholder for the username field")
-              ) {
-                Text("Username", tableName: "Account", comment: "Profile username field label")
-              }
-              .textInputAutocapitalization(.never)
-              .autocorrectionDisabled()
-              .textContentType(.username)
-              .focused($focusedField, equals: .username)
+            TextField(
+              text: $name,
+              prompt: Text(
+                "Your name",
+                tableName: "Account",
+                comment: "Placeholder for the profile name field")
+            ) {
+              Text("Name", tableName: "Account", comment: "Profile name field label")
             }
+            .textContentType(.name)
+            .focused($focusedField, equals: .name)
           } hint: {
-            usernameHint
-          }
-        } else {
-          HStack {
-            if username.isEmpty {
-              ProgressView()
-            } else {
+            if isNameTooLong {
               Text(
-                "Your username: @\(username)", tableName: "Account",
-                comment: "The username setup suggests; the argument is the username")
+                "Use 150 characters or fewer.", tableName: "Account",
+                comment: "Shown under the profile name field when the typed name is too long"
+              )
+              .foregroundStyle(.destructiveText)
+            } else if !isRequiredSetup {
+              Text(
+                "How Zoonk and your buddy call you, and the name on your certificates.",
+                tableName: "Account", comment: "What the profile name is for")
             }
+          }
 
-            Spacer()
+          if showsUsernameField {
+            FormField(
+              title: Text(
+                "Username", tableName: "Account", comment: "Profile username field label"),
+              isFocused: focusedField == .username,
+              isInvalid: usernameStatus == .taken || usernameStatus == .invalid
+            ) {
+              HStack(spacing: 2) {
+                Text(verbatim: "@")
+                  .foregroundStyle(.mutedForeground)
+                  .accessibilityHidden(true)
 
-            Button {
-              isChangingUsername = true
-            } label: {
-              Text("Change", tableName: "Account", comment: "Shows the username field in setup")
+                TextField(
+                  text: normalizedUsernameBinding,
+                  prompt: Text(
+                    "username",
+                    tableName: "Account",
+                    comment: "Placeholder for the username field")
+                ) {
+                  Text("Username", tableName: "Account", comment: "Profile username field label")
+                }
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .textContentType(.username)
+                .focused($focusedField, equals: .username)
+              }
+            } hint: {
+              usernameHint
             }
-            .accessibilityLabel(
-              Text("Change username", tableName: "Account", comment: "Shows the username field"))
-          }
-        }
-      }
+          } else {
+            HStack {
+              if username.isEmpty {
+                ProgressView()
+              } else {
+                Text(
+                  "Your username: @\(username)", tableName: "Account",
+                  comment: "The username setup suggests; the argument is the username")
+              }
 
-      if !isRequiredSetup {
-        Section {
-          ListRow(Text("Email", tableName: "Account", comment: "Read-only profile email label")) {
-            EmptyView()
-          } trailing: {
-            Text(account.user.email)
-              .typeStyle(.meta)
-          }
-        } header: {
-          SectionTitle(
-            Text(
-              String(
-                localized: "Account email",
-                table: "Account",
-                comment: "Section title above the read-only account email")))
-        }
-      }
+              Spacer()
 
-      if session.failure != nil {
-        Section {
-          AccountFailureMessage(failure: session.failure)
-        }
-      } else if isSaved {
-        Section {
-          Label {
-            Text(Self.savedLine)
-          } icon: {
-            Image(systemName: "checkmark.circle")
+              Button {
+                isChangingUsername = true
+              } label: {
+                Text("Change", tableName: "Account", comment: "Shows the username field in setup")
+              }
+              .accessibilityLabel(
+                Text("Change username", tableName: "Account", comment: "Shows the username field"))
+            }
           }
-          .typeStyle(.note)
-          .foregroundStyle(.successText)
+        }
+
+        if !isRequiredSetup {
+          Section {
+            ListRow(Text("Email", tableName: "Account", comment: "Read-only profile email label")) {
+              EmptyView()
+            } trailing: {
+              Text(account.user.email)
+                .typeStyle(.meta)
+            }
+          } header: {
+            SectionTitle(
+              Text(
+                String(
+                  localized: "Account email",
+                  table: "Account",
+                  comment: "Section title above the read-only account email")))
+          }
+        }
+
+        if session.failure != nil {
+          Section {
+            AccountFailureMessage(failure: session.failure)
+          }
+        } else if isSaved {
+          Section {
+            Label {
+              Text(Self.savedLine)
+            } icon: {
+              Image(systemName: "checkmark.circle")
+            }
+            .typeStyle(.note)
+            .foregroundStyle(.successText)
+          }
         }
       }
+      .disabled(session.isWorking)
 
       if isRequiredSetup {
         StepButtons(canContinue: isValid, onContinue: save)
           .environment(\.isSavingAnswer, session.isWorking)
       }
 
-      if let deleteAccount {
-        Section {
-          DataExportRow(
-            title: Text(
-              "Download my data", tableName: "Account",
-              comment: "Row that downloads everything Zoonk keeps about the learner"),
-            description: Text(
-              "Everything Zoonk keeps about you, as one file", tableName: "Account",
-              comment: "What the data download contains"),
-            filename: "zoonk-data"
-          ) {
-            await settings.exportAccountData()
+      Group {
+        if let deleteAccount {
+          Section {
+            DataExportRow(
+              title: Text(
+                "Download my data", tableName: "Account",
+                comment: "Row that downloads everything Zoonk keeps about the learner"),
+              description: Text(
+                "Everything Zoonk keeps about you, as one file", tableName: "Account",
+                comment: "What the data download contains"),
+              filename: "zoonk-data"
+            ) {
+              await settings.exportAccountData()
+            }
+          } header: {
+            SectionTitle(
+              Text(
+                "Your data", tableName: "Account", comment: "Profile section with the data download"
+              ))
           }
-        } header: {
-          SectionTitle(
-            Text(
-              "Your data", tableName: "Account", comment: "Profile section with the data download"))
-        }
 
-        Section {
-          Button(role: .destructive, action: deleteAccount) {
-            Text(
-              "Delete my account", tableName: "Account",
-              comment: "Opens permanent account deletion"
-            )
-            .typeStyle(.rowTitle)
-          }
-          .foregroundStyle(.destructiveText)
-        } header: {
-          SectionTitle(
-            Text("Delete account", tableName: "Account", comment: "Profile section about deletion"))
-        } footer: {
-          SectionFooter {
-            Text(
-              "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store.",
-              tableName: "Account", comment: "What deleting the account does")
+          Section {
+            Button(role: .destructive, action: deleteAccount) {
+              Text(
+                "Delete my account", tableName: "Account",
+                comment: "Opens permanent account deletion"
+              )
+              .typeStyle(.rowTitle)
+            }
+            .foregroundStyle(.destructiveText)
+          } header: {
+            SectionTitle(
+              Text(
+                "Delete account", tableName: "Account", comment: "Profile section about deletion"))
+          } footer: {
+            SectionFooter {
+              Text(
+                "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store.",
+                tableName: "Account", comment: "What deleting the account does")
+            }
           }
         }
       }
+      .disabled(session.isWorking)
     }
-    .disabled(session.isWorking)
     .navigationTitle(
       isRequiredSetup
         ? setupTitle

@@ -65,7 +65,8 @@ private struct OnboardingDetail: Decodable {
   }
 }
 
-/// While an answer saves, the question can't change and its Continue says so.
+/// While an answer saves, its fields lock (`locksWhileSaving`) and only the button that sent it
+/// spins. The list itself stays enabled, so that button keeps its focus.
 struct QuestionForm<Content: View>: View {
   let isSaving: Bool
   let failed: Bool
@@ -87,13 +88,51 @@ struct QuestionForm<Content: View>: View {
         }
       }
     }
-    .disabled(isSaving)
     .environment(\.isSavingAnswer, isSaving)
   }
 }
 
 extension EnvironmentValues {
   @Entry var isSavingAnswer = false
+}
+
+extension View {
+  /// The answer being saved can't change.
+  func locksWhileSaving() -> some View {
+    modifier(LocksWhileSaving())
+  }
+}
+
+private struct LocksWhileSaving: ViewModifier {
+  @Environment(\.isSavingAnswer) private var isSaving
+
+  func body(content: Content) -> some View {
+    content.disabled(isSaving)
+  }
+}
+
+/// Which of a step's buttons sent the answer that's saving: only it spins, and the other waits.
+struct StepSender {
+  enum Button {
+    case proceed
+    case skip
+  }
+
+  private var pressed: Button?
+
+  mutating func press(_ button: Button) {
+    pressed = button
+  }
+
+  /// Forgets the sender once its save ends, so a save started elsewhere, such as by a picked row,
+  /// spins neither button.
+  mutating func saveEnded() {
+    pressed = nil
+  }
+
+  func sent(_ button: Button, isSaving: Bool) -> Bool {
+    isSaving && pressed == button
+  }
 }
 
 struct StepHeader: View {
@@ -110,7 +149,8 @@ struct StepHeader: View {
 }
 
 /// A step's Continue, with an optional Skip under it. A label passed in takes its own icon, or none
-/// where no idea fits it; the defaults are Continue's forward arrow and Skip's.
+/// where no idea fits it; the defaults are Continue's forward arrow and Skip's. Either one's request
+/// is `isSavingAnswer`; the one pressed spins.
 struct StepButtons: View {
   var canContinue = true
   var canSkip = true
@@ -119,30 +159,39 @@ struct StepButtons: View {
   var skipLabel: Text?
   var skipIcon: ActionIcon? = .skip
   var note: Text?
-  var isSkipping = false
   let onContinue: () -> Void
   var onSkip: (() -> Void)?
 
   @Environment(\.isSavingAnswer) private var isSaving
+  @State private var sender = StepSender()
 
   var body: some View {
+    let proceeds = sender.sent(.proceed, isSaving: isSaving)
+    let skips = sender.sent(.skip, isSaving: isSaving)
+
     Section {
       VStack(spacing: 12) {
-        BusyButton(isBusy: isSaving, icon: continueIcon, action: onContinue) {
+        BusyButton(isBusy: proceeds, icon: continueIcon) {
+          sender.press(.proceed)
+          onContinue()
+        } label: {
           continueLabel
             ?? Text("Continue", tableName: "Onboarding", comment: "Saves an onboarding answer")
         }
         .buttonStyle(.mainAction)
-        .disabled((!canContinue || isSkipping) && !isSaving)
+        .disabled((!canContinue || isSaving) && !proceeds)
 
         if let onSkip {
-          BusyButton(isBusy: isSkipping, icon: skipIcon, action: onSkip) {
+          BusyButton(isBusy: skips, icon: skipIcon) {
+            sender.press(.skip)
+            onSkip()
+          } label: {
             skipLabel
               ?? Text(
                 "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question")
           }
           .buttonStyle(.outline)
-          .disabled((!canSkip || isSaving) && !isSkipping)
+          .disabled((!canSkip || isSaving) && !skips)
         }
       }
       .buttonSizing(.flexible)
@@ -157,6 +206,11 @@ struct StepButtons: View {
             .frame(maxWidth: .infinity)
             .multilineTextAlignment(.center)
         }
+      }
+    }
+    .onChange(of: isSaving) {
+      if !isSaving {
+        sender.saveEnded()
       }
     }
   }
@@ -285,6 +339,7 @@ private struct PurposeQuestion: View {
     ) { purpose in
       onAnswer(["purpose": purpose, "question": "purpose"])
     }
+    .locksWhileSaving()
   }
 }
 
@@ -345,6 +400,7 @@ private struct RoleQuestion: View {
           text: $second)
       }
     }
+    .locksWhileSaving()
 
     StepButtons(canContinue: !trimmed(isCareerChange ? second : role).isEmpty) {
       var input: [String: Any] = ["question": "role", "role": value(role)]
@@ -408,6 +464,7 @@ private struct TextQuestion: View {
     Section {
       LabeledField(label: label, prompt: prompt, text: $text)
     }
+    .locksWhileSaving()
 
     StepButtons(canContinue: !trimmed(text).isEmpty) {
       onAnswer(answer(trimmed(text)))
@@ -571,6 +628,7 @@ private struct DateQuestion: View {
           }
         }
       }
+      .locksWhileSaving()
 
       StepButtons(
         canContinue: date != nil,
@@ -775,6 +833,7 @@ private struct FollowUpsQuestion: View {
           text: $answers[index])
       }
     }
+    .locksWhileSaving()
 
     StepButtons {
       onAnswer(["answers": answers.map(value), "question": "followUps"])
@@ -897,6 +956,7 @@ private struct ExamChoiceQuestion: View {
         }
       }
     }
+    .locksWhileSaving()
 
     StepButtons(
       canContinue: choices.allSatisfy { !(picks[$0.group] ?? []).isEmpty },
@@ -938,6 +998,7 @@ private struct LevelQuestion: View {
     ChoiceRows(choices: LevelChoices.all(testMinutes: testMinutes), movesOn: true) { level in
       onAnswer(["level": LevelChoices.answer(level) ?? NSNull(), "question": "level"])
     }
+    .locksWhileSaving()
   }
 }
 
@@ -1048,6 +1109,7 @@ private struct SubjectsLevelQuestion: View {
         }
       }
     }
+    .locksWhileSaving()
 
     StepButtons(
       continueLabel: known.isEmpty
@@ -1084,6 +1146,7 @@ private struct BuddyQuestion: View {
         "Your buddy grows as you learn.", tableName: "Onboarding", comment: "Under the buddy step"))
 
     BuddyPickerSections(kind: $kind, name: $name)
+      .locksWhileSaving()
 
     StepButtons {
       onAnswer(["buddy": ["kind": kind.rawValue, "name": value(name)], "question": "buddy"])

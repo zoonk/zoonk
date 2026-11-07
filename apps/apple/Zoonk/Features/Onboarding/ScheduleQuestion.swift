@@ -160,6 +160,7 @@ struct ScheduleQuestion: View {
 
       // The days decide the time, and what the time covers arrives last, so nothing above it moves.
       weekSection(shown)
+        .locksWhileSaving()
 
       Section {
         VStack(alignment: .leading, spacing: 12) {
@@ -180,11 +181,13 @@ struct ScheduleQuestion: View {
         )
         .accessibilityHidden(true)
       }
+      .locksWhileSaving()
 
       if isExam, goalDate(shown) != nil, showsFullCourse(shown) {
         Section {
           fullCourseToggle(shown)
         }
+        .locksWhileSaving()
       }
 
       StepButtons(

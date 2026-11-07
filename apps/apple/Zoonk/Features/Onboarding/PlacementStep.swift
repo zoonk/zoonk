@@ -182,7 +182,6 @@ struct PlacementStep: View {
       saveFailure
 
       StepButtons(
-        canSkip: !isSaving,
         continueLabel: Text(
           "Continue the mock exam", tableName: "Mock", comment: "A running placement mock"),
         continueIcon: .play,
@@ -194,6 +193,7 @@ struct PlacementStep: View {
         onSkip: { stopMock(mockID) })
     }
     .onboardingColumn()
+    .environment(\.isSavingAnswer, isSaving)
   }
 
   @ViewBuilder private var saveFailure: some View {
@@ -233,6 +233,7 @@ struct PlacementStep: View {
 
       if view.goal.kind == .exam {
         PlacementMockOffer(goalId: view.goal.id)
+          .disabled(isSaving || isStarting)
       }
 
       saveFailure
@@ -243,8 +244,7 @@ struct PlacementStep: View {
         continueIcon: .play,
         skipLabel: Text(
           "Skip and start from the basics", tableName: "Onboarding",
-          comment: "Skips placement; the plan starts at the beginning"),
-        isSkipping: isSaving
+          comment: "Skips placement; the plan starts at the beginning")
       ) {
         Task { await start() }
       } onSkip: {
@@ -252,8 +252,7 @@ struct PlacementStep: View {
       }
     }
     .onboardingColumn()
-    .disabled(isSaving || isStarting)
-    .environment(\.isSavingAnswer, isStarting)
+    .environment(\.isSavingAnswer, isStarting || isSaving)
   }
 
   private static let questionsReady = LocalizedStringResource(
@@ -283,6 +282,7 @@ struct PlacementStep: View {
         GenerationFailureSection(failure: failure) {
           retry(failure)
         }
+        .disabled(isSaving || isStarting)
       } else if holding == nil {
         Section {
           ProgressView()
@@ -292,23 +292,24 @@ struct PlacementStep: View {
 
       if let warmUpID {
         WarmUpSection(deckID: warmUpID)
+          .disabled(isSaving)
       }
 
       saveFailure
 
       if holding == nil {
         Section {
-          Button {
+          BusyButton(isBusy: isSaving, icon: .skip) {
             finish(fromScratch: false)
           } label: {
             Text(
               "Skip for now", tableName: "Onboarding",
-              comment: "Skips placement while its questions are written"
-            )
-            .frame(maxWidth: .infinity)
+              comment: "Skips placement while its questions are written")
           }
           .buttonStyle(.outline)
           .controlSize(.large)
+          .buttonSizing(.flexible)
+          .disabled(isStarting)
           .listRowInsets(.vertical, 0)
           .listRowBackground(Color.clear)
         } footer: {
@@ -328,7 +329,6 @@ struct PlacementStep: View {
         comment: "Leaves placement's wait, once its questions are ready, for the questions")
     )
     .onboardingColumn()
-    .disabled(isSaving || isStarting)
     .task(id: waitRound) { await waitForQuestions() }
   }
 
@@ -347,7 +347,6 @@ struct PlacementStep: View {
       .environment(\.isSavingAnswer, isSaving)
     }
     .onboardingColumn()
-    .disabled(isSaving)
   }
 
   private func resume() async {
