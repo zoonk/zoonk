@@ -1,4 +1,5 @@
 import { generateText } from "ai";
+import { MockLanguageModelV4 } from "ai/test";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { readGatewayOptions } from "../_test-utils/gateway-options";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
@@ -18,6 +19,26 @@ vi.mock("ai", async (importOriginal) => {
 });
 
 const HINTS = { brand: "Lumen Works", name: "Orbit Notes", release: null };
+
+async function answerEmptyOnce(unified: "content-filter" | "error") {
+  const model = new MockLanguageModelV4({
+    doGenerate: {
+      content: [],
+      finishReason: { raw: unified, unified },
+      usage: {
+        inputTokens: { cacheRead: 0, cacheWrite: 0, noCache: 10, total: 10 },
+        outputTokens: { reasoning: 0, text: 0, total: 0 },
+      },
+      warnings: [],
+    },
+  });
+
+  const actual = await vi.importActual<typeof Ai>("ai");
+
+  vi.mocked(generateText).mockImplementationOnce((options) =>
+    actual.generateText({ ...options, model }),
+  );
+}
 
 const PAGE = {
   text: "Orbit Notes 5 shipped on October 21st, 2025.",
@@ -78,5 +99,21 @@ describe(readProductPages, () => {
       { disallowPromptTraining: true },
       undefined,
     ]);
+  });
+
+  it("fails an empty answer the provider's filter stopped as a reading the schema can't accept", async () => {
+    await answerEmptyOnce("content-filter");
+
+    await expect(
+      readProductPages({ hints: HINTS, known: true, pages: [PAGE] }),
+    ).rejects.toMatchObject({ finishReason: "content-filter", name: "AI_NoObjectGeneratedError" });
+  });
+
+  it("leaves an empty answer for any other reason as missing output, which a retry can fix", async () => {
+    await answerEmptyOnce("error");
+
+    await expect(
+      readProductPages({ hints: HINTS, known: true, pages: [PAGE] }),
+    ).rejects.toMatchObject({ name: "AI_NoOutputGeneratedError" });
   });
 });
