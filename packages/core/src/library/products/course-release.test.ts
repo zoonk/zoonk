@@ -494,6 +494,7 @@ describe(advanceCourseRelease, () => {
 
       advancing.catch(() => null);
       writes.push(advancing);
+
       await waitForBlockedStatement(
         noticePid,
         /FROM library_lessons[\s\S]*FOR (?:NO KEY )?UPDATE/u,
