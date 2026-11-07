@@ -1,5 +1,6 @@
 import "server-only";
 import { type Source, prisma } from "@zoonk/db";
+import { listProductPageIds } from "../../products/product-pages";
 import { lessonGoalsFilter, loadLessonMaterialPages } from "../../sources/goal-material";
 import {
   type MaterialPage,
@@ -13,7 +14,7 @@ const LESSON_SOURCE_CHARACTERS = 6000;
 const MIN_SHARED_TERMS = 3;
 
 /** Exam notices describe one exam's syllabus; using them as factual sources would leak that context into shared lessons. */
-const FACT_TOPICS: ReadonlySet<SourceTopic | null> = new Set(["regulation", "software"]);
+const FACT_TOPICS: ReadonlySet<SourceTopic | null> = new Set(["product", "regulation", "software"]);
 
 type LessonSourceRow = Pick<
   Source,
@@ -42,6 +43,10 @@ async function loadLessonSourcePages({
 }): Promise<MaterialPage[]> {
   const goals = lessonGoalsFilter({ chapterId, courseId, lessonId });
 
+  const productPageIds = courseId
+    ? await listProductPageIds({ courses: { some: { id: courseId } } })
+    : [];
+
   const sources = await prisma.source.findMany({
     orderBy: { fetchedAt: "desc" },
     select: {
@@ -58,6 +63,7 @@ async function loadLessonSourcePages({
         { learnerSources: { some: { goal: goals } } },
         { steps: { some: { lessonId } } },
         { stepSources: { some: { step: { lessonId } } } },
+        { id: { in: productPageIds } },
       ],
       extractedText: { not: null },
       kind: { not: "upload" },
@@ -69,12 +75,28 @@ async function loadLessonSourcePages({
     .filter((source) => statesFacts(source))
     .flatMap((source) => (source.extractedText ? [{ ...source, text: source.extractedText }] : []));
 
-  return selectSourcePages({
+  const productSourceIds = new Set(productPageIds);
+
+  const pages = toMaterialPages(documents);
+
+  // A product's own pages are about its lessons whatever words they share, often in another language.
+  const productPages = selectSourcePages({
     maxCharacters: LESSON_SOURCE_CHARACTERS,
-    minShared: MIN_SHARED_TERMS,
-    pages: toMaterialPages(documents),
+    minShared: 0,
+    pages: pages.filter((page) => productSourceIds.has(page.sourceId)),
     query,
   });
+
+  const used = productPages.reduce((total, page) => total + page.text.length, 0);
+
+  const otherPages = selectSourcePages({
+    maxCharacters: LESSON_SOURCE_CHARACTERS - used,
+    minShared: MIN_SHARED_TERMS,
+    pages: pages.filter((page) => !productSourceIds.has(page.sourceId)),
+    query,
+  });
+
+  return [...productPages, ...otherPages];
 }
 
 /** Internal workflow bridge: the lesson must come from the workflow planning or writing it. */

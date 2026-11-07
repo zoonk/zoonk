@@ -69,6 +69,7 @@ test.describe("Focus test API", () => {
       apiContext.post(path, {
         data: {
           answers: [{ answer: { selectedIndex: 0 }, durationMs: 1000, itemId: randomUUID() }],
+          requestId: randomUUID(),
         },
       }),
       apiContext.post(`${path}/generations`),
@@ -105,6 +106,7 @@ test.describe("Focus test API", () => {
             durationMs: 7000,
             itemId: question.itemId,
           })),
+          requestId: randomUUID(),
         },
       }),
       schema: focusTestResultSchema,

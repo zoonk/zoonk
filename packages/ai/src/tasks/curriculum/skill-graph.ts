@@ -98,6 +98,8 @@ export type SkillGraphParams = {
   hasMaterial?: boolean;
   /** For a test from the learner's own material days away: the most lessons its days hold. */
   lessonBudget?: number | null;
+  /** The branded product the goal is about, and the exact title of the course that teaches it. */
+  product?: { brand: string; courseTitle: string; name: string } | null;
   model?: string;
   serviceTier?: ServiceTier;
   useFallback?: boolean;
@@ -171,6 +173,8 @@ function formatGoalInputs(params: SkillGraphParams): string {
     `OWN_LEVEL: ${params.ownLevel ?? "none given"}`,
     params.goalKind === "language" && `TARGET_LANGUAGE: ${formatTargetLanguage(params)}`,
     params.lessonBudget && `LESSON_BUDGET: ${params.lessonBudget}`,
+    params.product && `PRODUCT: ${params.product.name} by ${params.product.brand}`,
+    params.product && `PRODUCT_COURSE: ${params.product.courseTitle}`,
     exam && `EXAM_BLUEPRINT: ${blueprint}`,
   ]
     .filter(Boolean)

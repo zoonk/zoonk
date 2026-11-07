@@ -1,6 +1,5 @@
 import "server-only";
 import { getWeeklyMockMinutes } from "../../exams/mocks/mock-plan";
-import { canHoldPhaseChallenge } from "../../plans/planner/phase-challenge-days";
 import { addDays, toIsoDate } from "../../plans/planner/plan-calendar";
 import { toExamWindows } from "../../plans/planner/plan-phases";
 import {
@@ -15,6 +14,7 @@ import {
   parsePlanPhases,
   parsePlanSettings,
 } from "../../plans/planner/plan-state";
+import { isStudyDay } from "../../plans/planner/practice-days";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { readDailyTimeLimitReached } from "../../sessions/_utils/daily-time-limit";
 import { type CheckpointKind } from "../../sessions/brain-power";
@@ -46,7 +46,7 @@ function getTomorrowRunInput({
   };
 }
 
-/** Returns a learner-local YYYY-MM-DD within a week, or null for weekly challenges and exams. */
+/** Returns a learner-local YYYY-MM-DD within a week, or null for weekly challenges and exams. A due phase challenge takes the next study day, while that day's weekly challenge waits. */
 export function getNextStudyDay({
   challenge,
   dailyLimitReached,
@@ -67,12 +67,7 @@ export function getNextStudyDay({
 
   const date = Array.from({ length: DAYS_PER_WEEK }, (_, offset) =>
     addDays(input.today, offset),
-  ).find((day) =>
-    canHoldPhaseChallenge({
-      day: { date: day, shape: describeDay(day) },
-      rules: { kind: "lessons" },
-    }),
-  );
+  ).find((day) => isStudyDay(describeDay(day)));
 
   return date ? toIsoDate(date) : null;
 }

@@ -265,11 +265,12 @@ struct FocusTestScreen: View {
     defer { isSubmitting = false }
 
     let goalId = goalId
+    let requestId = PracticeAnswerDraft.requestId(key: draftKey)
     switch await practice.write(
       .planChanged,
       { identity in
         try await practice.api.submitFocusTest(
-          token: identity.bearerToken, goalId: goalId, answers: answers)
+          token: identity.bearerToken, goalId: goalId, answers: answers, requestId: requestId)
       })
     {
     case .done(let graded):

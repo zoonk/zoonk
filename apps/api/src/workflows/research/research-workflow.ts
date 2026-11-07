@@ -7,6 +7,7 @@ import { scheduleFreshnessChecksStep } from "../freshness/steps/schedule-freshne
 import { getGoalContentToken, goalContentWorkflow } from "../goals/goal-content-workflow";
 import { type ResearchAnalytics, toResearchAnalytics } from "./_utils/research-analytics";
 import { describeExam, readExamBlueprint } from "./read-exam-blueprint";
+import { researchProduct } from "./research-product";
 import { type ResearchResult, researchResultSchema } from "./research-result";
 import { type ResearchContext, findAndStoreSources, researchSources } from "./research-sources";
 import { detectResearchTopic } from "./research-topic";
@@ -217,6 +218,10 @@ async function research({
   if (topic === "exam") {
     const plan = await planExamResearchStep({ analytics, goal });
     return researchExam({ analytics, goal, plan, uploads });
+  }
+
+  if (topic === "product") {
+    return researchProduct({ analytics, goal, uploads });
   }
 
   const plan = await planSourceResearchStep({ analytics, goal, topic });

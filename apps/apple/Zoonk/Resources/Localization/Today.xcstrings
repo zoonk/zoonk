@@ -14323,65 +14323,6 @@
         }
       }
     },
-    "Start with these. Starting your session fits the plan to today's time." : {
-      "comment" : "Why the day that opens can differ from the one shown",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fang damit an. Wenn du deine Lerneinheit startest, wird der Plan an deine heutige Zeit angepasst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Empieza por aquí. Al empezar tu sesión, el plan se ajusta al tiempo que tienes hoy."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commence par ces activités. Le plan s’adaptera au temps disponible aujourd’hui quand tu lanceras ta séance."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inizia da queste attività. Quando avvii la sessione, il piano si adatta al tempo che hai oggi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "まずはここから始めましょう。学習を始めると、今日使える時間に合わせて計画が調整されます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이것부터 시작해 보세요. 학습을 시작하면 오늘 공부할 시간에 맞춰 계획을 조정해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zacznij od tego. Gdy zaczynasz naukę, dopasowujemy plan do czasu, który masz dziś."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comece por estas. Ao começar a sessão, o plano se ajusta ao tempo de hoje."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bunlarla başla. Çalışmaya başladığında plan, bugün ayırabildiğin süreye göre ayarlanır."
-          }
-        }
-      }
-    },
     "studied" : {
       "comment" : "A day's status",
       "localizations" : {

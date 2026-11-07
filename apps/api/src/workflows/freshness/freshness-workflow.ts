@@ -6,6 +6,7 @@ import {
   type SourceChange,
 } from "@zoonk/core/library/exams/check-freshness";
 import { getWorkflowMetadata } from "workflow";
+import { readProductReleases } from "../products/product-releases";
 import { type ResearchAnalytics, toResearchAnalytics } from "../research/_utils/research-analytics";
 import { readExamBlueprint } from "../research/read-exam-blueprint";
 import { findAndStoreSources } from "../research/research-sources";
@@ -100,6 +101,19 @@ async function applyChanges({
 
   if (check.sourceChange) {
     await recordSourceNotice({ analytics, change: check.sourceChange });
+  }
+
+  if (check.releasesUpdate) {
+    await Promise.all(
+      check.releasesUpdate.productIds.map((productId) =>
+        readProductReleases({
+          analytics,
+          productId,
+          release: null,
+          serviceTier: chooseServiceTier({ wait: "later" }),
+        }),
+      ),
+    );
   }
 }
 

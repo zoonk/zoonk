@@ -74,8 +74,6 @@ struct ChoiceItemView: View {
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
 
-  @Environment(\.legibilityWeight) private var legibilityWeight
-
   var body: some View {
     let correct = result?.correctAnswer?.picks ?? []
     let shownPicks = result?.answer.picks ?? picks
@@ -93,8 +91,8 @@ struct ChoiceItemView: View {
             isPicked: shownPicks.contains(index),
             result: optionResult(index, correct: correct, picked: shownPicks),
             isLocked: isLocked,
-            action: { pick(index) },
-            label: { Text(ItemTextBlock.inline(option), legibility: legibilityWeight) }
+            text: RichInline(text: ItemTextBlock.inline(option)),
+            action: { pick(index) }
           )
           .practiceFocus(index == 0 ? .answer : nil)
         }
@@ -154,6 +152,8 @@ struct PickRule: View {
 }
 
 struct TrueFalseItemView: View {
+  @Environment(\.locale) private var locale
+
   let statement: String
   let labels: PracticeTrueFalseLabels
   let allowsBlank: Bool
@@ -177,19 +177,26 @@ struct TrueFalseItemView: View {
       VStack(spacing: 10) {
         ForEach(Array(answers.enumerated()), id: \.offset) { index, answer in
           if result == nil || optionResult(answer) != nil || shownPick == answer {
+            let text = localizedLabel(for: answer)
             AnswerOption(
               marker: index + 1,
               isPicked: shownPick == answer,
               result: optionResult(answer),
               isLocked: isLocked,
-              action: { draft = draft == answer ? nil : answer },
-              label: { Text(TrueFalseWords.label(for: answer, labels: labels)) }
+              text: RichInline(text: AttributedString(text)),
+              action: { draft = draft == answer ? nil : answer }
             )
             .practiceFocus(index == 0 ? .answer : nil)
           }
         }
       }
     }
+  }
+
+  private func localizedLabel(for answer: PracticeAnswer) -> String {
+    var label = TrueFalseWords.label(for: answer, labels: labels)
+    label.locale = locale
+    return String(localized: label)
   }
 
   /// A blank is neither right nor wrong: it stays picked, never marked.
@@ -287,8 +294,6 @@ struct MatchPairsItemView: View {
   @Binding var draft: PracticeAnswer?
   @State private var selected: Int?
 
-  @Environment(\.legibilityWeight) private var legibilityWeight
-
   var body: some View {
     let current = matches
 
@@ -299,8 +304,8 @@ struct MatchPairsItemView: View {
             isPicked: selected == index,
             isLocked: isLocked,
             tag: current[index] == nil ? nil : AnyView(PairBadge(number: index + 1)),
-            action: { pickLeft(index, current: current) },
-            label: { Text(ItemTextBlock.inline(entry), legibility: legibilityWeight) }
+            text: RichInline(text: ItemTextBlock.inline(entry)),
+            action: { pickLeft(index, current: current) }
           )
           .practiceFocus(index == 0 ? .answer : nil)
         }
@@ -316,8 +321,8 @@ struct MatchPairsItemView: View {
           AnswerOption(
             isLocked: isLocked || (selected == nil && owner == nil),
             tag: owner.map { AnyView(PairBadge(number: $0 + 1)) },
-            action: { pickRight(index, current: current) },
-            label: { Text(ItemTextBlock.inline(entry), legibility: legibilityWeight) }
+            text: RichInline(text: ItemTextBlock.inline(entry)),
+            action: { pickRight(index, current: current) }
           )
           .accessibilityValue(matchedValue(owner))
         }
@@ -400,8 +405,6 @@ struct OrderItemView: View {
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
 
-  @Environment(\.legibilityWeight) private var legibilityWeight
-
   var body: some View {
     let placed: [Int] = if case .order(let given) = result?.answer { given } else { order }
 
@@ -423,8 +426,8 @@ struct OrderItemView: View {
           result: result,
           isLocked: isLocked,
           tag: place.map { AnyView(PairBadge(number: $0 + 1)) },
-          action: { tap(index) },
-          label: { Text(ItemTextBlock.inline(step), legibility: legibilityWeight) }
+          text: RichInline(text: ItemTextBlock.inline(step)),
+          action: { tap(index) }
         )
         .accessibilityValue(placeValue(place, result: result))
         .practiceFocus(index == 0 ? .answer : nil)

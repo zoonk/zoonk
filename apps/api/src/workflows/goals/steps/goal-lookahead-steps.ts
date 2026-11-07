@@ -1,4 +1,3 @@
-import { findOrCreateGoalCourse } from "@zoonk/core/library/curriculum/find-or-create-course";
 import {
   getGoalCourseFormat,
   setGoalPrimaryCourse,
@@ -8,6 +7,8 @@ import {
   type CourseExtensionRequest,
   listSkillExtensions,
 } from "@zoonk/core/library/curriculum/skill-extensions";
+import { findGoalCourse } from "@zoonk/core/library/products/goal-courses";
+import { type GoalProduct } from "@zoonk/core/library/products/goal-product";
 import { type LearnerLookahead, getGoalLookahead } from "@zoonk/core/lookahead/learner-lookahead";
 import { endLessonsAsk } from "@zoonk/core/lookahead/lessons-ask";
 import {
@@ -31,12 +32,13 @@ import { type PlanStepOutcome } from "../../_shared/plan-conflict-retry";
 
 type OwnLevel = Parameters<typeof pickSpeculativeLessons>[0]["ownLevel"];
 
-type CourseProvenance = Parameters<typeof findOrCreateGoalCourse>[0]["provenance"];
+type CourseProvenance = Parameters<typeof findGoalCourse>[0]["provenance"];
 
 export async function findGoalCoursesStep({
   analytics,
   courses,
   goal,
+  product,
   provenance,
   scope,
   workflowRunId,
@@ -44,6 +46,8 @@ export async function findGoalCoursesStep({
   analytics?: ContentAnalytics;
   courses: { key: string; title: string }[];
   goal: { id: string; kind: GoalKind };
+  /** The product the graph was told about, so a graph built without it gets no product course. */
+  product: GoalProduct | null;
   provenance: CourseProvenance;
   scope: CurriculumScope;
   workflowRunId: string;
@@ -55,9 +59,10 @@ export async function findGoalCoursesStep({
 
   const found = await Promise.all(
     courses.map(async (need) => {
-      const { course } = await findOrCreateGoalCourse({
+      const { course } = await findGoalCourse({
         analytics: context,
         format,
+        product,
         provenance,
         scope,
         title: need.title,

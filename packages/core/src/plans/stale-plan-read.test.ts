@@ -9,6 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockAccountSession, mockSession } from "../_test-utils/mock-session";
 import { markPlansChanged } from "../learner/_utils/mark-learner-changed";
 import { seedPersonaCopy } from "../seed/seed";
+import { toDayBlockRef } from "../sessions/day-block";
 import { openStudyDay } from "../sessions/open-study-day";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
@@ -48,6 +49,54 @@ async function daysAwayFixture(
   mockSession(user.id);
   vi.setSystemTime(RETURN);
   return { ...fixture, library, user };
+}
+
+async function startReturningDay({
+  away,
+  day,
+  persona,
+}: {
+  away: number;
+  day: number;
+  persona: Parameters<typeof seedPersonaCopy>[0]["persona"];
+}) {
+  const copyKey = randomUUID();
+
+  const copy = await seedPersonaCopy({
+    awayDays: away,
+    copyKey,
+    day,
+    email: `away-start-${copyKey}@zoonk.test`,
+    persona,
+  });
+
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: copy.userId } });
+  mockAccountSession({ user });
+  const input = { goalId: copy.goalId, timeZone: "UTC" };
+  const read = await getTodayView(input);
+
+  if (read.status !== "ready" || read.today.session.status !== "unstarted") {
+    throw new Error("Expected the returning learner's unopened day");
+  }
+
+  const shown = read.today.session;
+  const first = shown.blocks[0];
+
+  if (!first) {
+    throw new Error("Expected work on the returning learner's day");
+  }
+
+  const opened = await openStudyDay({
+    ...input,
+    shownDate: shown.localDate.toISOString().slice(0, 10),
+    target: { kind: "next", shown: toDayBlockRef(first) },
+  });
+
+  if (opened.status !== "opened") {
+    throw new Error(`Expected Start to open the day, got ${opened.status}`);
+  }
+
+  return { goalId: copy.goalId, opened, shown };
 }
 
 describe("the visible Plan after days away, before any learner POST", () => {
@@ -234,6 +283,115 @@ describe("the visible Plan after days away, before any learner POST", () => {
     ).resolves.toBe(1);
   });
 
+  it("opens the day a learner back from days away was shown, on the first Start", async () => {
+    vi.setSystemTime(new Date("2026-11-06T15:00:00Z"));
+    const { opened, shown } = await startReturningDay({ away: 7, day: 16, persona: "stocks" });
+
+    expect(opened.session.blocks.map((block) => toDayBlockRef(block))).toStrictEqual(
+      shown.blocks.map((block) => toDayBlockRef(block)),
+    );
+
+    expect(opened.session.minutes.planned).toBe(shown.minutes.planned);
+
+    expect(opened.session.missions.map(({ kind, total }) => ({ kind, total }))).toStrictEqual(
+      shown.missions.map(({ kind, total }) => ({ kind, total })),
+    );
+
+    expect(opened.targetStatus).toBe("next");
+  });
+
+  it.each([
+    { at: "2026-11-06T15:00:00Z", away: 7, day: 16, mock: "left from the days away" },
+    { at: "2026-11-08T15:00:00Z", away: 5, day: 9, mock: "dated today" },
+  ])(
+    "opens an exam learner's day back without a mock $mock, which Start re-dates",
+    async (back) => {
+      vi.setSystemTime(new Date(back.at));
+      const { goalId, opened, shown } = await startReturningDay({ ...back, persona: "exam" });
+      const today = new Date(`${back.at.slice(0, 10)}T00:00:00Z`);
+
+      await expect(
+        prisma.planItem.count({
+          where: { kind: "mock", plan: { goalId }, scheduledFor: { lte: today }, status: "todo" },
+        }),
+      ).resolves.toBe(0);
+
+      expect(shown.blocks.some((block) => block.checkpoint?.mock)).toBe(false);
+      expect(opened.targetStatus).toBe("next");
+
+      expect(opened.session.blocks.map((block) => toDayBlockRef(block))).toStrictEqual(
+        shown.blocks.map((block) => toDayBlockRef(block)),
+      );
+    },
+  );
+
+  it.each([
+    { away: 4, day: 12, persona: "buddy" as const },
+    { away: 7, day: 16, persona: "stocks" as const },
+  ])(
+    "keeps every lesson $persona opens after days away whole on today in the Plan",
+    async (back) => {
+      vi.setSystemTime(new Date("2026-11-06T15:00:00Z"));
+      const { goalId, opened } = await startReturningDay(back);
+      const read = await getGoalPlan(goalId);
+
+      if (read.status !== "ready") {
+        throw new Error("Expected the Plan after Start");
+      }
+
+      const lessonIds = opened.session.blocks.flatMap((block) =>
+        block.kind === "learn" && block.planItemId ? [block.planItemId] : [],
+      );
+
+      const daysOf = (id: string) =>
+        read.plan.week.days.flatMap((day) =>
+          day.items.some((item) => item.id === id) ? [day.date] : [],
+        );
+
+      expect(lessonIds.length).toBeGreaterThan(0);
+      expect(lessonIds.map((id) => daysOf(id))).toStrictEqual(lessonIds.map(() => ["2026-11-06"]));
+
+      await expect(
+        prisma.planItem.count({ where: { id: { in: lessonIds }, status: "todo" } }),
+      ).resolves.toBe(lessonIds.length);
+    },
+  );
+
+  it("dates the challenge buddy opens after days away today, with no other challenge today", async () => {
+    vi.setSystemTime(new Date("2026-11-08T15:00:00Z"));
+    const { goalId, opened } = await startReturningDay({ away: 5, day: 9, persona: "buddy" });
+    const today = new Date("2026-11-08T00:00:00Z");
+
+    const held = new Set(
+      opened.session.blocks.flatMap((block) => (block.planItemId ? [block.planItemId] : [])),
+    );
+
+    expect(opened.session.blocks.some((block) => block.checkpoint?.kind === "boss")).toBe(true);
+    expect(opened.targetStatus).toBe("next");
+
+    const items = await prisma.planItem.findMany({
+      select: { id: true, kind: true, scheduledFor: true },
+      where: { plan: { goalId }, status: "todo" },
+    });
+
+    const dateOf = (id: string) =>
+      items
+        .find((item) => item.id === id)
+        ?.scheduledFor?.toISOString()
+        .slice(0, 10);
+
+    expect([...held].map((id) => dateOf(id))).toStrictEqual([...held].map(() => "2026-11-08"));
+
+    expect(
+      items.filter(
+        (item) =>
+          ["boss", "checkpoint", "mock"].includes(item.kind) &&
+          item.scheduledFor?.getTime() === today.getTime() &&
+          !held.has(item.id),
+      ),
+    ).toStrictEqual([]);
+  });
+
   it("counts newly selected non-exam teaching before Open from the same plan it persists", async () => {
     const fixture = await daysAwayFixture();
     const skill = fixture.library.skills[0];
@@ -260,13 +418,23 @@ describe("the visible Plan after days away, before any learner POST", () => {
       throw new Error("Expected both actual plan progress reads");
     }
 
-    expect((read.result.today.earlierWork ?? []).length).toBeGreaterThan(0);
     expect(after.today.progress).toMatchObject({ lessons: { total: 15 }, measure: "lessons" });
   });
 
   it("counts the fitted lessons of a requeued stand-in before Open exactly as the writer", async () => {
     const fixture = await daysAwayFixture([{ lessons: 2 }, { lessons: 0, size: 6 }]);
     const before = await saved(fixture.plan.id);
+
+    expect(
+      before.items.some(
+        (item) =>
+          item.kind === "lesson" &&
+          item.status === "todo" &&
+          item.scheduledFor &&
+          item.scheduledFor < RETURN,
+      ),
+    ).toBe(true);
+
     const input = { goalId: fixture.goal.id, timeZone: "UTC" };
     const read = await countDatabaseStatements(() => getTodayView(input));
     expect(read.writes).toBe(0);
@@ -280,7 +448,6 @@ describe("the visible Plan after days away, before any learner POST", () => {
       throw new Error("Expected the actual stand-in plan before and after Open");
     }
 
-    expect((read.result.today.earlierWork ?? []).length).toBeGreaterThan(0);
     expect(after.today.progress).toMatchObject({ lessons: { total: 8 }, measure: "lessons" });
 
     await expect(

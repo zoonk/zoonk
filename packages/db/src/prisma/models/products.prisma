@@ -1,0 +1,83 @@
+/// Made only from official pages research fetched. `normalizedName` and `aliases` are lookup keys:
+/// lowercase letters and digits only, so "Next.js" and "next js" meet.
+model Product {
+  id                     String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId         String           @map("organization_id") @db.Uuid
+  organization           Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  slug                   String
+  name                   String
+  normalizedName         String           @map("normalized_name")
+  aliases                String[]         @default([])
+  website                String
+  /// One page can serve several products (a brand's one docs hub), so each product points at the
+  /// pages its research read.
+  websiteSourceId        String?          @map("website_source_id") @db.Uuid
+  websiteSource          Source?          @relation("ProductWebsiteSource", fields: [websiteSourceId], references: [id], onDelete: SetNull)
+  docsSourceId           String?          @map("docs_source_id") @db.Uuid
+  docsSource             Source?          @relation("ProductDocsSource", fields: [docsSourceId], references: [id], onDelete: SetNull)
+  /// English, one or two neutral sentences.
+  description            String
+  imageUrl               String?          @map("image_url")
+  /// The official page that lists its releases; the daily sweep reads it again while learners use the product.
+  releasesSourceId       String?          @map("releases_source_id") @db.Uuid
+  releasesSource         Source?          @relation("ProductReleasesSource", fields: [releasesSourceId], references: [id], onDelete: SetNull)
+  /// The releases page's hash the saved releases were read from, so a page whose hash differs is
+  /// read again even when an earlier check already saved that hash and then failed.
+  releasesHash           String?          @map("releases_hash")
+  /// The releases page's hash a reading failed on after its retries (the model refused the page or
+  /// its output kept failing its checks), so checks skip that page until its hash changes.
+  unreadableReleasesHash String?          @map("unreadable_releases_hash")
+  model                  String
+  promptVersion          String           @map("prompt_version")
+  runId                  String           @map("run_id")
+  generatedAt            DateTime         @default(now()) @map("generated_at")
+  createdAt              DateTime         @default(now()) @map("created_at")
+  updatedAt              DateTime         @default(now()) @updatedAt @map("updated_at")
+  releases               ProductRelease[]
+  courses                Course[]
+  goals                  Goal[]
+
+  @@unique([organizationId, normalizedName], name: "organizationName")
+  @@unique([organizationId, slug], name: "organizationSlug")
+  @@index([normalizedName])
+  @@index([aliases], type: Gin)
+  @@index([docsSourceId])
+  @@index([releasesSourceId])
+  @@index([websiteSourceId])
+  @@map("products")
+}
+
+/// Stored at the level the official pages tell apart (Next.js 16, iPhone 17 Pro), never each patch.
+/// The current release is the newest already out: on its `releasedAt`, or once the month ends for a
+/// date the pages state only by month (`releasedMonthOnly`, `releasedAt` on its first day). A later
+/// date is announced, and a release with no known date never becomes current.
+model ProductRelease {
+  id                String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  productId         String    @map("product_id") @db.Uuid
+  product           Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  slug              String
+  name              String
+  normalizedName    String    @map("normalized_name")
+  version           String?
+  releasedAt        DateTime? @map("released_at") @db.Date
+  releasedMonthOnly Boolean   @default(false) @map("released_month_only")
+  /// When its own page was searched for because, as the newest listed release, it left the product
+  /// with no current one; each newest release is searched for once (`claimNewestReleaseSearch`).
+  pageSearchedAt    DateTime? @map("page_searched_at")
+  supportEndsAt     DateTime? @map("support_ends_at") @db.Date
+  sourceId          String?   @map("source_id") @db.Uuid
+  source            Source?   @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  model             String
+  promptVersion     String    @map("prompt_version")
+  runId             String    @map("run_id")
+  generatedAt       DateTime  @default(now()) @map("generated_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at")
+  courses           Course[]
+  goals             Goal[]
+
+  @@unique([productId, normalizedName], name: "productName")
+  @@unique([productId, slug], name: "productSlug")
+  @@index([sourceId])
+  @@map("product_releases")
+}

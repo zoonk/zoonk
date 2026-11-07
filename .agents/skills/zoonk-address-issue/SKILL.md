@@ -4,14 +4,14 @@ description: Verify and address a zoonk/zoonk GitHub issue. Mark it In Progress 
 license: MIT
 metadata:
   author: zoonk
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Addressing an issue
 
 An issue is someone's report of a problem or an idea, not a spec. Mark it In Progress so the team sees an agent has it, make sure nobody else is already on it, check that it holds up, then address it the way its kind calls for. Duplicates and open PRs come first because finding them takes a minute while reproducing a problem can take an hour, and a duplicate is verified on the issue it duplicates.
 
-Being asked to address or verify an issue is the go-ahead for what this skill does on GitHub: comments, closing, links, type, priority and its status on the project board. Every comment you post opens with the [disclosure](../zoonk-post-on-behalf/SKILL.md#the-disclosure).
+Being asked to address or verify an issue is the go-ahead for what this skill does on GitHub: comments, closing, links, type, priority, labels and its status on the project board. Every comment you post opens with the [disclosure](../zoonk-post-on-behalf/SKILL.md#the-disclosure).
 
 ## 1. Read it
 
@@ -101,7 +101,7 @@ If it doesn't reproduce, find out why. It may be fixed on `main` since it was fi
 
 Then judge whether it's worth addressing, the way [zoonk-pull-request](../zoonk-pull-request/SKILL.md#3-judge-every-comment) judges a review comment: can it really happen, who reaches it and with what, and what does it cost when it does? Double taps, retries, concurrent requests, forged fields and partial failures are ordinary traffic here, not rare. A problem nothing reaches, or a rare one with a harmless result, isn't worth a fix: comment with what you checked and why, then close it as not planned (`gh issue close <n> --repo zoonk/zoonk --reason "not planned"`).
 
-If it has no type or priority, or what you found changes them, set them following [zoonk-github-issues](../zoonk-github-issues/SKILL.md).
+If it has no type, priority or label, or what you found changes them, set them following [zoonk-github-issues](../zoonk-github-issues/SKILL.md).
 
 A valid issue doesn't always need a PR:
 

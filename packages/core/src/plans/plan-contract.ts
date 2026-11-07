@@ -4,7 +4,6 @@ import { examChoicePickSchema } from "../exams/choices/exam-choice-contract";
 import { LANGUAGE_ACTIVITY_TYPES } from "../language/activities/language-activities";
 import { answerTimeZoneSchema } from "../learner/contract";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "./daily-minutes";
-import { TOOL_CHOICES, TOOL_SYSTEMS } from "./plan-tools-contract";
 import {
   AREA_STARTS,
   BASE_CHOICES,
@@ -17,7 +16,6 @@ import {
 
 const MAX_OPERATIONS = 10;
 const MAX_AREAS = 20;
-const MAX_TOOLS = 20;
 const MAX_PART_NAME_LENGTH = 80;
 const MAX_PART_SKILLS = 200;
 const MAX_BASE_CHOICES = 200;
@@ -220,6 +218,8 @@ const addSkillsOperationSchema = z.object({
       area: z.string().nullable().default(null),
       /** Null puts it at the start of the plan's first phase. */
       beforeSkillId: z.string().nullable().default(null),
+      /** The course that teaches it, when it isn't the goal's own. */
+      courseId: z.string().optional(),
       lessons: z.int().min(1),
       name: z.string(),
       skillId: z.string(),
@@ -268,37 +268,6 @@ export const planChangeInputSchema = z
   .meta({ id: "PlanChangeInput" });
 
 export type PlanChangeInput = z.infer<typeof planChangeInputSchema>;
-
-export const planToolChoiceInputSchema = z
-  .object({
-    choice: z
-      .enum(TOOL_CHOICES)
-      .meta({
-        description:
-          "have: the learner has it. setup: a short lesson sets it up on `system`, before the first chapter that needs it. none: no install, the learner learns it with examples",
-      }),
-    system: z
-      .enum(TOOL_SYSTEMS)
-      .nullable()
-      .default(null)
-      .meta({
-        description: "The learner's device, needed to set a tool up; phone means no computer",
-      }),
-    timeZone: answerTimeZoneSchema,
-    tools: z
-      .array(z.string().trim().min(1))
-      .min(1)
-      .max(MAX_TOOLS)
-      .meta({ description: "Tool names exactly as the plan lists them" }),
-  })
-  .strict()
-  .refine((input) => input.choice !== "setup" || input.system !== null, {
-    message: "Setting a tool up needs the learner's device",
-    path: ["system"],
-  })
-  .meta({ id: "PlanToolChoiceInput" });
-
-export type PlanToolChoiceInput = z.infer<typeof planToolChoiceInputSchema>;
 
 export const planChangeDecisionInputSchema = z
   .object({

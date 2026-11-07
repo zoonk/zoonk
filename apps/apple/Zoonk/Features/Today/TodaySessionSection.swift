@@ -954,8 +954,6 @@ struct TodayDayStatus: View {
   }
 }
 
-/// Today shows the saved plan, and starting the session fits it to today's time, so the day that
-/// opens can differ from the one shown.
 private struct TodayEarlierWorkSection: View {
   let items: [TodayView.EarlierWork]
   @Binding var isExpanded: Bool
@@ -963,13 +961,6 @@ private struct TodayEarlierWorkSection: View {
   var body: some View {
     Section {
       DisclosureGroup(isExpanded: $isExpanded) {
-        Text(
-          "Start with these. Starting your session fits the plan to today's time.",
-          tableName: "Today", comment: "Why the day that opens can differ from the one shown"
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-
         ForEach(Array(items.enumerated()), id: \.offset) { _, item in
           Text(item.title)
         }

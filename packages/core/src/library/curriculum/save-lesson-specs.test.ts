@@ -245,6 +245,36 @@ describe(saveLessonSpecs, () => {
     ).resolves.toMatchObject({ spec: null, specStatus: "pending" });
   });
 
+  it("keeps no split part of a plan whose run lost its claim before saving it", async () => {
+    const { chapter, first } = await chapterWithLessons();
+    const workflowRunId = randomUUID();
+    await claimLibraryGeneration({ id: first.id, target: "lessonSpec", workflowRunId });
+    const part = splitPart("Temperatures, part two");
+
+    await prisma.lesson.update({ data: { specStatus: "pending" }, where: { id: first.id } });
+
+    await expect(
+      saveLessonSpecs({
+        homeChapterId: chapter.id,
+        lessonId: first.id,
+        provenance,
+        scope,
+        specs: [temperatureSpec(), part],
+        workflowRunId,
+      }),
+    ).resolves.toStrictEqual({ status: "notClaimed" });
+
+    const [split, placements] = await Promise.all([
+      prisma.lesson.findFirst({ where: { title: part.title } }),
+      prisma.chapterLesson.count({ where: { chapterId: chapter.id } }),
+    ]);
+
+    expect({ placements, specStatus: split?.specStatus }).toStrictEqual({
+      placements: 3,
+      specStatus: "pending",
+    });
+  });
+
   it("marks nothing when the run loses its claim while it waits for a plan", async () => {
     const { chapter, first } = await chapterWithLessons();
     const workflowRunId = randomUUID();

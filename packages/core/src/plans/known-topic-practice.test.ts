@@ -484,6 +484,16 @@ describe("a known topic a week after its test-out", () => {
       })),
     );
 
+    await prisma.$transaction([
+      prisma.planItem.updateMany({
+        data: { completedAt: day(5), status: "done" },
+        where: { plan: { goalId: goal.id }, scheduledFor: { lt: day(6) }, status: "todo" },
+      }),
+      prisma.planItem.deleteMany({
+        where: { kind: "review", plan: { goalId: goal.id }, scheduledFor: day(6) },
+      }),
+    ]);
+
     setClock(6);
 
     const { payload } = await startPractice(goal.id);

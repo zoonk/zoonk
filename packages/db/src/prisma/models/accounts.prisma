@@ -60,7 +60,7 @@ model User {
   mockExams             MockExam[]
   examResults           ExamResult[]
   essayGradeClaims      EssayGradeClaim[]
-  testOutClaims         TestOutClaim[]
+  testSubmissionClaims  TestSubmissionClaim[]
   languageSkillLevels   LanguageSkillLevel[]
   learnerWords          LearnerWord[]
   languageConversations LanguageConversation[]
@@ -147,14 +147,22 @@ model Organization {
   createdAt        DateTime     @default(now()) @map("created_at")
   metadata         String?
   kind             String       @default("brand")
+  /// The registrable domain of the official site research fetched (vercel.com), measured from the
+  /// fetched address and never taken from model output. Only core writes it, never Better Auth.
+  domain           String?
+  website          String?
+  /// English, one or two neutral sentences.
+  description      String?
   members          Member[]
   invitations      Invitation[]
   courses          Course[]
+  products         Product[]
   stripeCustomerId String?      @map("stripe_customer_id")
   words            Word[]
   sentences        Sentence[]
 
   @@unique([slug])
+  @@unique([domain])
   @@map("organizations")
 }
 

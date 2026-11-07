@@ -1,5 +1,11 @@
 import { type Client } from "pg";
-import { CATALOG_ROWS, type ContentTable, NOT_SEEDED, PUBLIC_ROWS } from "./metadata";
+import {
+  CATALOG_ORGANIZATIONS,
+  CATALOG_ROWS,
+  type ContentTable,
+  NOT_SEEDED,
+  PUBLIC_ROWS,
+} from "./metadata";
 import { type TableRows, getColumnValues, getRowIds, readRows } from "./rows";
 
 export type SourceCatalog = Record<ContentTable, TableRows>;
@@ -12,12 +18,12 @@ function getReader(source: Client): Reader {
   return (query, ...params) => readRows({ client: source, params, query });
 }
 
-async function readCourses({ organizationId, read }: { organizationId: string; read: Reader }) {
+async function readCourses(read: Reader) {
   const courses = await read(
     `SELECT * FROM courses
-      WHERE organization_id = $1 AND user_id IS NULL AND visibility = 'public' AND ${NOT_SEEDED}
+      WHERE organization_id IN (${CATALOG_ORGANIZATIONS})
+        AND user_id IS NULL AND visibility = 'public' AND ${NOT_SEEDED}
       ORDER BY id`,
-    organizationId,
   );
 
   const families = await read(
@@ -119,7 +125,18 @@ export async function readSourceCatalog({
   source: Client;
 }): Promise<SourceCatalog> {
   const read = getReader(source);
-  const course = await readCourses({ organizationId, read });
+
+  const organizations = await read(
+    `SELECT id, name, slug, kind, domain, website, description, logo, created_at
+       FROM organizations WHERE kind = 'brand' ORDER BY id`,
+  );
+
+  const products = await read(
+    `SELECT * FROM products WHERE organization_id = ANY($1::uuid[]) AND ${NOT_SEEDED} ORDER BY id`,
+    getRowIds(organizations),
+  );
+
+  const course = await readCourses(read);
   const skill = await readSkills(read);
   const vocabulary = await readVocabulary({ organizationId, read });
   const media = await read(`SELECT * FROM media_assets WHERE ${CATALOG_ROWS} ORDER BY id`);
@@ -187,6 +204,13 @@ export async function readSourceCatalog({
     library_lessons: lessons,
     library_steps: steps,
     media_assets: media,
+    organizations,
+    product_releases: await readChildren({
+      parent: ["product_id", getRowIds(products)],
+      read,
+      table: "product_releases",
+    }),
+    products,
     sentences: vocabulary.sentences,
     skill_prerequisites: skill.prerequisites,
     skills: skill.skills,

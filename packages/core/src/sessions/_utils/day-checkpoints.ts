@@ -1,4 +1,5 @@
 import { loadSessionBosses } from "../../checkpoints/_utils/load-boss";
+import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { type PlannedCheckpoint } from "../session-builder";
 import { type loadDayPlan } from "./day-plan";
 import { type SessionDayContext } from "./session-placement";
@@ -27,6 +28,8 @@ export async function loadDayBosses({
     itemSkillIds: plan.itemSkillIds,
     items: plan.items,
     listeningSkillIds: plan.listeningSkillIds,
+    movedEvents: parsePlanSettings(plan.settings).movedEvents,
+    phases: plan.phases,
     readSubscription,
     skills: plan.skills,
     today: localDate,

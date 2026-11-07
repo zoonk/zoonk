@@ -15544,7 +15544,7 @@
         }
       },
       "post": {
-        "description": "Grades the focus test, records every answer as diagnostic evidence, and gives the plan's focus to the areas that need it most: the weakest of the ones worth most, each decided by at least three answers. The focus is a plan change that can be undone; every other topic stays in the plan.",
+        "description": "Grades the focus test, records every answer as diagnostic evidence, and gives the plan's focus to the areas that need it most: the weakest of the ones worth most, each decided by at least three answers. The focus is a plan change that can be undone; every other topic stays in the plan. The same `requestId` sent again, even while the first send is still running, returns what that send recorded, with its plan change, and counts nothing again.",
         "operationId": "submitFocusTest",
         "security": [
           {
@@ -27247,13 +27247,20 @@
               "$ref": "#/components/schemas/ItemAnswerInput"
             }
           },
+          "requestId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The test's own id, made when it's first sent. Sending it again (a retry) returns what it already recorded instead of grading and counting it twice."
+          },
           "timeZone": {
             "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
             "type": "string"
           }
         },
         "required": [
-          "answers"
+          "answers",
+          "requestId"
         ],
         "additionalProperties": false
       },
@@ -37161,6 +37168,9 @@
                           "beforeSkillId": {
                             "default": null,
                             "nullable": true,
+                            "type": "string"
+                          },
+                          "courseId": {
                             "type": "string"
                           },
                           "lessons": {

@@ -44,12 +44,30 @@ const LESSON_WITH_SKILLS_DOCUMENT = {
     WHERE ls.lesson_id = l.id)`,
 };
 
+/**
+ * A pinned course teaches one older release of a product: a lesson homed in it serves only that
+ * course, and it reuses no lesson homed in another course of its product, which a release update
+ * may rewrite for a later release.
+ */
+function toOutsidePinnedSql(courseId: string | null): Sql {
+  return sql`NOT EXISTS (
+    SELECT 1 FROM library_chapters hc JOIN courses home ON home.id = hc.home_course_id
+    WHERE hc.id = l.home_chapter_id
+      AND home.id IS DISTINCT FROM ${courseId}::uuid
+      AND (home.is_pinned OR home.product_id IN (
+        SELECT asking.product_id FROM courses asking
+        WHERE asking.id = ${courseId}::uuid AND asking.is_pinned
+      ))
+  )`;
+}
+
 function toEligibleLessonSql(request: LessonIdentityRequest): Sql {
   return sql`l.language = ${request.language}
     AND l.level = ${request.level}::"CourseLevel"
     AND l.visibility = 'public'
     AND l.target_language IS NOT DISTINCT FROM ${request.targetLanguage}
-    AND l.identity_key !~ ${QUICK_LESSON_KEY_SQL_PATTERN}`;
+    AND l.identity_key !~ ${QUICK_LESSON_KEY_SQL_PATTERN}
+    AND ${toOutsidePinnedSql(request.course?.id ?? null)}`;
 }
 
 function toLessonsHoldingSql({ eligible, query }: { eligible: Sql; query: Sql }): Sql {
