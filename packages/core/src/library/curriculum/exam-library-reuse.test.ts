@@ -78,7 +78,7 @@ function toGraph(library: LibrarySkill[]) {
   });
 }
 
-describe("shared exam Library review reproductions", () => {
+describe("reusing Library skills in an exam graph", () => {
   it("places a repaired topic in its discipline when a notice subject combines disciplines", () => {
     const area = "Conhecimentos em Direito";
 

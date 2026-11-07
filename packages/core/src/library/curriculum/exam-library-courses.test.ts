@@ -75,7 +75,7 @@ async function saveExamGraph(placed: readonly { courseId: string; skillId: strin
   });
 }
 
-describe("shared exam fixes adversarial review", () => {
+describe("an exam's Library courses and prerequisites", () => {
   it("does not rewrite a valid new conversion and its reused inverse as duplicate abilities", async () => {
     const id = randomUUID();
 

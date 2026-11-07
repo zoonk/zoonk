@@ -82,7 +82,7 @@ async function twoExamsTeachingOneSkill({ sameCourse }: { sameCourse: boolean })
   return { firstGoal, firstPlan, lesson, secondGoal, secondPlan };
 }
 
-describe("shared exam promises under adversarial states", () => {
+describe("shared exam promises", () => {
   it("doesn't promise studying a skill once when the other exam teaches it in another course", async () => {
     const { firstGoal } = await twoExamsTeachingOneSkill({ sameCourse: false });
 

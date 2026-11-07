@@ -23,7 +23,7 @@ function graph(skillId: string, courseIds?: string[]) {
   };
 }
 
-describe("shared exam fixes adversarial review", () => {
+describe("shared exams follow saved lessons", () => {
   it.each([false, true])(
     "bases shared credit on saved lessons after a skill merge (same lesson: %s)",
     async (sameLesson) => {
@@ -40,7 +40,11 @@ describe("shared exam fixes adversarial review", () => {
 
       await Promise.all([
         lessonSkillFixture({ lessonId: second.lesson.id, skillId: duplicate.id }),
-        chapterLessonFixture({ chapterId: course.chapters[0]!.id, lessonId: lesson.id }),
+        chapterLessonFixture({
+          chapterId: course.chapters[0]!.id,
+          lessonId: lesson.id,
+          position: 0,
+        }),
         chapterLessonFixture({
           chapterId: course.chapters[0]!.id,
           lessonId: second.lesson.id,
