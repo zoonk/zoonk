@@ -75,10 +75,13 @@ const HAS_CARET_POWER = new RegExp(CARET_POWER.source, "u");
 /** `10^3,5` is a decimal power in some languages and two numbers in others; a writer decides. */
 const COMMA_AFTER_POWER = /\^[-−]?\p{N}+,\p{N}/u;
 
-const BRACE_GROUP = /\{(?:[^{}]|\{[^{}]*\})*\}/gu;
+const INNER_BRACE_GROUP = /\{[^{}]*\}/gu;
+const BRACE_STEP: Readonly<Record<string, number>> = { "{": 1, "}": -1 };
+const WHITESPACE = /\s/u;
+const CHUNK_MASK = /x+/gu;
 
-/** A run of text without spaces, except inside braces, so `\frac{a + b}{2}` stays one piece. */
-const CHUNK = new RegExp(String.raw`(?:${BRACE_GROUP.source}|[^\s{}])+`, "gu");
+/** Math names a variable with a letter or two; a longer run outside commands is a word (`10^3-fold`). */
+const WORD = /\p{L}{3,}/u;
 
 const PUNCTUATION_BEFORE = /^["'“‘«¿¡*_~]/u;
 const PUNCTUATION_AFTER = /[.,;:!?%"'”’»*_]$/u;
@@ -150,11 +153,35 @@ function findCommands(text: string): Command[] {
   });
 }
 
+/** `∅` stands for each group, at any depth, so nothing inside braces reads as a path or a word. */
+function collapseBraces(text: string): string {
+  const collapsed = text.replaceAll(INNER_BRACE_GROUP, "∅");
+  return collapsed === text ? text : collapseBraces(collapsed);
+}
+
+/** A run of text without spaces, except inside braces at any depth, so `\frac{a + b}{2}` stays one piece. */
+function findChunks(text: string): { chunk: string; index: number }[] {
+  const { mask } = text
+    .split("")
+    .reduce(
+      (state, character) => ({
+        depth: Math.max(0, state.depth + (BRACE_STEP[character] ?? 0)),
+        mask: `${state.mask}${state.depth === 0 && WHITESPACE.test(character) ? " " : "x"}`,
+      }),
+      { depth: 0, mask: "" },
+    );
+
+  return [...mask.matchAll(CHUNK_MASK)].map((match) => ({
+    chunk: text.slice(match.index, match.index + match[0].length),
+    index: match.index,
+  }));
+}
+
 function isLatex({ commands, text }: { commands: Command[]; text: string }): boolean {
   const known = commands.filter((command) => MATH_COMMANDS.has(command.name));
 
   const isPath =
-    FILE_PATH.test(text.replaceAll(BRACE_GROUP, "{}")) ||
+    FILE_PATH.test(collapseBraces(text)) ||
     commands.some((command) => !command.inBraces && !MATH_COMMANDS.has(command.name));
 
   return !isPath && (known.length > 0 || BRACED_SCRIPT.test(text) || HAS_CARET_POWER.test(text));
@@ -172,6 +199,8 @@ function isRepairable({
   return (
     !TEX_SPECIAL.test(latex) &&
     !COMMA_AFTER_POWER.test(written) &&
+    count(written, "{") === count(written, "}") &&
+    !WORD.test(collapseBraces(written).replaceAll(BACKSLASH_WORD, "")) &&
     commands.every(
       (command) =>
         MATH_COMMANDS.has(command.name) && (command.braced || !BRACED_COMMANDS.has(command.name)),
@@ -204,9 +233,7 @@ function toBareLatex({ chunk, index }: { chunk: string; index: number }): BareLa
 }
 
 function findBareLatexIn(hidden: string): BareLatex[] {
-  return [...hidden.matchAll(CHUNK)].flatMap(
-    (match) => toBareLatex({ chunk: match[0], index: match.index }) ?? [],
-  );
+  return findChunks(hidden).flatMap((chunk) => toBareLatex(chunk) ?? []);
 }
 
 function hasSameMath(found: MathSpan[], expected: { content: string; start: number }[]): boolean {

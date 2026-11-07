@@ -60,6 +60,12 @@ describe(wrapBareLatex, () => {
       String.raw`The volume is $\frac{4\pi.r^{3}}{3}$.`,
     );
 
+    expect(wrapBareLatex(String.raw`The ratio is \frac{1}{\sqrt{\frac{a}{b}}}.`)).toBe(
+      String.raw`The ratio is $\frac{1}{\sqrt{\frac{a}{b}}}$.`,
+    );
+
+    expect(wrapBareLatex("It factors as x^2-xy.")).toBe("It factors as $x^{2}-xy$.");
+
     expect(wrapBareLatex("It's 10^{3}, then R$ 80 and $5 later.")).toBe(
       "It's $10^{3}$, then R$ 80 and $5 later.",
     );
@@ -102,10 +108,11 @@ describe(wrapBareLatex, () => {
       "O valor é 10^3,5.",
       "The point is (2^3,3^2).",
       String.raw`The ratio is \frac{\sen(x)}{2}.`,
+      "A 10^3-fold increase.",
     ];
 
     expect(texts.map((text) => wrapBareLatex(text))).toStrictEqual(texts);
-    expect(texts.map((text) => findBareLatex(text).length)).toStrictEqual([1, 1, 1, 1, 1, 1, 1]);
+    expect(texts.map((text) => findBareLatex(text).length)).toStrictEqual([1, 1, 1, 1, 1, 1, 1, 1]);
 
     expect(findBareLatex(String.raw`The root is \sqrt 4 = 2.`)).toStrictEqual([
       String.raw`Shows math as raw text: "\sqrt". Write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \$.`,
