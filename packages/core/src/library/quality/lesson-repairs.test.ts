@@ -34,7 +34,7 @@ describe(repairWrittenLesson, () => {
     };
 
     const quoted: WrittenScreen = {
-      basis: { quote: result, screen: 0 },
+      basis: { quote: result, screen: 1 },
       context: "A sensor log stores a tiny gap as 7.02 × 10^{-5} m.",
       image: null,
       kind: "check",
@@ -81,6 +81,44 @@ describe(repairWrittenLesson, () => {
     });
 
     expect(repaired.summary.ideas[0]?.text).toBe("Small numbers get powers like $10^{-3}$.");
+  });
+
+  it("keeps a quote unwrapped when a price on its screen's line kept the screen unwrapped", () => {
+    const sentence = "It contains 10^3 cells.";
+
+    const explanation: WrittenScreen = {
+      exampleLineIdea: null,
+      explore: null,
+      image: null,
+      kind: "explanation",
+      text: `A kit costs $5. ${sentence}`,
+      title: "A kit",
+      visual: null,
+    };
+
+    const quoted: WrittenScreen = {
+      basis: { quote: sentence, screen: 1 },
+      context: null,
+      image: null,
+      kind: "check",
+      options: ["A thousand", "A hundred"].map((text, index) => ({
+        isCorrect: index === 0,
+        picture: null,
+        reason: "Count the zeros.",
+        text,
+      })),
+      question: "How many cells?",
+      visual: null,
+    };
+
+    const [kit, question] = repairWrittenLesson({
+      language: "en",
+      lesson: { screens: [explanation, quoted], summary: hubMap(["One idea."]) },
+      spec,
+    }).screens;
+
+    expect(kit?.kind === "explanation" && kit.text).toBe(`A kit costs $5. ${sentence}`);
+    expect(question?.kind === "check" && question.basis?.quote).toBe(sentence);
   });
 
   it("moves a minus written after the money mark in text, tables, activities and the quote that cites it, keeping the amount", () => {

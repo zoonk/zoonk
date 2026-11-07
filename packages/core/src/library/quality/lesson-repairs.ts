@@ -6,16 +6,17 @@ import { repairNegativeMoney } from "@zoonk/utils/negative-money";
 import { type TextLayout } from "@zoonk/utils/text-flaws";
 import { repairMarkdown } from "@zoonk/utils/text-repairs";
 import { dropEquivalentOptions } from "../_utils/option-checks";
-import { mapActivityProse, mapScreenTexts } from "./_utils/screen-texts";
+import { getScreenTexts, mapActivityProse, mapScreenTexts } from "./_utils/screen-texts";
 
 const MIN_OPTIONS = 2;
 
 /** Every text gets the same repairs, so a quote still matches the sentence it cites. */
+function repairProse({ layout, text }: { layout: TextLayout; text: string }): string {
+  return repairNegativeMoney({ text: repairMarkdown({ layout, text }) });
+}
+
 function repairText({ layout, text }: { layout: TextLayout; text: string }): string {
-  return wrapBareLatex({
-    layout,
-    text: repairNegativeMoney({ text: repairMarkdown({ layout, text }) }),
-  });
+  return wrapBareLatex({ layout, text: repairProse({ layout, text }) });
 }
 
 export function repairScreenText(screen: WrittenScreen): WrittenScreen {
@@ -33,21 +34,35 @@ export function repairScreenText(screen: WrittenScreen): WrittenScreen {
   );
 }
 
-/** A quote must match its screen's repaired sentence character for character. */
-function repairBasisQuote(screen: WrittenScreen): WrittenScreen {
+/**
+ * A quote must match its screen's repaired sentence character for character, and whether a power
+ * there was wrapped depends on the rest of its line (a price can rule it out), so the quote follows
+ * the screen it cites.
+ */
+function repairBasisQuote({
+  screen,
+  screens,
+}: {
+  screen: WrittenScreen;
+  screens: readonly WrittenScreen[];
+}): WrittenScreen {
   if (screen.kind !== "check" && screen.kind !== "mathCheck" && screen.kind !== "typedAnswer") {
     return screen;
   }
 
-  return screen.basis
-    ? {
-        ...screen,
-        basis: {
-          ...screen.basis,
-          quote: repairText({ layout: "inline", text: screen.basis.quote }),
-        },
-      }
-    : screen;
+  if (!screen.basis) {
+    return screen;
+  }
+
+  const quote = repairProse({ layout: "inline", text: screen.basis.quote });
+  const wrapped = wrapBareLatex({ layout: "inline", text: quote });
+  const cited = screens[screen.basis.screen - 1];
+
+  const isWrapped = cited
+    ? getScreenTexts(cited).some(({ text }) => text.includes(wrapped))
+    : false;
+
+  return { ...screen, basis: { ...screen.basis, quote: isWrapped ? wrapped : quote } };
 }
 
 function keepDistinct<TOption extends { isCorrect: boolean; text: string }>({
@@ -113,8 +128,10 @@ export function repairWrittenLesson({
   lesson: WrittenLesson;
   spec: LessonSpec;
 }): WrittenLesson {
-  const screens = lesson.screens.map((screen) =>
-    repairOptions({ language, screen: repairBasisQuote(repairScreenText(screen)) }),
+  const repaired = lesson.screens.map((screen) => repairScreenText(screen));
+
+  const screens = repaired.map((screen) =>
+    repairOptions({ language, screen: repairBasisQuote({ screen, screens: repaired }) }),
   );
 
   return {
