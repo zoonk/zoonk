@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag, getUserProgressCacheTag } from "../../cache/tags";
 import {
@@ -8,12 +8,18 @@ import {
   parseChoiceItem,
 } from "../../learner/_utils/choice-items";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { withTestSubmissionClaim } from "../../learner/_utils/test-submission-claim";
 import { type ItemAnswerInput } from "../../learner/contract";
 import { recordLearnerAnswer } from "../../learner/record-learner-answer";
 import { celebrateProgress } from "../../milestones/celebrate-progress";
 import { type ProgressCelebration } from "../../sessions/progress-celebration";
 import { recordAnsweredActivity } from "../../stats/record-answered-activity";
 import { changeGoalPlan } from "../change-goal-plan";
+import {
+  type FocusTestReceipt,
+  findFocusTestReceipt,
+  toFocusTestContentIds,
+} from "./_utils/focus-test-receipt";
 import { loadFocusTestShape } from "./_utils/load-focus-test";
 import { type FocusTestInput } from "./focus-test-contract";
 import { type FocusTestArea, chooseFocusAreas, scoreFocusTest } from "./focus-test-rules";
@@ -114,20 +120,68 @@ async function recordAnswers({
   );
 }
 
-export async function submitFocusTest({
+function toReadyResult({
+  celebration,
+  said,
+}: {
+  celebration: ProgressCelebration;
+  said: FocusTestReceipt;
+}): SubmitFocusTestResult {
+  return {
+    outcome: {
+      ...celebration,
+      areas: said.areas.map((area) => ({
+        answers: area.answers,
+        chosen: said.focusAreas.includes(area.name),
+        correct: area.answers.filter(Boolean).length,
+        label: area.label,
+        name: area.name,
+        total: area.answers.length,
+      })),
+      changeId: said.changeId,
+      focusAreas: said.focusAreas,
+    },
+    status: "ready",
+  };
+}
+
+/** Retries return their receipt even if the plan has changed since and grading would now refuse them. */
+async function replaySavedReceipt({
   goalId,
-  input,
+  requestId,
+  userId,
 }: {
   goalId: string;
-  input: FocusTestInput;
-}): Promise<SubmitFocusTestResult> {
-  const owned = await findOwnedGoal(goalId);
+  requestId: string;
+  userId: string;
+}): Promise<SubmitFocusTestResult | null> {
+  const sent = await findFocusTestReceipt({ goalId, requestId, userId });
 
-  if (owned.status !== "ready") {
-    return owned;
+  if (!sent) {
+    return null;
   }
 
-  const shape = await loadFocusTestShape(owned.goal);
+  const celebration = await celebrateProgress({ progress: null, userId });
+  return toReadyResult({ celebration, said: sent });
+}
+
+async function submitOwnedFocusTest({
+  goal,
+  input,
+  userId,
+}: {
+  goal: Goal;
+  input: FocusTestInput;
+  userId: string;
+}): Promise<SubmitFocusTestResult> {
+  const goalId = goal.id;
+  const replayed = await replaySavedReceipt({ goalId, requestId: input.requestId, userId });
+
+  if (replayed) {
+    return replayed;
+  }
+
+  const shape = await loadFocusTestShape(goal);
 
   if (!shape) {
     return { status: "unavailable" };
@@ -142,25 +196,8 @@ export async function submitFocusTest({
     return { status: "invalidItem" };
   }
 
-  const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
-  await recordAnswers({ graded, timeZone, userId: owned.userId });
-
-  const progress = await recordAnsweredActivity({
-    answers: graded.map((entry) => ({
-      durationMs: entry.answer.durationMs,
-      isCorrect: entry.isCorrect,
-    })),
-    contentIds: {},
-    goalId,
-    lessonKind: "focusTest",
-    timeZone,
-    userId: owned.userId,
-  });
-
-  revalidateCacheTags([
-    getLearnerModelCacheTag(owned.userId),
-    getUserProgressCacheTag(owned.userId),
-  ]);
+  const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
+  await recordAnswers({ graded, timeZone, userId });
 
   const results = scoreFocusTest({
     answers: graded.map((entry) => ({
@@ -183,22 +220,50 @@ export async function submitFocusTest({
         })
       : null;
 
-  const celebration = await celebrateProgress({ progress, userId: owned.userId });
-
-  return {
-    outcome: {
-      ...celebration,
-      areas: results.map((result) => ({
-        answers: result.answers,
-        chosen: focusAreas.includes(result.name),
-        correct: result.correct,
-        label: result.label,
-        name: result.name,
-        total: result.total,
-      })),
-      changeId: change?.status === "applied" ? (change.change?.id ?? null) : null,
-      focusAreas,
-    },
-    status: "ready",
+  const said = {
+    areas: results.map(({ answers, label, name }) => ({ answers, label, name })),
+    changeId: change?.status === "applied" ? (change.change?.id ?? null) : null,
+    focusAreas,
   };
+
+  const progress = await recordAnsweredActivity({
+    answers: graded.map((entry) => ({
+      durationMs: entry.answer.durationMs,
+      isCorrect: entry.isCorrect,
+    })),
+    contentIds: toFocusTestContentIds({ ...said, requestId: input.requestId }),
+    goalId,
+    lessonKind: "focusTest",
+    timeZone,
+    userId,
+  });
+
+  revalidateCacheTags([getLearnerModelCacheTag(userId), getUserProgressCacheTag(userId)]);
+
+  const celebration = await celebrateProgress({ progress, userId });
+  return toReadyResult({ celebration, said });
+}
+
+/** Retrying a `requestId` returns its receipt without recording or celebrating again. */
+export async function submitFocusTest({
+  goalId,
+  input,
+}: {
+  goalId: string;
+  input: FocusTestInput;
+}): Promise<SubmitFocusTestResult> {
+  const owned = await findOwnedGoal(goalId);
+
+  if (owned.status !== "ready") {
+    return owned;
+  }
+
+  const { userId } = owned;
+
+  return withTestSubmissionClaim({
+    key: `focusTest:${userId}:${goalId}:${input.requestId}`,
+    replay: () => replaySavedReceipt({ goalId, requestId: input.requestId, userId }),
+    submit: () => submitOwnedFocusTest({ goal: owned.goal, input, userId }),
+    userId,
+  });
 }

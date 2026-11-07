@@ -110,16 +110,27 @@ model Mistake {
   @@map("mistakes")
 }
 
-/// Taken before a chapter test-out submission is recorded and dropped once it is, so the same
-/// submission sent twice at once is recorded once: the second waits for the first's receipt. One
-/// older than any submission takes was left by a crash and can be taken again. `key` is the
-/// learner, goal, chapter and request id.
+/// Unused.
 model TestOutClaim {
+  key       String   @id
+  userId    String   @map("user_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("test_out_claims")
+  @@ignore
+}
+
+/// Taken before a test's answers (a chapter test-out, a focus test) are recorded and dropped once
+/// they are, so the same answers sent twice at once are recorded once: the second waits for the
+/// first's receipt. One older than any submission takes was left by a crash and can be taken
+/// again. `key` is the test's kind, the learner, the goal, what it tests and the request id.
+model TestSubmissionClaim {
   key       String   @id
   userId    String   @map("user_id") @db.Uuid
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now()) @map("created_at")
 
   @@index([userId])
-  @@map("test_out_claims")
+  @@map("test_submission_claims")
 }

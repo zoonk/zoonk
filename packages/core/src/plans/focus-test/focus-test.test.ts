@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
@@ -6,6 +7,8 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { NOTHING_REACHED } from "../../sessions/reached";
+import { decidePlanChange } from "../decide-plan-change";
 import { getFocusTest } from "./get-focus-test";
 import { requestFocusTestQuestions } from "./request-focus-test-questions";
 import { submitFocusTest } from "./submit-focus-test";
@@ -98,6 +101,46 @@ async function setup({
 async function readQuestions(goalId: string) {
   const result = await getFocusTest({ goalId });
   return result.status === "ready" ? result.focusTest.questions : [];
+}
+
+/** Law answered right and Math wrong, so Math gets the focus. */
+async function sendAnswers({
+  goalId,
+  requestId = randomUUID(),
+}: {
+  goalId: string;
+  requestId?: string;
+}) {
+  const questions = await readQuestions(goalId);
+
+  return submitFocusTest({
+    goalId,
+    input: {
+      answers: questions.map((question) => ({
+        answer: question.area === "Law" ? RIGHT : WRONG,
+        durationMs: 8000,
+        itemId: question.itemId,
+      })),
+      requestId,
+    },
+  });
+}
+
+async function countRecorded({ planId, userId }: { planId: string; userId: string }) {
+  const [attempts, changes, day, events] = await Promise.all([
+    prisma.attempt.count({ where: { userId } }),
+    prisma.planChange.count({ where: { planId } }),
+    prisma.dailyProgress.findFirst({ where: { userId } }),
+    prisma.learningEvent.count({ where: { lessonKind: "focusTest", userId } }),
+  ]);
+
+  return {
+    attempts,
+    changes,
+    correctAnswers: day?.correctAnswers,
+    events,
+    seconds: day?.timeSpentSeconds,
+  };
 }
 
 describe(getFocusTest, () => {
@@ -282,18 +325,7 @@ describe(requestFocusTestQuestions, () => {
 describe(submitFocusTest, () => {
   it("focuses the plan on the area the answers show needs it, and records every answer", async () => {
     const { goal, plan, user } = await setup();
-    const questions = await readQuestions(goal.id);
-
-    const result = await submitFocusTest({
-      goalId: goal.id,
-      input: {
-        answers: questions.map((question) => ({
-          answer: question.area === "Law" ? RIGHT : WRONG,
-          durationMs: 8000,
-          itemId: question.itemId,
-        })),
-      },
-    });
+    const result = await sendAnswers({ goalId: goal.id });
 
     expect(result).toMatchObject({
       outcome: {
@@ -328,22 +360,12 @@ describe(submitFocusTest, () => {
 
   it("celebrates the tenth of Energy its answers reach", async () => {
     const { goal, user } = await setup();
-    const questions = await readQuestions(goal.id);
 
     await prisma.userProgress.create({
       data: { currentEnergy: 79.8, lastActiveAt: new Date(), userId: user.id },
     });
 
-    const result = await submitFocusTest({
-      goalId: goal.id,
-      input: {
-        answers: questions.map((question) => ({
-          answer: question.area === "Law" ? RIGHT : WRONG,
-          durationMs: 8000,
-          itemId: question.itemId,
-        })),
-      },
-    });
+    const result = await sendAnswers({ goalId: goal.id });
 
     expect(result).toMatchObject({
       outcome: { ceremony: null, reached: { energy: 80, level: null } },
@@ -359,8 +381,79 @@ describe(submitFocusTest, () => {
     await expect(
       submitFocusTest({
         goalId: goal.id,
-        input: { answers: [{ answer: RIGHT, durationMs: 5000, itemId: item.id }] },
+        input: {
+          answers: [{ answer: RIGHT, durationMs: 5000, itemId: item.id }],
+          requestId: randomUUID(),
+        },
       }),
     ).resolves.toStrictEqual({ status: "invalidItem" });
+  });
+
+  it("counts answers sent again once and gives the retry the first send's result", async () => {
+    const { goal, plan, user } = await setup();
+    const requestId = randomUUID();
+
+    const first = await sendAnswers({ goalId: goal.id, requestId });
+    const counted = await countRecorded({ planId: plan.id, userId: user.id });
+
+    expect(counted).toStrictEqual({
+      attempts: 8,
+      changes: 1,
+      correctAnswers: 4,
+      events: 1,
+      seconds: 64,
+    });
+
+    await expect(sendAnswers({ goalId: goal.id, requestId })).resolves.toStrictEqual({
+      outcome: { ...(first.status === "ready" && first.outcome), reached: NOTHING_REACHED },
+      status: "ready",
+    });
+
+    await expect(countRecorded({ planId: plan.id, userId: user.id })).resolves.toStrictEqual(
+      counted,
+    );
+  });
+
+  it("counts two sends of the same answers at once once", async () => {
+    const { goal, plan, user } = await setup();
+    const requestId = randomUUID();
+
+    const [first, second] = await Promise.all([
+      sendAnswers({ goalId: goal.id, requestId }),
+      sendAnswers({ goalId: goal.id, requestId }),
+    ]);
+
+    const firstChange = first.status === "ready" ? first.outcome.changeId : null;
+
+    expect(firstChange).toBeTruthy();
+
+    expect(second).toMatchObject({
+      outcome: { changeId: firstChange, focusAreas: ["Math"] },
+      status: "ready",
+    });
+
+    await expect(countRecorded({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
+      attempts: 8,
+      changes: 1,
+      correctAnswers: 4,
+      events: 1,
+      seconds: 64,
+    });
+  });
+
+  it("undoes, from a retry's result, the focus the first send set", async () => {
+    const { goal, plan } = await setup();
+    const requestId = randomUUID();
+
+    await sendAnswers({ goalId: goal.id, requestId });
+    const retried = await sendAnswers({ goalId: goal.id, requestId });
+    const changeId = retried.status === "ready" ? retried.outcome.changeId : null;
+
+    await expect(
+      decidePlanChange({ changeId: changeId ?? "", goalId: goal.id, input: { status: "undone" } }),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(stored.settings).toMatchObject({ focusAreas: [] });
   });
 });

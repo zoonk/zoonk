@@ -239,8 +239,8 @@ describe("a chapter test-out sent and read back", () => {
     const requestId = randomUUID();
     const first = await send({ requestId });
 
-    await prisma.testOutClaim.create({
-      data: { key: `${user.id}:${goal.id}:${chapterId}:${requestId}`, userId: user.id },
+    await prisma.testSubmissionClaim.create({
+      data: { key: `testOut:${user.id}:${goal.id}:${chapterId}:${requestId}`, userId: user.id },
     });
 
     await expect(send({ requestId })).resolves.toStrictEqual(sentAgain(first));

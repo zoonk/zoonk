@@ -15,6 +15,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.certificates.CertificateName
 import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.practice.AnswersDraft
 import com.zoonk.android.feature.practice.GradedAnswer
 import com.zoonk.android.feature.practice.UndoState
 import com.zoonk.android.feature.questions.Answer
@@ -76,7 +77,7 @@ class FocusTestViewModel(
     private val store: FocusTestStore,
     private val plans: PlanStore,
     generations: GenerationSource,
-    private val answersDraft: DraftHandle<List<GradedAnswer>>?,
+    private val answersDraft: DraftHandle<AnswersDraft>?,
     private val saved: SavedStateHandle,
     private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
@@ -117,11 +118,15 @@ class FocusTestViewModel(
     private var shownAt = now()
     private var latest: List<Question> = emptyList()
     private var kept: List<GradedAnswer>? = null
+    private var requestId = UUID.randomUUID().toString()
 
     init {
         saved.get<String>(RUN)?.let(::follow)
         viewModelScope.launch {
-            kept = answersDraft?.value?.first().orEmpty()
+            val draft = answersDraft?.value?.first()
+            kept = draft?.answers.orEmpty()
+            // A new attempt gets its own id: an old one could already have its grade on the server.
+            if (!kept.isNullOrEmpty()) draft?.requestId?.let { requestId = it }
             place()
         }
     }
@@ -178,7 +183,7 @@ class FocusTestViewModel(
         val next = ui.answers + GradedAnswer(question.itemId, answer, now() - shownAt)
         shownAt = now()
         mutableUi.update { it.copy(answers = next) }
-        answersDraft?.saveDebounced(next)
+        answersDraft?.saveDebounced(AnswersDraft(requestId, next))
         if (total > 0 && next.size >= total) send()
     }
 
@@ -188,7 +193,7 @@ class FocusTestViewModel(
         if (ui.sending || ui.answers.isEmpty()) return
         mutableUi.update { it.copy(sending = true, sendFailed = false) }
         viewModelScope.launch {
-            when (val result = store.submit(goalId, ui.answers)) {
+            when (val result = store.submit(goalId, AnswersDraft(requestId, ui.answers))) {
                 is MutationResult.Done -> {
                     saved[OUTCOME] = ApiJson.encodeToString(FocusTestResult.serializer(), result.value)
                     mutableUi.update { it.copy(sending = false, outcome = result.value.outcome()) }

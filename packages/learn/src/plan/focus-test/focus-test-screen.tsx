@@ -6,7 +6,7 @@ import {
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { type HelpLimit, HelpLimitNotice } from "../../_components/help-limit-notice";
 import { AnswersSaveError } from "../../_components/save-error";
 import { StatusRegion } from "../../_components/status-region";
@@ -32,6 +32,9 @@ export type { FocusTestOutcome } from "./focus-test-result";
 const SECONDS_PER_QUESTION = 30;
 
 const SECONDS_PER_MINUTE = 60;
+
+/** Every send of one run carries its `requestId`, so a retry counts the test once. */
+type FocusTestAnswers = { answers: ChoiceQuestionAnswer[]; requestId: string };
 
 type FocusTestQuestion = ChoiceQuestionView & { area: string };
 
@@ -206,14 +209,15 @@ function FocusTestRun({
   closeHref: string;
   doneHref: string;
   limit: HelpLimit | null;
-  onSubmit: (answers: ChoiceQuestionAnswer[]) => Promise<FocusTestOutcome | null>;
+  onSubmit: (input: FocusTestAnswers) => Promise<FocusTestOutcome | null>;
   onUndo: (changeId: string) => Promise<boolean>;
   renderCeremony?: MomentCeremony;
   test: FocusTestView;
   writing: GenerationRun | null;
 }) {
   const t = useExtracted();
-  const [answers, setAnswers] = useState<ChoiceQuestionAnswer[] | null>(null);
+  const requestId = useMemo(() => crypto.randomUUID(), []);
+  const [sent, setSent] = useState<FocusTestAnswers | null>(null);
   const [outcome, setOutcome] = useState<FocusTestOutcome | null | undefined>();
   const [isPending, startTransition] = useTransition();
   const questions = useArrivingQuestions(test.questions);
@@ -233,9 +237,9 @@ function FocusTestRun({
         }
       : null;
 
-  const submit = (all: ChoiceQuestionAnswer[]) => {
-    setAnswers(all);
-    startTransition(async () => setOutcome(await onSubmit(all).catch(() => null)));
+  const submit = (input: FocusTestAnswers) => {
+    setSent(input);
+    startTransition(async () => setOutcome(await onSubmit(input).catch(() => null)));
   };
 
   if (outcome) {
@@ -251,10 +255,10 @@ function FocusTestRun({
     );
   }
 
-  if (outcome === null && answers && !isPending) {
+  if (outcome === null && sent && !isPending) {
     return (
       <TaskFrame exitHref={closeHref}>
-        <AnswersSaveError onRetry={() => submit(answers)} />
+        <AnswersSaveError onRetry={() => submit(sent)} />
       </TaskFrame>
     );
   }
@@ -263,7 +267,7 @@ function FocusTestRun({
     <ChoiceQuestionsRun
       header={{ closeHref, screen: "focus-test", title: t("Focus test") }}
       hint={(question) => question.area}
-      onFinish={submit}
+      onFinish={(answers) => submit({ answers, requestId })}
       pending={isPending}
       questions={questions}
       trueFalseLabels={test.trueFalseLabels}
@@ -286,7 +290,7 @@ export function FocusTestScreen({
   buddy?: LearnBuddy | null;
   closeHref: string;
   doneHref: string;
-  onSubmit: (answers: ChoiceQuestionAnswer[]) => Promise<FocusTestOutcome | null>;
+  onSubmit: (input: FocusTestAnswers) => Promise<FocusTestOutcome | null>;
   /** False when it didn't work. */
   onUndo: (changeId: string) => Promise<boolean>;
   /** Null when every question exists. */

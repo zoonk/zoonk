@@ -74,6 +74,7 @@ class FocusTestViewModelTest {
     private var readFails = false
     private var clock = 0L
     private val sent = mutableListOf<FocusTestInput>()
+    private var submit: () -> FocusTestResult = ::result
     private val plansApi = FakePlanApi()
 
     @Before
@@ -130,7 +131,10 @@ class FocusTestViewModelTest {
                     session: AuthenticatedSession,
                     goalId: UUID,
                     input: FocusTestInput,
-                ) = result().also { sent += input }
+                ): FocusTestResult {
+                    sent += input
+                    return submit()
+                }
             }
         return Triple(FocusTestStore(api, cache, drafts) { "UTC" }, PlanStore(plansApi, cache), drafts)
     }
@@ -306,6 +310,28 @@ class FocusTestViewModelTest {
                     ?.filter { it.chosen }
                     ?.map { it.label },
             )
+        }
+
+    @Test
+    fun aFailedSendKeepsTheAnswersAndTryAgainSendsTheSameTest() =
+        runTest(dispatcher) {
+            written = 4
+            val viewModel = viewModel()
+            started(viewModel)
+            submit = { throw ApiException(ApiError.Network) }
+
+            viewModel.ui.value.questions
+                .forEach { viewModel.answer(it, Answer.Choice(0)) }
+            advanceUntilIdle()
+            assertTrue(viewModel.ui.value.sendFailed)
+
+            submit = ::result
+            viewModel.send()
+            advanceUntilIdle()
+
+            assertEquals(2, sent.size)
+            assertEquals(sent[0].requestId, sent[1].requestId)
+            assertEquals(listOf("History"), viewModel.ui.value.outcome?.areas?.filter { it.chosen }?.map { it.label })
         }
 
     @Test

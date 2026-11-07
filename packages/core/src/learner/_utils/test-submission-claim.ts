@@ -10,11 +10,11 @@ const CLAIM_POLL_MS = 500;
 async function takeClaim({ key, userId }: { key: string; userId: string }) {
   const now = new Date();
 
-  await prisma.testOutClaim.deleteMany({
+  await prisma.testSubmissionClaim.deleteMany({
     where: { createdAt: { lt: new Date(now.getTime() - CLAIM_TTL_MS) }, key },
   });
 
-  const { count } = await prisma.testOutClaim.createMany({
+  const { count } = await prisma.testSubmissionClaim.createMany({
     data: [{ createdAt: now, key, userId }],
     skipDuplicates: true,
   });
@@ -28,7 +28,7 @@ async function takeClaim({ key, userId }: { key: string; userId: string }) {
  * work waited for others from the same pool. A saved receipt (`replay`) answers instead, before
  * waiting on anyone's claim; `submit` must check for it again once it holds the claim.
  */
-export async function withTestOutClaim<Result>({
+export async function withTestSubmissionClaim<Result>({
   key,
   replay,
   submit,
@@ -49,12 +49,12 @@ export async function withTestOutClaim<Result>({
 
   if (!claimedAt) {
     await wait(CLAIM_POLL_MS);
-    return withTestOutClaim({ key, replay, submit, userId });
+    return withTestSubmissionClaim({ key, replay, submit, userId });
   }
 
   try {
     return await submit();
   } finally {
-    await prisma.testOutClaim.deleteMany({ where: { createdAt: claimedAt, key } });
+    await prisma.testSubmissionClaim.deleteMany({ where: { createdAt: claimedAt, key } });
   }
 }

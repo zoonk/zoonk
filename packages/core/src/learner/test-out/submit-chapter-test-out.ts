@@ -13,12 +13,12 @@ import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { type ChoiceItem, gradeChoiceAnswer, parseChoiceItem } from "../_utils/choice-items";
 import { markPlanItemsTestedOut } from "../_utils/known-skills";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
+import { withTestSubmissionClaim } from "../_utils/test-submission-claim";
 import { writeLearnerChange } from "../_utils/write-learner-change";
 import { type ItemAnswerInput } from "../contract";
 import { recordLearnerAnswer } from "../record-learner-answer";
 import { countSkippableItems, getChapterSkills } from "./_utils/chapter-items";
 import { isTestOutPlusOnly } from "./_utils/test-out-access";
-import { withTestOutClaim } from "./_utils/test-out-claim";
 import { loadTestOutPlan } from "./_utils/test-out-plan";
 import {
   type TestOutReceipt,
@@ -320,8 +320,8 @@ export async function submitChapterTestOut({
 
   const { userId } = owned;
 
-  return withTestOutClaim({
-    key: `${userId}:${goalId}:${chapterId}:${input.requestId}`,
+  return withTestSubmissionClaim({
+    key: `testOut:${userId}:${goalId}:${chapterId}:${input.requestId}`,
     replay: () => replaySavedReceipt({ chapterId, goalId, requestId: input.requestId, userId }),
     submit: () => submitOwnedTestOut({ chapterId, goal: owned.goal, input, userId }),
     userId,
