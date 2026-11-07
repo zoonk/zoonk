@@ -78,7 +78,7 @@ export function LearningLink({
     <Link
       {...props}
       aria-busy={pending || undefined}
-      className={cn(className, "aria-busy:cursor-progress aria-busy:opacity-60")}
+      className={cn("group/busy", className, "aria-busy:cursor-progress")}
       onNavigate={(event) => {
         const cancellation = { prevented: false };
 

@@ -29,10 +29,6 @@ import { AreaWeights, PlanChapterList, PlanPhasesBar } from "./plan-shape";
 import { RevealCoverage } from "./reveal-coverage";
 import { RevealNoticeDay } from "./reveal-notice-day";
 
-/** The host's link marks itself `data-busy` from the tap; this gives it a busy button's look. */
-const START_BUSY_CLASS =
-  "group/busy has-data-busy:pointer-events-none has-data-busy:bg-muted has-data-busy:text-muted-foreground has-data-busy:**:data-[slot=shortcut-kbd]:invisible";
-
 /**
  * Today is prefetched only once the learner reaches for it, when the plan is final: opening it
  * builds the day once. A Today still on its way shows on the link, not as a tap that did nothing.
@@ -47,7 +43,7 @@ function StartButton({ href }: { href: string }) {
     <span className="contents" onFocus={reach} onPointerDown={reach} onPointerEnter={reach}>
       <LearnLink
         aria-keyshortcuts="Enter"
-        className={cn(DETAIL_PRIMARY_CLASS, START_BUSY_CLASS, "font-[560]")}
+        className={cn(DETAIL_PRIMARY_CLASS, "font-[560]")}
         href={href}
         prefetch={reached}
         ref={ref}

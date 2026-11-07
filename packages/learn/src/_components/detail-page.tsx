@@ -1,6 +1,6 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { BusyContent, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -89,8 +89,10 @@ export function DetailContinueLink({
       prefetch={lessonWritten === false ? "auto" : true}
       ref={ref}
     >
-      {started ? t("Continue") : t("Start")}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <BusyContent>
+        {started ? t("Continue") : t("Start")}
+        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      </BusyContent>
     </LearnLink>
   );
 }

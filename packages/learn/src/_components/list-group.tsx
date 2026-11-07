@@ -1,3 +1,4 @@
+import { BusyIcon } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { type LearnLinkComponentProps } from "../learn-context";
@@ -78,7 +79,9 @@ export function ListRowLink({
       prefetch={prefetch}
     >
       {children}
-      <ListRowChevron />
+      <BusyIcon className="text-muted-foreground self-center">
+        <ListRowChevron />
+      </BusyIcon>
     </LearnLink>
   );
 }

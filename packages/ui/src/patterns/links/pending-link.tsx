@@ -1,6 +1,6 @@
 import { BusyContent } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type ComponentProps } from "react";
+import { type ComponentProps, type ReactNode } from "react";
 
 const PENDING_LINK_ATTRIBUTE = "data-pending-link";
 
@@ -47,19 +47,24 @@ export const PENDING_LINK_SCRIPT = `(${markPendingLinks.toString()})(${JSON.stri
  * is busy from the tap, even before the page hydrates. It still takes another tap, which retries a
  * navigation the browser stopped (Esc, its stop button), since no `pageshow` clears the mark then.
  */
-export function PendingLink({ children, className, ...props }: ComponentProps<"a">) {
+export function PendingLink({
+  children,
+  className,
+  icon,
+  ...props
+}: ComponentProps<"a"> & { icon?: ReactNode }) {
   return (
     <a
       {...props}
       {...{ [PENDING_LINK_ATTRIBUTE]: "" }}
       className={cn(
-        "group/busy relative aria-busy:cursor-progress aria-busy:opacity-60 [&_svg:not([class*='size-'])]:size-4",
+        "group/busy relative aria-busy:cursor-progress [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       // The script marks a link tapped before the page hydrates.
       suppressHydrationWarning
     >
-      <BusyContent>{children}</BusyContent>
+      <BusyContent icon={icon}>{children}</BusyContent>
     </a>
   );
 }
