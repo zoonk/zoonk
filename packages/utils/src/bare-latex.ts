@@ -78,6 +78,9 @@ const BARE_SUBSCRIPT = /(?<![\p{L}\p{N}_\\])(?<base>\p{L}{1,2})_(?<below>\p{N}+)
 
 const HAS_BARE_SUBSCRIPT = new RegExp(BARE_SUBSCRIPT.source, "u");
 
+/** Inside a formula, every numeric subscript is braced, so `\log_10` and `C_12H_22O_11` keep their digits. */
+const NUMERIC_SUBSCRIPT = /_(?<below>\p{N}+)/gu;
+
 /** `10^3,5` is a decimal power in some languages and two numbers in others; a writer decides. */
 const COMMA_AFTER_POWER = /\^[-−]?\p{N}+,\p{N}/u;
 
@@ -244,7 +247,7 @@ function toBareLatex({ chunk, index }: { chunk: string; index: number }): BareLa
 
   const latex = written
     .replaceAll(CARET_POWER, (_power, power: string) => `^{${power.replace("−", "-")}}`)
-    .replaceAll(BARE_SUBSCRIPT, (_subscript, base: string, below: string) => `${base}_{${below}}`);
+    .replaceAll(NUMERIC_SUBSCRIPT, (_subscript, below: string) => `_{${below}}`);
 
   return {
     end: start + written.length,

@@ -74,6 +74,10 @@ describe(wrapBareLatex, () => {
       "Methane is $CH_{4}$, and ethoxide is $CH_{3}$—$CH_{2}$—$O^{-}$.",
     );
 
+    expect(wrapBareLatex(String.raw`Sucrose is C_12H_22O_11, and \log_10(100) = 2.`)).toBe(
+      String.raw`Sucrose is $C_{12}H_{22}O_{11}$, and $\log_{10}(100)$ = 2.`,
+    );
+
     expect(wrapBareLatex("Think of 10^3—it means one thousand. Recall—x^2 grows.")).toBe(
       "Think of $10^{3}$—it means one thousand. Recall—$x^{2}$ grows.",
     );
