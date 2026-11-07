@@ -112,6 +112,7 @@ describe(wrapBareLatex, () => {
       "Then x^-ab shrinks.",
       "Simplify x^2}+{y^2.",
       "The set {10^3 is open.",
+      "The set is {x^2,y^2}.",
       String.raw`The volume is \frac{4\pi r^3}{3}.`,
       String.raw`Then \log_{10}(x) grows.`,
     ];

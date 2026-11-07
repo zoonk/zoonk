@@ -24,6 +24,9 @@ const LETTER_SUBSCRIPT = /_(?<below>\p{L})(?![\p{L}\p{N}])/gu;
 /** A script left unbraced (`x^ab`, `x^-ab`) is one KaTeX would raise only in part. */
 const UNBRACED_SCRIPT = /[\^_](?!\{)/u;
 
+/** In prose a brace outside a script is a set's (`{x^2,y^2}`), which KaTeX would hide. */
+const PROSE_BRACE = /(?<![\^_])\{/u;
+
 /** `10^3,5` is a decimal power in some languages and two numbers in others; a writer decides. */
 const COMMA_AFTER_POWER = /\^[-−+]?\p{N}+,\p{N}/u;
 
@@ -151,6 +154,7 @@ function isRepairable({ latex, written }: { latex: string; written: string }): b
   return (
     !NOT_AS_WRITTEN.test(latex) &&
     !UNBRACED_SCRIPT.test(latex) &&
+    !PROSE_BRACE.test(latex) &&
     !COMMA_AFTER_POWER.test(written) &&
     !ATTACHED_WORD.test(collapseBraces(written)) &&
     rendersInKatex(latex)
