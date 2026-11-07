@@ -13,8 +13,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.maxLength
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -41,6 +39,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.FilledIconButton
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -139,6 +138,7 @@ private fun SendButton(
     FilledIconButton(
         onClick = onClick,
         enabled = enabled,
+        busy = asking,
         modifier = Modifier.size(SEND_SIZE),
         shape = RoundedCornerShape(ZoonkRadius.lg),
         colors =
@@ -147,11 +147,11 @@ private fun SendButton(
                 disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             ),
     ) {
-        when {
-            asking -> CircularProgressIndicator(Modifier.size(SEND_ICON).semantics { contentDescription = label }, strokeWidth = 2.dp)
-            resending -> Icon(painterResource(R.drawable.ic_refresh), contentDescription = label, Modifier.size(SEND_ICON))
-            else -> Icon(painterResource(R.drawable.ic_arrow_upward), contentDescription = label, Modifier.size(SEND_ICON))
-        }
+        Icon(
+            painterResource(if (resending) R.drawable.ic_refresh else R.drawable.ic_arrow_upward),
+            contentDescription = label,
+            Modifier.size(SEND_ICON),
+        )
     }
 }
 

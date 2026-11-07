@@ -18,7 +18,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Switch
@@ -46,6 +45,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.AlertDialog
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -182,16 +182,11 @@ private fun Loaded(
         trailing = {
             OutlinedButton(
                 onClick = { export.launch(EXPORT_FILE_NAME) },
-                enabled = !screen.isExporting,
+                busy = screen.isExporting,
+                leadingIcon = { ButtonIcon(R.drawable.ic_download) },
                 size = ButtonSize.Small,
             ) {
-                if (screen.isExporting) {
-                    CircularProgressIndicator(Modifier.size(ICON), color = LocalContentColor.current, strokeWidth = 2.dp)
-                } else {
-                    Icon(painterResource(R.drawable.ic_download), contentDescription = null, modifier = Modifier.size(ICON))
-                }
-                Spacer(Modifier.size(6.dp))
-                Text(stringResource(if (screen.isExporting) R.string.settings_download_preparing else R.string.settings_download))
+                Text(stringResource(R.string.settings_download))
             }
         },
     )

@@ -2,6 +2,7 @@
 
 import { type FieldMapView } from "@zoonk/core/view-models/map/contract";
 import { safeAsync } from "@zoonk/utils/error";
+import { AwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { PlusMark } from "../_components/plus-lock";
@@ -56,8 +57,8 @@ function ClaimAction({
 
   return (
     <SuggestionAction
-      aria-busy={isPending || undefined}
-      disabled={isPending}
+      busy={isPending}
+      icon={<AwardIcon aria-hidden="true" />}
       onClick={claim}
       variant={variant}
     >

@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "player_action_check": "baa4248a33e2d464f660d742ec31f0d284c0f42afa5199998da9164b2e7483c1",
-  "player_action_checking": "e3e3f56e4d0fd2979127cb7bb471e925108c4f9bc05cb05df6e58712b859b480",
   "player_action_confirm": "2f8022b74816958c0fadd4716252c83c3bc3d42ded05b4409c2caac7c72ed333",
   "player_action_continue": "0ebe4de04fe13db94a959fbcc219c2cb7d4196439f264397f1229bec211662d6",
   "player_action_next": "28a4f66d58d3a20568fb9a746a32e209302ce6d354d2799c234d9fdad08e912c",
@@ -72,7 +71,6 @@
   "player_explain_answer_failed": "96cb315160d2571217c30b6ae61aedfbc2a142ce6b6f2358a00e364eece9b15a",
   "player_explain_answer_title": "3106af268babcee5862d215a0f303ccd986eee19c7a2315c26861f379eba792f",
   "player_explain_first": "fccc2a995158ab210dd96edb358f0f6d36a670fcac484c169dff921b6c46fcb5",
-  "player_explaining_answer": "d9ed402dae9204c7cc400e19cf43bd77920c38212dd3df04aa81f66d325f066c",
   "player_finish": "d5824258e72a7d853c32aa92a5fc617f6112d6df67613af917e22787cc0fa2d3",
   "player_free_limit_day_description": "1d96fa48af378ab37ddb17daf09e4f2dd081f9c44216ddc8138ccef345cffcac",
   "player_free_limit_day_title": "7ad8502fb59c63f752f65578bd85200c4247b43decb722f289101b0a26f5ddc0",
@@ -165,7 +163,6 @@
   "player_start_failed_description": "7093de4cd328fd9fdc386067e4c2dadf52bc8a2bd2fdbc6c71f9ad82aa15be9a",
   "player_start_failed_title": "ee9100adec2e2d0dd407ab0b6b5d0ffc7af06e4b5401d082970c88951beef496",
   "player_start_this_lesson": "390cf859f433d3fd22db0d701f1c33cff598d1cacdfb27909156c23460d1da52",
-  "player_starting": "4c3dbf6213501755b799942d7bf01316c5a115ffd96a70d17162ae6cb8651007",
   "player_still_checking": "cd641ccee08d2fbbba068b5a2c4aaf0696dca14795b31e66e4ba286e1e5d17b2",
   "player_stop_failed": "bacf92739ba6d6ce5820f7a347860fc437c77c6c30ae5128c0d9fa66f03e1c14",
   "player_stop_for_today": "497ad2132602f69e16d525b4ea84bd24d2fa495fcd70fa25a960bbc5c306073e",
@@ -220,7 +217,6 @@
     <string name="player_leave_description">Cevabın henüz kontrol edilmediği için kaydedilmeyecek.</string>
     <string name="player_keep_writing">Yazmaya devam et</string>
     <string name="player_action_check">Kontrol et</string>
-    <string name="player_action_checking">Cevabını kontrol ediyoruz</string>
     <string name="player_action_confirm">Onayla</string>
     <string name="player_action_continue">Devam et</string>
     <string name="player_action_next">Devam et</string>
@@ -249,7 +245,6 @@
     <string name="player_spelled">Yazılışı:</string>
     <string name="player_correct_answer_label">Cevap:</string>
     <string name="player_explain_answer">Cevabımı açıkla</string>
-    <string name="player_explaining_answer">Cevabını açıklıyoruz</string>
     <string name="player_explain_answer_failed">Şu anda açıklayamadık. Biraz sonra tekrar dene.</string>
     <string name="player_explain_answer_title">Bu cevap neden doğru değil</string>
     <!-- Heading of the panel that recaps the lesson, not a button. -->
@@ -306,7 +301,6 @@
     <string name="player_not_written_title">Bu ders henüz hazırlanmadı</string>
     <string name="player_not_written_description">Başladığında Zoonk dersi hazırlar. Birkaç dakika sürer.</string>
     <string name="player_start_this_lesson">Bu derse başla</string>
-    <string name="player_starting">Başlatıyoruz…</string>
     <string name="player_writing_lesson">Dersini hazırlıyoruz</string>
     <string name="player_phase_plan">Dersi planlıyoruz</string>
     <string name="player_phase_plan_line_1">Neleri işleyeceğimizi seçiyoruz…</string>

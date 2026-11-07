@@ -19,10 +19,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,6 +50,7 @@ import com.zoonk.android.feature.catalog.courseLevelName
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -270,36 +269,39 @@ private fun OwnerActions(
                     onClick = { actions.share(certificate, fileName, caption) },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = actions.busy == null,
+                    busy = actions.busy == CertificateAction.Share,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_share) },
                     size = ButtonSize.Large,
                 ) {
-                    ActionLabel(R.drawable.ic_share, stringResource(R.string.certificates_share), actions.busy == CertificateAction.Share)
+                    ActionText(stringResource(R.string.certificates_share))
                 }
                 SideBySideOrStacked {
                     OutlinedButton(
                         onClick = { actions.print(certificate, fileName) },
                         enabled = actions.busy == null,
+                        busy = actions.busy == CertificateAction.Print,
+                        leadingIcon = { ButtonIcon(R.drawable.ic_print) },
                         size = ButtonSize.Large,
                     ) {
-                        ActionLabel(
-                            R.drawable.ic_print,
-                            stringResource(R.string.certificates_print),
-                            actions.busy == CertificateAction.Print,
-                        )
+                        ActionText(stringResource(R.string.certificates_print))
                     }
                     OutlinedButton(
                         onClick = { actions.download(certificate, fileName) },
                         enabled = actions.busy == null,
+                        busy = actions.busy == CertificateAction.Download,
+                        leadingIcon = { ButtonIcon(R.drawable.ic_download) },
                         size = ButtonSize.Large,
                     ) {
-                        ActionLabel(
-                            R.drawable.ic_download,
-                            stringResource(R.string.certificates_download),
-                            actions.busy == CertificateAction.Download,
-                        )
+                        ActionText(stringResource(R.string.certificates_download))
                     }
                 }
-                OutlinedButton(onClick = onAddToLinkedIn, modifier = Modifier.fillMaxWidth(), size = ButtonSize.Large) {
-                    ActionLabel(R.drawable.ic_north_east, stringResource(R.string.certificates_add_to_linkedin))
+                OutlinedButton(
+                    onClick = onAddToLinkedIn,
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = { ButtonIcon(R.drawable.ic_north_east) },
+                    size = ButtonSize.Large,
+                ) {
+                    ActionText(stringResource(R.string.certificates_add_to_linkedin))
                 }
             }
         }
@@ -307,19 +309,7 @@ private fun OwnerActions(
 }
 
 @Composable
-private fun ActionLabel(
-    @DrawableRes icon: Int,
-    text: String,
-    busy: Boolean = false,
-) {
-    if (busy) {
-        CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
-    } else {
-        Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
-    }
-    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-    Text(text, textAlign = TextAlign.Center)
-}
+private fun ActionText(text: String) = Text(text, textAlign = TextAlign.Center)
 
 /**
  * Main's two columns for Print and Download, one under the other when either's words need more than

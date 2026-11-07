@@ -80,7 +80,6 @@ export function MissionListRow({
     <>
       <ListRowButton
         aria-busy={target.pending || undefined}
-        className="aria-busy:opacity-60"
         disabled={target.pending}
         onClick={target.open}
       >

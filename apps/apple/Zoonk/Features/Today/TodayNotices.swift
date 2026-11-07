@@ -41,23 +41,25 @@ struct SuggestedGoalSection: View {
           .foregroundStyle(.mutedForeground)
       }
 
-      Button {
+      BusyButton(isBusy: answering == true, icon: .forward) {
         answer(accepted: true)
       } label: {
         Text("Build my plan", tableName: "Today", comment: "Accepts the suggested goal")
-          .frame(maxWidth: .infinity)
       }
       .buttonStyle(.mainAction)
       .controlSize(.large)
+      .buttonSizing(.flexible)
+      .disabled(answering == false)
 
-      Button {
+      BusyButton(isBusy: answering == false, icon: .dismiss) {
         answer(accepted: false)
       } label: {
         Text("Not now", tableName: "Today", comment: "Dismisses the suggested goal")
-          .frame(maxWidth: .infinity)
       }
       .buttonStyle(.outline)
       .controlSize(.large)
+      .buttonSizing(.flexible)
+      .disabled(answering == true)
     } header: {
       Label {
         Text(
@@ -76,7 +78,6 @@ struct SuggestedGoalSection: View {
         }
       }
     }
-    .disabled(answering != nil)
   }
 
   private func answer(accepted: Bool) {
@@ -120,12 +121,11 @@ struct TodayExamChoiceSection: View {
         Text(sentence)
 
         if change.canUndo {
-          Button {
+          BusyButton(isBusy: editor.isSaving, icon: .undo) {
             Task { await editor.undo() }
           } label: {
             Text("Undo", tableName: "Today", comment: "Undoes a plan change the learner applied")
           }
-          .disabled(editor.isSaving)
         }
 
         failure

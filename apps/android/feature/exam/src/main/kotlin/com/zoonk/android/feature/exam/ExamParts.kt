@@ -41,6 +41,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.plan.formatPlanDate
 import com.zoonk.android.feature.plan.noticeDayText
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -191,7 +192,11 @@ internal fun NoticeDatesCard(
                         noticeDayText(noticeDay.date.toJavaLocalDate(), noticeDay.estimated, exam.examDocument),
                         style = MaterialTheme.typography.titleSmall,
                     )
-                    OutlinedButton(onClick = { viewModel.useDate(noticeDay.date.toJavaLocalDate()) }, enabled = !pending) {
+                    OutlinedButton(
+                        onClick = { viewModel.useDate(noticeDay.date.toJavaLocalDate()) },
+                        busy = pending,
+                        leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
+                    ) {
                         Text(stringResource(R.string.exam_use_this_date))
                     }
                 } else if (noSitting != null) {
@@ -243,7 +248,7 @@ internal fun ExamResultSection(
     val parsedMax = parseLocalizedNumber(maxScore, locale)
     val scoreError = scoreError(score, parsedScore, scale)
     val maxError = maxScore.isNotBlank() && (parsedMax == null || parsedMax <= 0 || parsedMax > MAX_SCORE)
-    val canSave = (score.isNotBlank() || passed != null) && scoreError == null && !maxError && status != SaveStatus.Pending
+    val canSave = (score.isNotBlank() || passed != null) && scoreError == null && !maxError
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -304,6 +309,8 @@ internal fun ExamResultSection(
         if (status == SaveStatus.Failed) SuggestionSaveError()
 
         Button(
+            busy = status == SaveStatus.Pending,
+            leadingIcon = { ButtonIcon(R.drawable.ic_check) },
             onClick = {
                 viewModel.report(
                     ExamResultReport(

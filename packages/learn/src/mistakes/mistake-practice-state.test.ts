@@ -107,10 +107,10 @@ describe(practiceReducer, () => {
 
     const played = [
       { type: "start" },
-      { answer, timedOut: false, type: "check" },
+      { answer, durationMs: 4000, sender: "check", type: "check" },
       { feedback: graded("a1", true), mistakeId: "gap", type: "answered" },
       { type: "next" },
-      { answer, timedOut: false, type: "check" },
+      { answer, durationMs: 4000, sender: "check", type: "check" },
       { feedback: graded("a2", true), mistakeId: "gap", type: "answered" },
       { type: "next" },
     ] as const;
@@ -137,7 +137,8 @@ describe(practiceReducer, () => {
 
     const checked = practiceReducer(initial, {
       answer: { selectedIndex: 0 },
-      timedOut: false,
+      durationMs: 4000,
+      sender: "check",
       type: "check",
     });
 
@@ -149,7 +150,8 @@ describe(practiceReducer, () => {
 
     const unknown = practiceReducer(practiceReducer(state, { type: "next" }), {
       answer: { dontKnow: true },
-      timedOut: false,
+      durationMs: 4000,
+      sender: "notSure",
       type: "check",
     });
 
@@ -167,7 +169,8 @@ describe(practiceReducer, () => {
 
     const checked = practiceReducer(initial, {
       answer: { selectedIndex: 0 },
-      timedOut: false,
+      durationMs: 4000,
+      sender: "check",
       type: "check",
     });
 
@@ -179,7 +182,8 @@ describe(practiceReducer, () => {
 
     const checkedUnknown = practiceReducer(practiceReducer(fixed, { type: "next" }), {
       answer: { dontKnow: true },
-      timedOut: false,
+      durationMs: 4000,
+      sender: "notSure",
       type: "check",
     });
 
@@ -197,14 +201,14 @@ describe(practiceReducer, () => {
     const answer = { selectedIndex: 0 };
 
     const played = [
-      { answer, timedOut: false, type: "check" },
+      { answer, durationMs: 4000, sender: "check", type: "check" },
       {
         feedback: { ...graded("a1"), reached: { energy: 60, level: null } },
         mistakeId: "first",
         type: "answered",
       },
       { type: "next" },
-      { answer, timedOut: false, type: "check" },
+      { answer, durationMs: 4000, sender: "check", type: "check" },
       {
         feedback: {
           ...graded("a2"),
@@ -225,22 +229,31 @@ describe(practiceReducer, () => {
     expect(state.reached).toStrictEqual({ energy: 60, level: { color: "yellow", level: 1 } });
   });
 
-  it("keeps the answer to check again when grading fails", () => {
-    const practice = [entry("time", { kind: "timed", timeLimitSeconds: 45 })];
-    const reduce = practiceReducer;
+  it.each(["notSure", "timer"] as const)(
+    "sends the failed answer again as %s sent it",
+    (sender) => {
+      const practice = [entry("time", { kind: "timed", timeLimitSeconds: 45 })];
+      const reduce = practiceReducer;
 
-    const checking = reduce(createPracticeState(practice), {
-      answer: { dontKnow: true },
-      timedOut: true,
-      type: "check",
-    });
+      const checking = reduce(createPracticeState(practice), {
+        answer: { dontKnow: true },
+        durationMs: 45_000,
+        sender,
+        type: "check",
+      });
 
-    expect(reduce(checking, { type: "answerFailed" }).phase).toStrictEqual({
-      answer: { dontKnow: true },
-      kind: "answerFailed",
-      timedOut: true,
-    });
-  });
+      const failed = reduce(checking, { type: "answerFailed" });
+
+      expect(failed.phase).toStrictEqual({
+        answer: { dontKnow: true },
+        durationMs: 45_000,
+        kind: "answerFailed",
+        sender,
+      });
+
+      expect(reduce(failed, { type: "retry" }).phase).toStrictEqual(checking.phase);
+    },
+  );
 });
 
 describe(getPracticeSegments, () => {
@@ -249,10 +262,10 @@ describe(getPracticeSegments, () => {
     const answer = { selectedIndex: 0 };
 
     const played = [
-      { answer, timedOut: false, type: "check" },
+      { answer, durationMs: 4000, sender: "check", type: "check" },
       { feedback: graded("a1"), mistakeId: "retry", type: "answered" },
       { type: "next" },
-      { answer: { selectedIndex: 1 }, timedOut: false, type: "check" },
+      { answer: { selectedIndex: 1 }, durationMs: 4000, sender: "check", type: "check" },
       { feedback: { ...graded("a2"), isCorrect: false }, mistakeId: "retry", type: "answered" },
       { type: "next" },
     ] as const;
@@ -278,33 +291,34 @@ describe(getPracticeSegments, () => {
   });
 
   it.each([
-    { segment: "read", timedOut: false },
-    { segment: "wrong", timedOut: true },
-  ] as const)(
-    "marks an unknown answer $segment when timedOut is $timedOut",
-    ({ segment, timedOut }) => {
-      const initial = createPracticeState([entry("gap")]);
+    { segment: "read", sender: "notSure" },
+    { segment: "read", sender: "check" },
+    { segment: "wrong", sender: "timer" },
+  ] as const)("marks an unknown answer $segment when $sender sent it", ({ segment, sender }) => {
+    const initial = createPracticeState([entry("gap")]);
 
-      const checking = practiceReducer(initial, {
-        answer: { dontKnow: true },
-        timedOut,
-        type: "check",
-      });
+    const checking = practiceReducer(initial, {
+      answer: { dontKnow: true },
+      durationMs: 4000,
+      sender,
+      type: "check",
+    });
 
-      const answered = practiceReducer(checking, {
-        feedback: { ...graded("unknown"), isCorrect: false },
-        mistakeId: "gap",
-        type: "answered",
-      });
+    expect(checking.phase).toMatchObject({ kind: "checking", sender });
 
-      expect(getPracticeSegments(answered)).toStrictEqual([segment, "ahead"]);
+    const answered = practiceReducer(checking, {
+      feedback: { ...graded("unknown"), isCorrect: false },
+      mistakeId: "gap",
+      type: "answered",
+    });
 
-      expect(getPracticeSegments(practiceReducer(answered, { type: "next" }))).toStrictEqual([
-        segment,
-        "current",
-      ]);
-    },
-  );
+    expect(getPracticeSegments(answered)).toStrictEqual([segment, "ahead"]);
+
+    expect(getPracticeSegments(practiceReducer(answered, { type: "next" }))).toStrictEqual([
+      segment,
+      "current",
+    ]);
+  });
 });
 
 describe(isMistakeQuestion, () => {

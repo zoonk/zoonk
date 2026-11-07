@@ -18,13 +18,16 @@ struct GradedAtEndRun: View {
 
   @State private var answers: [PracticeChoiceAnswer] = []
   @State private var draft: PracticeAnswer?
+  @State private var sentBy: AnswerSender?
   @State private var shownAt = Date.now
   @State private var resumed = false
 
   var body: some View {
     let total = max(questions.count, upcomingTotal ?? 0)
     let index = answers.count
-    let question = questions.indices.contains(index) ? questions[index] : nil
+    let shown = sentBy == nil ? index : index - 1
+    let question = questions.indices.contains(shown) ? questions[shown] : nil
+    let locked = isPending || failed || sentBy != nil
 
     PracticeTaskLayout(segments: segments(total: total, index: index), index: index) {
       if let question {
@@ -32,14 +35,14 @@ struct GradedAtEndRun: View {
           Text(hint(question)).typeStyle(.note).foregroundStyle(.mutedForeground)
           Spacer()
           Text(
-            "\(min(index + 1, total)) of \(total)", tableName: "Practice",
+            "\(shown + 1) of \(total)", tableName: "Practice",
             comment: "Where a test is: question n of total."
           )
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
         }
 
-        asked(question).stimulus
+        asked(question, isLocked: locked).stimulus
       } else if GradedRunStage(answered: index, asked: questions.count, total: total)
         == .readyToSubmit
       {
@@ -88,7 +91,7 @@ struct GradedAtEndRun: View {
       }
     } response: {
       if let question {
-        asked(question).response
+        asked(question, isLocked: locked).response
       }
     } actions: {
       if failed {
@@ -101,8 +104,9 @@ struct GradedAtEndRun: View {
             title: LocalizedStringResource(
               "I don't know yet", table: "Practice", comment: "Answers a question as not known yet."
             ),
-            isDisabled: isPending || failed
-          ) { answer(.dontKnow, total: total) }
+            icon: .notSure, isBusy: isPending && sentBy == .notSure,
+            isDisabled: locked
+          ) { answer(.dontKnow, by: .notSure, total: total) }
 
           PracticeMainButton(
             title: index + 1 >= total
@@ -110,10 +114,10 @@ struct GradedAtEndRun: View {
                 "Finish", table: "Practice", comment: "Sends a test's answers to be graded.")
               : LocalizedStringResource(
                 "Next", table: "Practice", comment: "Moves to a test's next question."),
-            isBusy: isPending,
-            isDisabled: draft?.complete == nil || failed
+            icon: .forward, isBusy: isPending && sentBy == .check,
+            isDisabled: draft?.complete == nil || locked
           ) {
-            if let picked = draft?.complete { answer(picked, total: total) }
+            if let picked = draft?.complete { answer(picked, by: .check, total: total) }
           }
         }
       } else if GradedRunStage(answered: index, asked: questions.count, total: total)
@@ -124,7 +128,7 @@ struct GradedAtEndRun: View {
         PracticeMainButton(
           title: LocalizedStringResource(
             "Finish", table: "Practice", comment: "Sends a test's answers to be graded."),
-          isBusy: isPending
+          icon: .forward, isBusy: isPending
         ) { onFinish(answers) }
       } else if upcomingEnded, !failed {
         if let upcomingLimit {
@@ -136,23 +140,22 @@ struct GradedAtEndRun: View {
           title: LocalizedStringResource(
             "Finish with these answers", table: "Practice",
             comment: "Finishes a test whose writing stopped short."),
-          isBusy: isPending
+          icon: .forward, isBusy: isPending
         ) { onFinish(answers) }
       }
     }
     .onAppear(perform: resume)
   }
 
-  private func asked(_ question: PracticeQuestion) -> PracticeQuestionView {
-    PracticeQuestionView(
-      question: question, labels: labels, isLocked: isPending || failed, draft: $draft)
+  private func asked(_ question: PracticeQuestion, isLocked: Bool) -> PracticeQuestionView {
+    PracticeQuestionView(question: question, labels: labels, isLocked: isLocked, draft: $draft)
   }
 
   private func segments(total: Int, index: Int) -> [TaskSegment] {
     (0..<total).map { $0 < index ? .read : ($0 == index ? .current : .ahead) }
   }
 
-  private func answer(_ choice: PracticeAnswer, total: Int) {
+  private func answer(_ choice: PracticeAnswer, by sender: AnswerSender, total: Int) {
     guard let question = questions.indices.contains(answers.count) ? questions[answers.count] : nil
     else { return }
 
@@ -164,11 +167,13 @@ struct GradedAtEndRun: View {
       ]
     PracticeAnswerDraft.write(next, key: draftKey)
     answers = next
-    draft = nil
-    shownAt = .now
 
     if next.count >= total {
+      sentBy = sender
       onFinish(next)
+    } else {
+      draft = nil
+      shownAt = .now
     }
   }
 
@@ -305,7 +310,8 @@ struct PracticeQuestionsPreparingView: View {
         PracticeMainButton(
           title: LocalizedStringResource(
             "See Plus", table: "Practice",
-            comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\".")
+            comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\"."),
+          icon: .forward
         ) {
           hooks.navigate(.subscription)
         }
@@ -322,7 +328,7 @@ struct PracticeQuestionsPreparingView: View {
             title: LocalizedStringResource(
               "Start the test", table: "Practice",
               comment: "Asks for a test's questions and starts it."),
-            isBusy: isStarting, action: start
+            icon: .play, isBusy: isStarting, action: start
           )
           .accessibilityFocused($focus, equals: .start)
         }

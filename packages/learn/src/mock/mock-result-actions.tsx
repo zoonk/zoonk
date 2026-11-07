@@ -2,6 +2,7 @@
 
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
 import {
@@ -74,7 +75,7 @@ export function MockResultActions() {
   }
 
   return (
-    <TaskMainLink href={hrefs.mistakes}>
+    <TaskMainLink href={hrefs.mistakes} icon={<PlayIcon aria-hidden="true" />}>
       {t("{count, plural, one {Review the mistake} other {Review the # mistakes}}", {
         count: mistakes,
       })}

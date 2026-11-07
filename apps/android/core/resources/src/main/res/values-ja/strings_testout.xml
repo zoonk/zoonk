@@ -15,7 +15,6 @@
   "testout_rule": "3109c028bf583892b8c0d5755ef0fb8a9a91222fdb00fda8cdf0149cf105bd55",
   "testout_see_plus": "49253c1d3535a59ef513d3f91b71593a832429885fb46db8c0eb8dc286b3d16f",
   "testout_start": "0da27b176c6c541df5d3fcbd6e25f888bec55a958ebeaf0b187482619e159bae",
-  "testout_starting": "5e39d4076d2f2281dd57785057834a955cfdf6f9e3e3e0e4834549ddf295d685",
   "testout_this_chapter": "1eca64fb3b9239ce67ca994b05cee312c9ab11c544f9a05241dc5a91b89c71bb",
   "testout_title": "191a0a6570e5dd761f3fb7e7473d42313a4a0a2c55f1f178930f7fa0269ff0aa",
   "testout_writing": "27f38068717727fdf7dfd8f6e9a71962072f4a96c947603c6c3c68cf1ee2dd66",
@@ -33,7 +32,6 @@
     <string name="testout_intro_title">すでに知っている内容ですか？</string>
     <string name="testout_intro_detail">この章の問題をいくつか解きます。よい結果が出れば、すでに知っている内容は学習計画でスキップされます。</string>
     <string name="testout_start">テストを始める</string>
-    <string name="testout_starting">開始しています…</string>
     <string name="testout_see_plus">Plusの詳細を見る</string>
     <string name="testout_writing">問題を作成しています</string>
     <string name="testout_writing_questions">この章の問題を作成しています</string>

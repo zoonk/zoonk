@@ -4,7 +4,7 @@ import { type ExamDocument } from "@zoonk/core/exams/document";
 import { type NoSitting, type NoticeDay } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
-import { CalendarDaysIcon } from "lucide-react";
+import { CalendarCheckIcon, CalendarDaysIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Fragment, useState, useTransition } from "react";
 import {
@@ -65,11 +65,13 @@ export function NoSittingWords({
 }
 
 export function UseDateButton({
-  disabled,
+  busy = false,
+  disabled = false,
   onUse,
   variant = "outline",
 }: {
-  disabled: boolean;
+  busy?: boolean;
+  disabled?: boolean;
   onUse: () => void;
   variant?: "outline" | "secondary";
 }) {
@@ -77,8 +79,10 @@ export function UseDateButton({
 
   return (
     <Button
+      busy={busy}
       disabled={disabled}
       focusableWhenDisabled
+      icon={<CalendarCheckIcon aria-hidden="true" />}
       onClick={onUse}
       size="sm"
       type="button"
@@ -126,7 +130,7 @@ function NoticeDayCard({
       <NoticeCardContent>
         <NoticeCardTitle>{text({ ...day, document })}</NoticeCardTitle>
         <NoticeCardActions>
-          <UseDateButton disabled={isPending} onUse={use} variant="secondary" />
+          <UseDateButton busy={isPending} onUse={use} variant="secondary" />
         </NoticeCardActions>
 
         {failed && <ChangeSaveError className="mt-2" />}

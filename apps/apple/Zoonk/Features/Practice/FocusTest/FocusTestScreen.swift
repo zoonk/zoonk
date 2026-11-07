@@ -187,7 +187,8 @@ struct FocusTestScreen: View {
 
       PracticeMainButton(
         title: LocalizedStringResource(
-          "See your plan", table: "Practice", comment: "Leaves a focus test's result for the plan.")
+          "See your plan", table: "Practice", comment: "Leaves a focus test's result for the plan."),
+        icon: .forward
       ) {
         dismiss()
       }

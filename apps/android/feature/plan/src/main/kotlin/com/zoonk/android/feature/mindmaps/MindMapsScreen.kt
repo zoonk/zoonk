@@ -24,7 +24,6 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -69,6 +68,7 @@ import com.zoonk.android.feature.goalcontent.WithPlanGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -76,7 +76,6 @@ import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
-import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -536,13 +535,10 @@ private fun RequestTile(
                 OutlinedButton(
                     onClick = { if (failure) actions.retry(map.chapterId) else actions.create(map.chapterId) },
                     modifier = Modifier.semantics { contentDescription = spoken },
-                    enabled = local?.pending != true && !blocked,
-                ) {
-                    PendingLabel(
-                        local?.pending == true,
-                        stringResource(if (failure) R.string.mindmaps_try_again else R.string.mindmaps_create),
-                    )
-                }
+                    enabled = !blocked,
+                    busy = local?.pending == true,
+                    leadingIcon = { ButtonIcon(if (failure) R.drawable.ic_refresh else R.drawable.ic_add) },
+                ) { Text(stringResource(if (failure) R.string.mindmaps_try_again else R.string.mindmaps_create)) }
             }
         }
 

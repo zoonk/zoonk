@@ -44,6 +44,14 @@ enum PracticeSelect: Hashable, Sendable, Decodable {
   }
 }
 
+/// A blank answer can come from any of them: Leave blank with Check, the not-sure button, or the
+/// clock.
+enum AnswerSender: Sendable {
+  case check, notSure, timer
+
+  var pressesCheck: Bool { self == .check || self == .timer }
+}
+
 enum PracticeAnswer: Hashable, Sendable, Codable {
   case choice(Int)
   case choices([Int])

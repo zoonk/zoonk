@@ -359,11 +359,6 @@ msgid "Start over with the original code"
 msgstr "Repartir du code d’origine"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "nDyaq_"
-msgid "Running"
-msgstr "Exécution en cours"
-
-#: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/random-simulation/chance-simulation.tsx
 #: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "zG-cZG"
@@ -3252,11 +3247,6 @@ msgid "Why that answer misses"
 msgstr "Pourquoi cette réponse ne convient pas"
 
 #: src/lesson/feedback/explain-answer.tsx
-msgctxt "g00v5Z"
-msgid "Explaining your answer"
-msgstr "Explication de ta réponse en cours"
-
-#: src/lesson/feedback/explain-answer.tsx
 msgctxt "aIkpfv"
 msgid "Explain my answer"
 msgstr "Expliquer ma réponse"
@@ -3363,11 +3353,6 @@ msgstr "Bonne réponse"
 msgctxt "RDZVQL"
 msgid "Check"
 msgstr "Vérifier"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "IYUwzO"
-msgid "Checking your answer"
-msgstr "Vérification de ta réponse"
 
 #: src/lesson/lesson-action-bar.tsx
 msgctxt "N2IrpM"

@@ -14,7 +14,6 @@
   "focustest_questions": "07da0229c6695894e6caa2821c9de604eee6ae29b3ff3dfd85dd02d33739c9a3",
   "focustest_see_plan": "f43f410cc877266b929189d5891edce035bc16b5186e2087e685815a6b605be9",
   "focustest_start": "4ab9c05dc69e281186fe3fcafeadde580d66a38c885e89ca09ddafb4795bf7a9",
-  "focustest_starting": "48ad128013e08ea10b890c59d3ac2639aa3806201c7ce3c382a91725b16e25d3",
   "focustest_subjects": "ff54bc550521ea40e32358166db0fbfc539db1c1277e6d109b3ef3b32898719b",
   "focustest_title": "8afc5c17406a8b2bf621b336641d6131cd50b35754357f2f084a56af5a93add6",
   "focustest_undone": "b91f6e3dd1adad9c49df07a8e6967f165def38a4dc0515c43705d9e8914c5d2b",
@@ -43,7 +42,6 @@
     <!-- How long the test takes. %1$s is a duration, such as "5 min". -->
     <string name="focustest_about">Yaklaşık %1$s</string>
     <string name="focustest_start">Testi başlat</string>
-    <string name="focustest_starting">Başlatıyoruz…</string>
     <string name="focustest_writing">Sorularını hazırlıyoruz</string>
     <string name="focustest_writing_questions">Her branş için sorular hazırlıyoruz</string>
     <string name="focustest_writing_line">Her branşta ne soracağımızı seçiyoruz…</string>

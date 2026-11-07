@@ -1,7 +1,7 @@
 "use client";
 
 import { type LanguageUnitView } from "@zoonk/core/view-models/language/contract";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
@@ -10,7 +10,6 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
@@ -140,14 +139,12 @@ function CallSetup({
       ) : (
         // It opens the call's intro, whose button is the one that calls.
         <Button
-          aria-busy={call.isStarting}
+          busy={call.isStarting}
           className="w-full"
-          disabled={call.isStarting}
-          focusableWhenDisabled
           onClick={call.start}
           size="lg"
+          {...FORWARD_ICON}
         >
-          {call.isStarting && <Spinner aria-hidden="true" />}
           {t("Continue")}
         </Button>
       )}

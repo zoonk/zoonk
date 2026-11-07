@@ -20,7 +20,6 @@
   "mock_flagged_count": "0ad9624bcd7a97c8c48ad2e202eb44bf30f9c3ee890c81f0c2e55395ba694569",
   "mock_full_day": "f33c8021394c5a421926b8ce6029b6218be5d9fc7a944a6dd956c5c099d27dc0",
   "mock_full_day_number": "9bd512bc0091fa59c41a2d091d62bd792a149c899eee079d36e89783b4a5221d",
-  "mock_grading": "f65e92f01c0b59311f158b01f5b422be4649578ae33a55cff04ea391d22a24b0",
   "mock_half_day": "2336e23e31e7f8eddd59b79d69fa6ad31602e3b3c6aae5d052ed3b4eea951ca0",
   "mock_half_day_number": "04bc5dbc51a9254cc6135fca1cd120eb0f44cb71cc9d591ed6805a3793c1a7c6",
   "mock_hand_in": "e4480de1f117143755bb0938f6e495f11930797c2ffd96d2ca558a2792773a70",
@@ -31,7 +30,6 @@
   "mock_hand_in_section_title": "4a52e6f0cc67dc5d8ac4b7daa59f0af7bccf04f33206187ebb585b3e28eeefa7",
   "mock_handed_in": "0143cf80bc1c2a2d1e1f0782a445d3ec6257d6264d1ce1434465759dfb973c6b",
   "mock_handed_in_title": "96b815214d10fdf4ea2278ea71f013a2f6258baf8e83498c843f36f3b327b143",
-  "mock_handing_in": "30afe8e43c748cea2372fb17356111635b9f73e3a16f524534036d9b87f61ec7",
   "mock_keep_answering": "f1f1cd8dbf93e7da3628a3716347b2229a47772afaf38b55a9151f30f0f08e37",
   "mock_keep_going": "b0cc0512ae16c92012710a2b6456dcfcd41ec79294144d13ac912bbbff81b856",
   "mock_label": "bffdece59ec6c657d417adf077d448efdd270e451c67eda8aa70dec72ba628cb",
@@ -150,7 +148,6 @@
     <string name="mock_next">次へ</string>
     <string name="mock_hand_in_mock">模試を提出する</string>
     <string name="mock_hand_in_section">このセクションを提出する</string>
-    <string name="mock_handing_in">提出しています…</string>
     <string name="mock_moves_review_any">見直し：どの問題にも戻れます。</string>
     <string name="mock_moves_review_none">見直し：回答はもう変更できません。</string>
     <plurals name="mock_moves_review_changes">
@@ -220,7 +217,6 @@
     <string name="mock_step_slow">提出しています。いつもより時間がかかっています。</string>
     <string name="mock_handed_in_title">模試を提出しました</string>
     <string name="mock_see_how">結果を見る</string>
-    <string name="mock_grading">採点しています…</string>
     <string name="mock_continue_section">続ける</string>
     <string name="mock_time_up">時間切れ</string>
     <string name="mock_answers_saved">ここまでの解答は保存されています。</string>

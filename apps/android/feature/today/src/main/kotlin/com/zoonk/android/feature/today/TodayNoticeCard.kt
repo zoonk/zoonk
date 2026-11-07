@@ -28,6 +28,7 @@ import com.zoonk.android.feature.plan.planChangeSentence
 import com.zoonk.android.feature.research.SourceChangeNotice
 import com.zoonk.android.feature.research.UploadRequestNotice
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -174,8 +175,9 @@ private fun ExamChoiceNotice(
                     SuggestionAction(
                         stringResource(R.string.today_undo),
                         { viewModel.undoExamChoice(made) },
-                        enabled = !saving,
+                        busy = saving,
                         secondary = true,
+                        leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
                     )
                 }
             } else {
@@ -225,7 +227,7 @@ private fun ExamChoiceNotice(
         SuggestionHeader(question)
         SuggestionDescription(examChoiceLeftOut(choice))
         if (choice.take > 1) {
-            ExamChoicePicks(choice, enabled = !saving, onSave = choose)
+            ExamChoicePicks(choice, saving, onSave = choose)
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 choice.options.forEach { option ->

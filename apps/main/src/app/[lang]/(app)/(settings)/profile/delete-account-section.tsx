@@ -20,6 +20,7 @@ import {
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
+import { LogInIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { type DeleteAccountResult, deleteAccountAction } from "./delete-account-action";
@@ -44,7 +45,10 @@ function DeleteAccountOutcome({ result }: { result: DeleteAccountResult | null }
     return (
       <div className="flex flex-col items-start gap-2" role="alert">
         <p className="text-sm">{t("For your safety, sign in again, then delete your account.")}</p>
-        <CurrentPageLoginLink className={buttonVariants({ size: "sm", variant: "outline" })}>
+        <CurrentPageLoginLink
+          className={buttonVariants({ size: "sm", variant: "outline" })}
+          icon={<LogInIcon aria-hidden="true" />}
+        >
           {t("Sign in again")}
         </CurrentPageLoginLink>
       </div>
@@ -128,12 +132,7 @@ export function DeleteAccountSection({
 
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isPending}>{t("Cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              disabled={isPending}
-              focusableWhenDisabled
-              onClick={deleteAccount}
-              variant="destructive"
-            >
+            <AlertDialogAction busy={isPending} onClick={deleteAccount} variant="destructive">
               {t("Delete my account")}
             </AlertDialogAction>
           </AlertDialogFooter>

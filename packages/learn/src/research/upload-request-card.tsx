@@ -4,7 +4,7 @@ import { type GoalUploadRequest } from "@zoonk/core/library/sources/upload-reque
 import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
-import { FileSearchIcon, UploadIcon } from "lucide-react";
+import { FileSearchIcon, UploadIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
@@ -156,8 +156,8 @@ export function UploadRequestCard({
           </Button>
 
           <Button
-            disabled={isPending}
-            focusableWhenDisabled
+            busy={isPending}
+            icon={<XIcon aria-hidden="true" />}
             onClick={() =>
               run(async () => ((await actions.dismiss()) ? null : "failed"), "dismissed")
             }

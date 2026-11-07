@@ -333,9 +333,11 @@ describe("lesson by keyboard", () => {
     });
 
     await answer.fill(RIGHT_TYPED);
-    await page.getByRole("button", { exact: true, name: "Check" }).click();
+    const check = page.getByRole("button", { exact: true, name: "Check" });
+    await check.click();
     await expect.poll(() => checkStep.mock.calls.length).toBe(1);
-    await expect.element(page.getByRole("button", { name: "Checking" })).toBeDisabled();
+    await expect.element(check).toHaveAttribute("aria-busy", "true");
+    await expect.element(check).toBeDisabled();
     await page.getByRole("button", { name: "Close lesson" }).click();
     const leave = page.getByRole("alertdialog", { name: "Leave for now?" });
     await expect.element(leave).toBeVisible();

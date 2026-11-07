@@ -198,14 +198,14 @@ export function MaterialQuestions({
         />
         <Button
           aria-label={t("Ask")}
+          busy={isPending}
           className="size-11 shrink-0 rounded-full"
-          disabled={!trimmed || isPending}
+          disabled={!trimmed}
           focusableWhenDisabled
+          icon={<ArrowUpIcon aria-hidden="true" className="size-5" />}
           size="icon-lg"
           type="submit"
-        >
-          <ArrowUpIcon aria-hidden="true" className="size-5" />
-        </Button>
+        />
       </form>
     </OnboardingColumn>
   );

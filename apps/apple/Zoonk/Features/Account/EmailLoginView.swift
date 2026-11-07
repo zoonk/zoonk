@@ -68,14 +68,13 @@ struct EmailLoginView: View {
 
       Section {
         if hasSentCode {
-          Button(action: signIn) {
-            submitLabel(
-              title: Text(
-                "Sign in",
-                tableName: "Account",
-                comment: "Button that verifies an email code"))
+          BusyButton(isBusy: session.isWorking, isRow: true, action: signIn) {
+            Text(
+              "Sign in",
+              tableName: "Account",
+              comment: "Button that verifies an email code")
           }
-          .disabled(!isCodeValid || session.isWorking)
+          .disabled(!isCodeValid && !session.isWorking)
 
           Button {
             code = ""
@@ -89,14 +88,13 @@ struct EmailLoginView: View {
           }
           .disabled(session.isWorking)
         } else {
-          Button(action: sendEmailCode) {
-            submitLabel(
-              title: Text(
-                "Send code",
-                tableName: "Account",
-                comment: "Button that sends an email sign-in code"))
+          BusyButton(isBusy: session.isWorking, isRow: true, action: sendEmailCode) {
+            Text(
+              "Send code",
+              tableName: "Account",
+              comment: "Button that sends an email sign-in code")
           }
-          .disabled(!isEmailValid || session.isWorking)
+          .disabled(!isEmailValid && !session.isWorking)
         }
       }
 
@@ -160,19 +158,6 @@ struct EmailLoginView: View {
     }
 
     dismiss()
-  }
-
-  private func submitLabel(title: Text) -> some View {
-    HStack {
-      title
-
-      Spacer()
-
-      if session.isWorking {
-        ProgressView()
-          .controlSize(.small)
-      }
-    }
   }
 }
 

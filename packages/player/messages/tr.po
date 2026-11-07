@@ -359,11 +359,6 @@ msgid "Start over with the original code"
 msgstr "Kodu ilk hâline döndür"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "nDyaq_"
-msgid "Running"
-msgstr "Çalıştırıyoruz"
-
-#: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/random-simulation/chance-simulation.tsx
 #: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "zG-cZG"
@@ -3252,11 +3247,6 @@ msgid "Why that answer misses"
 msgstr "Bu cevap neden doğru değil"
 
 #: src/lesson/feedback/explain-answer.tsx
-msgctxt "g00v5Z"
-msgid "Explaining your answer"
-msgstr "Cevabını açıklıyoruz"
-
-#: src/lesson/feedback/explain-answer.tsx
 msgctxt "aIkpfv"
 msgid "Explain my answer"
 msgstr "Cevabımı açıkla"
@@ -3363,11 +3353,6 @@ msgstr "Doğru cevap"
 msgctxt "RDZVQL"
 msgid "Check"
 msgstr "Kontrol et"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "IYUwzO"
-msgid "Checking your answer"
-msgstr "Cevabını kontrol ediyoruz"
 
 #: src/lesson/lesson-action-bar.tsx
 msgctxt "N2IrpM"

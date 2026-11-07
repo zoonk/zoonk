@@ -359,11 +359,6 @@ msgid "Start over with the original code"
 msgstr "元のコードからやり直す"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "nDyaq_"
-msgid "Running"
-msgstr "実行中"
-
-#: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/random-simulation/chance-simulation.tsx
 #: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "zG-cZG"
@@ -3252,11 +3247,6 @@ msgid "Why that answer misses"
 msgstr "この答えが正解ではない理由"
 
 #: src/lesson/feedback/explain-answer.tsx
-msgctxt "g00v5Z"
-msgid "Explaining your answer"
-msgstr "答えを解説しています"
-
-#: src/lesson/feedback/explain-answer.tsx
 msgctxt "aIkpfv"
 msgid "Explain my answer"
 msgstr "自分の答えの解説を見る"
@@ -3363,11 +3353,6 @@ msgstr "正解"
 msgctxt "RDZVQL"
 msgid "Check"
 msgstr "答え合わせ"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "IYUwzO"
-msgid "Checking your answer"
-msgstr "答え合わせをしています"
 
 #: src/lesson/lesson-action-bar.tsx
 msgctxt "N2IrpM"

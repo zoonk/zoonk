@@ -19,12 +19,12 @@ struct MistakePracticeStep: Equatable {
 }
 
 enum MistakePracticePhase: Equatable {
-  case answerFailed(answer: PracticeAnswer, timedOut: Bool)
+  case answerFailed(SentAnswer)
   case answering
-  case checking(answer: PracticeAnswer, timedOut: Bool)
+  case checking(SentAnswer)
   case ended(Components.Schemas.MistakePracticeCompletion?)
   case ending
-  case feedback(answer: PracticeAnswer, grade: MistakePracticeGrade, timedOut: Bool)
+  case feedback(answer: PracticeAnswer, grade: MistakePracticeGrade, sender: AnswerSender)
   case idea
   case reading
 }
@@ -81,17 +81,18 @@ struct MistakePracticeState: Equatable {
     phase = .answering
   }
 
-  mutating func check(_ answer: PracticeAnswer, timedOut: Bool) {
-    phase = .checking(answer: answer, timedOut: timedOut)
+  mutating func check(_ sent: SentAnswer) {
+    phase = .checking(sent)
   }
 
   mutating func answerFailed() {
-    guard case .checking(let answer, let timedOut) = phase else { return }
-    phase = .answerFailed(answer: answer, timedOut: timedOut)
+    guard case .checking(let sent) = phase else { return }
+    phase = .answerFailed(sent)
   }
 
   mutating func answered(_ grade: MistakePracticeGrade, mistakeId: String) {
-    guard case .checking(let answer, let timedOut) = phase else { return }
+    guard case .checking(let sent) = phase else { return }
+    let (answer, sender) = (sent.answer, sent.sender)
 
     answerIds.append(grade.answerId)
 
@@ -106,8 +107,9 @@ struct MistakePracticeState: Equatable {
 
     reached = reached.merged(with: grade.reached)
     // An explicit "not sure" is neutral; the clock running out stays a miss.
-    verdicts.append(!timedOut && answer.isDontKnow ? .read : (grade.isCorrect ? .right : .wrong))
-    phase = .feedback(answer: answer, grade: grade, timedOut: timedOut)
+    verdicts.append(
+      sender != .timer && answer.isDontKnow ? .read : (grade.isCorrect ? .right : .wrong))
+    phase = .feedback(answer: answer, grade: grade, sender: sender)
   }
 
   mutating func next() {

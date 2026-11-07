@@ -2,7 +2,7 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
-import { LanguagesIcon } from "lucide-react";
+import { LanguagesIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import {
@@ -63,8 +63,8 @@ export function AlphabetRow({
       {alphabet.pending && (
         <div className="flex flex-wrap items-center gap-2">
           <Button
-            disabled={isPending}
-            focusableWhenDisabled
+            busy={isPending}
+            icon={<SkipForwardIcon aria-hidden="true" />}
             onClick={skip}
             size="sm"
             variant="outline"

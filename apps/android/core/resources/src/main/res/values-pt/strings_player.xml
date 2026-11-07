@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "player_action_check": "b8175d1cb6fda592077a4eb437bc8c2bad76a186a1e73da583f3be51eb4cd1ab",
-  "player_action_checking": "07867817cda421d286b52d19f2322f51685fe46d01830bea84f44e22bffa576d",
   "player_action_confirm": "dfcb44196e3791d2371ed2ea87ce4ef2acb431655281abb161fd620953aa56a2",
   "player_action_continue": "d536e1b4d0859fca9954cb1cb2a8b7c656b96377ad40f9e189e2143d9864607b",
   "player_action_next": "9e7494472f522dc668eb5fd0146215e7d2f1235e083cae52410d88b496c3a09e",
@@ -72,7 +71,6 @@
   "player_explain_answer_failed": "386af5625c972ac6221ae2949dc8a1bc5ca6233ed636ca409e75e4a48d8d21ac",
   "player_explain_answer_title": "03e637c930834e4c82b8de0802aa8cb4e402dd5ef8aebe13c1258f733373fd63",
   "player_explain_first": "0b313ff0964170472770cb0d0e823f7da32b1f5c9dcd6e7aed0d78ef66b26b02",
-  "player_explaining_answer": "b29183b90eb70f601a7d8934362b76b6ec31e0a90c82af9954fdc62dc55e7cff",
   "player_finish": "e50ca159f1b705ce86bbf721ec8e8636b3798ebc867490aed934c006ebbaa6cd",
   "player_free_limit_day_description": "b5600a679d53bf37e9dfbca7f29f1c07e68fc63f1eff14cf0a344bd146d346d7",
   "player_free_limit_day_title": "f6b304528666e8897577f70f729f02ac3f14e1f133841530936a7239b0c70e9e",
@@ -165,7 +163,6 @@
   "player_start_failed_description": "c91e1d322bc184955213eb63d63c250c70d1aef91230b2eede3a71785edb144c",
   "player_start_failed_title": "faa0f3f06a55f142b79f948722a46a7e126cba33787ed3a2684fcf833ed0e4d5",
   "player_start_this_lesson": "191ea684aeecfd6eec9af469fadde2a13756a874f3c9852746fe81de6ad28a62",
-  "player_starting": "b7781f3a26743f0ccb39a0768ef9f8b8aebd474a23029cd122bb67f23fe0012d",
   "player_still_checking": "472c96379372752b54c4e9505bbd556f1d2c9dbab451ae9cf4d68a1bf605ebd9",
   "player_stop_failed": "dd8e6004caf4379a44737eb9b07cfb52ec5efb5bb30b0a88679f11b2b48a14c2",
   "player_stop_for_today": "c3a0fffb4eb01e7ae57b0af0048f1d6e14ec986412290e646a92889a3431808a",
@@ -220,7 +217,6 @@
     <string name="player_leave_description">Sua resposta ainda não foi conferida, então não será salva.</string>
     <string name="player_keep_writing">Continuar escrevendo</string>
     <string name="player_action_check">Conferir</string>
-    <string name="player_action_checking">Conferindo sua resposta</string>
     <string name="player_action_confirm">Confirmar</string>
     <string name="player_action_continue">Continuar</string>
     <string name="player_action_next">Próximo</string>
@@ -249,7 +245,6 @@
     <string name="player_spelled">Escrito:</string>
     <string name="player_correct_answer_label">Resposta:</string>
     <string name="player_explain_answer">Explicar minha resposta</string>
-    <string name="player_explaining_answer">Explicando sua resposta</string>
     <string name="player_explain_answer_failed">Não conseguimos explicar agora. Tente de novo em instantes.</string>
     <string name="player_explain_answer_title">Por que essa resposta não está certa</string>
     <!-- Heading of the panel that recaps the lesson, not a button. -->
@@ -308,7 +303,6 @@
     <string name="player_not_written_title">Esta aula ainda não foi criada</string>
     <string name="player_not_written_description">O Zoonk cria a aula quando você começa. Leva alguns minutos.</string>
     <string name="player_start_this_lesson">Começar esta aula</string>
-    <string name="player_starting">Começando…</string>
     <string name="player_writing_lesson">Criando sua aula</string>
     <string name="player_phase_plan">Planejando a aula</string>
     <string name="player_phase_plan_line_1">Escolhendo o que abordar…</string>

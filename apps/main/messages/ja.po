@@ -1201,16 +1201,6 @@ msgid "Download my data"
 msgstr "データをダウンロードする"
 
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
-msgctxt "cQNx6-"
-msgid "Preparing your data…"
-msgstr "データを準備しています…"
-
-#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
-msgctxt "Ob8gKI"
-msgid "Preparing…"
-msgstr "準備しています…"
-
-#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 msgctxt "5q3qC0"
 msgid "Download"
 msgstr "ダウンロード"
@@ -2553,11 +2543,6 @@ msgstr "このレッスンはまだ作成されていません"
 msgctxt "BdqTEJ"
 msgid "Zoonk writes it when you start. It takes a few minutes."
 msgstr "始めると、Zoonkがレッスンを作成します。数分ほどかかります。"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "RFCwI6"
-msgid "Starting…"
-msgstr "開始しています…"
 
 #: src/app/[lang]/mistakes/practice/page.tsx
 msgctxt "HGnX5e"

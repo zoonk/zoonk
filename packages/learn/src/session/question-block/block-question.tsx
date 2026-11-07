@@ -13,6 +13,7 @@ import {
   type LessonHref,
   isIdeaFirst,
   isReadFirst,
+  pressesCheck,
 } from "../../mistakes/drill/drill-types";
 import { ItemSetStimulus } from "../../questions/item-set-stimulus";
 import { ItemSupport } from "../../questions/item-text";
@@ -226,7 +227,8 @@ export function BlockQuestion({
 
   function timeUp() {
     blockDrill.timeUp();
-    void run.submit(NOT_SURE, { minDurationMs: (drill?.timeLimitSeconds ?? 0) * MS_PER_SECOND });
+    const minDurationMs = (drill?.timeLimitSeconds ?? 0) * MS_PER_SECOND;
+    void run.submit(NOT_SURE, { minDurationMs, sender: "timer" });
   }
 
   return (
@@ -308,8 +310,8 @@ function getMainAction({
 
   return {
     action: "check",
-    busy: phase.kind === "checking",
-    disabled: draft.answer === null,
+    busy: phase.kind === "checking" && pressesCheck(phase.sender),
+    disabled: phase.kind === "checking" || draft.answer === null,
     onPress: () => (draft.answer ? void run.submit(draft.answer) : undefined),
   };
 }
@@ -320,20 +322,19 @@ export function BlockQuestionActions(props: BlockActionsProps) {
   const { phase } = props.run.state;
   const checking = phase.kind === "checking";
   const asking = phase.kind === "answering" || checking || phase.kind === "answerFailed";
-  const offersNotSure = stage !== "reading" && asking;
-  const notSure = () => void props.run.submit(NOT_SURE);
+  const noGuessing = drill?.kind === "noGuessing";
+  const notSureFits = noGuessing || props.question.placement || props.question.format === "typed";
 
   return (
     <>
-      {drill?.kind === "noGuessing" && offersNotSure && (
-        <NotSureButton disabled={checking} onClick={notSure} />
+      {stage !== "reading" && asking && notSureFits && (
+        <NotSureButton
+          busy={checking && phase.sender === "notSure"}
+          disabled={checking}
+          label={noGuessing ? undefined : t("I don't know yet")}
+          onClick={() => void props.run.submit(NOT_SURE, { sender: "notSure" })}
+        />
       )}
-
-      {(props.question.placement || props.question.format === "typed") &&
-        drill?.kind !== "noGuessing" &&
-        offersNotSure && (
-          <NotSureButton disabled={checking} label={t("I don't know yet")} onClick={notSure} />
-        )}
 
       <QuestionMainButton {...getMainAction(props)} />
     </>

@@ -2,6 +2,7 @@ import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import { PricingBarLink } from "@/components/public/public-nav-links";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { LogInIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
 export async function LoginBarLink({
@@ -14,7 +15,10 @@ export async function LoginBarLink({
   const t = await getExtracted();
 
   return (
-    <CurrentPageLoginLink className={cn(buttonVariants({ size: "bar", variant }), className)}>
+    <CurrentPageLoginLink
+      className={cn(buttonVariants({ size: "bar", variant }), className)}
+      icon={<LogInIcon aria-hidden="true" />}
+    >
       {t("Log in")}
     </CurrentPageLoginLink>
   );

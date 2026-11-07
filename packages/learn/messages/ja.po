@@ -557,16 +557,14 @@ msgstr "すでに知っている内容ですか？"
 #: src/_components/test-out-start-link.tsx
 #: src/conversation/tutor-tool-offer.tsx
 #: src/session/test-out-offer.tsx
-msgctxt "osZ9ZA"
-msgid "Opening the test…"
-msgstr "テストを開いています…"
-
-#: src/_components/test-out-start-link.tsx
-#: src/conversation/tutor-tool-offer.tsx
-#: src/session/test-out-offer.tsx
 msgctxt "May4OJ"
 msgid "Take the test"
 msgstr "テストを受ける"
+
+#: src/_components/test-out-start-link.tsx
+msgctxt "osZ9ZA"
+msgid "Opening the test…"
+msgstr "テストを開いています…"
 
 #: src/_components/test-out-start-link.tsx
 msgctxt "2xFPbE"
@@ -2091,16 +2089,6 @@ msgid "Still starting. This is taking longer than usual."
 msgstr "まだ開始の準備をしています。いつもより時間がかかっています。"
 
 #: src/challenge/challenge-footer.tsx
-#: src/language/conversation/call-intro-footer.tsx
-#: src/language/exam-speaking/speaking-task-row.tsx
-#: src/language/progress/speaking-mock-card.tsx
-#: src/plan/focus-test/focus-test-screen.tsx
-#: src/questions/test-out-preparing.tsx
-msgctxt "RFCwI6"
-msgid "Starting…"
-msgstr "開始しています…"
-
-#: src/challenge/challenge-footer.tsx
 #: src/mock/mock-chooser.tsx
 msgctxt "-HglUD"
 msgid "Start the mock exam"
@@ -3271,12 +3259,6 @@ msgstr "採点結果を見る"
 msgctxt "othn-n"
 msgid "Rewrite what needs work"
 msgstr "改善が必要な部分を書き直す"
-
-#: src/essay/essay-screen.tsx
-#: src/mock/mock-screen.tsx
-msgctxt "yWVqHs"
-msgid "Grading…"
-msgstr "採点しています…"
 
 #: src/essay/essay-screen.tsx
 msgctxt "Wleedk"
@@ -6998,16 +6980,6 @@ msgid "Download my memory"
 msgstr "メモリをダウンロードする"
 
 #: src/memory/memory-screen.tsx
-msgctxt "ySF1Q_"
-msgid "Preparing your memory…"
-msgstr "メモリを準備しています…"
-
-#: src/memory/memory-screen.tsx
-msgctxt "Ob8gKI"
-msgid "Preparing…"
-msgstr "準備しています…"
-
-#: src/memory/memory-screen.tsx
 msgctxt "owirfw"
 msgid "We couldn't prepare the download. Try again."
 msgstr "ダウンロードの準備ができませんでした。もう一度お試しください。"
@@ -8057,12 +8029,6 @@ msgid "One subject"
 msgstr "1科目"
 
 #: src/mock/mock-chooser.tsx
-#: src/session/summary/summary-steps.tsx
-msgctxt "Hlc1zt"
-msgid "Getting it ready…"
-msgstr "準備しています…"
-
-#: src/mock/mock-chooser.tsx
 msgctxt "a5f0pz"
 msgid "Start with {count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, other {#問から始める}}"
@@ -8890,12 +8856,6 @@ msgctxt "z1R1nT"
 msgid "Hand in this section"
 msgstr "このセクションを提出する"
 
-#: src/mock/mock-runner-view.tsx
-#: src/mock/mock-screen.tsx
-msgctxt "0QKYRq"
-msgid "Handing in…"
-msgstr "提出しています…"
-
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
 msgid "Mock exam handed in"
@@ -9221,11 +9181,6 @@ msgid "A short explanation written for you, about 5 minutes."
 msgstr "5分ほどで読める、一人ひとりに合わせた短い解説です。"
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "rnVK11"
-msgid "Opening your explanation…"
-msgstr "解説を開いています…"
-
-#: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "n-6wcY"
 msgid "Explain it"
 msgstr "説明する"
@@ -9287,12 +9242,6 @@ msgstr "演奏や歌を教えるには、実際の音を聴く必要がありま
 msgctxt "irzzdg"
 msgid "Musicianship for {instrument}: hear chords, read short melodies and keep the beat. No microphone needed."
 msgstr "{instrument}に役立つ音楽の基礎を学びます。和音を聴き分けたり、短いメロディーの楽譜を読んだり、リズムをとったりします。マイクは不要です。"
-
-#: src/onboarding/entry/goal-outcomes.tsx
-#: src/onboarding/understood/understood-screen.tsx
-msgctxt "LlWqkT"
-msgid "Saving your goal…"
-msgstr "目標を保存しています…"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "2zqqBZ"
@@ -10509,13 +10458,6 @@ msgstr "例年の日程から予想しています。正式な日程が発表さ
 msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "出典：{source}"
-
-#: src/onboarding/understood/understood-row.tsx
-#: src/plan/plan-date.tsx
-#: src/plan/plan-focus.tsx
-msgctxt "WUV28A"
-msgid "Saving…"
-msgstr "保存しています…"
 
 #: src/onboarding/understood/understood-row.tsx
 msgctxt "C9D4Tz"
@@ -13068,6 +13010,11 @@ msgstr "+{bonus}"
 msgctxt "DhH9Oq"
 msgid "{count, plural, one {+# level} other {+# levels}}"
 msgstr "{count, plural, other {+#レベル}}"
+
+#: src/session/summary/summary-steps.tsx
+msgctxt "Hlc1zt"
+msgid "Getting it ready…"
+msgstr "準備しています…"
 
 #: src/session/summary/summary-steps.tsx
 msgctxt "vrNWq4"

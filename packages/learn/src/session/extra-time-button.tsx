@@ -2,6 +2,7 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../_components/save-error";
 import { useSessionAction } from "./use-session-action";
@@ -27,9 +28,9 @@ export function ExtraTimeButton({
   return (
     <>
       <Button
+        busy={isPending}
         className={cn("w-full", className)}
-        disabled={isPending}
-        focusableWhenDisabled
+        icon={<PlayIcon aria-hidden="true" />}
         onClick={run}
         size="xl"
         variant="ghost"

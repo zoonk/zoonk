@@ -56,12 +56,11 @@ struct PlanBuildingView: View {
               comment: "Says the run building the plan failed")
           }
 
-          Button {
+          BusyButton(isBusy: isRestarting, isRow: true) {
             Task { await restart() }
           } label: {
             Text("Try again", tableName: "Plan", comment: "Starts building the plan again")
           }
-          .disabled(isRestarting)
 
           if run.status == .missing {
             Button {

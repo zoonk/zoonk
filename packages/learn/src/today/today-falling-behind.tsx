@@ -3,7 +3,7 @@
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { safeAsync } from "@zoonk/utils/error";
-import { CalendarClockIcon } from "lucide-react";
+import { CalendarClockIcon, CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useState, useTransition } from "react";
 import {
@@ -78,10 +78,12 @@ function BehindChoices({
   behind,
   isPending,
   keep,
+  superseded,
 }: {
   behind: Behind;
   isPending: boolean;
   keep: () => void;
+  superseded: boolean;
 }) {
   const t = useExtracted();
   const adjustTimeLabel = useAdjustTimeLabel();
@@ -100,7 +102,14 @@ function BehindChoices({
     adjustTime: link("adjustTime", actions.adjustTimeHref, adjustTimeLabel),
     focus: behind.canFocus && link("focus", actions.chooseFocusHref, t("Choose where to focus")),
     keep: (
-      <SuggestionAction disabled={isPending} key="keep" onClick={keep} variant={variant("keep")}>
+      <SuggestionAction
+        busy={isPending}
+        disabled={superseded}
+        icon={<CheckIcon aria-hidden="true" />}
+        key="keep"
+        onClick={keep}
+        variant={variant("keep")}
+      >
         {t({
           description: "Keeps the learner's daily study time as it is.",
           message: "Keep my time",
@@ -193,7 +202,12 @@ export function FallingBehindNotice({
         {answered ? (
           <SuggestionResult>{result}</SuggestionResult>
         ) : (
-          <BehindChoices behind={behind} isPending={isPending || superseded} keep={keep} />
+          <BehindChoices
+            behind={behind}
+            isPending={isPending}
+            keep={keep}
+            superseded={superseded}
+          />
         )}
 
         {answer && "failed" in answer && <SuggestionSaveError />}

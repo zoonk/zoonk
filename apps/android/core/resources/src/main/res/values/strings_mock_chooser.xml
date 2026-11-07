@@ -4,7 +4,6 @@
     <string name="mock_chooser_rule">Your result only shows at the end, like on exam day.</string>
     <string name="mock_chooser_pick_free">Pick how much of the exam to take now.</string>
     <string name="mock_chooser_start">Start</string>
-    <string name="mock_chooser_getting_ready">Getting it ready…</string>
     <plurals name="mock_chooser_start_with">
         <item quantity="one">Start with %d question</item>
         <item quantity="other">Start with %d questions</item>

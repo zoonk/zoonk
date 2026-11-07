@@ -44,6 +44,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.StatusMessage
@@ -195,6 +196,7 @@ private fun PracticeDone(
             title = stringResource(R.string.practice_done_title),
             action = stringResource(R.string.navigation_back),
             saving = end == null,
+            actionLeadingIcon = { ButtonIcon(R.drawable.ic_arrow_back) },
             onClose = onClose,
             detail = if (end != null && comesBack) stringResource(R.string.mistakes_practice_comes_back) else null,
         ) {

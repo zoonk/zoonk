@@ -5,6 +5,7 @@ import {
   GenerationTimelineDescription,
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
+import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { type HelpLimit, HelpLimitNotice } from "../../_components/help-limit-notice";
@@ -30,6 +31,8 @@ import { type FocusTestOutcome, FocusTestResult } from "./focus-test-result";
 export type { FocusTestOutcome } from "./focus-test-result";
 
 const SECONDS_PER_QUESTION = 30;
+
+const START_ICON = <PlayIcon aria-hidden="true" />;
 
 const SECONDS_PER_MINUTE = 60;
 
@@ -93,8 +96,8 @@ function FocusTestIntro({
           </StatusRegion>
 
           {!limit && (
-            <TaskMainButton busy={preparing?.starting ?? false} onClick={onStart}>
-              {preparing?.starting ? t("Starting…") : t("Start the test")}
+            <TaskMainButton busy={preparing?.starting} icon={START_ICON} onClick={onStart}>
+              {t("Start the test")}
             </TaskMainButton>
           )}
         </>

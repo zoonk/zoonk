@@ -1,5 +1,6 @@
 "use client";
 
+import { PlayIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useEffect } from "react";
 import { Steps, type StepsItem } from "../_components/steps";
@@ -61,7 +62,11 @@ function WeeklySummarySteps() {
   return (
     <Steps
       exitHref={hrefs.close}
-      finalAction={<TaskMainLink href={hrefs.start}>{t("Let's go")}</TaskMainLink>}
+      finalAction={
+        <TaskMainLink href={hrefs.start} icon={<PlayIcon aria-hidden="true" />}>
+          {t("Let's go")}
+        </TaskMainLink>
+      }
       items={items}
     />
   );

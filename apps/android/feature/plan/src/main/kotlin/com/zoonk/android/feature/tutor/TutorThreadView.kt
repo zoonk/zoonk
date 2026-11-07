@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -290,13 +289,7 @@ private fun EarlierQuestions(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        OutlinedButton(onClick = onLoad, enabled = !state.loadingEarlier) {
-            if (state.loadingEarlier) {
-                CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), strokeWidth = 2.dp)
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            }
-            Text(stringResource(R.string.tutor_load_earlier))
-        }
+        OutlinedButton(onClick = onLoad, busy = state.loadingEarlier) { Text(stringResource(R.string.tutor_load_earlier)) }
     }
 }
 

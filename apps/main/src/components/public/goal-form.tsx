@@ -103,7 +103,7 @@ export function GoalForm({
           </div>
         </div>
 
-        <GoalFieldSubmit className="self-end" disabled={sending} pending={sending}>
+        <GoalFieldSubmit busy={sending} className="self-end">
           {t("Build my plan")}
         </GoalFieldSubmit>
       </GoalField>

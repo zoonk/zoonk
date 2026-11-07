@@ -2,7 +2,6 @@
 
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { Button } from "@zoonk/ui/components/button";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { LightbulbIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -46,14 +45,13 @@ export function ExplainAnswer({ answer, stepId }: { answer: string; stepId: stri
   return (
     <div aria-live="polite" className="flex flex-col items-start gap-2">
       <Button
-        disabled={state.status === "loading"}
-        focusableWhenDisabled
+        busy={state.status === "loading"}
+        icon={<LightbulbIcon aria-hidden="true" />}
         onClick={() => void request()}
         size="sm"
         variant="outline"
       >
-        {state.status === "loading" ? <Spinner /> : <LightbulbIcon aria-hidden="true" />}
-        {state.status === "loading" ? t("Explaining your answer") : t("Explain my answer")}
+        {t("Explain my answer")}
       </Button>
 
       {state.status === "failed" && (

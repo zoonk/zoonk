@@ -15,7 +15,6 @@
   "testout_rule": "8efd3b0cd78d5087311748667f1bd2074e1f572db3be383ee28f902790d5ff11",
   "testout_see_plus": "c80e0c256bb6aed73f7964d111cdaa00ab930f233da8efef7c4e1c626b77e448",
   "testout_start": "917f1d50f3fa80816ec07b9739a2dc61128a2fa5023e98949ce576f6a35f9c9a",
-  "testout_starting": "ee0b06e544d1c76148960a2f0fb337293c9947bb75a087baea833649d23df66b",
   "testout_this_chapter": "d59645865e336f44929124207bfb055de97f766160952e3ab3ca934df70f5166",
   "testout_title": "35b9c7686bdc04af461903cb500f7777e1e712b6976f90cd453b0cbc4ad8f44a",
   "testout_writing": "d203b06aa867181093df2cfc838fa8e0a4ce5f13d4cd0ac6c89b32c1afe9bdbe",
@@ -33,7 +32,6 @@
     <string name="testout_intro_title">¿Ya lo sabes?</string>
     <string name="testout_intro_detail">Unas preguntas sobre este capítulo. Si te va bien, tu plan se salta lo que ya sabes.</string>
     <string name="testout_start">Comenzar la prueba</string>
-    <string name="testout_starting">Iniciando…</string>
     <string name="testout_see_plus">Ver Plus</string>
     <string name="testout_writing">Preparando tus preguntas</string>
     <string name="testout_writing_questions">Preparando preguntas sobre este capítulo</string>

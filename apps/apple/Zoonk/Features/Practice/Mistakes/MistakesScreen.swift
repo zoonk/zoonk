@@ -174,12 +174,11 @@ private struct MistakeListSections: View {
 
       if list.pagination.hasMore {
         Section {
-          Button {
+          BusyButton(isBusy: isLoadingMore, isRow: true) {
             Task { await loadMore() }
           } label: {
             Text("Show more", tableName: "Practice", comment: "Loads the notebook's next page.")
           }
-          .disabled(isLoadingMore)
         }
       }
     } else if case .failed(let error) = resource.state {

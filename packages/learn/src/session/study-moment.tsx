@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
-import { Spinner } from "@zoonk/ui/components/spinner";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { CircleStopIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { EnterButton } from "../_components/enter-button";
 import { KindMark } from "../_components/kind-tile";
@@ -116,8 +116,8 @@ function MomentActions({
       <TaskActions className={cn(!sessionCompleted && "max-lg:flex-col max-lg:items-stretch")}>
         {!sessionCompleted && (
           <Button
-            disabled={stop.isPending}
-            focusableWhenDisabled
+            busy={stop.isPending}
+            icon={<CircleStopIcon aria-hidden="true" />}
             onClick={stop.run}
             size="xl"
             variant="outline"
@@ -126,8 +126,7 @@ function MomentActions({
           </Button>
         )}
 
-        <EnterButton disabled={proceed.isPending} onClick={proceed.run}>
-          {proceed.isPending && <Spinner aria-hidden="true" />}
+        <EnterButton busy={proceed.isPending} onClick={proceed.run} {...FORWARD_ICON}>
           {sessionCompleted ? t("See today's summary") : t("Continue")}
         </EnterButton>
       </TaskActions>

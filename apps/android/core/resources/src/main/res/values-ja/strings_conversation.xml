@@ -140,7 +140,6 @@
   "conversation_start": "3a6f43dd984494d73a62566ddb496074090cc4469347633770b1ab611a734d13",
   "conversation_start_failed": "1145656c50b77819e09ef25cc07296281a34bf0297cb44fcbb0ce814f38a7022",
   "conversation_start_preparing": "4886c7eb21efc24ca3fa3fa398443c4aa54943382e58367863debd2233591a15",
-  "conversation_starting": "0028986903612d8b372619e3a49c93a38ff3d2f33479d559b1e524fdff69542e",
   "conversation_still_closing": "27de0396ef3cfd4767817efdd588bc4179bf5798d08cf037a3cdd2a11265fcb2",
   "conversation_still_to_get_across": "8c7caa10974b3c03bf1151517e2e7474da71ff0f9bec0e3c3b3b0b9203615082",
   "conversation_study_time_used_up": "54b639debf056c43703adb2dedfe26a554dde0253d1ed7c2f16a3c12fd335321",
@@ -209,7 +208,6 @@
     <!-- Starts a phone call with the character, whose name follows. -->
     <string name="conversation_call">%1$sさんと会話練習をする</string>
     <string name="conversation_start">会話を始める</string>
-    <string name="conversation_starting">開始しています…</string>
     <string name="conversation_start_failed">会話を開始できませんでした。少し待ってから、もう一度試してください。</string>
     <string name="conversation_challenge_plus">チャレンジの会話はPlusで利用できます。会話がなくても学習計画は進みます。</string>
     <!-- The microphone permission was denied; the character's name. -->

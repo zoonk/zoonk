@@ -26,7 +26,6 @@
   "essay_full_marks": "48f6ccdad0c55f3c689d7b734f8fac201bd87c8392b7230d7c6f003cdf856c01",
   "essay_grade_rewrite": "f0d362237109a7981c6d4b49c9e45ef57da8c642b9d7a90284b1ded54ceee4ce",
   "essay_grading": "efc1afbd9724e8d9a18e9ad76ab1f4a3bd64ea28a0b82603ca175a2cdc0e1661",
-  "essay_grading_button": "9940557f1f5b5ec9b238dcdf6f279a35ed9797e247a8c77534e5122cc55ce370",
   "essay_grading_slow": "e945df7d62ee071ffdc45ddf7741cd612819bdf48bc28bf903dfe3a0dea9648a",
   "essay_keep_writing": "e037acbecca2ede5d6c7e5097764b7e6e03f28bbdf59217dd27bc337b1556c9b",
   "essay_last_grade": "40d2275dfe479cc682fdd62c5cd3764dd1d053f3054acef65c8bc0f52d0f7b50",
@@ -115,7 +114,6 @@
     <string name="essay_grading">Estamos revisando tu redacción según cada criterio. Puede tardar hasta 30 segundos.</string>
     <string name="essay_grading_slow">Aún estamos calificando. Está tardando más de lo habitual.</string>
     <string name="essay_skip_rewrite">Saltar la reescritura</string>
-    <string name="essay_grading_button">Calificando…</string>
     <string name="essay_grade_rewrite">Calificar la nueva versión</string>
     <string name="essay_send">Enviar a calificar</string>
     <string name="essay_leave_title">¿Salir por ahora?</string>

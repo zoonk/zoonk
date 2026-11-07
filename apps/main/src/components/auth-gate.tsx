@@ -14,7 +14,7 @@ import {
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
-import { LockIcon } from "lucide-react";
+import { LockIcon, LogInIcon, UserPlusIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { cookies } from "next/headers";
 
@@ -51,7 +51,11 @@ export async function AuthGate({
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <PendingLink className={buttonVariants()} href={loginHref}>
+          <PendingLink
+            className={buttonVariants()}
+            href={loginHref}
+            icon={<UserPlusIcon aria-hidden="true" />}
+          >
             {t("Create an account")}
           </PendingLink>
         </EmptyContent>
@@ -76,7 +80,11 @@ export async function AuthGate({
       </EmptyHeader>
       <EmptyContent>
         <div className="flex flex-wrap gap-2">
-          <PendingLink className={buttonVariants()} href={loginHref}>
+          <PendingLink
+            className={buttonVariants()}
+            href={loginHref}
+            icon={<LogInIcon aria-hidden="true" />}
+          >
             {t("Log in")}
           </PendingLink>
           <Link className={buttonVariants({ variant: "outline" })} href="/start">

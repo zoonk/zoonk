@@ -15,7 +15,6 @@
     <!-- How long the test takes. %1$s is a duration, such as "5 min". -->
     <string name="focustest_about">About %1$s</string>
     <string name="focustest_start">Start the test</string>
-    <string name="focustest_starting">Starting…</string>
 
     <string name="focustest_writing">Writing your questions</string>
     <string name="focustest_writing_questions">Writing questions on each subject</string>

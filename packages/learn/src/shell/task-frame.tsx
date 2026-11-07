@@ -1,8 +1,7 @@
 "use client";
 
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { BusyContent, Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useEnterKey, useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { createOnDemand } from "@zoonk/ui/lib/on-demand";
@@ -260,8 +259,10 @@ export function TaskMainButton({
   children,
   className,
   disabled = false,
+  icon,
+  iconPosition,
   onClick,
-}: {
+}: Pick<React.ComponentProps<typeof Button>, "icon" | "iconPosition"> & {
   busy?: boolean;
   children: React.ReactNode;
   className?: string;
@@ -277,27 +278,31 @@ export function TaskMainButton({
   return (
     <Button
       aria-keyshortcuts="Enter"
+      busy={busy}
       className={cn(TASK_MAIN_ACTION_CLASS, className)}
-      disabled={isDisabled}
+      disabled={disabled || !mounted}
       focusableWhenDisabled
+      icon={icon}
+      iconPosition={iconPosition}
       onClick={onClick}
       ref={ref}
       size="xl"
     >
-      {busy && <Spinner aria-hidden="true" />}
       {children}
-      {!busy && <ShortcutKbd tone="inverse">⏎</ShortcutKbd>}
+      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
     </Button>
   );
 }
 
+/** It moves on, with the trailing forward arrow, unless it's given another `icon`. */
 export function TaskMainLink({
   children,
   className,
   href,
   steadyMs = 0,
   toApp = false,
-}: {
+  ...iconProps
+}: Pick<React.ComponentProps<typeof Button>, "icon" | "iconPosition"> & {
   children: React.ReactNode;
   className?: string;
   href: string;
@@ -331,8 +336,10 @@ export function TaskMainLink({
       onClick={onClick}
       ref={ref}
     >
-      {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <BusyContent {...(iconProps.icon ? iconProps : FORWARD_ICON)}>
+        {children}
+        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      </BusyContent>
     </LearnLink>
   );
 }

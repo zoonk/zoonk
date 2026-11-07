@@ -6,7 +6,6 @@
   "mock_chooser_failed": "9731b60b42cdcd5963e060c25e2c7c07f65d969df6e65936459c1741ce06d88a",
   "mock_chooser_full_day_number_without": "0d7e879b5d474ad99d12e8b1e810f9864b454df4ccd5aed3c66a364ab2b6e34f",
   "mock_chooser_full_day_without": "4774208025080fe2522e4bca6e998f85225a46d5cfbd60459295344383b1c29f",
-  "mock_chooser_getting_ready": "65e00c83ffbc721698a75d38138fb816d2bedf2093b91c5b7bf0f03679ce23f3",
   "mock_chooser_last_mock": "3995d50ff26ddbc4242ac008a2d2a27f2a32a759140ec590fe0a38790217bac7",
   "mock_chooser_left_out_choice": "603ce058a2270989cda6fe617ab5fdeb9bbf19034e200ec373e720426e2d229e",
   "mock_chooser_left_out_listening": "76a0446a7bfaa06188694b41c07683c29f760283625b56ee4661ebc601542864",
@@ -79,7 +78,6 @@
     <string name="mock_chooser_rule">실제 시험처럼 결과는 마지막에만 확인할 수 있어요.</string>
     <string name="mock_chooser_pick_free">지금 풀 분량을 선택하세요.</string>
     <string name="mock_chooser_start">시작하기</string>
-    <string name="mock_chooser_getting_ready">준비하고 있어요…</string>
     <plurals name="mock_chooser_start_with">
         <item quantity="other">%d문제로 시작하기</item>
     </plurals>

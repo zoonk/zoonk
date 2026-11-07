@@ -43,7 +43,6 @@
   "challenge_start": "02e58d339545ee85aef7f64d6df1468bef04d213987e3783aa234d55a9c26aea",
   "challenge_start_failed": "2bdf6a415bfb9631af8d973525aa9ad3d0bba27e3faad9faa64a8d3ba2c2058a",
   "challenge_start_slow": "a549d3f1f569259be481bb393f0b5ce374670f2002e58c232025a675dae47e3e",
-  "challenge_starting": "69d6f64c1e3540e0446c96bade7f01d3372f9cb190ae2ab828d7d0f082e6301d",
   "challenge_today": "f3ac16a35863b7ae309558be8e27e0957b820d4f5c1bf47fe01ec440ed9b0131",
   "challenge_tomorrow": "069f78c85148769e18888e5fdfb290176268fe2066cce7c4a2713a0f9e687425",
   "challenge_topic_count": "cf684fe3afe2916c6a5969543ade6a36c9107f414fe38ae23090533b5cbbda38",
@@ -137,7 +136,6 @@
     </plurals>
     <string name="challenge_call_plus">챌린지 대화는 Plus에서 이용할 수 있어요. 대화 없이도 계획은 계속 진행돼요.</string>
     <string name="challenge_start">시작하기</string>
-    <string name="challenge_starting">시작 중…</string>
     <string name="challenge_start_failed">처리하지 못했어요. 잠시 후에 다시 시도해 보세요.</string>
     <string name="challenge_start_slow">아직 시작을 준비하고 있어요. 평소보다 오래 걸리고 있어요.</string>
     <string name="challenge_continue">계속하기</string>

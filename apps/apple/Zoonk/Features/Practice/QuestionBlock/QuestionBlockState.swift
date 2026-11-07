@@ -1,10 +1,16 @@
 import Foundation
 
+struct SentAnswer: Equatable {
+  let answer: PracticeAnswer
+  let sender: AnswerSender
+  let durationMs: Int
+}
+
 enum QuestionBlockPhase: Equatable {
   case alreadyAnswered
-  case answerFailed
+  case answerFailed(SentAnswer)
   case answering
-  case checking
+  case checking(SentAnswer)
   case feedback(answer: PracticeAnswer, feedback: PracticeFeedback)
   case finishFailed
   case finished(Components.Schemas.StudyBlockCompletion)
@@ -13,9 +19,16 @@ enum QuestionBlockPhase: Equatable {
   case finishReady
   case finishing
 
-  var isAnswering: Bool { self == .answering || self == .checking || self == .answerFailed }
+  var acceptsAnswer: Bool {
+    switch self {
+    case .answering, .answerFailed: true
+    default: false
+    }
+  }
 
-  var acceptsAnswer: Bool { self == .answering || self == .answerFailed }
+  var checking: AnswerSender? {
+    if case .checking(let sent) = self { sent.sender } else { nil }
+  }
 }
 
 /// A wrong answer cancels a right one.
@@ -49,8 +62,8 @@ struct QuestionBlockState: Equatable {
 
   var total: Int { questions.count }
 
-  mutating func check() {
-    phase = .checking
+  mutating func check(_ sent: SentAnswer) {
+    phase = .checking(sent)
   }
 
   mutating func answered(_ answer: PracticeAnswer, feedback: PracticeFeedback, itemId: String) {
@@ -60,7 +73,8 @@ struct QuestionBlockState: Equatable {
   }
 
   mutating func answerFailed() {
-    phase = .answerFailed
+    guard case .checking(let sent) = phase else { return }
+    phase = .answerFailed(sent)
   }
 
   mutating func alreadyAnswered() {

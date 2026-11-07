@@ -1,7 +1,7 @@
 "use client";
 
 import { type MistakePatternView } from "@zoonk/core/language/patterns/contract";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { cn } from "@zoonk/ui/lib/utils";
-import { BookOpenIcon, EllipsisIcon } from "lucide-react";
+import { BookOpenIcon, CheckIcon, EllipsisIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { DrawerCloseButton } from "../../_components/details-drawer";
@@ -51,7 +51,7 @@ function DoneAction({ exitHref }: { exitHref: string }) {
 
   return (
     <TaskActions>
-      <TaskMainLink href={exitHref} toApp>
+      <TaskMainLink href={exitHref} icon={<CheckIcon aria-hidden="true" />} toApp>
         {t("Done")}
       </TaskMainLink>
     </TaskActions>
@@ -212,11 +212,15 @@ export function LanguagePatternScreen({
           {drill.failed && <AnswersSaveError onRetry={drill.retry} />}
           <TaskActions>
             {checked ? (
-              <TaskMainButton busy={drill.isSaving} onClick={drill.next}>
+              <TaskMainButton busy={drill.isSaving} onClick={drill.next} {...FORWARD_ICON}>
                 {isLast ? t("See how you did") : t("Continue")}
               </TaskMainButton>
             ) : (
-              <TaskMainButton disabled={drill.picked === null} onClick={drill.check}>
+              <TaskMainButton
+                disabled={drill.picked === null}
+                icon={<CheckIcon aria-hidden="true" />}
+                onClick={drill.check}
+              >
                 {t("Check")}
               </TaskMainButton>
             )}

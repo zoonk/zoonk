@@ -20,10 +20,9 @@ import {
   LevelChoiceList,
   toLevelAnswer,
 } from "@zoonk/learn/onboarding/level-choices";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
-import { Loader2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 
@@ -169,15 +168,16 @@ function CourseStartForm({
 
         {!blocked && (
           <OnboardingPrimaryButton
-            disabled={pending || (isMounted && level === null)}
+            busy={pending}
+            disabled={isMounted && level === null}
             onClick={(event) => {
               event.preventDefault();
               startHere();
             }}
             type="submit"
+            {...FORWARD_ICON}
           >
             {t("Build my plan")}
-            {pending && <Loader2Icon aria-hidden="true" className="animate-spin" />}
           </OnboardingPrimaryButton>
         )}
 

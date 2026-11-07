@@ -151,7 +151,6 @@
   "onboarding_musicianship_title": "02cd707908da579bd360b0c932bbe7eadf23a56530672ff98b254e166dfa1487",
   "onboarding_my_notes": "39cf9540acc66a031e0ae878b5d9360691a3330cbc61b5f9e4c93ef91f491976",
   "onboarding_no_date": "d4451f448c431d3d91c40745c234f82a27bda8c85421edddf1f5fb198c063bac",
-  "onboarding_opening_explanation": "343d720f614ee798b39611444477c74e31430a54de9fd71e81509861c76ed946",
   "onboarding_paste_link": "0a1731269c36f190ee7bef3e3a0861d860d6aaf88b52350d3e6d2abf328e6990",
   "onboarding_paste_link_placeholder": "15cd6ff5739d7485fa22d8b55d9f10338aebd7e30c161068634957f19bffbaf7",
   "onboarding_paste_text": "8126a31b71d0320038e45f540a8b72297013965287668a8a458f8f19ad07d8ec",
@@ -369,8 +368,6 @@
   "onboarding_row_your_role": "1a5e27aa8503ecba4b1dbb325fcdc5e2e53dd65973717e1d88e0815ba26496e7",
   "onboarding_save": "4dc5ea3390068fd01c0c162bab17b81723a1aa9c60dd20b92a6e6d72650adc59",
   "onboarding_save_failed": "8b66e753d4d22138d836c2d257bb35eae780709aa3b451840cef665d5eaf46d3",
-  "onboarding_saving": "51f1bb876579fe4f7f4d54fb06f31dfc1fe39130a8c610e140f937d0f8bbb36b",
-  "onboarding_saving_goal": "eeecb2982d0c41ea5197bd94ec8f61fc32885b437846a8c3103d20671a3bb06c",
   "onboarding_schedule_time_label": "edc40e1bdd5a4da3d1294901baad84fe5bcd4a7f3e9f2761e75c93d60ca714a2",
   "onboarding_schedule_title": "78f46439681098daf9288049fbd786cd4d901cf42267ce1bd37e763f1184f3c8",
   "onboarding_score_placeholder": "a5d366dacbd42353e2c81e35fc6094974afbb93df232cb81cf4e15bdbeee08b8",
@@ -488,7 +485,6 @@
     <!-- The same, for two or more goals shown just above. -->
     <string name="onboarding_understood_locked_goals">Plusに登録すると、複数の目標に同時に取り組めます。それまでは、これらの目標は目標一覧に残ります。</string>
     <string name="onboarding_looks_right">この内容で進める</string>
-    <string name="onboarding_saving_goal">目標を保存しています…</string>
     <string name="onboarding_fix_something">内容を修正する</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
     <string name="onboarding_what_you_wrote">入力した内容</string>
@@ -496,7 +492,6 @@
     <string name="onboarding_read_again">もう一度読み取る</string>
     <string name="onboarding_cancel">キャンセル</string>
     <string name="onboarding_save">保存する</string>
-    <string name="onboarding_saving">保存しています…</string>
     <!-- Edit button of a fact. %1$s is the fact's label, like "Exam date". -->
     <string name="onboarding_edit_fact">%1$sを編集</string>
     <string name="onboarding_use_this_date">この日付にする</string>
@@ -553,7 +548,6 @@
     <!-- After a goal the learner typed turned out to be a question. -->
     <string name="onboarding_explain_description">知りたいことをまとめた、5分ほどで読める短い解説です。</string>
     <string name="onboarding_explain_it">説明を聞く</string>
-    <string name="onboarding_opening_explanation">解説を開いています…</string>
     <string name="onboarding_declined_title">この目標には対応できません</string>
     <string name="onboarding_declined_description">Zoonkでは、自分やほかの人を傷つけること、ギャンブル、不正行為の方法は教えていません。ほかに学びたいことはありますか？</string>
     <string name="onboarding_try_another_goal">別の目標を試す</string>

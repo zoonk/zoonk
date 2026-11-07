@@ -299,7 +299,6 @@
   "plan_full_reviews_done": "dd442ecf4854ffd3dc7359a45a7bf0125d136ed6a068e4f1ad04725e552537b0",
   "plan_gain_this_week": "63d2e0bfc007e544e9918d131b333672f985b05a9248c1aaf4668744a76a4a47",
   "plan_get_recommendation": "564ff2cd3af329fc60e18931e8ae9f52061a74a321adb3c1bcc83f4130311191",
-  "plan_getting_recommendation": "96ae035d6579659363e377f3b9d3cfe9ca190406ba3b275563479402ffe58c85",
   "plan_go_to_today": "f84146d0a318222dc7292256a3b8be6b8fcc243a4f2cfb0ed0f728ed35566cc6",
   "plan_goal_date": "1cbecdc3fc356730a16ba0c6b1e9d114715b3f2ffb1d4f58ddd0ccf8179c0075",
   "plan_goal_limit_reached": "9375f56727d6f409fd9565b5f6c44d86dd2db2ca03f96d0070c3177a8cc4efe8",
@@ -437,7 +436,6 @@
   "plan_save": "22325f6a3e515eed577e2199ee85be063ed8b6b7134cf0f21205c65d9de4c9ff",
   "plan_save_choices": "56871f159f850361e53e925624b24228601ebf0641c63530f2d524fda3df500a",
   "plan_save_failed": "f1e5a42d6a44689dd16ef9af30c02b0fdf4958f5d0de2a4bbb740b84cf0fcc4c",
-  "plan_saving": "393c651e1286888ec69e1d1172fb68cbf85492f504015d32d27f1473a92b1a4a",
   "plan_score_band": "26af7161575ecc8d72e4b1c3e031b6e2984197b8d643cd947ac25a22b8a667ed",
   "plan_score_band_range": "3e9aa86e69df6e83a5cdf1b72572a8158643055dab973f02d32fd0ff4c0a8015",
   "plan_score_percent": "cf60f9f5dc7d4617db3b5fbe154ad3b73315f3422c24fa0b020ff3384cb8dd5f",
@@ -1313,7 +1311,6 @@
     <string name="plan_different_choices">Farklı seçimler</string>
     <string name="plan_base_studied">Çalışıldı</string>
     <string name="plan_get_recommendation">Öneri al</string>
-    <string name="plan_getting_recommendation">Öneri alıyoruz…</string>
     <string name="plan_recommendation_failed">Öneri alamadık.</string>
     <string name="plan_still_building">Planını hâlâ hazırlıyoruz. Birazdan tekrar dene.</string>
     <string name="plan_recommend_deep">Her şeye zamanın yetiyor, bu yüzden tüm ön bilgileri derinlemesine çalışmanı öneriyoruz.</string>
@@ -1513,7 +1510,6 @@
     <string name="plan_focus_cant_move">Değişiklik olmadı: %1$s için dersler, önce öğrenmen gereken konuların ardından mümkün olan en erken zamanda başlıyor ve çalışma sürene daha fazlası sığmıyor. Günlük çalışma süreni artırırsan daha fazla ders eklenir.</string>
     <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
     <string name="plan_focus_on_these">Bunlara odaklan</string>
-    <string name="plan_saving">Kaydediyoruz…</string>
     <string name="plan_couldnt_check_changes">Nelerin değişeceğini kontrol edemedik.</string>
     <string name="plan_then_covers_everything">Bu değişiklikle planın her şeyi ayrıntılı olarak işler.</string>
     <string name="plan_apply">Uygula</string>

@@ -22,10 +22,12 @@ export function useFocusAnswersOnReveal(reading: boolean) {
 }
 
 export function NotSureButton({
+  busy,
   disabled,
   label,
   onClick,
 }: {
+  busy?: boolean;
   disabled: boolean;
   label?: string;
   onClick: () => void;
@@ -33,8 +35,15 @@ export function NotSureButton({
   const t = useExtracted();
 
   return (
-    <Button disabled={disabled} focusableWhenDisabled onClick={onClick} size="lg" variant="outline">
-      <HelpCircleIcon aria-hidden="true" />
+    <Button
+      busy={busy}
+      disabled={disabled}
+      focusableWhenDisabled
+      icon={<HelpCircleIcon aria-hidden="true" />}
+      onClick={onClick}
+      size="lg"
+      variant="outline"
+    >
       {label ?? t("I'm not sure")}
     </Button>
   );

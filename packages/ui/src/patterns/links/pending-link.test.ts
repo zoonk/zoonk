@@ -1,13 +1,18 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { PENDING_LINK_SCRIPT } from "./pending-link";
 
+/** Whether the click went through: false once something cancelled it. */
 function click(target: Element, init: MouseEventInit = {}) {
-  target.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, ...init }));
+  const passed = target.dispatchEvent(
+    new MouseEvent("click", { bubbles: true, cancelable: true, ...init }),
+  );
+
   vi.runAllTimers();
+  return passed;
 }
 
 function loginLink() {
-  return document.querySelector("a[data-pending-link]")!;
+  return document.querySelector<HTMLAnchorElement>("a[data-pending-link]")!;
 }
 
 describe("the pending-link script", () => {
@@ -53,6 +58,16 @@ describe("the pending-link script", () => {
     click(document.querySelector('a[href="#pricing"]')!);
 
     expect(document.querySelectorAll("[aria-busy]")).toHaveLength(0);
+  });
+
+  it("lets a busy link be tapped again, so a navigation the browser stopped can be retried", () => {
+    loginLink().focus();
+    expect(click(loginLink())).toBe(true);
+
+    expect(click(loginLink().querySelector("span")!)).toBe(true);
+    expect(loginLink().getAttribute("aria-busy")).toBe("true");
+    expect(loginLink().hasAttribute("aria-disabled")).toBe(false);
+    expect(document.activeElement).toBe(loginLink());
   });
 
   it("clears the mark when going back restores the page", () => {

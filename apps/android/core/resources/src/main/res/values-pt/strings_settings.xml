@@ -21,7 +21,6 @@
   "settings_download_data": "c56d7663ed6636f59ea9799c324fc70a94b21da8a53a9a9570cba4a966641cf9",
   "settings_download_data_description": "6e172bc021f693733163db5764b685aadd0a3e302f8410bd2778e1f903b36da5",
   "settings_download_failed": "f249ba7b566b29e301be50d4c097b0c452bc626ac3f3c63623a69503d23fedfa",
-  "settings_download_preparing": "132c57777691b79592648329414ea98c3f53cd43f7dba02f043c57ee9cc415a6",
   "settings_licenses": "3f23ae170af001ac0ebc41a308407a3ea3dd762aad0d113c6869d383ca309771",
   "settings_licenses_read": "84f5cfd8cb25b136324ec19523b6bed8462da62dacc1acdff0f839753f20a63c",
   "settings_licenses_website": "86223ccf13dd4be2fc4c5c8f85321def04de2937de128691ee69deb29e4ffc43",
@@ -69,7 +68,6 @@
     <string name="settings_download_data">Baixar meus dados</string>
     <string name="settings_download_data_description">Tudo que o Zoonk guarda sobre você em um arquivo</string>
     <string name="settings_download">Baixar</string>
-    <string name="settings_download_preparing">Preparando…</string>
     <string name="settings_download_failed">A gente não conseguiu preparar o download. Tente de novo.</string>
     <string name="settings_delete_account">Excluir conta</string>
     <string name="settings_delete_my_account">Excluir minha conta</string>

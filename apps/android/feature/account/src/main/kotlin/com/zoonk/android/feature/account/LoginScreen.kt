@@ -25,7 +25,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -68,6 +67,7 @@ import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
@@ -252,7 +252,13 @@ fun CodeEntry(
     }
 
     if (needsNewCode) {
-        WorkingButton(stringResource(R.string.account_send_new_code), isWorking = work == SignInWork.Resend, onClick = signIn::resendCode)
+        WorkingButton(
+            stringResource(R.string.account_send_new_code),
+            isWorking = work == SignInWork.Resend,
+            onClick = signIn::resendCode,
+            leadingIcon = { ButtonIcon(R.drawable.ic_send) },
+            trailingIcon = null,
+        )
     } else {
         WorkingButton(stringResource(R.string.account_continue), isWorking = work == SignInWork.CheckCode, onClick = signIn::checkCode)
     }
@@ -266,7 +272,12 @@ fun CodeEntry(
                 style = MaterialTheme.typography.bodyMedium,
             )
             // Not while a code is checked: its answer would land on the new code's empty box.
-            TextButton(onClick = signIn::resendCode, enabled = work == null) { Text(stringResource(R.string.account_send_again)) }
+            TextButton(
+                busy = work == SignInWork.Resend,
+                onClick = signIn::resendCode,
+                enabled = work == null,
+                leadingIcon = { ButtonIcon(R.drawable.ic_send) },
+            ) { Text(stringResource(R.string.account_send_again)) }
         }
         TextButton(onClick = signIn::changeEmail, enabled = work != SignInWork.CheckCode) {
             Text(stringResource(R.string.account_change_email))
@@ -345,22 +356,18 @@ private fun ProviderButton(
     onClick: () -> Unit,
 ) {
     OutlinedButton(
+        busy = isWorking,
         onClick = onClick,
-        enabled = enabled,
         modifier = Modifier.fillMaxWidth(),
-        contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-    ) {
-        if (isWorking) {
-            CircularProgressIndicator(modifier = Modifier.size(ButtonDefaults.IconSize), strokeWidth = 2.dp)
-        } else {
+        enabled = enabled,
+        leadingIcon = {
             Icon(
-                painter = painterResource(icon),
+                painterResource(icon),
                 contentDescription = null,
-                modifier = Modifier.size(ButtonDefaults.IconSize),
                 tint = if (tinted) LocalContentColor.current else Color.Unspecified,
             )
-        }
-        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+        },
+    ) {
         Text(text)
     }
 }
@@ -371,18 +378,17 @@ private fun WorkingButton(
     isWorking: Boolean,
     onClick: () -> Unit,
     enabled: Boolean = true,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = { ButtonIcon(R.drawable.ic_arrow_forward) },
 ) {
-    Button(onClick = onClick, enabled = enabled, modifier = Modifier.fillMaxWidth()) {
-        Text(text)
-        if (isWorking) {
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            CircularProgressIndicator(
-                modifier = Modifier.size(ButtonDefaults.IconSize),
-                color = LocalContentColor.current,
-                strokeWidth = 2.dp,
-            )
-        }
-    }
+    Button(
+        busy = isWorking,
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        enabled = enabled,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
+    ) { Text(text) }
 }
 
 @Composable

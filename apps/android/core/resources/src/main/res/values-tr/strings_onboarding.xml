@@ -151,7 +151,6 @@
   "onboarding_musicianship_title": "af40183226a94d6b613d3c8c63d20b9c35005518b2243c3edc8bd124fb779f41",
   "onboarding_my_notes": "a5abc8f031e851552bb8edc62bc0ff50f4c9f4f433694632e8fc7e7b0f4b6f0b",
   "onboarding_no_date": "bbf4b15a569cf9e453b4e69cba373c9cf57ce9853823752bbfc2e49b085ae7af",
-  "onboarding_opening_explanation": "2c15d4a89b6f2848aae17a581967d2f52e1c5246cc1b6782c48fd118714ce8ad",
   "onboarding_paste_link": "e6269bcd4d90d073e6abfccae26d389c3b263b01ebc120528d3bf194b60dcca7",
   "onboarding_paste_link_placeholder": "2b1ad6832d108a7ca4ad7ce4d6dd37a2a7ed7bce49aa47ecfb6989952615ce6c",
   "onboarding_paste_text": "dc3ffffee02fec20158d8f51e4e1ccbaaffcd64072e18d0efd642c9665673358",
@@ -369,8 +368,6 @@
   "onboarding_row_your_role": "177e945fb6c1ae87d5f10e303302dce3e857188477a5f0631707dc1bb4615a8d",
   "onboarding_save": "0262a47e34652dfa77d1eb7976eb5b45dd43e1ac2e0e7cc44c97c9e37d54838f",
   "onboarding_save_failed": "91d52a65b9656e803e6dbfbcc8b45440bbe87abb86e246b5b68459eb264e1910",
-  "onboarding_saving": "a806c5d71d38bc5ef0111f88cf146eaceb44019a5b54d30b817c753a044ac782",
-  "onboarding_saving_goal": "94a9c24bcf461a67e2902eddb91aed1832e25dbe521abe9a9c65156e8e8e35f9",
   "onboarding_schedule_time_label": "0b7213ba78e9d648da25e1f4b326460f8f6323745443a8b0795d5f430de3d95d",
   "onboarding_schedule_title": "9e8a3a34f7db68122470c17e8ce91ea0e9225618db97e0305b44f0ce2bdb0dec",
   "onboarding_score_placeholder": "66d39f5ad8076bbca960622a3fa74412801aa9c41c2813fbd07bb16fab3962f9",
@@ -489,7 +486,6 @@
     <!-- The same, for two or more goals shown just above. -->
     <string name="onboarding_understood_locked_goals">Aynı anda birden fazla hedefi Plus ile takip edebilirsin. Bu hedefler o zamana kadar hedeflerin arasında seni bekler.</string>
     <string name="onboarding_looks_right">Onayla</string>
-    <string name="onboarding_saving_goal">Hedefini kaydediyoruz…</string>
     <string name="onboarding_fix_something">Düzeltme yap</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
     <string name="onboarding_what_you_wrote">Yazdıkların</string>
@@ -497,7 +493,6 @@
     <string name="onboarding_read_again">Tekrar oku</string>
     <string name="onboarding_cancel">Vazgeç</string>
     <string name="onboarding_save">Kaydet</string>
-    <string name="onboarding_saving">Kaydediyoruz…</string>
     <!-- Edit button of a fact. %1$s is the fact's label, like "Exam date". -->
     <string name="onboarding_edit_fact">%1$s bilgisini düzenle</string>
     <string name="onboarding_use_this_date">Bu tarihi kullan</string>
@@ -555,7 +550,6 @@
     <!-- After a goal the learner typed turned out to be a question. -->
     <string name="onboarding_explain_description">Sana özel hazırlanmış, yaklaşık 5 dakikalık kısa bir açıklama.</string>
     <string name="onboarding_explain_it">Açıkla</string>
-    <string name="onboarding_opening_explanation">Sana özel anlatımı açıyoruz…</string>
     <string name="onboarding_declined_title">Bu hedef için yardımcı olamıyoruz</string>
     <string name="onboarding_declined_description">Zoonk sana ya da başkalarına zarar verebilecek şeyleri, kumar oynamayı veya hile yapmayı öğretmez. Öğrenmek istediğin başka bir şey var mı?</string>
     <string name="onboarding_try_another_goal">Başka bir hedef dene</string>

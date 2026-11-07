@@ -10,7 +10,7 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import { LibraryBigIcon } from "lucide-react";
+import { LibraryBigIcon, ListPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use, useEffect, useEffectEvent, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
@@ -18,7 +18,6 @@ import { ChangeSaveError } from "../_components/save-error";
 import { useCloseSuggestionSheet } from "../_components/suggestion";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
-import { PendingLabel } from "./plan-coverage";
 import { type FullCourse, useFullCourse, useFullCourseText } from "./plan-full-course";
 import { currentPlanPreview } from "./plan-preview-state";
 import { usePlanChange } from "./use-plan-change";
@@ -89,12 +88,11 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
 
       <div className="flex flex-col gap-2 border-t px-6 pt-4 pb-6">
         <Button
-          aria-busy={isPending || undefined}
-          disabled={isPending}
-          focusableWhenDisabled
+          busy={isPending}
+          icon={<ListPlusIcon aria-hidden="true" />}
           onClick={() => void choose()}
         >
-          <PendingLabel pending={isPending}>{t("Study everything")}</PendingLabel>
+          {t("Study everything")}
         </Button>
         <DrawerClose render={<Button variant="outline" />}>{t("Cancel")}</DrawerClose>
         {failed && <ChangeSaveError />}

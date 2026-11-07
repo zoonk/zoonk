@@ -1,3 +1,4 @@
+import { type AnswerSender } from "../../mistakes/drill/drill-types";
 import {
   type StudyAnswerFeedback,
   type StudyBlockDetail,
@@ -5,11 +6,13 @@ import {
   type StudyQuestionAnswer,
 } from "../session-types";
 
+export type SentAnswer = { answer: StudyQuestionAnswer; durationMs: number; sender: AnswerSender };
+
 export type QuestionBlockPhase =
   | { kind: "answering" }
-  | { kind: "checking" }
+  | ({ kind: "checking" } & SentAnswer)
   | { answer: StudyQuestionAnswer; feedback: StudyAnswerFeedback; kind: "feedback" }
-  | { kind: "answerFailed" }
+  | ({ kind: "answerFailed" } & SentAnswer)
   | { kind: "alreadyAnswered" }
   | { kind: "finishing" }
   | { kind: "finishReady" }
@@ -24,7 +27,7 @@ export type QuestionBlockState = {
 };
 
 type QuestionBlockAction =
-  | { type: "check" }
+  | ({ type: "check" } & SentAnswer)
   | { answer: StudyQuestionAnswer; feedback: StudyAnswerFeedback; itemId: string; type: "answered" }
   | { type: "answerFailed" }
   | { type: "alreadyAnswered" }
@@ -66,7 +69,15 @@ export function questionBlockReducer(
   return (state, action) => {
     switch (action.type) {
       case "check":
-        return { ...state, phase: { kind: "checking" } };
+        return {
+          ...state,
+          phase: {
+            answer: action.answer,
+            durationMs: action.durationMs,
+            kind: "checking",
+            sender: action.sender,
+          },
+        };
       case "answered":
         return {
           ...state,
@@ -86,7 +97,9 @@ export function questionBlockReducer(
       case "alreadyAnswered":
         return { ...state, phase: { kind: "alreadyAnswered" } };
       case "answerFailed":
-        return { ...state, phase: { kind: "answerFailed" } };
+        return state.phase.kind === "checking"
+          ? { ...state, phase: { ...state.phase, kind: "answerFailed" } }
+          : state;
       case "finish":
         return { ...state, phase: { kind: "finishing" } };
       case "finishFailed":

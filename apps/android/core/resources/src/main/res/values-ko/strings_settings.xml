@@ -21,7 +21,6 @@
   "settings_download_data": "101075f65134ff13afea5b148028e357b6a8d091e72f5e5bf78c3114c304d3b4",
   "settings_download_data_description": "3158d180c0ad265d78daa0a45f37855a8b839bf2028e00f3422b17b990786fd7",
   "settings_download_failed": "172f096e663087bbbb6f1a19688b52e1008295cc4b1a12f3e0b6217adef5cda1",
-  "settings_download_preparing": "473f53d2904c6da5d54cf86c79b090e06c739c2f2d14eeb5557331da0ce62057",
   "settings_licenses": "a9b959364b550a8dd3b24267ffadc606a1ce564755937a2af0ffb0cba8089725",
   "settings_licenses_read": "c99a2bb36c5f044dc98cd76aff600743a215087a8a6e76024b0fb569d3e0d452",
   "settings_licenses_website": "caffcd2f6c173e824189cc690cd1652b0fd3fb26437270f43b8aab9e6636e8b2",
@@ -69,7 +68,6 @@
     <string name="settings_download_data">내 데이터 다운로드</string>
     <string name="settings_download_data_description">Zoonk가 보관하는 내 모든 정보를 하나의 파일로</string>
     <string name="settings_download">다운로드</string>
-    <string name="settings_download_preparing">준비 중…</string>
     <string name="settings_download_failed">다운로드할 파일을 준비하지 못했어요. 다시 시도해 보세요.</string>
     <string name="settings_delete_account">계정 삭제</string>
     <string name="settings_delete_my_account">내 계정 삭제</string>

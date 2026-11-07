@@ -7,7 +7,7 @@ import { Label } from "@zoonk/ui/components/label";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CircleCheckIcon } from "lucide-react";
+import { CheckIcon, CircleCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { ChangeSaveError } from "../_components/save-error";
@@ -185,7 +185,13 @@ export function ExamResultSection() {
 
         {status === "error" && <ChangeSaveError />}
 
-        <Button disabled={!canSave || status === "pending"} focusableWhenDisabled type="submit">
+        <Button
+          busy={status === "pending"}
+          disabled={!canSave}
+          focusableWhenDisabled
+          icon={<CheckIcon aria-hidden="true" />}
+          type="submit"
+        >
           {t("Save my result")}
         </Button>
       </form>

@@ -274,7 +274,7 @@ struct AccountSheet: View {
           tableName: "Account",
           comment: "Explains that a temporary account load failure did not remove the session")
       } actions: {
-        Button {
+        BusyButton(isBusy: session.isWorking, icon: .retry) {
           Task {
             await session.retryRestore()
           }
@@ -282,7 +282,6 @@ struct AccountSheet: View {
           Text("Try again", tableName: "Account", comment: "Retries loading the saved account")
         }
         .buttonStyle(.mainAction)
-        .disabled(session.isWorking)
       }
       .navigationTitle(accountTitle)
       .toolbarTitleDisplayMode(.inline)
@@ -431,7 +430,7 @@ private struct SettingsHubView: View {
                 comment: "Settings row where a guest creates the account that keeps their plan"))
           }
         } else {
-          Button(role: .destructive) {
+          BusyButton(isBusy: session.isWorking, role: .destructive, isRow: true) {
             Task {
               await session.signOut()
             }
@@ -440,7 +439,6 @@ private struct SettingsHubView: View {
               .typeStyle(.rowTitle)
           }
           .foregroundStyle(.destructiveText)
-          .disabled(session.isWorking)
         }
       }
 

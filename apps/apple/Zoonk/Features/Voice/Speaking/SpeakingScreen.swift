@@ -254,17 +254,13 @@ private struct SpeakingPaperView: View {
 
       ButtonRow(spacing: 12) {
         if !locked && writingTask != task.key {
-          Button {
+          BusyButton(isBusy: startingTask == task.key, icon: .play) {
             start = Task { await startTask(task.key) }
           } label: {
-            if startingTask == task.key {
-              Text("Starting…", tableName: "Voice", comment: "A task is starting")
-            } else {
-              Text("Start this task", tableName: "Voice", comment: "Starts an exam speaking task")
-            }
+            Text("Start this task", tableName: "Voice", comment: "Starts an exam speaking task")
           }
           .buttonStyle(.mainAction)
-          .disabled(startingTask != nil)
+          .disabled(startingTask != nil && startingTask != task.key)
         }
 
         if let lastTry = task.lastTry {

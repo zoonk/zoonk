@@ -18,8 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -161,17 +159,13 @@ fun GoalBox(
             }
 
             val submitButton: @Composable () -> Unit = {
-                Button(onClick = submit, size = ButtonSize.Large) {
+                Button(
+                    onClick = submit,
+                    busy = isSubmitting,
+                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+                    size = ButtonSize.Large,
+                ) {
                     Text(stringResource(R.string.goal_box_submit))
-
-                    if (isSubmitting) {
-                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(ButtonDefaults.IconSize),
-                            color = colors.onPrimary,
-                            strokeWidth = 2.dp,
-                        )
-                    }
                 }
             }
 

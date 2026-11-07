@@ -299,7 +299,6 @@
   "plan_full_reviews_done": "19e30a4c22c114db6931b0b101553a4be49041a8821f091f5ae90c0afb56c479",
   "plan_gain_this_week": "c8668ec3a6941c6f3803ee20e5a0319b36330789d8fabd2fe84c0d78b45b009d",
   "plan_get_recommendation": "f24515c2590b7df8d16af9d261aee8df22977333b92d0494424acde1447ca651",
-  "plan_getting_recommendation": "5d6ace4e1d67052f4e252bd21ae6da3ef7e09e64883a1f65d18f21024285ecf3",
   "plan_go_to_today": "be8c0eb7cd0237fa0f17ccf53251a872e38e415f31033705d09ab23a47d20c77",
   "plan_goal_date": "ecfe72e4f1a3c8d91472e88c7032e3472b235f28660a0fead76f48a6a787dd1e",
   "plan_goal_limit_reached": "c57bbb25f4af44fb11620db5b35770a81730bc0bbb12e0679e62ceaa112da8ad",
@@ -437,7 +436,6 @@
   "plan_save": "81c0d1d1d4445de88d065a12e0ee82ca4b6b1cca12f2394c6ea3642ce9bd7c67",
   "plan_save_choices": "c56de898c018741f2fa9050f793c30aeabd5ad1c7a95fccf0a3c2888ea9841aa",
   "plan_save_failed": "ca361adcb523a0a75080453e0abc4631bcf84367e89357b1365b88dca9b7e9dc",
-  "plan_saving": "e7d166cc2562b17afd62fe01a246058e201fb24161dd160a204ae156993d479b",
   "plan_score_band": "ccc2c89acf384f50f4a6cd9ddfbc27f563e4b239ce4dd950ee7400e729d4f7e2",
   "plan_score_band_range": "96b45855fe409a85d5c08eb887b4f23cfa04f5d257067c6ad5b58835f74d3435",
   "plan_score_percent": "1e03e1be9c9d12c61817fa6e292a7ad2dac51ef6c44479018ecbf5ef801088ae",
@@ -1391,7 +1389,6 @@
     <string name="plan_different_choices">Choix différents</string>
     <string name="plan_base_studied">Étudié</string>
     <string name="plan_get_recommendation">Obtenir une recommandation</string>
-    <string name="plan_getting_recommendation">Recherche d’une recommandation…</string>
     <string name="plan_recommendation_failed">Impossible d’obtenir une recommandation.</string>
     <string name="plan_still_building">Ton plan est encore en préparation. Réessaie dans un instant.</string>
     <string name="plan_recommend_deep">Tu as le temps de tout étudier. Nous te recommandons donc d’approfondir chaque prérequis.</string>
@@ -1595,7 +1592,6 @@
     <string name="plan_focus_cant_move">Rien n’a changé : les leçons de %1$s commencent déjà dès que les notions préalables le permettent, et ton temps disponible ne permet pas d’en ajouter. Avec plus de temps par jour, tu pourras en inclure davantage.</string>
     <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
     <string name="plan_focus_on_these">Privilégier ces matières</string>
-    <string name="plan_saving">Enregistrement…</string>
     <string name="plan_couldnt_check_changes">Impossible de vérifier ce qui change.</string>
     <string name="plan_then_covers_everything">Ton plan couvrira alors tout en profondeur.</string>
     <string name="plan_apply">Appliquer</string>

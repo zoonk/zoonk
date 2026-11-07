@@ -1,6 +1,7 @@
 "use client";
 
 import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
+import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { useExtracted, useFormatter } from "next-intl";
 import { type ReactNode } from "react";
 import { EnterButton } from "../_components/enter-button";
@@ -123,7 +124,7 @@ function OutsideSession({
         )}
 
         <TaskActions>
-          <EnterButton disabled={isPending} onClick={run}>
+          <EnterButton busy={isPending} onClick={run} {...FORWARD_ICON}>
             {t("Continue")}
           </EnterButton>
         </TaskActions>

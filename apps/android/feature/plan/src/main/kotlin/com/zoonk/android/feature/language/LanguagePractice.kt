@@ -24,6 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.Suggestion
@@ -91,7 +92,7 @@ fun AlphabetRow(
             onClick = { open(AppRoute.Lesson(alphabet.lessonId.toString())) },
         )
         if (alphabet.pending) {
-            OutlinedButton(onClick = { model.skip(goalId) }, enabled = !model.skipping) {
+            OutlinedButton(busy = model.skipping, onClick = { model.skip(goalId) }, leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) }) {
                 Text(stringResource(R.string.language_alphabet_skip))
             }
             if (model.failed) {

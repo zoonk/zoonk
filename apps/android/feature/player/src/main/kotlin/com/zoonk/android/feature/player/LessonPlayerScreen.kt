@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,7 +22,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -73,7 +71,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.constrainWidth
@@ -93,7 +90,6 @@ import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.PrimaryLabel
-import com.zoonk.android.feature.player.engine.isLanguageStep
 import com.zoonk.android.feature.player.engine.isReadStep
 import com.zoonk.android.feature.player.engine.lessonMap
 import com.zoonk.android.feature.player.engine.round
@@ -124,7 +120,7 @@ import com.zoonk.android.feature.tutor.TutorOffer
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.CelebrationScope
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LocalPrivatePictures
@@ -847,30 +843,46 @@ private fun ActionBar(
 
     TaskActions(back) { width ->
         if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
-        val label: @Composable RowScope.() -> Unit = {
-            if (primary.busy) {
-                CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
-            }
-            Text(stringResource(primary.label.text()))
-        }
+        val label: @Composable RowScope.() -> Unit = { Text(stringResource(primary.label.text())) }
+        val iconId = primary.label.icon()
+        val icon: @Composable () -> Unit = { ButtonIcon(iconId) }
+        val forward = iconId == R.drawable.ic_arrow_forward
         if (primary.label == PrimaryLabel.DontKnowYet) {
             SecondaryButton(
                 onClick = actions::runPrimary,
                 enabled = primary.enabled,
+                busy = primary.busy,
                 modifier = width.focusRequester(primaryFocus),
+                leadingIcon = icon,
                 content = label,
             )
         } else {
-            Button(onClick = actions::runPrimary, enabled = primary.enabled, modifier = width.focusRequester(primaryFocus), content = label)
+            Button(
+                busy = primary.busy,
+                onClick = actions::runPrimary,
+                modifier = width.focusRequester(primaryFocus),
+                enabled = primary.enabled,
+                leadingIcon = icon.takeUnless { forward },
+                trailingIcon = icon.takeIf { forward },
+                content = label,
+            )
         }
         ask()
     }
 }
 
+private fun PrimaryLabel.icon(): Int =
+    when (this) {
+        PrimaryLabel.Check, PrimaryLabel.Confirm -> R.drawable.ic_check
+        PrimaryLabel.Continue, PrimaryLabel.Next, PrimaryLabel.NextStep, PrimaryLabel.SeeHowItWent -> R.drawable.ic_arrow_forward
+        PrimaryLabel.DontKnowYet -> R.drawable.ic_help
+        PrimaryLabel.SeeAnswer -> R.drawable.ic_visibility
+        PrimaryLabel.Start -> R.drawable.ic_play_arrow
+    }
+
 private fun PrimaryLabel.text(): Int =
     when (this) {
         PrimaryLabel.Check -> R.string.player_action_check
-        PrimaryLabel.Checking -> R.string.player_action_checking
         PrimaryLabel.Confirm -> R.string.player_action_confirm
         PrimaryLabel.Continue -> R.string.player_action_continue
         PrimaryLabel.DontKnowYet -> R.string.player_dont_know_yet

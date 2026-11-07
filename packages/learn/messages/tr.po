@@ -557,16 +557,14 @@ msgstr "Bunu zaten biliyor musun?"
 #: src/_components/test-out-start-link.tsx
 #: src/conversation/tutor-tool-offer.tsx
 #: src/session/test-out-offer.tsx
-msgctxt "osZ9ZA"
-msgid "Opening the test…"
-msgstr "Testi açıyoruz…"
-
-#: src/_components/test-out-start-link.tsx
-#: src/conversation/tutor-tool-offer.tsx
-#: src/session/test-out-offer.tsx
 msgctxt "May4OJ"
 msgid "Take the test"
 msgstr "Testi çöz"
+
+#: src/_components/test-out-start-link.tsx
+msgctxt "osZ9ZA"
+msgid "Opening the test…"
+msgstr "Testi açıyoruz…"
 
 #: src/_components/test-out-start-link.tsx
 msgctxt "2xFPbE"
@@ -2091,16 +2089,6 @@ msgid "Still starting. This is taking longer than usual."
 msgstr "Hâlâ başlatmaya çalışıyoruz. Bu, normalden uzun sürüyor."
 
 #: src/challenge/challenge-footer.tsx
-#: src/language/conversation/call-intro-footer.tsx
-#: src/language/exam-speaking/speaking-task-row.tsx
-#: src/language/progress/speaking-mock-card.tsx
-#: src/plan/focus-test/focus-test-screen.tsx
-#: src/questions/test-out-preparing.tsx
-msgctxt "RFCwI6"
-msgid "Starting…"
-msgstr "Başlatıyoruz…"
-
-#: src/challenge/challenge-footer.tsx
 #: src/mock/mock-chooser.tsx
 msgctxt "-HglUD"
 msgid "Start the mock exam"
@@ -3271,12 +3259,6 @@ msgstr "Notunu gör"
 msgctxt "othn-n"
 msgid "Rewrite what needs work"
 msgstr "Geliştirmen gereken yerleri yeniden yaz"
-
-#: src/essay/essay-screen.tsx
-#: src/mock/mock-screen.tsx
-msgctxt "yWVqHs"
-msgid "Grading…"
-msgstr "Değerlendiriyoruz…"
 
 #: src/essay/essay-screen.tsx
 msgctxt "Wleedk"
@@ -6998,16 +6980,6 @@ msgid "Download my memory"
 msgstr "Belleğimi indir"
 
 #: src/memory/memory-screen.tsx
-msgctxt "ySF1Q_"
-msgid "Preparing your memory…"
-msgstr "Belleğini hazırlıyoruz…"
-
-#: src/memory/memory-screen.tsx
-msgctxt "Ob8gKI"
-msgid "Preparing…"
-msgstr "Hazırlıyoruz…"
-
-#: src/memory/memory-screen.tsx
 msgctxt "owirfw"
 msgid "We couldn't prepare the download. Try again."
 msgstr "İndirilecek dosyayı hazırlayamadık. Tekrar dene."
@@ -8057,12 +8029,6 @@ msgid "One subject"
 msgstr "Tek branş"
 
 #: src/mock/mock-chooser.tsx
-#: src/session/summary/summary-steps.tsx
-msgctxt "Hlc1zt"
-msgid "Getting it ready…"
-msgstr "Hazırlıyoruz…"
-
-#: src/mock/mock-chooser.tsx
 msgctxt "a5f0pz"
 msgid "Start with {count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, other {# soruyla başla}}"
@@ -8890,12 +8856,6 @@ msgctxt "z1R1nT"
 msgid "Hand in this section"
 msgstr "Bu oturumu teslim et"
 
-#: src/mock/mock-runner-view.tsx
-#: src/mock/mock-screen.tsx
-msgctxt "0QKYRq"
-msgid "Handing in…"
-msgstr "Teslim ediyoruz…"
-
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
 msgid "Mock exam handed in"
@@ -9221,11 +9181,6 @@ msgid "A short explanation written for you, about 5 minutes."
 msgstr "Sana özel hazırlanmış, yaklaşık 5 dakikalık kısa bir anlatım."
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "rnVK11"
-msgid "Opening your explanation…"
-msgstr "Sana özel anlatımı açıyoruz…"
-
-#: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "n-6wcY"
 msgid "Explain it"
 msgstr "Açıkla"
@@ -9287,12 +9242,6 @@ msgstr "Sana çalmayı öğretmek için nasıl çaldığını duymamız gerekiyo
 msgctxt "irzzdg"
 msgid "Musicianship for {instrument}: hear chords, read short melodies and keep the beat. No microphone needed."
 msgstr "{instrument} için müzik temelleri: akorları dinle, kısa melodileri oku ve ritim tut. Mikrofon gerekmez."
-
-#: src/onboarding/entry/goal-outcomes.tsx
-#: src/onboarding/understood/understood-screen.tsx
-msgctxt "LlWqkT"
-msgid "Saving your goal…"
-msgstr "Hedefini kaydediyoruz…"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "2zqqBZ"
@@ -10509,13 +10458,6 @@ msgstr "Sınavın genelde yapıldığı tarihlere göre tahmin edildi. Resmî ta
 msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "Kaynak: {source}"
-
-#: src/onboarding/understood/understood-row.tsx
-#: src/plan/plan-date.tsx
-#: src/plan/plan-focus.tsx
-msgctxt "WUV28A"
-msgid "Saving…"
-msgstr "Kaydediyoruz…"
 
 #: src/onboarding/understood/understood-row.tsx
 msgctxt "C9D4Tz"
@@ -13068,6 +13010,11 @@ msgstr "+{bonus}"
 msgctxt "DhH9Oq"
 msgid "{count, plural, one {+# level} other {+# levels}}"
 msgstr "{count, plural, other {+# seviye}}"
+
+#: src/session/summary/summary-steps.tsx
+msgctxt "Hlc1zt"
+msgid "Getting it ready…"
+msgstr "Hazırlıyoruz…"
 
 #: src/session/summary/summary-steps.tsx
 msgctxt "vrNWq4"

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,6 +33,7 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.steps.count
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackTone
@@ -169,20 +169,12 @@ internal fun ExplainAnswer(
                 RichText(text = explanation.text, style = MaterialTheme.typography.bodyMedium)
             }
         } else {
-            OutlinedButton(onClick = onExplain, enabled = !loading, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
-                if (loading) {
-                    CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), strokeWidth = 2.dp)
-                } else {
-                    Icon(
-                        painterResource(R.drawable.ic_lightbulb),
-                        contentDescription = null,
-                        modifier = Modifier.size(ButtonDefaults.IconSize),
-                    )
-                }
-                Text(
-                    stringResource(if (loading) R.string.player_explaining_answer else R.string.player_explain_answer),
-                    Modifier.padding(start = ButtonDefaults.IconSpacing),
-                )
+            OutlinedButton(
+                busy = loading,
+                onClick = onExplain,
+                leadingIcon = { ButtonIcon(R.drawable.ic_lightbulb) },
+            ) {
+                Text(stringResource(R.string.player_explain_answer))
             }
         }
 

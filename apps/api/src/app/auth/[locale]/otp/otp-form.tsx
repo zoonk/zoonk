@@ -15,6 +15,7 @@ import { DISPOSABLE_EMAIL_ERROR_CODE } from "@zoonk/auth/email-signup-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
+import { SendIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { getCallbackHref, type getLoginHref } from "../../_utils/auth-redirect";
@@ -258,9 +259,9 @@ export function OTPForm({
           // The code box turns off with the code, so focus moves on to what the learner does next.
           <Button
             autoFocus
+            busy={resendCode.status === "sending"}
             className="w-full font-[560]"
-            disabled={resendCode.status === "sending"}
-            focusableWhenDisabled
+            icon={<SendIcon aria-hidden="true" />}
             onClick={sendNewCode}
             size="lg"
             type="button"

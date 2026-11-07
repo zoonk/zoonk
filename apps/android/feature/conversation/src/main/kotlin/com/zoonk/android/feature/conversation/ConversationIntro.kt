@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -31,6 +30,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.audio.MicrophoneOff
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -214,13 +214,5 @@ internal fun StartCallButton(
     modifier: Modifier = Modifier,
     label: String = stringResource(R.string.conversation_start),
 ) {
-    Button(onClick = onClick, enabled = !starting, modifier = modifier) {
-        if (starting) {
-            CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), strokeWidth = 2.dp)
-        } else {
-            Icon(painterResource(R.drawable.ic_call), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
-        }
-        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-        Text(if (starting) stringResource(R.string.conversation_starting) else label)
-    }
+    Button(busy = starting, onClick = onClick, modifier = modifier, leadingIcon = { ButtonIcon(R.drawable.ic_call) }) { Text(label) }
 }

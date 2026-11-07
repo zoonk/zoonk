@@ -5,16 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -39,6 +35,7 @@ import com.zoonk.android.data.SessionSource
 import com.zoonk.android.feature.mock.runner.MockRunStore
 import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DiffKind
 import com.zoonk.android.ui.components.DiffLine
 import com.zoonk.android.ui.components.DiffLines
@@ -206,13 +203,8 @@ internal fun PlanChange(
         OfferLines(adapt)
         if (open.isNotEmpty()) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = onApply, enabled = !offers.applying) {
-                    if (offers.applying) {
-                        CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), strokeWidth = 2.dp)
-                        Text(stringResource(R.string.mock_result_apply), Modifier.padding(start = ButtonDefaults.IconSpacing))
-                    } else {
-                        Text(stringResource(R.string.mock_result_apply))
-                    }
+                OutlinedButton(busy = offers.applying, onClick = onApply, leadingIcon = { ButtonIcon(R.drawable.ic_check) }) {
+                    Text(stringResource(R.string.mock_result_apply))
                 }
                 TextButton(onClick = onKeep, enabled = !offers.applying) { Text(stringResource(R.string.mock_result_keep_plan)) }
             }

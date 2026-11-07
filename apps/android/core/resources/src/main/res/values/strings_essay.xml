@@ -51,7 +51,6 @@
     <string name="essay_grading">Reading your essay against each criterion. It can take up to 30 seconds.</string>
     <string name="essay_grading_slow">Still grading. This is taking longer than usual.</string>
     <string name="essay_skip_rewrite">Skip the rewrite</string>
-    <string name="essay_grading_button">Grading…</string>
     <string name="essay_grade_rewrite">Grade the rewrite</string>
     <string name="essay_send">Send for grading</string>
     <string name="essay_leave_title">Leave for now?</string>

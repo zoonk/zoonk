@@ -30,11 +30,12 @@ export function TodayUpNext({ className }: { className?: string }) {
       <ol className="flex flex-col">
         {lessons.map((lesson, index) => (
           <PlanLessonRow
-            busy={keep.isPending}
+            busy={keep.rowSent}
+            disabled={keep.isPending}
             // oxlint-disable-next-line react/no-array-index-key -- two plan lessons can share a title, and a read replaces the list whole.
             key={index}
             minutes={lesson.minutes}
-            onOpen={index === 0 ? keep.run : null}
+            onOpen={index === 0 ? keep.openFromRow : null}
             title={lesson.title}
           />
         ))}

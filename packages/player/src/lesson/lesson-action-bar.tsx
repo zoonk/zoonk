@@ -7,11 +7,11 @@ import {
   TaskActionLabel,
   TaskActions,
 } from "@zoonk/learn/task-layout";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { Spinner } from "@zoonk/ui/components/spinner";
-import { ChevronLeftIcon } from "lucide-react";
+import { CheckIcon, ChevronLeftIcon, EyeIcon, HelpCircleIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { type ComponentProps } from "react";
 import { PromptAudioButton } from "../components/prompt-audio-button";
 import { usePromptAudio } from "../player-audio-context";
 import { TutorAskButton } from "../questions/tutor-dock";
@@ -50,12 +50,27 @@ export function useLessonPrimary(): LessonScreen["primary"] {
     : primary;
 }
 
+/** Every label has its icon, busy or not, so the main action keeps one shape from screen to screen. */
+const PRIMARY_ICONS: Record<
+  LessonPrimaryLabel,
+  Pick<ComponentProps<typeof Button>, "icon" | "iconPosition">
+> = {
+  check: { icon: <CheckIcon aria-hidden="true" /> },
+  confirm: { icon: <CheckIcon aria-hidden="true" /> },
+  continue: FORWARD_ICON,
+  dontKnowYet: { icon: <HelpCircleIcon aria-hidden="true" /> },
+  next: FORWARD_ICON,
+  nextStep: FORWARD_ICON,
+  seeAnswer: { icon: <EyeIcon aria-hidden="true" /> },
+  seeHowItWent: FORWARD_ICON,
+  start: { icon: <PlayIcon aria-hidden="true" /> },
+};
+
 function PrimaryLabel({ label }: { label: LessonPrimaryLabel }) {
   const t = useExtracted();
 
   const labels: Record<LessonPrimaryLabel, string> = {
     check: t("Check"),
-    checking: t("Checking your answer"),
     confirm: t("Confirm"),
     continue: t("Continue"),
     dontKnowYet: t("I don't know yet"),
@@ -111,6 +126,7 @@ export function LessonActionBar() {
 
         <Button
           aria-keyshortcuts="Enter"
+          busy={primary.busy}
           className={TASK_MAIN_ACTION_CLASS}
           disabled={primary.disabled}
           focusableWhenDisabled
@@ -118,10 +134,10 @@ export function LessonActionBar() {
           onClick={() => runPrimary({ actions, screen })}
           size="xl"
           variant={isReveal ? "secondary" : "default"}
+          {...PRIMARY_ICONS[primary.label]}
         >
-          {primary.busy && <Spinner aria-hidden="true" />}
           <PrimaryLabel label={primary.label} />
-          {!primary.busy && <ShortcutKbd tone={isReveal ? undefined : "inverse"}>⏎</ShortcutKbd>}
+          <ShortcutKbd tone={isReveal ? undefined : "inverse"}>⏎</ShortcutKbd>
         </Button>
 
         <TutorAskButton quiet={Boolean(screen.struggleOffer)} />

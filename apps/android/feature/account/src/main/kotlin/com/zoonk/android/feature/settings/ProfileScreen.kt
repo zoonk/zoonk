@@ -5,7 +5,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,8 +16,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,6 +49,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DestructiveButton
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -154,11 +152,12 @@ private fun Profile(
             Button(
                 onClick = form::save,
                 enabled = form.canSave && form.isChanged,
+                busy = form.isSaving,
                 modifier = Modifier.align(Alignment.End),
+                leadingIcon = { ButtonIcon(R.drawable.ic_check) },
                 size = ButtonSize.Small,
             ) {
                 Text(stringResource(R.string.settings_save))
-                if (form.isSaving) ButtonProgress()
             }
         }
     }
@@ -168,9 +167,13 @@ private fun Profile(
             headline = { Text(stringResource(R.string.settings_download_data)) },
             supporting = { Text(stringResource(R.string.settings_download_data_description)) },
             trailing = {
-                OutlinedButton(onClick = { export.launch(EXPORT_FILE_NAME) }, enabled = !profile.isExporting, size = ButtonSize.Small) {
-                    Text(stringResource(if (profile.isExporting) R.string.settings_download_preparing else R.string.settings_download))
-                    if (profile.isExporting) ButtonProgress()
+                OutlinedButton(
+                    onClick = { export.launch(EXPORT_FILE_NAME) },
+                    busy = profile.isExporting,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_download) },
+                    size = ButtonSize.Small,
+                ) {
+                    Text(stringResource(R.string.settings_download))
                 }
             },
         )
@@ -303,13 +306,10 @@ private fun DeleteButton(
     onClick: () -> Unit,
 ) {
     TextButton(
+        busy = isDeleting,
         onClick = onClick,
-        enabled = !isDeleting,
         colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
-    ) {
-        Text(stringResource(text))
-        if (isDeleting) ButtonProgress()
-    }
+    ) { Text(stringResource(text)) }
 }
 
 @Composable
@@ -336,12 +336,6 @@ private fun Failure(
         color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,
     )
-}
-
-@Composable
-private fun ButtonProgress() {
-    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-    CircularProgressIndicator(modifier = Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
 }
 
 private const val EXPORT_FILE_NAME = "zoonk-data.json"

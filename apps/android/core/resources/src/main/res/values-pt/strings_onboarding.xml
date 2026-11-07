@@ -151,7 +151,6 @@
   "onboarding_musicianship_title": "4bdc6d47a474f1d7fc2b68fd052b97bfce809cdb40ddcd0c475737cd673bec5a",
   "onboarding_my_notes": "2240228e835b0b63a6641fa64c2913fd2d6adfb0086d9cc4246075a4a04ef2ec",
   "onboarding_no_date": "9f2bf15fecaf9c740629cbc0755f53c36d5388d935e0f8f6f19dc33eceda8e8d",
-  "onboarding_opening_explanation": "19537286b65b37fdb72c29e49185426a08c31692639be42146a616d4cb8c9d9c",
   "onboarding_paste_link": "b9e25fb17cb8a3af682c5d184daa5055de056c7c8cf03227aa4b8a4634176f2c",
   "onboarding_paste_link_placeholder": "af3c1cde59cf645d0707e6dfe02ac533e428914a8f25abaea1a31641ae87f870",
   "onboarding_paste_text": "bbc32a4207ea0f3bb7c12ded4e7005ea6c7151f777d45be8aac043b91543d848",
@@ -369,8 +368,6 @@
   "onboarding_row_your_role": "b4a5cecca2b780ef075f0c7e1bf591e7c9a1d4d8f50a173c6009ecb628c1f68e",
   "onboarding_save": "be70742b5516f24abdfa18df52a3fcdd9907283f4772c66a39b4768f1449af8d",
   "onboarding_save_failed": "aa23321826812076c39629becaf425a065a8cd950283e8c64a7b74a5f460cb6e",
-  "onboarding_saving": "1a3f1af38be68bf94f249c623e996650debaef83bbd3b0e82a382cad0e76bdd5",
-  "onboarding_saving_goal": "56ff905d0b12e8c3ac84f477c4db21dd16d00e426a4d3ba1f8de0c4db80e078e",
   "onboarding_schedule_time_label": "bd1d462ac7b0eb9c5aa166d953822ca043386124b538f030f6dec4efb8948cd0",
   "onboarding_schedule_title": "1dadbdd2471f0caadb0b4bf8b353cbdba202f811ffeab91a9a8c7ef1b5ef9582",
   "onboarding_score_placeholder": "849ba2c950d2a1a93c12f17c4933a1f7170ef87985791c0c684ac1b755ae9468",
@@ -490,7 +487,6 @@
     <!-- The same, for two or more goals shown just above. -->
     <string name="onboarding_understood_locked_goals">Com o Plus, você pode seguir mais de um objetivo ao mesmo tempo. Até lá, esses objetivos ficam na sua lista de objetivos.</string>
     <string name="onboarding_looks_right">Está certo</string>
-    <string name="onboarding_saving_goal">Salvando seu objetivo…</string>
     <string name="onboarding_fix_something">Corrigir algo</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
     <string name="onboarding_what_you_wrote">O que você escreveu</string>
@@ -498,7 +494,6 @@
     <string name="onboarding_read_again">Ler de novo</string>
     <string name="onboarding_cancel">Cancelar</string>
     <string name="onboarding_save">Salvar</string>
-    <string name="onboarding_saving">Salvando…</string>
     <!-- Edit button of a fact. %1$s is the fact's label, like "Exam date". -->
     <string name="onboarding_edit_fact">Editar %1$s</string>
     <string name="onboarding_use_this_date">Usar esta data</string>
@@ -557,7 +552,6 @@
     <!-- After a goal the learner typed turned out to be a question. -->
     <string name="onboarding_explain_description">Uma explicação curta feita para você, com cerca de 5 minutos.</string>
     <string name="onboarding_explain_it">Me explique</string>
-    <string name="onboarding_opening_explanation">Abrindo sua explicação…</string>
     <string name="onboarding_declined_title">Não podemos ajudar com esse objetivo</string>
     <string name="onboarding_declined_description">O Zoonk não ensina nada que possa machucar você ou outras pessoas, nem jogos de azar ou formas de trapacear. Tem outra coisa que você gostaria de aprender?</string>
     <string name="onboarding_try_another_goal">Tentar outro objetivo</string>

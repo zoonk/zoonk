@@ -79,17 +79,12 @@ struct TutorPlanChangeCard: View {
       }
       .disabled(isSaving)
     case .applied where change.canUndo:
-      Button {
+      BusyButton(isBusy: isSaving, icon: .undo) {
         decide(.undone)
       } label: {
-        Label {
-          Text("Undo", tableName: "Tutor", comment: "Undoes a plan change the learner applied")
-        } icon: {
-          Image(systemName: "arrow.uturn.backward")
-        }
+        Text("Undo", tableName: "Tutor", comment: "Undoes a plan change the learner applied")
       }
       .buttonStyle(.outline)
-      .disabled(isSaving)
     case .applied, .declined, .undone, .replaced:
       EmptyView()
     }

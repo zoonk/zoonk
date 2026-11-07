@@ -9,7 +9,7 @@ import { type LearnerSummaryGoal } from "@zoonk/core/learner/summary/contract";
 import { type CourseLevel } from "@zoonk/db/enums";
 import { RouteZone } from "@zoonk/learn/route-line";
 import { StatusMark } from "@zoonk/learn/status-mark";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
@@ -141,12 +141,7 @@ export function CourseContinueLink({ courseId }: { courseId: string }) {
     return null;
   }
 
-  const label = (
-    <>
-      {t("Continue your plan")}
-      <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
-    </>
-  );
+  const label = t("Continue your plan");
 
   if (goal.isSettingUp || goal.isActive) {
     return (
@@ -156,6 +151,7 @@ export function CourseContinueLink({ courseId }: { courseId: string }) {
         prefetch
       >
         {label}
+        <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
       </Link>
     );
   }
@@ -175,12 +171,11 @@ export function CourseContinueLink({ courseId }: { courseId: string }) {
 
   return (
     <Button
-      aria-busy={isPending}
+      busy={isPending}
       className={getStartControlClassName()}
-      disabled={isPending}
-      focusableWhenDisabled
       onClick={continueGoal}
       size="lg"
+      {...FORWARD_ICON}
     >
       {label}
     </Button>

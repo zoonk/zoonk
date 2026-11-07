@@ -38,7 +38,6 @@
   "activities_code_run": "696afaacc8efc5aee6a351a00ef778f87e1cc0107f456e00bc9427ccdab1fb19",
   "activities_code_run_again": "56ab2c215d236355d11940197edd8a104d0b219ab67f5f2482da87ed6eb5d61b",
   "activities_code_run_to_see": "1b8a4282bf0afe66da8f2be87c334ff198b368d93654c3cef7d3f1cc185fbe6b",
-  "activities_code_running": "d0d96bfd6f736a7527fec9e634ca656aff42b058a2493cd1e87fa0fda45b83cb",
   "activities_code_runtime_failed": "80c99054e2a1bd6913131b3c6b32be048e7b86c2ffc8b7e35d614cabc0fafd31",
   "activities_code_runtime_loading": "ec3bc523804eab04a73678cca4c1ed4c4993bf4ebe5912aced7f2ccb6679ca05",
   "activities_code_sample_doesnt_match": "adbb01d8f14ce07090ec0dc2a77d605abe1ae455ebeb316e4d7211584684063d",
@@ -104,7 +103,6 @@
     <string name="activities_code_runtime_failed">%1$s yüklenemedi. Bağlantını kontrol edip tekrar dene.</string>
     <string name="activities_code_run">Çalıştır</string>
     <string name="activities_code_run_again">Yeniden çalıştır</string>
-    <string name="activities_code_running">Çalıştırıyoruz</string>
     <string name="activities_code_start_over">Kodu ilk hâline döndür</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">Kod</string>

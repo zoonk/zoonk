@@ -473,12 +473,12 @@ private struct ExamResultSection: View {
             comment: "Saving the result failed"))
       }
 
-      Button {
+      BusyButton(isBusy: form.saving, isRow: true) {
         Task { await save() }
       } label: {
         Text("Save my result", tableName: "Exam", comment: "Saves the official result")
       }
-      .disabled(form.saving || (parsedScore == nil && form.passed == .unknown))
+      .disabled(!form.saving && parsedScore == nil && form.passed == .unknown)
     } header: {
       SectionTitle(
         Text("How did it go?", tableName: "Exam", comment: "Asks for the official result"))
@@ -996,18 +996,13 @@ private struct SpeakingMockSection: View {
             "Your mock opens as soon as it's ready.", tableName: "Exam",
             comment: "A speaking mock opens by itself once it's written"))
       } else {
-        Button {
+        BusyButton(isBusy: start.isStarting, isRow: true) {
           start.start(.case3(.init(goalId: goalId, kind: .speakingMock)), voice: voice) {
             router.open(.conversation(conversationId: $0))
           }
         } label: {
-          if start.isStarting {
-            Text("Starting…", tableName: "Exam", comment: "The speaking mock is starting")
-          } else {
-            Text("Start the mock", tableName: "Exam", comment: "Starts the speaking mock")
-          }
+          Text("Start the mock", tableName: "Exam", comment: "Starts the speaking mock")
         }
-        .disabled(start.isStarting)
 
         switch start.refusal {
         case .limit(let limit):

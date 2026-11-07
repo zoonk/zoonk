@@ -50,7 +50,6 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
-import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.ChoiceQuestionsRun
 import com.zoonk.android.feature.practice.RunIntro
 import com.zoonk.android.feature.practice.RunLoadFailed
@@ -64,6 +63,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
@@ -219,12 +219,12 @@ internal fun FocusTestIntro(
                     )
                 } else {
                     TaskActions { width ->
-                        BusyButton(
-                            stringResource(if (ui.starting) R.string.focustest_starting else R.string.focustest_start),
+                        Button(
                             busy = ui.starting,
-                            enabled = true,
+                            onClick = { start() },
                             modifier = replacementFocus?.let { width.focusRequester(it) } ?: width,
-                        ) { start() }
+                            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+                        ) { Text(stringResource(R.string.focustest_start)) }
                     }
                 }
             }

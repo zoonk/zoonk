@@ -71,9 +71,9 @@ describe("output belongs to the editor revision that ran", () => {
         await abandoned.promise;
       });
 
-      await expect
-        .element(page.getByRole("button", { exact: true, name: "Running" }))
-        .toBeDisabled();
+      const run = page.getByRole("button", { exact: true, name: "Run" });
+      await expect.element(run).toHaveAttribute("aria-busy", "true");
+      await expect.element(run).toBeDisabled();
 
       await expect.element(page.getByRole("button", { exact: true, name: "Check" })).toBeDisabled();
 

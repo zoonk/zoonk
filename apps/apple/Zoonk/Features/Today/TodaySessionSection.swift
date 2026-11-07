@@ -131,7 +131,7 @@ struct TodaySessionSection: View {
         coming: coming, writingStalled: writingStalled, isBusy: busy == .prepare,
         failed: failed == .prepare, prepare: prepare
       )
-      .disabled(busy != nil)
+      .disabled(busy != nil && busy != .prepare)
     }
 
     if upcomingCount > shownUpcoming || (disclosures.showsMore && upcomingCount > upcomingRows) {
@@ -147,8 +147,7 @@ struct TodaySessionSection: View {
   private func blockButton(_ block: StudyBlock, isNext: Bool) -> some View {
     let row = BlockRow(
       block: block, view: view, isNext: isNext, countsTowardMission: countsTowardMission(block),
-      isBusy: busy == .block(block.position) || (isNext && busy == .main),
-      failed: failed == .block(block.position))
+      isBusy: busy == .block(block.position), failed: failed == .block(block.position))
 
     if block.waitReason == nil {
       Button {
@@ -157,7 +156,8 @@ struct TodaySessionSection: View {
         row
       }
       .tint(.primary)
-      .disabled(busy != nil)
+      .disabled(busy != nil && busy != .block(block.position))
+      .accessibilityBusy(busy == .block(block.position))
     } else {
       row
     }
@@ -240,7 +240,10 @@ struct TodaySessionAction: View {
   }
 
   var body: some View {
+    let action = action
+
     action?.inHeader(isInHeader)
+      .disabled(busy != nil && action?.isBusy != true)
   }
 
   private var action: TodayMainAction? {
@@ -315,19 +318,12 @@ struct TodayMainAction: View {
 
   var body: some View {
     VStack(alignment: isInHeader ? .trailing : .center, spacing: 8) {
-      Button(action: action) {
-        HStack {
-          if isBusy {
-            ProgressView()
-          }
-
-          title
-        }
-        .frame(maxWidth: isInHeader ? nil : .infinity)
+      BusyButton(isBusy: isBusy, icon: icon, action: action) {
+        title
       }
       .buttonStyle(.mainAction)
       .controlSize(.large)
-      .disabled(isBusy)
+      .buttonSizing(isInHeader ? .fitted : .flexible)
 
       if failed {
         FailureLine(message: failure)
@@ -349,6 +345,15 @@ struct TodayMainAction: View {
       LocalizedStringResource(
         "We couldn't open the next step. Try again.", table: "Today",
         comment: "Opening the day's next step failed")
+    }
+  }
+
+  /// The slot keeps one shape whatever it says: ▶ starts or resumes, → only goes somewhere.
+  private var icon: ActionIcon {
+    switch kind {
+    case .continueSession, .keepLearning, .practice, .startSession: .play
+    case .prepareLessons: .addLessons
+    case .seePlan, .summary: .forward
     }
   }
 
@@ -551,9 +556,7 @@ struct BlockRow: View {
 
   @ViewBuilder
   private var trailing: some View {
-    if isBusy {
-      ProgressView()
-    } else if !block.isFinished {
+    if !block.isFinished {
       HStack(spacing: 6) {
         if countsTowardMission {
           Image(systemName: "target")
@@ -568,6 +571,7 @@ struct BlockRow: View {
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
       }
+      .coveredBySpinner(isBusy, alignment: .trailing)
     }
   }
 
@@ -639,8 +643,10 @@ private struct ComingLessonsRow: View {
     case .toPrepare:
       Button(action: prepare) {
         row
+          .spinnerAtEnd(isBusy)
       }
       .tint(.primary)
+      .accessibilityBusy(isBusy)
     case .beingWritten:
       row
         .accessibilityElement(children: .combine)
@@ -689,11 +695,6 @@ private struct ComingLessonsRow: View {
           )
           .typeStyle(.meta)
         }
-      }
-
-      if isBusy {
-        Spacer(minLength: 8)
-        ProgressView()
       }
     }
   }

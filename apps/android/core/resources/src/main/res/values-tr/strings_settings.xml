@@ -21,7 +21,6 @@
   "settings_download_data": "478eee67c3e7d49d413ac8ed2e4f6f097d3388b96286f6086ad0aad127ec1f91",
   "settings_download_data_description": "b7544b1d9437a2a58bf63b0286c1fe0416e22d13765b45a376a0bcaa0e1b3d4b",
   "settings_download_failed": "f7ac5d92935444b33d9df9d4180b1a75477829a6dc2da3c1aeb0c7c9b98a35fb",
-  "settings_download_preparing": "444e61053454e0449fbda14a20ff8c0eac84833e41b43fa7184f6ab781d852b8",
   "settings_licenses": "fbe7585e243de3d879cab9bc628e1a0ae9a39efac5b33ae30a1aa3f1ee15f5db",
   "settings_licenses_read": "140a819a1e6a448e833657273c88187a9ff532e27ddd432fb4d173f96eb267c1",
   "settings_licenses_website": "769ef0aeb62f23ff2895af6ba281781c64cad8ce029d70bc0dea31d58f45d395",
@@ -69,7 +68,6 @@
     <string name="settings_download_data">Verilerimi indir</string>
     <string name="settings_download_data_description">Zoonk’un seninle ilgili sakladığı her şey tek dosyada</string>
     <string name="settings_download">İndir</string>
-    <string name="settings_download_preparing">Hazırlıyoruz…</string>
     <string name="settings_download_failed">İndirilecek dosyayı hazırlayamadık. Tekrar dene.</string>
     <string name="settings_delete_account">Hesabı sil</string>
     <string name="settings_delete_my_account">Hesabımı sil</string>

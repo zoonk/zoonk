@@ -299,7 +299,6 @@
   "plan_full_reviews_done": "73931c8f11d67de556f039a51efcaf16e985155ead88ef1905c75b2c5be806db",
   "plan_gain_this_week": "3e2d63de1e39c1386a902dea424bc14fc2f79c257d5d655a98701a83075173f6",
   "plan_get_recommendation": "d2a54a427111e0f0179091bf089ee5d1f43e0e6b96061243b1f0dd277d3d1136",
-  "plan_getting_recommendation": "3ded8da7a65379d2e2acdf26ba4e77f5bcf9474c5644dd4ac3cf20133bc051d5",
   "plan_go_to_today": "36a158089e1823ea76dd08fbfa52cb9f8b722bd54bcb9ac4e36f86fbe50d0d50",
   "plan_goal_date": "5aa8e7d3452151e824211fc2878e8ce22f4ea819d96b9ed87bd3ad28903fad46",
   "plan_goal_limit_reached": "39b446b3d2d7f591064cec52c2372c195e64d3101c2e19ab1525694768efad4e",
@@ -437,7 +436,6 @@
   "plan_save": "b65f16ae80661a87ecfaef5f76d4a7f8bb556a1e254e3521950adcea0d16a399",
   "plan_save_choices": "91e08e9a7fd395e774380e5dc4200f9b3b77941dbc45b9152d9508b39d9be8fb",
   "plan_save_failed": "9b54e71281970e5230b4034f6259e6b3f5beb6baf159acf9f0a2a7ebf8c515aa",
-  "plan_saving": "0193d47b43d1d477a68284d8ad7e1752f65ec6c5e82c883cdae8511f2386bea3",
   "plan_score_band": "a21d856bb6321a2071d2139c0dadc06ba831ba021513419ebb11e7e7a51b5256",
   "plan_score_band_range": "f727008a73ee29df175eb5acfe36fbd84552ad19e4ae139ed5c8be6ae283638d",
   "plan_score_percent": "df6dd61ac0b4754731c69fe6991dfb3e6dcf62e6ae3aeae9871efa82066cf306",
@@ -1235,7 +1233,6 @@
     <string name="plan_different_choices">選択内容が異なる</string>
     <string name="plan_base_studied">学習済み</string>
     <string name="plan_get_recommendation">おすすめを確認する</string>
-    <string name="plan_getting_recommendation">おすすめを確認しています…</string>
     <string name="plan_recommendation_failed">おすすめを確認できませんでした。</string>
     <string name="plan_still_building">学習計画を作成しています。もう少し待ってから再度お試しください。</string>
     <string name="plan_recommend_deep">すべて学ぶ時間があるので、前提知識はそれぞれじっくり学ぶのがおすすめです。</string>
@@ -1431,7 +1428,6 @@
     <string name="plan_focus_cant_move">変更はありませんでした。%1$sは、前提知識を学び終えてすぐに始める計画になっています。今の学習時間では、これ以上レッスンを入れられません。1日の学習時間を増やすと、もっと入れられます。</string>
     <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
     <string name="plan_focus_on_these">選んだ科目を重点的に学ぶ</string>
-    <string name="plan_saving">保存しています…</string>
     <string name="plan_couldnt_check_changes">変更内容を確認できませんでした。</string>
     <string name="plan_then_covers_everything">この変更で、すべての内容を深く学べる計画になります。</string>
     <string name="plan_apply">適用する</string>

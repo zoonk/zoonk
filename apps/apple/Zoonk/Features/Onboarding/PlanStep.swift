@@ -278,7 +278,7 @@ private struct RevealNoticeDay: View {
         Section {
           planNoticeDayText(noticeDay, document: plan.examDocument)
 
-          Button {
+          BusyButton(isBusy: isSaving, isRow: true) {
             use(noticeDay.date)
           } label: {
             Text("Use this date", tableName: "Plan", comment: "Takes the notice's day as the date")
@@ -286,7 +286,6 @@ private struct RevealNoticeDay: View {
 
           failure
         }
-        .disabled(isSaving)
       } else if let noSitting = schedule.noSitting, let month = studyDate(noSitting.month) {
         Section {
           Text(
@@ -480,7 +479,6 @@ private struct PlanReveal: View {
   @State private var sheet: PlanSheet?
   @State private var showsTopics = false
   @State private var openingToday: Task<Void, Never>?
-  @State private var showsTodayProgress = false
   @State private var isChangingDate = false
   @State private var dateChangeFailed = false
   @State private var slotAnswer: PlanSlotAnswer?
@@ -560,20 +558,12 @@ private struct PlanReveal: View {
 
     Section {
       VStack(spacing: 12) {
-        Button(action: openToday) {
-          HStack {
-            if showsTodayProgress {
-              ProgressView()
-            }
-
-            Text(
-              "Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day")
-          }
-          .frame(maxWidth: .infinity)
+        BusyButton(isBusy: openingToday != nil, icon: .play, action: openToday) {
+          Text("Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day")
         }
         .buttonStyle(.mainAction)
+        .buttonSizing(.flexible)
         .keyboardShortcut(.defaultAction)
-        .disabled(showsTodayProgress)
 
         Button {
           adjusting = .top
@@ -654,21 +644,14 @@ private struct PlanReveal: View {
     }
   }
 
-  /// Today shows once it has read the new plan's day; a read slower than a moment shows on Start.
+  /// Today shows once it has read the new plan's day.
   private func openToday() {
     guard openingToday == nil else {
       return
     }
 
     openingToday = Task {
-      let progress = Task {
-        try await Task.sleep(for: .milliseconds(400))
-        showsTodayProgress = true
-      }
-
       await today.today.load()
-      progress.cancel()
-      showsTodayProgress = false
       openingToday = nil
 
       if !Task.isCancelled {

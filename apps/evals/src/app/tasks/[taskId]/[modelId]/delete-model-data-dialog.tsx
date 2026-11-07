@@ -12,7 +12,6 @@ import {
   AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
 import { Button } from "@zoonk/ui/components/button";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { Trash2Icon } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import { deleteModelDataAction } from "./actions";
@@ -23,9 +22,8 @@ function DeleteModelDataFooter() {
   return (
     <AlertDialogFooter>
       <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
-      <AlertDialogAction disabled={pending} type="submit" variant="destructive">
-        {pending && <Spinner />}
-        {pending ? "Deleting..." : "Delete Data"}
+      <AlertDialogAction busy={pending} type="submit" variant="destructive">
+        Delete Data
       </AlertDialogAction>
     </AlertDialogFooter>
   );

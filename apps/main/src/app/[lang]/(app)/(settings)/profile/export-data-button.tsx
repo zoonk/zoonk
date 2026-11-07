@@ -3,7 +3,6 @@
 import { ListGroup } from "@zoonk/learn/list";
 import { SettingRow } from "@zoonk/learn/setting-rows";
 import { Button } from "@zoonk/ui/components/button";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { downloadFile } from "@zoonk/utils/download";
 import { safeAsync } from "@zoonk/utils/error";
 import { DownloadIcon } from "lucide-react";
@@ -35,15 +34,14 @@ export function ExportDataButton() {
           label={t("Download my data")}
         >
           <Button
-            aria-label={isPending ? t("Preparing your data…") : t("Download my data")}
-            disabled={isPending}
-            focusableWhenDisabled
+            aria-label={t("Download my data")}
+            busy={isPending}
+            icon={<DownloadIcon aria-hidden="true" />}
             onClick={download}
             size="sm"
             variant="outline"
           >
-            {isPending ? <Spinner aria-hidden="true" /> : <DownloadIcon aria-hidden="true" />}
-            {isPending ? t("Preparing…") : t("Download")}
+            {t("Download")}
           </Button>
         </SettingRow>
       </ListGroup>

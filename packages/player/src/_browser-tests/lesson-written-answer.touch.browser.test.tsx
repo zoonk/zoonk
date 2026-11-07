@@ -41,7 +41,9 @@ describe("a written answer on a touch screen", () => {
     await tap(answer);
     await userEvent.keyboard(RIGHT_TYPED);
     await press("Enter");
-    await expect.element(page.getByRole("button", { name: "Checking" })).toBeDisabled();
+    const check = page.getByRole("button", { exact: true, name: "Check" });
+    await expect.element(check).toHaveAttribute("aria-busy", "true");
+    await expect.element(check).toBeDisabled();
     await expect.element(answer).not.toHaveFocus();
 
     const checked = await acceptedAnswerCheck(typedAnswer)(checkStep.mock.calls[0]![0]);

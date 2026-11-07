@@ -15,7 +15,6 @@
   "testout_rule": "aa107aa479717526550bba6da1bba1594fdc3979b22b6b828eb2ac987ebba5ff",
   "testout_see_plus": "a92c00b6c4a737f605bd693530582e0bb0b1a4580a1825b962190b74848d921b",
   "testout_start": "615e705d2e98e312b9f5fc90d8950d1aab1b1d279374e03a8bef2d9bfc053513",
-  "testout_starting": "06f5a386e6e137208eed21182c922ad2511735e471c507882ebf7276b05496e8",
   "testout_this_chapter": "6aa4d4806b742d267660eb3f51ce4162485b8e56a981e90033d7ed923f51c24d",
   "testout_title": "0eeae5b4a56d5ebca6c4426102c91e3eb249c77cb1a933e37d1ea2b83a262c6d",
   "testout_writing": "4dba671eb4fb452150bb727a73b85a1a160cf17e6a777fe1a09fc4c4b2a2f462",
@@ -33,7 +32,6 @@
     <string name="testout_intro_title">Tu connais déjà ce contenu ?</string>
     <string name="testout_intro_detail">Quelques questions sur ce chapitre. Si tu réussis, ton plan passe ce que tu connais déjà.</string>
     <string name="testout_start">Commencer le test</string>
-    <string name="testout_starting">Démarrage…</string>
     <string name="testout_see_plus">Découvrir Plus</string>
     <string name="testout_writing">Préparation de tes questions</string>
     <string name="testout_writing_questions">Préparation de questions sur ce chapitre</string>

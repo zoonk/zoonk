@@ -55,6 +55,7 @@ struct BuddyDayView: View {
                     open(opens)
                   }
                 }
+                .disabled(opening != nil && opening != blockID)
               }
             }
           }

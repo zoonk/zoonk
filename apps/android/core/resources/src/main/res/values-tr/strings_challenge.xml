@@ -43,7 +43,6 @@
   "challenge_start": "1567afe92f50d8f985ec940f73f23c8fe40e9eedc38da5c7b0531d36574d2745",
   "challenge_start_failed": "477b68b1e70838b180a64877d624c6f32305d8802060ce5e5ca3023de798512d",
   "challenge_start_slow": "d1ac047fb3e2484528e2758f2b846aa1e3782e6367f53f321aef1206dad8f194",
-  "challenge_starting": "3b220b3c32acab41154a9b29d30e67e916a5e3ca7955caec5f414691ad63cc39",
   "challenge_today": "2e0dd987aa5899d17d30cd9d1da455447efa702bedee16b6bdf154506760f2f6",
   "challenge_tomorrow": "c1a747fc22c58848f384fd1ba33094b4109cd97608647e004f3b073c5a841307",
   "challenge_topic_count": "573c9528b21e5cad71ae8cb2c01300a71611ac64189751d9acc71a78c5db9cc9",
@@ -144,7 +143,6 @@
     </plurals>
     <string name="challenge_call_plus">Meydan okuma sohbetleri Plus’a dahil. Planın bu sohbetler olmadan da devam ediyor.</string>
     <string name="challenge_start">Başla</string>
-    <string name="challenge_starting">Başlatıyoruz…</string>
     <string name="challenge_start_failed">İşlem tamamlanamadı. Birazdan tekrar dene.</string>
     <string name="challenge_start_slow">Hâlâ başlatmaya çalışıyoruz. Bu, normalden uzun sürüyor.</string>
     <string name="challenge_continue">Devam et</string>

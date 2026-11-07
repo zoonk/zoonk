@@ -2,7 +2,7 @@
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { SignpostIcon } from "lucide-react";
+import { SignpostIcon, Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import {
@@ -83,8 +83,8 @@ function ChoiceQuestion({
         {choice.take > 1 ? (
           <ExamChoicePicks
             choice={choice}
-            disabled={isPending}
             onSave={(subjects) => onPick({ group: choice.group, subjects })}
+            pending={isPending}
           />
         ) : (
           // Equal options, so one under the other in their order, never one as the main answer.
@@ -118,7 +118,12 @@ function ChoicePicked({ change, onUndone }: { change: PlanChangeView; onUndone: 
     save(() => actions.decidePlanChange({ changeId: change.id, status: "undone" }), onUndone);
 
   const undoButton = change.canUndo && (
-    <SuggestionAction disabled={isPending} onClick={undo} variant="outline">
+    <SuggestionAction
+      busy={isPending}
+      icon={<Undo2Icon aria-hidden="true" />}
+      onClick={undo}
+      variant="outline"
+    >
       {t("Undo")}
     </SuggestionAction>
   );

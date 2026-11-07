@@ -9,6 +9,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
@@ -103,6 +104,7 @@ class PlanRevealStepFlowTest {
         rule.mainClock.advanceTimeBy(500)
 
         assertNotEquals(AppRoute.Today, navigator.currentRoute)
+        rule.onNodeWithText("Start").assertIsNotEnabled()
         rule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate)).assertIsDisplayed()
 
         today.complete(Unit)

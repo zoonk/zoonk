@@ -1,7 +1,6 @@
 package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +26,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
@@ -35,7 +35,6 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.collapse
 import androidx.compose.ui.semantics.expand
 import androidx.compose.ui.semantics.semantics
@@ -56,8 +55,10 @@ import com.zoonk.android.ui.theme.zoonkType
  * it's open after [stateDescription]. [meta] (numbers, a date, the Plus mark) ends the headline and
  * moves under it when the words would get too little room. [trailing] is a control at the row's end,
  * such as a switch or a button (main's `SettingRow`). [leading] is a mark at least a line tall, or a
- * larger picture (an avatar). Rows reach the list's edges and inset their own content by
- * [LIST_ITEM_INSET]; a nested row moves its mark and words in by [indent], so its highlight still
+ * larger picture (an avatar). A [busy] row's end (its chevron, or its [meta] without one) turns
+ * into a spinner while it works ([BusyContent]); a row that isn't [enabled] dims, and with
+ * [focusableWhenDisabled], as one waiting on another control's request, keeps its focus. Rows reach the list's edges and inset
+ * their own content by [LIST_ITEM_INSET]; a nested row moves its mark and words in by [indent], so its highlight still
  * spans the list. [verticalAlignment] `Top` keeps the mark on the title's first line when lines
  * under it run long (main's `items-start`). A row that opens a page ends with main's chevron; one
  * that acts in place (a "Show more", logging out) passes [chevron] `false`, and one whose [trailing]
@@ -69,6 +70,8 @@ fun ListRow(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     enabled: Boolean = true,
+    focusableWhenDisabled: Boolean = false,
+    busy: Boolean = false,
     highlighted: Boolean = false,
     indent: Dp = 0.dp,
     expanded: Boolean? = null,
@@ -98,7 +101,7 @@ fun ListRow(
                 // The whole row takes the tap; its ripple stays inside the highlight's rounded shape.
                 .then(
                     if (onClick != null) {
-                        Modifier.clickable(interaction, indication = null, enabled = enabled, role = Role.Button, onClick = onClick)
+                        Modifier.busyClickable(busy, interaction, indication = null, enabled, focusableWhenDisabled, onClick)
                     } else {
                         Modifier.semantics(mergeDescendants = true) {}
                     },
@@ -115,6 +118,7 @@ fun ListRow(
                 .clip(RoundedCornerShape(ZoonkRadius.lg))
                 .background(if (highlighted) MaterialTheme.colorScheme.surfaceContainerHigh else Color.Transparent)
                 .indication(interaction, ripple())
+                .alpha(if (onClick != null && !enabled && !busy) DISABLED_ALPHA else 1f)
                 .padding(start = HIGHLIGHT_OUTSET + indent, end = HIGHLIGHT_OUTSET, top = WORDS_PADDING, bottom = WORDS_PADDING),
         horizontalArrangement = Arrangement.spacedBy(LEADING_GAP),
         verticalAlignment = verticalAlignment,
@@ -141,6 +145,7 @@ fun ListRow(
                         headline()
                     } else {
                         TitleAndMeta(
+                            metaBusy = busy && !chevron,
                             meta = {
                                 CompositionLocalProvider(LocalContentColor provides quiet) {
                                     ProvideTextStyle(MaterialTheme.zoonkType.data, meta)
@@ -168,7 +173,7 @@ fun ListRow(
 
         trailing?.invoke()
 
-        if (chevron) ListRowChevron()
+        if (chevron) BusyContent(busy) { ListRowChevron() }
     }
 }
 
@@ -207,6 +212,7 @@ fun MarkedLine(
 
 @Composable
 private fun TitleAndMeta(
+    metaBusy: Boolean,
     meta: @Composable () -> Unit,
     title: @Composable () -> Unit,
 ) {
@@ -216,7 +222,11 @@ private fun TitleAndMeta(
                 Column {
                     title()
                 }
-            }, { Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) { meta() } }),
+            }, {
+                BusyContent(metaBusy) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) { meta() }
+                }
+            }),
     ) { (titles, metas), constraints ->
         val width = constraints.maxWidth
         val gap = 12.dp.roundToPx()
@@ -267,3 +277,5 @@ private val HIGHLIGHT_INSET = 2.dp
 
 /** Main's 11dp above and below a row's words, less the highlight's inset. */
 private val WORDS_PADDING = 11.dp - HIGHLIGHT_INSET
+
+private const val DISABLED_ALPHA = 0.5f

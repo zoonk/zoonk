@@ -43,7 +43,6 @@
   "challenge_start": "ecca8c7a7aa2a9bc5fc71670cef87c14172acff5505797e4a1732789517032c0",
   "challenge_start_failed": "a907dbe816ee25a20d6ae6bb8de44179d90d2fe34995fb9bca60bfba3dff223c",
   "challenge_start_slow": "49ffa083c234dc006202b940ed2ab60eca4184aee8590553c89f9b6502e9b5d1",
-  "challenge_starting": "7ee37894f4e59f58ecf0f5edaca43c304cfe29917b2e1d18eff47c79ab5b542f",
   "challenge_today": "1a6d7d43d9fdfa0c302026c37afbea481271cac6a0992d72b19d539250f6e58a",
   "challenge_tomorrow": "c6777d14c156910b8e8c150b5a7ee9c689731c7e15c4c199c7ff2de5514db9d5",
   "challenge_topic_count": "3d8c83189968eda5346d0359d9edff41e0ba5b5b6c7de1529c1b0a41eabb8b73",
@@ -151,7 +150,6 @@
     </plurals>
     <string name="challenge_call_plus">Les échanges de défi sont inclus avec Plus. Ton plan continue sans eux.</string>
     <string name="challenge_start">Commencer</string>
-    <string name="challenge_starting">Démarrage…</string>
     <string name="challenge_start_failed">Ça n’a pas marché. Réessaie dans un instant.</string>
     <string name="challenge_start_slow">Le démarrage est toujours en cours. Cela prend plus de temps que d’habitude.</string>
     <string name="challenge_continue">Continuer</string>

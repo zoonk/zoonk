@@ -1,11 +1,12 @@
 import SwiftUI
 
-/// Being done for the day, or resting, never hides what comes next.
+/// Being done for the day, or resting, never hides what comes next. Its first lesson and Keep
+/// learning add the same lessons, each as its own tap, so only the one pressed spins.
 struct TodayUpNextSection: View {
   let view: TodayView
-  let isBusy: Bool
-  let failed: Bool
-  let keepLearning: () -> Void
+  let busy: TodayDayView.Tap?
+  let failed: TodayDayView.Tap?
+  let keepLearning: (TodayDayView.Tap) -> Void
 
   var body: some View {
     Section {
@@ -19,13 +20,19 @@ struct TodayUpNextSection: View {
           Text(studyDuration(minutes: lesson.minutes))
             .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
+            .coveredBySpinner(index == 0 && busy == .upNextLesson, alignment: .trailing)
         }
 
         if index == 0 {
-          Button(action: keepLearning) { row }
-            .tint(.primary)
-            .disabled(isBusy)
-            .currentRow()
+          Button {
+            keepLearning(.upNextLesson)
+          } label: {
+            row
+          }
+          .tint(.primary)
+          .disabled(busy != nil && busy != .upNextLesson)
+          .accessibilityBusy(busy == .upNextLesson)
+          .currentRow()
         } else {
           row
         }
@@ -36,7 +43,13 @@ struct TodayUpNextSection: View {
     }
 
     Section {
-      TodayMainAction(kind: .keepLearning, isBusy: isBusy, failed: failed, action: keepLearning)
+      TodayMainAction(
+        kind: .keepLearning, isBusy: busy == .keepLearning,
+        failed: failed == .keepLearning || failed == .upNextLesson
+      ) {
+        keepLearning(.keepLearning)
+      }
+      .disabled(busy != nil && busy != .keepLearning)
     }
     .listRowBackground(Color.clear)
     .listRowInsets(.vertical, 0)
@@ -63,7 +76,9 @@ struct TodayMoreSection: View {
         Section {
           TodayMainAction(
             kind: .practice(minutes: view.session.extraTime.minutes),
-            isBusy: busy == .keepLearning, failed: failed == .keepLearning, action: addTime)
+            isBusy: busy == .keepLearning, failed: failed == .keepLearning, action: addTime
+          )
+          .disabled(busy != nil && busy != .keepLearning)
         }
         .listRowBackground(Color.clear)
         .listRowInsets(.vertical, 0)
@@ -106,14 +121,12 @@ struct TodayMoreSection: View {
                   }
                 }
               } icon: {
-                if busy == .keepLearning {
-                  ProgressView()
-                } else {
-                  Image(systemName: "plus.circle")
-                }
+                Image(systemName: ActionIcon.play.rawValue)
+                  .coveredBySpinner(busy == .keepLearning)
               }
             }
-            .disabled(busy != nil)
+            .disabled(busy != nil && busy != .keepLearning)
+            .accessibilityBusy(busy == .keepLearning)
           }
 
           if let later = view.session.catchUp?.later, later.offered,
@@ -132,14 +145,12 @@ struct TodayMoreSection: View {
                   }
                 }
               } icon: {
-                if busy == .catchUp {
-                  ProgressView()
-                } else {
-                  Image(systemName: "arrow.uturn.forward")
-                }
+                Image(systemName: ActionIcon.addLessons.rawValue)
+                  .coveredBySpinner(busy == .catchUp)
               }
             }
-            .disabled(busy != nil)
+            .disabled(busy != nil && busy != .catchUp)
+            .accessibilityBusy(busy == .catchUp)
           }
         }
       }
@@ -246,13 +257,12 @@ struct TodayPlanChangeSection: View {
                   "Next suggestion", tableName: "Today", comment: "Shows the next plan suggestion")
               }
             } else if decision == .applied, change.canUndo {
-              Button {
+              BusyButton(isBusy: isSaving, icon: .undo) {
                 answer(.undone)
               } label: {
                 Text(
                   "Undo", tableName: "Today", comment: "Undoes a plan change the learner applied")
               }
-              .disabled(isSaving)
             }
           }
           .buttonStyle(.outline)
@@ -528,7 +538,7 @@ struct TodayMissionsSection: View {
           ) {
             go(mission)
           }
-          .disabled(busy != nil)
+          .disabled(busy != nil && busy != tap)
         }
       }
     } header: {

@@ -724,7 +724,6 @@
     <string name="plan_different_choices">Different choices</string>
     <string name="plan_base_studied">Studied</string>
     <string name="plan_get_recommendation">Get a recommendation</string>
-    <string name="plan_getting_recommendation">Getting a recommendation…</string>
     <string name="plan_recommendation_failed">We couldn\'t get a recommendation.</string>
     <string name="plan_still_building">Your plan is still being built. Try again in a moment.</string>
     <string name="plan_recommend_deep">Your time covers everything, so we recommend each prerequisite in depth.</string>
@@ -925,7 +924,6 @@
     <string name="plan_focus_cant_move">Nothing changed: %1$s already start as early as what they build on allows, and your time has no room for more of them. More time a day brings more in.</string>
     <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
     <string name="plan_focus_on_these">Focus on these</string>
-    <string name="plan_saving">Saving…</string>
     <string name="plan_couldnt_check_changes">We couldn\'t check what changes.</string>
     <string name="plan_then_covers_everything">Your plan then covers everything in depth.</string>
     <string name="plan_apply">Apply</string>

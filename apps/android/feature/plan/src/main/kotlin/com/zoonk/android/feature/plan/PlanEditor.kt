@@ -70,6 +70,7 @@ import com.zoonk.android.R
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
@@ -367,7 +368,9 @@ private fun LatestChange(
             icon = R.drawable.ic_tune,
         )
         if (latest.change.canUndo) {
-            TextButton(onClick = { onUndo(latest.change) }, enabled = !latest.undoing) { Text(stringResource(R.string.plan_undo)) }
+            TextButton(busy = latest.undoing, onClick = { onUndo(latest.change) }, leadingIcon = { ButtonIcon(R.drawable.ic_undo) }) {
+                Text(stringResource(R.string.plan_undo))
+            }
         }
         if (latest.undoFailed) SaveFailedText()
     }

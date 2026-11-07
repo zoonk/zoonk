@@ -299,7 +299,6 @@
   "plan_full_reviews_done": "cdb77dee62af534b1b625b048af7f0b17f6a1f3a16c950bda4c4edfd4ff1d747",
   "plan_gain_this_week": "a3bcc74fcd68138e71516f7dd00263672bb2ff47fe7b1208c6f93ce72cacf080",
   "plan_get_recommendation": "2b7f15621faabcb916f53b284a1ddf801dfe20c17d6b57f253d3bb749669f303",
-  "plan_getting_recommendation": "6a3b6a42db6b004dc4684e7943e61388274d3d07b9f01f9ad68ec06bda294375",
   "plan_go_to_today": "29b18f35a7dd5a9252a006122ff9e37a71b245b5a94deb90f5d226330b1ac15a",
   "plan_goal_date": "64d9f89975e54efe1862e1630e8c8c750c5dfba4639cdda302578d698ca8aba8",
   "plan_goal_limit_reached": "dbcfa485448d82bebcdd73c6a3c4209562865dd713194b48d9f3c703ba7d2899",
@@ -437,7 +436,6 @@
   "plan_save": "86b23fd6fd36897c925d44abafbcbda79ca9c05864f390c4df7d9a3e53ee4564",
   "plan_save_choices": "1c8630204a741554843815f856ad6f48e68e08ae0d22113ef884907f0bf52a28",
   "plan_save_failed": "c9ca9a36d9ab7b1437658292c5ef715c8dcac4f283a0cb3d07108a50ab0f9516",
-  "plan_saving": "6be578b1a2a472cb3613c632fa9976db874f335296fd886713fef8b985724894",
   "plan_score_band": "8effc4f8388d28c9aef8abd10c6842f1b3ea43f19a5ad8a168a28551c3c7ac3a",
   "plan_score_band_range": "e4500a3379f76a2f815984831889dc38427c03d615100c548a0fa4041fe1be6e",
   "plan_score_percent": "2e4761734a5f53cd4b777ddeb9c89ac2f6fb37e934d1e876baf8eb11f852677d",
@@ -1469,7 +1467,6 @@
     <string name="plan_different_choices">Różne opcje</string>
     <string name="plan_base_studied">Udało się pouczyć</string>
     <string name="plan_get_recommendation">Poproś o rekomendację</string>
-    <string name="plan_getting_recommendation">Przygotowujemy rekomendację…</string>
     <string name="plan_recommendation_failed">Nie udało nam się uzyskać rekomendacji.</string>
     <string name="plan_still_building">Wciąż przygotowujemy twój plan. Spróbuj ponownie za chwilę.</string>
     <string name="plan_recommend_deep">Masz czas na wszystko, więc polecamy dokładnie przerobić wszystkie podstawy.</string>
@@ -1677,7 +1674,6 @@
     <string name="plan_focus_cant_move">Bez zmian w obszarach: %1$s. Ich lekcje zaczynają się już najwcześniej, jak to możliwe po opanowaniu potrzebnych podstaw, a na więcej nie starcza czasu. Więcej czasu dziennie to więcej lekcji w planie.</string>
     <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
     <string name="plan_focus_on_these">Skup się na tych przedmiotach</string>
-    <string name="plan_saving">Zapisujemy…</string>
     <string name="plan_couldnt_check_changes">Nie udało się sprawdzić, co się zmieni.</string>
     <string name="plan_then_covers_everything">Dzięki tej zmianie twój plan pozwala dokładnie przerobić całość.</string>
     <string name="plan_apply">Zastosuj</string>

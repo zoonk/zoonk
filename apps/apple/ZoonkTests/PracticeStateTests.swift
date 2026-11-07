@@ -36,14 +36,16 @@ final class MistakePracticeStateTests: XCTestCase {
   }
 
   func testVerdictsCountNotSureAsNeutralButTimeoutsAsMisses() {
-    var state = MistakePracticeState(entries: [makeEntry("m", questions: ["a", "b", "c"])])
+    var state = MistakePracticeState(entries: [makeEntry("m", questions: ["a", "b", "c", "d"])])
 
-    answer(&state, .dontKnow, grade: makeGrade(isCorrect: false))
+    answer(&state, .dontKnow, by: .notSure, grade: makeGrade(isCorrect: false))
     state.next()
-    answer(&state, .dontKnow, timedOut: true, grade: makeGrade(isCorrect: false))
+    answer(&state, .dontKnow, by: .check, grade: makeGrade(isCorrect: false))
+    state.next()
+    answer(&state, .dontKnow, by: .timer, grade: makeGrade(isCorrect: false))
     state.next()
 
-    XCTAssertEqual(state.segments, [.read, .wrong, .current])
+    XCTAssertEqual(state.segments, [.read, .read, .wrong, .current])
   }
 
   func testFixedMistakesAreCountedOnceAndDroppedWhenReopened() {
@@ -63,9 +65,10 @@ final class MistakePracticeStateTests: XCTestCase {
   func testFailedAnswerKeepsItForRetryAndTheLastStepEnds() {
     var state = MistakePracticeState(entries: [makeEntry("m", questions: ["a"])])
 
-    state.check(.choice(1), timedOut: false)
+    let sent = SentAnswer(answer: .choice(1), sender: .check, durationMs: 30_000)
+    state.check(sent)
     state.answerFailed()
-    XCTAssertEqual(state.phase, .answerFailed(answer: .choice(1), timedOut: false))
+    XCTAssertEqual(state.phase, .answerFailed(sent))
     XCTAssertTrue(state.acceptsAnswer)
 
     answer(&state, .choice(1), grade: makeGrade(isCorrect: true))
@@ -86,10 +89,10 @@ final class MistakePracticeStateTests: XCTestCase {
 
   private func answer(
     _ state: inout MistakePracticeState, _ answer: PracticeAnswer = .choice(0),
-    timedOut: Bool = false,
+    by sender: AnswerSender = .check,
     grade: MistakePracticeGrade
   ) {
-    state.check(answer, timedOut: timedOut)
+    state.check(SentAnswer(answer: answer, sender: sender, durationMs: 4000))
     state.answered(grade, mistakeId: state.step?.entry.mistakeId ?? "")
   }
 }

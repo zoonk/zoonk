@@ -181,19 +181,14 @@ private struct TutorConversationView<Header: View>: View {
           .typeStyle(.note)
         }
 
-        Button {
+        BusyButton(isBusy: conversation.isLoadingEarlier) {
           Task { await conversation.loadEarlier() }
         } label: {
-          if conversation.isLoadingEarlier {
-            ProgressView()
-          } else {
-            Text(
-              "Load earlier messages", tableName: "Tutor",
-              comment: "Shows the conversation's earlier messages")
-          }
+          Text(
+            "Load earlier messages", tableName: "Tutor",
+            comment: "Shows the conversation's earlier messages")
         }
         .buttonStyle(.outline)
-        .disabled(conversation.isLoadingEarlier)
       }
       .frame(maxWidth: .infinity)
     }

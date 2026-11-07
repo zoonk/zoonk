@@ -22,6 +22,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -61,7 +62,7 @@ private fun ExamChoiceOptions(
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionLabel(choice.group)
         if (choice.take > 1) {
-            ExamChoicePicks(choice, enabled = !pending, onSave = { edits.chooseExamOption(choice.group, it) {} })
+            ExamChoicePicks(choice, saving = false, enabled = !pending, onSave = { edits.chooseExamOption(choice.group, it) {} })
         } else {
             val shown =
                 edits
@@ -91,12 +92,17 @@ private fun ExamChoiceOptions(
     }
 }
 
-/** Main's `ExamChoicePicks`: the options of a choice whose candidates take several, saved together so the plan isn't rebuilt on every tick. */
+/**
+ * Main's `ExamChoicePicks`: the options of a choice whose candidates take several, saved together so
+ * the plan isn't rebuilt on every tick. [saving] is this Save's own request; [enabled] off waits for
+ * another control's.
+ */
 @Composable
 fun ExamChoicePicks(
     choice: ExamChoice,
-    enabled: Boolean,
+    saving: Boolean,
     onSave: (subjects: List<String>) -> Unit,
+    enabled: Boolean = true,
 ) {
     var draft by rememberSaveable(choice.subjects) { mutableStateOf(choice.subjects) }
 
@@ -114,11 +120,16 @@ fun ExamChoicePicks(
                     selected = picked,
                     onClick = { draft = choice.toggled(draft, option.name) },
                     role = Role.Checkbox,
-                    enabled = enabled && (picked || !choice.isFull(draft)),
+                    enabled = enabled && !saving && (picked || !choice.isFull(draft)),
                 )
             }
         }
-        Button(onClick = { onSave(draft) }, enabled = enabled && choice.canSave(draft)) { Text(stringResource(R.string.plan_save)) }
+        Button(
+            busy = saving,
+            onClick = { onSave(draft) },
+            enabled = enabled && choice.canSave(draft),
+            leadingIcon = { ButtonIcon(R.drawable.ic_check) },
+        ) { Text(stringResource(R.string.plan_save)) }
     }
 }
 
@@ -249,7 +260,7 @@ internal fun ExamChoiceSuggestion(
         }
         SuggestionDescription(examChoiceLeftOut(choice))
         if (choice.take > 1) {
-            ExamChoicePicks(choice, enabled = !pending, onSave = onChoose)
+            ExamChoicePicks(choice, saving = false, enabled = !pending, onSave = onChoose)
         } else {
             SuggestionActions {
                 choice.options.forEach { option ->

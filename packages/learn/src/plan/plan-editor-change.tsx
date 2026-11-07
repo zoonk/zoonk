@@ -3,7 +3,7 @@
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { SlidersHorizontalIcon } from "lucide-react";
+import { SlidersHorizontalIcon, Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../_components/save-error";
 import { PlanChangeSummary } from "./plan-change-applied";
@@ -19,9 +19,9 @@ function EditorChangeNote({ change }: { change: PlanChangeView }) {
       <PlanChangeSummary change={change} icon={SlidersHorizontalIcon} />
       {change.canUndo && (
         <Button
+          busy={isPending}
           className="self-start"
-          disabled={isPending}
-          focusableWhenDisabled
+          icon={<Undo2Icon aria-hidden="true" />}
           onClick={undo}
           size="sm"
           variant="outline"

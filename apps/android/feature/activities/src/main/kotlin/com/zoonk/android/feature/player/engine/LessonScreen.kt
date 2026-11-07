@@ -7,7 +7,7 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.writtenText
 import com.zoonk.android.ui.components.TaskSegment
 
-enum class PrimaryLabel { Check, Checking, Confirm, Continue, DontKnowYet, Next, NextStep, SeeAnswer, SeeHowItWent, Start }
+enum class PrimaryLabel { Check, Confirm, Continue, DontKnowYet, Next, NextStep, SeeAnswer, SeeHowItWent, Start }
 
 @Immutable
 data class PrimaryAction(
@@ -47,7 +47,7 @@ private fun LessonPlayerState.readLabel(step: LessonStep): PrimaryLabel {
 private fun LessonPlayerState.primaryAction(step: LessonStep): PrimaryAction? {
     if (phase == LessonPhase.Completed || run is LessonRun.Refused) return null
     if (phase == LessonPhase.Feedback) return PrimaryAction(isCheck = false, label = PrimaryLabel.Continue)
-    if (phase == LessonPhase.Checking) return PrimaryAction(isCheck = true, label = PrimaryLabel.Checking, busy = true, enabled = false)
+    if (phase == LessonPhase.Checking) return copy(phase = LessonPhase.Playing).primaryAction(step)?.copy(busy = true, enabled = false)
     if (step.isReadStep) return PrimaryAction(isCheck = false, label = readLabel(step))
 
     val challenge = step.content as? StepContent.Challenge

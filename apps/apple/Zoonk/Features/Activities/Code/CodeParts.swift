@@ -123,30 +123,15 @@ struct CodeRunBar: View {
   }
 
   private var runButton: some View {
-    Button(action: run) {
-      Group {
-        if isRunning {
-          Label {
-            Text("Running", tableName: "ActivitiesCode", comment: "A program or query is running")
-          } icon: {
-            ProgressView()
-          }
-        } else {
-          Label {
-            if hasRun {
-              Text(
-                "Run again", tableName: "ActivitiesCode", comment: "Run a program or query again")
-            } else {
-              Text("Run", tableName: "ActivitiesCode", comment: "Run a program or query")
-            }
-          } icon: {
-            Image(systemName: "play.fill")
-          }
-        }
+    BusyButton(isBusy: isRunning, icon: .play, action: run) {
+      if hasRun {
+        Text("Run again", tableName: "ActivitiesCode", comment: "Run a program or query again")
+      } else {
+        Text("Run", tableName: "ActivitiesCode", comment: "Run a program or query")
       }
-      .frame(maxWidth: .infinity)
     }
-    .disabled(isRunning || !canRun)
+    .buttonSizing(.flexible)
+    .disabled(!canRun)
     .keyboardShortcut(.return, modifiers: .command)
   }
 }

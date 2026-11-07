@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TaskActions } from "../_components/task-layout";
@@ -18,7 +19,9 @@ function SkippedEssay() {
       exitHref={hrefs.exit}
       footer={
         <TaskActions>
-          <TaskMainLink href={hrefs.exit}>{t("Back to Today")}</TaskMainLink>
+          <TaskMainLink href={hrefs.exit} icon={<ArrowLeftIcon aria-hidden="true" />}>
+            {t("Back to Today")}
+          </TaskMainLink>
         </TaskActions>
       }
       headerTitle={<TaskHeaderTitle title={label} />}

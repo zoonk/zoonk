@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -36,6 +35,7 @@ import com.zoonk.android.feature.onboarding.goalErrorMessage
 import com.zoonk.android.feature.onboarding.goalLimitMessage
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.scaffold.pageTitle
@@ -222,9 +222,12 @@ internal fun ColumnScope.ExplainGoal(
     OutcomeIcon(R.drawable.ic_lightbulb)
     OnboardingHeading(question, stringResource(R.string.onboarding_explain_description))
     GoalFooter(error, onCreateAccount, onOpenPlan, onSeePlus) {
-        Button(onClick = onStart, enabled = !isStarting, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(if (isStarting) R.string.onboarding_opening_explanation else R.string.onboarding_explain_it))
-        }
+        Button(
+            busy = isStarting,
+            onClick = onStart,
+            modifier = Modifier.fillMaxWidth(),
+            leadingIcon = { ButtonIcon(R.drawable.ic_lightbulb) },
+        ) { Text(stringResource(R.string.onboarding_explain_it)) }
     }
 }
 
@@ -316,13 +319,18 @@ internal fun ColumnScope.InstrumentGoal(
     }
 
     GoalFooter(error, onCreateAccount, onOpenPlan, onSeePlus) {
-        Button(onClick = onStartMusicianship, enabled = !isStarting, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(if (isStarting) R.string.onboarding_saving_goal else R.string.onboarding_start_musicianship))
-        }
-        TextButton(
-            onClick = onJoinWaitlist,
-            enabled = !isJoining && waitlist != WaitlistOutcome.Joined,
+        Button(
+            busy = isStarting,
+            onClick = onStartMusicianship,
             modifier = Modifier.fillMaxWidth(),
+            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+        ) { Text(stringResource(R.string.onboarding_start_musicianship)) }
+        TextButton(
+            busy = isJoining,
+            onClick = onJoinWaitlist,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = waitlist != WaitlistOutcome.Joined,
+            leadingIcon = { ButtonIcon(R.drawable.ic_notifications) },
         ) { Text(stringResource(R.string.onboarding_join_waitlist)) }
     }
 }

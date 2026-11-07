@@ -207,7 +207,7 @@ struct AccountDeletionView: View {
       }
     } else {
       Section {
-        Button(role: .destructive) {
+        BusyButton(isBusy: isPerformingDeletion, role: .destructive, isRow: true) {
           pendingDeletion = .direct
           isConfirmingDeletion = true
         } label: {
@@ -217,7 +217,7 @@ struct AccountDeletionView: View {
             comment: "Starts permanent account deletion")
         }
         .foregroundStyle(.destructiveText)
-        .disabled(session.isWorking)
+        .disabled(session.isWorking && !isPerformingDeletion)
       }
     }
   }
@@ -257,44 +257,40 @@ struct AccountDeletionView: View {
         )
         .disabled(session.isWorking)
 
-        Button(role: .destructive) {
+        BusyButton(isBusy: isPerformingDeletion, role: .destructive, isRow: true) {
           pendingDeletion = .email
           isConfirmingDeletion = true
         } label: {
-          workingLabel(
-            title: Text(
-              "Verify and delete",
-              tableName: "Account",
-              comment: "Verifies the email code and permanently deletes the account"))
+          Text(
+            "Verify and delete",
+            tableName: "Account",
+            comment: "Verifies the email code and permanently deletes the account")
         }
         .foregroundStyle(.destructiveText)
-        .disabled(normalizedCode.count != 6 || session.isWorking)
+        .disabled((normalizedCode.count != 6 || session.isWorking) && !isPerformingDeletion)
 
-        Button {
+        BusyButton(isBusy: session.isWorking && !isPerformingDeletion, isRow: true) {
           Task {
             await sendEmailCode()
           }
         } label: {
-          workingLabel(
-            title: Text(
-              "Send a new code",
-              tableName: "Account",
-              comment: "Sends a replacement account deletion verification code"))
+          Text(
+            "Send a new code",
+            tableName: "Account",
+            comment: "Sends a replacement account deletion verification code")
         }
-        .disabled(session.isWorking)
+        .disabled(isPerformingDeletion)
       } else {
-        Button {
+        BusyButton(isBusy: session.isWorking, isRow: true) {
           Task {
             await sendEmailCode()
           }
         } label: {
-          workingLabel(
-            title: Text(
-              "Send verification code",
-              tableName: "Account",
-              comment: "Sends an email code for account deletion reauthorization"))
+          Text(
+            "Send verification code",
+            tableName: "Account",
+            comment: "Sends an email code for account deletion reauthorization")
         }
-        .disabled(session.isWorking)
       }
     } header: {
       SectionTitle(
@@ -447,19 +443,6 @@ struct AccountDeletionView: View {
         tableName: "Account",
         comment:
           "Warns that Google Play billing continues independently of Zoonk account deletion")
-    }
-  }
-
-  private func workingLabel(title: Text) -> some View {
-    HStack {
-      title
-
-      Spacer()
-
-      if session.isWorking {
-        ProgressView()
-          .controlSize(.small)
-      }
     }
   }
 

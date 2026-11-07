@@ -82,6 +82,9 @@ final class MockRun {
   var timeUp: Bool { sectionTimeUp || questionTimeUp }
   var pending: Bool { busy != nil }
 
+  /// A step's button waits while another step's request runs; its own keeps it busy, not disabled.
+  func pending(besides step: Step) -> Bool { busy != nil && busy != step }
+
   var moves: MockSectionMoves {
     MockSectionMoves(
       answered: question.map { drafts[$0.itemId]?.isAnswered ?? false } ?? false,
