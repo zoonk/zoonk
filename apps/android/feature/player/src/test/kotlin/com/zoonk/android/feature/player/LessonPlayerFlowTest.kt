@@ -361,7 +361,7 @@ class LessonPlayerFlowTest {
     }
 
     @Test
-    fun continueAloneLetsTheLessonFinishBeforeTheLastAnswerIsSaved() {
+    fun theFinishWaitsForAnAnswerHeldAfterContinueStartedAResend() {
         var firstOffline = true
         var secondOffline = false
         play(listOf(checkStep("first"), checkStep("second"), summaryStep("end"))) {
@@ -394,7 +394,7 @@ class LessonPlayerFlowTest {
     }
 
     @Test
-    fun controlWithoutAnOverlappingResendTheFinishWaits() {
+    fun theFinishWaitsForAHeldAnswerWithNoResendRunning() {
         var secondOffline = false
         play(listOf(checkStep("first"), checkStep("second"), summaryStep("end"))) {
             grade = { id, _ ->
@@ -424,7 +424,7 @@ class LessonPlayerFlowTest {
     }
 
     @Test
-    fun controlALostReplyMissResentAtReopenKeepsItsRetry() {
+    fun aLostReplyMissResentAtReopenKeepsItsRetry() {
         val quiz = "00000000-0000-4000-8000-000000000101"
         val idea = "00000000-0000-4000-8000-000000000102"
         val next = "00000000-0000-4000-8000-000000000103"
