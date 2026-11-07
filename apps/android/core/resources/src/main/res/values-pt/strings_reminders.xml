@@ -7,19 +7,19 @@
   "reminders_email": "637ae50134623d961311e92aea2d30d7fd745d0609d562c9df9af42ac15031ed",
   "reminders_email_instead": "046cf7c7c6e3a4d177dacd317bb9eeb606d3a5e4377c0064fe958fda8a387763",
   "reminders_email_needs_account": "a0745da4e851bf445f7f614167326885c1a5e3e97234652c78fe06d21dc009fd",
-  "reminders_email_on": "c248bf4a9e429d662bd2621860e0d72f52e39ef24c13bf1da20a33e1e641b000",
+  "reminders_email_on": "f99668aa69d71928cd76675681aed3e3b46bab0b03afe7fc6fe6260a12002663",
   "reminders_no_thanks": "3d398dcc8f4f19de57d95477a1710b92ca68fad0e59e8352c213a5442c5e9821",
   "reminders_not_now": "7f6c6418c0c282f276b3e743a921159390c28f16b8c1f003b65052d27e526d91",
   "reminders_notifications_off": "0449fbca6f01900fde6b92b2de8441609169726251f828bb23cad77d01eeb17e",
-  "reminders_offer_body": "b4f53eef7c2b3430454ce6266610d2d2304793dddf43b2fc8bc3345d295079ba",
-  "reminders_offer_title": "dc3b8b128a44dfd410f6a8b89953c6e0548855d0f32e57be5fce49e3cefd2507",
+  "reminders_offer_body": "8b330f13e21dad1bdbda6407ea934ceda1cfc052effdd22e4b797738929e4740",
+  "reminders_offer_title": "c06637539c6322e4232da27f7715f808d95a740646492c4da45c3ee222baa21a",
   "reminders_on": "d78d93a91e771216abfa960eed090e60bbc8388f5f2276ff20b73b999eb04adf",
   "reminders_open_settings": "fd7c2ebf97297b4929ebdc1109495ec9e067d4729b7c146fa3b5255a047232f7",
   "reminders_permission_body": "4a66f3a67e9979ec7010e7acae3586d0acf894fe645e71645c87c76359863b17",
   "reminders_permission_continue": "d9e61ae481f21783d5c3a07947fa14690547b2b873dcb59bd79e5f52c6f9a1f6",
   "reminders_permission_title": "8d6f9b1f80e30f85fd8ec505b34ee5c56eae70e2404cd5c864a799080d16420e",
   "reminders_push": "f214e0090270e8dfde494758242776f7820f6a51e7279c751877805f341e5381",
-  "reminders_quiet": "cecb6aebe6c37ecff395622d3f426204bb5e9eaab18d10beba794417b9e84531",
+  "reminders_quiet": "d9c6c49849fe65aeb26535d2f045aa8e0aa66a4599de55c1da1d5c0abd3d59c8",
   "reminders_remind_me": "27145dfdad77ab91d5ed6139c46e00aa070693a80ff0c0ac37c312210081352f",
   "reminders_save": "36e89fa773b65ec0e3f9417c123d709a27e31d23bda3c96201a5ccb704f0805b",
   "reminders_save_failed": "29d20c4660cd4e73e03d7b11fd29c5ee40268ab4ac31afb0e5aee3fb2f5ab7ef",
@@ -37,16 +37,16 @@
     <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
     <string name="reminders_channel_description">Um lembrete nos seus dias de estudo, quando ainda tiver o que estudar.</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
-    <string name="reminders_offer_title">Quer um lembrete de estudo?</string>
+    <string name="reminders_offer_title">Quer um lembrete para estudar?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
-    <string name="reminders_offer_body">Às %1$s nos seus dias de estudo, quando ainda tiver algo para estudar.</string>
+    <string name="reminders_offer_body">Às %1$s nos seus dias de estudo, se ainda tiver o que estudar.</string>
     <string name="reminders_remind_me">Me lembrar</string>
     <!-- Declines the offer, which isn't shown again. Portuguese: "Agora não" (ungendered). -->
     <string name="reminders_no_thanks">Agora não</string>
     <!-- After the learner said yes to reminders on the phone. -->
     <string name="reminders_on">Os lembretes estão ativados.</string>
     <!-- After the learner chose email reminders instead. -->
-    <string name="reminders_email_on">Lembretes por e-mail ativados.</string>
+    <string name="reminders_email_on">Os lembretes por e-mail estão ativados.</string>
     <!-- Android blocks Zoonk's notifications, so the phone can't show reminders. -->
     <string name="reminders_notifications_off">As notificações do Zoonk estão desativadas.</string>
     <!-- Opens Android's notification settings for Zoonk. -->
@@ -72,7 +72,7 @@
     <string name="reminders_push">Notificações push</string>
     <!-- Under the settings; "your plans" opens the plan, which sets the study days. -->
     <string name="reminders_study_days">Nos seus dias de estudo, conforme seus planos</string>
-    <string name="reminders_quiet">Pausados enquanto você dá um tempo nos estudos. Voltam quando você estudar.</string>
+    <string name="reminders_quiet">Pausados enquanto você não está por aqui. Voltam quando você estudar.</string>
     <string name="reminders_save_failed">Não foi possível salvar. Tente de novo.</string>
     <!-- Push reminders go to another of the learner's devices; this one can take over. -->
     <string name="reminders_use_this_device">Usar este aparelho</string>

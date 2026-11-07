@@ -11,15 +11,15 @@
   "reminders_no_thanks": "b85707d3be70b73c83299179c9ef5d8834f605ccf6f50a4fc2810ae4409417df",
   "reminders_not_now": "100efbd4e1539b697be72571e70fe137e25bc1d562d25cbc16fa0ec788a29d9a",
   "reminders_notifications_off": "8691f92095216eb04abdda5edd6a325690cd47e0827616f6dfa7b5fd780f3d6b",
-  "reminders_offer_body": "1411f2918aa53b72e463c1419a92dc6b955e1c7329a9f13055fe671c023b329e",
-  "reminders_offer_title": "0aae2f44e3138f330e37bf8e4cc3727ad6070c3cb4bec2ac4058e287072756bd",
+  "reminders_offer_body": "40a41a9ca8a573e239377bd33e1d6c42e8e92de516d9b9bc4f0701dac6b49417",
+  "reminders_offer_title": "982b8f0902ecd9dd16ddec1feeb87312a567c26b4d043d357c350164803b7141",
   "reminders_on": "74cbd757cfe377bf21c6f27d5d7913d4cc9ee80824a117ddea9dae069003bc04",
   "reminders_open_settings": "3dac6b857b232a112a2bfff3233672cad2f6abe83cbeb87a86f0df4e7b7ea83a",
   "reminders_permission_body": "4a3ecca6f132330c822871c8d105943c0c94ffa00e3a2f15b2f73ee4ff4e19b7",
   "reminders_permission_continue": "9299f550f07ae04583677232d547bf6bc86dc7d667535c2e0d2ed745fee86c64",
   "reminders_permission_title": "8980ced1c7cb8c2bcde6dc6bd2a729cc69c2f2f9f8d02d3c2b58698f37cdfda8",
   "reminders_push": "6c326cfaa7d525839a90f48355a886f7a0717be4032bb585ab5b4b88d988c1cd",
-  "reminders_quiet": "0f9e18e64d5048214b1139eee245f330f25b35abc87a691121bfca5f0eab01cb",
+  "reminders_quiet": "a2ba0ecf67cbb6d0ede1dea7887e2228b93580a580116ce8198f8d492e0a6617",
   "reminders_remind_me": "bc35e045c2740891893842d2a6deecfc57f7c7182927a80a13e352300aad089d",
   "reminders_save": "2e30fdbc10a6eafe700670f2c2e1b1044e6914c3300fa41b9eadd59608edb2c9",
   "reminders_save_failed": "cd92582f68c98f6434180facfa4dccbae3fd4c2fa572caf27ecd028dcee089ea",
@@ -37,9 +37,9 @@
     <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
     <string name="reminders_channel_description">Jedno przypomnienie w dni nauki, jeśli masz jeszcze coś do nauki.</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
-    <string name="reminders_offer_title">Przypomnieć ci o nauce?</string>
+    <string name="reminders_offer_title">Chcesz przypomnienia o nauce?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
-    <string name="reminders_offer_body">O %1$s w dni nauki, jeśli zostało ci jeszcze coś do nauki.</string>
+    <string name="reminders_offer_body">O %1$s w dni nauki, jeśli masz jeszcze coś do przerobienia.</string>
     <string name="reminders_remind_me">Przypomnij mi</string>
     <!-- Declines the offer, which isn't shown again. Portuguese: "Agora não" (ungendered). -->
     <string name="reminders_no_thanks">Nie, dziękuję</string>
@@ -72,7 +72,7 @@
     <string name="reminders_push">Powiadomienia push</string>
     <!-- Under the settings; "your plans" opens the plan, which sets the study days. -->
     <string name="reminders_study_days">W dni nauki ustalone w twoich planach</string>
-    <string name="reminders_quiet">Wstrzymane na czas twojej przerwy. Wrócą, gdy znów zaczniesz się uczyć.</string>
+    <string name="reminders_quiet">Wstrzymane na czas przerwy. Włączą się ponownie, gdy wrócisz do nauki.</string>
     <string name="reminders_save_failed">Nie udało się zapisać. Spróbuj ponownie.</string>
     <!-- Push reminders go to another of the learner's devices; this one can take over. -->
     <string name="reminders_use_this_device">Użyj tego urządzenia</string>

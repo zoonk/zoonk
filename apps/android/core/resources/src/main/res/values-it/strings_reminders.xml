@@ -11,7 +11,7 @@
   "reminders_no_thanks": "68b41e450158581e347f003c8a48b2d67d7e5f77d6cd15369b73614cb2d5dbe9",
   "reminders_not_now": "eae25cef6d3351e8e7d88df484e93bd3e4e44ab602c464b87f609b165d41a40d",
   "reminders_notifications_off": "fb6a418df6c3c9f6a1a0e6e960dbcef2dfd15d629cc03705a6c6136ced971cd8",
-  "reminders_offer_body": "ea44bc7e9a907368684272df4965eca09818eb4c5aac1bae46e2563a5781c05c",
+  "reminders_offer_body": "7f62632bd286c6d5335cfaa461a50d970f4d739083587cd37e4f1b2d5e00abb2",
   "reminders_offer_title": "e3967601ff5b80a53e707c72bbc8a522bf5645e155ce42524378853e60c0bb54",
   "reminders_on": "4234ee75213a07980946487c42e85ca45c57d4081472893b3c70b81e2ef3b9e6",
   "reminders_open_settings": "325da0939b326683ddecb8a5c760469fd782924efea3d971d15a24123dfacfb2",
@@ -19,7 +19,7 @@
   "reminders_permission_continue": "13778e82dfa01c5a90919192312fee46bd337443f6c35aeb0573d6ac8cb6b3fc",
   "reminders_permission_title": "c3564c761e0f085cda7b0f89ff992c7ac63617f20db0537821b34e819e3e6815",
   "reminders_push": "a5add4142003bc6a5c710d886c7d9a09d19629e66389ccd9ec537d3f04448b8a",
-  "reminders_quiet": "ef869796547eeb3bf394146917a23272d1b3b7ef9b3f0876c746f5bd4de21ea9",
+  "reminders_quiet": "3cf3a111b5d2e0f1a1b8dca3c45b688dc099d86c4e4bd46089d51815c8011baf",
   "reminders_remind_me": "dbdc196a1d54cf95921749099d09dc9b0d685fdcedb35c4a9496b0ba3eee6817",
   "reminders_save": "ffd7f5ecd82d3ce6b201bdd9e197bd533a346f15c93adac15e5f74957afb08ef",
   "reminders_save_failed": "45019847f762471d84fa11c92480d36d5f927374500596a0781be0fa3e5da941",
@@ -39,7 +39,7 @@
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">Vuoi un promemoria per studiare?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
-    <string name="reminders_offer_body">Alle %1$s nei tuoi giorni di studio, quando hai ancora qualcosa da studiare.</string>
+    <string name="reminders_offer_body">Alle %1$s nei tuoi giorni di studio, se hai ancora qualcosa da studiare.</string>
     <string name="reminders_remind_me">Ricordamelo</string>
     <!-- Declines the offer, which isn't shown again. Portuguese: "Agora não" (ungendered). -->
     <string name="reminders_no_thanks">No, grazie</string>
@@ -72,7 +72,7 @@
     <string name="reminders_push">Notifiche push</string>
     <!-- Under the settings; "your plans" opens the plan, which sets the study days. -->
     <string name="reminders_study_days">Nei giorni di studio previsti dai tuoi piani</string>
-    <string name="reminders_quiet">In pausa mentre non ci sei. Riprendono quando torni a studiare.</string>
+    <string name="reminders_quiet">In pausa durante la tua assenza. Si riattivano quando riprendi a studiare.</string>
     <string name="reminders_save_failed">Il salvataggio non è riuscito. Riprova.</string>
     <!-- Push reminders go to another of the learner's devices; this one can take over. -->
     <string name="reminders_use_this_device">Usa questo dispositivo</string>

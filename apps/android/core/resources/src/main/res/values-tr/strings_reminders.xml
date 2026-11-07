@@ -8,10 +8,10 @@
   "reminders_email_instead": "b72031fe6916709f11a07b043dcf95005fbbc541484d48e94e2e82123ba5c38b",
   "reminders_email_needs_account": "fcc99fe0add9f8a76ac2a6ce2919c9f3c3693d8d1a6679ec38ec1246190f55f4",
   "reminders_email_on": "2e01f58c40b779f03492964539598aa422bbae9ccb54cce0a486c92d38d7cbac",
-  "reminders_no_thanks": "36e1380f9401ca686da602a9630a71e05902d90a8ab27b959610aa04eeafd916",
+  "reminders_no_thanks": "43299ab3fcafea42a5f4b61da42c487e49efe5e66618a90ef796ec44638e21eb",
   "reminders_not_now": "97db0e11bbb687b9ef12256f6e5e199690d47440eed7abbf4af24eb6804d377a",
   "reminders_notifications_off": "e8bba6c0ad80bb494c0e4c7069b083c107e257b27a73a56709926f8bf493e055",
-  "reminders_offer_body": "a50fce9257949368128dc55066aea46dd395a3512df391afdd07a950274c53b5",
+  "reminders_offer_body": "aa2f8900b7cb0a62a8b0f70b44c56048f2c7d87782b9377d5116c1faec4e2b5e",
   "reminders_offer_title": "e5dfccc59bed7f4ddef0a45e79817aedca6ae71fecef07c67d397dddde6a3822",
   "reminders_on": "d2c3445ba9f53f7faa8c5823a393deccda5e7a381174a1396c4de5fe320ad325",
   "reminders_open_settings": "2f613a29ae32c31b61d124d5003ed3eb1d87c4ba5b20d38d681c0f9c170f454f",
@@ -19,7 +19,7 @@
   "reminders_permission_continue": "59ecbf433506726837d92b9faf81ffa63d5f2ff51e42738c600f7cc44791392d",
   "reminders_permission_title": "a70a899e7ee39dcb2c0a4b64b0b96341d0b965f50511eccc263a5cc1df9324d7",
   "reminders_push": "886b3cc3da33430701bb671c6d6e5dcc1d80130512bb272f074f0995d26e4c6a",
-  "reminders_quiet": "1edce3599192f8696082fcf378b5282d453f5ffff4e919874d0d23bfcd24be2f",
+  "reminders_quiet": "8fd553c65db141d0eb514460c23f50d5c633f175f35b45a9ce4b7ab46b1c616d",
   "reminders_remind_me": "0afa86587f02b93d695daee48985484dcf4a57197a636f0ec400cf47d9526242",
   "reminders_save": "9e604950a370a4c0faef4fe6b10ec17869b682d45306de18547127525a398ddf",
   "reminders_save_failed": "3f258696356444290a1b403aea58187994fa318a43d633ca38884866702e13ad",
@@ -39,10 +39,10 @@
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">Çalışma hatırlatması ister misin?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
-    <string name="reminders_offer_body">Çalışma günlerinde, çalışman kaldıysa saat %1$s.</string>
+    <string name="reminders_offer_body">Çalışma günlerinde, tamamlaman gerekenler kaldıysa %1$s saatinde.</string>
     <string name="reminders_remind_me">Bana hatırlat</string>
     <!-- Declines the offer, which isn't shown again. Portuguese: "Agora não" (ungendered). -->
-    <string name="reminders_no_thanks">Şimdi değil</string>
+    <string name="reminders_no_thanks">Hayır, teşekkürler</string>
     <!-- After the learner said yes to reminders on the phone. -->
     <string name="reminders_on">Hatırlatmalar açık.</string>
     <!-- After the learner chose email reminders instead. -->
@@ -72,7 +72,7 @@
     <string name="reminders_push">Anlık bildirimler</string>
     <!-- Under the settings; "your plans" opens the plan, which sets the study days. -->
     <string name="reminders_study_days">Planlarındaki çalışma günlerinde</string>
-    <string name="reminders_quiet">Ara verdiğinde duraklatılır. Çalışmaya başlayınca yeniden açılır.</string>
+    <string name="reminders_quiet">Ara verdiğin için duraklatıldı. Çalışmaya dönünce yeniden açılır.</string>
     <string name="reminders_save_failed">Kaydedilemedi. Tekrar dene.</string>
     <!-- Push reminders go to another of the learner's devices; this one can take over. -->
     <string name="reminders_use_this_device">Bu cihazı kullan</string>

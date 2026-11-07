@@ -8,19 +8,19 @@
   "reminders_email_instead": "ac5df0ad3f573fa522fc291df708e6490155a77e9f82d0c08f19577c55196ad7",
   "reminders_email_needs_account": "186691bb58b65f10e33e64df4e83f0a8fdabd9b9b14604ca8dca930aef5f09d7",
   "reminders_email_on": "be2c94ed92f7f8b29b4b9ce2f13fd086e2b0bb05224201cc9752fb3711725a98",
-  "reminders_no_thanks": "0bd237dfac756d0996242e6671c16e7951bdcf9dc8482b4f4ddadbe431ea4f11",
+  "reminders_no_thanks": "8124672f6c708a2d92a507796a56e8dc585d6650c821d2853d59891d4b097594",
   "reminders_not_now": "7b72b93670c30ecacd5be7ec7f99f4a5bf6b819cbce062f6eba5bbd5ca3b251c",
   "reminders_notifications_off": "e091d5dde5f351d152cb3784d8362005a03c9ebabf1d30a64ad414c9ed0776d6",
-  "reminders_offer_body": "d7fe6b2c63fe359e7147091fecd640f2ad83ea4bc269b3e4d12d881340692dbb",
-  "reminders_offer_title": "627946ed7f6ec87c6db139c4531a5ca6b34a9a551f5f6338d0591375f54b97f2",
+  "reminders_offer_body": "fd65f057a390e3ddaf7684c2199d9a2498f6ea4164e6cee0adafb915b108cf65",
+  "reminders_offer_title": "a6d76c43498118638ddb1f26abda833f305ae78577d291843de9bae6008a0419",
   "reminders_on": "552241df79310b3b101c7b3bb44991c196eae31ed76b61824aa7c63d3705c411",
   "reminders_open_settings": "b78fbcea9a9bf0afac4d91f69566043cd66713ed3304ba90dc48a145745fb49e",
   "reminders_permission_body": "2e07ba76d72bfce14cc015cef2fe0b22e9a0a9a87e610b6eec6bb0add9fe2296",
   "reminders_permission_continue": "75f5702b7df59f81237f0f5d97268d7cc064e4459303356cdf0bce0196c9a57b",
   "reminders_permission_title": "f6dbd6dabc1191b110f03ce8f1933db585651cdb7036e9c78fe4d39de481ecf5",
   "reminders_push": "a5d2f5bf0a6d7df325007a39410f9e85c6d2b7fddaac9535521c0d21850af6b0",
-  "reminders_quiet": "0bf48d35ead5dc99894d5a88477448809c3a7e41713aeffcf9eada54c5793349",
-  "reminders_remind_me": "3a4e999eab849652ba4e990d56dc492369cd9bbe70a96ee618a4eb57ebabe7fa",
+  "reminders_quiet": "b9b48fe74b275ca066fb83b3ed46e500d3dde9b6febc6a901e828f8f7e7896af",
+  "reminders_remind_me": "80eed86aad52145aefc609f369592f1bb38edc2e3e616ab52f9bd2b80774baa5",
   "reminders_save": "037f893322600786ef0b87f08a4ca2f69da6b71b2228fa482b23f6757f7f7eb6",
   "reminders_save_failed": "f7d78cd51e472948c9a8dace4686d75ffa87160ac7005c91f6ec42c50b4130a5",
   "reminders_study_days": "c9e78ed5aab5650d0f92248de99086fb8bbe3e50e7134c2489c306837d8f8aca",
@@ -37,12 +37,12 @@
     <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
     <string name="reminders_channel_description">Eine Erinnerung an deinen Lerntagen, wenn du noch etwas zu lernen hast.</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
-    <string name="reminders_offer_title">Möchtest du ans Lernen erinnert werden?</string>
+    <string name="reminders_offer_title">Sollen wir dich ans Lernen erinnern?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
-    <string name="reminders_offer_body">Um %1$s an deinen Lerntagen, wenn du noch etwas zu lernen hast.</string>
-    <string name="reminders_remind_me">Mich erinnern</string>
+    <string name="reminders_offer_body">An deinen Lerntagen um %1$s, wenn du noch etwas zu lernen hast.</string>
+    <string name="reminders_remind_me">Erinnerung aktivieren</string>
     <!-- Declines the offer, which isn't shown again. Portuguese: "Agora não" (ungendered). -->
-    <string name="reminders_no_thanks">Jetzt nicht</string>
+    <string name="reminders_no_thanks">Nein, danke</string>
     <!-- After the learner said yes to reminders on the phone. -->
     <string name="reminders_on">Erinnerungen sind aktiviert.</string>
     <!-- After the learner chose email reminders instead. -->
@@ -72,7 +72,7 @@
     <string name="reminders_push">Push-Benachrichtigungen</string>
     <!-- Under the settings; "your plans" opens the plan, which sets the study days. -->
     <string name="reminders_study_days">An den Lerntagen aus deinen Plänen</string>
-    <string name="reminders_quiet">Pausiert, solange du nicht da bist. Sobald du wieder lernst, sind sie wieder aktiv.</string>
+    <string name="reminders_quiet">Pausiert, solange du weg bist. Sobald du wieder lernst, sind die Erinnerungen wieder aktiv.</string>
     <string name="reminders_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <!-- Push reminders go to another of the learner's devices; this one can take over. -->
     <string name="reminders_use_this_device">Dieses Gerät verwenden</string>
