@@ -32,6 +32,7 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.OwnedCertificate
 import kotlinx.datetime.toJavaLocalDate
 
@@ -100,7 +101,7 @@ fun LockedCertificate(
             Text(
                 formatDate(name.completedOn.toJavaLocalDate(), currentLocale(), DateStyle.LongYear),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.zoonkType.data,
             )
         }
     }
