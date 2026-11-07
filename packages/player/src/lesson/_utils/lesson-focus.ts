@@ -72,7 +72,11 @@ function getFocusAfterTurn(controlId: string): HTMLElement | null {
     return null;
   }
 
-  return (controlId === LESSON_BACK_ID ? getShown(LESSON_BACK_ID) : null) ?? getLessonFocusTarget();
+  const back = controlId === LESSON_BACK_ID ? getShown(LESSON_BACK_ID) : null;
+  const primary = getShown(LESSON_PRIMARY_ID);
+  const focusable = primary && !primary.matches(":disabled") ? primary : null;
+
+  return back ?? focusable ?? document.querySelector(`#${LESSON_CONTENT_ID}`);
 }
 
 export function pressKeepingFocus(event: Press, press: () => void): void {

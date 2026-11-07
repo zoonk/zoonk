@@ -330,6 +330,23 @@ describe("lesson by keyboard", () => {
     });
   });
 
+  it("a key that turns onto an unanswered question lands on its Check, which takes focus before it can run", async () => {
+    await atViewport(DESKTOP, async () => {
+      openLesson({
+        steps: [
+          explanationStep({ text: "Electrons spread out.", title: "First idea" }),
+          teachingStep("check"),
+        ],
+      });
+
+      await tabTo(page.getByRole("button", { name: /^Next/u }));
+      await press("Enter");
+
+      await expect.element(page.getByRole("radiogroup")).toBeVisible();
+      await expect.element(page.getByRole("button", { name: /^Check/u })).toHaveFocus();
+    });
+  });
+
   it("leaving with a written answer not yet checked asks first, and staying keeps the text", async () => {
     await atViewport(DESKTOP, async () => {
       const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
