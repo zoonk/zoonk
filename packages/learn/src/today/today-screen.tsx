@@ -73,7 +73,6 @@ export function TodayScreen({
   missions = null,
   mistakes = NO_MISTAKES,
   mockEntry = null,
-  namesGoal = false,
   notices = NO_TODAY_HOST_NOTICES,
   planEnd = null,
   readAt,
@@ -89,7 +88,6 @@ export function TodayScreen({
   missions?: MissionsDay | null;
   mistakes?: MistakeAvailability;
   mockEntry?: React.ReactNode;
-  namesGoal?: boolean;
   notices?: TodayHostNotices;
   planEnd?: string | null;
   /** Each new read waits a full window again, for whatever it shows waiting. */
@@ -119,17 +117,7 @@ export function TodayScreen({
 
   return (
     <TodayScreenProvider
-      value={{
-        actions,
-        brainPower,
-        buddy,
-        missions,
-        namesGoal,
-        notices,
-        planEnd,
-        today,
-        writingStalled,
-      }}
+      value={{ actions, brainPower, buddy, missions, notices, planEnd, today, writingStalled }}
     >
       <PageWithAside
         aside={

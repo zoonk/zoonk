@@ -7,7 +7,6 @@ import { type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
 import { getMockOptions } from "@zoonk/core/exams/mocks/options";
 import { type MistakeAvailability } from "@zoonk/core/mistakes/contract";
 import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
-import { getLearningProfile } from "@zoonk/core/profile/get";
 import { getBeltLevel } from "@zoonk/core/progress/get-belt-level";
 import {
   type DayBlockRef,
@@ -35,7 +34,6 @@ export type TodayScreenData = {
   language: LanguageTodayView | null;
   mistakes: MistakeAvailability;
   mocks: MockOptionsView | null;
-  namesGoal: boolean;
   planEnd: string | null;
   steps: TodayStep[];
   syllabus: TodaySyllabus | null;
@@ -129,29 +127,18 @@ export async function loadTodayScreen(goalId?: string): Promise<TodayScreenResul
 
   const { today } = result;
 
-  const [
-    buddy,
-    planEnd,
-    readAt,
-    mocks,
-    mistakes,
-    completedLessons,
-    language,
-    syllabus,
-    belt,
-    profile,
-  ] = await Promise.all([
-    getLearnerBuddy(),
-    loadPlanEnd(today),
-    getReadAt(),
-    loadTodayMocks(today.goal),
-    countOpenMistakes(today.goal.id),
-    hasCompletedLessons(today.goal.id),
-    loadLanguageToday(today.goal),
-    loadSyllabus(today.goal.id),
-    getBeltLevel(),
-    goalId ? getLearningProfile() : null,
-  ]);
+  const [buddy, planEnd, readAt, mocks, mistakes, completedLessons, language, syllabus, belt] =
+    await Promise.all([
+      getLearnerBuddy(),
+      loadPlanEnd(today),
+      getReadAt(),
+      loadTodayMocks(today.goal),
+      countOpenMistakes(today.goal.id),
+      hasCompletedLessons(today.goal.id),
+      loadLanguageToday(today.goal),
+      loadSyllabus(today.goal.id),
+      getBeltLevel(),
+    ]);
 
   const steps = today.session.blocks.map((block) => ({
     ref: toDayBlockRef(block),
@@ -166,7 +153,6 @@ export async function loadTodayScreen(goalId?: string): Promise<TodayScreenResul
       language,
       mistakes,
       mocks,
-      namesGoal: Boolean(goalId) && profile?.activeGoalId !== today.goal.id,
       planEnd,
       steps,
       syllabus,
