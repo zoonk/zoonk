@@ -98,6 +98,7 @@ private struct GoalStartFlow: View {
   @State private var sending: Task<Void, Never>?
   @State private var material: [AttachedSource] = []
   @State private var intent: MaterialIntent?
+  @State private var materialDraft = MaterialDraft()
 
   init(
     sentGoal: SentGoal?, prefill: String?, draftID: String?, needsAccount: Bool,
@@ -141,7 +142,7 @@ private struct GoalStartFlow: View {
       }
     } else {
       NavigationStack(path: $path) {
-        List {
+        ZoonkList {
           StepHeader(
             title: Text(
               "What do you want to achieve?", tableName: "Onboarding",
@@ -154,8 +155,11 @@ private struct GoalStartFlow: View {
             words: $words, error: error, limit: limit,
             canSubmitEmpty: !material.isEmpty && intent != nil,
             onSubmit: submit,
+            attach: {
+              GoalMaterialButton(material: $material, draft: $materialDraft)
+            },
             attachment: {
-              GoalMaterialSections(material: $material, intent: $intent)
+              GoalMaterialSections(material: $material, intent: $intent, draft: $materialDraft)
             })
         }
         .onboardingColumn()
@@ -205,7 +209,7 @@ private struct GoalStartFlow: View {
   private var draftPage: some View {
     switch draft {
     case .opening(let id):
-      List {
+      ZoonkList {
         ProgressView()
           .frame(maxWidth: .infinity)
           .listRowBackground(Color.clear)
@@ -323,7 +327,7 @@ private struct DraftView: View {
 
   /// Starting it again is new work, so it waits for the learner's tap.
   private var failed: some View {
-    List {
+    ZoonkList {
       StepHeader(
         title: Text(
           "Understanding your goal", tableName: "Onboarding",
@@ -384,8 +388,10 @@ struct TypedGoalSection: View {
       Text(goal)
         .textSelection(.enabled)
     } header: {
-      Text(
-        "What you wrote", tableName: "Onboarding", comment: "Header over the learner's typed goal")
+      SectionTitle(
+        Text(
+          "What you wrote", tableName: "Onboarding", comment: "Header over the learner's typed goal"
+        ))
     }
   }
 }

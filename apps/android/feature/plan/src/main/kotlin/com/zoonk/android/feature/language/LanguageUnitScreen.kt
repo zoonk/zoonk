@@ -13,7 +13,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -24,7 +24,6 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -65,6 +64,7 @@ import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.KindDotLeading
@@ -91,7 +91,9 @@ import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.mainActionWidth
+import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.LanguageUnit
 import com.zoonk.api.models.LanguageUnitLessonsInner
@@ -132,7 +134,6 @@ private fun UnitEntry(
     val isRefreshing by resource.isRefreshing.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
-    val heroScrolledAway by remember(listState) { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     val unit = load.value
     val actions = remember(navigator) { UnitActions(open = navigator::open, start = app.conversations) }
     // Main reads the selected goal's plan, so a unit of another goal opened from a link marks nothing.
@@ -150,7 +151,7 @@ private fun UnitEntry(
 
     UnitFrame(
         navigator = navigator,
-        title = unit?.unit?.title?.takeIf { heroScrolledAway },
+        title = unit?.unit?.title,
         actions = {
             if (unit != null) {
                 TutorAskButton(TutorScope.Chapter(chapterId.toString()), app, navigator, worded = false)
@@ -293,8 +294,8 @@ private fun UnitHero(
     Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Eyebrow(eyebrow)
-            Text(info.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
-            facts?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
+            Text(info.title, Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
+            facts?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data) }
         }
         next?.let { lesson ->
             Button(onClick = { onOpen(lesson.id) }, modifier = Modifier.mainActionWidth()) {

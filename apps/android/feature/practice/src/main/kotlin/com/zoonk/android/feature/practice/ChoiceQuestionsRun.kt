@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.data.recode
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.ItemSetText
@@ -32,13 +31,12 @@ import com.zoonk.android.feature.questions.QuestionAnswer
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.TrueFalseWords
-import com.zoonk.android.ui.components.BusyButton
-import com.zoonk.android.ui.components.BusyTextButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.TaskSegment
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.FeedbackSubmissionContext
-import com.zoonk.api.models.ItemAnswerInput
-import kotlinx.serialization.Serializable
 import java.util.UUID
 
 enum class UndoState { Idle, Pending, Done, Failed }
@@ -57,7 +55,7 @@ internal fun UndoAction(
         )
     }
     TaskActions { width ->
-        BusyTextButton(state == UndoState.Pending, onUndo, width) { Text(stringResource(R.string.practice_undo)) }
+        TextButton(busy = state == UndoState.Pending, onClick = onUndo, modifier = width) { Text(stringResource(R.string.practice_undo)) }
     }
 }
 
@@ -160,7 +158,7 @@ internal fun ChoiceQuestionsRun(
                                 dontKnowYet = true,
                             )
                         }
-                        BusyButton(
+                        Button(
                             busy = pending && (question == null || sender == AnswerSender.Check),
                             onClick = { next?.invoke() },
                             modifier = width,
@@ -224,11 +222,11 @@ internal fun ChoiceQuestionsRun(
 private fun answeredSegments(
     answered: Int,
     total: Int,
-): List<Segment> =
+): List<TaskSegment> =
     List(total) {
         when {
-            it < answered -> Segment.Read
-            it == answered -> Segment.Current
-            else -> Segment.Ahead
+            it < answered -> TaskSegment.Read
+            it == answered -> TaskSegment.Current
+            else -> TaskSegment.Ahead
         }
     }

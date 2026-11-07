@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,6 +36,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitActions
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.limitMessage
 import java.util.UUID
 
@@ -94,7 +94,7 @@ fun ListenButton(
     @DrawableRes icon: Int = R.drawable.ic_volume_up,
 ) {
     val description = if (state == SpeechState.Idle) null else speechActionLabel(state, label)
-    FilledTonalButton(
+    OutlinedButton(
         onClick = { if (audio.isBusy) audio.cancel() else audio.speak(segments, rate) },
         modifier = modifier.semantics { description?.let { stateDescription = it } },
     ) {
@@ -171,7 +171,7 @@ fun SpeechFailedNote(
             )
         }
         if (limit == null || limit is Limit.SlowDown) {
-            FilledTonalButton(onClick = onRetry) {
+            OutlinedButton(onClick = onRetry) {
                 Icon(painterResource(R.drawable.ic_refresh), contentDescription = null, modifier = Modifier.size(buttonIconSize()))
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Text(stringResource(R.string.audio_try_again))

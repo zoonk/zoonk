@@ -8,16 +8,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,8 +62,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.characters.TricksterArt
-import com.zoonk.android.ui.components.BusyButton
-import com.zoonk.android.ui.components.BusyOutlinedButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -277,7 +272,7 @@ internal fun ChallengeMoved(
             TaskActionBar {
                 MoveFailed(ui)
                 TaskActions { width ->
-                    BusyOutlinedButton(ui.moving, onClick = viewModel::undoMove) { Text(stringResource(R.string.challenge_undo)) }
+                    OutlinedButton(busy = ui.moving, onClick = viewModel::undoMove) { Text(stringResource(R.string.challenge_undo)) }
                     Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = width) {
                         Text(stringResource(R.string.challenge_back_to_today))
                     }
@@ -750,10 +745,10 @@ private fun ChallengeFooter(
                     TaskActions { width ->
                         if (movable) {
                             OutlinedButton(onClick = actions::toToday) { Text(stringResource(R.string.challenge_back_to_today)) }
-                            BusyButton(
-                                ui.moving,
-                                vm::moveToMonday,
-                                width,
+                            Button(
+                                busy = ui.moving,
+                                onClick = vm::moveToMonday,
+                                modifier = width,
                                 enabled = !ui.starting,
                             ) { Text(stringResource(R.string.challenge_move)) }
                         } else {
@@ -771,7 +766,11 @@ private fun ChallengeFooter(
 
                 else -> {
                     TaskActions { width ->
-                        BusyButton(ui.starting, vm::start, width) { Text(stringResource(R.string.challenge_continue)) }
+                        Button(
+                            busy = ui.starting,
+                            onClick = vm::start,
+                            modifier = width,
+                        ) { Text(stringResource(R.string.challenge_continue)) }
                     }
                 }
             }
@@ -819,7 +818,7 @@ private fun ChallengeFooter(
         MoveFailed(ui)
         if (movable) {
             TaskActions { width ->
-                BusyOutlinedButton(ui.moving, onClick = vm::moveToMonday, modifier = width, enabled = !ui.starting) {
+                OutlinedButton(busy = ui.moving, onClick = vm::moveToMonday, modifier = width, enabled = !ui.starting) {
                     Text(stringResource(R.string.challenge_move))
                 }
             }
@@ -853,13 +852,13 @@ private fun StartActions(
     MoveFailed(ui)
     TaskActions { width ->
         if (movable) {
-            BusyOutlinedButton(
-                ui.moving,
+            OutlinedButton(
+                busy = ui.moving,
                 onClick = vm::moveToMonday,
                 enabled = !ui.starting,
             ) { Text(stringResource(R.string.challenge_move)) }
         }
-        BusyButton(ui.starting, vm::start, width, enabled = !ui.moving) {
+        Button(busy = ui.starting, onClick = vm::start, modifier = width, enabled = !ui.moving) {
             Text(stringResource(if (challenge.mock) R.string.challenge_mock_start else R.string.challenge_start))
         }
     }

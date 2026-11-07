@@ -78,7 +78,9 @@ struct PlanSlotAnswer {
 }
 
 /// One thing at a time, paged as main's slot is: "Not now" puts one off for as long as the app runs.
-/// An answer that changes the plan says what it did, with Undo, for a moment.
+/// An answer that changes the plan says what it did, with Undo, for a moment. In the page's column
+/// it's main's suggestion line, its summary with "View" opening the whole suggestion in a sheet,
+/// which the screen presents (`sheetItem`); beside the page (`isInline`) it's the whole suggestion.
 struct PlanSuggestionSection: View {
   private enum Focus: Hashable {
     case item
@@ -90,13 +92,28 @@ struct PlanSuggestionSection: View {
 
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
+  @Environment(\.dismiss) private var dismiss
   @AccessibilityFocusState private var focus: Focus?
   @State private var isHovering = false
 
   let context: PlanContext
   @Binding var answer: PlanSlotAnswer?
+  var isInline = false
+  /// The suggestion the screen's sheet shows in full.
+  var sheetItem: PlanSlotItem?
 
   var body: some View {
+    if let sheetItem {
+      sheet(sheetItem)
+    } else {
+      section
+    }
+  }
+
+  /// What the slot shows: its suggestions, the one paged to, and what an answer just did.
+  private var shown:
+    (items: [PlanSlotItem], index: Int, applied: (change: AppliedPlanChange, sentence: String)?)
+  {
     let state = store.suggestionState(goalId: context.goal.id)
     let isExam = context.goal.kind == .exam
     let unclaimed =
@@ -105,7 +122,6 @@ struct PlanSuggestionSection: View {
       plan: context.plan, isPaused: context.isPaused, isExam: isExam,
       courseComplete: !unclaimed.isEmpty
     ).filter { !state.dismissed.contains($0) }
-    let index = min(state.position, max(items.count - 1, 0))
     let answer = currentAnswer
     let applied: (change: AppliedPlanChange, sentence: String)? =
       if case .applied(let change, let sentence) = answer?.editor.latest, answer?.isOver == false {
@@ -113,6 +129,35 @@ struct PlanSuggestionSection: View {
       } else {
         nil
       }
+
+    return (items, min(state.position, max(items.count - 1, 0)), applied)
+  }
+
+  /// The sheet closes once its suggestion stops showing: answered, put off or paged past.
+  private func sheet(_ item: PlanSlotItem) -> some View {
+    let shown = shown
+    let isShowing =
+      shown.applied == nil && shown.items.indices.contains(shown.index)
+      && shown.items[shown.index] == item
+
+    return Group {
+      if isShowing {
+        slot(item)
+        answerFailure(item)
+      }
+    }
+    .disabled(currentAnswer?.editor.isSaving == true)
+    .onChange(of: isShowing, initial: true) { _, isShowing in
+      if !isShowing {
+        dismiss()
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var section: some View {
+    let (items, index, applied) = shown
+    let answer = currentAnswer
     let paged = items.indices.contains(index) ? items[index] : nil
 
     if let item = applied == nil ? paged : answer?.item {
@@ -120,16 +165,38 @@ struct PlanSuggestionSection: View {
         // One row whichever shows, so a pointer resting on it stays on it.
         VStack(alignment: .leading, spacing: 8) {
           if let answer, let applied {
-            result(answer, change: applied.change, sentence: applied.sentence)
-          } else {
+            if isInline {
+              result(answer, change: applied.change, sentence: applied.sentence)
+            } else {
+              resultLine(answer, change: applied.change, sentence: applied.sentence)
+            }
+          } else if isInline {
             slot(item)
+            answerFailure(item)
+          } else {
+            let summary = summary(item)
 
-            if answer?.item == item, answer?.editor.latest == nil, answer?.editor.failed == true {
-              saveError
+            SuggestionLine {
+              SuggestionMark(kind: summary.mark)
+            } summary: {
+              summary.text
+                .accessibilityFocused($focus, equals: .item)
+            } action: {
+              // Main's free-week line offers Plus itself; the others open in full.
+              if item == .freeWeekOver {
+                SeePlusButton()
+                  .buttonStyle(.outline)
+                  .controlSize(.small)
+              } else {
+                SuggestionViewButton {
+                  context.show(.suggestion(item))
+                }
+              }
             }
           }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, isInline ? 4 : 0)
+        .listRowSeparator(.hidden)
         .onHover { isHovering = $0 }
         .task(id: applied?.change.id) {
           if let answer, applied != nil {
@@ -137,13 +204,14 @@ struct PlanSuggestionSection: View {
           }
         }
       } header: {
-        // Above the card, so paging to a taller or shorter one never moves it under the finger.
-        // Hidden in place while a result shows, as main's is, so the result doesn't move either.
-        if items.count > 1 {
-          pager(index: index, count: items.count)
-            .opacity(applied == nil ? 1 : 0)
-            .allowsHitTesting(applied == nil)
-            .accessibilityHidden(applied != nil)
+        // Beside the page it heads the card, so paging to a taller or shorter one never moves it
+        // under the finger; under the line in the column, as main's is.
+        if isInline {
+          pager(index: index, count: items.count, isHidden: applied != nil)
+        }
+      } footer: {
+        if !isInline {
+          pager(index: index, count: items.count, isHidden: applied != nil)
         }
       }
       .disabled(answer?.editor.isSaving == true)
@@ -171,7 +239,7 @@ struct PlanSuggestionSection: View {
     // An exam choice keeps its question, as main's does.
     if case .choice(let choice) = answer.item {
       header(
-        choiceTitle(choice), icon: Image(systemName: "list.bullet").foregroundStyle(.warning))
+        choiceTitle(choice), icon: SuggestionMark(kind: .symbol("signpost.right")))
     } else {
       header(
         Text("Plan updated", tableName: "Plan", comment: "Title once a plan suggestion is applied"),
@@ -179,27 +247,65 @@ struct PlanSuggestionSection: View {
     }
 
     Text(sentence)
-      .font(.subheadline)
+      .typeStyle(.body.weight(.medium))
       .accessibilityFocused($focus, equals: .result)
 
     if change.canUndo {
       ButtonRow {
-        Button {
-          Task {
-            await answer.editor.undo()
-            // A failed Undo gets the whole moment again, so there's time to try once more.
-            extend(answer)
-          }
-        } label: {
-          Text("Undo", tableName: "Plan", comment: "Undoes the latest plan change")
-        }
-        .accessibilityFocused($focus, equals: .undo)
+        undoButton(answer)
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
 
     if answer.editor.failed {
-      saveError
+      SuggestionSaveError()
+    }
+  }
+
+  /// Main's answered line: the done mark, what the change did, and Undo.
+  @ViewBuilder
+  private func resultLine(
+    _ answer: PlanSlotAnswer, change: AppliedPlanChange, sentence: String
+  ) -> some View {
+    SuggestionLine {
+      StatusMark(status: .done)
+    } summary: {
+      Text(sentence)
+        .typeWeight(.medium)
+        .foregroundStyle(Color(.foreground))
+        .accessibilityFocused($focus, equals: .result)
+    } action: {
+      if change.canUndo {
+        undoButton(answer)
+          .buttonStyle(.outline)
+          .controlSize(.small)
+      }
+    }
+
+    if answer.editor.failed {
+      SuggestionSaveError()
+    }
+  }
+
+  private func undoButton(_ answer: PlanSlotAnswer) -> some View {
+    Button {
+      Task {
+        await answer.editor.undo()
+        // A failed Undo gets the whole moment again, so there's time to try once more.
+        extend(answer)
+      }
+    } label: {
+      Text("Undo", tableName: "Plan", comment: "Undoes the latest plan change")
+    }
+    .accessibilityFocused($focus, equals: .undo)
+  }
+
+  @ViewBuilder
+  private func answerFailure(_ item: PlanSlotItem) -> some View {
+    if currentAnswer?.item == item, currentAnswer?.editor.latest == nil,
+      currentAnswer?.editor.failed == true
+    {
+      SuggestionSaveError()
     }
   }
 
@@ -235,16 +341,19 @@ struct PlanSuggestionSection: View {
     }
   }
 
-  private var saveError: some View {
-    Text(
-      "That didn't save. Try again.", tableName: "Plan",
-      comment: "A plan suggestion's change or its Undo didn't save; trying again may work"
-    )
-    .font(.footnote)
-    .foregroundStyle(.destructive)
+  /// Hidden in place while a result shows, as main's is, so the result doesn't move and nobody pages
+  /// away from it.
+  @ViewBuilder
+  private func pager(index: Int, count: Int, isHidden: Bool) -> some View {
+    if count > 1 {
+      pages(index: index, count: count)
+        .opacity(isHidden ? 0 : 1)
+        .allowsHitTesting(!isHidden)
+        .accessibilityHidden(isHidden)
+    }
   }
 
-  private func pager(index: Int, count: Int) -> some View {
+  private func pages(index: Int, count: Int) -> some View {
     HStack(spacing: 0) {
       Spacer()
 
@@ -261,9 +370,8 @@ struct PlanSuggestionSection: View {
         "\(index + 1) of \(count)", tableName: "Plan",
         comment: "The suggestion shown of the Plan's suggestions"
       )
-      .font(.footnote)
-      .foregroundStyle(.secondary)
-      .monospacedDigit()
+      .typeStyle(.data)
+      .foregroundStyle(.mutedForeground)
 
       pageButton(
         Text("Next", tableName: "Plan", comment: "Goes on to the next of the Plan's suggestions"),
@@ -282,7 +390,7 @@ struct PlanSuggestionSection: View {
         title
       } icon: {
         Image(systemName: systemImage)
-          .font(.body)
+          .typeStyle(.body)
           .frame(minWidth: 44, minHeight: 44)
           .contentShape(.rect)
       }
@@ -323,12 +431,12 @@ struct PlanSuggestionSection: View {
       PlanPausedSlot(context: context)
     case .choice(let choice) where choice.take > 1:
       card(
-        title: choiceTitle(choice), systemImage: "list.bullet",
+        title: choiceTitle(choice), mark: .symbol("signpost.right"),
         description: Text(choice.leftOut.line),
         options: {
           Text.examPickLimit(choice.take)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
 
           ExamOptionToggles(
             options: choice.options, take: choice.take,
@@ -351,7 +459,7 @@ struct PlanSuggestionSection: View {
         })
     case .choice(let choice):
       card(
-        title: choiceTitle(choice), systemImage: "list.bullet",
+        title: choiceTitle(choice), mark: .symbol("signpost.right"),
         description: Text(choice.leftOut.line)
       ) {
         Menu {
@@ -369,7 +477,7 @@ struct PlanSuggestionSection: View {
         title: Text(
           "Your date came", tableName: "Plan",
           comment: "Title of the Plan's notice when the goal's date came"),
-        systemImage: "calendar.badge.exclamationmark", description: Text(text)
+        mark: .symbol("calendar.badge.clock"), description: Text(text)
       ) {
         Button {
           context.adjust(.date)
@@ -382,7 +490,7 @@ struct PlanSuggestionSection: View {
     case .fitLessons:
       fitLessons(item)
     case .coverage(let text):
-      card(title: Text(text), systemImage: "clock", description: nil) {
+      card(title: Text(text), mark: .sparkle, description: nil) {
         Button {
           context.adjust(.time)
         } label: {
@@ -397,7 +505,7 @@ struct PlanSuggestionSection: View {
       VStack(alignment: .leading, spacing: 8) {
         Label {
           completeTitle
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
         } icon: {
           StatusMark(status: .done)
         }
@@ -411,7 +519,7 @@ struct PlanSuggestionSection: View {
         title: Text(
           "Your plan no longer fits", tableName: "Plan",
           comment: "Title of the Plan's notice when the plan no longer fits"),
-        systemImage: "calendar.badge.clock", description: nil
+        mark: .symbol("calendar.badge.clock"), description: nil
       ) {
         Button {
           context.adjust(.top)
@@ -425,7 +533,7 @@ struct PlanSuggestionSection: View {
         title: Text(
           "A little to catch up", tableName: "Plan",
           comment: "Title of the Plan's notice when behind"),
-        systemImage: "calendar.badge.clock", description: Text(text)
+        mark: .symbol("calendar.badge.clock"), description: Text(text)
       ) {
         Button {
           router.select(.today)
@@ -437,6 +545,50 @@ struct PlanSuggestionSection: View {
       }
     case .freeWeekOver:
       FreeWeekOverNotice(isInset: true)
+    }
+  }
+
+  /// What the line says for each suggestion, as main's `SuggestionSummary`: its title, or for a pace
+  /// that's behind, how to catch up.
+  private func summary(_ item: PlanSlotItem) -> (text: Text, mark: SuggestionMark.Kind) {
+    switch item {
+    case .paused:
+      (
+        Text(
+          "\(context.goal.title) is paused", tableName: "Plan",
+          comment: "Title of the Plan's notice for a paused goal"), .symbol("pause")
+      )
+    case .choice(let choice):
+      (choiceTitle(choice), .symbol("signpost.right"))
+    case .pastDate:
+      (
+        Text(
+          "Your date came", tableName: "Plan",
+          comment: "Title of the Plan's notice when the goal's date came"),
+        .symbol("calendar.badge.clock")
+      )
+    case .fitLessons:
+      (context.plan.fitOffer.map(fitTitle) ?? Text(verbatim: ""), .sparkle)
+    case .coverage(let text):
+      (Text(text), .sparkle)
+    case .courseComplete:
+      (completeTitle, .done)
+    case .finished:
+      (
+        Text("You finished your plan", tableName: "Plan", comment: "Title once the plan is over"),
+        .done
+      )
+    case .tooTight:
+      (
+        Text(
+          "Your plan no longer fits", tableName: "Plan",
+          comment: "Title of the Plan's notice when the plan no longer fits"),
+        .symbol("calendar.badge.clock")
+      )
+    case .behind(let text):
+      (Text(text), .symbol("calendar.badge.clock"))
+    case .freeWeekOver:
+      (Text(FreeWeekOverNotice.title), .symbol("sparkles"))
     }
   }
 
@@ -469,7 +621,7 @@ struct PlanSuggestionSection: View {
       let title = fitTitle(offer)
 
       card(
-        title: title, systemImage: "sparkles",
+        title: title, mark: .sparkle,
         description: topicsMoved(offer.effect).map(Text.init),
         effect: offer.effect
       ) {
@@ -487,17 +639,17 @@ struct PlanSuggestionSection: View {
   }
 
   private func card(
-    title: Text, systemImage: String, description: Text?, effect: PlanEffect? = nil,
+    title: Text, mark: SuggestionMark.Kind, description: Text?, effect: PlanEffect? = nil,
     @ViewBuilder options: () -> some View = { EmptyView() },
     @ViewBuilder actions: () -> some View
   ) -> some View {
     VStack(alignment: .leading, spacing: 8) {
-      header(title, icon: Image(systemName: systemImage).foregroundStyle(.warning))
+      header(title, icon: SuggestionMark(kind: mark))
 
       if let description {
         description
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
 
       PlanEffectDiff(effect: effect, today: context.plan.today)
@@ -507,13 +659,13 @@ struct PlanSuggestionSection: View {
       ButtonRow {
         actions()
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
   }
 
   private func header(_ title: Text, icon: some View) -> some View {
     Label {
-      title.font(.headline)
+      title.typeStyle(.body.weight(.semibold))
     } icon: {
       icon
     }
@@ -616,10 +768,9 @@ private struct PlanPausedSlot: View {
           "\(context.goal.title) is paused", tableName: "Plan",
           comment: "Title of the Plan's notice for a paused goal"
         )
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
       } icon: {
-        Image(systemName: "pause")
-          .foregroundStyle(.warning)
+        SuggestionMark(kind: .symbol("pause"))
       }
 
       Group {
@@ -633,15 +784,15 @@ private struct PlanPausedSlot: View {
             comment: "Explains a paused goal")
         }
       }
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
 
       Button {
         Task { await resume() }
       } label: {
         Text("Resume", tableName: "Plan", comment: "Resumes the paused goal")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .disabled(isResuming)
 
       switch failure {
@@ -651,14 +802,14 @@ private struct PlanPausedSlot: View {
             "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
             table: "Plan", comment: "Explains why resuming a goal failed on the free plan")
         )
-        .font(.footnote)
+        .typeStyle(.note)
       case .failed:
         FailureLine(
           message: LocalizedStringResource(
             "That didn't save. Try again.", table: "Plan",
             comment: "Resuming the paused goal didn't save")
         )
-        .font(.footnote)
+        .typeStyle(.note)
       case .saved, nil:
         EmptyView()
       }
@@ -683,9 +834,11 @@ private struct PlanPausedSlot: View {
   }
 }
 
-/// Writes the certificates of the plan's finished levels or plan; the Plan plays their moment.
+/// Writes the certificates of the plan's finished levels or plan; the Plan plays their moment. The
+/// button owns its claim: once it leaves with its sheet or page, the claim shows nothing, and what
+/// it earned plays with the learner's next result.
 private struct CertificateClaimButton: View {
-  @State private var isClaiming = false
+  @State private var claiming: Task<Void, Never>?
   @State private var failed = false
 
   let context: PlanContext
@@ -695,13 +848,20 @@ private struct CertificateClaimButton: View {
       localized: "That didn't save. Try again.", table: "Plan",
       comment: "The plan's certificate couldn't be written; Get your certificate tries again")
 
-    BusyButton(isBusy: isClaiming) {
-      Task {
-        isClaiming = true
-        failed = !(await context.claimCertificate())
-        isClaiming = false
+    BusyButton(isBusy: claiming != nil) {
+      claiming = Task {
+        let claim = await context.claimCertificate()
 
-        if failed {
+        guard !Task.isCancelled else {
+          return
+        }
+
+        claiming = nil
+        failed = claim == nil
+
+        if let claim {
+          context.showClaim(claim)
+        } else {
           AccessibilityNotification.Announcement(failure).post()
         }
       }
@@ -715,11 +875,15 @@ private struct CertificateClaimButton: View {
       }
     }
     .buttonStyle(.mainAction)
+    .onDisappear {
+      claiming?.cancel()
+      claiming = nil
+    }
 
     if failed {
       Text(failure)
-        .font(.subheadline)
-        .foregroundStyle(.destructive)
+        .typeStyle(.body)
+        .foregroundStyle(.destructiveText)
     }
   }
 }
@@ -741,7 +905,7 @@ private struct PlanCertificatesButton: View {
             "View certificate", tableName: "Plan",
             comment: "Opens the certificate of the finished plan's course or level"))
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     } else if !earned.isEmpty {
       Button {
         router.present(.account(.certificates))
@@ -751,7 +915,7 @@ private struct PlanCertificatesButton: View {
             "View certificates", tableName: "Plan",
             comment: "Opens the learner's certificates, from a plan that earned several"))
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
   }
 
@@ -784,7 +948,7 @@ private struct PlanFinishedSlot: View {
     VStack(alignment: .leading, spacing: 8) {
       Label {
         Text("You finished your plan", tableName: "Plan", comment: "Title once the plan is over")
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
       } icon: {
         StatusMark(status: .done)
       }
@@ -801,8 +965,8 @@ private struct PlanFinishedSlot: View {
         Text(
           "Here's what to study next.", tableName: "Plan", comment: "Leads to what to study next"
         )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
 
         if let level = value.nextLevel {
           BusyButton(isBusy: isStarting) {
@@ -812,7 +976,7 @@ private struct PlanFinishedSlot: View {
               "Continue at \(planLevelName(level.level))", tableName: "Plan",
               comment: "Starts the next level of the plan's course")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
 
         ForEach(value.related) { course in
@@ -820,7 +984,7 @@ private struct PlanFinishedSlot: View {
             router.open(.course(courseId: course.courseId, title: course.title))
           } label: {
             Label(course.title, systemImage: "books.vertical")
-              .font(.subheadline)
+              .typeStyle(.body)
           }
           .buttonStyle(.borderless)
         }
@@ -832,7 +996,7 @@ private struct PlanFinishedSlot: View {
             "That didn't work. Try again in a moment.", table: "Plan",
             comment: "Says the next level didn't start")
         )
-        .font(.subheadline)
+        .typeStyle(.body)
       }
     }
     .loads(end, refreshable: false)

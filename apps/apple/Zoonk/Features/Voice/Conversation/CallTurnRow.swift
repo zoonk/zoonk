@@ -14,12 +14,12 @@ struct CallTurnRow: View {
 
       VStack(alignment: .leading, spacing: 2) {
         title
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
 
         if let detail {
           detail
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -41,18 +41,18 @@ struct CallTurnRow: View {
       ProgressView()
     case .goodbye, .characterTalking:
       Text(name.prefix(1).uppercased())
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.note.weight(.medium))
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.secondarySystemFill), in: .circle)
+        .background(Color.muted, in: .circle)
         .overlay {
-          Circle().strokeBorder(Color.secondary, lineWidth: 1.5)
+          Circle().strokeBorder(Color.mutedForeground, lineWidth: 1.5)
         }
     case .muted:
       Image(systemName: "mic.slash")
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     case .typing:
       Image(systemName: "keyboard")
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     case .listening:
       Image(systemName: "mic.fill")
         .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -6,11 +6,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +29,9 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.DoneMark
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.MockExamCurrent
@@ -174,7 +174,7 @@ private fun TaskRow(
             }
         } else {
             val label = stringResource(R.string.mock_speaking_start_task_number, number)
-            FilledTonalButton(onClick = onStart, modifier = Modifier.semantics { contentDescription = label }) {
+            OutlinedButton(onClick = onStart, modifier = Modifier.semantics { contentDescription = label }) {
                 Text(stringResource(R.string.mock_speaking_start_task))
             }
         }

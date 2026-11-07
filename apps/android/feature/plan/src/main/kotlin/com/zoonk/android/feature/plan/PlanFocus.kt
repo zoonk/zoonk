@@ -32,7 +32,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.theme.zoonk
@@ -137,7 +137,7 @@ internal fun ColumnScope.ChooseFocusBody(
             }
         },
         actions = {
-            BusyButton(
+            Button(
                 busy = pending,
                 onClick = ::save,
                 modifier = Modifier.fillMaxWidth(),

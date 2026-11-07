@@ -14,16 +14,9 @@ struct DataExportRow: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      HStack {
-        VStack(alignment: .leading, spacing: 2) {
-          title
-
-          description
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-        }
-
-        Spacer()
+      AccessibilityStack(spacing: 12, stackedSpacing: 8) {
+        ListRow(title, description: description)
+          .frame(maxWidth: .infinity, alignment: .leading)
 
         BusyButton(isBusy: isPreparing) {
           Task {
@@ -32,7 +25,8 @@ struct DataExportRow: View {
         } label: {
           Text("Download", tableName: "Settings", comment: "Downloads a file of the learner's data")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
+        .controlSize(.small)
         .accessibilityLabel(title)
       }
 
@@ -42,7 +36,7 @@ struct DataExportRow: View {
             "We couldn't prepare the download. Try again.", table: "Settings",
             comment: "Shown when a data download failed")
         )
-        .font(.subheadline)
+        .typeStyle(.body)
       }
     }
     .fileExporter(

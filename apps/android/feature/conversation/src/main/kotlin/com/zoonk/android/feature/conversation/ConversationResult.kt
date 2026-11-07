@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +36,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -51,10 +48,12 @@ import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
 import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DiffKind
 import com.zoonk.android.ui.components.DiffLine
 import com.zoonk.android.ui.components.DiffLines
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
@@ -62,6 +61,7 @@ import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.richtext.RichInlineText
+import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -372,7 +372,7 @@ private fun ImproveStep(
                             Text(
                                 item.respelling,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+                                style = MaterialTheme.typography.bodySmall.copy(fontFamily = GeistMono),
                             )
                         }
                         RichInlineText(
@@ -396,7 +396,7 @@ private fun SpeakButton(
 ) {
     val audio = rememberSpokenAudio(speech, language)
     val label = speechActionLabel(audio.state, stringResource(R.string.conversation_listen_to, text))
-    FilledTonalIconButton(
+    OutlinedIconButton(
         onClick = { if (audio.isBusy) audio.cancel() else audio.speak(listOf(SpokenText(text, personal = personal))) },
         modifier = Modifier.semantics { contentDescription = label },
     ) {

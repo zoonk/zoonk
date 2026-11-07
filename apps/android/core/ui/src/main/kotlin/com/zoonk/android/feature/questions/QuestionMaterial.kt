@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -41,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.IconNote
 import com.zoonk.android.ui.components.LessonVisual
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.SourcesChip
@@ -109,7 +109,7 @@ fun ItemSetText(
             }
 
             if (folds) {
-                FilledTonalButton(onClick = { expanded = !expanded }) {
+                OutlinedButton(onClick = { expanded = !expanded }) {
                     Text(stringResource(if (expanded) R.string.questions_show_less else R.string.questions_read_again))
                     Icon(
                         painter = painterResource(R.drawable.ic_expand_more),

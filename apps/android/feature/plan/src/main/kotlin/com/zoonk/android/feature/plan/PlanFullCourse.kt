@@ -7,13 +7,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,12 +28,13 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.api.models.LearnerSummaryGoal
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 import java.util.UUID
@@ -134,7 +132,7 @@ internal fun FullCourseSwitch(
 /** Main's `StudyEverything`: opens the sheet that says when it would end before the learner chooses it. */
 @Composable
 internal fun StudyEverythingAction(onOpen: () -> Unit) {
-    FilledTonalButton(onClick = onOpen) { Text(stringResource(R.string.plan_study_everything)) }
+    OutlinedButton(onClick = onOpen) { Text(stringResource(R.string.plan_study_everything)) }
 }
 
 /**
@@ -228,7 +226,11 @@ internal fun ColumnScope.StudyEverythingBody(
             )
         },
         actions = {
-            BusyButton(pending, ::choose, Modifier.fillMaxWidth()) { Text(stringResource(R.string.plan_study_everything)) }
+            Button(
+                busy = pending,
+                onClick = ::choose,
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text(stringResource(R.string.plan_study_everything)) }
             TextButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.plan_cancel)) }
             if (save != null && edits.sheetFailed(PlanPart.FullCourse, save)) SaveFailedText()
         },

@@ -25,12 +25,12 @@ struct ExamSpeakingSections: View {
       Section {
         VStack(alignment: .leading, spacing: 6) {
           Text(task.task.name)
-            .font(.title3.weight(.semibold))
+            .typeStyle(.section)
             .typesettingLanguage(.init(identifier: language))
           ForEach(notes(feedback), id: \.self) { note in
             Text(note)
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
           }
         }
         .padding(.vertical, 4)
@@ -47,24 +47,27 @@ struct ExamSpeakingSections: View {
           } else {
             row(item.criterion) {
               Text("Not rated", tableName: "Voice", comment: "A criterion without an estimate")
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
           }
         }
       } header: {
-        Text(
-          "\(task.title)\u{00A0}· Task \(task.number) of \(task.taskCount)", tableName: "Voice",
-          comment: "An exam task's place in its speaking paper")
+        SectionTitle(
+          Text(
+            "\(task.title)\u{00A0}· Task \(task.number) of \(task.taskCount)", tableName: "Voice",
+            comment: "An exam task's place in its speaking paper"))
       } footer: {
-        if feedback.heard, task.criteria.contains(where: \.sound) {
-          Text(
-            "An estimate from one practice task, not an official score. How you sound is rated by how easy you are to understand, never by your accent.",
-            tableName: "Voice",
-            comment: "An exam task's estimate isn't official; sound is rated for intelligibility")
-        } else {
-          Text(
-            "An estimate from one practice task, not an official score.", tableName: "Voice",
-            comment: "An exam task's estimate isn't official")
+        SectionFooter {
+          if feedback.heard, task.criteria.contains(where: \.sound) {
+            Text(
+              "An estimate from one practice task, not an official score. How you sound is rated by how easy you are to understand, never by your accent.",
+              tableName: "Voice",
+              comment: "An exam task's estimate isn't official; sound is rated for intelligibility")
+          } else {
+            Text(
+              "An estimate from one practice task, not an official score.", tableName: "Voice",
+              comment: "An exam task's estimate isn't official")
+          }
         }
       }
 
@@ -74,27 +77,29 @@ struct ExamSpeakingSections: View {
         Section {
           VStack(alignment: .leading, spacing: 4) {
             Text(speakingCriterionName(focus.criterion.key, officialName: focus.criterion.name))
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
             Text(focus.criterion.name)
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
               .typesettingLanguage(.init(identifier: language))
           }
           SpeakingGradeDetails(evidence: grade.evidence, tip: grade.tip)
         } header: {
-          Text("Work on this first", tableName: "Voice", comment: "The criterion to work on first")
+          SectionTitle(
+            Text(
+              "Work on this first", tableName: "Voice", comment: "The criterion to work on first"))
         }
       }
     } else {
       Section {
         VStack(alignment: .leading, spacing: 4) {
           Text("This task has no estimate", tableName: "Voice", comment: "An ungraded exam task")
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
           Text(
             "Try the task again when you're ready.", tableName: "Voice",
             comment: "Under an ungraded exam task"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
     }
@@ -146,10 +151,10 @@ struct ExamSpeakingSections: View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       VStack(alignment: .leading, spacing: 2) {
         Text(speakingCriterionName(criterion.key, officialName: criterion.name))
-          .fontWeight(.medium)
+          .typeWeight(.medium)
         Text(criterion.name)
-          .font(.caption)
-          .foregroundStyle(.secondary)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
           .typesettingLanguage(.init(identifier: language))
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -161,27 +166,27 @@ struct ExamSpeakingSections: View {
   private func estimate(_ grade: Grade, isFocus: Bool) -> some View {
     VStack(alignment: .trailing, spacing: 4) {
       Text(SpeakingEstimateText.text(grade.estimate))
-        .fontWeight(.medium)
+        .typeWeight(.medium)
         .monospacedDigit()
       Group {
         switch grade.standing {
         case .at:
           Text("At \(task.level.rawValue)", tableName: "Voice", comment: "An estimate at the level")
-            .foregroundStyle(.success)
+            .foregroundStyle(.successText)
         case .near:
           Text(
             "Near \(task.level.rawValue)", tableName: "Voice", comment: "An estimate near the level"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         case .below:
           Text(
             "Below \(task.level.rawValue)", tableName: "Voice",
             comment: "An estimate below the level"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
-      .font(.caption)
+      .typeStyle(.meta)
       if isFocus {
         Text("Focus", tableName: "Voice", comment: "The criterion to work on first").chip()
       }
@@ -206,16 +211,18 @@ struct SpeakingMockSections: View {
       Section {
         VStack(alignment: .leading, spacing: 4) {
           Text(band(low: mock.overall.low, high: mock.overall.high))
-            .font(.largeTitle.weight(.semibold).monospacedDigit())
+            .typeStyle(.momentReadout)
           Text(mock.scale)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
         .padding(.vertical, 4)
       } footer: {
-        Text(
-          "An estimate from one short mock, not an official score.", tableName: "Voice",
-          comment: "A speaking mock's band isn't official")
+        SectionFooter {
+          Text(
+            "An estimate from one short mock, not an official score.", tableName: "Voice",
+            comment: "A speaking mock's band isn't official")
+        }
       }
 
       if !mock.grades.isEmpty {
@@ -227,7 +234,7 @@ struct SpeakingMockSections: View {
               } label: {
                 LabeledContent {
                   Text(band(low: grade.low, high: grade.high))
-                    .fontWeight(.medium)
+                    .typeWeight(.medium)
                     .monospacedDigit()
                 } label: {
                   name(key, isFocus: key == mock.focus)
@@ -242,23 +249,28 @@ struct SpeakingMockSections: View {
             }
           }
         } header: {
-          Text("By criterion", tableName: "Voice", comment: "A speaking mock's criteria")
+          SectionTitle(
+            Text("By criterion", tableName: "Voice", comment: "A speaking mock's criteria"))
         } footer: {
-          if mock.expected.contains(where: { key in !mock.grades.contains { $0.key == key } }) {
-            Text(
-              "You typed your replies, so this estimate leaves out how you sound.",
-              tableName: "Voice", comment: "A speaking estimate from typed replies")
+          SectionFooter {
+            if mock.expected.contains(where: { key in !mock.grades.contains { $0.key == key } }) {
+              Text(
+                "You typed your replies, so this estimate leaves out how you sound.",
+                tableName: "Voice", comment: "A speaking estimate from typed replies")
+            }
           }
         }
 
         if let focus = mock.grades.first(where: { $0.key == mock.focus }) {
           Section {
             Text(speakingCriterionName(focus.key, officialName: nil))
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
             SpeakingGradeDetails(evidence: focus.evidence, tip: focus.tip)
           } header: {
-            Text(
-              "Work on this first", tableName: "Voice", comment: "The criterion to work on first")
+            SectionTitle(
+              Text(
+                "Work on this first", tableName: "Voice", comment: "The criterion to work on first")
+            )
           }
         }
       }
@@ -266,12 +278,12 @@ struct SpeakingMockSections: View {
       Section {
         VStack(alignment: .leading, spacing: 4) {
           Text("This mock has no score", tableName: "Voice", comment: "An ungraded speaking mock")
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
           Text(
             "Try another one when you're ready.", tableName: "Voice",
             comment: "Under an ungraded speaking mock"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
     }
@@ -322,7 +334,7 @@ struct SpeakingMockSections: View {
   private func name(_ key: String, isFocus: Bool) -> some View {
     HStack(spacing: 8) {
       Text(speakingCriterionName(key, officialName: nil))
-        .fontWeight(.medium)
+        .typeWeight(.medium)
       if isFocus {
         Text("Focus", tableName: "Voice", comment: "The criterion to work on first").chip()
       }
@@ -343,14 +355,14 @@ private struct SpeakingGradeDetails: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
       Text(evidence)
-        .font(.subheadline)
+        .typeStyle(.body)
       Label {
         Text(tip)
       } icon: {
         Image(systemName: "lightbulb")
       }
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
     }
   }
 }

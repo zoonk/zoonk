@@ -32,7 +32,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -42,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import java.util.Locale
@@ -233,7 +233,7 @@ fun richText(
                         }
 
                         SegmentKind.Code -> {
-                            withStyle(SpanStyle(fontFamily = FontFamily.Monospace, fontSize = CODE_SIZE.em, background = codeBackground)) {
+                            withStyle(SpanStyle(fontFamily = GeistMono, fontSize = CODE_SIZE.em, background = codeBackground)) {
                                 append(segment.text)
                             }
                         }

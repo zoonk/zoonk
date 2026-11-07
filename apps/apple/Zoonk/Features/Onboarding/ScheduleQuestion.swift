@@ -174,8 +174,11 @@ struct ScheduleQuestion: View {
         .listRowBackground(Color.clear)
       } header: {
         // The picker carries the name for VoiceOver; this is its visible title.
-        Text("Time a day", tableName: "Onboarding", comment: "Label of the daily study time picker")
-          .accessibilityHidden(true)
+        SectionTitle(
+          Text(
+            "Time a day", tableName: "Onboarding", comment: "Label of the daily study time picker")
+        )
+        .accessibilityHidden(true)
       }
 
       if isExam, goalDate(shown) != nil, showsFullCourse(shown) {
@@ -321,14 +324,13 @@ struct ScheduleQuestion: View {
     } label: {
       HStack(alignment: .firstTextBaseline, spacing: 8) {
         bigQuantity(duration(minutes))
-          .font(.largeTitle.weight(.semibold))
-          .monospacedDigit()
+          .typeStyle(.momentReadout)
           .multilineTextAlignment(.leading)
         Image(systemName: "chevron.down")
-          .font(.title3.weight(.semibold))
-          .foregroundStyle(.secondary)
+          .typeStyle(.section)
+          .foregroundStyle(.mutedForeground)
       }
-      .foregroundStyle(isStale(shown) ? .secondary : .primary)
+      .foregroundStyle(isStale(shown) ? .mutedForeground : .primary)
     }
     .disabled(shown.minutes == nil)
     .redacted(reason: shown.minutes == nil ? .placeholder : [])
@@ -383,7 +385,7 @@ struct ScheduleQuestion: View {
         .frame(minHeight: 44)
         .contentShape(.rect)
     }
-    .font(.subheadline)
+    .typeStyle(.body)
     .buttonStyle(.borderless)
   }
 
@@ -490,8 +492,10 @@ struct ScheduleQuestion: View {
         }
       }
     } header: {
-      Text(
-        "Study days", tableName: "Onboarding", comment: "Header over the days the learner studies")
+      SectionTitle(
+        Text(
+          "Study days", tableName: "Onboarding", comment: "Header over the days the learner studies"
+        ))
     }
     .tint(.success)
   }

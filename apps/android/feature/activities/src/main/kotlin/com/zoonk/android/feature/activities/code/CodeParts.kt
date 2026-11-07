@@ -21,7 +21,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -59,7 +58,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -70,12 +68,13 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.ui.components.BusyButton
-import com.zoonk.android.ui.components.BusyOutlinedButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.fadingHorizontalScroll
+import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.LocalMoreContrast
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
 
 /** The app's one sandbox; the lesson screen provides it. */
@@ -84,7 +83,7 @@ val LocalCodeSandbox = staticCompositionLocalOf<CodeSandbox> { error("The lesson
 enum class CodeLineTone { Plain, Current, Editable, Error }
 
 @Composable
-internal fun codeTextStyle(): TextStyle = MaterialTheme.typography.bodyLarge.copy(fontFamily = FontFamily.Monospace)
+internal fun codeTextStyle(): TextStyle = MaterialTheme.typography.bodyLarge.copy(fontFamily = GeistMono)
 
 private data class CodePalette(
     val builtin: Color,
@@ -152,7 +151,14 @@ internal fun CodeLine(
 ) {
     val colors = MaterialTheme.colorScheme
     val highlight = MaterialTheme.zoonk.vizHighlight
-    val shape = if (tone == CodeLineTone.Current) RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp) else RoundedCornerShape(8.dp)
+    val shape =
+        if (tone ==
+            CodeLineTone.Current
+        ) {
+            RoundedCornerShape(topEnd = ZoonkRadius.md, bottomEnd = ZoonkRadius.md)
+        } else {
+            RoundedCornerShape(ZoonkRadius.md)
+        }
     val toned =
         when (tone) {
             CodeLineTone.Plain -> {
@@ -171,7 +177,7 @@ internal fun CodeLine(
             }
 
             CodeLineTone.Error -> {
-                Modifier.background(colors.error.copy(alpha = SOFT_ALPHA), shape)
+                Modifier.background(MaterialTheme.zoonk.destructive.copy(alpha = SOFT_ALPHA), shape)
             }
         }
     Row(
@@ -286,7 +292,7 @@ internal fun CodeEditor(
     modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     val style = codeTextStyle().copy(color = colors.onSurface)
     BoxWithConstraints(
         modifier
@@ -370,7 +376,7 @@ internal fun SnippetBar(
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         snippets.forEach { snippet ->
-            FilledTonalButton(
+            OutlinedButton(
                 onClick = { onInsert(snippet) },
                 modifier =
                     Modifier
@@ -384,10 +390,10 @@ internal fun SnippetBar(
                             },
                         ),
                 enabled = enabled,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(ZoonkRadius.option),
                 contentPadding = PaddingValues(horizontal = 12.dp),
             ) {
-                Text(snippet.label, style = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace))
+                Text(snippet.label, style = MaterialTheme.typography.bodyMedium.copy(fontFamily = GeistMono))
             }
         }
     }
@@ -439,9 +445,9 @@ internal fun SandboxRunBar(
             }
             val runModifier = Modifier.weight(1f).heightIn(min = 48.dp)
             if (hasRun) {
-                BusyOutlinedButton(isRunning, onRun, runModifier, content = content)
+                OutlinedButton(busy = isRunning, onClick = onRun, modifier = runModifier, content = content)
             } else {
-                BusyButton(isRunning, onRun, runModifier, content = content)
+                Button(busy = isRunning, onClick = onRun, modifier = runModifier, content = content)
             }
         }
         if (runtime.status == SandboxRuntimeStatus.Loading) {

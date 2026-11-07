@@ -20,7 +20,7 @@ struct ConversationResultView: View {
   let onStartedAgain: (String) -> Void
 
   var body: some View {
-    List {
+    ZoonkList {
       if let result = conversation.result {
         header(result)
 
@@ -53,7 +53,7 @@ struct ConversationResultView: View {
       VStack(spacing: 8) {
         if let startFailure {
           FailureLine(message: startFailureMessage(startFailure))
-            .font(.subheadline)
+            .typeStyle(.body)
         }
 
         mainAction
@@ -225,7 +225,7 @@ struct ConversationResultView: View {
                 Text("Not this time", tableName: "Voice", comment: "A checkpoint call not passed")
               }
             }
-            .font(.title2.weight(.semibold))
+            .typeStyle(.section)
           }
 
           if showsStars {
@@ -233,10 +233,10 @@ struct ConversationResultView: View {
               ForEach(0..<3, id: \.self) { index in
                 Image(systemName: index < result.stars ? "star.fill" : "star")
                   .foregroundStyle(
-                    index < result.stars ? AnyShapeStyle(.energy) : AnyShapeStyle(.tertiary))
+                    index < result.stars ? AnyShapeStyle(.energy) : AnyShapeStyle(.faint))
               }
             }
-            .font(.title2)
+            .typeStyle(.section.weight(.regular))
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(
               Text("\(result.stars) of 3 stars", tableName: "Voice", comment: "A call's stars"))
@@ -263,7 +263,7 @@ struct ConversationResultView: View {
         IconLabeledContent {
           Text(result.brainPower, format: .number.sign(strategy: .always()))
             .monospacedDigit()
-            .foregroundStyle(.brain)
+            .foregroundStyle(.brainText)
         } title: {
           Text("Brain Power", tableName: "Voice", comment: "Points earned label")
         } icon: {
@@ -273,14 +273,16 @@ struct ConversationResultView: View {
         }
       }
     } footer: {
-      if conversation.kind == .checkpoint, !result.passed {
-        Text(
-          "Nothing is lost: the call comes back so you can try again.", tableName: "Voice",
-          comment: "A checkpoint call that didn't pass")
-      } else if showsStars {
-        Text(
-          "A star for finishing, one for getting everything across and one without Help.",
-          tableName: "Voice", comment: "How a call's stars are earned")
+      SectionFooter {
+        if conversation.kind == .checkpoint, !result.passed {
+          Text(
+            "Nothing is lost: the call comes back so you can try again.", tableName: "Voice",
+            comment: "A checkpoint call that didn't pass")
+        } else if showsStars {
+          Text(
+            "A star for finishing, one for getting everything across and one without Help.",
+            tableName: "Voice", comment: "How a call's stars are earned")
+        }
       }
     }
   }
@@ -308,11 +310,12 @@ private struct CallFeedbackSections: View {
 
       ForEach(feedback.wentWell, id: \.self) { phrase in
         Text(phrase)
-          .fontWeight(.medium)
+          .typeWeight(.medium)
           .typesettingLanguage(.init(identifier: language))
       }
     } header: {
-      Text("What went well", tableName: "Voice", comment: "A call result's first part")
+      SectionTitle(
+        Text("What went well", tableName: "Voice", comment: "A call result's first part"))
     }
 
     if feedback.improve != nil || !missed.isEmpty || !feedback.pronunciation.isEmpty {
@@ -328,7 +331,7 @@ private struct CallFeedbackSections: View {
             HStack(alignment: .firstTextBaseline) {
               LabeledContent {
                 Text(improve.better)
-                  .fontWeight(.medium)
+                  .typeWeight(.medium)
                   .typesettingLanguage(.init(identifier: language))
               } label: {
                 Text("Better", tableName: "Voice", comment: "A better way to say it")
@@ -338,8 +341,8 @@ private struct CallFeedbackSections: View {
             }
 
             Text(improve.why)
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
           }
           .labeledContentStyle(.vertical)
         }
@@ -348,7 +351,7 @@ private struct CallFeedbackSections: View {
           Label {
             Text(objective.label).typesettingLanguage(.init(identifier: language))
           } icon: {
-            Image(systemName: "circle").foregroundStyle(.tertiary)
+            Image(systemName: "circle").foregroundStyle(.faint)
           }
         }
 
@@ -356,14 +359,14 @@ private struct CallFeedbackSections: View {
           HStack(alignment: .firstTextBaseline) {
             VStack(alignment: .leading, spacing: 2) {
               Text(item.word)
-                .fontWeight(.medium)
+                .typeWeight(.medium)
                 .typesettingLanguage(.init(identifier: language))
               Text(item.respelling)
-                .font(.subheadline.monospaced())
-                .foregroundStyle(.secondary)
+                .typeStyle(.data)
+                .foregroundStyle(.mutedForeground)
               Text(item.tip)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+                .typeStyle(.note)
+                .foregroundStyle(.mutedForeground)
             }
 
             Spacer()
@@ -372,7 +375,7 @@ private struct CallFeedbackSections: View {
           }
         }
       } header: {
-        Text("To improve", tableName: "Voice", comment: "A call result's second part")
+        SectionTitle(Text("To improve", tableName: "Voice", comment: "A call result's second part"))
       }
     }
   }
@@ -410,7 +413,7 @@ struct SpeakButton: View {
       }
       .labelStyle(.iconOnly)
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .onDisappear { voice.player.stop(owner: owner) }
   }
 }
@@ -423,8 +426,8 @@ private struct VerticalLabeledContentStyle: LabeledContentStyle {
   func makeBody(configuration: Configuration) -> some View {
     VStack(alignment: .leading, spacing: 2) {
       configuration.label
-        .font(.caption.weight(.medium))
-        .foregroundStyle(.secondary)
+        .typeStyle(.meta.weight(.medium))
+        .foregroundStyle(.mutedForeground)
       configuration.content
     }
   }

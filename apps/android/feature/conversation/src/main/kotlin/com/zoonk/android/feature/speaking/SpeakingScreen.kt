@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.speaking
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,10 +13,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -31,7 +28,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -41,7 +37,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
@@ -74,9 +69,10 @@ import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.KindDot
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.ListRow
@@ -85,12 +81,15 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.WritingWait
+import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.SpeakingPaper
 import com.zoonk.api.models.SpeakingPaperTask
 import kotlinx.coroutines.launch
@@ -410,28 +409,24 @@ private fun TaskRow(
                 else -> stringResource(R.string.speaking_last_below, level)
             }
         }
-    val state = stringResource(if (open) R.string.disclosure_expanded else R.string.disclosure_collapsed)
-
-    ListItem(
-        headlineContent = { Text(inLanguage(task.name, paper.language)) },
-        supportingContent = {
+    ListRow(
+        headline = { Text(inLanguage(task.name, paper.language)) },
+        modifier = Modifier.bringIntoViewRequester(requester),
+        onClick = { open = !open },
+        expanded = open,
+        leading = { Text(formatNumber(index + 1.0, locale), style = MaterialTheme.zoonkType.data) },
+        supporting = {
             Column {
                 Text(facts)
                 lastTry?.let { Text(it) }
             }
         },
-        leadingContent = { Text((index + 1).toString(), style = MaterialTheme.typography.labelLarge) },
-        trailingContent = {
-            Icon(painterResource(R.drawable.ic_expand_more), contentDescription = null, modifier = Modifier.rotate(if (open) 180f else 0f))
-        },
-        modifier =
-            Modifier
-                .bringIntoViewRequester(requester)
-                .clickable(role = Role.Button) { open = !open }
-                .semantics { stateDescription = state },
     )
     if (open) {
-        Column(Modifier.padding(start = 56.dp, end = 16.dp, bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(
+            Modifier.padding(start = listRowWordsStart(), end = LIST_ITEM_INSET, bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
             Text(
                 stringResource(R.string.speaking_rated_on, spokenList(task.criteria.map { criterionGloss(it.key, it.name) }, locale)),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -439,7 +434,7 @@ private fun TaskRow(
             )
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (!locked) {
-                    BusyButton(starting, onStart, enabled = !busy) { Text(stringResource(R.string.speaking_start_task)) }
+                    Button(busy = starting, onClick = onStart, enabled = !busy) { Text(stringResource(R.string.speaking_start_task)) }
                 }
                 task.lastTry?.let { last ->
                     OutlinedButton(onClick = { onLastResult(last.conversationId) }) { Text(stringResource(R.string.speaking_last_result)) }

@@ -16,7 +16,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -38,12 +37,13 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.BusyTonalButton
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PrivatePictures
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.ChapterMindMap
@@ -247,7 +247,11 @@ private fun MindMapRequest(
                 strokeWidth = 2.dp,
             )
         } else {
-            BusyTonalButton(local?.pending == true, onClick = if (failure) actions.retry else actions.create, enabled = !capped) {
+            OutlinedButton(
+                onClick = if (failure) actions.retry else actions.create,
+                enabled = !capped,
+                busy = local?.pending == true,
+            ) {
                 Text(stringResource(if (failure) R.string.mindmaps_try_again else R.string.mindmaps_card_create))
             }
         }

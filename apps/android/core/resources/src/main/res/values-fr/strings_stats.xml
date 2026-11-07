@@ -29,6 +29,7 @@
   "stats_day_no_study": "17ab7cfe1579c6ad7907907e1a24d1eb22c03f73d7f6e46c34b9d1d7b74d8bc7",
   "stats_days": "ceb159d20f8d93be0f1b09fcec8286f0fb443d6ebe032e2f6e16fc394c2f62e9",
   "stats_days_even": "341f75e4cd458b51c32c45048c33fccfd3fe96359a0e4b37a40c135581fc6c83",
+  "stats_days_studied": "8b6836e786cd773bed32539a024b7e27e5f3c35f1f9a5e52b6d88c3aaf9666d4",
   "stats_empty_title": "f434b2ef164f33219e3f70a8dc0231dea78dfea8c92152c9250a743175660c8a",
   "stats_energy": "b682786da8300e2d41be394b6c8d454e8d676e3357ab01d7225f7d43e904f2fc",
   "stats_energy_average": "eadb965e7fcf87ea5c0aecd4216d38c821eaf44fed7ef6b01906bdf275a3a8a8",
@@ -83,7 +84,6 @@
   "stats_score_week": "a9189f2c5206582183bdf0722af9d2a573e25dfd9af9a9f29b2ac6634c57aac3",
   "stats_see_all": "55133e68085ea7605323ecef79a040c518426314aef89be6732229e4e303f0fd",
   "stats_since_start": "4f08aa3b80cdd721a1141e62a13e2386dfdc0a4c44a5b1dd7c14bf54b04f0e33",
-  "stats_study_days": "2570954d262f84b170fb09de21904e0285be2315913ebf93d502dbdd85a5545f",
   "stats_studying_total": "177b97bfe9bd5f1390319de6b56c54f98a888800d350e3f9a8240132250e1384",
   "stats_throughout_day": "351f292131ee7307498b4dcadcf7725f005e141c028b931efb00af47032a52e1",
   "stats_throughout_week": "3b3b3265b8fa0cb04b572fae34772439dede640d0306c006022d41a1fd81eb93",
@@ -111,7 +111,7 @@
     <string name="stats_not_yet">Pas encore</string>
     <string name="stats_part_failed">Impossible de charger cette partie.</string>
     <string name="stats_energy_average">Moyenne : %1$s</string>
-    <string name="stats_study_days">Jours d’étude</string>
+    <string name="stats_days_studied">Jours d’étude</string>
     <plurals name="stats_lessons_time">
         <item quantity="one">%1$s leçon · %2$s</item>
         <item quantity="many">%1$s leçons · %2$s</item>

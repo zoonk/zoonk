@@ -11,15 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,7 +25,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -56,16 +51,18 @@ import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.GenerationWait
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.SuccessEyebrow
-import com.zoonk.android.ui.components.markSize
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -275,17 +272,25 @@ private fun LibraryCourseOffer(
     val chapters = course.chapterCount.toInt()
 
     OutlinedCard(onClick = onOpen, modifier = Modifier.fillMaxWidth()) {
-        ListItem(
-            overlineContent = { Text(stringResource(R.string.onboarding_library_course_fits)) },
-            headlineContent = { Text(course.title) },
-            supportingContent =
+        ListRow(
+            headline = {
+                Column {
+                    Text(
+                        stringResource(R.string.onboarding_library_course_fits),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    Text(course.title)
+                }
+            },
+            leading = { Icon(painterResource(R.drawable.ic_menu_book), contentDescription = null) },
+            supporting =
                 if (chapters > 0) {
                     { Text(pluralStringResource(R.plurals.catalog_chapters, chapters, chapters)) }
                 } else {
                     null
                 },
-            leadingContent = { Icon(painterResource(R.drawable.ic_menu_book), contentDescription = null) },
-            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+            chevron = true,
         )
     }
 }
@@ -342,7 +347,7 @@ private fun StartButton(
     working: Boolean,
     onClick: () -> Unit,
 ) {
-    BusyButton(working, onClick, Modifier.fillMaxWidth()) { Text(stringResource(R.string.onboarding_reveal_start)) }
+    Button(busy = working, onClick = onClick, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.onboarding_reveal_start)) }
 }
 
 @Composable
@@ -363,7 +368,7 @@ private fun RevealBody(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SuccessEyebrow(stringResource(R.string.onboarding_reveal_created))
-        Text(goal.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+        Text(goal.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
         FactsLine(plan.revealFacts(today), plan.schedule)
         PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
         PaceLine(plan, goal.kind)
@@ -372,7 +377,7 @@ private fun RevealBody(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         StartButton(starting, onClick = onStart)
-        FilledTonalButton(
+        OutlinedButton(
             onClick = onAdjust,
             modifier = Modifier.fillMaxWidth(),
         ) { Text(stringResource(R.string.onboarding_reveal_adjust)) }
@@ -898,7 +903,7 @@ private fun FreeWeekOverNotice(onSeePlus: () -> Unit) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                FilledTonalButton(onClick = onSeePlus, modifier = Modifier.padding(top = 8.dp)) {
+                OutlinedButton(onClick = onSeePlus, modifier = Modifier.padding(top = 8.dp)) {
                     Text(stringResource(R.string.onboarding_see_plus))
                 }
             }

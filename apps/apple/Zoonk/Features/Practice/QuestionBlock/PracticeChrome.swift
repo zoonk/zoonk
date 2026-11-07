@@ -1,45 +1,5 @@
 import SwiftUI
 
-enum PracticeSegment: Equatable {
-  case ahead
-  case current
-  /// A placement question or a statement left blank: not graded right or wrong.
-  case read
-  case right
-  case wrong
-}
-
-struct PracticeSegmentsBar: View {
-  let segments: [PracticeSegment]
-  let index: Int
-
-  var body: some View {
-    HStack(spacing: 3) {
-      ForEach(Array(segments.enumerated()), id: \.offset) { _, segment in
-        mark(segment)
-          .frame(height: 4)
-      }
-    }
-    .accessibilityElement()
-    .accessibilityLabel(
-      Text(
-        "Question \(min(index + 1, segments.count)) of \(segments.count)", tableName: "Practice",
-        comment: "VoiceOver label of a run's progress: the question in view and how many there are."
-      ))
-  }
-
-  @ViewBuilder
-  private func mark(_ segment: PracticeSegment) -> some View {
-    switch segment {
-    case .right: Capsule().fill(.success)
-    case .wrong: Capsule().fill(.destructive)
-    case .read: Capsule().fill(Color(.systemGray3))
-    case .current: Capsule().strokeBorder(.success, lineWidth: 1)
-    case .ahead: Capsule().fill(Color(.systemFill))
-    }
-  }
-}
-
 enum PracticeLayout {
   static let readableWidth: CGFloat = 680
 }
@@ -55,14 +15,14 @@ private enum PracticeTaskKind {
 struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   @Environment(\.practiceActionsHidden) private var actionsHidden
   private let kind: PracticeTaskKind
-  private let segments: [PracticeSegment]?
+  private let segments: [TaskSegment]?
   private let index: Int
   private let stimulus: () -> Stimulus
   private let response: () -> Response
   private let actions: () -> Actions
 
   init(
-    isResult: Bool = false, segments: [PracticeSegment]? = nil, index: Int = 0,
+    isResult: Bool = false, segments: [TaskSegment]? = nil, index: Int = 0,
     @ViewBuilder stimulus: @escaping () -> Stimulus,
     @ViewBuilder response: @escaping () -> Response,
     @ViewBuilder actions: @escaping () -> Actions
@@ -73,7 +33,7 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   }
 
   fileprivate init(
-    kind: PracticeTaskKind, segments: [PracticeSegment]?, index: Int,
+    kind: PracticeTaskKind, segments: [TaskSegment]?, index: Int,
     stimulus: @escaping () -> Stimulus,
     response: @escaping () -> Response,
     actions: @escaping () -> Actions
@@ -111,16 +71,22 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
         }
       }
     }
-    .background(Color(.systemGroupedBackground))
+    .background(Color(.systemBackground))
   }
 
   @ViewBuilder private var segmentsBar: some View {
     if let segments, !segments.isEmpty {
-      PracticeSegmentsBar(segments: segments, index: index)
-        .frame(maxWidth: PracticeLayout.readableWidth)
-        .padding(.horizontal)
-        .padding(.vertical, 8)
-        .frame(maxWidth: .infinity)
+      TaskSegments(
+        segments: segments,
+        label: Text(
+          "Question \(min(index + 1, segments.count)) of \(segments.count)", tableName: "Practice",
+          comment:
+            "VoiceOver label of a run's progress: the question in view and how many there are.")
+      )
+      .frame(maxWidth: PracticeLayout.readableWidth)
+      .padding(.horizontal)
+      .padding(.vertical, 8)
+      .frame(maxWidth: .infinity)
     }
   }
 
@@ -239,14 +205,21 @@ extension View {
 
 struct PracticeMainButton: View {
   let title: LocalizedStringResource
+  var systemImage: String?
   var isBusy = false
   var isDisabled = false
   let action: () -> Void
 
   var body: some View {
     BusyButton(isBusy: isBusy, action: action) {
-      Text(title)
-        .frame(maxWidth: .infinity)
+      HStack(spacing: 8) {
+        if let systemImage {
+          Image(systemName: systemImage)
+            .accessibilityHidden(true)
+        }
+        Text(title)
+      }
+      .frame(maxWidth: .infinity)
     }
     .buttonStyle(.mainAction)
     .controlSize(.large)
@@ -352,7 +325,7 @@ struct PracticeSecondaryButton: View {
     // Beside the main action it keeps its own width, so its label stays on one line; the row
     // stacks instead when that doesn't fit.
     .fixedSize(horizontal: sideBySide, vertical: false)
-    .buttonStyle(.glass)
+    .buttonStyle(.outline)
     .controlSize(.large)
     .disabled(isDisabled)
   }
@@ -369,14 +342,14 @@ struct PracticeSaveError: View {
           comment:
             "Shown over a run's actions when an answer or the finish didn't reach the server.")
       )
-      .font(.subheadline)
+      .typeStyle(.body)
 
       Spacer()
 
       Button(action: retry) {
         Text("Try again", tableName: "Practice", comment: "Sends an answer that didn't save again.")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
   }
 }
@@ -406,9 +379,9 @@ struct PracticeResultTitle: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
-      Text(title).font(.largeTitle.bold())
+      Text(title).typeStyle(.heroTitle)
       if let detail {
-        Text(detail).foregroundStyle(.secondary)
+        Text(detail).foregroundStyle(.mutedForeground)
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -425,26 +398,29 @@ struct PracticeResultNumbers: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
-      HStack(spacing: 24) {
+      FlowLayout(spacing: 32, alignment: .firstTextBaseline) {
         if let correct, let total, total > 0 {
-          Readout(
-            value: Text("\(correct)/\(total)"),
-            label: Text(
+          MomentReadout {
+            Text("\(correct)/\(total)")
+          } words: {
+            Text(
               "Right", tableName: "Practice",
-              comment: "Readout label: right answers out of the total."))
+              comment: "Readout label: right answers out of the total.")
+          }
         }
 
         if brainPower > 0 {
-          Readout(
-            value: Text(brainPower, format: .number.sign(strategy: .always())),
-            label: Text(
-              "Brain Power", tableName: "Practice", comment: "Readout label: Brain Power earned."),
-            tint: .brain)
+          MomentReadout(tint: .brainText) {
+            EarnedNumber(value: brainPower)
+          } words: {
+            Text(
+              "Brain Power", tableName: "Practice", comment: "Readout label: Brain Power earned.")
+          }
         }
       }
 
       ForEach(facts, id: \.self) { fact in
-        Text(fact).font(.subheadline).foregroundStyle(.secondary)
+        Text(fact).typeStyle(.note).foregroundStyle(.mutedForeground)
       }
 
       if let day, !day.isEmpty {
@@ -452,20 +428,6 @@ struct PracticeResultNumbers: View {
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
-  }
-}
-
-private struct Readout: View {
-  let value: Text
-  let label: Text
-  var tint: Color = .primary
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 2) {
-      value.font(.title.monospacedDigit().weight(.semibold)).foregroundStyle(tint)
-      label.font(.footnote).foregroundStyle(.secondary)
-    }
-    .accessibilityElement(children: .combine)
   }
 }
 
@@ -518,7 +480,7 @@ struct PracticeLoadFailureView: View {
         Button(action: retry) {
           Text("Try again", tableName: "Practice", comment: "Loads a practice screen again.")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .lonePage()
     }

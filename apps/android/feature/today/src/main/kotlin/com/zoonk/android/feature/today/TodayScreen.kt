@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +23,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -51,10 +49,15 @@ import com.zoonk.android.navigation.SignInGate
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.StatusMessage
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -287,16 +290,12 @@ private fun ExplanationContinue(
     navigator: AppNavigator,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        androidx.compose.material3.ListItem(
-            headlineContent = { Text(explanation.title) },
-            supportingContent = { Text(stringResource(R.string.today_quick_explanation)) },
-            leadingContent = {
-                androidx.compose.material3.Icon(painterResource(R.drawable.ic_play_arrow), contentDescription = null)
-            },
-            colors =
-                androidx.compose.material3.ListItemDefaults
-                    .colors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
-            modifier = Modifier.clip(MaterialTheme.shapes.medium),
+        ListRow(
+            headline = { Text(explanation.title) },
+            modifier = Modifier.bleed(LIST_ITEM_INSET),
+            highlighted = true,
+            leading = { androidx.compose.material3.Icon(painterResource(R.drawable.ic_play_arrow), contentDescription = null) },
+            supporting = { Text(stringResource(R.string.today_quick_explanation)) },
         )
         Button(onClick = { navigator.open(AppRoute.Explain(explanation.id.toString())) }) {
             Text(stringResource(R.string.today_continue_explanation))

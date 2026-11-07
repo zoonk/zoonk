@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.audio.MicrophoneOff
 import com.zoonk.android.feature.subscription.PlusNotice
-import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -214,7 +213,7 @@ internal fun StartCallButton(
     modifier: Modifier = Modifier,
     label: String = stringResource(R.string.conversation_start),
 ) {
-    BusyButton(starting, onClick, modifier) {
+    Button(busy = starting, onClick = onClick, modifier = modifier) {
         Icon(painterResource(R.drawable.ic_call), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
         Text(label)

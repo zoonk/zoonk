@@ -3,8 +3,6 @@ package com.zoonk.android.feature.player.language
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -35,6 +33,8 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.steps.listeningInstead
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedIconButton
 
 /**
  * A language screen's own recording (a letter, a word, a sentence to hear), which plays as its screen
@@ -123,7 +123,7 @@ fun PromptAudioIconButton(
     prompt: PromptAudio,
 ) {
     val label = pronunciationLabel(prompt.state)
-    FilledTonalIconButton(onClick = { prompt.toggle(url) }, modifier = Modifier.semantics { contentDescription = label }) {
+    OutlinedIconButton(onClick = { prompt.toggle(url) }, modifier = Modifier.semantics { contentDescription = label }) {
         SpeechStatusIcon(prompt.state) { PlayIcon() }
     }
 }
@@ -154,7 +154,7 @@ internal fun PromptAudioButton(
     val state = prompt.state.withoutFailure()
     val playing = state == SpeechState.Playing
     val label = pronunciationLabel(state)
-    FilledTonalButton(onClick = { prompt.toggle(url) }, modifier = Modifier.semantics { contentDescription = label }) {
+    OutlinedButton(onClick = { prompt.toggle(url) }, modifier = Modifier.semantics { contentDescription = label }) {
         SpeechStatusIcon(state) { PlayIcon() }
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
         Text(stringResource(if (playing) R.string.player_language_stop else R.string.player_language_play))

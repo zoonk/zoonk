@@ -33,13 +33,13 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.steps.count
-import com.zoonk.android.ui.components.BusyOutlinedButton
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -168,7 +168,7 @@ internal fun ExplainAnswer(
                 RichText(text = explanation.text, style = MaterialTheme.typography.bodyMedium)
             }
         } else {
-            BusyOutlinedButton(loading, onExplain, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
+            OutlinedButton(busy = loading, onClick = onExplain, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
                 Icon(
                     painterResource(R.drawable.ic_lightbulb),
                     contentDescription = null,

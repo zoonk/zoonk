@@ -33,6 +33,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.answerTone
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 
 /**
@@ -135,7 +136,7 @@ private fun Entry(
     description: String? = null,
 ) {
     val tone = answerTone(picked = picked, result = null)
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
 
     Row(
         Modifier

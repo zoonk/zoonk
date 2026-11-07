@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -122,7 +121,7 @@ fun Suggestion(
                         }
                     }
                 if (framing == Framing.Own) {
-                    Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, border = frameBorder(), content = panel)
+                    Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large, border = frameBorder(), content = panel)
                 } else {
                     Box(modifier.fillMaxWidth()) { panel() }
                 }
@@ -138,7 +137,7 @@ fun SuggestionFrame(
     head: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, border = frameBorder()) {
+    Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large, border = frameBorder()) {
         Column {
             head?.invoke()
             CompositionLocalProvider(LocalFraming provides if (head != null) Framing.Headed else Framing.Shared, content = content)
@@ -159,7 +158,7 @@ class SuggestionContentScope internal constructor(
 
 @Composable
 fun SuggestionOpen(text: String = stringResource(R.string.suggestion_view)) {
-    FilledTonalButton(onClick = LocalFrame.current.open) { Text(text) }
+    OutlinedButton(onClick = LocalFrame.current.open) { Text(text) }
 }
 
 @Composable
@@ -241,9 +240,9 @@ fun SuggestionAction(
     val width = if (presentation == Presentation.Sheet) Modifier.fillMaxWidth() else Modifier
 
     if (secondary || presentation == Presentation.Line) {
-        BusyTonalButton(busy, onClick, modifier.then(width), enabled, content = content)
+        OutlinedButton(onClick = onClick, modifier = modifier.then(width), enabled = enabled, busy = busy, content = content)
     } else {
-        BusyButton(busy, onClick, modifier.then(width), enabled, content = content)
+        Button(onClick = onClick, modifier = modifier.then(width), enabled = enabled, busy = busy, content = content)
     }
 }
 
@@ -257,7 +256,7 @@ private fun SuggestionLine(
 ) {
     // With nothing to open, the line is all there is to read.
     val whole = answered || action == null
-    Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, border = frameBorder()) {
+    Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large, border = frameBorder()) {
         CompositionLocalProvider(LocalPresentation provides Presentation.Line) {
             Row(
                 modifier = Modifier.heightIn(min = 56.dp).padding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),

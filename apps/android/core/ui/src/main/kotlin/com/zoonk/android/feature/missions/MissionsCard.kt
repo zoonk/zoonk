@@ -59,6 +59,7 @@ import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.BusyContent
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
+import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.busyClickable
 import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.format.currentLocale
@@ -331,6 +332,7 @@ fun MissionListRow(
     trailing: (@Composable () -> Unit)? = null,
 ) {
     val doneLabel = stringResource(R.string.today_step_done)
+    val chevron = onOpen != null && trailing == null
 
     Row(
         modifier =
@@ -349,7 +351,7 @@ fun MissionListRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(Modifier.width(20.dp), contentAlignment = Alignment.Center) { BusyContent(busy, mark) }
+        Box(Modifier.width(20.dp), contentAlignment = Alignment.Center) { BusyContent(busy && !chevron, mark) }
 
         Column(Modifier.weight(1f)) {
             Text(
@@ -370,6 +372,7 @@ fun MissionListRow(
         }
 
         trailing?.invoke()
+        if (chevron) BusyContent(busy) { ListRowChevron() }
     }
 }
 
@@ -413,14 +416,15 @@ fun BrainPowerReward(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            val brain = MaterialTheme.zoonk.brain
+            // brainText, since the page's color on brain is under AA in light.
+            val fill = MaterialTheme.zoonk.brainText
             Row(
                 modifier =
                     if (earned) {
                         Modifier
                             .clip(
                                 MaterialTheme.shapes.extraSmall,
-                            ).background(brain)
+                            ).background(fill)
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     } else {
                         Modifier

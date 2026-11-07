@@ -38,7 +38,7 @@ struct MistakePracticeState: Equatable {
   private(set) var phase: MistakePracticePhase
   private(set) var reached = PracticeReached.nothing
   let steps: [MistakePracticeStep]
-  private(set) var verdicts: [PracticeSegment] = []
+  private(set) var verdicts: [TaskSegment] = []
 
   init(entries: [MistakePracticeEntry]) {
     steps = entries.flatMap { entry in
@@ -133,7 +133,7 @@ struct MistakePracticeState: Equatable {
     phase = .ended(summary)
   }
 
-  var segments: [PracticeSegment] {
+  var segments: [TaskSegment] {
     steps.indices.map { position in
       if verdicts.indices.contains(position) { return verdicts[position] }
       return position == index ? .current : .ahead

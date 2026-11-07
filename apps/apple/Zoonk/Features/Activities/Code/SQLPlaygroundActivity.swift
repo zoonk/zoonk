@@ -139,8 +139,8 @@ private struct SQLPlaygroundCanvas: View {
 
       if let errorLine {
         Text(errorLine)
-          .font(.subheadline.monospaced())
-          .foregroundStyle(.destructive)
+          .typeStyle(.body.monospaced())
+          .foregroundStyle(.destructiveText)
       }
 
       if let result {
@@ -184,15 +184,16 @@ private struct SQLPlaygroundCanvas: View {
   private var editor: some View {
     VStack(alignment: .leading, spacing: 8) {
       editorLabel
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
         .accessibilityHidden(true)
 
       MultilineTextField(
         text: $query, selection: $selection, prompt: Text(verbatim: "SELECT"), label: editorLabel
       )
       .lineLimit(3...)
-      .font(.body.monospaced())
-      .textFieldStyle(.roundedBorder)
+      .typeStyle(.body.monospaced())
+      .textFieldStyle(.plain)
+      .fieldBorder()
       .textInputAutocapitalization(.never)
       .autocorrectionDisabled()
       .keyboardType(.asciiCapable)
@@ -225,9 +226,9 @@ private struct SQLPlaygroundCanvas: View {
             insert(snippet)
           } label: {
             Text(verbatim: snippet.trimmingCharacters(in: .whitespaces))
-              .font(.footnote.monospaced())
+              .typeStyle(.data)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
       }
     }
@@ -247,7 +248,7 @@ private struct SQLPlaygroundCanvas: View {
 
     VStack(alignment: .leading, spacing: 6) {
       Text(resultLine(result))
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
 
       if !result.columns.isEmpty {
         SQLRowsTable(
@@ -283,7 +284,7 @@ private struct SQLPlaygroundCanvas: View {
               "Expected result", tableName: "ActivitiesCode", comment: "Rows a query should return")
           }
         }
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
 
         SQLRowsTable(
           caption: Text(
@@ -306,11 +307,11 @@ private struct SQLPlaygroundCanvas: View {
           "A query that works", tableName: "ActivitiesCode",
           comment: "The lesson's own query, after the check"
         )
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
 
         GroupBox {
           Text(CodeHighlight.text(of: verifiedSolution, language: .sql))
-            .font(.subheadline.monospaced())
+            .typeStyle(.body.monospaced())
             .textSelection(.enabled)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -435,14 +436,14 @@ private struct SQLTableViewer: View {
       } label: {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
           Image(systemName: "tablecells")
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
 
           Text(verbatim: table.name)
-            .font(.subheadline.monospaced().weight(.semibold))
+            .typeStyle(.body.weight(.semibold).monospaced())
 
           Text(verbatim: table.columns.map(\.name).joined(separator: ", "))
-            .font(.caption.monospaced())
-            .foregroundStyle(.secondary)
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -450,8 +451,8 @@ private struct SQLTableViewer: View {
             "\(table.rows.count) rows", tableName: "ActivitiesCode",
             comment: "How many rows a SQL table has"
           )
-          .font(.caption)
-          .foregroundStyle(.secondary)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
         }
       }
     }
@@ -472,9 +473,9 @@ private struct SQLRowsTable: View {
     ScrollView(.horizontal) {
       grid
         .overlay {
-          RoundedRectangle(cornerRadius: 10).strokeBorder(.separator)
+          RoundedRectangle(cornerRadius: Radius.lg).strokeBorder(.border)
         }
-        .clipShape(.rect(cornerRadius: 10))
+        .clipShape(.rect(cornerRadius: Radius.lg))
     }
     .scrollBounceBehavior(.basedOnSize)
     .accessibilityElement(children: .contain)
@@ -487,14 +488,14 @@ private struct SQLRowsTable: View {
         ForEach(Array(columns.enumerated()), id: \.offset) { _, column in
           Text(verbatim: column)
             .fixedSize()
-            .font(.caption.monospaced())
-            .foregroundStyle(.secondary)
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
       }
-      .background(Color(.tertiarySystemFill))
+      .background(Color.muted)
       .accessibilityHidden(true)
 
       ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
@@ -516,14 +517,14 @@ private struct SQLRowsTable: View {
         .accessibilityLabel(rowLabel(row, mark: mark))
       }
     }
-    .font(.subheadline)
+    .typeStyle(.body)
   }
 
   private func markColor(_ mark: Mark) -> Color {
     switch mark {
     case .plain: .clear
-    case .extra: Color.destructive.opacity(0.2)
-    case .missing: Color.success.opacity(0.2)
+    case .extra: Color.destructive.opacity(0.1)
+    case .missing: Color.success.opacity(0.1)
     }
   }
 
@@ -561,7 +562,7 @@ private struct SQLCell: View {
     if value == .null {
       Text(verbatim: "NULL")
         .italic()
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     } else {
       Text(verbatim: Self.text(value))
         .monospacedDigit()

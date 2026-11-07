@@ -22,10 +22,10 @@ import com.zoonk.android.feature.conversation.CallStartModel
 import com.zoonk.android.feature.conversation.CallStarter
 import com.zoonk.android.feature.conversation.OpenStartedCall
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.BusyOutlinedButton
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.MarkedLine
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.api.models.SpeakingMockExam
 import java.util.UUID
@@ -84,7 +84,7 @@ fun SpeakingMockCard(
             else -> {
                 val starting = model.state == CallStartModel.State.Starting
                 if (model.state == CallStartModel.State.Paused) CallsPaused()
-                BusyOutlinedButton(starting, startMock) { Text(stringResource(R.string.speaking_mock_start)) }
+                OutlinedButton(busy = starting, onClick = startMock) { Text(stringResource(R.string.speaking_mock_start)) }
                 if (model.state == CallStartModel.State.Failed) {
                     Text(
                         stringResource(R.string.speaking_mock_failed),

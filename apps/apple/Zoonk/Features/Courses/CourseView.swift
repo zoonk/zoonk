@@ -53,15 +53,15 @@ private struct CourseLandingList: View {
 
   var body: some View {
     PaneSplit {
-      List {
+      ZoonkList {
         pitch
       }
     } secondary: {
-      List {
+      ZoonkList {
         contents
       }
     } single: {
-      List {
+      ZoonkList {
         pitch
         contents
       }
@@ -145,7 +145,8 @@ private struct CourseHeroSection: View {
         CourseMark(detail.course)
 
         if detail.course.subject != nil || exam != nil {
-          AccessibilityStack(spacing: 8, stackedSpacing: 6) {
+          // Main's wrapping row: the eyebrow takes its own line once both don't fit.
+          FlowLayout(spacing: 12, rowSpacing: 8) {
             if let subject = detail.course.subject {
               CourseSubjectLabel(subject: subject)
             }
@@ -157,15 +158,15 @@ private struct CourseHeroSection: View {
         }
 
         Text(detail.course.title)
-          .font(.largeTitle.bold())
+          .typeStyle(.heroTitle)
           .fixedSize(horizontal: false, vertical: true)
           .accessibilityAddTraits(.isHeader)
           .heroTitle()
 
         if let promise {
           Text(promise)
-            .font(.title3)
-            .foregroundStyle(.secondary)
+            .typeStyle(.lead)
+            .foregroundStyle(.mutedForeground)
         }
 
         PlanLine(startsHere: false)
@@ -200,8 +201,8 @@ private struct CourseExamEyebrow: View {
           comment: "An exam course's next sitting: its days, then how long until it")
       }
     }
-    .font(.footnote.monospacedDigit())
-    .foregroundStyle(.secondary)
+    .typeStyle(.eyebrow)
+    .foregroundStyle(.mutedForeground)
   }
 
   private var dates: String {
@@ -255,8 +256,8 @@ struct PlanLine: View {
       Image(systemName: "map")
         .accessibilityHidden(true)
     }
-    .font(.subheadline)
-    .foregroundStyle(.secondary)
+    .typeStyle(.note)
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -270,7 +271,8 @@ private struct CourseFitSections: View {
           Text(line)
         }
       } header: {
-        Text("Who it's for", tableName: "Courses", comment: "Header of who a course is for")
+        SectionTitle(
+          Text("Who it's for", tableName: "Courses", comment: "Header of who a course is for"))
       }
     }
 
@@ -280,9 +282,10 @@ private struct CourseFitSections: View {
           CheckLine(text: line)
         }
       } header: {
-        Text(
-          "What you'll be able to do", tableName: "Courses",
-          comment: "Header of what a course makes someone able to do")
+        SectionTitle(
+          Text(
+            "What you'll be able to do", tableName: "Courses",
+            comment: "Header of what a course makes someone able to do"))
       }
     }
   }
@@ -326,7 +329,7 @@ private struct CourseClosingSection: View {
               comment: "A course page's last call")
           }
         }
-        .font(.title2.weight(.semibold))
+        .typeStyle(.section)
         .accessibilityAddTraits(.isHeader)
 
         if goal == nil {
@@ -334,7 +337,7 @@ private struct CourseClosingSection: View {
             "A few quick questions, then your plan and your first lesson.", tableName: "Courses",
             comment: "Under a course page's last call"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         CatalogStartActions(courseID: courseID, goal: goal, tryLessonID: nil)

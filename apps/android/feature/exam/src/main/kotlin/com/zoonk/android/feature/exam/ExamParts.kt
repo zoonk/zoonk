@@ -10,11 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -42,9 +40,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.formatPlanDate
 import com.zoonk.android.feature.plan.noticeDayText
-import com.zoonk.android.ui.components.BusyButton
-import com.zoonk.android.ui.components.BusyTonalButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -192,7 +191,7 @@ internal fun NoticeDatesCard(
                         noticeDayText(noticeDay.date.toJavaLocalDate(), noticeDay.estimated, exam.examDocument),
                         style = MaterialTheme.typography.titleSmall,
                     )
-                    BusyTonalButton(pending, { viewModel.useDate(noticeDay.date.toJavaLocalDate()) }) {
+                    OutlinedButton(onClick = { viewModel.useDate(noticeDay.date.toJavaLocalDate()) }, busy = pending) {
                         Text(stringResource(R.string.exam_use_this_date))
                     }
                 } else if (noSitting != null) {
@@ -214,7 +213,7 @@ internal fun NoticeDatesCard(
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         noSitting.closest.forEach { date ->
                             val day = date.toJavaLocalDate()
-                            FilledTonalButton(onClick = { viewModel.useDate(day) }, enabled = !pending) {
+                            OutlinedButton(onClick = { viewModel.useDate(day) }, enabled = !pending) {
                                 Text(stringResource(R.string.exam_use_date, formatDate(day, locale, DateStyle.Long)))
                             }
                         }
@@ -269,7 +268,7 @@ internal fun ExamResultSection(
                 value = score,
                 onValueChange = { score = it },
                 modifier = Modifier.weight(1f),
-                label = { Text(field) },
+                label = field,
                 supportingText = scoreError?.let { { Text(it) } },
                 isError = scoreError != null,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
@@ -280,7 +279,7 @@ internal fun ExamResultSection(
                     value = maxScore,
                     onValueChange = { maxScore = it },
                     modifier = Modifier.weight(1f),
-                    label = { Text(stringResource(R.string.exam_out_of)) },
+                    label = stringResource(R.string.exam_out_of),
                     isError = maxError,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
                     singleLine = true,
@@ -304,7 +303,7 @@ internal fun ExamResultSection(
 
         if (status == SaveStatus.Failed) SuggestionSaveError()
 
-        BusyButton(
+        Button(
             busy = status == SaveStatus.Pending,
             onClick = {
                 viewModel.report(

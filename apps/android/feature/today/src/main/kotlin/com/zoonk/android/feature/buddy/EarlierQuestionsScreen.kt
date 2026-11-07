@@ -36,8 +36,8 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.tutor.AnswerText
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.BusyTextButton
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.EarlierQuestion
@@ -192,7 +192,7 @@ private fun OlderQuestions(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        BusyTextButton(isLoading, onLoad) { Text(stringResource(R.string.earlier_questions_older)) }
+        TextButton(busy = isLoading, onClick = onLoad) { Text(stringResource(R.string.earlier_questions_older)) }
     }
 }
 

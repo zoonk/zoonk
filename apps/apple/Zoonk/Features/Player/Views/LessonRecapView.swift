@@ -4,12 +4,14 @@ struct LessonRecapView: View {
   let recap: LessonRecap
   @Binding var isExpanded: Bool
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
     DisclosureGroup(isExpanded: $isExpanded) {
       VStack(alignment: .leading, spacing: 12) {
         content
       }
-      .font(.subheadline)
+      .typeStyle(.body)
       .padding(.top, 8)
     } label: {
       Label {
@@ -20,8 +22,8 @@ struct LessonRecapView: View {
 
           if let title {
             LessonRichText(title)
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } icon: {
@@ -59,13 +61,13 @@ struct LessonRecapView: View {
       HStack(alignment: .firstTextBaseline, spacing: 10) {
         Text(index + 1, format: .number)
           .monospacedDigit()
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
         VStack(alignment: .leading, spacing: 4) {
           LessonTextBlocks(solved.text, mark: recap.mark)
 
           if let math = solved.math {
-            Text(LessonMath.typeset(math))
+            Text(LessonMath.typeset(math), legibility: legibilityWeight)
           }
         }
       }
@@ -74,8 +76,8 @@ struct LessonRecapView: View {
 
     VStack(alignment: .leading, spacing: 4) {
       Text("Result", tableName: "Player", comment: "Above a worked example's result in a recap")
-        .fontWeight(.medium)
-        .foregroundStyle(.secondary)
+        .typeWeight(.medium)
+        .foregroundStyle(.mutedForeground)
 
       LessonTextBlocks(example.result, mark: recap.mark)
     }

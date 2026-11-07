@@ -32,14 +32,14 @@ struct GradedAtEndRun: View {
     PracticeTaskLayout(segments: segments(total: total, index: index), index: index) {
       if let question {
         HStack(alignment: .firstTextBaseline) {
-          Text(hint(question)).font(.subheadline).foregroundStyle(.secondary)
+          Text(hint(question)).typeStyle(.note).foregroundStyle(.mutedForeground)
           Spacer()
           Text(
             "\(shown + 1) of \(total)", tableName: "Practice",
             comment: "Where a test is: question n of total."
           )
-          .font(.caption.monospacedDigit())
-          .foregroundStyle(.secondary)
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
         }
 
         asked(question, isLocked: locked).stimulus
@@ -51,12 +51,12 @@ struct GradedAtEndRun: View {
             "Every question is answered", tableName: "Practice",
             comment: "Title of a test whose answers are all in, before they're graded."
           )
-          .font(.title2.bold())
+          .typeStyle(.section)
           Text(
             "Finish to see how it went.", tableName: "Practice",
             comment: "Under the title of a block opened again with every answer in."
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       } else if total > questions.count {
         ContentUnavailableView {
@@ -151,7 +151,7 @@ struct GradedAtEndRun: View {
     PracticeQuestionView(question: question, labels: labels, isLocked: isLocked, draft: $draft)
   }
 
-  private func segments(total: Int, index: Int) -> [PracticeSegment] {
+  private func segments(total: Int, index: Int) -> [TaskSegment] {
     (0..<total).map { $0 < index ? .read : ($0 == index ? .current : .ahead) }
   }
 
@@ -267,13 +267,13 @@ struct PracticeQuestionsPreparingView: View {
               "Getting your test ready", table: "Practice",
               comment: "Title while a test's questions are written.") : title
         )
-        .font(.title2.bold())
+        .typeStyle(.section)
         .accessibilityFocused($focus, equals: .title)
-        Text(isWriting ? writingDetail : detail).foregroundStyle(.secondary)
+        Text(isWriting ? writingDetail : detail).foregroundStyle(.mutedForeground)
 
         if !isWriting {
           ForEach(facts, id: \.self) { fact in
-            Text(fact).font(.subheadline.monospacedDigit()).foregroundStyle(.secondary)
+            Text(fact).typeStyle(.data).foregroundStyle(.mutedForeground)
           }
         }
 
@@ -282,7 +282,7 @@ struct PracticeQuestionsPreparingView: View {
         }
 
         if isPlusRequired {
-          FreeWeekOverNotice(showsSeePlus: false, isInset: true)
+          FreeWeekOverNotice(showsSeePlus: false)
             .accessibilityElement(children: .combine)
             .accessibilityFocused($focus, equals: .notice)
         } else if failure != nil, limit == nil {
@@ -291,7 +291,7 @@ struct PracticeQuestionsPreparingView: View {
               "We couldn't write your test. Try again.", table: "Practice",
               comment: "Writing a test's questions failed.")
           )
-          .font(.subheadline)
+          .typeStyle(.body)
         }
       }
     } actions: {

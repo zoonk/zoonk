@@ -25,9 +25,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -67,12 +65,14 @@ import com.zoonk.android.feature.onboarding.goalStartLimit
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.components.BusyFilledIconButton
+import com.zoonk.android.ui.components.FilledIconButton
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -213,7 +213,7 @@ private fun StartColumn(content: @Composable ColumnScope.() -> Unit) {
                         .widthIn(max = 640.dp)
                         .fillMaxWidth()
                         .heightIn(min = windowHeight)
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
+                        .padding(horizontal = 16.dp, vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 content = content,
             )
@@ -510,13 +510,13 @@ private fun ColumnScope.MaterialQuestions(
             value = question,
             onValueChange = { question = it.take(MAX_QUESTION_LENGTH) },
             modifier = Modifier.weight(1f),
-            label = { Text(stringResource(R.string.onboarding_your_question)) },
+            label = stringResource(R.string.onboarding_your_question),
             placeholder = { Text(stringResource(R.string.onboarding_question_placeholder)) },
             maxLines = 6,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
             keyboardActions = KeyboardActions(onSend = { ask() }),
         )
-        BusyFilledIconButton(vm.isAsking, ask, enabled = question.isNotBlank()) {
+        FilledIconButton(busy = vm.isAsking, onClick = ask, enabled = question.isNotBlank()) {
             Icon(painterResource(R.drawable.ic_arrow_upward), contentDescription = stringResource(R.string.onboarding_ask))
         }
     }

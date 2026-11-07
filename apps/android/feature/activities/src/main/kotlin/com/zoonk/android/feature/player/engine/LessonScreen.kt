@@ -5,6 +5,7 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.writtenText
+import com.zoonk.android.ui.components.TaskSegment
 
 enum class PrimaryLabel { Check, Confirm, Continue, DontKnowYet, Next, NextStep, SeeAnswer, SeeHowItWent, Start }
 
@@ -16,9 +17,6 @@ data class PrimaryAction(
     val enabled: Boolean = true,
 )
 
-/** One segment per screen of the lesson's progress. */
-enum class Segment { Read, Right, Wrong, Current, Ahead }
-
 /**
  * What the header, the action bar and the keys read about the screen in view (main's
  * `getLessonScreen`), derived from the state so they never disagree.
@@ -27,7 +25,7 @@ enum class Segment { Read, Right, Wrong, Current, Ahead }
 data class LessonScreen(
     val step: LessonStep?,
     val primary: PrimaryAction?,
-    val segments: List<Segment>,
+    val segments: List<TaskSegment>,
     val canExplainFirst: Boolean,
     val canGoBack: Boolean,
     val canGoForward: Boolean,
@@ -87,26 +85,26 @@ private fun LessonPlayerState.primaryAction(step: LessonStep): PrimaryAction? {
     )
 }
 
-private fun LessonPlayerState.passedSegment(index: Int): Segment {
+private fun LessonPlayerState.passedSegment(index: Int): TaskSegment {
     val stepId = queue[index]
     val verdict = if (queue.indexOf(stepId) == index) firstVerdicts[stepId] else results[stepId]?.isCorrect
 
     return when (verdict) {
-        null -> Segment.Read
-        true -> Segment.Right
-        false -> Segment.Wrong
+        null -> TaskSegment.Read
+        true -> TaskSegment.Right
+        false -> TaskSegment.Wrong
     }
 }
 
-private fun LessonPlayerState.segments(): List<Segment> =
+private fun LessonPlayerState.segments(): List<TaskSegment> =
     queue.indices.map { index ->
         val answeredInView = index == position && phase == LessonPhase.Feedback
         when {
             index < position || answeredInView || phase == LessonPhase.Completed -> passedSegment(index)
-            index == position -> Segment.Current
-            else -> Segment.Ahead
+            index == position -> TaskSegment.Current
+            else -> TaskSegment.Ahead
         }
-    } + listOfNotNull(Segment.Ahead.takeIf { isMapAhead && phase != LessonPhase.Completed })
+    } + listOfNotNull(TaskSegment.Ahead.takeIf { isMapAhead && phase != LessonPhase.Completed })
 
 fun LessonPlayerState.screen(): LessonScreen {
     val step = if (phase == LessonPhase.Completed) null else currentStep

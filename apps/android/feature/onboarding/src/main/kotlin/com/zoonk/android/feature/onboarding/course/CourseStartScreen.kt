@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -56,9 +55,10 @@ import com.zoonk.android.feature.onboarding.start.GoalLimitWall
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -218,7 +218,7 @@ private fun CourseStartForm(
             }
             if (!blocked) {
                 val starting = stringResource(R.string.onboarding_course_starting)
-                BusyButton(
+                Button(
                     busy = vm.isStarting,
                     onClick = start,
                     modifier =

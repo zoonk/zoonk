@@ -64,7 +64,7 @@ private struct CombinationGridCanvas: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text(fields.title)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
 
       board
 
@@ -84,14 +84,14 @@ private struct CombinationGridCanvas: View {
 
     return VStack(alignment: .leading, spacing: 4) {
       Text(fields.columns.label)
-        .font(.caption)
-        .foregroundStyle(.secondary)
+        .typeStyle(.meta)
+        .foregroundStyle(.mutedForeground)
 
       Grid(horizontalSpacing: 6, verticalSpacing: 6) {
         GridRow {
           Text(fields.rows.label)
-            .font(.caption)
-            .foregroundStyle(.secondary)
+            .typeStyle(.meta)
+            .foregroundStyle(.mutedForeground)
             .lineLimit(2)
             .minimumScaleFactor(0.7)
             .frame(maxWidth: .infinity)
@@ -117,7 +117,7 @@ private struct CombinationGridCanvas: View {
 
   private func header(_ value: String) -> some View {
     Text(value)
-      .font(.headline.monospacedDigit())
+      .typeStyle(.body.weight(.semibold).monospaced())
       .lineLimit(1)
       .minimumScaleFactor(0.5)
       .frame(maxWidth: .infinity, minHeight: cellSize * 0.6)
@@ -143,16 +143,16 @@ private struct CombinationGridCanvas: View {
         Text(value ?? (isChecked && isReadOnly ? right[index] : " "))
           .lineLimit(1)
           .minimumScaleFactor(0.5)
-          .font(.body.weight(.semibold).monospacedDigit())
+          .typeStyle(.body.weight(.semibold).monospaced())
         if isChecked, !isReadOnly, mark == .wrong {
           Text(right[index])
-            .font(.caption.monospacedDigit())
+            .typeStyle(.data)
             .foregroundStyle(.primary)
         } else if let traits = fields.traits, let shown = value ?? (isReadOnly ? right[index] : nil)
         {
           Text(CombinationGrid.isDominant(shown) ? traits.dominant : traits.recessive)
-            .font(.caption2)
-            .foregroundStyle(.secondary)
+            .typeStyle(.small)
+            .foregroundStyle(.mutedForeground)
             .lineLimit(1)
             .minimumScaleFactor(0.7)
         }
@@ -258,7 +258,7 @@ private struct CombinationGridCanvas: View {
             comment: "Every square of a grid has a value")
         }
       }
-      .font(.subheadline.weight(.medium))
+      .typeStyle(.body.weight(.medium))
 
       if activeCell != nil {
         LazyVGrid(
@@ -272,11 +272,11 @@ private struct CombinationGridCanvas: View {
             } label: {
               VStack(spacing: 2) {
                 Text(option)
-                  .font(.body.weight(.semibold).monospacedDigit())
+                  .typeStyle(.body.weight(.semibold).monospaced())
                 if let traits = fields.traits {
                   Text(CombinationGrid.isDominant(option) ? traits.dominant : traits.recessive)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                    .typeStyle(.small)
+                    .foregroundStyle(.mutedForeground)
                 }
               }
               .frame(maxWidth: .infinity)

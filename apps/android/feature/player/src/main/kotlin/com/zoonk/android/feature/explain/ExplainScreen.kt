@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.explain
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,12 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,7 +28,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -64,11 +58,15 @@ import com.zoonk.android.feature.player.model.toPlayableLesson
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.components.BusyOutlinedButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SuccessEyebrow
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.taskBarColumn
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
@@ -78,6 +76,8 @@ import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.Explanation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -266,7 +266,7 @@ private fun ExplainHeading(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         eyebrow()
-        Text(title, modifier = Modifier.pageTitle(), style = MaterialTheme.typography.headlineSmall)
+        Text(title, modifier = Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
         subtitle?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
     }
 }
@@ -292,8 +292,8 @@ private fun Outline(titles: List<String>) {
             ) {
                 Text(
                     formatNumber((index + 1).toDouble(), locale),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.zoonk.faint,
+                    style = MaterialTheme.zoonkType.data,
                 )
                 if (title == null) {
                     Box(
@@ -372,16 +372,12 @@ private fun GoFurtherRow(
     description: String,
     onClick: () -> Unit,
 ) {
-    ListItem(
-        headlineContent = { Text(title) },
-        supportingContent = { Text(description) },
-        leadingContent = { Icon(painterResource(icon), contentDescription = null) },
-        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
-        modifier =
-            Modifier
-                .padding(vertical = 2.dp)
-                .clip(MaterialTheme.shapes.medium)
-                .clickable(onClick = onClick),
+    ListRow(
+        headline = { Text(title) },
+        modifier = Modifier.bleed(LIST_ITEM_INSET),
+        onClick = onClick,
+        leading = { Icon(painterResource(icon), contentDescription = null) },
+        supporting = { Text(description) },
     )
 }
 
@@ -411,7 +407,7 @@ private fun SlowWait(
             style = MaterialTheme.typography.bodyMedium,
         )
         if (!joined) {
-            BusyOutlinedButton(retrying, {
+            OutlinedButton(busy = retrying, onClick = {
                 retrying = true
                 scope.launch {
                     joined = viewModel.retrySlow(explanation)
@@ -466,8 +462,8 @@ internal fun ExplainEnding(
                         Row(Modifier.padding(vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             Text(
                                 formatNumber((index + 1).toDouble(), locale),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.zoonk.faint,
+                                style = MaterialTheme.zoonkType.data,
                             )
                             Text(sentence, style = MaterialTheme.typography.bodyMedium)
                         }

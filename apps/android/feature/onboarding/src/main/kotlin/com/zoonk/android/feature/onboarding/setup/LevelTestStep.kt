@@ -20,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -68,11 +67,11 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.navigation.AppNavigator
-import com.zoonk.android.ui.components.BusyButton
-import com.zoonk.android.ui.components.BusyTextButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LevelBar
 import com.zoonk.android.ui.components.MediaPending
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formattingLocale
@@ -83,7 +82,6 @@ import com.zoonk.api.models.LanguageLevelTestOneOf1LevelsInner
 import com.zoonk.api.models.LanguageLevelTestOneOf1NextOneOfQuestion
 import com.zoonk.api.models.PlacementAnswer
 import com.zoonk.api.models.TrueFalseLabels
-import java.util.Locale
 import androidx.compose.ui.text.intl.LocaleList as TextLocales
 
 /** The app's speech player for listening questions; none in previews and tests, where the message shows as text. */
@@ -195,10 +193,10 @@ private fun ColumnScope.LevelTestIntro(
     }
     OnboardingActions {
         FinishFailed(failed)
-        BusyButton(starting, onStart, Modifier.fillMaxWidth(), enabled = !pending) {
+        Button(busy = starting, onClick = onStart, modifier = Modifier.fillMaxWidth(), enabled = !pending) {
             Text(stringResource(R.string.onboarding_placement_start))
         }
-        BusyTextButton(pending, onSkip, Modifier.fillMaxWidth(), enabled = !starting) {
+        TextButton(busy = pending, onClick = onSkip, modifier = Modifier.fillMaxWidth(), enabled = !starting) {
             Text(stringResource(R.string.onboarding_language_test_skip))
         }
         InterfaceOffer(language)
@@ -240,7 +238,7 @@ private fun ColumnScope.LevelTestWaiting(
     }
     OnboardingActions {
         FinishFailed(failed)
-        BusyTextButton(pending, onSkip, Modifier.fillMaxWidth()) {
+        TextButton(busy = pending, onClick = onSkip, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_language_test_skip))
         }
         Text(
@@ -458,7 +456,7 @@ private fun ColumnScope.LevelTestDone(
     if (levels.isNotEmpty()) LevelRows(levels)
     OnboardingActions {
         FinishFailed(failed)
-        BusyButton(pending, onContinue, Modifier.fillMaxWidth()) {
+        Button(busy = pending, onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_language_test_build_plan))
         }
     }

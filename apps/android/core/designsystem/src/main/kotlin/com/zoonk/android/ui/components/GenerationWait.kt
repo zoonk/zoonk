@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -54,7 +53,7 @@ import com.zoonk.android.data.progress
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatPercent
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import kotlinx.coroutines.delay
 import kotlin.math.exp
 import kotlin.random.Random
@@ -89,6 +88,7 @@ fun GenerationWait(
                 WaitProgress(
                     name = stringResource(kind.label),
                     share = driftedShare(progress.share, progress.target, progress.activeMillis, following, now, since),
+                    weights = progress.phases.map { it.phase.seconds },
                 )
             }
         }
@@ -180,13 +180,16 @@ fun GenerationFailureNotice(
     }
 }
 
+/** Main's `GenerationTimelineProgress`: a part per phase, as long as the phase usually takes, filling in order. */
 @Composable
 private fun WaitProgress(
     name: String,
     share: Float,
+    weights: List<Int>,
 ) {
     val shown by animateFloatAsState(share, label = "generation progress")
     val percent = formatPercent(shown.toDouble(), currentLocale())
+    val fill = MaterialTheme.colorScheme.tertiary
 
     Row(
         modifier =
@@ -197,11 +200,18 @@ private fun WaitProgress(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Meter(share = shown, modifier = Modifier.weight(1f))
+        MeterParts(
+            parts =
+                segmentFills(
+                    shown,
+                    weights,
+                ).zip(weights) { part, weight -> MeterPart(MeterPart.Fill.Solid(fill, part), weight.toFloat()) },
+            modifier = Modifier.weight(1f),
+        )
         Text(
             text = percent,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+            style = MaterialTheme.zoonkType.data,
         )
     }
 }
@@ -247,7 +257,7 @@ private fun PhaseRow(
                 text = formatClock(elapsedMillis),
                 modifier = Modifier.clearAndSetSemantics {},
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                style = MaterialTheme.zoonkType.data.copy(lineHeight = MaterialTheme.typography.bodyMedium.lineHeight),
             )
         }
     }
@@ -388,6 +398,21 @@ private fun driftedShare(
             else -> drift.base + (ceiling - drift.base) * (1 - exp(-(now - drift.startedAt).coerceAtLeast(0) / constant)).toFloat()
         }
     return maxOf(drifted, share).also { drift.shown = it }
+}
+
+/** Main's `getSegmentFills`: how much of each part [share] (0 to 1) of the whole fills, the parts in order. */
+internal fun segmentFills(
+    share: Float,
+    weights: List<Int>,
+): List<Float> {
+    val sizes = weights.map { it.coerceAtLeast(0).toFloat() }
+    val reached = share.coerceIn(0f, 1f) * sizes.sum()
+    var start = 0f
+    return sizes.map { size ->
+        val fill = if (size == 0f) 0f else ((reached - start) / size).coerceIn(0f, 1f)
+        start += size
+        fill
+    }
 }
 
 /** Not state: only the composition that reads it writes it. */

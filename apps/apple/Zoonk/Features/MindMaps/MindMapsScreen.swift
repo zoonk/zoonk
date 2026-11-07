@@ -15,6 +15,9 @@ struct MindMapsScreen: View {
         .navigationTitle(
           Text("Mind maps", tableName: "MindMaps", comment: "Title of the mind maps page")
         )
+        .barTitleAfterHero(
+          String(localized: "Mind maps", table: "MindMaps", comment: "Title of the mind maps page")
+        )
         .loads(list)
     }
   }
@@ -35,20 +38,20 @@ struct MindMapsScreen: View {
     case .loaded(let maps):
       ScrollView {
         VStack(alignment: .leading, spacing: 12) {
-          AccessibilityStack(alignment: .firstTextBaseline, stackedSpacing: 4) {
+          PageHeader(
+            Text("Mind maps", tableName: "MindMaps", comment: "Title of the mind maps page"),
+            eyebrow: Text(goal.title)
+          )
+          .padding(.bottom, 12)
+
+          SectionTitle(
             Text(
               "Chapters you finished", tableName: "MindMaps",
-              comment: "Heading of the chapters with mind maps"
-            )
-            .font(.headline)
-            .frame(maxWidth: .infinity, alignment: .leading)
-
+              comment: "Heading of the chapters with mind maps")
+          ) {
             Text(
               "\(maps.chapters.count) chapters", tableName: "MindMaps",
-              comment: "How many chapters have mind maps"
-            )
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+              comment: "How many chapters have mind maps")
           }
 
           LazyVGrid(columns: columns, spacing: 16) {
@@ -93,7 +96,7 @@ struct MindMapsScreen: View {
         } label: {
           Text("Try again", tableName: "MindMaps", comment: "Retries")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .lonePage()
     case .idle, .loading:
@@ -116,7 +119,7 @@ private struct MindMapTile: View {
       Button {
         router.open(.mindMap(chapterId: map.chapterId))
       } label: {
-        Color(.secondarySystemBackground)
+        Color.card
           .aspectRatio(4 / 3, contentMode: .fit)
           .overlay {
             picture
@@ -131,11 +134,11 @@ private struct MindMapTile: View {
           comment: "Spoken label of a map's picture"))
 
       Text("Chapter \(map.position)", tableName: "MindMaps", comment: "A chapter's number")
-        .font(.caption.monospaced())
-        .foregroundStyle(.tertiary)
+        .typeStyle(.data)
+        .foregroundStyle(.faint)
 
       Text(map.title)
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
         .lineLimit(2)
 
       if drawing {
@@ -144,18 +147,18 @@ private struct MindMapTile: View {
         } icon: {
           ProgressView()
         }
-        .font(.footnote)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       } else if map.status == .available || map.status == .failed {
         if let failure = store.failures[map.chapterId] {
           FailureLine(message: failureMessage(failure))
-            .font(.footnote)
+            .typeStyle(.note)
         } else if map.status == .failed {
           Text(
             "It couldn't be made this time.", tableName: "MindMaps", comment: "A map that failed"
           )
-          .font(.footnote)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
         }
 
         Button {
@@ -167,7 +170,7 @@ private struct MindMapTile: View {
             Text("Create", tableName: "MindMaps", comment: "Makes the chapter's mind map")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .controlSize(.small)
       }
     }
@@ -194,7 +197,7 @@ private struct MindMapTile: View {
       }
     } else {
       KindMark(kind: .mindMap)
-        .font(.largeTitle)
+        .typeStyle(.heroTitle.weight(.regular))
     }
   }
 

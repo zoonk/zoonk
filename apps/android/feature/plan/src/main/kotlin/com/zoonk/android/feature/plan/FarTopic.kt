@@ -4,13 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,13 +42,14 @@ import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineChapter
@@ -377,13 +378,19 @@ private fun FarTopicRequest(
     }
 
     if (action != null) {
-        BusyButton(
-            busy = open.asking,
-            onClick = if (failed) topics::retry else topics::request,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = limit == null || limit is Limit.SlowDown,
-            colors = if (failed) ButtonDefaults.filledTonalButtonColors() else ButtonDefaults.buttonColors(),
-        ) { Text(stringResource(action)) }
+        val enabled = limit == null || limit is Limit.SlowDown
+        val label: @Composable RowScope.() -> Unit = { Text(stringResource(action)) }
+        if (failed) {
+            OutlinedButton(
+                onClick = topics::retry,
+                enabled = enabled,
+                busy = open.asking,
+                modifier = Modifier.fillMaxWidth(),
+                content = label,
+            )
+        } else {
+            Button(onClick = topics::request, enabled = enabled, busy = open.asking, modifier = Modifier.fillMaxWidth(), content = label)
+        }
     }
 
     if (limit != null && !open.asking) {

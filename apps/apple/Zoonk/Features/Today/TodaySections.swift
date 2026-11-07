@@ -14,11 +14,11 @@ struct TodayUpNextSection: View {
           KindMark(kind: .lesson)
             .frame(minWidth: 20)
           Text(lesson.title)
-            .font(index == 0 ? .body.weight(.semibold) : .body)
+            .typeStyle(.rowTitle)
           Spacer(minLength: 8)
           Text(studyDuration(minutes: lesson.minutes))
-            .font(.footnote.monospacedDigit())
-            .foregroundStyle(.secondary)
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
             .coveredBySpinnerWhenSlow(index == 0 && isBusy, alignment: .trailing)
         }
 
@@ -26,20 +26,21 @@ struct TodayUpNextSection: View {
           Button(action: keepLearning) { row }
             .tint(.primary)
             .disabled(isBusy)
-            .listRowBackground(NextRowBackground())
+            .currentRow()
         } else {
           row
         }
       }
     } header: {
-      Text("Up next in your plan", tableName: "Today", comment: "The plan's next lessons")
+      SectionTitle(
+        Text("Up next in your plan", tableName: "Today", comment: "The plan's next lessons"))
     }
 
     Section {
       TodayMainAction(kind: .keepLearning, isBusy: isBusy, failed: failed, action: keepLearning)
     }
     .listRowBackground(Color.clear)
-    .listRowInsets(EdgeInsets())
+    .listRowInsets(.vertical, 0)
     .listSectionSpacing(.compact)
   }
 }
@@ -66,7 +67,7 @@ struct TodayMoreSection: View {
             isBusy: busy == .keepLearning, failed: failed == .keepLearning, action: addTime)
         }
         .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets())
+        .listRowInsets(.vertical, 0)
         .listSectionSpacing(.compact)
       }
 
@@ -145,7 +146,7 @@ struct TodayMoreSection: View {
       message: LocalizedStringResource(
         "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved")
     )
-    .font(.footnote)
+    .typeStyle(.note)
   }
 
   private func hasRows(_ state: DayState) -> Bool {
@@ -215,28 +216,44 @@ struct TodayPlanChangeSection: View {
 
   private var change: TodayView.PlanChange { shown.change }
 
+  private var isBehind: Bool { change.kind == "missedDays" && change.behind != nil }
+
+  /// The proposal's Apply and Not now are in its sheet, so while it's open a failed answer shows
+  /// there, beside them; the page keeps it for Undo and the missed-days choices.
+  private var answersInSheet: Bool { isOpen && shown.decision == nil && !isBehind }
+
   var body: some View {
     Section {
       if let decision = shown.decision {
-        Text(result(decision))
-          .accessibilityFocused($isResultFocused)
-
-        if next != nil {
-          Button(action: showNext) {
-            Text("Next suggestion", tableName: "Today", comment: "Shows the next plan suggestion")
-          }
-        } else if decision == .applied, change.canUndo {
-          BusyButton(isBusy: isSaving) {
-            answer(.undone)
-          } label: {
-            Label {
-              Text("Undo", tableName: "Today", comment: "Undoes a plan change the learner applied")
-            } icon: {
-              Image(systemName: "arrow.uturn.backward")
+        // Main's answered line: the done mark, what the answer did, then Next or Undo.
+        SuggestionLine {
+          StatusMark(status: .done)
+        } summary: {
+          Text(result(decision))
+            .typeWeight(.medium)
+            .foregroundStyle(Color(.foreground))
+            .accessibilityFocused($isResultFocused)
+        } action: {
+          Group {
+            if next != nil {
+              Button(action: showNext) {
+                Text(
+                  "Next suggestion", tableName: "Today", comment: "Shows the next plan suggestion")
+              }
+            } else if decision == .applied, change.canUndo {
+              BusyButton(isBusy: isSaving) {
+                answer(.undone)
+              } label: {
+                Text(
+                  "Undo", tableName: "Today", comment: "Undoes a plan change the learner applied")
+              }
             }
           }
+          .buttonStyle(.outline)
+          .controlSize(.small)
         }
-      } else if let behind = change.behind, change.kind == "missedDays" {
+        .listRowSeparator(.hidden)
+      } else if isBehind, let behind = change.behind {
         Label {
           Text(behindSentence(behind))
         } icon: {
@@ -248,24 +265,34 @@ struct TodayPlanChangeSection: View {
         }
         .disabled(isSaving)
       } else {
-        DisclosureGroup(isExpanded: $isOpen) {
-          details
-        } label: {
-          Label {
+        // Main's `Suggestion`: the sentence on a panel, "View" opening the whole change.
+        SuggestionLine {
+          SuggestionMark(kind: change.source == "notice" ? .symbol("doc.badge.clock") : .sparkle)
+        } summary: {
+          Text(summary)
+        } action: {
+          SuggestionOpen(isOpen: $isOpen) {
             Text(summary)
-          } icon: {
-            Image(systemName: "sparkles")
+              .typeStyle(.body.weight(.semibold))
+              .foregroundStyle(Color(.foreground))
+
+            details
+
+            if failed {
+              SuggestionSaveError()
+            }
           }
         }
+        .listRowSeparator(.hidden)
       }
 
-      if failed {
+      if failed, !answersInSheet {
         FailureLine(
           message: LocalizedStringResource(
             "We couldn't save your answer. Try again.", table: "Today",
             comment: "Answering a plan change failed")
         )
-        .font(.footnote)
+        .typeStyle(.note)
       }
     }
     .onChange(of: shown.decision) {
@@ -361,12 +388,12 @@ struct TodayPlanChangeSection: View {
 
     if !effect.isEmpty {
       Text(effect.joinedSentences())
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
 
     if let date = change.officialDate?.date {
       Text(officialDateLine(PlanDate.text(date, today: view.session.localDate)))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
 
     ButtonRow {
@@ -386,7 +413,7 @@ struct TodayPlanChangeSection: View {
         declineLabel
           .frame(maxWidth: .infinity)
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
     .disabled(isSaving)
   }
@@ -480,9 +507,9 @@ struct TodayMissionsSection: View {
   var body: some View {
     let earned = view.session.fullMeal.earned
 
-    Section {
+    PageSection(isPanel: true) {
       MissionsSummary(missions: missions, bonus: view.session.fullMeal.bonus, earned: earned)
-        .listRowSeparator(.hidden, edges: .bottom)
+        .rowSeparatorHiddenBelow()
 
       if !earned, isBesideTheDay || !onlyOpensBlocks {
         ForEach(Array(missions.enumerated()), id: \.offset) { _, mission in
@@ -500,7 +527,8 @@ struct TodayMissionsSection: View {
       }
     } header: {
       if !earned {
-        Text("Today's missions", tableName: "Today", comment: "Today's missions header")
+        SectionTitle(
+          Text("Today's missions", tableName: "Today", comment: "Today's missions header"))
       }
     }
   }
@@ -554,7 +582,7 @@ struct TodayWeekSection: View {
 
   private var week: StudyWeek { view.session.week }
 
-  private var title: some View {
+  private var title: Text {
     Text("This week", tableName: "Today", comment: "The week's header")
   }
 
@@ -572,7 +600,7 @@ struct TodayWeekSection: View {
 
     if let line = Self.numbers(days: days, time: hasTime ? (studied, planned) : nil) {
       Text(verbatim: line)
-        .font(.footnote.monospacedDigit())
+        .monospacedDigit()
         .accessibilityLabel(
           [
             days,
@@ -604,7 +632,7 @@ struct TodayWeekSection: View {
     // previous day's session.
     let localDate = week.days.first(where: \.isToday)?.date ?? view.session.localDate
 
-    Section {
+    PageSection {
       HStack {
         ForEach(week.days, id: \.date) { day in
           WeekDayMark(
@@ -624,17 +652,8 @@ struct TodayWeekSection: View {
         WeekChallengeRow(challenge: challenge, date: date)
       }
     } header: {
-      ViewThatFits(in: .horizontal) {
-        HStack {
-          title
-          Spacer()
-          numbers
-        }
-
-        VStack(alignment: .leading, spacing: 2) {
-          title
-          numbers
-        }
+      SectionTitle(title) {
+        numbers
       }
     }
   }
@@ -659,8 +678,8 @@ private struct WeekChallengeRow: View {
             "\(day)\u{00A0}· every topic, your weakest first", tableName: "Today",
             comment: "When a free plan's full review is and what it asks"
           )
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
         }
       } icon: {
         KindMark(kind: .review)
@@ -684,9 +703,8 @@ private struct WeekChallengeRow: View {
           ? Text("Mock exam", tableName: "Today", comment: "The week's mock")
           : Text("Weekly challenge", tableName: "Today", comment: "The week's challenge")
         Text(facts)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-          .monospacedDigit()
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
       }
     } icon: {
       KindMark(kind: challenge.kind == "mock" ? .mock : .challenge)
@@ -727,40 +745,23 @@ private struct WeekDayMark: View {
         .frame(width: ringSize, height: ringSize)
 
       Text(date?.formatted(.studyDay.weekday(.narrow)) ?? "")
-        .font(.caption2.weight(day.isToday ? .bold : .regular))
-        .foregroundStyle(day.isToday ? .primary : .secondary)
+        .typeStyle(.small.weight(day.isToday ? .bold : .regular))
+        .foregroundStyle(day.isToday ? Color(.foreground) : .mutedForeground)
     }
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(label(weekday: date?.formatted(.studyDay.weekday(.wide)) ?? day.date))
   }
 
-  /// Main's `DayRing`: filled by the share of the day's goal studied, its track dashed for a study
-  /// day gone by without study, and a dash for a day outside the plan.
+  /// Main's `DayRing`: a dash for a day outside the plan.
   @ViewBuilder
   private var ring: some View {
     if !day.studied && (day.kind == "beforeStart" || day.kind == "afterEnd") && !day.isToday {
       Image(systemName: "minus")
-        .foregroundStyle(.quaternary)
+        .foregroundStyle(Color(.foreground).opacity(0.2))
     } else {
-      let lineWidth = ringSize / 12
-
-      ZStack {
-        Circle()
-          .stroke(
-            .primary.opacity(trackOpacity),
-            style: StrokeStyle(lineWidth: lineWidth, dash: isMissed ? [lineWidth, lineWidth] : []))
-
-        if day.share > 0 {
-          Circle()
-            .trim(from: 0, to: day.share)
-            .stroke(.success, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
-            .rotationEffect(.degrees(-90))
-        }
-
+      GoalRing(share: day.share, track: track, size: ringSize) {
         mark
-          .font(.caption2.weight(.bold))
       }
-      .padding(lineWidth / 2)
     }
   }
 
@@ -781,12 +782,16 @@ private struct WeekDayMark: View {
     day.kind == "study" && !day.studied && !day.isToday && day.date < localDate
   }
 
-  private var trackOpacity: Double {
-    if day.isToday || isMissed {
-      return 0.25
+  private var track: GoalRingTrack {
+    if day.isToday {
+      return .today
     }
 
-    return day.kind == "rest" ? 0.06 : 0.1
+    if isMissed {
+      return .missed
+    }
+
+    return day.kind == "rest" ? .rest : .standard
   }
 
   /// A mock the learner's plan doesn't include leaves its day to a full review of every topic.
@@ -931,7 +936,7 @@ struct TodayProgressSection: View {
   private func card(
     title: Text, value: String?, detail: Text?, @ViewBuilder content: () -> some View
   ) -> some View {
-    Section {
+    PageSection {
       Button {
         router.select(.plan)
       } label: {
@@ -939,14 +944,13 @@ struct TodayProgressSection: View {
           VStack(alignment: .leading, spacing: 2) {
             if let value {
               Text(value)
-                .font(.title.weight(.semibold))
-                .monospacedDigit()
+                .typeStyle(.readout)
             }
 
             if let detail {
               detail
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .typeStyle(.note)
+                .foregroundStyle(.mutedForeground)
             }
           }
 
@@ -958,15 +962,15 @@ struct TodayProgressSection: View {
             Image(systemName: "chevron.right")
           }
           .labelStyle(.titleOnly)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .contentShape(.rect)
       }
       .tint(.primary)
     } header: {
-      title
+      SectionTitle(title)
     }
   }
 
@@ -991,7 +995,7 @@ struct TodayProgressSection: View {
 
     return [
       MeterParts.Part(weight: Double(lessons.done - known), fill: .color(.success)),
-      MeterParts.Part(weight: Double(known), fill: .color(.secondary)),
+      MeterParts.Part(weight: Double(known), fill: .color(.mutedForeground)),
       MeterParts.Part(weight: Double(today), fill: .current),
       MeterParts.Part(weight: Double(rest), fill: .track),
     ].filter { $0.weight > 0 }
@@ -1007,7 +1011,7 @@ struct TodayProgressSection: View {
 
     return points > 0
       ? Text("+\(points) this week", tableName: "Today", comment: "Preparation gained this week")
-        .foregroundStyle(.success)
+        .foregroundStyle(.successText)
       : Text("\(points) this week", tableName: "Today", comment: "Preparation lost this week")
   }
 
@@ -1031,13 +1035,13 @@ struct TodayPracticeSection: View {
   var body: some View {
     let places = learner.summary.value?.places
 
-    Section {
+    PageSection {
       if places?.exam == true {
         TodayMockRow(options: exam.mockOptions(goalId: view.goal.id))
       }
 
       if let speaking = language?.speaking {
-        NavigationLink(value: AppRoute.speaking) {
+        PageLink(route: .speaking) {
           HStack {
             Label {
               VStack(alignment: .leading, spacing: 2) {
@@ -1049,8 +1053,8 @@ struct TodayPracticeSection: View {
                   comment:
                     "The speaking paper's exam and level, as in B1 Preliminary tasks on a call"
                 )
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+                .typeStyle(.note)
+                .foregroundStyle(.mutedForeground)
               }
             } icon: {
               KindMark(kind: .conversation)
@@ -1064,7 +1068,7 @@ struct TodayPracticeSection: View {
         }
       }
 
-      NavigationLink(value: AppRoute.mistakes) {
+      PageLink(route: .mistakes) {
         IconLabeledContent {
           if let ready = places?.readyMistakes, ready > 0 {
             Text(ready, format: .number)
@@ -1074,8 +1078,8 @@ struct TodayPracticeSection: View {
           VStack(alignment: .leading, spacing: 2) {
             Text("Mistakes notebook", tableName: "Today", comment: "Opens the mistakes notebook")
             Text("Redo what you got wrong", tableName: "Today", comment: "The notebook's line")
-              .font(.footnote)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
           }
         } icon: {
           KindMark(kind: .mistakes)
@@ -1083,7 +1087,7 @@ struct TodayPracticeSection: View {
       }
 
       if places?.completedLessons == true {
-        NavigationLink(value: AppRoute.completedLessons) {
+        PageLink(route: .completedLessons) {
           Label {
             VStack(alignment: .leading, spacing: 2) {
               Text(
@@ -1093,8 +1097,8 @@ struct TodayPracticeSection: View {
                 "Go back to any lesson you've finished", tableName: "Today",
                 comment: "The completed lessons page's line"
               )
-              .font(.footnote)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
             }
           } icon: {
             KindMark(kind: .lesson)
@@ -1102,7 +1106,7 @@ struct TodayPracticeSection: View {
         }
       }
     } header: {
-      Text("Practice anytime", tableName: "Today", comment: "Practice section header")
+      SectionTitle(Text("Practice anytime", tableName: "Today", comment: "Practice section header"))
     }
   }
 }
@@ -1162,8 +1166,8 @@ struct TodayLanguagePracticeSection: View {
         VStack(alignment: .leading, spacing: 2) {
           title
           detail
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
       } icon: {
         Image(systemName: systemImage)
@@ -1228,8 +1232,8 @@ private struct TodayMockRow: View {
 
         if let detail {
           detail
-            .font(.footnote)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
       }
     } icon: {

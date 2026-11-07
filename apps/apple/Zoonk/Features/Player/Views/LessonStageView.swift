@@ -349,8 +349,8 @@ private struct LessonCheckNote: View {
       } icon: {
         Image(systemName: "pencil")
       }
-      .font(.subheadline.weight(.medium))
-      .foregroundStyle(.destructive)
+      .typeStyle(.body.weight(.medium))
+      .foregroundStyle(.destructiveText)
     }
 
     if state.checkFailed {
@@ -359,13 +359,13 @@ private struct LessonCheckNote: View {
           "We couldn't check your answer this time. Try again.", table: "Player",
           comment: "The server couldn't grade a written or spoken answer")
       )
-      .font(.subheadline)
+      .typeStyle(.note)
     }
 
     if isSlow, state.phase == .checking {
       Text(Self.slowLine)
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -416,9 +416,10 @@ struct LessonActionBar: View {
   let step: LessonStep?
 
   @Environment(\.activityRenderers) private var activityRenderers
+  @Environment(\.lessonTutor) private var tutor
 
   var body: some View {
-    HStack(spacing: 12) {
+    HStack(spacing: 10) {
       if state.canGoBack {
         StepBackButton(
           label: Text(
@@ -433,6 +434,10 @@ struct LessonActionBar: View {
       }
 
       primaryButton
+
+      if tutor.panel != nil {
+        askButton
+      }
     }
     .frame(maxWidth: 680)
     .frame(maxWidth: .infinity)
@@ -462,8 +467,29 @@ struct LessonActionBar: View {
     if primary.isProminent {
       button.buttonStyle(.mainAction)
     } else {
-      button.buttonStyle(.bordered)
+      button.buttonStyle(.secondary)
     }
+  }
+
+  private var askButton: some View {
+    Button {
+      // Beside the lesson, Ask also closes the panel, as an inspector's button does; elsewhere it
+      // opens it, including one left open beside the lesson before iPhone Duo closed.
+      if store.isAsking, store.isSpread {
+        store.isAsking = false
+      } else {
+        store.ask()
+      }
+    } label: {
+      Label {
+        Text("Ask", tableName: "Player", comment: "Opens the panel to ask about the lesson")
+      } icon: {
+        Image(systemName: "questionmark.bubble")
+      }
+      .labelStyle(.iconOnly)
+    }
+    .buttonStyle(.outline.icon)
+    .controlSize(.large)
   }
 
   private var activityGrade: ((ActivityStepContent, ActivityAnswer) -> Bool)? {
@@ -608,14 +634,11 @@ private struct LessonNotice: View {
 
   var body: some View {
     if let quickCheck = state.quickCheckProgress {
-      Label {
-        Text(
+      LessonEyebrow(
+        title: Text(
           "Quick check\u{00A0}· \(quickCheck.current) of \(quickCheck.total)", tableName: "Player",
-          comment: "While \"I already know this\" asks the lesson's checks")
-      } icon: {
-        Image(systemName: "bolt")
-      }
-      .chip()
+          comment: "While \"I already know this\" asks the lesson's checks"),
+        systemImage: "bolt")
     } else {
       switch state.notice {
       case .answerNotSaved:
@@ -624,16 +647,16 @@ private struct LessonNotice: View {
         } icon: {
           Image(systemName: "icloud.slash")
         }
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       case .pictureReady:
         Label {
           Text(LessonPlayerState.Notice.pictureReady.line)
         } icon: {
           Image(systemName: "photo")
         }
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       case .writingSkipped:
         HStack(alignment: .firstTextBaseline) {
           Label {
@@ -641,7 +664,7 @@ private struct LessonNotice: View {
           } icon: {
             Image(systemName: "pencil.slash")
           }
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
           Spacer(minLength: 8)
 
@@ -653,10 +676,10 @@ private struct LessonNotice: View {
                 "Write again", tableName: "Player",
                 comment: "Takes back \"Can't write now\": the learner does the writing again")
             }
-            .buttonStyle(.borderless)
+            .buttonStyle(.ghost)
           }
         }
-        .font(.subheadline)
+        .typeStyle(.body)
       case .selfCorrect, nil:
         EmptyView()
       }

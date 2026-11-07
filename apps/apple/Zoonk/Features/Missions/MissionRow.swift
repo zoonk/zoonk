@@ -242,7 +242,7 @@ struct MissionRow: View {
   private var text: some View {
     VStack(alignment: .leading, spacing: 2) {
       Text(mission.name(buddy: buddyName))
-        .foregroundStyle((mission.isDone && justDone == nil) || waits ? .secondary : .primary)
+        .foregroundStyle((mission.isDone && justDone == nil) || waits ? .mutedForeground : .primary)
 
       if failed {
         FailureLine(
@@ -250,14 +250,13 @@ struct MissionRow: View {
             "We couldn't open this step. Try again.", table: "Today",
             comment: "Under a step of the day, or a mission, that didn't open")
         )
-        .font(.footnote)
+        .typeStyle(.note)
       }
 
       if !mission.isDone, !detail.isEmpty {
         Text(verbatim: detail.joinedFacts())
-          .font(.footnote)
-          .monospacedDigit()
-          .foregroundStyle(.secondary)
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -266,8 +265,8 @@ struct MissionRow: View {
   private var trailing: some View {
     if justDone != nil {
       Text("Just done", tableName: "Today", comment: "A mission the result just completed")
-        .font(.caption.weight(.medium))
-        .foregroundStyle(.success)
+        .typeStyle(.meta.weight(.medium))
+        .foregroundStyle(.successText)
     }
 
     if !mission.isDone, !waits, mission.opens?.kind == "block" {

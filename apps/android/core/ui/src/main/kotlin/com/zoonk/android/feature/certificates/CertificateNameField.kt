@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,7 +37,9 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.account.AccountStore
 import com.zoonk.android.feature.account.isNameChangeTooLong
-import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.TextButton
 import kotlinx.coroutines.launch
 
 /**
@@ -136,19 +136,7 @@ fun CertificateNameField(
                     .fillMaxWidth()
                     .focusRequester(focus)
                     .semantics { contentType = ContentType.PersonFullName },
-            label = {
-                Text(
-                    stringResource(
-                        if (current ==
-                            null
-                        ) {
-                            R.string.certificates_name_label_new
-                        } else {
-                            R.string.certificates_name_label
-                        },
-                    ),
-                )
-            },
+            label = stringResource(if (current == null) R.string.certificates_name_label_new else R.string.certificates_name_label),
             placeholder = { Text(stringResource(R.string.certificates_name_placeholder)) },
             supportingText = {
                 Text(
@@ -182,7 +170,7 @@ fun CertificateNameField(
             if (current != null) {
                 TextButton(onClick = model::stop, enabled = !model.isSaving) { Text(stringResource(R.string.certificates_cancel)) }
             }
-            BusyButton(model.isSaving, save, enabled = name.isNotBlank() && !isTooLong) {
+            Button(busy = model.isSaving, onClick = save, enabled = name.isNotBlank() && !isTooLong) {
                 Text(stringResource(R.string.certificates_save))
             }
         }

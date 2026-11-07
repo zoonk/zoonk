@@ -118,7 +118,7 @@ struct ZoonkApp: App {
         .environment(\.spokenAnswerRecording, .voice)
         .environment(\.activityRenderers, .app)
         .environment(\.openURL, OpenURLAction(handler: LinkOpening.open))
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
   }
 }
@@ -141,6 +141,7 @@ private struct AppWindow: View {
         // Inside the app's environment, so the gallery's screens get the app's renderers.
         .modifier(ActivityGalleryLaunch())
         .modifier(DebugCharacterGallery())
+        .modifier(DebugComponentGallery())
       #endif
       // Made from the router the window keeps: `init` runs again on every update of the app.
       .environment(router)

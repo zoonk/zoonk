@@ -78,7 +78,7 @@ private struct BusySpinner: View {
   var body: some View {
     ProgressView()
       .controlSize(.small)
-      .tint(.primary)
+      .tint(ForegroundStyle())
       .accessibilityHidden(true)
   }
 }

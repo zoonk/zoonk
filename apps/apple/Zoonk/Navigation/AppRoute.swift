@@ -12,6 +12,8 @@ enum AppRoute: Hashable, Identifiable {
   case speaking
   case earlierQuestions
   case statistics
+  case certificates
+  case certificate(code: String)
   case catalog
   case course(courseId: String, title: String)
 
@@ -58,7 +60,8 @@ enum AppRoute: Hashable, Identifiable {
   var presentation: Presentation {
     switch self {
     case .subject, .chapter, .languageUnit, .mindMaps, .exam, .mockChooser, .mistakes,
-      .completedLessons, .speaking, .earlierQuestions, .statistics, .catalog, .course:
+      .completedLessons, .speaking, .earlierQuestions, .statistics, .certificates, .certificate,
+      .catalog, .course:
       .push
     default:
       .task
@@ -71,7 +74,7 @@ enum AppRoute: Hashable, Identifiable {
     switch self {
     case .subject, .mindMaps, .exam, .mockChooser, .mistakes, .completedLessons, .speaking:
       .goal
-    case .chapter, .languageUnit, .earlierQuestions, .statistics:
+    case .chapter, .languageUnit, .earlierQuestions, .statistics, .certificates, .certificate:
       .account
     default:
       .none

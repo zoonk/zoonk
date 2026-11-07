@@ -3,39 +3,31 @@ package com.zoonk.android.feature.exam
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.paneTitle
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.openWebPage
@@ -54,6 +46,7 @@ import com.zoonk.android.feature.speaking.SpeakingMockCard
 import com.zoonk.android.feature.speaking.SpeakingPaperSection
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
@@ -61,6 +54,7 @@ import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.DetailPage
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.mainActionWidth
+import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.api.models.ExamView
 import com.zoonk.api.models.MockOptions
 import kotlinx.coroutines.launch
@@ -107,20 +101,10 @@ internal fun GoalExam(
     val viewModel = viewModel(key = "exam-$goalId") { ExamViewModel(exams, plans, goalId) }
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
-    val headlineScrolledAway by remember(listState) { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     val refresh: () -> Unit = { listOf(exam, mocks).forEach { scope.launch { it.refresh() } } }
     val loaded = state.value
 
-    ExamFrame(
-        navigator = navigator,
-        title = loaded?.examName?.takeIf { headlineScrolledAway },
-        report =
-            if (loaded != null) {
-                { ReportProblemMenu(app, FeedbackTarget("exam")) }
-            } else {
-                null
-            },
-    ) {
+    ExamFrame(navigator = navigator, title = loaded?.examName) {
         PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = refresh, modifier = Modifier.fillMaxSize()) {
             val current = state
             when {
@@ -150,13 +134,11 @@ internal fun GoalExam(
 private fun ExamFrame(
     navigator: AppNavigator,
     title: String?,
-    report: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     PageScaffold(
         onBack = { navigator.back() },
         title = { title?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
-        actions = { report?.invoke() },
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) { content() }
     }
@@ -182,7 +164,9 @@ private fun ExamPage(
         asideLabel = stringResource(R.string.exam_about),
         listState = listState,
     ) { aboutBeside ->
-        item(key = "hero", contentType = "hero") { ExamHero(exam, options, viewModel, navigator) }
+        item(key = "hero", contentType = "hero") {
+            ExamHero(exam, options, viewModel, navigator) { ReportProblemMenu(app, FeedbackTarget("exam"), inPage = true) }
+        }
         examSections(exam, mockOffered = options?.let(::mockEntryRoute) != null, viewModel, app, navigator)
         if (!aboutBeside) {
             about.forEach { section ->
@@ -242,28 +226,33 @@ private fun LazyListScope.examSections(
     }
 }
 
-/** Main's hero: the eyebrow, the exam, its days, the main action, and a date the notice set under them. */
+/** Main's hero: the eyebrow, the exam, its days, the main action with the page's [menu], and a date the notice set under them. */
 @Composable
 private fun ExamHero(
     exam: ExamView,
     options: MockOptions?,
     viewModel: ExamViewModel,
     navigator: AppNavigator,
+    menu: @Composable () -> Unit,
 ) {
     val facts = examFacts(exam)
 
     Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             ExamEyebrow(exam)
-            Text(exam.examName, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+            Text(exam.examName, Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
             if (facts.isNotEmpty()) Facts(facts)
         }
-        options?.let {
-            MockEntryButton(
-                it,
-                onOpen = navigator::open,
-                modifier = Modifier.mainActionWidth(),
-            )
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            options?.let {
+                MockEntryButton(
+                    it,
+                    onOpen = navigator::open,
+                    modifier = Modifier.weight(1f, fill = false).mainActionWidth(),
+                    size = ButtonSize.Large,
+                )
+            }
+            menu()
         }
         if (exam.noticeDay != null || exam.noSitting != null) NoticeDatesCard(exam, viewModel)
     }

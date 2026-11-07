@@ -3,16 +3,19 @@ package com.zoonk.android.feature.tutor
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.maxLength
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,9 +39,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.ui.components.BusyFilledIconButton
+import com.zoonk.android.ui.components.FilledIconButton
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.theme.ZoonkRadius
 
 @Composable
 internal fun TutorComposer(
@@ -82,6 +87,8 @@ internal fun TutorComposer(
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    // Main's 48dp composer, under Material's 56dp field.
+                    .heightIn(min = COMPOSER_HEIGHT)
                     .focusRequester(focus)
                     .onPreviewKeyEvent { event ->
                         val send = event.key == Key.Enter && !event.isShiftPressed
@@ -92,9 +99,10 @@ internal fun TutorComposer(
             trailingIcon = { SendButton(state.asking, resending, enabled = canSend, onClick = vm::send) },
             inputTransformation = InputTransformation.maxLength(MAX_QUESTION_LENGTH),
             lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = MAX_LINES),
+            shape = RoundedCornerShape(ZoonkRadius.xl),
+            contentPadding = PaddingValues(start = 14.dp, end = 12.dp, top = 12.dp, bottom = 12.dp),
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Send),
             onKeyboardAction = { if (canSend) vm.send() },
-            shape = MaterialTheme.shapes.large,
         )
 
         if (failure != null) {
@@ -126,10 +134,29 @@ private fun SendButton(
 ) {
     val label = stringResource(if (resending) R.string.tutor_retry_last_question else R.string.tutor_send)
 
-    BusyFilledIconButton(asking, onClick, Modifier.padding(end = 4.dp), enabled) {
-        Icon(painterResource(if (resending) R.drawable.ic_refresh else R.drawable.ic_arrow_upward), contentDescription = label)
+    // Main's small square send button, ink like the page's main action; Material's 48dp target stays around it.
+    FilledIconButton(
+        onClick = onClick,
+        enabled = enabled,
+        busy = asking,
+        modifier = Modifier.size(SEND_SIZE),
+        shape = RoundedCornerShape(ZoonkRadius.lg),
+        colors =
+            IconButtonDefaults.filledIconButtonColors(
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
+    ) {
+        Icon(
+            painterResource(if (resending) R.drawable.ic_refresh else R.drawable.ic_arrow_upward),
+            contentDescription = label,
+            Modifier.size(SEND_ICON),
+        )
     }
 }
 
+private val COMPOSER_HEIGHT = 48.dp
+private val SEND_SIZE = 30.dp
+private val SEND_ICON = 16.dp
 private const val MAX_QUESTION_LENGTH = 2000
 private const val MAX_LINES = 5

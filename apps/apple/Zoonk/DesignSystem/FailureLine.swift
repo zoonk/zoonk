@@ -23,7 +23,7 @@ struct FailureLine: View {
 
   var body: some View {
     line
-      .foregroundStyle(.destructive)
+      .foregroundStyle(.destructiveText)
       .announcesAlert(String(message.characters))
   }
 

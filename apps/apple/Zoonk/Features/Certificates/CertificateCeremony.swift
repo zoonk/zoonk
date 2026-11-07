@@ -6,6 +6,7 @@ import SwiftUI
 struct CertificateCeremony: View {
   @Environment(CertificatesStore.self) private var store
   @Environment(SessionStore.self) private var session
+  @Environment(\.legibilityWeight) private var legibilityWeight
   @State private var isEditingName = false
   @State private var nameDraft = ""
   @State private var isLinkedInShown = false
@@ -60,12 +61,12 @@ struct CertificateCeremony: View {
     .loads(store.list, refreshable: false)
     .sheet(isPresented: $isOpened) {
       CertificateSheet(code: top.code)
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
     .sheet(isPresented: $isLinkedInShown) {
       if let certificate {
         CertificateLinkedInSheet(certificate: certificate)
-          .accessibilitySizeStyles()
+          .zoonkStyles()
       }
     }
   }
@@ -112,15 +113,15 @@ struct CertificateCeremony: View {
   private var words: some View {
     VStack(spacing: 8) {
       Text(title)
-        .font(.largeTitle.bold())
+        .typeStyle(.heroTitle)
         .multilineTextAlignment(.center)
         .accessibilityAddTraits(.isHeader)
 
       // The Plus notice says how to get a locked one.
       if !top.locked {
         Text(line)
-          .font(.title3)
-          .foregroundStyle(.secondary)
+          .typeStyle(.reading)
+          .foregroundStyle(.mutedForeground)
           .multilineTextAlignment(.center)
       }
     }
@@ -152,10 +153,10 @@ struct CertificateCeremony: View {
   private var nameRow: some View {
     HStack(spacing: 8) {
       Text(
-        "On your certificate: \(Text(name).bold().foregroundStyle(.primary))",
+        "On your certificate: \(Text(name).typeWeight(.semibold, legibility: legibilityWeight).foregroundStyle(Color(.foreground)))",
         tableName: "Certificates", comment: "The name printed on the certificate just earned"
       )
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       Button {
         nameDraft = name
@@ -165,9 +166,9 @@ struct CertificateCeremony: View {
           .underline()
       }
       .buttonStyle(.borderless)
-      .foregroundStyle(.primary)
+      .foregroundStyle(Color(.foreground))
     }
-    .font(.subheadline)
+    .typeStyle(.body)
     .multilineTextAlignment(.center)
   }
 
@@ -206,7 +207,7 @@ struct CertificateCeremony: View {
         }
         .disabled(certificate == nil)
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .controlSize(.large)
     }
     // Both as tall as the one whose label wraps.
@@ -234,8 +235,8 @@ struct CertificateCeremony: View {
           comment: "Where the certificate just earned is kept")
       }
     }
-    .font(.footnote)
-    .foregroundStyle(.secondary)
+    .typeStyle(.note)
+    .foregroundStyle(.mutedForeground)
   }
 
   private var continueBar: some View {
@@ -309,7 +310,6 @@ struct CertificateCeremony: View {
 /// Plus opens Plus unless `seePlus` leaves the screen first.
 struct CertificatePlusNotice: View {
   var isList = false
-  var isInset = false
   var seePlus: (() -> Void)?
 
   var body: some View {
@@ -325,7 +325,7 @@ struct CertificatePlusNotice: View {
         "Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends.",
         tableName: "Certificates",
         comment: "What Plus does for certificates, on one the learner earned without Plus"),
-      isInset: isInset, seePlus: seePlus)
+      seePlus: seePlus)
   }
 }
 

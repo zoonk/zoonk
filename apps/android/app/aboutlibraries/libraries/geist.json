@@ -1,0 +1,9 @@
+{
+  "uniqueId": "geist",
+  "artifactVersion": "1.9.0",
+  "name": "Geist and Geist Mono",
+  "description": "",
+  "website": "https://github.com/vercel/geist-font",
+  "developers": [{ "name": "The Geist Project Authors" }],
+  "licenses": ["geist-ofl"]
+}

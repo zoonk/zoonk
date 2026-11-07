@@ -74,7 +74,7 @@ struct QuestionForm<Content: View>: View {
   @ViewBuilder let content: Content
 
   var body: some View {
-    Form {
+    ZoonkList {
       content
 
       if failed {
@@ -103,23 +103,8 @@ struct StepHeader: View {
 
   var body: some View {
     Section {
-      VStack(alignment: .leading, spacing: 6) {
-        if let subject {
-          Text(subject)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-        }
-
-        title
-          .font(.title2.bold())
-          .accessibilityAddTraits(.isHeader)
-
-        if let description {
-          description
-            .foregroundStyle(.secondary)
-        }
-      }
-      .listRowBackground(Color.clear)
+      PageHeader(title, eyebrow: subject.map { Text(verbatim: $0) }, supporting: description)
+        .listRowBackground(Color.clear)
     }
   }
 }
@@ -154,19 +139,21 @@ struct StepButtons: View {
                 "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question"))
               .frame(maxWidth: .infinity)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .disabled(!canSkip)
         }
       }
       .controlSize(.large)
       .keepsOffFold()
-      .listRowInsets(EdgeInsets())
+      .listRowInsets(.vertical, 0)
       .listRowBackground(Color.clear)
     } footer: {
-      if let note {
-        note
-          .frame(maxWidth: .infinity)
-          .multilineTextAlignment(.center)
+      SectionFooter {
+        if let note {
+          note
+            .frame(maxWidth: .infinity)
+            .multilineTextAlignment(.center)
+        }
       }
     }
   }
@@ -206,8 +193,8 @@ struct ChoiceRows<Value: Hashable>: View {
                 .foregroundStyle(.primary)
               if let detail = choice.detail {
                 detail
-                  .font(.subheadline)
-                  .foregroundStyle(.secondary)
+                  .typeStyle(.note)
+                  .foregroundStyle(.mutedForeground)
               }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -223,9 +210,13 @@ struct ChoiceRows<Value: Hashable>: View {
         .accessibilityAddTraits(picked == choice.value ? .isSelected : [])
       }
     } header: {
-      header
+      if let header {
+        SectionTitle(header)
+      }
     } footer: {
-      footer
+      SectionFooter {
+        footer
+      }
     }
   }
 }
@@ -370,8 +361,8 @@ struct LabeledField: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       label
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
       // Without a prompt, the field would repeat its label, already shown above, as its placeholder.
       MultilineTextField(text: $text, prompt: prompt ?? Text(verbatim: ""), label: label)
@@ -862,19 +853,22 @@ private struct ExamChoiceQuestion: View {
 
       if choice.take > 1 {
         Section {
+          Text.examPickLimit(choice.take)
+            .typeStyle(.body)
+            .foregroundStyle(.mutedForeground)
+            .listRowSeparator(.hidden)
+
           ExamOptionToggles(
             options: options, take: choice.take,
             picked: Binding(
               get: { picks[choice.group] ?? [] },
               set: { picks[choice.group] = $0 }))
         } header: {
-          VStack(alignment: .leading, spacing: 2) {
-            Text(choice.group)
-            Text.examPickLimit(choice.take)
-              .fontWeight(.regular)
-          }
+          SectionTitle(Text(choice.group))
         } footer: {
-          leftOut
+          SectionFooter {
+            leftOut
+          }
         }
       } else {
         ChoiceRows(

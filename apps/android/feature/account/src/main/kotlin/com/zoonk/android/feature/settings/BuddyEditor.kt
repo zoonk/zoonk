@@ -14,7 +14,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,8 +33,9 @@ import com.zoonk.android.ui.characters.BuddyGlassesPicker
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.BuddyPicker
-import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.TextButton
 
 /**
  * Main's buddy editor, in Preferences and on the buddy tab: its kind and name, and its glasses
@@ -103,7 +103,7 @@ fun BuddyEditor(
                     Spacer(Modifier.weight(1f))
                 }
                 TextButton(onClick = onClose) { Text(stringResource(R.string.settings_cancel)) }
-                BusyButton(isSaving, { onSave(kind, glasses, typed) }) { Text(stringResource(R.string.settings_save)) }
+                Button(busy = isSaving, onClick = { onSave(kind, glasses, typed) }) { Text(stringResource(R.string.settings_save)) }
             }
         }
     }

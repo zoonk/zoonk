@@ -62,7 +62,7 @@ private struct GuessRevealCanvas: View {
         VStack(alignment: .leading, spacing: 10) {
           if let guess {
             comparisonText(GuessScale.compare(guess: guess, actual: actual, isCorrect: isCorrect))
-              .font(.subheadline.weight(.semibold))
+              .typeStyle(.body.weight(.semibold))
           }
 
           if let workings = fields.truth.workings, fields.truth.kind == "computed" {
@@ -71,29 +71,29 @@ private struct GuessRevealCanvas: View {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
                   if let value = ActivityExpression.evaluate(working.expression) {
                     Text(ActivityNumberFormat.format(value))
-                      .fontWeight(.semibold)
+                      .typeWeight(.semibold)
                       .monospacedDigit()
                   }
                   Text(working.label)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.mutedForeground)
                 }
-                .font(.subheadline)
+                .typeStyle(.note)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityElement(children: .combine)
               }
             }
             .padding(12)
-            .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+            .panel(cornerRadius: Radius.option)
           }
 
           if let comparison = fields.comparison {
             LessonRichText(comparison)
-              .font(.subheadline)
+              .typeStyle(.body)
           }
 
           LessonRichText(fields.takeaway)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
       }
     }

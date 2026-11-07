@@ -70,14 +70,15 @@ import com.zoonk.android.R
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
-import com.zoonk.android.ui.components.BusyTextButton
 import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
@@ -336,7 +337,7 @@ private fun SidePanel(
 
 private const val PANEL_DIM = 0.2f
 private val PANEL_WIDTH = 400.dp
-private val PANEL_CORNER = 16.dp
+private val PANEL_CORNER = ZoonkRadius.xl
 
 @Composable
 private fun LatestChange(
@@ -366,7 +367,7 @@ private fun LatestChange(
             icon = R.drawable.ic_tune,
         )
         if (latest.change.canUndo) {
-            BusyTextButton(latest.undoing, { onUndo(latest.change) }) { Text(stringResource(R.string.plan_undo)) }
+            TextButton(busy = latest.undoing, onClick = { onUndo(latest.change) }) { Text(stringResource(R.string.plan_undo)) }
         }
         if (latest.undoFailed) SaveFailedText()
     }

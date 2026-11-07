@@ -79,7 +79,7 @@ private struct SpeakingPaperView: View {
         } label: {
           Text("Try again", tableName: "Voice", comment: "Button to retry loading")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .lonePage()
     case .loaded(let value):
@@ -89,16 +89,16 @@ private struct SpeakingPaperView: View {
 
   private func list(_ paper: Components.Schemas.SpeakingPaper) -> some View {
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
         exam(paper)
         access(paper)
       }
     } secondary: {
-      List {
+      ZoonkList {
         tasks(paper)
       }
     } single: {
-      List {
+      ZoonkList {
         exam(paper)
         access(paper)
         tasks(paper)
@@ -110,23 +110,23 @@ private struct SpeakingPaperView: View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
         Text("Exam-style speaking", tableName: "Voice", comment: "Eyebrow over the exam's name")
-          .font(.caption.monospaced())
-          .foregroundStyle(.tertiary)
+          .typeStyle(.data)
+          .foregroundStyle(.faint)
         Text(paper.title)
-          .font(.title2.weight(.semibold))
+          .typeStyle(.section)
         Text(
           "\(paper.tasks.count) tasks\u{00A0}· \(speakingTaskMinutes(min: paper.minutes.min, max: paper.minutes.max)) in the exam",
           tableName: "Voice",
           comment: "How many tasks the speaking paper has and how long it is"
         )
-        .font(.subheadline.monospacedDigit())
-        .foregroundStyle(.secondary)
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
         Text(
           "\(paper.title) is an official exam. Practice its speaking tasks whether or not you plan to take it.",
           tableName: "Voice", comment: "The exam is official; practicing doesn't mean taking it"
         )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       }
       .listRowBackground(Color.clear)
       .listRowSeparator(.hidden)
@@ -140,21 +140,20 @@ private struct SpeakingPaperView: View {
         PlusNotice(
           description: Text(
             "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one.",
-            tableName: "Voice", comment: "Speaking practice needs Plus"),
-          isInset: true)
+            tableName: "Voice", comment: "Speaking practice needs Plus"))
       }
     } else if paper.access == .callsPaused {
       Section {
         Label {
           VStack(alignment: .leading, spacing: 2) {
             Text("Calls are paused", tableName: "Voice", comment: "Calls are off for everyone")
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
             Text(
               "It's the same for everyone right now. Try again later.", tableName: "Voice",
               comment: "Calls are paused for everyone"
             )
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
           }
         } icon: {
           Image(systemName: "phone.down")
@@ -177,25 +176,27 @@ private struct SpeakingPaperView: View {
         }
       }
     } header: {
-      Text("Tasks", tableName: "Voice", comment: "The speaking paper's tasks")
+      SectionTitle(Text("Tasks", tableName: "Voice", comment: "The speaking paper's tasks"))
     } footer: {
-      VStack(alignment: .leading, spacing: 8) {
-        if paper.tasks.contains(where: { $0.role == .partner }) {
-          Text(
-            "An AI stands in for the human examiner or the other candidate. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
-            tableName: "Voice", comment: "What a practice exam task with a partner is")
-        } else {
-          Text(
-            "An AI stands in for the human examiner. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
-            tableName: "Voice", comment: "What a practice exam task is")
-        }
-
-        if let source = URL(string: paper.source) {
-          Link(destination: source) {
+      SectionFooter {
+        VStack(alignment: .leading, spacing: 8) {
+          if paper.tasks.contains(where: { $0.role == .partner }) {
             Text(
-              "Official format", tableName: "Voice", comment: "Link to the exam's official page"
-            )
-            .underline()
+              "An AI stands in for the human examiner or the other candidate. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
+              tableName: "Voice", comment: "What a practice exam task with a partner is")
+          } else {
+            Text(
+              "An AI stands in for the human examiner. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
+              tableName: "Voice", comment: "What a practice exam task is")
+          }
+
+          if let source = URL(string: paper.source) {
+            Link(destination: source) {
+              Text(
+                "Official format", tableName: "Voice", comment: "Link to the exam's official page"
+              )
+              .underline()
+            }
           }
         }
       }
@@ -206,15 +207,15 @@ private struct SpeakingPaperView: View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       Text(index + 1, format: .number)
         .monospacedDigit()
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
       VStack(alignment: .leading, spacing: 2) {
         Text(task.name)
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
 
         Text(facts(task))
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .padding(.vertical, 4)
@@ -231,14 +232,14 @@ private struct SpeakingPaperView: View {
           speakingRatedOn(
             task.criteria.map { speakingCriterionName($0.key, officialName: $0.name) })
         )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       }
 
       if let lastTry = task.lastTry {
         Text(lastTryText(lastTry, level: paper.level.rawValue))
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
 
       if writingTask == task.key {
@@ -268,7 +269,7 @@ private struct SpeakingPaperView: View {
           } label: {
             Text("See your last result", tableName: "Voice", comment: "Opens a task's last result")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
       }
       .padding(.top, 4)
@@ -276,7 +277,7 @@ private struct SpeakingPaperView: View {
       // Only the open task starts, so a failure is said right under its button.
       if let startFailure {
         FailureLine(message: startFailureMessage(startFailure))
-          .font(.subheadline)
+          .typeStyle(.body)
       }
     }
     .padding(.vertical, 4)

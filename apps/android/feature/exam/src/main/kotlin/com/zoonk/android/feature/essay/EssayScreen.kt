@@ -19,15 +19,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -91,18 +88,20 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.TaskNotFound
-import com.zoonk.android.ui.components.BusyButton
-import com.zoonk.android.ui.components.BusyOutlinedButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LocalStepHeading
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.components.stepHeading
@@ -250,10 +249,10 @@ internal fun EssayWrite(
                 if (finishFailed && !finishing) SaveErrorText(viewModel::finish)
                 TaskActions { width ->
                     if (rewriting) {
-                        BusyOutlinedButton(finishing, viewModel::finish) { Text(stringResource(R.string.essay_skip_rewrite)) }
+                        OutlinedButton(busy = finishing, onClick = viewModel::finish) { Text(stringResource(R.string.essay_skip_rewrite)) }
                     }
                     val pending = ui.send == EssaySend.Pending
-                    BusyButton(busy = pending, onClick = viewModel::send, modifier = width, enabled = ui.canSend && !finishing) {
+                    Button(busy = pending, onClick = viewModel::send, modifier = width, enabled = ui.canSend && !finishing) {
                         Text(stringResource(if (rewriting) R.string.essay_grade_rewrite else R.string.essay_send))
                     }
                 }
@@ -423,7 +422,7 @@ private fun EssayBox(
             if (it.text != ui.text) onWrite(it.text)
         },
         modifier = modifier.fillMaxWidth().focusRequester(focus),
-        label = { Text(label) },
+        label = label,
         supportingText = {
             if (ui.words >
                 0
@@ -585,7 +584,7 @@ internal fun EssayGradeSteps(
                         Text(stringResource(R.string.essay_back_to_today))
                     }
                 } else {
-                    BusyOutlinedButton(finishing, viewModel::finish) {
+                    OutlinedButton(busy = finishing, onClick = viewModel::finish) {
                         Text(stringResource(R.string.essay_skip_rewrite))
                     }
                     Button(

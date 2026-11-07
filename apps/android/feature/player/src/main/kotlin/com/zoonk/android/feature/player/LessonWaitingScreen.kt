@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -43,7 +42,7 @@ import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
@@ -102,7 +101,7 @@ fun LessonWaitingScreen(
             when {
                 showsStart -> {
                     {
-                        BusyButton(
+                        Button(
                             busy = current == LessonWriting.Starting,
                             onClick = viewModel::start,
                             modifier = Modifier.fillMaxWidth(),

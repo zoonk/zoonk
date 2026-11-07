@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,11 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import com.zoonk.android.app.LocalSnackbarAnchors
+import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.LocalButtonSize
 
 /**
- * Actions pinned to the bottom over a hairline. The window's snackbars show above it. Across an
- * unfolded book foldable's fold, or a spread's split on a wide window ([screenSplit]), the actions
- * sit on the page after it, off the fold and where the learner's turn is.
+ * A screen's actions, pinned to the bottom over a hairline, their buttons [ButtonSize.Large]. The
+ * window's snackbars show above it. Across an unfolded book foldable's fold, or a spread's split on a
+ * wide window ([screenSplit]), the actions sit on the page after it, off the fold and where the
+ * learner's turn is.
  */
 @Composable
 fun DockedActionBar(
@@ -39,7 +43,9 @@ fun DockedActionBar(
 
             Column {
                 HorizontalDivider()
-                Column(if (fold == null) Modifier else Modifier.padding(start = fold.end), content = content)
+                CompositionLocalProvider(LocalButtonSize provides ButtonSize.Large) {
+                    Column(if (fold == null) Modifier else Modifier.padding(start = fold.end), content = content)
+                }
             }
         }
     }

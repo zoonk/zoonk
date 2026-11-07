@@ -13,6 +13,7 @@ struct TodaySourceChangeSection: View {
       } icon: {
         Image(systemName: "doc.badge.clock")
       }
+      .sectionTitleStyle()
     }
   }
 }
@@ -34,10 +35,10 @@ struct SuggestedGoalSection: View {
           "Continue \(suggestion.title)?", tableName: "Today",
           comment: "Offers a goal from the learner's last course"
         )
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
 
         Text("Build a plan in 1 minute.", tableName: "Today", comment: "Suggested goal's promise")
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       BusyButton(isBusy: answering == true) {
@@ -55,7 +56,7 @@ struct SuggestedGoalSection: View {
         Text("Not now", tableName: "Today", comment: "Dismisses the suggested goal")
           .frame(maxWidth: .infinity)
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .controlSize(.large)
     } header: {
       Label {
@@ -64,12 +65,15 @@ struct SuggestedGoalSection: View {
       } icon: {
         Image(systemName: "safari")
       }
+      .sectionTitleStyle()
     } footer: {
-      if failed {
-        FailureLine(
-          message: LocalizedStringResource(
-            "We couldn't save your answer. Try again.", table: "Today",
-            comment: "Answering the suggested goal failed"))
+      SectionFooter {
+        if failed {
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't save your answer. Try again.", table: "Today",
+              comment: "Answering the suggested goal failed"))
+        }
       }
     }
     .disabled(answering != nil)
@@ -142,14 +146,14 @@ struct TodayExamChoiceSection: View {
                   comment: "Asks which option of an exam's choice the learner takes")
               }
             }
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
 
             Text(choice.leftOut.line)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
 
             if choice.take > 1 {
               Text.examPickLimit(choice.take)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
           }
         } icon: {
@@ -190,7 +194,7 @@ struct TodayExamChoiceSection: View {
           "That didn't save. Try again.", table: "Today",
           comment: "A change couldn't be saved")
       )
-      .font(.footnote)
+      .typeStyle(.note)
     }
   }
 
@@ -253,9 +257,9 @@ struct TodayUploadRequestSection: View {
         Label {
           VStack(alignment: .leading, spacing: 4) {
             Text(title)
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
             Text(description)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         } icon: {
           Image(systemName: "doc.text.magnifyingglass")
@@ -293,7 +297,7 @@ struct TodayUploadRequestSection: View {
                 "That didn't save. Try again.", table: "Today",
                 comment: "A change couldn't be saved")
             )
-            .font(.footnote)
+            .typeStyle(.note)
           }
         }
       }

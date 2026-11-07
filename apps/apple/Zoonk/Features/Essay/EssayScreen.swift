@@ -31,7 +31,7 @@ struct EssayScreen: View {
             } label: {
               Text("Try again", tableName: "Essay", comment: "Button to retry loading")
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
           }
           .lonePage()
         case .loaded(let view):
@@ -65,6 +65,7 @@ private struct EssayContent: View {
   @State private var finishFailed = false
   @State private var confirmsLeave = false
   @State private var openCriteria: Set<String> = []
+  @FocusState private var isBoxFocused: Bool
 
   let essay: EssayView
 
@@ -82,16 +83,16 @@ private struct EssayContent: View {
     Group {
       if writer.isWriting {
         PaneSplit(isSpread: true) {
-          Form {
+          ZoonkList {
             promptSections
           }
         } secondary: {
-          Form {
+          ZoonkList {
             writeSections
           }
           .safeAreaBar(edge: .bottom) { actionBar }
         } single: {
-          Form {
+          ZoonkList {
             promptSections
             writeSections
           }
@@ -99,35 +100,34 @@ private struct EssayContent: View {
         }
       } else if let grade = essay.drafts.first?.grade {
         PaneSplit {
-          List {
+          ZoonkList {
             EssayScoreSections(grade: grade, isClosed: writer.isClosed)
             EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
           }
         } secondary: {
-          List {
+          ZoonkList {
             EssayNextStepSections(grade: grade)
           }
-          // An essay too short to grade has no next step, and an empty list draws the plain
-          // background.
-          .scrollContentBackground(.hidden)
-          .background(Color(.systemGroupedBackground))
           .safeAreaBar(edge: .bottom) { actionBar }
         } single: {
-          List {
+          ZoonkList {
             EssayGradeSections(grade: grade, isClosed: writer.isClosed)
             EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
           }
           .safeAreaBar(edge: .bottom) { actionBar }
         }
       } else {
-        List {
+        ZoonkList {
           Section {
             ItemText(essay.question)
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
           } footer: {
-            Text(
-              "You skipped this essay.", tableName: "Essay",
-              comment: "An essay the learner skipped without sending a draft")
+            SectionFooter {
+              Text(
+                "You skipped this essay.", tableName: "Essay",
+                comment: "An essay the learner skipped without sending a draft")
+
+            }
           }
         }
         .safeAreaBar(edge: .bottom) { actionBar }
@@ -197,7 +197,7 @@ private struct EssayContent: View {
         } label: {
           Text("Skip the rewrite", tableName: "Essay", comment: "Goes on without rewriting")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .controlSize(.large)
         .disabled(finishing || writer.status == .grading)
       }
@@ -233,15 +233,15 @@ private struct EssayContent: View {
     if let context = essay.context, !context.isEmpty {
       Section {
         ItemText(context)
-          .font(.callout)
+          .typeStyle(.reading)
       } header: {
-        Text(essay.rubric.textsLabel)
+        SectionTitle(Text(essay.rubric.textsLabel))
       }
     }
 
     Section {
       ItemText(essay.question)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
     }
   }
 
@@ -253,7 +253,7 @@ private struct EssayContent: View {
           VStack(alignment: .leading, spacing: 4) {
             if let criterion = grade.nextStepCriterion {
               Text("Next step: \(criterion.name)", tableName: "Essay", comment: "Rewrite guide")
-                .font(.headline)
+                .typeStyle(.body.weight(.semibold))
             }
             Text(next.text)
           }
@@ -268,7 +268,8 @@ private struct EssayContent: View {
           Text("See the grade", tableName: "Essay", comment: "Back to the last grade")
         }
       } header: {
-        Text("Your last grade", tableName: "Essay", comment: "The last grade while rewriting")
+        SectionTitle(
+          Text("Your last grade", tableName: "Essay", comment: "The last grade while rewriting"))
       }
     }
 
@@ -276,15 +277,21 @@ private struct EssayContent: View {
 
     Section {
       TextEditor(text: $writer.text)
+        .typeStyle(.writing)
         .frame(minHeight: 280)
+        .scrollContentBackground(.hidden)
+        .focused($isBoxFocused)
+        .fieldBorder(isFocused: isBoxFocused)
         .accessibilityLabel(Text(boxLabel))
         .accessibilityHint(EssayWords.hint(words))
     } header: {
-      Text(boxLabel)
+      SectionTitle(Text(boxLabel))
     } footer: {
-      if words > 0 {
-        EssayWords.text(words)
-          .monospacedDigit()
+      SectionFooter {
+        if words > 0 {
+          EssayWords.text(words)
+            .monospacedDigit()
+        }
       }
     }
   }
@@ -313,7 +320,7 @@ private struct EssayContent: View {
       } else if let statusNote {
         VStack(alignment: .leading, spacing: 2) {
           Text(statusNote)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
 
           if writer.status == .dailyLimitReached {
             ChangeLimitButton()
@@ -321,7 +328,7 @@ private struct EssayContent: View {
         }
       }
     }
-    .font(.subheadline)
+    .typeStyle(.body)
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 

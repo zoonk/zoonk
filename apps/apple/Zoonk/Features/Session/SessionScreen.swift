@@ -104,12 +104,12 @@ private struct SessionContent: View {
           } label: {
             Text("Try again", tableName: "Session", comment: "Retries loading the session")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
         .lonePage()
       default:
         if let moment = playback.moment {
-          List {
+          ZoonkList {
             Section {
               MomentSummary(moment: moment, title: nil)
             }
@@ -217,11 +217,11 @@ private struct NextStopView: View {
       comment: "Opens a goal's first lesson, written while the learner guessed on its wait")
 
     return PaneSplit {
-      List {
+      ZoonkList {
         daySoFar
       }
     } secondary: {
-      List {
+      ZoonkList {
         upNext
         warmUpCard(deckID)
         actions(isHeld: held != nil)
@@ -229,7 +229,7 @@ private struct NextStopView: View {
       .warmUpDeck(deckID)
       .warmUpHoldBar(held, label: startLabel)
     } single: {
-      List {
+      ZoonkList {
         daySoFar
         upNext
         warmUpCard(deckID)
@@ -274,8 +274,8 @@ private struct NextStopView: View {
           "\(day.blocks.filter(\.isFinished).count) of \(day.blocks.count) done",
           tableName: "Session", comment: "How far the day's session is"
         )
-        .font(.subheadline.monospacedDigit())
-        .foregroundStyle(.secondary)
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
 
         MeterParts(parts: day.meterParts)
       }
@@ -293,7 +293,7 @@ private struct NextStopView: View {
           lessonLine
         }
       } header: {
-        Text("Up next", tableName: "Session", comment: "The session's next block")
+        SectionTitle(Text("Up next", tableName: "Session", comment: "The session's next block"))
       }
 
       if case .refused(let refusal) = writing {
@@ -336,7 +336,7 @@ private struct NextStopView: View {
           Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
             .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .controlSize(.large)
         .disabled(isOpening)
 
@@ -346,12 +346,12 @@ private struct NextStopView: View {
               "We couldn't open the next step. Try again.", table: "Session",
               comment: "Opening or stopping failed")
           )
-          .font(.footnote)
+          .typeStyle(.note)
         }
       }
     }
     .listRowBackground(Color.clear)
-    .listRowInsets(EdgeInsets())
+    .listRowInsets(.vertical, 0)
   }
 
   private func title(of moment: BlockMoment) -> String {
@@ -452,7 +452,7 @@ private struct NextStopView: View {
       } icon: {
         ProgressView()
       }
-      .foregroundStyle(.secondary))
+      .foregroundStyle(.mutedForeground))
   }
 
   /// Mirrors core's `findAlternativeStudyBlock`.
@@ -603,13 +603,13 @@ private struct MomentSummary: View {
             "Done", tableName: "Session", comment: "A block just finished, before its name loads")
         }
       }
-      .font(.title2.bold())
+      .typeStyle(.section)
       .accessibilityAddTraits(.isHeader)
 
       if moment.ownBrainPower > 0 {
         Text("+\(moment.ownBrainPower) Brain Power", tableName: "Session", comment: "Earned")
-          .font(.headline.monospacedDigit())
-          .foregroundStyle(.brain)
+          .typeStyle(.body.weight(.semibold).monospaced())
+          .foregroundStyle(.brainText)
       }
 
       if moment.total > 0 {
@@ -618,7 +618,7 @@ private struct MomentSummary: View {
           comment: "Questions right in the block just finished"
         )
         .monospacedDigit()
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
 
       if let date = moment.comesBackOn.flatMap(studyDate) {
@@ -626,7 +626,7 @@ private struct MomentSummary: View {
           "Review on \(date.formatted(.studyDay.month(.abbreviated).day()))", tableName: "Session",
           comment: "When the block's lesson comes back"
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
   }

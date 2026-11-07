@@ -13,7 +13,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +27,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.answerTone
 
 /**
@@ -68,7 +68,7 @@ fun BuddyPicker(
             value = name,
             onValueChange = { onNameChange(it.take(MAX_NAME_LENGTH)) },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(R.string.buddy_picker_name)) },
+            label = stringResource(R.string.buddy_picker_name),
             placeholder = { Text(buddyName(kind, null)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),

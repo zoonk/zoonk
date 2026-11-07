@@ -116,7 +116,7 @@ struct FocusTestScreen: View {
           "How you did", tableName: "Practice",
           comment: "Heading over a focus test's results by subject."
         )
-        .font(.largeTitle.bold())
+        .typeStyle(.heroTitle)
 
         ForEach(result.areas, id: \.name) { area in
           HStack(spacing: 12) {
@@ -127,8 +127,8 @@ struct FocusTestScreen: View {
                   width: 14, height: 4)
               }
             }
-            Text("\(area.correct)/\(area.total)").font(.subheadline.monospacedDigit())
-              .foregroundStyle(.secondary)
+            Text("\(area.correct)/\(area.total)").typeStyle(.data)
+              .foregroundStyle(.mutedForeground)
           }
           .accessibilityElement(children: .combine)
         }
@@ -138,15 +138,15 @@ struct FocusTestScreen: View {
     } response: {
       if undone {
         Text(Self.undoneTitle)
-          .font(.largeTitle.bold())
+          .typeStyle(.heroTitle)
       } else if !chosen.isEmpty {
         VStack(alignment: .leading, spacing: 6) {
           Text(
             "Your new focus", tableName: "Practice",
             comment: "Eyebrow over a focus test's chosen subjects."
           )
-          .font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
-          Text(chosen.formatted(.list(type: .and))).font(.largeTitle.bold())
+          .typeStyle(.note.weight(.medium)).foregroundStyle(.mutedForeground)
+          Text(chosen.formatted(.list(type: .and))).typeStyle(.heroTitle)
           Group {
             if chosen.count == 1 {
               Text(
@@ -158,7 +158,7 @@ struct FocusTestScreen: View {
                 tableName: "Practice", comment: "Why a focus test chose its subjects.")
             }
           }
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
 
@@ -168,7 +168,7 @@ struct FocusTestScreen: View {
             "We couldn't undo it. Try again.", table: "Practice",
             comment: "Undoing a focus test's change failed.")
         )
-        .font(.subheadline)
+        .typeStyle(.body)
       }
     } actions: {
       if let changeId = result.changeId, !undone {
@@ -181,7 +181,7 @@ struct FocusTestScreen: View {
           )
           .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.glass)
+        .buttonStyle(.outline)
         .controlSize(.large)
       }
 

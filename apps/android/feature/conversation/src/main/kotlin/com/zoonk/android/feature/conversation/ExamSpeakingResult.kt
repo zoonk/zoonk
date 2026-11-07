@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -27,21 +26,22 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.recode
-import com.zoonk.android.ui.components.BusyTextButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.api.models.ExamSpeakingFeedback
 import com.zoonk.api.models.ExamSpeakingFeedbackCriteriaInner
 import com.zoonk.api.models.ExamSpeakingTask
@@ -80,7 +80,7 @@ private fun TryCallAgain(
         WritingWait(writing, hint)
         return
     }
-    BusyTextButton(again.starting, again.onStart) { Text(label) }
+    TextButton(busy = again.starting, onClick = again.onStart) { Text(label) }
     if (again.failed) {
         Text(
             stringResource(R.string.conversation_start_failed),
@@ -253,7 +253,7 @@ private fun CriterionRow(
             Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     estimateText(grade.estimate),
-                    style = MaterialTheme.typography.titleSmall.copy(fontFamily = FontFamily.Monospace),
+                    style = MaterialTheme.typography.titleSmall.copy(fontFamily = GeistMono),
                 )
                 Text(
                     standingText(standing, level),
@@ -495,7 +495,7 @@ internal fun SpeakingMockResult(
                                         ) {
                                             MaterialTheme.typography.bodyMedium
                                         } else {
-                                            MaterialTheme.typography.titleSmall.copy(fontFamily = FontFamily.Monospace)
+                                            MaterialTheme.typography.titleSmall.copy(fontFamily = GeistMono)
                                         },
                                 )
                             }

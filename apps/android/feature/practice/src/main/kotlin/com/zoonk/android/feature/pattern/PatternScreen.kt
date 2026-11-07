@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -70,7 +69,7 @@ import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
-import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DiffKind
 import com.zoonk.android.ui.components.DiffLine
 import com.zoonk.android.ui.components.DiffLines
@@ -272,7 +271,7 @@ private fun PatternQuestion(
                 }
                 if (checked != null) {
                     val last = index + 1 == pattern.drill.size
-                    BusyButton(busy = drill.saving, onClick = viewModel::next, modifier = width) {
+                    Button(busy = drill.saving, onClick = viewModel::next, modifier = width) {
                         Text(stringResource(if (last) R.string.pattern_see_how_you_did else R.string.practice_continue))
                     }
                 } else {

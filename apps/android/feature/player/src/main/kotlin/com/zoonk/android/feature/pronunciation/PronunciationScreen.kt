@@ -19,15 +19,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -61,7 +58,6 @@ import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.withStyle
@@ -93,26 +89,27 @@ import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.ceremonies.MomentCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.feature.ceremonies.momentBuddy
-import com.zoonk.android.feature.player.segmentParts
 import com.zoonk.android.feature.questions.ItemLine
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.ReachedFacts
 import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.TaskSegments
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -125,6 +122,7 @@ import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.spreadFold
+import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.api.models.LearnerSummaryBuddy
 import com.zoonk.api.models.PronunciationAnswerGrade
 import com.zoonk.api.models.PronunciationRoundResult
@@ -406,7 +404,7 @@ private fun RoundMeter(round: PronunciationRound) {
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
-        MeterParts(segmentParts(round.segments))
+        TaskSegments(round.segments)
     }
 }
 
@@ -480,7 +478,7 @@ private fun SayItLike(respelling: String) {
         buildAnnotatedString {
             append(sentence.substring(0, start.coerceAtLeast(0)))
             withStyle(
-                SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Medium),
+                SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontFamily = GeistMono, fontWeight = FontWeight.Medium),
             ) {
                 append(if (start >= 0) respelling else "")
             }
@@ -586,7 +584,7 @@ private fun WordActions(
         grade != null -> {
             TaskActions { width ->
                 if (!grade.isCorrect) {
-                    FilledTonalButton(
+                    OutlinedButton(
                         onClick = round::tryAgain,
                         enabled = !round.pending,
                         contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
@@ -596,7 +594,7 @@ private fun WordActions(
                         Text(stringResource(R.string.pronunciation_try_again))
                     }
                 }
-                BusyButton(round.pending, model::next, width) {
+                Button(busy = round.pending, onClick = model::next, modifier = width) {
                     Text(
                         stringResource(
                             if (round.index + 1 ==
@@ -614,7 +612,7 @@ private fun WordActions(
 
         model.microphoneOff -> {
             TaskActions { width ->
-                BusyButton(round.pending, model::next, width) { Text(stringResource(R.string.pronunciation_skip)) }
+                Button(busy = round.pending, onClick = model::next, modifier = width) { Text(stringResource(R.string.pronunciation_skip)) }
             }
         }
 

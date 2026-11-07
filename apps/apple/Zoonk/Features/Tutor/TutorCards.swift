@@ -19,8 +19,8 @@ struct TutorPlanChangeCard: View {
 
         if let status = statusLine {
           status
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
             .accessibilityFocused($isResultFocused)
         }
 
@@ -32,7 +32,7 @@ struct TutorPlanChangeCard: View {
               "We couldn't save your answer. Try again.", table: "Tutor",
               comment: "Answering a plan change the buddy proposed failed")
           )
-          .font(.footnote)
+          .typeStyle(.note)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -75,7 +75,7 @@ struct TutorPlanChangeCard: View {
           Text("Not now", tableName: "Tutor", comment: "Declines a plan change the buddy proposed")
             .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .disabled(isSaving)
     case .applied where change.canUndo:
@@ -88,7 +88,7 @@ struct TutorPlanChangeCard: View {
           Image(systemName: "arrow.uturn.backward")
         }
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     case .applied, .declined, .undone, .replaced:
       EmptyView()
     }
@@ -187,7 +187,7 @@ struct TutorMemoryUpdate: View {
         } label: {
           Text("Undo", tableName: "Tutor", comment: "Undoes what the buddy remembered")
         }
-        .buttonStyle(.borderless)
+        .buttonStyle(.ghost)
         .disabled(undo == .undoing)
 
         if undo == .failed {
@@ -198,8 +198,8 @@ struct TutorMemoryUpdate: View {
         }
       }
     }
-    .font(.footnote)
-    .foregroundStyle(.secondary)
+    .typeStyle(.note)
+    .foregroundStyle(.mutedForeground)
     .announcesStatus(undo == .undone ? undone : nil)
   }
 
@@ -235,10 +235,10 @@ struct TutorMissionMoment: View {
     Label {
       VStack(alignment: .leading, spacing: 2) {
         Text(Self.title)
-          .font(.subheadline.weight(.semibold))
+          .typeStyle(.body.weight(.semibold))
         Text(Self.progress(moment))
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
     } icon: {
       Image(systemName: "checkmark.circle.fill")

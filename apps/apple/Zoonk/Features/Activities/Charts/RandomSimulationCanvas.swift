@@ -105,7 +105,7 @@ private struct ChanceSimulationView: View {
     ChartsCanvas {
       HStack(alignment: .top) {
         VStack(alignment: .leading, spacing: 2) {
-          Text(verbatim: runsLabel).font(.subheadline).foregroundStyle(.secondary)
+          Text(verbatim: runsLabel).typeStyle(.note).foregroundStyle(.mutedForeground)
           ChartsCaption(fields.hitLabel)
 
           if isRunning, let guess {
@@ -113,7 +113,7 @@ private struct ChanceSimulationView: View {
               "Your guess: \(percentText(guess))", tableName: "ActivitiesCharts",
               comment: "The learner's guess next to a simulation"
             )
-            .font(.footnote.weight(.medium))
+            .typeStyle(.note.weight(.medium))
           }
         }
 
@@ -130,8 +130,8 @@ private struct ChanceSimulationView: View {
           "Pick your guess, then check it to run the simulation.", tableName: "ActivitiesCharts",
           comment: "Before a simulation runs"
         )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity, minHeight: 128)
       } else if case .sharedBirthday = fields.model {
@@ -143,12 +143,12 @@ private struct ChanceSimulationView: View {
       if isDone {
         ViewThatFits(in: .horizontal) {
           HStack {
-            Text(doneSummary(share: share)).font(.subheadline.monospacedDigit())
+            Text(doneSummary(share: share)).typeStyle(.body.monospaced())
             Spacer()
             runAgain
           }
           VStack(alignment: .leading, spacing: 12) {
-            Text(doneSummary(share: share)).font(.subheadline.monospacedDigit())
+            Text(doneSummary(share: share)).typeStyle(.body.monospaced())
             runAgain
           }
         }
@@ -204,7 +204,7 @@ private struct ChanceSimulationView: View {
         Image(systemName: "arrow.counterclockwise")
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.large)
   }
 
@@ -221,7 +221,8 @@ private struct ChanceSimulationView: View {
     return Chart(bars, id: \.outcome) { bar in
       BarMark(x: .value(verbatim: "outcome", bar.outcome), y: .value(verbatim: "count", bar.count))
         .foregroundStyle(
-          ChanceModel.isHit(fields.model, bar.outcome) ? Color.orange : Color.secondary.opacity(0.4)
+          ChanceModel.isHit(fields.model, bar.outcome)
+            ? Color.vizHighlight : Color.mutedForeground.opacity(0.4)
         )
     }
     .chartXScale(domain: (Double(first) - 0.5)...(Double(last) + 0.5))
@@ -258,21 +259,21 @@ private struct ChanceSimulationView: View {
               "Your guess: \(percentText(guess))", tableName: "ActivitiesCharts",
               comment: "The learner's guess next to a simulation"
             )
-            .font(.caption2)
-            .foregroundStyle(isGuessRight ? Color.success : .destructive)
+            .typeStyle(.small)
+            .foregroundStyle(isGuessRight ? Color.successText : .destructiveText)
           }
       }
 
       ForEach(ChanceModel.runningShare(hits, points: 200), id: \.x) { point in
         LineMark(x: .value(verbatim: "run", point.x), y: .value(verbatim: "share", point.y))
-          .foregroundStyle(.mint)
+          .foregroundStyle(.vizAccent)
       }
     }
     .chartXScale(domain: 0...fields.runs)
     .chartYScale(domain: 0...1)
     .chartYAxis {
       AxisMarks(values: [0, 0.5, 1]) { value in
-        AxisGridLine()
+        AxisGridLine().foregroundStyle(.vizGrid)
         AxisValueLabel {
           if let share = value.as(Double.self) {
             Text(verbatim: ActivityNumberFormat.format(share * 100, unit: "%", digits: 0))
@@ -426,7 +427,7 @@ private struct SamplingSimulationView: View {
               xStart: .value(verbatim: "from", bin.from), xEnd: .value(verbatim: "to", bin.to),
               yStart: .value(verbatim: "count", 0), yEnd: .value(verbatim: "count", bin.count)
             )
-            .foregroundStyle(Color.secondary.opacity(0.25))
+            .foregroundStyle(Color.mutedForeground.opacity(0.25))
           }
         }
 
@@ -435,7 +436,7 @@ private struct SamplingSimulationView: View {
             xStart: .value(verbatim: "from", bin.from), xEnd: .value(verbatim: "to", bin.to),
             yStart: .value(verbatim: "count", 0), yEnd: .value(verbatim: "count", bin.count)
           )
-          .foregroundStyle(Color.mint.opacity(0.8))
+          .foregroundStyle(Color.vizAccent.opacity(0.8))
         }
 
         if isDone {
@@ -443,19 +444,19 @@ private struct SamplingSimulationView: View {
             xStart: .value(verbatim: "from", range.lowerBound),
             xEnd: .value(verbatim: "to", range.upperBound)
           )
-          .foregroundStyle(Color.mint.opacity(0.1))
+          .foregroundStyle(Color.vizAccent.opacity(0.1))
         }
 
         RuleMark(x: .value(verbatim: "truth", truth))
-          .foregroundStyle(.orange)
+          .foregroundStyle(.vizHighlight)
           .lineStyle(StrokeStyle(lineWidth: 2))
           .annotation(position: .top) {
             Text(
               "True value: \(valueText(truth, digits: digits))", tableName: "ActivitiesCharts",
               comment: "The population's real value on a sampling chart"
             )
-            .font(.caption2.weight(.medium))
-            .foregroundStyle(.orange)
+            .typeStyle(.small.weight(.medium))
+            .foregroundStyle(.vizHighlight)
           }
       }
       .chartXScale(domain: domain)
@@ -463,7 +464,7 @@ private struct SamplingSimulationView: View {
       .chartYAxis(.hidden)
       .chartXAxis {
         AxisMarks(values: .automatic(desiredCount: 4)) { value in
-          AxisGridLine()
+          AxisGridLine().foregroundStyle(.vizGrid)
           AxisValueLabel {
             if let x = value.as(Double.self) {
               Text(verbatim: valueText(x, digits: digits))
@@ -479,19 +480,20 @@ private struct SamplingSimulationView: View {
       if comparison != nil {
         HStack(spacing: 16) {
           legend(
-            Color.secondary.opacity(0.25), text: ActivityNumberFormat.format(Double(smallest)),
+            Color.mutedForeground.opacity(0.25),
+            text: ActivityNumberFormat.format(Double(smallest)),
             isCurrent: false)
-          legend(.mint, text: ActivityNumberFormat.format(Double(size)), isCurrent: true)
+          legend(.vizAccent, text: ActivityNumberFormat.format(Double(size)), isCurrent: true)
         }
         .accessibilityHidden(true)
       }
 
       VStack(alignment: .leading, spacing: 4) {
         HStack {
-          Text(verbatim: sizeLabel).font(.subheadline)
+          Text(verbatim: sizeLabel).typeStyle(.body)
           Spacer()
-          Text(verbatim: ActivityNumberFormat.format(Double(size))).font(
-            .subheadline.weight(.medium).monospacedDigit())
+          Text(verbatim: ActivityNumberFormat.format(Double(size))).typeStyle(
+            .body.weight(.medium).monospaced())
         }
         .accessibilityHidden(true)
 
@@ -504,11 +506,11 @@ private struct SamplingSimulationView: View {
           Text(verbatim: sizeLabel)
         } minimumValueLabel: {
           Text(verbatim: ActivityNumberFormat.format(Double(smallest)))
-            .font(.caption)
+            .typeStyle(.meta)
             .accessibilityHidden(true)
         } maximumValueLabel: {
           Text(verbatim: ActivityNumberFormat.format(Double(fields.sampleSizes.last ?? smallest)))
-            .font(.caption)
+            .typeStyle(.meta)
             .accessibilityHidden(true)
         }
         .disabled(isChecked)
@@ -576,15 +578,15 @@ private struct SamplingSimulationView: View {
         "95% of samples land within", tableName: "ActivitiesCharts",
         comment: "Above a sampling simulation's margin of error"
       )
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
       ChartsCaption(fields.populationLabel)
     }
   }
 
   /// The margin turns soft blue once the sample is big enough: done, which is never green.
   private func marginReadout(_ margin: Double, isDone: Bool) -> some View {
-    ChartsReadout(text: marginText(margin), style: isDone ? .success : .secondary)
+    ChartsReadout(text: marginText(margin), style: isDone ? .successText : .mutedForeground)
       .accessibilityHidden(true)
   }
 
@@ -593,8 +595,8 @@ private struct SamplingSimulationView: View {
       RoundedRectangle(cornerRadius: 2).fill(color).frame(width: 10, height: 10)
       Text(verbatim: text)
     }
-    .font(.caption.monospacedDigit().weight(isCurrent ? .medium : .regular))
-    .foregroundStyle(isCurrent ? .primary : .secondary)
+    .typeStyle(.meta.weight(isCurrent ? .medium : .regular).monospaced())
+    .foregroundStyle(isCurrent ? Color(.foreground) : .mutedForeground)
   }
 
   private var samplesText: String {
@@ -616,8 +618,8 @@ private struct SamplingSimulationView: View {
         .accessibilityHidden(true)
       }
     }
-    .font(.subheadline.monospacedDigit())
-    .foregroundStyle(.secondary)
+    .typeStyle(.data)
+    .foregroundStyle(.mutedForeground)
   }
 
   private func runAgain(isDone: Bool) -> some View {
@@ -631,7 +633,7 @@ private struct SamplingSimulationView: View {
         Image(systemName: "arrow.counterclockwise")
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.large)
     .disabled(!isDone)
   }
@@ -647,29 +649,29 @@ private struct SamplingSimulationView: View {
         "What the math says", tableName: "ActivitiesCharts",
         comment: "Title above the expected margins"
       )
-      .font(.subheadline.weight(.medium))
+      .typeStyle(.body.weight(.medium))
 
       ForEach(fields.sampleSizes, id: \.self) { size in
         LabeledContent {
           Text(
             verbatim: marginText(SamplingModel.standardError(fields.population, size: size) * 1.96)
           )
-          .fontWeight(.medium)
+          .typeWeight(.medium)
         } label: {
           Text(verbatim: ActivityNumberFormat.format(Double(size)))
         }
-        .font(.subheadline.monospacedDigit())
+        .typeStyle(.body.monospaced())
       }
 
       Text(
         "From \(ActivityNumberFormat.format(Double(smallest))) to \(ActivityNumberFormat.format(Double(largest))), the margin shrinks to \(ActivityNumberFormat.format(ratio * 100, unit: "%", digits: 1)) of its size.",
         tableName: "ActivitiesCharts", comment: "How much a margin of error shrinks as samples grow"
       )
-      .font(.footnote)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
     }
     .padding()
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(.background, in: .rect(cornerRadius: 12, style: .continuous))
+    .background(.background, in: .rect(cornerRadius: Radius.option, style: .continuous))
   }
 }

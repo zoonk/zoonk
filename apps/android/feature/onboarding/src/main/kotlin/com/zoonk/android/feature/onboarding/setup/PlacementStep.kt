@@ -8,23 +8,13 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -36,16 +26,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -74,26 +61,28 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
-import com.zoonk.android.ui.components.BusyButton
-import com.zoonk.android.ui.components.BusyTextButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.KindDot
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LessonVisual
-import com.zoonk.android.ui.components.Meter
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.SuccessEyebrow
-import com.zoonk.android.ui.components.answerTone
+import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.ChoiceAnswer
 import com.zoonk.api.models.ChoiceAnswerAnyOf
 import com.zoonk.api.models.ChoiceAnswerAnyOf2
@@ -237,10 +226,10 @@ private fun ColumnScope.PlacementIntro(
     mock?.let { MockOfferRow(it, onMock) }
     OnboardingActions {
         FinishFailed(failed)
-        BusyButton(starting, onStart, Modifier.fillMaxWidth(), enabled = !pending) {
+        Button(busy = starting, onClick = onStart, modifier = Modifier.fillMaxWidth(), enabled = !pending) {
             Text(stringResource(R.string.onboarding_placement_start))
         }
-        BusyTextButton(pending, onScratch, Modifier.fillMaxWidth(), enabled = !starting) {
+        TextButton(busy = pending, onClick = onScratch, modifier = Modifier.fillMaxWidth(), enabled = !starting) {
             Text(stringResource(R.string.onboarding_placement_skip_basics))
         }
     }
@@ -261,25 +250,24 @@ private fun MockOfferRow(
         }
     val plus = stringResource(R.string.onboarding_placement_plus_description)
 
-    OutlinedCard(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
-        ListItem(
-            headlineContent = { Text(stringResource(R.string.onboarding_placement_mock_title)) },
-            supportingContent = { Text(description) },
-            leadingContent = { KindDot(LearnKind.Mock) },
-            trailingContent =
-                if (mock.plusRequired) {
-                    {
-                        LabelChip(
-                            stringResource(R.string.onboarding_placement_plus),
-                            Modifier.clearAndSetSemantics { contentDescription = plus },
-                        )
-                    }
-                } else {
-                    null
-                },
-            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-        )
-    }
+    ListRow(
+        headline = { Text(stringResource(R.string.onboarding_placement_mock_title)) },
+        modifier = Modifier.bleed(LIST_ITEM_INSET),
+        onClick = onClick,
+        leading = { KindDot(LearnKind.Mock) },
+        supporting = { Text(description) },
+        meta =
+            if (mock.plusRequired) {
+                {
+                    LabelChip(
+                        stringResource(R.string.onboarding_placement_plus),
+                        Modifier.clearAndSetSemantics { contentDescription = plus },
+                    )
+                }
+            } else {
+                null
+            },
+    )
 }
 
 @Composable
@@ -324,7 +312,7 @@ private fun ColumnScope.PlacementWaiting(
     if (!hold.holding && (patient || run.status == GenerationRun.Status.Failed)) {
         OnboardingActions {
             FinishFailed(failed)
-            BusyTextButton(pending, onSkip, Modifier.fillMaxWidth()) {
+            TextButton(busy = pending, onClick = onSkip, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.onboarding_placement_skip_for_now))
             }
             Text(
@@ -388,7 +376,7 @@ internal fun ColumnScope.PlacementQuestion(
             item.context?.let { RichText(it, style = MaterialTheme.typography.bodyLarge) }
             item.image?.let { PrivatePicture(it.url, it.alt, it.width, it.height, PictureFrame.Question) }
             visual?.let { LessonVisual(it) }
-            RichText(item.question, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+            RichText(item.question, modifier = Modifier.semantics { heading() }, style = MaterialTheme.zoonkType.question)
         },
         answer = {
             if (item.format == PlacementFormat.Typed) {
@@ -398,7 +386,7 @@ internal fun ColumnScope.PlacementQuestion(
                     value = typed,
                     onValueChange = { typedWords?.set(0, it.take(MAX_TYPED_ANSWER)) },
                     modifier = Modifier.fillMaxWidth().focusRequester(typedFocus),
-                    label = { Text(stringResource(R.string.onboarding_placement_your_answer)) },
+                    label = stringResource(R.string.onboarding_placement_your_answer),
                     minLines = 3,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                     keyboardActions = KeyboardActions(onSend = { confirm() }),
@@ -585,7 +573,7 @@ private fun ColumnScope.PlacementOutcome(
     OnboardingHeading(title, description)
     OnboardingActions {
         FinishFailed(failed)
-        BusyButton(pending, onContinue, Modifier.fillMaxWidth()) {
+        Button(busy = pending, onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_placement_see_plan))
         }
     }
@@ -607,7 +595,7 @@ private fun ColumnScope.PlacementMockRunning(
         Button(onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_placement_continue_mock))
         }
-        BusyTextButton(pending, onStop, Modifier.fillMaxWidth()) {
+        TextButton(busy = pending, onClick = onStop, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_placement_stop_mock))
         }
     }

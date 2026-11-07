@@ -50,6 +50,7 @@ import com.zoonk.android.feature.activities.orderIds
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf12FieldsStepsInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf12Value as ProcessOrderContent
@@ -114,7 +115,7 @@ private fun OrderedStep(
 ) {
     val outcome = result?.let { if (it.learnerPosition == it.position) AnswerResult.Right else AnswerResult.Wrong }
     val tone = answerTone(picked = false, result = outcome)
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
 
     Row(
         Modifier

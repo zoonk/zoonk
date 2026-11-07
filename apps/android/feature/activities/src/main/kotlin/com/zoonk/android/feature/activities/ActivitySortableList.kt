@@ -56,6 +56,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.zoonk.android.R
+import com.zoonk.android.ui.theme.ZoonkRadius
 import kotlin.math.abs
 
 data class SortableItem(
@@ -242,7 +243,7 @@ private fun SortableRow(
     modifier: Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     val colors = MaterialTheme.colorScheme
 
     Row(

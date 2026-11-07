@@ -80,7 +80,7 @@ struct ChartReaderCanvas: View {
   var body: some View {
     ChartsCanvas {
       Text(verbatim: fields.yLabel)
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
 
       chart
         .accessibilityRepresentation { Text(verbatim: summary) }
@@ -90,8 +90,8 @@ struct ChartReaderCanvas: View {
       Text(
         "Tap a span to measure it", tableName: "ActivitiesCharts", comment: "Above a chart's spans"
       )
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
 
       LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 8)], spacing: 8) {
         ForEach(fields.spans) { span in
@@ -106,8 +106,8 @@ struct ChartReaderCanvas: View {
                 let text = measureText(span)
               {
                 Text(verbatim: text)
-                  .fontWeight(.semibold)
-                  .foregroundStyle(.purple)
+                  .typeWeight(.semibold)
+                  .foregroundStyle(.vizSecondary)
               }
             }
           }
@@ -130,7 +130,7 @@ struct ChartReaderCanvas: View {
         RectangleMark(
           xStart: .value(verbatim: "From", span.from), xEnd: .value(verbatim: "To", span.to)
         )
-        .foregroundStyle(Color.purple.opacity(0.12))
+        .foregroundStyle(Color.vizSecondary.opacity(0.12))
       }
 
       ForEach(fields.points, id: \.x) { point in
@@ -142,7 +142,7 @@ struct ChartReaderCanvas: View {
       ForEach(shownSpans) { span in
         ForEach([span.from, span.to], id: \.self) { x in
           PointMark(x: .value(verbatim: "x", x), y: .value(verbatim: "y", fields.y(at: x) ?? 0))
-            .foregroundStyle(.purple)
+            .foregroundStyle(.vizSecondary)
             .symbolSize(60)
         }
 
@@ -154,8 +154,8 @@ struct ChartReaderCanvas: View {
           .opacity(0)
           .annotation(position: .top, spacing: 4) {
             Text(verbatim: text)
-              .font(.caption.weight(.semibold).monospacedDigit())
-              .foregroundStyle(.purple)
+              .typeStyle(.meta.weight(.semibold).monospaced())
+              .foregroundStyle(.vizSecondary)
           }
         }
       }
@@ -164,7 +164,7 @@ struct ChartReaderCanvas: View {
     .chartYScale(domain: .automatic(includesZero: false))
     .chartXAxis {
       AxisMarks(values: .automatic(desiredCount: 4)) { value in
-        AxisGridLine()
+        AxisGridLine().foregroundStyle(.vizGrid)
         AxisValueLabel {
           if let x = value.as(Double.self) {
             Text(verbatim: ActivityNumberFormat.format(x, grouping: !fields.hasPlainX))
@@ -174,7 +174,7 @@ struct ChartReaderCanvas: View {
     }
     .chartYAxis {
       AxisMarks(values: .automatic(desiredCount: 4)) { value in
-        AxisGridLine()
+        AxisGridLine().foregroundStyle(.vizGrid)
         AxisValueLabel {
           if let y = value.as(Double.self) {
             Text(verbatim: ActivityNumberFormat.format(y, compact: true))

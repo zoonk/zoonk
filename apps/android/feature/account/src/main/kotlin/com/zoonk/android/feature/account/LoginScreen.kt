@@ -29,9 +29,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -68,9 +66,10 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.BusyButton
-import com.zoonk.android.ui.components.BusyOutlinedButton
-import com.zoonk.android.ui.components.BusyTextButton
+import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
@@ -186,7 +185,7 @@ fun Methods(
             Modifier
                 .fillMaxWidth()
                 .semantics { contentType = ContentType.EmailAddress },
-        label = { Text(stringResource(R.string.account_email)) },
+        label = stringResource(R.string.account_email),
         placeholder = { Text(stringResource(R.string.account_email_placeholder)) },
         isError = signIn.failure == AccountFailure.InvalidEmail || signIn.failure == AccountFailure.DisposableEmail,
         singleLine = true,
@@ -224,7 +223,7 @@ fun CodeEntry(
                 .fillMaxWidth()
                 .focusRequester(focus)
                 .semantics { contentType = ContentType.SmsOtpCode },
-        label = { Text(stringResource(R.string.account_code_label)) },
+        label = stringResource(R.string.account_code_label),
         isError = signIn.failure != null,
         enabled = !needsNewCode,
         readOnly = work == SignInWork.CheckCode,
@@ -266,9 +265,9 @@ fun CodeEntry(
                 style = MaterialTheme.typography.bodyMedium,
             )
             // Not while a code is checked: its answer would land on the new code's empty box.
-            BusyTextButton(
-                work == SignInWork.Resend,
-                signIn::resendCode,
+            TextButton(
+                busy = work == SignInWork.Resend,
+                onClick = signIn::resendCode,
                 enabled = work == null,
             ) { Text(stringResource(R.string.account_send_again)) }
         }
@@ -348,7 +347,7 @@ private fun ProviderButton(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    BusyOutlinedButton(
+    OutlinedButton(
         busy = isWorking,
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
@@ -373,7 +372,7 @@ private fun WorkingButton(
     onClick: () -> Unit,
     enabled: Boolean = true,
 ) {
-    BusyButton(isWorking, onClick, Modifier.fillMaxWidth(), enabled) { Text(text) }
+    Button(busy = isWorking, onClick = onClick, modifier = Modifier.fillMaxWidth(), enabled = enabled) { Text(text) }
 }
 
 @Composable

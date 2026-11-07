@@ -22,28 +22,22 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -68,6 +62,7 @@ import com.zoonk.android.feature.audio.VoiceAnswerRecorder
 import com.zoonk.android.feature.audio.VoiceRecorder
 import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
+import com.zoonk.android.feature.missions.BrainPowerReward
 import com.zoonk.android.navigation.PlaceIcon
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.AnswerResult
@@ -75,10 +70,22 @@ import com.zoonk.android.ui.components.AnswerTag
 import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltDot
 import com.zoonk.android.ui.components.BeltLevel
-import com.zoonk.android.ui.components.BusyButton
-import com.zoonk.android.ui.components.BusyOutlinedButton
+import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.DestructiveButton
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.EmptyState
+import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.FeedbackNote
+import com.zoonk.android.ui.components.FeedbackPanel
+import com.zoonk.android.ui.components.FeedbackTone
+import com.zoonk.android.ui.components.FeedbackVerdict
+import com.zoonk.android.ui.components.FilledIconButton
+import com.zoonk.android.ui.components.GoalBox
+import com.zoonk.android.ui.components.GoalExample
+import com.zoonk.android.ui.components.GoalExamples
+import com.zoonk.android.ui.components.GoalRing
+import com.zoonk.android.ui.components.GoalRingTrack
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LabelChip
@@ -90,14 +97,25 @@ import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.ListDivider
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.MomentReadouts
+import com.zoonk.android.ui.components.MomentScore
+import com.zoonk.android.ui.components.OptionsButton
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedIconButton
+import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.ProgressMark
+import com.zoonk.android.ui.components.Readout
+import com.zoonk.android.ui.components.SecondaryButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.Suggestion
@@ -107,6 +125,9 @@ import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.components.SuggestionMark
+import com.zoonk.android.ui.components.TaskSegment
+import com.zoonk.android.ui.components.TaskSegments
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -119,9 +140,11 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.formatProgressShare
 import com.zoonk.android.ui.format.formatTimeOfDay
+import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.LocalTime
@@ -135,6 +158,8 @@ internal val gallerySections =
     listOf(
         GallerySection("Color roles") { ColorRoles() },
         GallerySection("Type") { TypeRoles() },
+        GallerySection("Buttons") { Buttons() },
+        GallerySection("Fields") { Fields() },
         GallerySection("Material components") { MaterialComponents() },
         GallerySection("Busy buttons") { BusyButtons() },
         GallerySection("Navigation") { Navigation() },
@@ -274,34 +299,84 @@ private fun Words(
 @Composable
 private fun TypeRoles() {
     val type = MaterialTheme.typography
+    val roles = MaterialTheme.zoonkType
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Learn anything", style = type.displaySmall)
-        Text("Quantum physics from scratch", style = type.headlineSmall)
-        Text("Today", style = type.titleLarge)
-        SectionHeader("This week")
-        Text("Lessons, reviews and practice in the order that fits your week.", style = type.bodyLarge)
-        Text(
-            factsLine("3 lessons", "11 min"),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = type.bodyMedium.withTabularFigures(),
-        )
-        Text("Try a lesson", style = type.labelLarge)
-        Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("43", style = type.displaySmall.withTabularFigures())
-            Text("min", color = MaterialTheme.colorScheme.onSurfaceVariant, style = type.titleMedium)
+        Eyebrow("Tue, Nov 3 · ~376 days left")
+        PageTitleRow("Today") { Readout("43 min left") }
+        Text("Quantum physics from scratch", style = type.displaySmall)
+        Text("Subjects", style = type.titleLarge)
+        SectionHeader("This week", detail = factsLine("2 of 7 days", "54 min / 5 hr"))
+        Text("Lessons, reviews and practice in the order that fits your week.", color = muted, style = roles.lead)
+        Text("Porcentagem e descontos", style = type.bodyLarge)
+        Text("The app's body: settings, notices and anything without a role.", style = type.bodyMedium)
+        Text("Take a mock exam", style = type.titleSmall)
+        Text("Whenever you want: a full exam with a score", color = muted, style = type.bodySmall)
+        Text("33 ready to practice", color = muted, style = roles.data)
+        Text("LATEST MOCK", color = MaterialTheme.zoonk.faint, style = roles.label)
+        Text("What changes when a price drops by 20%?", style = roles.question)
+        Text("A discount is a share of the price taken away.", style = roles.lessonText)
+        Text("70%", style = type.displayMedium.withTabularFigures())
+        Text("fun main() = println(\"Geist Mono\")", style = type.bodyMedium.copy(fontFamily = GeistMono))
+    }
+}
+
+@Composable
+private fun Buttons() {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        ButtonSize.entries.forEach { size ->
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = {}, size = size) { Text("Continue") }
+                OutlinedButton(onClick = {}, size = size) { Text("Adjust plan") }
+                SecondaryButton(onClick = {}, size = size) { Text("I don't know yet") }
+                TextButton(onClick = {}, size = size) { Text("Skip") }
+                DestructiveButton(onClick = {}, size = size) { Text("Delete") }
+            }
         }
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = {}, enabled = false) { Text("Continue") }
+            OutlinedButton(onClick = {}, enabled = false) { Text("Adjust plan") }
+            SecondaryButton(onClick = {}, enabled = false) { Text("I don't know yet") }
+            TextButton(onClick = {}, enabled = false) { Text("Skip") }
+            DestructiveButton(onClick = {}, enabled = false) { Text("Delete") }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            OutlinedIconButton(onClick = {}) { Icon(painterResource(R.drawable.ic_contact_support), contentDescription = "Ask") }
+            OptionsButton(onClick = {}, contentDescription = "More options")
+            OptionsButton(onClick = {}, contentDescription = "More options", size = ButtonSize.Large)
+        }
+    }
+}
+
+@Composable
+private fun Fields() {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        OutlinedTextField(value = "", onValueChange = {}, label = "Email", placeholder = { Text("you@example.com") }, singleLine = true)
+        OutlinedTextField(value = "Ana Souza", onValueChange = {}, label = "Name", singleLine = true)
+        OutlinedTextField(
+            value = "ana@",
+            onValueChange = {},
+            label = "Email",
+            supportingText = { Text("Enter a valid email address") },
+            isError = true,
+            singleLine = true,
+        )
+        OutlinedTextField(value = "", onValueChange = {}, label = "Message", placeholder = { Text("What happened?") }, minLines = 3)
+        OutlinedTextField(value = "Read only", onValueChange = {}, label = "Disabled", enabled = false, singleLine = true)
+        OutlinedTextField(value = "", onValueChange = {}, placeholder = { Text("Without a label") }, singleLine = true)
+        GoalBox(value = "", onValueChange = {}, onSubmit = {})
+        GoalBox(value = "Speak Spanish for a job interview", onValueChange = {}, onSubmit = {})
+        GoalExamples(
+            listOf(GoalExample("Pass the ENEM", "Exam"), GoalExample("Understand quantum physics", "Learn a topic")),
+            onPick = {},
+        )
     }
 }
 
 @Composable
 private fun MaterialComponents() {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = {}) { Text("Continue") }
-            FilledTonalButton(onClick = {}) { Text("Adjust plan") }
-            TextButton(onClick = {}) { Text("Skip") }
-        }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(checked = true, onCheckedChange = {})
             RadioButton(selected = true, onClick = {})
@@ -325,24 +400,30 @@ private fun MaterialComponents() {
             FilterChip(selected = false, onClick = {}, label = { Text("Tue") })
             AssistChip(onClick = {}, label = { Text("Explain") })
         }
-        OutlinedTextField(
-            value = "",
-            onValueChange = {},
-            label = { Text("Your goal") },
-            supportingText = { Text("Write what you want to learn") },
-            isError = true,
-            modifier = Modifier.fillMaxWidth(),
-        )
         CircularProgressIndicator(progress = { 0.6f }, color = MaterialTheme.colorScheme.tertiary)
     }
 }
 
 @Composable
 private fun BusyButtons() {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        BusyButton(busy = false, onClick = {}) { Text("Start session") }
-        BusyButton(busy = true, onClick = {}) { Text("Start session") }
-        BusyOutlinedButton(busy = true, onClick = {}) { Text("Move to Monday") }
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = {}, busy = true) { Text("Start session") }
+            OutlinedButton(onClick = {}, busy = true) { Text("Move to Monday") }
+            SecondaryButton(onClick = {}, busy = true) { Text("I don't know yet") }
+            TextButton(onClick = {}, busy = true) { Text("Skip") }
+            DestructiveButton(onClick = {}, busy = true) { Text("Delete") }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            OutlinedIconButton(
+                onClick = {},
+                busy = true,
+            ) { Icon(painterResource(R.drawable.ic_contact_support), contentDescription = "Ask") }
+            FilledIconButton(onClick = {}, busy = true) { Icon(painterResource(R.drawable.ic_arrow_upward), contentDescription = "Send") }
+            OutlinedButton(onClick = {}, enabled = false, focusableWhenDisabled = true) { Text("Check") }
+        }
+        ListRow(headline = { Text("Practice this chapter") }, onClick = {}, busy = true)
+        ListRow(headline = { Text("Next lesson") }, onClick = {}, busy = true, meta = { Text("5 min") }, chevron = false)
     }
 }
 
@@ -397,6 +478,12 @@ private fun Meters() {
         Labeled("Lesson progress, 40%") { Meter(0.4f) }
         Labeled("Energy, 70%") { Meter(0.7f, color = MaterialTheme.zoonk.energy) }
         Labeled("Brain Power to the next level") { Meter(0.3f, color = MaterialTheme.zoonk.brain) }
+        Labeled("Today's missions reward, then earned") {
+            Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                BrainPowerReward("50", earned = false, brainPower = null)
+                BrainPowerReward("50", earned = true, brainPower = null)
+            }
+        }
         Labeled("Today's blocks: two done, one in progress") {
             MeterParts(
                 listOf(
@@ -409,9 +496,16 @@ private fun Meters() {
             )
         }
         Labeled("A lesson's answers") {
-            MeterParts(
-                listOf(done, done, done, MeterPart.Fill.Solid(colors.error), done, MeterPart.Fill.Track, MeterPart.Fill.Track)
-                    .map { MeterPart(it) },
+            TaskSegments(
+                listOf(
+                    TaskSegment.Right,
+                    TaskSegment.Wrong,
+                    TaskSegment.Read,
+                    TaskSegment.Done,
+                    TaskSegment.Current,
+                    TaskSegment.Ahead,
+                    TaskSegment.Ahead,
+                ),
             )
         }
         Labeled("A skill's level, B1") { LevelBar(2.0) }
@@ -425,6 +519,16 @@ private fun Meters() {
                 ),
             )
         }
+        Labeled("A week's goal rings") {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                GoalRing(1f) { DoneMark() }
+                GoalRing(0.4f, track = GoalRingTrack.Today)
+                GoalRing(0f, track = GoalRingTrack.Missed)
+                GoalRing(0f, track = GoalRingTrack.Rest)
+                GoalRing(0f)
+            }
+        }
+        MomentReadouts(brainPower = 120, score = MomentScore(answered = 10, correct = 8), facts = listOf("5 min"))
     }
 }
 
@@ -448,21 +552,25 @@ private fun StatusMarks() {
             MarkStatus.Next to "The periodic table",
             MarkStatus.Todo to "Chemical bonds",
         ).forEach { (status, title) ->
-            ListItem(
-                headlineContent = { Text(title) },
-                leadingContent = { StatusMark(status) },
-                colors =
-                    ListItemDefaults.colors(
-                        containerColor =
-                            if (status == MarkStatus.Next) MaterialTheme.colorScheme.surfaceContainerHigh else Color.Transparent,
-                    ),
+            ListRow(
+                headline = { Text(title) },
+                highlighted = status == MarkStatus.Next,
+                leading = { StatusMark(status) },
+                meta = { Text("5 min") },
             )
+            ListDivider()
         }
-        ListItem(
-            headlineContent = { Text("Acids and bases") },
-            leadingContent = { ProgressMark(0.4f) },
-            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+        ListRow(
+            headline = { Text("Acids and bases") },
+            leading = { ProgressMark(0.4f) },
+            supporting = { Text("2 of 5 lessons") },
+            expanded = false,
+            onClick = {},
         )
+        ListDivider()
+        ListRow(headline = { Text("Memory") }, onClick = {}, meta = { Text("5") })
+        ListDivider()
+        ListRow(headline = { Text("Daily reminder") }, trailing = { Switch(checked = true, onCheckedChange = {}) })
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             DoneMark()
             Text("Done mark alone", style = MaterialTheme.typography.bodyMedium)
@@ -474,11 +582,10 @@ private fun StatusMarks() {
 private fun Kinds() {
     Column {
         LearnKind.entries.forEach { kind ->
-            ListItem(
-                headlineContent = { Text(kind.name) },
-                leadingContent = { KindMark(kind) },
-                trailingContent = { KindDot(kind) },
-                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+            ListRow(
+                headline = { Text(kind.name) },
+                leading = { KindMark(kind) },
+                trailing = { KindDot(kind) },
             )
         }
     }
@@ -512,6 +619,17 @@ private fun Answers() {
         AnswerSample("3", "Golgi apparatus", picked = false, result = AnswerResult.Right)
         AnswerSample("4", "Nucleus", picked = true, result = AnswerResult.Wrong)
         AnswerSample("1", "A guess", picked = true, result = AnswerResult.Guess)
+        listOf(
+            FeedbackTone.Right to "Correct",
+            FeedbackTone.Neutral to "Not graded",
+            FeedbackTone.Almost to "Almost",
+            FeedbackTone.Wrong to "Not quite",
+        ).forEach { (tone, verdict) ->
+            FeedbackPanel(label = "Feedback") {
+                FeedbackVerdict(verdict, tone, end = "3 right in a row")
+                if (tone == FeedbackTone.Wrong) FeedbackNote("You'll see this one again tomorrow.")
+            }
+        }
     }
 }
 
@@ -592,13 +710,16 @@ private fun LessonVisuals() {
 @Composable
 private fun HeadersAndEmptyStates() {
     Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-        PageTitleRow("Plan", verticalAlignment = Alignment.CenterVertically) { FilledTonalButton(onClick = {}) { Text("Adjust plan") } }
+        PageTitleRow("Plan", verticalAlignment = Alignment.CenterVertically) {
+            OutlinedButton(onClick = {}, size = ButtonSize.Small) { Text("Adjust plan") }
+        }
+        PageHeader("Profile", "Your name and username, your data, and your account.")
         SectionHeader("This week")
         EmptyState(
             icon = R.drawable.ic_edit_square,
             title = "No mistakes to practice",
             description = "Questions you get wrong land here, ready to try again.",
-            action = { FilledTonalButton(onClick = {}) { Text("Start a lesson") } },
+            action = { OutlinedButton(onClick = {}) { Text("Start a lesson") } },
         )
     }
 }
@@ -686,7 +807,7 @@ private fun Audio() {
             val audio = rememberSpokenAudio((LocalContext.current.applicationContext as ZoonkApplication).container.speech, "it")
             ListenButton(audio, listOf(SpokenText("Ciao")), "Listen")
             listOf(SpeechState.Loading, SpeechState.Playing, SpeechState.Failed(null)).forEach { state ->
-                FilledTonalButton(onClick = {}) {
+                OutlinedButton(onClick = {}) {
                     SpeechStatusIcon(state) {
                         Icon(painterResource(R.drawable.ic_volume_up), contentDescription = null, Modifier.size(buttonIconSize()))
                     }

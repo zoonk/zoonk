@@ -8,7 +8,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
@@ -30,6 +29,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.parseLocalizedNumber
@@ -76,7 +76,7 @@ fun NumericAnswerField(
         modifier = modifier.fillMaxWidth(),
         readOnly = locked,
         textStyle = MaterialTheme.typography.titleLarge.withTabularFigures(),
-        label = { Text(stringResource(R.string.questions_your_answer)) },
+        label = stringResource(R.string.questions_your_answer),
         // Material shows a prefix or suffix only once the label floats; a unit stays in view, as on main.
         leadingIcon =
             unit
@@ -139,7 +139,7 @@ fun TypedAnswerField(
         modifier = modifier.fillMaxWidth(),
         readOnly = locked,
         textStyle = MaterialTheme.typography.titleLarge,
-        label = { Text(stringResource(R.string.questions_your_answer)) },
+        label = stringResource(R.string.questions_your_answer),
         trailingIcon = mark?.let { { MarkIcon(it) } },
         keyboardOptions =
             KeyboardOptions(

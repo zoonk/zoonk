@@ -42,6 +42,7 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.steps.QuestionScene
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.answerTone
+import com.zoonk.android.ui.theme.ZoonkRadius
 import kotlinx.coroutines.delay
 
 /** One side's item: [index] is its row in its own column. */
@@ -198,7 +199,7 @@ private fun MatchCell(
     modifier: Modifier,
 ) {
     val tone = answerTone(picked, result)
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     val state =
         when {
             result == AnswerResult.Right -> stringResource(R.string.player_language_matched)

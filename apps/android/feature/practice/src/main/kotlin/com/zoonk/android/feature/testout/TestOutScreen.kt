@@ -4,10 +4,6 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -59,7 +55,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.TaskNotFound
-import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
@@ -322,7 +318,7 @@ private fun StartActions(
 
         else -> {
             TaskActions { width ->
-                BusyButton(busy = ui.starting, onClick = onStart, modifier = width.focusRequester(replacementFocus)) {
+                Button(busy = ui.starting, onClick = onStart, modifier = width.focusRequester(replacementFocus)) {
                     Text(stringResource(R.string.testout_start))
                 }
             }

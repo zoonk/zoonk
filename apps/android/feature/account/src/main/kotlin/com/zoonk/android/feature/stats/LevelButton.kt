@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.stats
 
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -15,6 +14,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltLevel
+import com.zoonk.android.ui.components.TextButton
 
 /** The tab roots' belt and level (main's `LevelLink`), which open Statistics; nothing until the summary says them. */
 @Composable

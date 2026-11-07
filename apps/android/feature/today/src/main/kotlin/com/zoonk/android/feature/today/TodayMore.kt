@@ -1,13 +1,8 @@
 package com.zoonk.android.feature.today
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -20,16 +15,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.BusyOutlinedButton
 import com.zoonk.android.ui.components.KindDot
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -59,7 +56,7 @@ internal fun TodayMore(
                 ChallengeLink(model, actions)
                 LinkRow(
                     text = stringResource(R.string.today_practice_with_buddy, buddyName),
-                    leading = { Icon(painterResource(R.drawable.ic_forum), contentDescription = null, modifier = Modifier.size(20.dp)) },
+                    leading = { Icon(painterResource(R.drawable.ic_forum), contentDescription = null, modifier = Modifier.size(16.dp)) },
                 ) { actions.navigate(AppRoute.Buddy()) }
             }
         }
@@ -87,7 +84,7 @@ private fun MoreTime(
     val minutes = formatNumber(extraTime.minutes.toDouble(), currentLocale())
     val label = if (model.today.studiedToday) R.string.today_study_more_minutes else R.string.today_study_minutes
 
-    BusyOutlinedButton(viewModel.pending == TodayTap.KeepLearning, actions.keepLearning, enabled = viewModel.pending == null) {
+    OutlinedButton(busy = viewModel.pending == TodayTap.KeepLearning, onClick = actions.keepLearning, enabled = viewModel.pending == null) {
         Text(stringResource(label, minutes))
     }
     if (viewModel.failed == TodayTap.KeepLearning) Failure(stringResource(R.string.today_save_failed))
@@ -122,7 +119,7 @@ private fun CatchUpLater(
                 pluralStringResource(R.plurals.today_catch_up_tomorrow, lessons, lessons)
             },
         )
-        BusyOutlinedButton(viewModel.isCatchingUp, { viewModel.catchUp(model.read) }) {
+        OutlinedButton(busy = viewModel.isCatchingUp, onClick = { viewModel.catchUp(model.read) }) {
             Text(stringResource(R.string.today_catch_up_today, formatMinutes(later.minutes.toInt(), currentLocale())))
         }
     }
@@ -147,13 +144,7 @@ private fun ChallengeLink(
     LinkRow(
         text = stringResource(if (mock) R.string.today_see_day_mock else R.string.today_see_day_challenge, weekday),
         leading = { KindDot(if (mock) LearnKind.Mock else LearnKind.Challenge) },
-        trailing = {
-            if (challenge.access ==
-                TodayWeeklyChallenge.Access.PLUS_REQUIRED
-            ) {
-                PlusMark()
-            }
-        },
+        trailing = if (challenge.access == TodayWeeklyChallenge.Access.PLUS_REQUIRED) ({ PlusMark() }) else null,
     ) { actions.navigate(AppRoute.Challenge(planItemId.toString(), model.day.sessionId?.toString())) }
 }
 
@@ -161,26 +152,17 @@ private fun ChallengeLink(
 private fun LinkRow(
     text: String,
     leading: @Composable () -> Unit,
-    trailing: @Composable () -> Unit = {},
+    trailing: (@Composable () -> Unit)? = null,
     onClick: () -> Unit,
 ) {
     Column {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .clickable(
-                        role = Role.Button,
-                        onClick = onClick,
-                    ).heightIn(min = 48.dp)
-                    .padding(vertical = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            RowMark(leading)
-            Text(text, modifier = Modifier.weight(1f), style = MaterialTheme.typography.titleSmall)
-            trailing()
-        }
+        ListRow(
+            headline = { Text(text) },
+            modifier = Modifier.bleed(LIST_ITEM_INSET),
+            onClick = onClick,
+            leading = leading,
+            meta = trailing,
+        )
         HorizontalDivider()
     }
 }

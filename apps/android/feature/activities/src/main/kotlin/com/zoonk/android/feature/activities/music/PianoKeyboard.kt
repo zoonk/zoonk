@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import com.zoonk.android.ui.components.fadingHorizontalScroll
+import com.zoonk.android.ui.theme.ZoonkRadius
 
 private class PianoKey(
     val midi: Int,
@@ -166,9 +167,9 @@ private fun Key(
         } ?: Modifier
     val shape =
         if (key.isBlack) {
-            RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
+            RoundedCornerShape(bottomStart = ZoonkRadius.md, bottomEnd = ZoonkRadius.md)
         } else {
-            RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)
+            RoundedCornerShape(bottomStart = ZoonkRadius.option, bottomEnd = ZoonkRadius.option)
         }
     val surface =
         Modifier

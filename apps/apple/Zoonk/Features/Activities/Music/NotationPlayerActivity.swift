@@ -166,8 +166,8 @@ private struct NotationPlayerCanvas: View {
           "This music couldn't be drawn.", tableName: "ActivitiesMusic",
           comment: "When a melody's notation can't be read"
         )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       }
     }
     .onAppear {
@@ -201,12 +201,12 @@ private struct NotationPlayerCanvas: View {
           ?? String(
             localized: "Melody", table: "ActivitiesMusic", comment: "A melody without a title")
       )
-      .font(.headline)
+      .typeStyle(.body.weight(.semibold))
 
       if let composer = tune.composer {
         Text(composer)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -254,8 +254,7 @@ private struct NotationPlayerCanvas: View {
       .controlSize(.large)
 
       VStack(alignment: .leading, spacing: 6) {
-        ProgressView(value: Double(bar ?? 0), total: Double(max(bars, 1)))
-          .tint(.purple)
+        Meter(value: Double(bar ?? 0), total: Double(max(bars, 1)), fill: .vizSecondary)
           .accessibilityHidden(true)
 
         Group {
@@ -268,8 +267,8 @@ private struct NotationPlayerCanvas: View {
               "\(bars) bars", tableName: "ActivitiesMusic", comment: "How many bars the melody has")
           }
         }
-        .font(.caption.monospacedDigit())
-        .foregroundStyle(.secondary)
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
       }
 
       Picker(selection: $tempo) {
@@ -325,7 +324,7 @@ private struct NotationStaff: View {
       Canvas { context, _ in
         for item in drawing.items {
           let shading: GraphicsContext.Shading =
-            item.element != nil && item.element == playing ? .color(.mint) : .foreground
+            item.element != nil && item.element == playing ? .color(.vizAccent) : .foreground
 
           switch item.mark {
           case .fill(let path):
@@ -352,15 +351,15 @@ private struct NotationStaff: View {
     _ text: String, at point: CGPoint, kind: NotationDrawing.TextKind,
     shading: GraphicsContext.Shading, in context: inout GraphicsContext
   ) {
-    let font: Font =
+    let style: TypeStyle =
       switch kind {
-      case .chordSymbol: .caption
-      case .tabFret: .caption2.weight(.semibold).monospacedDigit()
-      case .tupletNumber: .caption2.italic()
-      case .endingNumber: .caption2
+      case .chordSymbol: .meta
+      case .tabFret: .small.weight(.semibold).monospaced()
+      case .tupletNumber: .small.italic()
+      case .endingNumber: .small
       }
 
-    var resolved = context.resolve(Text(text).font(font))
+    var resolved = context.resolve(Text(text).font(style.font(in: context.environment)))
     resolved.shading = shading
 
     switch kind {
@@ -369,7 +368,7 @@ private struct NotationStaff: View {
       let knockout = CGRect(
         x: point.x - size.width / 2 - 1, y: point.y - size.height / 2, width: size.width + 2,
         height: size.height)
-      context.fill(Path(knockout), with: .color(Color(.secondarySystemBackground)))
+      context.fill(Path(knockout), with: .color(Color.card))
       context.draw(resolved, at: point, anchor: .center)
     case .chordSymbol:
       context.draw(resolved, at: point, anchor: .bottomLeading)

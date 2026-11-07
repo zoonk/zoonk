@@ -3,7 +3,6 @@ package com.zoonk.android.feature.planlink
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,7 +24,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -45,15 +41,13 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.setup.selectedCheck
 import com.zoonk.android.feature.plan.phaseKindName
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.EmptyState
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.format.currentLocale
@@ -64,6 +58,7 @@ import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkOutline
 import com.zoonk.api.models.PlanLinkOutlinePhasesInner
@@ -107,7 +102,7 @@ internal fun PlanLinkScreen(
                     modifier = Modifier.padding(padding),
                 ) { beside ->
                     Column(
-                        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
+                        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 24.dp),
                         verticalArrangement = Arrangement.spacedBy(24.dp),
                     ) {
                         Heading(shown.value)
@@ -165,14 +160,18 @@ private fun NotFound(padding: PaddingValues) {
 @Composable
 private fun Heading(link: PlanLink) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Eyebrow(stringResource(R.string.planlink_eyebrow))
+        Text(
+            stringResource(R.string.planlink_eyebrow),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.titleSmall,
+        )
         Text(
             link.outline.subject?.title ?: stringResource(R.string.planlink_study_plan),
             modifier = Modifier.pageTitle(),
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.displaySmall,
         )
         link.outline.subject?.description?.let {
-            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.lead)
         }
     }
 }
@@ -186,7 +185,7 @@ private fun StartForm(
     Column(Modifier.widthIn(max = FORM_WIDTH), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(stringResource(R.string.planlink_minutes_label), fontWeight = FontWeight.Medium)
         DailyTimePicker(times, vm.minutes, stringResource(R.string.onboarding_schedule_time_label), vm::pick)
-        BusyButton(vm.isStarting, onStart, Modifier.fillMaxWidth()) {
+        Button(busy = vm.isStarting, onClick = onStart, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.planlink_start))
         }
         vm.failure?.let {

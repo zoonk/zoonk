@@ -42,7 +42,7 @@ struct CourseStartScreen: View {
   private var form: some View {
     let course = catalog.course(id: courseId)
 
-    return Form {
+    return ZoonkList {
       if let chapterId {
         StepHeader(
           subject: course.value?.course.title,
