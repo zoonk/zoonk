@@ -5,11 +5,12 @@ import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { replanWaitingGoal } from "../library/curriculum/replan-waiting-goals";
 import { afterPlanInputWrite, withPlanRetry } from "../plans/plan-conflict";
 import {
-  areDayLessonsComing,
+  hasOutliningCourses,
   loadDayStandInCourseIds,
 } from "../sessions/_utils/outlining-stand-ins";
 import { followSavedDay } from "../sessions/_utils/refresh-study-day-selection";
 import { findSavedDaySession } from "../sessions/_utils/saved-day-session";
+import { getOutlineStaleBefore } from "./outline-ahead";
 
 /**
  * The learner asked for their plan's lessons, so their day reads as getting them while the
@@ -37,6 +38,36 @@ async function clearLessonsAsk({ askedAt, goalId }: { askedAt: number; goalId: s
   });
 }
 
+async function hasUnfinishedOutlines({
+  askedAt,
+  courseIds,
+  now = new Date(),
+}: {
+  askedAt: number;
+  courseIds: readonly string[];
+  now?: Date;
+}): Promise<boolean> {
+  if (courseIds.length === 0) {
+    return false;
+  }
+
+  const since = new Date(askedAt);
+
+  if (since <= getOutlineStaleBefore(now)) {
+    return hasOutliningCourses({ courseIds, now });
+  }
+
+  const ended = await prisma.course.count({
+    where: {
+      id: { in: [...courseIds] },
+      outlineStatus: { in: ["completed", "failed"] },
+      updatedAt: { gte: since },
+    },
+  });
+
+  return ended < courseIds.length;
+}
+
 /** Trusted preparation only: the goal must come from an authorized POST or its workflow. */
 export async function followWrittenLessons({
   askedAt,
@@ -60,7 +91,7 @@ export async function followWrittenLessons({
       localDate: getDateInTimeZone({ date: now, timeZone }),
     });
 
-    if (!(await areDayLessonsComing({ askedAt: new Date(askedAt), courseIds, now }))) {
+    if (!(await hasUnfinishedOutlines({ askedAt, courseIds, now }))) {
       await clearLessonsAsk({ askedAt, goalId });
     }
   }
@@ -105,8 +136,8 @@ export async function endLessonsAsk({
   const dayCourseIds = await loadDayStandInCourseIds({ goal, localDate });
 
   if (
-    await areDayLessonsComing({
-      askedAt: new Date(askedAt),
+    await hasUnfinishedOutlines({
+      askedAt,
       courseIds: dayCourseIds.filter((courseId) => startedCourseIds.includes(courseId)),
     })
   ) {

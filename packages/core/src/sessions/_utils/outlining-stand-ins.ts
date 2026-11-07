@@ -5,7 +5,6 @@ import { listDayStandIns } from "../../lookahead/outline-window";
 import { readSkillCourses } from "../../lookahead/plan-outline-needs";
 
 const OUTLINING: GenerationStatus[] = ["pending", "running"];
-const ENDED: GenerationStatus[] = ["completed", "failed"];
 
 export type DayOutlines = "awaiting" | "idle" | null;
 
@@ -46,31 +45,17 @@ export async function loadDayStandInCourseIds({
   ];
 }
 
-export async function areDayLessonsComing({
-  askedAt = null,
+export async function hasOutliningCourses({
   client = prisma,
   courseIds,
   now = new Date(),
 }: {
-  askedAt?: Date | null;
   client?: TransactionClient;
   courseIds: readonly string[];
   now?: Date;
 }): Promise<boolean> {
   if (courseIds.length === 0) {
     return false;
-  }
-
-  if (askedAt && askedAt > getOutlineStaleBefore(now)) {
-    const ended = await client.course.count({
-      where: {
-        id: { in: [...courseIds] },
-        outlineStatus: { in: ENDED },
-        updatedAt: { gte: askedAt },
-      },
-    });
-
-    return ended < courseIds.length;
   }
 
   const outlining = await client.course.count({
@@ -87,7 +72,7 @@ export async function areDayLessonsComing({
 /**
  * Whether the day's stand-ins are getting lessons (`awaiting`) or wait for someone to ask (`idle`);
  * null without stand-ins. They're getting lessons while an outline is writing a course they need or
- * the learner's fresh ask has not had all its outlines end yet.
+ * the learner's own ask is fresh.
  */
 export async function getDayOutlines(input: DayOutlinesInput): Promise<DayOutlines> {
   const { client = prisma, goal, now = new Date() } = input;
@@ -97,12 +82,12 @@ export async function getDayOutlines(input: DayOutlinesInput): Promise<DayOutlin
     return null;
   }
 
-  const plan = await client.plan.findUnique({
-    select: { lessonsAskedAt: true },
-    where: { goalId: goal.id },
-  });
+  const [outlining, asked] = await Promise.all([
+    hasOutliningCourses({ client, courseIds, now }),
+    client.plan.count({
+      where: { goalId: goal.id, lessonsAskedAt: { gt: getOutlineStaleBefore(now) } },
+    }),
+  ]);
 
-  return (await areDayLessonsComing({ askedAt: plan?.lessonsAskedAt, client, courseIds, now }))
-    ? "awaiting"
-    : "idle";
+  return outlining || asked > 0 ? "awaiting" : "idle";
 }
