@@ -464,6 +464,26 @@ describe("tutor answers", () => {
     expect(stylesheets).toHaveLength(0);
   });
 
+  it("gives Tab to a formula wider than the answer, and not to one that fits", async () => {
+    await atViewport(PHONE, async () => {
+      const { api, lesson } = lessonWithTutor();
+      const wide = String.raw`E = \frac{(6{,}63 \times 10^{-34}\ \text{J·s})(3{,}00 \times 10^{8}\ \text{m/s})}{7{,}00 \times 10^{-7}\ \text{m}} \approx 2{,}84 \times 10^{-19}\ \text{J} \approx 1{,}8\ \text{eV}`;
+
+      api.next("answer", () =>
+        Promise.resolve(tutorAnswerResponse(`$$\n${wide}\n$$\n\n$$\na + b = c\n$$`)),
+      );
+
+      playLesson({ lesson });
+      const sheet = await openTutor();
+      await ask(sheet, "How much energy does a photon carry?");
+      await expectCount(sheet.getByRole("math"), 2);
+
+      await expect
+        .poll(() => sheet.element().querySelectorAll("[data-slot='display-math'] > [tabindex]"))
+        .toHaveLength(1);
+    });
+  });
+
   it("is done once it's saved, and what memory learned follows", async () => {
     const { api, lesson } = lessonWithTutor();
     const stream = tutorAnswerStream();

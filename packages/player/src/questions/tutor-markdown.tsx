@@ -1,6 +1,7 @@
 "use client";
 
 import { isTutorAppPath, readTutorBlockLink } from "@zoonk/core/lesson-questions/app-links";
+import { DisplayMath } from "@zoonk/learn/rich-text/display-math";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -145,7 +146,33 @@ function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
   );
 }
 
-const TUTOR_ANSWER_COMPONENTS: Components = { a: TutorAnswerLink };
+/** KaTeX's MathML for a formula on its own line: `<span class="katex"><math display="block">`. */
+function isDisplayMath(node: ExtraProps["node"]): boolean {
+  return (
+    node?.children.some(
+      (child) =>
+        child.type === "element" &&
+        child.tagName === "math" &&
+        child.properties.display === "block",
+    ) ?? false
+  );
+}
+
+function AnswerSpan({ node, ...props }: ComponentProps<"span"> & ExtraProps) {
+  if (isDisplayMath(node)) {
+    return (
+      <DisplayMath>
+        <span {...props} />
+      </DisplayMath>
+    );
+  }
+
+  return <span {...props} />;
+}
+
+const ANSWER_COMPONENTS: Components = { span: AnswerSpan };
+
+const TUTOR_ANSWER_COMPONENTS: Components = { a: TutorAnswerLink, span: AnswerSpan };
 
 function BlockOpenFailed() {
   const t = useExtracted();
@@ -162,7 +189,6 @@ function BlockOpenFailed() {
 // and scrolls instead of breaking them letter by letter.
 const TUTOR_MARKDOWN_CLASS = cn(
   "min-w-0 wrap-anywhere [&_a]:underline [&_a]:underline-offset-4",
-  "**:has-[>math[display=block]]:scroll-fade-x **:has-[>math[display=block]]:block **:has-[>math[display=block]]:overflow-x-auto **:has-[>math[display=block]]:overflow-y-hidden **:has-[>math[display=block]]:py-1",
   "**:data-[streamdown=code-block]:bg-background **:data-[streamdown=code-block-body]:scroll-fade-x **:data-[streamdown=code-block-body]:border-0 **:data-[streamdown=code-block-body]:bg-transparent",
   "**:data-[streamdown=table-wrapper]:bg-background [&_[data-streamdown=table-wrapper]>div:has(>table)]:scroll-fade-x **:data-[streamdown=table-wrapper]:wrap-normal [&_[data-streamdown=table-wrapper]>div:has(>table)]:border-0 [&_[data-streamdown=table-wrapper]>div:has(>table)]:bg-transparent",
 );
@@ -215,7 +241,7 @@ export function TutorMarkdown({
       <Streamdown
         animated={isAnimating}
         className={TUTOR_MARKDOWN_CLASS}
-        components={appLinks ? TUTOR_ANSWER_COMPONENTS : undefined}
+        components={appLinks ? TUTOR_ANSWER_COMPONENTS : ANSWER_COMPONENTS}
         controls={false}
         disallowedElements={DISALLOWED_ANSWER_ELEMENTS}
         isAnimating={isAnimating}
