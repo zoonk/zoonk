@@ -10,7 +10,8 @@ struct LessonOption: Identifiable, Hashable {
   var picture: LessonStepImage?
 }
 
-/// Number keys pick them on a hardware keyboard, as on main.
+/// Main's `PlayerChoiceSceneOptions`: number keys pick them on a hardware keyboard, and once
+/// checked only the right option and a wrong pick stay, unless it was a guess.
 struct LessonOptionList: View {
   @Environment(\.lessonScreenHeight) private var screenHeight
 
@@ -18,7 +19,7 @@ struct LessonOptionList: View {
   let selectedId: String?
   let isChecked: Bool
   let isLocked: Bool
-  /// A guess is never wrong: a missed pick keeps its plain look.
+  /// A guess is never wrong: a missed pick says "Your guess".
   var isGuess = false
   /// Picture options are still being drawn: a missing picture shows its placeholder.
   var picturesPending = false
@@ -28,52 +29,54 @@ struct LessonOptionList: View {
     options.contains { $0.pictureAlt != nil }
   }
 
+  private var shown: [(marker: Int, option: LessonOption)] {
+    options.enumerated().compactMap { index, option in
+      isChecked && result(option) == nil && !isGuess ? nil : (index + 1, option)
+    }
+  }
+
   var body: some View {
     if isPictureGrid {
       LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 10)], spacing: 10) {
-        buttons
+        pictureButtons
       }
     } else {
       VStack(spacing: 10) {
-        buttons
+        ForEach(shown, id: \.option.id) { marker, option in
+          AnswerOption(
+            marker: marker, isPicked: option.id == selectedId, result: result(option),
+            isGuessed: isGuess, isLocked: isLocked || isChecked
+          ) {
+            select(option.id)
+          } label: {
+            VStack(alignment: .leading, spacing: 2) {
+              LessonRichText(option.text)
+
+              if let detail = option.detail {
+                Text(detail)
+                  .typeStyle(.note)
+                  .foregroundStyle(.mutedForeground)
+              }
+            }
+          }
+        }
       }
     }
   }
 
-  private var buttons: some View {
-    ForEach(Array(options.enumerated()), id: \.element.id) { index, option in
+  private var pictureButtons: some View {
+    ForEach(shown, id: \.option.id) { marker, option in
       Button {
         select(option.id)
       } label: {
-        if isPictureGrid {
-          pictureLabel(option)
-        } else {
-          rowLabel(option)
-        }
+        pictureLabel(option)
       }
       .buttonStyle(LessonOptionStyle(mark: mark(option)))
-      .disabled(isLocked)
-      .modifier(NumberShortcut(index: index))
+      .disabled(isLocked || isChecked)
+      .modifier(NumberShortcut(index: marker - 1))
       .accessibilityAddTraits(option.id == selectedId ? .isSelected : [])
-      .modifier(PictureOptionLabel(option: option, isPicture: isPictureGrid, isChecked: isChecked))
+      .modifier(PictureOptionLabel(option: option, isPicture: true, isChecked: isChecked))
       .accessibilityValue(verdictValue(option))
-    }
-  }
-
-  private func rowLabel(_ option: LessonOption) -> some View {
-    HStack(alignment: .firstTextBaseline, spacing: 12) {
-      VStack(alignment: .leading, spacing: 2) {
-        LessonRichText(option.text)
-
-        if let detail = option.detail {
-          Text(detail)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-        }
-      }
-
-      Spacer(minLength: 0)
-      verdictSymbol(option)
     }
   }
 
@@ -125,22 +128,30 @@ struct LessonOptionList: View {
     }
   }
 
-  private func mark(_ option: LessonOption) -> LessonOptionStyle.Mark {
-    let isSelected = option.id == selectedId
-
+  /// Main's `getOptionResult`.
+  private func result(_ option: LessonOption) -> AnswerOptionResult? {
     guard isChecked else {
-      return isSelected ? .selected : .plain
+      return nil
     }
 
     if option.isCorrect == true {
       return .right
     }
 
-    if isSelected {
-      return isGuess ? .selected : .wrong
+    guard option.id == selectedId else {
+      return nil
     }
 
-    return .dimmed
+    return isGuess ? .guess : .wrong
+  }
+
+  private func mark(_ option: LessonOption) -> LessonOptionStyle.Mark {
+    switch result(option) {
+    case .right: .right
+    case .wrong: .wrong
+    case .guess: .guess
+    case nil: option.id == selectedId ? .selected : .plain
+    }
   }
 }
 
@@ -175,7 +186,7 @@ struct NumberShortcut: ViewModifier {
 
 struct LessonOptionStyle: ButtonStyle {
   enum Mark {
-    case plain, selected, right, wrong, dimmed
+    case plain, selected, guess, right, wrong
 
     var symbol: String? {
       switch self {
@@ -186,49 +197,34 @@ struct LessonOptionStyle: ButtonStyle {
     }
   }
 
-  @Environment(\.colorSchemeContrast) private var contrast
-
   let mark: Mark
 
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
-      .font(.body.weight(.medium))
+      .typeStyle(.button)
       .foregroundStyle(foreground)
       .multilineTextAlignment(.leading)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .padding()
-      .background(background, in: .rect(cornerRadius: 16))
-      .overlay {
-        RoundedRectangle(cornerRadius: 16)
-          .strokeBorder(stroke, lineWidth: mark == .plain || mark == .dimmed ? 0 : 2)
-      }
-      .opacity(configuration.isPressed ? 0.75 : mark == .dimmed ? 0.6 : 1)
-      .contentShape(.rect(cornerRadius: 16))
+      .padding(.horizontal, 14)
+      .padding(.vertical, 12)
+      .answerSurface(tone, isPressed: configuration.isPressed)
   }
 
   private var foreground: Color {
     switch mark {
-    case .right: .success
-    case .wrong: .destructive
-    default: .primary
+    case .right: .successText
+    case .wrong: .destructiveText
+    default: Color(.foreground)
     }
   }
 
-  private var background: Color {
+  private var tone: AnswerTone {
     switch mark {
-    case .selected: .pick(contrast)
-    case .right: Color.success.opacity(0.15)
-    case .wrong: Color.destructive.opacity(0.15)
-    default: Color(.secondarySystemBackground)
-    }
-  }
-
-  private var stroke: Color {
-    switch mark {
-    case .selected: .primary
-    case .right: .success
-    case .wrong: .destructive
-    default: .clear
+    case .selected: .picked
+    case .guess: .guess
+    case .right: .right
+    case .wrong: .wrong
+    case .plain: .idle
     }
   }
 }
@@ -245,12 +241,12 @@ struct LessonWordTile: View {
         Text(word)
         if let romanization {
           Text(romanization)
-            .font(.caption)
-            .foregroundStyle(.secondary)
+            .typeStyle(.meta)
+            .foregroundStyle(.mutedForeground)
         }
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .opacity(isUsed ? 0.3 : 1)
     .disabled(isUsed)
   }

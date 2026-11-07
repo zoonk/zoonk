@@ -23,6 +23,8 @@ struct CertificateFacts: Decodable, Hashable, Identifiable, Sendable {
   let topics: [String]
   /// A language level's: what the learner can do.
   let canDo: [String]
+  /// A language level's: each skill the learner's answers raised, at its level when earned.
+  var skillLevels: [SkillLevel]?
   let lessonsStudied: Int?
   let lessonsTestedOut: Int?
   /// About how long the studied lessons take; nil when unknown.
@@ -31,6 +33,14 @@ struct CertificateFacts: Decodable, Hashable, Identifiable, Sendable {
   let locked: Bool
 
   var id: String { code }
+}
+
+extension CertificateFacts {
+  struct SkillLevel: Decodable, Hashable, Sendable {
+    /// Such as "B1" or "B2+".
+    let label: String
+    let skill: String
+  }
 }
 
 /// One of the learner's certificates. The public read refuses a locked one, so screens read the
@@ -78,6 +88,12 @@ struct Certificate: Decodable, Hashable, Identifiable, Sendable {
 
   var id: String { facts.code }
 
+  /// Main's `getCertificateDisplayUrl`: the page's address without its scheme.
+  var shownURL: String {
+    let host = (url.host() ?? "").replacing(/^www\./, with: "")
+    return "\(host)\(url.port.map { ":\($0)" } ?? "")\(url.path())"
+  }
+
   private enum CodingKeys: String, CodingKey {
     case imageUrls
     case linkedInUrl
@@ -97,6 +113,8 @@ struct Certificate: Decodable, Hashable, Identifiable, Sendable {
 struct CertificateUpNext: Equatable, Identifiable, Sendable {
   let id: String
   let title: String
+  /// A language goal's flag, as the API names it (`us`, `es-ct`); nil for other goals.
+  var languageFlag: String?
   /// The plan's share of lessons done, 0 to 1; nil for a language, which earns one by levels.
   let progress: Double?
 }
@@ -160,31 +178,45 @@ extension CertificateFacts {
     .joined(separator: "-")
   }
 
-  /// What the page's heading says, for VoiceOver on the picture.
-  var spokenTitle: String {
-    let date = completedOnText(.studyDay.year().month(.wide).day())
-
-    guard let name = recipientName else {
-      return [kindName, self.name, date].joined(separator: ", ")
+  /// Main's `useCertificateSentence`: the page's heading.
+  var sentence: String {
+    switch (kind, recipientName) {
+    case (.course, let name?):
+      String(
+        localized: "\(name) completed \(self.name)", table: "Certificates",
+        comment:
+          "A course certificate read aloud: the learner's name, then the course or its level, such as Python · Beginner"
+      )
+    case (.course, nil):
+      String(
+        localized: "\(self.name), completed on Zoonk", table: "Certificates",
+        comment:
+          "A course certificate's heading before the learner gives a name: the course or its level, such as Python · Beginner"
+      )
+    case (.languageLevel, let name?):
+      String(
+        localized: "\(name) completed level \(level ?? "") in \(languageName)",
+        table: "Certificates",
+        comment:
+          "A language level certificate read aloud: the learner's name, the level, the language")
+    case (.languageLevel, nil):
+      String(
+        localized: "Level \(level ?? "") in \(languageName), completed on Zoonk",
+        table: "Certificates",
+        comment:
+          "A language level certificate's heading before the learner gives a name: the level, then the language"
+      )
     }
+  }
 
-    let sentence =
-      switch kind {
-      case .course:
-        String(
-          localized: "\(name) completed \(self.name)", table: "Certificates",
-          comment:
-            "A course certificate read aloud: the learner's name, then the course or its level, such as Python · Beginner"
-        )
-      case .languageLevel:
-        String(
-          localized: "\(name) completed level \(level ?? "") in \(languageName)",
-          table: "Certificates",
-          comment:
-            "A language level certificate read aloud: the learner's name, the level, the language")
-      }
+  /// "October 28, 2026".
+  var completedOnLong: String {
+    completedOnText(.studyDay.year().month(.wide).day())
+  }
 
-    return [sentence, date].joined(separator: ", ")
+  /// What the page's heading says with its date, for VoiceOver on the picture.
+  var spokenTitle: String {
+    [sentence, completedOnLong].joined(separator: ", ")
   }
 
   var languageName: String {

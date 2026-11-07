@@ -18,6 +18,8 @@ struct TodaySessionSection: View {
   let writingStalled: Bool
   @Binding var disclosures: TodayDisclosures
   let open: (StudyBlock, Bool) -> Void
+  /// Main's tablet column heads the day with its action instead (`TodaySessionAction`).
+  var showsAction = true
   let prepare: () -> Void
 
   /// Done blocks shown before folding them into one row, and upcoming ones before "+N more".
@@ -38,16 +40,11 @@ struct TodaySessionSection: View {
     }
 
     Section {
-      if let freshStart {
-        Text(freshStart)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-      }
+      let lead = TodayDayLead(view: view)
 
-      mockFunding
-
-      if !session.blocks.isEmpty {
-        DayProgressRow(session: session)
+      if !view.dayLeadJoinsHeader, !lead.isEmpty {
+        lead
+          .listRowSeparator(.hidden)
       }
 
       queue
@@ -61,78 +58,14 @@ struct TodaySessionSection: View {
       }
     }
 
-    if let action {
+    if showsAction, TodaySessionAction.offers(view) {
       Section {
-        action
+        TodaySessionAction(
+          view: view, busy: busy, failed: failed, open: open, prepare: prepare)
       }
       .listRowBackground(Color.clear)
-      .listRowInsets(EdgeInsets())
+      .listRowInsets(.vertical, 0)
       .listSectionSpacing(.compact)
-    }
-  }
-
-  /// It belongs to the session it explains, so it goes once the learner starts, and a day with
-  /// nothing to start says its own words instead.
-  private var freshStart: String? {
-    let state = session.state
-    guard !view.studiedToday, !session.isStarted, session.dailyLimit?.reached != true,
-      state != .ahead, state != .rest
-    else {
-      return nil
-    }
-
-    let time = studyDuration(minutes: session.blocks.reduce(0) { $0 + $1.estimatedMinutes })
-
-    switch session.freshStart {
-    case .welcomeBack:
-      return session.examAccess.trialEnded
-        ? String(
-          localized: "Welcome back! Today takes about \(time), so it's easy to pick up again.",
-          table: "Today", comment: "A return after a break")
-        : String(
-          localized:
-            "Welcome back! Today is lighter, about \(time), so it's easy to pick up again.",
-          table: "Today", comment: "A return after a break")
-    case .newPhase:
-      return String(
-        localized: "A new phase starts today, with an easy warm-up first.", table: "Today",
-        comment: "A day starting a new phase")
-    case .newWeek:
-      return String(
-        localized: "A fresh week. Today starts with an easy warm-up.", table: "Today",
-        comment: "A day starting a new week")
-    case nil:
-      return nil
-    }
-  }
-
-  /// A return after a break already says the day is lighter, so it only names the mock.
-  @ViewBuilder
-  private var mockFunding: some View {
-    if let funding = view.mockFunding, session.state != .done, session.state != .rest,
-      let date = studyDate(funding.mockDate)
-    {
-      let day = date.formatted(.studyDay.month(.abbreviated).day())
-
-      HStack {
-        if session.freshStart == .welcomeBack {
-          Text(
-            "Saving time for \(day)'s mock exam", tableName: "Today",
-            comment:
-              "Why the day is lighter, on a return after a break that already says so; the argument is the mock's date, like 'May 5'"
-          )
-        } else {
-          Text(
-            "Lighter day: saving time for \(day)'s mock exam", tableName: "Today",
-            comment: "Why the day is lighter; the argument is the mock's date, like 'May 5'")
-        }
-
-        if !session.examAccess.includesMockExams {
-          PlusMark()
-        }
-      }
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
     }
   }
 
@@ -163,23 +96,25 @@ struct TodaySessionSection: View {
     }
 
     if let next {
-      blockButton(next, isNext: true)
-        .listRowSeparator(
-          next.canTestOut && next.chapterId != nil ? .hidden : .automatic, edges: .bottom)
-
       if next.canTestOut, let chapterID = next.chapterId {
-        Button {
-          router.open(.testOut(chapterId: chapterID))
-        } label: {
-          Text(
-            "Already know this? **Take the test**", tableName: "Today",
-            comment: "Skips the next lesson's chapter with its test"
-          )
-          .font(.footnote)
-          .foregroundStyle(.secondary)
+        VStack(alignment: .blockTitle, spacing: 0) {
+          blockButton(next, isNext: true)
+
+          Button {
+            router.open(.testOut(chapterId: chapterID))
+          } label: {
+            Text(testOutLine)
+              .typeStyle(.meta)
+              .foregroundStyle(.mutedForeground)
+              .padding(.top, 6)
+          }
+          // A list row fires every default-style button in it; this one opens only the test.
+          .buttonStyle(.borderless)
         }
-        .listRowBackground(NextRowBackground())
-        .listRowSeparator(.hidden, edges: .top)
+        .currentRow()
+      } else {
+        blockButton(next, isNext: true)
+          .currentRow()
       }
     }
 
@@ -223,9 +158,28 @@ struct TodaySessionSection: View {
       }
       .tint(.primary)
       .disabled(busy != nil)
-      .listRowBackground(isNext ? NextRowBackground() : nil)
     } else {
       row
+    }
+  }
+
+  /// Main's link in the sentence: ink and underlined in its muted words.
+  private var testOutLine: AttributedString {
+    let line = AttributedString(
+      localized: "Already know this? **Take the test**", table: "Today",
+      comment: "Skips the next lesson's chapter with its test")
+
+    return line.runs[\.inlinePresentationIntent].reduce(into: AttributedString()) {
+      result, run in
+      var piece = AttributedString(line[run.1])
+
+      if run.0?.contains(.stronglyEmphasized) == true {
+        piece.inlinePresentationIntent = nil
+        piece.foregroundColor = Color(.foreground)
+        piece.underlineStyle = .single
+      }
+
+      result += piece
     }
   }
 
@@ -249,6 +203,44 @@ struct TodaySessionSection: View {
   private func countsTowardMission(_ block: StudyBlock) -> Bool {
     !session.fullMeal.earned
       && session.missions.contains { !$0.isDone && $0.waitReason == nil && $0.opens(block) }
+  }
+
+}
+
+/// The day's one main action: start or continue the session, get its lessons, its summary, or the
+/// Plan once the goal's date passed.
+struct TodaySessionAction: View {
+  @Environment(AppRouter.self) private var router
+
+  let view: TodayView
+  let busy: TodayDayView.Tap?
+  let failed: TodayDayView.Tap?
+  let open: (StudyBlock, Bool) -> Void
+  let prepare: () -> Void
+  /// Beside the page's title rather than across the column.
+  var isInHeader = false
+
+  private var session: StudyDay { view.session }
+
+  /// Whether the day has one, so a place that holds it can leave itself out.
+  static func offers(_ view: TodayView) -> Bool {
+    if view.isPastDate {
+      return true
+    }
+
+    if !view.upNextLessons.isEmpty {
+      return false
+    }
+
+    switch view.session.state {
+    case .underway: return view.session.nextBlock != nil
+    case .done, .prepare: return true
+    case .ahead, .limit, .rest, .waiting: return false
+    }
+  }
+
+  var body: some View {
+    action?.inHeader(isInHeader)
   }
 
   private var action: TodayMainAction? {
@@ -304,10 +296,25 @@ struct TodayMainAction: View {
   let kind: Kind
   let isBusy: Bool
   let failed: Bool
+  /// Beside the page's title, its own width, rather than across the column.
+  private var isInHeader = false
   let action: () -> Void
 
+  init(kind: Kind, isBusy: Bool, failed: Bool, action: @escaping () -> Void) {
+    self.kind = kind
+    self.isBusy = isBusy
+    self.failed = failed
+    self.action = action
+  }
+
+  func inHeader(_ isInHeader: Bool) -> Self {
+    var shown = self
+    shown.isInHeader = isInHeader
+    return shown
+  }
+
   var body: some View {
-    VStack(spacing: 8) {
+    VStack(alignment: isInHeader ? .trailing : .center, spacing: 8) {
       Button(action: action) {
         HStack {
           if isBusy {
@@ -316,7 +323,7 @@ struct TodayMainAction: View {
 
           title
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: isInHeader ? nil : .infinity)
       }
       .buttonStyle(.mainAction)
       .controlSize(.large)
@@ -324,7 +331,7 @@ struct TodayMainAction: View {
 
       if failed {
         FailureLine(message: failure)
-          .font(.footnote)
+          .typeStyle(.note)
       }
     }
   }
@@ -369,28 +376,129 @@ struct TodayMainAction: View {
   }
 }
 
+extension TodayView {
+  /// Main's order puts earlier unfinished work between the heading and the session's meter. Without
+  /// it, the day's lead sits in the heading's row: in a row of its own, the list's 44pt minimum row
+  /// height would hold the 6pt meter far from the title.
+  var dayLeadJoinsHeader: Bool { earlierWork.isEmpty }
+}
+
+/// What opens main's `TodaySession` before its queue: why the day is as it is, then its meter.
+struct TodayDayLead: View {
+  let view: TodayView
+
+  private var session: StudyDay { view.session }
+
+  var isEmpty: Bool { freshStart == nil && mockDay == nil && session.blocks.isEmpty }
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      if let freshStart {
+        Text(freshStart)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+      }
+
+      mockFunding
+
+      if !session.blocks.isEmpty {
+        DayProgressRow(session: session)
+      }
+    }
+  }
+
+  /// It belongs to the session it explains, so it goes once the learner starts, and a day with
+  /// nothing to start says its own words instead.
+  private var freshStart: String? {
+    let state = session.state
+    guard !view.studiedToday, !session.isStarted, session.dailyLimit?.reached != true,
+      state != .ahead, state != .rest
+    else {
+      return nil
+    }
+
+    let time = studyDuration(minutes: session.blocks.reduce(0) { $0 + $1.estimatedMinutes })
+
+    switch session.freshStart {
+    case .welcomeBack:
+      return session.examAccess.trialEnded
+        ? String(
+          localized: "Welcome back! Today takes about \(time), so it's easy to pick up again.",
+          table: "Today", comment: "A return after a break")
+        : String(
+          localized:
+            "Welcome back! Today is lighter, about \(time), so it's easy to pick up again.",
+          table: "Today", comment: "A return after a break")
+    case .newPhase:
+      return String(
+        localized: "A new phase starts today, with an easy warm-up first.", table: "Today",
+        comment: "A day starting a new phase")
+    case .newWeek:
+      return String(
+        localized: "A fresh week. Today starts with an easy warm-up.", table: "Today",
+        comment: "A day starting a new week")
+    case nil:
+      return nil
+    }
+  }
+
+  private var mockDay: String? {
+    guard let funding = view.mockFunding, session.state != .done, session.state != .rest,
+      let date = studyDate(funding.mockDate)
+    else {
+      return nil
+    }
+
+    return date.formatted(.studyDay.month(.abbreviated).day())
+  }
+
+  /// A return after a break already says the day is lighter, so it only names the mock.
+  @ViewBuilder
+  private var mockFunding: some View {
+    if let day = mockDay {
+      HStack {
+        if session.freshStart == .welcomeBack {
+          Text(
+            "Saving time for \(day)'s mock exam", tableName: "Today",
+            comment:
+              "Why the day is lighter, on a return after a break that already says so; the argument is the mock's date, like 'May 5'"
+          )
+        } else {
+          Text(
+            "Lighter day: saving time for \(day)'s mock exam", tableName: "Today",
+            comment: "Why the day is lighter; the argument is the mock's date, like 'May 5'")
+        }
+
+        if !session.examAccess.includesMockExams {
+          PlusMark()
+        }
+      }
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
+    }
+  }
+}
+
 private struct DayProgressRow: View {
   let session: StudyDay
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      if session.minutesLeft > 0 {
+    MeterParts(parts: session.meterParts)
+      .accessibilityElement(children: .ignore)
+      .accessibilityLabel(
         Text(
-          "\(studyDuration(minutes: session.minutesLeft)) left", tableName: "Today",
-          comment: "The time still to go in today's session"
-        )
-        .font(.subheadline.monospacedDigit())
-        .foregroundStyle(.secondary)
-      }
-
-      MeterParts(parts: session.meterParts)
-    }
-    .accessibilityElement(children: .ignore)
-    .accessibilityLabel(
-      Text(
-        "\(session.blocks.filter(\.isFinished).count) of \(session.blocks.count) done",
-        tableName: "Today", comment: "How far the day's session is"))
+          "\(session.blocks.filter(\.isFinished).count) of \(session.blocks.count) done",
+          tableName: "Today", comment: "How far the day's session is"))
   }
+}
+
+extension HorizontalAlignment {
+  private enum BlockTitle: AlignmentID {
+    static func defaultValue(in context: ViewDimensions) -> CGFloat { context[.leading] }
+  }
+
+  /// Where a `BlockRow`'s words start after its mark, for a line under them.
+  fileprivate static let blockTitle = HorizontalAlignment(BlockTitle.self)
 }
 
 struct BlockRow: View {
@@ -411,8 +519,8 @@ struct BlockRow: View {
       AccessibilityStack(alignment: .firstTextBaseline, spacing: 12, stackedSpacing: 2) {
         VStack(alignment: .leading, spacing: 2) {
           Text(block.displayTitle)
-            .font(isNext ? .body.weight(.semibold) : .body)
-            .foregroundStyle(block.isFinished ? .secondary : .primary)
+            .typeStyle(.rowTitle)
+            .foregroundStyle(block.isFinished ? .mutedForeground : .primary)
 
           if failed {
             FailureLine(
@@ -420,14 +528,14 @@ struct BlockRow: View {
                 "We couldn't open this step. Try again.", table: "Today",
                 comment: "Under a step of the day, or a mission, that didn't open")
             )
-            .font(.footnote)
+            .typeStyle(.note)
           }
 
           if !block.isFinished {
             ForEach(lines, id: \.self) { line in
               Text(line)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+                .typeStyle(.meta)
+                .foregroundStyle(.mutedForeground)
             }
           }
         }
@@ -435,6 +543,7 @@ struct BlockRow: View {
 
         trailing
       }
+      .alignmentGuide(.blockTitle) { $0[.leading] }
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(status)
@@ -456,8 +565,8 @@ struct BlockRow: View {
         }
 
         Text(studyDuration(minutes: block.estimatedMinutes))
-          .font(.footnote.monospacedDigit())
-          .foregroundStyle(.secondary)
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -523,6 +632,8 @@ private struct ComingLessonsRow: View {
   let failed: Bool
   let prepare: () -> Void
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
     switch coming {
     case .toPrepare:
@@ -544,14 +655,18 @@ private struct ComingLessonsRow: View {
       VStack(alignment: .leading, spacing: 2) {
         Text(
           "Your next lessons", tableName: "Today",
-          comment: "Holds the place of the day's lessons that aren't written yet")
+          comment: "Holds the place of the day's lessons that aren't written yet"
+        )
+        .typeStyle(.rowTitle)
 
         Group {
           switch coming {
           case .toPrepare:
             Text(
-              "Not written yet. **Get today's lessons**", tableName: "Today",
-              comment: "Asks for the day's next lessons, which nobody is writing")
+              AttributedString(
+                localized: "Not written yet. **Get today's lessons**", table: "Today",
+                comment: "Asks for the day's next lessons, which nobody is writing"),
+              legibility: legibilityWeight)
           case .beingWritten where writingStalled:
             Text(
               "Taking longer than usual", tableName: "Today",
@@ -564,15 +679,15 @@ private struct ComingLessonsRow: View {
             )
           }
         }
-        .font(.footnote)
-        .foregroundStyle(.secondary)
+        .typeStyle(.meta)
+        .foregroundStyle(.mutedForeground)
 
         if failed {
           FailureLine(
             message: LocalizedStringResource(
               "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved")
           )
-          .font(.footnote)
+          .typeStyle(.meta)
         }
       }
 
@@ -597,6 +712,7 @@ private struct PlusLessonRow: View {
         KindMark(kind: .lesson)
           .frame(minWidth: 20)
         Text(title)
+          .typeStyle(.rowTitle)
         Spacer(minLength: 8)
         Text("Plus", tableName: "Today", comment: "Marks a lesson that comes with Plus")
           .chip()
@@ -620,31 +736,34 @@ private struct FoldRow: View {
     } label: {
       HStack(spacing: 12) {
         Image(systemName: isDone ? "checkmark" : "ellipsis")
-          .foregroundStyle(isDone ? AnyShapeStyle(.success) : AnyShapeStyle(.secondary))
+          .foregroundStyle(isDone ? AnyShapeStyle(.success) : AnyShapeStyle(.mutedForeground))
           .frame(minWidth: 20)
           .accessibilityHidden(true)
 
-        if isDone {
-          Text("\(count) done", tableName: "Today", comment: "Folded done blocks")
-        } else if isOpen {
-          Text("Show less", tableName: "Today", comment: "Folds the day's later blocks")
-        } else {
-          Text("+\(count) more", tableName: "Today", comment: "Folded later blocks")
+        Group {
+          if isDone {
+            Text("\(count) done", tableName: "Today", comment: "Folded done blocks")
+          } else if isOpen {
+            Text("Show less", tableName: "Today", comment: "Folds the day's later blocks")
+          } else {
+            Text("+\(count) more", tableName: "Today", comment: "Folded later blocks")
+          }
         }
+        .typeStyle(.rowTitle)
 
         Spacer()
 
         if let minutes, minutes > 0, !isOpen {
           Text(studyDuration(minutes: minutes))
-            .font(.footnote.monospacedDigit())
+            .typeStyle(.data)
         }
 
         Image(systemName: "chevron.down")
           .rotationEffect(.degrees(isOpen ? 180 : 0))
-          .font(.footnote)
+          .typeStyle(.note)
           .accessibilityHidden(true)
       }
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
     .tint(.primary)
   }
@@ -791,7 +910,7 @@ struct TodayDayStatus: View {
 
         if let clause {
           Text(clause)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         switch link {
@@ -802,7 +921,7 @@ struct TodayDayStatus: View {
             router.open(.session)
           } label: {
             Text("See today's summary", tableName: "Today", comment: "Opens today's summary")
-              .fontWeight(.semibold)
+              .typeWeight(.semibold)
               .underline()
               .multilineTextAlignment(.leading)
           }
@@ -813,9 +932,9 @@ struct TodayDayStatus: View {
       }
     } icon: {
       Image(systemName: systemImage)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
-    .font(.subheadline)
+    .typeStyle(.note)
   }
 
   private static func seeYou(_ week: StudyWeek) -> String {
@@ -835,15 +954,6 @@ struct TodayDayStatus: View {
   }
 }
 
-/// A system fill over the row's own background, so it reads on dark rows (where a fill alone shows
-/// the black page through it) and grows with Increase Contrast.
-struct NextRowBackground: View {
-  var body: some View {
-    Color(.secondarySystemGroupedBackground)
-      .overlay(Color(.tertiarySystemFill))
-  }
-}
-
 /// Today shows the saved plan, and starting the session fits it to today's time, so the day that
 /// opens can differ from the one shown.
 private struct TodayEarlierWorkSection: View {
@@ -857,8 +967,8 @@ private struct TodayEarlierWorkSection: View {
           "Start with these. Starting your session fits the plan to today's time.",
           tableName: "Today", comment: "Why the day that opens can differ from the one shown"
         )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
 
         ForEach(Array(items.enumerated()), id: \.offset) { _, item in
           Text(item.title)
@@ -868,7 +978,7 @@ private struct TodayEarlierWorkSection: View {
           "Earlier unfinished work\u{00A0}· \(items.count.formatted())", tableName: "Today",
           comment: "Lessons left from earlier days, with how many"
         )
-        .font(.body.weight(.medium))
+        .typeStyle(.body.weight(.medium))
       }
     }
   }

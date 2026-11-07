@@ -53,7 +53,7 @@ struct LessonWaysOut: View {
       }
     }
     .buttonStyle(.borderless)
-    .font(.subheadline)
+    .typeStyle(.body)
   }
 
   static let dontKnowTitle = LocalizedStringResource(
@@ -70,12 +70,12 @@ struct LessonExampleLine: View {
     if let line {
       HStack(alignment: .firstTextBaseline, spacing: 12) {
         Image(systemName: "person")
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         LessonRichText(line)
       }
       .padding(.leading, 12)
       .overlay(alignment: .leading) {
-        Rectangle().fill(.separator).frame(width: 2)
+        Rectangle().fill(.border).frame(width: 2)
       }
       .accessibilityElement(children: .combine)
       .accessibilityLabel(
@@ -102,8 +102,8 @@ struct LessonScreenHelp: View {
       } icon: {
         Image(systemName: "bubble.left.and.text.bubble.right")
       }
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
 
       FlowLayout {
         ForEach(store.suggestionsBeside.prefix(2), id: \.id) { suggestion in
@@ -122,8 +122,7 @@ struct LessonScreenHelp: View {
             comment: "Opens the buddy to ask about the screen in the learner's own words")
         }
       }
-      .buttonStyle(.suggestionChip)
-      .font(.subheadline)
+      .buttonStyle(.outline)
     }
     .accessibilityElement(children: .contain)
   }
@@ -146,7 +145,7 @@ struct LessonAskBuddyOffer: View {
     if tutor.panel != nil, !isDismissed {
       VStack(alignment: .leading, spacing: 8) {
         Text(Self.message(reason, buddyName: buddyName))
-          .font(.subheadline)
+          .typeStyle(.body)
 
         ButtonRow {
           Button {
@@ -154,7 +153,7 @@ struct LessonAskBuddyOffer: View {
           } label: {
             askLabel
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
 
           Button {
             isDismissed = true
@@ -163,7 +162,7 @@ struct LessonAskBuddyOffer: View {
           }
           .buttonStyle(.borderless)
         }
-        .font(.subheadline)
+        .typeStyle(.body)
       }
       .padding(.top, 12)
       .overlay(alignment: .top) { Divider() }
@@ -294,15 +293,19 @@ extension PlayableLesson {
   }
 }
 
-/// Learners who don't follow a screen rarely think to ask the buddy, so one tap asks for them.
+/// Learners who don't follow a screen rarely think to ask the buddy, so one tap asks for them: the
+/// buddy's face beside their own words, as main's.
 struct LessonDidntGetIt: View {
   @Environment(\.lessonTutor) private var tutor
+  @Environment(LearnerSummaryStore.self) private var learnerSummary: LearnerSummaryStore?
 
   let store: LessonPlayerStore
 
   var body: some View {
     // A guest can't talk with the buddy yet: the tap would ask them to sign up instead.
     if tutor.panel != nil, !store.isGuest {
+      let buddy = learnerSummary?.summary.value?.buddy ?? BuddyLook()
+
       Button {
         store.ask(suggestionId: "simpler", sendsAtOnce: true)
       } label: {
@@ -313,12 +316,12 @@ struct LessonDidntGetIt: View {
               "Quiet button under a lesson's explanation, in the learner's own voice: what they'd say when the screen lost them (\"Não entendi\" in Portuguese). Tapping it has the buddy explain the screen more simply."
           )
         } icon: {
-          Image(systemName: "questionmark.bubble")
+          BuddyFace(kind: buddy.kind, glasses: buddy.glasses)
         }
       }
       .buttonStyle(.borderless)
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .typeStyle(.smallButton)
+      .foregroundStyle(.mutedForeground)
       .accessibilityHint(
         Text(
           "Your buddy explains this screen more simply", tableName: "Player",

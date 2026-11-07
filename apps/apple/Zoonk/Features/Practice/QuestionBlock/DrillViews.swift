@@ -62,7 +62,7 @@ struct DrillNoteView: View {
     {
       PracticeCallout(systemImage: drill.kind.systemImage) {
         if !isAnswered {
-          Text(drill.line).fontWeight(.medium)
+          Text(drill.line).typeWeight(.medium)
         }
 
         if let lastAnswer {
@@ -70,7 +70,7 @@ struct DrillNoteView: View {
             "Last time you answered: \(lastAnswer)", tableName: "Practice",
             comment: "A mistake drill's note: what the learner answered when they got it wrong."
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         if let lesson {
@@ -98,7 +98,7 @@ struct LessonLinkButton: View {
         Image(systemName: "book")
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.small)
   }
 }
@@ -110,8 +110,8 @@ struct DrillIdeaView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 20) {
       VStack(alignment: .leading, spacing: 6) {
-        Text(lesson.title).font(.title2.bold())
-        Text(drill.line).foregroundStyle(.secondary)
+        Text(lesson.title).typeStyle(.section)
+        Text(drill.line).foregroundStyle(.mutedForeground)
       }
 
       VStack(alignment: .leading, spacing: 0) {
@@ -119,8 +119,8 @@ struct DrillIdeaView: View {
           if index > 0 { Divider() }
           HStack(alignment: .firstTextBaseline, spacing: 12) {
             Text(index + 1, format: .number)
-              .font(.subheadline.monospacedDigit())
-              .foregroundStyle(.tertiary)
+              .typeStyle(.data)
+              .foregroundStyle(.faint)
             Text(idea)
           }
           .padding(.vertical, 10)
@@ -147,14 +147,14 @@ struct DrillCountdownView: View {
     let end = start.addingTimeInterval(TimeInterval(seconds))
 
     HStack(spacing: 12) {
-      Image(systemName: "timer").foregroundStyle(.secondary).accessibilityHidden(true)
+      Image(systemName: "timer").foregroundStyle(.mutedForeground).accessibilityHidden(true)
       ProgressView(timerInterval: start...end, countsDown: true) {
         EmptyView()
       } currentValueLabel: {
         EmptyView()
       }
       Text(timerInterval: start...end, countsDown: true)
-        .font(.subheadline.monospacedDigit().weight(.medium))
+        .typeStyle(.body.weight(.medium).monospaced())
         .frame(minWidth: 44, alignment: .trailing)
         .accessibilityLabel(
           Text(

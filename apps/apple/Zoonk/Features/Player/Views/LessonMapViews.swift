@@ -141,8 +141,8 @@ struct LessonMapView: View {
           comment:
             "Under a lesson map whose ideas are levels, the smallest first, such as an organism inside a population."
         )
-        .font(.footnote)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)
       }
@@ -154,6 +154,7 @@ struct LessonMapView: View {
 /// squeeze two.
 private struct LessonMindMap: View {
   @Environment(\.stacksContent) private var isStacked
+  @Environment(\.colorSchemeContrast) private var contrast
   @ScaledMetric(relativeTo: .subheadline) private var minimumIdeaWidth: CGFloat = 150
 
   let title: String
@@ -165,11 +166,11 @@ private struct LessonMindMap: View {
       minimumColumnWidth: isStacked ? .infinity : minimumIdeaWidth
     ) {
       Text(title)
-        .font(.subheadline.weight(.semibold))
+        .typeStyle(.body.weight(.semibold))
         .multilineTextAlignment(.center)
         .padding(.vertical, 8)
         .padding(.horizontal, 14)
-        .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+        .background(.muted, in: .rect(cornerRadius: Radius.lg, style: .continuous))
         .anchorPreference(key: LessonMindMapAnchors.self, value: .bounds) {
           LessonMindMapAnchors(center: $0)
         }
@@ -186,7 +187,7 @@ private struct LessonMindMap: View {
       GeometryReader { proxy in
         if let center = anchors.center.map({ proxy[$0] }) {
           Self.connectors(from: center, to: anchors.ideas.values.map { proxy[$0] })
-            .stroke(.separator, lineWidth: 1.5)
+            .stroke(contrast == .increased ? Color(.foreground) : .input, lineWidth: 1.5)
         }
       }
     }
@@ -293,8 +294,6 @@ private struct LessonMindMapIdea: View {
   let idea: LessonSummary.Idea
 
   var body: some View {
-    let shape = RoundedRectangle(cornerRadius: 14, style: .continuous)
-
     VStack(alignment: .leading, spacing: 6) {
       HStack(spacing: 8) {
         if let icon = idea.icon {
@@ -303,27 +302,25 @@ private struct LessonMindMapIdea: View {
 
         VStack(alignment: .leading, spacing: 0) {
           Text(number, format: .number)
-            .font(.caption.monospacedDigit())
-            .foregroundStyle(.secondary)
+            .typeStyle(.data)
+            .foregroundStyle(.faint)
 
           if let label = idea.label {
             Text(label)
-              .font(.subheadline.weight(.semibold))
+              .typeStyle(.body.weight(.semibold))
+              .foregroundStyle(Color(.foreground))
           }
         }
       }
 
       LessonRichText(idea.text)
-        .font(.footnote)
-        .foregroundStyle(idea.label == nil ? .primary : .secondary)
+        .typeStyle(.body)
+        .foregroundStyle(idea.label == nil ? Color(.foreground) : .mutedForeground)
         .fixedSize(horizontal: false, vertical: true)
     }
-    .padding(10)
+    .padding(12)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .background(.background, in: shape)
-    .overlay {
-      shape.strokeBorder(.separator)
-    }
+    .panel()
     .accessibilityElement(children: .combine)
   }
 }

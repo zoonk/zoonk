@@ -60,6 +60,7 @@ import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.selectionAnswer
 import com.zoonk.android.feature.activities.selectionIds
 import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf25FieldsSourcesInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf25Value as SourceComparisonContent
@@ -134,7 +135,7 @@ private fun SourceCard(
     val details = listOfNotNull(citation.title, citation.publisher, citation.year?.toString()).joinToString(", ")
 
     Surface(
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(ZoonkRadius.option),
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = Modifier.fillMaxWidth(),
@@ -293,7 +294,7 @@ private fun passageColors() =
         unmarked = MaterialTheme.zoonk.vizAccent,
         marked = MaterialTheme.zoonk.vizHighlight.copy(alpha = SOFT),
         correct = MaterialTheme.colorScheme.tertiary.copy(alpha = PASSAGE_TINT),
-        incorrect = MaterialTheme.colorScheme.error.copy(alpha = PASSAGE_TINT),
+        incorrect = MaterialTheme.zoonk.destructive.copy(alpha = PASSAGE_TINT),
         missed = MaterialTheme.colorScheme.onTertiaryContainer,
     )
 

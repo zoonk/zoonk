@@ -39,7 +39,7 @@ private struct GoalPlanView: View {
       }
     }
     .navigationTitle(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"))
-    .navigationSubtitle(subtitle(plan.value?.plan) ?? Text(verbatim: ""))
+    .navigationSubtitle(daysLeft(plan.value?.plan) ?? "")
   }
 
   @ViewBuilder
@@ -71,7 +71,7 @@ private struct GoalPlanView: View {
         } label: {
           Text("Try again", tableName: "Plan", comment: "Retries loading the plan")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .lonePage()
     case .idle, .loading:
@@ -79,28 +79,38 @@ private struct GoalPlanView: View {
         .lonePage()
     }
   }
+}
 
-  private func subtitle(_ plan: GoalPlan?) -> Text? {
-    guard let plan, let targetDate = plan.schedule.targetDate, targetDate >= plan.today else {
-      return nil
-    }
-
-    let days = PlanDate.days(from: plan.today, to: targetDate)
-
-    if days == 0 {
-      return Text("The day is here", tableName: "Plan", comment: "Plan subtitle on the goal's day")
-    }
-
-    if plan.schedule.targetDateEstimated {
-      return Text(
-        "~\(days) days left", tableName: "Plan",
-        comment: "Plan subtitle: about how many days are left until the goal's estimated date")
-    }
-
-    return Text(
-      "\(days) days left", tableName: "Plan",
-      comment: "Plan subtitle: how many days are left until the goal's date")
+private func daysLeft(_ plan: GoalPlan?) -> String? {
+  guard let plan, let targetDate = plan.schedule.targetDate, targetDate >= plan.today else {
+    return nil
   }
+
+  let days = PlanDate.days(from: plan.today, to: targetDate)
+
+  if days == 0 {
+    return String(
+      localized: "The day is here", table: "Plan", comment: "Plan subtitle on the goal's day")
+  }
+
+  if plan.schedule.targetDateEstimated {
+    return String(
+      localized: "~\(days) days left", table: "Plan",
+      comment: "Plan subtitle: about how many days are left until the goal's estimated date")
+  }
+
+  return String(
+    localized: "\(days) days left", table: "Plan",
+    comment: "Plan subtitle: how many days are left until the goal's date")
+}
+
+/// Main's eyebrow: the goal, then the days left until its date.
+private func planEyebrow(goal: LearnerGoal, plan: GoalPlan) -> Text {
+  guard let left = daysLeft(plan) else {
+    return Text(goal.title)
+  }
+
+  return Text(verbatim: "\(goal.title)\u{00A0}· \(left)")
 }
 
 /// A plan is built while the questions are still answered, on a time the learner hasn't chosen
@@ -137,6 +147,7 @@ private struct PlanSetupLeft: View {
 }
 
 private struct PlanContent: View {
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(AppRouter.self) private var router
   @Environment(CertificatesStore.self) private var certificates
   @Environment(PlanStore.self) private var store
@@ -154,43 +165,64 @@ private struct PlanContent: View {
     let structure = syllabus.flatMap { $0.hasSubjectPages ? $0 : nil }
     let context = PlanContext(
       goal: goal, plan: plan, adjust: { adjusting = $0 }, report: { isReporting = true },
-      show: { sheet = $0 }, claimCertificate: claimCertificate)
+      show: { sheet = $0 }, claimCertificate: claimCertificate, showClaim: show)
 
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
+        header
         PlanRoadmapSection(context: context, structure: structure)
-        structureSections(context: context, structure: structure)
+        structureSections(context: context, structure: structure, namesChoices: false)
       }
     } secondary: {
-      List {
+      ZoonkList {
         PlanNumbersSection(context: context, syllabus: syllabus)
-        PlanSuggestionSection(context: context, answer: $slotAnswer)
+        PlanSuggestionSection(context: context, answer: $slotAnswer, isInline: true)
         NextOnPathSection(context: context)
         PlanMoreSection(goal: goal)
         PlanSettingsSection(context: context)
       }
     } single: {
-      List {
+      ZoonkList {
+        header
         PlanRoadmapSection(context: context, structure: structure)
         PlanNumbersSection(context: context, syllabus: syllabus)
         PlanSuggestionSection(context: context, answer: $slotAnswer)
-        structureSections(context: context, structure: structure)
-        NextOnPathSection(context: context)
-        PlanMoreSection(goal: goal)
+        structureSections(context: context, structure: structure, namesChoices: true)
+
+        // Main's tablet column: what's next beside the other places.
+        if horizontalSizeClass == .regular {
+          BlockGridSection {
+            NextOnPathSection(context: context)
+            PlanMoreSection(goal: goal)
+          }
+        } else {
+          NextOnPathSection(context: context)
+          PlanMoreSection(goal: goal)
+        }
+
         PlanSettingsSection(context: context)
       }
     }
+    .barTitleAfterHero(String(localized: "Plan", table: "Plan", comment: "Title of the Plan tab"))
     .modifier(PlanToolbar(context: context))
-    .planSheets($sheet, context: context, syllabus: syllabus)
+    .planSheets($sheet, context: context, syllabus: syllabus, slotAnswer: $slotAnswer)
     .completionMoments(certificates: claimed)
     .loads(courseEnd, refreshable: false)
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: store)
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
     .feedbackSheet(
       isPresented: $isReporting,
       context: FeedbackContext(contentID: plan.planId, contentKind: .plan), isReport: true)
+  }
+
+  private var header: some View {
+    Section {
+      PageHeader(
+        Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"),
+        eyebrow: planEyebrow(goal: goal, plan: plan))
+    }
   }
 
   /// An exam's course can finish before its plan does: its exam-day mocks come after.
@@ -200,42 +232,66 @@ private struct PlanContent: View {
 
   /// The learner asked for them, so when every moment already played, the certificate opens
   /// instead.
-  private func claimCertificate() async -> Bool {
+  private func claimCertificate() async -> PlanClaim? {
     switch await certificates.claim(goalID: goal.id) {
     case .done(let claimed) where !claimed.isEmpty:
       let unshown = claimed.filter { !$0.wasShown }.map(\.facts)
 
       if !unshown.isEmpty {
-        self.claimed = unshown
+        return .moments(unshown)
       } else if let only = claimed.first, claimed.count == 1 {
-        sheet = .certificate(code: only.facts.code)
+        return .certificate(code: only.facts.code)
       } else {
-        router.present(.account(.certificates))
+        return .certificates
       }
-      return true
-    case .done, .failed: return false
-    case .obsolete: return true
+    case .done, .failed: return nil
+    case .obsolete: return .unchanged
+    }
+  }
+
+  private func show(_ claim: PlanClaim) {
+    switch claim {
+    case .moments(let facts): claimed = facts
+    case .certificate(let code): sheet = .certificate(code: code)
+    case .certificates: router.present(.account(.certificates))
+    case .unchanged: break
     }
   }
 
   @ViewBuilder
-  private func structureSections(context: PlanContext, structure: GoalSyllabus?) -> some View {
+  private func structureSections(
+    context: PlanContext, structure: GoalSyllabus?, namesChoices: Bool
+  ) -> some View {
     if let structure {
-      PlanSyllabusSection(goalKind: goal.kind, syllabus: structure)
+      // Unpicked choices are the suggestion's; beside the page its settings name the pick.
+      PlanSyllabusSection(
+        goalKind: goal.kind, syllabus: structure,
+        choices: namesChoices ? context.plan.examChoices.filter { !$0.subjects.isEmpty } : [],
+        change: { context.adjust(.choice($0)) })
     } else {
       PlanPathSection(context: context, course: context.plan.libraryCourse)
     }
   }
 }
 
+/// What claiming the plan's certificates earned, for the Plan to show.
+enum PlanClaim {
+  /// Moments that haven't played yet.
+  case moments([CertificateFacts])
+  case certificate(code: String)
+  case certificates
+  case unchanged
+}
+
 struct PlanContext {
   let goal: LearnerGoal
   let plan: GoalPlan
-  let adjust: (AdjustPlanSheet.Section) -> Void
+  var adjust: (AdjustPlanSheet.Section) -> Void
   var report: () -> Void = {}
   var show: (PlanSheet) -> Void
-  /// False when it didn't save; the Plan plays the certificate's moment.
-  var claimCertificate: () async -> Bool = { false }
+  /// Nil when it didn't save; `showClaim` shows what it earned.
+  var claimCertificate: () async -> PlanClaim? = { nil }
+  var showClaim: (PlanClaim) -> Void = { _ in }
 
   var isPaused: Bool { goal.status == .paused }
 }

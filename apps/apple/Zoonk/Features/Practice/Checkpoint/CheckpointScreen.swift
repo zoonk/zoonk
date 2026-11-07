@@ -152,7 +152,7 @@ struct CheckpointScreen: View {
           "Every question is answered.", tableName: "Practice",
           comment: "A checkpoint with every answer in."
         )
-        .font(.title3.weight(.semibold))
+        .typeStyle(.section)
       }
     } response: {
       if let asked {
@@ -168,7 +168,7 @@ struct CheckpointScreen: View {
                 Text(seeWhyAtEnd)
               }
             }
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
         }
       }
@@ -365,7 +365,7 @@ private struct ShieldGauge: View {
       .monospacedDigit()
     }
     .tint(.success)
-    .font(.subheadline)
+    .typeStyle(.body)
   }
 }
 
@@ -455,7 +455,7 @@ private struct CheckpointResultView: View {
               "Review the answers", tableName: "Practice",
               comment: "Opens a finished checkpoint's answers with why."
             )
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
           }
         }
       }
@@ -474,12 +474,12 @@ private struct CheckpointRewards: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text("Rewards", tableName: "Practice", comment: "Heading over what a won challenge earned.")
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
 
       LabeledContent {
         Text("+\(brainPower)", tableName: "Practice", comment: "Brain Power a challenge added.")
           .monospacedDigit()
-          .foregroundStyle(.brain)
+          .foregroundStyle(.brainText)
       } label: {
         Label {
           Text("Brain Power", tableName: "Practice", comment: "A challenge's Brain Power reward.")
@@ -520,7 +520,7 @@ private struct CheckpointRewards: View {
         Text(
           "Next phase", tableName: "Practice", comment: "Heading over the phase that comes next."
         )
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
         .padding(.top, 8)
 
         Label {

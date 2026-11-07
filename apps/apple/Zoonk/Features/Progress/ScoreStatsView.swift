@@ -46,7 +46,7 @@ private struct ScoreTiles: View {
 
       StatTile(
         label: Text("Period", tableName: "Progress", comment: "Tile: the days Score counts"),
-        value: bigQuantity(dayCount(90)),
+        quantity: dayCount(90),
         systemImage: "calendar",
         detail: Text(
           "Back from today", tableName: "Progress",
@@ -109,26 +109,26 @@ struct ScoreTrendChart: View {
           x: .value(
             Text("Week", tableName: "Progress", comment: "Score chart axis: a week"), selected.date)
         )
-        .foregroundStyle(Color(.separator))
+        .foregroundStyle(Color.border)
         .annotation(position: .top, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
           VStack(alignment: .leading, spacing: 2) {
             Text(weekLabel(selected.date))
-              .font(.caption.monospacedDigit())
-              .foregroundStyle(.secondary)
+              .typeStyle(.data)
+              .foregroundStyle(.mutedForeground)
             Text(metricPercent(selected.point.performance.score))
-              .font(.subheadline.weight(.medium).monospacedDigit())
-              .foregroundStyle(.success)
+              .typeStyle(.note.weight(.medium).monospaced())
+              .foregroundStyle(.successText)
             Text(
               "\(selected.point.performance.totalAnswers) answers", tableName: "Progress",
               comment: "A count of answers"
             )
-            .font(.caption)
-            .foregroundStyle(.secondary)
+            .typeStyle(.meta)
+            .foregroundStyle(.mutedForeground)
           }
           .padding(.horizontal, 12)
           .padding(.vertical, 8)
           .background(.background, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-          .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(.separator))
+          .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(.border))
           .accessibilityHidden(true)
         }
       }
@@ -136,7 +136,7 @@ struct ScoreTrendChart: View {
     .chartYScale(domain: 0...100)
     .chartYAxis {
       AxisMarks(position: .leading, values: [0, 25, 50, 75, 100]) {
-        AxisGridLine()
+        AxisGridLine().foregroundStyle(.vizGrid)
         AxisValueLabel()
       }
     }

@@ -19,13 +19,13 @@ struct EssayScoreSections: View {
       Section {
         VStack(alignment: .leading, spacing: 4) {
           Text("Too short to grade", tableName: "Essay", comment: "An essay too short to grade")
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
           if !isClosed {
             Text(
               "Write the whole essay, then send it again.", tableName: "Essay",
               comment: "What to do with an essay too short to grade"
             )
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
         }
       }
@@ -33,13 +33,13 @@ struct EssayScoreSections: View {
       Section {
         VStack(alignment: .leading, spacing: 4) {
           Text(MockLabels.range(low: grade.range.low, high: grade.range.high))
-            .font(.largeTitle.weight(.semibold).monospacedDigit())
+            .typeStyle(.momentReadout)
           Text(
             "Estimated score, from 0 to \(MockLabels.number(grade.total.maxScore))",
             tableName: "Essay", comment: "Under an essay's estimated range"
           )
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
         }
         .accessibilityElement(children: .combine)
 
@@ -52,11 +52,12 @@ struct EssayScoreSections: View {
             .monospacedDigit()
           } label: {
             Text(criterion.name)
-              .fontWeight(criterion.id == grade.nextStep?.criterionId ? .semibold : .regular)
+              .typeWeight(criterion.id == grade.nextStep?.criterionId ? .semibold : .regular)
           }
         }
       } header: {
-        Text("Score by criterion", tableName: "Essay", comment: "Each criterion's score")
+        SectionTitle(
+          Text("Score by criterion", tableName: "Essay", comment: "Each criterion's score"))
       }
     }
   }
@@ -71,23 +72,24 @@ struct EssayNextStepSections: View {
         if let next = grade.nextStep {
           VStack(alignment: .leading, spacing: 4) {
             if let criterion = grade.nextStepCriterion {
-              Text(criterion.name).font(.headline)
+              Text(criterion.name).typeStyle(.body.weight(.semibold))
             }
             Text(next.text)
           }
         } else {
           VStack(alignment: .leading, spacing: 4) {
             Text("Nothing left to work on", tableName: "Essay", comment: "Full marks")
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
             Text(
               "Every criterion has full marks in this estimate.", tableName: "Essay",
               comment: "Full marks on every criterion"
             )
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
         }
       } header: {
-        Text("Next step", tableName: "Essay", comment: "The one thing to work on next")
+        SectionTitle(
+          Text("Next step", tableName: "Essay", comment: "The one thing to work on next"))
       }
 
       if let elements = grade.enemInterventionElements {
@@ -97,7 +99,7 @@ struct EssayNextStepSections: View {
               Text(element.name)
             } icon: {
               Image(systemName: element.present ? "checkmark.circle.fill" : "circle.dashed")
-                .foregroundStyle(element.present ? .success : .secondary)
+                .foregroundStyle(element.present ? .success : .mutedForeground)
             }
             .accessibilityValue(
               element.present
@@ -105,9 +107,10 @@ struct EssayNextStepSections: View {
                 : Text("missing", tableName: "Essay", comment: "A proposal element is missing"))
           }
         } header: {
-          Text(
-            "The five elements of the proposal", tableName: "Essay",
-            comment: "ENEM's intervention proposal elements")
+          SectionTitle(
+            Text(
+              "The five elements of the proposal", tableName: "Essay",
+              comment: "ENEM's intervention proposal elements"))
         }
       }
     }
@@ -127,21 +130,21 @@ struct EssayCommentsSection: View {
               if let quote = criterion.quote {
                 Text(verbatim: "“\(quote)”")
                   .italic()
-                  .foregroundStyle(.secondary)
+                  .foregroundStyle(.mutedForeground)
               }
               Text(criterion.comment)
               if let example = criterion.example {
                 Text("For example: \(example)", tableName: "Essay", comment: "A rewrite example")
-                  .foregroundStyle(.secondary)
+                  .foregroundStyle(.mutedForeground)
               }
             }
-            .font(.callout)
+            .typeStyle(.reading)
           } label: {
             Text(criterion.name)
           }
         }
       } header: {
-        Text("Comments", tableName: "Essay", comment: "Comments on each criterion")
+        SectionTitle(Text("Comments", tableName: "Essay", comment: "Comments on each criterion"))
       }
     }
   }

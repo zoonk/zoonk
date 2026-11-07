@@ -8,15 +8,18 @@ enum PlanSheet: Identifiable, Hashable {
   case pace
   case farTopic(skillId: String, title: String)
   case certificate(code: String)
+  case suggestion(PlanSlotItem)
 
   var id: Self { self }
 }
 
 extension View {
   func planSheets(
-    _ sheet: Binding<PlanSheet?>, context: PlanContext, syllabus: GoalSyllabus?
+    _ sheet: Binding<PlanSheet?>, context: PlanContext, syllabus: GoalSyllabus?,
+    slotAnswer: Binding<PlanSlotAnswer?>
   ) -> some View {
-    modifier(PlanSheets(sheet: sheet, context: context, syllabus: syllabus))
+    modifier(
+      PlanSheets(sheet: sheet, slotAnswer: slotAnswer, context: context, syllabus: syllabus))
   }
 }
 
@@ -26,11 +29,13 @@ private struct PlanSheets: ViewModifier {
   @State private var then: Then?
 
   @Binding var sheet: PlanSheet?
+  @Binding var slotAnswer: PlanSlotAnswer?
   let context: PlanContext
   let syllabus: GoalSyllabus?
 
   private enum Then {
-    case adjust
+    case adjust(AdjustPlanSheet.Section)
+    case showClaim(PlanClaim)
     case open(AppRoute)
   }
 
@@ -55,7 +60,7 @@ private struct PlanSheets: ViewModifier {
           case .pace:
             NavigationStack {
               PlanPaceSheet(context: context) {
-                then = .adjust
+                then = .adjust(.top)
                 self.sheet = nil
               }
             }
@@ -64,6 +69,10 @@ private struct PlanSheets: ViewModifier {
             FarTopicSheet(goal: context.goal, skillId: skillId, title: title)
           case .certificate(let code):
             CertificateSheet(code: code)
+          case .suggestion(let item):
+            SuggestionSheet {
+              PlanSuggestionSection(context: handingOff, answer: $slotAnswer, sheetItem: item)
+            }
           }
         }
         .environment(
@@ -73,13 +82,29 @@ private struct PlanSheets: ViewModifier {
             self.sheet = nil
           }
         )
-        .accessibilitySizeStyles()
+        .zoonkStyles()
       }
+  }
+
+  /// The plan's editor and a certificate's moment are presented by the screen too, so the
+  /// suggestion closes before either opens.
+  private var handingOff: PlanContext {
+    var context = context
+    context.adjust = { section in
+      then = .adjust(section)
+      sheet = nil
+    }
+    context.showClaim = { claim in
+      then = .showClaim(claim)
+      sheet = nil
+    }
+    return context
   }
 
   private func doThen() {
     switch then {
-    case .adjust: context.adjust(.top)
+    case .adjust(let section): context.adjust(section)
+    case .showClaim(let claim): context.showClaim(claim)
     case .open(let route): router.open(route)
     case nil: break
     }
@@ -101,7 +126,7 @@ private struct PlanPathSheet: View {
     rows.show = { outline = $0 }
 
     return NavigationStack {
-      List {
+      ZoonkList {
         PlanPathRows(context: rows, brief: true)
       }
       .navigationTitle(
@@ -125,7 +150,7 @@ private struct PlanPathSheet: View {
               outline = nil
             }
           )
-          .accessibilitySizeStyles()
+          .zoonkStyles()
       }
     }
   }

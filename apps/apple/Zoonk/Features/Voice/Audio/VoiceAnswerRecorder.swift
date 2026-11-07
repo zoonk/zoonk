@@ -58,11 +58,11 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
       HelpLimitNotice(limit: limit)
     } else if issue == .failed, !recorder.isRecording, let hint {
       FailureLine(message: hint)
-        .font(.subheadline)
+        .typeStyle(.note)
     } else if let hint {
       Text(hint)
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
         .accessibilityAddTraits(.updatesFrequently)
     }
   }

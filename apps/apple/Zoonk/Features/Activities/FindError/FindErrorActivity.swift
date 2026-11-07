@@ -55,8 +55,8 @@ private struct FindErrorCanvas: View {
               "Problem", tableName: "Activities", comment: "Above the problem of a worked answer")
           }
         }
-        .font(.caption.weight(.medium))
-        .foregroundStyle(.secondary)
+        .typeStyle(.meta.weight(.medium))
+        .foregroundStyle(.mutedForeground)
 
         LessonRichText(fields.problem)
       }
@@ -69,7 +69,7 @@ private struct FindErrorCanvas: View {
         } icon: {
           Image(systemName: "sparkles")
         }
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
       }
 
       VStack(spacing: 8) {
@@ -87,13 +87,13 @@ private struct FindErrorCanvas: View {
               "The wrong step is step \(errorIndex + 1).", tableName: "Activities",
               comment: "After a missed pick: which step of a worked answer was wrong"
             )
-            .fontWeight(.semibold)
+            .typeWeight(.semibold)
           }
 
           LessonRichText(fields.why)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
-        .font(.subheadline)
+        .typeStyle(.note)
       }
     }
   }
@@ -106,17 +106,17 @@ private struct FindErrorCanvas: View {
     } label: {
       HStack(alignment: .firstTextBaseline, spacing: 12) {
         Text(index + 1, format: .number)
-          .font(.footnote.weight(.semibold).monospacedDigit())
-          .foregroundStyle(.secondary)
+          .typeStyle(.note.weight(.semibold).monospaced())
+          .foregroundStyle(.mutedForeground)
 
         VStack(alignment: .leading, spacing: 4) {
           LessonRichText(step.text)
             .strikethrough(mark == .right)
-            .foregroundStyle(mark == .right ? .secondary : .primary)
+            .foregroundStyle(mark == .right ? .mutedForeground : .primary)
 
           if mark == .right {
             LessonRichText(fields.correction)
-              .fontWeight(.semibold)
+              .typeWeight(.semibold)
           }
         }
       }

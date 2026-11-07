@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct LessonVerdictView: View {
+  @Environment(\.legibilityWeight) private var legibility
+
   let step: LessonStep
   let result: LessonStepResult
   let store: LessonPlayerStore
@@ -8,14 +10,14 @@ struct LessonVerdictView: View {
   var hyperdriveStreak: Int?
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Label {
-        Text(verdict.title)
-          .font(.headline)
-      } icon: {
-        Image(systemName: verdict.symbol)
+    VStack(alignment: .leading, spacing: 10) {
+      FeedbackVerdict(Text(verdict.title), tone: verdict.tone, symbol: verdict.symbol) {
+        if let hyperdriveStreak {
+          Text(
+            "\(hyperdriveStreak) right in a row", tableName: "Player",
+            comment: "Hyperdrive: right answers in a row")
+        }
       }
-      .foregroundStyle(verdict.tint)
 
       if let spelling = result.spelling {
         LabeledText(
@@ -35,8 +37,8 @@ struct LessonVerdictView: View {
             tableName: "Player",
             comment: "A typed answer that wasn't graded, before the sample answer"
           )
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
         }
 
         LabeledText(
@@ -50,8 +52,10 @@ struct LessonVerdictView: View {
       }
 
       ForEach(result.corrections, id: \.self) { correction in
-        Text("\(Text(correction.wrong).strikethrough()) → \(Text(correction.right).bold())")
-          .font(.subheadline)
+        Text(
+          "\(Text(correction.wrong).strikethrough()) → \(Text(correction.right).typeWeight(.bold, legibility: legibility))"
+        )
+        .typeStyle(.body)
       }
 
       if let keyPoints = result.keyPoints, !keyPoints.isEmpty {
@@ -60,19 +64,19 @@ struct LessonVerdictView: View {
 
       if let feedback = result.feedback, !feedback.isEmpty {
         LessonTextBlocks(feedback)
-          .font(.subheadline)
+          .typeStyle(.body)
       }
 
       if let correctReason {
         correctAnswerLine
 
         LessonTextBlocks(correctReason)
-          .font(.subheadline)
+          .typeStyle(.body)
       }
 
       if case .language(_, let wordHints?) = step.content {
         LessonWordHints(hints: wordHints)
-          .font(.subheadline)
+          .typeStyle(.body)
       }
 
       if case .typedAnswer = step.content, !result.isCorrect, result.checked, !result.isSampleAnswer
@@ -80,23 +84,21 @@ struct LessonVerdictView: View {
         LessonExplainAnswerView(step: step, store: store)
       }
 
-      if hyperdriveStreak != nil || note != nil {
-        notes
-          .font(.footnote)
-          .foregroundStyle(.secondary)
+      if let note {
+        Text(note)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
       }
     }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .padding()
-    .background(verdict.tint.opacity(0.15), in: .rect(cornerRadius: 20))
+    .feedbackPanel()
     .accessibilityElement(children: .contain)
   }
 
   /// A guess's reveal already names the right option, and the option list marks it.
   @ViewBuilder
   private var correctAnswerLine: some View {
-    if !result.isCorrect, let correctAnswer = result.correctAnswer, step.kind != .typedAnswer,
-      step.kind != .hook
+    if !result.isCorrect, let correctAnswer = result.correctAnswer,
+      !Self.marksItsAnswer.contains(step.kind)
     {
       LabeledText(
         label: Text(
@@ -104,6 +106,11 @@ struct LessonVerdictView: View {
         text: correctAnswer)
     }
   }
+
+  /// Steps whose options already mark the right one, and a typed answer, which shows its sample.
+  private static let marksItsAnswer: Set<LessonStepKind> = [
+    .typedAnswer, .hook, .check, .multipleChoice, .translation,
+  ]
 
   /// Main's activity feedback: after a missed choice, the picked option's reason, then the right
   /// option with its own.
@@ -114,21 +121,6 @@ struct LessonVerdictView: View {
     else { return nil }
 
     return reason
-  }
-
-  private var notes: Text {
-    let streak = hyperdriveStreak.map {
-      Text(
-        "\($0) right in a row", tableName: "Player", comment: "Hyperdrive: right answers in a row")
-    }
-    let next = note.map { Text($0) }
-
-    switch (streak, next) {
-    case (let streak?, let next?): return Text("\(streak)\u{00A0}· \(next)")
-    case (let streak?, nil): return streak
-    case (nil, let next?): return next
-    case (nil, nil): return Text(verbatim: "")
-    }
   }
 
   private var note: LocalizedStringResource? {
@@ -170,10 +162,10 @@ private struct LabeledText: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 2) {
       label
-        .font(.caption.weight(.medium))
-        .foregroundStyle(.secondary)
+        .typeStyle(.meta.weight(.medium))
+        .foregroundStyle(.mutedForeground)
       LessonRichText(text)
-        .font(.body.weight(.medium))
+        .typeStyle(.body.weight(.medium))
     }
   }
 }
@@ -187,17 +179,17 @@ private struct LessonKeyPointsView: View {
         "\(keyPoints.filter(\.met).count) of \(keyPoints.count) key points", tableName: "Player",
         comment: "How many key points a typed answer stated"
       )
-      .font(.caption.weight(.medium))
-      .foregroundStyle(.secondary)
+      .typeStyle(.meta.weight(.medium))
+      .foregroundStyle(.mutedForeground)
 
       ForEach(keyPoints, id: \.self) { point in
         Label {
           LessonRichText(point.text)
         } icon: {
           Image(systemName: point.met ? "checkmark.circle" : "circle.dashed")
-            .foregroundStyle(point.met ? .success : .secondary)
+            .foregroundStyle(point.met ? .success : .mutedForeground)
         }
-        .font(.subheadline)
+        .typeStyle(.note)
         .accessibilityLabel(
           point.met
             ? Text(
@@ -226,10 +218,10 @@ private struct LessonExplainAnswerView: View {
           "Why that answer misses", tableName: "Player",
           comment: "Title above why a typed answer is wrong"
         )
-        .font(.caption.weight(.medium))
-        .foregroundStyle(.secondary)
+        .typeStyle(.meta.weight(.medium))
+        .foregroundStyle(.mutedForeground)
         LessonTextBlocks(explanation)
-          .font(.subheadline)
+          .typeStyle(.note)
       }
     } else {
       VStack(alignment: .leading, spacing: 8) {
@@ -253,14 +245,14 @@ private struct LessonExplainAnswerView: View {
             }
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .disabled(state == .loading)
 
         switch state {
         case .failed:
           Text(Self.failedLine)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         case .refused(let refusal):
           LessonHelpLimitNote(refusal: refusal)
         default:
@@ -289,8 +281,8 @@ private struct LessonExplainAnswerView: View {
 /// What a checked answer was. A hook's guess is never wrong.
 struct LessonVerdict {
   let title: LocalizedStringResource
-  let symbol: String
-  let tint: Color
+  var symbol: String?
+  let tone: FeedbackTone
 }
 
 extension LessonVerdict {
@@ -299,11 +291,11 @@ extension LessonVerdict {
       ? LessonVerdict(
         title: LocalizedStringResource(
           "Good guess!", table: "Player", comment: "A hook's guess was right"),
-        symbol: "sparkles", tint: .success)
+        symbol: "sparkles", tone: .right)
       : LessonVerdict(
         title: LocalizedStringResource(
           "Here's the answer", table: "Player", comment: "A hook's guess missed"),
-        symbol: "sparkles", tint: .secondary)
+        symbol: "sparkles", tone: .neutral)
   }
 
   static func of(_ result: LessonStepResult, step: LessonStep) -> LessonVerdict {
@@ -312,7 +304,7 @@ extension LessonVerdict {
         title: LocalizedStringResource(
           "Here's a good answer", table: "Player",
           comment: "\"I don't know yet\" shows a good answer"),
-        symbol: "text.bubble", tint: .secondary)
+        tone: .neutral)
     }
 
     if step.kind == .hook {
@@ -323,20 +315,19 @@ extension LessonVerdict {
       return result.spelling == nil
         ? LessonVerdict(
           title: LocalizedStringResource(
-            "Correct!", table: "Player", comment: "The answer was right"), symbol: "checkmark",
-          tint: .success)
+            "Correct!", table: "Player", comment: "The answer was right"), tone: .right)
         : LessonVerdict(
           title: LocalizedStringResource(
             "Right, watch the spelling", table: "Player",
             comment: "A right typed answer with a typo"),
-          symbol: "checkmark", tint: .success)
+          tone: .right)
     }
 
     if step.kind == .typedAnswer, !result.checked {
       return LessonVerdict(
         title: LocalizedStringResource(
           "Not checked this time", table: "Player", comment: "A typed answer that wasn't graded"),
-        symbol: "text.bubble", tint: .secondary)
+        tone: .neutral)
     }
 
     if let score = result.score, score > 0 {
@@ -344,13 +335,13 @@ extension LessonVerdict {
         title: LocalizedStringResource(
           "Almost there", table: "Player", comment: "A typed or spoken answer that was partly right"
         ),
-        symbol: "circle.lefthalf.filled", tint: .warning)
+        tone: .almost)
     }
 
     return LessonVerdict(
       title: LocalizedStringResource(
         "Not quite", table: "Player",
         comment: "Gentle verdict after a wrong answer, without saying it was almost right"),
-      symbol: "xmark", tint: .destructive)
+      tone: .wrong)
   }
 }

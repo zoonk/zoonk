@@ -38,11 +38,9 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -76,11 +74,12 @@ import com.zoonk.android.feature.tutor.TutorAskButton
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.MeterPart
-import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.TaskSegment
+import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.focusMoveTarget
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.taskColumn
@@ -262,29 +261,12 @@ internal fun RunSegments(
 internal fun RunMeter(
     index: Int,
     total: Int,
-    segments: List<Segment>,
+    segments: List<TaskSegment>,
     done: Int = index,
 ) {
     val label = stringResource(R.string.practice_progress, minOf(index + 1, total), total)
-    val parts =
-        segments.map { segment ->
-            MeterPart(
-                when (segment) {
-                    Segment.Ahead -> MeterPart.Fill.Track
-                    Segment.Current -> MeterPart.Fill.Place()
-                    Segment.Right -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.tertiary)
-                    Segment.Wrong -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.error)
-                    Segment.Read -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.onSurface.copy(alpha = READ_ALPHA))
-                },
-            )
-        }
 
-    RunHeader(
-        Modifier.semantics {
-            contentDescription = label
-            progressBarRangeInfo = ProgressBarRangeInfo(done.toFloat(), 0f..total.toFloat())
-        },
-    ) { MeterParts(parts) }
+    RunHeader { TaskSegments(segments, contentDescription = label, done = done) }
 }
 
 /** A run's progress over its question, on the question's edges. */
@@ -562,5 +544,3 @@ private val DraftSaver =
         save = { it?.let { draft -> ApiJson.encodeToString(Draft.serializer(), draft) } ?: "" },
         restore = { it.takeIf(String::isNotEmpty)?.let { json -> ApiJson.decodeFromString(Draft.serializer(), json) } },
     )
-
-private const val READ_ALPHA = 0.25f

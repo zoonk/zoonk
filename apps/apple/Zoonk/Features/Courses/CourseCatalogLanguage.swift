@@ -10,7 +10,8 @@ func currentCourseCatalogLanguage() -> String {
 
 extension Locale {
   /// Lessons write and read numbers the course language's way, as main does, so a readout never
-  /// says "12.000" beside lesson text saying "12,000". The app's own screens keep the device region.
+  /// says "12.000" beside lesson text saying "12,000". Durations take it too, as main's. The app's
+  /// other screens keep the device region.
   static let courseLanguage = formattingLocale(currentCourseCatalogLanguage())
 }
 

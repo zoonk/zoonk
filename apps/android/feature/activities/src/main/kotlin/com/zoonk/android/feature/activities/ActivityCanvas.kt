@@ -46,6 +46,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 
@@ -64,7 +65,7 @@ fun ActivityCanvas(
         modifier =
             modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(ZoonkRadius.xl))
                 .background(activityCanvasColor())
                 .then(if (description == null) Modifier else Modifier.semantics { contentDescription = description })
                 .padding(16.dp),
@@ -169,7 +170,7 @@ fun RowScope.ActivityTile(
     content: @Composable RowScope.() -> Unit,
 ) {
     val tone = answerTone(picked, result)
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     val choice =
         when (role) {
             Role.Checkbox -> Modifier.toggleable(value = picked, enabled = enabled, role = role, onValueChange = { onClick() })

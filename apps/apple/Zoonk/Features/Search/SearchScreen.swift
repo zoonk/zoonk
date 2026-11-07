@@ -18,17 +18,17 @@ struct SearchScreen: View {
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
         groupSections(leadingGroups)
       }
     } secondary: {
-      List {
+      ZoonkList {
         groupSections(trailingGroups)
         catalogSection
         groupSections(trailingFallback)
       }
     } single: {
-      List {
+      ZoonkList {
         groupSections(groups)
         catalogSection
         groupSections(fallback.map { [$0] } ?? [])
@@ -91,7 +91,7 @@ struct SearchScreen: View {
           .foregroundStyle(.primary)
         }
       } header: {
-        Text(group.title)
+        SearchGroupLabel(title: Text(group.title))
       }
     }
   }
@@ -112,8 +112,8 @@ struct SearchScreen: View {
               VStack(alignment: .leading, spacing: 4) {
                 Text(chapter.title)
                 Text(chapter.courseTitle)
-                  .font(.subheadline)
-                  .foregroundStyle(.secondary)
+                  .typeStyle(.note)
+                  .foregroundStyle(.mutedForeground)
               }
             } icon: {
               Image(systemName: "rectangle.stack")
@@ -121,7 +121,9 @@ struct SearchScreen: View {
           }
         }
       } header: {
-        Text("In the catalog", tableName: "Search", comment: "Search results from the catalog")
+        SearchGroupLabel(
+          title: Text(
+            "In the catalog", tableName: "Search", comment: "Search results from the catalog"))
       }
     }
   }
@@ -223,5 +225,18 @@ struct SearchScreen: View {
         }
       }
     }
+  }
+}
+
+/// Main's `CommandGroupLabel`: a search group's small uppercase label, quieter than a page's
+/// section titles.
+private struct SearchGroupLabel: View {
+  let title: Text
+
+  var body: some View {
+    title
+      .typeStyle(.label)
+      .foregroundStyle(.faint)
+      .accessibilityAddTraits(.isHeader)
   }
 }

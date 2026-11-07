@@ -22,10 +22,10 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 
 enum class FeedbackTone { Almost, Neutral, Right, Wrong }
 
@@ -51,7 +51,7 @@ fun FeedbackVerdict(
     end: String? = null,
 ) {
     val color = tone.color()
-    val style = MaterialTheme.typography.titleSmall
+    val style = MaterialTheme.zoonkType.verdict
     val glyph = with(LocalDensity.current) { style.fontSize.toDp() }
 
     Row(
@@ -66,7 +66,7 @@ fun FeedbackVerdict(
                 modifier = Modifier.padding(top = 2.dp).size(glyph),
                 tint = color,
             )
-            Text(text = text, color = color, style = style, fontWeight = FontWeight.SemiBold)
+            Text(text = text, color = color, style = style)
         }
         if (end != null) {
             Text(text = end, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)

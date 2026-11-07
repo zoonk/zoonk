@@ -22,7 +22,7 @@ struct FarTopicSheet: View {
     let outline = store.outline(goalId: goal.id, skillId: skillId)
 
     NavigationStack {
-      List {
+      ZoonkList {
         content(outline)
       }
       .announcesStatus(announcement(outline))
@@ -62,17 +62,17 @@ struct FarTopicSheet: View {
             "We couldn't reach the server. Check your connection.", tableName: "Plan",
             comment: "A far topic's lessons couldn't be asked for"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         } else {
           Text(
             "A topic's lessons are planned two weeks before you get to it. You can see this one's now.",
             tableName: "Plan", comment: "Explains a far topic's lessons"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         if request == .limit {
-          PlusNotice(description: Text(Self.limitLine), isInset: true)
+          PlusNotice(description: Text(Self.limitLine))
         } else {
           Button {
             Task { await ask(outline) }
@@ -91,7 +91,7 @@ struct FarTopicSheet: View {
         "There's nothing left to prepare for this topic.", tableName: "Plan",
         comment: "A far topic with nothing to outline"
       )
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     case .idle, .loading:
       ProgressView()
     }
@@ -103,7 +103,7 @@ struct FarTopicSheet: View {
     } icon: {
       ProgressView()
     }
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
   }
 
   private func announcement(_ outline: Resource<SkillOutline>) -> String? {

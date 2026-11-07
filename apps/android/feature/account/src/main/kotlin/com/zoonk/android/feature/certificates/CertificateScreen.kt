@@ -2,10 +2,13 @@ package com.zoonk.android.feature.certificates
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,12 +18,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,36 +33,56 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.catalog.courseLevelName
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.EmptyState
-import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.MarkStatus
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.format.DateStyle
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.theme.zoonkType
+import com.zoonk.api.models.CertificateSkillLevel
 import com.zoonk.api.models.OwnedCertificate
 import kotlinx.coroutines.launch
+import kotlinx.datetime.toJavaLocalDate
 
 /**
- * Main's `/c/<code>` for its owner: the certificate with Share, Print, Download, Add to LinkedIn,
- * Copy link and its name, or, earned without Plus, locked with the Plus notice. It reads the
- * learner's list, so a rename or a subscription shows here at once, and a locked one, which the
- * public read refuses, shows at all.
+ * Main's `/c/<code>` for its owner: the certificate's headline, Share, Print, Download and Add to
+ * LinkedIn, its picture, its details (the name, with Change, and the link, with Copy), what it
+ * means and what it covers, or, earned without Plus, locked with the Plus notice. It reads the learner's list, so a
+ * rename or a subscription shows here at once, and a locked one, which the public read refuses,
+ * shows at all.
  */
 @Composable
 fun CertificateScreen(
@@ -74,24 +96,10 @@ fun CertificateScreen(
     val wanted = normalizeCertificateCode(code)
     val certificate = state.value?.find { it.code == wanted }
     val actions = rememberCertificateActions(app)
-    val canShare = certificate?.recipientName != null && !certificate.locked
 
     PageScaffold(
         onBack = { navigator.back() },
         title = { Text(stringResource(R.string.certificates_certificate)) },
-        actions = {
-            if (certificate != null && canShare) {
-                val fileName = certificate.fileName()
-                val caption = certificate.caption()
-                IconButton(onClick = { actions.share(certificate, fileName, caption) }, enabled = actions.busy == null) {
-                    if (actions.busy == CertificateAction.Share) {
-                        CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
-                    } else {
-                        Icon(painterResource(R.drawable.ic_share), contentDescription = stringResource(R.string.certificates_share))
-                    }
-                }
-            }
-        },
     ) { padding ->
         Box(
             Modifier
@@ -121,7 +129,7 @@ fun CertificateScreen(
                 }
 
                 else -> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                    PageLoading()
                 }
             }
         }
@@ -129,8 +137,8 @@ fun CertificateScreen(
 }
 
 /**
- * The certificate and what the learner can do with it, which on an open book takes the page after
- * the fold.
+ * Main's page, in its order: the headline, what the learner can do with it, the picture, the
+ * details, what it means and what it covers, which on an open book take the page after the fold.
  */
 @Composable
 private fun Certificate(
@@ -139,40 +147,40 @@ private fun Certificate(
     actions: CertificateActions,
     onSeePlus: () -> Unit,
 ) {
-    // Above both layouts: folding moves what the learner does between the one column and the page after the fold, and each keeps its scroll.
+    // Above both layouts: folding moves the details between the one column and the page after the fold, and each keeps its scroll.
     val name = certificateNameModel(app)
     var linkedIn by rememberSaveable { mutableStateOf(false) }
     val pageScroll = rememberScrollState()
-    val usesScroll = rememberScrollState()
+    val detailsScroll = rememberScrollState()
     val naming = certificate.naming
-    val uses =
-        @Composable {
-            if (naming.locked) {
-                CertificatesPlusNotice(onSeePlus, Modifier.padding(top = 24.dp))
-            } else {
-                Uses(certificate, actions, name) { linkedIn = true }
+    val details =
+        @Composable { modifier: Modifier ->
+            Column(modifier) {
+                CertificateDetails(certificate, name, actions)
+                CertificateMeaning(certificate, Modifier.padding(top = 32.dp))
+                CertificateCovered(certificate, Modifier.padding(top = 32.dp))
             }
         }
 
-    PageWithSupportingPane(supportingPane = { DetailColumn(usesScroll) { uses() } }, panesTouch = true, atFoldOnly = true) { usesBeside ->
+    PageWithSupportingPane(
+        supportingPane = { DetailColumn(detailsScroll) { details(Modifier) } },
+        panesTouch = true,
+        atFoldOnly = true,
+    ) { detailsBeside ->
         DetailColumn(pageScroll) {
-            Text(
-                naming.words(),
-                Modifier.pageTitle(),
-                style = MaterialTheme.typography.titleLarge,
-            )
-            Text(
-                naming.kindLine(),
-                Modifier.padding(top = 4.dp, bottom = 16.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            CertificateIntro(certificate)
+            OwnerActions(certificate, actions, name, onSeePlus, Modifier.padding(top = 24.dp)) { linkedIn = true }
             if (naming.locked) {
-                LockedCertificate(naming, Modifier.fillMaxWidth())
+                LockedCertificate(naming, Modifier.padding(top = 32.dp).fillMaxWidth())
             } else {
-                CertificatePicture(certificate.pictureUrl, app.images, certificate.pictureLabel(), Modifier.fillMaxWidth())
+                CertificatePicture(
+                    certificate.pictureUrl,
+                    app.images,
+                    certificate.pictureLabel(),
+                    Modifier.padding(top = 32.dp).fillMaxWidth(),
+                )
             }
-            if (!usesBeside) uses()
+            if (!detailsBeside) details(Modifier.padding(top = 28.dp))
         }
     }
 
@@ -194,88 +202,405 @@ private fun DetailColumn(
     )
 }
 
-/** Print, download, LinkedIn, the link and the name, or the name first for a learner without one. */
+/** Main's `CertificateIntro`: a locked certificate isn't issued yet, so it claims neither the check nor the date. */
 @Composable
-private fun Uses(
+private fun CertificateIntro(certificate: OwnedCertificate) {
+    val locked = certificate.locked
+
+    Column {
+        if (!locked) {
+            Row(
+                Modifier.padding(bottom = 14.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    painterResource(R.drawable.ic_verified),
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.tertiary,
+                )
+                Text(
+                    stringResource(R.string.certificates_verified),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
+        Text(certificate.sentence(), Modifier.pageTitle(), style = MaterialTheme.typography.displaySmall)
+        if (!locked) {
+            Text(
+                stringResource(
+                    R.string.certificates_issued_on,
+                    formatDate(certificate.completedOn.toJavaLocalDate(), currentLocale(), DateStyle.LongYear),
+                ),
+                Modifier.padding(top = 10.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.zoonkType.lead,
+            )
+        }
+    }
+}
+
+/** Main's `CertificateOwnerActions`: Share leads; without a name, the name comes first; locked, the Plus notice. */
+@Composable
+private fun OwnerActions(
     certificate: OwnedCertificate,
     actions: CertificateActions,
     name: CertificateNameModel,
+    onSeePlus: () -> Unit,
+    modifier: Modifier = Modifier,
     onAddToLinkedIn: () -> Unit,
 ) {
-    val recipient = certificate.recipientName
     val fileName = certificate.fileName()
+    val caption = certificate.caption()
 
     when {
-        // Share, print, download and LinkedIn wait for a name, as main's page does.
-        recipient == null -> {
-            CertificateNameField(current = null, name, Modifier.padding(top = 24.dp))
+        certificate.locked -> {
+            CertificatesPlusNotice(onSeePlus, modifier)
+        }
+
+        certificate.recipientName == null -> {
+            CertificateNameField(current = null, name, modifier)
         }
 
         else -> {
-            Column(Modifier.padding(top = 8.dp).bleed(LIST_ITEM_INSET)) {
-                ActionRow(
-                    R.drawable.ic_print,
-                    stringResource(R.string.certificates_print),
-                    busy = actions.busy == CertificateAction.Print,
+            Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(
+                    onClick = { actions.share(certificate, fileName, caption) },
+                    modifier = Modifier.fillMaxWidth(),
                     enabled = actions.busy == null,
+                    size = ButtonSize.Large,
                 ) {
-                    actions.print(certificate, fileName)
+                    ActionLabel(R.drawable.ic_share, stringResource(R.string.certificates_share), actions.busy == CertificateAction.Share)
                 }
-                ActionRow(
-                    R.drawable.ic_download,
-                    stringResource(R.string.certificates_download),
-                    busy = actions.busy == CertificateAction.Download,
-                    enabled = actions.busy == null,
-                ) {
-                    actions.download(certificate, fileName)
+                SideBySideOrStacked {
+                    OutlinedButton(
+                        onClick = { actions.print(certificate, fileName) },
+                        enabled = actions.busy == null,
+                        size = ButtonSize.Large,
+                    ) {
+                        ActionLabel(
+                            R.drawable.ic_print,
+                            stringResource(R.string.certificates_print),
+                            actions.busy == CertificateAction.Print,
+                        )
+                    }
+                    OutlinedButton(
+                        onClick = { actions.download(certificate, fileName) },
+                        enabled = actions.busy == null,
+                        size = ButtonSize.Large,
+                    ) {
+                        ActionLabel(
+                            R.drawable.ic_download,
+                            stringResource(R.string.certificates_download),
+                            actions.busy == CertificateAction.Download,
+                        )
+                    }
                 }
-                ActionRow(R.drawable.ic_north_east, stringResource(R.string.certificates_add_to_linkedin), onClick = onAddToLinkedIn)
-                ActionRow(
-                    R.drawable.ic_link,
-                    stringResource(R.string.certificates_copy_link),
-                ) { actions.copy(certificate.url.toString(), R.string.certificates_link_copied) }
-                HorizontalDivider(Modifier.padding(vertical = 8.dp))
-                if (name.changing) {
-                    CertificateNameField(recipient, name, Modifier.padding(horizontal = LIST_ITEM_INSET, vertical = 8.dp))
-                } else {
-                    ListItem(
-                        headlineContent = { Text(stringResource(R.string.certificates_name_on_certificate)) },
-                        modifier = Modifier.clickable(role = Role.Button) { name.change(recipient) },
-                        supportingContent = { Text(recipient) },
-                        leadingContent = { Icon(painterResource(R.drawable.ic_edit), contentDescription = null) },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                    )
+                OutlinedButton(onClick = onAddToLinkedIn, modifier = Modifier.fillMaxWidth(), size = ButtonSize.Large) {
+                    ActionLabel(R.drawable.ic_north_east, stringResource(R.string.certificates_add_to_linkedin))
                 }
             }
         }
     }
-
-    Text(
-        stringResource(R.string.certificates_link_note),
-        Modifier.padding(top = 16.dp),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodySmall,
-    )
 }
 
 @Composable
-private fun ActionRow(
+private fun ActionLabel(
     @DrawableRes icon: Int,
     text: String,
     busy: Boolean = false,
-    enabled: Boolean = true,
-    onClick: () -> Unit,
 ) {
-    ListItem(
-        headlineContent = { Text(text) },
-        modifier = Modifier.clickable(enabled = enabled, role = Role.Button, onClick = onClick),
-        leadingContent = {
-            if (busy) {
-                CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
-            } else {
-                Icon(painterResource(icon), contentDescription = null)
-            }
-        },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-    )
+    if (busy) {
+        CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
+    } else {
+        Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+    }
+    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+    Text(text, textAlign = TextAlign.Center)
 }
+
+/**
+ * Main's two columns for Print and Download, one under the other when either's words need more than
+ * half the width, so a long word (German's "Herunterladen") or a large font never cuts them.
+ */
+@Composable
+private fun SideBySideOrStacked(content: @Composable () -> Unit) {
+    Layout(content) { buttons, constraints ->
+        val gap = 8.dp.roundToPx()
+        val half = (constraints.maxWidth - gap) / 2
+        val sideBySide = buttons.all { it.maxIntrinsicWidth(Constraints.Infinity) <= half }
+        val width = if (sideBySide) half else constraints.maxWidth
+        val placed = buttons.map { it.measure(Constraints(minWidth = width, maxWidth = width)) }
+        val height = if (sideBySide) placed.maxOf { it.height } else placed.sumOf { it.height } + gap * (placed.size - 1)
+
+        layout(constraints.maxWidth, height) {
+            var y = 0
+            placed.forEachIndexed { index, button ->
+                if (sideBySide) {
+                    button.placeRelative(index * (width + gap), 0)
+                } else {
+                    button.placeRelative(0, y)
+                    y += button.height + gap
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Main's `CertificateDetails`, the picture's text equivalent: the name with Change, what was done,
+ * the ID and the link with Copy. A locked one shows what was done, without the ID or the link.
+ */
+@Composable
+private fun CertificateDetails(
+    certificate: OwnedCertificate,
+    name: CertificateNameModel,
+    actions: CertificateActions,
+    modifier: Modifier = Modifier,
+) {
+    val recipient = certificate.recipientName
+    val url = certificate.url.takeUnless { certificate.locked }
+
+    Column(modifier) {
+        Text(
+            stringResource(R.string.certificates_details),
+            Modifier.padding(bottom = 6.dp).semantics { heading() },
+            style = MaterialTheme.zoonkType.sectionTitle,
+        )
+        if (recipient != null && url != null) {
+            if (name.changing) {
+                HorizontalDivider()
+                CertificateNameField(recipient, name, Modifier.padding(vertical = 12.dp))
+            } else {
+                DetailRow(stringResource(R.string.certificates_recipient_name), recipient) {
+                    TextButton(onClick = { name.change(recipient) }, size = ButtonSize.Small) {
+                        Text(stringResource(R.string.certificates_change))
+                    }
+                }
+            }
+        }
+        certificateFacts(certificate).forEach { (label, value, mono) -> DetailRow(label, value, mono) }
+        if (url != null) {
+            DetailRow(stringResource(R.string.certificates_detail_link), url.host.removePrefix("www.") + url.path, mono = true) {
+                TextButton(onClick = { actions.copy(url.toString(), R.string.certificates_link_copied) }, size = ButtonSize.Small) {
+                    Text(stringResource(R.string.certificates_copy))
+                }
+            }
+            HorizontalDivider()
+            Text(
+                stringResource(R.string.certificates_link_note),
+                Modifier.padding(top = 10.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+}
+
+private data class CertificateFact(
+    val label: String,
+    val value: String,
+    val mono: Boolean,
+)
+
+@Composable
+private fun certificateFacts(certificate: OwnedCertificate): List<CertificateFact> {
+    val locale = currentLocale()
+
+    fun number(value: Long) = formatNumber(value.toDouble(), locale)
+    val skills =
+        if (certificate.naming.kind == CertificateKind.LanguageLevel) {
+            certificate.skillLevels.map { CertificateFact(skillName(it.skill), it.label, mono = true) }
+        } else {
+            emptyList()
+        }
+
+    return listOfNotNull(
+        certificate.courseLevel?.let {
+            CertificateFact(stringResource(R.string.certificates_detail_level), courseLevelName(it.value), mono = false)
+        },
+    ) + skills +
+        listOfNotNull(
+            CertificateFact(
+                stringResource(R.string.certificates_detail_completed),
+                formatDate(certificate.completedOn.toJavaLocalDate(), locale, DateStyle.Short),
+                mono = true,
+            ),
+            certificate.lessonsStudied?.takeIf { it > 0 }?.let {
+                CertificateFact(stringResource(R.string.certificates_detail_lessons_studied), number(it), mono = true)
+            },
+            certificate.lessonsTestedOut?.takeIf { it > 0 }?.let {
+                CertificateFact(stringResource(R.string.certificates_detail_passed_by_test), number(it), mono = true)
+            },
+            certificate.minutes?.takeIf { it > 0 }?.let {
+                CertificateFact(
+                    stringResource(R.string.certificates_detail_study_time),
+                    stringResource(
+                        R.string.certificates_about_duration,
+                        formatDuration(roundStudyMinutes(it) * SECONDS_PER_MINUTE, locale),
+                    ),
+                    mono = true,
+                )
+            },
+            if (certificate.locked) {
+                null
+            } else {
+                CertificateFact(stringResource(R.string.certificates_detail_id), formatCertificateCode(certificate.code), mono = true)
+            },
+        )
+}
+
+/** Main's `CertificateMeaning`: how Zoonk decides to issue this kind of certificate, and what it isn't. */
+@Composable
+private fun CertificateMeaning(
+    certificate: OwnedCertificate,
+    modifier: Modifier = Modifier,
+) {
+    val nameNote = stringResource(R.string.certificates_meaning_name)
+    val paragraphs =
+        if (certificate.kind == OwnedCertificate.Kind.LANGUAGE_LEVEL) {
+            listOf(
+                stringResource(R.string.certificates_meaning_language, certificate.level?.let(::bandAbove).orEmpty()),
+                "${stringResource(R.string.certificates_meaning_cefr)} $nameNote",
+            )
+        } else {
+            listOf(
+                stringResource(
+                    if (certificate.courseLevel !=
+                        null
+                    ) {
+                        R.string.certificates_meaning_level
+                    } else {
+                        R.string.certificates_meaning_plan
+                    },
+                ),
+                "${stringResource(R.string.certificates_meaning_record)} $nameNote",
+            )
+        }
+
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text(
+            stringResource(R.string.certificates_meaning_title),
+            Modifier.semantics { heading() },
+            style = MaterialTheme.typography.titleLarge,
+        )
+        paragraphs.forEach {
+            Text(
+                it,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 15.sp, lineHeight = 24.sp),
+            )
+        }
+    }
+}
+
+/** Main's `BAND_ABOVE`: a level is finished when every counted skill reaches the band above it. */
+private fun bandAbove(level: OwnedCertificate.Level): String =
+    when (level) {
+        OwnedCertificate.Level.A1 -> "A2"
+        OwnedCertificate.Level.A2 -> "B1"
+        OwnedCertificate.Level.B1 -> "B2"
+        OwnedCertificate.Level.B2 -> "C1"
+        OwnedCertificate.Level.C1 -> "C2"
+    }
+
+/** Main's `CertificateCovered`: a course's topics, counted, or what a language level's learner can do. */
+@Composable
+private fun CertificateCovered(
+    certificate: OwnedCertificate,
+    modifier: Modifier = Modifier,
+) {
+    val course = certificate.kind == OwnedCertificate.Kind.COURSE
+    val items = if (course) certificate.topics else certificate.canDo
+    if (items.isEmpty()) return
+
+    Column(modifier) {
+        Row(Modifier.semantics(mergeDescendants = true) { heading() }, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                stringResource(if (course) R.string.certificates_topics_covered else R.string.certificates_can_do),
+                Modifier.alignByBaseline(),
+                style = MaterialTheme.typography.titleMedium.copy(fontSize = 15.sp, fontWeight = FontWeight.SemiBold, lineHeight = 21.sp),
+            )
+            if (course) {
+                Text(
+                    formatNumber(items.size.toDouble(), currentLocale()),
+                    Modifier.alignByBaseline(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.zoonkType.data,
+                )
+            }
+        }
+        Column(Modifier.padding(top = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items.forEach { item ->
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    StatusMark(MarkStatus.Done)
+                    // bodyLarge's line is the mark's box, so the check sits on the first line at any font size.
+                    Text(item, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge.copy(fontSize = 15.sp))
+                }
+            }
+        }
+    }
+}
+
+/** Main's `roundStudyMinutes`: the plan's estimate, so whole hours past the first one. */
+internal fun roundStudyMinutes(minutes: Long): Long =
+    if (minutes < MINUTES_PER_HOUR) minutes else Math.round(minutes / MINUTES_PER_HOUR.toDouble()) * MINUTES_PER_HOUR
+
+@Composable
+private fun skillName(skill: CertificateSkillLevel.Skill): String =
+    stringResource(
+        when (skill) {
+            CertificateSkillLevel.Skill.READING -> R.string.language_skill_reading
+            CertificateSkillLevel.Skill.LISTENING -> R.string.language_skill_listening
+            CertificateSkillLevel.Skill.SPEAKING -> R.string.language_skill_speaking
+            CertificateSkillLevel.Skill.WRITING -> R.string.language_skill_writing
+        },
+    )
+
+/**
+ * Main's `DetailRow`: a fact's label and its value at the row's end, with the [action] that changes
+ * or copies it. A value that doesn't fit beside its label goes under it, so a large font never
+ * splits a date or a code mid-word.
+ */
+@Composable
+private fun DetailRow(
+    label: String,
+    value: String,
+    mono: Boolean = false,
+    action: (@Composable () -> Unit)? = null,
+) {
+    HorizontalDivider()
+    Row(
+        Modifier.fillMaxWidth().padding(vertical = if (action == null) 10.dp else 0.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        FlowRow(
+            Modifier.weight(1f).semantics(mergeDescendants = true) {},
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                label,
+                Modifier.padding(end = 16.dp).alignByBaseline(),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Text(
+                value,
+                Modifier.alignByBaseline(),
+                style =
+                    if (mono) {
+                        MaterialTheme.zoonkType.data.copy(color = MaterialTheme.colorScheme.onSurface)
+                    } else {
+                        MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
+                    },
+            )
+        }
+        action?.invoke()
+    }
+}
+
+private const val MINUTES_PER_HOUR = 60
+private const val SECONDS_PER_MINUTE = 60

@@ -23,19 +23,16 @@ struct PlanPathSection: View {
 
       if let course {
         NavigationLink(value: AppRoute.course(courseId: course.courseId, title: course.title)) {
-          Label {
+          PlanPathLink(systemImage: "books.vertical") {
             Text(
               "See the full course", tableName: "Plan",
               comment: "Opens the Library course the plan is built from")
-          } icon: {
-            Image(systemName: "books.vertical")
           }
         }
       }
     } header: {
-      SectionHeaderRow(
-        alignment: .firstTextBaseline,
-        title: Text(
+      SectionTitle(
+        Text(
           "Your path", tableName: "Plan", comment: "Section of the plan's phases and chapters")
       ) {
         if phases.count > 1 {
@@ -43,9 +40,6 @@ struct PlanPathSection: View {
             "\(done) of \(phases.count) phases done", tableName: "Plan",
             comment: "Phases done of the plan's phases"
           )
-          .font(.footnote)
-          .foregroundStyle(.secondary)
-          .monospacedDigit()
         }
       }
     }
@@ -177,7 +171,7 @@ private struct PlanPhaseRow: View {
           Image(systemName: showsAll ? "minus" : "plus")
         }
       }
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -194,8 +188,8 @@ private struct PlanPhaseRow: View {
         "More lessons for this phase are being written.", tableName: "Plan",
         comment: "Note under a phase whose lessons are still being written"
       )
-      .font(.footnote)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -233,13 +227,13 @@ private struct PlanPhaseRow: View {
                 comment: "Name of an unnamed phase by its number")
               : phase.title
           )
-          .fontWeight(phase.state == .current ? .semibold : .regular)
-          .foregroundStyle(phase.state == .done ? .secondary : .primary)
+          .typeWeight(phase.state == .current ? .semibold : .regular)
+          .foregroundStyle(phase.state == .done ? .mutedForeground : .primary)
 
           if let meta {
             meta
-              .font(.caption)
-              .foregroundStyle(.secondary)
+              .typeStyle(.meta)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } icon: {
@@ -257,7 +251,7 @@ private struct PlanPhaseRow: View {
 
         if let until {
           until
-            .font(.caption)
+            .typeStyle(.meta)
         }
       }
     }
@@ -372,7 +366,7 @@ private struct PlanChapterRow: View {
       }
     } else {
       content
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -384,8 +378,8 @@ private struct PlanChapterRow: View {
 
           if let note {
             note
-              .font(.caption)
-              .foregroundStyle(.secondary)
+              .typeStyle(.meta)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } icon: {
@@ -496,6 +490,10 @@ private struct PlanCheckpointRow: View {
 struct PlanSyllabusSection: View {
   let goalKind: LearnerGoal.Kind
   let syllabus: GoalSyllabus
+  /// The exam's choices the plan follows, each named in a line with Change, as main's
+  /// `PlanChoiceLines`; beside the page the plan's settings name them instead.
+  var choices: [GoalPlan.ExamChoice] = []
+  var change: (_ group: String) -> Void = { _ in }
 
   var body: some View {
     let isExam = goalKind == .exam
@@ -503,15 +501,20 @@ struct PlanSyllabusSection: View {
     Section {
       PlanCompletedLessonsRow()
 
+      ForEach(choices) { choice in
+        if let line = choice.followingLine {
+          PlanChoiceLine(line: line) { change(choice.group) }
+        }
+      }
+
       ForEach(syllabus.subjects) { subject in
         NavigationLink(value: AppRoute.subject(subjectKey: subject.key)) {
           SyllabusSubjectRow(subject: subject, isExam: isExam)
         }
       }
     } header: {
-      SectionHeaderRow(
-        alignment: .firstTextBaseline,
-        title: isExam
+      SectionTitle(
+        isExam
           ? Text("Subjects", tableName: "Plan", comment: "Section of an exam's subjects")
           : Text("Modules", tableName: "Plan", comment: "Section of a plan's modules")
       ) {
@@ -522,20 +525,52 @@ struct PlanSyllabusSection: View {
             Text("Lessons studied", tableName: "Plan", comment: "What the modules' bars measure")
           }
         }
-        .font(.footnote)
-        .foregroundStyle(.secondary)
+        // Main's legend for the bars is quiet words, not a mono fact.
+        .typeStyle(.small)
       }
     } footer: {
-      if isExam {
-        Text(
-          "\(syllabus.subjects.count) subjects", tableName: "Plan",
-          comment: "How many subjects the exam has")
-      } else {
-        Text(
-          "\(syllabus.subjects.count) modules", tableName: "Plan",
-          comment: "How many modules the plan has")
+      SectionFooter {
+        if isExam {
+          Text(
+            "\(syllabus.subjects.count) subjects", tableName: "Plan",
+            comment: "How many subjects the exam has")
+        } else {
+          Text(
+            "\(syllabus.subjects.count) modules", tableName: "Plan",
+            comment: "How many modules the plan has")
+        }
       }
     }
+  }
+}
+
+/// Main's `PlanChoiceLine`: one sentence naming what the plan follows, with Change inline.
+private struct PlanChoiceLine: View {
+  let line: String
+  let change: () -> Void
+
+  var body: some View {
+    let action = String(
+      localized: "Change", table: "Plan",
+      comment: "Opens the plan's settings to change the option of an exam's choice it follows")
+    var link = AttributedString(action)
+    link.link = URL(string: "zoonk-plan:change")
+    link.foregroundColor = Color(.foreground)
+    link.underlineStyle = .single
+
+    return Text(AttributedString("\(line)\u{00A0}· ") + link)
+      .typeStyle(.body)
+      .foregroundStyle(.mutedForeground)
+      .tint(Color(.foreground))
+      .environment(
+        \.openURL,
+        OpenURLAction { _ in
+          change()
+          return .handled
+        }
+      )
+      .accessibilityAction(named: Text(action)) { change() }
+      .listRowSeparator(.hidden)
   }
 }
 
@@ -549,15 +584,28 @@ private struct PlanCompletedLessonsRow: View {
       learner.summary.value?.places.completedLessons == true
     {
       NavigationLink(value: AppRoute.completedLessons) {
-        Label {
+        PlanPathLink(systemImage: "clock.arrow.circlepath") {
           Text(
             "Completed lessons", tableName: "Plan",
             comment: "Opens the page of the lessons the learner finished")
-        } icon: {
-          Image(systemName: "clock.arrow.circlepath")
         }
       }
     }
+  }
+}
+
+/// Main's `PathLinkRow`: a quiet way out of the path, in the secondary color.
+private struct PlanPathLink: View {
+  let systemImage: String
+  @ViewBuilder let title: Text
+
+  var body: some View {
+    Label {
+      title
+    } icon: {
+      Image(systemName: systemImage)
+    }
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -571,20 +619,19 @@ struct SyllabusSubjectRow: View {
     VStack(alignment: .leading, spacing: 6) {
       PlanPathRow {
         Text(subject.name)
-          .foregroundStyle(subject.notPlannedReason == nil ? .primary : .secondary)
+          .typeStyle(.rowTitle)
+          .foregroundStyle(subject.notPlannedReason == nil ? Color(.foreground) : .mutedForeground)
       } value: {
         Text(share, format: .percent.precision(.fractionLength(0)))
-          .font(.subheadline)
-          .monospacedDigit()
+          .typeStyle(.data)
       }
 
       if subject.notPlannedReason != nil {
         Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
-          .font(.caption)
-          .foregroundStyle(.secondary)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
       } else {
-        ProgressView(value: share)
-          .tint(.success)
+        Meter(value: share, fill: .success)
           .accessibilityHidden(true)
       }
     }
@@ -603,7 +650,7 @@ struct PlanPathRow<Title: View, Value: View>: View {
         .frame(maxWidth: .infinity, alignment: .leading)
 
       value
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .fixedSize()
     }
   }
@@ -633,7 +680,7 @@ struct PlanChallengeLabel: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
           when?
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         if explains {
@@ -648,8 +695,8 @@ struct PlanChallengeLabel: View {
                 comment: "What a phase challenge is, under its row")
             }
           }
-          .font(.caption)
-          .foregroundStyle(.secondary)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
         }
       }
       // In a list row's button it otherwise gets one line's height and truncates its title.

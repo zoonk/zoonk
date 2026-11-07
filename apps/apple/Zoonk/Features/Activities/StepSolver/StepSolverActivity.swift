@@ -82,6 +82,8 @@ private struct StepSolverCanvas: View {
 
   @ActivityState("picks") private var picks: StepSolver.Picks = [:]
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   private var isChecked: Bool {
     if case .checked = context.phase { true } else { false }
   }
@@ -93,7 +95,7 @@ private struct StepSolverCanvas: View {
 
     VStack(alignment: .leading, spacing: 16) {
       LessonRichText(fields.problem)
-        .fontWeight(.medium)
+        .typeWeight(.medium)
 
       ForEach(Array(fields.steps.enumerated()), id: \.element.id) { index, step in
         stepView(step, index: index, current: current, maxValue: maxValue)
@@ -124,8 +126,8 @@ private struct StepSolverCanvas: View {
             LessonRichText(step.prompt)
           }
         }
-        .font(isDone || isCurrent ? .body.weight(.semibold) : .body)
-        .foregroundStyle(isDone || isCurrent ? .primary : .secondary)
+        .typeStyle(isDone || isCurrent ? .body.weight(.semibold) : .body)
+        .foregroundStyle(isDone || isCurrent ? Color(.foreground) : .mutedForeground)
 
         if isCurrent, !isChecked {
           VStack(spacing: 8) {
@@ -145,16 +147,16 @@ private struct StepSolverCanvas: View {
 
           if let lastWrong = wrongPicks.last {
             LessonRichText(lastWrong.reason)
-              .font(.subheadline)
-              .foregroundStyle(.destructive)
+              .typeStyle(.body)
+              .foregroundStyle(.destructiveText)
           }
         }
 
         if isDone, let correct = step.correct {
           StepSolverWork(step: step, maxValue: maxValue)
           LessonRichText(correct.reason)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
 
         if isChecked, isFirstPickWrong,
@@ -162,10 +164,11 @@ private struct StepSolverCanvas: View {
         {
           let picked = LessonRichText.typeset(first.text)
 
-          firstPick(picked.quoted(spoken: false))
-            .font(.subheadline.weight(.medium))
-            .foregroundStyle(.destructive)
-            .accessibilityLabel(firstPick(picked.quoted(spoken: true)))
+          firstPick(picked.quoted(spoken: false, legibility: legibilityWeight))
+            .typeStyle(.body.weight(.medium))
+            .foregroundStyle(.destructiveText)
+            .accessibilityLabel(
+              firstPick(picked.quoted(spoken: true, legibility: legibilityWeight)))
         }
       }
     }
@@ -213,19 +216,19 @@ private struct StepSolverMarker: View {
       if isDone {
         Image(systemName: isWrong ? "xmark" : "checkmark")
           .fontWeight(.bold)
-          .foregroundStyle(Color(.systemBackground))
+          .foregroundStyle(Color(.background))
           .frame(width: size, height: size)
           .background(isWrong ? Color.destructive : Color.success, in: .circle)
       } else {
         Text(number, format: .number)
-          .font(.subheadline.weight(.semibold).monospacedDigit())
-          .foregroundStyle(isCurrent ? Color(.systemBackground) : .secondary)
+          .typeStyle(.note.weight(.semibold).monospaced())
+          .foregroundStyle(isCurrent ? Color(.background) : .mutedForeground)
           .frame(width: size, height: size)
           .background(isCurrent ? Color.primary : .clear, in: .circle)
           .overlay {
             if !isCurrent {
               Circle().strokeBorder(
-                Color(.separator), style: StrokeStyle(lineWidth: 2, dash: [3, 3]))
+                Color.border, style: StrokeStyle(lineWidth: 2, dash: [3, 3]))
             }
           }
       }
@@ -244,19 +247,18 @@ private struct StepSolverWork: View {
     let share = maxValue == 0 ? 0.04 : max(abs(step.value) / maxValue, 0.04)
 
     VStack(alignment: .leading, spacing: 4) {
-      HStack(spacing: 8) {
+      ShareRow(share: 0.6 * share) {
         Capsule()
-          .fill(Color.mint)
+          .fill(Color.vizAccent)
           .frame(height: barHeight)
-          .containerRelativeFrame(.horizontal) { width, _ in width * 0.6 * share }
 
         Text(ActivityNumberFormat.format(step.value, unit: step.unit))
-          .font(.subheadline.weight(.semibold).monospacedDigit())
+          .typeStyle(.body.weight(.semibold).monospaced())
       }
       .accessibilityHidden(true)
 
       LessonRichText(step.math)
-        .font(.body.monospaced())
+        .typeStyle(.body.monospaced())
     }
   }
 }

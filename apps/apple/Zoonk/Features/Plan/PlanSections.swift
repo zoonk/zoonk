@@ -74,7 +74,8 @@ struct PlanRoadmapSection: View {
         }
       } header: {
         if listsPhases {
-          Text("Phases", tableName: "Plan", comment: "Header over a new plan's phases")
+          SectionTitle(
+            Text("Phases", tableName: "Plan", comment: "Header over a new plan's phases"))
         }
       }
     }
@@ -109,7 +110,7 @@ private struct RoadmapPhaseRow: View {
     PlanPathRow {
       Label {
         Text(phase.title)
-          .fontWeight(.medium)
+          .typeWeight(.medium)
       } icon: {
         StatusMark(status: phase.mark)
       }
@@ -124,9 +125,8 @@ private struct RoadmapPhaseRow: View {
           EmptyView()
         }
       }
-      .font(.subheadline)
-      .monospacedDigit()
-      .foregroundStyle(.secondary)
+      .typeStyle(.data)
+      .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(
@@ -138,6 +138,8 @@ private struct RoadmapPhaseRow: View {
 }
 
 private struct RoadmapCompact: View {
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   let context: PlanContext
   let opens: Bool
 
@@ -163,41 +165,46 @@ private struct RoadmapCompact: View {
               "\(currentIndex + 1) of \(phases.count)", tableName: "Plan",
               comment: "The learner's phase number of the plan's phases, under the roadmap"
             )
-            .monospacedDigit()
+            .typeStyle(.data)
           }
         } else {
           Text(
             "\(phases.filter { $0.state == .done }.count) of \(phases.count) phases done",
             tableName: "Plan", comment: "Phases done of the plan's phases, once none is current"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           Spacer()
         }
 
         if opens {
           Image(systemName: "chevron.right")
-            .foregroundStyle(.tertiary)
+            .foregroundStyle(.faint)
             .imageScale(.small)
         }
       }
-      .font(.subheadline)
+      .typeStyle(.meta)
     }
     .accessibilityElement(children: .combine)
   }
 
   private func position(phase: PlanPhase) -> Text {
     let today = context.plan.today
+    let title = Text(phase.title)
+      .typeWeight(.medium, legibility: legibilityWeight)
+      .foregroundStyle(Color(.foreground))
 
     guard let start = phase.startDate, let end = phase.endDate, start <= today else {
-      return Text(phase.title).fontWeight(.medium)
+      return title
     }
 
     let day = PlanDate.days(from: start, to: today) + 1
     let days = PlanDate.days(from: start, to: end) + 1
 
     return Text(
-      "\(Text(phase.title).fontWeight(.medium))\u{00A0}· day \(day) of \(days)", tableName: "Plan",
-      comment: "Where the learner is: the phase's name, then its day of the phase's days")
+      "\(title)\u{00A0}· day \(day) of \(days)", tableName: "Plan",
+      comment: "Where the learner is: the phase's name, then its day of the phase's days"
+    )
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -207,20 +214,18 @@ struct PlanNumbersSection: View {
   let context: PlanContext
   let syllabus: GoalSyllabus?
 
+  @ScaledMetric(relativeTo: .body) private var minimumWidth = 150.0
+
   var body: some View {
     let standing = standingNumber
 
     Section {
-      AccessibilityStack(alignment: .top, spacing: 16) {
+      StatTileGrid(columns: [2, 1], minimumWidth: minimumWidth) {
         if let standing {
           tile(standing) { context.show(.standing) }
         }
 
         if let pace = paceNumber {
-          if standing != nil {
-            Divider()
-          }
-
           tile(pace) { context.show(.pace) }
         }
       }
@@ -228,27 +233,23 @@ struct PlanNumbersSection: View {
     }
   }
 
+  /// Main's plan tiles: a stat tile's label and readout, a meter for a share, and the line under it.
   private func tile(_ number: PlanNumber, open: @escaping () -> Void) -> some View {
     Button(action: open) {
-      VStack(alignment: .leading, spacing: 2) {
-        Text(number.label)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-
-        Text(number.value)
-          .font(.title2.weight(.semibold))
-          .monospacedDigit()
-
-        if let detail = number.detail {
-          Text(detail)
-            .font(.footnote)
-            .foregroundStyle(
-              number.detailIsGain ? AnyShapeStyle(.success) : AnyShapeStyle(.secondary))
-        }
-      }
-      .frame(maxWidth: .infinity, alignment: .leading)
+      StatTile(
+        label: Text(number.label),
+        value: Text(number.value),
+        icon: { EmptyView() },
+        detail: number.detail.map {
+          Text($0).foregroundStyle(
+            number.detailIsGain ? AnyShapeStyle(.successText) : AnyShapeStyle(.mutedForeground))
+        },
+        meter: number.share,
+        meterFill: .success
+      )
       .contentShape(.rect)
     }
+    .accessibilityAddTraits(.isButton)
   }
 
   private var standingNumber: PlanNumber? {
@@ -274,7 +275,7 @@ struct PlanNumbersSection: View {
             : String(
               localized: "\(points) this week", table: "Plan",
               comment: "Preparation points lost this week"),
-        detailIsGain: points > 0)
+        detailIsGain: points > 0, share: preparation.value)
     }
 
     if context.goal.kind == .language {
@@ -298,7 +299,7 @@ struct PlanNumbersSection: View {
       label: String(
         localized: "Progress", table: "Plan", comment: "Label of the goal's progress number"),
       value: goalProgressPercent(share),
-      detail: studiedText(lessons.done - lessons.known))
+      detail: studiedText(lessons.done - lessons.known), share: share)
   }
 
   /// Only the lessons studied: a long plan never leads with its total, which stays in the sheet,
@@ -388,6 +389,8 @@ private struct PlanNumber {
   var value: String
   var detail: String?
   var detailIsGain = false
+  /// From 0 to 1.
+  var share: Double?
 }
 
 func planStatusText(_ status: GoalPlan.Status) -> String {
@@ -488,7 +491,7 @@ struct NextOnPathSection: View {
     let chapter = isExam ? nil : plan.nextChapter
 
     if mockDate != nil || chapter?.chapterId != nil || checkpoint != nil || isExam {
-      Section {
+      PageSection {
         if let mockDate {
           Button {
             router.open(.exam)
@@ -501,7 +504,7 @@ struct NextOnPathSection: View {
         }
 
         if let chapter, let chapterId = chapter.chapterId {
-          NavigationLink(value: chapterRoute(chapterId)) {
+          PageLink(route: chapterRoute(chapterId)) {
             PlanPathRow {
               Label {
                 Text(chapter.title)
@@ -530,8 +533,10 @@ struct NextOnPathSection: View {
 
         finishRow
       } header: {
-        Text(
-          "Next on your path", tableName: "Plan", comment: "Section of what comes next on the plan")
+        SectionTitle(
+          Text(
+            "Next on your path", tableName: "Plan",
+            comment: "Section of what comes next on the plan"))
       }
     }
   }
@@ -615,9 +620,9 @@ struct PlanMoreSection: View {
     let mindMaps = learner.summary.value?.places.mindMaps == true
 
     if tabBarPlacement?.listsStudyPlaces != true, goal.kind == .exam || mindMaps {
-      Section {
+      PageSection {
         if goal.kind == .exam {
-          NavigationLink(value: AppRoute.exam) {
+          PageLink(route: .exam) {
             Label {
               Text("About the exam", tableName: "Plan", comment: "Opens the exam's page")
             } icon: {
@@ -627,7 +632,7 @@ struct PlanMoreSection: View {
         }
 
         if mindMaps {
-          NavigationLink(value: AppRoute.mindMaps) {
+          PageLink(route: .mindMaps) {
             Label {
               Text("Mind maps", tableName: "Plan", comment: "Opens the goal's mind maps")
             } icon: {
@@ -636,7 +641,8 @@ struct PlanMoreSection: View {
           }
         }
       } header: {
-        Text("More", tableName: "Plan", comment: "Section of other places the Plan leads to")
+        SectionTitle(
+          Text("More", tableName: "Plan", comment: "Section of other places the Plan leads to"))
       }
     }
   }
@@ -670,7 +676,7 @@ struct PlanSettingsSection: View {
           label: Text(choice.group), value: choiceValue(choice), section: .choice(choice.group))
       }
     } header: {
-      Text("Your plan", tableName: "Plan", comment: "Section of the plan's settings")
+      SectionTitle(Text("Your plan", tableName: "Plan", comment: "Section of the plan's settings"))
     }
   }
 
@@ -687,7 +693,7 @@ struct PlanSettingsSection: View {
   private func choiceValue(_ choice: GoalPlan.ExamChoice) -> Text {
     guard let picked = choice.pickedNames else {
       return Text("Choose", tableName: "Plan", comment: "An exam choice not made yet")
-        .foregroundStyle(.warning)
+        .foregroundStyle(.warningText)
     }
 
     return Text(picked)

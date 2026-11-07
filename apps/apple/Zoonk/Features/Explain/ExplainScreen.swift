@@ -77,25 +77,18 @@ private struct ExplanationView: View {
   }
 
   private var content: some View {
-    List {
+    ZoonkList {
       Section {
-        VStack(alignment: .leading, spacing: 6) {
-          Text(
+        PageHeader(
+          Text(explanation.title),
+          eyebrow: Text(
             "Quick explanation\u{00A0}· \(Duration.seconds(300), format: .units(allowed: [.minutes], width: .abbreviated))",
             tableName: "Explain",
-            comment: "Eyebrow over a quick explanation's title: its kind and length"
-          )
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-          Text(explanation.title)
-            .font(.title2.bold())
-            .accessibilityAddTraits(.isHeader)
-          Text(
+            comment: "Eyebrow over a quick explanation's title: its kind and length"),
+          supporting: Text(
             "No plan to set up.", tableName: "Explain", comment: "Under a quick explanation's title"
           )
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-        }
+        )
         .listRowBackground(Color.clear)
       }
 
@@ -115,7 +108,7 @@ private struct ExplanationView: View {
             } icon: {
               Text(index + 1, format: .number)
                 .monospacedDigit()
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
           }
 
@@ -125,13 +118,14 @@ private struct ExplanationView: View {
               comment: "The check after a quick explanation's screens")
           } icon: {
             Image(systemName: "checkmark.circle")
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
               .accessibilityHidden(true)
           }
         } header: {
-          Text(
-            "What's coming", tableName: "Explain",
-            comment: "Header over a quick explanation's outline")
+          SectionTitle(
+            Text(
+              "What's coming", tableName: "Explain",
+              comment: "Header over a quick explanation's outline"))
         }
       }
 
@@ -175,13 +169,15 @@ private struct ExplanationView: View {
       }
       .disabled(isRetrying)
     } footer: {
-      if retryFailed {
-        FailureLine(
-          message: LocalizedStringResource(
-            "We couldn't get this started.", table: "Explain",
-            comment: "A slow explanation couldn't be asked again"))
-      } else {
-        Text(stillWriting)
+      SectionFooter {
+        if retryFailed {
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't get this started.", table: "Explain",
+              comment: "A slow explanation couldn't be asked again"))
+        } else {
+          Text(stillWriting)
+        }
       }
     }
   }
@@ -200,7 +196,7 @@ private struct ExplanationView: View {
         } icon: {
           Text(index + 1, format: .number)
             .monospacedDigit()
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
     } header: {
@@ -211,7 +207,8 @@ private struct ExplanationView: View {
       } icon: {
         Image(systemName: "checkmark.circle.fill")
       }
-      .foregroundStyle(.success)
+      .sectionTitleStyle()
+      .foregroundStyle(.successText)
     }
   }
 
@@ -246,8 +243,8 @@ private struct ExplanationView: View {
                 comment: "Under the in-depth row")
             }
           }
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
         }
       }
 
@@ -262,9 +259,10 @@ private struct ExplanationView: View {
         }
       }
     } header: {
-      Text(
-        "Want to go further?", tableName: "Explain",
-        comment: "Header over ways to go further after a quick explanation")
+      SectionTitle(
+        Text(
+          "Want to go further?", tableName: "Explain",
+          comment: "Header over ways to go further after a quick explanation"))
     }
   }
 
@@ -314,26 +312,10 @@ private struct ExplanationWait: View {
 
   var body: some View {
     Section {
-      ForEach(wait.visiblePhases) { phase in
-        LabeledContent {
-          switch phase.state {
-          case .waiting:
-            EmptyView()
-          case .working:
-            ProgressView()
-          case .done:
-            Image(systemName: "checkmark")
-              .fontWeight(.semibold)
-              .foregroundStyle(.success)
-              .accessibilityLabel(
-                Text("Done", tableName: "Explain", comment: "A finished step of a wait"))
-          }
-        } label: {
-          Text(phase.label)
-            .foregroundStyle(phase.state == .waiting ? .secondary : .primary)
-        }
-      }
+      GenerationTimeline(wait: wait)
     }
+    .listRowBackground(Color.clear)
+    .listRowSeparator(.hidden)
     .task(id: generationID) {
       do {
         for try await event in onboarding.events(generationID: generationID) {

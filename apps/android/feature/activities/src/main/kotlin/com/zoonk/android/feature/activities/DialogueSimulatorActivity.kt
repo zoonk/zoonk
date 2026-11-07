@@ -36,6 +36,7 @@ import com.zoonk.android.feature.player.LocalLessonSpeech
 import com.zoonk.android.feature.player.steps.ChoiceOption
 import com.zoonk.android.feature.player.steps.ChoiceOptions
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf21FieldsLinesInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf21FieldsLinesInner.Speaker
@@ -113,9 +114,19 @@ private fun ChatLine(
     val said = stringResource(if (isThem) R.string.activities_dialogue_they_say else R.string.activities_dialogue_you_said)
     val bubble =
         if (isThem) {
-            RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp, bottomEnd = 12.dp, bottomStart = 4.dp)
+            RoundedCornerShape(
+                topStart = ZoonkRadius.option,
+                topEnd = ZoonkRadius.option,
+                bottomEnd = ZoonkRadius.option,
+                bottomStart = 4.dp,
+            )
         } else {
-            RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp, bottomEnd = 4.dp, bottomStart = 12.dp)
+            RoundedCornerShape(
+                topStart = ZoonkRadius.option,
+                topEnd = ZoonkRadius.option,
+                bottomEnd = 4.dp,
+                bottomStart = ZoonkRadius.option,
+            )
         }
 
     Row(

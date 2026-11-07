@@ -7,3 +7,7 @@ Most brand icon paths in `packages/ui/src/components/brand-icons.tsx` are adapte
 The LinkedIn path is adapted from Font Awesome Free 7.3.0, copyright Fonticons, Inc., and licensed under CC BY 4.0. Source: https://github.com/FortAwesome/Font-Awesome
 
 The Google mark uses the standard-color geometry published for Sign in with Google. Source and usage guidelines: https://developers.google.com/identity/branding-guidelines
+
+## Geist and Geist Mono
+
+The Apple and Android apps bundle the variable Geist and Geist Mono fonts from Geist 1.9.0, copyright 2024 The Geist Project Authors and licensed under the SIL Open Font License 1.1: the Apple app the upright and italic fonts, with the license beside them in `apps/apple/Zoonk/Resources/Fonts/OFL.txt`, and the Android app the upright ones, with the license on its open source licenses screen (`apps/android/app/aboutlibraries/licenses/geist-ofl.json`). Source: https://github.com/vercel/geist-font

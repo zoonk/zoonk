@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -48,7 +46,9 @@ import com.zoonk.android.ui.characters.BuddyGlasses
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.BuddyStage
 import com.zoonk.android.ui.components.Belt
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.FullScreenDialog
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -137,7 +137,7 @@ fun MilestoneCeremony(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         if (canWear) {
-                            FilledTonalButton(onClick = { if (steady()) close() }, modifier = Modifier.weight(1f)) {
+                            OutlinedButton(onClick = { if (steady()) close() }, modifier = Modifier.weight(1f)) {
                                 Text(stringResource(R.string.ceremony_not_now))
                             }
                         }

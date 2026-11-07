@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -69,6 +68,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
@@ -326,7 +326,7 @@ private fun ZoomControls(
             Icon(painterResource(R.drawable.ic_remove), contentDescription = stringResource(R.string.mindmaps_zoom_out))
         }
         val fit = stringResource(R.string.mindmaps_fit)
-        FilledTonalButton(
+        OutlinedButton(
             onClick = onFit,
             enabled = scale > 1f,
             modifier = Modifier.semantics { contentDescription = fit },

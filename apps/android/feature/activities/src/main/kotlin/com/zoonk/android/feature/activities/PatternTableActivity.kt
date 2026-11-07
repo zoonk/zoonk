@@ -50,6 +50,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf20FieldsRowsInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf20Value as PatternTableContent
@@ -159,7 +160,7 @@ private fun PatternTableActivity(props: ActivityProps) {
 private fun PatternGrid(rows: List<List<@Composable () -> Unit>>) {
     val line = MaterialTheme.colorScheme.outlineVariant
 
-    BoxWithConstraints(Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(MaterialTheme.colorScheme.surface)) {
+    BoxWithConstraints(Modifier.fillMaxWidth().clip(RoundedCornerShape(ZoonkRadius.option)).background(MaterialTheme.colorScheme.surface)) {
         val available = constraints.maxWidth
         Layout(
             content = {
@@ -290,7 +291,7 @@ private fun OpenBlank(
 ) {
     val accent = MaterialTheme.zoonk.vizAccent
     val label = stringResource(R.string.activities_pattern_blank, row.label, stem + (chosen ?: "…"))
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
 
     Row(
         Modifier

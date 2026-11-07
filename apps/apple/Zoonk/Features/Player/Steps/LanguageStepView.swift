@@ -98,8 +98,7 @@ struct LessonAudioButton: View {
       switch style {
       case .prominent, .bar:
         button
-          .buttonStyle(.bordered)
-          .buttonBorderShape(.circle)
+          .buttonStyle(.outline.icon)
           .controlSize(.large)
           .keyboardShortcut("p", modifiers: [])
       case .inline:
@@ -127,7 +126,7 @@ struct LessonAudioButton: View {
       case .inline:
         content
           .imageScale(.large)
-          .foregroundStyle(isPlaying ? .primary : .secondary)
+          .foregroundStyle(isPlaying ? Color(.foreground) : .mutedForeground)
           .frame(minWidth: 44, minHeight: 44)
           .contentShape(.rect)
       }
@@ -227,14 +226,14 @@ private struct VocabularyView: View {
         VStack(alignment: .leading, spacing: 4) {
           AccessibilityStack(spacing: 8) {
             Text(word.word)
-              .font(.largeTitle.weight(.semibold))
+              .typeStyle(.heroTitle)
             LessonAudioButton(url: exercise.promptAudio, style: .inline)
           }
           if let romanization = word.romanization {
-            Text(romanization).foregroundStyle(.secondary)
+            Text(romanization).foregroundStyle(.mutedForeground)
           }
           if let pronunciation = word.pronunciation {
-            Text(pronunciation).font(.callout).foregroundStyle(.secondary)
+            Text(pronunciation).typeStyle(.reading).foregroundStyle(.mutedForeground)
           }
         }
 
@@ -252,7 +251,7 @@ private struct VocabularyView: View {
   @ViewBuilder
   private func meaning(_ word: LanguageExercise.Word) -> some View {
     Text(word.translation)
-      .font(.title3)
+      .typeStyle(.section.weight(.regular))
 
     if let wordHints {
       LessonWordHints(hints: wordHints)
@@ -269,7 +268,7 @@ struct LessonWordHints: View {
     if let note = hints.note {
       VStack(alignment: .leading, spacing: 2) {
         Text("Usage:", tableName: "Player", comment: "Before a word's usage note")
-          .font(.caption.weight(.medium)).foregroundStyle(.secondary)
+          .typeStyle(.meta.weight(.medium)).foregroundStyle(.mutedForeground)
         Text(note)
       }
     }
@@ -279,7 +278,7 @@ struct LessonWordHints: View {
         Text(
           "Pronunciation tip:", tableName: "Player", comment: "Before a word's pronunciation tip"
         )
-        .font(.caption.weight(.medium)).foregroundStyle(.secondary)
+        .typeStyle(.meta.weight(.medium)).foregroundStyle(.mutedForeground)
         Text(tip)
       }
     }
@@ -297,17 +296,17 @@ private struct AlphabetView: View {
 
     HStack(alignment: .center, spacing: 16) {
       Text(content.symbol ?? "")
-        .font(.system(.largeTitle, design: .default).weight(.semibold))
+        .typeStyle(.heroTitle)
         .dynamicTypeSize(...DynamicTypeSize.accessibility5)
         .scaleEffect(1.6, anchor: .leading)
         .padding(.trailing, 24)
       AccessibilityStack(spacing: 8) {
         VStack(alignment: .leading, spacing: 4) {
           if let readingAid = content.readingAid {
-            Text(readingAid).font(.title3.weight(.medium))
+            Text(readingAid).typeStyle(.section.weight(.medium))
           }
           if let pronunciation = content.pronunciation {
-            Text(pronunciation).foregroundStyle(.secondary)
+            Text(pronunciation).foregroundStyle(.mutedForeground)
           }
         }
         LessonAudioButton(url: exercise.promptAudio, style: .inline)
@@ -318,8 +317,8 @@ private struct AlphabetView: View {
       HStack(spacing: 16) {
         ForEach(forms, id: \.self) { form in
           VStack {
-            Text(form.symbol).font(.title)
-            Text(form.label).font(.caption).foregroundStyle(.secondary)
+            Text(form.symbol).typeStyle(.pageTitle.weight(.regular))
+            Text(form.label).typeStyle(.meta).foregroundStyle(.mutedForeground)
           }
           .accessibilityElement(children: .combine)
         }
@@ -337,7 +336,7 @@ private struct MultipleChoiceView: View {
     switch part {
     case .screen:
       if let text = exercise.content.context {
-        LessonRichText(text).foregroundStyle(.secondary)
+        LessonRichText(text).foregroundStyle(.mutedForeground)
       }
 
       if let question = exercise.content.question {
@@ -452,7 +451,7 @@ private struct FillBlankView: View {
       ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
         if !segment.isEmpty {
           Text(segment.trimmingCharacters(in: .whitespaces))
-            .font(.title3)
+            .typeStyle(.section.weight(.regular))
             .dimsOnceChecked()
         }
 
@@ -499,7 +498,7 @@ private struct FillBlankView: View {
         answers[index] = ""
         context.select(answers.allSatisfy(\.isEmpty) ? nil : .fillBlank(userAnswers: answers))
       } label: {
-        blankWord(word, line: .secondary)
+        blankWord(word, line: .mutedForeground)
       }
       .buttonStyle(.plain)
       .disabled(context.isLocked || word.isEmpty)
@@ -514,7 +513,7 @@ private struct FillBlankView: View {
 
   private func blankWord(_ word: String, line: Color) -> some View {
     Text(word.isEmpty ? "      " : word)
-      .font(.title3.weight(.medium))
+      .typeStyle(.section.weight(.medium))
       .padding(.horizontal, 6)
       .overlay(alignment: .bottom) {
         Rectangle().frame(height: 2).foregroundStyle(line)
@@ -627,7 +626,7 @@ private struct ArrangeWordsView: View {
           } label: {
             Text(word)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .tint(.primary)
           .disabled(context.isLocked)
           .accessibilityFocused($focus, equals: .placed(index))
@@ -636,7 +635,7 @@ private struct ArrangeWordsView: View {
     }
     .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
     .padding(8)
-    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
+    .panel()
 
     LessonWordBank {
       ForEach(exercise.wordBankOptions.indices, id: \.self) { index in
@@ -699,7 +698,7 @@ private struct ReadingPromptText: View {
         }
       }
     }
-    .font(.title2.weight(.semibold))
+    .typeStyle(.question)
     .dimsOnceChecked()
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(prompt)
@@ -741,12 +740,12 @@ private struct HintedWord: View {
     .buttonStyle(.plain)
     .popover(isPresented: $isShown, arrowEdge: .top) {
       Text(translation)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
         .foregroundStyle(.primary)
         .padding(.horizontal)
         .padding(.vertical, 10)
         .presentationCompactAdaptation(.popover)
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
   }
 }
@@ -815,15 +814,10 @@ private struct CheckedWord: View {
   let isRight: Bool
 
   var body: some View {
-    let tone: Color = isRight ? .success : .destructive
-
     Text(word)
       .padding(.horizontal, 12)
       .padding(.vertical, 6)
-      .background(tone.opacity(0.15), in: .capsule)
-      .overlay {
-        Capsule().strokeBorder(tone, lineWidth: 1.5)
-      }
+      .answerSurface(isRight ? .right : .wrong, cornerRadius: Radius.lg)
       .accessibilityValue(Self.verdict(isRight: isRight))
   }
 
@@ -910,8 +904,8 @@ private struct MatchColumnsView: View {
 
     if let allMatchedLine {
       Text(allMatchedLine)
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
     }
   }
 

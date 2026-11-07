@@ -41,7 +41,7 @@ struct AccountAvatar: View {
       }
     }
     .frame(width: size, height: size)
-    .background(.quaternary, in: Circle())
+    .background(.muted, in: Circle())
     .clipShape(Circle())
     .contentShape(Circle())
   }
@@ -54,13 +54,15 @@ struct AccountAvatar: View {
   private var fallback: some View {
     if let user {
       Text(getInitial(user: user))
-        .font(.system(size: size * 0.42, weight: .semibold))
-        .foregroundStyle(.secondary)
+        .typeStyle(TypeStyle(size: size * 0.42, relativeTo: .body, weight: .semibold))
+        // The circle already grows with Dynamic Type, so its letter only follows the circle.
+        .dynamicTypeSize(.large)
+        .foregroundStyle(.mutedForeground)
     } else {
       Image(systemName: "person.crop.circle.fill")
         .resizable()
         .symbolRenderingMode(.hierarchical)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
   }
 

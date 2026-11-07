@@ -10,9 +10,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,7 +44,8 @@ import com.zoonk.android.feature.onboarding.start.toGoalCreateInput
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.DropdownMenu
-import com.zoonk.android.ui.components.LetterMark
+import com.zoonk.android.ui.components.GoalMark
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
@@ -122,7 +121,7 @@ fun GoalSwitcher(
 @Composable
 private fun SwitcherTitle(selected: LearnerSummaryGoal?) {
     if (selected != null) {
-        GoalMark(selected.title)
+        GoalMark(selected.title, selected.languageFlag)
     } else {
         Icon(painterResource(R.drawable.ic_add), contentDescription = null, modifier = Modifier.size(18.dp))
     }
@@ -163,7 +162,7 @@ private fun MenuItems(
                         GoalLine(goal)
                     }
                 },
-                leadingIcon = { GoalMark(goal.title) },
+                leadingIcon = { GoalMark(goal.title, goal.languageFlag) },
                 trailingIcon = if (isSelected) ({ Icon(painterResource(R.drawable.ic_check), contentDescription = null) }) else null,
                 onClick = {
                     onDismiss()
@@ -323,33 +322,6 @@ private fun GoalLine(goal: LearnerSummaryGoal) {
 
     Text(text = line, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium.withTabularFigures())
 }
-
-/** The goal's first letter on a quiet tile (main's `GoalMark`). */
-@Composable
-fun GoalMark(title: String) {
-    Surface(
-        shape = MaterialTheme.shapes.extraSmall,
-        color = MaterialTheme.colorScheme.surfaceContainerHighest,
-        modifier = Modifier.size(MARK_SIZE).clearAndSetSemantics {},
-    ) {
-        LetterMark(
-            letter =
-                title
-                    .firstOrNull()
-                    ?.uppercase()
-                    .orEmpty(),
-            size = MARK_SIZE,
-            share = MARK_LETTER_SHARE,
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.labelSmall,
-        )
-    }
-}
-
-private val MARK_SIZE = 20.dp
-
-/** Main's `text-[0.625rem]` on its `size-4.5` tile. */
-private const val MARK_LETTER_SHARE = 0.56f
 
 private val TITLE_WIDTH = 240.dp
 private val MENU_WIDTH = 320.dp

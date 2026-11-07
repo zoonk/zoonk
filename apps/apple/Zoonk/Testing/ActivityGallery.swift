@@ -33,7 +33,7 @@
             },
             isExploring: Self.environment["ZOONK_ACTIVITY_GALLERY_EXPLORE"] != nil
           )
-          .accessibilitySizeStyles()
+          .zoonkStyles()
         }
       } else {
         content
@@ -190,7 +190,7 @@
           verbatim: [result.correctAnswer, result.feedback].compactMap { $0 }.joined(
             separator: "\n")
         )
-        .font(.footnote)
+        .typeStyle(.note)
       }
     }
 

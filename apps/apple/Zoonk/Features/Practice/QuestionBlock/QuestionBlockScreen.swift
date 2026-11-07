@@ -164,12 +164,12 @@ struct QuestionBlockView: View {
           "Every question is answered", tableName: "Practice",
           comment: "Title of a block opened again with every answer in."
         )
-        .font(.title2.bold())
+        .typeStyle(.section)
         Text(
           "Finish to see how it went.", tableName: "Practice",
           comment: "Under the title of a block opened again with every answer in."
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     } else if phase == .finishing {
       ProgressView().frame(maxWidth: .infinity)
@@ -319,8 +319,8 @@ struct QuestionBlockView: View {
     switch phase {
     case .alreadyAnswered:
       Text(Self.alreadyAnswered)
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       PracticeMainButton(title: continueTitle) { onRefresh() }
         .practiceFocus(.next)
     case .finishReady:
@@ -350,7 +350,8 @@ struct QuestionBlockView: View {
         PracticeMainButton(
           title: LocalizedStringResource(
             "I've read it. Show the answers", table: "Practice",
-            comment: "Shows a misread drill's answers once the question was read.")
+            comment: "Shows a misread drill's answers once the question was read."),
+          systemImage: "eye"
         ) {
           if focuses.has(.reveal) { focuses.move(to: .answer) }
           run.revealAnswers()
@@ -507,15 +508,15 @@ private struct NetScoreLine: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       Text(tally.line)
-        .font(.footnote.monospacedDigit())
-        .foregroundStyle(.secondary)
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
 
       Text(
         "A wrong answer cancels a right one. Not sure? Leave it blank.", tableName: "Practice",
         comment: "Why a net-scored block offers 'Leave blank'."
       )
-      .font(.caption)
-      .foregroundStyle(.secondary)
+      .typeStyle(.meta)
+      .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
   }
@@ -560,7 +561,7 @@ private struct PauseSuggestionView: View {
           "Stop for today", tableName: "Practice",
           comment: "Stops today's session from the pause suggestion.")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .disabled(isStopping)
 
       if failed {
@@ -569,7 +570,7 @@ private struct PauseSuggestionView: View {
             "We couldn't stop the session. Try again.", table: "Practice",
             comment: "Stopping the session failed.")
         )
-        .font(.subheadline)
+        .typeStyle(.body)
       }
     }
   }

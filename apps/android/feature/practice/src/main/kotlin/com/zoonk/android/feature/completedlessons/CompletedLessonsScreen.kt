@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.completedlessons
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +35,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.EmptyState
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -69,19 +70,21 @@ fun CompletedLessonsScreen(
     val goalId = read?.activeGoalId
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
-    val titleAway by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     val title = stringResource(R.string.navigation_completed_lessons)
 
     PageScaffold(
         onBack = { navigator.back() },
-        title = { if (titleAway) Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
             when {
                 goalId != null -> {
                     // `finishedOn` is the goal's local day, and the summary is read again at its midnight.
                     val today = LocalDate.now(read.timeZone?.let(ZoneId::of) ?: ZoneId.systemDefault())
-                    CompletedLessons(goalId, today, app.completedLessons, listState) { navigator.open(AppRoute.Lesson(it.toString())) }
+                    val goal = read.goals.firstOrNull { it.id == goalId }
+                    CompletedLessons(goalId, today, app.completedLessons, listState, eyebrow = goal?.title) {
+                        navigator.open(AppRoute.Lesson(it.toString()))
+                    }
                 }
 
                 summary is LoadState.Failed -> {
@@ -107,6 +110,7 @@ internal fun CompletedLessons(
     today: LocalDate,
     store: CompletedLessonsStore,
     listState: LazyListState,
+    eyebrow: String? = null,
     onOpen: (UUID) -> Unit,
 ) {
     val resource = store.lessons[goalId]
@@ -147,11 +151,15 @@ internal fun CompletedLessons(
     BeforeFold { beforeFold ->
         LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, detailPagePadding()) {
             item(key = "title", contentType = "title") {
-                Text(
-                    stringResource(R.string.navigation_completed_lessons),
-                    Modifier.pageTitle(),
-                    style = MaterialTheme.typography.titleLarge,
-                )
+                // Main's page header: the goal's name over the page's title.
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    eyebrow?.let { Eyebrow(it) }
+                    Text(
+                        stringResource(R.string.navigation_completed_lessons),
+                        Modifier.pageTitle(),
+                        style = MaterialTheme.typography.headlineMedium,
+                    )
+                }
             }
 
             if (days.isEmpty()) {

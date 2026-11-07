@@ -170,7 +170,7 @@ struct PlacementStep: View {
   }
 
   private func mockRunning(_ mockID: String) -> some View {
-    Form {
+    ZoonkList {
       StepHeader(
         title: Text(
           "Your mock exam is waiting", tableName: "Onboarding",
@@ -215,7 +215,7 @@ struct PlacementStep: View {
   }
 
   private var intro: some View {
-    Form {
+    ZoonkList {
       StepHeader(
         subject: subject,
         title: Text(
@@ -257,7 +257,7 @@ struct PlacementStep: View {
     comment: "Title of placement's wait once its questions are ready, for a learner still guessing")
 
   private func waiting(holding: WarmUpHolding?) -> some View {
-    Form {
+    ZoonkList {
       if holding == nil {
         StepHeader(
           title: Text(
@@ -303,14 +303,16 @@ struct PlacementStep: View {
             )
             .frame(maxWidth: .infinity)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .controlSize(.large)
-          .listRowInsets(EdgeInsets())
+          .listRowInsets(.vertical, 0)
           .listRowBackground(Color.clear)
         } footer: {
-          Text(
-            "Your first sessions will ask a few of these instead.", tableName: "Onboarding",
-            comment: "Under Skip for now")
+          SectionFooter {
+            Text(
+              "Your first sessions will ask a few of these instead.", tableName: "Onboarding",
+              comment: "Under Skip for now")
+          }
         }
       }
     }
@@ -327,7 +329,7 @@ struct PlacementStep: View {
   }
 
   private func outcome(title: Text, description: Text) -> some View {
-    Form {
+    ZoonkList {
       StepHeader(title: title, description: description)
 
       saveFailure
@@ -557,19 +559,18 @@ struct PlacementQuestionScreen<Media: View>: View {
       VStack(alignment: .leading, spacing: 4) {
         if let subject {
           Text(subject)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
 
         Text(
           "Question \(number)", tableName: "Onboarding",
           comment: "Which placement question this is"
         )
-        .font(.subheadline.weight(.semibold))
+        .typeStyle(.body.weight(.semibold))
       }
 
-      ProgressView(value: progress)
-        .tint(.success)
+      Meter(value: progress, fill: .success)
         .accessibilityHidden(true)
 
       media()

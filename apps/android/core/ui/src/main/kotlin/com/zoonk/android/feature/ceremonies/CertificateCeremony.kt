@@ -22,13 +22,11 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,7 +46,6 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -76,15 +73,18 @@ import com.zoonk.android.feature.certificates.pictureLabel
 import com.zoonk.android.feature.certificates.pictureUrl
 import com.zoonk.android.feature.certificates.rememberCertificateActions
 import com.zoonk.android.feature.certificates.words
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.SnackbarHost
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.theme.ZoonkMotion
+import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.OwnedCertificate
 import kotlinx.coroutines.launch
 import kotlin.time.TimeSource
@@ -343,7 +343,7 @@ private fun Words(
         Text(
             text = stringResource(if (awarded.size > 1) R.string.certificates_saved_several else R.string.certificates_saved_one),
             modifier = Modifier.padding(top = 14.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = MaterialTheme.zoonk.faint,
             style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center,
         )
@@ -366,7 +366,7 @@ private fun NameRow(
         Text(
             stringResource(R.string.certificates_on_your_certificate, recipient),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
+            style = MaterialTheme.typography.bodyMedium,
         )
         TextButton(onClick = onChange, modifier = Modifier.semantics { contentDescription = changeLabel }) {
             Text(stringResource(R.string.certificates_change), Modifier.clearAndSetSemantics {})

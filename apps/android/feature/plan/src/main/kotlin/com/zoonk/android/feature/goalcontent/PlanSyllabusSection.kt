@@ -62,11 +62,14 @@ fun PlanSyllabusSection(
 
         Column {
             if (exam) {
-                SectionHeader(
-                    stringResource(R.string.goalcontent_subjects),
-                    Modifier.padding(horizontal = PAGE_PADDING),
-                    detail = stringResource(R.string.goalcontent_preparation),
-                )
+                // Main's legend for the bars (`bars-meaning`): quiet words, not a mono fact.
+                SectionHeader(stringResource(R.string.goalcontent_subjects), Modifier.padding(horizontal = PAGE_PADDING)) {
+                    Text(
+                        stringResource(R.string.goalcontent_preparation),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
                 Box(Modifier.padding(horizontal = PAGE_PADDING)) { note() }
             } else {
                 SectionHeader(stringResource(R.string.goalcontent_modules), Modifier.padding(horizontal = PAGE_PADDING)) {

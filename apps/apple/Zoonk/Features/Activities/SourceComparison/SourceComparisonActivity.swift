@@ -150,7 +150,7 @@ private struct SourceComparisonCanvas: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       LessonRichText(fields.markPrompt)
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
 
       ForEach(Array(fields.sources.enumerated()), id: \.element.id) { index, source in
         sourceCard(source, symbol: index.isMultiple(of: 2) ? "scroll" : "book")
@@ -205,8 +205,8 @@ private struct SourceComparisonCanvas: View {
         }
       }
     }
-    .font(.caption)
-    .foregroundStyle(.secondary)
+    .typeStyle(.meta)
+    .foregroundStyle(.mutedForeground)
     .accessibilityHidden(true)
   }
 
@@ -221,14 +221,14 @@ private struct SourceComparisonCanvas: View {
       Label {
         VStack(alignment: .leading, spacing: 0) {
           Text(source.author)
-            .font(.subheadline.weight(.semibold))
+            .typeStyle(.note.weight(.semibold))
           Text(source.date)
-            .font(.caption)
-            .foregroundStyle(.secondary)
+            .typeStyle(.meta)
+            .foregroundStyle(.mutedForeground)
         }
       } icon: {
         Image(systemName: symbol)
-          .foregroundStyle(.mint)
+          .foregroundStyle(.vizAccent)
       }
       .accessibilityElement(children: .combine)
 
@@ -258,17 +258,17 @@ private struct SourceComparisonCanvas: View {
 
       if let url = source.citation.url.flatMap(URL.init(string:)) {
         Link(citation, destination: url)
-          .font(.caption)
+          .typeStyle(.meta)
           .underline()
       } else {
         Text(citation)
-          .font(.caption)
-          .foregroundStyle(.secondary)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
-    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
+    .panel()
   }
 
   private func excerpt(_ source: SourceComparisonFields.Source) -> AttributedString {
@@ -289,9 +289,9 @@ private struct SourceComparisonCanvas: View {
 
         switch state(of: passage) {
         case .unmarked:
-          part.swiftUI.underlineStyle = Text.LineStyle(pattern: .dot, color: .mint)
+          part.swiftUI.underlineStyle = Text.LineStyle(pattern: .dot, color: .vizAccent)
         case .marked:
-          part.swiftUI.backgroundColor = Color.orange.opacity(0.25)
+          part.swiftUI.backgroundColor = Color.vizHighlight.opacity(0.25)
         case .correct:
           part.swiftUI.backgroundColor = Color.success.opacity(0.2)
         case .incorrect:

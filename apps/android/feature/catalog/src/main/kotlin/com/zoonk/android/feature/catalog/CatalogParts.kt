@@ -12,9 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -33,6 +31,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -53,9 +52,12 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.flagEmoji
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatMinutes
@@ -65,6 +67,8 @@ import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.CatalogFirstQuestion
 import com.zoonk.api.models.CatalogTryLesson
 import com.zoonk.api.models.LearnerSummary
@@ -214,12 +218,6 @@ internal fun languageFlagLabel(
     locale: Locale,
 ): String = languageName("${language.substringBefore('-')}-${flag.uppercase()}", locale).replaceFirstChar { it.titlecase(locale) }
 
-/** A country's two letters as its flag; regions (`es-ct`, `arab`) have no standard emoji. */
-internal fun flagEmoji(code: String): String? {
-    if (code.length != 2 || !code.all { it.isLetter() }) return null
-    return code.uppercase().map { Character.toChars(REGIONAL_INDICATOR_A + (it - 'A')).concatToString() }.joinToString("")
-}
-
 @Composable
 internal fun LineWithIcon(
     @DrawableRes icon: Int,
@@ -320,7 +318,7 @@ internal fun StartActions(
             }
 
             if (secondary) {
-                FilledTonalButton(
+                OutlinedButton(
                     onClick = start,
                     enabled = !saving,
                     contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
@@ -332,7 +330,7 @@ internal fun StartActions(
             }
 
             if (onTryLesson != null) {
-                FilledTonalButton(onClick = onTryLesson) { Text(stringResource(R.string.catalog_try_lesson)) }
+                OutlinedButton(onClick = onTryLesson) { Text(stringResource(R.string.catalog_try_lesson)) }
             }
         }
 
@@ -362,10 +360,17 @@ internal fun TryLessonCard(
 
     OutlinedCard(modifier.widthIn(max = COLUMN_WIDTH)) {
         Column(Modifier.padding(20.dp)) {
+            // Main's `text-label`: uppercase for the eye, as written for TalkBack.
+            val title = stringResource(R.string.catalog_try_title, formatMinutes(minutes.toInt(), locale))
             Text(
-                text = stringResource(R.string.catalog_try_title, formatMinutes(minutes.toInt(), locale)),
-                modifier = Modifier.semantics { heading() },
-                style = MaterialTheme.typography.labelLarge,
+                text = title.uppercase(locale),
+                modifier =
+                    Modifier.clearAndSetSemantics {
+                        heading()
+                        text = AnnotatedString(title)
+                    },
+                color = MaterialTheme.zoonk.faint,
+                style = MaterialTheme.zoonkType.label,
             )
             Spacer(Modifier.size(4.dp))
             Text(
@@ -464,7 +469,7 @@ private fun ContinueLesson(
             style = MaterialTheme.typography.bodyLarge,
         )
         Spacer(Modifier.size(20.dp))
-        if (secondary) FilledTonalButton(onClick = onContinue) { Text(label) } else Button(onClick = onContinue) { Text(label) }
+        if (secondary) OutlinedButton(onClick = onContinue) { Text(label) } else Button(onClick = onContinue) { Text(label) }
     }
 }
 
@@ -541,7 +546,7 @@ internal fun SectionTitle(
     facts: String? = null,
 ) {
     FlowRow(modifier, horizontalArrangement = Arrangement.spacedBy(12.dp), itemVerticalAlignment = Alignment.CenterVertically) {
-        Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+        Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
         if (facts != null) {
             Text(
                 facts,
@@ -568,4 +573,3 @@ private const val MARK_SIZE = 40
 private const val ICON_SIZE = 16
 private const val MINUTES_PER_HOUR = 60L
 private const val SECONDS_PER_MINUTE = 60L
-private const val REGIONAL_INDICATOR_A = 0x1F1E6

@@ -18,6 +18,7 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,6 +32,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import kotlin.math.max
 
@@ -45,7 +47,8 @@ fun AnswerOptionGroup(
 
 /**
  * One option of a question (main's `AnswerOption`): its number key (for keyboards, so TalkBack
- * skips it), its words and, once checked, the word its result shows. An option among several
+ * skips it), its words (in `labelLarge`, main's 15/500, unless the content sets its own) and,
+ * once checked, the word its result shows. An option among several
  * picks is a [Role.Checkbox], and one that acts at once is a [Role.Button]; [tag] replaces the
  * result's word (an order step's place). A [glyph] marks the key in place of its number, as main's
  * net-scored statements (✓, ✗, –). The key sits on the words' first line, or at the top with
@@ -67,7 +70,7 @@ fun AnswerOption(
     content: @Composable () -> Unit,
 ) {
     val tone = answerTone(picked, result)
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
 
     Row(
         modifier =
@@ -82,13 +85,13 @@ fun AnswerOption(
                         Role.Button -> Modifier.clickable(enabled = enabled, role = role, onClick = onClick)
                         else -> Modifier.selectable(selected = picked, enabled = enabled, role = role, onClick = onClick)
                     },
-                ).padding(horizontal = 14.dp, vertical = 16.dp),
+                ).padding(horizontal = 14.dp, vertical = 13.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         NumberKey(marker, glyph, if (keyAtTop) Modifier else Modifier.alignByBaseline())
         TagBesideOrUnder(
             modifier = Modifier.weight(1f).then(if (keyAtTop) Modifier else Modifier.alignByBaseline()),
-            content = content,
+            content = { ProvideTextStyle(MaterialTheme.typography.labelLarge, content) },
             tag = tag ?: { if (result != null) AnswerTag(picked, result, guessed = guessed) },
         )
     }
@@ -104,16 +107,17 @@ private fun NumberKey(
         modifier =
             modifier
                 .clearAndSetSemantics {}
-                .defaultMinSize(minWidth = 22.dp, minHeight = 22.dp)
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(6.dp)),
+                .defaultMinSize(minWidth = 20.dp, minHeight = 20.dp)
+                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.04f), RoundedCornerShape(ZoonkRadius.sm))
+                .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f), RoundedCornerShape(ZoonkRadius.sm)),
         contentAlignment = Alignment.Center,
     ) {
         // A glyph keeps the digit's size and baseline, so its key lines up with the option's words.
         Text(
             text = number.toString(),
-            modifier = Modifier.padding(horizontal = 6.dp),
+            modifier = Modifier.padding(horizontal = 4.dp),
             color = if (glyph == null) MaterialTheme.colorScheme.onSurfaceVariant else Color.Transparent,
-            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+            style = MaterialTheme.typography.labelSmall.withTabularFigures(),
         )
         glyph?.let {
             Icon(

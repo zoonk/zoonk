@@ -7,16 +7,13 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,9 +34,12 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
@@ -67,7 +67,7 @@ internal fun PlanBases(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionLabel(stringResource(R.string.plan_prerequisites))
         Text(basesSummary(bases), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        FilledTonalButton(onClick = { drafts.bases = BasesDraft() }) { Text(stringResource(R.string.plan_choose_prerequisites)) }
+        OutlinedButton(onClick = { drafts.bases = BasesDraft() }) { Text(stringResource(R.string.plan_choose_prerequisites)) }
     }
 
     drafts.bases?.let { draft ->
@@ -259,7 +259,7 @@ private fun SubjectChoice(
             modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled),
             enabled = enabled,
             readOnly = true,
-            label = { Text(area) },
+            label = area,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
             supportingText = {
                 Text(
@@ -321,7 +321,7 @@ private fun BasesAdvice(
             Advice.Idle, Advice.Pending -> {}
         }
         if (advice !is Advice.Answered) {
-            FilledTonalButton(onClick = onAsk, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
+            OutlinedButton(onClick = onAsk, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
                 PendingLabel(
                     asking,
                     stringResource(
@@ -354,7 +354,7 @@ private fun PreviewOutcome(
 
             Check.Failed -> {
                 Note(stringResource(R.string.plan_check_failed))
-                FilledTonalButton(onClick = onRetry) { Text(stringResource(R.string.load_failed_try_again)) }
+                OutlinedButton(onClick = onRetry) { Text(stringResource(R.string.load_failed_try_again)) }
             }
 
             is Check.Ready -> {

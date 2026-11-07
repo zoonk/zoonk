@@ -85,15 +85,15 @@ struct PlanLinkScreen: View {
   private func plan(_ link: Components.Schemas.PlanLink) -> some View {
     let outline = link.outline
 
-    return Form {
+    return ZoonkList {
       Section {
         VStack(alignment: .leading, spacing: 6) {
           Text(
             "A study plan someone shared with you", tableName: "PlanLink",
             comment: "Eyebrow over a shared plan's subject"
           )
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.rowTitle)
+          .foregroundStyle(.mutedForeground)
           Group {
             if let subject = outline.subject?.title {
               Text(subject)
@@ -102,20 +102,21 @@ struct PlanLinkScreen: View {
                 "A study plan", tableName: "PlanLink", comment: "A shared plan without a subject")
             }
           }
-          .font(.title2.bold())
+          .typeStyle(.heroTitle)
           .accessibilityAddTraits(.isHeader)
 
           if let description = outline.subject?.description {
             Text(description)
-              .foregroundStyle(.secondary)
+              .typeStyle(.lead)
+              .foregroundStyle(.mutedForeground)
           }
 
           Text(
             "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know.",
             tableName: "PlanLink", comment: "What starting from a shared plan does"
           )
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
         }
         .listRowBackground(Color.clear)
       }
@@ -149,7 +150,7 @@ struct PlanLinkScreen: View {
         .buttonStyle(.mainAction)
         .controlSize(.large)
         .disabled(isStarting)
-        .listRowInsets(EdgeInsets())
+        .listRowInsets(.vertical, 0)
         .listRowBackground(Color.clear)
       }
 
@@ -168,15 +169,20 @@ struct PlanLinkScreen: View {
           } icon: {
             Text(index + 1, format: .number)
               .monospacedDigit()
-              .foregroundStyle(index == 0 ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
+              .foregroundStyle(index == 0 ? AnyShapeStyle(.tint) : AnyShapeStyle(.mutedForeground))
           }
         }
       } header: {
-        Text("A study plan", tableName: "PlanLink", comment: "Header over a shared plan's phases")
+        SectionTitle(
+          Text("A study plan", tableName: "PlanLink", comment: "Header over a shared plan's phases")
+        )
       } footer: {
-        Text(
-          "~\(studyDuration(minutes: max(1, minutes(outline.hours)))) of study\u{00A0}· \(outline.phases.count) phases\u{00A0}· \(outline.skillCount) skills",
-          tableName: "PlanLink", comment: "A shared plan's size: its study time, phases and skills")
+        SectionFooter {
+          Text(
+            "~\(studyDuration(minutes: max(1, minutes(outline.hours)))) of study\u{00A0}· \(outline.phases.count) phases\u{00A0}· \(outline.skillCount) skills",
+            tableName: "PlanLink",
+            comment: "A shared plan's size: its study time, phases and skills")
+        }
       }
     }
   }

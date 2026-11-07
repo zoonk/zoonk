@@ -12,10 +12,10 @@ struct MissionsSummary: View {
 
     if earned {
       if left.isEmpty {
-        HStack {
+        AccessibilityStack(spacing: 8) {
           Text("Missions done", tableName: "Today", comment: "Today's missions are done")
-            .font(.body.weight(.medium))
-          Spacer()
+            .typeStyle(.body.weight(.medium))
+            .frame(maxWidth: .infinity, alignment: .leading)
           BrainPowerReward(points: bonus, earned: true)
         }
       } else {
@@ -23,22 +23,19 @@ struct MissionsSummary: View {
           "Today's +\(bonus) Brain Power is already earned.", tableName: "Today",
           comment: "Another goal already earned the day's missions reward"
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     } else {
       VStack(alignment: .leading, spacing: 12) {
-        HStack(spacing: 10) {
+        MarkedRow(alignment: .center, stackedSpacing: 8) {
           MissionsRing(done: missions.count - left.count, total: missions.count) {
             let buddy = learner.summary.value?.buddy ?? BuddyLook()
             BuddyFace(kind: buddy.kind, glasses: buddy.glasses)
           }
-
+        } content: {
           remaining(left)
-            .font(.subheadline)
-            .monospacedDigit()
-
-          Spacer()
-
+            .typeStyle(.body.monospaced())
+        } end: {
           BrainPowerReward(points: bonus, earned: false)
         }
 

@@ -36,6 +36,7 @@ import com.zoonk.android.feature.audio.SpokenText
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.player.model.SpokenHeard
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.api.models.SpokenPracticeWord
 import com.zoonk.api.models.SpokenWordResult
 
@@ -142,7 +143,7 @@ private fun PracticeWord(
     onSelect: () -> Unit,
 ) {
     val description = wordDescription(word)
-    val shape = RoundedCornerShape(6.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.sm)
 
     Surface(
         selected = selected,

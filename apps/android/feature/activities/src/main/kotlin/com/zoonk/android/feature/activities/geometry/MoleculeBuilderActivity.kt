@@ -75,6 +75,7 @@ import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import kotlin.math.PI
@@ -325,7 +326,7 @@ private fun MoleculeBoard(
     BoxWithConstraints(
         Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(ZoonkRadius.option))
             .background(board)
             .drawBehind { dotGrid(dots) },
         contentAlignment = Alignment.TopCenter,
@@ -537,7 +538,7 @@ private fun MoleculeElements(
     onAdd: (String) -> Unit,
 ) {
     val border = MaterialTheme.colorScheme.outlineVariant
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
 
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         val minWidth = ELEMENT_MIN_WIDTH * LocalDensity.current.fontScale.coerceAtLeast(1f)

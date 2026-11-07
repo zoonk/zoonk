@@ -23,14 +23,14 @@ struct ExamPrepTimer: View {
       AccessibilityStack(spacing: 16) {
         VStack(alignment: .leading, spacing: 4) {
           Text("Preparation", tableName: "Voice", comment: "An exam task's preparation time")
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
 
           if let start {
             clock(from: start)
           } else {
             Text(prepLine)
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
           }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -41,7 +41,7 @@ struct ExamPrepTimer: View {
           } label: {
             Text("Start preparing", tableName: "Voice", comment: "Starts the preparation clock")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         } else {
           Button {
             startedAt = Date.now.timeIntervalSince1970
@@ -63,11 +63,11 @@ struct ExamPrepTimer: View {
           "Preparation time is over. Start the call when you're ready.", tableName: "Voice",
           comment: "The preparation clock ran out"
         )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       } else {
         Text(timerInterval: start...deadline, countsDown: true)
-          .font(.title2.weight(.semibold).monospacedDigit())
+          .typeStyle(.readout)
           .accessibilityAddTraits(.updatesFrequently)
       }
     }

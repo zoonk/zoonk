@@ -16,7 +16,7 @@ struct MemoryInsightCard: View {
       VStack(alignment: .leading, spacing: 12) {
         if let answer {
           Text(answered(answer))
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         } else {
           Text(insight.message)
           actions
@@ -28,7 +28,7 @@ struct MemoryInsightCard: View {
               "We couldn't save your answer. Try again.", table: "Buddy",
               comment: "Answering an insight failed")
           )
-          .font(.footnote)
+          .typeStyle(.note)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -73,7 +73,7 @@ struct MemoryInsightCard: View {
           } label: {
             dismiss.frame(maxWidth: .infinity)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         } else {
           // A tip's only answer acknowledges it: bordered, so Today's own action stays the
           // screen's one main button.
@@ -82,7 +82,7 @@ struct MemoryInsightCard: View {
           } label: {
             acceptLabel
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
       } else if let dismiss = dismissLabel {
         Button {
@@ -90,7 +90,7 @@ struct MemoryInsightCard: View {
         } label: {
           dismiss
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
     }
     .disabled(isSaving)

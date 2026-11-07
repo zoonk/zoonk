@@ -32,7 +32,8 @@ final class UsageAnalyticsTests: XCTestCase {
       level: nil,
       nextChangeAt: .distantFuture,
       places: LearnerPlaces(
-        completedLessons: false, exam: false, mindMaps: false, readyMistakes: 0, speaking: false),
+        certificates: false, completedLessons: false, exam: false, mindMaps: false,
+        readyMistakes: 0, speaking: false),
       readAt: .now,
       tier: .plus,
       timeZone: nil,

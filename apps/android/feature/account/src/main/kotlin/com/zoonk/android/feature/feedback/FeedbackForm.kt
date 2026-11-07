@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
@@ -21,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -52,8 +50,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.SessionState
+import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.OptionsButton
+import com.zoonk.android.ui.components.OutlinedTextField
 import kotlinx.coroutines.flow.first
 import java.util.UUID
 
@@ -81,7 +83,7 @@ fun FeedbackForm(
                 Modifier
                     .fillMaxWidth()
                     .heightIn(min = 128.dp),
-            label = { Text(stringResource(R.string.feedback_message)) },
+            label = stringResource(R.string.feedback_message),
             placeholder = { Text(stringResource(R.string.feedback_message_placeholder)) },
             supportingText = form.target.contentId?.let { { Text(stringResource(R.string.feedback_screen_attached)) } },
             readOnly = isSending,
@@ -96,7 +98,7 @@ fun FeedbackForm(
                     Modifier
                         .fillMaxWidth()
                         .semantics { contentType = ContentType.EmailAddress },
-                label = { Text(stringResource(R.string.feedback_email)) },
+                label = stringResource(R.string.feedback_email),
                 placeholder = { Text(stringResource(R.string.account_email_placeholder)) },
                 singleLine = true,
                 readOnly = isSending,
@@ -120,6 +122,7 @@ fun FeedbackForm(
             onClick = { form.send(accountEmail) },
             enabled = form.canSend(accountEmail),
             modifier = Modifier.align(Alignment.End),
+            size = ButtonSize.Small,
         ) {
             Text(stringResource(R.string.feedback_send))
             if (isSending) {
@@ -238,18 +241,35 @@ fun ReportProblemItem(
     )
 }
 
-/** A "More" button with only Report a problem, for a screen without a menu of its own. */
+/**
+ * A "More" button with only Report a problem, for a screen without a menu of its own: in its top app
+ * bar, or [inPage] as main's "⋯" beside a detail page's main action.
+ */
 @Composable
 fun ReportProblemMenu(
     app: AppContainer,
     target: FeedbackTarget,
+    inPage: Boolean = false,
+) = ReportProblemMenu(rememberReportProblem(app, target), inPage)
+
+/**
+ * [ReportProblemMenu] for a [report] remembered above a layout the window size changes, so resizing
+ * while writing keeps the sheet open with its draft.
+ */
+@Composable
+fun ReportProblemMenu(
+    report: FeedbackSheet,
+    inPage: Boolean = false,
 ) {
-    val report = rememberReportProblem(app, target)
     var isOpen by rememberSaveable { mutableStateOf(false) }
 
     Box {
-        IconButton(onClick = { isOpen = true }) {
-            Icon(painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.feedback_more))
+        if (inPage) {
+            OptionsButton(onClick = { isOpen = true }, contentDescription = stringResource(R.string.feedback_more), size = ButtonSize.Large)
+        } else {
+            IconButton(onClick = { isOpen = true }) {
+                Icon(painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.feedback_more))
+            }
         }
         DropdownMenu(expanded = isOpen, onDismissRequest = { isOpen = false }) {
             ReportProblemItem(report) { isOpen = false }

@@ -268,6 +268,27 @@ describe(listCurrentUserGoals, () => {
     });
   });
 
+  it("marks only a language goal with its language's flag, not an exam in that language", async () => {
+    const user = await useLearner({ plus: true });
+
+    await goalFixture({
+      kind: "language",
+      targetLanguage: "pt-BR",
+      title: "Portuguese",
+      userId: user.id,
+    });
+
+    await goalFixture({ kind: "language", targetLanguage: "ar", title: "Arabic", userId: user.id });
+    await goalFixture({ kind: "exam", targetLanguage: "es", title: "DELE B2", userId: user.id });
+    await goalFixture({ title: "Physics", userId: user.id });
+
+    const list = await listCurrentUserGoals();
+
+    expect(
+      Object.fromEntries(list?.goals.map((goal) => [goal.title, goal.languageFlag]) ?? []),
+    ).toStrictEqual({ Arabic: "arab", "DELE B2": null, Physics: null, Portuguese: "br" });
+  });
+
   it("places a test days away on its first day while that day's lessons are still being written", async () => {
     const user = await useLearner();
     const goal = await goalFixture({ kind: "exam", userId: user.id });

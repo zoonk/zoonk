@@ -86,7 +86,7 @@ struct CallProblemView: View {
         .controlSize(.large)
 
       backButton
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
     default:
       backButton
         .buttonStyle(.mainAction)
@@ -187,7 +187,7 @@ struct DroppedCallView: View {
       } label: {
         Text("Open Settings", tableName: "Voice", comment: "Button that opens the app's settings")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
 
       endButton
     case nil:
@@ -198,7 +198,7 @@ struct DroppedCallView: View {
       }
 
       upsell
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
     }
   }
 
@@ -217,7 +217,7 @@ struct DroppedCallView: View {
     } label: {
       endLabel
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
   }
 
   private var endLabel: Text {
@@ -232,7 +232,7 @@ struct DroppedCallView: View {
   private func why(_ title: Text, _ text: Text?) -> some View {
     VStack(spacing: 4) {
       title
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
         .foregroundStyle(.primary)
 
       text

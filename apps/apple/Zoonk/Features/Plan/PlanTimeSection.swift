@@ -91,9 +91,11 @@ struct PlanTimeSection: View {
         fullCourseToggle
       }
     } footer: {
-      Text(
-        "Your plan changes from today. Less time spreads your lessons over more days.",
-        tableName: "Plan", comment: "Explains what changing the time a day does")
+      SectionFooter {
+        Text(
+          "Your plan changes from today. Less time spreads your lessons over more days.",
+          tableName: "Plan", comment: "Explains what changing the time a day does")
+      }
     }
   }
 
@@ -117,10 +119,10 @@ struct PlanTimeSection: View {
             "Working out what your time covers…", tableName: "Plan",
             comment: "While a change to the plan saves, in place of what the time a day covers"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         } else if plan.fitOffer?.fits == true, let covers = planCoversEverythingText(plan) {
           covers
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         } else {
           TimeAnswer(
             date: TimeAnswer.GoalDate(
@@ -139,7 +141,7 @@ struct PlanTimeSection: View {
           }
         }
       }
-      .font(.subheadline)
+      .typeStyle(.body)
 
       // A goal that isn't an exam can move its date to the day its own time covers everything.
       if goal.kind != .exam, !line.coversEverything, let fittingDate = found?.fittingDate {
@@ -147,8 +149,8 @@ struct PlanTimeSection: View {
       }
     } else if let finish {
       Text(finish)
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -299,53 +301,25 @@ func planCoversEverythingText(_ plan: GoalPlan) -> Text? {
         "The learner's own time a day covers the whole goal; the argument is a date like 'May 5'")
 }
 
-/// Nil when it covers everything in depth.
+/// Main's `useCoveredText`: how much of the goal its time covers in depth by its date. Nil when it
+/// covers everything in depth.
 func planCoverageText(_ plan: GoalPlan) -> String? {
   guard let feasibility = plan.feasibility, feasibility.deadline != nil, !feasibility.fits else {
     return nil
   }
 
-  let time = planDurationText(minutes: Double(plan.schedule.dailyMinutes))
-  let isExam = feasibility.measure == "exam"
+  let schedule = plan.schedule
 
-  if feasibility.coveredShare < 0.005 {
+  guard feasibility.coveredShare >= 0.005, let targetDate = schedule.targetDate else {
+    let time = planDurationText(minutes: Double(schedule.dailyMinutes))
+
     return String(
       localized: "\(time) a day isn't enough time to cover your goal.", table: "Plan",
       comment: "The time a day covers next to nothing")
   }
 
-  if feasibility.coreFits && isExam {
-    return feasibility.deepensMostAsked
-      ? String(
-        localized:
-          "\(time) a day studies every topic of the exam, the ones that come up most in more depth.",
-        table: "Plan", comment: "What the time a day covers of an exam")
-      : String(
-        localized: "\(time) a day studies every topic of the exam, some of them in less depth.",
-        table: "Plan", comment: "What the time a day covers of an exam")
-  }
-
-  if feasibility.coreFits {
-    return String(
-      localized:
-        "\(time) a day studies every part of your goal, the ones that matter most in more depth.",
-      table: "Plan", comment: "What the time a day covers of a goal")
-  }
-
-  if isExam && plan.schedule.fullCourse {
-    return String(
-      localized:
-        "\(time) a day doesn't reach every topic by the exam: the ones that come up least come after it.",
-      table: "Plan", comment: "What the time a day leaves for after the exam")
-  }
-
-  return isExam
-    ? String(
-      localized:
-        "\(time) a day doesn't reach every topic: the ones that come up least are left out.",
-      table: "Plan", comment: "What the time a day leaves out of an exam")
-    : String(
-      localized:
-        "\(time) a day doesn't reach every part of your goal: what comes last in your path is left out.",
-      table: "Plan", comment: "What the time a day leaves out of a goal")
+  return TimeAnswer.shareWords(
+    feasibility.coveredShare, exam: feasibility.measure == "exam",
+    month: schedule.targetDateNamedMonth,
+    date: PlanDate.longText(targetDate, month: schedule.targetDateNamedMonth))
 }

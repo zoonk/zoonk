@@ -2,10 +2,8 @@ package com.zoonk.android.ui.scaffold
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -21,6 +19,8 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.LocalSnackbarHostState
+import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule

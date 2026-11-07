@@ -38,6 +38,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf29Fields
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf29Value as FindErrorContent
@@ -127,7 +128,7 @@ private fun StepRow(
     onClick: () -> Unit,
 ) {
     val tone = answerTone(picked, result)
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     val verdict =
         when (result) {
             AnswerResult.Right -> stringResource(R.string.activities_find_error_the_wrong_step)

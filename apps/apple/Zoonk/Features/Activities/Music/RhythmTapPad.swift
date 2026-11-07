@@ -17,23 +17,23 @@ struct RhythmTapPad: View {
   var body: some View {
     VStack(spacing: 4) {
       Image(systemName: "hand.tap")
-        .font(.title)
+        .typeStyle(.pageTitle.weight(.regular))
       title
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
 
       if GCKeyboard.coalesced != nil {
         Text(
           "or press Space", tableName: "ActivitiesMusic",
           comment: "Under the rhythm pad, with a hardware keyboard"
         )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       }
     }
     .frame(maxWidth: .infinity, minHeight: 128)
     .padding()
     .accessibilityHidden(true)
-    .background(Color(.tertiarySystemFill), in: .rect(cornerRadius: 20, style: .continuous))
+    .background(Color.muted, in: .rect(cornerRadius: Radius.xl, style: .continuous))
     .opacity(isActive ? 1 : 0.6)
     .scaleEffect(isPressed && !reduceMotion ? 0.98 : 1)
     .animation(.snappy(duration: 0.1), value: isPressed)

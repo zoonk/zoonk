@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -62,9 +61,11 @@ import com.zoonk.android.feature.questions.isMulti
 import com.zoonk.android.feature.questions.trueFalseLabel
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.MockExam
@@ -139,19 +140,18 @@ private fun Options(
             ) {
                 when (option) {
                     is Answer.TrueFalse -> {
-                        ItemLine(trueFalseLabel(option.isTrue, words), style = MaterialTheme.typography.bodyLarge)
+                        ItemLine(trueFalseLabel(option.isTrue, words))
                     }
 
                     null -> {
                         Text(
                             stringResource(R.string.questions_leave_blank),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyLarge,
                         )
                     }
 
                     else -> {
-                        ItemLine(labels[index], style = MaterialTheme.typography.bodyLarge)
+                        ItemLine(labels[index])
                     }
                 }
             }
@@ -186,7 +186,7 @@ private fun Picks(
                     onClick = { viewModel.pickOption(index) },
                     enabled = !locked,
                     role = Role.Checkbox,
-                ) { ItemLine(label, style = MaterialTheme.typography.bodyLarge) }
+                ) { ItemLine(label) }
             }
         }
     }
@@ -250,19 +250,10 @@ private fun EssayAnswer(
         onValueChange = { if (it.length <= MAX_ESSAY_CHARACTERS) viewModel.write(Answer.Text(it)) },
         modifier = Modifier.fillMaxWidth().heightIn(min = ESSAY_HEIGHT),
         readOnly = run.pending,
-        label = {
-            Text(
-                stringResource(
-                    if (run.view.essayRubric ==
-                        MockExam.EssayRubric.ENEM
-                    ) {
-                        R.string.mock_your_essay
-                    } else {
-                        R.string.questions_your_answer
-                    },
-                ),
-            )
-        },
+        label =
+            stringResource(
+                if (run.view.essayRubric == MockExam.EssayRubric.ENEM) R.string.mock_your_essay else R.string.questions_your_answer,
+            ),
         // The field's own line, so TalkBack reads the count with the field, not on every word.
         supportingText = {
             Text(
@@ -314,7 +305,7 @@ internal fun QuestionCell(
     val flagged = draft?.flagged == true
     val current = index == run.position
     val enabled = run.moves.canOpen(index)
-    val shape = RoundedCornerShape(if (compact) 6.dp else 10.dp)
+    val shape = RoundedCornerShape(if (compact) ZoonkRadius.sm else 10.dp)
     val name =
         if (question.essay) {
             stringResource(

@@ -70,6 +70,7 @@ import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.LineMarker
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf23FieldsPlacesInner
@@ -193,7 +194,7 @@ private fun MapView(
             Modifier
                 .fillMaxWidth()
                 .height(layout.height.dp)
-                .clip(RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(ZoonkRadius.option))
                 .semantics {
                     contentDescription = description
                     isTraversalGroup = true
@@ -437,7 +438,7 @@ private fun PlaceDetails(
             }
         } else {
             Surface(
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(ZoonkRadius.option),
                 color = MaterialTheme.colorScheme.surface,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                 modifier = Modifier.fillMaxWidth(),

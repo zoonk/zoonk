@@ -24,16 +24,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
@@ -46,27 +38,24 @@ import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 
 /**
- * Main's detail page: [hero] heads it, and its title moves to the top app bar once it has scrolled
- * under the bar. Where the page splits into panes, [aside] runs beside it behind a hairline (main's
- * aside from 72rem, an unfolded book's second page); otherwise [content] places what it needs of it
- * in the page. [ask] sits in the bar, as the buddy's face on a narrow page, unless [askInAside] and
- * the aside is showing.
+ * Main's detail page: [hero] heads it, its title marked with `pageTitle()`, which the top app bar
+ * shows once it has scrolled under the bar. Where the page splits into panes, [aside] runs beside it
+ * behind a hairline (main's aside from 72rem, an unfolded book's second page); otherwise [content]
+ * places what it needs of it in the page. [ask] sits in the bar, as the buddy's face on a narrow page, unless [askInAside] and
+ * the aside is showing. The page's "⋯" goes in its [DetailHero], beside the main action, as main's.
  */
 @Composable
 internal fun DetailPage(
     title: String,
     onBack: () -> Unit,
-    hero: @Composable (onTitlePlaced: (LayoutCoordinates) -> Unit) -> Unit,
+    hero: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
     askInAside: Boolean = false,
-    menu: @Composable () -> Unit = {},
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
     val listState = rememberLazyListState()
-    var titleUnderBar by remember { mutableStateOf(false) }
-    val titleAway by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 || titleUnderBar } }
 
     BoxWithConstraints(modifier) {
         val asideBeside = aside != null && supportingPaneBeside(maxWidth, panesTouch = true)
@@ -74,13 +63,12 @@ internal fun DetailPage(
 
         PageScaffold(
             onBack = onBack,
-            title = { if (titleAway) BarTitle(title) },
+            title = { BarTitle(title) },
             actions = {
                 if (ask != null && !(askInAside && asideBeside)) ask(if (wide) AskTutorAppearance.Button else AskTutorAppearance.Icon)
-                menu()
             },
         ) { padding ->
-            DetailPageContent(listState, padding, if (asideBeside) aside else null, hero, { titleUnderBar = it }, content)
+            DetailPageContent(listState, padding, if (asideBeside) aside else null, hero, content)
         }
     }
 }
@@ -98,12 +86,10 @@ private fun DetailPageContent(
     listState: LazyListState,
     padding: PaddingValues,
     aside: (@Composable ColumnScope.() -> Unit)?,
-    hero: @Composable (onTitlePlaced: (LayoutCoordinates) -> Unit) -> Unit,
-    onTitleUnderBar: (Boolean) -> Unit,
+    hero: @Composable () -> Unit,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
     val direction = LocalLayoutDirection.current
-    val barBottom = with(LocalDensity.current) { padding.calculateTopPadding().toPx() }
     val listPadding =
         PaddingValues(
             start = padding.calculateStartPadding(direction),
@@ -111,20 +97,13 @@ private fun DetailPageContent(
             end = padding.calculateEndPadding(direction),
             bottom = padding.calculateBottomPadding() + SECTION_GAP,
         )
-    val list = remember { mutableStateOf<LayoutCoordinates?>(null) }
-    val onTitlePlaced: (LayoutCoordinates) -> Unit = { title ->
-        list.value?.takeIf { it.isAttached }?.let { coordinates ->
-            onTitleUnderBar(coordinates.localPositionOf(title, Offset(0f, title.size.height.toFloat())).y <= barBottom)
-        }
-    }
-    val listModifier = Modifier.onGloballyPositioned { list.value = it }
     val items: LazyListScope.(Boolean) -> Unit = { asideBeside ->
-        item(key = "hero", contentType = "hero") { hero(onTitlePlaced) }
+        item(key = "hero", contentType = "hero") { hero() }
         content(asideBeside)
     }
 
     if (aside == null) {
-        LazyColumn(Modifier.fillMaxSize().then(listModifier), state = listState, contentPadding = listPadding) { items(false) }
+        LazyColumn(Modifier.fillMaxSize(), state = listState, contentPadding = listPadding) { items(false) }
         return
     }
 
@@ -145,28 +124,38 @@ private fun DetailPageContent(
             }
         },
     ) { beside ->
-        LazyColumn(Modifier.fillMaxSize().then(listModifier), state = listState, contentPadding = listPadding) { items(beside) }
+        LazyColumn(Modifier.fillMaxSize(), state = listState, contentPadding = listPadding) { items(beside) }
     }
 }
 
-/** The page's name and facts, with its main action under them on a narrow page and at their end on a wide one. */
+/**
+ * The page's name and facts, with its main action and its [menu] ("⋯") under them on a narrow page,
+ * the action filling the row, and at their end on a wide one (main's `DetailHero` and `DetailActions`).
+ */
 @Composable
 internal fun DetailHero(
     action: (@Composable (Modifier) -> Unit)?,
+    menu: (@Composable () -> Unit)?,
     text: @Composable ColumnScope.() -> Unit,
 ) {
     BoxWithConstraints(Modifier.fillMaxWidth().padding(horizontal = PAGE_PADDING)) {
         if (maxWidth >= WIDE_FROM) {
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp), verticalAlignment = Alignment.Bottom) {
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp), content = text)
-                action?.invoke(Modifier)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    action?.invoke(Modifier)
+                    menu?.invoke()
+                }
             }
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 text()
-                if (action != null) {
+                if (action != null || menu != null) {
                     Spacer(Modifier.height(12.dp))
-                    action(Modifier.fillMaxWidth())
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        action?.invoke(Modifier.weight(1f))
+                        menu?.invoke()
+                    }
                 }
             }
         }

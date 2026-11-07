@@ -12,15 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,9 +35,12 @@ import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.goalErrorMessage
 import com.zoonk.android.feature.onboarding.goalLimitMessage
 import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
+import com.zoonk.android.ui.theme.ZoonkRadius
 
 @Composable
 internal fun OnboardingHeading(
@@ -52,7 +52,7 @@ internal fun OnboardingHeading(
         Text(
             text = title,
             modifier = Modifier.pageTitle().semantics { paneTitle = title },
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.headlineMedium,
         )
         if (description != null) {
             Text(text = description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
@@ -65,7 +65,7 @@ internal fun TypedGoal(goal: String) {
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
         Surface(
             modifier = Modifier.widthIn(max = 480.dp),
-            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 4.dp),
+            shape = RoundedCornerShape(topStart = ZoonkRadius.xl, topEnd = ZoonkRadius.xl, bottomStart = ZoonkRadius.xl, bottomEnd = 4.dp),
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
         ) {
             Text(
@@ -198,7 +198,7 @@ internal fun ColumnScope.GoalLimitWall(
         )
         Button(onClick = onSeePlus, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.onboarding_see_plus)) }
         if (reason == GoalLimitReason.OneActiveGoal) {
-            FilledTonalButton(
+            OutlinedButton(
                 onClick = onOpenPlan,
                 modifier = Modifier.fillMaxWidth(),
             ) { Text(stringResource(R.string.onboarding_go_to_plan)) }

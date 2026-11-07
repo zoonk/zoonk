@@ -39,6 +39,8 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LessonMap
 import com.zoonk.api.models.LessonMapIdeasInner
 
@@ -181,25 +183,25 @@ private fun MindMapIdea(
     Column(
         modifier
             .semantics(mergeDescendants = true) {}
-            .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
-            .border(HAIRLINE, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow, MaterialTheme.shapes.large)
+            .border(HAIRLINE, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.large)
             .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             idea.icon?.let { LessonIconImage(it, CARD_ICON) }
             Column {
-                Text(
-                    count(index + 1),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                )
+                Text(count(index + 1), color = MaterialTheme.zoonk.faint, style = MaterialTheme.zoonkType.data)
                 idea.label?.let { Text(it, style = MaterialTheme.typography.titleSmall) }
             }
         }
         RichInlineText(
             idea.text,
-            style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+            // Main's idea text is quiet under its name and ink when it stands alone.
+            style =
+                MaterialTheme.typography.bodyMedium.copy(
+                    color = if (idea.label == null) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                ),
         )
     }
 }

@@ -61,6 +61,7 @@ import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.richtext.RichInlineText
+import com.zoonk.android.ui.theme.ZoonkRadius
 
 /**
  * A lesson's language: what the learner reads in ([learner]) and what they're learning ([target]); a lesson that
@@ -410,7 +411,7 @@ private fun ChoicePicture(
                 Modifier
                     .fillMaxWidth()
                     .heightIn(max = 320.dp)
-                    .clip(RoundedCornerShape(12.dp)),
+                    .clip(RoundedCornerShape(ZoonkRadius.option)),
         )
     }
 }

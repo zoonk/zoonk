@@ -103,8 +103,8 @@ struct CourseOutlineSections: View {
     Section {
       if let estimate, !chapters.isEmpty, learner.showsExampleNumbers {
         planLine(estimate)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
 
       if let lead {
@@ -118,14 +118,14 @@ struct CourseOutlineSections: View {
             tableName: "Courses", comment: "A course outline before its chapters are written")
         } icon: {
           Image(systemName: "sparkles")
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .accessibilityHidden(true)
         }
       }
     } header: {
-      CatalogSectionHeader {
+      SectionTitle(
         Text("Course outline", tableName: "Courses", comment: "Header of a course's outline")
-      } detail: {
+      ) {
         if let size = sizeText(chapters) {
           Text(size)
         }
@@ -205,7 +205,7 @@ private struct CourseLevelOutline: View {
     let isExpanded = $disclosures.isExpanded(key, otherwise: isOpen)
 
     Section {
-      DisclosureGroup(isExpanded: isExpanded) {
+      OutlineDisclosure(isExpanded: isExpanded) {
         OutlineChapterRows(
           chapters: band.chapters, course: course, learner: learner,
           disclosures: $disclosures, key: key,
@@ -214,15 +214,15 @@ private struct CourseLevelOutline: View {
         VStack(alignment: .leading, spacing: 2) {
           LabeledContent {
             Text(aside)
-              .font(.footnote.monospacedDigit())
+              .typeStyle(.data)
           } label: {
             LevelTitle(level: band.level, isHere: learner.isHere(level: band.level))
           }
 
           if !isExpanded.wrappedValue {
             Text(band.chapters.prefix(Self.named).map(\.title).joinedFacts())
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
           }
         }
         .accessibilityElement(children: .combine)
@@ -255,6 +255,40 @@ private struct CourseLevelOutline: View {
   }
 }
 
+/// A `DisclosureGroup` in a list indents what it opens, where main's outline keeps its chapters on
+/// the page margin; so the label row opens and closes the rows after it.
+private struct OutlineDisclosure<Label: View, Content: View>: View {
+  @Binding var isExpanded: Bool
+  @ViewBuilder let content: Content
+  @ViewBuilder let label: Label
+
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+  var body: some View {
+    Button {
+      withAnimation(reduceMotion ? nil : .default) {
+        isExpanded.toggle()
+      }
+    } label: {
+      HStack(spacing: 12) {
+        label
+          .frame(maxWidth: .infinity, alignment: .leading)
+
+        DisclosureChevron(pointsDown: isExpanded)
+      }
+    }
+    .accessibilityValue(
+      isExpanded
+        ? Text("Expanded", tableName: "Courses", comment: "VoiceOver: a level's chapters are shown")
+        : Text(
+          "Collapsed", tableName: "Courses", comment: "VoiceOver: a level's chapters are hidden"))
+
+    if isExpanded {
+      content
+    }
+  }
+}
+
 /// A level the course covers with no chapter written yet, so a learner sees the whole course it
 /// promises. It has nothing to open.
 private struct UnwrittenLevel: View {
@@ -271,8 +305,8 @@ private struct UnwrittenLevel: View {
           comment:
             "Under the name of a course's level, such as Intermediate, that has no chapters yet. “it” is that level."
         )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       }
       .accessibilityElement(children: .combine)
     }
@@ -299,7 +333,7 @@ private struct LevelTitle: View {
 
   private var title: some View {
     Text(level.localizedTitle)
-      .font(.headline)
+      .typeStyle(.body.weight(.semibold))
   }
 
   @ViewBuilder
@@ -324,8 +358,8 @@ private struct YouAreHere: View {
         "You are here", tableName: "Courses",
         comment: "On a course's outline, marks the chapter or level the learner's plan is at")
     }
-    .font(.footnote)
-    .foregroundStyle(.success)
+    .typeStyle(.note)
+    .foregroundStyle(.successText)
   }
 }
 
@@ -350,7 +384,7 @@ private struct CourseAreaOutline: View {
         areaRows(chapters: chapters, key: "areas")
       } header: {
         if learner.showsExampleNumbers {
-          Text(areaFit(name: names.first, chapters: chapters))
+          SectionTitle(Text(areaFit(name: names.first, chapters: chapters)))
         }
       }
     } else {
@@ -358,7 +392,7 @@ private struct CourseAreaOutline: View {
         let areaChapters = chapters.filter { places[$0.id]?.area == name }
 
         Section {
-          DisclosureGroup(isExpanded: $disclosures.isExpanded("area:\(name)", otherwise: false)) {
+          OutlineDisclosure(isExpanded: $disclosures.isExpanded("area:\(name)", otherwise: false)) {
             areaRows(chapters: areaChapters, key: "area:\(name)")
           } label: {
             VStack(alignment: .leading, spacing: 2) {
@@ -367,16 +401,16 @@ private struct CourseAreaOutline: View {
                   "\(areaChapters.count) chapters", tableName: "Courses",
                   comment: "How many chapters a course or an exam area has"
                 )
-                .font(.footnote.monospacedDigit())
+                .typeStyle(.data)
               } label: {
                 Text(name)
-                  .font(.headline)
+                  .typeStyle(.body.weight(.semibold))
               }
 
               if learner.showsExampleNumbers {
                 Text(areaFit(name: name, chapters: areaChapters))
-                  .font(.subheadline)
-                  .foregroundStyle(.secondary)
+                  .typeStyle(.note)
+                  .foregroundStyle(.mutedForeground)
               }
             }
             .accessibilityElement(children: .combine)
@@ -556,12 +590,12 @@ private struct OutlineChapterRow: View {
   var body: some View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       Text(chapter.position + 1, format: .number)
-        .font(.footnote.monospacedDigit())
-        .foregroundStyle(.tertiary)
+        .typeStyle(.data)
+        .foregroundStyle(.faint)
 
       VStack(alignment: .leading, spacing: 4) {
         Text(chapter.title)
-          .font(.body.weight(.semibold))
+          .typeStyle(.body.weight(.semibold))
 
         if isHere || mark != nil {
           HStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -571,16 +605,16 @@ private struct OutlineChapterRow: View {
 
             if let mark {
               Text(mark)
-                .font(.footnote.monospacedDigit())
-                .foregroundStyle(.secondary)
+                .typeStyle(.data)
+                .foregroundStyle(.mutedForeground)
             }
           }
         }
 
         if !chapter.lessons.isEmpty {
           Text(chapter.lessons.map(\.title).joinedFacts())
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
       }
     }

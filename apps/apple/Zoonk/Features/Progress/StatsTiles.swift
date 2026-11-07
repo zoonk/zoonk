@@ -13,7 +13,7 @@ enum StatTone {
     case .energy:
       .energy
     case .neutral:
-      .secondary
+      .mutedForeground
     case .success:
       .success
     }
@@ -28,6 +28,7 @@ struct StatTile<Icon: View, Value: View>: View {
   var detail: Text?
   /// From 0 to 1.
   var meter: Double?
+  var meterFill: Color = .brain
   let spokenValue: Text
 
   var body: some View {
@@ -40,32 +41,28 @@ struct StatTile<Icon: View, Value: View>: View {
         label
           .lineLimit(2)
       }
-      .font(.caption.weight(.medium))
-      .textCase(.uppercase)
-      .foregroundStyle(.secondary)
+      .typeStyle(.label)
+      .foregroundStyle(.faint)
 
       value
-        .font(.title2.weight(.semibold))
-        .monospacedDigit()
-        .foregroundStyle(tone == .brain ? Color.brain : Color.primary)
+        .typeStyle(.readout)
+        .foregroundStyle(tone == .brain ? Color.brainText : Color(.foreground))
+
+      if let meter {
+        Meter(value: meter, fill: meterFill)
+          .padding(.vertical, 2)
+      }
 
       if let detail {
         detail
-          .font(.caption)
-          .foregroundStyle(.secondary)
-      }
-
-      if let meter {
-        ProgressView(value: meter)
-          .tint(.brain)
-          .padding(.top, 4)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     .padding(12)
-    .background(
-      Color(.secondarySystemGroupedBackground),
-      in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+    .overlay(
+      RoundedRectangle(cornerRadius: Radius.option, style: .continuous).strokeBorder(.border)
     )
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(label)
@@ -86,11 +83,12 @@ struct StatTile<Icon: View, Value: View>: View {
 extension StatTile where Value == Text {
   init(
     label: Text, value: Text, tone: StatTone = .neutral, @ViewBuilder icon: () -> Icon,
-    detail: Text? = nil, meter: Double? = nil, spokenValue: Text? = nil
+    detail: Text? = nil, meter: Double? = nil, spokenValue: Text? = nil,
+    meterFill: Color = .brain
   ) {
     self.init(
       label: label, value: value, tone: tone, icon: icon, detail: detail, meter: meter,
-      spokenValue: spokenValue ?? value)
+      meterFill: meterFill, spokenValue: spokenValue ?? value)
   }
 }
 
@@ -103,6 +101,42 @@ extension StatTile where Icon == Image, Value == Text {
       label: label, value: value, tone: tone, icon: { Image(systemName: systemImage) },
       detail: detail,
       meter: meter, spokenValue: spokenValue)
+  }
+}
+
+struct StatQuantity: View {
+  let quantity: String
+
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
+  var body: some View {
+    BigQuantity.text(
+      quantity,
+      unitFont: BigQuantity.unitFont(
+        dynamicTypeSize: dynamicTypeSize, legibilityWeight: legibilityWeight))
+  }
+}
+
+extension StatTile where Value == StatQuantity {
+  init(
+    label: Text, quantity: String, tone: StatTone = .neutral, @ViewBuilder icon: () -> Icon,
+    detail: Text? = nil, meter: Double? = nil, spokenValue: Text? = nil
+  ) {
+    self.init(
+      label: label, value: StatQuantity(quantity: quantity), tone: tone, icon: icon,
+      detail: detail, meter: meter, spokenValue: spokenValue ?? Text(verbatim: quantity))
+  }
+}
+
+extension StatTile where Icon == Image, Value == StatQuantity {
+  init(
+    label: Text, quantity: String, systemImage: String, tone: StatTone = .neutral,
+    detail: Text? = nil, meter: Double? = nil, spokenValue: Text? = nil
+  ) {
+    self.init(
+      label: label, quantity: quantity, tone: tone, icon: { Image(systemName: systemImage) },
+      detail: detail, meter: meter, spokenValue: spokenValue)
   }
 }
 
@@ -167,7 +201,7 @@ struct BeltDot: View {
   var body: some View {
     Circle()
       .fill(belt.color)
-      .strokeBorder(.secondary.opacity(0.35), lineWidth: 1)
+      .strokeBorder(Color.mutedForeground.opacity(0.35), lineWidth: 1)
       .frame(width: size, height: size)
       .accessibilityHidden(true)
   }
@@ -178,8 +212,8 @@ struct StatsLine: View {
 
   var body: some View {
     text
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
       .frame(maxWidth: 560, alignment: .leading)
   }
 }

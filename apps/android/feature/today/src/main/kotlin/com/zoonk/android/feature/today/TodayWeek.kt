@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.today
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -19,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -34,8 +32,11 @@ import com.zoonk.android.ui.components.GoalRing
 import com.zoonk.android.ui.components.GoalRingTrack
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.KindMark
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.Readout
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.WeekdayNames
 import com.zoonk.android.ui.format.currentLocale
@@ -46,6 +47,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.weekdayNames
 import com.zoonk.android.ui.scaffold.isMediumLayout
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.StudySessionWeekDaysInner
 import com.zoonk.api.models.TodayWeeklyChallenge
 import kotlinx.datetime.LocalDate
@@ -127,7 +129,7 @@ private fun WeekHeader(day: DayView) {
                             Modifier
                         },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall.withTabularFigures(),
+                    style = MaterialTheme.zoonkType.data,
                 )
             }
         }
@@ -307,26 +309,13 @@ private fun ChallengeRow(
 
     Column {
         HorizontalDivider()
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .then(if (open != null) Modifier.clickable(role = Role.Button, onClick = open) else Modifier)
-                    .heightIn(min = 48.dp)
-                    .padding(vertical = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            RowMark { KindDot(challenge.kind()) }
-            Column {
-                Text(name, style = MaterialTheme.typography.titleSmall)
-                Text(
-                    facts.factsLine(),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-        }
+        ListRow(
+            headline = { Text(name) },
+            modifier = Modifier.bleed(LIST_ITEM_INSET),
+            onClick = open,
+            leading = { KindDot(challenge.kind()) },
+            supporting = { Text(facts.factsLine()) },
+        )
     }
 }
 

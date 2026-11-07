@@ -86,13 +86,13 @@ private struct ProcessOrderCanvas: View {
     } label: {
       ProcessStepRow(position: index + 1, icon: step.icon, mark: .plain, isDraggable: true) {
         LessonRichText(step.text)
-          .fontWeight(.medium)
+          .typeWeight(.medium)
       }
     }
     .buttonStyle(ActivityTileStyle(mark: isSelected ? .selected : .plain))
     .overlay {
       if targetedId == step.id {
-        RoundedRectangle(cornerRadius: 12).strokeBorder(.primary, lineWidth: 2)
+        RoundedRectangle(cornerRadius: Radius.option).strokeBorder(.primary, lineWidth: 2)
       }
     }
     .draggable(ActivityDragItem(id: step.id))
@@ -170,24 +170,24 @@ private struct ProcessOrderCanvas: View {
         ProcessStepRow(position: index + 1, icon: step.icon, mark: mark) {
           VStack(alignment: .leading, spacing: 4) {
             LessonRichText(step.text)
-              .fontWeight(.medium)
+              .typeWeight(.medium)
             if let why = step.why {
               LessonRichText(why)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
             if mark == .wrong, let learnerPosition = result?.learnerPosition {
               Text(
                 "You had it at \(learnerPosition)", tableName: "Activities",
                 comment: "After the check: where the learner put a misplaced step"
               )
-              .font(.footnote.weight(.medium))
-              .foregroundStyle(.destructive)
+              .typeStyle(.note.weight(.medium))
+              .foregroundStyle(.destructiveText)
             }
           }
         }
-        .font(.subheadline)
+        .typeStyle(.body)
         .padding(12)
-        .background(background(mark), in: .rect(cornerRadius: 12))
+        .background(background(mark), in: .rect(cornerRadius: Radius.option))
         .accessibilityElement(children: .combine)
         .accessibilityValue(mark.verdict ?? Text(verbatim: ""))
       }
@@ -198,7 +198,7 @@ private struct ProcessOrderCanvas: View {
     switch mark {
     case .right: Color.success.opacity(0.1)
     case .wrong: Color.destructive.opacity(0.1)
-    default: Color(.secondarySystemBackground)
+    default: Color.card
     }
   }
 }
@@ -218,7 +218,7 @@ private struct ProcessStepRow<Content: View>: View {
     } end: {
       if isDraggable {
         Image(systemName: "line.3.horizontal")
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           .accessibilityHidden(true)
       }
     }
@@ -235,14 +235,14 @@ private struct ProcessStepMarks: View {
   var body: some View {
     HStack(spacing: 10) {
       Text(position, format: .number)
-        .font(.footnote.weight(.semibold).monospacedDigit())
-        .foregroundStyle(mark == .plain ? Color.primary : Color(.systemBackground))
+        .typeStyle(.note.weight(.semibold).monospaced())
+        .foregroundStyle(mark == .plain ? Color.primary : Color(.background))
         .frame(width: badge, height: badge)
         .background(fill, in: .circle)
 
       if let symbol = ProcessIcons.symbol(for: icon) {
         Image(systemName: symbol)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           .frame(width: badge)
       }
     }
@@ -253,7 +253,7 @@ private struct ProcessStepMarks: View {
     switch mark {
     case .right: .success
     case .wrong: .destructive
-    default: Color(.tertiarySystemFill)
+    default: Color.muted
     }
   }
 }

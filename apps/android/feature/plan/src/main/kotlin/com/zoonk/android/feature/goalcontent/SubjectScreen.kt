@@ -8,8 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -27,6 +25,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.feedback.rememberReportProblem
 import com.zoonk.android.feature.plan.FarTopic
 import com.zoonk.android.feature.plan.FarTopicSheet
 import com.zoonk.android.feature.plan.FarTopicViewModel
@@ -48,6 +47,7 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.SyllabusChapter
@@ -69,13 +69,15 @@ fun SubjectScreen(
     navigator: AppNavigator,
 ) {
     WithPlanGoal(app.learnerSummary.summary, navigator) { goal ->
+        val report = rememberReportProblem(app, FeedbackTarget(screen = "subject"))
+
         SubjectContent(
             goalId = goal.id,
             subjectKey = route.subjectKey,
             syllabus = app.plans.syllabus[goal.id],
             plans = app.plans,
             navigator = navigator,
-            menu = { ReportProblemMenu(app, FeedbackTarget(screen = "subject")) },
+            menu = { ReportProblemMenu(report, inPage = true) },
             ask = { AskTutor(TutorScope.Subject(goal.id.toString(), route.subjectKey), app, navigator, appearance = it) },
             mindMapChapters = {
                 val maps by app.mindMaps.list[goal.id].collectShown()
@@ -227,11 +229,10 @@ internal fun SubjectPage(
     DetailPage(
         title = subject.name,
         onBack = actions.back,
-        hero = { SubjectHero(syllabus, subject, actions, it) },
+        hero = { SubjectHero(syllabus, subject, actions, menu) },
         aside = { SubjectAside(syllabus, subject, today, actions.openMindMaps, ask) },
         ask = ask,
         askInAside = true,
-        menu = menu,
     ) { asideBeside ->
         if (!asideBeside && (subject.notPlannedReason == null || subject.preparation != null)) {
             item(key = "coverage", contentType = "coverage") {
@@ -262,19 +263,18 @@ private fun SubjectHero(
     syllabus: Syllabus,
     subject: SyllabusSubject,
     actions: SubjectActions,
-    onTitlePlaced: (LayoutCoordinates) -> Unit,
+    menu: @Composable () -> Unit,
 ) {
     val next = subject.nextChapterId
     val action: (@Composable (Modifier) -> Unit)? =
         next?.let { { modifier -> ContinueButton(started = subject.lessonsDone > 0, onClick = { actions.openChapter(it) }, modifier) } }
 
-    DetailHero(action) {
+    DetailHero(action, menu) {
         Eyebrow(subjectEyebrow(syllabus, subject))
         Text(
             text = subject.name,
-            modifier =
-                Modifier.onGloballyPositioned(onTitlePlaced).pageTitle(),
-            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.pageTitle(),
+            style = MaterialTheme.typography.headlineMedium,
         )
 
         subjectFacts(subject)?.let { Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle()) }
@@ -285,7 +285,7 @@ private fun SubjectHero(
 }
 
 @Composable
-internal fun factsStyle() = MaterialTheme.typography.bodyMedium.copy(fontFeatureSettings = "tnum")
+internal fun factsStyle() = MaterialTheme.zoonkType.data
 
 @Composable
 private fun subjectEyebrow(

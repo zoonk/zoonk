@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Button
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,9 +40,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.formatClock
+import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import kotlinx.coroutines.delay
@@ -106,8 +106,8 @@ fun DrillIdeas(
                     Text(
                         text = (index + 1).toString(),
                         modifier = Modifier.widthIn(min = 16.dp).clearAndSetSemantics {},
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
+                        color = MaterialTheme.zoonk.faint,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontFamily = GeistMono),
                     )
                     Text(text = idea, style = MaterialTheme.typography.bodyLarge)
                 }
@@ -309,7 +309,7 @@ private fun LessonLink(
     lesson: Drill.Lesson,
     onOpenLesson: (lessonId: String) -> Unit,
 ) {
-    FilledTonalButton(onClick = { onOpenLesson(lesson.id) }) {
+    OutlinedButton(onClick = { onOpenLesson(lesson.id) }) {
         Text(stringResource(R.string.questions_drill_open_lesson))
     }
 }

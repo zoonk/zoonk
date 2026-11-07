@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.today
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -20,7 +18,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
@@ -32,8 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.layout.layout
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -41,11 +36,9 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.collapse
 import androidx.compose.ui.semantics.expand
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
@@ -54,9 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withLink
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
 import com.zoonk.android.feature.session.BlockMark
 import com.zoonk.android.feature.session.DayStep
@@ -74,12 +65,15 @@ import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
-import com.zoonk.android.ui.components.MarkStatus
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
-import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.color
+import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -88,8 +82,8 @@ import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.spaceAfterSentence
-import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyExtraTimeLessonsInner
 import com.zoonk.api.models.StudySession
@@ -122,7 +116,7 @@ internal fun LazyListScope.todaySession(
     freshStartItem(model)
 
     if (day.steps.size >= 2) {
-        item(key = "segments", contentType = "segments") { DaySegments(model, Modifier.pageItem().padding(top = 20.dp)) }
+        item(key = "segments", contentType = "segments") { DayProgress(model, Modifier.pageItem().padding(top = 20.dp)) }
     }
 
     if (wide && day.steps.isNotEmpty()) {
@@ -135,7 +129,7 @@ internal fun LazyListScope.todaySession(
     if (next != null) {
         sessionQueue(model, next, viewModel, actions, folds, wide)
     } else {
-        items(day.steps, key = { "step-${it.position}" }, contentType = { "step" }) { step ->
+        itemsIndexed(day.steps, key = { _, step -> "step-${step.position}" }, contentType = { _, _ -> "step" }) { index, step ->
             val replay = step.lessonToReplay
             StepRow(
                 model,
@@ -144,10 +138,11 @@ internal fun LazyListScope.todaySession(
                 opens = replay != null,
                 busy = false,
                 onOpen = { replay?.let { actions.navigate(AppRoute.Lesson(it.toString())) } },
-                Modifier.pageItem(),
+                Modifier.pageRow(),
+                divider = index != day.steps.lastIndex || day.plusLessons.isNotEmpty(),
             )
         }
-        plusLessons(day.plusLessons, actions, visible = day.plusLessons.size)
+        plusLessons(day.plusLessons, actions, visible = day.plusLessons.size, endsList = true)
     }
 
     item(key = "status", contentType = "status") { TodayDayStatus(model, actions, Modifier.pageItem().padding(top = 12.dp)) }
@@ -223,6 +218,12 @@ private fun LazyListScope.sessionQueue(
     val upcoming = queue.after.size + coming + model.day.plusLessons.size
     val more = (upcoming - rows).coerceAtLeast(0)
     val shownAfter = if (folds.moreOpen) queue.after else queue.after.take(rows)
+    val showsComing = coming > 0 && (folds.moreOpen || queue.after.size < rows)
+    val plusShown =
+        (if (folds.moreOpen) model.day.plusLessons.size else (rows - queue.after.size - coming).coerceAtLeast(0))
+            .coerceAtMost(model.day.plusLessons.size)
+    // The list's last row has no hairline under it, as main's `last:border-b-0`; above "+N more" it keeps one.
+    val endsList = more == 0 || folds.moreOpen
 
     item(key = "queue-top", contentType = "spacer") { Box(Modifier.padding(top = 12.dp)) }
 
@@ -242,6 +243,7 @@ private fun LazyListScope.sessionQueue(
     val rowsShown = (if (!foldsDone || folds.doneOpen) queue.done else emptyList()) + queue.before + next + shownAfter
 
     val beforeNext = rowsShown.indexOf(next) - 1
+    val stepsEnd = endsList && !showsComing && plusShown == 0
 
     itemsIndexed(rowsShown, key = { _, step -> "step-${step.position}" }, contentType = { _, _ -> "step" }) { index, step ->
         val isNext = step.position == next.position
@@ -254,21 +256,19 @@ private fun LazyListScope.sessionQueue(
             busy = viewModel.pending == TodayTap.Step(step.position) || (isNext && viewModel.pending == TodayTap.Continue),
             openFailed = viewModel.failed == TodayTap.Step(step.position),
             onOpen = { if (replay != null) actions.navigate(AppRoute.Lesson(replay.toString())) else actions.open(step) },
-            modifier = Modifier.pageItem(),
+            modifier = Modifier.pageRow(),
             onNavigate = actions.navigate,
-            divider = index != beforeNext,
+            divider = index != beforeNext && !(stepsEnd && index == rowsShown.lastIndex),
         )
     }
 
-    if (coming > 0 && (folds.moreOpen || queue.after.size < rows)) {
-        item(key = "coming", contentType = "coming") { ComingLessonsRow(model, viewModel, actions, Modifier.pageItem()) }
+    if (showsComing) {
+        item(key = "coming", contentType = "coming") {
+            ComingLessonsRow(model, viewModel, actions, Modifier.pageRow(), divider = !endsList || plusShown > 0)
+        }
     }
 
-    plusLessons(
-        model.day.plusLessons,
-        actions,
-        visible = if (folds.moreOpen) model.day.plusLessons.size else (rows - queue.after.size - coming).coerceAtLeast(0),
-    )
+    plusLessons(model.day.plusLessons, actions, visible = plusShown, endsList = endsList)
 
     if (more > 0) {
         item(key = "fold-more", contentType = "fold") {
@@ -289,18 +289,18 @@ private fun LazyListScope.plusLessons(
     titles: List<String>,
     actions: TodayActionHandlers,
     visible: Int,
+    endsList: Boolean,
 ) {
-    items(titles.take(visible).withIndex().toList(), key = { "plus-${it.index}" }, contentType = { "plus" }) { (_, title) ->
-        RowFrame(isNext = false, busy = false, onClick = { actions.navigate(AppRoute.Subscription) }, modifier = Modifier.pageItem()) {
-            RowMark { KindMark(LearnKind.Lesson) }
-            Text(
-                text = title,
-                modifier = Modifier.weight(1f),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleSmall,
-            )
-            PlusMark()
+    val shown = titles.take(visible)
+    items(shown.withIndex().toList(), key = { "plus-${it.index}" }, contentType = { "plus" }) { (index, title) ->
+        QueueRow(
+            onClick = { actions.navigate(AppRoute.Subscription) },
+            modifier = Modifier.pageRow(),
+            divider = !endsList || index != shown.lastIndex,
+            leading = { KindMark(LearnKind.Lesson) },
+            meta = { PlusMark() },
+        ) {
+            Text(text = title, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }
 }
@@ -315,44 +315,47 @@ private fun ComingLessonsRow(
     viewModel: TodayViewModel,
     actions: TodayActionHandlers,
     modifier: Modifier,
+    divider: Boolean,
 ) {
-    RowFrame(isNext = false, busy = false, onClick = null, modifier = modifier) {
-        RowMark { KindMark(LearnKind.Lesson) }
-        Column(Modifier.weight(1f)) {
-            Text(
-                text = stringResource(R.string.today_coming_title),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleSmall,
-            )
-            if (model.day.lessonsToPrepare) {
-                FlowRow(itemVerticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        stringResource(R.string.today_coming_not_written),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                    TextButton(onClick = actions.prepare, enabled = viewModel.pending != TodayTap.Prepare) {
-                        Text(stringResource(R.string.today_get_lessons))
-                    }
-                }
-                if (viewModel.failed == TodayTap.Prepare) {
-                    Text(
-                        stringResource(R.string.today_save_failed),
-                        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                }
-            } else {
-                Text(
-                    stringResource(if (model.writingStalled) R.string.today_coming_stalled else R.string.today_coming_writing),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall,
-                )
+    QueueRow(
+        onClick = null,
+        modifier = modifier,
+        divider = divider,
+        leading = { KindMark(LearnKind.Lesson) },
+        supporting = { ComingLessonsLine(model, viewModel, actions) },
+    ) {
+        Text(text = stringResource(R.string.today_coming_title), maxLines = 1, overflow = TextOverflow.Ellipsis)
+    }
+}
+
+@Composable
+private fun ComingLessonsLine(
+    model: TodayDayModel,
+    viewModel: TodayViewModel,
+    actions: TodayActionHandlers,
+) {
+    if (!model.day.lessonsToPrepare) {
+        Text(
+            stringResource(if (model.writingStalled) R.string.today_coming_stalled else R.string.today_coming_writing),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        return
+    }
+
+    Column {
+        FlowRow(itemVerticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.today_coming_not_written))
+            TextButton(onClick = actions.prepare, enabled = viewModel.pending != TodayTap.Prepare) {
+                Text(stringResource(R.string.today_get_lessons))
             }
+        }
+        if (viewModel.failed == TodayTap.Prepare) {
+            Text(
+                stringResource(R.string.today_save_failed),
+                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.error,
+            )
         }
     }
 }
@@ -363,30 +366,20 @@ private fun LazyListScope.upNext(
     actions: TodayActionHandlers,
 ) {
     item(key = "up-next-title", contentType = "title") {
-        Text(
-            text = stringResource(R.string.today_up_next),
-            modifier = Modifier.pageItem().padding(top = 24.dp, bottom = 8.dp).semantics { heading() },
-            style = MaterialTheme.typography.titleMedium,
-        )
+        SectionHeader(stringResource(R.string.today_up_next), Modifier.pageItem().padding(top = 24.dp, bottom = 8.dp))
     }
 
     items(lessons.withIndex().toList(), key = { "up-next-${it.index}" }, contentType = { "up-next" }) { (index, lesson) ->
         val first = index == 0
-        RowFrame(
+        QueueRow(
             isNext = first,
             busy = first && busy,
             onClick = if (first) actions.keepLearning else null,
-            modifier = Modifier.pageItem(),
+            modifier = Modifier.pageRow(),
+            leading = { KindMark(LearnKind.Lesson) },
+            meta = { Minutes(lesson.minutes) },
         ) {
-            RowMark { KindMark(LearnKind.Lesson) }
-            Text(
-                text = lesson.title,
-                modifier = Modifier.weight(1f),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleSmall,
-            )
-            Minutes(lesson.minutes)
+            Text(text = lesson.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }
 }
@@ -424,41 +417,52 @@ private fun StepRow(
             else -> if (isNext) stringResource(R.string.today_step_next) else null
         }
 
-    RowFrame(
+    QueueRow(
         isNext = isNext,
         busy = busy,
         onClick = if (opens) onOpen else null,
-        modifier = modifier.semantics { if (state != null) stateDescription = state },
+        modifier = modifier,
         divider = divider,
+        stateDescription = state,
+        leading = { BlockMark(step) },
+        supporting =
+            if (finished && !openFailed) {
+                null
+            } else {
+                {
+                    Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                        if (openFailed) StepOpenFailed()
+                        if (!finished) {
+                            StepLines(model, step)
+                            if (isNext && step.canTestOut) step.chapterId?.let { TestOutLink(model, it, onNavigate) }
+                        }
+                    }
+                }
+            },
+        meta =
+            if (finished) {
+                null
+            } else {
+                {
+                    if (mission) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_target),
+                            contentDescription = stringResource(R.string.today_step_counts_toward_mission),
+                            modifier = Modifier.size(14.dp),
+                            tint = MaterialTheme.zoonk.brain,
+                        )
+                    }
+                    Minutes(step.estimatedMinutes)
+                }
+            },
     ) {
-        RowMark { BlockMark(step) }
-
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(1.dp)) {
-            Text(
-                text = blockTitle(step),
-                // Two lines, so a large font still shows what the step is.
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                color = if (finished) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.titleSmall,
-            )
-
-            if (openFailed) StepOpenFailed()
-            if (!finished) StepLines(model, step)
-            if (isNext && step.canTestOut) step.chapterId?.let { TestOutLink(model, it, onNavigate) }
-        }
-
-        if (!finished) {
-            if (mission) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_target),
-                    contentDescription = stringResource(R.string.today_step_counts_toward_mission),
-                    modifier = Modifier.size(16.dp),
-                    tint = MaterialTheme.zoonk.brain,
-                )
-            }
-            Minutes(step.estimatedMinutes)
-        }
+        Text(
+            text = blockTitle(step),
+            // Two lines, so a large font still shows what the step is.
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            color = if (finished) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+        )
     }
 }
 
@@ -594,76 +598,56 @@ private fun rowLabel(
 
 @Composable
 private fun SubLine(text: String) {
-    Text(
-        text = text,
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodySmall,
-    )
+    Text(text = text, maxLines = 2, overflow = TextOverflow.Ellipsis)
 }
 
-/** One width for every mark, growing with the font, so the rows' titles start in one place. */
+/** A fold's mark slot, so its words start where the rows' do. */
 @Composable
-internal fun RowMark(content: @Composable () -> Unit) {
-    val width = with(LocalDensity.current) { MARK_WIDTH.toDp() }
-    Box(Modifier.width(width).heightIn(min = width), contentAlignment = Alignment.Center) { content() }
+private fun RowMark(content: @Composable () -> Unit) {
+    Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) { content() }
 }
 
-/** The next block sits on a tinted card; the others are separated by hairlines. */
+/**
+ * A row of the day on main's `ListRow`: the next block on `muted`, its mark on the title's first line
+ * (main's `items-start`), the others over a hairline, except right above the next block.
+ */
 @Composable
-private fun RowFrame(
-    isNext: Boolean,
-    busy: Boolean,
+private fun QueueRow(
     onClick: (() -> Unit)?,
     modifier: Modifier,
+    leading: @Composable () -> Unit,
+    isNext: Boolean = false,
+    busy: Boolean = false,
     divider: Boolean = true,
-    content: @Composable androidx.compose.foundation.layout.RowScope.() -> Unit,
+    stateDescription: String? = null,
+    supporting: (@Composable () -> Unit)? = null,
+    meta: (@Composable () -> Unit)? = null,
+    headline: @Composable () -> Unit,
 ) {
     Column(modifier) {
-        Row(
-            modifier =
-                Modifier
-                    .then(if (isNext) Modifier.bleed(NEXT_BLEED) else Modifier.fillMaxWidth())
-                    .then(
-                        if (isNext) {
-                            Modifier.background(
-                                MaterialTheme.colorScheme.surfaceContainerHigh,
-                                MaterialTheme.shapes.medium,
-                            )
-                        } else {
-                            Modifier
-                        },
-                    ).clip(MaterialTheme.shapes.medium)
-                    .then(if (onClick != null) Modifier.clickable(enabled = !busy, role = Role.Button, onClick = onClick) else Modifier)
-                    .alpha(if (busy) OPENING_ROW_ALPHA else 1f)
-                    .heightIn(min = 48.dp)
-                    .padding(horizontal = if (isNext) NEXT_BLEED else 0.dp, vertical = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ListRow(
+            headline = headline,
+            modifier = Modifier.alpha(if (busy) OPENING_ROW_ALPHA else 1f),
+            onClick = onClick,
+            enabled = !busy,
+            highlighted = isNext,
+            stateDescription = stateDescription,
+            leading = leading,
+            supporting = supporting,
+            meta = meta,
             verticalAlignment = if (isNext) Alignment.Top else Alignment.CenterVertically,
-        ) {
-            content()
-        }
-
-        if (!isNext && divider) HorizontalDivider()
+            chevron = false,
+        )
+        if (!isNext && divider) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
     }
 }
-
-/** The next block's tint reaches past the column, so its mark and words stay on every row's edges. */
-private fun Modifier.bleed(horizontal: Dp): Modifier =
-    layout { measurable, constraints ->
-        val extra = (horizontal * 2).roundToPx()
-        val width = constraints.maxWidth + extra
-        val placeable = measurable.measure(constraints.copy(minWidth = width, maxWidth = width))
-        layout(constraints.maxWidth, placeable.height) { placeable.placeRelative(-extra / 2, 0) }
-    }
 
 @Composable
 private fun Minutes(minutes: Long) {
     Text(
         text = formatMinutes(minutes.toInt(), currentLocale()),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+        style = MaterialTheme.zoonkType.data,
     )
 }
 
@@ -706,8 +690,9 @@ private fun FoldRow(
     }
 }
 
+/** Main's `DayProgress`: the day's blocks by their minutes, the ones ahead in their kind's color. */
 @Composable
-private fun DaySegments(
+private fun DayProgress(
     model: TodayDayModel,
     modifier: Modifier,
 ) {
@@ -761,7 +746,7 @@ private fun DayMeta(
                 text = stepsDone(done, model.day.steps.size),
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                style = MaterialTheme.zoonkType.data,
             )
             DayTime(model, MaterialTheme.typography.titleLarge)
         }
@@ -902,9 +887,6 @@ private fun seeYou(model: TodayDayModel): String {
     val date = next.toJavaLocalDate()
     return stringResource(R.string.today_see_you_day, formatDate(date, currentLocale(), DateStyle.Weekday, date))
 }
-
-private val MARK_WIDTH = 20.sp
-private val NEXT_BLEED = 10.dp
 
 private const val PHONE_DONE_ROWS = 2
 private const val OPEN_BACKLOG_LIMIT = 5

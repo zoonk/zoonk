@@ -24,10 +24,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isShiftPressed
@@ -84,14 +83,18 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.ui.characters.Buddy
+import com.zoonk.android.ui.characters.BuddyCrop
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PictureShape
 import com.zoonk.android.ui.components.PrivatePicture
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -102,6 +105,7 @@ import com.zoonk.android.ui.richtext.plainText
 import com.zoonk.android.ui.richtext.rememberMathWords
 import com.zoonk.android.ui.richtext.typesetMath
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
@@ -124,6 +128,7 @@ internal fun QuestionScene(content: @Composable ColumnScope.() -> Unit) {
 }
 
 private val QUESTION_SPACING = 24.dp
+private val BUDDY_FACE = 24.dp
 private val QUESTION_PART_SPACING = 12.dp
 private val MIN_YIELDED_PICTURE = 140.dp
 
@@ -151,7 +156,7 @@ internal fun WordBankScene(
 
 @Composable
 private fun BodyText(text: String) {
-    RichText(text = text, style = MaterialTheme.typography.bodyLarge)
+    RichText(text = text, style = MaterialTheme.zoonkType.lessonText)
 }
 
 /** The opening scene. Once a knowledge lesson's map is tagged, its opening map follows the scene's words. */
@@ -294,8 +299,13 @@ internal fun ExplanationView(
 
 @Composable
 private fun DidntGetItButton() {
-    val ask = LocalAskSimpler.current ?: return
-    GhostAction(R.drawable.ic_contact_support, stringResource(R.string.player_didnt_get_it), ask)
+    val simpler = LocalAskSimpler.current ?: return
+    GhostAction(
+        label = stringResource(R.string.player_didnt_get_it),
+        onClick = simpler.ask,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        leading = simpler.look?.let { look -> { Buddy(look, Modifier.size(BUDDY_FACE), crop = BuddyCrop.Face) } },
+    )
 }
 
 /** Main's `ExampleLine`: the explanation's idea in the learner's own life, once it's written; nothing when none fits. */
@@ -456,7 +466,7 @@ internal fun CheckView(
                             ) { crowded = true }
                         }
                     } else {
-                        { RichInlineText(text = it.text, style = MaterialTheme.typography.bodyLarge) }
+                        { RichInlineText(text = it.text) }
                     },
             )
 
@@ -675,7 +685,7 @@ private fun AnswerField(
                         submits
                     },
             readOnly = state.phase != LessonPhase.Playing,
-            label = { Text(stringResource(R.string.player_your_answer)) },
+            label = stringResource(R.string.player_your_answer),
             placeholder = { if (!isNumber) Text(stringResource(R.string.player_write_your_answer)) },
             minLines = if (isNumber) 1 else 3,
             singleLine = isNumber,
@@ -745,10 +755,24 @@ internal fun GhostAction(
     label: String,
     onClick: () -> Unit,
 ) {
+    GhostAction(label, onClick) { Icon(painterResource(icon), contentDescription = null) }
+}
+
+@Composable
+internal fun GhostAction(
+    label: String,
+    onClick: () -> Unit,
+    color: Color = Color.Unspecified,
+    leading: (@Composable () -> Unit)?,
+) {
     val inset = ButtonDefaults.TextButtonWithIconContentPadding.calculateStartPadding(LocalLayoutDirection.current)
 
-    TextButton(onClick = onClick, modifier = Modifier.offset(x = -inset)) {
-        Icon(painterResource(icon), contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+    TextButton(
+        onClick = onClick,
+        modifier = Modifier.offset(x = -inset),
+        colors = ButtonDefaults.textButtonColors(contentColor = color),
+    ) {
+        leading?.let { Box(Modifier.padding(end = 8.dp)) { it() } }
         Text(label)
     }
 }
@@ -777,7 +801,7 @@ fun ChoiceOptions(
     keysAtTop: Boolean = false,
     keepsEveryOption: Boolean = false,
     label: String = stringResource(R.string.player_answer_options),
-    optionContent: @Composable (ChoiceOption) -> Unit = { RichInlineText(text = it.text, style = MaterialTheme.typography.bodyLarge) },
+    optionContent: @Composable (ChoiceOption) -> Unit = { RichInlineText(text = it.text) },
 ) {
     val shown =
         options.mapIndexedNotNull { index, option ->

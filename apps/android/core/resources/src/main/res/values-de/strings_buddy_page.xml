@@ -26,6 +26,8 @@
   "buddy_page_fully_grown": "59d37ed5cb33d9e398e87064c3d552c8f2ede0a8d0b6fc151a62371f0045e7aa",
   "buddy_page_glasses_description": "6cb70f62f5e236fc97bea006003d2622f514b403d84e09e24ea948dec4e7054c",
   "buddy_page_goal_greeting": "dd3179ef0a5a9850e3d60515e09f8bfff1d0f6f24e895a8f0ef7f107d79886b3",
+  "buddy_page_goal_label": "fbfe6b95c0e76d2ee6c64be9f52e1b059c66e108ff8bc537fc6a0f397948155f",
+  "buddy_page_goal_placeholder": "8a9f1af2bcd8d4b300b0401f0f32537b758f3a9fa1fbf6418e2b9b2b71dc5d65",
   "buddy_page_greeting": "3c73a2feac34d37991413e05f4665d396034d6b7471850120e5a9f5b91e8eff2",
   "buddy_page_grows_adult": "7a11cbc90e7c63555f289b133ee5f2a7da23122f382878e5cac58e431dfe6e31",
   "buddy_page_grows_young": "151463a4f05997dfe45ee092580cc45f8dcfdbead6e55f8cfbd75038b8d7f812",
@@ -68,6 +70,8 @@
     <string name="buddy_page_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="buddy_page_greeting">Hi! Ich bin %1$s, dein KI-Kumpel zum Lernen. Frag mich alles zu dem, was du gerade lernst, oder sag mir, was du an deinem Plan ändern möchtest.</string>
+    <string name="buddy_page_goal_placeholder">Was du lernen möchtest</string>
+    <string name="buddy_page_goal_label">Dein Ziel</string>
     <string name="buddy_page_goal_greeting">Hi! Ich bin %1$s, dein KI-Lernkumpel. Was möchtest du bis wann lernen? Ich erstelle dir einen Plan für jeden Tag bis dahin.</string>
     <string name="buddy_page_placeholder">Stell eine Frage oder wünsch dir eine Änderung</string>
     <string name="buddy_page_suggest_plan_today">Was steht heute in meinem Plan?</string>

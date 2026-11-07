@@ -326,14 +326,14 @@ private struct SettingsHubView: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
   @Environment(SettingsStore.self) private var settings
-  @ScaledMetric(relativeTo: .body) private var avatarSize = 40.0
+  @ScaledMetric(relativeTo: .body) private var avatarSize = 36.0
 
   let account: CurrentAccount
   let sectionOpen: AccountSectionOpen?
   let sendFeedback: () -> Void
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         if !isGuest {
           AccountSectionLink(destination: .profile, sectionOpen: sectionOpen) {
@@ -341,31 +341,28 @@ private struct SettingsHubView: View {
               AccountAvatar(user: account.user, size: avatarSize)
                 .accessibilityHidden(true)
 
-              VStack(alignment: .leading) {
+              VStack(alignment: .leading, spacing: 1) {
                 Text(account.user.preferredName)
+                  .typeStyle(.rowTitle)
 
                 Text(account.user.email)
-                  .font(.subheadline)
-                  .foregroundStyle(.secondary)
+                  .typeStyle(.meta)
+                  .foregroundStyle(.mutedForeground)
               }
             }
           }
         }
 
         AccountSectionLink(destination: .certificates, sectionOpen: sectionOpen) {
-          LabeledContent {
+          ListRow(
+            Text(
+              "Certificates", tableName: "Account",
+              comment: "Settings row for the learner's certificates")
+          ) {
+            EmptyView()
+          } trailing: {
             if let count = certificates.list.value?.count {
               Text(count, format: .number)
-                .monospacedDigit()
-                .foregroundStyle(.secondary)
-            }
-          } label: {
-            Label {
-              Text(
-                "Certificates", tableName: "Account",
-                comment: "Settings row for the learner's certificates")
-            } icon: {
-              Image(systemName: "rosette")
             }
           }
         }
@@ -373,7 +370,12 @@ private struct SettingsHubView: View {
 
       Section {
         AccountSectionLink(destination: .preferences, sectionOpen: sectionOpen) {
-          LabeledContent {
+          ListRow(
+            Text("Preferences", tableName: "Account", comment: "Settings row for Preferences")
+          ) {
+            EmptyView()
+          } trailing: {
+            // Words, not data: main's summary is in the sans face.
             Group {
               if let buddy = settings.preferences.value?.buddy {
                 Text(verbatim: "\(buddy.displayName)\u{00A0}· \(appLanguageName)")
@@ -381,21 +383,19 @@ private struct SettingsHubView: View {
                 Text(appLanguageName)
               }
             }
-            .foregroundStyle(.secondary)
-          } label: {
-            Text("Preferences", tableName: "Account", comment: "Settings row for Preferences")
+            .typeStyle(.meta)
           }
         }
 
         AccountSectionLink(destination: .memory, sectionOpen: sectionOpen) {
-          LabeledContent {
+          ListRow(
+            Text("Memory", tableName: "Account", comment: "Settings row for what Zoonk remembers")
+          ) {
+            EmptyView()
+          } trailing: {
             if let count = settings.memory.value?.facts.count {
               Text(count, format: .number)
-                .monospacedDigit()
-                .foregroundStyle(.secondary)
             }
-          } label: {
-            Text("Memory", tableName: "Account", comment: "Settings row for what Zoonk remembers")
           }
         }
       }
@@ -407,14 +407,17 @@ private struct SettingsHubView: View {
           sectionOpen: sectionOpen)
 
         Link(destination: AccountLinks.support) {
-          Text("Help", tableName: "Account", comment: "Settings row that opens Zoonk's help pages")
+          ListRow(
+            Text(
+              "Help", tableName: "Account", comment: "Settings row that opens Zoonk's help pages"))
         }
         .foregroundStyle(.primary)
 
         Button(action: sendFeedback) {
-          Text(
-            "Send feedback", tableName: "Account",
-            comment: "Settings row that opens the form to write to Zoonk")
+          ListRow(
+            Text(
+              "Send feedback", tableName: "Account",
+              comment: "Settings row that opens the form to write to Zoonk"))
         }
         .foregroundStyle(.primary)
       }
@@ -422,9 +425,10 @@ private struct SettingsHubView: View {
       Section {
         if isGuest {
           AccountSectionLink(destination: .createAccount, sectionOpen: sectionOpen) {
-            Text(
-              "Create an account", tableName: "Account",
-              comment: "Settings row where a guest creates the account that keeps their plan")
+            ListRow(
+              Text(
+                "Create an account", tableName: "Account",
+                comment: "Settings row where a guest creates the account that keeps their plan"))
           }
         } else {
           Button(role: .destructive) {
@@ -433,7 +437,9 @@ private struct SettingsHubView: View {
             }
           } label: {
             Text("Log out", tableName: "Account", comment: "Account log-out action")
+              .typeStyle(.rowTitle)
           }
+          .foregroundStyle(.destructiveText)
           .disabled(session.isWorking)
         }
       }
@@ -473,7 +479,7 @@ private struct AccountSectionLink<Label: View>: View {
         label
       }
       .foregroundStyle(.primary)
-      .listRowBackground(isShown ? Color(.tertiarySystemFill) : nil)
+      .currentRow(isShown)
       .accessibilityAddTraits(isShown ? .isSelected : [])
     } else {
       NavigationLink(value: destination) {
@@ -498,16 +504,15 @@ private struct AccountSubscriptionRow: View {
 
   var body: some View {
     AccountSectionLink(destination: destination, sectionOpen: sectionOpen) {
-      LabeledContent {
+      ListRow(subscriptionLabel) {
+        EmptyView()
+      } trailing: {
         if access.subscription != nil {
           PlusMark(
             accessibilityLabel: Text(
               "Plus", tableName: "Account", comment: "Zoonk Plus, the plan's name"))
         }
-      } label: {
-        subscriptionLabel
       }
-      .foregroundStyle(.primary)
     }
     .accessibilityLabel(subscriptionLabel)
     .accessibilityValue(status)

@@ -26,6 +26,8 @@
   "buddy_page_fully_grown": "6141f17d4f000fa38cc0832ef0b388ce678f807d05a6006cd4f7e5ff66741620",
   "buddy_page_glasses_description": "90b82649678bfdf39c7d9ae8ee27fa181da09e062df10c2b2aacce19033efb91",
   "buddy_page_goal_greeting": "af0231e4f362388bb5f7267b9e13ba6eb6a504a014343a0bc450e74caa35ca8c",
+  "buddy_page_goal_label": "f8663439b4e3877ae187735479ad03f6a9351f517cf107529e9f1e28d05c5932",
+  "buddy_page_goal_placeholder": "2efa14ecb0d8398bdde85ae1b98d2b16af1ae63db3acfa3844301bdf48cfa68e",
   "buddy_page_greeting": "063cd476c2a301f6d73be119450260375c7ea817ac41e32c90591fbfdd2441b9",
   "buddy_page_grows_adult": "3f4a93218cbb7a871bf5b45f1f787eac325dcece40c026267aa659271aaaee77",
   "buddy_page_grows_young": "d5174c8a17ee2432bf0d9925bb0d532bd9b00b8398781d7002cebf67818c8e87",
@@ -68,6 +70,8 @@
     <string name="buddy_page_save_failed">Nie udało się zapisać. Spróbuj ponownie.</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="buddy_page_greeting">Cześć! Mam na imię %1$s. Jestem sztuczną inteligencją i twoim kumplem do nauki. Pytaj mnie o wszystko, czego się uczysz, albo powiedz, co chcesz zmienić w swoim planie.</string>
+    <string name="buddy_page_goal_placeholder">Czego chcesz się nauczyć</string>
+    <string name="buddy_page_goal_label">Twój cel</string>
     <string name="buddy_page_goal_greeting">Cześć! Tu %1$s, twój kumpel AI do nauki. Czego chcesz się nauczyć i do kiedy? Ułożę ci plan na każdy dzień aż do tego terminu.</string>
     <string name="buddy_page_placeholder">Zadaj pytanie lub poproś o zmianę</string>
     <string name="buddy_page_suggest_plan_today">Co mam w planie na dziś?</string>

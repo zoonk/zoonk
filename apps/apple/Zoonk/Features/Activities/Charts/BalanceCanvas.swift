@@ -75,14 +75,14 @@ private struct BlockBalance: View {
       .announcesStatus(tilt != 0 ? hint.map(LessonRichText.spoken) : nil)
 
     Text(verbatim: "\(sides.left) \(tilt == 0 ? "=" : "≠") \(sides.right)")
-      .font(.title3.weight(.semibold).monospaced())
+      .typeStyle(.section.monospaced())
       .frame(maxWidth: .infinity)
       .accessibilityHidden(true)
 
     if tilt != 0, let hint {
       LessonRichText(hint)
-        .font(.subheadline)
-        .foregroundStyle(.orange)
+        .typeStyle(.body)
+        .foregroundStyle(.vizHighlight)
     }
 
     if !isChecked {
@@ -146,8 +146,8 @@ private struct BlockBalance: View {
         takeButton(fields.unit, side: side, isEnabled: pan.units >= 1) { handle(.takeUnit(side)) }
       }
     }
-    .font(.footnote.weight(.medium))
-    .foregroundStyle(.secondary)
+    .typeStyle(.note.weight(.medium))
+    .foregroundStyle(.mutedForeground)
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 
@@ -157,10 +157,10 @@ private struct BlockBalance: View {
   ) -> some View {
     Button(action: action) {
       Text(verbatim: "\u{2212}\(object.symbol)")
-        .font(.body.weight(.semibold).monospaced())
+        .typeStyle(.body.weight(.semibold).monospaced())
         .frame(maxWidth: .infinity)
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.large)
     .disabled(!isEnabled)
     .accessibilityLabel(
@@ -183,7 +183,7 @@ private struct BlockBalance: View {
           "Split both sides into \(groups) equal groups", tableName: "ActivitiesCharts",
           comment: "Divides both pans of a balance by the number of bags")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .controlSize(.large)
     }
   }
@@ -198,7 +198,7 @@ private struct BlockBalance: View {
         Image(systemName: "arrow.uturn.backward")
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.large)
     .disabled(history.isEmpty)
   }
@@ -263,7 +263,7 @@ private struct BalanceScale: View {
         .padding(.horizontal, 8)
 
       Triangle()
-        .fill(.secondary)
+        .fill(.mutedForeground)
         .frame(width: 28, height: 24)
     }
     .padding(.vertical, 8)
@@ -273,37 +273,37 @@ private struct BalanceScale: View {
     VStack(spacing: 4) {
       if isHeavier {
         Text("Heavier", tableName: "ActivitiesCharts", comment: "Over the heavier pan of a balance")
-          .font(.caption2.weight(.semibold))
-          .foregroundStyle(.orange)
+          .typeStyle(.small.weight(.semibold))
+          .foregroundStyle(.vizHighlight)
       }
 
       FlowLayout(spacing: 3) {
         ForEach(0..<max(Int(pan.x), 0), id: \.self) { _ in
           Text(verbatim: unknown)
-            .font(.subheadline.weight(.bold).italic())
+            .typeStyle(.body.bold().italic())
             .foregroundStyle(.white)
             .padding(.horizontal, 6)
             .frame(minWidth: 30, minHeight: 38)
-            .background(Color.purple, in: .rect(cornerRadius: 8, style: .continuous))
+            .background(Color.vizSecondary, in: .rect(cornerRadius: Radius.md, style: .continuous))
         }
 
         if pan.units.rounded() == pan.units && pan.units <= 12 {
           ForEach(0..<max(Int(pan.units), 0), id: \.self) { _ in
             RoundedRectangle(cornerRadius: 3, style: .continuous)
-              .fill(Color.orange.opacity(0.8))
+              .fill(Color.vizHighlight.opacity(0.8))
               .frame(width: 18, height: 18)
           }
         } else if pan.units > 0 {
           Text(verbatim: ActivityNumberFormat.format(pan.units))
-            .font(.caption.weight(.semibold).monospacedDigit())
+            .typeStyle(.meta.weight(.semibold).monospaced())
             .padding(.horizontal, 8)
             .frame(minHeight: 28)
-            .background(Color.orange.opacity(0.8), in: .rect(cornerRadius: 6))
+            .background(Color.vizHighlight.opacity(0.8), in: .rect(cornerRadius: Radius.sm))
         }
       }
       .frame(maxWidth: .infinity, alignment: .bottom)
 
-      Capsule().fill(.secondary).frame(height: 3)
+      Capsule().fill(.mutedForeground).frame(height: 3)
     }
     .frame(maxWidth: .infinity)
   }
@@ -354,7 +354,7 @@ private struct SymbolicBalance: View {
     let current = reached > 0 ? steps[reached - 1].equation : "\(startText.0) = \(startText.1)"
 
     Text(verbatim: current)
-      .font(.title3.weight(.semibold).monospaced())
+      .typeStyle(.section.monospaced())
       .frame(maxWidth: .infinity)
       .announcesStatus(current)
       .announcesStatus(hint.map(LessonRichText.spoken))
@@ -383,8 +383,8 @@ private struct SymbolicBalance: View {
 
     if let hint {
       LessonRichText(hint)
-        .font(.subheadline)
-        .foregroundStyle(.orange)
+        .typeStyle(.body)
+        .foregroundStyle(.vizHighlight)
     }
 
     if isChecked {
@@ -435,10 +435,10 @@ private struct BalanceSteps: View {
             : Text(verbatim: step.move)
         } icon: {
           Image(systemName: isDone ? "checkmark.circle.fill" : "circle.dashed")
-            .foregroundStyle(isDone ? Color.success : .secondary)
+            .foregroundStyle(isDone ? Color.success : .mutedForeground)
         }
-        .font(.subheadline)
-        .foregroundStyle(isDone ? .primary : .secondary)
+        .typeStyle(.note)
+        .foregroundStyle(isDone ? Color(.foreground) : .mutedForeground)
       }
     }
   }

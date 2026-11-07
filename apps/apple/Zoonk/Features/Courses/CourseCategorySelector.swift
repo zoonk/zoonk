@@ -63,7 +63,7 @@ private struct CourseCategoryButton: View {
       if isSelected {
         button.buttonStyle(.mainAction)
       } else {
-        button.buttonStyle(.bordered)
+        button.buttonStyle(.outline)
       }
     }
     .accessibilityAddTraits(isSelected ? .isSelected : [])
@@ -80,8 +80,8 @@ private struct CourseCategoryButton: View {
 
         title
       }
-      .font(.subheadline.weight(.semibold))
     }
+    .controlSize(.small)
   }
 
   @ViewBuilder

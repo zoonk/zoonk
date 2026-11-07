@@ -14,8 +14,8 @@ struct LessonSpokenWordsView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       Text("What we heard", tableName: "Player", comment: "Above a spoken answer's words as heard")
-        .font(.caption.weight(.medium))
-        .foregroundStyle(.secondary)
+        .typeStyle(.meta.weight(.medium))
+        .foregroundStyle(.mutedForeground)
 
       FlowLayout(spacing: 6) {
         ForEach(Array(heard.words.enumerated()), id: \.offset) { _, word in
@@ -25,10 +25,11 @@ struct LessonSpokenWordsView: View {
             } label: {
               HeardWordText(word: word)
                 .padding(.horizontal, 4)
-                .background(.destructive.opacity(0.12), in: .rect(cornerRadius: 6))
+                .background(.destructive.opacity(0.12), in: .rect(cornerRadius: Radius.sm))
                 .overlay {
                   if index == selected {
-                    RoundedRectangle(cornerRadius: 6).strokeBorder(.destructive.opacity(0.5))
+                    RoundedRectangle(cornerRadius: Radius.sm).strokeBorder(
+                      .destructive.opacity(0.5))
                   }
                 }
             }
@@ -39,7 +40,7 @@ struct LessonSpokenWordsView: View {
           }
         }
       }
-      .font(.title3)
+      .typeStyle(.section.weight(.regular))
 
       if heard.wordsToPractice.indices.contains(selected) {
         practice(heard.wordsToPractice[selected])
@@ -68,12 +69,12 @@ struct LessonSpokenWordsView: View {
 
       if let tip = word.tip {
         LessonRichText(tip)
-          .font(.subheadline)
+          .typeStyle(.body)
       }
     }
     .padding(.leading, 12)
     .overlay(alignment: .leading) {
-      Rectangle().fill(.separator).frame(width: 2)
+      Rectangle().fill(.border).frame(width: 2)
     }
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
@@ -83,7 +84,7 @@ struct LessonSpokenWordsView: View {
   private func name(_ word: SpokenHeard.PracticeWord) -> some View {
     HStack(alignment: .firstTextBaseline, spacing: 8) {
       Text(word.text)
-        .fontWeight(.semibold)
+        .typeWeight(.semibold)
         .typesettingLanguage(.init(identifier: language))
 
       if let respelling = word.respelling {
@@ -91,8 +92,8 @@ struct LessonSpokenWordsView: View {
           "sounds like \(respelling)", tableName: "Player",
           comment: "How a word to practice sounds, spelled for the learner"
         )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -121,7 +122,7 @@ struct LessonSpokenWordsView: View {
           }
         }
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .controlSize(.small)
     }
   }
@@ -160,15 +161,15 @@ private struct HeardWordText: View {
       switch word.status {
       case .correct:
         Text(word.text)
-          .foregroundStyle(.success)
+          .foregroundStyle(.successText)
       case .different:
         Text(word.text)
           .underline(pattern: .dot, color: .destructive)
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
       case .missed:
         Text(word.text)
           .strikethrough()
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .accessibilityLabel(label)

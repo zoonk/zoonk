@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.activities
 
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,6 +13,7 @@ import com.zoonk.android.feature.audio.SpokenAudio
 import com.zoonk.android.feature.audio.SpokenText
 import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.speechActionLabel
+import com.zoonk.android.ui.components.OutlinedIconButton
 
 /** Main's `ActivitySpeakButton`: an icon-only listen button named by what it plays, then by its state. */
 @Composable
@@ -24,7 +24,7 @@ fun ActivitySpeakButton(
     modifier: Modifier = Modifier,
 ) {
     val name = speechActionLabel(audio.state, label)
-    FilledTonalIconButton(
+    OutlinedIconButton(
         onClick = { if (audio.isBusy) audio.cancel() else audio.speak(listOf(SpokenText(text))) },
         modifier = modifier.semantics { contentDescription = name },
     ) {

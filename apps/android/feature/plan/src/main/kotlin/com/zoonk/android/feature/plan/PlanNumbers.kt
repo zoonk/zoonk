@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -43,8 +42,12 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -62,6 +65,8 @@ import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.markSize
@@ -72,6 +77,8 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.weekdayNames
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.EstimatedScore
 import com.zoonk.api.models.GoalPreparation
 import com.zoonk.api.models.GoalProgress
@@ -82,7 +89,6 @@ import com.zoonk.api.models.PlanItem
 import com.zoonk.api.models.PreparationComponentsMocks
 import com.zoonk.api.models.SpeakingPaper
 import kotlinx.datetime.toJavaLocalDate
-import java.util.Locale
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -318,19 +324,26 @@ private fun NumberButton(
     onOpen: () -> Unit,
 ) {
     val content: @Composable ColumnScope.() -> Unit = {
-        Text(
-            text = number.label,
-            style = if (variant == NumberVariant.Tiles) MaterialTheme.typography.labelLarge else MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        val style =
-            MaterialTheme.typography.headlineMedium.let {
-                if (number.numeric) it.withTabularFigures() else it.copy(fontWeight = FontWeight.SemiBold)
-            }
+        // Main's `NumberButton`: a tile's label is a stat tile's (`text-label`), the aside's a section title.
+        if (variant == NumberVariant.Tiles) {
+            Text(
+                text = number.label.toUpperCase(LocaleList.current),
+                modifier = Modifier.clearAndSetSemantics { text = AnnotatedString(number.label) },
+                style = MaterialTheme.zoonkType.label,
+                color = MaterialTheme.zoonk.faint,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        } else {
+            Text(number.label, style = MaterialTheme.zoonkType.sectionTitle, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        }
+        val style = MaterialTheme.typography.headlineSmall
         val target = number.target
-        if (target == null) Text(number.value, style = style) else LevelValue(number.value, target, style)
+        when {
+            target != null -> LevelValue(number.value, target, style)
+            number.numeric -> Readout(number.value, style = style)
+            else -> Text(number.value, style = style.copy(fontWeight = FontWeight.SemiBold))
+        }
         number.share?.let { Meter(it, Modifier.padding(vertical = 2.dp)) }
         number.detail?.let { MetaLine(it) }
     }
@@ -392,7 +405,7 @@ internal fun PaceDetails(
         if (resting) MetaLine(stringResource(R.string.plan_nothing_planned_until_resume))
         fix?.let { MetaLine(it.text) }
         if (fix?.adjust == true && onAdjust != null) {
-            FilledTonalButton(
+            OutlinedButton(
                 onClick = onAdjust,
                 modifier = Modifier.padding(top = 4.dp),
             ) { Text(stringResource(R.string.plan_adjust_plan)) }
