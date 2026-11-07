@@ -69,10 +69,7 @@ export function SharedExamsLine({ areas, shared }: { areas: string[]; shared: Sh
   }
 
   return (
-    <span
-      className="text-muted-foreground text-xs @lg/subjects:truncate"
-      data-slot="shared-exams-line"
-    >
+    <span className="text-muted-foreground text-xs text-pretty" data-slot="shared-exams-line">
       {exams
         ? t({
             description:
