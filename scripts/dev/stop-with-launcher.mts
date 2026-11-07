@@ -1,14 +1,14 @@
 import { env, kill, pid, stderr, stdout } from "node:process";
 
 /**
- * Portless starts each service in its own process group, so a force-killed `pnpm dev` leaves it
- * running, and Next.js retries writing to the closed pipe until it holds a CPU core
- * (https://github.com/vercel/next.js/issues/96216).
+ * Portless starts each service in its own process group, so neither a force-killed `pnpm dev` nor a
+ * task Turbo force-kills takes the service with it, and Next.js retries writing to the closed pipe
+ * until it holds a CPU core (https://github.com/vercel/next.js/issues/96216).
  */
 const LAUNCHER_CHECK_INTERVAL_MS = 2000;
-const launcherPid = Number(env.ZOONK_DEV_LAUNCHER_PID);
+const launcherPids = String(env.ZOONK_DEV_LAUNCHER_PIDS).split(",").map(Number);
 
-function isLauncherRunning(): boolean {
+function isRunning(launcherPid: number): boolean {
   try {
     kill(launcherPid, 0);
     return true;
@@ -22,12 +22,12 @@ function stop(): void {
   kill(pid, "SIGTERM");
 }
 
-function stopWithoutLauncher(): void {
-  if (!isLauncherRunning()) {
+function stopWithoutLaunchers(): void {
+  if (!launcherPids.every((launcherPid) => isRunning(launcherPid))) {
     stop();
   }
 }
 
-setInterval(stopWithoutLauncher, LAUNCHER_CHECK_INTERVAL_MS).unref();
+setInterval(stopWithoutLaunchers, LAUNCHER_CHECK_INTERVAL_MS).unref();
 stdout.on("error", stop);
 stderr.on("error", stop);

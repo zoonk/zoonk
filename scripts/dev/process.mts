@@ -21,19 +21,19 @@ export function getPnpmCommand(environment: NodeJS.ProcessEnv): ExecutableComman
   return { args: [], command: pnpmExecutable };
 }
 
-/** Every Node process started with this environment stops once `launcherPid` exits; see `stop-with-launcher.mts`. */
+/** Every Node process started with this environment stops once any of `launcherPids` exits; see `stop-with-launcher.mts`. */
 export function getStopWithLauncherEnvironment({
   environment,
-  launcherPid,
+  launcherPids,
 }: {
   environment: NodeJS.ProcessEnv;
-  launcherPid: string;
-}): { NODE_OPTIONS: string; ZOONK_DEV_LAUNCHER_PID: string } {
+  launcherPids: number[];
+}): { NODE_OPTIONS: string; ZOONK_DEV_LAUNCHER_PIDS: string } {
   const preload = `--import=${import.meta.resolve("./stop-with-launcher.mts")}`;
 
   return {
     NODE_OPTIONS: [environment.NODE_OPTIONS, preload].filter(Boolean).join(" "),
-    ZOONK_DEV_LAUNCHER_PID: launcherPid,
+    ZOONK_DEV_LAUNCHER_PIDS: launcherPids.join(","),
   };
 }
 
