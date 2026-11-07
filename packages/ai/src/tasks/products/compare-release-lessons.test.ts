@@ -1,6 +1,6 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { answerEmptyOnce } from "../_test-utils/answer-once-with";
+import { answerCutOffOnce, answerEmptyOnce } from "../_test-utils/answer-once-with";
 import { compareReleaseLessons } from "./compare-release-lessons";
 import type * as Ai from "ai";
 
@@ -112,5 +112,11 @@ describe(compareReleaseLessons, () => {
     await expect(compareReleaseLessons(PARAMS)).rejects.toMatchObject({
       name: "AI_NoOutputGeneratedError",
     });
+  });
+
+  it("fails a comparison the provider cut off as an ordinary error, which a retry can fix", async () => {
+    await answerCutOffOnce();
+
+    await expect(compareReleaseLessons(PARAMS)).rejects.toMatchObject({ name: "Error" });
   });
 });

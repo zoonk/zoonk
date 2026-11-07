@@ -1,6 +1,6 @@
 import { type LanguageModelUsage, generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { answerEmptyOnce } from "../_test-utils/answer-once-with";
+import { answerCutOffOnce, answerEmptyOnce } from "../_test-utils/answer-once-with";
 import { type CourseOutlineParams, generateCourseOutline } from "./course-outline";
 import type * as Ai from "ai";
 
@@ -280,5 +280,11 @@ describe(generateCourseOutline, () => {
     await expect(generateCourseOutline(BAND)).rejects.toMatchObject({
       name: "AI_NoOutputGeneratedError",
     });
+  });
+
+  it("fails an outline the provider cut off as an ordinary error, which a retry can fix", async () => {
+    await answerCutOffOnce();
+
+    await expect(generateCourseOutline(BAND)).rejects.toMatchObject({ name: "Error" });
   });
 });

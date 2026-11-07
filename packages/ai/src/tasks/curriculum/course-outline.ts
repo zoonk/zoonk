@@ -6,7 +6,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration, streamTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { draftAgainWhenFlawed } from "../_utils/draft-again";
-import { failFilteredAnswer } from "../_utils/filtered-answer";
+import { failFilteredAnswer, failUnfinishedAnswer } from "../_utils/filtered-answer";
 import { formatLocalContext } from "../_utils/language-context";
 import { type LessonExam, formatLessonExams } from "../_utils/lesson-exams";
 import { type PromptProduct, formatProduct } from "../_utils/product";
@@ -204,14 +204,16 @@ async function draftOutline({
   const { provenance, result } = await runTaskGeneration({
     analytics,
     generate: () =>
-      generateText({
-        instructions: systemPrompt,
-        model,
-        output: Output.object({ schema }),
-        prompt: userPrompt,
-        providerOptions,
-        reasoning,
-      }),
+      failUnfinishedAnswer(
+        generateText({
+          instructions: systemPrompt,
+          model,
+          output: Output.object({ schema }),
+          prompt: userPrompt,
+          providerOptions,
+          reasoning,
+        }),
+      ),
     libraryInput: true,
     systemPrompt,
     task: "course-outline",
