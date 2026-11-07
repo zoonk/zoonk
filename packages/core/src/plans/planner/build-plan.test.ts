@@ -1733,6 +1733,12 @@ function skillsOf(planned: readonly PlannedItem[]): Set<string> {
   );
 }
 
+function firstLeft(plan: { items: readonly PlannedItem[] }) {
+  return plan.items
+    .filter((item) => item.status === "todo" && item.phase === 0)
+    .map((item) => [item.key.split(":")[0], dateOf(item)]);
+}
+
 function lessonsOn(plan: { items: readonly PlannedItem[] }, date: Date) {
   return plan.items
     .filter((item) => item.kind === "lesson" && item.scheduledFor?.getTime() === date.getTime())
@@ -1952,11 +1958,6 @@ describe("work an earlier day left", () => {
           setAsideLeftWork: true,
           today: wednesday,
         });
-
-      const firstLeft = (plan: ReturnType<typeof buildPlan>) =>
-        plan.items
-          .filter((item) => item.status === "todo" && item.phase === 0)
-          .map((item) => [item.key.split(":")[0], dateOf(item)]);
 
       const kept = comeBack(new Set());
 
