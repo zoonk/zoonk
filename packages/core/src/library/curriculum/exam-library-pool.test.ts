@@ -13,7 +13,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { describe, expect, it } from "vitest";
 import { findExamLibrary } from "./exam-library-skills";
 
-describe("review repros", () => {
+describe("an exam's reusable Library skill pool", () => {
   it("offers an exam's own chapter-taught skill after the reset when the new frame names its discipline instead", async () => {
     const [regimento, processo, blueprint, skill] = await Promise.all([
       courseFixture({ language: "pt", title: "Regimento Interno da Câmara dos Deputados" }),
@@ -50,6 +50,7 @@ describe("review repros", () => {
     ]);
 
     const chapter = await libraryChapterFixture({ homeCourseId: course.id, language: "pt" });
+
     const [kept, setAside] = await libraryLessonsFixture(2, {
       homeChapterId: chapter.id,
       language: "pt",
@@ -72,7 +73,7 @@ describe("review repros", () => {
   });
 });
 
-describe("foundation sizing", () => {
+describe("chapter-taught prerequisite sizes", () => {
   it("sizes a chapter-taught foundation from another discipline by its lessons, as the course pool does", async () => {
     const [physics, mathematics, blueprint, applied, foundation] = await Promise.all([
       courseFixture({ language: "pt" }),
