@@ -27,6 +27,10 @@ enum MistakePracticePhase: Equatable {
   case feedback(answer: PracticeAnswer, grade: MistakePracticeGrade, sender: AnswerSender)
   case idea
   case reading
+
+  var failed: SentAnswer? {
+    if case .answerFailed(let sent) = self { sent } else { nil }
+  }
 }
 
 /// The run keeps the questions it started with: a fixed mistake leaves the server's practice, not the

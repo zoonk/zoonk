@@ -100,7 +100,10 @@ class QuestionBlockViewModelTest {
                     session: AuthenticatedSession,
                     key: BlockKey,
                     input: StudyAnswerInput,
-                ) = answer().also { sent += input }
+                ): StudyAnswerFeedback {
+                    sent += input
+                    return answer()
+                }
 
                 override suspend fun finish(
                     session: AuthenticatedSession,
@@ -301,6 +304,27 @@ class QuestionBlockViewModelTest {
                     sent.last().answer,
                 ),
             )
+        }
+
+    @Test
+    fun checkAgainAfterAFailedSaveSendsTheTimeAnUnchangedAnswerFirstTook() =
+        runTest(dispatcher) {
+            var clock = 0L
+            val viewModel = viewModel { clock }
+            val question = started(viewModel).questions.first()
+            answer = { throw ApiException(ApiError.Network) }
+
+            clock = 30_000L
+            viewModel.submit(question, Answer.Choice(0))
+            advanceUntilIdle()
+            clock = 90_000L
+            viewModel.submit(question, Answer.Choice(0))
+            advanceUntilIdle()
+            clock = 100_000L
+            viewModel.submit(question, Answer.Choice(1))
+            advanceUntilIdle()
+
+            assertEquals(listOf(30_000L, 30_000L, 100_000L), sent.map { it.durationMs })
         }
 
     @Test

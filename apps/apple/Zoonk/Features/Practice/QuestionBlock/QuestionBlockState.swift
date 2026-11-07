@@ -6,6 +6,15 @@ struct SentAnswer: Equatable {
   let durationMs: Int
 }
 
+extension SentAnswer {
+  /// An answer sent again unchanged after it failed to save keeps the time it first took: a timed
+  /// drill grades that time, and the wait on the failure isn't the learner's.
+  init(answer: PracticeAnswer, sender: AnswerSender, measuredMs: Int, failed: SentAnswer?) {
+    let resent = failed.flatMap { $0.answer == answer ? $0.durationMs : nil }
+    self.init(answer: answer, sender: sender, durationMs: resent ?? measuredMs)
+  }
+}
+
 enum QuestionBlockPhase: Equatable {
   case alreadyAnswered
   case answerFailed(SentAnswer)
@@ -28,6 +37,10 @@ enum QuestionBlockPhase: Equatable {
 
   var checking: AnswerSender? {
     if case .checking(let sent) = self { sent.sender } else { nil }
+  }
+
+  var failed: SentAnswer? {
+    if case .answerFailed(let sent) = self { sent } else { nil }
   }
 }
 
