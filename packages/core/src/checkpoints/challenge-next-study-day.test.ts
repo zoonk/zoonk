@@ -147,7 +147,18 @@ describe("a learn plan's phase challenge past today's study time names the day i
     const next = await openTheNextDay({ date: sunday, goalId: goal.id });
     const replanned = await findPhaseChallenge({ phase: 0, planId: plan.id });
 
+    const challengesOnSunday = await prisma.planItem.findMany({
+      select: { id: true },
+      where: {
+        kind: { in: ["boss", "checkpoint", "mock"] },
+        planId: plan.id,
+        scheduledFor: sunday,
+        status: "todo",
+      },
+    });
+
     expect(next.blocks.map((block) => block.planItemId)).toStrictEqual([boss.id]);
+    expect(challengesOnSunday.map((item) => item.id)).toStrictEqual([boss.id]);
     expect(toIsoDate(replanned.scheduledFor)).toBe(toIsoDate(sunday));
     expect(held.nextStudyDate).toBe(toIsoDate(sunday));
   });

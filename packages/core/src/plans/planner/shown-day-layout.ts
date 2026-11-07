@@ -143,7 +143,7 @@ function holdWholeOn({ day, unit }: { day: PlanDay; unit: QueueUnit }): Schedule
   };
 }
 
-/** The rest still fills today's time left after the opened work, so the day before an exam keeps the lessons it can't move; only events Today showed stay on today. */
+/** The rest still fills today's time left after the opened work, so the day before an exam keeps the lessons it can't move; an event the opened day doesn't hold leaves today. */
 function holdOpenedDay({
   days,
   input,
@@ -168,15 +168,18 @@ function holdOpenedDay({
     return unit ? [holdWholeOn({ day, unit })] : [];
   });
 
-  const shown = new Set(
+  // A mock keeps its funded day even when a free learner's session reviews in its place.
+  const mocks = new Set(
     input.items.flatMap((item) =>
-      item.scheduledFor?.getTime() === today.getTime() ? [getItemKey(item)] : [],
+      item.kind === "mock" && item.scheduledFor?.getTime() === today.getTime()
+        ? [getItemKey(item)]
+        : [],
     ),
   );
 
   const shape = {
     ...day.shape,
-    events: day.shape.events.filter((event) => shown.has(event.key)),
+    events: day.shape.events.filter((event) => opened.has(event.key) || mocks.has(event.key)),
     reserved: (day.shape.reserved ?? 0) + held.reduce((total, unit) => total + unit.minutes, 0),
   };
 
