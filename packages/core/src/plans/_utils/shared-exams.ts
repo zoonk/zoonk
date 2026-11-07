@@ -4,12 +4,17 @@ import { loadSkillSurvivorMap } from "../../learner/_utils/update-learner-skill"
 import { type OtherExamGoal, readOtherExamGoals } from "../../learner/facts/other-exam-goals";
 import { type PlanView } from "../plan-view-contract";
 import { getSkillArea } from "../planner/graph-areas";
-import { type PlanGraph } from "../planner/plan-state";
+import { type PlanGraph, type PlanGraphSkill } from "../planner/plan-state";
 
 export type SharedExams = { areas: ReadonlyMap<string, string[]>; exams: PlanView["sharedExams"] };
 
 const NONE: SharedExams = { areas: new Map(), exams: [] };
 
+/**
+ * Completion credits a lesson in every plan that holds it, and the planner takes a skill's lessons
+ * only from the courses its graph names (from any course when it names none). So two plans teach a
+ * skill with the same lessons only when they name the same courses for it.
+ */
 function findSharedExams({
   graph,
   others,
@@ -19,9 +24,15 @@ function findSharedExams({
   others: readonly OtherExamGoal[];
   survivorOf: (skillId: string) => string;
 }): SharedExams {
+  const lessonSource = ({
+    courseIds = [],
+    skillId,
+  }: Pick<PlanGraphSkill, "courseIds" | "skillId">) =>
+    [survivorOf(skillId), ...courseIds.toSorted()].join(" ");
+
   const held = others.map((other) => ({
     ...other,
-    skillIds: new Set(other.skillIds.map(survivorOf)),
+    sources: new Set(other.skills.map(lessonSource)),
   }));
 
   const byArea = Map.groupBy(graph.skills, (skill) => getSkillArea({ graph, skill }));
@@ -29,7 +40,7 @@ function findSharedExams({
   const areas = new Map(
     [...byArea].flatMap(([area, skills]) => {
       const goalIds = held
-        .filter((other) => skills.some((skill) => other.skillIds.has(survivorOf(skill.skillId))))
+        .filter((other) => skills.some((skill) => other.sources.has(lessonSource(skill))))
         .map((other) => other.goalId);
 
       return goalIds.length > 0 ? [[area, goalIds] as const] : [];
@@ -65,7 +76,7 @@ export async function loadSharedExams({
 
   const survivors = await loadSkillSurvivorMap([
     ...graph.skills.map((skill) => skill.skillId),
-    ...others.flatMap((other) => other.skillIds),
+    ...others.flatMap((other) => other.skills.map((skill) => skill.skillId)),
   ]);
 
   return findSharedExams({

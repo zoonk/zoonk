@@ -14,78 +14,90 @@ import { loadGoalPlannerLessons } from "./_utils/planner-lessons";
 import { getGoalPlan } from "./get-goal-plan";
 import { parsePlanGraph } from "./planner/plan-state";
 
+async function twoExamsTeachingOneSkill({ sameCourse }: { sameCourse: boolean }) {
+  const { lesson, skill, user } = await setupPlayableLesson({ steps: ["explanation", "summary"] });
+
+  const second = await playableLessonFixture({ steps: ["explanation", "summary"] });
+  await lessonSkillFixture({ lessonId: second.lesson.id, skillId: skill.id });
+
+  const [firstCourse, secondCourse] = await Promise.all([
+    catalogCourseFixture({ lessonCounts: [0] }),
+    catalogCourseFixture({ lessonCounts: [0] }),
+  ]);
+
+  await Promise.all([
+    chapterLessonFixture({ chapterId: firstCourse.chapters[0]!.id, lessonId: lesson.id }),
+    chapterLessonFixture({ chapterId: secondCourse.chapters[0]!.id, lessonId: second.lesson.id }),
+  ]);
+
+  const graphFor = (courseId: string) => ({
+    phases: [{ name: "Reading" }],
+    skills: [
+      {
+        area: "Reading",
+        courseIds: [courseId],
+        lessons: 1,
+        name: skill.name,
+        phase: 0,
+        skillId: skill.id,
+      },
+    ],
+  });
+
+  const otherCourse = sameCourse ? firstCourse : secondCourse;
+  const otherLesson = sameCourse ? lesson : second.lesson;
+
+  const [firstGoal, secondGoal] = await Promise.all([
+    goalFixture({ kind: "exam", title: "Chamber", userId: user.id }),
+    goalFixture({ kind: "exam", title: "CGU", userId: user.id }),
+  ]);
+
+  const [firstPlan, secondPlan] = await Promise.all([
+    planFixture({
+      goalId: firstGoal.id,
+      graph: graphFor(firstCourse.course.id),
+      items: [{ lessonId: lesson.id, skillId: skill.id }],
+    }),
+    planFixture({
+      goalId: secondGoal.id,
+      graph: graphFor(otherCourse.course.id),
+      items: [{ lessonId: otherLesson.id, skillId: skill.id }],
+    }),
+  ]);
+
+  const selected = await Promise.all(
+    [
+      { goal: firstGoal, plan: firstPlan },
+      { goal: secondGoal, plan: secondPlan },
+    ].map(({ goal, plan }) =>
+      loadGoalPlannerLessons({ goal, graph: parsePlanGraph(plan.graph), userId: user.id }),
+    ),
+  );
+
+  expect(selected.map((lessons) => lessons.map((row) => row.lessonId))).toStrictEqual([
+    [lesson.id],
+    [otherLesson.id],
+  ]);
+
+  return { firstGoal, firstPlan, lesson, secondGoal, secondPlan };
+}
+
 describe("shared exam promises under adversarial states", () => {
-  it("credits both exams when the plan promises a shared skill is studied once", async () => {
-    const { lesson, skill, user } = await setupPlayableLesson({
-      steps: ["explanation", "summary"],
+  it("doesn't promise studying a skill once when the other exam teaches it in another course", async () => {
+    const { firstGoal } = await twoExamsTeachingOneSkill({ sameCourse: false });
+
+    await expect(getGoalPlan(firstGoal.id)).resolves.toMatchObject({
+      plan: { areas: [{ name: "Reading", sharedWith: [] }], sharedExams: [] },
+      status: "ready",
     });
+  });
 
-    const second = await playableLessonFixture({ steps: ["explanation", "summary"] });
-    await lessonSkillFixture({ lessonId: second.lesson.id, skillId: skill.id });
+  it("credits both exams when they teach a shared skill in the same course", async () => {
+    const { firstGoal, firstPlan, lesson, secondGoal, secondPlan } = await twoExamsTeachingOneSkill(
+      { sameCourse: true },
+    );
 
-    const [firstCourse, secondCourse] = await Promise.all([
-      catalogCourseFixture({ lessonCounts: [0] }),
-      catalogCourseFixture({ lessonCounts: [0] }),
-    ]);
-
-    await Promise.all([
-      chapterLessonFixture({ chapterId: firstCourse.chapters[0]!.id, lessonId: lesson.id }),
-      chapterLessonFixture({ chapterId: secondCourse.chapters[0]!.id, lessonId: second.lesson.id }),
-    ]);
-
-    const graphFor = (courseId: string) => ({
-      phases: [{ name: "Reading" }],
-      skills: [
-        {
-          area: "Reading",
-          courseIds: [courseId],
-          lessons: 1,
-          name: skill.name,
-          phase: 0,
-          skillId: skill.id,
-        },
-      ],
-    });
-
-    const [firstGoal, secondGoal] = await Promise.all([
-      goalFixture({ kind: "exam", title: "Chamber", userId: user.id }),
-      goalFixture({ kind: "exam", title: "CGU", userId: user.id }),
-    ]);
-
-    const [firstPlan, secondPlan] = await Promise.all([
-      planFixture({
-        goalId: firstGoal.id,
-        graph: graphFor(firstCourse.course.id),
-        items: [{ lessonId: lesson.id, skillId: skill.id }],
-      }),
-      planFixture({
-        goalId: secondGoal.id,
-        graph: graphFor(secondCourse.course.id),
-        items: [{ lessonId: second.lesson.id, skillId: skill.id }],
-      }),
-    ]);
-
-    const selected = await Promise.all([
-      loadGoalPlannerLessons({
-        goal: firstGoal,
-        graph: parsePlanGraph(firstPlan.graph),
-        userId: user.id,
-      }),
-      loadGoalPlannerLessons({
-        goal: secondGoal,
-        graph: parsePlanGraph(secondPlan.graph),
-        userId: user.id,
-      }),
-    ]);
-
-    expect(selected.map((lessons) => lessons.map((row) => row.lessonId))).toStrictEqual([
-      [lesson.id],
-      [second.lesson.id],
-    ]);
-
-    const before = await getGoalPlan(firstGoal.id);
-
-    expect(before).toMatchObject({
+    await expect(getGoalPlan(firstGoal.id)).resolves.toMatchObject({
       plan: { sharedExams: [{ goalId: secondGoal.id, name: "CGU" }] },
       status: "ready",
     });

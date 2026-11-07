@@ -2,9 +2,13 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getGoalsCacheTag, getLearnerModelCacheTag } from "../../cache/tags";
-import { parsePlanGraph } from "../../plans/planner/plan-state";
+import { type PlanGraphSkill, parsePlanGraph } from "../../plans/planner/plan-state";
 
-export type OtherExamGoal = { goalId: string; name: string; skillIds: string[] };
+export type OtherExamGoal = {
+  goalId: string;
+  name: string;
+  skills: Pick<PlanGraphSkill, "courseIds" | "skillId">[];
+};
 
 /** GET-only, after ownership authorization. Skill ids are as saved: callers resolve merges. */
 export async function readOtherExamGoals(userId: string, goalId: string): Promise<OtherExamGoal[]> {
@@ -24,7 +28,10 @@ export async function readOtherExamGoals(userId: string, goalId: string): Promis
           {
             goalId: goal.id,
             name: goal.examBlueprint?.name ?? goal.title,
-            skillIds: parsePlanGraph(goal.plan.graph).skills.map((skill) => skill.skillId),
+            skills: parsePlanGraph(goal.plan.graph).skills.map(({ courseIds, skillId }) => ({
+              courseIds,
+              skillId,
+            })),
           },
         ]
       : [],
