@@ -895,7 +895,6 @@ class LessonPlayerReducerTest {
         val done =
             play(
                 listOf(explanationStep("e")),
-                LessonAction.RunStarting,
                 LessonAction.RunStarted("run-1", emptyList(), hyperdrive, STARTED_AT),
                 LessonAction.Continue,
                 LessonAction.CompletionFailed,

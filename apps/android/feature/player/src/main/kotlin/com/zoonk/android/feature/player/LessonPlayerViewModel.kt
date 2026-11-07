@@ -258,7 +258,6 @@ class LessonPlayerViewModel(
         writingExampleLines = false
         mutableEnding.value = LessonEnding(inSession = studySessionId != null)
         mutableExplanations.value = emptyMap()
-        mutableState.value = null
         startRun()
     }
 
@@ -504,7 +503,8 @@ class LessonPlayerViewModel(
 
     private fun startRun() {
         val opened = lesson ?: return
-        dispatch(LessonAction.RunStarting)
+        // The lesson shows its wait until the run starts, since the run rebuilds every screen and would drop work done before.
+        mutableState.value = null
         starting =
             work.launch {
                 // The run keeps the screens it starts with, and the copy shown on opening may predate a plan change or
@@ -540,8 +540,8 @@ class LessonPlayerViewModel(
                     }
 
                     is StartOutcome.Refused -> {
-                        val current = mutableState.value ?: LessonPlayerState.initial(opened.id, opened.playedSteps, now = now())
-                        mutableState.value = reduce(current, LessonAction.RunRefused(outcome.refusal), now())
+                        val opening = LessonPlayerState.initial(opened.id, opened.playedSteps, now = now())
+                        mutableState.value = reduce(opening, LessonAction.RunRefused(outcome.refusal), now())
                     }
                 }
             }

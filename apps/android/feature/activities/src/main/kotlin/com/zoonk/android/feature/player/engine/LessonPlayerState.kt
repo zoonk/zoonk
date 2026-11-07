@@ -44,8 +44,6 @@ data class HyperdriveStart(
 sealed interface LessonRun {
     data object Idle : LessonRun
 
-    data object Starting : LessonRun
-
     /** [carriedStepIds] were answered in an earlier sitting, so they don't replay Hyperdrive. */
     data class Started(
         val runId: String,

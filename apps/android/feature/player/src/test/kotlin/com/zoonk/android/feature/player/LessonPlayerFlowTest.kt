@@ -193,6 +193,22 @@ class LessonPlayerFlowTest {
         rule.onNodeWithText("tengo hambre").assertExists()
     }
 
+    /** "Try again" after a failed start keeps the lesson's wait until the run starts, so nothing done meanwhile is lost. */
+    @Test
+    fun aRetriedStartShowsTheLessonOnlyOnceTheRunStarts() {
+        play(listOf(typedAnswerStep("write"), summaryStep("end"))) { startFailures = 1 }
+        harness.cache.invalidate(setOf(DataDomain.Goals))
+        api.lessonGate = CompletableDeferred()
+
+        tap("Try again")
+        rule.waitForIdle()
+        rule.onNode(hasSetTextAction()).assertDoesNotExist()
+
+        api.lessonGate?.complete(Unit)
+        rule.waitUntil { viewModel.state.value?.run is LessonRun.Started }
+        rule.onNode(hasSetTextAction()).assertExists()
+    }
+
     /** Android closing the app in the background keeps a pick the learner hasn't checked, ready to check. */
     @Test
     fun aPickComesBackAfterAndroidClosesTheAppInTheBackground() {
@@ -400,7 +416,7 @@ class LessonPlayerFlowTest {
         rule.waitForIdle()
 
         val reopened = openAgain()
-        rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run != null && reopened.state.value?.run !is LessonRun.Starting }
+        rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run != null }
 
         assertTrue(reopened.state.value?.run is LessonRun.Started)
         assertTrue(reopened.hasUnsent)

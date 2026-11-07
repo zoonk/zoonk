@@ -63,8 +63,6 @@ sealed interface LessonAction {
         val savedMistake: Boolean,
     ) : LessonAction
 
-    data object RunStarting : LessonAction
-
     data class RunStarted(
         val runId: String,
         val answers: List<RunAnswer>,
@@ -164,10 +162,6 @@ fun reduce(
 
         is LessonAction.CheckConfirmed -> {
             state.confirmCheck(action)
-        }
-
-        LessonAction.RunStarting -> {
-            state.copy(run = LessonRun.Starting)
         }
 
         is LessonAction.RunStarted -> {
