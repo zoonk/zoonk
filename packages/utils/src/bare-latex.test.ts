@@ -85,11 +85,15 @@ describe(wrapBareLatex, () => {
 
     expect(
       wrapBareLatex(String.raw`So a_n = 2n + 1, \Delta x_i is small, and \mathbb{R} is real.`),
-    ).toBe(String.raw`So $a_n$ = 2n + 1, $\Delta$ $x_i$ is small, and $\mathbb{R}$ is real.`);
+    ).toBe(String.raw`So $a_{n}$ = 2n + 1, $\Delta$ $x_{i}$ is small, and $\mathbb{R}$ is real.`);
 
     expect(
       wrapBareLatex(String.raw`Use \left(x^2+1\right) and x_1's value with H_2O's mass.`),
     ).toBe(String.raw`Use $\left(x^{2}+1\right)$ and $x_{1}$'s value with $H_{2}O$'s mass.`);
+
+    expect(wrapBareLatex(String.raw`The decay is \mathrm{e}^-t, or e^-x.`)).toBe(
+      String.raw`The decay is $\mathrm{e}^{-t}$, or $e^{-x}$.`,
+    );
 
     expect(wrapBareLatex("Think of 10^3—it means one thousand. Recall—x^2 grows.")).toBe(
       "Think of $10^{3}$—it means one thousand. Recall—$x^{2}$ grows.",
@@ -144,6 +148,7 @@ describe(wrapBareLatex, () => {
       String.raw`The ratio is \frac{\\sen(x)}{2}.`,
       "A 10^3‑fold increase.",
       "The area is **r**^2.",
+      "Then x^-ab shrinks.",
     ];
 
     expect(texts.map((text) => wrapBareLatex(text))).toStrictEqual(texts);

@@ -13,11 +13,15 @@ const HAS_COMMAND = /\\[A-Za-z]+/u;
 const FILE_PATH = /^[A-Za-z]:\\|^(?:~|\.{1,2})?\/|\.[A-Za-z]{2,4}$/u;
 const BRACED_SCRIPT = /[\^_]\{/u;
 
-/** KaTeX raises only the next character, so `10^12`, `10^-1` and `Na^+` need their power braced. */
+/** KaTeX raises only the next character, so `10^12`, `e^-t` and `Na^+` need their power braced. */
 const CARET_POWER =
-  /(?<=[\p{L}\p{N})\]}*])\^(?<power>[-−+]?\p{N}+(?:\.\p{N}+)?|[-−+](?![\p{L}\p{N}])|\p{L}(?![\p{L}\p{N}]))/gu;
+  /(?<=[\p{L}\p{N})\]}*])\^(?<power>[-−+]?(?:\p{N}+(?:\.\p{N}+)?|\p{L}(?![\p{L}\p{N}]))|[-−+](?![\p{L}\p{N}]))/gu;
 
-const HAS_CARET_POWER = new RegExp(CARET_POWER.source, "u");
+/** A raised character after a symbol, number or group; what code can't brace is left to a writer. */
+const CARET = /(?<=[\p{L}\p{N})\]}*])\^[-−+\p{L}\p{N}]/u;
+
+/** A script left unbraced (`x^ab`, `x^-ab`) is one KaTeX would raise only in part. */
+const UNBRACED_SCRIPT = /[\^_](?!\{)/u;
 
 /**
  * A subscript under a symbol, elements or a group (`x_1`, `a_n`, `CaCl_2`, `Mg(OH)_2`); a lowercase
@@ -28,6 +32,7 @@ const BARE_SUBSCRIPT =
 
 /** Inside a formula, every numeric subscript is braced, so `\log_10` and `C_12H_22O_11` keep their digits. */
 const NUMERIC_SUBSCRIPT = /_(?<below>\p{N}+)/gu;
+const LETTER_SUBSCRIPT = /_(?<below>\p{L})(?![\p{L}\p{N}])/gu;
 
 /** `10^3,5` is a decimal power in some languages and two numbers in others; a writer decides. */
 const COMMA_AFTER_POWER = /\^[-−+]?\p{N}+,\p{N}/u;
@@ -146,7 +151,7 @@ function isLatex(text: string): boolean {
     !FILE_PATH.test(collapseBraces(text)) &&
     (HAS_COMMAND.test(text) ||
       BRACED_SCRIPT.test(text) ||
-      HAS_CARET_POWER.test(text) ||
+      CARET.test(text) ||
       BARE_SUBSCRIPT.test(text))
   );
 }
@@ -170,6 +175,7 @@ function rendersInKatex(latex: string): boolean {
 function isRepairable({ latex, written }: { latex: string; written: string }): boolean {
   return (
     !TEX_SPECIAL.test(latex) &&
+    !UNBRACED_SCRIPT.test(latex) &&
     !COMMA_AFTER_POWER.test(written) &&
     !ATTACHED_WORD.test(collapseBraces(written).replaceAll(BACKSLASH_WORD, "")) &&
     rendersInKatex(latex)
@@ -187,7 +193,8 @@ function toBareLatex({ chunk, index }: { chunk: string; index: number }): BareLa
 
   const latex = written
     .replaceAll(CARET_POWER, (_power, power: string) => `^{${power.replace("−", "-")}}`)
-    .replaceAll(NUMERIC_SUBSCRIPT, (_subscript, below: string) => `_{${below}}`);
+    .replaceAll(NUMERIC_SUBSCRIPT, (_subscript, below: string) => `_{${below}}`)
+    .replaceAll(LETTER_SUBSCRIPT, (_subscript, below: string) => `_{${below}}`);
 
   return {
     end: start + written.length,
