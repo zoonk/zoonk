@@ -1,10 +1,11 @@
 import { readSelectedItemFacts } from "../_utils/selected-item-contract";
 import { type BuildPlanInput } from "./build-plan";
 import { type scheduleCarriedAndRest } from "./carried-and-rest";
+import { getOneDayStudy, toDayMinutes } from "./interval-study-minutes";
 import { toIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem, getItemKey } from "./plan-items";
 import { type QueueUnit } from "./plan-units";
-import { type PlanDay, type ScheduledUnit } from "./schedule-units";
+import { type PlanDay, type ScheduledEvent, type ScheduledUnit } from "./schedule-units";
 import { type layOutAfterThisWeek } from "./week-after";
 
 type DayLayout = ReturnType<typeof layOutAfterThisWeek<ReturnType<typeof scheduleCarriedAndRest>>>;
@@ -115,19 +116,88 @@ function futureDays({
     }));
 }
 
-export function layOutShownDay({
+type ShownDay = {
+  days: readonly PlanDay[];
+  events: ScheduledEvent[];
+  held: ScheduledUnit[];
+  units: readonly QueueUnit[];
+};
+
+function holdWholeOn({ day, unit }: { day: PlanDay; unit: QueueUnit }): ScheduledUnit {
+  const { share } = day.shape;
+
+  if (unit.kind === "boss") {
+    return {
+      ...unit,
+      date: day.date,
+      studyMinutes: toDayMinutes({ lessonMinutes: unit.minutes, share }),
+    };
+  }
+
+  return {
+    ...unit,
+    date: day.date,
+    phase: day.shape.phase ?? unit.phase,
+    ...getOneDayStudy({ date: day.date, lessonMinutes: unit.minutes, share }),
+  };
+}
+
+/** The rest still fills today's time left after the opened work, so the day before an exam keeps the lessons it can't move; only events Today showed stay on today. */
+function holdOpenedDay({
   days,
   input,
-  layOut,
+  units,
+}: {
+  days: readonly PlanDay[];
+  input: BuildPlanInput;
+  units: readonly QueueUnit[];
+}): ShownDay | null {
+  const { openedKeys, today } = input;
+  const day = days.find((planDay) => planDay.date.getTime() === today.getTime());
+
+  if (!openedKeys || !day) {
+    return null;
+  }
+
+  const opened = new Set(openedKeys);
+  const byKey = new Map(units.map((unit) => [unit.key, unit]));
+
+  const held = [...opened].flatMap((key) => {
+    const unit = byKey.get(key);
+    return unit ? [holdWholeOn({ day, unit })] : [];
+  });
+
+  const shown = new Set(
+    input.items.flatMap((item) =>
+      item.scheduledFor?.getTime() === today.getTime() ? [getItemKey(item)] : [],
+    ),
+  );
+
+  const shape = {
+    ...day.shape,
+    events: day.shape.events.filter((event) => shown.has(event.key)),
+    reserved: (day.shape.reserved ?? 0) + held.reduce((total, unit) => total + unit.minutes, 0),
+  };
+
+  return {
+    days: days.map((planDay) => (planDay === day ? { ...day, shape } : planDay)),
+    events: [],
+    held,
+    units: units.filter((unit) => !opened.has(unit.key)),
+  };
+}
+
+function holdShownBefore({
+  days,
+  input,
   layOutBefore,
   units,
 }: {
   days: readonly PlanDay[];
   input: BuildPlanInput;
-  layOut: (input: LayoutInput) => DayLayout;
   layOutBefore: (input: { days: readonly PlanDay[]; fresh: ReadonlySet<string> }) => DayLayout;
   units: readonly QueueUnit[];
-}): DayLayout {
+}): ShownDay | null {
   const known = new Set(input.items.map((item) => getItemKey(item)));
 
   const fresh = new Set(
@@ -155,7 +225,7 @@ export function layOutShownDay({
     known.size === 0 ||
     (fresh.size === 0 && !unavailable)
   ) {
-    return layOut({ days, units });
+    return null;
   }
 
   const before = layOutBefore({ days, fresh });
@@ -164,6 +234,35 @@ export function layOutShownDay({
     (unit) => unit.lessonId === null || available.has(unit.lessonId),
   );
 
+  return {
+    days: futureDays({ days, held, today: input.today }),
+    events: before.restSchedule.events.filter((event) => event.date <= input.today),
+    held,
+    units: remainingUnits({ held, units }),
+  };
+}
+
+export function layOutShownDay({
+  days,
+  input,
+  layOut,
+  layOutBefore,
+  units,
+}: {
+  days: readonly PlanDay[];
+  input: BuildPlanInput;
+  layOut: (input: LayoutInput) => DayLayout;
+  layOutBefore: (input: { days: readonly PlanDay[]; fresh: ReadonlySet<string> }) => DayLayout;
+  units: readonly QueueUnit[];
+}): DayLayout {
+  const shown =
+    holdOpenedDay({ days, input, units }) ?? holdShownBefore({ days, input, layOutBefore, units });
+
+  if (!shown) {
+    return layOut({ days, units });
+  }
+
+  const { events, held } = shown;
   const heldKeys = new Set(held.map((unit) => unit.key));
   const dated = new Map(held.map((unit) => [unit.key, unit.teachingEnd ?? unit.date]));
 
@@ -173,21 +272,11 @@ export function layOutShownDay({
       : [],
   );
 
-  const after = layOut({
-    days: futureDays({ days, held, today: input.today }),
-    kept,
-    units: remainingUnits({ held, units }),
-  });
+  const after = layOut({ days: shown.days, kept, units: shown.units });
 
   return {
     ...after,
     carriedSchedule: { ...after.carriedSchedule, units: [...held, ...after.carriedSchedule.units] },
-    restSchedule: {
-      ...after.restSchedule,
-      events: [
-        ...before.restSchedule.events.filter((event) => event.date <= input.today),
-        ...after.restSchedule.events,
-      ],
-    },
+    restSchedule: { ...after.restSchedule, events: [...events, ...after.restSchedule.events] },
   };
 }

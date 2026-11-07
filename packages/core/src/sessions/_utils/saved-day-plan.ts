@@ -108,13 +108,13 @@ function selectSavedDay({
   return { ...selection, items, left, source: toSource({ ...selection, items }) };
 }
 
-function listLessonKeys(day: PlannedStudyDay): string[] {
+function listOpenedKeys(day: PlannedStudyDay): string[] {
   return day.blocks.flatMap((block) =>
-    block.kind === "learn" && block.payload.planItemKey ? [block.payload.planItemKey] : [],
+    block.payload.planItemKey ? [block.payload.planItemKey] : [],
   );
 }
 
-/** Start plans the saved day first, so the settle keeps that day's lessons whole on today and dates the rest around them. */
+/** Start plans the saved day first, so the settle keeps that day whole on today and dates the rest around it. */
 export async function settleAroundSavedDay({
   context,
   left,
@@ -139,7 +139,7 @@ export async function settleAroundSavedDay({
     keepPhaseDates: true,
     mode: "forced",
     now,
-    openedKeys: opened && listLessonKeys(opened),
+    openedKeys: opened && listOpenedKeys(opened),
     setAsideLeftWork: true,
     todayShown: true,
   });

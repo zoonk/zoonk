@@ -13,8 +13,6 @@ import { type PlanDay, getLessonCapacity } from "./schedule-units";
 export type CarryOver = {
   itemIds?: readonly string[];
   lessonIds: readonly string[];
-  /** The lessons of the day the learner opens, which stay whole on today. */
-  openedKeys?: readonly string[];
   todayExceptAreas?: readonly string[] | null;
 };
 
@@ -35,10 +33,6 @@ function isKeptToday({
   item: ExistingPlanItem;
   today: Date;
 }): boolean {
-  if (carryOver.openedKeys?.includes(getItemKey(item))) {
-    return true;
-  }
-
   const except = carryOver.todayExceptAreas;
 
   if (!except || item.scheduledFor?.getTime() !== today.getTime()) {

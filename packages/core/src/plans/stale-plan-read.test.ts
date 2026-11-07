@@ -357,6 +357,41 @@ describe("the visible Plan after days away, before any learner POST", () => {
     },
   );
 
+  it("dates the challenge buddy opens after days away today, with no other challenge today", async () => {
+    vi.setSystemTime(new Date("2026-11-08T15:00:00Z"));
+    const { goalId, opened } = await startReturningDay({ away: 5, day: 9, persona: "buddy" });
+    const today = new Date("2026-11-08T00:00:00Z");
+
+    const held = new Set(
+      opened.session.blocks.flatMap((block) => (block.planItemId ? [block.planItemId] : [])),
+    );
+
+    expect(opened.session.blocks.some((block) => block.checkpoint?.kind === "boss")).toBe(true);
+    expect(opened.targetStatus).toBe("next");
+
+    const items = await prisma.planItem.findMany({
+      select: { id: true, kind: true, scheduledFor: true },
+      where: { plan: { goalId }, status: "todo" },
+    });
+
+    const dateOf = (id: string) =>
+      items
+        .find((item) => item.id === id)
+        ?.scheduledFor?.toISOString()
+        .slice(0, 10);
+
+    expect([...held].map((id) => dateOf(id))).toStrictEqual([...held].map(() => "2026-11-08"));
+
+    expect(
+      items.filter(
+        (item) =>
+          ["boss", "checkpoint", "mock"].includes(item.kind) &&
+          item.scheduledFor?.getTime() === today.getTime() &&
+          !held.has(item.id),
+      ),
+    ).toStrictEqual([]);
+  });
+
   it("counts newly selected non-exam teaching before Open from the same plan it persists", async () => {
     const fixture = await daysAwayFixture();
     const skill = fixture.library.skills[0];

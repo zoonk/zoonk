@@ -190,7 +190,6 @@ export async function computePlan({
         (loadedCarry) =>
           loadedCarry && {
             ...loadedCarry,
-            openedKeys: options.openedKeys,
             todayExceptAreas: options.todayExceptAreas ?? loadedCarry.todayExceptAreas ?? null,
           },
       ),
@@ -240,6 +239,7 @@ export async function computePlan({
     mode,
     movesPhaseEnds: !keepPhaseDates || movedEnds !== undefined || releasedPhases !== undefined,
     noticeAreas: areaShares ? new Set(areaShares.keys()) : null,
+    openedKeys: options.openedKeys,
     paceFactor: settings.pace.factor,
     phaseEnds: keepPhaseDates
       ? getShownPhaseEnds({
