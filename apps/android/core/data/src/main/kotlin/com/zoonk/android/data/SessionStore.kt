@@ -229,10 +229,11 @@ class SessionStore(
         started: AuthenticatedSession?,
         wasGuest: Boolean,
         asGuest: Boolean,
+        isStillWanted: () -> Boolean = { current == started },
     ): SignInResult {
         var installed = false
         drafts.follow {
-            if (current != started) return@follow null
+            if (!isStillWanted()) return@follow null
             val session = AuthenticatedSession(account.user.id.toString(), token, newLocalId())
             try {
                 credentials.writePendingApple(null)
@@ -378,7 +379,12 @@ class SessionStore(
                 revokeQuietly(restored.token)
                 return showUnavailable()
             }
-        signInMutex.withLock { install(restored.token, account, started = null, wasGuest = false, asGuest = restored.isGuest) }
+        // Whatever the learner did meanwhile wins, even a sign-in they've already signed out of.
+        signInMutex.withLock {
+            install(restored.token, account, started = null, wasGuest = false, asGuest = restored.isGuest) {
+                mutableState.value == SessionState.Restoring
+            }
+        }
     }
 
     /** [checked] once this device has its answer, so later launches don't look for a key; a [refused] key is deleted. */

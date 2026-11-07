@@ -178,6 +178,27 @@ class SessionRestoreKeyTest {
         }
 
     @Test
+    fun aRestoreOvertakenByASignInAndSignOutIsRevokedAndChangesNothing() =
+        runTest {
+            newPhone("old-phone", RestoreKeySessionResponse(token = "restored-a", isGuest = false))
+            val gate = CompletableDeferred<Unit>()
+            api.gate = gate
+            val sessions = store()
+            val restoring = launch { sessions.restore() }
+            runCurrent()
+            api.gate = null
+
+            sessions.signIn { "token-b" }
+            sessions.signOut()
+            gate.complete(Unit)
+            restoring.join()
+            advanceUntilIdle()
+            assertEquals(SessionState.SignedOut(), sessions.state.value)
+            assertNull(credentials.stored)
+            assertTrue("restored-a" in api.revoked)
+        }
+
+    @Test
     fun aPhoneWithoutCloudBackupStillKeepsAKeyForAPhoneToPhoneMove() =
         runTest {
             keys.hasCloudBackup = false
