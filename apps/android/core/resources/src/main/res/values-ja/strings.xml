@@ -64,6 +64,8 @@
   "not_found_description": "ce3925aee7c5a6fdf101e58e54f660d3dadbea286d0bd5a497fe4effff5d48dc",
   "not_found_go_home": "8705540c6bd7c40f8ec2cdfe0f6d64a5d31bc9914ba5898f0cf47934aa2b168c",
   "not_found_title": "1fb8cec8ca480ca78264b0eaa619f04f058c316fe639e6176734cf37f500d269",
+  "player_not_saved": "935a3eb56de624d863959c0f9087faf9f745fdb110e86d99fa21d3c4ccb428fe",
+  "player_not_saved_description": "c26124139fa6a455aacde74cc77c906102c28ccb4392a9856a1e5c027284f715",
   "suggestion_save_failed": "8dd207612bb75af9bfd2bb062a4f24e8dd6206bb806ea1b7fb1bac9e5ac42e67",
   "suggestion_view": "3f7028098dd17111109fd0e1edbf9177e13d02d8d65ebd9138f484d9726af686",
   "task_leave": "86d332b8b850e31ef494d50c10cb5342fb3d3d85c1bc141f9d43476de9e86e23",
@@ -158,4 +160,6 @@
     <!-- %1$s is a document\'s title, %2$s a page number. -->
     <string name="citation_page">%1$s、%2$sページ</string>
     <string name="citation_slide">%1$s、スライド%2$s</string>
+    <string name="player_not_saved">まだ保存されていません</string>
+    <string name="player_not_saved_description">一部の回答がまだ保存されていません。このレッスンを開いている間は、引き続き保存を試みます。</string>
 </resources>

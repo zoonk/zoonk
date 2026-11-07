@@ -64,6 +64,8 @@
   "not_found_description": "0bc2f9de7bd79d4b841e8a58a6b012c9e8855f22c5edb7952c2bc3b2e6011f0a",
   "not_found_go_home": "15848291f200ce64248588b5e9bbb365050e83c8efc34ba5163b8a0af9879db0",
   "not_found_title": "7c76fad69ccfab206d1daeb348478509cf70c273825f8cbf08cf64ae85dcbe7c",
+  "player_not_saved": "3ef9a97073667e282b1ee412ab06c48d7c6f71b74e66d9ec7acbe7b0f8438bec",
+  "player_not_saved_description": "73a2d464c119c7a41f90e7d08b4eb85e9a9fb3d2db0227b0be6e0646a774ca69",
   "suggestion_save_failed": "cf84bd9a1f3bf0c8c3071f7530f4c3ca9586046a179c7579ecabd845dad930c8",
   "suggestion_view": "50eb71cd92f6c182f3d8422d630b5e5aa95bd81c7df3484085786ed0dac5e0ff",
   "task_leave": "e1bb1d841def987889c30c7e783fa24211f01266bb638d633c974d7082d6f4cf",
@@ -158,4 +160,6 @@
     <!-- %1$s is a document\'s title, %2$s a page number. -->
     <string name="citation_page">%1$s, Seite %2$s</string>
     <string name="citation_slide">%1$s, Folie %2$s</string>
+    <string name="player_not_saved">Noch nicht gespeichert</string>
+    <string name="player_not_saved_description">Einige Antworten sind noch nicht gespeichert. Wir versuchen es weiter, solange diese Lektion geöffnet ist.</string>
 </resources>

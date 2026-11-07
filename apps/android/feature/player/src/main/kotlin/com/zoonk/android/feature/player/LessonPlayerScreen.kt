@@ -30,7 +30,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.IntState
@@ -40,6 +45,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
@@ -148,6 +154,7 @@ import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.spreadShows
 import com.zoonk.api.models.LearnerSummaryBuddy
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 /** Where the player leads: other features' routes, over the lesson or in its place. */
@@ -241,7 +248,10 @@ fun LessonPlayer(
     val shownStep = screen?.step?.takeIf { state?.run !is LessonRun.Refused }
     language.prompt?.let { PromptAudioEffect(shownStep, viewModel.cantTalk, it) }
     val activity = LocalActivity.current
-    LifecycleStartEffect(viewModel) { onStopOrDispose { if (activity?.isChangingConfigurations != true) viewModel.leave() } }
+    LifecycleStartEffect(viewModel) {
+        viewModel.resendAnswers()
+        onStopOrDispose { if (activity?.isChangingConfigurations != true) viewModel.leave() }
+    }
     val actions =
         remember(viewModel) {
             object : StepActions {
@@ -374,7 +384,10 @@ fun LessonPlayer(
                             }
                     },
             title = { LessonTitle(lesson.title) },
-            actions = { ScreenMenu(state, screen, viewModel) },
+            actions = {
+                if (viewModel.hasUnsent) UnsavedAnswers()
+                ScreenMenu(state, screen, viewModel)
+            },
             exitConfirmation =
                 if (unsent) {
                     TaskExitConfirmation(
@@ -880,6 +893,29 @@ private fun PrimaryLabel.text(): Int =
         PrimaryLabel.SeeHowItWent -> R.string.player_action_see_how_it_went
         PrimaryLabel.Start -> R.string.player_action_start
     }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun UnsavedAnswers() {
+    val tooltip = rememberTooltipState(isPersistent = true)
+    val scope = rememberCoroutineScope()
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+        tooltip = { RichTooltip { Text(stringResource(R.string.player_not_saved_description)) } },
+        state = tooltip,
+    ) {
+        IconButton(
+            onClick = { scope.launch { tooltip.show() } },
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        ) {
+            Icon(
+                painterResource(R.drawable.ic_cloud_off),
+                contentDescription = stringResource(R.string.player_not_saved),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
 
 @Composable
 private fun ScreenMenu(

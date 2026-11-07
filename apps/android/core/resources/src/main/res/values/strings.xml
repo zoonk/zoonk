@@ -85,4 +85,6 @@
     <!-- %1$s is a document\'s title, %2$s a page number. -->
     <string name="citation_page">%1$s, page %2$s</string>
     <string name="citation_slide">%1$s, slide %2$s</string>
+    <string name="player_not_saved">Not saved yet</string>
+    <string name="player_not_saved_description">Some answers aren\'t saved yet. We\'ll keep trying while this lesson is open.</string>
 </resources>

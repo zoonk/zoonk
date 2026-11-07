@@ -64,6 +64,8 @@
   "not_found_description": "bb1b2461628c12aea26e7ae88b344434bed93ace8549881407ffba1f0ca7c77f",
   "not_found_go_home": "956cc85474be7b5a30f060e90a1ed888c8e121f43f65da4e9ad57f2d86bd3b28",
   "not_found_title": "ac7599e7936a50f7b977b79e6299bbe367632d51ecdaeb7405d7accd4ace37cc",
+  "player_not_saved": "57deebecd006b2fa2d6ee7b658210c8d6db29ad0e34e596ed632a3b8fcaf4a77",
+  "player_not_saved_description": "5be810a8b5bdf29cad6807be62e1afd5580f506e6b5a1bf8702693725fa4cf7b",
   "suggestion_save_failed": "5cc011d4b7131953d9a5f823412ce23c8c8db104766c9cd7b976a8113cd6117e",
   "suggestion_view": "799e8a8e64f4edb7717e2b3beefe1eceb16653f9c0332451ce582f7fae866997",
   "task_leave": "5bb4b8874aee4d8c407570dac2ed6d6ecb135327e6334f11dab50946e081cb1b",
@@ -158,4 +160,6 @@
     <!-- %1$s is a document\'s title, %2$s a page number. -->
     <string name="citation_page">%1$s, %2$s. sayfa</string>
     <string name="citation_slide">%1$s, slayt %2$s</string>
+    <string name="player_not_saved">Henüz kaydedilmedi</string>
+    <string name="player_not_saved_description">Bazı cevapların henüz kaydedilmedi. Bu ders açık kaldığı sürece kaydetmeyi denemeye devam edeceğiz.</string>
 </resources>

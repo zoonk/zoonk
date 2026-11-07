@@ -70,6 +70,7 @@ sealed interface LessonAction {
         val hyperdrive: HyperdriveStart,
         val startedAt: Instant,
         val optionalStepIds: List<String> = emptyList(),
+        val heldAnswers: List<RunAnswer> = emptyList(),
     ) : LessonAction
 
     /** A fresh read of the lesson's screens while some pictures were still being drawn. */
@@ -262,11 +263,23 @@ private fun LessonPlayerState.startRun(
         copy(run = LessonRun.Started(action.runId, action.hyperdrive, carried))
             .skipSteps(action.optionalStepIds, now)
     val isUntouched = results.isEmpty() && quickCheck == null
-    val answers = action.answers.filter { it.stepId in steps }
+    val answers = (action.answers + action.heldAnswers).filter { it.stepId in steps }.sortedBy(RunAnswer::answeredAt)
+    val sameVerdicts = firstVerdicts == runVerdicts(answers)
 
-    if (!isUntouched || firstVerdicts == runVerdicts(answers)) return started
+    if (!isUntouched || (sameVerdicts && resumeTries == answers.groupingBy(RunAnswer::stepId).eachCount())) return started
 
-    return started.resumeFrom(answers, now)
+    val resumed = started.resumeFrom(answers, now)
+    val current = currentStep?.id
+    val occurrence = queue.take(position).count { it == current }
+    val currentPosition =
+        resumed.queue.indices
+            .filter { resumed.queue[it] == current }
+            .getOrNull(occurrence)
+    return if (sameVerdicts && phase == LessonPhase.Playing && currentPosition != null) {
+        resumed.copy(position = currentPosition, answers = this.answers, revealed = revealed, rounds = rounds)
+    } else {
+        resumed
+    }
 }
 
 private val LessonPlayerState.isAllAnswered: Boolean
