@@ -23,6 +23,7 @@ import { endLessonsAsk } from "../lookahead/lessons-ask";
 import { keepPaceOwn } from "../plans/_test-utils/keep-pace-own";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import { getTodayView } from "../view-models/today/get-today-view";
 import { daysAgo, dueSkillFixture } from "./_test-utils/session-goal";
 import { loadDayLessonIds } from "./_test-utils/todays-lessons";
 import { openStudyDay } from "./open-study-day";
@@ -144,6 +145,49 @@ describe("an exam day that waited on lessons", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     vi.useRealTimers();
+  });
+
+  it("follows written lessons without reopening or replacing a started exam block, including a repeated completion", async () => {
+    const { course, goal, library } = await setupExamDay({ outlineStatus: "running" });
+    await startFirstBlock(goal.id);
+
+    const before = await prisma.studySession.findFirstOrThrow({
+      include: { blocks: { orderBy: { position: "asc" } } },
+      where: { goalId: goal.id },
+    });
+
+    const written = await writeLessons({ count: 8, library, skillIndex: 1 });
+    await replanGoalsWaitingOnSkills({ skillIds: [library.skills[1]?.id ?? ""] });
+    await prisma.course.update({ data: { outlineStatus: "completed" }, where: { id: course.id } });
+    await endAsk(goal.id);
+
+    const after = await getTodayView({ goalId: goal.id, timeZone: TIME_ZONE });
+    const day = after.status === "ready" ? after.today.session : null;
+    const allocated = await loadDayLessonIds({ goalId: goal.id, today: TODAY });
+    const landedToday = written.filter((id) => allocated.has(id));
+
+    expect(landedToday.length).toBeGreaterThan(0);
+
+    expect(day?.blocks.map((block) => block.lessonId)).toStrictEqual(
+      expect.arrayContaining(landedToday),
+    );
+
+    const saved = await prisma.studySession.findUniqueOrThrow({
+      include: { blocks: { orderBy: { position: "asc" } } },
+      where: { id: before.id },
+    });
+
+    expect(saved.blocks.slice(0, before.blocks.length)).toStrictEqual(before.blocks);
+    expect(saved.startedAt).toStrictEqual(before.startedAt);
+
+    await endAsk(goal.id);
+
+    await expect(
+      prisma.studySessionBlock.findMany({
+        orderBy: { position: "asc" },
+        where: { sessionId: before.id },
+      }),
+    ).resolves.toStrictEqual(saved.blocks);
   });
 
   it("keeps a day an exam pick left waiting to the plan's day once some of its lessons are written", async () => {

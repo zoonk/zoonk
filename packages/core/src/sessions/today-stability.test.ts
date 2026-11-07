@@ -230,6 +230,62 @@ describe("today's session the learner was shown", () => {
     vi.useRealTimers();
   });
 
+  it.each([
+    { count: 4, laterLessons: 8, ownAsk: false },
+    { count: 2, laterLessons: 0, ownAsk: false },
+    { count: 4, laterLessons: 0, ownAsk: true },
+  ])(
+    "shows $count landed lessons on the next read with $laterLessons later lessons and own ask $ownAsk",
+    async ({ count, laterLessons, ownAsk }) => {
+      const { course, goal, library } = await setupDayWithStandIn({
+        laterLessons,
+        outlineStatus: ownAsk ? "completed" : "running",
+      });
+
+      const opened = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
+      const askedAt = ownAsk ? await askForLessons({ goalId: goal.id }) : null;
+
+      if (ownAsk) {
+        await prisma.course.update({
+          data: { outlineStatus: "running" },
+          where: { id: course.id },
+        });
+
+        await endLessonsAsk({
+          askedAt: askedAt ?? 0,
+          goalId: goal.id,
+          startedCourseIds: [course.id],
+        });
+      }
+
+      const waiting = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+      expect(waiting.status === "ready" && waiting.today.session.lessonsComing).toBe(true);
+
+      vi.setSystemTime(A_MINUTE_LATER);
+      const landed = await landWaitingLessons({ count, courseId: course.id, library });
+      await endLessonsAsk({ askedAt: askedAt ?? 0, goalId: goal.id, startedCourseIds: [] });
+
+      const after = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+      const day = after.status === "ready" ? after.today.session : null;
+
+      expect(day).toMatchObject({ id: opened.today.session.id });
+
+      expect(day?.blocks.map((block) => block.lessonId)).toStrictEqual(
+        expect.arrayContaining(landed),
+      );
+
+      expect(day?.minutes.planned).toBeGreaterThan(opened.today.session.minutes.planned);
+      expect(day?.lessonsComing).toBe(false);
+      expect(day?.lessonsToPrepare).toBe(count < LANDING || laterLessons === 0);
+
+      vi.setSystemTime(new Date("2026-09-30T12:05:00Z"));
+
+      await expect(getTodayView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
+        today: { session: { blocks: day?.blocks, lessonsComing: false } },
+      });
+    },
+  );
+
   it("holds the place of lessons still being outlined, says they're on the way, and keeps every block it showed when they land", async () => {
     const { course, goal, library } = await setupDayWithStandIn();
     const before = await readToday(goal.id);
