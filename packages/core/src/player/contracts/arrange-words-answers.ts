@@ -2,7 +2,7 @@ import { segmentLearnerWords, segmentWords, stripPunctuation } from "@zoonk/util
 
 const SEQUENCE_SEPARATOR = "\u0000";
 
-function normalizeArrangeWord(word: string): string {
+export function normalizeArrangeWord(word: string): string {
   return stripPunctuation(word).toLowerCase().trim();
 }
 
@@ -10,10 +10,10 @@ function getSequenceKey(words: string[]): string {
   return words.map((word) => normalizeArrangeWord(word)).join(SEQUENCE_SEPARATOR);
 }
 
-type ArrangeText = { kind: "listening" | "reading"; text: string };
+export type ArrangeText = { kind: "listening" | "reading"; text: string };
 
 /** A reading builds the sentence in the language learned; a listening, its translation in the learner's. */
-function segmentArrangeWords({ kind, text }: ArrangeText): string[] {
+export function segmentArrangeWords({ kind, text }: ArrangeText): string[] {
   return kind === "listening" ? segmentLearnerWords(text) : segmentWords(text);
 }
 

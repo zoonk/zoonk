@@ -357,6 +357,7 @@
     "./library/language/alphabet-lesson-validator": "./src/library/language/alphabet/alphabet-lesson-validator.ts",
     "./library/language/grade-spoken-answer": "./src/library/language/grade-spoken-answer.ts",
     "./library/language/review-alphabet-lesson": "./src/library/language/alphabet/review-alphabet-lesson.ts",
+    "./library/language/sentence-orders": "./src/library/language/sentence-orders.ts",
     "./library/language/spoken-answer-contract": "./src/library/language/spoken-answer-contract.ts",
     "./library/language/spoken-answer-match": "./src/library/language/spoken-answer-match.ts",
     "./library/language/voice-word": "./src/library/language/voice-word.ts",

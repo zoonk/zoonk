@@ -124,6 +124,62 @@ describe(cleanLanguageLesson, () => {
     ]);
   });
 
+  it("keeps only other orders a learner can build from the sentence's own tiles", () => {
+    const draft = languageLessonDraft();
+    const [question, ...rest] = draft.sentences;
+
+    const cleaned = cleanLanguageLesson({
+      content: {
+        ...draft,
+        sentences: [
+          {
+            ...question!,
+            otherOrders: ["how much is the rent?", "The rent is how much?", "How much is rent?"],
+            otherTranslationOrders: [
+              "O aluguel é quanto ?",
+              "o aluguel é quanto",
+              "O aluguel custa quanto?",
+            ],
+          },
+          ...rest,
+        ],
+      },
+      knownWords: [],
+      sameLanguage: false,
+    });
+
+    expect(cleaned.sentences[0]).toMatchObject({
+      otherOrders: ["The rent is how much?"],
+      otherTranslationOrders: ["O aluguel é quanto?"],
+    });
+  });
+
+  it("in the learner's own language, gives the translation the sentence's orders", () => {
+    const draft = sameLanguageLessonDraft();
+    const [first, ...rest] = draft.sentences;
+
+    const cleaned = cleanLanguageLesson({
+      content: {
+        ...draft,
+        sentences: [
+          {
+            ...first!,
+            otherOrders: ["To grow plants need water"],
+            otherTranslationOrders: ["Plants need to grow water"],
+          },
+          ...rest,
+        ],
+      },
+      knownWords: [],
+      sameLanguage: true,
+    });
+
+    expect(cleaned.sentences[0]).toMatchObject({
+      otherOrders: ["To grow plants need water"],
+      otherTranslationOrders: ["To grow plants need water"],
+    });
+  });
+
   it("keeps a word whose translation looks like it in another language", () => {
     const draft = languageLessonDraft();
     const [rent, ...rest] = draft.words;

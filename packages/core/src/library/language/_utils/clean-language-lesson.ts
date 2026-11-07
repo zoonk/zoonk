@@ -2,6 +2,7 @@ import { type LanguageLessonContent } from "@zoonk/ai/tasks/language/language-le
 import { definitionNamesWord } from "@zoonk/ai/tasks/language/language-lesson-rules";
 import { normalizeDistractorKey, sanitizeDistractors } from "@zoonk/utils/distractors";
 import { normalizePunctuation, segmentWords } from "@zoonk/utils/string";
+import { keepSentenceOrders } from "../sentence-orders";
 
 const BLANK = "[BLANK]";
 
@@ -124,6 +125,7 @@ function cleanSentences({
     .filter((sentence) => sentence.translation && sentence.explanation)
     .map((sentence) => ({
       ...sentence,
+      ...keepSentenceOrders({ sameLanguage, sentence }),
       distractors: withoutWordsOf({ distractors: sentence.distractors, text: sentence.sentence }),
       romanization: cleanOptional(sentence.romanization),
       speakingPrompt: cleanOptional(sentence.speakingPrompt),

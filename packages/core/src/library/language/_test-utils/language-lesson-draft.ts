@@ -17,6 +17,8 @@ export function languageLessonDraft(
       {
         distractors: ["are", "many"],
         explanation: "Em inglês, 'how much' vem antes do verbo, como 'quanto' em português.",
+        otherOrders: [],
+        otherTranslationOrders: ["O aluguel é quanto?"],
         romanization: null,
         sentence: "How much is the rent?",
         speakingPrompt: "Pergunte quanto é o aluguel.",
@@ -26,6 +28,8 @@ export function languageLessonDraft(
       {
         distractors: ["pay", "cost"],
         explanation: "'Deposit' é o valor que você deixa como garantia.",
+        otherOrders: [],
+        otherTranslationOrders: [],
         romanization: null,
         sentence: "Is there a deposit?",
         speakingPrompt: null,
@@ -35,6 +39,8 @@ export function languageLessonDraft(
       {
         distractors: ["is", "includes"],
         explanation: "'Utilities' são as contas da casa, como luz e água.",
+        otherOrders: [],
+        otherTranslationOrders: ["Estão incluídas as contas"],
         romanization: null,
         sentence: "Utilities are included",
         speakingPrompt: "Diga que as contas estão incluídas.",
@@ -106,6 +112,8 @@ export function sameLanguageLessonDraft(
       {
         distractors: ["needs", "feed"],
         explanation: "The subject 'plants' is plural, so the verb has no -s.",
+        otherOrders: [],
+        otherTranslationOrders: [],
         romanization: null,
         sentence: "Plants need water to grow",
         speakingPrompt: "Read the fact about plants aloud.",
@@ -115,6 +123,8 @@ export function sameLanguageLessonDraft(
       {
         distractors: ["does", "needs"],
         explanation: "A yes-or-no question starts with 'do' before a plural subject.",
+        otherOrders: [],
+        otherTranslationOrders: [],
         romanization: null,
         sentence: "Do plants need light?",
         speakingPrompt: null,
@@ -124,6 +134,8 @@ export function sameLanguageLessonDraft(
       {
         distractors: ["grows", "glow"],
         explanation: "'Grow' takes no -s after 'plants'.",
+        otherOrders: ["In many places plants grow"],
+        otherTranslationOrders: ["In many places plants grow"],
         romanization: null,
         sentence: "Plants grow in many places",
         speakingPrompt: null,
