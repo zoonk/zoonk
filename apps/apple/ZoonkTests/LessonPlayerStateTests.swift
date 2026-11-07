@@ -106,8 +106,8 @@ final class LessonPlayerStateTests: XCTestCase {
     state.startRun(runId: "run", answers: [runAnswer("second", isCorrect: false)])
 
     XCTAssertEqual(state.currentStep?.id, "hook")
-    XCTAssertEqual(state.segments, [.current, .read, .ahead, .read, .wrong, .ahead, .ahead])
-    XCTAssertEqual(state.progress, 3 / 7)
+    XCTAssertEqual(state.segments, [.current, .ahead, .ahead, .ahead, .wrong, .ahead, .ahead])
+    XCTAssertEqual(state.progress, 1 / 7)
   }
 
   func testWorkedExampleRevealsOnePartPerContinue() throws {
@@ -221,6 +221,7 @@ final class LessonPlayerStateTests: XCTestCase {
 
     state.goBack()
     XCTAssertNil(state.notice)
+    XCTAssertEqual(state.segments, [.current, .wrong])
     state.continueLesson()
 
     XCTAssertEqual(state.notice, .selfCorrect)

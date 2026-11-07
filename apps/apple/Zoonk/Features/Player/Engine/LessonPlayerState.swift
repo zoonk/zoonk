@@ -233,7 +233,7 @@ struct LessonPlayerState: Equatable, Sendable {
         return .current
       }
 
-      if index > position, phase != .completed, isToDo(index) {
+      if index > position, phase != .completed, !hasRunAnswer(index), continueStopsAt(index) {
         return .ahead
       }
 
@@ -250,19 +250,17 @@ struct LessonPlayerState: Equatable, Sendable {
     return endsWithMap ? screens + [mapSegment] : screens
   }
 
-  /// A screen ahead the learner still has to go through: any in "I know this", which asks each
-  /// again, one the run still needs, or one past the furthest answer it has. After a refused finish
-  /// the learner already went through them all.
-  private func isToDo(_ index: Int) -> Bool {
-    guard quickCheck == nil, !isStillNeeded(index) else {
-      return true
-    }
+  /// A retry or a quick check starts its screen over, so only a first copy keeps the run's answer.
+  private func hasRunAnswer(_ index: Int) -> Bool {
+    let id = queue[index]
+    return quickCheck == nil && queue.firstIndex(of: id) == index
+      && (results[id] != nil || firstVerdicts[id] != nil)
+  }
 
-    let isPastEveryAnswer = !queue.indices[index...].contains { later in
-      queue.firstIndex(of: queue[later]) == later && results[queue[later]] != nil
-    }
-
-    return recovery == nil && isPastEveryAnswer
+  /// After a refused finish, Continue stops only at what the run still needs, except through
+  /// "I know this", whose every check counts.
+  private func continueStopsAt(_ index: Int) -> Bool {
+    recovery == nil || quickCheck != nil || isStillNeeded(index)
   }
 
   /// An answerable screen without a result, or a question that came back.
@@ -861,14 +859,8 @@ struct LessonPlayerState: Equatable, Sendable {
     enter(next, now: now)
   }
 
-  /// After a finish the server refused, Continue skips the screens it already has: it goes to the
-  /// next one still to answer or to a question that came back.
   private var nextPosition: Int? {
-    guard recovery != nil, quickCheck == nil else {
-      return position + 1
-    }
-
-    return queue.indices.first { $0 > position && isStillNeeded($0) }
+    queue.indices.first { $0 > position && continueStopsAt($0) }
   }
 
   /// A missed quick check returns to where the learner was, without the checks they just got
