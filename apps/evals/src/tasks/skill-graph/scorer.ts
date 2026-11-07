@@ -75,11 +75,16 @@ function checkCourses({
 }): ExpectedCheck[] {
   const titles = new Set(graph.courses.map((course) => normalizeString(course.title)));
 
-  return (expected.courses ?? []).map((accepted) => ({
-    problem: accepted.some((title) => titles.has(normalizeString(title)))
-      ? null
-      : `No course titled ${accepted.map((title) => `"${title}"`).join(" or ")}.`,
-  }));
+  return [
+    ...(expected.courses ?? []).map((accepted) => ({
+      problem: accepted.some((title) => titles.has(normalizeString(title)))
+        ? null
+        : `No course titled ${accepted.map((title) => `"${title}"`).join(" or ")}.`,
+    })),
+    ...(expected.noCourses ?? []).map((title) => ({
+      problem: titles.has(normalizeString(title)) ? `Unexpected course titled "${title}".` : null,
+    })),
+  ];
 }
 
 function checkExpected({

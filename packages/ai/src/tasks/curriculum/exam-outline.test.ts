@@ -3,6 +3,7 @@ import {
   type ExamOutline,
   findUncoveredTopics,
   formatExamOutline,
+  isTopicId,
   placeInExam,
 } from "./exam-outline";
 
@@ -121,6 +122,33 @@ const OAB: ExamOutline = {
 };
 
 describe(placeInExam, () => {
+  it.each([" ", "\t", "\n", "\u00A0"])(
+    "reads a leading topic id separated from its text by %j",
+    (separator) => {
+      for (const [subjectIndex, subject] of outline.subjects.entries()) {
+        for (const [topicIndex, topic] of subject.topics.entries()) {
+          const id = `S${subjectIndex + 1}.${topicIndex + 1}`;
+          const line = `${id}${separator}${topic}`;
+
+          expect(placeInExam({ area: "", outline, topics: [line] })).toStrictEqual({
+            area: subject.name,
+            topics: [topic],
+          });
+
+          expect(isTopicId(id)).toBe(true);
+          expect(isTopicId(line)).toBe(false);
+        }
+      }
+    },
+  );
+
+  it.each(["S0.1 text", "S1.0 text", "S1.99 text", "S99.1 text", "S1.1extra", "S1.1.1 text"])(
+    "rejects an invalid or out-of-range leading topic id: %s",
+    (topic) => {
+      expect(placeInExam({ area: "", outline, topics: [topic] }).topics).toStrictEqual([]);
+    },
+  );
+
   it("places an area named as learners call a subject in that subject", () => {
     expect(placeInExam({ area: "Ética Profissional", outline: OAB, topics: [] })).toStrictEqual({
       area: OAB.subjects[0]?.name,

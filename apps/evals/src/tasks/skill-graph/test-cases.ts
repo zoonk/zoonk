@@ -2,6 +2,7 @@ import { type TestCase } from "@/lib/types";
 import { type ExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { CAMARA_BLUEPRINT } from "./camara-blueprint";
 import { CGU_BLUEPRINT } from "./cgu-blueprint";
+import { DISCIPLINE_ALIAS_CASES } from "./discipline-alias-cases";
 import { ENEM_SCIENCE_BLUEPRINT } from "./enem-science-blueprint";
 import { type SkillGraphCase, type SkillGraphExpected } from "./library-cases";
 import { PIRACEMA_BLUEPRINT } from "./piracema-blueprint";
@@ -339,6 +340,7 @@ const CACD_LANGUAGES_BLUEPRINT: ExamOutline = {
 };
 
 export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
+  ...DISCIPLINE_ALIAS_CASES,
   {
     expectations: `
       - MUST be in Brazilian Portuguese
