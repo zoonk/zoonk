@@ -35,6 +35,21 @@ function iconProblem({
   return toIconNeed(asked) ? repeated : "no usable icon";
 }
 
+/** Normalizing drops an idea in the map's range only when it would go back in the map's order. */
+function findHiddenIdea({
+  asked,
+  ideaCount,
+  kept,
+}: {
+  asked: number | null | undefined;
+  ideaCount: number;
+  kept: number | null | undefined;
+}): number | null {
+  return typeof asked === "number" && asked >= 1 && asked <= ideaCount && kept === null
+    ? asked - 1
+    : null;
+}
+
 function ideaProblem({
   asked,
   ideaCount,
@@ -48,9 +63,33 @@ function ideaProblem({
     return null;
   }
 
-  return asked >= 1 && asked <= ideaCount
-    ? "idea goes back in the map's order"
-    : "idea number out of range";
+  return findHiddenIdea({ asked, ideaCount, kept }) === null
+    ? "idea number out of range"
+    : "idea goes back in the map's order";
+}
+
+/** Shows the judge each idea hidden for going back, so it still judges the model's choice there. */
+function toJudgedMarks({
+  input,
+  marks,
+  raw,
+}: {
+  input: MarksInput;
+  marks: LessonMarks;
+  raw: RawOutput;
+}) {
+  return {
+    ...marks,
+    screens: marks.screens.map((screen, index) => {
+      const hiddenIdeaIndex = findHiddenIdea({
+        asked: raw.screens.find((item) => item.screen === index + 1)?.idea,
+        ideaCount: input.ideas.length,
+        kept: screen.ideaIndex,
+      });
+
+      return hiddenIdeaIndex === null ? screen : { ...screen, hiddenIdeaIndex };
+    }),
+  };
 }
 
 function screenProblems({
@@ -129,7 +168,7 @@ export const checkLessonMarks: TaskCodeChecks = ({ output, testCase }) => {
   const failing = new Set(problems.map((problem) => problem.split(":")[0]));
 
   return {
-    judgedOutput: JSON.stringify(marks, null, 2),
+    judgedOutput: JSON.stringify(toJudgedMarks({ input, marks, raw }), null, 2),
     passed: total - failing.size,
     problems,
     total,
