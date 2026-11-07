@@ -237,7 +237,7 @@ private fun LessonPlayerState.withCompletion(change: (LessonCompletion) -> Lesso
 
 /**
  * Starts over from the lesson's own order, then resumes at the first screen [answers] leave open. The opening guess,
- * never saved, stays as the learner left it; every canvas starts over, drawn from its answer.
+ * never saved, stays as the learner left it; a canvas starts over only where its screen's answer changes.
  */
 private fun LessonPlayerState.resumeFrom(
     answers: List<RunAnswer>,
@@ -252,13 +252,15 @@ private fun LessonPlayerState.resumeFrom(
             answers = this.answers.filterKeys(isGuess),
             queue = fresh.queue.filterNot { it in unavailableStepIds || it in skipped },
             results = results.filterKeys(isGuess),
-            rounds = steps.keys.associateWith { round(it) + 1 },
+            rounds = rounds,
         )
 
     if (available.queue.isEmpty()) return this
 
     val resumed = available.resume(answers, now).copy(run = run, skippedWritingStepIds = skipped, unavailableStepIds = unavailableStepIds)
-    return if (restore != null) resumed.skipWriting(opening = true, now = now) else resumed
+    val changed = (this.answers.keys + resumed.answers.keys).filter { this.answers[it] != resumed.answers[it] }
+    val restarted = resumed.copy(rounds = resumed.rounds + changed.associateWith { round(it) + 1 })
+    return if (restore != null) restarted.skipWriting(opening = true, now = now) else restarted
 }
 
 private fun LessonPlayerState.startRun(

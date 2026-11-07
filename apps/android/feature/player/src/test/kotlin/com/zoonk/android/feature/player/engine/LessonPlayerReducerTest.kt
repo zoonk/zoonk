@@ -773,6 +773,27 @@ class LessonPlayerReducerTest {
     }
 
     @Test
+    fun aRecoveryKeepsTheCanvasOfAScreenTheServerHasAndStartsOverTheOneItLacks() {
+        val code = ActivityFixtures.step("codeRunner", id = "code")
+        val answer = LessonAnswer.Activity(checkNotNull(ActivityFixtures.rightAnswer("codeRunner")))
+        val finished =
+            play(
+                listOf(code, checkStep("q1")),
+                LessonAction.SelectAnswer("code", answer),
+                LessonAction.CheckResolved("code", stepResult(true), counts = true),
+                LessonAction.Continue,
+                *answerCheck("q1", true),
+                LessonAction.Continue,
+            )
+
+        val resynced = finished.then(LessonAction.RunResynced(null, listOf(RunAnswer("code", true, ANSWERED_AT, answer, stepResult(true)))))
+
+        assertEquals("q1", resynced.currentId)
+        assertEquals(finished.round("code"), resynced.round("code"))
+        assertEquals(finished.round("q1") + 1, resynced.round("q1"))
+    }
+
+    @Test
     fun heldAnswersPlaceTheLearnerWithoutBeingCarriedFromAnEarlierSitting() {
         val held =
             saved(
