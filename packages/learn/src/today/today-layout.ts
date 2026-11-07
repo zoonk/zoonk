@@ -14,3 +14,13 @@ export const TODAY_ACTION_CLASS = cn(
   ABOVE_BOTTOM_TABS_CLASS,
   "max-sm:before:from-background max-sm:before:pointer-events-none max-sm:before:absolute max-sm:before:inset-x-0 max-sm:before:bottom-full max-sm:before:h-6 max-sm:before:bg-linear-to-t max-sm:before:to-transparent",
 );
+
+/**
+ * Marked `data-speaking` while it says something. The docked action is pinned by its bottom, so a
+ * line under the button would lift it: on a phone the line sits above it, over the page.
+ */
+export const TODAY_ACTION_STATUS_CLASS = cn(
+  "text-sm sm:data-speaking:pt-2",
+  "max-sm:bg-background max-sm:pointer-events-none max-sm:absolute max-sm:inset-x-0 max-sm:bottom-full max-sm:px-4",
+  "max-sm:data-speaking:before:from-background max-sm:data-speaking:before:absolute max-sm:data-speaking:before:inset-x-0 max-sm:data-speaking:before:bottom-full max-sm:data-speaking:before:h-6 max-sm:data-speaking:before:bg-linear-to-t max-sm:data-speaking:before:to-transparent",
+);

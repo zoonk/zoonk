@@ -276,6 +276,9 @@ internal fun TodayAction(
         val busy = status.tap != null && viewModel.pending == status.tap
         val waiting = viewModel.pending != null && !busy
 
+        // The bar is pinned by its bottom, so a line under the button would lift it.
+        if (docked) TodayActionStatus(status)
+
         when {
             model.pastDate != null -> {
                 ActionButton(stringResource(R.string.today_see_plan), busy = false, buttonModifier, icon = R.drawable.ic_arrow_forward) {
@@ -327,7 +330,7 @@ internal fun TodayAction(
         }
 
         // Beside the title, Continue's words go on the day's meta line, as main's do.
-        if (docked || status.tap != TodayTap.Continue) TodayActionStatus(status)
+        if (!docked && status.tap != TodayTap.Continue) TodayActionStatus(status)
     }
 }
 

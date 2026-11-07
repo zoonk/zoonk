@@ -17,8 +17,8 @@ import { LearnLink } from "../learn-link";
 import { useSessionAction } from "../session/use-session-action";
 import { useGoalSwitchPending } from "../shell/goal-switcher";
 import { useTodayScreen } from "./today-context";
-import { TodayExtraTime } from "./today-extra-time";
 import { NEXT_TITLE_ID } from "./today-ids";
+import { TODAY_ACTION_STATUS_CLASS } from "./today-layout";
 import { useContinueSession } from "./use-continue-session";
 import { useDayState, useSessionState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
 
@@ -148,7 +148,7 @@ function ContinueButton() {
         <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
       </Button>
 
-      <TodayContinueStatus className="text-sm data-speaking:pt-2 sm:hidden" />
+      <TodayContinueStatus className={cn(TODAY_ACTION_STATUS_CLASS, "sm:hidden")} />
     </>
   );
 }
@@ -174,6 +174,30 @@ function SummaryLink() {
   );
 }
 
+function SaveAction({
+  action,
+  children,
+  icon,
+}: {
+  action: () => Promise<boolean>;
+  children: React.ReactNode;
+  icon: React.ReactNode;
+}) {
+  const { failed, isPending, run } = useSessionAction({ action });
+
+  return (
+    <>
+      <Button busy={isPending} className={ACTION_CLASS} icon={icon} onClick={run} size="lg">
+        {children}
+      </Button>
+
+      <div className={TODAY_ACTION_STATUS_CLASS} data-speaking={failed || undefined}>
+        {failed && <ChangeSaveError />}
+      </div>
+    </>
+  );
+}
+
 function PracticeTime() {
   const t = useExtracted();
   const { actions, today } = useTodayScreen();
@@ -184,39 +208,23 @@ function PracticeTime() {
   }
 
   return (
-    <TodayExtraTime
-      action={actions.addExtraTime}
-      className={ACTION_CLASS}
-      label={t("Practice for {minutes} minutes", { minutes: String(extraTime.minutes) })}
-      minutes={extraTime.minutes}
-      size="lg"
-      variant="default"
-    />
+    <SaveAction action={actions.addExtraTime} icon={<PlayIcon aria-hidden="true" />}>
+      {t("Practice for {minutes} minutes", { minutes: String(extraTime.minutes) })}
+    </SaveAction>
   );
 }
 
 function PrepareLessons() {
   const t = useExtracted();
   const { actions } = useTodayScreen();
-  const { failed, isPending, run } = useSessionAction({ action: actions.prepareLessons });
 
   return (
-    <>
-      <Button
-        busy={isPending}
-        className={ACTION_CLASS}
-        icon={<ListPlusIcon aria-hidden="true" />}
-        onClick={run}
-        size="lg"
-      >
-        {t({
-          description: "Button that has Zoonk write today's lessons.",
-          message: "Get today's lessons",
-        })}
-      </Button>
-
-      {failed && <ChangeSaveError />}
-    </>
+    <SaveAction action={actions.prepareLessons} icon={<ListPlusIcon aria-hidden="true" />}>
+      {t({
+        description: "Button that has Zoonk write today's lessons.",
+        message: "Get today's lessons",
+      })}
+    </SaveAction>
   );
 }
 
@@ -241,7 +249,7 @@ function KeepLearning() {
       </Button>
 
       <span
-        className="text-sm data-speaking:pt-2"
+        className={TODAY_ACTION_STATUS_CLASS}
         data-speaking={failed || wait !== "none" || undefined}
       >
         <OpeningWaitLine wait={wait} />
