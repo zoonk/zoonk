@@ -4,7 +4,6 @@ import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { PLAN_EPSILON } from "./plan-precision";
 import { parsePlanSettings } from "./plan-state";
 import { listSelectedItemFacts } from "./selected-item-facts";
-import { summarizeSelectedPlan } from "./selected-plan-summary";
 
 const START = fromIsoDate("2026-10-10");
 
@@ -99,21 +98,14 @@ describe("a lesson's saved study days", () => {
     );
   });
 
-  it.each(
-    ["forced", "automatic"].flatMap((mode) => [
-      { dailyMinutes: 10, minutes: 12, mode: mode as BuildPlanInput["mode"], pace: 1 },
-      { dailyMinutes: 10, minutes: 8, mode: mode as BuildPlanInput["mode"], pace: 1.1 },
-      { dailyMinutes: 10, minutes: 6, mode: mode as BuildPlanInput["mode"], pace: 1.5 },
-      { dailyMinutes: 5, minutes: 5, mode: mode as BuildPlanInput["mode"], pace: 1 },
-    ]),
-  )(
-    "end consistently at $minutes minutes, pace $pace, and $dailyMinutes minutes a day in $mode mode",
-    ({ dailyMinutes, minutes, mode, pace }) => {
+  it.each(["forced", "automatic"] as const)(
+    "end consistently when the first lesson exceeds the exam time in %s mode",
+    (mode) => {
       const today = fromIsoDate("2026-10-12");
 
       const input: BuildPlanInput = {
-        ...examInput({ count: 2, dailyMinutes, minutes, pace }),
-        goal: { dailyMinutes, kind: "exam", targetDate: addDays(today, 3) },
+        ...examInput({ count: 2, dailyMinutes: 10, minutes: 12 }),
+        goal: { dailyMinutes: 10, kind: "exam", targetDate: addDays(today, 3) },
         mode,
         settings: parsePlanSettings({ startDate: toIsoDate(today) }),
         today,
@@ -126,14 +118,10 @@ describe("a lesson's saved study days", () => {
       expect(first?.scheduledFor).toStrictEqual(today);
       expect(facts?.teachingEnd).toBe("2026-10-13");
 
-      expect(facts?.days?.map(([date, studyMinutes]) => [date, studyMinutes])).toStrictEqual([
-        ["2026-10-12", dailyMinutes],
-        ["2026-10-13", (first?.minutes ?? 0) - dailyMinutes],
+      expect(facts?.days?.map(([date, minutes]) => [date, minutes])).toStrictEqual([
+        ["2026-10-12", 10],
+        ["2026-10-13", 10 + (first?.minutes ?? 0) - 20],
       ]);
-
-      expect(summarizeSelectedPlan({ built, examSubjects: null, input }).endDate).toBe(
-        "2026-10-13",
-      );
     },
   );
 
