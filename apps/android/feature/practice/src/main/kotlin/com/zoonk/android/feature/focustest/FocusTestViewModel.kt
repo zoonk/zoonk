@@ -118,6 +118,7 @@ class FocusTestViewModel(
     private var shownAt = now()
     private var latest: List<Question> = emptyList()
     private var kept: List<GradedAnswer>? = null
+    private var keptRequestId: String? = null
     private var requestId = UUID.randomUUID().toString()
 
     init {
@@ -125,8 +126,7 @@ class FocusTestViewModel(
         viewModelScope.launch {
             val draft = answersDraft?.value?.first()
             kept = draft?.answers.orEmpty()
-            // A new attempt gets its own id: an old one could already have its grade on the server.
-            if (!kept.isNullOrEmpty()) draft?.requestId?.let { requestId = it }
+            keptRequestId = draft?.requestId
             place()
         }
     }
@@ -236,6 +236,8 @@ class FocusTestViewModel(
         if (ui.questions.isEmpty()) {
             val byId = latest.associateBy { it.itemId }
             val answers = kept.takeWhile { it.itemId in byId }.take(maxOf(0, total - 1))
+            // A new attempt gets its own id: an old one could already have its grade on the server.
+            if (answers.isNotEmpty()) keptRequestId?.let { requestId = it }
             val answered = answers.map { it.itemId }.toSet()
             if (latest.isNotEmpty()) shownAt = now()
             mutableUi.update {
