@@ -1,61 +1,52 @@
 import { renderToString } from "katex";
 import { parseInlineMarkupRanges } from "./inline-markup";
 import { splitLinesAndCells } from "./markdown-table";
-import { type MathSpan, findMathSpans, hideMath, normalizeLatexCommands } from "./math-spans";
-
-const BACKSLASH_WORD = /\\[A-Za-z]+/gu;
-const HAS_COMMAND = /\\[A-Za-z]+/u;
+import { type MathSpan, findMathSpans, hideMath } from "./math-spans";
 
 /**
- * A file path, not math: a drive (`C:\`), a path from the root, home or here (`/tmp/x_1`), or a
- * file name's extension at the end (`\log.txt`, `docs/ch_1.md`).
+ * Only scripts mark math here: a power after a symbol, number or group (`x^2`, `10^-1`, `Na^+`) or a
+ * braced script (`^{`, `_{`). A backslash or a bare `_` alone is just as often a path, an escape or
+ * an identifier (`src\utils`, `\n`, `UTF_8`).
  */
-const FILE_PATH = /^[A-Za-z]:\\|^(?:~|\.{1,2})?\/|\.[A-Za-z]{2,4}$/u;
+const CARET = /(?<=[\p{L}\p{N})\]}*])\^[-−+\p{L}\p{N}]/u;
 const BRACED_SCRIPT = /[\^_]\{/u;
 
-/** KaTeX raises only the next character, so `10^12`, `e^-t` and `Na^+` need their power braced. */
+/**
+ * KaTeX raises only the next character, so `10^12`, `e^-t`, `Na^+` and a charge at the end
+ * (`Fe^3+`) need their power braced.
+ */
 const CARET_POWER =
-  /(?<=[\p{L}\p{N})\]}*])\^(?<power>[-−+]?(?:\p{N}+(?:\.\p{N}+)?|\p{L}(?![\p{L}\p{N}]))|[-−+](?![\p{L}\p{N}]))/gu;
+  /(?<=[\p{L}\p{N})\]}*])\^(?<power>[-−+]?\p{N}+(?:\.\p{N}+)?(?:[-−+]$)?|[-−+]?\p{L}(?![\p{L}\p{N}])|[-−+](?![\p{L}\p{N}]))/gu;
 
-/** A raised character after a symbol, number or group; what code can't brace is left to a writer. */
-const CARET = /(?<=[\p{L}\p{N})\]}*])\^[-−+\p{L}\p{N}]/u;
+const NUMERIC_SUBSCRIPT = /_(?<below>\p{N}+)/gu;
+const LETTER_SUBSCRIPT = /_(?<below>\p{L})(?![\p{L}\p{N}])/gu;
 
 /** A script left unbraced (`x^ab`, `x^-ab`) is one KaTeX would raise only in part. */
 const UNBRACED_SCRIPT = /[\^_](?!\{)/u;
 
-/**
- * A subscript under a symbol, elements or a group (`x_1`, `a_n`, `CaCl_2`, `Mg(OH)_2`); a lowercase
- * word before `_` is an identifier (`db_1`, `user_id`).
- */
-const BARE_SUBSCRIPT =
-  /(?:(?<![\p{L}\p{N}_\\])(?:\p{Lu}\p{Ll}?)+|(?<![\p{L}\p{N}_\\])\p{L}|\))_(?:\p{N}+|\p{L}(?![\p{L}\p{N}]))/u;
-
-/** Inside a formula, every numeric subscript is braced, so `\log_10` and `C_12H_22O_11` keep their digits. */
-const NUMERIC_SUBSCRIPT = /_(?<below>\p{N}+)/gu;
-const LETTER_SUBSCRIPT = /_(?<below>\p{L})(?![\p{L}\p{N}])/gu;
-
 /** `10^3,5` is a decimal power in some languages and two numbers in others; a writer decides. */
 const COMMA_AFTER_POWER = /\^[-−+]?\p{N}+,\p{N}/u;
 
+/** Math subtracts a letter or two (`x^2-xy`); a dash before a longer run attaches a word (`10^3-fold`). */
+const ATTACHED_WORD = /[-‐‑–]\p{L}{3,}/u;
+
+/**
+ * KaTeX draws these without an error but not as written: `%` starts a comment, `~` is a space, `*`
+ * (bold, or a typed times sign) is an asterisk operator, and a backslash may start an escape.
+ */
+const NOT_AS_WRITTEN = /[%~*\\]/u;
+
 const INNER_BRACE_GROUP = /\{[^{}]*\}/gu;
 const BRACE_STEP: Readonly<Record<string, number>> = { "{": 1, "}": -1 };
+
 /** An em dash joins clauses, never math, so it splits pieces like a space; an en dash can be a minus. */
 const SEPARATOR = /[\s—]/u;
 const CHUNK_MASK = /x+/gu;
 const NOT_SEPARATOR = /[^\s—]+/gu;
 
-/** Math subtracts a letter or two (`x^2-xy`); a dash before a longer run attaches a word (`10^3-fold`). */
-const ATTACHED_WORD = /[-‐‑–]\p{L}{3,}/u;
-
 const PUNCTUATION_BEFORE = /^["'“‘«¿¡*_~]/u;
 const PUNCTUATION_AFTER = /[.,;:!?%"'”’»*_]$/u;
 const POSSESSIVE = /['’]s$/u;
-
-/**
- * KaTeX draws these without an error but not as written: `%` starts a comment, `~` is a space, and
- * `*` (bold, or a typed times sign) is an asterisk operator.
- */
-const TEX_SPECIAL = /[%~*]/u;
 
 type BareLatex = {
   end: number;
@@ -111,13 +102,13 @@ function trimEnd(text: string): string {
   return PUNCTUATION_AFTER.test(text) || isUnpairedClose(text) ? trimEnd(text.slice(0, -1)) : text;
 }
 
-/** `∅` stands for each group, at any depth, so nothing inside braces reads as a path or a word. */
+/** `∅` stands for each group, at any depth, so nothing inside braces reads as an attached word. */
 function collapseBraces(text: string): string {
   const collapsed = text.replaceAll(INNER_BRACE_GROUP, "∅");
   return collapsed === text ? text : collapseBraces(collapsed);
 }
 
-/** Separators inside braces at any depth don't split, so `\frac{a + b}{2}` stays one piece. */
+/** Separators inside braces at any depth don't split, so `x^{a + b}` stays one piece. */
 function maskSpaces(text: string): { mask: string; nests: boolean } {
   const { depth, mask, nests } = text.split("").reduce(
     (state, character) => {
@@ -146,26 +137,10 @@ function findChunks(text: string): { chunk: string; index: number }[] {
   }));
 }
 
-function isLatex(text: string): boolean {
-  return (
-    !FILE_PATH.test(collapseBraces(text)) &&
-    (HAS_COMMAND.test(text) ||
-      BRACED_SCRIPT.test(text) ||
-      CARET.test(text) ||
-      BARE_SUBSCRIPT.test(text))
-  );
-}
-
 /** The player's KaTeX settings, so code wraps only what the player draws without an error. */
 function rendersInKatex(latex: string): boolean {
   try {
-    renderToString(normalizeLatexCommands(latex), {
-      output: "mathml",
-      strict: "ignore",
-      throwOnError: true,
-      trust: false,
-    });
-
+    renderToString(latex, { output: "mathml", strict: "ignore", throwOnError: true, trust: false });
     return true;
   } catch {
     return false;
@@ -174,10 +149,10 @@ function rendersInKatex(latex: string): boolean {
 
 function isRepairable({ latex, written }: { latex: string; written: string }): boolean {
   return (
-    !TEX_SPECIAL.test(latex) &&
+    !NOT_AS_WRITTEN.test(latex) &&
     !UNBRACED_SCRIPT.test(latex) &&
     !COMMA_AFTER_POWER.test(written) &&
-    !ATTACHED_WORD.test(collapseBraces(written).replaceAll(BACKSLASH_WORD, "")) &&
+    !ATTACHED_WORD.test(collapseBraces(written)) &&
     rendersInKatex(latex)
   );
 }
@@ -187,7 +162,7 @@ function toBareLatex({ chunk, index }: { chunk: string; index: number }): BareLa
   const written = trimEnd(opened);
   const start = index + chunk.length - opened.length;
 
-  if (!isLatex(written)) {
+  if (!CARET.test(written) && !BRACED_SCRIPT.test(written)) {
     return null;
   }
 

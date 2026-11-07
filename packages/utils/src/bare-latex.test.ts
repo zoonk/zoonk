@@ -17,26 +17,26 @@ describe(findBareLatex, () => {
       problem("10^-1", "10^{-1}"),
     ]);
 
-    expect(findBareLatex(String.raw`Half of it is \frac{a + b}{2}, times x_{1}.`)).toStrictEqual([
-      problem(String.raw`\frac{a + b}{2}`, String.raw`\frac{a + b}{2}`),
-      problem("x_{1}", "x_{1}"),
+    expect(findBareLatex(String.raw`Then \log_{10}(x) grows.`)).toStrictEqual([
+      String.raw`Shows math as raw text: "\log_{10}(x)". Write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \$.`,
     ]);
   });
 
-  it("leaves math, code and text that only looks like it", () => {
+  it("leaves math, code, paths, escapes and identifiers alone", () => {
     const texts = [
       String.raw`A sensor records $7.02 \times 10^{-5}$ m, or \(7.02 \times 10^{-5}\) m.`,
       String.raw`$$v = \sqrt{\frac{GM}{r}}$$`,
       "In Python, `2**10` and `x ^ y` aren't powers, and neither is `10^{3}`.",
       String.raw`It costs R$ 80, \$5 or $10, keeps user_id and the file C:\Users\ana\notes.txt.`,
-      String.raw`Open C:\text\notes.txt to read it.`,
-      String.raw`Open C:\log.txt or logs\ln.csv to read them.`,
-      "Set user_1 and max_2 in the config, then rename db_1 to db_2.",
+      String.raw`Open C:\text\notes.txt, C:\log.txt or (logs\log.txt), and read data\train.jsonl in src\utils.`,
+      "Set user_1, max_2 and StandardCharsets.UTF_8, then rename db_1 to db_2.",
       "Abra /tmp/ch_1.txt e docs/x_1.md para ler os arquivos.",
+      String.raw`In a regex, \S matches a non-space and \n starts a new line; see \url{https://example.com}.`,
       "Smile ^_^ and rate it 9/10 * 2.",
     ];
 
     expect(texts.flatMap((text) => findBareLatex(text))).toStrictEqual([]);
+    expect(texts.map((text) => wrapBareLatex(text))).toStrictEqual(texts);
   });
 });
 
@@ -50,57 +50,24 @@ describe(wrapBareLatex, () => {
       "Calcule (6 × $10^{3}$) ÷ (2 × $10^{-1}$).",
     );
 
-    expect(
-      wrapBareLatex(String.raw`So $0.000406$ m = 4.06 \times 10^{-4} m, or \frac{a + b}{2}.`),
-    ).toBe(String.raw`So $0.000406$ m = 4.06 $\times$ $10^{-4}$ m, or $\frac{a + b}{2}$.`);
-
-    expect(wrapBareLatex(String.raw`The ratio is \frac{\sin(x)}{2}.`)).toBe(
-      String.raw`The ratio is $\frac{\sin(x)}{2}$.`,
+    expect(wrapBareLatex("So $0.000406$ m = 4.06 × 10^{-4} m, and it's 10^{3}, R$ 80 or $5.")).toBe(
+      "So $0.000406$ m = 4.06 × $10^{-4}$ m, and it's $10^{3}$, R$ 80 or $5.",
     );
 
-    expect(wrapBareLatex(String.raw`The volume is \frac{4\pi.r^3}{3}.`)).toBe(
-      String.raw`The volume is $\frac{4\pi.r^{3}}{3}$.`,
+    expect(wrapBareLatex("It factors as x^2-xy, then x^2–y_1, with log_{10}(1000).")).toBe(
+      "It factors as $x^{2}-xy$, then $x^{2}–y_{1}$, with $log_{10}(1000)$.",
     );
 
-    expect(wrapBareLatex(String.raw`The ratio is \frac{1}{\sqrt{\frac{a}{b}}}.`)).toBe(
-      String.raw`The ratio is $\frac{1}{\sqrt{\frac{a}{b}}}$.`,
+    expect(wrapBareLatex("The pressure is 10^3kPa; e^-x decays, and the x^2's sign flips.")).toBe(
+      "The pressure is $10^{3}kPa$; $e^{-x}$ decays, and the $x^{2}$'s sign flips.",
     );
 
-    expect(wrapBareLatex("It factors as x^2-xy.")).toBe("It factors as $x^{2}-xy$.");
-    expect(wrapBareLatex("Find log_{10}(1000).")).toBe("Find $log_{10}(1000)$.");
-    expect(wrapBareLatex("The pressure is 10^3kPa.")).toBe("The pressure is $10^{3}kPa$.");
-    expect(wrapBareLatex("Simplify x^2–y_1.")).toBe("Simplify $x^{2}–y_{1}$.");
-
-    expect(wrapBareLatex("Methane is CH_4, and ethoxide is CH_3—CH_2—O^{-}.")).toBe(
-      "Methane is $CH_{4}$, and ethoxide is $CH_{3}$—$CH_{2}$—$O^{-}$.",
-    );
-
-    expect(wrapBareLatex(String.raw`Sucrose is C_12H_22O_11, and \log_10(100) = 2.`)).toBe(
-      String.raw`Sucrose is $C_{12}H_{22}O_{11}$, and $\log_{10}(100)$ = 2.`,
-    );
-
-    expect(wrapBareLatex("Salts: CaCl_2, HCO_3 and Mg(OH)_2. Ions: Na^+, Cl^- at 10^+3 Pa.")).toBe(
-      "Salts: $CaCl_{2}$, $HCO_{3}$ and $Mg(OH)_{2}$. Ions: $Na^{+}$, $Cl^{-}$ at $10^{+3}$ Pa.",
-    );
-
-    expect(
-      wrapBareLatex(String.raw`So a_n = 2n + 1, \Delta x_i is small, and \mathbb{R} is real.`),
-    ).toBe(String.raw`So $a_{n}$ = 2n + 1, $\Delta$ $x_{i}$ is small, and $\mathbb{R}$ is real.`);
-
-    expect(
-      wrapBareLatex(String.raw`Use \left(x^2+1\right) and x_1's value with H_2O's mass.`),
-    ).toBe(String.raw`Use $\left(x^{2}+1\right)$ and $x_{1}$'s value with $H_{2}O$'s mass.`);
-
-    expect(wrapBareLatex(String.raw`The decay is \mathrm{e}^-t, or e^-x.`)).toBe(
-      String.raw`The decay is $\mathrm{e}^{-t}$, or $e^{-x}$.`,
+    expect(wrapBareLatex("Ions: Na^+, Cl^- and Fe^3+ at 10^+3 Pa.")).toBe(
+      "Ions: $Na^{+}$, $Cl^{-}$ and $Fe^{3+}$ at $10^{+3}$ Pa.",
     );
 
     expect(wrapBareLatex("Think of 10^3—it means one thousand. Recall—x^2 grows.")).toBe(
       "Think of $10^{3}$—it means one thousand. Recall—$x^{2}$ grows.",
-    );
-
-    expect(wrapBareLatex("It's 10^{3}, then R$ 80 and $5 later.")).toBe(
-      "It's $10^{3}$, then R$ 80 and $5 later.",
     );
   });
 
@@ -137,26 +104,20 @@ describe(wrapBareLatex, () => {
       "It costs $5 and the gap is 10^{-5} m.",
       "Learn **the 10^{3} rule** first.",
       "_e^x_ grows.",
-      String.raw`The root is \sqrt 4 = 2.`,
       "O valor é 10^3,5.",
       "The point is (2^3,3^2).",
-      String.raw`The ratio is \frac{\sen(x)}{2}.`,
       "A 10^3-fold increase.",
-      String.raw`The ratio is \frac{1} {2}.`,
-      "Simplify x^2}+{y^2.",
-      String.raw`The set {10^3 is saved in C:\log.txt.`,
-      String.raw`The ratio is \frac{\\sen(x)}{2}.`,
       "A 10^3‑fold increase.",
       "The area is **r**^2.",
       "Then x^-ab shrinks.",
+      "Simplify x^2}+{y^2.",
+      "The set {10^3 is open.",
+      String.raw`The volume is \frac{4\pi r^3}{3}.`,
+      String.raw`Then \log_{10}(x) grows.`,
     ];
 
     expect(texts.map((text) => wrapBareLatex(text))).toStrictEqual(texts);
     expect(texts.map((text) => findBareLatex(text).length)).toStrictEqual(texts.map(() => 1));
-
-    expect(findBareLatex(String.raw`The root is \sqrt 4 = 2.`)).toStrictEqual([
-      String.raw`Shows math as raw text: "\sqrt". Write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \$.`,
-    ]);
   });
 
   it("keeps a table cell's escaped pipe inside its code", () => {
@@ -178,15 +139,15 @@ describe(wrapBareLatex, () => {
       "`",
       "$x^2$",
       "R$ 80",
-      String.raw`\sqrt`,
-      String.raw`\notes`,
       "10^−5",
+      "Fe^3+",
       "%",
       "~",
       ",",
       "|",
       "**",
       "_",
+      "—",
       "(",
       ")",
       "{",
