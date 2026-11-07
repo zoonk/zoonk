@@ -58,7 +58,7 @@ describe(repairWrittenLesson, () => {
       language: "en",
       lesson: {
         screens: [worked, quoted, activity],
-        summary: hubMap(["Small numbers get 10^{-n}."]),
+        summary: hubMap(["Small numbers get powers like 10^{-3}."]),
       },
       spec,
     });
@@ -80,7 +80,7 @@ describe(repairWrittenLesson, () => {
       options: [{ text: "0.0000702 m" }, { text: "7.02 × $10^{5}$ m" }],
     });
 
-    expect(repaired.summary.ideas[0]?.text).toBe("Small numbers get $10^{-n}$.");
+    expect(repaired.summary.ideas[0]?.text).toBe("Small numbers get powers like $10^{-3}$.");
   });
 
   it("moves a minus written after the money mark in text, tables, activities and the quote that cites it, keeping the amount", () => {

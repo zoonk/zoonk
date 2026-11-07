@@ -12,7 +12,7 @@ import {
 } from "../../_utils/option-checks";
 
 type ScreenFlaw = {
-  code: "answerKey" | "duplicateOptions" | "markdown" | "optionData" | "placeholder";
+  code: "answerKey" | "duplicateOptions" | "markdown" | "optionData" | "placeholder" | "rawMath";
   problem: string;
 };
 
@@ -54,9 +54,14 @@ export function findTextFlaws({
   text: string;
 }): ScreenFlaw[] {
   return [
-    ...(layout ? [...findUnrenderedMarkdown({ layout, text }), ...findBareLatex(text)] : []).map(
-      (problem) => ({ code: "markdown" as const, problem }),
-    ),
+    ...(layout ? findUnrenderedMarkdown({ layout, text }) : []).map((problem) => ({
+      code: "markdown" as const,
+      problem,
+    })),
+    ...(layout ? findBareLatex(text) : []).map((problem) => ({
+      code: "rawMath" as const,
+      problem,
+    })),
     ...findPlaceholderText(text).map((problem) => ({ code: "placeholder" as const, problem })),
   ];
 }

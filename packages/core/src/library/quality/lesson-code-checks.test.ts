@@ -604,7 +604,7 @@ describe(checkWrittenLesson, () => {
     const priced = explanation("A sensor costs $5 and measures gaps of 7.02 × 10^{-5} m.");
     const wrapped = explanation(String.raw`It measures $7.02 \times 10^{-5}$ m.`);
 
-    expect(codesOf(withScreen(4, priced))).toStrictEqual([[4, "markdown"]]);
+    expect(codesOf(withScreen(4, priced))).toStrictEqual([[4, "rawMath"]]);
     expect(codesOf(withScreen(4, wrapped))).toStrictEqual([]);
   });
 

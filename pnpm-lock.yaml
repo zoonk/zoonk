@@ -1628,9 +1628,6 @@ importers:
       '@formatjs/intl-localematcher':
         specifier: 0.10.1
         version: 0.10.1
-      katex:
-        specifier: 0.19.1
-        version: 0.19.1
       mdast-util-from-markdown:
         specifier: 2.1.0
         version: 2.1.0(supports-color@10.2.2)

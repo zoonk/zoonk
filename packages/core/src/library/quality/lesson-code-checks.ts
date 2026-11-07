@@ -36,6 +36,7 @@ type LessonCheckCode =
   | "optionData"
   | "optionPosition"
   | "placeholder"
+  | "rawMath"
   | "readingLevel"
   | "repeatedExample"
   | "repeatedQuestion"
