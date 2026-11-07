@@ -1,9 +1,10 @@
 import "server-only";
-import { NoObjectGeneratedError, Output, generateText } from "ai";
+import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
+import { failFilteredAnswer } from "../_utils/filtered-answer";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { cited } from "./cited-passages";
 import promptTemplate from "./read-product-pages.prompt.md";
@@ -136,15 +137,7 @@ export async function readProductPages({
     task: "read-product-pages",
   });
 
-  // The AI SDK reports a filtered empty answer as missing output, as it does a failed call.
-  if (result.finishReason === "content-filter" && !result.text) {
-    throw new NoObjectGeneratedError({
-      finishReason: result.finishReason,
-      response: result.finalStep.response,
-      text: result.text,
-      usage: result.usage,
-    });
-  }
+  failFilteredAnswer(result);
 
   return {
     data: toReading(result.output),

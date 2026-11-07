@@ -1,5 +1,6 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { answerEmptyOnce } from "../_test-utils/answer-once-with";
 import { compareReleaseLessons } from "./compare-release-lessons";
 import type * as Ai from "ai";
 
@@ -44,17 +45,18 @@ function answer(output: unknown) {
   return { finalStep: step, output, steps: [step], usage };
 }
 
+const PARAMS = {
+  from: "Version 7",
+  language: "en",
+  lessons: [LESSON, LESSON, LESSON],
+  product: "Test App",
+  releaseNotes: "Version 8 moves export to a panel.",
+  to: "Version 8",
+};
+
 function compare(output: unknown) {
   vi.mocked(generateText).mockResolvedValue(answer(output) as never);
-
-  return compareReleaseLessons({
-    from: "Version 7",
-    language: "en",
-    lessons: [LESSON, LESSON, LESSON],
-    product: "Test App",
-    releaseNotes: "Version 8 moves export to a panel.",
-    to: "Version 8",
-  });
+  return compareReleaseLessons(PARAMS);
 }
 
 describe(compareReleaseLessons, () => {
@@ -93,5 +95,22 @@ describe(compareReleaseLessons, () => {
     });
 
     expect(data.whatsNew).toBeNull();
+  });
+
+  it("fails an empty answer the provider's filter stopped as a comparison the schema can't accept", async () => {
+    await answerEmptyOnce("content-filter");
+
+    await expect(compareReleaseLessons(PARAMS)).rejects.toMatchObject({
+      finishReason: "content-filter",
+      name: "AI_NoObjectGeneratedError",
+    });
+  });
+
+  it("leaves an empty answer for any other reason as missing output, which a retry can fix", async () => {
+    await answerEmptyOnce("error");
+
+    await expect(compareReleaseLessons(PARAMS)).rejects.toMatchObject({
+      name: "AI_NoOutputGeneratedError",
+    });
   });
 });

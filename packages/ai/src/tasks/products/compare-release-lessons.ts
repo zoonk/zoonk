@@ -6,6 +6,7 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
+import { failFilteredAnswer } from "../_utils/filtered-answer";
 import { fillPromptLanguages } from "../_utils/prompt-language";
 import promptTemplate from "./compare-release-lessons.prompt.md";
 
@@ -163,6 +164,8 @@ export async function compareReleaseLessons({
     systemPrompt,
     task: "compare-release-lessons",
   });
+
+  failFilteredAnswer(result);
 
   return {
     data: repairReleaseComparison({ lessonCount: lessons.length, raw: result.output }),
