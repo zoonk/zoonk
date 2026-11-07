@@ -3,6 +3,7 @@ import { findCurrentPhase, getPhaseStates, isPhaseFinished } from "../_utils/pha
 import { isPlanFinished } from "../_utils/plan-end";
 import { getPlannedBossMinutes } from "./boss-minutes";
 import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
+import { withPlannedLessons } from "./core-first";
 import { getShownPhaseEnds } from "./kept-phase-ends";
 import { addDays, daysBetween, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { getPlanFeasibility } from "./plan-feasibility";
@@ -468,6 +469,40 @@ describe(buildPlan, () => {
         ends: run.phases.map((phase) => phase.endDate),
       })),
     ).toStrictEqual(days.map(() => shown));
+  });
+
+  it("asks to move an end before a lesson kept this week once written lessons make it core", () => {
+    const skills = [0, 1, 2].map((index) => skill(`s${index}`, { lessons: 3, phase: index }));
+
+    const input = planInput({
+      goal: { dailyMinutes: 10, kind: "learn", targetDate: addDays(TODAY, 8) },
+      graph: { phases: skills.map((_, index) => ({ milestone: null, name: `${index}` })), skills },
+      lessons: skills.flatMap(({ skillId }) => writtenLessons(skillId, 0, 3)),
+    });
+
+    const first = buildPlan(input);
+    const today = addDays(TODAY, 1);
+
+    const studied = store(first, new Set(lessonsOn(first, TODAY))).map((item) =>
+      item.status === "done" ? { ...item, completedAt: TODAY } : item,
+    );
+
+    const automatic = (previous: BuiltPlan, items: ExistingPlanItem[], lessons = input.lessons) =>
+      buildPlan({
+        ...input,
+        graph: withPlannedLessons({ graph: input.graph, skillLessons: previous.skillLessons }),
+        items,
+        lessons,
+        mode: "automatic",
+        phaseEnds: getShownPhaseEnds({ items, phases: previous.phases }),
+        today,
+      });
+
+    const kept = automatic(first, studied);
+    const landed = automatic(kept, store(kept), [...input.lessons, ...writtenLessons("s0", 3, 3)]);
+
+    expect(kept.endsBeforeLessons).toStrictEqual([]);
+    expect(landed.endsBeforeLessons).toStrictEqual([0, 1]);
   });
 
   it("keeps the chapter an unstarted skill's item teaches from when it moves after this week", () => {
@@ -1151,6 +1186,13 @@ describe("language plans", () => {
     ).toBeGreaterThan(20);
   });
 });
+
+function writtenLessons(skillId: string, from: number, count: number): PlannerLesson[] {
+  return Array.from({ length: count }, (_, index) => ({
+    ...lesson(`${skillId}-${from + index}`, [skillId], 5),
+    chapterId: skillId,
+  }));
+}
 
 function lessonsFor(skillId: string, count: number): PlannerLesson[] {
   return Array.from({ length: count }, (_, index) => lesson(`${skillId}-${index}`, [skillId]));

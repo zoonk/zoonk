@@ -1,18 +1,18 @@
 import { listCoreLessonItems } from "../_utils/core-lessons";
 import { type BuildPlanInput } from "./build-plan";
-import { isPastCore } from "./core-first";
+import { isPastCore, withPlannedLessons } from "./core-first";
 import { listWonPhases } from "./phase-time";
 import { LEARN_KINDS } from "./plan-item-rules";
 import { type PlannedItem } from "./plan-items";
 import { type ScheduledUnit } from "./schedule-units";
 
 export function listEndsBeforeLessons({
-  ends,
   given,
   items,
-  units,
+  laidOut,
+  phaseEnds,
+  skillLessons,
 }: {
-  ends: ReadonlyMap<number, Date>;
   given: Pick<BuildPlanInput, "graph" | "lessons">;
   items: readonly Pick<
     PlannedItem,
@@ -26,7 +26,9 @@ export function listEndsBeforeLessons({
     | "skillId"
     | "status"
   >[];
-  units: readonly Pick<ScheduledUnit, "depth" | "key" | "pastCore">[];
+  laidOut: readonly Pick<ScheduledUnit, "depth" | "key" | "pastCore">[];
+  phaseEnds: ReadonlyMap<number, Date>;
+  skillLessons: ReadonlyMap<string, number>;
 }): number[] {
   const skillPhases = new Map(given.graph.skills.map((skill) => [skill.skillId, skill.phase]));
 
@@ -36,19 +38,21 @@ export function listEndsBeforeLessons({
     ),
   );
 
-  const laidOut = new Set(units.map((unit) => unit.key));
-  const laidOutCore = new Set(units.flatMap((unit) => (isPastCore(unit) ? [] : [unit.key])));
+  const laidOutKeys = new Set(laidOut.map((unit) => unit.key));
+  const laidOutCore = new Set(laidOut.flatMap((unit) => (isPastCore(unit) ? [] : [unit.key])));
+
+  const { skills } = withPlannedLessons({ graph: given.graph, skillLessons });
 
   const keptCore = new Set(
-    [...listCoreLessonItems({ graphSkills: given.graph.skills, items }).values()]
+    [...listCoreLessonItems({ graphSkills: skills, items }).values()]
       .flat()
       .map((item) => item.key),
   );
 
-  // Lessons this week's run kept as they were carry no flags, so they're sized as the challenge
-  // sizes its skills' cores.
+  // Lessons this week's run kept as they were carry no flags, so they're sized as this build's
+  // challenges size their skills' cores.
   const isWaitedFor = (item: (typeof items)[number]) =>
-    laidOut.has(item.key)
+    laidOutKeys.has(item.key)
       ? laidOutCore.has(item.key)
       : item.kind !== "lesson" || keptCore.has(item.key);
 
@@ -70,7 +74,7 @@ export function listEndsBeforeLessons({
 
   const won = listWonPhases(home);
 
-  return [...ends].flatMap(([phase, date]) =>
+  return [...phaseEnds].flatMap(([phase, date]) =>
     !won.has(phase) &&
     lessons.some(
       (item) => item.phase <= phase && item.scheduledFor !== null && item.scheduledFor > date,
