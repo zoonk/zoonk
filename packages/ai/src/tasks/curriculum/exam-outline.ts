@@ -77,7 +77,12 @@ export function formatExamOutline(outline: ExamOutline): string {
 type TopicRef = { subject: number; topic: string };
 
 function findTopic({ outline, value }: { outline: ExamOutline; value: string }): TopicRef | null {
-  const match = TOPIC_ID_PATTERN.exec(value.trim().split(/\s/u, 1)[0] ?? "")?.groups;
+  const [id = ""] = value
+    .trim()
+    .replace(/^[-*+•]\s+/u, "")
+    .split(/\s/u, 1);
+
+  const match = TOPIC_ID_PATTERN.exec(id)?.groups;
 
   if (match) {
     const subject = Number(match.subject) - 1;

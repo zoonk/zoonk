@@ -37,6 +37,33 @@ function toCheck(code: SkillGraphProblem["code"]): GraphCheck {
 
 type ExpectedCheck = { problem: string | null };
 
+function checkCoursePlacement({
+  accepted,
+  area,
+  graph,
+}: {
+  accepted: string[];
+  area: string;
+  graph: SkillGraphOutput;
+}): ExpectedCheck {
+  const titles = new Set(accepted.map((title) => normalizeString(title)));
+
+  const keys = new Set(
+    graph.courses
+      .filter((course) => titles.has(normalizeString(course.title)))
+      .map((course) => course.key),
+  );
+
+  const skills = graph.skills.filter((skill) => skill.area === area);
+
+  return {
+    problem:
+      skills.length > 0 && skills.every((skill) => keys.has(skill.course))
+        ? null
+        : `Skills in "${area}" must be taught in ${accepted.map((title) => `"${title}"`).join(" or ")}.`,
+  };
+}
+
 function checkReuse({
   expected,
   graph,
@@ -84,6 +111,9 @@ function checkCourses({
     ...(expected.noCourses ?? []).map((title) => ({
       problem: titles.has(normalizeString(title)) ? `Unexpected course titled "${title}".` : null,
     })),
+    ...Object.entries(expected.coursesByArea ?? {}).map(([area, accepted]) =>
+      checkCoursePlacement({ accepted, area, graph }),
+    ),
   ];
 }
 
