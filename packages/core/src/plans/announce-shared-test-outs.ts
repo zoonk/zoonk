@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { skipTestedOutBlocks } from "../sessions/_utils/skip-tested-out-blocks";
 import { announceTestedOutItems } from "./announce-tested-out-items";
+import { afterPlanInputWrite } from "./plan-conflict";
 
 /** Read the saved transition so a retry can announce it after the item write already committed. */
 export async function announceSharedTestOuts({
@@ -29,14 +30,16 @@ export async function announceSharedTestOuts({
 
   await Promise.all(
     plans.map((plan) =>
-      announceTestedOutItems({
-        followToday: false,
-        goalId: plan.goalId,
-        now,
-        planItemIds: plan.items.map((item) => item.id),
-        skipBlocks: false,
-        timeZone: getAnswerTimeZone({ goal: plan.goal }),
-      }),
+      afterPlanInputWrite(() =>
+        announceTestedOutItems({
+          followToday: false,
+          goalId: plan.goalId,
+          now,
+          planItemIds: plan.items.map((item) => item.id),
+          skipBlocks: false,
+          timeZone: getAnswerTimeZone({ goal: plan.goal }),
+        }),
+      ),
     ),
   );
 
