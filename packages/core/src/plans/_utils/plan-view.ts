@@ -216,7 +216,7 @@ export async function buildPlanView({
     readTodayLearnBlocks(goal.userId, goal.id),
     loadGraphPartAreas({ examBlueprintId: goal.examBlueprintId, graph: state.graph }),
     readTaughtStandInSkills(goal.userId, goal.id),
-    readChallengeReadiness({ goal, items, state, today: context.today }),
+    readChallengeReadiness({ goal, items, phases, state, today: context.today }),
   ]);
 
   const skillAreas = getSkillAreas({
