@@ -21,6 +21,15 @@ export function startsWithSubject({
   );
 }
 
+/** An exam's skill is one ability whatever the exam's size, so exams that test it share it. */
+function sizesSkillsByAbility({
+  goalKind,
+  hasMaterial = false,
+  lessonBudget,
+}: Pick<SkillGraphParams, "goalKind" | "hasMaterial" | "lessonBudget">): boolean {
+  return goalKind === "exam" && !hasMaterial && !lessonBudget;
+}
+
 /** Every call of one exam's graph reads the same text, so they share a cached prefix. */
 export function buildSkillGraphSystemPrompt({
   findLibrarySkills,
@@ -33,11 +42,15 @@ export function buildSkillGraphSystemPrompt({
   SkillGraphParams,
   "findLibrarySkills" | "goalKind" | "hasMaterial" | "lessonBudget" | "ownLevel" | "purpose"
 >): string {
+  const examSkills = sizesSkillsByAbility({ goalKind, hasMaterial, lessonBudget });
+
   return selectPromptVariants({
     template,
     variants: {
       budget: Boolean(lessonBudget),
       exam: goalKind === "exam",
+      examSkills,
+      goalSizedSkills: !examSkills,
       language: goalKind === "language",
       learn: goalKind === "learn",
       librarySkills: goalKind === "exam" && Boolean(findLibrarySkills),
