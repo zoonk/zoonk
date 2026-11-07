@@ -7,14 +7,15 @@ import { type TextLayout } from "./text-flaws";
 const RAW_SCRIPT = /\S\^\S|[\^_]\{/u;
 
 /**
- * A power written with spaces around its caret (`x ^ 2`, `10 ^ -5`): a number or one letter on each
- * side, so a caret described in prose (`, ^ matches`) isn't one.
+ * A power written with spaces around its caret (`x ^ 2`, `(a + b) ^ 2`, `10 ^ {-5}`): a number, a
+ * letter or a closing mark before it and a number or an opening bracket after it, so a caret named in
+ * prose (`, ^ matches`, `O ^ é`) isn't one.
  */
 const SPACED_CARET =
-  /(?<![\p{L}\p{N}])(?:\p{N}+(?:\.\p{N}+)?|\p{L})(?:\s+\^\s*|\^\s+)[-−+]?(?:\p{N}+|\p{L})(?![\p{L}\p{N}])/gu;
+  /(?:(?<![\p{L}\p{N}])(?:\p{N}+(?:\.\p{N}+)?|\p{L})|[)\]}|])(?:\s+\^\s*|\^\s+)(?:[-−+]?\p{N}+|[({[])/gu;
 
-/** Trimming took the mark after this caret (`10^?`, `p^*`); a lone caret in quotes is a symbol. */
-const ENDING_CARET = /[\p{L}\p{N})\]}]\^$/u;
+/** Trimming took the mark after this caret (`10^?`, `|x|^?`); a lone caret in quotes is a symbol. */
+const ENDING_CARET = /[\p{L}\p{N})\]}|]\^$/u;
 
 /**
  * Code repairs only a number raised to a number (`10^{-5}`, `10^3`, `10^−1`), the only kind lessons

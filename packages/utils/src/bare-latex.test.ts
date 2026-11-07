@@ -41,7 +41,8 @@ describe(findBareLatex, () => {
       String.raw`It costs R$ 80, \$5 or $10, keeps user_id and the file C:\Users\ana\notes.txt.`,
       "Smile ^_^ and rate it 9/10 * 2.",
       'In regular expressions, ^ matches the start of a line; the caret (^) and "^" stay text.',
-      "Na expressão regular, ^ marca o início da linha.",
+      "Na expressão regular, ^ marca o início da linha, e o ^ é chamado de acento circunflexo.",
+      "In C, a ^ b is a bitwise XOR.",
     ];
 
     expect(texts.flatMap((text) => find(text))).toStrictEqual([]);
@@ -126,6 +127,8 @@ describe(wrapBareLatex, () => {
       String.raw`The volume is \frac{4\pi r^3}{3}.`,
       "Complete 10^? = 1000, where the equilibrium price is p^*.",
       "A square has area x ^ 2, or x^ 2, and 10 ^ -5 is small.",
+      "The area is (a + b) ^ 2, the gap 10 ^ {−5} m.",
+      "Complete |x|^? = 16 when |x| = 2.",
     ];
 
     expect(texts.map((text) => wrap(text))).toStrictEqual(texts);
