@@ -83,6 +83,7 @@ async function writeSteps(context: CourseContext, lesson: SeedLesson, lessonId: 
         kind: step.kind,
         lessonId,
         position,
+        retiredAt: null,
         sentenceId: lookup(sentenceIds, step.sentence),
         skillId: skillKey ? skillIdOf(course, skillIds, skillKey) : null,
         wordId: lookup(wordIds, step.word),

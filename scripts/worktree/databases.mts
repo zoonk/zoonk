@@ -22,16 +22,47 @@ export function prisma({
   return run({ args: [cli, ...args], command: process.execPath, cwd: directory, env });
 }
 
+function runDatabaseScript({
+  env,
+  script,
+  worktree,
+}: {
+  env: NodeJS.ProcessEnv;
+  script: string;
+  worktree: string;
+}): Promise<string> {
+  const directory = join(worktree, "packages/db");
+
+  return run({
+    args: [createRequire(join(directory, "package.json")).resolve("tsx/cli"), script],
+    command: process.execPath,
+    cwd: directory,
+    env,
+  });
+}
+
+/**
+ * A migration can retire stored lessons, the seed's hand-written ones too, so a development
+ * database that keeps its rows gets the seed's Library again after its migrations.
+ */
+function seedLibrary({ env, worktree }: { env: NodeJS.ProcessEnv; worktree: string }) {
+  return runDatabaseScript({ env, script: "src/prisma/seed-library.ts", worktree });
+}
+
 /** Does nothing unless the checkout uses this worktree's own copy, so the primary checkout's `zoonk` is never migrated. */
-export async function migrateDevelopmentDatabase(worktree: string): Promise<void> {
+export async function updateDevelopmentDatabase(worktree: string): Promise<void> {
   const url = ownDevelopmentDatabaseUrl(worktree);
 
-  if (url) {
-    await prisma({
-      args: ["migrate", "deploy"],
-      env: { ...process.env, DATABASE_URL: url, DATABASE_URL_UNPOOLED: url },
-      worktree,
-    });
+  if (!url) {
+    return;
+  }
+
+  const env = { ...process.env, DATABASE_URL: url, DATABASE_URL_UNPOOLED: url };
+  const output = await prisma({ args: ["migrate", "deploy"], env, worktree });
+
+  // Prisma's words when it applied nothing; any other output only costs a Library write.
+  if (!output.includes("No pending migrations to apply")) {
+    await seedLibrary({ env, worktree });
   }
 }
 
@@ -75,7 +106,7 @@ export function markDatabase({
 
 /**
  * A database this checkout's setup didn't create is never replaced: a worktree refuses one with its
- * copy's name, and the primary checkout keeps its own and only migrates it.
+ * copy's name, and the primary checkout keeps its own.
  */
 async function prepareDatabase({
   database,
@@ -225,7 +256,7 @@ export function migrateDatabase({
   return prisma({ args: ["migrate", "deploy"], env: urlEnvironment(database), worktree });
 }
 
-/** Tests need only the regular seed; the development database also gets core's Library courses and personas. */
+/** Tests need only the regular seed; a new development database also gets core's Library courses and personas. */
 export function seedDatabase({
   database,
   worktree,
@@ -233,16 +264,15 @@ export function seedDatabase({
   database: CheckoutDatabase;
   worktree: string;
 }): Promise<string> {
-  const directory = join(worktree, "packages/db");
+  const env = urlEnvironment(database);
 
-  if (database.mode === "dev") {
-    return prisma({ args: ["db", "seed"], env: urlEnvironment(database), worktree });
+  if (database.mode !== "dev") {
+    return runDatabaseScript({ env, script: "src/prisma/seed.ts", worktree });
   }
 
-  return run({
-    args: [createRequire(join(directory, "package.json")).resolve("tsx/cli"), "src/prisma/seed.ts"],
-    command: process.execPath,
-    cwd: directory,
-    env: urlEnvironment(database),
-  });
+  if (database.seed) {
+    return prisma({ args: ["db", "seed"], env, worktree });
+  }
+
+  return seedLibrary({ env, worktree });
 }
