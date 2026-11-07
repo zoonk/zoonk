@@ -180,6 +180,41 @@ class LessonPlayerFlowTest {
         assertEquals(LessonAnswer.Typed("The saved answer") to true, state.answers[write] to state.results[write]?.isCorrect)
     }
 
+    /** A retry the server saved comes back drawn from its answer, not from the cards the learner had sorted when Android closed the app. */
+    @Test
+    fun aSavedRetryComesBackOverItsHalfSortedCanvasAfterAndroidClosesTheApp() {
+        val quiz = "00000000-0000-4000-8000-000000000131"
+        val sort = "00000000-0000-4000-8000-000000000132"
+        val restoration = StateRestorationTester(rule)
+        harness.play(listOf(checkStep(quiz), ActivityFixtures.step("categorize", id = sort), lessonMapStep()), restoration = restoration) {
+            grade = { id, _ -> checkResult(isCorrect = id == quiz) }
+        }
+        tap("Right")
+        tap("Check")
+        tap("Continue")
+        rule.onRoot().performKeyInput { repeat(3) { pressKey(Key.Two) } }
+        tap("Check")
+        tap("Continue")
+        rule.onRoot().performKeyInput { pressKey(Key.One) }
+        rule.onNodeWithText("1 of 3 sorted").assertExists()
+
+        val sorted = """{"kind":"activity","answer":{"kind":"assignment","pairs":{"i1":"chemical","i2":"physical","i3":"chemical"}}}"""
+        api.runAnswers =
+            listOf(
+                runAnswerJson(quiz, isCorrect = true),
+                runAnswerJson(sort, isCorrect = false),
+                runAnswerJson(sort, isCorrect = true, answer = sorted),
+            ).joinToString(prefix = "[", postfix = "]")
+        harness.viewModel = openAgain()
+        restoration.emulateSavedInstanceStateRestore()
+        rule.waitUntil { viewModel.state.value?.run is LessonRun.Started }
+        rule.onNodeWithContentDescription("Previous screen").performClick()
+
+        val state = checkNotNull(viewModel.state.value)
+        assertEquals(true, state.results[sort]?.isCorrect)
+        rule.onNodeWithText("Rusting iron").assertExists()
+    }
+
     /** A spoken screen answered by typing shows what was typed on review, even on a day the learner can talk. */
     @Test
     fun aSpokenAnswerTypedInAnEarlierSittingShowsWhatWasTyped() {

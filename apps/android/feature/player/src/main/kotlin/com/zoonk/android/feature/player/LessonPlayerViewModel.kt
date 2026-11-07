@@ -591,7 +591,8 @@ class LessonPlayerViewModel(
         listenDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantListen) }
 
         // After the server's answers rebuild the run, what the learner did and hadn't checked comes back on the screens the
-        // run has no answer for, under the round it was saved in, when Android closed the app in the background.
+        // run has no answer for, under the round it was saved in, when Android closed the app in the background. A screen
+        // the run answered moves past its saved round, so its canvas draws that answer instead of the work saved there.
         val rounds = saved.get<Map<String, Int>>(ROUNDS).orEmpty()
         val revealed = saved.get<Map<String, Int>>(REVEALED).orEmpty()
         val answers =
@@ -603,7 +604,7 @@ class LessonPlayerViewModel(
         return resumed.copy(
             answers = resumed.answers + answers.filterKeys(unanswered),
             revealed = resumed.revealed + revealed.filterKeys(unanswered),
-            rounds = resumed.rounds + rounds,
+            rounds = resumed.rounds + rounds + resumed.results.keys.associateWith { (rounds[it] ?: 0) + 1 },
         )
     }
 
