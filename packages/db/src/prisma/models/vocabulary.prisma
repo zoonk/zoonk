@@ -102,6 +102,8 @@ model LessonSentence {
   sentence               Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
   position               Int      @db.SmallInt
   translation            String
+  otherSentenceOrders    String[] @default([]) @map("other_sentence_orders")
+  otherTranslationOrders String[] @default([]) @map("other_translation_orders")
   explanation            String
   distractors            String[] @default([])
   translationDistractors String[] @default([]) @map("translation_distractors")
