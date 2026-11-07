@@ -52,10 +52,6 @@ function sumMinutesByDay(entries: readonly DayMinutes[]): Map<number, number> {
   );
 }
 
-/**
- * Carried time is reserved in the order it's laid out (`reserveCarriedTime`), so a unit moved onto
- * `day` takes its time off the days it was laid on.
- */
 function sumMovedTime({ day, units }: { day: PlanDay; units: readonly ScheduledUnit[] }) {
   return sumMinutesByDay(
     units.flatMap((unit) => [
