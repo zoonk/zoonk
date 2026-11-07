@@ -1,3 +1,4 @@
+import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { listLessonDays } from "./interval-study-minutes";
 import { addDays, toIsoDate } from "./plan-calendar";
@@ -149,9 +150,48 @@ describe("scheduled study time across learning intervals", () => {
 
     expect([...(lessonDayMinutes.get("lesson:one") ?? [])]).toStrictEqual([
       [toIsoDate(START), 20],
-      [toIsoDate(addDays(START, 1)), 40],
+      [toIsoDate(addDays(START, 1)), 30],
     ]);
 
-    expect(result.units[0]?.studyMinutes).toBe(60);
+    expect(result.units[0]?.studyMinutes).toBe(50);
+  });
+
+  it("keeps a first lesson's time and end consistent across daily capacities and paces", () => {
+    fc.assert(
+      fc.property(
+        fc.array(
+          fc.record({
+            minutes: fc.integer({ max: 60, min: 5 }),
+            share: fc.integer({ max: 8, min: 2 }),
+          }),
+          { maxLength: 5, minLength: 1 },
+        ),
+        fc.integer({ max: 60, min: 2 }),
+        fc.constantFrom(0.8, 1, 1.3, 1.5, 2),
+        (shapes, minutes, pace) => {
+          const result = scheduleUnits({
+            days: days(shapes.map((shape) => ({ ...shape, share: shape.share / 10 }))),
+            units: [lesson(minutes * pace)],
+          });
+
+          const first = result.units[0];
+          const portions = first?.studyPortions ?? [];
+          expect(result.dropped).toStrictEqual([]);
+          expect(portions.every((portion) => portion.lessonMinutes > PLAN_EPSILON)).toBe(true);
+
+          expect(portions.reduce((sum, portion) => sum + portion.lessonMinutes, 0)).toBeCloseTo(
+            minutes * pace,
+            8,
+          );
+
+          expect(portions.reduce((sum, portion) => sum + portion.minutes, 0)).toBeCloseTo(
+            first?.studyMinutes ?? 0,
+            8,
+          );
+
+          expect(portions.at(-1)?.date).toBe(toIsoDate(first?.teachingEnd ?? START));
+        },
+      ),
+    );
   });
 });
