@@ -7,7 +7,7 @@ import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
 import { ORIGIN_PARAM, withOrigin } from "@/lib/public/public-hrefs";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
-import { PlayIcon } from "lucide-react";
+import { LogInIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef, useState, useTransition } from "react";
 import { START_FAILURE_SLOT, getStartControlClassName } from "./public-start";
@@ -81,7 +81,10 @@ function StartFailure() {
         {t("We couldn't open the lesson. Try again, or log in to keep going.")}
       </p>
 
-      <CurrentPageLoginLink className={buttonVariants({ variant: "outline" })}>
+      <CurrentPageLoginLink
+        className={buttonVariants({ variant: "outline" })}
+        icon={<LogInIcon aria-hidden="true" />}
+      >
         {t("Log in")}
       </CurrentPageLoginLink>
     </div>
