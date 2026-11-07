@@ -12,7 +12,8 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { feedbackStatusLabels, getLearnerLabel } from "../../_utils/feedback-labels";
+import { getLearnerLabel } from "@/lib/learner-label";
+import { feedbackStatusLabels } from "../../_utils/feedback-labels";
 import { type FeedbackMessage, MessageDetail } from "./message-detail";
 import { MessageStatusForm } from "./message-status-form";
 

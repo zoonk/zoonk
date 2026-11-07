@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getLearnerLabel } from "../_utils/feedback-labels";
+import { getLearnerLabel } from "@/lib/learner-label";
 
 type MessageSenderProps = {
   email: string | null;

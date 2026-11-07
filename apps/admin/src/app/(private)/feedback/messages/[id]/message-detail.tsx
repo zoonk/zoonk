@@ -3,7 +3,8 @@ import { DetailField, DetailFields } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
 import { type getFeedbackMessage } from "@/data/feedback/get-feedback-message";
 import Link from "next/link";
-import { feedbackContentKindLabels, getLearnerLabel } from "../../_utils/feedback-labels";
+import { getLearnerLabel } from "@/lib/learner-label";
+import { feedbackContentKindLabels } from "../../_utils/feedback-labels";
 
 export type FeedbackMessage = NonNullable<Awaited<ReturnType<typeof getFeedbackMessage>>>;
 
