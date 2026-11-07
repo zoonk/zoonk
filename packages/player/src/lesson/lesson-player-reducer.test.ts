@@ -1,3 +1,5 @@
+import { gradeStepAnswer } from "@zoonk/core/lesson-player/grade";
+import { serializeExerciseSteps } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { describe, expect, it } from "vitest";
 import {
   challengeStep,
@@ -11,6 +13,7 @@ import {
   typedAnswerStep,
   workedExampleStep,
 } from "./_test-utils/lesson-steps";
+import { fromLocalGrade } from "./_utils/lesson-results";
 import { lessonPlayerReducer } from "./lesson-player-reducer";
 import { getLessonScreen } from "./lesson-player-screen";
 import {
@@ -19,7 +22,11 @@ import {
   createInitialState,
   getCurrentStep,
 } from "./lesson-player-state";
-import { type LessonPlayerAnswer, type PlayableLibraryStep } from "./lesson-player-types";
+import {
+  type LessonPlayerAnswer,
+  type PlayableLanguageStep,
+  type PlayableLibraryStep,
+} from "./lesson-player-types";
 
 const STARTED_AT = "2026-10-05T10:00:00.000Z";
 const ANSWERED_AT = "2026-10-05T10:01:00.000Z";
@@ -73,6 +80,82 @@ function answerCheck(
       type: "checkResolved",
     },
   ];
+}
+
+function staleWordBank(kind: "listening" | "reading") {
+  const sentence = {
+    audioUrl: null,
+    distractors: [],
+    explanation: "The subject can follow the verb.",
+    id: "sentence",
+    otherSentenceOrders: [],
+    otherTranslationOrders: [],
+    romanization: null,
+    sentence: "Quando pioveva l'autobus è arrivato",
+    translation: "Quando chovia o ônibus chegou",
+    translationDistractors: [],
+  };
+
+  const [exercise] = serializeExerciseSteps({
+    languages: { language: "pt", targetLanguage: "it" },
+    resources: {
+      distractorWords: [],
+      lessonSentences: [sentence],
+      lessonWords: [],
+      sentenceWords: [],
+    },
+    steps: [{ content: {}, id: "order", kind, position: 0, sentence, word: null }],
+  });
+
+  if (!exercise) {
+    throw new Error("Missing word bank");
+  }
+
+  const step: PlayableLanguageStep = {
+    exercise,
+    id: "order",
+    kind,
+    position: 0,
+    skillId: null,
+    wordHints: null,
+  };
+
+  const answer = {
+    arrangedWords:
+      kind === "reading"
+        ? ["Quando", "pioveva", "è", "arrivato", "l'autobus"]
+        : ["o", "ônibus", "chegou", "Quando", "chovia"],
+    kind,
+  };
+
+  const graded = gradeStepAnswer({ answer, language: "pt", step });
+
+  if (!graded) {
+    throw new Error("Missing local grade");
+  }
+
+  expect(graded.isCorrect).toBe(false);
+
+  const result = { ...fromLocalGrade(graded), attemptId: "first" };
+
+  const actions: LessonPlayerAction[] = [
+    { answer, stepId: step.id, type: "selectAnswer" },
+    { counts: true, result, stepId: step.id, type: "checkResolved" },
+  ];
+
+  const confirmation: LessonPlayerAction = {
+    attemptId: "first",
+    result: {
+      ...stepResult(true),
+      correctAnswer: kind === "reading" ? sentence.sentence : sentence.translation,
+      feedback: sentence.explanation,
+      nextReviewAt: "2026-11-08T00:00:00.000Z",
+    },
+    stepId: step.id,
+    type: "checkConfirmed",
+  };
+
+  return { actions, answer, confirmation, result, step };
 }
 
 describe(lessonPlayerReducer, () => {
@@ -895,6 +978,144 @@ describe(lessonPlayerReducer, () => {
     });
 
     expect(confirmed.results.quiz?.nextReviewAt).toBe("2026-10-02T00:00:00.000Z");
+  });
+
+  it.each(["reading", "listening"] as const)(
+    "accepts a server-correct %s first try still waiting for self-correction",
+    (kind) => {
+      const { actions, confirmation, result, step } = staleWordBank(kind);
+      const waiting = play([step], actions);
+
+      expect(waiting).toMatchObject({ notice: "selfCorrect", phase: "playing", results: {} });
+
+      const confirmed = lessonPlayerReducer(waiting, confirmation);
+
+      expect(confirmed).toMatchObject({
+        firstVerdicts: { order: true },
+        notice: null,
+        phase: "feedback",
+      });
+
+      expect(confirmed.results.order).toMatchObject({
+        ...confirmation.result,
+        answerText: result.answerText,
+        attemptId: "first",
+      });
+    },
+  );
+
+  it.each(["reading", "listening"] as const)(
+    "keeps an edited %s answer when its first reply arrives late, but fixes its first-try count",
+    (kind) => {
+      const { actions, confirmation, step } = staleWordBank(kind);
+
+      const editing = play(
+        [step],
+        [...actions, { answer: null, stepId: step.id, type: "selectAnswer" }],
+      );
+
+      const confirmed = lessonPlayerReducer(editing, confirmation);
+
+      expect(confirmed).toMatchObject({
+        firstVerdicts: { order: true },
+        notice: "selfCorrect",
+        phase: "playing",
+      });
+
+      expect(confirmed.answers).toStrictEqual({});
+      expect(confirmed.results).toStrictEqual({});
+    },
+  );
+
+  it.each([true, false])(
+    "adopts a flipped server verdict (%s) on an ordinary result",
+    (isCorrect) => {
+      const answered = play([checkStep("quiz")], answerCheck("quiz", !isCorrect));
+      const verdict = { ...stepResult(isCorrect), feedback: "The stored answer has changed." };
+
+      const confirmed = lessonPlayerReducer(answered, {
+        attemptId: "quiz-attempt",
+        result: verdict,
+        stepId: "quiz",
+        type: "checkConfirmed",
+      });
+
+      expect(confirmed.firstVerdicts).toStrictEqual({ quiz: isCorrect });
+
+      expect(confirmed.results.quiz).toMatchObject({
+        ...verdict,
+        answerText: isCorrect ? "Wrong" : "Right",
+        attemptId: "quiz-attempt",
+      });
+
+      expect(confirmed.queue).toStrictEqual(answered.queue);
+    },
+  );
+
+  it.each(["reading", "listening"] as const)(
+    "keeps the newer %s result and counts only its first attempt",
+    (kind) => {
+      const { actions, answer, confirmation, result, step } = staleWordBank(kind);
+      const second = { ...result, attemptId: "second" };
+
+      const retried = play(
+        [step],
+        [
+          ...actions,
+          { answer: { ...answer }, stepId: step.id, type: "selectAnswer" },
+          { counts: true, result: second, stepId: step.id, type: "checkResolved" },
+        ],
+      );
+
+      const late = lessonPlayerReducer(retried, confirmation);
+      expect(late.results.order).toStrictEqual(second);
+      expect(late.firstVerdicts).toStrictEqual({ order: true });
+
+      const secondConfirmed = lessonPlayerReducer(retried, {
+        ...confirmation,
+        attemptId: "second",
+      });
+
+      expect(secondConfirmed.results.order).toMatchObject({
+        ...confirmation.result,
+        answerText: result.answerText,
+        attemptId: "second",
+      });
+
+      expect(secondConfirmed.firstVerdicts).toStrictEqual({ order: false });
+    },
+  );
+
+  it("keeps a rebuilt answer editable even when its words match the first attempt", () => {
+    const { actions, answer, confirmation, step } = staleWordBank("reading");
+
+    const rebuilt = play(
+      [step],
+      [
+        ...actions,
+        { answer: null, stepId: step.id, type: "selectAnswer" },
+        { answer: { ...answer }, stepId: step.id, type: "selectAnswer" },
+      ],
+    );
+
+    const confirmed = lessonPlayerReducer(rebuilt, confirmation);
+    expect(confirmed).toMatchObject({ notice: "selfCorrect", phase: "playing" });
+    expect(confirmed.results).toStrictEqual({});
+    expect(confirmed.firstVerdicts).toStrictEqual({ order: true });
+  });
+
+  it("doesn't move another screen into feedback when a self-correction's reply arrives", () => {
+    const { actions, confirmation, step } = staleWordBank("reading");
+
+    const elsewhere = play(
+      [explanationStep("tip"), step],
+      [{ type: "continue" }, ...actions, { direction: "prev", type: "navigate" }],
+    );
+
+    const confirmed = lessonPlayerReducer(elsewhere, confirmation);
+    expect(confirmed).toMatchObject({ phase: "playing", position: 0 });
+    expect(confirmed.results).toStrictEqual({});
+    expect(confirmed.firstVerdicts).toStrictEqual({ order: true });
   });
 
   it("keeps a newer answer's verdict when the server's word on an earlier answer comes late", () => {

@@ -231,21 +231,21 @@ export function canGoBack(state: LessonPlayerState): boolean {
 }
 
 function offerSelfCorrection({
-  isFirst,
+  result,
   state,
   stepId,
 }: {
-  isFirst: boolean;
+  result: LessonStepResult;
   state: LessonPlayerState;
   stepId: string;
 }): LessonPlayerState {
   return {
     ...state,
     checkFailed: false,
-    firstVerdicts: isFirst ? { ...state.firstVerdicts, [stepId]: false } : state.firstVerdicts,
     notice: "selfCorrect",
     phase: "playing",
     selfCorrected: [...state.selfCorrected, stepId],
+    selfCorrection: { result, stepId },
   };
 }
 
@@ -267,13 +267,30 @@ function getMisses({
   return isCorrect ? [] : [...state.misses, { skillId: step.skillId, stepId: step.id }];
 }
 
+function recordFirstVerdict(
+  state: LessonPlayerState,
+  { counts, result, stepId }: { counts: boolean; result: LessonStepResult; stepId: string },
+): LessonPlayerState {
+  if (!counts || stepId in state.firstVerdicts) {
+    return state;
+  }
+
+  return {
+    ...state,
+    firstVerdictAttemptIds: result.attemptId
+      ? { ...state.firstVerdictAttemptIds, [stepId]: result.attemptId }
+      : state.firstVerdictAttemptIds,
+    firstVerdicts: { ...state.firstVerdicts, [stepId]: result.isCorrect },
+  };
+}
+
 export function resolveCheck(
   state: LessonPlayerState,
   { counts, result, stepId }: { counts: boolean; result: LessonStepResult; stepId: string },
 ): LessonPlayerState {
   const step = state.steps[stepId];
-  const isFirst = counts && !(stepId in state.firstVerdicts);
   const isMiss = counts && !result.isCorrect;
+  const checked = recordFirstVerdict(state, { counts, result, stepId });
 
   if (
     isMiss &&
@@ -282,7 +299,7 @@ export function resolveCheck(
     !state.quickCheck &&
     !state.selfCorrected.includes(stepId)
   ) {
-    return offerSelfCorrection({ isFirst, state, stepId });
+    return offerSelfCorrection({ result, state: checked, stepId });
   }
 
   const willRetry =
@@ -293,11 +310,8 @@ export function resolveCheck(
     ![...state.retried, ...state.unavailableStepIds].includes(stepId);
 
   const resolved: LessonPlayerState = {
-    ...state,
+    ...checked,
     checkFailed: false,
-    firstVerdicts: isFirst
-      ? { ...state.firstVerdicts, [stepId]: result.isCorrect }
-      : state.firstVerdicts,
     misses: getMisses({ counts, isCorrect: result.isCorrect, state, step }),
     notice: state.notice === "selfCorrect" ? null : state.notice,
     phase: "feedback",
@@ -306,6 +320,7 @@ export function resolveCheck(
       state.quickCheck && isMiss ? { ...state.quickCheck, missed: true } : state.quickCheck,
     results: { ...state.results, [stepId]: result },
     retried: willRetry ? [...state.retried, stepId] : state.retried,
+    selfCorrection: null,
   };
 
   return step?.kind === "matchColumns" ? advance(resolved) : resolved;
