@@ -10,7 +10,7 @@ import { readActionNames } from "./actions.mts";
 import { compareWithBaseline, comparisonRows, readBaseline } from "./baseline.mts";
 import { markBusy } from "./busy.mts";
 import { type Finding } from "./checks.mts";
-import { checkExposure, readLearner } from "./exposure.mts";
+import { checkExposure } from "./exposure.mts";
 import { type LoadReport, measureLoad, warmUp } from "./measure.mts";
 import { type SoakReport, judgeSoak, measureSoak, soakRows } from "./memory.mts";
 import { type NavigationMode } from "./navigation-checks.mts";
@@ -39,6 +39,7 @@ const repository = resolve(import.meta.dirname, "../..");
 const { positionals, values } = parseArgs({
   allowPositionals: true,
   options: {
+    app: { default: "main", type: "string" },
     baseline: { type: "string" },
     early: { default: false, type: "boolean" },
     email: { type: "string" },
@@ -56,7 +57,9 @@ const { positionals, values } = parseArgs({
   },
 });
 
-const baseUrl = values.url ?? getServiceUrl({ currentDirectory: repository, serviceName: "main" });
+const baseUrl =
+  values.url ?? getServiceUrl({ currentDirectory: repository, serviceName: values.app });
+
 const paths = positionals.length > 0 ? positionals : ["/"];
 const viewports = pick(values.viewports, VIEWPORT_NAMES, "viewport");
 const schemes = pick(values.schemes, SCHEMES, "scheme");
@@ -72,10 +75,10 @@ const mailboxUrl =
     : "";
 
 const signedIn = values.email
-  ? await signIn({ baseUrl, email: values.email, mailboxUrl })
+  ? await signIn({ app: values.app, baseUrl, email: values.email, mailboxUrl })
   : undefined;
 
-const learner = signedIn ? await readLearner(baseUrl, signedIn) : null;
+const learner = signedIn?.learner;
 
 /** `--local-storage name=value` sets what the page keeps on the device, such as a collapsed sidebar. */
 const localStorage = (values["local-storage"] ?? []).map((pair) => {
@@ -86,13 +89,13 @@ const localStorage = (values["local-storage"] ?? []).map((pair) => {
 const storageState =
   localStorage.length > 0
     ? {
-        cookies: signedIn?.cookies ?? [],
+        cookies: signedIn?.storageState.cookies ?? [],
         origins: [{ localStorage, origin: new URL(baseUrl).origin }],
       }
-    : signedIn;
+    : signedIn?.storageState;
 
 const intruder = values.intruder
-  ? await signIn({ baseUrl, email: values.intruder, mailboxUrl })
+  ? await signIn({ app: values.app, baseUrl, email: values.intruder, mailboxUrl })
   : undefined;
 
 const baseline = values.baseline ? await readBaseline(resolve(values.baseline)) : null;
@@ -199,7 +202,10 @@ const busy = Math.max(loadAtStart, loadAtEnd) > BUSY_LOAD_PER_CORE;
 const judge = (findings: Finding[]) => (busy ? markBusy(findings) : findings);
 const judgedLoads = loads.map((load) => ({ ...load, findings: judge(load.findings) }));
 const judgedNavigations = navigations.map((hop) => ({ ...hop, findings: judge(hop.findings) }));
-const exposures = learner ? await checkExposure({ baseUrl, intruder, learner, paths }) : [];
+
+const exposures = learner
+  ? await checkExposure({ baseUrl, intruder: intruder?.storageState, learner, paths })
+  : [];
 
 const comparison = baseline
   ? compareWithBaseline(baseline.loads, loads, {

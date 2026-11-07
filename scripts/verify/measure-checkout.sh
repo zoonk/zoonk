@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # For the Measure pages workflow: measure-checkout.sh <checkout> <report folder> [verify:pages flags…],
-# with EMAIL, FLAGS and PATHS from its inputs.
+# with APP, EMAIL, FLAGS and PATHS from its inputs.
 set -e
 
 checkout=$1
 out=$2
+app=${APP:-main}
 shift 2
 
 cd "$checkout"
@@ -16,12 +17,12 @@ mkdir -p "$out"
 
 # In CI, Turbo holds a task's output until it ends, and a server never ends.
 TURBO_LOG_ORDER=stream ZOONK_QUERY_LOG="$out/queries.jsonl" \
-  setsid pnpm start main > "$out/start.log" 2>&1 &
+  setsid pnpm start "$app" > "$out/start.log" 2>&1 &
 server=$!
 # pnpm start outlives a TERM, and its services stop by themselves once it's gone.
 trap 'kill -KILL -- -"$server" 2> /dev/null || true; wait "$server" || true' EXIT
 
-url=$(node -e "import('./scripts/dev/config.mts').then((config) => console.log(config.getServiceUrl({ currentDirectory: process.cwd(), serviceName: 'main' })))")
+url=$(node -e "import('./scripts/dev/config.mts').then((config) => console.log(config.getServiceUrl({ currentDirectory: process.cwd(), serviceName: process.argv[1] })))" "$app")
 deadline=$((SECONDS + 1200))
 
 # Next prints that it's ready before its port answers.
@@ -36,5 +37,5 @@ done
 
 # A failing check exits 1 after writing the report, which the workflow reads.
 # shellcheck disable=SC2086 # FLAGS and PATHS are lists.
-pnpm verify:pages ${EMAIL:+--email "$EMAIL"} --queries "$out/queries.jsonl" --out "$out" \
+pnpm verify:pages ${APP:+--app "$APP"} ${EMAIL:+--email "$EMAIL"} --queries "$out/queries.jsonl" --out "$out" \
   "$@" $FLAGS $PATHS || true
