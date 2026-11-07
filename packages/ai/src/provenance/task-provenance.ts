@@ -1,5 +1,5 @@
 import { type LanguageModelUsage, type ProviderMetadata } from "ai";
-import { type CallUsage, computeCallCostUsd } from "../pricing/call-cost";
+import { type CallUsage, type GatewayCharge, computeCallCostUsd } from "../pricing/call-cost";
 import { readGatewayMetadata } from "./gateway-metadata";
 
 type TaskUsage = CallUsage & { totalTokens?: number; reasoningTokens?: number };
@@ -14,7 +14,10 @@ export type TaskProvenance = {
   promptVersion: string;
   runId: string;
   usage: TaskUsage;
-  /** Unknown for a model our price list doesn't price. */
+  /**
+   * What our own provider key paid, from our price list, plus what AI Gateway debited, such as its
+   * search fees. Unknown for a model our price list doesn't price, unless the gateway paid for it.
+   */
   costUsd?: number;
   /** A cross-check for `costUsd`; unknown off the gateway. */
   gatewayCostUsd?: number;
@@ -133,8 +136,16 @@ function getServedModel(step: GenerationStep): string {
 }
 
 /** What one call cost, at the model that answered it. */
-export function describeStep(step: GenerationStep): { model: string; usage: TaskUsage } {
-  return { model: getServedModel(step), usage: toTaskUsage(step.usage) };
+export function describeStep(step: GenerationStep): {
+  gatewayCharge?: GatewayCharge;
+  model: string;
+  usage: TaskUsage;
+} {
+  return {
+    gatewayCharge: readGatewayMetadata(step.providerMetadata).charge,
+    model: getServedModel(step),
+    usage: toTaskUsage(step.usage),
+  };
 }
 
 /** Steps can differ in fallback model, tier and context length. */
@@ -144,6 +155,7 @@ function priceStep(step: GenerationStep) {
 
   return {
     costUsd: computeCallCostUsd({
+      charge: gateway.charge,
       model,
       serviceTier: gateway.serviceTier,
       usage: toTaskUsage(step.usage),

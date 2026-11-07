@@ -5,7 +5,7 @@ import { type TranscriptionResult, transcribe } from "ai";
 import { getModelFamily } from "../../_utils/model-family";
 import { NO_PROMPT_TRAINING } from "../../data-protection";
 import { zoonkGateway } from "../../gateway";
-import { computeCallCostUsd } from "../../pricing/call-cost";
+import { addGatewayCharge, computeCallCostUsd } from "../../pricing/call-cost";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { readGatewayMetadata } from "../../provenance/gateway-metadata";
 import { type TaskRunDetails, startTaskRun } from "../../provenance/run-task-generation";
@@ -57,7 +57,10 @@ function getProviderOptions(language: string) {
   };
 }
 
-/** Billed by audio length: a model that doesn't report a duration leaves the cost unknown. */
+/**
+ * Billed by audio length: a model that doesn't report a duration leaves the cost unknown, unless
+ * the gateway's credentials paid and its debit is the whole cost.
+ */
 function buildTranscriptionProvenance({
   details,
   requestedModel,
@@ -73,7 +76,10 @@ function buildTranscriptionProvenance({
 
   return {
     ...details,
-    costUsd: usage.audioSeconds === undefined ? undefined : computeCallCostUsd({ model, usage }),
+    costUsd: addGatewayCharge({
+      charge: gateway.charge,
+      usageUsd: usage.audioSeconds === undefined ? undefined : computeCallCostUsd({ model, usage }),
+    }),
     credential: gateway.credential,
     gatewayCostUsd: gateway.costUsd,
     model,

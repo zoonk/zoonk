@@ -41,7 +41,12 @@ export function buildSpeechProvenance({
   };
 
   return {
-    costUsd: computeCallCostUsd({ model: voiced.model, serviceTier: gateway.serviceTier, usage }),
+    costUsd: computeCallCostUsd({
+      charge: gateway.charge,
+      model: voiced.model,
+      serviceTier: gateway.serviceTier,
+      usage,
+    }),
     credential: gateway.credential,
     gatewayCostUsd: gateway.costUsd,
     generatedAt: new Date().toISOString(),

@@ -89,6 +89,35 @@ describe(transcribeSpeech, () => {
     });
   });
 
+  it("costs what the gateway debited when its credentials paid, even without the audio's length", async () => {
+    vi.mocked(transcribe).mockResolvedValueOnce(
+      heard("Tengo un pero", {
+        providerMetadata: {
+          gateway: {
+            gatewayCost: "0.02",
+            routing: {
+              modelAttempts: [
+                {
+                  canonicalSlug: "microsoft/mai-transcribe-2",
+                  providerAttempts: [{ credentialType: "system", success: true }],
+                  success: true,
+                },
+              ],
+            },
+          },
+        },
+      }),
+    );
+
+    const { provenance } = await transcribeSpeech({
+      audio: AUDIO,
+      language: "es",
+      model: "microsoft/mai-transcribe-2",
+    });
+
+    expect(provenance.costUsd).toBe(0.02);
+  });
+
   it("transcribes with the requested model", async () => {
     vi.mocked(transcribe).mockResolvedValueOnce(heard("Tengo un pero"));
 

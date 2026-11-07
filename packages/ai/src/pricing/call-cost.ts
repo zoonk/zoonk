@@ -146,18 +146,52 @@ export function priceCall({
   return priceTokens({ pricing, serviceTier, usage }) + priceUnits({ pricing, usage });
 }
 
-/** Undefined when the model has no price, so an unknown model never looks free. */
+/**
+ * What AI Gateway debited from our credits for one call. When our own provider key paid (`byok`),
+ * that's only the gateway's own fees, such as its per-search tool fees; when the gateway's
+ * credentials paid (`system`), it covers the call's usage too.
+ */
+export type GatewayCharge = { coversUsage: boolean; usd: number };
+
+export function addGatewayCharge<UsageUsd extends number | undefined>({
+  charge,
+  usageUsd,
+}: {
+  charge?: GatewayCharge;
+  usageUsd: UsageUsd;
+}): UsageUsd | number {
+  if (!charge) {
+    return usageUsd;
+  }
+
+  if (charge.coversUsage) {
+    return charge.usd;
+  }
+
+  return usageUsd === undefined ? usageUsd : usageUsd + charge.usd;
+}
+
+/**
+ * Undefined when the model has no price and no gateway charge covers its usage, so an unknown
+ * model never looks free.
+ */
 export function computeCallCostUsd({
   at = new Date(),
+  charge,
   model,
   serviceTier,
   usage,
 }: {
   at?: Date;
+  charge?: GatewayCharge;
   model: string;
   serviceTier?: string;
   usage: CallUsage;
 }): number | undefined {
   const pricing = getModelPricing({ at, model });
-  return pricing ? priceCall({ pricing, serviceTier, usage }) : undefined;
+
+  return addGatewayCharge({
+    charge,
+    usageUsd: pricing ? priceCall({ pricing, serviceTier, usage }) : undefined,
+  });
 }
