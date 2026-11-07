@@ -4,7 +4,7 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { addDays } from "../../plans/planner/plan-calendar";
-import { isReleasesPageUnread } from "../products/product-releases";
+import { findNewestReleaseSearch, isReleasesPageUnread } from "../products/product-releases";
 import { getNextExamCheck, getNextSourceCheck } from "../sources/freshness-schedule";
 import { type OwedSourceChange, getOwedSourceChange } from "../sources/unnoticed-changes";
 import { refreshWebSource } from "../sources/web-sources";
@@ -230,12 +230,19 @@ async function checkSource({
 
   await prisma.source.update({ data: { nextCheckAt }, where: { id: source.id } });
 
-  // A releases page is read for its releases, never turned into a notice for learners.
+  // A releases page is read for its releases, never turned into a notice for learners. Its product
+  // is read again too while its newest release's own page is due, such as after an outage.
   const contentHash = refresh?.source.contentHash ?? source.contentHash;
 
-  const unread = source.releasesOf.filter((product) =>
-    isReleasesPageUnread({ contentHash, product }),
+  const due = await Promise.all(
+    source.releasesOf.map(
+      async (product) =>
+        isReleasesPageUnread({ contentHash, product }) ||
+        (await findNewestReleaseSearch(product.id)) !== null,
+    ),
   );
+
+  const unread = source.releasesOf.filter((_, index) => due[index]);
 
   const owed = getOwedSourceChange(refresh?.source ?? source);
 

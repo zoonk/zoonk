@@ -189,7 +189,8 @@ async function applyRelease({
     return comparison;
   }
 
-  if (comparison) {
+  // A course that taught no release has none to tell what's new against: it only gets its rewrites.
+  if (comparison && state.fromReleaseId) {
     await addWhatsNew({ ...run, comparison, state });
   }
 

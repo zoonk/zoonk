@@ -81,22 +81,33 @@ async function readNewestReleasePage({
   }
 }
 
-/**
- * Research's refresh of a stale product, a new product's research and the freshness check read a
- * product's releases through here, one run at a time; a run that finds another reading waits for
- * it and reads only what it left unread. The main courses a new current release leaves behind
- * start their update.
- */
-export async function readProductReleases(run: ReleasesRun): Promise<void> {
-  const token = `product:${run.productId}`;
+/** One run at a time per product; a run that finds another reading waits for it. */
+async function underProductClaim(productId: string, work: () => Promise<void>): Promise<void> {
+  const token = `product:${productId}`;
   using claim = await claimRunToken(token);
 
   if (claim.conflict) {
     await waitForRunToken(token);
   }
 
-  await readUnreadPage(run);
-  await readNewestReleasePage(run);
+  await work();
+}
+
+/** Research's refresh of a stale product, before its goal is linked: the releases page alone. */
+export function readUnreadReleasesPage(run: ReleasesRun): Promise<void> {
+  return underProductClaim(run.productId, () => readUnreadPage(run));
+}
+
+/**
+ * The freshness check, and research once its goal is linked, read a product's releases through
+ * here: the releases page when it's unread, then the newest release's own page when none is
+ * current. The main courses a new current release leaves behind start their update.
+ */
+export function readProductReleases(run: ReleasesRun): Promise<void> {
+  return underProductClaim(run.productId, async () => {
+    await readUnreadPage(run);
+    await readNewestReleasePage(run);
+  });
 }
 
 /** One release update per course at a time: a course already updating keeps its run. */

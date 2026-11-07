@@ -2,7 +2,11 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
-import { brandFixture, productFixture } from "@zoonk/testing/fixtures/products";
+import {
+  brandFixture,
+  productFixture,
+  productReleaseFixture,
+} from "@zoonk/testing/fixtures/products";
 import {
   examBlueprintFixture,
   learnerSourceFixture,
@@ -303,6 +307,30 @@ describe(checkFreshness, () => {
     await expect(
       checkFreshness({ now: NOW, target: { kind: "source", sourceId: source.id } }),
     ).resolves.toMatchObject({ releasesUpdate: { productIds: [unread.id] }, status: "scheduled" });
+  });
+
+  it("reads a read releases page's product again while its newest release's own page is due", async () => {
+    servePage("Version 1.0 and version 2.0.");
+    const [{ product, source }, user] = await Promise.all([productReleasesPage(), userFixture()]);
+    await goalFixture({ productId: product.id, userId: user.id });
+
+    const [, newest] = await Promise.all(
+      ["1.0", "2.0"].map((version) =>
+        productReleaseFixture({ name: `Test Product ${version}`, productId: product.id, version }),
+      ),
+    );
+
+    const check = () =>
+      checkFreshness({ now: NOW, target: { kind: "source", sourceId: source.id } });
+
+    await expect(check()).resolves.toMatchObject({ releasesUpdate: { productIds: [product.id] } });
+
+    await prisma.productRelease.update({
+      data: { pageSearchedAt: NOW },
+      where: { id: newest?.id ?? "" },
+    });
+
+    await expect(check()).resolves.toMatchObject({ releasesUpdate: null });
   });
 
   it("stops checking a source nobody studies", async () => {

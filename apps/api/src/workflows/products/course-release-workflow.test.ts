@@ -149,6 +149,34 @@ describe(courseReleaseWorkflow, () => {
     );
   });
 
+  it("compares the lessons of a course that taught no release, with no What's new chapter or offer", async () => {
+    const { course, releases } = await productCourse();
+    await prisma.course.update({ data: { productReleaseId: null }, where: { id: course.id } });
+    await follow(course.id);
+    await homedLessons(course.id, 1);
+    compareWith({ changed: [{ change: "Moved.", lesson: 1 }], whatsNew: WHATS_NEW });
+    const offers = vi.spyOn(releaseSteps, "offerWhatsNewStep");
+
+    await expect(courseReleaseWorkflow({ courseId: course.id })).resolves.toStrictEqual({
+      releasesApplied: 1,
+      status: "current",
+    });
+
+    expect(vi.mocked(compareReleaseLessons).mock.calls[0]?.[0].from).toBeNull();
+    expect(generateCourseOutline).not.toHaveBeenCalled();
+    expect(offers).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.contentReviewFlag.count({
+        where: { lesson: { homeChapter: { homeCourseId: course.id } } },
+      }),
+    ).resolves.toBe(1);
+
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+    ).resolves.toMatchObject({ productReleaseId: releases[2]?.id });
+  });
+
   it("offers What's new to every page of followers, however many", async () => {
     const { course } = await productCourse();
     await follow(course.id);

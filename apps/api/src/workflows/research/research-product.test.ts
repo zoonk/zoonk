@@ -460,7 +460,8 @@ describe("product research", () => {
         where: { organization: { domain: site.brand } },
       });
 
-      return { product, status: run.status };
+      const linked = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+      return { linked, product, status: run.status };
     }
 
     it("looks up the newest release's own page and ends with a current release", async () => {
@@ -491,8 +492,8 @@ describe("product research", () => {
       expect(product.releases.map((release) => release.releasedAt)).toStrictEqual([null, null]);
     });
 
-    it("looks a newest release's page up again after a search that failed", async () => {
-      const { product, status } = await research({
+    it("links the goal when the newest release's search fails, and looks the page up again later", async () => {
+      const { linked, product, status } = await research({
         outage: true,
         passage: "Orbit Notes 5.2 shipped on November 2, 2025.",
         releasedOn: "2025-11-02",
@@ -505,7 +506,8 @@ describe("product research", () => {
         where: { productId: product.id },
       });
 
-      expect(status).toBe("rejected");
+      expect(status).toBe("fulfilled");
+      expect(linked).toMatchObject({ productCheckedAt: expect.any(Date), productId: product.id });
       expect(vi.mocked(findProductPages)).toHaveBeenCalledTimes(3);
 
       expect(releases.map((release) => release.releasedAt)).toStrictEqual([

@@ -3,7 +3,7 @@ import { type ProductHints, type SourceResearchPlan } from "@zoonk/ai/tasks/rese
 import { toNameKey } from "@zoonk/core/library/products/keys";
 import { type GoalProductLink } from "@zoonk/core/library/products/link-goal";
 import { claimRunToken, waitForRunToken } from "../_shared/run-token";
-import { readProductReleases } from "../products/product-releases";
+import { readProductReleases, readUnreadReleasesPage } from "../products/product-releases";
 import { readReleasePage } from "./release-page";
 import { type ResearchResult } from "./research-result";
 import { type ResearchContext } from "./research-sources";
@@ -177,15 +177,7 @@ async function researchNewProduct(research: Research): Promise<GoalProductLink |
     productId: saved.link.productId,
   });
 
-  await readProductReleases({
-    analytics,
-    productId: saved.link.productId,
-    release: hints.release,
-    serviceTier: learnerTier,
-  });
-
-  const found = await findKnown(research);
-  return found?.link ?? saved.link;
+  return saved.link;
 }
 
 /**
@@ -205,7 +197,7 @@ async function refreshReleases({
   if (sourceId) {
     await Promise.allSettled([refreshProductReleasesStep(sourceId)]);
 
-    await readProductReleases({
+    await readUnreadReleasesPage({
       analytics: research.analytics,
       productId: known.product.id,
       release: research.hints.release,
@@ -315,5 +307,17 @@ export async function researchProduct({
   }
 
   await linkGoalProductStep({ goalId: goal.id, link });
+
+  // Dating the product's releases never decides the learner's research: a reading that keeps
+  // failing is left for the freshness check, which reads the product again while it's due.
+  await Promise.allSettled([
+    readProductReleases({
+      analytics,
+      productId: link.productId,
+      release: plan.product?.release ?? null,
+      serviceTier: learnerTier,
+    }),
+  ]);
+
   return READY;
 }
