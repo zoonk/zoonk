@@ -218,6 +218,34 @@ describe("saving answers", () => {
     await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
   });
 
+  it("saves a held miss before its retry when the device clock goes back between them", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+
+    const lesson = buildLesson([teachingStep("check")]);
+    const saved = buildAdapters(lesson).checkStep;
+
+    const checkStep = vi
+      .fn<LessonPlayerAdapters["checkStep"]>()
+      .mockResolvedValueOnce({ status: "failed" })
+      .mockResolvedValueOnce({ status: "failed" })
+      .mockResolvedValueOnce({ status: "failed" })
+      .mockResolvedValueOnce({ status: "failed" })
+      .mockImplementation(saved);
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep }), lesson });
+
+    await answer(WRONG_OPTION, "Not quite");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect.poll(() => checkStep.mock.calls.length).toBe(2);
+
+    vi.setSystemTime(Date.now() - 60_000);
+    await answer(RIGHT_OPTION, "Correct!");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+
+    expect(sentOptions(checkStep).slice(-2)).toStrictEqual(["path", "likely"]);
+  });
+
   it("sends a screen's save that didn't get through again before the screen's next answer", async () => {
     const lesson = buildLesson([teachingStep("check")]);
     const saved = buildAdapters(lesson).checkStep;

@@ -15,7 +15,7 @@ export type StartedRun = { learnerId: string; runId: string };
 type HeldCheck = Omit<UnsentAnswer, "runId">;
 
 /** Until the run exists, an answer has no run to be saved in, so it isn't on the device yet. */
-export type HeldAnswer = { check: HeldCheck; run: StartedRun | null };
+export type HeldAnswer = { check: HeldCheck; fromDevice: boolean; run: StartedRun | null };
 
 /** `sending`: the screen's held answers going out, oldest first, which every trigger joins. */
 export type ScreenQueue = { last: Promise<unknown>; sending: Promise<boolean> | null };
@@ -24,13 +24,16 @@ export function toRunAnswer({ answeredAt, isCorrect, stepId }: HeldCheck) {
   return { answeredAt, isCorrect, stepId };
 }
 
-function findOldest(held: Map<string, HeldAnswer>, stepId: string): HeldAnswer | undefined {
-  return [...held.values()]
-    .filter((answer) => answer.check.stepId === stepId)
-    .toSorted(
-      (first, second) => Date.parse(first.check.answeredAt) - Date.parse(second.check.answeredAt),
-    )
-    .at(0);
+function byAnsweredAt(first: HeldAnswer, second: HeldAnswer): number {
+  return Date.parse(first.check.answeredAt) - Date.parse(second.check.answeredAt);
+}
+
+/** This tab's answers keep their order: a clock set back could put a retry before its miss. */
+function findNext(held: Map<string, HeldAnswer>, stepId: string): HeldAnswer | undefined {
+  const screen = [...held.values()].filter((answer) => answer.check.stepId === stepId);
+  const own = screen.find((answer) => !answer.fromDevice);
+  const [kept] = screen.filter((answer) => answer.fromDevice).toSorted(byAnsweredAt);
+  return kept && (!own || byAnsweredAt(kept, own) < 0) ? kept : own;
 }
 
 /**
@@ -59,7 +62,7 @@ export function useHeldAnswers({
       const run = await ensureRun().catch(() => null);
 
       if (run && heldRef.current.has(check.attemptId)) {
-        heldRef.current.set(check.attemptId, { check, run });
+        heldRef.current.set(check.attemptId, { check, fromDevice: false, run });
         const answer = { ...check, runId: run.runId };
         keepUnsentAnswer({ answer, learnerId: run.learnerId, lessonId });
       }
@@ -107,10 +110,10 @@ export function useHeldAnswers({
 
       // Stops at the first answer that doesn't get through, so a miss never lands after its retry.
       const sendInOrder = async (): Promise<boolean> => {
-        const oldest = findOldest(heldRef.current, stepId);
-        const saved = oldest ? await send(oldest) : true;
+        const next = findNext(heldRef.current, stepId);
+        const saved = next ? await send(next) : true;
 
-        if (oldest && saved) {
+        if (next && saved) {
           return sendInOrder();
         }
 
@@ -137,7 +140,7 @@ export function useHeldAnswers({
 
   const hold = useCallback(
     (check: HeldCheck) => {
-      heldRef.current.set(check.attemptId, { check, run: null });
+      heldRef.current.set(check.attemptId, { check, fromDevice: false, run: null });
       void keepInRun(check);
 
       void resendScreen(check.stepId).then((saved) => {
@@ -154,7 +157,13 @@ export function useHeldAnswers({
       const kept = readUnsentAnswers({ learnerId, lessonId });
 
       for (const { runId, ...check } of kept) {
-        heldRef.current.set(check.attemptId, { check, run: { learnerId, runId } });
+        if (!heldRef.current.has(check.attemptId)) {
+          heldRef.current.set(check.attemptId, {
+            check,
+            fromDevice: true,
+            run: { learnerId, runId },
+          });
+        }
       }
 
       return kept;
