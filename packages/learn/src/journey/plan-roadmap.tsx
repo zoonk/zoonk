@@ -66,12 +66,14 @@ function RoadmapCompact({
 
       {position && (
         <span className={cn(TITLE_ROW_CLASS, "w-full items-baseline text-xs")}>
-          <span className="flex items-baseline">
-            <span className={cn(TRUNCATED_TITLE_CLASS, "min-w-0 font-medium")}>
+          <span className="flex flex-wrap items-baseline">
+            <span
+              className={cn(TRUNCATED_TITLE_CLASS, "max-w-max min-w-0 grow basis-24 font-medium")}
+            >
               {position.name}
             </span>
             {position.day && (
-              <span className="text-muted-foreground shrink-0 whitespace-pre">{` · ${position.day}`}</span>
+              <span className="text-muted-foreground whitespace-pre-wrap">{` · ${position.day}`}</span>
             )}
           </span>
           <span className="text-muted-foreground flex items-center gap-0.5 font-mono tabular-nums">

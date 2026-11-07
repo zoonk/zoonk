@@ -11,7 +11,7 @@ import { cn } from "@zoonk/ui/lib/utils";
  * its parent, as a block or a `flex-1` item.
  */
 export const TITLE_ROW_CLASS =
-  "@container flex flex-wrap items-center justify-between gap-x-3 wrap-break-word *:first:min-w-0 *:first:max-w-max *:first:grow *:first:basis-[6rem] stacked:*:first:max-w-none stacked:*:first:basis-full";
+  "@container flex flex-wrap items-center justify-between gap-x-3 wrap-break-word *:first:min-w-0 *:first:max-w-max *:first:grow *:first:basis-24 stacked:*:first:max-w-none stacked:*:first:basis-full";
 
 /** A title row's title that truncates beside its values, and reads in full once the row stacks. */
 export const TRUNCATED_TITLE_CLASS = "truncate stacked:whitespace-normal";
