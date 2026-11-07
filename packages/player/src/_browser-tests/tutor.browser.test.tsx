@@ -97,7 +97,10 @@ function freezeClock() {
   });
 }
 
-/** Vitest advances a fake clock while a click waits, which can run a poll first; a key press doesn't. */
+/**
+ * Vitest advances a fake clock while a click waits (https://github.com/vitest-dev/vitest/issues/11910),
+ * which can run a poll first; a key press doesn't.
+ */
 async function checkAgain(sheet: Locator) {
   await focusOn(sheet.getByRole("button", { name: "Check again" }));
   await press("Enter");
