@@ -48,11 +48,12 @@ describe(findBareLatex, () => {
     expect(texts.flatMap((text) => find(text))).toStrictEqual([]);
   });
 
-  it("doesn't look for backslash commands or bare subscripts, which are as often paths, escapes or identifiers", () => {
+  it("doesn't look for backslash commands, bare subscripts or spaced carets, which are as often something else", () => {
     const texts = [
       String.raw`Open C:\log.txt or (logs\log.txt), read data\train.jsonl in src\utils.`,
       String.raw`In a regex, \S matches a non-space and \n starts a new line.`,
       "Set StandardCharsets.UTF_8, rename db_1, and note that methane is CH_4.",
+      "A caret with spaces is as often named in prose: x ^ 2, (a + b) ^ 2, O ^ (acento) and $r$^2.",
     ];
 
     expect(texts.flatMap((text) => find(text))).toStrictEqual([]);
@@ -126,8 +127,6 @@ describe(wrapBareLatex, () => {
       "The square is x'^2, the limit e^∞, the value 10^(−5).",
       String.raw`The volume is \frac{4\pi r^3}{3}.`,
       "Complete 10^? = 1000, where the equilibrium price is p^*.",
-      "A square has area x ^ 2, or x^ 2, and 10 ^ -5 is small.",
-      "The area is (a + b) ^ 2, the gap 10 ^ {−5} m.",
       "Complete |x|^? = 16 when |x| = 2.",
     ];
 

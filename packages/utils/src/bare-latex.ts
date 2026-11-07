@@ -6,14 +6,6 @@ import { type TextLayout } from "./text-flaws";
 /** A caret between two characters, or a braced script, is math a writer left outside `$…$`. */
 const RAW_SCRIPT = /\S\^\S|[\^_]\{/u;
 
-/**
- * A power written with spaces around its caret (`x ^ 2`, `(a + b) ^ 2`, `10 ^ {-5}`): a number, a
- * letter or a closing mark before it and a number or an opening bracket after it, so a caret named in
- * prose (`, ^ matches`, `O ^ é`) isn't one.
- */
-const SPACED_CARET =
-  /(?:(?<![\p{L}\p{N}])(?:\p{N}+(?:\.\p{N}+)?|\p{L})|[)\]}|])(?:\s+\^\s*|\^\s+)(?:[-−+]?\p{N}+|[({[])/gu;
-
 /** Trimming took the mark after this caret (`10^?`, `|x|^?`); a lone caret in quotes is a symbol. */
 const ENDING_CARET = /[\p{L}\p{N})\]}|]\^$/u;
 
@@ -164,13 +156,7 @@ function describe({ latex, written }: Pick<BareLatex, "latex" | "written">): str
 }
 
 function findInLine(line: string): string[] {
-  const hidden = hideMathAndCode(line);
-  const spaced = [...hidden.matchAll(SPACED_CARET)].map((match) => match[0]);
-
-  return [
-    ...findBareLatexIn(hidden).map((piece) => describe(piece)),
-    ...spaced.map((written) => describe({ latex: null, written })),
-  ];
+  return findBareLatexIn(hideMathAndCode(line)).map((piece) => describe(piece));
 }
 
 /** After `wrapBareLatex`, what's left is beyond a plain power, in bold or italics, or beside another `$`. */
