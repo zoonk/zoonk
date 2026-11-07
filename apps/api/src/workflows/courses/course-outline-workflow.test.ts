@@ -35,6 +35,7 @@ import * as logger from "@zoonk/utils/logger";
 import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { getWorkflowMetadata, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
+import { listDayStandIns } from "../../../../../packages/core/src/lookahead/outline-window";
 import { getDayOutlines } from "../../../../../packages/core/src/sessions/_utils/outlining-stand-ins";
 import { mockHookConflict, workflowWriteMock } from "../../../mocks/workflow";
 import { mockLastRunEvent } from "../../../mocks/workflow-runtime";
@@ -1344,6 +1345,59 @@ describe(courseOutlineWorkflow, () => {
 
     expect({ outlines: atEarlySave.outlines, shown: atEarlySave.shown }).toMatchObject({
       shown: waiting ? atEarlySave.shown : atEarlySave.planToday,
+    });
+  });
+
+  it("stops waiting on today's lessons once the ask's outline is done, even when it left some unwritten", async () => {
+    const [{ bandSkills, goal }, course] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+    ]);
+
+    await prisma.goal.update({
+      data: { primaryCourseId: course.id, timezone: "UTC" },
+      where: { id: goal.id },
+    });
+
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    await studySessionFixture({
+      goalId: goal.id,
+      planVersion: plan.version,
+      plannedMinutes: 0,
+      userId: goal.userId,
+    });
+
+    // The learner's preparation starts this course's outline and leaves the ask for it to end.
+    const askedAt = await askForLessons({ goalId: goal.id });
+    await endLessonsAsk({ askedAt: askedAt ?? 0, goalId: goal.id, startedCourseIds: [course.id] });
+
+    // The model leaves some of the band's skills uncovered (normalizeCourseOutline's uncoveredSkillKeys).
+    outlineOneChapter();
+
+    await courseOutlineWorkflow({
+      bands: [{ level: "overview", skills: bandSkills }],
+      courseId: course.id,
+      scope,
+    });
+
+    const localDate = new Date(`${new Date().toISOString().slice(0, 10)}T00:00:00Z`);
+
+    const [stored, standIns, outlines, ended] = await Promise.all([
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+      listDayStandIns({ goalId: goal.id, localDate }),
+      getDayOutlines({ goal: { id: goal.id, primaryCourseId: course.id }, localDate }),
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ]);
+
+    // Nothing is writing, yet today still holds a stand-in the outline left.
+    expect(stored.outlineStatus).toBe("completed");
+    expect(standIns.length).toBeGreaterThan(0);
+
+    // Today asks the learner to request them instead of saying they're on the way.
+    expect({ lessonsAskedAt: ended.lessonsAskedAt, outlines }).toStrictEqual({
+      lessonsAskedAt: null,
+      outlines: "idle",
     });
   });
 
