@@ -16,6 +16,7 @@ const STEPS = [checkStep("q1"), explanationStep("idea"), checkStep("q2"), checkS
 
 const STARTED: LessonPlayerAction = {
   answers: [],
+  held: [],
   hyperdrive: { knownStepIds: [], streak: 0 },
   replay: false,
   runId: "run",

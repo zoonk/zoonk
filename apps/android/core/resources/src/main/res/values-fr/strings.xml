@@ -64,6 +64,8 @@
   "not_found_description": "f9a92ace3b35477b3397f0b09141177936313d20e52aa4379a4393bfd6009c02",
   "not_found_go_home": "1973394b75d6eca01015c246a88a7c58be5c412c98e676cf05ea66f8a61cd6e1",
   "not_found_title": "8283917f147ffb6ad6c3f29743501f2e31d2ae3b0fb93bd98a9eab2eb8055eb9",
+  "player_not_saved": "f28c4879fbe8daab9ec7864d2c5dece90fcd8ee23714b04db3d711e509750ac5",
+  "player_not_saved_description": "4412cb778f504ae495be61b409893447cfabc3b92f1fd5ed9ebade72ef71264b",
   "suggestion_save_failed": "3201328931b215cc862758f886986add42f378c955330e0da377b83466bd972d",
   "suggestion_view": "1dcbae3a8851c1faf1f89a935ef862acc0be17cc10baf7fc0590148e7a03cde7",
   "task_leave": "6db565c745931437e4b0783c99b62b93de0ebe9c62e972e0f5db499b0a9c51ad",
@@ -158,4 +160,6 @@
     <!-- %1$s is a document\'s title, %2$s a page number. -->
     <string name="citation_page">%1$s, page %2$s</string>
     <string name="citation_slide">%1$s, diapositive %2$s</string>
+    <string name="player_not_saved">Pas encore enregistré</string>
+    <string name="player_not_saved_description">Certaines réponses ne sont pas encore enregistrées. On continuera d’essayer tant que cette leçon restera ouverte.</string>
 </resources>

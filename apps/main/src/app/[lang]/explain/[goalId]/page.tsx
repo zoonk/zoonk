@@ -50,7 +50,7 @@ async function ExplainContent({ params }: Props) {
     <MainLearnProvider>
       <ExplainClient
         explanation={result.explanation}
-        hasSession={Boolean(session)}
+        learnerId={session?.user.id ?? null}
         soundsEnabled={profile?.soundsEnabled ?? true}
         tutor={tutor}
         tutorSuggestions={tutorSuggestions}

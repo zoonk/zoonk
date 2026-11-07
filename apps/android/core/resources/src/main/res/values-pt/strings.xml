@@ -64,6 +64,8 @@
   "not_found_description": "1f9f90c25b9cdd4a59d58f3d29c44e56568fd95d2d3d254a1779cd835ac342ca",
   "not_found_go_home": "17eae6ccbed3804a1cf0525babe20b1cd764510e1c14871e498ecf775fd017ad",
   "not_found_title": "a54234e10a21588e264d0111397d9372b3841c8601914ce752cb8b49faae8c71",
+  "player_not_saved": "11615190eb8261b3acc51d85bc78d22be0f663366a996d45afe64aca44994c97",
+  "player_not_saved_description": "86828e39de8ae7d5d416b0bb67c3e45bc144b9425f1bac37eaf184e3d982a66a",
   "suggestion_save_failed": "64f77e2077e7d4f067f974eabdcc53a20ac52105964c1a1d6fe1a1f03e6f09e6",
   "suggestion_view": "3d160efc2a851cc8cb8b887b76439d4c85bf15bdbeec4eb2da058732e8bcad57",
   "task_leave": "177cb39387567943127b8e077274966476e8573f7f4bec70580fe56164773c57",
@@ -158,4 +160,6 @@
     <!-- %1$s is a document\'s title, %2$s a page number. -->
     <string name="citation_page">%1$s, página %2$s</string>
     <string name="citation_slide">%1$s, slide %2$s</string>
+    <string name="player_not_saved">Ainda não foi salvo</string>
+    <string name="player_not_saved_description">Algumas respostas ainda não foram salvas. A gente vai continuar tentando enquanto a aula estiver aberta.</string>
 </resources>

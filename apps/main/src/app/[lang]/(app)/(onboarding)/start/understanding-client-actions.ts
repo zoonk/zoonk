@@ -16,10 +16,10 @@ export const WEB_UNDERSTANDING_ACTIONS: UnderstandingActions = {
   start: async (input) => {
     const guest = await ensureGuestSession();
 
-    if (guest === "ready") {
+    if (guest.status === "ready") {
       return startUnderstandingAction({ ...input, timeZone: getLocalTimeZone() });
     }
 
-    return { status: guest === "blocked" ? "browserBlocked" : "failed" };
+    return { status: guest.status === "blocked" ? "browserBlocked" : "failed" };
   },
 };

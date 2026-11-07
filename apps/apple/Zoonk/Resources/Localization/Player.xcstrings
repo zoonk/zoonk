@@ -7286,6 +7286,65 @@
         }
       }
     },
+    "Not saved yet" : {
+      "comment" : "Names the lesson's header icon shown while some answers haven't reached Zoonk",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nicht gespeichert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún sin guardar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrement en attente"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvataggio in sospeso"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ保存されていません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 저장되지 않음"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeszcze nie zapisano"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda não salvo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz kaydedilmedi"
+          }
+        }
+      }
+    },
     "Nothing left to answer" : {
       "comment" : "Title of a lesson opened again with every step answered, before Finish saves it",
       "localizations" : {
@@ -9821,6 +9880,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yavaş dinle"
+          }
+        }
+      }
+    },
+    "Some answers aren't saved yet. We'll keep trying while this lesson is open." : {
+      "comment" : "Opens from the lesson's header icon for answers not saved yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einige Antworten sind noch nicht gespeichert. Wir versuchen es weiter, solange diese Lektion geöffnet ist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algunas respuestas aún no están guardadas. Seguiremos intentando guardarlas mientras esta lección esté abierta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certaines réponses ne sont pas encore enregistrées. On continuera d’essayer tant que cette leçon restera ouverte."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alcune risposte non sono ancora state salvate. Continueremo a riprovare finché questa lezione resta aperta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一部の回答がまだ保存されていません。このレッスンを開いている間は、引き続き保存を試みます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 저장되지 않은 답이 있어요. 이 레슨이 열려 있는 동안 계속 저장을 시도할게요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie wszystkie odpowiedzi zostały jeszcze zapisane. Będziemy próbować dalej, dopóki lekcja jest otwarta."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algumas respostas ainda não foram salvas. A gente vai continuar tentando enquanto esta aula estiver aberta."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bazı cevaplar henüz kaydedilmedi. Bu ders açık olduğu sürece kaydetmeyi denemeye devam edeceğiz."
           }
         }
       }

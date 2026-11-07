@@ -65,6 +65,8 @@ export type LessonPlayerState = {
   stepStartedAt: number;
   steps: Record<string, PlayableLibraryStep>;
   unavailableStepIds: string[];
+  /** Set only by a save that failed, so a resend that gets through at once never shows it. */
+  unsavedAnswers: boolean;
   writingRestore: Pick<LessonPlayerState, "position" | "queue" | "skippedWritingStepIds"> | null;
 };
 
@@ -79,6 +81,8 @@ export type LessonPlayerAction =
   | { result: LessonPlayerCompletionState["result"]; type: "completionSaved" }
   | {
       answers: LessonRunAnswers;
+      /** Answers given on this device that the server may not have yet. */
+      held: LessonRunAnswers;
       hyperdrive: LessonRunHyperdrive;
       replay: boolean;
       runId: string;
@@ -86,6 +90,7 @@ export type LessonPlayerAction =
       optionalStepIds?: string[];
       type: "runStarted";
     }
+  | { answers: LessonRunAnswers; type: "unsentPlaced" }
   | {
       answers: LessonRunAnswers;
       optionalStepIds?: string[];
@@ -95,12 +100,14 @@ export type LessonPlayerAction =
     }
   | { issue?: CheckIssue; stepId: string; type: "checkFailed" }
   | { stepId: string; type: "checkStarted" }
+  | { type: "allSaved" }
   | { type: "completionFailed" }
   | { type: "completionRetried" }
   | { type: "continue" }
   | { type: "explainFirst" }
   | { type: "knowThis" }
   | { type: "runStarting" }
+  | { type: "saveFailed" }
   | { type: "writingRestored" };
 
 export function createInitialState(
@@ -137,6 +144,7 @@ export function createInitialState(
     stepStartedAt: now,
     steps,
     unavailableStepIds: [],
+    unsavedAnswers: false,
     writingRestore: null,
   };
 }

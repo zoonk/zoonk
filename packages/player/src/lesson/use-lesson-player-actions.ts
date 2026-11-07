@@ -62,31 +62,25 @@ export function useLessonPlayerActions({
   state,
   track,
   writeExampleLines,
-}: ActionsInput): LessonPlayerActions {
-  const {
-    ensureRun,
-    flushChecks,
-    keepGrade,
-    track: trackCheck,
-  } = useLessonRun({ adapters, dispatch });
+}: ActionsInput) {
+  const lessonRun = useLessonRun({ adapters, dispatch, lessonId: state.lessonId });
+  const { ensureRun, flushChecks, resendHeld } = lessonRun;
 
   const { gradeOnServer, recordInBackground, submitSpokenAnswer } = useStepGrading({
+    ...lessonRun,
     adapters,
     dispatch,
-    ensureRun,
-    keepGrade,
     state,
-    trackCheck,
   });
 
   const saveCompletion = useEffectEvent(async () => {
-    const [allSaved, runId] = await Promise.all([flushChecks(), ensureRun()]);
+    const [allSaved, run] = await Promise.all([flushChecks(), ensureRun()]);
 
     const outcome =
-      allSaved && runId
+      allSaved && run
         ? await adapters
             .completeLesson({
-              runId,
+              runId: run.runId,
               ...(state.skippedWritingStepIds.length > 0 && {
                 skippedWritingStepIds: state.skippedWritingStepIds,
               }),
@@ -102,7 +96,7 @@ export function useLessonPlayerActions({
     const [restarted, pictures] =
       outcome?.status === "incomplete"
         ? await Promise.all([
-            adapters.startLesson(runId ? { runId } : undefined).catch(() => null),
+            adapters.startLesson(run ? { runId: run.runId } : undefined).catch(() => null),
             adapters.getLessonPictures?.().catch(() => []) ?? Promise.resolve([]),
           ])
         : [null, []];
@@ -178,7 +172,7 @@ export function useLessonPlayerActions({
       type: "checkResolved",
     });
 
-    recordInBackground({ answer, attemptId, step });
+    recordInBackground({ answer, attemptId, isCorrect: graded.isCorrect, step });
   }, [
     dispatch,
     ensureRun,
@@ -190,11 +184,12 @@ export function useLessonPlayerActions({
     writeExampleLines,
   ]);
 
-  return useMemo(
-    () => ({
+  const actions = useMemo(
+    (): LessonPlayerActions => ({
       check,
       continue: () => {
         void ensureRun();
+        void resendHeld();
         writeExampleLines();
         dispatch({ type: "continue" });
       },
@@ -228,6 +223,8 @@ export function useLessonPlayerActions({
       },
       submitSpokenAnswer: (input) => void submitSpokenAnswer(input),
     }),
-    [check, dispatch, ensureRun, state.steps, submitSpokenAnswer, writeExampleLines],
+    [check, dispatch, ensureRun, resendHeld, state.steps, submitSpokenAnswer, writeExampleLines],
   );
+
+  return { actions, reopen: lessonRun.reopen };
 }

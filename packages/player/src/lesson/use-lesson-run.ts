@@ -3,44 +3,29 @@
 import { type Dispatch, useCallback, useRef } from "react";
 import { type LessonPlayerAction } from "./lesson-player-state";
 import { type LessonPlayerAdapters } from "./lesson-player-types";
-
-type BackgroundCheck = () => Promise<boolean>;
-
-type ScreenQueue = { failed: BackgroundCheck[]; last: Promise<unknown> };
-
-function settle(check: BackgroundCheck): Promise<boolean> {
-  return check().catch(() => false);
-}
-
-function resendFailed(queue: ScreenQueue): Promise<boolean> {
-  const [next] = queue.failed;
-
-  if (!next) {
-    return Promise.resolve(true);
-  }
-
-  return settle(next).then((saved) => {
-    if (!saved) {
-      return false;
-    }
-
-    queue.failed = queue.failed.slice(1);
-    return resendFailed(queue);
-  });
-}
+import {
+  type HeldAnswer,
+  type ScreenQueue,
+  type StartedRun,
+  toRunAnswer,
+  useHeldAnswers,
+} from "./use-held-answers";
 
 export function useLessonRun({
   adapters,
   dispatch,
+  lessonId,
 }: {
   adapters: LessonPlayerAdapters;
   dispatch: Dispatch<LessonPlayerAction>;
+  lessonId: string;
 }) {
-  const runRef = useRef<Promise<string | null> | null>(null);
+  const runRef = useRef<Promise<StartedRun | null> | null>(null);
   const pendingRef = useRef(new Set<Promise<unknown>>());
   const screensRef = useRef(new Map<string, ScreenQueue>());
+  const heldRef = useRef(new Map<string, HeldAnswer>());
 
-  const ensureRun = useCallback((): Promise<string | null> => {
+  const ensureRun = useCallback((): Promise<StartedRun | null> => {
     if (runRef.current) {
       return runRef.current;
     }
@@ -51,6 +36,7 @@ export function useLessonRun({
       if (outcome.reason === "started") {
         dispatch({
           answers: outcome.answers,
+          held: [...heldRef.current.values()].map((held) => toRunAnswer(held.check)),
           hyperdrive: outcome.hyperdrive,
           optionalStepIds: outcome.optionalStepIds,
           replay: outcome.replay,
@@ -59,7 +45,7 @@ export function useLessonRun({
           type: "runStarted",
         });
 
-        return outcome.runId;
+        return { learnerId: outcome.learnerId, runId: outcome.runId };
       }
 
       runRef.current = null;
@@ -83,21 +69,10 @@ export function useLessonRun({
   }, []);
 
   const getQueue = useCallback((stepId: string): ScreenQueue => {
-    const queue = screensRef.current.get(stepId) ?? { failed: [], last: Promise.resolve() };
+    const queue = screensRef.current.get(stepId) ?? { last: Promise.resolve(), sending: null };
     screensRef.current.set(stepId, queue);
     return queue;
   }, []);
-
-  const inScreenOrder = useCallback(
-    <T>(stepId: string, send: (queue: ScreenQueue) => Promise<T>): Promise<T> => {
-      const queue = getQueue(stepId);
-      const request = keepPending(queue.last.then(() => send(queue)));
-
-      queue.last = request.catch(() => null);
-      return request;
-    },
-    [getQueue, keepPending],
-  );
 
   const keepGrade = useCallback(
     <T>({ request, stepId }: { request: Promise<T>; stepId: string }): Promise<T> => {
@@ -108,28 +83,20 @@ export function useLessonRun({
     [getQueue, keepPending],
   );
 
-  const track = useCallback(
-    ({ check, stepId }: { check: BackgroundCheck; stepId: string }) => {
-      void inScreenOrder(stepId, async (queue) => {
-        if ((await resendFailed(queue)) && (await settle(check))) {
-          return;
-        }
-
-        queue.failed = [...queue.failed, check];
-      });
-    },
-    [inScreenOrder],
-  );
+  const { hold, reopen, resendHeld, resendKept } = useHeldAnswers({
+    adapters,
+    dispatch,
+    ensureRun,
+    getQueue,
+    heldRef,
+    keepPending,
+    lessonId,
+  });
 
   const flushChecks = useCallback(async (): Promise<boolean> => {
     await Promise.allSettled(pendingRef.current);
+    return resendKept();
+  }, [resendKept]);
 
-    const resent = await Promise.all(
-      [...screensRef.current.keys()].map((stepId) => inScreenOrder(stepId, resendFailed)),
-    );
-
-    return resent.every(Boolean);
-  }, [inScreenOrder]);
-
-  return { ensureRun, flushChecks, keepGrade, track };
+  return { ensureRun, flushChecks, hold, keepGrade, reopen, resendHeld };
 }

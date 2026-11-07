@@ -3,10 +3,13 @@ import { type PlayableLibraryLesson } from "@zoonk/core/lesson-player/playable-l
 import { NOTHING_REACHED } from "@zoonk/core/sessions/reached";
 import { type LessonPlayerAdapters, type LessonStartOutcome } from "../lesson/lesson-player-types";
 
+export const PREVIEW_LEARNER_ID = "preview";
+
 function startedRun(): Extract<LessonStartOutcome, { reason: "started" }> {
   return {
     answers: [],
     hyperdrive: { knownStepIds: [], streak: 0 },
+    learnerId: PREVIEW_LEARNER_ID,
     reason: "started",
     replay: false,
     runId: crypto.randomUUID(),

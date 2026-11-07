@@ -3,7 +3,7 @@
 import { type TrackEvent } from "@zoonk/core/analytics/events";
 import { type ChallengeTeam } from "@zoonk/core/library/challenges/team";
 import { usePreloadMath } from "@zoonk/learn/rich-text/preload-math";
-import { useEffect, useEffectEvent, useMemo, useReducer } from "react";
+import { useEffectEvent, useLayoutEffect, useMemo, useReducer } from "react";
 import { type PlayerLinkComponent } from "../player-context";
 import { LessonPicturesProvider } from "./_components/lesson-pictures";
 import { resumeLesson } from "./_utils/lesson-resume";
@@ -102,7 +102,8 @@ export type LessonPlayerProviderProps = {
   soundsEnabled?: boolean;
   track?: TrackEvent;
   tutor?: LessonTutorConfig;
-  viewer: { hasSession: boolean };
+  /** Null for a visitor, whose run starts on their first tap. */
+  viewer: { learnerId: string | null };
 };
 
 function noTracking() {
@@ -137,7 +138,7 @@ export function LessonPlayerProvider({
 
   const exampleLines = useExampleLines({ adapters, steps: lesson.steps });
 
-  const actions = useLessonPlayerActions({
+  const { actions, reopen } = useLessonPlayerActions({
     adapters,
     dispatch,
     language: lesson.language,
@@ -157,6 +158,7 @@ export function LessonPlayerProvider({
       dispatch({ opening: true, type: "skipWriting" });
     }
 
+    const held = viewer.learnerId ? reopen(viewer.learnerId) : [];
     const first = lesson.steps[0];
     const answer = state.answers[first?.id ?? ""];
 
@@ -165,12 +167,19 @@ export function LessonPlayerProvider({
       return;
     }
 
-    if (viewer.hasSession) {
+    if (held.length > 0) {
+      dispatch({ answers: [...resume, ...held], type: "unsentPlaced" });
+      return;
+    }
+
+    if (viewer.learnerId) {
       actions.retryStart();
     }
   });
 
-  useEffect(() => {
+  // Before the first paint and before React replays a tap made while the page loaded, so the tap
+  // can't act on the screen the server drew. Rendering can't read storage: the server has none.
+  useLayoutEffect(() => {
     onOpen();
   }, []);
 

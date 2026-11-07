@@ -250,7 +250,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
           challengeTeam={challengeTeam}
           firstAnswer={firstAnswer}
           fit={fit}
-          hasSession={Boolean(session)}
+          learnerId={session?.user.id ?? null}
           lesson={result.lesson}
           resume={resume}
           routing={routing}
@@ -264,7 +264,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
         <LessonPlayerClient
           challengeTeam={challengeTeam}
           firstAnswer={firstAnswer}
-          hasSession={Boolean(session)}
+          learnerId={session?.user.id ?? null}
           lesson={played.lesson}
           resume={resume}
           routing={routing}

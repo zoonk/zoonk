@@ -1,5 +1,6 @@
 "use client";
 
+import { StatusRegion } from "@zoonk/learn/status-region";
 import {
   TASK_HEADER_ICON_CLASS,
   TaskHeader,
@@ -8,9 +9,15 @@ import {
   TaskHeaderSide,
   TaskHeaderTitle,
 } from "@zoonk/learn/task-header";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverTrigger,
+} from "@zoonk/ui/components/popover";
 import { cn } from "@zoonk/ui/lib/utils";
-import { XIcon } from "lucide-react";
+import { CloudOffIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLeaveLesson } from "./lesson-leave";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
@@ -55,6 +62,36 @@ function LessonCloseLink() {
   );
 }
 
+function UnsavedAnswers() {
+  const t = useExtracted();
+  const { state } = useLessonPlayer();
+
+  return (
+    <>
+      <StatusRegion className="sr-only">{state.unsavedAnswers && t("Not saved yet")}</StatusRegion>
+
+      {state.unsavedAnswers && (
+        <Popover>
+          <PopoverTrigger
+            render={
+              <Button className="text-muted-foreground shrink-0" size="icon" variant="ghost" />
+            }
+          >
+            <CloudOffIcon aria-hidden="true" />
+            <span className="sr-only">{t("Not saved yet")}</span>
+          </PopoverTrigger>
+
+          <PopoverContent align="end" className="w-64">
+            <PopoverDescription className="text-popover-foreground">
+              {t("Some answers aren't saved yet. We'll keep trying while this lesson is open.")}
+            </PopoverDescription>
+          </PopoverContent>
+        </Popover>
+      )}
+    </>
+  );
+}
+
 function useLessonProgress(): number {
   const { screen } = useLessonPlayer();
   const { current, total } = screen.progress;
@@ -78,6 +115,7 @@ export function LessonPlayerHeader() {
         <TaskHeaderTitle title={lesson.title} />
 
         <TaskHeaderSide align="end">
+          <UnsavedAnswers />
           <LessonScreenMenu />
         </TaskHeaderSide>
       </TaskHeaderBar>

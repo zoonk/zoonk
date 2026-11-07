@@ -587,6 +587,16 @@ class LessonPlayerReducerTest {
     }
 
     @Test
+    fun heldAnswersPlaceTheLearnerWithoutBeingCarriedFromAnEarlierSitting() {
+        val held = RunAnswer("q1", true, STARTED_AT - kotlin.time.Duration.parse("1m"))
+        val action = started().copy(heldAnswers = listOf(held))
+        val resumed = play(listOf(checkStep("q1"), explanationStep("next"), checkStep("q2")), action)
+
+        assertEquals("next", resumed.currentId)
+        assertTrue((resumed.run as LessonRun.Started).carriedStepIds.isEmpty())
+    }
+
+    @Test
     fun waitsForADeliberateFinishOnAResumedRunWithEveryScreenAnswered() {
         val steps = listOf(explanationStep("e1"), checkStep("q1"))
         val answer = RunAnswer("q1", true, ANSWERED_AT)

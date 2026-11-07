@@ -64,6 +64,8 @@
   "not_found_description": "f0c5df7f84177bcebc5d36bd7be89ee4986e7022751699bd79056d70771fd4b2",
   "not_found_go_home": "8991f7934124c7dd48c8301ecb5bba9e6185dacc1a64c0d3e58429ef7f6e95d9",
   "not_found_title": "6be6cc1e91ab29b4b09a3d4b085b009cdd3999e4c21f3e408311c581e03f4a94",
+  "player_not_saved": "4e266e63c02e5ffacce35c878acfbef62defeeb19de316b042480e4dc9fd8393",
+  "player_not_saved_description": "b82c75378ad1a68faaeea1ad108700349135a601eae32ce3b77e4b82b09f0eb4",
   "suggestion_save_failed": "480f9201290520e75e0153ad10c21d55772b1d3ee204c42276469109145f20ab",
   "suggestion_view": "87e0754a658b539b073255533eaad7665d04cf81e81cefabfde2ef18471f35a7",
   "task_leave": "35cab1a652e1aed3abba5390d6e524cfee544775b6c5e81e98651f5c04fac094",
@@ -158,4 +160,6 @@
     <!-- %1$s is a document\'s title, %2$s a page number. -->
     <string name="citation_page">%1$s, página %2$s</string>
     <string name="citation_slide">%1$s, diapositiva %2$s</string>
+    <string name="player_not_saved">Aún sin guardar</string>
+    <string name="player_not_saved_description">Algunas respuestas aún no se guardaron. Seguiremos intentándolo mientras esta lección esté abierta.</string>
 </resources>

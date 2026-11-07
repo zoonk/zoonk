@@ -6,7 +6,10 @@ import { uuidSchema } from "@zoonk/utils/uuid-schema";
 
 const stepIdSchema = uuidSchema();
 
-/** The player resends a 500; a finished run or an answer that doesn't fit the screen is a refusal no retry changes. */
+/**
+ * The player keeps and resends a 500 or an answer sent after its session ended (it may come back);
+ * a finished run or an answer that doesn't fit the screen is a refusal no retry changes.
+ */
 export const POST = appPostRoute<{ stepId: string }>(
   "lessonStepCheckRoute",
   async (request, { stepId }): Promise<LessonCheckOutcome> => {
@@ -18,8 +21,10 @@ export const POST = appPostRoute<{ stepId: string }>(
 
     const outcome = await checkLessonStep({ input: input.data, stepId });
 
-    return outcome.status === "checked"
-      ? { result: outcome.result, status: "checked" }
-      : { status: "refused" };
+    if (outcome.status === "checked") {
+      return { result: outcome.result, status: "checked" };
+    }
+
+    return outcome.status === "unauthorized" ? { status: "failed" } : { status: "refused" };
   },
 );

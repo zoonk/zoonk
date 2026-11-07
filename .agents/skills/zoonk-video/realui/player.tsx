@@ -440,7 +440,7 @@ function Tutored({ lang, finish = false }: { finish?: boolean; lang: Lang }) {
         onExit={() => null}
         routes={{ exit: "/", exitTo: null, nextLesson: null, signUp: "/", upgrade: "/" } as any}
         tutor={tutor as any}
-        viewer={{ hasSession: true } as any}
+        viewer={{ learnerId: "preview" } as any}
       >
         <LessonPlayerShell />
       </LessonPlayerProvider>

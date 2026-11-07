@@ -78,7 +78,7 @@ type LessonPlayerClientProps = {
     "completion" | "completionActions"
   >;
   firstAnswer: string | null;
-  hasSession: boolean;
+  learnerId: string | null;
   lesson: PlayableLibraryLesson;
   outline?: boolean;
   resume?: LessonRunAnswers;
@@ -94,7 +94,7 @@ function LessonPlayerVisit({
   challengeTeam = null,
   endingSlots,
   firstAnswer,
-  hasSession,
+  learnerId,
   lesson,
   outline = false,
   resume,
@@ -167,7 +167,7 @@ function LessonPlayerVisit({
       soundsEnabled={soundsEnabled}
       track={trackEvent}
       tutor={tutor}
-      viewer={{ hasSession }}
+      viewer={{ learnerId }}
     >
       <LessonPlayerShell />
     </LessonPlayerProvider>

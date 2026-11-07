@@ -140,7 +140,10 @@ describe("numbered pictures", () => {
 
     renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
 
-    await expect.element(page.getByRole("status")).toHaveTextContent("Drawing the picture…");
+    await expect
+      .element(page.getByRole("status").filter({ hasText: "Drawing the picture…" }))
+      .toBeVisible();
+
     await expect.element(page.getByText(heart.fields.picture.alt)).toBeVisible();
     await expect.element(firstSpot).toBeDisabled();
 

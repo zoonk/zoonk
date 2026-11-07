@@ -64,6 +64,8 @@
   "not_found_description": "8191ddd8f0b473232b5bd8b6fc8c6b573bb0f82c899b46561c343c59e59995e7",
   "not_found_go_home": "d8c5aa16a565b1b56b210a5e8a2acf1b88dc33b3ad8b0ea608a181bc376ba879",
   "not_found_title": "12326177841bbc90578b294f5e0784ea93661a9b3e09d3fefdc431cd05ce4c8b",
+  "player_not_saved": "d66bc9b5d3048a476b8fa0a70340508de4847c91762ade0c9c1f925137275e0e",
+  "player_not_saved_description": "376547f3d52ee0220c01d7d7ca993d5d6b6d5f7a25ebc1c1feb7d4a5dbd61b9a",
   "suggestion_save_failed": "02fbee30e383655064d1e2eb7fe48ce9521e4e2fc702ca3eeb5513fe63fa06cf",
   "suggestion_view": "e3a1fb8f637296b1df8426e16ce50ab0f7e50bd50aacf93f195548bbe8f8599a",
   "task_leave": "c1f53a985e7316412400f7f986d42a52663c3a0411340458979daf05c7a44180",
@@ -158,4 +160,6 @@
     <!-- %1$s is a document\'s title, %2$s a page number. -->
     <string name="citation_page">%1$s, %2$s페이지</string>
     <string name="citation_slide">%1$s, %2$s번 슬라이드</string>
+    <string name="player_not_saved">아직 저장되지 않음</string>
+    <string name="player_not_saved_description">일부 답이 아직 저장되지 않았어요. 레슨이 열려 있는 동안 계속 저장을 시도할게요.</string>
 </resources>

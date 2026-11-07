@@ -40,7 +40,10 @@ describe("ensureGuestSession", () => {
     auth.signInAnonymously.mockResolvedValue(GUEST);
     const ensureGuestSession = await loadHelper();
 
-    await expect(ensureGuestSession()).resolves.toBe("ready");
+    await expect(ensureGuestSession()).resolves.toStrictEqual({
+      learnerId: "guest-1",
+      status: "ready",
+    });
 
     expect(auth.signInAnonymously).toHaveBeenCalledOnce();
     expect(api.sendFromBrowser).not.toHaveBeenCalled();
@@ -51,7 +54,7 @@ describe("ensureGuestSession", () => {
     auth.signInAnonymously.mockResolvedValue({ data: null, error: { status: 429 } });
     const ensureGuestSession = await loadHelper();
 
-    await expect(ensureGuestSession()).resolves.toBe("failed");
+    await expect(ensureGuestSession()).resolves.toStrictEqual({ status: "failed" });
   });
 
   it("says when the bot check refused this browser, since trying again can't help", async () => {
@@ -64,7 +67,7 @@ describe("ensureGuestSession", () => {
 
     const ensureGuestSession = await loadHelper();
 
-    await expect(ensureGuestSession()).resolves.toBe("blocked");
+    await expect(ensureGuestSession()).resolves.toStrictEqual({ status: "blocked" });
   });
 
   it.each([
@@ -79,7 +82,7 @@ describe("ensureGuestSession", () => {
       api.sendFromBrowser.mockResolvedValue(new Response(null, { status: 200 }));
       const ensureGuestSession = await loadHelper();
 
-      await expect(ensureGuestSession()).resolves.toBe("ready");
+      await expect(ensureGuestSession()).resolves.toMatchObject({ status: "ready" });
 
       expect(api.sendFromBrowser).toHaveBeenCalledExactlyOnceWith({
         body: { shareUsageData: share },
@@ -96,14 +99,17 @@ describe("ensureGuestSession", () => {
     api.sendFromBrowser.mockResolvedValue(null);
     const ensureGuestSession = await loadHelper();
 
-    await expect(ensureGuestSession()).resolves.toBe("failed");
+    await expect(ensureGuestSession()).resolves.toStrictEqual({ status: "failed" });
   });
 
   it("changes nothing for a session the browser already holds", async () => {
     auth.getSession.mockResolvedValue({ data: { user: { id: "learner-l" } }, error: null });
     const ensureGuestSession = await loadHelper();
 
-    await expect(ensureGuestSession()).resolves.toBe("ready");
+    await expect(ensureGuestSession()).resolves.toStrictEqual({
+      learnerId: "learner-l",
+      status: "ready",
+    });
 
     expect(auth.signInAnonymously).not.toHaveBeenCalled();
   });
@@ -112,7 +118,7 @@ describe("ensureGuestSession", () => {
     auth.getSession.mockResolvedValue({ data: null, error: { status: 429 } });
     const ensureGuestSession = await loadHelper();
 
-    await expect(ensureGuestSession()).resolves.toBe("failed");
+    await expect(ensureGuestSession()).resolves.toStrictEqual({ status: "failed" });
 
     expect(auth.signInAnonymously).not.toHaveBeenCalled();
   });
@@ -121,7 +127,7 @@ describe("ensureGuestSession", () => {
     auth.getSession.mockRejectedValue(new TypeError("Failed to fetch"));
     const ensureGuestSession = await loadHelper();
 
-    await expect(ensureGuestSession()).resolves.toBe("failed");
+    await expect(ensureGuestSession()).resolves.toStrictEqual({ status: "failed" });
 
     expect(auth.signInAnonymously).not.toHaveBeenCalled();
   });

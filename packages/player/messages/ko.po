@@ -3459,6 +3459,16 @@ msgid "Close lesson"
 msgstr "레슨 닫기"
 
 #: src/lesson/lesson-player-header.tsx
+msgctxt "0WZ-rc"
+msgid "Not saved yet"
+msgstr "아직 저장되지 않음"
+
+#: src/lesson/lesson-player-header.tsx
+msgctxt "4fcWWV"
+msgid "Some answers aren't saved yet. We'll keep trying while this lesson is open."
+msgstr "아직 저장되지 않은 답이 있어요. 이 레슨이 열려 있는 동안 계속 저장을 시도할게요."
+
+#: src/lesson/lesson-player-header.tsx
 msgctxt "dYp90P"
 msgid "Lesson progress"
 msgstr "레슨 진도"

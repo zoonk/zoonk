@@ -22,6 +22,8 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.pressKey
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.LoadState
@@ -287,7 +289,27 @@ class LessonPlayerFlowTest {
     }
 
     @Test
-    fun aRunWaitsWhileAnAnswerTheAppNeverSentStillCantGetThrough() {
+    fun aReopenedLessonsHeldAnswerShowsNoIndicatorWhenItsResendSucceeds() {
+        play(listOf(checkStep("quiz"), summaryStep("end"))) { checkFailures = 1 }
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        api.gate = CompletableDeferred()
+
+        val reopened = openAgain()
+        rule.waitUntil { api.checks.size == 2 }
+
+        try {
+            assertTrue(!reopened.hasUnsent)
+        } finally {
+            api.gate?.complete(Unit)
+        }
+        rule.waitUntil { reopened.state.value?.run is LessonRun.Started }
+        assertTrue(!reopened.hasUnsent)
+    }
+
+    @Test
+    fun aRunStartsAfterAHeldAnswerEvenWhenItsResendFails() {
         play(listOf(checkStep("quiz"), summaryStep("end"))) { checkFailures = 2 }
 
         tap("Right")
@@ -298,7 +320,294 @@ class LessonPlayerFlowTest {
         val reopened = openAgain()
         rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run != null && reopened.state.value?.run !is LessonRun.Starting }
 
-        assertEquals(LessonRun.Refused(LessonRefusal.Failed), reopened.state.value?.run)
+        assertTrue(reopened.state.value?.run is LessonRun.Started)
+        assertTrue(reopened.hasUnsent)
+        assertEquals(
+            "end",
+            reopened.state.value
+                ?.currentStep
+                ?.id,
+        )
+    }
+
+    @Test
+    fun continueSendsHeldAnswersBeforeTheLessonFinishes() {
+        play(listOf(checkStep("quiz"), summaryStep("end"))) { checkFailures = 1 }
+        tap("Right")
+        tap("Check")
+        rule.waitUntil { api.checks.size == 1 }
+        rule.waitForIdle()
+
+        tap("Continue")
+        rule.waitUntil { api.checks.size == 2 }
+
+        assertEquals(api.checks.first().second, api.checks.last().second)
+        assertTrue(api.completions.isEmpty())
+    }
+
+    @Test
+    fun theLessonFinishesOnlyOnceAnAnswerHeldDuringAnotherResendIsSaved() {
+        var firstOffline = true
+        var secondOffline = false
+        play(listOf(checkStep("first"), checkStep("second"), summaryStep("end"))) {
+            grade = { id, _ ->
+                if (id == "first" && firstOffline) throw ApiException(ApiError.Network)
+                if (id == "second" && secondOffline) throw ApiException(ApiError.Network)
+                checkResult(isCorrect = true)
+            }
+        }
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+
+        firstOffline = false
+        secondOffline = true
+        api.gate = CompletableDeferred()
+        rule.runOnIdle { viewModel.resendAnswers() }
+
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+        api.gate?.complete(Unit)
+        rule.waitForIdle()
+
+        assertTrue("second's answer is still held", viewModel.hasUnsent)
+        assertEquals("completion must wait for every held answer", emptyList<String>(), api.completions)
+    }
+
+    @Test
+    fun theFinishWaitsForAnAnswerHeldAfterContinueStartedAResend() {
+        var firstOffline = true
+        var secondOffline = false
+        play(listOf(checkStep("first"), checkStep("second"), summaryStep("end"))) {
+            grade = { id, _ ->
+                if (id == "first" && firstOffline) throw ApiException(ApiError.Network)
+                if (id == "second" && secondOffline) throw ApiException(ApiError.Network)
+                checkResult(isCorrect = true)
+            }
+        }
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        firstOffline = false
+        secondOffline = true
+        api.gate = CompletableDeferred()
+        tap("Continue")
+        rule.waitForIdle()
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+        api.gate?.complete(Unit)
+        rule.waitForIdle()
+
+        assertTrue(viewModel.hasUnsent)
+        assertEquals(emptyList<String>(), api.completions)
+    }
+
+    @Test
+    fun theFinishWaitsForAHeldAnswerWithNoResendRunning() {
+        var secondOffline = false
+        play(listOf(checkStep("first"), checkStep("second"), summaryStep("end"))) {
+            grade = { id, _ ->
+                if (id == "second" && secondOffline) throw ApiException(ApiError.Network)
+                checkResult(isCorrect = true)
+            }
+        }
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+        secondOffline = true
+        api.gate = CompletableDeferred()
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+        api.gate?.complete(Unit)
+        rule.waitForIdle()
+
+        assertTrue(viewModel.hasUnsent)
+        assertEquals(emptyList<String>(), api.completions)
+    }
+
+    @Test
+    fun aLostReplyMissResentAtReopenKeepsItsRetry() {
+        val quiz = "00000000-0000-4000-8000-000000000101"
+        val idea = "00000000-0000-4000-8000-000000000102"
+        val next = "00000000-0000-4000-8000-000000000103"
+        play(listOf(checkStep(quiz), explanationStep(idea), checkStep(next))) { checkFailures = 1 }
+        tap("Wrong")
+        tap("Check")
+        rule.waitForIdle()
+
+        api.runAnswers = """[{"answeredAt":"2026-10-28T10:01:00Z","isCorrect":false,"stepId":"$quiz"}]"""
+        val reopened = openAgain()
+        rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run is LessonRun.Started }
+
+        assertTrue(!reopened.hasUnsent)
+        assertEquals(listOf(quiz, idea, next, quiz), reopened.state.value?.queue)
+    }
+
+    @Test
+    fun aSavedCheckSendsOtherScreensHeldAnswers() {
+        var offline = true
+        play(listOf(checkStep("first"), checkStep("second"), summaryStep("end"))) {
+            grade = { id, _ ->
+                if (id == "first" && offline) throw ApiException(ApiError.Network)
+                checkResult(isCorrect = true)
+            }
+        }
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+        val attempts = api.checks.count { it.first == "first" }
+        offline = false
+
+        tap("Right")
+        tap("Check")
+        rule.waitUntil { api.checks.count { it.first == "first" } > attempts }
+
+        assertEquals(
+            1,
+            api.checks
+                .filter { it.first == "first" }
+                .map { it.second.attemptId }
+                .distinct()
+                .size,
+        )
+    }
+
+    @Test
+    fun aServerGradedCheckSendsOtherScreensHeldAnswers() {
+        var offline = true
+        play(listOf(checkStep("first"), typedAnswerStep("write"), summaryStep("end"))) {
+            grade = { id, _ ->
+                if (id == "first" && offline) throw ApiException(ApiError.Network)
+                checkResult(isCorrect = true)
+            }
+        }
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        tap("Continue")
+        rule.waitForIdle()
+        val attempts = api.checks.count { it.first == "first" }
+        offline = false
+
+        rule.onNode(hasSetTextAction()).performTextInput("Because the droplets are small")
+        tap("Check")
+        rule.waitUntil { api.checks.count { it.first == "first" } > attempts }
+
+        assertEquals(
+            1,
+            api.checks
+                .filter { it.first == "first" }
+                .map { it.second.attemptId }
+                .distinct()
+                .size,
+        )
+    }
+
+    @Test
+    fun foregroundTriggersMergeAndSendHeldScreensInParallel() {
+        play(listOf(checkStep("first"), checkStep("second"), summaryStep("end"))) {
+            grade = { _, _ -> throw ApiException(ApiError.Network) }
+        }
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        tap("Continue")
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        val sent = api.checks.size
+        api.gate = CompletableDeferred()
+        api.grade = { _, _ -> checkResult(isCorrect = true) }
+
+        rule.runOnIdle { repeat(3) { viewModel.resendAnswers() } }
+        rule.waitUntil { api.checks.size == sent + 2 }
+        assertEquals(
+            setOf("first", "second"),
+            api.checks
+                .drop(sent)
+                .map { it.first }
+                .toSet(),
+        )
+        api.gate?.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(sent + 2, api.checks.size)
+        assertTrue(!viewModel.hasUnsent)
+    }
+
+    @Test
+    fun aMissIsSentBeforeItsRetryAndItsFailureHoldsThatRetry() {
+        var offline = true
+        play(listOf(checkStep("quiz"), summaryStep("end"))) {
+            grade = { _, _ ->
+                if (offline) throw ApiException(ApiError.Network)
+                checkResult(isCorrect = true)
+            }
+        }
+        tap("Wrong")
+        tap("Check")
+        rule.waitForIdle()
+        val miss = api.checks.first().second
+        tap("Continue")
+        tap("Next")
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+
+        assertEquals(listOf(miss.attemptId), api.checks.map { it.second.attemptId }.distinct())
+        offline = false
+        rule.runOnIdle { viewModel.resendAnswers() }
+        rule.waitUntil { !viewModel.hasUnsent }
+
+        assertEquals(miss, api.checks[api.checks.lastIndex - 1].second)
+        assertTrue(
+            miss.attemptId !=
+                api.checks
+                    .last()
+                    .second.attemptId,
+        )
+    }
+
+    @Test
+    fun anotherLearnersHeldAnswersAreNeitherPlacedNorSent() {
+        play(listOf(checkStep("quiz"), summaryStep("end"))) { checkFailures = 1 }
+        tap("Right")
+        tap("Check")
+        rule.waitForIdle()
+        session.session = AuthenticatedSession("bia", "token-b", "local-b")
+
+        val reopened = openAgain()
+        rule.waitUntil { reopened.state.value?.run is LessonRun.Started }
+
+        assertEquals(
+            "quiz",
+            reopened.state.value
+                ?.currentStep
+                ?.id,
+        )
+        assertEquals(1, api.checks.size)
+        assertTrue(!reopened.hasUnsent)
     }
 
     @Test

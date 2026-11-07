@@ -99,6 +99,13 @@ private struct LessonPlayerContent: View {
           // A vertical bar (iPhone Duo) has no room for a title.
           .toolbar(removing: hasVerticalBar ? .title : nil)
           .taskClose { closeButton }
+          .toolbar {
+            if showsUnsavedAnswers {
+              ToolbarItem(placement: .primaryAction) {
+                UnsavedAnswersButton()
+              }
+            }
+          }
           .taskOptions(
             isShown: store.screen == .playing && store.state != nil,
             label: Text("Screen options", tableName: "Player", comment: "The lesson's menu")
@@ -148,9 +155,18 @@ private struct LessonPlayerContent: View {
     .onChange(of: store.state?.currentStep?.id) { sounds.stop() }
     // From here rather than the stage, which is made anew as a lesson comes back from its end.
     .announcesStatus(store.state?.noticeLine)
+    .announcesStatus(
+      showsUnsavedAnswers
+        ? String(
+          localized: "Not saved yet", table: "Player",
+          comment: "Names the lesson's header icon shown while some answers haven't reached Zoonk")
+        : nil
+    )
     .onChange(of: scenePhase) { _, phase in
-      if phase == .background {
-        store.reportAbandonment()
+      switch phase {
+      case .active: store.sendHeldAnswers()
+      case .background: store.reportAbandonment()
+      default: break
       }
     }
     .onDisappear {
@@ -359,6 +375,10 @@ private struct LessonPlayerContent: View {
     }
   }
 
+  private var showsUnsavedAnswers: Bool {
+    store.screen == .playing && store.hasUnsavedAnswers
+  }
+
   private var segments: [TaskSegment]? {
     guard let state = store.state, store.screen == .playing, state.phase != .completed else {
       return nil
@@ -380,6 +400,38 @@ private struct LessonPlayerContent: View {
     }
 
     return !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+  }
+}
+
+/// Quiet on purpose: the lesson goes on, and the answers go out again on their own.
+private struct UnsavedAnswersButton: View {
+  @State private var explains = false
+
+  var body: some View {
+    Button {
+      explains = true
+    } label: {
+      Label {
+        Text(
+          "Not saved yet", tableName: "Player",
+          comment: "Names the lesson's header icon shown while some answers haven't reached Zoonk")
+      } icon: {
+        Image(systemName: "icloud.slash")
+      }
+    }
+    .tint(.mutedForeground)
+    .popover(isPresented: $explains) {
+      Text(
+        "Some answers aren't saved yet. We'll keep trying while this lesson is open.",
+        tableName: "Player",
+        comment: "Opens from the lesson's header icon for answers not saved yet"
+      )
+      .typeStyle(.note)
+      .padding()
+      .frame(idealWidth: 280)
+      .presentationCompactAdaptation(.popover)
+      .zoonkStyles()
+    }
   }
 }
 

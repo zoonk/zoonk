@@ -64,6 +64,8 @@
   "not_found_description": "978c5b2510889d1160937d34cd752594e1d9050d9a5e101222f5af015c653f31",
   "not_found_go_home": "e641c471bfa8e23341bffbe50daecaf26370d7447aaefe2a2b07ad3f409b7010",
   "not_found_title": "a0f1d511f46c8fd558eb361b0cfa02577e5ab6fe2d89962c5bc0016665dd7ed2",
+  "player_not_saved": "37a323337142bde871c30c60506de3145d40ac25115b6b1eb2fc39c86ec7758b",
+  "player_not_saved_description": "0b1335c95b0d4837c9f51b4b497898c04aac71f3b2541fe0f355fbc7c0dfdf20",
   "suggestion_save_failed": "4f58d5e72794139d434a8415bffd28d4517a86c7277e7b085cacc12da6c4151d",
   "suggestion_view": "e5b376578e5de396bcb0115e083368efff9fd52e7a6ebb058a7b9b91ce691aac",
   "task_leave": "bd347d0a7bf01348cbac57a1ede5ba6c32e8bac7642dd1bad5967c5545524b79",
@@ -158,4 +160,6 @@
     <!-- %1$s is a document\'s title, %2$s a page number. -->
     <string name="citation_page">%1$s, pagina %2$s</string>
     <string name="citation_slide">%1$s, diapositiva %2$s</string>
+    <string name="player_not_saved">Salvataggio in sospeso</string>
+    <string name="player_not_saved_description">Alcune risposte non sono ancora state salvate. Continueremo a riprovare finché questa lezione resterà aperta.</string>
 </resources>

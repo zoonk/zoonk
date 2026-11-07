@@ -62,9 +62,12 @@ import com.zoonk.api.models.LessonStepCheckResult
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.LibraryLessonRun
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -85,6 +88,7 @@ import kotlinx.serialization.json.encodeToJsonElement
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 /** [fit] is where a guest's lesson sits in its course; null outside a public chapter. */
 @Immutable
@@ -114,15 +118,20 @@ sealed interface AnswerExplanation {
 private data class PendingCheck(
     val stepId: String,
     val input: LessonStepCheckInput,
+    val isCorrect: Boolean? = null,
+    val answeredAt: Instant? = null,
 ) {
     val attemptId: String get() = input.attemptId.toString()
+
+    val progress: RunAnswer? get() = isCorrect?.let { correct -> answeredAt?.let { RunAnswer(stepId, correct, it) } }
 }
 
-/** A pending answer kept on the device, so one the app never sent goes out when the lesson opens again. */
 @Serializable
 private data class UnsentAnswer(
     val stepId: String,
     val input: JsonElement,
+    val isCorrect: Boolean? = null,
+    val answeredAt: Instant? = null,
 )
 
 private sealed interface CheckOutcome {
@@ -206,6 +215,10 @@ class LessonPlayerViewModel(
     private var completing: Job? = null
     private val unsaved = mutableMapOf<String, MutableList<PendingCheck>>()
     private val screenLocks = mutableMapOf<String, Mutex>()
+    private val unsentLock = Mutex()
+    private var resending: Deferred<Boolean>? = null
+    var hasUnsent by mutableStateOf(false)
+        private set
     private var exampleLinesWrite: Job? = null
     private var writingExampleLines by mutableStateOf(false)
     private var abandonSent = false
@@ -226,6 +239,8 @@ class LessonPlayerViewModel(
         owner = session
         unsaved.clear()
         screenLocks.clear()
+        resending = null
+        hasUnsent = false
         exampleLinesWrite = null
         writingExampleLines = false
         mutableEnding.value = LessonEnding(inSession = studySessionId != null)
@@ -257,6 +272,7 @@ class LessonPlayerViewModel(
 
     fun dispatch(action: LessonAction) {
         if (action == LessonAction.Continue || action == LessonAction.GoBack) writeExampleLines()
+        if (action == LessonAction.Continue) resendAnswers()
         val before = mutableState.value
         mutableState.update { state -> state?.let { reduce(it, action, now()) } }
         val after = mutableState.value ?: return
@@ -346,6 +362,7 @@ class LessonPlayerViewModel(
         return when (outcome) {
             is GradeOutcome.Graded -> {
                 dispatch(LessonAction.CheckResolved(stepId, outcome.value.toStepResult(spoken.content.targetText), counts = true))
+                resendAnswers()
                 GradeOutcome.Graded(Unit)
             }
 
@@ -399,8 +416,8 @@ class LessonPlayerViewModel(
                 timeZone = timeZone(),
                 usedHelp = step.id in state.helped,
             )
-        val pending = PendingCheck(step.id, input)
         val local = if (isServerGradedAnswer(answer, step)) null else gradeOnDevice(step, answer)
+        val pending = PendingCheck(step.id, input, local?.isCorrect, Instant.fromEpochMilliseconds(now()))
 
         if (local == null) {
             gradeOnServer(step, pending, answer.writtenText)
@@ -479,7 +496,20 @@ class LessonPlayerViewModel(
                 // a rewrite, so a stale one is read again first, as Apple's player does. Offline, the copy plays.
                 val read = store.lesson(lessonId)
                 val reading = async { read.load() }
-                val outcome = if (sendUnsent()) start(runId = null) else StartOutcome.Refused(LessonRefusal.Failed)
+                val queued =
+                    unsaved.values
+                        .flatten()
+                        .map(PendingCheck::attemptId)
+                        .toSet()
+                unsentAnswers()
+                    ?.value
+                    ?.first()
+                    .orEmpty()
+                    .map { PendingCheck(it.stepId, ApiJson.decodeFromJsonElement(it.input), it.isCorrect, it.answeredAt) }
+                    .filterNot { it.attemptId in queued }
+                    .forEach { unsaved.getOrPut(it.stepId) { mutableListOf() } += it }
+                sendUnsent()
+                val outcome = start(runId = null)
                 if (outcome !is StartOutcome.Started) reading.cancel()
                 if (outcome == null) return@launch
                 when (outcome) {
@@ -527,7 +557,7 @@ class LessonPlayerViewModel(
     ): LessonPlayerState {
         val started = now()
         var state = LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = started)
-        state = reduce(state, run.toStartedAction(), started)
+        state = reduce(state, run.toStartedAction(unsaved.values.flatten().mapNotNull(PendingCheck::progress)), started)
 
         val unplayable = lesson.steps.filterNot(::isPlayable).map(LessonStep::id)
         val leftOut = run.optionalStepIds.orEmpty().map(UUID::toString) + run.answers.map { it.stepId.toString() }
@@ -596,11 +626,12 @@ class LessonPlayerViewModel(
         dispatch(LessonAction.CheckStarted(step.id))
         work.launch {
             val timeout = if (step.kind == StepKind.SpokenAnswer) SPOKEN_TIMEOUT else TYPED_TIMEOUT
-            when (val outcome = withTimeoutOrNull(timeout) { send(pending) }) {
+            when (val outcome = withTimeoutOrNull(timeout) { if (saveScreen(step.id)) send(pending) else CheckOutcome.Failed }) {
                 is CheckOutcome.Checked -> {
                     val result = outcome.result.toStepResult(answerText)
                     countActivity(step)
                     dispatch(LessonAction.CheckResolved(step.id, result, counts = outcome.result.checked))
+                    resendAnswers()
                 }
 
                 else -> {
@@ -617,59 +648,74 @@ class LessonPlayerViewModel(
     }
 
     /** Sends a screen's unsaved answers oldest first; false while one of them can't get through. */
-    private suspend fun saveScreen(stepId: String): Boolean =
-        screenLocks.getOrPut(stepId, ::Mutex).withLock {
-            val queue = unsaved[stepId] ?: return@withLock true
+    private suspend fun saveScreen(stepId: String): Boolean {
+        var checked = false
+        val saved =
+            screenLocks.getOrPut(stepId, ::Mutex).withLock {
+                val queue = unsaved[stepId] ?: return@withLock true
 
-            while (queue.isNotEmpty()) {
-                val pending = queue.first()
-                val outcome = send(pending)
+                while (queue.isNotEmpty()) {
+                    val pending = queue.first()
+                    val outcome = send(pending)
 
-                if (outcome == CheckOutcome.Failed) return@withLock false
-                if (outcome is CheckOutcome.Checked) {
-                    dispatch(
-                        LessonAction.CheckConfirmed(stepId, pending.attemptId, outcome.result.nextReviewAt, outcome.result.savedMistake),
-                    )
+                    if (outcome == CheckOutcome.Failed) {
+                        if (sessions.current == owner) hasUnsent = true
+                        return@withLock false
+                    }
+                    if (outcome is CheckOutcome.Checked) {
+                        checked = true
+                        dispatch(
+                            LessonAction.CheckConfirmed(
+                                stepId,
+                                pending.attemptId,
+                                outcome.result.nextReviewAt,
+                                outcome.result.savedMistake,
+                            ),
+                        )
+                    }
+                    queue.removeAt(0)
+                    hasUnsent = hasUnsent && unsaved.values.any { it.isNotEmpty() }
+                    keepUnsent()
                 }
-                queue.removeAt(0)
-                keepUnsent()
+
+                unsaved.remove(stepId)
+                true
             }
+        if (checked) resendAnswers()
+        return saved
+    }
 
-            true
-        }
+    fun resendAnswers() {
+        if (unsaved.isNotEmpty() && resending?.isActive != true) work.launch { sendUnsent() }
+    }
 
-    /**
-     * Answers the app closed before sending go first, so the run resumes with them; false while one
-     * still can't get through, since a run started without it would ask that screen again.
-     */
     private suspend fun sendUnsent(): Boolean {
-        val queued =
-            unsaved.values
-                .flatten()
-                .map(PendingCheck::attemptId)
-                .toSet()
-        val kept = unsentAnswers()?.value?.first().orEmpty()
-
-        kept
-            .map { PendingCheck(it.stepId, ApiJson.decodeFromJsonElement<LessonStepCheckInput>(it.input)) }
-            .filterNot { it.attemptId in queued }
-            .forEach { unsaved.getOrPut(it.stepId) { mutableListOf() } += it }
-        return unsaved.keys
-            .toList()
-            .map { saveScreen(it) }
-            .all { it }
+        resending?.takeIf { it.isActive }?.await()
+        if (unsaved.isEmpty()) return true
+        val pass =
+            work.async(start = CoroutineStart.LAZY) {
+                keepUnsent()
+                unsaved.keys
+                    .toList()
+                    .map { async { saveScreen(it) } }
+                    .awaitAll()
+                    .all { it }
+            }
+        resending = pass
+        return pass.await() && unsaved.isEmpty()
     }
 
-    private suspend fun keepUnsent() {
-        val handle = unsentAnswers() ?: return
-        val pending = unsaved.values.flatten()
+    private suspend fun keepUnsent() =
+        unsentLock.withLock {
+            val handle = unsentAnswers() ?: return@withLock
+            val pending = unsaved.values.flatten()
 
-        if (pending.isEmpty()) {
-            handle.remove()
-        } else {
-            handle.save(pending.map { UnsentAnswer(it.stepId, ApiJson.encodeToJsonElement(it.input)) })
+            if (pending.isEmpty()) {
+                handle.remove()
+            } else {
+                handle.save(pending.map { UnsentAnswer(it.stepId, ApiJson.encodeToJsonElement(it.input), it.isCorrect, it.answeredAt) })
+            }
         }
-    }
 
     private fun unsentAnswers() = owner?.let { drafts.open(it, "player.unsent.$lessonId", ListSerializer(UnsentAnswer.serializer())) }
 
@@ -694,11 +740,7 @@ class LessonPlayerViewModel(
     }
 
     private suspend fun complete() {
-        val allSaved =
-            unsaved.keys
-                .toList()
-                .map { saveScreen(it) }
-                .all { it }
+        val allSaved = sendUnsent()
         val state = mutableState.value ?: return
         val runId = (state.run as? LessonRun.Started)?.runId
 
@@ -810,13 +852,14 @@ class LessonPlayerViewModel(
     }
 }
 
-private fun LibraryLessonRun.toStartedAction() =
+private fun LibraryLessonRun.toStartedAction(heldAnswers: List<RunAnswer>) =
     LessonAction.RunStarted(
         runId = runId.toString(),
         answers = answers.map { RunAnswer(it.stepId.toString(), it.isCorrect, it.answeredAt) },
         hyperdrive = HyperdriveStart(hyperdrive.knownStepIds.map(UUID::toString).toSet(), hyperdrive.streak.toInt()),
         startedAt = startedAt,
         optionalStepIds = optionalStepIds.orEmpty().map(UUID::toString),
+        heldAnswers = heldAnswers,
     )
 
 private fun List<LessonStep>.pictures(): Map<String, StepImage> = mapNotNull { step -> step.image?.let { step.id to it } }.toMap()

@@ -3459,6 +3459,16 @@ msgid "Close lesson"
 msgstr "レッスンを閉じる"
 
 #: src/lesson/lesson-player-header.tsx
+msgctxt "0WZ-rc"
+msgid "Not saved yet"
+msgstr "まだ保存されていません"
+
+#: src/lesson/lesson-player-header.tsx
+msgctxt "4fcWWV"
+msgid "Some answers aren't saved yet. We'll keep trying while this lesson is open."
+msgstr "まだ保存されていない回答があります。このレッスンを開いている間は、保存を繰り返し試します。"
+
+#: src/lesson/lesson-player-header.tsx
 msgctxt "dYp90P"
 msgid "Lesson progress"
 msgstr "レッスンの進行状況"
