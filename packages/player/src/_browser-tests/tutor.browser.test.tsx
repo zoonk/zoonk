@@ -70,7 +70,14 @@ function playLesson({
 }
 
 async function openTutor() {
-  await page.getByRole("button", { name: "Ask Pip" }).click();
+  const askPip = page.getByRole("button", { name: "Ask Pip" });
+
+  if (vi.isFakeTimers()) {
+    await pressKeepingClock(askPip);
+  } else {
+    await askPip.click();
+  }
+
   const sheet = page.getByRole("dialog");
   await expect.element(sheet.getByRole("heading", { name: "Pip" })).toBeVisible();
   return sheet;
@@ -101,9 +108,13 @@ function freezeClock() {
  * Vitest advances a fake clock while a click waits (https://github.com/vitest-dev/vitest/issues/11910),
  * which can run a poll first; a key press doesn't.
  */
-async function checkAgain(sheet: Locator) {
-  await focusOn(sheet.getByRole("button", { name: "Check again" }));
+async function pressKeepingClock(button: Locator) {
+  await focusOn(button);
   await press("Enter");
+}
+
+function checkAgain(sheet: Locator) {
+  return pressKeepingClock(sheet.getByRole("button", { name: "Check again" }));
 }
 
 function connectionLost() {
@@ -786,12 +797,12 @@ describe("answers still being written", () => {
     });
 
     api.questions = [running];
-    const onLine = vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
-    onTestFinished(() => onLine.mockRestore());
     playLesson({ lesson });
     const sheet = await openTutor();
     await expect.element(sheet.getByText(running.question)).toBeVisible();
 
+    const onLine = vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
+    onTestFinished(() => onLine.mockRestore());
     await vi.advanceTimersByTimeAsync(10_000);
     expect(api.requests.question).toBe(0);
 
@@ -1117,7 +1128,7 @@ describe("tutor history", () => {
     playLesson({ lesson });
 
     const sheet = await openTutor();
-    await sheet.getByRole("button", { name: "Load earlier questions" }).click();
+    await pressKeepingClock(sheet.getByRole("button", { name: "Load earlier questions" }));
     await expect.element(sheet.getByText(older.question)).toBeVisible();
 
     await vi.advanceTimersByTimeAsync(FIRST_POLL_MS);
