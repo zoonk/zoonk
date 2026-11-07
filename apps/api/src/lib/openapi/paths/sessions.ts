@@ -219,7 +219,7 @@ export const sessionPaths = {
         "400": restoreKeyChallengeResponse,
         "401": {
           ...unauthorizedResponse,
-          description: `This restore key can't sign in: it's unknown, its signature, origin or RP ID is wrong, or the session that registered it ended. Delete the key. Error code: ${sessionErrorCodes.restoreKeyInvalid}.`,
+          description: `This restore key can't sign in: it's unknown, its signature or RP ID is wrong, or the session that registered it ended. Delete the key. Error code: ${sessionErrorCodes.restoreKeyInvalid}.`,
         },
         "403": accountDisabledResponse,
         "429": authRateLimitResponse,

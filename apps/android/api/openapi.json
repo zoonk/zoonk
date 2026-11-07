@@ -12362,7 +12362,7 @@
             }
           },
           "401": {
-            "description": "This restore key can't sign in: it's unknown, its signature, origin or RP ID is wrong, or the session that registered it ended. Delete the key. Error code: RESTORE_KEY_INVALID.",
+            "description": "This restore key can't sign in: it's unknown, its signature or RP ID is wrong, or the session that registered it ended. Delete the key. Error code: RESTORE_KEY_INVALID.",
             "content": {
               "application/json": {
                 "schema": {
