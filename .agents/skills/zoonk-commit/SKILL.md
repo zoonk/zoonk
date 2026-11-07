@@ -83,7 +83,7 @@ A reviewer looks at every picture, and a long page of them hides the one that ma
 
 - **Show the few screens that make the change clear,** usually one to three: the screen the change is about, plus another size, scheme or state only where the change looks different there. A change that reaches many screens, such as a redesign, shows a representative few, and the verification section says what else you checked.
 - **Each screen gets a collapsed panel,** and its summary says what changed there, so a reviewer can scan the summaries without opening any: `<summary>Today: the time readout sits at the title's end</summary>`. Put the screen that shows the change best first; its panel starts open. `media.md` is laid out this way; lay out hand-made media (the native apps, a sheet of several screens) the same way.
-- **Compare each pair before you attach it.** `pr:capture` prints how much of each shot changed and where, in CSS pixels, and leaves out pairs where nothing changed. When you can't spot the difference at a glance, a reviewer can't either: say in the summary where to look, and when it's a small part of the screen, lead with a shot of just that part (`shot(name, { clip })`, from the box it printed). Drop a pair whose change doesn't show.
+- **Compare each pair before you attach it.** `pr:capture` prints how much of each shot changed and the box around it, and leaves out pairs where nothing changed. When you can't spot the difference at a glance, a reviewer can't either: say in the summary where to look, and when it's a small part of the screen, lead with a shot of just that part (`shot(name, { clip })`). Drop a pair whose change doesn't show.
 
 ### Screenshots and videos
 

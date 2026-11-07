@@ -1,13 +1,12 @@
 import { join } from "node:path";
 import sharp from "sharp";
-import { VIEWPORTS } from "../verify/viewports.mts";
 import { type Sides, pairItems } from "./media.mts";
 
 const BYTES_PER_PIXEL = 4;
 
 type Box = { height: number; width: number; x: number; y: number };
 
-/** In image pixels; `share` is the part of them that differ. */
+/** In the shots' own pixels; `share` is the part of them that differ. */
 type ShotChange = { box?: Box; height: number; share: number; width: number };
 
 async function readPixels(image: Buffer | string) {
@@ -27,7 +26,7 @@ function pixelAt(image: Pixels, x: number, y: number): number | undefined {
     : undefined;
 }
 
-/** Shots of different sizes compare from their top-left corner; what only one covers counts as changed. */
+/** Shots of different sizes compare from their top-left corner: what only one covers changed. */
 export async function compareShots(
   before: Buffer | string,
   after: Buffer | string,
@@ -43,9 +42,7 @@ export async function compareShots(
 
   for (let y = 0; y < height; y += 1) {
     for (let x = 0; x < width; x += 1) {
-      const color = pixelAt(first, x, y);
-
-      if (color === undefined || color !== pixelAt(second, x, y)) {
+      if (pixelAt(first, x, y) !== pixelAt(second, x, y)) {
         changed += 1;
         left = Math.min(left, x);
         top = Math.min(top, y);
@@ -66,7 +63,7 @@ export async function compareShots(
   };
 }
 
-type PairChange = { change: ShotChange; row: string; scale: number };
+type PairChange = { change: ShotChange; row: string };
 
 /** One pair at a time: a full-page shot decodes to tens of megabytes. */
 export async function compareSides(out: string, sides: Sides): Promise<PairChange[]> {
@@ -80,7 +77,7 @@ export async function compareSides(out: string, sides: Sides): Promise<PairChang
         join(out, "after", after.file),
       );
 
-      changes.push({ change, row, scale: VIEWPORTS[after.viewport].deviceScaleFactor ?? 1 });
+      changes.push({ change, row });
     }
   }
 
@@ -92,14 +89,8 @@ function percent(share: number): string {
   return shown === "0.0" ? "under 0.1%" : `${shown}%`;
 }
 
-/** In CSS pixels, the unit `shot`'s `clip` takes. */
-export function describeChange({ change, row, scale }: PairChange): string {
-  if (!change.box) {
-    return `${row}: nothing changed, left out of media.md`;
-  }
-
-  const css = (pixels: number) => Math.round(pixels / scale);
-  const { box } = change;
-
-  return `${row}: ${percent(change.share)} changed, x ${css(box.x)}–${css(box.x + box.width)}, y ${css(box.y)}–${css(box.y + box.height)} of ${css(change.width)}×${css(change.height)}`;
+export function describeChange({ change: { box, height, share, width }, row }: PairChange): string {
+  return box
+    ? `${row}: ${percent(share)} changed, x ${box.x}–${box.x + box.width}, y ${box.y}–${box.y + box.height} of ${width}×${height} px`
+    : `${row}: nothing changed, left out of media.md`;
 }

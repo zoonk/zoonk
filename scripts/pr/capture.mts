@@ -116,10 +116,7 @@ async function capture({ positionals, values }: ReturnType<typeof readArguments>
     [
       `${side}: ${items.length} files from ${baseUrl} in ${relative(repository, join(out, side))}`,
       ...(changes.length > 0
-        ? [
-            "What changed in each pair, in CSS pixels:",
-            ...changes.map((change) => `  ${describeChange(change)}`),
-          ]
+        ? ["What changed in each pair:", ...changes.map((change) => `  ${describeChange(change)}`)]
         : []),
       `Before-and-after section: ${relative(repository, join(out, "media.md"))}${before && after ? "" : " (one side so far)"}`,
       "Rewrite each panel's summary to say what changed there. Put the section in the PR body, and pass every file it links to gh pr create or gh pr edit, run from the repository root:",
