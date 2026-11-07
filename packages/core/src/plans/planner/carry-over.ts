@@ -1,9 +1,11 @@
+import { sumOf } from "@zoonk/utils/number";
 import { keepCarriedAfterBases, listBegunSkillIds } from "./carried-bases";
 import { keepCarriedBeforeChallenges } from "./carried-challenges";
 import { markAfterCarried, scheduleCarriedWork, shiftReserved } from "./carried-schedule";
 import { findChapterInProgress } from "./chapter-in-progress";
 import { takeFocusedToday } from "./focused-today";
 import { getSkillArea } from "./graph-areas";
+import { sumByDay } from "./held-time";
 import { LEARN_KINDS, PHASE_WORK_KINDS } from "./plan-item-rules";
 import { type ExistingPlanItem, getItemKey } from "./plan-items";
 import { type PlanGraph } from "./plan-state";
@@ -223,7 +225,7 @@ export function placeCarriedWork({
   // (`keepPhaseEnds`; a study cycle or a learned order don't). A focus day gives the rest of today
   // to focus lessons, where letting time go could stack challenges tomorrow past what a day keeps
   // and leave one out (#2227).
-  const { room, roomed, schedule } = scheduleCarriedWork({
+  const { overflow, room, roomed, schedule } = scheduleCarriedWork({
     carried,
     days,
     letGo: keepsEnds && !input.carryOver?.todayExceptAreas,
@@ -233,9 +235,13 @@ export function placeCarriedWork({
   });
 
   const reserved = shiftReserved({
-    days: reserveCarriedTime({
-      days: roomed,
-      minutes: carried.reduce((total, unit) => total + unit.minutes, 0),
+    days: shiftReserved({
+      days: reserveCarriedTime({
+        days: roomed,
+        minutes:
+          sumOf(carried.map((unit) => unit.minutes)) - sumOf(overflow.map((unit) => unit.minutes)),
+      }),
+      minutes: sumByDay(overflow),
     }),
     minutes: new Map([...room].map(([time, minutes]) => [time, -minutes])),
   });

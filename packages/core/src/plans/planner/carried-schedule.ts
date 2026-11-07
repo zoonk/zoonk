@@ -1,3 +1,4 @@
+import { sumByDay } from "./held-time";
 import { type QueueUnit, getBossKey } from "./plan-units";
 import { type PlanDay, type ScheduledUnit, scheduleUnits } from "./schedule-units";
 import { markKeptLessons } from "./whole-boss";
@@ -35,14 +36,14 @@ function scheduleCarriedUnits({
   days: readonly PlanDay[];
   today: ReadonlySet<string>;
   units: readonly QueueUnit[];
-}): ReturnType<typeof scheduleUnits> {
+}): { overflow: ScheduledUnit[]; schedule: ReturnType<typeof scheduleUnits> } {
   const schedule = scheduleUnits({ days, units });
   const [first] = days;
   const lastDate = schedule.units.at(-1)?.date.getTime();
   const day = days.find((planDay) => planDay.date.getTime() === lastDate) ?? first;
 
   if (!day || !first) {
-    return schedule;
+    return { overflow: [], schedule };
   }
 
   const placed = schedule.units.map((unit) =>
@@ -57,9 +58,12 @@ function scheduleCarriedUnits({
   const all = [...placed, ...kept];
 
   return {
-    ...schedule,
-    dropped: [],
-    units: [...all.filter((unit) => isToday(unit)), ...all.filter((unit) => !isToday(unit))],
+    overflow: kept.filter((unit) => today.has(unit.key)),
+    schedule: {
+      ...schedule,
+      dropped: [],
+      units: [...all.filter((unit) => isToday(unit)), ...all.filter((unit) => !isToday(unit))],
+    },
   };
 }
 
@@ -97,14 +101,6 @@ function listChallengeRooms({
     .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }
 
-function sumRoomMinutes(rooms: readonly ChallengeRoom[]): Map<number, number> {
-  return rooms.reduce(
-    (byDay, room) =>
-      byDay.set(room.date.getTime(), (byDay.get(room.date.getTime()) ?? 0) + room.minutes),
-    new Map<number, number>(),
-  );
-}
-
 export function markAfterCarried({
   schedule,
   units,
@@ -140,8 +136,8 @@ function listHeldRooms({
   today: ReadonlySet<string>;
 }): ChallengeRoom[] {
   return rooms.reduce<ChallengeRoom[]>((held, room) => {
-    const schedule = scheduleCarriedUnits({
-      days: shiftReserved({ days, minutes: sumRoomMinutes(held) }),
+    const { schedule } = scheduleCarriedUnits({
+      days: shiftReserved({ days, minutes: sumByDay(held) }),
       today,
       units: carried,
     });
@@ -183,8 +179,8 @@ export function scheduleCarriedWork({
 
   const rooms = letGo ? listHeldRooms({ carried, days, rest, rooms: all, today }) : all;
 
-  const room = sumRoomMinutes(rooms);
+  const room = sumByDay(rooms);
   const roomed = shiftReserved({ days, minutes: room });
 
-  return { room, roomed, schedule: scheduleCarriedUnits({ days: roomed, today, units: carried }) };
+  return { room, roomed, ...scheduleCarriedUnits({ days: roomed, today, units: carried }) };
 }

@@ -112,4 +112,44 @@ describe("a change of focus when today's time no longer holds today's lessons", 
     expect(stayed).toStrictEqual(kept);
     expect(checkSteeringKeepsToday(context)).toStrictEqual([]);
   });
+
+  it("leaves tomorrow's time to tomorrow's lessons when today's run past the plan's days", () => {
+    const sizes = [3, 5, 4, 2, 6];
+
+    const input: BuildPlanInput = {
+      goal: { dailyMinutes: 10, kind: "learn", targetDate: addDays(TODAY, 2) },
+      graph,
+      items: [],
+      lessons: lessons.map((lesson, index) => ({ ...lesson, minutes: sizes[index % 5] ?? 0 })),
+      mockMinutes: 180,
+      mode: "forced",
+      paceFactor: 1,
+      prerequisites: new Map(),
+      readiness: new Map(),
+      settings: parsePlanSettings({ startDate: toIsoDate(TODAY) }),
+      today: TODAY,
+    };
+
+    const shown = buildPlan(input).items.map((item, position) => ({
+      ...item,
+      id: `item-${position}`,
+      position,
+    }));
+
+    const after = buildPlan({
+      ...input,
+      carryOver: { lessonIds: [], todayExceptAreas: [] },
+      items: shown,
+      paceFactor: 2,
+      settings: { ...input.settings, focusAreas: ["Penal"] },
+    }).items;
+
+    const findDate = (key: string) =>
+      after.find((item) => item.key === key)?.scheduledFor?.getTime();
+
+    expect(listTodayLessons(shown)).toStrictEqual(["Civil-0", "Civil-1"]);
+    expect(listTodayLessons(after)).toStrictEqual(["Civil-0", "Civil-1"]);
+    expect(findDate("lesson:Penal-0")).toBe(addDays(TODAY, 1).getTime());
+    expect(findDate("boss:0")).toBe(addDays(TODAY, 1).getTime());
+  });
 });
