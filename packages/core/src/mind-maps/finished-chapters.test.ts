@@ -135,6 +135,37 @@ describe("a finished chapter", () => {
     ).resolves.toMatchObject({ finishedChapter: null, isFirstCompletion: false });
   });
 
+  it("reports a chapter the plan files its lessons under by their home, as the list shows it", async () => {
+    const chapter = await chapterOfTwoLessons();
+    const { goal, user } = await learnerOf(chapter);
+    const lessonId = chapter.last.id;
+
+    await Promise.all([
+      prisma.lesson.updateMany({
+        data: { homeChapterId: chapter.chapter.id },
+        where: { id: { in: [chapter.first.id, lessonId] } },
+      }),
+      prisma.planItem.updateMany({
+        data: { chapterId: null },
+        where: { plan: { goalId: goal.id } },
+      }),
+    ]);
+
+    await expect(getChapterMindMap({ chapterId: chapter.chapter.id })).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    await expect(
+      finishRun({ lessonId, runId: await startRun({ lessonId }) }),
+    ).resolves.toMatchObject({
+      finishedChapter: { chapterId: chapter.chapter.id, goalId: goal.id, title: "Cells" },
+    });
+
+    await expect(owedMaps(user.id)).resolves.toStrictEqual([
+      { input: { chapterId: chapter.chapter.id, goalId: goal.id }, key: chapter.chapter.id },
+    ]);
+  });
+
   it("reports nothing for a lesson that leaves the chapter unfinished", async () => {
     const chapter = await chapterOfTwoLessons();
     const { user } = await learnerOf(chapter);

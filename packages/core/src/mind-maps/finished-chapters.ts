@@ -6,6 +6,7 @@ import { findActiveGoalId } from "../goals/_utils/goal-view";
 import { type FinishedChapter } from "../sessions/completion-contract";
 import { chapterLessonStats } from "./_utils/chapter-lesson-stats";
 import { MIND_MAP_STALE_AFTER_MS } from "./_utils/mind-map-view";
+import { planChapters } from "./_utils/plan-chapters";
 
 type FinishedChapterRow = FinishedChapter & { owesMap: boolean };
 
@@ -25,34 +26,31 @@ export async function settleFinishedChapters(
 
   const staleBefore = new Date(Date.now() - MIND_MAP_STALE_AFTER_MS);
 
+  const touched = [...planItemIds];
+
+  const goals = sql`g.id IN (
+    SELECT p.goal_id FROM plan_items i JOIN plans p ON p.id = i.plan_id
+    WHERE i.id = ANY(${touched}::uuid[])
+  )`;
+
   const rows = await tx.$queryRaw<FinishedChapterRow[]>`
-    WITH touched AS (
-      SELECT DISTINCT i.plan_id, i.chapter_id
-      FROM plan_items i
-      WHERE i.id = ANY(${[...planItemIds]}::uuid[])
-        AND i.chapter_id IS NOT NULL AND i.kind IN ('chapter', 'lesson')
-    )
     SELECT
-      t.chapter_id AS "chapterId",
-      p.goal_id AS "goalId",
+      pc.chapter_id AS "chapterId",
+      pc.goal_id AS "goalId",
       c.title,
       stats.written AND stats.to_write = 0 AND NOT EXISTS (
         SELECT 1 FROM chapter_mind_maps mm
-        WHERE mm.chapter_id = t.chapter_id
+        WHERE mm.chapter_id = pc.chapter_id
           AND (mm.status = 'completed' OR (mm.status = 'running' AND mm.updated_at > ${staleBefore}))
       ) AS "owesMap"
-    FROM touched t
-    JOIN plans p ON p.id = t.plan_id
-    JOIN goals g ON g.id = p.goal_id
-    JOIN library_chapters c ON c.id = t.chapter_id
-    CROSS JOIN LATERAL (${chapterLessonStats(sql`t.chapter_id`)}) stats
-    WHERE g.kind <> 'language' AND c.target_language IS NULL
-      AND NOT EXISTS (
-        SELECT 1 FROM plan_items o
-        WHERE o.plan_id = t.plan_id AND o.chapter_id = t.chapter_id
-          AND o.kind IN ('chapter', 'lesson') AND o.status NOT IN ('done', 'tested_out')
-      )
-    ORDER BY p.goal_id, t.chapter_id`;
+    FROM (${planChapters(goals)}) pc
+    JOIN goals g ON g.id = pc.goal_id
+    JOIN library_chapters c ON c.id = pc.chapter_id
+      AND (c.visibility = 'public' OR c.owner_id = g.user_id)
+    CROSS JOIN LATERAL (${chapterLessonStats(sql`pc.chapter_id`)}) stats
+    WHERE pc.finished AND pc.item_ids && ${touched}::uuid[]
+      AND g.kind <> 'language' AND c.target_language IS NULL
+    ORDER BY pc.goal_id, pc.plan_position`;
 
   await oweFollowUps({
     db: tx,
