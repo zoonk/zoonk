@@ -155,10 +155,32 @@ function getAnswerMode({
   return cantTalk || micBlocked || !canSpeak ? "type" : "speak";
 }
 
-function useAnswerMode({
-  onAnswer,
+/** An answer shows the way it was given, whatever this device would offer now. */
+function getGivenMode({
+  answer,
+  result,
   step,
-}: Pick<LessonStepViewProps<StepOf<"spokenAnswer">>, "onAnswer" | "step">) {
+}: Pick<
+  LessonStepViewProps<StepOf<"spokenAnswer">>,
+  "answer" | "result" | "step"
+>): AnswerMode | null {
+  if (answer?.kind === "spokenAnswer") {
+    return "type";
+  }
+
+  if (answer?.kind === "listening" && step.listening) {
+    return "listen";
+  }
+
+  return result?.heard ? "speak" : null;
+}
+
+function useAnswerMode({
+  answer,
+  onAnswer,
+  result,
+  step,
+}: Pick<LessonStepViewProps<StepOf<"spokenAnswer">>, "answer" | "onAnswer" | "result" | "step">) {
   const { adapters } = useLessonPlayerConfig();
   const canRecord = useCanRecord();
   const canSpeak = Boolean(adapters.gradeSpokenAnswer) && canRecord;
@@ -166,7 +188,9 @@ function useAnswerMode({
   const [cantTalk, setCantTalk] = useTodayChoice(CANT_TALK_TODAY);
   const [micBlocked, setMicBlocked] = useState(false);
 
-  const mode = getAnswerMode({ canListen, canSpeak, cantTalk, micBlocked });
+  const mode =
+    getGivenMode({ answer, result, step }) ??
+    getAnswerMode({ canListen, canSpeak, cantTalk, micBlocked });
 
   const switchTo = (next: { cantTalk: boolean }) => {
     onAnswer(null);
@@ -253,8 +277,8 @@ function ModeSwitch({
 export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAnswer">>) {
   const t = useExtracted();
   const spoken = useSpokenText();
-  const { answer, isLocked, onAnswer, step } = props;
-  const answerMode = useAnswerMode({ onAnswer, step });
+  const { answer, isLocked, onAnswer, result, step } = props;
+  const answerMode = useAnswerMode({ answer, onAnswer, result, step });
   const { listening } = step;
   const text = answer?.kind === "spokenAnswer" ? answer.text : "";
 
