@@ -19,19 +19,20 @@
   "reminders_permission_body": "b3d20c983deb52256e81364ca891d25779b1460b7c2a0e9fb1530040ff8b3ef1",
   "reminders_permission_continue": "2d9c074792beca2be8b8bc7967b862b4ab2633bc7d98d685697c0079cc8eb035",
   "reminders_permission_title": "607d7d0d12f19ce710a651b7b90f2328eaaa45fc6a7f321561a121f1a2a52d4b",
-  "reminders_push": "2aa5cdabe96efe06453c80e96a5e683044476add5ee123a80488da77bbdbf25d",
+  "reminders_push": "7a76f51a6d0240666bee6de092bc61e794501adbfae13c00958d1dff8a726f1a",
   "reminders_quiet": "d98faf536114d7d9d7c0e7e0feb6fb8772e0ecb80e59a935e707ef9a365e1818",
   "reminders_remind_me": "135009e71183fcf256b4094f1e97214eb331e59aa00c0deeae9113cffad76e60",
   "reminders_row": "f6e3c97860d86c93a7e38d2ca9a548c9814f5b5a15f07a82c7db03a2741cd6ed",
   "reminders_save": "e2c57f30a65dda9d839cec48a5a5b5bb69c76e962cc0a020810a78dc39376502",
   "reminders_save_failed": "01f5072f961bc0ff6e2d5616e6b0a8f96d5b13fd1dfdcc46a2ebc0e818554a5b",
   "reminders_study_days": "073484acd77b3b780e64979e6c9995a61a2e0cdc9d88566ac53ec5664f817bdd",
+  "reminders_this_device": "b43f5915c9c2ae556fdc49ec1f81492cb8e003495b139587867193d6aae1703e",
   "reminders_time": "b283db11afc396bf766dfa2567f3778fbdcecf4102e06e48ab4b1a6e2b58d020",
   "reminders_time_in_zone": "291d3190074574e467c5023062b64de18e34744d83e6b0fbd7796185602dd01a",
   "reminders_time_title": "d35817898eb984cfd87d6381df1c15dce564d220ce82b0e098661d3b3efdfa72",
   "reminders_title": "faa7d9b53055d273c323a874bc2ab1f65f8fb216481419d4ff02c45319b790ce",
   "reminders_turn_on_failed": "e897908c2d69209869b516e2f04ac06fcfb86ae6280b3bb5b220ff7cdcde4ed2",
-  "reminders_use_this_phone": "7aa7fa90c6daadcd215245cf642c13f577c2944c7782da5ad56bb49153522021"
+  "reminders_use_this_device": "9cfb9d478adc00be55dd8ea924e029487a2f1dad0a43853a85a853d9c3d32d5f"
 }
 -->
 <resources>
@@ -70,17 +71,20 @@
     <!-- The reminders page in Settings. -->
     <string name="reminders_title">알림</string>
     <string name="reminders_description">공부할 내용이 남아 있을 때만 하루에 한 번 알려 드려요.</string>
+    <!-- The time of day a reminder goes out, not an amount of time. -->
     <string name="reminders_time">시간</string>
     <!-- %1$s is a time of day and %2$s its time zone, such as "7:00 PM, Brasilia Time". -->
     <string name="reminders_time_in_zone">%1$s, %2$s</string>
     <string name="reminders_email">이메일</string>
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">계정을 만들고 이메일 알림 받기</string>
-    <string name="reminders_push">알림</string>
-    <!-- Push reminders go to another of the learner's phones; this one can take over. -->
-    <string name="reminders_use_this_phone">이 휴대전화로 받기</string>
+    <string name="reminders_push">푸시 알림</string>
     <!-- Under the settings; "your plans" opens the plan, which sets the study days. -->
     <string name="reminders_study_days">계획에서 정한 학습일에</string>
     <string name="reminders_quiet">학습을 쉬는 동안 알림도 일시 중지돼요. 다시 학습하면 켜져요.</string>
     <string name="reminders_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
+    <!-- Push reminders go to another of the learner's devices; this one can take over. -->
+    <string name="reminders_use_this_device">이 기기로 받기</string>
+    <!-- After the selected device's name, such as "Pixel 9 · This device", when it's the device in hand. -->
+    <string name="reminders_this_device">이 기기</string>
 </resources>

@@ -19,19 +19,20 @@
   "reminders_permission_body": "2e07ba76d72bfce14cc015cef2fe0b22e9a0a9a87e610b6eec6bb0add9fe2296",
   "reminders_permission_continue": "75f5702b7df59f81237f0f5d97268d7cc064e4459303356cdf0bce0196c9a57b",
   "reminders_permission_title": "f6dbd6dabc1191b110f03ce8f1933db585651cdb7036e9c78fe4d39de481ecf5",
-  "reminders_push": "0b6ed12be94d50e1e6a984eb6771ada795b1ca2f4a8cd8d85691046f45a9176a",
+  "reminders_push": "a5d2f5bf0a6d7df325007a39410f9e85c6d2b7fddaac9535521c0d21850af6b0",
   "reminders_quiet": "0bf48d35ead5dc99894d5a88477448809c3a7e41713aeffcf9eada54c5793349",
   "reminders_remind_me": "3a4e999eab849652ba4e990d56dc492369cd9bbe70a96ee618a4eb57ebabe7fa",
   "reminders_row": "4a734380e8fcd8df41c933d98319751492f33e1294eab6f28e63e125bef12a80",
   "reminders_save": "037f893322600786ef0b87f08a4ca2f69da6b71b2228fa482b23f6757f7f7eb6",
   "reminders_save_failed": "f7d78cd51e472948c9a8dace4686d75ffa87160ac7005c91f6ec42c50b4130a5",
   "reminders_study_days": "c9e78ed5aab5650d0f92248de99086fb8bbe3e50e7134c2489c306837d8f8aca",
+  "reminders_this_device": "311658f314c1dc368fbe8daf17e135b500d909aa8a4bba864ef7cf9912b93e72",
   "reminders_time": "159ac45b15ca3b495d7bc65c1c73b0eb650e73c3ec5596227e0fed29b8aeb747",
   "reminders_time_in_zone": "c02b67e5e70afb497afb3fe8cf3680165734b691f95658640203773d8680b76f",
   "reminders_time_title": "bc37c431c9f756da5b57a3bcac15185ad0e883ae20e5830d72c6a96d4d4bd326",
   "reminders_title": "ee6b519edb48eee90919683af4fe169ea27ae0694e3ecc041433a6b0787d3ec3",
   "reminders_turn_on_failed": "a9d508be6edc6019fee79862a8c3c34f5c70bb253e5644855ba35f6015ebea72",
-  "reminders_use_this_phone": "560725c0769c1ba936274523725f1336505402420058ee8f1f861a456cdf2d8e"
+  "reminders_use_this_device": "7f617ca130626aef991b11bccbf5e0a3d1f4cddc17ffcfffb91e3a4e2a0cd46c"
 }
 -->
 <resources>
@@ -70,17 +71,20 @@
     <!-- The reminders page in Settings. -->
     <string name="reminders_title">Erinnerungen</string>
     <string name="reminders_description">Eine Erinnerung pro Tag, nur wenn du noch etwas zu lernen hast.</string>
+    <!-- The time of day a reminder goes out, not an amount of time. -->
     <string name="reminders_time">Uhrzeit</string>
     <!-- %1$s is a time of day and %2$s its time zone, such as "7:00 PM, Brasilia Time". -->
     <string name="reminders_time_in_zone">%1$s, %2$s</string>
     <string name="reminders_email">E-Mail</string>
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">Konto erstellen, um E-Mail-Erinnerungen zu erhalten</string>
-    <string name="reminders_push">Benachrichtigungen</string>
-    <!-- Push reminders go to another of the learner's phones; this one can take over. -->
-    <string name="reminders_use_this_phone">Dieses Handy verwenden</string>
+    <string name="reminders_push">Push-Benachrichtigungen</string>
     <!-- Under the settings; "your plans" opens the plan, which sets the study days. -->
     <string name="reminders_study_days">An den Lerntagen aus deinen Plänen</string>
     <string name="reminders_quiet">Pausiert, solange du nicht da bist. Sobald du wieder lernst, sind sie wieder aktiv.</string>
     <string name="reminders_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
+    <!-- Push reminders go to another of the learner's devices; this one can take over. -->
+    <string name="reminders_use_this_device">Dieses Gerät verwenden</string>
+    <!-- After the selected device's name, such as "Pixel 9 · This device", when it's the device in hand. -->
+    <string name="reminders_this_device">Dieses Gerät</string>
 </resources>

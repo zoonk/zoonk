@@ -19,19 +19,20 @@
   "reminders_permission_body": "a5f7e276be0b7c0eeea1eebd30af1cee987ec214c22ac1bc67d0b3b88061420b",
   "reminders_permission_continue": "1c5eb6b2e3c27e5a8f91498ee017a3cb9e315ece5c40a9791acb63315581ea57",
   "reminders_permission_title": "1c609b0a378d07efd8d051faec8a461c22df491dc77a310ed1fe30b26fa583bb",
-  "reminders_push": "a41cccf10d187d99b908079e23f73003b13bade2022c4f052cd521f45032bd4e",
+  "reminders_push": "e2e515be51faa2133f627aa77b2083441ad26f682865736cf9cedc926515208b",
   "reminders_quiet": "74576f27d543a72bb0517034196397f3235f67ed8a2cc8cbe8aea31e1f1b3c33",
   "reminders_remind_me": "05bbc7ee5a286441487021b86bbe0286d16fdbc99ee1b3f5a69db667e811d2fb",
   "reminders_row": "bbaf009934700c5fe729761c1d2cb8b4cc246fd04a9cc7648a3df4072754b4d0",
   "reminders_save": "e0a13da9901e3a49448e845c5af3b4ca32af416a94a2b20061db8c43b766bea6",
   "reminders_save_failed": "e65da486c754f486eff1adbf083ecc9d330d3cd53c0a70e74689fa4219f2eb06",
   "reminders_study_days": "57958d3ab22574771bec5add5d8bbac8001decc57069c3aec93279cead2daa1a",
+  "reminders_this_device": "b0619bfc1f6c785ec4fb9e65d820ea099f5b7a151891bbaa32450d24d3d370aa",
   "reminders_time": "93167b1d597cdcebf8ae1f0c091c372a9657857424b187b8e5b679c0644c8ddf",
   "reminders_time_in_zone": "700b1de9cf3063882916ddf787bf77800087c21a50feba2611f456a7c2b78ae4",
   "reminders_time_title": "aa7e5d9affdad20afb9382089bc8370ff2738387449aad942de6f93cbee341b7",
   "reminders_title": "6d2b71367c4edccd8afc6c45f1c702f28e7a27eaa75d2112b7831cdf907c6f21",
   "reminders_turn_on_failed": "077ffe9d03e91409dc240776df55c388f9000c44b3d53c24c0d287e603da16fa",
-  "reminders_use_this_phone": "9e556d7dd8fb8c25e0ae27fe4f83250a21f81c997d547b89895911b4c27c4121"
+  "reminders_use_this_device": "11e50f4753907274558dc23e3f80bc2a77df31d44094e7e1e9af999c30bc71b5"
 }
 -->
 <resources>
@@ -70,17 +71,20 @@
     <!-- The reminders page in Settings. -->
     <string name="reminders_title">リマインダー</string>
     <string name="reminders_description">その日の学習が残っているときだけ、1日1回お知らせします。</string>
+    <!-- The time of day a reminder goes out, not an amount of time. -->
     <string name="reminders_time">時刻</string>
     <!-- %1$s is a time of day and %2$s its time zone, such as "7:00 PM, Brasilia Time". -->
     <string name="reminders_time_in_zone">%1$s（%2$s）</string>
     <string name="reminders_email">メールアドレス</string>
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">アカウントを作成してメールでリマインダーを受け取る</string>
-    <string name="reminders_push">通知</string>
-    <!-- Push reminders go to another of the learner's phones; this one can take over. -->
-    <string name="reminders_use_this_phone">このスマートフォンで受け取る</string>
+    <string name="reminders_push">プッシュ通知</string>
     <!-- Under the settings; "your plans" opens the plan, which sets the study days. -->
     <string name="reminders_study_days">学習計画で設定した学習日に</string>
     <string name="reminders_quiet">学習をお休みしている間は一時停止しています。学習すると再開します。</string>
     <string name="reminders_save_failed">保存できませんでした。もう一度お試しください。</string>
+    <!-- Push reminders go to another of the learner's devices; this one can take over. -->
+    <string name="reminders_use_this_device">このデバイスで受け取る</string>
+    <!-- After the selected device's name, such as "Pixel 9 · This device", when it's the device in hand. -->
+    <string name="reminders_this_device">このデバイス</string>
 </resources>

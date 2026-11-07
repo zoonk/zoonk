@@ -52,6 +52,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.TimeOfDayDialog
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.StudyReminder
 import kotlinx.coroutines.launch
@@ -87,15 +88,16 @@ class RemindersViewModel(
 
     private var askedBy: AuthenticatedSession? = null
 
-    /** The learner tapped to turn push on or use this phone: what follows writes for them only. */
+    /** The learner tapped to turn push on or use this device: what follows writes for them only. */
     fun asked() {
         askedBy = reminders.learner
     }
 
-    fun turnOnPush() {
+    /** Push goes back on for the device the row names; with none chosen yet, this one is set up first. */
+    fun turnOnPush(setUp: Boolean) {
         blocked = false
         push = true
-        save({ push = null }) { reminders.turnOnPush(learner = askedBy) }
+        save({ push = null }) { if (setUp) reminders.turnOnPush(learner = askedBy) else reminders.update(pushOn = true, learner = askedBy) }
     }
 
     fun turnOffPush() {
@@ -260,7 +262,10 @@ private fun EmailRow(
     )
 }
 
-/** The switch names the phone push goes to; another phone can take over, and a blocked one says so. */
+/**
+ * The switch acts on the device it names: another device's push only goes on or off, and this one asks
+ * Android first. Another device can take over with "Use this device", and a blocked one says so.
+ */
 @Composable
 private fun PushRows(
     reminder: StudyReminder,
@@ -269,28 +274,28 @@ private fun PushRows(
 ) {
     val context = LocalContext.current
     val canShow = rememberCanShowReminders()
-    val turnOn = rememberReminderPermission { allowed -> if (allowed) viewModel.turnOnPush() else viewModel.blocked() }
-    val move = rememberReminderPermission { allowed -> if (allowed) viewModel.useThisPhone() else viewModel.blocked() }
     val phone = reminder.push.phone
+    val turnOn = rememberReminderPermission { allowed -> if (allowed) viewModel.turnOnPush(setUp = phone == null) else viewModel.blocked() }
+    val move = rememberReminderPermission { allowed -> if (allowed) viewModel.useThisPhone() else viewModel.blocked() }
     val on = viewModel.push ?: reminder.push.on
 
     SwitchRow(
         title = stringResource(R.string.reminders_push),
-        description = phone?.label,
+        description = phone?.let { if (thisPhone) factsLine(it.label, stringResource(R.string.reminders_this_device)) else it.label },
         checked = on,
         onCheckedChange = {
-            if (it) {
-                viewModel.asked()
-                turnOn()
-            } else {
-                viewModel.turnOffPush()
+            viewModel.asked()
+            when {
+                !it -> viewModel.turnOffPush()
+                phone != null && !thisPhone -> viewModel.turnOnPush(setUp = false)
+                else -> turnOn()
             }
         },
     )
 
     if (phone != null && !thisPhone) {
         ListRow(
-            headline = { Text(stringResource(R.string.reminders_use_this_phone)) },
+            headline = { Text(stringResource(R.string.reminders_use_this_device)) },
             onClick = {
                 viewModel.asked()
                 move()
