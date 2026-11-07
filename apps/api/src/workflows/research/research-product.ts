@@ -127,15 +127,15 @@ async function researchNewProduct(research: Research): Promise<GoalProductLink |
     return null;
   }
 
-  const productIds = [
-    ...new Set([productPage, docs, releases, release].flatMap((page) => page?.sourceId ?? [])),
-  ];
+  const pageIds = [brandPage, productPage, docs, releases, release].flatMap(
+    (page) => page?.sourceId ?? [],
+  );
 
   const reading = await readProductPagesStep({
     analytics,
     hints,
     language: plan.language,
-    sourceIds: [...new Set([brandPage.sourceId, ...productIds])],
+    sourceIds: [...new Set(pageIds)],
   });
 
   if (!reading.brand || !reading.product) {
@@ -154,15 +154,15 @@ async function researchNewProduct(research: Research): Promise<GoalProductLink |
       product: {
         aliases: reading.product.aliases,
         description: reading.product.description,
-        docsUrl: docs?.url ?? null,
+        docsSourceId: docs?.sourceId ?? null,
         name: reading.product.name,
         website: sites.product.url,
+        websiteSourceId: productPage.sourceId,
       },
       provenance: reading.provenance,
       releases: reading.releases,
       releasesHash: releases ? (reading.hashes[releases.sourceId] ?? null) : null,
       releasesSourceId: releases?.sourceId ?? null,
-      sourceIds: productIds,
     },
   });
 
@@ -258,7 +258,6 @@ async function researchNamedRelease({
       releases: reading.releases,
       releasesHash: null,
       releasesSourceId: null,
-      sourceIds: [releasePage.sourceId],
     },
   });
 

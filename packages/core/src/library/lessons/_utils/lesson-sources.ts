@@ -1,5 +1,6 @@
 import "server-only";
 import { type Source, prisma } from "@zoonk/db";
+import { listProductPageIds } from "../../products/product-pages";
 import { lessonGoalsFilter, loadLessonMaterialPages } from "../../sources/goal-material";
 import {
   type MaterialPage,
@@ -17,7 +18,7 @@ const FACT_TOPICS: ReadonlySet<SourceTopic | null> = new Set(["product", "regula
 
 type LessonSourceRow = Pick<
   Source,
-  "contentHash" | "extractedText" | "id" | "mimeType" | "productId" | "structure" | "title"
+  "contentHash" | "extractedText" | "id" | "mimeType" | "structure" | "title"
 >;
 
 function statesFacts(source: LessonSourceRow): boolean {
@@ -42,6 +43,10 @@ async function loadLessonSourcePages({
 }): Promise<MaterialPage[]> {
   const goals = lessonGoalsFilter({ chapterId, courseId, lessonId });
 
+  const productPageIds = courseId
+    ? await listProductPageIds({ courses: { some: { id: courseId } } })
+    : [];
+
   const sources = await prisma.source.findMany({
     orderBy: { fetchedAt: "desc" },
     select: {
@@ -49,7 +54,6 @@ async function loadLessonSourcePages({
       extractedText: true,
       id: true,
       mimeType: true,
-      productId: true,
       structure: true,
       title: true,
     },
@@ -59,7 +63,7 @@ async function loadLessonSourcePages({
         { learnerSources: { some: { goal: goals } } },
         { steps: { some: { lessonId } } },
         { stepSources: { some: { step: { lessonId } } } },
-        ...(courseId ? [{ product: { courses: { some: { id: courseId } } } }] : []),
+        { id: { in: productPageIds } },
       ],
       extractedText: { not: null },
       kind: { not: "upload" },
@@ -71,9 +75,7 @@ async function loadLessonSourcePages({
     .filter((source) => statesFacts(source))
     .flatMap((source) => (source.extractedText ? [{ ...source, text: source.extractedText }] : []));
 
-  const productSourceIds = new Set(
-    documents.flatMap((source) => (source.productId ? [source.id] : [])),
-  );
+  const productSourceIds = new Set(productPageIds);
 
   const pages = toMaterialPages(documents);
 

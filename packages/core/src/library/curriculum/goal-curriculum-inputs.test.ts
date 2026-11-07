@@ -149,12 +149,15 @@ describe(loadGoalCurriculumInputs, () => {
 
   it("tells the graph a goal's product and titles its course for the release the goal pins", async () => {
     const [brand, user] = await Promise.all([brandFixture({ name: "Acme" }), userFixture()]);
-    const product = await productFixture({ name: "Gizmo", organizationId: brand.id });
+    const docs = await sourceFixture({ extractedText: "Gizmo docs", title: "Gizmo docs" });
 
-    const [release, docs] = await Promise.all([
-      productReleaseFixture({ name: "Gizmo 2", productId: product.id }),
-      sourceFixture({ extractedText: "Gizmo docs", productId: product.id, title: "Gizmo docs" }),
-    ]);
+    const product = await productFixture({
+      docsSourceId: docs.id,
+      name: "Gizmo",
+      organizationId: brand.id,
+    });
+
+    const release = await productReleaseFixture({ name: "Gizmo 2", productId: product.id });
 
     const [main, pinned, undecided] = await Promise.all([
       goalFixture({ productCheckedAt: new Date(), productId: product.id, userId: user.id }),

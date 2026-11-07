@@ -3,7 +3,6 @@ import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { refreshWebSource } from "../sources/web-sources";
 import { isNewer, isReleased, pickCurrentRelease } from "./current-release";
-import { findDocsSourceId } from "./goal-product-link";
 
 type DatedRelease = { id: string; releasedAt: Date | null };
 
@@ -67,8 +66,7 @@ function loadMainCourses(where: { id?: string | { in: string[] }; productId?: st
       isPinned: true,
       product: {
         select: {
-          docsUrl: true,
-          id: true,
+          docsSourceId: true,
           releases: { select: { id: true, releasedAt: true, sourceId: true } },
           releasesSourceId: true,
         },
@@ -170,7 +168,7 @@ export async function loadCourseRelease({
   }
 
   const pageId = next.sourceId ?? course.product.releasesSourceId;
-  const docsId = await findDocsSourceId(course.product);
+  const docsId = course.product.docsSourceId;
 
   return {
     fromReleaseId: course.productReleaseId,

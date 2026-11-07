@@ -219,7 +219,11 @@ describe("product research", () => {
     });
 
     const brand = await prisma.organization.findUniqueOrThrow({
-      include: { products: { include: { releases: true, sources: true } } },
+      include: {
+        products: {
+          include: { docsSource: true, releases: true, releasesSource: true, websiteSource: true },
+        },
+      },
       where: { domain: site.brand },
     });
 
@@ -233,20 +237,16 @@ describe("product research", () => {
     });
 
     expect(product).toMatchObject({
-      docsUrl: `https://${site.product}/docs`,
+      docsSource: { url: `https://${site.product}/docs` },
       imageUrl: `https://blob.example/products/${product?.id}/image.webp`,
       name: "Orbit Notes",
+      releasesSource: { url: `https://${site.product}/releases` },
       website: `https://${site.product}/`,
+      websiteSource: { url: `https://${site.product}/` },
     });
 
     expect(product?.releases.map((release) => [release.name, release.releasedAt])).toStrictEqual([
       ["Orbit Notes 5", new Date("2025-10-21T00:00:00.000Z")],
-    ]);
-
-    expect(product?.sources.map((source) => source.url).toSorted()).toStrictEqual([
-      `https://${site.product}/`,
-      `https://${site.product}/docs`,
-      `https://${site.product}/releases`,
     ]);
 
     expect(
@@ -416,7 +416,7 @@ describe("product research", () => {
     const releaseUrl = `${repo}/releases/tag/v13`;
     const product = await savedProduct(site);
 
-    await sourceFixture({ productId: product.id, url: `${repo}/releases` });
+    const releasesPage = await sourceFixture({ url: `${repo}/releases` });
 
     const [goal] = await Promise.all([
       productGoal(),
@@ -425,6 +425,7 @@ describe("product research", () => {
         normalizedName: "orbitnotes15",
         productId: product.id,
         releasedAt: new Date("2025-10-21"),
+        sourceId: releasesPage.id,
       }),
     ]);
 

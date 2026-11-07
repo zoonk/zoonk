@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { fetchDocument } from "../sources/fetch-document";
 import { type PageTags, decodeHtml, readPageTags } from "./page-tags";
 import { toNameKey, toRegistrableDomain } from "./product-keys";
+import { listProductPageIds } from "./product-pages";
 
 type InspectedPage = { domain: string; tags: PageTags; url: string };
 
@@ -238,9 +239,11 @@ export async function loadProductSites({
     return null;
   }
 
+  const pageIds = await listProductPageIds({ id: product.id });
+
   const sources = await prisma.source.findMany({
     select: { url: true },
-    where: { productId: product.id },
+    where: { id: { in: pageIds } },
   });
 
   return {

@@ -159,7 +159,19 @@ describe(loadLessonSpecInputs, () => {
 
   it("plans a product course's lesson for its product and release, from the product's pages", async () => {
     const brand = await brandFixture({ name: "Acme" });
-    const product = await productFixture({ name: "Gizmo", organizationId: brand.id });
+
+    const docs = await sourceFixture({
+      extractedText:
+        "To pair the gizmo remote, hold the base station button until the remote light blinks.",
+      structure: { images: 0, pages: null, topic: "product" },
+      title: "Gizmo help: pairing",
+    });
+
+    const product = await productFixture({
+      docsSourceId: docs.id,
+      name: "Gizmo",
+      organizationId: brand.id,
+    });
 
     const release = await productReleaseFixture({
       name: "Gizmo 2",
@@ -176,20 +188,11 @@ describe(loadLessonSpecInputs, () => {
 
     const chapter = await libraryChapterFixture({ homeCourseId: course.id });
 
-    const [lesson] = await Promise.all([
-      libraryLessonFixture({
-        description: "Pair the gizmo remote with the gizmo base station.",
-        homeChapterId: chapter.id,
-        title: "Pair the gizmo remote",
-      }),
-      sourceFixture({
-        extractedText:
-          "To pair the gizmo remote, hold the base station button until the remote light blinks.",
-        productId: product.id,
-        structure: { images: 0, pages: null, topic: "product" },
-        title: "Gizmo help: pairing",
-      }),
-    ]);
+    const lesson = await libraryLessonFixture({
+      description: "Pair the gizmo remote with the gizmo base station.",
+      homeChapterId: chapter.id,
+      title: "Pair the gizmo remote",
+    });
 
     const inputs = await loadLessonSpecInputs(lesson.id);
 
@@ -204,7 +207,13 @@ describe(loadLessonSpecInputs, () => {
 
   it("grounds a product lesson in its product's pages even in another language than theirs", async () => {
     const brand = await brandFixture();
-    const product = await productFixture({ organizationId: brand.id });
+
+    const docs = await sourceFixture({
+      extractedText: "To pair the remote, hold the dock button until the light blinks.",
+      structure: { images: 0, pages: null, topic: "product" },
+    });
+
+    const product = await productFixture({ docsSourceId: docs.id, organizationId: brand.id });
 
     const course = await courseFixture({
       language: "pt",
@@ -214,19 +223,12 @@ describe(loadLessonSpecInputs, () => {
 
     const chapter = await libraryChapterFixture({ homeCourseId: course.id, language: "pt" });
 
-    const [lesson] = await Promise.all([
-      libraryLessonFixture({
-        description: "Conecte o controle remoto à base.",
-        homeChapterId: chapter.id,
-        language: "pt",
-        title: "Parear o controle",
-      }),
-      sourceFixture({
-        extractedText: "To pair the remote, hold the dock button until the light blinks.",
-        productId: product.id,
-        structure: { images: 0, pages: null, topic: "product" },
-      }),
-    ]);
+    const lesson = await libraryLessonFixture({
+      description: "Conecte o controle remoto à base.",
+      homeChapterId: chapter.id,
+      language: "pt",
+      title: "Parear o controle",
+    });
 
     const unrelated = await sourceFixture({
       extractedText: "Regras de trânsito para bicicletas elétricas. ".repeat(130),

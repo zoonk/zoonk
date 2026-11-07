@@ -8,6 +8,7 @@ import { applyPlanOperations } from "../../plans/planner/plan-operations";
 import { getReferenceSyllabusNeed } from "../curriculum/goal-curriculum-inputs";
 import { toExamIdentity, toSharedContext } from "../curriculum/shared-graph-prompt";
 import { courseFollowersFilter } from "../products/course-release";
+import { readsProductPage } from "../products/product-pages";
 import { type ExamStructure, examStructureSchema } from "./blueprint-contract";
 import { readTestedLanguage } from "./blueprint-language";
 
@@ -29,7 +30,7 @@ export function countNextEditionGoals({
 
 /** A product's page counts the goals about its product and the learners of its main courses. */
 export async function countActiveSourceGoals(sourceId: string): Promise<number> {
-  const product = { OR: [{ releasesSourceId: sourceId }, { sources: { some: { id: sourceId } } }] };
+  const product = readsProductPage(sourceId);
 
   const mainCourses = await prisma.course.findMany({
     select: { id: true },

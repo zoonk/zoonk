@@ -22,9 +22,10 @@ type ResearchedBrand = { description: string; domain: string; name: string; webs
 type ResearchedProduct = {
   aliases: readonly string[];
   description: string;
-  docsUrl: string | null;
+  docsSourceId: string | null;
   name: string;
   website: string;
+  websiteSourceId: string | null;
 };
 
 type ResearchedRelease = {
@@ -46,7 +47,6 @@ type ReleasesReading = {
 export type ProductResearch = ReleasesReading & {
   brand: ResearchedBrand;
   product: ResearchedProduct;
-  sourceIds: readonly string[];
 };
 
 type SavedReleases = {
@@ -121,12 +121,13 @@ async function createProduct({
       ...toProvenanceData(research.provenance),
       aliases: toAliasKeys({ aliases: product.aliases, nameKey: normalizedName }),
       description: product.description,
-      docsUrl: product.docsUrl,
+      docsSourceId: product.docsSourceId,
       name: product.name,
       normalizedName,
       organizationId,
       slug: pickSlug({ name: product.name, taken: taken.map((row) => row.slug) }),
       website: product.website,
+      websiteSourceId: product.websiteSourceId,
     },
   });
 }
@@ -156,7 +157,8 @@ async function saveProduct({
   return tx.product.update({
     data: {
       aliases: [...new Set([...existing.aliases, ...aliases])],
-      docsUrl: existing.docsUrl ?? research.product.docsUrl,
+      docsSourceId: existing.docsSourceId ?? research.product.docsSourceId,
+      websiteSourceId: existing.websiteSourceId ?? research.product.websiteSourceId,
     },
     where: { id: existing.id },
   });
@@ -329,12 +331,6 @@ export async function saveProductResearch(
   const saved = await prisma.$transaction(async (tx) => {
     await lockBrandProducts(tx, organization.id);
     const product = await saveProduct({ organizationId: organization.id, research, tx });
-
-    await tx.source.updateMany({
-      data: { productId: product.id },
-      where: { id: { in: [...research.sourceIds] }, productId: null },
-    });
-
     return finishReleases({ productId: product.id, reading: research, tx });
   });
 

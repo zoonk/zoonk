@@ -1,18 +1,21 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { listProductPageIds } from "../products/product-pages";
 
 const MAX_REFERENCE_CHARACTERS = 30_000;
 const MAX_REFERENCES = 3;
 
 const REFERENCE_SELECT = { extractedText: true, title: true } as const;
 
-function loadSources({ goalId, productId }: { goalId: string; productId: string | null }) {
+async function loadSources({ goalId, productId }: { goalId: string; productId: string | null }) {
   if (productId) {
+    const pageIds = await listProductPageIds({ id: productId });
+
     return prisma.source.findMany({
       orderBy: { createdAt: "asc" },
       select: REFERENCE_SELECT,
       take: MAX_REFERENCES,
-      where: { extractedText: { not: null }, productId },
+      where: { extractedText: { not: null }, id: { in: pageIds } },
     });
   }
 

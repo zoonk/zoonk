@@ -1,8 +1,16 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { brandFixture, productFixture } from "@zoonk/testing/fixtures/products";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { listGoalReferences } from "../curriculum/goal-references";
+import { countActiveSourceGoals } from "../exams/exam-learners";
+import { loadLessonDocuments } from "../lessons/_utils/lesson-sources";
+import { findProductCheckedSourceId } from "./goal-product-link";
 import {
   type ProductResearch,
   saveProductReleases,
@@ -18,7 +26,12 @@ const provenance = {
 
 async function research(attrs?: Partial<ProductResearch>): Promise<ProductResearch> {
   const key = randomUUID().slice(0, 8);
-  const [productPage, releasesPage] = await Promise.all([sourceFixture(), sourceFixture()]);
+
+  const [productPage, docsPage, releasesPage] = await Promise.all([
+    sourceFixture(),
+    sourceFixture(),
+    sourceFixture(),
+  ]);
 
   return {
     brand: {
@@ -30,9 +43,10 @@ async function research(attrs?: Partial<ProductResearch>): Promise<ProductResear
     product: {
       aliases: [`WJS ${key}`, `Widget JS ${key}`],
       description: "A framework for building websites.",
-      docsUrl: `https://widget-${key}.test/docs`,
+      docsSourceId: docsPage.id,
       name: `Widget.js ${key}`,
       website: `https://widget-${key}.test/`,
+      websiteSourceId: productPage.id,
     },
     provenance,
     releases: [
@@ -53,7 +67,6 @@ async function research(attrs?: Partial<ProductResearch>): Promise<ProductResear
     ],
     releasesHash: releasesPage.contentHash,
     releasesSourceId: releasesPage.id,
-    sourceIds: [productPage.id, releasesPage.id],
     ...attrs,
   };
 }
@@ -71,10 +84,11 @@ describe(saveProductResearch, () => {
     });
 
     expect(saved.product).toMatchObject({
-      docsUrl: input.product.docsUrl,
+      docsSourceId: input.product.docsSourceId,
       organizationId: saved.organization.id,
       releasesHash: input.releasesHash,
       releasesSourceId: input.releasesSourceId,
+      websiteSourceId: input.product.websiteSourceId,
     });
 
     expect(saved.releases.map((release) => release.version)).toStrictEqual(["15", "16"]);
@@ -82,9 +96,6 @@ describe(saveProductResearch, () => {
     expect(saved.newReleaseIds.toSorted()).toStrictEqual(
       saved.releases.map((release) => release.id).toSorted(),
     );
-
-    const pages = await prisma.source.findMany({ where: { id: { in: [...input.sourceIds] } } });
-    expect(pages.map((page) => page.productId)).toStrictEqual([saved.product.id, saved.product.id]);
   });
 
   it("keeps what an earlier reading saved, adds what a later one finds and reports only releases it stored first", async () => {
@@ -169,21 +180,56 @@ describe(saveProductResearch, () => {
     expect(new Set(saved.map((item) => item.organization.slug)).size).toBe(2);
   });
 
-  it("leaves a page another product owns with that product", async () => {
-    const owner = await brandFixture();
+  it("lets every product whose research reads one docs page reach it", async () => {
+    const docs = await sourceFixture({
+      extractedText: "To pair the remote, hold the dock button until the light blinks.",
+      structure: { images: 0, pages: null, topic: "product" },
+      title: "Brand docs",
+    });
 
-    const [otherProduct, input] = await Promise.all([
-      productFixture({ organizationId: owner.id }),
-      research(),
-    ]);
+    const [first, second] = await Promise.all([research(), research()]);
 
-    const shared = await sourceFixture({ productId: otherProduct.id });
+    const withDocs = (input: ProductResearch) => ({
+      ...input,
+      product: { ...input.product, docsSourceId: docs.id, websiteSourceId: null },
+      releases: [],
+      releasesHash: null,
+      releasesSourceId: null,
+    });
 
-    await saveProductResearch({ ...input, sourceIds: [...input.sourceIds, shared.id] });
+    await saveProductResearch(withDocs(first));
+    const saved = await saveProductResearch(withDocs(second));
+
+    await expect(findProductCheckedSourceId(saved.product.id)).resolves.toBe(docs.id);
+
+    const user = await userFixture();
+    await goalFixture({ productId: saved.product.id, userId: user.id });
+    await expect(countActiveSourceGoals(docs.id)).resolves.toBe(1);
 
     await expect(
-      prisma.source.findUniqueOrThrow({ where: { id: shared.id } }),
-    ).resolves.toMatchObject({ productId: otherProduct.id });
+      listGoalReferences({ goalId: randomUUID(), productId: saved.product.id }),
+    ).resolves.toStrictEqual([{ text: docs.extractedText, title: "Brand docs" }]);
+
+    const course = await courseFixture({
+      organizationId: saved.organization.id,
+      productId: saved.product.id,
+    });
+
+    const chapter = await libraryChapterFixture({ homeCourseId: course.id });
+
+    const lesson = await libraryLessonFixture({
+      homeChapterId: chapter.id,
+      title: "Pair the remote",
+    });
+
+    const documents = await loadLessonDocuments({
+      chapterId: chapter.id,
+      courseId: course.id,
+      lessonId: lesson.id,
+      query: "Pair the remote with the dock",
+    });
+
+    expect(documents.sources.map((page) => page.sourceId)).toStrictEqual([docs.id]);
   });
 
   it("keeps the releases page a product has, and the hash its releases were read from", async () => {

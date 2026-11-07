@@ -19,9 +19,6 @@ ALTER TABLE "organizations" ADD COLUMN     "description" TEXT,
 ADD COLUMN     "domain" TEXT,
 ADD COLUMN     "website" TEXT;
 
--- AlterTable
-ALTER TABLE "sources" ADD COLUMN     "product_id" UUID;
-
 -- CreateTable
 CREATE TABLE "products" (
     "id" UUID NOT NULL DEFAULT uuidv7(),
@@ -31,7 +28,8 @@ CREATE TABLE "products" (
     "normalized_name" TEXT NOT NULL,
     "aliases" TEXT[] DEFAULT ARRAY[]::TEXT[],
     "website" TEXT NOT NULL,
-    "docs_url" TEXT,
+    "website_source_id" UUID,
+    "docs_source_id" UUID,
     "description" TEXT NOT NULL,
     "image_url" TEXT,
     "releases_source_id" UUID,
@@ -74,7 +72,13 @@ CREATE INDEX "products_normalized_name_idx" ON "products"("normalized_name");
 CREATE INDEX "products_aliases_idx" ON "products" USING GIN ("aliases");
 
 -- CreateIndex
+CREATE INDEX "products_docs_source_id_idx" ON "products"("docs_source_id");
+
+-- CreateIndex
 CREATE INDEX "products_releases_source_id_idx" ON "products"("releases_source_id");
+
+-- CreateIndex
+CREATE INDEX "products_website_source_id_idx" ON "products"("website_source_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "products_organization_id_normalized_name_key" ON "products"("organization_id", "normalized_name");
@@ -106,9 +110,6 @@ CREATE INDEX "goals_product_release_id_idx" ON "goals"("product_release_id");
 -- CreateIndex
 CREATE UNIQUE INDEX "organizations_domain_key" ON "organizations"("domain");
 
--- CreateIndex
-CREATE INDEX "sources_product_id_idx" ON "sources"("product_id");
-
 -- AddForeignKey
 ALTER TABLE "courses" ADD CONSTRAINT "courses_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
@@ -125,6 +126,12 @@ ALTER TABLE "goals" ADD CONSTRAINT "goals_product_release_id_fkey" FOREIGN KEY (
 ALTER TABLE "products" ADD CONSTRAINT "products_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "products" ADD CONSTRAINT "products_website_source_id_fkey" FOREIGN KEY ("website_source_id") REFERENCES "sources"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "products" ADD CONSTRAINT "products_docs_source_id_fkey" FOREIGN KEY ("docs_source_id") REFERENCES "sources"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "products" ADD CONSTRAINT "products_releases_source_id_fkey" FOREIGN KEY ("releases_source_id") REFERENCES "sources"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -132,6 +139,3 @@ ALTER TABLE "product_releases" ADD CONSTRAINT "product_releases_product_id_fkey"
 
 -- AddForeignKey
 ALTER TABLE "product_releases" ADD CONSTRAINT "product_releases_source_id_fkey" FOREIGN KEY ("source_id") REFERENCES "sources"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "sources" ADD CONSTRAINT "sources_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE SET NULL ON UPDATE CASCADE;

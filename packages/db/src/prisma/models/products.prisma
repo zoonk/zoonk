@@ -9,7 +9,12 @@ model Product {
   normalizedName   String           @map("normalized_name")
   aliases          String[]         @default([])
   website          String
-  docsUrl          String?          @map("docs_url")
+  /// One page can serve several products (a brand's one docs hub), so each product points at the
+  /// pages its research read.
+  websiteSourceId  String?          @map("website_source_id") @db.Uuid
+  websiteSource    Source?          @relation("ProductWebsiteSource", fields: [websiteSourceId], references: [id], onDelete: SetNull)
+  docsSourceId     String?          @map("docs_source_id") @db.Uuid
+  docsSource       Source?          @relation("ProductDocsSource", fields: [docsSourceId], references: [id], onDelete: SetNull)
   /// English, one or two neutral sentences.
   description      String
   imageUrl         String?          @map("image_url")
@@ -26,7 +31,6 @@ model Product {
   createdAt        DateTime         @default(now()) @map("created_at")
   updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at")
   releases         ProductRelease[]
-  sources          Source[]         @relation("ProductSources")
   courses          Course[]
   goals            Goal[]
 
@@ -34,7 +38,9 @@ model Product {
   @@unique([organizationId, slug], name: "organizationSlug")
   @@index([normalizedName])
   @@index([aliases], type: Gin)
+  @@index([docsSourceId])
   @@index([releasesSourceId])
+  @@index([websiteSourceId])
   @@map("products")
 }
 

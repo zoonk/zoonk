@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import {
@@ -57,16 +56,17 @@ describe(findCourseProductLink, () => {
 describe(findProductCheckedSourceId, () => {
   it("checks the releases page, else the docs, else nothing", async () => {
     const brand = await brandFixture();
-    const releasesPage = await sourceFixture();
-    const docsUrl = `https://docs.example.test/${randomUUID()}`;
+    const [releasesPage, docsPage] = await Promise.all([sourceFixture(), sourceFixture()]);
 
     const [withReleases, withDocs, bare] = await Promise.all([
-      productFixture({ organizationId: brand.id, releasesSourceId: releasesPage.id }),
-      productFixture({ docsUrl, organizationId: brand.id }),
+      productFixture({
+        docsSourceId: docsPage.id,
+        organizationId: brand.id,
+        releasesSourceId: releasesPage.id,
+      }),
+      productFixture({ docsSourceId: docsPage.id, organizationId: brand.id }),
       productFixture({ organizationId: brand.id }),
     ]);
-
-    const docsPage = await sourceFixture({ productId: withDocs.id, url: docsUrl });
 
     await expect(
       Promise.all(

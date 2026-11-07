@@ -88,8 +88,6 @@ async function productReleasesPage({ releasesHash }: { releasesHash?: string } =
     releasesSourceId: source.id,
   });
 
-  await prisma.source.update({ data: { productId: product.id }, where: { id: source.id } });
-
   const course = await courseFixture({ organizationId: brand.id, productId: product.id });
   return { course, product, source };
 }

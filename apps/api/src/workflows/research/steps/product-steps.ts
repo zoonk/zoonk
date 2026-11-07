@@ -125,12 +125,13 @@ export async function findProductStep(hints: LookupHints): Promise<KnownProduct 
     product: {
       aliases: product.aliases,
       description: product.description,
-      docsUrl: product.docsUrl,
+      docsSourceId: product.docsSourceId,
       id: product.id,
       name: product.name,
       releasesHash: product.releasesHash,
       releasesSourceId: product.releasesSourceId,
       website: product.website,
+      websiteSourceId: product.websiteSourceId,
     },
     sites,
   };

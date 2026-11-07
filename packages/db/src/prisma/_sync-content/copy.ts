@@ -26,6 +26,8 @@ function keepKnown({ column, known }: { column: string; known: ReadonlySet<strin
   return (data) => keepKnownReferences({ column, data, known });
 }
 
+const PRODUCT_SOURCE_COLUMNS = ["website_source_id", "docs_source_id", "releases_source_id"];
+
 function applyTransforms(data: TableRows, transforms: Transform[]): TableRows {
   return transforms.reduce((current, transform) => transform(current), data);
 }
@@ -81,7 +83,7 @@ async function getExistingReferences({
     ids: [
       ...getColumnValues(catalog.items, "source_id"),
       ...getColumnValues(catalog.library_steps, "source_id"),
-      ...getColumnValues(catalog.products, "releases_source_id"),
+      ...PRODUCT_SOURCE_COLUMNS.flatMap((column) => getColumnValues(catalog.products, column)),
       ...getColumnValues(catalog.product_releases, "source_id"),
     ],
     table: "sources",
@@ -198,8 +200,9 @@ export async function copyCatalog({
 
   const { productIds, releaseIds } = await upsertProducts({
     destination,
-    products: keepKnown({ column: "releases_source_id", known: existing.sourceIds })(
+    products: applyTransforms(
       catalog.products,
+      PRODUCT_SOURCE_COLUMNS.map((column) => keepKnown({ column, known: existing.sourceIds })),
     ),
     releases: keepKnown({ column: "source_id", known: existing.sourceIds })(
       catalog.product_releases,

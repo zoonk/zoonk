@@ -26,39 +26,15 @@ export async function findCourseProductLink(goalId: string): Promise<GoalProduct
   };
 }
 
-/** A product's docs page is the one of its sources saved at its docs address. */
-export async function findDocsSourceId({
-  docsUrl,
-  id,
-}: {
-  docsUrl: string | null;
-  id: string;
-}): Promise<string | null> {
-  if (!docsUrl) {
-    return null;
-  }
-
-  const docs = await prisma.source.findFirst({
-    select: { id: true },
-    where: { productId: id, url: docsUrl },
-  });
-
-  return docs?.id ?? null;
-}
-
 /**
  * Internal workflow bridge for research: the page the freshness sweep re-reads while learners use
  * the product, its releases page, else its docs. Marketing pages change too often to follow.
  */
 export async function findProductCheckedSourceId(productId: string): Promise<string | null> {
   const product = await prisma.product.findUnique({
-    select: { docsUrl: true, releasesSourceId: true },
+    select: { docsSourceId: true, releasesSourceId: true },
     where: { id: productId },
   });
 
-  if (!product) {
-    return null;
-  }
-
-  return product.releasesSourceId ?? findDocsSourceId({ docsUrl: product.docsUrl, id: productId });
+  return product ? (product.releasesSourceId ?? product.docsSourceId) : null;
 }
