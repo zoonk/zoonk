@@ -1,3 +1,5 @@
+import { getAndroidApps } from "@zoonk/utils/android-apps";
+
 const HANDLE_ALL_URLS = "delegate_permission/common.handle_all_urls";
 
 /**
@@ -13,33 +15,13 @@ export const APP_LINK_COMPONENTS = [{ "/": "/plan-link/*" }, { "/": "/*/plan-lin
  */
 const ANDROID_APPLE_RETURN = { "/": "/auth/apple" };
 
-/** A comma-separated list of fingerprints, so another key (the upload key, a second machine) can join. */
-function readFingerprints(value: string | undefined): string[] {
-  return (value ?? "")
-    .split(",")
-    .map((fingerprint) => fingerprint.trim())
-    .filter(Boolean);
-}
-
 /**
- * Android's Digital Asset Links: the release app and the Debug build, each verified by the SHA-256
- * fingerprints of the certificates that sign it (Play App Signing's key for release, the local
- * debug keystore for Debug). An app without fingerprints is left out. Android 15 and later open
- * only these paths; earlier versions use the app's manifest.
+ * Android's Digital Asset Links, verified by each app's signing fingerprints. An app without
+ * fingerprints is left out. Android 15 and later open only these paths; earlier versions use the
+ * app's manifest.
  */
 export function getAndroidAssetLinks() {
-  const apps = [
-    {
-      fingerprints: readFingerprints(process.env.ANDROID_RELEASE_CERT_FINGERPRINTS),
-      packageName: "com.zoonk",
-    },
-    {
-      fingerprints: readFingerprints(process.env.ANDROID_DEBUG_CERT_FINGERPRINTS),
-      packageName: "com.zoonk.debug",
-    },
-  ];
-
-  return apps
+  return getAndroidApps()
     .filter((app) => app.fingerprints.length > 0)
     .map((app) => ({
       relation: [HANDLE_ALL_URLS],

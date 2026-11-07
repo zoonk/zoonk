@@ -6,6 +6,9 @@ import com.google.android.play.core.integrity.StandardIntegrityManager.PrepareIn
 import com.google.android.play.core.integrity.StandardIntegrityManager.StandardIntegrityToken
 import com.google.android.play.core.integrity.StandardIntegrityManager.StandardIntegrityTokenProvider
 import com.google.android.play.core.integrity.StandardIntegrityManager.StandardIntegrityTokenRequest
+import com.zoonk.android.data.ApiClients
+import com.zoonk.android.data.ApiException
+import com.zoonk.android.data.perform
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -67,8 +70,29 @@ fun BotProofRequest.requestHash(challenge: String): String {
             BotProofRequest.Guest -> listOf("guest")
             is BotProofRequest.EmailCode -> listOf("email-code", email)
             is BotProofRequest.EmailSession -> listOf("email-session", email, code)
+            is BotProofRequest.RestoreKey -> listOf("restore-key", credentialId)
         }
     val clientData = (listOf("zoonk-app-attest:1", challenge) + binding).joinToString("\n")
     val digest = MessageDigest.getInstance("SHA-256").digest(clientData.toByteArray(Charsets.UTF_8))
     return Base64.getUrlEncoder().withoutPadding().encodeToString(digest)
+}
+
+/** A Play Integrity token and the single-use challenge its request hash covers. */
+data class PlayIntegrityProof(
+    val token: String,
+    val challenge: String,
+)
+
+/** Null when Play can't make a token: the request then goes anyway, and the server decides as it does for iOS. */
+suspend fun IntegrityTokens.proof(
+    api: ApiClients,
+    request: BotProofRequest,
+): PlayIntegrityProof? {
+    val challenge =
+        try {
+            perform { api.clients(null).sessions.createAppAttestChallenge() }.challenge
+        } catch (e: ApiException) {
+            return null
+        }
+    return token(request.requestHash(challenge))?.let { PlayIntegrityProof(it, challenge) }
 }

@@ -1,10 +1,11 @@
 import { accessErrorCodes } from "@/lib/access-error-codes";
-import { createErrorResponse, httpStatus } from "@/lib/api-errors";
+import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
 import { authRateLimitError } from "@/lib/auth-rate-limit-error";
 import { sessionErrorCodes } from "@/lib/session-error-codes";
 import { DISPOSABLE_EMAIL_ERROR_MESSAGE } from "@zoonk/auth/email-signup-contract";
 import { getAuthError } from "@zoonk/auth/errors";
 import { AppleAuthorizationError, NativeAppleAccountError } from "@zoonk/auth/native-apple";
+import { RESTORE_KEY_ERROR_CODES } from "@zoonk/auth/restore-key-contract";
 
 function isInvalidSocialAuthorization(error: unknown) {
   return getAuthError(error)?.statusCode === httpStatus.unauthorized;
@@ -133,4 +134,30 @@ export function getAppleSessionErrorResponse(error: unknown) {
   }
 
   return null;
+}
+
+const restoreKeyErrorCodes = new Set<string>(Object.values(RESTORE_KEY_ERROR_CODES));
+
+function getRestoreKeyRefusal(error: unknown) {
+  const authError = getAuthError(error);
+
+  return authError?.code && authError.statusCode && restoreKeyErrorCodes.has(authError.code)
+    ? createErrorResponse({
+        code: authError.code,
+        message: authError.message,
+        status: authError.statusCode,
+      })
+    : null;
+}
+
+export function getRestoreKeyErrorResponse(error: unknown) {
+  if (getAuthError(error)?.statusCode === httpStatus.unauthorized) {
+    return errors.unauthorized();
+  }
+
+  return getSharedSessionErrorResponse(error) ?? getRestoreKeyRefusal(error);
+}
+
+export function getRestoreKeySessionErrorResponse(error: unknown) {
+  return getSharedSessionErrorResponse(error) ?? getRestoreKeyRefusal(error);
 }

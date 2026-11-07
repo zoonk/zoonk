@@ -16,7 +16,7 @@ export const appAttestChallengeResponseSchema = z
       .min(1)
       .meta({
         description:
-          "Single-use and valid for five minutes. An attestation's client data hash is the SHA-256 of its UTF-8 bytes; an assertion signs it inside the request's client data (see the `x-app-attest-assertion` header), and a Play Integrity token's request hash covers it the same way (see the `x-play-integrity-token` header).",
+          "Single-use and valid for five minutes. An attestation's client data hash is the SHA-256 of its UTF-8 bytes; an assertion signs it inside the request's client data (see the `x-app-attest-assertion` header), and a Play Integrity token's request hash covers it the same way (see the `x-play-integrity-token` header). A restore key's WebAuthn request uses it as its `challenge`, unchanged.",
       }),
   })
   .meta({ id: "AppAttestChallenge" });
@@ -59,6 +59,12 @@ export const appProofHeaderParamsSchema = z.object({
     .optional()
     .meta({
       description:
-        "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`)",
+        "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`; for POST /v1/sessions/current/restore-keys the operation is `restore-key` and its one field is the registration's credential `id`)",
     }),
+});
+
+/** Restore keys are Android's, so they take only Play Integrity's headers. */
+export const playIntegrityHeaderParamsSchema = appProofHeaderParamsSchema.pick({
+  [PLAY_INTEGRITY_HEADERS.challenge]: true,
+  [PLAY_INTEGRITY_HEADERS.token]: true,
 });

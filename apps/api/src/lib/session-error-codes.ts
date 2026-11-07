@@ -1,5 +1,6 @@
 import { APP_ATTESTATION_INVALID_ERROR_CODE } from "@zoonk/auth/app-attest-contract";
 import { DISPOSABLE_EMAIL_ERROR_CODE } from "@zoonk/auth/email-signup-contract";
+import { RESTORE_KEY_ERROR_CODES } from "@zoonk/auth/restore-key-contract";
 
 export const sessionErrorCodes = {
   accountDisabled: "ACCOUNT_DISABLED",
@@ -11,4 +12,8 @@ export const sessionErrorCodes = {
   emailCodeLocked: "EMAIL_SIGN_IN_CODE_LOCKED",
   googleAuthorizationInvalid: "GOOGLE_AUTHORIZATION_INVALID",
   rateLimitExceeded: "RATE_LIMIT_EXCEEDED",
+  restoreKeyChallengeInvalid: RESTORE_KEY_ERROR_CODES.challengeInvalid,
+  restoreKeyInvalid: RESTORE_KEY_ERROR_CODES.keyInvalid,
+  restoreKeyRegistrationInvalid: RESTORE_KEY_ERROR_CODES.registrationInvalid,
+  restoreKeyResponseMalformed: RESTORE_KEY_ERROR_CODES.responseMalformed,
 } as const;
