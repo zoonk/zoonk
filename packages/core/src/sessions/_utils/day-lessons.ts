@@ -1,7 +1,7 @@
 import { type Goal, type PlanItem } from "@zoonk/db";
 import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
-import { LEARN_KINDS, hasUnwrittenSkill } from "../../plans/planner/plan-item-rules";
+import { LEARN_KINDS, hasUnwrittenSkill, isStandIn } from "../../plans/planner/plan-item-rules";
 import { type PlanGraph } from "../../plans/planner/plan-state";
 
 const LESSON_LOOKAHEAD = 8;
@@ -29,6 +29,29 @@ export function isAllocatedOn({ item, today }: { item: AllocatedItem; today: Dat
   const facts = readSelectedItemFacts(item.facts);
   const date = toIsoDate(today);
   return facts?.days?.some(([day, , raw]) => day === date && raw > 0) === true;
+}
+
+export function getUnwrittenMinutesOn({
+  items,
+  today,
+}: {
+  items: readonly (AllocatedItem &
+    Pick<PlanItem, "chapterId" | "kind" | "lessonId" | "minutes" | "skillId" | "status">)[];
+  today: Date;
+}): number {
+  const date = toIsoDate(today);
+
+  return items
+    .filter((item) => item.status === "todo" && isStandIn(item))
+    .reduce((sum, item) => {
+      const days = readSelectedItemFacts(item.facts)?.days;
+
+      if (days) {
+        return sum + (days.find(([day]) => day === date)?.[1] ?? 0);
+      }
+
+      return isDue({ item, today }) ? sum + (item.minutes ?? 0) : sum;
+    }, 0);
 }
 
 function getDayShares<TItem extends DayItem>({
