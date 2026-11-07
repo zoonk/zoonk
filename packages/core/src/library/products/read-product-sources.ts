@@ -39,18 +39,7 @@ export type ProductSourcesReading = Omit<CheckedProductReading, "releases"> & {
   provenance: Awaited<ReturnType<typeof readProductPages>>["provenance"];
 };
 
-/**
- * Internal workflow bridge for research and the freshness check: one model call over stored
- * official pages, keeping only the claims their pages state (`checkProductReading`).
- */
-export async function readProductSources({
-  analytics,
-  hints,
-  known = false,
-  language,
-  serviceTier,
-  sourceIds,
-}: {
+type ReadInput = {
   analytics?: AiGenerationContext;
   hints: ProductHints;
   /** The product is saved already, so only its releases are read. */
@@ -58,10 +47,28 @@ export async function readProductSources({
   /** The pages' language, which names their months. */
   language: string;
   serviceTier?: ServiceTier;
-  sourceIds: readonly string[];
-}): Promise<ProductSourcesReading> {
-  const sources = await loadReadSources(sourceIds);
+};
 
+/**
+ * Internal workflow bridge for research: one model call over stored official pages, keeping only
+ * the claims their pages state (`checkProductReading`).
+ */
+export async function readProductSources({
+  sourceIds,
+  ...input
+}: ReadInput & { sourceIds: readonly string[] }): Promise<ProductSourcesReading> {
+  return readSourceVersions({ ...input, sources: await loadReadSources(sourceIds) });
+}
+
+/** Internal workflow bridge for the freshness check: reads these versions of the pages. */
+export async function readSourceVersions({
+  analytics,
+  hints,
+  known = false,
+  language,
+  serviceTier,
+  sources,
+}: ReadInput & { sources: readonly ReadSource[] }): Promise<ProductSourcesReading> {
   const { data, provenance } = await readProductPages({
     analytics,
     hints,
