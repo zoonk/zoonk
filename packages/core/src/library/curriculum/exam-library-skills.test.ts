@@ -91,6 +91,7 @@ describe(loadExamLibrarySkills, () => {
     );
 
     await prisma.skill.update({ data: { mergedIntoId: base?.id }, where: { id: merged?.id } });
+
     await prisma.skillPrerequisite.create({
       data: { prerequisiteId: base!.id, skillId: placed!.id },
     });
@@ -136,6 +137,7 @@ describe("reusing another exam's skills", () => {
     await prisma.skillPrerequisite.create({
       data: { prerequisiteId: base!.id, skillId: placed!.id },
     });
+
     const skillCount = await prisma.skill.count();
 
     const skills = [
@@ -146,7 +148,7 @@ describe("reusing another exam's skills", () => {
     const idsByKey = await saveGoalSkills({ provenance, scope, skills });
 
     expect(idsByKey).toStrictEqual({ base: base!.id, placed: placed!.id });
-    expect(await prisma.skill.count()).toBe(skillCount);
+    await expect(prisma.skill.count()).resolves.toBe(skillCount);
 
     await linkGoalSkillPrerequisites({ idsByKey, skills });
 
