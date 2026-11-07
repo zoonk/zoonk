@@ -3213,7 +3213,7 @@ msgstr "Pergunte para {name}"
 #: src/lesson/controls/ask-buddy-offer.tsx
 msgctxt "c-JYNI"
 msgid "No thanks"
-msgstr "Não, obrigado"
+msgstr "Agora não"
 
 #. Quiet button under a lesson's explanation, in the learner's own words when they didn't understand it, as short as they'd say it (Portuguese: 'Não entendi'). Tapping it asks their study buddy to explain the screen more simply.
 #: src/lesson/controls/didnt-get-it-button.tsx

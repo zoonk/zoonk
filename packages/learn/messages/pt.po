@@ -12500,7 +12500,7 @@ msgstr "Crie uma conta para receber lembretes por e-mail"
 #: src/today/today-insight.tsx
 msgctxt "c-JYNI"
 msgid "No thanks"
-msgstr "Não, obrigado"
+msgstr "Agora não"
 
 #: src/reminders/reminder-offer.tsx
 msgctxt "1mG4ae"

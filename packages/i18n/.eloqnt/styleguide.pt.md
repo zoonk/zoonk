@@ -6,6 +6,7 @@
 - Prefer everyday speech: “a gente” for “we”, “te ajuda” for “helps you”, and “criar ela” over “criá-la”.
 - “Zoonk”, “Plus” and “Zoonk Plus” always take the masculine article: “O Zoonk cria”.
 - Localize illustrative exam examples for Brazil: Enem (not “ENEM”), vestibular, concursos públicos, and prova da OAB.
+- Don't assume the learner's gender: no “obrigado/obrigada”, “pronto/pronta” or “atrasado/atrasada” about them. Use verbs or neutral phrasing instead, and “Agora não” for “No thanks”.
 - Treat “Poder Mental” as a product name without an article in short labels and headings. Amounts take “de”: “+10 de Poder Mental”.
 
 ## Glossary
