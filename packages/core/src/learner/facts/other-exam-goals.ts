@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getGoalsCacheTag, getLearnerModelCacheTag } from "../../cache/tags";
+import { getExamName } from "../../exams/exam-name";
 import { type PlanGraphSkill, parsePlanGraph } from "../../plans/planner/plan-state";
 
 export type OtherExamGoal = {
@@ -27,7 +28,7 @@ export async function readOtherExamGoals(userId: string, goalId: string): Promis
       ? [
           {
             goalId: goal.id,
-            name: goal.examBlueprint?.name ?? goal.title,
+            name: getExamName({ blueprint: goal.examBlueprint, goal }),
             skills: parsePlanGraph(goal.plan.graph).skills.map(({ courseIds, skillId }) => ({
               courseIds,
               skillId,

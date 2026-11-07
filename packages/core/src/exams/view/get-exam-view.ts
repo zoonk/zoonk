@@ -25,6 +25,7 @@ import { readExamPicks, toChosenStructure } from "../choices/exam-choices";
 import { loadTargetCutoff } from "../cutoffs/load-target-cutoff";
 import { loadGoalScoreEstimate } from "../estimates/load-goal-estimate";
 import { getExamDocument } from "../exam-document";
+import { getExamName } from "../exam-name";
 import {
   getDaysToExam,
   getExamDayChecklist,
@@ -274,7 +275,7 @@ export async function getExamView({
       daysLeft: getDaysToExam({ targetDate: toExamDates(calendar)[0] ?? null, today }),
       estimate,
       examDocument: getExamDocument(goal),
-      examName: blueprint?.name ?? goal.title,
+      examName: getExamName({ blueprint, goal }),
       format: getExamFormat({ days: calendar.namedMonth ? [] : calendar.days, structure }),
       goalId,
       map,
