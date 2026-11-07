@@ -62,7 +62,7 @@ const BRACED_COMMANDS = new Set(["dfrac", "frac", "mathrm", "sqrt", "text"]);
 
 const BACKSLASH_WORD = /\\(?<name>[A-Za-z]+)(?=(?<next>.?))/gu;
 
-/** A drive (`C:\`) or a file name with its extension (`\log.txt`). */
+/** A drive (`C:\`) or a file name with its extension (`\log.txt`), outside a formula's braces. */
 const FILE_PATH = /^[A-Za-z]:\\|\\[A-Za-z]+\.[A-Za-z]/u;
 const BRACED_SCRIPT = /[\^_]\{/u;
 
@@ -75,8 +75,10 @@ const HAS_CARET_POWER = new RegExp(CARET_POWER.source, "u");
 /** `10^3,5` is a decimal power in some languages and two numbers in others; a writer decides. */
 const COMMA_AFTER_POWER = /\^[-−]?\p{N}+,\p{N}/u;
 
+const BRACE_GROUP = /\{(?:[^{}]|\{[^{}]*\})*\}/gu;
+
 /** A run of text without spaces, except inside braces, so `\frac{a + b}{2}` stays one piece. */
-const CHUNK = /(?:\{(?:[^{}]|\{[^{}]*\})*\}|[^\s{}])+/gu;
+const CHUNK = new RegExp(String.raw`(?:${BRACE_GROUP.source}|[^\s{}])+`, "gu");
 
 const PUNCTUATION_BEFORE = /^["'“‘«¿¡*_~]/u;
 const PUNCTUATION_AFTER = /[.,;:!?%"'”’»*_]$/u;
@@ -152,7 +154,7 @@ function isLatex({ commands, text }: { commands: Command[]; text: string }): boo
   const known = commands.filter((command) => MATH_COMMANDS.has(command.name));
 
   const isPath =
-    FILE_PATH.test(text) ||
+    FILE_PATH.test(text.replaceAll(BRACE_GROUP, "{}")) ||
     commands.some((command) => !command.inBraces && !MATH_COMMANDS.has(command.name));
 
   return !isPath && (known.length > 0 || BRACED_SCRIPT.test(text) || HAS_CARET_POWER.test(text));

@@ -56,6 +56,10 @@ describe(wrapBareLatex, () => {
       String.raw`The ratio is $\frac{\sin(x)}{2}$.`,
     );
 
+    expect(wrapBareLatex(String.raw`The volume is \frac{4\pi.r^3}{3}.`)).toBe(
+      String.raw`The volume is $\frac{4\pi.r^{3}}{3}$.`,
+    );
+
     expect(wrapBareLatex("It's 10^{3}, then R$ 80 and $5 later.")).toBe(
       "It's $10^{3}$, then R$ 80 and $5 later.",
     );
