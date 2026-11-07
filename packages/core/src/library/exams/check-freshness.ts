@@ -13,6 +13,7 @@ import {
   countActiveExamGoals,
   countActiveSourceGoals,
   countNextEditionGoals,
+  hasActiveProductGoals,
 } from "./exam-learners";
 import { readBlueprintContent } from "./save-exam-blueprint";
 
@@ -236,15 +237,17 @@ async function checkSource({
 
   // A releases page is read for its releases, never turned into a notice for learners. A product
   // whose checked page this is, its releases page or its docs, is read again too while its newest
-  // release's own page is due, such as after an outage.
+  // release's own page is due, such as after an outage; either only while the product itself has
+  // active learners, since one shared page passes the check for all its products.
   const contentHash = refresh?.source.contentHash ?? source.contentHash;
   const releasesOf = products.filter((product) => product.releasesSourceId === source.id);
 
   const due = await Promise.all(
     products.map(
       async (product) =>
-        (releasesOf.includes(product) && isReleasesPageUnread({ contentHash, product })) ||
-        (await findNewestReleaseSearch(product.id)) !== null,
+        ((releasesOf.includes(product) && isReleasesPageUnread({ contentHash, product })) ||
+          (await findNewestReleaseSearch(product.id)) !== null) &&
+        (await hasActiveProductGoals(product.id)),
     ),
   );
 

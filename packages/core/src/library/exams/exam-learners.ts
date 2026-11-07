@@ -1,5 +1,12 @@
 import "server-only";
-import { type Goal, type GoalKind, type Plan, type TransactionClient, prisma } from "@zoonk/db";
+import {
+  type Goal,
+  type GoalKind,
+  type Plan,
+  type ProductWhereInput,
+  type TransactionClient,
+  prisma,
+} from "@zoonk/db";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { findNamedChoices } from "../../exams/choices/named-exam-choices";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
@@ -28,26 +35,40 @@ export function countNextEditionGoals({
   });
 }
 
-/** A product's page counts the goals about its product and the learners of its main courses. */
-export async function countActiveSourceGoals(sourceId: string): Promise<number> {
-  const product = readsProductPage(sourceId);
-
+/** The goals about the products `product` finds and the learners of their main courses. */
+async function listProductGoalFilters(product: ProductWhereInput) {
   const mainCourses = await prisma.course.findMany({
     select: { id: true },
     where: { isPinned: false, product, userId: null },
   });
+
+  return [{ product }, ...mainCourses.flatMap((course) => courseFollowersFilter(course.id).OR)];
+}
+
+/** A product's page counts the goals about its product and the learners of its main courses. */
+export async function countActiveSourceGoals(sourceId: string): Promise<number> {
+  const productGoals = await listProductGoalFilters(readsProductPage(sourceId));
 
   return prisma.goal.count({
     where: {
       OR: [
         { learnerSources: { some: { sourceId } } },
         { examBlueprint: { sourceId } },
-        { product },
-        ...mainCourses.flatMap((course) => courseFollowersFilter(course.id).OR),
+        ...productGoals,
       ],
       status: "active",
     },
   });
+}
+
+/** The product has active learners, counted as `countActiveSourceGoals` counts a product's page. */
+export async function hasActiveProductGoals(productId: string): Promise<boolean> {
+  const goal = await prisma.goal.findFirst({
+    select: { id: true },
+    where: { OR: await listProductGoalFilters({ id: productId }), status: "active" },
+  });
+
+  return goal !== null;
 }
 
 async function saveNamedChoices(

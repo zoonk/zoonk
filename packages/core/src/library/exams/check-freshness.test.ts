@@ -333,6 +333,55 @@ describe(checkFreshness, () => {
     await expect(check()).resolves.toMatchObject({ releasesUpdate: null });
   });
 
+  it("asks only for the products with active learners when several share the docs page it checks", async () => {
+    servePage("Version 1.0 and version 2.0.");
+
+    const docs = await storeWebSource({
+      kind: "official",
+      language: "en",
+      publisher: null,
+      title: "Docs",
+      topic: "product",
+      url: `https://product.example/${randomUUID()}/docs`,
+    });
+
+    const brand = await brandFixture();
+
+    const [active, paused] = await Promise.all(
+      ["Active App", "Dormant App"].map((name) =>
+        productFixture({
+          docsSourceId: docs.id,
+          name,
+          organizationId: brand.id,
+          websiteSourceId: docs.id,
+        }),
+      ),
+    );
+
+    await Promise.all(
+      [active, paused].flatMap((product) =>
+        ["1.0", "2.0"].map((version) =>
+          productReleaseFixture({
+            name: `${product?.name} ${version}`,
+            productId: product?.id ?? "",
+            version,
+          }),
+        ),
+      ),
+    );
+
+    const [learner, pausedLearner] = await Promise.all([userFixture(), userFixture()]);
+
+    await Promise.all([
+      goalFixture({ productId: active?.id, userId: learner.id }),
+      goalFixture({ productId: paused?.id, status: "paused", userId: pausedLearner.id }),
+    ]);
+
+    await expect(
+      checkFreshness({ now: NOW, target: { kind: "source", sourceId: docs.id } }),
+    ).resolves.toMatchObject({ releasesUpdate: { productIds: [active?.id] }, status: "scheduled" });
+  });
+
   it("stops checking a source nobody studies", async () => {
     const source = await sourceFixture();
 
