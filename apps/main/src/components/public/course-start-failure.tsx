@@ -6,6 +6,7 @@ import { useGoalLimitMessage } from "@zoonk/learn/onboarding/goal-errors";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
+import { UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { getCourseStartRemedy } from "./course-start-remedy";
 import { START_FAILURE_SLOT } from "./public-start";
@@ -28,7 +29,11 @@ function FailureAction({
 
   if (remedy === "signUp") {
     return (
-      <PendingLink className={className} href={getPathname({ href: "/login", locale })}>
+      <PendingLink
+        className={className}
+        href={getPathname({ href: "/login", locale })}
+        icon={<UserPlusIcon aria-hidden="true" />}
+      >
         {t("Create a free account")}
       </PendingLink>
     );

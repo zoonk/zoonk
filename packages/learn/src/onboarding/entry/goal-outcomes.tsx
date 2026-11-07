@@ -11,6 +11,7 @@ import {
   MessageCircleQuestionIcon,
   MusicIcon,
   PlayIcon,
+  UserPlusIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../../_components/save-error";
@@ -37,7 +38,11 @@ export function SignUpLink({ href }: { href: string }) {
   const t = useExtracted();
 
   return (
-    <PendingLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={href}>
+    <PendingLink
+      className={cn(buttonVariants({ size: "lg" }), "w-full")}
+      href={href}
+      icon={<UserPlusIcon aria-hidden="true" />}
+    >
       {t("Create a free account")}
     </PendingLink>
   );

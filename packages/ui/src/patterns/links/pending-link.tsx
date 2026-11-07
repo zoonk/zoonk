@@ -1,6 +1,6 @@
 import { BusyContent } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type ComponentProps, type ReactNode } from "react";
+import { type ComponentProps } from "react";
 
 const PENDING_LINK_ATTRIBUTE = "data-pending-link";
 
@@ -51,8 +51,9 @@ export function PendingLink({
   children,
   className,
   icon,
+  iconPosition,
   ...props
-}: ComponentProps<"a"> & { icon?: ReactNode }) {
+}: ComponentProps<"a"> & Pick<ComponentProps<typeof BusyContent>, "icon" | "iconPosition">) {
   return (
     <a
       {...props}
@@ -64,7 +65,9 @@ export function PendingLink({
       // The script marks a link tapped before the page hydrates.
       suppressHydrationWarning
     >
-      <BusyContent icon={icon}>{children}</BusyContent>
+      <BusyContent icon={icon} iconPosition={iconPosition}>
+        {children}
+      </BusyContent>
     </a>
   );
 }
