@@ -17,7 +17,8 @@ const SILENT_REGISTRATION = { requireUserPresence: false, requireUserVerificatio
 const SILENT_ASSERTION = { advancedFIDOConfig: { userVerification: "discouraged" } } as const;
 
 const MAX_CREDENTIAL_ID_BYTES = 1023;
-const SHA256_BYTES = 32;
+const SHA256_HEX = /^[\da-f]{64}$/iu;
+const ANDROID_APP_ORIGIN = /^android:apk-key-hash:[\w-]+$/u;
 
 const base64urlSchema = z.base64url();
 
@@ -66,7 +67,7 @@ const authenticationResponseSchema = z
 
 const clientDataSchema = z.object({
   challenge: z.string().min(1),
-  origin: z.string(),
+  origin: z.string().regex(ANDROID_APP_ORIGIN),
   type: z.string(),
 });
 
@@ -78,18 +79,12 @@ function parseJson(text: string): unknown {
   }
 }
 
-function readChallenge({
-  clientDataJSON,
-  type,
-}: {
-  clientDataJSON: string;
-  type: string;
-}): string | null {
+function readClientData({ clientDataJSON, type }: { clientDataJSON: string; type: string }) {
   const clientData = clientDataSchema.safeParse(
     parseJson(Buffer.from(clientDataJSON, "base64url").toString("utf8")),
   );
 
-  return clientData.success && clientData.data.type === type ? clientData.data.challenge : null;
+  return clientData.success && clientData.data.type === type ? clientData.data : null;
 }
 
 function readCredentialResponse<T extends { response: { clientDataJSON: string } }>({
@@ -103,21 +98,21 @@ function readCredentialResponse<T extends { response: { clientDataJSON: string }
 }) {
   const parsed = schema.safeParse(parseJson(json));
 
-  const challenge = parsed.success
-    ? readChallenge({ clientDataJSON: parsed.data.response.clientDataJSON, type })
+  const clientData = parsed.success
+    ? readClientData({ clientDataJSON: parsed.data.response.clientDataJSON, type })
     : null;
 
-  return parsed.success && challenge ? { challenge, response: parsed.data } : null;
+  return parsed.success && clientData ? { clientData, response: parsed.data } : null;
 }
 
 function toApkKeyHashOrigin(fingerprint: string): string {
-  const digest = Buffer.from(fingerprint.replaceAll(":", ""), "hex");
+  const hex = fingerprint.replaceAll(":", "");
 
-  if (digest.length !== SHA256_BYTES) {
+  if (!SHA256_HEX.test(hex)) {
     throw new Error(`This Android signing fingerprint isn't a SHA-256 digest: ${fingerprint}`);
   }
 
-  return `android:apk-key-hash:${digest.toString("base64url")}`;
+  return `android:apk-key-hash:${Buffer.from(hex, "hex").toString("base64url")}`;
 }
 
 /**
@@ -230,14 +225,14 @@ export async function registerRestoreKey({
     return "appProofInvalid";
   }
 
-  if (!(await consumeAppChallenge(registration.challenge))) {
+  if (!(await consumeAppChallenge(registration.clientData.challenge))) {
     return "challengeInvalid";
   }
 
   const { data: verification } = await safeAsync(() =>
     verifyRegistrationResponse({
       ...SILENT_REGISTRATION,
-      expectedChallenge: registration.challenge,
+      expectedChallenge: registration.clientData.challenge,
       expectedOrigin,
       expectedRPID: RESTORE_KEY_RP_ID,
       response: registration.response,
@@ -282,7 +277,7 @@ export async function redeemRestoreKey(
 ): Promise<
   { refusal: RestoreKeyRefusal } | { refusal: null; user: { id: string; isAnonymous: boolean } }
 > {
-  const expectedOrigin = getAndroidAppOrigins();
+  const configuredOrigins = getAndroidAppOrigins();
 
   const assertion = readCredentialResponse({
     json: authenticationResponseJson,
@@ -294,7 +289,7 @@ export async function redeemRestoreKey(
     return { refusal: "responseMalformed" };
   }
 
-  if (!(await consumeAppChallenge(assertion.challenge))) {
+  if (!(await consumeAppChallenge(assertion.clientData.challenge))) {
     return { refusal: "challengeInvalid" };
   }
 
@@ -310,14 +305,24 @@ export async function redeemRestoreKey(
       // Every phone restored from one backup holds the same private key, so a signature counter
       // can't tell a clone from a restore.
       credential: { counter: 0, id: assertion.response.id, publicKey: owner.publicKey },
-      expectedChallenge: assertion.challenge,
-      expectedOrigin,
+      expectedChallenge: assertion.clientData.challenge,
+      expectedOrigin: assertion.clientData.origin,
       expectedRPID: RESTORE_KEY_RP_ID,
       response: assertion.response,
     }),
   );
 
-  return verification?.verified
-    ? { refusal: null, user: { id: owner.userId, isAnonymous: owner.isAnonymous } }
-    : { refusal: "keyInvalid" };
+  if (!verification?.verified) {
+    return { refusal: "keyInvalid" };
+  }
+
+  // Registration checked this origin and only the phone holding the key can sign, so an origin the
+  // config doesn't list means the configured certificates changed, not that the key is dead.
+  if (!configuredOrigins.includes(assertion.clientData.origin)) {
+    throw new Error(
+      `A restore key signed in from an app whose certificate isn't configured: ${assertion.clientData.origin}`,
+    );
+  }
+
+  return { refusal: null, user: { id: owner.userId, isAnonymous: owner.isAnonymous } };
 }

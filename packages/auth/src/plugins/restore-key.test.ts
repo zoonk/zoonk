@@ -146,12 +146,9 @@ function withResponse(assertion: AssertionJson, fields: Record<string, string>) 
   return { ...assertion, response: { ...assertion.response, ...fields } };
 }
 
-function asRegistration(clientDataJSON = "") {
-  const clientData = JSON.parse(Buffer.from(clientDataJSON, "base64url").toString("utf8"));
-
-  return Buffer.from(JSON.stringify({ ...clientData, type: "webauthn.create" })).toString(
-    "base64url",
-  );
+function rewriteClientData(clientDataJSON: string | undefined, fields: Record<string, string>) {
+  const clientData = JSON.parse(Buffer.from(clientDataJSON ?? "", "base64url").toString("utf8"));
+  return Buffer.from(JSON.stringify({ ...clientData, ...fields })).toString("base64url");
 }
 
 async function readSessionUser(token: string) {
@@ -316,7 +313,18 @@ describe(restoreKeyPlugin, () => {
         key,
         tamper: (assertion) =>
           withResponse(assertion, {
-            clientDataJSON: asRegistration(assertion.response.clientDataJSON),
+            clientDataJSON: rewriteClientData(assertion.response.clientDataJSON, {
+              type: "webauthn.create",
+            }),
+          }),
+      }),
+      redeemTampered({
+        key,
+        tamper: (assertion) =>
+          withResponse(assertion, {
+            clientDataJSON: rewriteClientData(assertion.response.clientDataJSON, {
+              origin: "https://www.zoonk.com/",
+            }),
           }),
       }),
     ]);
@@ -326,17 +334,18 @@ describe(restoreKeyPlugin, () => {
       responseMalformed,
       responseMalformed,
       responseMalformed,
+      responseMalformed,
     ]);
 
     await expect(redeem({ key })).resolves.toMatchObject({ status: 200 });
   });
 
-  it("answers 401 when the signature, origin, RP ID or key is wrong", async () => {
+  it("answers 401 when the signature, RP ID or key is wrong, whatever the origin", async () => {
     const key = await registeredKey({ session: await signUp() });
 
     const refusals = await Promise.all([
       redeem({ key, signer: makeRestoreKey() }),
-      redeem({ key, origin: makeSigningCertificate().origin }),
+      redeem({ key, origin: makeSigningCertificate().origin, signer: makeRestoreKey() }),
       redeem({ key, rpId: "zoonk.com" }),
       redeem({ key: makeRestoreKey() }),
     ]);
@@ -499,5 +508,42 @@ describe(restoreKeyPlugin, () => {
     vi.stubEnv("ANDROID_RELEASE_CERT_FINGERPRINTS", releaseApp.fingerprint);
 
     await expect(redeem({ key })).resolves.toMatchObject({ status: 200 });
+  });
+
+  it("answers 500, never 401, for a signed key from an app the config no longer lists", async () => {
+    const key = await registeredKey({ session: await signUp() });
+
+    vi.stubEnv("VERCEL_ENV", "production");
+    vi.stubEnv("ANDROID_RELEASE_CERT_FINGERPRINTS", makeSigningCertificate().fingerprint);
+
+    const answers = await Promise.all([redeem({ key }), redeem({ key, signer: makeRestoreKey() })]);
+
+    expect(answers.map((answer) => answer.status)).toStrictEqual([500, 401]);
+
+    vi.stubEnv("ANDROID_RELEASE_CERT_FINGERPRINTS", releaseApp.fingerprint);
+
+    await expect(redeem({ key })).resolves.toMatchObject({ status: 200 });
+  });
+
+  it("answers 500 for a fingerprint that isn't 64 hex digits", async () => {
+    const [releaseSession, debugSession] = await Promise.all([signUp(), signUp()]);
+    const releaseKey = await registeredKey({ session: releaseSession });
+    const debugKey = makeRestoreKey();
+
+    await expect(
+      register({ key: debugKey, origin: debugApp.origin, token: debugSession.token }),
+    ).resolves.toMatchObject({ status: 200 });
+
+    vi.stubEnv("VERCEL_ENV", "production");
+    vi.stubEnv("ANDROID_DEBUG_CERT_FINGERPRINTS", "");
+    vi.stubEnv("ANDROID_RELEASE_CERT_FINGERPRINTS", `${releaseApp.fingerprint}INVALID`);
+
+    await expect(redeem({ key: releaseKey })).resolves.toMatchObject({ status: 500 });
+
+    vi.stubEnv("ANDROID_RELEASE_CERT_FINGERPRINTS", `${debugApp.fingerprint}INVALID`);
+
+    await expect(redeem({ key: debugKey, origin: debugApp.origin })).resolves.toMatchObject({
+      status: 500,
+    });
   });
 });
