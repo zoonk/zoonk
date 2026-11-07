@@ -465,13 +465,13 @@ describe("tutor answers", () => {
     expect(stylesheets).toHaveLength(0);
   });
 
-  it("draws a boxed result's box and a cancelled factor's stroke", async () => {
+  it("draws a boxed result's box and a cancelled factor's stroke, in forced colors too", async () => {
     const { api, lesson } = lessonWithTutor();
 
     api.next("answer", () =>
       Promise.resolve(
         tutorAnswerResponse(
-          String.raw`So $$\frac{\cancel{2}x}{\cancel{2}} = x$$, and $$\boxed{x = 5}$$.`,
+          String.raw`So $$\frac{\cancel{2}x}{\cancel{\color{red}{2}}} = x$$, and $$\boxed{x = 5}$$.`,
         ),
       ),
     );
@@ -481,20 +481,46 @@ describe("tutor answers", () => {
     await ask(sheet, "Can you simplify it?");
     await expectCount(sheet.getByRole("math"), 2);
 
-    const drawn = (notation: string) =>
-      [...sheet.element().querySelectorAll(`[notation~='${notation}']`)].map((element) => {
-        const style = getComputedStyle(element);
-        return style.borderTopWidth !== "0px" || style.backgroundImage !== "none";
-      });
+    /** Whether each enclosure looks different with its box or stroke made invisible. */
+    const drawn = async (notation: string) => {
+      const rows = [...sheet.element().querySelectorAll<HTMLElement>(`[notation~='${notation}']`)];
 
-    const shown = () => ({ box: drawn("box"), strokes: drawn("updiagonalstrike") });
-    const expected = { box: [true], strokes: [true, true] };
+      return rows.reduce<Promise<boolean[]>>(async (earlier, row) => {
+        const seen = await earlier;
+        const decorated = await page.screenshot({ element: row, save: false });
+        row.style.setProperty("border-color", "transparent", "important");
+        row.style.setProperty("background-image", "none", "important");
+        const bare = await page.screenshot({ element: row, save: false });
+        row.style.removeProperty("border-color");
+        row.style.removeProperty("background-image");
+        return [...seen, decorated !== bare];
+      }, Promise.resolve([]));
+    };
 
-    expect(shown()).toStrictEqual(expected);
+    const struck = async () => {
+      const row = sheet.element().querySelector("[notation~='updiagonalstrike']:has([mathcolor])");
+      const redFactor = row?.querySelector("[mathcolor]");
 
-    await expect(onDevice({ forcedColors: "active" }, async () => shown())).resolves.toStrictEqual(
-      expected,
-    );
+      return {
+        redFactorInTextColor:
+          row && redFactor
+            ? getComputedStyle(redFactor).color === getComputedStyle(row).color
+            : null,
+        strokes: await drawn("updiagonalstrike"),
+      };
+    };
+
+    await expect(drawn("box")).resolves.toStrictEqual([true]);
+
+    await expect(struck()).resolves.toStrictEqual({
+      redFactorInTextColor: false,
+      strokes: [true, true],
+    });
+
+    await expect(onDevice({ forcedColors: "active" }, struck)).resolves.toStrictEqual({
+      redFactorInTextColor: true,
+      strokes: [true, true],
+    });
   });
 
   it("gives Tab to a formula wider than the answer, and not to one that fits", async () => {

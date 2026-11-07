@@ -62,4 +62,15 @@ mrow[notation~="horizontalstrike"] {
     forced-color-adjust: none;
     color: CanvasText;
   }
+
+  /* `forced-color-adjust` passes down, so a `\color` inside would keep its own color on the forced canvas. */
+  mrow:is(
+      [notation~="updiagonalstrike"],
+      [notation~="downdiagonalstrike"],
+      [notation~="horizontalstrike"]
+    )
+    * {
+    color: CanvasText;
+    background-color: transparent;
+  }
 }
