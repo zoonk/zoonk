@@ -8,8 +8,8 @@ import Foundation
 /// removes its network and storage globals. The host page keeps the worker, times each run out
 /// and turns its messages into output, like main's `sandbox-host.ts` and `run-program.ts`.
 ///
-/// Pyodide loads from jsDelivr only when a Python activity appears. The version is pinned with
-/// main's: update both together.
+/// Pyodide loads from jsDelivr only when a Python activity appears, at the version core checks
+/// programs with on the server (`scripts/verify/code-runtimes.test.mts` fails when they differ).
 enum CodeWorkerSources {
   private static let pyodideIndexURL = "https://cdn.jsdelivr.net/pyodide/v314.0.7/full/"
 
