@@ -61,14 +61,16 @@ jobs:
           echo "DEPLOY_REF=$ref" >> "$GITHUB_ENV"
 
           # The blog is static and reads no database, so a PR that changes only the blog gets no
-          # database branch or other apps.
+          # database branch or other apps. GitHub lists at most 300 of a comparison's files, so a
+          # diff that reaches the cap previews both.
           files=$(gh api "repos/$GITHUB_REPOSITORY/compare/$base...$sha" --jq '.files[].filename')
+          capped=$(( $(wc -l <<< "$files") >= 300 ))
 
-          if grep -q '^apps/blog/' <<< "$files"; then
+          if (( capped )) || grep -q '^apps/blog/' <<< "$files"; then
             echo "PREVIEW_BLOG=true" >> "$GITHUB_ENV"
           fi
 
-          if grep -qv '^apps/blog/' <<< "$files"; then
+          if (( capped )) || grep -qv '^apps/blog/' <<< "$files"; then
             echo "PREVIEW_DATABASE_APPS=true" >> "$GITHUB_ENV"
           fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
