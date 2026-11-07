@@ -9034,6 +9034,7 @@ msgstr "Create a free account to add a PDF, a photo of your notes or any text to
 #: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 #: src/onboarding/save-plan-note.tsx
+#: src/reminders/reminders-screen.tsx
 msgctxt "0vL5u1"
 msgid "Create an account"
 msgstr "Create an account"
@@ -12479,6 +12480,79 @@ msgctxt "rxqs5U"
 msgid "False"
 msgstr "False"
 
+#: src/reminders/reminder-offer.tsx
+msgctxt "SwCKSr"
+msgid "Want a study reminder?"
+msgstr "Want a study reminder?"
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "8mg7o6"
+msgid "At {time} on your study days, when you still have learning left."
+msgstr "At {time} on your study days, when you still have learning left."
+
+#: src/reminders/reminder-offer.tsx
+#: src/reminders/reminders-screen.tsx
+msgctxt "ZZS4vO"
+msgid "Create an account to get email reminders"
+msgstr "Create an account to get email reminders"
+
+#: src/reminders/reminder-offer.tsx
+#: src/today/today-insight.tsx
+msgctxt "c-JYNI"
+msgid "No thanks"
+msgstr "No thanks"
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "1mG4ae"
+msgid "Email reminders are on."
+msgstr "Email reminders are on."
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "viijDX"
+msgid "We'll email {address} at {time} on your study days, when you still have learning left."
+msgstr "We'll email {address} at {time} on your study days, when you still have learning left."
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "6Vy4z5"
+msgid "Reminder time"
+msgstr "Reminder time"
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "zSzHqS"
+msgid "Remind me"
+msgstr "Remind me"
+
+#. The time of day a study reminder goes out, not an amount of time
+#: src/reminders/reminders-screen.tsx
+msgctxt "studyReminderTime"
+msgid "Time"
+msgstr "Time"
+
+#: src/reminders/reminders-screen.tsx
+msgctxt "sy-pv5"
+msgid "Email"
+msgstr "Email"
+
+#: src/reminders/reminders-screen.tsx
+msgctxt "O95R3Z"
+msgid "Phone"
+msgstr "Phone"
+
+#: src/reminders/reminders-screen.tsx
+msgctxt "7DNAyh"
+msgid "To get reminders on your phone, turn them on in the Zoonk app."
+msgstr "To get reminders on your phone, turn them on in the Zoonk app."
+
+#: src/reminders/reminders-screen.tsx
+msgctxt "1cVf3e"
+msgid "On your study days, from your <link>plans</link>"
+msgstr "On your study days, from your <link>plans</link>"
+
+#: src/reminders/reminders-screen.tsx
+msgctxt "ClZyPb"
+msgid "Paused while you're away. Studying turns them back on."
+msgstr "Paused while you're away. Studying turns them back on."
+
 #: src/research/upload-request-card.tsx
 msgctxt "hKrdzi"
 msgid "Upload your material"
@@ -13903,11 +13977,6 @@ msgstr "Lighter day: saving time for {date}'s mock exam"
 msgctxt "8owE4V"
 msgid "Add it"
 msgstr "Add it"
-
-#: src/today/today-insight.tsx
-msgctxt "c-JYNI"
-msgid "No thanks"
-msgstr "No thanks"
 
 #: src/today/today-insight.tsx
 msgctxt "xNg7nj"

@@ -1135,6 +1135,12 @@ msgctxt "DId5yN"
 msgid "{email} · Plus"
 msgstr "{email} · Plus"
 
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
+msgctxt "-vBFap"
+msgid "Reminders"
+msgstr "Recordatorios"
+
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "Bq4K5C"
 msgid "For your safety, sign in again, then delete your account."
@@ -1309,6 +1315,11 @@ msgstr "Consulta, corrige o elimina lo que Zoonk recuerda sobre ti."
 msgctxt "KTQxC5"
 msgid "What Zoonk remembers to give you examples and plans that fit your life."
 msgstr "Lo que Zoonk recuerda para darte ejemplos y planes adaptados a tu vida."
+
+#: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
+msgctxt "gVqHlS"
+msgid "Choose when Zoonk reminds you to study, by email or on your phone."
+msgstr "Elige cuándo recibir recordatorios de Zoonk para estudiar, por correo electrónico o en tu celular."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "cEOHN2"
@@ -2630,6 +2641,46 @@ msgstr "Dilo de nuevo"
 msgctxt "hnntJl"
 msgid "Today's session"
 msgstr "Sesión de hoy"
+
+#: src/app/[lang]/study-reminders/unsubscribe/page.tsx
+msgctxt "QacXkK"
+msgid "Email reminders"
+msgstr "Recordatorios por correo electrónico"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "DekliR"
+msgid "Manage reminders"
+msgstr "Administrar recordatorios"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "22mt47"
+msgid "Email reminders are off"
+msgstr "Recordatorios por correo electrónico desactivados"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "hvjqbs"
+msgid "This link is no longer active"
+msgstr "Este enlace ya no está activo"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "OqrvHM"
+msgid "Your other reminder settings haven't changed. You'll still get sign-in codes."
+msgstr "La configuración de tus otros recordatorios no cambió. Seguirás recibiendo códigos para iniciar sesión."
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "c5ajtI"
+msgid "Turn off email reminders?"
+msgstr "¿Desactivar los recordatorios por correo electrónico?"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "XZ-Fx6"
+msgid "Turn off"
+msgstr "Desactivar"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "DxPDlc"
+msgid "That didn't save. Try again."
+msgstr "No se pudo guardar. Inténtalo de nuevo."
 
 #: src/app/[lang]/terms/page.tsx
 msgctxt "DaGtoz"

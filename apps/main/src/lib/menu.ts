@@ -1,5 +1,6 @@
 import {
   AwardIcon,
+  BellIcon,
   Brain,
   BrainCircuitIcon,
   CalendarCheckIcon,
@@ -53,6 +54,7 @@ const menu = {
   patterns: { icon: ChartSplineIcon, url: "/patterns" },
   pricing: { icon: TagIcon, url: "/pricing" },
   profile: { icon: IdCardLanyard, url: "/profile" },
+  reminders: { icon: BellIcon, url: "/settings/reminders" },
   score: { icon: TargetIcon, url: "/score" },
   settings: { icon: SettingsIcon, url: "/settings" },
   speaking: { icon: MicIcon, url: "/speaking" },

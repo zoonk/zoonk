@@ -1135,6 +1135,12 @@ msgctxt "DId5yN"
 msgid "{email} · Plus"
 msgstr "{email} · Plus"
 
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
+msgctxt "-vBFap"
+msgid "Reminders"
+msgstr "학습 알림"
+
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "Bq4K5C"
 msgid "For your safety, sign in again, then delete your account."
@@ -1309,6 +1315,11 @@ msgstr "Zoonk가 기억하는 내 정보를 확인하고 수정하거나 삭제�
 msgctxt "KTQxC5"
 msgid "What Zoonk remembers to give you examples and plans that fit your life."
 msgstr "내 생활에 맞는 예시와 계획을 제공하기 위해 Zoonk가 기억하는 내용이에요."
+
+#: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
+msgctxt "gVqHlS"
+msgid "Choose when Zoonk reminds you to study, by email or on your phone."
+msgstr "Zoonk의 학습 알림을 이메일이나 휴대폰으로 받을 시간을 선택하세요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "cEOHN2"
@@ -2630,6 +2641,46 @@ msgstr "다시 소리 내어 말하기"
 msgctxt "hnntJl"
 msgid "Today's session"
 msgstr "오늘의 학습"
+
+#: src/app/[lang]/study-reminders/unsubscribe/page.tsx
+msgctxt "QacXkK"
+msgid "Email reminders"
+msgstr "이메일 학습 알림"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "DekliR"
+msgid "Manage reminders"
+msgstr "학습 알림 관리"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "22mt47"
+msgid "Email reminders are off"
+msgstr "이메일 학습 알림이 꺼져 있어요"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "hvjqbs"
+msgid "This link is no longer active"
+msgstr "이 링크는 더 이상 사용할 수 없어요"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "OqrvHM"
+msgid "Your other reminder settings haven't changed. You'll still get sign-in codes."
+msgstr "다른 학습 알림 설정은 그대로예요. 로그인 코드는 계속 받을 수 있어요."
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "c5ajtI"
+msgid "Turn off email reminders?"
+msgstr "이메일 학습 알림을 끌까요?"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "XZ-Fx6"
+msgid "Turn off"
+msgstr "끄기"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "DxPDlc"
+msgid "That didn't save. Try again."
+msgstr "저장하지 못했어요. 다시 시도해 보세요."
 
 #: src/app/[lang]/terms/page.tsx
 msgctxt "DaGtoz"

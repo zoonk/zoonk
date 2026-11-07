@@ -9034,6 +9034,7 @@ msgstr "Utwórz bezpłatne konto, by dodać do swojego celu plik PDF, zdjęcie n
 #: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 #: src/onboarding/save-plan-note.tsx
+#: src/reminders/reminders-screen.tsx
 msgctxt "0vL5u1"
 msgid "Create an account"
 msgstr "Utwórz konto"
@@ -12479,6 +12480,79 @@ msgctxt "rxqs5U"
 msgid "False"
 msgstr "Fałsz"
 
+#: src/reminders/reminder-offer.tsx
+msgctxt "SwCKSr"
+msgid "Want a study reminder?"
+msgstr "Chcesz przypomnienia o nauce?"
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "8mg7o6"
+msgid "At {time} on your study days, when you still have learning left."
+msgstr "O {time} w dni nauki, jeśli masz jeszcze coś do przerobienia."
+
+#: src/reminders/reminder-offer.tsx
+#: src/reminders/reminders-screen.tsx
+msgctxt "ZZS4vO"
+msgid "Create an account to get email reminders"
+msgstr "Załóż konto, by otrzymywać przypomnienia e-mailem"
+
+#: src/reminders/reminder-offer.tsx
+#: src/today/today-insight.tsx
+msgctxt "c-JYNI"
+msgid "No thanks"
+msgstr "Nie, dziękuję"
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "1mG4ae"
+msgid "Email reminders are on."
+msgstr "Przypomnienia e-mail są włączone."
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "viijDX"
+msgid "We'll email {address} at {time} on your study days, when you still have learning left."
+msgstr "Wyślemy e-mail na adres {address} o {time} w dni nauki, jeśli masz jeszcze coś do przerobienia."
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "6Vy4z5"
+msgid "Reminder time"
+msgstr "Godzina przypomnienia"
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "zSzHqS"
+msgid "Remind me"
+msgstr "Przypomnij mi"
+
+#. The time of day a study reminder goes out, not an amount of time
+#: src/reminders/reminders-screen.tsx
+msgctxt "studyReminderTime"
+msgid "Time"
+msgstr "Godzina"
+
+#: src/reminders/reminders-screen.tsx
+msgctxt "sy-pv5"
+msgid "Email"
+msgstr "E-mail"
+
+#: src/reminders/reminders-screen.tsx
+msgctxt "O95R3Z"
+msgid "Phone"
+msgstr "Telefon"
+
+#: src/reminders/reminders-screen.tsx
+msgctxt "7DNAyh"
+msgid "To get reminders on your phone, turn them on in the Zoonk app."
+msgstr "Aby otrzymywać przypomnienia na telefonie, włącz je w aplikacji Zoonk."
+
+#: src/reminders/reminders-screen.tsx
+msgctxt "1cVf3e"
+msgid "On your study days, from your <link>plans</link>"
+msgstr "W dni nauki zgodnie z twoimi <link>planami</link>"
+
+#: src/reminders/reminders-screen.tsx
+msgctxt "ClZyPb"
+msgid "Paused while you're away. Studying turns them back on."
+msgstr "Wstrzymane na czas przerwy. Włączą się ponownie, gdy wrócisz do nauki."
+
 #: src/research/upload-request-card.tsx
 msgctxt "hKrdzi"
 msgid "Upload your material"
@@ -13903,11 +13977,6 @@ msgstr "Lżejszy dzień: rezerwujemy czas na egzamin próbny ({date})"
 msgctxt "8owE4V"
 msgid "Add it"
 msgstr "Dodaj"
-
-#: src/today/today-insight.tsx
-msgctxt "c-JYNI"
-msgid "No thanks"
-msgstr "Nie, dziękuję"
 
 #: src/today/today-insight.tsx
 msgctxt "xNg7nj"

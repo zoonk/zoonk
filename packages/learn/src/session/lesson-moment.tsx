@@ -9,6 +9,7 @@ import { MomentReadouts } from "../_components/moment-readouts";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart } from "../_components/test-out-start-link";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { type ReminderOfferActions } from "../reminders/reminder-offer";
 import { DayMoment } from "./day-moment";
 import { FailedMoment } from "./failed-moment";
 import { MomentHeader } from "./moment-header";
@@ -41,6 +42,7 @@ function SavedMoment({
   onContinue,
   onStartTestOut,
   onStop,
+  reminderActions,
   session,
   testedOut,
 }: {
@@ -49,6 +51,7 @@ function SavedMoment({
   onContinue: () => Promise<boolean>;
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
   onStop: () => Promise<boolean>;
+  reminderActions: ReminderOfferActions;
   session: LessonMomentSession;
   testedOut: boolean;
 }) {
@@ -66,6 +69,7 @@ function SavedMoment({
       onContinue={onContinue}
       onStartTestOut={onStartTestOut}
       onStop={onStop}
+      reminderActions={reminderActions}
       testedOut={testedOut}
     />
   );
@@ -159,6 +163,7 @@ export function LessonMoment({
   onRetry,
   onStartTestOut,
   onStop,
+  reminderActions,
   session,
 }: {
   buddy?: LearnBuddy | null;
@@ -167,6 +172,7 @@ export function LessonMoment({
   onRetry: () => void;
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
   onStop: () => Promise<boolean>;
+  reminderActions: ReminderOfferActions;
   session: LessonMomentSession;
 }) {
   const t = useExtracted();
@@ -199,6 +205,7 @@ export function LessonMoment({
       onContinue={onContinue}
       onStartTestOut={onStartTestOut}
       onStop={onStop}
+      reminderActions={reminderActions}
       session={session}
       testedOut={completion.testedOut}
     />

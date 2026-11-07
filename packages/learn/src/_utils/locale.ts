@@ -8,3 +8,11 @@ export function useAppLocale() {
 export function useSentenceSpace() {
   return getSentenceSpace(useLocale());
 }
+
+export function useTimeZoneName(timeZone: string): string {
+  const name = new Intl.DateTimeFormat(useLocale(), { timeZone, timeZoneName: "longGeneric" })
+    .formatToParts()
+    .find((part) => part.type === "timeZoneName");
+
+  return name?.value ?? timeZone;
+}

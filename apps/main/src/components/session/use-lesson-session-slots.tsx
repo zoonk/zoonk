@@ -2,6 +2,7 @@
 
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { useRouter } from "@/i18n/navigation";
+import { useReminderOfferActions } from "@/lib/reminders/use-reminder-offer-actions";
 import { type LessonSessionContext } from "@/lib/session/lesson-session-context";
 import { useStudyNavigation } from "@/lib/session/use-study-navigation";
 import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
@@ -22,6 +23,7 @@ export function useLessonSessionSlots({
 }): Pick<LessonPlayerSlots, "completion" | "completionHeader"> | null {
   const navigation = useStudyNavigation(session?.id ?? "");
   const startTestOut = useStartTestOut();
+  const reminderActions = useReminderOfferActions();
   const router = useRouter();
   const inSession = session !== null;
 
@@ -51,6 +53,7 @@ export function useLessonSessionSlots({
                 : Promise.resolve({ status: "failed" })
             }
             onStop={navigation.stop}
+            reminderActions={reminderActions}
             session={session}
           />
         </MainLearnProvider>
@@ -62,5 +65,5 @@ export function useLessonSessionSlots({
           </MainLearnProvider>
         ) : null,
     };
-  }, [buddy, navigation, session, startTestOut]);
+  }, [buddy, navigation, reminderActions, session, startTestOut]);
 }

@@ -122,13 +122,22 @@ function keepWhileSharing(event: BeforeSendEvent): BeforeSendEvent | null {
   return isSharingUsageData() ? event : null;
 }
 
+/** Its URL carries a token that turns a learner's email reminders off. */
+function isUntrackedPage(): boolean {
+  return globalThis.location.pathname.endsWith("/study-reminders/unsubscribe");
+}
+
+// oxlint-disable-next-line no-empty-function -- useSyncExternalStore requires a subscribe that returns an unsubscribe
+const subscribeToNothing = () => () => {};
+
 /** Reads the learner summary in the browser, so no page's render reads who is looking. */
 export function AppAnalytics({ locale }: { locale: string }) {
   const learner = useLearnerSummary();
   const viewer = useMemo(() => getAnalyticsViewer({ learner, locale }), [learner, locale]);
   const share = useUsageDataSharing(viewer?.shareUsageData ?? null);
+  const untracked = useSyncExternalStore(subscribeToNothing, isUntrackedPage, () => true);
 
-  if (!viewer || share === undefined) {
+  if (!viewer || share === undefined || untracked) {
     return null;
   }
 

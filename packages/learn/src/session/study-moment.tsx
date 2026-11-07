@@ -13,6 +13,7 @@ import { type TestOutStart, TestOutStartLink } from "../_components/test-out-sta
 import { useFormatDuration } from "../_utils/time-format";
 import { SCREEN_STEADY_MS } from "../_utils/use-steady";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { ReminderOffer, type ReminderOfferActions } from "../reminders/reminder-offer";
 import { getOwnBrainPower } from "./block-brain-power";
 import { getBlockKind } from "./block-kind";
 import { DayMoment } from "./day-moment";
@@ -146,6 +147,7 @@ export function StudyMoment({
   onContinue,
   onStartTestOut,
   onStop,
+  reminderActions,
   renderCeremony,
   testedOut = false,
 }: {
@@ -160,6 +162,7 @@ export function StudyMoment({
   onContinue: () => Promise<boolean>;
   onStartTestOut?: (chapterId: string) => Promise<TestOutStart>;
   onStop: () => Promise<boolean>;
+  reminderActions?: ReminderOfferActions;
   renderCeremony?: MomentCeremony;
   testedOut?: boolean;
 }) {
@@ -198,6 +201,8 @@ export function StudyMoment({
           }}
           reached={moment.reached}
         />
+
+        <ReminderOffer actions={reminderActions} offer={moment.reminderOffer} />
 
         {nextBlock && (
           <NextBlock block={nextBlock} subject={Boolean(nextChapterId && onStartTestOut)} />
