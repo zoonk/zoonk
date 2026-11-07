@@ -1,5 +1,4 @@
 import "server-only";
-import { type Goal } from "@zoonk/db";
 import { type findActiveSubscription } from "../../auth/subscription";
 import { CHECKPOINT_CALL_BLOCK_MINUTES } from "../../language/conversations/conversation-rules";
 import { type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
@@ -14,7 +13,7 @@ import {
   getPlannedQuestions,
   selectCheckpointItems,
 } from "../checkpoint-rules";
-import { findSessionBosses } from "./boss-reached";
+import { type ChallengePlan, findSessionBosses } from "./boss-reached";
 import { loadBossRecordingItems } from "./boss-recordings";
 import { loadCheckpointCandidates } from "./checkpoint-candidates";
 import { loadResultReinforcement } from "./checkpoint-reinforcement";
@@ -75,13 +74,8 @@ export async function loadBossQuestions({
   };
 }
 
-type BossInput = {
+type BossInput = ChallengePlan<SessionPlanItem> & {
   examBlueprintId: string | null;
-  goal: Pick<Goal, "kind" | "targetDate">;
-  graphSkills: readonly { lessons: number; skillId: string }[];
-  itemSkillIds: ReadonlyMap<string, readonly string[]>;
-  items: readonly SessionPlanItem[];
-  listeningSkillIds?: ReadonlySet<string>;
   readSubscription?: typeof findActiveSubscription;
   skills: readonly GoalSkillNode[];
   today: Date;
@@ -95,7 +89,7 @@ export async function loadSessionBosses(input: BossInput): Promise<SessionBosses
     return { checkpoints: [], reinforcement: [] };
   }
 
-  const [first, ...later] = findSessionBosses(input);
+  const [first, ...later] = findSessionBosses({ plan: input, today: input.today });
   const head = first ? await loadBoss({ ...input, boss: first }) : NO_BOSS;
 
   if (!head.checkpoint) {
@@ -128,7 +122,7 @@ async function loadBoss({
   graphSkills,
   itemSkillIds,
   items,
-  listeningSkillIds = new Set(),
+  listeningSkillIds,
   skills,
   today,
   userId,

@@ -1,5 +1,14 @@
 import { toIsoDate } from "./plan-calendar";
-import { type PlanDay, type ScheduledEvent, type ScheduledUnit } from "./schedule-units";
+import {
+  type DayShape,
+  type PlanDay,
+  type ScheduledEvent,
+  type ScheduledUnit,
+} from "./schedule-units";
+
+export function isStudyDay({ minutes, open }: Pick<DayShape, "minutes" | "open">): boolean {
+  return open && minutes > 0;
+}
 
 export function isSpareDay({
   day,
@@ -8,8 +17,7 @@ export function isSpareDay({
   day: PlanDay;
   lastLessonDate: Date | null;
 }): boolean {
-  const { minutes, open } = day.shape;
-  return open && minutes > 0 && (lastLessonDate === null || day.date > lastLessonDate);
+  return isStudyDay(day.shape) && (lastLessonDate === null || day.date > lastLessonDate);
 }
 
 export function addPracticeDays({

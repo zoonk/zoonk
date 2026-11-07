@@ -27,11 +27,3 @@ export function getFeedbackStatusVariant(status: FeedbackStatus) {
 
   return status === "replied" ? ("success" as const) : ("secondary" as const);
 }
-
-export function getLearnerLabel(user: {
-  email: string;
-  name: string | null;
-  username: string | null;
-}): string {
-  return user.name || user.username || user.email;
-}

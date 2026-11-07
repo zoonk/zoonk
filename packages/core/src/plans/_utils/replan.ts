@@ -99,6 +99,7 @@ type ComputePlanRequest = {
   mode: PlanningMode;
   movedEnds?: ReadonlyMap<number, string>;
   now?: Date;
+  openedKeys?: readonly string[];
   pace?: "sampled" | "saved";
   releasedPhases?: ReadonlySet<number>;
   setAsideLeftWork?: boolean;
@@ -238,6 +239,7 @@ export async function computePlan({
     mode,
     movesPhaseEnds: !keepPhaseDates || movedEnds !== undefined || releasedPhases !== undefined,
     noticeAreas: areaShares ? new Set(areaShares.keys()) : null,
+    openedKeys: options.openedKeys,
     paceFactor: settings.pace.factor,
     phaseEnds: keepPhaseDates
       ? getShownPhaseEnds({
