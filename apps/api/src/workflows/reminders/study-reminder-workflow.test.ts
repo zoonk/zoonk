@@ -149,6 +149,9 @@ describe(studyReminderWorkflow, () => {
       },
       htmlBody: expect.stringContaining(`/today?goal=${goal.id}`),
       sender: "reminders",
+      textBody: expect.stringMatching(
+        /You get this because you turned on study reminders in Zoonk\.[\s\S]*Change reminder settings: \S+\/settings\/reminders/u,
+      ),
       to: user.email,
     });
 

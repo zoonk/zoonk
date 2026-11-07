@@ -65,6 +65,8 @@ export async function sendReminderEmail(email: ReminderEmail): Promise<EmailOutc
       text.title,
       text.body,
       `${words.open}: ${links.today}`,
+      words.why,
+      `${words.settings}: ${links.settings}`,
       `${words.unsubscribe}: ${links.unsubscribe}`,
     ].join("\n\n"),
     to: address,
