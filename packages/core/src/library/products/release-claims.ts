@@ -5,6 +5,7 @@ const NAMING_YEAR = 2000;
 const TOKEN = /\p{L}+|\p{N}+/gu;
 const SHORT_NUMBER = /^\d{1,2}$/u;
 const NUMBER = /^\p{N}+$/u;
+const LETTER = /\p{L}/u;
 /** Ordinals and the words pages write inside a date beyond `Intl`'s formats ("the 4th of May", "1er mai"). */
 const DATE_WORDS = ["er", "nd", "of", "rd", "st", "th"];
 /** A space, a comma or a period between a named month's date parts, or a slash or hyphen alone. */
@@ -29,12 +30,33 @@ function toKey(text: string): string {
   return text.normalize("NFKC").toLowerCase();
 }
 
-function listMonthNames(language: string): string[] {
-  const format = new Intl.DateTimeFormat(language, { month: "long", timeZone: "UTC" });
+/** Each month's name alone and as the language writes it inside a date ("maj" and "maja"). */
+function listMonthNames(language: string): string[][] {
+  const alone = new Intl.DateTimeFormat(language, { month: "long", timeZone: "UTC" });
 
-  return Array.from({ length: MONTHS }, (_, index) =>
-    toKey(format.format(new Date(Date.UTC(NAMING_YEAR, index, 1)))),
+  const inDates = (["long", "short"] as const).map(
+    (month) =>
+      new Intl.DateTimeFormat(language, {
+        day: "numeric",
+        month,
+        timeZone: "UTC",
+        year: "numeric",
+      }),
   );
+
+  return Array.from({ length: MONTHS }, (_, index) => {
+    const date = new Date(Date.UTC(NAMING_YEAR, index, 1));
+
+    const forms = inDates.flatMap((format) =>
+      format.formatToParts(date).filter((part) => part.type === "month" && LETTER.test(part.value)),
+    );
+
+    return [
+      ...new Set(
+        [alone.format(date), ...forms.map((part) => part.value)].map((name) => toKey(name)),
+      ),
+    ];
+  });
 }
 
 /** The words a language writes between a date's parts: "de" in "4 de maio de 2024", "年" and "月". */
@@ -51,13 +73,16 @@ function listDateWords(language: string): Set<string> {
   return new Set([...DATE_WORDS, ...words]);
 }
 
-/** A month's long name, or an abbreviation no other month's name starts with ("oct", "sept"). */
-function isMonthName({ month, names, token }: { month: number; names: string[]; token: string }) {
+/** A month's name, or an abbreviation no other month's names start with ("oct", "sept"). */
+function isMonthName({ month, names, token }: { month: number; names: string[][]; token: string }) {
   if (token.length < MIN_MONTH_PREFIX) {
     return false;
   }
 
-  const matches = names.flatMap((name, index) => (name.startsWith(token) ? [index + 1] : []));
+  const matches = names.flatMap((forms, index) =>
+    forms.some((name) => name.startsWith(token)) ? [index + 1] : [],
+  );
+
   return matches.length === 1 && matches[0] === month;
 }
 
@@ -65,7 +90,7 @@ function isShortNumber({ token, value }: { token: string; value: number }): bool
   return SHORT_NUMBER.test(token) && Number(token) === value;
 }
 
-type Passage = { names: string[]; text: string; tokens: Token[]; words: Set<string> };
+type Passage = { names: string[][]; text: string; tokens: Token[]; words: Set<string> };
 
 function readPassage({ language, passage }: { language: string; passage: string }): Passage {
   const text = toKey(passage);

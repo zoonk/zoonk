@@ -18,7 +18,7 @@ function formatLong({ date, language }: { date: Date; language: string }): strin
 }
 
 describe(isDateStated, () => {
-  it.each(["en", "pt", "fr", "de", "ja"])(
+  it.each(["en", "pt", "fr", "de", "ja", "pl", "ru", "fi"])(
     "finds every date its page's %s formats state",
     (language) => {
       const missed = listDates().filter(
@@ -31,7 +31,7 @@ describe(isDateStated, () => {
     },
   );
 
-  it.each(["en", "pt"])(
+  it.each(["en", "pt", "pl", "ru", "fi"])(
     "never confirms a date from a passage with another day or month (%s)",
     (language) => {
       const confirmed = listDates().filter((date) =>
@@ -48,6 +48,18 @@ describe(isDateStated, () => {
       expect(confirmed).toStrictEqual([]);
     },
   );
+
+  it("reads the month in the form a language writes it inside a date", () => {
+    const date = new Date(Date.UTC(2024, 4, 4));
+
+    expect(
+      [
+        ["pl", "Wydano 4 maja 2024"],
+        ["ru", "Выпущено 4 мая 2024 г."],
+        ["fi", "Julkaistu 4. toukokuuta 2024"],
+      ].filter(([language = "", passage = ""]) => !isDateStated({ date, language, passage })),
+    ).toStrictEqual([]);
+  });
 
   it("needs the day, not only the month and year", () => {
     const date = new Date(Date.UTC(2024, 4, 1));
@@ -127,6 +139,10 @@ describe(isMonthStated, () => {
       ["en", "2024-10"],
       ["en", "10/2024"],
       ["ja", "2024年10月"],
+      ["pl", "Wydanie: październik 2024 r."],
+      ["pl", "4 października 2024"],
+      ["ru", "4 октября 2024 г."],
+      ["fi", "4. lokakuuta 2024"],
     ].filter(
       ([language = "", passage = ""]) => !isMonthStated({ date: october, language, passage }),
     );
