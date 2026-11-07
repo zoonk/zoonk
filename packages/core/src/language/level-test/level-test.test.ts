@@ -1085,6 +1085,30 @@ describe("placing a level test's result on the planner's plan", () => {
     });
   });
 
+  it("finishes during input bursts on another goal that shares the skipped lessons", async () => {
+    const { goalId, readPlacement, userId } = await plannedLearnerFixture();
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
+    const other = await unplannedGoalFixture({ settings: { startDate: "2020-09-28" }, userId });
+
+    await createGoalPlan({ goalId: other.goal.id, graph: parsePlanGraph(plan.graph) });
+
+    const stop = new AbortController();
+    const marking = markPlanInputsUntil({ planId: other.plan.id, signal: stop.signal });
+
+    try {
+      // The test goal's own notice tolerates bursts; the other goal's must not fail the finish.
+      await expect(finishLanguageLevelTest(goalId)).resolves.toMatchObject({ status: "ready" });
+    } finally {
+      stop.abort();
+      await expect(marking).resolves.toBeGreaterThan(1);
+    }
+
+    await expect(readPlacement()).resolves.toMatchObject({
+      changes: [{ status: "applied" }],
+      items: ["testedOut", "testedOut"],
+    });
+  });
+
   it("skips the lessons below the level once, with one undo, when two finishes race", async () => {
     const { goalId, readPlacement, userId } = await plannedLearnerFixture();
     const writer = holdLearnerLock({ userId });

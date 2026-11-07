@@ -12,6 +12,7 @@ import { markPlanItemsTestedOut } from "../learner/_utils/known-skills";
 import { testOutKnownPlanItems } from "../learner/_utils/test-out-known-plan-items";
 import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { toBlockPayload } from "../sessions/block-payload";
+import { markPlanInputsUntil } from "./_test-utils/mark-plan-inputs";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
@@ -125,5 +126,43 @@ describe("shared test-out notices", () => {
     await expect(
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: pending.id } }),
     ).resolves.toMatchObject({ status: "pending" });
+  });
+
+  it("still announces the test-out goal's own skip while another goal's plan is busy", async () => {
+    freezeClock();
+    vi.setSystemTime(NOW);
+    const user = await userFixture();
+    const library = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 2 }] });
+
+    const [source, other] = await Promise.all([
+      unplannedGoalFixture({ settings: { startDate: "2020-09-28" }, userId: user.id }),
+      unplannedGoalFixture({ settings: { startDate: "2020-09-28" }, userId: user.id }),
+    ]);
+
+    await createGoalPlan({ goalId: source.goal.id, graph: library.graph });
+    await createGoalPlan({ goalId: other.goal.id, graph: library.graph });
+    const { items } = await loadGoalPlan(source.goal.id);
+    const stop = new AbortController();
+    const marking = markPlanInputsUntil({ planId: other.plan.id, signal: stop.signal });
+
+    const testOut = markPlanItemsTestedOut({
+      followToday: false,
+      goalId: source.goal.id,
+      items,
+      knownSkillIds: new Set([library.skills[0]?.id ?? ""]),
+      testedOutAt: NOW,
+      timeZone: "UTC",
+    });
+
+    try {
+      await expect(testOut).resolves.toMatchObject({ changeId: expect.any(String) });
+    } finally {
+      stop.abort();
+      await expect(marking).resolves.toBeGreaterThan(1);
+    }
+
+    await expect(
+      prisma.planChange.count({ where: { kind: "testedOut", planId: source.plan.id } }),
+    ).resolves.toBe(1);
   });
 });
