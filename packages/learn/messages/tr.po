@@ -7057,6 +7057,11 @@ msgid "In short:"
 msgstr "Kısaca:"
 
 #: src/mind-maps/mind-map-row.tsx
+msgctxt "Vx6AAM"
+msgid "{count, plural, one {# lesson to write first} other {# lessons to write first}}"
+msgstr "{count, plural, other {Önce hazırlanacak # ders}}"
+
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "TS33yQ"
 msgid "Its lessons get written first, so it takes a few minutes."
 msgstr "Önce ünitenin dersleri hazırlanır, bu yüzden birkaç dakika sürer."
@@ -7165,6 +7170,11 @@ msgstr "{count, plural, =0 {# harita} other {# harita}}"
 msgctxt "V-r52O"
 msgid "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan."
 msgstr "Bir ünitenin ana kavramları tek bir görselde. Tamamladığın her ünite için bir zihin haritası hazırlanır; planındaki diğer üniteler için de oluşturabilirsin."
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "L3DF5i"
+msgid "When a chapter's lessons aren't written yet, they get written first and count toward your free lessons."
+msgstr "Bir ünitenin dersleri henüz hazırlanmamışsa önce bu dersler hazırlanır ve ücretsiz ders hakkından düşülür."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "b3Jpo7"

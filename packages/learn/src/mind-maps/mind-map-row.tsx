@@ -74,10 +74,18 @@ function MapSlot({ shown, view }: { shown: MindMapShown; view: ChapterMindMapVie
   );
 }
 
-function useAvailableLine({ place, plus, view }: RowCopyInput): string | null {
+/** A list says what writing the lessons costs once, above its rows (`MindMapsScreen`). */
+function useAvailableLine({ place, plus, shown, view }: RowCopyInput): string | null {
   const t = useExtracted();
+  const writesLessons = view.lessonsToWrite > 0 && shown !== "plusRequired";
 
-  if (view.lessonsToWrite > 0 && view.status !== "plusRequired") {
+  if (writesLessons && place === "library") {
+    return t("{count, plural, one {# lesson to write first} other {# lessons to write first}}", {
+      count: view.lessonsToWrite,
+    });
+  }
+
+  if (writesLessons) {
     return plus
       ? t("Its lessons get written first, so it takes a few minutes.")
       : t("Its lessons get written first and count toward your free lessons.");

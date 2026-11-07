@@ -7057,6 +7057,11 @@ msgid "In short:"
 msgstr "W skrócie:"
 
 #: src/mind-maps/mind-map-row.tsx
+msgctxt "Vx6AAM"
+msgid "{count, plural, one {# lesson to write first} other {# lessons to write first}}"
+msgstr "{count, plural, one {Najpierw trzeba przygotować # lekcję} few {Najpierw trzeba przygotować # lekcje} other {Najpierw trzeba przygotować # lekcji}}"
+
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "TS33yQ"
 msgid "Its lessons get written first, so it takes a few minutes."
 msgstr "Najpierw przygotowujemy lekcje z tego rozdziału, więc potrwa to kilka minut."
@@ -7165,6 +7170,11 @@ msgstr "{count, plural, =0 {# map} one {# mapa} many {# map} other {# mapy}}"
 msgctxt "V-r52O"
 msgid "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan."
 msgstr "Główne zagadnienia rozdziału na jednym obrazku. Każdy ukończony rozdział ma swoją mapę. Możesz ją też stworzyć dla dowolnego innego rozdziału w swoim planie."
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "L3DF5i"
+msgid "When a chapter's lessons aren't written yet, they get written first and count toward your free lessons."
+msgstr "Jeśli lekcje z rozdziału nie są jeszcze gotowe, najpierw je przygotowujemy i wliczamy do twojego limitu bezpłatnych lekcji."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "b3Jpo7"
