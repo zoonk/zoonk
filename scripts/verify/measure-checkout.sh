@@ -23,11 +23,12 @@ server=$!
 trap 'kill -KILL -- -"$server" 2> /dev/null || true; wait "$server" || true' EXIT
 
 url=$(node -e "import('./scripts/dev/config.mts').then((config) => console.log(config.getServiceUrl({ currentDirectory: process.cwd(), serviceName: process.argv[1] })))" "$app")
+read -r first_path _ <<< "$PATHS"
 deadline=$((SECONDS + 1200))
 
 # Next prints that it's ready before its port answers. The API has no page at /, so this waits on
 # the first page to measure, which answers even when it redirects a signed-out visitor.
-until curl --silent --fail --max-time 10 --output /dev/null "$url${PATHS%% *}"; do
+until curl --silent --fail --max-time 10 --output /dev/null "$url$first_path"; do
   if ! kill -0 "$server" 2> /dev/null || [ "$SECONDS" -gt "$deadline" ]; then
     cat "$out/start.log"
     exit 1
