@@ -6,7 +6,7 @@ import { getExamName } from "../../exams/exam-name";
 
 export type OtherExamGoal = { goalId: string; name: string; lessonIds: string[] };
 
-/** GET-only, after ownership authorization. */
+/** GET-only, after ownership authorization. Holds only the lessons `goalId`'s plan also holds. */
 export async function readOtherExamGoals(userId: string, goalId: string): Promise<OtherExamGoal[]> {
   "use cache: private";
 
@@ -17,7 +17,10 @@ export async function readOtherExamGoals(userId: string, goalId: string): Promis
       examBlueprint: { select: { name: true } },
       plan: {
         select: {
-          items: { select: { lessonId: true }, where: { kind: "lesson", lessonId: { not: null } } },
+          items: {
+            select: { lessonId: true },
+            where: { kind: "lesson", lesson: { planItems: { some: { plan: { goalId } } } } },
+          },
         },
       },
     },

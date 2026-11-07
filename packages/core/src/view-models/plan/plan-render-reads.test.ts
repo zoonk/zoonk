@@ -128,7 +128,7 @@ describe("the Plan's render reads", () => {
       countDatabaseRows(
         () =>
           Promise.all([getSyllabusView({ goalId: goal.id }), getSyllabusView({ goalId: goal.id })]),
-        '"public"."plan_items"."lesson_id" IS NOT NULL',
+        'FROM "public"."plan_items" LEFT JOIN "public"."library_lessons"',
       ),
     );
 
