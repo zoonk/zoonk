@@ -143,7 +143,7 @@ internal fun ColumnScope.BasesChoices(
                     followed = changed.isEmpty() && shared != null && shared == recommended,
                     isExam = page.isExam,
                     onAsk = {
-                        advice = Advice.Pending(retry = advice != Advice.Idle)
+                        advice = Advice.Pending(retrying = advice as? Advice.Failure)
                         scope.launch { advice = adviceOf(edits.adviseOnBases()) }
                     },
                 )
@@ -294,21 +294,21 @@ private fun BasesAdvice(
     isExam: Boolean,
     onAsk: () -> Unit,
 ) {
-    val retry = advice == Advice.Building || advice == Advice.Failed || (advice is Advice.Pending && advice.retry)
+    val failure = (advice as? Advice.Pending)?.retrying ?: advice as? Advice.Failure
+    val retry = failure != null
     val answer = remember { FocusRequester() }
 
     LaunchedEffect(advice) { if (advice is Advice.Answered) answer.requestFocus() }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        when (advice) {
-            is Advice.Answered -> {
-                val text = adviceText(advice, isExam)
-                Note(
-                    text = if (followed) joinSentences(text, stringResource(R.string.plan_recommendation_followed)) else text,
-                    modifier = Modifier.focusRequester(answer).focusable(),
-                )
-            }
-
+        if (advice is Advice.Answered) {
+            val text = adviceText(advice, isExam)
+            Note(
+                text = if (followed) joinSentences(text, stringResource(R.string.plan_recommendation_followed)) else text,
+                modifier = Modifier.focusRequester(answer).focusable(),
+            )
+        }
+        when (failure) {
             Advice.Building -> {
                 Note(stringResource(R.string.plan_still_building), live = true)
             }
@@ -317,7 +317,7 @@ private fun BasesAdvice(
                 Note(stringResource(R.string.plan_recommendation_failed), live = true)
             }
 
-            Advice.Idle, is Advice.Pending -> {}
+            null -> {}
         }
         if (advice !is Advice.Answered) {
             OutlinedButton(
@@ -384,14 +384,17 @@ private fun Note(
 private sealed interface Advice {
     data object Idle : Advice
 
-    /** Asked again after the advice failed or the plan was still being built, so Try again keeps its words. */
+    /** A failure that Try again answers. */
+    sealed interface Failure : Advice
+
+    /** A retry keeps the [retrying] failure, so Try again and its line stay put until it settles. */
     data class Pending(
-        val retry: Boolean,
+        val retrying: Failure?,
     ) : Advice
 
-    data object Building : Advice
+    data object Building : Failure
 
-    data object Failed : Advice
+    data object Failed : Failure
 
     data class Answered(
         val recommended: PlanBase.Choice,
