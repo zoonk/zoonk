@@ -191,6 +191,7 @@ export function MatchPairsActivity({
       </ActivityCanvasLabel>
 
       <MatchBoard
+        className="text-sm sm:text-base"
         label={t("Cards to match")}
         left={left}
         renderItem={cardButton}
