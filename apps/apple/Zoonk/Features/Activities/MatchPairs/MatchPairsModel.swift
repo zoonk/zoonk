@@ -46,6 +46,11 @@ enum MatchPairs {
     var traps: [String] = []
   }
 
+  struct SolvedRow: Hashable, Sendable {
+    let left: MatchCard?
+    let right: MatchCard?
+  }
+
   private static let maxAttempts = 32
 
   static func cards(_ fields: MatchPairsFields, side: Side) -> [MatchCard] {
@@ -82,6 +87,14 @@ enum MatchPairs {
     left.enumerated().contains { index, card in
       !card.isTrap && index < right.count && right[index].id == card.id
     }
+  }
+
+  static func solvedRows(left: [MatchCard], right: [MatchCard]) -> [SolvedRow] {
+    let partners = Dictionary(
+      right.filter { !$0.isTrap }.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+
+    return left.map { SolvedRow(left: $0, right: $0.isTrap ? nil : partners[$0.id]) }
+      + right.filter(\.isTrap).map { SolvedRow(left: nil, right: $0) }
   }
 
   static func isMatch(_ left: MatchCard, _ right: MatchCard) -> Bool {

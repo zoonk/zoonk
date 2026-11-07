@@ -219,6 +219,19 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertEqual(columns.right.map(\.id), ["a", "right-trap-0", "c", "right-trap-1", "b"])
   }
 
+  func testMatchPairsSolvedRowsPutEachPairSideBySideAndEachTrapAlone() {
+    let card = { (id: String) in
+      MatchCard(id: id, isTrap: id.contains("trap"), text: id, why: nil)
+    }
+    let left = ["b", "left-trap-0", "a"].map(card)
+    let right = ["right-trap-0", "a", "b", "right-trap-1"].map(card)
+
+    let rows = MatchPairs.solvedRows(left: left, right: right)
+
+    XCTAssertEqual(rows.map(\.left?.id), ["b", "left-trap-0", "a", nil, nil])
+    XCTAssertEqual(rows.map(\.right?.id), ["b", nil, "a", "right-trap-0", "right-trap-1"])
+  }
+
   func testMatchPairsMatchingEachPairOnTheFirstTryIsRight() throws {
     let content = try content(matchPairsJSON)
     let fields = try content.fields(as: MatchPairsFields.self)
