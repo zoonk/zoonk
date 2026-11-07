@@ -1,0 +1,855 @@
+{
+  "modelId": "openai/gpt-6.1-terra",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "precision",
+          "reasoning": "All kept word orders are acceptable and preserve the intended meaning. The first sentence correctly allows a postverbal subject and a final “quando pioveva” clause without changing clause membership. In the second, both placements of “oggi” are natural, and “non” remains directly before “ho.” The Portuguese topicalizations are also acceptable in Brazilian speech. No incorrect-order cap is triggered.",
+          "score": 10,
+          "label": "Only correct orders",
+          "weight": 70
+        },
+        {
+          "categoryId": "recall",
+          "reasoning": "The common Italian alternatives are covered, including both subject positions with the temporal clause at either end, and sentence-final “oggi.” Coverage of Portuguese alternatives is slightly incomplete: the natural combinations “chegou o ônibus quando chovia” and “eu não peguei hoje o guarda-chuva” are absent.",
+          "score": 8,
+          "label": "Common orders found",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1368,
+          "outputTokens": 965,
+          "reasoningTokens": 630
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The Portuguese alternatives miss natural orders such as “chegou o ônibus quando chovia” and “eu não peguei hoje o guarda-chuva.” The Italian alternatives cover the main expected variations.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning Italian. In the first sentence the subject can follow the verb (\"Quando pioveva è arrivato l'autobus\") and the \"quando\" clause can close the sentence; an order that attaches \"quando\" to the bus's arrival says something else. In the second, \"oggi\" can close the sentence, but \"non\" stays right before the verb.",
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "Quando è arrivato l'autobus pioveva",
+                  "Quando l'autobus pioveva è arrivato"
+                ],
+                "valid": [
+                  "Quando pioveva è arrivato l'autobus",
+                  "L'autobus è arrivato quando pioveva"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Quando o ônibus chegou, chovia"
+                ],
+                "valid": [
+                  "O ônibus chegou quando chovia"
+                ]
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "Oggi ho non preso l'ombrello",
+                  "Oggi non l'ombrello ho preso"
+                ],
+                "valid": [
+                  "Non ho preso l'ombrello oggi"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Hoje eu peguei não o guarda-chuva"
+                ],
+                "valid": [
+                  "Eu não peguei o guarda-chuva hoje"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "pt-it-rain-and-bus-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "sentences": [
+            {
+              "sentence": "Quando pioveva l'autobus è arrivato",
+              "translation": "Quando chovia, o ônibus chegou"
+            },
+            {
+              "sentence": "Oggi non ho preso l'ombrello",
+              "translation": "Hoje eu não peguei o guarda-chuva"
+            }
+          ],
+          "targetLanguage": "it"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "precision",
+          "reasoning": "Every retained German order keeps the finite verb in second position and preserves the original meaning. The fronted transport, destination, and object phrases are acceptable topicalizations. Both English alternatives correctly place the time phrase at the end, without separating the verb from its object. No incorrect-order cap is triggered; capitalization defects do not invalidate the ordering itself.",
+          "score": 10,
+          "label": "Only correct orders",
+          "weight": 70
+        },
+        {
+          "categoryId": "recall",
+          "reasoning": "Both sentences include the common German subject-first alternative. The second also includes a final time phrase, and the lists retain acceptable topicalized alternatives. Both English translations include the ordinary alternative with the time phrase at the end. There is no material omission of the expected common alternatives.",
+          "score": 10,
+          "label": "Common orders found",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1307,
+          "outputTokens": 1233,
+          "reasoningTokens": 893
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Capitalization is not adjusted after moving words. German alternatives should begin with capitals, while internal time expressions should use lowercase 'morgen' and 'am Wochenende'. English alternatives likewise need lowercase 'tomorrow' and 'on the weekend' at the end. These are orthographic defects, not incorrect word orders.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning German. Every German order keeps the conjugated verb in second place, so a fronted time phrase is followed by the verb, and the subject-first order is the common alternative. In English a time phrase moves only to the front or the end, never between the verb and its object.",
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "Morgen ich fahre mit dem Zug nach Berlin",
+                  "Ich morgen fahre mit dem Zug nach Berlin"
+                ],
+                "valid": [
+                  "Ich fahre morgen mit dem Zug nach Berlin"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "I'm taking tomorrow the train to Berlin"
+                ],
+                "valid": [
+                  "I'm taking the train to Berlin tomorrow"
+                ]
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "Am Wochenende ich besuche meine Eltern"
+                ],
+                "valid": [
+                  "Ich besuche am Wochenende meine Eltern"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "I visit on the weekend my parents"
+                ],
+                "valid": [
+                  "I visit my parents on the weekend"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "en-de-verb-second-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "sentences": [
+            {
+              "sentence": "Morgen fahre ich mit dem Zug nach Berlin",
+              "translation": "Tomorrow I'm taking the train to Berlin"
+            },
+            {
+              "sentence": "Am Wochenende besuche ich meine Eltern",
+              "translation": "On the weekend I visit my parents"
+            }
+          ],
+          "targetLanguage": "de"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "precision",
+          "reasoning": "The two sentence-initial tomorrow alternatives move a word across the conditional-clause boundary, violating an explicit meaning-preservation requirement and triggering the maximum score of 5. Punctuation defects further undermine acceptance as correct written answers.",
+          "score": 4,
+          "label": "Only correct orders",
+          "weight": 70
+        },
+        {
+          "categoryId": "recall",
+          "reasoning": "Both sentences include the common main-clause-first alternative in Portuguese and English. The Portuguese conditional also includes placing “amanhã” before “chover” while keeping it inside the conditional clause. No clearly common alternative order is missing; the correctness and punctuation problems are assessed separately under precision.",
+          "score": 10,
+          "label": "Common orders found",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1300,
+          "outputTokens": 693,
+          "reasoningTokens": 287
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The kept orders “amanhã, Se chover eu fico em casa” and “tomorrow, If it rains I'll stay home” move the time expression out of the conditional clause. The originals explicitly condition staying home on rain tomorrow; the alternatives instead frame the overall conditional or staying home as happening tomorrow. This violates the required preservation of clause membership and meaning.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The alternatives mishandle sentence punctuation and capitalization. Reversed clauses retain a trailing comma and capitalized “Se,” “Quando,” “If,” or “When” mid-sentence. “Se amanhã, chover” also incorrectly inserts a comma within the conditional clause. Correct forms include “Eu fico em casa se chover amanhã” and “I take a shower when I get home.”",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Brazilian Portuguese. The \"se\" and \"quando\" clauses can come before or after the main clause in both languages, but the words of one clause never move into the other, which would change what depends on what.",
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "Se eu fico em casa, chover amanhã"
+                ],
+                "valid": [
+                  "Eu fico em casa se chover amanhã"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "If I'll stay home, it rains tomorrow"
+                ],
+                "valid": [
+                  "I'll stay home if it rains tomorrow"
+                ]
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "Quando tomo um banho, chego em casa"
+                ],
+                "valid": [
+                  "Tomo um banho quando chego em casa"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "When I take a shower, I get home"
+                ],
+                "valid": [
+                  "I take a shower when I get home"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "en-pt-clause-order-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "sentences": [
+            {
+              "sentence": "Se chover amanhã, eu fico em casa",
+              "translation": "If it rains tomorrow, I'll stay home"
+            },
+            {
+              "sentence": "Quando chego em casa, tomo um banho",
+              "translation": "When I get home, I take a shower"
+            }
+          ],
+          "targetLanguage": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "precision",
+          "reasoning": "The Japanese alternatives preserve the topic and object particles, keep the verb at the end, and retain the same meaning. Object-fronted orders are more context-dependent but acceptable scrambling, not incorrect sentences. The English alternative correctly moves only “every morning” to the front.",
+          "score": 10,
+          "label": "Only correct orders",
+          "weight": 70
+        },
+        {
+          "categoryId": "recall",
+          "reasoning": "All five alternative arrangements of the three Japanese preverbal phrases are included, covering the common time-phrase placements. The English fronted-time alternative is also included; no expected common order is missing.",
+          "score": 10,
+          "label": "Common orders found",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1236,
+          "outputTokens": 435,
+          "reasoningTokens": 184
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Japanese. Japanese phrases can change places (a time word before or after the topic) as long as the verb stays at the end. In English only \"every morning\" moves, to the front.",
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "飲みます私は毎朝コーヒーを"
+                ],
+                "valid": [
+                  "毎朝私はコーヒーを飲みます"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Coffee I drink every morning",
+                  "I every morning drink coffee"
+                ],
+                "valid": [
+                  "Every morning I drink coffee"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "en-ja-phrase-order-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "sentences": [
+            {
+              "sentence": "私は毎朝コーヒーを飲みます",
+              "translation": "I drink coffee every morning"
+            }
+          ],
+          "targetLanguage": "ja"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "precision",
+          "reasoning": "All retained orders are acceptable and preserve the original meaning. The English alternatives keep 'English' directly after 'study'; fronting either the time or location phrase is grammatical and natural. The Japanese alternatives preserve the particles and keep the verb at the end, allowing the preceding phrases to move without changing their roles.",
+          "score": 10,
+          "label": "Only correct orders",
+          "weight": 70
+        },
+        {
+          "categoryId": "recall",
+          "reasoning": "The result includes the common English alternatives: swapping the final time and location phrases, fronting 'on Saturdays', and fronting 'at the library'. It also includes all five alternative arrangements of the three Japanese phrases before the final verb. No common alternative is materially missing.",
+          "score": 10,
+          "label": "Common orders found",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1287,
+          "outputTokens": 377,
+          "reasoningTokens": 103
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Japanese speaker learning US English. The Japanese translation's phrases (\"土曜日に\", \"図書館で\") can swap as long as the verb stays at the end. In English \"on Saturdays\" can open the sentence or swap places with \"at the library\" at the end, while \"English\" stays right after \"study\".",
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "I study at the library English on Saturdays"
+                ],
+                "valid": [
+                  "On Saturdays I study English at the library"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "英語を勉強します土曜日に図書館で"
+                ],
+                "valid": [
+                  "図書館で土曜日に英語を勉強します"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "ja-en-phrase-tiles-1",
+        "userInput": {
+          "learnerLanguage": "ja",
+          "sentences": [
+            {
+              "sentence": "I study English at the library on Saturdays",
+              "translation": "土曜日に図書館で英語を勉強します"
+            }
+          ],
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "precision",
+          "reasoning": "Both retained Portuguese alternatives are grammatical and preserve the sister as caller, the mother as recipient, and the weekly frequency. No incorrect alternatives are retained, so the precision cap is not triggered.",
+          "score": 10,
+          "label": "Only correct orders",
+          "weight": 70
+        },
+        {
+          "categoryId": "recall",
+          "reasoning": "The empty lists for the first sentence are appropriate. For the second sentence, two acceptable Portuguese alternatives are included, but the common sentence-initial time phrase is missing in both English and Portuguese. In particular, no English alternative is supplied despite “Every Sunday my sister calls my mother” being natural and meaning-preserving.",
+          "score": 7,
+          "label": "Common orders found",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "4 of 6 parts passed. \"Every Sunday my sister calls my mother\" is missing. \"Todo domingo minha irmã liga para minha mãe\" is missing.",
+          "score": 7,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1215,
+          "outputTokens": 498,
+          "reasoningTokens": 195
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The second sentence omits common time-fronted alternatives in both languages: “Every Sunday my sister calls my mother” and “Todo domingo minha irmã liga para minha mãe.” Its empty English alternatives list therefore misses a clearly acceptable order.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning US English. Who does what to whom is fixed by word order in both sentences: swapping the subject and the object makes a different, wrong sentence. Moving the time phrase is fine.",
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "The boy bit the dog"
+                ],
+                "valid": []
+              },
+              "translationOrders": {
+                "invalid": [
+                  "O menino mordeu o cachorro"
+                ],
+                "valid": []
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "My mother calls my sister every Sunday",
+                  "My sister calls every Sunday my mother"
+                ],
+                "valid": [
+                  "Every Sunday my sister calls my mother"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Minha mãe liga para minha irmã todo domingo"
+                ],
+                "valid": [
+                  "Todo domingo minha irmã liga para minha mãe"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "pt-en-rigid-roles-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "sentences": [
+            {
+              "sentence": "The dog bit the boy",
+              "translation": "O cachorro mordeu o menino"
+            },
+            {
+              "sentence": "My sister calls my mother every Sunday",
+              "translation": "Minha irmã liga para minha mãe todo domingo"
+            }
+          ],
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "precision",
+          "reasoning": "Multiple retained alternatives violate the explicit scope constraints, triggering the maximum score of 5 for accepting even one incorrect order. The failures are systematic across the first sentence's English and Portuguese alternatives, including an expressly prohibited morning-fronted order. All alternative lists should be empty under these expectations.",
+          "score": 2,
+          "label": "Only correct orders",
+          "weight": 70
+        },
+        {
+          "categoryId": "recall",
+          "reasoning": "The expectations specify that no other orders should be kept, so there are no valid alternatives missing. The incorrect additions are precision failures, not recall failures.",
+          "score": 10,
+          "label": "Common orders found",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "2 of 4 parts passed. \"in the morning I only drink tea\" is kept but wrong. \"de manhã Eu só bebo chá\" is kept but wrong.",
+          "score": 5.5,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1353,
+          "outputTokens": 589,
+          "reasoningTokens": 240
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The result keeps alternatives where the expectations require none. The first sentence includes 11 English and Portuguese alternatives that move 'only'/'só' or separate the morning phrase from its required scope. Examples include 'I drink tea only in the morning', 'Eu bebo só chá de manhã', and the explicitly excluded 'in the morning I only drink tea'. These would cause the app to accept answers that do not preserve the required meaning. The second sentence also retains two Portuguese alternatives despite the task-specific expectation of no other orders.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning US English. Moving \"only\" or \"always\" changes what it applies to (\"Only I drink tea\" means nobody else does; \"always doesn't\" means never), so no order that moves them is kept, and neither is one that moves the morning away from what \"only\"/\"só\" limits (\"In the morning, I only drink tea\", \"De manhã eu só bebo chá\"). Keeping no other order is right here.",
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "Only I drink tea in the morning",
+                  "In the morning, I only drink tea"
+                ],
+                "valid": []
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Só eu bebo chá de manhã",
+                  "De manhã eu só bebo chá",
+                  "Eu de manhã só bebo chá"
+                ],
+                "valid": []
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "She always doesn't eat breakfast"
+                ],
+                "valid": []
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Ela sempre nem toma café da manhã"
+                ],
+                "valid": []
+              }
+            }
+          ]
+        },
+        "id": "pt-en-only-and-negation-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "sentences": [
+            {
+              "sentence": "I only drink tea in the morning",
+              "translation": "Eu só bebo chá de manhã"
+            },
+            {
+              "sentence": "She doesn't always eat breakfast",
+              "translation": "Ela nem sempre toma café da manhã"
+            }
+          ],
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "precision",
+          "reasoning": "The kept English alternative \"included in the rent is Water\" directly triggers the maximum score of 5 for accepting a literary, non-everyday order. Several Portuguese alternatives also have misplaced question marks that prevent them from being clean, acceptable answers as written. The correctly empty English question lists do not cancel these failures.",
+          "score": 4,
+          "label": "Only correct orders",
+          "weight": 70
+        },
+        {
+          "categoryId": "recall",
+          "reasoning": "The result correctly leaves the English question orders fixed and includes fronted \"in the rent\" and several Portuguese locative and subject-placement alternatives. However, it misses the natural Portuguese order \"Está incluída a água no aluguel\". Coverage is therefore useful but incomplete.",
+          "score": 8,
+          "label": "Common orders found",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "7 of 9 parts passed. \"included in the rent is Water\" is kept but wrong. \"A água no aluguel está incluída\" is kept but wrong.",
+          "score": 8,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1418,
+          "outputTokens": 768,
+          "reasoningTokens": 375
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The result accepts \"included in the rent is Water\", the literary inversion explicitly excluded by the expectations. This would cause the app to accept an unsuitable learner answer.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The Portuguese question alternatives retain question marks inside the reordered sentences, as in \"o aluguel? é Quanto\" and \"estão incluídas no aluguel? As contas de serviços\". Capitalization also remains attached to the original positions rather than being adjusted for the new sentences.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Include the natural Portuguese alternative \"Está incluída a água no aluguel\". The result includes subject placement after the full predicate but misses this common placement immediately after \"está incluída\".",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning US English, renting a flat. An English yes-or-no question keeps its verb first and a statement keeps its subject first: \"Utilities are included in the rent?\" and \"The rent is how much?\" are not correct answers, and \"Included in the rent is water\" is literary. In Portuguese the subject can follow \"estar incluído\" (\"Está incluída no aluguel a água\"), but \"Incluída no aluguel está a água\" sounds poetic.",
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "The rent is how much?"
+                ],
+                "valid": []
+              },
+              "translationOrders": {
+                "invalid": [],
+                "valid": [
+                  "O aluguel é quanto?"
+                ]
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "Utilities are included in the rent?",
+                  "In the rent, utilities are included?"
+                ],
+                "valid": []
+              },
+              "translationOrders": {
+                "invalid": [
+                  "As contas de serviços, no aluguel, estão incluídas?"
+                ],
+                "valid": [
+                  "Estão incluídas no aluguel as contas de serviços?"
+                ]
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "Included in the rent is water"
+                ],
+                "valid": []
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Incluída no aluguel está a água",
+                  "A água, no aluguel, está incluída"
+                ],
+                "valid": [
+                  "Está incluída no aluguel a água"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "pt-en-renting-questions-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "sentences": [
+            {
+              "sentence": "How much is the rent?",
+              "translation": "Quanto é o aluguel?"
+            },
+            {
+              "sentence": "Are utilities included in the rent?",
+              "translation": "As contas de serviços estão incluídas no aluguel?"
+            },
+            {
+              "sentence": "Water is included in the rent",
+              "translation": "A água está incluída no aluguel"
+            }
+          ],
+          "targetLanguage": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "language-sentence-orders"
+}
