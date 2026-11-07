@@ -9,6 +9,7 @@ import {
   runAnswer,
   startedRun,
 } from "../_test-utils/render-lesson-player";
+import { LESSON_CONTENT_ID } from "../lesson/_utils/lesson-focus";
 import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 import { activityStep, languageStep, teachingStep } from "../preview/preview-steps";
@@ -138,37 +139,52 @@ describe("coming back to a lesson", () => {
     expect(adapters.checkStep).toHaveBeenCalledOnce();
   });
 
-  it("leaves a learner who pressed in the lesson where they are when a slow start lands", async () => {
-    const lesson = createLesson();
-    const [first] = checkIds(lesson);
-    const start = Promise.withResolvers<Awaited<ReturnType<LessonPlayerAdapters["startLesson"]>>>();
-    const startLesson = vi.fn<LessonPlayerAdapters["startLesson"]>(() => start.promise);
-    const adapters = buildAdapters(lesson, { startLesson });
+  it.each([
+    {
+      activate: () => page.getByRole("main", { name: "Lesson content" }).click(),
+      input: "a press",
+    },
+    {
+      activate: () => document.querySelector<HTMLElement>(`#${LESSON_CONTENT_ID}`)?.click(),
+      input: "a click with no press before it, as assistive tools send",
+    },
+  ])(
+    "leaves a learner where they are when $input in the lesson comes before a slow start",
+    async ({ activate }) => {
+      const lesson = createLesson();
+      const [first] = checkIds(lesson);
 
-    renderLessonPlayer({ adapters, lesson, resume: [] });
+      const start =
+        Promise.withResolvers<Awaited<ReturnType<LessonPlayerAdapters["startLesson"]>>>();
 
-    await expect.element(page.getByRole("button", { name: /^Next/u })).toBeVisible();
-    await page.getByRole("main", { name: "Lesson content" }).click();
+      const startLesson = vi.fn<LessonPlayerAdapters["startLesson"]>(() => start.promise);
+      const adapters = buildAdapters(lesson, { startLesson });
 
-    start.resolve(
-      startedRun({
-        answers: [
-          runAnswer({
-            answer: { kind: "check", optionId: "likely" },
-            answerText: RIGHT_OPTION,
-            stepId: first ?? "",
-          }),
-        ],
-      }),
-    );
+      renderLessonPlayer({ adapters, lesson, resume: [] });
 
-    await expect.poll(() => startLesson.mock.calls.length).toBeGreaterThan(0);
-    await expect.element(page.getByText("Reading it")).not.toBeInTheDocument();
+      await expect.element(page.getByRole("button", { name: /^Next/u })).toBeVisible();
+      await activate();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
-    await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeChecked();
-    await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
-  });
+      start.resolve(
+        startedRun({
+          answers: [
+            runAnswer({
+              answer: { kind: "check", optionId: "likely" },
+              answerText: RIGHT_OPTION,
+              stepId: first ?? "",
+            }),
+          ],
+        }),
+      );
+
+      await expect.poll(() => startLesson.mock.calls.length).toBeGreaterThan(0);
+      await expect.element(page.getByText("Reading it")).not.toBeInTheDocument();
+
+      await page.getByRole("button", { name: /^Next/u }).click();
+      await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeChecked();
+      await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+    },
+  );
 
   it("shows a reopened matching screen with the pairs the learner matched", async () => {
     const matching = languageStep("matchColumns");

@@ -154,6 +154,7 @@ function LessonPlayerFrame() {
       data-aside={asideRoot["data-aside"]}
       data-phase={state.phase}
       data-slot="lesson-player"
+      onClickCapture={actions.engage}
       onKeyDownCapture={actions.engage}
       onPointerDownCapture={actions.engage}
     >
