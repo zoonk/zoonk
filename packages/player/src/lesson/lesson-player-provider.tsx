@@ -159,17 +159,16 @@ export function LessonPlayerProvider({
     }
 
     const held = viewer.learnerId ? reopen(viewer.learnerId) : [];
-
-    if (held.length > 0) {
-      dispatch({ answers: [...resume, ...held], type: "unsentPlaced" });
-      return;
-    }
-
     const first = lesson.steps[0];
     const answer = state.answers[first?.id ?? ""];
 
     if (first?.kind === "hook" && answer?.kind === "hook" && firstAnswer) {
       actions.check();
+      return;
+    }
+
+    if (held.length > 0) {
+      dispatch({ answers: [...resume, ...held], type: "unsentPlaced" });
       return;
     }
 

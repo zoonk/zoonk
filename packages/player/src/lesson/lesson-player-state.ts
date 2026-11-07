@@ -65,7 +65,7 @@ export type LessonPlayerState = {
   stepStartedAt: number;
   steps: Record<string, PlayableLibraryStep>;
   unavailableStepIds: string[];
-  /** From a save that didn't get through, or a reopen with answers still on the device, until all are saved. */
+  /** Set only by a save that failed, so a resend that gets through at once never shows it. */
   unsavedAnswers: boolean;
   writingRestore: Pick<LessonPlayerState, "position" | "queue" | "skippedWritingStepIds"> | null;
 };

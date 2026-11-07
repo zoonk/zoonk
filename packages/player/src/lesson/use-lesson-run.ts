@@ -83,7 +83,7 @@ export function useLessonRun({
     [getQueue, keepPending],
   );
 
-  const { hold, reopen, resendHeld } = useHeldAnswers({
+  const { hold, reopen, resendHeld, resendKept } = useHeldAnswers({
     adapters,
     dispatch,
     ensureRun,
@@ -95,8 +95,8 @@ export function useLessonRun({
 
   const flushChecks = useCallback(async (): Promise<boolean> => {
     await Promise.allSettled(pendingRef.current);
-    return resendHeld();
-  }, [resendHeld]);
+    return resendKept();
+  }, [resendKept]);
 
   return { ensureRun, flushChecks, hold, keepGrade, reopen, resendHeld };
 }

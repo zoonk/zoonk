@@ -195,7 +195,11 @@ function startRun(state: LessonPlayerState, action: ActionOf<"runStarted">): Les
 }
 
 function isUntouched(state: LessonPlayerState): boolean {
-  return Object.keys(state.results).length === 0 && !state.quickCheck;
+  return (
+    Object.keys(state.answers).length === 0 &&
+    Object.keys(state.results).length === 0 &&
+    !state.quickCheck
+  );
 }
 
 /**
@@ -219,8 +223,7 @@ function placeUnsent(
   state: LessonPlayerState,
   action: ActionOf<"unsentPlaced">,
 ): LessonPlayerState {
-  const placed = isUntouched(state) ? resumeFrom(state, action.answers) : state;
-  return { ...placed, unsavedAnswers: true };
+  return isUntouched(state) ? resumeFrom(state, action.answers) : state;
 }
 
 function resyncRun(state: LessonPlayerState, action: ActionOf<"runResynced">): LessonPlayerState {

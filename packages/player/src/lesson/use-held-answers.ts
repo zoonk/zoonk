@@ -24,6 +24,15 @@ export function toRunAnswer({ answeredAt, isCorrect, stepId }: HeldCheck) {
   return { answeredAt, isCorrect, stepId };
 }
 
+function findOldest(held: Map<string, HeldAnswer>, stepId: string): HeldAnswer | undefined {
+  return [...held.values()]
+    .filter((answer) => answer.check.stepId === stepId)
+    .toSorted(
+      (first, second) => Date.parse(first.check.answeredAt) - Date.parse(second.check.answeredAt),
+    )
+    .at(0);
+}
+
 /**
  * Answers graded on the device whose save hasn't been confirmed: kept on the device until the
  * server checks or refuses them, and sent again, a screen's oldest first, on each trigger.
@@ -46,16 +55,16 @@ export function useHeldAnswers({
   lessonId: string;
 }) {
   const keepInRun = useCallback(
-    async ({ check, run }: HeldAnswer): Promise<StartedRun | null> => {
-      const started = run ?? (await ensureRun().catch(() => null));
+    async (check: HeldCheck): Promise<StartedRun | null> => {
+      const run = await ensureRun().catch(() => null);
 
-      if (started && !run) {
-        heldRef.current.set(check.attemptId, { check, run: started });
-        const answer = { ...check, runId: started.runId };
-        keepUnsentAnswer({ answer, learnerId: started.learnerId, lessonId });
+      if (run && heldRef.current.has(check.attemptId)) {
+        heldRef.current.set(check.attemptId, { check, run });
+        const answer = { ...check, runId: run.runId };
+        keepUnsentAnswer({ answer, learnerId: run.learnerId, lessonId });
       }
 
-      return started;
+      return run;
     },
     [ensureRun, heldRef, lessonId],
   );
@@ -63,7 +72,7 @@ export function useHeldAnswers({
   const send = useCallback(
     async (held: HeldAnswer): Promise<boolean> => {
       const { answer, attemptId, durationMs, stepId, usedHelp } = held.check;
-      const run = await keepInRun(held);
+      const run = held.run ?? (await keepInRun(held.check));
 
       const outcome =
         run &&
@@ -98,7 +107,7 @@ export function useHeldAnswers({
 
       // Stops at the first answer that doesn't get through, so a miss never lands after its retry.
       const sendInOrder = async (): Promise<boolean> => {
-        const oldest = [...heldRef.current.values()].find((held) => held.check.stepId === stepId);
+        const oldest = findOldest(heldRef.current, stepId);
         const saved = oldest ? await send(oldest) : true;
 
         if (oldest && saved) {
@@ -129,6 +138,7 @@ export function useHeldAnswers({
   const hold = useCallback(
     (check: HeldCheck) => {
       heldRef.current.set(check.attemptId, { check, run: null });
+      void keepInRun(check);
 
       void resendScreen(check.stepId).then((saved) => {
         if (saved) {
@@ -136,26 +146,46 @@ export function useHeldAnswers({
         }
       });
     },
-    [heldRef, resendHeld, resendScreen],
+    [heldRef, keepInRun, resendHeld, resendScreen],
+  );
+
+  const holdKept = useCallback(
+    (learnerId: string): UnsentAnswer[] => {
+      const kept = readUnsentAnswers({ learnerId, lessonId });
+
+      for (const { runId, ...check } of kept) {
+        heldRef.current.set(check.attemptId, { check, run: { learnerId, runId } });
+      }
+
+      return kept;
+    },
+    [heldRef, lessonId],
   );
 
   /** Holds the answers the device kept for this learner and sends them before the run starts. */
   const reopen = useCallback(
     (learnerId: string): LessonRunAnswers => {
-      const unsent = readUnsentAnswers({ learnerId, lessonId });
+      const kept = holdKept(learnerId);
 
-      for (const { runId, ...check } of unsent) {
-        heldRef.current.set(check.attemptId, { check, run: { learnerId, runId } });
-      }
-
-      if (unsent.length > 0) {
+      if (kept.length > 0) {
         void resendHeld().then(() => ensureRun());
       }
 
-      return unsent.map((answer) => toRunAnswer(answer));
+      return kept.map((answer) => toRunAnswer(answer));
     },
-    [ensureRun, heldRef, lessonId, resendHeld],
+    [ensureRun, holdKept, resendHeld],
   );
+
+  /** Before the run ends, so the server never turns away an answer another tab still holds. */
+  const resendKept = useCallback(async (): Promise<boolean> => {
+    const run = await ensureRun().catch(() => null);
+
+    if (run) {
+      holdKept(run.learnerId);
+    }
+
+    return resendHeld();
+  }, [ensureRun, holdKept, resendHeld]);
 
   useEffect(() => {
     const resendWhenBack = () => {
@@ -173,5 +203,5 @@ export function useHeldAnswers({
     };
   }, [resendHeld]);
 
-  return { hold, reopen, resendHeld };
+  return { hold, reopen, resendHeld, resendKept };
 }

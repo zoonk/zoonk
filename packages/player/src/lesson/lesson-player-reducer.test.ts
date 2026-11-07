@@ -755,7 +755,7 @@ describe(lessonPlayerReducer, () => {
     expect(placed).toMatchObject({
       firstVerdicts: { q1: true, q2: false },
       queue: ["e1", "q1", "e2", "q2", "e3", "q3", "q2"],
-      unsavedAnswers: true,
+      unsavedAnswers: false,
     });
 
     expect(getCurrentStep(placed)?.id).toBe("e3");
@@ -766,9 +766,24 @@ describe(lessonPlayerReducer, () => {
       { answers: [runAnswer("q2", false)], type: "unsentPlaced" },
     ]);
 
-    expect([getCurrentStep(answeredHere)?.id, answeredHere.unsavedAnswers]).toStrictEqual([
+    expect(getCurrentStep(answeredHere)?.id).toBe("q1");
+  });
+
+  it("keeps a learner on the answer they arrived with when held answers or the run would move them", () => {
+    const steps = [checkStep("q1"), explanationStep("e1"), checkStep("q2")];
+    const arrivedWith: LessonPlayerAnswer = { kind: "check", optionId: "right" };
+    const answered = [runAnswer("q1", true)];
+
+    const placed = play(steps, [
+      { answer: arrivedWith, stepId: "q1", type: "selectAnswer" },
+      { answers: answered, type: "unsentPlaced" },
+    ]);
+
+    const started = lessonPlayerReducer(placed, runStarted({ answers: answered, held: [] }));
+
+    expect([getCurrentStep(started)?.id, started.answers]).toStrictEqual([
       "q1",
-      true,
+      { q1: arrivedWith },
     ]);
   });
 

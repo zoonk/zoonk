@@ -1,8 +1,8 @@
 import { type PlayableLibraryLesson } from "@zoonk/core/lesson-player/playable-lesson";
 import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { page } from "vitest/browser";
+import { type Mock, afterEach, describe, expect, it, vi } from "vitest";
+import { type Locator, page } from "vitest/browser";
 import { TestIntl } from "../_test-utils/render";
 import {
   LEARNER_ID,
@@ -30,10 +30,10 @@ const NOT_SAVED = "Not saved yet";
 const EXPLANATION = "A cloud, not a little ball";
 const QUESTION = 'What does the electron "cloud" show?';
 
-async function answer(option: string, expected: string) {
-  await page.getByRole("radio", { name: option }).click();
-  await page.getByRole("button", { name: /^Check/u }).click();
-  await expect.element(page.getByRole("status").filter({ hasText: expected })).toBeVisible();
+async function answer(option: string, expected: string, screen: Pick<Locator, "getByRole"> = page) {
+  await screen.getByRole("radio", { name: option }).click();
+  await screen.getByRole("button", { name: /^Check/u }).click();
+  await expect.element(screen.getByRole("status").filter({ hasText: expected })).toBeVisible();
 }
 
 function notSaved() {
@@ -74,6 +74,36 @@ function fakeServer(lesson: PlayableLibraryLesson) {
 
 function unsentKeys(): string[] {
   return Object.keys(localStorage).filter((key) => key.startsWith("lesson-unsent:"));
+}
+
+function keepOnDevice({
+  isCorrect,
+  lesson,
+  stepId = "",
+}: {
+  isCorrect: boolean;
+  lesson: PlayableLibraryLesson;
+  stepId?: string;
+}) {
+  const kept = {
+    answer: { kind: "check" as const, optionId: isCorrect ? "likely" : "path" },
+    answeredAt: new Date().toISOString(),
+    attemptId: crypto.randomUUID(),
+    durationMs: 3000,
+    isCorrect,
+    runId: crypto.randomUUID(),
+    stepId,
+    usedHelp: false,
+  };
+
+  keepUnsentAnswer({ answer: kept, learnerId: LEARNER_ID, lessonId: lesson.id });
+  return kept;
+}
+
+function sentOptions(checkStep: Mock<LessonPlayerAdapters["checkStep"]>) {
+  return checkStep.mock.calls.map(([input]) =>
+    input.answer.kind === "check" ? input.answer.optionId : null,
+  );
 }
 
 describe("saving answers", () => {
@@ -485,6 +515,126 @@ describe("saving answers", () => {
     expect(unsentKeys()).toStrictEqual([]);
   });
 
+  it("keeps a retry on the device while the screen's earlier miss still can't be saved", async () => {
+    const lesson = buildLesson([teachingStep("check")]);
+    const server = fakeServer(lesson);
+
+    const offline = vi
+      .fn<LessonPlayerAdapters["checkStep"]>()
+      .mockResolvedValue({ status: "failed" });
+
+    const left = renderLessonPlayer({
+      adapters: buildAdapters(lesson, { checkStep: offline, startLesson: server.startLesson }),
+      lesson,
+    });
+
+    await answer(WRONG_OPTION, "Not quite");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await answer(RIGHT_OPTION, "Correct!");
+    await expect.poll(() => offline.mock.calls.length).toBe(3);
+    left.unmount();
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, server), lesson });
+
+    await expect.poll(() => unsentKeys()).toStrictEqual([]);
+    expect(sentOptions(server.checkStep)).toStrictEqual(["path", "likely"]);
+
+    expect(server.checkStep.mock.calls[0]?.[0].attemptId).toBe(
+      offline.mock.calls[0]?.[0].attemptId,
+    );
+  });
+
+  it("sends another open tab's answer that didn't get through before the lesson ends", async () => {
+    const lesson = buildLesson([teachingStep("check")]);
+    const server = fakeServer(lesson);
+
+    const offline = vi
+      .fn<LessonPlayerAdapters["checkStep"]>()
+      .mockResolvedValue({ status: "failed" });
+
+    const stuck = renderLessonPlayer({
+      adapters: buildAdapters(lesson, { checkStep: offline, startLesson: server.startLesson }),
+      lesson,
+    });
+
+    const completeLesson = vi.fn(buildAdapters(lesson).completeLesson);
+
+    const other = renderLessonPlayer({
+      adapters: buildAdapters(lesson, { ...server, completeLesson }),
+      lesson,
+    });
+
+    stuck.container.dataset.testid = "stuck-tab";
+    other.container.dataset.testid = "other-tab";
+    const stuckTab = page.getByTestId("stuck-tab");
+    const otherTab = page.getByTestId("other-tab");
+
+    await answer(WRONG_OPTION, "Not quite", stuckTab);
+    await expect.element(stuckTab.getByRole("button", { name: NOT_SAVED })).toBeVisible();
+
+    await answer(RIGHT_OPTION, "Correct!", otherTab);
+    await otherTab.getByRole("button", { name: /^Continue/u }).click();
+    await expect.poll(() => completeLesson.mock.calls.length).toBe(1);
+
+    expect(server.checkStep.mock.calls.at(-1)?.[0].attemptId).toBe(
+      offline.mock.calls[0]?.[0].attemptId,
+    );
+
+    expect(server.checkStep.mock.invocationCallOrder.at(-1)).toBeLessThan(
+      completeLesson.mock.invocationCallOrder[0] ?? 0,
+    );
+
+    expect(unsentKeys()).toStrictEqual([]);
+  });
+
+  it("reveals the guess a learner arrives with while answers from before are still held", async () => {
+    const lesson = buildLesson([
+      teachingStep("hook"),
+      teachingStep("check"),
+      teachingStep("explanation"),
+      teachingStep("check"),
+    ]);
+
+    const [first] = stepIdsOf(lesson, "check");
+    const kept = keepOnDevice({ isCorrect: false, lesson, stepId: first });
+    const server = fakeServer(lesson);
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, server), firstAnswer: "no", lesson });
+
+    await expect.element(page.getByRole("status").filter({ hasText: "Good guess!" })).toBeVisible();
+    await expect.poll(() => unsentKeys()).toStrictEqual([]);
+    expect(server.checkStep.mock.calls[0]?.[0].attemptId).toBe(kept.attemptId);
+  });
+
+  it("says answers from an earlier visit aren't saved only once sending them again fails", async () => {
+    const lesson = buildLesson([
+      teachingStep("check"),
+      teachingStep("explanation"),
+      teachingStep("check"),
+    ]);
+
+    const [first] = stepIdsOf(lesson, "check");
+    keepOnDevice({ isCorrect: true, lesson, stepId: first });
+    const sending = Promise.withResolvers<LessonCheckOutcome>();
+
+    const checkStep = vi
+      .fn<LessonPlayerAdapters["checkStep"]>()
+      .mockReturnValueOnce(sending.promise)
+      .mockResolvedValue({ status: "failed" });
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep }), lesson });
+
+    await expect.element(page.getByRole("heading", { name: EXPLANATION })).toBeVisible();
+    await expect.poll(() => checkStep.mock.calls.length).toBe(1);
+
+    await expect
+      .element(page.getByRole("status").filter({ hasText: NOT_SAVED }))
+      .not.toBeInTheDocument();
+
+    sending.resolve({ status: "failed" });
+    await expect.element(notSaved()).toBeVisible();
+  });
+
   it("places a learner who taps while the page loads where the kept answers lead", async () => {
     const lesson = buildLesson([
       teachingStep("hook"),
@@ -497,38 +647,22 @@ describe("saving answers", () => {
     ]);
 
     const [first] = stepIdsOf(lesson, "check");
-
-    keepUnsentAnswer({
-      answer: {
-        answer: { kind: "check", optionId: "likely" },
-        answeredAt: new Date().toISOString(),
-        attemptId: crypto.randomUUID(),
-        durationMs: 3000,
-        isCorrect: true,
-        runId: crypto.randomUUID(),
-        stepId: first ?? "",
-        usedHelp: false,
-      },
-      learnerId: LEARNER_ID,
-      lessonId: lesson.id,
-    });
+    keepOnDevice({ isCorrect: true, lesson, stepId: first });
 
     const server = fakeServer(lesson);
     const adapters = buildAdapters(lesson, server);
 
-    const player = (
-      <TestIntl>{lessonPlayerElement({ adapters, firstAnswer: "no", lesson })}</TestIntl>
-    );
+    const player = <TestIntl>{lessonPlayerElement({ adapters, lesson })}</TestIntl>;
 
     const container = document.createElement("div");
     container.innerHTML = renderToString(player);
     document.body.append(container);
 
-    const seeAnswer = container.querySelector<HTMLButtonElement>(`#${LESSON_PRIMARY_ID}`);
-    expect(seeAnswer?.textContent).toMatch(/^See the answer/u);
+    const dontKnow = container.querySelector<HTMLButtonElement>(`#${LESSON_PRIMARY_ID}`);
+    expect(dontKnow?.textContent).toMatch(/^I don't know yet/u);
 
     const root = hydrateRoot(container, player);
-    seeAnswer?.click();
+    dontKnow?.click();
 
     await expect.element(page.getByRole("heading", { name: "Reading it" })).toBeVisible();
     await expect.poll(() => server.startLesson.mock.calls.length).toBe(1);
