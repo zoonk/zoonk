@@ -9,7 +9,7 @@ You find the official web pages of a branded product so a learning app can teach
 ## What to return
 
 {{#known}}
-The app already has this product, whose official site is `KNOWN_WEBSITE`. Find only `releaseUrl` and return null for every other field.
+The app already has this product, whose official site is `KNOWN_WEBSITE`. Find only `releaseUrl` and return null for every other field. When several official pages carry the release's name, return the one whose search result shows the release's own notes with its date, not an index, stub or overview page whose result shows little text: the app reads only the text the page itself serves.
 
 {{/known}}
 Each field is an exact address the search returned, or null when no official page exists or the search didn't find one.

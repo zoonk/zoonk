@@ -210,44 +210,6 @@
       ],
       "testCase": {
         "expected": {
-          "brandUrl": null,
-          "docsUrl": null,
-          "productUrl": null,
-          "releaseUrl": null,
-          "releasesUrl": null
-        },
-        "id": "internal-tool-1",
-        "language": "en",
-        "userInput": {
-          "hints": {
-            "brand": "Brightwave Dental",
-            "name": "Brightwave Scheduler",
-            "release": null
-          },
-          "officialDomains": []
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
           "brandUrl": [
             "totvs.com"
           ],
@@ -326,6 +288,84 @@
             "totvs.com",
             "tdn.totvs.com"
           ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "releaseUrl": [
+            "tdn.totvs.com/pages/viewpage.action?pageId=836052340",
+            "tdn.totvs.com/pages/releaseview.action?pageId=836052340"
+          ]
+        },
+        "id": "protheus-known-release-notes-1",
+        "language": "pt",
+        "userInput": {
+          "hints": {
+            "brand": "TOTVS",
+            "name": "Protheus",
+            "release": "Protheus 12.1.2410"
+          },
+          "knownWebsite": "https://www.totvs.com/sistema-de-gestao/totvs-backoffice-linha-protheus/",
+          "officialDomains": [
+            "totvs.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": null,
+          "docsUrl": null,
+          "productUrl": null,
+          "releaseUrl": null,
+          "releasesUrl": null
+        },
+        "id": "internal-tool-1",
+        "language": "en",
+        "userInput": {
+          "hints": {
+            "brand": "Brightwave Dental",
+            "name": "Brightwave Scheduler",
+            "release": null
+          },
+          "officialDomains": []
         }
       }
     }

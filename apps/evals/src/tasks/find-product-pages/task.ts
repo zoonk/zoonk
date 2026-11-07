@@ -7,7 +7,7 @@ import {
 } from "@zoonk/ai/tasks/research/find-product-pages";
 import { TEST_CASES } from "./test-cases";
 
-/** Each address must be on one of these sites (a host or a host with a path); null expects none. */
+/** Each address must start with one of these (a host, a path or a query); null expects none. */
 export type FindProductPagesExpected = Partial<Record<keyof ProductPages, string[] | null>>;
 
 const MIN_SCORE = 6;
@@ -18,8 +18,8 @@ function isOnSite({ sites, url }: { sites: string[]; url: string }): boolean {
     return false;
   }
 
-  const { hostname, pathname } = new URL(url);
-  const address = `${hostname.replace(/^www\./u, "")}${pathname}`;
+  const { hostname, pathname, search } = new URL(url);
+  const address = `${hostname.replace(/^www\./u, "")}${pathname}${search}`;
 
   return sites.some((site) => address.startsWith(site) || address.includes(`.${site}`));
 }

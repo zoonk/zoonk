@@ -93,6 +93,23 @@ export const TEST_CASES: TestCase<FindProductPagesExpected, FindProductPagesPara
     },
   },
   {
+    // TDN's `display/.../Release+12.1.2410` address loads its notes by script, so our fetcher reads
+    // no date there; only the notes addressed by page id state "Expedição em Outubro/2024".
+    expected: {
+      releaseUrl: [
+        "tdn.totvs.com/pages/viewpage.action?pageId=836052340",
+        "tdn.totvs.com/pages/releaseview.action?pageId=836052340",
+      ],
+    },
+    id: "protheus-known-release-notes",
+    language: "pt",
+    userInput: {
+      hints: { brand: "TOTVS", name: "Protheus", release: "Protheus 12.1.2410" },
+      knownWebsite: "https://www.totvs.com/sistema-de-gestao/totvs-backoffice-linha-protheus/",
+      officialDomains: ["totvs.com"],
+    },
+  },
+  {
     expected: {
       brandUrl: null,
       docsUrl: null,
