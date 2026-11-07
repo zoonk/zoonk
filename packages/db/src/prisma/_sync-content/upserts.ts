@@ -1,6 +1,7 @@
 import { pickAvailableSlug } from "@zoonk/utils/string";
 import { type Client } from "pg";
 import {
+  type DatabaseRow,
   type TableRows,
   getColumnValues,
   getRowKey,
@@ -130,6 +131,56 @@ export async function upsertOrganizations({
   return { ...catalog, courses: remap(catalog.courses), products: remap(catalog.products) };
 }
 
+/**
+ * Products and releases match by normalized name, yet two names can share a slug ("3.12" and "3.1.2"),
+ * so each copy's suffixes depend on the order its rows were made. A local row keeps its slug, and a
+ * new row whose slug another local row under the same parent holds takes a free one.
+ */
+async function matchLocalSlugs({
+  data,
+  destination,
+  parent,
+  table,
+}: {
+  data: TableRows;
+  destination: Client;
+  parent: "organization_id" | "product_id";
+  table: "products" | "product_releases";
+}): Promise<TableRows> {
+  const local = await readRows({
+    client: destination,
+    params: [getColumnValues(data, parent)],
+    query: `SELECT ${parent}, normalized_name, slug FROM ${table} WHERE ${parent} = ANY($1::uuid[])`,
+  });
+
+  const key = (row: DatabaseRow) => getRowKey(row, [parent, "normalized_name"]);
+  const localSlugs = new Map(local.rows.map((row) => [key(row), row.slug]));
+  const localTaken = new Set(local.rows.map((row) => getRowKey(row, [parent, "slug"])));
+
+  const takenUnder = (parentId: string | null) =>
+    [...local.rows, ...data.rows].flatMap((row) =>
+      row[parent] === parentId && row.slug ? [row.slug] : [],
+    );
+
+  return {
+    ...data,
+    rows: data.rows.map((row) => {
+      const localSlug = localSlugs.get(key(row));
+
+      if (localSlug) {
+        return { ...row, slug: localSlug };
+      }
+
+      return row.slug && localTaken.has(getRowKey(row, [parent, "slug"]))
+        ? {
+            ...row,
+            slug: pickAvailableSlug({ base: row.slug, taken: takenUnder(row[parent] ?? null) }),
+          }
+        : row;
+    }),
+  };
+}
+
 export async function upsertProducts({
   destination,
   products,
@@ -141,18 +192,30 @@ export async function upsertProducts({
 }): Promise<{ productIds: IdMap; releaseIds: IdMap }> {
   const productIds = await upsertRows({
     conflict: ["organization_id", "normalized_name"],
-    data: products,
+    data: await matchLocalSlugs({
+      data: products,
+      destination,
+      parent: "organization_id",
+      table: "products",
+    }),
     destination,
     keep: ["created_at"],
     table: "products",
   });
 
+  const localReleases = mapColumn({
+    column: "product_id",
+    data: releases,
+    map: (id) => productIds.get(id) ?? null,
+  });
+
   const releaseIds = await upsertRows({
     conflict: ["product_id", "normalized_name"],
-    data: mapColumn({
-      column: "product_id",
-      data: releases,
-      map: (id) => productIds.get(id) ?? null,
+    data: await matchLocalSlugs({
+      data: localReleases,
+      destination,
+      parent: "product_id",
+      table: "product_releases",
     }),
     destination,
     keep: ["created_at"],
