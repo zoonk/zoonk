@@ -34,6 +34,7 @@ describe("checked answer readability", () => {
   it.each([
     { fontFamily: "", fontSize: "150%", width: 390 },
     { fontFamily: "", fontSize: "200%", width: 390 },
+    { fontFamily: "", fontSize: "200%", width: 360 },
     { fontFamily: "", fontSize: "400%", width: 320 },
     { fontFamily: "monospace", fontSize: "200%", width: 400 },
   ])(
@@ -71,20 +72,24 @@ describe("checked answer readability", () => {
 
           const splitWords: string[] = [];
           const text = document.createTreeWalker(answer, NodeFilter.SHOW_TEXT).nextNode();
-          const content = answer.closest('[data-slot="player-choice-scene-option-text"]');
-          const row = content?.parentElement?.parentElement;
+          const option = selected.element();
+          const optionStyle = getComputedStyle(option);
 
-          if (!text || !row) {
-            throw new Error("The selected answer must contain text in a row.");
+          if (!text) {
+            throw new Error("The selected answer must contain text.");
           }
 
           const measure = document.createElement("span");
-          const rowWidth = row.getBoundingClientRect().width;
+
+          const availableWidth =
+            option.clientWidth -
+            Number(optionStyle.paddingLeft.replace("px", "")) -
+            Number(optionStyle.paddingRight.replace("px", ""));
 
           measure.style.cssText =
             "position:fixed;visibility:hidden;white-space:nowrap;width:max-content";
 
-          row.append(measure);
+          option.append(measure);
 
           for (const word of ANSWER.matchAll(/\S+/gu)) {
             measure.textContent = word[0];
@@ -92,7 +97,7 @@ describe("checked answer readability", () => {
             range.setEnd(text, word.index + word[0].length);
             const lines = new Set([...range.getClientRects()].map((line) => line.top));
 
-            if (measure.getBoundingClientRect().width <= rowWidth && lines.size > 1) {
+            if (measure.getBoundingClientRect().width <= availableWidth && lines.size > 1) {
               splitWords.push(word[0]);
             }
           }
@@ -100,7 +105,6 @@ describe("checked answer readability", () => {
           measure.remove();
           expect(splitWords).toStrictEqual([]);
 
-          const option = selected.element();
           expect(option.scrollWidth).toBeLessThanOrEqual(option.clientWidth);
         } finally {
           document.documentElement.style.fontSize = fontSize;

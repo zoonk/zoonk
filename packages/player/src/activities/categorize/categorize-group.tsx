@@ -22,7 +22,7 @@ function CategorizePreview({ latest, others }: { latest: string | null; others: 
   return (
     <span
       aria-hidden="true"
-      className="mt-2 flex h-5.5 min-w-0 gap-1.5"
+      className="mt-2 grid h-5.5 min-w-0 grid-flow-col grid-cols-[minmax(0,max-content)] justify-start gap-1.5"
       data-slot="categorize-preview"
     >
       {latest && (

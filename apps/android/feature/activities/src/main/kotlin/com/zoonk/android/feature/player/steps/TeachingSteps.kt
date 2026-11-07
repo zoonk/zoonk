@@ -445,7 +445,19 @@ internal fun CheckView(
 
         if (part.showsTurn) {
             val pictured = screen.step?.takeIf { check.options.any { it.picture != null } }
-            // Picture options sit side by side until a description still being drawn doesn't fit its frame there.
+            val optionCaption: (@Composable (ChoiceOption) -> Unit)? =
+                if (pictured != null && result != null) {
+                    {
+                        Text(
+                            it.text,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.labelLarge,
+                        )
+                    }
+                } else {
+                    null
+                }
             var crowded by remember(pictured?.id) { mutableStateOf(false) }
             ChoiceOptions(
                 options = check.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
@@ -456,13 +468,15 @@ internal fun CheckView(
                 onSelect = { id -> actions.select(id?.let(LessonAnswer::Check)) },
                 columns = if (pictured != null && !crowded) 2 else 1,
                 keysAtTop = pictured != null,
+                optionReadingContent = optionCaption,
+                onReadingOverflow = { crowded = true },
                 optionContent =
                     if (pictured != null) {
                         { option ->
                             PictureOption(
                                 pictured,
                                 check.options.first { it.id == option.id },
-                                isChecked = result != null,
+                                caption = { optionCaption?.invoke(option) },
                             ) { crowded = true }
                         }
                     } else {
@@ -801,6 +815,8 @@ fun ChoiceOptions(
     keysAtTop: Boolean = false,
     keepsEveryOption: Boolean = false,
     label: String = stringResource(R.string.player_answer_options),
+    optionReadingContent: (@Composable (ChoiceOption) -> Unit)? = null,
+    onReadingOverflow: (() -> Unit)? = null,
     optionContent: @Composable (ChoiceOption) -> Unit = { RichInlineText(text = it.text) },
 ) {
     val shown =
@@ -829,6 +845,8 @@ fun ChoiceOptions(
                         enabled = !locked && !isChecked,
                         keyAtTop = keysAtTop,
                         guessed = isGuess,
+                        readingContent = optionReadingContent?.let { reading -> { reading(item.option) } },
+                        onReadingOverflow = onReadingOverflow,
                         onClick = { onSelect(if (item.picked) null else item.option.id) },
                     ) { optionContent(item.option) }
                 }
@@ -850,7 +868,7 @@ private data class ShownOption(
 private fun PictureOption(
     step: LessonStep,
     option: CheckOption,
-    isChecked: Boolean,
+    caption: @Composable () -> Unit,
     onDescriptionOverflow: () -> Unit,
 ) {
     val image = step.optionPictures[option.id]
@@ -899,8 +917,6 @@ private fun PictureOption(
                 }
             }
         }
-        if (isChecked) {
-            Text(option.text, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, style = MaterialTheme.typography.labelLarge)
-        }
+        caption()
     }
 }

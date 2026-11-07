@@ -121,7 +121,7 @@ export function AnswerOption({
 
       <span
         className={cn(
-          "flex min-w-0 grow basis-1/2 flex-wrap items-start justify-between gap-x-3 gap-y-1",
+          "flex w-full grow basis-1/2 flex-wrap items-start justify-between gap-x-3 gap-y-1",
           layout === "stacked" && "contents",
         )}
       >
