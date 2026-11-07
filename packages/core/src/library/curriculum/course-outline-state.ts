@@ -14,6 +14,7 @@ import {
   claimLibraryGeneration,
   finishLibraryGeneration,
 } from "../claims/generation-claim";
+import { COURSE_PRODUCT_SELECT, toPromptProduct } from "../products/course-product";
 import { loadCourseMaterial } from "../sources/goal-material";
 
 export async function findUntaughtSkills({
@@ -79,10 +80,12 @@ export async function getCourseBandContext({
   chapterTitles: string[];
   material: string | null;
   nextPosition: number;
+  product: ReturnType<typeof toPromptProduct>;
   title: string;
 }> {
   const course = await prisma.course.findUniqueOrThrow({
     include: {
+      ...COURSE_PRODUCT_SELECT,
       courseChapters: {
         include: { chapter: { select: { title: true } } },
         orderBy: { position: "asc" },
@@ -98,6 +101,7 @@ export async function getCourseBandContext({
     material: await loadCourseMaterial(course),
     nextPosition:
       band.length === 0 ? 0 : Math.max(...band.map((placement) => placement.position)) + 1,
+    product: toPromptProduct(course),
     title: course.title,
   };
 }

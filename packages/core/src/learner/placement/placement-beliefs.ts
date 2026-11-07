@@ -270,3 +270,19 @@ export function getPlacementBeliefs({
     initial,
   );
 }
+
+export function getOwnBeliefs({
+  evidence,
+  priors,
+}: {
+  evidence: readonly PlacementEvidence[];
+  priors: SkillBeliefs;
+}): SkillBeliefs {
+  return evidence.reduce((beliefs, answer) => {
+    const prior = beliefs.get(answer.skillId);
+
+    return prior === undefined
+      ? beliefs
+      : new Map(beliefs).set(answer.skillId, getPosterior({ evidence: answer, prior }));
+  }, priors);
+}

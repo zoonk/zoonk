@@ -1,6 +1,11 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import {
+  brandFixture,
+  productFixture,
+  productReleaseFixture,
+} from "@zoonk/testing/fixtures/products";
+import {
   examBlueprintFixture,
   learnerSourceFixture,
   sourceFixture,
@@ -140,6 +145,64 @@ describe(loadGoalCurriculumInputs, () => {
     });
 
     await expect(loadGoalCurriculumInputs(question.id)).resolves.toBeNull();
+  });
+
+  it("tells the graph a goal's product and titles its course for the release the goal pins", async () => {
+    const [brand, user] = await Promise.all([brandFixture({ name: "Acme" }), userFixture()]);
+    const docs = await sourceFixture({ extractedText: "Gizmo docs", title: "Gizmo docs" });
+
+    const product = await productFixture({
+      docsSourceId: docs.id,
+      name: "Gizmo",
+      organizationId: brand.id,
+    });
+
+    const release = await productReleaseFixture({ name: "Gizmo 2", productId: product.id });
+
+    const [main, pinned, undecided] = await Promise.all([
+      goalFixture({ productCheckedAt: new Date(), productId: product.id, userId: user.id }),
+      goalFixture({
+        productCheckedAt: new Date(),
+        productId: product.id,
+        productReleaseId: release.id,
+        userId: user.id,
+      }),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    await expect(loadGoalCurriculumInputs(main.id)).resolves.toMatchObject({
+      graphPrompt: { product: { brand: "Acme", courseTitle: "Gizmo", name: "Gizmo" } },
+      product: { courseTitle: "Gizmo", id: product.id, pinnedReleaseId: null },
+      productChecked: true,
+      references: [{ text: docs.extractedText, title: "Gizmo docs" }],
+    });
+
+    const linked = await Promise.all(
+      [1, 2, 3].map((index) =>
+        sourceFixture({ extractedText: `Linked ${index}`, title: `Linked ${index}` }),
+      ),
+    );
+
+    await Promise.all(
+      linked.map((source) =>
+        learnerSourceFixture({ goalId: main.id, sourceId: source.id, userId: user.id }),
+      ),
+    );
+
+    await expect(loadGoalCurriculumInputs(main.id)).resolves.toMatchObject({
+      references: [{ title: "Gizmo docs" }],
+    });
+
+    await expect(loadGoalCurriculumInputs(pinned.id)).resolves.toMatchObject({
+      product: { courseTitle: "Gizmo 2", pinnedReleaseId: release.id },
+    });
+
+    await expect(loadGoalCurriculumInputs(undecided.id)).resolves.toMatchObject({
+      graphPrompt: { product: null },
+      product: null,
+      productChecked: false,
+      references: [],
+    });
   });
 
   it("waits for the onboarding answers that shape the graph, only for goals typed in onboarding", async () => {

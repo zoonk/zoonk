@@ -35,6 +35,7 @@ const KEYED_FIELDS = {
   mode: "How the run lays the plan out (from today, or after this week), not what it plans.",
   movesPhaseEnds: "Whether the run moves the phase ends shown, which the plan it saves holds.",
   noticeAreas: true,
+  openedKeys: "The day the learner opened, which the plan it saves dates today.",
   paceFactor: true,
   phaseEnds: "The phase end dates the saved plan shows: that plan's own dates.",
   prerequisites: true,

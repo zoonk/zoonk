@@ -19,6 +19,17 @@ The beginner, intermediate and advanced bands together are the full path to mast
 
 When `TAUGHT_ELSEWHERE` lists skills, the learners of this band already learn them in other chapters of this course. Never write a lesson that teaches them again, even under another name: a chapter next to one of them covers only what's still missing, and names itself for that.
 
+{{#product}}
+# A product course
+
+`PRODUCT` names the branded product this course teaches people to use, the organization that makes it and, when the product has releases, the release the course is written for and when it came out. Learners come to get things done with it, so:
+
+- Chapters are tasks done in the product, named for what the learner gets done ("Pull your first espresso", "Keep the machine clean"), never a tour of its menus or a tree of concepts. A concept is taught inside the task that needs it.
+- The first lessons of the first chapter, the learner's first session, end with a real result in the product: something made, set up or done that they can see. Setting the product up comes only as far as that result needs.
+- Teach the release the course is written for. A title, description or objective names a release or a model only for a feature some releases or models lack, and then says which ones have it, so the outline stays right when the course moves to a later release.
+- Required skills the size of a tutorial (one task, or a few steps of one) are one chapter, not spread over several.
+
+{{/product}}
 {{#examSkills}}
 # Skills an exam needs
 
@@ -37,6 +48,12 @@ When `EXAMS` names the exam those learners prepare for, write the chapters that 
 When `MATERIAL` is given, this is a private course built from one learner's own class material (their teacher's notes, slides or a handout), page by page, and the course teaches exactly that material: its topics, in its order, at its depth and with its terms, so a learner studying for a test on it learns what the test asks. Write only the chapters and lessons the material covers, not the whole band: add a lesson beyond it only when an idea of the material can't make sense without it, and leave out what the material says isn't on the test. A required skill that says how many lessons it gets is taught in about that many: the learner's test is close, and that's what fits in their time until it.
 
 {{/material}}
+{{#whatsNew}}
+# A new release's chapter
+
+`COURSE_TITLE` is a course on using a product, and the product has a new release. Don't write the band: write only one chapter, titled exactly `WHATS_NEW`, that teaches the new release's `REQUIRED_SKILLS` at this band's level, every one of them in its `skillKeys`. Each lesson teaches one thing the release adds and says which release brings it; none teaches again what the course's other chapters (`OTHER_LEVEL_CHAPTERS`) already teach.
+
+{{/whatsNew}}
 {{#extend}}
 # Continuing a skill
 
@@ -98,4 +115,4 @@ Favor what still matters when AI does routine work: understanding why, judgment,
 
 # Final check
 
-Before answering, verify the order has no skipped prerequisites, the band has no missing pillar and no filler, overview outlines have 3 to 6 chapters with no formulas, code or tools, every lesson is one idea of 2 to 5 minutes with 1 to 3 skills, no two lessons of a chapter teach the same distinction, tools appear only on chapters that practice with them, and every required skill is tagged in a chapter{{#withoutTools}} (with `WITHOUT_TOOLS`, in a chapter without tools){{/withoutTools}}.{{#extend}} With `EXTEND_SKILLS`, the answer has one new chapter per listed skill, each under a new title and repeating none of the listed lessons, and no other chapters but those that teach `REQUIRED_SKILLS`.{{/extend}}{{#areas}} Every chapter's skills and lessons sit in one area.{{/areas}}{{#material}} With `MATERIAL`, nothing in the outline goes beyond the material except what one of its ideas needs.{{/material}}
+Before answering, verify the order has no skipped prerequisites, the band has no missing pillar and no filler, overview outlines have 3 to 6 chapters with no formulas, code or tools, every lesson is one idea of 2 to 5 minutes with 1 to 3 skills, no two lessons of a chapter teach the same distinction, tools appear only on chapters that practice with them, and every required skill is tagged in a chapter{{#withoutTools}} (with `WITHOUT_TOOLS`, in a chapter without tools){{/withoutTools}}.{{#extend}} With `EXTEND_SKILLS`, the answer has one new chapter per listed skill, each under a new title and repeating none of the listed lessons, and no other chapters but those that teach `REQUIRED_SKILLS`.{{/extend}}{{#areas}} Every chapter's skills and lessons sit in one area.{{/areas}}{{#material}} With `MATERIAL`, nothing in the outline goes beyond the material except what one of its ideas needs.{{/material}}{{#whatsNew}} With `WHATS_NEW`, the answer is that one chapter.{{/whatsNew}}

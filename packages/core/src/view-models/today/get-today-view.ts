@@ -30,7 +30,6 @@ import { daysBetween } from "../../plans/planner/plan-calendar";
 import { type PlanStatus } from "../../preparation/plan-status";
 import { withLessonScreens } from "../../sessions/_utils/lesson-screens";
 import { type ReadStudyDay, readStudyDay } from "../../sessions/_utils/read-study-day";
-import { getSelectedCatchUpItems } from "../../sessions/_utils/selected-day-plan";
 import { type TodayStudySessionInput } from "../../sessions/contract";
 import { type DayView } from "../../sessions/day-view";
 import { loadNoticedPattern, selectDayPattern } from "../language/_utils/today-pattern";
@@ -38,6 +37,7 @@ import { type NoticedPattern } from "../language/language-view-contract";
 import { getLessonShare } from "../syllabus/lesson-share";
 import { type TodayAdmission, admitToday } from "./_utils/admit-today";
 import { countLessonsLeftToday } from "./_utils/count-lessons-left-today";
+import { listEarlierWork } from "./_utils/earlier-work";
 import { loadAroundSession } from "./_utils/load-around-session";
 import { loadDayMockFunding } from "./_utils/load-mock-funding";
 import { hasStudiedOn } from "./_utils/studied-on-day";
@@ -308,12 +308,7 @@ async function readAdmittedToday({
   return {
     status: "ready",
     today: {
-      earlierWork: day.selection
-        ? getSelectedCatchUpItems(day.selection).map((item) => ({
-            id: item.id,
-            title: item.titleSnapshot,
-          }))
-        : [],
+      earlierWork: listEarlierWork({ day, session: studySession }),
       exam,
       examChoice,
       goal: {

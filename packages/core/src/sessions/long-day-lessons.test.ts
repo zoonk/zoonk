@@ -12,7 +12,7 @@ import { getTodayView } from "../view-models/today/get-today-view";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { SESSION_NOW, SESSION_TODAY, sessionGoalFixture } from "./_test-utils/session-goal";
 import { planStudyDay } from "./_utils/plan-study-day";
-import { readSavedDayPlan } from "./_utils/selected-day-plan";
+import { readSavedDayPlan } from "./_utils/saved-day-plan";
 
 describe("a long study day", () => {
   beforeEach(() => {

@@ -27,10 +27,11 @@ export function buildSkillGraphSystemPrompt({
   hasMaterial = false,
   lessonBudget,
   ownLevel,
+  product,
   purpose,
 }: Pick<
   SkillGraphParams,
-  "goalKind" | "hasMaterial" | "lessonBudget" | "ownLevel" | "purpose"
+  "goalKind" | "hasMaterial" | "lessonBudget" | "ownLevel" | "product" | "purpose"
 >): string {
   return selectPromptVariants({
     template,
@@ -40,6 +41,7 @@ export function buildSkillGraphSystemPrompt({
       language: goalKind === "language",
       learn: goalKind === "learn",
       material: hasMaterial,
+      product: Boolean(product),
       subjectStart: startsWithSubject({ goalKind, hasMaterial, ownLevel, purpose }),
     },
   });

@@ -113,6 +113,7 @@ function addSkills({
 
       const skill = {
         area: added.area ?? anchor?.area ?? null,
+        ...(added.courseId && { courseIds: [added.courseId] }),
         lessons: added.lessons,
         name: added.name,
         phase: anchor?.phase ?? 0,

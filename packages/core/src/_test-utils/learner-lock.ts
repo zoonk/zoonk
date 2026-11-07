@@ -99,3 +99,10 @@ export function holdSourceLock(sourceId: string) {
       tx.$queryRaw`SELECT id FROM sources WHERE id = ${sourceId}::uuid FOR NO KEY UPDATE`,
   });
 }
+
+export function holdLessonLock(lessonId: string) {
+  return holdLock({
+    lock: (tx) =>
+      tx.$queryRaw`SELECT id FROM library_lessons WHERE id = ${lessonId}::uuid FOR UPDATE`,
+  });
+}

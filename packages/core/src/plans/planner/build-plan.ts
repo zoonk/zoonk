@@ -79,6 +79,8 @@ export type BuildPlanInput = {
   movesPhaseEnds?: boolean;
   noticeAreas?: ReadonlySet<string> | null;
   mode: PlanningMode;
+  /** The plan items of the day the learner opened, which stay whole on today. */
+  openedKeys?: readonly string[];
   paceFactor: number;
   examWindows?: readonly ExamWindow[];
   finishedOn?: ReadonlyMap<string, Date>;

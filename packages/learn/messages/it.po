@@ -13799,11 +13799,6 @@ msgctxt "ylqDtY"
 msgid "Earlier unfinished work · {count}"
 msgstr "Lezioni in sospeso dai giorni scorsi · {count}"
 
-#: src/today/today-earlier-work.tsx
-msgctxt "Dzg6Ne"
-msgid "Start with these. Starting your session fits the plan to today's time."
-msgstr "Inizia da queste. Quando inizi la sessione, il piano si adatta al tempo disponibile oggi."
-
 #: src/today/today-exam-access.tsx
 msgctxt "6cgB9d"
 msgid "Exam prep on the free plan"

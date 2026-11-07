@@ -6,6 +6,7 @@ import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
 import { startPictureChecks } from "../images/start-picture-checks";
+import { updateCoursesBehind } from "../products/product-releases";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
@@ -26,6 +27,7 @@ const MAX_GUEST_BATCHES = 20;
 
 type SweepCounts = {
   accessRecordsPurged: number;
+  courseReleaseUpdates: number;
   sessionsPurged: number;
   evaluationRunsPurged: number;
   flaggedContentStarted: boolean;
@@ -120,6 +122,7 @@ async function sweep(): Promise<SweepCounts> {
     verifications,
     access,
     followUps,
+    courseReleases,
     pictures,
   ] = await Promise.allSettled([
     checkFreshness(),
@@ -133,11 +136,14 @@ async function sweep(): Promise<SweepCounts> {
     purgeExpiredVerificationsStep(),
     purgeExpiredAuthRecordsStep(),
     startOldFollowUps(),
+    // Also catches an update whose start failed.
+    updateCoursesBehind(),
     checkOwedPictures(),
   ]);
 
   return {
     accessRecordsPurged: access.status === "fulfilled" ? access.value.recordsPurged : 0,
+    courseReleaseUpdates: countOf(courseReleases),
     evaluationRunsPurged: countOf(runs),
     flaggedContentStarted: flagged.status === "fulfilled" && flagged.value,
     followUpsStarted: countOf(followUps),

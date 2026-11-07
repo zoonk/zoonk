@@ -599,17 +599,20 @@
   private struct Options: View {
     var body: some View {
       VStack(spacing: 10) {
-        AnswerOption(marker: 1, action: {}) { Text(verbatim: "An option at rest") }
-        AnswerOption(marker: 2, isPicked: true, action: {}) { Text(verbatim: "The learner's pick") }
-        AnswerOption(marker: 3, result: .right, isLocked: true, action: {}) {
-          Text(verbatim: "Checked right")
-        }
-        AnswerOption(marker: 4, isPicked: true, result: .wrong, isLocked: true, action: {}) {
-          Text(verbatim: "Checked wrong")
-        }
-        AnswerOption(marker: 5, isPicked: true, result: .guess, isLocked: true, action: {}) {
-          Text(verbatim: "A guess, checked")
-        }
+        AnswerOption(
+          marker: 1, text: RichInline(text: AttributedString("An option at rest")), action: {})
+        AnswerOption(
+          marker: 2, isPicked: true, text: RichInline(text: AttributedString("The learner's pick")),
+          action: {})
+        AnswerOption(
+          marker: 3, result: .right, isLocked: true,
+          text: RichInline(text: AttributedString("Checked right")), action: {})
+        AnswerOption(
+          marker: 4, isPicked: true, result: .wrong, isLocked: true,
+          text: RichInline(text: AttributedString("Checked wrong")), action: {})
+        AnswerOption(
+          marker: 5, isPicked: true, result: .guess, isLocked: true,
+          text: RichInline(text: AttributedString("A guess, checked")), action: {})
       }
       .padding(.vertical, 8)
     }

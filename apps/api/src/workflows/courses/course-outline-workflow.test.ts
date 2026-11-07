@@ -328,6 +328,7 @@ async function writeAfterEarlyAttempt(firstStatus: "completed" | "failed") {
       material: null,
       nextPosition: 0,
       otherChapterTitles: [],
+      product: null,
       skills: bandSkills,
       taughtElsewhere: [],
       withoutTools: false,

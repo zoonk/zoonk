@@ -45,19 +45,10 @@ struct LessonOptionList: View {
         ForEach(shown, id: \.option.id) { marker, option in
           AnswerOption(
             marker: marker, isPicked: option.id == selectedId, result: result(option),
-            isGuessed: isGuess, isLocked: isLocked || isChecked
+            isGuessed: isGuess, isLocked: isLocked || isChecked,
+            text: LessonRichText.typeset(option.text), detail: option.detail
           ) {
             select(option.id)
-          } label: {
-            VStack(alignment: .leading, spacing: 2) {
-              LessonRichText(option.text)
-
-              if let detail = option.detail {
-                Text(detail)
-                  .typeStyle(.note)
-                  .foregroundStyle(.mutedForeground)
-              }
-            }
           }
         }
       }
