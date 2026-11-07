@@ -40,12 +40,9 @@ export async function findGoalCourses({
 
       const input = { analytics: context, scope, title };
 
-      const productCourseId = await findGoalProductCourseStep({
-        product,
-        provenance,
-        scope,
-        title,
-      });
+      const productCourseId = product
+        ? await findGoalProductCourseStep({ product, provenance, scope, title })
+        : null;
 
       if (productCourseId) {
         return [key, productCourseId] as const;
