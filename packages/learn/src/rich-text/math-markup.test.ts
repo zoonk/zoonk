@@ -1,7 +1,8 @@
+import { toOneLine } from "@zoonk/utils/math-spans";
 import { describe, expect, it } from "vitest";
 import { mathMarkupKey } from "./math-key";
 import { collectMathMarkup, renderMathMarkup } from "./math-markup";
-import { parseRichBlocks, parseRichInline, toOneLine } from "./rich-text-parser";
+import { parseRichBlocks, parseRichInline } from "./rich-text-parser";
 
 function shownFormulas(text: string) {
   return parseRichInline(text).flatMap((segment) =>

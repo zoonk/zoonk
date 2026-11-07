@@ -127,6 +127,14 @@ export function findMarkdownTableLines(lines: readonly string[]): ReadonlySet<nu
   );
 }
 
+/** The player reads each line, and each table cell, on its own; joining with `|` and `\n` restores the text. */
+export function splitLinesAndCells(text: string): string[][] {
+  const lines = text.split("\n");
+  const tableLines = findMarkdownTableLines(lines);
+
+  return lines.map((line, index) => (tableLines.has(index) ? line.split(CELL_PIPE) : [line]));
+}
+
 export function removeMarkdownTables(text: string): string {
   const lines = text.split(/\r?\n/u);
   const tableLines = findMarkdownTableLines(lines);

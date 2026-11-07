@@ -3,6 +3,7 @@ import { type FixLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer/fix";
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { describeActivityTemplates } from "@zoonk/core/library/activities/writer-templates";
 import { BASE_LESSONS } from "../lesson-quality-check/base-lessons";
+import { RECORDED_SCIENTIFIC_NOTATION_FIX } from "./scientific-notation-case";
 
 type BaseLesson = (typeof BASE_LESSONS)[keyof typeof BASE_LESSONS];
 
@@ -221,5 +222,10 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
         },
       ],
     ),
+  },
+  {
+    expected: { screens: [8, 9] },
+    id: "en-scientific-notation-keeps-math",
+    userInput: RECORDED_SCIENTIFIC_NOTATION_FIX,
   },
 ];

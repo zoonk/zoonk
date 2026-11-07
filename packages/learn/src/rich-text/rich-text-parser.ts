@@ -1,5 +1,6 @@
 import { parseInlineMarkup } from "@zoonk/utils/inline-markup";
 import { type MarkdownTableAlign, readMarkdownTable } from "@zoonk/utils/markdown-table";
+import { findMath } from "@zoonk/utils/math-spans";
 import { type RichInlineSegment } from "./rich-inline-segments";
 
 /**
@@ -16,113 +17,8 @@ export type RichBlock =
       rows: RichInlineSegment[][][];
     };
 
-type Span = { content: string; end: number; start: number };
-
-const WHITESPACE = /\s/u;
-const DIGIT = /\d/u;
-const UPPERCASE_LETTER = /\p{Lu}/u;
-const PRICE_AFTER_SIGN = /^\s?\d/u;
 const UNORDERED_ITEM = /^\s*[-*•]\s+(?<text>.+)$/u;
 const ORDERED_ITEM = /^\s*\d{1,3}[.)]\s+(?<text>.+)$/u;
-
-function isWhitespace(character: string | undefined): boolean {
-  return character === undefined || WHITESPACE.test(character);
-}
-
-function isEscaped(text: string, index: number): boolean {
-  return index > 0 && text[index - 1] === "\\";
-}
-
-function isCurrencySign(text: string, index: number): boolean {
-  return (
-    UPPERCASE_LETTER.test(text[index - 1] ?? "") && PRICE_AFTER_SIGN.test(text.slice(index + 1))
-  );
-}
-
-function isDelimiter(text: string, index: number): boolean {
-  return !isEscaped(text, index) && !isCurrencySign(text, index);
-}
-
-/**
- * Pandoc's rule: a closing `$` has text right before it and no digit right after, so "$5 and $10"
- * stay text.
- */
-function findInlineMathClose(text: string, from: number): number | null {
-  const index = text.indexOf("$", from);
-
-  if (index === -1) {
-    return null;
-  }
-
-  const isClose =
-    isDelimiter(text, index) &&
-    !isWhitespace(text[index - 1]) &&
-    !DIGIT.test(text[index + 1] ?? "");
-
-  return isClose ? index : findInlineMathClose(text, index + 1);
-}
-
-function matchMathAt(text: string, start: number): (Span & { display: boolean }) | null {
-  if (text.startsWith("$$", start)) {
-    const close = text.indexOf("$$", start + 2);
-    const content = close === -1 ? "" : text.slice(start + 2, close).trim();
-    return content ? { content, display: true, end: close + 2, start } : null;
-  }
-
-  if (isWhitespace(text[start + 1])) {
-    return null;
-  }
-
-  const close = findInlineMathClose(text, start + 2);
-
-  return close === null
-    ? null
-    : { content: text.slice(start + 1, close), display: false, end: close + 1, start };
-}
-
-function findDollarMath(text: string, from = 0): (Span & { display: boolean }) | null {
-  const start = text.indexOf("$", from);
-
-  if (start === -1) {
-    return null;
-  }
-
-  const span = isDelimiter(text, start) ? matchMathAt(text, start) : null;
-  return span ?? findDollarMath(text, start + 1);
-}
-
-function findMath(text: string): (Span & { display: boolean }) | null {
-  const dollar = findDollarMath(text);
-
-  const delimiters = [
-    { close: String.raw`\\)`, display: false, open: String.raw`\\(` },
-    { close: String.raw`\\]`, display: true, open: String.raw`\\[` },
-    { close: String.raw`\)`, display: false, open: String.raw`\(` },
-    { close: String.raw`\]`, display: true, open: String.raw`\[` },
-  ];
-
-  const brackets = delimiters.flatMap(({ open, close, display }) => {
-    const start = text.indexOf(open);
-    const end = start === -1 ? -1 : text.indexOf(close, start + open.length);
-
-    return end < 0
-      ? []
-      : [
-          {
-            content: text.slice(start + open.length, end),
-            display,
-            end: end + close.length,
-            start,
-          },
-        ];
-  });
-
-  return (
-    [...(dollar ? [dollar] : []), ...brackets].toSorted(
-      (first, second) => first.start - second.start,
-    )[0] ?? null
-  );
-}
 
 function parseMarkup(text: string): RichInlineSegment[] {
   return parseInlineMarkup(text).map((segment) =>
@@ -130,10 +26,6 @@ function parseMarkup(text: string): RichInlineSegment[] {
       ? { ...segment, text: segment.text.replaceAll(String.raw`\$`, "$") }
       : segment,
   );
-}
-
-export function toOneLine(text: string): string {
-  return text.replaceAll(/\s*\n\s*/gu, " ");
 }
 
 /**

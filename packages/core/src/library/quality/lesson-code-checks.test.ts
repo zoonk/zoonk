@@ -600,6 +600,25 @@ describe(checkWrittenLesson, () => {
     );
   });
 
+  it("rejects LaTeX the player would show as raw text", () => {
+    const priced = explanation("A sensor costs $5 and measures gaps of 7.02 × 10^{-5} m.");
+    const wrapped = explanation(String.raw`It measures $7.02 \times 10^{-5}$ m.`);
+
+    expect(codesOf(withScreen(4, priced))).toStrictEqual([[4, "rawMath"]]);
+    expect(codesOf(withScreen(4, wrapped))).toStrictEqual([]);
+  });
+
+  it("reads no math as money, and every price in a table's cells", () => {
+    const priced = explanation("The deposit is $5.00.\nIt grows by $10^{3}$ in a decade.");
+
+    const table = explanation(
+      ["| Price | Formula |", "|---|---|", "| $5 | $x$ |", "| $10.00 | $y$ |"].join("\n"),
+    );
+
+    expect(codesOf(withScreen(4, priced))).toStrictEqual([]);
+    expect(codesOf(withScreen(4, table))).toStrictEqual([[4, "moneyFormat"]]);
+  });
+
   it("rejects a guess's reveal that points at an option by its place", () => {
     const hook = temperatureGuess();
 

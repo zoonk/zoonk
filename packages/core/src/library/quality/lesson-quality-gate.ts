@@ -39,6 +39,7 @@ const LENIENT_AFTER_FIX = new Set<LessonCheckProblem["code"]>([
   "moneyFormat",
   "newTerms",
   "plannedVisual",
+  "rawMath",
   "readingLevel",
   "repeatedExample",
   "repeatedQuestion",
