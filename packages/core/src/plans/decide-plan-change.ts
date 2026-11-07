@@ -3,7 +3,6 @@ import { type PlanChange, prisma } from "@zoonk/db";
 import { trackPlanEdited } from "../analytics/track-plan-edited";
 import { oweGoalLessons } from "../follow-ups/owe-goal-lessons";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
-import { askForLessons } from "../lookahead/lessons-ask";
 import { commitPlan } from "./_utils/commit-plan";
 import { computeChange } from "./_utils/compute-change";
 import { followPlanToday } from "./_utils/follow-plan-today";
@@ -40,8 +39,6 @@ async function acceptProposal({ change, context }: Decision) {
   if ("error" in result) {
     return { error: result.error, status: "invalid" as const };
   }
-
-  const askedAt = new Date();
 
   const { bringsBackSetAside, computed, effect } = await computeChange({
     context,
@@ -80,12 +77,7 @@ async function acceptProposal({ change, context }: Decision) {
         tx,
       });
 
-      await oweGoalLessons({
-        askedAt,
-        db: tx,
-        goalId: context.goal.id,
-        userId: context.goal.userId,
-      });
+      await oweGoalLessons({ db: tx, goalId: context.goal.id, userId: context.goal.userId });
     },
     phaseDates: {
       ...getChangePlanning(payload.operations),
@@ -106,10 +98,6 @@ async function acceptProposal({ change, context }: Decision) {
   });
 
   await followPlanToday({ changeId: change.id, context });
-
-  // A fresh ask reads the day as awaiting lessons, which would fill a started day with later days'
-  // lessons once they're written, so it starts only after the day followed the change.
-  await askForLessons({ goalId: context.goal.id, now: askedAt });
 
   return null;
 }

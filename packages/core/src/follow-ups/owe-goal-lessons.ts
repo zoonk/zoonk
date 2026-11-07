@@ -13,24 +13,21 @@ import { oweFollowUps } from "./owe-follow-ups";
  */
 export async function oweGoalLessons({
   also = [],
-  askedAt,
   db,
   goalId,
   userId,
 }: {
   also?: readonly FollowUp[];
-  /** Set when the caller asks with `askForLessons` itself once the write's day is followed. */
-  askedAt?: Date;
   db?: TransactionClient;
   goalId: string;
   userId: string;
 }): Promise<void> {
   if (!db) {
-    await prisma.$transaction((tx) => oweGoalLessons({ also, askedAt, db: tx, goalId, userId }));
+    await prisma.$transaction((tx) => oweGoalLessons({ also, db: tx, goalId, userId }));
     return;
   }
 
-  const lessonsAskedAt = askedAt ? askedAt.getTime() : await askForLessons({ db, goalId });
+  const lessonsAskedAt = await askForLessons({ db, goalId });
 
   await oweFollowUps({
     db,
