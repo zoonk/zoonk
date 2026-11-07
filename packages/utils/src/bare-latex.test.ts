@@ -69,6 +69,10 @@ describe(wrapBareLatex, () => {
     expect(wrapBareLatex("The pressure is 10^3kPa.")).toBe("The pressure is $10^{3}kPa$.");
     expect(wrapBareLatex("Simplify x^2–y_1.")).toBe("Simplify $x^{2}–y_1$.");
 
+    expect(wrapBareLatex("Think of 10^3—it means one thousand. Recall—x^2 grows.")).toBe(
+      "Think of $10^{3}$—it means one thousand. Recall—$x^{2}$ grows.",
+    );
+
     expect(wrapBareLatex("It's 10^{3}, then R$ 80 and $5 later.")).toBe(
       "It's $10^{3}$, then R$ 80 and $5 later.",
     );
@@ -117,7 +121,6 @@ describe(wrapBareLatex, () => {
       String.raw`The set {10^3 is saved in C:\log.txt.`,
       String.raw`The ratio is \frac{\\sen(x)}{2}.`,
       "A 10^3‑fold increase.",
-      "Use 10^3—that is, one thousand—as the multiplier.",
     ];
 
     expect(texts.map((text) => wrapBareLatex(text))).toStrictEqual(texts);

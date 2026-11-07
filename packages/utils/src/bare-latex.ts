@@ -75,12 +75,13 @@ const COMMA_AFTER_POWER = /\^[-−]?\p{N}+,\p{N}/u;
 
 const INNER_BRACE_GROUP = /\{[^{}]*\}/gu;
 const BRACE_STEP: Readonly<Record<string, number>> = { "{": 1, "}": -1 };
-const WHITESPACE = /\s/u;
+/** An em dash joins clauses, never math, so it splits pieces like a space; an en dash can be a minus. */
+const SEPARATOR = /[\s—]/u;
 const CHUNK_MASK = /x+/gu;
-const NON_SPACE = /\S+/gu;
+const NOT_SEPARATOR = /[^\s—]+/gu;
 
 /** Math subtracts a letter or two (`x^2-xy`); a dash before a longer run attaches a word (`10^3-fold`). */
-const ATTACHED_WORD = /[-‐‑–—]\p{L}{3,}/u;
+const ATTACHED_WORD = /[-‐‑–]\p{L}{3,}/u;
 
 const PUNCTUATION_BEFORE = /^["'“‘«¿¡*_~]/u;
 const PUNCTUATION_AFTER = /[.,;:!?%"'”’»*_]$/u;
@@ -153,12 +154,12 @@ function collapseBraces(text: string): string {
   return collapsed === text ? text : collapseBraces(collapsed);
 }
 
-/** Spaces inside braces at any depth don't split, so `\frac{a + b}{2}` stays one piece. */
+/** Separators inside braces at any depth don't split, so `\frac{a + b}{2}` stays one piece. */
 function maskSpaces(text: string): { mask: string; nests: boolean } {
   const { depth, mask, nests } = text.split("").reduce(
     (state, character) => {
       const next = state.depth + (BRACE_STEP[character] ?? 0);
-      const space = state.depth === 0 && WHITESPACE.test(character);
+      const space = state.depth === 0 && SEPARATOR.test(character);
 
       return {
         depth: next,
@@ -172,11 +173,11 @@ function maskSpaces(text: string): { mask: string; nests: boolean } {
   return { mask, nests: nests && depth === 0 };
 }
 
-/** Braces that don't nest can't group a formula, so that text splits at every space. */
+/** Braces that don't nest can't group a formula, so that text splits at every separator. */
 function findChunks(text: string): { chunk: string; index: number }[] {
   const { mask, nests } = maskSpaces(text);
 
-  return [...(nests ? mask : text).matchAll(nests ? CHUNK_MASK : NON_SPACE)].map((match) => ({
+  return [...(nests ? mask : text).matchAll(nests ? CHUNK_MASK : NOT_SEPARATOR)].map((match) => ({
     chunk: text.slice(match.index, match.index + match[0].length),
     index: match.index,
   }));
