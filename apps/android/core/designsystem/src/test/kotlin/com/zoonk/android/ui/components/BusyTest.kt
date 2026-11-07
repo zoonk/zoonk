@@ -80,10 +80,6 @@ class BusyTest {
         val spinners = spinners()
         spinners.assertCountEquals(WIDTHS.count())
         spinners.assertAll(SemanticsMatcher.keyIsDefined(SemanticsProperties.HideFromAccessibility))
-
-        // A spinner still running when the test ends makes later captureRender calls in this JVM read a stale frame.
-        busy = false
-        compose.waitForIdle()
     }
 
     /**
@@ -122,9 +118,6 @@ class BusyTest {
         assertTrue(spinnerIn("Start session").right <= wordsOf("Start session").left)
         assertTrue(spinnerIn("Continue").left >= wordsOf("Continue").right)
         assertTrue(wordsOf("Show more").contains(spinnerIn("Show more")))
-
-        busy = false
-        compose.waitForIdle()
     }
 
     /** On a narrow phone at 200% font, German's long label gives the trailing spinner its spot, in either direction. */
@@ -156,9 +149,6 @@ class BusyTest {
 
         val widths = spinners().fetchSemanticsNodes().map { with(compose.density) { it.boundsInRoot.width.toDp() } }
         assertEquals(listOf(ButtonDefaults.IconSize, ButtonDefaults.IconSize), widths)
-
-        busy = false
-        compose.waitForIdle()
     }
 
     private fun heights() = WIDTHS.associateWith { compose.onNodeWithTag("row-$it").getUnclippedBoundsInRoot().height }
