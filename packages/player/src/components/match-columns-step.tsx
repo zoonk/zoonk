@@ -28,6 +28,7 @@ import {
   getItemVisualState,
   getKeyboardItems,
   isItemMatched,
+  restoreMatches,
 } from "./_utils/match-columns";
 import { QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
@@ -139,6 +140,7 @@ function MatchGrid({
 
 export function MatchColumnsStep({
   onSelectAnswer,
+  selectedAnswer,
   step,
 }: {
   onSelectAnswer: (answer: SelectedAnswer | null) => void;
@@ -158,7 +160,13 @@ export function MatchColumnsStep({
   );
 
   const [selected, setSelected] = useState<MatchSelection | null>(null);
-  const [correctMatches, setCorrectMatches] = useState<MatchAttempt[]>([]);
+
+  const [correctMatches, setCorrectMatches] = useState<MatchAttempt[]>(() =>
+    selectedAnswer?.kind === "matchColumns"
+      ? restoreMatches({ leftItems, pairs: selectedAnswer.userPairs, rightItems })
+      : [],
+  );
+
   const [flashingMatch, setFlashingMatch] = useState<MatchAttempt | null>(null);
   const [mistakes, setMistakes] = useState(0);
   const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);

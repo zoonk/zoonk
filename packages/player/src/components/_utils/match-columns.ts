@@ -41,6 +41,22 @@ export function buildMatchAttempt({
   };
 }
 
+export function restoreMatches({
+  leftItems,
+  pairs,
+  rightItems,
+}: {
+  leftItems: MatchItemData[];
+  pairs: Pair[];
+  rightItems: MatchItemData[];
+}): MatchAttempt[] {
+  return pairs.flatMap((pair) => {
+    const left = leftItems.find((item) => item.label === pair.left);
+    const right = rightItems.find((item) => item.label === pair.right);
+    return left && right ? [{ leftId: left.id, pair, rightId: right.id }] : [];
+  });
+}
+
 export function isItemMatched({
   correctMatches,
   item,
