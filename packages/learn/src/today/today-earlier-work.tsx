@@ -24,10 +24,7 @@ export function TodayEarlierWork() {
           values: { count: String(items.length) },
         })}
       </summary>
-      <p className="text-muted-foreground mt-2 text-pretty">
-        {t("Start with these. Starting your session fits the plan to today's time.")}
-      </p>
-      <ul className="mt-3 space-y-2">
+      <ul className="mt-2 space-y-2">
         {items.map((item) => (
           <li key={item.id}>{item.title}</li>
         ))}

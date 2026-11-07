@@ -1,10 +1,10 @@
 ---
 name: zoonk-github-issues
-description: Create or update problem-focused Zoonk GitHub issues, their type and priority, and their requested metadata or relationships.
+description: Create or update problem-focused Zoonk GitHub issues, their type, priority and labels, and their requested metadata or relationships.
 license: MIT
 metadata:
   author: zoonk
-  version: "2.2.0"
+  version: "2.3.0"
 ---
 
 # GitHub issues
@@ -68,10 +68,25 @@ gh api graphql -f query='
 
 When updating an issue, change its priority only when what you learned changes its severity.
 
+## Labels
+
+Give every new issue at least one label: one for each app or package the problem is in, such as `main:gameplay`, `packages:core` or `ios:player` (the Apple app's labels start with `ios:`). List them with `gh label list --repo zoonk/zoonk --limit 200`, check how recent issues about the same screen or code are labeled, and pass each with `--label <name>`, or `gh issue edit <number> --add-label <name>` for an existing issue. Skip labels for an app or package that's no longer in the repo.
+
+When no label fits, create the one the issue needs, not a set of them:
+
+- Name it `<prefix>:<area>`, with the prefix the app's other labels use (`packages` for a package) and an area that will last, like a screen or feature (`plan`) rather than the bug.
+- Give it its prefix's color. A new prefix, for a part of the repo no label covers yet, gets a color no other prefix uses.
+- Describe what it covers in a few words.
+
+```sh
+gh label create <prefix>:<area> --repo zoonk/zoonk --color <prefix's color> --description "<what it covers>"
+```
+
+When updating an issue that has no label, add one.
+
 ## Publication and metadata
 
 - Prefer a structured tool argument or `gh issue create --title "..." --body-file <path>` for multiline text. Verify the destination repository from current context or GitHub configuration.
-- Inspect existing labels when assigning them. Reuse the current app/feature grouping and colors; do not infer a new label from an obsolete app name or create a taxonomy as a side effect of an ordinary issue request.
 - Use GitHub's native fields for issue type, parent/sub-issues, and blocked-by dependencies. Avoid duplicating metadata in the body.
 - Verify issue numbers before cross-referencing them. Local spec numbers and filenames are not GitHub issue numbers; keep a mapping when publishing a breakdown.
 - Make the issue self-contained. Temporary local paths are not usable context for a GitHub reader.

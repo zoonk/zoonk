@@ -13852,11 +13852,6 @@ msgctxt "ylqDtY"
 msgid "Earlier unfinished work · {count}"
 msgstr "이전에 마치지 못한 레슨 · {count}"
 
-#: src/today/today-earlier-work.tsx
-msgctxt "Dzg6Ne"
-msgid "Start with these. Starting your session fits the plan to today's time."
-msgstr "이 레슨부터 시작하세요. 학습을 시작하면 오늘 학습 시간에 맞게 계획이 조정돼요."
-
 #: src/today/today-exam-access.tsx
 msgctxt "6cgB9d"
 msgid "Exam prep on the free plan"

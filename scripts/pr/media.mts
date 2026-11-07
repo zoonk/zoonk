@@ -38,6 +38,10 @@ export async function readCapture(folder: string): Promise<CaptureItem[] | undef
   return JSON.parse(await readFile(manifest, "utf8")) as CaptureItem[];
 }
 
+export type Sides = Partial<Record<Side, CaptureItem[]>>;
+
+type Pair = Partial<Record<Side, CaptureItem>> & { name: string; row: string; screen: string };
+
 function screenOf(item: CaptureItem): string {
   return `${item.viewport} · ${item.scheme}`;
 }
@@ -46,54 +50,76 @@ function rowOf(item: CaptureItem): string {
   return item.kind === "shot" ? `${item.name} · ${screenOf(item)}` : screenOf(item);
 }
 
+export function pairItems(sides: Sides, kind: CaptureItem["kind"]): Pair[] {
+  const pairs = new Map<string, Pair>();
+
+  for (const side of ["after", "before"] as const) {
+    for (const item of sides[side] ?? []) {
+      if (item.kind === kind) {
+        const row = rowOf(item);
+        const name = item.kind === "shot" ? item.name : "Video";
+        pairs.set(row, { name, row, screen: screenOf(item), ...pairs.get(row), [side]: item });
+      }
+    }
+  }
+
+  return [...pairs.values()];
+}
+
 /** Each video stands alone in its paragraph: GitHub plays a video only there. */
 export function renderMedia({
   root,
   sides,
+  unchanged = new Set(),
 }: {
   root: string;
-  sides: Partial<Record<Side, CaptureItem[]>>;
+  sides: Sides;
+  unchanged?: ReadonlySet<string>;
 }): { attachments: string[]; markdown: string } {
-  const all = [...(sides.after ?? []), ...(sides.before ?? [])];
   const link = (side: Side, item: CaptureItem) => `${root}/${side}/${item.file}`;
+  const shots = pairItems(sides, "shot").filter((pair) => !unchanged.has(pair.row));
+  const videos = pairItems(sides, "video");
 
-  const find = (side: Side, kind: CaptureItem["kind"], row: string) =>
-    sides[side]?.find((item) => item.kind === kind && rowOf(item) === row);
+  const image = (side: Side, pair: Pair) => {
+    const item = pair[side];
+    return item ? `![${SIDE_LABEL[side]}: ${pair.row}](${link(side, item)})` : "–";
+  };
 
-  const rows = (kind: CaptureItem["kind"]) => [
-    ...new Set(all.filter((item) => item.kind === kind).map((item) => rowOf(item))),
-  ];
+  const screenPanels = [...Map.groupBy(shots, (pair) => pair.name)].map(([name, pairs]) => ({
+    body: [
+      "| | Before | After |",
+      "| --- | --- | --- |",
+      ...pairs.map(
+        (pair) => `| ${pair.screen} | ${image("before", pair)} | ${image("after", pair)} |`,
+      ),
+      "",
+    ],
+    summary: name,
+  }));
 
-  const shots = rows("shot").map((row) =>
-    SIDES.map((side) => ({ item: find(side, "shot", row), row, side })),
+  const videoPanels = videos.map((pair) => ({
+    body: SIDES.flatMap((side) => {
+      const item = pair[side];
+      return item ? [`**${SIDE_LABEL[side]}**`, "", `![](${link(side, item)})`, ""] : [];
+    }),
+    summary: `${pair.name} · ${pair.screen}`,
+  }));
+
+  const panels = [...screenPanels, ...videoPanels].flatMap(({ body, summary }, index) => [
+    index === 0 ? "<details open>" : "<details>",
+    `<summary>${summary}</summary>`,
+    "",
+    ...body,
+    "</details>",
+    "",
+  ]);
+
+  const attachments = [...shots, ...videos].flatMap((pair) =>
+    SIDES.flatMap((side) => {
+      const item = pair[side];
+      return item ? [link(side, item)] : [];
+    }),
   );
 
-  const videos = rows("video").flatMap((row) =>
-    SIDES.map((side) => ({ item: find(side, "video", row), row, side })),
-  );
-
-  const cell = ({ item, row, side }: { item?: CaptureItem; row: string; side: Side }) =>
-    item ? `![${SIDE_LABEL[side]}: ${row}](${link(side, item)})` : "–";
-
-  const table =
-    shots.length > 0
-      ? [
-          "| Screen | Before | After |",
-          "| --- | --- | --- |",
-          ...shots.map(
-            (pair) => `| ${pair[0]?.row} | ${pair.map((side) => cell(side)).join(" | ")} |`,
-          ),
-          "",
-        ]
-      : [];
-
-  const players = videos.flatMap(({ item, row, side }) =>
-    item ? [`**${SIDE_LABEL[side]}** · ${row}`, "", `![](${link(side, item)})`, ""] : [],
-  );
-
-  const attachments = [...shots.flat(), ...videos].flatMap(({ item, side }) =>
-    item ? [link(side, item)] : [],
-  );
-
-  return { attachments, markdown: ["## Before and after", "", ...table, ...players].join("\n") };
+  return { attachments, markdown: ["## Before and after", "", ...panels].join("\n") };
 }

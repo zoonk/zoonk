@@ -5,7 +5,7 @@ import { persistStudyDay } from "./persist-study-day";
 import { type PlannedStudyDay, planStudyDay } from "./plan-study-day";
 import { followSavedDay } from "./refresh-study-day-selection";
 import { findSavedDaySession } from "./saved-day-session";
-import { selectDayPlan } from "./selected-day-plan";
+import { type SelectedDayPlan, selectDayPlan } from "./selected-day-plan";
 import { type SessionDayContext } from "./session-placement";
 import { type StudySessionRow } from "./study-session-access";
 
@@ -31,7 +31,8 @@ export async function openPlannedDay(
     return { created: false, session, status: "opened" };
   }
 
-  const selection = await selectDayPlan({ goal, now, timeZone });
+  const planDay = (selection: SelectedDayPlan) => planStudyDay({ ...context, selection });
+  const selection = await selectDayPlan({ goal, now, planDay, timeZone });
 
   if (!selection) {
     return { status: "preparing" };
@@ -41,7 +42,7 @@ export async function openPlannedDay(
     return { status: "stale" };
   }
 
-  const planned = await planStudyDay({ ...context, selection });
+  const planned = selection.opened ?? (await planDay(selection));
 
   if (
     planned.blocks.length === 0 &&
