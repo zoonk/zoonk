@@ -3,7 +3,14 @@ import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { type DatabaseMode, ownDevelopmentDatabaseUrl } from "./environment.mts";
-import { postgresEnvironment, query, run, sqlLiteral, together } from "./postgres.mts";
+import {
+  postgresEnvironment,
+  query,
+  run,
+  sqlLiteral,
+  together,
+  withDatabaseLock,
+} from "./postgres.mts";
 
 /** A fresh database is marked ready only once it's migrated and has its content. */
 export type CheckoutDatabase = { fresh: boolean; mode: DatabaseMode; seed: boolean; url: URL };
@@ -49,7 +56,11 @@ function seedLibrary({ env, worktree }: { env: NodeJS.ProcessEnv; worktree: stri
   return runDatabaseScript({ env, script: "src/prisma/seed-library.ts", worktree });
 }
 
-/** Does nothing unless the checkout uses this worktree's own copy, so the primary checkout's `zoonk` is never migrated. */
+/**
+ * Does nothing unless the checkout uses this worktree's own copy, so the primary checkout's `zoonk`
+ * is never migrated. Setup and other starts in the checkout write the same rows, so it takes setup's
+ * lock.
+ */
 export async function updateDevelopmentDatabase(worktree: string): Promise<void> {
   const url = ownDevelopmentDatabaseUrl(worktree);
 
@@ -58,8 +69,15 @@ export async function updateDevelopmentDatabase(worktree: string): Promise<void>
   }
 
   const env = { ...process.env, DATABASE_URL: url, DATABASE_URL_UNPOOLED: url };
-  await prisma({ args: ["migrate", "deploy"], env, worktree });
-  await seedLibrary({ env, worktree });
+
+  await withDatabaseLock({
+    action: async () => {
+      await prisma({ args: ["migrate", "deploy"], env, worktree });
+      await seedLibrary({ env, worktree });
+    },
+    source: new URL(url),
+    worktree,
+  });
 }
 
 export function databaseName(database: CheckoutDatabase): string {
