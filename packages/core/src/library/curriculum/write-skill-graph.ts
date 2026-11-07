@@ -20,7 +20,9 @@ export function writeSkillGraphSection(input: { params: SkillGraphParams; part: 
 export async function writeWholeSkillGraph(params: SkillGraphParams) {
   const { data, error } = await safeAsync(() => generateWholeSkillGraph(params));
 
-  if (data || error instanceof EmptySkillGraphError) {
+  // Only the cheaper model's empty graph falls through to the default model; the default model's
+  // throws, so its step retries.
+  if (data || (params.model && error instanceof EmptySkillGraphError)) {
     return data;
   }
 
