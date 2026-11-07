@@ -73,7 +73,10 @@ internal fun <T : Any> SolvedMatchBoard(
     }
 }
 
-/** Main's board stays side by side while it's at least 16rem wide, and a rem grows with the learner's text size. */
+/**
+ * Side by side only while a matched card keeps a ten-letter word whole beside its check mark, as main's 18rem board
+ * does: 288dp at default text, growing with the learner's text size.
+ */
 @Composable
 private fun BoardWidth(
     modifier: Modifier,
@@ -112,7 +115,7 @@ private fun <T : Any> SideBySideRows(
     }
 }
 
-private val SIDE_BY_SIDE_WIDTH = 256.dp
+private val SIDE_BY_SIDE_WIDTH = 288.dp
 private val CARD_GAP = 8.dp
 private val ACROSS_GAP = 10.dp
 private val STACKED_GAP = 16.dp
