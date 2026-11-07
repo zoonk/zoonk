@@ -84,13 +84,14 @@ function OfferFrame({
   claimed,
   description,
   onSeen,
+  title,
 }: {
   children?: React.ReactNode;
   claimed: boolean;
   description: React.ReactNode;
   onSeen: () => void;
+  title: string;
 }) {
-  const t = useExtracted();
   const titleId = useId();
   const seenRef = useSeenRef(onSeen);
 
@@ -105,13 +106,10 @@ function OfferFrame({
 
       <div className="flex min-w-0 flex-1 flex-col gap-3">
         <div className="flex flex-col gap-0.5">
-          <p className="text-sm font-medium" id={titleId}>
-            {t("Want a study reminder?")}
+          <p className="text-sm font-medium" id={titleId} role="status">
+            {title}
           </p>
-          <p
-            className="text-muted-foreground text-xs leading-5 text-pretty wrap-anywhere"
-            role="status"
-          >
+          <p className="text-muted-foreground text-xs leading-5 text-pretty wrap-anywhere">
             {description}
           </p>
         </div>
@@ -145,6 +143,7 @@ function GuestOffer({
         time: formatTime(time),
       })}
       onSeen={onSeen}
+      title={t("Want a study reminder?")}
     >
       <div className="flex flex-wrap gap-2">
         <PendingLink
@@ -193,18 +192,28 @@ function EmailOffer({
       setResult(saved ? "saved" : "failed");
     });
 
+  const description = t(
+    "We'll email {address} at {time} on your study days, when you still have learning left.",
+    { address, time: formatTime(time) },
+  );
+
   if (result === "saved") {
-    return <OfferFrame claimed description={t("Email reminders are on.")} onSeen={onSeen} />;
+    return (
+      <OfferFrame
+        claimed
+        description={description}
+        onSeen={onSeen}
+        title={t("Email reminders are on.")}
+      />
+    );
   }
 
   return (
     <OfferFrame
       claimed={claimed}
-      description={t(
-        "We'll email {address} at {time} on your study days, when you still have learning left.",
-        { address, time: formatTime(time) },
-      )}
+      description={description}
       onSeen={onSeen}
+      title={t("Want a study reminder?")}
     >
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <label className="sr-only" htmlFor={selectId}>

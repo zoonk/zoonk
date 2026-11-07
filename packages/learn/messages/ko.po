@@ -12481,14 +12481,14 @@ msgid "False"
 msgstr "거짓"
 
 #: src/reminders/reminder-offer.tsx
-msgctxt "SwCKSr"
-msgid "Want a study reminder?"
-msgstr "학습 알림을 받아 보실래요?"
-
-#: src/reminders/reminder-offer.tsx
 msgctxt "8mg7o6"
 msgid "At {time} on your study days, when you still have learning left."
 msgstr "공부하기로 한 날에 할 공부가 남아 있으면 {time}에 알려 드려요."
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "SwCKSr"
+msgid "Want a study reminder?"
+msgstr "학습 알림을 받아 보실래요?"
 
 #: src/reminders/reminder-offer.tsx
 #: src/reminders/reminders-screen.tsx
@@ -12503,14 +12503,14 @@ msgid "No thanks"
 msgstr "아니요, 괜찮아요"
 
 #: src/reminders/reminder-offer.tsx
-msgctxt "1mG4ae"
-msgid "Email reminders are on."
-msgstr "이메일 알림이 켜져 있어요."
-
-#: src/reminders/reminder-offer.tsx
 msgctxt "viijDX"
 msgid "We'll email {address} at {time} on your study days, when you still have learning left."
 msgstr "공부하기로 한 날에 할 공부가 남아 있으면 {address} 주소로 {time}에 이메일을 보내 드려요."
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "1mG4ae"
+msgid "Email reminders are on."
+msgstr "이메일 알림이 켜져 있어요."
 
 #: src/reminders/reminder-offer.tsx
 msgctxt "6Vy4z5"
@@ -12534,14 +12534,15 @@ msgid "Email"
 msgstr "이메일"
 
 #: src/reminders/reminders-screen.tsx
-msgctxt "O95R3Z"
-msgid "Phone"
-msgstr "휴대폰"
+msgctxt "Awq32I"
+msgid "Push notifications"
+msgstr "푸시 알림"
 
+#. Stands in for the Push notifications row: name them in the same words as that row
 #: src/reminders/reminders-screen.tsx
-msgctxt "7DNAyh"
-msgid "To get reminders on your phone, turn them on in the Zoonk app."
-msgstr "휴대폰으로 알림을 받으려면 Zoonk 앱에서 알림을 켜세요."
+msgctxt "1uzrpo"
+msgid "To get push notifications, turn them on in the Zoonk app."
+msgstr "푸시 알림을 받으려면 Zoonk 앱에서 알림을 켜세요."
 
 #: src/reminders/reminders-screen.tsx
 msgctxt "1cVf3e"

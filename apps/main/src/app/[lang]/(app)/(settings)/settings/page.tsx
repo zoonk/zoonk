@@ -3,6 +3,7 @@ import { getAppLocale } from "@/i18n/locale";
 import { getMenu } from "@/lib/menu";
 import { getCurrentUserMemory } from "@zoonk/core/memory/get";
 import { getLearningProfile } from "@zoonk/core/profile/get";
+import { getStudyReminder } from "@zoonk/core/reminders/get";
 import { getSession } from "@zoonk/core/users/session";
 import { BuddyTabName } from "@zoonk/learn/buddy";
 import {
@@ -53,10 +54,11 @@ async function AccountRow() {
 async function SettingsHubContent() {
   const locale = await getAppLocale();
 
-  const [shown, profile, memory] = await Promise.all([
+  const [shown, profile, memory, reminder] = await Promise.all([
     getSettingsPagesShown(),
     getLearningProfile(),
     getCurrentUserMemory(),
+    getStudyReminder(),
   ]);
 
   const language = isValidLocale(locale) ? LOCALE_LABELS[locale] : locale;
@@ -67,6 +69,7 @@ async function SettingsHubContent() {
       <SettingsHubLists
         {...shown}
         memoryCount={memory?.facts.length}
+        reminders={reminder && { on: reminder.email.on || reminder.push.on, time: reminder.time }}
         preferencesSummary={
           <>
             {profile?.buddy && (

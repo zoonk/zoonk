@@ -133,7 +133,7 @@ export function RemindersScreen({
             <SwitchSettingRow
               checked={view.push.on}
               description={view.push.phone.label}
-              label={t("Phone")}
+              label={t("Push notifications")}
               onCheckedChange={(pushOn) => change({ pushOn })}
             />
           )}
@@ -141,7 +141,11 @@ export function RemindersScreen({
 
         {!view.push.phone && (
           <PageSectionFooter>
-            {t("To get reminders on your phone, turn them on in the Zoonk app.")}
+            {t({
+              description:
+                "Stands in for the Push notifications row: name them in the same words as that row",
+              message: "To get push notifications, turn them on in the Zoonk app.",
+            })}
           </PageSectionFooter>
         )}
 

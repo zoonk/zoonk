@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
   return {
-    description: t("Choose when Zoonk reminds you to study, by email or on your phone."),
+    description: t("Choose when Zoonk reminds you to study, by email or push notification."),
     robots: { follow: false, index: false },
     title: t("Reminders"),
   };
@@ -42,7 +42,10 @@ export default async function RemindersPage() {
 
   return (
     <Page className="max-w-form">
-      <SectionPageHeader title={t("Reminders")} />
+      <SectionPageHeader
+        description={t("One reminder on your study days, when you still have learning left.")}
+        title={t("Reminders")}
+      />
 
       <Suspense fallback={<RemindersSkeleton />}>
         <RemindersContent />

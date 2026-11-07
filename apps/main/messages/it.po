@@ -343,6 +343,13 @@ msgid "Preferences"
 msgstr "Preferenze"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
+msgctxt "-vBFap"
+msgid "Reminders"
+msgstr "Promemoria"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 #: src/components/public/footer-languages.tsx
 msgctxt "y1Z3or"
@@ -1146,11 +1153,11 @@ msgctxt "DId5yN"
 msgid "{email} · Plus"
 msgstr "{email} · Plus"
 
+#. Study reminders are off: the value beside the Reminders row in Settings
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
-#: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
-msgctxt "-vBFap"
-msgid "Reminders"
-msgstr "Promemoria"
+msgctxt "remindersOff"
+msgid "Off"
+msgstr "Disattivati"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "Bq4K5C"
@@ -1328,9 +1335,14 @@ msgid "What Zoonk remembers to give you examples and plans that fit your life."
 msgstr "Quello che Zoonk ricorda di te per proporti esempi e piani adatti alla tua vita."
 
 #: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
-msgctxt "gVqHlS"
-msgid "Choose when Zoonk reminds you to study, by email or on your phone."
-msgstr "Scegli quando Zoonk deve ricordarti di studiare, via email o sul telefono."
+msgctxt "cwph5l"
+msgid "Choose when Zoonk reminds you to study, by email or push notification."
+msgstr "Scegli quando Zoonk deve ricordarti di studiare, via email o con una notifica push."
+
+#: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
+msgctxt "4jhMYU"
+msgid "One reminder on your study days, when you still have learning left."
+msgstr "Un promemoria nei tuoi giorni di studio, se hai ancora qualcosa da studiare."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "cEOHN2"

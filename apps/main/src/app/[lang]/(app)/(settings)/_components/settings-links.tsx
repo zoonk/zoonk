@@ -12,6 +12,7 @@ import {
   ListRowTrailing,
 } from "@zoonk/learn/list";
 import { PlusMark } from "@zoonk/learn/plus-lock";
+import { useFormatTimeOfDay } from "@zoonk/learn/time-format";
 import { useExtracted } from "next-intl";
 
 export type SettingsPagesShown = { plus: boolean; showLogout: boolean; showProfile: boolean };
@@ -101,15 +102,41 @@ function LogoutGroup() {
   );
 }
 
+type HubReminders = { on: boolean; time: string };
+
+function useRemindersSummary(reminders: HubReminders | null | undefined): string | undefined {
+  const t = useExtracted();
+  const formatTime = useFormatTimeOfDay();
+
+  if (!reminders) {
+    return undefined;
+  }
+
+  return reminders.on
+    ? formatTime(reminders.time)
+    : t({
+        description: "Study reminders are off: the value beside the Reminders row in Settings",
+        id: "remindersOff",
+        message: "Off",
+      });
+}
+
 export function SettingsHubLists({
   memoryCount,
   preferencesSummary,
+  reminders,
   ...shown
-}: SettingsPagesShown & { memoryCount?: number; preferencesSummary?: React.ReactNode }) {
+}: SettingsPagesShown & {
+  memoryCount?: number;
+  preferencesSummary?: React.ReactNode;
+  reminders?: HubReminders | null;
+}) {
   const { label, plan, yours } = useSettingsPages({ ...shown, withProfile: false });
+  const remindersSummary = useRemindersSummary(reminders);
 
   const trails = new Map<string, React.ReactNode>([
     [getMenu("appearance").url, preferencesSummary],
+    [getMenu("reminders").url, remindersSummary],
     [getMenu("memory").url, memoryCount],
   ]);
 

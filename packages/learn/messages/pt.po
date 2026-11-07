@@ -12481,14 +12481,14 @@ msgid "False"
 msgstr "Falso"
 
 #: src/reminders/reminder-offer.tsx
-msgctxt "SwCKSr"
-msgid "Want a study reminder?"
-msgstr "Quer um lembrete para estudar?"
-
-#: src/reminders/reminder-offer.tsx
 msgctxt "8mg7o6"
 msgid "At {time} on your study days, when you still have learning left."
 msgstr "Às {time} nos seus dias de estudo, se ainda tiver o que estudar."
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "SwCKSr"
+msgid "Want a study reminder?"
+msgstr "Quer um lembrete para estudar?"
 
 #: src/reminders/reminder-offer.tsx
 #: src/reminders/reminders-screen.tsx
@@ -12503,14 +12503,14 @@ msgid "No thanks"
 msgstr "Agora não"
 
 #: src/reminders/reminder-offer.tsx
-msgctxt "1mG4ae"
-msgid "Email reminders are on."
-msgstr "Os lembretes por e-mail estão ativados."
-
-#: src/reminders/reminder-offer.tsx
 msgctxt "viijDX"
 msgid "We'll email {address} at {time} on your study days, when you still have learning left."
 msgstr "A gente vai enviar um e-mail para {address} às {time} nos seus dias de estudo, se ainda tiver o que estudar."
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "1mG4ae"
+msgid "Email reminders are on."
+msgstr "Os lembretes por e-mail estão ativados."
 
 #: src/reminders/reminder-offer.tsx
 msgctxt "6Vy4z5"
@@ -12534,14 +12534,15 @@ msgid "Email"
 msgstr "E-mail"
 
 #: src/reminders/reminders-screen.tsx
-msgctxt "O95R3Z"
-msgid "Phone"
-msgstr "Celular"
+msgctxt "Awq32I"
+msgid "Push notifications"
+msgstr "Notificações push"
 
+#. Stands in for the Push notifications row: name them in the same words as that row
 #: src/reminders/reminders-screen.tsx
-msgctxt "7DNAyh"
-msgid "To get reminders on your phone, turn them on in the Zoonk app."
-msgstr "Para receber lembretes no celular, ative essa opção no app do Zoonk."
+msgctxt "1uzrpo"
+msgid "To get push notifications, turn them on in the Zoonk app."
+msgstr "Para receber notificações push, ative essa opção no app do Zoonk."
 
 #: src/reminders/reminders-screen.tsx
 msgctxt "1cVf3e"

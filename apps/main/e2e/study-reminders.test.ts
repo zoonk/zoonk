@@ -70,7 +70,10 @@ test.describe("Study reminders", () => {
     await offer.getByLabel("Reminder time").selectOption("20:30");
     await expect(offer).toContainText(`We'll email ${user.email} at 8:30 PM`);
     await offer.getByRole("button", { name: "Remind me" }).click();
-    await expect(offer.getByText("Email reminders are on.")).toBeVisible();
+
+    await expect(page.getByRole("region", { name: "Email reminders are on." })).toContainText(
+      `We'll email ${user.email} at 8:30 PM`,
+    );
 
     await expect
       .poll(() => readReminder(user.id))

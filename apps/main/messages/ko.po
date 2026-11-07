@@ -343,6 +343,13 @@ msgid "Preferences"
 msgstr "사용 환경"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
+msgctxt "-vBFap"
+msgid "Reminders"
+msgstr "학습 알림"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 #: src/components/public/footer-languages.tsx
 msgctxt "y1Z3or"
@@ -1146,11 +1153,11 @@ msgctxt "DId5yN"
 msgid "{email} · Plus"
 msgstr "{email} · Plus"
 
+#. Study reminders are off: the value beside the Reminders row in Settings
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
-#: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
-msgctxt "-vBFap"
-msgid "Reminders"
-msgstr "학습 알림"
+msgctxt "remindersOff"
+msgid "Off"
+msgstr "꺼짐"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "Bq4K5C"
@@ -1328,9 +1335,14 @@ msgid "What Zoonk remembers to give you examples and plans that fit your life."
 msgstr "내 생활에 맞는 예시와 계획을 제공하기 위해 Zoonk가 기억하는 내용이에요."
 
 #: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
-msgctxt "gVqHlS"
-msgid "Choose when Zoonk reminds you to study, by email or on your phone."
-msgstr "Zoonk의 학습 알림을 이메일이나 휴대폰으로 받을 시간을 선택하세요."
+msgctxt "cwph5l"
+msgid "Choose when Zoonk reminds you to study, by email or push notification."
+msgstr "Zoonk에서 이메일이나 푸시 알림으로 학습 알림을 받을 시간을 선택하세요."
+
+#: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
+msgctxt "4jhMYU"
+msgid "One reminder on your study days, when you still have learning left."
+msgstr "학습일에 할 공부가 남아 있으면 한 번 알려 드려요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "cEOHN2"
