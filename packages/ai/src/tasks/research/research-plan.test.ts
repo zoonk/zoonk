@@ -48,8 +48,12 @@ describe("research plans", () => {
     const examOptions = gatewayOptions;
 
     await generateSourceResearchPlan({ analytics, goal, topic: "syllabus" });
+    const syllabusOptions = gatewayOptions;
 
-    expect([examOptions, gatewayOptions]).toStrictEqual([
+    await generateSourceResearchPlan({ analytics, goal, topic: "product" });
+
+    expect([examOptions, syllabusOptions, gatewayOptions]).toStrictEqual([
+      { disallowPromptTraining: true },
       { disallowPromptTraining: true },
       { disallowPromptTraining: true },
     ]);

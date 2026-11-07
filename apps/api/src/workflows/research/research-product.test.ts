@@ -703,6 +703,26 @@ describe("product research", () => {
     });
   });
 
+  it("plans from what the learner typed, so a release the title leaves out still reaches the plan", async () => {
+    const site = newSite();
+    const user = await userFixture();
+    const prompt = "I use Orbit Notes 5 at work and want to master its sharing";
+    const title = "Master sharing in Orbit Notes";
+    const goal = await goalFixture({ prompt, title, userId: user.id });
+    planProduct({ site });
+    findPages(site);
+    servePages({ site });
+    readPages();
+
+    await researchWorkflow({ goalId: goal.id });
+
+    expect(vi.mocked(generateSourceResearchPlan).mock.lastCall?.[0]).toMatchObject({
+      analytics: { contentScope: "personal" },
+      goal: `${title}\n${prompt}`,
+      topic: "product",
+    });
+  });
+
   it("records the product decision right after the classifier for other topics", async () => {
     vi.mocked(detectChangingFacts).mockResolvedValue("none");
     const goal = await productGoal();

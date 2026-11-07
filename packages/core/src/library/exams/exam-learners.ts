@@ -219,6 +219,11 @@ function toResearchedExam({ details, title }: { details: unknown; title: string 
   return name && position ? `${name}, ${position}` : (name ?? title);
 }
 
+/** What the learner typed, after the title onboarding gave it. */
+export function toLearnerWords(goal: { prompt: string; title: string }): string {
+  return `${goal.title}\n${goal.prompt}`;
+}
+
 export function toResearchPlanInput(goal: {
   details: unknown;
   kind: GoalKind;
@@ -230,11 +235,7 @@ export function toResearchPlanInput(goal: {
   const ownMaterial = goal.uploadIds.length > 0 || details.materialIntent === "exam";
 
   if (ownMaterial) {
-    return {
-      details: JSON.stringify(details),
-      goal: `${goal.title}\n${goal.prompt}`,
-      personal: true,
-    };
+    return { details: JSON.stringify(details), goal: toLearnerWords(goal), personal: true };
   }
 
   return {
