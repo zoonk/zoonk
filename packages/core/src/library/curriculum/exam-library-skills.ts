@@ -2,7 +2,6 @@ import "server-only";
 import { type ExamLibrary, type LibrarySkill } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { CHALLENGE_LESSON_KEY_SQL_PATTERN } from "../challenges/challenge-lesson-spec";
-import { findSurvivingSkill } from "../skills/_utils/find-surviving-skill";
 
 async function listExamSkillIds({
   examBlueprintId,
@@ -15,18 +14,13 @@ async function listExamSkillIds({
     where: {
       items: { some: { examBlueprintId, language, retiredAt: null } },
       language,
+      mergedIntoId: null,
       targetLanguage: null,
       visibility: "public",
     },
   });
 
-  const survivors = await Promise.all(
-    skills.map((skill) =>
-      skill.mergedIntoId ? findSurvivingSkill(skill.mergedIntoId) : Promise.resolve({ skill }),
-    ),
-  );
-
-  return [...new Set(survivors.flatMap((result) => (result ? [result.skill.id] : [])))];
+  return skills.map((skill) => skill.id);
 }
 
 async function listCourseSkills({

@@ -13,8 +13,11 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
-import { describe, expect, it } from "vitest";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { describe, expect, it, vi } from "vitest";
 import { loadSkillLessons } from "../../plans/_utils/planner-lessons";
+import { getSession } from "../../users/get-session";
+import { mergeSkillForAdmin } from "../skills/merge-skill";
 import { findExamLibrary } from "./exam-library-skills";
 
 describe("an exam's reusable Library skill pool", () => {
@@ -48,25 +51,36 @@ describe("an exam's reusable Library skill pool", () => {
     expect(library.courses).toStrictEqual([{ key: regimento.id, title: regimento.title }]);
   });
 
-  it("resolves its question bank's merged skills and excludes retired, private and other-language skills", async () => {
-    const [course, blueprint, otherBlueprint, survivor, hidden, foreign, targeted, retired, other] =
-      await Promise.all([
-        courseFixture({ language: "pt" }),
-        examBlueprintFixture({ language: "pt" }),
-        examBlueprintFixture({ language: "pt" }),
-        skillFixture({ language: "pt" }),
-        skillFixture({ language: "pt", visibility: "private" }),
-        skillFixture({ language: "en" }),
-        skillFixture({ language: "pt", targetLanguage: "en" }),
-        skillFixture({ language: "pt" }),
-        skillFixture({ language: "pt" }),
-      ]);
+  it("keeps its question bank's surviving skill after a merge and excludes retired, private and other-language skills", async () => {
+    const [
+      course,
+      blueprint,
+      otherBlueprint,
+      survivor,
+      hidden,
+      foreign,
+      targeted,
+      retired,
+      other,
+      admin,
+    ] = await Promise.all([
+      courseFixture({ language: "pt" }),
+      examBlueprintFixture({ language: "pt" }),
+      examBlueprintFixture({ language: "pt" }),
+      skillFixture({ language: "pt" }),
+      skillFixture({ language: "pt", visibility: "private" }),
+      skillFixture({ language: "en" }),
+      skillFixture({ language: "pt", targetLanguage: "en" }),
+      skillFixture({ language: "pt" }),
+      skillFixture({ language: "pt" }),
+      userFixture({ role: "admin" }),
+    ]);
 
-    const merged = await skillFixture({ language: "pt", mergedIntoId: survivor.id });
+    const merged = await skillFixture({ language: "pt" });
     const chapter = await libraryChapterFixture({ homeCourseId: course.id, language: "pt" });
 
     await Promise.all([
-      ...[survivor, hidden, foreign, targeted, retired, other].map((skill) =>
+      ...[merged, hidden, foreign, targeted, retired, other].map((skill) =>
         chapterSkillFixture({ chapterId: chapter.id, skillId: skill.id }),
       ),
       ...[merged, hidden, foreign, targeted].map((skill) =>
@@ -80,6 +94,15 @@ describe("an exam's reusable Library skill pool", () => {
       }),
       itemFixture({ examBlueprintId: otherBlueprint.id, language: "pt", skillId: other.id }),
     ]);
+
+    vi.mocked(getSession).mockResolvedValue(
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Merges only read the identity and role.
+      { user: { id: admin.id, role: "admin" } } as Awaited<ReturnType<typeof getSession>>,
+    );
+
+    await expect(
+      mergeSkillForAdmin({ duplicateId: merged.id, survivorId: survivor.id }),
+    ).resolves.toMatchObject({ status: "merged", survivorId: survivor.id });
 
     const library = await findExamLibrary({
       courseIdsByKey: {},
