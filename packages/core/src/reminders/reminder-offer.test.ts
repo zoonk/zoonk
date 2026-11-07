@@ -57,7 +57,7 @@ describe("reminder offer after a plan lesson", () => {
     const lesson = await finishFirstLesson();
 
     await expect(lesson.finish()).resolves.toMatchObject({
-      completion: { reminderOffer: { time: "07:30" } },
+      completion: { reminderOffer: { time: "07:30", timeZone: "UTC" } },
     });
 
     await claimStudyReminderOffer({ locale: "en" });

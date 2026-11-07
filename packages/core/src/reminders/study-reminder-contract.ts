@@ -16,6 +16,13 @@ const reminderLocaleSchema = z
   .enum(SUPPORTED_LOCALES)
   .meta({ description: "The app language reminders are written in: send the app's current one" });
 
+const reminderTimeZoneSchema = z
+  .string()
+  .meta({
+    description:
+      "The IANA zone reminders follow: the active goal's. Show it next to the time, named the platform's localized way",
+  });
+
 const pushPlatformSchema = z.enum(PushPlatform).meta({ id: "PushPlatform" });
 
 const studyReminderSchema = z
@@ -52,12 +59,7 @@ const studyReminderSchema = z
           "A channel is on, but reminders are paused: 7 days passed without study since the last study day or the last time a channel was turned on. Studying turns them back on",
       }),
     time: reminderTimeSchema,
-    timeZone: z
-      .string()
-      .meta({
-        description:
-          "The IANA zone reminders follow: the active goal's. Show it next to the time, named the platform's localized way",
-      }),
+    timeZone: reminderTimeZoneSchema,
   })
   .meta({
     description:
@@ -135,7 +137,7 @@ export const studyReminderPhoneSchema = z
 export type StudyReminderPhoneInput = z.infer<typeof studyReminderPhoneSchema>;
 
 export const reminderOfferSchema = z
-  .object({ time: reminderTimeSchema })
+  .object({ time: reminderTimeSchema, timeZone: reminderTimeZoneSchema })
   .nullable()
   .meta({
     description:

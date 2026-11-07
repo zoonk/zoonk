@@ -72583,10 +72583,15 @@
             "type": "string",
             "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$",
             "description": "Local time the reminder goes out, such as \"19:00\", in the learner's zone"
+          },
+          "timeZone": {
+            "type": "string",
+            "description": "The IANA zone reminders follow: the active goal's. Show it next to the time, named the platform's localized way"
           }
         },
         "required": [
-          "time"
+          "time",
+          "timeZone"
         ],
         "additionalProperties": false
       },
