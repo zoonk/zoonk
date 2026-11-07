@@ -2,6 +2,7 @@
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
+import { Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { TaskActions } from "../_components/task-layout";
@@ -39,6 +40,7 @@ export function ChallengeMovedScreen({
             <Button
               busy={move.pending}
               className="shrink-0"
+              icon={<Undo2Icon aria-hidden="true" />}
               onClick={() => void move.undo(changeId)}
               size="xl"
               variant="outline"

@@ -4,11 +4,13 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import {
+  BellIcon,
   GuitarIcon,
   HandHeartIcon,
   LightbulbIcon,
   MessageCircleQuestionIcon,
   MusicIcon,
+  PlayIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../../_components/save-error";
@@ -140,7 +142,11 @@ export function ExplainGoal({
       </OnboardingHeading>
 
       <GoalFooter error={error} signUpHref={signUpHref}>
-        <OnboardingPrimaryButton busy={isStarting} onClick={onStart}>
+        <OnboardingPrimaryButton
+          busy={isStarting}
+          icon={<LightbulbIcon aria-hidden="true" />}
+          onClick={onStart}
+        >
           {t("Explain it")}
         </OnboardingPrimaryButton>
       </GoalFooter>
@@ -299,11 +305,17 @@ export function InstrumentGoal({
       <WaitlistNote outcome={waitlist} signUpHref={signUpHref} />
 
       <GoalFooter error={error} signUpHref={signUpHref}>
-        <OnboardingPrimaryButton busy={isStarting} onClick={onStartMusicianship}>
+        <OnboardingPrimaryButton
+          busy={isStarting}
+          icon={<PlayIcon aria-hidden="true" />}
+          onClick={onStartMusicianship}
+        >
           {t("Start musicianship")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton
-          disabled={isJoining || waitlist === "joined"}
+          busy={isJoining}
+          disabled={waitlist === "joined"}
+          icon={<BellIcon aria-hidden="true" />}
           onClick={onJoinWaitlist}
         >
           {t("Join the waitlist")}

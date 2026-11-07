@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { CalendarCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ChangeSaveError } from "../_components/save-error";
@@ -192,6 +193,7 @@ export function MoveDateSwitch({
       <Button
         busy={move.pending}
         className="self-start"
+        icon={<CalendarCheckIcon aria-hidden="true" />}
         id={id}
         onClick={() => void move.move()}
         size="sm"

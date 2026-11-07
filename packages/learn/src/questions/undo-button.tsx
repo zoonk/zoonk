@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../_components/save-error";
 import { TASK_OPTION_CLASS } from "../_components/task-layout";
@@ -22,6 +23,7 @@ export function UndoButton({
       <Button
         busy={pending}
         className={TASK_OPTION_CLASS}
+        icon={<Undo2Icon aria-hidden="true" />}
         onClick={onUndo}
         size="xl"
         variant="ghost"

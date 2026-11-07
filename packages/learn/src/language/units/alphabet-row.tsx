@@ -2,7 +2,7 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
-import { LanguagesIcon } from "lucide-react";
+import { LanguagesIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import {
@@ -62,7 +62,13 @@ export function AlphabetRow({
 
       {alphabet.pending && (
         <div className="flex flex-wrap items-center gap-2">
-          <Button busy={isPending} onClick={skip} size="sm" variant="outline">
+          <Button
+            busy={isPending}
+            icon={<SkipForwardIcon aria-hidden="true" />}
+            onClick={skip}
+            size="sm"
+            variant="outline"
+          >
             {t("I can already read it")}
           </Button>
           {failed && <ChangeSaveError />}

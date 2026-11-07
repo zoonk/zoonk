@@ -11,7 +11,7 @@ import {
   CollapsibleTrigger,
 } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, PlayIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import {
   LIST_ROW_INTERACTIVE_CLASS,
@@ -173,6 +173,7 @@ export function TaskRow({
                 busy={starting}
                 disabled={busy}
                 focusableWhenDisabled
+                icon={<PlayIcon aria-hidden="true" />}
                 onClick={onStart}
                 size="sm"
               >

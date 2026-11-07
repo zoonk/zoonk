@@ -13,6 +13,7 @@ import {
 import { Input } from "@zoonk/ui/components/input";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
+import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
@@ -126,6 +127,7 @@ export function CertificateNameField({
           className="shrink-0"
           disabled={!canSave}
           focusableWhenDisabled
+          icon={<CheckIcon aria-hidden="true" />}
           size="lg"
           type="submit"
         >
@@ -195,7 +197,14 @@ function NameDialogForm({
         <Button onClick={onClose} size="lg" type="button" variant="outline">
           {t("Cancel")}
         </Button>
-        <Button busy={pending} disabled={!canSave} focusableWhenDisabled size="lg" type="submit">
+        <Button
+          busy={pending}
+          disabled={!canSave}
+          focusableWhenDisabled
+          icon={<CheckIcon aria-hidden="true" />}
+          size="lg"
+          type="submit"
+        >
           {t("Save")}
         </Button>
       </DialogFooter>

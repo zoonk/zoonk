@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -177,6 +177,7 @@ export function GoalFieldSubmit({
       focusableWhenDisabled
       size="lg"
       type="submit"
+      {...FORWARD_ICON}
       {...props}
     >
       {children}

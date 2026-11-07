@@ -3,7 +3,7 @@
 import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CalendarClockIcon, RotateCcwIcon } from "lucide-react";
+import { CalendarCheckIcon, CalendarClockIcon, PlayIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
@@ -107,6 +107,7 @@ function StartButton() {
         <TaskMainButton
           busy={start.busy}
           disabled={move.pending}
+          icon={<PlayIcon aria-hidden="true" />}
           onClick={() => void start.start()}
         >
           {challenge.mock ? t("Start the mock exam") : t("Start")}
@@ -139,6 +140,7 @@ function MoveToMondayButton({ className, main = false }: { className?: string; m
       <TaskMainButton
         busy={move.pending}
         disabled={start.busy}
+        icon={<CalendarCheckIcon aria-hidden="true" />}
         onClick={() => void move.moveToMonday()}
       >
         {t("Move to Monday")}
@@ -152,6 +154,7 @@ function MoveToMondayButton({ className, main = false }: { className?: string; m
       className={cn("shrink-0", className)}
       disabled={start.busy}
       focusableWhenDisabled
+      icon={<CalendarCheckIcon aria-hidden="true" />}
       onClick={() => void move.moveToMonday()}
       size="xl"
       variant="outline"
@@ -167,7 +170,11 @@ function ResumeButton() {
 
   return (
     <TaskActions>
-      <TaskMainButton busy={start.busy} onClick={() => void start.start()}>
+      <TaskMainButton
+        busy={start.busy}
+        icon={<PlayIcon aria-hidden="true" />}
+        onClick={() => void start.start()}
+      >
         {t("Continue")}
       </TaskMainButton>
     </TaskActions>

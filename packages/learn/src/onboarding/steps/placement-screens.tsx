@@ -2,6 +2,7 @@
 
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { CircleStopIcon, PlayIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindDot } from "../../_components/kind-tile";
 import {
@@ -113,12 +114,18 @@ export function PlacementIntro({
       {mock && <PlacementMockRow mock={mock} />}
 
       <OnboardingFooter>
-        <OnboardingPrimaryButton busy={starting} disabled={pending} onClick={onStart}>
+        <OnboardingPrimaryButton
+          busy={starting}
+          disabled={pending}
+          icon={<PlayIcon aria-hidden="true" />}
+          onClick={onStart}
+        >
           {t("Start")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton
           busy={pending}
           disabled={starting}
+          icon={<SkipForwardIcon aria-hidden="true" />}
           onClick={onScratch}
           variant="ghost"
         >
@@ -259,7 +266,12 @@ export function PlacementMockRunning({
         <LearnLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={href}>
           {t("Continue the mock exam")}
         </LearnLink>
-        <OnboardingSecondaryButton busy={pending} onClick={onStop} variant="ghost">
+        <OnboardingSecondaryButton
+          busy={pending}
+          icon={<CircleStopIcon aria-hidden="true" />}
+          onClick={onStop}
+          variant="ghost"
+        >
           {t("Stop and see my plan")}
         </OnboardingSecondaryButton>
       </OnboardingFooter>

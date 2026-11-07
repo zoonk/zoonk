@@ -1,9 +1,10 @@
 "use client";
 
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { BusyContent, Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
+import { ListPlusIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
 import { OpeningWaitLine } from "../_components/opening-wait-line";
@@ -102,8 +103,10 @@ function ContinueLink({ href }: { href: string }) {
       href={href}
       ref={ref}
     >
-      {started ? t("Continue session") : t("Start session")}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <BusyContent icon={<PlayIcon aria-hidden="true" />}>
+        {started ? t("Continue session") : t("Start session")}
+        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      </BusyContent>
     </LearnLink>
   );
 }
@@ -125,6 +128,7 @@ function ContinueButton() {
         aria-keyshortcuts="Enter"
         busy={isPending}
         className={ACTION_CLASS}
+        icon={<PlayIcon aria-hidden="true" />}
         onClick={run}
         size="lg"
       >
@@ -150,8 +154,10 @@ function SummaryLink() {
       prefetch={false}
       ref={ref}
     >
-      {t("See today's summary")}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <BusyContent {...FORWARD_ICON}>
+        {t("See today's summary")}
+        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      </BusyContent>
     </LearnLink>
   );
 }
@@ -184,7 +190,13 @@ function PrepareLessons() {
 
   return (
     <>
-      <Button busy={isPending} className={ACTION_CLASS} onClick={run} size="lg">
+      <Button
+        busy={isPending}
+        className={ACTION_CLASS}
+        icon={<ListPlusIcon aria-hidden="true" />}
+        onClick={run}
+        size="lg"
+      >
         {t({
           description: "Button that has Zoonk write today's lessons.",
           message: "Get today's lessons",
@@ -206,6 +218,7 @@ function KeepLearning() {
         aria-keyshortcuts="Enter"
         busy={isPending}
         className={ACTION_CLASS}
+        icon={<PlayIcon aria-hidden="true" />}
         onClick={run}
         size="lg"
       >
@@ -241,8 +254,10 @@ function SeePlanLink() {
       href={routes.journey}
       ref={ref}
     >
-      {t("See your plan")}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <BusyContent {...FORWARD_ICON}>
+        {t("See your plan")}
+        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      </BusyContent>
     </LearnLink>
   );
 }

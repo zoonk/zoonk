@@ -5,6 +5,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { countWords } from "@zoonk/utils/string";
 import { settleWithin } from "@zoonk/utils/timeout";
+import { SendIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { AnswersSaveError } from "../_components/save-error";
@@ -155,6 +156,7 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
           <Button
             busy={finishing.pending}
             className="shrink-0"
+            icon={<SkipForwardIcon aria-hidden="true" />}
             onClick={() => void finishing.finish()}
             size="xl"
             variant="outline"
@@ -167,6 +169,7 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
           className={TASK_MAIN_ACTION_CLASS}
           disabled={!writer.canSend || finishing.pending}
           focusableWhenDisabled
+          icon={<SendIcon aria-hidden="true" />}
           onClick={() => void writer.send()}
           size="xl"
         >

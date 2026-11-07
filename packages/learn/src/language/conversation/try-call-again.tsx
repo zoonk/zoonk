@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { RotateCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { TASK_OPTION_CLASS } from "../../_components/task-layout";
@@ -31,6 +32,7 @@ export function TryCallAgain({
       <Button
         busy={call.isStarting}
         className={TASK_OPTION_CLASS}
+        icon={<RotateCwIcon aria-hidden="true" />}
         onClick={call.start}
         size="xl"
         variant="ghost"

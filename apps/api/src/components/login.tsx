@@ -3,7 +3,7 @@ import {
   type BrandIconComponent,
   GoogleBrandIcon,
 } from "@zoonk/ui/components/brand-icons";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { Input, InputError } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -72,11 +72,11 @@ function LoginWithProvider({
     <Button
       busy={isLoading ?? false}
       className={cn("w-full", className)}
+      icon={Icon && <Icon aria-hidden="true" />}
       size="lg"
       variant="outline"
       {...props}
     >
-      {Icon && <Icon aria-hidden="true" />}
       {children}
     </Button>
   );
@@ -148,7 +148,7 @@ export function LoginEmailInput({ ...props }: React.ComponentProps<"input">) {
 
 export function LoginSubmit({ children, ...props }: React.ComponentProps<"button">) {
   return (
-    <SubmitButton className="h-11 font-[560]" full {...props}>
+    <SubmitButton className="h-11 font-[560]" full {...FORWARD_ICON} {...props}>
       {children}
     </SubmitButton>
   );

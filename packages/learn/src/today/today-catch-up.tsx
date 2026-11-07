@@ -2,6 +2,7 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
+import { ListPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
@@ -64,7 +65,13 @@ export function CatchUpLater() {
             )}
       </p>
 
-      <Button busy={isPending} onClick={catchUp} size="sm" variant="outline">
+      <Button
+        busy={isPending}
+        icon={<ListPlusIcon aria-hidden="true" />}
+        onClick={catchUp}
+        size="sm"
+        variant="outline"
+      >
         {t("Catch up today · +{time}", { time: formatDuration(later.minutes) })}
       </Button>
 

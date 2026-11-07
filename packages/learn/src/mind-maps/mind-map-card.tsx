@@ -7,7 +7,7 @@ import {
 } from "@zoonk/core/mind-maps/contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { Maximize2Icon } from "lucide-react";
+import { Maximize2Icon, PlusIcon, RotateCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { type MindMapLimit, MindMapLimitNotice } from "../_components/help-limit-notice";
@@ -166,6 +166,7 @@ function MindMapRequestCard({
           className="self-start"
           disabled={isCapped}
           focusableWhenDisabled
+          icon={isFailure ? <RotateCwIcon aria-hidden="true" /> : <PlusIcon aria-hidden="true" />}
           onClick={isFailure ? retry : create}
           size="sm"
           variant="outline"

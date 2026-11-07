@@ -5,7 +5,7 @@ import {
   type PronunciationReviewsView,
   type PronunciationRoundResult,
 } from "@zoonk/core/language/pronunciation/contract";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -249,7 +249,7 @@ function WordActions({
             {t("Try again")}
           </Button>
         )}
-        <TaskMainButton busy={round.isPending} onClick={round.next}>
+        <TaskMainButton busy={round.isPending} onClick={round.next} {...FORWARD_ICON}>
           {isLast ? t("See how it went") : t("Continue")}
         </TaskMainButton>
       </TaskActions>
@@ -259,7 +259,11 @@ function WordActions({
   if (!available) {
     return (
       <TaskActions>
-        <TaskMainButton busy={round.isPending} onClick={round.next}>
+        <TaskMainButton
+          busy={round.isPending}
+          icon={<SkipForwardIcon aria-hidden="true" />}
+          onClick={round.next}
+        >
           {t("Skip this word")}
         </TaskMainButton>
       </TaskActions>

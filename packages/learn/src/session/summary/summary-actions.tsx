@@ -2,6 +2,7 @@
 
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LearnLink } from "../../learn-link";
 import { SavePlanNote } from "../../onboarding/save-plan-note";
@@ -58,6 +59,7 @@ export function KeepGoingButton({
     <Button
       busy={keepGoing.isPending}
       className={cn("shrink-0", className)}
+      icon={<PlayIcon aria-hidden="true" />}
       onClick={keepGoing.run}
       size="xl"
       variant="outline"

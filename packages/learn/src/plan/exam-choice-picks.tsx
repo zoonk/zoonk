@@ -4,6 +4,7 @@ import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { Checkbox } from "@zoonk/ui/components/checkbox";
 import { cn } from "@zoonk/ui/lib/utils";
+import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { PLAN_OPTION_CLASS } from "./plan-option-styles";
@@ -61,6 +62,7 @@ function Picks({ choice, onSave, pending }: ExamChoicePicksProps) {
         className="self-start"
         disabled={draft.length === 0 || isSaved}
         focusableWhenDisabled
+        icon={<CheckIcon aria-hidden="true" />}
         onClick={() =>
           onSave(
             choice.options.flatMap((option) => (draft.includes(option.name) ? [option.name] : [])),

@@ -3,6 +3,7 @@
 import { useRouter } from "@/i18n/navigation";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { Button } from "@zoonk/ui/components/button";
+import { Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { type KeepPlusResult, keepPlusAction } from "./keep-plus-action";
@@ -30,7 +31,14 @@ export function KeepPlusButton() {
         {t("Changed your mind? Keep Plus, and it renews as before.")}
       </p>
 
-      <Button busy={pending} className="w-max" onClick={keep} size="sm" variant="outline">
+      <Button
+        busy={pending}
+        className="w-max"
+        icon={<Undo2Icon aria-hidden="true" />}
+        onClick={keep}
+        size="sm"
+        variant="outline"
+      >
         {t("Keep Plus")}
       </Button>
 

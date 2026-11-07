@@ -1,6 +1,7 @@
 "use client";
 
 import { type PlanOffer } from "@zoonk/core/plans/view-contract";
+import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   SuggestionAction,
@@ -61,7 +62,11 @@ export function PlanOfferSuggestion({
 
       <SuggestionActions>
         {offer && canApply && (
-          <SuggestionAction busy={isPending} onClick={apply}>
+          <SuggestionAction
+            busy={isPending}
+            icon={<CheckIcon aria-hidden="true" />}
+            onClick={apply}
+          >
             {t("Apply")}
           </SuggestionAction>
         )}

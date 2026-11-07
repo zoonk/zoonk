@@ -260,13 +260,13 @@ export function TaskMainButton({
   className,
   disabled = false,
   icon,
+  iconPosition,
   onClick,
-}: {
+}: Pick<React.ComponentProps<typeof Button>, "icon" | "iconPosition"> & {
   busy?: boolean;
   children: React.ReactNode;
   className?: string;
   disabled?: boolean;
-  icon?: React.ReactNode;
   onClick: () => void;
 }) {
   const ref = useRef<HTMLButtonElement>(null);
@@ -283,6 +283,7 @@ export function TaskMainButton({
       disabled={disabled || !mounted}
       focusableWhenDisabled
       icon={icon}
+      iconPosition={iconPosition}
       onClick={onClick}
       ref={ref}
       size="xl"

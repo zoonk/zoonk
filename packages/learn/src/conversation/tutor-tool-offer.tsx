@@ -1,7 +1,7 @@
 "use client";
 
 import { type TutorToolOffer } from "@zoonk/core/lesson-questions/contract";
-import { CrosshairIcon, FastForwardIcon } from "lucide-react";
+import { CrosshairIcon, FastForwardIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { KindDot } from "../_components/kind-tile";
@@ -69,7 +69,7 @@ function ChapterTestOffer({
       }
       title={t("Test: {chapter}", { chapter: offer.chapterTitle })}
     >
-      <OfferButton busy={test.opening} onClick={test.start}>
+      <OfferButton busy={test.opening} icon={<PlayIcon aria-hidden="true" />} onClick={test.start}>
         {t("Take the test")}
       </OfferButton>
       <TestOutStartStatus isPending={test.isPending} result={test.result} />

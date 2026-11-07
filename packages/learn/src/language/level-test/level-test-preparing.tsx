@@ -1,5 +1,6 @@
 "use client";
 
+import { SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type GenerationRun } from "../../generation/generation-run";
 import { GenerationWait } from "../../generation/generation-wait";
@@ -40,7 +41,11 @@ export function LevelTestPreparing({
       </GenerationWait>
 
       <OnboardingFooter>
-        <OnboardingSecondaryButton busy={skipping} onClick={onSkip}>
+        <OnboardingSecondaryButton
+          busy={skipping}
+          icon={<SkipForwardIcon aria-hidden="true" />}
+          onClick={onSkip}
+        >
           {t("Skip the test")}
         </OnboardingSecondaryButton>
         <p className="text-muted-foreground text-center text-sm text-pretty">

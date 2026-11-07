@@ -4,7 +4,7 @@ import { CourseStartFailureNote } from "@/components/public/course-start-failure
 import { useCourseStart } from "@/components/public/use-course-start";
 import { Link } from "@/i18n/navigation";
 import { getGoalStartHref } from "@/lib/public/public-hrefs";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -28,6 +28,7 @@ function StartCoursePlan({ start }: { start: CourseStart }) {
         onClick={startCourse}
         ref={ref}
         size="xl"
+        {...FORWARD_ICON}
       >
         {t("Build my plan")}
         <ShortcutKbd tone="inverse">⏎</ShortcutKbd>

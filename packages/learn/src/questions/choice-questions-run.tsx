@@ -1,8 +1,9 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { HelpCircleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TaskHeaderTitle } from "../_components/task-header";
@@ -283,7 +284,7 @@ function QuestionsFooter({
   if (!question) {
     return canFinish ? (
       <TaskActions>
-        <TaskMainButton busy={pending} disabled={locked} onClick={onFinish}>
+        <TaskMainButton busy={pending} disabled={locked} onClick={onFinish} {...FORWARD_ICON}>
           {t("Finish with these answers")}
         </TaskMainButton>
       </TaskActions>
@@ -297,6 +298,7 @@ function QuestionsFooter({
         className="shrink-0"
         disabled={locked}
         focusableWhenDisabled
+        icon={<HelpCircleIcon aria-hidden="true" />}
         onClick={onDontKnow}
         size="xl"
         variant="outline"
@@ -307,6 +309,7 @@ function QuestionsFooter({
         busy={pending && sender === "check"}
         disabled={locked || !selected}
         onClick={onNext}
+        {...FORWARD_ICON}
       >
         {isLast ? t("Finish") : t("Next")}
       </TaskMainButton>

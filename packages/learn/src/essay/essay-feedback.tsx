@@ -3,7 +3,7 @@
 import { type EssayDraft } from "@zoonk/core/exams/essays/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, CircleIcon } from "lucide-react";
+import { CheckIcon, CircleIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { Meter, MeterFill } from "../_components/meter";
@@ -268,6 +268,7 @@ export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite?
     <Button
       busy={finishing.pending}
       className="shrink-0"
+      icon={<SkipForwardIcon aria-hidden="true" />}
       onClick={() => void finishing.finish()}
       size="xl"
       variant="outline"

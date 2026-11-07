@@ -4,7 +4,7 @@ import { type GoalMindMapView } from "@zoonk/core/mind-maps/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
-import { NetworkIcon } from "lucide-react";
+import { NetworkIcon, PlusIcon, RotateCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { MindMapLimitNotice } from "../_components/help-limit-notice";
@@ -149,6 +149,7 @@ function MapRequestTile({
             busy={isPending}
             disabled={isCapped}
             focusableWhenDisabled
+            icon={isFailure ? <RotateCwIcon aria-hidden="true" /> : <PlusIcon aria-hidden="true" />}
             onClick={isFailure ? retry : create}
             size="sm"
             variant="outline"

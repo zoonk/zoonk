@@ -3,7 +3,7 @@
 import { ACCESS_ERROR_CODES } from "@zoonk/auth/access-contract";
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { useAppLocale } from "@zoonk/learn/locale";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { useExtracted } from "next-intl";
@@ -109,6 +109,7 @@ export function SubscribeButton({ billingSwitch }: { billingSwitch: string }) {
         onClick={subscribe}
         size="lg"
         type="button"
+        {...FORWARD_ICON}
       >
         {t("Subscribe")}
       </Button>

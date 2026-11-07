@@ -1,11 +1,11 @@
 "use client";
 
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterKey, useKeyboardCallback, useLetterKey } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { FlagIcon } from "lucide-react";
+import { FlagIcon, SendIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { TaskHeaderProgress } from "../_components/task-header";
@@ -152,6 +152,7 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
           focusableWhenDisabled
           onClick={next}
           size="xl"
+          {...(isLastQuestion ? { icon: <SendIcon aria-hidden="true" /> } : FORWARD_ICON)}
         >
           {isLastQuestion ? (
             nextLabel

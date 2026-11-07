@@ -4,6 +4,7 @@ import { BusyContent, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
+import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LearnLink } from "../learn-link";
 import { PageWithAside } from "../shell/learn-shell";
@@ -89,7 +90,7 @@ export function DetailContinueLink({
       prefetch={lessonWritten === false ? "auto" : true}
       ref={ref}
     >
-      <BusyContent>
+      <BusyContent icon={<PlayIcon aria-hidden="true" />}>
         {started ? t("Continue") : t("Start")}
         <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
       </BusyContent>

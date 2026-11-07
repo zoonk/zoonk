@@ -11,6 +11,7 @@ import {
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
 import { Spinner } from "@zoonk/ui/components/spinner";
+import { ListPlusIcon, RotateCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactElement, type ReactNode, useRef, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
@@ -120,6 +121,9 @@ function FarTopicBody({
           busy={isPending}
           disabled={isCapped}
           focusableWhenDisabled
+          icon={
+            isFailure ? <RotateCwIcon aria-hidden="true" /> : <ListPlusIcon aria-hidden="true" />
+          }
           onClick={isFailure ? retry : request}
           size="lg"
           variant={isFailure ? "outline" : "default"}

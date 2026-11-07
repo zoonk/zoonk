@@ -2,7 +2,7 @@
 
 import { type SpeakingMockExam } from "@zoonk/core/language/conversations/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { PhoneOffIcon } from "lucide-react";
+import { PhoneOffIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindDot } from "../../_components/kind-tile";
 import {
@@ -85,6 +85,7 @@ export function SpeakingMockCard({
             <Button
               busy={call.isStarting}
               className="self-start"
+              icon={<PlayIcon aria-hidden="true" />}
               onClick={call.start}
               size="lg"
               variant="outline"

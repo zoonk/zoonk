@@ -11,7 +11,7 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon, CrosshairIcon } from "lucide-react";
+import { CheckIcon, ChevronRightIcon, CrosshairIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { createContext, use, useId, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
@@ -200,6 +200,7 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
           disabled={chosen.length === 0 || sameAreas(chosen, current) || unchanged !== null}
           focusableWhenDisabled
           form={formId}
+          icon={<CheckIcon aria-hidden="true" />}
           type="submit"
         >
           {t("Focus on these")}

@@ -1,7 +1,7 @@
 "use client";
 
 import { type LanguageUnitView } from "@zoonk/core/view-models/language/contract";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
@@ -138,7 +138,13 @@ function CallSetup({
         <PlusNotice inset>{t("Longer calls come with Plus.")}</PlusNotice>
       ) : (
         // It opens the call's intro, whose button is the one that calls.
-        <Button busy={call.isStarting} className="w-full" onClick={call.start} size="lg">
+        <Button
+          busy={call.isStarting}
+          className="w-full"
+          onClick={call.start}
+          size="lg"
+          {...FORWARD_ICON}
+        >
           {t("Continue")}
         </Button>
       )}

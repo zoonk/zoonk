@@ -15,6 +15,7 @@ import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
+import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
@@ -161,6 +162,7 @@ export function ChooserStartButton({
       className={cn(DETAIL_PRIMARY_CLASS, "font-[560]")}
       disabled={isDisabled}
       focusableWhenDisabled
+      icon={<PlayIcon aria-hidden="true" />}
       onClick={onClick}
       ref={ref}
       size="lg"

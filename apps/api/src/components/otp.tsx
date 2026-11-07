@@ -1,4 +1,4 @@
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { InputError } from "@zoonk/ui/components/input";
 import {
   InputOTP,
@@ -156,6 +156,7 @@ export function OTPSubmit({
       focusableWhenDisabled
       size="lg"
       type="submit"
+      {...FORWARD_ICON}
       {...props}
     >
       {children}

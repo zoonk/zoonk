@@ -10,7 +10,7 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import { LibraryBigIcon } from "lucide-react";
+import { LibraryBigIcon, ListPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use, useEffect, useEffectEvent, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
@@ -87,7 +87,11 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
       </DrawerContent>
 
       <div className="flex flex-col gap-2 border-t px-6 pt-4 pb-6">
-        <Button busy={isPending} onClick={() => void choose()}>
+        <Button
+          busy={isPending}
+          icon={<ListPlusIcon aria-hidden="true" />}
+          onClick={() => void choose()}
+        >
           {t("Study everything")}
         </Button>
         <DrawerClose render={<Button variant="outline" />}>{t("Cancel")}</DrawerClose>

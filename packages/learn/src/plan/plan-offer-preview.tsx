@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
-import { ChevronDownIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   SuggestionAction,
@@ -152,7 +152,11 @@ export function OfferPreview({
       <SuggestionActions>
         {/* Never applied without the diff it makes, as Today's proposals. */}
         {!unchanged && effect !== null && (
-          <SuggestionAction busy={pending} onClick={onApply}>
+          <SuggestionAction
+            busy={pending}
+            icon={<CheckIcon aria-hidden="true" />}
+            onClick={onApply}
+          >
             {t("Apply")}
           </SuggestionAction>
         )}

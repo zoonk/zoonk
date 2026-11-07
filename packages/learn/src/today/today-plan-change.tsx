@@ -5,6 +5,7 @@ import { type PlanChangeDecisionInput } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { safeAsync } from "@zoonk/utils/error";
+import { Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import {
@@ -189,7 +190,12 @@ function AfterAnswer({
 
   if (state.answer === "applied" && state.answered.canUndo) {
     return (
-      <SuggestionAction busy={isPending} onClick={() => answer("undone")} variant="outline">
+      <SuggestionAction
+        busy={isPending}
+        icon={<Undo2Icon aria-hidden="true" />}
+        onClick={() => answer("undone")}
+        variant="outline"
+      >
         {t("Undo")}
       </SuggestionAction>
     );

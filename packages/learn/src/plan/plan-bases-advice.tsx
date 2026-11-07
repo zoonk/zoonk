@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { LightbulbIcon, RotateCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef, useState } from "react";
 import { useSentenceSpace } from "../_utils/locale";
@@ -90,7 +91,13 @@ export function BasesAdvice({
       )}
 
       {!answered && (
-        <Button busy={pending} onClick={ask} size="sm" variant="outline">
+        <Button
+          busy={pending}
+          icon={retry ? <RotateCwIcon aria-hidden="true" /> : <LightbulbIcon aria-hidden="true" />}
+          onClick={ask}
+          size="sm"
+          variant="outline"
+        >
           {retry ? t("Try again") : t("Get a recommendation")}
         </Button>
       )}

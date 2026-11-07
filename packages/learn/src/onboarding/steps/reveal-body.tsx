@@ -7,6 +7,7 @@ import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
+import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Fragment, useState } from "react";
 import { DETAIL_PRIMARY_CLASS } from "../../_components/detail-page";
@@ -48,7 +49,7 @@ function StartButton({ href }: { href: string }) {
         prefetch={reached}
         ref={ref}
       >
-        <BusyContent>
+        <BusyContent icon={<PlayIcon aria-hidden="true" />}>
           {t("Start")}
           <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
         </BusyContent>

@@ -16,7 +16,7 @@ import { TaskMainButton } from "@zoonk/learn/task-frame";
 import { TaskActionBar, TaskActions } from "@zoonk/learn/task-layout";
 import { WarmUpCard } from "@zoonk/learn/warm-up/card";
 import { useReadyHold } from "@zoonk/learn/warm-up/hold";
-import { ChevronRightIcon } from "lucide-react";
+import { ChevronRightIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { LessonRouteFrame } from "./lesson-route-frame";
@@ -211,7 +211,7 @@ function StartLessonBar({ busy, onStart }: { busy: boolean; onStart: () => void 
   return (
     <TaskActionBar>
       <TaskActions>
-        <TaskMainButton busy={busy} onClick={onStart}>
+        <TaskMainButton busy={busy} icon={<PlayIcon aria-hidden="true" />} onClick={onStart}>
           {t("Start this lesson")}
         </TaskMainButton>
       </TaskActions>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { CoffeeIcon } from "lucide-react";
+import { CircleStopIcon, CoffeeIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Callout } from "../../_components/callout";
 import { useSessionAction } from "../use-session-action";
@@ -19,7 +19,13 @@ export function PauseSuggestion({ onStop }: { onStop: () => Promise<boolean> }) 
         )}
       </Callout>
 
-      <Button busy={isPending} onClick={run} size="sm" variant="outline">
+      <Button
+        busy={isPending}
+        icon={<CircleStopIcon aria-hidden="true" />}
+        onClick={run}
+        size="sm"
+        variant="outline"
+      >
         {t("Stop for today")}
       </Button>
 

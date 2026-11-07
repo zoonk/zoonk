@@ -1,5 +1,6 @@
 "use client";
 
+import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import {
   OnboardingColumn,
@@ -60,7 +61,12 @@ export function StepForm({
         {children}
 
         <OnboardingFooter>
-          <OnboardingPrimaryButton busy={pending} disabled={!canContinue} type="submit">
+          <OnboardingPrimaryButton
+            busy={pending}
+            disabled={!canContinue}
+            type="submit"
+            {...FORWARD_ICON}
+          >
             {continueLabel ?? t("Continue")}
           </OnboardingPrimaryButton>
 

@@ -5,6 +5,7 @@ import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
+import { Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useRef, useState, useTransition } from "react";
 import { CHIP_CLASS } from "../_components/chip";
@@ -198,6 +199,7 @@ function ChangeActions({
       <Button
         busy={isPending}
         className="self-start"
+        icon={<Undo2Icon aria-hidden="true" />}
         onClick={() => answer("undone")}
         size="sm"
         variant="outline"

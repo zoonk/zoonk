@@ -3,7 +3,7 @@
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { safeAsync } from "@zoonk/utils/error";
-import { CalendarClockIcon } from "lucide-react";
+import { CalendarClockIcon, CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useState, useTransition } from "react";
 import {
@@ -105,6 +105,7 @@ function BehindChoices({
       <SuggestionAction
         busy={isPending}
         disabled={superseded}
+        icon={<CheckIcon aria-hidden="true" />}
         key="keep"
         onClick={keep}
         variant={variant("keep")}

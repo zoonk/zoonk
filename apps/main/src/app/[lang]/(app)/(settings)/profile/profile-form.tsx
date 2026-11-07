@@ -20,6 +20,7 @@ import {
 } from "@zoonk/ui/components/input-group";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
+import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useActionState, useId, useState } from "react";
 import { useFormStatus } from "react-dom";
@@ -71,7 +72,14 @@ function SaveButton({ disabled }: { disabled: boolean }) {
   const { pending } = useFormStatus();
 
   return (
-    <Button busy={pending} disabled={disabled} focusableWhenDisabled size="sm" type="submit">
+    <Button
+      busy={pending}
+      disabled={disabled}
+      focusableWhenDisabled
+      icon={<CheckIcon aria-hidden="true" />}
+      size="sm"
+      type="submit"
+    >
       {t("Save")}
     </Button>
   );
