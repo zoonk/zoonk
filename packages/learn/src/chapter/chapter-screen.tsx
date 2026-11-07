@@ -11,7 +11,6 @@ import {
   DetailLayout,
 } from "../_components/detail-page";
 import { Disclosure } from "../_components/disclosure";
-import { type MindMapLimit } from "../_components/help-limit-notice";
 import { LessonList, LessonProgress } from "../_components/lesson-list";
 import { LessonSummaries } from "../_components/lesson-summaries";
 import { ListGroup, ListRowIcon } from "../_components/list-group";
@@ -20,7 +19,7 @@ import { SectionLabel } from "../_components/section-label";
 import { SkillList } from "../_components/skill-list";
 import { TestOutStartRow } from "../_components/test-out-start-link";
 import { type MindMapActions } from "../mind-maps/mind-map-actions";
-import { MindMapCard } from "../mind-maps/mind-map-card";
+import { MindMapRow } from "../mind-maps/mind-map-row";
 import {
   type ChapterActions,
   type ChapterHrefs,
@@ -34,29 +33,21 @@ export type { AreaPracticeOutcome } from "../_utils/use-practice-run";
 export type { TestOutStart } from "../_components/test-out-start-link";
 export type { ChapterActions, ChapterHrefs } from "./chapter-context";
 
-type ChapterMindMap = {
-  actions: MindMapActions;
-  cap?: MindMapLimit | null;
-  view: ChapterMindMapView;
-};
+type ChapterMindMap = { actions: MindMapActions; plus: boolean; view: ChapterMindMapView };
 
 const PRACTICE_TITLE_ID = "chapter-practice-title";
 const PROGRESS_TITLE_ID = "chapter-progress-title";
 const REFERENCE_TITLE_ID = "chapter-reference-title";
 
 function ChapterSummary({
-  mindMap,
   renderLessonText,
 }: {
-  mindMap: ChapterMindMap | null;
   renderLessonText: (text: string) => React.ReactNode;
 }) {
   const t = useExtracted();
   const { chapter } = useChapterScreen();
-  const map = mindMap?.view.status === "unavailable" ? null : mindMap;
-  const hasSummary = chapter.skills.length > 0 || chapter.summaries.length > 0;
 
-  if (!map && !hasSummary) {
+  if (chapter.skills.length === 0 && chapter.summaries.length === 0) {
     return null;
   }
 
@@ -66,35 +57,24 @@ function ChapterSummary({
         <PageSectionTitle id={REFERENCE_TITLE_ID}>{t("For reference")}</PageSectionTitle>
       </PageSectionHeader>
 
-      {map && (
-        <MindMapCard
-          actions={map.actions}
-          cap={map.cap ?? null}
-          chapterTitle={chapter.chapter.title}
-          mindMap={map.view}
-        />
-      )}
-
-      {hasSummary && (
-        <ListGroup>
-          <Disclosure
-            icon={
-              <ListRowIcon>
-                <ListChecksIcon />
-              </ListRowIcon>
-            }
-            title={t("Chapter summary")}
-          >
-            {chapter.skills.length > 0 && (
-              <section aria-labelledby="chapter-skills-title" className="flex flex-col gap-1">
-                <SectionLabel id="chapter-skills-title">{t("Skills")}</SectionLabel>
-                <SkillList skills={chapter.skills} />
-              </section>
-            )}
-            <LessonSummaries renderText={renderLessonText} summaries={chapter.summaries} />
-          </Disclosure>
-        </ListGroup>
-      )}
+      <ListGroup>
+        <Disclosure
+          icon={
+            <ListRowIcon>
+              <ListChecksIcon />
+            </ListRowIcon>
+          }
+          title={t("Chapter summary")}
+        >
+          {chapter.skills.length > 0 && (
+            <section aria-labelledby="chapter-skills-title" className="flex flex-col gap-1">
+              <SectionLabel id="chapter-skills-title">{t("Skills")}</SectionLabel>
+              <SkillList skills={chapter.skills} />
+            </section>
+          )}
+          <LessonSummaries renderText={renderLessonText} summaries={chapter.summaries} />
+        </Disclosure>
+      </ListGroup>
     </PageSection>
   );
 }
@@ -166,7 +146,7 @@ function ChapterBody({
         <>
           <ChapterProgress />
           <ChapterPractice />
-          <ChapterSummary mindMap={mindMap} renderLessonText={renderLessonText} />
+          <ChapterSummary renderLessonText={renderLessonText} />
         </>
       }
       asideLabel={t("About this chapter")}
@@ -175,6 +155,14 @@ function ChapterBody({
     >
       <DetailAside>
         <ChapterHeader />
+        {mindMap && mindMap.view.status !== "unavailable" && (
+          <MindMapRow
+            actions={mindMap.actions}
+            place="chapter"
+            plus={mindMap.plus}
+            view={mindMap.view}
+          />
+        )}
       </DetailAside>
 
       <DetailContent>

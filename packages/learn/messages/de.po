@@ -156,7 +156,6 @@ msgstr "Tägliche Lernzeit"
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/language/unit/practice-conversation.tsx
-#: src/mind-maps/mind-maps-screen.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
@@ -236,6 +235,7 @@ msgstr "Auch wenn du jetzt falsch liegst, hilft dir das, dich später zu erinner
 #: src/_components/plus-lock.tsx
 #: src/challenge/challenge-plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/mind-maps/mind-map-row.tsx
 #: src/mock/mock-chooser-page.tsx
 #: src/onboarding/entry/goal-limit-notice.tsx
 #: src/plan/plan-suggestion.tsx
@@ -399,8 +399,8 @@ msgstr "{done, number} von {total, number}"
 #: src/language/conversation/call-problem.tsx
 #: src/language/conversation/dropped-call-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-#: src/mind-maps/mind-map-card.tsx
-#: src/mind-maps/mind-map-tiles.tsx
+#: src/mind-maps/finished-chapter-map.tsx
+#: src/mind-maps/mind-map-row.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/plan/plan-bases-advice.tsx
 #: src/plan/plan-bases-sheet.tsx
@@ -1883,7 +1883,6 @@ msgstr "Drucken"
 
 #: src/certificates/certificate-page.tsx
 #: src/memory/memory-screen.tsx
-#: src/mind-maps/mind-map-card.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "5q3qC0"
 msgid "Download"
@@ -2396,7 +2395,7 @@ msgid "{subject} · Chapter {number, number}"
 msgstr "{subject} · Kapitel {number, number}"
 
 #: src/chapter/chapter-header.tsx
-#: src/mind-maps/mind-map-tiles.tsx
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "sIR8OK"
 msgid "Chapter {number, number}"
 msgstr "Kapitel {number, number}"
@@ -2835,6 +2834,7 @@ msgstr "Aufsätze üben und bewerten lassen ist in Plus enthalten."
 
 #: src/conversation/tutor-feature-offers.tsx
 #: src/language/today/language-today-section.tsx
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "JfG49w"
 msgid "Open"
 msgstr "Öffnen"
@@ -4897,7 +4897,7 @@ msgid "Finished"
 msgstr "Abgeschlossen"
 
 #: src/journey/pace-details.tsx
-#: src/questions/test-out-run.tsx
+#: src/questions/test-out-aside.tsx
 msgctxt "FvhRwo"
 msgid "{count, plural, one {# lesson left} other {# lessons left}}"
 msgstr "{count, plural, one {# Lektion übrig} other {# Lektionen übrig}}"
@@ -5066,19 +5066,19 @@ msgctxt "yPg8s6"
 msgid "Until"
 msgstr "Bis"
 
+#: src/journey/plan-sections.tsx
+#: src/mind-maps/mind-maps-screen.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "Z9Sg5E"
+msgid "Mind maps"
+msgstr "Mindmaps"
+
 #. A menu or section of other options and links, like an app's “More” menu.
 #: src/journey/plan-sections.tsx
 #: src/onboarding/start-over-menu.tsx
 msgctxt "I5NMJ8"
 msgid "More"
 msgstr "Mehr"
-
-#: src/journey/plan-sections.tsx
-#: src/mind-maps/mind-maps-screen.tsx
-#: src/syllabus/subject-aside.tsx
-msgctxt "Z9Sg5E"
-msgid "Mind maps"
-msgstr "Mindmaps"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "djCOWA"
@@ -7024,54 +7024,19 @@ msgctxt "GGUKxA"
 msgid "Couldn't undo. Try again."
 msgstr "Das ließ sich nicht rückgängig machen. Versuch es noch einmal."
 
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "FZBGji"
-msgid "Full screen"
-msgstr "Vollbild"
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "X6Frhz"
-msgid "It takes about half a minute. You can leave this page; it'll be here."
-msgstr "Das dauert etwa eine halbe Minute. Du kannst diese Seite verlassen. Die Mindmap wartet hier auf dich."
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "DSQIYK"
-msgid "Drawing the mind map…"
-msgstr "Wir zeichnen die Mindmap…"
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "_E5BoN"
-msgid "The mind map couldn't be made this time."
-msgstr "Die Mindmap konnte dieses Mal nicht erstellt werden."
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "RIuQL5"
-msgid "Mind map"
-msgstr "Mindmap"
-
-#: src/mind-maps/mind-map-card.tsx
+#: src/mind-maps/finished-chapter-map.tsx
+#: src/mind-maps/mind-map-row.tsx
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "7FWazb"
 msgid "We couldn't reach the server. Check your connection."
 msgstr "Wir konnten den Server nicht erreichen. Prüfe deine Verbindung."
 
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "dTC4nf"
-msgid "Create the mind map"
-msgstr "Mindmap erstellen"
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "g3Jor0"
-msgid "The chapter's main ideas in one picture, to review at a glance."
-msgstr "Die wichtigsten Ideen des Kapitels in einem Bild zum Wiederholen auf einen Blick."
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "Vxnu0A"
-msgid "Its picture had mistakes, so here's the mind map as text."
-msgstr "Das Bild hatte Fehler. Deshalb findest du die Mindmap hier als Text."
+#: src/mind-maps/finished-chapter-map.tsx
+msgctxt "2DLM14"
+msgid "Chapter finished"
+msgstr "Kapitel abgeschlossen"
 
 #: src/mind-maps/mind-map-description.tsx
-#: src/mind-maps/mind-map-tiles.tsx
 msgctxt "v3MXM4"
 msgid "Mind map of {chapter}"
 msgstr "Mindmap zu {chapter}"
@@ -7091,30 +7056,65 @@ msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "Kurz gesagt:"
 
-#: src/mind-maps/mind-map-tiles.tsx
-msgctxt "1Ed5Dt"
-msgid "As text"
-msgstr "Als Text"
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "TS33yQ"
+msgid "Its lessons get written first, so it takes a few minutes."
+msgstr "Wir erstellen zuerst die Lektionen des Kapitels, deshalb dauert es ein paar Minuten."
 
-#: src/mind-maps/mind-map-tiles.tsx
-msgctxt "yPO4Un"
-msgid "Drawing…"
-msgstr "Wir zeichnen…"
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "rqcOg3"
+msgid "Its lessons get written first and count toward your free lessons."
+msgstr "Wir erstellen zuerst die Lektionen des Kapitels und rechnen sie auf deine kostenlosen Lektionen an."
 
-#: src/mind-maps/mind-map-tiles.tsx
-msgctxt "VzzYJk"
-msgid "Create"
-msgstr "Erstellen"
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "AAKHvt"
+msgid "Its main ideas in one picture"
+msgstr "Das Wichtigste aus dem Kapitel in einem Bild"
 
-#: src/mind-maps/mind-map-tiles.tsx
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "Vxnu0A"
+msgid "Its picture had mistakes, so here's the mind map as text."
+msgstr "Das Bild hatte Fehler. Deshalb findest du die Mindmap hier als Text."
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "lY6tDJ"
+msgid "Mind map ready"
+msgstr "Mindmap fertig"
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "1dO0rM"
+msgid "This takes a few minutes. You can leave; it'll be here."
+msgstr "Das dauert ein paar Minuten. Du kannst die Seite verlassen; du findest die Mindmap später hier."
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "gAZmi-"
+msgid "Writing the lessons, then the mind map…"
+msgstr "Wir erstellen zuerst die Lektionen, dann die Mindmap…"
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "cdPOua"
+msgid "About half a minute. You can leave; it'll be here."
+msgstr "Etwa eine halbe Minute. Du kannst die Seite verlassen; du findest die Mindmap später hier."
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "DSQIYK"
+msgid "Drawing the mind map…"
+msgstr "Wir zeichnen die Mindmap…"
+
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "lZl8_B"
 msgid "It couldn't be made this time."
 msgstr "Die Mindmap konnte dieses Mal nicht erstellt werden."
 
-#: src/mind-maps/mind-map-tiles.tsx
-msgctxt "XUsrNt"
-msgid "We couldn't reach the server."
-msgstr "Wir konnten den Server nicht erreichen."
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "RIuQL5"
+msgid "Mind map"
+msgstr "Mindmap"
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "VzzYJk"
+msgid "Create"
+msgstr "Erstellen"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -7132,14 +7132,22 @@ msgid "Zoom in"
 msgstr "Vergrößern"
 
 #: src/mind-maps/mind-map-viewer.tsx
+msgctxt "1Ed5Dt"
+msgid "As text"
+msgstr "Als Text"
+
+#: src/mind-maps/mind-map-viewer.tsx
 msgctxt "Mxc7gH"
 msgid "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
 msgstr "Ziehe zwei Finger zusammen oder auseinander, scrolle oder nutze + und - zum Zoomen; ziehe die Ansicht oder nutze die Pfeile zum Verschieben."
 
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "RUOlbw"
-msgid "Chapters you finished"
-msgstr "Abgeschlossene Kapitel"
+#: src/onboarding/steps/plan-shape.tsx
+#: src/syllabus/subject-aside.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "Do1Pfd"
+msgid "Chapters"
+msgstr "Kapitel"
 
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/onboarding/library-course-offer.tsx
@@ -7149,29 +7157,14 @@ msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, other {# Kapitel}}"
 
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "kMLujw"
-msgid "No mind maps yet"
-msgstr "Noch keine Mindmaps"
-
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "dNmkk9"
-msgid "Finish a chapter to make its mind map: its main ideas in one picture."
-msgstr "Schließe ein Kapitel ab, um seine Mindmap zu erstellen: die wichtigsten Ideen auf einen Blick."
-
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "Pf0Ru7"
-msgid "{count, plural, one {Your first one comes after {chapter}: # lesson left.} other {Your first one comes after {chapter}: # lessons left.}}"
-msgstr "{count, plural, one {Deine erste Mindmap kommt nach {chapter}: Noch # Lektion.} other {Deine erste Mindmap kommt nach {chapter}: Noch # Lektionen.}}"
-
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "t9hafN"
-msgid "Keep studying"
-msgstr "Weiterlernen"
-
-#: src/mind-maps/mind-maps-screen.tsx
 msgctxt "tv38K5"
 msgid "{count, plural, =0 {# maps} one {# map} other {# maps}}"
 msgstr "{count, plural, =0 {# Mindmaps} one {# Mindmap} other {# Mindmaps}}"
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "V-r52O"
+msgid "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan."
+msgstr "Das Wichtigste aus einem Kapitel in einem Bild. Für jedes Kapitel, das du abschließt, bekommst du eine Mindmap; für jedes andere Kapitel in deinem Plan kannst du eine erstellen."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "b3Jpo7"
@@ -10011,13 +10004,6 @@ msgid "We're choosing what to learn first and fitting it into your days. A new s
 msgstr "Wir wählen aus, was du zuerst lernst, und verteilen es auf deine Tage. Bei einem neuen Thema kann das ein bis zwei Minuten dauern."
 
 #: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-aside.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "Do1Pfd"
-msgid "Chapters"
-msgstr "Kapitel"
-
-#: src/onboarding/steps/plan-shape.tsx
 msgctxt "VJVQGr"
 msgid "Weight by area"
 msgstr "Gewichtung nach Bereich"
@@ -12412,6 +12398,16 @@ msgctxt "vT9wr2"
 msgid "{count, plural, one {Choose # option.} other {Choose # options.}}"
 msgstr "{count, plural, one {Wähle # Option aus.} other {Wähle # Optionen aus.}}"
 
+#: src/questions/test-out-aside.tsx
+msgctxt "4x1wtn"
+msgid "{passMark, number}% right skips the chapter. No feedback until the end."
+msgstr "Bei {passMark, number} % richtigen Antworten überspringst du das Kapitel. Feedback gibt es erst am Ende."
+
+#: src/questions/test-out-aside.tsx
+msgctxt "LzwC46"
+msgid "What a pass skips"
+msgstr "Was du beim Bestehen überspringst"
+
 #: src/questions/test-out-preparing.tsx
 msgctxt "2L2enW"
 msgid "A few questions on this chapter. Do well, and your plan skips what you already know."
@@ -12453,16 +12449,6 @@ msgstr "Das weißt du schon"
 msgctxt "ABnCBH"
 msgid "Not yet, and that's fine"
 msgstr "Noch nicht, und das ist okay"
-
-#: src/questions/test-out-run.tsx
-msgctxt "4x1wtn"
-msgid "{passMark, number}% right skips the chapter. No feedback until the end."
-msgstr "Bei {passMark, number} % richtigen Antworten überspringst du das Kapitel. Feedback gibt es erst am Ende."
-
-#: src/questions/test-out-run.tsx
-msgctxt "LzwC46"
-msgid "What a pass skips"
-msgstr "Was du beim Bestehen überspringst"
 
 #: src/questions/use-true-false-labels.ts
 msgctxt "L-_WP4"

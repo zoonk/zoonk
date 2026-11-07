@@ -8,15 +8,10 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
-import {
-  ChevronRightIcon,
-  GraduationCapIcon,
-  HistoryIcon,
-  LibraryIcon,
-  NetworkIcon,
-} from "lucide-react";
+import { ChevronRightIcon, GraduationCapIcon, HistoryIcon, LibraryIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DrawerCloseButton } from "../_components/details-drawer";
+import { KindIcon } from "../_components/kind-tile";
 import {
   ListGroup,
   ListRowContent,
@@ -39,9 +34,7 @@ import { JourneyPathList } from "./journey-path-list";
 import { PATH_ROW_CLASS, PATH_ROW_LEADING_CLASS } from "./journey-phase-events";
 import { useRoadmapPhases } from "./use-roadmap";
 
-type MoreLinks = Pick<JourneyPathLinks, "exam"> & { mindMaps: string | null };
-
-type PathLinks = JourneyPathLinks & { completedLessons: string | null };
+type PathLinks = JourneyPathLinks & { completedLessons: string | null; mindMaps: string | null };
 
 function PathDetail() {
   const t = useExtracted();
@@ -101,8 +94,7 @@ function FullCourseRow({ href }: { href: string }) {
   );
 }
 
-/** From `lg` the sidebar holds the same way in. */
-export function CompletedLessonsPathRow({ href }: { href: string | null }) {
+function CompletedLessonsPathRow({ href }: { href: string | null }) {
   const t = useExtracted();
 
   if (!href) {
@@ -113,6 +105,34 @@ export function CompletedLessonsPathRow({ href }: { href: string | null }) {
     <PathLinkRow className="lg:hidden" href={href} icon={<HistoryIcon className="size-4" />}>
       {t("Completed lessons")}
     </PathLinkRow>
+  );
+}
+
+function MindMapsPathRow({ href }: { href: string | null }) {
+  const t = useExtracted();
+
+  if (!href) {
+    return null;
+  }
+
+  return (
+    <PathLinkRow className="lg:hidden" href={href} icon={<KindIcon kind="mindMap" />}>
+      {t("Mind maps")}
+    </PathLinkRow>
+  );
+}
+
+/** From `lg` the sidebar holds the same ways in. */
+export function PlanPlaceRows({
+  links,
+}: {
+  links: Pick<PathLinks, "completedLessons" | "mindMaps">;
+}) {
+  return (
+    <>
+      <CompletedLessonsPathRow href={links.completedLessons} />
+      <MindMapsPathRow href={links.mindMaps} />
+    </>
   );
 }
 
@@ -134,7 +154,7 @@ export function PathSection({
         <PathDetail />
       </PageSectionHeader>
 
-      <CompletedLessonsPathRow href={links.completedLessons} />
+      <PlanPlaceRows links={links} />
       {alphabet && <AlphabetRow alphabet={alphabet.link} onSkip={alphabet.onSkip} />}
 
       <JourneyPathList links={links} />
@@ -143,10 +163,10 @@ export function PathSection({
   );
 }
 
-export function MoreSection({ links }: { links: MoreLinks }) {
+export function MoreSection({ links }: { links: Pick<JourneyPathLinks, "exam"> }) {
   const t = useExtracted();
 
-  if (!links.exam && !links.mindMaps) {
+  if (!links.exam) {
     return null;
   }
 
@@ -162,31 +182,16 @@ export function MoreSection({ links }: { links: MoreLinks }) {
       </PageSectionHeader>
 
       <ListGroup>
-        {links.exam && (
-          <ListRowLink href={links.exam}>
-            <ListRowLeading>
-              <ListRowIcon>
-                <GraduationCapIcon />
-              </ListRowIcon>
-            </ListRowLeading>
-            <ListRowContent>
-              <ListRowTitle>{t("About the exam")}</ListRowTitle>
-            </ListRowContent>
-          </ListRowLink>
-        )}
-
-        {links.mindMaps && (
-          <ListRowLink href={links.mindMaps}>
-            <ListRowLeading>
-              <ListRowIcon>
-                <NetworkIcon />
-              </ListRowIcon>
-            </ListRowLeading>
-            <ListRowContent>
-              <ListRowTitle>{t("Mind maps")}</ListRowTitle>
-            </ListRowContent>
-          </ListRowLink>
-        )}
+        <ListRowLink href={links.exam}>
+          <ListRowLeading>
+            <ListRowIcon>
+              <GraduationCapIcon />
+            </ListRowIcon>
+          </ListRowLeading>
+          <ListRowContent>
+            <ListRowTitle>{t("About the exam")}</ListRowTitle>
+          </ListRowContent>
+        </ListRowLink>
       </ListGroup>
     </PageSection>
   );

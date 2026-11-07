@@ -1,5 +1,6 @@
 "use client";
 
+import { MainFinishedChapterMaps } from "@/components/learn/main-finished-chapter-map";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { useRouter } from "@/i18n/navigation";
 import { type LessonSessionContext } from "@/lib/session/lesson-session-context";
@@ -40,19 +41,21 @@ export function useLessonSessionSlots({
       // The player sits outside the learning tabs, so the moment brings main's adapters along.
       completion: ({ completion, onRetry }) => (
         <MainLearnProvider>
-          <LessonMoment
-            buddy={buddy}
-            completion={completion}
-            onContinue={navigation.continueSession}
-            onRetry={onRetry}
-            onStartTestOut={(chapterId) =>
-              session.goalId
-                ? startTestOut({ chapterId, fromSession: true, goalId: session.goalId })
-                : Promise.resolve({ status: "failed" })
-            }
-            onStop={navigation.stop}
-            session={session}
-          />
+          <MainFinishedChapterMaps>
+            <LessonMoment
+              buddy={buddy}
+              completion={completion}
+              onContinue={navigation.continueSession}
+              onRetry={onRetry}
+              onStartTestOut={(chapterId) =>
+                session.goalId
+                  ? startTestOut({ chapterId, fromSession: true, goalId: session.goalId })
+                  : Promise.resolve({ status: "failed" })
+              }
+              onStop={navigation.stop}
+              session={session}
+            />
+          </MainFinishedChapterMaps>
         </MainLearnProvider>
       ),
       completionHeader: ({ completion, menu }) =>

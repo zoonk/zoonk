@@ -21,7 +21,8 @@ export type LessonLimit =
   | { period: "day" | "month" | "total"; status: "limitReached"; tier: EntitlementTier }
   | SignUpRequired;
 
-export type MindMapLimit = LessonLimit;
+/** `lessons` when what ran out is the lessons a map writes first, not the maps. */
+export type MindMapLimit = LessonLimit & { lessons?: boolean };
 
 export type OutlineLimit = LessonLimit;
 
@@ -237,7 +238,16 @@ export function MindMapLimitNotice({
   limit,
   ...props
 }: LimitNoticeProps & { limit: MindMapLimit }) {
-  return <LimitNoticeBody {...props} limit={limit} message={useMindMapLimitMessage(limit)} />;
+  const lessonMessage = useLessonLimitMessage(limit);
+  const mapMessage = useMindMapLimitMessage(limit);
+
+  return (
+    <LimitNoticeBody
+      {...props}
+      limit={limit}
+      message={limit.lessons ? lessonMessage : mapMessage}
+    />
+  );
 }
 
 export function OutlineLimitNotice({

@@ -3,6 +3,7 @@
 import { LESSON_FEEDBACK_SLOTS } from "@/components/feedback/lesson-feedback-slots";
 import { LearningLink } from "@/components/learn/learning-link";
 import { type TutorViewer } from "@/components/learn/main-ask-tutor";
+import { MainFinishedChapterMaps } from "@/components/learn/main-finished-chapter-map";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useSignUpHref } from "@/components/learn/use-sign-up-href";
@@ -22,6 +23,7 @@ import { trackEvent } from "@zoonk/core/analytics/client";
 import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { type ChallengeTeam } from "@zoonk/core/library/challenges/team";
 import { useAppLocale } from "@zoonk/learn/locale";
+import { FinishedChapterMoment } from "@zoonk/learn/mind-maps/finished-chapter";
 import { LessonPlayerProvider, type LessonPlayerProviderProps } from "@zoonk/player/lesson";
 import { LessonPlayerShell } from "@zoonk/player/lesson/shell";
 import {
@@ -50,6 +52,16 @@ function createCeremonySlot(buddy: TutorViewer["buddy"]): Pick<LessonPlayerSlots
     ),
   };
 }
+
+const FINISHED_CHAPTER_SLOT: Pick<LessonPlayerSlots, "finishedChapter"> = {
+  finishedChapter: (chapter) => (
+    <MainLearnProvider>
+      <MainFinishedChapterMaps>
+        <FinishedChapterMoment chapter={chapter} />
+      </MainFinishedChapterMaps>
+    </MainLearnProvider>
+  ),
+};
 
 function createAdapters({
   lessonId,
@@ -134,6 +146,7 @@ function LessonPlayerVisit({
   const slots = useMemo(
     () => ({
       ...LESSON_FEEDBACK_SLOTS,
+      ...FINISHED_CHAPTER_SLOT,
       ...createCeremonySlot(buddy),
       ...sessionSlots,
       ...endingSlots,

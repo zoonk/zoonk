@@ -1,67 +1,81 @@
 "use client";
 
-import { type MindMapStatus } from "@zoonk/core/mind-maps/contract";
+import { type ChapterMindMapView, type MindMapStatus } from "@zoonk/core/mind-maps/contract";
 import { useState, useTransition } from "react";
 import { type MindMapLimit } from "../_components/help-limit-notice";
 import { usePoll } from "../_utils/use-poll";
 import { type MindMapActions, type MindMapRequestOutcome } from "./mind-map-actions";
 
-const POLL_MS = 4000;
+const DRAWING_POLL_MS = 4000;
+const WRITING_POLL_MS = 15_000;
+const WRITING_TIMEOUT_MS = 30 * 60 * 1000;
 
 export type MindMapShown = MindMapStatus | "refused" | "unreachable";
 
-function getShown({
-  arriving,
-  isStuck,
-  shown,
-}: {
-  arriving: boolean;
-  isStuck: boolean;
-  shown: MindMapShown;
-}): MindMapShown {
-  if (isStuck) {
+type Local = { limit?: MindMapLimit; shown: MindMapShown };
+
+function getServedKey(view: ChapterMindMapView): string {
+  return `${view.status}:${view.image?.url ?? ""}`;
+}
+
+function getShownAfterRequest(outcome: Exclude<MindMapRequestOutcome, { status: "refused" }>) {
+  if (outcome.status === "failed") {
     return "unreachable";
   }
 
-  return arriving ? "drawing" : shown;
+  return outcome.status === "unavailable" ? "failed" : outcome.status;
 }
 
+/** Follows the map from the tap until it's ready, then reads it, so the row needs no page reload. */
 export function useMindMapRequest({
   actions,
-  cap = null,
-  chapterId,
-  status,
+  view: served,
 }: {
   actions: MindMapActions;
-  cap?: MindMapLimit | null;
-  chapterId: string;
-  status: MindMapStatus;
+  view: ChapterMindMapView;
 }) {
-  const [local, setLocal] = useState<{ limit?: MindMapLimit; shown: MindMapShown } | null>(null);
+  const [view, setView] = useState(served);
+  const [servedKey, setServedKey] = useState(() => getServedKey(served));
+  const [local, setLocal] = useState<Local | null>(null);
   const [isPending, startTransition] = useTransition();
-  const shown: MindMapShown = status === "ready" ? "ready" : (local?.shown ?? status);
-  const arriving = shown === "ready" && status !== "ready";
+
+  if (getServedKey(served) !== servedKey) {
+    setServedKey(getServedKey(served));
+    setView(served);
+    setLocal(null);
+  }
+
+  const shown = local?.shown ?? view.status;
+  const { chapterId } = view;
+
+  const showReady = async (): Promise<boolean> => {
+    const next = await actions.read(chapterId).catch(() => null);
+
+    if (!next) {
+      return false;
+    }
+
+    setView(next);
+    setLocal(null);
+    return true;
+  };
 
   const poll = usePoll({
-    active: shown === "drawing" || arriving,
-    intervalMs: POLL_MS,
+    active: shown === "drawing" || shown === "writingLessons",
+    intervalMs: shown === "writingLessons" ? WRITING_POLL_MS : DRAWING_POLL_MS,
+    key: shown,
     onPoll: async () => {
-      if (arriving) {
-        actions.refresh();
-        return;
-      }
-
       const next = await actions.readStatus(chapterId);
 
-      if (next === null) {
-        throw new Error("The map's status couldn't be read.");
+      if (next === null || (next === "ready" && !(await showReady()))) {
+        throw new Error("The map couldn't be read.");
       }
 
-      if (next !== "drawing") {
+      if (next !== "ready" && next !== shown) {
         setLocal({ shown: next });
-        actions.refresh();
       }
     },
+    timeoutMs: shown === "writingLessons" ? WRITING_TIMEOUT_MS : undefined,
   });
 
   const create = () =>
@@ -71,13 +85,17 @@ export function useMindMapRequest({
         .catch((): MindMapRequestOutcome => ({ status: "failed" }));
 
       if (outcome.status === "ready") {
-        actions.refresh();
+        if (!(await showReady())) {
+          setLocal({ shown: "unreachable" });
+        }
+
+        return;
       }
 
       setLocal(
         outcome.status === "refused"
           ? { limit: outcome.limit, shown: "refused" }
-          : { shown: outcome.status === "failed" ? "unreachable" : outcome.status },
+          : { shown: getShownAfterRequest(outcome) },
       );
     });
 
@@ -86,8 +104,9 @@ export function useMindMapRequest({
   return {
     create,
     isPending,
-    limit: local?.limit ?? cap,
+    limit: local?.limit ?? null,
     retry: isStuck ? poll.restart : create,
-    shown: getShown({ arriving, isStuck, shown }),
+    shown: isStuck ? "unreachable" : shown,
+    view,
   };
 }

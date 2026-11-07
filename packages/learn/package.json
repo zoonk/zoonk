@@ -84,6 +84,7 @@
     "./messages/*.po": "./messages/*.po",
     "./meter": "./src/_components/meter.tsx",
     "./mind-maps": "./src/mind-maps/mind-maps-screen.tsx",
+    "./mind-maps/finished-chapter": "./src/mind-maps/finished-chapter-map.tsx",
     "./picture-box": "./src/_components/picture-box.ts",
     "./question-tutor": "./src/questions/question-tutor.ts",
     "./topic-outline": "./src/topic-outline/topic-outline-actions.ts",

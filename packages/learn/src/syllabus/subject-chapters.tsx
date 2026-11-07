@@ -1,6 +1,7 @@
 "use client";
 
 import { type SyllabusChapter } from "@zoonk/core/view-models/syllabus/contract";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Collapsible,
   CollapsibleContent,
@@ -10,6 +11,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDownIcon, PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { KindIcon } from "../_components/kind-tile";
 import {
   LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
@@ -25,6 +27,7 @@ import {
   PageSectionTitle,
 } from "../_components/page";
 import { StatusMark } from "../_components/status-mark";
+import { LearnLink } from "../learn-link";
 import { SyllabusChapterRow } from "./syllabus-chapter-row";
 
 const CHAPTERS_TITLE_ID = "subject-chapters-title";
@@ -109,12 +112,28 @@ function DoneChapters({
   );
 }
 
+function MindMapsLink({ href }: { href: string }) {
+  const t = useExtracted();
+
+  return (
+    <LearnLink
+      className={cn(buttonVariants({ size: "sm", variant: "ghost" }), "-my-1 -mr-2.5")}
+      href={href}
+    >
+      <KindIcon kind="mindMap" />
+      {t("Mind maps")}
+    </LearnLink>
+  );
+}
+
 export function SubjectChapters({
   chapterHref,
   chapters,
+  mindMapsHref,
 }: {
   chapterHref: (chapterId: string) => string;
   chapters: readonly SyllabusChapter[];
+  mindMapsHref: string | null;
 }) {
   const t = useExtracted();
   const [showAll, setShowAll] = useState(false);
@@ -132,9 +151,15 @@ export function SubjectChapters({
     <PageSection aria-labelledby={CHAPTERS_TITLE_ID}>
       <PageSectionHeader>
         <PageSectionTitle id={CHAPTERS_TITLE_ID}>{t("Chapters")}</PageSectionTitle>
-        <PageSectionDetail>
-          {t("{done, number} of {total, number}", { done: studied.length, total: chapters.length })}
-        </PageSectionDetail>
+        <span className="flex items-center gap-3">
+          <PageSectionDetail>
+            {t("{done, number} of {total, number}", {
+              done: studied.length,
+              total: chapters.length,
+            })}
+          </PageSectionDetail>
+          {mindMapsHref && <MindMapsLink href={mindMapsHref} />}
+        </span>
       </PageSectionHeader>
 
       <ul className={LIST_GROUP_CLASS}>

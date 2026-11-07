@@ -156,7 +156,6 @@ msgstr "하루 학습 시간"
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/language/unit/practice-conversation.tsx
-#: src/mind-maps/mind-maps-screen.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
@@ -236,6 +235,7 @@ msgstr "지금 틀려 보면 나중에 더 잘 기억할 수 있어요."
 #: src/_components/plus-lock.tsx
 #: src/challenge/challenge-plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/mind-maps/mind-map-row.tsx
 #: src/mock/mock-chooser-page.tsx
 #: src/onboarding/entry/goal-limit-notice.tsx
 #: src/plan/plan-suggestion.tsx
@@ -399,8 +399,8 @@ msgstr "{done, number}/{total, number}"
 #: src/language/conversation/call-problem.tsx
 #: src/language/conversation/dropped-call-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-#: src/mind-maps/mind-map-card.tsx
-#: src/mind-maps/mind-map-tiles.tsx
+#: src/mind-maps/finished-chapter-map.tsx
+#: src/mind-maps/mind-map-row.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/plan/plan-bases-advice.tsx
 #: src/plan/plan-bases-sheet.tsx
@@ -1883,7 +1883,6 @@ msgstr "인쇄"
 
 #: src/certificates/certificate-page.tsx
 #: src/memory/memory-screen.tsx
-#: src/mind-maps/mind-map-card.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "5q3qC0"
 msgid "Download"
@@ -2396,7 +2395,7 @@ msgid "{subject} · Chapter {number, number}"
 msgstr "{subject} · 챕터 {number, number}"
 
 #: src/chapter/chapter-header.tsx
-#: src/mind-maps/mind-map-tiles.tsx
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "sIR8OK"
 msgid "Chapter {number, number}"
 msgstr "챕터 {number, number}"
@@ -2835,6 +2834,7 @@ msgstr "채점이 포함된 에세이 연습은 Plus에서 이용할 수 있어�
 
 #: src/conversation/tutor-feature-offers.tsx
 #: src/language/today/language-today-section.tsx
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "JfG49w"
 msgid "Open"
 msgstr "열기"
@@ -4897,7 +4897,7 @@ msgid "Finished"
 msgstr "완료"
 
 #: src/journey/pace-details.tsx
-#: src/questions/test-out-run.tsx
+#: src/questions/test-out-aside.tsx
 msgctxt "FvhRwo"
 msgid "{count, plural, one {# lesson left} other {# lessons left}}"
 msgstr "{count, plural, other {레슨 #개 남음}}"
@@ -5066,19 +5066,19 @@ msgctxt "yPg8s6"
 msgid "Until"
 msgstr "종료일"
 
+#: src/journey/plan-sections.tsx
+#: src/mind-maps/mind-maps-screen.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "Z9Sg5E"
+msgid "Mind maps"
+msgstr "마인드맵"
+
 #. A menu or section of other options and links, like an app's “More” menu.
 #: src/journey/plan-sections.tsx
 #: src/onboarding/start-over-menu.tsx
 msgctxt "I5NMJ8"
 msgid "More"
 msgstr "더보기"
-
-#: src/journey/plan-sections.tsx
-#: src/mind-maps/mind-maps-screen.tsx
-#: src/syllabus/subject-aside.tsx
-msgctxt "Z9Sg5E"
-msgid "Mind maps"
-msgstr "마인드맵"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "djCOWA"
@@ -7024,54 +7024,19 @@ msgctxt "GGUKxA"
 msgid "Couldn't undo. Try again."
 msgstr "되돌리지 못했어요. 다시 시도해 보세요."
 
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "FZBGji"
-msgid "Full screen"
-msgstr "전체 화면"
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "X6Frhz"
-msgid "It takes about half a minute. You can leave this page; it'll be here."
-msgstr "약 30초 걸려요. 페이지를 나가도 나중에 여기서 볼 수 있어요."
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "DSQIYK"
-msgid "Drawing the mind map…"
-msgstr "마인드맵을 그리고 있어요…"
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "_E5BoN"
-msgid "The mind map couldn't be made this time."
-msgstr "이번에는 마인드맵을 만들지 못했어요."
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "RIuQL5"
-msgid "Mind map"
-msgstr "마인드맵"
-
-#: src/mind-maps/mind-map-card.tsx
+#: src/mind-maps/finished-chapter-map.tsx
+#: src/mind-maps/mind-map-row.tsx
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "7FWazb"
 msgid "We couldn't reach the server. Check your connection."
 msgstr "서버에 연결하지 못했어요. 인터넷 연결을 확인해 보세요."
 
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "dTC4nf"
-msgid "Create the mind map"
-msgstr "마인드맵 만들기"
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "g3Jor0"
-msgid "The chapter's main ideas in one picture, to review at a glance."
-msgstr "챕터의 핵심 내용을 그림 한 장으로 한눈에 복습할 수 있어요."
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "Vxnu0A"
-msgid "Its picture had mistakes, so here's the mind map as text."
-msgstr "그림에 잘못된 부분이 있어 마인드맵을 글로 보여 드려요."
+#: src/mind-maps/finished-chapter-map.tsx
+msgctxt "2DLM14"
+msgid "Chapter finished"
+msgstr "챕터 완료"
 
 #: src/mind-maps/mind-map-description.tsx
-#: src/mind-maps/mind-map-tiles.tsx
 msgctxt "v3MXM4"
 msgid "Mind map of {chapter}"
 msgstr "{chapter} 마인드맵"
@@ -7091,30 +7056,65 @@ msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "요약:"
 
-#: src/mind-maps/mind-map-tiles.tsx
-msgctxt "1Ed5Dt"
-msgid "As text"
-msgstr "글로 보기"
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "TS33yQ"
+msgid "Its lessons get written first, so it takes a few minutes."
+msgstr "챕터의 레슨을 먼저 만들어야 해서 몇 분 정도 걸려요."
 
-#: src/mind-maps/mind-map-tiles.tsx
-msgctxt "yPO4Un"
-msgid "Drawing…"
-msgstr "그리고 있어요…"
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "rqcOg3"
+msgid "Its lessons get written first and count toward your free lessons."
+msgstr "챕터의 레슨을 먼저 만들고, 만든 레슨은 무료 레슨 한도에 포함돼요."
 
-#: src/mind-maps/mind-map-tiles.tsx
-msgctxt "VzzYJk"
-msgid "Create"
-msgstr "만들기"
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "AAKHvt"
+msgid "Its main ideas in one picture"
+msgstr "핵심 내용을 한 장의 그림으로"
 
-#: src/mind-maps/mind-map-tiles.tsx
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "Vxnu0A"
+msgid "Its picture had mistakes, so here's the mind map as text."
+msgstr "그림에 잘못된 부분이 있어 마인드맵을 글로 보여 드려요."
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "lY6tDJ"
+msgid "Mind map ready"
+msgstr "마인드맵 준비 완료"
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "1dO0rM"
+msgid "This takes a few minutes. You can leave; it'll be here."
+msgstr "몇 분 정도 걸려요. 화면을 나가도 나중에 여기서 확인할 수 있어요."
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "gAZmi-"
+msgid "Writing the lessons, then the mind map…"
+msgstr "레슨, 마인드맵 순서로 만들고 있어요…"
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "cdPOua"
+msgid "About half a minute. You can leave; it'll be here."
+msgstr "30초 정도 걸려요. 화면을 나가도 나중에 여기서 확인할 수 있어요."
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "DSQIYK"
+msgid "Drawing the mind map…"
+msgstr "마인드맵을 그리고 있어요…"
+
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "lZl8_B"
 msgid "It couldn't be made this time."
 msgstr "이번에는 만들지 못했어요."
 
-#: src/mind-maps/mind-map-tiles.tsx
-msgctxt "XUsrNt"
-msgid "We couldn't reach the server."
-msgstr "서버에 연결하지 못했어요."
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "RIuQL5"
+msgid "Mind map"
+msgstr "마인드맵"
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "VzzYJk"
+msgid "Create"
+msgstr "만들기"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -7132,14 +7132,22 @@ msgid "Zoom in"
 msgstr "확대"
 
 #: src/mind-maps/mind-map-viewer.tsx
+msgctxt "1Ed5Dt"
+msgid "As text"
+msgstr "글로 보기"
+
+#: src/mind-maps/mind-map-viewer.tsx
 msgctxt "Mxc7gH"
 msgid "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
 msgstr "두 손가락을 오므리거나 벌리거나, 스크롤하거나, +와 -를 눌러 확대·축소하세요. 드래그하거나 방향키로 이동하세요."
 
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "RUOlbw"
-msgid "Chapters you finished"
-msgstr "완료한 챕터"
+#: src/onboarding/steps/plan-shape.tsx
+#: src/syllabus/subject-aside.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "Do1Pfd"
+msgid "Chapters"
+msgstr "챕터"
 
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/onboarding/library-course-offer.tsx
@@ -7149,29 +7157,14 @@ msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, other {챕터 #개}}"
 
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "kMLujw"
-msgid "No mind maps yet"
-msgstr "아직 마인드맵이 없어요"
-
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "dNmkk9"
-msgid "Finish a chapter to make its mind map: its main ideas in one picture."
-msgstr "챕터를 마치면 핵심 내용을 그림 한 장에 담은 마인드맵을 만들 수 있어요."
-
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "Pf0Ru7"
-msgid "{count, plural, one {Your first one comes after {chapter}: # lesson left.} other {Your first one comes after {chapter}: # lessons left.}}"
-msgstr "{count, plural, other {{chapter}의 남은 레슨 #개를 마치면 첫 마인드맵을 만들 수 있어요.}}"
-
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "t9hafN"
-msgid "Keep studying"
-msgstr "계속 공부하기"
-
-#: src/mind-maps/mind-maps-screen.tsx
 msgctxt "tv38K5"
 msgid "{count, plural, =0 {# maps} one {# map} other {# maps}}"
 msgstr "{count, plural, =0 {마인드맵 #개} other {#개의 마인드맵}}"
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "V-r52O"
+msgid "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan."
+msgstr "챕터의 핵심 내용을 한 장의 그림으로 정리해요. 완료한 챕터마다 마인드맵이 만들어지고, 계획에 있는 다른 챕터의 마인드맵도 만들 수 있어요."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "b3Jpo7"
@@ -10011,13 +10004,6 @@ msgid "We're choosing what to learn first and fitting it into your days. A new s
 msgstr "먼저 배울 내용을 고르고 일정에 맞춰 계획을 짜고 있어요. 새 과목을 준비하는 데는 1~2분 정도 걸릴 수 있어요."
 
 #: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-aside.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "Do1Pfd"
-msgid "Chapters"
-msgstr "챕터"
-
-#: src/onboarding/steps/plan-shape.tsx
 msgctxt "VJVQGr"
 msgid "Weight by area"
 msgstr "영역별 비중"
@@ -12412,6 +12398,16 @@ msgctxt "vT9wr2"
 msgid "{count, plural, one {Choose # option.} other {Choose # options.}}"
 msgstr "{count, plural, other {보기 #개를 선택하세요.}}"
 
+#: src/questions/test-out-aside.tsx
+msgctxt "4x1wtn"
+msgid "{passMark, number}% right skips the chapter. No feedback until the end."
+msgstr "정답률이 {passMark, number}% 이상이면 챕터를 건너뛰어요. 피드백은 테스트가 끝난 뒤에 확인할 수 있어요."
+
+#: src/questions/test-out-aside.tsx
+msgctxt "LzwC46"
+msgid "What a pass skips"
+msgstr "통과하면 건너뛰는 내용"
+
 #: src/questions/test-out-preparing.tsx
 msgctxt "2L2enW"
 msgid "A few questions on this chapter. Do well, and your plan skips what you already know."
@@ -12453,16 +12449,6 @@ msgstr "이미 아는 내용이에요"
 msgctxt "ABnCBH"
 msgid "Not yet, and that's fine"
 msgstr "아직 몰라도 괜찮아요"
-
-#: src/questions/test-out-run.tsx
-msgctxt "4x1wtn"
-msgid "{passMark, number}% right skips the chapter. No feedback until the end."
-msgstr "정답률이 {passMark, number}% 이상이면 챕터를 건너뛰어요. 피드백은 테스트가 끝난 뒤에 확인할 수 있어요."
-
-#: src/questions/test-out-run.tsx
-msgctxt "LzwC46"
-msgid "What a pass skips"
-msgstr "통과하면 건너뛰는 내용"
 
 #: src/questions/use-true-false-labels.ts
 msgctxt "L-_WP4"

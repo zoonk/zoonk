@@ -1,4 +1,5 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
+import { MainFinishedChapterMaps } from "@/components/learn/main-finished-chapter-map";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
 import { redirect } from "@/i18n/navigation";
@@ -190,7 +191,9 @@ export default function TestOutPage(props: Props) {
   return (
     <Suspense fallback={<TestOutSkeleton />}>
       <MainLearnProvider>
-        <TestOutBody {...props} />
+        <MainFinishedChapterMaps>
+          <TestOutBody {...props} />
+        </MainFinishedChapterMaps>
       </MainLearnProvider>
     </Suspense>
   );

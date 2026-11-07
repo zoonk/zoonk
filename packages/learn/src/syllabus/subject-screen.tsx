@@ -253,12 +253,7 @@ export function SubjectScreen({
   return (
     <DetailLayout
       aside={
-        <SubjectAside
-          ask={ask?.row}
-          mindMapsHref={hrefs.mindMaps?.(subject.key) ?? null}
-          questionsSource={syllabus.questionsSource}
-          subject={subject}
-        />
+        <SubjectAside ask={ask?.row} questionsSource={syllabus.questionsSource} subject={subject} />
       }
       asideLabel={t("About this subject")}
       bar={
@@ -287,7 +282,11 @@ export function SubjectScreen({
       </DetailAside>
 
       <DetailContent>
-        <SubjectChapters chapterHref={hrefs.chapter} chapters={subject.chapters} />
+        <SubjectChapters
+          chapterHref={hrefs.chapter}
+          chapters={subject.chapters}
+          mindMapsHref={hrefs.mindMaps?.(subject.key) ?? null}
+        />
 
         {subject.topics.length > 0 && (
           <KnownTopicsReturnContext value={syllabus.knownTopicsReturn}>

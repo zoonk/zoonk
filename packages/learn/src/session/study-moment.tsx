@@ -13,6 +13,7 @@ import { type TestOutStart, TestOutStartLink } from "../_components/test-out-sta
 import { useFormatDuration } from "../_utils/time-format";
 import { SCREEN_STEADY_MS } from "../_utils/use-steady";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { FinishedChapterMoment } from "../mind-maps/finished-chapter-map";
 import { getOwnBrainPower } from "./block-brain-power";
 import { getBlockKind } from "./block-kind";
 import { DayMoment } from "./day-moment";
@@ -198,6 +199,8 @@ export function StudyMoment({
           }}
           reached={moment.reached}
         />
+
+        <FinishedChapterMoment chapter={moment.finishedChapter} />
 
         {nextBlock && (
           <NextBlock block={nextBlock} subject={Boolean(nextChapterId && onStartTestOut)} />

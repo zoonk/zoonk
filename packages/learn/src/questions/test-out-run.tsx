@@ -1,39 +1,33 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
+import { type FinishedChapter } from "@zoonk/core/sessions/completion-contract";
 import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
 import { NOTHING_REACHED } from "@zoonk/core/sessions/reached";
 import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
-import { BookOpenIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useMemo, useState, useTransition } from "react";
 import { AnswersSaveError } from "../_components/save-error";
-import {
-  StepCard,
-  StepDetail,
-  StepHeader,
-  StepRow,
-  StepRows,
-  StepTitle,
-} from "../_components/step-card";
+import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { Steps } from "../_components/steps";
 import { TaskMeta } from "../_components/task-meta";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { FinishedChapterMoment } from "../mind-maps/finished-chapter-map";
 import { DayMoment, StepWithDayMoment } from "../session/day-moment";
 import { type MomentCeremony, getCeremonyMoment } from "../session/moment-ceremony";
-import { type TaskFrameAside, TaskMainLink } from "../shell/task-frame";
+import { TaskMainLink } from "../shell/task-frame";
 import { clearAnswerDraft, keepDraftRequestId } from "./_utils/answer-draft";
 import { type ChoiceQuestionView } from "./choice-question";
 import { type ChoiceQuestionAnswer, ChoiceQuestionsRun } from "./choice-questions-run";
+import { useTestOutAside, useTestOutRule } from "./test-out-aside";
 import { UndoButton } from "./undo-button";
-
-const PERCENT = 100;
 
 export type TestOutOutcome =
   | (ProgressCelebration & {
       /** For its undo; null when nothing was skipped. */
       changeId: string | null;
       correct: number;
+      finishedChapter: FinishedChapter | null;
       passed: boolean;
       skippedLessons: number;
       total: number;
@@ -42,7 +36,9 @@ export type TestOutOutcome =
 
 type GradedTestOut = NonNullable<TestOutOutcome>;
 
-export type TestOutRecord = Omit<GradedTestOut, keyof ProgressCelebration> & { undone: boolean };
+export type TestOutRecord = Omit<GradedTestOut, keyof ProgressCelebration | "finishedChapter"> & {
+  undone: boolean;
+};
 
 export type TestOutTest = {
   passMark: number;
@@ -84,12 +80,15 @@ function ResultStep({
   return (
     <StepWithDayMoment
       dayMoment={
-        <DayMoment
-          buddy={buddy}
-          ceremony={outcome.ceremony}
-          missionMoment={null}
-          reached={outcome.reached}
-        />
+        <>
+          <DayMoment
+            buddy={buddy}
+            ceremony={outcome.ceremony}
+            missionMoment={null}
+            reached={outcome.reached}
+          />
+          {!undone && <FinishedChapterMoment chapter={outcome.finishedChapter} />}
+        </>
       }
     >
       <StepCard aria-live="polite" role="status">
@@ -162,50 +161,6 @@ function TestOutResult({
       ]}
     />
   );
-}
-
-function useTestOutRule(passMark: number): string {
-  const t = useExtracted();
-
-  return t("{passMark, number}% right skips the chapter. No feedback until the end.", {
-    passMark: Math.round(passMark * PERCENT),
-  });
-}
-
-function useTestOutAside({
-  chapterTitle,
-  lessonsLeft,
-  rule,
-}: {
-  chapterTitle: string;
-  lessonsLeft: number | null;
-  rule: string;
-}): TaskFrameAside {
-  const t = useExtracted();
-
-  return {
-    children: (
-      <>
-        <StepRows>
-          <StepRow>
-            <BookOpenIcon aria-hidden="true" />
-            <span className="min-w-0 flex-1 font-medium text-pretty">{chapterTitle}</span>
-            {lessonsLeft !== null && lessonsLeft > 0 && (
-              <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
-                {t("{count, plural, one {# lesson left} other {# lessons left}}", {
-                  count: lessonsLeft,
-                })}
-              </span>
-            )}
-          </StepRow>
-        </StepRows>
-
-        <p className="text-muted-foreground text-[0.8125rem] leading-5 text-pretty">{rule}</p>
-      </>
-    ),
-    label: t("What a pass skips"),
-    title: t("What a pass skips"),
-  };
 }
 
 function TestOutQuestions({
@@ -302,7 +257,13 @@ export function TestOutRun({
 
   const shown =
     outcome ??
-    (recorded && { ...recorded, ceremony: null, certificates: [], reached: NOTHING_REACHED });
+    (recorded && {
+      ...recorded,
+      ceremony: null,
+      certificates: [],
+      finishedChapter: null,
+      reached: NOTHING_REACHED,
+    });
 
   if (shown) {
     return (

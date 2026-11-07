@@ -156,7 +156,6 @@ msgstr "Tempo diário"
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/language/unit/practice-conversation.tsx
-#: src/mind-maps/mind-maps-screen.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
@@ -236,6 +235,7 @@ msgstr "Errar agora ajuda você a lembrar depois."
 #: src/_components/plus-lock.tsx
 #: src/challenge/challenge-plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/mind-maps/mind-map-row.tsx
 #: src/mock/mock-chooser-page.tsx
 #: src/onboarding/entry/goal-limit-notice.tsx
 #: src/plan/plan-suggestion.tsx
@@ -399,8 +399,8 @@ msgstr "{done, number} de {total, number}"
 #: src/language/conversation/call-problem.tsx
 #: src/language/conversation/dropped-call-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-#: src/mind-maps/mind-map-card.tsx
-#: src/mind-maps/mind-map-tiles.tsx
+#: src/mind-maps/finished-chapter-map.tsx
+#: src/mind-maps/mind-map-row.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/plan/plan-bases-advice.tsx
 #: src/plan/plan-bases-sheet.tsx
@@ -1883,7 +1883,6 @@ msgstr "Imprimir"
 
 #: src/certificates/certificate-page.tsx
 #: src/memory/memory-screen.tsx
-#: src/mind-maps/mind-map-card.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "5q3qC0"
 msgid "Download"
@@ -2396,7 +2395,7 @@ msgid "{subject} · Chapter {number, number}"
 msgstr "{subject} · Capítulo {number, number}"
 
 #: src/chapter/chapter-header.tsx
-#: src/mind-maps/mind-map-tiles.tsx
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "sIR8OK"
 msgid "Chapter {number, number}"
 msgstr "Capítulo {number, number}"
@@ -2835,6 +2834,7 @@ msgstr "A prática de redação com correção está incluída no Plus."
 
 #: src/conversation/tutor-feature-offers.tsx
 #: src/language/today/language-today-section.tsx
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "JfG49w"
 msgid "Open"
 msgstr "Abrir"
@@ -4897,7 +4897,7 @@ msgid "Finished"
 msgstr "Concluído"
 
 #: src/journey/pace-details.tsx
-#: src/questions/test-out-run.tsx
+#: src/questions/test-out-aside.tsx
 msgctxt "FvhRwo"
 msgid "{count, plural, one {# lesson left} other {# lessons left}}"
 msgstr "{count, plural, one {# aula restante} other {# aulas restantes}}"
@@ -5066,19 +5066,19 @@ msgctxt "yPg8s6"
 msgid "Until"
 msgstr "Até"
 
+#: src/journey/plan-sections.tsx
+#: src/mind-maps/mind-maps-screen.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "Z9Sg5E"
+msgid "Mind maps"
+msgstr "Mapas mentais"
+
 #. A menu or section of other options and links, like an app's “More” menu.
 #: src/journey/plan-sections.tsx
 #: src/onboarding/start-over-menu.tsx
 msgctxt "I5NMJ8"
 msgid "More"
 msgstr "Mais"
-
-#: src/journey/plan-sections.tsx
-#: src/mind-maps/mind-maps-screen.tsx
-#: src/syllabus/subject-aside.tsx
-msgctxt "Z9Sg5E"
-msgid "Mind maps"
-msgstr "Mapas mentais"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "djCOWA"
@@ -7024,54 +7024,19 @@ msgctxt "GGUKxA"
 msgid "Couldn't undo. Try again."
 msgstr "Não foi possível desfazer. Tente de novo."
 
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "FZBGji"
-msgid "Full screen"
-msgstr "Tela cheia"
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "X6Frhz"
-msgid "It takes about half a minute. You can leave this page; it'll be here."
-msgstr "Leva cerca de meio minuto. Você pode sair desta página; o mapa vai estar aqui."
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "DSQIYK"
-msgid "Drawing the mind map…"
-msgstr "Desenhando o mapa mental…"
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "_E5BoN"
-msgid "The mind map couldn't be made this time."
-msgstr "Não foi possível criar o mapa mental desta vez."
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "RIuQL5"
-msgid "Mind map"
-msgstr "Mapa mental"
-
-#: src/mind-maps/mind-map-card.tsx
+#: src/mind-maps/finished-chapter-map.tsx
+#: src/mind-maps/mind-map-row.tsx
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "7FWazb"
 msgid "We couldn't reach the server. Check your connection."
 msgstr "Não foi possível conectar ao servidor. Confira sua conexão."
 
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "dTC4nf"
-msgid "Create the mind map"
-msgstr "Criar o mapa mental"
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "g3Jor0"
-msgid "The chapter's main ideas in one picture, to review at a glance."
-msgstr "As ideias principais do capítulo em uma imagem, para revisar rapidinho."
-
-#: src/mind-maps/mind-map-card.tsx
-msgctxt "Vxnu0A"
-msgid "Its picture had mistakes, so here's the mind map as text."
-msgstr "A imagem tinha erros, então aqui está o mapa mental em texto."
+#: src/mind-maps/finished-chapter-map.tsx
+msgctxt "2DLM14"
+msgid "Chapter finished"
+msgstr "Capítulo concluído"
 
 #: src/mind-maps/mind-map-description.tsx
-#: src/mind-maps/mind-map-tiles.tsx
 msgctxt "v3MXM4"
 msgid "Mind map of {chapter}"
 msgstr "Mapa mental de {chapter}"
@@ -7091,30 +7056,65 @@ msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "Em resumo:"
 
-#: src/mind-maps/mind-map-tiles.tsx
-msgctxt "1Ed5Dt"
-msgid "As text"
-msgstr "Em texto"
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "TS33yQ"
+msgid "Its lessons get written first, so it takes a few minutes."
+msgstr "As aulas do capítulo são criadas primeiro, então leva alguns minutos."
 
-#: src/mind-maps/mind-map-tiles.tsx
-msgctxt "yPO4Un"
-msgid "Drawing…"
-msgstr "Desenhando…"
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "rqcOg3"
+msgid "Its lessons get written first and count toward your free lessons."
+msgstr "As aulas do capítulo são criadas primeiro e contam para o seu limite de aulas grátis."
 
-#: src/mind-maps/mind-map-tiles.tsx
-msgctxt "VzzYJk"
-msgid "Create"
-msgstr "Criar"
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "AAKHvt"
+msgid "Its main ideas in one picture"
+msgstr "As principais ideias do capítulo em uma imagem"
 
-#: src/mind-maps/mind-map-tiles.tsx
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "Vxnu0A"
+msgid "Its picture had mistakes, so here's the mind map as text."
+msgstr "A imagem tinha erros, então aqui está o mapa mental em texto."
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "lY6tDJ"
+msgid "Mind map ready"
+msgstr "Mapa mental pronto"
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "1dO0rM"
+msgid "This takes a few minutes. You can leave; it'll be here."
+msgstr "Isso leva alguns minutos. Pode sair; o mapa vai estar aqui."
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "gAZmi-"
+msgid "Writing the lessons, then the mind map…"
+msgstr "Criando as aulas e depois o mapa mental…"
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "cdPOua"
+msgid "About half a minute. You can leave; it'll be here."
+msgstr "Cerca de meio minuto. Pode sair; o mapa vai estar aqui."
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "DSQIYK"
+msgid "Drawing the mind map…"
+msgstr "Desenhando o mapa mental…"
+
+#: src/mind-maps/mind-map-row.tsx
 msgctxt "lZl8_B"
 msgid "It couldn't be made this time."
 msgstr "Não foi possível criar desta vez."
 
-#: src/mind-maps/mind-map-tiles.tsx
-msgctxt "XUsrNt"
-msgid "We couldn't reach the server."
-msgstr "Não foi possível conectar ao servidor."
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "RIuQL5"
+msgid "Mind map"
+msgstr "Mapa mental"
+
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "VzzYJk"
+msgid "Create"
+msgstr "Criar"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -7132,14 +7132,22 @@ msgid "Zoom in"
 msgstr "Aumentar zoom"
 
 #: src/mind-maps/mind-map-viewer.tsx
+msgctxt "1Ed5Dt"
+msgid "As text"
+msgstr "Em texto"
+
+#: src/mind-maps/mind-map-viewer.tsx
 msgctxt "Mxc7gH"
 msgid "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
 msgstr "Faça o gesto de pinça, role a tela ou use + e - para ajustar o zoom; arraste ou use as setas para mover."
 
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "RUOlbw"
-msgid "Chapters you finished"
-msgstr "Capítulos que você concluiu"
+#: src/onboarding/steps/plan-shape.tsx
+#: src/syllabus/subject-aside.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "Do1Pfd"
+msgid "Chapters"
+msgstr "Capítulos"
 
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/onboarding/library-course-offer.tsx
@@ -7149,29 +7157,14 @@ msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, one {# capítulo} other {# capítulos}}"
 
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "kMLujw"
-msgid "No mind maps yet"
-msgstr "Nenhum mapa mental ainda"
-
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "dNmkk9"
-msgid "Finish a chapter to make its mind map: its main ideas in one picture."
-msgstr "Conclua um capítulo para criar seu mapa mental: as ideias principais em uma imagem."
-
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "Pf0Ru7"
-msgid "{count, plural, one {Your first one comes after {chapter}: # lesson left.} other {Your first one comes after {chapter}: # lessons left.}}"
-msgstr "{count, plural, one {Seu primeiro mapa vem depois de {chapter}: falta # aula.} other {Seu primeiro mapa vem depois de {chapter}: faltam # aulas.}}"
-
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "t9hafN"
-msgid "Keep studying"
-msgstr "Continuar estudando"
-
-#: src/mind-maps/mind-maps-screen.tsx
 msgctxt "tv38K5"
 msgid "{count, plural, =0 {# maps} one {# map} other {# maps}}"
 msgstr "{count, plural, =0 {# mapas} one {# mapa} other {# mapas}}"
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "V-r52O"
+msgid "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan."
+msgstr "As principais ideias de um capítulo em uma imagem. Cada capítulo que você conclui ganha um mapa mental; você pode criar um para qualquer outro capítulo do seu plano."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "b3Jpo7"
@@ -10011,13 +10004,6 @@ msgid "We're choosing what to learn first and fitting it into your days. A new s
 msgstr "A gente está escolhendo o que você vai aprender primeiro e organizando tudo nos seus dias. Uma matéria nova pode levar um ou dois minutos."
 
 #: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-aside.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "Do1Pfd"
-msgid "Chapters"
-msgstr "Capítulos"
-
-#: src/onboarding/steps/plan-shape.tsx
 msgctxt "VJVQGr"
 msgid "Weight by area"
 msgstr "Peso por área"
@@ -12412,6 +12398,16 @@ msgctxt "vT9wr2"
 msgid "{count, plural, one {Choose # option.} other {Choose # options.}}"
 msgstr "{count, plural, one {Escolha # alternativa.} other {Escolha # alternativas.}}"
 
+#: src/questions/test-out-aside.tsx
+msgctxt "4x1wtn"
+msgid "{passMark, number}% right skips the chapter. No feedback until the end."
+msgstr "Ao acertar {passMark, number}%, você pula o capítulo. As respostas só são mostradas no final."
+
+#: src/questions/test-out-aside.tsx
+msgctxt "LzwC46"
+msgid "What a pass skips"
+msgstr "O que você pula ao passar"
+
 #: src/questions/test-out-preparing.tsx
 msgctxt "2L2enW"
 msgid "A few questions on this chapter. Do well, and your plan skips what you already know."
@@ -12453,16 +12449,6 @@ msgstr "Você já sabe isso"
 msgctxt "ABnCBH"
 msgid "Not yet, and that's fine"
 msgstr "Ainda não, e tudo bem"
-
-#: src/questions/test-out-run.tsx
-msgctxt "4x1wtn"
-msgid "{passMark, number}% right skips the chapter. No feedback until the end."
-msgstr "Ao acertar {passMark, number}%, você pula o capítulo. As respostas só são mostradas no final."
-
-#: src/questions/test-out-run.tsx
-msgctxt "LzwC46"
-msgid "What a pass skips"
-msgstr "O que você pula ao passar"
 
 #: src/questions/use-true-false-labels.ts
 msgctxt "L-_WP4"

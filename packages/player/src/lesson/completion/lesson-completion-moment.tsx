@@ -148,6 +148,7 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
           />
         )}
 
+        {isSaved && result?.finishedChapter && slots.finishedChapter?.(result.finishedChapter)}
         {isSaved && slots.completionActions?.(props)}
       </TaskBody>
 

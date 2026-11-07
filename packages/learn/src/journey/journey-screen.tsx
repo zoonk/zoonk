@@ -40,7 +40,7 @@ import { AdjustPlanButton, JourneyMenu } from "./journey-menu";
 import { NextOnPath } from "./next-on-path";
 import { PlanHeader } from "./plan-header";
 import { PlanRoadmap } from "./plan-roadmap";
-import { CompletedLessonsPathRow, MoreSection, PathSection, PhasesSheet } from "./plan-sections";
+import { MoreSection, PathSection, PhasesSheet, PlanPlaceRows } from "./plan-sections";
 
 export type { PlanEnd } from "../plan/plan-suggestion-context";
 export type { PlanActions, PlanChangeOutcome, PlanTutor } from "../plan/plan-context";
@@ -232,7 +232,7 @@ function JourneyBody({
 
           {structure ? (
             <SyllabusSection subjectHref={links.subject} syllabus={structure}>
-              <CompletedLessonsPathRow href={links.completedLessons} />
+              <PlanPlaceRows links={links} />
               {/* Unpicked choices are the suggestion's; from 72rem the aside's properties name the pick. */}
               <PlanChoiceLines
                 choices={plan.examChoices.filter((choice) => choice.subjects.length > 0)}
