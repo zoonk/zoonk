@@ -101,10 +101,14 @@ internal fun ScoreChart(
         }
 
         // Recharts' `preserveStartEnd` with a minimum gap: the first and last week, and those between that fit.
+        fun labelStart(index: Int): Float {
+            val width = weekLabels[index].size.width
+            return (x.toPixel(index.toDouble()) - width / 2f).coerceAtMost(size.width - width).coerceAtLeast(0f)
+        }
         var lastEnd = Float.NEGATIVE_INFINITY
-        val lastStart = x.toPixel((weeks.size - 1).toDouble()) - weekLabels.last().size.width / 2f
+        val lastStart = labelStart(weekLabels.lastIndex)
         weekLabels.forEachIndexed { index, label ->
-            val start = x.toPixel(index.toDouble()) - label.size.width / 2f
+            val start = labelStart(index)
             val isEdge = index == 0 || index == weekLabels.lastIndex
             if (isEdge || (start >= lastEnd + MIN_LABEL_GAP.toPx() && start + label.size.width + MIN_LABEL_GAP.toPx() <= lastStart)) {
                 drawText(label, topLeft = Offset(start, bottom + gap))
