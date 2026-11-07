@@ -1,6 +1,7 @@
 import { memoryCategorySchema, memorySourceSchema } from "@zoonk/core/memory/contract";
 import { planEffectSchema } from "@zoonk/core/plans/effect-contract";
 import { MemoryFactStatus, MemoryInsightKind, MemoryInsightStatus, MemoryOrigin } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const memoryFactSchema = z
@@ -19,7 +20,7 @@ const memoryFactSchema = z
       .datetime()
       .nullable()
       .meta({ description: "When a fact with an end, like an exam date, stops being true" }),
-    id: z.uuid(),
+    id: uuidSchema(),
     origin: z
       .enum(MemoryOrigin)
       .meta({ description: "The learner said it, or Zoonk noticed it from activity" }),
@@ -59,7 +60,7 @@ export const memoryFactDeletionSchema = z
 
 export const memoryChangeReversalSchema = z
   .object({
-    removedFactIds: z.array(z.uuid()).meta({ description: "Facts the undo took back" }),
+    removedFactIds: z.array(uuidSchema()).meta({ description: "Facts the undo took back" }),
     restored: z.array(memoryFactSchema).meta({ description: "Facts the undo brought back" }),
   })
   .meta({ id: "MemoryChangeReversal" });
@@ -73,8 +74,7 @@ export const memoryExportSchema = z
         deletedAt: z.iso.datetime().nullable(),
         lastUsedAt: z.iso.datetime().nullable(),
         status: z.enum(MemoryFactStatus),
-        supersededById: z
-          .uuid()
+        supersededById: uuidSchema()
           .nullable()
           .meta({ description: "The fact that replaced this one" }),
       }),
@@ -82,7 +82,7 @@ export const memoryExportSchema = z
     insights: z.array(
       z.object({
         createdAt: z.iso.datetime(),
-        id: z.uuid(),
+        id: uuidSchema(),
         kind: z.enum(MemoryInsightKind),
         message: z.string(),
         status: z.enum(MemoryInsightStatus),
@@ -94,8 +94,8 @@ export const memoryExportSchema = z
 export const memoryInsightSchema = z
   .object({
     createdAt: z.iso.datetime(),
-    goalId: z.uuid().nullable(),
-    id: z.uuid(),
+    goalId: uuidSchema().nullable(),
+    id: uuidSchema(),
     kind: z
       .enum(MemoryInsightKind)
       .meta({ description: "A study tip, a plan change offer or a schedule idea" }),
@@ -106,7 +106,7 @@ export const memoryInsightSchema = z
         effect: planEffectSchema
           .nullable()
           .meta({ description: "Lessons the change adds and how it moves the plan's end date" }),
-        id: z.uuid(),
+        id: uuidSchema(),
         status: z
           .enum(["applied", "proposed"])
           .meta({

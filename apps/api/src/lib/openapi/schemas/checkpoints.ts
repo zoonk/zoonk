@@ -3,6 +3,7 @@ import { EXAM_DAY_CHECKLIST } from "@zoonk/core/checkpoints/weekly-challenge-rul
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
 import { BuddyGlasses } from "@zoonk/db";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import {
   checkpointEndedWithoutQuestionsSchema,
@@ -40,7 +41,7 @@ const rewardSchema = z
 export const checkpointResponseSchema = z
   .object({
     answeredQuestions: studyBlockDetailResponseSchema.shape.answeredQuestions,
-    blockId: z.uuid(),
+    blockId: uuidSchema(),
     checklist: z
       .array(z.enum(EXAM_DAY_CHECKLIST))
       .meta({ description: "Before a mock: keys to rehearse exam day, ticked off on the device" }),
@@ -59,8 +60,7 @@ export const checkpointResponseSchema = z
           "Right answers needed to win. A boss's duel is over once it's decided, won when they're reached (his shield breaks) or lost when its misses leave too few questions to reach them: ask no more questions and finish its block, the questions left unasked. A weekly challenge asks every question",
       }),
     phase: checkpointPhaseSchema.nullable(),
-    planItemId: z
-      .uuid()
+    planItemId: uuidSchema()
       .nullable()
       .meta({ description: "The plan item it plays: its challenge, before and on its day" }),
     questions: studyBlockDetailResponseSchema.shape.questions,
@@ -89,7 +89,7 @@ export const checkpointResponseSchema = z
           "A boss that wasn't won, as things stand now: a new try tomorrow (it finished today), open (back in the plan) or passed (a later try won)",
       }),
     reward: rewardSchema,
-    sessionId: z.uuid(),
+    sessionId: uuidSchema(),
     status: studyBlockSchema.shape.status,
     timeLimitMinutes: z.number().int().min(0).nullable(),
     title: z.string().nullable(),
@@ -99,8 +99,7 @@ export const checkpointResponseSchema = z
 
 export const checkpointMoveResponseSchema = z
   .object({
-    changeId: z
-      .uuid()
+    changeId: uuidSchema()
       .nullable()
       .meta({ description: "The plan change to undo it with; null before the plan is built" }),
     date: z.iso.date().meta({ description: "The learner-local day it moved to: the next Monday" }),
@@ -109,8 +108,7 @@ export const checkpointMoveResponseSchema = z
 
 export const challengeResponseSchema = z
   .object({
-    blockId: z
-      .uuid()
+    blockId: uuidSchema()
       .nullable()
       .meta({
         description: "Today's block for it, or the last one it was played in; null before its day",
@@ -164,7 +162,7 @@ export const challengeResponseSchema = z
         description:
           "A mock the length of the real exam; a short one is half of it. False outside mocks",
       }),
-    goalId: z.uuid(),
+    goalId: uuidSchema(),
     kind: checkpointKindSchema,
     leftOut: mockLeftOutSchema,
     locked: z
@@ -186,7 +184,7 @@ export const challengeResponseSchema = z
         "Right answers that win a boss, null while its size is unknown; a call's goals got across, null until written. A weekly challenge pays for finishing",
     }),
     phase: checkpointPhaseSchema.nullable(),
-    planItemId: z.uuid(),
+    planItemId: uuidSchema(),
     questions: unknownSizeSchema.meta({
       description: "Null while unknown; 0 for a call or a checkpoint with nothing to ask yet",
     }),

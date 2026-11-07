@@ -117,8 +117,8 @@
   "player_offer_tricky": "9729d82f8f1e74fab0b81b90e119e5fa77b9eb524bbbc545e6f76e913f923310",
   "player_open_failed": "b270d74305b333c0ca1ead11a37618efef9a884ecee56a365c2f384876ff7c24",
   "player_opening_lesson": "b02985bdf5b120bc5495c7f9f2d8a545150cb7a1225087b0b2a8204cac14be50",
+  "player_opening_map_hint": "07cd0b0b45a0b0dd30f1d847544492d23f3cbf37b5a8c8e3687bcde41ff59dcc",
   "player_opening_map_idea": "76251a81d1499e8a9f3923f8ce0bac1c49e0629507581f49fc472b04e532a3e2",
-  "player_opening_map_ideas": "e4e0b639460c9121d946a724bf8fd820a5967ac5aa71c16cc8b1ee7bb0a539cb",
   "player_opening_map_show": "cffdbadf53dc3453f6de66db4d176ccd32e8d05fbe0ae20f765e60ecbb691940",
   "player_part_of": "2ebc2f89e89eb350f48413be2e4b245283b004041472fb1f6cd6384c8f7ee0e0",
   "player_phase_draw": "7dc325b76503a3639b329655a1775ea8e86e31fc8c9abf7aba72d3686b735db1",
@@ -204,12 +204,8 @@
     <string name="player_idea_position">Idea %1$s de %2$s</string>
     <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
     <string name="player_example">Ejemplo</string>
-    <!-- Under the small map of the lesson's ideas on its opening screen, before the learner has studied them. -->
-    <plurals name="player_opening_map_ideas">
-        <item quantity="one">%1$s idea por descubrir en esta lección</item>
-        <item quantity="many">%1$s ideas por descubrir en esta lección</item>
-        <item quantity="other">%1$s ideas por descubrir en esta lección</item>
-    </plurals>
+    <!-- Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers. -->
+    <string name="player_opening_map_hint">Toca una idea para ver de qué trata</string>
     <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
     <string name="player_opening_map_idea">Idea %1$s</string>
     <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->

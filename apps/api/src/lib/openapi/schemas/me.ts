@@ -1,6 +1,7 @@
 import { emailAccountDeletionCredentialsSchema } from "@zoonk/auth/email-deletion-contract";
 import { NAME_MAX_LENGTH } from "@zoonk/auth/name-rules";
 import { nativeAppleCredentialsSchema } from "@zoonk/auth/native-apple-contract";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { usernameCandidateSchema } from "./usernames";
 
@@ -58,7 +59,7 @@ const meUserSchema = z
     createdAt: z.iso.datetime().meta({ description: "User creation timestamp" }),
     email: z.email().meta({ description: "Email address" }),
     emailVerified: z.boolean().meta({ description: "Whether the email has been verified" }),
-    id: z.uuid().meta({ description: "User ID" }),
+    id: uuidSchema().meta({ description: "User ID" }),
     image: z.string().nullable().meta({ description: "Profile image URL" }),
     name: z.string().meta({ description: "Display name" }),
     updatedAt: z.iso.datetime().meta({ description: "User update timestamp" }),
@@ -73,7 +74,7 @@ const meSubscriptionSchema = z
       .boolean()
       .nullable()
       .meta({ description: "Whether cancellation is scheduled" }),
-    id: z.uuid().meta({ description: "Subscription ID" }),
+    id: uuidSchema().meta({ description: "Subscription ID" }),
     periodEnd: z.iso.datetime().nullable().meta({ description: "Current billing period end" }),
     periodStart: z.iso.datetime().nullable().meta({ description: "Current billing period start" }),
     plan: z.string().meta({ description: "Subscription plan" }),

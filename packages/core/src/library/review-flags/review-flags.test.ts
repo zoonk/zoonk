@@ -2,9 +2,13 @@ import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  examBlueprintFixture,
+  sourceFixture,
+  unnoticedSourceChangeFixture,
+} from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { assert, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getSession } from "../../users/get-session";
 import { saveLessonContent } from "../lessons/_utils/save-lesson-content";
@@ -28,6 +32,8 @@ const LAW_TEXT = [
   "Art. 14. A posse em cargo público dependerá de prévia inspeção médica oficial.",
 ].join("\n");
 
+const NEW_LAW_HASH = "law-after-the-change";
+
 const PROVENANCE = {
   generatedAt: new Date(),
   model: "test/model",
@@ -39,16 +45,21 @@ function daysAgo(days: number) {
   return new Date(Date.now() - days * DAY_MS);
 }
 
-function noticeFor(sourceId: string) {
-  return recordSourceChangeNotice({
-    contentHash: `new-${crypto.randomUUID()}`,
+async function noticeFor(sourceId: string) {
+  const owed = await unnoticedSourceChangeFixture({ previousHash: "old", sourceId });
+
+  const notice = await recordSourceChangeNotice({
+    ...owed,
+    contentHash: NEW_LAW_HASH,
     fields: ["text"],
     language: "pt",
     message: "A lei mudou: a posse agora ocorre em quinze dias.",
-    previousHash: "old",
     provenance: PROVENANCE,
     sourceId,
   });
+
+  assert(notice, "The owed change should get its notice.");
+  return notice;
 }
 
 async function lawWithDependents() {
@@ -75,7 +86,7 @@ async function lawWithDependents() {
       sourceCitation: "Lei nº 8.112, Art. 13",
       sourceId: law.id,
     }),
-    itemFixture({ generatedAt: daysAgo(-1), skillId: skill.id, sourceId: law.id }),
+    itemFixture({ skillId: skill.id, sourceHash: NEW_LAW_HASH, sourceId: law.id }),
     libraryStepFixture({ generatedAt: daysAgo(3), lessonId: citing.id, sourceId: law.id }),
     libraryStepFixture({ generatedAt: daysAgo(3), lessonId: other.id }),
   ]);
@@ -168,7 +179,7 @@ describe("a rewritten lesson", () => {
           content: { text: "A posse ocorre em quinze dias.", title: "A posse" },
           kind: "explanation",
           mathItem: null,
-          provenance: PROVENANCE,
+          provenance: { ...PROVENANCE, sources: [] },
           skillId: null,
         },
       ],
@@ -211,6 +222,7 @@ describe("the flag sweep", () => {
           url: law.url,
         },
         preparedAt: expect.any(Date),
+        sourceHash: law.contentHash,
         sourceId: law.id,
         style: "cebraspe",
       },

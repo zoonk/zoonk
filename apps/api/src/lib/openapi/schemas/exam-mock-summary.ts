@@ -1,11 +1,11 @@
 import { MOCK_PURPOSES, MOCK_SCORINGS, mockShapeSchema } from "@zoonk/core/exams/mocks/contract";
 import { type ExamMockSummary } from "@zoonk/core/exams/view/contract";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 export const examMockSummarySchema = z
   .object({
-    blockId: z
-      .uuid()
+    blockId: uuidSchema()
       .nullable()
       .meta({
         description:

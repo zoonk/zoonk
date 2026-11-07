@@ -117,8 +117,8 @@
   "player_offer_tricky": "9c8c8fa75e2ca30dcb9d3b7639563e84a18f670709b9c1d1b545cc990af2ec30",
   "player_open_failed": "2b81deb6cd9d5c6bcbffd3d0b07ea80c46c104e0fd6d1211f9b88fe066ac4650",
   "player_opening_lesson": "2def0126b2d22c708245cd90e5f53e62c3a2b0b3c0f3962731e13f63c38a2e60",
+  "player_opening_map_hint": "cfc373e9e872bbb5d2c44727cfafdfb0982c8ee832d630deacc3bc09f2fbabb9",
   "player_opening_map_idea": "d43b3d5ae0970a40f4351ebc83ee52352ca13ba4e3bdd8aab2740ab6d4fa1612",
-  "player_opening_map_ideas": "f401804a83222b0e94ca1b5e35138496e9c45433cd23bc56f4407b0db08fbde2",
   "player_opening_map_show": "2471b743fbc1f06da95aeddc3f8c0da61c614ff71b7ca32d1bb812aaf88d0282",
   "player_part_of": "76f09d23881de278a0e932932beb4e68203b4f34a2b545e340027b1de171a045",
   "player_phase_draw": "932fa18dfee849016333f9a20878e8b53dfaa3c825b10b6005cfe307a9e240ae",
@@ -204,12 +204,8 @@
     <string name="player_idea_position">Notion %1$s sur %2$s</string>
     <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
     <string name="player_example">Exemple</string>
-    <!-- Under the small map of the lesson's ideas on its opening screen, before the learner has studied them. -->
-    <plurals name="player_opening_map_ideas">
-        <item quantity="one">%1$s notion à découvrir dans cette leçon</item>
-        <item quantity="many">%1$s notions à découvrir dans cette leçon</item>
-        <item quantity="other">%1$s notions à découvrir dans cette leçon</item>
-    </plurals>
+    <!-- Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers. -->
+    <string name="player_opening_map_hint">Appuie sur une idée pour voir ce qu’elle aborde</string>
     <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
     <string name="player_opening_map_idea">Notion %1$s</string>
     <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->

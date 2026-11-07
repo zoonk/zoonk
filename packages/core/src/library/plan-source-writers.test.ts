@@ -685,7 +685,7 @@ function checkScreen(skillId: string): LessonScreenToSave {
     },
     kind: "check",
     mathItem: null,
-    provenance: generatedProvenance(),
+    provenance: { ...generatedProvenance(), sources: [] },
     skillId,
   };
 }
@@ -1251,6 +1251,7 @@ async function drillsCase(): Promise<WriterCase> {
           language: "pt",
           law: { shortName: "Lei nº 8.112", title: law.title, url: law.url },
           preparedAt: new Date(),
+          sourceHash: law.contentHash,
           sourceId: law.id,
           style: "cebraspe",
         },

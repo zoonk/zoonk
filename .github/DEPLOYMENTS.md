@@ -7,7 +7,8 @@ GitHub Actions owns every deployment. The Vercel projects keep the Git connectio
 | PR opened, updated, or reopened  | Code quality, Vitest (unit, database integration and player browser tests), and main/API E2E for PRs targeting `main`.                     |
 | Preview requested                | `pnpm preview [pr]` (or "Run workflow" on PR Preview) gives an open same-repository PR a Neon branch and Vercel previews.                  |
 | PR closed                        | Cancel remaining preview builds and delete the PR's Neon branch.                                                                           |
-| Push to `main`                   | Code quality, unit/integration tests, and main/API E2E. After success, `main`'s newest commit migrates and deploys staging.                |
+| Push to `main`                   | Code quality, unit/integration tests, and main/API E2E.                                                                                    |
+| Staging requested                | `pnpm staging` (or "Run workflow" on Staging) waits for `main`'s newest commit to pass CI, then migrates and deploys staging.              |
 | Push to `main` touching the blog | Deploy the blog to production when the push changes `apps/blog`, the lockfile or `turbo.json`. "Run workflow" on Blog redeploys `main`.    |
 | Push a `v*` tag                  | Run CI if the exact commit has not already passed CI on `main`. This supports hotfix commits outside `main`.                               |
 | Publish a stable GitHub release  | Require successful CI for the tagged commit, migrate production once, and deploy all three production apps concurrently on Turbo machines. |
@@ -15,7 +16,7 @@ GitHub Actions owns every deployment. The Vercel projects keep the Git connectio
 
 Production domains move automatically when each deployment succeeds. Apps switch independently, so a failed release can leave a successful app on the new version while another remains on the old version. Production releases are serialized with GitHub's `queue: max`; up to 100 runs can wait without replacing one another.
 
-Every push to `main` runs its checks right away, alongside any earlier push's. Staging only takes `main`'s newest commit: a run whose commit `main` has moved past by the time its checks pass skips staging, and a newer commit's staging deploy cancels an older one still running, along with the Vercel builds it started. Rerunning only the staging job skips it, since its check of `main` belongs to the first attempt; to redeploy, re-run all jobs.
+Staging is on request, for trying `main` before a release: a push to `main` doesn't deploy it. `pnpm staging` starts the Staging workflow on `main`'s newest commit, which waits for that commit's CI like a release does and fails if CI failed. A new request cancels a running one along with the Vercel builds it started. Staging deploys only `main`, since its shared database must only receive migrations that reached `main`: a run started from another branch is skipped and leaves a running deploy alone.
 
 ## Configuration contract
 
@@ -57,7 +58,7 @@ Production and local development retain direct API requests and omit these OIDC 
 
 Main's project builds previews and staging on a fixed Enhanced machine (8 cores, 16 GB). A build without a restored Turbopack cache keeps Turbopack's memory while it writes the cache, which ran main out of memory on the Standard machine's 8 GB. The API and admin projects use Elastic machines, which Vercel sizes per build. Production selects Turbo per deployment. Every app keeps Next's default build worker count (one fewer than the cores). On-demand concurrency is a Vercel project setting and applies across its environments. Production deployment requests are submitted concurrently; their actual build start times depend on available build capacity.
 
-Vitest and both E2E suites run on PRs and again on `main` before staging. See [the workflows](workflows/) for check names, matrices, and deployment gates.
+Vitest and both E2E suites run on PRs and again on every push to `main`, whose CI releases and staging require. See [the workflows](workflows/) for check names, matrices, and deployment gates.
 
 ## Preview behavior
 

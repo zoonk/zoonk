@@ -75,7 +75,7 @@ function OpeningMapIdea({
         )}
       </PopoverTrigger>
 
-      <PopoverContent className="w-64 max-w-(--available-width)">
+      <PopoverContent backdrop={false} className="w-64 max-w-(--available-width)">
         <PopoverHeader>
           <PopoverTitle className="text-pretty wrap-break-word">
             {idea.label ?? ideaOfTotal}
@@ -107,7 +107,10 @@ export function OpeningMap({ ideas }: { ideas: readonly MapIdea[] }) {
   const points = slots.map((slot) => toPoint({ center, slot }));
 
   return (
-    <figure className="flex w-full flex-col items-center gap-4 pt-2" data-slot="opening-map">
+    <figure
+      className="flex w-full flex-col items-center gap-4 pt-2 lg:pt-8"
+      data-slot="opening-map"
+    >
       <div
         className="relative w-full"
         style={{ aspectRatio: `${String(size.x)} / ${String(size.y)}`, maxWidth: size.x }}
@@ -162,10 +165,11 @@ export function OpeningMap({ ideas }: { ideas: readonly MapIdea[] }) {
       </div>
 
       <figcaption className="text-muted-foreground text-sm">
-        {t(
-          "{count, plural, one {# idea to discover in this lesson} other {# ideas to discover in this lesson}}",
-          { count: ideas.length },
-        )}
+        {t({
+          description:
+            "Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers.",
+          message: "Tap an idea to see what it covers",
+        })}
       </figcaption>
     </figure>
   );

@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 const MAX_PROVENANCE_LENGTH = 200;
@@ -28,7 +29,7 @@ export const lessonRegenerationRequestSchema = z
 export const lessonRegenerationResponseSchema = z
   .object({
     lessonIds: z
-      .array(z.uuid())
+      .array(uuidSchema())
       .meta({ description: "Lessons taken out of play, each with a writing run started" }),
   })
   .meta({ id: "LessonRegeneration" });

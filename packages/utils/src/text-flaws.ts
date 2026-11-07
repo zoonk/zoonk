@@ -1,5 +1,5 @@
 import { parseInlineMarkupRanges } from "./inline-markup";
-import { isJsonObject } from "./json";
+import { collectJsonStrings } from "./json";
 import { findMarkdownTableLines } from "./markdown-table";
 
 /**
@@ -149,21 +149,9 @@ export function findUnrenderedMarkdown({
   return layout === "blocks" ? findBlockProblems(text) : findInlineProblems(text);
 }
 
-function collectStrings(value: unknown): string[] {
-  if (typeof value === "string") {
-    return [value];
-  }
-
-  if (Array.isArray(value)) {
-    return value.flatMap((entry) => collectStrings(entry));
-  }
-
-  return isJsonObject(value) ? Object.values(value).flatMap((entry) => collectStrings(entry)) : [];
-}
-
 /** Quoted source text keeps its punctuation, so callers leave it out. */
 export function findEmDashes(value: unknown): string[] {
-  return collectStrings(value).flatMap((text) =>
+  return collectJsonStrings(value).flatMap((text) =>
     text.includes("—") ? [`Uses an em dash: ${quote(text)}. Write it without one.`] : [],
   );
 }

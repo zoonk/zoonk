@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 export const LESSON_RICH_TEXT = "Rich text: the lesson Markdown subset and `$…$` math";
@@ -30,7 +31,7 @@ export const firstQuestionSchema = z
 export const catalogTryLessonSchema = z
   .object({
     chapterTitle: z.string(),
-    lessonId: z.uuid(),
+    lessonId: uuidSchema(),
     minutes: z.int().nonnegative(),
     number: z.int().min(1).meta({ description: "The lesson's number in its chapter" }),
     screen: firstQuestionSchema,

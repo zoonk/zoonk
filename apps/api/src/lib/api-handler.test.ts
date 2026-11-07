@@ -1,5 +1,6 @@
 import { assertTargetDates } from "@zoonk/core/plans/target-date-range";
 import { logError } from "@zoonk/utils/logger";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { unstable_rethrow } from "next/navigation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
@@ -94,7 +95,7 @@ describe(withApiErrorBoundary, () => {
   it("answers a path or body its schema refuses as the request's validation error", async () => {
     const wrappedHandler = withApiErrorBoundary(
       async (request: Request, context: { params: Promise<unknown> }) => {
-        await readPathParams(context, z.object({ goalId: z.uuid() }));
+        await readPathParams(context, z.object({ goalId: uuidSchema() }));
         await readBody(request, z.object({ minutes: z.number() }));
         return Response.json({});
       },

@@ -32,3 +32,8 @@ export function summarizeTextChange({
     .join("\n")
     .slice(0, MAX_EXCERPT_LENGTH);
 }
+
+/** Keeps the latest change whole when both run past the limit. */
+export function appendTextChange({ earlier, later }: { earlier: string; later: string }): string {
+  return `${earlier}\n${later}`.slice(-MAX_EXCERPT_LENGTH);
+}

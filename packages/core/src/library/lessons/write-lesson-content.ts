@@ -15,6 +15,7 @@ import {
   checkFixedLesson,
   fixVersionDraft,
   getLessonDocuments,
+  readLessonSources,
   toScreensToSave,
 } from "./_utils/checked-version";
 import { pickDraftWriter } from "./_utils/draft-writer";
@@ -102,6 +103,7 @@ export async function writeLessonContent({
   });
 
   const writerModel = draft.provenance.model;
+  const sources = readLessonSources(inputs);
   const cite = getLessonDocuments(inputs).length > 0;
   const reusable = inputs.ownerId === null;
 
@@ -119,7 +121,7 @@ export async function writeLessonContent({
   return {
     draft: {
       cite,
-      gate: { analytics: taskAnalytics, context, reuse, serviceTier, writerModel },
+      gate: { analytics: taskAnalytics, context, reuse, serviceTier, sources, writerModel },
       inputs,
       previous: null,
       remainingFixes: reusable ? 1 : PRIVATE_FIX_PASSES,
@@ -130,7 +132,7 @@ export async function writeLessonContent({
           lesson: draft.data,
           spec: inputs.spec,
         }),
-        provenanceByScreen: draft.data.screens.map(() => draft.provenance),
+        provenanceByScreen: draft.data.screens.map(() => ({ ...draft.provenance, sources })),
       },
     },
     status: "drafted",

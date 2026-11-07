@@ -13,18 +13,18 @@ async function checkCI(): Promise<boolean | undefined> {
 
   if (run?.status === "completed") {
     if (run.conclusion !== "success") {
-      throw new Error(`Release commit failed CI (run ${run.id})`);
+      throw new Error(`${sha} failed CI (run ${run.id})`);
     }
 
-    process.stdout.write(`Release commit passed CI (run ${run.id})\n`);
+    process.stdout.write(`${sha} passed CI (run ${run.id})\n`);
     return true;
   }
 
-  process.stdout.write("Waiting for CI on the release's exact commit\n");
+  process.stdout.write(`Waiting for CI on ${sha}\n`);
   return undefined;
 }
 
 await waitFor({
   check: checkCI,
-  description: "CI on the release commit; push its v* tag or run CI manually",
+  description: `CI on ${sha}; outside main, push its v* tag or run CI manually`,
 });

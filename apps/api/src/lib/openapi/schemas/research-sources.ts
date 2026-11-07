@@ -6,6 +6,7 @@ import {
 } from "@zoonk/core/library/exams/blueprint-contract";
 import { MAX_PASTED_TEXT_LENGTH, reusePolicySchema } from "@zoonk/core/library/sources/contract";
 import { LearnerSourceOrigin, LibraryVisibility, SourceKind } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { uploadRequestSchema } from "./upload-request";
 import { generationResourceSchema } from "./workflows";
@@ -31,11 +32,11 @@ const reusePolicyResourceSchema = reusePolicySchema.meta({
 });
 
 export const sourcePathParamsSchema = z
-  .object({ sourceId: z.uuid().meta({ description: "Source ID" }) })
+  .object({ sourceId: uuidSchema().meta({ description: "Source ID" }) })
   .meta({ id: "SourcePathParams" });
 
 export const examBlueprintPathParamsSchema = z
-  .object({ blueprintId: z.uuid().meta({ description: "Exam blueprint ID" }) })
+  .object({ blueprintId: uuidSchema().meta({ description: "Exam blueprint ID" }) })
   .meta({ id: "ExamBlueprintPathParams" });
 
 export const researchPathParamsSchema = z
@@ -45,7 +46,7 @@ export const researchPathParamsSchema = z
 export const sourceResourceSchema = z
   .object({
     fetchedAt: z.iso.datetime(),
-    id: z.uuid(),
+    id: uuidSchema(),
     kind: z.enum(SourceKind),
     language: z.string(),
     mimeType: z.string().nullable(),
@@ -100,7 +101,7 @@ export const uploadTokenResponseSchema = z
   .meta({ id: "UploadToken" });
 
 const uploadOptionsSchema = {
-  goalId: z.uuid().nullish().meta({ description: "The goal the material is for" }),
+  goalId: uuidSchema().nullish().meta({ description: "The goal the material is for" }),
   language: languageSchema,
   title: z.string().trim().max(MAX_TITLE_LENGTH).nullish(),
 };
@@ -138,7 +139,7 @@ export const uploadResourceSchema = z
   .meta({ id: "Upload" });
 
 export const learnerSourcesQuerySchema = z
-  .object({ goalId: z.uuid().optional() })
+  .object({ goalId: uuidSchema().optional() })
   .meta({ id: "LearnerSourcesQuery" });
 
 export const learnerSourcesResponseSchema = z
@@ -146,7 +147,7 @@ export const learnerSourcesResponseSchema = z
     sources: z.array(
       z.object({
         addedAt: z.iso.datetime(),
-        goalId: z.uuid().nullable(),
+        goalId: uuidSchema().nullable(),
         origin: z.enum(LearnerSourceOrigin),
         source: sourceResourceSchema,
       }),
@@ -155,7 +156,7 @@ export const learnerSourcesResponseSchema = z
   .meta({ id: "LearnerSources" });
 
 export const changeNoticesQuerySchema = z
-  .object({ goalId: z.uuid() })
+  .object({ goalId: uuidSchema() })
   .meta({ id: "SourceChangeNoticesQuery" });
 
 export const changeNoticesResponseSchema = z
@@ -163,11 +164,11 @@ export const changeNoticesResponseSchema = z
     notices: z.array(
       z.object({
         createdAt: z.iso.datetime(),
-        examBlueprintId: z.uuid().nullable(),
+        examBlueprintId: uuidSchema().nullable(),
         fields: z.array(z.string()),
-        id: z.uuid(),
+        id: uuidSchema(),
         message: z.string().meta({ description: "One line for Today, in the source's language" }),
-        sourceId: z.uuid(),
+        sourceId: uuidSchema(),
       }),
     ),
   })
@@ -179,7 +180,7 @@ export const examBlueprintResourceSchema = z
     country: z.string(),
     edition: examEditionSchema.omit({ check: true }).meta({ id: "ExamEdition" }),
     examDate: z.iso.datetime().nullable(),
-    id: z.uuid(),
+    id: uuidSchema(),
     language: z.string(),
     name: z.string(),
     registrationEndsAt: z.iso.datetime().nullable(),
@@ -187,7 +188,7 @@ export const examBlueprintResourceSchema = z
     source: z
       .object({
         fetchedAt: z.iso.datetime(),
-        id: z.uuid(),
+        id: uuidSchema(),
         kind: z.enum(SourceKind),
         publisher: z.string().nullable(),
         reusePolicy: reusePolicyResourceSchema.nullable(),
@@ -208,9 +209,9 @@ export const examBlueprintResourceSchema = z
 
 export const createResearchRequestSchema = z
   .object({
-    goalId: z.uuid(),
+    goalId: uuidSchema(),
     sourceIds: z
-      .array(z.uuid())
+      .array(uuidSchema())
       .max(MAX_RESEARCH_UPLOADS)
       .optional()
       .meta({
@@ -245,8 +246,8 @@ export const freshnessCommandRequestSchema = z
           "`checkNow` reads a notice or source again only when its document changed; `readAgain` reads an exam's stored notice again with today's instructions, even unchanged (the only way a stored reading is redone; exams only); `stop` ends its checks",
       }),
     target: z.discriminatedUnion("kind", [
-      z.object({ examBlueprintId: z.uuid(), kind: z.literal("exam") }),
-      z.object({ kind: z.literal("source"), sourceId: z.uuid() }),
+      z.object({ examBlueprintId: uuidSchema(), kind: z.literal("exam") }),
+      z.object({ kind: z.literal("source"), sourceId: uuidSchema() }),
     ]),
   })
   .meta({ id: "FreshnessCommandRequest" });

@@ -1,11 +1,12 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 export const acknowledgeTodayPlanChangeInputSchema = z
-  .object({ changeId: z.uuid(), kind: z.literal("stored") })
+  .object({ changeId: uuidSchema(), kind: z.literal("stored") })
   .strict();
 
 export const acknowledgedTodayPlanChangeSchema = z
-  .object({ changeId: z.uuid(), status: z.literal("acknowledged") })
+  .object({ changeId: uuidSchema(), status: z.literal("acknowledged") })
   .strict();
 
 export type AcknowledgeTodayPlanChangeInput = z.infer<typeof acknowledgeTodayPlanChangeInputSchema>;

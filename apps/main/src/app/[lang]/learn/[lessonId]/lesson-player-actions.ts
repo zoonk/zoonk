@@ -7,10 +7,11 @@ import { type LessonPicture } from "@zoonk/core/lesson-player/playable-lesson";
 import { type LessonCompletionOutcome } from "@zoonk/player/lesson/types";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
-const idSchema = z.uuid();
-const stepIdsSchema = z.array(z.uuid()).optional();
+const idSchema = uuidSchema();
+const stepIdsSchema = z.array(uuidSchema()).optional();
 
 export async function completeLibraryLessonAction({
   lessonId,

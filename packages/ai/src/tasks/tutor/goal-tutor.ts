@@ -4,8 +4,10 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration, streamTaskGeneration } from "../../provenance/run-task-generation";
 import { type TaskProvenance } from "../../provenance/task-provenance";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type LessonQuestionPriorTurn } from "../lessons/lesson-question";
 import { type PlanScopeContext, type TutorScreenContext } from "../lessons/lesson-question-context";
+import { getLessonScreenVariants } from "../lessons/lesson-screen-variants";
 import {
   type OfferGoalAppTool,
   type ProposeGoalPlanChange,
@@ -166,7 +168,16 @@ function getSystemPrompt({
   const withPages = `${goalPrompt}\n${getPageGuide({ contextSnapshot, links })}`;
   const { screen } = contextSnapshot;
 
-  return screen ? `${withPages}\n${SCREEN_PROMPTS[screen.scope.kind]}` : withPages;
+  if (!screen) {
+    return withPages;
+  }
+
+  const screenPrompt = selectPromptVariants({
+    template: SCREEN_PROMPTS[screen.scope.kind],
+    variants: getLessonScreenVariants(screen),
+  });
+
+  return `${withPages}\n${screenPrompt}`;
 }
 
 /**
@@ -190,6 +201,7 @@ function createGenerationOptions({
         earlierQuestion: input.priorTurns.at(-1)?.question ?? null,
         goal: input.contextSnapshot.goal.title,
         question: input.question,
+        screen: input.contextSnapshot.screen,
       })
     : Promise.resolve(false);
 

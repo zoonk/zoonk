@@ -3,9 +3,9 @@
 import { dismissGoalUploadRequest } from "@zoonk/core/library/sources/upload-request";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
-import { z } from "zod";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 
-const goalIdSchema = z.uuid();
+const goalIdSchema = uuidSchema();
 
 export async function dismissUploadRequestAction(goalId: string): Promise<boolean> {
   const parsed = goalIdSchema.safeParse(goalId);

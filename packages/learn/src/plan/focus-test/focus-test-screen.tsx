@@ -213,8 +213,8 @@ function FocusTestRun({
   writing: GenerationRun | null;
 }) {
   const t = useExtracted();
-  const [answers, setAnswers] = useState<ChoiceQuestionAnswer[] | null>(null);
-  const [outcome, setOutcome] = useState<FocusTestOutcome | null | undefined>();
+  const [unsent, setUnsent] = useState<ChoiceQuestionAnswer[] | null>(null);
+  const [outcome, setOutcome] = useState<FocusTestOutcome | null>(null);
   const [isPending, startTransition] = useTransition();
   const questions = useArrivingQuestions(test.questions);
   const total = countTestQuestions(test);
@@ -233,10 +233,12 @@ function FocusTestRun({
         }
       : null;
 
-  const submit = (all: ChoiceQuestionAnswer[]) => {
-    setAnswers(all);
-    startTransition(async () => setOutcome(await onSubmit(all).catch(() => null)));
-  };
+  const submit = (answers: ChoiceQuestionAnswer[]) =>
+    startTransition(async () => {
+      const graded = await onSubmit(answers).catch(() => null);
+      setUnsent(graded ? null : answers);
+      setOutcome(graded);
+    });
 
   if (outcome) {
     return (
@@ -251,16 +253,9 @@ function FocusTestRun({
     );
   }
 
-  if (outcome === null && answers && !isPending) {
-    return (
-      <TaskFrame exitHref={closeHref}>
-        <AnswersSaveError onRetry={() => submit(answers)} />
-      </TaskFrame>
-    );
-  }
-
   return (
     <ChoiceQuestionsRun
+      error={unsent && !isPending && <AnswersSaveError onRetry={() => submit(unsent)} />}
       header={{ closeHref, screen: "focus-test", title: t("Focus test") }}
       hint={(question) => question.area}
       onFinish={submit}

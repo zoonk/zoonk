@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../../learner/contract";
 import { activityBrainPowerSchema, missionMomentSchema } from "../../sessions/completion-contract";
@@ -8,7 +9,7 @@ const MAX_WORD_RECORDING_MS = 30_000;
 const pronunciationWordSchema = z
   .object({
     audioUrl: z.string().nullable().meta({ description: "A native speaker's recording" }),
-    id: z.uuid().meta({ description: "The review's id" }),
+    id: uuidSchema().meta({ description: "The review's id" }),
     respelling: z
       .string()
       .nullable()
@@ -24,7 +25,7 @@ const pronunciationWordSchema = z
 
 export const pronunciationReviewsViewSchema = z
   .object({
-    goalId: z.uuid(),
+    goalId: uuidSchema(),
     language: z.string().meta({ description: "The language the words are in" }),
     words: z
       .array(pronunciationWordSchema)
@@ -42,8 +43,12 @@ export const pronunciationAnswerFieldsSchema = z
       .min(0)
       .max(MAX_WORD_RECORDING_MS)
       .meta({ description: "How long the learner spoke, in milliseconds" }),
-    goalId: z.uuid().meta({ description: "The goal the round is for, as its completion names it" }),
-    roundId: z.uuid().meta({ description: "Groups the answers of one round, for its completion" }),
+    goalId: uuidSchema().meta({
+      description: "The goal the round is for, as its completion names it",
+    }),
+    roundId: uuidSchema().meta({
+      description: "Groups the answers of one round, for its completion",
+    }),
     timeZone: answerTimeZoneSchema,
   })
   .strict();
@@ -52,7 +57,7 @@ export type PronunciationAnswerFields = z.infer<typeof pronunciationAnswerFields
 
 export const pronunciationAnswerGradeSchema = z
   .object({
-    attemptId: z.uuid(),
+    attemptId: uuidSchema(),
     isCorrect: z.boolean().meta({ description: "The word was heard as expected" }),
     nextReviewAt: z.iso
       .datetime()
@@ -65,7 +70,7 @@ export const pronunciationAnswerGradeSchema = z
 export type PronunciationAnswerGrade = z.infer<typeof pronunciationAnswerGradeSchema>;
 
 export const pronunciationRoundInputSchema = z
-  .object({ goalId: z.uuid(), timeZone: answerTimeZoneSchema })
+  .object({ goalId: uuidSchema(), timeZone: answerTimeZoneSchema })
   .strict()
   .meta({ id: "PronunciationRoundInput" });
 

@@ -3048,10 +3048,11 @@ msgctxt "CCQ4rY"
 msgid "Idea {current} of {total}"
 msgstr "{current}번째 개념 (총 {total}개)"
 
+#. Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers.
 #: src/lesson/_components/opening-map.tsx
-msgctxt "JHFGf_"
-msgid "{count, plural, one {# idea to discover in this lesson} other {# ideas to discover in this lesson}}"
-msgstr "{count, plural, other {이번 레슨에서 알아볼 개념 #개}}"
+msgctxt "twXJ5H"
+msgid "Tap an idea to see what it covers"
+msgstr "개념을 눌러 어떤 내용을 다루는지 확인해 보세요"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "P0MjYO"

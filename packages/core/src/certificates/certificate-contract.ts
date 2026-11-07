@@ -1,5 +1,6 @@
 import { CertificateKind, CourseLevel, LanguageSkill } from "@zoonk/db/enums";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 /** C2 has nothing above it to reach, and the level test tops out at C1+. */
@@ -74,8 +75,7 @@ export const certificateFactsShape = {
         'The public verification code, 12 characters; show it in groups of four ("K7QF-2M9X-HD4P")',
     }),
   completedOn: z.iso.date().meta({ description: "The learner-local day it was earned" }),
-  courseId: z
-    .uuid()
+  courseId: uuidSchema()
     .nullable()
     .meta({ description: "Course: the course while it's public, for a link to its page" }),
   courseLevel: z

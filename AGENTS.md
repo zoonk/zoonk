@@ -28,6 +28,8 @@
 
 ## Agent orchestration
 
+Before writing code for a task with more than one reasonable approach, where the choice changes what learners see, a public contract, the data model or the architecture, have two models from different families debate it until they agree, then align with the user on the result ([design debate](.agents/guides/orchestration.md#design-debate)). Skip it for a bug with a known cause, copy edits, mechanical changes and dependency updates. The agent that owns the task runs it and says in its handoff whether it did.
+
 Delegate a big task, or one that spans several areas (code, design, UX, accessibility), to subagents specialized in each, following the [orchestration guide](.agents/guides/orchestration.md). It also covers several agents sharing one machine. Before you hand back, commit and stop the servers you started. If you own the task's PR, push and keep your worktree: review fixes and follow-ups happen there, and the harness removes it once the PR merges. A subagent or lane removes the worktree made for its slice ([details](.agents/guides/orchestration.md#sharing-one-machine)).
 
 ## Architecture shared by all workspaces

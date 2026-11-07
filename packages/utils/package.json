@@ -71,7 +71,8 @@
     "./usage-data": "./src/usage-data.ts",
     "./uuid": "./src/uuid.ts",
     "./url": "./src/url.ts",
-    "./user-blobs": "./src/user-blobs.ts"
+    "./user-blobs": "./src/user-blobs.ts",
+    "./uuid-schema": "./src/uuid-schema.ts"
   },
   "scripts": {
     "test": "vitest run",
@@ -83,7 +84,8 @@
     "mdast-util-from-markdown": "2.1.0",
     "mdast-util-gfm": "3.1.0",
     "micromark-extension-gfm": "3.0.0",
-    "negotiator": "1.1.0"
+    "negotiator": "1.1.0",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/mdast": "4.0.4",

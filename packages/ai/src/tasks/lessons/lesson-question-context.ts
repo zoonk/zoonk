@@ -2,6 +2,8 @@ import { type TutorLink } from "../tutor/goal-tutor-pages";
 
 /** Built on the server from stored content and the learner's records, never from client text. */
 export type LessonQuestionStepContext = {
+  /** False on a screen that only teaches: it has no answer the buddy must hold back. */
+  answerable: boolean;
   content: unknown;
   kind: string;
   sentence: {

@@ -1,4 +1,5 @@
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { languageCodeSchema } from "../library/steps/contract/content-schemas";
 
@@ -40,7 +41,7 @@ export const speechClipSchema = z.object({
     .nonnegative()
     .nullable()
     .meta({ description: "How long the clip plays, when known" }),
-  id: z.uuid(),
+  id: uuidSchema(),
   language: z.string(),
   url: z
     .url()

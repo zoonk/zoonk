@@ -1,9 +1,10 @@
 import { dayBlockRefSchema, dayBlockScreenSchema } from "@zoonk/core/sessions/day-block";
 import { StudyBlockKind, StudyBlockStatus } from "@zoonk/db";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { studyCheckpointSchema } from "./checkpoint-evidence";
 
-const idSchema = z.uuid();
+const idSchema = uuidSchema();
 
 export const studyBlockSchema = z
   .object({

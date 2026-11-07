@@ -1,13 +1,22 @@
 /**
- * A word here is the same for every learner, so it can never carry one learner's data. Matched
- * without case or accents, so each is written once, as it's spelled.
+ * A word in these lists is the same for every learner, so it can never carry one learner's data.
+ * Matched without case or accents, so each is written once, as it's spelled.
  */
-const WORDS = [
+const FUNCTION_WORDS = [
   "a o as os um uma de da do das dos e em no na nos nas ao aos à às para pela pelo por com sem sobre entre após antes até ou que como qual quais quando onde ainda já mais menos se",
-  "the of in on at to for and or a an is are was be with by from after before since until about not new",
+  "the of in on at to for and or a an is are was be with by from after before since until about not",
   "el la los las un una del al y en por para con sin sobre entre tras hasta o que cómo cuál cuándo",
   "le la les un une des du de et en au aux pour par avec sans sur entre après avant",
   "der die das ein eine des dem den und oder in im am an auf für mit ohne nach vor seit",
+] as const;
+
+/** They ask for what's current, never about what. */
+const QUALIFIERS = [
+  "nova novo novas novos atual atualizado atualizada atualização vigente vigência vigor",
+  "new current latest update updated actual",
+] as const;
+
+const WORDS = [
   "direito direitos lei leis artigo artigos art arts inciso incisos parágrafo parágrafos alínea caput",
   "súmula súmulas vinculante jurisprudência entendimento tese teses tema temas repercussão geral",
   "decisão decisões julgamento julgado acórdão ministro ministros plenário turma recurso recursos",
@@ -17,8 +26,8 @@ const WORDS = [
   "empresarial comercial consumidor ambiental eleitoral previdenciário previdenciária internacional",
   "humanos ética estatuto regulamento regimento resolução provimento portaria instrução normativa",
   "decreto emenda medida provisória complementar ordinária revogação revogado revogada revogou",
-  "alteração alterações alterado alterada alterou nova novo novas novos redação vigência vigente vigor",
-  "atual atualizado atualizada atualização prazo prazos prescrição decadência competência",
+  "alteração alterações alterado alterada alterou redação",
+  "prazo prazos prescrição decadência competência",
   "contrato contratos cláusula cláusulas nula nulo nulidade válida válido validade",
   "honorários sucumbência sucumbenciais advocatícios contratuais advogado advogados advocacia",
   "sociedade empregado empregados empregador empregadores salário férias jornada rescisão demissão",
@@ -33,11 +42,11 @@ const WORDS = [
   "objetiva oficial resultado recursos regras regra",
   "law laws act acts article articles section sections clause clauses statute statutes regulation",
   "regulations rule rules ruling rulings court courts supreme decision decisions case cases precedent",
-  "amendment amendments repeal repealed current latest update updated valid invalid contract",
+  "amendment amendments repeal repealed valid invalid contract",
   "contracts employee employer tax taxes federal state constitution constitutional",
   "exam exams test tests board syllabus notice date dates deadline registration score scores",
   "cutoff passing official requirements format section",
-  "ley leyes artículo artículos decreto reforma derogación derogado vigente actual sentencia",
+  "ley leyes artículo artículos decreto reforma derogación derogado sentencia",
   "tribunal supremo constitucional jurisprudencia contrato examen convocatoria oposiciones temario",
   "suprema corte nación amparo admisión ingreso aciertos reactivos guía",
   "fecha plazo requisitos",
@@ -75,7 +84,18 @@ function toSet(lines: readonly string[]): ReadonlySet<string> {
   return new Set(lines.flatMap((line) => line.split(" ")).map((word) => normalizeSearchWord(word)));
 }
 
-export const SEARCH_TERMS = toSet([...WORDS, ...ACRONYMS, ROMAN_NUMERALS]);
+export const SEARCH_TERMS = toSet([
+  ...FUNCTION_WORDS,
+  ...QUALIFIERS,
+  ...WORDS,
+  ...ACRONYMS,
+  ROMAN_NUMERALS,
+]);
+
+export const SEARCH_FUNCTION_WORDS = toSet(FUNCTION_WORDS);
+
+/** Alone, they name something only where the public text does ("Laravel Nova", "Marketing on X"). */
+export const SEARCH_MODIFIERS = toSet([...QUALIFIERS, ROMAN_NUMERALS]);
 
 export const SEARCH_REFERENCE_WORDS = toSet(REFERENCE_WORDS);
 

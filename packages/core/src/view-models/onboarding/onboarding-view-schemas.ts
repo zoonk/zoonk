@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { targetCutoffSchema } from "../../exams/cutoffs/target-cutoff-contract";
 import { goalDraftSchema } from "../../goals/goal-contract";
@@ -108,11 +109,10 @@ export const onboardingDraftViewSchema = z
         description:
           "The run reading the words, followed live at `GET /v1/generations/{generationId}/events` (`readGoal`, `findExamDates` when the words name an exam, then `understandingReady`); null when none is needed or none started yet",
       }),
-    goalId: z
-      .uuid()
+    goalId: uuidSchema()
       .nullable()
       .meta({ description: "The main goal created from the draft once the learner confirmed it" }),
-    id: z.uuid(),
+    id: uuidSchema(),
     prompt: z.string().meta({ description: "What the learner typed" }),
     status: z
       .enum(ONBOARDING_DRAFT_STATUSES)
@@ -137,12 +137,12 @@ export const onboardingResumeSchema = z
     resume: z
       .discriminatedUnion("kind", [
         z.object({
-          draftId: z.uuid().meta({ description: "Read it at GET /goal-understandings/{id}" }),
+          draftId: uuidSchema().meta({ description: "Read it at GET /goal-understandings/{id}" }),
           kind: z.literal("draft"),
           prompt: z.string().meta({ description: "What the learner typed" }),
         }),
         z.object({
-          goalId: z.uuid().meta({ description: "Continue at GET /goals/{goalId}/onboarding" }),
+          goalId: uuidSchema().meta({ description: "Continue at GET /goals/{goalId}/onboarding" }),
           kind: z.literal("goal"),
           title: z.string(),
         }),

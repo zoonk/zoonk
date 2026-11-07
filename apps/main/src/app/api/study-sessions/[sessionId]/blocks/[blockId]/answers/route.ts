@@ -2,9 +2,9 @@ import { appPostRoute, readJsonBody } from "@/lib/http/app-post-route";
 import { answerStudyQuestion } from "@zoonk/core/sessions/answer";
 import { studyAnswerInputSchema } from "@zoonk/core/sessions/contract";
 import { type StudyAnswerOutcome } from "@zoonk/learn/session/types";
-import { z } from "zod";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 
-const idSchema = z.uuid();
+const idSchema = uuidSchema();
 
 export const POST = appPostRoute<{ blockId: string; sessionId: string }>(
   "studyAnswerRoute",

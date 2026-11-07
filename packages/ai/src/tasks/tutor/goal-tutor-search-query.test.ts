@@ -303,6 +303,7 @@ describe(buildSearchQueries, () => {
       lesson: { description: null, kind: "explanation", language: "pt", title: "Cessão" },
       lessonSteps: [
         {
+          answerable: false,
           content: { text: "A cessão de honorários ao empregador depende do contrato." },
           kind: "static",
           sentence: null,
@@ -349,6 +350,40 @@ describe(buildSearchQueries, () => {
     expect(
       build(asking({ ...SOFIA_PLAN, exam, privateContent: false, screen }), proposed),
     ).toStrictEqual([]);
+  });
+
+  it("sends no query left without a subject word", () => {
+    const thisYear = new Date().getUTCFullYear();
+
+    // On a private screen, a grammar query keeps only the words every language shares.
+    expect(
+      build(asking({ ...SOFIA_PLAN, privateContent: undefined }), [
+        "núcleo do sujeito concordância verbal envio dos relatórios atrasou",
+        `what changed in ${thisYear}`,
+      ]),
+    ).toStrictEqual([]);
+
+    // A product's or a pronoun's name taken out leaves only a qualifier or a Roman numeral.
+    expect(
+      build(asking(SOFIA_PLAN), ["current FooWidget version", "latest FooWidget", "I versus me"]),
+    ).toStrictEqual([]);
+  });
+
+  it("sends a name the public text gives, even one spelled like a qualifier or a numeral", () => {
+    const course = { ...SOFIA_PLAN.course, title: "Marketing on X with Laravel Nova" };
+
+    expect(
+      build(asking({ ...SOFIA_PLAN, course }), ["X latest update", "Nova latest", "on the do"]),
+    ).toStrictEqual(["X latest update", "Nova latest"]);
+  });
+
+  it("sends a law's number alone as the reference it is", () => {
+    const course = { ...SOFIA_PLAN.course, description: "Lei 8.906/1994 e IN 128/2022" };
+
+    expect(build(asking({ ...SOFIA_PLAN, course }), ["8.906/1994", "IN 128/2022"])).toStrictEqual([
+      "8.906/1994",
+      "IN 128/2022",
+    ]);
   });
 
   it("sends at most three queries of up to 200 characters, each once", () => {

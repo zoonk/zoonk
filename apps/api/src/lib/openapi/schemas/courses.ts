@@ -1,4 +1,5 @@
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { organizationSummarySchema } from "./catalog-resources";
 
@@ -32,7 +33,7 @@ export const courseResultSchema = z
         description:
           "The estimated minutes of every lesson in the course's outline added up, as its page states its length",
       }),
-    id: z.uuid().meta({ description: "Course ID" }),
+    id: uuidSchema().meta({ description: "Course ID" }),
     imageUrl: z.string().nullable().meta({ description: "Cover image URL" }),
     language: z.string().meta({ description: "Language code" }),
     languageFlag: z
