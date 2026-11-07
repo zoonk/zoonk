@@ -5,7 +5,7 @@ import { type FinishedChapter } from "@zoonk/core/sessions/completion-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useExtracted } from "next-intl";
-import { type ComponentType, createContext, use, useEffect, useState } from "react";
+import { type ComponentType, createContext, use, useEffect, useId, useState } from "react";
 import {
   LIST_ROW_CLASS,
   ListRowContent,
@@ -36,14 +36,14 @@ export function FinishedChapterMapProvider({
 
 /** After the day's moment and before "Up next", when the completion finished a chapter. */
 export function FinishedChapterMoment({ chapter }: { chapter: FinishedChapter | null }) {
-  const Map = use(FinishedChapterMapContext);
+  const ChapterMap = use(FinishedChapterMapContext);
 
-  if (!chapter || !Map) {
+  if (!chapter || !ChapterMap) {
     return null;
   }
 
   // oxlint-disable-next-line react/static-components -- The host supplies a stable module-level component through context; nothing is created here.
-  return <Map chapter={chapter} />;
+  return <ChapterMap chapter={chapter} />;
 }
 
 function Unreachable({ onRetry, title }: { onRetry: () => void; title: string }) {
@@ -89,6 +89,7 @@ function ReadChapterMap({
   plus,
 }: FinishedChapterMapInput & { onRetry: () => void }) {
   const t = useExtracted();
+  const labelId = useId();
   const [view, setView] = useState<ChapterMindMapView | "unreachable" | null>(null);
 
   useEffect(() => {
@@ -113,8 +114,8 @@ function ReadChapterMap({
   }
 
   return (
-    <section className="flex flex-col gap-2" data-slot="finished-chapter">
-      <PageSectionLabel>{t("Chapter finished")}</PageSectionLabel>
+    <section aria-labelledby={labelId} className="flex flex-col gap-2" data-slot="finished-chapter">
+      <PageSectionLabel id={labelId}>{t("Chapter finished")}</PageSectionLabel>
       {view === null && <RowSkeleton title={chapter.title} />}
       {view === "unreachable" && <Unreachable onRetry={onRetry} title={chapter.title} />}
       {view !== null && view !== "unreachable" && (
