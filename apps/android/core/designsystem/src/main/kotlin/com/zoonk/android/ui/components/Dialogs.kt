@@ -1,13 +1,18 @@
 package com.zoonk.android.ui.components
 
+import android.text.format.DateFormat
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.adaptive.separatingHorizontalHingeBounds
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
@@ -22,6 +27,7 @@ import androidx.core.view.WindowCompat
 import com.zoonk.android.ui.scaffold.HoldUntilFoldsRead
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
+import java.time.LocalTime
 import kotlin.math.roundToInt
 
 /**
@@ -74,26 +80,38 @@ fun DatePickerDialog(
     }
 }
 
-/** Material's time picker dialog, off a foldable's fold as [AlertDialog] is. */
+/**
+ * Material's clock for a time of day, in the device's 12- or 24-hour style, off a foldable's fold
+ * as [AlertDialog] is.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimePickerDialog(
-    onDismissRequest: () -> Unit,
-    confirmButton: @Composable () -> Unit,
-    title: @Composable () -> Unit,
-    dismissButton: @Composable (() -> Unit)? = null,
-    content: @Composable ColumnScope.() -> Unit,
+fun TimeOfDayDialog(
+    initial: LocalTime,
+    title: String,
+    confirmLabel: String,
+    dismissLabel: String,
+    onPick: (LocalTime) -> Unit,
+    onDismiss: () -> Unit,
 ) {
     val place = dialogPlace()
+    val state = rememberTimePickerState(initial.hour, initial.minute, DateFormat.is24HourFormat(LocalContext.current))
 
     androidx.compose.material3.TimePickerDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = confirmButton,
-        title = title,
-        dismissButton = dismissButton,
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onPick(LocalTime.of(state.hour, state.minute))
+                    onDismiss()
+                },
+            ) { Text(confirmLabel) }
+        },
+        title = { Text(title) },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(dismissLabel) } },
     ) {
         WindowAt(place)
-        content()
+        TimePicker(state)
     }
 }
 

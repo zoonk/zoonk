@@ -11,14 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -60,7 +57,7 @@ import com.zoonk.android.ui.components.MAX_GOAL_LENGTH
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
-import com.zoonk.android.ui.components.TimePickerDialog
+import com.zoonk.android.ui.components.TimeOfDayDialog
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
@@ -392,28 +389,20 @@ private fun TextEditor(
     LaunchedEffect(Unit) { focus.requestFocus() }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TimeEditor(
     initial: String,
     onDismiss: () -> Unit,
     onPick: (String) -> Unit,
 ) {
-    val start = runCatching { LocalTime.parse(initial) }.getOrNull() ?: LocalTime.of(DEFAULT_STUDY_HOUR, 0)
-    val state = rememberTimePickerState(start.hour, start.minute, DateFormat.is24HourFormat(LocalContext.current))
-    TimePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onPick(LocalTime.of(state.hour, state.minute).toString())
-                    onDismiss()
-                },
-            ) { Text(stringResource(R.string.onboarding_save)) }
-        },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.onboarding_cancel)) } },
-        title = { Text(stringResource(R.string.onboarding_row_when_you_study)) },
-    ) { TimePicker(state) }
+    TimeOfDayDialog(
+        initial = runCatching { LocalTime.parse(initial) }.getOrNull() ?: LocalTime.of(DEFAULT_STUDY_HOUR, 0),
+        title = stringResource(R.string.onboarding_row_when_you_study),
+        confirmLabel = stringResource(R.string.onboarding_save),
+        dismissLabel = stringResource(R.string.onboarding_cancel),
+        onPick = { onPick(it.toString()) },
+        onDismiss = onDismiss,
+    )
 }
 
 private fun sourceName(source: RowSource): String {
