@@ -12,6 +12,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -183,4 +184,9 @@ internal fun ZoonkTypography.wrappedFor(language: String): ZoonkTypography =
         )
     }
 
-private fun TextStyle.byPhrase(): TextStyle = copy(lineBreak = lineBreak.copy(wordBreak = LineBreak.WordBreak.Phrase))
+private fun TextStyle.byPhrase(): TextStyle =
+    copy(
+        lineBreak = lineBreak.copy(wordBreak = LineBreak.WordBreak.Phrase),
+        // Compose's intrinsic width reads the locale's breaks instead of the paragraph's word-break style.
+        localeList = LocaleList("ko-u-lw-phrase"),
+    )

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -52,7 +51,8 @@ fun AnswerOptionGroup(
  * picks is a [Role.Checkbox], and one that acts at once is a [Role.Button]; [tag] replaces the
  * result's word (an order step's place). A [glyph] marks the key in place of its number, as main's
  * net-scored statements (✓, ✗, –). The key sits on the words' first line, or at the top with
- * [keyAtTop].
+ * [keyAtTop]. [readingContent] supplies a picture's caption for intrinsic sizing without placing a
+ * second copy.
  */
 @Composable
 fun AnswerOption(
@@ -67,12 +67,14 @@ fun AnswerOption(
     glyph: Painter? = null,
     keyAtTop: Boolean = false,
     guessed: Boolean = false,
+    readingContent: (@Composable () -> Unit)? = null,
+    onReadingOverflow: (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     val tone = answerTone(picked, result)
     val shape = RoundedCornerShape(ZoonkRadius.option)
 
-    Row(
+    TagBesideOrUnder(
         modifier =
             modifier
                 .fillMaxWidth()
@@ -86,15 +88,13 @@ fun AnswerOption(
                         else -> Modifier.selectable(selected = picked, enabled = enabled, role = role, onClick = onClick)
                     },
                 ).padding(horizontal = 14.dp, vertical = 13.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        NumberKey(marker, glyph, if (keyAtTop) Modifier else Modifier.alignByBaseline())
-        TagBesideOrUnder(
-            modifier = Modifier.weight(1f).then(if (keyAtTop) Modifier else Modifier.alignByBaseline()),
-            content = { ProvideTextStyle(MaterialTheme.typography.labelLarge, content) },
-            tag = tag ?: { if (result != null) AnswerTag(picked, result, guessed = guessed) },
-        )
-    }
+        content = { ProvideTextStyle(MaterialTheme.typography.labelLarge, content) },
+        tag = tag ?: { if (result != null) AnswerTag(picked, result, guessed = guessed) },
+        leading = { NumberKey(marker, glyph, Modifier) },
+        leadingAtTop = keyAtTop,
+        readingContent = readingContent?.let { reading -> { ProvideTextStyle(MaterialTheme.typography.labelLarge, reading) } },
+        onReadingOverflow = onReadingOverflow,
+    )
 }
 
 @Composable
@@ -135,35 +135,86 @@ fun TagBesideOrUnder(
     modifier: Modifier,
     content: @Composable () -> Unit,
     tag: @Composable () -> Unit,
+    leading: (@Composable () -> Unit)? = null,
+    leadingAtTop: Boolean = false,
+    readingContent: (@Composable () -> Unit)? = null,
+    onReadingOverflow: (() -> Unit)? = null,
 ) {
-    Layout(contents = listOf(content, tag), modifier = modifier) { (words, tags), constraints ->
+    Layout(
+        contents =
+            listOf(
+                content,
+                tag,
+                leading ?: {
+                },
+                {
+                    if (readingContent != null) {
+                        Box(Modifier.clearAndSetSemantics {}) { readingContent() }
+                    }
+                },
+            ),
+        modifier = modifier,
+    ) { (words, tags, keys, readings), constraints ->
         val gap = 12.dp.roundToPx()
         val width = constraints.maxWidth
-        val tagPlaceable = tags.firstOrNull()?.measure(constraints.copy(minWidth = 0, minHeight = 0))
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val text = words.firstOrNull()
+        val keyPlaceable = keys.firstOrNull()?.measure(loose)
+        val reading = readings.firstOrNull() ?: text.takeUnless { leadingAtTop }
+        val textMinimum = if (keyPlaceable == null) 0 else reading?.minIntrinsicWidth(constraints.maxHeight) ?: 0
+        val besideKeyWidth = max(0, width - (keyPlaceable?.width ?: 0) - gap)
+        val keyBeside =
+            keyPlaceable != null &&
+                (textMinimum > width || textMinimum <= besideKeyWidth)
+        val contentWidth = if (keyBeside) besideKeyWidth else width
+        val contentX = width - contentWidth
+        val label = tags.firstOrNull()
+        val tagMinimum = label?.minIntrinsicWidth(constraints.maxHeight) ?: 0
+        if (readings.isNotEmpty() && max(textMinimum, tagMinimum) > width) {
+            onReadingOverflow?.invoke()
+        }
+        val tagAcross = tagMinimum > contentWidth
+        val tagPlaceable = label?.measure(loose.copy(maxWidth = if (tagAcross) width else contentWidth))
         val tagWidth = tagPlaceable?.width ?: 0
         val tagHeight = tagPlaceable?.height ?: 0
-        val besideWidth = max(0, width - gap - tagWidth)
-        val text = words.firstOrNull()
+        val besideWidth = max(0, contentWidth - gap - tagWidth)
         val beside =
             tagPlaceable == null ||
                 text == null ||
                 (
                     text.minIntrinsicWidth(constraints.maxHeight) <= besideWidth &&
-                        max(text.minIntrinsicHeight(besideWidth), tagHeight) <= text.minIntrinsicHeight(width) + gap / 2 + tagHeight
+                        max(text.minIntrinsicHeight(besideWidth), tagHeight) <= text.minIntrinsicHeight(contentWidth) + gap / 2 + tagHeight
                 )
-        val wordsWidth = if (beside && tagPlaceable != null) besideWidth else width
-        val wordsPlaceable = text?.measure(constraints.copy(minWidth = 0, maxWidth = wordsWidth))
+        val wordsWidth = if (beside && tagPlaceable != null) besideWidth else contentWidth
+        val wordsPlaceable = text?.measure(loose.copy(maxWidth = wordsWidth))
         val wordsHeight = wordsPlaceable?.height ?: 0
-        val height = if (beside) max(wordsHeight, tagHeight) else wordsHeight + gap / 2 + tagHeight
+        val wordsBaseline = wordsPlaceable?.get(FirstBaseline)?.takeIf { it != AlignmentLine.Unspecified } ?: 0
+        val keyBaseline = keyPlaceable?.get(FirstBaseline)?.takeIf { it != AlignmentLine.Unspecified } ?: 0
+        val keyY = if (keyBeside && !leadingAtTop) max(0, wordsBaseline - keyBaseline) else 0
+        val contentY =
+            when {
+                keyPlaceable == null -> 0
+                !keyBeside -> keyPlaceable.height + gap / 2
+                leadingAtTop -> 0
+                else -> max(0, keyBaseline - wordsBaseline)
+            }
+        val keyBottom = (keyPlaceable?.height ?: 0) + keyY
+        val tagBaseline = tagPlaceable?.get(FirstBaseline)?.takeIf { it != AlignmentLine.Unspecified } ?: 0
+        val tagY =
+            if (beside) {
+                contentY + max(0, wordsBaseline - tagBaseline)
+            } else {
+                max(contentY + wordsHeight, if (tagAcross) keyBottom else 0) + gap / 2
+            }
+        val height = max(max(wordsHeight + contentY, keyBottom), tagY + tagHeight)
 
         layout(width, max(height, constraints.minHeight)) {
-            wordsPlaceable?.placeRelative(0, 0)
+            keyPlaceable?.placeRelative(0, keyY)
+            wordsPlaceable?.placeRelative(contentX, contentY)
             if (beside) {
-                val wordsBaseline = wordsPlaceable?.get(FirstBaseline)?.takeIf { it != AlignmentLine.Unspecified } ?: 0
-                val tagBaseline = tagPlaceable?.get(FirstBaseline)?.takeIf { it != AlignmentLine.Unspecified } ?: 0
-                tagPlaceable?.placeRelative(width - tagWidth, max(0, wordsBaseline - tagBaseline))
+                tagPlaceable?.placeRelative(width - tagWidth, tagY)
             } else {
-                tagPlaceable.placeRelative(0, wordsHeight + gap / 2)
+                tagPlaceable.placeRelative(if (tagAcross) 0 else contentX, tagY)
             }
         }
     }
