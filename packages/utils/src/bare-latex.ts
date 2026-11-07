@@ -57,10 +57,19 @@ const MATH_COMMANDS = new Set([
   "to",
 ]);
 
-/** KaTeX reads these commands' arguments only in braces, so `\sqrt 4` can't be wrapped as written. */
-const BRACED_COMMANDS = new Set(["dfrac", "frac", "mathrm", "sqrt", "text"]);
+/**
+ * Arguments these commands need right after them, in braces, for code to wrap the formula whole:
+ * `\sqrt 4` and `\frac{1} {2}` are left to a writer.
+ */
+const COMMAND_ARGUMENTS: Readonly<Record<string, number>> = {
+  dfrac: 2,
+  frac: 2,
+  mathrm: 1,
+  sqrt: 1,
+  text: 1,
+};
 
-const BACKSLASH_WORD = /\\(?<name>[A-Za-z]+)(?=(?<next>.?))/gu;
+const BACKSLASH_WORD = /\\(?<name>[A-Za-z]+)/gu;
 
 /** A drive (`C:\`) or a file name with its extension (`\log.txt`), outside a formula's braces. */
 const FILE_PATH = /^[A-Za-z]:\\|\\[A-Za-z]+\.[A-Za-z]/u;
@@ -89,7 +98,7 @@ const PUNCTUATION_AFTER = /[.,;:!?%"'”’»*_]$/u;
 /** In KaTeX, `%` starts a comment, `~` is a space, and `&` and `#` are errors outside environments. */
 const TEX_SPECIAL = /[%~&#]/u;
 
-type Command = { braced: boolean; inBraces: boolean; name: string };
+type Command = { arguments: number; inBraces: boolean; name: string };
 
 type BareLatex = {
   end: number;
@@ -141,12 +150,34 @@ function trimEnd(text: string): string {
   return PUNCTUATION_AFTER.test(text) || isUnpairedClose(text) ? trimEnd(text.slice(0, -1)) : text;
 }
 
+function findClosingBrace({
+  depth,
+  index,
+  text,
+}: {
+  depth: number;
+  index: number;
+  text: string;
+}): number | null {
+  if (index >= text.length) {
+    return null;
+  }
+
+  const next = depth + (BRACE_STEP[text[index] ?? ""] ?? 0);
+  return next === 0 ? index : findClosingBrace({ depth: next, index: index + 1, text });
+}
+
+function countBraceGroups(text: string, from: number): number {
+  const close = text[from] === "{" ? findClosingBrace({ depth: 0, index: from, text }) : null;
+  return close === null ? 0 : 1 + countBraceGroups(text, close + 1);
+}
+
 function findCommands(text: string): Command[] {
   return [...text.matchAll(BACKSLASH_WORD)].map((match) => {
     const before = text.slice(0, match.index);
 
     return {
-      braced: match.groups?.next === "{",
+      arguments: countBraceGroups(text, match.index + match[0].length),
       inBraces: count(before, "{") > count(before, "}"),
       name: match.groups?.name ?? "",
     };
@@ -203,7 +234,8 @@ function isRepairable({
     !WORD.test(collapseBraces(written).replaceAll(BACKSLASH_WORD, "")) &&
     commands.every(
       (command) =>
-        MATH_COMMANDS.has(command.name) && (command.braced || !BRACED_COMMANDS.has(command.name)),
+        MATH_COMMANDS.has(command.name) &&
+        command.arguments >= (COMMAND_ARGUMENTS[command.name] ?? 0),
     )
   );
 }
