@@ -6,6 +6,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration, streamTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { draftAgainWhenFlawed } from "../_utils/draft-again";
+import { failFilteredAnswer } from "../_utils/filtered-answer";
 import { formatLocalContext } from "../_utils/language-context";
 import { type LessonExam, formatLessonExams } from "../_utils/lesson-exams";
 import { type PromptProduct, formatProduct } from "../_utils/product";
@@ -215,6 +216,8 @@ async function draftOutline({
     systemPrompt,
     task: "course-outline",
   });
+
+  failFilteredAnswer(result);
 
   const data: CourseOutline = normalizeCourseOutline({
     level: params.level,

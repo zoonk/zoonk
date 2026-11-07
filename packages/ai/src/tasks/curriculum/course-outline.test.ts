@@ -1,5 +1,6 @@
 import { type LanguageModelUsage, generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { answerEmptyOnce } from "../_test-utils/answer-once-with";
 import { type CourseOutlineParams, generateCourseOutline } from "./course-outline";
 import type * as Ai from "ai";
 
@@ -262,5 +263,22 @@ describe(generateCourseOutline, () => {
       ["Visual panels", ["charts"]],
       ["Visual panels 2", ["multimodal"]],
     ]);
+  });
+
+  it("fails an empty answer the provider's filter stopped as an outline the schema can't accept", async () => {
+    await answerEmptyOnce("content-filter");
+
+    await expect(generateCourseOutline(BAND)).rejects.toMatchObject({
+      finishReason: "content-filter",
+      name: "AI_NoObjectGeneratedError",
+    });
+  });
+
+  it("leaves an empty answer for any other reason as missing output, which a retry can fix", async () => {
+    await answerEmptyOnce("error");
+
+    await expect(generateCourseOutline(BAND)).rejects.toMatchObject({
+      name: "AI_NoOutputGeneratedError",
+    });
   });
 });
