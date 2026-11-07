@@ -78,11 +78,8 @@ async function claimMindMap({ chapterId, now }: { chapterId: string; now: Date }
   return count > 0;
 }
 
-/**
- * The chapter's lessons the run writes first: those not written and not set aside. Only the ones
- * no run is writing are charged; a lesson another run is writing is joined.
- */
-async function findLessonsToWrite(chapterId: string) {
+/** The chapter's lessons the run writes or joins first: every one not written and not set aside. */
+async function findLessonsToWrite(chapterId: string): Promise<string[]> {
   const rows = await prisma.chapterLesson.findMany({
     select: { lessonId: true },
     where: { chapterId },
@@ -90,16 +87,9 @@ async function findLessonsToWrite(chapterId: string) {
 
   const states = await getLessonGenerationStates(rows.map((row) => row.lessonId));
 
-  const toWrite = [...states].filter(
-    ([, state]) => state.status !== "ready" && !(state.status === "failed" && state.setAside),
+  return [...states].flatMap(([lessonId, state]) =>
+    state.status === "ready" || (state.status === "failed" && state.setAside) ? [] : lessonId,
   );
-
-  return {
-    charged: toWrite.flatMap(([lessonId, state]) =>
-      state.status === "generating" ? [] : lessonId,
-    ),
-    lessonIds: toWrite.map(([lessonId]) => lessonId),
-  };
 }
 
 function toUsageClaims({
@@ -154,8 +144,8 @@ async function requestFor({
     return { generationId: await findRunId(chapterId), status };
   }
 
-  const lessons = await findLessonsToWrite(chapterId);
-  const decision = await claim(toUsageClaims({ chapterId, lessonIds: lessons.charged }));
+  const lessonIds = await findLessonsToWrite(chapterId);
+  const decision = await claim(toUsageClaims({ chapterId, lessonIds }));
 
   if (decision.status === "unauthorized") {
     return decision;
@@ -168,14 +158,14 @@ async function requestFor({
   if (!(await claimMindMap({ chapterId, now }))) {
     return {
       generationId: await findRunId(chapterId),
-      status: lessons.lessonIds.length > 0 ? "writingLessons" : "drawing",
+      status: lessonIds.length > 0 ? "writingLessons" : "drawing",
     };
   }
 
   return {
     analytics: { distinctId: goal.userId, goalId: goal.id, platform },
     forExam: goal.kind === "exam",
-    lessonIds: lessons.lessonIds,
+    lessonIds,
     status: "start",
   };
 }

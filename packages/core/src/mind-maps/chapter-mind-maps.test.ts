@@ -271,8 +271,9 @@ describe("chapter mind maps", () => {
 
     await prisma.usageRecord.deleteMany({ where: { userId: user.id } });
 
+    // A run that died can leave a lesson stored as being written; the map's run may write it.
     await prisma.lesson.update({
-      data: { contentRunId: "another-run", contentStatus: "running" },
+      data: { contentRunId: "abandoned-run", contentStatus: "running" },
       where: { id: writing },
     });
 
@@ -289,10 +290,15 @@ describe("chapter mind maps", () => {
       where: { userId: user.id },
     });
 
-    expect(claimed.toSorted((a, b) => a.kind.localeCompare(b.kind))).toStrictEqual([
-      { generated: true, kind: "lessonStart", targetId: unstarted },
-      { generated: true, kind: "mindMap", targetId: current },
-    ]);
+    expect(
+      claimed.map((claim) => `${claim.kind}:${claim.targetId}:${claim.generated}`).toSorted(byId),
+    ).toStrictEqual(
+      [
+        `lessonStart:${unstarted}:true`,
+        `lessonStart:${writing}:true`,
+        `mindMap:${current}:true`,
+      ].toSorted(byId),
+    );
 
     await expect(getChapterMindMap({ chapterId: current })).resolves.toMatchObject({
       mindMap: { lessonsToWrite: 2, status: "writingLessons" },
