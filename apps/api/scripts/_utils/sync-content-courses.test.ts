@@ -127,4 +127,69 @@ describe(matchLocalCourses, () => {
       ].toSorted((first, second) => first.id.localeCompare(second.id)),
     );
   });
+
+  it("keeps a course's skipped comparison on the local release when the source's release ids differ", async () => {
+    const brand = await brandFixture();
+    const product = await productFixture({ organizationId: brand.id });
+
+    const [first, second] = await Promise.all(
+      ["1", "2"].map((name) =>
+        productReleaseFixture({ normalizedName: name, productId: product.id }),
+      ),
+    );
+
+    const course = await courseFixture({
+      organizationId: brand.id,
+      productId: product.id,
+      productReleaseId: first?.id ?? null,
+    });
+
+    const sourceProductId = randomUUID();
+
+    const sourceReleaseIds = new Map([
+      [first?.id ?? "", randomUUID()],
+      [second?.id ?? "", randomUUID()],
+    ]);
+
+    const toSource = (id: string | null | undefined) => sourceReleaseIds.get(id ?? "") ?? null;
+
+    const products = await readTable("products", [product.id]);
+    const releases = await readTable("product_releases", [...sourceReleaseIds.keys()]);
+    const courses = await readTable("courses", [course.id]);
+
+    await sync({
+      courses: {
+        ...courses,
+        rows: courses.rows.map((row) => ({
+          ...row,
+          id: randomUUID(),
+          product_id: sourceProductId,
+          product_release_id: toSource(first?.id),
+          uncomparable_notes_hash: "notes-hash",
+          uncomparable_release_id: toSource(second?.id),
+        })),
+      },
+      product_releases: {
+        ...releases,
+        rows: releases.rows.map((row) => ({
+          ...row,
+          id: toSource(row.id),
+          product_id: sourceProductId,
+        })),
+      },
+      products: {
+        ...products,
+        rows: products.rows.map((row) => ({ ...row, id: sourceProductId })),
+      },
+    });
+
+    const { rows } = await destination.query(
+      "SELECT product_release_id, uncomparable_release_id FROM courses WHERE id = $1",
+      [course.id],
+    );
+
+    expect(rows).toStrictEqual([
+      { product_release_id: first?.id, uncomparable_release_id: second?.id },
+    ]);
+  });
 });

@@ -219,6 +219,7 @@ export async function copyCatalog({
       courses: applyTransforms(catalog.courses, [
         remap({ column: "product_id", ids: productIds }),
         remap({ column: "product_release_id", ids: releaseIds }),
+        remap({ column: "uncomparable_release_id", ids: releaseIds }),
       ]),
     },
     destination,
