@@ -4,6 +4,7 @@ const MONTHS = 12;
 const NAMING_YEAR = 2000;
 const TOKEN = /\p{L}+|\p{N}+/gu;
 const SHORT_NUMBER = /^\d{1,2}$/u;
+const NUMBER = /^\p{N}+$/u;
 /** Ordinals and the words pages write inside a date beyond `Intl`'s formats ("the 4th of May", "1er mai"). */
 const DATE_WORDS = ["er", "nd", "of", "rd", "st", "th"];
 /** A space, a comma or a period between a named month's date parts, or a slash or hyphen alone. */
@@ -125,6 +126,21 @@ function isReadable({
   return !numeric || (year < month && month < day) || date.day > MONTHS || date.day === date.month;
 }
 
+function isNumberJoined({ gap, token }: { gap: string; token: Token | undefined }): boolean {
+  return token !== undefined && NUMBER.test(token.text) && NUMERIC_JOINER.test(gap);
+}
+
+/** A numeric month and year that don't continue a longer numeric date ("05/10/2024"). */
+function standsAlone({ from, passage, to }: { from: number; passage: Passage; to: number }) {
+  const { text, tokens } = passage;
+  const [before, first, last, after] = [tokens[from - 1], tokens[from], tokens[to], tokens[to + 1]];
+
+  return (
+    !isNumberJoined({ gap: text.slice(before?.end, first?.start), token: before }) &&
+    !isNumberJoined({ gap: text.slice(last?.end, after?.start), token: after })
+  );
+}
+
 function listIndexes(passage: Passage, isPart: (token: string) => boolean): number[] {
   return passage.tokens.flatMap((token, index) => (isPart(token.text) ? [index] : []));
 }
@@ -175,6 +191,9 @@ function hasDateExpression({ date, passage }: { date: DateParts; passage: Passag
                 to,
               }),
             ) &&
+          (!numeric ||
+            dayIndex !== null ||
+            standsAlone({ from: parts[0] ?? -1, passage, to: parts.at(-1) ?? -1 })) &&
           (day === null ||
             dayIndex === null ||
             isReadable({
@@ -227,9 +246,13 @@ export function isMonthStated({
   });
 }
 
-/** The version on its own ("v1.37", "1.37"), not inside "1.370" or "21.37". */
+/** The version, or a name ending in one, on its own ("v1.37", "1.37"), not inside "1.370" or "21.37". */
 function toVersionPattern({ flags, version }: { flags: string; version: string }): RegExp {
-  const escaped = version.replaceAll(/[.*+?^${}()|[\]\\]/gu, String.raw`\$&`);
+  const escaped = version
+    .trim()
+    .split(/\s+/u)
+    .map((word) => word.replaceAll(/[.*+?^${}()|[\]\\]/gu, String.raw`\$&`))
+    .join(String.raw`\s+`);
 
   return new RegExp(`(?<![\\p{L}\\p{N}.])v?${escaped}(?![\\p{L}\\p{N}]|\\.\\p{N})`, flags);
 }
@@ -239,11 +262,12 @@ export function hasVersionToken({ text, version }: { text: string; version: stri
 }
 
 /**
- * The passage without the release's own numbered versions, the claimed one and any in its name: a
- * version written like a date ("Orbit Notes 2024.05.04") never states the release's date. A bare
- * number stays, since it may be the date's day ("Orbit 5" shipped on "5 Feb 2018").
+ * The passage without the release's own name and numbered versions, the claimed one and any in its
+ * name: neither a version written like a date ("Orbit Notes 2024.05.04") nor the name's number
+ * beside a month ("Orbit Notes 4 November 2026") states the release's date. A bare number elsewhere
+ * stays, since it may be the date's day ("Next.js 5" shipped on "5 Feb 2018").
  */
-export function withoutVersions({
+export function withoutReleaseName({
   name,
   passage,
   version,
@@ -254,7 +278,7 @@ export function withoutVersions({
 }): string {
   const versions = [version ?? "", name].flatMap((text) => text.match(NUMBERED_VERSION) ?? []);
 
-  return versions.reduce(
+  return [name, ...versions].reduce(
     (text, item) => text.replaceAll(toVersionPattern({ flags: "giu", version: item }), " "),
     passage,
   );

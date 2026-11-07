@@ -553,3 +553,61 @@ Orbit Notes 2024.07 is out.`;
     ]);
   });
 });
+
+type DatedRow = {
+  name: string;
+  passage: string;
+  releasedOn: string;
+  text: string;
+  version: string;
+};
+
+function readDate({ name, passage, releasedOn, text, version }: DatedRow) {
+  const [kept] = checkProductReading({
+    pages: [releasesPage(text)],
+    productName: "Orbit Notes",
+    reading: reading({
+      brand: null,
+      product: null,
+      releases: [{ ...tableRelease(name, version, passage), releasedOn }],
+    }),
+  }).releases;
+
+  return [kept?.releasedAt ?? null, kept?.releasedMonthOnly ?? null];
+}
+
+describe("a date only next to the release's name or inside a longer date", () => {
+  it("never reads a month and year from the end of a longer numeric date", () => {
+    expect([
+      readDate({
+        name: "Orbit Notes 2.0",
+        passage: "Orbit Notes 2.0 | 05/10/2024",
+        releasedOn: "2024-10",
+        text: "Orbit Notes 2.0 | 05/10/2024",
+        version: "2.0",
+      }),
+      readDate({
+        name: "Orbit Notes 2.0",
+        passage: "Orbit Notes 2.0 | 10/2024",
+        releasedOn: "2024-10",
+        text: "Orbit Notes 2.0 | 10/2024",
+        version: "2.0",
+      }),
+    ]).toStrictEqual([
+      [null, false],
+      [new Date(Date.UTC(2024, 9, 1)), true],
+    ]);
+  });
+
+  it("never reads the release's own number as the day of the month beside it", () => {
+    expect(
+      readDate({
+        name: "Orbit Notes 4",
+        passage: "Orbit Notes 4 November 2026",
+        releasedOn: "2026-11-04",
+        text: "Orbit Notes 4\nNovember 2026",
+        version: "4",
+      }),
+    ).toStrictEqual([new Date(Date.UTC(2026, 10, 1)), true]);
+  });
+});

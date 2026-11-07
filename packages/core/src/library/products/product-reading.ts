@@ -13,7 +13,7 @@ import {
   isDateStated,
   isMonthStated,
   isVersionStated,
-  withoutVersions,
+  withoutReleaseName,
 } from "./release-claims";
 
 /** A page's language names its months ("21 de outubro de 2025"). */
@@ -187,7 +187,7 @@ function checkRelease({
   }
 
   const { version } = release;
-  const dated = { language: page.language, passage: withoutVersions(release) };
+  const dated = { language: page.language, passage: withoutReleaseName(release) };
 
   return {
     document: release.document,
