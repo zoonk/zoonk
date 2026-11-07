@@ -62,8 +62,9 @@ export type LessonPlayerState = {
   retried: string[];
   revealed: Record<string, number>;
   /**
-   * Moves on wherever a screen starts over (its answer cleared), so the stage makes it anew; until
-   * then the screen keeps what the learner did on it, even while another screen shows.
+   * Moves on wherever a screen starts over (its answer cleared) or a fresher saved answer replaces
+   * the one it shows, so the stage makes it anew; until then the screen keeps what the learner did
+   * on it, even while another screen shows.
    */
   rounds: Record<string, number>;
   run: LessonPlayerRun;

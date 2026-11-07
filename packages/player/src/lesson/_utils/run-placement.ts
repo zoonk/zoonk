@@ -70,9 +70,7 @@ function resumeFrom(state: LessonPlayerState, answers: LessonRunAnswers): Lesson
     actedOn: state.actedOn,
     answers: { ...pickKeys(state.answers, guessIds), ...resumedLesson.answers },
     results: { ...pickKeys(state.results, guessIds), ...resumedLesson.results },
-    rounds: Object.fromEntries(
-      Object.keys(state.steps).map((id) => [id, (state.rounds[id] ?? 0) + 1]),
-    ),
+    rounds: state.rounds,
     run: state.run,
     skippedWritingStepIds,
     unavailableStepIds: state.unavailableStepIds,
@@ -80,6 +78,38 @@ function resumeFrom(state: LessonPlayerState, answers: LessonRunAnswers): Lesson
   };
 
   return writingRestore ? skipWriting(resumed, { opening: true }) : resumed;
+}
+
+function showsSameAnswer({
+  after,
+  before,
+  id,
+}: {
+  after: LessonPlayerState;
+  before: LessonPlayerState;
+  id: string;
+}): boolean {
+  return (
+    id in before.results === id in after.results &&
+    JSON.stringify(before.answers[id]) === JSON.stringify(after.answers[id])
+  );
+}
+
+/** Screens whose renderers seed themselves from the answer start anew only when placing changes it. */
+export function restartChanged(
+  before: LessonPlayerState,
+  after: LessonPlayerState,
+): LessonPlayerState {
+  const changed = Object.keys(after.steps).filter(
+    (id) => after.rounds[id] === before.rounds[id] && !showsSameAnswer({ after, before, id }),
+  );
+
+  if (changed.length === 0) {
+    return after;
+  }
+
+  const rounds = changed.map((id) => [id, (after.rounds[id] ?? 0) + 1] as const);
+  return { ...after, rounds: { ...after.rounds, ...Object.fromEntries(rounds) } };
 }
 
 export function startRun(

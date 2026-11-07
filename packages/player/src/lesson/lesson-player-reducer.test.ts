@@ -44,6 +44,20 @@ function runAnswer(stepId: string, isCorrect: boolean, answeredAt = ANSWERED_AT)
   return { answer, answeredAt, isCorrect, result: stepResult(isCorrect), stepId };
 }
 
+function blankAnswer(
+  word: string,
+  isCorrect: boolean,
+  answeredAt = ANSWERED_AT,
+): LessonRunAnswers[number] {
+  return {
+    answer: { kind: "fillBlank", userAnswers: [word] },
+    answeredAt,
+    isCorrect,
+    result: stepResult(isCorrect),
+    stepId: "blank",
+  };
+}
+
 function runStarted({
   answers,
   held,
@@ -1119,6 +1133,65 @@ describe(lessonPlayerReducer, () => {
       true,
       { kind: "check", optionId: "right" },
     ]);
+  });
+
+  it("starts over only the screens whose shown answer a fresher run replaces", () => {
+    const steps = [
+      checkStep("q1"),
+      explanationStep("e1"),
+      fillBlankStep("blank"),
+      explanationStep("e2"),
+      checkStep("q2"),
+    ];
+
+    const right = runAnswer("q1", true);
+
+    const miss = blankAnswer("rent", false);
+
+    const reviewing = play(steps, [
+      { answers: [right, miss], type: "unsentPlaced" },
+      { direction: "prev", type: "navigate" },
+    ]);
+
+    expect([getCurrentStep(reviewing)?.id, reviewing.phase]).toStrictEqual(["blank", "feedback"]);
+
+    const refreshed = lessonPlayerReducer(
+      reviewing,
+      runStarted({ answers: [right, miss, blankAnswer("pay", true, LATER)], held: [] }),
+    );
+
+    expect([refreshed.answers.blank, refreshed.results.blank?.isCorrect]).toStrictEqual([
+      { kind: "fillBlank", userAnswers: ["pay"] },
+      true,
+    ]);
+
+    expect(refreshed.rounds.blank).not.toBe(reviewing.rounds.blank);
+    expect(refreshed.rounds.q1).toBe(reviewing.rounds.q1);
+  });
+
+  it("keeps a reviewed screen as it was when a finished lesson comes back to a screen it still needs", () => {
+    const steps = [explanationStep("e1"), checkStep("q1"), explanationStep("e2"), checkStep("q2")];
+
+    const finished = play(steps, [
+      { type: "continue" },
+      ...answerCheck("q1", true),
+      { type: "continue" },
+      { type: "continue" },
+      ...answerCheck("q2", true),
+      { type: "continue" },
+    ]);
+
+    const recovered = lessonPlayerReducer(finished, {
+      answers: [runAnswer("q1", true)],
+      type: "runResynced",
+    });
+
+    expect([getCurrentStep(recovered)?.id, recovered.rounds.q1]).toStrictEqual([
+      "q2",
+      finished.rounds.q1,
+    ]);
+
+    expect(recovered.rounds.q2).not.toBe(finished.rounds.q2);
   });
 
   it("shows an answer this device still holds with the verdict the device gave it", () => {

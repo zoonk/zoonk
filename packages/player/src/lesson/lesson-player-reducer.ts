@@ -10,7 +10,7 @@ import {
   startQuickCheck,
 } from "./_utils/lesson-flow";
 import { isReadStep } from "./_utils/lesson-steps";
-import { placeUnsent, resyncRun, startRun } from "./_utils/run-placement";
+import { placeUnsent, restartChanged, resyncRun, startRun } from "./_utils/run-placement";
 import { restoreWriting, skipWriting } from "./_utils/writing-skip";
 import {
   type LessonPlayerAction,
@@ -142,13 +142,13 @@ function reduceServerAction(state: LessonPlayerState, action: ServerAction): Les
     case "runStarting":
       return { ...state, run: { status: "starting" } };
     case "runStarted":
-      return startRun(state, action);
+      return restartChanged(state, startRun(state, action));
     case "runResynced":
-      return resyncRun(state, action);
+      return restartChanged(state, resyncRun(state, action));
     case "runRefused":
       return { ...state, run: { refusal: action.refusal, status: "refused" } };
     case "unsentPlaced":
-      return placeUnsent(state, action);
+      return restartChanged(state, placeUnsent(state, action));
     case "saveFailed":
       return state.unsavedAnswers ? state : { ...state, unsavedAnswers: true };
     case "allSaved":
