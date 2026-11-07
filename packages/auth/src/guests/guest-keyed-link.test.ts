@@ -305,9 +305,9 @@ describe("guest certificate linking", () => {
     ]);
 
     const [accountRow, , uniqueRow] = await Promise.all([
-      createCertificate({ key: "es:A1", userId: accountId }),
-      createCertificate({ key: "es:A1", userId: guestId }),
-      createCertificate({ key: "es:A2", userId: guestId }),
+      createCertificate({ key: "course:beginner", userId: accountId }),
+      createCertificate({ key: "course:beginner", userId: guestId }),
+      createCertificate({ key: "course:intermediate", userId: guestId }),
     ]);
 
     await linkGuestAccount({ account: { id: accountId }, guestUserId: guestId });
@@ -324,7 +324,7 @@ describe("guest certificate linking", () => {
     ]);
 
     await Promise.all([
-      createCertificate({ key: "es:A1", userId: guestId }),
+      createCertificate({ key: "course:beginner", userId: guestId }),
       prisma.subscription.create({
         data: { plan: "plus", referenceId: accountId, status: "active", userId: accountId },
       }),

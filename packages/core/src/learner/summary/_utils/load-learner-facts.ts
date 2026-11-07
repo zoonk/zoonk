@@ -54,7 +54,7 @@ export async function loadLearnerFacts(userId: string): Promise<LearnerFacts> {
         WHERE g.user_id = u.id AND g.status <> 'archived'
           AND EXISTS (${completedLessonRuns({ goalId: sql`g.id`, userId: sql`u.id` })})
       ) AS "completedLessonGoalIds",
-      EXISTS (SELECT 1 FROM certificates c WHERE c.user_id = u.id) AS "hasCertificates",
+      EXISTS (SELECT 1 FROM certificates c WHERE c.user_id = u.id AND c.kind = 'course') AS "hasCertificates",
       (
         SELECT coalesce(json_object_agg(l.language, l.score), '{}'::json)
         FROM language_skill_levels l WHERE l.user_id = u.id AND l.skill = 'speaking'

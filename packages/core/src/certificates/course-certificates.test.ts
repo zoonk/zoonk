@@ -909,6 +909,34 @@ describe("a certificate as anyone sees it", () => {
     });
   });
 
+  it("never shows a language level the release before this one wrote", async () => {
+    const user = await userFixture();
+
+    const straggler = await certificateFixture({
+      courseLevel: null,
+      details: { canDo: [], lessonsStudied: 2, minutes: 8, skillLevels: [] },
+      key: "it:B1",
+      kind: "languageLevel",
+      shownAt: null,
+      targetLanguage: "it",
+      title: null,
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    await expect(listCurrentUserCertificates()).resolves.toStrictEqual({
+      certificates: [],
+      status: "ready",
+    });
+
+    await expect(getPublicCertificate(straggler.code)).resolves.toBeNull();
+
+    await expect(celebrateProgress({ progress: null, userId: user.id })).resolves.toMatchObject({
+      certificates: [],
+    });
+  });
+
   it("outlives its course: the title stays and the course link goes", async () => {
     const fixture = await courseGoal();
     await applePlus(fixture.user.id);

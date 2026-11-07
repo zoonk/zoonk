@@ -3,7 +3,7 @@ import { type GuestLinkContext } from "./merge-keyed-rows";
 /**
  * A level can fall as well as rise, so the latest assessment wins whole, never the highest score.
  * Adding windows from different baselines could invent a level change. A skill the learner's answers
- * raised beats one that wasn't, since certificates count raised skills and must never lose one.
+ * raised beats one that wasn't, since a retest leaves a raised skill as it was.
  */
 export async function mergeLanguageLevels({ guestUserId, transaction, userId }: GuestLinkContext) {
   await transaction.$executeRaw`

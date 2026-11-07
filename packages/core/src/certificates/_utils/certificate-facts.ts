@@ -1,11 +1,8 @@
 import { type Certificate, type Course, type User } from "@zoonk/db";
 import {
-  CERTIFIED_LEVELS,
   type CertificateFacts,
-  type CertifiedLevel,
   type OwnedCertificateFacts,
   courseCertificateDetailsSchema,
-  languageLevelCertificateDetailsSchema,
 } from "../certificate-contract";
 
 const LOGICAL_DATE_LENGTH = 10;
@@ -35,31 +32,19 @@ function getRecipientName(user: CertificateRow["user"]): string | null {
   return user.isAnonymous ? null : user.name.trim() || null;
 }
 
-function toCertifiedLevel(level: string | null): CertifiedLevel | null {
-  return CERTIFIED_LEVELS.find((band) => band === level) ?? null;
-}
-
-function getKindDetails(row: CertificateRow) {
-  if (row.kind === "course") {
-    return courseCertificateDetailsSchema.parse(row.details);
-  }
-
-  return languageLevelCertificateDetailsSchema.parse(row.details);
-}
-
 export function toCertificateFacts(row: CertificateRow): CertificateFacts {
   const isPublicCourse = row.course?.isPublished && row.course.visibility === "public";
 
   return {
     ...NO_DETAILS,
-    ...getKindDetails(row),
+    ...courseCertificateDetailsSchema.parse(row.details),
     code: row.code,
     completedOn: row.completedOn.toISOString().slice(0, LOGICAL_DATE_LENGTH),
     courseId: isPublicCourse ? row.courseId : null,
     courseLevel: row.courseLevel,
     kind: row.kind,
     language: row.language,
-    level: toCertifiedLevel(row.level),
+    level: null,
     recipientName: getRecipientName(row.user),
     targetLanguage: row.targetLanguage,
     title: row.title,
