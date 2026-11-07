@@ -14,7 +14,7 @@ export const languagePaths = {
   "/steps/{stepId}/spoken-answers": {
     post: {
       description:
-        "Grades a \"say it out loud\" screen: transcribes the recording as said, compares it with the expected sentence word by word, explains at most two words that didn't match in the learner's language (shared with everyone who says the same thing) and records the answer. An accent never blocks progress. 422 `NO_SPEECH` when no words were heard. The audio is only used for grading and never kept.",
+        "Grades a \"say it out loud\" screen: transcribes the recording as said, compares it with the expected sentence word by word, explains at most two words that didn't match in the learner's language (shared with everyone who says the same thing) and records the answer. An answer to a screen that already has a right answer or three answers in its progress window is graded and returned without recording an attempt, mistake, pronunciation review or language evidence; `attemptId` then identifies the saved answer that closed the screen. An accent never blocks progress. 422 `NO_SPEECH` when no words were heard. The audio is only used for grading and never kept.",
       operationId: "createSpokenAnswer",
       requestBody: {
         content: { "multipart/form-data": { schema: spokenAnswerRequestSchema } },

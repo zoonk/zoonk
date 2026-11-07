@@ -1,12 +1,20 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { claimAssist } from "../../entitlements/claim-usage";
-import { recordLanguageStepEvidence } from "../../language/levels/record-language-evidence";
+import {
+  loadLanguageStepEvidence,
+  writeLanguageStepEvidence,
+} from "../../language/levels/record-language-evidence";
 import { schedulePronunciationReviews } from "../../language/pronunciation/schedule-pronunciation-reviews";
+import {
+  type RecordedOutcome,
+  type RefusedOutcome,
+  recordAnswerOnce,
+} from "../../learner/_utils/answer-once";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
-import { recordLearnerAnswer } from "../../learner/record-learner-answer";
+import { findClosingAnswer } from "../../lesson-player/_utils/answer-recording";
 import { getSession } from "../../users/get-session";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { parseStepContent } from "../steps/contract/step-contract";
@@ -38,6 +46,7 @@ async function findSpokenStep({ stepId, userId }: { stepId: string; userId: stri
     content,
     id: step.id,
     learnerLanguage: step.lesson.language,
+    lessonId: step.lessonId,
     level: step.lesson.level,
     skillId: step.skillId,
     targetLanguage: content.language,
@@ -64,6 +73,14 @@ async function findOwnStudySessionId({
   return session?.id ?? null;
 }
 
+function getSpokenAttemptId(outcome: RecordedOutcome | RefusedOutcome<string>): string {
+  if (outcome.status === "refused") {
+    return outcome.refusal;
+  }
+
+  return outcome.status === "saved" ? outcome.saved.id : outcome.recorded.attempt.id;
+}
+
 export async function gradeSpokenAnswer({
   audio,
   fields,
@@ -73,6 +90,7 @@ export async function gradeSpokenAnswer({
   fields: SpokenAnswerFields;
   stepId: string;
 }): Promise<GradeSpokenAnswerResult> {
+  const receivedAt = new Date();
   const session = await getSession();
 
   if (!session) {
@@ -130,36 +148,60 @@ export async function gradeSpokenAnswer({
   const question = `${step.content.prompt}\n${step.targetText}`;
   const timeZone = getAnswerTimeZone({ goal: null, timeZone: fields.timeZone });
 
-  const recorded = await recordLearnerAnswer({
-    answer: { kind: "spoken", transcript },
-    graded: { durationMs: fields.durationMs, isCorrect: match.isCorrect, score: match.score },
-    language: step.learnerLanguage,
-    mistake: {
-      questionText: question,
-      snapshot: {
-        answer: transcript,
-        correctAnswer: step.targetText,
-        explanation,
-        format: "spoken",
-        question,
-      },
-    },
-    purpose: "learning",
-    skillId: step.skillId,
-    stepId: step.id,
-    studySessionId,
-    targetLanguage: step.targetLanguage,
-    timeZone,
+  const evidence = await loadLanguageStepEvidence({
+    isCorrect: match.score >= SPOKEN_EVIDENCE_SCORE,
+    lesson: { level: step.level, targetLanguage: step.targetLanguage },
+    step: { kind: "spokenAnswer", wordId: null },
     userId,
   });
 
-  await schedulePronunciationReviews({
-    targetLanguage: step.targetLanguage,
-    timeZone,
-    userId,
-    userLanguage: step.learnerLanguage,
-    words: wordsToPractice.map((word) => word.text),
+  const outcome = await recordAnswerOnce({
+    answer: {
+      answer: { kind: "spoken", transcript },
+      graded: { durationMs: fields.durationMs, isCorrect: match.isCorrect, score: match.score },
+      language: step.learnerLanguage,
+      mistake: {
+        questionText: question,
+        snapshot: {
+          answer: transcript,
+          correctAnswer: step.targetText,
+          explanation,
+          format: "spoken",
+          question,
+        },
+      },
+      purpose: "learning",
+      skillId: step.skillId,
+      stepId: step.id,
+      studySessionId,
+      targetLanguage: step.targetLanguage,
+      timeZone,
+      userId,
+    },
+    refuse: (client: TransactionClient) =>
+      findClosingAnswer({
+        client,
+        lessonId: step.lessonId,
+        stepId: step.id,
+        until: receivedAt,
+        userId,
+      }),
+    withAnswer: evidence
+      ? (transaction) => writeLanguageStepEvidence(transaction, evidence)
+      : undefined,
   });
+
+  const attemptId = getSpokenAttemptId(outcome);
+
+  if (outcome.status === "recorded") {
+    await schedulePronunciationReviews({
+      targetLanguage: step.targetLanguage,
+      timeZone,
+      userId,
+      userLanguage: step.learnerLanguage,
+      words: wordsToPractice.map((word) => word.text),
+    });
+  }
 
   if (explanation) {
     after(() =>
@@ -175,16 +217,9 @@ export async function gradeSpokenAnswer({
     );
   }
 
-  await recordLanguageStepEvidence({
-    isCorrect: match.score >= SPOKEN_EVIDENCE_SCORE,
-    lesson: { level: step.level, targetLanguage: step.targetLanguage },
-    step: { kind: "spokenAnswer", wordId: null },
-    userId,
-  });
-
   return {
     grade: {
-      attemptId: recorded.attempt.id,
+      attemptId,
       explanation,
       isCorrect: match.isCorrect,
       score: match.score,
