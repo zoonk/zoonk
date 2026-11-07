@@ -13,7 +13,11 @@ import {
 import { normalizeString } from "@zoonk/utils/string";
 import { TEST_CASES } from "./test-cases";
 
-export type ReadProductPagesInput = ReadProductPagesParams & { language: string };
+export type ReadProductPagesInput = ReadProductPagesParams & {
+  language: string;
+  /** The pages, numbered from 1, research would choose as the product's releases or release page. */
+  releasesPages?: number[];
+};
 
 export type ReadProductPagesExpected = {
   brand: string | null;
@@ -38,7 +42,12 @@ function isSameName(left: string | null | undefined, right: string): boolean {
 /** The reading as production keeps it: the same passage checks run before anything is saved. */
 async function generate(input: ReadProductPagesInput) {
   const result = await readProductPages(input);
-  const pages = input.pages.map((page) => ({ language: input.language, text: page.text }));
+
+  const pages = input.pages.map((page, index) => ({
+    isReleasesPage: input.releasesPages?.includes(index + 1) ?? false,
+    language: input.language,
+    text: page.text,
+  }));
 
   return {
     ...result,

@@ -298,6 +298,60 @@ describe("product research", () => {
     expect(product.releasesSource?.url).toBe(releasesUrl);
   });
 
+  it("takes a release row naming only its version from the releases page, never from a sibling product's line", async () => {
+    const site = newSite();
+    const goal = await productGoal();
+    const brand = await brandFixture({ domain: site.brand, website: `https://${site.brand}/` });
+
+    await productFixture({
+      name: "Comet Phone",
+      normalizedName: "cometphone",
+      organizationId: brand.id,
+    });
+
+    planProduct({ site });
+    findPages(site);
+
+    servePages({
+      releases:
+        "<p>Releases</p><p>| 5.1 | 2025-11-02 |</p><p>Comet Phone 6.2 shipped on 2025-11-03.</p>",
+      site,
+    });
+
+    readPages({
+      ...READING,
+      releases: [
+        {
+          document: 4,
+          name: "Orbit Notes 5.1",
+          passage: "| 5.1 | 2025-11-02 |",
+          releasedOn: "2025-11-02",
+          supportEndsOn: null,
+          version: "5.1",
+        },
+        {
+          document: 4,
+          name: "Orbit Notes 6.2",
+          passage: "6.2 shipped on 2025-11-03.",
+          releasedOn: "2025-11-03",
+          supportEndsOn: null,
+          version: "6.2",
+        },
+      ],
+    });
+
+    await researchWorkflow({ goalId: goal.id });
+
+    const product = await prisma.product.findFirstOrThrow({
+      include: { releases: true },
+      where: { normalizedName: "orbitnotes", organizationId: brand.id },
+    });
+
+    expect(product.releases.map((release) => [release.name, release.releasedAt])).toStrictEqual([
+      ["Orbit Notes 5.1", new Date("2025-11-02T00:00:00.000Z")],
+    ]);
+  });
+
   it("pins a named older model when the models page gives only years", async () => {
     const site = newSite();
     const goal = await productGoal();

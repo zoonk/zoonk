@@ -1,6 +1,6 @@
 import { assert, property, string } from "fast-check";
 import { describe, expect, it } from "vitest";
-import { toNameKey, toRegistrableDomain, toVersionKey } from "./product-keys";
+import { namesAnyProduct, toNameKey, toRegistrableDomain, toVersionKey } from "./product-keys";
 
 describe(toNameKey, () => {
   it("gives the ways learners write a product one key", () => {
@@ -71,5 +71,18 @@ describe(toRegistrableDomain, () => {
         expect(() => toRegistrableDomain(text)).not.toThrow();
       }),
     );
+  });
+});
+
+describe(namesAnyProduct, () => {
+  it("finds another product's name in whole words, outside the words naming this product", () => {
+    const own = ["Orbit Server"];
+    const keys = ["orbit", "cometphone"];
+
+    expect(
+      ["| Orbit Server | 1.36 |", "| Orbit | 2.0 |", "Comet Phone 1.37", "Cometphones 4"].map(
+        (text) => namesAnyProduct({ keys, own, text }),
+      ),
+    ).toStrictEqual([false, true, true, false]);
   });
 });

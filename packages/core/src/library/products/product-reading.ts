@@ -2,11 +2,21 @@ import {
   type ProductReading,
   type ProductReleaseClaim,
 } from "@zoonk/ai/tasks/research/read-product-pages";
-import { findNamesInDocument, isPassageExactlyInDocument } from "../exams/passage-check";
+import {
+  findNamesInDocument,
+  findPassageLines,
+  isPassageExactlyInDocument,
+} from "../exams/passage-check";
+import { namesAnyProduct } from "./product-keys";
 import { hasVersionToken, isDateStated, isMonthStated, isVersionStated } from "./release-claims";
 
 /** A page's language names its months ("21 de outubro de 2025"). */
-export type ReadProductPage = { language: string; text: string };
+export type ReadProductPage = {
+  /** Research chose and verified it as the product's releases page, or its named release's page. */
+  isReleasesPage?: boolean;
+  language: string;
+  text: string;
+};
 
 type CheckedProductRelease = {
   name: string;
@@ -110,31 +120,60 @@ function isClaimStated({
   return isQuoted({ claim, pages }) && isNamed({ name, passage: claim.passage });
 }
 
-/**
- * A release keeps its version only when its name and passage state it, so a year in its date never
- * passes for one. A row naming no product counts by its version alone when the release's name names
- * the product and the version opens its line or sits beside the product's name (`isVersionStated`),
- * so another product's row can't pass.
- */
-function checkRelease({
-  pages,
-  productNames,
-  release,
-}: {
+type ProductContext = {
   pages: readonly ReadProductPage[];
   productNames: readonly string[];
+  /** Name keys of the brand's other saved products, their names and aliases. */
+  siblingKeys: readonly string[];
+};
+
+/**
+ * A row that names only its version ("| 1.37 | 2026-09-15 |") stands for this product's release only
+ * on a page research chose as the product's releases page, and only when the page's own lines it
+ * sits on, not the quote the model may have cropped, name none of the brand's other products.
+ */
+function isVersionRow({
+  context,
+  page,
+  release,
+}: {
+  context: ProductContext;
+  page: ReadProductPage;
+  release: ProductReleaseClaim;
+}): boolean {
+  const { productNames, siblingKeys } = context;
+  const lines = findPassageLines({ passage: release.passage, text: page.text });
+
+  return (
+    page.isReleasesPage === true &&
+    isVersionStated(release) &&
+    findNamesInDocument({ names: productNames, text: release.name }).size > 0 &&
+    lines.length > 0 &&
+    !lines.some((line) => namesAnyProduct({ keys: siblingKeys, own: productNames, text: line }))
+  );
+}
+
+/**
+ * A release keeps its version only when its name and passage state it, so a year in its date never
+ * passes for one. Its passage names it, or it is a version row of the product's releases page.
+ */
+function checkRelease({
+  context,
+  release,
+}: {
+  context: ProductContext;
   release: ProductReleaseClaim;
 }): CheckedProductRelease | null {
+  const { pages } = context;
   const page = pages[release.document - 1];
-
-  const isVersionOfProduct =
-    isVersionStated({ ...release, productNames }) &&
-    findNamesInDocument({ names: productNames, text: release.name }).size > 0;
 
   if (
     !page ||
     !isQuoted({ claim: release, pages }) ||
-    !(isNamed({ name: release.name, passage: release.passage }) || isVersionOfProduct)
+    !(
+      isNamed({ name: release.name, passage: release.passage }) ||
+      isVersionRow({ context, page, release })
+    )
   ) {
     return null;
   }
@@ -182,19 +221,21 @@ export function checkProductReading({
   pages,
   productName,
   reading,
+  siblingKeys = [],
 }: {
   pages: readonly ReadProductPage[];
   /** A known product's stored name, which its releases name when the reading has no product. */
   productName: string;
   reading: ProductReading;
+  /** Name keys of the brand's other saved products, their names and aliases. */
+  siblingKeys?: readonly string[];
 }): CheckedProductReading {
   const { brand } = reading;
   const product = checkProduct({ pages, product: reading.product });
   const productNames = product ? [product.name, ...product.aliases] : [productName];
+  const context = { pages, productNames, siblingKeys };
 
-  const releases = reading.releases.flatMap(
-    (release) => checkRelease({ pages, productNames, release }) ?? [],
-  );
+  const releases = reading.releases.flatMap((release) => checkRelease({ context, release }) ?? []);
 
   return {
     brand:

@@ -4,6 +4,7 @@ import {
 } from "@zoonk/ai/tasks/research/read-product-pages";
 import { describe, expect, it } from "vitest";
 import { isPassageInDocument } from "../exams/passage-check";
+import { parseDocument } from "../sources/parse-document";
 import { checkProductReading } from "./product-reading";
 
 const PAGE = `Orbit Notes is made by Lumen Works.
@@ -229,98 +230,139 @@ function tableRelease(name: string, version: string, passage: string): ProductRe
   return { document: 1, name, passage, releasedOn: null, supportEndsOn: null, version };
 }
 
-describe("a releases table that lists versions without the product's name", () => {
+/** A page research chose and verified as the product's releases page. */
+function releasesPage(text: string) {
+  return { isReleasesPage: true, language: "en", text };
+}
+
+function readVersions({
+  pages,
+  releases,
+  siblingKeys = [],
+}: {
+  pages: Parameters<typeof checkProductReading>[0]["pages"];
+  releases: ProductReleaseClaim[];
+  siblingKeys?: string[];
+}) {
+  return checkProductReading({
+    pages,
+    productName: "Orbit Server",
+    reading: reading({ brand: null, product: null, releases }),
+    siblingKeys,
+  }).releases.map((kept) => [kept.name, kept.releasedAt]);
+}
+
+describe("a release row that names only its version", () => {
   const table = `Orbit Server releases
 | Version | Latest patch | Released   | End of life |
 | 1.37    | 1.37.2       | 2026-09-15 | 2027-10-28  |
 | 1.36    | 1.36.5       | 2026-05-12 | 2027-06-28  |
 | 5       | 5.0.9        | 2019-03-01 | 2020-03-01  |`;
 
-  it("keeps a row whose version has a separator and drops one with a bare integer", () => {
-    const checked = checkProductReading({
-      pages: [{ language: "en", text: table }],
-      productName: "Orbit Server",
-      reading: reading({
-        brand: null,
-        product: null,
-        releases: [
-          tableRelease("Orbit Server 1.37", "1.37", "| 1.37    | 1.37.2       | 2026-09-15 |"),
-          tableRelease("Orbit Server 5", "5", "| 5       | 5.0.9        | 2019-03-01 |"),
-        ],
-      }),
-    });
+  const rows = [
+    tableRelease("Orbit Server 1.37", "1.37", "| 1.37    | 1.37.2       | 2026-09-15 |"),
+    tableRelease("Orbit Server 5", "5", "| 5       | 5.0.9        | 2019-03-01 |"),
+  ];
 
-    expect(checked.releases.map((item) => item.name)).toStrictEqual(["Orbit Server 1.37"]);
+  it("keeps a row whose version has a separator on the product's releases page, never a bare integer", () => {
+    expect(readVersions({ pages: [releasesPage(table)], releases: rows })).toStrictEqual([
+      ["Orbit Server 1.37", null],
+    ]);
   });
 
-  it("drops a version that follows another product's name in its passage", () => {
-    const passage = "Comet Phone 1.37 released on 2026-09-15.";
+  it("drops a row that names only its version on any other page", () => {
+    expect(
+      readVersions({ pages: [{ language: "en", text: table }], releases: rows }),
+    ).toStrictEqual([]);
+  });
 
-    const checked = checkProductReading({
-      pages: [{ language: "en", text: `Lumen news\n${passage}\nOrbit Server 1.36 is next.` }],
-      productName: "Orbit Server",
-      reading: reading({
-        brand: null,
-        product: null,
+  it("keeps a date-first row of a releases table as the parser reads it", async () => {
+    const parsed = await parseDocument({
+      bytes: Buffer.from(
+        "<html><body><h1>Orbit Server changelog</h1><table><tr><th>Date</th><th>Version</th></tr><tr><td>2026-09-15</td><td>1.37</td></tr></table></body></html>",
+      ),
+      contentType: "text/html",
+    });
+
+    const text = parsed.text ?? "";
+    const passage = text.split("\n").find((line) => line.includes("2026-09-15")) ?? "";
+
+    expect(
+      readVersions({
+        pages: [releasesPage(text)],
         releases: [
           { ...tableRelease("Orbit Server 1.37", "1.37", passage), releasedOn: "2026-09-15" },
         ],
       }),
-    });
-
-    expect(checked.releases).toStrictEqual([]);
+    ).toStrictEqual([["Orbit Server 1.37", new Date(Date.UTC(2026, 8, 15))]]);
   });
 
-  it("keeps a version that opens its line or follows the product's own name", () => {
+  it("keeps a bare version heading and a list item on the product's releases page", () => {
     const notes = `Orbit Server changelog
 ## 4.98.0  November 3, 2026
 - Release 4.97.0
-- Release 4.96.0
-Orbit 4.95.0 shipped with faster sync.`;
+- Release 4.96.0`;
 
-    const checked = checkProductReading({
-      pages: [{ language: "en", text: notes }],
-      productName: "Orbit Server",
-      reading: reading({
-        brand: null,
-        product: {
-          ...PRODUCT,
-          aliases: ["Orbit"],
-          name: "Orbit Server",
-          passage: "Orbit Server changelog",
-        },
+    expect(
+      readVersions({
+        pages: [releasesPage(notes)],
         releases: [
           {
             ...tableRelease("Orbit Server 4.98.0", "4.98.0", "## 4.98.0  November 3, 2026"),
             releasedOn: "2026-11-03",
           },
-          tableRelease("Orbit Server 4.96.0", "4.96.0", "- Release 4.97.0\n- Release 4.96.0"),
-          tableRelease("Orbit Server 4.95.0", "4.95.0", "Orbit 4.95.0 shipped with faster sync."),
+          tableRelease("Orbit Server 4.96.0", "4.96.0", "- Release 4.96.0"),
         ],
       }),
-    });
-
-    expect(checked.releases.map((item) => [item.name, item.releasedAt])).toStrictEqual([
+    ).toStrictEqual([
       ["Orbit Server 4.98.0", new Date(Date.UTC(2026, 10, 3))],
       ["Orbit Server 4.96.0", null],
-      ["Orbit Server 4.95.0", null],
     ]);
   });
 
+  it("drops a row whose whole line on the page names another of the brand's products", () => {
+    const page = `Lumen releases
+| Comet Phone  | 1.37 | 2026-09-15 |
+| Orbit Server | 1.36 | 2026-05-12 |`;
+
+    expect(
+      readVersions({
+        pages: [releasesPage(page)],
+        releases: [
+          tableRelease("Orbit Server 1.37", "1.37", "| 1.37 | 2026-09-15 |"),
+          tableRelease("Orbit Server 1.36", "1.36", "| 1.36 | 2026-05-12 |"),
+        ],
+        siblingKeys: ["cometphone"],
+      }),
+    ).toStrictEqual([["Orbit Server 1.36", null]]);
+  });
+
+  it("drops a quote cropped from another product's line, or one turning its space into a line break", () => {
+    const page = "Comet Phone 1.37 released on 2026-09-15.\nOrbit Server 1.36 is next.";
+
+    const quotes = ["1.37 released on 2026-09-15.", "Comet Phone\n1.37 released on 2026-09-15."];
+
+    expect(
+      readVersions({
+        pages: [releasesPage(page)],
+        releases: quotes.map((quote) => ({
+          ...tableRelease("Orbit Server 1.37", "1.37", quote),
+          releasedOn: "2026-09-15",
+        })),
+        siblingKeys: ["cometphone"],
+      }),
+    ).toStrictEqual([]);
+  });
+
   it("drops a version row whose release names another product", () => {
-    const checked = checkProductReading({
-      pages: [{ language: "en", text: table }],
-      productName: "Orbit Server",
-      reading: reading({
-        brand: null,
-        product: null,
+    expect(
+      readVersions({
+        pages: [releasesPage(table)],
         releases: [
           tableRelease("Comet Phone 1.37", "1.37", "| 1.37    | 1.37.2       | 2026-09-15 |"),
         ],
       }),
-    });
-
-    expect(checked.releases).toStrictEqual([]);
+    ).toStrictEqual([]);
   });
 });
 

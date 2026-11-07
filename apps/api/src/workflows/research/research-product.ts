@@ -133,8 +133,10 @@ async function researchNewProduct(research: Research): Promise<GoalProductLink |
 
   const reading = await readProductPagesStep({
     analytics,
+    brandDomain: sites.brand.domain,
     hints,
     language: plan.language,
+    releasesPageIds: [releases, release].flatMap((page) => page?.sourceId ?? []),
     sourceIds: [...new Set(pageIds)],
   });
 
@@ -239,9 +241,11 @@ async function researchNamedRelease({
 
   const reading = await readProductPagesStep({
     analytics,
+    brandDomain: known.brand.domain,
     hints: { ...hints, brand: known.brand.name, name: known.product.name },
     known: true,
     language: plan.language,
+    releasesPageIds: [releasePage.sourceId],
     sourceIds: [releasePage.sourceId],
   });
 

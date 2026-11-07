@@ -13,22 +13,6 @@ const NUMERIC_JOINER = /^[./-]$/u;
 /** "2024-10" and "10/2024", never "2024.10", which is how versions are written. */
 const NUMERIC_MONTH_JOINER = /^[/-]$/u;
 const VERSION_SEPARATOR = /[\p{L}\p{N}][._-][\p{L}\p{N}]/u;
-const RELEASE_WORDS = "release|version|versão|versión";
-const RELEASE_WORD = new RegExp(String.raw`(?:^|[^\p{L}\p{N}])(?:${RELEASE_WORDS})$`, "iu");
-
-/**
- * What may come before a version that opens its line: list or table marks, a label naming a
- * release ("Next release:", "Release anterior:") and a release word ("Release 4.2").
- */
-const LINE_OPENING = new RegExp(
-  String.raw`^[^\p{L}\p{N}]*(?:(?:(?:${RELEASE_WORDS})(?:\s+\p{L}+)?|\p{L}+\s+(?:${RELEASE_WORDS}))\s*:[^\p{L}\p{N}]*)?(?:(?:${RELEASE_WORDS})[^\p{L}\p{N}]*)?$`,
-  "iu",
-);
-
-const TRAILING_MARKS = /[^\p{L}\p{N}]+$/u;
-const LEADING_SPACE = /^\s+/u;
-const LETTER_OR_NUMBER = /[\p{L}\p{N}]/u;
-
 type Token = { end: number; start: number; text: string };
 
 function toTokens(text: string): Token[] {
@@ -242,92 +226,33 @@ export function isMonthStated({
   });
 }
 
-/** The version on its own ("v1.37", "1.37"), not inside "1.370" or "21.37". */
-function toVersionPattern({ flags, version }: { flags: string; version: string }): RegExp {
-  const escaped = version.replaceAll(/[.*+?^${}()|[\]\\]/gu, String.raw`\$&`);
-  return new RegExp(`(?<![\\p{L}\\p{N}.])v?${escaped}(?![\\p{L}\\p{N}]|\\.\\p{N})`, flags);
-}
-
+/** The text states the version on its own ("v1.37", "1.37"), not inside "1.370" or "21.37". */
 export function hasVersionToken({ text, version }: { text: string; version: string }): boolean {
-  return toVersionPattern({ flags: "iu", version }).test(text);
-}
+  const escaped = version.replaceAll(/[.*+?^${}()|[\]\\]/gu, String.raw`\$&`);
 
-/** `text` ends (or, with `atStart`, starts) with `name` as whole words. */
-function hasNameAtEdge({
-  atStart = false,
-  name,
-  text,
-}: {
-  atStart?: boolean;
-  name: string;
-  text: string;
-}): boolean {
-  const [key, nameKey] = [toKey(text), toKey(name)];
-  const isEdge = atStart ? key.startsWith(nameKey) : key.endsWith(nameKey);
-  const next = atStart ? key.at(nameKey.length) : key.at(-nameKey.length - 1);
-
-  return nameKey !== "" && isEdge && !LETTER_OR_NUMBER.test(next ?? "");
-}
-
-/**
- * The version opens its line (`LINE_OPENING`), or the product's own name sits right before it or
- * follows it after a space. A version beside any other name ("Comet Phone 1.37") is another
- * product's.
- */
-function isVersionOfLine({
-  passage,
-  productNames,
-  version,
-}: {
-  passage: string;
-  productNames: readonly string[];
-  version: string;
-}): boolean {
-  return [...passage.matchAll(toVersionPattern({ flags: "giu", version }))].some((match) => {
-    const lineEnd = passage.indexOf("\n", match.index);
-
-    const opening = passage.slice(passage.lastIndexOf("\n", match.index) + 1, match.index);
-
-    const before = opening
-      .replace(TRAILING_MARKS, "")
-      .replace(RELEASE_WORD, "")
-      .replace(TRAILING_MARKS, "");
-
-    const after = passage
-      .slice(match.index + match[0].length, lineEnd === -1 ? undefined : lineEnd)
-      .replace(LEADING_SPACE, "");
-
-    return (
-      LINE_OPENING.test(opening) ||
-      productNames.some(
-        (name) =>
-          hasNameAtEdge({ name, text: before }) ||
-          hasNameAtEdge({ atStart: true, name, text: after }),
-      )
-    );
-  });
+  return new RegExp(`(?<![\\p{L}\\p{N}.])v?${escaped}(?![\\p{L}\\p{N}]|\\.\\p{N})`, "iu").test(
+    text,
+  );
 }
 
 /**
  * A releases table or changelog often lists a version without the product's name ("1.37 |
  * 2026-09-15"). A version with a separator is specific enough to stand for its release there; a bare
- * "5" isn't.
+ * "5" isn't. Where such a row may count is the reading's rule (`checkProductReading`).
  */
 export function isVersionStated({
   name,
   passage,
-  productNames,
   version,
 }: {
   name: string;
   passage: string;
-  productNames: readonly string[];
   version: string | null;
 }): boolean {
   return (
     version !== null &&
     VERSION_SEPARATOR.test(version) &&
     hasVersionToken({ text: name, version }) &&
-    isVersionOfLine({ passage, productNames, version })
+    hasVersionToken({ text: passage, version })
   );
 }

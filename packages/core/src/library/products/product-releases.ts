@@ -18,6 +18,7 @@ export type UnreadReleasesPage = {
   contentHash: string;
   language: string;
   name: string;
+  organizationId: string;
   productId: string;
   sourceId: string;
   text: string;
@@ -48,6 +49,7 @@ export async function findUnreadReleasesPage(
     select: {
       name: true,
       organization: { select: { name: true } },
+      organizationId: true,
       releasesHash: true,
       releasesSource: {
         select: {
@@ -80,6 +82,7 @@ export async function findUnreadReleasesPage(
     contentHash: source.contentHash,
     language: source.language,
     name: product.name,
+    organizationId: product.organizationId,
     productId,
     sourceId: source.id,
     text: source.extractedText,
@@ -107,7 +110,8 @@ export async function readReleasesPage({
     known: true,
     language: page.language,
     serviceTier,
-    sources: [{ ...page, id: page.sourceId }],
+    siblings: { NOT: { id: page.productId }, organizationId: page.organizationId },
+    sources: [{ ...page, id: page.sourceId, isReleasesPage: true }],
   });
 
   return {

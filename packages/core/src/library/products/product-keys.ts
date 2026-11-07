@@ -21,6 +21,48 @@ export function toNameKey(name: string): string {
   );
 }
 
+/** Enough words for a product's name, such as "Microsoft Dynamics 365 Business Central". */
+const MAX_NAME_WORDS = 5;
+
+type NameSpan = { end: number; key: string; start: number };
+
+function listNameSpans(text: string): NameSpan[] {
+  const words = text.split(/\s+/u).filter(Boolean);
+
+  return words.flatMap((_, start) =>
+    Array.from({ length: Math.min(MAX_NAME_WORDS, words.length - start) }, (__, size) => ({
+      end: start + size + 1,
+      key: toNameKey(words.slice(start, start + size + 1).join(" ")),
+      start,
+    })),
+  );
+}
+
+/**
+ * The text names a product by one of `keys` in whole words, outside the words that name `own`
+ * ("Orbit Server" never names a sibling called "Orbit").
+ */
+export function namesAnyProduct({
+  keys,
+  own,
+  text,
+}: {
+  keys: readonly string[];
+  own: readonly string[];
+  text: string;
+}): boolean {
+  const spans = listNameSpans(text);
+  const [wanted, ownKeys] = [new Set(keys), new Set(own.map((name) => toNameKey(name)))];
+  const owned = spans.filter((span) => ownKeys.has(span.key));
+
+  return spans.some(
+    (span) =>
+      span.key !== "" &&
+      wanted.has(span.key) &&
+      !owned.some((ownSpan) => ownSpan.start < span.end && span.start < ownSpan.end),
+  );
+}
+
 /** A product is named by its own name's key or one of its aliases. */
 export function whereProductNamed(nameKey: string) {
   return { OR: [{ normalizedName: nameKey }, { aliases: { has: nameKey } }] };

@@ -3,12 +3,37 @@ import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { readProductPages } from "@zoonk/ai/tasks/research/read-product-pages";
 import { type ProductHints } from "@zoonk/ai/tasks/research/source-plan";
-import { prisma } from "@zoonk/db";
+import { type ProductWhereInput, prisma } from "@zoonk/db";
+import { toNameKey, whereProductNamed } from "./product-keys";
 import { type CheckedProductReading, checkProductReading } from "./product-reading";
 
-type ReadSource = { contentHash: string; id: string; text: string; title: string; url: string };
+/** The name keys, names and aliases, of the products `where` finds. */
+async function listProductKeys(where: ProductWhereInput): Promise<string[]> {
+  const products = await prisma.product.findMany({
+    select: { aliases: true, normalizedName: true },
+    where,
+  });
 
-async function loadReadSources(sourceIds: readonly string[]): Promise<ReadSource[]> {
+  return products.flatMap((product) => [product.normalizedName, ...product.aliases]);
+}
+
+type ReadSource = {
+  contentHash: string;
+  id: string;
+  /** Research chose and verified it as the product's releases page, or its named release's page. */
+  isReleasesPage: boolean;
+  text: string;
+  title: string;
+  url: string;
+};
+
+async function loadReadSources({
+  releasesPageIds,
+  sourceIds,
+}: {
+  releasesPageIds: readonly string[];
+  sourceIds: readonly string[];
+}): Promise<ReadSource[]> {
   const rows = await prisma.source.findMany({
     select: { contentHash: true, extractedText: true, id: true, title: true, url: true },
     where: { id: { in: [...sourceIds] } },
@@ -22,6 +47,7 @@ async function loadReadSources(sourceIds: readonly string[]): Promise<ReadSource
           {
             contentHash: row.contentHash,
             id,
+            isReleasesPage: releasesPageIds.includes(id),
             text: row.extractedText,
             title: row.title,
             url: row.url,
@@ -54,10 +80,26 @@ type ReadInput = {
  * the claims their pages state (`checkProductReading`).
  */
 export async function readProductSources({
+  brandDomain,
+  releasesPageIds,
   sourceIds,
   ...input
-}: ReadInput & { sourceIds: readonly string[] }): Promise<ProductSourcesReading> {
-  return readSourceVersions({ ...input, sources: await loadReadSources(sourceIds) });
+}: ReadInput & {
+  /** The brand's domain, whose other saved products' lines never give this one a release. */
+  brandDomain: string;
+  releasesPageIds: readonly string[];
+  sourceIds: readonly string[];
+}): Promise<ProductSourcesReading> {
+  const sources = await loadReadSources({ releasesPageIds, sourceIds });
+
+  return readSourceVersions({
+    ...input,
+    siblings: {
+      NOT: whereProductNamed(toNameKey(input.hints.name)),
+      organization: { domain: brandDomain },
+    },
+    sources,
+  });
 }
 
 /** Internal workflow bridge for the freshness check: reads these versions of the pages. */
@@ -67,20 +109,29 @@ export async function readSourceVersions({
   known = false,
   language,
   serviceTier,
+  siblings,
   sources,
-}: ReadInput & { sources: readonly ReadSource[] }): Promise<ProductSourcesReading> {
-  const { data, provenance } = await readProductPages({
-    analytics,
-    hints,
-    known,
-    pages: sources.map(({ text, title, url }) => ({ text, title, url })),
-    serviceTier,
-  });
+}: ReadInput & {
+  /** The brand's other saved products, whose lines never give this one a release. */
+  siblings: ProductWhereInput;
+  sources: readonly ReadSource[];
+}): Promise<ProductSourcesReading> {
+  const [{ data, provenance }, siblingKeys] = await Promise.all([
+    readProductPages({
+      analytics,
+      hints,
+      known,
+      pages: sources.map(({ text, title, url }) => ({ text, title, url })),
+      serviceTier,
+    }),
+    listProductKeys(siblings),
+  ]);
 
   const checked = checkProductReading({
-    pages: sources.map((source) => ({ language, text: source.text })),
+    pages: sources.map(({ isReleasesPage, text }) => ({ isReleasesPage, language, text })),
     productName: hints.name,
     reading: data,
+    siblingKeys,
   });
 
   return {

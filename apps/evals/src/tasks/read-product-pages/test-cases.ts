@@ -56,6 +56,7 @@ export const TEST_CASES: TestCase<ReadProductPagesExpected, ReadProductPagesInpu
       hints: { brand: "Vercel", name: "Next.js", release: null },
       language: "en",
       pages: [NEXTJS_HOME, VERCEL_HOME, NEXTJS_BLOG],
+      releasesPages: [3],
     },
   },
   {
@@ -74,6 +75,7 @@ export const TEST_CASES: TestCase<ReadProductPagesExpected, ReadProductPagesInpu
       hints: { brand: "Apple", name: "iPhone", release: "iPhone 13" },
       language: "en",
       pages: [APPLE_HOME, IPHONE_MODELS],
+      releasesPages: [2],
     },
   },
   {
@@ -94,6 +96,7 @@ export const TEST_CASES: TestCase<ReadProductPagesExpected, ReadProductPagesInpu
       hints: { brand: "PagBank", name: "Moderninha", release: "Moderninha Plus 2" },
       language: "pt",
       pages: [MODERNINHA_PLUS_2, PAGBANK_MACHINES, PAGBANK_HOME],
+      releasesPages: [1, 2],
     },
   },
   {
@@ -112,6 +115,7 @@ export const TEST_CASES: TestCase<ReadProductPagesExpected, ReadProductPagesInpu
       hints: { brand: "TOTVS", name: "Protheus", release: null },
       language: "pt",
       pages: [TOTVS_HOME, PROTHEUS_PAGE, PROTHEUS_DOCS, PROTHEUS_LIFECYCLE],
+      releasesPages: [4],
     },
   },
   {
@@ -127,6 +131,7 @@ export const TEST_CASES: TestCase<ReadProductPagesExpected, ReadProductPagesInpu
       hints: { brand: "TOTVS", name: "Protheus", release: "12.1.2410" },
       language: "pt",
       pages: [TOTVS_HOME, PROTHEUS_PAGE, PROTHEUS_DOCS, PROTHEUS_LIFECYCLE, PROTHEUS_RELEASE_STUB],
+      releasesPages: [4, 5],
     },
   },
   {
@@ -146,6 +151,7 @@ export const TEST_CASES: TestCase<ReadProductPagesExpected, ReadProductPagesInpu
       hints: { brand: "TOTVS", name: "Protheus", release: "Protheus 12.1.2410" },
       language: "pt",
       pages: [TOTVS_HOME, PROTHEUS_PAGE, PROTHEUS_DOCS, PROTHEUS_LIFECYCLE, PROTHEUS_RELEASE_NOTES],
+      releasesPages: [4, 5],
     },
   },
   {
@@ -166,6 +172,7 @@ export const TEST_CASES: TestCase<ReadProductPagesExpected, ReadProductPagesInpu
       hints: { brand: "Cloud Native Computing Foundation", name: "Kubernetes", release: null },
       language: "en",
       pages: [KUBERNETES_HOME, KUBERNETES_RELEASES],
+      releasesPages: [2],
     },
   },
   {
@@ -191,6 +198,7 @@ export const TEST_CASES: TestCase<ReadProductPagesExpected, ReadProductPagesInpu
       hints: { brand: "Vercel", name: "Next.js", release: null },
       language: "en",
       pages: [NEXTJS_HOME, INJECTED_BLOG],
+      releasesPages: [2],
     },
   },
   {
@@ -209,6 +217,7 @@ export const TEST_CASES: TestCase<ReadProductPagesExpected, ReadProductPagesInpu
       hints: { brand: "Lumen Works", name: "Orbit Notes", release: null },
       language: "en",
       pages: [ORBIT_NEWS],
+      releasesPages: [1],
     },
   },
   {
@@ -224,6 +233,7 @@ export const TEST_CASES: TestCase<ReadProductPagesExpected, ReadProductPagesInpu
       known: true,
       language: "en",
       pages: [ORBIT_NEWS],
+      releasesPages: [1],
     },
   },
 ];

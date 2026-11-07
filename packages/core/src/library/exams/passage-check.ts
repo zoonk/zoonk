@@ -110,6 +110,34 @@ export function isPassageExactlyInDocument({
   );
 }
 
+/**
+ * The page's own whole lines around each place it holds the passage, so a quote cropped from a line
+ * or with a line break where the page has a space is judged by the line it came from.
+ */
+export function findPassageLines({ passage, text }: { passage: string; text: string }): string[] {
+  const target = normalizeText(passage);
+  const lines = text.split("\n");
+
+  const holds = (start: number, end: number) =>
+    normalizeText(lines.slice(start, end + 1).join("\n")).includes(target);
+
+  return lines.flatMap((line, start) => {
+    const limit = normalizeText(line).length + target.length;
+
+    for (let end = start; end < lines.length; end += 1) {
+      if (holds(start, end)) {
+        return end > start && holds(start + 1, end) ? [] : [lines.slice(start, end + 1).join("\n")];
+      }
+
+      if (normalizeText(lines.slice(start, end + 1).join("\n")).length > limit) {
+        return [];
+      }
+    }
+
+    return [];
+  });
+}
+
 export function isPassageInDocument({ passage, text }: { passage: string; text: string }): boolean {
   const normalizedPassage = normalizeText(passage);
 
