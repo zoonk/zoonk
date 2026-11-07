@@ -36,11 +36,11 @@ export function ExportDataButton() {
           <Button
             aria-label={t("Download my data")}
             busy={isPending}
+            icon={<DownloadIcon aria-hidden="true" />}
             onClick={download}
             size="sm"
             variant="outline"
           >
-            <DownloadIcon aria-hidden="true" />
             {t("Download")}
           </Button>
         </SettingRow>

@@ -59,11 +59,11 @@ export function SandboxRunBar({
         <Button
           busy={isRunning}
           className="flex-1"
+          icon={<Play aria-hidden="true" />}
           onClick={onRun}
           size="lg"
           variant={hasRun ? "outline" : "default"}
         >
-          <Play aria-hidden="true" />
           {hasRun ? t("Run again") : t("Run")}
         </Button>
       </div>

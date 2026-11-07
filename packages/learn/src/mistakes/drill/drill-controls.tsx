@@ -39,11 +39,11 @@ export function NotSureButton({
       busy={busy}
       disabled={disabled}
       focusableWhenDisabled
+      icon={<HelpCircleIcon aria-hidden="true" />}
       onClick={onClick}
       size="lg"
       variant="outline"
     >
-      <HelpCircleIcon aria-hidden="true" />
       {label ?? t("I'm not sure")}
     </Button>
   );

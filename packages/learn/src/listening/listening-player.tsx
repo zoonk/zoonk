@@ -175,18 +175,20 @@ export function ListeningPlayer({
           </Button>
         ) : (
           <Button
-            aria-busy={status === "loading"}
-            disabled={isUsedUp || status === "playing" || status === "loading"}
+            busy={status === "loading"}
+            disabled={isUsedUp || status === "playing"}
             focusableWhenDisabled
+            icon={
+              played > 0 && !isReview ? (
+                <RotateCcwIcon aria-hidden="true" />
+              ) : (
+                <PlayIcon aria-hidden="true" />
+              )
+            }
             onClick={() => void play()}
             size="icon-lg"
             type="button"
           >
-            {played > 0 && !isReview ? (
-              <RotateCcwIcon aria-hidden="true" />
-            ) : (
-              <PlayIcon aria-hidden="true" />
-            )}
             <span className="sr-only">{playLabel}</span>
           </Button>
         )}

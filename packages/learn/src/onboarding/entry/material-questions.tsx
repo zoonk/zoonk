@@ -202,11 +202,10 @@ export function MaterialQuestions({
           className="size-11 shrink-0 rounded-full"
           disabled={!trimmed}
           focusableWhenDisabled
+          icon={<ArrowUpIcon aria-hidden="true" className="size-5" />}
           size="icon-lg"
           type="submit"
-        >
-          <ArrowUpIcon aria-hidden="true" className="size-5" />
-        </Button>
+        />
       </form>
     </OnboardingColumn>
   );

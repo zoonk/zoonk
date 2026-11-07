@@ -46,11 +46,11 @@ export function ExplainAnswer({ answer, stepId }: { answer: string; stepId: stri
     <div aria-live="polite" className="flex flex-col items-start gap-2">
       <Button
         busy={state.status === "loading"}
+        icon={<LightbulbIcon aria-hidden="true" />}
         onClick={() => void request()}
         size="sm"
         variant="outline"
       >
-        <LightbulbIcon aria-hidden="true" />
         {t("Explain my answer")}
       </Button>
 

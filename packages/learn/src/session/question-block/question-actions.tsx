@@ -48,12 +48,12 @@ export function QuestionMainButton({
     <EnterButton
       busy={busy}
       disabled={disabled}
+      icon={action === "reveal" ? <EyeIcon aria-hidden="true" /> : undefined}
       id={QUESTION_MAIN_ID}
       onClick={onPress}
       onKeyDown={ignoreHeldEnter}
       ref={ref}
     >
-      {action === "reveal" && <EyeIcon aria-hidden="true" />}
       {labels[action]}
     </EnterButton>
   );

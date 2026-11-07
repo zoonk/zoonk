@@ -251,12 +251,11 @@ export function QuestionComposer({
             className="size-7.5 rounded-lg"
             disabled={!canSend || createNavigationError}
             focusableWhenDisabled
+            icon={<SubmitIcon isResolvingPreviousQuestion={isResolvingPreviousQuestion} />}
             onClick={() => void controller.send()}
             size="icon-sm"
             variant="default"
-          >
-            <SubmitIcon isResolvingPreviousQuestion={isResolvingPreviousQuestion} />
-          </InputGroupButton>
+          />
         </InputGroupAddon>
       </InputGroup>
 

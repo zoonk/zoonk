@@ -117,11 +117,11 @@ function MemoryExportRow({ exportMemory }: Pick<MemoryActions, "exportMemory">) 
           <Button
             aria-label={t("Download my memory")}
             busy={isPending}
+            icon={<DownloadIcon aria-hidden="true" />}
             onClick={download}
             size="sm"
             variant="outline"
           >
-            <DownloadIcon aria-hidden="true" />
             {t("Download")}
           </Button>
         </SettingRow>

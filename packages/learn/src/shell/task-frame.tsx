@@ -259,12 +259,14 @@ export function TaskMainButton({
   children,
   className,
   disabled = false,
+  icon,
   onClick,
 }: {
   busy?: boolean;
   children: React.ReactNode;
   className?: string;
   disabled?: boolean;
+  icon?: React.ReactNode;
   onClick: () => void;
 }) {
   const ref = useRef<HTMLButtonElement>(null);
@@ -280,6 +282,7 @@ export function TaskMainButton({
       className={cn(TASK_MAIN_ACTION_CLASS, className)}
       disabled={disabled || !mounted}
       focusableWhenDisabled
+      icon={icon}
       onClick={onClick}
       ref={ref}
       size="xl"
