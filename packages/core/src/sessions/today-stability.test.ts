@@ -286,6 +286,31 @@ describe("today's session the learner was shown", () => {
     },
   );
 
+  it("REVIEW #2286: shows an early chapter's lessons on an opened day, or keeps waiting for them", async () => {
+    const { course, goal, library } = await setupDayWithStandIn();
+    const opened = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    expect(opened.today.session.lessonsComing).toBe(true);
+
+    vi.setSystemTime(A_MINUTE_LATER);
+
+    // What `saveEarlyChapter` (apps/api/src/workflows/courses/steps/waited-band-outline.ts) does
+    // mid-stream: save the waited chapter, then `replanGoalsWaitingOnSkills`. No day follow runs
+    // until the whole band is written, so the course's outline is still running here.
+    const landed = await landWaitingLessons({ courseId: course.id, library });
+    await prisma.course.update({ data: { outlineStatus: "running" }, where: { id: course.id } });
+
+    const after = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+    const day = after.status === "ready" ? after.today.session : null;
+    const shown = new Set(day?.blocks.map((block) => block.lessonId));
+
+    const landedShown = landed.filter((id) => shown.has(id)).length;
+
+    expect({ landedShown, lessonsComing: day?.lessonsComing }).toMatchObject({
+      landedShown: day?.lessonsComing ? landedShown : landed.length,
+    });
+  });
+
   it("holds the place of lessons still being outlined, says they're on the way, and keeps every block it showed when they land", async () => {
     const { course, goal, library } = await setupDayWithStandIn();
     const before = await readToday(goal.id);
