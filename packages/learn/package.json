@@ -112,6 +112,7 @@
     "./rich-table": "./src/_components/rich-table.tsx",
     "./roadmap-styles": "./src/journey/roadmap-styles.tsx",
     "./provider": "./src/learn-provider.tsx",
+    "./title-row": "./src/_components/title-row.ts",
     "./trickster-art": "./src/checkpoints/trickster-art.tsx",
     "./save-error": "./src/_components/save-error.tsx",
     "./session/block": "./src/session/question-block/question-block.tsx",

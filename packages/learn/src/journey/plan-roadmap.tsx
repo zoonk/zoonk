@@ -10,6 +10,7 @@ import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
 import { type JourneyPathLinks } from "./journey-links";
+import { PATH_ROW_BODY_CLASS } from "./journey-phase-events";
 import { BandFace } from "./roadmap-band";
 import { RoadmapFull } from "./roadmap-full";
 import { PhaseAxis } from "./roadmap-lane";
@@ -173,14 +174,16 @@ function RoadmapRevealList() {
                 label={phase.state === "current" ? t("You are here") : undefined}
                 status={PHASE_MARK[phase.state]}
               />
-              <span className="min-w-0 flex-1 font-medium text-pretty">
-                {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
-              </span>
-              {when && phase.startDate && (
-                <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
-                  {when === "today" ? t("Today") : <PlanDateText isoDate={phase.startDate} />}
+              <span className={PATH_ROW_BODY_CLASS}>
+                <span className="font-medium text-pretty">
+                  {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
                 </span>
-              )}
+                {when && phase.startDate && (
+                  <span className="text-muted-foreground font-mono text-xs tabular-nums">
+                    {when === "today" ? t("Today") : <PlanDateText isoDate={phase.startDate} />}
+                  </span>
+                )}
+              </span>
             </li>
           );
         })}

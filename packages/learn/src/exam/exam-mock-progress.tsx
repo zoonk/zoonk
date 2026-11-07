@@ -8,6 +8,7 @@ import { Meter, MeterFill } from "../_components/meter";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PlusMark } from "../_components/plus-lock";
 import { StatTile, StatTiles } from "../_components/stat-tile";
+import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { useMockShapeLabel } from "../mock/mock-labels";
 import { findBestArea } from "./best-area";
 import { useExamScreen } from "./exam-context";
@@ -119,19 +120,19 @@ function SubjectRow({ trend, trends }: { trend: SubjectTrend; trends: boolean })
   const latest = trend.percents.at(-1) ?? 0;
 
   return (
-    <li className="flex min-h-11 items-center gap-3">
-      <span className="min-w-0 flex-1 py-2.5 text-sm leading-snug font-medium text-pretty">
-        {trend.name}
+    <li className={cn(TITLE_ROW_CLASS, "min-h-11 py-2.5")}>
+      <span className="text-sm leading-snug font-medium text-pretty">{trend.name}</span>
+      <span className="flex flex-wrap items-center gap-x-3">
+        {trends ? (
+          <Sparkline values={trend.percents} />
+        ) : (
+          <Meter className="w-20 sm:w-36">
+            <MeterFill className="bg-success" share={latest / PERCENT} />
+          </Meter>
+        )}
+        <span className="w-10 text-right font-mono text-xs tabular-nums">{`${latest}%`}</span>
+        {trends && <SubjectChange change={trend.change} />}
       </span>
-      {trends ? (
-        <Sparkline values={trend.percents} />
-      ) : (
-        <Meter className="w-20 sm:w-36">
-          <MeterFill className="bg-success" share={latest / PERCENT} />
-        </Meter>
-      )}
-      <span className="w-10 text-right font-mono text-xs tabular-nums">{`${latest}%`}</span>
-      {trends && <SubjectChange change={trend.change} />}
     </li>
   );
 }

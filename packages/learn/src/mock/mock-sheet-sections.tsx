@@ -6,6 +6,7 @@ import { useExtracted } from "next-intl";
 import {
   ListGroup,
   ListRow,
+  ListRowBody,
   ListRowContent,
   ListRowLeading,
   ListRowTitle,
@@ -48,14 +49,16 @@ function SectionRow({ section }: { section: MockSectionView }) {
       <ListRowLeading>
         <StatusMark status={SECTION_MARK[section.status]} />
       </ListRowLeading>
-      <ListRowContent>
-        <ListRowTitle className={cn(section.status !== "current" && "text-muted-foreground")}>
-          {section.name ?? t("Section {number, number}", { number: section.index + 1 })}
-        </ListRowTitle>
-      </ListRowContent>
-      <ListRowTrailing>
-        <SectionTrailing section={section} />
-      </ListRowTrailing>
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowTitle className={cn(section.status !== "current" && "text-muted-foreground")}>
+            {section.name ?? t("Section {number, number}", { number: section.index + 1 })}
+          </ListRowTitle>
+        </ListRowContent>
+        <ListRowTrailing>
+          <SectionTrailing section={section} />
+        </ListRowTrailing>
+      </ListRowBody>
     </ListRow>
   );
 }

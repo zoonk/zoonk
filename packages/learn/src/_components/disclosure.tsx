@@ -10,6 +10,7 @@ import { ChevronDownIcon } from "lucide-react";
 import { SpokenMath } from "../rich-text/spoken-math";
 import {
   LIST_ROW_INTERACTIVE_CLASS,
+  ListRowBody,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -38,15 +39,17 @@ export function Disclosure({
     <Collapsible className={className} data-slot="disclosure" defaultOpen={defaultOpen}>
       <CollapsibleTrigger className={cn(LIST_ROW_INTERACTIVE_CLASS, "group/disclosure")}>
         <ListRowLeading>{icon}</ListRowLeading>
-        <ListRowContent>
-          <ListRowTitle>{title}</ListRowTitle>
-          {description && (
-            <ListRowDescription>
-              <SpokenMath>{description}</SpokenMath>
-            </ListRowDescription>
-          )}
-        </ListRowContent>
-        {aside !== undefined && <ListRowTrailing>{aside}</ListRowTrailing>}
+        <ListRowBody>
+          <ListRowContent>
+            <ListRowTitle>{title}</ListRowTitle>
+            {description && (
+              <ListRowDescription>
+                <SpokenMath>{description}</SpokenMath>
+              </ListRowDescription>
+            )}
+          </ListRowContent>
+          {aside !== undefined && <ListRowTrailing>{aside}</ListRowTrailing>}
+        </ListRowBody>
         <ChevronDownIcon
           aria-hidden="true"
           className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-data-panel-open/disclosure:rotate-180 motion-reduce:transition-none"

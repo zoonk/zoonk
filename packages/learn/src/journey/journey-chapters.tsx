@@ -15,7 +15,12 @@ import { useTopicOutlineActions } from "../topic-outline/topic-outline-actions";
 import { useWritingLine } from "../topic-outline/use-far-topic-line";
 import { getChapterWindow } from "./chapter-window";
 import { type JourneyPathLinks } from "./journey-links";
-import { CheckpointRow, PATH_ROW_CLASS, PATH_ROW_LEADING_CLASS } from "./journey-phase-events";
+import {
+  CheckpointRow,
+  PATH_ROW_BODY_CLASS,
+  PATH_ROW_CLASS,
+  PATH_ROW_LEADING_CLASS,
+} from "./journey-phase-events";
 
 export function getChapterKey(chapter: PlanChapterView): string {
   return chapter.chapterId ?? `${chapter.writing ? "writing" : "settled"}:${chapter.title}`;
@@ -53,7 +58,7 @@ function ChapterLessons({ chapter }: { chapter: PlanChapterView }) {
   }
 
   return (
-    <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
+    <span className="text-muted-foreground font-mono text-xs tabular-nums">
       <span aria-hidden="true">
         {t("{done, number} / {total, number}", {
           done: chapter.lessonsDone,
@@ -100,18 +105,20 @@ function ChapterRow({
       <span className={PATH_ROW_LEADING_CLASS}>
         <ChapterMark chapter={chapter} isNext={isNext} skipped={isSkipped(chapter)} />
       </span>
-      <span className="flex min-w-0 flex-1 flex-col">
-        <span
-          className={cn(
-            "line-clamp-2 font-medium",
-            chapter.state === "done" && "text-muted-foreground",
-          )}
-        >
-          {title(chapter)}
+      <span className={PATH_ROW_BODY_CLASS}>
+        <span className="flex flex-col">
+          <span
+            className={cn(
+              "line-clamp-2 font-medium",
+              chapter.state === "done" && "text-muted-foreground",
+            )}
+          >
+            {title(chapter)}
+          </span>
+          {line && <span className="text-muted-foreground text-xs">{line}</span>}
         </span>
-        {line && <span className="text-muted-foreground text-xs">{line}</span>}
+        <ChapterLessons chapter={chapter} />
       </span>
-      <ChapterLessons chapter={chapter} />
     </>
   );
 

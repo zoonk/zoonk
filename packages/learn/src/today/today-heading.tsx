@@ -10,6 +10,7 @@ import {
   PageTitle,
 } from "../_components/page";
 import { PlusMark } from "../_components/plus-lock";
+import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { usePlanStatusText } from "../plan/plan-status-label";
 import { useShortDayRange, useShortFocusName } from "../plan/use-short-plan";
@@ -179,9 +180,9 @@ export function TodayHeading({ className }: { className?: string }) {
           <TodayPace />
         </TodayEyebrow>
 
-        <div className="flex items-baseline justify-between gap-3">
+        <div className={cn(TITLE_ROW_CLASS, "items-baseline")}>
           <PageTitle>{t("Today")}</PageTitle>
-          <DayTime className="shrink-0 text-2xl sm:hidden" />
+          <DayTime className="text-2xl sm:hidden" />
         </div>
 
         {!endsDay && <MockFundingLine />}

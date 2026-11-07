@@ -3,6 +3,7 @@ import { KindMark, type LearnKind } from "@zoonk/learn/kind-tile";
 import {
   ListGroup,
   ListRow,
+  ListRowBody,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -38,12 +39,14 @@ function DayRow({ minutesText, step }: { minutesText: string; step: DayListStep 
         {done ? <DoneMark className="size-3.5" /> : <KindMark kind={step.kind} />}
       </ListRowLeading>
 
-      <ListRowContent>
-        <ListRowTitle className={cn(done && "text-muted-foreground")}>{step.title}</ListRowTitle>
-        {!done && step.detail && <ListRowDescription>{step.detail}</ListRowDescription>}
-      </ListRowContent>
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowTitle className={cn(done && "text-muted-foreground")}>{step.title}</ListRowTitle>
+          {!done && step.detail && <ListRowDescription>{step.detail}</ListRowDescription>}
+        </ListRowContent>
 
-      <ListRowTrailing>{minutesText}</ListRowTrailing>
+        <ListRowTrailing>{minutesText}</ListRowTrailing>
+      </ListRowBody>
     </ListRow>
   );
 }

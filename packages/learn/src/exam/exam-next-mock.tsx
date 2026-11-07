@@ -4,6 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import {
   CURRENT_ROW_CLASS,
+  ListRowBody,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -36,16 +37,18 @@ export function ExamNextMock({ current }: { current: boolean }) {
       <ListRowLeading>
         <StatusMark status={current ? "next" : "todo"} />
       </ListRowLeading>
-      <ListRowContent>
-        <ListRowTitle className="flex items-center gap-2">
-          {daySize({ fullLength: next.fullLength })}
-          {exam.mocksRequirePlus && <PlusMark />}
-        </ListRowTitle>
-        <ListRowDescription>
-          {t("{count, plural, one {# question} other {# questions}}", { count: next.questions })}
-        </ListRowDescription>
-      </ListRowContent>
-      {next.date && <ListRowTrailing>{dayDate(next.date)}</ListRowTrailing>}
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowTitle className="flex items-center gap-2">
+            {daySize({ fullLength: next.fullLength })}
+            {exam.mocksRequirePlus && <PlusMark />}
+          </ListRowTitle>
+          <ListRowDescription>
+            {t("{count, plural, one {# question} other {# questions}}", { count: next.questions })}
+          </ListRowDescription>
+        </ListRowContent>
+        {next.date && <ListRowTrailing>{dayDate(next.date)}</ListRowTrailing>}
+      </ListRowBody>
     </ListRowLink>
   );
 }

@@ -11,7 +11,12 @@ import { usePlanScreen } from "../plan/plan-context";
 import { usePhaseName } from "../plan/use-phase-name";
 import { CurrentPhaseMark } from "./current-phase-mark";
 import { type JourneyPathLinks } from "./journey-links";
-import { CheckpointRow, MockRow, usePhaseMocksLine } from "./journey-phase-events";
+import {
+  CheckpointRow,
+  MockRow,
+  PATH_ROW_BODY_CLASS,
+  usePhaseMocksLine,
+} from "./journey-phase-events";
 import { useFinishDate, usePhaseWhen } from "./use-phase-when";
 
 type NodeState = PlanPhaseView["state"] | "finish";
@@ -45,8 +50,9 @@ function PathLine({ walked }: { walked: boolean }) {
   );
 }
 
-const DATE_CLASS =
-  "text-muted-foreground shrink-0 text-right font-mono text-xs whitespace-nowrap tabular-nums";
+const DATE_CLASS = "text-muted-foreground text-right font-mono text-xs tabular-nums";
+
+const HEADER_BODY_CLASS = cn(PATH_ROW_BODY_CLASS, "items-baseline gap-y-0.5");
 
 function PhaseTitle({ phase }: { phase: PlanPhaseView }) {
   const t = useExtracted();
@@ -56,8 +62,8 @@ function PhaseTitle({ phase }: { phase: PlanPhaseView }) {
   const when = phaseWhen(phase);
 
   return (
-    <>
-      <span className="flex min-w-0 flex-1 flex-col">
+    <span className={HEADER_BODY_CLASS}>
+      <span className="flex flex-col">
         <span
           className={cn("text-sm font-medium", phase.state === "done" && "text-muted-foreground")}
         >
@@ -78,7 +84,7 @@ function PhaseTitle({ phase }: { phase: PlanPhaseView }) {
         )}
       </span>
       {when && <span className={DATE_CLASS}>{when}</span>}
-    </>
+    </span>
   );
 }
 
@@ -153,25 +159,21 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
   );
 }
 
-const FINISH_HEADER_CLASS = "flex-wrap gap-y-0.5";
-
 function FinishNode({ continues, examHref }: { continues: boolean; examHref: string | null }) {
   const t = useExtracted();
   const { goal } = usePlanScreen();
   const date = useFinishDate();
 
   const content = (
-    <>
-      <span className="min-w-0 flex-1 text-sm font-medium">{goal.title}</span>
-      {examHref && (
-        <span className="text-muted-foreground shrink-0 text-xs">{t("About the exam")}</span>
-      )}
+    <span className={HEADER_BODY_CLASS}>
+      <span className="text-sm font-medium">{goal.title}</span>
+      {examHref && <span className="text-muted-foreground text-xs">{t("About the exam")}</span>}
       {date && (
-        <span className="text-muted-foreground order-last basis-full font-mono text-xs tabular-nums">
+        <span className="text-muted-foreground basis-full font-mono text-xs tabular-nums">
           {date}
         </span>
       )}
-    </>
+    </span>
   );
 
   return (
@@ -179,15 +181,12 @@ function FinishNode({ continues, examHref }: { continues: boolean; examHref: str
       {continues && <PathLine walked={false} />}
       <PathMarker state="finish" />
       {examHref ? (
-        <LearnLink
-          className={cn(HEADER_CLASS, HEADER_INTERACTIVE_CLASS, FINISH_HEADER_CLASS)}
-          href={examHref}
-        >
+        <LearnLink className={cn(HEADER_CLASS, HEADER_INTERACTIVE_CLASS)} href={examHref}>
           {content}
           <ChevronRightIcon aria-hidden="true" className={HEADER_CHEVRON_CLASS} />
         </LearnLink>
       ) : (
-        <div className={cn(HEADER_CLASS, FINISH_HEADER_CLASS)}>
+        <div className={HEADER_CLASS}>
           {content}
           <ChevronSpace />
         </div>
