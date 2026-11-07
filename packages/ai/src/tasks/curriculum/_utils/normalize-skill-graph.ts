@@ -6,7 +6,7 @@ import { EmptySkillGraphError } from "./empty-skill-graph-error";
 import { toExamWeight } from "./exam-weight";
 import { fitLessonBudget } from "./lesson-budget";
 import { orderSkillGraph } from "./order-skill-graph";
-import { toSkillNameKey } from "./skill-graph-checks";
+import { toSkillIdentityKey, toSkillNameKey } from "./skill-graph-checks";
 
 type RawSkillGraphSkill = {
   area: string;
@@ -101,7 +101,7 @@ function dedupeSkills(skills: readonly RawSkillGraphSkill[]) {
   for (const skill of skills) {
     const key = toKey(skill.key || skill.name);
     const name = toSkillNameKey(skill.name) || normalizeString(skill.name);
-    const identity = skill.libraryId ? `library:${skill.libraryId}` : name;
+    const identity = toSkillIdentityKey(skill) || name;
     const survivorKey = survivors.has(key) ? key : keysByIdentity.get(identity);
     const survivor = survivorKey ? survivors.get(survivorKey) : undefined;
 

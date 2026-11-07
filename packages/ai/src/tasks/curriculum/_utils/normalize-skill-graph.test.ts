@@ -166,12 +166,12 @@ describe(normalizeSkillGraph, () => {
     ]);
   });
 
-  it("merges a skill written twice in other words' order and takes em dashes out", () => {
+  it("merges a skill repeated with articles and takes em dashes out", () => {
     const graph = normalizeSkillGraph(
       rawGraph(
         [
           rawSkill({ key: "tipos", name: "Distinguir tipos e gêneros textuais" }),
-          rawSkill({ key: "generos", name: "Distinguir gêneros e tipos textuais" }),
+          rawSkill({ key: "generos", name: "Distinguir os tipos e gêneros textuais" }),
           rawSkill({
             description: "Read a graph — then decide.",
             key: "graphs",
