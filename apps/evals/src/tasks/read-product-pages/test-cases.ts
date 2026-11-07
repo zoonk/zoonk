@@ -16,6 +16,7 @@ import {
   PROTHEUS_DOCS,
   PROTHEUS_LIFECYCLE,
   PROTHEUS_PAGE,
+  PROTHEUS_RELEASE_NOTES,
   PROTHEUS_RELEASE_STUB,
   TOTVS_HOME,
 } from "./protheus-pages";
@@ -126,6 +127,25 @@ export const TEST_CASES: TestCase<ReadProductPagesExpected, ReadProductPagesInpu
       hints: { brand: "TOTVS", name: "Protheus", release: "12.1.2410" },
       language: "pt",
       pages: [TOTVS_HOME, PROTHEUS_PAGE, PROTHEUS_DOCS, PROTHEUS_LIFECYCLE, PROTHEUS_RELEASE_STUB],
+    },
+  },
+  {
+    expected: {
+      brand: "TOTVS",
+      learnerRelease: "Protheus 12.1.2410",
+      product: "Protheus",
+      releases: [
+        { name: "Protheus 12.1.2510", releasedOn: "2025-10" },
+        { name: "Protheus 12.1.2410", releasedOn: "2024-10" },
+        { name: "Protheus 12.1.2310", releasedOn: "2023-10" },
+      ],
+    },
+    id: "protheus-release-notes-by-month",
+    language: "pt",
+    userInput: {
+      hints: { brand: "TOTVS", name: "Protheus", release: "Protheus 12.1.2410" },
+      language: "pt",
+      pages: [TOTVS_HOME, PROTHEUS_PAGE, PROTHEUS_DOCS, PROTHEUS_LIFECYCLE, PROTHEUS_RELEASE_NOTES],
     },
   },
   {

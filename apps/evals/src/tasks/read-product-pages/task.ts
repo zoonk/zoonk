@@ -5,6 +5,7 @@ import {
   type ReadProductPagesParams,
   readProductPages,
 } from "@zoonk/ai/tasks/research/read-product-pages";
+import { formatReleaseDate } from "@zoonk/core/library/products/current-release";
 import {
   type CheckedProductReading,
   checkProductReading,
@@ -17,7 +18,7 @@ export type ReadProductPagesInput = ReadProductPagesParams & { language: string 
 export type ReadProductPagesExpected = {
   brand: string | null;
   product: string | null;
-  /** Each must survive the passage checks, with this date (null: no date survives). */
+  /** Each must survive the passage checks, with this date ("YYYY-MM" by month; null: none survives). */
   releases: { name: string; releasedOn: string | null }[];
   /** Releases the pages don't state, which the reading must never keep. */
   absent?: string[];
@@ -48,10 +49,6 @@ async function generate(input: ReadProductPagesInput) {
   };
 }
 
-function toDay(date: Date | string | null): string | null {
-  return date ? new Date(date).toISOString().slice(0, 10) : null;
-}
-
 function listChecks({
   expected,
   output,
@@ -78,7 +75,13 @@ function listChecks({
 
       return {
         label: `${release.name} dated ${release.releasedOn ?? "unknown"}`,
-        passed: found !== undefined && toDay(found.releasedAt) === release.releasedOn,
+        passed:
+          found !== undefined &&
+          formatReleaseDate({
+            // Parsed from saved JSON, where a date is a string.
+            releasedAt: found.releasedAt ? new Date(found.releasedAt) : null,
+            releasedMonthOnly: found.releasedMonthOnly,
+          }) === release.releasedOn,
       };
     }),
     ...(expected.absent ?? []).map((name) => ({
