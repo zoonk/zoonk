@@ -34,6 +34,8 @@ export type TeachingChaptersParams = {
   level: CourseLevel;
   /** The band's chapters in order; answers number them from 1. */
   chapters: BandChapter[];
+  /** An exam's skills gather what a notice subject asks, so one often spans several chapters. */
+  exam?: boolean;
   skills: BandSkill[];
   model?: string;
   serviceTier?: ServiceTier;
@@ -67,7 +69,10 @@ function formatSkill(skill: BandSkill): string {
 function buildSystemPrompt(params: TeachingChaptersParams): string {
   return selectPromptVariants({
     template,
-    variants: { continued: params.skills.some((skill) => skill.taughtIn?.length) },
+    variants: {
+      continued: params.skills.some((skill) => skill.taughtIn?.length),
+      exam: Boolean(params.exam),
+    },
   });
 }
 

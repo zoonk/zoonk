@@ -155,6 +155,8 @@ function interviewChapter(title: string, skillKeys: string[]) {
 
 const ITALIAN_SCOPE = { generalGoal: null, language: "pt", ownerId: null, targetLanguage: "it" };
 
+const ENEM_SCOPE = { ...ITALIAN_SCOPE, exams: [{ name: "ENEM", style: "Five-option items." }] };
+
 async function writtenBand({
   chapters,
   courseId,
@@ -940,24 +942,76 @@ describe(courseOutlineWorkflow, () => {
       ]);
     });
 
-    it("leaves an exam's band to the outline, which keeps each chapter to one subject", async () => {
+    it("teaches an exam's skill through the chapter on a part of it, writing no chapter", async () => {
       const course = await courseFixture({ language: "pt", outlineStatus: "completed" });
 
-      const [, skill] = await Promise.all([
+      const [[ratios], skill] = await Promise.all([
         writtenBand({
-          chapters: [{ lessons: ["Porcentagem"], title: "Razões e proporções" }],
+          chapters: [{ lessons: ["Porcentagem", "Juros simples"], title: "Razões e proporções" }],
           courseId: course.id,
         }),
-        italianSkill("Calcular juros simples"),
+        italianSkill("Resolver problemas de matemática financeira"),
       ]);
 
-      await courseOutlineWorkflow({
-        bands: [{ level: "beginner", skills: [toSkillRef(skill)] }],
-        courseId: course.id,
-        scope: { ...ITALIAN_SCOPE, exams: [{ name: "ENEM", style: "Five-option items." }] },
+      vi.mocked(findTeachingChapters).mockResolvedValue(
+        taskResult([{ after: 1, chapter: 1, key: skill.id }]),
+      );
+
+      await expect(
+        courseOutlineWorkflow({
+          bands: [{ level: "beginner", skills: [{ ...toSkillRef(skill), area: "Matemática" }] }],
+          courseId: course.id,
+          scope: ENEM_SCOPE,
+        }),
+      ).resolves.toMatchObject({ chapterIds: [], status: "written" });
+
+      expect(vi.mocked(findTeachingChapters).mock.calls[0]?.[0].exam).toBe(true);
+      expect(generateCourseOutline).not.toHaveBeenCalled();
+
+      const tags = await prisma.chapterSkill.findMany({
+        select: { chapterId: true },
+        where: { skillId: skill.id },
       });
 
-      expect(findTeachingChapters).not.toHaveBeenCalled();
+      expect(tags).toStrictEqual([{ chapterId: ratios?.chapter.id }]);
+    });
+
+    it("writes an exam's skill its own chapter when the one that teaches it holds another of the exam's subjects", async () => {
+      const course = await courseFixture({ language: "pt", outlineStatus: "completed" });
+
+      const [[news], skill, reading] = await Promise.all([
+        writtenBand({
+          chapters: [
+            {
+              lessons: ["Gráficos em notícias", "Porcentagens em manchetes"],
+              title: "Dados na imprensa",
+            },
+          ],
+          courseId: course.id,
+        }),
+        italianSkill("Interpretar gráficos e tabelas"),
+        italianSkill("Ler textos jornalísticos"),
+      ]);
+
+      await lessonSkillFixture({ lessonId: news?.lessons[0]?.id ?? "", skillId: reading.id });
+
+      vi.mocked(findTeachingChapters).mockResolvedValue(
+        taskResult([{ after: 1, chapter: 1, key: skill.id }]),
+      );
+
+      await courseOutlineWorkflow({
+        bands: [{ level: "beginner", skills: [{ ...toSkillRef(skill), area: "Matemática" }] }],
+        courseId: course.id,
+        scope: ENEM_SCOPE,
+        skillAreas: { [reading.id]: "Linguagens", [skill.id]: "Matemática" },
+      });
+
+      const tags = await prisma.chapterSkill.findMany({
+        select: { chapterId: true },
+        where: { skillId: skill.id },
+      });
+
+      expect(tags.map((tag) => tag.chapterId)).not.toContain(news?.chapter.id);
       expect(generateCourseOutline).toHaveBeenCalledOnce();
     });
 

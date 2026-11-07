@@ -1,5 +1,11 @@
 import { type CourseLevel } from "@zoonk/db";
-import { type CourseBandNeed, type GoalSkillRef } from "./curriculum-scope";
+import {
+  type CourseBandNeed,
+  type CourseOutlineNeed,
+  type CurriculumScope,
+  type GoalSkillRef,
+  toExamSkillAreas,
+} from "./curriculum-scope";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
 export type GoalCourseNeed = {
@@ -102,22 +108,38 @@ export function orderGoalCourses(graph: GoalSkillGraph): { key: string; title: s
 
 export function toGoalCourses({
   courseIdsByKey,
+  graph,
+  idsByKey,
   needs,
-  ownerId,
+  scope,
   withToolChapters,
 }: {
   courseIdsByKey: Readonly<Record<string, string>>;
+  graph: GoalSkillGraph;
+  idsByKey: Readonly<Record<string, string>>;
   needs: readonly GoalCourseNeed[];
-  ownerId: string | null;
+  scope: CurriculumScope;
   withToolChapters: boolean;
-}): { bands: CourseBandNeed[]; courseId: string }[] {
+}): CourseOutlineNeed[] {
+  const areas = toExamSkillAreas({
+    scope,
+    skills: graph.skills.flatMap((skill) => {
+      const skillId = idsByKey[skill.key];
+      return skillId ? [{ area: skill.area, skillId }] : [];
+    }),
+  });
+
   return needs.flatMap((need) => {
     const courseId = courseIdsByKey[need.key];
-    const bands = ownerId ? mergePrivateBands(need).bands : need.bands;
+    const bands = scope.ownerId ? mergePrivateBands(need).bands : need.bands;
 
-    return courseId
-      ? [{ bands: bands.map((band) => ({ ...band, withToolChapters })), courseId }]
-      : [];
+    if (!courseId) {
+      return [];
+    }
+
+    return [
+      { bands: bands.map((band) => ({ ...band, withToolChapters })), courseId, scope, ...areas },
+    ];
   });
 }
 

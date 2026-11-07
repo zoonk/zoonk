@@ -19,6 +19,10 @@ Answer every skill of `SKILLS` under its `key`:
 - `chapter`: the number of the chapter whose lessons already teach what the skill describes, at this band's depth: the same situation, task or idea in other words, or most of it, or all of it as part of a wider chapter. A plan that needs more of the skill gets more lessons right after that chapter, so a chapter that teaches most of it counts. Use null when no chapter does: a neighbouring situation or topic that shares words with the skill is a different skill, and so is one a chapter only touches in a lesson among other things.
 - `after`: where a chapter for the skill belongs in the band's order, as the number of the chapter it comes after: after the chapters it builds on, and before the ones that build on it. 0 puts it before every chapter. With a `chapter`, give that chapter's number.
 
+{{#exam}}
+These skills come from an exam's notice, and each gathers what a part of a notice subject asks, so one is often bigger than any chapter and the band may teach it across several chapters. For such a skill the band doesn't teach yet, `chapter` is the first chapter, in the band's order, that is about a part of what it describes, with most of its lessons teaching that part: as the plan needs more lessons of the skill, it takes the band's other chapters on it, and the course writes new chapters only for what none teaches. A chapter about another topic doesn't count because a lesson or two of it touch the skill, and neither does one on a neighbouring topic that only shares words with it.
+
+{{/exam}}
 {{#continued}}
 For a skill taught in chapters already, `chapter` is another chapter whose lessons teach more of what it describes: its next situations, harder tasks or new material, such as a chapter that goes on with the same situation after one of its own. Never give one of its own chapters. A chapter on a neighbouring situation, or one that only touches the skill in a lesson among other things, doesn't count. Use null when no other chapter teaches more of it, with its last chapter as `after`: the course then writes its next chapter.
 

@@ -31,6 +31,7 @@ import {
 } from "@zoonk/core/library/curriculum/scope";
 import { planSkillExtensions } from "@zoonk/core/library/curriculum/skill-extensions";
 import {
+  keepToOneSubject,
   loadBandChapters,
   tagTeachingChapters,
 } from "@zoonk/core/library/curriculum/teaching-chapters";
@@ -176,8 +177,7 @@ type BandCoverage = { anchors: BandAnchors; plan: BandPlan; taughtSkillIds: stri
  * A shared band's chapters already teach most of what a new goal's skills ask in other words, so
  * they're tagged with those skills, and only the rest get chapters of their own. A skill's next
  * chapter may be there too, written for another goal's skill on the same topic, so it's written
- * only when none is. An exam's band keeps each chapter to one of its subjects, which this doesn't
- * weigh, so it writes as before.
+ * only when none is.
  */
 export async function coverBandSkillsStep(
   input: BandInput & BandWait,
@@ -192,11 +192,11 @@ async function coverBandSkills({
   waitedSkillId,
   ...input
 }: BandInput & BandWait): Promise<BandCoverage> {
-  const { analytics, courseId, plan, scope, workflowRunId } = input;
+  const { analytics, courseId, plan, scope, skillAreas, workflowRunId } = input;
 
   const asked = [...plan.skills, ...plan.extensions.map((extension) => extension.skill)];
 
-  if (plan.isNewBand || scope.ownerId || scope.exams?.length || asked.length === 0) {
+  if (plan.isNewBand || scope.ownerId || asked.length === 0) {
     return { anchors: {}, plan, taughtSkillIds: [] };
   }
 
@@ -213,6 +213,7 @@ async function coverBandSkills({
     analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
     chapters: chapters.map(({ lessons, title }) => ({ lessons, title })),
     courseTitle: plan.courseTitle,
+    exam: Boolean(scope.exams?.length),
     language: scope.language,
     level: plan.level,
     serviceTier: getBandTier({ background, plan, waitedSkillId }),
@@ -232,10 +233,12 @@ async function coverBandSkills({
 
   const answers = new Map(data.map((answer) => [answer.key, answer]));
 
-  const teaching = asked.flatMap((skill) => {
+  const found = asked.flatMap((skill) => {
     const chapterId = chapterAt(answers.get(skill.key)?.chapter ?? null);
     return chapterId ? [{ chapterId, skill }] : [];
   });
+
+  const teaching = keepToOneSubject({ chapters, scope, skillAreas, teaching: found });
 
   await tagTeachingChapters({
     courseId,

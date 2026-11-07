@@ -173,10 +173,12 @@ async function createPlanAndOutlines({
 
   const courses = toGoalCourses({
     courseIdsByKey,
+    graph,
+    idsByKey,
     needs: near,
-    ownerId: scope.ownerId,
+    scope,
     withToolChapters: inputs.usesTools,
-  }).map((course) => ({ ...course, scope }));
+  });
 
   await startOutlines({ context, courses, firstSkillId, forGuest: inputs.isGuest });
 

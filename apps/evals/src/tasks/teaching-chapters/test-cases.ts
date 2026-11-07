@@ -513,6 +513,287 @@ const GERMAN_BEGINNER = [
 ];
 
 /** Skills later guests' graphs asked for, which the preview wrote again as new chapters. */
+/** The shared "Direito Constitucional" course's intermediate band before an exam's graph was written again (dev, 9 Oct 2026). */
+const CONSTITUTIONAL_LAW_INTERMEDIATE = [
+  {
+    lessons: [
+      "Colisão entre direitos fundamentais",
+      "Limites e restrições a direitos fundamentais",
+      "Adequação e necessidade",
+      "Proporcionalidade em sentido estrito",
+      "Abuso de direito fundamental",
+    ],
+    title: "Colisões e restrições de direitos fundamentais",
+  },
+  {
+    lessons: [
+      "Aprovação de tratados de direitos humanos",
+      "Tratados com equivalência a emenda constitucional",
+      "Supralegalidade dos tratados de direitos humanos",
+      "Controle de convencionalidade",
+    ],
+    title: "Tratados de direitos humanos no direito brasileiro",
+  },
+  {
+    lessons: [
+      "Intervenção federal e intervenção estadual",
+      "Hipóteses de intervenção federal",
+      "Solicitação, requisição e iniciativa da intervenção",
+      "Decreto de intervenção",
+      "Controle legislativo da intervenção",
+    ],
+    title: "Intervenção e autonomia federativa",
+  },
+  {
+    lessons: [
+      "Congresso Nacional e suas duas Casas",
+      "Sessões conjuntas do Congresso Nacional",
+      "Legislatura e sessões legislativas",
+      "Competências do Congresso com sanção presidencial",
+      "Competências exclusivas do Congresso Nacional",
+      "Convocação e pedidos de informação",
+      "Competências privativas da Câmara em contraste",
+    ],
+    title: "Funcionamento e competências do Congresso Nacional",
+  },
+  {
+    lessons: [
+      "Representação na Câmara dos Deputados",
+      "Composição da Câmara dos Deputados",
+      "Autorização da Câmara para processar autoridades",
+      "Tomada de contas do presidente pela Câmara",
+      "Organização interna da Câmara dos Deputados",
+      "Competências privativas da Câmara em contraste",
+    ],
+    title: "Composição e competências da Câmara dos Deputados",
+  },
+  {
+    lessons: [
+      "Composição e renovação do Senado Federal",
+      "Processamento e julgamento pelo Senado",
+      "Aprovação de autoridades pelo Senado",
+      "Competências financeiras do Senado",
+      "Competências privativas do Senado em contraste",
+    ],
+    title: "Composição e competências do Senado Federal",
+  },
+  {
+    lessons: [
+      "Requisitos de criação da CPI",
+      "Poderes de investigação da CPI",
+      "Convocações e documentos na CPI",
+      "Sigilos e reserva de jurisdição na CPI",
+      "Relatório final e encaminhamentos da CPI",
+    ],
+    title: "Limites da investigação parlamentar",
+  },
+  {
+    lessons: [
+      "Interpretação conforme à Constituição",
+      "Inconstitucionalidade sem redução de texto",
+      "Modulação dos efeitos da decisão",
+      "Eficácia contra todos e efeito vinculante",
+      "Súmula vinculante",
+    ],
+    title: "Técnicas e efeitos das decisões constitucionais",
+  },
+  {
+    lessons: [
+      "Lei complementar e lei ordinária",
+      "Cabimento e limites da medida provisória",
+      "Lei delegada e limites da delegação",
+      "Decreto legislativo e resolução",
+      "Decreto autônomo e decreto regulamentar",
+      "Emenda constitucional e normas regimentais",
+      "Hierarquia, competência e reserva de matéria",
+    ],
+    title: "Espécies normativas e seus limites constitucionais",
+  },
+  {
+    lessons: [
+      "Constituições estaduais e poder constituinte decorrente",
+      "Emendas constitucionais estaduais e simetria",
+      "Lei Orgânica do Distrito Federal",
+      "Lei orgânica municipal e aprovação qualificada",
+      "Emendas às leis orgânicas",
+      "Leis distritais e dupla competência",
+      "Leis complementares estaduais, distritais e municipais",
+      "Medidas provisórias estaduais e municipais",
+      "Lei delegada e limites da delegação",
+      "Decretos legislativos e resoluções locais",
+    ],
+    title: "Espécies normativas dos entes subnacionais",
+  },
+  {
+    lessons: [
+      "Direitos fundamentais das pessoas jurídicas",
+      "Direitos fundamentais dos estrangeiros não residentes",
+      "Eficácia dos direitos fundamentais nas relações privadas",
+      "Direitos fundamentais nas associações privadas",
+      "Dever estatal de proteção contra terceiros",
+    ],
+    title: "Titularidade e eficácia dos direitos fundamentais",
+  },
+  {
+    lessons: [
+      "Igualdade e critérios de diferenciação",
+      "Ações afirmativas",
+      "Cotas raciais e sociais no ensino superior",
+      "Acessibilidade e adaptações razoáveis",
+      "Discriminação indireta",
+    ],
+    title: "Igualdade material em casos concretos",
+  },
+  {
+    lessons: [
+      "Censura prévia e responsabilidade posterior",
+      "Liberdade de imprensa e exercício do jornalismo",
+      "Acesso à informação pública e sigilo",
+      "Proteção constitucional dos dados pessoais",
+      "Transparência pública e dados pessoais",
+      "Conteúdo de comunicações e dados cadastrais",
+    ],
+    title: "Expressão, informação pública e dados pessoais",
+  },
+  {
+    lessons: [
+      "Não autoincriminação e produção de provas",
+      "Prova ilícita e provas derivadas",
+      "Entrada em domicílio e suas exceções",
+      "Contraditório no processo administrativo",
+      "Fundamentação das decisões judiciais",
+    ],
+    title: "Garantias fundamentais na prova e na decisão",
+  },
+  {
+    lessons: [
+      "Laicidade do Estado e colaboração religiosa",
+      "Ensino religioso nas escolas públicas",
+      "Símbolos religiosos em prédios públicos",
+      "Assistência religiosa em instituições de internação",
+      "Proteção aos cultos e regras de uso do espaço",
+      "Escusa de consciência e prestação alternativa",
+      "Guarda religiosa em concursos públicos",
+      "Recusa de transfusão por adulto capaz",
+      "Tratamento de crianças e crença dos responsáveis",
+    ],
+    title: "Liberdade religiosa e objeção de consciência",
+  },
+  {
+    lessons: [
+      "Princípios do artigo 37 em casos concretos",
+      "Concurso público e cargos em comissão",
+      "Contratação por tempo determinado",
+      "Acumulação de cargos, empregos e funções",
+      "Teto remuneratório e parcelas recebidas",
+      "Responsabilidade civil das pessoas jurídicas de direito público",
+    ],
+    title: "Limites constitucionais da atuação administrativa",
+  },
+  {
+    lessons: [
+      "Cargo efetivo, emprego público e cargo em comissão",
+      "Estabilidade e avaliação especial de desempenho",
+      "Perda do cargo do servidor estável",
+      "Reintegração, recondução e disponibilidade",
+      "Regime próprio e vínculos abrangidos",
+    ],
+    title: "Garantias e vínculos dos servidores civis",
+  },
+  {
+    lessons: [
+      "Militares dos estados e das Forças Armadas",
+      "Militar da ativa e filiação partidária",
+      "Candidatura do militar da ativa",
+      "Greve, sindicalização e direitos dos militares",
+    ],
+    title: "Regime constitucional dos militares",
+  },
+  {
+    lessons: [
+      "Sessões conjuntas do Congresso Nacional",
+      "Mesa e direção das sessões conjuntas",
+      "Convocação das sessões conjuntas",
+      "Sessões conjuntas e sessões da Câmara ou do Senado",
+    ],
+    title: "Direção e convocação das sessões conjuntas",
+  },
+  {
+    lessons: [
+      "Abertura e fases da sessão conjunta",
+      "Discussão e encaminhamento da votação",
+      "Questão de ordem em sessão conjunta",
+      "Votação e apuração em sessão conjunta",
+      "Ata e publicação dos trabalhos",
+    ],
+    title: "Deliberação em sessão conjunta",
+  },
+  {
+    lessons: [
+      "Instituição e finalidade das comissões mistas",
+      "Composição das comissões mistas",
+      "Presidência e relatoria da comissão mista",
+      "Parecer da comissão mista",
+    ],
+    title: "Formação e trabalho das comissões mistas",
+  },
+  {
+    lessons: [
+      "Veto total e veto parcial",
+      "Recebimento e tramitação do veto",
+      "Exame do veto e deliberação congressual",
+      "Quórum de rejeição do veto",
+      "Promulgação após a rejeição do veto",
+    ],
+    title: "Apreciação congressual do veto",
+  },
+  {
+    lessons: [
+      "Critérios para identificar funções típicas e atípicas",
+      "Função administrativa do Poder Legislativo",
+      "Julgamento de crimes de responsabilidade pelo Senado",
+      "Fiscalização parlamentar e função jurisdicional",
+      "Função normativa atípica do Poder Executivo",
+      "Decisões administrativas e função jurisdicional",
+      "Função administrativa do Poder Judiciário",
+      "Regimentos internos dos tribunais",
+      "Funções atípicas e controles recíprocos",
+    ],
+    title: "Funções típicas e atípicas dos Poderes",
+  },
+  {
+    lessons: [
+      "Iniciativa geral e iniciativa reservada",
+      "Reserva de iniciativa do chefe do Executivo",
+      "Pertinência temática das emendas parlamentares",
+      "Aumento de despesa em projetos de iniciativa reservada",
+      "Vício de iniciativa e sanção presidencial",
+    ],
+    title: "Iniciativa reservada e limites das emendas",
+  },
+  {
+    lessons: [
+      "Emendas da Casa revisora",
+      "Promulgação após a rejeição do veto",
+      "Urgência constitucional solicitada pelo presidente",
+      "Sobrestamento da pauta na urgência constitucional",
+      "Deliberação conclusiva das comissões e recurso ao Plenário",
+    ],
+    title: "Revisão bicameral e urgência constitucional",
+  },
+  {
+    lessons: [
+      "Prazo de vigência e prorrogação da medida provisória",
+      "Sobrestamento da pauta na urgência constitucional",
+      "Projeto de lei de conversão",
+      "Emendas sem pertinência temática à medida provisória",
+      "Decreto legislativo após perda de eficácia",
+      "Relações jurídicas sem decreto legislativo",
+    ],
+    title: "Conversão e perda de eficácia das medidas provisórias",
+  },
+];
+
 export const TEST_CASES: TeachingChaptersTestCase[] = [
   {
     expected: {
@@ -735,6 +1016,56 @@ export const TEST_CASES: TeachingChaptersTestCase[] = [
           "package",
           "Mail a package at the post office",
           "Ask to send a package, give the recipient's details and ask about delivery and tracking.",
+        ),
+      ],
+    },
+  },
+  {
+    expected: {
+      administration: { chapters: [16, 17, 18] },
+      federation: { chapters: [3] },
+      nationality: { chapters: [null] },
+      parliament: { chapters: [4, 5, 6] },
+      principles: { chapters: [null] },
+      rights: { chapters: [1, 11, 12, 13, 14, 15] },
+    },
+    id: "pt-exam-skills-rewritten-on-a-shared-band",
+    userInput: {
+      chapters: CONSTITUTIONAL_LAW_INTERMEDIATE,
+      courseTitle: "Direito Constitucional",
+      exam: true,
+      language: "pt",
+      level: "intermediate",
+      skills: [
+        skill(
+          "rights",
+          "Aplicar direitos e garantias fundamentais",
+          "Aplicar direitos, garantias e limites constitucionais a situações apresentadas.",
+        ),
+        skill(
+          "administration",
+          "Julgar regras constitucionais da administração pública",
+          "Julgar as disposições constitucionais sobre administração pública e servidores civis e militares.",
+        ),
+        skill(
+          "nationality",
+          "Distinguir nacionalidade e direitos políticos",
+          "Distinguir regras de nacionalidade, direitos políticos, elegibilidade e organização dos partidos políticos.",
+        ),
+        skill(
+          "federation",
+          "Julgar organização federativa e intervenção",
+          "Comparar as competências dos entes federativos e identificar as hipóteses e os limites da intervenção federal.",
+        ),
+        skill(
+          "parliament",
+          "Distinguir competências e prerrogativas parlamentares",
+          "Distinguir competências, reuniões e comissões das Casas do Congresso e as regras constitucionais aplicáveis aos parlamentares.",
+        ),
+        skill(
+          "principles",
+          "Julgar princípios fundamentais da Constituição",
+          "Distinguir a estrutura e as características da Constituição de 1988 e aplicar seus princípios fundamentais a assertivas.",
         ),
       ],
     },

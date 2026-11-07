@@ -1,11 +1,8 @@
-import {
-  type CourseExtensionRequest,
-  listSkillExtensions,
-} from "@zoonk/core/library/curriculum/skill-extensions";
+import { type CourseOutlineNeed } from "@zoonk/core/library/curriculum/scope";
+import { listSkillExtensions } from "@zoonk/core/library/curriculum/skill-extensions";
 import { type LearnerLookahead, getGoalLookahead } from "@zoonk/core/lookahead/learner-lookahead";
 import { endLessonsAsk } from "@zoonk/core/lookahead/lessons-ask";
 import {
-  type PlanOutlineNeed,
   listPlanOutlineNeeds,
   listPlanSkillIdsWithin,
   listSoonStandInCourseIds,
@@ -81,7 +78,7 @@ export async function createGoalGenerationManifestStep(input: {
 export async function listPlanOutlineNeedsStep(input: {
   days: number;
   goalId: string;
-}): Promise<PlanOutlineNeed[]> {
+}): Promise<CourseOutlineNeed[]> {
   "use step";
 
   return listPlanOutlineNeeds(input);
@@ -90,7 +87,7 @@ export async function listPlanOutlineNeedsStep(input: {
 export async function listSkillExtensionsStep(input: {
   days: number;
   goalId: string;
-}): Promise<CourseExtensionRequest[]> {
+}): Promise<CourseOutlineNeed[]> {
   "use step";
 
   return listSkillExtensions(input);
