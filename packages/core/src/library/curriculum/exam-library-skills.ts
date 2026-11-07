@@ -100,7 +100,8 @@ async function listCourseSkills({
       AND (membership.course_id = ANY(${[...courseIds]}::text[])
         OR membership.skill_id = ANY(${[...skillIds]}::text[]))
     GROUP BY membership.course_id, membership.skill_id
-    ORDER BY BOOL_OR(membership.is_placed) DESC, membership.course_id, membership.skill_id
+    ORDER BY BOOL_OR(membership.course_id = ANY(${[...courseIds]}::text[])) DESC,
+      BOOL_OR(membership.is_placed) DESC, membership.course_id, membership.skill_id
   `;
 }
 
