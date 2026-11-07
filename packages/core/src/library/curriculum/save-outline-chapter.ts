@@ -1,4 +1,5 @@
 import "server-only";
+import { createHash } from "node:crypto";
 import { type generateCourseOutline } from "@zoonk/ai/tasks/curriculum/course-outline";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { buildLessonIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
@@ -28,7 +29,7 @@ export type OutlineChapter = CourseOutline["chapters"][number];
 /**
  * Identities for a chapter that's new with new skills, such as a release's What's new, so nothing
  * is matched against the library and a retry finds what an earlier try saved. Its lessons are named
- * by those skills and their titles.
+ * by those skills and their literal titles.
  */
 export type OutlineKeys = { chapter: string; skill: (name: string) => string };
 
@@ -94,6 +95,13 @@ async function resolveChapter({
   return created.chapter.id;
 }
 
+const TITLE_HASH_LENGTH = 12;
+
+/** The identity builder drops punctuation, so "Use C++" and "Use C#" keep apart by a hash of their own. */
+function toLiteralTitle(title: string): string {
+  return `${title} ${createHash("sha256").update(title).digest("hex").slice(0, TITLE_HASH_LENGTH)}`;
+}
+
 async function createKeyedLessons({
   chapter,
   chapterId,
@@ -150,7 +158,7 @@ async function createKeyedLessons({
           level,
           skillIds: ids,
           targetLanguage: scope.targetLanguage,
-          title: lesson.title,
+          title: toLiteralTitle(lesson.title),
         }),
         ownerId: scope.ownerId,
       }),

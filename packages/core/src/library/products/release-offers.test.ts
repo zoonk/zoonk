@@ -169,59 +169,68 @@ describe(findWhatsNewChapter, () => {
 });
 
 describe(saveWhatsNewChapter, () => {
-  it("keeps apart lessons whose titles differ only in symbols", async () => {
-    const { course } = await setup();
-    const releaseId = crypto.randomUUID();
+  it.each([
+    {
+      label: "different skills",
+      skills: ["Compile native programs", "Build managed applications"],
+    },
+    { label: "one skill", skills: ["Run a program", "Run a program"] },
+  ])(
+    "keeps apart lessons whose titles differ only in symbols, teaching $label",
+    async ({ skills: names }) => {
+      const { course } = await setup();
+      const releaseId = crypto.randomUUID();
 
-    const lessons = [
-      { skill: "Compile native programs", title: "Use C++" },
-      { skill: "Build managed applications", title: "Use C#" },
-    ];
+      const lessons = ["Use C++", "Use C#"].map((title, index) => ({
+        skill: names[index] ?? "",
+        title,
+      }));
 
-    const whatsNew = {
-      level: "beginner" as const,
-      offer: "Learn the new languages.",
-      skills: lessons.map(({ skill }) => ({ description: skill, name: skill })),
-      title: "What's new",
-    };
+      const whatsNew = {
+        level: "beginner" as const,
+        offer: "Learn the new languages.",
+        skills: [...new Set(names)].map((name) => ({ description: name, name })),
+        title: "What's new",
+      };
 
-    const skills = await saveWhatsNewSkills({
-      courseId: course.id,
-      provenance: PROVENANCE,
-      releaseId,
-      whatsNew,
-    });
+      const skills = await saveWhatsNewSkills({
+        courseId: course.id,
+        provenance: PROVENANCE,
+        releaseId,
+        whatsNew,
+      });
 
-    const saved = await saveWhatsNewChapter({
-      chapter: {
-        description: "New languages.",
-        lessons: lessons.map(({ skill, title }) => ({
-          canDo: skill,
-          description: skill,
-          estimatedMinutes: 3,
-          skills: [skill],
-          title,
-        })),
-        objectives: lessons.map(({ skill }) => skill),
-        skillKeys: skills.map((skill) => skill.key),
-        title: whatsNew.title,
-        tools: [],
-      },
-      courseId: course.id,
-      level: "beginner",
-      provenance: PROVENANCE,
-      releaseId,
-      skills,
-      workflowRunId: crypto.randomUUID(),
-    });
+      const saved = await saveWhatsNewChapter({
+        chapter: {
+          description: "New languages.",
+          lessons: lessons.map(({ skill, title }) => ({
+            canDo: skill,
+            description: skill,
+            estimatedMinutes: 3,
+            skills: [skill],
+            title,
+          })),
+          objectives: [...new Set(names)],
+          skillKeys: skills.map((skill) => skill.key),
+          title: whatsNew.title,
+          tools: [],
+        },
+        courseId: course.id,
+        level: "beginner",
+        provenance: PROVENANCE,
+        releaseId,
+        skills,
+        workflowRunId: crypto.randomUUID(),
+      });
 
-    const titles = await prisma.lesson.findMany({
-      select: { title: true },
-      where: { id: { in: saved.lessonIds } },
-    });
+      const titles = await prisma.lesson.findMany({
+        select: { title: true },
+        where: { id: { in: saved.lessonIds } },
+      });
 
-    expect(titles.map(({ title }) => title)).toStrictEqual(
-      expect.arrayContaining(["Use C++", "Use C#"]),
-    );
-  });
+      expect(titles.map(({ title }) => title)).toStrictEqual(
+        expect.arrayContaining(["Use C++", "Use C#"]),
+      );
+    },
+  );
 });
