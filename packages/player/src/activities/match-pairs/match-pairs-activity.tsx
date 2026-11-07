@@ -5,6 +5,7 @@ import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { MatchBoard } from "../../components/match-board";
 import { NotQuiteLead } from "../../components/not-quite-lead";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import {
@@ -14,9 +15,13 @@ import {
 } from "../_components/activity-canvas";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
-import { MatchPairsBoard } from "./match-pairs-board";
 import { type MatchCardState, MatchPairsCard } from "./match-pairs-card";
-import { type MatchCard, arrangeMatchColumns, explainMismatch } from "./match-pairs-columns";
+import {
+  type MatchCard,
+  arrangeMatchColumns,
+  explainMismatch,
+  solvedRows,
+} from "./match-pairs-columns";
 import {
   type MatchProgress,
   isMatch,
@@ -185,12 +190,12 @@ export function MatchPairsActivity({
         )}
       </ActivityCanvasLabel>
 
-      <MatchPairsBoard
-        isComplete={isComplete}
+      <MatchBoard
         label={t("Cards to match")}
         left={left}
-        renderCard={cardButton}
+        renderItem={cardButton}
         right={right}
+        solvedRows={isComplete ? solvedRows({ left, right }) : undefined}
       />
 
       {miss && (

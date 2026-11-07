@@ -40,7 +40,7 @@ export function MatchPairsCard({
       onClick={onPick}
       type="button"
     >
-      <span className="min-w-0 flex-1">
+      <span className="min-w-0 flex-1 wrap-break-word">
         <LessonRichText text={text} />
       </span>
 
