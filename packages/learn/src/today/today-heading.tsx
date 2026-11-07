@@ -164,6 +164,7 @@ function MockFundingLine() {
 
 export function TodayHeading({ className }: { className?: string }) {
   const t = useExtracted();
+  const { namesGoal, today } = useTodayScreen();
   const date = useTodayDate();
   const state = useDayState();
   const endsDay = state === "done" || state === "rest";
@@ -183,6 +184,8 @@ export function TodayHeading({ className }: { className?: string }) {
           <PageTitle>{t("Today")}</PageTitle>
           <DayTime className="shrink-0 text-2xl sm:hidden" />
         </div>
+
+        {namesGoal && <PageSubtitle>{today.goal.title}</PageSubtitle>}
 
         {!endsDay && <MockFundingLine />}
       </PageHeaderContent>

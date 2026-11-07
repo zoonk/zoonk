@@ -86,6 +86,8 @@ type TodayScreenValue = {
   brainPower: number | null;
   buddy: LearnBuddy | null;
   missions: MissionsDay | null;
+  /** The shown goal isn't the active one, as from a reminder's link, so the header names it. */
+  namesGoal: boolean;
   notices: TodayHostNotices;
   planEnd: string | null;
   today: TodayView;

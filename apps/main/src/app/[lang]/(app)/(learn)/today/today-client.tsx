@@ -222,6 +222,7 @@ export function TodayClient({
       missions={{ fullMeal: today.session.fullMeal, missions: today.session.missions }}
       mistakes={data.mistakes}
       mockEntry={data.mocks && <MockEntryRow hrefs={MOCK_ENTRY_HREFS} view={data.mocks} />}
+      namesGoal={data.namesGoal}
       notices={toHostNotices({
         answeredUpload,
         data,
