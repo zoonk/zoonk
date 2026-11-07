@@ -99,6 +99,10 @@ describe(endLessonsAsk, () => {
         await followWrittenLessons({ askedAt: served, goalId: goal.id });
       }
 
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+      ).resolves.toMatchObject({ lessonsAskedAt: new Date(askedAt ?? 0) });
+
       const owed = () =>
         prisma.followUp.findUniqueOrThrow({
           where: { userKindKey: { key: goal.id, kind: "prepareGoalLessons", userId: user.id } },
@@ -121,6 +125,12 @@ describe(endLessonsAsk, () => {
         input: { goalId: goal.id, lessonsAskedAt: askedAt },
         revision: afterFirst.revision + 1,
       });
+
+      await followWrittenLessons({ askedAt, goalId: goal.id });
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+      ).resolves.toMatchObject({ lessonsAskedAt: null });
     },
   );
 
@@ -129,7 +139,13 @@ describe(endLessonsAsk, () => {
     const { goal, plan } = await waitingGoal(skill);
     const askedAt = await askForLessons({ goalId: goal.id });
 
+    await outlineSkill(skill);
+    await replanWaitingGoal(goal.id);
     await followWrittenLessons({ askedAt: askedAt ?? 0, goalId: goal.id });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      lessonsAskedAt: null,
+    });
 
     const newer = new Date(WAITING_START.getTime() + 60_000);
     await askForLessons({ goalId: goal.id, now: newer });

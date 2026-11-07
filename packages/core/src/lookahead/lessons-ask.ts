@@ -7,6 +7,7 @@ import { afterPlanInputWrite, withPlanRetry } from "../plans/plan-conflict";
 import { loadDayStandInCourseIds } from "../sessions/_utils/outlining-stand-ins";
 import { followSavedDay } from "../sessions/_utils/refresh-study-day-selection";
 import { findSavedDaySession } from "../sessions/_utils/saved-day-session";
+import { listDayStandIns } from "./outline-window";
 
 /**
  * The learner asked for their plan's lessons, so their day reads as getting them while the
@@ -27,6 +28,13 @@ export async function askForLessons({
   return count > 0 ? now.getTime() : null;
 }
 
+async function clearLessonsAsk({ askedAt, goalId }: { askedAt: number; goalId: string }) {
+  await prisma.plan.updateMany({
+    data: { lessonsAskedAt: null },
+    where: { goalId, lessonsAskedAt: new Date(askedAt) },
+  });
+}
+
 /** Trusted preparation only: the goal must come from an authorized POST or its workflow. */
 export async function followWrittenLessons({
   askedAt,
@@ -41,18 +49,23 @@ export async function followWrittenLessons({
     return;
   }
 
-  if (askedAt !== null) {
-    await prisma.plan.updateMany({
-      data: { lessonsAskedAt: null },
-      where: { goalId, lessonsAskedAt: new Date(askedAt) },
-    });
-  }
-
   const timeZone = getAnswerTimeZone({ goal });
+  const now = new Date();
+
+  if (askedAt !== null) {
+    const standIns = await listDayStandIns({
+      goalId,
+      localDate: getDateInTimeZone({ date: now, timeZone }),
+    });
+
+    if (standIns.length === 0) {
+      await clearLessonsAsk({ askedAt, goalId });
+    }
+  }
 
   const session = await findSavedDaySession({
     goalId: goal.id,
-    now: new Date(),
+    now,
     timeZone,
     userId: goal.userId,
   });
@@ -97,5 +110,6 @@ export async function endLessonsAsk({
     await afterPlanInputWrite(() => withPlanRetry(() => replanWaitingGoal(goalId)));
   }
 
-  await afterPlanInputWrite(() => followWrittenLessons({ askedAt, goalId }));
+  await clearLessonsAsk({ askedAt, goalId });
+  await afterPlanInputWrite(() => followWrittenLessons({ askedAt: null, goalId }));
 }
