@@ -3,15 +3,18 @@ import { claimRunToken, startOnce, waitForRunToken } from "../_shared/run-token"
 import { type ResearchAnalytics } from "../research/_utils/research-analytics";
 import { courseReleaseWorkflow } from "./course-release-workflow";
 import {
+  findUnreadReleasesPageStep,
   listCoursesBehindStep,
-  readProductReleasesStep,
+  readReleasesPageStep,
+  recordUnreadableReleasesPageStep,
   saveProductReleasesStep,
 } from "./steps/product-releases-steps";
 
 /**
  * Research's refresh of a stale product and the freshness check read a product's releases page
  * through here, one run at a time; a run that finds another reading waits for it and reads only
- * what it left unread. The main courses a new current release leaves behind start their update.
+ * what it left unread. A page the model can't read is recorded and left until it changes. The main
+ * courses a new current release leaves behind start their update.
  */
 export async function readProductReleases({
   analytics,
@@ -31,7 +34,22 @@ export async function readProductReleases({
     await waitForRunToken(token);
   }
 
-  const reading = await readProductReleasesStep({ analytics, productId, release, serviceTier });
+  const page = await findUnreadReleasesPageStep(productId);
+
+  if (!page) {
+    return;
+  }
+
+  const reading = await readReleasesPageStep({ analytics, page, release, serviceTier }).catch(
+    async (error: unknown) => {
+      if (!isUnusableReading(error)) {
+        throw error;
+      }
+
+      await recordUnreadableReleasesPageStep(page);
+      return null;
+    },
+  );
 
   if (!reading) {
     return;
@@ -39,6 +57,18 @@ export async function readProductReleases({
 
   const courseIds = await saveProductReleasesStep(reading);
   await startCourseReleases(courseIds);
+}
+
+/**
+ * The model answered every retry without a reading the schema accepts, such as when it refuses the
+ * page. A step that used up its retries fails with the runtime's error, whose `cause` is the step's
+ * own error without its class, so the AI SDK's error is told by its name.
+ */
+function isUnusableReading(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.name === "AI_NoObjectGeneratedError" || isUnusableReading(error.cause))
+  );
 }
 
 /** One release update per course at a time: a course already updating keeps its run. */

@@ -4,6 +4,7 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { addDays } from "../../plans/planner/plan-calendar";
+import { isReleasesPageUnread } from "../products/product-releases";
 import { getNextExamCheck, getNextSourceCheck } from "../sources/freshness-schedule";
 import { type OwedSourceChange, getOwedSourceChange } from "../sources/unnoticed-changes";
 import { refreshWebSource } from "../sources/web-sources";
@@ -196,7 +197,9 @@ async function checkSource({
 }): Promise<FreshnessCheck> {
   const [source, learners] = await Promise.all([
     prisma.source.findUnique({
-      include: { releasesOf: { select: { id: true, releasesHash: true } } },
+      include: {
+        releasesOf: { select: { id: true, releasesHash: true, unreadableReleasesHash: true } },
+      },
       omit: { extractedText: true },
       where: { id: sourceId },
     }),
@@ -229,7 +232,11 @@ async function checkSource({
 
   // A releases page is read for its releases, never turned into a notice for learners.
   const contentHash = refresh?.source.contentHash ?? source.contentHash;
-  const unread = source.releasesOf.filter((product) => product.releasesHash !== contentHash);
+
+  const unread = source.releasesOf.filter((product) =>
+    isReleasesPageUnread({ contentHash, product }),
+  );
+
   const owed = getOwedSourceChange(refresh?.source ?? source);
 
   return {

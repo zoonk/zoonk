@@ -1,16 +1,31 @@
 import { listCoursesBehind } from "@zoonk/core/library/products/course-release";
 import {
   type ReleasesReading,
-  readProductReleases,
+  type UnreadReleasesPage,
+  findUnreadReleasesPage,
+  readReleasesPage,
+  recordUnreadableReleasesPage,
   saveReadReleases,
 } from "@zoonk/core/library/products/product-releases";
 
 /** Null when the page's releases are read already. */
-export async function readProductReleasesStep(
-  input: Parameters<typeof readProductReleases>[0],
-): Promise<ReleasesReading | null> {
+export async function findUnreadReleasesPageStep(
+  productId: string,
+): Promise<UnreadReleasesPage | null> {
   "use step";
-  return readProductReleases(input);
+  return findUnreadReleasesPage(productId);
+}
+
+export async function readReleasesPageStep(
+  input: Parameters<typeof readReleasesPage>[0],
+): Promise<ReleasesReading> {
+  "use step";
+  return readReleasesPage(input);
+}
+
+export async function recordUnreadableReleasesPageStep(page: UnreadReleasesPage): Promise<void> {
+  "use step";
+  await recordUnreadableReleasesPage(page);
 }
 
 /** Returns the product's followed main courses that are now behind. */
