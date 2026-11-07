@@ -96,7 +96,9 @@ function BusyContent({
   iconPosition = "start",
 }: IconProps & { children: React.ReactNode }) {
   if (icon) {
-    const busyIcon = <BusyIcon data-icon={`inline-${iconPosition}`}>{icon}</BusyIcon>;
+    const busyIcon = (
+      <BusyIcon data-icon={children ? `inline-${iconPosition}` : undefined}>{icon}</BusyIcon>
+    );
 
     return iconPosition === "end" ? (
       <>
