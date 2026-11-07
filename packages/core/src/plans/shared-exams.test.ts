@@ -5,7 +5,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { getGoalPlan } from "./get-goal-plan";
+import { getSyllabusView } from "../view-models/syllabus/get-syllabus-view";
 
 type GoalAttrs = Partial<
   Pick<Goal, "examBlueprintId" | "kind" | "status" | "targetLanguage" | "title">
@@ -39,15 +39,17 @@ async function goalWithSkills({
 }
 
 async function readSharing(goalId: string) {
-  const result = await getGoalPlan(goalId);
+  const result = await getSyllabusView({ goalId });
 
   if (result.status !== "ready") {
-    throw new Error(`Expected the plan, got ${result.status}`);
+    throw new Error(`Expected the syllabus, got ${result.status}`);
   }
 
   return {
-    areas: Object.fromEntries(result.plan.areas.map((area) => [area.name, area.sharedWith])),
-    exams: result.plan.sharedExams,
+    exams: result.syllabus.sharedExams,
+    subjects: Object.fromEntries(
+      result.syllabus.subjects.map((subject) => [subject.name, subject.sharedWith]),
+    ),
   };
 }
 
@@ -92,11 +94,11 @@ describe("the subjects a plan shares with the learner's other exams", () => {
     mockSession(user.id);
 
     await expect(readSharing(camara.id)).resolves.toStrictEqual({
-      areas: { Computing: [], Constitution: [cgu.id], Portuguese: [cgu.id, court.id] },
       exams: [
         { goalId: cgu.id, name: "CGU" },
         { goalId: court.id, name: "TJ-SP" },
       ],
+      subjects: { Computing: [], Constitution: [cgu.id], Portuguese: [cgu.id, court.id] },
     });
   });
 
@@ -128,8 +130,8 @@ describe("the subjects a plan shares with the learner's other exams", () => {
     mockSession(user.id);
 
     await expect(readSharing(camara.id)).resolves.toStrictEqual({
-      areas: { Portuguese: [paused.id], Statistics: [] },
       exams: [{ goalId: paused.id, name: "CGU" }],
+      subjects: { Portuguese: [paused.id], Statistics: [] },
     });
   });
 
@@ -145,7 +147,7 @@ describe("the subjects a plan shares with the learner's other exams", () => {
 
     mockSession(user.id);
 
-    const nothing = { areas: { Reading: [] }, exams: [] };
+    const nothing = { exams: [], subjects: { Reading: [] } };
 
     await expect(readSharing(exam.id)).resolves.toStrictEqual(nothing);
     await expect(readSharing(language.id)).resolves.toStrictEqual(nothing);
@@ -162,6 +164,6 @@ describe("the subjects a plan shares with the learner's other exams", () => {
 
     mockSession(user.id);
 
-    await expect(readSharing(exam.id)).resolves.toStrictEqual({ areas: { Law: [] }, exams: [] });
+    await expect(readSharing(exam.id)).resolves.toStrictEqual({ exams: [], subjects: { Law: [] } });
   });
 });

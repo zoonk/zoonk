@@ -23,7 +23,7 @@ fun plan(extra: String = ""): Plan {
                 """
                 {"access":{"freeWeekOver":false,"mocksRequirePlus":false},"areas":[],"changes":[],
                  "estimate":{"remainingHours":10,"totalHours":12},"examChoices":[],"examDocument":"guide",
-                 "fundedMocks":[],"goalId":"$GOAL","phases":[],"planId":"$PLAN_ID","ready":true,"sharedExams":[],
+                 "fundedMocks":[],"goalId":"$GOAL","phases":[],"planId":"$PLAN_ID","ready":true,
                  "schedule":{"dailyMinutes":20,"dailyTimes":$DAILY_TIMES,"fullCourse":false,"lightWeeks":[],"studyDays":5,
                   "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,20,20,20,20,20,0]},
                  "steering":{"difficultyBias":"standard","lessonsStudied":0,"practiceBias":"balanced","skippedActivities":[]},
@@ -53,7 +53,7 @@ internal fun syllabus(): Syllabus =
     ApiJson.decodeFromString(
         """
         {"examDocument":"guide","fromMaterial":false,"goal":{"id":"$GOAL","kind":"learn","title":"Learn Python"},
-         "kind":"modules","knownTopicsReturn":"practice","lessons":{"done":0,"known":0,"total":0},"subjects":[],
+         "kind":"modules","knownTopicsReturn":"practice","lessons":{"done":0,"known":0,"total":0},"sharedExams":[],"subjects":[],
          "topicCount":0,"topicsMapped":true}
         """.trimIndent(),
     )
@@ -215,7 +215,7 @@ internal fun area(
     focused: Boolean = false,
     partOf: String? = null,
 ) = """{"focusPart":null,"focused":$focused,"name":"$name","partOf":${partOf?.let { "\"$it\"" }},"pastBasics":false,
-    "reduced":false,"sharedWith":[],"skillCount":4,"skipped":false}"""
+    "reduced":false,"skillCount":4,"skipped":false}"""
 
 internal fun timeToCover(
     recommended: Long? = 45,

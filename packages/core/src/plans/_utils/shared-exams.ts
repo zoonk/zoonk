@@ -2,11 +2,12 @@ import "server-only";
 import { type Goal } from "@zoonk/db";
 import { loadSkillSurvivorMap } from "../../learner/_utils/update-learner-skill";
 import { type OtherExamGoal, readOtherExamGoals } from "../../learner/facts/other-exam-goals";
-import { type PlanView } from "../plan-view-contract";
+import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { getSkillArea } from "../planner/graph-areas";
-import { type PlanGraph, type PlanGraphSkill } from "../planner/plan-state";
+import { type PlanGraph, type PlanGraphSkill, parsePlanGraph } from "../planner/plan-state";
+import { type SharedExam } from "../shared-exams-contract";
 
-export type SharedExams = { areas: ReadonlyMap<string, string[]>; exams: PlanView["sharedExams"] };
+export type SharedExams = { areas: ReadonlyMap<string, string[]>; exams: SharedExam[] };
 
 const NONE: SharedExams = { areas: new Map(), exams: [] };
 
@@ -57,22 +58,24 @@ function findSharedExams({
   };
 }
 
-export async function loadSharedExams({
-  goal,
-  graph,
-}: {
-  goal: Pick<Goal, "id" | "kind" | "userId">;
-  graph: PlanGraph;
-}): Promise<SharedExams> {
+/** GET-only, after ownership authorization. */
+export async function readSharedExams(
+  goal: Pick<Goal, "id" | "kind" | "userId">,
+): Promise<SharedExams> {
   if (goal.kind !== "exam") {
     return NONE;
   }
 
-  const others = await readOtherExamGoals(goal.userId, goal.id);
+  const [plan, others] = await Promise.all([
+    readSavedPlan(goal.userId, goal.id),
+    readOtherExamGoals(goal.userId, goal.id),
+  ]);
 
-  if (others.length === 0) {
+  if (!plan || others.length === 0) {
     return NONE;
   }
+
+  const graph = parsePlanGraph(plan.graph);
 
   const survivors = await loadSkillSurvivorMap([
     ...graph.skills.map((skill) => skill.skillId),

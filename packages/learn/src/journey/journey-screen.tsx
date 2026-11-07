@@ -231,7 +231,7 @@ function JourneyBody({
           <PlanSuggestionSlot className={IN_COLUMN_CLASS} />
 
           {structure ? (
-            <SyllabusSection shared={plan} subjectHref={links.subject} syllabus={structure}>
+            <SyllabusSection subjectHref={links.subject} syllabus={structure}>
               <CompletedLessonsPathRow href={links.completedLessons} />
               {/* Unpicked choices are the suggestion's; from 72rem the aside's properties name the pick. */}
               <PlanChoiceLines

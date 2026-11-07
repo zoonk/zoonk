@@ -109,7 +109,7 @@ fun planOf(
         {"access":{"freeUntil":null,"freeWeekOver":false,"mocksRequirePlus":false},"areas":[],"changes":[],
          "estimate":{"remainingHours":40,"totalHours":40${endDate?.let { ""","endDate":"$it"""" } ?: ""}},
          "examChoices":$examChoices,"examDocument":"notice","fundedMocks":[],"goalId":"$GOAL_ID","phases":[${phases.joinToString(",")}],
-         "planId":"$PLAN_ID","ready":$ready,"sharedExams":[]${notice?.let {
+         "planId":"$PLAN_ID","ready":$ready${notice?.let {
             ""","notice":"$it""""
         } ?: ""}${feasibility?.let { ""","feasibility":$it""" } ?: ""}
          ${numbers?.let { ""","numbers":$it""" } ?: ""},
@@ -146,7 +146,7 @@ fun subjectOf(
     assumed: Boolean = false,
 ) = """
     {"areas":["$name"],"chapters":[],"key":"${name.lowercase().replace(' ', '-')}","lessonsDone":0,"lessonsKnown":0,
-     "lessonsTotal":10,"matrix":[],"name":"$name","shortName":"$name","source":"notice","topics":[]
+     "lessonsTotal":10,"matrix":[],"name":"$name","sharedWith":[],"shortName":"$name","source":"notice","topics":[]
      ${percent?.let {
     ""","displayWeight":{"basis":"${if (assumed) "assumed" else "stated"}","percent":$it,"share":${it / 100.0}}"""
 } ?: ""}}
@@ -160,7 +160,7 @@ fun syllabusOf(
         """
         {"examDocument":"notice","fromMaterial":false,"goal":{"id":"$GOAL_ID","kind":"exam","title":"Pass the bar exam"},
          "kind":"$kind","knownTopicsReturn":"practice","lessons":{"done":0,"known":0,"total":40},
-         "subjects":[${subjects.joinToString(",")}],"topicCount":0,"topicsMapped":true}
+         "sharedExams":[],"subjects":[${subjects.joinToString(",")}],"topicCount":0,"topicsMapped":true}
         """.trimIndent(),
     )
 

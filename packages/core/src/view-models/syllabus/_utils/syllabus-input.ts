@@ -1,6 +1,7 @@
 import { type TopicFrequencyLevel } from "../../../library/exams/blueprint-past-contract";
 import { type PassMarks } from "../../../library/exams/pass-marks";
 import { type TopicFrequencySource } from "../../../library/exams/topic-frequency";
+import { type SharedExams } from "../../../plans/_utils/shared-exams";
 import { type TodayLearnBlock } from "../../../plans/_utils/up-next-item";
 import { type ExistingPlanItem } from "../../../plans/planner/plan-items";
 import { type WrittenPractice } from "../../../plans/written-practice-contract";
@@ -74,6 +75,8 @@ export type SyllabusInput = {
   pastBasicsSkillIds: ReadonlySet<string>;
   /** Exam preparation only; other goals measure lessons. */
   sections?: readonly SectionPreparation[] | null;
+  /** Exam goals only; missing shares nothing. */
+  shared?: SharedExams;
   skills: readonly SyllabusSkill[];
   skippedAreas: readonly string[];
   /** Chosen skips are not confirmed knowledge. */

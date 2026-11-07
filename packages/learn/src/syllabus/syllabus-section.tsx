@@ -10,7 +10,7 @@ import { LIST_GROUP_CLASS, ListRowLink, ListRowTrailing } from "../_components/l
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { useFormatProgressShare } from "../_utils/percent";
 import { type SubjectGroup, groupSubjects } from "./group-subjects";
-import { type SharedExams, SharedExamsLine, SharedExamsNote } from "./shared-exams";
+import { SharedExamsNote, useAlsoIn } from "./shared-exams";
 import { CourseWeightsNote, QuestionsSourceNote, useGroupName } from "./syllabus-notes";
 import { type SyllabusSectionSubject, type SyllabusSectionView } from "./syllabus-section-view";
 import { getSubjectShare, useSubjectProgress } from "./use-subject-progress";
@@ -83,16 +83,17 @@ const SHARE_CLASS = "w-10 justify-end";
 
 function SubjectRow({
   href,
-  shared,
+  sharedExams,
   subject,
 }: {
   href: string;
-  shared: SharedExams;
+  sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSectionSubject;
 }) {
   const t = useExtracted();
   const formatShare = useFormatProgressShare();
   const progress = useSubjectProgress()(subject);
+  const alsoIn = useAlsoIn({ sharedExams, sharedWith: subject.sharedWith });
   const notPlanned = subject.notPlannedReason !== null;
   const share = progress.bar ? getSubjectShare(progress.bar) : subject.preparation;
 
@@ -110,7 +111,7 @@ function SubjectRow({
             {subject.name}
           </span>
 
-          <SharedExamsLine areas={subject.areas} shared={shared} />
+          {alsoIn && <span className="text-muted-foreground text-xs text-pretty">{alsoIn}</span>}
         </span>
 
         <span className="text-muted-foreground hidden text-right font-mono text-xs whitespace-nowrap tabular-nums @2xl/subjects:block">
@@ -168,12 +169,10 @@ function GroupHeading({
 
 export function SyllabusSection({
   children,
-  shared,
   subjectHref,
   syllabus,
 }: {
   children?: React.ReactNode;
-  shared: SharedExams;
   subjectHref: (key: string) => string;
   syllabus: SyllabusSectionView;
 }) {
@@ -192,7 +191,7 @@ export function SyllabusSection({
         <BarsMeaning syllabus={syllabus} />
       </PageSectionHeader>
 
-      <SharedExamsNote shared={shared} />
+      <SharedExamsNote sharedExams={syllabus.sharedExams} />
       {children}
 
       <div className={LIST_GROUP_CLASS}>
@@ -208,7 +207,11 @@ export function SyllabusSection({
             <ul aria-labelledby={group.extra || group.name ? getGroupId(index) : SECTION_TITLE_ID}>
               {group.subjects.map((subject) => (
                 <li key={subject.key}>
-                  <SubjectRow href={subjectHref(subject.key)} shared={shared} subject={subject} />
+                  <SubjectRow
+                    href={subjectHref(subject.key)}
+                    sharedExams={syllabus.sharedExams}
+                    subject={subject}
+                  />
                 </li>
               ))}
             </ul>

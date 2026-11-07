@@ -25,6 +25,7 @@ import {
 } from "../_components/page";
 import { ReportProblemMenu } from "../feedback/content-feedback-menu";
 import { LearnPageBar } from "../shell/learn-bar";
+import { useAlsoIn } from "./shared-exams";
 import { SubjectAside, SubjectCoverage } from "./subject-aside";
 import { SubjectChapters } from "./subject-chapters";
 import { SubjectMatrix } from "./subject-matrix";
@@ -99,10 +100,17 @@ function useEyebrow(props: Parameters<typeof useKindWord>[0]): string {
   return [kindWord, weight].filter(Boolean).join(" · ");
 }
 
-function SubjectFacts({ subject }: { subject: SyllabusSubject }) {
+function SubjectFacts({
+  sharedExams,
+  subject,
+}: {
+  sharedExams: SyllabusView["sharedExams"];
+  subject: SyllabusSubject;
+}) {
   const t = useExtracted();
   const doneShare = useDoneShare();
   const known = useKnownLine()(subject);
+  const alsoIn = useAlsoIn({ sharedExams, sharedWith: subject.sharedWith });
   const inLessons = !subject.notPlannedReason && subject.preparation === null;
 
   const facts = [
@@ -117,6 +125,7 @@ function SubjectFacts({ subject }: { subject: SyllabusSubject }) {
     <>
       {facts.length > 0 && <DetailFacts>{facts.join(" · ")}</DetailFacts>}
       {known && <DetailFacts className="pt-0 font-sans">{known}</DetailFacts>}
+      {alsoIn && <DetailFacts className="pt-0 font-sans">{alsoIn}</DetailFacts>}
     </>
   );
 }
@@ -147,12 +156,14 @@ function SubjectHeader({
   document,
   fromMaterial,
   kind,
+  sharedExams,
   subject,
 }: {
   chapterHref: (chapterId: string) => string;
   document: SyllabusView["examDocument"];
   fromMaterial: boolean;
   kind: SyllabusView["kind"];
+  sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSubject;
 }) {
   const eyebrow = useEyebrow({ document, fromMaterial, kind, subject });
@@ -162,7 +173,7 @@ function SubjectHeader({
       <DetailHeroText>
         <PageEyebrow>{eyebrow}</PageEyebrow>
         <DetailTitle>{subject.name}</DetailTitle>
-        <SubjectFacts subject={subject} />
+        <SubjectFacts sharedExams={sharedExams} subject={subject} />
       </DetailHeroText>
 
       <SubjectActionsRow chapterHref={chapterHref} subject={subject} />
@@ -233,6 +244,7 @@ export function SubjectScreen({
     | "kind"
     | "knownTopicsReturn"
     | "questionsSource"
+    | "sharedExams"
     | "writtenPractice"
   >;
 }) {
@@ -262,6 +274,7 @@ export function SubjectScreen({
           document={syllabus.examDocument}
           fromMaterial={syllabus.fromMaterial}
           kind={syllabus.kind}
+          sharedExams={syllabus.sharedExams}
           subject={subject}
         />
         <SubjectCoverage className="min-[72rem]:hidden" labelled subject={subject} />

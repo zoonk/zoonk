@@ -1,10 +1,10 @@
 "use client";
 
-import { type PlanView } from "@zoonk/core/plans/view-contract";
+import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { useExtracted, useFormatter } from "next-intl";
 import { PageSectionFooter } from "../_components/page";
 
-export type SharedExams = Pick<PlanView, "areas" | "sharedExams">;
+type SharedExams = SyllabusView["sharedExams"];
 
 const MAX_NAMED_EXAMS = 2;
 
@@ -21,11 +21,11 @@ function useExamNames() {
   };
 }
 
-export function SharedExamsNote({ shared }: { shared: SharedExams }) {
+export function SharedExamsNote({ sharedExams }: { sharedExams: SharedExams }) {
   const t = useExtracted();
   const examNames = useExamNames();
-  const count = shared.sharedExams.length;
-  const exams = examNames(shared.sharedExams);
+  const count = sharedExams.length;
+  const exams = examNames(sharedExams);
 
   if (count === 0) {
     return null;
@@ -53,36 +53,32 @@ export function SharedExamsNote({ shared }: { shared: SharedExams }) {
   );
 }
 
-export function SharedExamsLine({ areas, shared }: { areas: string[]; shared: SharedExams }) {
+export function useAlsoIn({
+  sharedExams,
+  sharedWith,
+}: {
+  sharedExams: SharedExams;
+  sharedWith: readonly string[];
+}): string | null {
   const t = useExtracted();
   const examNames = useExamNames();
-
-  const goalIds = new Set(
-    shared.areas.filter((area) => areas.includes(area.name)).flatMap((area) => area.sharedWith),
-  );
-
-  const alsoIn = shared.sharedExams.filter((exam) => goalIds.has(exam.goalId));
+  const alsoIn = sharedExams.filter((exam) => sharedWith.includes(exam.goalId));
   const exams = examNames(alsoIn);
 
   if (alsoIn.length === 0) {
     return null;
   }
 
-  return (
-    <span className="text-muted-foreground text-xs text-pretty" data-slot="shared-exams-line">
-      {exams
-        ? t({
-            description:
-              "Marks a subject on one exam's plan that the learner's other exams named in {exams} also test.",
-            message: "Also in {exams}",
-            values: { exams },
-          })
-        : t({
-            description:
-              "Marks a subject on one exam's plan that the learner's other exams also test.",
-            message: "{count, plural, one {Also in # exam} other {Also in # exams}}",
-            values: { count: alsoIn.length },
-          })}
-    </span>
-  );
+  return exams
+    ? t({
+        description:
+          "Marks a subject on one exam's plan that the learner's other exams named in {exams} also test.",
+        message: "Also in {exams}",
+        values: { exams },
+      })
+    : t({
+        description: "Marks a subject on one exam's plan that the learner's other exams also test.",
+        message: "{count, plural, one {Also in # exam} other {Also in # exams}}",
+        values: { count: alsoIn.length },
+      });
 }

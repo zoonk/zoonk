@@ -77793,6 +77793,29 @@
             ],
             "additionalProperties": false
           },
+          "sharedExams": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "goalId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The exam's name, or the goal's title"
+                }
+              },
+              "required": [
+                "goalId",
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "description": "For an exam goal: the learner's other active or paused exam goals whose plans teach some of the same skills with the same lessons, in the order they were started. A lesson on a shared skill counts in each, so a topic is studied once for all of them; practice and mocks stay in each exam's style. Each subject's `sharedWith` names which. Empty for other goals, and when nothing is shared"
+          },
           "subjects": {
             "type": "array",
             "items": {
@@ -77830,6 +77853,7 @@
           "noticeUrl",
           "passMarks",
           "questionsSource",
+          "sharedExams",
           "subjects",
           "topicCount",
           "topicsMapped",
@@ -77989,6 +78013,15 @@
             "minimum": 0,
             "maximum": 1
           },
+          "sharedWith": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "description": "The goals in `sharedExams` whose plans also teach some of this subject's skills with the same lessons: show it as also in those exams. Empty when no other exam shares it"
+          },
           "shortName": {
             "type": "string",
             "description": "A short label for it, for places with little room such as a lesson's subject"
@@ -78064,6 +78097,7 @@
           "preparation",
           "questions",
           "share",
+          "sharedWith",
           "shortName",
           "source",
           "topicFrequencySource",
@@ -78324,15 +78358,6 @@
                   "type": "boolean",
                   "description": "The learner wants less of it (`reduceAreas`): it keeps its core, and its depth goes to other areas first"
                 },
-                "sharedWith": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "description": "The goals in `sharedExams` whose plans also hold some of this area's skills: show it as also in those exams. Empty when no other exam shares it"
-                },
                 "skillCount": {
                   "type": "integer",
                   "minimum": -9007199254740991,
@@ -78349,7 +78374,6 @@
                 "partOf",
                 "pastBasics",
                 "reduced",
-                "sharedWith",
                 "skillCount",
                 "skipped"
               ],
@@ -78843,29 +78867,6 @@
             ],
             "additionalProperties": false
           },
-          "sharedExams": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "goalId": {
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                },
-                "name": {
-                  "type": "string",
-                  "description": "The exam's name, or the goal's title"
-                }
-              },
-              "required": [
-                "goalId",
-                "name"
-              ],
-              "additionalProperties": false
-            },
-            "description": "For an exam goal: the learner's other active or paused exam goals whose plans hold some of the same skills, in the order they were started. A lesson on a shared skill counts in each, so a topic is studied once for all of them; practice and mocks stay in each exam's style. Each area's `sharedWith` names which. Empty for other goals, and when nothing is shared"
-          },
           "shortPlan": {
             "nullable": true,
             "description": "A test at most a week away, planned day by day: its study days and the day of its short mock; null for any other plan",
@@ -79034,7 +79035,6 @@
           "planId",
           "ready",
           "schedule",
-          "sharedExams",
           "shortPlan",
           "status",
           "steering",

@@ -10,8 +10,8 @@ import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { setupPlayableLesson } from "../lesson-player/_test-utils/playable-lesson-setup";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
+import { getSyllabusView } from "../view-models/syllabus/get-syllabus-view";
 import { loadGoalPlannerLessons } from "./_utils/planner-lessons";
-import { getGoalPlan } from "./get-goal-plan";
 import { parsePlanGraph } from "./planner/plan-state";
 
 async function twoExamsTeachingOneSkill({ sameCourse }: { sameCourse: boolean }) {
@@ -86,9 +86,9 @@ describe("shared exam promises under adversarial states", () => {
   it("doesn't promise studying a skill once when the other exam teaches it in another course", async () => {
     const { firstGoal } = await twoExamsTeachingOneSkill({ sameCourse: false });
 
-    await expect(getGoalPlan(firstGoal.id)).resolves.toMatchObject({
-      plan: { areas: [{ name: "Reading", sharedWith: [] }], sharedExams: [] },
+    await expect(getSyllabusView({ goalId: firstGoal.id })).resolves.toMatchObject({
       status: "ready",
+      syllabus: { sharedExams: [], subjects: [{ name: "Reading", sharedWith: [] }] },
     });
   });
 
@@ -97,9 +97,9 @@ describe("shared exam promises under adversarial states", () => {
       { sameCourse: true },
     );
 
-    await expect(getGoalPlan(firstGoal.id)).resolves.toMatchObject({
-      plan: { sharedExams: [{ goalId: secondGoal.id, name: "CGU" }] },
+    await expect(getSyllabusView({ goalId: firstGoal.id })).resolves.toMatchObject({
       status: "ready",
+      syllabus: { sharedExams: [{ goalId: secondGoal.id, name: "CGU" }] },
     });
 
     const started = await startLibraryLesson({ input: { timeZone: "UTC" }, lessonId: lesson.id });
@@ -143,16 +143,26 @@ describe("shared exam promises under adversarial states", () => {
 
     mockSession(user.id);
 
-    await expect(getGoalPlan(ownGoal.id)).resolves.toMatchObject({
-      plan: { sharedExams: [] },
+    await expect(getSyllabusView({ goalId: ownGoal.id })).resolves.toMatchObject({
       status: "ready",
+      syllabus: { sharedExams: [] },
     });
 
-    await expect(getGoalPlan(foreignGoal.id)).resolves.toStrictEqual({ status: "notFound" });
+    await expect(getSyllabusView({ goalId: foreignGoal.id })).resolves.toStrictEqual({
+      status: "notFound",
+    });
+
     mockGuestSession(stranger.id);
-    await expect(getGoalPlan(ownGoal.id)).resolves.toStrictEqual({ status: "notFound" });
+
+    await expect(getSyllabusView({ goalId: ownGoal.id })).resolves.toStrictEqual({
+      status: "notFound",
+    });
+
     mockSession(null);
-    await expect(getGoalPlan(ownGoal.id)).resolves.toStrictEqual({ status: "unauthorized" });
+
+    await expect(getSyllabusView({ goalId: ownGoal.id })).resolves.toStrictEqual({
+      status: "unauthorized",
+    });
   });
 
   it("ignores explain goals and absent plans or graphs, and falls back after blueprint deletion", async () => {
@@ -184,21 +194,23 @@ describe("shared exam promises under adversarial states", () => {
 
     await prisma.examBlueprint.delete({ where: { id: blueprint.id } });
 
-    await expect(getGoalPlan(own.id)).resolves.toMatchObject({
-      plan: { sharedExams: [{ goalId: deletedBlueprint.id, name: "Retained exam title" }] },
+    await expect(getSyllabusView({ goalId: own.id })).resolves.toMatchObject({
       status: "ready",
+      syllabus: { sharedExams: [{ goalId: deletedBlueprint.id, name: "Retained exam title" }] },
     });
 
-    await expect(getGoalPlan(explain.id)).resolves.toMatchObject({
-      plan: { sharedExams: [] },
+    await expect(getSyllabusView({ goalId: explain.id })).resolves.toMatchObject({
       status: "ready",
+      syllabus: { sharedExams: [] },
     });
 
-    await expect(getGoalPlan(absentPlan.id)).resolves.toStrictEqual({ status: "notFound" });
+    await expect(getSyllabusView({ goalId: absentPlan.id })).resolves.toStrictEqual({
+      status: "notFound",
+    });
 
-    await expect(getGoalPlan(absentGraph.id)).resolves.toMatchObject({
-      plan: { sharedExams: [] },
+    await expect(getSyllabusView({ goalId: absentGraph.id })).resolves.toMatchObject({
       status: "ready",
+      syllabus: { sharedExams: [] },
     });
   });
 });

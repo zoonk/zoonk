@@ -1,4 +1,3 @@
-import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 export const planAreaSchema = z.object({
@@ -26,12 +25,6 @@ export const planAreaSchema = z.object({
     .meta({
       description:
         "The learner wants less of it (`reduceAreas`): it keeps its core, and its depth goes to other areas first",
-    }),
-  sharedWith: z
-    .array(uuidSchema())
-    .meta({
-      description:
-        "The goals in `sharedExams` whose plans also hold some of this area's skills: show it as also in those exams. Empty when no other exam shares it",
     }),
   skillCount: z.int(),
   skipped: z.boolean(),
