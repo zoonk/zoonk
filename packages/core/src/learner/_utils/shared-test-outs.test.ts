@@ -161,7 +161,7 @@ describe("test-outs across goals", () => {
     ).resolves.toBe(1);
   });
 
-  it("rolls back the shared item and saved-day skip when its test-out transaction fails", async () => {
+  it("rolls back the shared item and leaves the saved day intact when its test-out transaction fails", async () => {
     const fixture = await setup();
 
     await expect(

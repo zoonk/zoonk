@@ -14,6 +14,7 @@ import { markSkillsKnown } from "../../../learner/_utils/known-skills";
 import { testOutKnownPlanItems } from "../../../learner/_utils/test-out-known-plan-items";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { loadPlacement } from "../../../learner/placement/_utils/apply-placement";
+import { announceSharedTestOuts } from "../../../plans/announce-shared-test-outs";
 import { announceTestedOutItems } from "../../../plans/announce-tested-out-items";
 import { isPlanConflictError } from "../../../plans/plan-conflict";
 import { skipTestedOutBlocks } from "../../../sessions/_utils/skip-tested-out-blocks";
@@ -81,7 +82,7 @@ export async function placeLevelTestResult({
       userId,
     });
 
-    const { itemIds, standInIds } = await testOutKnownPlanItems(tx, {
+    const { itemIds, sharedItemIds, standInIds } = await testOutKnownPlanItems(tx, {
       goalId,
       items: goalPlan.items,
       knownSkillIds: new Set(state.knownSkillIds),
@@ -90,7 +91,9 @@ export async function placeLevelTestResult({
       timeZone,
     });
 
-    const unannounced = [...new Set([...current.unannounced, ...itemIds, ...standInIds])];
+    const unannounced = [
+      ...new Set([...current.unannounced, ...itemIds, ...standInIds, ...sharedItemIds]),
+    ];
 
     const placement = {
       pastBasicsAreas:
@@ -154,6 +157,21 @@ export async function announceLevelTestPlacement({
     return;
   }
 
+  const skipped = await prisma.planItem.findMany({
+    select: { completedAt: true, id: true, plan: { select: { goalId: true } } },
+    where: { id: { in: placement.unannounced }, plan: { goal: { userId } }, status: "testedOut" },
+  });
+
+  const instants = new Set(skipped.flatMap((item) => item.completedAt?.getTime() ?? []));
+
+  await Promise.all(
+    [...instants].map((instant) =>
+      announceSharedTestOuts({ goalId, now: new Date(), testedOutAt: new Date(instant), userId }),
+    ),
+  );
+
+  const planItemIds = skipped.filter((item) => item.plan.goalId === goalId).map((item) => item.id);
+
   const { data, error } = await safeAsync(() =>
     announceTestedOutItems({
       extraWrites: async (tx) => {
@@ -164,7 +182,7 @@ export async function announceLevelTestPlacement({
       goalId,
       now: new Date(),
       pastBasicsAreas: placement.pastBasicsAreas,
-      planItemIds: placement.unannounced,
+      planItemIds,
       timeZone,
     }),
   );
@@ -174,7 +192,7 @@ export async function announceLevelTestPlacement({
   }
 
   if (isPlanConflictError(error)) {
-    await skipTestedOutBlocks({ goalId, notStarted: true, planItemIds: placement.unannounced });
+    await skipTestedOutBlocks({ goalId, notStarted: true, planItemIds });
     return;
   }
 

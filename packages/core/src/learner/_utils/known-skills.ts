@@ -1,5 +1,6 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { announceSharedTestOuts } from "../../plans/announce-shared-test-outs";
 import { announceTestedOutItems } from "../../plans/announce-tested-out-items";
 import { afterPlanInputWrite } from "../../plans/plan-conflict";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
@@ -143,7 +144,7 @@ export async function markPlanItemsTestedOut({
           const result = { pastBasicsAdded, standInIds: changed.standInIds };
 
           return changed.itemIds.length === 0 &&
-            !changed.sharedItemsChanged &&
+            changed.sharedItemIds.length === 0 &&
             changed.standInIds.length === 0 &&
             pastBasicsAdded.length === 0
             ? unchanged(result)
@@ -153,6 +154,13 @@ export async function markPlanItemsTestedOut({
 
   const planItemIds = [...ids, ...standInIds];
   const announced = [...new Set([...announceAlso, ...planItemIds])];
+
+  await announceSharedTestOuts({
+    goalId,
+    now: now ?? testedOutAt,
+    testedOutAt,
+    userId: goal.userId,
+  });
 
   if (announced.length === 0) {
     return { ...empty, pastBasicsAdded: addedBasics };
@@ -198,7 +206,7 @@ export async function loadPlanItemSkillIds({
   return [...new Set(items.filter((item) => ids.has(item.id)).flatMap((item) => item.skillIds))];
 }
 
-/** Preserves memory backed by real answers; unstudied assumed skills revert to New. */
+/** Preserves real answers and other plans' retained test-outs; remaining assumed skills revert to New. */
 export async function forgetAssumedSkills({
   skillIds,
   tx,
@@ -219,8 +227,29 @@ export async function forgetAssumedSkills({
 
   const answeredIds = new Set(answered.map((attempt) => attempt.skillId));
 
+  const retainedPlans = await tx.plan.findMany({
+    where: { goal: { userId }, items: { some: { status: "testedOut" } } },
+  });
+
+  const retained = await Promise.all(
+    retainedPlans.map((plan) => loadGoalPlan(plan.goalId, undefined, { tx })),
+  );
+
+  const retainedSkillIds = new Set(
+    retained.flatMap((plan) =>
+      plan.items.flatMap((item) => (item.status === "testedOut" ? item.skillIds : [])),
+    ),
+  );
+
   await tx.learnerSkill.updateMany({
     data: NEW_SKILL_MEMORY,
-    where: { skillId: { in: skillIds.filter((skillId) => !answeredIds.has(skillId)) }, userId },
+    where: {
+      skillId: {
+        in: skillIds.filter(
+          (skillId) => !answeredIds.has(skillId) && !retainedSkillIds.has(skillId),
+        ),
+      },
+      userId,
+    },
   });
 }

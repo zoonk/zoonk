@@ -92,11 +92,13 @@ export async function skipTestedOutBlocks({
   goalId,
   notStarted = false,
   planItemIds,
+  skipActive = true,
 }: {
   goalId: string;
   /** Skips the settled lessons' blocks not started yet too: the rest of the day stays as it is. */
   notStarted?: boolean;
   planItemIds: readonly string[];
+  skipActive?: boolean;
 }): Promise<void> {
   const [goal, lessonIds] = await Promise.all([
     prisma.goal.findUnique({ where: { id: goalId } }),
@@ -112,7 +114,7 @@ export async function skipTestedOutBlocks({
       goalId,
       lessonIds,
       notStarted,
-      skipActive: true,
+      skipActive,
       userId: goal.userId,
     });
 

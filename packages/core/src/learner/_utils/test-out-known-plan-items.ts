@@ -2,10 +2,6 @@ import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { awardCourseCertificates } from "../../certificates/_utils/award-course-certificate";
-import {
-  loadItemLessonIds,
-  skipSettledLessonBlocks,
-} from "../../sessions/_utils/skip-tested-out-blocks";
 import { type GoalPlan, type GoalPlanItem, loadGoalPlan } from "./goal-skill-graph";
 
 export type LeftOutSkill = Pick<GoalPlan["skills"][number], "id" | "phase">;
@@ -103,7 +99,7 @@ export async function testOutKnownPlanItems(
     timeZone,
     ...input
   }: TestOutInput & { goalId: string; testedOutAt: Date; timeZone: string },
-): Promise<{ itemIds: string[]; sharedItemsChanged: boolean; standInIds: string[] }> {
+): Promise<{ itemIds: string[]; sharedItemIds: string[]; standInIds: string[] }> {
   const { ids, leftOut } = findTestOut(input);
   const goal = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
 
@@ -141,13 +137,9 @@ export async function testOutKnownPlanItems(
 
   const changed = new Set(updated.map((item) => item.id));
 
-  const lessonIds = await loadItemLessonIds([...changed], tx);
-
-  await skipSettledLessonBlocks(tx, { goalId, lessonIds, userId: goal.userId });
-
   return {
     itemIds: ids.filter((id) => changed.has(id)),
-    sharedItemsChanged: sharedIds.some((id) => changed.has(id)),
+    sharedItemIds: sharedIds.filter((id) => changed.has(id)),
     standInIds,
   };
 }
