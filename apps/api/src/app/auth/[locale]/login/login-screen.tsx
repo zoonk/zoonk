@@ -8,7 +8,7 @@ import {
   LoginTitle,
 } from "@/components/login";
 import { getAuthPageLocale } from "@/i18n/page-locale";
-import { PRIVACY_URL, TERMS_URL } from "@zoonk/utils/url";
+import { getMainPageUrl } from "@zoonk/utils/url";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 import { readRedirectTo } from "../../_utils/auth-redirect";
@@ -17,12 +17,10 @@ import { EmailLoginForm } from "./email-login-form";
 import { SocialLogin } from "./social-login";
 import { USAGE_DATA_SCRIPT } from "./usage-data-script";
 
-function TermsLink(children: ReactNode) {
-  return <a href={TERMS_URL}>{children}</a>;
-}
-
-function PrivacyLink(children: ReactNode) {
-  return <a href={PRIVACY_URL}>{children}</a>;
+function linkTo(href: string) {
+  return function MainPageLink(children: ReactNode) {
+    return <a href={href}>{children}</a>;
+  };
 }
 
 /**
@@ -66,7 +64,10 @@ export async function LoginScreen({
         <LoginFooter>
           {t.rich(
             "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
-            { privacy: PrivacyLink, terms: TermsLink },
+            {
+              privacy: linkTo(getMainPageUrl({ locale, path: "/privacy" })),
+              terms: linkTo(getMainPageUrl({ locale, path: "/terms" })),
+            },
           )}
         </LoginFooter>
       </Login>

@@ -1,5 +1,6 @@
 import { getSessionCookieName } from "@zoonk/auth/cookies";
-import { API_URL } from "@zoonk/utils/url";
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
+import { API_URL, getMainPageUrl } from "@zoonk/utils/url";
 import { unstable_doesMiddlewareMatch } from "next/experimental/testing/server";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -202,6 +203,22 @@ describe("English by its prefix", () => {
       expect(english.headers.get("location")).toBe("https://www.zoonk.com/privacy");
       expect(english.headers.get("set-cookie")).toBeNull();
       expect(unprefixed.headers.get("location")).toBe(`https://www.zoonk.com${follows}`);
+    },
+  );
+});
+
+describe("Main pages linked from a page in another app", () => {
+  it.each(SUPPORTED_LOCALES.filter((locale) => locale !== DEFAULT_LOCALE))(
+    "open in %s with a browser in another language",
+    async (locale) => {
+      const response = await proxy(
+        new NextRequest(getMainPageUrl({ locale, path: "/terms" }), {
+          headers: { "accept-language": locale === "pt" ? "de-DE" : "pt-BR" },
+        }),
+      );
+
+      expect(response.headers.get("location")).toBeNull();
+      expect(response.headers.get("x-middleware-rewrite")).toBeNull();
     },
   );
 });

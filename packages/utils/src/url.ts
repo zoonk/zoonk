@@ -1,3 +1,5 @@
+import { DEFAULT_LOCALE, isValidLocale } from "./locale";
+
 function getDefaultApiUrl(): string {
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
@@ -37,9 +39,15 @@ function getDefaultMainUrl(): string {
 
 export const MAIN_URL = getDefaultMainUrl();
 
-export const TERMS_URL = new URL("/terms", MAIN_URL).toString();
-
-export const PRIVACY_URL = new URL("/privacy", MAIN_URL).toString();
+/**
+ * Main picks the language of an address without one from the browser, so a page written in
+ * another language links Main's pages through this. English, and a language Main lacks, have no
+ * prefix, as Main's routing names them.
+ */
+export function getMainPageUrl({ locale, path }: { locale: string; path: string }): string {
+  const prefix = isValidLocale(locale) && locale !== DEFAULT_LOCALE ? `/${locale}` : "";
+  return new URL(`${prefix}${path}`, MAIN_URL).toString();
+}
 
 export const APPLE_SUBSCRIPTIONS_URL = "https://apps.apple.com/account/subscriptions";
 
