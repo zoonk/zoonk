@@ -16,19 +16,22 @@ import { type UsageDecision } from "./contract";
 type UsageClaim = { generated?: boolean; kind: UsageKind; seconds?: number; targetId: string };
 
 async function claimAs({
-  claims,
+  generated = false,
+  kind,
+  seconds,
+  targetId,
   viewer,
-}: {
-  claims: readonly UsageClaim[];
-  viewer: EntitlementViewer | null;
-}): Promise<UsageDecision> {
+}: UsageClaim & { viewer: EntitlementViewer | null }): Promise<UsageDecision> {
   if (!viewer) {
     return { status: "unauthorized" };
   }
 
   const decision = await claimUsageForViewer({
-    claims: claims.map(({ generated = false, ...claim }) => ({ ...claim, generated })),
+    generated,
+    kind,
     now: new Date(),
+    ...(seconds === undefined ? {} : { seconds }),
+    targetId,
     viewer,
   });
 
@@ -41,7 +44,7 @@ async function claimAs({
 
 /** Claim immediately before work and obey the decision; targetId makes retries free. Calls may hold fewer seconds than requested. */
 export async function claimUsage(claim: UsageClaim): Promise<UsageDecision> {
-  return claimAs({ claims: [claim], viewer: await getEntitlementViewer() });
+  return claimAs({ ...claim, viewer: await getEntitlementViewer() });
 }
 
 /** Internal, for workflows: `userId` must come from the learner's own write. */
@@ -49,23 +52,7 @@ export async function claimUsageFor({
   userId,
   ...claim
 }: UsageClaim & { userId: string }): Promise<UsageDecision> {
-  return claimAs({ claims: [claim], viewer: await getEntitlementViewerFor(userId) });
-}
-
-/** For work that costs several kinds at once: every claim is recorded or none, and the first refusal answers. */
-export async function claimUsages(claims: readonly UsageClaim[]): Promise<UsageDecision> {
-  return claimAs({ claims, viewer: await getEntitlementViewer() });
-}
-
-/** Internal, for workflows: `userId` must come from the learner's own write. */
-export async function claimUsagesFor({
-  claims,
-  userId,
-}: {
-  claims: readonly UsageClaim[];
-  userId: string;
-}): Promise<UsageDecision> {
-  return claimAs({ claims, viewer: await getEntitlementViewerFor(userId) });
+  return claimAs({ ...claim, viewer: await getEntitlementViewerFor(userId) });
 }
 
 /** Claim immediately before starting a small AI call. */
@@ -96,4 +83,40 @@ export async function claimAssistInWrite({
   });
 
   return decision.status === "allowed";
+}
+
+/**
+ * Claims several uses inside the caller's learner write, stopping at the first refusal, which the
+ * caller answers by rolling its write back. They're charged only if that write commits; the caller
+ * expires the allowance tag once it does.
+ */
+export async function claimUsagesInWrite({
+  claims,
+  transaction,
+  viewer,
+}: {
+  claims: readonly UsageClaim[];
+  transaction: TransactionClient;
+  viewer: EntitlementViewer;
+}): Promise<UsageDecision> {
+  await lockUsageForViewer({ transaction, userId: viewer.userId });
+
+  const now = new Date();
+
+  for (const { generated = false, ...claim } of claims) {
+    // oxlint-disable-next-line no-await-in-loop -- Each claim counts the ones before it.
+    const { decision } = await claimUsageInTransaction({
+      ...claim,
+      generated,
+      now,
+      transaction,
+      viewer,
+    });
+
+    if (decision.status !== "allowed") {
+      return decision;
+    }
+  }
+
+  return { status: "allowed" };
 }

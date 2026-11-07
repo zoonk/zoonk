@@ -1,15 +1,19 @@
 import "server-only";
-import { type Goal, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
+import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getRequestPlatform } from "../analytics/request-platform";
 import { type AnalyticsPlatform } from "../analytics/shared-properties";
+import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
+import { getAllowanceCacheTag } from "../cache/tags";
 import {
   type EntitlementViewer,
+  getEntitlementViewer,
   getEntitlementViewerFor,
 } from "../entitlements/_utils/entitlement-viewer";
-import { claimUsages, claimUsagesFor } from "../entitlements/claim-usage";
-import { type RefusedUsage, type UsageDecision } from "../entitlements/contract";
+import { claimUsagesInWrite } from "../entitlements/claim-usage";
+import { type RefusedUsage, isRefusedUsage } from "../entitlements/contract";
 import { findGoalFor, findOwnedGoal } from "../learner/_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getLessonGenerationStates } from "../library/generation/lesson-generation-state";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
 import { MIND_MAP_STALE_AFTER_MS, getMindMapStatus } from "./_utils/mind-map-view";
@@ -35,7 +39,11 @@ export type ChapterMindMapRequest =
   | { status: "unauthorized" }
   | { status: "unavailable" };
 
-type UsageClaims = Parameters<typeof claimUsages>[0];
+type Admission =
+  | { decision: RefusedUsage; status: "refused" }
+  | { status: "claimed" }
+  | { status: "joined" }
+  | { status: "unauthorized" };
 
 async function findRunId(chapterId: string): Promise<string | null> {
   const row = await prisma.chapterMindMap.findUnique({
@@ -46,36 +54,28 @@ async function findRunId(chapterId: string): Promise<string | null> {
   return row?.runId ?? null;
 }
 
-async function claimMindMap({ chapterId, now }: { chapterId: string; now: Date }) {
-  const chapter = await prisma.chapter.findUniqueOrThrow({
-    select: { language: true },
-    where: { id: chapterId },
-  });
+/** False when another request holds the map; a failed or stopped run's map is taken over. */
+async function claimMindMapRow(
+  transaction: TransactionClient,
+  { chapterId, now }: { chapterId: string; now: Date },
+): Promise<boolean> {
+  const staleBefore = new Date(now.getTime() - MIND_MAP_STALE_AFTER_MS);
 
-  try {
-    await prisma.chapterMindMap.create({
-      data: { chapterId, language: chapter.language, status: "running" },
-    });
+  const claimed = await transaction.$queryRaw<{ id: string }[]>`
+    INSERT INTO chapter_mind_maps (chapter_id, language, status, updated_at)
+    VALUES (
+      ${chapterId}::uuid,
+      (SELECT language FROM library_chapters WHERE id = ${chapterId}::uuid),
+      'running',
+      ${now}::timestamp
+    )
+    ON CONFLICT (chapter_id) DO UPDATE
+      SET run_id = NULL, status = 'running', updated_at = EXCLUDED.updated_at
+      WHERE chapter_mind_maps.status <> 'running'
+        OR chapter_mind_maps.updated_at < ${staleBefore}::timestamp
+    RETURNING id`;
 
-    return true;
-  } catch (error) {
-    if (!isPrismaUniqueConstraintError(error)) {
-      throw error;
-    }
-  }
-
-  const { count } = await prisma.chapterMindMap.updateMany({
-    data: { runId: null, status: "running", updatedAt: now },
-    where: {
-      OR: [
-        { status: { not: "running" } },
-        { updatedAt: { lt: new Date(now.getTime() - MIND_MAP_STALE_AFTER_MS) } },
-      ],
-      chapterId,
-    },
-  });
-
-  return count > 0;
+  return claimed.length > 0;
 }
 
 /** The chapter's lessons the run writes or joins first: every one not written and not set aside. */
@@ -92,35 +92,66 @@ async function findLessonsToWrite(chapterId: string): Promise<string[]> {
   );
 }
 
-function toUsageClaims({
+/**
+ * Claims the map and each lesson it writes first in one learner write, together with the map's row:
+ * a request that finds the map taken by then joins it and keeps no claim.
+ */
+async function admitMindMap({
   chapterId,
   lessonIds,
+  now,
+  viewer,
 }: {
   chapterId: string;
   lessonIds: readonly string[];
-}): UsageClaims {
-  return [
-    { generated: true, kind: "mindMap", targetId: chapterId },
+  now: Date;
+  viewer: EntitlementViewer;
+}): Promise<Admission> {
+  const claims = [
+    { generated: true, kind: "mindMap" as const, targetId: chapterId },
     ...lessonIds.map((lessonId) => ({
       generated: true,
       kind: "lessonStart" as const,
       targetId: lessonId,
     })),
   ];
+
+  const admission = await writeLearnerChange<Admission>(
+    { userId: viewer.userId },
+    async (transaction) => {
+      const decision = await claimUsagesInWrite({ claims, transaction, viewer });
+
+      if (isRefusedUsage(decision)) {
+        return unchanged({ decision, status: "refused" as const });
+      }
+
+      if (decision.status !== "allowed") {
+        return unchanged({ status: "unauthorized" as const });
+      }
+
+      return (await claimMindMapRow(transaction, { chapterId, now }))
+        ? { status: "claimed" }
+        : unchanged({ status: "joined" as const });
+    },
+  );
+
+  if (admission.status === "claimed") {
+    revalidateCacheTags([getAllowanceCacheTag(viewer.userId)]);
+  }
+
+  return admission;
 }
 
 async function requestFor({
   chapterId,
-  claim,
   goal,
   platform,
   readViewer,
 }: {
   chapterId: string;
-  claim: (claims: UsageClaims) => Promise<UsageDecision>;
   goal: Goal;
   platform: AnalyticsPlatform | null;
-  readViewer?: () => Promise<EntitlementViewer | null>;
+  readViewer: () => Promise<EntitlementViewer | null>;
 }): Promise<ChapterMindMapRequest> {
   if (!isUuid(chapterId)) {
     return { status: "notFound" };
@@ -144,18 +175,20 @@ async function requestFor({
     return { generationId: await findRunId(chapterId), status };
   }
 
+  const viewer = await readViewer();
+
+  if (!viewer) {
+    return { status: "unauthorized" };
+  }
+
   const lessonIds = await findLessonsToWrite(chapterId);
-  const decision = await claim(toUsageClaims({ chapterId, lessonIds }));
+  const admission = await admitMindMap({ chapterId, lessonIds, now, viewer });
 
-  if (decision.status === "unauthorized") {
-    return decision;
+  if (admission.status === "refused" || admission.status === "unauthorized") {
+    return admission;
   }
 
-  if (decision.status !== "allowed") {
-    return { decision, status: "refused" };
-  }
-
-  if (!(await claimMindMap({ chapterId, now }))) {
+  if (admission.status === "joined") {
     return {
       generationId: await findRunId(chapterId),
       status: lessonIds.length > 0 ? "writingLessons" : "drawing",
@@ -189,9 +222,9 @@ export async function requestChapterMindMap({
 
   return requestFor({
     chapterId,
-    claim: claimUsages,
     goal: owned.goal,
     platform: await getRequestPlatform(),
+    readViewer: getEntitlementViewer,
   });
 }
 
@@ -213,7 +246,6 @@ export async function requestChapterMindMapFor({
 
   return requestFor({
     chapterId,
-    claim: (claims) => claimUsagesFor({ claims, userId }),
     goal: owned.goal,
     platform: null,
     readViewer: () => getEntitlementViewerFor(userId),
