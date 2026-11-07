@@ -95,57 +95,6 @@ function pullPhaseDepth({
   return count === -1 ? candidates : candidates.slice(0, count);
 }
 
-function keepAfterEarlierChallenges({
-  after,
-  before,
-  boss,
-  cumulative,
-  endDay,
-  late,
-  start,
-}: {
-  after: readonly QueueUnit[];
-  before: readonly QueueUnit[];
-  boss: QueueUnit;
-  cumulative: readonly number[];
-  endDay: number;
-  late: number;
-  start: number;
-}): QueueUnit[] {
-  const isEarlier = (unit: QueueUnit, index: number) =>
-    index >= late && unit.kind === "boss" && unit.phase < boss.phase;
-
-  const challenges = before
-    .filter((unit, index) => isEarlier(unit, index))
-    .toSorted((first, second) => first.phase - second.phase);
-
-  const rest = before.filter((unit, index) => !isEarlier(unit, index));
-  const minutes = challenges.reduce((total, unit) => total + unit.minutes, 0);
-  const room = Math.max(0, start - minutes);
-
-  const restLate = placeUnits({ cumulative, units: rest }).findIndex(
-    ({ dayIndex, start: unitStart, unit }) =>
-      dayIndex < 0 || unitStart + unit.minutes > room + PLAN_EPSILON,
-  );
-
-  const count = restLate === -1 ? rest.length : restLate;
-  const first = rest.slice(0, count);
-
-  const held = placeUnits({ cumulative, units: [...first, ...challenges] })
-    .slice(first.length)
-    .map(({ dayIndex, unit }) =>
-      dayIndex < 0 || dayIndex > endDay ? { ...unit, heldOn: endDay } : unit,
-    );
-
-  return [
-    ...first,
-    ...held,
-    { ...boss, heldOn: endDay, startsAt: start },
-    ...rest.slice(count),
-    ...after,
-  ];
-}
-
 function keepPhaseEnd({
   boss,
   cumulative,
@@ -176,19 +125,20 @@ function keepPhaseEnd({
     return [...units];
   }
 
-  const earlier = before.findLastIndex((unit) => unit.kind === "boss" && unit.phase < boss.phase);
+  const held = { ...boss, heldOn: endDay, startsAt: start };
 
-  if (late !== -1 && late <= earlier) {
-    return keepAfterEarlierChallenges({ after, before, boss, cumulative, endDay, late, start });
-  }
-
+  // Only challenges run past the shown day here. Earlier phases' stay before this one, which
+  // gives way to them when they reach its day (`placeBoss`).
   if (late !== -1) {
-    return [
-      ...before.slice(0, late),
-      { ...boss, heldOn: endDay, startsAt: start },
-      ...before.slice(late),
-      ...after,
-    ];
+    const passing = before.slice(late);
+
+    const earlier = passing
+      .filter((unit) => unit.phase < boss.phase)
+      .toSorted((first, second) => first.phase - second.phase);
+
+    const others = passing.filter((unit) => unit.phase >= boss.phase);
+
+    return [...before.slice(0, late), ...earlier, held, ...others, ...after];
   }
 
   const pulled = pullPhaseDepth({
@@ -199,12 +149,7 @@ function keepPhaseEnd({
 
   const pulledKeys = new Set(pulled.map((unit) => unit.key));
 
-  return [
-    ...before,
-    ...pulled,
-    { ...boss, heldOn: endDay, startsAt: start },
-    ...after.filter((unit) => !pulledKeys.has(unit.key)),
-  ];
+  return [...before, ...pulled, held, ...after.filter((unit) => !pulledKeys.has(unit.key))];
 }
 
 export function keepPhaseEnds({

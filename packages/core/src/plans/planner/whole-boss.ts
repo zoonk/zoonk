@@ -7,6 +7,30 @@ import { type PlanDay } from "./schedule-units";
 
 export type PlacedBoss = { beside: boolean; dayIndex: number; start: number; used: number };
 
+function leadDay({
+  cumulative,
+  dayIndex,
+  minutes,
+  start,
+  used,
+}: {
+  cumulative: readonly number[];
+  dayIndex: number;
+  minutes: number;
+  start: number;
+  used: number;
+}): PlacedBoss {
+  const dayEnd = cumulative[dayIndex] ?? start;
+  const end = start + minutes;
+
+  return {
+    beside: false,
+    dayIndex,
+    start,
+    used: Math.max(used, end <= dayEnd + PLAN_EPSILON ? end : dayEnd),
+  };
+}
+
 export function placeBoss({
   cumulative,
   from,
@@ -24,20 +48,17 @@ export function placeBoss({
     return null;
   }
 
-  const lead = (dayIndex: number, start: number): PlacedBoss => {
-    const dayEnd = cumulative[dayIndex] ?? start;
-    const end = start + unit.minutes;
-
-    return {
-      beside: false,
-      dayIndex,
-      start,
-      used: Math.max(used, end <= dayEnd + PLAN_EPSILON ? end : dayEnd),
-    };
-  };
+  const lead = (dayIndex: number, start: number) =>
+    leadDay({ cumulative, dayIndex, minutes: unit.minutes, start, used });
 
   if (unit.heldOn !== undefined) {
-    return lead(unit.heldOn, unit.startsAt ?? cumulative[unit.heldOn - 1] ?? 0);
+    const start = unit.startsAt ?? cumulative[unit.heldOn - 1] ?? 0;
+
+    // A challenge held on the day the learner saw keeps it while the work before it ends by then.
+    // When an earlier phase's challenge reaches that day, this one goes after it (R39).
+    if (used <= start + PLAN_EPSILON) {
+      return lead(unit.heldOn, start);
+    }
   }
 
   const afterDay = unit.afterDay ?? -1;
@@ -74,11 +95,15 @@ export function placeBoss({
   return { beside: true, dayIndex: lastDay, start: floor, used: floor };
 }
 
-/** Records the minutes `boss` runs past its day in `pastDays`, or leaves it out (day -1). */
+/**
+ * Records the minutes `boss` runs past its day in `pastDays`. A day runs past the learner's time by
+ * one challenge at most, so another goes on the next study day, or is left out (day -1) when none
+ * is left.
+ */
 export function keepDayOverrun({
   boss,
   cumulative,
-  state: { pastDays, used },
+  state,
   unit,
 }: {
   boss: PlacedBoss;
@@ -86,15 +111,25 @@ export function keepDayOverrun({
   state: { pastDays: Map<number, number>; used: number };
   unit: QueueUnit;
 }): PlacedBoss {
+  const { pastDays, used } = state;
+
   const past = boss.beside
     ? unit.minutes
     : Math.max(0, boss.start + unit.minutes - (cumulative[boss.dayIndex] ?? 0));
 
   const before = pastDays.get(boss.dayIndex) ?? 0;
 
-  // A day runs past the learner's time by one challenge at most; another has no room.
   if (before + past > unit.minutes + PLAN_EPSILON) {
-    return { ...boss, dayIndex: -1, used };
+    const next = findLessonDayFrom({ cumulative, from: boss.dayIndex + 1 });
+
+    if (next === -1) {
+      return { ...boss, dayIndex: -1, used };
+    }
+
+    const start = Math.max(used, cumulative[next - 1] ?? 0);
+    const moved = leadDay({ cumulative, dayIndex: next, minutes: unit.minutes, start, used });
+
+    return keepDayOverrun({ boss: moved, cumulative, state, unit });
   }
 
   if (boss.dayIndex >= 0 && past > 0) {

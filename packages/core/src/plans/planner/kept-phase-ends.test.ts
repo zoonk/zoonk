@@ -200,4 +200,58 @@ describe(keepPhaseEnds, () => {
 
     expect(listStrainedEnds({ days, ends, units: scheduled.units })).toStrictEqual([]);
   });
+
+  describe("earlier challenges longer than a day, before a later phase's kept end", () => {
+    const short = Array.from({ length: 8 }, (_, offset) => ({
+      date: addDays(today, offset),
+      shape: { events: [], minutes: 10, open: true, phase: null, share: 1 },
+    }));
+
+    const ends = new Map([[2, addDays(today, 5)]]);
+
+    const schedule = (lessons: number) => {
+      const units = [
+        ...Array.from({ length: lessons }, (_, index) =>
+          unit({ key: `lesson:${index}`, kind: "lesson", minutes: 10, phase: 0 }),
+        ),
+        ...[0, 1, 2].map((index) =>
+          unit({ key: `boss:${index}`, kind: "boss", minutes: 15, phase: index }),
+        ),
+      ];
+
+      const scheduled = scheduleUnits({
+        days: short,
+        units: keepPhaseEnds({ days: short, ends, units }),
+      });
+
+      return {
+        bosses: scheduled.units
+          .filter((entry) => entry.kind === "boss")
+          .map((entry) => [entry.key, toIsoDate(entry.date)]),
+        dropped: scheduled.dropped.map((entry) => entry.key),
+      };
+    };
+
+    it("puts each on a day of its own before that end, which stays", () => {
+      expect(schedule(3)).toStrictEqual({
+        bosses: [
+          ["boss:0", "2026-10-30"],
+          ["boss:1", "2026-10-31"],
+          ["boss:2", "2026-11-01"],
+        ],
+        dropped: [],
+      });
+    });
+
+    it("moves that end to just after them when they reach its day", () => {
+      expect(schedule(4)).toStrictEqual({
+        bosses: [
+          ["boss:0", "2026-10-31"],
+          ["boss:1", "2026-11-01"],
+          ["boss:2", "2026-11-02"],
+        ],
+        dropped: [],
+      });
+    });
+  });
 });
