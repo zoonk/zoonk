@@ -18,13 +18,24 @@ export type PromptOutcomeRow = { goal_ids: string[]; id: string; outcome: Prompt
  * Goals point back to the prompt only through `details.onboardingId`, so whether one was created
  * is decided here, in SQL, where the list can filter on it. Archived goals still count.
  */
-export function promptOutcomesSql(where: Sql): Sql {
+export function promptOutcomesSql({
+  page,
+  where,
+}: {
+  page?: { limit: number; offset: number };
+  where: Sql;
+}): Sql {
+  const pageSql = page
+    ? sql`ORDER BY d.created_at DESC, d.id DESC LIMIT ${page.limit} OFFSET ${page.offset}`
+    : sql``;
+
   return sql`
     WITH drafts AS (
       SELECT d.id, d.user_id, d.status, d.understanding, d.created_at
       FROM onboarding_drafts d
       JOIN users u ON u.id = d.user_id
       WHERE ${where}
+      ${pageSql}
     ),
     created AS (
       SELECT g.user_id, g.details->>'onboardingId' AS draft_id, array_agg(g.id ORDER BY g.created_at) AS goal_ids

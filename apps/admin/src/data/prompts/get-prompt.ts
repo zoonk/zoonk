@@ -5,7 +5,8 @@ import { type PromptOutcomeRow, loadPrompts, promptOutcomesSql } from "./_utils/
 
 export const getPrompt = cacheAdminData(async (id: string) => {
   const rows = await prisma.$queryRaw<PromptOutcomeRow[]>`
-    SELECT id, outcome, goal_ids FROM (${promptOutcomesSql(sql`d.id = ${id}::uuid`)}) prompts
+    SELECT id, outcome, goal_ids
+    FROM (${promptOutcomesSql({ where: sql`d.id = ${id}::uuid` })}) prompts
   `;
 
   const [prompt] = await loadPrompts(rows);
