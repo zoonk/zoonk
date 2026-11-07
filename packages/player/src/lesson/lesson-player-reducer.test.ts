@@ -835,7 +835,7 @@ describe(lessonPlayerReducer, () => {
     expect(done).toMatchObject({ completion: { status: "saving" }, phase: "completed" });
   });
 
-  it('asks every question of "I know this" while a finished lesson comes back to a screen it still needs', () => {
+  it('asks every question of "I know this" while a finished lesson comes back to a screen it still needs, and brings back what it missed', () => {
     const steps = [
       explanationStep("e1"),
       checkStep("q1"),
@@ -868,12 +868,43 @@ describe(lessonPlayerReducer, () => {
     const quickCheck = playOn(recovered, [
       { direction: "prev", type: "navigate" },
       { type: "knowThis" },
-      ...answerCheck("q1", true),
+    ]);
+
+    const second = playOn(quickCheck, [...answerCheck("q1", true), { type: "continue" }]);
+
+    expect([getCurrentStep(second)?.id, second.phase]).toStrictEqual(["q2", "playing"]);
+    expect(second.quickCheck).not.toBeNull();
+
+    const secondAgain = playOn(second, [
+      ...answerCheck("q2", false),
+      { type: "continue" },
       { type: "continue" },
     ]);
 
-    expect([getCurrentStep(quickCheck)?.id, quickCheck.phase]).toStrictEqual(["q2", "playing"]);
-    expect(quickCheck.quickCheck).not.toBeNull();
+    expect([getCurrentStep(secondAgain)?.id, secondAgain.phase]).toStrictEqual(["q2", "playing"]);
+
+    const missedFirst = playOn(quickCheck, [...answerCheck("q1", false), { type: "continue" }]);
+
+    expect([missedFirst.queue, missedFirst.results.q2?.isCorrect]).toStrictEqual([
+      ["e1", "e2", "q2", "sum", "q2", "q1"],
+      false,
+    ]);
+
+    const retry = lessonPlayerReducer(missedFirst, { type: "continue" });
+
+    expect([getCurrentStep(retry)?.id, retry.position, retry.phase]).toStrictEqual([
+      "q2",
+      4,
+      "playing",
+    ]);
+
+    const firstAgain = playOn(retry, [...answerCheck("q2", true), { type: "continue" }]);
+
+    expect([getCurrentStep(firstAgain)?.id, firstAgain.phase, firstAgain.notice]).toStrictEqual([
+      "q1",
+      "playing",
+      null,
+    ]);
   });
 
   it("lands on the first question when no answer reached the server", () => {

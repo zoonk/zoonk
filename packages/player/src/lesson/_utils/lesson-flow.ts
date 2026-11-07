@@ -1,3 +1,4 @@
+import { isAnswerableStep } from "@zoonk/core/lesson-player/run";
 import { type LessonPlayerState, getCurrentStep } from "../lesson-player-state";
 import { type LessonStepResult, type PlayableLibraryStep } from "../lesson-player-types";
 import { getChallengeProgress } from "./challenge-progress";
@@ -31,10 +32,6 @@ function startsOver(state: LessonPlayerState, position: number): boolean {
   return id in state.results && (state.quickCheck !== null || isLaterCopy(state, position));
 }
 
-function awaitsMissingAnswer(state: LessonPlayerState, id: string): boolean {
-  return id in state.missing && !(id in state.firstVerdicts) && !(id in state.results);
-}
-
 function getEntryNotice(state: LessonPlayerState, id: string): LessonPlayerState["notice"] {
   if (id in state.results) {
     return null;
@@ -44,7 +41,7 @@ function getEntryNotice(state: LessonPlayerState, id: string): LessonPlayerState
     return "selfCorrect";
   }
 
-  return awaitsMissingAnswer(state, id) ? (state.missing[id] ?? null) : null;
+  return id in state.firstVerdicts ? null : (state.missing[id] ?? null);
 }
 
 function showPosition(state: LessonPlayerState, position: number): LessonPlayerState {
@@ -75,7 +72,7 @@ function leaveQuickCheck(state: LessonPlayerState): LessonPlayerState {
     return state;
   }
 
-  const answered = state.queue.filter((id) => state.results[id]);
+  const answered = state.queue.slice(0, state.position + 1).filter((id) => state.results[id]);
   const passed = new Set(answered.filter((id) => state.results[id]?.isCorrect));
   const missed = answered.filter((id) => !passed.has(id));
 
@@ -94,7 +91,11 @@ function leaveQuickCheck(state: LessonPlayerState): LessonPlayerState {
 }
 
 function isStillNeeded(state: LessonPlayerState, position: number): boolean {
-  return awaitsMissingAnswer(state, state.queue[position] ?? "") || isLaterCopy(state, position);
+  const id = state.queue[position] ?? "";
+  const step = state.steps[id];
+  const isOpen = step !== undefined && isAnswerableStep(step) && !(id in state.results);
+
+  return isOpen || isLaterCopy(state, position);
 }
 
 /**
