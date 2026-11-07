@@ -63,7 +63,13 @@ export async function skipSettledLessonBlocks(
         OR ((${goalId}::uuid IS NULL OR session.goal_id IS DISTINCT FROM ${goalId}::uuid)
           AND block.status = 'pending' AND block.started_at IS NULL
           AND COALESCE(block.payload ->> 'extra', 'false') = 'false'
-          AND COALESCE(block.payload ->> 'reinforcement', 'false') = 'false')
+          AND COALESCE(block.payload ->> 'reinforcement', 'false') = 'false'
+          AND NOT EXISTS (
+            SELECT 1 FROM plan_items AS item
+            JOIN plans AS plan ON plan.id = item.plan_id
+            WHERE plan.goal_id = session.goal_id AND item.lesson_id = block.lesson_id
+              AND item.status = 'todo'
+          ))
       )
     ORDER BY block.id FOR UPDATE OF block
   `;

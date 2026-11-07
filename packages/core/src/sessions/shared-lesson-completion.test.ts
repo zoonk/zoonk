@@ -192,6 +192,11 @@ describe("shared lessons in saved days", () => {
     const fixture = await setup();
     const planItemIds = fixture.plans[0]?.items.map((item) => item.id) ?? [];
 
+    await prisma.planItem.updateMany({
+      data: { completedAt: NOW, status: "testedOut" },
+      where: { lessonId: fixture.lesson.id, plan: { goal: { userId: fixture.user.id } } },
+    });
+
     await skipTestedOutBlocks({
       goalId: fixture.source.goalId ?? "",
       notStarted: true,
