@@ -204,10 +204,7 @@ async function toOutlineNeeds(standIns: StandIns): Promise<CourseOutlineNeed[]> 
         bands,
         courseId: course.id,
         scope,
-        ...toExamSkillAreas({
-          scope,
-          skills: graphSkills.filter((skill) => courseOf.get(skill.skillId) === course.id),
-        }),
+        ...toExamSkillAreas({ scope, skills: graphSkills }),
       };
     }),
   );

@@ -50,6 +50,22 @@ describe(keepToOneSubject, () => {
     ).toStrictEqual([tag("ratios", "percent", "Matemática")]);
   });
 
+  it("judges each chapter on its own, even when another chapter has the same title", () => {
+    const pure = tag("pure", "percent", "Matemática");
+
+    expect(
+      keepToOneSubject({
+        chapters: [
+          { ...chapter("mixed", ["reading"]), title: "Dados" },
+          { ...chapter("pure", ["ratios"]), title: "Dados" },
+        ],
+        scope,
+        skillAreas: { ratios: "Matemática", reading: "Linguagens" },
+        teaching: [tag("mixed", "charts", "Matemática"), pure],
+      }),
+    ).toStrictEqual([pure]);
+  });
+
   it("leaves a goal that isn't an exam free to reuse any chapter", () => {
     const teaching = [tag("news", "charts", "Matemática")];
 

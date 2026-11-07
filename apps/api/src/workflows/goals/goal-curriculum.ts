@@ -164,6 +164,8 @@ async function createPlanAndOutlines({
 
   const courses = toGoalCourses({
     courseIdsByKey,
+    graph,
+    idsByKey,
     needs: near,
     scope,
     withToolChapters: inputs.usesTools,

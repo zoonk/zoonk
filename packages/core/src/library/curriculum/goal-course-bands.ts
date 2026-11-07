@@ -13,8 +13,6 @@ export type GoalCourseNeed = {
   title: string;
   firstPhase: number;
   bands: (CourseBandNeed & { firstPhase: number })[];
-  /** Every skill of the graph the course teaches, in bands the plan reaches now or later. */
-  skills: { area: string; skillId: string }[];
 };
 
 type GraphSkill = GoalSkillGraph["skills"][number];
@@ -78,21 +76,8 @@ export function groupGoalCourseBands({
 
     const [first] = bands;
 
-    const courseSkills = skills.flatMap((skill) => {
-      const skillId = idsByKey[skill.key];
-      return skillId ? [{ area: skill.area, skillId }] : [];
-    });
-
     return first
-      ? [
-          {
-            bands,
-            firstPhase: first.firstPhase,
-            key: course.key,
-            skills: courseSkills,
-            title: course.title,
-          },
-        ]
+      ? [{ bands, firstPhase: first.firstPhase, key: course.key, title: course.title }]
       : [];
   });
 
@@ -123,15 +108,27 @@ export function orderGoalCourses(graph: GoalSkillGraph): { key: string; title: s
 
 export function toGoalCourses({
   courseIdsByKey,
+  graph,
+  idsByKey,
   needs,
   scope,
   withToolChapters,
 }: {
   courseIdsByKey: Readonly<Record<string, string>>;
+  graph: GoalSkillGraph;
+  idsByKey: Readonly<Record<string, string>>;
   needs: readonly GoalCourseNeed[];
   scope: CurriculumScope;
   withToolChapters: boolean;
 }): CourseOutlineNeed[] {
+  const areas = toExamSkillAreas({
+    scope,
+    skills: graph.skills.flatMap((skill) => {
+      const skillId = idsByKey[skill.key];
+      return skillId ? [{ area: skill.area, skillId }] : [];
+    }),
+  });
+
   return needs.flatMap((need) => {
     const courseId = courseIdsByKey[need.key];
     const bands = scope.ownerId ? mergePrivateBands(need).bands : need.bands;
@@ -141,12 +138,7 @@ export function toGoalCourses({
     }
 
     return [
-      {
-        bands: bands.map((band) => ({ ...band, withToolChapters })),
-        courseId,
-        scope,
-        ...toExamSkillAreas({ scope, skills: need.skills }),
-      },
+      { bands: bands.map((band) => ({ ...band, withToolChapters })), courseId, scope, ...areas },
     ];
   });
 }

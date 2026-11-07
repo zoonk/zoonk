@@ -92,26 +92,26 @@ export function keepToOneSubject<T extends Teaching>({
     return [...teaching];
   }
 
-  const mixed = findMixedAreaChapters({
-    chapters: chapters.map((chapter) => ({
-      skillKeys: [
-        ...chapter.skillIds,
-        ...teaching.flatMap((entry) =>
-          entry.chapterId === chapter.chapterId ? entry.skill.id : [],
-        ),
-      ],
-      title: chapter.title,
-    })),
-    skills: [
-      ...Object.entries(skillAreas).map(([key, area]) => ({ area, key })),
-      ...teaching.map((entry) => ({ area: entry.skill.area, key: entry.skill.id })),
-    ],
-  });
-
-  const mixedTitles = new Set(mixed.map((chapter) => chapter.title));
+  const skills = [
+    ...Object.entries(skillAreas).map(([key, area]) => ({ area, key })),
+    ...teaching.map((entry) => ({ area: entry.skill.area, key: entry.skill.id })),
+  ];
 
   const mixedIds = new Set(
-    chapters.flatMap((chapter) => (mixedTitles.has(chapter.title) ? chapter.chapterId : [])),
+    chapters.flatMap((chapter) => {
+      const added = teaching.flatMap((entry) =>
+        entry.chapterId === chapter.chapterId ? entry.skill.id : [],
+      );
+
+      const skillKeys = [...chapter.skillIds, ...added];
+
+      const mixed = findMixedAreaChapters({
+        chapters: [{ skillKeys, title: chapter.title }],
+        skills,
+      });
+
+      return mixed.length > 0 ? [chapter.chapterId] : [];
+    }),
   );
 
   return teaching.filter((entry) => !mixedIds.has(entry.chapterId));

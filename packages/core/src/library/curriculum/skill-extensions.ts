@@ -218,13 +218,13 @@ function groupByBand({
 
 async function toCourseRequest({
   course,
-  courseSkills,
   extensions,
   goal,
+  planGraphSkills,
   withToolChapters,
 }: {
   course: ExtensionCourse;
-  courseSkills: readonly PlanGraphSkill[];
+  planGraphSkills: readonly PlanGraphSkill[];
   extensions: readonly WantedExtension[];
   goal: Parameters<typeof toPlanCourseScope>[0]["goal"];
   withToolChapters: boolean;
@@ -239,7 +239,7 @@ async function toCourseRequest({
   });
 
   const bands = groupByBand({ extensions, plans, withToolChapters });
-  const areas = toExamSkillAreas({ scope, skills: courseSkills });
+  const areas = toExamSkillAreas({ scope, skills: planGraphSkills });
 
   return plans.length > 0 ? [{ bands, courseId: course.id, scope, ...areas }] : [];
 }
@@ -315,9 +315,6 @@ export async function listSkillExtensions({
     courses.map((course) =>
       toCourseRequest({
         course,
-        courseSkills: graph.skills.filter(
-          (graphSkill) => getSkillCourseId({ goal, skill: graphSkill }) === course.id,
-        ),
         extensions: graphSkills
           .filter((graphSkill) => getSkillCourseId({ goal, skill: graphSkill }) === course.id)
           .flatMap((graphSkill) =>
@@ -329,6 +326,7 @@ export async function listSkillExtensions({
               })),
           ),
         goal,
+        planGraphSkills: graph.skills,
         withToolChapters,
       }),
     ),
