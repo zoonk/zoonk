@@ -10,7 +10,7 @@ import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { useReducedMotion } from "../activities/_utils/use-reduced-motion";
 import { type LessonTutorConfig } from "../lesson/tutor/lesson-tutor-context";
 import { QuestionComposer } from "./lesson-question-composer";
@@ -114,7 +114,16 @@ function useFollowLatest({
     mounted ? null : { count, id: latestId },
   );
 
-  useEffect(() => {
+  // Next.js keeps a page the learner left mounted but hidden, and scrolls to the top when they come
+  // back, so a hidden conversation forgets what it showed and opens at its latest turn again.
+  useLayoutEffect(
+    () => () => {
+      shown.current = null;
+    },
+    [],
+  );
+
+  useLayoutEffect(() => {
     if (!ready) {
       return;
     }
@@ -127,11 +136,11 @@ function useFollowLatest({
     }
 
     const turn = latestId ? turns.current.get(latestId) : null;
+    const behavior = previous === null || reducedMotion ? "instant" : "smooth";
 
-    turn?.scrollIntoView({
-      behavior: previous === null || reducedMotion ? "instant" : "smooth",
-      block: "start",
-    });
+    // Before the browser paints, but after Next.js scrolls a page it navigated to, which happens in
+    // a parent's layout effect later in this same commit.
+    queueMicrotask(() => turn?.scrollIntoView({ behavior, block: "start" }));
   }, [count, latestId, ready, reducedMotion]);
 
   return (id: string) => (element: HTMLElement | null) => {

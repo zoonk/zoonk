@@ -8,12 +8,7 @@ function streamElement() {
   const script = document.createElement("script");
   const scrollIntoView = vi.fn();
 
-  // jsdom lays nothing out, so the element has boxes only once it's out of the hidden segment.
-  Object.assign(element, {
-    getClientRects: () => (element.closest("[hidden]") ? [] : [{}]),
-    scrollIntoView,
-  });
-
+  Object.assign(element, { scrollIntoView });
   segment.hidden = true;
   element.append(script);
   segment.append(element);
@@ -22,13 +17,12 @@ function streamElement() {
   vi.spyOn(document, "currentScript", "get").mockReturnValue(script);
   runInThisContext(OPEN_PAGE_HERE_SCRIPT);
 
-  return { reveal: () => document.body.append(element), scrollIntoView };
+  return { reveal: () => document.body.append(element), script, scrollIntoView };
 }
 
 describe("opening a streamed page at an element", () => {
   afterEach(() => {
     vi.restoreAllMocks();
-    vi.useRealTimers();
     document.body.replaceChildren();
   });
 
@@ -48,11 +42,11 @@ describe("opening a streamed page at an element", () => {
     expect(scrollIntoView).toHaveBeenCalledOnce();
   });
 
-  it("stops waiting for an element the page never reveals", async () => {
-    vi.useFakeTimers();
-    const { reveal, scrollIntoView } = streamElement();
+  it("stops waiting once hydration takes the script out", async () => {
+    const { reveal, script, scrollIntoView } = streamElement();
 
-    vi.advanceTimersByTime(10_000);
+    script.remove();
+    await Promise.resolve();
     reveal();
     await Promise.resolve();
 
