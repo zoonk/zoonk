@@ -59,7 +59,8 @@ internal data class MatchAttempt(
 
 /**
  * Main's `MatchColumnsStep`: tap a word on each side to pair them. A right pair stays matched; a wrong
- * one flashes and counts as a mistake. The answer goes once every pair is matched.
+ * one flashes and counts as a mistake. The answer goes once every pair is matched, and the board then
+ * shows each pair on its own row, so the learner sees what goes together.
  */
 @Composable
 internal fun MatchColumnsView(
@@ -78,6 +79,7 @@ internal fun MatchColumnsView(
     var flashing by remember { mutableStateOf<MatchAttempt?>(null) }
     val haptics = LocalHapticFeedback.current
     val allMatched = matched.size == content.pairs.size
+    val rights = if (allMatched) content.pairs.map(MatchPair::right) else rightItems
 
     // After the app was closed in the background, the saved pairs come back but the player's answer doesn't.
     LaunchedEffect(Unit) {
@@ -131,7 +133,7 @@ internal fun MatchColumnsView(
 
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             lefts.indices.forEach { row ->
-                val right = rightItems.getOrNull(row) ?: return@forEach
+                val right = rights.getOrNull(row) ?: return@forEach
                 Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     listOf(MatchItem(true, row) to lefts[row], MatchItem(false, row) to right).forEach { (item, label) ->
                         val isMatched = matched.any { (l, r) -> if (item.left) l == row else r == row }
