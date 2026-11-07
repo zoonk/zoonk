@@ -1,7 +1,6 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useMemo } from "react";
 import {
@@ -105,21 +104,14 @@ export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
 
   return (
     <>
-      {answering &&
-        (step.entry.drill.kind === "noGuessing" ? (
-          <NotSureButton busy={sender === "notSure"} disabled={checking} onClick={run.notSure} />
-        ) : (
-          <Button
-            busy={sender === "notSure"}
-            disabled={checking}
-            focusableWhenDisabled
-            onClick={run.notSure}
-            size="lg"
-            variant="outline"
-          >
-            {t("I don't know yet")}
-          </Button>
-        ))}
+      {answering && (
+        <NotSureButton
+          busy={sender === "notSure"}
+          disabled={checking}
+          label={step.entry.drill.kind === "noGuessing" ? undefined : t("I don't know yet")}
+          onClick={run.notSure}
+        />
+      )}
 
       <QuestionMainButton {...getMainAction(run)} />
     </>
