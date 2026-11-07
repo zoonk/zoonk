@@ -816,6 +816,21 @@ class LessonPlayerReducerTest {
     }
 
     @Test
+    fun aHeldAnswerBehindTheServersRightAnswerIsLeftOutWhateverTheDevicesClock() {
+        val right = saved("q1", true, ANSWERED_AT + kotlin.time.Duration.parse("1m"))
+        val held =
+            saved(
+                "q1",
+                false,
+                ANSWERED_AT + kotlin.time.Duration.parse("5m"),
+            ).let { it.copy(result = it.result.copy(attemptId = "held")) }
+        val action = started(saved("q1", false), right).copy(heldAnswers = listOf(held))
+        val resumed = play(listOf(checkStep("q1"), explanationStep("next"), checkStep("q2")), action)
+
+        assertEquals(LessonAnswer.Check("right") to right.result, resumed.answers["q1"] to resumed.results["q1"])
+    }
+
+    @Test
     fun waitsForADeliberateFinishOnAResumedRunWithEveryScreenAnswered() {
         val done = play(listOf(explanationStep("e1"), checkStep("q1")), started(saved("q1", true)))
 

@@ -272,12 +272,18 @@ private fun LessonPlayerState.startRun(
             .filter { it.answeredAt < action.startedAt }
             .map(RunAnswer::stepId)
             .toSet()
-    val answers = (action.answers + action.heldAnswers).sortedBy(RunAnswer::answeredAt)
+    val answers = withHeld(action.answers, action.heldAnswers)
 
     return copy(run = LessonRun.Started(action.runId, action.hyperdrive, carried))
         .skipSteps(action.optionalStepIds, now)
         .resumeFrom(answers, now)
 }
+
+/** The server's answers, then the device's held ones in turn; the server records nothing on a screen after its right answer. */
+private fun withHeld(
+    answers: List<RunAnswer>,
+    held: List<RunAnswer>,
+): List<RunAnswer> = held.fold(answers) { all, answer -> if (all.any { it.stepId == answer.stepId && it.isCorrect }) all else all + answer }
 
 /**
  * Pictures drawn since are restored first; then every screen the server has no answer for is marked with why, and the
