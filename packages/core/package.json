@@ -667,6 +667,7 @@
     "@types/react": "catalog:",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
+    "fast-check": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

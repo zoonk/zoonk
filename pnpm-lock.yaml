@@ -1168,6 +1168,9 @@ importers:
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
+      fast-check:
+        specifier: 'catalog:'
+        version: 4.10.2
       tsx:
         specifier: 'catalog:'
         version: 4.23.15
