@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { findCurrentPhase, getPhaseStates, isPhaseFinished } from "../_utils/phase-states";
 import { isPlanFinished } from "../_utils/plan-end";
 import { getPlannedBossMinutes } from "./boss-minutes";
-import { type BuildPlanInput, buildPlan } from "./build-plan";
+import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
 import { getShownPhaseEnds } from "./kept-phase-ends";
 import { addDays, daysBetween, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { getPlanFeasibility } from "./plan-feasibility";
@@ -419,6 +419,55 @@ describe(buildPlan, () => {
 
     expect(keptAfter("automatic")).toStrictEqual(kept);
     expect(keptAfter("forced")).toStrictEqual(kept);
+  });
+
+  it("keeps the ends the learner saw while they follow Today through chapters whose depth comes later", () => {
+    const skills = [0, 1, 2, 3, 4].map((index) => skill(`s${index}`, { lessons: 6, phase: index }));
+
+    const input = planInput({
+      goal: { dailyMinutes: 10, kind: "learn", targetDate: addDays(TODAY, 30) },
+      graph: { phases: skills.map((_, index) => ({ milestone: null, name: `${index}` })), skills },
+      lessons: skills.flatMap(({ skillId }) =>
+        lessonsFor(skillId, 6).map((row) => ({ ...row, chapterId: skillId, minutes: 5 })),
+      ),
+    });
+
+    const first = buildPlan(input);
+    const days = Array.from({ length: 10 }, (_, offset) => addDays(TODAY, offset + 1));
+
+    // Each morning the plan runs again after the learner finished the day before, which leaves
+    // the rest of a chapter in progress whenever they finish its skill's core.
+    const { runs } = days.reduce<{ items: ExistingPlanItem[]; runs: BuiltPlan[] }>(
+      ({ items, runs: built }, today) => {
+        const yesterday = addDays(today, -1).getTime();
+
+        const studied = items.map((item) =>
+          item.status === "todo" && item.scheduledFor?.getTime() === yesterday
+            ? { ...item, completedAt: new Date(yesterday), status: "done" as const }
+            : item,
+        );
+
+        const next = buildPlan({
+          ...input,
+          items: studied,
+          mode: "automatic",
+          phaseEnds: getShownPhaseEnds({ items: studied, phases: (built.at(-1) ?? first).phases }),
+          today,
+        });
+
+        return { items: store(next), runs: [...built, next] };
+      },
+      { items: store(first), runs: [] },
+    );
+
+    const shown = { before: [], ends: first.phases.map((phase) => phase.endDate) };
+
+    expect(
+      runs.map((run) => ({
+        before: run.endsBeforeLessons,
+        ends: run.phases.map((phase) => phase.endDate),
+      })),
+    ).toStrictEqual(days.map(() => shown));
   });
 
   it("keeps the chapter an unstarted skill's item teaches from when it moves after this week", () => {

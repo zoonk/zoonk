@@ -6,6 +6,7 @@ import { parsePlanSettings } from "./plan-state";
 
 function filed(key: string, skillId: string, date: string) {
   return {
+    chapterId: null,
     key,
     kind: "lesson" as const,
     lessonId: key,
@@ -61,6 +62,7 @@ describe(listEndsBeforeLessons, () => {
 
   it("never counts the end of a phase whose challenge the learner already won", () => {
     const won = {
+      chapterId: null,
       key: "boss:0",
       kind: "boss" as const,
       lessonId: null,

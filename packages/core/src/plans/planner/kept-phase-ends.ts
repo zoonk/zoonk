@@ -1,8 +1,8 @@
 import { findDayIndex, isLessonRoom } from "./day-index";
+import { deferPastCore, findLate, hasLateLesson } from "./past-core-deferral";
 import { canHoldPhaseChallenge } from "./phase-challenge-days";
 import { listWonPhases } from "./phase-time";
 import { fromIsoDate, toIsoDate } from "./plan-calendar";
-import { LEARN_KINDS } from "./plan-item-rules";
 import { type ExistingPlanItem } from "./plan-items";
 import { PLAN_EPSILON } from "./plan-precision";
 import { type PlanPhase } from "./plan-state";
@@ -123,10 +123,7 @@ function keepAfterEarlierChallenges({
   const minutes = challenges.reduce((total, unit) => total + unit.minutes, 0);
   const room = Math.max(0, start - minutes);
 
-  const restLate = placeUnits({ cumulative, units: rest }).findIndex(
-    ({ dayIndex, start: unitStart, unit }) =>
-      dayIndex < 0 || unitStart + unit.minutes > room + PLAN_EPSILON,
-  );
+  const restLate = findLate({ cumulative, start: room, units: rest });
 
   const count = restLate === -1 ? rest.length : restLate;
   const first = rest.slice(0, count);
@@ -162,18 +159,23 @@ function keepPhaseEnd({
   const after = units.slice(index + 1);
 
   const start = cumulative[endDay - 1] ?? 0;
+  const late = findLate({ cumulative, start, units: before });
 
-  const late = placeUnits({ cumulative, units: before }).findIndex(
-    ({ dayIndex, start: unitStart, unit }) =>
-      dayIndex < 0 || unitStart + unit.minutes > start + PLAN_EPSILON,
-  );
-
-  const lateLesson =
-    (late !== -1 && before.slice(late).some((unit) => LEARN_KINDS.has(unit.kind))) ||
-    (boss.afterDay ?? -1) >= endDay;
-
-  if (lateLesson) {
+  if ((boss.afterDay ?? -1) >= endDay) {
     return [...units];
+  }
+
+  if (hasLateLesson({ late, units: before })) {
+    const deferred = deferPastCore({ before, cumulative, start });
+
+    return deferred
+      ? keepPhaseEnd({
+          boss,
+          cumulative,
+          endDay,
+          units: [...deferred.kept, boss, ...deferred.moved, ...after],
+        })
+      : [...units];
   }
 
   const earlier = before.findLastIndex((unit) => unit.kind === "boss" && unit.phase < boss.phase);

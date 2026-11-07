@@ -1,4 +1,6 @@
+import { listCoreLessonItems } from "../_utils/core-lessons";
 import { type BuildPlanInput } from "./build-plan";
+import { isPastCore } from "./core-first";
 import { listWonPhases } from "./phase-time";
 import { LEARN_KINDS } from "./plan-item-rules";
 import { type PlannedItem } from "./plan-items";
@@ -14,9 +16,17 @@ export function listEndsBeforeLessons({
   given: Pick<BuildPlanInput, "graph" | "lessons">;
   items: readonly Pick<
     PlannedItem,
-    "key" | "kind" | "lessonId" | "phase" | "scheduledFor" | "skillId" | "status"
+    | "chapterId"
+    | "key"
+    | "kind"
+    | "lessonId"
+    | "lessons"
+    | "phase"
+    | "scheduledFor"
+    | "skillId"
+    | "status"
   >[];
-  units: readonly Pick<ScheduledUnit, "depth" | "key">[];
+  units: readonly Pick<ScheduledUnit, "depth" | "key" | "pastCore">[];
 }): number[] {
   const skillPhases = new Map(given.graph.skills.map((skill) => [skill.skillId, skill.phase]));
 
@@ -26,11 +36,21 @@ export function listEndsBeforeLessons({
     ),
   );
 
-  const core = new Set(units.flatMap((unit) => (unit.depth ? [] : [unit.key])));
+  const laidOut = new Set(units.map((unit) => unit.key));
+  const laidOutCore = new Set(units.flatMap((unit) => (isPastCore(unit) ? [] : [unit.key])));
 
-  const depth = new Set(
-    units.flatMap((unit) => (unit.depth && !core.has(unit.key) ? [unit.key] : [])),
+  const keptCore = new Set(
+    [...listCoreLessonItems({ graphSkills: given.graph.skills, items }).values()]
+      .flat()
+      .map((item) => item.key),
   );
+
+  // Lessons this week's run kept as they were carry no flags, so they're sized as the challenge
+  // sizes its skills' cores.
+  const isWaitedFor = (item: (typeof items)[number]) =>
+    laidOut.has(item.key)
+      ? laidOutCore.has(item.key)
+      : item.kind !== "lesson" || keptCore.has(item.key);
 
   // A lesson that spills past its phase's end is filed under the next phase but still belongs to
   // its skill's phase, or to its chapter's level in a course.
@@ -45,7 +65,7 @@ export function listEndsBeforeLessons({
       LEARN_KINDS.has(item.kind) &&
       item.status === "todo" &&
       item.scheduledFor !== null &&
-      !depth.has(item.key),
+      isWaitedFor(item),
   );
 
   const won = listWonPhases(home);
