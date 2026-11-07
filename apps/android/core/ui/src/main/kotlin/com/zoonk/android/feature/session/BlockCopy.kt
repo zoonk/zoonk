@@ -235,9 +235,6 @@ fun BlockMark(step: DayStep) {
     }
 }
 
-/** A row dims while its tap opens its block. */
-const val OPENING_ROW_ALPHA = 0.6f
-
 /** Under the title of a row whose tap couldn't open its block. */
 @Composable
 fun StepOpenFailed() {

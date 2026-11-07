@@ -31,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -50,7 +49,6 @@ import com.zoonk.android.feature.session.BlockMark
 import com.zoonk.android.feature.session.DayMission
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.MissionOpens
-import com.zoonk.android.feature.session.OPENING_ROW_ALPHA
 import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.ui.characters.Buddy
 import com.zoonk.android.ui.characters.BuddyCrop
@@ -344,8 +342,7 @@ fun MissionListRow(
                     } else {
                         Modifier
                     },
-                ).alpha(if (busy) OPENING_ROW_ALPHA else 1f)
-                .semantics { if (done) stateDescription = doneLabel }
+                ).semantics { if (done) stateDescription = doneLabel }
                 .heightIn(min = 48.dp)
                 .padding(vertical = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),

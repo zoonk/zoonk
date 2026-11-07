@@ -26,7 +26,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
@@ -53,7 +52,6 @@ import com.zoonk.android.feature.session.BlockMark
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.feature.session.MissionOpens
-import com.zoonk.android.feature.session.OPENING_ROW_ALPHA
 import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
@@ -627,7 +625,6 @@ private fun QueueRow(
     Column(modifier) {
         ListRow(
             headline = headline,
-            modifier = Modifier.alpha(if (busy) OPENING_ROW_ALPHA else 1f),
             onClick = onClick,
             busy = busy,
             highlighted = isNext,
