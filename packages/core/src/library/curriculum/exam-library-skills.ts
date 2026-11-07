@@ -26,11 +26,14 @@ async function listExamSkillIds({
 async function listCourseSkills({
   courseIds = [],
   examBlueprintId,
+  frameCourseIds = courseIds,
   language,
   skillIds = [],
 }: {
   courseIds?: readonly string[];
   examBlueprintId: string;
+  /** A skill a frame course teaches keeps that course, so its listing never pulls in another. */
+  frameCourseIds?: readonly string[];
   language: string;
   skillIds?: readonly string[];
 }) {
@@ -91,7 +94,7 @@ async function listCourseSkills({
       AND (membership.course_id = ANY(${[...courseIds]}::text[])
         OR membership.skill_id = ANY(${[...skillIds]}::text[]))
     GROUP BY membership.course_id, membership.skill_id
-    ORDER BY BOOL_OR(membership.course_id = ANY(${[...courseIds]}::text[])) DESC,
+    ORDER BY BOOL_OR(membership.course_id = ANY(${[...frameCourseIds]}::text[])) DESC,
       BOOL_OR(membership.is_placed) DESC, membership.course_id, membership.skill_id
   `;
 }
@@ -140,7 +143,12 @@ async function loadExamLibrarySkills({
   const placed = [
     ...inCourses,
     ...(foundations.length > 0
-      ? await listCourseSkills({ examBlueprintId, language, skillIds: foundations })
+      ? await listCourseSkills({
+          examBlueprintId,
+          frameCourseIds: courseIds,
+          language,
+          skillIds: foundations,
+        })
       : []),
   ];
 
