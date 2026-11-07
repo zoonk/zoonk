@@ -13,7 +13,7 @@ import {
   mockSearchTerms,
   uniqueWord,
 } from "../library/identity/_test-utils/identity-mocks";
-import { askForLessons, endLessonsAsk } from "./lessons-ask";
+import { askForLessons, endLessonsAsk, followWrittenLessons } from "./lessons-ask";
 
 describe(endLessonsAsk, () => {
   beforeEach(() => {
@@ -46,5 +46,23 @@ describe(endLessonsAsk, () => {
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       lessonsAskedAt: null,
     });
+  });
+
+  it("does not end a newer ask when an outline's day follow is replayed", async () => {
+    const skill = await skillFixture();
+    const { goal, plan } = await waitingGoal(skill);
+    const askedAt = await askForLessons({ goalId: goal.id });
+
+    await followWrittenLessons({ askedAt: askedAt ?? 0, goalId: goal.id });
+
+    const newer = new Date(WAITING_START.getTime() + 60_000);
+    await askForLessons({ goalId: goal.id, now: newer });
+    await followWrittenLessons({ askedAt: askedAt ?? 0, goalId: goal.id });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      lessonsAskedAt: newer,
+    });
+
+    await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
   });
 });
