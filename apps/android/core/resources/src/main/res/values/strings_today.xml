@@ -206,7 +206,6 @@
     <string name="today_take_the_test">Take the test</string>
     <!-- Lessons from earlier days the learner hasn't finished; %1$s is how many, as a number. -->
     <string name="today_earlier_work">Earlier unfinished work · %1$s</string>
-    <string name="today_earlier_work_detail">Start with these. Starting your session fits the plan to today\'s time.</string>
     <string name="today_practice_anytime">Practice anytime</string>
     <string name="today_mistakes_notebook">Mistakes notebook</string>
     <string name="today_mistakes_redo">Redo what you got wrong</string>

@@ -34,7 +34,6 @@
   "today_done_count": "49ba7434e17534c087df1507f64f4fbdefc3110fc123fc96c294f5da3a46535d",
   "today_done_day_off": "e25b2db7f9b9395f884f263e83d2d5fa3934a6617116dbf77025bc75da3072fb",
   "today_earlier_work": "56b8d14c26203ae230f69ed1001161ac429a2ac2db5fcf384ba8b6796af71a5b",
-  "today_earlier_work_detail": "fb4e43bb949e7390edbaadf9b024b019d2171c99983c1ede58a90d8cb6e5f658",
   "today_exam_choice_choose": "d9cb2efab69311bd9af3ec9931c30f4ab39f7cdf2072f2bf98a97e6e9ea81086",
   "today_exam_choice_question": "93e1b32f5a9903411411a50e91d300ed864a9196af5de8b7deb94cf517576cd7",
   "today_exam_choice_question_several": "5f75f5d482baff7bc57de00486aea30ec495098cfaa63b9d27980343e459d082",
@@ -387,7 +386,6 @@
     <string name="today_take_the_test">テストを受ける</string>
     <!-- Lessons from earlier days the learner hasn't finished; %1$s is how many, as a number. -->
     <string name="today_earlier_work">前の日までのやり残し · %1$s</string>
-    <string name="today_earlier_work_detail">まずはここから始めてください。学習を始めると、今日の学習時間に合わせて計画が調整されます。</string>
     <string name="today_practice_anytime">いつでも練習</string>
     <string name="today_mistakes_notebook">間違いノート</string>
     <string name="today_mistakes_redo">間違えた問題を解き直す</string>
