@@ -32,6 +32,7 @@ import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.language.reading
+import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.api.ApiJson
@@ -308,6 +309,31 @@ class LessonPlayerFlowTest {
         assertTrue(!reopened.hasUnsent)
     }
 
+    /** An answer the server doesn't have yet shows as the device graded it when the lesson opens again. */
+    @Test
+    fun aHeldAnswerShowsAnsweredWhenTheLessonOpensAgain() {
+        play(listOf(checkStep("quiz"), explanationStep("idea"), checkStep("next"))) { checkFailures = 2 }
+        tap("Right")
+        tap("Check")
+        rule.onNodeWithText("Correct!").assertIsDisplayed()
+        rule.waitForIdle()
+
+        val reopened = openAgain()
+        rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run is LessonRun.Started }
+
+        val state = checkNotNull(reopened.state.value)
+        assertEquals("idea", state.currentStep?.id)
+        assertEquals(LessonAnswer.Check("right"), state.answers["quiz"])
+        assertEquals(true, state.results["quiz"]?.isCorrect)
+        assertEquals(
+            api.checks
+                .first()
+                .second.attemptId
+                .toString(),
+            state.results["quiz"]?.attemptId,
+        )
+    }
+
     @Test
     fun aRunStartsAfterAHeldAnswerEvenWhenItsResendFails() {
         play(listOf(checkStep("quiz"), summaryStep("end"))) { checkFailures = 2 }
@@ -454,7 +480,7 @@ class LessonPlayerFlowTest {
         tap("Check")
         rule.waitForIdle()
 
-        api.runAnswers = """[{"answeredAt":"2026-10-28T10:01:00Z","isCorrect":false,"stepId":"$quiz"}]"""
+        api.runAnswers = "[${runAnswerJson(quiz, isCorrect = false)}]"
         val reopened = openAgain()
         rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run is LessonRun.Started }
 

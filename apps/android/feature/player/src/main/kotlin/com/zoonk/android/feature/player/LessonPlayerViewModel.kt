@@ -50,6 +50,7 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.toApi
+import com.zoonk.android.feature.player.model.toLessonAnswer
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.player.model.writtenText
 import com.zoonk.android.feature.player.steps.isPlayable
@@ -61,6 +62,7 @@ import com.zoonk.api.models.LessonStepCheckInput
 import com.zoonk.api.models.LessonStepCheckResult
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.LibraryLessonRun
+import com.zoonk.api.models.LibraryLessonRunAnswersInner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
@@ -123,7 +125,14 @@ private data class PendingCheck(
 ) {
     val attemptId: String get() = input.attemptId.toString()
 
-    val progress: RunAnswer? get() = isCorrect?.let { correct -> answeredAt?.let { RunAnswer(stepId, correct, it) } }
+    /** An answer graded on the device, shown as it was graded while it waits for the server. */
+    fun held(step: LessonStep?): RunAnswer? {
+        val correct = isCorrect ?: return null
+        val at = answeredAt ?: return null
+        val answer = input.answer.toLessonAnswer()
+        val result = step?.let { gradeOnDevice(it, answer) } ?: return null
+        return RunAnswer(stepId, correct, at, answer, result.copy(attemptId = attemptId))
+    }
 }
 
 @Serializable
@@ -557,7 +566,8 @@ class LessonPlayerViewModel(
     ): LessonPlayerState {
         val started = now()
         var state = LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = started)
-        state = reduce(state, run.toStartedAction(unsaved.values.flatten().mapNotNull(PendingCheck::progress)), started)
+        val steps = lesson.steps.associateBy(LessonStep::id)
+        state = reduce(state, run.toStartedAction(unsaved.values.flatten().mapNotNull { it.held(steps[it.stepId]) }), started)
 
         val unplayable = lesson.steps.filterNot(::isPlayable).map(LessonStep::id)
         val leftOut = run.optionalStepIds.orEmpty().map(UUID::toString) + run.answers.map { it.stepId.toString() }
@@ -792,7 +802,7 @@ class LessonPlayerViewModel(
         dispatch(
             LessonAction.RunResynced(
                 runId = run.runId.toString(),
-                answers = run.answers.map { RunAnswer(it.stepId.toString(), it.isCorrect, it.answeredAt) },
+                answers = run.answers.map(LibraryLessonRunAnswersInner::toRunAnswer),
                 optionalStepIds = run.optionalStepIds.orEmpty().map(UUID::toString),
                 pictures = pictures,
             ),
@@ -855,11 +865,16 @@ class LessonPlayerViewModel(
 private fun LibraryLessonRun.toStartedAction(heldAnswers: List<RunAnswer>) =
     LessonAction.RunStarted(
         runId = runId.toString(),
-        answers = answers.map { RunAnswer(it.stepId.toString(), it.isCorrect, it.answeredAt) },
+        answers = answers.map(LibraryLessonRunAnswersInner::toRunAnswer),
         hyperdrive = HyperdriveStart(hyperdrive.knownStepIds.map(UUID::toString).toSet(), hyperdrive.streak.toInt()),
         startedAt = startedAt,
         optionalStepIds = optionalStepIds.orEmpty().map(UUID::toString),
         heldAnswers = heldAnswers,
     )
+
+private fun LibraryLessonRunAnswersInner.toRunAnswer(): RunAnswer {
+    val saved = answer?.toLessonAnswer()
+    return RunAnswer(stepId.toString(), isCorrect, answeredAt, saved, result.toStepResult(isRecording = saved == null))
+}
 
 private fun List<LessonStep>.pictures(): Map<String, StepImage> = mapNotNull { step -> step.image?.let { step.id to it } }.toMap()

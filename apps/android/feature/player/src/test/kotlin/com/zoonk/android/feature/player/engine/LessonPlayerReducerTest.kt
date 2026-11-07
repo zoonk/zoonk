@@ -51,6 +51,13 @@ private fun answerCheck(
         LessonAction.CheckResolved(stepId, stepResult(isCorrect, attemptId), counts = true),
     )
 
+/** A check's saved answer: the right or wrong option, with its verdict. */
+private fun saved(
+    stepId: String,
+    isCorrect: Boolean,
+    answeredAt: Instant = ANSWERED_AT,
+) = RunAnswer(stepId, isCorrect, answeredAt, LessonAnswer.Check(if (isCorrect) "right" else "wrong"), stepResult(isCorrect))
+
 private fun started(
     vararg answers: RunAnswer,
     hyperdrive: HyperdriveStart = NO_HYPERDRIVE,
@@ -174,17 +181,20 @@ class LessonPlayerReducerTest {
     @Test
     fun opensAResumedRunWithEveryScreenAnsweredOnTheMapWhoseContinueSaves() {
         val steps = listOf(explanationStep("e1"), checkStep("q1"), lessonMapStep())
-        val resumed = play(steps, started(RunAnswer("q1", true, ANSWERED_AT)))
+        val resumed = play(steps, started(saved("q1", true)))
 
         assertEquals(LESSON_MAP_STEP_ID to LessonPhase.Playing, resumed.currentId to resumed.phase)
         assertNull(resumed.completion)
-        assertFalse(resumed.screen().canGoBack)
-        assertSame(resumed, resumed.then(LessonAction.GoBack))
+
+        val back = resumed.then(LessonAction.GoBack)
+        assertEquals("q1" to LessonPhase.Feedback, back.currentId to back.phase)
+        assertEquals(LessonAnswer.Check("right") to true, back.answers["q1"] to back.results["q1"]?.isCorrect)
+        assertEquals(LESSON_MAP_STEP_ID, back.then(LessonAction.Continue).currentId)
 
         val done = resumed.then(LessonAction.Continue)
         assertEquals(LessonPhase.Completed to CompletionStatus.Saving, done.phase to done.completion?.status)
 
-        val resynced = done.then(LessonAction.RunResynced(null, listOf(RunAnswer("q1", true, ANSWERED_AT))))
+        val resynced = done.then(LessonAction.RunResynced(null, listOf(saved("q1", true))))
         assertEquals(LessonPhase.Completed to CompletionStatus.Failed, resynced.phase to resynced.completion?.status)
         assertNull(resynced.notice)
     }
@@ -327,7 +337,7 @@ class LessonPlayerReducerTest {
     @Test
     fun keepsTodaysWritingNoticeAndUndoWhenTheRunStartReconcilesStaleProgress() {
         val steps = listOf(checkStep("quiz"), typedAnswerStep("write"), explanationStep("tip"), summaryStep("end"))
-        val resumed = play(steps, LessonAction.SkipWriting(opening = true), started(RunAnswer("quiz", true, ANSWERED_AT)))
+        val resumed = play(steps, LessonAction.SkipWriting(opening = true), started(saved("quiz", true)))
 
         assertEquals(LessonNotice.WritingSkipped, resumed.notice)
         assertEquals("tip", resumed.currentId)
@@ -576,7 +586,7 @@ class LessonPlayerReducerTest {
                 checkStep("q2"),
                 summaryStep("sum"),
             )
-        val resumed = play(steps, started(RunAnswer("q1", false, ANSWERED_AT)))
+        val resumed = play(steps, started(saved("q1", false)))
 
         assertEquals(mapOf("q1" to false), resumed.firstVerdicts)
         assertEquals(LessonPhase.Playing, resumed.phase)
@@ -586,28 +596,175 @@ class LessonPlayerReducerTest {
         assertEquals("e2", resumed.currentId)
     }
 
+    /** #2293: Previous after a reopen shows the question as the learner left it: their answer and its verdict. */
+    @Test
+    fun previousAfterAReopenShowsTheAnsweredQuestionAsTheLearnerLeftIt() {
+        val steps = listOf(explanationStep("e1"), checkStep("q1"), explanationStep("e2"), checkStep("q2"))
+        val resumed = play(steps, started(saved("q1", false)))
+        assertEquals("e2", resumed.currentId)
+
+        val back = resumed.then(LessonAction.GoBack)
+        assertEquals("q1" to LessonPhase.Feedback, back.currentId to back.phase)
+        assertTrue(back.reviewing)
+        assertEquals(LessonAnswer.Check("wrong") to stepResult(false), back.answers["q1"] to back.results["q1"])
+        assertEquals(PrimaryLabel.Continue, back.screen().primary?.label)
+
+        val forward = back.then(LessonAction.Continue)
+        assertEquals("e2" to LessonPhase.Playing, forward.currentId to forward.phase)
+        assertEquals(mapOf("q1" to false), forward.firstVerdicts)
+    }
+
+    @Test
+    fun continueOpensAScreenAnsweredInAnEarlierSittingAsAnswered() {
+        val steps = listOf(explanationStep("e1"), checkStep("q1"), checkStep("q2"), summaryStep("end"))
+        val resumed = play(steps, started(saved("q2", true)))
+        assertEquals("e1", resumed.currentId)
+
+        val answered = answerCheck("q1", true).fold(resumed.then(LessonAction.Continue), LessonPlayerState::then)
+        val onQ2 = answered.then(LessonAction.Continue)
+
+        assertEquals("q2" to LessonPhase.Feedback, onQ2.currentId to onQ2.phase)
+        assertTrue(onQ2.reviewing)
+        assertEquals(LessonAnswer.Check("right") to resumed.round("q2"), onQ2.answers["q2"] to onQ2.round("q2"))
+        assertEquals("end", onQ2.then(LessonAction.Continue).currentId)
+    }
+
+    @Test
+    fun aReopenedMissComesBackAtTheEndStartedOver() {
+        val resumed = play(listOf(checkStep("q1"), explanationStep("e1"), checkStep("q2")), started(saved("q1", false)))
+        assertEquals(listOf("q1", "e1", "q2", "q1"), resumed.queue)
+
+        val retry = answerCheck("q2", true).fold(resumed.then(LessonAction.Continue), LessonPlayerState::then).then(LessonAction.Continue)
+
+        assertEquals("q1" to LessonPhase.Playing, retry.currentId to retry.phase)
+        assertFalse(retry.reviewing)
+        assertNull(retry.answers["q1"])
+        assertNull(retry.results["q1"])
+    }
+
+    @Test
+    fun iAlreadyKnowThisAfterAReopenAsksEachCheckAfreshAndAMissStartsOverWhenItComesBack() {
+        val steps = listOf(explanationStep("e1"), checkStep("q1"), explanationStep("e2"), checkStep("q2"))
+        val quick = play(steps, started(saved("q1", false)), LessonAction.KnowThis)
+
+        assertEquals("q1" to LessonPhase.Playing, quick.currentId to quick.phase)
+        assertNull(quick.answers["q1"])
+        assertNull(quick.results["q1"])
+
+        val left = answerCheck("q1", false).fold(quick, LessonPlayerState::then).then(LessonAction.Continue)
+        assertEquals("e2", left.currentId)
+        assertEquals(listOf("e1", "q1", "e2", "q2", "q1"), left.queue)
+        assertNull(left.results["q1"])
+    }
+
+    /** #2074: each screen the server lacks says why; Continue goes from one to the next, then its retry, then the end. */
+    @Test
+    fun aRecoveryTakesTheLearnerToEachMissingScreenInTurnWithItsOwnReason() {
+        val steps =
+            listOf(
+                explanationStep("e1"),
+                checkStep("q1"),
+                explanationStep("e2"),
+                numberedCheckStep("parts"),
+                explanationStep("e3"),
+                checkStep("q3"),
+                summaryStep("end"),
+            )
+        val finished =
+            play(
+                steps,
+                started(),
+                LessonAction.SkipSteps(listOf("parts")),
+                LessonAction.Continue,
+                *answerCheck("q1", true),
+                LessonAction.Continue,
+                LessonAction.Continue,
+                LessonAction.Continue,
+                *answerCheck("q3", true),
+                LessonAction.Continue,
+                LessonAction.Continue,
+            )
+        assertEquals(LessonPhase.Completed, finished.phase)
+
+        val resynced = finished.then(LessonAction.RunResynced(null, listOf(saved("q1", true)), pictures = mapOf("parts" to PICTURE)))
+        assertEquals("parts" to LessonNotice.PictureReady, resynced.currentId to resynced.notice)
+        assertEquals(steps.map(LessonStep::id), resynced.queue)
+
+        val back = resynced.then(LessonAction.GoBack)
+        assertEquals("e2" to null, back.currentId to back.notice)
+        assertEquals(LessonNotice.PictureReady, back.then(LessonAction.Continue).notice)
+
+        val failed = resynced.then(LessonAction.CheckStarted("parts")).then(LessonAction.CheckFailed("parts"))
+        assertEquals(LessonNotice.PictureReady, failed.notice)
+
+        val answered = answerCheck("parts", true).fold(failed, LessonPlayerState::then)
+        assertNull(answered.notice)
+
+        val missing = answered.then(LessonAction.Continue)
+        assertEquals("q3" to LessonNotice.AnswerNotSaved, missing.currentId to missing.notice)
+
+        val retry = answerCheck("q3", false).fold(missing, LessonPlayerState::then).then(LessonAction.Continue)
+        assertEquals("q3" to LessonPhase.Playing, retry.currentId to retry.phase)
+        assertNull(retry.notice)
+
+        val done = answerCheck("q3", true).fold(retry, LessonPlayerState::then).then(LessonAction.Continue)
+        assertEquals(LessonPhase.Completed to CompletionStatus.Saving, done.phase to done.completion?.status)
+    }
+
+    @Test
+    fun aRecoveryWithNoSavedAnswersStartsAtTheFirstQuestionAndKeepsTheGuess() {
+        val steps = listOf(hookGuessStep("hook"), explanationStep("e1"), checkStep("q1"), explanationStep("e2"), checkStep("q2"))
+        val guess = revealGuess(steps.first(), "yes")!!
+        val finished =
+            play(
+                steps,
+                started(),
+                LessonAction.SelectAnswer("hook", LessonAnswer.Hook("yes")),
+                LessonAction.CheckResolved("hook", guess, counts = false),
+                LessonAction.Continue,
+                LessonAction.Continue,
+                *answerCheck("q1", true),
+                LessonAction.Continue,
+                LessonAction.Continue,
+                *answerCheck("q2", true),
+                LessonAction.Continue,
+            )
+
+        val resynced = finished.then(LessonAction.RunResynced(null, emptyList()))
+        assertEquals("q1" to LessonNotice.AnswerNotSaved, resynced.currentId to resynced.notice)
+        assertEquals(steps.map(LessonStep::id), resynced.queue)
+        assertEquals(LessonAnswer.Hook("yes") to guess, resynced.answers["hook"] to resynced.results["hook"])
+        assertEquals("e1", resynced.then(LessonAction.GoBack).currentId)
+    }
+
     @Test
     fun heldAnswersPlaceTheLearnerWithoutBeingCarriedFromAnEarlierSitting() {
-        val held = RunAnswer("q1", true, STARTED_AT - kotlin.time.Duration.parse("1m"))
+        val held =
+            saved(
+                "q1",
+                true,
+                STARTED_AT - kotlin.time.Duration.parse("1m"),
+            ).let { it.copy(result = it.result.copy(attemptId = "held")) }
         val action = started().copy(heldAnswers = listOf(held))
         val resumed = play(listOf(checkStep("q1"), explanationStep("next"), checkStep("q2")), action)
 
         assertEquals("next", resumed.currentId)
         assertTrue((resumed.run as LessonRun.Started).carriedStepIds.isEmpty())
+
+        val back = resumed.then(LessonAction.GoBack)
+        assertEquals(LessonAnswer.Check("right") to held.result, back.answers["q1"] to back.results["q1"])
+
+        val confirmedAt = Instant.parse("2026-10-06T00:00:00Z")
+        val confirmed = back.then(LessonAction.CheckConfirmed("q1", "held", confirmedAt, savedMistake = false))
+        assertEquals(confirmedAt, confirmed.results["q1"]?.nextReviewAt)
     }
 
     @Test
     fun waitsForADeliberateFinishOnAResumedRunWithEveryScreenAnswered() {
-        val steps = listOf(explanationStep("e1"), checkStep("q1"))
-        val answer = RunAnswer("q1", true, ANSWERED_AT)
-        val done = play(steps, started(answer))
+        val done = play(listOf(explanationStep("e1"), checkStep("q1")), started(saved("q1", true)))
 
         assertEquals(LessonPhase.Completed to CompletionStatus.Ready, done.phase to done.completion?.status)
         assertEquals(CompletionStatus.Saving, done.then(LessonAction.CompletionRetried).completion?.status)
-
-        val answeredHere = play(steps, LessonAction.Continue, *answerCheck("q1", false), started(answer))
-        assertEquals(LessonPhase.Feedback, answeredHere.phase)
-        assertEquals(mapOf("q1" to false), answeredHere.firstVerdicts)
     }
 
     @Test
@@ -625,13 +782,12 @@ class LessonPlayerReducerTest {
             )
         assertEquals(LessonPhase.Completed, finished.phase)
 
-        val resynced = finished.then(LessonAction.RunResynced(null, listOf(RunAnswer("q1", true, ANSWERED_AT))))
+        val resynced = finished.then(LessonAction.RunResynced(null, listOf(saved("q1", true))))
         assertEquals(LessonNotice.AnswerNotSaved, resynced.notice)
         assertEquals(LessonPhase.Playing, resynced.phase)
-        assertEquals("e2", resynced.currentId)
+        assertEquals("q2", resynced.currentId)
 
-        val complete =
-            finished.then(LessonAction.RunResynced(null, listOf(RunAnswer("q1", true, ANSWERED_AT), RunAnswer("q2", true, ANSWERED_AT))))
+        val complete = finished.then(LessonAction.RunResynced(null, listOf(saved("q1", true), saved("q2", true))))
         assertEquals(LessonPhase.Completed to CompletionStatus.Failed, complete.phase to complete.completion?.status)
     }
 

@@ -23,11 +23,14 @@ sealed interface CheckIssue {
     data object NoSpeech : CheckIssue
 }
 
+/** A saved answer: [answer] is null for a recording, whose words are in [result]. */
 @Immutable
 data class RunAnswer(
     val stepId: String,
     val isCorrect: Boolean,
     val answeredAt: Instant,
+    val answer: LessonAnswer?,
+    val result: StepResult,
 )
 
 /** Where Hyperdrive stood when the run started: right answers on [knownStepIds] don't build it. */
@@ -108,6 +111,8 @@ data class LessonPlayerState(
     val misses: List<Miss> = emptyList(),
     val notice: LessonNotice? = null,
     val quickCheck: QuickCheck? = null,
+    /** After a finish the server found incomplete: the screens to answer again, each with why. */
+    val recovery: Map<String, LessonNotice> = emptyMap(),
     val retried: List<String> = emptyList(),
     val revealed: Map<String, Int> = emptyMap(),
     val run: LessonRun = LessonRun.Idle,
