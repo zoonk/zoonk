@@ -1,7 +1,6 @@
 import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { getCourseHref } from "@/data/courses/course-href";
-import { getPathname } from "@/i18n/navigation";
-import { rememberLocale } from "@/i18n/remember-locale";
+import { switchLanguage } from "@/i18n/switch-language";
 import { askMaterialQuestion } from "@/lib/goals/goal-material-questions";
 import { findGoalTimeToCover, getGoalTimeAdvice } from "@/lib/goals/goal-time-advice";
 import { attachGoalFile, attachGoalLink, attachGoalText } from "@/lib/goals/goal-uploads";
@@ -79,14 +78,9 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
       form.set("audio", audio);
       return speakLevelTestAction(goalId, form);
     },
-    // Saved, then a document navigation, like the language setting.
     switchLanguage: (language) => {
       if (isValidLocale(language)) {
-        rememberLocale(language);
-
-        globalThis.location.replace(
-          getPathname({ forcePrefix: true, href: `/start/${goalId}`, locale: language }),
-        );
+        void switchLanguage({ href: `/start/${goalId}`, locale: language });
       }
     },
   }),
