@@ -4,6 +4,7 @@ import { findProductPages } from "@zoonk/ai/tasks/research/find-product-pages";
 import { type ProductReading, readProductPages } from "@zoonk/ai/tasks/research/read-product-pages";
 import { generateSourceResearchPlan } from "@zoonk/ai/tasks/research/source-plan";
 import { uploadImage } from "@zoonk/core/images/upload";
+import { findOrCreateProductCourse } from "@zoonk/core/library/products/course";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
@@ -504,7 +505,15 @@ describe("product research", () => {
         releasedOn: "2025-11-02",
       });
 
+      const { course } = await findOrCreateProductCourse({
+        language: "en",
+        pinnedReleaseId: linked.productReleaseId,
+        productId: product.id,
+        provenance: PROVENANCE,
+      });
+
       expect(linked).toMatchObject({ productId: product.id, productReleaseId: null });
+      expect(course).toMatchObject({ isPinned: false, title: "Orbit Notes" });
 
       expect(product.releases.map((release) => [release.name, release.releasedAt])).toStrictEqual([
         ["Orbit Notes 5.1", null],
