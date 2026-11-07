@@ -21,15 +21,17 @@ const graph: PlanGraph = {
   })),
 };
 
-const lessons = graph.skills.flatMap((skill) =>
-  Array.from({ length: skill.lessons }, (_, index) => ({
-    chapterId: `chapter-${skill.skillId}`,
-    lessonId: `${skill.skillId}-${index}`,
-    minutes: 4,
-    skillIds: [skill.skillId],
-    title: `${skill.name} ${index}`,
-  })),
-);
+function listLessons(minutesOf: (lessonId: string) => number = () => 4) {
+  return graph.skills.flatMap((skill) =>
+    Array.from({ length: skill.lessons }, (_, index) => ({
+      chapterId: `chapter-${skill.skillId}`,
+      lessonId: `${skill.skillId}-${index}`,
+      minutes: minutesOf(`${skill.skillId}-${index}`),
+      skillIds: [skill.skillId],
+      title: `${skill.name} ${index}`,
+    })),
+  );
+}
 
 function listTodayLessons(items: readonly PlannedItem[]): string[] {
   return items.flatMap((item) =>
@@ -41,7 +43,7 @@ function listTodayLessons(items: readonly PlannedItem[]): string[] {
   );
 }
 
-function reduceAtSlowerPace() {
+function reduceAtSlowerPace(lessons = listLessons()) {
   const targetDate = addDays(TODAY, 40);
   const settings = parsePlanSettings({ startDate: toIsoDate(TODAY) });
   const operations: PlanOperation[] = [{ areas: ["Ética"], kind: "reduceAreas" }];
@@ -128,5 +130,15 @@ describe("a change of focus when today's time no longer holds today's lessons", 
       );
 
     expect(elsewhere).toStrictEqual([]);
+  });
+
+  it("leaves tomorrow's time to tomorrow's lessons", () => {
+    const { built } = reduceAtSlowerPace(
+      listLessons((lessonId) => (lessonId === "Civil-2" ? 7 : 4)),
+    );
+
+    expect([...(built.lessonDayMinutes.get("lesson:Civil-2")?.keys() ?? [])]).toStrictEqual([
+      toIsoDate(addDays(TODAY, 1)),
+    ]);
   });
 });
