@@ -60,8 +60,12 @@ export function canScreenGetIcon(screen: MarksScreen): boolean {
   return screen.kind === "explanation" && !screen.hasVisual;
 }
 
+function showsMarks(screen: MarksScreen): boolean {
+  return screen.kind === "explanation" || screen.kind === "workedExample";
+}
+
 function toUnderline({ quote, screen }: { quote: string | null; screen: MarksScreen }) {
-  if (!quote || (screen.kind !== "explanation" && screen.kind !== "workedExample")) {
+  if (!quote || !showsMarks(screen)) {
     return null;
   }
 
@@ -84,6 +88,61 @@ function toExample({ quote, screen }: { quote: string | null; screen: MarksScree
 
 function toIdeaIndex({ idea, ideaCount }: { idea: number | null; ideaCount: number }) {
   return idea !== null && idea >= 1 && idea <= ideaCount ? idea - 1 : null;
+}
+
+type IdeaRun = { ideas: number; last: number; screens: readonly number[] };
+
+function furthest(best: IdeaRun, run: IdeaRun): IdeaRun {
+  const further =
+    run.ideas > best.ideas ||
+    (run.ideas === best.ideas && run.screens.length > best.screens.length);
+
+  return further ? run : best;
+}
+
+/**
+ * The strip above each teaching screen counts through the map ("Idea 2 of 4"), so it never goes
+ * back. The teaching screens whose ideas follow the map's order and reach the most ideas, then
+ * cover the most screens, keep them; any other teaching screen shows none. Questions never show
+ * the strip, so they keep their ideas and don't count.
+ */
+function keepIdeasInOrder(
+  screens: readonly { ideaIndex: number | null; screen: MarksScreen }[],
+): (number | null)[] {
+  const strip = screens.flatMap(({ ideaIndex, screen }, at) =>
+    ideaIndex !== null && showsMarks(screen) ? [{ at, ideaIndex }] : [],
+  );
+
+  const runs: IdeaRun[] = [];
+
+  for (const { at, ideaIndex } of strip) {
+    runs.push(
+      runs
+        .filter((run) => run.last <= ideaIndex)
+        .map((run) => ({
+          ideas: run.ideas + (run.last < ideaIndex ? 1 : 0),
+          last: ideaIndex,
+          screens: [...run.screens, at],
+        }))
+        .reduce<IdeaRun>((best, run) => furthest(best, run), {
+          ideas: 1,
+          last: ideaIndex,
+          screens: [at],
+        }),
+    );
+  }
+
+  const longest = runs.reduce<IdeaRun>((best, run) => furthest(best, run), {
+    ideas: 0,
+    last: 0,
+    screens: [],
+  });
+
+  const kept = new Set(longest.screens);
+
+  return screens.map(({ ideaIndex, screen }, at) =>
+    kept.has(at) || !showsMarks(screen) ? ideaIndex : null,
+  );
 }
 
 function toAbout(about: string | undefined): string | null {
@@ -129,6 +188,16 @@ export function normalizeLessonMarks({
     ideas.map((_idea, index) => toIconNeed(byIdea.get(index + 1)?.icon)),
   );
 
+  const ideaIndexes = keepIdeasInOrder(
+    screens.map((screen, index) => ({
+      ideaIndex: toIdeaIndex({
+        idea: byScreen.get(index + 1)?.idea ?? null,
+        ideaCount: ideas.length,
+      }),
+      screen,
+    })),
+  );
+
   return {
     ideas: ideas.map((_idea, index) => ({
       about: toAbout(byIdea.get(index + 1)?.about),
@@ -136,7 +205,7 @@ export function normalizeLessonMarks({
     })),
     screens: screens.map((screen, index) => {
       const marked = byScreen.get(index + 1);
-      const ideaIndex = toIdeaIndex({ idea: marked?.idea ?? null, ideaCount: ideas.length });
+      const ideaIndex = ideaIndexes[index] ?? null;
 
       return {
         example: toExample({ quote: marked?.example ?? null, screen }),

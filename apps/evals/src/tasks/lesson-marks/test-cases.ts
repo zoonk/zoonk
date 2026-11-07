@@ -93,6 +93,21 @@ export const TEST_CASES = [
   }),
   marksCase({
     expectations: `
+      - In Brazilian Portuguese, an overview of quantum physics for beginners
+      - The explanation right after the guess says the hydrogen's map stays the same, before the lesson names the cloud or the ground state, so it isn't about "Estado fundamental"
+      - The "Estado fundamental" about line doesn't say hydrogen has no lower energy to reach; "Elétron inteiro num ponto" doesn't say a measurement finds the whole electron at one point
+    `,
+    id: "pt-eletron-nucleo",
+  }),
+  marksCase({
+    expectations: `
+      - In Brazilian Portuguese, an overview of quantum physics for beginners
+      - The "Fóton e sua energia" about line doesn't say more energy means a shorter wavelength; "Regra do 1.240" doesn't give the division; "Vácuo e ar" doesn't say where the rule holds
+    `,
+    id: "pt-comprimento-de-onda",
+  }),
+  marksCase({
+    expectations: `
       - In Spanish (Mexico), for beginners in economics
       - "No todos suben" about line doesn't say not every price has to rise; "Más pesos" doesn't say more pesos don't guarantee buying more
     `,
