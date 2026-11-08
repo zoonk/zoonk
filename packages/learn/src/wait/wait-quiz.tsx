@@ -30,6 +30,7 @@ type Dealt = { pickedId: string | null; position: number };
 
 const POSITION_KEY = "zoonk:warm-up:";
 const SHOWN_KEY = "zoonk:warm-up-shown:";
+const shownDecks = new Set<string>();
 
 /** The next card the learner hasn't guessed in this tab, so another wait goes on from there. */
 function readPosition(deckId: string): number {
@@ -138,10 +139,11 @@ export function useWaitQuiz({
   const markShown = () => {
     const key = `${SHOWN_KEY}${deck.id}`;
 
-    if (tabStorage.get(key) === "1") {
+    if (shownDecks.has(deck.id) || tabStorage.get(key) === "1") {
       return;
     }
 
+    shownDecks.add(deck.id);
     tabStorage.set(key, "1");
 
     track({

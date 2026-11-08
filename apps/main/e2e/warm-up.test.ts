@@ -150,8 +150,13 @@ test("blocked tab storage leaves the wait quiz playable", async ({
     });
   });
 
+  const events = await captureAnalytics(page);
   await openPlanWait({ page, userId: noProgressUser.id });
   await page.getByRole("button", { name: PLAY_QUIZ }).click();
+
+  await expect.poll(() => events.filter((event) => event.name === "Warm-Up Shown").length).toBe(1);
+
+  await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
 
   await page
     .getByRole("radiogroup", { name: FIRST_CARD })
@@ -159,6 +164,12 @@ test("blocked tab storage leaves the wait quiz playable", async ({
     .click();
 
   await expect(page.getByText("Good guess!")).toBeVisible();
+
+  await expect
+    .poll(() => events.filter((event) => event.name === "Warm-Up Answered").length)
+    .toBe(1);
+
+  expect(events.filter((event) => event.name === "Warm-Up Shown")).toHaveLength(1);
 });
 
 test("a learner who didn't guess moves on to the time question as soon as the plan is ready", async ({
