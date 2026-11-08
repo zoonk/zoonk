@@ -238,10 +238,40 @@ describe(writeLanguageLessonContent, () => {
     expect(distractorWord.audioUrl).toContain("blob.test");
   });
 
-  it("writes at the levels its plan skills are tagged at, on the lesson or its unit, past its untagged finer skills", async () => {
+  it("writes at its own plan skills' level inside a unit that spans levels, past its untagged finer skills", async () => {
     await aiOrganizationFixture();
 
-    const [chapter, finer, lessonSkill, unitSkill] = await Promise.all([
+    const [chapter, finer, lessonSkill, otherUnitSkill] = await Promise.all([
+      libraryChapterFixture({ language: "pt", targetLanguage: "en" }),
+      skillFixture({ level: "beginner" }),
+      skillFixture({ cefrLevel: "A1", level: "beginner" }),
+      skillFixture({ cefrLevel: "A2", level: "beginner" }),
+    ]);
+
+    const { lesson, workflowRunId } = await claimLanguageLesson({
+      chapterId: chapter.id,
+      language: "pt",
+    });
+
+    await Promise.all([
+      lessonSkillFixture({ lessonId: lesson.id, skillId: finer.id }),
+      lessonSkillFixture({ lessonId: lesson.id, skillId: lessonSkill.id }),
+      chapterSkillFixture({ chapterId: chapter.id, skillId: lessonSkill.id }),
+      chapterSkillFixture({ chapterId: chapter.id, skillId: otherUnitSkill.id }),
+    ]);
+
+    mockDraft(uniqueDraft(crypto.randomUUID()));
+    mockAudio();
+
+    await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+
+    expect(vi.mocked(generateLanguageLesson).mock.calls[0]?.[0]).toMatchObject({ level: "A1" });
+  });
+
+  it("writes at its unit's levels when only untagged finer skills sit on the lesson", async () => {
+    await aiOrganizationFixture();
+
+    const [chapter, finer, lowerUnitSkill, upperUnitSkill] = await Promise.all([
       libraryChapterFixture({ language: "pt", targetLanguage: "en" }),
       skillFixture({ level: "beginner" }),
       skillFixture({ cefrLevel: "A2", level: "beginner" }),
@@ -255,8 +285,8 @@ describe(writeLanguageLessonContent, () => {
 
     await Promise.all([
       lessonSkillFixture({ lessonId: lesson.id, skillId: finer.id }),
-      lessonSkillFixture({ lessonId: lesson.id, skillId: lessonSkill.id }),
-      chapterSkillFixture({ chapterId: chapter.id, skillId: unitSkill.id }),
+      chapterSkillFixture({ chapterId: chapter.id, skillId: lowerUnitSkill.id }),
+      chapterSkillFixture({ chapterId: chapter.id, skillId: upperUnitSkill.id }),
     ]);
 
     mockDraft(uniqueDraft(crypto.randomUUID()));

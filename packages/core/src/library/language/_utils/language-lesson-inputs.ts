@@ -80,10 +80,14 @@ export async function loadLanguageLessonInputs({
   const unit = lesson.homeChapter;
   const knownWords = await findKnownWords({ chapterId: unit?.id ?? null, lessonId });
 
-  // The plan skills a lesson teaches sit on it or on its unit; its finer skills have no level.
-  const levels = [...lesson.skills, ...(unit?.goalSkills ?? [])].flatMap(
-    ({ skill }) => skill.cefrLevel ?? [],
-  );
+  // Only plan skills have levels, and a lesson linked only to its finer skills has its plan skills
+  // on its unit.
+  const lessonLevels = lesson.skills.flatMap(({ skill }) => skill.cefrLevel ?? []);
+
+  const levels =
+    lessonLevels.length > 0
+      ? lessonLevels
+      : (unit?.goalSkills ?? []).flatMap(({ skill }) => skill.cefrLevel ?? []);
 
   return {
     inputs: {
