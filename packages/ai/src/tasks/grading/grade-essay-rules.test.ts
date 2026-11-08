@@ -142,7 +142,7 @@ describe(buildEssayGrade, () => {
     expect(grade.criteria[4]?.score).toBe(score);
   });
 
-  it("scores competency 5 as 0 when the model reports no elements", () => {
+  it("scores competency 5 as 0 when the essay has no proposal", () => {
     const grade = buildEssayGrade({
       essay: ESSAY,
       output: enemOutput([160, 160, 160, 160, 160], { interventionElements: null }),
@@ -152,6 +152,16 @@ describe(buildEssayGrade, () => {
     expect(grade.criteria[4]?.score).toBe(0);
 
     expect(grade.enemInterventionElements).toStrictEqual(NO_ELEMENTS);
+  });
+
+  it("scores a proposal whose elements are all vague at 40", () => {
+    const grade = buildEssayGrade({
+      essay: ESSAY,
+      output: enemOutput([160, 160, 160, 160, 0], { interventionElements: NO_ELEMENTS }),
+      rubric: ENEM,
+    });
+
+    expect(grade.criteria[4]?.score).toBe(40);
   });
 
   it("estimates an ENEM range of 40 points around the total, inside 0 to 1000", () => {
@@ -171,7 +181,7 @@ describe(buildEssayGrade, () => {
 
     const low = buildEssayGrade({
       essay: ESSAY,
-      output: enemOutput([40, 0, 0, 0, 0], { interventionElements: NO_ELEMENTS }),
+      output: enemOutput([40, 0, 0, 0, 0], { interventionElements: null }),
       rubric: ENEM,
     });
 

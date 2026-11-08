@@ -15,8 +15,9 @@ import { findEssayQuote } from "./grade-essay-quote";
  * https://download.inep.gov.br/publicacoes/institucionais/avaliacoes_e_exames_da_educacao_basica/a_redacao_no_enem_2025_cartilha_do_participante.pdf
  *
  * ENEM C5: the level is the number of valid elements in the most complete proposal, so 200 needs
- * all 5. Conditional proposals stop at 80, and tangent essays or proposals that touch only the
- * theme's broad subject at 40. A proposal unrelated to the subject or against human rights scores 0.
+ * all 5, and one made only of vague (null) elements still earns 40. Conditional proposals stop at
+ * 80, tangent essays at 40. No proposal, a copied one, or one unrelated even to the theme's subject
+ * or against human rights scores 0.
  * https://download.inep.gov.br/educacao_basica/enem/downloads/2020/Competencia_5.pdf
  *
  * AP: each scoring guideline row awards whole points on its own criteria.
@@ -234,13 +235,11 @@ function toCriterionGrade({
  */
 function getCriterionScore({
   definition,
-  elements,
   output,
   rubric,
   zeroReason,
 }: {
   definition: EssayCriterionDefinition;
-  elements: EnemInterventionElements | null;
   output: EssayModelOutput;
   rubric: EssayRubric;
   zeroReason: EssayGrade["zeroReason"];
@@ -249,8 +248,10 @@ function getCriterionScore({
     return 0;
   }
 
-  if (elements && definition.id === "c5") {
-    const level = ENEM_STEP * Object.values(elements).filter(Boolean).length;
+  if (rubric.kind === "enem" && definition.id === "c5") {
+    const elements = output.interventionElements;
+    const count = elements ? Object.values(elements).filter(Boolean).length : 0;
+    const level = elements ? ENEM_STEP * Math.max(1, count) : 0;
     const limit = output.proposalLimit;
     return limit ? Math.min(level, PROPOSAL_LIMIT_MAX[limit]) : level;
   }
@@ -350,7 +351,7 @@ function assembleEssayGrade({
       definition,
       essay,
       output: output.criteria[definition.id],
-      score: getCriterionScore({ definition, elements, output, rubric, zeroReason }),
+      score: getCriterionScore({ definition, output, rubric, zeroReason }),
     }),
   );
 
