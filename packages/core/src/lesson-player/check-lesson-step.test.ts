@@ -1165,6 +1165,38 @@ describe(checkLessonStep, () => {
     ).resolves.toMatchObject({ snapshot: { answer: "o Quanto é aluguel?", format: "listening" } });
   });
 
+  it.each([
+    {
+      answer: { arrangedWords: ["much", "How", "is", "the", "rent?"], kind: "reading" },
+      snapshot: { correctAnswer: "How much is the rent?", question: "Quanto é o aluguel?" },
+    },
+    {
+      answer: { arrangedWords: ["o", "Quanto", "é", "aluguel?"], kind: "listening" },
+      snapshot: { correctAnswer: "Quanto é o aluguel?", question: "How much is the rent?" },
+    },
+    {
+      answer: { kind: "translation", selectedOptionId: randomUUID() },
+      snapshot: { correctAnswer: "rent", question: "aluguel" },
+    },
+  ] satisfies { answer: LessonStepAnswer; snapshot: object }[])(
+    "saves a $answer.kind miss with the prompt the learner saw",
+    async ({ answer, snapshot }) => {
+      const [user, { lesson, steps }] = await Promise.all([userFixture(), languageLessonFixture()]);
+      const run = await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+      const stepId = stepOfKind(steps, answer.kind).id;
+      mockSession(user.id);
+
+      await expect(check({ answer, runId: run.id, stepId })).resolves.toMatchObject({
+        result: { isCorrect: false, savedMistake: true },
+        status: "checked",
+      });
+
+      await expect(
+        prisma.mistake.findFirstOrThrow({ where: { stepId, userId: user.id } }),
+      ).resolves.toMatchObject({ snapshot: { ...snapshot, format: answer.kind } });
+    },
+  );
+
   it("refuses answers to reading screens and answers that don't fit the screen", async () => {
     const { run, steps, user } = await setupRun();
 
