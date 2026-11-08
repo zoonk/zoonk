@@ -5,10 +5,12 @@ import { type GenerationRun } from "../generation-run";
 export type PhaseStatus = "active" | "completed" | "failed" | "pending";
 
 type Definition<TPhase extends string> = GenerationKindDefinition<string, TPhase>;
-type RunState = Pick<GenerationRun, "failure" | "status" | "steps">;
+type RunState = Pick<GenerationRun, "clockOffsetMs" | "failure" | "status" | "stepTimes" | "steps">;
 
 export type PhaseProgress<TPhase extends string> = {
   activeMs: number | null;
+  /** When the running stage's first step started, on this device's clock; null while unknown. */
+  activeSince: number | null;
   phases: { id: TPhase; seconds: number; status: PhaseStatus }[];
   /** 0 to 100. */
   progress: number;
@@ -135,6 +137,7 @@ export function getPhaseProgress<TPhase extends string>({
   if (run.status === "ready" || isGenerationDone({ definition, steps: run.steps })) {
     return {
       activeMs: null,
+      activeSince: null,
       phases: phases.map((phase) => ({
         id: phase.id,
         seconds: phase.seconds,
@@ -159,11 +162,16 @@ export function getPhaseProgress<TPhase extends string>({
 
   const running = active.filter((phase) => phase.share < 1);
 
+  const started = (stages[activeIndex] ?? [])
+    .flatMap((phase) => getPhaseSteps(definition, phase.id))
+    .flatMap((step) => run.stepTimes?.[step]?.started ?? []);
+
   return {
     activeMs:
       run.status === "failed" || active.length === 0
         ? null
         : Math.max(...(running.length > 0 ? running : active).map((phase) => phase.seconds)) * 1000,
+    activeSince: started.length > 0 ? Math.min(...started) + (run.clockOffsetMs ?? 0) : null,
     phases: stages.flatMap((stage, index) =>
       stage.map((phase) => ({
         id: phase.id,
