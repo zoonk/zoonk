@@ -1,9 +1,9 @@
-import { type StudySessionBlock } from "@zoonk/db";
+import { type StudySessionBlock, type TransactionClient } from "@zoonk/db";
 import { type MissionPick } from "./catalog";
 import { getMissionBlocks } from "./mission-blocks";
 
 /** Credit requires the verified block that crossed the mission threshold; finishedAt must match its completion time. */
-export function isLinkedBlockMission({
+function isLinkedBlockMission({
   blockId,
   blocks,
   finishedAt,
@@ -39,7 +39,7 @@ export function isLinkedBlockMission({
 }
 
 /** Only the verified block this call finished can give it credit for a block mission. */
-export function isLinkedCallMission({
+function isLinkedCallMission({
   blocks,
   call,
   pick,
@@ -58,4 +58,46 @@ export function isLinkedCallMission({
     finishedAt: call.endedAt,
     pick,
   });
+}
+
+type SourceLink = {
+  call: { endedAt: Date | null; studyBlockId: string | null } | null;
+  mockBlockId: string | null;
+};
+
+/** Read under the settlement's lock: the session block a call or mock actually finished. */
+export async function findSourceLink(
+  tx: TransactionClient,
+  { source, userId }: { source: { id: string; kind: string } | undefined; userId: string },
+): Promise<SourceLink> {
+  const call =
+    source?.kind === "conversation"
+      ? await tx.languageConversation.findFirst({
+          select: { endedAt: true, studyBlockId: true },
+          where: { id: source.id, status: "completed", userId },
+        })
+      : null;
+
+  const mock =
+    source?.kind === "mockExam"
+      ? await tx.mockExam.findFirst({ select: { blockId: true }, where: { id: source.id, userId } })
+      : null;
+
+  return { call, mockBlockId: mock?.blockId ?? null };
+}
+
+/** Only the session block a call or mock actually finished may credit that block's mission. */
+export function isLinkedSourceMission({
+  blocks,
+  link,
+  pick,
+}: {
+  blocks: readonly StudySessionBlock[];
+  link: SourceLink;
+  pick: MissionPick;
+}): boolean {
+  return (
+    isLinkedCallMission({ blocks, call: link.call, pick }) ||
+    (link.mockBlockId !== null && isLinkedBlockMission({ blockId: link.mockBlockId, blocks, pick }))
+  );
 }
