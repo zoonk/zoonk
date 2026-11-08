@@ -176,7 +176,12 @@ export const languageUnitViewSchema = z
     unit: z.object({
       chapterId: uuidSchema(),
       description: z.string(),
-      levelRange: z.string().meta({ description: 'The CEFR bands it teaches, "A1–A2"' }),
+      levelRange: z
+        .string()
+        .meta({
+          description:
+            'The CEFR level of its lessons in the plan ("B1"), the span when they differ ("A2–B1"), or its band until each has a level ("A1–A2")',
+        }),
       objectives: z.array(z.string()),
       position: z.int().min(1).nullable(),
       title: z.string(),

@@ -7,28 +7,35 @@
   "language_alphabet_skip_failed": "fffd59cf12dde40e22cfb9941a4dab9bc3f4d205612136766d391f5c625b3da4",
   "language_can_already": "3da8bff22819b07e6f0bb389f519edcab605148ebc78f2d2b561787afada168d",
   "language_can_do_not_yet": "8a900297345b752fe01b12ffa439dc39d4c0cabd2bd6ed5edd8f604fbd3061a2",
+  "language_estimate_listening": "637b7c125ffef32dbd13f27a91022368223d9013a1f5adb82280664cef93b0ad",
+  "language_estimate_reading": "c538a8415cc9ae596d06b7cc97842a1c3c0d9a41797742a98fe47944caa0f258",
+  "language_estimate_rose_listening": "75c8938d9df270b646a502d43e6436dfda14fc4435a3f332be30e1b62482a252",
+  "language_estimate_rose_reading": "1d74fa20b5d3960496dd32abe833a401e77404915b37736993853683972bf22f",
+  "language_estimate_rose_speaking": "047ccfbd5c525c25ec06adc3c772eaefb503c5314959c179ab7958b004ae49c2",
+  "language_estimate_rose_writing": "4d8117ef0667e39f6e7263fef3d1c55f1b627e16071f8fd7786e06dd089fd7e2",
+  "language_estimate_speaking": "808a4e32764474c15f1aa90518de8d5f274d634e6371c40072c50fa5c8365324",
+  "language_estimate_trend": "46e643025715cb7cffee07a649a66b0f9e70f2ea79c3f6f438b233d41578de1d",
+  "language_estimate_writing": "f0e547334b0f076f370dbd2d78c8f7d236bd623ddf356b33ef115383274214b5",
+  "language_estimates_note": "4d2a4f54f6dfb5250c3fb8724e186b3ab4ad398d9c52f5791ae0d49bc3bcc3e6",
+  "language_estimates_rose": "ab17d43cc9f0ac10834c8bbe83da009cf61f16ece8da889e080a9453e8729726",
   "language_level": "cbcab170818c95ddfdb82c4e42689f31a1799d5ec31ba481ae4f0e671b44dfe0",
-  "language_level_by_skill": "745827e63aa07634a527c35e717bd2175606d27606ac3b3eff1d0015282b7179",
   "language_level_down": "2908d2056be2f85860b9218ff6cb6de2b780aa5b5eae133d12f66de79bf2342b",
   "language_level_goal": "9e261aadab0e4439091c1b7dfc4f65ede67a2719dd4b5e6c5c4680628cdde4c7",
   "language_level_goal_by": "80b61e492cea43620a2570072d4c0c34d5c4d90446903b464d9b1c3ddc5b94dc",
-  "language_level_rose": "f9a48e9c5822e2007f3afd59e714d3bd9d27e7c12b9ed06e2b3fd3951f87bde6",
   "language_level_toward": "a2c8c71894b35c6730d0c0d0aa2c7c0b0d40f9c57d58e616af0c7296ec2e54cc",
   "language_level_toward_goal": "eb31ddfb72db83757e2d5b8af0d15218ac602a48641df5faefcc8b714f7dd299",
   "language_level_toward_spoken": "4f858cf3844c23b103df11f2c0d4b1b4f3ac03ad462a6c3c5d22c2c45be42ad6",
   "language_level_up": "00d6956f3e1e21d5be17413c393dd7d907b7b72824731a4c9844b5412da3468d",
   "language_levels_move": "c961bdc961b541685cb943982fe033ee30884f99da5a1ccc81118813825daffa",
-  "language_levels_rose": "9117caff863257bf25ad6592e4719c67542ca3315ec3138c767e7be4f428b097",
   "language_pattern_noticed": "ee055190afd8e2d14cfec8505e3134a77a761fe561a4f913f07bae8558a33ca7",
   "language_pattern_noticed_summary": "afc6701b01cd318c76d13e71639aefb09e0d84ff40276462afdeabebdf5b70b3",
   "language_pattern_practice": "888c657ade348f679c36d2b6e1e56ff0053ade264e2bcec1e7ef893bcf5148d8",
   "language_pattern_typos": "ddf1af6effed1a8009f78c0aa5f69c07ede3465b9edb3a35e3236b56089a4389",
   "language_pattern_typos_description": "eb05e5072682fad3dac17ee4da96ea78393b89fd5af6874424019ee7a83d4151",
+  "language_practice_estimates": "a64fce1a61ad92e77c76789340f9e4bf0a449031b80ba054b02ff5eb30481982",
   "language_say_again": "320993a77f6cec9696102b214cdfcc0d73e6818ed2cf9ba31d3e84585c2a270a",
   "language_say_them": "d88b5bc1445a3403ba7bb03ea894cc9b91c0fcf3bc17a6e91a913f2677af161d",
   "language_see_your_plan": "9736d03e96607ab584843f6c2d7a363f5458f4001a9d84661f157efbd73432db",
-  "language_skill_level": "0b28c3021630ea500c087bee1e5599e5945bb04a794ad360748749510e666c84",
-  "language_skill_level_trend": "c6cb4ffbc0eb3852a3099d1e5385a88775a1eacbd799a5dc9af8e1a6a271aa7a",
   "language_skill_listening": "7f28a85faddbf6527ab11923d92e34440e3d6f77148b88f08b6bdb78d20e768d",
   "language_skill_reading": "a59cb5601200cd629015615e6c3a9687695eda2d49b1e2e83abf8ae5c6d5fac6",
   "language_skill_speaking": "e978bf2b2c1a514f7eff2666d7203eff94334bffad012da2a7fd52eddb8bcc1a",
@@ -81,27 +88,35 @@
     <string name="language_skill_speaking">Konuşma</string>
     <string name="language_skill_words">Kelime bilgisi</string>
     <string name="language_skill_writing">Yazma</string>
-    <!-- Heads the learner's level in each skill (reading, listening, speaking, writing), on the CEFR scale from A1 to C2. -->
-    <string name="language_level_by_skill">Beceriye göre seviye</string>
+    <!-- Heads each skill's level (reading, listening, speaking, writing) on the CEFR scale from A1 to C2, estimated from the learner's answers to set how hard practice is. -->
+    <string name="language_practice_estimates">Tahmini beceri seviyeleri</string>
     <!-- The level the learner aims for and when: "Goal B2 by June 2027". %1$s is a CEFR level, %2$s a month and year. -->
     <string name="language_level_goal_by">Hedef %1$s · %2$s tarihine kadar</string>
     <!-- The level the learner aims for: "Goal B2". -->
     <string name="language_level_goal">Hedef %1$s</string>
-    <!-- What TalkBack says for a skill's row: "Reading, B1". -->
-    <string name="language_skill_level">%1$s, %2$s</string>
-    <!-- What TalkBack says for a skill's row that moved: "Reading, B1, up since the level test". -->
-    <string name="language_skill_level_trend">%1$s, %2$s, %3$s</string>
+    <!-- What TalkBack says for a skill's row. %1$s is a CEFR level, such as "B1". -->
+    <string name="language_estimate_reading">Tahmini okuma seviyesi: %1$s</string>
+    <string name="language_estimate_listening">Tahmini dinleme seviyesi: %1$s</string>
+    <string name="language_estimate_speaking">Tahmini konuşma seviyesi: %1$s</string>
+    <string name="language_estimate_writing">Tahmini yazma seviyesi: %1$s</string>
+    <!-- What TalkBack says for a skill's row that moved: "Estimated reading level: B1, up since the level test". -->
+    <string name="language_estimate_trend">%1$s, %2$s</string>
     <!-- Read by TalkBack after a skill's level that went up since the learner's first level test. -->
     <string name="language_level_up">seviye tespit testinden bu yana yükseldi</string>
     <!-- Read by TalkBack after a skill's level that went down since the learner's first level test. -->
     <string name="language_level_down">seviye tespit testinden bu yana geriledi</string>
     <string name="language_levels_move">Pratik yaptıkça seviyelerin değişir. Her hafta becerilerini daha doğru yansıtır.</string>
-    <!-- One skill rose: "Speaking went up to B1 since the level test." -->
-    <string name="language_level_rose">%1$s seviyen seviye tespit testinden bu yana %2$s seviyesine yükseldi.</string>
-    <!-- The count is how many skills rose, always two or more; %1$s lists them: "Speaking and Writing went up since the level test." -->
-    <plurals name="language_levels_rose">
-        <item quantity="one">%1$s seviyelerin seviye tespit testinden bu yana yükseldi.</item>
-        <item quantity="other">%1$s seviyelerin seviye tespit testinden bu yana yükseldi.</item>
+    <!-- Under the skill estimates: they set how hard practice is, while certificates come from finishing the plan's lessons. -->
+    <string name="language_estimates_note">Bu tahminler alıştırmaların zorluk düzeyini belirler. Sertifikalar planında tamamladığın derslere göre verilir.</string>
+    <!-- One skill's estimate rose since the level test. %1$s is a CEFR level, such as "B2". -->
+    <string name="language_estimate_rose_reading">Tahmini okuma seviyen %1$s düzeyine yükseldi</string>
+    <string name="language_estimate_rose_listening">Tahmini dinleme seviyen %1$s düzeyine yükseldi</string>
+    <string name="language_estimate_rose_speaking">Tahmini konuşma seviyen %1$s düzeyine yükseldi</string>
+    <string name="language_estimate_rose_writing">Tahmini yazma seviyen %1$s düzeyine yükseldi</string>
+    <!-- The count is how many skills' estimates rose since the level test, always two or more; %1$s lists them: "Speaking and Writing estimates went up". -->
+    <plurals name="language_estimates_rose">
+        <item quantity="one">%1$s için tahmini seviyeler yükseldi</item>
+        <item quantity="other">%1$s için tahmini seviyeler yükseldi</item>
     </plurals>
     <!-- Heads the list of things the learner is now able to do in the language, from the units they finished. -->
     <string name="language_can_already">Artık şunları yapabiliyorum…</string>

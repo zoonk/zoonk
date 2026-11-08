@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   type SkillLevelState,
   applyLevelEvidence,
+  formatLevels,
   getContentCeiling,
   getLevelTrend,
   getOverallLevel,
@@ -108,6 +109,14 @@ describe(getContentCeiling, () => {
   it("gives each Library band its highest level", () => {
     expect(getContentCeiling("beginner")).toBe(1.5);
     expect(getContentCeiling("advanced")).toBe(5);
+  });
+});
+
+describe(formatLevels, () => {
+  it("shows one level, the span of mixed levels, or the band without any", () => {
+    expect(formatLevels({ band: "intermediate", levels: ["B1", "B1"] })).toBe("B1");
+    expect(formatLevels({ band: "intermediate", levels: ["B1", "A2", "B1"] })).toBe("A2–B1");
+    expect(formatLevels({ band: "intermediate", levels: [] })).toBe("B1–B2");
   });
 });
 

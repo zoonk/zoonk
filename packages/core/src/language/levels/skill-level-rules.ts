@@ -1,5 +1,11 @@
 import { type CourseLevel, type LanguageSkill, type StepKind } from "@zoonk/db";
-import { clampCefrScore, formatCefrScore, parseCefrScore } from "@zoonk/utils/cefr";
+import {
+  CEFR_LEVELS,
+  type CefrLevel,
+  clampCefrScore,
+  formatCefrScore,
+  parseCefrScore,
+} from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
 
 export const LANGUAGE_SKILLS = [
@@ -19,12 +25,27 @@ const HALF_STEP = 0.5;
 
 const DEFAULT_START_SCORE = 0;
 
-export const CEFR_BANDS: Readonly<Record<CourseLevel, string>> = {
-  advanced: "C1–C2",
-  beginner: "A1–A2",
-  intermediate: "B1–B2",
-  overview: "A1–A2",
+export const BAND_LEVELS: Readonly<Record<CourseLevel, readonly [CefrLevel, CefrLevel]>> = {
+  advanced: ["C1", "C2"],
+  beginner: ["A1", "A2"],
+  intermediate: ["B1", "B2"],
+  overview: ["A1", "A2"],
 };
+
+/** One level when they all match ("B1"), the span they cover ("A2–B1"), or the band without any. */
+export function formatLevels({
+  band,
+  levels,
+}: {
+  band: CourseLevel;
+  levels: readonly CefrLevel[];
+}): string {
+  const shown = new Set(levels.length > 0 ? levels : BAND_LEVELS[band]);
+  const [lowest = "", ...higher] = CEFR_LEVELS.filter((level) => shown.has(level));
+  const highest = higher.at(-1);
+
+  return highest ? `${lowest}–${highest}` : lowest;
+}
 
 const CONTENT_CEILINGS: Readonly<Record<CourseLevel, number>> = {
   advanced: 5,

@@ -40,6 +40,31 @@ extension LanguageStanding {
   }
 }
 
+extension LanguageStanding.Level {
+  /// One sentence per skill, since a skill's name can't be dropped into a sentence in every
+  /// language.
+  fileprivate var estimate: String {
+    switch skill {
+    case "reading":
+      String(
+        localized: "Estimated reading level: \(label)", table: "Plan",
+        comment: "What VoiceOver says for a skill's row; the argument is a CEFR level, such as B2")
+    case "listening":
+      String(
+        localized: "Estimated listening level: \(label)", table: "Plan",
+        comment: "What VoiceOver says for a skill's row; the argument is a CEFR level, such as B2")
+    case "speaking":
+      String(
+        localized: "Estimated speaking level: \(label)", table: "Plan",
+        comment: "What VoiceOver says for a skill's row; the argument is a CEFR level, such as B2")
+    default:
+      String(
+        localized: "Estimated writing level: \(label)", table: "Plan",
+        comment: "What VoiceOver says for a skill's row; the argument is a CEFR level, such as B2")
+    }
+  }
+}
+
 struct LanguageLevelSheet: View {
   let standing: LanguageStanding
 
@@ -60,6 +85,23 @@ struct LanguageLevelSheet: View {
           } label: {
             Text(languageSkillName(level.skill))
           }
+          .accessibilityRepresentation { Text(level.estimate) }
+        }
+      } header: {
+        SectionTitle(
+          Text(
+            "Practice estimates", tableName: "Plan",
+            comment:
+              "Heads each language skill's level, estimated from the learner's answers to set how hard practice is"
+          ))
+      } footer: {
+        SectionFooter {
+          Text(
+            "These estimates guide practice difficulty. Certificates follow the lessons completed in your plan.",
+            tableName: "Plan",
+            comment:
+              "Under the skill estimates: they set how hard practice is, while certificates come from finishing the plan's lessons"
+          )
         }
       }
     }

@@ -274,6 +274,33 @@ describe("language view models", () => {
     });
   });
 
+  it("shows a unit at its lessons' level, the span when they differ, and its band until each has one", async () => {
+    const { renting, skills, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const [first, second] = skills.slice(2);
+
+    if (!first || !second) {
+      throw new Error("No skills");
+    }
+
+    const unitSkills = [first, second];
+
+    async function levelRangeWith(levels: ["A2" | null, "A2" | "B1"]) {
+      await Promise.all(
+        unitSkills.map((skill, index) =>
+          prisma.skill.update({ data: { cefrLevel: levels[index] }, where: { id: skill.id } }),
+        ),
+      );
+
+      const result = await getLanguageUnitView({ chapterId: renting.id });
+      return result.status === "ready" ? result.unit.unit.levelRange : null;
+    }
+
+    await expect(levelRangeWith([null, "A2"])).resolves.toBe("A1–A2");
+    await expect(levelRangeWith(["A2", "A2"])).resolves.toBe("A2");
+    await expect(levelRangeWith(["A2", "B1"])).resolves.toBe("A2–B1");
+  });
+
   it("keeps the free-account recovery for a guest instead of claiming a global pause", async () => {
     const { renting, user } = await languageGoalFixture();
     await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });

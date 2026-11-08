@@ -60,7 +60,7 @@
   "certificates_linkedin_title": "3588f86a8a6c9e6767f477741454b4920305377f19f8f33ec911cb1f9fedfa74",
   "certificates_locked": "6d33da88043bb568b1aedb656f8809c59e5b12a238f62251eb64bc8b7253e948",
   "certificates_meaning_cefr": "385cf91d2420b93e499801033e24828761b0c1c391e6a3a2d641a28ac332b988",
-  "certificates_meaning_language": "a5d389496c27a47b5469906b7f75b7837054c40b3642add4c7221b6b4262f0e5",
+  "certificates_meaning_language": "b79fe0547476f20416af25091e10c08084f23205806c27f5a5868d581da21721",
   "certificates_meaning_level": "3aff0ddbb232152abeeba50b5c939084571ca36f7c1964e88bfd0ebe79ef9fd7",
   "certificates_meaning_name": "c81a62165fe90b325b2cfedf3fce897cffd497130ef1e5d5c2b916a306522fff",
   "certificates_meaning_plan": "3e506191120d3c70808cd13e042b8189649d38f40a64456208da27af5dca2371",
@@ -89,7 +89,7 @@
   "certificates_topics_covered": "784637aff5a3ff40b366e8c5b1747245c30815dc22f0d26dade7d6f0e3447eff",
   "certificates_up_next": "a69ebe170814b00ef71c6f67406a4c3932f26de20b563e22c12938f83c786dfa",
   "certificates_up_next_course": "81660bc2435fda45d68525488cc230f8874e43b68c2c8f3480831c438934cd34",
-  "certificates_up_next_language": "b2e792e4c2a048773a386df86ffb47c28e52de78f8b1f7ad21e6c787a94cc48e",
+  "certificates_up_next_language": "3f525beb67cfd263c757b0d4daab8fde7550543d0f68a11e05ae6be8b6049568",
   "certificates_verified": "6865a8918b13334d0ae05317b3c2f38cbccb6ecaa67208bd2fbc9393a8498084",
   "certificates_view": "dcacee6275a13d6275fb4744b1969e32cc0ac49d626e625d344194a918c74c72",
   "certificates_view_several": "17cb264f12463d103ff20004037959ee639401e9bab3518107c11f6d57683398"
@@ -121,8 +121,8 @@
     <string name="certificates_get">Ottieni il tuo certificato</string>
     <string name="certificates_up_next">A seguire</string>
     <string name="certificates_up_next_course">Ricevi il certificato quando completi il piano</string>
-    <!-- Under a language goal: its certificate comes once every skill the learner practices (reading, listening, speaking, writing) reaches the next CEFR level. -->
-    <string name="certificates_up_next_language">Lo ottieni quando passi al livello successivo in tutte le abilità che alleni</string>
+    <!-- Under a language goal: its next certificate comes when the learner finishes a CEFR level of their plan, having studied at least half of that level's lessons. -->
+    <string name="certificates_up_next_language">Lo ottieni quando completi un livello, dopo averne studiato almeno metà</string>
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">Corso completato!</string>
     <string name="certificates_level_complete">%1$s completato!</string>
@@ -208,7 +208,7 @@
     <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
     <string name="certificates_about_duration">circa %1$s</string>
     <string name="certificates_meaning_title">Cosa attesta questo certificato</string>
-    <string name="certificates_meaning_language">Zoonk misura ogni abilità (lettura, ascolto, parlato, scrittura) in base alle risposte date durante le lezioni e le esercitazioni. Un livello è completo quando tutte le abilità migliorate con quelle risposte raggiungono il livello successivo. Questo certificato è stato quindi rilasciato quando ciascuna ha raggiunto %1$s.</string>
+    <string name="certificates_meaning_language">Zoonk rilascia questo certificato a chi completa un livello studiando almeno la metà delle lezioni.</string>
     <string name="certificates_meaning_level">Zoonk rilascia questo certificato a chi completa tutti i capitoli di un livello del corso, studiando ogni lezione o superando il relativo test, e vince tutte le sfide del livello.</string>
     <string name="certificates_meaning_plan">Zoonk rilascia questo certificato a chi completa ogni lezione del piano di un corso, studiandola o superandone il test, e vince tutte le sfide del piano.</string>
     <string name="certificates_meaning_record">Attesta il completamento su Zoonk, ma non dà crediti formativi.</string>

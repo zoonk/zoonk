@@ -56,7 +56,7 @@ export async function getSkillLevelRows(skillIds: string[]) {
   }
 
   return prisma.skill.findMany({
-    select: { id: true, level: true },
+    select: { cefrLevel: true, id: true, level: true },
     where: { id: { in: skillIds } },
   });
 }

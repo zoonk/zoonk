@@ -248,7 +248,7 @@ private struct UpNextRow: View {
   private var description: Text {
     goal.progress == nil
       ? Text(
-        "Comes when every skill you practice reaches the next level", tableName: "Certificates",
+        "Comes when you finish a level, studying at least half of it", tableName: "Certificates",
         comment: "Under a language goal on the empty certificates page: when it earns one")
       : Text(
         "Your certificate comes when you finish the plan", tableName: "Certificates",

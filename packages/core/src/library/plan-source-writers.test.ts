@@ -429,6 +429,14 @@ const REGISTRY: Record<string, Registration[]> = {
       ],
     },
   ],
+  "library/skills/tag-skill-levels.ts": [
+    {
+      fields: ["cefrAttempts", "cefrLevel"],
+      verdict: "excluded",
+      why: "a skill's level within its band, read by views, not the planner",
+      writes: ["raw:skills", "skill.updateMany"],
+    },
+  ],
   "library/tools/find-or-create-setup-lesson.ts": [
     {
       fields: ["canDo"],

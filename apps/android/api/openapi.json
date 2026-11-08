@@ -32260,7 +32260,8 @@
               "A2",
               "B1",
               "B2",
-              "C1"
+              "C1",
+              "C2"
             ]
           },
           "minutes": {
@@ -32274,13 +32275,6 @@
             "nullable": true,
             "description": "The learner's profile name, read live, so fixing it fixes every certificate; null when empty: ask for a name before they share, print or download",
             "type": "string"
-          },
-          "skillLevels": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CertificateSkillLevel"
-            },
-            "description": "Language level: each skill the learner's answers raised, at its level when earned"
           },
           "targetLanguage": {
             "nullable": true,
@@ -32327,7 +32321,6 @@
           "level",
           "minutes",
           "recipientName",
-          "skillLevels",
           "targetLanguage",
           "title",
           "topics",
@@ -32337,29 +32330,6 @@
         ],
         "additionalProperties": false,
         "description": "A certificate as anyone with its link sees it, with its page and pictures"
-      },
-      "CertificateSkillLevel": {
-        "type": "object",
-        "properties": {
-          "label": {
-            "type": "string",
-            "description": "The skill's level, such as \"B1\" or \"B2+\""
-          },
-          "skill": {
-            "type": "string",
-            "enum": [
-              "reading",
-              "listening",
-              "speaking",
-              "writing"
-            ]
-          }
-        },
-        "required": [
-          "label",
-          "skill"
-        ],
-        "additionalProperties": false
       },
       "CertificateImageUrls": {
         "type": "object",
@@ -32505,7 +32475,8 @@
               "A2",
               "B1",
               "B2",
-              "C1"
+              "C1",
+              "C2"
             ]
           },
           "minutes": {
@@ -32519,13 +32490,6 @@
             "nullable": true,
             "description": "The learner's profile name, read live, so fixing it fixes every certificate; null when empty: ask for a name before they share, print or download",
             "type": "string"
-          },
-          "skillLevels": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CertificateSkillLevel"
-            },
-            "description": "Language level: each skill the learner's answers raised, at its level when earned"
           },
           "targetLanguage": {
             "nullable": true,
@@ -32590,7 +32554,6 @@
           "level",
           "minutes",
           "recipientName",
-          "skillLevels",
           "targetLanguage",
           "title",
           "topics",
@@ -39719,7 +39682,8 @@
               "A2",
               "B1",
               "B2",
-              "C1"
+              "C1",
+              "C2"
             ]
           },
           "minutes": {
@@ -39733,13 +39697,6 @@
             "nullable": true,
             "description": "The learner's profile name, read live, so fixing it fixes every certificate; null when empty: ask for a name before they share, print or download",
             "type": "string"
-          },
-          "skillLevels": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CertificateSkillLevel"
-            },
-            "description": "Language level: each skill the learner's answers raised, at its level when earned"
           },
           "targetLanguage": {
             "nullable": true,
@@ -39784,7 +39741,6 @@
           "level",
           "minutes",
           "recipientName",
-          "skillLevels",
           "targetLanguage",
           "title",
           "topics",

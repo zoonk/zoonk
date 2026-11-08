@@ -1,0 +1,1744 @@
+{
+  "modelId": "google/gemini-3.8-flash:low",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "19/21 right. Wrong: en-en-ielts-foundations-18 (B2, expected B1), en-en-ielts-foundations-32 (B2, expected B1)",
+          "kind": "majorErrors",
+          "score": 9.619047619047619
+        },
+        {
+          "conclusion": "19/21 right. Wrong: en-en-ielts-foundations-18 (B2, expected B1), en-en-ielts-foundations-32 (B2, expected B1)",
+          "kind": "minorErrors",
+          "score": 9.619047619047619
+        },
+        {
+          "conclusion": "19/21 right. Wrong: en-en-ielts-foundations-18 (B2, expected B1), en-en-ielts-foundations-32 (B2, expected B1)",
+          "kind": "potentialImprovements",
+          "score": 9.619047619047619
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "levels": {
+            "en-en-ielts-foundations-3": "A1",
+            "en-en-ielts-foundations-5": "A2",
+            "en-en-ielts-foundations-6": "A2",
+            "en-en-ielts-foundations-8": "A1",
+            "en-en-ielts-foundations-9": "A1",
+            "en-en-ielts-foundations-10": "A1",
+            "en-en-ielts-foundations-11": "A2",
+            "en-en-ielts-foundations-12": "A2",
+            "en-en-ielts-foundations-13": "B1",
+            "en-en-ielts-foundations-14": "B2",
+            "en-en-ielts-foundations-16": "B1",
+            "en-en-ielts-foundations-18": "B1",
+            "en-en-ielts-foundations-25": "B1",
+            "en-en-ielts-foundations-26": "B2",
+            "en-en-ielts-foundations-27": "B1",
+            "en-en-ielts-foundations-30": "B1",
+            "en-en-ielts-foundations-31": "B1",
+            "en-en-ielts-foundations-32": "B1",
+            "en-en-ielts-foundations-35": "B1",
+            "en-en-ielts-foundations-37": "B1",
+            "en-en-ielts-foundations-38": "B2"
+          }
+        },
+        "id": "en-en-ielts-foundations-1",
+        "language": "en",
+        "userInput": {
+          "skills": [
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Give understandable answers about identity, everyday activities, and familiar experiences.",
+              "id": "en-en-ielts-foundations-1",
+              "name": "Answer familiar questions in English"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Produce English consonants and vowels clearly enough to distinguish common words.",
+              "id": "en-en-ielts-foundations-2",
+              "name": "Articulate English sounds clearly"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Catch names, dates, prices, numbers, and spelled words accurately.",
+              "id": "en-en-ielts-foundations-3",
+              "name": "Catch numbers and spelled details"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Use agreement, articles, and determiners so sentences express the intended reference.",
+              "id": "en-en-ielts-foundations-4",
+              "name": "Control agreement and determiners"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Choose verb forms and word forms that place events in time and express intended meanings.",
+              "id": "en-en-ielts-foundations-5",
+              "name": "Control verb tenses and word forms"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Describe familiar people, places, and routines with relevant details.",
+              "id": "en-en-ielts-foundations-6",
+              "name": "Describe familiar people and places"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Hear distinctions between English sounds that change the words being spoken.",
+              "id": "en-en-ielts-foundations-7",
+              "name": "Distinguish spoken English sounds"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Form understandable English statements and questions with appropriate word order.",
+              "id": "en-en-ielts-foundations-8",
+              "name": "Form clear English sentences"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Recognize frequent English words and their meanings in short passages.",
+              "id": "en-en-ielts-foundations-9",
+              "name": "Recognize words in English passages"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Recognize familiar words in short, clearly spoken phrases.",
+              "id": "en-en-ielts-foundations-10",
+              "name": "Recognize words in spoken phrases"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Understand the purpose and key details of everyday exchanges.",
+              "id": "en-en-ielts-foundations-11",
+              "name": "Understand everyday spoken exchanges"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Understand who did what and how ideas relate in English sentences.",
+              "id": "en-en-ielts-foundations-12",
+              "name": "Understand written English sentences"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Respond naturally and sufficiently to the familiar-topic interview questions in Speaking Part 1.",
+              "id": "en-en-ielts-foundations-13",
+              "name": "Answer IELTS Speaking Part 1"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Choose words and collocations precise enough for descriptions and arguments.",
+              "id": "en-en-ielts-foundations-14",
+              "name": "Choose precise academic vocabulary"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Compare options or situations using relevant similarities, differences, and consequences.",
+              "id": "en-en-ielts-foundations-15",
+              "name": "Compare alternatives aloud"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Enter the correct details in forms, notes, tables, and sentence completions.",
+              "id": "en-en-ielts-foundations-16",
+              "name": "Complete IELTS listening gaps"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Choose words or answers that accurately complete summaries, notes, and sentences.",
+              "id": "en-en-ielts-foundations-17",
+              "name": "Complete IELTS reading gaps"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Combine ideas using coordination, subordination, and punctuation without obscuring meaning.",
+              "id": "en-en-ielts-foundations-18",
+              "name": "Connect clauses accurately"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Use the preparation minute to organize and deliver a sustained response to a Part 2 cue card.",
+              "id": "en-en-ielts-foundations-19",
+              "name": "Deliver an IELTS Part 2 talk"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Explain spatial arrangements and changes shown in maps or plans.",
+              "id": "en-en-ielts-foundations-20",
+              "name": "Describe maps and spatial changes"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Explain the stages of a natural or manufactured process in a coherent sequence.",
+              "id": "en-en-ielts-foundations-21",
+              "name": "Describe process stages"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Describe numerical values, proportions, and differences without misrepresenting them.",
+              "id": "en-en-ielts-foundations-22",
+              "name": "Describe quantities and comparisons"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Describe increases, decreases, fluctuations, and changes over time accurately.",
+              "id": "en-en-ielts-foundations-23",
+              "name": "Describe trends in data"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Notice when a speaker replaces an earlier detail with a correction.",
+              "id": "en-en-ielts-foundations-24",
+              "name": "Detect corrections in speech"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Talk about intended actions and preferences and explain simple choices.",
+              "id": "en-en-ielts-foundations-25",
+              "name": "Discuss plans and preferences"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Find and correct errors in grammar, spelling, meaning, and reference in a draft.",
+              "id": "en-en-ielts-foundations-26",
+              "name": "Edit English writing for accuracy"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Express a view and make its supporting reasons easy to follow.",
+              "id": "en-en-ielts-foundations-27",
+              "name": "Explain opinions aloud"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Add explanations and specific examples rather than stopping at a short answer.",
+              "id": "en-en-ielts-foundations-28",
+              "name": "Extend answers with examples"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Recognize familiar words despite reduced sounds and natural speaking speed.",
+              "id": "en-en-ielts-foundations-29",
+              "name": "Follow connected English speech"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Follow directions and descriptions of locations or arrangements.",
+              "id": "en-en-ielts-foundations-30",
+              "name": "Follow spoken directions and descriptions"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Identify a paragraph's central idea rather than treating every detail as equally important.",
+              "id": "en-en-ielts-foundations-31",
+              "name": "Identify paragraph main ideas"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Use nearby words and sentences to infer an unfamiliar word's likely meaning.",
+              "id": "en-en-ielts-foundations-32",
+              "name": "Infer word meanings from context"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Distinguish a supported statement, a contradicted statement, and one the passage does not establish.",
+              "id": "en-en-ielts-foundations-33",
+              "name": "Judge true, false, and not given"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Connect diagrams or labeled processes with the information given in a passage.",
+              "id": "en-en-ielts-foundations-34",
+              "name": "Label diagrams from passages"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Match spoken directions or descriptions to labels on a plan or map.",
+              "id": "en-en-ielts-foundations-35",
+              "name": "Label maps from spoken directions"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Link sentences with clear references and logical relationships.",
+              "id": "en-en-ielts-foundations-36",
+              "name": "Link ideas across sentences"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Find a specific fact or passage relevant to a question without rereading everything.",
+              "id": "en-en-ielts-foundations-37",
+              "name": "Locate details in passages"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Allocate time across three passages and verify answers against the text and word limits.",
+              "id": "en-en-ielts-foundations-38",
+              "name": "Manage IELTS academic reading time"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Read ahead, track the question sequence, and check answer form within the listening section's limits.",
+              "id": "en-en-ielts-foundations-39",
+              "name": "Manage IELTS listening questions"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Complete both writing tasks within the available time while protecting enough time for the longer essay.",
+              "id": "en-en-ielts-foundations-40",
+              "name": "Manage IELTS writing time"
+            }
+          ],
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "16/18 right. Wrong: en-en-ielts-academic-29 (C2, expected C1), en-en-ielts-academic-32 (C2, expected C1)",
+          "kind": "majorErrors",
+          "score": 9.555555555555555
+        },
+        {
+          "conclusion": "16/18 right. Wrong: en-en-ielts-academic-29 (C2, expected C1), en-en-ielts-academic-32 (C2, expected C1)",
+          "kind": "minorErrors",
+          "score": 9.555555555555555
+        },
+        {
+          "conclusion": "16/18 right. Wrong: en-en-ielts-academic-29 (C2, expected C1), en-en-ielts-academic-32 (C2, expected C1)",
+          "kind": "potentialImprovements",
+          "score": 9.555555555555555
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "levels": {
+            "en-en-ielts-academic-3": "B1",
+            "en-en-ielts-academic-8": "B1",
+            "en-en-ielts-academic-13": "B1",
+            "en-en-ielts-academic-14": "B2",
+            "en-en-ielts-academic-16": "B2",
+            "en-en-ielts-academic-18": "B2",
+            "en-en-ielts-academic-19": "B2",
+            "en-en-ielts-academic-20": "C1",
+            "en-en-ielts-academic-21": "C1",
+            "en-en-ielts-academic-22": "C1",
+            "en-en-ielts-academic-23": "C1",
+            "en-en-ielts-academic-24": "C1",
+            "en-en-ielts-academic-25": "C1",
+            "en-en-ielts-academic-27": "C1",
+            "en-en-ielts-academic-29": "C1",
+            "en-en-ielts-academic-30": "C1",
+            "en-en-ielts-academic-32": "C1",
+            "en-en-ielts-academic-34": "C1"
+          }
+        },
+        "id": "en-en-ielts-academic-1",
+        "language": "en",
+        "userInput": {
+          "skills": [
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Match headings to the main point of each relevant paragraph or section.",
+              "id": "en-en-ielts-academic-1",
+              "name": "Match headings to paragraphs"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Match statements, features, or people to the passage sections that support them.",
+              "id": "en-en-ielts-academic-2",
+              "name": "Match information and features"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Relate an experience in a comprehensible order using suitable past forms.",
+              "id": "en-en-ielts-academic-3",
+              "name": "Narrate past experiences"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Restate a question's meaning without copying its wording or changing its scope.",
+              "id": "en-en-ielts-academic-4",
+              "name": "Paraphrase writing prompts accurately"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Connect question wording with different words used for the same idea in audio.",
+              "id": "en-en-ielts-academic-5",
+              "name": "Recognize paraphrases in audio"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Recognize when a question and a passage express the same idea in different words.",
+              "id": "en-en-ielts-academic-6",
+              "name": "Recognize paraphrases in texts"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Rephrase an unclear idea or recover from an error without abandoning the response.",
+              "id": "en-en-ielts-academic-7",
+              "name": "Repair unclear spoken responses"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Determine what pronouns and other referring expressions point to.",
+              "id": "en-en-ielts-academic-8",
+              "name": "Resolve references in a text"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Choose answers to multiple-choice and matching questions as an audio passage progresses.",
+              "id": "en-en-ielts-academic-9",
+              "name": "Select IELTS listening answers"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Identify the main patterns and contrasts that a visual report should highlight.",
+              "id": "en-en-ielts-academic-10",
+              "name": "Select key features of visuals"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Develop a relevant claim with reasons and concrete examples.",
+              "id": "en-en-ielts-academic-11",
+              "name": "Support claims with reasons and examples"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Track each speaker's position and decisions in a conversation.",
+              "id": "en-en-ielts-academic-12",
+              "name": "Track multiple speakers' views"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Understand the requests, advice, and arrangements in education-related conversations.",
+              "id": "en-en-ielts-academic-13",
+              "name": "Understand campus conversations"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Use an appropriately formal, direct tone in reports and essays.",
+              "id": "en-en-ielts-academic-14",
+              "name": "Use appropriate academic register"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Use rhythm and intonation to make meaning and sentence boundaries clear.",
+              "id": "en-en-ielts-academic-15",
+              "name": "Use English rhythm and intonation"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Choose suitable alternatives when a repeated or imprecise word limits an answer.",
+              "id": "en-en-ielts-academic-16",
+              "name": "Use flexible spoken vocabulary"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Stress the intended syllables and important words in a phrase.",
+              "id": "en-en-ielts-academic-17",
+              "name": "Use word and sentence stress"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Use varied sentence structures intelligibly while speaking without a script.",
+              "id": "en-en-ielts-academic-18",
+              "name": "Vary grammar in spontaneous speech"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Write a Task 1 report that gives an overview and accurately selects and compares visual features.",
+              "id": "en-en-ielts-academic-19",
+              "name": "Write IELTS visual reports"
+            },
+            {
+              "band": [
+                "C1",
+                "C2"
+              ],
+              "description": "State a consistent response to every part of an essay question.",
+              "id": "en-en-ielts-academic-20",
+              "name": "Develop a clear essay position"
+            },
+            {
+              "band": [
+                "C1",
+                "C2"
+              ],
+              "description": "Explain broader causes, effects, and social questions beyond personal experience.",
+              "id": "en-en-ielts-academic-21",
+              "name": "Discuss abstract topics aloud"
+            },
+            {
+              "band": [
+                "C1",
+                "C2"
+              ],
+              "description": "Develop and defend answers to the broader follow-up questions in Speaking Part 3.",
+              "id": "en-en-ielts-academic-22",
+              "name": "Discuss IELTS Speaking Part 3 questions"
+            },
+            {
+              "band": [
+                "C1",
+                "C2"
+              ],
+              "description": "Track stages, causes, and comparisons in explanatory academic passages.",
+              "id": "en-en-ielts-academic-23",
+              "name": "Follow academic explanations"
+            },
+            {
+              "band": [
+                "C1",
+                "C2"
+              ],
+              "description": "Follow a lecture's main points, examples, and transitions.",
+              "id": "en-en-ielts-academic-24",
+              "name": "Follow academic lectures"
+            },
+            {
+              "band": [
+                "C1",
+                "C2"
+              ],
+              "description": "Follow how an academic passage develops claims, reasons, and counterpoints.",
+              "id": "en-en-ielts-academic-25",
+              "name": "Follow arguments in academic texts"
+            },
+            {
+              "band": [
+                "C1",
+                "C2"
+              ],
+              "description": "Tell what an author asserts, reports about others, or presents as uncertain.",
+              "id": "en-en-ielts-academic-26",
+              "name": "Identify a writer's stance"
+            },
+            {
+              "band": [
+                "C1",
+                "C2"
+              ],
+              "description": "Separate a speaker's claim from the examples and evidence supporting it.",
+              "id": "en-en-ielts-academic-27",
+              "name": "Identify claims and support in speech"
+            },
+            {
+              "band": [
+                "C1",
+                "C2"
+              ],
+              "description": "Unpack embedded clauses and qualifications in long academic sentences.",
+              "id": "en-en-ielts-academic-28",
+              "name": "Interpret complex academic sentences"
+            },
+            {
+              "band": [
+                "C1",
+                "C2"
+              ],
+              "description": "Sustain clear, appropriately developed answers across all three speaking parts without reading a script.",
+              "id": "en-en-ielts-academic-29",
+              "name": "Manage the IELTS speaking interview"
+            },
+            {
+              "band": [
+                "C1",
+                "C2"
+              ],
+              "description": "Arrange an introduction, developed paragraphs, and conclusion around the essay question.",
+              "id": "en-en-ielts-academic-30",
+              "name": "Organize a coherent academic essay"
+            },
+            {
+              "band": [
+                "C1",
+                "C2"
+              ],
+              "description": "Qualify a generalization and defend a view when a question probes it further.",
+              "id": "en-en-ielts-academic-31",
+              "name": "Qualify and defend spoken views"
+            },
+            {
+              "band": [
+                "C1",
+                "C2"
+              ],
+              "description": "Check a report or essay against task response, coherence, vocabulary, and grammar requirements.",
+              "id": "en-en-ielts-academic-32",
+              "name": "Revise IELTS writing responses"
+            },
+            {
+              "band": [
+                "C1",
+                "C2"
+              ],
+              "description": "Compare competing views and address reasonable qualifications without losing a clear position.",
+              "id": "en-en-ielts-academic-33",
+              "name": "Weigh arguments and concessions"
+            },
+            {
+              "band": [
+                "C1",
+                "C2"
+              ],
+              "description": "Write a Task 2 response that addresses the prompt with a developed, coherent argument.",
+              "id": "en-en-ielts-academic-34",
+              "name": "Write IELTS Task 2 essays"
+            }
+          ],
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "26/26 right",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "26/26 right",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "26/26 right",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "levels": {
+            "pt-en-moving-and-interviews-1": "A2",
+            "pt-en-moving-and-interviews-2": "A1",
+            "pt-en-moving-and-interviews-3": "A2",
+            "pt-en-moving-and-interviews-4": "A1",
+            "pt-en-moving-and-interviews-5": "A2",
+            "pt-en-moving-and-interviews-6": "A1",
+            "pt-en-moving-and-interviews-9": "A2",
+            "pt-en-moving-and-interviews-12": "B1",
+            "pt-en-moving-and-interviews-13": "B1",
+            "pt-en-moving-and-interviews-14": "B1",
+            "pt-en-moving-and-interviews-16": "B1",
+            "pt-en-moving-and-interviews-17": "B1",
+            "pt-en-moving-and-interviews-18": "B1",
+            "pt-en-moving-and-interviews-20": "B1",
+            "pt-en-moving-and-interviews-22": "B1",
+            "pt-en-moving-and-interviews-23": "B1",
+            "pt-en-moving-and-interviews-24": "B1",
+            "pt-en-moving-and-interviews-26": "B2",
+            "pt-en-moving-and-interviews-27": "B1",
+            "pt-en-moving-and-interviews-28": "B1",
+            "pt-en-moving-and-interviews-29": "B1",
+            "pt-en-moving-and-interviews-31": "B1",
+            "pt-en-moving-and-interviews-33": "B1",
+            "pt-en-moving-and-interviews-35": "B1",
+            "pt-en-moving-and-interviews-38": "B2",
+            "pt-en-moving-and-interviews-39": "B1"
+          }
+        },
+        "id": "pt-en-moving-and-interviews-1",
+        "language": "pt",
+        "userInput": {
+          "skills": [
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Abrir uma conta no banco e perguntar sobre tarifas.",
+              "id": "pt-en-moving-and-interviews-1",
+              "name": "Abrir uma conta no banco"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Quando “tem” quer dizer “existe”, o inglês usa there is (uma coisa) ou there are (várias).",
+              "id": "pt-en-moving-and-interviews-2",
+              "name": "Descrever um lugar com there is e there are"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Entender quanto dura o contrato e o que ele proíbe.",
+              "id": "pt-en-moving-and-interviews-3",
+              "name": "Entender um contrato de aluguel"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Dizer por que você está no país e por quanto tempo.",
+              "id": "pt-en-moving-and-interviews-4",
+              "name": "Explicar o motivo da viagem na imigração"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Pedir para ver um imóvel e combinar dia e horário.",
+              "id": "pt-en-moving-and-interviews-5",
+              "name": "Marcar uma visita ao apartamento"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Nomear os cômodos da casa: bedroom, bathroom, kitchen, living room.",
+              "id": "pt-en-moving-and-interviews-6",
+              "name": "Nomear os cômodos de um apartamento"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Perguntar onde ficam as coisas e entender a resposta.",
+              "id": "pt-en-moving-and-interviews-7",
+              "name": "Pedir informações no aeroporto"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Perguntar o preço com “How much is…?” e o que ele inclui.",
+              "id": "pt-en-moving-and-interviews-8",
+              "name": "Perguntar quanto é o aluguel"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Escolher um plano de celular e resolver um problema por telefone.",
+              "id": "pt-en-moving-and-interviews-9",
+              "name": "Resolver o plano de celular"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Rent é o aluguel, landlord é o proprietário, deposit é a caução e lease é o contrato.",
+              "id": "pt-en-moving-and-interviews-10",
+              "name": "Usar as palavras do aluguel"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Acompanhar uma reunião e pedir para repetirem ou explicarem.",
+              "id": "pt-en-moving-and-interviews-11",
+              "name": "Acompanhar uma reunião"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Fazer uma apresentação breve que conecte sua experiência ao trabalho procurado.",
+              "id": "pt-en-moving-and-interviews-12",
+              "name": "Apresentar seu perfil profissional"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Convidar alguém e combinar um programa.",
+              "id": "pt-en-moving-and-interviews-13",
+              "name": "Combinar um programa com amigos"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Pedir um remédio e entender como tomar.",
+              "id": "pt-en-moving-and-interviews-14",
+              "name": "Comprar remédio na farmácia"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Entender perguntas sobre remuneração e expressar uma expectativa salarial com as condições relevantes.",
+              "id": "pt-en-moving-and-interviews-15",
+              "name": "Conversar sobre expectativa salarial"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Cumprimentar o entrevistador e participar dos primeiros minutos de conversa com naturalidade.",
+              "id": "pt-en-moving-and-interviews-16",
+              "name": "Cumprimentar um entrevistador"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Explicar como você está se sentindo e desde quando.",
+              "id": "pt-en-moving-and-interviews-17",
+              "name": "Descrever como você está se sentindo"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Explicar suas atividades habituais e distinguir responsabilidades próprias das da equipe.",
+              "id": "pt-en-moving-and-interviews-18",
+              "name": "Descrever responsabilidades no trabalho"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Descrever um desacordo profissional, como conversou sobre ele e o que aconteceu depois.",
+              "id": "pt-en-moving-and-interviews-19",
+              "name": "Descrever um desacordo profissional"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Contar o objetivo, sua contribuição e o resultado de um projeto profissional.",
+              "id": "pt-en-moving-and-interviews-20",
+              "name": "Descrever um projeto profissional"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Dar um exemplo concreto de uma qualidade e falar de um ponto a desenvolver sem perder a clareza.",
+              "id": "pt-en-moving-and-interviews-21",
+              "name": "Discutir pontos fortes e desenvolvimento"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Informar quando poderia começar e conversar sobre horários, local de trabalho e deslocamento.",
+              "id": "pt-en-moving-and-interviews-22",
+              "name": "Discutir sua disponibilidade para trabalhar"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Agradecer pela conversa, confirmar os próximos passos e despedir-se de forma adequada.",
+              "id": "pt-en-moving-and-interviews-23",
+              "name": "Encerrar uma entrevista de trabalho"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Pedir que uma pergunta seja repetida ou reformulada e confirmar o que o entrevistador quis dizer.",
+              "id": "pt-en-moving-and-interviews-24",
+              "name": "Esclarecer uma pergunta da entrevista"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Explicar como definiu prioridades diante de prazos ou demandas concorrentes.",
+              "id": "pt-en-moving-and-interviews-25",
+              "name": "Explicar prioridades e prazos"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Apresentar resultados com números, comparações e ressalvas compreensíveis.",
+              "id": "pt-en-moving-and-interviews-26",
+              "name": "Explicar resultados do seu trabalho"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Explicar o que chamou sua atenção na vaga e como ela se relaciona com seus objetivos.",
+              "id": "pt-en-moving-and-interviews-27",
+              "name": "Explicar seu interesse por uma vaga"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Explicar uma pausa no trabalho ou uma mudança de área com datas e motivos claros.",
+              "id": "pt-en-moving-and-interviews-28",
+              "name": "Explicar uma transição profissional"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Confirmar que ouviu corretamente, sinalizar problemas de áudio e retomar a conversa por vídeo ou telefone.",
+              "id": "pt-en-moving-and-interviews-29",
+              "name": "Lidar com interrupções em entrevistas remotas"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Perguntar sobre responsabilidades, equipe e critérios de sucesso e compreender as respostas.",
+              "id": "pt-en-moving-and-interviews-30",
+              "name": "Perguntar sobre a vaga e a equipe"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Conversar sobre o tempo, o fim de semana e o bairro.",
+              "id": "pt-en-moving-and-interviews-31",
+              "name": "Puxar conversa com os vizinhos"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Relacionar habilidades relevantes às atividades mencionadas pelo entrevistador.",
+              "id": "pt-en-moving-and-interviews-32",
+              "name": "Relacionar suas habilidades à vaga"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Relatar cargos anteriores, períodos de trabalho e mudanças de responsabilidade.",
+              "id": "pt-en-moving-and-interviews-33",
+              "name": "Relatar sua trajetória profissional"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Falar sobre um erro ou resultado abaixo do esperado e explicar o que mudou depois.",
+              "id": "pt-en-moving-and-interviews-34",
+              "name": "Relatar um erro e um aprendizado"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Explicar como você colaborou com colegas para resolver uma tarefa ou alcançar um objetivo.",
+              "id": "pt-en-moving-and-interviews-35",
+              "name": "Relatar uma colaboração no trabalho"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Contar uma situação de trabalho, suas ações e o resultado em uma resposta organizada.",
+              "id": "pt-en-moving-and-interviews-36",
+              "name": "Responder a perguntas comportamentais"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Descrever como reagiria a uma situação de trabalho proposta durante a entrevista.",
+              "id": "pt-en-moving-and-interviews-37",
+              "name": "Responder a um cenário hipotético"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Responder a uma pergunta inesperada usando pausas, reformulações e exemplos sem perder o fio da resposta.",
+              "id": "pt-en-moving-and-interviews-38",
+              "name": "Responder a uma pergunta inesperada"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Se apresentar e falar da sua função para uma equipe nova.",
+              "id": "pt-en-moving-and-interviews-39",
+              "name": "Se apresentar no trabalho"
+            }
+          ],
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "23/24 right. Wrong: pt-es-dele-foundations-6 (A1, expected A2)",
+          "kind": "majorErrors",
+          "score": 9.833333333333334
+        },
+        {
+          "conclusion": "23/24 right. Wrong: pt-es-dele-foundations-6 (A1, expected A2)",
+          "kind": "minorErrors",
+          "score": 9.833333333333334
+        },
+        {
+          "conclusion": "23/24 right. Wrong: pt-es-dele-foundations-6 (A1, expected A2)",
+          "kind": "potentialImprovements",
+          "score": 9.833333333333334
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "levels": {
+            "pt-es-dele-foundations-1": "A1",
+            "pt-es-dele-foundations-4": "A1",
+            "pt-es-dele-foundations-5": "A1",
+            "pt-es-dele-foundations-6": "A2",
+            "pt-es-dele-foundations-7": "A1",
+            "pt-es-dele-foundations-8": "A1",
+            "pt-es-dele-foundations-9": "A2",
+            "pt-es-dele-foundations-10": "A1",
+            "pt-es-dele-foundations-11": "B2",
+            "pt-es-dele-foundations-12": "B1",
+            "pt-es-dele-foundations-14": "B2",
+            "pt-es-dele-foundations-15": "B2",
+            "pt-es-dele-foundations-16": "B2",
+            "pt-es-dele-foundations-17": "B2",
+            "pt-es-dele-foundations-18": "B2",
+            "pt-es-dele-foundations-19": "B2",
+            "pt-es-dele-foundations-20": "B2",
+            "pt-es-dele-foundations-24": "B1",
+            "pt-es-dele-foundations-25": "B2",
+            "pt-es-dele-foundations-26": "B1",
+            "pt-es-dele-foundations-27": "B1",
+            "pt-es-dele-foundations-28": "B2",
+            "pt-es-dele-foundations-29": "B2",
+            "pt-es-dele-foundations-30": "B2"
+          }
+        },
+        "id": "pt-es-dele-foundations-1",
+        "language": "pt",
+        "userInput": {
+          "skills": [
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Construir frases afirmativas, negativas e interrogativas compreensíveis sobre situações familiares.",
+              "id": "pt-es-dele-foundations-1",
+              "name": "Escrever frases cotidianas em espanhol"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Escrever mensagens simples que informam, solicitam algo ou respondem a outra pessoa.",
+              "id": "pt-es-dele-foundations-2",
+              "name": "Escrever mensagens simples"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Identificar informações sobre horários, lugares, pessoas e ações em falas curtas.",
+              "id": "pt-es-dele-foundations-3",
+              "name": "Identificar informações em falas curtas"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Reconhecer como artigos, gênero, número e concordância afetam o sentido de frases em espanhol.",
+              "id": "pt-es-dele-foundations-4",
+              "name": "Interpretar concordância em espanhol"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Distinguir afirmações, perguntas e negações construídas com verbos frequentes no presente.",
+              "id": "pt-es-dele-foundations-5",
+              "name": "Interpretar verbos espanhóis no presente"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Localizar informações explícitas em mensagens, anúncios e textos cotidianos curtos.",
+              "id": "pt-es-dele-foundations-6",
+              "name": "Localizar informações em textos curtos"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Reconhecer sons e padrões de acentuação que ajudam a separar palavras no fluxo da fala.",
+              "id": "pt-es-dele-foundations-7",
+              "name": "Reconhecer sons da fala espanhola"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Identificar o sentido de palavras frequentes sobre pessoas, lugares, rotinas e necessidades.",
+              "id": "pt-es-dele-foundations-8",
+              "name": "Reconhecer vocabulário cotidiano em espanhol"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Pedir esclarecimentos, confirmar informações e responder a solicitações em conversas simples.",
+              "id": "pt-es-dele-foundations-9",
+              "name": "Sustentar trocas orais simples"
+            },
+            {
+              "band": [
+                "A1",
+                "A2"
+              ],
+              "description": "Formular respostas e perguntas curtas sobre identidade, rotina e preferências com pronúncia compreensível.",
+              "id": "pt-es-dele-foundations-10",
+              "name": "Trocar informações pessoais em espanhol"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Reconhecer palavras e relações gramaticais apesar de elisões, ligações e diferentes ritmos de fala.",
+              "id": "pt-es-dele-foundations-11",
+              "name": "Acompanhar a fala natural em espanhol"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Acompanhar o assunto e as mudanças de tópico em diálogos de situações habituais.",
+              "id": "pt-es-dele-foundations-12",
+              "name": "Acompanhar diálogos cotidianos"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Ajustar saudação, tratamento e escolha de palavras ao destinatário e à finalidade.",
+              "id": "pt-es-dele-foundations-13",
+              "name": "Adequar o registro escrito"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Reconhecer posições, justificativas e contrapontos em artigos e textos de opinião.",
+              "id": "pt-es-dele-foundations-14",
+              "name": "Analisar argumentos em textos espanhóis"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Separar a opinião principal das justificativas e dos exemplos em entrevistas e exposições.",
+              "id": "pt-es-dele-foundations-15",
+              "name": "Analisar argumentos na fala"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Organizar uma exposição oral sobre um tema proposto, com posição clara e desenvolvimento suficiente.",
+              "id": "pt-es-dele-foundations-16",
+              "name": "Apresentar exposição oral de nível B2"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Defender uma posição por escrito com justificativas, exemplos e contrapontos.",
+              "id": "pt-es-dele-foundations-17",
+              "name": "Argumentar por escrito em espanhol"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Comparar alternativas e discutir vantagens, desvantagens e consequências com precisão.",
+              "id": "pt-es-dele-foundations-18",
+              "name": "Comparar alternativas oralmente"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Distinguir mudanças de pronúncia e vocabulário em variedades comuns do espanhol.",
+              "id": "pt-es-dele-foundations-19",
+              "name": "Compreender variedades do espanhol"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Desenvolver uma posição com razões, exemplos e ressalvas em uma exposição contínua.",
+              "id": "pt-es-dele-foundations-20",
+              "name": "Defender uma posição oralmente"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Distinguir alternativas parecidas com base no que a gravação afirma ou permite inferir.",
+              "id": "pt-es-dele-foundations-21",
+              "name": "Distinguir alternativas sobre áudios"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Distinguir falsos cognatos e diferenças de sentido relevantes para falantes de português.",
+              "id": "pt-es-dele-foundations-22",
+              "name": "Distinguir falsos cognatos do espanhol"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Distinguir fatos, desejos, avaliações e hipóteses expressos pelo indicativo ou subjuntivo.",
+              "id": "pt-es-dele-foundations-23",
+              "name": "Distinguir indicativo e subjuntivo"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Distinguir acontecimentos concluídos de hábitos e circunstâncias passadas em narrativas.",
+              "id": "pt-es-dele-foundations-24",
+              "name": "Distinguir tempos passados em espanhol"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Empregar estruturas para expressar hipóteses, avaliações e recomendações sem alterar a intenção.",
+              "id": "pt-es-dele-foundations-25",
+              "name": "Expressar nuances por escrito"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Identificar tema, finalidade e sequência de ideias em relatos e textos informativos.",
+              "id": "pt-es-dele-foundations-26",
+              "name": "Identificar a estrutura de textos"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Distinguir quem fez o quê e em que momento em relatos falados.",
+              "id": "pt-es-dele-foundations-27",
+              "name": "Identificar sequências em relatos orais"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Inferir concordância, dúvida, ironia ou reserva pelas palavras e pela entonação.",
+              "id": "pt-es-dele-foundations-28",
+              "name": "Inferir atitudes de falantes"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Inferir intenção, atitude e informação implícita a partir das pistas do texto.",
+              "id": "pt-es-dele-foundations-29",
+              "name": "Inferir intenção em textos espanhóis"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Inferir sentidos de expressões, combinações de palavras e vocabulário abstrato pelo contexto.",
+              "id": "pt-es-dele-foundations-30",
+              "name": "Inferir vocabulário pelo contexto"
+            }
+          ],
+          "targetLanguage": "es"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "13/13 right",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "13/13 right",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "13/13 right",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "levels": {
+            "pt-es-dele-b2-2": "B2",
+            "pt-es-dele-b2-4": "B1",
+            "pt-es-dele-b2-5": "B2",
+            "pt-es-dele-b2-7": "B1",
+            "pt-es-dele-b2-8": "B1",
+            "pt-es-dele-b2-9": "B2",
+            "pt-es-dele-b2-11": "B1",
+            "pt-es-dele-b2-12": "B2",
+            "pt-es-dele-b2-13": "B2",
+            "pt-es-dele-b2-14": "B2",
+            "pt-es-dele-b2-15": "B1",
+            "pt-es-dele-b2-16": "B2",
+            "pt-es-dele-b2-20": "B1"
+          }
+        },
+        "id": "pt-es-dele-b2-1",
+        "language": "pt",
+        "userInput": {
+          "skills": [
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Selecionar informações de um texto ou áudio e incorporá-las, com fidelidade, à resposta escrita solicitada.",
+              "id": "pt-es-dele-b2-1",
+              "name": "Integrar fontes à resposta escrita"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Sustentar a conversa da prova oral, reagindo às perguntas e desenvolvendo respostas pertinentes.",
+              "id": "pt-es-dele-b2-2",
+              "name": "Interagir na entrevista oral B2"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Reconhecer relações de causa, contraste, finalidade e consequência marcadas por conectores.",
+              "id": "pt-es-dele-b2-3",
+              "name": "Interpretar conectores argumentativos"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Interpretar referências a planos, previsões, possibilidades e condições em frases espanholas.",
+              "id": "pt-es-dele-b2-4",
+              "name": "Interpretar futuro e condicional"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Interpretar condições reais e hipotéticas e suas consequências em diferentes tempos.",
+              "id": "pt-es-dele-b2-5",
+              "name": "Interpretar hipóteses e condições"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Descrever e interpretar uma situação apresentada em imagens sem limitar a resposta a uma lista de objetos.",
+              "id": "pt-es-dele-b2-6",
+              "name": "Interpretar imagens oralmente no B2"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Identificar a quem ou ao que os pronomes se referem, inclusive em construções com objetos diretos e indiretos.",
+              "id": "pt-es-dele-b2-7",
+              "name": "Interpretar referências pronominais"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Descrever situações e apresentar razões para preferências ou decisões sem depender de frases isoladas.",
+              "id": "pt-es-dele-b2-8",
+              "name": "Justificar opiniões oralmente"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Responder ao interlocutor, pedir esclarecimentos e negociar concordâncias ou divergências sem abandonar o assunto.",
+              "id": "pt-es-dele-b2-9",
+              "name": "Negociar pontos de vista"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Organizar ideias em parágrafos e usar referências que mantenham o texto coeso.",
+              "id": "pt-es-dele-b2-10",
+              "name": "Organizar parágrafos coesos"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Reconhecer palavras e expressões de trabalho, estudo, saúde, viagens e vida social.",
+              "id": "pt-es-dele-b2-11",
+              "name": "Reconhecer vocabulário da vida social"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Selecionar a continuação ou o trecho ausente que preserva referências, coerência e progressão das ideias.",
+              "id": "pt-es-dele-b2-12",
+              "name": "Reconstituir a coerência de textos"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Recuperar informações específicas de uma gravação sem perder o sentido geral ao avançar para a próxima pergunta.",
+              "id": "pt-es-dele-b2-13",
+              "name": "Recuperar detalhes de áudios extensos"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Produzir correspondência que atende à situação proposta, desenvolve todos os pontos pedidos e mantém o registro adequado.",
+              "id": "pt-es-dele-b2-14",
+              "name": "Redigir correspondência de nível B2"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Relatar acontecimentos e circunstâncias em ordem compreensível usando tempos passados.",
+              "id": "pt-es-dele-b2-15",
+              "name": "Redigir relatos em espanhol"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Produzir um texto de opinião ou informativo que desenvolve a proposta com estrutura, argumentos e conclusão.",
+              "id": "pt-es-dele-b2-16",
+              "name": "Redigir texto argumentativo de nível B2"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Reformular uma ideia, contornar uma palavra desconhecida e corrigir ambiguidades durante a fala.",
+              "id": "pt-es-dele-b2-17",
+              "name": "Reformular ideias oralmente"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Associar cada intervenção a seu falante, ponto de vista ou experiência em gravações com várias vozes.",
+              "id": "pt-es-dele-b2-18",
+              "name": "Relacionar falantes e opiniões"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Relacionar descrições, perguntas e trechos a diferentes textos sem confundir informações próximas.",
+              "id": "pt-es-dele-b2-19",
+              "name": "Relacionar textos e informações"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Narrar experiências e explicar planos mantendo a sequência temporal compreensível.",
+              "id": "pt-es-dele-b2-20",
+              "name": "Relatar experiências oralmente"
+            },
+            {
+              "band": [
+                "B1",
+                "B2"
+              ],
+              "description": "Revisar concordância, tempos verbais, acentuação e escolhas lexicais que prejudiquem a clareza.",
+              "id": "pt-es-dele-b2-21",
+              "name": "Revisar a precisão de textos"
+            }
+          ],
+          "targetLanguage": "es"
+        }
+      }
+    }
+  ],
+  "taskId": "skill-levels"
+}
