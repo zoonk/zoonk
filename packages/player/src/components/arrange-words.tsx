@@ -111,7 +111,7 @@ export function ArrangeWordsInteraction({
   const syncSelectedAnswer = (next: PlacedWordWithBankIndex[]) => {
     const arrangedWords = next.map((placedWord) => placedWord.word);
 
-    if (next.length === correctWords.length) {
+    if (next.length > 0) {
       onSelectAnswer({ arrangedWords, kind: answerKind });
       return;
     }
@@ -122,7 +122,7 @@ export function ArrangeWordsInteraction({
   };
 
   const handlePlace = (tile: WordBankTile) => {
-    if (isLocked || placedWords.length >= correctWords.length) {
+    if (isLocked) {
       return;
     }
 
@@ -181,6 +181,7 @@ export function ArrangeWordsInteraction({
 
       <WordBank
         disabled={isLocked}
+        fillsAnswer={placedWords.length + 1 === correctWords.length}
         onPlace={handlePlace}
         tiles={getWordBankTiles({ placedWords, words: wordBankOptions })}
       />

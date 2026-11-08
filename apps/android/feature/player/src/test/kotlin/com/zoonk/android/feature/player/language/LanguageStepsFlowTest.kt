@@ -156,6 +156,16 @@ class LanguageStepsFlowTest {
     }
 
     @Test
+    fun aSentenceCanBeCheckedFromItsFirstWord() {
+        play(listOf(reading("read"), summaryStep("end")))
+
+        tap("Yo")
+        tap("Check")
+
+        assertEquals(Json.parseToJsonElement("""{"arrangedWords":["Yo"],"kind":"reading"}"""), sent("read"))
+    }
+
+    @Test
     fun aSentenceBuiltBeforeTheAppClosedIsAnsweredAgainWhenItComesBack() {
         val restoration = StateRestorationTester(rule)
         var current by mutableStateOf<LessonAnswer?>(null)

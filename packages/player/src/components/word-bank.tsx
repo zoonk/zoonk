@@ -9,10 +9,13 @@ type WordBankTile = { isUsed: boolean; key: string; option: WordBankOption };
 
 export function WordBank<Tile extends WordBankTile>({
   disabled,
+  fillsAnswer,
   onPlace,
   tiles,
 }: {
   disabled: boolean;
+  /** The next word placed completes the answer, so a keyboard's focus moves on to Check. */
+  fillsAnswer: boolean;
   onPlace: (tile: Tile) => void;
   tiles: Tile[];
 }) {
@@ -30,7 +33,9 @@ export function WordBank<Tile extends WordBankTile>({
           disabled={disabled}
           isSelected={tile.isUsed}
           key={tile.key}
-          onToggle={(event) => placeKeepingFocus(event, () => onPlace(tile))}
+          onToggle={(event) =>
+            placeKeepingFocus({ event, fillsAnswer, place: () => onPlace(tile) })
+          }
           option={tile.option}
         />
       ))}

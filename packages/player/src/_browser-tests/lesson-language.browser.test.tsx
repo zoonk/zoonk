@@ -124,10 +124,14 @@ describe("language lesson screens", () => {
     });
 
     await expect.element(page.getByText("Translate", { exact: true })).toBeVisible();
-    await pickWords(["How", "much", "is", "the", "rent?"]);
+    await expect.element(page.getByRole("button", { name: /^Check/u })).toBeDisabled();
+    await pickWords(["How"]);
+    await expect.element(page.getByRole("button", { name: /^Check/u })).toBeEnabled();
+    await pickWords(["much", "is", "the", "rent?", "many"]);
 
-    await pickWords(["many"]);
-    await expectCount(page.getByRole("group", { name: "Your answer" }).getByRole("button"), 5);
+    const answer = page.getByRole("group", { name: "Your answer" });
+    await expectCount(answer.getByRole("button"), 6);
+    await answer.getByRole("button", { name: "Position 6: many. Tap to remove." }).click();
     await checkRightAndContinue();
 
     await expect.element(page.getByText(SENTENCE, { exact: true })).toBeVisible();
