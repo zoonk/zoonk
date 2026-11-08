@@ -7,7 +7,15 @@ import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { type KeyboardEvent, type RefObject, useEffect, useId, useRef, useState } from "react";
+import {
+  type KeyboardEvent,
+  type RefObject,
+  useEffect,
+  useEffectEvent,
+  useId,
+  useRef,
+  useState,
+} from "react";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { type AnswerOptionResult } from "../_components/answer-tone";
 import { PageEyebrow } from "../_components/page";
@@ -34,6 +42,8 @@ export type WaitQuizState = {
   next: () => void;
   pick: (optionId: string) => void;
   pickedId: string | null;
+  /** The card is on screen: counted once per deck, however often the learner switches views. */
+  shown: () => void;
 };
 
 export type WaitQuizRefs = {
@@ -63,29 +73,14 @@ export function useWaitQuiz({
   const { track } = useLearnAnalytics();
   const clock = useOnboardingClock();
   const eventGoalId = goalId ?? clock?.goalId;
-  const deckId = deck?.id;
   const moved = useRef(false);
+  const shownDeckId = useRef<string | null>(null);
   const mounted = useIsMounted();
   const [dealt, setDealt] = useState<Dealt | null>(null);
   const stored = deck && mounted ? { pickedId: null, position: readPosition(deck.id) } : null;
   const shown = deck && (dealt ?? stored);
   const card = shown ? deck.cards[shown.position] : undefined;
   const cardCount = deck?.cards.length ?? 0;
-
-  useEffect(() => {
-    if (card) {
-      track({
-        name: "Warm-Up Shown",
-        properties: {
-          at: Date.now(),
-          card_count: cardCount,
-          deck_id: deckId,
-          goal_id: eventGoalId,
-          surface,
-        },
-      });
-    }
-  }, [card, cardCount, deckId, eventGoalId, surface, track]);
 
   // Focus follows the learner: to the way to the next card after a guess (the question when
   // there's none), and to the new question after it.
@@ -138,7 +133,33 @@ export function useWaitQuiz({
     setDealt({ pickedId: null, position: shown.position + 1 });
   };
 
-  return { card, hasNext: shown.position + 1 < cardCount, next, pick, pickedId: shown.pickedId };
+  const markShown = () => {
+    if (shownDeckId.current === deck.id) {
+      return;
+    }
+
+    shownDeckId.current = deck.id;
+
+    track({
+      name: "Warm-Up Shown",
+      properties: {
+        at: Date.now(),
+        card_count: cardCount,
+        deck_id: deck.id,
+        goal_id: eventGoalId,
+        surface,
+      },
+    });
+  };
+
+  return {
+    card,
+    hasNext: shown.position + 1 < cardCount,
+    next,
+    pick,
+    pickedId: shown.pickedId,
+    shown: markShown,
+  };
 }
 
 /**
@@ -234,6 +255,20 @@ export function WaitQuizCard({
   const questionId = useId();
   const { card, pick, pickedId } = quiz;
   const answered = pickedId !== null;
+  const markShown = useEffectEvent(quiz.shown);
+
+  // Drawn here, the card is on screen once the tab is.
+  useEffect(() => {
+    const show = () => {
+      if (document.visibilityState === "visible") {
+        markShown();
+      }
+    };
+
+    show();
+    document.addEventListener("visibilitychange", show);
+    return () => document.removeEventListener("visibilitychange", show);
+  }, []);
 
   // A hold takes the way to the next card away, so focus on it stays in the card; a main button
   // that takes lost focus first (the session's Start) keeps it.
