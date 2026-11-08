@@ -42,19 +42,21 @@ function waitForResearch({
   });
 }
 
-function waitForAnswers({
+async function waitForAnswers({
   goalId,
   scope,
 }: {
   goalId: string;
   scope: CurriculumScope;
 }): Promise<GoalCurriculumInputs | null> {
-  return repeatUntil({
+  await repeatUntil({
     done: (inputs) => !inputs || !isAwaitingGraphAnswers({ inputs, scope }),
-    run: () => beginGoalCurriculumStep({ goalId, scope }),
+    run: () => loadGoalCurriculumStep(goalId),
     times: MAX_ANSWERS_POLLS,
     wait: () => sleep(ANSWERS_POLL),
   });
+
+  return beginGoalCurriculumStep({ goalId, scope });
 }
 
 export function isBuiltBeforeResearch({

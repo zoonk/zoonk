@@ -4,7 +4,7 @@ import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learne
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { type CurriculumScope } from "./curriculum-scope";
 import { type GoalCurriculumInputs, loadGoalCurriculumInputs } from "./goal-curriculum-inputs";
-import { getGraphQuestions, isAwaitingGraphAnswers } from "./shared-graph-prompt";
+import { getGraphQuestions } from "./shared-graph-prompt";
 
 /** Internal workflow bridge: the goal comes from its authorized run. */
 export async function beginGoalCurriculum({
@@ -18,10 +18,6 @@ export async function beginGoalCurriculum({
 
   if (!inputs) {
     return null;
-  }
-
-  if (isAwaitingGraphAnswers({ inputs, scope })) {
-    return inputs;
   }
 
   const curriculumQuestions = getGraphQuestions({ inputs, scope });

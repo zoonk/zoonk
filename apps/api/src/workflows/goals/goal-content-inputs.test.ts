@@ -4,6 +4,7 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
+import { saveAnswerInputs } from "../../../../../packages/core/src/view-models/onboarding/_utils/save-onboarding-answer";
 import { waitForGraphInputs } from "./goal-content-inputs";
 
 describe(waitForGraphInputs, () => {
@@ -41,6 +42,35 @@ describe(waitForGraphInputs, () => {
     },
   );
 
+  it("owes a rebuild for a late answer after the gate timed out", async () => {
+    const user = await userFixture();
+
+    const goal = await goalFixture({
+      details: { answered: [], onboardingId: crypto.randomUUID() },
+      planRevealedAt: null,
+      userId: user.id,
+    });
+
+    const initial = await loadGoalCurriculumInputs(goal.id);
+
+    if (!initial) {
+      throw new Error("Expected curriculum inputs");
+    }
+
+    await waitForGraphInputs({
+      initial,
+      scope: { generalGoal: "Accounting", language: "en", ownerId: null, targetLanguage: null },
+    });
+
+    expect(sleep).toHaveBeenCalledTimes(59);
+    const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    await saveAnswerInputs({ goal: saved, input: { purpose: "deep", question: "purpose" } });
+
+    await expect(prisma.followUp.findMany({ where: { userId: user.id } })).resolves.toMatchObject([
+      { input: { goalId: goal.id }, kind: "rebuildGoalCurriculum" },
+    ]);
+  });
+
   it("waits for a private learn graph's role and follow-ups, then uses those answers", async () => {
     const user = await userFixture();
 
@@ -60,6 +90,10 @@ describe(waitForGraphInputs, () => {
     }
 
     vi.mocked(sleep).mockImplementationOnce(async () => {
+      await expect(
+        prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
+      ).resolves.toMatchObject({ curriculumQuestions: [] });
+
       await prisma.goal.update({
         data: {
           details: {

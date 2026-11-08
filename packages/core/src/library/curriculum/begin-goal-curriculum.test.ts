@@ -117,26 +117,6 @@ describe(beginGoalCurriculum, () => {
     },
   );
 
-  it("does not owe another graph while its gate still waits for the first answers", async () => {
-    const user = await userFixture();
-    mockSession(user.id);
-
-    const goal = await goalFixture({
-      details: { answered: [], onboardingId: crypto.randomUUID(), purpose: "overview" },
-      planRevealedAt: null,
-      userId: user.id,
-    });
-
-    await beginGoalCurriculum({ goalId: goal.id, scope: { ownerId: null } });
-
-    await answerOnboardingQuestion({
-      goalId: goal.id,
-      input: { purpose: "work", question: "purpose" },
-    });
-
-    await expect(listOwed(user.id)).resolves.toStrictEqual([]);
-  });
-
   it("owes a material exam's graph again when its date changes the lesson budget", async () => {
     const user = await userFixture();
     mockSession(user.id);
