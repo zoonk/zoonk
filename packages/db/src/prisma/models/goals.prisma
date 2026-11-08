@@ -78,6 +78,10 @@ model Goal {
   primaryCourse         Course?                @relation(fields: [primaryCourseId], references: [id], onDelete: SetNull)
   warmUpId              String?                @map("warm_up_id") @db.Uuid
   warmUp                WarmUp?                @relation(fields: [warmUpId], references: [id], onDelete: SetNull)
+  /// A learn goal's first lesson, picked before its plan so the learner can start it sooner. Only
+  /// the goal's run writes it, once; every retry and client opens this lesson.
+  openingLessonId       String?                @map("opening_lesson_id") @db.Uuid
+  openingLesson         Lesson?                @relation(fields: [openingLessonId], references: [id], onDelete: SetNull)
   /// Written only by research, never from `details`, so a brand can rely on it.
   productId             String?                @map("product_id") @db.Uuid
   product               Product?               @relation(fields: [productId], references: [id], onDelete: SetNull)
@@ -118,6 +122,7 @@ model Goal {
   @@index([examBlueprintId])
   @@index([primaryCourseId])
   @@index([warmUpId])
+  @@index([openingLessonId])
   @@index([productId])
   @@index([productReleaseId])
   @@map("goals")
