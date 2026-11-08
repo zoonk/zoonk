@@ -186,7 +186,6 @@ class AppContainer private constructor(
                     voiceFiles.forget(it)
                 }
             },
-            leaving = { reminders.leave(it) },
             clearCredentialState = { clearCredentialState(context) },
             restoreKeys = if (previewAccess == null) DeviceRestoreKeys(context) else RestoreKeys.None,
         )

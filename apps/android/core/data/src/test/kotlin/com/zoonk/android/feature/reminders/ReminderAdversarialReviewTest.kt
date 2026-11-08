@@ -111,11 +111,6 @@ private class ReviewReminderApi : StudyReminderApi {
             saved[session.accountId] = it
         }
     }
-
-    override suspend fun removePhone(
-        session: AuthenticatedSession,
-        token: String,
-    ) = saved.getValue(session.accountId)
 }
 
 private class ReviewPush : PushAddress {
@@ -178,7 +173,7 @@ class ReminderAdversarialReviewTest {
             // What ReminderMessagingService.onRegistered does with each callback.
             api.offline = true
             store.follow("fid-new")
-            assertEquals("Sign-out must still remove the token the server has", "fid-old", push.token)
+            assertEquals("A failed upload keeps the token the server has, so the next callback tries again", "fid-old", push.token)
             api.offline = false
             store.follow("fid-new")
 

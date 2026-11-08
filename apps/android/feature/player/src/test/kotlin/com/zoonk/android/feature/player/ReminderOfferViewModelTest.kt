@@ -56,11 +56,6 @@ class ReminderOfferViewModelTest {
                     session: AuthenticatedSession,
                     phone: StudyReminderPhone,
                 ): StudyReminder = error("Not used")
-
-                override suspend fun removePhone(
-                    session: AuthenticatedSession,
-                    token: String,
-                ): StudyReminder = error("Not used")
             }
         val push =
             object : PushAddress {

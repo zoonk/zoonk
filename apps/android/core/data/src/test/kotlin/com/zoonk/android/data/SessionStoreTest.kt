@@ -27,7 +27,7 @@ class SessionStoreTest {
     private val changes = mutableListOf<Pair<String?, String?>>()
     private var credentialStateClears = 0
 
-    private fun TestScope.store(leaving: suspend (AuthenticatedSession) -> Unit = {}): SessionStore {
+    private fun TestScope.store(): SessionStore {
         val main = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
         val drafts = DraftStore(folder.root, main, io = StandardTestDispatcher(testScheduler))
         return SessionStore(
@@ -36,7 +36,6 @@ class SessionStoreTest {
             drafts,
             onChange = { previous, next -> changes += previous?.accountId to next?.accountId },
             clearCredentialState = { credentialStateClears++ },
-            leaving = leaving,
         )
     }
 
@@ -131,28 +130,6 @@ class SessionStoreTest {
             assertNull(credentials.stored)
             assertEquals(1, credentialStateClears)
             assertEquals(ANA to null, changes.last())
-        }
-
-    @Test
-    fun signOutLetsThePhoneGoWithTheTokenStillValidAndStaysWhenItCant() =
-        runTest {
-            val left = mutableListOf<Pair<String, List<String>>>()
-            var failure: ApiError? = ApiError.Network
-            val sessions =
-                store { session ->
-                    failure?.let { throw ApiException(it) }
-                    left += session.bearerToken to api.revoked.toList()
-                }.apply { restore() }
-            sessions.signIn { "token-a" }
-
-            assertEquals(SignOutResult.Failed(ApiError.Network), sessions.signOut())
-            assertEquals(ANA, sessions.current?.accountId)
-            assertEquals(emptyList<String>(), api.revoked)
-
-            failure = null
-            assertEquals(SignOutResult.SignedOut, sessions.signOut())
-            assertEquals(listOf("token-a" to emptyList<String>()), left)
-            assertEquals(listOf("token-a"), api.revoked)
         }
 
     @Test

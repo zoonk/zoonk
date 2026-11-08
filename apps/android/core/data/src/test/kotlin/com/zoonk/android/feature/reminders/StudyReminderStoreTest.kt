@@ -76,14 +76,6 @@ private class FakeReminderApi(
         saved = saved.copy(push = saved.push.copy(phone = StudyReminderPushPhone(phone.label, phone.platform, phone.token)))
         return saved
     }
-
-    override suspend fun removePhone(
-        session: AuthenticatedSession,
-        token: String,
-    ): StudyReminder {
-        calls += "remove $token"
-        return saved
-    }
 }
 
 private class FakePush(
@@ -168,16 +160,6 @@ class StudyReminderStoreTest {
 
             assertTrue(result is MutationResult.Failed)
             assertEquals(listOf("select fid-1 Pixel 9 android pt"), api.calls)
-        }
-
-    @Test
-    fun `signing out removes this phone only once push was set up on it`() =
-        runTest {
-            store(FakePush(token = null)).leave(ana)
-            assertEquals(emptyList<String>(), api.calls)
-
-            store(FakePush(token = "fid-1")).leave(ana)
-            assertEquals(listOf("remove fid-1"), api.calls)
         }
 
     @Test
