@@ -88,6 +88,7 @@ export function AimChoices({
 export function AimPicker({
   children,
   description,
+  onOpen,
   onPick,
   options,
   trigger,
@@ -96,6 +97,7 @@ export function AimPicker({
   /** What the trigger shows; `trigger` is the element it's drawn as. */
   children: React.ReactNode;
   description: string | null;
+  onOpen?: () => void;
   /** False when it couldn't be saved, which keeps the choices open. */
   onPick: (aim: LanguageAim) => Promise<boolean>;
   options: readonly AimOption[];
@@ -108,6 +110,14 @@ export function AimPicker({
   const [failed, setFailed] = useState(false);
   const [isSaving, startSaving] = useTransition();
   const title = t("How far do you want to go?");
+
+  const changeOpen = (next: boolean) => {
+    setOpen(next);
+
+    if (next) {
+      onOpen?.();
+    }
+  };
 
   const pick = (aim: LanguageAim) => {
     if (aim === value) {
@@ -135,7 +145,7 @@ export function AimPicker({
 
   if (isPhone) {
     return (
-      <Drawer onOpenChange={setOpen} open={open}>
+      <Drawer onOpenChange={changeOpen} open={open}>
         <DrawerTrigger render={trigger}>{children}</DrawerTrigger>
         <DrawerPopup>
           <DrawerHeader>
@@ -149,7 +159,7 @@ export function AimPicker({
   }
 
   return (
-    <Popover onOpenChange={setOpen} open={open}>
+    <Popover onOpenChange={changeOpen} open={open}>
       <PopoverTrigger render={trigger}>{children}</PopoverTrigger>
       <PopoverContent align="end" className="w-96 gap-3">
         <PopoverHeader>

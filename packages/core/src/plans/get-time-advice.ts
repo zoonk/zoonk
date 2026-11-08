@@ -92,14 +92,14 @@ function getSearchWeekdayMinutes({
 }
 
 function withStudyWeek({
+  aim,
   context,
   dailyMinutes,
   fullCourse = false,
   input,
-}: {
+}: Pick<PlanTimeAdviceInput, "aim" | "fullCourse"> & {
   context: PlanContext;
   dailyMinutes: number;
-  fullCourse?: boolean;
   input: PlanTimeToCoverInput;
 }): PlanState {
   const schedule = getScheduleOperations({
@@ -109,7 +109,11 @@ function withStudyWeek({
 
   const result = applyPlanOperations({
     goalKind: context.goal.kind,
-    operations: fullCourse ? [...schedule, { fullCourse, kind: "setFullCourse" }] : schedule,
+    operations: [
+      ...schedule,
+      ...(fullCourse ? [{ fullCourse, kind: "setFullCourse" } as const] : []),
+      ...(aim && context.goal.kind === "language" ? [{ aim, kind: "setAim" } as const] : []),
+    ],
     state: context.state,
     today: context.today,
   });
@@ -226,7 +230,7 @@ export async function getPlanTimeAdvice({
       context,
       mode: "forced",
       pace: "saved",
-      state: withStudyWeek({ context, dailyMinutes, fullCourse, input: week }),
+      state: withStudyWeek({ aim: input.aim, context, dailyMinutes, fullCourse, input: week }),
     }),
     loadGoalDateKind(context.goal),
   ]);

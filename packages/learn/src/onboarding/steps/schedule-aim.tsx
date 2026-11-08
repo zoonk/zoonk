@@ -2,12 +2,10 @@
 
 import { type LanguageAim, type LanguageAimView } from "@zoonk/core/language/aims";
 import { Button } from "@zoonk/ui/components/button";
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
-import { getTodayInZone } from "../../_utils/iso-date";
 import { useFormatDuration } from "../../_utils/time-format";
-import { getAimEndDate } from "../../language-aim/aim-end-date";
 import { AimName, AimPicker } from "../../language-aim/aim-picker";
+import { useAimEnds } from "../../language-aim/use-aim-ends";
 import { useAimWords } from "../../language-aim/use-aim-words";
 
 /** The aim's own choices, so a learner past their aim isn't told when they'll reach it. */
@@ -36,7 +34,7 @@ export function ScheduleAim({
   level,
   minutes,
   onChangeAim,
-  timeZone,
+  readEnd,
 }: {
   /** When the plan reaches the aim at the time shown; null while it isn't known. */
   endDate: string | null;
@@ -44,19 +42,19 @@ export function ScheduleAim({
   level: unknown;
   minutes: number | null;
   onChangeAim: (aim: LanguageAim) => Promise<boolean>;
-  timeZone: string | null;
+  /** When another aim would be reached at the time shown, as the line under it would say once picked. */
+  readEnd: (aim: LanguageAim) => Promise<string | null>;
 }) {
   const t = useExtracted();
   const words = useAimWords();
   const fromLevel = useFromLevel();
-  const today = getTodayInZone({ now: useMountTime(), timeZone });
+  const { ask, ends } = useAimEnds(readEnd);
 
   if (!languageAim?.aim || languageAim.choices.length === 0) {
     return null;
   }
 
   const { aim, choices } = languageAim;
-  const current = choices.find((choice) => choice.aim === aim)?.hours ?? 0;
 
   return (
     <div className="flex items-center gap-3 border-y py-3">
@@ -69,11 +67,12 @@ export function ScheduleAim({
 
       <AimPicker
         description={minutes === null ? null : fromLevel({ level, minutes })}
+        onOpen={() => ask(choices.flatMap((choice) => (choice.aim === aim ? [] : [choice.aim])))}
         onPick={onChangeAim}
         options={choices.map((choice) => ({
           aim: choice.aim,
           detail: words.left({
-            endDate: getAimEndDate({ current, endDate, hours: choice.hours, today }),
+            endDate: choice.aim === aim ? endDate : (ends[choice.aim] ?? null),
             hours: choice.hours,
           }),
         }))}

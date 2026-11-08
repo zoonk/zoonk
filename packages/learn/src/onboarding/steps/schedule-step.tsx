@@ -303,7 +303,7 @@ export function ScheduleStep({
           level={goal.details.level}
           minutes={schedule.minutes}
           onChangeAim={onChangeAim}
-          timeZone={goal.timezone}
+          readEnd={schedule.readAimEnd}
         />
         {/* The days decide the time, and what the time covers arrives last, so nothing above it moves. */}
         <ScheduleWeek recommendedMinutes={recommendedMinutes} schedule={schedule} />

@@ -2,6 +2,7 @@
 
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { getDaySplit } from "@zoonk/core/goals/daily-budget";
+import { type LanguageAim } from "@zoonk/core/language/aims";
 import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { useState } from "react";
@@ -160,8 +161,17 @@ export function useSchedule({
     weekend: week.weekend,
   });
 
+  const askAdvice = (askedAim?: LanguageAim) =>
+    actions.getTimeAdvice({ ...asked, aim: askedAim, dailyMinutes: minutes ?? recommendedMinutes });
+
+  /** When another aim would be reached at the week shown, as the line would say once it's picked. */
+  const readAimEnd = async (other: LanguageAim) => {
+    const answer = await askAdvice(other);
+    return answer?.ready ? answer.endDate : null;
+  };
+
   const timeAdvice = usePlanAnswer({
-    ask: () => actions.getTimeAdvice({ ...asked, dailyMinutes: minutes ?? recommendedMinutes }),
+    ask: () => askAdvice(),
     enabled:
       hasDays &&
       asksAboutTime({ dated, found: found.found, fullCourse: studiesEverything, minutes }),
@@ -206,6 +216,7 @@ export function useSchedule({
     line,
     minutes,
     picked,
+    readAimEnd,
     setFullCourse,
     setPicked,
     shown: getShownAnswer({
