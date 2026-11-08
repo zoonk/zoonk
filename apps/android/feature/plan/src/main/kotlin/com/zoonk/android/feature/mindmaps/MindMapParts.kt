@@ -260,7 +260,7 @@ internal fun FollowWhileOnItsWay(
 ) {
     if (!shown.onItsWay) return
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    LaunchedEffect(lifecycle, chapterId, shown) {
+    LaunchedEffect(maps, lifecycle, chapterId, shown) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { maps.follow(chapterId, shown) }
     }
 }

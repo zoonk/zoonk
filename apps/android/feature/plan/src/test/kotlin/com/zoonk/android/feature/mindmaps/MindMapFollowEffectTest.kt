@@ -8,6 +8,8 @@ import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -167,6 +169,55 @@ class MindMapFollowEffectTest {
                 buyPlus(store, "failed")
 
                 assertEquals(MindMapShown.Failed, rendered)
+            }
+        }
+
+    @Test
+    fun aRowShownWithAnotherGoalsMapsFollowsWithThem() =
+        runTest(dispatcher) {
+            val asked = mutableListOf<ChapterKey>()
+            val other = ChapterKey(UUID.randomUUID(), key.chapterId)
+            val polled =
+                object : MindMapApi by fake {
+                    override suspend fun status(
+                        session: AuthenticatedSession,
+                        key: ChapterKey,
+                    ): ChapterMindMapStatus.Status {
+                        asked += key
+                        awaitCancellation()
+                    }
+                }
+            val scope = CoroutineScope(SupervisorJob() + dispatcher)
+            val store = MindMapStore(polled, AppCache(FakeSession(ana), scope))
+            var maps by mutableStateOf(MindMapViewModel(store, ana, key.goalId, { ana }, io = dispatcher))
+            val clock = BroadcastFrameClock()
+            val recomposer = Recomposer(backgroundScope.coroutineContext + clock)
+            backgroundScope.launch(clock) { recomposer.runRecomposeAndApplyChanges() }
+            val composition = Composition(NoNodes, recomposer)
+
+            try {
+                // The Mind maps page keeps a row by its chapter, which two goals can share, when the goal changes.
+                composition.setContent {
+                    CompositionLocalProvider(
+                        LocalLifecycleOwner provides Started,
+                    ) { FollowWhileOnItsWay(maps, key.chapterId, MindMapShown.Drawing) }
+                }
+                runCurrent()
+                advanceTimeBy(MindMapShown.Drawing.pollEvery.inWholeMilliseconds)
+                runCurrent()
+
+                maps = MindMapViewModel(store, ana, other.goalId, { ana }, io = dispatcher)
+                Snapshot.sendApplyNotifications()
+                runCurrent()
+                clock.sendFrame(currentTime * NANOS_PER_MILLI + 1)
+                advanceTimeBy(MindMapShown.Drawing.pollEvery.inWholeMilliseconds)
+                runCurrent()
+
+                assertEquals(listOf(key, other), asked)
+            } finally {
+                composition.dispose()
+                recomposer.cancel()
+                scope.cancel()
             }
         }
 
