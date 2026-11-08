@@ -1,7 +1,8 @@
 "use client";
 
-import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
+import { type GoalWarmUp, type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { type ReactNode, createContext, use, useEffect, useState } from "react";
+import { type GenerationRun } from "../generation/generation-run";
 
 type ReadDeck = (warmUpId: string) => Promise<WarmUpDeck | null>;
 
@@ -9,6 +10,8 @@ const reading = new Map<string, Promise<WarmUpDeck | null>>();
 const read = new Map<string, WarmUpDeck>();
 
 const PageDeckContext = createContext<WarmUpDeck | null>(null);
+
+const ClaimedDeckContext = createContext<GoalWarmUp | null>(null);
 
 /**
  * The goal's deck read with the page, so a wait the page opens on draws its card from the first
@@ -22,6 +25,17 @@ export function PageDeckProvider({
   deck: WarmUpDeck | null;
 }) {
   return <PageDeckContext value={deck}>{children}</PageDeckContext>;
+}
+
+/** The goal's deck as the onboarding read last reported it: on its way (`writing`) or `ready`. */
+export function ClaimedDeckProvider({
+  children,
+  warmUp,
+}: {
+  children: ReactNode;
+  warmUp: GoalWarmUp | null;
+}) {
+  return <ClaimedDeckContext value={warmUp}>{children}</ClaimedDeckContext>;
 }
 
 /**
@@ -60,10 +74,13 @@ function preloadDeck({
   return next;
 }
 
-/** The stream's deck, or the page's until the stream names one. */
+/** A ready deck to read: the stream's, the onboarding read's once ready, or the page's. */
 function useDeckId(warmUpId: string | undefined) {
   const page = use(PageDeckContext);
-  return { id: warmUpId ?? page?.id, page };
+  const claimed = use(ClaimedDeckContext);
+  const ready = claimed?.status === "ready" ? claimed.id : undefined;
+
+  return { claimed, id: warmUpId ?? ready ?? page?.id, page };
 }
 
 /** While the learner answers questions, so the quiz is there as soon as a wait opens. */
@@ -83,8 +100,13 @@ export function usePreloadedDeck({
   }, [id, page, readDeck]);
 }
 
-export function useDeck({ readDeck, warmUpId }: { readDeck: ReadDeck; warmUpId?: string }) {
-  const { id, page } = useDeckId(warmUpId);
+/**
+ * The goal's deck once it's read, and whether it's still `coming`: claimed or named but not read
+ * yet, while the goal's run, which writes it, goes on and hasn't said it won't come. A wait shows
+ * the quiz's skeleton meanwhile.
+ */
+export function useDeck({ readDeck, run }: { readDeck: ReadDeck; run: GenerationRun }) {
+  const { claimed, id, page } = useDeckId(run.warmUpId);
 
   const [deck, setDeck] = useState(() =>
     id ? (read.get(id) ?? (page?.id === id ? page : null)) : null,
@@ -108,5 +130,11 @@ export function useDeck({ readDeck, warmUpId }: { readDeck: ReadDeck; warmUpId?:
     };
   }, [id, page, readDeck]);
 
-  return deck?.id === id ? deck : null;
+  const shown = deck?.id === id ? deck : null;
+
+  const going =
+    (run.status === "following" || run.status === "waiting") &&
+    run.steps.warmUpFailed !== "completed";
+
+  return { coming: !shown && (claimed !== null || id !== undefined) && going, deck: shown };
 }

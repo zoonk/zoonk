@@ -2,6 +2,7 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { warmUpFixture } from "@zoonk/testing/fixtures/warm-ups";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
@@ -69,5 +70,33 @@ describe(getOnboarding, () => {
 
     await learningEventFixture({ contentIds: { lessonId: lesson.id }, userId: learner.id });
     await expect(readFirstLesson(goal.id)).resolves.toMatchObject({ status: "done" });
+  });
+
+  it("reports the goal's deck as on its way once claimed, ready once saved, and none once failed", async () => {
+    const [user, writing, ready, failed] = await Promise.all([
+      userFixture(),
+      warmUpFixture({ cards: undefined, status: "writing" }),
+      warmUpFixture(),
+      warmUpFixture({ status: "failed" }),
+    ]);
+
+    const goals = await Promise.all(
+      [writing.id, ready.id, failed.id, null].map((warmUpId) =>
+        goalFixture({ details: { answered: [] }, userId: user.id, warmUpId }),
+      ),
+    );
+
+    mockSession(user.id);
+
+    const reads = await Promise.all(goals.map((goal) => getOnboarding({ goalId: goal.id })));
+
+    expect(
+      reads.map((read) => (read.status === "ready" ? read.onboarding.warmUp : "unread")),
+    ).toStrictEqual([
+      { id: writing.id, status: "writing" },
+      { id: ready.id, status: "ready" },
+      null,
+      null,
+    ]);
   });
 });

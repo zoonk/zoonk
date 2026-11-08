@@ -236,7 +236,7 @@ function ScreenWait({
   screen: PlanWaitScreen;
 }) {
   const hold = useReadyHold(ready);
-  const deck = useDeck({ readDeck: readWarmUp, warmUpId: run.warmUpId });
+  const { coming, deck } = useDeck({ readDeck: readWarmUp, run });
   const aside = useOnboardingHost()?.kind === "page";
   // The ready screen counts while a learner who played holds it.
   useOnboardingWait(screen === "notice" ? "examNotice" : "planWait", hold.status !== "go");
@@ -246,7 +246,7 @@ function ScreenWait({
   }
 
   return (
-    <WaitScreen aside={aside} deck={deck} hold={hold} surface="planWait">
+    <WaitScreen aside={aside} coming={coming} deck={deck} hold={hold} surface="planWait">
       <PlanWaitPage
         {...props}
         holding={hold.status === "hold"}

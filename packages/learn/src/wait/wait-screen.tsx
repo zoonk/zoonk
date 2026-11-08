@@ -67,6 +67,7 @@ export function useWaitBack(): (() => void) | null {
 export function WaitScreen({
   aside = false,
   children,
+  coming = false,
   deck,
   goalId,
   hold,
@@ -74,6 +75,8 @@ export function WaitScreen({
 }: {
   aside?: boolean;
   children: ReactNode;
+  /** A deck is on its way: the quiz's skeleton holds its place, so the page never switches when it lands. */
+  coming?: boolean;
   deck: WarmUpDeck | null;
   /** Outside onboarding, which knows its goal, the goal whose deck this is. */
   goalId?: string | null;
@@ -84,6 +87,7 @@ export function WaitScreen({
   const questionRef = useRef<HTMLHeadingElement>(null);
 
   const quiz = useWaitQuiz({
+    coming,
     deck,
     goalId,
     onGuess: hold.engage,

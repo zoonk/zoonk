@@ -54,16 +54,18 @@ export type WaitQuizRefs = {
 
 /**
  * The card being played, kept by the wait screen so its other view and its bar act on the same one.
- * Null while there's no card: no deck yet, or every card was guessed in this tab. Undefined while
- * the deck is known but its card isn't yet: the server can't know the tab's place in the deck.
+ * Null while there's no card: no deck coming, or every card was guessed in this tab. Undefined while
+ * a deck is on its way, or known but its card isn't yet: the server can't know the tab's place.
  */
 export function useWaitQuiz({
+  coming,
   deck,
   goalId,
   onGuess,
   refs,
   surface,
 }: {
+  coming: boolean;
   deck: WarmUpDeck | null;
   goalId?: string | null;
   onGuess: () => void;
@@ -94,7 +96,7 @@ export function useWaitQuiz({
   });
 
   if (!deck) {
-    return null;
+    return coming ? undefined : null;
   }
 
   if (!shown) {

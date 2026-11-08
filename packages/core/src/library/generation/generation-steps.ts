@@ -15,6 +15,7 @@ const GOAL_CONTENT_STEPS = [
   "joinRunningGoal",
   "understandGoal",
   "warmUpReady",
+  "warmUpFailed",
   "readExamNotice",
   "buildSkillGraph",
   "saveSkills",

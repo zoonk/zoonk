@@ -214,10 +214,10 @@ export function PlacementWaiting({
 }) {
   const patient = usePatience();
   const hold = useReadyHold(questionsReady);
-  const deck = useDeck({ readDeck: readWarmUp, warmUpId: run?.warmUpId });
   const aside = useOnboardingHost()?.kind === "page";
   useOnboardingWait("placementWait", hold.status !== "go");
   const shown = getWaitRun({ poll, run: run ?? (buildFailed ? FAILED_RUN : WAITING_RUN) });
+  const { coming, deck } = useDeck({ readDeck: readWarmUp, run: shown });
   const showQuestions = useEffectEvent(onQuestions);
   const holding = hold.status === "hold";
 
@@ -228,7 +228,7 @@ export function PlacementWaiting({
   }, [hold.status]);
 
   return (
-    <WaitScreen aside={aside} deck={deck} hold={hold} surface="placementWait">
+    <WaitScreen aside={aside} coming={coming} deck={deck} hold={hold} surface="placementWait">
       <PlacementWaitPage
         canSkip={!holding && (patient || shown.status === "failed")}
         holding={holding}

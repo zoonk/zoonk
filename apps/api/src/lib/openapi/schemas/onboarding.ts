@@ -172,6 +172,23 @@ export const onboardingResponseSchema = z
         description:
           "The daily times the time question offers, in order, `recommendedMinutes` among them, each with how it splits among the goals typed together",
       }),
+    warmUp: z
+      .object({
+        id: uuidSchema().meta({
+          description: "Read its cards at GET /v1/warm-ups/{warmUpId} once `ready`",
+        }),
+        status: z
+          .enum(["ready", "writing"])
+          .meta({
+            description:
+              "`writing` once a run claimed the deck: open a wait on the quiz with a card skeleton and fill it when the run's `warmUpReady` names this deck. `ready` once its cards can be read",
+          }),
+      })
+      .nullable()
+      .meta({
+        description:
+          "The goal's quiz deck for its waits. Null when none is coming (a private goal, or a deck that failed): open a wait on its progress. A deck that fails while a wait shows its skeleton turns the wait to its progress, the one switch it makes by itself",
+      }),
   })
   .meta({ id: "Onboarding" }) satisfies z.ZodType<OnboardingView>;
 
