@@ -49,9 +49,11 @@ export function listThisWeekItems({
 
 export function getPendingOrder({
   finished,
+  frozen,
   queue,
 }: {
   finished: readonly ExistingPlanItem[];
+  frozen: readonly ExistingPlanItem[];
   queue: readonly QueueUnit[];
 }) {
   const finishedKeys = new Set(finished.map((item) => getItemKey(item)));
@@ -59,7 +61,7 @@ export function getPendingOrder({
   return {
     finishedKeys,
     ordered: withoutRepeatedTitles({
-      kept: finished,
+      kept: [...finished, ...frozen],
       units: queue.filter((unit) => !finishedKeys.has(unit.key)),
     }),
     unitsByKey: new Map(queue.map((unit) => [unit.key, unit])),

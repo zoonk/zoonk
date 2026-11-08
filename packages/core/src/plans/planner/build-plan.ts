@@ -192,7 +192,7 @@ function planGoal({
     thisWeek,
   } = splitExistingItems({ input, keepsRest, landedSkillIds: landedUnits ?? undefined, queue });
 
-  const { finishedKeys, ordered, unitsByKey } = getPendingOrder({ finished, queue });
+  const { finishedKeys, ordered, unitsByKey } = getPendingOrder({ finished, frozen, queue });
   const start = frozen.length > 0 ? addDays(getEndOfWeek(input.today), 1) : getOpenStart(input);
   const days = createDays({ input, planStart });
 
