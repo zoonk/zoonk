@@ -36,10 +36,8 @@ class MindMapViewModel(
     val requests: StateFlow<Map<UUID, MindMapLocal>> = locals.asStateFlow()
 
     private val stopWatching =
-        store.watchReads(goalId) { chapterId, started ->
-            locals.update { all ->
-                all.filterNot { (id, local) -> (chapterId == null || id == chapterId) && !local.pending && local.since < started }
-            }
+        store.watchReads(goalId) { chapterIds, started ->
+            locals.update { all -> all.filterNot { (id, local) -> id in chapterIds && !local.pending && local.since < started } }
         }
 
     private val saved = MutableStateFlow<PictureSave?>(null)

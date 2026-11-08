@@ -231,6 +231,23 @@ class MindMapViewModelTest {
         }
 
     @Test
+    fun aListClearsOnlyTheRefusalsOfTheChaptersItLists() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            store.chapter[key].load()
+            store.list[goalId].load()
+            api.create = { throw ApiException(ApiError.Unavailable, "USAGE_LIMIT_REACHED", 403, refusal("free", "day")) }
+            maps.create(chapterId)
+            advanceUntilIdle()
+
+            // A plan change dropped this chapter from the list while its own read stays.
+            api.mindMaps = { goalMindMaps(listOf(mapJson(4, "Electricity", "drawing"))) }
+            store.list[goalId].refresh()
+
+            assertEquals(MindMapShown.Refused, shownMindMap(store.chapterShown(), maps.requests.value[chapterId]))
+        }
+
+    @Test
     fun aRefusalOverTheDaysAiSpendIsWordedAsHelpNotMaps() =
         runTest(dispatcher) {
             val (maps) = setUp()
