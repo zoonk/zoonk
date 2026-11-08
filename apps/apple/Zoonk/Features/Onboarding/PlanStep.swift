@@ -535,6 +535,20 @@ private struct PlanReveal: View {
   @State private var slotAnswer: PlanSlotAnswer?
 
   var body: some View {
+  /// The moment plays the first time this device shows the reveal before its action is pressed;
+  /// opened again, after a restart too, the reveal draws its end, still.
+  @State private var playsMoment: Bool
+
+  init(view: GoalOnboarding, plan: GoalPlan) {
+    self.view = view
+    self.plan = plan
+    _playsMoment = State(
+      initialValue: !view.planRevealed && !UserDefaults.standard.bool(forKey: Self.momentKey(view)))
+  }
+
+  private static func momentKey(_ view: GoalOnboarding) -> String {
+    "planReveal.momentPlayed.\(view.goal.id)"
+  }
     let goal = learnerGoal
     let context = PlanContext(
       goal: goal, plan: plan, adjust: { adjusting = $0 }, show: { sheet = $0 })
@@ -564,10 +578,12 @@ private struct PlanReveal: View {
       .onboardingColumn()
     }
     .loads(syllabus, day, refreshable: false)
-    // The moment plays once, the first time the reveal shows before the learner pressed its action;
-    // a revisit shows its end, still.
-    .celebratesOnce(id: "planReveal:\(goal.id)")
-    .environment(\.celebrates, !view.planRevealed)
+    .environment(\.celebrates, playsMoment)
+    .onAppear {
+      if playsMoment {
+        UserDefaults.standard.set(true, forKey: Self.momentKey(view))
+      }
+    }
     .onDisappear { openingToday?.cancel() }
     .planSheets($sheet, context: context, syllabus: syllabus.value, slotAnswer: $slotAnswer)
     .sheet(item: $adjusting) { section in
