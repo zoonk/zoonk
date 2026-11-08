@@ -45,6 +45,7 @@ export async function prepareItemSetStep({
       level: skill.level ?? "intermediate",
       name: skill.name,
     })),
+    targetLanguage: first.targetLanguage,
     usedTitles,
   });
 
@@ -53,6 +54,7 @@ export async function prepareItemSetStep({
     format,
     language: first.language,
     optionCount: format === "multipleChoice" ? (first.exam?.optionCount ?? null) : null,
+    optionLanguage: first.targetLanguage,
     provenance,
     skillIds: skills.map((skill) => skill.id),
     written: data,

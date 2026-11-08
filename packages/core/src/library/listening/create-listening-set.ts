@@ -83,6 +83,7 @@ export async function createListeningSet({
     })),
     kind: "audio",
     language,
+    optionLanguage: scriptLanguage,
     provenance: written.provenance,
   });
 

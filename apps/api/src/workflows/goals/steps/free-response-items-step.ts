@@ -32,6 +32,7 @@ export async function prepareFreeResponseItemStep({
     language: skill.language,
     level: skill.level ?? "intermediate",
     skill: { description: skill.description, name: skill.name },
+    targetLanguage: skill.targetLanguage,
   });
 
   const context = toContentAnalytics({ analytics, scope: skill, workflowRunId });

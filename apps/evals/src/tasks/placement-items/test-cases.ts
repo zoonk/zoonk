@@ -298,4 +298,26 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
       targetLanguage: "en",
     },
   },
+  {
+    expectations: `Placement questions for a Brazilian starting Italian, two everyday situation skills at A1 to A2 (beginner). Every question practices Italian itself: what someone says and the reply options are in natural Italian at about A1 to A2, while the setup, the question, reasons and feedback are in Brazilian Portuguese. The situations happen in Italy: the people have Italian names, any city or town named is Italian, and any money is in euros. A question that sets the learner in a Brazilian city (Santarém, Maringá, São Luís) or pays in reais fails. Each skill also has one typed question whose answer is written in Italian.`,
+    id: "pt-it-language-beginner-placement-in-italy",
+    userInput: {
+      ...LANGUAGE_PLACEMENT_COUNTS,
+      language: "pt",
+      quickFormat: "multipleChoice",
+      skills: [
+        {
+          description: "Dizer seu nome, de onde você é e perguntar o nome da outra pessoa.",
+          level: "beginner",
+          name: "Apresentar-se a alguém novo",
+        },
+        {
+          description: "Pedir um café ou um lanche no balcão e perguntar quanto custa.",
+          level: "beginner",
+          name: "Pedir algo em um bar",
+        },
+      ],
+      targetLanguage: "it",
+    },
+  },
 ];

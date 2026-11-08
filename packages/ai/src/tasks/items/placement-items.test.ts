@@ -2,6 +2,7 @@ import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
+import { formatCast } from "../_utils/cast";
 import { withItemRules } from "./item-rules";
 import { generatePlacementItems } from "./placement-items";
 import type * as Ai from "ai";
@@ -118,5 +119,24 @@ describe(generatePlacementItems, () => {
     expect(userPrompt).toMatch(/TARGET_LANGUAGE: \S/u);
     expect(userPrompt).not.toContain("OPTION_COUNT");
     await expect(writtenSkillFields()).resolves.toStrictEqual(["skill", "quick", "typed"]);
+  });
+
+  it("sets a language goal's questions where the practiced language is spoken", async () => {
+    vi.mocked(generateText).mockResolvedValueOnce(
+      createGenerateTextResult({ skills: [{ quick: [], skill: 1 }] }),
+    );
+
+    const { userPrompt } = await generatePlacementItems({
+      language: "pt",
+      quickCount: 1,
+      quickFormat: "multipleChoice",
+      skills: [skill],
+      targetLanguage: "it",
+      typedCount: 0,
+    });
+
+    expect(userPrompt).toContain("- Place: Italy");
+    expect(userPrompt).not.toMatch(/Brazil|Register/u);
+    expect(userPrompt).toContain(formatCast({ language: "it", seed: skill.name }));
   });
 });

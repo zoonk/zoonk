@@ -50,6 +50,7 @@ async function storeSkillItems({
     items,
     language: skill.language,
     optionCount: format === "multipleChoice" ? (exam?.optionCount ?? null) : null,
+    optionLanguage: skill.targetLanguage,
     provenance,
     skillId: skill.id,
   });
