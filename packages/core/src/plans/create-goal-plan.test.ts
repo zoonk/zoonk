@@ -470,6 +470,27 @@ describe(createGoalPlan, () => {
     expect(changed.version).toBe(before.version + 1);
   });
 
+  it("records a newly saved graph's provenance even when the layout stays the same", async () => {
+    const { goal, library, plan } = await setup();
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    const provenance = { generatedAt: NOW, model: "test", promptVersion: "test", runId: "rebuilt" };
+    const items = await prisma.planItem.findMany({ where: { planId: plan.id } });
+    await createGoalPlan({ goalId: goal.id, graph: library.graph, provenance });
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(saved).toMatchObject(provenance);
+
+    await expect(prisma.planItem.findMany({ where: { planId: plan.id } })).resolves.toStrictEqual(
+      items,
+    );
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph, provenance });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      updatedAt: saved.updatedAt,
+      version: saved.version,
+    });
+  });
+
   it("keeps this week's lessons when planning again finds only a later week out of course order", async () => {
     const user = await userFixture();
     const library = await planLibraryFixture({ skills: [{ lessons: 12 }, { lessons: 12 }] });

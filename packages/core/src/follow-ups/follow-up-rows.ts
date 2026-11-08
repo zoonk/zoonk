@@ -30,7 +30,7 @@ export async function listFollowUps(
   const rows = await prisma.followUp.findMany({
     orderBy: { requestedAt: "asc" },
     take: BATCH,
-    where: { ...(started.length > 0 ? { NOT: [...started] } : {}), userId },
+    where: { ...(started.length > 0 ? { NOT: [...started] } : {}), failedAt: null, userId },
   });
 
   const read = await Promise.all(rows.map((row) => readRow(row)));
@@ -63,7 +63,7 @@ export async function listLearnersWithOldFollowUps(): Promise<string[]> {
     by: ["userId"],
     orderBy: { userId: "asc" },
     take: SWEPT_LEARNERS,
-    where: { requestedAt: { lt: new Date(Date.now() - OLD_AFTER_MS) } },
+    where: { failedAt: null, requestedAt: { lt: new Date(Date.now() - OLD_AFTER_MS) } },
   });
 
   return rows.map((row) => row.userId);

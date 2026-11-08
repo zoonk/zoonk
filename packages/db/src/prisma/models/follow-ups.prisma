@@ -31,6 +31,8 @@ model FollowUp {
   input       Json
   revision    Int          @default(0)
   requestedAt DateTime     @default(now()) @map("requested_at")
+  /// A terminal failure waits for a new ask; dispatch and sweeps skip it.
+  failedAt    DateTime?    @map("failed_at")
 
   @@unique([userId, kind, key], name: "userKindKey")
   @@index([requestedAt])

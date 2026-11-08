@@ -17,7 +17,12 @@ import { finishGoalRebuild, isGoalRebuildOwed } from "./goal-rebuild-follow-up";
 async function savedGoal() {
   const user = await userFixture();
   const skill = await skillFixture();
-  const goal = await goalFixture({ generationRunId: "current-run", userId: user.id });
+
+  const goal = await goalFixture({
+    generationRunId: "current-run",
+    planRevealedAt: null,
+    userId: user.id,
+  });
 
   await planFixture({
     goalId: goal.id,
@@ -29,8 +34,35 @@ async function savedGoal() {
 }
 
 describe("a goal rebuild's owed work", () => {
+  it.each([false, true])(
+    "does not owe a graph for a healthy plan (revealed: %s)",
+    async (revealed) => {
+      const { goal, user } = await savedGoal();
+
+      await prisma.goal.update({
+        data: { planRevealedAt: revealed ? new Date() : null },
+        where: { id: goal.id },
+      });
+
+      await getGoalGenerationAccess({ goalId: goal.id });
+      await expect(listOwed(user.id)).resolves.toStrictEqual([]);
+    },
+  );
+
   it("coalesces simultaneous retry taps into the same row and revision", async () => {
     const { goal, user } = await savedGoal();
+    await prisma.plan.update({ data: { buildFailedAt: new Date() }, where: { goalId: goal.id } });
+
+    await prisma.followUp.create({
+      data: {
+        failedAt: new Date(),
+        input: { goalId: goal.id },
+        key: goal.id,
+        kind: "rebuildGoalCurriculum",
+        userId: user.id,
+      },
+    });
+
     const held = holdLearnerLock({ userId: user.id });
     const pid = await held.pid;
 
@@ -55,8 +87,44 @@ describe("a goal rebuild's owed work", () => {
 
     await expect(
       prisma.followUp.findFirstOrThrow({ where: { userId: user.id } }),
-    ).resolves.toMatchObject({ revision: 0 });
+    ).resolves.toMatchObject({ failedAt: null, revision: 1 });
   });
+
+  it.each(["unsaved", "saved", "revealed"])(
+    "keeps only an unsaved, unseen failed graph owed (state: %s)",
+    async (state) => {
+      const { goal, user } = await savedGoal();
+      const startedAt = new Date();
+
+      await prisma.plan.update({
+        data: { generatedAt: state === "saved" ? startedAt : null },
+        where: { goalId: goal.id },
+      });
+
+      if (state === "revealed") {
+        await prisma.goal.update({ data: { planRevealedAt: new Date() }, where: { id: goal.id } });
+      }
+
+      await oweFollowUps({
+        followUps: [{ input: { goalId: goal.id }, kind: "rebuildGoalCurriculum" }],
+        userId: user.id,
+      });
+
+      const owed = await prisma.followUp.findFirstOrThrow({ where: { userId: user.id } });
+
+      await finishGoalRebuild({
+        failed: true,
+        followUp: owed,
+        generationId: goal.generationRunId!,
+        goalId: goal.id,
+        startedAt,
+      });
+
+      const row = await prisma.followUp.findUnique({ where: { id: owed.id } });
+      const failedRow = expect.objectContaining({ failedAt: expect.any(Date) });
+      expect(row).toStrictEqual(state === "unsaved" ? failedRow : null);
+    },
+  );
 
   it("keeps an existing rebuild ask even before its first graph is saved", async () => {
     const { goal, user } = await savedGoal();
@@ -76,7 +144,12 @@ describe("a goal rebuild's owed work", () => {
 
   it("cannot spend or finish a newer revision using an older ask", async () => {
     const { goal, user } = await savedGoal();
-    await getGoalGenerationAccess({ goalId: goal.id });
+
+    await oweFollowUps({
+      followUps: [{ input: { goalId: goal.id }, kind: "rebuildGoalCurriculum" }],
+      userId: user.id,
+    });
+
     const old = await prisma.followUp.findFirstOrThrow({ where: { userId: user.id } });
 
     await oweFollowUps({
@@ -86,7 +159,13 @@ describe("a goal rebuild's owed work", () => {
 
     const input = { followUp: { id: old.id, revision: old.revision }, goalId: goal.id };
     await expect(isGoalRebuildOwed(input)).resolves.toBe(false);
-    await finishGoalRebuild({ ...input, failed: true, generationId: "current-run" });
+
+    await finishGoalRebuild({
+      ...input,
+      failed: true,
+      generationId: "current-run",
+      startedAt: new Date(),
+    });
 
     await expect(
       prisma.followUp.findUniqueOrThrow({ where: { id: old.id } }),
@@ -99,7 +178,12 @@ describe("a goal rebuild's owed work", () => {
 
   it("records terminal failure and ends its row together without failing a newer run", async () => {
     const { goal, user } = await savedGoal();
-    await getGoalGenerationAccess({ goalId: goal.id });
+
+    await oweFollowUps({
+      followUps: [{ input: { goalId: goal.id }, kind: "rebuildGoalCurriculum" }],
+      userId: user.id,
+    });
+
     const owed = await prisma.followUp.findFirstOrThrow({ where: { userId: user.id } });
 
     await finishGoalRebuild({
@@ -107,6 +191,7 @@ describe("a goal rebuild's owed work", () => {
       followUp: owed,
       generationId: "earlier-run",
       goalId: goal.id,
+      startedAt: new Date(),
     });
 
     await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);

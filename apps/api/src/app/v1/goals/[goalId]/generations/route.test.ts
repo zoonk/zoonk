@@ -1,3 +1,4 @@
+import { goalContentWorkflow } from "@/workflows/goals/goal-content-workflow";
 import { rebuildGoalCurriculumWorkflow } from "@/workflows/goals/rebuild-goal-curriculum-workflow";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
@@ -19,7 +20,7 @@ function startRequest(goalId: string) {
 }
 
 describe("POST /v1/goals/{goalId}/generations", () => {
-  it("retries a goal with a saved graph through the rebuild", async () => {
+  it("resumes a healthy saved graph without buying a rebuild", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
     const skill = await skillFixture();
@@ -33,6 +34,34 @@ describe("POST /v1/goals/{goalId}/generations", () => {
 
     const response = await startRequest(goal.id);
 
+    expect(response.status).toBe(202);
+    expect(vi.mocked(start).mock.calls[0]?.[0]).toBe(goalContentWorkflow);
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
+  it("retries a failed rebuild whose graph was never saved", async () => {
+    const user = await userFixture();
+
+    const goal = await goalFixture({
+      generationRunId: "failed-rebuild",
+      planRevealedAt: null,
+      userId: user.id,
+    });
+
+    await planFixture({ buildFailedAt: new Date(), goalId: goal.id });
+    mockSession(user.id);
+
+    await prisma.followUp.create({
+      data: {
+        failedAt: new Date(),
+        input: { goalId: goal.id },
+        key: goal.id,
+        kind: "rebuildGoalCurriculum",
+        userId: user.id,
+      },
+    });
+
+    const response = await startRequest(goal.id);
     expect(response.status).toBe(202);
     expect(vi.mocked(start).mock.calls[0]?.[0]).toBe(rebuildGoalCurriculumWorkflow);
   });
