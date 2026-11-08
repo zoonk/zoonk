@@ -3,8 +3,6 @@ import {
   type SkillLevelState,
   applyLevelEvidence,
   getContentCeiling,
-  getEarnedLanguageLevel,
-  getFinishedBands,
   getLevelTrend,
   getOverallLevel,
   getStartScore,
@@ -131,51 +129,5 @@ describe(getOverallLevel, () => {
 
   it("is null before any skill has a level", () => {
     expect(getOverallLevel([])).toBeNull();
-  });
-});
-
-describe(getEarnedLanguageLevel, () => {
-  const RAISED = new Date("2026-11-01T00:00:00Z");
-
-  it("is the lowest skill the learner's answers raised", () => {
-    expect(
-      getEarnedLanguageLevel([
-        { raisedAt: RAISED, score: 2.5 },
-        { raisedAt: RAISED, score: 1.5 },
-        { raisedAt: null, score: 0 },
-      ]),
-    ).toBe(1.5);
-  });
-
-  it("counts no skill a typed level or a test put there until answers raise it", () => {
-    expect(getEarnedLanguageLevel([{ raisedAt: null, score: 5 }])).toBeNull();
-    expect(getEarnedLanguageLevel([])).toBeNull();
-  });
-
-  it("keeps a raised skill that fell back, so the lowest can drop", () => {
-    expect(
-      getEarnedLanguageLevel([
-        { raisedAt: RAISED, score: 3 },
-        { raisedAt: RAISED, score: 0.5 },
-      ]),
-    ).toBe(0.5);
-  });
-});
-
-describe(getFinishedBands, () => {
-  it("finishes a band when the earned level reaches the next one", () => {
-    expect(getFinishedBands({ after: 1, before: 0.5 })).toStrictEqual(["A1"]);
-    expect(getFinishedBands({ after: 3, before: 2.5 })).toStrictEqual(["B1"]);
-    expect(getFinishedBands({ after: 5, before: 4.5 })).toStrictEqual(["C1"]);
-  });
-
-  it("finishes nothing within a band, on a fall, or below where the climb started", () => {
-    expect(getFinishedBands({ after: 2.5, before: 2 })).toStrictEqual([]);
-    expect(getFinishedBands({ after: 0.5, before: 1 })).toStrictEqual([]);
-    expect(getFinishedBands({ after: 2, before: 2 })).toStrictEqual([]);
-  });
-
-  it("finishes every band crossed at once", () => {
-    expect(getFinishedBands({ after: 3, before: 0.5 })).toStrictEqual(["A1", "A2", "B1"]);
   });
 });

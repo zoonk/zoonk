@@ -1,10 +1,11 @@
-import { CertificateKind, CourseLevel, LanguageSkill } from "@zoonk/db/enums";
+import { CertificateKind, CourseLevel } from "@zoonk/db/enums";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
+import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
-/** C2 has nothing above it to reach, and the level test tops out at C1+. */
-export const CERTIFIED_LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
+/** One certificate per CEFR level and language. */
+export const CERTIFIED_LEVELS = CEFR_LEVELS;
 
 export type CertifiedLevel = (typeof CERTIFIED_LEVELS)[number];
 
@@ -33,13 +34,6 @@ const countSchema = z.int().min(0);
 
 const certifiedLevelSchema = z.enum(CERTIFIED_LEVELS);
 
-const skillLevelSchema = z
-  .object({
-    label: z.string().meta({ description: 'The skill\'s level, such as "B1" or "B2+"' }),
-    skill: z.enum(LanguageSkill),
-  })
-  .meta({ id: "CertificateSkillLevel" });
-
 export const courseCertificateDetailsSchema = z.object({
   category: z.enum(COURSE_CATEGORIES).nullable(),
   lessonsStudied: countSchema,
@@ -52,12 +46,9 @@ export const languageLevelCertificateDetailsSchema = z.object({
   canDo: z.array(z.string()),
   lessonsStudied: countSchema,
   minutes: countSchema.nullable(),
-  skillLevels: z.array(skillLevelSchema),
 });
 
 export type CourseCertificateDetails = z.infer<typeof courseCertificateDetailsSchema>;
-
-export type LanguageLevelCertificateDetails = z.infer<typeof languageLevelCertificateDetailsSchema>;
 
 /** A plain shape, so the API can add its links without an `allOf` strict clients can't decode. */
 export const certificateFactsShape = {
@@ -104,12 +95,6 @@ export const certificateFactsShape = {
     .meta({
       description:
         "The learner's profile name, read live, so fixing it fixes every certificate; null when empty: ask for a name before they share, print or download",
-    }),
-  skillLevels: z
-    .array(skillLevelSchema)
-    .meta({
-      description:
-        "Language level: each skill the learner's answers raised, at its level when earned",
     }),
   targetLanguage: z.string().nullable().meta({ description: "Language kinds: the language" }),
   title: z

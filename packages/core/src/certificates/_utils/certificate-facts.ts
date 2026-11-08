@@ -26,7 +26,6 @@ const NO_DETAILS = {
   lessonsStudied: null,
   lessonsTestedOut: null,
   minutes: null,
-  skillLevels: [],
   topics: [],
 } satisfies Partial<CertificateFacts>;
 

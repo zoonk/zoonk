@@ -1,20 +1,11 @@
 "use client";
 
-import { type CertificateFacts, type CertifiedLevel } from "@zoonk/core/certificates/contract";
+import { type CertificateFacts } from "@zoonk/core/certificates/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted, useFormatter } from "next-intl";
 import { DoneMark } from "../_components/status-mark";
 import { LearnLink } from "../learn-link";
 import { useLanguageNameInSentence } from "./certificate-labels";
-
-/** A level is finished when every counted skill reaches the band above it. */
-const BAND_ABOVE: Record<CertifiedLevel, string> = {
-  A1: "A2",
-  A2: "B1",
-  B1: "B2",
-  B2: "C1",
-  C1: "C2",
-};
 
 function useMeaning(facts: CertificateFacts): string[] {
   const t = useExtracted();
@@ -30,8 +21,7 @@ function useMeaning(facts: CertificateFacts): string[] {
   if (facts.kind === "languageLevel") {
     return [
       t(
-        "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached {level}.",
-        { level: facts.level ? BAND_ABOVE[facts.level] : "" },
+        "Zoonk issues this certificate when a learner finishes a level, studying at least half of its lessons.",
       ),
       `${cefr} ${nameNote}`,
     ];

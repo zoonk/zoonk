@@ -1682,9 +1682,9 @@ msgid "Levels are aligned with the CEFR, the Common European Framework of Refere
 msgstr "Die Level orientieren sich am CEFR, dem Gemeinsamen Europäischen Referenzrahmen für Sprachen. Das ist kein offizielles Prüfungsergebnis."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "X1QrOq"
-msgid "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached {level}."
-msgstr "Zoonk bewertet jede Fähigkeit (Lesen, Hören, Sprechen, Schreiben) anhand der Antworten in Lektionen und Übungen. Ein Level ist abgeschlossen, wenn alle Fähigkeiten, die durch diese Antworten höher eingestuft wurden, das nächste Level erreichen. Dieses Zertifikat wurde daher ausgestellt, als jede davon {level} erreicht hatte."
+msgctxt "iO6aKW"
+msgid "Zoonk issues this certificate when a learner finishes a level, studying at least half of its lessons."
+msgstr "Zoonk stellt dieses Zertifikat aus, wenn jemand ein Level abschließt und dabei mindestens die Hälfte der zugehörigen Lektionen bearbeitet."
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "j5jrUM"

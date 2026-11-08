@@ -143,13 +143,7 @@ function shrinkUntil({
 }
 
 function toSheetCovered(view: CertificateView): SheetCovered {
-  if (!view.covered) {
-    return null;
-  }
-
-  return view.covered.kind === "topics"
-    ? { kind: "topics", topics: view.covered.topics }
-    : { kind: "readouts" };
+  return view.covered && { topics: view.covered.topics };
 }
 
 function getSheetGraphKind(view: CertificateView): SheetGraphKind {
@@ -177,10 +171,7 @@ async function getMoreTopics({
   locale: string;
   view: CertificateView;
 }): Promise<string | null> {
-  const hidden =
-    covered?.kind === "topics" && view.covered?.kind === "topics"
-      ? view.covered.total - covered.topics.length
-      : 0;
+  const hidden = covered && view.covered ? view.covered.total - covered.topics.length : 0;
 
   if (hidden <= 0) {
     return null;

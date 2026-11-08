@@ -19,7 +19,7 @@ const TITLE_LINE = 40 * 1.14;
 
 function getTopicOverflow(topic: string): number {
   return getSheetOverflow({
-    covered: { kind: "topics", topics: [topic] },
+    covered: { topics: [topic] },
     finePrint: COURSE_FINE_PRINT,
     graph: "labelledRoute",
     nameHeight: NAME_LINE,
@@ -31,7 +31,7 @@ describe(getSheetOverflow, () => {
   it("fits a one-line name and title with every topic and the route", () => {
     expect(
       getSheetOverflow({
-        covered: { kind: "topics", topics: TOPICS },
+        covered: { topics: TOPICS },
         finePrint: COURSE_FINE_PRINT,
         graph: "labelledRoute",
         nameHeight: NAME_LINE,
@@ -48,7 +48,7 @@ describe(getSheetOverflow, () => {
       titleHeight: TITLE_LINE * 3,
     };
 
-    const overflows = getCoveredFallbacks({ kind: "topics", topics: TOPICS }).map((covered) =>
+    const overflows = getCoveredFallbacks({ topics: TOPICS }).map((covered) =>
       getSheetOverflow({ ...longTitle, covered }),
     );
 
@@ -90,12 +90,10 @@ describe(getLinkOverflow, () => {
 
 describe(getCoveredFallbacks, () => {
   it("gives way from every topic to the first two, then to none", () => {
-    expect(getCoveredFallbacks({ kind: "topics", topics: TOPICS })).toStrictEqual([
-      { kind: "topics", topics: TOPICS },
-      { kind: "topics", topics: ["Light and matter", "Waves and probability"] },
+    expect(getCoveredFallbacks({ topics: TOPICS })).toStrictEqual([
+      { topics: TOPICS },
+      { topics: ["Light and matter", "Waves and probability"] },
       null,
     ]);
-
-    expect(getCoveredFallbacks({ kind: "readouts" })).toStrictEqual([{ kind: "readouts" }, null]);
   });
 });

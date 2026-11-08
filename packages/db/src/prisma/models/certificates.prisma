@@ -5,7 +5,7 @@ enum CertificateKind {
 
 /// Titles and numbers are snapshots, so a certificate reads the same after its course changes or
 /// goes away. `key` awards each once: "<courseId>:<level>" for a course level, the goal for a plan
-/// certified whole, "<language>:<band>" for a language level. Every learner earns the row; only
+/// certified whole, "<language>:<level>" for a language level. Every learner earns the row; only
 /// `issuedAt` makes it a certificate they can show.
 model Certificate {
   id             String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
@@ -22,7 +22,7 @@ model Certificate {
   /// The learner's language: the certificate's own words are written in it.
   language       String          @db.VarChar(10)
   targetLanguage String?         @map("target_language") @db.VarChar(10)
-  /// The CEFR band, for a language level.
+  /// The CEFR level, for a language level.
   level          String?         @db.VarChar(2)
   /// The course level it certifies; null for a plan certified whole and for language levels.
   courseLevel    CourseLevel?    @map("course_level")

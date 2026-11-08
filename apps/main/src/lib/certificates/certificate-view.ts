@@ -1,6 +1,6 @@
 import "server-only";
 import { getCategoryNames } from "@/lib/categories/category";
-import { type CertificateFacts, type CertifiedLevel } from "@zoonk/core/certificates/contract";
+import { type CertificateFacts } from "@zoonk/core/certificates/contract";
 import { getCertificateDisplayUrl, getCertificateLinks } from "@zoonk/utils/certificate-links";
 import { getCourseLevelNames } from "@zoonk/utils/course-level-names";
 import { getLanguageName } from "@zoonk/utils/languages";
@@ -13,20 +13,10 @@ import {
   type CertificateStat,
   type KindInput,
   type Readout,
-  getSkillReadouts,
-  getSkillStats,
   getStudyFacts,
   getStudyStats,
 } from "./certificate-study-view";
 import { type TextRun } from "./shaped-text";
-
-const NEXT_BAND: Record<CertifiedLevel, string> = {
-  A1: "A2",
-  A2: "B1",
-  B1: "B2",
-  B2: "C1",
-  C1: "C2",
-};
 
 /** A course's route has a station per topic, labelled with its level on a level's certificate. */
 export type CertificateGraph =
@@ -44,10 +34,7 @@ type CommonView = {
 };
 
 type KindView = {
-  covered:
-    | { kind: "readouts"; readouts: Readout[] }
-    | { kind: "topics"; label: string; topics: string[]; total: number }
-    | null;
+  covered: { label: string; topics: string[]; total: number } | null;
   facts: Readout[];
   finePrint: string;
   graph: CertificateGraph;
@@ -108,22 +95,18 @@ async function getCommonView({ facts, locale }: KindInput): Promise<CommonView> 
 async function getLanguageLevelView(input: KindInput): Promise<KindView> {
   const { facts, locale } = input;
 
-  const [t, readouts, studyFacts, studyStats] = await Promise.all([
+  const [t, studyFacts, stats] = await Promise.all([
     getExtracted({ locale }),
-    getSkillReadouts(input),
     getStudyFacts(input),
     getStudyStats(input),
   ]);
 
   return {
-    covered: readouts.length > 0 ? { kind: "readouts", readouts } : null,
+    covered: null,
     facts: studyFacts,
     finePrint: t({
-      description:
-        "The fine print on a language level certificate. {level} is the next level's start, such as B2 on a B1 certificate.",
-      message:
-        "Awarded when every skill this learner practiced on Zoonk reached {level}, measured from their answers. This is not an official exam result.",
-      values: { level: facts.level ? NEXT_BAND[facts.level] : "" },
+      description: "The fine print on a language level certificate, such as B1.",
+      message: "Awarded for finishing this level on Zoonk. This is not an official exam result.",
     }),
     graph: { filled: getLadderFill(facts.level), kind: "ladder", reached: facts.level },
     meta: t({
@@ -131,7 +114,7 @@ async function getLanguageLevelView(input: KindInput): Promise<KindView> {
         "How a language level certificate was earned. The level follows the CEFR scale, without claiming official recognition.",
       message: "Level completed · aligned with the CEFR",
     }),
-    stats: studyStats.length > 0 ? studyStats : getSkillStats(readouts),
+    stats,
     subject: null,
   };
 }
@@ -189,10 +172,7 @@ async function getCourseView(input: KindInput): Promise<KindView> {
   });
 
   return {
-    covered:
-      shown.length > 0
-        ? { kind: "topics", label, topics: shown, total: facts.topics.length }
-        : null,
+    covered: shown.length > 0 ? { label, topics: shown, total: facts.topics.length } : null,
     facts: studyFacts,
     finePrint: level
       ? t({

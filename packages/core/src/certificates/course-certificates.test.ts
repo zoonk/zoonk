@@ -755,7 +755,6 @@ describe("a certificate as anyone sees it", () => {
       "level",
       "minutes",
       "recipientName",
-      "skillLevels",
       "targetLanguage",
       "title",
       "topics",
