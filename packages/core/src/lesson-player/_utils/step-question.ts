@@ -1,10 +1,30 @@
+import { type SerializedStep } from "../../player/contracts/prepare-lesson-data";
 import { type PlayableLibraryStep } from "../playable-lesson";
 
 function joinContext(context: string | undefined, question: string): string {
   return context ? `${context}\n\n${question}` : question;
 }
 
-function getExerciseQuestion(content: object): string | null {
+function getExerciseQuestion({ content, kind, sentence, word }: SerializedStep): string | null {
+  switch (kind) {
+    case "listening":
+      return sentence?.sentence ?? null;
+    case "reading":
+      return sentence?.translation ?? null;
+    case "translation":
+      return word?.translation ?? null;
+    case "alphabet":
+    case "fillBlank":
+    case "matchColumns":
+    case "multipleChoice":
+    case "vocabulary":
+      return getContentQuestion(content);
+    default:
+      return null;
+  }
+}
+
+function getContentQuestion(content: object): string | null {
   const question = "question" in content ? content.question : null;
   const template = "template" in content ? content.template : null;
   const context = "context" in content ? content.context : null;
@@ -18,7 +38,7 @@ function getExerciseQuestion(content: object): string | null {
 
 export function getStepQuestion(step: PlayableLibraryStep): string | null {
   if ("exercise" in step) {
-    return getExerciseQuestion(step.exercise.content);
+    return getExerciseQuestion(step.exercise);
   }
 
   switch (step.kind) {

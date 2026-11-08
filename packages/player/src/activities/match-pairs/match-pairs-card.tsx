@@ -26,7 +26,7 @@ export function MatchPairsCard({
       aria-label={label}
       aria-pressed={state === "matched" || state === "noMatch" ? undefined : state === "selected"}
       className={cn(
-        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-12 w-full items-center gap-2 rounded-xl border px-3.5 py-2 text-left text-sm leading-snug font-medium outline-none select-none focus-visible:ring-[3px] sm:text-base",
+        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-12 w-full items-center gap-2 rounded-xl border px-3.5 py-2 text-left leading-snug font-medium outline-none select-none focus-visible:ring-[3px]",
         state === "idle" && "hover:bg-accent",
         state === "selected" && "border-primary ring-primary/15 ring-[3px]",
         state === "matched" && "border-success/40 bg-success/10 text-success-text",
@@ -40,7 +40,7 @@ export function MatchPairsCard({
       onClick={onPick}
       type="button"
     >
-      <span className="min-w-0 flex-1">
+      <span className="min-w-0 flex-1 wrap-break-word">
         <LessonRichText text={text} />
       </span>
 

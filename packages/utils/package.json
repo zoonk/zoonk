@@ -5,6 +5,7 @@
   "exports": {
     "./after-page-load": "./src/after-page-load.ts",
     "./aggregation": "./src/aggregation.ts",
+    "./android-apps": "./src/android-apps.ts",
     "./apportion": "./src/apportion.ts",
     "./bare-latex": "./src/bare-latex.ts",
     "./belt-level": "./src/belt-level.ts",

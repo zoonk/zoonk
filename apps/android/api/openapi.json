@@ -362,7 +362,7 @@
     },
     "/app-attest/challenges": {
       "post": {
-        "description": "A one-time challenge for the apps' bot proof. The iOS app asks for one before attesting its App Attest key and before each request that needs bot proof (`POST /v1/guests`, `POST /v1/email-sign-in-codes`, `POST /v1/sessions/email-code`), where it sends the assertion in the `X-App-Attest-*` headers instead of BotID's browser proof; the Android app asks for one before each of those requests and sends a Play Integrity token in the `X-Play-Integrity-*` headers.",
+        "description": "A one-time challenge for the apps' bot proof. The iOS app asks for one before attesting its App Attest key and before each request that needs bot proof (`POST /v1/guests`, `POST /v1/email-sign-in-codes`, `POST /v1/sessions/email-code`), where it sends the assertion in the `X-App-Attest-*` headers instead of BotID's browser proof; the Android app asks for one before each of those requests and sends a Play Integrity token in the `X-Play-Integrity-*` headers. The Android app also asks for one before creating or redeeming a restore key (`POST /v1/sessions/current/restore-keys`, `POST /v1/sessions/restore-key`), as its WebAuthn challenge.",
         "operationId": "createAppAttestChallenge",
         "security": [],
         "summary": "Get an app proof challenge",
@@ -4464,12 +4464,12 @@
             "in": "header",
             "name": "x-play-integrity-token",
             "schema": {
-              "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`)",
+              "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`; for POST /v1/sessions/current/restore-keys the operation is `restore-key` and its one field is the registration's credential `id`)",
               "type": "string",
               "minLength": 1,
               "maxLength": 16384
             },
-            "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`)"
+            "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`; for POST /v1/sessions/current/restore-keys the operation is `restore-key` and its one field is the registration's credential `id`)"
           }
         ],
         "responses": {
@@ -4766,7 +4766,7 @@
     },
     "/steps/{stepId}/spoken-answers": {
       "post": {
-        "description": "Grades a \"say it out loud\" screen: transcribes the recording as said, compares it with the expected sentence word by word, explains at most two words that didn't match in the learner's language (shared with everyone who says the same thing) and records the answer. An accent never blocks progress. 422 `NO_SPEECH` when no words were heard. The audio is only used for grading and never kept.",
+        "description": "Grades a \"say it out loud\" screen: transcribes the recording as said, compares it with the expected sentence word by word, explains at most two words that didn't match in the learner's language (shared with everyone who says the same thing) and records the answer. An answer to a screen that already has a right answer in its progress window, or a miss after three misses there, is graded and returned without recording an attempt, mistake, pronunciation review or language evidence; `attemptId` then identifies the saved answer that closed the screen. An accent never blocks progress. 422 `NO_SPEECH` when no words were heard. The audio is only used for grading and never kept.",
         "operationId": "createSpokenAnswer",
         "security": [
           {
@@ -8655,7 +8655,7 @@
     },
     "/steps/{stepId}/checks": {
       "post": {
-        "description": "Grades one answer to a lesson screen on the server and records it: the attempt, the review of its skill and, when wrong, an entry in the mistakes notebook. Checks, activities and language exercises are graded by the same code the app runs; typed answers (and the typed fallback of a spoken answer) by the grader. The answer counts toward an open run of the screen's lesson; a screen answered more often than a run allows is graded by code and not recorded. `LESSON_RUN_ENDED` (409) means the run finished.",
+        "description": "Grades one answer to a lesson screen on the server and records it: the attempt, the review of its skill and, when wrong, an entry in the mistakes notebook. Checks, activities and language exercises are graded by the same code the app runs; typed answers (and the typed fallback of a spoken answer) by the grader. The answer counts toward an open run of the screen's lesson; an answer to a screen that already has a right answer in its progress window, or a miss after three misses there, is graded by code and returned without recording an attempt, mistake or review change. Reuse `attemptId` to replay a saved verdict. `LESSON_RUN_ENDED` (409) means the run finished.",
         "operationId": "createStepCheck",
         "security": [
           {
@@ -11689,12 +11689,12 @@
             "in": "header",
             "name": "x-play-integrity-token",
             "schema": {
-              "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`)",
+              "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`; for POST /v1/sessions/current/restore-keys the operation is `restore-key` and its one field is the registration's credential `id`)",
               "type": "string",
               "minLength": 1,
               "maxLength": 16384
             },
-            "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`)"
+            "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`; for POST /v1/sessions/current/restore-keys the operation is `restore-key` and its one field is the registration's credential `id`)"
           }
         ],
         "requestBody": {
@@ -11903,6 +11903,125 @@
         }
       }
     },
+    "/sessions/current/restore-keys": {
+      "post": {
+        "description": "Registers the restore key the Android app made with Credential Manager's Restore Credentials after this session signed in, so the learner's next phone signs in with `POST /v1/sessions/restore-key`. Make the key's WebAuthn request over a fresh challenge from `POST /v1/app-attest/challenges`, with the RP ID `www.zoonk.com`. Use ES256 or RS256, attestation `none` and a discoverable credential; user verification isn't required. In production, the request also carries a Play Integrity token in the `X-Play-Integrity-*` headers, made over a second challenge from `POST /v1/app-attest/challenges` with the operation `restore-key` and the registration's `id`. The key signs in only while this session lasts: signing out, deleting the account or a guest creating an account ends it on every phone. A session keeps one key: registering another replaces it, and registering the same key again is a no-op.",
+        "operationId": "createRestoreKey",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Register a restore key",
+        "tags": [
+          "Sessions"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-play-integrity-challenge",
+            "schema": {
+              "description": "A fresh challenge from `POST /v1/app-attest/challenges`",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "description": "A fresh challenge from `POST /v1/app-attest/challenges`"
+          },
+          {
+            "in": "header",
+            "name": "x-play-integrity-token",
+            "schema": {
+              "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`; for POST /v1/sessions/current/restore-keys the operation is `restore-key` and its one field is the registration's credential `id`)",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 16384
+            },
+            "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`; for POST /v1/sessions/current/restore-keys the operation is `restore-key` and its one field is the registration's credential `id`)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestoreKeyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Restore key registered, or already registered for this session"
+          },
+          "400": {
+            "description": "Request validation failed, the challenge wasn't issued here or was already used or expired, the registration is malformed, doesn't verify (origin, RP ID, algorithm) or names a key another session registered, or the session is an admin's impersonation of a learner. Error codes include: RESTORE_KEY_CHALLENGE_INVALID, RESTORE_KEY_RESPONSE_MALFORMED, RESTORE_KEY_REGISTRATION_INVALID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "In production, the request had no valid Play Integrity proof for this key. Error code: BOT_DETECTED.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request rate limit exceeded. Error code: RATE_LIMIT_EXCEEDED.",
+            "headers": {
+              "Retry-After": {
+                "required": true,
+                "description": "Seconds until another attempt can be made",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991,
+                  "description": "Seconds until another attempt can be made"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sessions/email-code": {
       "post": {
         "description": "Signs in with the code from `POST /v1/email-sign-in-codes`, creating the account the first time. Requests must pass Vercel BotID, which runs in a browser, or carry the iOS app's App Attest assertion in the `X-App-Attest-*` headers or the Android app's Play Integrity token in the `X-Play-Integrity-*` headers (see `POST /v1/app-attest/challenges`); without any of them they get 403 BOT_DETECTED.",
@@ -11965,12 +12084,12 @@
             "in": "header",
             "name": "x-play-integrity-token",
             "schema": {
-              "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`)",
+              "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`; for POST /v1/sessions/current/restore-keys the operation is `restore-key` and its one field is the registration's credential `id`)",
               "type": "string",
               "minLength": 1,
               "maxLength": 16384
             },
-            "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`)"
+            "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`; for POST /v1/sessions/current/restore-keys the operation is `restore-key` and its one field is the registration's credential `id`)"
           }
         ],
         "requestBody": {
@@ -12090,6 +12209,101 @@
           },
           "401": {
             "description": "Google authorization is invalid or expired. Error code: GOOGLE_AUTHORIZATION_INVALID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Account disabled. Error code: ACCOUNT_DISABLED.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request rate limit exceeded. Error code: RATE_LIMIT_EXCEEDED.",
+            "headers": {
+              "Retry-After": {
+                "required": true,
+                "description": "Seconds until another attempt can be made",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991,
+                  "description": "Seconds until another attempt can be made"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/restore-key": {
+      "post": {
+        "description": "Signs a new phone in with the restore key Google moved to it from the learner's previous phone, creating a new session for that learner, guests included. The previous phone keeps its own session, and this key signs in only while that session lasts, so register a new key for the new session with `POST /v1/sessions/current/restore-keys`. Make the key's WebAuthn request over a fresh challenge from `POST /v1/app-attest/challenges`, with the RP ID `www.zoonk.com`. No bot proof is needed: the key's signature is the proof. A 5xx means keys can't be checked right now, so keep the key and try again later.",
+        "operationId": "createRestoreKeySession",
+        "security": [],
+        "summary": "Sign in with a restore key",
+        "tags": [
+          "Sessions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestoreKeySessionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Zoonk bearer session created for the key's learner",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestoreKeySessionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation failed, the challenge wasn't issued here or was already used or expired, or the JSON isn't a credential response. Keep the key and try again with a new challenge. Error codes include: RESTORE_KEY_CHALLENGE_INVALID, RESTORE_KEY_RESPONSE_MALFORMED.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "This restore key can't sign in: it's unknown, its signature or RP ID is wrong, or the session that registered it ended. Delete the key. Error code: RESTORE_KEY_INVALID.",
             "content": {
               "application/json": {
                 "schema": {
@@ -26608,6 +26822,21 @@
         ],
         "additionalProperties": false
       },
+      "RestoreKeyRequest": {
+        "type": "object",
+        "properties": {
+          "registrationResponseJson": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16384,
+            "description": "The `registrationResponseJson` of Credential Manager's `CreateRestoreCredentialResponse`, unchanged"
+          }
+        },
+        "required": [
+          "registrationResponseJson"
+        ],
+        "additionalProperties": false
+      },
       "EmailCodeSessionRequest": {
         "type": "object",
         "properties": {
@@ -26637,6 +26866,21 @@
         },
         "required": [
           "idToken"
+        ],
+        "additionalProperties": false
+      },
+      "RestoreKeySessionRequest": {
+        "type": "object",
+        "properties": {
+          "authenticationResponseJson": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16384,
+            "description": "`RestoreCredential.authenticationResponseJson`, unchanged"
+          }
+        },
+        "required": [
+          "authenticationResponseJson"
         ],
         "additionalProperties": false
       },
@@ -30147,7 +30391,7 @@
           "challenge": {
             "type": "string",
             "minLength": 1,
-            "description": "Single-use and valid for five minutes. An attestation's client data hash is the SHA-256 of its UTF-8 bytes; an assertion signs it inside the request's client data (see the `x-app-attest-assertion` header), and a Play Integrity token's request hash covers it the same way (see the `x-play-integrity-token` header)."
+            "description": "Single-use and valid for five minutes. An attestation's client data hash is the SHA-256 of its UTF-8 bytes; an assertion signs it inside the request's client data (see the `x-app-attest-assertion` header), and a Play Integrity token's request hash covers it the same way (see the `x-play-integrity-token` header). A restore key's WebAuthn request uses it as its `challenge`, unchanged."
           }
         },
         "required": [
@@ -72913,6 +73157,15 @@
             "items": {
               "type": "object",
               "properties": {
+                "answer": {
+                  "nullable": true,
+                  "description": "What the learner answered, to show on the screen with `result`. Null for a recording (its words are `result.answerText`) and for an answer that no longer fits the screen",
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/LessonStepAnswerOutput"
+                    }
+                  ]
+                },
                 "answeredAt": {
                   "type": "string",
                   "format": "date-time",
@@ -72922,6 +73175,9 @@
                 "isCorrect": {
                   "type": "boolean"
                 },
+                "result": {
+                  "$ref": "#/components/schemas/LessonRunAnswerResult"
+                },
                 "stepId": {
                   "type": "string",
                   "format": "uuid",
@@ -72929,8 +73185,10 @@
                 }
               },
               "required": [
+                "answer",
                 "answeredAt",
                 "isCorrect",
+                "result",
                 "stepId"
               ],
               "additionalProperties": false
@@ -73004,6 +73262,146 @@
           "startedAt"
         ],
         "additionalProperties": false
+      },
+      "LessonRunAnswerResult": {
+        "type": "object",
+        "properties": {
+          "checked": {
+            "type": "boolean",
+            "description": "False for a typed answer that wasn't checked: past a few graded answers to the same screen a day, code still recognizes an accepted answer, and anything else is shown with the sample answer (`correctAnswer`) as not checked, not as wrong. It isn't recorded and saves no mistake. True otherwise."
+          },
+          "correctAnswer": {
+            "nullable": true,
+            "description": "The right answer when missed",
+            "type": "string"
+          },
+          "corrections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "right": {
+                  "type": "string",
+                  "description": "The same words written correctly"
+                },
+                "wrong": {
+                  "type": "string",
+                  "description": "The learner's words as they wrote them"
+                }
+              },
+              "required": [
+                "right",
+                "wrong"
+              ],
+              "additionalProperties": false
+            },
+            "description": "A typed answer in a language course: each form mistake (a wrong word, gender, number, tense or agreement), which keeps the answer from being right even when every key point is met. A sentence typed instead of said that misses: one correction, the sentence as typed and as it reads. Empty otherwise."
+          },
+          "expected": {
+            "nullable": true,
+            "description": "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number or the canvas's end state. Null for other screens, and for an activity whose template computes none",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ActivityExpected"
+              }
+            ]
+          },
+          "feedback": {
+            "nullable": true,
+            "description": "Why: the chosen option's reason, the grader's feedback or the check's explanation",
+            "type": "string"
+          },
+          "isCorrect": {
+            "type": "boolean"
+          },
+          "keyPoints": {
+            "nullable": true,
+            "description": "Each key point of a typed answer and whether the answer stated it, judged by meaning",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "met": {
+                  "type": "boolean"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "met",
+                "text"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "nextReviewAt": {
+            "nullable": true,
+            "description": "When the skill behind the screen comes back for review",
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "savedMistake": {
+            "type": "boolean",
+            "description": "A wrong answer went to the mistakes notebook"
+          },
+          "score": {
+            "nullable": true,
+            "description": "Partial credit from 0 to 1 for typed and spoken answers and challenges",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "spelling": {
+            "nullable": true,
+            "description": "A typed answer that was right apart from a typo: the right spelling to show. A typo isn't a mistake.",
+            "type": "string"
+          },
+          "answerText": {
+            "nullable": true,
+            "description": "What the learner's answer reads as: the picked option's text, the typed text or what a recording heard. Null when there's nothing to show",
+            "type": "string"
+          }
+        },
+        "required": [
+          "checked",
+          "correctAnswer",
+          "corrections",
+          "expected",
+          "feedback",
+          "isCorrect",
+          "keyPoints",
+          "nextReviewAt",
+          "savedMistake",
+          "score",
+          "spelling",
+          "answerText"
+        ],
+        "additionalProperties": false,
+        "description": "The saved answer's result, built again from what was saved: show the screen answered with it, without checking again. Its `isCorrect` and `score` are the saved verdict. `nextReviewAt` is null and `savedMistake` false, and a typed answer has no model feedback, key points or corrections, since those aren't saved"
+      },
+      "ActivityExpected": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ActivityExpectedChoice"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedInteraction"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedNumeric"
+          }
+        ],
+        "type": "object",
+        "discriminator": {
+          "propertyName": "kind",
+          "mapping": {
+            "choice": "#/components/schemas/ActivityExpectedChoice",
+            "interaction": "#/components/schemas/ActivityExpectedInteraction",
+            "numeric": "#/components/schemas/ActivityExpectedNumeric"
+          }
+        }
       },
       "LibraryLessonRetryable": {
         "type": "object",
@@ -73154,28 +73552,6 @@
           "spelling"
         ],
         "additionalProperties": false
-      },
-      "ActivityExpected": {
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/ActivityExpectedChoice"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedInteraction"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedNumeric"
-          }
-        ],
-        "type": "object",
-        "discriminator": {
-          "propertyName": "kind",
-          "mapping": {
-            "choice": "#/components/schemas/ActivityExpectedChoice",
-            "interaction": "#/components/schemas/ActivityExpectedInteraction",
-            "numeric": "#/components/schemas/ActivityExpectedNumeric"
-          }
-        }
       },
       "LessonRegeneration": {
         "type": "object",
@@ -75315,6 +75691,24 @@
           }
         },
         "required": [
+          "token"
+        ],
+        "additionalProperties": false
+      },
+      "RestoreKeySessionResponse": {
+        "type": "object",
+        "properties": {
+          "isGuest": {
+            "type": "boolean",
+            "description": "Whether the restored learner is a guest"
+          },
+          "token": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "isGuest",
           "token"
         ],
         "additionalProperties": false
@@ -92959,6 +93353,692 @@
           "goals"
         ],
         "additionalProperties": false
+      },
+      "LessonStepAnswerOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "check"
+                ]
+              },
+              "optionId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              }
+            },
+            "required": [
+              "kind",
+              "optionId"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "typedAnswer"
+                ]
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              }
+            },
+            "required": [
+              "kind",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "spokenAnswer"
+                ]
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              }
+            },
+            "required": [
+              "kind",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "assignment"
+                        ]
+                      },
+                      "pairs": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string",
+                          "maxLength": 2000
+                        }
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "pairs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "choice"
+                        ]
+                      },
+                      "optionId": {
+                        "type": "string",
+                        "maxLength": 2000
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "optionId"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "curve": {
+                        "type": "string",
+                        "maxLength": 2000,
+                        "description": "The id of the line the learner moved"
+                      },
+                      "direction": {
+                        "type": "string",
+                        "enum": [
+                          "down",
+                          "left",
+                          "right",
+                          "up"
+                        ]
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "curveShift"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "curve",
+                      "direction",
+                      "kind"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "cells": {
+                        "maxItems": 200,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 2000
+                        }
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "grid"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "cells",
+                      "kind"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "links"
+                        ]
+                      },
+                      "links": {
+                        "maxItems": 200,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "from": {
+                              "type": "string",
+                              "maxLength": 2000
+                            },
+                            "to": {
+                              "type": "string",
+                              "maxLength": 2000
+                            }
+                          },
+                          "required": [
+                            "from",
+                            "to"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "links"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "atoms": {
+                        "maxItems": 200,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "element": {
+                              "type": "string",
+                              "maxLength": 2000
+                            },
+                            "id": {
+                              "type": "string",
+                              "maxLength": 2000
+                            }
+                          },
+                          "required": [
+                            "element",
+                            "id"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "bonds": {
+                        "maxItems": 200,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "from": {
+                              "type": "string",
+                              "maxLength": 2000
+                            },
+                            "order": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "to": {
+                              "type": "string",
+                              "maxLength": 2000
+                            }
+                          },
+                          "required": [
+                            "from",
+                            "order",
+                            "to"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "molecule"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "atoms",
+                      "bonds",
+                      "kind"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "notes"
+                        ]
+                      },
+                      "notes": {
+                        "maxItems": 200,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 2000
+                        }
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "notes"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "numeric"
+                        ]
+                      },
+                      "value": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "ids": {
+                        "maxItems": 200,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 2000
+                        }
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "order"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "ids",
+                      "kind"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "output"
+                        ]
+                      },
+                      "output": {
+                        "type": "string",
+                        "maxLength": 10000
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "output"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "pattern"
+                        ]
+                      },
+                      "pattern": {
+                        "type": "string",
+                        "maxLength": 2000
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "pattern"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "deviceDelayMs": {
+                        "description": "How late this device plays sound, measured once by tapping along with steady clicks; taps are graded after taking it out",
+                        "type": "number",
+                        "minimum": -100,
+                        "maximum": 500
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "rhythm"
+                        ]
+                      },
+                      "tapTimesMs": {
+                        "maxItems": 200,
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "tapTimesMs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "columns": {
+                        "maxItems": 200,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 2000
+                        }
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "rows"
+                        ]
+                      },
+                      "rows": {
+                        "maxItems": 200,
+                        "type": "array",
+                        "items": {
+                          "maxItems": 200,
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 10000
+                              },
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "string",
+                                "nullable": true,
+                                "enum": [
+                                  null
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "columns",
+                      "kind",
+                      "rows"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "ids": {
+                        "maxItems": 200,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 2000
+                        }
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "selection"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "ids",
+                      "kind"
+                    ],
+                    "additionalProperties": false
+                  }
+                ],
+                "type": "object"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "activity"
+                ]
+              }
+            },
+            "required": [
+              "answer",
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "choiceIds": {
+                "minItems": 1,
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 40
+                },
+                "description": "The choice picked at each decision of a challenge, in order"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "challenge"
+                ]
+              }
+            },
+            "required": [
+              "choiceIds",
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "fillBlank"
+                ]
+              },
+              "userAnswers": {
+                "maxItems": 50,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 500
+                }
+              }
+            },
+            "required": [
+              "kind",
+              "userAnswers"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "arrangedWords": {
+                "maxItems": 50,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 500
+                }
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "listening"
+                ]
+              }
+            },
+            "required": [
+              "arrangedWords",
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "matchColumns"
+                ]
+              },
+              "mistakes": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 50
+              },
+              "userPairs": {
+                "maxItems": 50,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "left": {
+                      "type": "string",
+                      "maxLength": 500
+                    },
+                    "right": {
+                      "type": "string",
+                      "maxLength": 500
+                    }
+                  },
+                  "required": [
+                    "left",
+                    "right"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "kind",
+              "mistakes",
+              "userPairs"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "multipleChoice"
+                ]
+              },
+              "selectedOptionId": {
+                "type": "string",
+                "maxLength": 500
+              }
+            },
+            "required": [
+              "kind",
+              "selectedOptionId"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "arrangedWords": {
+                "maxItems": 50,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 500
+                }
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "reading"
+                ]
+              }
+            },
+            "required": [
+              "arrangedWords",
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "translation"
+                ]
+              },
+              "selectedOptionId": {
+                "type": "string",
+                "maxLength": 500
+              }
+            },
+            "required": [
+              "kind",
+              "selectedOptionId"
+            ],
+            "additionalProperties": false
+          }
+        ],
+        "type": "object"
       }
     },
     "securitySchemes": {

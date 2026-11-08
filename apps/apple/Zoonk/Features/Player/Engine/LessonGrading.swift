@@ -2,7 +2,7 @@ import Foundation
 
 /// Mirrors core's `gradeStepAnswer`, so feedback is instant. When the server's verdict differs,
 /// it replaces this one (`LessonPlayerState.confirm`).
-struct LocalGrade: Hashable, Sendable {
+struct LocalGrade: Codable, Hashable, Sendable {
   let isCorrect: Bool
   let answerText: String?
   let correctAnswer: String?

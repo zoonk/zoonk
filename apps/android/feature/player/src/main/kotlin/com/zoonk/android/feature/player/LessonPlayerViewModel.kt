@@ -50,6 +50,7 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.toApi
+import com.zoonk.android.feature.player.model.toLessonAnswer
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.player.model.writtenText
 import com.zoonk.android.feature.player.steps.isPlayable
@@ -64,6 +65,7 @@ import com.zoonk.api.models.LessonStepCheckInput
 import com.zoonk.api.models.LessonStepCheckResult
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.LibraryLessonRun
+import com.zoonk.api.models.LibraryLessonRunAnswersInner
 import com.zoonk.api.models.LibraryLessonStartInputOpening
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -127,7 +129,14 @@ private data class PendingCheck(
 ) {
     val attemptId: String get() = input.attemptId.toString()
 
-    val progress: RunAnswer? get() = isCorrect?.let { correct -> answeredAt?.let { RunAnswer(stepId, correct, it) } }
+    /** An answer graded on the device, shown as it was graded while it waits for the server. */
+    fun held(step: LessonStep?): RunAnswer? {
+        val correct = isCorrect ?: return null
+        val at = answeredAt ?: return null
+        val answer = input.answer.toLessonAnswer()
+        val result = step?.let { gradeOnDevice(it, answer) } ?: return null
+        return RunAnswer(stepId, correct, at, answer, result.copy(attemptId = attemptId))
+    }
 }
 
 private data class HeldDeviceVerdict(
@@ -271,6 +280,9 @@ class LessonPlayerViewModel(
     private val answeredHere = mutableSetOf<String>()
     private val encodedAnswers = HashMap<String, Pair<LessonAnswer, String?>>()
 
+    /** By screen: a server-graded answer sent with no verdict back yet, so Check sends it again under the same attempt. */
+    private val unverdicted = HashMap<String, Pair<LessonAnswer, UUID>>()
+
     /**
      * Starts the lesson's run when it opens, as main does after its player mounts (never on a
      * prefetch); reopening it for the same learner keeps where they are.
@@ -289,6 +301,7 @@ class LessonPlayerViewModel(
         answeredHere.clear()
         heldDeviceVerdicts.clear()
         unsaved.clear()
+        unverdicted.clear()
         screenLocks.clear()
         resending = null
         hasUnsent = false
@@ -515,7 +528,7 @@ class LessonPlayerViewModel(
         }
 
         val apiAnswer = answer.toApi() ?: return
-        val attemptId = UUID.randomUUID()
+        val attemptId = unverdicted[step.id]?.takeIf { it.first == answer }?.second ?: UUID.randomUUID()
         val durationMs = state.answerDurationMs()
         val answeredAt = Instant.fromEpochMilliseconds(now())
         val local = if (isServerGradedAnswer(answer, step)) null else gradeOnDevice(step, answer)
@@ -545,6 +558,7 @@ class LessonPlayerViewModel(
             }
             return
         }
+        unverdicted[step.id] = answer to attemptId
         dispatch(LessonAction.CheckStarted(step.id))
         checksAwaitingRun.removeAll { it.isCompleted }
         checksAwaitingRun +=
@@ -625,7 +639,7 @@ class LessonPlayerViewModel(
     private fun startRun() {
         if (!activated) return
         val opened = lesson ?: return
-        dispatch(LessonAction.RunStarting)
+        mutableState.update { state -> state?.takeUnless { it.run is LessonRun.Refused } ?: state?.copy(run = LessonRun.Idle) }
         starting =
             work.launch {
                 // The run keeps the screens it starts with, and the copy shown on opening may predate a plan change or
@@ -725,8 +739,9 @@ class LessonPlayerViewModel(
                     )
             }
                 ?: LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = started)
-        state =
-            reduce(state, run.toStartedAction(unsaved.values.flatten().mapNotNull(PendingCheck::progress), keepsScreen = acted), started)
+        val steps = lesson.steps.associateBy(LessonStep::id)
+        val held = unsaved.values.flatten().mapNotNull { it.held(steps[it.stepId]) }
+        state = reduce(state, run.toStartedAction(held, keepsScreen = acted), started)
 
         val unplayable = lesson.steps.filterNot(::isPlayable).map(LessonStep::id)
         val leftOut = run.optionalStepIds.orEmpty().map(UUID::toString) + run.answers.map { it.stepId.toString() }
@@ -743,8 +758,10 @@ class LessonPlayerViewModel(
         talkDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantTalk) }
         listenDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantListen) }
 
-        // After the server's answers rebuild the run, what the learner did and hadn't checked comes back, under the round
-        // it was saved in, when Android closed the app in the background; what they entered on this visit stays.
+        // After the server's answers rebuild the run, what the learner did and hadn't checked comes back on the screens the
+        // run has no answer for, under the round it was saved in, when Android closed the app in the background; what they
+        // entered on this visit stays. A screen the run answered moves past its saved round, so its canvas draws that
+        // answer instead of the work saved there.
         val rounds = saved.get<Map<String, Int>>(ROUNDS).orEmpty()
         val revealed = saved.get<Map<String, Int>>(REVEALED).orEmpty()
         val answers =
@@ -755,7 +772,13 @@ class LessonPlayerViewModel(
                     ApiJson.decodeFromString(LessonAnswer.serializer(), json)
                 }.filterKeys { it !in answeredHere }
         val resumed = state.withFirstAnswer(started)
-        return resumed.copy(answers = resumed.answers + answers, revealed = revealed + resumed.revealed, rounds = resumed.rounds + rounds)
+        val unanswered = { id: String -> id !in resumed.results }
+        val runAnswered = resumed.results.keys - answeredHere
+        return resumed.copy(
+            answers = resumed.answers + answers.filterKeys(unanswered),
+            revealed = revealed.filterKeys(unanswered) + resumed.revealed,
+            rounds = resumed.rounds + rounds + runAnswered.associateWith { (rounds[it] ?: 0) + 1 },
+        )
     }
 
     /** Main's and Apple's: the lesson is read again every few seconds until its pictures come or their wait ends. */
@@ -801,6 +824,7 @@ class LessonPlayerViewModel(
             when (val outcome = withTimeoutOrNull(timeout) { if (saveScreen(step.id)) send(pending) else CheckOutcome.Failed }) {
                 is CheckOutcome.Checked -> {
                     val result = outcome.result.toStepResult(answerText)
+                    unverdicted.remove(step.id)
                     countActivity(step)
                     dispatch(LessonAction.CheckResolved(step.id, result, counts = outcome.result.checked))
                     resendAnswers()
@@ -979,7 +1003,7 @@ class LessonPlayerViewModel(
         dispatch(
             LessonAction.RunResynced(
                 runId = run.runId.toString(),
-                answers = run.answers.map { RunAnswer(it.stepId.toString(), it.isCorrect, it.answeredAt) },
+                answers = run.answers.map(LibraryLessonRunAnswersInner::toRunAnswer),
                 optionalStepIds = run.optionalStepIds.orEmpty().map(UUID::toString),
                 pictures = pictures,
             ),
@@ -1044,12 +1068,17 @@ private fun LibraryLessonRun.toStartedAction(
     keepsScreen: Boolean,
 ) = LessonAction.RunStarted(
     runId = runId.toString(),
-    answers = answers.map { RunAnswer(it.stepId.toString(), it.isCorrect, it.answeredAt) },
+    answers = answers.map(LibraryLessonRunAnswersInner::toRunAnswer),
     hyperdrive = HyperdriveStart(hyperdrive.knownStepIds.map(UUID::toString).toSet(), hyperdrive.streak.toInt()),
     startedAt = startedAt,
     optionalStepIds = optionalStepIds.orEmpty().map(UUID::toString),
     heldAnswers = heldAnswers,
     keepsScreen = keepsScreen,
 )
+
+private fun LibraryLessonRunAnswersInner.toRunAnswer(): RunAnswer {
+    val saved = answer?.toLessonAnswer()
+    return RunAnswer(stepId.toString(), isCorrect, answeredAt, saved, result.toStepResult(isRecording = saved == null))
+}
 
 private fun List<LessonStep>.pictures(): Map<String, StepImage> = mapNotNull { step -> step.image?.let { step.id to it } }.toMap()

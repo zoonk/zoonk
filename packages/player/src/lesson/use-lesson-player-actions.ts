@@ -11,7 +11,11 @@ import {
   type LessonPlayerState,
   getCurrentStep,
 } from "./lesson-player-state";
-import { type LessonPlayerAdapters, type PlayableLibraryStep } from "./lesson-player-types";
+import {
+  type LessonPlayerAdapters,
+  type LessonPlayerLesson,
+  type PlayableLibraryStep,
+} from "./lesson-player-types";
 import { useLessonRun } from "./use-lesson-run";
 import { type CheckContext, useStepGrading } from "./use-step-grading";
 import { CANT_WRITE_TODAY, setChosenToday } from "./use-today-choice";
@@ -19,7 +23,7 @@ import { CANT_WRITE_TODAY, setChosenToday } from "./use-today-choice";
 type ActionsInput = {
   adapters: LessonPlayerAdapters;
   dispatch: Dispatch<LessonPlayerAction>;
-  language: string;
+  lesson: Pick<LessonPlayerLesson, "id" | "language" | "steps">;
   state: LessonPlayerState;
   track: (event: AnalyticsEvent) => void;
   writeExampleLines: () => void;
@@ -58,12 +62,12 @@ function revealWithoutGuess({
 export function useLessonPlayerActions({
   adapters,
   dispatch,
-  language,
+  lesson,
   state,
   track,
   writeExampleLines,
 }: ActionsInput) {
-  const lessonRun = useLessonRun({ adapters, dispatch, lessonId: state.lessonId });
+  const lessonRun = useLessonRun({ adapters, dispatch, lesson });
   const { ensureRun, flushChecks, resendHeld } = lessonRun;
 
   const { gradeOnServer, recordInBackground, submitSpokenAnswer } = useStepGrading({
@@ -151,7 +155,7 @@ export function useLessonPlayerActions({
       return;
     }
 
-    const graded = gradeStepAnswer({ answer, language, step });
+    const graded = gradeStepAnswer({ answer, language: lesson.language, step });
 
     if (!graded) {
       return;
@@ -177,7 +181,7 @@ export function useLessonPlayerActions({
     dispatch,
     ensureRun,
     gradeOnServer,
-    language,
+    lesson.language,
     recordInBackground,
     state,
     track,
@@ -203,6 +207,7 @@ export function useLessonPlayerActions({
 
         dispatch({ stepId, type: "skipWriting" });
       },
+      engage: () => dispatch({ type: "engaged" }),
       explainFirst: () => dispatch({ type: "explainFirst" }),
       goBack: () => {
         writeExampleLines();

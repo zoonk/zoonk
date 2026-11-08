@@ -161,7 +161,7 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertTrue(fields.ticks.allSatisfy(\.isLabelled))
   }
 
-  func testLineCrossingMovesAndGrades() throws {
+  func testLineCrossingMovesGradesAndPutsASavedMoveBack() throws {
     let fields: LineCrossingFields = try decode(
       """
       {"change":"Bird flu cut the number of laying hens.",
@@ -186,6 +186,10 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertTrue(LineCrossingModel.grade(fields, right))
     XCTAssertFalse(LineCrossingModel.grade(fields, wrongWay))
     XCTAssertFalse(LineCrossingModel.grade(fields, wrongLine))
+
+    XCTAssertEqual(LineCrossingModel.restoredOffsets(fields, answer: right), ["supply": -2])
+    XCTAssertEqual(LineCrossingModel.restoredOffsets(fields, answer: wrongWay), ["supply": 2])
+    XCTAssertEqual(LineCrossingModel.restoredOffsets(fields, answer: .numeric(4)), [:])
   }
 
   func testFormulaModelReadsOutputsLikeCore() throws {

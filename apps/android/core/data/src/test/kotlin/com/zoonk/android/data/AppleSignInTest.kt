@@ -54,6 +54,15 @@ class AppleSignInTest {
                 exchangeGate?.await()
                 return "apple"
             }
+
+            override suspend fun challenge() = error("unexpected")
+
+            override suspend fun registerRestoreKey(
+                session: AuthenticatedSession,
+                registrationResponseJson: String,
+            ) = error("unexpected")
+
+            override suspend fun restoreKeySession(authenticationResponseJson: String) = error("unexpected")
         }
 
     private fun TestScope.store() =
@@ -237,6 +246,12 @@ class AppleSignInTest {
 
                         override suspend fun writePendingApple(pending: PendingAppleSignIn?) {
                             disk.updateData { it.copy(pendingApple = pending) }
+                        }
+
+                        override suspend fun restoreChecked() = disk.data.first().restoreChecked
+
+                        override suspend fun markRestoreChecked() {
+                            disk.updateData { it.copy(restoreChecked = true) }
                         }
                     }
                 }

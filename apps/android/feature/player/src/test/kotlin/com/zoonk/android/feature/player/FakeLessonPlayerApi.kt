@@ -69,6 +69,24 @@ fun checkResult(
         """.trimIndent(),
     )
 
+/** An answer from a sitting before the fake run's `startedAt`. */
+const val EARLIER_SITTING = "2026-10-28T09:59:00Z"
+
+/** A saved answer as a run sends it back; [answer] is its JSON, null for a recording. */
+fun runAnswerJson(
+    stepId: String,
+    isCorrect: Boolean,
+    answer: String = "null",
+    answerText: String? = null,
+    answeredAt: String = "2026-10-28T10:01:00Z",
+): String =
+    """
+    {"answer":$answer,"answeredAt":"$answeredAt","isCorrect":$isCorrect,"stepId":"$stepId",
+     "result":{"answerText":${answerText?.let { "\"$it\"" } ?: "null"},"checked":true,"correctAnswer":null,"corrections":[],
+     "expected":null,"feedback":null,"isCorrect":$isCorrect,"keyPoints":null,"nextReviewAt":null,"savedMistake":false,
+     "score":null,"spelling":null}}
+    """.trimIndent()
+
 val COMPLETION =
     """
     {"ceremony":null,"certificates":[],"reached":{"energy":null,"level":null},"brainPower":30,"correctCount":2,"energyDelta":0.5,

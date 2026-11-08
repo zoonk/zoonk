@@ -83,13 +83,17 @@ async function waitForPictureDeadline() {
   await act(() => vi.advanceTimersByTimeAsync(WAIT_MS + POLL_MS));
 }
 
+async function answerCurrent({ current }: Pick<ReturnType<typeof openPictures>, "current">) {
+  await page.getByRole("textbox", { name: current.content.question }).fill(ANSWER);
+  await page.getByRole("button", { name: /^Check/u }).click();
+  await page.getByRole("button", { exact: true, name: "Continue" }).click();
+}
+
 async function finishLesson({
   current,
   last,
 }: Pick<ReturnType<typeof openPictures>, "current" | "last">) {
-  await page.getByRole("textbox", { name: current.content.question }).fill(ANSWER);
-  await page.getByRole("button", { name: /^Check/u }).click();
-  await page.getByRole("button", { exact: true, name: "Continue" }).click();
+  await answerCurrent({ current });
   await expect.element(page.getByText(last.content.text)).toBeVisible();
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
 }
@@ -189,7 +193,7 @@ describe("picture loss during a lesson", () => {
         startedRun({ answers: [runAnswer({ stepId: current.id })], runId: resumedRun.runId }),
       );
 
-      await finishLesson({ current, last });
+      await (resyncFirst ? answerCurrent({ current }) : finishLesson({ current, last }));
       await expect.element(page.getByText(picture.content.question)).toBeVisible();
       await expect.element(page.getByText(PICTURE_READY)).toBeVisible();
       await expect.element(page.getByText(NOT_SAVED)).not.toBeInTheDocument();
@@ -323,7 +327,15 @@ describe("picture loss during a lesson", () => {
       .fn<NonNullable<LessonPlayerAdapters["getLessonPictures"]>>()
       .mockResolvedValue([]);
 
-    const { current, last, picture, state } = openPictures({ completeLesson, getLessonPictures });
+    const run = startedRun();
+    const startLesson = vi.fn<LessonPlayerAdapters["startLesson"]>().mockResolvedValue(run);
+
+    const { current, last, picture, state } = openPictures({
+      completeLesson,
+      getLessonPictures,
+      startLesson,
+    });
+
     await waitForPictureDeadline();
 
     getLessonPictures.mockResolvedValue([
@@ -333,14 +345,12 @@ describe("picture loss during a lesson", () => {
       },
     ]);
 
+    startLesson.mockResolvedValue({ ...run, optionalStepIds: [picture.id] });
+
     await resyncMissingAnswer({ current, last, state });
     expect(state()?.queue).not.toContain(picture.id);
 
-    await page.getByRole("textbox", { name: current.content.question }).fill(ANSWER);
-    await page.getByRole("button", { name: /^Check/u }).click();
-    await page.getByRole("button", { exact: true, name: "Continue" }).click();
-    await expect.element(page.getByText(last.content.text)).toBeVisible();
-    await page.getByRole("button", { exact: true, name: "Continue" }).click();
+    await answerCurrent({ current });
 
     await expect.poll(() => state()?.completion?.status).toBe("saved");
     expect(completeLesson).toHaveBeenCalledTimes(2);
@@ -364,14 +374,9 @@ describe("picture loss during a lesson", () => {
     await expect.element(page.getByText(NOT_SAVED)).toBeVisible();
     expect(state()?.queue).not.toContain(picture.id);
 
-    await expect
-      .element(page.getByRole("textbox", { name: current.content.question }))
-      .toBeVisible();
-
-    await page.getByRole("textbox", { name: current.content.question }).fill(ANSWER);
-    await page.getByRole("button", { name: /^Check/u }).click();
-    await page.getByRole("button", { exact: true, name: "Continue" }).click();
-    await expect.element(page.getByText(last.content.text)).toBeVisible();
+    await answerCurrent({ current });
+    await expect.poll(() => completeLesson).toHaveBeenCalledTimes(2);
+    expect(state()?.queue).not.toContain(picture.id);
   });
 
   it.each([false, true])(

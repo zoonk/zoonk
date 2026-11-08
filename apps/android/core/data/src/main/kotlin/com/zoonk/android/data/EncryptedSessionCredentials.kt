@@ -30,6 +30,7 @@ import java.security.ProviderException
 data class SessionFile(
     val session: StoredSession? = null,
     val pendingApple: PendingAppleSignIn? = null,
+    val restoreChecked: Boolean = false,
 )
 
 /** A file that can't be decrypted (the Keystore key was lost) resets, which signs the learner out. */
@@ -59,6 +60,13 @@ class EncryptedSessionCredentials(
 
     override suspend fun writePendingApple(pending: PendingAppleSignIn?) {
         withContext(Dispatchers.IO) { keystoreFailuresAsIO { store.updateData { it.copy(pendingApple = pending) } } }
+    }
+
+    override suspend fun restoreChecked(): Boolean =
+        withContext(Dispatchers.IO) { keystoreFailuresAsIO { store.data.first().restoreChecked } }
+
+    override suspend fun markRestoreChecked() {
+        withContext(Dispatchers.IO) { keystoreFailuresAsIO { store.updateData { it.copy(restoreChecked = true) } } }
     }
 
     // Some devices' Keystore fails outright; the session then can't be kept, which callers handle.

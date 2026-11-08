@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addPick, currentStepIndex, firstPicks } from "./step-solver-progress";
+import { addPick, currentStepIndex, firstPicks, picksFromFirst } from "./step-solver-progress";
 
 const steps = [
   {
@@ -46,5 +46,14 @@ describe(addPick, () => {
 
     expect(picks).toStrictEqual({ tax: ["a", "b"] });
     expect(addPick(picks, "tax", "a")).toBe(picks);
+  });
+});
+
+describe(picksFromFirst, () => {
+  it("rebuilds a saved answer's picks, the right move after a wrong first pick", () => {
+    const picks = picksFromFirst(steps, { discount: "b", tax: "b" });
+
+    expect(picks).toStrictEqual({ discount: ["b", "a"], tax: ["b"] });
+    expect(firstPicks(steps, picks)).toStrictEqual({ discount: "b", tax: "b" });
   });
 });

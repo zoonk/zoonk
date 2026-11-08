@@ -15,7 +15,7 @@ enum CodeWorkerSources {
 
   /// The page that hosts the language's worker. `warmUp()` loads the runtime; `run(code)`
   /// resolves with how the run ended and what it printed.
-  static func page(_ language: CodeLanguage) -> String {
+  static func page(_ language: CodeLanguage, timeLimit: TimeInterval) -> String {
     let runtime = language == .python ? pyodideIndexURL : ""
     let worker = language == .python ? python : javascript
 
@@ -25,7 +25,7 @@ enum CodeWorkerSources {
       "use strict";
       const KIND = \(json(language.rawValue));
       const SOURCE = \(json(worker));
-      const TIME_LIMIT_MS = \(language.timeLimitSeconds * 1000);
+      const TIME_LIMIT_MS = \(Int(timeLimit * 1000));
       const MAX_OUTPUT_LENGTH = 10000;
       \(host)
       \(consoleFormat)

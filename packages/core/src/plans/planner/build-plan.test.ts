@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { findCurrentPhase, getPhaseStates, isPhaseFinished } from "../_utils/phase-states";
 import { isPlanFinished } from "../_utils/plan-end";
 import { getPlannedBossMinutes } from "./boss-minutes";
-import { type BuildPlanInput, buildPlan } from "./build-plan";
+import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
+import { withPlannedLessons } from "./core-first";
 import { getShownPhaseEnds } from "./kept-phase-ends";
 import { addDays, daysBetween, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { getPlanFeasibility } from "./plan-feasibility";
@@ -419,6 +420,89 @@ describe(buildPlan, () => {
 
     expect(keptAfter("automatic")).toStrictEqual(kept);
     expect(keptAfter("forced")).toStrictEqual(kept);
+  });
+
+  it("keeps the ends the learner saw while they follow Today through chapters whose depth comes later", () => {
+    const skills = [0, 1, 2, 3, 4].map((index) => skill(`s${index}`, { lessons: 6, phase: index }));
+
+    const input = planInput({
+      goal: { dailyMinutes: 10, kind: "learn", targetDate: addDays(TODAY, 30) },
+      graph: { phases: skills.map((_, index) => ({ milestone: null, name: `${index}` })), skills },
+      lessons: skills.flatMap(({ skillId }) =>
+        lessonsFor(skillId, 6).map((row) => ({ ...row, chapterId: skillId, minutes: 5 })),
+      ),
+    });
+
+    const first = buildPlan(input);
+    const days = Array.from({ length: 10 }, (_, offset) => addDays(TODAY, offset + 1));
+
+    // Each morning the plan runs again after the learner finished the day before, which leaves
+    // the rest of a chapter in progress whenever they finish its skill's core.
+    const { runs } = days.reduce<{ items: ExistingPlanItem[]; runs: BuiltPlan[] }>(
+      ({ items, runs: built }, today) => {
+        const yesterday = addDays(today, -1).getTime();
+
+        const studied = items.map((item) =>
+          item.status === "todo" && item.scheduledFor?.getTime() === yesterday
+            ? { ...item, completedAt: new Date(yesterday), status: "done" as const }
+            : item,
+        );
+
+        const next = buildPlan({
+          ...input,
+          items: studied,
+          mode: "automatic",
+          phaseEnds: getShownPhaseEnds({ items: studied, phases: (built.at(-1) ?? first).phases }),
+          today,
+        });
+
+        return { items: store(next), runs: [...built, next] };
+      },
+      { items: store(first), runs: [] },
+    );
+
+    const shown = { before: [], ends: first.phases.map((phase) => phase.endDate) };
+
+    expect(
+      runs.map((run) => ({
+        before: run.endsBeforeLessons,
+        ends: run.phases.map((phase) => phase.endDate),
+      })),
+    ).toStrictEqual(days.map(() => shown));
+  });
+
+  it("asks to move an end before a lesson kept this week once written lessons make it core", () => {
+    const skills = [0, 1, 2].map((index) => skill(`s${index}`, { lessons: 3, phase: index }));
+
+    const input = planInput({
+      goal: { dailyMinutes: 10, kind: "learn", targetDate: addDays(TODAY, 8) },
+      graph: { phases: skills.map((_, index) => ({ milestone: null, name: `${index}` })), skills },
+      lessons: skills.flatMap(({ skillId }) => writtenLessons(skillId, 0, 3)),
+    });
+
+    const first = buildPlan(input);
+    const today = addDays(TODAY, 1);
+
+    const studied = store(first, new Set(lessonsOn(first, TODAY))).map((item) =>
+      item.status === "done" ? { ...item, completedAt: TODAY } : item,
+    );
+
+    const automatic = (previous: BuiltPlan, items: ExistingPlanItem[], lessons = input.lessons) =>
+      buildPlan({
+        ...input,
+        graph: withPlannedLessons({ graph: input.graph, skillLessons: previous.skillLessons }),
+        items,
+        lessons,
+        mode: "automatic",
+        phaseEnds: getShownPhaseEnds({ items, phases: previous.phases }),
+        today,
+      });
+
+    const kept = automatic(first, studied);
+    const landed = automatic(kept, store(kept), [...input.lessons, ...writtenLessons("s0", 3, 3)]);
+
+    expect(kept.endsBeforeLessons).toStrictEqual([]);
+    expect(landed.endsBeforeLessons).toStrictEqual([0, 1]);
   });
 
   it("keeps the chapter an unstarted skill's item teaches from when it moves after this week", () => {
@@ -1103,6 +1187,13 @@ describe("language plans", () => {
   });
 });
 
+function writtenLessons(skillId: string, from: number, count: number): PlannerLesson[] {
+  return Array.from({ length: count }, (_, index) => ({
+    ...lesson(`${skillId}-${from + index}`, [skillId], 5),
+    chapterId: skillId,
+  }));
+}
+
 function lessonsFor(skillId: string, count: number): PlannerLesson[] {
   return Array.from({ length: count }, (_, index) => lesson(`${skillId}-${index}`, [skillId]));
 }
@@ -1531,6 +1622,52 @@ describe("phase challenges a learner reaches together, a day before the date", (
     expect(
       plan.phases.map((phase, index) => phase.challengeLeftOut === true || planned(index)),
     ).toStrictEqual([true, true, true]);
+  });
+});
+
+describe("phase challenges whose lessons the learner finished ahead", () => {
+  const input = planInput({
+    goal: { dailyMinutes: 12, kind: "learn", targetDate: null },
+    graph: {
+      phases: ["One", "Two", "Three"].map((name) => ({ milestone: null, name })),
+      skills: ["a", "b", "c"].map((skillId, phase) => skill(skillId, { lessons: 3, phase })),
+    },
+    lessons: ["a", "b", "c"].flatMap((skillId) => lessonsFor(skillId, 3)),
+  });
+
+  it("each get a study day of their own, in phase order, when a change re-plans", () => {
+    const first = buildPlan(input);
+    const ahead = new Set(["a", "b"]);
+
+    const items = store(
+      first,
+      new Set(
+        first.items.flatMap((item) => (item.skillId && ahead.has(item.skillId) ? [item.key] : [])),
+      ),
+    ).map((item) => (item.status === "done" ? { ...item, completedAt: TODAY } : item));
+
+    const changed = buildPlan({
+      ...input,
+      finishedOn: new Map(
+        items.flatMap((item) => (item.status === "done" ? [[item.id, TODAY]] : [])),
+      ),
+      goal: { ...input.goal, dailyMinutes: 14 },
+      items,
+    });
+
+    expect(
+      changed.items.filter((item) => item.kind === "boss").map((item) => [item.key, dateOf(item)]),
+    ).toStrictEqual([
+      ["boss:0", "2026-09-29"],
+      ["boss:1", "2026-09-30"],
+      ["boss:2", "2026-10-03"],
+    ]);
+
+    expect(changed.phases.map((phase) => phase.challengeLeftOut ?? false)).toStrictEqual([
+      false,
+      false,
+      false,
+    ]);
   });
 });
 

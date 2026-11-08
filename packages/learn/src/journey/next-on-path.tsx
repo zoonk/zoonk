@@ -13,6 +13,7 @@ import { LIST_GROUP_CLASS } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PlusMark } from "../_components/plus-lock";
 import { StatusMark } from "../_components/status-mark";
+import { MarkedText, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
@@ -21,6 +22,7 @@ import { type JourneyPathLinks } from "./journey-links";
 import {
   CheckpointRow,
   MockRow,
+  PATH_ROW_BODY_CLASS,
   PATH_ROW_CLASS,
   PATH_ROW_LEADING_CLASS,
   usePhaseMocksLine,
@@ -70,19 +72,21 @@ function NextChapterRow({
       <span className={PATH_ROW_LEADING_CLASS}>
         <ChapterMark chapter={chapter} isNext />
       </span>
-      <span className="min-w-0 flex-1 truncate font-medium">{chapter.title}</span>
-      <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
-        <span aria-hidden="true">
-          {t("{done, number} / {total, number}", {
-            done: chapter.lessonsDone,
-            total: chapter.lessonsTotal,
-          })}
-        </span>
-        <span className="sr-only">
-          {t(
-            "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}",
-            { done: chapter.lessonsDone, total: chapter.lessonsTotal },
-          )}
+      <span className={PATH_ROW_BODY_CLASS}>
+        <span className={cn(TRUNCATED_TITLE_CLASS, "font-medium")}>{chapter.title}</span>
+        <span className="text-muted-foreground font-mono text-xs tabular-nums">
+          <span aria-hidden="true">
+            {t("{done, number} / {total, number}", {
+              done: chapter.lessonsDone,
+              total: chapter.lessonsTotal,
+            })}
+          </span>
+          <span className="sr-only">
+            {t(
+              "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}",
+              { done: chapter.lessonsDone, total: chapter.lessonsTotal },
+            )}
+          </span>
         </span>
       </span>
       <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
@@ -139,27 +143,31 @@ function AfterExamRow({ phase }: { phase: PlanPhaseView }) {
       <span className={PATH_ROW_LEADING_CLASS}>
         <StatusMark status="todo" />
       </span>
-      <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate font-medium">{phaseName(phase)}</span>
-        {phase.mocks.count > 0 && (
-          <span className="text-muted-foreground flex items-center gap-2 text-xs">
-            {mocksLine({
-              count: phase.mocks.count,
-              forNextSitting: true,
-              nextSitting: plan.schedule.nextSitting,
-            })}
-            {plan.access.mocksRequirePlus && <PlusMark />}
-          </span>
+      <span className={PATH_ROW_BODY_CLASS}>
+        <span className="flex flex-col">
+          <span className={cn(TRUNCATED_TITLE_CLASS, "font-medium")}>{phaseName(phase)}</span>
+          {phase.mocks.count > 0 && (
+            <MarkedText
+              className="text-muted-foreground text-xs"
+              mark={plan.access.mocksRequirePlus && <PlusMark />}
+            >
+              {mocksLine({
+                count: phase.mocks.count,
+                forNextSitting: true,
+                nextSitting: plan.schedule.nextSitting,
+              })}
+            </MarkedText>
+          )}
+        </span>
+        {phase.endDate && (
+          <PlanDateText
+            className="text-muted-foreground text-xs"
+            estimate
+            isoDate={phase.endDate}
+            month
+          />
         )}
       </span>
-      {phase.endDate && (
-        <PlanDateText
-          className="text-muted-foreground shrink-0 text-xs"
-          estimate
-          isoDate={phase.endDate}
-          month
-        />
-      )}
     </div>
   );
 }

@@ -60,6 +60,12 @@ struct LessonPlayerState: Equatable, Sendable {
     let skippedWritingStepIds: [String]
   }
 
+  struct PendingCheck: Hashable, Sendable {
+    let stepId: String
+    let answer: LessonAnswer
+    let attemptId: String
+  }
+
   let lessonId: String
   private(set) var steps: [String: LessonStep]
   let lessonOrder: [String]
@@ -97,6 +103,12 @@ struct LessonPlayerState: Equatable, Sendable {
   private(set) var hyperdriveStart = LessonHyperdriveStart.none
   private(set) var carriedStepIds: Set<String> = []
   private(set) var notice: Notice?
+  /// After a finish the server refused: each screen it's missing, with why, until it's answered.
+  /// Nil otherwise.
+  private var recovery: [String: Notice]?
+  /// A server-graded answer sent without a verdict keeps its attempt id while it's unchanged, so
+  /// sending it again after a lost reply replays the saved verdict instead of grading it twice.
+  private var pendingCheck: PendingCheck?
   private(set) var checkFailed = false
   /// Back on an answered screen with Previous: it shows its result again.
   private(set) var reviewing = false
@@ -159,16 +171,15 @@ struct LessonPlayerState: Equatable, Sendable {
   }
 
   /// Previous is on every screen after the first while it's being played, the map included, not
-  /// during "I know this". It returns only to a screen played in this sitting: a question answered
-  /// in an earlier one (a resumed run) or the earlier copy of one that came back has no result here,
-  /// so it would ask for an answer again.
+  /// during "I know this". It never returns to the earlier copy of a question that came back: the
+  /// later copy holds its attempt, so the earlier one would ask for an answer again.
   var canGoBack: Bool {
     guard phase == .playing || phase == .map, position > 0, quickCheck == nil, !isRefused else {
       return false
     }
 
     let previous = queue[position - 1]
-    return results[previous] != nil || steps[previous]?.isRead == true
+    return results[previous] != nil || !queue[position...].contains(previous)
   }
 
   /// A screen's verdict when it counts: a hook's guess is never wrong, and "I don't know yet" and an
@@ -210,18 +221,20 @@ struct LessonPlayerState: Equatable, Sendable {
       return 1
     }
 
-    let total = queue.count + (endsWithMap ? 1 : 0)
-    let done = phase == .completed ? total : position + (phase == .feedback ? 1 : 0)
-    return Double(done) / Double(total)
+    let done = segments.filter { $0 != .ahead && $0 != .current }.count
+    return Double(done) / Double(segments.count)
   }
 
-  /// Main's `getSegments`: a screen's first copy shows its first verdict, a later copy its own.
+  /// Main's `getSegments`: each screen shows what the run has, wherever the learner is: a first
+  /// copy its first verdict, a later copy its own. The position only marks the screen in view.
   var segments: [TaskSegment] {
     let screens: [TaskSegment] = queue.indices.map { index in
-      let isAnsweredInView = index == position && phase == .feedback
+      if index == position, phase == .playing || phase == .checking {
+        return .current
+      }
 
-      guard index < position || isAnsweredInView || phase == .completed else {
-        return index == position ? .current : .ahead
+      if index > position, phase != .completed, !hasRunAnswer(index), continueStopsAt(index) {
+        return .ahead
       }
 
       let id = queue[index]
@@ -235,6 +248,26 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     return endsWithMap ? screens + [mapSegment] : screens
+  }
+
+  /// A retry or a quick check starts its screen over, so only a first copy keeps the run's answer.
+  private func hasRunAnswer(_ index: Int) -> Bool {
+    let id = queue[index]
+    return quickCheck == nil && queue.firstIndex(of: id) == index
+      && (results[id] != nil || firstVerdicts[id] != nil)
+  }
+
+  /// After a refused finish, Continue stops only at what the run still needs, except through
+  /// "I know this", whose every check counts.
+  private func continueStopsAt(_ index: Int) -> Bool {
+    recovery == nil || quickCheck != nil || isStillNeeded(index)
+  }
+
+  /// An answerable screen without a result, or a question that came back.
+  private func isStillNeeded(_ index: Int) -> Bool {
+    let id = queue[index]
+    return (steps[id]?.isAnswerable == true && results[id] == nil)
+      || queue.firstIndex(of: id) != index
   }
 
   private var mapSegment: TaskSegment {
@@ -415,6 +448,7 @@ struct LessonPlayerState: Equatable, Sendable {
     case .typedAnswer(let content):
       checkFailed = false
       notice = nil
+      recovery?[stepId] = nil
       phase = .feedback
       results[stepId] = .sampleAnswer(content.sampleAnswer)
       addSkippedWriting([stepId])
@@ -465,13 +499,19 @@ struct LessonPlayerState: Equatable, Sendable {
     enter(restore.position, now: now)
   }
 
-  mutating func startChecking() {
-    guard phase == .playing else {
-      return
+  /// The attempt id to send the answer on screen under.
+  mutating func startChecking(newAttemptId: String = UUID().uuidString.lowercased()) -> String? {
+    guard phase == .playing, let step = currentStep, let answer = answers[step.id] else {
+      return nil
+    }
+
+    if pendingCheck?.stepId != step.id || pendingCheck?.answer != answer {
+      pendingCheck = PendingCheck(stepId: step.id, answer: answer, attemptId: newAttemptId)
     }
 
     checkFailed = false
     phase = .checking
+    return pendingCheck?.attemptId
   }
 
   mutating func failChecking() {
@@ -499,6 +539,11 @@ struct LessonPlayerState: Equatable, Sendable {
 
     let isFirst = counts && firstVerdicts[stepId] == nil
     let isMiss = counts && !result.isCorrect
+    let wasMissing = recovery?.removeValue(forKey: stepId) != nil
+
+    if pendingCheck?.stepId == stepId {
+      pendingCheck = nil
+    }
 
     if isMiss, step.canSelfCorrect, quickCheck == nil, !selfCorrected.contains(stepId) {
       if isFirst {
@@ -529,9 +574,12 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     checkFailed = false
-    notice = notice == .selfCorrect ? nil : notice
     phase = .feedback
     results[stepId] = result
+
+    if notice == .selfCorrect || wasMissing {
+      notice = nil
+    }
 
     if willRetry {
       queue.append(stepId)
@@ -617,11 +665,19 @@ struct LessonPlayerState: Equatable, Sendable {
     carriedStepIds = Set(runAnswers.filter { $0.answeredAt < startedAt }.map(\.stepId))
     skipSteps(optionalStepIds)
 
-    guard !keepsScreen else {
-      return
+    // The server records nothing on a screen after its right answer, so a held answer behind one
+    // never counts.
+    let answers = held.reduce(runAnswers) { all, answer in
+      all.contains { $0.stepId == answer.stepId && $0.isCorrect } ? all : all + [answer]
     }
 
-    resume(from: (runAnswers + held).filter { steps[$0.stepId] != nil })
+    let known = answers.filter { steps[$0.stepId] != nil }
+
+    if keepsScreen {
+      fillUntouched(from: known)
+    } else {
+      resume(from: known)
+    }
   }
 
   mutating func retryRun() {
@@ -632,11 +688,14 @@ struct LessonPlayerState: Equatable, Sendable {
     run = .refused(refusal)
   }
 
-  /// The server couldn't finish the lesson: the lesson goes back to the first screen whose answer
-  /// never reached it or, when every answer did, to a question left out for a picture that has
-  /// come since (`lesson` is the lesson read again).
+  /// The server couldn't finish the lesson: it comes back from the server's answers, with the
+  /// questions left out for a picture that has come since (`lesson` is the lesson read again), on
+  /// the first screen the server is missing. When nothing it misses can be answered here (it was
+  /// left out on this device), the finish fails instead, or the learner would replay the lesson
+  /// without end.
   mutating func resync(
-    answers runAnswers: [LessonRunAnswer], optionalStepIds: [String] = [], lesson: [LessonStep] = []
+    answers runAnswers: [LessonRunAnswer], optionalStepIds: [String] = [],
+    lesson: [LessonStep] = [], now: Date = .now
   ) {
     guard phase == .completed else {
       return
@@ -644,33 +703,29 @@ struct LessonPlayerState: Equatable, Sendable {
 
     skipSteps(optionalStepIds)
     let known = runAnswers.filter { steps[$0.stepId] != nil }
-
-    if var missing = resumed(from: known) {
-      missing.notice = .answerNotSaved
-      self = missing
-    } else if var pictured = restoringPictures(from: lesson, optionalStepIds: optionalStepIds)
-      .resumed(from: known)
-    {
-      pictured.notice = .pictureReady
-      self = pictured
-    } else {
-      completion?.status = .failed
-    }
-  }
-
-  /// Going back helps only if a screen here is still to answer; when the one the server misses
-  /// was left out on this device, the learner would replay the lesson without end.
-  private func resumed(from known: [LessonRunAnswer]) -> LessonPlayerState? {
     let answered = Set(known.map(\.stepId))
-    var resumed = self
-    resumed.resetForResume()
-    resumed.resume(from: known)
+    var recovered = restoringPictures(from: lesson, optionalStepIds: optionalStepIds)
+    recovered.resetForResume()
+    recovered.resume(from: known)
 
-    let isOpen = resumed.queue.contains {
+    for id in lessonOrder where recovered.answers[id] != answers[id] {
+      recovered.rounds[id, default: 0] += 1
+    }
+
+    let missing = recovered.queue.filter {
       steps[$0]?.isAnswerable == true && !answered.contains($0)
     }
 
-    return isOpen ? resumed : nil
+    guard let first = missing.first, let position = recovered.queue.firstIndex(of: first) else {
+      completion?.status = .failed
+      return
+    }
+
+    recovered.recovery = Dictionary(
+      missing.map { ($0, unavailableStepIds.contains($0) ? .pictureReady : .answerNotSaved) },
+      uniquingKeysWith: { reason, _ in reason })
+    recovered.enter(position, now: now)
+    self = recovered
   }
 
   /// Screens left out here that the run still needs, back with the picture they now have.
@@ -736,22 +791,27 @@ struct LessonPlayerState: Equatable, Sendable {
     completion?.status = .failed
   }
 
-  /// A checked screen entered again (a missed question coming back) starts over; any other shows
-  /// what the learner left, with its self-correct notice if it still waits for one.
+  /// An answered screen shows its result, as Previous does. It starts over only as a missed
+  /// question coming back (a later copy) or in "I know this". Any other shows what the learner
+  /// left, with why it still waits: its chance to self-correct, or a finish that came back for it.
   private mutating func enter(_ newPosition: Int, now: Date) {
     let id = newPosition < queue.count ? queue[newPosition] : ""
 
     if results[id] != nil {
-      clearAnswer(id)
-      results[id] = nil
+      if quickCheck != nil || queue.firstIndex(of: id) != newPosition {
+        clearAnswer(id)
+        results[id] = nil
+      }
     } else if selfCorrected.contains(id) {
       notice = .selfCorrect
+    } else if let reason = recovery?[id] {
+      notice = reason
     }
 
     checkFailed = false
-    phase = .playing
+    reviewing = results[id] != nil
+    phase = reviewing ? .feedback : .playing
     position = newPosition
-    reviewing = false
     stepStartedAt = now
   }
 
@@ -768,6 +828,8 @@ struct LessonPlayerState: Equatable, Sendable {
   /// One rule for every way a lesson runs out of screens: the map, as a last screen after them,
   /// then the save.
   private mutating func end(_ status: Completion.Status, now: Date) {
+    recovery = nil
+
     guard endsWithMap else {
       complete(status: status)
       return
@@ -800,28 +862,38 @@ struct LessonPlayerState: Equatable, Sendable {
       index <= position || !unavailableStepIds.contains(id)
     }.map(\.element)
 
-    guard position + 1 < queue.count else {
+    guard let next = nextPosition, next < queue.count else {
       end(.saving, now: now)
       return
     }
 
     notice = nil
-    enter(position + 1, now: now)
+    enter(next, now: now)
+  }
+
+  private var nextPosition: Int? {
+    queue.indices.first { $0 > position && continueStopsAt($0) }
   }
 
   /// A missed quick check returns to where the learner was, without the checks they just got
-  /// right, which already count. The missed one comes back at the end of the lesson.
+  /// right, which already count. The missed one comes back at the end of the lesson, to answer
+  /// again.
   private mutating func leaveQuickCheck(now: Date) {
     guard let check = quickCheck else {
       return
     }
 
-    let answered = queue.filter { results[$0] != nil }
+    let answered = queue.prefix(position + 1).filter { results[$0] != nil }
     let passed = Set(answered.filter { results[$0]?.isCorrect == true })
     let missed = answered.filter { !passed.contains($0) }
     let rest = check.returnQueue.enumerated().filter { index, id in
       index <= check.returnPosition || (!passed.contains(id) && !missed.contains(id))
     }.map(\.element)
+
+    for id in missed {
+      clearAnswer(id)
+      results[id] = nil
+    }
 
     quickCheck = nil
     notice = nil
@@ -937,25 +1009,16 @@ struct LessonPlayerState: Equatable, Sendable {
     a == nil || b == nil || a == b
   }
 
-  private static func verdicts(_ answers: [LessonRunAnswer]) -> [String: Bool] {
-    var verdicts: [String: Bool] = [:]
-
-    for answer in answers where verdicts[answer.stepId] == nil {
-      verdicts[answer.stepId] = answer.isCorrect
-    }
-
-    return verdicts
-  }
-
+  /// The opening guess is never sent, so the one made here stays.
   private mutating func resetForResume() {
     let leftOut = unavailableStepIds + skippedWritingStepIds
+    let steps = steps
+    let isGuess = { (id: String) in steps[id]?.kind == .hook }
     queue = lessonOrder.filter { !leftOut.contains($0) }
     position = 0
     phase = queue.isEmpty ? .completed : .playing
-    for id in lessonOrder {
-      clearAnswer(id)
-    }
-    results = [:]
+    answers = answers.filter { isGuess($0.key) }
+    results = results.filter { isGuess($0.key) }
     firstVerdicts = [:]
     firstVerdictAttemptIds = [:]
     answerOrder = []
@@ -970,9 +1033,63 @@ struct LessonPlayerState: Equatable, Sendable {
     reviewing = false
   }
 
-  /// A lesson the learner comes back to continues where they left off: the screens they answered
-  /// count with their first answer, a check they missed once comes back at the end, and the
-  /// lesson opens at the first screen still to answer, after the reading that leads to it.
+  /// A run that lands after the learner acted on this visit leaves them where they are: screens
+  /// they haven't touched, other than the one in play, show the run's answers, and a check it
+  /// missed once comes back at the end.
+  private mutating func fillUntouched(from known: [LessonRunAnswer]) {
+    let inPlay = currentStep.flatMap { results[$0.id] == nil ? $0.id : nil }
+    let saved = known.filter {
+      $0.stepId != inPlay && answers[$0.stepId] == nil && results[$0.stepId] == nil
+    }
+
+    guard !saved.isEmpty else {
+      return
+    }
+
+    let ids = saved.map(\.stepId)
+    let firsts = saved.enumerated().filter { index, answer in
+      ids.firstIndex(of: answer.stepId) == index
+    }.map(\.element)
+    let lessonQueue = quickCheck?.returnQueue ?? queue
+    let owed = firsts.map(\.stepId).filter { id in
+      let tries = saved.filter { $0.stepId == id }
+      return steps[id]?.isRetried == true && tries.count == 1 && tries.first?.isCorrect == false
+        && lessonQueue.filter { $0 == id }.count == 1
+    }
+
+    if let check = quickCheck {
+      quickCheck = QuickCheck(
+        missed: check.missed, returnPosition: check.returnPosition,
+        returnQueue: check.returnQueue + owed)
+    } else {
+      queue += owed
+    }
+
+    for first in firsts {
+      firstVerdicts[first.stepId] = first.isCorrect
+      firstVerdictAttemptIds[first.stepId] = first.result.attemptId
+      rounds[first.stepId, default: 0] += 1
+    }
+
+    answerOrder = firsts.map(\.stepId) + answerOrder
+    retried.formUnion(
+      ids.enumerated().filter { index, id in ids.firstIndex(of: id) != index }.map(\.element))
+    retried.formUnion(owed)
+
+    for answer in saved {
+      results[answer.stepId] = answer.result
+      answers[answer.stepId] = answer.answer
+
+      if case .challenge(let choiceIds) = answer.answer {
+        revealed[answer.stepId] = choiceIds.count + 1
+      }
+    }
+  }
+
+  /// A lesson the learner comes back to continues where they left off: each screen they answered
+  /// shows their last answer and counts with their first, a check they missed once comes back at
+  /// the end, and the lesson opens at the first screen still to answer, after the reading that
+  /// leads to it.
   private mutating func resume(from known: [LessonRunAnswer]) {
     guard !known.isEmpty else {
       return
@@ -986,12 +1103,27 @@ struct LessonPlayerState: Equatable, Sendable {
     let ids = known.map(\.stepId)
     let answeredMoreThanOnce = Set(
       ids.enumerated().filter { index, id in ids.firstIndex(of: id) != index }.map(\.element))
+    let firsts = known.enumerated().filter { index, answer in
+      ids.firstIndex(of: answer.stepId) == index
+    }.map(\.element)
     let lessonLength = queue.count
     queue += missedOnce
-    firstVerdicts = Self.verdicts(known)
-    answerOrder = ids.enumerated().filter { index, id in ids.firstIndex(of: id) == index }.map(
-      \.element)
+    firstVerdicts = Dictionary(uniqueKeysWithValues: firsts.map { ($0.stepId, $0.isCorrect) })
+    firstVerdictAttemptIds = Dictionary(
+      uniqueKeysWithValues: firsts.compactMap { first in
+        first.result.attemptId.map { (first.stepId, $0) }
+      })
+    answerOrder = firsts.map(\.stepId)
     retried = answeredMoreThanOnce.union(missedOnce)
+
+    for answer in known {
+      results[answer.stepId] = answer.result
+      answers[answer.stepId] = answer.answer
+
+      if case .challenge(let choiceIds) = answer.answer {
+        revealed[answer.stepId] = choiceIds.count + 1
+      }
+    }
 
     let answered = Set(ids)
     let steps = steps
@@ -1007,7 +1139,7 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     let readingBefore = queue[..<open].lastIndex { isAnswerable($0) }
-    position = readingBefore.map { $0 + 1 } ?? 0
+    enter(readingBefore.map { $0 + 1 } ?? 0, now: .now)
   }
 }
 

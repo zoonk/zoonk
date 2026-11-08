@@ -86,7 +86,7 @@ class LessonStartTest {
             lesson = playable(listOf(explanationStep(first), typedAnswerStep(typed), checkStep(quiz), explanationStep(last)))
             api.load = LessonLoad.Ready(lesson)
             // The learner answered the typed screen in an earlier visit.
-            api.runAnswers = """[{"answeredAt":"2026-10-28T09:59:00Z","isCorrect":true,"stepId":"$typed"}]"""
+            api.runAnswers = "[${runAnswerJson(typed, true, answeredAt = EARLIER_SITTING)}]"
             api.startGate = CompletableDeferred()
             val vm = player(null, tapped = true)
             vm.open(lesson)
@@ -287,7 +287,7 @@ class LessonStartTest {
         }
 
     private fun answered(vararg stepIds: String) =
-        stepIds.joinToString(",", "[", "]") { """{"answeredAt":"2026-10-28T09:59:00Z","isCorrect":true,"stepId":"$it"}""" }
+        stepIds.joinToString(",", "[", "]") { runAnswerJson(it, true, answeredAt = EARLIER_SITTING) }
 
     @Test fun aTypedAnswerSurvivesRetryingAFailedStartAfterCheck() = typedAnswerSurvivesRetryingStart(check = true)
 
@@ -300,7 +300,7 @@ class LessonStartTest {
             val last = "00000000-0000-4000-8000-000000000103"
             lesson = playable(listOf(explanationStep(first), typedAnswerStep(typed), explanationStep(last)))
             api.load = LessonLoad.Ready(lesson)
-            api.runAnswers = """[{"answeredAt":"2026-10-28T09:59:00Z","isCorrect":true,"stepId":"$first"}]"""
+            api.runAnswers = "[${runAnswerJson(first, true, answeredAt = EARLIER_SITTING)}]"
             api.startGate = CompletableDeferred()
             api.startFailures = 1
             val vm = player(null, tapped = true)
@@ -448,7 +448,7 @@ class LessonStartTest {
                 vm.open(lesson)
                 runCurrent()
                 assertNotNull(vm.state.value?.currentStep)
-                assertTrue(vm.state.value?.run is LessonRun.Starting)
+                assertTrue(vm.state.value?.run is LessonRun.Idle)
                 val expected = ApiJson.decodeFromString(LibraryLessonStartInputOpening.serializer(), route.opening!!)
                 assertEquals(expected, api.startOpenings.last())
                 api.startGate!!.complete(Unit)

@@ -1,6 +1,5 @@
 import { type MouseEvent } from "react";
-import { flushSync } from "react-dom";
-import { getReadyLessonPrimary } from "../../lesson/_utils/lesson-focus";
+import { getReadyLessonPrimary, updateKeepingFocus } from "../../lesson/_utils/lesson-focus";
 
 type Press = MouseEvent<HTMLButtonElement>;
 
@@ -22,30 +21,6 @@ function getNearestAvailable(buttons: HTMLButtonElement[], pressed: HTMLButtonEl
     buttons.slice(index + 1).find((button) => isAvailable(button)) ??
     buttons.slice(0, index).findLast((button) => isAvailable(button))
   );
-}
-
-/** A screen reader's click in Chromium keeps its button pressed, which a tap or click has already released: https://github.com/chromium/chromium/blob/main/third_party/blink/renderer/core/events/simulated_event_util.cc */
-function isVirtualPress({ nativeEvent }: Press): boolean {
-  if (nativeEvent instanceof PointerEvent) {
-    return nativeEvent.pointerType === "" || nativeEvent.buttons === 1;
-  }
-
-  return nativeEvent.detail === 0;
-}
-
-/** A tap or click leaves focus where the browser puts it, so Enter afterwards still checks the answer. */
-function updateKeepingFocus(
-  event: Press,
-  update: () => void,
-  getTarget: () => HTMLElement | null | undefined,
-) {
-  if (!isVirtualPress(event)) {
-    update();
-    return;
-  }
-
-  flushSync(update);
-  getTarget()?.focus({ preventScroll: true });
 }
 
 export function placeKeepingFocus(event: Press, place: () => void) {

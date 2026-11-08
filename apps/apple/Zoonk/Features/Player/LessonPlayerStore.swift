@@ -652,7 +652,6 @@ final class LessonPlayerStore {
 
     activate()
     writeExampleLinesOnce()
-    let attemptId = UUID().uuidString.lowercased()
     let durationMs = Int(Date.now.timeIntervalSince(state.stepStartedAt) * 1000)
 
     if step.kind == .hook || (fromCatalog && state.position == 0) {
@@ -664,6 +663,8 @@ final class LessonPlayerStore {
         UsageAnalytics.track(.activityUsed(lessonID: state.lessonId, template: content.template))
       }
 
+      let attemptId = UUID().uuidString.lowercased()
+
       // Held before anything moves on, so finishing waits for it: match columns finishes a lesson
       // on its own check.
       if answer.isRecorded {
@@ -672,8 +673,7 @@ final class LessonPlayerStore {
         let held = { runId in
           HeldAnswer(
             stepId: step.id, answer: answer, attemptId: attemptId, runId: runId,
-            durationMs: durationMs, usedHelp: usedHelp, isCorrect: grade.isCorrect,
-            answeredAt: answeredAt)
+            durationMs: durationMs, usedHelp: usedHelp, grade: grade, answeredAt: answeredAt)
         }
 
         if let runId = self.state?.runId {
@@ -690,7 +690,9 @@ final class LessonPlayerStore {
       return
     }
 
-    self.state?.startChecking()
+    guard let attemptId = self.state?.startChecking() else {
+      return
+    }
 
     guard await ensureRun(), let runId = self.state?.runId else {
       self.state?.failChecking()

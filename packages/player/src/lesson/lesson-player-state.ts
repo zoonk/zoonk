@@ -31,7 +31,14 @@ type LessonPlayerRun =
 
 type QuickCheck = { missed: boolean; returnPosition: number; returnQueue: string[] };
 
+type MissingReason = "answerNotSaved" | "pictureReady";
+
 export type LessonPlayerState = {
+  /**
+   * The screens the learner worked on in this page, never set by restoring: a late run start leaves
+   * them, and where the learner is, as they were.
+   */
+  actedOn: string[];
   answers: Record<string, LessonPlayerAnswer>;
   checkFailed: boolean;
   checkIssue: CheckIssue | null;
@@ -39,12 +46,16 @@ export type LessonPlayerState = {
     | LessonPlayerCompletionState
     | { result: null; status: "ready"; testedOut: boolean }
     | null;
+  /** The learner pressed or typed in the player on this page, so a late run start leaves them where they are. */
+  engaged: boolean;
   firstVerdicts: Record<string, boolean>;
   hasMap: boolean;
   helped: string[];
   lessonId: string;
   misses: { skillId: string | null; stepId: string }[];
-  notice: "answerNotSaved" | "pictureReady" | "selfCorrect" | "writingSkipped" | null;
+  /** The screens a finished lesson came back to because the run still needs them. */
+  missing: Record<string, MissingReason>;
+  notice: MissingReason | "selfCorrect" | "writingSkipped" | null;
   phase: LessonPlayerPhase;
   position: number;
   queue: string[];
@@ -53,8 +64,9 @@ export type LessonPlayerState = {
   retried: string[];
   revealed: Record<string, number>;
   /**
-   * Moves on wherever a screen starts over (its answer cleared), so the stage makes it anew; until
-   * then the screen keeps what the learner did on it, even while another screen shows.
+   * Moves on wherever a screen starts over (its answer cleared) or a fresher saved answer replaces
+   * the one it shows, so the stage makes it anew; until then the screen keeps what the learner did
+   * on it, even while another screen shows.
    */
   rounds: Record<string, number>;
   run: LessonPlayerRun;
@@ -104,6 +116,7 @@ export type LessonPlayerAction =
   | { type: "completionFailed" }
   | { type: "completionRetried" }
   | { type: "continue" }
+  | { type: "engaged" }
   | { type: "explainFirst" }
   | { type: "knowThis" }
   | { type: "runStarting" }
@@ -118,15 +131,18 @@ export function createInitialState(
   const queue = lesson.steps.map((step) => step.id);
 
   return {
+    actedOn: [],
     answers: {},
     checkFailed: false,
     checkIssue: null,
     completion: queue.length === 0 ? { result: null, status: "ready", testedOut: false } : null,
+    engaged: false,
     firstVerdicts: {},
     hasMap: lesson.hasMap,
     helped: [],
     lessonId: lesson.id,
     misses: [],
+    missing: {},
     notice: null,
     phase: queue.length === 0 ? "completed" : "playing",
     position: 0,

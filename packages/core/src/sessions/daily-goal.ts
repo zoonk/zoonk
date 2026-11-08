@@ -13,7 +13,7 @@ export type PlanDay = { goalMinutes: number; kind: WeekDayKind };
 
 export type WeekDay = PlanDay & {
   date: Date;
-  /** Reached the day's time goal, or finished the day's session in less time. */
+  /** Reached the day's time goal, or finished each goal's session for the day in less time. */
   hitGoal: boolean;
   isToday: boolean;
   minutes: number;
@@ -56,17 +56,24 @@ export function getWeekDayKind({
     : "rest";
 }
 
-/** Monday through Sunday; session completion satisfies the daily goal even early, while rest days have no goal to hit. */
+function includesDate(dates: readonly Date[], date: Date): boolean {
+  return dates.some((item) => item.getTime() === date.getTime());
+}
+
+/** Monday through Sunday; finishing the day's sessions satisfies the daily goal even early, while rest days have no goal to hit. */
 export function getWeekDays({
-  completedDates = [],
   days,
+  finishedDates = [],
   getPlanDay,
+  studiedDates = [],
   today,
 }: {
-  /** Days with a finished study session, as UTC-midnight labels. */
-  completedDates?: readonly Date[];
   days: readonly { date: Date; seconds: number }[];
+  /** Days on which every goal that asked for time finished its session, as UTC-midnight labels. */
+  finishedDates?: readonly Date[];
   getPlanDay: (date: Date) => PlanDay;
+  /** Days with any finished study session, as UTC-midnight labels. */
+  studiedDates?: readonly Date[];
   today: Date;
 }): WeekDay[] {
   const start = getStartOfWeek(today).getTime();
@@ -76,16 +83,17 @@ export function getWeekDays({
     const seconds = days.find((day) => day.date.getTime() === date.getTime())?.seconds ?? 0;
     const minutes = toStudiedMinutes(seconds);
     const { goalMinutes, kind } = getPlanDay(date);
-    const finished = completedDates.some((completed) => completed.getTime() === date.getTime());
 
     return {
       date,
       goalMinutes,
-      hitGoal: goalMinutes > 0 && (finished || seconds >= goalMinutes * SECONDS_PER_MINUTE),
+      hitGoal:
+        goalMinutes > 0 &&
+        (includesDate(finishedDates, date) || seconds >= goalMinutes * SECONDS_PER_MINUTE),
       isToday: date.getTime() === today.getTime(),
       kind,
       minutes,
-      studied: finished || seconds > 0,
+      studied: includesDate(studiedDates, date) || seconds > 0,
     };
   });
 }

@@ -40,7 +40,7 @@ class LessonLearnerInputTest {
     /** The run, which already holds an answer for [answered], starts only when the test lets it. */
     private fun FakeLessonPlayerApi.holdsStart(answered: String) {
         startGate = CompletableDeferred()
-        runAnswers = """[{"answeredAt":"2026-10-28T09:59:00Z","isCorrect":true,"stepId":"$answered"}]"""
+        runAnswers = "[${runAnswerJson(answered, true, answeredAt = EARLIER_SITTING)}]"
     }
 
     private fun runLands() {

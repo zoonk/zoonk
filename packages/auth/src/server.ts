@@ -35,6 +35,7 @@ import { accessGuardsPlugin } from "./plugins/access-guards";
 import { appAttestPlugin } from "./plugins/app-attest";
 import { botCheckPlugin } from "./plugins/bot-check";
 import { guestPlugin } from "./plugins/guest";
+import { restoreKeyPlugin } from "./plugins/restore-key";
 import { sessionHintPlugin } from "./plugins/session-hint";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
 import { nameProviderAccount } from "./provider-username";
@@ -160,6 +161,7 @@ export const baseAuthPlugins = [
 export const fullPlugins = [
   botCheckPlugin(),
   appAttestPlugin(),
+  restoreKeyPlugin(),
   createEmailOTPPlugin({ storeOTP: "hashed" }),
   oneTimeToken({ storeToken: "hashed" }),
   bearer(),

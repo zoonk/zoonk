@@ -79,7 +79,7 @@ CI is the full gate. Every push to a PR runs the PR pipelines in [.github/workfl
 
 A task ends with a pull request the user can review, following [zoonk-pull-request](.agents/skills/zoonk-pull-request/SKILL.md). The agent that owns the task does this; a subagent hands its work back to its lead instead.
 
-The PR shows what the change did: numbers before and after for a performance change, screenshots before and after for anything a learner sees, and a video of each side for a flow, transition or wait ([show the change](.agents/skills/zoonk-commit/SKILL.md#show-the-change)). Capture the before side before you edit.
+The PR shows what the change did: numbers before and after for a performance change, screenshots before and after for anything a learner sees, a video of each side for a flow, transition or wait, and a link to its Vercel preview for a blog post ([show the change](.agents/skills/zoonk-commit/SKILL.md#show-the-change)). Capture the before side before you edit.
 
 1. Pass the [PR verification gate](#pr-verification-gate)'s local checks on the final tree.
 2. Open the PR ready for review and watch it while CI and the reviewers run.
@@ -115,6 +115,7 @@ Read the scoped `AGENTS.md` files governing paths you change, including when wor
 | Reporting a bug for someone                                     | [Bug report](.agents/skills/zoonk-bug-report/SKILL.md)                             |
 | Requesting a feature for someone (Discussions, not issues)      | [Feature request](.agents/skills/zoonk-feature-request/SKILL.md)                   |
 | Creating a release (production deploy and release notes)        | [Release](.agents/skills/zoonk-release/SKILL.md)                                   |
+| Writing a blog post, such as a release post                     | [Blog post](.agents/skills/zoonk-blog-post/SKILL.md)                               |
 
 ## Maintaining these instructions
 

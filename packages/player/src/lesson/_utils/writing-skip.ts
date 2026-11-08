@@ -57,7 +57,6 @@ export function restoreWriting(state: LessonPlayerState): LessonPlayerState {
   return enterPosition(
     {
       ...state,
-      notice: null,
       queue: restore.queue,
       skippedWritingStepIds: restore.skippedWritingStepIds,
       writingRestore: null,

@@ -1,5 +1,6 @@
 import { MAX_ANSWER_DURATION_MS } from "@zoonk/core/learner/contract";
 import { lessonStepCheckInputSchema } from "@zoonk/core/lesson-player/contract";
+import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import {
@@ -8,9 +9,10 @@ import {
   runAnswer,
   startedRun,
 } from "../_test-utils/render-lesson-player";
+import { LESSON_CONTENT_ID } from "../lesson/_utils/lesson-focus";
 import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
-import { teachingStep } from "../preview/preview-steps";
+import { activityStep, languageStep, teachingStep } from "../preview/preview-steps";
 
 const QUESTION = 'What does the electron "cloud" show?';
 const RIGHT_OPTION = "Where the electron is most likely to be found";
@@ -101,10 +103,17 @@ describe("coming back to a lesson", () => {
     expect(adapters.completeLesson).toHaveBeenCalledOnce();
   });
 
-  it("opens at the first screen still to answer, after its reading, and counts what was answered", async () => {
+  it("opens at the first screen still to answer, after its reading, and shows what was answered", async () => {
     const lesson = createLesson();
     const [first] = checkIds(lesson);
-    const resume = [runAnswer({ stepId: first ?? "" })];
+
+    const resume = [
+      runAnswer({
+        answer: { kind: "check", optionId: "likely" },
+        answerText: RIGHT_OPTION,
+        stepId: first ?? "",
+      }),
+    ];
 
     const adapters = buildAdapters(lesson, {
       startLesson: () => Promise.resolve(startedRun({ answers: resume })),
@@ -113,7 +122,14 @@ describe("coming back to a lesson", () => {
     renderLessonPlayer({ adapters, lesson, resume });
 
     await expect.element(page.getByText("Reading it")).toBeVisible();
-    await expect.element(page.getByRole("button", { name: "Previous screen" })).toBeVisible();
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeChecked();
+    await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    await expect.element(page.getByText("Reading it")).toBeVisible();
+    expect(adapters.checkStep).not.toHaveBeenCalled();
 
     await page.getByRole("button", { name: /^Next/u }).click();
     await answerRight();
@@ -121,6 +137,120 @@ describe("coming back to a lesson", () => {
 
     await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
     expect(adapters.checkStep).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    {
+      activate: () => page.getByRole("main", { name: "Lesson content" }).click(),
+      input: "a press",
+    },
+    {
+      activate: () => document.querySelector<HTMLElement>(`#${LESSON_CONTENT_ID}`)?.click(),
+      input: "a click with no press before it, as assistive tools send",
+    },
+  ])(
+    "leaves a learner where they are when $input in the lesson comes before a slow start",
+    async ({ activate }) => {
+      const lesson = createLesson();
+      const [first] = checkIds(lesson);
+
+      const start =
+        Promise.withResolvers<Awaited<ReturnType<LessonPlayerAdapters["startLesson"]>>>();
+
+      const startLesson = vi.fn<LessonPlayerAdapters["startLesson"]>(() => start.promise);
+      const adapters = buildAdapters(lesson, { startLesson });
+
+      renderLessonPlayer({ adapters, lesson, resume: [] });
+
+      await expect.element(page.getByRole("button", { name: /^Next/u })).toBeVisible();
+      await activate();
+
+      start.resolve(
+        startedRun({
+          answers: [
+            runAnswer({
+              answer: { kind: "check", optionId: "likely" },
+              answerText: RIGHT_OPTION,
+              stepId: first ?? "",
+            }),
+          ],
+        }),
+      );
+
+      await expect.poll(() => startLesson.mock.calls.length).toBeGreaterThan(0);
+      await expect.element(page.getByText("Reading it")).not.toBeInTheDocument();
+
+      await page.getByRole("button", { name: /^Next/u }).click();
+      await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeChecked();
+      await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+    },
+  );
+
+  it("shows a reopened matching screen with the pairs the learner matched", async () => {
+    const matching = languageStep("matchColumns");
+
+    const lesson = buildLesson([matching, teachingStep("explanation"), teachingStep("check")], {
+      language: "pt",
+      targetLanguage: "en",
+    });
+
+    const resume = [
+      runAnswer({
+        answer: {
+          kind: "matchColumns",
+          mistakes: 0,
+          userPairs: [
+            { left: "Electron", right: "Negative charge" },
+            { left: "Proton", right: "Positive charge" },
+            { left: "Neutron", right: "No charge" },
+          ],
+        },
+        stepId: matching.id,
+      }),
+    ];
+
+    const adapters = buildAdapters(lesson, {
+      startLesson: () => Promise.resolve(startedRun({ answers: resume })),
+    });
+
+    renderLessonPlayer({ adapters, lesson, resume });
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    for (const item of ["Electron", "Proton", "Neutron", "No charge"]) {
+      // oxlint-disable-next-line no-await-in-loop -- Each pair is checked in turn.
+      await expect.element(page.getByRole("button", { exact: true, name: item })).toBeDisabled();
+    }
+
+    await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeVisible();
+    expect(adapters.checkStep).not.toHaveBeenCalled();
+  });
+
+  it("shows a reopened step solver with the learner's wrong first pick", async () => {
+    const solver = activityStep({ content: activityContentFixtures.stepSolver });
+    const lesson = buildLesson([solver, teachingStep("explanation"), teachingStep("check")]);
+
+    const resume = [
+      runAnswer({
+        answer: {
+          answer: { kind: "assignment", pairs: { discount: "b", tax: "b" } },
+          kind: "activity",
+        },
+        isCorrect: false,
+        stepId: solver.id,
+      }),
+    ];
+
+    const adapters = buildAdapters(lesson, {
+      startLesson: () => Promise.resolve(startedRun({ answers: resume })),
+    });
+
+    renderLessonPlayer({ adapters, lesson, resume });
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expect.element(page.getByText("Your first pick: Add the tax")).toBeVisible();
+    expect(adapters.checkStep).not.toHaveBeenCalled();
   });
 
   it("continues a lesson left days ago, with Hyperdrive counting only this sitting's answers", async () => {
@@ -208,14 +338,12 @@ describe("coming back to a lesson", () => {
       )
       .toBeVisible();
 
-    await expect.element(page.getByText("Reading it")).toBeVisible();
+    await expect.element(page.getByText(QUESTION)).toBeVisible();
 
     await expect
       .element(page.getByText("That didn't go through. Your answers are kept."))
       .not.toBeInTheDocument();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
-    await expect.element(page.getByText(QUESTION)).toBeVisible();
     await answerRight();
     await page.getByRole("button", { name: /^Continue/u }).click();
 

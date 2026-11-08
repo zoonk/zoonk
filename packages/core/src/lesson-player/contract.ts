@@ -82,70 +82,6 @@ export const libraryLessonStartInputSchema = z
 
 export type LibraryLessonStartInput = z.infer<typeof libraryLessonStartInputSchema>;
 
-/** Answers are ordered by arrival. */
-const lessonRunAnswerSchema = z.object({
-  answeredAt: z.iso
-    .datetime()
-    .meta({ description: "Before the run's `startedAt` for an answer from an earlier sitting" }),
-  isCorrect: z.boolean(),
-  stepId: uuidSchema(),
-});
-
-export const libraryLessonRunSchema = z
-  .object({
-    answers: z
-      .array(lessonRunAnswerSchema)
-      .meta({
-        description:
-          "The lesson's answers so far, oldest first: this run's and those of earlier sittings the learner left unfinished in the last week (since they last finished the lesson). The lesson continues after the screens they answered, each counting with its first answer, and a check missed once comes back at the end. Hyperdrive replays only this run's answers (`answeredAt` at or after `startedAt`) on top of `hyperdrive`",
-      }),
-    hyperdrive: z
-      .object({
-        knownStepIds: z
-          .array(uuidSchema())
-          .meta({
-            description:
-              "Screens answered right before this run: a right answer on them doesn't build Hyperdrive",
-          }),
-        streak: z
-          .int()
-          .min(0)
-          .meta({
-            description: "Right answers in a row in the session before this run, 0 outside one",
-          }),
-      })
-      .meta({
-        description:
-          "Where Hyperdrive stood when the run started, to show it live with the server's rule (a resumed run replays its `answers` on top)",
-      }),
-    optionalStepIds: z
-      .array(uuidSchema())
-      .optional()
-      .describe("Questions with late numbered pictures"),
-    replay: z
-      .boolean()
-      .meta({
-        description:
-          "True when the learner already finished this lesson: its end offers no next lesson",
-      }),
-    runId: uuidSchema().meta({ description: "Send it with every answer and with the completion" }),
-    sessionId: uuidSchema()
-      .nullable()
-      .meta({ description: "The run's canonical study session, or null for standalone work" }),
-    startedAt: z.iso.datetime(),
-  })
-  .meta({ id: "LibraryLessonRun" });
-
-export const libraryLessonRetryableSchema = z
-  .object({ status: z.literal("retryable") })
-  .meta({ id: "LibraryLessonRetryable" });
-
-export const libraryLessonOpenedSchema = z
-  .object({ opening: studyBlockOpeningSchema, status: z.literal("opened") })
-  .meta({ id: "LibraryLessonOpened" });
-
-export type LibraryLessonRun = z.infer<typeof libraryLessonRunSchema>;
-
 export const lessonStepCheckResultSchema = z
   .object({
     checked: z
@@ -211,6 +147,93 @@ export const lessonStepCheckResultSchema = z
   .meta({ id: "LessonStepCheckResult" });
 
 export type LessonStepCheckResult = z.infer<typeof lessonStepCheckResultSchema>;
+
+const restoredCheckResultSchema = lessonStepCheckResultSchema
+  .extend({
+    answerText: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          "What the learner's answer reads as: the picked option's text, the typed text or what a recording heard. Null when there's nothing to show",
+      }),
+  })
+  .meta({
+    description:
+      "The saved answer's result, built again from what was saved: show the screen answered with it, without checking again. Its `isCorrect` and `score` are the saved verdict. `nextReviewAt` is null and `savedMistake` false, and a typed answer has no model feedback, key points or corrections, since those aren't saved",
+    id: "LessonRunAnswerResult",
+  });
+
+/** Answers are ordered by arrival. */
+const lessonRunAnswerSchema = z.object({
+  answer: lessonStepAnswerSchema
+    .nullable()
+    .meta({
+      description:
+        "What the learner answered, to show on the screen with `result`. Null for a recording (its words are `result.answerText`) and for an answer that no longer fits the screen",
+    }),
+  answeredAt: z.iso
+    .datetime()
+    .meta({ description: "Before the run's `startedAt` for an answer from an earlier sitting" }),
+  isCorrect: z.boolean(),
+  result: restoredCheckResultSchema,
+  stepId: uuidSchema(),
+});
+
+export const libraryLessonRunSchema = z
+  .object({
+    answers: z
+      .array(lessonRunAnswerSchema)
+      .meta({
+        description:
+          "The lesson's answers so far, oldest first: this run's and those of earlier sittings the learner left unfinished in the last week (since they last finished the lesson). The lesson continues after the screens they answered, each counting with its first answer, and a check missed once comes back at the end. Hyperdrive replays only this run's answers (`answeredAt` at or after `startedAt`) on top of `hyperdrive`",
+      }),
+    hyperdrive: z
+      .object({
+        knownStepIds: z
+          .array(uuidSchema())
+          .meta({
+            description:
+              "Screens answered right before this run: a right answer on them doesn't build Hyperdrive",
+          }),
+        streak: z
+          .int()
+          .min(0)
+          .meta({
+            description: "Right answers in a row in the session before this run, 0 outside one",
+          }),
+      })
+      .meta({
+        description:
+          "Where Hyperdrive stood when the run started, to show it live with the server's rule (a resumed run replays its `answers` on top)",
+      }),
+    optionalStepIds: z
+      .array(uuidSchema())
+      .optional()
+      .describe("Questions with late numbered pictures"),
+    replay: z
+      .boolean()
+      .meta({
+        description:
+          "True when the learner already finished this lesson: its end offers no next lesson",
+      }),
+    runId: uuidSchema().meta({ description: "Send it with every answer and with the completion" }),
+    sessionId: uuidSchema()
+      .nullable()
+      .meta({ description: "The run's canonical study session, or null for standalone work" }),
+    startedAt: z.iso.datetime(),
+  })
+  .meta({ id: "LibraryLessonRun" });
+
+export const libraryLessonRetryableSchema = z
+  .object({ status: z.literal("retryable") })
+  .meta({ id: "LibraryLessonRetryable" });
+
+export const libraryLessonOpenedSchema = z
+  .object({ opening: studyBlockOpeningSchema, status: z.literal("opened") })
+  .meta({ id: "LibraryLessonOpened" });
+
+export type LibraryLessonRun = z.infer<typeof libraryLessonRunSchema>;
 
 export const libraryLessonCompletionSchema = z
   .object({
