@@ -258,6 +258,21 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.phase, .feedback)
   }
 
+  func testResumedRunKeepsTheQuestionBeingChecked() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    state.continueLesson()
+    state.continueLesson()
+    state.select(.check(optionId: "right"), for: "check")
+    state.startChecking()
+
+    state.startRun(
+      runId: "run", answers: [.init(stepId: "check", isCorrect: true, answeredAt: .now)])
+
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.phase, .checking)
+    XCTAssertEqual(state.currentAnswer, .check(optionId: "right"))
+  }
+
   func testOptionalScreensAreLeftOut() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
 
