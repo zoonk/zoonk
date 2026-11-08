@@ -274,6 +274,7 @@ class LessonPlayerViewModel(
         work.cancel()
         work = openScope()
         this.lesson = lesson
+        chosenHere = emptySet()
         owner = session
         admittedRunId = null
         heldDeviceVerdicts.clear()
@@ -287,7 +288,7 @@ class LessonPlayerViewModel(
         mutableExplanations.value = emptyMap()
         // Written content is usable while admission runs; server work still waits for its run.
         openedAt = now()
-        mutableState.value = LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = openedAt).withFirstAnswer(openedAt)
+        mutableState.value = restoreWork(LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = openedAt).withFirstAnswer(openedAt))
         if (activated) startRun()
     }
 
@@ -370,8 +371,6 @@ class LessonPlayerViewModel(
      * under its next round: the resumed run puts its retry straight on screen, and that retry starts over.
      */
     private fun keepWork(state: LessonPlayerState) {
-        // Until a run starts it holds none of the saved work, so what's saved waits for the run that restores it.
-        if (state.run !is LessonRun.Started) return
         val checked = state.results.keys
         saved[ROUNDS] = HashMap(state.rounds + checked.associateWith { state.round(it) + 1 })
         saved[REVEALED] = HashMap(state.revealed - checked)
@@ -393,13 +392,17 @@ class LessonPlayerViewModel(
         dispatch(LessonAction.SelectAnswer(step.id, answer))
     }
 
+    private var chosenHere = emptySet<TodayChoice>()
+
     /** "Can't write now", kept for the rest of the day on this device. */
     fun skipWriting() {
+        chosenHere += TodayChoice.CantWrite
         owner?.let { session -> work.launch { choices.set(session, TodayChoice.CantWrite, true) } }
         dispatch(LessonAction.SkipWriting())
     }
 
     fun restoreWriting() {
+        chosenHere += TodayChoice.CantWrite
         owner?.let { session -> work.launch { choices.set(session, TodayChoice.CantWrite, false) } }
         dispatch(LessonAction.RestoreWriting)
     }
@@ -409,6 +412,7 @@ class LessonPlayerViewModel(
     val cantTalk: Boolean get() = talkDay.value == choices.today()
 
     fun setCantTalk(chosen: Boolean) {
+        chosenHere += TodayChoice.CantTalk
         talkDay.value = choices.today().takeIf { chosen }
         owner?.let { session -> work.launch { choices.set(session, TodayChoice.CantTalk, chosen) } }
     }
@@ -418,6 +422,7 @@ class LessonPlayerViewModel(
     val cantListen: Boolean get() = listenDay.value == choices.today()
 
     fun setCantListen(chosen: Boolean) {
+        chosenHere += TodayChoice.CantListen
         listenDay.value = choices.today().takeIf { chosen }
         owner?.let { session -> work.launch { choices.set(session, TodayChoice.CantListen, chosen) } }
     }
@@ -486,6 +491,7 @@ class LessonPlayerViewModel(
         val state = mutableState.value ?: return
         val step = state.currentStep ?: return
         val answer = state.answers[step.id] ?: return
+        if (answer == LessonAnswer.Draft) return
 
         if (state.phase != LessonPhase.Playing) return
 
@@ -707,7 +713,7 @@ class LessonPlayerViewModel(
                         LessonStep::id,
                     )
             }
-                ?: LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = started)
+                ?: restoreWork(LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = started).withFirstAnswer(started))
         state = reduce(state, run.toStartedAction(unsaved.values.flatten().mapNotNull(PendingCheck::progress)), started)
 
         val unplayable = lesson.steps.filterNot(::isPlayable).map(LessonStep::id)
@@ -719,22 +725,26 @@ class LessonPlayerViewModel(
         state = reduce(state, LessonAction.PicturesRead(emptyList(), openedAt), started)
 
         val session = owner
-        if (session != null && choices.isChosen(session, TodayChoice.CantWrite)) {
+        val cantWrite = session != null && choices.isChosen(session, TodayChoice.CantWrite)
+        val cantTalk = session != null && choices.isChosen(session, TodayChoice.CantTalk)
+        val cantListen = session != null && choices.isChosen(session, TodayChoice.CantListen)
+        if (TodayChoice.CantWrite !in chosenHere && cantWrite) {
             state = reduce(state, LessonAction.SkipWriting(opening = true), started)
         }
-        talkDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantTalk) }
-        listenDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantListen) }
+        if (TodayChoice.CantTalk !in chosenHere) talkDay.value = choices.today().takeIf { cantTalk }
+        if (TodayChoice.CantListen !in chosenHere) listenDay.value = choices.today().takeIf { cantListen }
 
-        // After the server's answers rebuild the run, what the learner did and hadn't checked comes back, under the round
-        // it was saved in, when Android closed the app in the background.
-        val rounds = saved.get<Map<String, Int>>(ROUNDS).orEmpty()
-        val revealed = saved.get<Map<String, Int>>(REVEALED).orEmpty()
+        return state
+    }
+
+    private fun restoreWork(state: LessonPlayerState): LessonPlayerState {
+        val rounds = saved.get<Map<String, Int>>(ROUNDS).orEmpty().filterKeys { it in state.steps }
+        val revealed = saved.get<Map<String, Int>>(REVEALED).orEmpty().filterKeys { it in state.steps }
         val answers =
-            saved.get<Map<String, String>>(ANSWERS).orEmpty().mapValues { (_, json) ->
+            saved.get<Map<String, String>>(ANSWERS).orEmpty().filterKeys { it in state.steps }.mapValues { (_, json) ->
                 ApiJson.decodeFromString(LessonAnswer.serializer(), json)
             }
-        val resumed = state.withFirstAnswer(started)
-        return resumed.copy(answers = resumed.answers + answers, revealed = resumed.revealed + revealed, rounds = resumed.rounds + rounds)
+        return state.copy(answers = state.answers + answers, revealed = state.revealed + revealed, rounds = state.rounds + rounds)
     }
 
     /** Main's and Apple's: the lesson is read again every few seconds until its pictures come or their wait ends. */

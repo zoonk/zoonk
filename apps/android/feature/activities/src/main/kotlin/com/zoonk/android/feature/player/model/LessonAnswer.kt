@@ -31,6 +31,10 @@ typealias AnswerKeyPoint = LessonStepCheckResultKeyPointsInner
 @Immutable
 @Serializable
 sealed interface LessonAnswer {
+    /** Local work without a checkable answer; never sent to the API. */
+    @Serializable
+    data object Draft : LessonAnswer
+
     @Serializable
     data class Hook(
         val optionId: String,
@@ -106,6 +110,10 @@ val LessonAnswer.writtenText: String?
 
 fun LessonAnswer.toApi(): LessonStepAnswer? =
     when (this) {
+        LessonAnswer.Draft -> {
+            null
+        }
+
         is LessonAnswer.Hook -> {
             null
         }

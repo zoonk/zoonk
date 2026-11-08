@@ -24,6 +24,7 @@ import com.zoonk.api.models.StudyBlockOpening
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -56,6 +57,7 @@ class LessonStartTest {
     private suspend fun TestScope.player(
         opening: String?,
         tapped: Boolean,
+        saved: SavedStateHandle = SavedStateHandle(),
     ): LessonPlayerViewModel {
         val cache = AppCache(session, backgroundScope)
         val drafts = DraftStore(folder.newFolder(), backgroundScope, dispatcher)
@@ -71,7 +73,7 @@ class LessonStartTest {
             sessions = session,
             choices = TodayChoices(drafts),
             drafts = drafts,
-            saved = SavedStateHandle(),
+            saved = saved,
         )
     }
 
@@ -112,6 +114,71 @@ class LessonStartTest {
                     ?.id,
             )
             assertEquals("the typed answer is graded", listOf(typed), api.checks.map { it.first })
+        }
+
+    @Test fun cantTalkNowKeepsItsEmptyTypedFallbackWhenTheRunStarts() =
+        runTest(dispatcher) {
+            val spoken = "00000000-0000-4000-8000-000000000102"
+            lesson = playable(listOf(spokenStep(spoken), explanationStep("last")))
+            api.load = LessonLoad.Ready(lesson)
+            api.runAnswers = """[{"answeredAt":"2026-10-28T09:59:00Z","isCorrect":true,"stepId":"$spoken"}]"""
+            api.startGate = CompletableDeferred()
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            runCurrent()
+            vm.select(null)
+            vm.setCantTalk(true)
+            vm.check()
+
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(
+                spoken,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            assertTrue(vm.cantTalk)
+            assertTrue(api.checks.isEmpty())
+            assertEquals(LessonPhase.Playing, vm.state.value?.phase)
+        }
+
+    @Test fun aRestoredDraftKeepsItsScreenWhenTheRunResumesElsewhere() =
+        runTest(dispatcher) {
+            val typed = "00000000-0000-4000-8000-000000000102"
+            lesson = playable(listOf(typedAnswerStep(typed), explanationStep("last")))
+            api.load = LessonLoad.Ready(lesson)
+            api.runAnswers = """[{"answeredAt":"2026-10-28T09:59:00Z","isCorrect":true,"stepId":"$typed"}]"""
+            api.startGate = CompletableDeferred()
+            val answer = LessonAnswer.Typed("Because the droplets are small")
+            val saved = SavedStateHandle(mapOf("answers" to hashMapOf(typed to ApiJson.encodeToString(LessonAnswer.serializer(), answer))))
+            val vm = player(null, tapped = true, saved = saved)
+            vm.open(lesson)
+            runCurrent()
+            assertEquals(
+                answer,
+                vm.state.value
+                    ?.answers
+                    ?.get(typed),
+            )
+
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+
+            assertTrue(vm.state.value?.run is LessonRun.Started)
+            assertEquals(
+                typed,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            assertEquals(
+                answer,
+                vm.state.value
+                    ?.answers
+                    ?.get(typed),
+            )
         }
 
     @Test fun aTypedAnswerSurvivesRetryingAFailedStartAfterCheck() = typedAnswerSurvivesRetryingStart(check = true)
@@ -255,6 +322,71 @@ class LessonStartTest {
             runCurrent()
             assertTrue(graded)
             assertTrue(grading.isCompleted)
+        }
+
+    @Test fun aSpokenTakeKeepsItsScreenWhenTheRunResumesElsewhere() =
+        runTest(dispatcher) {
+            val first = "00000000-0000-4000-8000-000000000101"
+            val spoken = "00000000-0000-4000-8000-000000000102"
+            val last = "00000000-0000-4000-8000-000000000103"
+            lesson = playable(listOf(explanationStep(first), spokenStep(spoken), explanationStep(last)))
+            api.load = LessonLoad.Ready(lesson)
+            api.runAnswers = """[{"answeredAt":"2026-10-28T09:59:00Z","isCorrect":true,"stepId":"$spoken"}]"""
+            api.startGate = CompletableDeferred()
+            var graded = false
+            api.spokenGrade = {
+                graded = true
+                ApiJson.decodeFromString(
+                    com.zoonk.api.models.SpokenAnswerGrade
+                        .serializer(),
+                    """{"attemptId":"00000000-0000-4000-8000-000000000021","explanation":null,"isCorrect":true,"score":1,
+                        "transcript":"Tengo hambre","words":[],"wordsToPractice":[]}""",
+                )
+            }
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            runCurrent()
+            vm.dispatch(LessonAction.Continue)
+            val grading =
+                async {
+                    vm.gradeSpoken(
+                        spoken,
+                        com.zoonk.android.feature.audio
+                            .VoiceRecording(ByteArray(8), 1200),
+                    )
+                }
+            runCurrent()
+            assertEquals(LessonPhase.Checking, vm.state.value?.phase)
+            assertTrue(
+                vm.state.value!!
+                    .answers
+                    .isEmpty(),
+            )
+            assertTrue(!graded)
+
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(
+                com.zoonk.android.feature.audio.GradeOutcome
+                    .Graded(Unit),
+                grading.await(),
+            )
+            assertTrue(graded)
+            assertEquals(
+                spoken,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            assertEquals(LessonPhase.Feedback, vm.state.value?.phase)
+            assertEquals(
+                "Tengo hambre",
+                vm.state.value
+                    ?.results
+                    ?.get(spoken)
+                    ?.answerText,
+            )
         }
 
     @Test fun writtenStepsNavigateBeforeAdmissionAndStartWithTheirExactOpening() =

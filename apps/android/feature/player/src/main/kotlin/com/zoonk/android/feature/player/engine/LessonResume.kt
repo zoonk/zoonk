@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.player.engine
 
+import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepResult
 
@@ -84,9 +85,20 @@ internal fun LessonPlayerState.skipWriting(
 
     val isLeftOut = { id: String -> steps[id]?.isWritingStep == true }
     val skipped = queue.drop(position).filter(isLeftOut)
+    val currentId = currentStep?.id
+    val touched =
+        if (!opening && skipped.isNotEmpty() && currentId != null &&
+            currentId !in answers
+        ) {
+            answers + (currentId to LessonAnswer.Draft)
+        } else {
+            answers
+        }
     val next =
-        copy(skippedWritingStepIds = (skippedWritingStepIds + skipped).distinct())
-            .leaveOutAhead(isLeftOut, if (opening) CompletionStatus.Ready else CompletionStatus.Saving, now)
+        copy(
+            answers = touched,
+            skippedWritingStepIds = (skippedWritingStepIds + skipped).distinct(),
+        ).leaveOutAhead(isLeftOut, if (opening) CompletionStatus.Ready else CompletionStatus.Saving, now)
 
     if (next.phase != LessonPhase.Playing || skipped.isEmpty()) return next
 

@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -48,6 +49,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -72,6 +74,7 @@ class LanguageStepsFlowTest {
 
     private val session = FakeSession(AuthenticatedSession(ANA, "token-a", "local-a"))
     private lateinit var api: FakeLessonPlayerApi
+    private lateinit var viewModel: LessonPlayerViewModel
 
     private val exits =
         object : LessonPlayerExits {
@@ -82,14 +85,17 @@ class LanguageStepsFlowTest {
             override fun replace(route: AppRoute) = Unit
         }
 
-    private fun play(steps: List<LessonStep>) {
+    private fun play(
+        steps: List<LessonStep>,
+        configure: FakeLessonPlayerApi.() -> Unit = {},
+    ) {
         val lesson = playable(steps).copy(language = "en", targetLanguage = "es")
-        api = FakeLessonPlayerApi(LessonLoad.Ready(lesson))
+        api = FakeLessonPlayerApi(LessonLoad.Ready(lesson)).apply(configure)
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val cache = AppCache(session, scope)
         val drafts = DraftStore(folder.newFolder(), scope, io = Dispatchers.Main.immediate)
         runBlocking { drafts.follow { DraftsChange(ANA) } }
-        val viewModel =
+        viewModel =
             LessonPlayerViewModel(
                 lessonId = LESSON_ID,
                 studySessionId = null,
@@ -117,7 +123,7 @@ class LanguageStepsFlowTest {
                 }
             }
         }
-        rule.waitUntil { viewModel.state.value?.run is LessonRun.Started }
+        rule.waitUntil { if (api.startGate != null) api.startOpenings.isNotEmpty() else viewModel.state.value?.run is LessonRun.Started }
     }
 
     private fun tap(text: String) =
@@ -131,6 +137,42 @@ class LanguageStepsFlowTest {
         rule.waitForIdle()
         val input = api.checks.last { it.first == stepId }.second
         return Json.parseToJsonElement(ApiJson.encodeToString(input)).jsonObject.getValue("answer")
+    }
+
+    @Test
+    fun aPartialMatchKeepsItsScreenWhenAdmissionResumesAnAnsweredRun() {
+        val stepId = "00000000-0000-4000-8000-000000000102"
+        play(listOf(matchColumns(stepId), summaryStep("end"))) {
+            startGate = CompletableDeferred()
+            runAnswers = """[{"answeredAt":"2026-10-28T09:59:00Z","isCorrect":true,"stepId":"$stepId"}]"""
+        }
+        tap("hola")
+        tap("hello")
+        val before =
+            viewModel.state.value
+                ?.answers
+                ?.get(stepId)
+        rule.onNodeWithText("Check").assertIsNotEnabled()
+        api.startGate!!.complete(Unit)
+        rule.waitUntil { viewModel.state.value?.run is LessonRun.Started }
+
+        assertEquals(LessonAnswer.MatchColumns(listOf("hola" to "hello"), 0), before)
+        assertEquals(
+            stepId,
+            viewModel.state.value
+                ?.currentStep
+                ?.id,
+        )
+        assertEquals(
+            before,
+            viewModel.state.value
+                ?.answers
+                ?.get(stepId),
+        )
+        tap("gato")
+        tap("cat")
+        tap("Check")
+        assertEquals(1, api.checks.size)
     }
 
     @Test

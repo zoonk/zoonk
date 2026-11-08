@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.player.engine
 
 import androidx.compose.runtime.Immutable
+import com.zoonk.android.feature.player.language.ExerciseContent
+import com.zoonk.android.feature.player.language.toExercise
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
@@ -36,7 +38,21 @@ data class LessonScreen(
     val unsentAnswer: Boolean,
 )
 
-private fun LessonAnswer?.isReady(): Boolean = this != null && (writtenText?.isNotBlank() ?: true)
+private fun LessonAnswer?.isReady(step: LessonStep): Boolean =
+    when (this) {
+        null, LessonAnswer.Draft -> {
+            false
+        }
+
+        is LessonAnswer.MatchColumns -> {
+            val content = (step.content as? StepContent.Language)?.exercise?.toExercise()?.content as? ExerciseContent.MatchColumns
+            content != null && pairs.size == content.pairs.size
+        }
+
+        else -> {
+            writtenText?.isNotBlank() ?: true
+        }
+    }
 
 private fun LessonPlayerState.readLabel(step: LessonStep): PrimaryLabel {
     val worked = step.content as? StepContent.WorkedExample
@@ -74,14 +90,14 @@ private fun LessonPlayerState.primaryAction(step: LessonStep): PrimaryAction? {
 
     val isGuess = step.content is StepContent.Guess
 
-    if (isGuess && step.id !in answers) {
+    if (isGuess && (answers[step.id] == null || answers[step.id] == LessonAnswer.Draft)) {
         return PrimaryAction(isCheck = false, label = PrimaryLabel.DontKnowYet, enabled = !step.isRequiredPictureDrawing)
     }
 
     return PrimaryAction(
         isCheck = true,
         label = if (isGuess) PrimaryLabel.SeeAnswer else PrimaryLabel.Check,
-        enabled = answers[step.id].isReady() && !step.isRequiredPictureDrawing,
+        enabled = answers[step.id].isReady(step) && !step.isRequiredPictureDrawing,
     )
 }
 
@@ -115,7 +131,9 @@ fun LessonPlayerState.screen(): LessonScreen {
         step = step,
         primary = step?.let(::primaryAction),
         segments = segments(),
-        canExplainFirst = isPlaying && step != null && step.isQuestionStep && step.id !in answers && explanationsAfter().isNotEmpty(),
+        canExplainFirst =
+            isPlaying && step != null && step.isQuestionStep && (answers[step.id] == null || answers[step.id] == LessonAnswer.Draft) &&
+                explanationsAfter().isNotEmpty(),
         canGoBack = step != null && canGoBack,
         canGoForward =
             step != null && run !is LessonRun.Refused &&
