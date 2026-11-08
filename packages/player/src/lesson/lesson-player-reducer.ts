@@ -1,4 +1,3 @@
-import { confirmCheck } from "./_utils/lesson-confirmation";
 import { isAtEnd, leaveMap } from "./_utils/lesson-end";
 import {
   advance,
@@ -35,24 +34,16 @@ function selectAnswer(
     return state;
   }
 
-  const selfCorrection =
-    state.selfCorrection?.stepId === action.stepId ? null : state.selfCorrection;
-
   if (!action.answer) {
     return {
       ...state,
       answers: Object.fromEntries(
         Object.entries(state.answers).filter(([id]) => id !== action.stepId),
       ),
-      selfCorrection,
     };
   }
 
-  return {
-    ...state,
-    answers: { ...state.answers, [action.stepId]: action.answer },
-    selfCorrection,
-  };
+  return { ...state, answers: { ...state.answers, [action.stepId]: action.answer } };
 }
 
 function continueFrom(state: LessonPlayerState): LessonPlayerState {
@@ -83,6 +74,24 @@ function navigate(state: LessonPlayerState, action: ActionOf<"navigate">): Lesso
   }
 
   return action.direction === "prev" ? goBack(state) : continueFrom(state);
+}
+
+function confirmCheck(
+  state: LessonPlayerState,
+  action: ActionOf<"checkConfirmed">,
+): LessonPlayerState {
+  const current = state.results[action.stepId];
+
+  if (!current || current.attemptId !== action.attemptId) {
+    return state;
+  }
+
+  const { nextReviewAt, savedMistake } = action.result;
+
+  return {
+    ...state,
+    results: { ...state.results, [action.stepId]: { ...current, nextReviewAt, savedMistake } },
+  };
 }
 
 function startChecking(state: LessonPlayerState): LessonPlayerState {

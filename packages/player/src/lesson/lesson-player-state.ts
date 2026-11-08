@@ -39,7 +39,6 @@ export type LessonPlayerState = {
     | LessonPlayerCompletionState
     | { result: null; status: "ready"; testedOut: boolean }
     | null;
-  firstVerdictAttemptIds: Record<string, string>;
   firstVerdicts: Record<string, boolean>;
   hasMap: boolean;
   helped: string[];
@@ -60,7 +59,6 @@ export type LessonPlayerState = {
   rounds: Record<string, number>;
   run: LessonPlayerRun;
   reviewing: boolean;
-  selfCorrection: { result: LessonStepResult; stepId: string } | null;
   selfCorrected: string[];
   skippedWritingStepIds: string[];
   startedAt: number;
@@ -124,7 +122,6 @@ export function createInitialState(
     checkFailed: false,
     checkIssue: null,
     completion: queue.length === 0 ? { result: null, status: "ready", testedOut: false } : null,
-    firstVerdictAttemptIds: {},
     firstVerdicts: {},
     hasMap: lesson.hasMap,
     helped: [],
@@ -142,7 +139,6 @@ export function createInitialState(
     rounds: {},
     run: { status: "idle" },
     selfCorrected: [],
-    selfCorrection: null,
     skippedWritingStepIds: [],
     startedAt: now,
     stepStartedAt: now,
