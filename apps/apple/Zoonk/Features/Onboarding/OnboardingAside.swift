@@ -43,7 +43,7 @@ private struct OnboardingColumn<Lead: View>: ViewModifier {
         EmptyView()
       }
     } content: { _ in
-      content.lonePage(readableWidth: 640)
+      content.readableScreen(640).lonePage()
     }
   }
 }
