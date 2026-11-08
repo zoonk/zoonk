@@ -190,20 +190,7 @@ async function saveOpeningLesson({
     (await findOpeningLessonStep({ courseId: course.id, skillId: skill.id, userId })) ??
     (await writeOpeningChapter({ context, opening, scope, userId }));
 
-  if (!lessonId) {
-    return null;
-  }
-
-  const saved = await saveGoalOpeningStep({ goalId, lessonId });
-
-  // A plan built before the chapter landed gets its lessons as an outline's would.
-  await replanWaitingGoals({
-    context: { analytics: context.analytics, courseId: course.id },
-    goalIds: [goalId],
-    skillIds: [skill.id],
-  });
-
-  return saved;
+  return lessonId ? saveGoalOpeningStep({ goalId, lessonId }) : null;
 }
 
 async function followLesson(lessonId: string): Promise<boolean> {
@@ -324,7 +311,19 @@ export function openGoal({
       : null,
   );
 
-  const settled = Promise.all([lesson, writing]).then(([saved, ready]) =>
+  // A plan built before the chapter landed gets its lessons as an outline's would, once the
+  // lesson's run is on its way.
+  const replanned = Promise.all([written, writing]).then(([opening]) =>
+    opening
+      ? replanWaitingGoals({
+          context: { analytics: context.analytics, courseId: opening.opening.course.id },
+          goalIds: [goal.id],
+          skillIds: [opening.opening.skill.id],
+        })
+      : null,
+  );
+
+  const settled = Promise.all([lesson, writing, replanned]).then(([saved, ready]) =>
     saved && ready ? reportReady({ goalId: goal.id, lessonId: saved.id, ready }) : null,
   );
 
