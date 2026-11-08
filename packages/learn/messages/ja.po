@@ -802,6 +802,12 @@ msgctxt "f4Zmb7"
 msgid "Different time on weekends"
 msgstr "週末は学習時間を変える"
 
+#: src/_utils/time-format.ts
+#: src/today/today-day-progress.tsx
+msgctxt "RQRGjK"
+msgid "{time} studied"
+msgstr "{time}学習済み"
+
 #: src/_utils/use-belt-name.ts
 msgctxt "belts.kZw3xs"
 msgid "Yellow belt"
@@ -13681,11 +13687,6 @@ msgstr "いつもより時間がかかっています"
 msgctxt "m9CrfE"
 msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
 msgstr "{done, plural, =0 {#件完了、残り{total, number}件} other {#件完了（全{total, number}件）}}"
-
-#: src/today/today-day-progress.tsx
-msgctxt "RQRGjK"
-msgid "{time} studied"
-msgstr "{time}学習済み"
 
 #: src/today/today-day-status.tsx
 msgctxt "XMRh7X"

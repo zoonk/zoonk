@@ -170,6 +170,7 @@
   "player_stop_for_today": "497ad2132602f69e16d525b4ea84bd24d2fa495fcd70fa25a960bbc5c306073e",
   "player_summary": "76a023fcd9a571d3cc608a04bbd9aa6f9dd224f566fd949dfc65770d3da51b42",
   "player_summary_ideas": "700167b879504ae64f8a16e5bf850e683e52569debcc1788134b30b29f4afa5b",
+  "player_time_studied": "4d571ba2220429c1d0df3f856481726e0a01b0208f8046f7c14d644b3588c135",
   "player_try_again": "0bd2ae7a08f67176343ff4e2853fe6a81616d3f4229b321f43771a7023092587",
   "player_unchecked_compare": "eada2bbc01f1f21ed10bad23ca59b57c258a756f45b192b99033f77c4559e222",
   "player_verdict_almost": "ef061ca34d4ec5dfad5cac44977b98d0964e9316fbf7480f241487bea7945c74",
@@ -412,6 +413,8 @@
     <string name="player_saving_progress">İlerlemeni kaydediyoruz…</string>
     <string name="player_save_failed">Gönderilemedi. Cevapların saklanıyor.</string>
     <string name="player_lesson_not_saved">Dersin henüz kaydedilmedi</string>
+    <!-- At a finished lesson's end: the study time it counted. %1$s is a duration, such as "4 min". -->
+    <string name="player_time_studied">%1$s çalıştın</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">%1$s tarihinde tekrar</string>
     <string name="player_next_lesson">Sonraki derse geç</string>

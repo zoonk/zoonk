@@ -11,7 +11,7 @@ import { MomentReadouts } from "../_components/moment-readouts";
 import { PageSectionLabel } from "../_components/page";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
-import { useFormatDuration } from "../_utils/time-format";
+import { useFormatDuration, useStudyTimeFact } from "../_utils/time-format";
 import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { LearnLink } from "../learn-link";
@@ -34,12 +34,20 @@ import { useSessionAction } from "./use-session-action";
  * The day a lesson comes back reads as a date, never a weekday that could be this week's or the
  * next.
  */
-function MomentEarned({ moment }: { moment: StudyMomentView }) {
+function MomentEarned({
+  lessonSeconds = 0,
+  moment,
+}: {
+  lessonSeconds?: number;
+  moment: StudyMomentView;
+}) {
   const t = useExtracted();
   const format = useFormatter();
+  const studied = useStudyTimeFact(lessonSeconds);
   const brainPower = getOwnBrainPower(moment);
 
   const facts = [
+    studied,
     moment.comesBackOn &&
       t("Review on {date}", {
         date: format.dateTime(new Date(`${moment.comesBackOn}T00:00:00Z`), {
@@ -149,6 +157,7 @@ export function StudyMoment({
   exitHref,
   inLessonPlayer = false,
   kind,
+  lessonSeconds,
   moment,
   next,
   finishedChapterId = null,
@@ -165,6 +174,7 @@ export function StudyMoment({
   finishedChapterId?: string | null;
   inLessonPlayer?: boolean;
   kind: MomentKind;
+  lessonSeconds?: number;
   moment: StudyMomentView;
   next: StudyBlock | null;
   onContinue: () => Promise<boolean>;
@@ -195,7 +205,7 @@ export function StudyMoment({
     <MomentAfterCeremony moments={moment} render={renderCeremony}>
       <TaskBody data-slot="study-moment">
         <MomentHeader title={title}>
-          <MomentEarned moment={moment} />
+          <MomentEarned lessonSeconds={lessonSeconds} moment={moment} />
         </MomentHeader>
 
         <DayMoment
