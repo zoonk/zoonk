@@ -7,11 +7,10 @@ import { isSameLanguage } from "@zoonk/utils/languages";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { type SentenceOrders, checkOrderCandidates, toOrderCandidates } from "./sentence-orders";
+import { MAX_SENTENCE_ORDERS_ATTEMPTS } from "./sentence-orders-constants";
 
 type Analytics = Parameters<typeof generateLanguageSentenceOrders>[0]["analytics"];
 
-/** Every try claims one, a step's retries included, so two runs' tries end a failure no retry fixes. */
-const MAX_ATTEMPTS = 8;
 const OWED_LESSONS_PER_SWEEP = 1000;
 
 export type OwedSentenceOrdersStatus = "changed" | "skipped" | "written";
@@ -62,11 +61,12 @@ async function claimAttempt(lessonId: string): Promise<boolean> {
     UPDATE library_lessons
     SET sentence_orders_attempts = sentence_orders_attempts + 1
     WHERE id = ${lessonId}::uuid
+      AND target_language IS NOT NULL
       AND EXISTS (
         SELECT 1 FROM lesson_sentences
         WHERE lesson_id = library_lessons.id AND orders_owed_at IS NOT NULL
       )
-      AND sentence_orders_attempts < ${MAX_ATTEMPTS}
+      AND sentence_orders_attempts < ${MAX_SENTENCE_ORDERS_ATTEMPTS}
   `;
 
   return claimed > 0;
@@ -216,7 +216,8 @@ export async function listOwedSentenceOrders(): Promise<string[]> {
     FROM library_lessons lesson
     JOIN lesson_sentences sentence ON sentence.lesson_id = lesson.id
     WHERE sentence.orders_owed_at IS NOT NULL
-      AND lesson.sentence_orders_attempts < ${MAX_ATTEMPTS}
+      AND lesson.target_language IS NOT NULL
+      AND lesson.sentence_orders_attempts < ${MAX_SENTENCE_ORDERS_ATTEMPTS}
     GROUP BY lesson.id
     ORDER BY (
       SELECT MAX(COALESCE(activity.ended_at, activity.started_at))

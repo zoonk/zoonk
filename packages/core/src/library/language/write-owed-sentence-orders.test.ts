@@ -2,7 +2,33 @@ import { prisma } from "@zoonk/db";
 import { libraryLessonsFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { describe, expect, it } from "vitest";
-import { listOwedSentenceOrders } from "./write-owed-sentence-orders";
+import {
+  generateSentenceOrderCandidates,
+  listOwedSentenceOrders,
+} from "./write-owed-sentence-orders";
+
+describe(generateSentenceOrderCandidates, () => {
+  it("does not schedule or spend attempts on an owed lesson without a target language", async () => {
+    const { lesson, sentence } = await languageLessonFixture();
+
+    await prisma.lessonSentence.update({
+      data: { ordersOwedAt: new Date() },
+      where: { lessonId_sentenceId: { lessonId: lesson.id, sentenceId: sentence.id } },
+    });
+
+    await prisma.lesson.update({ data: { targetLanguage: null }, where: { id: lesson.id } });
+
+    await expect(generateSentenceOrderCandidates({ lessonId: lesson.id })).resolves.toStrictEqual({
+      status: "skipped",
+    });
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ).resolves.toMatchObject({ sentenceOrdersAttempts: 0 });
+
+    await expect(listOwedSentenceOrders()).resolves.not.toContain(lesson.id);
+  });
+});
 
 describe(listOwedSentenceOrders, () => {
   it("starts at most 1,000 owed lessons so a backlog of thousands drains in days", async () => {

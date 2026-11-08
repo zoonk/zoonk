@@ -20,6 +20,7 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { validateActivity } from "../library/activities/validate-activity";
+import { MAX_SENTENCE_ORDERS_ATTEMPTS } from "../library/language/sentence-orders-constants";
 import { readSavedLessonMap } from "../library/lessons/lesson-map";
 import { readSavedStepMarks } from "../library/marks/step-marks";
 import { PPTX_CONTENT_TYPE } from "../library/sources/source-contract";
@@ -444,9 +445,15 @@ describe(getPlayableLibraryLesson, () => {
     });
   });
 
-  it.each([null, new Date()])(
-    "serves pending orders from the sentence's owed mark (%s)",
-    async (ordersOwedAt) => {
+  it.each([
+    { attempts: 0, expected: false, ordersOwedAt: null },
+    { attempts: 0, expected: true, ordersOwedAt: new Date() },
+    { attempts: MAX_SENTENCE_ORDERS_ATTEMPTS - 1, expected: true, ordersOwedAt: new Date() },
+    { attempts: MAX_SENTENCE_ORDERS_ATTEMPTS, expected: false, ordersOwedAt: new Date() },
+    { attempts: MAX_SENTENCE_ORDERS_ATTEMPTS + 1, expected: false, ordersOwedAt: new Date() },
+  ])(
+    "serves pending orders only while attempts remain (%s)",
+    async ({ attempts, expected, ordersOwedAt }) => {
       const { lesson, sentence } = await languageLessonFixture();
 
       await prisma.lessonSentence.update({
@@ -454,15 +461,24 @@ describe(getPlayableLibraryLesson, () => {
         where: { lessonId_sentenceId: { lessonId: lesson.id, sentenceId: sentence.id } },
       });
 
+      await prisma.lesson.update({
+        data: { sentenceOrdersAttempts: attempts },
+        where: { id: lesson.id },
+      });
+
       const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
       const steps = result?.status === "ready" ? result.lesson.steps : [];
 
       expect(steps.find((step) => step.kind === "reading")).toMatchObject({
-        exercise: { sentence: { ordersPending: ordersOwedAt !== null } },
+        exercise: { sentence: { ordersPending: expected } },
+      });
+
+      expect(steps.find((step) => step.kind === "listening")).toMatchObject({
+        exercise: { sentence: { ordersPending: expected } },
       });
 
       expect(steps.find((step) => step.kind === "spokenAnswer")).toMatchObject({
-        listening: { sentence: { ordersPending: ordersOwedAt !== null } },
+        listening: { sentence: { ordersPending: expected } },
       });
     },
   );

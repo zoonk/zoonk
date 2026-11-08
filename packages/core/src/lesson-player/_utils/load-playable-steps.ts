@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isSameLanguage } from "@zoonk/utils/languages";
+import { MAX_SENTENCE_ORDERS_ATTEMPTS } from "../../library/language/sentence-orders-constants";
 import { listTargetBankWords } from "../../player/contracts/build-word-bank-options";
 import { type PlayableLibraryStep, type PlayableWordHints } from "../playable-lesson";
 import { type LessonPairResources, type PlayableStepRow, toPlayableSteps } from "./playable-step";
@@ -13,7 +14,12 @@ const NO_RESOURCES: LessonPairResources = {
   wordHints: new Map(),
 };
 
-type ExerciseLesson = { id: string; language: string; targetLanguage: string | null };
+type ExerciseLesson = {
+  id: string;
+  language: string;
+  sentenceOrdersAttempts: number;
+  targetLanguage: string | null;
+};
 
 type WordRow = {
   audioUrl: string | null;
@@ -112,7 +118,8 @@ async function loadExerciseResources({
       distractors: link.distractors,
       explanation: link.explanation,
       id: link.sentence.id,
-      ordersPending: link.ordersOwedAt !== null,
+      ordersPending:
+        link.ordersOwedAt !== null && lesson.sentenceOrdersAttempts < MAX_SENTENCE_ORDERS_ATTEMPTS,
       otherSentenceOrders: link.otherSentenceOrders,
       otherTranslationOrders: link.otherTranslationOrders,
       romanization: link.sentence.romanization,
