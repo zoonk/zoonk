@@ -204,7 +204,11 @@ describe("an exam day that waited on lessons", () => {
     const after = await readDay(goal.id);
 
     expect(after.lessonIds).toStrictEqual(expect.arrayContaining([...after.allocated, ...written]));
-    expect(after.later).toStrictEqual([]);
+
+    expect(
+      after.day.blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
+    ).toBeLessThanOrEqual(after.day.minutes.planned);
+
     expect(after.day.lessonsToPrepare).toBe(true);
   });
 
@@ -230,7 +234,10 @@ describe("an exam day that waited on lessons", () => {
       const twin = await readDay(opened.goal.id);
 
       expect(after.lessonIds).toStrictEqual(expect.arrayContaining(written));
-      expect(after.later).toStrictEqual([]);
+
+      expect(
+        after.day.blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
+      ).toBeLessThanOrEqual(after.day.minutes.planned);
 
       expect(after.day).toMatchObject({
         lessonsToPrepare: true,

@@ -12,12 +12,12 @@ import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
 import { toDayBlockView } from "./day-block-view";
 import { toDayViewFields } from "./day-view-fields";
-import { hasLessonRoom } from "./empty-day";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
 import { type PlannedStudyDay } from "./plan-study-day";
 import { loadDayPlusLessons } from "./plus-only-lessons";
 import { type SelectedDayPlan, getSelectedCatchUpItems } from "./selected-day-plan";
+import { hasSessionLessonReservation } from "./session-lesson-reservation";
 import { type SessionDayContext } from "./session-placement";
 import { getSessionBar } from "./session-view";
 
@@ -81,15 +81,29 @@ export async function loadUnstartedDayView({
 
   const missions = missionViews.map((mission) => asDayMission(mission));
 
+  const reserved = hasSessionLessonReservation({
+    plan: day.plan,
+    prerequisites: day.plan.prerequisites,
+    session: {
+      blocks,
+      freshStart: day.input.freshStart,
+      goal,
+      localDate,
+      plannedMinutes: day.plannedMinutes,
+      status: "planned",
+    },
+    trialEnded: examAccess.trialEnded,
+  });
+
   const fields = toDayViewFields({
     answers: [],
     current: true,
     dayMinutes,
     examAccess,
     fullMealEarned: earned,
-    lessonRoom: hasLessonRoom({ day: day.input, plannedMinutes: day.plannedMinutes }),
+    lessonRoom: reserved,
     missions,
-    outlines: day.plan.outlines,
+    outlines: reserved ? (day.plan.outlines ?? "idle") : null,
     plusLessons,
     session: {
       blocks,

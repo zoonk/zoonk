@@ -75,6 +75,7 @@ export async function loadBossQuestions({
 }
 
 type BossInput = ChallengePlan<SessionPlanItem> & {
+  paceFactor?: number;
   examBlueprintId: string | null;
   readSubscription?: typeof findActiveSubscription;
   skills: readonly GoalSkillNode[];
@@ -123,6 +124,7 @@ async function loadBoss({
   itemSkillIds,
   items,
   listeningSkillIds,
+  paceFactor,
   skills,
   today,
   userId,
@@ -189,6 +191,6 @@ async function loadBoss({
       timeLimitMinutes: null,
       title: boss.titleSnapshot,
     },
-    reinforcement: await loadResultReinforcement({ result, userId }),
+    reinforcement: await loadResultReinforcement({ paceFactor, result, userId }),
   };
 }

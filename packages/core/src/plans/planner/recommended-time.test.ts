@@ -77,24 +77,24 @@ describe("the daily time a plan recommends", () => {
       expect.arrayContaining([expect.objectContaining({ date: "2020-10-04", minutes: 60 })]),
     );
 
-    const earlierTimes = Array.from({ length: 18 }, (_, index) => (index + 1) * 5);
+    const earlierTimes = Array.from({ length: 12 }, (_, index) => (index + 1) * 5);
     expect(earlierTimes.some((minutes) => holdsEveryTopicAt(input, minutes))).toBe(false);
 
     expect(
-      [90, 95, 110, 115, 130, 135].map((minutes) => holdsEveryTopicAt(input, minutes)),
-    ).toStrictEqual([false, true, true, false, false, true]);
+      [60, 65, 70, 75, 80, 85].map((minutes) => holdsEveryTopicAt(input, minutes)),
+    ).toStrictEqual([false, true, false, false, true, true]);
 
-    expect(getPlanFeasibility({ input })).toMatchObject({ recommendedMinutes: 315 });
+    expect(getPlanFeasibility({ input })).toMatchObject({ recommendedMinutes: 190 });
 
-    expect([310, 315].map((minutes) => fitsAt(input, minutes))).toStrictEqual([false, true]);
+    expect([185, 190].map((minutes) => fitsAt(input, minutes))).toStrictEqual([false, true]);
   });
 
   it("measures every topic at the learner's own time, even when a shorter day brings them in", () => {
-    const at130 = getPlanFeasibility({ input: withDailyMinutes(sundayExam(), 130) });
+    const at70 = getPlanFeasibility({ input: withDailyMinutes(sundayExam(), 70) });
 
-    expect(at130).toMatchObject({ coreFits: false, fits: false, timeCovers: false });
+    expect(at70).toMatchObject({ coreFits: false, fits: false, timeCovers: false });
 
-    const at105 = getPlanFeasibility({ input: withDailyMinutes(sundayExam(), 105) });
-    expect(at105).toMatchObject({ coreFits: true, fits: false, timeCovers: false });
+    const at65 = getPlanFeasibility({ input: withDailyMinutes(sundayExam(), 65) });
+    expect(at65).toMatchObject({ coreFits: true, fits: false, timeCovers: false });
   });
 });

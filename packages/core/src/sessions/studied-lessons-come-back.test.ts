@@ -276,22 +276,22 @@ describe("a lesson whose answers land on finer skills than the plan's", () => {
     const finer = await liveDaysOnce("finer");
     const plan = await liveDaysOnce("plan");
 
-    expect(finer.days[0]).toStrictEqual(["L1", "L2", "L3"]);
-    expect(plan.days[0]).toStrictEqual(["L1", "L2", "L3"]);
+    expect(finer.days[0]).toStrictEqual(["L1", "L2", "L3", "L4", "L5"]);
+    expect(plan.days[0]).toStrictEqual(["L1", "L2", "L3", "L4", "L5"]);
 
     expect(
       new Set(
         finer.finished.filter((lesson) => lesson.day === 0).map((lesson) => lesson.planSkillId),
       ),
-    ).toStrictEqual(new Set([finer.library.skills[0]?.id]));
+    ).toStrictEqual(new Set(finer.library.skills.slice(0, 2).map((skill) => skill.id)));
 
     expect(
       new Set(
         plan.finished.filter((lesson) => lesson.day === 0).map((lesson) => lesson.planSkillId),
       ),
-    ).toStrictEqual(new Set([plan.library.skills[0]?.id]));
+    ).toStrictEqual(new Set(plan.library.skills.slice(0, 2).map((skill) => skill.id)));
 
-    expect(finer.days[1]?.[0]).toMatch(/^review\[G1\]$/u);
+    expect(finer.days[1]?.[0]).toBe("review[G1,G2]");
     expect(finer.days.flat().some((block) => block.startsWith("practice[G"))).toBe(true);
     expect(finer.days).toStrictEqual(plan.days);
   });

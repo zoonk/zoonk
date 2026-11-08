@@ -575,6 +575,7 @@
     "./security/headers": "./src/security/headers.ts",
     "./seed": "./src/seed/seed.ts",
     "./server-sinks": "./src/server-sinks.ts",
+    "./sessions/session-minutes": "./src/sessions/session-minutes.ts",
     "./sessions/alternative": "./src/sessions/alternative-study-block.ts",
     "./sessions/answer": "./src/sessions/answer-study-question.ts",
     "./sessions/answer-limits": "./src/sessions/answer-limits.ts",

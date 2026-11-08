@@ -4,7 +4,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
-import { loadLessonsForSkills, loadUpcomingLessons } from "./load-plan-lessons";
+import { loadLessonsForSkills, loadPlanLessons, loadUpcomingLessons } from "./load-plan-lessons";
 
 async function skillWithLessons(name: string) {
   const [lower = "", higher = ""] = [randomUUID(), randomUUID()].toSorted((a, b) =>
@@ -93,5 +93,32 @@ describe(loadUpcomingLessons, () => {
     );
 
     expect(upcoming).toStrictEqual({ result: [], statements: 0, writes: 0 });
+  });
+});
+
+describe("personal lesson minutes", () => {
+  it.each([
+    { factor: 0.5, minutes: 2 },
+    { factor: 1, minutes: 3 },
+    { factor: 2, minutes: 6 },
+  ])("prices a raw three-minute lesson once at pace $factor", async ({ factor, minutes }) => {
+    const lesson = await libraryLessonFixture({ estimatedMinutes: 3 });
+
+    const [planned] = await loadPlanLessons({
+      items: [
+        {
+          chapterId: null,
+          id: null,
+          kind: "lesson",
+          lessonId: lesson.id,
+          phase: 0,
+          scheduledFor: null,
+          skillId: null,
+        },
+      ],
+      paceFactor: factor,
+    });
+
+    expect(planned?.minutes).toBe(minutes);
   });
 });

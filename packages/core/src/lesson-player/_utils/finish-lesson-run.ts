@@ -11,7 +11,9 @@ import { finishExplanations } from "../../goals/_utils/finish-explanations";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { clampEnergy } from "../../progress/energy";
 import { completeLessonPlanItems, scheduleLessonCanDos } from "../../sessions/_utils/plan-items";
+import { refitSessionLessons } from "../../sessions/_utils/refit-session-lessons";
 import { trackBlockCompleted } from "../../sessions/_utils/session-events";
+import { readBlockPayload } from "../../sessions/block-payload";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { upsertDailyProgress } from "../../stats/daily-progress";
 import { finishLearningEvent } from "../../stats/record-learning-event";
@@ -154,6 +156,19 @@ export async function finishLessonRun({
       }));
 
     const languageGoals = await completeLessonPlanItems(tx, { lessonId, now: completedAt, userId });
+
+    if (
+      blockDone &&
+      block &&
+      !readBlockPayload(block).extra &&
+      !readBlockPayload(block).reinforcement
+    ) {
+      await refitSessionLessons(tx, {
+        completedBlockId: block.id,
+        sessionId: block.sessionId,
+        timeZone,
+      });
+    }
 
     const explanationsFinished = await finishExplanations(tx, { lessonId, userId });
 

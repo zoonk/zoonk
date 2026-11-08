@@ -1,5 +1,6 @@
 import "server-only";
 import { type StudySessionBlock, prisma } from "@zoonk/db";
+import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { loadLessonsForSkills } from "../../sessions/_utils/load-plan-lessons";
 import { getBlockItemIds, readBlockPayload } from "../../sessions/block-payload";
 import { REINFORCEMENT_LESSONS, getMissedSkills } from "../checkpoint-rules";
@@ -8,8 +9,10 @@ import { type CheckpointResult } from "./checkpoint-results";
 export async function loadCheckpointReinforcement({
   block,
   userId,
+  paceFactor,
 }: {
   block: StudySessionBlock | null;
+  paceFactor?: number;
   userId: string;
 }) {
   const payload = block ? readBlockPayload(block) : null;
@@ -32,16 +35,32 @@ export async function loadCheckpointReinforcement({
   const latest = new Map(answers.map((answer) => [answer.itemId, answer]));
   const skillIds = getMissedSkills([...latest.values()]);
 
-  return skillIds.length > 0
-    ? loadLessonsForSkills({ limit: REINFORCEMENT_LESSONS, skillIds })
-    : [];
+  if (skillIds.length === 0) {
+    return [];
+  }
+
+  const session =
+    paceFactor === undefined
+      ? await prisma.studySession.findUnique({
+          select: { goal: { select: { plan: { select: { settings: true } } } } },
+          where: { id: block.sessionId },
+        })
+      : null;
+
+  return loadLessonsForSkills({
+    limit: REINFORCEMENT_LESSONS,
+    paceFactor: paceFactor ?? parsePlanSettings(session?.goal?.plan?.settings).pace?.factor,
+    skillIds,
+  });
 }
 
 export async function loadResultReinforcement({
   result,
   userId,
+  paceFactor,
 }: {
   result: CheckpointResult | null;
+  paceFactor?: number;
   userId: string;
 }) {
   if (!result || result.passed || !result.studySessionBlockId || !result.studySessionId) {
@@ -56,5 +75,5 @@ export async function loadResultReinforcement({
     },
   });
 
-  return loadCheckpointReinforcement({ block, userId });
+  return loadCheckpointReinforcement({ block, paceFactor, userId });
 }

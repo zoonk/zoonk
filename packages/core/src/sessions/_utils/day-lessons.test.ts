@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type PlanGraph } from "../../plans/planner/plan-state";
-import { getLessonLookahead, pickDayLessons } from "./day-lessons";
+import { getLessonLookahead, getUnwrittenMinutesOn, pickDayLessons } from "./day-lessons";
 
 const TODAY = new Date("2026-10-06T00:00:00Z");
 const TOMORROW = new Date("2026-10-07T00:00:00Z");
@@ -232,5 +232,29 @@ describe(getLessonLookahead, () => {
     expect([5, 15, 30, 240].map((minutes) => getLessonLookahead(minutes))).toStrictEqual([
       8, 15, 30, 240,
     ]);
+  });
+});
+
+describe("writing reservations", () => {
+  it.each([false, true])("holds only personal lesson time, with day facts %s", (spanning) => {
+    const writing = {
+      ...item("writing", "reading", TODAY),
+      facts: {
+        minutes: 20,
+        parts: { checkpoint: 0, practice: 8, unwritten: 12, written: 0 },
+        schemaVersion: 1,
+        skillIds: ["reading"],
+        ...(spanning && {
+          days: [
+            ["2026-10-06", 20, 12],
+            ["2026-10-07", 20, 12],
+          ],
+        }),
+      },
+      lessonId: null,
+      minutes: 20,
+    };
+
+    expect(getUnwrittenMinutesOn({ items: [writing], today: TODAY })).toBe(12);
   });
 });

@@ -135,18 +135,3 @@ export function getBlockMinutes({
   const minutes = (completedAt.getTime() - startedAt.getTime()) / MS_PER_MINUTE;
   return Math.min(Math.max(0, minutes), estimatedMinutes * MAX_BLOCK_TIME_FACTOR);
 }
-
-type TimedBlock = {
-  completedAt: Date | null;
-  estimatedMinutes: number | null;
-  startedAt: Date | null;
-};
-
-/** Uses planned minutes of completed blocks for Today; stats count actual elapsed time instead. */
-export function getSessionMinutesDone(
-  blocks: readonly (Pick<TimedBlock, "estimatedMinutes"> & { status: string })[],
-): number {
-  return blocks
-    .filter((block) => block.status === "completed")
-    .reduce((sum, block) => sum + (block.estimatedMinutes ?? 0), 0);
-}

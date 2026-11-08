@@ -38,6 +38,7 @@ async function startLessonBeforeMidnight() {
   const [goal, second] = await Promise.all([
     goalFixture({ dailyMinutes: 30, timezone: TIME_ZONE, userId: user.id }),
     libraryLessonFixture({ title: "Second lesson" }),
+    prisma.lesson.update({ data: { estimatedMinutes: 15 }, where: { id: lesson.id } }),
   ]);
 
   await lessonSkillFixture({ lessonId: second.id, skillId: skill.id });

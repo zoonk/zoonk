@@ -171,10 +171,15 @@ describe("a selected plan reaches the day exactly once", () => {
     }
 
     expect
-      .soft(opened.session.blocks.map((block) => toDayBlockRef(block)))
+      .soft(
+        opened.session.blocks
+          .slice(0, preview.day.blocks.length)
+          .map((block) => toDayBlockRef(block)),
+      )
       .toStrictEqual(preview.day.blocks.map((block) => toDayBlockRef(block)));
 
-    expect.soft(opened.session.blocks.map((block) => block.lessonId)).not.toContain(landed.id);
+    expect.soft(opened.session.blocks.map((block) => block.lessonId)).toContain(landed.id);
+    expect(opened.session.minutes.left).toBe(preview.day.minutes.left + landed.estimatedMinutes);
     const savedPlan = await saved(fixture.plan.id);
     const future = savedPlan.items.find((item) => item.lessonId === landed.id);
 

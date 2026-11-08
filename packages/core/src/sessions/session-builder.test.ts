@@ -412,7 +412,8 @@ describe(buildSessionBlocks, () => {
     });
 
     expect(blocks.some((block) => block.kind === "practice")).toBe(true);
-    expect(plannedMinutes).toBe(18);
+    expect(plannedMinutes).toBe(30);
+    expect(blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0)).toBe(18);
   });
 
   it("keeps the time of lessons still being written free when review takes the rest of the day", () => {
@@ -427,7 +428,8 @@ describe(buildSessionBlocks, () => {
     });
 
     expect(blocks.map((block) => block.kind)).toStrictEqual(["review"]);
-    expect(plannedMinutes).toBeLessThanOrEqual(12);
+    expect(plannedMinutes).toBe(30);
+    expect(blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0)).toBeLessThanOrEqual(12);
   });
 
   it("splits a long day's practice into short blocks, mistakes first, and never a set", () => {
@@ -634,5 +636,76 @@ describe(getPracticeShare, () => {
     expect(kinds.at(-1)).toBe("produce");
     expect(blocks.at(-1)?.payload.itemIds).toStrictEqual(["essay-1"]);
     expect(plannedMinutes).toBeLessThanOrEqual(60 + 14);
+  });
+});
+
+describe("filling ordinary study days", () => {
+  const empty = {
+    ...baseInput,
+    capsules: [],
+    dailyMinutes: 100,
+    drills: [],
+    lessons: [],
+    practice: [],
+  };
+
+  it("fills practice's unused time with the next written lessons", () => {
+    const result = buildSessionBlocks({
+      ...empty,
+      fillLessons: Array.from({ length: 12 }, (_, i) => lesson(`later-${i}`, 10)),
+      lessons: [lesson("first", 10)],
+      practiceShare: 0.6,
+    });
+
+    expect(result.blocks).toHaveLength(10);
+    expect(result.plannedMinutes).toBe(100);
+  });
+
+  it("keeps a healthy question bank's actual practice before filling", () => {
+    const result = buildSessionBlocks({
+      ...empty,
+      dailyMinutes: 20,
+      fillLessons: [lesson("later", 10)],
+      lessons: [lesson("first", 10)],
+      practice: Array.from({ length: 20 }, (_, i) => ({
+        itemId: `question-${i}`,
+        skillId: "skill",
+      })),
+      practiceShare: 0.5,
+    });
+
+    expect(result.blocks.map((block) => block.kind)).toStrictEqual(["learn", "practice"]);
+  });
+
+  it("never adds a second first-lesson overflow", () => {
+    const result = buildSessionBlocks({
+      ...empty,
+      dailyMinutes: 10,
+      fillLessons: [lesson("second", 6)],
+      lessons: [lesson("first", 6)],
+    });
+
+    expect(result.blocks.map((block) => block.lessonId)).toStrictEqual(["first"]);
+    expect(result.plannedMinutes).toBe(10);
+  });
+
+  it.each([{ examTrialEnded: true }, { reviewPlanItemId: "review" }])(
+    "does not fill when new lessons are closed: %j",
+    (gate) => {
+      const result = buildSessionBlocks({ ...empty, fillLessons: [lesson("later", 10)], ...gate });
+      expect(result.blocks).toStrictEqual([]);
+      expect(result.plannedMinutes).toBe(0);
+    },
+  );
+
+  it("keeps a rounded forty-lesson day at its commitment", () => {
+    const result = buildSessionBlocks({
+      ...empty,
+      dailyMinutes: 240,
+      lessons: Array.from({ length: 40 }, (_, i) => lesson(`personal-${i}`, 6)),
+    });
+
+    expect(result.blocks).toHaveLength(40);
+    expect(result.plannedMinutes).toBe(240);
   });
 });
