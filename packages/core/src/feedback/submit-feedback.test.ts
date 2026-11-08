@@ -5,7 +5,8 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { mockSession } from "../_test-utils/mock-session";
+import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
+import { feedbackMessageInputSchema } from "./contract";
 import { submitFeedback } from "./submit-feedback";
 
 const SENT = { data: Response.json({ ok: true }), error: null };
@@ -83,6 +84,59 @@ describe(submitFeedback, () => {
         textBody: "From: visitor@zoonk.test\n\nDo you have a course on welding?",
       }),
     );
+  });
+
+  it("stores a guest's save report without an email and emails it without a reply address", async () => {
+    const user = await userFixture();
+    await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
+    mockGuestSession(user.id);
+
+    const feedback = await submitFeedback(
+      feedbackMessageInputSchema.parse({
+        context: { platform: "web", reportType: "saveFailure", screen: "answers-save-error" },
+        message: "I couldn't save my answers.",
+      }),
+    );
+
+    await expect(
+      prisma.feedback.findUniqueOrThrow({ where: { id: feedback.id } }),
+    ).resolves.toMatchObject({
+      context: { platform: "web", reportType: "saveFailure", screen: "answers-save-error" },
+      email: null,
+      message: "I couldn't save my answers.",
+      status: "new",
+      userId: user.id,
+    });
+
+    expect(sendEmail).toHaveBeenCalledExactlyOnceWith({
+      subject: "Zoonk: a save keeps failing",
+      textBody: [
+        "From: no email",
+        "",
+        "I couldn't save my answers.",
+        "",
+        "---",
+        "Report: saveFailure",
+        "Screen: answers-save-error",
+        "Platform: web",
+      ].join("\n"),
+      to: "hello@zoonk.com",
+    });
+  });
+
+  it("stores a save report without a session or an email", async () => {
+    mockSession(null);
+
+    const feedback = await submitFeedback(
+      feedbackMessageInputSchema.parse({
+        context: { reportType: "saveFailure" },
+        message: "I couldn't save my answers.",
+      }),
+    );
+
+    await expect(
+      prisma.feedback.findUniqueOrThrow({ where: { id: feedback.id } }),
+    ).resolves.toMatchObject({ context: { reportType: "saveFailure" }, email: null, userId: null });
   });
 
   it("snapshots the provenance of the content the message is about", async () => {

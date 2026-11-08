@@ -35,8 +35,9 @@ export async function submitFeedback({ context = {}, email, message }: FeedbackM
 
   const feedback = await saveFeedbackMessage({
     context: await getStoredContext({ context, userId }),
-    email,
+    email: email ?? null,
     message,
+    subject: context.reportType === "saveFailure" ? "Zoonk: a save keeps failing" : undefined,
     userId,
   });
 

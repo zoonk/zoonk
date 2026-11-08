@@ -1,3 +1,4 @@
+import { type FeedbackReportType, feedbackReportTypeSchema } from "@zoonk/core/feedback/contract";
 import { FeedbackContentKind } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 
@@ -13,6 +14,7 @@ type FeedbackMessageContext = {
   contentKind: FeedbackContentKind | null;
   platform: string | null;
   provenance: MessageProvenance | null;
+  reportType: FeedbackReportType | null;
   screen: string | null;
   url: string | null;
 };
@@ -52,6 +54,7 @@ export function parseFeedbackMessageContext(context: unknown): FeedbackMessageCo
     contentKind: readContentKind(record),
     platform: readString(record, "platform"),
     provenance: readProvenance(record.provenance),
+    reportType: feedbackReportTypeSchema.safeParse(record.reportType).data ?? null,
     screen: readString(record, "screen"),
     url: readString(record, "url"),
   };
