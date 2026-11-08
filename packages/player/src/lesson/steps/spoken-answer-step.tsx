@@ -61,6 +61,8 @@ function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: st
   const seconds = Math.floor(recorder.elapsedMs / MS_PER_SECOND);
 
   const startRecording = async () => {
+    actions.startRecording();
+
     if ((await recorder.start()) === false) {
       onBlocked();
     }

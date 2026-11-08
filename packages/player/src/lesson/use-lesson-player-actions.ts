@@ -221,6 +221,7 @@ export function useLessonPlayerActions({
         setChosenToday(CANT_WRITE_TODAY, true);
         dispatch({ type: "skipWriting" });
       },
+      startRecording: () => dispatch({ type: "recordingStarted" }),
       submitSpokenAnswer: (input) => void submitSpokenAnswer(input),
     }),
     [check, dispatch, ensureRun, resendHeld, state.steps, submitSpokenAnswer, writeExampleLines],

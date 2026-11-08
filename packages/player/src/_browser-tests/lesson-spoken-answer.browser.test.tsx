@@ -121,6 +121,20 @@ describe("spoken answers", () => {
     vi.useRealTimers();
   });
 
+  it("puts a failed check away once the learner records again", async () => {
+    allowMicrophone();
+    const gradeSpokenAnswer = vi.fn<GradeSpokenAnswer>(async () => ({ status: "failed" as const }));
+    openSpokenLesson({ gradeSpokenAnswer });
+    await sayIt();
+
+    const failed = page.getByText("We couldn't check your answer this time. Try again.");
+    await expect.element(failed).toBeVisible();
+
+    await page.getByRole("button", { name: "Record" }).click();
+    await expect.element(page.getByText("Listening… Tap Stop to check.")).toBeVisible();
+    await expect.element(failed).not.toBeInTheDocument();
+  });
+
   it("with no words in it says so and lets the learner try again or type", async () => {
     allowMicrophone();
 

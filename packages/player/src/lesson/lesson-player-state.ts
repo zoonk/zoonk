@@ -106,6 +106,7 @@ export type LessonPlayerAction =
   | { type: "continue" }
   | { type: "explainFirst" }
   | { type: "knowThis" }
+  | { type: "recordingStarted" }
   | { type: "runStarting" }
   | { type: "saveFailed" }
   | { type: "writingRestored" };

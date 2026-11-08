@@ -344,6 +344,8 @@ export function lessonPlayerReducer(
       return startQuickCheck(state);
     case "checkStarted":
       return startChecking(state);
+    case "recordingStarted":
+      return state.checkFailed ? { ...state, checkFailed: false, checkIssue: null } : state;
     case "checkResolved":
       return recordVerdict(state, action);
     case "checkFailed":
