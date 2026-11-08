@@ -8,7 +8,9 @@ const TODAY = "2026-10-07";
 
 export const TEST_CASES: FindTargetCutoffCase[] = [
   {
-    expected: { range: { max: 900, min: 700 } },
+    // UFMG's 2026 first-edition table gives Medicina's open-competition minimum as 818.50 after the
+    // regular call and 804.30 after the waiting list; 854.90 is its maximum, not a cut-off.
+    expected: { range: { max: 825, min: 800 } },
     id: "pt-enem-medicina-ufmg",
     userInput: {
       course: "Medicina",

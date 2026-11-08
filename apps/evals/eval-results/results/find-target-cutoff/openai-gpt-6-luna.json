@@ -23,41 +23,6 @@
         "expected": {
           "range": {
             "max": 900,
-            "min": 700
-          }
-        },
-        "id": "pt-enem-medicina-ufmg-1",
-        "userInput": {
-          "course": "Medicina",
-          "exam": "ENEM",
-          "institution": "UFMG",
-          "position": null,
-          "today": "2026-10-07"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "range": {
-            "max": 900,
             "min": 550
           }
         },
@@ -202,6 +167,41 @@
           "exam": "Northern Plains Civil Service Exam, Junior Records Officer",
           "institution": null,
           "position": "Junior Records Officer",
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Cut-off 854.9 out of range",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Cut-off 854.9 out of range",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Cut-off 854.9 out of range",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "range": {
+            "max": 825,
+            "min": 800
+          }
+        },
+        "id": "pt-enem-medicina-ufmg-1",
+        "userInput": {
+          "course": "Medicina",
+          "exam": "ENEM",
+          "institution": "UFMG",
+          "position": null,
           "today": "2026-10-07"
         }
       }
