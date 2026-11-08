@@ -842,6 +842,7 @@ private fun TodayDayStatus(
         }
 
         StudySession.State.UNDERWAY -> {
+            return
         }
     }
 }
