@@ -26,8 +26,33 @@ enum LessonLoad: Hashable, Sendable {
   case sessionRequired(LessonOutline)
 }
 
+struct LessonOpening: Hashable, Sendable {
+  let data: Data
+
+  init(_ input: some Encodable) throws {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = .sortedKeys
+    data = try encoder.encode(input)
+  }
+
+  init(data: Data) { self.data = data }
+
+  static func block(_ id: String) -> LessonOpening {
+    try! LessonOpening(
+      Components.Schemas.StudyBlockOpeningInput(
+        target: .block(.init(blockId: id, kind: .block))))
+  }
+}
+
+enum LessonStartOutcome: Sendable {
+  case success(LessonRunStart)
+  case failure(LessonRunRefusal)
+  case opened(StudyBlockOpening)
+}
+
 struct LessonRunStart: Hashable, Sendable {
   let runId: String
+  var sessionId: String? = nil
   /// When this sitting's run started: earlier answers came from sittings before it.
   let startedAt: Date
   let answers: [LessonRunAnswer]
@@ -127,20 +152,31 @@ struct LessonPlayerAPI: Sendable {
   }
 
   /// Resumes the open run (within half an hour) with its answers.
-  func startLesson(id: String, studySessionId: String?, token: String) async throws -> Result<
-    LessonRunStart, LessonRunRefusal
-  > {
+  func startLesson(
+    id: String, studySessionId: String?, opening: LessonOpening? = nil, runId: String? = nil,
+    token: String
+  ) async throws -> LessonStartOutcome {
     let body = Components.Schemas.LibraryLessonStartInput(
-      studySessionId: studySessionId, timeZone: TimeZone.current.identifier)
+      opening: try opening.map {
+        try JSONDecoder().decode(
+          Components.Schemas.LibraryLessonStartInput.OpeningPayload.self, from: $0.data)
+      }, runId: runId, studySessionId: studySessionId, timeZone: TimeZone.current.identifier)
 
-    let output = try await clients.perform(
-      token: token,
-      operation: {
-        try await $0.createLibraryLessonStart(
-          path: .init(lessonId: id), body: .json(body))
-      })
+    var json = try JSONSerialization.jsonObject(with: JSONEncoder().encode(body)) as! [String: Any]
+    if let opening { json["opening"] = try JSONSerialization.jsonObject(with: opening.data) }
+    let encoded = try JSONSerialization.data(withJSONObject: json)
+    func send() async throws -> Operations.CreateLibraryLessonStart.Output {
+      try await clients.perform(token: token, body: encoded) {
+        try await $0.createLibraryLessonStart(path: .init(lessonId: id), body: .json(body))
+      }
+    }
+    let first = try await send()
+    let output: Operations.CreateLibraryLessonStart.Output
+    if case .serviceUnavailable = first { output = try await send() } else { output = first }
 
     switch output {
+    case .ok(let response): return .opened(try response.body.json.opening)
+    case .serviceUnavailable: return .failure(.failed)
     case .created(let response):
       guard let run = try? response.body.json else {
         return .failure(.failed)
@@ -148,7 +184,7 @@ struct LessonPlayerAPI: Sendable {
 
       return .success(
         LessonRunStart(
-          runId: run.runId,
+          runId: run.runId, sessionId: run.sessionId,
           startedAt: run.startedAt,
           answers: run.answers.map {
             LessonRunAnswer(stepId: $0.stepId, isCorrect: $0.isCorrect, answeredAt: $0.answeredAt)

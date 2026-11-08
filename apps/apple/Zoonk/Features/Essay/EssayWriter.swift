@@ -9,7 +9,6 @@ final class EssayWriter {
     case grading
     case failed
     case limitReached
-    case dailyLimitReached
     case signUpRequired
   }
 
@@ -117,8 +116,6 @@ final class EssayWriter {
       }
     case .done(.limitReached):
       status = .limitReached
-    case .done(.dailyLimitReached):
-      status = .dailyLimitReached
     case .done(.signUpRequired):
       status = .signUpRequired
     case .done(.blockNotActive):

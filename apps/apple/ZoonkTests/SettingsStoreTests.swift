@@ -22,27 +22,8 @@ final class SettingsStoreTests: XCTestCase {
     let store = makeStore(api: api)
     await store.preferences.load()
 
-    await store.updatePreferences(.dailyLimitMinutes(30))
+    await store.updatePreferences(.soundsEnabled(false))
 
-    XCTAssertNil(store.preferences.value?.dailyLimitMinutes)
-    XCTAssertTrue(store.saveFailed)
-  }
-
-  func testAFailedSaveLeavesAnotherSettingSavedAfterIt() async {
-    let api = SettingsAPIStub()
-    let store = makeStore(api: api)
-    await store.preferences.load()
-    await api.hold(.soundsEnabled(false))
-
-    let sounds = Task { await store.updatePreferences(.soundsEnabled(false)) }
-    await api.waitForHeldUpdate()
-    let limit = Task { await store.updatePreferences(.dailyLimitMinutes(30)) }
-    await waitUntil { store.preferences.value?.dailyLimitMinutes == 30 }
-    await api.releaseHeldUpdate(throwing: APIError.unavailable)
-    await sounds.value
-    await limit.value
-
-    XCTAssertEqual(store.preferences.value?.dailyLimitMinutes, 30, "the later save stays")
     XCTAssertEqual(store.preferences.value?.soundsEnabled, true)
     XCTAssertTrue(store.saveFailed)
   }
@@ -51,36 +32,36 @@ final class SettingsStoreTests: XCTestCase {
     let api = SettingsAPIStub()
     let store = makeStore(api: api)
     await store.preferences.load()
-    await api.hold(.dailyLimitMinutes(30))
+    await api.hold(.soundsEnabled(false))
 
-    let first = Task { await store.updatePreferences(.dailyLimitMinutes(30)) }
+    let first = Task { await store.updatePreferences(.soundsEnabled(false)) }
     await api.waitForHeldUpdate()
-    let second = Task { await store.updatePreferences(.dailyLimitMinutes(60)) }
-    await waitUntil { store.preferences.value?.dailyLimitMinutes == 60 }
+    let second = Task { await store.updatePreferences(.soundsEnabled(true)) }
+    await waitUntil { store.preferences.value?.soundsEnabled == true }
     await api.releaseHeldUpdate(throwing: APIError.unavailable)
     await first.value
     await second.value
 
-    XCTAssertEqual(store.preferences.value?.dailyLimitMinutes, 60)
+    XCTAssertEqual(store.preferences.value?.soundsEnabled, true)
     let updates = await api.updates
-    XCTAssertEqual(updates, [.dailyLimitMinutes(30), .dailyLimitMinutes(60)], "sent in order")
+    XCTAssertEqual(updates, [.soundsEnabled(false), .soundsEnabled(true)], "sent in order")
   }
 
   func testTwoFailedSavesShowWhatTheServerHas() async {
     let api = SettingsAPIStub(updateError: APIError.unavailable)
     let store = makeStore(api: api)
     await store.preferences.load()
-    await api.hold(.dailyLimitMinutes(30))
+    await api.hold(.soundsEnabled(false))
 
-    let first = Task { await store.updatePreferences(.dailyLimitMinutes(30)) }
+    let first = Task { await store.updatePreferences(.soundsEnabled(false)) }
     await api.waitForHeldUpdate()
-    let second = Task { await store.updatePreferences(.dailyLimitMinutes(60)) }
-    await waitUntil { store.preferences.value?.dailyLimitMinutes == 60 }
+    let second = Task { await store.updatePreferences(.soundsEnabled(true)) }
+    await waitUntil { store.preferences.value?.soundsEnabled == true }
     await api.releaseHeldUpdate(throwing: APIError.unavailable)
     await first.value
     await second.value
 
-    XCTAssertNil(store.preferences.value?.dailyLimitMinutes, "neither limit saved")
+    XCTAssertEqual(store.preferences.value?.soundsEnabled, true, "neither limit saved")
   }
 
   func testAFailedEditLeavesAFactDeletedAfterIt() async {
@@ -98,29 +79,6 @@ final class SettingsStoreTests: XCTestCase {
     await deletion.value
 
     XCTAssertEqual(store.memory.value?.facts, [.sciFi], "the deleted fact stays deleted")
-  }
-
-  func testAChangeWaitingWhenItsLearnerLeavesIsNeverSentForTheNext() async {
-    let accounts = SwitchingAccountAPI()
-    let session = await accounts.signedIn(as: "learner-a")
-    let cache = AppCache(session: session)
-    let api = SettingsAPIStub()
-    let store = SettingsStore(api: api, cache: cache)
-    await store.preferences.load()
-    await api.hold(.soundsEnabled(false))
-
-    let sounds = Task { await store.updatePreferences(.soundsEnabled(false)) }
-    await api.waitForHeldUpdate()
-    let limit = Task { await store.updatePreferences(.dailyLimitMinutes(30)) }
-    await waitUntil { store.preferences.value?.dailyLimitMinutes == 30 }
-    await accounts.signIn(session, as: "learner-b")
-    cache.followSession()
-    await api.releaseHeldUpdate(throwing: APIError.network)
-    await sounds.value
-    await limit.value
-
-    let updates = await api.updates
-    XCTAssertEqual(updates, [.soundsEnabled(false)], "learner A's limit never reaches learner B")
   }
 
   func testAnUndoAnsweredAfterAnotherDeletionLeavesThatOneUndoable() async {
@@ -615,8 +573,7 @@ extension LearningPreferences {
     buddy: BuddyChoice(kind: .otto, name: nil, glasses: .round),
     buddyPicked: true,
     availableGlasses: [.round],
-    dailyLimitMinutes: nil,
-    dailyTimes: [15, 30, 45],
+
     soundsEnabled: true)
 }
 

@@ -130,8 +130,7 @@ struct TodayDayView: View {
     .listSectionSpacing(.compact)
   }
 
-  /// Main's `DayTime`: the time still ahead while the day goes on, and once it's done, or the daily
-  /// limit ended it, the time actually studied rather than the plan's estimate for what was done.
+  /// Once the day ends, show time actually studied rather than the plan's estimate.
   private var dayTime: String? {
     let session = view.session
 
@@ -139,7 +138,7 @@ struct TodayDayView: View {
       return nil
     }
 
-    if session.state == .done || session.dailyLimit?.reached == true {
+    if session.state == .done {
       let studied = session.week.days.first(where: \.isToday)?.minutes ?? 0
 
       return studied > 0
@@ -505,6 +504,8 @@ extension StudyDestination {
       .checkpoint(blockId: blockID, sessionId: sessionID)
     case .essay(let blockID):
       .essay(blockId: blockID)
+    case .instantLesson(let lessonID, let sessionID, let opening):
+      .lesson(lessonId: lessonID, sessionId: sessionID, opening: opening, activated: true)
     case .lesson(let lessonID, let sessionID):
       .lesson(lessonId: lessonID, sessionId: sessionID)
     case .mock(let blockID, let sessionID):

@@ -7,6 +7,52 @@ import XCTest
 
 @MainActor
 final class LessonPlayerLoadingTests: XCTestCase {
+  func testWrittenContentPaintsWhileStartCarriesItsOpening() async throws {
+    let transport = OpeningStartTransport(holds: true)
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+      .ready(try markedLesson())
+    }
+    let store = player(
+      cache: cache, content: content, transport: transport,
+      opening: .block("block"), activated: true)
+    let loading = Task { await store.load() }
+    let deadline = Date.now.addingTimeInterval(5)
+    while await transport.count == 0, Date.now < deadline { await Task.yield() }
+    XCTAssertEqual(store.screen, .playing)
+    XCTAssertEqual(store.state?.currentStep?.id, "first")
+    XCTAssertNil(store.state?.runId)
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.studySessionId, "canonical")
+    let inputs = await transport.inputs
+    XCTAssertTrue(inputs[0].contains("block"))
+  }
+
+  func testRestoredOpeningWaitsForActionAndFollowsOpenedOnce() async throws {
+    let transport = OpeningStartTransport(holds: false, opensElsewhere: true)
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+      .ready(try markedLesson())
+    }
+    var destinations: [StudyBlockOpening] = []
+    let store = player(
+      cache: cache, content: content, transport: transport,
+      opening: .block("block"), onOpened: { destinations.append($0) })
+    await store.load()
+    let before = await transport.count
+    XCTAssertEqual(before, 0)
+    store.activate()
+    let deadline = Date.now.addingTimeInterval(5)
+    while destinations.isEmpty, Date.now < deadline { await Task.yield() }
+    store.activate()
+    let after = await transport.count
+    XCTAssertEqual(after, 2, "one retry for 503")
+    XCTAssertEqual(destinations.count, 1)
+    XCTAssertEqual(destinations.first, .today(.init(kind: .today)))
+    XCTAssertNil(store.state?.runId)
+  }
+
   func testReopeningALessonReusesItsFreshContent() async {
     let cache = AppCache(session: SessionStore.preview(account: nil))
     var reads = 0
@@ -370,12 +416,14 @@ final class LessonPlayerLoadingTests: XCTestCase {
   private func player(
     cache: AppCache, content: Resource<LessonLoad>,
     transport: any ClientTransport = UnexpectedLessonTransport(),
-    defaults: UserDefaults = .standard
+    defaults: UserDefaults = .standard, opening: LessonOpening? = nil, activated: Bool = false,
+    onOpened: @escaping @MainActor (StudyBlockOpening) -> Void = { _ in }
   ) -> LessonPlayerStore {
     let preferences: Resource<LearningPreferences> = cache.resource(audience: .signedIn) { _ in nil
     }
     return LessonPlayerStore(
-      lessonId: "lesson", studySessionId: nil,
+      lessonId: "lesson", studySessionId: nil, opening: opening, activated: activated,
+      onOpened: onOpened,
       api: LessonPlayerAPI(
         clients: APIClientFactory(
           baseURL: URL(string: "https://api.zoonk.test")!, transport: transport)),
@@ -544,7 +592,7 @@ private actor HeldAnswersTransport: ClientTransport {
       return (
         HTTPResponse(status: .created, headerFields: headerFields),
         HTTPBody(
-          #"{"answers": \#(runAnswers), "hyperdrive": {"knownStepIds": [], "streak": 0}, "optionalStepIds": [], "replay": false, "runId": "run", "startedAt": "2026-11-07T09:00:00.000Z"}"#
+          #"{"answers": \#(runAnswers), "hyperdrive": {"knownStepIds": [], "streak": 0}, "optionalStepIds": [], "replay": false, "sessionId":null, "runId": "run", "startedAt": "2026-11-07T09:00:00.000Z"}"#
         )
       )
     case "createStepCheck":
@@ -620,7 +668,7 @@ private let sessionLessonCompletion = #"""
    "studyBlock": {
      "blockId": "0192f8a4-3c2b-7d1e-8f00-000000000001", "brainPower": 62, "capsulesOpened": 0,
      "ceremony": null, "certificates": [], "checkpoint": null, "comesBackOn": null,
-     "completedMissions": ["somethingNew"],
+     "blocks":[],"sessionId":"s1","goalId":null,"finishedChapterId":null,"next":null,"completedMissions": ["somethingNew"],
      "correct": 1, "fullMeal": {"bonus": 50, "paid": true}, "milestones": [],
      "missions": [{"kind": "somethingNew", "status": "done", "done": 1, "total": 1}],
      "netScore": null, "nextBlockId": null,
@@ -628,3 +676,48 @@ private let sessionLessonCompletion = #"""
      "sessionBar": {"completed": 1, "total": 3}, "sessionCompleted": false, "testOutOffer": null,
      "topHyperdrive": 0, "total": 1}}
   """#
+
+private actor OpeningStartTransport: ClientTransport {
+  let holds: Bool
+  let opensElsewhere: Bool
+  private var gate: CheckedContinuation<Void, Never>?
+  private(set) var count = 0
+  private(set) var inputs: [String] = []
+
+  init(holds: Bool, opensElsewhere: Bool = false) {
+    self.holds = holds
+    self.opensElsewhere = opensElsewhere
+  }
+
+  func release() {
+    gate?.resume()
+    gate = nil
+  }
+
+  func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String)
+    async throws -> (HTTPResponse, HTTPBody?)
+  {
+    guard operationID == "createLibraryLessonStart" else { throw APIError.network }
+    inputs.append(
+      String(
+        decoding: try await Data(collecting: try XCTUnwrap(body), upTo: 1 << 20), as: UTF8.self))
+    count += 1
+    if holds { await withCheckedContinuation { gate = $0 } }
+    var headers = HTTPFields()
+    headers[.contentType] = "application/json"
+    if opensElsewhere {
+      return (
+        HTTPResponse(status: count == 1 ? .serviceUnavailable : .ok, headerFields: headers),
+        HTTPBody(
+          count == 1
+            ? #"{"status":"retryable"}"# : #"{"status":"opened","opening":{"kind":"today"}}"#)
+      )
+    }
+    return (
+      HTTPResponse(status: .created, headerFields: headers),
+      HTTPBody(
+        #"{"answers":[],"hyperdrive":{"knownStepIds":[],"streak":0},"replay":false,"runId":"run","sessionId":"canonical","startedAt":"2026-11-07T09:00:00.000Z"}"#
+      )
+    )
+  }
+}

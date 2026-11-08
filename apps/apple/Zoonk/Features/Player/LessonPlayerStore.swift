@@ -39,7 +39,11 @@ final class LessonPlayerStore {
   }
 
   let lessonId: String
-  let studySessionId: String?
+  private(set) var studySessionId: String?
+  private let opening: LessonOpening?
+  private var activated: Bool
+  private let onOpened: @MainActor (StudyBlockOpening) -> Void
+  private var starting: Task<Void, Never>?
   /// Opened from a public catalog page, where main asks the first question: answering it counts as
   /// main's catalog answer, and a guest's lesson ends with "Build my plan". Opened anywhere else in
   /// the app, a guest's lesson ends as a learner's.
@@ -115,7 +119,9 @@ final class LessonPlayerStore {
   @ObservationIgnored private var works: [String: (round: Int, work: ActivityWork)] = [:]
 
   init(
-    lessonId: String, studySessionId: String?, fromCatalog: Bool = false, api: LessonPlayerAPI,
+    lessonId: String, studySessionId: String?, fromCatalog: Bool = false,
+    opening: LessonOpening? = nil, activated: Bool = false,
+    onOpened: @escaping @MainActor (StudyBlockOpening) -> Void = { _ in }, api: LessonPlayerAPI,
     cache: AppCache,
     preferences: Resource<LearningPreferences>,
     lessonResource: Resource<LessonLoad>,
@@ -126,6 +132,9 @@ final class LessonPlayerStore {
     self.lessonId = lessonId
     self.studySessionId = studySessionId
     self.fromCatalog = fromCatalog
+    self.opening = opening
+    self.activated = activated
+    self.onOpened = onOpened
     self.api = api
     self.cache = cache
     self.preferences = preferences
@@ -198,6 +207,8 @@ final class LessonPlayerStore {
       heldOnDevice = nil
     }
 
+    starting?.cancel()
+    starting = nil
     self.identity = identity
     screen = .loading
 
@@ -229,7 +240,23 @@ final class LessonPlayerStore {
       case .notGenerated(let outline):
         await showWaiting(outline, identity: identity)
       case .ready(let lesson):
-        await start(lesson, identity: identity)
+        guard identity != nil else {
+          screen = .sessionRequired(
+            LessonOutline(id: lesson.id, title: lesson.title, description: "", estimatedMinutes: 0))
+          return
+        }
+        self.lesson = lesson
+        var state = LessonPlayerState(
+          lessonId: lesson.id, steps: lesson.steps, hasMap: lesson.summary != nil)
+        leaveOutUnplayable(&state)
+        self.state = state
+        openedAt = .now
+        // Written content can paint before admission; server actions await the run.
+        screen = .playing
+        if opening == nil || activated {
+          beginStart()
+          await starting?.value
+        }
       }
     } catch is CancellationError {
       return
@@ -238,6 +265,25 @@ final class LessonPlayerStore {
     } catch {
       screen = .failed
     }
+  }
+
+  func cancelStart() { starting?.cancel() }
+
+  func activate() {
+    // A restored lesson or deep link cannot owe preparation until a learner acts.
+    activated = true
+    beginStart()
+  }
+
+  private func beginStart() {
+    guard starting == nil, let lesson, let identity else { return }
+    starting = Task { await start(lesson, identity: identity) }
+  }
+
+  private func ensureRun() async -> Bool {
+    activate()
+    await starting?.value
+    return state?.runId != nil && !Task.isCancelled
   }
 
   private func start(_ lesson: PlayableLesson, identity: AuthenticatedSession?) async {
@@ -264,14 +310,16 @@ final class LessonPlayerStore {
     sendHeldAnswers()
     await heldAnswersSent()
 
-    let started = await write { token in
-      try await api.startLesson(id: lesson.id, studySessionId: studySessionId, token: token)
+    let started = await write(invalidating: opening == nil ? [] : [.userProgress, .userSession]) {
+      token in
+      try await api.startLesson(
+        id: lesson.id, studySessionId: studySessionId, opening: opening, token: token)
     }
 
     let (_, challengeTeam) = await (sounds, team)
     guard isCurrent(identity) else { return }
 
-    let run: Result<LessonRunStart, LessonRunRefusal>
+    let run: LessonStartOutcome
 
     switch started {
     case .done(let result): run = result
@@ -279,17 +327,18 @@ final class LessonPlayerStore {
     case .obsolete: return
     }
 
-    var state = LessonPlayerState(
-      lessonId: lesson.id, steps: lesson.steps, hasMap: lesson.summary != nil)
-
     switch run {
     case .success(let run):
-      state.startRun(
+      self.studySessionId = run.sessionId
+      self.state?.startRun(
         runId: run.runId, answers: run.answers, held: held.map(\.runAnswer),
         startedAt: run.startedAt, hyperdrive: run.hyperdrive, optionalStepIds: run.optionalStepIds)
-    case .failure(let refusal):
-      state.refuseRun(refusal)
+    case .failure(let refusal): self.state?.refuseRun(refusal)
+    case .opened(let opening):
+      onOpened(opening)
+      return
     }
+    guard var state = self.state else { return }
 
     leaveOutUnplayable(&state)
 
@@ -304,7 +353,6 @@ final class LessonPlayerStore {
     openRecap = nil
     soundsEnabled = preferences.value?.soundsEnabled ?? true
     self.challengeTeam = challengeTeam
-    openedAt = .now
     screen = .playing
   }
 
@@ -499,14 +547,23 @@ final class LessonPlayerStore {
   }
 
   func select(_ answer: LessonAnswer?) {
+    activate()
     guard let stepId = state?.currentStep?.id else { return }
     state?.select(answer, for: stepId)
   }
 
   func continueLesson() {
+    activate()
+    guard state?.runId != nil else {
+      let stepId = state?.currentStep?.id
+      Task {
+        if await ensureRun(), self.state?.currentStep?.id == stepId { self.continueLesson() }
+      }
+      return
+    }
     writeExampleLinesOnce()
     sendHeldAnswers()
-    state?.continueLesson()
+    self.state?.continueLesson()
     finishIfCompleted()
   }
 
@@ -515,13 +572,29 @@ final class LessonPlayerStore {
   }
 
   func explainFirst() {
+    activate()
+    guard state?.runId != nil else {
+      let stepId = state?.currentStep?.id
+      Task {
+        if await ensureRun(), self.state?.currentStep?.id == stepId { self.explainFirst() }
+      }
+      return
+    }
     writeExampleLinesOnce()
-    state?.explainFirst()
+    self.state?.explainFirst()
   }
 
   func knowThis() {
+    activate()
+    guard state?.runId != nil else {
+      let stepId = state?.currentStep?.id
+      Task {
+        if await ensureRun(), self.state?.currentStep?.id == stepId { self.knowThis() }
+      }
+      return
+    }
     writeExampleLinesOnce()
-    state?.knowThis()
+    self.state?.knowThis()
   }
 
   func dontKnow() {
@@ -530,8 +603,16 @@ final class LessonPlayerStore {
   }
 
   func skipWriting() {
+    activate()
+    guard state?.runId != nil else {
+      let stepId = state?.currentStep?.id
+      Task {
+        if await ensureRun(), self.state?.currentStep?.id == stepId { self.skipWriting() }
+      }
+      return
+    }
     choices.setChosenToday(.cantWrite, true)
-    state?.skipWriting()
+    self.state?.skipWriting()
     finishIfCompleted()
   }
 
@@ -560,6 +641,8 @@ final class LessonPlayerStore {
       return
     }
 
+    guard await ensureRun() else { return }
+    self.state?.select(answer, for: step.id)
     writeExampleLinesOnce()
     let attemptId = UUID().uuidString.lowercased()
     let durationMs = Int(Date.now.timeIntervalSince(state.stepStartedAt) * 1000)
@@ -575,7 +658,7 @@ final class LessonPlayerStore {
 
       // Held before anything moves on, so finishing waits for it: match columns finishes a lesson
       // on its own check.
-      if answer.isRecorded, let runId = state.runId {
+      if answer.isRecorded, let runId = self.state?.runId {
         hold(
           HeldAnswer(
             stepId: step.id, answer: answer, attemptId: attemptId, runId: runId,
@@ -592,7 +675,7 @@ final class LessonPlayerStore {
 
     self.state?.startChecking()
 
-    guard let runId = state.runId else {
+    guard let runId = self.state?.runId else {
       self.state?.failChecking()
       return
     }
@@ -725,6 +808,7 @@ final class LessonPlayerStore {
   }
 
   private func saveCompletion() async {
+    guard await ensureRun() else { return }
     let identity = identity
 
     guard let runId = state?.runId, let token = identity?.bearerToken else {
@@ -779,7 +863,8 @@ final class LessonPlayerStore {
       // the lesson read again has any picture a left-out question was waiting for.
       async let pictures: Void = lessonResource.refresh()
       let restarted = await write { token in
-        try await api.startLesson(id: lessonId, studySessionId: studySessionId, token: token)
+        try await api.startLesson(
+          id: lessonId, studySessionId: studySessionId, runId: runId, token: token)
       }
       await pictures
       guard isCurrent(identity) else { return }

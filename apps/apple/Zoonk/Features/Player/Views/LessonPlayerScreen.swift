@@ -44,12 +44,24 @@ struct LessonPlayerScreen: View {
   let lessonId: String
   var sessionId: String?
   var fromCatalog = false
+  var opening: LessonOpening?
+  var activated = false
+  @Environment(AppRouter.self) private var router
 
   var body: some View {
     if let player {
       LessonPlayerContent(
         store: LessonPlayerStore(
-          lessonId: lessonId, studySessionId: sessionId, fromCatalog: fromCatalog,
+          lessonId: lessonId, studySessionId: sessionId, fromCatalog: fromCatalog, opening: opening,
+          activated: activated,
+          onOpened: { opening in
+            guard case .lesson(let id, _, _, _, _)? = router.tasks.last, id == lessonId else {
+              return
+            }
+            router.dismissTask()
+            let destination = StudyDestination(opening)
+            router.openStudy(destination == .changed ? .today : destination)
+          },
           api: player.api, cache: player.cache, preferences: player.preferences,
           lessonResource: player.lesson(id: lessonId), blockFinished: player.blockFinished)
       )
@@ -117,6 +129,8 @@ private struct LessonPlayerContent: View {
       }
     }
     // Beside the lesson on a spread (the stage shows it); a sheet where the lesson is one column.
+    .onDisappear { store.cancelStart() }
+    .simultaneousGesture(TapGesture().onEnded { store.activate() })
     .sheet(isPresented: isShowingAskSheet) {
       LessonAskPanel(store: store, isBeside: false)
         .zoonkStyles()

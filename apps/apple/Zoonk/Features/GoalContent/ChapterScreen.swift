@@ -317,14 +317,6 @@ private struct ChapterContent: View {
       switch result {
       case .done(.opened(let route)):
         router.open(route)
-      case .done(.dailyLimit):
-        practiceNote = String(
-          localized:
-            "You've reached your daily time limit. Tomorrow's session picks this chapter up.",
-          table: "Plan",
-          comment:
-            "Says the learner's daily time limit, a setting that stops study for the day, is reached"
-        )
       case .done(.nothingToPractice):
         practiceNote = String(
           localized: "Nothing to practice in this chapter yet.", table: "Plan",

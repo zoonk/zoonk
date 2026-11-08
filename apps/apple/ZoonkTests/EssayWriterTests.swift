@@ -13,19 +13,6 @@ final class EssayWriterTests: XCTestCase {
     super.tearDown()
   }
 
-  func testTheDailyTimeLimitStopsASendAndKeepsTheText() async {
-    let transport = ForbiddenTransport(code: "DAILY_LIMIT_REACHED")
-    let writer = makeWriter(transport)
-    writer.text = "My essay about it."
-
-    await writer.send()
-
-    XCTAssertEqual(writer.status, .dailyLimitReached)
-    XCTAssertEqual(writer.text, "My essay about it.")
-    XCTAssertEqual(
-      makeWriter(transport).text, "My essay about it.", "Opened again, it's still there")
-  }
-
   func testAGuestPastTheSharedAIBudgetIsAskedToSignUpAndKeepsTheText() async {
     let writer = makeWriter(ForbiddenTransport(code: "SIGN_UP_REQUIRED"))
     writer.text = "My essay about it."

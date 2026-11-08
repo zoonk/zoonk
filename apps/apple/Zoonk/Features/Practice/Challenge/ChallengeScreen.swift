@@ -176,12 +176,6 @@ struct ChallengeScreen: View {
         Text(rule).typeStyle(.note).foregroundStyle(.mutedForeground)
       }
 
-      if challenge.dailyLimitReached {
-        PracticeCallout(systemImage: "hourglass") {
-          Text(usedUpLine(challenge))
-        }
-      }
-
       if isWriting {
         HStack(spacing: 12) {
           ProgressView()
@@ -235,7 +229,6 @@ struct ChallengeScreen: View {
       actions(challenge)
     }
     .practiceActionsHidden(!hasActions(challenge))
-    .announcesStatus(challenge.dailyLimitReached ? String(localized: usedUpLine(challenge)) : nil)
   }
 
   private func movedTo(_ day: String) -> String {
@@ -307,7 +300,7 @@ struct ChallengeScreen: View {
                 "Start the mock exam", table: "Practice", comment: "Starts a mock exam challenge.")
               : LocalizedStringResource("Start", table: "Practice", comment: "Starts a challenge."),
             icon: .play, isBusy: isStarting || isWriting,
-            isDisabled: challenge.dailyLimitReached || isMoving
+            isDisabled: isMoving
           ) { run { await start(afterWriting: false) } }
         }
       }
@@ -589,53 +582,6 @@ struct ChallengeScreen: View {
     } else {
       FreeWeekOverNotice(showsSeePlus: false)
     }
-  }
-
-  /// Past the daily time limit the week's challenge doesn't come back on its own, so it asks to move
-  /// it; a phase's challenge waits for the next study day.
-  private func usedUpLine(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource {
-    if challenge.kind == .weekly {
-      return challenge.canMove
-        ? LocalizedStringResource(
-          "You've reached your daily time limit. Move the challenge to Monday to keep it.",
-          table: "Practice",
-          comment: "The daily time limit is a setting that stops study for the day.")
-        : LocalizedStringResource(
-          "You've reached your daily time limit. You'll miss this week's challenge.",
-          table: "Practice",
-          comment:
-            "The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week."
-        )
-    }
-
-    guard let next = challenge.nextStudyDate, let nextDate = Self.parseDay(next),
-      let today = Self.parseDay(challenge.today)
-    else {
-      return LocalizedStringResource(
-        "You've reached your daily time limit. The challenge will be in your next session.",
-        table: "Practice",
-        comment: "The daily time limit is a setting that stops study for the day.")
-    }
-
-    var calendar = Calendar(identifier: .gregorian)
-    calendar.timeZone = .gmt
-
-    if calendar.dateComponents([.day], from: today, to: nextDate).day == 1 {
-      return LocalizedStringResource(
-        "You've reached your daily time limit. The challenge will be here tomorrow.",
-        table: "Practice",
-        comment: "The daily time limit is a setting that stops study for the day.")
-    }
-
-    var weekday = Date.FormatStyle.dateTime.weekday(.wide)
-    weekday.timeZone = .gmt
-
-    return LocalizedStringResource(
-      "You've reached your daily time limit. The challenge will be here on \(nextDate.formatted(weekday)).",
-      table: "Practice",
-      comment:
-        "The daily time limit is a setting that stops study for the day. The argument is a weekday, like 'Monday'."
-    )
   }
 
   private static func parseDay(_ day: String) -> Date? {

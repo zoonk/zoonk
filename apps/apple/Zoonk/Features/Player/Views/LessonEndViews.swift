@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct LessonCompletionView: View {
+  @Environment(AppRouter.self) private var router
   let completion: LessonPlayerState.Completion
   let correct: Int
   let answered: Int
@@ -148,7 +149,19 @@ struct LessonCompletionView: View {
               maxWidth: .infinity)
           }
         case .saving, .saved:
-          Button(action: close) {
+          Button {
+            if let moment = completion.summary?.block, let next = moment.next,
+              next.opensInPlayer, let lessonID = next.block.lessonId, let blockID = next.block.id
+            {
+              router.dismissTask()
+              router.openStudy(
+                .instantLesson(
+                  lessonID: lessonID, sessionID: moment.sessionId,
+                  opening: .block(blockID)))
+            } else {
+              close()
+            }
+          } label: {
             Text("Continue", tableName: "Player", comment: "Leaves the finished lesson").frame(
               maxWidth: .infinity)
           }

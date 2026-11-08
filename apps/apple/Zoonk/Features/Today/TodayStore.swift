@@ -8,6 +8,7 @@ enum StudyDestination: Hashable, Sendable {
   case lesson(lessonID: String, sessionID: String)
   case mock(blockID: String, sessionID: String)
   case questionBlock(blockID: String)
+  case instantLesson(lessonID: String, sessionID: String?, opening: LessonOpening)
   case session
   case lessonWait(blockID: String, writing: LessonWriting)
   case today
@@ -217,7 +218,27 @@ final class TodayStore {
   func open(_ block: StudyBlock, as tap: StudyTap, in view: TodayView) async -> MutationResult<
     StudyDestination
   > {
-    await openStep(for: OpenedSession.Day(view)) { token in
+    if block.opensInPlayer, let lessonID = block.lessonId {
+      struct Input: Encodable {
+        let goalId: String
+        let shownDate: String
+        let target: DayTarget
+      }
+      do {
+        let opening: LessonOpening
+        if view.session.status != .unstarted, view.session.id != nil, let id = block.id {
+          opening = .block(id)
+        } else {
+          opening = try LessonOpening(
+            Input(
+              goalId: view.session.goalId ?? view.goal.id,
+              shownDate: view.session.localDate, target: .ref(DayBlockRef(block))))
+        }
+        return .done(
+          .instantLesson(lessonID: lessonID, sessionID: view.session.id, opening: opening))
+      } catch { return .failed(.unavailable) }
+    }
+    return await openStep(for: OpenedSession.Day(view)) { token in
       guard let sessionID = view.session.id, let blockID = block.id else {
         let ref = DayBlockRef(block)
         let opened = try await self.openDay(
@@ -239,7 +260,10 @@ final class TodayStore {
   func open(_ block: StudyBlock, as tap: StudyTap, sessionID: String) async -> MutationResult<
     StudyDestination
   > {
-    await openStep(for: day.map(OpenedSession.Day.init)) { token in
+    if block.opensInPlayer, let lessonID = block.lessonId, let id = block.id {
+      return .done(.instantLesson(lessonID: lessonID, sessionID: sessionID, opening: .block(id)))
+    }
+    return await openStep(for: day.map(OpenedSession.Day.init)) { token in
       guard let blockID = block.id else {
         throw DayChanged()
       }

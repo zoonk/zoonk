@@ -4,6 +4,24 @@ import XCTest
 
 @MainActor
 final class TodayStoreTests: XCTestCase {
+  func testWrittenLessonNavigatesWithoutOpeningRequest() async throws {
+    let json = blockJSON(
+      position: 0, kind: "learn", status: "pending", id: "b1", lessonID: "l1", planItemID: nil,
+      checkpoint: nil
+    )
+    .replacingOccurrences(of: "\"opensInPlayer\":false", with: "\"opensInPlayer\":true")
+    let lesson: StudyBlock = try decode(json)
+    let view = try today(session: day(blocks: [lesson], nextPosition: 0, id: "s1"))
+    let api = StudyAPIStub()
+    let store = TodayStore(api: api, cache: signedInCache())
+    for tap in [StudyTap.next, .block] {
+      let result = await store.open(lesson, as: tap, in: view).destination
+      XCTAssertEqual(result, .instantLesson(lessonID: "l1", sessionID: "s1", opening: .block("b1")))
+    }
+    let requests = await api.openedBlocks
+    XCTAssertTrue(requests.isEmpty)
+  }
+
   func testStartOnADayNotOpenedYetOpensItWithTheShownStep() async throws {
     let view = try today(
       session: day(blocks: [block(position: 0, kind: "review")], nextPosition: 0))
@@ -441,7 +459,7 @@ final class TodayStoreTests: XCTestCase {
 
     XCTAssertEqual(destination, .today)
     let reads = await api.todayReads
-    XCTAssertEqual(reads, 2, "the daily limit or earlier work shows on Today")
+    XCTAssertEqual(reads, 2, "earlier work shows on Today")
   }
 
   func testAMilestoneCeremonyShowsOnceOnTheSessionScreen() {
@@ -639,34 +657,6 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(reads, 1, "the completion shows without reading Today again")
   }
 
-  func testAFinishedBlockEndsTheDayOrWaitsForANextBlockTheDayDoesNotList() throws {
-    let session = try day(
-      blocks: [block(position: 0, id: "b0"), block(position: 1, id: "b1")], nextPosition: 0,
-      id: "s1")
-
-    let ended = session.finishing(try moment(blockID: "b0", nextBlockID: nil))
-    XCTAssertNil(ended.nextBlock)
-    XCTAssertEqual(ended.state, .done)
-    XCTAssertEqual(session.finishing(try moment(blockID: "b0", nextBlockID: "new")), session)
-    XCTAssertEqual(session.finishing(try moment(blockID: "other", nextBlockID: "b1")), session)
-  }
-
-  func testALateCompletionNeverPutsAFinishedBlockBackUpNext() throws {
-    let session = try day(
-      blocks: [
-        block(position: 0, id: "b0"), block(position: 1, id: "b1"), block(position: 2, id: "b2"),
-      ],
-      nextPosition: 0, id: "s1")
-    let afterB1 =
-      session
-      .finishing(try moment(blockID: "b0", nextBlockID: "b1"))
-      .finishing(try moment(blockID: "b1", nextBlockID: "b2"))
-
-    let late = afterB1.finishing(try moment(blockID: "b0", nextBlockID: "b1"))
-
-    XCTAssertEqual(late.nextBlock?.id, "b2")
-  }
-
   func testShownStepEncodesItsWorkAsCoreReadsIt() throws {
     let challenge = try block(
       position: 2, kind: "checkpoint",
@@ -713,7 +703,7 @@ private func blockJSON(
   {"answered":0,"areaId":null,"brainPower":0,"canDo":null,"areas": [], "topics": [], "canTestOut":false,"capsules":[],
   "chapterId":null,"checkpoint":\(checkpoint ?? "null"),"estimatedBrainPower":5,
   "estimatedMinutes":5,"extra":false,"fullReview":false,"kind":"\(kind)",
-  "lessonId":\(json(lessonID)),"mistakesOnly":false,"netScored":false,"oftenTested":false,
+  "lessonId":\(json(lessonID)),"mistakesOnly":false,"netScored":false,"opensInPlayer":false,"oftenTested":false,
   "planItemId":\(json(planItemID)),"planItemKey":null,"position":\(position),"questions":3,
   "refresh":false,"reinforcement":false,"screen":"session","status":"\(status)",
   "subject":null,"title":"Block",
@@ -744,8 +734,6 @@ private func dayJSON(
 
   return """
     {"blocks":[\(blockList.joined(separator: ","))],"brainPower":0,"catchUp":null,"current":true,
-    "dailyLimit":{"limitMinutes":60,"reached":false,"remainingMinutes":0,
-    "usedMinutes":0},
     "dayEndsAt":1793242800000,"emptyDay":\(json(emptyDay)),
     "examAccess":{"includesMockExams":true,"trialEnded":false},"examTomorrow":false,
     "extraTime":{"available":false,"lessons":[],"minutes":10,"reason":null},"freshStart":null,
@@ -797,6 +785,9 @@ private func moment(blockID: String, nextBlockID: String?) throws -> BlockMoment
   try decode(
     """
     {"blockId":"\(blockID)","brainPower":10,"ceremony":null,"certificates":[],"comesBackOn":null,
+    "blocks":[\(blockJSON(position: 0, kind: "learn", status: "completed", id: blockID, lessonID: "l0", planItemID: nil, checkpoint: nil)),\(blockJSON(position: 1, kind: "practice", status: "pending", id: "b1", lessonID: nil, planItemID: nil, checkpoint: nil))],
+    "sessionId":"s1","goalId":null,"finishedChapterId":null,
+    "next":{"block":\(blockJSON(position: 1, kind: "practice", status: "pending", id: "b1", lessonID: nil, planItemID: nil, checkpoint: nil)),"opensInPlayer":false,"target":{"kind":"block","blockId":"b1"}},
     "completedMissions":[],"correct":1,"fullMeal":{"bonus":0,"paid":false},"missions":[],
     "nextBlockId":\(json(nextBlockID)),"reached":null,"sessionCompleted":\(nextBlockID == nil),
     "total":1}

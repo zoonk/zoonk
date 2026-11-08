@@ -483,7 +483,7 @@ private struct SpokenAnswerStepView: View {
         SpokenAnswerContext(
           lessonId: context.lessonId, studySessionId: context.studySessionId, stepId: step.id,
           content: content,
-          isLocked: context.isLocked,
+          isLocked: context.isLocked || store.state?.runId == nil,
           onGraded: context.resolveSpoken,
           onBlocked: {
             store.isMicBlocked = true
