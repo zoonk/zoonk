@@ -15,6 +15,7 @@ export type PlanOperationError =
   | "moveBeforeNextMonday"
   | "noStudyDays"
   | "notExam"
+  | "notLanguage"
   | "nothingLeft"
   | "pastDate"
   | "unfundedMove"
@@ -287,6 +288,10 @@ function applyOperation({
       return { state };
     case "setExamChoice":
       return { state: setExamChoice({ operation, state }) };
+    case "setAim":
+      return goalKind === "language"
+        ? { state: { ...state, goal: { ...state.goal, aim: operation.aim } } }
+        : { error: "notLanguage" };
     default:
       return operation satisfies never;
   }

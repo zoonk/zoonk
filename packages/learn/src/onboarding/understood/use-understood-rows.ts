@@ -2,6 +2,7 @@
 
 import { type TargetCutoff } from "@zoonk/core/exams/cutoffs/contract";
 import { type GoalDraft } from "@zoonk/core/goals/contract";
+import { type LanguageAimChoice, type LanguageAimView } from "@zoonk/core/language/aims";
 import {
   type OnboardingExamDate,
   type UnderstoodSchedule,
@@ -11,10 +12,12 @@ import { useExtracted } from "next-intl";
 import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration, useFormatTimeOfDay } from "../../_utils/time-format";
 import { useCutoffWords } from "../../exam/target-cutoff";
+import { useAimWords } from "../../language-aim/use-aim-words";
 import { isSaidInTitle } from "./said-in-title";
 import { useDateRow } from "./understood-date-row";
 
 export type EditableField =
+  | { kind: "aim"; key: "targetScore" }
   | { kind: "date"; key: "targetDate" }
   | {
       kind: "text";
@@ -24,6 +27,8 @@ export type EditableField =
   | { kind: "time"; key: "studyTime" };
 
 export type UnderstoodRow = {
+  /** For an `aim` row, the aims it can change to. */
+  aimChoices?: readonly LanguageAimChoice[];
   badge?: string;
   choiceDates?: string[];
   editable?: EditableField;
@@ -95,11 +100,50 @@ function useCutoffRow() {
     };
 }
 
+/** A language goal's aim changes by its choices, never as free text, which would stop sizing it. */
+function useTargetRow() {
+  const t = useExtracted();
+  const words = useAimWords();
+
+  return function toTargetRow({
+    languageAim,
+    target,
+  }: {
+    languageAim: LanguageAimView | null;
+    target: string | null;
+  }): UnderstoodRow | null {
+    if (languageAim?.aim) {
+      return {
+        aimChoices: languageAim.choices,
+        editable: { key: "targetScore", kind: "aim" },
+        id: "targetScore",
+        label: t("Level you're aiming for"),
+        note: words.label(languageAim.aim) ?? undefined,
+        value: languageAim.aim,
+      };
+    }
+
+    return target && !languageAim
+      ? {
+          editable: { key: "targetScore", kind: "text" },
+          id: "targetScore",
+          label: t("Target score"),
+          value: target,
+        }
+      : null;
+  };
+}
+
 export function useDetailRows() {
   const t = useExtracted();
   const cutoffRow = useCutoffRow();
+  const targetRow = useTargetRow();
 
-  return (draft: GoalFacts, cutoff: TargetCutoff | null): UnderstoodRow[] => {
+  return (
+    draft: GoalFacts,
+    cutoff: TargetCutoff | null,
+    languageAim: LanguageAimView | null = null,
+  ): UnderstoodRow[] => {
     const unsaid = (key: string) => {
       const value = readText(draft.details, key);
       return value && !isSaidInTitle({ title: draft.title, value }) ? value : null;
@@ -135,12 +179,7 @@ export function useDetailRows() {
         label: isCareerChange ? t("The role you want") : t("Position"),
         value: position ?? "",
       },
-      Boolean(target) && {
-        editable: { key: "targetScore", kind: "text" },
-        id: "targetScore",
-        label: draft.kind === "language" ? t("Level you're aiming for") : t("Target score"),
-        value: target ?? "",
-      },
+      targetRow({ languageAim, target }) ?? false,
       cutoffRow(cutoff) ?? false,
       Boolean(reason) && {
         editable: { key: "reason", kind: "text" },
@@ -170,10 +209,12 @@ export function useUnderstoodRows() {
     cutoff,
     draft,
     examDates,
+    languageAim,
   }: {
     cutoff: TargetCutoff | null;
     draft: GoalDraft;
     examDates: OnboardingExamDate[];
+    languageAim: LanguageAimView | null;
   }): UnderstoodRow[] => {
     const levelNote = readText(draft.details, "levelNote");
 
@@ -186,7 +227,7 @@ export function useUnderstoodRows() {
       },
       dateRow({ draft, examDates }),
       ...languageRows(draft),
-      ...detailRows(draft, cutoff),
+      ...detailRows(draft, cutoff, languageAim),
       Boolean(levelNote) && {
         badge: t("you said"),
         id: "level",

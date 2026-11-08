@@ -27844,6 +27844,32 @@
           {
             "type": "object",
             "properties": {
+              "aim": {
+                "type": "string",
+                "enum": [
+                  "A2",
+                  "B1",
+                  "B2",
+                  "C1"
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setAim"
+                ]
+              }
+            },
+            "required": [
+              "aim",
+              "kind"
+            ],
+            "additionalProperties": false,
+            "description": "Language goals only: the level the course goes up to (`languageAim`'s choices on the plan). The plan studies the situations up to that level, sized to the hours it takes from the learner's level, and re-plans from today; it can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason notLanguage for other goals"
+          },
+          {
+            "type": "object",
+            "properties": {
               "areas": {
                 "minItems": 1,
                 "maxItems": 20,
@@ -28822,7 +28848,19 @@
                 ]
               },
               "reason": {
-                "default": null,
+                "type": "string",
+                "enum": [
+                  "travel",
+                  "talk",
+                  "work",
+                  "fluent",
+                  "certificate",
+                  "other"
+                ],
+                "description": "Why the learner studies the language, which sets the level the course goes up to (`languageAim.reasons`): certificate moves the goal to an exam goal for the certificate `words` names"
+              },
+              "words": {
+                "description": "For certificate, which one (IELTS, DELE, CELI). For other, the learner's own words",
                 "nullable": true,
                 "type": "string",
                 "minLength": 1,
@@ -28830,7 +28868,8 @@
               }
             },
             "required": [
-              "question"
+              "question",
+              "reason"
             ],
             "additionalProperties": false
           },
@@ -79785,6 +79824,15 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "languageAim": {
+            "nullable": true,
+            "description": "Language goals only: the level the course goes up to, and the aims above the learner's level to change it to with the plan change `setAim`. Null for other goals",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LanguageAim"
+              }
+            ]
+          },
           "notice": {
             "nullable": true,
             "description": "An exam plan built before research read the exam's notice: reading while the reveal waits for that reading; usual once the wait ended without it (the plan follows the exam's usual structure and the reading arrives as a change to apply); null otherwise",
@@ -80142,6 +80190,7 @@
           "fitOffer",
           "fundedMocks",
           "goalId",
+          "languageAim",
           "notice",
           "numbers",
           "ownLevel",
@@ -80365,6 +80414,58 @@
           "options",
           "subjects",
           "take"
+        ],
+        "additionalProperties": false
+      },
+      "LanguageAim": {
+        "type": "object",
+        "properties": {
+          "aim": {
+            "nullable": true,
+            "description": "The level the course goes up to; null when none is set yet",
+            "type": "string",
+            "enum": [
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1",
+              "C2"
+            ]
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "aim": {
+                  "type": "string",
+                  "enum": [
+                    "A2",
+                    "B1",
+                    "B2",
+                    "C1"
+                  ]
+                },
+                "hours": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "description": "Hours of study, practice included, from the learner's level to this aim; from scratch while the level isn't known"
+                }
+              },
+              "required": [
+                "aim",
+                "hours"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The aims above the learner's level, lowest first, to offer as a change"
+          }
+        },
+        "required": [
+          "aim",
+          "choices"
         ],
         "additionalProperties": false
       },
@@ -86705,12 +86806,23 @@
               "$ref": "#/components/schemas/OnboardingExamDate"
             },
             "description": "The exam's dates for the named year (or the next ones): from its stored notice, or estimated from its usual timing"
+          },
+          "languageAim": {
+            "default": null,
+            "description": "Language goals only: the level the words aim for and the aims the card offers instead. Edit it with field targetScore set to one of the choices' aims; null for other goals",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LanguageAim"
+              }
+            ]
           }
         },
         "required": [
           "cutoff",
           "draft",
-          "examDates"
+          "examDates",
+          "languageAim"
         ],
         "additionalProperties": false
       },
@@ -87148,6 +87260,68 @@
             },
             "description": "Goals created in the same onboarding, which share the day's time"
           },
+          "languageAim": {
+            "nullable": true,
+            "description": "Language goals only: the `reason` question's choices, and the aim the `schedule` screen shows with the aims to change it to, which a plan change `setAim` applies. Null for other goals",
+            "type": "object",
+            "properties": {
+              "aim": {
+                "nullable": true,
+                "description": "The level the course goes up to; null when none is set yet",
+                "type": "string",
+                "enum": [
+                  "A1",
+                  "A2",
+                  "B1",
+                  "B2",
+                  "C1",
+                  "C2"
+                ]
+              },
+              "choices": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "aim": {
+                      "type": "string",
+                      "enum": [
+                        "A2",
+                        "B1",
+                        "B2",
+                        "C1"
+                      ]
+                    },
+                    "hours": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "Hours of study, practice included, from the learner's level to this aim; from scratch while the level isn't known"
+                    }
+                  },
+                  "required": [
+                    "aim",
+                    "hours"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "The aims above the learner's level, lowest first, to offer as a change"
+              },
+              "reasons": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LanguageReason"
+                },
+                "description": "The `reason` question's choices, in order, each with the level it aims for and its hours from scratch"
+              }
+            },
+            "required": [
+              "aim",
+              "choices",
+              "reasons"
+            ],
+            "additionalProperties": false
+          },
           "libraryCourse": {
             "nullable": true,
             "description": "A published Library course that teaches the goal, searched again once every question is answered",
@@ -87286,12 +87460,53 @@
           "generationId",
           "goal",
           "goalIds",
+          "languageAim",
           "libraryCourse",
           "planReadiness",
           "quickTestMinutes",
           "recommendedMinutes",
           "steps",
           "timeChoices"
+        ],
+        "additionalProperties": false
+      },
+      "LanguageReason": {
+        "type": "object",
+        "properties": {
+          "aim": {
+            "nullable": true,
+            "description": "The level this reason aims for; null for a certificate, whose exam decides",
+            "type": "string",
+            "enum": [
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ]
+          },
+          "hours": {
+            "nullable": true,
+            "description": "Hours of study from scratch, practice included; null for a certificate",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "travel",
+              "talk",
+              "work",
+              "fluent",
+              "certificate",
+              "other"
+            ]
+          }
+        },
+        "required": [
+          "aim",
+          "hours",
+          "reason"
         ],
         "additionalProperties": false
       },
@@ -93156,6 +93371,32 @@
             ],
             "additionalProperties": false,
             "description": "Brings in the lessons the learner's own time fits by the plan's date, at the time, date and pace their plan has: the plan is planned again from today as a change of theirs plans it, so topics its date left out, or more depth, come in where they fit. The plan offers it as `fitOffer` (GET /v1/goals/{goalId}/plan) when it adds lessons"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "aim": {
+                "type": "string",
+                "enum": [
+                  "A2",
+                  "B1",
+                  "B2",
+                  "C1"
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setAim"
+                ]
+              }
+            },
+            "required": [
+              "aim",
+              "kind"
+            ],
+            "additionalProperties": false,
+            "description": "Language goals only: the level the course goes up to (`languageAim`'s choices on the plan). The plan studies the situations up to that level, sized to the hours it takes from the learner's level, and re-plans from today; it can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason notLanguage for other goals"
           },
           {
             "type": "object",

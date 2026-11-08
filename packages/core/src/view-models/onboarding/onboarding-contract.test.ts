@@ -20,9 +20,9 @@ describe("an onboarding answer", () => {
   });
 
   it("keeps an explicit null and a given answer", () => {
-    expect(onboardingAnswerInputSchema.parse({ question: "reason", reason: null })).toStrictEqual({
-      question: "reason",
-      reason: null,
+    expect(onboardingAnswerInputSchema.parse({ question: "role", role: null })).toStrictEqual({
+      question: "role",
+      role: null,
     });
 
     expect(

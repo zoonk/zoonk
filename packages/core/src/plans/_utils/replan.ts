@@ -198,10 +198,11 @@ export async function computePlan({
       loadQuickBaseLessons(state.settings),
     ]);
 
-  const graph = sizeLanguageGraph({
-    details: context.goal.details,
+  const { graph: fullGraph, planned: graph } = sizeLanguageGraph({
+    aim: state.goal.aim ?? null,
+    bands: loaded.bands,
+    goal: context.goal,
     graph: resolved,
-    kind: context.goal.kind,
     settledSkillIds: getSettledSkillIds({ ...loaded, items: context.items }),
   });
 
@@ -287,7 +288,7 @@ export async function computePlan({
 
   const standInLessons = getChosenStandInLessons(builtInput);
 
-  const saved = withPlannedLessons({ graph, skillLessons: built.skillLessons });
+  const saved = withPlannedLessons({ graph: fullGraph, skillLessons: built.skillLessons });
 
   const savedSettings = withBuiltSettings({ built, settings });
 

@@ -25,7 +25,7 @@ import { type OnboardingAnswerInput } from "./onboarding-contract";
 
 /**
  * A saved answer says which goal onboarding goes on with: `movedTo` is the exam goal a language
- * goal moved to ("Pass an exam" naming a certificate), null when the goal stays. `created` is true
+ * goal moved to ("Pass a certificate" naming one it knows), null when the goal stays. `created` is true
  * only for the request that created it, whose caller starts its research and curriculum. A schedule
  * whose day or weekend is shorter than `minutes`, the least the `goals` typed together need, isn't
  * saved.
@@ -42,6 +42,10 @@ function toMovedGoal(moved: MoveLanguageGoalResult) {
   return moved.status === "moved" || moved.status === "alreadyMoved"
     ? { created: moved.status === "moved", goal: moved.goal }
     : null;
+}
+
+function isCertificateAnswer(input: OnboardingAnswerInput): boolean {
+  return input.question === "reason" && input.reason === "certificate";
 }
 
 /** The buddy belongs to the learner, not the goal, so it's saved on the profile. */
@@ -64,7 +68,7 @@ async function followSavedPlan(goalId: string): Promise<void> {
   });
 }
 
-/** Requires an owned goal; remembers skipped answers too, and schedule answers settle its plan and shared time. A language goal whose reason names a certificate moves to an exam goal for it. */
+/** Requires an owned goal; remembers skipped answers too, and schedule answers settle its plan and shared time. A language goal whose reason is a certificate it knows moves to an exam goal for it. */
 export async function answerOnboardingQuestion({
   goalId,
   input,
@@ -82,7 +86,7 @@ export async function answerOnboardingQuestion({
 
   // A reason answer sent again after its goal moved (its response was lost) goes on with the
   // exam goal, without writing to the archived one.
-  if (input.question === "reason" && goal.kind === "language" && goal.status !== "active") {
+  if (isCertificateAnswer(input) && goal.kind === "language" && goal.status !== "active") {
     const movedTo = toMovedGoal(await moveLanguageGoalToExam(goalId));
 
     if (movedTo) {
@@ -160,8 +164,8 @@ export async function answerOnboardingQuestion({
     });
   }
 
-  // "Pass an exam" inside a language goal: a reason naming a certificate moves it to an exam goal.
-  if (input.question === "reason" && goal.kind === "language") {
+  // "Pass a certificate" inside a language goal moves it to an exam goal for that certificate.
+  if (isCertificateAnswer(input) && goal.kind === "language") {
     return { movedTo: toMovedGoal(await moveLanguageGoalToExam(goalId)), status: "saved" };
   }
 

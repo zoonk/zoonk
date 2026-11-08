@@ -13,6 +13,7 @@ import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { findActiveGoalId, loadGoalViews } from "../../goals/_utils/goal-view";
 import { readCourseStart } from "../../goals/course-start-details";
 import { getDaySplit } from "../../goals/daily-budget";
+import { LANGUAGE_REASON_VIEWS, toLanguageAimView } from "../../language/aims/language-aims";
 import { getQuickTestMinutes } from "../../language/level-test/level-test-contract";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readActiveSubscription } from "../../learner/facts/subscription";
@@ -286,6 +287,10 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       generationId: goal.generationRunId,
       goal: view,
       goalIds,
+      languageAim:
+        goal.kind === "language"
+          ? { ...toLanguageAimView(details), reasons: LANGUAGE_REASON_VIEWS }
+          : null,
       libraryCourse,
       planReadiness: planReadiness ?? { readingNotice: false, ready: false },
       quickTestMinutes: getQuickTestMinutes(goal.kind),

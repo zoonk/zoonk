@@ -1,4 +1,6 @@
 import { isDeepStrictEqual } from "node:util";
+import { isJsonObject } from "@zoonk/utils/json";
+import { withLanguageAim } from "../../language/aims/language-aims";
 import { withoutPlannedLessons } from "../planner/core-first";
 import { getSkillArea } from "../planner/graph-areas";
 import { getEndOfWeek, toIsoDate } from "../planner/plan-calendar";
@@ -8,15 +10,33 @@ import { type PlanContext, getStateTargetDate } from "./plan-context";
 import { type ComputedPlan } from "./replan";
 import { readSelectedItemFacts } from "./selected-item-contract";
 
-export function getGoalUpdate({ context, state }: { context: PlanContext; state: PlanState }) {
-  const targetDate = getStateTargetDate(state);
-  const sameDate = targetDate?.getTime() === context.goal.targetDate?.getTime();
+/** The aim lives in the goal's details, where the language level pages read it too. */
+function getAimDetails({ goal, state }: { goal: PlanContext["goal"]; state: PlanState }) {
+  const { aim } = state.goal;
 
-  if (state.goal.dailyMinutes === context.goal.dailyMinutes && sameDate) {
+  if (aim === undefined || goal.kind !== "language") {
     return null;
   }
 
-  return { dailyMinutes: state.goal.dailyMinutes, targetDate };
+  return withLanguageAim({ aim, details: isJsonObject(goal.details) ? goal.details : {} });
+}
+
+export function getGoalUpdate({
+  context,
+  state,
+}: {
+  context: Pick<PlanContext, "goal">;
+  state: PlanState;
+}) {
+  const targetDate = getStateTargetDate(state);
+  const sameDate = targetDate?.getTime() === context.goal.targetDate?.getTime();
+  const details = getAimDetails({ goal: context.goal, state });
+
+  if (state.goal.dailyMinutes === context.goal.dailyMinutes && sameDate && !details) {
+    return null;
+  }
+
+  return { dailyMinutes: state.goal.dailyMinutes, targetDate, ...(details && { details }) };
 }
 
 function toDay(date: Date | null): string | null {

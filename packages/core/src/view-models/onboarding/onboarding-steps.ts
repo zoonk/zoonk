@@ -1,6 +1,7 @@
 import { type Goal } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type CourseStart, readCourseStart } from "../../goals/course-start-details";
+import { readLanguageAim } from "../../language/aims/language-aims";
 import { isPlacementSkipped } from "../../learner/placement/placement-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import {
@@ -134,7 +135,7 @@ function isQuestionMissing({ goal, question }: { goal: StepGoal; question: Onboa
     case "role":
       return kind === "learn" && isRolePurpose(details.purpose) && !hasRoleAnswer(details);
     case "reason":
-      return kind === "language" && !hasText(details.reason);
+      return kind === "language" && readLanguageAim(details) === null;
     case "target":
       return kind === "exam" && !hasExamTarget(details);
     case "targetDate":

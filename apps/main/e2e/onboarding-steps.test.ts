@@ -189,3 +189,34 @@ test.describe("When a wait can't go on", () => {
       .toEqual(expect.any(String));
   });
 });
+
+test.describe("Why a language learner studies it", () => {
+  test("sets how far the course goes: a trip aims it at A2", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const goal = await goalFixture({
+      details: { answered: [], level: "none", subject: "Italian" },
+      kind: "language",
+      prompt: `learn italian ${randomUUID()}`,
+      targetLanguage: "it",
+      title: "Learn Italian",
+      userId: noProgressUser.id,
+    });
+
+    await page.goto(`/start/${goal.id}`);
+
+    const travel = page.getByRole("radio", { name: /^Travel/u });
+    await expectHydrated(travel);
+    await travel.click();
+
+    await expect(page.getByRole("heading", { name: "Why are you learning it?" })).toBeHidden();
+
+    await expect
+      .poll(async () => {
+        const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+        return saved.details;
+      })
+      .toMatchObject({ reason: "travel", targetScore: "A2" });
+  });
+});

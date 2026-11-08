@@ -76,6 +76,6 @@ export async function loadLanguageSkillLevels({
 export function getTargetLevel(
   details: Record<string, unknown>,
 ): { label: string; score: number } | null {
-  const score = parseCefrScore(details.targetLevel) ?? parseCefrScore(details.targetScore);
+  const score = parseCefrScore(details.targetScore) ?? parseCefrScore(details.targetLevel);
   return score === null ? null : { label: formatCefrScore(score), score };
 }

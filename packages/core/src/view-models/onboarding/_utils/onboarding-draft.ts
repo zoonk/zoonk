@@ -17,7 +17,7 @@ import { withPlannableDate } from "../../../plans/target-date-range";
 import { type GoalUnderstandingView, type OnboardingDraftView } from "../onboarding-contract";
 import { goalUnderstandingViewSchema } from "../onboarding-view-schemas";
 import { type FoundExam } from "./exam-facts";
-import { getLearnerToday, toUnderstandingView } from "./understanding-view";
+import { getLearnerToday, getUnderstoodAim, toUnderstandingView } from "./understanding-view";
 
 /** The learner's own draft; another learner's reads as missing. */
 export async function findOwnedDraft({
@@ -57,7 +57,7 @@ export function parseStoredUnderstanding(value: unknown): GoalUnderstandingView 
   return goalUnderstandingViewSchema.safeParse(value).data ?? null;
 }
 
-/** On read, not when the card is saved: a card's date can become today overnight. */
+/** On read, not when the card is saved: a card's date can become today overnight, and its aim's choices follow the level. */
 function withPlannableDates({
   today,
   understanding,
@@ -74,6 +74,7 @@ function withPlannableDates({
     goals: understanding.goals.map((goal) => ({
       ...goal,
       draft: withPlannableDate({ draft: goal.draft, today }),
+      languageAim: getUnderstoodAim(goal.draft),
     })),
   };
 }

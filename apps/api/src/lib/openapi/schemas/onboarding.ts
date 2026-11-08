@@ -1,4 +1,5 @@
 import { examChoiceViewSchema } from "@zoonk/core/exams/choices/contract";
+import { languageAimViewSchema, languageReasonViewSchema } from "@zoonk/core/language/aims/schemas";
 import { daySplitSchema, planReadinessSchema } from "@zoonk/core/plans/time-advice-contract";
 import {
   ONBOARDING_QUESTIONS,
@@ -92,6 +93,20 @@ export const onboardingResponseSchema = z
     goalIds: z
       .array(uuidSchema())
       .meta({ description: "Goals created in the same onboarding, which share the day's time" }),
+    languageAim: languageAimViewSchema
+      .extend({
+        reasons: z
+          .array(languageReasonViewSchema)
+          .meta({
+            description:
+              "The `reason` question's choices, in order, each with the level it aims for and its hours from scratch",
+          }),
+      })
+      .nullable()
+      .meta({
+        description:
+          "Language goals only: the `reason` question's choices, and the aim the `schedule` screen shows with the aims to change it to, which a plan change `setAim` applies. Null for other goals",
+      }),
     libraryCourse: z
       .object({
         brandSlug: z.string(),

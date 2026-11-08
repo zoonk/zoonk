@@ -27,6 +27,7 @@ import {
   PurposeStep,
   TextStep,
 } from "./steps/question-steps";
+import { ReasonStep } from "./steps/reason-step";
 import { RoleStep } from "./steps/role-step";
 import { ScheduleStep } from "./steps/schedule-step";
 import { SubjectsLevelStep } from "./steps/subjects-level-step";
@@ -127,7 +128,7 @@ function QuestionStepScreen({
         />
       );
     case "reason":
-      return <TextStep {...props} key={step} question={step} subject={subject} />;
+      return <ReasonStep {...props} reasons={view.languageAim?.reasons ?? []} subject={subject} />;
     case "target":
       return (
         <TextStep
@@ -224,6 +225,11 @@ export function OnboardingStepScreen({
           findTimeToCover={(week) => actions.findTimeToCover({ goalId: view.goal.id, ...week })}
           getTimeAdvice={(week) => actions.getTimeAdvice({ goalId: view.goal.id, ...week })}
           goal={view.goal}
+          languageAim={view.languageAim}
+          onChangeAim={async (aim) => {
+            const outcome = await plan.planActions.change([{ aim, kind: "setAim" }]);
+            return outcome?.status === "applied";
+          }}
           onChangeDate={schedule.onChangeDate}
           onPlanReadyChange={onPlanReadyChange}
           planReadiness={view.planReadiness}

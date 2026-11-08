@@ -2,12 +2,18 @@ import { NOTICE_SOURCE } from "../plan-change-contract";
 import { type PlanOperation } from "../plan-contract";
 import { type StudyOperation, isStudyOperation } from "../planner/study-operations";
 
-const CORE_PROPOSAL_LEVERS = { fitPhaseDates: "phaseDates", followNotice: "notice" } as const;
+/** Operations that each move one lever whatever they carry. */
+const SINGLE_LEVERS = {
+  fitLessons: "fitLessons",
+  fitPhaseDates: "phaseDates",
+  followNotice: "notice",
+  setAim: "aim",
+} as const;
 
-type CoreProposal = Extract<PlanOperation, { kind: keyof typeof CORE_PROPOSAL_LEVERS }>;
+type SingleLeverOperation = Extract<PlanOperation, { kind: keyof typeof SINGLE_LEVERS }>;
 
-function isCoreProposal(operation: PlanOperation): operation is CoreProposal {
-  return operation.kind in CORE_PROPOSAL_LEVERS;
+function isSingleLever(operation: PlanOperation): operation is SingleLeverOperation {
+  return operation.kind in SINGLE_LEVERS;
 }
 
 function toStudyLevers(operation: StudyOperation): string[] {
@@ -28,8 +34,8 @@ function toStudyLevers(operation: StudyOperation): string[] {
 }
 
 function toLevers(operation: PlanOperation): string[] {
-  if (isCoreProposal(operation)) {
-    return [CORE_PROPOSAL_LEVERS[operation.kind]];
+  if (isSingleLever(operation)) {
+    return [SINGLE_LEVERS[operation.kind]];
   }
 
   if (isStudyOperation(operation)) {
@@ -64,8 +70,6 @@ function toLevers(operation: PlanOperation): string[] {
       return operation.tools.map((tool) => `tool:${tool.name}`);
     case "setExamChoice":
       return [`examChoice:${operation.group}`];
-    case "fitLessons":
-      return ["fitLessons"];
     default:
       return operation satisfies never;
   }
