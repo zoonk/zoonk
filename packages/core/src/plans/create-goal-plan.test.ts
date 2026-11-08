@@ -562,6 +562,16 @@ describe(createGoalPlan, () => {
     expect(
       items.filter((item) => item.lessonId !== finished.id).map((item) => item.status),
     ).toStrictEqual(["todo", "todo"]);
+
+    // What the reveal reads: the lesson checked on today, and counted as done.
+    const result = await getGoalPlan(goal.id);
+    const read = result.status === "ready" ? result.plan : null;
+
+    expect(read?.nextDays[0]?.items.find((item) => item.lessonId === finished.id)).toMatchObject({
+      status: "done",
+    });
+
+    expect(read?.phases.reduce((done, phase) => done + phase.lessonsDone, 0)).toBe(1);
   });
 
   it("goes on with the chapter of a lesson the learner finished before the plan existed", async () => {
