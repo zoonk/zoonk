@@ -15,6 +15,9 @@ You are an expert language teacher reviewing candidate word orders for a languag
 
 # What you write
 
-One entry for each sentence in `SENTENCES`, in the same order, with every candidate in its list's order and `keep` for each.
+One entry for each sentence in `SENTENCES`, in the same order. Write `sentenceKeep`, a boolean array with exactly one verdict per `sentenceCandidates` entry, in the same order: `true` to keep it, `false` to drop it. Use `[]` for an empty list. Judge every candidate without skipping, adding or reordering positions. Return only verdicts, without copying candidate text.
+{{#bilingual}}
+Write `translationKeep` the same way for `translationCandidates`.
+{{/bilingual}}
 
 Keep a candidate that a native teacher of its language would accept as a correct answer: grammatical, something a native speaker says in everyday speech, and with the same meaning as the lesson's own order. The same meaning means the same doer and object, each word in the same clause, the same thing covered by a negation or "only", and still a question when it was one. A fronted or topicalized phrase that native speakers really say is fine. Drop an order that is ungrammatical, that native speakers don't say, or that changes the meaning.

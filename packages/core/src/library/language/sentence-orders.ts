@@ -9,8 +9,6 @@ export type SentenceOrders = { otherOrders: string[]; otherTranslationOrders: st
 
 type SentenceText = { sentence: string; translation: string };
 
-type Verdicts = Awaited<ReturnType<typeof checkSentenceOrders>>["data"]["sentences"][number];
-
 /**
  * Keeps the orders a learner can build from the sentence's tiles: reading builds the sentence,
  * listening its translation. A learner reading the app in the language they learn hears the sentence
@@ -95,16 +93,13 @@ function keepApproved({
   verdicts = [],
 }: {
   candidates: readonly string[];
-  verdicts?: Verdicts["sentenceCandidates"];
+  verdicts?: readonly boolean[];
 }): string[] {
-  if (
-    verdicts.length !== candidates.length ||
-    verdicts.some((verdict, index) => verdict.candidate !== candidates[index])
-  ) {
+  if (verdicts.length !== candidates.length) {
     throw new Error("The review must judge every candidate, in order.");
   }
 
-  return candidates.filter((_candidate, index) => verdicts[index]?.keep);
+  return candidates.filter((_candidate, index) => verdicts[index]);
 }
 
 /** The candidates a native teacher accepts, as the screen's tiles; a lesson without any skips the review. */
@@ -155,11 +150,11 @@ export async function checkOrderCandidates({
     candidates.map((item, index) => ({
       otherOrders: keepApproved({
         candidates: item.otherOrders,
-        verdicts: data.sentences[index]?.sentenceCandidates,
+        verdicts: data.sentences[index]?.sentenceKeep,
       }),
       otherTranslationOrders: keepApproved({
         candidates: item.otherTranslationOrders,
-        verdicts: data.sentences[index]?.translationCandidates,
+        verdicts: data.sentences[index]?.translationKeep,
       }),
     })),
   );

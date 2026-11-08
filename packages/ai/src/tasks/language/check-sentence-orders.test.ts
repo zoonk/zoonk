@@ -23,6 +23,13 @@ describe(checkSentenceOrders, () => {
   });
 
   it("in the learner's own language, reviews only the sentence's candidates", async () => {
+    const sameLanguageVerdicts = { sentences: [{ sentenceKeep: [true] }] };
+    const bilingualVerdicts = { sentences: [{ sentenceKeep: [false], translationKeep: [true] }] };
+
+    vi.mocked(generateText)
+      .mockResolvedValueOnce(createGenerateTextResult(sameLanguageVerdicts))
+      .mockResolvedValueOnce(createGenerateTextResult(bilingualVerdicts));
+
     const sentence = {
       sentence: "Plants grow in many places",
       sentenceCandidates: ["In many places plants grow"],
@@ -49,9 +56,11 @@ describe(checkSentenceOrders, () => {
     });
 
     expect(sameLanguage.systemPrompt).toBe("Review.\nOne language.\n");
+    expect(sameLanguage.data).toStrictEqual(sameLanguageVerdicts);
     expect(sameLanguage.userPrompt).toContain('sentenceCandidates: ["In many places plants grow"]');
     expect(sameLanguage.userPrompt).not.toContain("translation");
     expect(bilingual.systemPrompt).toBe("Review.\nTranslations too.\n");
+    expect(bilingual.data).toStrictEqual(bilingualVerdicts);
 
     expect(bilingual.userPrompt).toContain(
       'translationCandidates: ["Em muitos lugares plantas crescem"]',

@@ -7,11 +7,11 @@ const SENTENCE = {
   translation: "Plants grow in many places",
 };
 
-function mockReview(keep: boolean) {
+type Reviewed = Awaited<ReturnType<typeof checkSentenceOrders>>["data"]["sentences"];
+
+function mockReview(sentences: Reviewed) {
   vi.mocked(checkSentenceOrders).mockResolvedValue({
-    data: {
-      sentences: [{ sentenceCandidates: [{ candidate: "In many places plants grow", keep }] }],
-    },
+    data: { sentences },
     provenance: {} as never,
     systemPrompt: "",
     usage: {} as never,
@@ -20,42 +20,79 @@ function mockReview(keep: boolean) {
 }
 
 describe(checkOrderCandidates, () => {
-  it.each([
-    ["duplicate", ["In many places plants grow", "In many places plants grow"]],
-    ["reordered", ["Plants in many places grow", "In many places plants grow"]],
-    ["unexpected", ["In many places plants grow", "Many plants grow in places"]],
-  ])(
-    "rejects %s candidate echoes instead of silently dropping an unreviewed order",
-    async (_name, echoes) => {
-      const candidates = [
-        {
-          otherOrders: ["In many places plants grow", "Plants in many places grow"],
-          otherTranslationOrders: [],
-        },
-      ];
+  it("keeps the original candidate at each approved position without an echoed text", async () => {
+    mockReview([{ sentenceKeep: [false, true], translationKeep: [true, false] }]);
 
-      vi.mocked(checkSentenceOrders).mockResolvedValue({
-        data: {
-          sentences: [
-            { sentenceCandidates: echoes.map((candidate) => ({ candidate, keep: true })) },
-          ],
-        },
-        provenance: {} as never,
-        systemPrompt: "",
-        usage: {} as never,
-        userPrompt: "",
-      });
+    await expect(
+      checkOrderCandidates({
+        candidates: [
+          {
+            otherOrders: ['"In many places plants grow"', "Plants  in many places grow"],
+            otherTranslationOrders: [
+              '"Em muitos lugares plantas crescem"',
+              "Plantas em muitos lugares crescem",
+            ],
+          },
+        ],
+        learnerLanguage: "pt",
+        sentences: [{ ...SENTENCE, translation: "Plantas crescem em muitos lugares" }],
+        targetLanguage: "en",
+      }),
+    ).resolves.toStrictEqual([
+      {
+        otherOrders: ["Plants in many places grow"],
+        otherTranslationOrders: ["em muitos lugares Plantas crescem"],
+      },
+    ]);
+  });
 
-      await expect(
-        checkOrderCandidates({
-          candidates,
-          learnerLanguage: "en",
-          sentences: [SENTENCE],
-          targetLanguage: "en",
-        }),
-      ).rejects.toThrow("The review must judge every candidate, in order.");
-    },
-  );
+  it.each<[string, Reviewed, string]>([
+    ["missing sentence", [], "one result per requested sentence"],
+    [
+      "extra sentence",
+      [{ sentenceKeep: [true, false] }, { sentenceKeep: [] }],
+      "one result per requested sentence",
+    ],
+    [
+      "missing sentence verdict",
+      [{ sentenceKeep: [true], translationKeep: [true, false] }],
+      "judge every candidate",
+    ],
+    [
+      "extra sentence verdict",
+      [{ sentenceKeep: [true, false, true], translationKeep: [true, false] }],
+      "judge every candidate",
+    ],
+    [
+      "missing translation verdict",
+      [{ sentenceKeep: [true, false], translationKeep: [true] }],
+      "judge every candidate",
+    ],
+    [
+      "extra translation verdict",
+      [{ sentenceKeep: [true, false], translationKeep: [true, false, true] }],
+      "judge every candidate",
+    ],
+  ])("rejects a %s", async (_name, verdicts, error) => {
+    mockReview(verdicts);
+
+    await expect(
+      checkOrderCandidates({
+        candidates: [
+          {
+            otherOrders: ["In many places plants grow", "Plants in many places grow"],
+            otherTranslationOrders: [
+              "Em muitos lugares plantas crescem",
+              "Plantas em muitos lugares crescem",
+            ],
+          },
+        ],
+        learnerLanguage: "pt",
+        sentences: [{ ...SENTENCE, translation: "Plantas crescem em muitos lugares" }],
+        targetLanguage: "en",
+      }),
+    ).rejects.toThrow(error);
+  });
 
   it("in the learner's own language, reviews the sentence's orders once and gives them to the translation", async () => {
     const candidates = toOrderCandidates({
@@ -64,7 +101,7 @@ describe(checkOrderCandidates, () => {
       sentences: [SENTENCE],
     });
 
-    mockReview(true);
+    mockReview([{ sentenceKeep: [true] }]);
 
     await expect(
       checkOrderCandidates({

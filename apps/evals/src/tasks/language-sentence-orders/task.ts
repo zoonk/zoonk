@@ -23,12 +23,7 @@ async function generateCheckedOrders(input: Parameters<typeof generateLanguageSe
     sentences: input.sentences,
   });
 
-  const kept = await checkOrderCandidates({
-    candidates,
-    learnerLanguage: input.learnerLanguage,
-    sentences: input.sentences,
-    targetLanguage: input.targetLanguage,
-  });
+  const kept = await checkOrderCandidates({ ...input, candidates });
 
   const data: CheckedSentenceOrders = {
     sentences: kept.map((orders, index) => ({ ...orders, candidates: candidates[index] })),

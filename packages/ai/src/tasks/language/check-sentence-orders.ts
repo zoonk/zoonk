@@ -15,20 +15,16 @@ import basePrompt from "./check-sentence-orders.prompt.md";
  */
 const defaultModel = "google/gemini-4-argon";
 
-const verdicts = z.array(z.object({ candidate: z.string(), keep: z.boolean() }));
+const verdicts = z.array(z.boolean());
 
 const bilingualSchema = z.object({
-  sentences: z.array(z.object({ sentenceCandidates: verdicts, translationCandidates: verdicts })),
+  sentences: z.array(z.object({ sentenceKeep: verdicts, translationKeep: verdicts })),
 });
 
-const sameLanguageSchema = z.object({
-  sentences: z.array(z.object({ sentenceCandidates: verdicts })),
-});
-
-type Verdict = z.infer<typeof verdicts>[number];
+const sameLanguageSchema = z.object({ sentences: z.array(z.object({ sentenceKeep: verdicts })) });
 
 type SentenceOrdersCheck = {
-  sentences: { sentenceCandidates: Verdict[]; translationCandidates?: Verdict[] }[];
+  sentences: { sentenceKeep: boolean[]; translationKeep?: boolean[] }[];
 };
 
 export type CheckSentenceOrdersParams = {

@@ -27,15 +27,7 @@ const RENT_CANDIDATES: Generated = [
   },
 ];
 
-const RENT_REVIEW: Reviewed = [
-  {
-    sentenceCandidates: [{ candidate: "The rent is how much?", keep: false }],
-    translationCandidates: [
-      { candidate: "O aluguel é quanto?", keep: true },
-      { candidate: "É quanto o aluguel?", keep: false },
-    ],
-  },
-];
+const RENT_REVIEW: Reviewed = [{ sentenceKeep: [false], translationKeep: [true, false] }];
 
 async function owedLessonFixture({ attempts = 0 }: { attempts?: number } = {}) {
   const { lesson, sentence } = await languageLessonFixture();
@@ -161,25 +153,12 @@ describe(sentenceOrdersWorkflow, () => {
     [
       "the review skips a candidate",
       RENT_CANDIDATES,
-      [
-        {
-          ...RENT_REVIEW[0]!,
-          translationCandidates: RENT_REVIEW[0]!.translationCandidates?.slice(1),
-        },
-      ],
+      [{ ...RENT_REVIEW[0]!, translationKeep: RENT_REVIEW[0]!.translationKeep?.slice(1) }],
     ],
     [
-      "the review duplicates a candidate instead of judging the next one",
+      "the review returns an extra verdict",
       RENT_CANDIDATES,
-      [
-        {
-          ...RENT_REVIEW[0]!,
-          translationCandidates: [
-            { candidate: "O aluguel é quanto?", keep: true },
-            { candidate: "O aluguel é quanto?", keep: true },
-          ],
-        },
-      ],
+      [{ ...RENT_REVIEW[0]!, translationKeep: [true, false, true] }],
     ],
   ])("keeps the lesson owing its orders when %s", async (_case, generated, reviewed) => {
     const owed = await owedLessonFixture();
