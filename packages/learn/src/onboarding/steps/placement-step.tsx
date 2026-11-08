@@ -67,8 +67,21 @@ function toPhase(outcome: ReadyOutcome, shown: Shown = NOTHING_SHOWN): Phase {
     : { answered, forToday: outcome.dayBudgetUsed, kind: "done" };
 }
 
-function countSave(phase: Phase, saved: boolean): Phase {
-  return phase.kind === "question" ? { ...phase, failures: saved ? 0 : phase.failures + 1 } : phase;
+/** Counts a save on the question it came from; a save from another screen leaves questions alone. */
+function countSave({
+  current,
+  from,
+  saved,
+}: {
+  current: Phase;
+  from: Phase;
+  saved: boolean;
+}): Phase {
+  return current.kind === "question" &&
+    from.kind === "question" &&
+    current.question.itemId === from.question.itemId
+    ? { ...current, failures: saved ? 0 : current.failures + 1 }
+    : current;
 }
 
 function toResumedPhase({
@@ -202,9 +215,10 @@ export function PlacementStep({
       // Finishing is one save to the learner: it goes through once the step's save does too.
       const saved = Boolean(finished) && (await onDone().catch(() => false));
 
-      // A Stop on the question screen fails on that screen's line, counted with its answers.
+      // `phase` is the screen the finish started on: a Stop on a question fails on that question's
+      // line, counted with its answers; another screen's finish says so in the top notice.
       onFinishFailed(!saved && phase.kind !== "question");
-      setPhase((current) => countSave(current, saved));
+      setPhase((current) => countSave({ current, from: phase, saved }));
     });
 
   const show = (outcome: PlacementOutcome) => {
@@ -240,7 +254,9 @@ export function PlacementStep({
           .answerPlacement({ answer: choice, durationMs, goalId, itemId: question.itemId })
           .catch((): PlacementOutcome => ({ status: "failed" }));
 
-        setPhase((current) => countSave(current, outcome.status !== "failed"));
+        setPhase((current) =>
+          countSave({ current, from: phase, saved: outcome.status !== "failed" }),
+        );
 
         if (outcome.status === "failed") {
           return;
