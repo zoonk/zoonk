@@ -7,6 +7,28 @@ import XCTest
 
 @MainActor
 final class LessonPlayerLoadingTests: XCTestCase {
+  func testALateRunPreservesCanvasWorkWithNoAnswerAfterGoingBack() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one"]))
+    let store = try openingPlayer(
+      checkLesson(["intro", "one", "two"], explanations: ["intro"], code: ["one"]),
+      transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+    store.act()
+    store.continueLesson()
+    store.act()
+    let work = store.work(for: "one", round: 0)
+    work.set([0: "print(1)"], for: "edits")
+    store.select(nil)
+    store.goBack()
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.state?.rounds["one", default: 0], 0)
+    XCTAssertTrue(
+      store.work(for: "one", round: store.state?.rounds["one", default: 0] ?? 0) === work)
+    XCTAssertNil(store.state?.results["one"])
+  }
+
   func testWrittenContentPaintsWhileStartCarriesItsOpening() async throws {
     let transport = OpeningStartTransport(holds: true)
     let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
@@ -800,7 +822,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
 }
 
 private func checkLesson(
-  _ ids: [String], spoken: Set<String> = [], explanations: Set<String> = []
+  _ ids: [String], spoken: Set<String> = [], explanations: Set<String> = [], code: Set<String> = []
 ) throws -> PlayableLesson {
   let check = """
     "kind": "check", "content": {"question": "Capital of France?", "basis": null, "options": [
@@ -814,13 +836,16 @@ private func checkLesson(
   let explanation = """
     "kind": "explanation", "content": {"title": null, "text": "Paris is the capital."}
     """
+  let codeStep = #"""
+    "kind":"activity","content":{"template":"codeRunner","prompt":"Fix it","check":{"kind":"interaction","explanation":"Why"},"fields":{"editableLines":[1],"expectedOutput":"1","language":"python","mistakes":[],"solution":"print(1)","starterCode":"print(0)"}}
+    """#
   let steps = try ids.enumerated().map { index, id in
     try JSONDecoder().decode(
       LessonStep.self,
       from: Data(
         """
         {"id": "\(id)", "position": \(index), "pictureWaitStartedAt": 0,
-         \(spoken.contains(id) ? speak : explanations.contains(id) ? explanation : check)}
+         \(code.contains(id) ? codeStep : spoken.contains(id) ? speak : explanations.contains(id) ? explanation : check)}
         """.utf8))
   }
 

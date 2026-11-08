@@ -658,7 +658,8 @@ struct LessonPlayerState: Equatable, Sendable {
     startedAt: Date = .distantPast,
     hyperdrive: LessonHyperdriveStart = .none,
     optionalStepIds: [String] = [],
-    keepsScreen: Bool = false
+    keepsScreen: Bool = false,
+    workedStepIds: Set<String> = []
   ) {
     run = .started(runId: runId)
     hyperdriveStart = hyperdrive
@@ -674,7 +675,7 @@ struct LessonPlayerState: Equatable, Sendable {
     let known = answers.filter { steps[$0.stepId] != nil }
 
     if keepsScreen {
-      fillUntouched(from: known)
+      fillUntouched(from: known, workedStepIds: workedStepIds)
     } else {
       resume(from: known)
     }
@@ -1036,10 +1037,11 @@ struct LessonPlayerState: Equatable, Sendable {
   /// A run that lands after the learner acted on this visit leaves them where they are: screens
   /// they haven't touched, other than the one in play, show the run's answers, and a check it
   /// missed once comes back at the end.
-  private mutating func fillUntouched(from known: [LessonRunAnswer]) {
+  private mutating func fillUntouched(from known: [LessonRunAnswer], workedStepIds: Set<String>) {
     let inPlay = currentStep.flatMap { results[$0.id] == nil ? $0.id : nil }
     let saved = known.filter {
-      $0.stepId != inPlay && answers[$0.stepId] == nil && results[$0.stepId] == nil
+      $0.stepId != inPlay && !workedStepIds.contains($0.stepId) && answers[$0.stepId] == nil
+        && results[$0.stepId] == nil
     }
 
     guard !saved.isEmpty else {

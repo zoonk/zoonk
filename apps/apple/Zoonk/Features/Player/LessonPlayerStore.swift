@@ -47,6 +47,7 @@ final class LessonPlayerStore {
   /// run that starts after that keeps their screen; one that starts before resumes them at their
   /// furthest screen.
   private var acted = false
+  private var workedHere: Set<String> = []
   private let onOpened: @MainActor (StudyBlockOpening) -> Void
   private var starting: Task<Void, Never>?
   /// Opened from a public catalog page, where main asks the first question: answering it counts as
@@ -270,6 +271,7 @@ final class LessonPlayerStore {
         self.state = state
         works = [:]
         acted = false
+        workedHere = []
         openedAt = .now
         // Written content can paint before admission; server actions await the run.
         screen = .playing
@@ -302,6 +304,7 @@ final class LessonPlayerStore {
 
   /// The learner tapped or pressed a key in the lesson, seen once at the player's root.
   func act() {
+    if let id = state?.currentStep?.id { workedHere.insert(id) }
     acted = true
     activate()
   }
@@ -365,7 +368,7 @@ final class LessonPlayerStore {
       self.state?.startRun(
         runId: run.runId, answers: run.answers, held: held.map(\.runAnswer),
         startedAt: run.startedAt, hyperdrive: run.hyperdrive, optionalStepIds: run.optionalStepIds,
-        keepsScreen: acted)
+        keepsScreen: acted, workedStepIds: workedHere)
       for answer in heldForRun {
         hold(answer(run.runId))
       }

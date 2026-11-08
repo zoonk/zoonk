@@ -72,6 +72,7 @@ sealed interface LessonAction {
         val heldAnswers: List<RunAnswer> = emptyList(),
         /** The learner already did something on this visit, so their screen stays where it is. */
         val keepsScreen: Boolean = false,
+        val workedStepIds: Set<String> = emptySet(),
     ) : LessonAction
 
     /** A fresh read of the lesson's screens while some pictures were still being drawn. */
@@ -273,7 +274,7 @@ private fun LessonPlayerState.startRun(
         copy(run = LessonRun.Started(action.runId, action.hyperdrive, carried))
             .skipSteps(action.optionalStepIds, now)
 
-    if (action.keepsScreen || firstVerdicts == runVerdicts(answers)) return started.fillUntouched(answers)
+    if (action.keepsScreen || firstVerdicts == runVerdicts(answers)) return started.fillUntouched(answers, action.workedStepIds)
 
     return started.resumeFrom(answers, now)
 }

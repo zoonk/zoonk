@@ -42,6 +42,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
+@org.junit.runner.RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
 @OptIn(ExperimentalCoroutinesApi::class)
 class LessonStartTest {
     @get:Rule val folder = TemporaryFolder()
@@ -115,6 +116,46 @@ class LessonStartTest {
             )
             assertEquals(listOf(ONE), api.checks.map { it.first })
             assertEquals(false, reopened.hasUnsent)
+        }
+
+    @Test fun aLateRunLeavesWorkWithNoAnswerOnAPreviousScreenAlone() =
+        runTest(dispatcher) {
+            lesson =
+                playable(
+                    listOf(
+                        explanationStep(FIRST),
+                        com.zoonk.android.feature.activities.ActivityFixtures
+                            .step("codeRunner", id = ONE),
+                        checkStep(TWO),
+                    ),
+                )
+            api.load = LessonLoad.Ready(lesson)
+            api.runAnswers = answered(ONE)
+            api.startGate = CompletableDeferred()
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            runCurrent()
+            vm.act()
+            vm.dispatch(LessonAction.Continue)
+            vm.act()
+            vm.select(null)
+            vm.dispatch(LessonAction.GoBack)
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(
+                0,
+                (
+                    vm.state.value
+                        ?.rounds
+                        ?.get(ONE) ?: 0
+                ),
+            )
+            assertEquals(
+                null,
+                vm.state.value
+                    ?.results
+                    ?.get(ONE),
+            )
         }
 
     @Test fun aPendingServerCheckKeepsItsScreenWhenTheRunResumesElsewhere() =

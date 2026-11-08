@@ -275,6 +275,7 @@ class LessonPlayerViewModel(
      * their screen; one that starts before resumes them at their furthest screen.
      */
     private var acted = false
+    private val workedHere = mutableSetOf<String>()
 
     /** Screens the learner answered or cleared on this visit, which work restored from the device leaves alone. */
     private val answeredHere = mutableSetOf<String>()
@@ -298,6 +299,7 @@ class LessonPlayerViewModel(
         owner = session
         admittedRunId = null
         acted = false
+        workedHere.clear()
         answeredHere.clear()
         heldDeviceVerdicts.clear()
         unsaved.clear()
@@ -373,6 +375,10 @@ class LessonPlayerViewModel(
 
     /** The learner tapped or typed in the lesson, seen once at the player's root ([LearnerInput]). */
     fun act() {
+        mutableState.value
+            ?.currentStep
+            ?.id
+            ?.let { workedHere += it }
         acted = true
         activate()
     }
@@ -743,7 +749,7 @@ class LessonPlayerViewModel(
                 ?: LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = started)
         val steps = lesson.steps.associateBy(LessonStep::id)
         val held = unsaved.values.flatten().mapNotNull { it.held(steps[it.stepId]) }
-        state = reduce(state, run.toStartedAction(held, keepsScreen = acted), started)
+        state = reduce(state, run.toStartedAction(held, keepsScreen = acted).copy(workedStepIds = workedHere.toSet()), started)
 
         val unplayable = lesson.steps.filterNot(::isPlayable).map(LessonStep::id)
         val leftOut = run.optionalStepIds.orEmpty().map(UUID::toString) + run.answers.map { it.stepId.toString() }

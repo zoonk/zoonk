@@ -70,9 +70,16 @@ internal fun LessonPlayerState.resume(
  * A run that lands after the learner acted on this visit leaves them where they are: screens they haven't touched, other
  * than the one in play, show the run's answers, and a check it missed once comes back at the end.
  */
-internal fun LessonPlayerState.fillUntouched(answers: List<RunAnswer>): LessonPlayerState {
+internal fun LessonPlayerState.fillUntouched(
+    answers: List<RunAnswer>,
+    workedStepIds: Set<String>,
+): LessonPlayerState {
     val inPlay = currentStep?.id?.takeIf { it !in results }
-    val saved = answers.filter { it.stepId in steps && it.stepId != inPlay && it.stepId !in this.answers && it.stepId !in results }
+    val saved =
+        answers.filter {
+            it.stepId in steps && it.stepId != inPlay && it.stepId !in workedStepIds && it.stepId !in this.answers &&
+                it.stepId !in results
+        }
 
     if (saved.isEmpty()) return this
 
