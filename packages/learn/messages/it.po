@@ -802,6 +802,12 @@ msgctxt "f4Zmb7"
 msgid "Different time on weekends"
 msgstr "Tempo di studio diverso nel fine settimana"
 
+#: src/_utils/time-format.ts
+#: src/today/today-day-progress.tsx
+msgctxt "RQRGjK"
+msgid "{time} studied"
+msgstr "{time} di studio"
+
 #: src/_utils/use-belt-name.ts
 msgctxt "belts.kZw3xs"
 msgid "Yellow belt"
@@ -13681,11 +13687,6 @@ msgstr "Ci stiamo mettendo più tempo del solito"
 msgctxt "m9CrfE"
 msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
 msgstr "{done, plural, =0 {# su {total, number} completati} one {# completato su {total, number}} other {# completati su {total, number}}}"
-
-#: src/today/today-day-progress.tsx
-msgctxt "RQRGjK"
-msgid "{time} studied"
-msgstr "{time} di studio"
 
 #: src/today/today-day-status.tsx
 msgctxt "XMRh7X"
