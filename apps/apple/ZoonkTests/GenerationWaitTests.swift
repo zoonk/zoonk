@@ -95,17 +95,17 @@ final class GenerationWaitTests: XCTestCase {
     let start = Date(timeIntervalSince1970: 1_000)
     var wait = GenerationWait(kind: .lesson).started
 
-    // The device's clock runs 30 seconds ahead; a replayed event arrives late, so the smallest gap
-    // is the clocks' difference.
-    wait.apply(
-      GenerationEvent(at: start, status: "started", step: "planLesson"),
-      receivedAt: start.addingTimeInterval(90))
-    wait.apply(
-      GenerationEvent(at: start.addingTimeInterval(52), status: "completed", step: "planLesson"),
-      receivedAt: start.addingTimeInterval(82))
-    wait.apply(
-      GenerationEvent(at: start.addingTimeInterval(55), status: "started", step: "writeLesson"),
-      receivedAt: start.addingTimeInterval(85))
+    // The device's clock runs 30 seconds ahead, as the stream's connection said; its replayed
+    // events arrive long after their times.
+    for event in [
+      GenerationEvent(at: start, status: "started", step: "planLesson", clockOffset: 30),
+      GenerationEvent(
+        at: start.addingTimeInterval(52), status: "completed", step: "planLesson", clockOffset: 30),
+      GenerationEvent(
+        at: start.addingTimeInterval(55), status: "started", step: "writeLesson", clockOffset: 30),
+    ] {
+      wait.apply(event, receivedAt: start.addingTimeInterval(120))
+    }
 
     let plan = wait.visiblePhases[0]
     let write = wait.visiblePhases[1]
@@ -169,20 +169,18 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertEqual(wait.firstLesson(read: done)?.isDone, true)
   }
 
-  /// A wait opened two minutes into its stage goes on from there: its steps come replayed at once,
-  /// then a live one tells the two clocks apart.
+  /// A wait opened two minutes into its stage goes on from there, its steps replayed at once.
   func testAWaitOpenedPartwayDriftsFromWhenItsStageStarted() {
     let opened = Date()
     var wait = GenerationWait(kind: .curriculum, since: opened).started
 
     for event in [
       GenerationEvent(
-        at: opened.addingTimeInterval(-130), status: "completed", step: "understandGoal"),
+        at: opened.addingTimeInterval(-130), status: "completed", step: "understandGoal",
+        clockOffset: 0),
       GenerationEvent(
-        at: opened.addingTimeInterval(-120), status: "started", step: "buildSkillGraph"),
-      GenerationEvent(
-        at: opened, skillName: "Telling songs from calls", status: "started",
-        step: "buildSkillGraph"),
+        at: opened.addingTimeInterval(-120), status: "started", step: "buildSkillGraph",
+        clockOffset: 0),
     ] {
       wait.apply(event, receivedAt: opened)
     }
