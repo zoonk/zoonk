@@ -66,13 +66,7 @@ function lessonSnapshot(
   answerable = true,
   screen: { content: object; kind: string } = CHECK_SCREEN,
 ): LessonScopeContext {
-  const step = {
-    answerable,
-    ...screen,
-    sentence: null,
-    stepNumber: 1,
-    word: null,
-  };
+  const step = { answerable, ...screen, sentence: null, stepNumber: 1, word: null };
 
   return {
     answer: null,
