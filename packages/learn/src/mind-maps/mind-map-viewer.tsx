@@ -224,7 +224,7 @@ export function MindMapViewer({
           </header>
 
           <DialogDescription className="sr-only">
-            {image
+            {image && !asText
               ? `${alt} ${t("Pinch, scroll or use + and - to zoom; drag or use the arrows to move.")}`
               : alt}
           </DialogDescription>
