@@ -1,5 +1,6 @@
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import { type GoalCreateInput } from "@zoonk/core/goals/contract";
+import { type LanguageAim } from "@zoonk/core/language/aims";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { type MaterialQuestionAnswer } from "@zoonk/core/library/sources/material-question-contract";
 import { type LessonVisual } from "@zoonk/core/library/steps/contract";
@@ -139,6 +140,8 @@ export type PlanOutcome = (RevealedPlan & { status: "ready" }) | { status: "fail
 export type OnboardingActions = {
   answer: (input: { goalId: string; input: OnboardingAnswerInput }) => Promise<AnswerOutcome>;
   attach: GoalAttachActions;
+  /** The onboarding as it is after the aim moved; null when it couldn't be changed. */
+  changeAim: (input: { aim: LanguageAim; goalId: string }) => Promise<OnboardingView | null>;
   createGoals: (input: GoalCreateInput) => Promise<CreateGoalsOutcome>;
   finishPlacement: (input: { fromScratch: boolean; goalId: string }) => Promise<boolean>;
   getPlacement: (goalId: string) => Promise<PlacementOutcome>;

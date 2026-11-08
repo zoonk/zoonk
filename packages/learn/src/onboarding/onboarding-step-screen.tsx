@@ -180,6 +180,7 @@ export function OnboardingStepScreen({
   onAnswer,
   onPlacementDone,
   onPlacementFinishFailed,
+  onViewChange,
   pending,
   plan,
   refreshPages,
@@ -194,6 +195,8 @@ export function OnboardingStepScreen({
   onAnswer: (input: OnboardingAnswerInput) => void;
   onPlacementDone: () => void;
   onPlacementFinishFailed: (failed: boolean) => void;
+  /** A change made on a screen without answering it, such as the aim, read back. */
+  onViewChange: (view: OnboardingView) => void;
   pending: boolean;
   plan: { initialPlan: RevealedPlan | null; planActions: PlanActions };
   refreshPages: () => void;
@@ -227,8 +230,13 @@ export function OnboardingStepScreen({
           goal={view.goal}
           languageAim={view.languageAim}
           onChangeAim={async (aim) => {
-            const outcome = await plan.planActions.change([{ aim, kind: "setAim" }]);
-            return outcome?.status === "applied";
+            const changed = await actions.changeAim({ aim, goalId: view.goal.id });
+
+            if (changed) {
+              onViewChange(changed);
+            }
+
+            return changed !== null;
           }}
           onChangeDate={schedule.onChangeDate}
           onPlanReadyChange={onPlanReadyChange}

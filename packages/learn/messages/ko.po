@@ -5272,27 +5272,28 @@ msgid "Everyday conversations"
 msgstr "일상 대화"
 
 #: src/language-aim/use-aim-words.ts
-#: src/onboarding/steps/reason-step.tsx
+#: src/language-aim/use-reason-copy.ts
 msgctxt "QcdeJ8"
 msgid "Work or study in it"
 msgstr "일이나 공부에 쓰기"
 
 #: src/language-aim/use-aim-words.ts
-#: src/onboarding/steps/reason-step.tsx
+#: src/language-aim/use-reason-copy.ts
 msgctxt "uLO8Ma"
 msgid "Speak it fluently"
 msgstr "유창하게 말하기"
 
-#. {month} is a month and year, like "Nov 2027".
+#. Under a language level to aim for: the hours of study still needed to reach it, then when. {month} is a month and year, like "Nov 2027".
 #: src/language-aim/use-aim-words.ts
 msgctxt "nxt5u1"
 msgid "About {hours} h more · around {month}"
-msgstr "약 {hours}시간 남음 · {month}쯤"
+msgstr "약 {hours}시간 더 필요 · {month}쯤"
 
+#. Under a language level to aim for: the hours of study still needed to reach it.
 #: src/language-aim/use-aim-words.ts
 msgctxt "PSVY23"
 msgid "About {hours} h more"
-msgstr "약 {hours}시간 남음"
+msgstr "약 {hours}시간 더 필요"
 
 #: src/language-aim/use-aim-words.ts
 msgctxt "2B8IBO"
@@ -5304,6 +5305,58 @@ msgstr "약 {hours}시간 학습"
 msgctxt "mI_0zG"
 msgid "Your aim"
 msgstr "목표 레벨"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "IZU_K4"
+msgid "Get by on trips: order, ask the way, small talk"
+msgstr "여행지에서 주문하기, 길 묻기, 가벼운 대화 나누기"
+
+#. A reason to learn a language: to travel.
+#: src/language-aim/use-reason-copy.ts
+msgctxt "z1QN2q"
+msgid "Travel"
+msgstr "여행"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "GcOu5Q"
+msgid "Everyday conversations, at home or abroad"
+msgstr "국내에서나 해외에서나 나누는 일상 대화"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "pY3V77"
+msgid "Talk with people"
+msgstr "사람들과 대화하기"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "bd1s9H"
+msgid "Meetings, interviews and classes"
+msgstr "회의, 면접, 수업"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "fI9mky"
+msgid "Talk about almost anything with ease"
+msgstr "거의 모든 주제로 편하게 대화하기"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "3RtBi8"
+msgid "IELTS, DELE, CELI and others"
+msgstr "토익, DELE, CELI 등"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "sY1qPu"
+msgid "Pass a certificate"
+msgstr "어학시험 합격하기"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "RW_ehZ"
+msgid "In your own words. Aims for {level}"
+msgstr "직접 설명하기. 목표 수준: {level}"
+
+#: src/language-aim/use-reason-copy.ts
+#: src/onboarding/steps/question-steps.tsx
+msgctxt "qm_eL5"
+msgid "Something else"
+msgstr "다른 이유가 있어요"
 
 #: src/language/_utils/use-skill-name.ts
 #: src/language/unit/unit-mistakes.tsx
@@ -10099,12 +10152,6 @@ msgid "Tell us later, in your own words"
 msgstr "나중에 자유롭게 적어 주세요"
 
 #: src/onboarding/steps/question-steps.tsx
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "qm_eL5"
-msgid "Something else"
-msgstr "다른 이유가 있어요"
-
-#: src/onboarding/steps/question-steps.tsx
 msgctxt "3ixkTn"
 msgid "It sets how deep your course goes, and so how long it is."
 msgstr "답변에 따라 코스에서 얼마나 깊이 배울지, 얼마나 오래 공부할지 정해져요."
@@ -10188,52 +10235,6 @@ msgstr "몇 가지만 더 알려 주면 더 잘 맞는 계획을 세울 수 있�
 msgctxt "VW5079"
 msgid "{hours} h"
 msgstr "{hours}시간"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "IZU_K4"
-msgid "Get by on trips: order, ask the way, small talk"
-msgstr "여행지에서 주문하기, 길 묻기, 가벼운 대화 나누기"
-
-#. A reason to learn a language: to travel.
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "z1QN2q"
-msgid "Travel"
-msgstr "여행"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "GcOu5Q"
-msgid "Everyday conversations, at home or abroad"
-msgstr "국내에서나 해외에서나 나누는 일상 대화"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "pY3V77"
-msgid "Talk with people"
-msgstr "사람들과 대화하기"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "bd1s9H"
-msgid "Meetings, interviews and classes"
-msgstr "회의, 면접, 수업"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "fI9mky"
-msgid "Talk about almost anything with ease"
-msgstr "거의 모든 주제로 편하게 대화하기"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "3RtBi8"
-msgid "IELTS, DELE, CELI and others"
-msgstr "토익, DELE, CELI 등"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "sY1qPu"
-msgid "Pass a certificate"
-msgstr "어학시험 합격하기"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "RW_ehZ"
-msgid "In your own words. Aims for {level}"
-msgstr "직접 설명하기. 목표 수준: {level}"
 
 #: src/onboarding/steps/reason-step.tsx
 msgctxt "PtLljQ"

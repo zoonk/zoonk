@@ -5272,23 +5272,24 @@ msgid "Everyday conversations"
 msgstr "Everyday conversations"
 
 #: src/language-aim/use-aim-words.ts
-#: src/onboarding/steps/reason-step.tsx
+#: src/language-aim/use-reason-copy.ts
 msgctxt "QcdeJ8"
 msgid "Work or study in it"
 msgstr "Work or study in it"
 
 #: src/language-aim/use-aim-words.ts
-#: src/onboarding/steps/reason-step.tsx
+#: src/language-aim/use-reason-copy.ts
 msgctxt "uLO8Ma"
 msgid "Speak it fluently"
 msgstr "Speak it fluently"
 
-#. {month} is a month and year, like "Nov 2027".
+#. Under a language level to aim for: the hours of study still needed to reach it, then when. {month} is a month and year, like "Nov 2027".
 #: src/language-aim/use-aim-words.ts
 msgctxt "nxt5u1"
 msgid "About {hours} h more · around {month}"
 msgstr "About {hours} h more · around {month}"
 
+#. Under a language level to aim for: the hours of study still needed to reach it.
 #: src/language-aim/use-aim-words.ts
 msgctxt "PSVY23"
 msgid "About {hours} h more"
@@ -5304,6 +5305,58 @@ msgstr "About {hours} h of study"
 msgctxt "mI_0zG"
 msgid "Your aim"
 msgstr "Your aim"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "IZU_K4"
+msgid "Get by on trips: order, ask the way, small talk"
+msgstr "Get by on trips: order, ask the way, small talk"
+
+#. A reason to learn a language: to travel.
+#: src/language-aim/use-reason-copy.ts
+msgctxt "z1QN2q"
+msgid "Travel"
+msgstr "Travel"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "GcOu5Q"
+msgid "Everyday conversations, at home or abroad"
+msgstr "Everyday conversations, at home or abroad"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "pY3V77"
+msgid "Talk with people"
+msgstr "Talk with people"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "bd1s9H"
+msgid "Meetings, interviews and classes"
+msgstr "Meetings, interviews and classes"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "fI9mky"
+msgid "Talk about almost anything with ease"
+msgstr "Talk about almost anything with ease"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "3RtBi8"
+msgid "IELTS, DELE, CELI and others"
+msgstr "IELTS, DELE, CELI and others"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "sY1qPu"
+msgid "Pass a certificate"
+msgstr "Pass a certificate"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "RW_ehZ"
+msgid "In your own words. Aims for {level}"
+msgstr "In your own words. Aims for {level}"
+
+#: src/language-aim/use-reason-copy.ts
+#: src/onboarding/steps/question-steps.tsx
+msgctxt "qm_eL5"
+msgid "Something else"
+msgstr "Something else"
 
 #: src/language/_utils/use-skill-name.ts
 #: src/language/unit/unit-mistakes.tsx
@@ -10099,12 +10152,6 @@ msgid "Tell us later, in your own words"
 msgstr "Tell us later, in your own words"
 
 #: src/onboarding/steps/question-steps.tsx
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "qm_eL5"
-msgid "Something else"
-msgstr "Something else"
-
-#: src/onboarding/steps/question-steps.tsx
 msgctxt "3ixkTn"
 msgid "It sets how deep your course goes, and so how long it is."
 msgstr "It sets how deep your course goes, and so how long it is."
@@ -10188,52 +10235,6 @@ msgstr "A couple of details make your plan fit better."
 msgctxt "VW5079"
 msgid "{hours} h"
 msgstr "{hours} h"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "IZU_K4"
-msgid "Get by on trips: order, ask the way, small talk"
-msgstr "Get by on trips: order, ask the way, small talk"
-
-#. A reason to learn a language: to travel.
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "z1QN2q"
-msgid "Travel"
-msgstr "Travel"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "GcOu5Q"
-msgid "Everyday conversations, at home or abroad"
-msgstr "Everyday conversations, at home or abroad"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "pY3V77"
-msgid "Talk with people"
-msgstr "Talk with people"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "bd1s9H"
-msgid "Meetings, interviews and classes"
-msgstr "Meetings, interviews and classes"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "fI9mky"
-msgid "Talk about almost anything with ease"
-msgstr "Talk about almost anything with ease"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "3RtBi8"
-msgid "IELTS, DELE, CELI and others"
-msgstr "IELTS, DELE, CELI and others"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "sY1qPu"
-msgid "Pass a certificate"
-msgstr "Pass a certificate"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "RW_ehZ"
-msgid "In your own words. Aims for {level}"
-msgstr "In your own words. Aims for {level}"
 
 #: src/onboarding/steps/reason-step.tsx
 msgctxt "PtLljQ"

@@ -59,11 +59,12 @@ export function ScheduleAim({
 
   return (
     <div className="flex items-center gap-3 border-y py-3">
-      <span className="text-muted-foreground shrink-0 text-[0.8125rem]">{words.title}</span>
-
-      <span className="min-w-0 flex-1 text-[0.9375rem] font-medium text-pretty">
-        <AimName aim={aim} />
-      </span>
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <span className="text-muted-foreground text-[0.8125rem]">{words.title}</span>
+        <span className="text-[0.9375rem] font-medium text-pretty">
+          <AimName aim={aim} />
+        </span>
+      </div>
 
       <AimPicker
         description={minutes === null ? null : fromLevel({ level, minutes })}

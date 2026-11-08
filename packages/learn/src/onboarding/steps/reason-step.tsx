@@ -4,6 +4,7 @@ import { type LanguageReason, type LanguageReasonView } from "@zoonk/core/langua
 import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/contract";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState } from "react";
+import { useReasonCopy } from "../../language-aim/use-reason-copy";
 import { type Choice, ChoiceList } from "../choice-list";
 import { StepForm } from "./step-form";
 import { TextField } from "./text-field";
@@ -42,44 +43,6 @@ function ReasonSize({ view }: { view: LanguageReasonView }) {
       )}
     </span>
   );
-}
-
-function useReasonCopy() {
-  const t = useExtracted();
-
-  return (view: LanguageReasonView): Pick<Choice<LanguageReason>, "description" | "label"> => {
-    switch (view.reason) {
-      case "travel":
-        return {
-          description: t("Get by on trips: order, ask the way, small talk"),
-          label: t({ description: "A reason to learn a language: to travel.", message: "Travel" }),
-        };
-      case "talk":
-        return {
-          description: t("Everyday conversations, at home or abroad"),
-          label: t("Talk with people"),
-        };
-      case "work":
-        return {
-          description: t("Meetings, interviews and classes"),
-          label: t("Work or study in it"),
-        };
-      case "fluent":
-        return {
-          description: t("Talk about almost anything with ease"),
-          label: t("Speak it fluently"),
-        };
-      case "certificate":
-        return { description: t("IELTS, DELE, CELI and others"), label: t("Pass a certificate") };
-      case "other":
-        return {
-          description: t("In your own words. Aims for {level}", { level: view.aim ?? "" }),
-          label: t("Something else"),
-        };
-      default:
-        return view.reason satisfies never;
-    }
-  };
 }
 
 /** The field sits inside the reasons' radio group, whose arrow keys would move off it. */

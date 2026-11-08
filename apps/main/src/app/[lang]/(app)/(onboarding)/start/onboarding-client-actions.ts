@@ -35,6 +35,7 @@ import {
   startOverAction,
   stopPlacementMockAction,
 } from "./onboarding-actions";
+import { changeOnboardingAimAction } from "./onboarding-aim-actions";
 import { createGoalsFromPlanLinkAction } from "./plan-link-actions";
 import { WEB_UNDERSTANDING_ACTIONS } from "./understanding-client-actions";
 
@@ -61,6 +62,7 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   answerPlacement: (input) => answerPlacementAction({ ...input, timeZone: getLocalTimeZone() }),
   askMaterial: askMaterialQuestion,
   attach: { file: attachGoalFile, link: attachGoalLink, text: attachGoalText },
+  changeAim: ({ aim, goalId }) => changeOnboardingAimAction(goalId, aim),
   createGoals: (input) => createAsGuest(() => createOnboardingGoalsAction(input)),
   findTimeToCover: findGoalTimeToCover,
   finishPlacement: (input) => finishPlacementAction({ ...input, timeZone: getLocalTimeZone() }),

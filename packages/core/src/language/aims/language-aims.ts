@@ -48,6 +48,10 @@ const OWN_LEVEL_HOURS: Readonly<Record<string, number>> = {
   none: 0,
 };
 
+export function isLanguageReason(value: unknown): value is LanguageReason {
+  return LANGUAGE_REASONS.some((reason) => reason === value);
+}
+
 export function getReasonAim(reason: LanguageReason): LanguageAim | null {
   return REASON_AIMS[reason];
 }

@@ -5272,27 +5272,28 @@ msgid "Everyday conversations"
 msgstr "Gespräche im Alltag"
 
 #: src/language-aim/use-aim-words.ts
-#: src/onboarding/steps/reason-step.tsx
+#: src/language-aim/use-reason-copy.ts
 msgctxt "QcdeJ8"
 msgid "Work or study in it"
 msgstr "Im Beruf oder Studium nutzen"
 
 #: src/language-aim/use-aim-words.ts
-#: src/onboarding/steps/reason-step.tsx
+#: src/language-aim/use-reason-copy.ts
 msgctxt "uLO8Ma"
 msgid "Speak it fluently"
 msgstr "Fließend sprechen"
 
-#. {month} is a month and year, like "Nov 2027".
+#. Under a language level to aim for: the hours of study still needed to reach it, then when. {month} is a month and year, like "Nov 2027".
 #: src/language-aim/use-aim-words.ts
 msgctxt "nxt5u1"
 msgid "About {hours} h more · around {month}"
-msgstr "Noch etwa {hours} h · etwa {month}"
+msgstr "Etwa {hours} Std. mehr · voraussichtlich {month}"
 
+#. Under a language level to aim for: the hours of study still needed to reach it.
 #: src/language-aim/use-aim-words.ts
 msgctxt "PSVY23"
 msgid "About {hours} h more"
-msgstr "Noch etwa {hours} h"
+msgstr "Etwa {hours} Std. mehr"
 
 #: src/language-aim/use-aim-words.ts
 msgctxt "2B8IBO"
@@ -5304,6 +5305,58 @@ msgstr "Etwa {hours} h Lernzeit"
 msgctxt "mI_0zG"
 msgid "Your aim"
 msgstr "Dein angestrebtes Level"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "IZU_K4"
+msgid "Get by on trips: order, ask the way, small talk"
+msgstr "Auf Reisen zurechtkommen: bestellen, nach dem Weg fragen, sich unterhalten"
+
+#. A reason to learn a language: to travel.
+#: src/language-aim/use-reason-copy.ts
+msgctxt "z1QN2q"
+msgid "Travel"
+msgstr "Reisen"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "GcOu5Q"
+msgid "Everyday conversations, at home or abroad"
+msgstr "Gespräche im Alltag, zu Hause oder im Ausland"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "pY3V77"
+msgid "Talk with people"
+msgstr "Mit anderen sprechen"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "bd1s9H"
+msgid "Meetings, interviews and classes"
+msgstr "Besprechungen, Vorstellungsgespräche und Unterricht"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "fI9mky"
+msgid "Talk about almost anything with ease"
+msgstr "Mühelos über fast alles sprechen"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "3RtBi8"
+msgid "IELTS, DELE, CELI and others"
+msgstr "IELTS, DELE, CELI und andere"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "sY1qPu"
+msgid "Pass a certificate"
+msgstr "Zertifikatsprüfung bestehen"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "RW_ehZ"
+msgid "In your own words. Aims for {level}"
+msgstr "In deinen eigenen Worten. Ziel: {level}"
+
+#: src/language-aim/use-reason-copy.ts
+#: src/onboarding/steps/question-steps.tsx
+msgctxt "qm_eL5"
+msgid "Something else"
+msgstr "Etwas anderes"
 
 #: src/language/_utils/use-skill-name.ts
 #: src/language/unit/unit-mistakes.tsx
@@ -10099,12 +10152,6 @@ msgid "Tell us later, in your own words"
 msgstr "Erzähl es uns später in deinen eigenen Worten"
 
 #: src/onboarding/steps/question-steps.tsx
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "qm_eL5"
-msgid "Something else"
-msgstr "Etwas anderes"
-
-#: src/onboarding/steps/question-steps.tsx
 msgctxt "3ixkTn"
 msgid "It sets how deep your course goes, and so how long it is."
 msgstr "Das bestimmt, wie tief dein Kurs ins Thema geht, und damit seine Dauer."
@@ -10188,52 +10235,6 @@ msgstr "Ein paar Details helfen, deinen Plan besser auf dich abzustimmen."
 msgctxt "VW5079"
 msgid "{hours} h"
 msgstr "{hours} h"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "IZU_K4"
-msgid "Get by on trips: order, ask the way, small talk"
-msgstr "Auf Reisen zurechtkommen: bestellen, nach dem Weg fragen, sich unterhalten"
-
-#. A reason to learn a language: to travel.
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "z1QN2q"
-msgid "Travel"
-msgstr "Reisen"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "GcOu5Q"
-msgid "Everyday conversations, at home or abroad"
-msgstr "Gespräche im Alltag, zu Hause oder im Ausland"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "pY3V77"
-msgid "Talk with people"
-msgstr "Mit anderen sprechen"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "bd1s9H"
-msgid "Meetings, interviews and classes"
-msgstr "Besprechungen, Vorstellungsgespräche und Unterricht"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "fI9mky"
-msgid "Talk about almost anything with ease"
-msgstr "Mühelos über fast alles sprechen"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "3RtBi8"
-msgid "IELTS, DELE, CELI and others"
-msgstr "IELTS, DELE, CELI und andere"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "sY1qPu"
-msgid "Pass a certificate"
-msgstr "Zertifikatsprüfung bestehen"
-
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "RW_ehZ"
-msgid "In your own words. Aims for {level}"
-msgstr "In deinen eigenen Worten. Ziel: {level}"
 
 #: src/onboarding/steps/reason-step.tsx
 msgctxt "PtLljQ"

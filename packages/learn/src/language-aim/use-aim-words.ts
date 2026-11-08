@@ -49,11 +49,17 @@ export function useAimWords() {
     left: ({ endDate, hours }: { endDate: string | null; hours: number }) =>
       endDate
         ? t({
-            description: '{month} is a month and year, like "Nov 2027".',
+            description:
+              'Under a language level to aim for: the hours of study still needed to reach it, then when. {month} is a month and year, like "Nov 2027".',
             message: "About {hours} h more · around {month}",
             values: { hours: format.number(hours), month: formatDate(endDate, "month") },
           })
-        : t("About {hours} h more", { hours: format.number(hours) }),
+        : t({
+            description:
+              "Under a language level to aim for: the hours of study still needed to reach it.",
+            message: "About {hours} h more",
+            values: { hours: format.number(hours) },
+          }),
     study: (hours: number) => t("About {hours} h of study", { hours: format.number(hours) }),
     title: t({
       description:

@@ -2,7 +2,11 @@
 
 import { type TargetCutoff } from "@zoonk/core/exams/cutoffs/contract";
 import { type GoalDraft } from "@zoonk/core/goals/contract";
-import { type LanguageAimChoice, type LanguageAimView } from "@zoonk/core/language/aims";
+import {
+  type LanguageAimChoice,
+  type LanguageAimView,
+  isLanguageReason,
+} from "@zoonk/core/language/aims";
 import {
   type OnboardingExamDate,
   type UnderstoodSchedule,
@@ -13,6 +17,7 @@ import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration, useFormatTimeOfDay } from "../../_utils/time-format";
 import { useCutoffWords } from "../../exam/target-cutoff";
 import { useAimWords } from "../../language-aim/use-aim-words";
+import { useReasonCopy } from "../../language-aim/use-reason-copy";
 import { isSaidInTitle } from "./said-in-title";
 import { useDateRow } from "./understood-date-row";
 
@@ -137,6 +142,7 @@ function useTargetRow() {
 export function useDetailRows() {
   const t = useExtracted();
   const cutoffRow = useCutoffRow();
+  const reasonCopy = useReasonCopy();
   const targetRow = useTargetRow();
 
   return (
@@ -185,7 +191,7 @@ export function useDetailRows() {
         editable: { key: "reason", kind: "text" },
         id: "reason",
         label: t("Reason"),
-        value: reason ?? "",
+        value: isLanguageReason(reason) ? reasonCopy({ aim: null, reason }).label : (reason ?? ""),
       },
       Boolean(role) && {
         editable: { key: "role", kind: "text" },
