@@ -10,6 +10,7 @@ import {
 } from "../../provenance/combine-task-provenance";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { formatLocalContext } from "../_utils/language-context";
 import { getLanguagePromptContext } from "../_utils/prompt-language";
 import systemPrompt from "./level-test-bank.prompt.md";
 
@@ -206,15 +207,18 @@ function formatSituations(level: TestLevel): string {
 function buildLevelPrompt({
   languages,
   level,
+  targetLanguage,
 }: {
   languages: ReturnType<typeof getLanguagePromptContext>;
   level: TestLevel;
+  targetLanguage: string;
 }): string {
   const words = LEVEL_TEST_PASSAGE_WORDS[level];
 
   return `
 TARGET_LANGUAGE: ${languages.targetLanguageName}
 LEARNER_LANGUAGE: ${languages.userLanguageName}
+${formatLocalContext(targetLanguage, { register: false })}
 LEVEL: ${level}
 READING_WORDS: ${formatWords(words.reading)}
 LISTENING_WORDS: ${formatWords(words.listening)}
@@ -234,7 +238,7 @@ async function writeLevel({
   params: GenerateLevelTestBankParams;
 }) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
-  const userPrompt = buildLevelPrompt({ languages, level });
+  const userPrompt = buildLevelPrompt({ languages, level, targetLanguage: params.targetLanguage });
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
