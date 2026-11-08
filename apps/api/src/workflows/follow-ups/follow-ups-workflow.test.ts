@@ -9,6 +9,7 @@ import { sleep } from "workflow";
 import { HookConflictError } from "workflow/errors";
 import { getStartMock } from "../_test-utils/start-mock";
 import { placementItemsWorkflow } from "../goals/placement-items-workflow";
+import { rebuildGoalCurriculumWorkflow } from "../goals/rebuild-goal-curriculum-workflow";
 import { followUpsWorkflow } from "./follow-ups-workflow";
 
 // Force a competing plan write after core's quick retry without timing real database writers.
@@ -24,6 +25,31 @@ const CAUSE = {
 };
 
 describe(followUpsWorkflow, () => {
+  it("starts one rebuild for a coalesced answer revision", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+
+    const owed = await prisma.followUp.create({
+      data: {
+        input: { goalId: goal.id },
+        key: goal.id,
+        kind: "rebuildGoalCurriculum",
+        revision: 2,
+        userId: user.id,
+      },
+    });
+
+    await followUpsWorkflow({ userId: user.id });
+
+    expect(getStartMock()).toHaveBeenCalledExactlyOnceWith(
+      rebuildGoalCurriculumWorkflow,
+      [{ goalId: goal.id }],
+      { experimental_hook: { token: `goal-rebuild:${goal.id}:${owed.id}:2` } },
+    );
+
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
   it("starts fresh placement preparation for an answer saved after an earlier run began", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });

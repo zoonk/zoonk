@@ -162,6 +162,34 @@ describe("a learn goal's opening", () => {
     vi.restoreAllMocks();
   });
 
+  it("keeps the saved opening as FIRST_SKILL when an answer rebuilds the curriculum", async () => {
+    const { goal } = await newGoal();
+    await goalContentWorkflow({ goalId: goal.id });
+    const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    const firstSkill = vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].firstSkill;
+    const starts = openingLessonStarts().length;
+
+    await prisma.goal.update({
+      data: { details: { answered: ["purpose", "level"], level: "basic", purpose: "deep" } },
+      where: { id: goal.id },
+    });
+
+    await goalContentWorkflow({ goalId: goal.id, rebuild: true });
+
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls.at(-1)?.[0]).toMatchObject({
+      firstSkill,
+      purpose: "deep",
+    });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      openingLessonId: saved.openingLessonId,
+      openingSkill: saved.openingSkill,
+    });
+
+    expect(generateGoalOpening).toHaveBeenCalledOnce();
+    expect(openingLessonStarts()).toHaveLength(starts);
+  });
+
   it("writes the first lesson through the learner's own start, fast, and plans from it", async () => {
     const { goal, user } = await newGoal();
     const progress = vi.spyOn(progressSteps, "goalProgressStep");

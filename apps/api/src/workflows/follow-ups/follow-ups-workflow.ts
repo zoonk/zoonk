@@ -7,6 +7,7 @@ import { repeatUntil } from "../_shared/repeat-until";
 import { startOnce } from "../_shared/run-token";
 import { callContentWorkflow } from "../calls/call-content-workflow";
 import { placementItemsWorkflow } from "../goals/placement-items-workflow";
+import { rebuildGoalCurriculumWorkflow } from "../goals/rebuild-goal-curriculum-workflow";
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
@@ -30,6 +31,7 @@ export function getFollowUpsToken(userId: string): string {
 }
 
 /** `start()` in a workflow is a step, so a replay never starts the same run twice. */
+// oxlint-disable-next-line complexity -- Each follow-up kind starts its own workflow.
 async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
   const { userId } = followUp;
 
@@ -43,6 +45,11 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
     case "prepareGoalLessons":
       await start(sessionPreparationWorkflow, [{ ...followUp.input, userId }]);
       return;
+    case "rebuildGoalCurriculum": {
+      const ask = `goal-rebuild:${followUp.input.goalId}:${followUp.id}:${followUp.revision}`;
+      await startOnce(rebuildGoalCurriculumWorkflow, [followUp.input], ask);
+      return;
+    }
     case "preparePlacementItems": {
       const ask = `placement-items:${followUp.input.goalId}:${followUp.id}:${followUp.revision}`;
 

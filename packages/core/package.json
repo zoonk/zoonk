@@ -289,6 +289,7 @@
     "./library/curriculum/exam-skill-graph-reset": "./src/library/curriculum/exam-skill-graph-reset.ts",
     "./library/curriculum/find-or-create-course": "./src/library/curriculum/find-or-create-goal-course.ts",
     "./library/curriculum/goal-course-bands": "./src/library/curriculum/goal-course-bands.ts",
+    "./library/curriculum/begin-goal-curriculum": "./src/library/curriculum/begin-goal-curriculum.ts",
     "./library/curriculum/goal-curriculum-inputs": "./src/library/curriculum/goal-curriculum-inputs.ts",
     "./library/curriculum/goal-opening": "./src/library/curriculum/goal-opening.ts",
     "./library/curriculum/goal-plan-graph": "./src/library/curriculum/goal-plan-graph.ts",

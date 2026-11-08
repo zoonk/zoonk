@@ -5,7 +5,7 @@ import { type GoalKind } from "@zoonk/db";
 import { sleep } from "workflow";
 import { isRunActiveStep } from "../_shared/is-run-active-step";
 import { repeatUntil } from "../_shared/repeat-until";
-import { loadGoalCurriculumStep } from "./steps/goal-curriculum-steps";
+import { beginGoalCurriculumStep, loadGoalCurriculumStep } from "./steps/goal-curriculum-steps";
 import { goalProgressStep } from "./steps/goal-progress-step";
 
 const RESEARCH_POLL = "3s";
@@ -50,8 +50,8 @@ function waitForAnswers({
   scope: CurriculumScope;
 }): Promise<GoalCurriculumInputs | null> {
   return repeatUntil({
-    done: (inputs) => !inputs || !isAwaitingGraphAnswers({ inputs, scope }) || inputs.hasPlanGraph,
-    run: () => loadGoalCurriculumStep(goalId),
+    done: (inputs) => !inputs || !isAwaitingGraphAnswers({ inputs, scope }),
+    run: () => beginGoalCurriculumStep({ goalId, scope }),
     times: MAX_ANSWERS_POLLS,
     wait: () => sleep(ANSWERS_POLL),
   });
@@ -143,9 +143,7 @@ export async function waitForGraphInputs({
   researchId?: string | null;
   scope: CurriculumScope;
 }): Promise<GoalCurriculumInputs | null> {
-  const inputs = isAwaitingGraphAnswers({ inputs: initial, scope })
-    ? await waitForAnswers({ goalId: initial.goal.id, scope })
-    : initial;
+  const inputs = await waitForAnswers({ goalId: initial.goal.id, scope });
 
   if (!inputs || !researchId || inputs.hasPlanGraph) {
     return inputs;

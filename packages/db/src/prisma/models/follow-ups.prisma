@@ -3,6 +3,7 @@ enum FollowUpKind {
   prepareSession        @map("prepare_session")
   prepareGoalLessons    @map("prepare_goal_lessons")
   preparePlacementItems @map("prepare_placement_items")
+  rebuildGoalCurriculum @map("rebuild_goal_curriculum")
   writeLesson           @map("write_lesson")
   classifyMistakeCause  @map("classify_mistake_cause")
   findMistakePattern    @map("find_mistake_pattern")

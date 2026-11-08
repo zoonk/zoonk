@@ -8,14 +8,14 @@ import { type OnboardingQuestion } from "../../view-models/onboarding/onboarding
 import { type CurriculumScope } from "./curriculum-scope";
 import { type GoalCurriculumInputs } from "./goal-curriculum-inputs";
 
-const PRIVATE_GRAPH_QUESTIONS = new Set<OnboardingQuestion>([
+const PRIVATE_GRAPH_QUESTIONS: OnboardingQuestion[] = [
   "followUps",
   "level",
   "purpose",
   "role",
   "reason",
   "target",
-]);
+];
 
 type GraphPrompt = Omit<SkillGraphParams, "analytics" | "model" | "reasoning" | "useFallback">;
 
@@ -103,28 +103,32 @@ export function isSharedExamGraph({
   );
 }
 
-export function isAwaitingGraphAnswers({
+export function getGraphQuestions({
   inputs,
   scope,
 }: {
   inputs: GoalCurriculumInputs;
   scope: Pick<CurriculumScope, "ownerId">;
-}): boolean {
+}): OnboardingQuestion[] {
   if (inputs.hasMaterial || scope.ownerId) {
-    return inputs.unansweredQuestions.some(
-      (question) =>
-        PRIVATE_GRAPH_QUESTIONS.has(question) ||
-        (question === "targetDate" && inputs.goal.kind === "exam" && inputs.hasMaterial),
-    );
+    return inputs.goal.kind === "exam" && inputs.hasMaterial
+      ? [...PRIVATE_GRAPH_QUESTIONS, "targetDate"]
+      : PRIVATE_GRAPH_QUESTIONS;
   }
 
   if (inputs.goal.kind === "language" || isSharedExamGraph({ inputs, scope })) {
-    return false;
+    return [];
   }
 
-  return inputs.unansweredQuestions.some(
-    (question) => question === "purpose" || question === "level",
-  );
+  return ["purpose", "level"];
+}
+
+export function isAwaitingGraphAnswers(input: {
+  inputs: GoalCurriculumInputs;
+  scope: Pick<CurriculumScope, "ownerId">;
+}): boolean {
+  const questions = getGraphQuestions(input);
+  return input.inputs.unansweredQuestions.some((question) => questions.includes(question));
 }
 
 function toSharedGoal({ generalGoal }: Pick<CurriculumScope, "generalGoal">): string {
