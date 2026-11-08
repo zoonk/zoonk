@@ -6,7 +6,10 @@ import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
 import { startPictureChecks } from "../images/start-picture-checks";
-import { sentenceOrdersWorkflow } from "../language/sentence-orders-workflow";
+import {
+  getSentenceOrdersToken,
+  sentenceOrdersWorkflow,
+} from "../language/sentence-orders-workflow";
 import { updateCoursesBehind } from "../products/product-releases";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
@@ -81,9 +84,15 @@ async function checkOwedPictures(): Promise<number> {
 async function writeOwedSentenceOrders(): Promise<number> {
   const lessonIds = await listOwedSentenceOrdersStep();
 
-  if (lessonIds.length > 0) {
-    await start(sentenceOrdersWorkflow, [{ lessonIds, wait: "later" }]);
-  }
+  await Promise.all(
+    lessonIds.map((lessonId) =>
+      startOnce(
+        sentenceOrdersWorkflow,
+        [{ lessonId, wait: "later" }],
+        getSentenceOrdersToken(lessonId),
+      ),
+    ),
+  );
 
   return lessonIds.length;
 }

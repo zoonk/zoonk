@@ -244,8 +244,9 @@ describe(dailySweepsWorkflow, () => {
     expect(result.pictureChecks).toBe(started.length);
   });
 
-  it("starts writing the word orders lessons written before them still owe", async () => {
-    const [owed, written, failing] = await Promise.all([
+  it("starts a separate token-owned run for each lesson still owing word orders", async () => {
+    const [owed, alsoOwed, written, failing] = await Promise.all([
+      languageLessonFixture(),
       languageLessonFixture(),
       languageLessonFixture(),
       languageLessonFixture(),
@@ -269,14 +270,26 @@ describe(dailySweepsWorkflow, () => {
     const result = await dailySweepsWorkflow(scheduledRun());
     assert(result.status === "swept");
 
-    const started = getStartMock()
-      .mock.calls.filter(([workflow]) => workflow === sentenceOrdersWorkflow)
-      .flatMap(([, args]) => (args as [{ lessonIds: string[] }])[0].lessonIds);
+    const runs = getStartMock().mock.calls.filter(
+      ([workflow]) => workflow === sentenceOrdersWorkflow,
+    );
+
+    const started = runs.map(([, args]) => (args as [{ lessonId: string }])[0].lessonId);
 
     expect(started).toContain(owed.lesson.id);
+    expect(started).toContain(alsoOwed.lesson.id);
     expect(started).not.toContain(written.lesson.id);
     expect(started).not.toContain(failing.lesson.id);
     expect(result.sentenceOrders).toBe(started.length);
+
+    for (const [, args, options] of runs) {
+      const [{ lessonId }] = args as [{ lessonId: string }];
+      expect(args).toStrictEqual([{ lessonId, wait: "later" }]);
+
+      expect(options).toStrictEqual({
+        experimental_hook: { token: `sentence-orders:${lessonId}` },
+      });
+    }
   });
 
   it("prioritizes the lessons learners played most recently over older debt and unplayed lessons", async () => {
@@ -315,7 +328,7 @@ describe(dailySweepsWorkflow, () => {
 
     const started = getStartMock()
       .mock.calls.filter(([workflow]) => workflow === sentenceOrdersWorkflow)
-      .flatMap(([, args]) => (args as [{ lessonIds: string[] }])[0].lessonIds)
+      .map(([, args]) => (args as [{ lessonId: string }])[0].lessonId)
       .filter((id) => [recent.lesson.id, older.lesson.id, unplayed.lesson.id].includes(id));
 
     expect(started).toStrictEqual([recent.lesson.id, older.lesson.id, unplayed.lesson.id]);
@@ -335,7 +348,7 @@ describe(dailySweepsWorkflow, () => {
 
     const started = getStartMock()
       .mock.calls.filter(([workflow]) => workflow === sentenceOrdersWorkflow)
-      .flatMap(([, args]) => (args as [{ lessonIds: string[] }])[0].lessonIds);
+      .map(([, args]) => (args as [{ lessonId: string }])[0].lessonId);
 
     expect(started.filter((id) => id === first.lesson.id)).toStrictEqual([first.lesson.id]);
     expect(started).not.toContain(second.lesson.id);

@@ -447,7 +447,7 @@ describe(lessonContentWorkflow, () => {
 
     expect(start).toHaveBeenCalledWith(
       sentenceOrdersWorkflow,
-      [{ analytics: undefined, lessonIds: [lesson.id], wait: "soon" }],
+      [{ analytics: undefined, lessonId: lesson.id, wait: "soon" }],
       { experimental_hook: { token: getSentenceOrdersToken(lesson.id) } },
     );
   });

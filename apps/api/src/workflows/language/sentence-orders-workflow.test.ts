@@ -3,7 +3,6 @@ import { generateLanguageSentenceOrders } from "@zoonk/ai/tasks/language/languag
 import { prisma } from "@zoonk/db";
 import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { describe, expect, it, vi } from "vitest";
-import { mockHookConflict } from "../../../mocks/workflow";
 import { taskResult } from "../_test-utils/recorded-outputs";
 import { sentenceOrdersWorkflow } from "./sentence-orders-workflow";
 
@@ -68,7 +67,7 @@ function readOrders({ lessonId, sentenceId }: { lessonId: string; sentenceId: st
 }
 
 function writeOrdersOf(lessonId: string) {
-  return sentenceOrdersWorkflow({ lessonIds: [lessonId], wait: "later" });
+  return sentenceOrdersWorkflow({ lessonId, wait: "later" });
 }
 
 describe(sentenceOrdersWorkflow, () => {
@@ -77,11 +76,7 @@ describe(sentenceOrdersWorkflow, () => {
     mockGenerated(RENT_CANDIDATES);
     mockReviewed(RENT_REVIEW);
 
-    await expect(writeOrdersOf(owed.lessonId)).resolves.toStrictEqual({
-      changed: 0,
-      skipped: 0,
-      written: 1,
-    });
+    await expect(writeOrdersOf(owed.lessonId)).resolves.toBe("written");
 
     const stored = await readOrders(owed);
 
@@ -115,18 +110,14 @@ describe(sentenceOrdersWorkflow, () => {
       }),
     );
 
-    await expect(writeOrdersOf(owed.lessonId)).resolves.toStrictEqual({
-      changed: 0,
-      skipped: 1,
-      written: 0,
-    });
+    await expect(writeOrdersOf(owed.lessonId)).resolves.toBe("skipped");
   });
 
   it("saves no orders without a review when nothing generated can be built from the tiles", async () => {
     const owed = await owedLessonFixture();
     mockGenerated([{ otherOrders: ["How much is the deposit?"], otherTranslationOrders: [] }]);
 
-    await expect(writeOrdersOf(owed.lessonId)).resolves.toMatchObject({ written: 1 });
+    await expect(writeOrdersOf(owed.lessonId)).resolves.toBe("written");
 
     await expect(readOrders(owed)).resolves.toMatchObject({
       ordersOwedAt: null,
@@ -150,11 +141,7 @@ describe(sentenceOrdersWorkflow, () => {
       return taskResult({ sentences: RENT_REVIEW });
     });
 
-    await expect(writeOrdersOf(owed.lessonId)).resolves.toStrictEqual({
-      changed: 1,
-      skipped: 0,
-      written: 0,
-    });
+    await expect(writeOrdersOf(owed.lessonId)).resolves.toBe("changed");
 
     await expect(readOrders(owed)).resolves.toMatchObject({
       lesson: { updatedAt: owed.owedAt },
@@ -199,11 +186,7 @@ describe(sentenceOrdersWorkflow, () => {
     mockGenerated(generated);
     mockReviewed(reviewed);
 
-    await expect(writeOrdersOf(owed.lessonId)).resolves.toStrictEqual({
-      changed: 0,
-      skipped: 0,
-      written: 0,
-    });
+    await expect(writeOrdersOf(owed.lessonId)).rejects.toThrow();
 
     await expect(readOrders(owed)).resolves.toMatchObject({
       lesson: { updatedAt: owed.owedAt },
@@ -218,11 +201,11 @@ describe(sentenceOrdersWorkflow, () => {
     mockGenerated(RENT_CANDIDATES);
     vi.mocked(checkSentenceOrders).mockRejectedValue(new Error("Gateway unavailable"));
 
-    await writeOrdersOf(owed.lessonId);
+    await expect(writeOrdersOf(owed.lessonId)).rejects.toThrow("Gateway unavailable");
 
     mockReviewed(RENT_REVIEW);
 
-    await expect(writeOrdersOf(owed.lessonId)).resolves.toMatchObject({ written: 0 });
+    await expect(writeOrdersOf(owed.lessonId)).resolves.toBe("skipped");
 
     expect(generateLanguageSentenceOrders).toHaveBeenCalledTimes(2);
     expect(checkSentenceOrders).toHaveBeenCalledOnce();
@@ -231,18 +214,5 @@ describe(sentenceOrdersWorkflow, () => {
       lesson: { sentenceOrdersAttempts: MAX_ATTEMPTS },
       ordersOwedAt: owed.owedAt,
     });
-  });
-
-  it("writes nothing while another run holds the lesson", async () => {
-    const owed = await owedLessonFixture();
-    mockHookConflict({ returnValue: Promise.resolve(null), runId: "other-run" });
-
-    await expect(writeOrdersOf(owed.lessonId)).resolves.toStrictEqual({
-      changed: 0,
-      skipped: 1,
-      written: 0,
-    });
-
-    expect(generateLanguageSentenceOrders).not.toHaveBeenCalled();
   });
 });

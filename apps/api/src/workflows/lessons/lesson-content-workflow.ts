@@ -274,7 +274,7 @@ export async function lessonContentWorkflow(
   if (outcome.owesSentenceOrders) {
     await startOnce(
       sentenceOrdersWorkflow,
-      [{ analytics: input.analytics, lessonIds: [lessonId], wait: "soon" }],
+      [{ analytics: input.analytics, lessonId, wait: "soon" }],
       getSentenceOrdersToken(lessonId),
     );
   }
