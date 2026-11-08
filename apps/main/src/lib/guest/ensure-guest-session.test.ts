@@ -17,7 +17,7 @@ vi.mock("@/lib/learner/learner-store", () => ({ ensureLearnerSummary: vi.fn() })
 vi.mock("@zoonk/utils/logger", () => ({ logError: vi.fn() }));
 
 const NO_SESSION = { data: null, error: null };
-const GUEST = { data: { user: { id: "guest-1" } }, error: null };
+const GUEST = { data: { token: "guest-token", user: { id: "guest-1" } }, error: null };
 
 async function loadHelper() {
   vi.resetModules();
@@ -47,6 +47,19 @@ describe("ensureGuestSession", () => {
 
     expect(auth.signInAnonymously).toHaveBeenCalledOnce();
     expect(api.sendFromBrowser).not.toHaveBeenCalled();
+  });
+
+  it("sends the new guest's token with the next API calls, though a session read sent before it answers none", async () => {
+    auth.getSession.mockResolvedValue(NO_SESSION);
+    auth.signInAnonymously.mockResolvedValue(GUEST);
+    const ensureGuestSession = await loadHelper();
+    const { getWorkflowAuthHeaders } = await import("@/lib/workflow/auth-headers");
+
+    await expect(ensureGuestSession()).resolves.toMatchObject({ status: "ready" });
+
+    await expect(getWorkflowAuthHeaders()).resolves.toStrictEqual({
+      Authorization: "Bearer guest-token",
+    });
   });
 
   it("says no when the guest can't be made", async () => {

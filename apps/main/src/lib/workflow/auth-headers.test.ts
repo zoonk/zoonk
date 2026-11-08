@@ -54,41 +54,56 @@ describe("getWorkflowAuthHeaders", () => {
     expect(auth.getSession).toHaveBeenCalledTimes(4);
   });
 
-  it("shares a read in flight, so a guest's first write can't reuse an answer from before the guest", async () => {
-    const firstRead = Promise.withResolvers<SessionRead>();
-    auth.getSession.mockReturnValueOnce(firstRead.promise).mockResolvedValue(session("guest"));
-    const { getWorkflowAuthHeaders: getHeaders, readBrowserSession } = await loadHelpers();
+  it("sends a new guest's token at once, whatever session reads are in flight", async () => {
+    const beforeCheck = Promise.withResolvers<SessionRead>();
+    const duringSignIn = Promise.withResolvers<SessionRead>();
 
-    const pollHeaders = getHeaders();
-    const guestCheck = readBrowserSession();
-    await vi.waitFor(() => expect(auth.getSession).toHaveBeenCalledOnce());
-    firstRead.resolve({ data: null, error: null });
+    auth.getSession
+      .mockReturnValueOnce(beforeCheck.promise)
+      .mockReturnValueOnce(duringSignIn.promise);
+
+    const helpers = await loadHelpers();
+
+    const pollHeaders = helpers.getWorkflowAuthHeaders();
+    const guestCheck = helpers.readBrowserSession();
+    beforeCheck.resolve({ data: null, error: null });
 
     await expect(guestCheck).resolves.toStrictEqual({ data: null, error: null });
     await expect(pollHeaders).resolves.toStrictEqual({});
-    await expect(getHeaders()).resolves.toStrictEqual({ Authorization: "Bearer guest" });
+
+    const feedbackRead = helpers.readBrowserSession();
+    helpers.keepSessionToken("guest");
+
+    await expect(helpers.getWorkflowAuthHeaders()).resolves.toStrictEqual({
+      Authorization: "Bearer guest",
+    });
+
+    duringSignIn.resolve({ data: null, error: null });
+    await feedbackRead;
+
+    await expect(helpers.getWorkflowAuthHeaders()).resolves.toStrictEqual({
+      Authorization: "Bearer guest",
+    });
 
     expect(auth.getSession).toHaveBeenCalledTimes(2);
   });
 
-  it("sends the session the page read last, such as a guest's made after the old one ended", async () => {
+  it("follows the session a read finds, such as another tab's new guest, and keeps it when none is found", async () => {
     auth.getSession
       .mockResolvedValueOnce(session("ended"))
       .mockResolvedValueOnce({ data: null, error: { status: 429 } })
       .mockResolvedValueOnce({ data: null, error: null })
-      .mockResolvedValueOnce(session("guest"))
-      .mockResolvedValueOnce(session("guest-2"));
+      .mockResolvedValueOnce(session("guest"));
 
     const { getWorkflowAuthHeaders: getHeaders, readBrowserSession } = await loadHelpers();
 
     await expect(getHeaders()).resolves.toStrictEqual({ Authorization: "Bearer ended" });
     await readBrowserSession();
+    await readBrowserSession();
     await expect(getHeaders()).resolves.toStrictEqual({ Authorization: "Bearer ended" });
     await readBrowserSession();
     await expect(getHeaders()).resolves.toStrictEqual({ Authorization: "Bearer guest" });
-    await readBrowserSession();
-    await expect(getHeaders()).resolves.toStrictEqual({ Authorization: "Bearer guest-2" });
 
-    expect(auth.getSession).toHaveBeenCalledTimes(5);
+    expect(auth.getSession).toHaveBeenCalledTimes(4);
   });
 });

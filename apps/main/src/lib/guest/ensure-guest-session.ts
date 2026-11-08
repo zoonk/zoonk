@@ -1,6 +1,6 @@
 import { ensureLearnerSummary } from "@/lib/learner/learner-store";
 import { carryUsageDataChoiceToAccount } from "@/lib/usage-data/usage-data-choice";
-import { readBrowserSession } from "@/lib/workflow/auth-headers";
+import { keepSessionToken, readBrowserSession } from "@/lib/workflow/auth-headers";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 
@@ -35,6 +35,8 @@ async function startGuestSession(): Promise<GuestSession> {
     logError("[ensureGuestSession] Could not start a guest session:", error);
     return error?.code === BOT_CHECK_REFUSED ? { status: "blocked" } : FAILED;
   }
+
+  keepSessionToken(guest.token);
 
   // A visitor's choice goes with the guest before its first learning, so the server's events follow it.
   if (!(await carryUsageDataChoiceToAccount())) {
