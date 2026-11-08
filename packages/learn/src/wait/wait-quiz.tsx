@@ -2,19 +2,19 @@
 
 import { type WarmUpSurface } from "@zoonk/core/analytics/events";
 import { type WarmUpCard as Card, type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
-import { Button } from "@zoonk/ui/components/button";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
-import { useEnterKey, useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { ArrowRightIcon, SparklesIcon } from "lucide-react";
+import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { type KeyboardEvent, type Ref, useEffect, useId, useRef, useState } from "react";
+import { type KeyboardEvent, type RefObject, useEffect, useId, useRef, useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { type AnswerOptionResult } from "../_components/answer-tone";
-import { GuessHint } from "../_components/guess-hint";
+import { PageEyebrow } from "../_components/page";
 import { VerdictLabel } from "../_components/verdict-label";
 import { tabStorage } from "../_utils/device-storage";
 import { isFocusLost } from "../_utils/is-focus-lost";
 import { useLearnAnalytics } from "../learn-context";
+import { QUESTION_TEXT_CLASS } from "../questions/item-text";
 
 type Dealt = { pickedId: string | null; position: number };
 
@@ -26,9 +26,95 @@ function readPosition(deckId: string): number {
   return Number.isInteger(saved) && saved > 0 ? saved : 0;
 }
 
-/** The server can't know the tab's place, so the card shows once the page is in the browser. */
-function useStoredPosition(deckId: string): number | null {
-  return useIsMounted() ? readPosition(deckId) : null;
+export type WaitQuizState = {
+  card: Card;
+  hasNext: boolean;
+  next: () => void;
+  pick: (optionId: string) => void;
+  pickedId: string | null;
+};
+
+export type WaitQuizRefs = {
+  /** The bar's way to the next card, where focus goes after a guess when the bar shows it. */
+  nextRef: RefObject<HTMLButtonElement | null>;
+  questionRef: RefObject<HTMLHeadingElement | null>;
+};
+
+/**
+ * The card being played, kept by the wait screen so its other view and its bar act on the same one.
+ * Null while there's no card: no deck yet, or every card was guessed in this tab.
+ */
+export function useWaitQuiz({
+  deck,
+  onGuess,
+  refs,
+  surface,
+}: {
+  deck: WarmUpDeck | null;
+  onGuess: () => void;
+  refs: WaitQuizRefs;
+  surface: WarmUpSurface;
+}): WaitQuizState | null {
+  const { track } = useLearnAnalytics();
+  const moved = useRef(false);
+  // The server can't know the tab's place, so the card shows once the page is in the browser.
+  const mounted = useIsMounted();
+  const [dealt, setDealt] = useState<Dealt | null>(null);
+  const stored = deck && mounted ? { pickedId: null, position: readPosition(deck.id) } : null;
+  const shown = deck && (dealt ?? stored);
+  const card = shown ? deck.cards[shown.position] : undefined;
+  const cardCount = deck?.cards.length ?? 0;
+
+  useEffect(() => {
+    if (card) {
+      track({ name: "Warm-Up Shown", properties: { card_count: cardCount, surface } });
+    }
+  }, [card, cardCount, surface, track]);
+
+  // Focus follows the learner: to the way to the next card after a guess (the question when
+  // there's none), and to the new question after it.
+  useEffect(() => {
+    if (!moved.current) {
+      return;
+    }
+
+    moved.current = false;
+    (refs.nextRef.current ?? refs.questionRef.current)?.focus();
+  });
+
+  if (!deck || !shown || !card) {
+    return null;
+  }
+
+  const pick = (optionId: string) => {
+    const option = card.options.find((candidate) => candidate.id === optionId);
+
+    if (shown.pickedId !== null || !option) {
+      return;
+    }
+
+    moved.current = true;
+    setDealt({ pickedId: optionId, position: shown.position });
+    tabStorage.set(`${POSITION_KEY}${deck.id}`, String(shown.position + 1));
+    onGuess();
+
+    track({
+      name: "Warm-Up Answered",
+      properties: {
+        card_id: card.id,
+        correct: option.correct,
+        position: shown.position + 1,
+        surface,
+      },
+    });
+  };
+
+  const next = () => {
+    moved.current = true;
+    setDealt({ pickedId: null, position: shown.position + 1 });
+  };
+
+  return { card, hasNext: shown.position + 1 < cardCount, next, pick, pickedId: shown.pickedId };
 }
 
 /**
@@ -61,7 +147,7 @@ function getResult({
   return picked ? "guess" : null;
 }
 
-function WarmUpReveal({ card, pickedId }: { card: Card; pickedId: string }) {
+function QuizReveal({ card, pickedId }: { card: Card; pickedId: string }) {
   const right = card.options.some((option) => option.id === pickedId && option.correct);
 
   return (
@@ -72,124 +158,37 @@ function WarmUpReveal({ card, pickedId }: { card: Card; pickedId: string }) {
   );
 }
 
-function NextGuess({
-  enterKey,
-  hasNext,
-  onNext,
-  ref,
-}: {
-  enterKey: boolean;
-  hasNext: boolean;
-  onNext: () => void;
-  ref: Ref<HTMLButtonElement>;
-}) {
-  const t = useExtracted();
-
-  useEnterKey(onNext, { enabled: hasNext && enterKey });
-
-  if (!hasNext) {
-    return <p className="text-muted-foreground self-end text-sm">{t("That's all for now.")}</p>;
-  }
-
-  return (
-    <Button
-      className="hit-area relative self-end"
-      onClick={onNext}
-      ref={ref}
-      size="sm"
-      variant="outline"
-    >
-      {t("Next guess")}
-      <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
-    </Button>
-  );
-}
-
 /**
- * A quick guess while the learner waits. Once what they wait for is ready (`holding`), they can
- * still answer this card and read its reveal, but no new card is dealt.
+ * A guess while the learner waits, a side game apart from their course. Once what they wait for is
+ * ready (`holding`), they can still answer this card and read its reveal, but no new card is dealt.
  */
-export function WarmUpCard({
-  deck,
+export function WaitQuizCard({
   holding,
-  nextOnEnter = true,
-  onGuess,
-  surface,
+  questionRef,
+  quiz,
 }: {
-  deck: WarmUpDeck;
   holding: boolean;
-  /** False when Enter already runs another button on the screen. */
-  nextOnEnter?: boolean;
-  onGuess: () => void;
-  surface: WarmUpSurface;
+  questionRef: WaitQuizRefs["questionRef"];
+  quiz: WaitQuizState;
 }) {
   const t = useExtracted();
-  const { track } = useLearnAnalytics();
   const questionId = useId();
-  const questionRef = useRef<HTMLParagraphElement>(null);
-  const nextRef = useRef<HTMLButtonElement>(null);
-  const moved = useRef(false);
-  const stored = useStoredPosition(deck.id);
-  const [dealt, setDealt] = useState<Dealt | null>(null);
-  const shown = dealt ?? (stored === null ? null : { pickedId: null, position: stored });
-  const card = shown ? deck.cards[shown.position] : undefined;
-  const pickedId = shown?.pickedId ?? null;
+  const { card, pick, pickedId } = quiz;
   const answered = pickedId !== null;
-  const hasCard = card !== undefined;
 
-  useEffect(() => {
-    if (hasCard) {
-      track({ name: "Warm-Up Shown", properties: { card_count: deck.cards.length, surface } });
-    }
-  }, [deck.cards.length, hasCard, surface, track]);
-
-  const pick = (optionId: string) => {
-    const option = card?.options.find((candidate) => candidate.id === optionId);
-
-    if (!card || !shown || answered || !option) {
-      return;
-    }
-
-    moved.current = true;
-    setDealt({ pickedId: optionId, position: shown.position });
-    tabStorage.set(`${POSITION_KEY}${deck.id}`, String(shown.position + 1));
-    onGuess();
-
-    track({
-      name: "Warm-Up Answered",
-      properties: {
-        card_id: card.id,
-        correct: option.correct,
-        position: shown.position + 1,
-        surface,
-      },
-    });
-  };
-
-  // Focus follows the learner: to "Next guess" after a guess (the question when there's none), and
-  // to the new question after it.
-  useEffect(() => {
-    if (!moved.current) {
-      return;
-    }
-
-    moved.current = false;
-    (nextRef.current ?? questionRef.current)?.focus();
-  });
-
-  // A hold takes "Next guess" away, so focus on it stays in the card; a main button that takes
-  // lost focus first (the session's Start) keeps it.
+  // A hold takes the way to the next card away, so focus on it stays in the card; a main button
+  // that takes lost focus first (the session's Start) keeps it.
   useEffect(() => {
     if (holding && isFocusLost(document.activeElement)) {
       questionRef.current?.focus({ preventScroll: true });
     }
-  }, [holding]);
+  }, [holding, questionRef]);
 
   useNumberKeys({
-    count: card?.options.length ?? 0,
-    enabled: hasCard && !answered,
+    count: card.options.length,
+    enabled: !answered,
     onPick: (index) => {
-      const option = card?.options[index];
+      const option = card.options[index];
 
       if (!option) {
         return false;
@@ -199,34 +198,26 @@ export function WarmUpCard({
     },
   });
 
-  if (!card || !shown) {
-    return null;
-  }
-
-  const next = () => {
-    moved.current = true;
-    setDealt({ pickedId: null, position: shown.position + 1 });
-  };
-
   return (
-    <section
-      aria-labelledby={questionId}
-      className="bg-card ring-border flex flex-col gap-3 rounded-xl p-4 ring-1 ring-inset"
-      data-slot="warm-up-card"
-    >
-      <p className="text-muted-foreground flex items-center gap-1.5 text-[0.8125rem] font-medium [&_svg]:size-3.5">
-        <SparklesIcon aria-hidden="true" />
-        {t("Guess while you wait")}
-      </p>
+    <section aria-labelledby={questionId} className="flex flex-col gap-5" data-slot="wait-quiz">
+      <div className="flex flex-col gap-2">
+        <PageEyebrow>
+          {t({
+            description:
+              "The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
+            message: "Quiz while you wait",
+          })}
+        </PageEyebrow>
 
-      <p
-        className="text-[1.0625rem] leading-snug font-[560] tracking-[-0.012em] text-pretty outline-none"
-        id={questionId}
-        ref={questionRef}
-        tabIndex={-1}
-      >
-        {card.question}
-      </p>
+        <h2
+          className={cn(QUESTION_TEXT_CLASS, "text-pretty outline-none")}
+          id={questionId}
+          ref={questionRef}
+          tabIndex={-1}
+        >
+          {card.question}
+        </h2>
+      </div>
 
       <AnswerOptionGroup aria-label={undefined} aria-labelledby={questionId}>
         {card.options.map((option, index) => {
@@ -252,20 +243,16 @@ export function WarmUpCard({
 
       {/* The live region stays rendered, so the reveal is announced as it lands in it. */}
       <div>
-        {pickedId === null && <GuessHint />}
+        {pickedId === null && (
+          <p className="text-muted-foreground text-sm text-pretty">
+            {t("Just for fun. Your answers don't count.")}
+          </p>
+        )}
+
         <div aria-live="polite">
-          {pickedId !== null && <WarmUpReveal card={card} pickedId={pickedId} />}
+          {pickedId !== null && <QuizReveal card={card} pickedId={pickedId} />}
         </div>
       </div>
-
-      {answered && !holding && (
-        <NextGuess
-          enterKey={nextOnEnter}
-          hasNext={shown.position + 1 < deck.cards.length}
-          onNext={next}
-          ref={nextRef}
-        />
-      )}
     </section>
   );
 }

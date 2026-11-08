@@ -15,7 +15,8 @@ import { TaskMeta } from "../_components/task-meta";
 import { isFocusLost } from "../_utils/is-focus-lost";
 import { useFormatDuration } from "../_utils/time-format";
 import { useSlowWait } from "../_utils/use-slow-wait";
-import { WarmUpCard } from "../warm-up/warm-up-card";
+import { useReadyHold } from "../wait/use-ready-hold";
+import { WaitScreen, WaitSlot, useWaitScreen } from "../wait/wait-screen";
 import { AlternativeButton, NotWritten, Waiting } from "./next-stop-wait";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
@@ -23,7 +24,6 @@ import { useSessionQueueAside } from "./session-queue";
 import { getSessionQueue } from "./session-queue-rows";
 import { type DayStep } from "./session-types";
 import { useBlockDetail, useBlockTitle } from "./use-block-copy";
-import { useFirstLessonWarmUp } from "./use-first-lesson-warm-up";
 import { useSessionAction } from "./use-session-action";
 
 export type NextStopLesson = "failed" | "notStarted" | "ready" | "writing";
@@ -179,9 +179,11 @@ function NextStopActionBar({
   const t = useExtracted();
   const start = useStartState({ actions, block, isReady, tap });
   const stop = useSessionAction({ action: actions.stop });
+  const { slotShown } = useWaitScreen();
   const canStop = sessionBar.completed > 0;
+  const quizSlot = !isReady && !notWritten && slotShown;
 
-  if (!isReady && !alternative && !canStop) {
+  if (!isReady && !alternative && !canStop && !quizSlot) {
     return null;
   }
 
@@ -203,7 +205,9 @@ function NextStopActionBar({
       <OpeningWaitLine className="text-sm empty:-mt-2" wait={start.wait} />
 
       <TaskActions
-        className={!isReady && alternative ? "max-lg:flex-col max-lg:items-stretch" : undefined}
+        className={
+          !isReady && (alternative || quizSlot) ? "max-lg:flex-col max-lg:items-stretch" : undefined
+        }
       >
         {canStop && (
           <Button
@@ -226,6 +230,8 @@ function NextStopActionBar({
           />
         )}
 
+        {quizSlot && <WaitSlot enterKey={!alternative} />}
+
         {!isReady && alternative && (
           <AlternativeButton
             actions={actions}
@@ -236,6 +242,20 @@ function NextStopActionBar({
       </TaskActions>
     </TaskActionBar>
   );
+}
+
+/**
+ * The page reads the goal's first lesson's deck only while it waits, so the screen keeps it: a
+ * learner who guessed finishes the card after the lesson is written, as on every wait.
+ */
+function useKeptDeck(deck: WarmUpDeck | null): WarmUpDeck | null {
+  const [kept, setKept] = useState(deck);
+
+  if (deck && deck.id !== kept?.id) {
+    setKept(deck);
+  }
+
+  return kept;
 }
 
 export function NextStop({
@@ -275,61 +295,54 @@ export function NextStop({
   const aside = useSessionQueueAside(queue);
 
   const written = useWrittenWhileWaiting({ actions, block, lesson });
-  const card = useFirstLessonWarmUp({ deck: warmUp, isReady });
-  // The finished wait stays above a card still showing, so the card doesn't move under the learner.
-  const heldWait = written && card !== null;
+  const deck = useKeptDeck(warmUp);
+  const hold = useReadyHold(isReady);
+  // A learner who played keeps the finished wait and their card; anyone else sees Start alone.
+  const showsWait = !notWritten && (!isReady || (written && hold.status !== "go"));
   const facts = [formatDuration(block.estimatedMinutes), block.oftenTested && t("Often tested")];
 
   return (
-    <SessionFrame aside={aside}>
-      <SessionHeader
-        exitHref={exitHref}
-        lessonsComing={lessonsComing}
-        queue={queue.rows}
-        sessionBar={sessionBar}
-      />
+    <WaitScreen deck={hold.status === "go" ? null : deck} hold={hold} surface="lessonWait">
+      <SessionFrame aside={aside}>
+        <SessionHeader
+          exitHref={exitHref}
+          lessonsComing={lessonsComing}
+          queue={queue.rows}
+          sessionBar={sessionBar}
+        />
 
-      <TaskBody data-slot="next-stop">
-        <div className="flex flex-col gap-2">
-          <PageEyebrow>{t("Up next")}</PageEyebrow>
-          <h2 className="text-title">{title(block)}</h2>
-          {line && <p className="text-muted-foreground text-sm text-balance">{line}</p>}
-          <TaskMeta facts={facts} />
-        </div>
+        <TaskBody data-slot="next-stop">
+          <div className="flex flex-col gap-2">
+            <PageEyebrow>{t("Up next")}</PageEyebrow>
+            <h2 className="text-title">{title(block)}</h2>
+            {line && <p className="text-muted-foreground text-sm text-balance">{line}</p>}
+            <TaskMeta facts={facts} />
+          </div>
 
-        <StatusRegion className="text-sm text-pretty">
-          {written && t("Your lesson is ready.")}
-        </StatusRegion>
+          <StatusRegion className="text-sm text-pretty">
+            {written && t("Your lesson is ready.")}
+          </StatusRegion>
 
-        {!isReady && notWritten && (
-          <NotWritten actions={actions} block={block} reason={notWritten} />
-        )}
+          {!isReady && notWritten && (
+            <NotWritten actions={actions} block={block} reason={notWritten} />
+          )}
 
-        {!notWritten && (!isReady || heldWait) && (
-          <Waiting actions={actions} block={block} generationId={generationId} lesson={lesson} />
-        )}
+          {showsWait && (
+            <Waiting actions={actions} block={block} generationId={generationId} lesson={lesson} />
+          )}
+        </TaskBody>
 
-        {!notWritten && card && (
-          <WarmUpCard
-            deck={card.deck}
-            holding={card.hold.status === "hold"}
-            nextOnEnter={!alternative}
-            onGuess={card.hold.onGuess}
-            surface="lessonWait"
-          />
-        )}
-      </TaskBody>
-
-      <NextStopActionBar
-        actions={actions}
-        alternative={alternative}
-        block={block}
-        isReady={isReady}
-        notWritten={notWritten}
-        sessionBar={sessionBar}
-        tap={tap}
-        written={written}
-      />
-    </SessionFrame>
+        <NextStopActionBar
+          actions={actions}
+          alternative={alternative}
+          block={block}
+          isReady={isReady}
+          notWritten={notWritten}
+          sessionBar={sessionBar}
+          tap={tap}
+          written={written}
+        />
+      </SessionFrame>
+    </WaitScreen>
   );
 }

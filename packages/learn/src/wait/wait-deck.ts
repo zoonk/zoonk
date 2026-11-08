@@ -1,35 +1,43 @@
 "use client";
 
-import { type WarmUpSurface } from "@zoonk/core/analytics/events";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { useEffect, useState } from "react";
-import { type ReadyHoldControl } from "../../warm-up/use-ready-hold";
-import { WarmUpCard } from "../../warm-up/warm-up-card";
-import { type OnboardingActions } from "../onboarding-actions";
 
-type ReadWarmUp = OnboardingActions["readWarmUp"];
+type ReadDeck = (warmUpId: string) => Promise<WarmUpDeck | null>;
 
-const decks = new Map<string, Promise<WarmUpDeck | null>>();
+const reading = new Map<string, Promise<WarmUpDeck | null>>();
+const read = new Map<string, WarmUpDeck>();
 
-/** Read once while the page is open: every wait of this onboarding deals from the same deck. */
-function readDeck({ read, warmUpId }: { read: ReadWarmUp; warmUpId: string }) {
-  const known = decks.get(warmUpId);
+/**
+ * Read once while the page is open: every wait of this onboarding deals from the same deck, and one
+ * read while the learner still answers questions has the card there as the wait opens.
+ */
+export function preloadDeck({ readDeck, warmUpId }: { readDeck: ReadDeck; warmUpId: string }) {
+  const known = reading.get(warmUpId);
 
   if (known) {
     return known;
   }
 
-  const reading = read(warmUpId).catch(() => {
-    decks.delete(warmUpId);
-    return null;
-  });
+  const next = readDeck(warmUpId)
+    .then((deck) => {
+      if (deck) {
+        read.set(warmUpId, deck);
+      }
 
-  decks.set(warmUpId, reading);
-  return reading;
+      return deck;
+    })
+    .catch(() => {
+      reading.delete(warmUpId);
+      return null;
+    });
+
+  reading.set(warmUpId, next);
+  return next;
 }
 
-function useDeck({ read, warmUpId }: { read: ReadWarmUp; warmUpId?: string }) {
-  const [deck, setDeck] = useState<WarmUpDeck | null>(null);
+export function useDeck({ readDeck, warmUpId }: { readDeck: ReadDeck; warmUpId?: string }) {
+  const [deck, setDeck] = useState(() => (warmUpId ? (read.get(warmUpId) ?? null) : null));
 
   useEffect(() => {
     if (!warmUpId) {
@@ -38,7 +46,7 @@ function useDeck({ read, warmUpId }: { read: ReadWarmUp; warmUpId?: string }) {
 
     let current = true;
 
-    void readDeck({ read, warmUpId }).then((found) => {
+    void preloadDeck({ readDeck, warmUpId }).then((found) => {
       if (current) {
         setDeck(found);
       }
@@ -47,33 +55,7 @@ function useDeck({ read, warmUpId }: { read: ReadWarmUp; warmUpId?: string }) {
     return () => {
       current = false;
     };
-  }, [read, warmUpId]);
+  }, [readDeck, warmUpId]);
 
   return deck?.id === warmUpId ? deck : null;
-}
-
-/** Shows once the run reports the goal's deck; nothing above it moves when it arrives. */
-export function WaitWarmUp({
-  hold,
-  read,
-  surface,
-  warmUpId,
-}: {
-  hold: ReadyHoldControl;
-  read: ReadWarmUp;
-  surface: WarmUpSurface;
-  warmUpId?: string;
-}) {
-  const deck = useDeck({ read, warmUpId });
-
-  return (
-    deck && (
-      <WarmUpCard
-        deck={deck}
-        holding={hold.status === "hold"}
-        onGuess={hold.onGuess}
-        surface={surface}
-      />
-    )
-  );
 }

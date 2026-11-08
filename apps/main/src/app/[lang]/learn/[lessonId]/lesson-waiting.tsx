@@ -7,15 +7,17 @@ import { type LessonRequest, useLessonWriting } from "@/lib/lessons/use-lesson-w
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { type LessonWaitingResult } from "@zoonk/core/lookahead/lesson-waiting-state";
-import { GenerationWait } from "@zoonk/learn/generation";
+import { GenerationFailureNotice, GenerationWait } from "@zoonk/learn/generation";
 import { type GenerationRun, toHeldRun } from "@zoonk/learn/generation/run";
 import { KindMark } from "@zoonk/learn/kind-tile";
 import { LessonNotWrittenNotice } from "@zoonk/learn/lesson-not-written";
 import { useAppLocale } from "@zoonk/learn/locale";
 import { TaskMainButton } from "@zoonk/learn/task-frame";
 import { TaskActionBar, TaskActions } from "@zoonk/learn/task-layout";
-import { WarmUpCard } from "@zoonk/learn/warm-up/card";
-import { useReadyHold } from "@zoonk/learn/warm-up/hold";
+import { WaitContent, WaitScreen, WaitSlot, useWaitScreen } from "@zoonk/learn/wait";
+import { useReadyHold } from "@zoonk/learn/wait/hold";
+import { LessonWaitStatus } from "@zoonk/learn/wait/lesson-status";
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { ChevronRightIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
@@ -125,6 +127,58 @@ function useOpenWhenReady({ open, ready }: { open: boolean; ready: boolean }) {
 
 type LessonFrame = { exitHref: string; lesson: LessonOutline };
 
+function WritingProgress({
+  holding,
+  run,
+  since,
+}: {
+  holding: boolean;
+  run: GenerationRun;
+  since: number;
+}) {
+  const t = useExtracted();
+
+  return (
+    <>
+      <GenerationWait
+        doneLabel={holding ? t("Your lesson is ready") : undefined}
+        kind="lesson"
+        run={holding ? toHeldRun(run) : run}
+        since={since}
+      />
+
+      {run.status !== "failed" && (
+        <p className="text-muted-foreground text-sm text-pretty">
+          {holding
+            ? t("Your lesson is ready. Start it whenever you like.")
+            : t("It usually takes a few minutes. The lesson opens here as soon as it's ready.")}
+        </p>
+      )}
+    </>
+  );
+}
+
+/** Ready and held, the bar starts the lesson; before that it's the quiz's, or the screen's own. */
+function WritingWaitBar({ footer, holding }: { footer?: React.ReactNode; holding: boolean }) {
+  const { release, slotShown } = useWaitScreen();
+
+  if (holding) {
+    return <StartLessonBar busy={false} onStart={release} />;
+  }
+
+  if (footer || !slotShown) {
+    return footer;
+  }
+
+  return (
+    <TaskActionBar>
+      <TaskActions>
+        <WaitSlot />
+      </TaskActions>
+    </TaskActionBar>
+  );
+}
+
 function WritingWait({
   alternative,
   children,
@@ -140,8 +194,8 @@ function WritingWait({
   warmUp: WarmUpDeck | null;
   writing: ReturnType<typeof useLessonWriting>;
 }) {
-  const t = useExtracted();
   const late = useIsLate();
+  const since = useMountTime().getTime();
 
   const followed = useWorkflowRun({
     generationId: writing.generationId,
@@ -157,38 +211,31 @@ function WritingWait({
   const ready = run.status === "ready";
   const hold = useReadyHold(ready);
   const holding = hold.status === "hold";
+  const progress = <WritingProgress holding={holding} run={run} since={since} />;
 
   useOpenWhenReady({ open: hold.status === "go", ready });
 
   return (
-    <LessonRouteFrame
-      {...frame}
-      footer={holding ? <StartLessonBar busy={false} onStart={hold.release} /> : footer}
-    >
-      {children}
+    <WaitScreen deck={warmUp} hold={hold} surface="lessonWait">
+      <LessonRouteFrame {...frame} footer={<WritingWaitBar footer={footer} holding={holding} />}>
+        {children}
 
-      <GenerationWait
-        doneLabel={holding ? t("Your lesson is ready") : undefined}
-        kind="lesson"
-        run={holding ? toHeldRun(run) : run}
-      />
+        <WaitContent
+          progress={progress}
+          status={
+            run.status === "failed" ? (
+              <GenerationFailureNotice failure={run.failure ?? "generation"} retry={run.retry} />
+            ) : (
+              <LessonWaitStatus holding={holding} run={run} since={since} />
+            )
+          }
+        />
 
-      {run.status !== "failed" && (
-        <p className="text-muted-foreground text-sm text-pretty">
-          {holding
-            ? t("Your lesson is ready. Start it whenever you like.")
-            : t("It usually takes a few minutes. The lesson opens here as soon as it's ready.")}
-        </p>
-      )}
-
-      {warmUp && (
-        <WarmUpCard deck={warmUp} holding={holding} onGuess={hold.onGuess} surface="lessonWait" />
-      )}
-
-      {!holding && (late || run.status === "failed") && alternative && (
-        <Alternative alternative={alternative} />
-      )}
-    </LessonRouteFrame>
+        {!holding && (late || run.status === "failed") && alternative && (
+          <Alternative alternative={alternative} />
+        )}
+      </LessonRouteFrame>
+    </WaitScreen>
   );
 }
 

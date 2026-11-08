@@ -1,17 +1,15 @@
 "use client";
 
 import { type PlanView } from "@zoonk/core/plans/view-contract";
-import { type OnboardingLibraryCourse } from "@zoonk/core/view-models/onboarding/contract";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { useEffect, useEffectEvent, useState } from "react";
 import { usePoll } from "../../_utils/use-poll";
-import { type GenerationRun } from "../../generation/generation-run";
+import { type GenerationFirstLesson, type GenerationRun } from "../../generation/generation-run";
 import { type PlanActions, type PlanGoal, PlanScreenProvider } from "../../plan/plan-context";
 import { PlanSheetHosts } from "../../plan/plan-sheet-hosts";
-import { LibraryCourseOffer } from "../library-course-offer";
 import { type OnboardingActions, type RevealedPlan } from "../onboarding-actions";
-import { PlanWait } from "./plan-wait";
+import { type LibraryCourseLink, PlanWait } from "./plan-wait";
 import { RevealBody } from "./reveal-body";
 import { StepLoading } from "./step-parts";
 import {
@@ -25,16 +23,16 @@ import {
 
 const POLL_MS = 3000;
 
-type LibraryCourseLink = { course: OnboardingLibraryCourse; href: string };
-
 export function PlanReveal({
   actions,
+  firstLesson,
   focusTestHref,
   goal,
   goalId,
   initialPlan,
   isGuest,
-  libraryCourse,
+  lessonHref,
+  library,
   onPlanReadyChange,
   planActions,
   planLinkHref,
@@ -44,12 +42,14 @@ export function PlanReveal({
   todayHref,
 }: {
   actions: OnboardingActions;
+  firstLesson: GenerationFirstLesson | null;
   focusTestHref: string;
   goal: PlanGoal;
   goalId: string;
   initialPlan: RevealedPlan | null;
   isGuest: boolean;
-  libraryCourse: LibraryCourseLink | null;
+  lessonHref: (lessonId: string) => string;
+  library: LibraryCourseLink | null;
   onPlanReadyChange: (isReady: boolean) => void;
   planActions: PlanActions;
   planLinkHref: (planId: string) => string;
@@ -139,6 +139,9 @@ export function PlanReveal({
 
   return (
     <PlanWait
+      firstLesson={firstLesson}
+      lessonHref={lessonHref}
+      library={library}
       next="plan"
       notice={
         plan
@@ -149,7 +152,6 @@ export function PlanReveal({
             }
           : undefined
       }
-      offer={libraryCourse && <LibraryCourseOffer {...libraryCourse} />}
       readWarmUp={actions.readWarmUp}
       run={waitRun}
       wait={wait}

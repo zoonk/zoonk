@@ -221,11 +221,6 @@ msgctxt "WCwsVK"
 msgid "Your free week of exam prep is over"
 msgstr "試験対策の無料期間（1週間）が終了しました"
 
-#: src/_components/guess-hint.tsx
-msgctxt "CKdZQn"
-msgid "Getting it wrong now helps you remember later."
-msgstr "ここで間違えると、あとで覚えやすくなります。"
-
 #: src/_components/help-limit-notice.tsx
 #: src/_components/lesson-not-written-notice.tsx
 #: src/_components/plus-lock.tsx
@@ -4056,6 +4051,7 @@ msgid "This didn't start"
 msgstr "準備を開始できませんでした"
 
 #: src/generation/lesson-generation-copy.ts
+#: src/wait/lesson-wait-status.tsx
 msgctxt "57Hm5c"
 msgid "Writing your lesson"
 msgstr "レッスンを作成しています"
@@ -4214,6 +4210,7 @@ msgstr "試験・語学・科目のどれに当たるか確かめています…
 
 #: src/generation/use-generation-copy.ts
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 #: src/today/today-preparing.tsx
 msgctxt "PBFmO0"
 msgid "Building your plan"
@@ -4357,6 +4354,7 @@ msgid "Reading your question…"
 msgstr "質問を読んでいます…"
 
 #: src/generation/use-generation-copy.ts
+#: src/wait/first-lesson-row.tsx
 msgctxt "H2ZUHF"
 msgid "Writing about 5 short screens"
 msgstr "短い解説を5ページほど作成しています"
@@ -7072,7 +7070,6 @@ msgid "Chapters you finished"
 msgstr "完了した章"
 
 #: src/mind-maps/mind-maps-screen.tsx
-#: src/onboarding/library-course-offer.tsx
 #: src/syllabus/subject-screen.tsx
 msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
@@ -9470,9 +9467,9 @@ msgid "How it works"
 msgstr "使い方"
 
 #: src/onboarding/library-course-offer.tsx
-msgctxt "JHbf4S"
-msgid "A course in the Library fits your goal"
-msgstr "ライブラリに目標に合うコースがあります"
+msgctxt "u1Zt5F"
+msgid "A Library course fits your goal. Start it now"
+msgstr "ライブラリに目標に合うコースがあります。今すぐ始める"
 
 #: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
@@ -9749,6 +9746,7 @@ msgstr "{document, select, notice {要項の科目、トピック、日程に合
 
 #: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 msgctxt "Tezxsy"
 msgid "Your plan is ready"
 msgstr "学習計画ができました"
@@ -9891,11 +9889,6 @@ msgid "Stop and see my plan"
 msgstr "終了して学習計画を見る"
 
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "7yADK5"
-msgid "Start them whenever you're ready."
-msgstr "準備ができたら、いつでも始められます。"
-
-#: src/onboarding/steps/placement-waiting.tsx
 msgctxt "kx8w4b"
 msgid "They come from the material you added. Reading it takes a few minutes."
 msgstr "追加した資料をもとに問題を作成しています。資料の読み取りには数分かかります。"
@@ -9909,6 +9902,11 @@ msgstr "目標に必要なスキルをもとに問題を作成しています。
 msgctxt "QRwbAL"
 msgid "Your questions are ready"
 msgstr "問題の準備ができました"
+
+#: src/onboarding/steps/placement-waiting.tsx
+msgctxt "7yADK5"
+msgid "Start them whenever you're ready."
+msgstr "準備ができたら、いつでも始められます。"
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "WYzHAI"
@@ -9926,6 +9924,7 @@ msgid "See it whenever you're ready."
 msgstr "好きなタイミングで学習計画を見られます。"
 
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 msgctxt "TTJuzU"
 msgid "One last question, then you'll see it."
 msgstr "最後の質問に答えると、学習計画が見られます。"
@@ -9985,6 +9984,16 @@ msgstr "回答は保存されています。質問に答え終わるまでに学
 msgctxt "SedhMm"
 msgid "See your plan"
 msgstr "学習計画を見る"
+
+#: src/onboarding/steps/plan-wait.tsx
+msgctxt "x4Kcgs"
+msgid "Your plan will be waiting when you finish."
+msgstr "レッスンが終わる頃には、学習計画ができています。"
+
+#: src/onboarding/steps/plan-wait.tsx
+msgctxt "z2snrT"
+msgid "Start lesson 1"
+msgstr "レッスン1を始める"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "xwLmmU"
@@ -14097,20 +14106,63 @@ msgctxt "c1J3nF"
 msgid "Lessons on the way"
 msgstr "レッスンを準備しています"
 
-#: src/warm-up/warm-up-card.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "22HeK6"
+msgid "Your first lesson"
+msgstr "最初のレッスン"
+
+#: src/wait/first-lesson-row.tsx
+msgctxt "zbkRbA"
+msgid "Ready to start"
+msgstr "開始できます"
+
+#: src/wait/lesson-wait-status.tsx
+msgctxt "4Wktrz"
+msgid "Your lesson is ready"
+msgstr "レッスンの準備ができました"
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-quiz.tsx
+msgctxt "IUmRs3"
+msgid "Quiz while you wait"
+msgstr "待ち時間にクイズ"
+
+#: src/wait/wait-quiz.tsx
+msgctxt "LroSLM"
+msgid "Just for fun. Your answers don't count."
+msgstr "気軽に楽しめるクイズです。回答は評価に影響しません。"
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-screen.tsx
+msgctxt "8ZwEZ-"
+msgid "Back to the quiz"
+msgstr "クイズに戻る"
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-screen.tsx
+msgctxt "3IyRnV"
+msgid "Play a quiz while you wait"
+msgstr "待ち時間にクイズをする"
+
+#: src/wait/wait-screen.tsx
 msgctxt "YW_xVV"
 msgid "That's all for now."
 msgstr "今回はここまでです。"
 
-#: src/warm-up/warm-up-card.tsx
+#: src/wait/wait-screen.tsx
 msgctxt "e4FgxF"
 msgid "Next guess"
 msgstr "次も予想する"
 
-#: src/warm-up/warm-up-card.tsx
-msgctxt "wPwGoj"
-msgid "Guess while you wait"
-msgstr "待っている間に予想してみましょう"
+#: src/wait/wait-status.tsx
+msgctxt "YgBrpA"
+msgid "Your first lesson is ready"
+msgstr "最初のレッスンができました"
+
+#: src/wait/wait-status.tsx
+msgctxt "FZtFoB"
+msgid "Writing your first lesson: <lesson>{title}</lesson>"
+msgstr "最初のレッスンを作成しています：<lesson>{title}</lesson>"
 
 #: src/week/logbook-screen.tsx
 msgctxt "wVu1FL"

@@ -11,11 +11,11 @@ import { useEffect } from "react";
 import { DailyTimePicker } from "../../_components/daily-time-picker";
 import { type GoalDate, TimeAnswer } from "../../_components/time-answer";
 import { getFullTimeNote, getMarkedTimes, getOffer } from "../../_utils/time-answer";
-import { type GenerationRun } from "../../generation/generation-run";
+import { type GenerationFirstLesson, type GenerationRun } from "../../generation/generation-run";
 import { type OnboardingActions } from "../onboarding-actions";
 import { PlanReceipt, PlanReceiptChips } from "../plan-receipt";
 import { FullCourseToggle } from "./full-course-toggle";
-import { PlanWait } from "./plan-wait";
+import { type LibraryCourseLink, PlanWait } from "./plan-wait";
 import { type GoalsTogether, keepsFullCourse, toPickedMinutes, waitsToSave } from "./schedule-time";
 import { StepForm } from "./step-form";
 import { EVERY_DAY, WeekdayToggles, WeekendMinutes } from "./study-week";
@@ -208,8 +208,11 @@ export function ScheduleStep({
   draft,
   exam = false,
   findTimeToCover,
+  firstLesson,
   getTimeAdvice,
   goal,
+  lessonHref,
+  library,
   onAnswer,
   onChangeDate,
   onPlanReadyChange,
@@ -223,7 +226,10 @@ export function ScheduleStep({
   dated: boolean;
   draft: ScheduleDraft | null;
   exam?: boolean;
+  firstLesson: GenerationFirstLesson | null;
   goal: GoalView;
+  lessonHref: (lessonId: string) => string;
+  library: LibraryCourseLink | null;
   onAnswer: (input: OnboardingAnswerInput) => void;
   onChangeDate: (draft: ScheduleDraft) => void;
   onPlanReadyChange: (isReady: boolean) => void;
@@ -256,6 +262,9 @@ export function ScheduleStep({
 
   return (
     <PlanWait
+      firstLesson={firstLesson}
+      lessonHref={lessonHref}
+      library={library}
       next="timeQuestion"
       notice={{
         document: getExamDocument(goal),

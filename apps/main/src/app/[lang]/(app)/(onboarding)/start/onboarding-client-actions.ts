@@ -101,6 +101,7 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
 const WEB_ONBOARDING_ROUTES = {
   course: getCourseHref,
   focusTest: (goalId) => `/focus-test?goal=${goalId}`,
+  lesson: (lessonId) => `/learn/${lessonId}`,
   mock: (mockId) => `/mock/${mockId}`,
   placementMock: (goalId) => `/mock/placement/${goalId}`,
   planLink: (planId) => `/plan-link/${planId}`,

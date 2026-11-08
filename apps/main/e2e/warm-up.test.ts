@@ -19,8 +19,23 @@ const STILL_READING_MS = 30 * 60_000;
 
 const DAILY_MINUTES = Array.from({ length: 7 }, () => 20);
 
-/** A goal at the time question while its plan is built, by a run that already reported its deck. */
-async function openPlanWait({ page, userId }: { page: Page; userId: string }) {
+const PLAY_QUIZ = "Play a quiz while you wait";
+
+/**
+ * A goal at the time question while its plan is built, by a run that already reported its deck. A
+ * page opened on the wait reads the deck after it draws, so the quiz is offered, not shown.
+ */
+async function openPlanWait({
+  events = [],
+  openingLessonId = null,
+  page,
+  userId,
+}: {
+  events?: StreamEvent[];
+  openingLessonId?: string | null;
+  page: Page;
+  userId: string;
+}) {
   const runId = `e2e-warm-up-${randomUUID()}`;
 
   const [deck, goal] = await Promise.all([
@@ -28,6 +43,7 @@ async function openPlanWait({ page, userId }: { page: Page; userId: string }) {
     goalFixture({
       details: { answered: ["purpose", "targetDate", "level", "buddy", "placement"] },
       generationRunId: runId,
+      openingLessonId,
       prompt: `learn beekeeping ${randomUUID()}`,
       title: "Learn beekeeping",
       userId,
@@ -47,6 +63,7 @@ async function openPlanWait({ page, userId }: { page: Page; userId: string }) {
       { entityId: goal.id, status: "started", step: "understandGoal" },
       { status: "completed", step: "warmUpReady", warmUpId: deck.id },
       { entityId: goal.id, status: "started", step: "buildSkillGraph" },
+      ...events,
     ],
     page,
     runId,
@@ -83,6 +100,7 @@ test("a learner who guessed stays once the plan is ready, and the first lesson's
   userWithoutProgress: page,
 }) => {
   const { deck, goal } = await openPlanWait({ page, userId: noProgressUser.id });
+  await page.getByRole("button", { name: PLAY_QUIZ }).click();
 
   const card = page.getByRole("radiogroup", { name: FIRST_CARD });
 
@@ -113,8 +131,7 @@ test("a learner who didn't guess moves on to the time question as soon as the pl
   userWithoutProgress: page,
 }) => {
   const { goal } = await openPlanWait({ page, userId: noProgressUser.id });
-
-  await expect(page.getByRole("radiogroup", { name: FIRST_CARD })).toBeVisible();
+  await expect(page.getByRole("button", { name: PLAY_QUIZ })).toBeVisible();
 
   await mapGoalSkills({ goalId: goal.id });
 
@@ -151,7 +168,12 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
   await followRun({ events, page, runId });
   await page.goto("/session");
 
+  const card = page.getByRole("radiogroup", { name: FIRST_CARD });
+  await card.getByRole("radio", { name: /alarm scent/u }).click();
+  await expect(page.getByText("Good guess!")).toBeVisible();
+
   const steps = page.getByRole("list", { name: "Writing your lesson" }).getByRole("listitem");
+  await page.getByRole("button", { name: /^Writing your lesson/u }).click();
 
   await expect(steps).toHaveText([
     /^Planning the lesson, done/u,
@@ -160,14 +182,17 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
     /^Drawing the pictures, not started yet/u,
   ]);
 
-  const card = page.getByRole("radiogroup", { name: FIRST_CARD });
-  await card.getByRole("radio", { name: /alarm scent/u }).click();
+  await page.goBack();
   await expect(page.getByText("Good guess!")).toBeVisible();
 
   await writeStudyLesson(lesson.id);
   events.push({ entityId: lesson.id, status: "completed", step: "lessonReady" });
 
   await expect(page.getByRole("status").filter({ hasText: "Your lesson is ready." })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Next guess" })).toBeHidden();
+  await expect(page.getByText(/^Smoke masks the alarm scent/u)).toBeVisible();
+
+  await page.getByRole("button", { name: /^Your lesson is ready/u }).click();
 
   await expect(steps).toHaveText([
     /^Planning the lesson, done/u,
@@ -175,9 +200,6 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
     /^Highlighting the key ideas, done/u,
     /^Drawing the pictures, done/u,
   ]);
-
-  await expect(page.getByRole("button", { name: "Next guess" })).toBeHidden();
-  await expect(page.getByText(/^Smoke masks the alarm scent/u)).toBeVisible();
 
   await page.getByRole("main").getByRole("button", { exact: true, name: "Start" }).click();
   await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
@@ -219,6 +241,7 @@ test("a learner who guessed while the exam's notice is read stays once it's read
     page.getByRole("heading", { name: "Reading the exam's official documents" }),
   ).toBeVisible();
 
+  await page.getByRole("button", { name: PLAY_QUIZ }).click();
   const card = page.getByRole("radiogroup", { name: FIRST_CARD });
   await card.getByRole("radio", { name: /alarm scent/u }).click();
   await expect(page.getByText("Good guess!")).toBeVisible();
@@ -232,4 +255,33 @@ test("a learner who guessed while the exam's notice is read stays once it's read
   await expect(page.getByRole("button", { name: "Next guess" })).toBeHidden();
   await page.getByRole("button", { name: "See your plan" }).click();
   await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+});
+
+test("a learner whose first lesson is written before the plan starts it from the wait", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const lesson = await libraryLessonFixture({
+    contentStatus: "completed",
+    title: "Why birds sing at dawn",
+  });
+
+  await openPlanWait({
+    events: [
+      {
+        lessonId: lesson.id,
+        lessonTitle: lesson.title,
+        status: "started",
+        step: "writeFirstLesson",
+      },
+      { lessonId: lesson.id, status: "completed", step: "firstLessonReady" },
+    ],
+    openingLessonId: lesson.id,
+    page,
+    userId: noProgressUser.id,
+  });
+
+  await expect(page.getByText("Your plan will be waiting when you finish.")).toBeVisible();
+  await page.getByRole("link", { name: "Start lesson 1" }).click();
+  await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}`, "u"));
 });

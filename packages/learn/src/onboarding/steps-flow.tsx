@@ -7,12 +7,13 @@ import {
 } from "@zoonk/core/view-models/onboarding/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
 import { StepDots } from "../_components/step-dots";
 import { useFormatDuration } from "../_utils/time-format";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlanActions } from "../plan/plan-context";
+import { preloadDeck } from "../wait/wait-deck";
 import { type FlowState, applyAnswer, openStep } from "./_utils/answered-step";
 import { getSetupProgress } from "./_utils/setup-progress";
 import {
@@ -90,6 +91,15 @@ export function StepsFlow({
 }) {
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState<Failed | null>(null);
+  const warmUpId = generation?.warmUpId;
+
+  // While the learner answers questions, so the quiz is there as soon as a wait opens.
+  useEffect(() => {
+    if (warmUpId) {
+      void preloadDeck({ readDeck: actions.readWarmUp, warmUpId });
+    }
+  }, [actions.readWarmUp, warmUpId]);
+
   const [scheduleDraft, setScheduleDraft] = useState<ScheduleDraft | null>(null);
 
   // Current only when the page opened on the plan; after the steps the reveal reads it fresh.
