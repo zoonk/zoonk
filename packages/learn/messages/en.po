@@ -7517,14 +7517,14 @@ msgid "{count, plural, one {# left} other {# left}}"
 msgstr "{count, plural, one {# left} other {# left}}"
 
 #: src/missions/missions-card.tsx
-msgctxt "agm7r8"
-msgid "Today's missions start with today's session."
-msgstr "Today's missions start with today's session."
-
-#: src/missions/missions-card.tsx
 msgctxt "0gBkBl"
 msgid "Missions done"
 msgstr "Missions done"
+
+#: src/missions/missions-card.tsx
+msgctxt "agm7r8"
+msgid "Today's missions start with today's session."
+msgstr "Today's missions start with today's session."
 
 #. "It" is the question: it comes back in later practice.
 #: src/mistakes/drill/drill-answer-notes.tsx
@@ -7862,6 +7862,16 @@ msgid "Sheet"
 msgstr "Sheet"
 
 #: src/mock/mock-break.tsx
+msgctxt "zMR5Za"
+msgid "Next: {name}"
+msgstr "Next: {name}"
+
+#: src/mock/mock-break.tsx
+msgctxt "gVB2Pv"
+msgid "Next section"
+msgstr "Next section"
+
+#: src/mock/mock-break.tsx
 #: src/mock/mock-sheet-sections.tsx
 msgctxt "pP1R8y"
 msgid "Sections"
@@ -7886,16 +7896,6 @@ msgstr "Break time left"
 msgctxt "nyrCLe"
 msgid "The next section starts on its own when the break ends."
 msgstr "The next section starts on its own when the break ends."
-
-#: src/mock/mock-break.tsx
-msgctxt "zMR5Za"
-msgid "Next: {name}"
-msgstr "Next: {name}"
-
-#: src/mock/mock-break.tsx
-msgctxt "gVB2Pv"
-msgid "Next section"
-msgstr "Next section"
 
 #: src/mock/mock-chooser-last-mock.tsx
 msgctxt "fdQ7Q-"

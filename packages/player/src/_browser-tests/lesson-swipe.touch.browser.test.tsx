@@ -97,6 +97,20 @@ describe("turning lesson screens with a finger", () => {
     await expect.element(heading(FRONTAL.title)).toBeVisible();
   });
 
+  it("leaves focus where it was after a swipe, unlike a key", async () => {
+    const lesson = buildLesson([pictured(FRONTAL), pictured(OCCIPITAL), teachingStep("check")]);
+    renderLessonPlayer({ lesson });
+
+    const next = page.getByRole("button", { name: /^Next/u });
+    await expect.element(next).toBeVisible();
+    next.element().focus();
+
+    await swipeFrom(page.getByText("It plans what you do next."), { x: -SWIPE_PX });
+
+    await expect.element(heading(OCCIPITAL.title)).toBeVisible();
+    await expect.element(page.getByRole("button", { name: /^Next/u })).not.toHaveFocus();
+  });
+
   it("turns on a quick flick the page reads late, as a busy phone does", async () => {
     const lesson = buildLesson([pictured(FRONTAL), pictured(OCCIPITAL)]);
     renderLessonPlayer({ lesson });

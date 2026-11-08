@@ -16,7 +16,12 @@ import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
 import { JourneyChapters, WritingAheadLine } from "./journey-chapters";
 import { type JourneyPathLinks } from "./journey-links";
-import { CheckpointRow, PATH_ROW_CLASS, PATH_ROW_LEADING_CLASS } from "./journey-phase-events";
+import {
+  CheckpointRow,
+  PATH_ROW_BODY_CLASS,
+  PATH_ROW_CLASS,
+  PATH_ROW_LEADING_CLASS,
+} from "./journey-phase-events";
 import { PhaseLessons, PhaseMark, PhaseName, PhaseUntil } from "./path-phase-row";
 import { findOpenPhase, findOwnChapter, isNamedLikeAChapter } from "./path-phases";
 import { useRoadmapFinish } from "./use-roadmap";
@@ -41,9 +46,13 @@ function PhaseColumns({
       <span className={PATH_ROW_LEADING_CLASS}>
         {nextChapter ? <ChapterMark chapter={nextChapter} isNext /> : <PhaseMark phase={phase} />}
       </span>
-      <PhaseName byPlace={byPlace} isNext={Boolean(nextChapter)} open={open} phase={phase} />
-      <PhaseLessons phase={phase} />
-      <PhaseUntil isLast={isLast} phase={phase} />
+      <span className={PATH_ROW_BODY_CLASS}>
+        <PhaseName byPlace={byPlace} isNext={Boolean(nextChapter)} open={open} phase={phase} />
+        <span className="flex flex-wrap items-center gap-x-3 empty:hidden">
+          <PhaseLessons phase={phase} />
+          <PhaseUntil isLast={isLast} phase={phase} />
+        </span>
+      </span>
     </>
   );
 }
@@ -191,15 +200,17 @@ function FinishItem() {
         <span className={PATH_ROW_LEADING_CLASS}>
           <FlagIcon aria-hidden="true" className="size-4" />
         </span>
-        <span className="min-w-0 flex-1 font-medium">{goal.title}</span>
-        {finish && (
-          <PlanDateText
-            className="text-muted-foreground shrink-0 text-xs"
-            estimate={finish.estimate}
-            isoDate={finish.isoDate}
-            month={finish.month}
-          />
-        )}
+        <span className={PATH_ROW_BODY_CLASS}>
+          <span className="font-medium">{goal.title}</span>
+          {finish && (
+            <PlanDateText
+              className="text-muted-foreground text-xs"
+              estimate={finish.estimate}
+              isoDate={finish.isoDate}
+              month={finish.month}
+            />
+          )}
+        </span>
         <span aria-hidden="true" className="size-4 shrink-0" />
       </div>
     </li>

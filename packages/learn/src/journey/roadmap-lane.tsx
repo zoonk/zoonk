@@ -94,12 +94,7 @@ function GoalDate() {
   }
 
   const date = (
-    <PlanDateText
-      className="whitespace-normal"
-      estimate={finish.estimate}
-      isoDate={finish.isoDate}
-      month={finish.month}
-    />
+    <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
   );
 
   if (goal.kind !== "exam") {

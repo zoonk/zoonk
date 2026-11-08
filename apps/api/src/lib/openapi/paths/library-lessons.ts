@@ -194,7 +194,7 @@ export const libraryLessonPaths = {
   "/steps/{stepId}/checks": {
     post: {
       description:
-        "Grades one answer to a lesson screen on the server and records it: the attempt, the review of its skill and, when wrong, an entry in the mistakes notebook. Checks, activities and language exercises are graded by the same code the app runs; typed answers (and the typed fallback of a spoken answer) by the grader. The answer counts toward an open run of the screen's lesson; a screen answered more often than a run allows is graded by code and not recorded. `LESSON_RUN_ENDED` (409) means the run finished.",
+        "Grades one answer to a lesson screen on the server and records it: the attempt, the review of its skill and, when wrong, an entry in the mistakes notebook. Checks, activities and language exercises are graded by the same code the app runs; typed answers (and the typed fallback of a spoken answer) by the grader. The answer counts toward an open run of the screen's lesson; an answer to a screen that already has a right answer in its progress window, or a miss after three misses there, is graded by code and returned without recording an attempt, mistake or review change. Reuse `attemptId` to replay a saved verdict. `LESSON_RUN_ENDED` (409) means the run finished.",
       operationId: "createStepCheck",
       requestBody: {
         content: { "application/json": { schema: lessonStepCheckInputSchema } },

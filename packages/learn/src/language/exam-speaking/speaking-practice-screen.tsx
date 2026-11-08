@@ -7,6 +7,7 @@ import { useExtracted } from "next-intl";
 import { DetailAside, DetailContent, DetailLayout } from "../../_components/detail-page";
 import { KindDot } from "../../_components/kind-tile";
 import {
+  ListRowBody,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -34,17 +35,19 @@ export function SpeakingPracticeRow({
       <ListRowLeading>
         <KindDot kind="conversation" />
       </ListRowLeading>
-      <ListRowContent>
-        <ListRowTitle>{t("Exam-style speaking")}</ListRowTitle>
-        <ListRowDescription>
-          {t("{exam} tasks on a call", { exam: entry.title })}
-        </ListRowDescription>
-      </ListRowContent>
-      {entry.access === "plusRequired" && (
-        <ListRowTrailing className="font-sans">
-          <PlusMark />
-        </ListRowTrailing>
-      )}
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowTitle>{t("Exam-style speaking")}</ListRowTitle>
+          <ListRowDescription>
+            {t("{exam} tasks on a call", { exam: entry.title })}
+          </ListRowDescription>
+        </ListRowContent>
+        {entry.access === "plusRequired" && (
+          <ListRowTrailing className="font-sans">
+            <PlusMark />
+          </ListRowTrailing>
+        )}
+      </ListRowBody>
     </ListRowLink>
   );
 }

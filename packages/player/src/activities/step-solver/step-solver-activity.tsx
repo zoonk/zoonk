@@ -6,7 +6,13 @@ import { useState } from "react";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { type ActivityRendererProps } from "../activity-renderer";
-import { type SolverPicks, addPick, currentStepIndex, firstPicks } from "./step-solver-progress";
+import {
+  type SolverPicks,
+  addPick,
+  currentStepIndex,
+  firstPicks,
+  picksFromFirst,
+} from "./step-solver-progress";
 import { StepSolverStep, type StepStatus } from "./step-solver-step";
 
 type StepSolverProps = ActivityRendererProps<"stepSolver">;
@@ -19,10 +25,20 @@ function statusOf(index: number, current: number): StepStatus {
   return index === current ? "current" : "later";
 }
 
-export function StepSolverActivity({ content, labelId, onAnswerChange, phase }: StepSolverProps) {
+export function StepSolverActivity({
+  answer,
+  content,
+  labelId,
+  onAnswerChange,
+  phase,
+}: StepSolverProps) {
   const t = useExtracted();
   const { check, fields } = content;
-  const [picks, setPicks] = useState<SolverPicks>({});
+
+  const [picks, setPicks] = useState<SolverPicks>(() =>
+    answer?.kind === "assignment" ? picksFromFirst(fields.steps, answer.pairs) : {},
+  );
+
   const isChecked = phase === "checked";
   const current = isChecked ? fields.steps.length : currentStepIndex(fields.steps, picks);
   const maxValue = Math.max(...fields.steps.map((step) => Math.abs(step.value)));

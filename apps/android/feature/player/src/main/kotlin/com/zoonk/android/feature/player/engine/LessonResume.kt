@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.player.engine
 
+import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepResult
 
@@ -34,7 +35,19 @@ private fun LessonPlayerState.resumePosition(
     return if (readingBefore == -1) 0 else open - readingBefore
 }
 
-/** A run the learner comes back to continues at the first screen still to answer; a check missed once comes back at the end. */
+/** Each screen as its last answer left it, a challenge on its ending. */
+private fun LessonPlayerState.answeredAs(saved: List<RunAnswer>): LessonPlayerState {
+    val last = saved.associateBy(RunAnswer::stepId)
+    val picks = last.values.mapNotNull { run -> run.answer?.let { run.stepId to it } }.toMap()
+    val endings = picks.mapNotNull { (id, answer) -> (answer as? LessonAnswer.Challenge)?.let { id to it.choiceIds.size + 1 } }.toMap()
+
+    return copy(answers = answers + picks, results = results + last.mapValues { it.value.result }, revealed = revealed + endings)
+}
+
+/**
+ * A run the learner comes back to shows each answered screen as they left it and continues at the first screen still
+ * to answer; a check missed once comes back at the end.
+ */
 internal fun LessonPlayerState.resume(
     answers: List<RunAnswer>,
     now: Long,
@@ -46,11 +59,11 @@ internal fun LessonPlayerState.resume(
     val missed = missedOnce(known)
     val resumedQueue = queue + missed
     val position = resumePosition(resumedQueue, known.map(RunAnswer::stepId).toSet(), queue.size)
-    val resumed = copy(firstVerdicts = runVerdicts(known), queue = resumedQueue, retried = retriedIn(known) + missed)
+    val resumed = copy(firstVerdicts = runVerdicts(known), queue = resumedQueue, retried = retriedIn(known) + missed).answeredAs(known)
 
     if (position >= resumedQueue.size) return resumed.copy(position = resumedQueue.size - 1).finish(CompletionStatus.Ready, now)
 
-    return resumed.copy(position = position)
+    return resumed.enterPosition(position, now)
 }
 
 /** "I don't know yet": an open answer's sample, or the guess's answer with no pick, without a verdict; neither counts. */

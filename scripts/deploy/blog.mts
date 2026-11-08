@@ -1,9 +1,13 @@
 import { z } from "zod";
 import { vercel } from "./api.mts";
 import { requiredEnv } from "./config.mts";
-import { waitForDeployment } from "./deployment.mts";
+import { assertPullRequestOpen, waitForDeployment } from "./deployment.mts";
 
-export async function deployBlog(): Promise<void> {
+export async function deployBlog(target: "preview" | "production"): Promise<void> {
+  if (target === "preview") {
+    await assertPullRequestOpen();
+  }
+
   const response = await vercel({
     body: {
       gitSource: {
@@ -14,7 +18,7 @@ export async function deployBlog(): Promise<void> {
       },
       name: "zoonk-blog",
       project: requiredEnv("VERCEL_PROJECT_ID_BLOG"),
-      target: "production",
+      ...(target === "production" ? { target } : {}),
     },
     method: "POST",
     path: "/v13/deployments",
@@ -22,5 +26,5 @@ export async function deployBlog(): Promise<void> {
   });
 
   const deployment = z.object({ id: z.string() }).parse(response);
-  await waitForDeployment({ app: "blog", id: deployment.id, target: "production" });
+  await waitForDeployment({ app: "blog", id: deployment.id, target });
 }

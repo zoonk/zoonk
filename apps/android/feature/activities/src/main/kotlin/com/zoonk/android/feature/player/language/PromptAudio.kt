@@ -29,10 +29,10 @@ import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
 import com.zoonk.android.feature.audio.withoutFailure
+import com.zoonk.android.feature.player.engine.listeningInstead
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
-import com.zoonk.android.feature.player.steps.listeningInstead
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 

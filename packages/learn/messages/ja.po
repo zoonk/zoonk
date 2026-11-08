@@ -7517,14 +7517,14 @@ msgid "{count, plural, one {# left} other {# left}}"
 msgstr "{count, plural, other {残り#個}}"
 
 #: src/missions/missions-card.tsx
-msgctxt "agm7r8"
-msgid "Today's missions start with today's session."
-msgstr "今日の学習を始めると、ミッションも始まります。"
-
-#: src/missions/missions-card.tsx
 msgctxt "0gBkBl"
 msgid "Missions done"
 msgstr "ミッション達成"
+
+#: src/missions/missions-card.tsx
+msgctxt "agm7r8"
+msgid "Today's missions start with today's session."
+msgstr "今日の学習を始めると、ミッションも始まります。"
 
 #. "It" is the question: it comes back in later practice.
 #: src/mistakes/drill/drill-answer-notes.tsx
@@ -7862,6 +7862,16 @@ msgid "Sheet"
 msgstr "解答用紙"
 
 #: src/mock/mock-break.tsx
+msgctxt "zMR5Za"
+msgid "Next: {name}"
+msgstr "次：{name}"
+
+#: src/mock/mock-break.tsx
+msgctxt "gVB2Pv"
+msgid "Next section"
+msgstr "次のセクション"
+
+#: src/mock/mock-break.tsx
 #: src/mock/mock-sheet-sections.tsx
 msgctxt "pP1R8y"
 msgid "Sections"
@@ -7886,16 +7896,6 @@ msgstr "休憩の残り時間"
 msgctxt "nyrCLe"
 msgid "The next section starts on its own when the break ends."
 msgstr "休憩が終わると、次のセクションが自動で始まります。"
-
-#: src/mock/mock-break.tsx
-msgctxt "zMR5Za"
-msgid "Next: {name}"
-msgstr "次：{name}"
-
-#: src/mock/mock-break.tsx
-msgctxt "gVB2Pv"
-msgid "Next section"
-msgstr "次のセクション"
 
 #: src/mock/mock-chooser-last-mock.tsx
 msgctxt "fdQ7Q-"

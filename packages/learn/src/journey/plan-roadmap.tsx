@@ -5,11 +5,13 @@ import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { MeterPart, MeterParts } from "../_components/meter";
 import { StatusMark } from "../_components/status-mark";
+import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { getPhaseWeight, getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
 import { type JourneyPathLinks } from "./journey-links";
+import { PATH_ROW_BODY_CLASS } from "./journey-phase-events";
 import { BandFace } from "./roadmap-band";
 import { RoadmapFull } from "./roadmap-full";
 import { PhaseAxis } from "./roadmap-lane";
@@ -63,12 +65,18 @@ function RoadmapCompact({
       </MeterParts>
 
       {position && (
-        <span className="flex w-full items-baseline justify-between gap-3 text-xs">
-          <span className="min-w-0 truncate">
-            <span className="font-medium">{position.name}</span>
-            {position.day && <span className="text-muted-foreground">{` · ${position.day}`}</span>}
+        <span className={cn(TITLE_ROW_CLASS, "w-full items-baseline text-xs")}>
+          <span className="flex flex-wrap items-baseline">
+            <span
+              className={cn(TRUNCATED_TITLE_CLASS, "max-w-max min-w-0 grow basis-24 font-medium")}
+            >
+              {position.name}
+            </span>
+            {position.day && (
+              <span className="text-muted-foreground whitespace-pre-wrap">{` · ${position.day}`}</span>
+            )}
           </span>
-          <span className="text-muted-foreground flex shrink-0 items-center gap-0.5 font-mono tabular-nums">
+          <span className="text-muted-foreground flex items-center gap-0.5 font-mono tabular-nums">
             <span aria-hidden="true">
               {t("{number, number} of {total, number}", {
                 number: position.number,
@@ -173,14 +181,16 @@ function RoadmapRevealList() {
                 label={phase.state === "current" ? t("You are here") : undefined}
                 status={PHASE_MARK[phase.state]}
               />
-              <span className="min-w-0 flex-1 font-medium text-pretty">
-                {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
-              </span>
-              {when && phase.startDate && (
-                <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
-                  {when === "today" ? t("Today") : <PlanDateText isoDate={phase.startDate} />}
+              <span className={PATH_ROW_BODY_CLASS}>
+                <span className="font-medium text-pretty">
+                  {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
                 </span>
-              )}
+                {when && phase.startDate && (
+                  <span className="text-muted-foreground font-mono text-xs tabular-nums">
+                    {when === "today" ? t("Today") : <PlanDateText isoDate={phase.startDate} />}
+                  </span>
+                )}
+              </span>
             </li>
           );
         })}

@@ -128,15 +128,20 @@ final class LiveCall {
   @ObservationIgnored private var goodbyeCues = 0
   @ObservationIgnored private var examCuesSent = 0
   @ObservationIgnored private var checkTiming = ObjectiveCheckTiming()
+  @ObservationIgnored private let checkSettle: Duration
   /// Its own task, so words that arrive while it runs don't cancel it and lose its answer.
   @ObservationIgnored private var runningCheck: Task<Void, Never>?
   /// The latest check's note for the character, until the ending sends it.
   @ObservationIgnored private var progressNote: LiveCallCue?
   @ObservationIgnored private var reserving: Task<CallReservation?, Never>?
 
-  init(conversation: LanguageConversation, client: LiveCallClient, soFar: CallSoFar? = nil) {
+  init(
+    conversation: LanguageConversation, client: LiveCallClient, soFar: CallSoFar? = nil,
+    checkSettle: Duration = ObjectiveCheckTiming.settle
+  ) {
     self.conversation = conversation
     self.client = client
+    self.checkSettle = checkSettle
     talkSeconds = conversation.minutes * 60
     carry(soFar ?? .newCall(conversation))
   }
@@ -707,8 +712,8 @@ final class LiveCall {
   /// A check still running holds the next until it's done.
   private func checkOnceSettled() {
     settle?.cancel()
-    settle = Task { [weak self] in
-      try? await Task.sleep(for: ObjectiveCheckTiming.settle)
+    settle = Task { [weak self, delay = checkSettle] in
+      try? await Task.sleep(for: delay)
 
       guard !Task.isCancelled, let self else {
         return

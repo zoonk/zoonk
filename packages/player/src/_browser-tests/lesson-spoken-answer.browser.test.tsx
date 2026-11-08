@@ -2,7 +2,12 @@ import { type PlayableSpokenAnswerStep } from "@zoonk/core/lesson-player/playabl
 import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
-import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import {
+  buildAdapters,
+  renderLessonPlayer,
+  runAnswer,
+  startedRun,
+} from "../_test-utils/render-lesson-player";
 import { type LessonPlayerAdapters, type SpokenAnswerOutcome } from "../lesson/lesson-player-types";
 import { CHECK_BOUNDS } from "../lesson/use-step-grading";
 import { buildLesson } from "../preview/preview-lesson";
@@ -86,6 +91,51 @@ describe("spoken answers", () => {
     third.unmount();
     openSpokenLesson({ gradeSpokenAnswer, step });
     await expect.element(page.getByRole("button", { name: "Record" })).toBeVisible();
+  });
+
+  it("shows a typed answer to a spoken screen again on a device set to speak", async () => {
+    const step = spokenAnswerStep();
+    const lesson = buildLesson([step, teachingStep("explanation"), teachingStep("check")]);
+    const typed = "The electron is a cloud";
+
+    const resume = [
+      runAnswer({
+        answer: { kind: "spokenAnswer", text: typed },
+        answerText: typed,
+        stepId: step.id,
+      }),
+    ];
+
+    const adapters = buildAdapters(lesson, {
+      gradeSpokenAnswer: vi.fn<GradeSpokenAnswer>(),
+      startLesson: () => Promise.resolve(startedRun({ answers: resume })),
+    });
+
+    renderLessonPlayer({ adapters, lesson, resume });
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expect.element(page.getByRole("textbox")).toHaveValue(typed);
+    await expect.element(page.getByRole("button", { name: "Record" })).not.toBeInTheDocument();
+  });
+
+  it("shows the right translation after a missed listening answer, as a listening screen does", async () => {
+    openSpokenLesson({ gradeSpokenAnswer: vi.fn<GradeSpokenAnswer>(), step: spokenSentenceStep() });
+
+    await page.getByRole("button", { name: "I can't talk now" }).click();
+
+    const bank = page.getByRole("group", { name: "Word bank" });
+
+    for (const word of [/^aluguel\?$/iu, /^o$/iu, /^é$/iu, /^quanto$/iu]) {
+      // oxlint-disable-next-line no-await-in-loop -- The words go in one at a time, in order.
+      await bank.getByRole("button", { name: word }).click();
+    }
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+
+    await expect
+      .element(page.getByRole("status").filter({ hasText: "Not quite" }))
+      .toMatchTextContent(/Answer: Quanto é o aluguel\?/u);
   });
 
   it("saves the listening answer that replaced a slow spoken one only after that grade settles", async () => {

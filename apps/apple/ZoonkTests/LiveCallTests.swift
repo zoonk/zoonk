@@ -197,7 +197,8 @@ final class LiveCallTests: XCTestCase {
   func testALateLearnerTranscriptStillGetsTheExchangeChecked() async {
     let transport = FakeTransport()
     let server = FakeServer()
-    let call = LiveCall(conversation: .fixture(), client: server.client(transport))
+    let call = LiveCall(
+      conversation: .fixture(), client: server.client(transport), checkSettle: .milliseconds(500))
 
     await call.start()
     transport.onEvent?(.started)
@@ -209,11 +210,11 @@ final class LiveCallTests: XCTestCase {
     transport.onEvent?(
       .transcript(speaker: .learner, delta: " there", startMs: 2500, endMs: 2900))
 
-    // The transcript settles 2 s after its last fragment, longer than the learner's words lag.
-    try? await Task.sleep(for: .milliseconds(1700))
+    // The check waits for the transcript to settle after its last fragment.
+    try? await Task.sleep(for: .milliseconds(200))
     XCTAssertEqual(server.checkedConnections, [])
     await waitUpTo(5) { !server.checkedConnections.isEmpty }
-    try? await Task.sleep(for: .seconds(2.5))
+    try? await Task.sleep(for: .milliseconds(750))
 
     XCTAssertEqual(server.checkedConnections, ["connection-1"])
   }
@@ -221,7 +222,8 @@ final class LiveCallTests: XCTestCase {
   func testWordsArrivingDuringACheckDontLoseItsAnswer() async {
     let transport = FakeTransport()
     let server = FakeServer(holdsChecks: true)
-    let call = LiveCall(conversation: .fixture(), client: server.client(transport))
+    let call = LiveCall(
+      conversation: .fixture(), client: server.client(transport), checkSettle: .milliseconds(500))
 
     await call.start()
     transport.onEvent?(.started)
@@ -240,13 +242,16 @@ final class LiveCallTests: XCTestCase {
   }
 
   func testTheOpeningRetryHasItsOwnEventId() async {
+    var setup = Components.Schemas.LanguageConversationSetup.fixture(connectionId: "connection-1")
+    setup.script.timing.openingRetryMs = 300
     let transport = FakeTransport()
-    let call = LiveCall(conversation: .fixture(), client: FakeServer().client(transport))
+    let call = LiveCall(
+      conversation: .fixture(), client: FakeServer(reservations: [.ready(setup)]).client(transport))
 
     await call.start()
     transport.onEvent?(.started)
     transport.onEvent?(.acknowledged(id: "opening-1", startMs: 0))
-    await waitUpTo(8) { transport.cues("opening").count > 1 }
+    await waitUpTo(5) { transport.cues("opening").count > 1 }
 
     let ids = transport.sent.compactMap { command -> String? in
       guard case .append(_, _, let eventId?) = command else { return nil }

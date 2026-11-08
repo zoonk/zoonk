@@ -1,3 +1,4 @@
+import { toListeningStep } from "@zoonk/core/lesson-player/grade";
 import {
   type LessonPlayerAnswer,
   type PlayableLanguageStep,
@@ -32,6 +33,18 @@ export function isReadStep(step: PlayableLibraryStep): boolean {
 
 export function isLanguageStep(step: PlayableLibraryStep): step is PlayableLanguageStep {
   return "exercise" in step;
+}
+
+export function getAnsweredStep({
+  answer,
+  step,
+}: {
+  answer: LessonPlayerAnswer | undefined;
+  step: PlayableLibraryStep;
+}): PlayableLibraryStep {
+  return step.kind === "spokenAnswer" && step.listening && answer?.kind === "listening"
+    ? toListeningStep({ listening: step.listening, step })
+    : step;
 }
 
 export function canSelfCorrect(step: PlayableLibraryStep): boolean {

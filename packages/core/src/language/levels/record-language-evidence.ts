@@ -6,10 +6,7 @@ import {
   type TransactionClient,
   prisma,
 } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
-import { usesNonLatinScript } from "@zoonk/utils/languages";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
-import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { findLearnerLanguageGoal, readGoalDetails } from "../_utils/language-goal";
 import { isPatternCheckDue } from "../patterns/find-mistake-pattern";
 import {
@@ -19,12 +16,6 @@ import {
   getStartScore,
   getStepLanguageSkill,
 } from "./skill-level-rules";
-
-const MAX_EVIDENCE_ATTEMPTS = 3;
-
-class EvidenceAdmissionChangedError extends Error {
-  override name = "EvidenceAdmissionChangedError";
-}
 
 const WORD_STEP_KINDS = new Set<StepKind>(["translation", "vocabulary"]);
 
@@ -79,28 +70,6 @@ export async function addSkillEvidence(
     data: { ...next, ...(raised && current.raisedAt === null && { raisedAt: new Date() }) },
     where: { id: current.id },
   });
-}
-
-async function changesSelection(tx: TransactionClient, input: SkillEvidence): Promise<boolean> {
-  if (input.skill !== "reading" || !usesNonLatinScript(input.language)) {
-    return false;
-  }
-
-  const current = await tx.languageSkillLevel.findUnique({
-    where: {
-      userLanguageSkill: { language: input.language, skill: input.skill, userId: input.userId },
-    },
-  });
-
-  const state = current ?? {
-    score: input.startScore,
-    startScore: input.startScore,
-    windowCeiling: null,
-    windowCorrect: 0,
-    windowTotal: 0,
-  };
-
-  return applyLevelEvidence(state, input.evidence).score !== (current?.score ?? 0);
 }
 
 /** Callers must derive `userId` from the authenticated session. */
@@ -180,48 +149,4 @@ export async function writeLanguageStepEvidence(
       userId,
     });
   }
-}
-
-async function writeStepEvidence({
-  attempt = 1,
-  evidence,
-}: {
-  attempt?: number;
-  evidence: LanguageStepEvidence;
-}): Promise<void> {
-  const { skill } = evidence;
-
-  const { error } = await safeAsync(() =>
-    prisma.$transaction(async (tx) => {
-      const planInputs = await changesSelection(tx, skill);
-      await markLearnerChanged(tx, { planInputs, userId: skill.userId });
-
-      if (planInputs !== (await changesSelection(tx, skill))) {
-        throw new EvidenceAdmissionChangedError();
-      }
-
-      await writeLanguageStepEvidence(tx, evidence);
-    }),
-  );
-
-  if (error instanceof EvidenceAdmissionChangedError && attempt < MAX_EVIDENCE_ATTEMPTS) {
-    return writeStepEvidence({ attempt: attempt + 1, evidence });
-  }
-
-  if (error) {
-    throw error;
-  }
-}
-
-/** Callers must derive `userId` from the authenticated session. */
-export async function recordLanguageStepEvidence(
-  input: Parameters<typeof loadLanguageStepEvidence>[0],
-): Promise<void> {
-  const evidence = await loadLanguageStepEvidence(input);
-
-  if (!evidence) {
-    return;
-  }
-
-  await writeStepEvidence({ evidence });
 }

@@ -1,5 +1,5 @@
 import "server-only";
-import { type StepKind, type TransactionClient, prisma } from "@zoonk/db";
+import { type StepKind, type TransactionClient } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import {
   loadLanguageStepEvidence,
@@ -13,6 +13,7 @@ import {
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { claimModelGrade } from "../learner/_utils/model-grading";
 import { getSession } from "../users/get-session";
+import { findClosingAnswer } from "./_utils/answer-recording";
 import {
   type ComesBackInput,
   checkSaved,
@@ -38,9 +39,6 @@ import {
 } from "./contract";
 import { isAnswerableStep } from "./lesson-run";
 
-/** Allow the first answer, an end-of-lesson retry, and one retried request; extra answers must not record more study. */
-const MAX_ANSWERS_PER_STEP_IN_RUN = 3;
-
 const EXPECTED_ANSWER_MS: Partial<Record<StepKind, number>> = {
   activity: 45_000,
   challenge: 300_000,
@@ -54,30 +52,6 @@ export type LessonStepCheckOutcome =
   | { status: "notFound" }
   | { status: "runEnded" }
   | { status: "unauthorized" };
-
-/** Leaves out `attemptId`, so a copy of an answer sent at once replays it instead of being refused. */
-async function countRunAnswers({
-  attemptId,
-  client = prisma,
-  startedAt,
-  stepId,
-  userId,
-}: {
-  attemptId?: string;
-  client?: TransactionClient;
-  startedAt: Date;
-  stepId: string;
-  userId: string;
-}): Promise<number> {
-  return client.attempt.count({
-    where: {
-      answeredAt: { gte: startedAt },
-      stepId,
-      userId,
-      ...(attemptId && { id: { not: attemptId } }),
-    },
-  });
-}
 
 /** A spoken screen's fallbacks train what the learner did: typing is writing, listening is listening. */
 const SPOKEN_FALLBACK_KINDS: Partial<Record<LessonStepAnswer["kind"], StepKind>> = {
@@ -182,16 +156,18 @@ async function recordCheck({
         return "runEnded";
       }
 
-      const answers = await countRunAnswers({
+      const closingAnswer = await findClosingAnswer({
         attemptId,
         client: transaction,
-        startedAt: run.startedAt,
+        isCorrect: verdict.isCorrect,
+        lessonId: row.lessonId,
         stepId: row.id,
+        until: run.startedAt,
         userId: comesBack.userId,
       });
 
-      if (answers >= MAX_ANSWERS_PER_STEP_IN_RUN) {
-        return "runFull";
+      if (closingAnswer) {
+        return closingAnswer;
       }
 
       const overtaken = await hasAnswerSince(transaction, {
@@ -292,8 +268,13 @@ export async function checkLessonStep({
 
   const isRecorded =
     !saved &&
-    (await countRunAnswers({ startedAt: run.startedAt, stepId: row.id, userId })) <
-      MAX_ANSWERS_PER_STEP_IN_RUN;
+    (await findClosingAnswer({
+      attemptId,
+      lessonId: row.lessonId,
+      stepId: row.id,
+      until: run.startedAt,
+      userId,
+    })) === null;
 
   const verdict = await gradeRunAnswer({
     answer: input.answer,

@@ -90,16 +90,19 @@ extension APIClientFactory {
   /// received: after a moment while the run works, and once more at once after it ended, for the
   /// events it wrote just before. A dropped connection resumes the same way. A run that stops
   /// without saying so may leave its stream open (vercel/workflow#964), so its status is read
-  /// every `stopCheck` too.
+  /// every `stopCheck` too. A dropped connection waits `backoff` for each drop in a row before it
+  /// resumes, and a stream that closed while its run works waits 1.5 times it.
   func generationEvents(
     id: String,
     token: String?,
-    stopCheck: Duration = .seconds(120)
+    stopCheck: Duration = .seconds(120),
+    backoff: Duration = .seconds(1)
   ) -> AsyncThrowingStream<GenerationEvent, Error> {
     AsyncThrowingStream { continuation in
       let task = Task {
         do {
-          try await follow(id, token: token, stopCheck: stopCheck, continuation)
+          try await follow(
+            id, token: token, stopCheck: stopCheck, backoff: backoff, continuation)
           continuation.finish()
         } catch {
           continuation.finish(throwing: error)
@@ -137,6 +140,7 @@ extension APIClientFactory {
     _ id: String,
     token: String?,
     stopCheck: Duration,
+    backoff: Duration,
     _ continuation: AsyncThrowingStream<GenerationEvent, Error>.Continuation
   ) async throws {
     var run = id
@@ -165,7 +169,7 @@ extension APIClientFactory {
         }
 
         dropsWithoutEvents += 1
-        try await Task.sleep(for: .seconds(dropsWithoutEvents))
+        try await Task.sleep(for: backoff * dropsWithoutEvents)
         continue
       }
 
@@ -187,7 +191,7 @@ extension APIClientFactory {
         watch.cancel()
         watch = watchForStop(of: run, token: token, every: stopCheck, continuation)
       case .closed(.working):
-        try await Task.sleep(for: .milliseconds(1500))
+        try await Task.sleep(for: backoff * 1.5)
       case .closed:
         runEnded = true
       }

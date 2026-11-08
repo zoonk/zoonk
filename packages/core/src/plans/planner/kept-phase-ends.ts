@@ -1,9 +1,10 @@
+import { isPastCore } from "./core-first";
 import { findDayIndex, isLessonRoom } from "./day-index";
 import { findLargestCount } from "./outcome-room";
+import { deferPastCore, findLate, hasLateLesson } from "./past-core-deferral";
 import { canHoldPhaseChallenge } from "./phase-challenge-days";
 import { listWonPhases } from "./phase-time";
 import { fromIsoDate, toIsoDate } from "./plan-calendar";
-import { LEARN_KINDS } from "./plan-item-rules";
 import { type ExistingPlanItem } from "./plan-items";
 import { PLAN_EPSILON } from "./plan-precision";
 import { type PlanPhase } from "./plan-state";
@@ -14,7 +15,6 @@ import {
   getCumulativeCapacity,
   getLessonCapacity,
   getUsedAfterUnits,
-  placeUnits,
 } from "./schedule-units";
 import { withKeptLessons } from "./whole-boss";
 
@@ -97,8 +97,8 @@ function pullPhaseDepth({
 }
 
 /**
- * How many of `fitting` stay before the earlier challenges: all but the fewest depth lessons at its
- * end that let those challenges end by `start`.
+ * How many of `fitting` stay before the earlier challenges: all but the fewest lessons past their
+ * core at its end that let those challenges end by `start`.
  */
 function countKeptBefore({
   cumulative,
@@ -111,13 +111,16 @@ function countKeptBefore({
   fitting: readonly QueueUnit[];
   start: number;
 }): number {
-  const depthFrom = fitting.findLastIndex((unit) => unit.kind !== "lesson" || !unit.depth) + 1;
+  const pastCoreFrom =
+    fitting.findLastIndex((unit) => unit.kind !== "lesson" || !isPastCore(unit)) + 1;
 
   const fits = (count: number) =>
     getUsedAfterUnits({ cumulative, units: [...fitting.slice(0, count), ...earlier] }) <=
     start + PLAN_EPSILON;
 
-  return findLargestCount({ high: fitting.length, low: depthFrom, works: fits }) ?? fitting.length;
+  return (
+    findLargestCount({ high: fitting.length, low: pastCoreFrom, works: fits }) ?? fitting.length
+  );
 }
 
 function keepPhaseEnd({
@@ -136,18 +139,23 @@ function keepPhaseEnd({
   const after = units.slice(index + 1);
 
   const start = cumulative[endDay - 1] ?? 0;
+  const late = findLate({ cumulative, start, units: before });
 
-  const late = placeUnits({ cumulative, units: before }).findIndex(
-    ({ dayIndex, start: unitStart, unit }) =>
-      dayIndex < 0 || unitStart + unit.minutes > start + PLAN_EPSILON,
-  );
-
-  const lateLesson =
-    (late !== -1 && before.slice(late).some((unit) => LEARN_KINDS.has(unit.kind))) ||
-    (boss.afterDay ?? -1) >= endDay;
-
-  if (lateLesson) {
+  if ((boss.afterDay ?? -1) >= endDay) {
     return [...units];
+  }
+
+  if (hasLateLesson({ late, units: before })) {
+    const deferred = deferPastCore({ before, cumulative, start });
+
+    return deferred
+      ? keepPhaseEnd({
+          boss,
+          cumulative,
+          endDay,
+          units: [...deferred.kept, boss, ...deferred.moved, ...after],
+        })
+      : [...units];
   }
 
   const held = { ...boss, heldOn: endDay, startsAt: start };
