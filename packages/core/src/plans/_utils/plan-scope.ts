@@ -7,7 +7,7 @@ import { type CountedLesson, type PlanScope, type UnwrittenLessons } from "./hal
 import { loadGoalPlannerLessons } from "./planner-lessons";
 import { getWorkProgress } from "./work-progress";
 
-type ScopeGoal = Pick<Goal, "details" | "examBlueprintId" | "kind" | "primaryCourseId" | "userId">;
+type ScopeGoal = Pick<Goal, "examBlueprintId" | "kind" | "primaryCourseId" | "userId">;
 
 type ScopeItem = Pick<PlanItem, "chapterId" | "kind" | "lessonId" | "skillId" | "status">;
 
@@ -100,8 +100,13 @@ export async function loadPlanScope({
         : [],
   );
 
+  // An award reads the course start the plan saved, never the goal's details the learner can edit.
   const loaded = await loadGoalPlannerLessons({
-    goal,
+    goal: {
+      examBlueprintId: goal.examBlueprintId,
+      kind: goal.kind,
+      primaryCourseId: goal.primaryCourseId,
+    },
     graph: { ...graph, skills },
     userId: goal.userId,
   });

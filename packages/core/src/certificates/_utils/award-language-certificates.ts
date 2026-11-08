@@ -20,7 +20,6 @@ async function loadLanguagePlans(tx: TransactionClient, planIds: readonly string
     select: {
       goal: {
         select: {
-          details: true,
           examBlueprintId: true,
           id: true,
           kind: true,

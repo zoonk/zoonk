@@ -14,7 +14,7 @@ import { loadSkillCourseLevels } from "./skill-course-levels";
 
 export type UnitGoal = Pick<
   Goal,
-  "details" | "examBlueprintId" | "id" | "kind" | "primaryCourseId" | "targetDate" | "userId"
+  "examBlueprintId" | "id" | "kind" | "primaryCourseId" | "targetDate" | "userId"
 >;
 
 export type UnitPlan = Pick<Plan, "createdAt" | "graph" | "phases" | "settings"> & {

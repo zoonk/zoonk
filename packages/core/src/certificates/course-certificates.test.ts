@@ -986,6 +986,56 @@ async function startBeginnerCourse(skillLevels: (CourseLevel | null)[], lessonSk
   return { course, goal: started.goal, user };
 }
 
+/**
+ * A public core course with a chapter at each level, started from its beginning, its beginner
+ * chapter's eleven lessons teaching one skill.
+ */
+async function startWholeCourse() {
+  const levels = ["beginner", "intermediate", "advanced"] as const;
+
+  const [user, course, chapters, skills] = await Promise.all([
+    userFixture(),
+    courseFixture({ format: "core", isPublished: true, visibility: "public" }),
+    Promise.all(levels.map((level) => libraryChapterFixture({ level }))),
+    Promise.all(levels.map((level) => skillFixture({ level }))),
+  ]);
+
+  await Promise.all(
+    chapters.map(async (chapter, index) => {
+      const count = index === 0 ? 11 : 1;
+
+      await courseChapterFixture({
+        chapterId: chapter.id,
+        courseId: course.id,
+        level: levels[index] ?? "beginner",
+      });
+
+      await Promise.all(
+        Array.from({ length: count }, async (_, position) => {
+          const lesson = await libraryLessonFixture({
+            estimatedMinutes: 4,
+            homeChapterId: chapter.id,
+          });
+
+          await Promise.all([
+            chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position }),
+            lessonSkillFixture({ lessonId: lesson.id, skillId: skills[index]?.id ?? "" }),
+          ]);
+        }),
+      );
+    }),
+  );
+
+  mockSession(user.id);
+  const started = await startCourseWithPlan({ courseId: course.id, input: {} });
+
+  if (started.status !== "created") {
+    throw new Error(`Expected a started course, not ${started.status}`);
+  }
+
+  return { course, goal: started.goal, user };
+}
+
 async function finishPlan({ goal, user }: { goal: Pick<Goal, "id">; user: { id: string } }) {
   const items = await prisma.planItem.findMany({
     orderBy: { position: "asc" },
@@ -1113,6 +1163,33 @@ describe("a course level, its skills where its course teaches them", () => {
     await finishPlan(started);
 
     await expect(listCourseKeys(started.user.id)).resolves.toStrictEqual([]);
+  });
+
+  it("sizes a level by the start its plan saved, not one written into the goal", async () => {
+    const started = await startWholeCourse();
+
+    await prisma.planItem.deleteMany({ where: { plan: { goalId: started.goal.id } } });
+
+    await prisma.goal.update({
+      data: { dailyMinutes: 15, targetDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) },
+      where: { id: started.goal.id },
+    });
+
+    await refreshGoalPlan({ goalId: started.goal.id });
+    await finishPlan(started);
+
+    await expect(claimCourseCertificate(started.goal.id)).resolves.toStrictEqual({
+      status: "notFinished",
+    });
+
+    await prisma.goal.update({
+      data: { details: { courseStart: { chapterId: randomUUID() } }, status: "paused" },
+      where: { id: started.goal.id },
+    });
+
+    await expect(claimCourseCertificate(started.goal.id)).resolves.toStrictEqual({
+      status: "notFinished",
+    });
   });
 
   it("awards a finished level when a later level's shared lesson takes it to half", async () => {
