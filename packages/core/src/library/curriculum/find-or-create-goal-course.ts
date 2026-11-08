@@ -1,4 +1,5 @@
 import "server-only";
+import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { type Course, type CourseFormat, prisma } from "@zoonk/db";
 import { lockCourseHome } from "@zoonk/db/course-home";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
@@ -28,10 +29,12 @@ function toCourseRequest({ scope, title }: { scope: CourseScope; title: string }
 export async function writeGoalCourseSearchTerms({
   analytics,
   scope,
+  serviceTier,
   title,
 }: {
   analytics?: CurriculumAnalytics;
   scope: CourseScope;
+  serviceTier?: ServiceTier;
   title: string;
 }): Promise<string[]> {
   const search = getCourseIdentitySearch(toCourseRequest({ scope, title }));
@@ -40,7 +43,12 @@ export async function writeGoalCourseSearchTerms({
     return [];
   }
 
-  const [terms = []] = await writeSearchTerms({ analytics, subjects: [search.aiSubject] });
+  const [terms = []] = await writeSearchTerms({
+    analytics,
+    serviceTier,
+    subjects: [search.aiSubject],
+  });
+
   return terms;
 }
 

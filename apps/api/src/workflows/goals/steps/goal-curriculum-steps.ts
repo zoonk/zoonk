@@ -1,4 +1,4 @@
-import { chooseServiceTier } from "@zoonk/ai/provider-options";
+import { type ServiceTier, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { type generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { classifyGoalSpecificity } from "@zoonk/ai/tasks/identity/goal-specificity";
@@ -142,11 +142,13 @@ export async function saveGoalSkillsStep({
   analytics,
   provenance,
   scope,
+  serviceTier,
   skills,
   workflowRunId,
 }: RunScope & {
   provenance: GraphProvenance;
   scope: CurriculumScope;
+  serviceTier?: ServiceTier;
   skills: GoalSkillGraph["skills"];
 }): Promise<Record<string, string>> {
   "use step";
@@ -155,6 +157,7 @@ export async function saveGoalSkillsStep({
     analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
     provenance,
     scope,
+    serviceTier,
     skills,
   });
 }
