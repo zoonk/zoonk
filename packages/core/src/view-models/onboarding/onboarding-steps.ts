@@ -19,6 +19,11 @@ type StepGoal = {
   /** Omit unless the caller loaded notice/plan choices; omission never asks an exam-choice question. */
   hasUnpickedChoice?: boolean;
   kind: GoalKind;
+  /**
+   * A shown plan never asks why again: goals set up before a language goal's reason became its aim
+   * have a reason and no aim. Omit only where the reason question doesn't matter.
+   */
+  planRevealed?: boolean;
   targetDate: string | null;
 };
 
@@ -142,7 +147,7 @@ function isQuestionMissing({ goal, question }: { goal: StepGoal; question: Onboa
     case "role":
       return kind === "learn" && isRolePurpose(details.purpose) && !hasRoleAnswer(details);
     case "reason":
-      return kind === "language" && readLanguageAim(details) === null;
+      return kind === "language" && readLanguageAim(details) === null && !goal.planRevealed;
     case "target":
       return kind === "exam" && !hasExamTarget(details);
     case "targetDate":
@@ -228,13 +233,14 @@ export function isPlanRevealOwed(goal: Pick<Goal, "kind" | "planRevealedAt">): b
 }
 
 export function isGoalSetupLeft(
-  goal: Pick<Goal, "details" | "kind" | "replacesGoalId" | "targetDate">,
+  goal: Pick<Goal, "details" | "kind" | "planRevealedAt" | "replacesGoalId" | "targetDate">,
 ): boolean {
   return hasOnboardingQuestions(
     getOnboardingSteps({
       goal: {
         details: isJsonObject(goal.details) ? goal.details : {},
         kind: goal.kind,
+        planRevealed: goal.planRevealedAt !== null,
         replacesGoalId: goal.replacesGoalId,
         targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
       },

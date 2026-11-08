@@ -1,7 +1,7 @@
 "use client";
 
 import { type GoalView } from "@zoonk/core/goals/contract";
-import { readLanguageAim } from "@zoonk/core/language/aims";
+import { toLanguageAimView } from "@zoonk/core/language/aims";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -80,11 +80,7 @@ function useReceiptFacts(goal: GoalView): ReceiptFact[] {
     { id: "title", label: t("Goal"), value: goal.title },
     dateFact(goal),
     ...languageRows(goal),
-    ...detailRows(
-      goal,
-      null,
-      goal.kind === "language" ? { aim: readLanguageAim(goal.details), choices: [] } : null,
-    ),
+    ...detailRows(goal, null, goal.kind === "language" ? toLanguageAimView(goal.details) : null),
     level !== null && { id: "level", label: t("Your level"), value: level },
     isAnswered({ goal, question: "schedule" }) && {
       id: "time",

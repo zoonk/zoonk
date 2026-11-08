@@ -89,6 +89,7 @@ export async function insertGoalWithPlan(
       settings: {
         ...toScopeSettings(examSubjects),
         startDate: toIsoDate(getDateInTimeZone({ date: new Date(), timeZone })),
+        ...(draft.kind === "language" && { stopsAtAim: true }),
         weekdayMinutes: getWeekdayMinutes({ dailyMinutes, studyDays: input.studyDays }),
       },
     },

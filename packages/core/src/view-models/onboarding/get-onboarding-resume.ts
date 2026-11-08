@@ -84,6 +84,7 @@ async function isInOnboarding({
       details: readDetails(goal),
       hasUnpickedChoice: await hasUnpickedChoice(goal),
       kind: goal.kind,
+      planRevealed: goal.planRevealedAt !== null,
       replacesGoalId: goal.replacesGoalId,
       targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
     },

@@ -444,6 +444,7 @@ describe(isGoalSetupLeft, () => {
           purpose: "overview",
         },
         kind: "learn",
+        planRevealedAt: null,
         replacesGoalId: null,
         targetDate: null,
       }),
@@ -453,6 +454,7 @@ describe(isGoalSetupLeft, () => {
       isGoalSetupLeft({
         details: { answered: ["level"], courseStart, level: "basic" },
         kind: "learn",
+        planRevealedAt: null,
         replacesGoalId: null,
         targetDate: null,
       }),
@@ -464,10 +466,27 @@ describe(isGoalSetupLeft, () => {
       isGoalSetupLeft({
         details: { answered: ["level", "targetDate", "placement", "schedule"], courseStart },
         kind: "learn",
+        planRevealedAt: null,
         replacesGoalId: null,
         targetDate: null,
       }),
     ).toBe(false);
+  });
+
+  it("lets a language goal set up before aims go, though its words gave a reason and no level", () => {
+    const setUp = {
+      details: {
+        answered: ["targetDate", "level", "buddy", "placement", "schedule"],
+        level: "basic",
+        reason: "Talk with my partner's family",
+      },
+      kind: "language" as const,
+      replacesGoalId: null,
+      targetDate: null,
+    };
+
+    expect(isGoalSetupLeft({ ...setUp, planRevealedAt: new Date("2026-10-01") })).toBe(false);
+    expect(isGoalSetupLeft({ ...setUp, planRevealedAt: null })).toBe(true);
   });
 
   it("never holds back the next level of a finished course", () => {
@@ -475,6 +494,7 @@ describe(isGoalSetupLeft, () => {
       isGoalSetupLeft({
         details: { courseStart },
         kind: "learn",
+        planRevealedAt: new Date("2026-10-01"),
         replacesGoalId: "finished-goal",
         targetDate: null,
       }),

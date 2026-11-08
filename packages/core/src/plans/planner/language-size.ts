@@ -1,10 +1,10 @@
 import { type CourseLevel, type GoalKind } from "@zoonk/db";
-import { type CefrLevel, parseCefrScore } from "@zoonk/utils/cefr";
+import { type CefrLevel, parseCefrScore, toCefrLevel } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getCefrHours, getStartHours } from "../../language/aims/language-aims";
 import { getBandRank } from "../../learner/placement/placement-graph";
 import { getLearningShare } from "./plan-phases";
-import { type PlanGraph } from "./plan-state";
+import { type PlanGraph, type PlanSettings, type PlanState } from "./plan-state";
 import { DEFAULT_LESSON_MINUTES } from "./plan-units";
 
 const MINUTES_PER_HOUR = 60;
@@ -50,12 +50,12 @@ function listAboveAim({
   graph,
   settledSkillIds,
 }: {
-  aim: CefrLevel;
+  aim: number;
   bands: ReadonlyMap<string, CourseLevel | null>;
   graph: PlanGraph;
   settledSkillIds: ReadonlySet<string>;
 }): Set<string> {
-  const ceiling = getBandRank(AIM_BANDS[aim]);
+  const ceiling = getBandRank(AIM_BANDS[toCefrLevel(aim)]);
 
   return new Set(
     graph.skills.flatMap((skill) => {
@@ -111,32 +111,40 @@ function resize({
  * save, so a higher aim later brings the rest back; `planned` is what the plan lays out.
  */
 export function sizeLanguageGraph({
-  aim,
   bands,
   goal,
   graph,
   settledSkillIds = new Set(),
+  state,
 }: {
-  aim: CefrLevel | null;
   bands: ReadonlyMap<string, CourseLevel | null>;
   /** Its details hold the level the learner starts from. */
   goal: { details: unknown; kind: GoalKind };
   graph: PlanGraph;
   settledSkillIds?: ReadonlySet<string>;
+  /** The aim is a CEFR label, half bands included ("B1+"). */
+  state: { goal: Pick<PlanState["goal"], "aim">; settings: Pick<PlanSettings, "stopsAtAim"> };
 }): { graph: PlanGraph; planned: PlanGraph } {
-  const aimScore = parseCefrScore(aim);
+  const aimScore = parseCefrScore(state.goal.aim);
   const start = getStartHours(isJsonObject(goal.details) ? goal.details.level : null);
 
-  if (goal.kind !== "language" || aim === null || aimScore === null) {
+  if (goal.kind !== "language" || aimScore === null) {
     return { graph, planned: graph };
   }
 
-  const leftOut = listAboveAim({ aim, bands, graph, settledSkillIds });
+  const leftOut = state.settings.stopsAtAim
+    ? listAboveAim({ aim: aimScore, bands, graph, settledSkillIds })
+    : new Set<string>();
+
   const ahead = start !== null && getCefrHours(aimScore) > start;
 
   const sized = ahead
     ? resize({ graph, leftOut, settledSkillIds, target: getLessonTarget({ aim: aimScore, start }) })
     : graph;
+
+  if (leftOut.size === 0) {
+    return { graph: sized, planned: sized };
+  }
 
   const skills = sized.skills.filter((skill) => !leftOut.has(skill.skillId));
   const lastPhase = Math.max(-1, ...skills.map((skill) => skill.phase));
