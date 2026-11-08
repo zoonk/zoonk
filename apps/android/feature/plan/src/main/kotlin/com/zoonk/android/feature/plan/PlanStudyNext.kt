@@ -10,7 +10,6 @@ import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.feature.catalog.courseLevelName
 import com.zoonk.android.feature.certificates.certificateLevelName
-import com.zoonk.android.feature.certificates.keepingLevelTogether
 import com.zoonk.android.feature.subscription.ButtonPlusMark
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -106,7 +105,7 @@ internal fun CourseCompleteSuggestion(slot: Slot) {
 
     val title =
         level?.courseLevel?.let {
-            stringResource(R.string.plan_level_complete, certificateLevelName(it.value, level.cefrRange).keepingLevelTogether())
+            stringResource(R.string.plan_level_complete, certificateLevelName(it.value, level.cefrRange))
         }
             ?: stringResource(R.string.plan_course_complete)
     val claim =
