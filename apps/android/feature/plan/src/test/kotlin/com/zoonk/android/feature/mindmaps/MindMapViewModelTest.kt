@@ -121,7 +121,7 @@ class MindMapViewModelTest {
         }
 
     @Test
-    fun aLockThePollFoundOutlivesTheRowStoppingItUntilBuyingPlus() =
+    fun aPollStoppedWhileItReadsTheLockAgainLeavesNoLockAfterBuyingPlus() =
         runTest(dispatcher) {
             val (_, _, cache) = setUp()
             var hold = false
@@ -146,10 +146,10 @@ class MindMapViewModelTest {
             api.statuses.add(ChapterMindMapStatus.Status.PLUS_REQUIRED)
             hold = true
 
-            // The row stops following once it shows the lock, here while the poll reads the map again.
+            // Leaving the screen stops the poll while it reads the map again; the row still shows what the reads say.
             val follow = launch { maps.follow(chapterId, MindMapShown.Drawing) }
             reading.await()
-            assertEquals(MindMapShown.PlusRequired, shownMindMap(heldStore.chapterShown(), maps.requests.value[chapterId]))
+            assertEquals(MindMapShown.Drawing, shownMindMap(heldStore.chapterShown(), maps.requests.value[chapterId]))
             follow.cancelAndJoin()
 
             hold = false
@@ -158,6 +158,53 @@ class MindMapViewModelTest {
             heldStore.chapter[key].load()
 
             assertEquals(MindMapShown.Available, shownMindMap(heldStore.chapterShown(), maps.requests.value[chapterId]))
+        }
+
+    @Test
+    fun aPollAnsweredBeforeBuyingPlusCantLockTheMapReadAfterIt() =
+        runTest(dispatcher) {
+            val (_, _, cache) = setUp()
+            val asked = CompletableDeferred<Unit>()
+            val answer = CompletableDeferred<ChapterMindMapStatus.Status>()
+            val slow =
+                object : MindMapApi by api {
+                    override suspend fun status(
+                        session: AuthenticatedSession,
+                        key: ChapterKey,
+                    ): ChapterMindMapStatus.Status {
+                        asked.complete(Unit)
+                        return answer.await()
+                    }
+                }
+            val slowStore = MindMapStore(slow, cache)
+            val maps = MindMapViewModel(slowStore, ana, goalId, { current }, io = dispatcher)
+            api.chapter = { chapterMindMap("drawing") }
+            api.mindMaps = { goalMindMaps(listOf(mapJson(3, "Waves and sound", "drawing"))) }
+            slowStore.list[goalId].load()
+            slowStore.chapter[key].load()
+
+            val follow = launch { maps.follow(chapterId, MindMapShown.Drawing) }
+            asked.await()
+            api.chapter = { chapterMindMap("ready") }
+            api.mindMaps = { goalMindMaps(listOf(mapJson(3, "Waves and sound", "ready"))) }
+            cache.invalidate(setOf(DataDomain.UserSubscription))
+            slowStore.list[goalId].load()
+            slowStore.chapter[key].load()
+            api.chapter = { throw ApiException(ApiError.Network) }
+            api.mindMaps = { throw ApiException(ApiError.Network) }
+            answer.complete(ChapterMindMapStatus.Status.PLUS_REQUIRED)
+            follow.join()
+
+            assertEquals(MindMapShown.Ready, shownMindMap(slowStore.chapterShown(), maps.requests.value[chapterId]))
+            assertEquals(
+                MindMapShown.Ready,
+                slowStore.list[goalId]
+                    .state.value.value
+                    ?.chapters
+                    ?.single()
+                    ?.status
+                    ?.shown,
+            )
         }
 
     @Test

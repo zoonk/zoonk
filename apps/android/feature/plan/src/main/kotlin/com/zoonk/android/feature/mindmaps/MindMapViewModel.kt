@@ -88,9 +88,10 @@ class MindMapViewModel(
 
     /**
      * Runs while the screen shows the map on its way ([shown]), until the screen's reads show how it
-     * ended, and then leaves the row to them, so a later read (after buying Plus) wins. A status or a
-     * read that fails counts as a miss; a stuck poll keeps what it waited on, so Try again follows it
-     * at the same pace.
+     * ended. It never writes what a status said: an answer can land after a newer read (Plus bought
+     * meanwhile), so the reads stay the row's only truth. A status or a read that fails, or reads
+     * that don't show it yet, count as a miss; a stuck poll keeps what it waited on, so Try again
+     * follows it at the same pace.
      */
     suspend fun follow(
         chapterId: UUID,
@@ -116,9 +117,6 @@ class MindMapViewModel(
                 }
 
                 else -> {
-                    // A lock or a failure lives in the store's reads: the row stops following once it shows one.
-                    val held = store.show(key, status)
-                    locals.update { if (held) it - chapterId else it + (chapterId to MindMapLocal(shown = status)) }
                     if (store.reread(key, status)) {
                         locals.update { it - chapterId }
                         return
