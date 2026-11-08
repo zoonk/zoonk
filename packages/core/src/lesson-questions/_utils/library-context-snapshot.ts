@@ -120,14 +120,38 @@ async function getAnswerContext({
     : null;
 }
 
-function getStepNumber({
-  context,
-  index,
+function isGuess(step: PlayableLibraryStep): boolean {
+  return step.kind === "hook" && step.content.variant === "guess";
+}
+
+function isTeachingStep(step: PlayableLibraryStep): boolean {
+  return !isAnswerableStep(step) && !isGuess(step);
+}
+
+/**
+ * A screen's question also gets the screens that teach its idea, often after it, so the tutor can
+ * explain what they explain. Other questions and guesses stay out: they hold answers. Numbers follow
+ * the lesson, since the client's number counts retried screens again.
+ */
+function getScreenSteps({
+  activeStep,
+  steps,
 }: {
-  context: LessonScopeContextInput;
-  index: number;
-}): number {
-  return context.kind === "lesson" ? index + 1 : context.stepNumber;
+  activeStep: PlayableLibraryStep;
+  steps: PlayableLibraryStep[];
+}): Pick<LessonScopeContext, "lessonSteps" | "step"> {
+  const numbered = steps.map((step, index) => ({
+    active: step.id === activeStep.id,
+    context: toStepContext({ step, stepNumber: index + 1 }),
+    teaching: isTeachingStep(step),
+  }));
+
+  return {
+    lessonSteps: numbered
+      .filter(({ active, teaching }) => active || teaching)
+      .map(({ context }) => context),
+    step: numbered.find(({ active }) => active)?.context ?? null,
+  };
 }
 
 function getLessonPlace(
@@ -175,18 +199,12 @@ export async function buildLibraryQuestionContextSnapshot({
     return { status: "invalidContext" as const };
   }
 
-  const steps = getRequestedSteps({
-    context,
-    steps: await loadPlayableSteps({ lesson: row, rows: row.steps }),
-  });
+  const lessonRows = await loadPlayableSteps({ lesson: row, rows: row.steps });
+  const steps = getRequestedSteps({ context, steps: lessonRows });
 
   if (!steps) {
     return { status: "invalidContext" as const };
   }
-
-  const lessonSteps = steps.map((step, index) =>
-    toStepContext({ step, stepNumber: getStepNumber({ context, index }) }),
-  );
 
   const activeStep = context.kind === "lesson" ? null : steps[0];
 
@@ -207,9 +225,13 @@ export async function buildLibraryQuestionContextSnapshot({
   const contextSnapshot: LessonScopeContext = {
     ...getLessonPlace(lesson),
     answer,
-    lessonSteps,
+    ...(activeStep
+      ? getScreenSteps({ activeStep, steps: lessonRows })
+      : {
+          lessonSteps: steps.map((step, index) => toStepContext({ step, stepNumber: index + 1 })),
+          step: null,
+        }),
     scope: { kind: context.kind },
-    step: context.kind === "lesson" ? null : (lessonSteps[0] ?? null),
     version: 1,
   };
 
