@@ -112,6 +112,7 @@ async function loadExerciseResources({
       distractors: link.distractors,
       explanation: link.explanation,
       id: link.sentence.id,
+      ordersPending: link.ordersOwedAt !== null,
       otherSentenceOrders: link.otherSentenceOrders,
       otherTranslationOrders: link.otherTranslationOrders,
       romanization: link.sentence.romanization,

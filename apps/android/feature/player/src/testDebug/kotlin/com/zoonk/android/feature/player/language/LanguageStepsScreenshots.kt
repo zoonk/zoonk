@@ -116,7 +116,7 @@ class LanguageStepsScreenshots {
             StepKind.Reading,
             "reading",
             sentence =
-                """{"audioUrl":null,"distractors":[],"explanation":null,"id":"s-3","otherSentenceOrders":[["Quando","pioveva","è","arrivato","l'autobus"]],
+                """{"audioUrl":null,"distractors":[],"explanation":null,"id":"s-3","ordersPending":false,"otherSentenceOrders":[["Quando","pioveva","è","arrivato","l'autobus"]],
                    "otherTranslationOrders":[],"romanization":null,"sentence":"Quando pioveva l'autobus è arrivato",
                    "translation":"Quando chovia o ônibus chegou","translationDistractors":[]}""",
             wordBank = bank("arrivato", "Quando", "l'autobus", "pioveva", "è"),

@@ -86,6 +86,18 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.phase, .completed)
   }
 
+  func testPendingWordOrdersWaitForTheServerOnlyOnALocalMiss() throws {
+    let pending = try step(
+      reading.replacingOccurrences(of: "\"ordersPending\": false", with: "\"ordersPending\": true"))
+    let ready = try step(reading)
+    let wrong = LessonAnswer.reading(arrangedWords: ["suis", "Je", "Marie"])
+    let right = LessonAnswer.reading(arrangedWords: ["Je", "suis", "Marie"])
+
+    XCTAssertNil(LessonGrading.grade(wrong, step: pending))
+    XCTAssertEqual(LessonGrading.grade(right, step: pending)?.isCorrect, true)
+    XCTAssertEqual(LessonGrading.grade(wrong, step: ready)?.isCorrect, false)
+  }
+
   func testBuiltLanguageAnswerGetsOneChanceToSelfCorrect() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: [try step(fillBlank)])
     let step = try XCTUnwrap(state.currentStep)
@@ -733,7 +745,7 @@ private let reading = language(
   sentence: #"""
     {"id": "s", "sentence": "Je suis Marie.", "translation": "I am Marie.", "explanation": null,
      "audioUrl": null, "romanization": null, "distractors": [], "translationDistractors": [],
-     "otherSentenceOrders": [["Marie,", "je", "suis."]], "otherTranslationOrders": []}
+     "ordersPending": false, "otherSentenceOrders": [["Marie,", "je", "suis."]], "otherTranslationOrders": []}
     """#, sentenceWords: ["Je", "suis", "Marie."])
 
 private let japaneseReading = language(
@@ -741,7 +753,7 @@ private let japaneseReading = language(
   sentence: #"""
     {"id": "s", "sentence": "私は学生です。", "translation": "I am a student.", "explanation": null,
      "audioUrl": null, "romanization": null, "distractors": ["学", "生"],
-     "translationDistractors": [], "otherSentenceOrders": [], "otherTranslationOrders": []}
+     "translationDistractors": [], "ordersPending": false, "otherSentenceOrders": [], "otherTranslationOrders": []}
     """#, sentenceWords: ["私", "は", "学生", "です。"])
 
 private let numericActivity = teaching(

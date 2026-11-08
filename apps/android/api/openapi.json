@@ -63865,6 +63865,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "ordersPending": {
+                            "type": "boolean"
+                          },
                           "otherSentenceOrders": {
                             "type": "array",
                             "items": {
@@ -63905,6 +63908,7 @@
                           "distractors",
                           "explanation",
                           "id",
+                          "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
                           "romanization",
@@ -64256,6 +64260,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "ordersPending": {
+                            "type": "boolean"
+                          },
                           "otherSentenceOrders": {
                             "type": "array",
                             "items": {
@@ -64296,6 +64303,7 @@
                           "distractors",
                           "explanation",
                           "id",
+                          "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
                           "romanization",
@@ -64639,6 +64647,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "ordersPending": {
+                            "type": "boolean"
+                          },
                           "otherSentenceOrders": {
                             "type": "array",
                             "items": {
@@ -64679,6 +64690,7 @@
                           "distractors",
                           "explanation",
                           "id",
+                          "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
                           "romanization",
@@ -64986,6 +64998,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "ordersPending": {
+                            "type": "boolean"
+                          },
                           "otherSentenceOrders": {
                             "type": "array",
                             "items": {
@@ -65026,6 +65041,7 @@
                           "distractors",
                           "explanation",
                           "id",
+                          "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
                           "romanization",
@@ -65360,6 +65376,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "ordersPending": {
+                            "type": "boolean"
+                          },
                           "otherSentenceOrders": {
                             "type": "array",
                             "items": {
@@ -65400,6 +65419,7 @@
                           "distractors",
                           "explanation",
                           "id",
+                          "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
                           "romanization",
@@ -65760,6 +65780,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "ordersPending": {
+                            "type": "boolean"
+                          },
                           "otherSentenceOrders": {
                             "type": "array",
                             "items": {
@@ -65800,6 +65823,7 @@
                           "distractors",
                           "explanation",
                           "id",
+                          "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
                           "romanization",
@@ -66107,6 +66131,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "ordersPending": {
+                            "type": "boolean"
+                          },
                           "otherSentenceOrders": {
                             "type": "array",
                             "items": {
@@ -66147,6 +66174,7 @@
                           "distractors",
                           "explanation",
                           "id",
+                          "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
                           "romanization",
@@ -66454,6 +66482,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "ordersPending": {
+                            "type": "boolean"
+                          },
                           "otherSentenceOrders": {
                             "type": "array",
                             "items": {
@@ -66494,6 +66525,7 @@
                           "distractors",
                           "explanation",
                           "id",
+                          "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
                           "romanization",
@@ -68007,6 +68039,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "ordersPending": {
+                            "type": "boolean"
+                          },
                           "otherSentenceOrders": {
                             "type": "array",
                             "items": {
@@ -68047,6 +68082,7 @@
                           "distractors",
                           "explanation",
                           "id",
+                          "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
                           "romanization",
@@ -68398,6 +68434,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "ordersPending": {
+                            "type": "boolean"
+                          },
                           "otherSentenceOrders": {
                             "type": "array",
                             "items": {
@@ -68438,6 +68477,7 @@
                           "distractors",
                           "explanation",
                           "id",
+                          "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
                           "romanization",
@@ -68781,6 +68821,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "ordersPending": {
+                            "type": "boolean"
+                          },
                           "otherSentenceOrders": {
                             "type": "array",
                             "items": {
@@ -68821,6 +68864,7 @@
                           "distractors",
                           "explanation",
                           "id",
+                          "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
                           "romanization",
@@ -69128,6 +69172,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "ordersPending": {
+                            "type": "boolean"
+                          },
                           "otherSentenceOrders": {
                             "type": "array",
                             "items": {
@@ -69168,6 +69215,7 @@
                           "distractors",
                           "explanation",
                           "id",
+                          "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
                           "romanization",
@@ -69502,6 +69550,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "ordersPending": {
+                            "type": "boolean"
+                          },
                           "otherSentenceOrders": {
                             "type": "array",
                             "items": {
@@ -69542,6 +69593,7 @@
                           "distractors",
                           "explanation",
                           "id",
+                          "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
                           "romanization",
@@ -69902,6 +69954,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "ordersPending": {
+                            "type": "boolean"
+                          },
                           "otherSentenceOrders": {
                             "type": "array",
                             "items": {
@@ -69942,6 +69997,7 @@
                           "distractors",
                           "explanation",
                           "id",
+                          "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
                           "romanization",
@@ -70249,6 +70305,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "ordersPending": {
+                            "type": "boolean"
+                          },
                           "otherSentenceOrders": {
                             "type": "array",
                             "items": {
@@ -70289,6 +70348,7 @@
                           "distractors",
                           "explanation",
                           "id",
+                          "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
                           "romanization",
@@ -70596,6 +70656,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "ordersPending": {
+                            "type": "boolean"
+                          },
                           "otherSentenceOrders": {
                             "type": "array",
                             "items": {
@@ -70636,6 +70699,7 @@
                           "distractors",
                           "explanation",
                           "id",
+                          "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
                           "romanization",

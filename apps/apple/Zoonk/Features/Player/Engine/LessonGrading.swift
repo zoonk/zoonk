@@ -227,6 +227,10 @@ enum LessonGrading {
       let otherOrders = isListening ? sentence.otherTranslationOrders : sentence.otherSentenceOrders
       let isCorrect = isLessonOrder || otherOrders.contains { arrangementKey($0) == key }
 
+      if sentence.ordersPending && !isCorrect {
+        return nil
+      }
+
       // Right in another order, the verdict still shows the lesson's own version.
       return LocalGrade(
         isCorrect: isCorrect,

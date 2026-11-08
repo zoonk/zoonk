@@ -146,12 +146,12 @@ export function useLessonPlayerActions({
       return;
     }
 
-    if (isServerGradedAnswer({ answer, step })) {
+    const graded = gradeStepAnswer({ answer, language, step });
+
+    if (isServerGradedAnswer({ answer, isCorrect: graded?.isCorrect, step })) {
       void gradeOnServer({ answer, step });
       return;
     }
-
-    const graded = gradeStepAnswer({ answer, language, step });
 
     if (!graded) {
       return;

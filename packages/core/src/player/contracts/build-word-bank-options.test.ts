@@ -36,6 +36,7 @@ function makeSentence(overrides: Partial<SerializedSentence> = {}): SerializedSe
     distractors: [],
     explanation: null,
     id: "sentence-1",
+    ordersPending: false,
     otherSentenceOrders: [],
     otherTranslationOrders: [],
     romanization: null,

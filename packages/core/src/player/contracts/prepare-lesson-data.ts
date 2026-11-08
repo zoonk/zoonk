@@ -40,6 +40,7 @@ type SentenceDataInput = {
   romanization: string | null;
   audioUrl: string | null;
   translation: string;
+  ordersPending: boolean;
   otherSentenceOrders: string[];
   otherTranslationOrders: string[];
   translationDistractors: string[];
@@ -77,6 +78,7 @@ type SerializedSentence = {
   sentence: string;
   distractors: string[];
   translation: string;
+  ordersPending: boolean;
   otherSentenceOrders: string[][];
   otherTranslationOrders: string[][];
   translationDistractors: string[];
@@ -133,6 +135,7 @@ function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
     distractors: [...sentence.distractors],
     explanation: sentence.explanation,
     id: sentence.id,
+    ordersPending: sentence.ordersPending,
     otherSentenceOrders: sentence.otherSentenceOrders.map((order) => segmentWords(order)),
     otherTranslationOrders: sentence.otherTranslationOrders.map((order) =>
       segmentLearnerWords(order),

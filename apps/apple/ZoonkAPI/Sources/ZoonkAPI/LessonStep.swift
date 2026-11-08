@@ -542,6 +542,7 @@ public struct LanguageExercise: Codable, Hashable, Sendable {
     public let romanization: String?
     public let distractors: [String]
     public let translationDistractors: [String]
+    public let ordersPending: Bool
     /// Other accepted tile orders of `sentence`, already split into its tiles.
     public let otherSentenceOrders: [[String]]
     /// Other accepted tile orders of `translation`, already split into its tiles.

@@ -42,6 +42,7 @@ function makeSentence(overrides: Partial<SentenceInput> = {}): SentenceInput {
     distractors: [],
     explanation: null,
     id: "1",
+    ordersPending: false,
     otherSentenceOrders: [],
     otherTranslationOrders: [],
     romanization: null,

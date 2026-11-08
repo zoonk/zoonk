@@ -13,7 +13,7 @@ internal const val WORD = """{"audioUrl":null,"distractors":[],"id":"w-1","pronu
 
 internal fun sentence(audioUrl: String?) =
     """{"audioUrl":${audioUrl?.let { "\"$it\"" } ?: "null"},"distractors":[],"explanation":null,"id":"s-1",
-       "otherSentenceOrders":[],"otherTranslationOrders":[],"romanization":null,"sentence":"Yo veo un gato.","translation":"I see a cat.","translationDistractors":[]}"""
+       "ordersPending":false,"otherSentenceOrders":[],"otherTranslationOrders":[],"romanization":null,"sentence":"Yo veo un gato.","translation":"I see a cat.","translationDistractors":[]}"""
 
 internal fun bank(vararg words: String) =
     words.joinToString(",", "[", "]") {
@@ -81,7 +81,7 @@ internal fun longReading(id: String) =
         StepKind.Reading,
         "reading",
         sentence =
-            """{"audioUrl":null,"distractors":[],"explanation":null,"id":"s-2","otherSentenceOrders":[],"otherTranslationOrders":[],"romanization":null,
+            """{"audioUrl":null,"distractors":[],"explanation":null,"id":"s-2","ordersPending":false,"otherSentenceOrders":[],"otherTranslationOrders":[],"romanization":null,
                "sentence":"${LONG_SENTENCE.joinToString(" ")}",
                "translation":"O fio condutor da minha experiência é melhorar processos","translationDistractors":[]}""",
         wordBank = bank("in", "common", "processes", "my", "improves", "am", "experience", "The", "those", "thread", "is", "improving"),

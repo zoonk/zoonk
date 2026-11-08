@@ -444,6 +444,29 @@ describe(getPlayableLibraryLesson, () => {
     });
   });
 
+  it.each([null, new Date()])(
+    "serves pending orders from the sentence's owed mark (%s)",
+    async (ordersOwedAt) => {
+      const { lesson, sentence } = await languageLessonFixture();
+
+      await prisma.lessonSentence.update({
+        data: { ordersOwedAt },
+        where: { lessonId_sentenceId: { lessonId: lesson.id, sentenceId: sentence.id } },
+      });
+
+      const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+      const steps = result?.status === "ready" ? result.lesson.steps : [];
+
+      expect(steps.find((step) => step.kind === "reading")).toMatchObject({
+        exercise: { sentence: { ordersPending: ordersOwedAt !== null } },
+      });
+
+      expect(steps.find((step) => step.kind === "spokenAnswer")).toMatchObject({
+        listening: { sentence: { ordersPending: ordersOwedAt !== null } },
+      });
+    },
+  );
+
   it("plays a sentence word that only another lesson saved and voiced", async () => {
     const word = randomUUID();
 
